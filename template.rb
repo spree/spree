@@ -1,0 +1,178 @@
+# Spree Commerce Rails Application Template
+# This template sets up a new Rails application with Spree Commerce
+
+# Check if verbose mode is enabled via environment variable
+VERBOSE = ENV['VERBOSE_MODE'] == '1'
+
+def run_quietly(description, &block)
+  if VERBOSE
+    say description, :blue
+    block.call
+  else
+    # Suppress output unless there's an error
+    require 'open3'
+    stdout, stderr, status = Open3.capture3("bash -c '#{yield}'")
+    unless status.success?
+      say "Error: #{stderr}", :red
+      raise "Command failed: #{description}"
+    end
+  end
+end
+
+def add_gems
+  say 'Adding required gems to Gemfile...', :blue
+
+  # Core dependencies
+  gem 'devise'
+
+  # Spree gems - using main branch for latest
+  spree_opts = { github: 'spree/spree', branch: 'main' }
+  gem 'spree', spree_opts
+  gem 'spree_emails', spree_opts
+  gem 'spree_sample', spree_opts
+  gem 'spree_admin', spree_opts
+  gem 'spree_storefront', spree_opts
+  # translations
+  gem 'spree_i18n'
+
+  # Payment & Analytics integrations
+  gem 'spree_stripe', github: 'spree/spree_stripe', branch: 'main'
+  gem 'spree_google_analytics', github: 'spree/spree_google_analytics', branch: 'main'
+  gem 'spree_klaviyo', github: 'spree/spree_klaviyo', branch: 'main'
+  gem 'spree_paypal_checkout', github: 'spree/spree_paypal_checkout', branch: 'main'
+
+  # Development & Test gems
+  gem_group :development, :test do
+    gem 'bullet'
+    gem 'pry-byebug'
+    gem 'awesome_print'
+    gem 'letter_opener'
+    gem 'listen'
+  end
+end
+
+def setup_importmap
+  say 'Setting up JavaScript with Importmap...', :blue
+
+  # Rails 8 already has importmap, turbo, and stimulus by default
+  # Just ensure they're properly set up by running the install tasks
+  # Using system with 'yes' to auto-accept prompts
+  if VERBOSE
+    system("yes | bin/rails importmap:install")
+    system("yes | bin/rails turbo:install")
+    system("yes | bin/rails stimulus:install")
+  else
+    system("yes | bin/rails importmap:install >/dev/null 2>&1")
+    system("yes | bin/rails turbo:install >/dev/null 2>&1")
+    system("yes | bin/rails stimulus:install >/dev/null 2>&1")
+  end
+end
+
+def setup_devise
+  say 'Setting up Devise authentication...', :blue
+
+  rails_command 'generate devise:install'
+  rails_command 'generate devise Spree::User'
+end
+
+def install_spree
+  say 'Running Spree installer...', :blue
+
+  # Run Spree installer with all options
+  rails_command 'generate spree:install --auto-accept --user_class=Spree::User --authentication=devise --install_storefront=true --install_admin=true'
+
+  # Run integration installers
+  rails_command 'generate spree_stripe:install'
+  rails_command 'generate spree_google_analytics:install'
+  rails_command 'generate spree_klaviyo:install'
+  rails_command 'generate spree_paypal_checkout:install'
+end
+
+
+def configure_development_environment
+  say 'Configuring development environment...', :blue
+
+  # Bullet configuration
+  create_file 'config/initializers/bullet.rb' do
+    <<~RUBY
+      if Rails.env.development? && defined?(Bullet)
+        Bullet.enable = true
+        Bullet.rails_logger = true
+        Bullet.stacktrace_includes = [ 'spree_core', 'spree_storefront', 'spree_api', 'spree_admin', 'spree_emails' ]
+      end
+    RUBY
+  end
+
+  # Letter opener and file watcher configuration
+  inject_into_file 'config/environments/development.rb', before: /^end/ do
+    <<-RUBY
+
+  # Letter Opener for email previews
+  config.action_mailer.delivery_method = :letter_opener
+  config.action_mailer.perform_deliveries = true
+
+  # Improved file watching
+  config.file_watcher = ActiveSupport::EventedFileUpdateChecker
+    RUBY
+  end
+end
+
+def setup_procfile
+  say 'Setting up Procfile.dev...', :blue
+
+  # Add web server to Procfile.dev
+  append_to_file 'Procfile.dev' do
+    "\nweb: bin/rails s -p 3000\n"
+  end
+end
+
+def setup_database
+  say 'Setting up database...', :blue
+
+  rails_command 'db:migrate'
+end
+
+def load_sample_data
+  if yes?('Would you like to load sample data (demo products, categories)? (y/n)')
+    say 'Loading sample data...', :blue
+    rails_command 'spree_sample:load'
+  end
+end
+
+def show_success_message
+  say
+  say '=' * 60, :green
+  say 'Spree Commerce has been successfully installed!', :green
+  say '=' * 60, :green
+  say
+  say 'To start your server:', :yellow
+  say '  bin/dev', :bold
+  say
+  say 'Then visit:', :yellow
+  say '  Storefront: http://localhost:3000', :bold
+  say '  Admin Panel: http://localhost:3000/admin', :bold
+  say
+  say 'Default admin credentials:', :yellow
+  say '  Email: spree@example.com', :bold
+  say '  Password: spree123', :bold
+  say
+  say 'Useful commands:', :yellow
+  say '  bin/rails console                # Rails console'
+  say '  bin/rails spree_sample:load      # Load more sample data'
+  say '  bin/rails db:migrate             # Run migrations'
+  say
+end
+
+# Main template execution
+add_gems
+
+after_bundle do
+  setup_importmap
+  configure_development_environment
+  setup_devise
+  install_spree
+  setup_procfile
+  setup_database
+  load_sample_data
+  show_success_message
+end
