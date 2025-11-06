@@ -30,6 +30,7 @@ namespace :common do
     Spree::DummyGenerator.start dummy_app_args
 
     unless skip_javascript
+      system('bundle add sprockets-rails') # we need this until we will remove bootstrap/popper_js gems
       system('bundle exec rails importmap:install turbo:install stimulus:install')
     end
 
