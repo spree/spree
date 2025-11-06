@@ -52,16 +52,26 @@ module Spree
         private
 
         def ensure_product_exists
-          product = Spree::Product.new
-          if attributes['slug'].present?
-            existing_product = product_scope.find_by(slug: attributes['slug'].strip.downcase)
-            product = existing_product if existing_product.present?
-          end
+          if options.empty?
+            # For master variants, create or update the product
+            product = Spree::Product.new
+            if attributes['slug'].present?
+              existing_product = product_scope.find_by(slug: attributes['slug'].strip.downcase)
+              product = existing_product if existing_product.present?
+            end
 
-          product = assign_attributes_to_product(product)
-          product.save!
-          handle_metafields(product)
-          product
+            product = assign_attributes_to_product(product)
+            product.save!
+            handle_metafields(product)
+            product
+          else
+            # For non-master variants, only look up the product
+            if attributes['slug'].present?
+              product_scope.find_by!(slug: attributes['slug'].strip.downcase)
+            else
+              raise ActiveRecord::RecordNotFound, 'Product slug is required for variant rows'
+            end
+          end
         end
 
         def product_scope

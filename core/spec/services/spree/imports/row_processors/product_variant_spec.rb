@@ -311,6 +311,44 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
     end
   end
 
+  context 'when importing a variant row with options but product does not exist' do
+    let(:row_data) do
+      csv_row_hash(
+        'slug' => 'non-existent-shirt',
+        'sku' => 'NON-EXISTENT-SHIRT-BLUE-XS',
+        'price' => '62.99',
+        'currency' => 'USD',
+        'option1_name' => 'Color',
+        'option1_value' => 'Blue',
+        'option2_name' => 'Size',
+        'option2_value' => 'XS'
+      )
+    end
+
+    it 'raises ActiveRecord::RecordNotFound' do
+      expect { subject.process! }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+  end
+
+  context 'when importing a variant row with options but slug is missing' do
+    let(:row_data) do
+      csv_row_hash(
+        'slug' => '',
+        'sku' => 'MISSING-SLUG-BLUE-XS',
+        'price' => '62.99',
+        'currency' => 'USD',
+        'option1_name' => 'Color',
+        'option1_value' => 'Blue',
+        'option2_name' => 'Size',
+        'option2_value' => 'XS'
+      )
+    end
+
+    it 'raises ActiveRecord::RecordNotFound with descriptive message' do
+      expect { subject.process! }.to raise_error(ActiveRecord::RecordNotFound, 'Product slug is required for variant rows')
+    end
+  end
+
   context 'when variant row refers to missing product slug' do
     let(:row_data) do
       csv_row_hash(
@@ -501,6 +539,43 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
           expect(product.has_metafield?('custom.material')).to be false
           expect(product.metafields.count).to eq 0
         end
+      end
+    end
+
+    context 'when processing a non-master variant row' do
+      let!(:existing_product) do
+        p = create(:product, slug: 'denim-shirt', name: 'Denim Shirt', stores: [store])
+        p.set_metafield('custom.brand', 'Awesome Brand')
+        p.set_metafield('custom.material', 'Cotton')
+        p
+      end
+
+      let(:row_data) do
+        csv_row_hash(
+          'slug' => 'denim-shirt',
+          'sku' => 'DENIM-SHIRT-BLUE-XS',
+          'price' => '62.99',
+          'currency' => 'USD',
+          'option1_name' => 'Color',
+          'option1_value' => 'Blue',
+          'option2_name' => 'Size',
+          'option2_value' => 'XS',
+          'metafield.custom.brand' => '',
+          'metafield.custom.material' => ''
+        )
+      end
+
+      it 'does not clear out existing metafield values' do
+        expect(existing_product.metafields.count).to eq 2
+
+        product = variant.product
+
+        expect(product.id).to eq existing_product.id
+        expect(product.has_metafield?('custom.brand')).to be true
+        expect(product.get_metafield('custom.brand').value).to eq 'Awesome Brand'
+        expect(product.has_metafield?('custom.material')).to be true
+        expect(product.get_metafield('custom.material').value).to eq 'Cotton'
+        expect(product.metafields.count).to eq 2
       end
     end
   end
