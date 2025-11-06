@@ -30,13 +30,21 @@ module Spree
 
           # Authentication & authorization errors
           authentication_required: 'authentication_required',
+          authentication_failed: 'authentication_failed',
           access_denied: 'access_denied',
           invalid_token: 'invalid_token',
+          invalid_provider: 'invalid_provider',
 
           # Payment errors
           payment_failed: 'payment_failed',
           payment_processing_error: 'payment_processing_error',
           gateway_error: 'gateway_error',
+
+          # Digital download errors
+          attachment_missing: 'attachment_missing',
+          download_unauthorized: 'download_unauthorized',
+          digital_link_expired: 'digital_link_expired',
+          download_limit_exceeded: 'download_limit_exceeded',
 
           # General errors
           processing_error: 'processing_error',
@@ -109,8 +117,6 @@ module Spree
 
         # Exception handlers
         def handle_record_not_found(exception)
-          Rails.error.report(exception, context: error_context, source: 'spree.api.v3')
-
           code = determine_not_found_code(exception)
           message = generate_not_found_message(exception)
 
@@ -122,7 +128,6 @@ module Spree
         end
 
         def handle_access_denied(exception)
-          Rails.error.report(exception, context: error_context, source: 'spree.api.v3')
           render_error(
             code: ERROR_CODES[:access_denied],
             message: exception.message,

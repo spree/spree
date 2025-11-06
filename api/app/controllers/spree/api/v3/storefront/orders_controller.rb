@@ -3,7 +3,7 @@ module Spree
     module V3
       module Storefront
         class OrdersController < ResourceController
-          include Spree::Api::V3::GuestOrderAccess
+          include Spree::Api::V3::OrderConcern
 
           # Override authorization for orders
           skip_before_action :set_resource, only: [:index, :create]
@@ -96,8 +96,13 @@ module Spree
 
           protected
 
-          def set_order
-            @order = Spree::Order.find_by!(number: params[:id])
+          def load_order
+            # for show action we need to find any order by id, not only incomplete orders
+            if action_name == 'show'
+              @order = current_store.orders.friendly.find(params[:id])
+            else
+              super
+            end
           end
 
           def scope

@@ -3,7 +3,7 @@ module Spree
     module V3
       module Storefront
         class ShippingMethodsController < BaseController
-          include Spree::Api::V3::GuestOrderAccess
+          include Spree::Api::V3::OrderConcern
 
           before_action :set_order
           before_action :authorize_order_access!
@@ -18,10 +18,6 @@ module Spree
           end
 
           protected
-
-          def set_order
-            @order = Spree::Order.find_by!(number: params[:order_id])
-          end
 
           def available_shipping_methods
             @order.available_shipping_methods
