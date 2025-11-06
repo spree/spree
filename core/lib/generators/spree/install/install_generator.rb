@@ -95,7 +95,6 @@ module Spree
       append_file 'db/seeds.rb', <<-SEEDS.strip_heredoc
 
         Spree::Core::Engine.load_seed if defined?(Spree::Core)
-        Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
       SEEDS
     end
 

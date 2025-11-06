@@ -71,21 +71,32 @@ end
 def setup_devise
   say 'Setting up Devise authentication...', :blue
 
-  rails_command 'generate devise:install'
-  rails_command 'generate devise Spree::User'
+  if VERBOSE
+    rails_command 'generate devise:install'
+    rails_command 'generate devise Spree::User'
+  else
+    run 'bin/rails generate devise:install >/dev/null 2>&1'
+    run 'bin/rails generate devise Spree::User >/dev/null 2>&1'
+  end
 end
 
 def install_spree
   say 'Running Spree installer...', :blue
 
   # Run Spree installer with all options
-  rails_command 'generate spree:install --auto-accept --user_class=Spree::User --authentication=devise --install_storefront=true --install_admin=true'
-
-  # Run integration installers
-  rails_command 'generate spree_stripe:install'
-  rails_command 'generate spree_google_analytics:install'
-  rails_command 'generate spree_klaviyo:install'
-  rails_command 'generate spree_paypal_checkout:install'
+  if VERBOSE
+    rails_command 'generate spree:install --auto-accept --user_class=Spree::User --authentication=devise --install_storefront=true --install_admin=true'
+    rails_command 'generate spree_stripe:install'
+    rails_command 'generate spree_google_analytics:install'
+    rails_command 'generate spree_klaviyo:install'
+    rails_command 'generate spree_paypal_checkout:install'
+  else
+    run 'bin/rails generate spree:install --auto-accept --user_class=Spree::User --authentication=devise --install_storefront=true --install_admin=true >/dev/null 2>&1'
+    run 'bin/rails generate spree_stripe:install >/dev/null 2>&1'
+    run 'bin/rails generate spree_google_analytics:install >/dev/null 2>&1'
+    run 'bin/rails generate spree_klaviyo:install >/dev/null 2>&1'
+    run 'bin/rails generate spree_paypal_checkout:install >/dev/null 2>&1'
+  end
 end
 
 
@@ -129,13 +140,21 @@ end
 def setup_database
   say 'Setting up database...', :blue
 
-  rails_command 'db:migrate'
+  if VERBOSE
+    rails_command 'db:migrate'
+  else
+    run 'bin/rails db:migrate >/dev/null 2>&1'
+  end
 end
 
 def load_sample_data
   if yes?('Would you like to load sample data (demo products, categories)? (y/n)')
     say 'Loading sample data...', :blue
-    rails_command 'spree_sample:load'
+    if VERBOSE
+      rails_command 'spree_sample:load'
+    else
+      run 'bin/rails spree_sample:load >/dev/null 2>&1'
+    end
   end
 end
 
