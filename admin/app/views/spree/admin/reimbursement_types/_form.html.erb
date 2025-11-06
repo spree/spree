@@ -7,6 +7,7 @@
                 Spree::ReimbursementType::KINDS.map do |kind|
                   [kind.demodulize.titleize, kind]
                 end,
+                f.object.type
               ),
               { include_blank: false, label: Spree.t(:type), autocomplete: true } %>
 
