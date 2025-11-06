@@ -51,6 +51,30 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       expect(variant.stock_items.first.count_on_hand).to eq 100
       expect(variant.stock_items.first.backorderable).to eq true
     end
+
+    context 'when updating an existing master variant' do
+      let!(:existing_product) { create(:product, slug: 'denim-shirt', name: 'Old Name', stores: [store]) }
+
+      before do
+        stock_item = existing_product.master.stock_items.find_or_initialize_by(stock_location: store.default_stock_location)
+        stock_item.count_on_hand = 50
+        stock_item.backorderable = false
+        stock_item.save!
+      end
+
+      it 'updates inventory_count and inventory_backorderable' do
+        stock_item = existing_product.master.stock_items.find_by(stock_location: store.default_stock_location)
+        expect(stock_item.count_on_hand).to eq 50
+        expect(stock_item.backorderable).to eq false
+
+        subject.process!
+
+        stock_item.reload
+        expect(stock_item.count_on_hand).to eq 100
+        expect(stock_item.backorderable).to eq true
+        expect(existing_product.reload.name).to eq 'Denim Shirt'
+      end
+    end
   end
 
   context 'when importing a variant row with options' do
@@ -107,6 +131,27 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       it 'updates the variant' do
         expect { subject.process! }.to change { variant.reload.price }.from(50.99).to(62.99)
         expect(variant.option_values.map(&:presentation).sort).to contain_exactly('Blue', 'XS')
+      end
+
+      context 'when updating inventory values' do
+        before do
+          stock_item = variant.stock_items.find_or_initialize_by(stock_location: store.default_stock_location)
+          stock_item.count_on_hand = 50
+          stock_item.backorderable = false
+          stock_item.save!
+        end
+
+        it 'updates inventory_count and inventory_backorderable' do
+          stock_item = variant.stock_items.find_by(stock_location: store.default_stock_location)
+          expect(stock_item.count_on_hand).to eq 50
+          expect(stock_item.backorderable).to eq false
+
+          subject.process!
+
+          stock_item.reload
+          expect(stock_item.count_on_hand).to eq 100
+          expect(stock_item.backorderable).to eq true
+        end
       end
     end
   end
