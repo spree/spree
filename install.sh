@@ -437,11 +437,12 @@ show_final_instructions() {
 
     echo -e "\n${BOLD}${GREEN}Happy coding with Spree Commerce!${NC}\n"
 
-    # Ask if user wants to start server now
-    read -p "Would you like to start the server now? (y/n): " -n 1 -r
+    # Ask if user wants to start server now (Y is default)
+    read -p "Would you like to start the server now? (Y/n): " -r
     echo
 
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
+    # Default to yes if empty response
+    if [[ -z "$REPLY" ]] || [[ $REPLY =~ ^[Yy]$ ]]; then
         print_info "Starting server... (Press Ctrl+C to stop)"
         cd "$APP_NAME"
         bin/dev
