@@ -1,191 +1,112 @@
 ---
 title: "Product Options"
-description: "How to manage product options in the Spree open-source eCommerce dashboard"
+description: "How to manage product options in the Spree Commerce open-source dashboard"
 ---
 
-Product options are product attributes like size, color, or material that allow customers to choose variations of a product.
+Product options define customizable product attributes (such as size, color, or material) that generate selectable variants for customers. 
 
-They enhance the user experience by making it easier to find and choose the desired product variant by acting as filters on the storefront, helping customers refine their searches more efficiently.
+They improve the shopping experience by helping users quickly find and choose the desired variant and often serve as filters on the PLP. 
 
-Additionally, they can streamline inventory management by linking variations to a single product listing.
+In the backend, they consolidate inventory tracking by grouping all variants under a single product record.
 
-To manage Options, navigate to the Options tab of the admin dashboard, found under Products.
+To manage Options, navigate to **Products → Options** in the admin dashboard
 
-<img
-  alt="Product Options Dashboard Tab"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734624482/docs/Manage%20Products/Product%20Options/2.5.1_Options_-_Navigate_To_Tab_ckkk2a.png"
-/>
+![](/docs/images/user/products/options/1-tab.png)
 
-Here you’ll see a list of all the Options currently available on your store.
+Here you’ll see a list of all the Options currently added to your store.
 
-## Add an New Option
+## Add a New Option
 
-To add a new Option, click ‘\+ New Option Type’ in the top right corner.
+To add a new Option, click **New Option Type** in the top right corner.
 
-This will redirect you to the Option creation page.
+This will redirect you to the Option creation form:
 
-<img
-  alt="Add New Product Option"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734624483/docs/Manage%20Products/Product%20Options/2.5.2_Options_-_Add_New_Option_kvvsib.png"
-/>
+![](/docs/images/user/products/options/2-new-option-type.png)
+
+Here you must fill in two sections to define your new Option:
 
 ### General Information
 
-In this section you can set the name of the Option as should be displayed on the storefront, as well as the Interal Name.
+![](/docs/images/user/products/options/3-general-information.png)
 
-If you don’t set an internal name, the presentation name will be used.
+In this section you can set the display name and the internal name for the Option Type. If you don’t set an internal name, the presentation name will be used.
 
-<img
-  alt="Presentation Name And Internal Name"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734624482/docs/Manage%20Products/Product%20Options/2.5.3_Options_-_Presentation_Name_And_Internal_Name_zkbgcj.png"
-/>
+You can also select whether or not you want this Option to be filterable on product listing pages by checking the **Filterable** box
 
-### Filterable
+When an option type is set to Filterable, your storefront visitors are presented with option-based filters on PLPs. A typical example of this would be to filter clothing by size and color as shown here:
 
-In the General Information section, you can also select whether or not you want this Option to be filterable on product listing pages.
-
-<img
-  alt="Filterable"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734624482/docs/Manage%20Products/Product%20Options/2.5.4_Options_-_Filterable_cdgyhc.png"
-/>
-
-When an option type is set to Filterable, your storefront visitors are presented with the option to filter a taxon of products based on the option type. A typical example of this would be to filter clothing by size and color as shown here:
-
-<img
-  alt="Storefront Filters"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734624484/docs/Manage%20Products/Product%20Options/2.5.5_Options_-_Storefront_Filters_xamhgf.png"
-/>
+![](/docs/images/user/products/options/4-storefront-filters.png)
 
 ### Option Values
 
-Option Types represent the attribute being customized, such as size, color, or material, while Option Values are the specific choices available for that attribute, like Small, Red, or Cotton.
+![](/docs/images/user/products/options/5-option-values.png)
 
-<img
-  alt="Product Option Values"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734624482/docs/Manage%20Products/Product%20Options/2.5.6_Options_-_Option_Values_skkhlu.png"
-/>
+Option Types define the attributes that can be customized (e.g., size, color, or material) while Option Values specify the available choices for each attribute, like Small, Red, or Cotton.
 
-Simply enter the names of the values, and click ‘\+ Add One’ to add more values.
+![](/docs/images/user/products/options/6-enter-option-values.png)
 
-<img
-  alt="Enter Values"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734624482/docs/Manage%20Products/Product%20Options/2.5.7_Options_-_Enter_Values_txckof.png"
-/>
+Simply enter the values, and click **Add One** if you need to add more values.
 
-Note: When creating or importing products, any new Option Values that haven’t already been added to this Option will be added automatically.
+After entering all the necessary Option Values, click the **Create** button at the bottom of the page to save the Option.
 
-Once you’re finished adding values, click the blue ‘Create’ button at the bottom of the page, and you’ll receive a notification that the Option has been successfully created.
-
-<img
-  alt="Option Created"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734624484/docs/Manage%20Products/Product%20Options/2.5.8_Options_-_Option_Created_o38zio.png"
-/>
+<note>When creating or importing products, any new Option Values that haven’t already been added to this Option will be added automatically.</note>
 
 ## Option Management
 
+![](/docs/images/user/products/options/7-option-management.png)
+
 Navigating back to the Options page, you’ll see that your newly created option is now listed among your other Options.
 
-<img
-  alt="Product Options_Management"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734624484/docs/Manage%20Products/Product%20Options/2.5.9_Options_-_Options_Management_sgru96.png"
-/>
+Here there are a few ways in which you can manage existing Options:
 
 ### Option Ordering
 
-If you’d like to change the order in which Options are displayed on the storefront, e.g., in filters and on product detail pages, you can drag and drop them into position by clicking on the 6 dots on the left hand side.
+If you’d like to change the order in which Options are displayed on the storefront, e.g., in filters or on product detail pages, you rearrange them by clicking on the 6 dots on the left-hand side and dragging and dropping them into place.
 
-<img
-  alt="Product Option Ordering"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734624484/docs/Manage%20Products/Product%20Options/2.5.10_Options_-_Option_Ordering_z0w0uh.png"
-/>
+![](/docs/images/user/products/options/8-option-ordering.png)
 
-For example, this will change the filter from this:
+For example, this will change the PLP filter from this:
 
-<img
-  alt="Original Order"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734627725/docs/Manage%20Products/Product%20Options/2.5.11_Options_-_Original_Order_sjy2f9.png"
-/>
+![](/docs/images/user/products/options/9-storefront-order-og.png)
 
 To this:
 
-<img
-  alt="New Order"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734627725/docs/Manage%20Products/Product%20Options/2.5.12_Options_-_New_Order_xutfw0.png"
-/>
+![](/docs/images/user/products/options/10-storefront-order-new.png)
 
 The effect is similar on product detail pages:
 
-<img
-  alt="PDP Order"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734624486/docs/Manage%20Products/Product%20Options/2.5.13_Options_-_PDP_Order_vnkzk1.png"
-/>
+![](/docs/images/user/products/options/11-pdp-order.png)
 
 ### Edit Options
 
-To edit an Option, navigate to the Options tab, and click ‘Edit’ on the option you’d like to edit.
+To edit an Option, navigate to the Options tab, and click **Edit** on the option you’d like to edit.
 
-<img
-  alt="Edit Options"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734624485/docs/Manage%20Products/Product%20Options/2.5.14_Options_-_Edit_Options_h8urqo.png"
-/>
+![](/docs/images/user/products/options/12-edit-option.png)
 
 Feel free to change the Presentation Name, Internal Name, check or uncheck the Filterable box, and add or remove Option Values.
 
-<img
-  alt="Make Changes and Update"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734624485/docs/Manage%20Products/Product%20Options/2.5.15_Options_-_Makes_Changes_and_Update_bm2sgn.png"
-/>
-
-Once you’re finished, make sure to click the blue ‘Update’ button at the bottom of the page.
+Make sure to click **Update** to save your changes.
 
 ### Delete Options
 
-To delete an Option, navigate to the Options tab, and click ‘Edit’ on the option you’d like to delete.
+To delete an Option, navigate to the Options tab, and click **Edit** on the option you’d like to delete.
 
-<img
-  alt="Delete An Option"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734624485/docs/Manage%20Products/Product%20Options/2.5.16_Options_-_Delete_An_Option_ejatzm.png"
-/>
+![](/docs/images/user/products/options/13-delete-option.png)
 
-On the Option editor page, locate the red ‘Delete button at the bottom of the page and the Option will be deleted.
-
-<img
-  alt="Click Delete"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734624485/docs/Manage%20Products/Product%20Options/2.5.17_Options_-_Click_Delete_dy877y.png"
-/>
+Click on **Delete**, found in the 3-dot menu at the top of the page, and the Option will be deleted.
 
 ## Import Options
 
-New Options Types and Option Values can be automatically imported if you add the appropriate values to the Option columns in a product import file.
+Option Values can be automatically imported if you add the appropriate values to the Option columns in a product import file.
 
 To learn more about imports, please refer to the [Product Import](https://spreecommerce.org/docs/user/manage-products/import-products) support article.
 
-## Real-Life Examples: Product Options vs Product Properties
+## Real-Life Examples: Product Options
 
 These powerful features work together to make products more discoverable, appealing, and purchase-ready for customers.
 
 Let’s dive deep into how these tools can revolutionize your product presentation and drive better business outcomes:
 
-1. [Understanding Product Properties: The DNA of Your Products](https://spreecommerce.org/product-properties-and-product-options-a-strategic-guide-to-improving-conversions-and-seo/#Product-Properties)
-2. [Understanding Product Options: The Power of Choice](https://spreecommerce.org/product-properties-and-product-options-a-strategic-guide-to-improving-conversions-and-seo/#Product-Options)
-3. [Product Properties vs. Product Options: Understanding the Distinction](https://spreecommerce.org/product-properties-and-product-options-a-strategic-guide-to-improving-conversions-and-seo/#Properties-vs-Options)
-4. [Leveraging Properties and Options for Better Business Outcomes](https://spreecommerce.org/product-properties-and-product-options-a-strategic-guide-to-improving-conversions-and-seo/#Leveraging-Properties-and-Options)
-5. [Bringing It All Together in Spree 5](https://spreecommerce.org/product-properties-and-product-options-a-strategic-guide-to-improving-conversions-and-seo/#Spree-5)
-6. [Next Steps](https://spreecommerce.org/product-properties-and-product-options-a-strategic-guide-to-improving-conversions-and-seo/#Next-Steps)
+1. [Understanding Product Options: The Power of Choice](https://spreecommerce.org/product-properties-and-product-options-a-strategic-guide-to-improving-conversions-and-seo/#Product-Options)
+2. [Bringing It All Together in Spree 5](https://spreecommerce.org/product-properties-and-product-options-a-strategic-guide-to-improving-conversions-and-seo/#Spree-5)
+3. [Next Steps](https://spreecommerce.org/product-properties-and-product-options-a-strategic-guide-to-improving-conversions-and-seo/#Next-Steps)
