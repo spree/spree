@@ -208,6 +208,33 @@ ask_sample_data() {
     fi
 }
 
+# Ask about admin credentials
+ask_admin_credentials() {
+    print_step "Configure admin user..."
+
+    echo -e "\n${BOLD}Set up your admin user credentials${NC}"
+    echo -e "These credentials will be used to access the admin panel."
+    echo -e "${BLUE}Press Enter to use defaults${NC}"
+    echo
+
+    # Ask for admin email
+    read -p "Admin email [spree@example.com]: " ADMIN_EMAIL
+    if [[ -z "$ADMIN_EMAIL" ]]; then
+        ADMIN_EMAIL="spree@example.com"
+    fi
+
+    # Ask for admin password
+    read -p "Admin password [spree123]: " ADMIN_PASSWORD
+    if [[ -z "$ADMIN_PASSWORD" ]]; then
+        ADMIN_PASSWORD="spree123"
+    fi
+
+    echo
+    print_success "Admin credentials set:"
+    print_info "  Email: ${BOLD}$ADMIN_EMAIL${NC}"
+    print_info "  Password: ${BOLD}$ADMIN_PASSWORD${NC}"
+}
+
 # Install system dependencies
 install_system_deps() {
     print_step "Installing system dependencies..."
@@ -367,10 +394,10 @@ create_rails_app() {
 
     # Run rails new with the template
     if [ "$VERBOSE" = true ]; then
-        VERBOSE_MODE=1 LOAD_SAMPLE_DATA="$LOAD_SAMPLE_DATA" rails _${RAILS_VERSION}_ new "$APP_NAME" -m "$TEMPLATE_FILE"
+        VERBOSE_MODE=1 LOAD_SAMPLE_DATA="$LOAD_SAMPLE_DATA" ADMIN_EMAIL="$ADMIN_EMAIL" ADMIN_PASSWORD="$ADMIN_PASSWORD" rails _${RAILS_VERSION}_ new "$APP_NAME" -m "$TEMPLATE_FILE"
     else
         # Run in background with spinner
-        VERBOSE_MODE=0 LOAD_SAMPLE_DATA="$LOAD_SAMPLE_DATA" rails _${RAILS_VERSION}_ new "$APP_NAME" -m "$TEMPLATE_FILE" >/tmp/spree_install.log 2>&1 &
+        VERBOSE_MODE=0 LOAD_SAMPLE_DATA="$LOAD_SAMPLE_DATA" ADMIN_EMAIL="$ADMIN_EMAIL" ADMIN_PASSWORD="$ADMIN_PASSWORD" rails _${RAILS_VERSION}_ new "$APP_NAME" -m "$TEMPLATE_FILE" >/tmp/spree_install.log 2>&1 &
         local rails_pid=$!
 
         # Show spinner with progress messages
@@ -446,9 +473,9 @@ show_final_instructions() {
     echo -e "\n${BOLD}2. Access your Spree store:${NC}"
     echo -e "   • Storefront: ${BLUE}http://localhost:3000${NC}"
     echo -e "   • Admin Panel: ${BLUE}http://localhost:3000/admin${NC}"
-    echo -e "   • Default admin credentials:"
-    echo -e "     Email: ${BOLD}spree@example.com${NC}"
-    echo -e "     Password: ${BOLD}spree123${NC}"
+    echo -e "   • Admin credentials:"
+    echo -e "     Email: ${BOLD}$ADMIN_EMAIL${NC}"
+    echo -e "     Password: ${BOLD}$ADMIN_PASSWORD${NC}"
 
     echo -e "\n${BOLD}3. Useful commands:${NC}"
     echo -e "   ${BLUE}bin/rails console${NC}              # Rails console"
@@ -494,6 +521,7 @@ main() {
     install_rails
     get_app_name
     ask_sample_data
+    ask_admin_credentials
     create_rails_app
     show_final_instructions
 }

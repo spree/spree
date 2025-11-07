@@ -6,11 +6,11 @@ module Spree
       def call
         if Spree.admin_user_class.present? && Spree.admin_user_class.count.zero?
           user = Spree.admin_user_class.create!(
-            email: 'spree@example.com',
-            password: 'spree123',
-            password_confirmation: 'spree123',
-            first_name: 'Spree',
-            last_name: 'Admin'
+            email: ENV.fetch('ADMIN_EMAIL', 'spree@example.com'),
+            password: ENV.fetch('ADMIN_PASSWORD', 'spree123'),
+            password_confirmation: ENV.fetch('ADMIN_PASSWORD', 'spree123'),
+            first_name: ENV.fetch('ADMIN_FIRST_NAME', 'Spree'),
+            last_name: ENV.fetch('ADMIN_LAST_NAME', 'Admin')
           )
           user.save!
 

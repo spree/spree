@@ -138,7 +138,7 @@ module Spree
           cmd.call
         end
       else
-        say_status :skipping, 'seed data (you can always run rake db:seed)'
+        say_status :skipping, 'seed data (you can always run bin/rails db:seed)'
       end
     end
 

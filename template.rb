@@ -4,6 +4,9 @@
 # Check if verbose mode is enabled via environment variable
 VERBOSE = ENV['VERBOSE_MODE'] == '1'
 LOAD_SAMPLE_DATA = ENV['LOAD_SAMPLE_DATA'] == 'true'
+USE_LOCAL_SPREE = ENV['USE_LOCAL_SPREE'] == 'true'
+ADMIN_EMAIL = ENV['ADMIN_EMAIL'] || 'spree@example.com'
+ADMIN_PASSWORD = ENV['ADMIN_PASSWORD'] || 'spree123'
 
 def run_quietly(description, &block)
   if VERBOSE
@@ -27,7 +30,7 @@ def add_gems
   gem 'devise'
 
   # Spree gems - using main branch for latest
-  spree_opts = { path: '../' }
+  spree_opts = USE_LOCAL_SPREE ? { path: '../' } : { version: '~> 5.2.0.rc2' }
   gem 'spree', spree_opts
   gem 'spree_emails', spree_opts
   gem 'spree_sample', spree_opts
@@ -89,13 +92,13 @@ def install_spree
 
   # Run Spree installer with all options
   if VERBOSE
-    rails_command 'generate spree:install --auto-accept --user_class=Spree::User --admin_user_class=Spree::AdminUser --authentication=devise --install_storefront=true --install_admin=true'
+    rails_command "generate spree:install --auto-accept --user_class=Spree::User --admin_user_class=Spree::AdminUser --authentication=devise --install_storefront=true --install_admin=true --admin_email=#{ADMIN_EMAIL} --admin_password=#{ADMIN_PASSWORD}"
     rails_command 'generate spree_stripe:install'
     rails_command 'generate spree_google_analytics:install'
     rails_command 'generate spree_klaviyo:install'
     rails_command 'generate spree_paypal_checkout:install'
   else
-    run 'bin/rails generate spree:install --auto-accept --user_class=Spree::User --admin_user_class=Spree::AdminUser --authentication=devise --install_storefront=true --install_admin=true >/dev/null 2>&1'
+    run "bin/rails generate spree:install --auto-accept --user_class=Spree::User --admin_user_class=Spree::AdminUser --authentication=devise --install_storefront=true --install_admin=true --admin_email=#{ADMIN_EMAIL} --admin_password=#{ADMIN_PASSWORD} >/dev/null 2>&1"
     run 'bin/rails generate spree_stripe:install >/dev/null 2>&1'
     run 'bin/rails generate spree_google_analytics:install >/dev/null 2>&1'
     run 'bin/rails generate spree_klaviyo:install >/dev/null 2>&1'
@@ -175,9 +178,9 @@ def show_success_message
   say '  Storefront: http://localhost:3000', :bold
   say '  Admin Panel: http://localhost:3000/admin', :bold
   say
-  say 'Default admin credentials:', :yellow
-  say '  Email: spree@example.com', :bold
-  say '  Password: spree123', :bold
+  say 'Admin credentials:', :yellow
+  say "  Email: #{ADMIN_EMAIL}", :bold
+  say "  Password: #{ADMIN_PASSWORD}", :bold
   say
   say 'Useful commands:', :yellow
   say '  bin/rails console                # Rails console'
