@@ -3,6 +3,7 @@
 
 # Check if verbose mode is enabled via environment variable
 VERBOSE = ENV['VERBOSE_MODE'] == '1'
+LOAD_SAMPLE_DATA = ENV['LOAD_SAMPLE_DATA'] == 'true'
 
 def run_quietly(description, &block)
   if VERBOSE
@@ -148,7 +149,7 @@ def setup_database
 end
 
 def load_sample_data
-  if yes?('Would you like to load sample data (demo products, categories)? (y/n)')
+  if LOAD_SAMPLE_DATA
     say 'Loading sample data...', :blue
     if VERBOSE
       rails_command 'spree_sample:load'

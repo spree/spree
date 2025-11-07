@@ -18,6 +18,7 @@ NC='\033[0m' # No Color
 RUBY_VERSION="3.3.0"
 RAILS_VERSION="8.0.4"
 APP_NAME=""
+LOAD_SAMPLE_DATA="false"
 TEMPLATE_URL="https://raw.githubusercontent.com/spree/spree/main/template.rb"
 VERBOSE=false
 
@@ -185,6 +186,28 @@ get_app_name() {
     print_success "App name set to: $APP_NAME"
 }
 
+# Ask about loading sample data
+ask_sample_data() {
+    print_step "Configure sample data..."
+
+    echo -e "\n${BOLD}Would you like to load sample data?${NC}"
+    echo -e "Sample data includes demo products, categories, and content to help you get started."
+    echo -e "${BLUE}Press Enter to load sample data (recommended for testing)${NC}"
+    echo
+
+    read -p "Load sample data? (Y/n): " -r
+    echo
+
+    # Default to yes if empty response
+    if [[ -z "$REPLY" ]] || [[ $REPLY =~ ^[Yy]$ ]]; then
+        LOAD_SAMPLE_DATA="true"
+        print_success "Sample data will be loaded"
+    else
+        LOAD_SAMPLE_DATA="false"
+        print_success "Sample data will not be loaded"
+    fi
+}
+
 # Install system dependencies
 install_system_deps() {
     print_step "Installing system dependencies..."
@@ -344,10 +367,10 @@ create_rails_app() {
 
     # Run rails new with the template
     if [ "$VERBOSE" = true ]; then
-        VERBOSE_MODE=1 rails _${RAILS_VERSION}_ new "$APP_NAME" -m "$TEMPLATE_FILE"
+        VERBOSE_MODE=1 LOAD_SAMPLE_DATA="$LOAD_SAMPLE_DATA" rails _${RAILS_VERSION}_ new "$APP_NAME" -m "$TEMPLATE_FILE"
     else
         # Run in background with spinner
-        VERBOSE_MODE=0 rails _${RAILS_VERSION}_ new "$APP_NAME" -m "$TEMPLATE_FILE" >/tmp/spree_install.log 2>&1 &
+        VERBOSE_MODE=0 LOAD_SAMPLE_DATA="$LOAD_SAMPLE_DATA" rails _${RAILS_VERSION}_ new "$APP_NAME" -m "$TEMPLATE_FILE" >/tmp/spree_install.log 2>&1 &
         local rails_pid=$!
 
         # Show spinner with progress messages
@@ -429,7 +452,9 @@ show_final_instructions() {
 
     echo -e "\n${BOLD}3. Useful commands:${NC}"
     echo -e "   ${BLUE}bin/rails console${NC}              # Rails console"
-    echo -e "   ${BLUE}bin/rails spree_sample:load${NC}    # Load sample data (if not loaded during install)"
+    if [ "$LOAD_SAMPLE_DATA" = "false" ]; then
+        echo -e "   ${BLUE}bin/rails spree_sample:load${NC}    # Load sample data"
+    fi
 
     echo -e "\n${BOLD}4. Documentation:${NC}"
     echo -e "   • Developer Guide: ${BLUE}https://spreecommerce.org/docs/developer${NC}"
@@ -468,6 +493,7 @@ main() {
     install_ruby
     install_rails
     get_app_name
+    ask_sample_data
     create_rails_app
     show_final_instructions
 }
