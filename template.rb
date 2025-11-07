@@ -27,7 +27,7 @@ def add_gems
   gem 'devise'
 
   # Spree gems - using main branch for latest
-  spree_opts = { github: 'spree/spree', branch: 'main' }
+  spree_opts = { path: '../' }
   gem 'spree', spree_opts
   gem 'spree_emails', spree_opts
   gem 'spree_sample', spree_opts
@@ -44,6 +44,7 @@ def add_gems
 
   # Development & Test gems
   gem_group :development, :test do
+    gem 'spree_dev_tools'
     gem 'bullet'
     gem 'pry-byebug'
     gem 'awesome_print'
@@ -75,9 +76,11 @@ def setup_devise
   if VERBOSE
     rails_command 'generate devise:install'
     rails_command 'generate devise Spree::User'
+    rails_command 'generate devise Spree::AdminUser'
   else
     run 'bin/rails generate devise:install >/dev/null 2>&1'
     run 'bin/rails generate devise Spree::User >/dev/null 2>&1'
+    run 'bin/rails generate devise Spree::AdminUser >/dev/null 2>&1'
   end
 end
 
@@ -86,13 +89,13 @@ def install_spree
 
   # Run Spree installer with all options
   if VERBOSE
-    rails_command 'generate spree:install --auto-accept --user_class=Spree::User --authentication=devise --install_storefront=true --install_admin=true'
+    rails_command 'generate spree:install --auto-accept --user_class=Spree::User --admin_user_class=Spree::AdminUser --authentication=devise --install_storefront=true --install_admin=true'
     rails_command 'generate spree_stripe:install'
     rails_command 'generate spree_google_analytics:install'
     rails_command 'generate spree_klaviyo:install'
     rails_command 'generate spree_paypal_checkout:install'
   else
-    run 'bin/rails generate spree:install --auto-accept --user_class=Spree::User --authentication=devise --install_storefront=true --install_admin=true >/dev/null 2>&1'
+    run 'bin/rails generate spree:install --auto-accept --user_class=Spree::User --admin_user_class=Spree::AdminUser --authentication=devise --install_storefront=true --install_admin=true >/dev/null 2>&1'
     run 'bin/rails generate spree_stripe:install >/dev/null 2>&1'
     run 'bin/rails generate spree_google_analytics:install >/dev/null 2>&1'
     run 'bin/rails generate spree_klaviyo:install >/dev/null 2>&1'
