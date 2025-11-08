@@ -2,7 +2,13 @@
 
 # Spree Commerce Guided Installer
 # Usage: bash -c "$(curl -fsSL https://raw.githubusercontent.com/spree/spree/main/install.sh)"
-# Usage with verbose: bash install.sh --verbose
+# Usage with options: bash install.sh --verbose --local --app-name=my_store --auto-accept --force
+# Options:
+#   --verbose, -v           Show detailed output
+#   --local, -l             Use local Spree gems from parent directory
+#   --app-name=NAME         Set application name (skips prompt)
+#   --auto-accept, -y       Use default values for all prompts (non-interactive mode)
+#   --force, -f             Remove existing directory if it exists
 
 set -e
 
@@ -21,12 +27,31 @@ APP_NAME=""
 LOAD_SAMPLE_DATA="false"
 TEMPLATE_URL="https://raw.githubusercontent.com/spree/spree/main/template.rb"
 VERBOSE=false
+USE_LOCAL_SPREE=false
+AUTO_ACCEPT=false
+FORCE_REMOVE=false
 
 # Parse arguments
 for arg in "$@"; do
     case $arg in
         --verbose|-v)
             VERBOSE=true
+            shift
+            ;;
+        --local|-l)
+            USE_LOCAL_SPREE=true
+            shift
+            ;;
+        --app-name=*)
+            APP_NAME="${arg#*=}"
+            shift
+            ;;
+        --auto-accept|-y)
+            AUTO_ACCEPT=true
+            shift
+            ;;
+        --force|-f)
+            FORCE_REMOVE=true
             shift
             ;;
     esac
@@ -147,6 +172,38 @@ detect_os() {
 get_app_name() {
     print_step "Setting up your Spree application..."
 
+    # Use default app name if auto-accept is enabled and no app name provided
+    if [ "$AUTO_ACCEPT" = true ] && [[ -z "$APP_NAME" ]]; then
+        APP_NAME="spree"
+        print_info "Using default app name: $APP_NAME"
+    fi
+
+    # Check if app name was provided via command line argument or auto-accept
+    if [[ -n "$APP_NAME" ]]; then
+        # Validate app name provided via argument
+        if [[ ! "$APP_NAME" =~ ^[a-z0-9_]+$ ]]; then
+            print_error "App name must contain only lowercase letters, numbers, and underscores"
+            print_error "Provided: $APP_NAME"
+            exit 1
+        fi
+
+        # Handle existing directory
+        if [ -d "$APP_NAME" ]; then
+            if [ "$FORCE_REMOVE" = true ]; then
+                print_warning "Directory '$APP_NAME' already exists, removing..."
+                rm -rf "$APP_NAME"
+            else
+                print_error "Directory '$APP_NAME' already exists"
+                print_error "Use --force to remove it automatically"
+                exit 1
+            fi
+        fi
+
+        print_success "App name set to: $APP_NAME"
+        return 0
+    fi
+
+    # Interactive prompt if app name not provided
     echo -e "\n${BOLD}What would you like to name your application?${NC}"
     echo -e "This will be used for the directory name and Spree Commerce application name."
     echo -e "Use lowercase letters, numbers, and underscores (e.g., my_store, awesome_shop)"
@@ -190,6 +247,13 @@ get_app_name() {
 ask_sample_data() {
     print_step "Configure sample data..."
 
+    # Skip prompt if auto-accept is enabled
+    if [ "$AUTO_ACCEPT" = true ]; then
+        LOAD_SAMPLE_DATA="true"
+        print_info "Sample data will be loaded (default)"
+        return 0
+    fi
+
     echo -e "\n${BOLD}Would you like to load sample data?${NC}"
     echo -e "Sample data includes demo products, categories, and content to help you get started."
     echo -e "${BLUE}Press Enter to load sample data (recommended for testing)${NC}"
@@ -211,6 +275,16 @@ ask_sample_data() {
 # Ask about admin credentials
 ask_admin_credentials() {
     print_step "Configure admin user..."
+
+    # Skip prompt if auto-accept is enabled
+    if [ "$AUTO_ACCEPT" = true ]; then
+        ADMIN_EMAIL="spree@example.com"
+        ADMIN_PASSWORD="spree123"
+        print_info "Using default admin credentials:"
+        print_info "  Email: ${BOLD}$ADMIN_EMAIL${NC}"
+        print_info "  Password: ${BOLD}$ADMIN_PASSWORD${NC}"
+        return 0
+    fi
 
     echo -e "\n${BOLD}Set up your admin user credentials${NC}"
     echo -e "These credentials will be used to access the admin panel."
@@ -392,12 +466,18 @@ create_rails_app() {
         echo -e "${YELLOW}This will take several minutes. Please be patient...${NC}\n"
     fi
 
+    # Prepare environment variables
+    local use_local_spree="false"
+    if [ "$USE_LOCAL_SPREE" = true ]; then
+        use_local_spree="true"
+    fi
+
     # Run rails new with the template
     if [ "$VERBOSE" = true ]; then
-        VERBOSE_MODE=1 LOAD_SAMPLE_DATA="$LOAD_SAMPLE_DATA" ADMIN_EMAIL="$ADMIN_EMAIL" ADMIN_PASSWORD="$ADMIN_PASSWORD" rails _${RAILS_VERSION}_ new "$APP_NAME" -m "$TEMPLATE_FILE"
+        VERBOSE_MODE=1 LOAD_SAMPLE_DATA="$LOAD_SAMPLE_DATA" USE_LOCAL_SPREE="$use_local_spree" ADMIN_EMAIL="$ADMIN_EMAIL" ADMIN_PASSWORD="$ADMIN_PASSWORD" rails _${RAILS_VERSION}_ new "$APP_NAME" -m "$TEMPLATE_FILE"
     else
         # Run in background with spinner
-        VERBOSE_MODE=0 LOAD_SAMPLE_DATA="$LOAD_SAMPLE_DATA" ADMIN_EMAIL="$ADMIN_EMAIL" ADMIN_PASSWORD="$ADMIN_PASSWORD" rails _${RAILS_VERSION}_ new "$APP_NAME" -m "$TEMPLATE_FILE" >/tmp/spree_install.log 2>&1 &
+        VERBOSE_MODE=0 LOAD_SAMPLE_DATA="$LOAD_SAMPLE_DATA" USE_LOCAL_SPREE="$use_local_spree" ADMIN_EMAIL="$ADMIN_EMAIL" ADMIN_PASSWORD="$ADMIN_PASSWORD" rails _${RAILS_VERSION}_ new "$APP_NAME" -m "$TEMPLATE_FILE" >/tmp/spree_install.log 2>&1 &
         local rails_pid=$!
 
         # Show spinner with progress messages
@@ -489,6 +569,11 @@ show_final_instructions() {
 
     echo -e "\n${BOLD}${GREEN}Happy coding with Spree Commerce!${NC}\n"
 
+    # Skip server start prompt if auto-accept is enabled
+    if [ "$AUTO_ACCEPT" = true ]; then
+        return 0
+    fi
+
     # Ask if user wants to start server now (Y is default)
     read -p "Would you like to start the server now? (Y/n): " -r
     echo
@@ -513,7 +598,13 @@ main() {
     echo -e "  • Rails $RAILS_VERSION"
     echo -e "  • Create a new Spree Commerce application"
 
-    press_any_key
+    if [ "$USE_LOCAL_SPREE" = true ]; then
+        echo -e "\n${YELLOW}Using local Spree gems from parent directory${NC}"
+    fi
+
+    if [ "$AUTO_ACCEPT" = false ]; then
+        press_any_key
+    fi
 
     detect_os
     install_system_deps

@@ -185,7 +185,6 @@ def show_success_message
   say 'Useful commands:', :yellow
   say '  bin/rails console                # Rails console'
   say '  bin/rails spree_sample:load      # Load more sample data'
-  say '  bin/rails db:migrate             # Run migrations'
   say
 end
 
