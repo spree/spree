@@ -12,108 +12,13 @@ Welcome to the Spree Commerce [open-source eCommerce](https://spreecommerce.org)
 
 ### 1. Installing Spree
 
-<AccordionGroup>
-  <Accordion icon="github" title="Getting the Spree Starter template">
-    <Info>
-      [Spree Starter](https://github.com/spree/spree_starter/) is a pre-configured Rails application that comes with Spree Commerce, the official [Stripe gem](https://github.com/spree/spree_stripe/), and some other useful gems installed. It is highly recommended to use Spree Starter to get started with Spree Commerce.
-    </Info>
+Copy and paste the following command to your terminal:
 
-    <Note>
-      If you're on Windows remember to [install the Linux subsystem](https://docs.microsoft.com/en-us/windows/wsl/install-win10) before proceeding.
-    </Note>
+```bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/spree/spree/main/install.sh)"
+```
 
-    1. Install [git](https://github.com/git-guides/install-git) if you don't have it already.
-
-    2. Clone the Spree starter template:
-
-        ```bash
-        git clone https://github.com/spree/spree_starter.git
-        ```
-
-    3. Go to the repository directory:
-
-        ```bash
-        cd spree_starter
-        ```      
-
-  </Accordion>
-
-  <Accordion icon="rectangle-terminal" title="Setting up Your Development Environment">
-    Now that you have the Spree Starter template, you can start setting up your development environment.
-  
-    1. Install required dependencies
-
-        On MacOS you can install the dependencies using [Homebrew package manager](https://brew.sh/):
-
-        ```bash
-        brew install vips libpq
-        ```
-
-        On debian-based systems you can install the dependencies using the package manager:
-
-        ```bash
-        sudo apt-get install libvips-dev libpq-dev
-        ```
-
-    2. Install Ruby
-
-        Spree is based on [Ruby and Rails](https://rubyonrails.org/), hence you need to install Ruby language.
-
-        Install [rbenv (ruby version manager)](https://github.com/rbenv/rbenv):
-
-        ```bash
-        curl -fsSL https://rbenv.org/install.sh | bash
-        ```
-
-        And now install Ruby 3.3:
-
-        Before attempting to install Ruby, check that your build environment has the necessary tools and libraries.(https://github.com/rbenv/ruby-build/wiki#suggested-build-environment)
-
-        ```bash
-        rbenv install 3.3.0 && rbenv global 3.3.0
-        ```
-
-    3. Install [Docker Desktop](https://docs.docker.com/get-docker)
-
-    4. Start Docker Compose services:
-
-        <Info>
-          Docker needs to be running before running the setup commands.
-        </Info>
-
-        ```bash
-        docker compose up -d
-        ```
-
-        This will start the PostgreSQL database which is required for Spree to work. You can also use other databases like MySQL.
-
-    5. Run setup commands:
-
-       ```bash
-       bin/setup
-       ```
-
-        This will install the necessary gems, run the database migrations and seed the database with some sample data.
-
-    6. And finally start the development server with:
-
-       ```bash
-       bin/dev
-       ```
-
-        This will start the development server on [http://localhost:3000](http://localhost:3000).
-  </Accordion>
-
-  <Accordion icon="box" title="Adding sample data">
-    To add sample data to your store, run:
-
-    ```bash
-    bin/rake spree_sample:load
-    ```
-
-    This will add a some products, categories, and will setup a checkout flow to your store.
-  </Accordion>
-</AccordionGroup>
+This will fire up the guided installer that will ask you a few questions and then set up your Spree Commerce application.
 
 ### 2. Exploring Your Store
 
