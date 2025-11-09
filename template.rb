@@ -8,21 +8,6 @@ USE_LOCAL_SPREE = ENV['USE_LOCAL_SPREE'] == 'true'
 ADMIN_EMAIL = ENV['ADMIN_EMAIL'] || 'spree@example.com'
 ADMIN_PASSWORD = ENV['ADMIN_PASSWORD'] || 'spree123'
 
-def run_quietly(description, &block)
-  if VERBOSE
-    say description, :blue
-    block.call
-  else
-    # Suppress output unless there's an error
-    require 'open3'
-    stdout, stderr, status = Open3.capture3("bash -c '#{yield}'")
-    unless status.success?
-      say "Error: #{stderr}", :red
-      raise "Command failed: #{description}"
-    end
-  end
-end
-
 def add_gems
   say 'Adding required gems to Gemfile...', :blue
 
