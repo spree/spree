@@ -48,6 +48,30 @@ module Spree
           say "Please replace < ApplicationRecord with < Spree.base_class in #{user_class_file}"
         end
 
+        if Spree.admin_user_class != Spree.user_class
+          admin_user_class_file = Rails.root.join('app', 'models', "#{Spree.admin_user_class.name.underscore}.rb")
+
+          if File.exist?(admin_user_class_file)
+            inject_into_file admin_user_class_file, after: "class #{Spree.admin_user_class.name} < ApplicationRecord\n" do
+              <<-RUBY
+    # Spree modules
+    include Spree::UserMethods
+              RUBY
+            end
+            gsub_file admin_user_class_file, "< ApplicationRecord", "< Spree.base_class"
+
+            say "Successfully added Spree admin user modules into #{admin_user_class_file}"
+          else
+            say "Could not locate admin user model file at #{admin_user_class_file}. Please add these lines manually:", :red
+            say <<~RUBY
+              # Spree modules
+              include Spree::UserMethods
+            RUBY
+
+            say "Please replace < ApplicationRecord with < Spree.base_class in #{admin_user_class_file}"
+          end
+        end
+
         append_file 'config/initializers/spree.rb' do
           %Q{
             if defined?(Devise) && Devise.respond_to?(:parent_controller)

@@ -14,6 +14,7 @@ module Spree
     class_option :install_admin, type: :boolean, default: false, banner: 'installs default rails admin'
     class_option :auto_accept, type: :boolean
     class_option :user_class, type: :string
+    class_option :admin_user_class, type: :string
     class_option :admin_email, type: :string
     class_option :admin_password, type: :string
     class_option :lib_name, type: :string, default: 'spree'
@@ -69,6 +70,11 @@ module Spree
     def install_admin
       if @install_admin && Spree::Core::Engine.admin_available?
         generate 'spree:admin:install'
+
+        # generate devise controllers if authentication is devise
+        if @authentication == 'devise'
+          generate 'spree:admin:devise'
+        end
       end
     end
 
@@ -95,7 +101,6 @@ module Spree
       append_file 'db/seeds.rb', <<-SEEDS.strip_heredoc
 
         Spree::Core::Engine.load_seed if defined?(Spree::Core)
-        Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
       SEEDS
     end
 
@@ -133,7 +138,7 @@ module Spree
           cmd.call
         end
       else
-        say_status :skipping, 'seed data (you can always run rake db:seed)'
+        say_status :skipping, 'seed data (you can always run bin/rails db:seed)'
       end
     end
 

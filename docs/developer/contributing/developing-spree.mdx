@@ -21,65 +21,21 @@ Go to [Spree GitHub repository](https://github.com/spree/spree) and click the **
 
 ## Local setup
 
-1. Clone your fork repository
+Clone your fork repository
 
     ```bash
     git clone git://github.com/your_github_username/spree.git && cd spree
     ```
 
-2. [Install ruby](https://www.ruby-lang.org/en/documentation/installation/)
-
-    On MacOS, we recommend using [rbenv](https://github.com/rbenv/rbenv) to install Ruby.
-
-    Firstly, install rbenv itself:
-
-    ```bash
-    curl -fsSL https://rbenv.org/install.sh | bash
-    ```
-
-    Then, install Ruby:
-
-    ```bash
-    rbenv init && rbenv install && rbenv global 3.3.0
-    ```
-
-3. Install required libraries
-
-    You will need SQLite (or PostgreSQL or MySQL) and libvips installed on your system. You can install them using the following commands:
-
-    ```bash
-    brew install vips
-    ```
-
-    If you are using Ubuntu or Windows Linux Subsystem, you can install libvips using the following command:
-
-    ```bash
-    sudo apt-get install libvips
-    ```
-
-    Please refer to the [libvips installation guide](https://libvips.github.io/libvips/install.html) for more information.
-
-4. Install the gem dependencies
-
-    ```bash
-    bundle install
-    ```
-
-## Creating Sandbox application
+## Create a sandbox application
 
 Bellow command will setup a Rails application with Spree pre-installed with some data seeded:
 
-```bash
-bin/sandbox.sh
-```
+    ```bash
+    bin/sandbox.sh
+    ```
 
-By default, Sandbox uses the **SQLite** database. But you can switch to **PostgreSQL** or **MySQL**:
-
-```bash
-DB=postgres DB_PASSWORD=password DB_USERNAME=postgres DB_HOST=localhost bin/sandbox.sh
-```
-
-We recommend sticking to SQLite for development purposes as it doesn't require any additional setup.
+This script will automatically install the necessary dependencies such as Ruby, libvips and Rails.
 
 ## Running the application
 

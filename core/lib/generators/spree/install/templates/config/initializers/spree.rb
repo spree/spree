@@ -91,5 +91,4 @@ Rails.application.config.after_initialize do
 end
 
 Spree.user_class = <%= (options[:user_class].blank? ? 'Spree::LegacyUser' : options[:user_class]).inspect %>
-# Use a different class for admin users
-# Spree.admin_user_class = 'AdminUser'
+Spree.admin_user_class = <%= (options[:admin_user_class].blank? ? (options[:user_class].blank? ? 'Spree::LegacyUser' : options[:user_class]) : options[:admin_user_class]).inspect %>
