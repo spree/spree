@@ -1,8 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Bash(bundle exec rspec:*)",
-      "Read(//Users/damian/github/spree/**)"
+      "Bash(bundle exec rspec:*)"
     ],
     "deny": [],
     "ask": []
