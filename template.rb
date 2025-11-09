@@ -30,7 +30,7 @@ def add_gems
   gem 'devise'
 
   # Spree gems - using main branch for latest
-  spree_opts = USE_LOCAL_SPREE ? { path: '../' } : { version: '~> 5.2.0.rc2' }
+  spree_opts = USE_LOCAL_SPREE ? { path: '../' } : { github: 'spree/spree', branch: 'main' }
   gem 'spree', spree_opts
   gem 'spree_emails', spree_opts
   gem 'spree_sample', spree_opts
