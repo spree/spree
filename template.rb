@@ -15,7 +15,7 @@ def add_gems
   gem 'devise'
 
   # Spree gems - using main branch for latest
-  spree_opts = USE_LOCAL_SPREE ? { path: '../' } : { github: 'spree/spree', branch: 'main' }
+  spree_opts = USE_LOCAL_SPREE ? { path: '../' } : { version: '>= 5.2.0.rc2' }
   gem 'spree', spree_opts
   gem 'spree_emails', spree_opts
   gem 'spree_sample', spree_opts
@@ -34,8 +34,6 @@ def add_gems
   gem_group :development, :test do
     gem 'spree_dev_tools'
     gem 'bullet'
-    gem 'pry-byebug'
-    gem 'awesome_print'
     gem 'letter_opener'
     gem 'listen'
   end
@@ -90,7 +88,6 @@ def install_spree
     run 'bin/rails generate spree_paypal_checkout:install >/dev/null 2>&1'
   end
 end
-
 
 def configure_development_environment
   say 'Configuring development environment...', :blue
