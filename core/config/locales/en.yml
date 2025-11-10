@@ -1763,6 +1763,32 @@ en:
       user_logged_in:
         description: Available only to logged in users
         name: User Logged In
+    price_rule_types:
+      store_rule:
+        description: Apply different pricing per store
+        name: Store
+      zone_rule:
+        description: Apply pricing based on geographic zone
+        name: Zone
+      user_rule:
+        description: Apply pricing to specific customers
+        name: User
+      date_range_rule:
+        description: Apply pricing during specific dates
+        name: Date Range
+      volume_rule:
+        description: Apply pricing based on quantity
+        name: Volume
+      product_taxon_rule:
+        description: Apply pricing to products in specific categories
+        name: Product Category
+    price_list_statuses:
+      active: Active
+      inactive: Inactive
+      scheduled: Scheduled
+    match_policies:
+      all: Match ALL rules
+      any: Match ANY rule
     promotion_uses: Promotion uses
     promotionable: Promotable
     promotions: Promotions
