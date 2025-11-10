@@ -379,7 +379,19 @@ install_ruby() {
         print_info "Installing rbenv..."
 
         if [ "$OS" = "macos" ]; then
-            brew install rbenv ruby-build
+            run_with_status "Running: brew install rbenv ruby-build" brew install rbenv ruby-build || {
+                print_warning "Packages may already be installed"
+            }
+
+            # Ensure Homebrew environment is loaded
+            if [[ $(uname -m) == 'arm64' ]]; then
+                eval "$(/opt/homebrew/bin/brew shellenv)" 2>/dev/null || true
+            else
+                eval "$(/usr/local/bin/brew shellenv)" 2>/dev/null || true
+            fi
+
+            # Initialize rbenv for macOS (brew installation)
+            eval "$(rbenv init - bash)" 2>/dev/null || true
         elif [ "$OS" = "linux" ]; then
             curl -fsSL https://github.com/rbenv/rbenv-installer/raw/HEAD/bin/rbenv-installer | bash
 
@@ -401,11 +413,22 @@ install_ruby() {
         print_success "rbenv installed"
     else
         print_success "rbenv is already installed"
-    fi
 
-    # Initialize rbenv in current shell
-    export PATH="$HOME/.rbenv/bin:$PATH"
-    eval "$(rbenv init - bash)" 2>/dev/null || true
+        # Initialize rbenv in current shell for existing installations
+        if [ "$OS" = "macos" ]; then
+            # Ensure Homebrew environment is loaded for existing brew installations
+            if [[ $(uname -m) == 'arm64' ]]; then
+                eval "$(/opt/homebrew/bin/brew shellenv)" 2>/dev/null || true
+            else
+                eval "$(/usr/local/bin/brew shellenv)" 2>/dev/null || true
+            fi
+        else
+            # For Linux, use manual installation path
+            export PATH="$HOME/.rbenv/bin:$PATH"
+        fi
+
+        eval "$(rbenv init - bash)" 2>/dev/null || true
+    fi
 
     # Install Ruby 3.3.0
     print_info "Installing Ruby $RUBY_VERSION (this may take several minutes)..."
@@ -428,7 +451,16 @@ install_rails() {
     print_step "Installing Rails $RAILS_VERSION..."
 
     # Ensure rbenv is initialized
-    export PATH="$HOME/.rbenv/bin:$PATH"
+    if [ "$OS" = "macos" ]; then
+        # Ensure Homebrew environment is loaded
+        if [[ $(uname -m) == 'arm64' ]]; then
+            eval "$(/opt/homebrew/bin/brew shellenv)" 2>/dev/null || true
+        else
+            eval "$(/usr/local/bin/brew shellenv)" 2>/dev/null || true
+        fi
+    else
+        export PATH="$HOME/.rbenv/bin:$PATH"
+    fi
     eval "$(rbenv init - bash)" 2>/dev/null || true
 
     # Check if Rails is already installed
@@ -450,7 +482,16 @@ create_rails_app() {
     print_step "Creating new Spree Commerce application..."
 
     # Ensure rbenv is initialized
-    export PATH="$HOME/.rbenv/bin:$PATH"
+    if [ "$OS" = "macos" ]; then
+        # Ensure Homebrew environment is loaded
+        if [[ $(uname -m) == 'arm64' ]]; then
+            eval "$(/opt/homebrew/bin/brew shellenv)" 2>/dev/null || true
+        else
+            eval "$(/usr/local/bin/brew shellenv)" 2>/dev/null || true
+        fi
+    else
+        export PATH="$HOME/.rbenv/bin:$PATH"
+    fi
     eval "$(rbenv init - bash)" 2>/dev/null || true
 
     # Download template if running from URL, or use local if exists
