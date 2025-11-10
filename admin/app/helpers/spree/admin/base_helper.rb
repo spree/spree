@@ -135,14 +135,16 @@ module Spree
           render 'spree/admin/preferences/password_field', form: form, field: field, options: options
         when :text
           form.text_area(field, preference_field_options(options))
+        when :datetime
+          form.datetime_field(field, preference_field_options(options))
         else
           form.text_field(field, preference_field_options(options))
         end
       end
 
-      # returns the options for a preference field, according to the type of the preference (number, decimal, boolean, string, password, text)
+      # returns the options for a preference field, according to the type of the preference (number, decimal, boolean, string, password, text, datetime)
       # @param options [Hash] the options for the field
-      # @option options [Symbol] :type the type of the preference, eg. :integer, :decimal, :boolean, :string, :password, :text
+      # @option options [Symbol] :type the type of the preference, eg. :integer, :decimal, :boolean, :string, :password, :text, :datetime
       # @option options [Boolean] :disabled whether the field is disabled
       # @return [Hash] the options for the field
       def preference_field_options(options)
@@ -176,6 +178,10 @@ module Spree
                           {
                             rows: 15,
                             cols: 85,
+                            class: 'form-input'
+                          }
+                        when :datetime
+                          {
                             class: 'form-input'
                           }
                         else

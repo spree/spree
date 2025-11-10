@@ -403,6 +403,18 @@ module Spree
       price.save!
     end
 
+    def price_for(context_or_options)
+      context = if context_or_options.is_a?(Spree::Pricing::Context)
+                  context_or_options
+                elsif context_or_options.is_a?(Hash)
+                  Spree::Pricing::Context.new(**context_or_options.merge(variant: self))
+                else
+                  raise ArgumentError, 'Must provide a Pricing::Context or options hash'
+                end
+
+      Spree::Pricing::Resolver.new(context).resolve
+    end
+
     def set_stock(count_on_hand, backorderable = nil, stock_location = nil)
       stock_location ||= Spree::Store.current.default_stock_location
       stock_item = stock_items.find_or_initialize_by(stock_location: stock_location)

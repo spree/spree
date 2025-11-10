@@ -115,6 +115,17 @@ en:
       spree/policy:
         body: Body
         owner: Policy for
+      spree/price_list:
+        description: Description
+        ends_at: Ends At
+        match_policy: Match Policy
+        name: Name
+        priority: Priority
+        starts_at: Starts At
+        status: Status
+      spree/price_rule:
+        priority: Priority
+        type: Type
       spree/product:
         available_on: Available On
         cost_currency: Cost Currency
@@ -281,6 +292,10 @@ en:
           attributes:
             amount:
               greater_than_max_amount: is greater than the allowed maximum amount of %{max_amount}
+        spree/price_list:
+          attributes:
+            ends_at:
+              must_be_after_starts_at: must be after starts at
         spree/product:
           attributes:
             base:
@@ -413,6 +428,12 @@ en:
       spree/price:
         one: Price
         other: Prices
+      spree/price_list:
+        one: Price List
+        other: Price Lists
+      spree/price_rule:
+        one: Price Rule
+        other: Price Rules
       spree/product:
         one: Product
         other: Products
@@ -1292,6 +1313,9 @@ en:
     match_choices:
       all: All
       none: None
+    match_policies:
+      all: Match ALL rules
+      any: Match ANY rule
     max: Max
     max_items: Max Items
     media: Media
@@ -1658,7 +1682,30 @@ en:
     previous: Previous
     previously_used_card: Previously Used Cards
     price: Price
+    price_list_statuses:
+      active: Active
+      inactive: Inactive
+      scheduled: Scheduled
     price_range: Price Range
+    price_rule_types:
+      date_range_rule:
+        description: Apply pricing during specific dates
+        name: Date Range
+      product_taxon_rule:
+        description: Apply pricing to products in specific categories
+        name: Product Category
+      store_rule:
+        description: Apply different pricing per store
+        name: Store
+      user_rule:
+        description: Apply pricing to specific customers
+        name: User
+      volume_rule:
+        description: Apply pricing based on quantity
+        name: Volume
+      zone_rule:
+        description: Apply pricing based on geographic zone
+        name: Zone
     price_sack: Price Sack
     prices: Prices
     pricing: Pricing
