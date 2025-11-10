@@ -220,6 +220,17 @@ en:
       spree/zone:
         description: Description
         name: Name
+      spree/price_list:
+        name: Name
+        description: Description
+        priority: Priority
+        status: Status
+        starts_at: Starts At
+        ends_at: Ends At
+        match_policy: Match Policy
+      spree/price_rule:
+        type: Type
+        priority: Priority
       user:
         current_sign_in: Current sign in at
         last_sign_in: Last sign in at
@@ -287,6 +298,10 @@ en:
               cannot_destroy_if_attached_to_line_items: Cannot delete Products that are added to placed Orders. In such cases, please discontinue them.
             discontinue_on:
               invalid_date_range: must be later than available date
+        spree/price_list:
+          attributes:
+            ends_at:
+              must_be_after_starts_at: must be after starts at
         spree/promotion:
           attributes:
             expires_at:
@@ -413,6 +428,12 @@ en:
       spree/price:
         one: Price
         other: Prices
+      spree/price_list:
+        one: Price List
+        other: Price Lists
+      spree/price_rule:
+        one: Price Rule
+        other: Price Rules
       spree/product:
         one: Product
         other: Products
