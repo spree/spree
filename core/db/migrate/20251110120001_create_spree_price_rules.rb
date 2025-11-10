@@ -4,6 +4,7 @@ class CreateSpreePriceRules < ActiveRecord::Migration[7.0]
       t.references :price_list, null: false
       t.string :type, null: false
       t.integer :priority, null: false, default: 0
+      t.text :preferences
       t.timestamps
       t.datetime :deleted_at
     end
