@@ -9,6 +9,7 @@ module Spree
     MAXIMUM_AMOUNT = BigDecimal('99_999_999.99')
 
     belongs_to :variant, -> { with_deleted }, class_name: 'Spree::Variant', inverse_of: :prices, touch: true
+    belongs_to :price_list, class_name: 'Spree::PriceList', optional: true
 
     before_validation :ensure_currency
     before_save :remove_compare_at_amount_if_equals_amount
@@ -35,6 +36,8 @@ module Spree
     scope :with_currency, ->(currency) { where(currency: currency) }
     scope :non_zero, -> { where.not(amount: [nil, 0]) }
     scope :discounted, -> { where('compare_at_amount > amount') }
+    scope :base_prices, -> { where(price_list_id: nil) }
+    scope :for_price_list, ->(price_list) { where(price_list_id: price_list) }
     scope :for_products, ->(products, currency = nil) do
       currency ||= Spree::Store.default.default_currency
 

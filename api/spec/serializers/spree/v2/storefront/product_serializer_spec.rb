@@ -5,7 +5,7 @@ describe Spree::V2::Storefront::ProductSerializer do
 
   include_context 'API v2 serializers params'
 
-  let(:product) { create(:product) }
+  let(:product) { create(:product, price: 20) }
 
   context 'with tags' do
     before { product.tag_list.add('tag1', 'tag2') }
@@ -20,6 +20,183 @@ describe Spree::V2::Storefront::ProductSerializer do
 
     it 'returns labels' do
       expect(subject[:data][:attributes][:labels]).to eq ['label1', 'label2']
+    end
+  end
+
+  describe 'pricing attributes' do
+    it 'returns base price attributes' do
+      expect(subject[:data][:attributes]).to include(
+        currency: currency,
+        price: BigDecimal(20),
+        display_price: '$20.00'
+      )
+    end
+  end
+
+  describe 'pricing context integration' do
+    let(:other_store) { create(:store, default: false) }
+    let(:other_zone) { create(:zone) }
+    let(:user) { create(:user) }
+    let(:taxon) { create(:taxon) }
+
+    before do
+      product.taxons << taxon
+    end
+
+    context 'with store-specific pricing' do
+      let!(:price_list) { create(:price_list, status: 'active', priority: 100) }
+      let!(:store_rule) { create(:store_price_rule, price_list: price_list, store_ids: [other_store.id]) }
+      let!(:price_list_price) { create(:price, variant: product.master, currency: currency, amount: 12.50, price_list: price_list) }
+
+      context 'when store matches' do
+        let(:serializer_params) do
+          {
+            store: other_store,
+            currency: currency,
+            user: nil,
+            locale: locale,
+            price_options: { tax_zone: zone }
+          }
+        end
+
+        it 'returns the store-specific price' do
+          expect(subject[:data][:attributes][:price]).to eq(BigDecimal('12.50'))
+          expect(subject[:data][:attributes][:display_price]).to eq('$12.50')
+        end
+      end
+
+      context 'when store does not match' do
+        it 'returns the base price' do
+          expect(subject[:data][:attributes][:price]).to eq(BigDecimal(20))
+          expect(subject[:data][:attributes][:display_price]).to eq('$20.00')
+        end
+      end
+    end
+
+    context 'with zone-specific pricing' do
+      let!(:price_list) { create(:price_list, status: 'active', priority: 100) }
+      let!(:zone_rule) { create(:zone_price_rule, price_list: price_list, zone_ids: [other_zone.id]) }
+      let!(:price_list_price) { create(:price, variant: product.master, currency: currency, amount: 15.00, price_list: price_list) }
+
+      context 'when zone matches' do
+        let(:serializer_params) do
+          {
+            store: store,
+            currency: currency,
+            user: nil,
+            locale: locale,
+            price_options: { tax_zone: other_zone }
+          }
+        end
+
+        it 'returns the zone-specific price' do
+          expect(subject[:data][:attributes][:price]).to eq(BigDecimal('15.00'))
+          expect(subject[:data][:attributes][:display_price]).to eq('$15.00')
+        end
+      end
+
+      context 'when zone does not match' do
+        it 'returns the base price' do
+          expect(subject[:data][:attributes][:price]).to eq(BigDecimal(20))
+          expect(subject[:data][:attributes][:display_price]).to eq('$20.00')
+        end
+      end
+    end
+
+    context 'with user-specific pricing' do
+      let!(:price_list) { create(:price_list, status: 'active', priority: 100) }
+      let!(:user_rule) { create(:user_price_rule, price_list: price_list, user_ids: [user.id]) }
+      let!(:price_list_price) { create(:price, variant: product.master, currency: currency, amount: 14.00, price_list: price_list) }
+
+      context 'when user matches' do
+        let(:serializer_params) do
+          {
+            store: store,
+            currency: currency,
+            user: user,
+            locale: locale,
+            price_options: { tax_zone: zone }
+          }
+        end
+
+        it 'returns the user-specific price' do
+          expect(subject[:data][:attributes][:price]).to eq(BigDecimal('14.00'))
+          expect(subject[:data][:attributes][:display_price]).to eq('$14.00')
+        end
+      end
+
+      context 'when user does not match' do
+        it 'returns the base price' do
+          expect(subject[:data][:attributes][:price]).to eq(BigDecimal(20))
+          expect(subject[:data][:attributes][:display_price]).to eq('$20.00')
+        end
+      end
+    end
+
+    context 'with taxon-specific pricing' do
+      let!(:price_list) { create(:price_list, status: 'active', priority: 100) }
+      let!(:taxon_rule) { create(:product_taxon_price_rule, price_list: price_list, taxon_ids: [taxon.id]) }
+      let!(:price_list_price) { create(:price, variant: product.master, currency: currency, amount: 11.00, price_list: price_list) }
+
+      it 'returns the taxon-specific price' do
+        expect(subject[:data][:attributes][:price]).to eq(BigDecimal('11.00'))
+        expect(subject[:data][:attributes][:display_price]).to eq('$11.00')
+      end
+    end
+
+    context 'with combined rules (store AND zone)' do
+      let!(:price_list) { create(:price_list, status: 'active', priority: 100, match_policy: 'all') }
+      let!(:store_rule) { create(:store_price_rule, price_list: price_list, store_ids: [other_store.id]) }
+      let!(:zone_rule) { create(:zone_price_rule, price_list: price_list, zone_ids: [other_zone.id]) }
+      let!(:price_list_price) { create(:price, variant: product.master, currency: currency, amount: 9.00, price_list: price_list) }
+
+      context 'when both store and zone match' do
+        let(:serializer_params) do
+          {
+            store: other_store,
+            currency: currency,
+            user: nil,
+            locale: locale,
+            price_options: { tax_zone: other_zone }
+          }
+        end
+
+        it 'returns the combined rule price' do
+          expect(subject[:data][:attributes][:price]).to eq(BigDecimal('9.00'))
+          expect(subject[:data][:attributes][:display_price]).to eq('$9.00')
+        end
+      end
+
+      context 'when only store matches' do
+        let(:serializer_params) do
+          {
+            store: other_store,
+            currency: currency,
+            user: nil,
+            locale: locale,
+            price_options: { tax_zone: zone }
+          }
+        end
+
+        it 'returns the base price because both rules must match' do
+          expect(subject[:data][:attributes][:price]).to eq(BigDecimal(20))
+          expect(subject[:data][:attributes][:display_price]).to eq('$20.00')
+        end
+      end
+    end
+
+    context 'with multiple price lists' do
+      let!(:low_priority_list) { create(:price_list, status: 'active', priority: 50) }
+      let!(:high_priority_list) { create(:price_list, status: 'active', priority: 150) }
+      let!(:store_rule_low) { create(:store_price_rule, price_list: low_priority_list, store_ids: [store.id]) }
+      let!(:store_rule_high) { create(:store_price_rule, price_list: high_priority_list, store_ids: [store.id]) }
+      let!(:low_price) { create(:price, variant: product.master, currency: currency, amount: 16.00, price_list: low_priority_list) }
+      let!(:high_price) { create(:price, variant: product.master, currency: currency, amount: 10.00, price_list: high_priority_list) }
+
+      it 'returns the highest priority price' do
+        expect(subject[:data][:attributes][:price]).to eq(BigDecimal('10.00'))
+        expect(subject[:data][:attributes][:display_price]).to eq('$10.00')
+      end
     end
   end
 end

@@ -20,7 +20,9 @@
 
       target ||= product
 
-      price = target.price_in(current_currency)
+      variant_for_context = target.is_a?(Spree::Product) ? target.default_variant : target
+      pricing_context = pricing_context_for_variant(variant_for_context)
+      price = variant_for_context.price_for(pricing_context)
       money_price = price.display_amount
 
       if target.is_a?(Spree::Product) && !use_variant && product.price_varies?(current_currency)
