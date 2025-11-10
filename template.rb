@@ -7,6 +7,7 @@ LOAD_SAMPLE_DATA = ENV['LOAD_SAMPLE_DATA'] == 'true'
 USE_LOCAL_SPREE = ENV['USE_LOCAL_SPREE'] == 'true'
 ADMIN_EMAIL = ENV['ADMIN_EMAIL'] || 'spree@example.com'
 ADMIN_PASSWORD = ENV['ADMIN_PASSWORD'] || 'spree123'
+SPREE_VERSION = ENV['SPREE_VERSION'] || '>= 5.2.0.rc2'
 
 def add_gems
   say 'Adding required gems to Gemfile...', :blue
@@ -15,20 +16,19 @@ def add_gems
   gem 'devise'
 
   # Spree gems - using main branch for latest
-  spree_opts = USE_LOCAL_SPREE ? { path: '../' } : { version: '>= 5.2.0.rc2' }
-  gem 'spree', spree_opts
-  gem 'spree_emails', spree_opts
-  gem 'spree_sample', spree_opts
-  gem 'spree_admin', spree_opts
-  gem 'spree_storefront', spree_opts
+  gem 'spree', USE_LOCAL_SPREE ? { path: '../' } : { version: SPREE_VERSION }
+  gem 'spree_emails', USE_LOCAL_SPREE ? { path: '../' } : { version: SPREE_VERSION }
+  gem 'spree_sample', USE_LOCAL_SPREE ? { path: '../' } : { version: SPREE_VERSION }
+  gem 'spree_admin', USE_LOCAL_SPREE ? { path: '../' } : { version: SPREE_VERSION }
+  gem 'spree_storefront', USE_LOCAL_SPREE ? { path: '../' } : { version: SPREE_VERSION }
   # translations
   gem 'spree_i18n'
 
   # Payment & Analytics integrations
-  gem 'spree_stripe', github: 'spree/spree_stripe', branch: 'main'
-  gem 'spree_google_analytics', github: 'spree/spree_google_analytics', branch: 'main'
-  gem 'spree_klaviyo', github: 'spree/spree_klaviyo', branch: 'main'
-  gem 'spree_paypal_checkout', github: 'spree/spree_paypal_checkout', branch: 'main'
+  gem 'spree_stripe'
+  gem 'spree_google_analytics'
+  gem 'spree_klaviyo'
+  gem 'spree_paypal_checkout'
 
   # Development & Test gems
   gem_group :development, :test do
