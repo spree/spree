@@ -12,6 +12,7 @@ module Spree
                                :adjusters,
                                :stock_splitters,
                                :promotions,
+                               :pricing,
                                :line_item_comparison_hooks,
                                :data_feed_types,
                                :export_types,
@@ -30,6 +31,7 @@ module Spree
                                :integrations)
       SpreeCalculators = Struct.new(:shipping_methods, :tax_rates, :promotion_actions_create_adjustments, :promotion_actions_create_item_adjustments)
       PromoEnvironment = Struct.new(:rules, :actions)
+      PricingEnvironment = Struct.new(:rules)
       SpreeValidators = Struct.new(:addresses)
       MetafieldsEnvironment = Struct.new(:types, :enabled_resources)
       isolate_namespace Spree
@@ -80,6 +82,12 @@ module Spree
       end
 
       initializer 'spree.promo.register.promotion.calculators' do |app|
+      end
+
+      # Pricing configuration for price lists and price rules
+      initializer 'spree.pricing.environment', after: 'spree.environment' do |app|
+        app.config.spree.pricing = PricingEnvironment.new
+        app.config.spree.pricing.rules = []
       end
 
       # Promotion rules need to be evaluated on after initialize otherwise
@@ -144,6 +152,15 @@ module Spree
           Spree::Promotion::Rules::OneUsePerUser,
           Spree::Promotion::Rules::Taxon,
           Spree::Promotion::Rules::OptionValue,
+        ]
+
+        Rails.application.config.spree.pricing.rules.concat [
+          'Spree::PriceRules::StoreRule',
+          'Spree::PriceRules::ZoneRule',
+          'Spree::PriceRules::UserRule',
+          'Spree::PriceRules::DateRangeRule',
+          'Spree::PriceRules::VolumeRule',
+          'Spree::PriceRules::ProductTaxonRule'
         ]
 
         Rails.application.config.spree.promotions.actions = [
