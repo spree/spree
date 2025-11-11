@@ -2,7 +2,7 @@
 
 <div class="flex flex-col gap-4">
   <div class="flex gap-4">
-    <div class="flex-shrink-0">
+    <div class="shrink-0">
       <% image = line_item.variant.default_image %>
       <% if image.present? && image.attached? && image.variable? %>
         <%= link_to spree_storefront_resource_url(line_item.product, relative: true) do %>

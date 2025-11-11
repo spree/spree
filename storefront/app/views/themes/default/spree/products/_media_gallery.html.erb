@@ -6,17 +6,17 @@
       class="media-gallery w-full h-full media-gallery-desktop"
       id="media-gallery-<%= product.id %>-desktop"
       data-controller="lightbox pdp-desktop-gallery">
-      <div class="grid grid-cols-[6.5rem,_1fr] grid-rows-1 gap-2 w-full media-gallery-desktop__wrapper">
-        <div class="flex flex-col h-full w-full aspect-1 overflow-hidden">
+      <div class="grid grid-cols-[6.5rem_1fr] grid-rows-1 gap-2 w-full media-gallery-desktop__wrapper">
+        <div class="flex flex-col h-full overflow-hidden">
           <%= button_tag class: "w-full bg-background py-2 flex justify-center items-center disabled:opacity-50 media-gallery-desktop-arrow", data: { pdp_desktop_gallery_target: "prevArrow" } do %>
             <span class="rotate-180">
               <%= render 'spree/shared/icons/chevron_down' %>
             </span>
           <% end %>
-          <div class="swiper h-full w-full block" data-pdp-desktop-gallery-target="imagesThumbsSlider">
-            <div class="swiper-wrapper w-full h-full block">
+          <div class="swiper h-full block" data-pdp-desktop-gallery-target="imagesThumbsSlider">
+            <div class="swiper-wrapper h-full block">
               <% images.each do |image| %>
-                <div class="swiper-slide !h-min cursor-pointer w-full">
+                <div class="swiper-slide !h-min cursor-pointer">
                   <div
                     class="relative aspect-1 w-full block "
                     id="thumb-desktop-product-image-<%= image.id %>"

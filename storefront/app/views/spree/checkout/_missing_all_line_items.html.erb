@@ -1,7 +1,7 @@
 <div data-controller="modal" data-modal-opened-value="true" data-modal-allow-background-close="false">
   <div data-modal-target="container" data-action="click->modal#closeBackground keyup@window->modal#closeWithKeyboard" class="hidden animated fadeIn fixed inset-0 overflow-y-auto flex items-center justify-center" style="z-index: 9999;">
     <div class="max-h-screen w-full max-w-lg relative">
-      <div class="m-1 bg-white rounded shadow">
+      <div class="m-1 bg-white rounded-sm shadow">
         <div class="p-8">
           <h2 class="text-xl mb-4"><%= Spree.t(:shipping_not_available) %></h2>
           <p class="mb-4"><%= Spree.t('errors.messages.no_shipping_methods_available') %> </p>
