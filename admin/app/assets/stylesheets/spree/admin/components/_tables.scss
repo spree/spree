@@ -35,8 +35,8 @@ table.table {
     th {
       background-color: $light;
       @extend .text-muted;
-      font-size: $font-size-base;
-      font-weight: $font-weight-normal;
+      font-size: $font-size-sm;
+      font-weight: $font-weight-medium;
       vertical-align: middle;
       padding-top: 0.45rem;
       padding-bottom: 0.45rem;

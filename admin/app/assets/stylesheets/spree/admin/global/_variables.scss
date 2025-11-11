@@ -73,7 +73,7 @@ $border-radius: 0.5rem !default;
 $border-radius-sm: 0.4rem !default;
 $border-radius-lg: 0.75rem !default;
 $border-color: rgba($gray-100, 0.85) !default;
-$input-border-color: rgba($gray-200, 0.85) !default;
+$input-border-color: $gray-200 !default;
 $list-group-border-color: $border-color !default;
 $list-group-hover-bg: $gray-25 !default;
 $list-group-active-bg: $action !default;
@@ -103,12 +103,14 @@ $link-hover-decoration:                   underline !default;
 
 $btn-active-box-shadow:       inset 0 3px 5px rgba($black, .025) !default;
 $btn-disabled-opacity: 0.7 !default;
+$btn-padding-y:               0.35rem !default;
+$btn-padding-x:               0.75rem !default;
 
-$nav-link-padding-y:                .5rem !default;
-$nav-link-padding-x:                .6rem !default;
+$nav-link-padding-y:                .35rem !default;
+$nav-link-padding-x:                .75rem !default;
 
 $box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),0 2px 4px -1px rgba(0, 0, 0, 0.06) !default;
-$box-shadow-xs: rgba(43, 34, 51, 0.03) 0px 1px 1px !default;
+$box-shadow-xs: rgba(43, 34, 51, 0.05) 0px 1px 1px !default;
 $box-shadow-lg: rgba(0, 5, 13, 0.5) 0px 4px 8px 2px;
 $input-box-shadow: $box-shadow-xs !default;
 $btn-box-shadow: $input-box-shadow !default;
@@ -174,7 +176,7 @@ $dropdown-padding-y:    0.25rem !default;
 $dropdown-divider-bg: $gray-50 !default;
 $dropdown-divider-margin-y: 0.25rem !default;
 $dropdown-header-color: $text-muted !default;
-$dropdown-item-padding-y:           0.45rem !default;
+$dropdown-item-padding-y:           0.35rem !default;
 $dropdown-item-padding-x:           0.65rem !default;
 
 $zindex-dropdown: 1050;
@@ -223,7 +225,7 @@ $list-group-bg: transparent !default;
 $list-group-item-padding-x:         1.25rem !default;
 $list-group-item-padding-y:         0.75rem !default;
 $header-bg: $body-bg !default;
-$header-height: 54px !default;
+$header-height: 58px !default;
 $sidebar-width: 220px !default;
 $sidebar-bg: $light !default;
 

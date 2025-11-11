@@ -1,6 +1,6 @@
 <% if try_spree_current_user.present? %>
   <%= dropdown id: dom_id(try_spree_current_user, 'account-dropdown') do %>
-    <%= dropdown_toggle class: 'd-flex align-items-center justify-content-between text-left w-100 pr-0' do %>
+    <%= dropdown_toggle class: 'd-flex align-items-center justify-content-between text-left w-100 pr-0 shadow-none' do %>
       <%= render_avatar(try_spree_current_user, width: 32, height: 32) %>
     <% end %>
     <%= dropdown_menu class: 'dropdown-menu-right', style: 'min-width: 250px;' do %>

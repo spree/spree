@@ -1,6 +1,6 @@
 <%= turbo_frame_tag :page_sidebar do %>
   <h6 class="sidebar-header">
-    <%= link_to collection_url, data: { action: 'click->page-builder#clearActiveOverlays' }, class: 'btn hover-gray px-2' do %>
+    <%= link_to collection_url, data: { action: 'click->page-builder#clearActiveOverlays' }, class: 'btn hover-gray shadow-none px-2' do %>
       <%= icon 'chevron-left', class: 'mr-0 back' %>
     <% end %>
     <%= Spree.t(:add_section) %>

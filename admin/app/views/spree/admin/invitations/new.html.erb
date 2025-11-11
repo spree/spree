@@ -12,7 +12,8 @@
       <%= f.spree_date_field :expires_at, required: true, data: { 'enable-button-target': 'input' } %>
     </div>
     <div class="dialog-footer">
-      <%= turbo_save_button_tag nil, class: 'btn btn-primary', data: { 'enable-button-target': 'button' } do %>
+      <%= dialog_discard_button %>
+      <%= turbo_save_button_tag do %>
         <%= icon 'send' %>
         <%= Spree.t('actions.send_invitation') %>
       <% end %>

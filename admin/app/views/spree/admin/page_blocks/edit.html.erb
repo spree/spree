@@ -1,7 +1,7 @@
 <%= turbo_frame_tag :page_sidebar do %>
   <% tab_selected ||= :content %>
   <h6 class="sidebar-header">
-    <%= link_to spree.edit_admin_theme_path(@theme, page_id: @page&.id),  data: { action: 'click->page-builder#clearActiveOverlays' }, class: 'btn hover-gray px-2' do %>
+    <%= link_to spree.edit_admin_theme_path(@theme, page_id: @page&.id),  data: { action: 'click->page-builder#clearActiveOverlays' }, class: 'btn hover-gray shadow-none px-2' do %>
       <%= icon 'chevron-left', class: 'mr-0' %>
     <% end %>
     <%= @page_block.display_name %>
@@ -11,10 +11,10 @@
       <div data-controller="tabs">
         <ul class="nav nav-pills nav-fill mb-3" id="pills-tab" role="tablist">
           <li class="nav-item" role="presentation">
-            <button class="btn nav-link w-100 <%= tab_selected == :content ? 'active' : '' %>" id="pills-home-tab" data-tabs-target="tab" data-action="click->tabs#select" type="button" role="tab" aria-controls="pills-home" aria-selected="<%= tab_selected == :content %>">Content</button>
+            <button class="nav-link w-100 <%= tab_selected == :content ? 'active' : '' %>" id="pills-home-tab" data-tabs-target="tab" data-action="click->tabs#select" type="button" role="tab" aria-controls="pills-home" aria-selected="<%= tab_selected == :content %>">Content</button>
           </li>
           <li class="nav-item" role="presentation">
-            <button class="btn nav-link w-100 <%= tab_selected == :design ? 'active' : '' %>" id="pills-profile-tab" data-tabs-target="tab" data-action="click->tabs#select" type="button" role="tab" aria-controls="pills-profile" aria-selected="<%= tab_selected == :design %>">Design</button>
+            <button class="nav-link w-100 <%= tab_selected == :design ? 'active' : '' %>" id="pills-profile-tab" data-tabs-target="tab" data-action="click->tabs#select" type="button" role="tab" aria-controls="pills-profile" aria-selected="<%= tab_selected == :design %>">Design</button>
           </li>
         </ul>
         <div data-tabs-target="panel" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab" class="animate__animated animate__fadeIn" <%= 'hidden' unless tab_selected == :content %>>
