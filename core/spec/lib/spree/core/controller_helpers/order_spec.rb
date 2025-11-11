@@ -216,4 +216,11 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
       expect(controller.ip_address).to eq request.remote_ip
     end
   end
+
+  describe '#create_token_cookie' do
+    it 'creates a new token cookie' do
+      controller.send(:create_token_cookie, 'token-123')
+      expect(request.cookie_jar.signed[:token]).to eq 'token-123'
+    end
+  end
 end

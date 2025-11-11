@@ -118,9 +118,18 @@ module Spree
             value: token,
             expires: 90.days.from_now,
             secure: Rails.configuration.force_ssl || Rails.application.config.ssl_options[:secure_cookies],
-            domain: current_store.url_or_custom_domain,
+            domain: cookie_domain_without_port,
             httponly: true
           }
+        end
+
+        def cookie_domain_without_port
+          domain = current_store.url_or_custom_domain
+          return nil if domain.blank?
+
+          # Remove port from domain (e.g., "localhost:3000" -> "localhost")
+          # Cookies don't support port numbers in the domain attribute
+          domain.split(':').first
         end
 
         def last_incomplete_order(includes = {})
