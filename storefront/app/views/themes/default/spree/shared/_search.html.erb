@@ -15,7 +15,7 @@
             <%= render 'spree/shared/icons/search' %>
           <% end %>
 
-          <%= text_field_tag :q, params[:q], class: 'p-2 lg:text-sm !leading-6 pl-10 !h-auto bg-accent w-full uppercase pr-14 focus:outline-none text-input', placeholder: Spree.t(:search), data: { search_suggestions_target: 'input', clear_input_target: 'input' } %>
+          <%= text_field_tag :q, params[:q], class: 'p-2 lg:text-sm !leading-6 pl-10 !h-auto bg-accent w-full uppercase pr-14 focus:outline-hidden text-input', placeholder: Spree.t(:search), data: { search_suggestions_target: 'input', clear_input_target: 'input' } %>
           <%= button_tag class: 'hidden text-sm font-semibold absolute top-2 right-2 uppercase h-6 tracking-widest', data: { clear_input_target: 'button', action: 'click->clear-input#clear touch->clear-input#clear click->search-suggestions#clear touch->search-suggestions#clear' } do %>
             <%= Spree.t(:clear) %>
           <% end %>

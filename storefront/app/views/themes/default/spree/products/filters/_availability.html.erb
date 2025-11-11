@@ -3,7 +3,7 @@
   data-controller='accordion'
   data-accordion-close-others-value="false">
   <% availability_filter_opened = permitted_products_params.dig(:filter, :purchasable).present? || permitted_products_params.dig(:filter, :out_of_stock).present? %>
-  <%= link_to "#availability_filter", class: "cursor-pointer uppercase flex items-center justify-between h-10 px-4 lg:px-10 text-sm tracking-widest focus:outline-none transition duration-150 ease-in-out #{'st-accordion__icon--opened' if availability_filter_opened}", data: { action: 'accordion#toggle:prevent' } do %>
+  <%= link_to "#availability_filter", class: "cursor-pointer uppercase flex items-center justify-between h-10 px-4 lg:px-10 text-sm tracking-widest focus:outline-hidden transition duration-150 ease-in-out #{'st-accordion__icon--opened' if availability_filter_opened}", data: { action: 'accordion#toggle:prevent' } do %>
     <%= Spree.t(:availability).capitalize %>
     <%= render 'spree/shared/icons/chevron_down' %>
   <% end %>

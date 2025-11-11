@@ -5,7 +5,7 @@
     class="st-accordion"
     data-controller="accordion"
     data-accordion-close-others-value="false">
-    <%= link_to "##{filter.id}", class: "cursor-pointer uppercase flex items-center justify-between h-10 px-4 lg:px-10 text-sm tracking-widest focus:outline-none transition duration-150 ease-in-out #{'st-accordion__icon--opened' if permitted_products_params.dig(:filter, :options, filter.name).present?}", data: { action: 'accordion#toggle:prevent' } do %>
+    <%= link_to "##{filter.id}", class: "cursor-pointer uppercase flex items-center justify-between h-10 px-4 lg:px-10 text-sm tracking-widest focus:outline-hidden transition duration-150 ease-in-out #{'st-accordion__icon--opened' if permitted_products_params.dig(:filter, :options, filter.name).present?}", data: { action: 'accordion#toggle:prevent' } do %>
       <%= filter.presentation %>
       <%= render 'spree/shared/icons/chevron_down' %>
     <% end %>

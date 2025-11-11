@@ -6,7 +6,7 @@
     <% next unless metafield.metafield_definition.available_on_front_end? %>
     
     <details class="product-metafield border-b border-default group" id="metafield_<%= metafield.id %>">
-      <summary class="text-sm uppercase tracking-widest inline-flex w-full justify-between items-center py-4 cursor-pointer focus:outline-none">
+      <summary class="text-sm uppercase tracking-widest inline-flex w-full justify-between items-center py-4 cursor-pointer focus:outline-hidden">
         <span><%= metafield.name %></span>
         <span class="ml-2 transition-transform group-open:rotate-180">
           <%= render 'spree/shared/icons/chevron_down' %>

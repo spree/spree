@@ -31,7 +31,7 @@
                                class: 'hidden',
                                data: { action: 'change->auto-submit#submit' },
                                checked: option[:value] == products_sort %>
-            <%= f.label "sort-#{option[:value]}", class: 'text-sm cursor-pointer flex items-center justify-between px-4 py-2.5 hover:bg-accent focus:outline-none focus:bg-accent transition ease-in-out' do %>
+            <%= f.label "sort-#{option[:value]}", class: 'text-sm cursor-pointer flex items-center justify-between px-4 py-2.5 hover:bg-accent focus:outline-hidden focus:bg-accent transition ease-in-out' do %>
               <%= option[:name] %>
               <% if option[:value] == products_sort %>
                 <%= render 'spree/shared/icons/check' %>

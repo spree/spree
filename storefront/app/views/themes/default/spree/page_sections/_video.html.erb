@@ -14,7 +14,7 @@
 
         <% if section.video_embed.present? %>
           <div class="<%= 'lg:col-span-5' if separated_vertically %>">
-            <div class="mx-auto <%= 'lg:mr-0' if separated_vertically %> rounded overflow-hidden">
+            <div class="mx-auto <%= 'lg:mr-0' if separated_vertically %> rounded-sm overflow-hidden">
               <div class="video-embed-container">
                 <%= section.video_embed.raw_html.html_safe %>
               </div>

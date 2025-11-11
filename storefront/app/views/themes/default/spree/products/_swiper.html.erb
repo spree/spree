@@ -75,10 +75,10 @@
         <% end %>
       </div>
     </div>
-    <%= button_tag class: "absolute p-2 bg-white rounded-full z-10 border border-accent left-0 disabled:hidden hover:border-primary ml-2 lg:ml-0 swiper-custom-button-prev-#{section.id} block #{arrows_on_top ? '' : 'md:hidden'} top-[--top] lg:top-[--desktop-top]", aria: { hidden: true }, style: "--top: calc(#{theme_setting('product_listing_image_height_mobile')}px/2); --desktop-top: calc(#{theme_setting('product_listing_image_height')}px/2); transform: translate(-50%, -50%);" do %>
+    <%= button_tag class: "absolute p-2 bg-white rounded-full z-10 border border-accent left-0 disabled:hidden hover:border-primary ml-2 lg:ml-0 swiper-custom-button-prev-#{section.id} block #{arrows_on_top ? '' : 'md:hidden'} top-(--top) lg:top-(--desktop-top)", aria: { hidden: true }, style: "--top: calc(#{theme_setting('product_listing_image_height_mobile')}px/2); --desktop-top: calc(#{theme_setting('product_listing_image_height')}px/2); transform: translate(-50%, -50%);" do %>
       <%= render 'spree/shared/icons/chevron' %>
     <% end %>
-    <%= button_tag class: "absolute p-2 bg-white rounded-full z-10 border border-accent right-0 disabled:hidden hover:border-primary mr-2 lg:mr-0 swiper-custom-button-next-#{section.id} block #{arrows_on_top ? '' : 'md:hidden'} top-[--top] lg:top-[--desktop-top]", aria: { hidden: true }, style: "--top: calc(#{theme_setting('product_listing_image_height_mobile')}px/2); --desktop-top: calc(#{theme_setting('product_listing_image_height')}px/2); transform: translate(50%, -50%);" do %>
+    <%= button_tag class: "absolute p-2 bg-white rounded-full z-10 border border-accent right-0 disabled:hidden hover:border-primary mr-2 lg:mr-0 swiper-custom-button-next-#{section.id} block #{arrows_on_top ? '' : 'md:hidden'} top-(--top) lg:top-(--desktop-top)", aria: { hidden: true }, style: "--top: calc(#{theme_setting('product_listing_image_height_mobile')}px/2); --desktop-top: calc(#{theme_setting('product_listing_image_height')}px/2); transform: translate(50%, -50%);" do %>
       <%= render 'spree/shared/icons/chevron_right' %>
     <% end %>
   </div>

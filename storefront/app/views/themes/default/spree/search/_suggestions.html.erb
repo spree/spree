@@ -26,7 +26,7 @@
           <div class="fixed md:sticky py-6 px-4 bottom-0 left-0 bg-accent w-full z-[60]">
             <%= link_to spree.search_path(q: query), class: "btn-primary text-center uppercase flex items-baseline justify-center" do %>
               <span class="whitespace-nowrap"><%= Spree.t(:search_all) %> "</span>
-              <span class="whitespace-nowrap overflow-ellipsis w-min max-w-[12ch] overflow-hidden inline"><%= query %></span>
+              <span class="whitespace-nowrap text-ellipsis w-min max-w-[12ch] overflow-hidden inline"><%= query %></span>
               <span>"</span>
             <% end %>
           </div>
@@ -54,7 +54,7 @@
         <div class="fixed md:relative md:col-span-2 lg:col-span-1 py-6 px-10 bottom-0 left-0 bg-accent w-full z-[60]">
           <%= link_to spree.search_path(q: query), class: "btn-primary text-center uppercase flex items-baseline justify-center" do %>
             <span class="whitespace-nowrap"><%= Spree.t(:search_all) %> "</span>
-            <span class="whitespace-nowrap overflow-ellipsis w-min max-w-[12ch] overflow-hidden inline"><%= query %></span>
+            <span class="whitespace-nowrap text-ellipsis w-min max-w-[12ch] overflow-hidden inline"><%= query %></span>
             <span>"</span>
           <% end %>
         </div>
@@ -71,18 +71,18 @@
           <div class='grid gap-4 lg:gap-6 grid-cols-8 lg:grid-cols-12'>
             <div class='col-span-6 lg:col-span-4'>
               <div class='aspect-1 bg-accent w-full'></div>
-              <div class='h-6 mt-2 w-32 bg-accent rounded'></div>
-              <div class='h-8 mt-2 w-16 bg-accent rounded'></div>
+              <div class='h-6 mt-2 w-32 bg-accent rounded-sm'></div>
+              <div class='h-8 mt-2 w-16 bg-accent rounded-sm'></div>
             </div>
             <div class='col-span-2 lg:col-span-4 flex flex-col h-full overflow-hidden'>
               <div class='h-full lg:aspect-1 bg-accent w-full'></div>
-              <div class='h-6 mt-2 w-32 bg-accent rounded shrink-0'></div>
-              <div class='h-8 mt-2 w-16 bg-accent rounded shrink-0'></div>
+              <div class='h-6 mt-2 w-32 bg-accent rounded-sm shrink-0'></div>
+              <div class='h-8 mt-2 w-16 bg-accent rounded-sm shrink-0'></div>
             </div>
             <div class='hidden col-span-2 lg:col-span-4 lg:flex flex-col h-full overflow-hidden'>
               <div class='h-full lg:aspect-1 bg-accent w-full'></div>
-              <div class='h-6 mt-2 w-32 bg-accent rounded shrink-0'></div>
-              <div class='h-8 mt-2 w-16 bg-accent rounded shrink-0'></div>
+              <div class='h-6 mt-2 w-32 bg-accent rounded-sm shrink-0'></div>
+              <div class='h-8 mt-2 w-16 bg-accent rounded-sm shrink-0'></div>
             </div>
           </div>
         </div>

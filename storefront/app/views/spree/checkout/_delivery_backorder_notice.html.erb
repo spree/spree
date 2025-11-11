@@ -1,5 +1,5 @@
 <% if order.backordered_variants.any? %>
-  <div class="alert rounded border border-default text-sm p-5 mb-6">
+  <div class="alert rounded-sm border border-default text-sm p-5 mb-6">
     <%= Spree.t("storefront.checkout.backorder_notice") %>
     <ul class="list-disc list-inside flex-col flex space-y-1 mt-2">
       <% order.backordered_variants.each do |variant| %>
