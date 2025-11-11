@@ -182,7 +182,7 @@ module Spree
             end
 
             reset_session
-            cookies.permanent.signed[:token] = @order.token
+            create_token_cookie(@order.token)
 
             redirect_to spree.checkout_path(@order.token)
           else
@@ -204,7 +204,7 @@ module Spree
     end
 
     def allow_access_to_complete_order_with_new_user?
-      cookies_order_token = cookies.permanent.signed[:token]
+      cookies_order_token = cookies.signed[:token]
 
       @order.completed? && @order.signup_for_an_account? && @order.user_id.present? && cookies_order_token.present? && cookies_order_token == @order.token
     end
