@@ -2,7 +2,7 @@
   <nav class="navbar navbar-expand-lg">
     <div data-controller="tooltip">
       <% back_url = @page.custom? ? spree.admin_pages_path : spree.admin_themes_path %>
-      <%= link_to back_url, class: 'btn hover-gray px-2' do %>
+      <%= link_to back_url, class: 'btn hover-gray shadow-none px-2' do %>
         <%= icon('x', class: 'mr-0') %>
       <% end %>
       <%= tooltip(Spree.t('admin.back_to_dashboard')) %>

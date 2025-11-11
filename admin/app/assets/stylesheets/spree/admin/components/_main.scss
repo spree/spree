@@ -149,27 +149,26 @@
   .nav {
     padding-left: 0.75rem;
     padding-right: 0.75rem;
-    gap: 0.2rem;
+    gap: 0.25rem;
     display: flex;
     flex-direction: column;
   }
 
   .nav-link {
-    border-radius: $nav-pills-border-radius;
+    border-radius: $border-radius-lg;
     display: flex;
     align-items: center;
-    padding-left: 0.35rem;
-    padding-right: 0.35rem;
-    padding-top: 0.35rem;
-    padding-bottom: 0.35rem;
+    padding-left: 0.3rem;
+    padding-right: 0.3rem;
+    padding-top: 0.3rem;
+    padding-bottom: 0.3rem;
     color: inherit;
 
     transition: background-color 0.1s ease-in-out;
 
     .ti {
-      font-size: 1.125rem !important;
       margin-right: 0.5rem;
-      border-radius: $border-radius;
+      border-radius: $border-radius-sm;
       padding: 0.2rem 0.2rem;
     }
 

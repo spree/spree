@@ -1,6 +1,7 @@
 .custom-checkbox .custom-control-label::before {
   border-radius: 0.25rem !important;
   border-color: $input-border-color;
+  box-shadow: $input-box-shadow;
 }
 
 label {
@@ -73,7 +74,7 @@ input[type="file"] {
 }
 .custom-select, .form-control, .ts-control {
   &:hover:not(:focus):not(:active):not(.active):not(:focus-visible):not(:focus-within) {
-    border: 1px solid $gray-100;
+    border: 1px solid $gray-300;
   }
 }
 

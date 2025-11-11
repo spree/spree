@@ -248,7 +248,7 @@ module Spree
         end
 
         link_to url, class: 'd-flex align-items-center text-decoration-none' do
-          content_tag(:span, icon('chevron-left', class: 'mr-0'), class: 'btn hover-gray px-2 d-flex align-items-center') +
+          content_tag(:span, icon('chevron-left', class: 'mr-0'), class: 'btn hover-gray shadow-none px-2 d-flex align-items-center shadow-none') +
             content_tag(:span, label, class: 'font-size-base text-black')
         end
       end
