@@ -320,10 +320,15 @@ install_system_deps() {
             /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
             # Add Homebrew to PATH
-            if [[ $(uname -m) == 'arm64' ]]; then
+            # Detect brew installation path dynamically
+            BREW_PATH=$(command -v brew 2>/dev/null)
+            if [[ -n "$BREW_PATH" ]]; then
+                echo "eval \"\$($BREW_PATH shellenv)\"" >> ~/.zprofile
+                eval "$($BREW_PATH shellenv)"
+            elif [[ $(uname -m) == 'arm64' ]] && [[ -x /opt/homebrew/bin/brew ]]; then
                 echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
                 eval "$(/opt/homebrew/bin/brew shellenv)"
-            else
+            elif [[ -x /usr/local/bin/brew ]]; then
                 echo 'eval "$(/usr/local/bin/brew shellenv)"' >> ~/.zprofile
                 eval "$(/usr/local/bin/brew shellenv)"
             fi
@@ -384,9 +389,12 @@ install_ruby() {
             }
 
             # Ensure Homebrew environment is loaded
-            if [[ $(uname -m) == 'arm64' ]]; then
+            BREW_PATH=$(command -v brew 2>/dev/null)
+            if [[ -n "$BREW_PATH" ]]; then
+                eval "$($BREW_PATH shellenv)" 2>/dev/null || true
+            elif [[ $(uname -m) == 'arm64' ]] && [[ -x /opt/homebrew/bin/brew ]]; then
                 eval "$(/opt/homebrew/bin/brew shellenv)" 2>/dev/null || true
-            else
+            elif [[ -x /usr/local/bin/brew ]]; then
                 eval "$(/usr/local/bin/brew shellenv)" 2>/dev/null || true
             fi
 
@@ -417,9 +425,12 @@ install_ruby() {
         # Initialize rbenv in current shell for existing installations
         if [ "$OS" = "macos" ]; then
             # Ensure Homebrew environment is loaded for existing brew installations
-            if [[ $(uname -m) == 'arm64' ]]; then
+            BREW_PATH=$(command -v brew 2>/dev/null)
+            if [[ -n "$BREW_PATH" ]]; then
+                eval "$($BREW_PATH shellenv)" 2>/dev/null || true
+            elif [[ $(uname -m) == 'arm64' ]] && [[ -x /opt/homebrew/bin/brew ]]; then
                 eval "$(/opt/homebrew/bin/brew shellenv)" 2>/dev/null || true
-            else
+            elif [[ -x /usr/local/bin/brew ]]; then
                 eval "$(/usr/local/bin/brew shellenv)" 2>/dev/null || true
             fi
         else
@@ -453,9 +464,12 @@ install_rails() {
     # Ensure rbenv is initialized
     if [ "$OS" = "macos" ]; then
         # Ensure Homebrew environment is loaded
-        if [[ $(uname -m) == 'arm64' ]]; then
+        BREW_PATH=$(command -v brew 2>/dev/null)
+        if [[ -n "$BREW_PATH" ]]; then
+            eval "$($BREW_PATH shellenv)" 2>/dev/null || true
+        elif [[ $(uname -m) == 'arm64' ]] && [[ -x /opt/homebrew/bin/brew ]]; then
             eval "$(/opt/homebrew/bin/brew shellenv)" 2>/dev/null || true
-        else
+        elif [[ -x /usr/local/bin/brew ]]; then
             eval "$(/usr/local/bin/brew shellenv)" 2>/dev/null || true
         fi
     else
@@ -484,9 +498,12 @@ create_rails_app() {
     # Ensure rbenv is initialized
     if [ "$OS" = "macos" ]; then
         # Ensure Homebrew environment is loaded
-        if [[ $(uname -m) == 'arm64' ]]; then
+        BREW_PATH=$(command -v brew 2>/dev/null)
+        if [[ -n "$BREW_PATH" ]]; then
+            eval "$($BREW_PATH shellenv)" 2>/dev/null || true
+        elif [[ $(uname -m) == 'arm64' ]] && [[ -x /opt/homebrew/bin/brew ]]; then
             eval "$(/opt/homebrew/bin/brew shellenv)" 2>/dev/null || true
-        else
+        elif [[ -x /usr/local/bin/brew ]]; then
             eval "$(/usr/local/bin/brew shellenv)" 2>/dev/null || true
         fi
     else
