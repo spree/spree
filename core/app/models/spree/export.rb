@@ -150,6 +150,12 @@ module Spree
           begin
             JSON.parse(search_params.to_s)
           rescue JSON::ParserError => e
+            Rails.error.report(
+              e,
+              handled: true,
+              severity: :warning,
+              context: { component: 'Spree::Export', method: 'normalize_search_params', raw: search_params.to_s, export_id: id }
+            )
             self.search_params = nil
             return
           end
@@ -240,7 +246,13 @@ module Spree
         else
           ''
         end
-      rescue StandardError
+      rescue ArgumentError => e
+        Rails.error.report(
+          e,
+          handled: true,
+          severity: :warning,
+          context: { component: 'Spree::Export', method: 'parse_to_day_boundary', value: value, boundary: boundary, export_id: id }
+        )
         ''
       end
     end
@@ -254,7 +266,13 @@ module Spree
         begin
           parsed = Time.use_zone(store_timezone) { Time.zone.parse(value) }
           parsed ? parsed.iso8601 : ''
-        rescue StandardError
+        rescue ArgumentError => e
+          Rails.error.report(
+            e,
+            handled: true,
+            severity: :warning,
+            context: { component: 'Spree::Export', method: 'normalize_single_date_filter', value: value, export_id: id }
+          )
           ''
         end
       elsif value.is_a?(String)
