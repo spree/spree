@@ -232,7 +232,7 @@ module Spree
     end
 
     def parse_to_day_boundary(value, boundary)
-      timezone = store&.preferred_timezone.presence || Time.zone.name || 'UTC'
+      timezone = store.preferred_timezone.presence || Time.zone.name || 'UTC'
 
       begin
         date = value.respond_to?(:to_date) ? value.to_date : Date.parse(value.to_s)
