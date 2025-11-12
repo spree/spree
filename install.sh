@@ -21,7 +21,6 @@ BOLD='\033[1m'
 NC='\033[0m' # No Color
 
 # Configuration
-RUBY_VERSION="3.3.0"
 RAILS_VERSION="8.0.4"
 APP_NAME=""
 LOAD_SAMPLE_DATA="false"
@@ -30,6 +29,7 @@ VERBOSE=false
 USE_LOCAL_SPREE=false
 AUTO_ACCEPT=false
 FORCE_REMOVE=false
+RUBY_CONFIGURED=false
 
 # Parse arguments
 for arg in "$@"; do
@@ -363,119 +363,220 @@ install_system_deps() {
     fi
 }
 
-# Install rbenv and Ruby
+# Install Ruby using system package manager
 install_ruby() {
     print_step "Checking Ruby installation..."
 
-    # Check if Ruby 3.3.0 is already installed
-    if command_exists ruby; then
-        CURRENT_RUBY=$(ruby -v | awk '{print $2}' | cut -d'p' -f1)
-        if [[ "$CURRENT_RUBY" == "$RUBY_VERSION"* ]]; then
-            print_success "Ruby $RUBY_VERSION is already installed"
-            return 0
+    if [ "$OS" = "macos" ]; then
+        # On macOS, always prefer Homebrew Ruby over system Ruby
+        # System Ruby requires root privileges for gem installation
+        BREW_PREFIX=$(brew --prefix 2>/dev/null || echo "/opt/homebrew")
+
+        # Check if Homebrew Ruby is already installed
+        if [ -x "$BREW_PREFIX/opt/ruby/bin/ruby" ]; then
+            # Homebrew Ruby exists, ensure it's in PATH
+            export PATH="$BREW_PREFIX/opt/ruby/bin:$PATH"
+
+            CURRENT_RUBY=$("$BREW_PREFIX/opt/ruby/bin/ruby" -v | awk '{print $2}' | cut -d'p' -f1)
+            RUBY_MAJOR=$(echo "$CURRENT_RUBY" | cut -d'.' -f1)
+
+            if [ "$RUBY_MAJOR" -ge 3 ]; then
+                print_success "Homebrew Ruby $CURRENT_RUBY is already installed"
+
+                # Still need to setup PATH in shell profiles
+                RUBY_VERSION_PATH=$("$BREW_PREFIX/opt/ruby/bin/ruby" -e 'puts RbConfig::CONFIG["ruby_version"]' 2>/dev/null || echo "")
+
+                # Add to zsh profile
+                if [ -f ~/.zshrc ]; then
+                    if ! grep -q "$BREW_PREFIX/opt/ruby/bin" ~/.zshrc; then
+                        echo "" >> ~/.zshrc
+                        echo "# Homebrew Ruby" >> ~/.zshrc
+                        echo "export PATH=\"$BREW_PREFIX/opt/ruby/bin:\$PATH\"" >> ~/.zshrc
+                        if [ -n "$RUBY_VERSION_PATH" ]; then
+                            echo "export PATH=\"$BREW_PREFIX/lib/ruby/gems/$RUBY_VERSION_PATH/bin:\$PATH\"" >> ~/.zshrc
+                        fi
+                        print_info "Added Homebrew Ruby to ~/.zshrc"
+                    fi
+                fi
+
+                # Add to bash profile
+                if [ -f ~/.bash_profile ]; then
+                    if ! grep -q "$BREW_PREFIX/opt/ruby/bin" ~/.bash_profile; then
+                        echo "" >> ~/.bash_profile
+                        echo "# Homebrew Ruby" >> ~/.bash_profile
+                        echo "export PATH=\"$BREW_PREFIX/opt/ruby/bin:\$PATH\"" >> ~/.bash_profile
+                        if [ -n "$RUBY_VERSION_PATH" ]; then
+                            echo "export PATH=\"$BREW_PREFIX/lib/ruby/gems/$RUBY_VERSION_PATH/bin:\$PATH\"" >> ~/.bash_profile
+                        fi
+                        print_info "Added Homebrew Ruby to ~/.bash_profile"
+                    fi
+                fi
+
+                # Add to bashrc if it exists
+                if [ -f ~/.bashrc ]; then
+                    if ! grep -q "$BREW_PREFIX/opt/ruby/bin" ~/.bashrc; then
+                        echo "" >> ~/.bashrc
+                        echo "# Homebrew Ruby" >> ~/.bashrc
+                        echo "export PATH=\"$BREW_PREFIX/opt/ruby/bin:\$PATH\"" >> ~/.bashrc
+                        if [ -n "$RUBY_VERSION_PATH" ]; then
+                            echo "export PATH=\"$BREW_PREFIX/lib/ruby/gems/$RUBY_VERSION_PATH/bin:\$PATH\"" >> ~/.bashrc
+                        fi
+                        print_info "Added Homebrew Ruby to ~/.bashrc"
+                    fi
+                fi
+
+                # Update PATH for current session (including gem bin)
+                if [ -n "$RUBY_VERSION_PATH" ]; then
+                    export PATH="$BREW_PREFIX/lib/ruby/gems/$RUBY_VERSION_PATH/bin:$PATH"
+                fi
+
+                # Rehash command cache to pick up Homebrew Ruby
+                hash -r 2>/dev/null || true
+
+                RUBY_CONFIGURED=true
+                return 0
+            fi
+        fi
+
+        # Homebrew Ruby not found or too old, install it
+        print_info "Installing Ruby..."
+        run_with_status "Running: brew install ruby" brew install ruby || {
+            print_warning "Ruby may already be installed"
+        }
+
+        RUBY_CONFIGURED=true
+
+        # Add Homebrew Ruby to PATH
+        export PATH="$BREW_PREFIX/opt/ruby/bin:$PATH"
+        RUBY_VERSION_PATH=$("$BREW_PREFIX/opt/ruby/bin/ruby" -e 'puts RbConfig::CONFIG["ruby_version"]' 2>/dev/null || echo "")
+
+        # Add to zsh profile
+        if [ -f ~/.zshrc ]; then
+            if ! grep -q "$BREW_PREFIX/opt/ruby/bin" ~/.zshrc; then
+                echo "" >> ~/.zshrc
+                echo "# Homebrew Ruby" >> ~/.zshrc
+                echo "export PATH=\"$BREW_PREFIX/opt/ruby/bin:\$PATH\"" >> ~/.zshrc
+                if [ -n "$RUBY_VERSION_PATH" ]; then
+                    echo "export PATH=\"$BREW_PREFIX/lib/ruby/gems/$RUBY_VERSION_PATH/bin:\$PATH\"" >> ~/.zshrc
+                fi
+                print_info "Added Homebrew Ruby to ~/.zshrc"
+            fi
+        fi
+
+        # Add to bash profile
+        if [ -f ~/.bash_profile ]; then
+            if ! grep -q "$BREW_PREFIX/opt/ruby/bin" ~/.bash_profile; then
+                echo "" >> ~/.bash_profile
+                echo "# Homebrew Ruby" >> ~/.bash_profile
+                echo "export PATH=\"$BREW_PREFIX/opt/ruby/bin:\$PATH\"" >> ~/.bash_profile
+                if [ -n "$RUBY_VERSION_PATH" ]; then
+                    echo "export PATH=\"$BREW_PREFIX/lib/ruby/gems/$RUBY_VERSION_PATH/bin:\$PATH\"" >> ~/.bash_profile
+                fi
+                print_info "Added Homebrew Ruby to ~/.bash_profile"
+            fi
+        fi
+
+        # Add to bashrc if it exists
+        if [ -f ~/.bashrc ]; then
+            if ! grep -q "$BREW_PREFIX/opt/ruby/bin" ~/.bashrc; then
+                echo "" >> ~/.bashrc
+                echo "# Homebrew Ruby" >> ~/.bashrc
+                echo "export PATH=\"$BREW_PREFIX/opt/ruby/bin:\$PATH\"" >> ~/.bashrc
+                if [ -n "$RUBY_VERSION_PATH" ]; then
+                    echo "export PATH=\"$BREW_PREFIX/lib/ruby/gems/$RUBY_VERSION_PATH/bin:\$PATH\"" >> ~/.bashrc
+                fi
+                print_info "Added Homebrew Ruby to ~/.bashrc"
+            fi
+        fi
+
+        # Update PATH for current session (including gem bin)
+        if [ -n "$RUBY_VERSION_PATH" ]; then
+            export PATH="$BREW_PREFIX/lib/ruby/gems/$RUBY_VERSION_PATH/bin:$PATH"
+        fi
+
+        # Rehash command cache to pick up newly installed Ruby
+        hash -r 2>/dev/null || true
+
+    elif [ "$OS" = "linux" ]; then
+        # On Linux, check if Ruby is already installed and meets minimum version
+        if command_exists ruby; then
+            CURRENT_RUBY=$(ruby -v | awk '{print $2}' | cut -d'p' -f1)
+            RUBY_MAJOR=$(echo "$CURRENT_RUBY" | cut -d'.' -f1)
+
+            if [ "$RUBY_MAJOR" -ge 3 ]; then
+                print_success "Ruby $CURRENT_RUBY is already installed"
+                return 0
+            else
+                print_warning "Current Ruby version $CURRENT_RUBY is too old (need >= 3.0)"
+            fi
+        fi
+
+        print_info "Installing Ruby..."
+
+        if [ "$DISTRO" = "ubuntu" ] || [ "$DISTRO" = "debian" ]; then
+            run_with_status "Running: apt install ruby-full" sudo apt-get install -y ruby-full
+        elif [ "$DISTRO" = "fedora" ] || [ "$DISTRO" = "rhel" ] || [ "$DISTRO" = "centos" ]; then
+            run_with_status "Running: dnf install ruby" sudo dnf install -y ruby ruby-devel || \
+            sudo yum install -y ruby ruby-devel
         else
-            print_info "Current Ruby version: $CURRENT_RUBY"
-            print_info "Spree requires Ruby $RUBY_VERSION"
+            print_error "Unsupported Linux distribution: $DISTRO"
+            print_info "Please install Ruby 3.0+ manually from: https://www.ruby-lang.org/en/documentation/installation/"
+            exit 1
         fi
     fi
 
-    # Check for rbenv
-    if ! command_exists rbenv; then
-        print_info "Installing rbenv..."
-
-        if [ "$OS" = "macos" ]; then
-            run_with_status "Running: brew install rbenv ruby-build" brew install rbenv ruby-build || {
-                print_warning "Packages may already be installed"
-            }
-
-            # Ensure Homebrew environment is loaded
-            BREW_PATH=$(command -v brew 2>/dev/null)
-            if [[ -n "$BREW_PATH" ]]; then
-                eval "$($BREW_PATH shellenv)" 2>/dev/null || true
-            elif [[ $(uname -m) == 'arm64' ]] && [[ -x /opt/homebrew/bin/brew ]]; then
-                eval "$(/opt/homebrew/bin/brew shellenv)" 2>/dev/null || true
-            elif [[ -x /usr/local/bin/brew ]]; then
-                eval "$(/usr/local/bin/brew shellenv)" 2>/dev/null || true
-            fi
-
-            # Initialize rbenv for macOS (brew installation)
-            eval "$(rbenv init - bash)" 2>/dev/null || true
-        elif [ "$OS" = "linux" ]; then
-            curl -fsSL https://github.com/rbenv/rbenv-installer/raw/HEAD/bin/rbenv-installer | bash
-
-            # Add rbenv to PATH
-            export PATH="$HOME/.rbenv/bin:$PATH"
-            eval "$(rbenv init - bash)"
-
-            # Add to shell profile
-            if [ -f ~/.bashrc ]; then
-                echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
-                echo 'eval "$(rbenv init - bash)"' >> ~/.bashrc
-            fi
-            if [ -f ~/.zshrc ]; then
-                echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.zshrc
-                echo 'eval "$(rbenv init - zsh)"' >> ~/.zshrc
-            fi
+    # Verify Ruby installation and version
+    # On macOS, explicitly check Homebrew Ruby
+    if [ "$OS" = "macos" ]; then
+        if [ ! -x "$BREW_PREFIX/opt/ruby/bin/ruby" ]; then
+            print_error "Homebrew Ruby installation failed"
+            exit 1
         fi
 
-        print_success "rbenv installed"
+        INSTALLED_RUBY=$("$BREW_PREFIX/opt/ruby/bin/ruby" -v | awk '{print $2}' | cut -d'p' -f1)
     else
-        print_success "rbenv is already installed"
-
-        # Initialize rbenv in current shell for existing installations
-        if [ "$OS" = "macos" ]; then
-            # Ensure Homebrew environment is loaded for existing brew installations
-            BREW_PATH=$(command -v brew 2>/dev/null)
-            if [[ -n "$BREW_PATH" ]]; then
-                eval "$($BREW_PATH shellenv)" 2>/dev/null || true
-            elif [[ $(uname -m) == 'arm64' ]] && [[ -x /opt/homebrew/bin/brew ]]; then
-                eval "$(/opt/homebrew/bin/brew shellenv)" 2>/dev/null || true
-            elif [[ -x /usr/local/bin/brew ]]; then
-                eval "$(/usr/local/bin/brew shellenv)" 2>/dev/null || true
-            fi
-        else
-            # For Linux, use manual installation path
-            export PATH="$HOME/.rbenv/bin:$PATH"
+        if ! command_exists ruby; then
+            print_error "Ruby installation failed"
+            exit 1
         fi
 
-        eval "$(rbenv init - bash)" 2>/dev/null || true
+        INSTALLED_RUBY=$(ruby -v | awk '{print $2}' | cut -d'p' -f1)
     fi
 
-    # Install Ruby 3.3.0
-    print_info "Installing Ruby $RUBY_VERSION (this may take several minutes)..."
+    RUBY_MAJOR=$(echo "$INSTALLED_RUBY" | cut -d'.' -f1)
 
-    if rbenv versions | grep -q "$RUBY_VERSION"; then
-        print_success "Ruby $RUBY_VERSION is already installed via rbenv"
-    else
-        rbenv install "$RUBY_VERSION"
-        print_success "Ruby $RUBY_VERSION installed successfully"
+    if [ "$RUBY_MAJOR" -lt 3 ]; then
+        print_error "Installed Ruby version $INSTALLED_RUBY is too old (need >= 3.0)"
+        print_info "Please install Ruby 3.0+ manually from: https://www.ruby-lang.org/en/documentation/installation/"
+        exit 1
     fi
 
-    rbenv global "$RUBY_VERSION"
-    rbenv rehash
+    print_success "Ruby $INSTALLED_RUBY installed successfully"
 
-    print_success "Ruby $RUBY_VERSION is now active"
+    # On macOS, show which Ruby is in use
+    if [ "$OS" = "macos" ]; then
+        print_info "Using Homebrew Ruby at: $BREW_PREFIX/opt/ruby/bin/ruby"
+    fi
 }
 
 # Install Rails
 install_rails() {
     print_step "Installing Rails $RAILS_VERSION..."
 
-    # Ensure rbenv is initialized
+    # Ensure Homebrew Ruby is in PATH for macOS
     if [ "$OS" = "macos" ]; then
-        # Ensure Homebrew environment is loaded
-        BREW_PATH=$(command -v brew 2>/dev/null)
-        if [[ -n "$BREW_PATH" ]]; then
-            eval "$($BREW_PATH shellenv)" 2>/dev/null || true
-        elif [[ $(uname -m) == 'arm64' ]] && [[ -x /opt/homebrew/bin/brew ]]; then
-            eval "$(/opt/homebrew/bin/brew shellenv)" 2>/dev/null || true
-        elif [[ -x /usr/local/bin/brew ]]; then
-            eval "$(/usr/local/bin/brew shellenv)" 2>/dev/null || true
+        BREW_PREFIX=$(brew --prefix 2>/dev/null || echo "/opt/homebrew")
+        export PATH="$BREW_PREFIX/opt/ruby/bin:$PATH"
+
+        # Add gem bin directory to PATH (dynamically detect Ruby version)
+        if [ -x "$BREW_PREFIX/opt/ruby/bin/ruby" ]; then
+            RUBY_VERSION_PATH=$("$BREW_PREFIX/opt/ruby/bin/ruby" -e 'puts RbConfig::CONFIG["ruby_version"]')
+            export PATH="$BREW_PREFIX/lib/ruby/gems/$RUBY_VERSION_PATH/bin:$PATH"
         fi
-    else
-        export PATH="$HOME/.rbenv/bin:$PATH"
+
+        # Rehash command cache to pick up gem executables
+        hash -r 2>/dev/null || true
     fi
-    eval "$(rbenv init - bash)" 2>/dev/null || true
 
     # Check if Rails is already installed
     if command_exists rails; then
@@ -486,7 +587,6 @@ install_rails() {
     # Install specific Rails version
     print_info "Installing Rails gem (this may take a few minutes)..."
     run_with_status "Running: gem install rails -v $RAILS_VERSION" gem install rails -v "$RAILS_VERSION" --no-document
-    run_quiet rbenv rehash
 
     print_success "Rails $RAILS_VERSION installed successfully"
 }
@@ -495,21 +595,20 @@ install_rails() {
 create_rails_app() {
     print_step "Creating new Spree Commerce application..."
 
-    # Ensure rbenv is initialized
+    # Ensure Homebrew Ruby is in PATH for macOS
     if [ "$OS" = "macos" ]; then
-        # Ensure Homebrew environment is loaded
-        BREW_PATH=$(command -v brew 2>/dev/null)
-        if [[ -n "$BREW_PATH" ]]; then
-            eval "$($BREW_PATH shellenv)" 2>/dev/null || true
-        elif [[ $(uname -m) == 'arm64' ]] && [[ -x /opt/homebrew/bin/brew ]]; then
-            eval "$(/opt/homebrew/bin/brew shellenv)" 2>/dev/null || true
-        elif [[ -x /usr/local/bin/brew ]]; then
-            eval "$(/usr/local/bin/brew shellenv)" 2>/dev/null || true
+        BREW_PREFIX=$(brew --prefix 2>/dev/null || echo "/opt/homebrew")
+        export PATH="$BREW_PREFIX/opt/ruby/bin:$PATH"
+
+        # Add gem bin directory to PATH (dynamically detect Ruby version)
+        if [ -x "$BREW_PREFIX/opt/ruby/bin/ruby" ]; then
+            RUBY_VERSION_PATH=$("$BREW_PREFIX/opt/ruby/bin/ruby" -e 'puts RbConfig::CONFIG["ruby_version"]')
+            export PATH="$BREW_PREFIX/lib/ruby/gems/$RUBY_VERSION_PATH/bin:$PATH"
         fi
-    else
-        export PATH="$HOME/.rbenv/bin:$PATH"
+
+        # Rehash command cache to pick up gem executables
+        hash -r 2>/dev/null || true
     fi
-    eval "$(rbenv init - bash)" 2>/dev/null || true
 
     # Download template if running from URL, or use local if exists
     TEMPLATE_FILE="template.rb"
@@ -640,6 +739,22 @@ show_final_instructions() {
     if [[ -z "$START_SERVER" ]] || [[ $START_SERVER =~ ^[Yy]$ ]]; then
         print_info "Starting server... (Press Ctrl+C to stop)"
         cd "$APP_NAME"
+
+        # Ensure Homebrew Ruby is in PATH for macOS
+        if [ "$OS" = "macos" ]; then
+            BREW_PREFIX=$(brew --prefix 2>/dev/null || echo "/opt/homebrew")
+            export PATH="$BREW_PREFIX/opt/ruby/bin:$PATH"
+
+            # Add gem bin directory to PATH (dynamically detect Ruby version)
+            if [ -x "$BREW_PREFIX/opt/ruby/bin/ruby" ]; then
+                RUBY_VERSION_PATH=$("$BREW_PREFIX/opt/ruby/bin/ruby" -e 'puts RbConfig::CONFIG["ruby_version"]')
+                export PATH="$BREW_PREFIX/lib/ruby/gems/$RUBY_VERSION_PATH/bin:$PATH"
+            fi
+
+            # Rehash command cache to pick up gem executables
+            hash -r 2>/dev/null || true
+        fi
+
         bin/dev
     fi
 }
@@ -651,8 +766,7 @@ main() {
     echo -e "This installer will set up Spree Commerce on your system."
     echo -e "It will install the following if needed:"
     echo -e "  • System dependencies (libvips for image processing)"
-    echo -e "  • rbenv (Ruby version manager)"
-    echo -e "  • Ruby $RUBY_VERSION"
+    echo -e "  • Ruby 3.0+ (via system package manager)"
     echo -e "  • Rails $RAILS_VERSION"
     echo -e "  • Create a new Spree Commerce application"
 
@@ -673,6 +787,23 @@ main() {
     ask_admin_credentials
     create_rails_app
     show_final_instructions
+
+    # On macOS, automatically start a new shell with updated PATH if Ruby was configured
+    if [ "$OS" = "macos" ] && [ "$RUBY_CONFIGURED" = true ]; then
+        sleep 1
+
+        # Detect user's shell and start it with updated environment
+        USER_SHELL="${SHELL:-/bin/zsh}"
+
+        if [[ "$USER_SHELL" == *"zsh"* ]]; then
+            exec /bin/zsh -l
+        elif [[ "$USER_SHELL" == *"bash"* ]]; then
+            exec /bin/bash -l
+        else
+            # Fallback to their configured shell
+            exec "$USER_SHELL" -l
+        fi
+    fi
 }
 
 # Run main installation
