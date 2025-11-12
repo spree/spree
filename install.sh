@@ -226,9 +226,9 @@ get_app_name() {
 
         if [ -d "$APP_NAME" ]; then
             print_warning "Directory '$APP_NAME' already exists"
-            read -p "Remove and continue? (y/n): " -n 1 -r
+            read -p "Remove and continue? (y/n): " -n 1 -r REMOVE_DIR
             echo
-            if [[ $REPLY =~ ^[Yy]$ ]]; then
+            if [[ $REMOVE_DIR =~ ^[Yy]$ ]]; then
                 rm -rf "$APP_NAME"
                 break
             else
@@ -259,11 +259,11 @@ ask_sample_data() {
     echo -e "${BLUE}Press Enter to load sample data (recommended for testing)${NC}"
     echo
 
-    read -p "Load sample data? (Y/n): " -r
+    read -p "Load sample data? (Y/n): " -r LOAD_SAMPLE_INPUT
     echo
 
     # Default to yes if empty response
-    if [[ -z "$REPLY" ]] || [[ $REPLY =~ ^[Yy]$ ]]; then
+    if [[ -z "$LOAD_SAMPLE_INPUT" ]] || [[ $LOAD_SAMPLE_INPUT =~ ^[Yy]$ ]]; then
         LOAD_SAMPLE_DATA="true"
         print_success "Sample data will be loaded"
     else
@@ -633,11 +633,11 @@ show_final_instructions() {
     fi
 
     # Ask if user wants to start server now (Y is default)
-    read -p "Would you like to start the server now? (Y/n): " -r
+    read -p "Would you like to start the server now? (Y/n): " -r START_SERVER
     echo
 
     # Default to yes if empty response
-    if [[ -z "$REPLY" ]] || [[ $REPLY =~ ^[Yy]$ ]]; then
+    if [[ -z "$START_SERVER" ]] || [[ $START_SERVER =~ ^[Yy]$ ]]; then
         print_info "Starting server... (Press Ctrl+C to stop)"
         cd "$APP_NAME"
         bin/dev
