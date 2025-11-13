@@ -72,6 +72,9 @@
     &.btn {
       font-weight: $font-weight-base !important;
     }
+    &.btn-danger {
+      box-shadow: none;
+    }
   }
   .dropdown-item.active {
     color: theme-color('black') !important;

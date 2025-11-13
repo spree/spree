@@ -10,9 +10,11 @@ button[disabled]        .show-when-enabled { display: none; }
 }
 
 .btn {
-  box-shadow: $btn-box-shadow;
-
   transition: background-color 0.1s linear 0s, border-color 0.2s linear 0s !important;
+}
+
+.btn-primary, .btn-light, .btn-secondary {
+  box-shadow: $btn-box-shadow;
 }
 
 .btn,
@@ -33,7 +35,6 @@ button[disabled]        .show-when-enabled { display: none; }
 .ti {
   font-size: 120%;
   vertical-align: middle;
-  line-height: 120%;
 }
 
 .btn {

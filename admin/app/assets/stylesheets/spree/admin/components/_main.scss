@@ -158,17 +158,17 @@
     border-radius: $border-radius-lg;
     display: flex;
     align-items: center;
-    padding-left: 0.3rem;
-    padding-right: 0.3rem;
-    padding-top: 0.3rem;
-    padding-bottom: 0.3rem;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
     color: inherit;
 
     transition: background-color 0.1s ease-in-out;
 
     .ti {
       margin-right: 0.5rem;
-      border-radius: $border-radius-sm;
+      border-radius: $border-radius;
       padding: 0.2rem 0.2rem;
     }
 
@@ -193,6 +193,7 @@
 
     .badge:not(.badge-info) {
       @extend .badge-light;
+      border-radius: $border-radius;
     }
   }
 

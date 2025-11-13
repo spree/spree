@@ -80,8 +80,7 @@
     .new_option_button {
       @extend .btn;
       @extend .btn-secondary;
-      @extend .py-3;
-      @extend .mt-2;
+      @extend .py-2;
       width: 100%;
       justify-content: flex-start;
     }

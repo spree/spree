@@ -162,7 +162,7 @@
           <%= render 'spree/admin/products/form/variants/variant_template', default_stock_location: default_stock_location_for_product(@product) %>
           <div class="variants-table__body" data-variants-form-target="variantsContainer" data-test-id="product-variants-table">
           </div>
-          <div class="variants-table__footer">
+          <div class="variants-table__footer font-size-sm">
             <%= Spree.t('admin.variants_form.total_inventory_html', stock_location: current_store.default_stock_location.name, count: raw("<span data-variants-form-target='stockItemsCount'>#{@product.total_on_hand}</span>") )%>
           </div>
         </div>

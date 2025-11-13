@@ -4,6 +4,7 @@ html {
   letter-spacing: normal;
   text-rendering: optimizeLegibility;
   text-size-adjust: 100%;
+  line-height: 1;
 }
 body {
   @extend .h-100;
