@@ -23,20 +23,6 @@ def add_gems
   gem 'spree_storefront', USE_LOCAL_SPREE ? { path: '../' } : { version: SPREE_VERSION }
   # translations
   gem 'spree_i18n'
-
-  # Payment & Analytics integrations
-  gem 'spree_stripe'
-  gem 'spree_google_analytics'
-  gem 'spree_klaviyo'
-  gem 'spree_paypal_checkout'
-
-  # Development & Test gems
-  gem_group :development, :test do
-    gem 'spree_dev_tools'
-    gem 'bullet'
-    gem 'letter_opener'
-    gem 'listen'
-  end
 end
 
 def setup_importmap
@@ -76,44 +62,8 @@ def install_spree
   # Run Spree installer with all options
   if VERBOSE
     rails_command "generate spree:install --auto-accept --user_class=Spree::User --admin_user_class=Spree::AdminUser --authentication=devise --install_storefront=true --install_admin=true --admin_email=#{ADMIN_EMAIL} --admin_password=#{ADMIN_PASSWORD}"
-    rails_command 'generate spree_stripe:install'
-    rails_command 'generate spree_google_analytics:install'
-    rails_command 'generate spree_klaviyo:install'
-    rails_command 'generate spree_paypal_checkout:install'
   else
     run "bin/rails generate spree:install --auto-accept --user_class=Spree::User --admin_user_class=Spree::AdminUser --authentication=devise --install_storefront=true --install_admin=true --admin_email=#{ADMIN_EMAIL} --admin_password=#{ADMIN_PASSWORD} >/dev/null 2>&1"
-    run 'bin/rails generate spree_stripe:install >/dev/null 2>&1'
-    run 'bin/rails generate spree_google_analytics:install >/dev/null 2>&1'
-    run 'bin/rails generate spree_klaviyo:install >/dev/null 2>&1'
-    run 'bin/rails generate spree_paypal_checkout:install >/dev/null 2>&1'
-  end
-end
-
-def configure_development_environment
-  say 'Configuring development environment...', :blue
-
-  # Bullet configuration
-  create_file 'config/initializers/bullet.rb' do
-    <<~RUBY
-      if Rails.env.development? && defined?(Bullet)
-        Bullet.enable = true
-        Bullet.rails_logger = true
-        Bullet.stacktrace_includes = [ 'spree_core', 'spree_storefront', 'spree_api', 'spree_admin', 'spree_emails' ]
-      end
-    RUBY
-  end
-
-  # Letter opener and file watcher configuration
-  inject_into_file 'config/environments/development.rb', before: /^end/ do
-    <<-RUBY
-
-  # Letter Opener for email previews
-  config.action_mailer.delivery_method = :letter_opener
-  config.action_mailer.perform_deliveries = true
-
-  # Improved file watching
-  config.file_watcher = ActiveSupport::EventedFileUpdateChecker
-    RUBY
   end
 end
 
@@ -175,7 +125,6 @@ add_gems
 
 after_bundle do
   setup_importmap
-  configure_development_environment
   setup_devise
   install_spree
   setup_procfile

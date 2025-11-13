@@ -30,6 +30,7 @@ USE_LOCAL_SPREE=false
 AUTO_ACCEPT=false
 FORCE_REMOVE=false
 RUBY_CONFIGURED=false
+USING_HOMEBREW_RUBY=false
 
 # Parse arguments
 for arg in "$@"; do
@@ -368,7 +369,30 @@ install_ruby() {
     print_step "Checking Ruby installation..."
 
     if [ "$OS" = "macos" ]; then
-        # On macOS, always prefer Homebrew Ruby over system Ruby
+        # On macOS, check if there's already a non-system Ruby installed (e.g., via rvm, rbenv, etc.)
+        if command_exists ruby; then
+            CURRENT_RUBY_PATH=$(which ruby)
+
+            # If Ruby is not the system Ruby and meets version requirements, use it
+            if [[ "$CURRENT_RUBY_PATH" != "/usr/bin/ruby" ]]; then
+                CURRENT_RUBY=$(ruby -v | awk '{print $2}' | cut -d'p' -f1)
+                RUBY_MAJOR=$(echo "$CURRENT_RUBY" | cut -d'.' -f1)
+
+                if [ "$RUBY_MAJOR" -ge 3 ]; then
+                    print_success "Ruby $CURRENT_RUBY is already installed at $CURRENT_RUBY_PATH"
+                    print_info "Using existing Ruby installation"
+                    return 0
+                else
+                    print_warning "Existing Ruby $CURRENT_RUBY at $CURRENT_RUBY_PATH is too old (need >= 3.0)"
+                    print_info "Will install Homebrew Ruby"
+                fi
+            else
+                print_info "System Ruby detected at /usr/bin/ruby (requires sudo for gems)"
+                print_info "Will install Homebrew Ruby for better experience"
+            fi
+        fi
+
+        # On macOS, prefer Homebrew Ruby over system Ruby
         # System Ruby requires root privileges for gem installation
         BREW_PREFIX=$(brew --prefix 2>/dev/null || echo "/opt/homebrew")
 
@@ -434,6 +458,7 @@ install_ruby() {
                 hash -r 2>/dev/null || true
 
                 RUBY_CONFIGURED=true
+                USING_HOMEBREW_RUBY=true
                 return 0
             fi
         fi
@@ -445,6 +470,7 @@ install_ruby() {
         }
 
         RUBY_CONFIGURED=true
+        USING_HOMEBREW_RUBY=true
 
         # Add Homebrew Ruby to PATH
         export PATH="$BREW_PREFIX/opt/ruby/bin:$PATH"
@@ -526,23 +552,12 @@ install_ruby() {
     fi
 
     # Verify Ruby installation and version
-    # On macOS, explicitly check Homebrew Ruby
-    if [ "$OS" = "macos" ]; then
-        if [ ! -x "$BREW_PREFIX/opt/ruby/bin/ruby" ]; then
-            print_error "Homebrew Ruby installation failed"
-            exit 1
-        fi
-
-        INSTALLED_RUBY=$("$BREW_PREFIX/opt/ruby/bin/ruby" -v | awk '{print $2}' | cut -d'p' -f1)
-    else
-        if ! command_exists ruby; then
-            print_error "Ruby installation failed"
-            exit 1
-        fi
-
-        INSTALLED_RUBY=$(ruby -v | awk '{print $2}' | cut -d'p' -f1)
+    if ! command_exists ruby; then
+        print_error "Ruby installation failed"
+        exit 1
     fi
 
+    INSTALLED_RUBY=$(ruby -v | awk '{print $2}' | cut -d'p' -f1)
     RUBY_MAJOR=$(echo "$INSTALLED_RUBY" | cut -d'.' -f1)
 
     if [ "$RUBY_MAJOR" -lt 3 ]; then
@@ -553,18 +568,17 @@ install_ruby() {
 
     print_success "Ruby $INSTALLED_RUBY installed successfully"
 
-    # On macOS, show which Ruby is in use
-    if [ "$OS" = "macos" ]; then
-        print_info "Using Homebrew Ruby at: $BREW_PREFIX/opt/ruby/bin/ruby"
-    fi
+    # Show which Ruby is in use
+    RUBY_PATH=$(which ruby)
+    print_info "Using Ruby at: $RUBY_PATH"
 }
 
 # Install Rails
 install_rails() {
     print_step "Installing Rails $RAILS_VERSION..."
 
-    # Ensure Homebrew Ruby is in PATH for macOS
-    if [ "$OS" = "macos" ]; then
+    # Ensure Homebrew Ruby is in PATH for macOS (only if using Homebrew Ruby)
+    if [ "$OS" = "macos" ] && [ "$USING_HOMEBREW_RUBY" = true ]; then
         BREW_PREFIX=$(brew --prefix 2>/dev/null || echo "/opt/homebrew")
         export PATH="$BREW_PREFIX/opt/ruby/bin:$PATH"
 
@@ -588,15 +602,27 @@ install_rails() {
     print_info "Installing Rails gem (this may take a few minutes)..."
     run_with_status "Running: gem install rails -v $RAILS_VERSION" gem install rails -v "$RAILS_VERSION" --no-document
 
+    # Determine the exact rails binary path for this Ruby/gem environment
+    RAILS_BIN=$(gem environment gemdir)/bin/rails
+    if [ ! -x "$RAILS_BIN" ]; then
+        # Fallback: try to find rails in PATH
+        RAILS_BIN=$(command -v rails)
+        if [ -z "$RAILS_BIN" ]; then
+            print_error "Failed to locate rails binary after installation"
+            exit 1
+        fi
+    fi
+
     print_success "Rails $RAILS_VERSION installed successfully"
+    print_info "Rails binary at: $RAILS_BIN"
 }
 
 # Create Rails app with Spree template
 create_rails_app() {
     print_step "Creating new Spree Commerce application..."
 
-    # Ensure Homebrew Ruby is in PATH for macOS
-    if [ "$OS" = "macos" ]; then
+    # Ensure Homebrew Ruby is in PATH for macOS (only if using Homebrew Ruby)
+    if [ "$OS" = "macos" ] && [ "$USING_HOMEBREW_RUBY" = true ]; then
         BREW_PREFIX=$(brew --prefix 2>/dev/null || echo "/opt/homebrew")
         export PATH="$BREW_PREFIX/opt/ruby/bin:$PATH"
 
@@ -629,12 +655,12 @@ create_rails_app() {
         use_local_spree="true"
     fi
 
-    # Run rails new with the template
+    # Run rails new with the template using the specific rails binary
     if [ "$VERBOSE" = true ]; then
-        VERBOSE_MODE=1 LOAD_SAMPLE_DATA="$LOAD_SAMPLE_DATA" USE_LOCAL_SPREE="$use_local_spree" ADMIN_EMAIL="$ADMIN_EMAIL" ADMIN_PASSWORD="$ADMIN_PASSWORD" rails _${RAILS_VERSION}_ new "$APP_NAME" -m "$TEMPLATE_FILE"
+        VERBOSE_MODE=1 LOAD_SAMPLE_DATA="$LOAD_SAMPLE_DATA" USE_LOCAL_SPREE="$use_local_spree" ADMIN_EMAIL="$ADMIN_EMAIL" ADMIN_PASSWORD="$ADMIN_PASSWORD" "$RAILS_BIN" _${RAILS_VERSION}_ new "$APP_NAME" -m "$TEMPLATE_FILE"
     else
         # Run in background with spinner
-        VERBOSE_MODE=0 LOAD_SAMPLE_DATA="$LOAD_SAMPLE_DATA" USE_LOCAL_SPREE="$use_local_spree" ADMIN_EMAIL="$ADMIN_EMAIL" ADMIN_PASSWORD="$ADMIN_PASSWORD" rails _${RAILS_VERSION}_ new "$APP_NAME" -m "$TEMPLATE_FILE" >/tmp/spree_install.log 2>&1 &
+        VERBOSE_MODE=0 LOAD_SAMPLE_DATA="$LOAD_SAMPLE_DATA" USE_LOCAL_SPREE="$use_local_spree" ADMIN_EMAIL="$ADMIN_EMAIL" ADMIN_PASSWORD="$ADMIN_PASSWORD" "$RAILS_BIN" _${RAILS_VERSION}_ new "$APP_NAME" -m "$TEMPLATE_FILE" >/tmp/spree_install.log 2>&1 &
         local rails_pid=$!
 
         # Show spinner with progress messages
@@ -740,8 +766,8 @@ show_final_instructions() {
         print_info "Starting server... (Press Ctrl+C to stop)"
         cd "$APP_NAME"
 
-        # Ensure Homebrew Ruby is in PATH for macOS
-        if [ "$OS" = "macos" ]; then
+        # Ensure Homebrew Ruby is in PATH for macOS (only if using Homebrew Ruby)
+        if [ "$OS" = "macos" ] && [ "$USING_HOMEBREW_RUBY" = true ]; then
             BREW_PREFIX=$(brew --prefix 2>/dev/null || echo "/opt/homebrew")
             export PATH="$BREW_PREFIX/opt/ruby/bin:$PATH"
 
@@ -788,8 +814,9 @@ main() {
     create_rails_app
     show_final_instructions
 
-    # On macOS, automatically start a new shell with updated PATH if Ruby was configured
-    if [ "$OS" = "macos" ] && [ "$RUBY_CONFIGURED" = true ]; then
+    # On macOS, automatically start a new shell with updated PATH if Homebrew Ruby was configured
+    # (Only needed for Homebrew Ruby since that's when we modify shell profiles)
+    if [ "$OS" = "macos" ] && [ "$USING_HOMEBREW_RUBY" = true ] && [ "$RUBY_CONFIGURED" = true ]; then
         sleep 1
 
         # Detect user's shell and start it with updated environment
