@@ -602,7 +602,19 @@ install_rails() {
     print_info "Installing Rails gem (this may take a few minutes)..."
     run_with_status "Running: gem install rails -v $RAILS_VERSION" gem install rails -v "$RAILS_VERSION" --no-document
 
+    # Determine the exact rails binary path for this Ruby/gem environment
+    RAILS_BIN=$(gem environment gemdir)/bin/rails
+    if [ ! -x "$RAILS_BIN" ]; then
+        # Fallback: try to find rails in PATH
+        RAILS_BIN=$(command -v rails)
+        if [ -z "$RAILS_BIN" ]; then
+            print_error "Failed to locate rails binary after installation"
+            exit 1
+        fi
+    fi
+
     print_success "Rails $RAILS_VERSION installed successfully"
+    print_info "Rails binary at: $RAILS_BIN"
 }
 
 # Create Rails app with Spree template
@@ -643,12 +655,12 @@ create_rails_app() {
         use_local_spree="true"
     fi
 
-    # Run rails new with the template
+    # Run rails new with the template using the specific rails binary
     if [ "$VERBOSE" = true ]; then
-        VERBOSE_MODE=1 LOAD_SAMPLE_DATA="$LOAD_SAMPLE_DATA" USE_LOCAL_SPREE="$use_local_spree" ADMIN_EMAIL="$ADMIN_EMAIL" ADMIN_PASSWORD="$ADMIN_PASSWORD" rails _${RAILS_VERSION}_ new "$APP_NAME" -m "$TEMPLATE_FILE"
+        VERBOSE_MODE=1 LOAD_SAMPLE_DATA="$LOAD_SAMPLE_DATA" USE_LOCAL_SPREE="$use_local_spree" ADMIN_EMAIL="$ADMIN_EMAIL" ADMIN_PASSWORD="$ADMIN_PASSWORD" "$RAILS_BIN" _${RAILS_VERSION}_ new "$APP_NAME" -m "$TEMPLATE_FILE"
     else
         # Run in background with spinner
-        VERBOSE_MODE=0 LOAD_SAMPLE_DATA="$LOAD_SAMPLE_DATA" USE_LOCAL_SPREE="$use_local_spree" ADMIN_EMAIL="$ADMIN_EMAIL" ADMIN_PASSWORD="$ADMIN_PASSWORD" rails _${RAILS_VERSION}_ new "$APP_NAME" -m "$TEMPLATE_FILE" >/tmp/spree_install.log 2>&1 &
+        VERBOSE_MODE=0 LOAD_SAMPLE_DATA="$LOAD_SAMPLE_DATA" USE_LOCAL_SPREE="$use_local_spree" ADMIN_EMAIL="$ADMIN_EMAIL" ADMIN_PASSWORD="$ADMIN_PASSWORD" "$RAILS_BIN" _${RAILS_VERSION}_ new "$APP_NAME" -m "$TEMPLATE_FILE" >/tmp/spree_install.log 2>&1 &
         local rails_pid=$!
 
         # Show spinner with progress messages
