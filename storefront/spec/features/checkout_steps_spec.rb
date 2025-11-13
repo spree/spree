@@ -306,7 +306,7 @@ describe 'Checkout steps (address and delivery)' do
     let!(:promotion) { create(:free_shipping_promotion, code: 'freeshipping') }
     let!(:order) { create(:order_with_line_items, line_items_count: 1, user: user, ship_address: user.ship_address, bill_address: user.ship_address) }
     let!(:shipping_method) do
-      create(:shipping_method, name: 'Shipping Method', code: 'shipping_method', calculator: create(:shipping_calculator))
+      create(:shipping_method, name: 'Shipping Method', code: 'shipping_method', calculator: create(:shipping_calculator, preferred_amount: 15))
     end
     let!(:other_shipping_method) do
       create(
@@ -336,11 +336,11 @@ describe 'Checkout steps (address and delivery)' do
           choose "order_ship_address_id_#{user.shipping_address.id}"
           click_on 'Save and Continue'
 
-          expect(find('#summary-order-total')).to have_content('$19.99')
-
-          page.find("input[data-cost='$10.00']").click
-          wait_for_turbo
           expect(find('#summary-order-total')).to have_content('$29.99')
+
+          page.find("input[data-cost='$15.00']").click
+          wait_for_turbo
+          expect(find('#summary-order-total')).to have_content('$34.99')
 
           page.find("input[data-cost='$20.00']").click
           wait_for_turbo
@@ -358,8 +358,8 @@ describe 'Checkout steps (address and delivery)' do
         choose "order_ship_address_id_#{user.shipping_address.id}"
         click_on 'Save and Continue'
 
-        expect(page).to have_selector("input[data-cost='$0.00'][checked='checked']")
-        expect(page).to have_selector("input[data-cost='$10.00']")
+        expect(page).to have_selector("input[data-cost='$10.00'][checked='checked']")
+        expect(page).to have_selector("input[data-cost='$15.00']")
 
         fill_in 'coupon_code', with: promotion.code
         click_on 'Apply'
@@ -370,7 +370,7 @@ describe 'Checkout steps (address and delivery)' do
           expect(page).to have_content("#{Spree.t(:total)}\nUSD $19.99")
         end
 
-        page.find("input[data-cost='$10.00']").click
+        page.find("input[data-cost='$15.00']").click
 
         within('div.summary-content') do
           expect(page).to have_content('Free')
@@ -398,7 +398,7 @@ describe 'Checkout steps (address and delivery)' do
         expect(page).to have_content('Delivery')
         expect(page).to have_content(Spree::ShippingMethod.first.name)
 
-        page.find("input[data-cost='$10.00']").click
+        page.find("input[data-cost='$15.00']").click
 
         expect(page).to have_content('Payment')
       end
@@ -409,7 +409,7 @@ describe 'Checkout steps (address and delivery)' do
     let(:user) { create(:user_with_addresses) }
     let!(:order) { create(:order_with_line_items, line_items_count: 1, user: user, ship_address: user.ship_address, bill_address: user.ship_address) }
     let!(:shipping_method) do
-      create(:shipping_method, name: 'Shipping Method', code: 'shipping_method', calculator: create(:shipping_calculator))
+      create(:shipping_method, name: 'Shipping Method', code: 'shipping_method', calculator: create(:shipping_calculator, preferred_amount: 15))
     end
 
     before do
@@ -420,13 +420,13 @@ describe 'Checkout steps (address and delivery)' do
       visit "/checkout/#{order.token}"
       choose "order_ship_address_id_#{user.shipping_address.id}"
       click_on 'Save and Continue'
-      page.find("input[data-cost='$10.00']").click
+      page.find("input[data-cost='$15.00']").click
       click_on 'Save and Continue'
 
-      expect(page).to have_content('Shipping Method · $10.00')
+      expect(page).to have_content('Shipping Method · $15.00')
       expect(page).to have_content("Subtotal:\n$19.99")
-      expect(page).to have_content("Shipping:\n$10.00")
-      expect(page).to have_content("Total\nUSD $29.99")
+      expect(page).to have_content("Shipping:\n$15.00")
+      expect(page).to have_content("Total\nUSD $34.99")
 
       uncheck 'Use Shipping Address'
       fill_in_address_form('order_bill_address_attributes_country_id')
@@ -445,15 +445,15 @@ describe 'Checkout steps (address and delivery)' do
         visit "/checkout/#{order.token}"
         choose "order_ship_address_id_#{user.shipping_address.id}"
         click_on 'Save and Continue'
-        page.find("input[data-cost='$10.00']").click
+        page.find("input[data-cost='$15.00']").click
         click_on 'Save and Continue'
 
-        expect(page).to have_content('Shipping Method · $10.00')
-        expect(page).to have_content("Show\norder summary\n$29.99")
+        expect(page).to have_content('Shipping Method · $15.00')
+        expect(page).to have_content("Show\norder summary\n$34.99")
         click_on 'toggle-order-summary'
         expect(page).to have_content("Subtotal:\n$19.99")
-        expect(page).to have_content("Shipping:\n$10.00")
-        expect(page).to have_content("Total\nUSD $29.99")
+        expect(page).to have_content("Shipping:\n$15.00")
+        expect(page).to have_content("Total\nUSD $34.99")
 
         uncheck 'Use Shipping Address'
         fill_in_address_form('order_bill_address_attributes_country_id')

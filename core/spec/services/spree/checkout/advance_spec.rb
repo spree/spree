@@ -8,8 +8,8 @@ RSpec.describe Spree::Checkout::Advance do
   describe '#call' do
     context 'with no specific target state' do
       before do
-        order.update!(total: 19.99, payment_total: 0, shipment_total: 5, item_total: 14.99, completed_at: nil)
-        order.payments.last.update!(amount: 19.99)
+        order.update!(total: 29.99, payment_total: 0, shipment_total: 10.00, item_total: 19.99, completed_at: nil)
+        order.payments.first.update!(amount: 29.99)
         order.reload
 
         Spree::StockItem.where(variant: order.variants).update_all(count_on_hand: 10, backorderable: false)
