@@ -14,16 +14,28 @@
       <%= Spree.t('admin.integrations.page_subtitle') %>
     </div>
 
-    <% grouped_available_store_integrations.each do |group, integrations| %>
-      <% if group.present? %>
-        <div class="my-2 text-muted font-weight-light text-uppercase"><%= Spree.t(group) %></div>
+    <% if grouped_available_store_integrations.any? %>
+      <% grouped_available_store_integrations.each do |group, integrations| %>
+        <% if group.present? %>
+          <div class="my-2 text-muted font-weight-light text-uppercase"><%= Spree.t(group) %></div>
+        <% end %>
+
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 mb-4">
+          <% integrations.each do |integration| %>
+            <%= render 'spree/admin/integrations/integration', integration_class: integration %>
+          <% end %>
+        </div>
       <% end %>
 
-      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 mb-4">
-        <% integrations.each do |integration| %>
-          <%= render 'spree/admin/integrations/integration', integration_class: integration %>
-        <% end %>
-      </div>
+      <p class="text-muted text-center my-5">
+        Find more integrations in <%= external_link_to 'Integrations Directory', 'https://spreecommerce.org/docs/integrations/integrations', class: 'text-decoration-none font-weight-bold', target: '_blank' %>
+      </p>
+    <% else %>
+      <p class="text-muted text-center my-5">
+        No integrations installed yet. Find integrations in 
+
+        <%= external_link_to 'Integrations Directory', 'https://spreecommerce.org/docs/integrations/integrations', class: 'text-decoration-none font-weight-bold', target: '_blank' %>
+      </p>
     <% end %>
   </div>
 </div>

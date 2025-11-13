@@ -29,8 +29,9 @@
         <h6 class="dropdown-header mt-2">
           <%= Spree.t(:support) %>
         </h6>
-        <%= external_link_to Spree.t(:help_center), 'https://spreecommerce.org/docs/user', class: 'dropdown-item justify-content-between', target: '_blank' %>
-        <%= external_link_to Spree.t(:contact_us), 'https://spreecommerce.org/contact/', class: 'dropdown-item justify-content-between', target: '_blank' %>
+        <%= link_to_with_icon 'book',  Spree.t('admin.documentation'), 'https://spreecommerce.org/docs', class: 'dropdown-item', target: '_blank' %>
+        <%= link_to_with_icon 'brand-slack', Spree.t('admin.slack'), 'https://slack.spreecommerce.org/', class: 'dropdown-item', target: '_blank' %>
+        <%= link_to_with_icon 'message', Spree.t(:contact_us), 'https://spreecommerce.org/contact/', class: 'dropdown-item', target: '_blank' %>
       <% end %>
 
       <div class="dropdown-divider"></div>
