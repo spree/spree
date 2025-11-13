@@ -7,9 +7,9 @@ module Spree
 
     money_methods :base_price, :final_price, :tax_amount
 
-    delegate :order, :currency, :free?, :with_free_shipping_promotion?, to: :shipment
-    delegate :name,             to: :shipping_method
-    delegate :code,             to: :shipping_method, prefix: true
+    delegate :order, :currency, :with_free_shipping_promotion?, to: :shipment
+    delegate :name, to: :shipping_method
+    delegate :code, to: :shipping_method, prefix: true
 
     def display_price
       price = display_base_price.to_s
@@ -26,6 +26,10 @@ module Spree
     end
     alias display_cost display_price
     alias_attribute :base_price, :cost
+
+    def free?
+      final_price.zero?
+    end
 
     def tax_amount
       @tax_amount ||= tax_rate&.calculator&.compute_shipping_rate(self) || BigDecimal(0)

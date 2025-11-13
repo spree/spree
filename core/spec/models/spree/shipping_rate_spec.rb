@@ -198,4 +198,42 @@ describe Spree::ShippingRate, type: :model do
       expect(shipping_rate.display_delivery_range).to eq('Delivery in 1-2 business days')
     end
   end
+
+  describe '#free?' do
+    subject { shipping_rate.free? }
+
+    context 'when the shipping rate cost is 0' do
+      let(:shipping_rate) { create(:shipping_rate, cost: 0) }
+
+      it { is_expected.to be(true) }
+    end
+
+    context 'when the shipping rate cost is not 0' do
+      let(:shipping_rate) { create(:shipping_rate, cost: 10) }
+
+      let(:shipment) { shipping_rate.shipment }
+      let(:order) { shipment.order }
+
+      it { is_expected.to be(false) }
+
+      context 'when the shipment has a free shipping promotion' do
+        let(:free_shipping_promotion) { create(:free_shipping_promotion) }
+
+        before do
+          order.coupon_code = free_shipping_promotion.code
+          Spree::PromotionHandler::Coupon.new(order).apply
+        end
+
+        it { is_expected.to be(true) }
+      end
+
+      context 'when the discount amount is equal to the cost' do
+        before do
+          allow(shipping_rate).to receive(:discount_amount).and_return(-10.0)
+        end
+
+        it { is_expected.to be(true) }
+      end
+    end
+  end
 end
