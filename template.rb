@@ -62,16 +62,8 @@ def install_spree
   # Run Spree installer with all options
   if VERBOSE
     rails_command "generate spree:install --auto-accept --user_class=Spree::User --admin_user_class=Spree::AdminUser --authentication=devise --install_storefront=true --install_admin=true --admin_email=#{ADMIN_EMAIL} --admin_password=#{ADMIN_PASSWORD}"
-    rails_command 'generate spree_stripe:install'
-    rails_command 'generate spree_google_analytics:install'
-    rails_command 'generate spree_klaviyo:install'
-    rails_command 'generate spree_paypal_checkout:install'
   else
     run "bin/rails generate spree:install --auto-accept --user_class=Spree::User --admin_user_class=Spree::AdminUser --authentication=devise --install_storefront=true --install_admin=true --admin_email=#{ADMIN_EMAIL} --admin_password=#{ADMIN_PASSWORD} >/dev/null 2>&1"
-    run 'bin/rails generate spree_stripe:install >/dev/null 2>&1'
-    run 'bin/rails generate spree_google_analytics:install >/dev/null 2>&1'
-    run 'bin/rails generate spree_klaviyo:install >/dev/null 2>&1'
-    run 'bin/rails generate spree_paypal_checkout:install >/dev/null 2>&1'
   end
 end
 
