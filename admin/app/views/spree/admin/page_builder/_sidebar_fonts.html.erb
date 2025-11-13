@@ -60,7 +60,7 @@
             <div class="alert alert-warning">
               Using custom fonts can slow down your store.
             </div>
-            <%= f.spree_text_area :preferred_custom_font_code, style: 'min-height: 6em' %>
+            <%= f.spree_text_area :preferred_custom_font_code, style: 'min-height: 6em', label: Spree.t(:custom_font_code) %>
           </div>
           <%= f.submit Spree.t('actions.update'), class: 'btn btn-primary' %>
 
