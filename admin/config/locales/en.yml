@@ -67,6 +67,7 @@ en:
         back_end: Only on admin panel
         both: On both admin panel & storefront
         front_end: Only on storefront
+      documentation: Documentation
       edit_billing_address: Edit billing address
       edit_contact_information: Edit contact information
       edit_profile: Edit Profile
@@ -228,6 +229,7 @@ en:
       shipment_transfer:
         wrong_destination: Wrong destination
       show_json: Show JSON
+      slack: Slack
       stock_transfers:
         add_products_tip: You need to select a destination location first
       store_credit:
