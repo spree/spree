@@ -23,6 +23,13 @@ def add_gems
   gem 'spree_storefront', USE_LOCAL_SPREE ? { path: '../' } : { version: SPREE_VERSION }
   # translations
   gem 'spree_i18n'
+
+  # Development & Test gems
+  gem_group :development, :test do
+    gem 'spree_dev_tools'
+    gem 'letter_opener'
+    gem 'listen'
+  end
 end
 
 def setup_importmap
@@ -64,6 +71,23 @@ def install_spree
     rails_command "generate spree:install --auto-accept --user_class=Spree::User --admin_user_class=Spree::AdminUser --authentication=devise --install_storefront=true --install_admin=true --admin_email=#{ADMIN_EMAIL} --admin_password=#{ADMIN_PASSWORD}"
   else
     run "bin/rails generate spree:install --auto-accept --user_class=Spree::User --admin_user_class=Spree::AdminUser --authentication=devise --install_storefront=true --install_admin=true --admin_email=#{ADMIN_EMAIL} --admin_password=#{ADMIN_PASSWORD} >/dev/null 2>&1"
+  end
+end
+
+def configure_development_environment
+  say 'Configuring development environment...', :blue
+
+  # Letter opener and file watcher configuration
+  inject_into_file 'config/environments/development.rb', before: /^end/ do
+    <<-RUBY
+
+  # Letter Opener for email previews
+  config.action_mailer.delivery_method = :letter_opener
+  config.action_mailer.perform_deliveries = true
+
+  # Improved file watching
+  config.file_watcher = ActiveSupport::EventedFileUpdateChecker
+    RUBY
   end
 end
 
@@ -125,6 +149,7 @@ add_gems
 
 after_bundle do
   setup_importmap
+  configure_development_environment
   setup_devise
   install_spree
   setup_procfile
