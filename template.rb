@@ -23,12 +23,6 @@ def add_gems
   gem 'spree_storefront', USE_LOCAL_SPREE ? { path: '../' } : { version: SPREE_VERSION }
   # translations
   gem 'spree_i18n'
-
-  # Payment & Analytics integrations
-  gem 'spree_stripe'
-  gem 'spree_google_analytics'
-  gem 'spree_klaviyo'
-  gem 'spree_paypal_checkout'
 end
 
 def setup_importmap
