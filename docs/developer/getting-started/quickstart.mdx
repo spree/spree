@@ -12,21 +12,63 @@ Welcome to the Spree Commerce [open-source eCommerce](https://spreecommerce.org)
 
 ### 1. Installing Spree
 
-Copy and paste the following command to your terminal:
+<Tabs>
+  <Tab title="Spree Installer">
+    Use the guided installer to set up your Spree Commerce application with all the required dependencies (Ruby, Rails, etc.) on your system.
 
-```bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/spree/spree/main/install.sh)"
-```
+    Copy and paste the following command to your terminal:
 
-This will fire up the guided installer that will ask you a few questions and then set up your Spree Commerce application.
+    ```bash
+    bash -c "$(curl -fsSL https://raw.githubusercontent.com/spree/spree/main/install.sh)"
+    ```
 
-<Info>
-  On Windows please install WSL (Windows Subsystem for Linux) first.
-  ```bash
-  wsl --install
-  ```
-  Then run the installer from within WSL.
-</Info>
+    This will fire up the guided installer that will ask you a few questions (eg. application name, load sample data, etc.) and then set up your Spree Commerce application.
+
+    <Info>
+      On Windows please install WSL (Windows Subsystem for Linux) first.
+      ```bash
+      wsl --install
+      ```
+      Then run the installer from within WSL.
+    </Info>
+
+    <Warning>
+      Minimum system requirements for MacOS:
+      * MacOS 14.0+
+      * XCode command line tools installed
+    </Warning>
+
+    <Info>
+      If you have any issues with the installer, please create an issue on [GitHub](https://github.com/spree/spree/issues/new). Thank you!
+    </Info>
+  </Tab>
+  <Tab title="Manual Installation">
+    If you prefer to install Spree manually, you're free to do so.
+
+    1. Install [Ruby](https://www.ruby-lang.org/en/documentation/installation/)
+    2. Install [vips](https://www.libvips.org/install.html) for image processing
+    3. Install Rails gem:
+        ```bash
+        gem install rails 8.0.4
+        ```
+    4. Run the following command to create a new Spree Commerce application:
+        ```bash
+        rails new my_store -m https://raw.githubusercontent.com/spree/spree/main/template.rb
+        ```
+    5. Navigate to the application directory
+        ```bash
+        cd my_store
+        ```
+    6. Run the following command to start the development server:
+        ```bash
+        bin/dev
+        ```
+    7. Optionally load sample data (products, categories, etc.):
+        ```bash
+        bin/rails spree_sample:load
+        ```
+  </Tab>
+</Tabs>
 
 ### 2. Exploring Your Store
 
