@@ -211,12 +211,12 @@ describe Spree::ShippingMethod, type: :model do
   end
 
   describe '#display_estimated_price' do
-    it { expect(shipping_method.display_estimated_price).to eq('Flat rate: Free') }
+    it { expect(shipping_method.display_estimated_price).to eq('Flat rate: $10.00') }
 
-    context 'with calculator' do
-      let(:shipping_method) { build(:shipping_method, calculator: create(:shipping_calculator)) }
+    context 'with the free rate' do
+      let(:shipping_method) { build(:free_shipping_method) }
 
-      it { expect(shipping_method.display_estimated_price).to eq('Flat rate: $10.00') }
+      it { expect(shipping_method.display_estimated_price).to eq('Flat rate: Free') }
     end
   end
 end

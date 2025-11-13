@@ -78,7 +78,7 @@ describe 'exchanges:charge_unreturned_items' do
       it 'authorizes the order for the full amount of the unreturned items including taxes' do
         expect { subject.invoke }.to change { Spree::Payment.count }.by(1)
         new_order = Spree::Order.last
-        expected_amount = return_item_2.reload.exchange_variant.price + new_order.additional_tax_total + new_order.included_tax_total
+        expected_amount = return_item_2.reload.exchange_variant.price + new_order.additional_tax_total + new_order.included_tax_total + new_order.ship_total
         expect(new_order.total).to eq expected_amount
         payment = new_order.payments.first
         expect(payment.amount).to eq expected_amount
