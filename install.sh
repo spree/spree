@@ -348,13 +348,13 @@ install_system_deps() {
         if [ "$DISTRO" = "ubuntu" ] || [ "$DISTRO" = "debian" ]; then
             print_info "Installing libvips-dev..."
             run_with_status "Running: apt-get update" sudo apt-get update
-            run_with_status "Running: apt-get install runtime deps" sudo apt-get install -y build-essential libvips-dev libssl-dev libreadline-dev zlib1g-dev libsqlite3-dev 
+            run_with_status "Running: apt-get install runtime deps" sudo apt-get install -y build-essential git libvips-dev libssl-dev libreadline-dev zlib1g-dev libsqlite3-dev 
 
             print_success "System dependencies installed"
         elif [ "$DISTRO" = "fedora" ] || [ "$DISTRO" = "rhel" ] || [ "$DISTRO" = "centos" ]; then
             print_info "Installing vips development packages..."
             run_with_status "Running: dnf/yum install runtime deps" sudo dnf install -y vips vips-devel gcc gcc-c++ make openssl-devel readline-devel zlib-devel sqlite-devel || \
-            sudo yum install -y vips vips-devel gcc gcc-c++ make openssl-devel readline-devel zlib-devel sqlite-devel 
+            sudo yum install -y vips vips-devel gcc gcc-c++ make openssl-devel readline-devel zlib-devel sqlite-devel git 
 
             print_success "System dependencies installed"
         else
