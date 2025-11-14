@@ -173,6 +173,20 @@ detect_os() {
 get_app_name() {
     print_step "Setting up your Spree application..."
 
+    # Check if we're in WSL and in a Windows mount point
+    if [ "$OS" = "linux" ] && [[ $(pwd) == /mnt/* ]]; then
+        print_warning "You are currently in a Windows directory ($(pwd))"
+        print_warning "Rails requires Unix file permissions which Windows filesystems don't support."
+        echo
+        print_info "Changing to your Linux home directory: $HOME"
+        cd "$HOME" || {
+            print_error "Failed to change to home directory"
+            exit 1
+        }
+        print_success "Now in: $(pwd)"
+        echo
+    fi
+
     # Use default app name if auto-accept is enabled and no app name provided
     if [ "$AUTO_ACCEPT" = true ] && [[ -z "$APP_NAME" ]]; then
         APP_NAME="spree"
