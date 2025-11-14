@@ -1,379 +1,246 @@
 ---
 title: "User Quickstart"
-description: "Start selling with Spree Commerce open-source eCommerce solution"
+description: "Start selling with the Spree Commerce open-source eCommerce solution"
 ---
 
-When first logging in to your instance of Spree Commerce [open-source eCommerce platform](https://spreecommerce.org/), you’ll be greeted with the Getting Started tab which, by default, outlines 4 onboarding tasks you’ll need to complete.
+Spree Commerce gives you a powerful, flexible platform to build and manage your online store - but before you can start selling, there are a few key steps to complete. 
 
-<img
-  alt="Getting started with Spree Commerce - an Open Source e-commerce platform"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733327023/docs/Getting%20Started/1.1_Getting_Started_pwvjhm"
-/>
+This guide walks you through the essential setup tasks, from configuring payments and taxes to adding products and launching your storefront. Whether you're launching an MVP or just exploring Spree’s capabilities, this guide will help you get up and running quickly.
 
-Once you’ve completed these tasks, this tab will disappear.
+## Getting Started
 
-Let’s take a look at each task in more detail.
+![Getting Started tab showing the onboarding checklist with four key tasks](/docs/images/user/quickstart/1-getting-started.png)
 
-## Set up payments
+When you log into a fresh Spree Commerce instance, you’ll land on the Getting Started tab - a quick-launch checklist that helps you configure the essentials and go live faster.
 
-It shouldn’t come as a surprise that in order to sell anything, you need to accept payments, and in order to accept payments, you need to add payment methods.
+You’ll see four key onboarding tasks:
 
-To setup payment methods, click on the blue button which will redirect you to the Payment Methods section of Settings.
+- Setup payments
+- Add products
+- Set customer support email
+- Setup taxes collection
 
-<img
-  alt="Payment Methods"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733327023/docs/Getting%20Started/1.2_Getting_Started_-_Payment_Methods_danmea.png"
-/>
+Once all tasks are completed, the checklist will disappear from view. Let’s walk through each step below.
 
-At the top, there’s a list of added payment methods, each of which you can toggle on/off, change its visibility on the storefront or admin panel, and edit. The Store Credits payment methods is always added by default, but alone it does not enable to accept payments from customers.
+### Setup Payment Method
 
-Below that, you’ll see a list of available payment methods that you can add to your store.
+![Payment setup onboarding step](/docs/images/user/quickstart/2-setup-payments.png)
 
-Find the method you’d like to use and click ‘\+ Add’. This will redirect you to the set up page for that particular payment method.
+To sell anything, you’ll need to configure at least one payment method.
 
-Important: to use any of these available payment methods, you are required to first set up an account with the associated payment service provider.
+Click **Setup Payment Method** to jump to **Settings → Payments**.
 
-<img
-  alt="Create Payment Method"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733327023/docs/Getting%20Started/1.3_Getting_Started_-_Create_Payment_Method_i0xp8m.png"
-/>
+![Payments section of admin dashboard](/docs/images/user/quickstart/3-settings-payments.png)
 
-Simply follow the steps outlined for that payment method, click Create, and the payment method will be added to your store.
+At the top, you’ll see your currently enabled methods (e.g., Store Credits, added by default). 
 
-<img
-  alt="Payment Method Added"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733327023/docs/Getting%20Started/1.4_Getting_Started_-_Payment_Method_Added_eojwfj.png"
-/>
+Below that is a list of available payment methods you can add, such as Stripe, Adyen or PayPal.
 
-To learn more about Payment Methods, please refer to a separate support article.
+<Note>Only payment methods that have been installed will appear in the Available Payment Methods list. If a method you’re expecting isn’t listed, ask your developer to confirm it has been added to the codebase.</Note>
 
-## Add products
+To add a method:
 
-Next on the list is adding products.
+1. Click **Add** next to your chosen method
+2. Follow the setup instructions in the form
+3. Click **Create** to enable it
 
-<img
-  alt="Add Products"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733327023/docs/Getting%20Started/1.5_Getting_Started_-_Add_Products_cxbdq5.png"
-/>
+<Note>Most payment gateways require you to have an account with the provider before setup.</Note>
 
-There are three ways to add products to your store:
+To learn more about available methods and configuration, see [<u>Payments</u>](https://spreecommerce.org/docs/user/settings/payments).
 
-1. Adding products manually
-2. Importing products with CSV
-3. Inviting vendors (3rd party products)
+### Add Products
 
-Please refer to the respective articles for more information on each method of adding products.
+![Add products Spree onboarding step](/docs/images/user/quickstart/4-add-products.png)
 
-<Note>
-  Inviting 3rd party vendors to your marketplace is only available in the Spree Enterprise Edition.
-</Note>
+There are three ways to populate your store’s catalog:
 
-## Set customer support email
+- [<u>Add products manually</u>](https://spreecommerce.org/docs/user/products/creating-products) (ideal for small catalogs or testing)
+- Import products using CSV (essential for large catalogs)
+- [<u>Invite vendors to add their own products</u>](https://spreecommerce.org/docs/user/vendors/invite-vendor) (for marketplaces - Spree Enterprise only)
 
-The next task is a simple one, but it plays a very important role.
+Click the **Add Products** button to start adding manually, or refer to the relevant articles based on your method.
 
-<img
-  alt="Add Customer Support Email"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733327023/docs/Getting%20Started/1.6_Getting_Started_-_Add_Customer_Support_Email_ahnei4.png"
-/>
+Once you’ve added some products, make sure to set them as **Active** to publish them on the storefront.
 
-You need to add a customer support email to display on your storefront. This email serves as a contact point for your customers to reach out to you if they have any queries or require support.
+For more detailed guides on creating and managing products, see:
 
-Simply type in the email address you’d like to use and click save.
+- [<u>Creating Products</u>](https://spreecommerce.org/docs/user/products/creating-products)
+- [<u>Editing Products</u>](https://spreecommerce.org/docs/user/products/editing-products)
+- [<u>Editing Multi-Variant Products</u>](https://spreecommerce.org/docs/user/products/editing-multi-variant-products)
+- [<u>Managing Products in Bulk</u>](https://spreecommerce.org/docs/user/manage-products/bulk-product-operations)
 
-## Setup taxes collection
+### Add Customer Support Email
 
-The last task to complete in the Getting Started is setting up taxes collection.
+![Add a customer support email onboarding step](/docs/images/user/quickstart/5-customer-support-email.png)
 
-<img
-  alt="Setup Taxes Collection"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733327023/docs/Getting%20Started/1.7_Getting_Started_-_Setup_Taxes_Collection_nwt1zn.png"
-/>
+This small but critical step ensures customers know how to reach you.
 
-Follow the link in the description and you’ll be redirected to the Tax section of Settings.
+Simply enter your customer support email in the field provided, and click **Save**.
 
-To learn more about setting up taxes, please refer to a separate support article.
+This address will appear on your storefront and works as a contact for your customers in case they have any queries or require support.
+
+### Setup Taxes Collection
+
+![Setup tax collection ecommerce onboarding step](/docs/images/user/quickstart/6-setup-taxes.png)
+
+To charge the correct taxes at checkout, click **Setup Tax Rates** to be taken to **Settings → Tax**.
+
+From here, you can configure:
+
+- Tax rates (manual or through third-party services like Avalara)
+- Tax categories
+
+For full instructions, please refer to our [<u>Tax support article</u>](https://spreecommerce.org/docs/user/settings/tax).
 
 ## Shipping Methods
 
-To allow customers to actually place orders, there must be shipping methods available for them to select on checkout.
+![Configure shipping methods Spree onboarding step](/docs/images/user/quickstart/7-shipping-methods.png)
 
-You can add shipping methods by navigating to the Shipping section in Settings.
+Customers won’t be able to complete orders without at least one shipping method configured.
 
-<img
-  alt="Shipping Methods"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733327023/docs/Getting%20Started/1.8_Getting_Started_-_Shipping_Methods_ailaai.png"
-/>
+To configure a shipping methods, go to **Settings → Shipping** and click **New Shipping Method** to define:
 
-To add a new shipping method, click the blue button in the top right corner. This will open to shipping method editor.
+- Shipping zones
+- Cost calculator settings
+- Estimated delivery times
+- Shipping and Tax categories
+- Tracking links
 
-<img
-  alt="Add A Shipping Method"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733327023/docs/Getting%20Started/1.9_Getting_Started_-_Add_A_Shipping_Method_wf4ajh.png"
-/>
+See [<u>Shipping Methods</u>](https://spreecommerce.org/docs/user/settings/shipping-methods) for a full breakdown of settings and examples.
 
-Here you can configure the settings of the shipping method, such as the shipping zones, calculator and costs, and estimated delivery time.
+<Note>By default, all Spree stores have a Digital Delivery method pre-configured. If you plan on selling digital products, be sure to assign those products the Digital shipping category.</Note>
 
-For more information about shipping methods, please refer to a separate support article.
+## Storefront Setup
 
-## Basic Storefront Setup
+![Setup a Spree storefront without code](/docs/images/user/quickstart/8-storefront-setup.png)
 
-Now that you’ve configured payments, taxes, and shipping, and added some products, it’s time to configure your storefront.
+Once your product catalog, payments, taxes, and shipping are ready, it's time to build your storefront. Spree gives you a built-in visual page builder that lets you design your storefront without writing any code.
 
-Spree comes with a drag and drop page builder with pre-built page sections that allows you to quickly and easily configure a storefront. This is a great option for MVPs or other projects that don’t require a lot of custom frontend features.
+Navigate to **Storefront** in the admin dashboard to access:
 
-If you’re planning on using Spree in headless mode and connect it to a separate storefront application, please refer to [Spree developer documentation](https://spreecommerce.org/docs/developer/getting-started/quickstart).
+### Themes
 
-The Storefront tab of the admin dashboard, found under Channels & Apps, contains four sections that manage various parts of your storefront.
+![Create and manage themes in the admin dashboard](/docs/images/user/quickstart/9-themes.png)
 
-### Theme
+Here you can customize the design, layout, and branding of your storefront, and add new themes that you can switch between when desired.
 
-This is where you can modify the layout and look and feel of your storefront.
+Simply click on the theme you wish to edit to launch the Theme Editor.
 
-<img
-  alt="Theme"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733327023/docs/Getting%20Started/1.10_Getting_Started_-_Theme_nmwoh4.png"
-/>
+![A screenshot of the Spree theme editor](/docs/images/user/quickstart/10-theme-editor.png)
 
-#### View Store
+If this is a fresh Spree installation, you’ll see the blank, default layout. However, here you can easily:
 
-To view the live storefront, click on the View Store button on the top right corner. If you haven’t modified the theme at all, you’ll see what is essentially a blank slate with a few default page sections, and perhaps some products if you’ve made them Active.
+- Add and arrange pre-built page sections
+- Update global theme settings like fonts and colors
+- Upload and swap out media in individual sections
+- Switch between mobile and desktop editor preview
+- Click **Publish** in the top right when you're ready to save changes
 
-<img
-  alt="View_Store"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733327023/docs/Getting%20Started/1.11_Getting_Started_-_View_Store_jynqgp.png"
-/>
+For a detailed guide on customizing your storefront theme, please refer to our [<u>Theme Editor support article</u>](https://spreecommerce.org/docs/user/storefront/theme-editor).
 
-With a little investment of your time, you can turn this into something presentable, shoppable, and on-brand without the need to hire developers (or even designers if it’s an MVP).
+<Warning>Changes are only saved when published. Previewing alone does not make them live.</Warning>
 
-<img
-  alt="Styled Store on Spree"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733327026/docs/Getting%20Started/1.12_Getting_Started_-_Modified_Store_tfdwxm.png"
-/>
+### Connect Your Domain
 
-#### Connect Your Own Domain
+![Connecting a domain to Spree commerce](/docs/images/user/quickstart/11-connect-domain.png)
 
-At the top of the Theme section, you’ll notice a prompt to connect your own domain. Clicking on this will lead you to the Domains section of Settings where you can connect your domains and subdomains.
-
-<img
-  alt="Connect Your own Domain"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733327026/docs/Getting%20Started/1.13_Getting_Started_-_Connect_Your_own_Domain_ay8q1s.png"
-/>
-
-#### Theme Editor
-
-To edit the store’s default Theme, simply click on it or click the three dots on the left and select Edit.
-
-<img
-  alt="Theme Editor"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733327026/docs/Getting%20Started/1.14_Getting_Started_-_Theme_Editor_qxfbsu.png"
-/>
-
-This will open the visual page builder UI that allows you to easily add or modify page sections, upload visual media, and change color schemes and fonts.
-
-<img
-  alt="Drag & Drop Visual Page Builder Composer"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733327026/docs/Getting%20Started/1.15_Getting_Started_-_Page_Builder_c63a2a.png"
-/>
-
-Themes are mobily-reponsive, and you can switch between views by clicking on the mobile or desktop icons in the top right corner.
-
-<img
-  alt="Page Builder Mobile View"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733327026/docs/Getting%20Started/1.16_Getting_Started_-_Page_Builder_Mobile_View_qbmdp9.png"
-/>
-
-Important: Whenever you make changes to the storefront, it’s important to publish them before backing out of the page builder otherwise all progress will be lost. To publish changes, click the blue button in the top right corner.
-
-You can also preview changes you’ve made to the storefront without publishing them by clicking Preview in the top right corne.
-
-For a comprehensive guide to using the page builder, please refer to a separate support article.
+At the top of the Themes section, click **Connect your own domain** to add a custom domain or subdomain. This will redirect you to **Settings → Domains** where you can complete the setup of your custom domain.
 
 ### Pages
 
-This where you can add static pages to your store, such as About Us, Contact Us, landing pages, etc.
+![A dashboard tab showing page management UI](/docs/images/user/quickstart/12-pages.png)
 
-<img
-  alt="Content Pages"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733327027/docs/Getting%20Started/1.17_Getting_Started_-_Pages_didkze.png"
-/>
+Use the Pages section to add static pages like:
 
-To add a new page, simply click on the blue button in the top right corner, give the page a name, edit the SEO settings, and then click Create at the bottom of the page.
+- About Us
+- Contact
+- Custom landing pages
 
-<img
-  alt="Add A New Page"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733327027/docs/Getting%20Started/1.18_Getting_Started_-_Add_A_New_Page_mmht9c.png"
-/>
+Click **Add new page** and fill in the page name and SEO fields. 
 
-After creating the page, you’ll be redirected to the page builder where you can configure the layout and insert content for the new page.
+![Ecommerce dashboard showing a page creation form](/docs/images/user/quickstart/13-add-new-page.png)
 
-<img
-  alt="Publish New Page"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733327027/docs/Getting%20Started/1.19_Getting_Started_-_Publish_New_Page_huxsg6.png"
-/>
+Click Create to finalize the settings of the new page, and you’ll be taken directly to the Theme Editor to edit the content of your new page.
 
-Once you’re finished, click Publish and the new page will be added to your store.
-
-<img
-  alt="New Page Added"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733327027/docs/Getting%20Started/1.20_Getting_Started_-_New_Page_Added_z5zikq.png"
-/>
-
-You can edit pages at any time by simpling clicking on them, and you can delete the page by navigating to Page Settings at the top left of the page builder, and clicking Delete.
-
-<img
-  alt="Delete A Page"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733327028/docs/Getting%20Started/1.21_Getting_Started_-_Delete_A_Page_nydiix.png"
-/>
+To learn more about Pages, please refer to our [<u>Pages</u>](https://spreecommerce.org/docs/user/storefront/create-page) support article.
 
 ### Posts
 
-Here you can make use of Spree’s built-in blog to add blog posts to your store. Adding blog posts to your store is a great way to improve SEO, and the posts themselves can be used for social sharing or ads.
+![Ecommerce dashboard with a blog CMS](/docs/images/user/quickstart/14-posts.png)
 
-<img
-  alt="Posts"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733327027/docs/Getting%20Started/1.22_Getting_Started_-_Posts_axgngz.png"
-/>
+Spree includes a built-in blogging tool that’s great for content marketing and SEO.
 
-To add a new post, simply click on the blue button in the top right corner.
+To add a blog post, go to **Storefront → Posts** and click **New Post**.
 
-Note: If you’re using Spree Enterprise Edition, you can import blog posts in bulk from your previous site by uploading a CSV file.
+![A blog post editor in Spree Commerce](/docs/images/user/quickstart/15-new-post.png)
 
-<img
-  alt="Add A New Post"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733327029/docs/Getting%20Started/1.23_Getting_Started_-_Add_A_New_Post_kkg1kw.png"
-/>
+Simply, fill in your post content, image, and SEO fields, set a Published At date, and click **Create** to finalize your new post.
 
-This will redirect you to the blog post editor where you can add content, visual media, and modify SEO settings for the new post.
-
-Make sure to add a Published At date, otherwise it won’t appear on the live site.
-
-Once you’re done, click Create to add the new blog post to site.
-
-<img
-  alt="Publish New Post"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733327028/docs/Getting%20Started/1.24_Getting_Started_-_Publish_New_Post_ee0xos.png"
-/>
-
-You can edit old blog posts by simply clicking on them, making changes, and then clicking Update at the bottom of the page.
-
-Here’s the new blog post on the storefront:
-
-<img
-  alt="New Post Storefront View"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733327030/docs/Getting%20Started/1.25_Getting_Started_-_New_Post_Storefront_View_meloyu.png"
-/>
+To learn more about Posts, please refer to our [<u>Posts</u>](https://spreecommerce.org/docs/user/storefront/create-post) support article.
 
 ### Storefront Settings
 
-This is where you can configure some important settings for the storefront, such as SEO, security, favicon and social sharing images, and social media links.
+![An ecommerce storefront settings menu](/docs/images/user/quickstart/16-storefront-settings.png)
 
-<img
-  alt="Storefront_Settings"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733327029/docs/Getting%20Started/1.26_Getting_Started_-_Storefront_Settings_q94xc6.png"
-/>
+In **Storefront → Settings**, you can control:
 
-Important: If you want your store to be shown in search engines, make sure to uncheck the box next to “Do not show in search engines” in the SEO section of the settings.
+- SEO settings, including search engine indexing preferences
+- Favicon and social share images
+- Social media links
+- Custom code snippets to add to head and body tags
+- Storefront password protection preferences
 
-To learn more about Storefront Settings, please refer to a separate support article.
+Make sure to click **Update** to save your changes.
 
-### New Store
+<Note>To appear in search results, make sure **Index in search engines** is checked.</Note>
 
-If you’d like to add multiple storefronts with completely different user experiences, product offerings, payment methods, etc., you can easily add a new store by clicking on the store name in the top left corner, and selecting New Store from the dropdown.
+## Managing Multiple Stores
 
-<img
-  alt="Add A New Store"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733327029/docs/Getting%20Started/1.27_Getting_Started_-_Add_A_New_Store_mrbisv.png"
-/>
+![Spree multi-store ecommerce](/docs/images/user/quickstart/17-multi-store.png)
 
-The popup that appears will ask you to give the new store a name, select the country and currency, and to select whether or not to import products and payment methods from the original store.
+If you need to launch multiple storefronts (e.g., for different regions or brands), you can create a new store by clicking the **\+** button next to your store name (top-left) and selecting **New Store**.
 
-<img
-  alt="Configure New Store Settings"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733327029/docs/Getting%20Started/1.28_Getting_Started_-_Configure_New_Store_Settings_p7mwlb.png"
-/>
+![Adding a new store in Spree Commerce](/docs/images/user/quickstart/18-new-store.png)
 
-To learn more about the multi-store feature, please refer to a separate support article.
+You’ll be asked to:
 
-## Home Screen
+- Name the store
+- Choose a country, currency, and locale
+- Decide whether to import products and payment methods from the current store
 
-The home screen gives you an overview of your stores results over a time period of your choosing.
+Each store can operate independently and have unique designs, catalogs, and settings, but they all share customers, admin users, and some other configurations.
 
-It highlights some important sales KPIs and visitor metrics so you can see how business is going at a glance.
+Learn more about managing multiple stores in our [<u>multi-store use case documentation</u>](https://spreecommerce.org/docs/use-case/multi-store/model).
 
-<img
-  alt="Home Screen"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733327030/docs/Getting%20Started/1.29_Getting_Started_-_Home_Screen_pehjal.png"
-/>
+## Analytics
 
-### Key Sales KPIs
+![Spree Commerce dashboard analytics](/docs/images/user/quickstart/19-home-screen.png)
 
-At the top of the page, there’s a chart that depicts some of the key sales KPIs over the defined time period.
+Your Spree dashboard Home tab gives you high-level insights into store performance. 
 
-You change the time period by clicking on the date and then selecting the desired dates.
+You’ll see:
 
-<img
-  alt="Sales KPIs"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733327030/docs/Getting%20Started/1.30_Getting_Started_-_Sales_KPIs_pevyhk.png"
-/>
+- Key Sales KPIs for revenue, orders, AOV and sign-ups
+- A list of top selling products over the selected time range
 
-### Top products
+Use the date selector to change the reporting period at any time.
 
-Below the KPIs, you’ll see a section that shows a list of the top selling products, with the option to view the full report.
+Similarly, you can view and export sales reports from the Reports tab:
 
-<img
-  alt="Top_Products"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733327030/docs/Getting%20Started/1.31_Getting_Started_-_Top_Products_r37mpk.png"
-/>
+![Spree Commerce native reports](/docs/images/user/quickstart/20-reports.png)
 
-### Visitor Data
+### 3rd Party Tools
 
-At the bottom of the page, there are four sections that provide data on your audience, specifically:
+For more detailed analytics, we recommend using our native [<u>Google Analytics 4</u>](https://spreecommerce.org/docs/integrations/analytics/google-analytics) or [<u>Google Tag Manager</u>](https://spreecommerce.org/docs/integrations/analytics/google-tag-manager) integration.
 
-- Referral site
-- Top landing pages
-- Visitor location
-- Visitor devices
+## Next Steps
 
-<img
-  alt="Visitor_Data"
-  classname="block dark:hidden"
-  src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733327030/docs/Getting%20Started/1.32_Getting_Started_-_Visitor_Data_pugv5j.png"
-/>
+Once you’ve completed the basic setup, you’re ready to explore more advanced features and tailor your store to your business model. Here’s some recommended reading:
 
-### Google Analytics
-
-For more detailed analytics, we recommend setting up Google Analytics or whichever analytics tool you prefer.
-
-Spree Enterprise Edition comes with pre-built GA4 and Segment integration.
+- [**<u>Learn how to manage orders</u>**](https://spreecommerce.org/docs/user/orders/processing-orders) - process payments, fulfill shipments, create and edit orders
+- [**<u>Learn how to process returns</u>**](https://spreecommerce.org/docs/user/returns/returns-processing) - configure returns flow, authorize returns, reimburse customers
+- [**<u>Explore multi-store setups</u>**](https://spreecommerce.org/docs/use-case/multi-store/model) - run separate storefronts with unique catalogs, domains, and branding
+- [**<u>Launch a B2B storefront</u>**](https://spreecommerce.org/docs/use-case/b2b/b2b-commerce-model) - offer net terms, tiered pricing, company accounts, and purchase flows optimized for wholesale
+- [**<u>Build a multi-vendor marketplace</u>**](https://spreecommerce.org/docs/use-case/marketplace/model) - invite third-party vendors to sell through your platform
+- [**<u>Create a multi-tenant platform</u>**](https://spreecommerce.org/docs/use-case/multi-tenant/multi-tenant-model)  power multiple stores or clients from a single backend
+- [**<u>Sell digital products</u>**](https://spreecommerce.org/docs/use-case/digital-products/model) - deliver files automatically, skip shipping steps, and disable inventory tracking
