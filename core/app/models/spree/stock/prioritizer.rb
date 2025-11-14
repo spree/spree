@@ -47,10 +47,12 @@ module Spree
       def hash_item(item)
         shipment = item.inventory_unit.shipment
         variant  = item.inventory_unit.variant
+        line_item = item.inventory_unit.line_item
+        base_hash = variant.hash ^ line_item.hash
         if shipment.present?
-          variant.hash ^ shipment.hash
+          base_hash ^ shipment.hash
         else
-          variant.hash
+          base_hash
         end
       end
     end
