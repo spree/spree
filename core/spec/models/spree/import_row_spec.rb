@@ -213,6 +213,11 @@ RSpec.describe Spree::ImportRow, :job, type: :model do
         import_row.process!
         expect(import_row.validation_errors).to eq(error_message)
       end
+
+      it 'reports the error to Rails.error' do
+        expect(Rails.error).to receive(:report).with(an_instance_of(StandardError), handled: true, context: { import_row_id: import_row.id }, source: 'spree.core')
+        import_row.process!
+      end
     end
   end
 end

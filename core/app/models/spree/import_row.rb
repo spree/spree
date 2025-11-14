@@ -76,6 +76,7 @@ module Spree
       self.item = import.row_processor_class.new(self).process!
       complete!
     rescue StandardError => e
+      Rails.error.report(e, handled: true, context: { import_row_id: id }, source: 'spree.core')
       self.validation_errors = e.message
       fail!
     end
