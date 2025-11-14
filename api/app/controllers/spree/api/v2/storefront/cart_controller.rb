@@ -12,7 +12,6 @@ module Spree
           before_action :load_variant, only: :add_item
           before_action :require_spree_current_user, only: :associate
 
-
           def create
             spree_authorize! :create, Spree::Order
 
@@ -104,6 +103,7 @@ module Spree
             result = coupon_handler.new(spree_current_order).apply
 
             if result.error.blank?
+              spree_current_order.reload
               render_serialized_payload { serialized_current_order }
             else
               render_error_payload(result.error)

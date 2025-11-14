@@ -689,6 +689,40 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         end
       end
 
+      context 'with coupon code for item discount' do
+        let(:params) { { coupon_code: coupon_code, include: 'promotions,line_items' } }
+
+        let!(:promotion) { create(:promotion, name: '10% off', code: '10off', stores: [store]) }
+        let!(:promotion_action) { Spree::Promotion::Actions::CreateItemAdjustments.create(promotion_id: promotion.id, calculator: calculator) }
+        let(:calculator) { Spree::Calculator::PercentOnLineItem.new(preferred_percent: 10) }
+
+        let(:coupon_code) { promotion.code }
+
+        it_behaves_like 'returns valid cart JSON'
+
+        it 'changes the promo totals on order and line item' do
+          expect(json_response['data']).to have_attribute(:item_total).with_value('10.0')
+          expect(json_response['data']).to have_attribute(:ship_total).with_value('100.0')
+          expect(json_response['data']).to have_attribute(:total).with_value('109.0')
+          expect(json_response['data']).to have_attribute(:promo_total).with_value('-1.0')
+          expect(json_response['data']).to have_attribute(:display_promo_total).with_value('-$1.00')
+
+          expect(json_response['included']).to include(have_type('line_item').and(have_attribute(:price).with_value('10.0')))
+          expect(json_response['included']).to include(have_type('line_item').and(have_attribute(:display_price).with_value('$10.00')))
+          expect(json_response['included']).to include(have_type('line_item').and(have_attribute(:total).with_value('9.0')))
+          expect(json_response['included']).to include(have_type('line_item').and(have_attribute(:display_total).with_value('$9.00')))
+          expect(json_response['included']).to include(have_type('line_item').and(have_attribute(:promo_total).with_value('-1.0')))
+          expect(json_response['included']).to include(have_type('line_item').and(have_attribute(:display_promo_total).with_value('-$1.00')))
+        end
+
+        it 'includes the promotion in the response' do
+          expect(json_response['included']).to include(have_type('promotion').and(have_id(promotion.id.to_s)))
+          expect(json_response['included']).to include(have_type('promotion').and(have_attribute(:amount).with_value('-1.0')))
+          expect(json_response['included']).to include(have_type('promotion').and(have_attribute(:display_amount).with_value('-$1.00')))
+          expect(json_response['included']).to include(have_type('promotion').and(have_attribute(:code).with_value(promotion.code)))
+        end
+      end
+
       context 'without coupon code' do
         context 'does not apply the coupon code' do
           let!(:coupon_code) { '' }
