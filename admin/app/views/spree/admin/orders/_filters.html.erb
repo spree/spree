@@ -15,7 +15,8 @@
   class: "filter-wrap",
   data: {
     controller: "filters dropdown",
-    filters_url_value: request.url
+    filters_url_value: request.url,
+    dropdown_placement_value: "bottom-end"
   } do |f| %>
   <%= hidden_field_tag :frame_name, frame_name if frame_name.present? %>
 
@@ -27,15 +28,13 @@
       date_from_input_name: "q[created_at_gt]",
       date_to_input_name: "q[created_at_lt]",
       date_from_value: params.dig(:q, :created_at_gt),
-      date_to_value: params.dig(:q, :created_at_lt),
-      dropdown_direction: "right" %>
+      date_to_value: params.dig(:q, :created_at_lt) %>
     <% else %>
       <%= render "spree/admin/shared/calendar_range_picker",
       date_from_input_name: "q[completed_at_gt]",
       date_to_input_name: "q[completed_at_lt]",
       date_from_value: params.dig(:q, :completed_at_gt),
-      date_to_value: params.dig(:q, :completed_at_lt),
-      dropdown_direction: "right" %>
+      date_to_value: params.dig(:q, :completed_at_lt) %>
     <% end %>
 
     <%= render "spree/admin/orders/table_filter_dropdown" %>

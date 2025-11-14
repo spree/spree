@@ -1,4 +1,4 @@
-<%= dropdown id: 'pages_dropdown' do %>
+<%= dropdown id: 'pages_dropdown', direction: 'left' do %>
   <%= dropdown_toggle class: 'btn-light' do %>
     <span class="d-flex align-items-center pr-5">
       <%= icon @page.icon_name, class: 'mr-2' %>
@@ -6,7 +6,7 @@
     </span>
     <%= icon 'selector', class: 'mr-0 ml-2 mb-0 text-muted' %>
   <% end %>
-  <%= dropdown_menu direction: 'left', style: 'min-width: 250px' do %>
+  <%= dropdown_menu style: 'min-width: 250px' do %>
     <% @theme.pages.standard.order(name: :asc).find_all(&:customizable?).each do |page| %>
       <%= active_link_to spree.edit_admin_theme_path(@theme, theme_preview_id: @theme_preview.id, page_id: page.id), class: 'dropdown-item', active: @page == page, data: { turbo_prefetch: false } do %>
         <%= icon page.icon_name, class: 'mr-2' %>

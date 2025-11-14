@@ -18,11 +18,11 @@
       url: spree.bulk_status_update_admin_products_path(status: :draft)
     ) %>
 
-    <%= dropdown do %>
+    <%= dropdown direction: 'top' do %>
       <%= dropdown_toggle do %>
         <%= icon('dots-vertical', class: "mr-0") %>
       <% end %>
-      <%= dropdown_menu direction: 'top', class: 'mb-2' do %>
+      <%= dropdown_menu class: 'mb-2' do %>
         <%= bulk_action_link(
           Spree.t("admin.bulk_ops.products.title.set_status", status: :archived),
           spree.bulk_modal_admin_products_path(kind: :set_status, status: :archived),

@@ -2,7 +2,7 @@
   <%= dropdown_toggle class: 'btn-light btn-sm px-1' do %>
     <%= icon 'plus', class: 'mr-0' %>
   <% end %>
-  <%= dropdown_menu direction: 'left' do %>
+  <%= dropdown_menu do %>
     <%= link_to_with_icon 'shopping-bag-plus', Spree.t(:new_order), spree.new_admin_order_path, class: "dropdown-item" if can?(:manage, Spree::Order)  %>
 
     <%= link_to spree.new_admin_product_path, class: 'dropdown-item' do %>

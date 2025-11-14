@@ -6,8 +6,7 @@
           date_from_input_name: "q[created_at_gt]",
           date_to_input_name: "q[created_at_lt]",
           date_from_value: params.dig(:q, :created_at_gt),
-          date_to_value: params.dig(:q, :created_at_lt),
-          dropdown_direction: "right" %>
+          date_to_value: params.dig(:q, :created_at_lt) %>
 
     <%= render 'spree/admin/shared/filters_button' %>
   </div>

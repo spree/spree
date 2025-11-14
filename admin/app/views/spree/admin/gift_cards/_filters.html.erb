@@ -6,7 +6,8 @@
   class: "filter-wrap",
   data: {
     controller: "filters dropdown",
-    filters_url_value: request.url
+    filters_url_value: request.url,
+    dropdown_placement_value: "bottom-end"
   } do |f| %>
   <%= hidden_field_tag :frame_name, frame_name if frame_name.present? %>
 

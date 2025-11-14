@@ -7,7 +7,7 @@
 
 <% dropdown_direction ||= 'left' %>
 
-<%= dropdown data: { controller: 'dropdown calendar-range', action: 'click->calendar-range#open' }, class: 'h-100' do %>
+<%= dropdown direction: dropdown_direction, data: { controller: 'dropdown calendar-range', action: 'click->calendar-range#open' }, class: 'h-100' do %>
   <%= dropdown_toggle class: css_classes do %>
     <%= icon('calendar', class: 'mr-2') %>
     <div data-calendar-range-target="label">
@@ -18,7 +18,7 @@
       <% end %>
     </div>
   <% end %>
-  <%= dropdown_menu direction: dropdown_direction, class: "pt-2 px-2 pb-1" do %>
+  <%= dropdown_menu class: "pt-2 px-2 pb-1" do %>
     <div data-calendar-range-target="picker" class="d-none"></div>
   <% end %>
 
