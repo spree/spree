@@ -346,15 +346,15 @@ install_system_deps() {
 
     elif [ "$OS" = "linux" ]; then
         if [ "$DISTRO" = "ubuntu" ] || [ "$DISTRO" = "debian" ]; then
-            print_info "Installing libvips-dev..."
+            print_info "Installing development dependencies..."
             run_with_status "Running: apt-get update" sudo apt-get update
-            run_with_status "Running: apt-get install runtime deps" sudo apt-get install -y build-essential libvips-dev libssl-dev libreadline-dev zlib1g-dev libsqlite3-dev 
+            run_with_status "Running: apt-get install runtime deps" sudo apt-get install -y build-essential git libvips-dev libssl-dev libreadline-dev zlib1g-dev libsqlite3-dev libyaml-dev
 
             print_success "System dependencies installed"
         elif [ "$DISTRO" = "fedora" ] || [ "$DISTRO" = "rhel" ] || [ "$DISTRO" = "centos" ]; then
-            print_info "Installing vips development packages..."
-            run_with_status "Running: dnf/yum install runtime deps" sudo dnf install -y vips vips-devel gcc gcc-c++ make openssl-devel readline-devel zlib-devel sqlite-devel || \
-            sudo yum install -y vips vips-devel gcc gcc-c++ make openssl-devel readline-devel zlib-devel sqlite-devel 
+            print_info "Installing development packages..."
+            run_with_status "Running: dnf/yum install runtime deps" sudo dnf install -y vips vips-devel gcc gcc-c++ make openssl-devel readline-devel zlib-devel sqlite-devel libyaml-devel git || \
+            sudo yum install -y vips vips-devel gcc gcc-c++ make openssl-devel readline-devel zlib-devel sqlite-devel libyaml-devel git
 
             print_success "System dependencies installed"
         else
@@ -531,7 +531,15 @@ install_ruby() {
 
             if [ "$RUBY_MAJOR" -ge 3 ]; then
                 print_success "Ruby $CURRENT_RUBY is already installed"
-                return 0
+
+                # Still need to configure user gem installation if using system Ruby
+                GEM_DIR=$(gem environment gemdir 2>/dev/null || echo "")
+                if [[ "$GEM_DIR" == /var/lib/* ]] || [[ "$GEM_DIR" == /usr/lib/* ]]; then
+                    print_info "Configuring user gem installation (system Ruby detected)"
+                    # Will configure below
+                else
+                    return 0
+                fi
             else
                 print_warning "Current Ruby version $CURRENT_RUBY is too old (need >= 3.0)"
             fi
@@ -549,6 +557,55 @@ install_ruby() {
             print_info "Please install Ruby 3.0+ manually from: https://www.ruby-lang.org/en/documentation/installation/"
             exit 1
         fi
+
+        # Configure gem to install to user directory (avoids need for sudo)
+        print_info "Configuring user gem installation..."
+        RUBY_VERSION=$(ruby -e 'puts RbConfig::CONFIG["ruby_version"]')
+        USER_GEM_HOME="$HOME/.gem/ruby/$RUBY_VERSION"
+
+        # Add gem configuration to shell profiles
+        GEM_CONFIG="# Ruby gem user installation
+export GEM_HOME=\"\$HOME/.gem/ruby/$RUBY_VERSION\"
+export GEM_PATH=\"\$HOME/.gem/ruby/$RUBY_VERSION:/var/lib/gems/$RUBY_VERSION\"
+export PATH=\"\$HOME/.gem/ruby/$RUBY_VERSION/bin:\$PATH\""
+
+        # Add to bashrc (primary config file for Ubuntu/Debian)
+        if [ -f ~/.bashrc ]; then
+            if ! grep -q "GEM_HOME.*\.gem/ruby" ~/.bashrc; then
+                echo "" >> ~/.bashrc
+                echo "$GEM_CONFIG" >> ~/.bashrc
+                print_info "Added gem configuration to ~/.bashrc"
+            fi
+        fi
+
+        # Add to bash_profile if it exists
+        if [ -f ~/.bash_profile ]; then
+            if ! grep -q "GEM_HOME.*\.gem/ruby" ~/.bash_profile; then
+                echo "" >> ~/.bash_profile
+                echo "$GEM_CONFIG" >> ~/.bash_profile
+                print_info "Added gem configuration to ~/.bash_profile"
+            fi
+        fi
+
+        # Add to zshrc if it exists
+        if [ -f ~/.zshrc ]; then
+            if ! grep -q "GEM_HOME.*\.gem/ruby" ~/.zshrc; then
+                echo "" >> ~/.zshrc
+                echo "$GEM_CONFIG" >> ~/.zshrc
+                print_info "Added gem configuration to ~/.zshrc"
+            fi
+        fi
+
+        # Set for current session
+        export GEM_HOME="$USER_GEM_HOME"
+        export GEM_PATH="$USER_GEM_HOME:/var/lib/gems/$RUBY_VERSION"
+        export PATH="$USER_GEM_HOME/bin:$PATH"
+
+        # Create gem directory if it doesn't exist
+        mkdir -p "$USER_GEM_HOME"
+
+        RUBY_CONFIGURED=true
+        hash -r 2>/dev/null || true
     fi
 
     # Verify Ruby installation and version
@@ -590,6 +647,16 @@ install_rails() {
 
         # Rehash command cache to pick up gem executables
         hash -r 2>/dev/null || true
+    fi
+
+    # On Linux, ensure user gem paths are set
+    if [ "$OS" = "linux" ]; then
+        RUBY_VERSION=$(ruby -e 'puts RbConfig::CONFIG["ruby_version"]')
+        USER_GEM_HOME="$HOME/.gem/ruby/$RUBY_VERSION"
+        export GEM_HOME="$USER_GEM_HOME"
+        export GEM_PATH="$USER_GEM_HOME:/var/lib/gems/$RUBY_VERSION"
+        export PATH="$USER_GEM_HOME/bin:$PATH"
+        mkdir -p "$USER_GEM_HOME"
     fi
 
     # Check if Rails is already installed
@@ -634,6 +701,16 @@ create_rails_app() {
 
         # Rehash command cache to pick up gem executables
         hash -r 2>/dev/null || true
+    fi
+
+    # On Linux, ensure user gem paths are set
+    if [ "$OS" = "linux" ]; then
+        RUBY_VERSION=$(ruby -e 'puts RbConfig::CONFIG["ruby_version"]')
+        USER_GEM_HOME="$HOME/.gem/ruby/$RUBY_VERSION"
+        export GEM_HOME="$USER_GEM_HOME"
+        export GEM_PATH="$USER_GEM_HOME:/var/lib/gems/$RUBY_VERSION"
+        export PATH="$USER_GEM_HOME/bin:$PATH"
+        mkdir -p "$USER_GEM_HOME"
     fi
 
     # Download template if running from URL, or use local if exists
@@ -781,6 +858,15 @@ show_final_instructions() {
             hash -r 2>/dev/null || true
         fi
 
+        # On Linux, ensure user gem paths are set
+        if [ "$OS" = "linux" ]; then
+            RUBY_VERSION=$(ruby -e 'puts RbConfig::CONFIG["ruby_version"]')
+            USER_GEM_HOME="$HOME/.gem/ruby/$RUBY_VERSION"
+            export GEM_HOME="$USER_GEM_HOME"
+            export GEM_PATH="$USER_GEM_HOME:/var/lib/gems/$RUBY_VERSION"
+            export PATH="$USER_GEM_HOME/bin:$PATH"
+        fi
+
         bin/dev
     fi
 }
@@ -814,13 +900,13 @@ main() {
     create_rails_app
     show_final_instructions
 
-    # On macOS, automatically start a new shell with updated PATH if Homebrew Ruby was configured
-    # (Only needed for Homebrew Ruby since that's when we modify shell profiles)
-    if [ "$OS" = "macos" ] && [ "$USING_HOMEBREW_RUBY" = true ] && [ "$RUBY_CONFIGURED" = true ]; then
+    # Automatically start a new shell with updated PATH if Ruby/gem paths were configured
+    # (Only needed when we modify shell profiles - Homebrew Ruby or gem bin paths)
+    if [ "$RUBY_CONFIGURED" = true ]; then
         sleep 1
 
         # Detect user's shell and start it with updated environment
-        USER_SHELL="${SHELL:-/bin/zsh}"
+        USER_SHELL="${SHELL:-/bin/bash}"
 
         if [[ "$USER_SHELL" == *"zsh"* ]]; then
             exec /bin/zsh -l
