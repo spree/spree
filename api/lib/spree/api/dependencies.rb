@@ -115,7 +115,7 @@ module Spree
         v3_storefront_section_serializer: 'Spree::Api::V3::SectionSerializer',
         v3_storefront_block_serializer: 'Spree::Api::V3::BlockSerializer',
         v3_storefront_page_link_serializer: 'Spree::Api::V3::PageLinkSerializer',
-
+        v3_storefront_taxonomy_serializer: 'Spree::Api::V3::TaxonomySerializer',
         # platform serializers
         platform_metafield_serializer: 'Spree::Api::V2::Platform::MetafieldSerializer',
 

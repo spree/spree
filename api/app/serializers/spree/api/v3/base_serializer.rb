@@ -86,19 +86,13 @@ module Spree
 
         # Image URL helper
         def image_url(image, size: nil)
-          return nil unless image
+          return nil unless image&.attached?
 
-          if size && image.attachment.representation_processable?
-            Rails.application.routes.url_helpers.rails_representation_url(
-              image.attachment.variant(resize_to_limit: size),
-              only_path: false
-            )
-          else
-            Rails.application.routes.url_helpers.rails_blob_url(
-              image.attachment,
-              only_path: false
-            )
-          end
+          url_helpers.cdn_image_url(image.attachment)
+        end
+
+        def url_helpers
+          Rails.application.routes.url_helpers
         end
 
         # Timestamp helper
