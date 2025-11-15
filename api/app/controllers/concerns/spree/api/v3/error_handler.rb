@@ -6,6 +6,10 @@ module Spree
 
         # Stripe-style error codes for consistent API error responses
         ERROR_CODES = {
+          # Authentication errors
+          authentication_required: 'authentication_required',
+          authentication_failed: 'authentication_failed',
+
           # Resource errors
           record_not_found: 'record_not_found',
           resource_invalid: 'resource_invalid',

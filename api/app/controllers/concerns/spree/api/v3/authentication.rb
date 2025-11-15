@@ -4,6 +4,8 @@ module Spree
       module Authentication
         extend ActiveSupport::Concern
 
+        include Spree::Api::V3::ErrorHandler
+
         included do
           attr_reader :current_user
         end
@@ -25,7 +27,7 @@ module Spree
           authenticate_user
 
           unless current_user
-            render json: { error: 'Authentication required' }, status: :unauthorized
+            render_error(code: ErrorHandler::ERROR_CODES[:authentication_required], message: 'Authentication required', status: :unauthorized)
             return false
           end
         end
