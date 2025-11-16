@@ -47,11 +47,7 @@ module Spree
         @collection = @collection.active if active
         @collection = @collection.expired if expired
 
-        @search = @collection.ransack(params[:q])
-        @collection = @search.result(distinct: true).
-                      includes(:promotion_actions).
-                      page(params[:page]).
-                      per(params[:per_page])
+        @collection = @collection.includes(:promotion_actions).
 
         params[:q][:expired] = expired
         params[:q][:active] = active

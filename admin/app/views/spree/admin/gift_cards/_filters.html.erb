@@ -1,7 +1,7 @@
 <% frame_name ||= nil %>
 <% filter_form_url = params[:user_id].present? ? spree.admin_user_gift_cards_path(params[:user_id]) : spree.admin_gift_cards_path %>
 
-<%= search_form_for @search,
+<%= search_form_for search_collection,
   url: filter_form_url,
   class: "filter-wrap",
   data: {

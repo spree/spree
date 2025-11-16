@@ -257,6 +257,12 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     end
   end
 
+  # Sets the search variable for the current controller
+  # For compatibility with old code that expects @search to be set
+  def set_search_variable
+    @search = search_collection
+  end
+
   # Returns the URL to redirect to after destroying a resource
   # @return [String]
   def location_after_destroy
