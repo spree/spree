@@ -1,10 +1,10 @@
 module Spree
   module Admin
     class GiftCardsController < ResourceController
-      before_action :load_user
+      prepend_before_action :load_user
+      prepend_before_action :set_user_id_filter, only: :index
       before_action :add_breadcrumbs
       before_action :load_orders, only: :show
-      before_action :set_user_id_filter, only: :index
 
       helper_method :gift_cards_filter_dropdown_value
 
