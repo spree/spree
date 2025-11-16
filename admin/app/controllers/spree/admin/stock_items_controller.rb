@@ -12,8 +12,8 @@ module Spree
       end
 
       def collection
-        @search = super.accessible_by(current_ability, :update).ransack(params[:q])
-        @stock_items = @search.result.
+        @search = scope.accessible_by(current_ability, :update).ransack(params[:q])
+        @collection = @search.result.
                        joins(:variant).
                        where(spree_variants: { track_inventory: true }).
                        merge(current_store.variants.eligible).
