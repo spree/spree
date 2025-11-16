@@ -4,6 +4,7 @@ module Spree
       before_action :load_user
       before_action :add_breadcrumbs
       before_action :load_orders, only: :show
+      before_action :set_user_id_filter, only: :index
 
       helper_method :gift_cards_filter_dropdown_value
 
@@ -21,23 +22,15 @@ module Spree
         end
       end
 
-      def collection
-        return @collection if @collection.present?
+      def collection_includes
+        [:user, :created_by]
+      end
 
-        @collection = super
+      def set_user_id_filter
+        return if params[:user_id].blank?
 
         params[:q] ||= {}
-        params[:q][:s] ||= 'created_at desc'
         params[:q][:user_id_eq] = params[:user_id] if params[:user_id].present?
-
-        @search = @collection
-        @search = @search.ransack(params[:q])
-
-        @collection = @search.result.includes(:user, :created_by)
-
-        @collection = @collection.page(params[:page]).per(params[:per_page])
-
-        @collection
       end
 
       def location_after_destroy

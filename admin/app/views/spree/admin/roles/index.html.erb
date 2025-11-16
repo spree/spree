@@ -8,7 +8,7 @@
 <%= render_admin_partials(:roles_header_partials) %>
 
 <div class="card-lg">
-  <% if @collection.any? %>
+  <% if paginated_collection.any? %>
     <div class="table-responsive">
       <table class="table">
         <thead>
@@ -19,7 +19,7 @@
           </tr>
         </thead>
         <tbody>
-          <% @collection.each do |role| %>
+          <% paginated_collection.each do |role| %>
             <tr id="<%= spree_dom_id role %>">
               <td class="w-20">
                 <code><%= role.name %></code>

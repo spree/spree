@@ -15,16 +15,6 @@ module Spree
         spree.admin_stock_transfer_path(@object)
       end
 
-      def collection
-        params[:q] ||= {}
-        params[:q][:s] ||= 'created_at desc'
-
-        @search = super.accessible_by(current_ability, :index).ransack(params[:q])
-        @stock_transfers = @search.result.
-                           page(params[:page]).
-                           per(params[:per_page])
-      end
-
       def permitted_resource_params
         params.require(:stock_transfer).permit(permitted_stock_transfer_attributes)
       end

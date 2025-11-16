@@ -7,7 +7,7 @@
 <%= render_admin_partials(:exports_header_partials) %>
 
 <div class="card-lg">
-  <% if @collection.any? %>
+  <% if paginated_collection.any? %>
     <div class="table-responsive">
       <table class="table">
         <thead>
@@ -23,10 +23,10 @@
           </tr>
         </thead>
         <tbody>
-          <%= render partial: 'export', collection: @collection, cached: true %>
+          <%= render partial: 'export', collection: paginated_collection, cached: true %>
         </tbody>
       </table>
-      <%= render 'spree/admin/shared/index_table_options', collection: @collection %>
+      <%= render 'spree/admin/shared/index_table_options', collection: paginated_collection %>
     </div>
   <% else %>
     <%= render 'spree/admin/shared/no_resource_found', new_object_url: nil %>

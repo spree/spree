@@ -10,7 +10,7 @@
 <%= render_admin_partials(:store_credit_categories_header_partials) %>
 
 <div class="card-lg">
-  <% if @collection.any? %>
+  <% if paginated_collection.any? %>
     <div class="table-responsive">
       <table class="table">
         <thead>
@@ -20,7 +20,7 @@
           </tr>
         </thead>
         <tbody>
-          <% @collection.each do |store_credit_category| %>
+          <% paginated_collection.each do |store_credit_category| %>
             <tr id="<%= spree_dom_id store_credit_category %>">
               <td>
                 <%= store_credit_category.name %>

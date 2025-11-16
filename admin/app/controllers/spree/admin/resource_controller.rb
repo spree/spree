@@ -227,10 +227,14 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
 
     if model_class.respond_to?(:accessible_by) &&
         !current_ability.has_block?(params[:action], model_class)
-      base_scope.accessible_by(current_ability, action)
+      base_scope.accessible_by(current_ability, action).includes(collection_includes)
     else
-      base_scope
+      base_scope.includes(collection_includes)
     end
+  end
+
+  def collection_includes
+    []
   end
 
   # Returns the filtered and paginated ransack results

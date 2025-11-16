@@ -271,9 +271,7 @@ module Spree
         @search = @collection.ransack(params[:q].except(:deleted_at_null))
         @collection = @search.result(distinct: true).
                       for_ordering_with_translations(model_class, :name).
-                      includes(product_includes).
-                      page(params[:page]).
-                      per(params[:per_page] || Spree::Admin::RuntimeConfig.admin_products_per_page)
+                      includes(product_includes)
 
         @collection
       end
