@@ -108,7 +108,7 @@ module Spree
       end
 
       def product_list_filters_search_form_path
-        [:admin, search_collection]
+        [:admin, @search]
       end
 
       def sorted_product_properties(product)

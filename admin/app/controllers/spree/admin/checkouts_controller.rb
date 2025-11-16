@@ -19,8 +19,8 @@ module Spree
 
       private
 
-      def collection
-        @collection ||= current_store.checkouts.accessible_by(current_ability, :index)
+      def scope
+        current_store.checkouts.accessible_by(current_ability, :index)
       end
     end
   end

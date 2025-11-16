@@ -1,28 +1,28 @@
-<% if paginated_collection.any? %>
+<% if @collection.any? %>
   <div class="table-responsive">
     <table class="table" id="listing_orders">
       <thead>
         <tr>
           <th scope="col"><%= I18n.t(:number, scope: 'activerecord.attributes.spree/order') %></th>
           <% if controller_name == 'orders' %>
-            <th scope="col"><%= sort_link search_collection, :completed_at,   Spree.t(:date) %></th>
+            <th scope="col"><%= sort_link @search, :completed_at,   Spree.t(:date) %></th>
           <% else %>
-            <th scope="col"><%= sort_link search_collection, :created_at,     Spree.t(:date) %></th>
+            <th scope="col"><%= sort_link @search, :created_at,     Spree.t(:date) %></th>
           <% end %>
           <th class="d-customer"><%= Spree.t(:customer) %></th>
           <th scope="col"><%= Spree.t(:package_from) %></th>
           <th scope="col"><%= I18n.t(:payment_state, scope: 'activerecord.attributes.spree/order') %></th>
           <th scope="col"><%= I18n.t(:shipment_state, scope: 'activerecord.attributes.spree/order') %></th>
-          <th class="text-right"><%= sort_link search_collection, :item_count, I18n.t(:item_count, scope: 'activerecord.attributes.spree/order') %></th>
-          <th class="text-right"><%= sort_link search_collection, :total, I18n.t(:total, scope: 'activerecord.attributes.spree/order') %></th>
+          <th class="text-right"><%= sort_link @search, :item_count, I18n.t(:item_count, scope: 'activerecord.attributes.spree/order') %></th>
+          <th class="text-right"><%= sort_link @search, :total, I18n.t(:total, scope: 'activerecord.attributes.spree/order') %></th>
         </tr>
       </thead>
       <tbody>
-        <%= render collection: paginated_collection, partial: 'spree/admin/orders/order', cached: !(defined?(current_vendor) && current_vendor) ? spree_base_cache_scope : false %>
+        <%= render collection: @collection, partial: 'spree/admin/orders/order', cached: !(defined?(current_vendor) && current_vendor) ? spree_base_cache_scope : false %>
       </tbody>
     </table>
   </div>
 <% else %>
   <%= render 'spree/admin/shared/no_resource_found', new_object_url: nil, model_class: Spree::Order %>
 <% end %>
-<%= render 'spree/admin/shared/index_table_options', collection: paginated_collection %>
+<%= render 'spree/admin/shared/index_table_options', collection: @collection %>

@@ -15,7 +15,7 @@
     <%= render 'spree/admin/shared/export_modal', export_type: Spree::Exports::Customers %>
     <%= render "spree/admin/users/filters" %>
 
-    <% if paginated_collection.any? %>
+    <% if @collection.any? %>
       <div data-controller="bulk-operation bulk-dialog" data-action="keydown.esc->bulk-operation#cancel" tabindex="0">
         <%= form_tag spree.admin_users_path, data: { 'bulk-operation-target': 'form' } do %>
           <%= render 'spree/admin/shared/bulk_modal' %>
@@ -53,17 +53,17 @@
                   <th scope="col"><%= Spree.t(:location) %></th>
                   <th scope="col"><%= Spree.t('admin.num_orders') %></th>
                   <th scope="col"><%= Spree.t('admin.amount_spent') %></th>
-                  <th scope="col"><%= sort_link search_collection, :created_at, Spree.t(:created_at) %></th>
+                  <th scope="col"><%= sort_link @search, :created_at, Spree.t(:created_at) %></th>
                 </tr>
               </thead>
               <tbody>
-                <%= render collection: paginated_collection, partial: "spree/admin/users/user", cached: spree_base_cache_scope %>
+                <%= render collection: @collection, partial: "spree/admin/users/user", cached: spree_base_cache_scope %>
               </tbody>
             </table>
           </div>
         <% end %>
       </div>
-      <%= render "spree/admin/shared/index_table_options", collection: paginated_collection %>
+      <%= render "spree/admin/shared/index_table_options", collection: @collection %>
     <% else %>
       <%= render "spree/admin/shared/no_resource_found" %>
     <% end %>

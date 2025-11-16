@@ -1,4 +1,4 @@
-  <% if paginated_collection.any? %>
+  <% if @collection.any? %>
     <div data-controller="bulk-operation bulk-dialog" data-action="keydown.esc->bulk-operation#cancel" tabindex="0">
       <%= form_tag spree.admin_products_path, method: :put, data: { 'bulk-operation-target': 'form' } do %>
         <%= render 'spree/admin/shared/bulk_modal' %>
@@ -12,7 +12,7 @@
                   <%= bulk_operations_select_all_checkbox %>
                 </th>
                 <th scope="col">
-                  <%= sort_link search_collection,
+                  <%= sort_link @search,
                   :name,
                   Spree.t(:name),
                   {
@@ -35,13 +35,13 @@
               </tr>
             </thead>
             <tbody>
-              <%= render partial: 'spree/admin/products/product', collection: paginated_collection, cached: spree_base_cache_scope %>
+              <%= render partial: 'spree/admin/products/product', collection: @collection, cached: spree_base_cache_scope %>
             </tbody>
           </table>
         </div>
       <% end %>
     </div>
-    <%= render partial: 'spree/admin/shared/index_table_options', locals: { collection: paginated_collection } %>
+    <%= render partial: 'spree/admin/shared/index_table_options', locals: { collection: @collection } %>
   <% else %>
     <%= render 'spree/admin/shared/no_resource_found' %>
   <% end %>

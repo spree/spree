@@ -30,20 +30,20 @@ module Spree
         true
       end
 
-      def collection
-        @collection ||= parent.
-                        classifications.
-                        joins(:product).
-                        merge(current_store.products.not_archived).
-                        includes(
-                          :taxon,
-                          product: {
-                            variant_images: [],
-                            master: [:images, :stock_items, :stock_locations],
-                            variants: [:images, :stock_items, :stock_locations]
-                          }
-                        ).
-                        accessible_by(current_ability)
+      def scope
+        parent.
+          classifications.
+          joins(:product).
+          merge(current_store.products.not_archived).
+          includes(
+            :taxon,
+            product: {
+              variant_images: [],
+              master: [:images, :stock_items, :stock_locations],
+              variants: [:images, :stock_items, :stock_locations]
+            }
+          ).
+          accessible_by(current_ability)
       end
 
       def load_sorted_classifications

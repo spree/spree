@@ -1,4 +1,4 @@
-<%= search_form_for [:admin, search_collection], class: "filter-wrap", data: {controller: "filters auto-submit"} do |f| %>
+<%= search_form_for [:admin, @search], class: "filter-wrap", data: {controller: "filters auto-submit"} do |f| %>
   <div class="d-flex">
     <%= render 'spree/admin/shared/filters_search_bar', param: :multi_search, label: Spree.t(:title) %>
 

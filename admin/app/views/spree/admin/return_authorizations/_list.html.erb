@@ -1,4 +1,4 @@
-<% if paginated_collection.any? %>
+<% if @collection.any? %>
   <div class="table-responsive">
     <table class="table">
       <thead>
@@ -11,7 +11,7 @@
       </thead>
       <tbody>
         <%= render partial: "spree/admin/return_authorizations/return_authorization",
-        collection: paginated_collection,
+        collection: @collection,
         cached: spree_base_cache_scope %>
       </tbody>
     </table>

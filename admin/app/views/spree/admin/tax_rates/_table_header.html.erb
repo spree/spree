@@ -1,8 +1,8 @@
 <tr>
-  <th scope="col"><%= sort_link search_collection, :name, Spree.t(:name) %></th>
+  <th scope="col"><%= sort_link @search, :name, Spree.t(:name) %></th>
   <th scope="col"><%= Spree.t(:tax_category) %></th>
   <th scope="col"><%= Spree.t(:zone) %></th>
-  <th scope="col"><%= sort_link search_collection, :amount, Spree.t(:amount) %></th>
+  <th scope="col"><%= sort_link @search, :amount, Spree.t(:amount) %></th>
   <th scope="col"><%= Spree.t(:included_in_price) %></th>
   <th scope="col"><%= Spree.t(:show_rate_in_label) %></th>
   <th scope="col"></th>

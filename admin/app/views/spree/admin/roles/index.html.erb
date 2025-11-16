@@ -8,18 +8,18 @@
 <%= render_admin_partials(:roles_header_partials) %>
 
 <div class="card-lg">
-  <% if paginated_collection.any? %>
+  <% if @collection.any? %>
     <div class="table-responsive">
       <table class="table">
         <thead>
           <tr>
-            <th scope="col"><%= sort_link search_collection, :name, Spree.t(:name) %></th>
+            <th scope="col"><%= sort_link @search, :name, Spree.t(:name) %></th>
             <th scope="col"><%= Spree.t(:permissions) %></th>
             <th scope="col"></th>
           </tr>
         </thead>
         <tbody>
-          <% paginated_collection.each do |role| %>
+          <% @collection.each do |role| %>
             <tr id="<%= spree_dom_id role %>">
               <td class="w-20">
                 <code><%= role.name %></code>

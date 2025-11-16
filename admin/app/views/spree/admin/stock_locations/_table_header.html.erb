@@ -1,6 +1,6 @@
 <tr>
-  <th scope="col"><%= sort_link search_collection, :name, Spree.t(:name) %></th>
-  <th scope="col"><%= sort_link search_collection, :country, Spree.t(:country) %></th>
+  <th scope="col"><%= sort_link @search, :name, Spree.t(:name) %></th>
+  <th scope="col"><%= sort_link @search, :country, Spree.t(:country) %></th>
   <th scope="col"><%= Spree.t(:active) %>?</th>
   <% if can?(:mark_as_default, Spree::StockLocation) %>
     <th scope="col"><%= Spree.t(:default) %>?</th>

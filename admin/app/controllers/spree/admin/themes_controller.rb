@@ -70,7 +70,7 @@ module Spree
         true
       end
 
-      def collection
+      def scope
         super.without_previews.order(default: :desc)
       end
 

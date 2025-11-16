@@ -15,7 +15,7 @@ module Spree
 
       private
 
-      def collection
+      def scope
         super.order_default
       end
 

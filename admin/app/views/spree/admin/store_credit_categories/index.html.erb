@@ -10,17 +10,17 @@
 <%= render_admin_partials(:store_credit_categories_header_partials) %>
 
 <div class="card-lg">
-  <% if paginated_collection.any? %>
+  <% if @collection.any? %>
     <div class="table-responsive">
       <table class="table">
         <thead>
           <tr>
-            <th scope="col"><%= sort_link search_collection, :name, Spree.t(:name) %></th>
+            <th scope="col"><%= sort_link @search, :name, Spree.t(:name) %></th>
             <th scope="col"></th>
           </tr>
         </thead>
         <tbody>
-          <% paginated_collection.each do |store_credit_category| %>
+          <% @collection.each do |store_credit_category| %>
             <tr id="<%= spree_dom_id store_credit_category %>">
               <td>
                 <%= store_credit_category.name %>
