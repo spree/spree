@@ -1,19 +1,14 @@
-<% args = params.clone %>
 <% entry_name ||= nil %>
 
-<% if defined?(per_page_action) %>
-  <% args[:action] = per_page_action %>
-<% end %>
-
-<% if collection.any? && collection.respond_to?(:current_page) %>
+<% if collection.any? && defined?(@pagy) && @pagy %>
   <div class="pagination-container">
     <div class="index-pagination-row d-flex align-items-center justify-content-between px-2">
       <%= per_page_dropdown %>
       <div class="d-none d-lg-block text-center text-muted">
-        <%= page_entries_info(collection, entry_name: entry_name) %>
+        <%== @pagy.info_tag(item_name: entry_name || 'item') %>
       </div>
       <div class="text-right">
-        <%= paginate collection, theme: 'admin-twitter-bootstrap-4' %>
+        <%== @pagy.bootstrap_nav %>
       </div>
     </div>
   </div>

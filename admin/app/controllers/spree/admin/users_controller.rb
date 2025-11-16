@@ -57,16 +57,19 @@ module Spree
         params[:q][:s] ||= 'created_at desc'
         params[:q][:created_at_not_null] ||= 1
 
-        @collection = model_class.accessible_by(current_ability, :index)
-        @search = @collection.ransack(params[:q])
-        @collection = @search.result(distinct: true).
-                      includes(
-                        addresses: [:country, :state],
-                        ship_address: [:country, :state],
-                        bill_address: [:country, :state],
-                        avatar_attachment: :blob
-                      ).
-                      page(params[:page]).per(params[:per_page])
+        base_collection = model_class.accessible_by(current_ability, :index)
+        @search = base_collection.ransack(params[:q])
+        result = @search.result(distinct: true).
+                 includes(
+                   addresses: [:country, :state],
+                   ship_address: [:country, :state],
+                   bill_address: [:country, :state],
+                   avatar_attachment: :blob
+                 )
+
+        @pagy, @collection = pagy(result, items: params[:per_page] || Spree::Admin::Config[:admin_records_per_page])
+
+        @collection
       end
 
       def find_resource

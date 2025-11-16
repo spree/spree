@@ -237,10 +237,12 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   # @return [ActiveRecord::Relation]
   def paginated_collection
     @paginated_collection ||= begin
-      # Check if collection is already a ransack collection and return it
-      return collection if collection.respond_to?(:current_page)
+      # Check if collection is already paginated and return it
+      return collection if @pagy.present?
 
-      search_collection.result(distinct: true).page(params[:page]).per(params[:per_page])
+      @pagy, records = pagy(search_collection.result(distinct: true), items: params[:per_page] || Spree::Admin::Config[:admin_records_per_page])
+
+      records
     end
   end
 

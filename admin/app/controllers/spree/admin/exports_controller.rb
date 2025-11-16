@@ -25,12 +25,14 @@ module Spree
       def collection
         return @collection if @collection.present?
 
-        @collection = super
+        base_collection = super
 
         params[:q] ||= {}
         params[:q][:s] ||= 'created_at desc'
-        @search = @collection.ransack(params[:q])
-        @collection = @search.result.includes(:user, attachment_attachment: :blob).page(params[:page])
+        @search = base_collection.ransack(params[:q])
+        @pagy, @collection = pagy(@search.result.includes(:user, attachment_attachment: :blob), items: params[:per_page] || Spree::Admin::Config[:admin_records_per_page])
+
+        @collection
       end
 
       def set_user

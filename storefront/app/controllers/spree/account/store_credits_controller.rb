@@ -3,10 +3,11 @@ module Spree
     class StoreCreditsController < BaseController
       # GET /account/store_credits
       def index
-        @store_credit_events = Spree::StoreCreditEvent.where(store_credit: user_store_credits).
-                               exposed_events.
-                               reverse_chronological.
-                               page(params[:page]).per(25)
+        scope = Spree::StoreCreditEvent.where(store_credit: user_store_credits).
+                exposed_events.
+                reverse_chronological
+
+        @pagy, @store_credit_events = pagy(scope, items: 25)
       end
 
       private

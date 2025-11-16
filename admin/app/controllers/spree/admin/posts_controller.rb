@@ -23,7 +23,9 @@ module Spree
         params[:q][:s] ||= 'published_at desc'
 
         @search = @collection.ransack(params[:q])
-        @collection = @search.result.page(params[:page]).per(params[:per_page])
+        @pagy, @collection = pagy(@search.result, items: params[:per_page] || Spree::Admin::Config[:admin_records_per_page])
+
+        @collection
       end
 
       def load_post_categories

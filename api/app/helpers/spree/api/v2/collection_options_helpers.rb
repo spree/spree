@@ -3,20 +3,24 @@ module Spree
     module V2
       module CollectionOptionsHelpers
         def collection_links(collection)
+          pagy_obj = collection.respond_to?(:pagy) ? collection.pagy : nil
+
           {
             self: request.original_url,
-            next: pagination_url(collection.next_page || collection.total_pages),
-            prev: pagination_url(collection.prev_page || 1),
-            last: pagination_url(collection.total_pages),
+            next: pagination_url(pagy_obj&.next || pagy_obj&.last || 1),
+            prev: pagination_url(pagy_obj&.prev || 1),
+            last: pagination_url(pagy_obj&.last || 1),
             first: pagination_url(1)
           }
         end
 
         def collection_meta(collection)
+          pagy_obj = collection.respond_to?(:pagy) ? collection.pagy : nil
+
           {
             count: collection.size,
-            total_count: collection.total_count,
-            total_pages: collection.total_pages
+            total_count: pagy_obj&.count || collection.size,
+            total_pages: pagy_obj&.pages || 1
           }
         end
 

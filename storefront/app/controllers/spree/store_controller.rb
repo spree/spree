@@ -1,6 +1,7 @@
 module Spree
   class StoreController < BaseController
     include Spree::Core::ControllerHelpers::Order
+    include Pagy::Method
 
     include Spree::LocaleUrls
     include Spree::ThemeConcern
@@ -13,6 +14,7 @@ module Spree
     layout :choose_layout
 
     helper 'spree/base'
+    helper 'spree/pagy'
     helper 'spree/locale'
     helper 'spree/storefront_locale'
     helper 'spree/currency'
@@ -168,9 +170,10 @@ module Spree
 
         default_per_page = Spree::Storefront::Config[:products_per_page]
         per_page = params[:per_page].present? ? params[:per_page].to_i : default_per_page
-        page = params[:page].present? ? params[:page].to_i : 1
 
-        products.page(page).per(per_page)
+        @pagy, paginated_products = pagy(products, items: per_page, page: params[:page])
+
+        paginated_products
       end
     end
 

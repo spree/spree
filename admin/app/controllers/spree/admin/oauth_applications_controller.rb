@@ -10,11 +10,13 @@ module Spree
       def collection
         return @collection if @collection.present?
 
-        @collection = super
+        base_collection = super
 
         params[:q] ||= {}
-        @search = @collection.ransack(params[:q])
-        @collection = @search.result.page(params[:page]).per(500)
+        @search = base_collection.ransack(params[:q])
+        @pagy, @collection = pagy(@search.result, items: 500)
+
+        @collection
       end
 
       def create_turbo_stream_enabled?

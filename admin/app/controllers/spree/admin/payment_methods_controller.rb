@@ -27,9 +27,11 @@ module Spree
 
         params[:q] ||= {}
 
-        @collection = super.order(position: :asc)
-        @search = @collection.ransack(params[:q])
-        @collection = @search.result.page(params[:page]).per(params[:per_page])
+        base_collection = super.order(position: :asc)
+        @search = base_collection.ransack(params[:q])
+        @pagy, @collection = pagy(@search.result, items: params[:per_page] || Spree::Admin::Config[:admin_records_per_page])
+
+        @collection
       end
 
       def require_payment_type

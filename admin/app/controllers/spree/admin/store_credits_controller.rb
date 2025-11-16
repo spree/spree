@@ -9,8 +9,8 @@ module Spree
       helper_method :collection_url
 
       def index
-        @store_credits = scope.includes(:created_by).order(created_at: :desc)
-        @store_credits = @store_credits.page(params[:page]).per(params[:per_page])
+        collection_scope = scope.includes(:created_by).order(created_at: :desc)
+        @pagy, @store_credits = pagy(collection_scope, items: params[:per_page] || Spree::Admin::Config[:admin_records_per_page])
 
         @collection = @store_credits
       end

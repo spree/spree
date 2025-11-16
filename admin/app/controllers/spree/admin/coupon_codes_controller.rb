@@ -8,14 +8,15 @@ module Spree
       def collection
         return @collection if @collection.present?
 
-        @collection = super
+        base_collection = super
 
         params[:q] ||= {}
-        @search = @collection.ransack(params[:q])
+        @search = base_collection.ransack(params[:q])
         @collection = if request.format.csv?
                         @search.result
                       else
-                        @search.result.page(params[:page])
+                        @pagy, result = pagy(@search.result, items: params[:per_page] || Spree::Admin::Config[:admin_records_per_page])
+                        result
                       end
       end
     end

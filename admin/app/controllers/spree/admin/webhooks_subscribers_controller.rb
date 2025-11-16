@@ -10,7 +10,7 @@ module Spree
 
       def show
         @webhooks_subscriber = Webhooks::Subscriber.find(params[:id])
-        @events = @webhooks_subscriber.events.order(created_at: :desc).page(params[:page]).per(params[:per_page])
+        @pagy, @events = pagy(@webhooks_subscriber.events.order(created_at: :desc), items: params[:per_page] || Spree::Admin::Config[:admin_records_per_page])
       end
 
       private
@@ -24,9 +24,9 @@ module Spree
         params[:q][:s] ||= 'created_at desc'
 
         @search = Webhooks::Subscriber.accessible_by(current_ability).ransack(params[:q])
-        @collection = @search.result.
-                      page(params[:page]).
-                      per(params[:per_page])
+        @pagy, @collection = pagy(@search.result, items: params[:per_page] || Spree::Admin::Config[:admin_records_per_page])
+
+        @collection
       end
 
       def process_subscriptions

@@ -18,7 +18,9 @@ module Spree
         params[:q] ||= {}
         params[:q][:s] ||= 'name asc'
         @search = super.ransack(params[:q])
-        @zones = @search.result.page(params[:page]).per(params[:per_page])
+        @pagy, @zones = pagy(@search.result, items: params[:per_page] || Spree::Admin::Config[:admin_records_per_page])
+
+        @zones
       end
 
       def load_data

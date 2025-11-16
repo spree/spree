@@ -2,11 +2,13 @@ module Spree
   module Admin
     class BaseController < Spree::BaseController
       include Spree::Admin::BreadcrumbConcern
+      include Pagy::Method
 
       layout :choose_layout
       default_form_builder Spree::Admin::FormBuilder
 
       helper 'spree/base'
+      helper 'spree/pagy'
       helper 'spree/admin/navigation'
       helper 'spree/locale'
       helper 'spree/currency'
