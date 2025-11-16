@@ -1,7 +1,7 @@
 class Spree::Admin::ResourceController < Spree::Admin::BaseController
   include Spree::Admin::Callbacks
 
-  helper_method :new_object_url, :edit_object_url, :object_url, :collection_url, :model_class, :search_collection, :paginated_collection
+  helper_method :new_object_url, :edit_object_url, :object_url, :collection_url, :model_class, :search, :collection
   before_action :load_resource
   before_action :set_currency, :set_current_store, only: [:new, :create]
 
@@ -217,7 +217,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
 
   # Returns the collection of resources (as a scope)
   # @return [ActiveRecord::Relation]
-  def collection
+  def scope
     return parent.send(controller_name) if parent_data.present?
 
     base_scope = model_class.try(:for_store, current_store) || model_class
@@ -233,34 +233,20 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     end
   end
 
-  def collection_includes
-    []
+  # keeping this as @search for backwards compatibility
+  # @return [Ransack::Search]
+  def search_collection
+    @search ||= scope.ransack(params[:q])
   end
 
   # Returns the filtered and paginated ransack results
   # @return [ActiveRecord::Relation]
-  def paginated_collection
-    @paginated_collection ||= begin
-      # Check if collection is already a ransack collection and return it
-      return collection if collection.respond_to?(:current_page)
-
-      search_collection.result(distinct: true).page(params[:page]).per(params[:per_page])
-    end
+  def collection
+    @collection ||= search_collection.result(distinct: true).page(params[:page]).per(params[:per_page])
   end
 
-  # Returns the ransack search collection
-  # @return [Ransack::Search]
-  def search_collection
-    @search_collection ||= begin
-      params[:q] ||= {}
-      collection.ransack(params[:q])
-    end
-  end
-
-  # Sets the search variable for the current controller
-  # For compatibility with old code that expects @search to be set
-  def set_search_variable
-    @search = search_collection
+  def collection_includes
+    []
   end
 
   # Returns the URL to redirect to after destroying a resource
