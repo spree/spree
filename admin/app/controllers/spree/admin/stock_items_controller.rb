@@ -12,6 +12,8 @@ module Spree
       end
 
       def collection
+        return @collection if @collection.present?
+
         @search = scope.accessible_by(current_ability, :update).ransack(params[:q])
         @collection = @search.result.
                        joins(:variant).
