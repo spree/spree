@@ -53,7 +53,7 @@
                   <th scope="col"><%= Spree.t(:location) %></th>
                   <th scope="col"><%= Spree.t('admin.num_orders') %></th>
                   <th scope="col"><%= Spree.t('admin.amount_spent') %></th>
-                  <th scope="col"><%= sort_link @search, :created_at, Spree.t(:created_at) %></th>
+                  <th scope="col"><%= sort_link search_collection, :created_at, Spree.t(:created_at) %></th>
                 </tr>
               </thead>
               <tbody>

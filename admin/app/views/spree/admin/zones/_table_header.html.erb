@@ -1,7 +1,7 @@
 <tr>
-  <th scope="col"><%= sort_link @search,:name, Spree.t(:name) %></th>
+  <th scope="col"><%= sort_link search_collection,:name, Spree.t(:name) %></th>
   <th scope="col">
-    <%= sort_link @search,:description, Spree.t(:description) %>
+    <%= sort_link search_collection,:description, Spree.t(:description) %>
   </th>
   <th scope="col"><%= Spree.t(:default_tax_zone) %></th>
   <th scope="col"></th>
