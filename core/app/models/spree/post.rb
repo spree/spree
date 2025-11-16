@@ -55,7 +55,6 @@ module Spree
     #
     # Scopes
     #
-    default_scope { order(created_at: :desc) }
     scope :published, -> { where(published_at: [..Time.current]) }
     scope :by_newest, -> { order(created_at: :desc) }
 
