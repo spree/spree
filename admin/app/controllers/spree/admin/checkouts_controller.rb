@@ -1,6 +1,6 @@
 module Spree
   module Admin
-    class CheckoutsController < BaseController
+    class CheckoutsController < ResourceController
       include Spree::Admin::OrdersFiltersHelper
 
       before_action :load_user, only: [:index]
@@ -19,8 +19,8 @@ module Spree
 
       private
 
-      def scope
-        current_store.checkouts.accessible_by(current_ability, :index)
+      def collection
+        @collection ||= current_store.checkouts.accessible_by(current_ability, :index)
       end
     end
   end
