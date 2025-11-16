@@ -12,9 +12,6 @@ module Spree
       end
 
       def collection
-        params[:q] ||= {}
-        params[:q][:s] ||= 'created_at desc'
-
         @search = super.accessible_by(current_ability, :update).ransack(params[:q])
         @stock_items = @search.result.
                        joins(:variant).
