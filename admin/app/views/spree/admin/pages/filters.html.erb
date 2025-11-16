@@ -1,4 +1,4 @@
-<%= search_form_for [:admin, @search], url: spree.admin_pages_path , class: "filter-wrap", data: {controller: "filters"} do |f| %>
+<%= search_form_for [:admin, search_collection], url: spree.admin_pages_path , class: "filter-wrap", data: {controller: "filters"} do |f| %>
   <%= render 'spree/admin/shared/filters_search_bar', param: :name_cont, label: Spree.t(:name) %>
 
   <%= render "spree/admin/shared/filter_badge_template" %>
