@@ -61,13 +61,7 @@ module Spree
       end
 
       def load_orders
-        @search = scope.preload(:user).accessible_by(current_ability, :index).
-                  ransack(params_to_filters(search_params: params[:q].clone, vendor: @vendor, user: @user))
-
-        # lazy loading other models here (via includes) may result in an invalid query
-        # e.g. SELECT  DISTINCT DISTINCT "spree_orders".id, "spree_orders"."created_at" AS alias_0 FROM "spree_orders"
-        # see https://github.com/spree/spree/pull/3919
-        @orders = @search.result(distinct: true).page(params[:page]).per(params[:per_page] || Spree::Admin::RuntimeConfig.admin_orders_per_page)
+        @search_collection = collection.ransack(params_to_filters(search_params: params[:q].clone, vendor: @vendor, user: @user))
       end
 
       def load_user

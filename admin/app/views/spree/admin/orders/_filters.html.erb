@@ -10,7 +10,7 @@
                         spree.admin_orders_path
                       end %>
 
-<%= search_form_for [:admin, @vendor || @user, @search],
+<%= search_form_for [:admin, @vendor || @user, search_collection],
   url: search_form_path,
   class: "filter-wrap",
   data: {
