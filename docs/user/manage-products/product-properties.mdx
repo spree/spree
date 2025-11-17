@@ -3,105 +3,79 @@ title: "Product Properties"
 description: "How to manage product properties in the Spree open-source eCommerce dashboard"
 ---
 
-Product properties provide detailed specifications, such as dimensions, materials, care instructions, allergen warnings, etc., that help customers make informed purchase decisions.
+<Warning>
+**Starting with Spree 5.2**, Metafields are the **recommended default** for storing custom product attributes, replacing the legacy [Product Properties](/developer/core-concepts/products#product-properties) system. For new projects, use [Metafields](/user/settings/metafields) instead of Properties.
+
+Product Properties are still supported for backward compatibility (until Spree 6.0) but require enabling via `config.product_properties_enabled = true`. See the [upgrade guide](/developer/upgrades/5.1-to-5.2#3-migrate-to-metafields-or-keep-using-properties) for migration details.
+</Warning>
+
+Product properties provide detailed specifications, such as dimensions, materials, care instructions, allergen warnings, etc., that help customers make informed purchase decisions. 
 
 They streamline inventory management by standardizing key product details across listings. Additionally, product properties enhance product listings by highlighting unique features that differentiate items from competitors.
 
 To manage product Properties, navigate to the Properties tab of the admin dashboard found under Products.
 
-<img alt="Product Properties" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734626565/docs/Manage%20Products/Product%20Properties/2.6.1_Properties_-_Navigate_To_Tab_cnxdhz.png" />
+![Spree Commerce product properties tab](/docs/images/user/products/properties/1-product-properties.png)
 
-This page lists all of the product properties added to your store, with columns indicating the kind of property, how many products have the property, and the visibilility of the property.
+This page lists all of the product properties added to your store, with columns indicating the kind of property, how many products have the property, and the visibility of the property.
 
-## Add a New Property
+### Add a New Property
 
-To add a new property, click ‘+ New Property’ in the top right corner.
+To add a new property, click **New Property** in the top right corner to open the product property creation page.
 
-This will open the property creation page.
+![How to add a new product property in Spree](/docs/images/user/products/properties/2-add-property.png)
 
-<img alt="Add A New Property" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734626565/docs/Manage%20Products/Product%20Properties/2.6.2_Properties_-_Add_A_New_Property_gnhjyk.png" />
+When creating a new property field, you’ll see the following form inputs:
 
-### Presentation
+- **Presentation** - the display name of the property shown on the storefront (if visible).
+- **Internal Name** - a unique identifier used in the backend. If left blank, it will default to the Presentation name.
+- **Kind** - defines the type of value this property stores:
+  - **Short Text** - e.g., “Cotton”
+  - **Long Text** - e.g., “Made from organically grown cotton harvested in Japan”
+  - **Number** - e.g., “10”
+  - **Rich Text** - supports formatted content (e.g. bold, lists)
+- **Display** - Controls where the property is shown:
+  - **Both admin panel & storefront** - useful for customers and admins alike
+  - **Only on storefront** - e.g., material, country of origin
+  - **Only on admin panel** - e.g., internal notes, restocking schedule
 
-In the top two fields, you can set the name of the property. Presentation is how the property will be displayed on the storefront.
+Once you’ve completed all of the fields, click the **Create** to save your new product property.
 
-If an Internal Name is not set, the Presentation name will be used.
+If a product is visible on the storefront, the property will appear (if it has a non-empty value) below the product description on PDPs as shown below:
 
-<img alt="Presentation" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734626564/docs/Manage%20Products/Product%20Properties/2.6.3_Properties_-_Presentation_jgnmsz.png" />
+![How product products are displayed in Spree on the PDP](/docs/images/user/products/properties/3-pdp-display.png)
 
-### Kind
+### Properties Management
 
-Kind indicates the type of values the property field should store, e.g.:
+From the Properties tab, there are a number of ways in which you can edit product properties:
 
-* Short text
+#### Properties Ordering
 
-* Long text
-
-* Number
-
-* Rick Text
-
-<img alt="Kind" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734626565/docs/Manage%20Products/Product%20Properties/2.6.4_Properties_-_Kind_xkahvm.png" />
-
-### Display
-
-Controls where the Property will be displayed, i.e., for who is the information relevant:
-
-* On both admin panel & storefront, i.e., useful for admins and customers
-
-* Only on storefront, i.e., only useful for customers
-
-* Only on admin panel, i.e., only useful for admins
-
-<img alt="Display On" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734626565/docs/Manage%20Products/Product%20Properties/2.6.5_Properties_-_Display_On_em37wp.png" />
-
-If the product is visible on the storefront, it will be presented below the product description on PDPs if and only if the product has a non-empty value for that property field:
-
-<img alt="Storefront" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734626567/docs/Manage%20Products/Product%20Properties/2.6.6_Properties_-_Storefront_mh6yho.png" />
-
-### Click Create
-
-Once you’ve completed all of the fields, click the blue ‘Create’ button at the bottom of the page, and the property will be created.
-
-<img alt="Click Create" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734626566/docs/Manage%20Products/Product%20Properties/2.6.7_Properties_-_Click_Create_ppz4zn.png" />
-
-## Properties Management
-
-Navigating back to the Properties page, you’ll see that your newly created option is now listed among your other Properties.
-
-<img alt="Management" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734626565/docs/Manage%20Products/Product%20Properties/2.6.8_Properties_-_Management_dktdhj.png" />
-
-### Properties Ordering
+![How to reorder product properties in Spree](/docs/images/user/products/properties/4-properties-ordering.png)
 
 If you’d like to change the order in which properties are displayed on the storefront, e.g., on product detail pages, you can drag and drop them into position by clicking on the 6 dots on the left hand side.
 
-<img alt="Ordering" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734626573/docs/Manage%20Products/Product%20Properties/2.6.9_Properties_-_Ordering_cb9tpf.png" />
+#### Editing Properties
 
-### Editing Properties
+To edit a property, navigate to the Properties tab, and click **Edit** on the property you’d like to edit.
 
-To edit a property, navigate to the Properties tab, and click ‘Edit’ on the property you’d like to edit.
-
-<img alt="Edit A Property" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734626573/docs/Manage%20Products/Product%20Properties/2.6.10_Properties_-_Edit_A_Property_gharxz.png" />
+![Product edit form in Spree](/docs/images/user/products/properties/5-edit-properties.png)
 
 Feel free to change the Presentation Name, Internal Name, Kind, and Display On fields.
 
-<img alt="Make Changes and Update" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734626573/docs/Manage%20Products/Product%20Properties/2.6.11_Properties_-_Make_Changes_and_Update_dddcou.png" />
-
-Once you’re finished, make sure to click the blue ‘Update’ button at the bottom of the page.
+Once you’re finished, make sure to click **Update** to save your changes.
 
 ### Delete Properties
 
-To delete a property, navigate to the Properties tab, and click ‘Edit’ on the property you’d like to delete.
+To delete a property, click on the **three-dot menu** in the top right corner and select **Delete** from the dropdown menu, or simply click **Delete** in the bottom right corner.
 
-On the property editor page, locate the red ‘Delete’ button at the bottom of the page and the property will be deleted.
+![How to delete product properties in Spree](/docs/images/user/products/properties/6-delete-properties.png)
 
-<img alt="Delete A Property" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1734626574/docs/Manage%20Products/Product%20Properties/2.6.12_Properties_-_Delete_A_Property_vfengh.png" />
+### Import Properties
 
-## Import Properties
+Properties can be automatically imported if you add the appropriate values to the properties columns in a product import file. 
 
-Properties can be automatically imported if you add the appropriate values to the properties columns in a product import file.
-
-To learn more about imports, please refer to the [Product Imports](https://spreecommerce.org/docs/user/manage-products/import-products) support article.
+To learn more about product imports, please refer to our [<u>CSV Importer</u>](https://spreecommerce.org/docs/user/manage-products/import-products) support article.
 
 ## Real-Life Examples: Product Options vs Product Properties
 
