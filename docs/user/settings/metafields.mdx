@@ -1,0 +1,116 @@
+---
+title: "Metafields"
+description: "Learn how to define and use metafields in Spree Commerce"
+---
+
+Metafields in Spree allow you to attach custom data to nearly any object in your store - without needing to write a single line of code or modify the database.
+
+From product materials to internal order notes, metafields give you the flexibility to store, manage, and display extra information that doesn't come out of the box. This reduces reliance on developer deployments, makes experimentation easier, and enables faster iteration directly from the admin dashboard.
+
+## Creating a New Metafield
+
+To create a metafield definition go to **Settings → Metafield Definitions**
+
+![Spree Commerce metafields](/docs/images/user/settings/metafields/1-settings-metafields.png)
+
+Here you’ll see a list of all existing metafield definitions in your store. 
+
+To add a new one, click **New Metafield Definition** in the top right corner.
+
+![Creating metafields in Spree](/docs/images/user/settings/metafields/2-create-a-metafield.png)
+
+Fill out the form with the required details:
+
+- **Name** - this is the display name for the field, shown in the dashboard and/or storefront
+- **Namespace** - used to group metafields and avoid naming conflicts
+  - We recommend using something like “custom” for internal or merchant-defined fields
+  - Avoid using common Spree model names like product, order, or variant as these may conflict with existing integrations
+- **Key** - the unique identifier for the field, combined with the namespace
+  - e.g.: custom.material, custom.internal_note
+- **Resource** - choose the object the metafield applies to (see full list below)
+- **Type** - the format of data the field should accept (see examples below)
+- **Display on** - choose whether this field appears in the Admin only, or Admin and Storefront.
+
+### Supported Resources
+
+![Add a metafield definition in Spree](/docs/images/user/settings/metafields/3-metafield-resource.png)
+
+You can define metafields for nearly any data object in Spree:
+
+- **Address** - e.g., delivery instructions
+- **Asset** - e.g., alt text or copyright
+- **Credit Card** - e.g., vault token
+- **Custom Domain** - e.g., domain verification token
+- **Customer Return** - e.g., return reason detail
+- **Gift Card** - e.g., personal message
+- **Image** - e.g., display priority or alt tag
+- **Line Item** - e.g., engraving or personalization notes
+- **Newsletter Subscriber** - e.g., subscription source
+- **Option Type**
+- **Option Value** - e.g., color hex code
+- **Order** - e.g., internal comment, PO number
+- **Payment** - e.g., external transaction reference
+- **Payment Method** - e.g., risk profile or processor ID
+- **Payment Source** - e.g., metadata from payment gateway
+- **Post** - e.g., featured tag
+- **Post Category** - e.g., CTA label
+- **Product** - e.g., material, sustainability rating, care instructions
+- **Promotion** - e.g., campaign name
+- **Refund** - e.g., refund reason detail
+- **Shipment** - e.g., fragile/handling notes
+- **Shipping Method** - e.g., carrier code
+- **Stock Item** - e.g., e.g., warehouse bin location
+- **Stock Transfer** - e.g., batch ID or receiving note
+- **Store** - e.g., store tagline or branding metadata
+- **Store Credit** - e.g., usage restrictions
+- **Tax Rate** - e.g., compliance category
+- **Taxon** - e.g., display badge (“New”, “Sustainable”)
+- **Taxonomy** - e.g., navigation group metadata
+- **Variant** - e.g., spec sheet URL, sizing details
+- **User** - e.g., loyalty tier
+- **Vendor** - e.g., vendor profile details
+
+### Supported Data Types
+
+![Spree Commerce metafield resources](/docs/images/user/settings/metafields/4-metafield-type.png)
+
+Each metafield must be assigned a **type**, which determines the format of the stored value. Choosing the right type helps keep data structured, valid, and useful across the storefront and admin.
+
+- **Short Text** - for single-line strings, e.g., "Cotton" or "Blue"
+- **Long Text** -  multi-line content, e.g., care instructions
+- **Rich Text** - text with formatting options, e.g., marketing blocks
+- **Number** - any numeric value, e.g.,  4.5 (rating), 12 (inches)
+- **Boolean** - true/false flags, e.g., “Is this product fragile?” = true
+- **JSON** - for structured data or multiple related attributes
+
+## Adding Metafield Values
+
+Once your metafield definition has been created, you can enter values in a few different ways:
+
+### Individually in the Admin Dashboard
+
+First, navigate to the relevant resource (e.g., Product, Order, Shipment).
+
+![Spree Commerce metafield data types](/docs/images/user/settings/metafields/5-add-metafield-value.png)
+
+Click the **three-dot menu** in the top right corner and select **Metafields** from the dropdown.
+
+![Adding metafields values in Spree](/docs/images/user/settings/metafields/6-select-metafields.png)
+
+Enter the desired values in the form and click **Save** to finalized your changes.
+
+![Product metafields in Spree](/docs/images/user/settings/metafields/7-enter-metafield-values.png)
+
+This works for any individual resource type and is perfect for adding or editing a few metafields manually.
+
+### In Bulk (Products Only)
+
+Product metafields can also be imported or updated in bulk by:
+
+1. Adding columns to your CSV file using this format: metafield.namespace.key (e.g. metafield.custom.material)
+2. Entering the desired values for each product row.
+3. Importing the file when uploading a new product catalog
+
+You can also update your existing catalogby exporting the product file, updating it as described above, and then reimporting it to apply metafield updates
+
+This is ideal for large-scale changes across multiple products, especially when onboarding a large catalog.
