@@ -7,6 +7,10 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
 
   rescue_from ActiveRecord::RecordNotFound, with: :resource_not_found
 
+  def index
+    @collection = collection
+  end
+
   # GET /admin/<resource_name>/new
   def new
     invoke_callbacks(:new_action, :before)
