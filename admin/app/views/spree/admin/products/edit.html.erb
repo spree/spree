@@ -8,8 +8,6 @@
 
   <%= render_admin_partials(:product_dropdown_partials, product: @product) %>
 
-  <div class="dropdown-divider"></div>
-
   <%= external_page_preview_link(@product) %>
 
   <% if can?(:clone, @product) %>

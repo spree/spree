@@ -27,7 +27,10 @@
             <%= icon 'dots-vertical', class: 'mr-0' %>
           <% end %>
           <%= dropdown_menu id: 'page_actions_dropdown_menu' do %>
-            <%= yield :page_actions_dropdown if content_for(:page_actions_dropdown) %>
+            <% if content_for?(:page_actions_dropdown) %>
+              <%= yield :page_actions_dropdown %>
+              <div class="dropdown-divider"></div>
+            <% end %>
             <% if record && record.persisted? %>
               <%= link_to_edit_metafields(record) %>
               <%= link_to_edit_translations(record) %>

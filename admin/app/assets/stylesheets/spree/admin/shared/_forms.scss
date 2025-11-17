@@ -3,6 +3,9 @@
   border-color: $input-border-color;
   box-shadow: $input-box-shadow;
 }
+.custom-checkbox .custom-control-label::before, .custom-checkbox .custom-control-label::after {
+  top: 0rem;
+}
 
 label {
   font-weight: $font-weight-medium;

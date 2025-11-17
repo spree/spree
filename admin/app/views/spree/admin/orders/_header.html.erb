@@ -41,8 +41,6 @@
       can?(:create, Spree::CustomerReturn) && @order.return_authorizations.exists? %>
 
     <% if can_create_ra || can_create_cr %>
-      <div class="dropdown-divider"></div>
-
       <% if can_create_ra %>
         <%= link_to_with_icon "plus", Spree.t(:new_return_authorization),
         spree.new_admin_order_return_authorization_path(@order),
@@ -54,8 +52,6 @@
         spree.new_admin_order_customer_return_path(@order),
         class: "btn dropdown-item" %>
       <% end %>
-
-      <div class="dropdown-divider"></div>
     <% end %>
   <% end %>
 
@@ -69,6 +65,5 @@
       <%= icon "cancel" %>
       <%= Spree.t(:cancel_order) %>
     <% end %>
-    <div class="dropdown-divider"></div>
   <% end %>
 <% end %>

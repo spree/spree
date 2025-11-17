@@ -4,11 +4,10 @@ html {
   letter-spacing: normal;
   text-rendering: optimizeLegibility;
   text-size-adjust: 100%;
-  line-height: 1;
 }
 body {
   @extend .h-100;
-  overflow-y:scroll;
+  overflow-y: scroll;
 }
 
 body * {
@@ -164,7 +163,7 @@ strong {
 }
 .focus-shadow {
   &:focus, &:focus-within, &:active {
-    box-shadow: $input-btn-focus-box-shadow;
+    box-shadow: $input-focus-box-shadow;
   }
 }
 .focus-border {
