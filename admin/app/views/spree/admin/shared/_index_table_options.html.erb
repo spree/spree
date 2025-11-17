@@ -5,15 +5,15 @@
   <% args[:action] = per_page_action %>
 <% end %>
 
-<% if collection.any? && collection.respond_to?(:current_page) %>
+<% if @collection.any? && @collection.respond_to?(:current_page) %>
   <div class="pagination-container">
     <div class="index-pagination-row d-flex align-items-center justify-content-between px-2">
       <%= per_page_dropdown %>
       <div class="d-none d-lg-block text-center text-muted">
-        <%= page_entries_info(collection, entry_name: entry_name) %>
+        <%= page_entries_info(@collection, entry_name: entry_name) %>
       </div>
       <div class="text-right">
-        <%= paginate collection, theme: 'admin-twitter-bootstrap-4' %>
+        <%= paginate @collection, theme: 'admin-twitter-bootstrap-4' %>
       </div>
     </div>
   </div>
