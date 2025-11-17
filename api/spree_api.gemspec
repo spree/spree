@@ -29,5 +29,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'bcrypt', '~> 3.1'
   s.add_dependency 'doorkeeper', '~> 5.3'
   s.add_dependency 'jsonapi-serializer', '~> 2.1'
+  s.add_dependency 'pagy', '~> 43.0'
   s.add_dependency 'spree_core', s.version
 end

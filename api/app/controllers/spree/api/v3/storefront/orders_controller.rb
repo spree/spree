@@ -11,16 +11,6 @@ module Spree
           before_action :set_order, only: [:show, :update, :destroy, :next, :advance, :complete, :cancel]
           before_action :authorize_order_access!, only: [:show, :update, :destroy, :next, :advance, :complete, :cancel]
 
-          # GET /api/v3/storefront/orders (requires auth)
-          def index
-            @collection = ransack_collection
-
-            render json: {
-              data: serialize_collection(@collection),
-              meta: collection_meta(@collection)
-            }
-          end
-
           # POST /api/v3/storefront/orders (public - guest checkout)
           def create
             @resource = Spree::Order.create!(

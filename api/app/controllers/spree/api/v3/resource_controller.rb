@@ -3,12 +3,13 @@ module Spree
     module V3
       class ResourceController < ::Spree::Api::V3::BaseController
         include Spree::Api::V3::ResourceSerializer
+        include Pagy::Method
 
         before_action :set_resource, only: [:show, :update, :destroy]
 
         # GET /api/v3/resource
         def index
-          @collection = ransack_collection
+          @collection = collection
 
           render json: {
             data: serialize_collection(@collection),
@@ -62,9 +63,14 @@ module Spree
         end
 
         # Returns ransack-filtered, sorted and paginated collection
-        def ransack_collection
+        # @return [ActiveRecord::Relation]
+        def collection
+          return @collection if @collection.present?
+
           @search = scope.ransack(ransack_params)
-          @search.result(distinct: true).page(page).per(per_page)
+          result = @search.result(distinct: true)
+          @pagy, records = pagy(result, limit: limit, page: page)
+          records
         end
 
         # Ransack query parameters
@@ -77,18 +83,25 @@ module Spree
           params[:page]&.to_i || 1
         end
 
-        def per_page
-          per = params[:per_page]&.to_i || 25
-          [per, 100].min # Max 100 per page
+        def limit
+          limit_param = params[:per_page]&.to_i || params[:limit]&.to_i || 25
+          [limit_param, 100].min # Max 100 per page
         end
 
         # Metadata for collection responses
-        def collection_meta(collection)
+        def collection_meta(_collection)
+          return {} unless @pagy
+
           {
-            total_count: collection.total_count,
-            total_pages: collection.total_pages,
-            current_page: collection.current_page,
-            per_page: per_page
+            page: @pagy.page,
+            limit: @pagy.limit,
+            count: @pagy.count,
+            pages: @pagy.pages,
+            from: @pagy.from,
+            to: @pagy.to,
+            in: @pagy.in,
+            previous: @pagy.previous,
+            next: @pagy.next
           }
         end
 

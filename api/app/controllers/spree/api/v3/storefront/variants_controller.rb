@@ -5,16 +5,6 @@ module Spree
         class VariantsController < ResourceController
           before_action :set_product
 
-          # GET /api/v3/storefront/products/:product_id/variants
-          def index
-            @collection = ransack_collection
-
-            render json: {
-              data: serialize_collection(@collection),
-              meta: collection_meta(@collection)
-            }
-          end
-
           # GET /api/v3/storefront/products/:product_id/variants/:id
           def show
             @resource = @product.variants.find(params[:id])
