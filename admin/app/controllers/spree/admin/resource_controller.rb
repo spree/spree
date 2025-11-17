@@ -238,7 +238,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   def search_collection
     @search ||= begin
       params[:q] ||= {}
-      params[:q][:s] ||= collection_default_sort.to_query if collection_default_sort.present?
+      params[:q][:s] ||= collection_default_sort if collection_default_sort.present?
       scope.ransack(params[:q])
     end
   end
@@ -253,8 +253,10 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     []
   end
 
+  # Override in child controllers to set default sort order
+  # @return [String, nil] Ransack sort string (e.g., "name asc", "created_at desc")
   def collection_default_sort
-    {}
+    nil
   end
 
   # Returns the URL to redirect to after destroying a resource
