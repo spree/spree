@@ -1007,6 +1007,7 @@
                   "user/settings/checkout",
                   "user/settings/domains",
                   "user/settings/locations",
+                  "user/settings/metafields",
                   "user/settings/payments",
                   "user/settings/zones",
                   "user/settings/shipping-methods",
