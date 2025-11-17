@@ -106,8 +106,8 @@ module Spree
     has_many :custom_domains, class_name: 'Spree::CustomDomain', dependent: :destroy
     has_one :default_custom_domain, -> { where(default: true) }, class_name: 'Spree::CustomDomain'
 
-    has_many :posts, class_name: 'Spree::Post'
-    has_many :post_categories, class_name: 'Spree::PostCategory'
+    has_many :posts, class_name: 'Spree::Post', dependent: :destroy, inverse_of: :store
+    has_many :post_categories, class_name: 'Spree::PostCategory', dependent: :destroy, inverse_of: :store
 
     has_many :integrations, class_name: 'Spree::Integration'
 

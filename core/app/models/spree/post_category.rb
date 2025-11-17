@@ -9,8 +9,8 @@ module Spree
     #
     # Associations
     #
-    belongs_to :store, class_name: 'Spree::Store'
-    has_many :posts, class_name: 'Spree::Post'
+    belongs_to :store, class_name: 'Spree::Store', inverse_of: :post_categories
+    has_many :posts, class_name: 'Spree::Post', dependent: :nullify, inverse_of: :post_category
 
     #
     # Validations
@@ -18,7 +18,15 @@ module Spree
     validates :title, :store, presence: true
     validates :slug, presence: true, uniqueness: { scope: :store_id }
 
+    #
+    # ActionText
+    #
     has_rich_text :description
+
+    #
+    # Ransack
+    #
+    self.whitelisted_ransackable_attributes = %w[title slug]
 
     def should_generate_new_friendly_id?
       slug.blank? || title_changed?
