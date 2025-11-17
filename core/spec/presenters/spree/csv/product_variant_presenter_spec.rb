@@ -43,7 +43,7 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
       expect(subject[25]).to eq(variant.total_on_hand == BigDecimal::INFINITY ? '∞' : variant.total_on_hand)
       expect(subject[26]).to eq variant.backorderable?
       expect(subject[27]).to eq variant.tax_category&.name
-      expect(subject[28]).to eq variant.digital?
+      expect(subject[28]).to eq product.shipping_category&.name
       expect(subject[29]).to end_with(variant.images[0].filename.to_s)
       expect(subject[30]).to end_with(variant.images[1].filename.to_s)
       expect(subject[31]).to end_with(variant.images[2].filename.to_s)
@@ -176,6 +176,28 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
         result = presenter.call
         expect(result).not_to include('value1')
         expect(result).not_to include('value2')
+      end
+    end
+  end
+
+  describe 'shipping_category' do
+    context 'when product has shipping category' do
+      let(:shipping_category) { create(:shipping_category, name: 'Digital') }
+      let(:product) { create(:product, stores: [store], shipping_category: shipping_category) }
+
+      it 'exports shipping category name' do
+        result = presenter.call
+        expect(result[28]).to eq 'Digital'
+      end
+    end
+
+    context 'when product has no shipping category explicitly set' do
+      let(:product) { create(:product, stores: [store]) }
+
+      it 'exports the assigned shipping category' do
+        result = presenter.call
+        expect(result[28]).to be_present
+        expect(result[28]).to eq product.shipping_category.name
       end
     end
   end
