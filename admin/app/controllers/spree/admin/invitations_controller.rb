@@ -11,10 +11,10 @@ module Spree
 
       layout :choose_layout
 
-      helper_method :collection
-
       # GET /admin/invitations
       def index
+        @search = scope.includes(:inviter, :role).ransack(params[:q])
+        @collection = @search.result
       end
 
       # GET /admin/invitations/new
@@ -95,13 +95,6 @@ module Spree
 
       def load_invitation
         @invitation = scope.find(params[:id])
-      end
-
-      def collection
-        return @collection if @collection.present?
-
-        @search = scope.includes(:inviter, :role).ransack(params[:q])
-        @collection = @search.result
       end
 
       def load_parent
