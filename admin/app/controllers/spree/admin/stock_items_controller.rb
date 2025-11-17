@@ -11,17 +11,8 @@ module Spree
         true
       end
 
-      def collection
-        return @collection if @collection.present?
-
-        @search = scope.accessible_by(current_ability, :update).ransack(params[:q])
-        @collection = @search.result.
-                       joins(:variant).
-                       where(spree_variants: { track_inventory: true }).
-                       merge(current_store.variants.eligible).
-                       includes(collection_includes).
-                       page(params[:page]).
-                       per(params[:per_page])
+      def scope
+        super.joins(:variant).where(spree_variants: { track_inventory: true }).merge(current_store.variants.eligible).reorder('')
       end
 
       def collection_includes
