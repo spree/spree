@@ -9,14 +9,10 @@ module Spree
       before_action :load_invitation, only: [:new, :create]
       before_action :load_admin_user, only: [:show, :edit, :update, :destroy]
 
-      helper_method :object_url
+      helper_method :object_url, :collection
 
       # GET /admin/admin_users
       def index
-        @search = scope.includes(role_users: :role, avatar_attachment: :blob).
-                  where(role_users: { resource: @parent }).
-                  ransack(params[:q])
-        @collection = @search.result
       end
 
       # GET /admin/admin_users/:id
@@ -84,6 +80,15 @@ module Spree
 
       def permitted_params
         params.require(:admin_user).permit(:email, :password, :password_confirmation, :first_name, :last_name)
+      end
+
+      def collection
+        return @collection if @collection.present?
+
+        @search = scope.includes(role_users: :role, avatar_attachment: :blob).
+                  where(role_users: { resource: @parent }).
+                  ransack(params[:q])
+        @collection = @search.result
       end
 
       def load_invitation
