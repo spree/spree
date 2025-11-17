@@ -1,7 +1,7 @@
 class Spree::Admin::ResourceController < Spree::Admin::BaseController
   include Spree::Admin::Callbacks
 
-  helper_method :new_object_url, :edit_object_url, :object_url, :collection_url, :model_class, :search, :collection
+  helper_method :new_object_url, :edit_object_url, :object_url, :collection_url, :model_class
   before_action :load_resource
   before_action :set_currency, :set_current_store, only: [:new, :create]
 
