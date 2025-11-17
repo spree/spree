@@ -1,4 +1,4 @@
-<% if @collection.any? %>
+<% if collection.any? %>
   <div class="table-responsive" id="listing_gift_cards">
     <table class="table">
       <thead class="text-muted">
@@ -13,11 +13,11 @@
         </tr>
       </thead>
       <tbody>
-        <%= render collection: @collection, partial: 'spree/admin/gift_cards/gift_card' %>
+        <%= render collection: collection, partial: 'spree/admin/gift_cards/gift_card' %>
       </tbody>
     </table>
   </div>
-  <%= render partial: 'spree/admin/shared/index_table_options', locals: { collection: @collection } %>
+  <%= render partial: 'spree/admin/shared/index_table_options', locals: { collection: collection } %>
 <% else %>
   <% new_object_url = @user.present? ? spree.new_admin_user_gift_card_path(@user) : spree.new_admin_gift_card_path %>
   <%= render 'spree/admin/shared/no_resource_found', model_class: Spree::GiftCard, new_object_url: new_object_url %>
