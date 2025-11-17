@@ -767,11 +767,11 @@ create_rails_app() {
 
             # Change message based on elapsed time
             if [ $elapsed -lt 30 ]; then
-                msg="Installing Rails and dependencies"
+                msg="Installing Spree dependencies"
             elif [ $elapsed -lt 60 ]; then
-                msg="Installing Spree gems (this takes a while)"
+                msg="Installing Spree gems"
             elif [ $elapsed -lt 90 ]; then
-                msg="Setting up Devise authentication"
+                msg="Setting up authentication"
             elif [ $elapsed -lt 120 ]; then
                 msg="Running Spree generators"
             elif [ $elapsed -lt 150 ]; then
@@ -782,7 +782,7 @@ create_rails_app() {
                 msg="Almost done, finalizing installation"
             fi
 
-            printf "\r${BLUE}${spin:$i:1}${NC} ${msg}... (${elapsed}s)"
+            printf "\r${BLUE}${spin:$i:1}${NC} ${msg}...                  "
             sleep 1
             elapsed=$((elapsed + 1))
         done

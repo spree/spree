@@ -49,8 +49,8 @@ def setup_importmap
   end
 end
 
-def setup_devise
-  say 'Setting up Devise authentication...', :blue
+def setup_auth
+  say 'Setting up authentication...', :blue
 
   if VERBOSE
     rails_command 'generate devise:install'
@@ -150,7 +150,7 @@ add_gems
 after_bundle do
   setup_importmap
   configure_development_environment
-  setup_devise
+  setup_auth
   install_spree
   setup_procfile
   setup_database
