@@ -236,7 +236,11 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   # keeping this as @search for backwards compatibility
   # @return [Ransack::Search]
   def search_collection
-    @search ||= scope.ransack(params[:q])
+    @search ||= begin
+      params[:q] ||= {}
+      params[:q][:s] ||= collection_default_sort.to_query if collection_default_sort.present?
+      scope.ransack(params[:q])
+    end
   end
 
   # Returns the filtered and paginated ransack results
@@ -247,6 +251,10 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
 
   def collection_includes
     []
+  end
+
+  def collection_default_sort
+    {}
   end
 
   # Returns the URL to redirect to after destroying a resource
