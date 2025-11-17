@@ -14,6 +14,10 @@ module Spree
 
       private
 
+      def collection_includes
+        [:author, :post_category, :image_attachment]
+      end
+
       def load_post_categories
         @post_categories = current_store.post_categories.accessible_by(current_ability).order(:title)
       end

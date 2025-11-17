@@ -7,6 +7,10 @@ module Spree
 
       private
 
+      def collection_includes
+        [:rich_text_translations]
+      end
+
       def permitted_resource_params
         params.require(:policy).permit(permitted_policy_attributes)
       end
