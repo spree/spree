@@ -19,9 +19,16 @@ module Spree
                        joins(:variant).
                        where(spree_variants: { track_inventory: true }).
                        merge(current_store.variants.eligible).
-                       includes(:stock_location, [variant: [product: [variants: [:images], master: [:images]], images: []]]).
+                       includes(collection_includes).
                        page(params[:page]).
                        per(params[:per_page])
+      end
+
+      def collection_includes
+        {
+          stock_location: [],
+          variant: [option_values: :option_type, product: [variant_images: [], variants: [:images], master: [:images]], images: []]
+        }
       end
 
       def add_breadcrumbs
