@@ -11,6 +11,9 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
 
   before do
     import.create_mappings
+    # Manually map fields since there's no CSV file attached
+    import.mappings.find_by(schema_field: 'shipping_category')&.update(file_column: 'shipping_category')
+    import.mappings.find_by(schema_field: 'tax_category')&.update(file_column: 'tax_category')
   end
 
   # Matches how our production import will pass attributes
@@ -621,6 +624,201 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
         expect(product.has_metafield?('custom.material')).to be true
         expect(product.get_metafield('custom.material').value).to eq 'Cotton'
         expect(product.metafields.count).to eq 2
+      end
+    end
+  end
+
+  context 'when importing with shipping_category' do
+    context 'when shipping_category exists' do
+      let!(:digital_category) { create(:shipping_category, name: 'Digital') }
+
+      let(:row_data) do
+        csv_row_hash(
+          'slug' => 'digital-product',
+          'name' => 'Digital Product',
+          'status' => 'active',
+          'price' => '29.99',
+          'currency' => 'USD',
+          'shipping_category' => 'Digital'
+        )
+      end
+
+      it 'assigns the shipping category to the product' do
+        product = variant.product
+        expect(product.shipping_category).to eq digital_category
+      end
+    end
+
+    context 'when shipping_category does not exist' do
+      let(:row_data) do
+        csv_row_hash(
+          'slug' => 'digital-product',
+          'name' => 'Digital Product',
+          'status' => 'active',
+          'price' => '29.99',
+          'currency' => 'USD',
+          'shipping_category' => 'NonExistent'
+        )
+      end
+
+      it 'assigns the default shipping category' do
+        product = variant.product
+        expect(product.shipping_category).to be_present
+        expect(product.shipping_category.name).to eq 'Default'
+      end
+    end
+
+    context 'when updating product with different shipping_category' do
+      let!(:standard_category) { create(:shipping_category, name: 'Standard') }
+      let!(:digital_category) { create(:shipping_category, name: 'Digital') }
+      let!(:existing_product) do
+        create(:product, slug: 'product-to-update', name: 'Product', stores: [store], shipping_category: standard_category)
+      end
+
+      let(:row_data) do
+        csv_row_hash(
+          'slug' => 'product-to-update',
+          'name' => 'Product',
+          'status' => 'active',
+          'price' => '29.99',
+          'currency' => 'USD',
+          'shipping_category' => 'Digital'
+        )
+      end
+
+      it 'updates the shipping category' do
+        product = variant.product
+
+        expect(product.id).to eq existing_product.id
+        expect(product.shipping_category).to eq digital_category
+      end
+    end
+
+    context 'when shipping_category is not provided' do
+      let(:row_data) do
+        csv_row_hash(
+          'slug' => 'product-no-category',
+          'name' => 'Product',
+          'status' => 'active',
+          'price' => '29.99',
+          'currency' => 'USD'
+        )
+      end
+
+      it 'assigns the default shipping category' do
+        product = variant.product
+
+        expect(product.shipping_category).to be_present
+        expect(product.shipping_category.name).to eq 'Default'
+      end
+    end
+  end
+
+  context 'when importing with tax_category' do
+    context 'when tax_category exists' do
+      let!(:clothing_tax) { create(:tax_category, name: 'Clothing') }
+
+      let(:row_data) do
+        csv_row_hash(
+          'slug' => 'test-product',
+          'name' => 'Test Product',
+          'status' => 'active',
+          'price' => '29.99',
+          'currency' => 'USD',
+          'tax_category' => 'Clothing'
+        )
+      end
+
+      it 'assigns the tax category to the variant' do
+        expect(variant.tax_category).to eq clothing_tax
+      end
+    end
+
+    context 'when tax_category does not exist' do
+      let(:row_data) do
+        csv_row_hash(
+          'slug' => 'test-product',
+          'name' => 'Test Product',
+          'status' => 'active',
+          'price' => '29.99',
+          'currency' => 'USD',
+          'tax_category' => 'NonExistent'
+        )
+      end
+
+      it 'does not assign a tax category' do
+        expect(variant.tax_category).to be_nil
+      end
+    end
+
+    context 'when updating variant with different tax_category' do
+      let!(:standard_tax) { create(:tax_category, name: 'Standard') }
+      let!(:clothing_tax) { create(:tax_category, name: 'Clothing') }
+      let!(:existing_product) do
+        p = create(:product, slug: 'product-to-update', name: 'Product', stores: [store])
+        p.master.update(tax_category: standard_tax)
+        p
+      end
+
+      let(:row_data) do
+        csv_row_hash(
+          'slug' => 'product-to-update',
+          'name' => 'Product',
+          'status' => 'active',
+          'price' => '29.99',
+          'currency' => 'USD',
+          'tax_category' => 'Clothing'
+        )
+      end
+
+      it 'updates the tax category' do
+        product = variant.product
+
+        expect(product.id).to eq existing_product.id
+        expect(variant.tax_category).to eq clothing_tax
+      end
+    end
+
+    context 'when tax_category is not provided' do
+      let(:row_data) do
+        csv_row_hash(
+          'slug' => 'product-no-tax',
+          'name' => 'Product',
+          'status' => 'active',
+          'price' => '29.99',
+          'currency' => 'USD'
+        )
+      end
+
+      it 'does not assign a tax category' do
+        expect(variant.tax_category).to be_nil
+      end
+    end
+
+    context 'when importing a non-master variant with tax_category' do
+      let!(:clothing_tax) { create(:tax_category, name: 'Clothing') }
+      let!(:product) do
+        p = create(:product, slug: 'denim-shirt', name: 'Denim Shirt', stores: [store])
+        color = create(:option_type, name: 'color', presentation: 'Color')
+        p.option_types << color
+        p
+      end
+
+      let(:row_data) do
+        csv_row_hash(
+          'slug' => 'denim-shirt',
+          'sku' => 'DENIM-SHIRT-BLUE',
+          'price' => '62.99',
+          'currency' => 'USD',
+          'tax_category' => 'Clothing',
+          'option1_name' => 'Color',
+          'option1_value' => 'Blue'
+        )
+      end
+
+      it 'assigns tax category to the non-master variant' do
+        expect(variant.is_master?).to be false
+        expect(variant.tax_category).to eq clothing_tax
       end
     end
   end

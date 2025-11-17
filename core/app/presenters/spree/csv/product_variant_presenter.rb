@@ -32,7 +32,7 @@ module Spree
         'inventory_count',
         'inventory_backorderable',
         'tax_category',
-        'digital',
+        'shipping_category',
         'image1_src',
         'image2_src',
         'image3_src',
@@ -66,7 +66,7 @@ module Spree
       # For the primary variant row (when the index is zero), product-level details such as name,
       # slug, status, vendor and brand names, description, meta tags, and tag/label lists are included.
       # In all cases, variant-specific attributes (e.g., id, SKU, pricing, dimensions, weight,
-      # availability dates, inventory count, digital flag, tax category, image URLs via original_url,
+      # availability dates, inventory count, shipping category, tax category, image URLs via original_url,
       # and the first three option types and corresponding option values) are appended.
       # Additionally, when the index is zero, associated taxons and properties are added.
       #
@@ -103,7 +103,7 @@ module Spree
           total_on_hand == BigDecimal::INFINITY ? '∞' : total_on_hand,
           variant.backorderable?,
           variant.tax_category&.name,
-          variant.digital?,
+          product.shipping_category&.name,
           spree_image_url(variant.images[0], image_url_options),
           spree_image_url(variant.images[1], image_url_options),
           spree_image_url(variant.images[2], image_url_options),
