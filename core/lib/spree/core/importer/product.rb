@@ -5,6 +5,8 @@ module Spree
         attr_reader :product, :product_attrs, :variants_attrs, :options_attrs, :store
 
         def initialize(product, product_params, options = {})
+          Spree::Deprecation.warn('Spree::Core::Importer::Product is deprecated and will be removed in Spree 6.0. Please use `Spree::Imports::Product` instead.')
+
           @store = options[:store] || Spree::Store.default
           @product = product || Spree::Product.new(product_params)
           @product.stores << @store if @product.stores.exclude?(@store)

@@ -3,6 +3,8 @@ module Spree
     module Importer
       class Order
         def self.import(user, params)
+          Spree::Deprecation.warn('Spree::Core::Importer::Order is deprecated and will be removed in Spree 6.0. Please use `Spree::Imports::Order` instead.')
+
           ensure_country_id_from_params params[:ship_address_attributes]
           ensure_state_id_from_params params[:ship_address_attributes]
           ensure_country_id_from_params params[:bill_address_attributes]
