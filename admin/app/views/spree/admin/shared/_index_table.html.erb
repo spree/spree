@@ -8,7 +8,7 @@
       <%= render 'filters' %>
     <% end %>
 
-    <% if collection.any? %>
+    <% if @collection.any? %>
       <div class="<% if lookup_context.template_exists?('filters', lookup_context.prefixes, true) %>with-filters<% end %>" id="listing_<%= controller_name %>">
         <table class="table">
           <thead>
@@ -22,12 +22,12 @@
               data-sortable-response-kind-value="turbo-stream"
             <% end %>
           >
-            <%= render partial: 'table_row', collection: collection, as: controller_name.singularize %>
+            <%= render partial: 'table_row', collection: @collection, as: controller_name.singularize %>
           </tbody>
         </table>
       </div>
 
-      <%= render 'spree/admin/shared/index_table_options', collection: collection %>
+      <%= render 'spree/admin/shared/index_table_options', collection: @collection %>
     <% else %>
       <%= render 'spree/admin/shared/no_resource_found', new_object_url: (new_object_url if can?(:create, model_class)) %>
     <% end %>
