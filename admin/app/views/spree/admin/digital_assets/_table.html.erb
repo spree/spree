@@ -4,7 +4,7 @@
       <% if @product.has_variants? %>
         <th scope="col"><%= Spree.t(:variant) %></th>
       <% end %>
-      <th scope="col"><%= sort_link search_collection, :name, Spree.t(:name) %></th>
+      <th scope="col"><%= sort_link @search, :name, Spree.t(:name) %></th>
       <th scope="col"><%= Spree.t(:size) %></th>
       <th scope="col"></th>
     </tr>

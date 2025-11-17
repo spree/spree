@@ -2,18 +2,10 @@ module Spree
   module Admin
     class StoreCreditError < StandardError; end
 
-    class StoreCreditsController < Spree::Admin::BaseController
-      before_action :load_user
-      before_action :load_store_credit, only: [:new, :edit, :update, :destroy]
+    class StoreCreditsController < Spree::Admin::ResourceController
+      before_action :set_breadcrumbs
+      before_action :set_user
       before_action :ensure_unused_store_credit, only: [:update]
-      helper_method :collection_url
-
-      def index
-        @store_credits = scope.includes(:created_by).order(created_at: :desc)
-        @store_credits = @store_credits.page(params[:page]).per(params[:per_page])
-
-        @collection = @store_credits
-      end
 
       def show
         @store_credit = scope.find(params[:id])
@@ -21,8 +13,8 @@ module Spree
       end
 
       def create
-        @store_credit = @user.store_credits.build(
-          permitted_store_credit_params.merge(
+        @store_credit = parent.store_credits.build(
+          permitted_resource_params.merge(
             created_by: try_spree_current_user,
             action_originator: try_spree_current_user,
             store: current_store
@@ -31,7 +23,7 @@ module Spree
 
         if @store_credit.save
           flash[:success] = flash_message_for(@store_credit, :successfully_created)
-          redirect_to spree.admin_user_path(@user)
+          redirect_to spree.admin_user_path(parent)
         else
           flash[:error] = Spree.t('store_credit.errors.unable_to_create')
           render :new, status: :unprocessable_entity
@@ -39,11 +31,11 @@ module Spree
       end
 
       def update
-        @store_credit.assign_attributes(permitted_store_credit_params)
+        @store_credit.assign_attributes(permitted_resource_params)
 
         if @store_credit.save
           flash[:success] = flash_message_for(@store_credit, :successfully_updated)
-          redirect_to spree.admin_user_store_credit_path(@user, @store_credit)
+          redirect_to spree.admin_user_store_credit_path(parent, @store_credit)
         else
           flash[:error] = Spree.t('store_credit.errors.unable_to_update')
           render :edit, status: :unprocessable_entity
@@ -59,37 +51,41 @@ module Spree
           flash[:error] = Spree.t('store_credit.errors.unable_to_delete')
         end
 
-        redirect_to spree.admin_user_path(@user)
+        redirect_to spree.admin_user_path(parent)
       end
 
       protected
 
-      def permitted_store_credit_params
+      def parent
+        @parent ||= Spree.user_class.find_by(id: params[:user_id])
+      end
+
+      def parent_data
+        {
+          model_name: 'spree/user',
+          model_class: Spree.user_class,
+          find_by: :id
+        }
+      end
+
+      def permitted_resource_params
         params.require(:store_credit).permit(permitted_store_credit_attributes)
       end
 
       private
 
-      def load_user
-        @user = Spree.user_class.find_by(id: params[:user_id])
+      def set_user
+        @user = parent
+      end
 
-        unless @user
-          flash[:error] = Spree.t(:user_not_found)
-          redirect_to spree.admin_path
-        end
+      def object_url
+        spree.admin_user_store_credit_path(parent, @store_credit)
+      end
 
+      def set_breadcrumbs
         @breadcrumb_icon = 'users'
         add_breadcrumb Spree.t(:customers), :admin_users_path
-        add_breadcrumb @user.name, spree.admin_user_path(@user)
-      end
-
-      def load_store_credit
-        @store_credit = scope.find_by(id: params[:id]) || scope.new
-        @object = @store_credit
-      end
-
-      def scope
-        current_store.store_credits.where(user: @user)
+        add_breadcrumb parent.name, spree.admin_user_path(parent)
       end
 
       def ensure_unused_store_credit
@@ -99,7 +95,11 @@ module Spree
       end
 
       def collection_url
-        spree.admin_user_store_credits_path(@user)
+        spree.admin_user_store_credits_path(parent)
+      end
+
+      def update_turbo_stream_enabled?
+        true
       end
     end
   end

@@ -7,16 +7,6 @@ module Spree
 
       private
 
-      def collection
-        return @collection if @collection.present?
-
-        @collection = super
-
-        params[:q] ||= {}
-        @search = @collection.ransack(params[:q])
-        @collection = @search.result.page(params[:page]).per(500)
-      end
-
       def create_turbo_stream_enabled?
         true
       end

@@ -13,8 +13,6 @@ module Spree
 
       # GET /admin/admin_users
       def index
-        params[:q] ||= {}
-        params[:q][:s] ||= 'created_at asc'
         @search = scope.includes(role_users: :role, avatar_attachment: :blob).
                   where(role_users: { resource: @parent }).
                   ransack(params[:q])

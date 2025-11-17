@@ -20,7 +20,7 @@ RSpec.describe Spree::Admin::StoreCreditsController, type: :controller do
       expect(response).to be_successful
       expect(response).to render_template(:index)
 
-      expect(assigns(:store_credits)).to contain_exactly(*store_credits)
+      expect(assigns(:collection)).to contain_exactly(*store_credits)
     end
   end
 

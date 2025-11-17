@@ -12,18 +12,6 @@ module Spree
         true
       end
 
-      def collection
-        return @collection if @collection.present?
-
-        # params[:q] can be blank upon pagination
-        params[:q] = {} if params[:q].blank?
-
-        @collection = super
-        @search = @collection.ransack(params[:q])
-        @collection = @search.result.
-                      page(params[:page])
-      end
-
       def add_breadcrumbs
         if @property.present? && @property.persisted?
           add_breadcrumb @property.presentation, spree.edit_admin_property_path(@property)

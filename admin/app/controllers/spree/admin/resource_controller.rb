@@ -1,11 +1,15 @@
 class Spree::Admin::ResourceController < Spree::Admin::BaseController
   include Spree::Admin::Callbacks
 
-  helper_method :new_object_url, :edit_object_url, :object_url, :collection_url, :model_class, :search_collection, :paginated_collection
+  helper_method :new_object_url, :edit_object_url, :object_url, :collection_url, :model_class
   before_action :load_resource
   before_action :set_currency, :set_current_store, only: [:new, :create]
 
   rescue_from ActiveRecord::RecordNotFound, with: :resource_not_found
+
+  def index
+    @collection = collection
+  end
 
   # GET /admin/<resource_name>/new
   def new
@@ -217,7 +221,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
 
   # Returns the collection of resources (as a scope)
   # @return [ActiveRecord::Relation]
-  def collection
+  def scope
     return parent.send(controller_name) if parent_data.present?
 
     base_scope = model_class.try(:for_store, current_store) || model_class
@@ -227,30 +231,36 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
 
     if model_class.respond_to?(:accessible_by) &&
         !current_ability.has_block?(params[:action], model_class)
-      base_scope.accessible_by(current_ability, action)
+      base_scope.accessible_by(current_ability, action).includes(collection_includes)
     else
-      base_scope
+      base_scope.includes(collection_includes)
+    end
+  end
+
+  # keeping this as @search for backwards compatibility
+  # @return [Ransack::Search]
+  def search_collection
+    @search ||= begin
+      params[:q] ||= {}
+      params[:q][:s] ||= collection_default_sort if collection_default_sort.present?
+      scope.ransack(params[:q])
     end
   end
 
   # Returns the filtered and paginated ransack results
   # @return [ActiveRecord::Relation]
-  def paginated_collection
-    @paginated_collection ||= begin
-      # Check if collection is already a ransack collection and return it
-      return collection if collection.respond_to?(:current_page)
-
-      search_collection.result(distinct: true).page(params[:page]).per(params[:per_page])
-    end
+  def collection
+    @collection ||= search_collection.result(distinct: true).page(params[:page]).per(params[:per_page])
   end
 
-  # Returns the ransack search collection
-  # @return [Ransack::Search]
-  def search_collection
-    @search_collection ||= begin
-      params[:q] ||= {}
-      collection.ransack(params[:q])
-    end
+  def collection_includes
+    []
+  end
+
+  # Override in child controllers to set default sort order
+  # @return [String, nil] Ransack sort string (e.g., "name asc", "created_at desc")
+  def collection_default_sort
+    nil
   end
 
   # Returns the URL to redirect to after destroying a resource

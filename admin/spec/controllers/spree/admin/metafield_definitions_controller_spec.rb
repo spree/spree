@@ -32,15 +32,15 @@ RSpec.describe Spree::Admin::MetafieldDefinitionsController, type: :controller d
     it 'renders the index template' do
       get :index
       expect(response).to render_template(:index)
-      expect(assigns(:search_collection).result).to include(*metafield_definitions)
-      expect(assigns(:search_collection).result).to include(taxon_rich_text_field)
+      expect(assigns[:collection]).to include(*metafield_definitions)
+      expect(assigns[:collection]).to include(taxon_rich_text_field)
     end
 
     context 'filtering by resource type' do
       it 'renders the index template' do
         get :index, params: { q: { resource_type_eq: 'Spree::Taxon' } }
         expect(response).to render_template(:index)
-        expect(assigns(:search_collection).result).to eq([taxon_rich_text_field])
+        expect(assigns[:collection]).to eq([taxon_rich_text_field])
       end
     end
   end

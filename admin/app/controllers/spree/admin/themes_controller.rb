@@ -70,8 +70,12 @@ module Spree
         true
       end
 
-      def collection
-        super.without_previews.order(default: :desc).includes(screenshot_attachment: :blob)
+      def scope
+        super.without_previews.order(default: :desc)
+      end
+
+      def collection_includes
+        { screenshot_attachment: :blob }
       end
 
       def permitted_resource_params

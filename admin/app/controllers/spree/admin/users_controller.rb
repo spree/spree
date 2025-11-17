@@ -50,23 +50,13 @@ module Spree
 
       protected
 
-      def collection
-        return @collection if @collection.present?
-
-        params[:q] ||= {}
-        params[:q][:s] ||= 'created_at desc'
-        params[:q][:created_at_not_null] ||= 1
-
-        @collection = model_class.accessible_by(current_ability, :index)
-        @search = @collection.ransack(params[:q])
-        @collection = @search.result(distinct: true).
-                      includes(
-                        addresses: [:country, :state],
-                        ship_address: [:country, :state],
-                        bill_address: [:country, :state],
-                        avatar_attachment: :blob
-                      ).
-                      page(params[:page]).per(params[:per_page])
+      def collection_includes
+        {
+          addresses: [:country, :state],
+          ship_address: [:country, :state],
+          bill_address: [:country, :state],
+          avatar_attachment: :blob
+        }
       end
 
       def find_resource

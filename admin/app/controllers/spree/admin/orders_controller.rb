@@ -1,6 +1,6 @@
 module Spree
   module Admin
-    class OrdersController < Spree::Admin::BaseController
+    class OrdersController < Spree::Admin::ResourceController
       include Spree::Admin::OrderConcern
       include Spree::Admin::OrdersFiltersHelper
       include Spree::Admin::OrderBreadcrumbConcern

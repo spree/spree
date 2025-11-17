@@ -1,13 +1,14 @@
 <% sortable = local_assigns[:sortable] %>
+<% frame_name = local_assigns[:frame_name] || controller_name %>
 
-<%= turbo_frame_tag controller_name, autoscroll: true, data: { autoscroll_block: :start, autoscroll_behavior: :smooth, turbo_action: 'advance' } do %>
+<%= turbo_frame_tag frame_name, autoscroll: true, data: { autoscroll_block: :start, autoscroll_behavior: :smooth, turbo_action: 'advance' } do %>
   <%= render 'spree/admin/shared/export_modal', export_type: export_type if local_assigns[:export_type] %>
   <div class="card-lg">
     <% if lookup_context.template_exists?('filters', lookup_context.prefixes, true) %>
       <%= render 'filters' %>
     <% end %>
 
-    <% if paginated_collection.any? %>
+    <% if @collection.any? %>
       <div class="<% if lookup_context.template_exists?('filters', lookup_context.prefixes, true) %>with-filters<% end %>" id="listing_<%= controller_name %>">
         <table class="table">
           <thead>
@@ -21,12 +22,12 @@
               data-sortable-response-kind-value="turbo-stream"
             <% end %>
           >
-            <%= render partial: 'table_row', collection: paginated_collection, as: controller_name.singularize %>
+            <%= render partial: 'table_row', collection: @collection, as: controller_name.singularize %>
           </tbody>
         </table>
       </div>
 
-      <%= render 'spree/admin/shared/index_table_options', collection: paginated_collection %>
+      <%= render 'spree/admin/shared/index_table_options', collection: @collection %>
     <% else %>
       <%= render 'spree/admin/shared/no_resource_found', new_object_url: (new_object_url if can?(:create, model_class)) %>
     <% end %>

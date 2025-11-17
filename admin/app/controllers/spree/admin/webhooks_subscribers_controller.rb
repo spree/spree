@@ -19,16 +19,6 @@ module Spree
         @resource ||= Spree::Admin::Resource.new 'spree/admin/webhooks/subscribers', 'subscribers', nil
       end
 
-      def collection
-        params[:q] ||= {}
-        params[:q][:s] ||= 'created_at desc'
-
-        @search = Webhooks::Subscriber.accessible_by(current_ability).ransack(params[:q])
-        @collection = @search.result.
-                      page(params[:page]).
-                      per(params[:per_page])
-      end
-
       def process_subscriptions
         return if params[:webhooks_subscriber].blank?
 

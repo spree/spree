@@ -1,4 +1,4 @@
-<% if @store_credits.any? %>
+<% if @collection.any? %>
   <div class="table-responsive">
     <table class="table">
       <thead>
@@ -11,11 +11,11 @@
         <th scope="col"><%= Spree.t(:issued_on) %></th>
       </thead>
       <tbody>
-        <%= render partial: 'spree/admin/store_credits/store_credit', collection: @store_credits, as: :store_credit, cached: spree_base_cache_scope %>
+        <%= render partial: 'spree/admin/store_credits/store_credit', collection: @collection, as: :store_credit, cached: spree_base_cache_scope %>
       </tbody>
     </table>
   </div>
-  <%= render partial: 'spree/admin/shared/index_table_options', locals: { collection: @store_credits } %>
+  <%= render partial: 'spree/admin/shared/index_table_options', locals: { collection: @collection } %>
 <% else %>
   <%= render 'spree/admin/shared/no_resource_found', model_class: Spree::StoreCredit, new_object_url: spree.new_admin_user_store_credit_path(@user) %>
 <% end %>

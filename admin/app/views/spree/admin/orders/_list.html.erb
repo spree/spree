@@ -1,4 +1,4 @@
-<% if @orders.any? %>
+<% if @collection.any? %>
   <div class="table-responsive">
     <table class="table" id="listing_orders">
       <thead>
@@ -18,11 +18,11 @@
         </tr>
       </thead>
       <tbody>
-        <%= render collection: @orders, partial: 'spree/admin/orders/order', cached: !(defined?(current_vendor) && current_vendor) ? spree_base_cache_scope : false %>
+        <%= render collection: @collection, partial: 'spree/admin/orders/order', cached: !(defined?(current_vendor) && current_vendor) ? spree_base_cache_scope : false %>
       </tbody>
     </table>
   </div>
 <% else %>
   <%= render 'spree/admin/shared/no_resource_found', new_object_url: nil, model_class: Spree::Order %>
 <% end %>
-<%= render 'spree/admin/shared/index_table_options', collection: @orders if @orders.any? %>
+<%= render 'spree/admin/shared/index_table_options', collection: @collection %>

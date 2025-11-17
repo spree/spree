@@ -63,7 +63,7 @@
           </div>
         <% end %>
       </div>
-      <%= render "spree/admin/shared/index_table_options", collection: @collection if @collection.any? %>
+      <%= render "spree/admin/shared/index_table_options", collection: @collection %>
     <% else %>
       <%= render "spree/admin/shared/no_resource_found" %>
     <% end %>

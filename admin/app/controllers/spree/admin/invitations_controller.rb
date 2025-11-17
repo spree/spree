@@ -13,8 +13,6 @@ module Spree
 
       # GET /admin/invitations
       def index
-        params[:q] ||= {}
-        params[:q][:s] ||= 'created_at desc'
         @search = scope.includes(:inviter, :role).ransack(params[:q])
         @collection = @search.result
       end

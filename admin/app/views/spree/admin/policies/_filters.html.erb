@@ -1,4 +1,4 @@
-<%= search_form_for [:admin, search_collection], class: "filter-wrap", data: { controller: "filters" } do |f| %>
+<%= search_form_for [:admin, @search], class: "filter-wrap", data: { controller: "filters" } do |f| %>
   <div class="d-flex flex-column flex-lg-row gap-2">
     <%= render 'spree/admin/shared/filters_search_bar', param: :name_i_cont, label: Spree.t(:name) %>
   </div>

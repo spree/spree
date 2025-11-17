@@ -2,6 +2,8 @@ module Spree
   module Admin
     module OrdersFiltersHelper
       def params_to_filters(search_params:, vendor: nil, user: nil)
+        return if search_params.blank?
+
         if search_params.is_a?(String)
           search_params = JSON.parse(search_params).deep_symbolize_keys
         end

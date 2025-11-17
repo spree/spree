@@ -27,7 +27,7 @@ module Spree
         spree.edit_admin_theme_path(current_store.default_theme, page_id: object.id, **options)
       end
 
-      def collection
+      def scope
         super.custom.without_previews
       end
 

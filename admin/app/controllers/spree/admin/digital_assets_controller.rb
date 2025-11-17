@@ -13,8 +13,8 @@ module Spree
         Spree::Digital
       end
 
-      def collection
-        parent.digitals
+      def scope
+        parent.digitals.accessible_by(current_ability, :index)
       end
 
       def collection_url

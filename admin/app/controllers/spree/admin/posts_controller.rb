@@ -14,16 +14,8 @@ module Spree
 
       private
 
-      def collection
-        return @collection if @collection.present?
-
-        @collection = super
-
-        params[:q] ||= {}
-        params[:q][:s] ||= 'published_at desc'
-
-        @search = @collection.ransack(params[:q])
-        @collection = @search.result.page(params[:page]).per(params[:per_page])
+      def collection_includes
+        [:author, :post_category, :image_attachment]
       end
 
       def load_post_categories

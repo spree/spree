@@ -11,18 +11,15 @@ module Spree
         true
       end
 
-      def collection
-        params[:q] ||= {}
-        params[:q][:s] ||= 'created_at desc'
+      def scope
+        super.joins(:variant).where(spree_variants: { track_inventory: true }).merge(current_store.variants.eligible).reorder('')
+      end
 
-        @search = super.accessible_by(current_ability, :update).ransack(params[:q])
-        @stock_items = @search.result.
-                       joins(:variant).
-                       where(spree_variants: { track_inventory: true }).
-                       merge(current_store.variants.eligible).
-                       includes(:stock_location, [variant: [product: [variants: [:images], master: [:images]], images: []]]).
-                       page(params[:page]).
-                       per(params[:per_page])
+      def collection_includes
+        {
+          stock_location: [],
+          variant: [option_values: :option_type, product: [variant_images: [], variants: [:images], master: [:images]], images: []]
+        }
       end
 
       def add_breadcrumbs

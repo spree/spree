@@ -8,6 +8,10 @@ module Spree
 
       private
 
+      def collection_includes
+        [:zones, :calculator]
+      end
+
       def set_default_values
         @shipping_method.display_on = 'both'
         @shipping_method.shipping_categories = [Spree::ShippingCategory.first]

@@ -22,16 +22,6 @@ module Spree
         end
       end
 
-      def collection
-        return @collection if @collection.present?
-
-        params[:q] ||= {}
-
-        @collection = super.order(position: :asc)
-        @search = @collection.ransack(params[:q])
-        @collection = @search.result.page(params[:page]).per(params[:per_page])
-      end
-
       def require_payment_type
         redirect_to spree.admin_payment_methods_path unless params.dig(:payment_method, :type).present?
       end

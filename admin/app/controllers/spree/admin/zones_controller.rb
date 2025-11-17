@@ -14,13 +14,6 @@ module Spree
         edit_object_url(@object, states_country_id: @selected_country&.id)
       end
 
-      def collection
-        params[:q] ||= {}
-        params[:q][:s] ||= 'name asc'
-        @search = super.ransack(params[:q])
-        @zones = @search.result.page(params[:page]).per(params[:per_page])
-      end
-
       def load_data
         @selected_country = if params[:states_country_id]
           Spree::Country.find_by(id: params[:states_country_id])
