@@ -42,5 +42,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'mapkick-rb', '~> 0.1'
   s.add_dependency 'turbo-rails'
   s.add_dependency 'stimulus-rails'
-  s.add_dependency 'tinymce-rails', '~> 6.8.5'
+  s.add_dependency 'tinymce-rails', '>= 6.8.5', '< 8.3.0'
 end
