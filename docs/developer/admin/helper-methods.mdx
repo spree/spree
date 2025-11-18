@@ -84,6 +84,148 @@ Returns the current store [Spree::Store](https://github.com/spree/spree/blob/mas
   <SpreeVendor />
 </ResponseField>
 
+## `dropdown`
+
+Creates a dropdown container with automatic Stimulus controller setup.
+
+```erb
+<%= dropdown do %>
+  <%= dropdown_toggle class: 'btn-sm' do %>
+    <%= icon('dots-vertical') %>
+  <% end %>
+
+  <%= dropdown_menu do %>
+    <%= link_to_with_icon 'edit', Spree.t(:edit), edit_admin_brand_path(@brand), class: 'dropdown-item' %>
+    <%= link_to_with_icon 'trash', Spree.t(:delete), admin_brand_path(@brand),
+        class: 'dropdown-item text-danger',
+        data: { turbo_method: :delete, turbo_confirm: Spree.t(:are_you_sure) } %>
+  <% end %>
+<% end %>
+```
+
+Will render:
+
+```html
+<div class="dropdown" data-controller="dropdown">
+  <!-- dropdown content -->
+</div>
+```
+
+**Features:**
+- Automatically adds `data-controller="dropdown"` for Stimulus
+- Smart positioning with Floating UI
+- Auto-flip to stay in viewport
+- Closes on outside click and Escape key
+
+<ParamField query="class" type="string">
+  Additional CSS classes to add to the dropdown container
+</ParamField>
+
+<ParamField query="data" type="hash">
+  Additional data attributes to add to the dropdown container
+</ParamField>
+
+## `dropdown_toggle`
+
+Creates a button that toggles the dropdown menu.
+
+```erb
+<%= dropdown_toggle class: 'btn-primary' do %>
+  <%= Spree.t(:actions) %>
+<% end %>
+```
+
+Will render:
+
+```html
+<button type="button"
+        class="btn btn-primary"
+        data-action="dropdown#toggle click@window->dropdown#hide"
+        data-dropdown-target="toggle">
+  Actions
+</button>
+```
+
+**Features:**
+- Automatically adds required Stimulus actions and targets
+- Properly styled as a button element
+- Handles window click events for closing
+
+<ParamField query="class" type="string">
+  Additional CSS classes to add to the button (e.g., 'btn-sm', 'btn-primary')
+</ParamField>
+
+<ParamField query="data" type="hash">
+  Additional data attributes to merge with default dropdown attributes
+</ParamField>
+
+## `dropdown_menu`
+
+Creates the dropdown menu container with proper positioning.
+
+```erb
+<%= dropdown_menu class: 'dropdown-menu-right' do %>
+  <%= link_to Spree.t(:edit), edit_admin_brand_path(@brand), class: 'dropdown-item' %>
+  <%= link_to Spree.t(:delete), admin_brand_path(@brand), class: 'dropdown-item text-danger' %>
+<% end %>
+```
+
+Will render:
+
+```html
+<div class="dropdown-container hidden dropdown-menu-right"
+     data-dropdown-target="menu"
+     data-dropdown-placement-value="bottom-start">
+  <!-- menu items -->
+</div>
+```
+
+**Features:**
+- Automatically adds required Stimulus target
+- Hidden by default
+- Configurable placement using Floating UI
+
+<ParamField query="class" type="string">
+  Additional CSS classes (e.g., 'dropdown-menu-right' for right-aligned menu)
+</ParamField>
+
+<ParamField query="placement" type="string">
+  Dropdown placement position. Options: 'bottom-start' (default), 'bottom-end', 'top-start', 'top-end'
+</ParamField>
+
+<ParamField query="direction" type="string">
+  Legacy option for positioning. Use `placement` instead. Options: 'left', 'top', 'top-left'
+</ParamField>
+
+<ParamField query="data" type="hash">
+  Additional data attributes to merge with default dropdown attributes
+</ParamField>
+
+### Complete Dropdown Example
+
+```erb
+<%= content_for :page_actions do %>
+  <%= dropdown do %>
+    <%= dropdown_toggle class: 'btn-primary' do %>
+      <%= icon('adjustments', class: 'mr-2') %>
+      <%= Spree.t(:actions) %>
+      <%= icon('chevron-down', class: 'ml-2') %>
+    <% end %>
+
+    <%= dropdown_menu class: 'dropdown-menu-right' do %>
+      <%= link_to_with_icon 'download', Spree.t(:export_csv), export_admin_brands_path(format: :csv), class: 'dropdown-item' %>
+      <%= link_to_with_icon 'file-export', Spree.t(:export_excel), export_admin_brands_path(format: :xlsx), class: 'dropdown-item' %>
+      <div class="dropdown-divider"></div>
+      <%= link_to_with_icon 'upload', Spree.t(:import), import_admin_brands_path, class: 'dropdown-item' %>
+      <div class="dropdown-divider"></div>
+      <%= link_to_with_icon 'trash', Spree.t(:bulk_delete), bulk_delete_admin_brands_path,
+          class: 'dropdown-item text-danger',
+          data: { turbo_method: :delete, turbo_confirm: Spree.t(:are_you_sure) } %>
+    <% end %>
+  <% end %>
+<% end %>
+```
+
 ## `icon`
 
 Displays an icon.

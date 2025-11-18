@@ -1,7 +1,7 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "name": "Spree Commerce documentation",
-  "theme": "maple",
+  "theme": "almond",
   "colors": {
     "primary": "#0A2242",
     "light": "#D7DFE9",
@@ -10,8 +10,24 @@
   "favicon": "/favicon.png",
   "seo": {
     "metatags": {
-      "canonical": "https://spreecommerce.org/docs"
+      "canonical": "https://spreecommerce.org/docs",
+      "og:locale": "en_US",
+      "twitter:site": "@spreecommerce"
     }
+  },
+  "icons": {
+    "library": "lucide"
+  },
+  "contextual": {
+    "options": [
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "mcp",
+      "cursor",
+      "vscode"
+    ]
   },
   "navigation": {
     "versions": [
@@ -24,8 +40,26 @@
             "groups": [
               {
                 "group": "Getting started",
+                "icon": "rocket",
                 "pages": [
                   "developer/getting-started/quickstart",
+                  "developer/getting-started/installation"
+                ]
+              },
+              {
+                "group": "Customization Guide",
+                "icon": "graduation-cap",
+                "pages": [
+                  "developer/guide/custom-model",
+                  "developer/guide/extend-model",
+                  "developer/guide/create-admin-resource",
+                  "developer/guide/create-api-endpoint"
+                ]
+              },
+              {
+                "group": "Core Concepts",
+                "icon": "brain",
+                "pages": [
                   "developer/core-concepts/architecture",
                   "developer/core-concepts/stores",
                   "developer/core-concepts/orders",
@@ -45,12 +79,12 @@
               },
               {
                 "group": "Customizing Spree",
+                "icon": "wrench",
                 "pages": [
                   "developer/customization/quickstart",
                   "developer/customization/configuration",
                   {
                     "group": "Storefront",
-                    "icon": "store",
                     "pages": [
                       "developer/storefront/storefront",
                       "developer/storefront/themes",
@@ -66,10 +100,13 @@
                   },
                   {
                     "group": "Admin Dashboard",
-                    "icon": "gauge",
                     "pages": [
                       "developer/admin/admin",
+                      "developer/admin/form-builder",
                       "developer/admin/extending-ui",
+                      "developer/admin/stimulus-controllers",
+                      "developer/admin/turbo-patterns",
+                      "developer/admin/common-patterns",
                       "developer/admin/navigation",
                       "developer/admin/authentication",
                       "developer/admin/permissions",
@@ -97,7 +134,6 @@
                 "pages": [
                   {
                     "group": "Multi-Store",
-                    "icon": "store",
                     "pages": [
                       "developer/multi-store/quickstart",
                       "developer/multi-store/setup"
@@ -105,7 +141,6 @@
                   },
                   {
                     "group": "Multi-Tenant",
-                    "icon": "building",
                     "pages": [
                       "developer/multi-tenant/quickstart",
                       "developer/multi-tenant/installation",
@@ -115,7 +150,6 @@
                   },
                   {
                     "group": "Multi-Vendor",
-                    "icon": "shop",
                     "pages": [
                       "developer/multi-vendor/quickstart",
                       "developer/multi-vendor/installation"
@@ -125,6 +159,7 @@
               },
               {
                 "group": "Deployment",
+                "icon": "server",
                 "pages": [
                   "developer/deployment/render",
                   "developer/deployment/aws",
@@ -138,6 +173,7 @@
               },
               {
                 "group": "Upgrading",
+                "icon": "circle-arrow-up",
                 "pages": [
                   "developer/upgrades/quickstart",
                   {
@@ -174,6 +210,7 @@
               },
               {
                 "group": "Contributing",
+                "icon": "heart",
                 "pages": [
                   "developer/contributing/quickstart",
                   "developer/contributing/developing-spree",
@@ -182,15 +219,10 @@
               },
               {
                 "group": "Security",
+                "icon": "shield",
                 "pages": [
                   "developer/security/security_policy",
                   "developer/security/pci_compliance"
-                ]
-              },
-              {
-                "group": "Advanced",
-                "pages": [
-                  "developer/advanced/adding_spree_to_rails_app"
                 ]
               }
             ]
@@ -1945,6 +1977,17 @@
     "href": "https://spreecommerce.org"
   },
   "api": {
+    "examples": {
+      "languages": [
+        "curl",
+        "javascript",
+        "ruby",
+        "python",
+        "php",
+        "java",
+        "c#"
+      ]
+    },
     "openapi": [
       "api-reference/storefront.yaml",
       "api-reference/platform.yaml"
@@ -1957,15 +2000,9 @@
     }
   },
   "navbar": {
-    "links": [
-      {
-        "label": "Support",
-        "href": "mailto:hello@spreecommerce.org"
-      }
-    ],
     "primary": {
       "type": "button",
-      "label": "Get started",
+      "label": "Support",
       "href": "https://spreecommerce.org/contact/"
     }
   },
