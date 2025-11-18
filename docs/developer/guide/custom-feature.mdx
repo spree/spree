@@ -22,13 +22,13 @@ Let's create a complete "Brand" resource that allows admins to manage [Product](
 
 ## Step 1: Create the Migration
 
-Create a new model migration file:
+Create a new model migration:
 
 ```bash
 bin/rails g migration CreateSpreeBrands name:string:index slug:string:uniq active:boolean:index position:integer:index
 ```
 
-Run the migrations:
+Run the migration:
 
 ```bash
 bin/rails db:migrate

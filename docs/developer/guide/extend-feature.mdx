@@ -1,0 +1,57 @@
+---
+title: Extending a Feature
+description: Learn how to extend a Spree feature
+---
+
+Now that we've created a complete "Brand" resource, let's connect it to the [Product](/developer/core-concepts/products) model.
+
+## Step 1: Create the Migration
+
+Add a reference to the newly created brand model in the `spree_products` table:
+
+```bash
+bin/rails g migration AddBrandIdToSpreeProducts brand:references
+```
+
+Run the migration:
+
+```bash
+bin/rails db:migrate
+```
+
+## Step 2: Create a Decorator
+
+[Decorators](/developer/customization/decorators) allow you to add or modify behavior of Spree Core classes in your application. Let's create a decorator for the `Spree::Product` model to add a brand association.
+
+```bash
+mkdir -p app/models/spree && touch app/models/spree/product_decorator.rb
+```
+
+Add the following code to the file:
+
+```ruby
+module Spree
+  module ProductDecorator
+    def self.prepended(base)
+      base.belongs_to :brand, class_name: 'Spree::Brand', optional: true, touch: true
+    end
+
+    # Returns the brand name if the product has a brand associated
+    # Otherwise returns nil
+    # @return [String, nil]
+    def brand_name
+      brand&.name
+    end
+  end
+
+  Product.prepend(ProductDecorator)
+end
+```
+
+**Key points:**
+- You can use `belongs_to` and other ActiveRecord methods inside the `self.prepended(base)` block, where `base` is the model being decorated.
+- You can add new methods to the `Spree::Product` model, eg. `brand_name` to display the brand name in the product show page.
+- Using `&.name` is a safe navigation operator to avoid raising an error if the brand is not present.
+- Using YARD documentation comments is a good practice to describe the method and its parameters. This will be automatically picked up by your IDE like Cursor or Visual Studio Code.
+- Adding `optional: true` tells ActiveRecord to not raise an error if a product doesn't have a brand associated
+- Adding `touch: true` will update the Brand when the Product is updated, useful for clearing the brand cache, eg. Brand Listing page
