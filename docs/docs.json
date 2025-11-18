@@ -50,10 +50,11 @@
                 "group": "Customization Guide",
                 "icon": "graduation-cap",
                 "pages": [
-                  "developer/guide/custom-model",
-                  "developer/guide/extend-model",
-                  "developer/guide/create-admin-resource",
-                  "developer/guide/create-api-endpoint"
+                  "developer/guide/custom-feature",
+                  "developer/guide/extend-feature",
+                  "developer/guide/create-admin-ui",
+                  "developer/guide/create-api-endpoint",
+                  "developer/guide/writing-tests"
                 ]
               },
               {
@@ -78,43 +79,45 @@
                 ]
               },
               {
-                "group": "Customizing Spree",
+                "group": "Storefront",
+                "icon": "store",
+                "pages": [
+                  "developer/storefront/storefront",
+                  "developer/storefront/themes",
+                  "developer/storefront/pages",
+                  "developer/storefront/sections",
+                  "developer/storefront/blocks",
+                  "developer/storefront/links",
+                  "developer/storefront/images",
+                  "developer/storefront/helper-methods",
+                  "developer/storefront/custom-javascript",
+                  "developer/storefront/custom-css"
+                ]
+              },
+              {
+                "group": "Admin Dashboard",
+                "icon": "gauge",
+                "pages": [
+                  "developer/admin/admin",
+                  "developer/admin/form-builder",
+                  "developer/admin/extending-ui",
+                  "developer/admin/stimulus-controllers",
+                  "developer/admin/turbo-patterns",
+                  "developer/admin/common-patterns",
+                  "developer/admin/navigation",
+                  "developer/admin/authentication",
+                  "developer/admin/permissions",
+                  "developer/admin/helper-methods",
+                  "developer/admin/custom-javascript",
+                  "developer/admin/custom-css"
+                ]
+              },
+              {
+                "group": "Customization Reference",
                 "icon": "wrench",
                 "pages": [
                   "developer/customization/quickstart",
                   "developer/customization/configuration",
-                  {
-                    "group": "Storefront",
-                    "pages": [
-                      "developer/storefront/storefront",
-                      "developer/storefront/themes",
-                      "developer/storefront/pages",
-                      "developer/storefront/sections",
-                      "developer/storefront/blocks",
-                      "developer/storefront/links",
-                      "developer/storefront/images",
-                      "developer/storefront/helper-methods",
-                      "developer/storefront/custom-javascript",
-                      "developer/storefront/custom-css"
-                    ]
-                  },
-                  {
-                    "group": "Admin Dashboard",
-                    "pages": [
-                      "developer/admin/admin",
-                      "developer/admin/form-builder",
-                      "developer/admin/extending-ui",
-                      "developer/admin/stimulus-controllers",
-                      "developer/admin/turbo-patterns",
-                      "developer/admin/common-patterns",
-                      "developer/admin/navigation",
-                      "developer/admin/authentication",
-                      "developer/admin/permissions",
-                      "developer/admin/helper-methods",
-                      "developer/admin/custom-javascript",
-                      "developer/admin/custom-css"
-                    ]
-                  },
                   "developer/customization/authentication",
                   "developer/customization/checkout",
                   "developer/customization/permissions",
@@ -1156,7 +1159,7 @@
                 ]
               },
               {
-                "group": "Customizing Spree",
+                "group": "Customization Reference",
                 "pages": [
                   "developer/customization/quickstart",
                   "developer/customization/v4/authentication",

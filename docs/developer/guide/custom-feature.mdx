@@ -1,0 +1,85 @@
+---
+title: Custom Feature
+description: Learn how to create a custom feature 
+---
+
+This guide walks you through creating a complete Spree feature from scratch, covering models, Admin dashboard, API and Storefront. 
+By the end, you'll understand how to add new manageable features to the Spree platform.
+
+## Overview
+
+Building a Spree feature in Spree typically involves:
+
+1. Creating a database model
+2. Creating admin UI (index, new, edit, form)
+3. Adding API endpoints
+4. Adding Storefront (optional)
+5. Writing tests
+
+## Example: Building a Brand Resource
+
+Let's create a complete "Brand" resource that allows admins to manage [Product](/developer/core-concepts/products) brands.
+
+## Step 1: Create the Migration
+
+Create a new model migration file:
+
+```bash
+bin/rails g migration CreateSpreeBrands name:string:index slug:string:uniq active:boolean:index position:integer:index
+```
+
+Run the migrations:
+
+```bash
+bin/rails db:migrate
+```
+
+## Step 2: Create the Model
+
+Create the model file at `app/models/spree/brand.rb`:
+
+```bash
+mkdir -p app/models/spree && touch app/models/spree/brand.rb
+```
+
+Add the following code to the file:
+
+```ruby
+module Spree
+  class Brand < Spree::Base
+    # FriendlyId for nice URLs, eg. https://example.com/brands/nike-sportswear
+    extend FriendlyId
+    friendly_id :slug_candidates, use: %i[slugged history]
+
+    # Include metadata support
+    include Spree::Metafields
+
+    # Active Storage attachments
+    has_one_attached :logo
+
+    # Action text for rich text content
+    has_rich_text :description
+
+    # Validations
+    validates :name, presence: true
+    validates :slug, presence: true, uniqueness: true
+
+    # Associations
+    has_many :products, class_name: 'Spree::Product', dependent: :nullify
+
+    # Scopes
+    scope :active, -> { where(active: true) }
+    scope :alphabetical, -> { order(:name) }
+    scope :with_logo, -> { includes(:logo_attachment).where.not(logo_attachment: { blob: nil }) }
+  end
+end
+```
+
+**Key points:**
+- This is a standard Ruby on Rails ActiveRecord model
+- Inherit from `Spree::Base` (not `ApplicationRecord`) to automatically inherit all Spree functionality
+- Always specify `class_name` and `dependent` in associations
+- Use string columns instead of enums
+- Use `FriendlyId` for nice URLs
+- Include `Spree::Metafields` for [Metafields](/developer/core-concepts/metafields) support
+- Use Rails Active Storage for file attachments
