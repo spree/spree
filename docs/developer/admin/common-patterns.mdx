@@ -1,0 +1,799 @@
+---
+title: Common Admin Patterns
+sidebarTitle: Common Patterns
+---
+
+<Info>
+  This guide requires Spree 5.2 or later. 
+</Info>
+
+This guide provides reusable patterns and code examples for common scenarios in Spree admin development. Use these patterns as starting points for your own implementations.
+
+<Note>
+  **Helper Methods First:** Many patterns shown here use Spree's built-in helper methods (like `dropdown`, `nav_item`, `active_badge`, `link_to_with_icon`, etc.) for consistent styling and automatic controller setup. See [Helper Methods](/developer/admin/helper-methods) for a complete reference.
+</Note>
+
+## Form Patterns
+
+### Basic Resource Form
+
+The standard pattern for creating/editing resources using scaffold partials:
+
+```erb
+<!-- app/views/spree/admin/brands/new.html.erb -->
+<%= render 'spree/admin/shared/new_resource' %>
+
+<!-- app/views/spree/admin/brands/edit.html.erb -->
+<%= render 'spree/admin/shared/edit_resource' %>
+
+<!-- app/views/spree/admin/brands/_form.html.erb -->
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title">
+      <%= Spree.t(:general_settings) %>
+    </h5>
+  </div>
+
+  <div class="card-body">
+    <%= f.spree_text_field :name, required: true %>
+    <%= f.spree_text_area :description %>
+    <%= f.spree_check_box :active %>
+  </div>
+</div>
+```
+
+### Multi-Section Form with Cards
+
+Organize complex forms into multiple card sections:
+
+```erb
+<!-- Basic Information Card -->
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title">
+      <%= Spree.t(:basic_information) %>
+    </h5>
+  </div>
+  <div class="card-body">
+    <%= f.spree_text_field :name, required: true %>
+    <%= f.spree_text_field :sku, required: true %>
+    <%= f.spree_number_field :price, required: true, step: 0.01 %>
+  </div>
+</div>
+
+<!-- Advanced Settings Card -->
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title">
+      <%= Spree.t(:advanced_settings) %>
+    </h5>
+  </div>
+  <div class="card-body">
+    <%= f.spree_text_field :meta_keywords %>
+    <%= f.spree_text_area :meta_description %>
+  </div>
+</div>
+
+<!-- Associations Card -->
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title">
+      <%= Spree.t(:associations) %>
+    </h5>
+  </div>
+  <div class="card-body">
+    <%= f.spree_collection_select :tax_category_id,
+        Spree::TaxCategory.all, :id, :name,
+        { include_blank: true }, {} %>
+    <%= f.spree_collection_select :shipping_category_id,
+        Spree::ShippingCategory.all, :id, :name,
+        { include_blank: true }, {} %>
+  </div>
+</div>
+```
+
+### Form with Nested Attributes
+
+Handle nested associations (e.g., product with variants):
+
+```ruby
+# Model
+class Product < Spree.base_class
+  has_many :variants, class_name: 'Spree::Variant', dependent: :destroy
+  accepts_nested_attributes_for :variants, allow_destroy: true
+end
+
+# Controller
+def permitted_resource_params
+  params.require(:product).permit(
+    :name,
+    :description,
+    variants_attributes: [:id, :sku, :price, :_destroy]
+  )
+end
+```
+
+```erb
+<!-- Form -->
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title"><%= Spree.t(:variants) %></h5>
+  </div>
+  <div class="card-body">
+    <%= f.fields_for :variants do |variant_form| %>
+      <div class="variant-fields mb-3">
+        <%= variant_form.spree_text_field :sku %>
+        <%= variant_form.spree_number_field :price, step: 0.01 %>
+        <%= variant_form.check_box :_destroy %>
+        <%= variant_form.label :_destroy, 'Remove' %>
+      </div>
+    <% end %>
+  </div>
+</div>
+```
+
+### Dynamic Field Addition
+
+Add/remove fields dynamically using Stimulus:
+
+```erb
+<div data-controller="multi-input" class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title"><%= Spree.t(:tags) %></h5>
+  </div>
+  <div class="card-body">
+    <div data-multi-input-target="container">
+      <%= f.fields_for :tags do |tag_form| %>
+        <div class="input-group mb-2">
+          <%= tag_form.text_field :name, class: 'form-control' %>
+          <button type="button"
+                  class="btn btn-danger"
+                  data-action="click->multi-input#remove">
+            Remove
+          </button>
+        </div>
+      <% end %>
+    </div>
+
+    <button type="button"
+            class="btn btn-secondary"
+            data-action="click->multi-input#add">
+      Add Tag
+    </button>
+
+    <template data-multi-input-target="template">
+      <div class="input-group mb-2">
+        <input type="text" name="product[tags_attributes][][name]" class="form-control">
+        <button type="button" class="btn btn-danger" data-action="click->multi-input#remove">
+          Remove
+        </button>
+      </div>
+    </template>
+  </div>
+</div>
+```
+
+### Conditional Fields
+
+Show/hide fields based on other field values:
+
+```erb
+<div class="card mb-4">
+  <div class="card-body">
+    <%= f.spree_select :product_type,
+        ['simple', 'configurable'],
+        {},
+        { data: { action: 'change->conditional-fields#toggle' } } %>
+
+    <div data-conditional-fields-target="field"
+         data-show-when="configurable"
+         class="hidden">
+      <%= f.spree_text_field :configuration_template %>
+    </div>
+  </div>
+</div>
+```
+
+```javascript
+// app/javascript/controllers/conditional_fields_controller.js
+import { Controller } from "@hotwired/stimulus"
+
+export default class extends Controller {
+  static targets = ["field"]
+
+  toggle(event) {
+    const selectedValue = event.target.value
+
+    this.fieldTargets.forEach(field => {
+      const showWhen = field.dataset.showWhen
+      if (showWhen === selectedValue) {
+        field.classList.remove('hidden')
+      } else {
+        field.classList.add('hidden')
+      }
+    })
+  }
+}
+```
+
+## Index/List Patterns
+
+### Standard Index Table
+
+**Index View** - `app/views/spree/admin/brands/index.html.erb`:
+
+```erb
+<%= content_for :page_title do %>
+  <%= Spree.t(:brands) %>
+<% end %>
+
+<%= content_for :page_actions do %>
+  <%= link_to_with_icon 'plus', Spree.t(:new_brand), new_object_url, class: 'btn btn-primary' if can?(:create, Spree::Brand) %>
+<% end %>
+
+<%= render 'spree/admin/shared/index_table' %>
+```
+
+**Table Header** - `app/views/spree/admin/brands/_table_header.html.erb`:
+
+```erb
+<tr>
+  <th scope="col"><%= sort_link @search, :name, Spree.t(:name) %></th>
+  <th scope="col"><%= Spree.t(:active) %>?</th>
+  <th scope="col"></th>
+</tr>
+```
+
+**Table Row** - `app/views/spree/admin/brands/_table_row.html.erb`:
+
+```erb
+<tr id="<%= spree_dom_id(brand) %>" data-controller="row-link" class="cursor-pointer">
+  <td data-action="click->row-link#openLink"><%= brand.name %></td>
+  <td data-action="click->row-link#openLink">
+    <%= active_badge(brand.active?) %>
+  </td>
+  <td class="actions">
+    <% if can?(:edit, brand) %>
+      <div class="d-flex justify-content-end align-items-center">
+        <div><%= link_to_edit brand, data: { row_link_target: 'link', turbo_frame: '_top' } %></div>
+
+        <%= dropdown do %>
+          <%= dropdown_toggle class: 'btn-sm h-100' do %>
+            <%= icon('dots-vertical', class: 'mr-0') %>
+          <% end %>
+          <%= dropdown_menu class: 'dropdown-menu-right' do %>
+            <%= link_to_with_icon 'trash',
+              Spree.t(:delete),
+              object_url(brand),
+              class: 'dropdown-item text-danger',
+              data: { turbo_method: :delete, turbo_confirm: Spree.t(:are_you_sure) } %>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+  </td>
+</tr>
+```
+
+The `shared/index_table` template provides:
+- Turbo Frame wrapping for fast updates
+- Automatic pagination
+- Empty state handling
+- Optional filters integration
+- Sortable support
+
+### Index with Bulk Actions
+
+```erb
+<%= content_for :page_title do %>
+  <%= Spree.t(:brands) %>
+<% end %>
+
+<%= form_tag bulk_activate_admin_brands_path, method: :post do %>
+  <div data-controller="bulk-operation">
+    <!-- Bulk Action Panel -->
+    <div data-bulk-operation-target="panel" class="bulk-actions-panel d-none">
+      <span class="mr-3">
+        <strong data-bulk-operation-target="counter">0</strong> selected
+      </span>
+
+      <button type="button"
+              class="btn btn-sm btn-success"
+              data-action="click->bulk-operation#setBulkAction"
+              data-url="<%= bulk_activate_admin_brands_path %>"
+              data-method="post">
+        Activate
+      </button>
+
+      <button type="button"
+              class="btn btn-sm btn-danger"
+              data-action="click->bulk-operation#setBulkAction"
+              data-url="<%= bulk_delete_admin_brands_path %>"
+              data-method="delete">
+        Delete
+      </button>
+
+      <button type="button"
+              class="btn btn-sm btn-secondary"
+              data-action="click->bulk-operation#cancel">
+        Cancel
+      </button>
+    </div>
+
+    <!-- Table -->
+    <div class="card">
+      <table class="table">
+        <thead>
+          <tr>
+            <th style="width: 40px;">
+              <input type="checkbox"
+                     data-bulk-operation-target="checkboxAll"
+                     data-action="change->bulk-operation#toggleAll">
+            </th>
+            <th><%= Spree.t(:name) %></th>
+            <th><%= Spree.t(:active) %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @brands.each do |brand| %>
+            <tr>
+              <td>
+                <input type="checkbox"
+                       name="brand_ids[]"
+                       value="<%= brand.id %>"
+                       data-bulk-operation-target="checkbox"
+                       data-action="change->bulk-operation#toggle">
+              </td>
+              <td><%= link_to brand.name, edit_admin_brand_path(brand) %></td>
+              <td><%= status_badge(brand.active?) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <input type="hidden"
+           name="_method"
+           data-bulk-operation-target="form">
+  </div>
+<% end %>
+```
+
+### Index with Filters
+
+```erb
+<div data-controller="filters" data-filters-url-value="<%= admin_brands_path %>">
+  <!-- Filter Badges -->
+  <div data-filters-target="badgesContainer" class="mb-3"></div>
+
+  <!-- Filter Form -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="card-title"><%= Spree.t(:filters) %></h5>
+    </div>
+    <div class="card-body">
+      <%= search_form_for @search, url: admin_brands_path do |f| %>
+        <div class="row">
+          <div class="col-md-4">
+            <%= f.label :name_cont, Spree.t(:name) %>
+            <%= f.text_field :name_cont,
+                class: 'form-control',
+                data: { filters_target: 'input' } %>
+          </div>
+
+          <div class="col-md-4">
+            <%= f.label :active_eq, Spree.t(:status) %>
+            <%= f.select :active_eq,
+                [['Active', true], ['Inactive', false]],
+                { include_blank: Spree.t(:all) },
+                { class: 'form-control', data: { filters_target: 'input' } } %>
+          </div>
+
+          <div class="col-md-4">
+            <%= f.label :created_at_gteq, Spree.t(:created_from) %>
+            <%= f.date_field :created_at_gteq,
+                class: 'form-control',
+                data: { filters_target: 'input' } %>
+          </div>
+        </div>
+
+        <div class="mt-3">
+          <%= f.submit Spree.t(:filter), class: 'btn btn-primary' %>
+          <%= link_to Spree.t(:clear_filters), admin_brands_path, class: 'btn btn-secondary' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Badge Template -->
+  <template data-filters-target="badgeTemplate">
+    <span class="badge badge-info mr-2 mb-2">
+      LABEL
+      <a href="DELETE_URL" class="text-white ml-2">&times;</a>
+    </span>
+  </template>
+
+  <!-- Results Table -->
+  <%= render 'table', brands: @brands %>
+</div>
+```
+
+### Sortable Index
+
+```erb
+<table class="table" data-controller="sortable" data-sortable-url-value="<%= reorder_admin_brands_path %>">
+  <tbody data-sortable-target="list">
+    <% @brands.each do |brand| %>
+      <tr data-sortable-id="<%= brand.id %>">
+        <td class="handle" data-sortable-target="handle">⋮⋮</td>
+        <td><%= brand.name %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+```
+
+## Navigation Patterns
+
+### Adding Main Menu Item
+
+**Create partial:** `app/views/spree/admin/shared/_brands_nav.html.erb`
+
+```erb
+<% if can?(:manage, Spree::Brand) %>
+  <%= nav_item(
+    Spree.t(:brands),
+    spree.admin_brands_path,
+    icon: 'tag',
+    active: controller_name == 'brands'
+  ) %>
+<% end %>
+```
+
+**Register in** `config/initializers/spree.rb`:
+
+```ruby
+Rails.application.config.spree_admin.store_nav_partials << 'spree/admin/shared/brands_nav'
+```
+
+### Adding Submenu Item
+
+**Create partial:** `app/views/spree/admin/shared/_brands_products_nav.html.erb`
+
+```erb
+<% if can?(:manage, Spree::Brand) %>
+  <%= nav_item(
+    Spree.t(:brands),
+    spree.admin_brands_path,
+    active: controller_name == 'brands'
+  ) %>
+<% end %>
+```
+
+**Register in** `config/initializers/spree.rb`:
+
+```ruby
+Rails.application.config.spree_admin.store_products_nav_partials << 'spree/admin/shared/brands_products_nav'
+```
+
+### Creating Nested Navigation with Submenu
+
+**Create partial:** `app/views/spree/admin/shared/_inventory_nav.html.erb`
+
+```erb
+<% inventory_active = %w[inventory warehouses stock_movements].include?(controller_name) %>
+
+<% if can?(:manage, Spree::Inventory) %>
+  <%= nav_item(
+    Spree.t(:inventory),
+    spree.admin_inventory_index_path,
+    icon: 'boxes',
+    active: inventory_active
+  ) %>
+
+  <ul class="nav-submenu <% unless inventory_active %>d-none<% end %>">
+    <% if can?(:manage, Spree::Warehouse) %>
+      <%= nav_item(
+        Spree.t(:warehouses),
+        spree.admin_warehouses_path,
+        active: controller_name == 'warehouses'
+      ) %>
+    <% end %>
+
+    <% if can?(:manage, Spree::StockMovement) %>
+      <%= nav_item(
+        Spree.t(:stock_movements),
+        spree.admin_stock_movements_path,
+        active: controller_name == 'stock_movements'
+      ) %>
+    <% end %>
+
+    <%= render_admin_partials(:store_inventory_nav_partials) %>
+  </ul>
+<% end %>
+```
+
+**Register:**
+
+```ruby
+Rails.application.config.spree_admin.store_nav_partials << 'spree/admin/shared/inventory_nav'
+```
+
+### Adding Dropdown Menu Item
+
+```erb
+<%= content_for :page_actions do %>
+  <%= dropdown do %>
+    <%= dropdown_toggle class: 'btn-primary' do %>
+      <%= Spree.t(:actions) %>
+    <% end %>
+
+    <%= dropdown_menu do %>
+      <%= link_to_with_icon 'download', Spree.t(:export), export_admin_brands_path, class: 'dropdown-item' %>
+      <%= link_to_with_icon 'upload', Spree.t(:import), import_admin_brands_path, class: 'dropdown-item' %>
+      <div class="dropdown-divider"></div>
+      <%= link_to_with_icon 'trash', Spree.t(:bulk_delete), bulk_delete_admin_brands_path,
+          class: 'dropdown-item text-danger',
+          data: { turbo_method: :delete, turbo_confirm: Spree.t(:are_you_sure) } %>
+    <% end %>
+  <% end %>
+<% end %>
+```
+
+## UI Component Patterns
+
+### Status Badges
+
+Use the built-in `active_badge` helper:
+
+```erb
+<%= active_badge(brand.active?) %>
+```
+
+Or create custom badge helpers:
+
+```ruby
+# app/helpers/spree/admin/brands_helper.rb
+module Spree
+  module Admin
+    module BrandsHelper
+      def brand_status_badge(brand)
+        if brand.active?
+          content_tag(:span, Spree.t(:active), class: 'badge badge-success')
+        else
+          content_tag(:span, Spree.t(:inactive), class: 'badge badge-secondary')
+        end
+      end
+    end
+  end
+end
+```
+
+### Alert Messages
+
+```erb
+<% if @brand.errors.any? %>
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <strong><%= Spree.t(:error) %>:</strong>
+    <ul class="mb-0">
+      <% @brand.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+    <button type="button" class="close" data-dismiss="alert">
+      <span>&times;</span>
+    </button>
+  </div>
+<% end %>
+```
+
+### Confirmation Modals
+
+```erb
+<%= link_to Spree.t(:delete),
+    admin_brand_path(@brand),
+    method: :delete,
+    class: 'btn btn-danger',
+    data: {
+      confirm: Spree.t(:are_you_sure),
+      turbo_confirm: Spree.t(:delete_confirmation, name: @brand.name)
+    } %>
+```
+
+### Progress Indicators
+
+```erb
+<div class="progress" data-controller="progress">
+  <div class="progress-bar"
+       role="progressbar"
+       data-progress-target="bar"
+       style="width: 0%">
+    0%
+  </div>
+</div>
+```
+
+### Empty States
+
+```erb
+<div class="empty-state text-center py-5">
+  <div class="mb-3">
+    <i class="icon-large icon-box"></i>
+  </div>
+  <h4><%= Spree.t(:no_brands_yet) %></h4>
+  <p class="text-muted">
+    <%= Spree.t(:no_brands_description) %>
+  </p>
+  <%= link_to Spree.t(:create_your_first_brand),
+      new_admin_brand_path,
+      class: 'btn btn-primary' %>
+</div>
+```
+
+## Permission Patterns
+
+### Basic Ability Definition
+
+```ruby
+# app/models/spree/brand_ability.rb
+module Spree
+  class BrandAbility
+    include CanCan::Ability
+
+    def initialize(user)
+      if user.admin?
+        can :manage, Spree::Brand
+      elsif user.has_role?(:brand_manager)
+        can [:read, :update], Spree::Brand
+      else
+        can :read, Spree::Brand, active: true
+      end
+    end
+  end
+end
+
+# config/initializers/spree.rb
+Rails.application.config.after_initialize do
+  Spree::Ability.register_ability(Spree::BrandAbility)
+end
+```
+
+### Conditional UI Based on Permissions
+
+```erb
+<% if can?(:update, @brand) %>
+  <%= link_to Spree.t(:edit), edit_admin_brand_path(@brand), class: 'btn btn-primary' %>
+<% end %>
+
+<% if can?(:destroy, @brand) %>
+  <%= link_to Spree.t(:delete),
+      admin_brand_path(@brand),
+      method: :delete,
+      class: 'btn btn-danger',
+      data: { confirm: Spree.t(:are_you_sure) } %>
+<% end %>
+```
+
+### Controller Authorization
+
+```ruby
+module Spree
+  module Admin
+    class BrandsController < ResourceController
+      before_action :check_permissions
+
+      private
+
+      def check_permissions
+        authorize! :manage, Spree::Brand
+      end
+    end
+  end
+end
+```
+
+## Helper Patterns
+
+### Reusable Link Helpers
+
+```ruby
+# app/helpers/spree/admin/action_helpers.rb
+module Spree
+  module Admin
+    module ActionHelpers
+      def link_to_edit(resource, options = {})
+        url = edit_polymorphic_path([:admin, resource])
+        name = options[:no_text] ? '' : Spree.t(:edit)
+        options[:class] ||= 'btn btn-secondary'
+        link_to name, url, options
+      end
+
+      def link_to_delete(resource, options = {})
+        url = polymorphic_path([:admin, resource])
+        name = options[:no_text] ? '' : Spree.t(:delete)
+        options[:class] ||= 'btn btn-danger'
+        options[:method] = :delete
+        options[:data] ||= {}
+        options[:data][:confirm] ||= Spree.t(:are_you_sure)
+        link_to name, url, options
+      end
+    end
+  end
+end
+```
+
+### Date Formatting Helper
+
+```ruby
+module Spree
+  module Admin
+    module DateHelpers
+      def formatted_date(date, format = :long)
+        return '' if date.blank?
+        I18n.l(date, format: format)
+      end
+
+      def time_ago(date)
+        return '' if date.blank?
+        time_ago_in_words(date) + ' ago'
+      end
+    end
+  end
+end
+```
+
+## AJAX/Turbo Patterns
+
+### Turbo Frame Inline Editing
+
+```erb
+<!-- Index view -->
+<%= turbo_frame_tag dom_id(brand, :edit) do %>
+  <%= link_to brand.name, edit_admin_brand_path(brand) %>
+<% end %>
+
+<!-- Edit view fragment -->
+<%= turbo_frame_tag dom_id(@brand, :edit) do %>
+  <%= form_with model: [:admin, @brand] do |f| %>
+    <%= f.text_field :name, class: 'form-control' %>
+    <%= f.submit 'Save', class: 'btn btn-sm btn-primary' %>
+    <%= link_to 'Cancel', admin_brands_path, class: 'btn btn-sm btn-secondary' %>
+  <% end %>
+<% end %>
+```
+
+### Turbo Stream Updates
+
+```ruby
+# Controller
+def activate
+  @brand.update(active: true)
+
+  respond_to do |format|
+    format.turbo_stream
+    format.html { redirect_to admin_brands_path }
+  end
+end
+```
+
+```erb
+<!-- activate.turbo_stream.erb -->
+<%= turbo_stream.replace dom_id(@brand) do %>
+  <%= render @brand %>
+<% end %>
+
+<%= turbo_stream.update 'flash_messages' do %>
+  <div class="alert alert-success"><%= Spree.t(:brand_activated) %></div>
+<% end %>
+```
+
+## Testing Patterns
+
+See [Building Resources Guide](/developer/admin/building-resources#step-9-write-tests) for comprehensive testing examples.
+
+## See Also
+
+- [FormBuilder API](/developer/admin/form-builder) - Complete FormBuilder reference
+- [Building Resources](/developer/admin/building-resources) - Full resource creation guide
+- [Stimulus Controllers](/developer/admin/stimulus-controllers) - JavaScript controllers reference
+- [Turbo Patterns](/developer/admin/turbo-patterns) - Hotwire/Turbo patterns
