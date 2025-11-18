@@ -552,7 +552,7 @@ module Spree
       # implement your custom logic here
     end
 
-    # This FriendlyId method is overwitten to keep our logic for generating code
+    # This FriendlyId method is overwritten to keep our logic for generating code
     # there is no option for own format
     def set_code
       self.code = if code.present?
