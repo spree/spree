@@ -7,6 +7,15 @@
     "light": "#D7DFE9",
     "dark": "#0A2242"
   },
+  "styling": {
+    "eyebrows": "breadcrumbs",
+    "codeblocks": {
+      "theme": "night-owl"
+    }
+  },
+  "interaction": {
+    "drilldown": true
+  },
   "favicon": "/favicon.png",
   "seo": {
     "metatags": {
@@ -60,6 +69,7 @@
                       "developer/tutorial/custom-feature/introduction",
                       "developer/tutorial/custom-feature/model",
                       "developer/tutorial/custom-feature/admin",
+                      "developer/tutorial/custom-feature/attachments",
                       "developer/tutorial/custom-feature/api",
                       "developer/tutorial/custom-feature/storefront",
                       "developer/tutorial/custom-feature/testing"

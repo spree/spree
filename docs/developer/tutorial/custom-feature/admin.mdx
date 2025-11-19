@@ -43,7 +43,7 @@ You will now be able to access the brands resource at `http://localhost:3000/adm
 
 You'll probably want to customize the newly created controller at `app/controllers/spree/admin/brands_controller.rb`:
 
-```ruby
+```ruby app/controllers/spree/admin/brands_controller.rb
 module Spree
   module Admin
     class BrandsController < ResourceController
@@ -69,10 +69,7 @@ module Spree
         params.require(:brand).permit(
           :name,
           :slug,
-          :description,
-          :logo,
-          :active,
-          :position
+          :description
         )
       end
     end
@@ -98,9 +95,9 @@ end
 
 ### Index View
 
-Customize `app/views/spree/admin/brands/index.html.erb` to add sorting support.
+This file is responsible for displaying the list of brands in the Admin Dashboard. It will handle sorting, filtering, pagination, and the empty state.
 
-```erb
+```erb app/views/spree/admin/brands/index.html.erb
 <%= content_for :page_title do %>
   <%= Spree.t(:brands) %>
 <% end %>
@@ -109,22 +106,21 @@ Customize `app/views/spree/admin/brands/index.html.erb` to add sorting support.
   <%= link_to_with_icon 'plus', Spree.t(:new_brand), new_object_url, class: 'btn btn-primary' if can?(:create, Spree::Brand) %>
 <% end %>
 
-<%= render 'spree/admin/shared/index_table' %> // [!code --]
-<%= render 'spree/admin/shared/index_table', sortable: true %> // [!code ++]
+<%= render 'spree/admin/shared/index_table' %>
 ```
 
-This uses the standard [index_table.html.erb](https://github.com/spree/spree/blob/main/admin/app/views/spree/admin/shared/_index_table.html.erb) template which handles:
-- Turbo Frame wrapping for fast updates
-- Automatic empty state handling
-- Pagination
-- Optional filters support
-- Sortable support
+Let's break down each part:
+- `content_for :page_title` - Set the page title
+- `content_for :page_actions` - Add a new button to the page actions, uses `can?` to run a check if the current user has permission to create a new brand
+- `link_to_with_icon 'plus', Spree.t(:new_brand), new_object_url, class: 'btn btn-primary'` - Add a new button to the page actions to create a new brand, `new_object_url` is a helper that generates the URL to create a new brand, it's the same as calling `spree.new_admin_brand_path`
+- `render 'spree/admin/shared/index_table'` - Render the index table partial which handled sorting, filtering, pagination, and the empty state.
+
 
 ### Table Header Partial
 
-Create `app/views/spree/admin/brands/_table_header.html.erb`:
+Customize `app/views/spree/admin/brands/_table_header.html.erb` file to add the following content:
 
-```erb
+```erb app/views/spree/admin/brands/_table_header.html.erb
 <tr>
   <th scope="col"><%= sort_link @search, :name, Spree.t(:name) %></th>
   <th scope="col"><%= Spree.t(:active) %>?</th>
@@ -138,7 +134,7 @@ The `sort_link` helper provides sortable column headers that work with Ransack.
 
 Customize `app/views/spree/admin/brands/_table_row.html.erb` file to add the following content:
 
-```erb
+```erb app/views/spree/admin/brands/_table_row.html.erb
 <tr id="<%= spree_dom_id(brand) %>" data-controller="row-link" class="cursor-pointer">
   <td data-action="click->row-link#openLink"><%= brand.name %></td>
   <td data-action="click->row-link#openLink">
@@ -162,7 +158,7 @@ Customize `app/views/spree/admin/brands/_table_row.html.erb` file to add the fol
 
 Scaffold created a `app/views/spree/admin/brands/new.html.erb` template with the following content:
 
-```erb
+```erb app/views/spree/admin/brands/new.html.erb
 <%= render 'spree/admin/shared/new_resource' %>
 ```
 
@@ -175,9 +171,9 @@ That's it! The [new_resource.html.erb](https://github.com/spree/spree/blob/main/
 
 ### Edit View
 
-Scaffold created a `app/views/spree/admin/brands/edit.html.erb` template with the following content:
+Scaffold also created a `app/views/spree/admin/brands/edit.html.erb` template with the following content:
 
-```erb
+```erb app/views/spree/admin/brands/edit.html.erb
 <%= render 'spree/admin/shared/edit_resource' %>
 ```
 
@@ -189,11 +185,13 @@ The [edit_resource.html.erb](https://github.com/spree/spree/blob/main/admin/app/
 - Submit/cancel buttons
 - Delete button
 
+As with the new view, you can just leave it as is.
+
 ### Form Partial
 
-Customize `app/views/spree/admin/brands/_form.html.erb` file to add the following fields:
+This one is a bit more complex. We need to customize it to add the following fields:
 
-```erb
+```erb app/views/spree/admin/brands/_form.html.erb
 <div class="card mb-4" data-controller="slug-form">
   <div class="card-header">
     <h5 class="card-title">
@@ -214,9 +212,6 @@ Customize `app/views/spree/admin/brands/_form.html.erb` file to add the followin
 
     <%= f.spree_rich_text_area :description,
         help: "Optional brand description" %>
-
-    <%= f.spree_check_box :active,
-        label: "Active" %>
   </div>
 </div>
 
@@ -236,14 +231,13 @@ Customize `app/views/spree/admin/brands/_form.html.erb` file to add the followin
 </div>
 ```
 
-**Form structure:**
-- Stack cards vertically
-- Use card components for visual grouping
-- Use [Spree::Admin::FormBuilder](/developer/admin/form-builder) methods (automatically available)
-- Add help text for non-obvious fields
-- Use `active_storage/upload_form` partial for file uploads with specified dimensions
-- Use `slug-form` Stimulus controller for slug generation preview (so user don't need to type the slug manually)
-- Uses `spree_rich_text_area` to embed a fully-featured rich text editor
+Let's break down each part:
+- `data-controller="slug-form"` - Use [Stimulus controllers](/developer/core-concepts/stimulus) for slug generation preview (so user don't need to type the slug manually)
+- `spree_text_field :name` - Use [Spree::Admin::FormBuilder](/developer/admin/form-builder) method to create a text field for the name
+- `spree_text_field :slug` - Use [Spree::Admin::FormBuilder](/developer/admin/form-builder) method to create a text field for the slug
+- `spree_rich_text_area :description` - Use [Spree::Admin::FormBuilder](/developer/admin/form-builder) method to create a rich text area for the description
+- `active_storage/upload_form` - Use [Rails Active Storage](/developer/core-concepts/active-storage) partial to upload the logo
+- `f.error_message_on :logo` - Use [Rails Active Record](/developer/core-concepts/active-record) method to display error messages for the logo field
 
 ## Step 4: Add Navigation Menu Item
 
@@ -251,9 +245,15 @@ Now that we've created a complete Admin Dashboard UI for the brand resource, let
 
 ### Create Navigation Partial
 
-Create `app/views/spree/admin/shared/_brands_nav.html.erb`:
+Run the following command to create the navigation partial:
 
-```erb
+```bash
+mkdir -p app/views/spree/admin/shared && touch app/views/spree/admin/shared/_brands_nav.html.erb
+```
+
+And add the following content:
+
+```erb app/views/spree/admin/shared/_brands_nav.html.erb
 <% if can?(:manage, Spree::Brand) %>
   <%= nav_item(
     Spree.t(:brands),
@@ -275,7 +275,7 @@ Create `app/views/spree/admin/shared/_brands_nav.html.erb`:
 
 Add to `config/initializers/spree.rb`:
 
-```ruby
+```ruby config/initializers/spree.rb
 Rails.application.config.spree_admin.store_nav_partials << 'spree/admin/shared/brands_nav'
 ```
 
@@ -285,9 +285,15 @@ This adds the navigation item to the main sidebar after Reports and before Store
 
 To add Brands under the existing Products menu, use the products injection point:
 
-**Create:** `app/views/spree/admin/shared/_brands_products_nav.html.erb`
+Run the following command to create the products navigation partial:
 
-```erb
+```bash
+mkdir -p app/views/spree/admin/shared && touch app/views/spree/admin/shared/_brands_products_nav.html.erb
+```
+
+And add the following content:
+
+```erb app/views/spree/admin/shared/_brands_products_nav.html.erb
 <% if can?(:manage, Spree::Brand) %>
   <%= nav_item(
     Spree.t(:brands),
@@ -299,7 +305,7 @@ To add Brands under the existing Products menu, use the products injection point
 
 **Register:**
 
-```ruby
+```ruby config/initializers/spree.rb
 Rails.application.config.spree_admin.store_products_nav_partials << 'spree/admin/shared/brands_products_nav'
 ```
 
