@@ -84,8 +84,10 @@
                   "developer/core-concepts/calculators",
                   "developer/core-concepts/adjustments",
                   "developer/core-concepts/addresses",
+                  "developer/core-concepts/metafields",
                   "developer/core-concepts/i18n",
-                  "developer/core-concepts/metafields"
+                  "developer/core-concepts/search-filtering",
+                  "developer/core-concepts/slugs"
                 ]
               },
               {
