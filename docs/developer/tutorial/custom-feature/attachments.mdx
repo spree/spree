@@ -1,0 +1,23 @@
+---
+title: Add Attachments to Brands
+sidebarTitle: Brands Attachments
+description: Learn how to add attachments to the Brands feature
+---
+
+## Step 1: Add Attachments to the Model
+
+Now we need to add attachments to the brand model. Spree uses [Rails Active Storage](https://guides.rubyonrails.org/active_storage_overview.html) engine to handle the attachments, image processing and storage. It can also be used for non-image files.
+
+Let's add a logo attachment to the brand model:
+
+```ruby app/models/spree/brand.rb
+module Spree
+  class Brand < Spree::Base
+    has_one_attached :logo # [!code ++]
+
+    # ... other code ...
+  end
+end
+```
+
+## Step 2: Add Attachments uploader in the Admin Dashboard

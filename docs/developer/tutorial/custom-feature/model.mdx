@@ -11,12 +11,12 @@ First we need to create a database migration to add the new brand model to the d
 Create a new model migration file by running the following command in your Spree application root directory:
 
 ```bash
-bin/rails g migration CreateSpreeBrands name:string:index slug:string:uniq status:string:index position:integer:index published_at:datetime
+bin/rails g migration CreateSpreeBrands name:string:index slug:string:uniq status:string:index  published_at:datetime --timestamps
 ```
 
 This should create a new migration file at `db/migrate/<YYYYMMDDHHMMSS>_create_spree_brands.rb` with the following content:
 
-```ruby
+```ruby db/migrate/<YYYYMMDDHHMMSS>_create_spree_brands.rb
 class CreateSpreeBrands < ActiveRecord::Migration[8.0]
   def change
     create_table :spree_brands do |t|
@@ -25,11 +25,11 @@ class CreateSpreeBrands < ActiveRecord::Migration[8.0]
       t.string :status
       t.datetime :published_at
 
+      t.timestamps
     end
     add_index :spree_brands, :name
     add_index :spree_brands, :slug, unique: true
     add_index :spree_brands, :status
-    add_index :spree_brands, :position
   end
 end
 ```
@@ -56,37 +56,49 @@ mkdir -p app/models/spree && touch app/models/spree/brand.rb
 
 Add the following code to the file:
 
-```ruby
+```ruby app/models/spree/brand.rb
 module Spree
   class Brand < Spree::Base
     # FriendlyId for nice URLs, eg. https://example.com/brands/nike-sportswear
     extend FriendlyId
     friendly_id :slug_candidates, use: %i[slugged]
 
-    # Include metadata support
-    include Spree::Metafields
+    # Validations
+    validates :name, presence: true
+    validates :slug, presence: true, uniqueness: true
+  end
+end
+```
 
-    # Active Storage attachments
-    has_one_attached :logo
+This is a standard [Ruby on Rails ActiveRecord model](https://guides.rubyonrails.org/active_record_basics.html) with all the bells and whistles for a Brand resource. Let's break down each part:
+- Inherits from `Spree::Base` to automatically inherit all Spree functionality. Also the model itself is namespaced under `Spree::` module, so it's available as `Spree::Brand` in the application.
+- `extend FriendlyId` - Use [FriendlyId slugs](/developer/core-concepts/slugs) library for nice URLs
+- `validates :name, presence: true` - Validate that the name is present
+- `validates :slug, presence: true, uniqueness: true` - Validate that the slug is present and unique
 
-    # Action text for rich text content
-    has_rich_text :description
+### Add State Machine for Brand Status
+
+As you probably noticed, we've added a `status` column to the database table. This column is used to store the status of the brand. This will come in handy to manage which brands show on Storefront.
+
+We also have a `published_at` column to store the timestamp when the brand was published. Let's implement this business logic in the model:
+
+```ruby app/models/spree/brand.rb
+module Spree
+  class Brand < Spree::Base
+    # FriendlyId for nice URLs, eg. https://example.com/brands/nike-sportswear
+    extend FriendlyId
+    friendly_id :slug_candidates, use: %i[slugged]
 
     # Validations
     validates :name, presence: true
     validates :slug, presence: true, uniqueness: true
 
+    # [!code ++:13]
     # Scopes
     scope :published, -> { where(status: 'published') }
-    scope :alphabetical, -> { order(:name) }
-    scope :with_logo, -> { includes(:logo_attachment).where.not(logo_attachment: { blob: nil }) }
-
-    # Ransack configuration
-    self.whitelisted_ransackable_attributes = %w[name slug status published_at]
-    self.whitelisted_ransackable_scopes = %w[published with_logo]
 
     # State machine for brand status
-    state_machine :status, initial: :draft do
+    state_machine :status, initial: :draft do 
       event :publish do
         transition draft: :published
       end
@@ -99,14 +111,66 @@ module Spree
 end
 ```
 
-This is a standard [Ruby on Rails ActiveRecord model](https://guides.rubyonrails.org/active_record_basics.html) with all the bells and whistles for a Brand resource. Let's break down each part:
-- Inherits from `Spree::Base` to automatically inherit all Spree functionality. Also the model itself is namespaced under `Spree::` module, so it's available as `Spree::Brand` in the application.
-- `extend FriendlyId` - Use [FriendlyId slugs](/developer/core-concepts/slugs) library for nice URLs
-- `include Spree::Metafields` - Include `Spree::Metafields` for [Metafields](/developer/core-concepts/metafields) support to easily add metadata and custom attributes to the brand model from the Admin Dashboard
-- `has_one_attached :logo` - Use [Rails Active Storage](https://guides.rubyonrails.org/active_storage_overview.html) for file attachments and image processing. Active Storage can be used for non-image files as well
-- `has_rich_text :description` - Use [Rails Action Text](https://guides.rubyonrails.org/action_text_overview.html) for rich text content, enabling admins to use a WYSIWYG editor to add formatted text to the brand model from the Admin Dashboard
-- `validates :name, presence: true` - Validate that the name is present
-- `validates :slug, presence: true, uniqueness: true` - Validate that the slug is present and unique
-- `scope :published, -> { where(status: 'published') }` - Scope to filter the brands by status
-- `self.whitelisted_ransackable_attributes` and `self.whitelisted_ransackable_scopes` - Allow for searching, filtering and sorting the brands in the Admin Dashboard using [Ransack search & filtering](/developer/core-concepts/search-filtering)
-- `state_machine :status, initial: :draft do` - Use State Machines to manage the brand status, allowing to attach events to the status transitions, eg. `publish` event to transition the brand from `draft` to `published` status
+Now every `Spree::Brand` instance will have a `status` attribute with the value of `draft` by default. When the brand is published, the `status` will be set to `published` and the `published_at` timestamp will be set to the current time.
+
+We've also added `published` scope to the model to filter the brands by status, eg.
+
+```ruby
+Spree::Brand.published.count
+# => 1
+
+Spree::Brand.published.first
+# => #<Spree::Brand:0x0000000100000000 id: 1, name: "Nike", slug: "nike", status: "published", published_at: 2021-01-01 00:00:00>
+```
+
+### Add Brand Description rich text content
+
+Our Brand model has a `name` attribute to store the brand name. However it's missing a description. That's because we're going to use [Action Text](https://guides.rubyonrails.org/action_text_overview.html) to handle the rich text content.
+
+```ruby app/models/spree/brand.rb
+module Spree
+  class Brand < Spree::Base
+    # FriendlyId for nice URLs, eg. https://example.com/brands/nike-sportswear
+    extend FriendlyId
+    friendly_id :slug_candidates, use: %i[slugged]
+
+    # [!code ++:2]
+    # Action text for rich text content
+    has_rich_text :description
+
+    # Validations
+    validates :name, presence: true
+    validates :slug, presence: true, uniqueness: true
+
+    # Scopes
+    scope :published, -> { where(status: 'published') }
+
+    # State machine for brand status
+    state_machine :status, initial: :draft do 
+      event :publish do
+        transition draft: :published
+      end
+      after_transition to: :published do |brand|
+        # Set the published_at timestamp when the brand is published
+        brand.update(published_at: Time.current)
+      end
+    end
+  end
+end
+```
+
+We only need to add `has_rich_text :description` to the model to use Action Text for the brand description. The content is stored in a seperate table called `action_text_rich_texts` in the database. In the Admin dashboard users will be able to use a WYSIWYG editor to add formatted text to the brand description.
+
+You can access the description content like this:
+
+```ruby
+brand.description.to_s
+# => "<h1>Hello</h1><p>World</p>"
+```
+
+Or if you prefer plain text:
+
+```ruby
+brand.description.to_plain_text
+# => "Hello World"
+```
