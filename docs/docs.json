@@ -916,6 +916,8 @@
                       "user/manage-products/search-products",
                       "user/manage-products/bulk-product-operations",
                       "user/manage-products/export-products",
+                      "user/manage-products/import-products",
+                      "user/manage-products/product-import-file-template",
                       "user/manage-products/stock-levels",
                       "user/manage-products/stock-transfers",
                       "user/manage-products/product-taxonomies",
