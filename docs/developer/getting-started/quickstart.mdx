@@ -1,62 +1,116 @@
 ---
-title: "Introduction"
-description: "Meet the next generation of documentation. AI-native, beautiful out-of-the-box, and built for developers."
-mode: "frame"
+title: "Quickstart"
+description: "Start building awesome eCommerce applications with Spree open-source eg. multi-store, multi-vendor, multi-tenant, multi-language, multi-currency. B2B or B2C."
 ---
 
-export const HeroCard = ({ filename, title, description, href }) => {
-  return (
-    <a className="group cursor-pointer pb-8" href={href}>
-      <img
-        src={`https://mintlify.s3.us-west-1.amazonaws.com/mintlify/images/hero/${filename}.png`}
-        className="block dark:hidden pointer-events-none group-hover:scale-105 transition-all duration-100"
-      />
-      <img
-        src={`https://mintlify.s3.us-west-1.amazonaws.com/mintlify/images/hero/${filename}-dark.png`}
-        className="pointer-events-none group-hover:scale-105 transition-all duration-100 hidden dark:block"
-      />
-      <h3 className="mt-5 text-gray-900 dark:text-zinc-50 font-medium">
-        {title}
-      </h3>
-      <span className="mt-1.5">{description}</span>
-    </a>
-  );
-};
+## Getting Started with Spree Commerce
 
-<div className="relative">
+Follow the instructions below to learn how to build and deploy your Spree Commerce store.
 
-  <div className="relative z-10 px-4 py-16 lg:py-48 lg:pb-24 max-w-3xl mx-auto">
-    <h1 className="block text-4xl font-medium text-center text-gray-900 dark:text-zinc-50 tracking-tight">
-      Spree Commerce
-    </h1>
+### 1. Installing Spree
 
-    <div className="max-w-xl mx-auto px-4 mt-4 text-lg text-center text-gray-500 dark:text-zinc-500">
-      Start building your eCommerce solution with our flexible open source eCommerce platform.
-    </div>
+<Tabs>
+  <Tab title="Spree Installer">
+    Use the guided installer to set up your Spree Commerce application with all the required dependencies (Ruby, Rails, etc.) on your system.
 
-    <div className="px-6 lg:px-0 mt-12 lg:mt-24 grid sm:grid-cols-2 gap-x-6 gap-y-4">
-      <HeroCard filename="rocket" title="Quickstart" description="Deploy your first docs site in minutes with our step-by-step guide" href="/quickstart" />
+    Copy and paste the following command to your terminal:
 
-      <HeroCard
-        filename="cli"
-        title="CLI installation"
-        description="Install the CLI to preview and develop your docs locally"
-        href="/installation"
-      />
+    ```bash
+    bash -c "$(curl -fsSL https://raw.githubusercontent.com/spree/spree/main/install.sh)"
+    ```
 
-      <HeroCard
-        filename="editor"
-        title="Web editor"
-        description="Make quick updates and manage content with our browser-based editor"
-        href="/editor"
-      />
+    This will fire up the guided installer that will ask you a few questions (eg. application name, load sample data, etc.) and then set up your Spree Commerce application.
 
-      <HeroCard
-        filename="components"
-        title="Components"
-        description="Build rich, interactive documentation with our ready-to-use components"
-        href="/text"
-      />
-    </div>
-  </div>
-</div>
+    <Info>
+      On Windows please install WSL (Windows Subsystem for Linux) first.
+      ```bash
+      wsl --install
+      ```
+      Then run the installer from within WSL.
+    </Info>
+
+    <Warning>
+      Minimum system requirements for MacOS:
+      * MacOS 14.0+
+      * XCode command line tools installed
+    </Warning>
+
+    <Info>
+      If you have any issues with the installer, please create an issue on [GitHub](https://github.com/spree/spree/issues/new). Thank you!
+    </Info>
+  </Tab>
+  <Tab title="Manual Installation">
+    If you prefer to install Spree manually, you're free to do so.
+
+    1. Install [Ruby](https://www.ruby-lang.org/en/documentation/installation/)
+    2. Install [vips](https://www.libvips.org/install.html) for image processing
+    3. Install Rails gem:
+        ```bash
+        gem install rails 8.0.4
+        ```
+    4. Run the following command to create a new Spree Commerce application:
+        ```bash
+        rails new my_store -m https://raw.githubusercontent.com/spree/spree/main/template.rb
+        ```
+    5. Navigate to the application directory
+        ```bash
+        cd my_store
+        ```
+    6. Run the following command to start the development server:
+        ```bash
+        bin/dev
+        ```
+    7. Optionally load sample data (products, categories, etc.):
+        ```bash
+        bin/rails spree_sample:load
+        ```
+  </Tab>
+</Tabs>
+
+### 2. Exploring Your Store
+
+Feel free to explore your store. You can do so because Spree comes with a default pre-built Storefront and Admin Panel.
+
+<AccordionGroup>
+  <Accordion icon="palette" title="Browsing Storefront">
+    Spree comes with a default pre-built Storefront. You can access it by navigating to [http://localhost:3000](http://localhost:3000).
+
+    <Frame caption="Spree Storefront">
+      <img src="/images/spree_storefront.png" />
+    </Frame>
+
+    You can learn more about Storefront configuration in the [Storefront](/user/storefront/theme-editor) section.
+  </Accordion>
+
+  <Accordion icon="key" title="Logging into the Admin Dashboard">
+    Use your browser window to navigate to [http://localhost:3000/admin](http://localhost:3000/admin). You can log in with the default credentials:
+
+    login: 
+
+    ```
+    spree@example.com
+    ```
+
+    password: 
+
+    ```
+    spree123
+    ```
+
+    Upon successful authentication, you should see the admin screen:
+
+    <Frame caption="Spree Admin Dashboard">
+      <img src="/images/spree_admin_dashboard.png" />
+    </Frame>
+
+    Feel free to explore some of the Admin Panel features that Spree has to offer and to verify that your installation is working properly.
+  </Accordion>
+</AccordionGroup>
+
+### All Done!
+
+Congrats! You've set up your Spree Commerce and it's looking amazing!
+
+Give Spree a [GitHub Star](https://github.com/spree/spree)<Icon icon="star" iconType="solid" color="#FFD43B" />, why dont't ya? Thank you for supporting Spree open-source! <Icon icon="heart" iconType="solid" color="#FF0000" />
+
+Need support or want to give some feedback? Join our [community](https://slack.spreecommerce.org/) with 6000+ members or drop us an email at [hello@spreecommerce.org](mailto:hello@spreecommerce.org).

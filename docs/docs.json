@@ -18,6 +18,10 @@
   "icons": {
     "library": "lucide"
   },
+  "banner": {
+    "content": "🚀 Spree 5.2 is now live! See our [changelog](/changelog) for details.",
+    "dismissible": true
+  },
   "contextual": {
     "options": [
       "copy",
@@ -42,19 +46,25 @@
                 "group": "Getting started",
                 "icon": "rocket",
                 "pages": [
-                  "developer/getting-started/quickstart",
-                  "developer/getting-started/installation"
+                  "developer/index",
+                  "developer/getting-started/quickstart"
                 ]
               },
               {
-                "group": "Customization Guide",
+                "group": "Customization Tutorial",
                 "icon": "graduation-cap",
                 "pages": [
-                  "developer/guide/custom-feature",
-                  "developer/guide/extend-feature",
-                  "developer/guide/create-admin-ui",
-                  "developer/guide/create-api-endpoint",
-                  "developer/guide/writing-tests"
+                  {
+                    "group": "Custom Brands Feature",
+                    "pages": [
+                      "developer/tutorial/custom-feature/introduction",
+                      "developer/tutorial/custom-feature/model",
+                      "developer/tutorial/custom-feature/admin",
+                      "developer/tutorial/custom-feature/api",
+                      "developer/tutorial/custom-feature/storefront",
+                      "developer/tutorial/custom-feature/testing"
+                    ]
+                  }
                 ]
               },
               {
@@ -1958,21 +1968,7 @@
           }
         ]
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Community",
-          "href": "http://slack.spreecommerce.org/",
-          "icon": "slack"
-        },
-        {
-          "anchor": "Github",
-          "href": "https://github.com/spree/spree",
-          "icon": "github"
-        }
-      ]
-    }
+    ]
   },
   "logo": {
     "light": "/logo/logo_light.png",
