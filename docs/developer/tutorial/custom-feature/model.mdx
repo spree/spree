@@ -23,7 +23,6 @@ class CreateSpreeBrands < ActiveRecord::Migration[8.0]
       t.string :name
       t.string :slug
       t.string :status
-      t.integer :position
       t.datetime :published_at
 
     end
@@ -36,7 +35,7 @@ end
 ```
 
 <Info>
-  As you can see, we're using the `:index` option to add indexes to the columns. This is a good practice to improve performance when querying the database. Also the `:uniq` option is used to add a unique index to the column, as we're going to use the `slug` column for unique URLs, eg. https://example.com/brands/nike-sportswear
+  As you can see, we're using the `:index` option to add indexes to the columns. This is a good practice to improve performance when querying the database. Also the `:uniq` option is used to add a unique index to the column, as we're going to use the `slug` column for unique URLs, eg. `https://example.com/brands/nike-sportswear`
 </Info>
 
 Now run the migration:
@@ -64,9 +63,6 @@ module Spree
     extend FriendlyId
     friendly_id :slug_candidates, use: %i[slugged]
 
-    # Ability to reorder the brands
-    acts_as_list
-
     # Include metadata support
     include Spree::Metafields
 
@@ -92,10 +88,10 @@ module Spree
     # State machine for brand status
     state_machine :status, initial: :draft do
       event :publish do
-        transition :draft to :published
+        transition draft: :published
       end
       after_transition to: :published do |brand|
-        # Set the published_at timestamp when the brand is published  
+        # Set the published_at timestamp when the brand is published
         brand.update(published_at: Time.current)
       end
     end
@@ -106,7 +102,6 @@ end
 This is a standard [Ruby on Rails ActiveRecord model](https://guides.rubyonrails.org/active_record_basics.html) with all the bells and whistles for a Brand resource. Let's break down each part:
 - Inherits from `Spree::Base` to automatically inherit all Spree functionality. Also the model itself is namespaced under `Spree::` module, so it's available as `Spree::Brand` in the application.
 - `extend FriendlyId` - Use [FriendlyId slugs](/developer/core-concepts/slugs) library for nice URLs
-- `acts_as_list` - Use [acts_as_list](https://github.com/brendon/acts_as_list) to allow for reordering the brands, so admins can prioritize the brands in the Admin Dashboard
 - `include Spree::Metafields` - Include `Spree::Metafields` for [Metafields](/developer/core-concepts/metafields) support to easily add metadata and custom attributes to the brand model from the Admin Dashboard
 - `has_one_attached :logo` - Use [Rails Active Storage](https://guides.rubyonrails.org/active_storage_overview.html) for file attachments and image processing. Active Storage can be used for non-image files as well
 - `has_rich_text :description` - Use [Rails Action Text](https://guides.rubyonrails.org/action_text_overview.html) for rich text content, enabling admins to use a WYSIWYG editor to add formatted text to the brand model from the Admin Dashboard
