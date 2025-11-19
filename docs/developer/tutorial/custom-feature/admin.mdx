@@ -96,7 +96,7 @@ end
 
 ## Step 3: Customize the Views
 
-#### Index View
+### Index View
 
 Customize `app/views/spree/admin/brands/index.html.erb` to add sorting support.
 
@@ -120,7 +120,7 @@ This uses the standard [index_table.html.erb](https://github.com/spree/spree/blo
 - Optional filters support
 - Sortable support
 
-#### Table Header Partial
+### Table Header Partial
 
 Create `app/views/spree/admin/brands/_table_header.html.erb`:
 
@@ -134,7 +134,7 @@ Create `app/views/spree/admin/brands/_table_header.html.erb`:
 
 The `sort_link` helper provides sortable column headers that work with Ransack.
 
-#### Table Row Partial
+### Table Row Partial
 
 Customize `app/views/spree/admin/brands/_table_row.html.erb` file to add the following content:
 
@@ -158,7 +158,7 @@ Customize `app/views/spree/admin/brands/_table_row.html.erb` file to add the fol
 - Dropdown menu for additional actions
 - `turbo_frame: '_top'` - Ensures edit navigates full page
 
-#### New View
+### New View
 
 Scaffold created a `app/views/spree/admin/brands/new.html.erb` template with the following content:
 
@@ -173,7 +173,7 @@ That's it! The [new_resource.html.erb](https://github.com/spree/spree/blob/main/
 - Form partial rendering
 - Submit/cancel buttons
 
-#### Edit View
+### Edit View
 
 Scaffold created a `app/views/spree/admin/brands/edit.html.erb` template with the following content:
 
@@ -189,7 +189,7 @@ The [edit_resource.html.erb](https://github.com/spree/spree/blob/main/admin/app/
 - Submit/cancel buttons
 - Delete button
 
-#### Form Partial
+### Form Partial
 
 Customize `app/views/spree/admin/brands/_form.html.erb` file to add the following fields:
 
@@ -245,11 +245,11 @@ Customize `app/views/spree/admin/brands/_form.html.erb` file to add the followin
 - Use `slug-form` Stimulus controller for slug generation preview (so user don't need to type the slug manually)
 - Uses `spree_rich_text_area` to embed a fully-featured rich text editor
 
-### Step 4: Add Navigation Menu Item
+## Step 4: Add Navigation Menu Item
 
 Now that we've created a complete Admin Dashboard UI for the brand resource, let's add a navigation menu item to the main sidebar so we can access it from the admin dashboard.
 
-#### Create Navigation Partial
+### Create Navigation Partial
 
 Create `app/views/spree/admin/shared/_brands_nav.html.erb`:
 
@@ -271,7 +271,7 @@ Create `app/views/spree/admin/shared/_brands_nav.html.erb`:
 - Define active state based on controller name
 - Use `spree.` prefix for route helpers
 
-#### Register Navigation Partial
+### Register Navigation Partial
 
 Add to `config/initializers/spree.rb`:
 
@@ -281,7 +281,7 @@ Rails.application.config.spree_admin.store_nav_partials << 'spree/admin/shared/b
 
 This adds the navigation item to the main sidebar after Reports and before Storefront.
 
-#### Alternative: Add as Submenu Item
+### Alternative: Add as Submenu Item
 
 To add Brands under the existing Products menu, use the products injection point:
 
