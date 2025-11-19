@@ -1,0 +1,81 @@
+---
+title: Create a Brands Model
+sidebarTitle: Brands Model
+description: Learn how to create a database model for the Brands feature
+---
+
+## Step 1: Create Database Migration
+
+First we need to create a database migration to add the new brand model to the database. Database migrations are used to create or modify the database schema. They are typically created using the `rails g migration` command. Each migration file is named after the change it makes, date and time of creation, and contains the SQL commands to perform the change.
+
+Create a new model migration file by running the following command in your Spree application root directory:
+
+```bash
+bin/rails g migration CreateSpreeBrands name:string:index slug:string:uniq status:string:index position:integer:index published_at:datetime
+```
+
+
+
+## Step 2: Create the Model file
+
+Now we need to create the model file at `app/models/spree/brand.rb`:
+
+```bash
+mkdir -p app/models/spree && touch app/models/spree/brand.rb
+```
+
+Add the following code to the file:
+
+```ruby
+module Spree
+  class Brand < Spree::Base
+    # FriendlyId for nice URLs, eg. https://example.com/brands/nike-sportswear
+    extend FriendlyId
+    friendly_id :slug_candidates, use: %i[slugged]
+
+    # Include metadata support
+    include Spree::Metafields
+
+    # Active Storage attachments
+    has_one_attached :logo
+
+    # Action text for rich text content
+    has_rich_text :description
+
+    # Validations
+    validates :name, presence: true
+    validates :slug, presence: true, uniqueness: true
+
+    # Scopes
+    scope :published, -> { where(status: 'published') }
+    scope :alphabetical, -> { order(:name) }
+    scope :with_logo, -> { includes(:logo_attachment).where.not(logo_attachment: { blob: nil }) }
+
+    # Ransack configuration
+    self.whitelisted_ransackable_attributes = %w[name slug status published_at]
+    self.whitelisted_ransackable_scopes = %w[published with_logo]
+
+    # State machine for brand status
+    state_machine :status, initial: :draft do
+      event :publish do
+        transition :draft to :published
+      end
+      after_transition to: :published do |brand|
+        brand.update(published_at: Time.current)
+      end
+    end
+  end
+end
+```
+
+**Key points:**
+
+- This is a standard [Ruby on Rails ActiveRecord model](https://guides.rubyonrails.org/active_record_basics.html)
+- Inherit from `Spree::Base` to automatically inherit all Spree functionality
+- Use `FriendlyId` library for nice URLs
+- Include `Spree::Metafields` for [Metafields](/developer/core-concepts/metafields) support to easily add metadata and custom attributes to the brand model from the Admin Dashboard
+- Use [Rails Active Storage](https://guides.rubyonrails.org/active_storage_overview.html) for file attachments
+- Use [Rails Action Text](https://guides.rubyonrails.org/action_text_overview.html) for rich text content, enabling admins to add formatted text to the brand model from the Admin Dashboard
+- Scopes to easily filter and order the brands in the Admin Dashboard
+- [Ransack](https://activerecord-hackery.github.io/ransack/) to allow for searching, filtering and sorting the Brands. `created_at` and `updated_at` columns are always included by default so you don't need to specify them in the `whitelisted_ransackable_attributes` array.
+- Use State Machines to manage the brand status, allowing for easy transitions between different states
