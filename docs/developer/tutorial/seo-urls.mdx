@@ -91,6 +91,7 @@ To allow this in Admin dashboard, we need to add a form field for the slug to th
 That's nice but we can make it even better by using the `slug-form` Stimulus Javascript controller to auto-generate the slug from the name of the brand as user types the name.
 
 ```erb
+<div class="card mb-4"> <!-- [!code --] -->
 <div class="card mb-4" data-controller="slug-form"> <!-- [!code ++] -->
   <div class="card-body">
     <%= f.spree_text_field :name, required: true, autofocus: true %> # [!code --]
