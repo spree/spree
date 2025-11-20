@@ -465,6 +465,67 @@ describe Spree::Payment, type: :model do
       end
     end
 
+    describe '#confirm!' do
+      subject(:confirm!) { payment.confirm! }
+
+      before do
+        gateway.update!(auto_capture: auto_capture)
+      end
+
+      context 'for automatically captured payments' do
+        let(:auto_capture) { true }
+
+        it 'makes the payment complete' do
+          confirm!
+          expect(payment.reload).to be_completed
+        end
+
+        it 'logs a capture event' do
+          confirm!
+
+          expect(payment.reload.capture_events.count).to eq(1)
+          expect(payment.capture_events.first.amount).to eq(payment.amount)
+        end
+
+        context 'when payment is already completed' do
+          before do
+            payment.complete!
+            payment.capture_events.create!(amount: payment.amount)
+          end
+
+          it 'keeps the payment completed' do
+            confirm!
+            expect(payment.reload).to be_completed
+          end
+
+          it 'does not log a duplicated capture event' do
+            expect { confirm! }.not_to change(Spree::PaymentCaptureEvent, :count)
+            expect(payment.reload.capture_events.count).to eq(1)
+          end
+        end
+      end
+
+      context 'for manually captured payments' do
+        let(:auto_capture) { false }
+
+        it 'makes the payment pending' do
+          confirm!
+          expect(payment.reload).to be_pending
+        end
+
+        context 'when payment is already pending' do
+          before do
+            payment.pend!
+          end
+
+          it 'keeps the payment pending' do
+            confirm!
+            expect(payment.reload).to be_pending
+          end
+        end
+      end
+    end
+
     describe '#capture!' do
       context 'when payment is pending' do
         before do
