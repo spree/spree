@@ -1,0 +1,45 @@
+product_id,sku,name,slug,status,description,meta_title,meta_description,meta_keywords,tags,price,compare_at_price,currency,width,height,depth,dimensions_unit,weight,weight_unit,available_on,discontinue_on,track_inventory,inventory_count,inventory_backorderable,tax_category,shipping_category,image1_src,image2_src,image3_src,option1_name,option1_value,option2_name,option2_value,option3_name,option3_value,category1,category2,category3,metafield.custom.fit,metafield.custom.material
+1,ABC-1,Active,active,active,An active product,Active Product,A Active Product,"active, single","active, single",10,0,USD,2,2,2,in,2,lb,,,TRUE,2000,FALSE,Default,Default,,,,,,,,,,Categories -> Taxon1,Categories -> Taxon2,Categories -> Taxon3 -> Subtaxon,Standard,Cotton
+2,ABC-2,No Inventory Tracking,no-inventory-tracking,draft,A product with no inventory tracking,No Tracking Product,A No Tracking Product,"no inv tracking, single","no inv tracking, single",15,0,USD,2,2,2,in,2,lb,,,FALSE,0,FALSE,Default,Default,,,,,,,,,,Categories -> Taxon1,Categories -> Taxon2,Categories -> Taxon3 -> Subtaxon,Standard,Cotton
+3,ABC-3,Backorderable,backorderable,draft,A backorderable product,Backorderable Product,A Backorderable Product,"backorderable, single","backorderable, single",20,0,USD,2,2,2,in,2,lb,,,TRUE,2000,TRUE,Default,Default,,,,,,,,,,Categories -> Taxon1,Categories -> Taxon2,Categories -> Taxon3 -> Subtaxon,Standard,Cotton
+4,ABC-4,Non-Taxable,non-taxable,draft,A non-taxable product,Non-Taxable Product,A Non-Taxable Product,"non-taxable, single","non-taxable, single",30,0,USD,2,2,2,in,2,lb,,,TRUE,2000,FALSE,Non-taxable,Default,,,,,,,,,,Categories -> Taxon4,,,Standard,Cotton
+5,ABC-5,Digital,digital,draft,A digital product,Digital Product,A Digital Product,"digital, single","digital, single",40,0,USD,2,2,2,in,2,lb,,,TRUE,2000,FALSE,Default,Digital,,,,,,,,,,Categories -> Taxon1,Categories -> Taxon2,Categories -> Taxon3 -> Subtaxon,,
+18,ABC-18,Marked Down,compare-at,draft,A product with a compare at price,Compare At Product,A Compare At Product,"compare at, single","compare at, single",100,120,USD,2,2,2,in,2,lb,,,TRUE,2000,FALSE,Default,Default,,,,,,,,,,Categories -> Taxon1,Categories -> Taxon2,Categories -> Taxon3 -> Subtaxon,Standard,Cotton
+11,ABC-11,Multi-Variant Active,mv-active,active,An active multi-variant product,MV Active Product,A MV Active Product,"active, multi","active, multi",0,0,USD,2,3,2,in,2,lb,,,TRUE,0,FALSE,Default,Default,,,,,,,,,,Categories -> Taxon1,Categories -> Taxon2,Categories -> Taxon3 -> Subtaxon,Standard,Cotton
+11,ABC-11-1,,mv-active,,,,,,,19.99,0,USD,2,2,2,in,2,lb,,,TRUE,2000,FALSE,Default,Default,,,,Color,White,Size,S,,,,,,,
+11,ABC-11-2,,mv-active,,,,,,,19.99,0,USD,2,2,2,in,2,lb,,,TRUE,2000,FALSE,Default,Default,,,,Color,White,Size,M,,,,,,,
+11,ABC-11-3,,mv-active,,,,,,,19.99,0,USD,2,2,2,in,2,lb,,,TRUE,2000,FALSE,Default,Default,,,,Color,White,Size,L,,,,,,,
+12,ABC-12,Multi-Variant No Inventory Tracking,mv-no-inv-tracking,draft,A multi-variant product with no inv tracking,MV No Inv Product,A MV No Inv Product,"no inv tracking, multi","no inv tracking, multi",0,0,USD,2,3,2,in,2,lb,,,FALSE,0,FALSE,Default,Default,,,,,,,,,,Categories -> Taxon1,Categories -> Taxon2,Categories -> Taxon3 -> Subtaxon,Standard,Cotton
+12,ABC-12-1,,mv-no-inv-tracking,,,,,,,29.99,0,USD,2,2,2,in,2,lb,,,FALSE,0,FALSE,Default,Default,,,,Color,Khaki,Size,S,,,,,,,
+12,ABC-12-2,,mv-no-inv-tracking,,,,,,,29.99,0,USD,2,2,2,in,2,lb,,,FALSE,0,FALSE,Default,Default,,,,Color,Khaki,Size,M,,,,,,,
+12,ABC-12-3,,mv-no-inv-tracking,,,,,,,29.99,0,USD,2,2,2,in,2,lb,,,FALSE,0,FALSE,Default,Default,,,,Color,Khaki,Size,L,,,,,,,
+13,ABC-13,Multi-Variant Backorderable,mv-backorderable,draft,An backorderable multi-variant product,MV Backorderable Product,A MV Backorderable Product,"backorderable, multi","backorderable, multi",0,0,USD,2,3,2,in,2,lb,,,TRUE,0,TRUE,Default,Default,,,,,,,,,,Categories -> Taxon1,Categories -> Taxon2,Categories -> Taxon3 -> Subtaxon,Standard,Cotton
+13,ABC-13-1,,mv-backorderable,,,,,,,39.99,0,USD,2,2,2,in,2,lb,,,TRUE,2000,TRUE,Default,Default,,,,Color,Blue,Size,S,,,,,,,
+13,ABC-13-2,,mv-backorderable,,,,,,,39.99,0,USD,2,2,2,in,2,lb,,,TRUE,2000,TRUE,Default,Default,,,,Color,Blue,Size,M,,,,,,,
+13,ABC-13-3,,mv-backorderable,,,,,,,39.99,0,USD,2,2,2,in,2,lb,,,TRUE,2000,TRUE,Default,Default,,,,Color,Blue,Size,L,,,,,,,
+14,ABC-14,Multi-Variant Non-Taxable,mv-non-taxable,draft,An non-taxable multi-variant product,MV Non-Taxable Product,A MV Non-Taxable Product,"non-taxable, multi","non-taxable, multi",0,0,USD,2,3,2,in,2,lb,,,TRUE,0,FALSE,Non-taxable,Default,,,,,,,,,,Categories -> Taxon1,Categories -> Taxon2,Categories -> Taxon3 -> Subtaxon,Standard,Cotton
+14,ABC-14-1,,mv-non-taxable,,,,,,,49.99,0,USD,2,2,2,in,2,lb,,,TRUE,2000,FALSE,Non-taxable,Default,,,,Color,Black,Size,S,,,,,,,
+14,ABC-14-2,,mv-non-taxable,,,,,,,49.99,0,USD,2,2,2,in,2,lb,,,TRUE,2000,FALSE,Non-taxable,Default,,,,Color,Black,Size,M,,,,,,,
+14,ABC-14-3,,mv-non-taxable,,,,,,,49.99,0,USD,2,2,2,in,2,lb,,,TRUE,2000,FALSE,Non-taxable,Default,,,,Color,Black,Size,L,,,,,,,
+15,ABC-15,Multi-Variant Digital,mv-digital,draft,An digital multi-variant product,MV Digital Product,A MV Digital Product,"digital, multi","digital, multi",0,0,USD,2,3,2,in,2,lb,,,TRUE,0,FALSE,Default,Digital,,,,,,,,,,Categories -> Taxon4,,,,
+15,ABC-15-1,,mv-digital,,,,,,,59.99,0,USD,2,2,2,in,2,lb,,,TRUE,2000,FALSE,Default,Digital,,,,Level,Beginner,,,,,,,,,
+15,ABC-15-2,,mv-digital,,,,,,,59.99,0,USD,2,2,2,in,2,lb,,,TRUE,2000,FALSE,Default,Digital,,,,Level,Intermediate,,,,,,,,,
+15,ABC-15-3,,mv-digital,,,,,,,59.99,0,USD,2,2,2,in,2,lb,,,TRUE,2000,FALSE,Default,Digital,,,,Level,Advanced,,,,,,,,,
+19,ABC-19,Multi-Variant Marked Down,mv-compare-at-price,draft,An multi-variant product with compare at price,MV Compare At Product,A MV Compare At Product,"compare at, multi","compare at, multi",0,0,USD,2,3,2,in,2,lb,,,TRUE,0,FALSE,Default,Default,,,,,,,,,,Categories -> Taxon1,Categories -> Taxon2,Categories -> Taxon3 -> Subtaxon,Standard,Cotton
+19,ABC-19-1,,mv-compare-at-price,,,,,,,89.99,99.99,USD,2,2,2,in,2,lb,,,TRUE,2000,FALSE,Default,Default,,,,Color,Orange,Size,S,,,,,,,
+19,ABC-19-2,,mv-compare-at-price,,,,,,,89.99,99.99,USD,2,2,2,in,2,lb,,,TRUE,2000,FALSE,Default,Default,,,,Color,Orange,Size,M,,,,,,,
+19,ABC-19-3,,mv-compare-at-price,,,,,,,89.99,99.99,USD,2,2,2,in,2,lb,,,TRUE,2000,FALSE,Default,Default,,,,Color,Orange,Size,L,,,,,,,
+22,ABC-22,Multi-Variant Three Options,mv-three-options,draft,An multi-variant product with three options,,,,,0,0,USD,2,3,2,in,2,lb,,,TRUE,0,FALSE,Default,Default,,,,,,,,,,Categories -> Taxon1,Categories -> Taxon2,Categories -> Taxon3 -> Subtaxon,Standard,Cotton
+22,ABC-22-1,,mv-three-options,,,,,,,99.99,0,USD,2,2,2,in,2,lb,,,TRUE,2000,FALSE,Default,Default,,,,Color,White,Size,XS,Fit,Tight,,,,,
+22,ABC-22-2,,mv-three-options,,,,,,,99.99,0,USD,2,2,2,in,2,lb,,,TRUE,2000,FALSE,Default,Default,,,,Color,White,Size,S,Fit,Tight,,,,,
+22,ABC-22-3,,mv-three-options,,,,,,,99.99,0,USD,2,2,2,in,2,lb,,,TRUE,2000,FALSE,Default,Default,,,,Color,White,Size,M,Fit,Tight,,,,,
+22,ABC-22-4,,mv-three-options,,,,,,,99.99,0,USD,2,2,2,in,2,lb,,,TRUE,2000,FALSE,Default,Default,,,,Color,White,Size,XS,Fit,Loose,,,,,
+22,ABC-22-5,,mv-three-options,,,,,,,99.99,0,USD,2,2,2,in,2,lb,,,TRUE,2000,FALSE,Default,Default,,,,Color,White,Size,S,Fit,Loose,,,,,
+22,ABC-22-6,,mv-three-options,,,,,,,99.99,0,USD,2,2,2,in,2,lb,,,TRUE,2000,FALSE,Default,Default,,,,Color,White,Size,M,Fit,Loose,,,,,
+22,ABC-22-7,,mv-three-options,,,,,,,99.99,0,USD,2,2,2,in,2,lb,,,TRUE,2000,FALSE,Default,Default,,,,Color,Black,Size,XS,Fit,Tight,,,,,
+22,ABC-22-8,,mv-three-options,,,,,,,99.99,0,USD,2,2,2,in,2,lb,,,TRUE,2000,FALSE,Default,Default,,,,Color,Black,Size,S,Fit,Tight,,,,,
+22,ABC-22-9,,mv-three-options,,,,,,,99.99,0,USD,2,2,2,in,2,lb,,,TRUE,2000,FALSE,Default,Default,,,,Color,Black,Size,M,Fit,Tight,,,,,
+22,ABC-22-10,,mv-three-options,,,,,,,99.99,0,USD,2,2,2,in,2,lb,,,TRUE,2000,FALSE,Default,Default,,,,Color,Black,Size,XS,Fit,Loose,,,,,
+22,ABC-22-11,,mv-three-options,,,,,,,99.99,0,USD,2,2,2,in,2,lb,,,TRUE,2000,FALSE,Default,Default,,,,Color,Black,Size,S,Fit,Loose,,,,,
+22,ABC-22-12,,mv-three-options,,,,,,,99.99,0,USD,2,2,2,in,2,lb,,,TRUE,2000,FALSE,Default,Default,,,,Color,Black,Size,M,Fit,Loose,,,,,
+

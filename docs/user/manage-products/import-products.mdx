@@ -1,102 +1,83 @@
 ---
 title: "Import Products"
-description: "How to import products in the Spree open-source eCommerce dashboard"
+description: "How to import products files in the Spree Commerce dashboard."
 ---
 
-Adding products one at a time can be very time consuming, especially if you have hundreds or even thousands of products to upload.
+Adding products one at a time can be time consuming - especially when you're dealing with hundreds or thousands of SKUs. 
 
-You can save a lot of that time by making use of the product import feature which allows you to upload products in bulk from a CSV or Excel file.
+Spree’s CSV importer allows you to upload products in bulk using a pre-formatted CSV file, dramatically reducing the time required to launch or scale your catalog.
 
-<Note>It’s strongly recommended that you pre-format your product file so that the columns match the internal values in Spree. To learn more about formatting your product files, please refer to a separate support article.</Note>
+Need an example? Please refer to [<u>Product Import File Template</u>](https://spreecommerce.org/docs/user/manage-products/product-import-file-template) to download a template and see a list of internal fields.
 
-To import a product file, navigate to the Products tab of the admin dashboard and locate the ‘Import’ button in the top right corner.
+<Note>Your product file does not need to exactly match the import template. Thanks to the field mapping step, you can manually match each column to the appropriate internal field during import (see Step 2 below).</Note>
 
-<img alt="Products Tab" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733926795/docs/Manage%20Products/Import%20Products/2.2.3.1.1_Product_Imports_-_Products_Tab_g67bxn.png" />
+## How to Import Products
 
-Clicking on ‘Import’ will open up a window to begin the process of importing a product file.
+To get started, navigate to the Products tab of the admin dashboard.
 
-<img alt="Product Import Window" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733926797/docs/Manage%20Products/Import%20Products/2.2.3.1.2_Product_Imports_-_Import_Window_m9syrc.png" />
+![Spree Commerce products tab](/docs/images/user/products/import-products/1-products-tab.png)
 
-You’ll be greeted by two options:
+Click **Import**  in the top right corner. This will open a side panel where you can begin the import process.
 
-1. Upload file - choose an existing file to automatically import to your store
+![Spree product importer](/docs/images/user/products/import-products/2-click-import.png)
 
-2. Manually enter data - create a file by entering all the necessary product data manually
+From here, simply follow these steps to import your product catalog:
 
-First, lets take a look at uploading a file
+### Step 1: Upload a Product File
 
-## Upload File
+![Uploading a product file to Spree](/docs/images/user/products/import-products/3-upload-file.png)
 
-When clicking on ‘Upload file’, you’ll be prompted to select a file from your device.
+First, you’ll need to upload the file you wish to import. Either **drag-and-drop the file** into the box or select a file from your computer by clicking **browse files**.
 
-Select the file you want to upload and click Open.
+<Note>The importer supports both single and multi-variant products - just follow the multi-variant format in the [<u>Product File Import Template</u>](https://spreecommerce.org/docs/user/manage-products/product-import-file-template).</Note>
 
-<img alt="Choose A Product File" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733926796/docs/Manage%20Products/Import%20Products/2.2.3.1.3_Product_Imports_-_Choose_A_File_pse9jm.png" />
+If successful, the UI will indicate that the upload was completed:
 
-This will automatically extract the product data from the file.
+![Successfully uploaded product file](/docs/images/user/products/import-products/4-upload-complete.png)
 
-### Map Fields
+<Note>Double-check for any formatting issues, data type mismatches, and duplicates before uploading.</Note>
 
-Next, you’ll be directed to the field mapping step, which allows you to match the incoming fields from the CSV with the internal fields in your store.
+#### Select a Delimiter
 
-<img alt="Map Imported Product Fields" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733926794/docs/Manage%20Products/Import%20Products/2.2.3.1.4_Product_Imports_-_Map_Fields_autpcg.png" />
+![Spree CSV importer delimiter](/docs/images/user/products/import-products/5-delimiter.png)
 
-Hovering over the rows with the cursor will show a preview of the incoming data.
+Before processing the file, you need to select which delimiter separates values in your file:
 
-<img alt="Imported Field Previews" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733926796/docs/Manage%20Products/Import%20Products/2.2.3.1.5_Product_Imports_-_Field_Previews_x2kg27.png" />
+- , (comma) - most common for CSVs
+- | (pipe)
+- ; (semicolon)
+- \\t (tab)
 
-In the ‘Destination Fields’ column, you can select the internal field that the incoming field should be mapped to.
+Once the file has been uploaded and the correct delimiter has been selected, click **Create** at the bottom of the side panel to continue to Step 2.
 
-<Note> If you preformatted your CSV file to match the internal naming conventions, most if not all of these fields will be automatically matched.</Note>
+### Step 2: Map Fields and Submit
 
-<img alt="Import Destination Fields" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733926795/docs/Manage%20Products/Import%20Products/2.2.3.1.6_Product_Imports_-_Destination_Fields_ef25ee.png" />
+![Mapping fields in the Spree product importer](/docs/images/user/products/import-products/6-map-fields.png)
 
-Once you’re happy with the mapping of the fields, click ‘Continue’ in the top right corner of the window.
+With the file uploaded, you’ll now be prompted to map your file’s columns to Spree’s internal fields.
 
-### Review and Submit
+Spree will try to match fields automatically when names are identical (or very similar), but you can manually select destination fields from the dropdowns on the right-hand side column for any unmatched, or incorrectly mapped fields.
 
-On the next screen, can review the data to be uploaded and submit it for upload provided there are no errors.
+Once satisfied, click **Continue** in the bottom-right corner to submit the file for import.
 
-<img alt="Import Review Step" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733926799/docs/Manage%20Products/Import%20Products/2.2.3.1.7_Product_Imports_-_Review_Step_yoru5g.png" />
+### Step 3: Monitor Import Status
 
-In the above example, there are some errors - two rows have a matching SKU.
+![Spree CSV importer processing product rows](/docs/images/user/products/import-products/7-import-processing.png)
 
-To fix this error, you can simply click on one of the fields and edit the data and click Enter.
+After submitting the file, you'll be redirected to a processing screen where you can monitor the progress of the import. All that’s left to do is wait until the import has finished processing 
 
-<Note> You can edit all of the other data fields in the file, error or not, in the same manner.</Note>
+<Note>If there are any errors in your file (e.g., missing fields, duplicate values), the processing screen will indicate the error with an error message on the affected row.</Note>
 
-<img alt="Fix Product Import Errors" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733926798/docs/Manage%20Products/Import%20Products/2.2.3.1.8_Product_Imports_-_Fix_Errors_nncqes.png" />
+## Update Products in Bulk
 
-Once you’ve fixed all the errors and updated any other fields you want to change, click Submit Data in the top right corner of the window.
+You can also use the product importer to update existing products in your catalog.
 
-<img alt="Submit Product Import Data" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733926795/docs/Manage%20Products/Import%20Products/2.2.3.1.9_Product_Imports_-_Submit_Data_s9n9fh.png" />
+To do so:
 
-### Import Processing
+1. [<u>Export your product catalog</u>](https://spreecommerce.org/docs/user/manage-products/export-products) from the Products tab
+2. Make any necessary changes directly in the file
+3. Re-import the updated file through the product importer
 
-Once you’ve submitted the data, you’ll be redirected to another page where you can watch the monitor the progress of the import process.
+<Warning>When updating products in bulk, make sure to keep the slug exactly the same for each existing product. The slug is the unique identifier used during import - changing it will cause Spree to treat the row as a new product and create a duplicate record.</Warning>
 
-<img alt="Product Import Processing" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733926801/docs/Manage%20Products/Import%20Products/2.2.3.1.10_Product_Imports_-_Import_Processing_sx7rzx.png" />
-
-When the import is complete, the status of the import at the top of the page will be marked as ‘Processed’.
-
-<img alt="Product Import Processed" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733926795/docs/Manage%20Products/Import%20Products/2.2.3.1.11_Product_Imports_-_Import_Processed_ffowr9.png" />
-
-The products will now manageable in the Products tab of the admin dashboard.
-
-<img alt="Products Uploaded" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733926800/docs/Manage%20Products/Import%20Products/2.2.3.1.12_Product_Imports_-_Products_Uploaded_b5ucnj.png" />
-
-## Manually Enter Data
-
-If you don’t have an existing file to upload, you can manually enter the product data directly into the product importer, which you may find more convenient than adding products one by one using the product editor.
-
-Simply fill in all of the necessary fields following the Product File Format guidelines.
-
-<img alt="Manually Enter Data" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733926796/docs/Manage%20Products/Import%20Products/2.2.3.1.13_Product_Imports_-_Manually_Enter_Data_dd3xxa.png" />
-
-Once you’ve added all the relevant product data, click ‘Submit data’ in the top right corner of the window and the products will be imported.
-
-## Import Auditing
-
-You can audit past imports by navigating to Settings > Audit Trail and clicking on ‘Imports’ at the top of the page.
-
-<img alt="Audit Product Imports" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1733926799/docs/Manage%20Products/Import%20Products/2.2.3.1.14_Product_Imports_-_Audit_Imports_eof5xv.png" />
+This is the safest and most efficient way to make large-scale updates to product data such as pricing, descriptions, inventory, or metafields.
