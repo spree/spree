@@ -10,9 +10,9 @@ product_id,sku,name,slug,status,description,meta_title,meta_description,meta_key
 11,ABC-11-2,,mv-active,,,,,,,19.99,0,USD,2,2,2,in,2,lb,,,TRUE,2000,FALSE,Default,Default,,,,Color,White,Size,M,,,,,,,
 11,ABC-11-3,,mv-active,,,,,,,19.99,0,USD,2,2,2,in,2,lb,,,TRUE,2000,FALSE,Default,Default,,,,Color,White,Size,L,,,,,,,
 12,ABC-12,Multi-Variant No Inventory Tracking,mv-no-inv-tracking,draft,A multi-variant product with no inv tracking,MV No Inv Product,A MV No Inv Product,"no inv tracking, multi","no inv tracking, multi",0,0,USD,2,3,2,in,2,lb,,,FALSE,0,FALSE,Default,Default,,,,,,,,,,Categories -> Taxon1,Categories -> Taxon2,Categories -> Taxon3 -> Subtaxon,Standard,Cotton
-12,ABC-12-1,,mv-no-inv-tracking,,,,,,,29.99,0,USD,2,2,2,in,2,lb,,,FALSE,2000,FALSE,Default,Default,,,,Color,Khaki,Size,S,,,,,,,
-12,ABC-12-2,,mv-no-inv-tracking,,,,,,,29.99,0,USD,2,2,2,in,2,lb,,,FALSE,2000,FALSE,Default,Default,,,,Color,Khaki,Size,M,,,,,,,
-12,ABC-12-3,,mv-no-inv-tracking,,,,,,,29.99,0,USD,2,2,2,in,2,lb,,,FALSE,2000,FALSE,Default,Default,,,,Color,Khaki,Size,L,,,,,,,
+12,ABC-12-1,,mv-no-inv-tracking,,,,,,,29.99,0,USD,2,2,2,in,2,lb,,,FALSE,0,FALSE,Default,Default,,,,Color,Khaki,Size,S,,,,,,,
+12,ABC-12-2,,mv-no-inv-tracking,,,,,,,29.99,0,USD,2,2,2,in,2,lb,,,FALSE,0,FALSE,Default,Default,,,,Color,Khaki,Size,M,,,,,,,
+12,ABC-12-3,,mv-no-inv-tracking,,,,,,,29.99,0,USD,2,2,2,in,2,lb,,,FALSE,0,FALSE,Default,Default,,,,Color,Khaki,Size,L,,,,,,,
 13,ABC-13,Multi-Variant Backorderable,mv-backorderable,draft,An backorderable multi-variant product,MV Backorderable Product,A MV Backorderable Product,"backorderable, multi","backorderable, multi",0,0,USD,2,3,2,in,2,lb,,,TRUE,0,TRUE,Default,Default,,,,,,,,,,Categories -> Taxon1,Categories -> Taxon2,Categories -> Taxon3 -> Subtaxon,Standard,Cotton
 13,ABC-13-1,,mv-backorderable,,,,,,,39.99,0,USD,2,2,2,in,2,lb,,,TRUE,2000,TRUE,Default,Default,,,,Color,Blue,Size,S,,,,,,,
 13,ABC-13-2,,mv-backorderable,,,,,,,39.99,0,USD,2,2,2,in,2,lb,,,TRUE,2000,TRUE,Default,Default,,,,Color,Blue,Size,M,,,,,,,
@@ -41,4 +41,5 @@ product_id,sku,name,slug,status,description,meta_title,meta_description,meta_key
 22,ABC-22-9,,mv-three-options,,,,,,,99.99,0,USD,2,2,2,in,2,lb,,,TRUE,2000,FALSE,Default,Default,,,,Color,Black,Size,M,Fit,Tight,,,,,
 22,ABC-22-10,,mv-three-options,,,,,,,99.99,0,USD,2,2,2,in,2,lb,,,TRUE,2000,FALSE,Default,Default,,,,Color,Black,Size,XS,Fit,Loose,,,,,
 22,ABC-22-11,,mv-three-options,,,,,,,99.99,0,USD,2,2,2,in,2,lb,,,TRUE,2000,FALSE,Default,Default,,,,Color,Black,Size,S,Fit,Loose,,,,,
+
 22,ABC-22-12,,mv-three-options,,,,,,,99.99,0,USD,2,2,2,in,2,lb,,,TRUE,2000,FALSE,Default,Default,,,,Color,Black,Size,M,Fit,Loose,,,,,
