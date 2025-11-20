@@ -7,11 +7,9 @@ Adding products one at a time can be time consuming - especially when you're dea
 
 Spree’s CSV importer allows you to upload products in bulk using a pre-formatted CSV file, dramatically reducing the time required to launch or scale your catalog.
 
-Need an example? Please refer to [<u>Product Import File Template</u>](https://spreecommerce.org/docs/user/manage-products/product-import-file-template) to download a template and see a list of accepted fields.
+Need an example? Please refer to [<u>Product Import File Template</u>](https://spreecommerce.org/docs/user/manage-products/product-import-file-template) to download a template and see a list of internal fields.
 
-<Note>
-  The importer supports both single and multi-variant products - just follow the format in the import template.
-</Note>
+<Note>Your product file does not need to exactly match the import template. Thanks to the field mapping step, you can manually match each column to the appropriate internal field during import (see Step 2 below).</Note>
 
 ## How to Import Products
 
@@ -31,13 +29,13 @@ From here, simply follow these steps to import your product catalog:
 
 First, you’ll need to upload the file you wish to import. Either **drag-and-drop the file** into the box or select a file from your computer by clicking **browse files**.
 
+<Note>The importer supports both single and multi-variant products - just follow the multi-variant format in the [<u>Product File Import Template</u>](https://spreecommerce.org/docs/user/manage-products/product-import-file-template).</Note>
+
 If successful, the UI will indicate that the upload was completed:
 
 ![Successfully uploaded product file](/docs/images/user/products/import-products/4-upload-complete.png)
 
-<Note>
-  Double-check for any formatting issues, data type mismatches, and duplicates before uploading.
-</Note>
+<Note>Double-check for any formatting issues, data type mismatches, and duplicates before uploading.</Note>
 
 #### Select a Delimiter
 
@@ -68,9 +66,7 @@ Once satisfied, click **Continue** in the bottom-right corner to submit the file
 
 After submitting the file, you'll be redirected to a processing screen where you can monitor the progress of the import. All that’s left to do is wait until the import has finished processing 
 
-<Note>
-  If there are any errors in your file (e.g., missing fields, duplicate values), the processing screen will indicate the error with an error message on the affected row.
-</Note>
+<Note>If there are any errors in your file (e.g., missing fields, duplicate values), the processing screen will indicate the error with an error message on the affected row.</Note>
 
 ## Update Products in Bulk
 
@@ -82,8 +78,6 @@ To do so:
 2. Make any necessary changes directly in the file
 3. Re-import the updated file through the product importer
 
-<Warning>
-  When updating products, make sure to **keep the following values unchanged** for each row: **product_id**, **sku**, and **slug**. Changing any of these may result in new products being created instead of updating the existing ones.
-</Warning>
+<Warning>When updating products, make sure to **keep the following values unchanged** for each row: **product_id**, **sku**, and **slug**. Changing any of these may result in new products being created instead of updating the existing ones.</Warning>
 
 This is the safest and most efficient way to make large-scale updates to product data such as pricing, descriptions, inventory, or metafields.
