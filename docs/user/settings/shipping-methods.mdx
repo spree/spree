@@ -1,39 +1,35 @@
 ---
 title: "Shipping Methods"
-description: "In this Spree user doc, you'll learn how to setup up shipping methods for your store."
+description: "Learn how to set up shipping methods in Spree Commerce."
 ---
 
 If you want to run a successful online business, having shipping methods in place is essential. These methods appear at checkout, representing the carriers and services used to deliver your products to customers.
 
-<Warning>
-  If you don’t set up at least one shipping method for each region you sell to, customers in those regions won’t be able to complete their checkout.
-</Warning>
+<Warning>If you don’t set up at least one shipping method for each region you sell to, customers in those regions won’t be able to complete their checkout.</Warning>
 
-To set up shipping methods, navigate to the Shipping tab of the admin dashboard, found in Settings menu.
+To set up shipping methods, navigate to **Settings → Shipping** in the Spree dashboard.
 
-![](/images/user/settings/shipping/10.10.1.1Shipping-NavigateToTab.png)
+![Shipping section of the Spree dashboard](/docs/images/user/settings/shipping/1-shipping-methods.png)
 
 ## Add a New Shipping Method
 
-To add a new shipping method, click 'New Shipping Method’ in the top right corner. This will open the shipping method creation page.
+To add a new shipping method, click **New Shipping Method** in the top right corner. This will open the shipping method creation form.
 
-![](/images/user/settings/shipping/10.10.1.2Shipping-AddANewShippingMethod.png)
+![Adding a new shipping method in Spree](/docs/images/user/settings/shipping/2-new-shipping-method.png)
 
-This page is divided into seven sections, so let’s take a look at each individually.
+This page is divided into seven distinct sections, so let’s take a look at each individually:
 
 ### Presentation
 
-![](/images/user/settings/shipping/10.10.1.3Shipping-Presentation.png)
+![Spree shipping methods presentation settings](/docs/images/user/settings/shipping/3-shipping-method-presentation.png)
 
-Here you can set a descriptive name for the shipping method (e.g., UPS Standard, Fed Ex Next Day), and choose where it should be displayed.
+Here you can set a descriptive name for the shipping method (e.g., UPS Standard, FedEx Next Day), and choose where it should be displayed.
 
-<Warning>
-  Make sure the ‘Display on’ setting includes ‘storefront’ if you want customers to see this shipping method on the checkout.
-</Warning>
+<Warning>Make sure the **Display on** setting includes **storefront** if you want customers to see this shipping method on the checkout.</Warning>
 
 ### Tracking URL
 
-![](/images/user/settings/shipping/10.10.1.4Shipping-TrackingURL.png)
+![Spree shipping method tracking url](/docs/images/user/settings/shipping/4-tracking-url.png)
 
 Here you can add the tracking URL format for the shipping carrier that’s associated with the payment method, e.g.:
 
@@ -41,71 +37,71 @@ Here you can add the tracking URL format for the shipping carrier that’s assoc
 - [<u>https://www.ups.com/track?loc=en_US&tracknum=:tracking</u>](https://www.ups.com/track?loc=en_US&tracknum=:tracking)
 - [<u>https://tools.usps.com/go/TrackConfirmAction?qtc_tLabels1=:tracking</u>](https://tools.usps.com/go/TrackConfirmAction?qtc_tLabels1=:tracking)
 
-This way, you can simply enter the tracking number when fulfilling an order that’s using the shipping method, and the customer will receive the correct tracking link to track their order.\
-\
-<Warning>
-  Make sure to verify the tracking link format for each shipping carrier you plan on using and test them before going live.
-</Warning>
+This way, you can simply enter the tracking number when fulfilling an order that’s using the associated shipping method, and the customer will receive the correct tracking link for their order.
 
+<Warning>Make sure to verify the tracking link format for each shipping carrier you plan on using and test them before going live.</Warning>
 
 ### Zones
 
-![](/images/user/settings/shipping/10.10.1.5Shipping-Zones.png)
+![Set shipping zones in Spree Commerce](/docs/images/user/settings/shipping/5-shipping-method-zones.png)
 
-Even if you sell to multiple regions, not every shipping method should be available in every country. With Zones, you can set regional restrictions to control where each shipping method applies. Simply select the appropriate Zones for each method.
+Not all shipping methods should be available in every region - especially if you serve customers across multiple countries or continents. Zones allow you to define regional availability for each shipping method.
 
-<Note>
-  Customers will only see shipping methods that apply to their delivery address based on the assigned Zones.
-</Note>
+Simply select the appropriate Zone(s) to ensure the method only appears for customers in those regions. This helps you prevent invalid shipping options and tailor your delivery strategy to each market.
+
+<Note>Customers will only see shipping methods that apply to their delivery address based on the assigned Zones.</Note>
 
 ### Shipping Categories
 
-![](/images/user/settings/shipping/10.10.1.6Shipping-ShippingCategories.png)
+![Choose shipping categories in Spree Commerce](/docs/images/user/settings/shipping/6-shipping-categories.png)
 
-Shipping Categories allow you to specify which products a shipping method applies to.
+Shipping Categories are especially useful when your store includes products with very different delivery needs. For example:
 
-For example:
-
-- If you sell digital products, selecting the "Digital" category ensures they bypass the delivery address step at checkout.
-- If you offer large or heavy items, creating a "Freight" category helps separate those shipping methods from standard products.
+- Assigning a “Digital” category to non-physical products ensures they skip the shipping step during checkout.
+- Creating a “Heavy” category for large or heavy items allows you to limit specific shipping methods to those products.
 
 ### Tax Category
 
-![](/images/user/settings/shipping/10.10.1.7Shipping-TaxCategory.png)
+![Set a shipping method tax category in Spree](/docs/images/user/settings/shipping/7-tax-category.png)
 
-Here you can select the tax category that should apply to the shipping method.
+Use this setting to assign a Tax Category to the shipping method. This determines how taxes are applied to shipping charges at checkout.
 
-Tax categories can impact shipping methods by determining the applicable tax rates based on the type of product being shipped. 
+Different types of products may be subject to different tax rules, and assigning a tax category here ensures that shipping is taxed appropriately based on the contents of the order.
 
-Certain tax rules may apply differently to specific product categories, affecting the final shipping cost and compliance with regional tax regulations.
+For example:
+
+- In some regions, digital goods may be exempt from shipping tax, while physical goods are not.
+- Shipping charges related to tax-exempt products might also need to be excluded from tax calculations entirely.
+
+Assigning the correct tax category helps you stay compliant with local tax regulations and ensures customers are charged accurately.
 
 ### Calculator
 
-![](/images/user/settings/shipping/10.10.1.8Shipping-Calculator.png)
+![Choosing a shipping calculator in Spree](/docs/images/user/settings/shipping/8-shipping-calculator.png)
 
-The calculator section is where you can define the rules for calculating the cost of the shipping method. The calculator types are are follows:
+This section determines how the shipping cost will be calculated for this method. Spree offers several calculator types to support different pricing strategies:
 
-- Flat Percent
-- Flat Rate
-- Flexible Rate per package item
-- Flat Rate per package item
-- Price Sack
-- Digital Delivery
+- **Flat Percent** - charges a percentage of the order total as the shipping cost.
+- **Flat Rate** - charges a fixed shipping amount, regardless of order size or value.
+- **Flexible Rate per package item** - charges a base rate plus an additional amount for each item in the package (ideal for variable-size orders).
+- **Flat Rate per package item** - Applies the same fixed fee to every item in the shipment.
+- **Price Sack** - offers tiered pricing based on the total order value (e.g., $5 for orders under $50, free over $100).
+- **Digital Delivery** - used for digital products that don’t require physical shipping (typically results in no shipping cost).
+
+Each calculator type may reveal different fields depending on its configuration. Choose the one that best aligns with your fulfillment strategy.
 
 For a more detailed guide on shipping calculators, please refer to another support article.
 
 ### Estimated Transit Business Days
 
-![](/images/user/settings/shipping/10.10.1.9Shipping-EstimatedTransit.png)
+![Set shipping method estimated transits days in Spree](/docs/images/user/settings/shipping/9-estimated-delivery.png)
 
-Here you can set an estimated delivery time that the customer will be able to see on both PDPs and checkout. 
+This optional setting allows you to display an estimated delivery time for the shipping method, visible on both the product detail page (PDP) and during checkout.
 
-While it’s not necessary to add this, estimated delivery times can improve conversions by setting clear expectations, giving customers confidence in when they will receive their order. 
+While not required, showing delivery estimates can help build trust, reduce cart abandonment, and improve conversions by setting clear expectations about when customers will receive their orders.
 
 ### Click Create
 
-Once you’ve configured all of the above settings, all you need to do is click the ‘Create’ button at the bottom of the page to save your new shipping method. It will become immediately available to customers provided the order details match the method’s conditions.
+Once you’ve configured all of the above settings, simply click **Create** at the bottom of the page to save your new shipping method. It will become immediately available to customers provided the order details match the method’s configuration.
 
-Congratulations, you’ve just created your first shipping method\!
-
-![](/images/user/settings/shipping/10.10.1.10Shipping-MethodCreated.png)
+Congratulations, you’ve just created your first shipping method!

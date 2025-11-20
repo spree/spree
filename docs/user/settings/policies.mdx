@@ -1,40 +1,58 @@
 ---
 title: "Policies"
-description: "In this Spree user doc, you’ll learn how to set your store’s policies."
+description: "Learn how to set up and manage store policies in Spree Commerce."
 ---
 
-Policies help define the rules of engagement between your store and your customers. They’re not just legal safeguards - they also build trust and set expectations. 
+Your store policies are an essential part of your eCommerce setup, helping you establish trust, maintain compliance, and communicate clearly with your customers. Spree allows you to easily manage these pages from the Policies tab.
 
-All policies added here will appear in your store’s footer and will be available to customers during checkout.
+You can create as many custom policy pages as you need, with full control over their content and URL structure.
 
-To set up your store policies, navigate to the Policies tab of the Settings menu.
+The following four standard policies are added to every store by default:
 
-<img src="/images/user/settings/policies/policies.png" />
+- Terms of Service
+- Privacy Policy
+- Returns Policy
+- Shipping Policy
 
-In each case, simply copy and paste (or type) your policy into the associated text editor. Formatting is usually preserved when pasting, but you can also use the rich text editor tools to adjust the layout or style of your policies as needed.
+These can be customized, deleted, or supplemented with additional policies depending on your business needs.
 
-## Terms of Service
+## Create a New Policy
 
-This is a legal agreement between you and your customers. It outlines how your store operates, acceptable use, disclaimers, and liability limitations. Customers must accept it at signup. It's important for protecting your business in the event of disputes.
+To create a new policy, navigate to **Settings → Policies** in your Spree dashboard.
 
-## Privacy Policy
+![Spree Commerce policies tab](/docs/images/user/settings/policies/1-policies-tab.png)
 
-This explains how customer data is collected, stored, and used. It's a legal requirement in most regions (like GDPR in the EU) and reassures customers that their data is handled responsibly.
+Click **New Policy** in the top-right corner to open the policy creation form.
 
-## Returns Policy
+![Creating a new store policy in Spree Commerce](/docs/images/user/settings/policies/2-policy-form.png)
 
-Clearly states the conditions under which customers can return products. This reduces support queries and helps avoid misunderstandings. A transparent policy can also increase customer confidence and conversion rates.
+Simply enter data into the following fields:
 
-## Shipping Policy
+- **Name** - displayed title on the storefront.
+- **Slug** - URL identifier (e.g. /policies/custom-warranty).
+- **Content** - enter your policy text using the rich text editor (supports formatting, links, media, etc.).
 
-Provides details about delivery times, methods, and costs. It helps manage customer expectations and avoid frustration caused by delays or unexpected charges.
+Then, click **Create** to save and publish your new policy.
 
-## Vendor Terms of Service (For marketplaces)
+Once published, the policy will be accessible from the storefront and can also be linked in your footer navigation or other relevant areas.
 
-<Warning>The Vendor Terms of Service policy is only available (and relevant) to Spree Enterprise users running marketplaces.</Warning>
+![Published store policy on Spree storefront](/docs/images/user/settings/policies/3-policy-published.png)
 
-If you’re running a multi-vendor marketplace, this sets the rules vendors must agree to in order to sell on your platform. It could cover commission structure, responsibilities, content standards, and any platform-specific rules. This is essential for keeping vendor operations consistent and enforceable.
+## Edit an Existing Policy
 
-## Saving Changes
+To edit an existing policy, navigate to **Settings → Policies** and follow these steps:
 
-After making any updates, click Update at the bottom of the page to save your policy settings, otherwise any changes you’ve made will not be saved.
+1. Click on the policy you’d like to update.
+2. Modify the name, slug, or content as needed.
+3. Click **Update** to save your changes.
+
+Your edits will be reflected immediately on the live storefront.
+
+## Delete a Policy
+
+To delete an existing policy, navigate to **Settings → Policies** and follow these steps:
+
+1. Click on the policy you’d like to delete.
+2. Click **Delete** at  the bottom of the page and confirm.
+
+<Warning>Deleted policies are permanently removed and will no longer be accessible to customers.</Warning>
