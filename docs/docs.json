@@ -60,21 +60,20 @@
                 ]
               },
               {
-                "group": "Customization Tutorial",
+                "group": "Tutorial",
                 "icon": "graduation-cap",
                 "pages": [
-                  {
-                    "group": "Custom Brands Feature",
-                    "pages": [
-                      "developer/tutorial/custom-feature/introduction",
-                      "developer/tutorial/custom-feature/model",
-                      "developer/tutorial/custom-feature/admin",
-                      "developer/tutorial/custom-feature/attachments",
-                      "developer/tutorial/custom-feature/api",
-                      "developer/tutorial/custom-feature/storefront",
-                      "developer/tutorial/custom-feature/testing"
-                    ]
-                  }
+                  "developer/tutorial/introduction",
+                  "developer/tutorial/model",
+                  "developer/tutorial/admin",
+                  "developer/tutorial/rich-text",
+                  "developer/tutorial/file-uploads",
+                  "developer/tutorial/storefront",
+                  "developer/tutorial/seo-urls",
+                  "developer/tutorial/state-machines",
+                  "developer/tutorial/override-spree-core",
+                  "developer/tutorial/api",
+                  "developer/tutorial/testing"
                 ]
               },
               {
