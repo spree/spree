@@ -30,87 +30,17 @@ Now that the model file is created, let's add some additional functionality to i
 ```ruby app/models/spree/brand.rb
 module Spree
   class Brand < Spree::Base
-    # [!code ++:3]
+    # [!code ++:2]
     # Validations
     validates :name, presence: true
-    validates :slug, presence: true, uniqueness: true
   end
 end
 ```
 
 This is a standard [Ruby on Rails ActiveRecord model](https://guides.rubyonrails.org/active_record_basics.html). Let's break down each part:
 - Inherits from `Spree::Base` to automatically inherit all Spree functionality. Also the model itself is namespaced under `Spree::` module, so it's available as `Spree::Brand` in the application.
-- `validates :name, presence: true` - Validate that the name is present
-- `validates :slug, presence: true, uniqueness: true` - Validate that the slug is present and unique
-
-### Generate SEO-friendly URLs
-
-We already have the `slug` column in the database table, so we can use it to generate nice URLs. Let's add the [FriendlyId gem](/developer/core-concepts/slugs) to the model:
-
-```ruby app/models/spree/brand.rb
-module Spree
-  class Brand < Spree::Base
-    # [!code ++:3]
-    # FriendlyId for nice URLs
-    extend FriendlyId
-    friendly_id :slug_candidates, use: %i[slugged]
-
-     # Validations
-    validates :name, presence: true
-    validates :slug, presence: true, uniqueness: true
-  end
-end
-```
-
-Now every time a brand is created or updated, the slug will be generated automatically from the name, eg. `Nike Sportswear` will become `nike-sportswear`. On Storefront customers will be able to access the brand page using the slug, eg. `https://example.com/brands/nike-sportswear`.
+- `validates :name, presence: true` - using ActiveRecord validations to ensure that the name is present.
 
 
-### Add State Machine for Brand Status
 
-As you probably noticed, we've added before a `status` column to the database table. This column is used to store the status of the brand. This will come in handy to manage which brands show on Storefront.
 
-We also have a `published_at` column to store the timestamp when the brand was published. Let's implement some business logic in the model:
-
-```ruby app/models/spree/brand.rb
-module Spree
-  class Brand < Spree::Base
-    # FriendlyId for nice URLs, eg. https://example.com/brands/nike-sportswear
-    extend FriendlyId
-    friendly_id :slug_candidates, use: %i[slugged]
-
-    # Action text for rich text content
-    has_rich_text :description
-
-    # Validations
-    validates :name, presence: true
-    validates :slug, presence: true, uniqueness: true
-
-    # [!code ++:13]
-    # Scopes
-    scope :published, -> { where(status: 'published') }
-
-    # State machine for brand status
-    state_machine :status, initial: :draft do 
-      event :publish do
-        transition draft: :published
-      end
-      after_transition to: :published do |brand|
-        # Set the published_at timestamp when the brand is published
-        brand.update(published_at: Time.current)
-      end
-    end
-  end
-end
-```
-
-Now every `Spree::Brand` instance will have a `status` attribute with the value of `draft` by default. When the brand is published, the `status` will be set to `published` and the `published_at` timestamp will be set to the current time.
-
-We've also added `published` scope to the model to filter the brands by status, eg.
-
-```ruby
-Spree::Brand.published.count
-# => 1
-
-Spree::Brand.published.first
-# => #<Spree::Brand:0x0000000100000000 id: 1, name: "Nike", slug: "nike", status: "published", published_at: 2021-01-01 00:00:00>
-```
