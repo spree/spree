@@ -6,9 +6,9 @@ description: Learn how to create Admin Dashboard UI for your new resource
 
 Now that we've created a complete "Brand" model, let's create a Admin Dashboard interface so we can manage the brands.
 
-## Step 1: Run the spree admin scaffold generator
+## Step 1: Create the boilerplate Admin Dashboard UI
 
-Admin Scaffold generator is a tool that helps you create a complete Admin Dashboard UI for your new resource
+Admin Scaffold generator is a tool that helps you create a complete Admin Dashboard UI for your new resource.
 
 Run the following command in your Spree application root directory:
 
@@ -18,14 +18,16 @@ bin/rails g spree:admin:scaffold Spree::Brand
 
 This will create the following files:
 
-- `app/controllers/spree/admin/brands_controller.rb`
-- `app/views/spree/admin/brands/index.html.erb`
-- `app/views/spree/admin/brands/new.html.erb`
-- `app/views/spree/admin/brands/edit.html.erb`
-- `app/views/spree/admin/brands/_table_header.html.erb`
-- `app/views/spree/admin/brands/_table_row.html.erb`
-- `app/views/spree/admin/brands/_filters.html.erb`
-- `app/views/spree/admin/brands/_form.html.erb`
+| File Type | Path | Description |
+|-----------|------|------|
+| Controller | `app/controllers/spree/admin/brands_controller.rb` | Handles the logic for the brands resource. |
+| View | `app/views/spree/admin/brands/index.html.erb` | Handles displaying the list of brands in the Admin Dashboard. |
+| View | `app/views/spree/admin/brands/new.html.erb` | Handles displaying the new brand form in the Admin Dashboard. |
+| View | `app/views/spree/admin/brands/edit.html.erb` | Handles displaying the edit brand form in the Admin Dashboard. |
+| Partial | `app/views/spree/admin/brands/_table_header.html.erb` | Handles displaying the table header in the brands index view. |
+| Partial | `app/views/spree/admin/brands/_table_row.html.erb` | Handles displaying the table row in the brands index view. |
+| Partial | `app/views/spree/admin/brands/_filters.html.erb` | Handles displaying the filters in the brands index view. |
+| Partial | `app/views/spree/admin/brands/_form.html.erb` | Handles displaying the form in the new and edit brand views. |
 
 It will also automatically add the following routes to your `config/routes.rb` file:
 
@@ -35,41 +37,26 @@ namespace :admin do
 end
 ```
 
-The router matches incoming HTTP requests to specific controller actions in your application based on the URL path. The router also generates path and URL helpers based on the resources configured in the router.
-
 You will now be able to access the brands resource at `http://localhost:3000/admin/brands` in your browser. To reference this route in your code, you can use the `spree.admin_brands_path` helper.
 
-## Step 2: Customize the Admin Controller
+## Step 2: Add ability for admins to create new Brands
 
-You'll probably want to customize the newly created controller at `app/controllers/spree/admin/brands_controller.rb`:
+Firstly, we will need to customize the controller and specify permitted parameters which users can submit through the new/edit form:
 
 ```ruby app/controllers/spree/admin/brands_controller.rb
 module Spree
   module Admin
     class BrandsController < ResourceController
-      # Optional: customize the index collection scope
-      # def scope
-      #   super.with_logo
-      # end
-
-      # Default sort for the index action
-      def collection_default_sort
-        'name asc'
-      end
-
-      # avoid N+1 queries by specifying the includes
-      def collection_includes
-        { logo_attachment: :blob }
-      end
-
       private
 
+      # [!code ++:8]
       # Define permitted parameters which users can submit through the new/edit form
       def permitted_resource_params
         params.require(:brand).permit(
           :name,
           :slug,
-          :description
+          :status,
+          :description,
         )
       end
     end
@@ -77,53 +64,40 @@ module Spree
 end
 ```
 
-**Controller inheritance benefits:**
-`Spree::Admin::ResourceController` provides:
-- Standard CRUD actions (index, new, create, edit, update, destroy)
-- Automatic authorization via CanCanCan
-- Flash messages
-- Collection and object loading
-- Pagination support
+Now that we have that, we need to add the fields to the `form.html.erb` partial:
 
-**Customization points:**
-- Override `scope` to modify the index query
-- Override `collection_includes` to specify the includes for the index query
-- Override `permitted_resource_params` for strong parameters
-- Override individual actions (create, update, etc.) for custom logic
+```erb app/views/spree/admin/brands/_form.html.erb
+<div class="card mb-4">
+  <div class="card-body">
+    <%= f.spree_text_field :name, required: true, autofocus: true %>
+    <!-- [!code ++:6] -->
+    <%= f.spree_text_field :slug,
+        required: true,
+        help: "URL-friendly identifier (auto-generated from name)" %>
 
-## Step 3: Customize the Views
-
-### Index View
-
-This file is responsible for displaying the list of brands in the Admin Dashboard. It will handle sorting, filtering, pagination, and the empty state.
-
-```erb app/views/spree/admin/brands/index.html.erb
-<%= content_for :page_title do %>
-  <%= Spree.t(:brands) %>
-<% end %>
-
-<%= content_for :page_actions do %>
-  <%= link_to_with_icon 'plus', Spree.t(:new_brand), new_object_url, class: 'btn btn-primary' if can?(:create, Spree::Brand) %>
-<% end %>
-
-<%= render 'spree/admin/shared/index_table' %>
+    <%= f.spree_rich_text_area :description,
+        help: "Optional brand description" %>
+  </div>
+</div>
 ```
 
-Let's break down each part:
-- `content_for :page_title` - Set the page title
-- `content_for :page_actions` - Add a new button to the page actions, uses `can?` to run a check if the current user has permission to create a new brand
-- `link_to_with_icon 'plus', Spree.t(:new_brand), new_object_url, class: 'btn btn-primary'` - Add a new button to the page actions to create a new brand, `new_object_url` is a helper that generates the URL to create a new brand, it's the same as calling `spree.new_admin_brand_path`
-- `render 'spree/admin/shared/index_table'` - Render the index table partial which handled sorting, filtering, pagination, and the empty state.
+This partial is used for both the new and edit brand forms. `f` is the form builder instance, you can use it to render the form fields.
 
+We're using `spree_text_field` and `spree_rich_text_area` methods to create the form fields. These are [Spree::Admin::FormBuilder](/developer/admin/form-builder) methods that are automatically available in the form builder. It will render a field, label and handle validation errors automatically. You can also pass `help` to display hints or other information to the user.
 
-### Table Header Partial
+Using the Spree Admin Form Builder ensures that the form fields are styled consistently with the rest of the Admin Dashboard.
+
+### Step 3: Customize the list view
+
+To display more information about the brand, we need to customize the list view.
 
 Customize `app/views/spree/admin/brands/_table_header.html.erb` file to add the following content:
 
 ```erb app/views/spree/admin/brands/_table_header.html.erb
 <tr>
   <th scope="col"><%= sort_link @search, :name, Spree.t(:name) %></th>
-  <th scope="col"><%= Spree.t(:active) %>?</th>
+  <th scope="col"><%= Spree.t(:status) %></th>
+  <th scope="col"><%= sort_link @search, :created_at, Spree.t(:created_at) %></th>
   <th scope="col"></th>
 </tr>
 ```
@@ -140,6 +114,9 @@ Customize `app/views/spree/admin/brands/_table_row.html.erb` file to add the fol
   <td data-action="click->row-link#openLink">
     <%= active_badge(brand.active?) %>
   </td>
+  <td data-action="click->row-link#openLink">
+    <%= brand.created_at.strftime('%B %d, %Y') %>
+  </td>
   <td class="actions">
     <%= link_to_edit brand, data: { row_link_target: 'link', turbo_frame: '_top' } if can?(:edit, brand) %>
   </td>
@@ -154,38 +131,6 @@ Customize `app/views/spree/admin/brands/_table_row.html.erb` file to add the fol
 - Dropdown menu for additional actions
 - `turbo_frame: '_top'` - Ensures edit navigates full page
 
-### New View
-
-Scaffold created a `app/views/spree/admin/brands/new.html.erb` template with the following content:
-
-```erb app/views/spree/admin/brands/new.html.erb
-<%= render 'spree/admin/shared/new_resource' %>
-```
-
-That's it! The [new_resource.html.erb](https://github.com/spree/spree/blob/main/admin/app/views/spree/admin/shared/_new_resource.html.erb) partial handles:
-- Page title with back button
-- Form wrapper with proper URL
-- Error message display
-- Form partial rendering
-- Submit/cancel buttons
-
-### Edit View
-
-Scaffold also created a `app/views/spree/admin/brands/edit.html.erb` template with the following content:
-
-```erb app/views/spree/admin/brands/edit.html.erb
-<%= render 'spree/admin/shared/edit_resource' %>
-```
-
-The [edit_resource.html.erb](https://github.com/spree/spree/blob/main/admin/app/views/spree/admin/shared/_edit_resource.html.erb) partial handles:
-- Page title with resource name
-- Form wrapper with proper URL
-- Error message display
-- Form partial rendering
-- Submit/cancel buttons
-- Delete button
-
-As with the new view, you can just leave it as is.
 
 ### Form Partial
 
