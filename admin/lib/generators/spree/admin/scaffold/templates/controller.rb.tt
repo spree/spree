@@ -4,7 +4,9 @@ module Spree
       private
 
       def permitted_resource_params
-        params.require(:<%= @singular_name %>).permit(:name)
+        params.require(:<%= @singular_name %>).permit(
+          :name
+        )
       end
     end
   end

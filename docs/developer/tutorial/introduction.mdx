@@ -10,16 +10,13 @@ By the end, you'll understand how to add new manageable features to the Spree pl
 
 ## Overview
 
-Building a Spree feature typically involves:
-
-1. [Creating a database model](/developer/tutorial/custom-feature/model) to store data and business logic
-2. [Creating Admin Dashboard UI](/developer/tutorial/custom-feature/admin) to manage the feature from the Admin panel, usually standard CRUD operations (create-read-update-delete)
-3. [Adding API endpoints](/developer/tutorial/custom-feature/api) to allow for accessing the feature from a mobile app or headless storefront
-4. [Adding Storefront](/developer/tutorial/custom-feature/storefront) to allow customers to interact with the feature from the storefront
-5. [Writing tests](/developer/tutorial/custom-feature/testing) to ensure the feature works as expected
+Spree is built on top of [Ruby on Rails framework](https://rubyonrails.org) and follows Model-View-Controller (MVC) architecture. To fully implement a new feature, you will typically create the following components:
+* Database model
+* Admin Dashboard controllers and views
+* API endpoints
+* Storefront views
+* Automated tests
 
 ## Example: Building a Brands Feature
 
 In this guide we will create a complete "Brands" feature that allows admins to manage [Product](/developer/core-concepts/products) brands.
-
-By now you should have Spree [installed locally](/developer/getting-started/quickstart) on your system. This guide will assume you have basic knowledge of Ruby on Rails web framework.

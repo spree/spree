@@ -1,0 +1,50 @@
+---
+title: Testing
+description: Learn how to write automated tests for the Brands feature
+---
+
+Automated testing is a crucial part of the development process. It helps you ensure that your code works as expected and catches bugs early. 
+Spree uses [RSpec](https://rspec.info) and [Factory Bot](https://github.com/thoughtbot/factory_bot_rails) for testing. 
+We also provide `spree_dev_tools` gem that helps you writing Spree-specific tests.
+
+## Setup
+ 
+### Step 1: Set RSpec as the test framework
+
+```bash
+bin/rails g rspec:install
+```
+
+You can also remove the `test/` directory if you don't need it.
+
+```bash
+rm -rf test/
+```
+
+### Step 2: Run `spree_dev_tools` generator
+
+```bash
+bin/rails g spree_dev_tools:install
+```
+
+This will add Spree-specific test helpers to Rspec.
+
+### Step 3: Create a test for the Brands feature
+
+```bash
+bin/rails g factory_bot:model Spree::Brand
+```
+
+```bash
+bin/rails g rspec:model Spree::Brand
+```
+
+## Writing model tests
+
+## Writing controller tests
+
+## Writing feature tests
+
+### Admin Dashboard tests
+
+### Storefront tests
