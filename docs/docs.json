@@ -47,6 +47,9 @@
       {
         "version": "v5",
         "default": true,
+        "pages": [
+          "index"
+        ],
         "tabs": [
           {
             "tab": "Developer Docs",
@@ -55,7 +58,6 @@
                 "group": "Getting started",
                 "icon": "rocket",
                 "pages": [
-                  "developer/index",
                   "developer/getting-started/quickstart"
                 ]
               },
@@ -71,7 +73,6 @@
                   "developer/tutorial/storefront",
                   "developer/tutorial/seo-urls",
                   "developer/tutorial/state-machines",
-                  "developer/tutorial/override-spree-core",
                   "developer/tutorial/api",
                   "developer/tutorial/testing"
                 ]
@@ -1983,8 +1984,7 @@
   },
   "logo": {
     "light": "/logo/logo_light.png",
-    "dark": "/logo/logo_dark.png",
-    "href": "https://spreecommerce.org"
+    "dark": "/logo/logo_dark.png"
   },
   "api": {
     "examples": {
