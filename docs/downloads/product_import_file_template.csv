@@ -41,5 +41,5 @@ product_id,sku,name,slug,status,description,meta_title,meta_description,meta_key
 22,ABC-22-9,,mv-three-options,,,,,,,99.99,0,USD,2,2,2,in,2,lb,,,TRUE,2000,FALSE,Default,Default,,,,Color,Black,Size,M,Fit,Tight,,,,,
 22,ABC-22-10,,mv-three-options,,,,,,,99.99,0,USD,2,2,2,in,2,lb,,,TRUE,2000,FALSE,Default,Default,,,,Color,Black,Size,XS,Fit,Loose,,,,,
 22,ABC-22-11,,mv-three-options,,,,,,,99.99,0,USD,2,2,2,in,2,lb,,,TRUE,2000,FALSE,Default,Default,,,,Color,Black,Size,S,Fit,Loose,,,,,
-
 22,ABC-22-12,,mv-three-options,,,,,,,99.99,0,USD,2,2,2,in,2,lb,,,TRUE,2000,FALSE,Default,Default,,,,Color,Black,Size,M,Fit,Loose,,,,,
+
