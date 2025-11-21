@@ -654,7 +654,7 @@ describe Spree::Payment, type: :model do
           # Change it to something different
           payment.response_code = 'abc'
           payment.void_transaction!
-          expect(payment.response_code).to eq('12345')
+          expect(payment.response_code).to eq('void-12345')
         end
       end
 

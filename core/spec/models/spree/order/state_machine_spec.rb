@@ -121,6 +121,7 @@ describe Spree::Order, type: :model do
 
     context 'resets payment state' do
       let(:payment) { create(:payment, amount: order.total) }
+      let(:incomplete_payment) { create(:payment, state: 'pending') }
 
       before do
         # TODO: This is ugly :(
@@ -131,6 +132,7 @@ describe Spree::Order, type: :model do
         allow(order).to receive_message_chain(:payments, :valid, :empty?).and_return(false)
         allow(order).to receive_message_chain(:payments, :completed).and_return([payment])
         allow(order).to receive_message_chain(:payments, :completed, :includes).and_return([payment])
+        allow(order).to receive_message_chain(:payments, :incomplete, :not_store_credits).and_return([incomplete_payment])
         allow(order).to receive_message_chain(:payments, :last).and_return(payment)
         allow(order).to receive_message_chain(:payments, :store_credits, :pending).and_return([])
       end
@@ -161,8 +163,10 @@ describe Spree::Order, type: :model do
           allow(order).to receive_message_chain(:payments, :valid, :size).and_return(1)
           allow(order).to receive_message_chain(:payments, :completed).and_return([payment])
           allow(order).to receive_message_chain(:payments, :completed, :includes).and_return([payment])
+          allow(order).to receive_message_chain(:payments, :incomplete, :not_store_credits).and_return([incomplete_payment])
           allow(order).to receive_message_chain(:payments, :last).and_return(payment)
           expect(payment).to receive(:cancel!)
+          expect(incomplete_payment).to receive(:void_transaction!)
           order.cancel!
         end
       end
