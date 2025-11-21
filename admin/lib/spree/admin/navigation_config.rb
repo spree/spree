@@ -8,7 +8,7 @@ Spree::Admin::Navigation.configure(:sidebar) do |nav|
           url: :admin_getting_started_path,
           icon: 'map',
           position: 5,
-          if: -> { can?(:manage, current_store) && !current_store.setup_completed? },
+          if: -> { current_store && can?(:manage, current_store) && !current_store.setup_completed? },
           badge: -> { "#{current_store.setup_tasks_done}/#{current_store.setup_tasks_total}" },
           badge_class: 'badge-info',
           active: -> { controller_name == 'dashboard' && action_name == 'getting_started' }

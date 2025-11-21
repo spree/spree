@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Admin::Navigation do
+  let(:current_store) { @default_store }
+
   after do
     # Clear all registries after each test
     described_class.clear_all!
