@@ -12,14 +12,8 @@
       <%= Spree.t(:store_name_help) %>
     </p>
     <%= f.spree_text_field :name, required: true, autofocus: f.object.new_record? %>
-    
-    <div class="form-group mb-0">
-      <%= f.label :logo do %>
-        <%= Spree.t(:logo) %>
-        <%= help_bubble("Used in the admin dashboard") %>
-      <% end %>
-      <%= render 'active_storage/upload_form', form: f, field_name: :logo, width: 240, height: 240, crop: true %>
-    </div>
+
+    <%= f.spree_file_field :logo, width: 240, height: 240, crop: true, help_bubble: "Used in the admin dashboard" %>
   </div>
 </div>
 

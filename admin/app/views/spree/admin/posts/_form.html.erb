@@ -25,10 +25,7 @@
   <div class="col-lg-4">
     <div class="card mb-4">
       <div class="card-body">
-        <div class="form-group">
-          <%= f.label :image, Spree.t(:featured_image) %>
-          <%= render 'active_storage/upload_form', form: f, field_name: :image, width: 1200, height: 600, crop: true, css: 'flex-col' %>
-        </div>
+        <%= f.spree_file_field :image, width: 1200, height: 600, crop: true, css: 'flex-col', label: Spree.t(:featured_image) %>
       </div>
     </div>
 

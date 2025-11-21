@@ -6,72 +6,20 @@
   <%= turbo_save_button_tag Spree.t('actions.update'), form: 'edit_user', data: { admin_target: 'save' } %>
 <% end %>
 
-<%= form_for @user, url: spree.admin_profile_path, method: :put, as: :user do |f| %>
-  <div class="row">
-    <div class="col-lg-6 offset-lg-3">
+<div class="row">
+  <div class="col-lg-6 offset-lg-3">
+    <%= form_for @user, url: spree.admin_profile_path, method: :put, as: :user do |f| %>
       <div class="card mb-4">
         <div class="card-header">
           <h5 class="card-title"><%= Spree.t('admin.personal_details') %></h5>
         </div>
         <div class="card-body">
-          <div class="form-group mb-4">
-            <%= f.label :email, class: 'form-label' %>
-            <%= f.email_field :email, class: 'form-control', required: true %>
-          </div>
-          <div class="form-group mb-4">
-            <%= f.label :first_name, class: 'form-label' %>
-            <%= f.text_field :first_name, class: 'form-control', required: true %>
-          </div>
-          <div class="form-group mb-4">
-            <%= f.label :last_name, class: 'form-label' %>
-            <%= f.text_field :last_name, class: 'form-control', required: true %>
-          </div>
-          <div class="form-group mb-0">
-            <div>
-              <%= f.label :avatar, class: 'form-label' %>
-            </div>
-            <%= render 'active_storage/upload_form', form: f, field_name: :avatar, crop: true %>
-          </div>
+          <%= f.spree_email_field :email, required: true %>
+          <%= f.spree_text_field :first_name, required: true %>
+          <%= f.spree_text_field :last_name, required: true %>
+          <%= f.spree_file_field :avatar, crop: true %>
         </div>
       </div>
-
-      <div class="card">
-        <div class="card-header">
-          <h5 class="card-title"><%= Spree.t('admin.notifications') %></h5>
-        </div>
-        <div class="card-body">
-          <% if @user.respond_to?(:deliver_invitation_accepted_email) %>
-            <div class="custom-control custom-switch mb-3">
-              <%= f.check_box :deliver_invitation_accepted_email, class: 'custom-control-input' %>
-              <%= f.label :deliver_invitation_accepted_email, 'Someone accepted your team invitation', class: 'custom-control-label' %>
-            </div>
-          <% end %>
-
-          <% if @user.respond_to?(:deliver_vendor_new_order_email) %>
-            <hr />
-            <div class="custom-control custom-switch mb-3">
-              <%= f.check_box :deliver_vendor_new_order_email, class: 'custom-control-input' %>
-              <%= f.label :deliver_vendor_new_order_email, 'New order notification', class: 'custom-control-label' %>
-            </div>
-          <% end %>
-
-          <% if @user.respond_to?(:deliver_vendor_onboarding_started_email) %>
-            <hr />
-            <div class="custom-control custom-switch mb-3">
-              <%= f.check_box :deliver_vendor_onboarding_started_email, class: 'custom-control-input' %>
-              <%= f.label :deliver_vendor_onboarding_started_email, 'Vendor started onboarding', class: 'custom-control-label' %>
-            </div>
-            <div class="custom-control custom-switch mb-3">
-              <%= f.check_box :deliver_vendor_onboarding_completed_email, class: 'custom-control-input' %>
-              <%= f.label :deliver_vendor_onboarding_completed_email, 'Vendor completed onboarding', class: 'custom-control-label' %>
-            </div>
-            <div class="custom-control custom-switch mb-3">
-              <%= f.check_box :deliver_vendor_approved_email, class: 'custom-control-input' %>
-              <%= f.label :deliver_vendor_approved_email, 'Vendor has been approved', class: 'custom-control-label' %>
-            </div>
-          <% end %>
-        </div>
-      </div>
-    </div>
+    <% end %>
   </div>
-<% end %>
+</div>

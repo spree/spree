@@ -30,7 +30,7 @@ module Spree
         @template.content_tag(:div, class: 'form-group') do
           @template.label(@object_name, method, get_label(method, options)) +
             @template.text_field(@object_name, method, objectify_options(options)) +
-            @template.error_message_on(@object_name, method) + field_help(method, options.merge(class: 'form-text mt-2'))
+            @template.error_message_on(@object_name, method) + spree_field_help(method, options.merge(class: 'form-text mt-2'))
         end
       end
 
@@ -44,7 +44,7 @@ module Spree
         @template.content_tag(:div, class: 'form-group') do
           @template.label(@object_name, method, get_label(method, options)) +
             @template.number_field(@object_name, method, objectify_options(options)) +
-            @template.error_message_on(@object_name, method) + field_help(method, options.merge(class: 'form-text mt-2'))
+            @template.error_message_on(@object_name, method) + spree_field_help(method, options.merge(class: 'form-text mt-2'))
         end
       end
 
@@ -58,7 +58,7 @@ module Spree
         @template.content_tag(:div, class: 'form-group') do
           @template.label(@object_name, method, get_label(method, options)) +
             @template.email_field(@object_name, method, objectify_options(options)) +
-            @template.error_message_on(@object_name, method) + field_help(method, options.merge(class: 'form-text mt-2'))
+            @template.error_message_on(@object_name, method) + spree_field_help(method, options.merge(class: 'form-text mt-2'))
         end
       end
 
@@ -72,7 +72,7 @@ module Spree
         @template.content_tag(:div, class: 'form-group') do
           @template.label(@object_name, method, get_label(method, options)) +
             @template.date_field(@object_name, method, objectify_options(options)) +
-            @template.error_message_on(@object_name, method) + field_help(method, options.merge(class: 'form-text mt-2'))
+            @template.error_message_on(@object_name, method) + spree_field_help(method, options.merge(class: 'form-text mt-2'))
         end
       end
 
@@ -86,7 +86,7 @@ module Spree
         @template.content_tag(:div, class: 'form-group') do
           @template.label(@object_name, method, get_label(method, options)) +
             @template.datetime_field(@object_name, method, objectify_options(options)) +
-            @template.error_message_on(@object_name, method) + field_help(method, options.merge(class: 'form-text mt-2'))
+            @template.error_message_on(@object_name, method) + spree_field_help(method, options.merge(class: 'form-text mt-2'))
         end
       end
 
@@ -107,7 +107,7 @@ module Spree
 
           @template.label(@object_name, method, get_label(method, options)) +
             @template.text_area(@object_name, method, objectify_options(options)) +
-            @template.error_message_on(@object_name, method) + field_help(method, options.merge(class: 'form-text mt-2'))
+            @template.error_message_on(@object_name, method) + spree_field_help(method, options.merge(class: 'form-text mt-2'))
         end
       end
 
@@ -122,7 +122,7 @@ module Spree
             @template.content_tag(:div, class: 'trix-container') do
               @template.rich_text_area(@object_name, method, objectify_options(options))
             end +
-            @template.error_message_on(@object_name, method) + field_help(method, options.merge(class: 'form-text mt-2'))
+            @template.error_message_on(@object_name, method) + spree_field_help(method, options.merge(class: 'form-text mt-2'))
         end
       end
 
@@ -147,7 +147,7 @@ module Spree
         @template.content_tag(:div, class: 'form-group') do
           @template.label(@object_name, method, get_label(method, options)) +
             @template.select(@object_name, method, choices, objectify_options(options), html_options, &block) +
-            @template.error_message_on(@object_name, method) + field_help(method, options.merge(class: 'form-text mt-2'))
+            @template.error_message_on(@object_name, method) + spree_field_help(method, options.merge(class: 'form-text mt-2'))
         end
       end
 
@@ -173,7 +173,7 @@ module Spree
         @template.content_tag(:div, class: 'form-group') do
           @template.label(@object_name, method, get_label(method, options)) +
             @template.collection_select(@object_name, method, collection, value_method, text_method, objectify_options(options), html_options) +
-            @template.error_message_on(@object_name, method) + field_help(method, options.merge(class: 'form-text mt-2'))
+            @template.error_message_on(@object_name, method) + spree_field_help(method, options.merge(class: 'form-text mt-2'))
         end
       end
 
@@ -187,7 +187,7 @@ module Spree
           @template.content_tag(:div, class: 'custom-control custom-checkbox') do
             @template.check_box(@object_name, method, objectify_options(options.merge(class: 'custom-control-input'))) +
             @template.label(@object_name, method, get_label(method, options), class: 'custom-control-label')
-          end + @template.error_message_on(@object_name, method) + field_help(method, options.merge!(class: 'form-text mt-2 ml-4'))
+          end + @template.error_message_on(@object_name, method) + spree_field_help(method, options.merge!(class: 'form-text mt-2 ml-4'))
         end
       end
 
@@ -204,9 +204,31 @@ module Spree
           @template.content_tag(:div, class: 'custom-control custom-radio') do
             @template.radio_button(@object_name, method, tag_value, objectify_options(options.merge(class: 'custom-control-input'))) +
               @template.label(@object_name, method, get_label(method, options), class: 'custom-control-label', for: options[:id])
-          end + @template.error_message_on(@object_name, method) + field_help(method, options.merge(class: 'form-text mt-2'))
+          end + @template.error_message_on(@object_name, method) + spree_field_help(method, options.merge(class: 'form-text mt-2'))
         end
       end
+
+      # Create a direct file upload field with Spree form styling
+      #
+      # @param method [Symbol] the field name
+      # @param options [Hash] field options
+      # @option options [Boolean] :crop whether to crop the image
+      # @option options [Boolean] :auto_submit whether to auto-submit the form when the file is uploaded
+      # @option options [Boolean] :can_delete whether to show the delete button
+      # @option options [Boolean] :inline whether to display the uploader inline
+      # @option options [Integer] :height the height of the uploader
+      # @option options [Integer] :width the width of the uploader
+      # @option options [Array] :allowed_file_types the allowed file types, defaults to image types
+      # @return [String] HTML string containing the complete form group with direct file upload field
+      def spree_file_field(method, options = {})
+        @template.content_tag(:div, class: 'form-group') do
+          @template.label(@object_name, method, get_label(method, options)) +
+          @template.render('active_storage/upload_form', form: self, field_name: method, **options) +
+          @template.error_message_on(@object_name, method) + spree_field_help(method, options.merge(class: 'form-text mt-2'))
+        end
+      end
+
+      private
 
       # Generate help text for a field
       #
@@ -214,12 +236,10 @@ module Spree
       # @param options [Hash] field options
       # @option options [String] :help help text to display
       # @return [String] HTML string containing the help text or empty string
-      def field_help(_method, options = {})
+      def spree_field_help(_method, options = {})
         options[:class] ||= 'form-text mt-2'
         @template.content_tag(:span, options[:help], class: options[:class])
       end
-
-      private
 
       # Generate the label for a field with required indicator and help bubble
       #

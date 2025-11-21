@@ -81,17 +81,10 @@
         <h5 class="card-title"><%= Spree.t(:images) %></h5>
       </div>
       <div class="card-body">
-        <%= f.label :image, Spree.t(:image) %>
-        <%= render 'active_storage/upload_form', form: f, field_name: :image, width: 1920, height: 1080 %>
-        <%= f.error_message_on :image %>
+        <%= f.spree_file_field :image, width: 1920, height: 1080 %>
       </div>
       <div class="card-body">
-        <%= f.label :square_image, Spree.t(:square_image) %>
-        <p class="text-muted form-text">
-          Used for the featured image on the homepage.
-        </p>
-        <%= render 'active_storage/upload_form', form: f, field_name: :square_image, width: 400, height: 400, crop: true %>
-        <%= f.error_message_on :square_image %>
+        <%= f.spree_file_field :square_image, width: 400, height: 400, crop: true, help: "Used for the featured image on the homepage." %>
       </div>
     </div>
 

@@ -63,21 +63,9 @@
           </h5>
         </div>
         <div class="card-body">
-          <div class="form-group">
-            <%= f.label :favicon_image do %>
-              Favicon image
-              <%= help_bubble("A favicon is a small image that appears in the tab of your web browser when you visit a website. It is usually a tiny square or rectangle with a unique design or logo that represents the website") %>
-            <% end %>
-            <%= render 'active_storage/upload_form', form: f, field_name: :favicon_image, width: 120, height: 120, crop: true %>
-          </div>
+          <%= f.spree_file_field :favicon_image, width: 120, height: 120, crop: true, label: 'Favicon image', help_bubble: "A favicon is a small image that appears in the tab of your web browser when you visit a website. It is usually a tiny square or rectangle with a unique design or logo that represents the website" %>
 
-          <div class="form-group mb-0">
-            <%= f.label :social_image do %>
-              Preview image
-              <%= help_bubble("This image will be used when your store is shared on social media or in search engines.") %>
-            <% end %>
-            <%= render 'active_storage/upload_form', form: f, field_name: :social_image, width: 1200, height: 630, crop: true %>
-          </div>
+          <%= f.spree_file_field :social_image, width: 1200, height: 630, crop: true, label: 'Preview image', help_bubble: "This image will be used when your store is shared on social media or in search engines." %>
         </div>
       </div>
 
