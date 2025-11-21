@@ -7,15 +7,15 @@ module Spree
       # @param [String, nil] icon Optional icon name to prepend to the label
       # @param [Boolean, nil] active Whether the link should be marked as active
       # @return [SafeBuffer] The navigation item HTML
-      def nav_item(label = nil, url, icon: nil, active: nil, data: {})
+      def nav_item(label = nil, url, icon: nil, active: nil, data: {}, **options)
         content_tag :li, class: 'nav-item', role: 'presentation' do
           if block_given?
-            active_link_to url, class: 'nav-link', active: active, data: data do
+            active_link_to url, class: 'nav-link', active: active, data: data, **options do
               yield
             end
           else
             label = icon(icon) + label if icon.present? && label.present?
-            active_link_to label, url, class: 'nav-link', active: active, data: data
+            active_link_to label, url, class: 'nav-link', active: active, data: data, **options
           end
         end
       end

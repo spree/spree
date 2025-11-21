@@ -3,7 +3,7 @@ module Spree
     class Navigation
       class Item
         attr_accessor :key, :label, :url, :icon, :position, :parent_key,
-                      :condition, :badge, :badge_class, :tooltip, :children, :section_label, :active_condition
+                      :condition, :badge, :badge_class, :tooltip, :target, :data_attributes, :children, :section_label, :active_condition
 
         def initialize(key, **options)
           @key = key.to_sym
@@ -17,6 +17,8 @@ module Spree
           @badge = options[:badge]
           @badge_class = options[:badge_class]
           @tooltip = options[:tooltip]
+          @target = options[:target]
+          @data_attributes = options[:data_attributes] || {}
           @section_label = options[:section_label]
           @children = []
         end
@@ -157,6 +159,8 @@ module Spree
             badge: badge,
             badge_class: badge_class,
             tooltip: tooltip,
+            target: target,
+            data_attributes: data_attributes,
             section_label: section_label
           }
         end
