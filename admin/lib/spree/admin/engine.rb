@@ -131,11 +131,11 @@ module Spree
 
       NavigationEnvironment = Struct.new(
         :sidebar,
-        :settings
+        :settings,
         :tax_tabs,
         :shipping_tabs,
         :team_tabs,
-        :stock_tabs
+        :stock_tabs,
         :returns_tabs,
         :developers_tabs,
         :audit_tabs
@@ -148,19 +148,6 @@ module Spree
 
       initializer 'spree.admin.configuration', before: :load_config_initializers do |_app|
         Spree::Admin::RuntimeConfig = Spree::Admin::RuntimeConfiguration.new
-      end
-
-      initializer 'spree.admin.navigation', before: :load_config_initializers do |app|
-        app.config.spree_admin.navigation = NavigationEnvironment.new
-        app.config.spree_admin.navigation.sidebar = Spree::Admin::Navigation.new(:sidebar)
-        app.config.spree_admin.navigation.settings = Spree::Admin::Navigation.new(:settings)
-        app.config.spree_admin.navigation.tax_tabs = Spree::Admin::Navigation.new(:tax_tabs)
-        app.config.spree_admin.navigation.shipping_tabs = Spree::Admin::Navigation.new(:shipping_tabs)
-        app.config.spree_admin.navigation.team_tabs = Spree::Admin::Navigation.new(:team_tabs)
-        app.config.spree_admin.navigation.stock_tabs = Spree::Admin::Navigation.new(:stock_tabs)
-        app.config.spree_admin.navigation.returns_tabs = Spree::Admin::Navigation.new(:returns_tabs)
-        app.config.spree_admin.navigation.developers_tabs = Spree::Admin::Navigation.new(:developers_tabs)
-        app.config.spree_admin.navigation.audit_tabs = Spree::Admin::Navigation.new(:audit_tabs)
       end
 
       initializer 'spree.admin.dartsass_fix' do |app|
@@ -208,12 +195,23 @@ module Spree
         end
       end
 
-      config.after_initialize do
+      config.after_initialize do |app|
         Environment.new.tap do |env|
           env.members.each do |key|
             Rails.application.config.spree_admin.send("#{key}=", [])
           end
         end
+
+        app.config.spree_admin.navigation = NavigationEnvironment.new
+        app.config.spree_admin.navigation.sidebar = Spree::Admin::Navigation.new(:sidebar)
+        app.config.spree_admin.navigation.settings = Spree::Admin::Navigation.new(:settings)
+        app.config.spree_admin.navigation.tax_tabs = Spree::Admin::Navigation.new(:tax_tabs)
+        app.config.spree_admin.navigation.shipping_tabs = Spree::Admin::Navigation.new(:shipping_tabs)
+        app.config.spree_admin.navigation.team_tabs = Spree::Admin::Navigation.new(:team_tabs)
+        app.config.spree_admin.navigation.stock_tabs = Spree::Admin::Navigation.new(:stock_tabs)
+        app.config.spree_admin.navigation.returns_tabs = Spree::Admin::Navigation.new(:returns_tabs)
+        app.config.spree_admin.navigation.developers_tabs = Spree::Admin::Navigation.new(:developers_tabs)
+        app.config.spree_admin.navigation.audit_tabs = Spree::Admin::Navigation.new(:audit_tabs)
       end
     end
   end

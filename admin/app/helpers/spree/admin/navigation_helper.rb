@@ -334,36 +334,7 @@ module Spree
       # @return [Array<Spree::Admin::Navigation::Item>] the visible navigation items
       def navigation_items(context = :sidebar)
         # Pass the view context (self) so that can? and other helpers are available
-        Spree::Admin::Navigation.visible_items(context, self)
-      end
-
-      # Get the current navigation context based on the current page
-      # @return [Symbol] the current navigation context
-      def current_navigation_context
-        settings_area? ? :settings : :sidebar
-      end
-
-      # Check if a specific navigation item is active
-      # @param key [Symbol] the navigation item key
-      # @param context [Symbol] the navigation context
-      # @return [Boolean] whether the navigation item is active
-      def navigation_item_active?(key, context = current_navigation_context)
-        item = Spree::Admin::Navigation.for(context).find(key)
-        item&.active?(request.path, self)
-      end
-
-      # Get the active navigation item for the current path
-      # @param context [Symbol] the navigation context
-      # @return [Spree::Admin::Navigation::Item, nil] the active navigation item
-      def active_navigation_item(context = current_navigation_context)
-        Spree::Admin::Navigation.find_active_item(request.path, context, self)
-      end
-
-      # Get breadcrumbs from navigation for current path
-      # @param context [Symbol] the navigation context
-      # @return [Array<Spree::Admin::Navigation::Item>] the breadcrumb trail
-      def navigation_breadcrumbs(context = current_navigation_context)
-        Spree::Admin::Navigation.breadcrumbs_for(request.path, context, self)
+        Rails.application.config.spree_admin.navigation.send(context).visible_items(self)
       end
 
       # Renders page tab navigation for the given context
