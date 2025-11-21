@@ -8,11 +8,11 @@ export const HeroCard = ({ filename, title, description, href }) => {
   return (
     <a className="group cursor-pointer pb-8" href={href}>
       <img
-        src={`https://mintlify.s3.us-west-1.amazonaws.com/mintlify/images/hero/${filename}.png`}
+        src={`images/hero/${filename}.png`}
         className="block dark:hidden pointer-events-none group-hover:scale-105 transition-all duration-100"
       />
       <img
-        src={`https://mintlify.s3.us-west-1.amazonaws.com/mintlify/images/hero/${filename}-dark.png`}
+        src={`images/hero/${filename}-dark.png`}
         className="pointer-events-none group-hover:scale-105 transition-all duration-100 hidden dark:block"
       />
       <h3 className="mt-5 text-gray-900 dark:text-zinc-50 font-medium">
@@ -34,25 +34,25 @@ export const HeroCard = ({ filename, title, description, href }) => {
       Start building your eCommerce solution with our flexible open source eCommerce platform.
     </div>
 
-    <div className="px-6 lg:px-0 mt-12 lg:mt-24 grid sm:grid-cols-2 gap-x-6 gap-y-4">
-      <HeroCard filename="rocket" title="Developer Docs" description="Setup your Spree Commerce in minutes and start developing" href="/developer/getting-started" />
+    <div className="px-6 lg:px-0 mt-12 grid sm:grid-cols-2 gap-x-6 gap-y-4">
+      <HeroCard filename="dev" title="Developer Docs" description="Setup your Spree Commerce in minutes and start developing" href="/developer/getting-started" />
 
       <HeroCard
-        filename="cli"
+        filename="api"
         title="API Reference"
         description="Explore the Spree Commerce API reference"
         href="/api-reference"
       />
 
       <HeroCard
-        filename="editor"
+        filename="user"
         title="User Documentation"
         description="Learn how to use Spree Commerce as a store owner or operator"
         href="/user"
       />
 
       <HeroCard
-        filename="components"
+        filename="integrations"
         title="Integrations"
         description="Integrate Spree Commerce with your favorite tools and services"
         href="/integrations"
