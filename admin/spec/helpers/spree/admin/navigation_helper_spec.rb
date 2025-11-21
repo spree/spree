@@ -117,4 +117,138 @@ describe Spree::Admin::NavigationHelper, type: :helper do
       end
     end
   end
+
+  describe '#render_navigation' do
+    before do
+      Spree::Admin::Navigation.clear_all!
+      allow(Spree::Admin::RuntimeConfig).to receive(:legacy_sidebar_navigation).and_return(false)
+    end
+
+    it 'returns empty string when legacy navigation is enabled' do
+      allow(Spree::Admin::RuntimeConfig).to receive(:legacy_sidebar_navigation).and_return(true)
+
+      expect(helper.render_navigation(:sidebar)).to eq('')
+    end
+
+    it 'returns empty string when no items are visible' do
+      Spree::Admin::Navigation.configure(:sidebar) do |nav|
+        nav.add :dashboard, label: 'Dashboard', if: -> { false }
+      end
+
+      expect(helper.render_navigation(:sidebar)).to eq('')
+    end
+
+    it 'renders navigation partial when items are visible' do
+      Spree::Admin::Navigation.configure(:sidebar) do |nav|
+        nav.add :dashboard, label: 'Dashboard', url: '/admin'
+      end
+
+      allow(helper).to receive(:render).and_return('navigation html')
+
+      result = helper.render_navigation(:sidebar)
+
+      expect(result).to eq('navigation html')
+    end
+  end
+
+  describe '#navigation_items' do
+    before do
+      Spree::Admin::Navigation.clear_all!
+    end
+
+    it 'returns visible items for the given context' do
+      Spree::Admin::Navigation.configure(:sidebar) do |nav|
+        nav.add :dashboard, label: 'Dashboard', url: '/admin'
+        nav.add :products, label: 'Products', url: '/admin/products'
+      end
+
+      items = helper.navigation_items(:sidebar)
+
+      expect(items.size).to eq(2)
+      expect(items.map(&:key)).to contain_exactly(:dashboard, :products)
+    end
+
+    it 'passes view context for permission checking' do
+      allow(helper).to receive(:can?).with(:manage, Spree::Product).and_return(false)
+
+      Spree::Admin::Navigation.configure(:sidebar) do |nav|
+        nav.add :dashboard, label: 'Dashboard'
+        nav.add :products, label: 'Products', if: -> { can?(:manage, Spree::Product) }
+      end
+
+      items = helper.navigation_items(:sidebar)
+
+      expect(items.map(&:key)).to eq([:dashboard])
+    end
+  end
+
+  describe '#current_navigation_context' do
+    it 'returns :settings when in settings area' do
+      allow(helper).to receive(:settings_area?).and_return(true)
+
+      expect(helper.current_navigation_context).to eq(:settings)
+    end
+
+    it 'returns :sidebar when not in settings area' do
+      allow(helper).to receive(:settings_area?).and_return(false)
+
+      expect(helper.current_navigation_context).to eq(:sidebar)
+    end
+  end
+
+  describe '#navigation_item_active?' do
+    before do
+      Spree::Admin::Navigation.clear_all!
+      allow(helper).to receive(:request).and_return(double(path: '/admin/products'))
+    end
+
+    it 'returns true when item is active' do
+      Spree::Admin::Navigation.configure(:sidebar) do |nav|
+        nav.add :products, label: 'Products', url: '/admin/products'
+      end
+
+      expect(helper.navigation_item_active?(:products, :sidebar)).to be true
+    end
+
+    it 'returns false when item is not active' do
+      Spree::Admin::Navigation.configure(:sidebar) do |nav|
+        nav.add :dashboard, label: 'Dashboard', url: '/admin/orders'
+      end
+
+      expect(helper.navigation_item_active?(:dashboard, :sidebar)).to be false
+    end
+
+    it 'returns nil when item does not exist' do
+      expect(helper.navigation_item_active?(:nonexistent, :sidebar)).to be_nil
+    end
+  end
+
+  describe '#active_navigation_item' do
+    before do
+      Spree::Admin::Navigation.clear_all!
+      allow(helper).to receive(:request).and_return(double(path: '/admin/products'))
+      allow(helper).to receive(:settings_area?).and_return(false)
+    end
+
+    it 'returns the active navigation item for current path' do
+      Spree::Admin::Navigation.configure(:sidebar) do |nav|
+        nav.add :dashboard, label: 'Dashboard', url: '/admin/orders'
+        nav.add :products, label: 'Products', url: '/admin/products'
+      end
+
+      active_item = helper.active_navigation_item
+
+      expect(active_item.key).to eq(:products)
+    end
+
+    it 'returns nil when no item is active' do
+      Spree::Admin::Navigation.configure(:sidebar) do |nav|
+        nav.add :dashboard, label: 'Dashboard', url: '/admin/orders'
+      end
+
+      active_item = helper.active_navigation_item
+
+      expect(active_item).to be_nil
+    end
+  end
 end

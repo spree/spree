@@ -1,9 +1,8 @@
 <% content_for :page_title, Spree.t(:users) %>
 
+<%= render_tab_navigation(:team_tabs) %>
+
 <%= content_for(:page_tabs) do %>
-  <%= nav_item(Spree.t(:users), spree.admin_admin_users_path) if can?(:manage, Spree.admin_user_class) %>
-  <%= nav_item(Spree.t(:invitations), spree.admin_invitations_path) if can?(:manage, Spree::Invitation) %>
-  <%= nav_item(Spree.t(:roles), spree.admin_roles_path) if can?(:manage, Spree::Role) %>
   <%= render_admin_partials(:team_nav_partials) %>
 <% end %>
 

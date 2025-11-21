@@ -1,5 +1,4 @@
+<%= render_tab_navigation(:tax_tabs) %>
 <%= content_for(:page_tabs) do %>
-  <%= nav_item(Spree.t(:tax_rates), spree.admin_tax_rates_path) if can?(:manage, Spree::TaxRate) %>
-  <%= nav_item(Spree.t(:tax_categories), spree.admin_tax_categories_path) if can?(:manage, Spree::TaxCategory) %>
   <%= render_admin_partials(:tax_nav_partials) %>
 <% end %>

@@ -298,6 +298,8 @@ en:
         compare_at_price_description: This price is used to show marked down price on the product page.
         stock_locations_link: To add more stock locations please go to <a href="%{link}">Stock Locations</a>
         total_inventory_html: 'Total inventory at %{stock_location} location: %{count} available'
+      vendors:
+        enterprise_feature: Multi-Vendor Marketplace is available in the Enterprise Edition
       webhooks_subscribers:
         all_events: All Events
         new_webhooks_subscriber: New Webhooks Subscriber

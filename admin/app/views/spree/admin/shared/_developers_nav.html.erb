@@ -1,7 +1,5 @@
 <%= content_for :page_title do %>
   <%= Spree.t(:developers) %>
 <% end %>
-<%= content_for :page_tabs do %>
-  <%= nav_item(Spree.t(:api_keys), spree.admin_oauth_applications_path) if can?(:manage, Spree::OauthApplication) %>
-  <%= nav_item(Spree.t(:webhooks), spree.admin_webhooks_subscribers_path) if can?(:manage, Spree::Webhooks::Subscriber) %>
-<% end %>
+
+<%= render_tab_navigation(:developers_tabs) %>

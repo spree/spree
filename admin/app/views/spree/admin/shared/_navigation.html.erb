@@ -1,0 +1,5 @@
+<ul class="nav flex-column">
+  <% items.each do |item| %>
+    <%= render 'spree/admin/shared/navigation_item', item: item, context: context %>
+  <% end %>
+</ul>

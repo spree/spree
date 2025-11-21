@@ -1,0 +1,53 @@
+<%
+  # Resolve item properties (pass self as context for route helpers)
+  item_url = item.resolve_url(self)
+  item_label = item.resolve_label
+  badge_value = item.badge_value(self)
+  is_active = item.active?(request.path, self)
+  has_children = item.children.present?
+  tooltip_text = item.tooltip
+
+  # Build data attributes - only add tooltip controller if tooltip is present
+  data_attrs = item.data_attributes.dup
+  if tooltip_text.present?
+    data_attrs[:controller] = 'tooltip'
+  end
+
+  # Build additional HTML options (like target)
+  html_options = {}
+  html_options[:target] = item.target if item.target.present?
+
+  # Build complete label with badge (like old menu pattern)
+  complete_label = item_label
+  if badge_value.present?
+    badge_class = item.badge_class.presence || 'badge-light'
+    complete_label += content_tag(:span, badge_value, class: "badge ml-auto #{badge_class}")
+  end
+  # Add tooltip if present
+  if tooltip_text.present?
+    complete_label += tooltip(tooltip_text)
+  end
+  complete_label = complete_label.html_safe
+%>
+
+<% if item.section? %>
+  <%# Section header %>
+  <li class="nav-item nav-section-header mt-3">
+    <span class="text-muted text-uppercase small"><%= item.section_label %></span>
+  </li>
+<% else %>
+  <% if has_children %>
+    <%# Item with children (submenu shows when parent is active) %>
+    <%= nav_item(complete_label, item_url, icon: item.icon, active: is_active, data: data_attrs, **html_options) %>
+    <% if is_active %>
+      <ul class="nav-submenu">
+        <% item.children.select { |child| child.visible?(self) }.each do |child_item| %>
+          <%= render 'spree/admin/shared/navigation_item', item: child_item, context: context %>
+        <% end %>
+      </ul>
+    <% end %>
+  <% else %>
+    <%# Regular item without children %>
+    <%= nav_item(complete_label, item_url, icon: item.icon, active: is_active, data: data_attrs, **html_options) %>
+  <% end %>
+<% end %>
