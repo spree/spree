@@ -10,15 +10,4 @@
   translated_value = f.object.send("#{field}_#{locale}")&.delete_prefix(base_permalink_translated)
 %>
 
-<div class="form-group">
-  <%= f.label field, Spree.t(field) %>
-  <div class="input-group">
-    <% if base_permalink_translated.present? %>
-      <div class="input-group-prepend">
-        <span class="input-group-text"><%= base_permalink_translated %></span>
-      </div>
-    <% end %>
-
-    <%= f.text_field "#{field}_#{locale}", value: translated_value, class: 'form-control' %>
-  </div>
-</div>
+<%= f.spree_text_field "#{field}_#{locale}", label: Spree.t(field), value: translated_value, prepend: base_permalink_translated.presence %>

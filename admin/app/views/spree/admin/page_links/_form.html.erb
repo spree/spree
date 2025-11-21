@@ -1,19 +1,10 @@
 <% data_action = (@page_link.persisted? && !@page_link.parent.is_a?(Spree::Store) ? { action: 'blur->auto-submit#submit' } : {}) %>
 
-<div class="form-group">
-  <%= f.label :linkable_type, 'Link' %>
-  <%= f.select :linkable_type, @page_link.parent.allowed_linkable_types, { include_blank: false }, { class: 'custom-select mb-3', data: { action: 'auto-submit#submit' } } %>
-  <%= render 'spree/admin/page_links/linkable_type_dropdown', page_link: @page_link, form_name: 'page_link' %>
-</div>
+<%= f.spree_select :linkable_type, @page_link.parent.allowed_linkable_types, { label: 'Link', include_blank: false }, { class: 'custom-select mb-3', data: { action: 'auto-submit#submit' } } %>
+<%= render 'spree/admin/page_links/linkable_type_dropdown', page_link: @page_link, form_name: 'page_link' %>
 
 <hr class="my-4" />
 
-<div class="form-group">
-  <%= f.label :label, Spree.t(:name) %>
-  <%= f.text_field :label, class: 'form-control', data: data_action, required: true %>
-</div>
+<%= f.spree_text_field :label, label: Spree.t(:name), data: data_action, required: true %>
 
-<div class="custom-control custom-checkbox">
-  <%= f.check_box :open_in_new_tab, class: 'custom-control-input', data: data_action %>
-  <%= f.label :open_in_new_tab, class: 'custom-control-label' %>
-</div>
+<%= f.spree_check_box :open_in_new_tab, data: data_action %>

@@ -8,16 +8,7 @@
   <div class="card-body">
     <%= f.spree_text_field :name, required: true %>
 
-    <div class="form-group">
-      <%= f.label :amount_percentage, Spree.t(:rate) %>
-      <div class="input-group">
-        <%= f.number_field :amount_percentage, class: 'form-control', min: 0, step: 0.1, required: true %>
-        <div class="input-group-append">
-          <span class="input-group-text">%</span>
-        </div>
-      </div>
-      <%= f.error_message_on :amount %>
-    </div>
+    <%= f.spree_number_field :amount_percentage, label: Spree.t(:rate), append: '%', min: 0, step: 0.1, required: true %>
 
     <%= f.spree_collection_select :zone_id, @available_zones, :id, :name, label: Spree.t(:zone) %>
     <%= f.spree_collection_select :tax_category_id, @available_categories, :id, :name, label: Spree.t(:tax_category) %>
