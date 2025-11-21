@@ -31,7 +31,7 @@
     <% end %>
     <% if is_active %>
       <ul class="nav-submenu">
-        <% item.children.each do |child_item| %>
+        <% item.children.select { |child| child.visible?(self) }.each do |child_item| %>
           <%= render 'spree/admin/shared/navigation_item', item: child_item, context: context %>
         <% end %>
       </ul>
