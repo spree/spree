@@ -1622,6 +1622,7 @@ en:
     payment_updated: Payment Updated
     payments: Payments
     payments_count: Payments count
+    payments_gateway_processing_errors: "%{payment_method_name} processing errors"
     pending: Pending
     pending_sale: Pending Sale
     percent: Percent

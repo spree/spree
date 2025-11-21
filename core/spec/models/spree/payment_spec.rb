@@ -1254,4 +1254,41 @@ describe Spree::Payment, type: :model do
       end
     end
   end
+
+  describe '#add_gateway_processing_error' do
+    subject { payment.add_gateway_processing_error('Insufficient balance on payment') }
+
+    it 'adds a gateway processing error' do
+      subject
+      expect(payment.get_metafield('gateway.processing_errors').value).to eq([{ message: 'Insufficient balance on payment' }].to_json)
+    end
+
+    context 'when the metafield already exists' do
+      before do
+        payment.set_metafield('gateway.processing_errors', [{ message: 'Gateway processing error' }].to_json)
+      end
+
+      it 'adds a gateway processing error' do
+        subject
+
+        expect(payment.get_metafield('gateway.processing_errors').value).to eq(
+          [
+            { message: 'Gateway processing error' },
+            { message: 'Insufficient balance on payment' }
+          ].to_json
+        )
+      end
+    end
+  end
+
+  describe '#gateway_processing_error_messages' do
+    before do
+      payment.add_gateway_processing_error('Gateway processing error')
+      payment.add_gateway_processing_error('Another gateway processing error')
+    end
+
+    it 'returns the gateway processing error messages' do
+      expect(payment.gateway_processing_error_messages).to eq(['Gateway processing error', 'Another gateway processing error'])
+    end
+  end
 end
