@@ -2,9 +2,8 @@
   <%= Spree.t(:returns) %> & <%= Spree.t(:refunds) %>
 <% end %>
 
+<%= render_tab_navigation(:returns_tabs) %>
+
 <% content_for(:page_tabs) do %>
-  <%= nav_item(Spree.t(:return_authorization_reasons), spree.admin_return_authorization_reasons_path) if can?(:manage, Spree::ReturnAuthorizationReason) %>
-  <%= nav_item(Spree.t(:refund_reasons), spree.admin_refund_reasons_path) if can?(:manage, Spree::RefundReason) %>
-  <%= nav_item(Spree.t(:reimbursement_types), spree.admin_reimbursement_types_path) if can?(:manage, Spree::ReimbursementType) %>
   <%= render_admin_partials(:returns_and_refunds_nav_partials) %>
 <% end %>

@@ -373,3 +373,138 @@ Spree::Admin::Navigation.configure(:settings) do |nav|
           position: 200,
           active: -> { controller_name == 'profiles' && action_name == 'edit' }
 end
+
+# ===============================================
+# Page Tab Navigations
+# ===============================================
+
+# Tax Tab Navigation
+Spree::Admin::Navigation.configure(:tax_tabs) do |nav|
+  nav.add :tax_rates,
+          label: :tax_rates,
+          url: :admin_tax_rates_path,
+          position: 10,
+          if: -> { can?(:manage, Spree::TaxRate) }
+
+  nav.add :tax_categories,
+          label: :tax_categories,
+          url: :admin_tax_categories_path,
+          position: 20,
+          if: -> { can?(:manage, Spree::TaxCategory) }
+end
+
+# Shipping Tab Navigation
+Spree::Admin::Navigation.configure(:shipping_tabs) do |nav|
+  nav.add :shipping_methods,
+          label: :shipping_methods,
+          url: :admin_shipping_methods_path,
+          position: 10,
+          active: -> { controller_name == 'shipping_methods' && action_name == 'index' },
+          if: -> { can?(:manage, Spree::ShippingMethod) }
+
+  nav.add :shipping_categories,
+          label: :shipping_categories,
+          url: :admin_shipping_categories_path,
+          position: 20,
+          if: -> { can?(:manage, Spree::ShippingCategory) }
+end
+
+# Team Tab Navigation
+Spree::Admin::Navigation.configure(:team_tabs) do |nav|
+  nav.add :admin_users,
+          label: :users,
+          url: :admin_admin_users_path,
+          position: 10,
+          if: -> { can?(:manage, Spree.admin_user_class) }
+
+  nav.add :invitations,
+          label: :invitations,
+          url: :admin_invitations_path,
+          position: 20,
+          if: -> { can?(:manage, Spree::Invitation) }
+
+  nav.add :roles,
+          label: :roles,
+          url: :admin_roles_path,
+          position: 30,
+          if: -> { can?(:manage, Spree::Role) }
+end
+
+# Stock Tab Navigation
+Spree::Admin::Navigation.configure(:stock_tabs) do |nav|
+  nav.add :stock_items,
+          label: :stock_items,
+          url: :admin_stock_items_path,
+          position: 10,
+          active: -> { controller_name == 'stock_items' },
+          if: -> { can?(:manage, Spree::StockItem) }
+
+  nav.add :stock_transfers,
+          label: :stock_transfers,
+          url: :admin_stock_transfers_path,
+          position: 20,
+          active: -> { controller_name == 'stock_transfers' },
+          if: -> { can?(:manage, Spree::StockTransfer) }
+end
+
+# Returns and Refunds Tab Navigation
+Spree::Admin::Navigation.configure(:returns_tabs) do |nav|
+  nav.add :return_authorization_reasons,
+          label: :return_authorization_reasons,
+          url: :admin_return_authorization_reasons_path,
+          position: 10,
+          if: -> { can?(:manage, Spree::ReturnAuthorizationReason) }
+
+  nav.add :refund_reasons,
+          label: :refund_reasons,
+          url: :admin_refund_reasons_path,
+          position: 20,
+          if: -> { can?(:manage, Spree::RefundReason) }
+
+  nav.add :reimbursement_types,
+          label: :reimbursement_types,
+          url: :admin_reimbursement_types_path,
+          position: 30,
+          if: -> { can?(:manage, Spree::ReimbursementType) }
+end
+
+# Developers Tab Navigation
+Spree::Admin::Navigation.configure(:developers_tabs) do |nav|
+  nav.add :api_keys,
+          label: :api_keys,
+          url: :admin_oauth_applications_path,
+          position: 10,
+          active: -> { controller_name == 'oauth_applications' },
+          if: -> { can?(:manage, Spree::OauthApplication) }
+
+  nav.add :webhooks,
+          label: :webhooks,
+          url: :admin_webhooks_subscribers_path,
+          position: 20,
+          active: -> { controller_name == 'webhooks_subscribers' },
+          if: -> { can?(:manage, Spree::Webhooks::Subscriber) }
+end
+
+# Audit Tab Navigation
+Spree::Admin::Navigation.configure(:audit_tabs) do |nav|
+  nav.add :audit_log,
+          label: 'admin.audit_log',
+          url: :admin_audits_path,
+          position: 10,
+          active: -> { controller_name == 'audits' },
+          if: -> { can?(:manage, current_store) }
+
+  nav.add :exports,
+          label: :exports,
+          url: :admin_exports_path,
+          position: 20,
+          active: -> { controller_name == 'exports' },
+          if: -> { can?(:manage, Spree::Export) }
+
+  nav.add :imports,
+          label: :imports,
+          url: :admin_imports_path,
+          position: 30,
+          active: -> { controller_name == 'imports' },
+          if: -> { can?(:manage, Spree::Import) }
+end

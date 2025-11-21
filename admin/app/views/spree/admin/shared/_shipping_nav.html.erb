@@ -1,5 +1,6 @@
+<%= render_tab_navigation(:shipping_tabs) %>
+
 <%= content_for(:page_tabs) do %>
-  <%= nav_item(Spree.t(:shipping_methods), spree.admin_shipping_methods_path, active: controller_name == 'shipping_methods' && action_name == 'index') if can?(:manage, Spree::ShippingMethod) %>
-  <%= nav_item(Spree.t(:shipping_categories), spree.admin_shipping_categories_path) if can?(:manage, Spree::ShippingCategory) %>
   <%= render_admin_partials(:shipping_nav_partials) %>
 <% end %>
+

@@ -365,6 +365,25 @@ module Spree
       def navigation_breadcrumbs(context = current_navigation_context)
         Spree::Admin::Navigation.breadcrumbs_for(request.path, context, self)
       end
+
+      # Renders page tab navigation for the given context
+      # @param context [Symbol] the navigation context (:tax_tabs, :shipping_tabs, etc.)
+      # @param options [Hash] additional options for rendering
+      # @return [String] the rendered tab navigation HTML wrapped in content_for(:page_tabs)
+      def render_tab_navigation(context, **options)
+        items = navigation_items(context)
+        return '' if items.empty?
+
+        content_for :page_tabs do
+          items.map do |item|
+            item_url = item.resolve_url(self)
+            item_label = item.resolve_label
+            is_active = item.active?(request.path, self)
+
+            nav_item(item_label, item_url, active: is_active)
+          end.join.html_safe
+        end
+      end
     end
   end
 end
