@@ -24,12 +24,17 @@ module Spree
       #   - :required [Boolean] whether field is required
       #   - :help [String] help text to display below the field
       #   - :help_bubble [String] help bubble text
+      #   - :prepend [String] text to prepend before the input field
+      #   - :append [String] text to append after the input field
       # @return [String] HTML string containing the complete form group
       def spree_text_field(method, options = {})
         options[:class] ||= 'form-control'
+        prepend = options.delete(:prepend)
+        append = options.delete(:append)
+
         @template.content_tag(:div, class: 'form-group') do
           @template.label(@object_name, method, get_label(method, options)) +
-            @template.text_field(@object_name, method, objectify_options(options)) +
+            wrap_with_input_group(@template.text_field(@object_name, method, objectify_options(options)), prepend, append) +
             @template.error_message_on(@object_name, method) + spree_field_help(method, options.merge(class: 'form-text mt-2'))
         end
       end
@@ -41,9 +46,12 @@ module Spree
       # @return [String] HTML string containing the complete form group
       def spree_number_field(method, options = {})
         options[:class] ||= 'form-control'
+        prepend = options.delete(:prepend)
+        append = options.delete(:append)
+
         @template.content_tag(:div, class: 'form-group') do
           @template.label(@object_name, method, get_label(method, options)) +
-            @template.number_field(@object_name, method, objectify_options(options)) +
+            wrap_with_input_group(@template.number_field(@object_name, method, objectify_options(options)), prepend, append) +
             @template.error_message_on(@object_name, method) + spree_field_help(method, options.merge(class: 'form-text mt-2'))
         end
       end
@@ -265,6 +273,36 @@ module Spree
         help_bubble = options[:help_bubble] ? ' ' + @template.help_bubble(options[:help_bubble]) : ''
 
         @template.raw(translated_label + required_label + help_bubble)
+      end
+
+      # Wrap a field with an input group if prepend or append is specified
+      #
+      # @param field_html [String] the HTML for the field
+      # @param prepend [String, nil] text to prepend before the input field
+      # @param append [String, nil] text to append after the input field
+      # @return [String] HTML string with input group wrapper or the original field
+      def wrap_with_input_group(field_html, prepend = nil, append = nil)
+        return field_html if prepend.nil? && append.nil?
+
+        @template.content_tag(:div, class: 'input-group') do
+          prepend_html = if prepend.present?
+                           @template.content_tag(:div, class: 'input-group-prepend') do
+                             @template.content_tag(:span, prepend, class: 'input-group-text')
+                           end
+                         else
+                           ''.html_safe
+                         end
+
+          append_html = if append.present?
+                          @template.content_tag(:div, class: 'input-group-append') do
+                            @template.content_tag(:span, append, class: 'input-group-text')
+                          end
+                        else
+                          ''.html_safe
+                        end
+
+          prepend_html + field_html + append_html
+        end
       end
     end
   end

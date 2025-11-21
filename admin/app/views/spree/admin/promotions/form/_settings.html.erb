@@ -2,17 +2,6 @@
   <%= f.spree_number_field :usage_limit, min: 0, step: 1, help: 'Leave this field blank for unlimited usage.' %>
 <% end %>
 
-<div class="form-group">
-  <%= f.label :starts_at %>
-  <%= f.datetime_field :starts_at, class: 'form-control' %>
-  <%= f.error_message_on :starts_at %>  
-</div>
+<%= f.spree_datetime_field :starts_at %>
 
-<div class="form-group">
-  <%= f.label :expires_at %>
-  <%= f.datetime_field :expires_at, class: 'form-control' %>
-  <%= f.error_message_on :expires_at %>
-  <span class="form-text mt-2">
-    Leave this field blank for no expiration.
-  </span>
-</div>
+<%= f.spree_datetime_field :expires_at, help: 'Leave this field blank for no expiration.' %>

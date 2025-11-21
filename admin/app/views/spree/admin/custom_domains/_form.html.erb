@@ -1,19 +1,7 @@
 <div class="card mb-3">
   <div class="card-body">
-    <div class="form-group">
-      <%= f.label :url, Spree.t(:domain) %>
-      <div class="form-control d-flex align-items-center py-0 focus-shadow focus-border">
-        <span class="text-muted">https://</span>
-        <%= f.text_field :url, class: 'form-control-plaintext pr-0 pl-1', autofocus: f.object.new_record?, required: true %>
-      </div>
-      <%= f.error_message_on :url %>
-    </div>
+    <%= f.spree_text_field :url, label: Spree.t(:domain), prepend: 'https://', autofocus: f.object.new_record?, required: true %>
 
-    <div class="custom-control custom-checkbox">
-      <%= f.check_box :default, class: 'custom-control-input' %>
-      <%= f.label :default, class: 'custom-control-label font-weight-semibold' %>
-      <p class="form-text mb-0">We will use this domain in emails to customers.</p>
-      <%= f.error_message_on :default %>
-    </div>
+    <%= f.spree_check_box :default, help: 'We will use this domain in emails to customers.' %>
   </div>
 </div>

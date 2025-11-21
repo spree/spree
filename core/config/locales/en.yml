@@ -105,6 +105,8 @@ en:
         phone: Shipping address phone
         state: Shipping address state
         zipcode: Shipping address zipcode
+      spree/page_link:
+        open_in_new_tab: Open in new tab
       spree/payment:
         amount: Amount
         number: Number
