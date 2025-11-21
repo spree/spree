@@ -182,11 +182,7 @@ module Spree
         end
       end
 
-      initializer 'spree.admin.navigation', before: :load_config_initializers do
-        # Navigation models will be autoloaded by Rails
-      end
-
-      config.after_initialize do
+      config.to_prepare do
         Environment.new.tap do |env|
           env.members.each do |key|
             Rails.application.config.spree_admin.send("#{key}=", [])
@@ -194,7 +190,9 @@ module Spree
         end
 
         # Load default navigation configuration
-        require_relative 'navigation_config'
+        # This needs to run on every code reload in development to repopulate
+        # the navigation registries after the Navigation class is reloaded
+        load File.expand_path('navigation_config.rb', __dir__)
       end
     end
   end
