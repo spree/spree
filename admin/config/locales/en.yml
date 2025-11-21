@@ -288,6 +288,8 @@ en:
           search_placeholder: Search customers by email or name
       utilities:
         preview: Preview
+      vendors:
+        enterprise_feature: Multi-Vendor Marketplace is available in the Enterprise Edition
       variants:
         search_results:
           no_variants: We couldn't find any variants matching your search :(

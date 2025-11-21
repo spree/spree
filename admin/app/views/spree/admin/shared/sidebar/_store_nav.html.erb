@@ -1,4 +1,6 @@
-<% if settings_area? %>
+<% if Spree::Admin::RuntimeConfig.legacy_sidebar_navigation %>
+  <%# Legacy navigation system %>
+  <% if settings_area? %>
   <ul class="nav flex-column">
     <% if can?(:manage, current_store) %>
       <%= nav_item(Spree.t(:store_details), spree.edit_admin_store_path(section: 'general-settings'), icon: 'building-store', active: params[:section] == 'general-settings') %>
@@ -114,4 +116,16 @@
       <% end %>
     </ul>
   </div>
+  <% end %>
+<% else %>
+  <%# New navigation system %>
+  <% if settings_area? %>
+    <%= render_navigation(:settings) %>
+  <% else %>
+    <%= render_navigation(:sidebar) %>
+
+    <div class="mt-auto d-flex flex-column">
+      <%= render 'spree/admin/shared/sidebar/enterprise_edition_notice' %>
+    </div>
+  <% end %>
 <% end %>

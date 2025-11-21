@@ -12,6 +12,7 @@ module Spree
       preference :admin_orders_per_page, :integer, default: Kaminari.config.default_per_page
 
       preference :include_application_importmap, :boolean, default: false
+      preference :legacy_sidebar_navigation, :boolean, default: false
     end
   end
 end
