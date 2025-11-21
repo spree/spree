@@ -16,7 +16,16 @@ module Spree
         def configure(context = :sidebar, &block)
           reg = registry(context)
           builder = Builder.new(reg)
-          builder.instance_eval(&block) if block_given?
+          # Support both block styles: |nav| nav.add or just add
+          if block_given?
+            if block.arity > 0
+              # Block expects parameter: do |nav| nav.add ... end
+              block.call(builder)
+            else
+              # Block uses implicit self: do add ... end
+              builder.instance_eval(&block)
+            end
+          end
           reg
         end
 

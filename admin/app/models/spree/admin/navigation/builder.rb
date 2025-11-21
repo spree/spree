@@ -29,7 +29,14 @@ module Spree
 
           if block_given?
             builder = self.class.new(registry, section_item)
-            builder.instance_eval(&block)
+            # Support both block styles: |nav| nav.add or just add
+            if block.arity > 0
+              # Block expects parameter: do |nav| nav.add ... end
+              block.call(builder)
+            else
+              # Block uses implicit self: do add ... end
+              builder.instance_eval(&block)
+            end
           end
 
           section_item
