@@ -2,7 +2,7 @@
   <%= dialog_header(Spree.t(:edit) + ' ' + Spree.t(:image)) %>
   <%= form_with model: @asset, url: spree.admin_asset_path(@asset), method: :put, scope: :asset do |f| %>
     <div class="dialog-body pb-0" data-turbo-permanent id="asset-<%= @asset.key.parameterize %>">
-      <%= render 'active_storage/upload_form', form: f, field_name: :attachment, width: 200, height: 200, can_delete: false %>
+      <%= f.spree_file_field :attachment, width: 200, height: 200, can_delete: false, label: Spree.t(:image) %>
     </div>
     <div class="dialog-body" style="min-height: 200px">
       <%= f.spree_text_area :alt, label: Spree.t(:alt_text), rows: 4 %>

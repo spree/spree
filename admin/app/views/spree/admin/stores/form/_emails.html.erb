@@ -33,7 +33,7 @@
   </div>
   <div class="card-body">
     <p class="text-muted">This logo is included in all email notifications such as order confirmation</p>
-    <%= render 'active_storage/upload_form', form: f, field_name: :mailer_logo, width: 204, height: 104 %>
+    <%= f.spree_file_field :mailer_logo, width: 204, height: 104 %>
     <p class="form-text mb-0 mt-2">
       We recommend images with a transparent background.
       <br />

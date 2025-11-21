@@ -1,8 +1,5 @@
-<%= render 'active_storage/upload_form', form: f, field_name: :asset, width: 512, height: 512, auto_submit: true %>
-<div class="mt-2 form-group">
-  <%= f.label :preferred_image_alt, Spree.t(:alt_text) %>
-  <%= f.text_field :preferred_image_alt, data: { action: 'auto-submit#submit' }, class: 'form-control' %>
-</div>
+<%= f.spree_file_field :asset, width: 512, height: 512, auto_submit: true %>
+<%= f.spree_text_field :preferred_image_alt, label: Spree.t(:alt_text), data: { action: 'auto-submit#submit' } %>
 <% content_for(:design_tab) do %>
   <%= render 'spree/admin/page_builder/labeled_range_input',
     f: f, field: :preferred_height, min: 1, max: 1024, unit: 'px', _label: 'Max image height on desktop'
