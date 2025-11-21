@@ -3,3 +3,8 @@
     action: 'trix-change->auto-submit#submit'
   }, class: 'mb-3' %>
 </div>
+
+<div class="pb-2 custom-control custom-checkbox">
+  <%= f.check_box :preferred_enabled, class: 'custom-control-input', data: { action: 'auto-submit#submit' } %>
+  <%= f.label :preferred_enabled, Spree.t('admin.page_builder.enabled'), class: 'custom-control-label' %>
+</div>
