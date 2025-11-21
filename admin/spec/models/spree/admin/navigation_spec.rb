@@ -139,32 +139,4 @@ RSpec.describe Spree::Admin::Navigation do
       expect(described_class.for(:settings).find(:general)).not_to be_nil
     end
   end
-
-  describe '.copy_from' do
-    it 'copies items from one context to another' do
-      described_class.configure(:sidebar) do |nav|
-        nav.add :dashboard, label: 'Dashboard'
-        nav.add :products, label: 'Products'
-      end
-
-      described_class.copy_from(:sidebar, :custom)
-
-      expect(described_class.for(:custom).find(:dashboard)).not_to be_nil
-      expect(described_class.for(:custom).find(:products)).not_to be_nil
-    end
-
-    it 'copies only specified items' do
-      described_class.configure(:sidebar) do |nav|
-        nav.add :dashboard, label: 'Dashboard'
-        nav.add :products, label: 'Products'
-        nav.add :orders, label: 'Orders'
-      end
-
-      described_class.copy_from(:sidebar, :custom, only: [:dashboard, :products])
-
-      expect(described_class.for(:custom).find(:dashboard)).not_to be_nil
-      expect(described_class.for(:custom).find(:products)).not_to be_nil
-      expect(described_class.for(:custom).find(:orders)).to be_nil
-    end
-  end
 end

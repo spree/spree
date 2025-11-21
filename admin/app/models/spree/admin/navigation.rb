@@ -92,27 +92,6 @@ module Spree
         def clear!(context = :sidebar)
           registry(context).clear
         end
-
-        # Copy items from one context to another
-        def copy_from(source_context, target_context, only: nil)
-          source = registry(source_context)
-          target = registry(target_context)
-
-          items_to_copy = if only
-                            only.map { |key| source.find(key) }.compact
-                          else
-                            source.root_items
-                          end
-
-          items_to_copy.each do |item|
-            target.add(item.key, **item.to_h)
-          end
-        end
-
-        # Merge items from one context into another
-        def merge_from(source_context, target_context = :sidebar)
-          copy_from(source_context, target_context)
-        end
       end
     end
   end
