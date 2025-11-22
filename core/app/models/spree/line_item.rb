@@ -38,6 +38,8 @@ module Spree
     validates :price, numericality: true
 
     validates_with Spree::Stock::AvailabilityValidator, if: -> { variant.present? }
+    attribute :validate_only_quantity, :boolean, default: false
+
     validate :ensure_proper_currency, if: -> { order.present? }
 
     before_destroy :verify_order_inventory_before_destroy, if: -> { order.has_checkout_step?('delivery') }
@@ -186,6 +188,14 @@ module Spree
       update_price_from_modifier(currency, opts)
       assign_attributes opts
     end
+
+    def from_promotion
+      @from_promotion ||= begin
+        create_line_items_promotions = order.create_line_items_promotions.includes(:promotion_actions)
+        create_line_items_promotions.find do |promotion|
+          promotion.create_line_items_promotion_actions.any? { |action| action.item_promotable?(variant_id) }
+        end
+      end
 
     # Returns the maximum quantity that can be added to the line item
     #
