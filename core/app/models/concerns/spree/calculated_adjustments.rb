@@ -30,7 +30,7 @@ module Spree
       end
 
       def self.spree_calculators
-        Rails.application.config.spree.calculators
+        Spree.calculators
       end
     end
   end

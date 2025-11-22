@@ -23,6 +23,19 @@ require 'spree/core/partials'
 require 'tinymce-rails'
 
 module Spree
+  def self.admin
+    @admin ||= AdminConfig.new
+  end
+
+  class AdminConfig
+    def partials
+      @partials ||= Spree::Core::Partials.new(
+        Rails.application.config.spree_admin,
+        Spree::Admin::Engine::Environment
+      )
+    end
+  end
+
   module Admin
     def self.navigation
       Rails.application.config.spree_admin.navigation
@@ -30,13 +43,6 @@ module Spree
 
     def self.navigation=(navigation)
       Rails.application.config.spree_admin.navigation = navigation
-    end
-
-    def self.partials
-      @partials ||= Spree::Core::Partials.new(
-        Rails.application.config.spree_admin,
-        Spree::Admin::Engine::Environment
-      )
     end
   end
 end

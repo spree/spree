@@ -9,7 +9,7 @@ module Spree
     end
 
     def grouped_available_store_integrations
-      Rails.application.config.spree.integrations.group_by(&:integration_group).sort_by { |group, _| group }
+      Spree.integrations.group_by(&:integration_group).sort_by { |group, _| group }
     end
   end
 end

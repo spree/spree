@@ -7,8 +7,8 @@ describe Spree::PaymentMethod, type: :model do
 
   # register test gateways
   before do
-    Rails.application.config.spree.payment_methods << TestGateway
-    Rails.application.config.spree.payment_methods << Spree::Gateway::Test
+    Spree.payment_methods << TestGateway
+    Spree.payment_methods << Spree::Gateway::Test
   end
 
   context 'visibility scopes' do

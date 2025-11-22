@@ -4,7 +4,7 @@ module Spree
       include Spree::ImagesHelper
 
       def render_admin_partials(section, options = {})
-        Spree::Admin.partials.send(section.to_s.gsub('_partials', '').to_sym).map do |partial|
+        Spree.admin.partials.send(section.to_s.gsub('_partials', '').to_sym).map do |partial|
           render partial, options
         end.join.html_safe
       end

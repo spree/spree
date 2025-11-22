@@ -56,7 +56,7 @@ module Spree
     #
     # @return [Array<Spree::Theme>]
     def self.available_themes
-      @available_themes ||= Rails.application.config.spree.themes.sort_by(&:display_name)
+      @available_themes ||= Spree.page_builder.themes.sort_by(&:display_name)
     end
 
     def self.metadata
@@ -98,7 +98,7 @@ module Spree
     end
 
     def create_default_pages
-      Rails.application.config.spree.pages.map(&:to_s).map(&:constantize).each do |page_class|
+      Spree.page_builder.pages.map(&:to_s).map(&:constantize).each do |page_class|
         next if page_class == Spree::Pages::Custom
 
         page_class.where(pageable: self).first_or_create!
@@ -160,7 +160,7 @@ module Spree
     # @return [Array<Class>]
     def available_layout_sections
       [
-        *Rails.application.config.spree.theme_layout_sections,
+        *Spree.page_builder.theme_layout_sections,
         *custom_layout_sections
       ]
     end
@@ -181,7 +181,7 @@ module Spree
       return @available_page_sections if @available_page_sections
 
       @available_page_sections ||= [
-        *Rails.application.config.spree.page_sections.find_all do |section_class|
+        *Spree.page_builder.page_sections.find_all do |section_class|
           section_class.role == 'content'
         end,
         *custom_page_sections

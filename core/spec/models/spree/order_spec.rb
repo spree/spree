@@ -741,12 +741,12 @@ describe Spree::Order, type: :model do
 
     context 'match line item with options' do
       before do
-        Rails.application.config.spree.line_item_comparison_hooks << :foos_match
+        Spree.line_item_comparison_hooks << :foos_match
       end
 
       after do
         # reset to avoid test pollution
-        Rails.application.config.spree.line_item_comparison_hooks = Set.new
+        Spree.line_item_comparison_hooks = Set.new
       end
 
       it 'matches line item when options match' do

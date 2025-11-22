@@ -33,7 +33,7 @@ module Spree
       end
 
       def available_types
-        Rails.application.config.spree.data_feed_types
+        Spree.data_feed_types
       end
     end
   end

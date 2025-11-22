@@ -55,7 +55,7 @@ module Spree
       end
 
       def adjusters
-        Rails.application.config.spree.adjusters
+        Spree.adjusters
       end
 
       def tax_adjuster
