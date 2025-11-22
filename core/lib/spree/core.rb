@@ -138,6 +138,10 @@ module Spree
     Spree::Config.always_use_translations || I18n.default_locale != I18n.locale
   end
 
+  def self.uniqueness_scopes
+    @@uniqueness_scopes ||= ActiveSupport::HashWithIndifferentAccess.new
+  end
+
   # Used to configure Spree.
   #
   # Example:
