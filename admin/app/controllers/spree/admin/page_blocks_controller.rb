@@ -40,7 +40,7 @@ module Spree
 
       def allowed_types
         [
-          *Rails.application.config.spree.page_blocks,
+          *Spree.page_builder.page_blocks,
           *parent&.available_blocks_to_add
         ].uniq.sort_by(&:name)
       end

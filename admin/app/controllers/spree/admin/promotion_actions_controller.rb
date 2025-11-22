@@ -30,7 +30,7 @@ module Spree
       end
 
       def allowed_action_types
-        Rails.application.config.spree.promotions.actions
+        Spree.promotions.actions
       end
 
       def location_after_save

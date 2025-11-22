@@ -28,7 +28,7 @@ module Spree
       end
 
       def allowed_model_classes
-        @allowed_model_classes ||= Rails.application.config.spree.metafield_enabled_resources
+        @allowed_model_classes ||= Spree.metafield_enabled_resources
       end
 
       def update_turbo_stream_enabled?

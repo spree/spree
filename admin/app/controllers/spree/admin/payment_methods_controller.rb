@@ -33,7 +33,7 @@ module Spree
       def allowed_payment_types
         # We need to map to strings, otherwise some weird things happen with STI
         # where Rails can't find the ancestor class when we try to save the payment method.
-        Rails.application.config.spree.payment_methods.map(&:to_s)
+        Spree.payment_methods.map(&:to_s)
       end
 
       def permitted_resource_params
