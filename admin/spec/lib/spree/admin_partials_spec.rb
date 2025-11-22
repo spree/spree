@@ -67,6 +67,12 @@ RSpec.describe 'Spree::Admin.partials' do
   describe 'setter methods' do
     let(:partials) { Spree::Admin.partials }
 
+    after do
+      Rails.application.config.spree_admin.product_form_partials = []
+      Rails.application.config.spree_admin.dashboard_analytics_partials = []
+      Rails.application.config.spree_admin.order_page_sidebar_partials = []
+    end
+
     it 'sets the config values' do
       partials.product_form = ['custom_form']
       expect(Rails.application.config.spree_admin.product_form_partials).to eq(['custom_form'])

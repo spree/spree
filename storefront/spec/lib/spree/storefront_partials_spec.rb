@@ -73,6 +73,12 @@ RSpec.describe 'Spree::Storefront.partials' do
   describe 'setter methods' do
     let(:partials) { Spree::Storefront.partials }
 
+    after do
+      Rails.application.config.spree_storefront.cart_partials = []
+      Rails.application.config.spree_storefront.product_partials = []
+      Rails.application.config.spree_storefront.checkout_partials = []
+    end
+
     it 'sets the config values' do
       partials.cart = ['custom_cart']
       expect(Rails.application.config.spree_storefront.cart_partials).to eq(['custom_cart'])
