@@ -97,7 +97,7 @@ module Spree
       end
 
       def load_form_data
-        @taxon_rules = Rails.application.config.spree.taxon_rules
+        @taxon_rules = Spree.taxon_rules
         @rule_types = @taxon_rules.map do |taxon_rule|
           [Spree.t("admin.taxon_rules.#{taxon_rule.to_s.demodulize.underscore}"), taxon_rule.to_s]
         end

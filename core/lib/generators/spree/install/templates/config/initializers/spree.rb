@@ -61,33 +61,40 @@ end
 # uncomment lines below to add your own custom business logic
 # such as promotions, shipping methods, etc
 Rails.application.config.after_initialize do
-  # Rails.application.config.spree.shipping_methods << Spree::ShippingMethods::SuperExpensiveNotVeryFastShipping
-  # Rails.application.config.spree.payment_methods << Spree::PaymentMethods::VerySafeAndReliablePaymentMethod
+  # Payment methods and shipping calculators
+  # Spree.payment_methods << Spree::PaymentMethods::VerySafeAndReliablePaymentMethod
+  # Spree.calculators.shipping_methods << Spree::ShippingMethods::SuperExpensiveNotVeryFastShipping
+  # Spree.calculators.tax_rates << Spree::TaxRates::FinanceTeamForcedMeToCodeThis
 
-  # Rails.application.config.spree.calculators.tax_rates << Spree::TaxRates::FinanceTeamForcedMeToCodeThis
-
-  # Rails.application.config.spree.stock_splitters << Spree::Stock::Splitters::SecretLogicSplitter
-
-  # Rails.application.config.spree.adjusters << Spree::Adjustable::Adjuster::TaxTheRich
+  # Stock splitters and adjusters
+  # Spree.stock_splitters << Spree::Stock::Splitters::SecretLogicSplitter
+  # Spree.adjusters << Spree::Adjustable::Adjuster::TaxTheRich
 
   # Custom promotions
-  # Rails.application.config.spree.calculators.promotion_actions_create_adjustments << Spree::Calculators::PromotionActions::CreateAdjustments::AddDiscountForFriends
-  # Rails.application.config.spree.calculators.promotion_actions_create_item_adjustments << Spree::Calculators::PromotionActions::CreateItemAdjustments::FinanceTeamForcedMeToCodeThis
-  # Rails.application.config.spree.promotions.rules << Spree::Promotions::Rules::OnlyForVIPCustomers
-  # Rails.application.config.spree.promotions.actions << Spree::Promotions::Actions::GiftWithPurchase
+  # Spree.calculators.promotion_actions_create_adjustments << Spree::Calculators::PromotionActions::CreateAdjustments::AddDiscountForFriends
+  # Spree.calculators.promotion_actions_create_item_adjustments << Spree::Calculators::PromotionActions::CreateItemAdjustments::FinanceTeamForcedMeToCodeThis
+  # Spree.promotions.rules << Spree::Promotions::Rules::OnlyForVIPCustomers
+  # Spree.promotions.actions << Spree::Promotions::Actions::GiftWithPurchase
 
-  # Rails.application.config.spree.taxon_rules << Spree::TaxonRules::ProductsWithColor
+  # Taxon rules
+  # Spree.taxon_rules << Spree::TaxonRules::ProductsWithColor
 
-  # Rails.application.config.spree.exports << Spree::Exports::Payments
-  # Rails.application.config.spree.reports << Spree::Reports::MassivelyOvercomplexReportForCfo
+  # Exports and reports
+  # Spree.export_types << Spree::Exports::Payments
+  # Spree.reports << Spree::Reports::MassivelyOvercomplexReportForCfo
 
-  # Themes and page builder
-  # Rails.application.config.spree.themes << Spree::Themes::NewShinyTheme
-  # Rails.application.config.spree.theme_layout_sections << Spree::PageSections::SuperImportantCeoBio
-  # Rails.application.config.spree.page_sections << Spree::PageSections::ContactFormToGetInTouch
-  # Rails.application.config.spree.page_blocks << Spree::PageBlocks::BigRedButtonToCallSales
+  # Page builder (themes, pages, sections, blocks)
+  # Spree.page_builder.themes << Spree::Themes::NewShinyTheme
+  # Spree.page_builder.theme_layout_sections << Spree::PageSections::SuperImportantCeoBio
+  # Spree.page_builder.pages << Spree::Pages::CustomLandingPage
+  # Spree.page_builder.page_sections << Spree::PageSections::ContactFormToGetInTouch
+  # Spree.page_builder.page_blocks << Spree::PageBlocks::BigRedButtonToCallSales
 
-  # Rails.application.config.spree_storefront.head_partials << 'spree/shared/that_js_snippet_that_marketing_forced_me_to_include'
+  # Storefront partials
+  # Spree.storefront.partials.head << 'spree/shared/that_js_snippet_that_marketing_forced_me_to_include'
+
+  # Admin partials
+  # Spree.admin.partials.product_form << 'spree/admin/products/custom_section'
 end
 
 Spree.user_class = <%= (options[:user_class].blank? ? 'Spree::LegacyUser' : options[:user_class]).inspect %>

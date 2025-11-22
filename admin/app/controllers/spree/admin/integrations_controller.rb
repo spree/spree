@@ -16,7 +16,7 @@ module Spree
       private
 
       def allowed_integration_types
-        @allowed_integration_types ||= Rails.application.config.spree.integrations.map { |klass| [klass.to_s, klass] }.to_h
+        @allowed_integration_types ||= Spree.integrations.map { |klass| [klass.to_s, klass] }.to_h
       end
 
       def require_integration_type

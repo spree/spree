@@ -360,7 +360,7 @@ RSpec.describe Spree::Import, :job, type: :model do
 
   describe '.available_types' do
     it 'returns configured import types' do
-      expect(described_class.available_types).to eq(Rails.application.config.spree.import_types)
+      expect(described_class.available_types).to eq(Spree.import_types)
     end
   end
 

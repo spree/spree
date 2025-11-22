@@ -42,7 +42,7 @@ module Spree
 
       # Allowed translatable resources configured in Spree
       def allowed_model_classes
-        Rails.application.config.spree.translatable_resources
+        Spree.translatable_resources
       end
 
       # Determine the translation locale to use

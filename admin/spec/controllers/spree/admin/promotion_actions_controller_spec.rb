@@ -155,7 +155,7 @@ RSpec.describe Spree::Admin::PromotionActionsController, type: :controller do
   describe 'helper methods' do
     it 'provides allowed_action_types' do
       get :new, params: { promotion_id: promotion.id }
-      expect(controller.send(:allowed_action_types)).to eq(Rails.application.config.spree.promotions.actions)
+      expect(controller.send(:allowed_action_types)).to eq(Spree.promotions.actions)
     end
   end
 end

@@ -175,7 +175,7 @@ module Spree
 
     class << self
       def available_types
-        Rails.application.config.spree.export_types
+        Spree.export_types
       end
 
       def available_models

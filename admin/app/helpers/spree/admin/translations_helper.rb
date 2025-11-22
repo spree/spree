@@ -2,7 +2,7 @@ module Spree
   module Admin
     module TranslationsHelper
       def link_to_edit_translations(resource, options = {})
-        return unless Rails.application.config.spree.translatable_resources.map(&:name).include?(resource.class.name)
+        return unless Spree.translatable_resources.map(&:name).include?(resource.class.name)
         return unless can?(:update, resource)
         return unless can?(:update, :translations)
 

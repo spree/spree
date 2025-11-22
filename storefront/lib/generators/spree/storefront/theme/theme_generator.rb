@@ -22,7 +22,7 @@ module Spree
           directory "themes/default", "app/views/themes/#{file_name}"
 
           append_to_file "config/initializers/spree.rb", after: "Rails.application.config.after_initialize do\n" do
-            "  Rails.application.config.spree.themes << Spree::Themes::#{class_name}\n"
+            "  Spree.page_builder.themes << Spree::Themes::#{class_name}\n"
           end
         end
 

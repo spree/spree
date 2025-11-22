@@ -255,7 +255,7 @@ bin/rails g spree:storefront:theme MyTheme
 
 ```ruby
 # Register theme in config/initializers/spree.rb
-Rails.application.config.spree.themes << Spree::Themes::MyTheme
+Spree.page_builder.themes << Spree::Themes::MyTheme
 ```
 
 #### View Overrides

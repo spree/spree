@@ -168,6 +168,201 @@ module Spree
     yield(Spree::Dependencies)
   end
 
+  # Environment accessors for easier configuration access
+  # Instead of Rails.application.config.spree.payment_methods
+  # you can use Spree.payment_methods
+
+  def self.calculators
+    Rails.application.config.spree.calculators
+  end
+
+  def self.calculators=(value)
+    Rails.application.config.spree.calculators = value
+  end
+
+  def self.validators
+    Rails.application.config.spree.validators
+  end
+
+  def self.validators=(value)
+    Rails.application.config.spree.validators = value
+  end
+
+  def self.payment_methods
+    Rails.application.config.spree.payment_methods
+  end
+
+  def self.payment_methods=(value)
+    Rails.application.config.spree.payment_methods = value
+  end
+
+  def self.adjusters
+    Rails.application.config.spree.adjusters
+  end
+
+  def self.adjusters=(value)
+    Rails.application.config.spree.adjusters = value
+  end
+
+  def self.stock_splitters
+    Rails.application.config.spree.stock_splitters
+  end
+
+  def self.stock_splitters=(value)
+    Rails.application.config.spree.stock_splitters = value
+  end
+
+  def self.promotions
+    Rails.application.config.spree.promotions
+  end
+
+  def self.promotions=(value)
+    Rails.application.config.spree.promotions = value
+  end
+
+  def self.line_item_comparison_hooks
+    Rails.application.config.spree.line_item_comparison_hooks
+  end
+
+  def self.line_item_comparison_hooks=(value)
+    Rails.application.config.spree.line_item_comparison_hooks = value
+  end
+
+  def self.data_feed_types
+    Rails.application.config.spree.data_feed_types
+  end
+
+  def self.data_feed_types=(value)
+    Rails.application.config.spree.data_feed_types = value
+  end
+
+  def self.export_types
+    Rails.application.config.spree.export_types
+  end
+
+  def self.export_types=(value)
+    Rails.application.config.spree.export_types = value
+  end
+
+  def self.import_types
+    Rails.application.config.spree.import_types
+  end
+
+  def self.import_types=(value)
+    Rails.application.config.spree.import_types = value
+  end
+
+  def self.taxon_rules
+    Rails.application.config.spree.taxon_rules
+  end
+
+  def self.taxon_rules=(value)
+    Rails.application.config.spree.taxon_rules = value
+  end
+
+  def self.reports
+    Rails.application.config.spree.reports
+  end
+
+  def self.reports=(value)
+    Rails.application.config.spree.reports = value
+  end
+
+  def self.translatable_resources
+    Rails.application.config.spree.translatable_resources
+  end
+
+  def self.translatable_resources=(value)
+    Rails.application.config.spree.translatable_resources = value
+  end
+
+  def self.metafield_types
+    Rails.application.config.spree.metafield_types
+  end
+
+  def self.metafield_types=(value)
+    Rails.application.config.spree.metafield_types = value
+  end
+
+  def self.metafield_enabled_resources
+    Rails.application.config.spree.metafield_enabled_resources
+  end
+
+  def self.metafield_enabled_resources=(value)
+    Rails.application.config.spree.metafield_enabled_resources = value
+  end
+
+  def self.analytics_events
+    Rails.application.config.spree.analytics_events
+  end
+
+  def self.analytics_events=(value)
+    Rails.application.config.spree.analytics_events = value
+  end
+
+  def self.analytics_event_handlers
+    Rails.application.config.spree.analytics_event_handlers
+  end
+
+  def self.analytics_event_handlers=(value)
+    Rails.application.config.spree.analytics_event_handlers = value
+  end
+
+  def self.integrations
+    Rails.application.config.spree.integrations
+  end
+
+  def self.integrations=(value)
+    Rails.application.config.spree.integrations = value
+  end
+
+  # Page Builder configuration accessor
+  def self.page_builder
+    @page_builder ||= PageBuilderConfig.new
+  end
+
+  class PageBuilderConfig
+    def themes
+      Rails.application.config.spree.themes
+    end
+
+    def themes=(value)
+      Rails.application.config.spree.themes = value
+    end
+
+    def theme_layout_sections
+      Rails.application.config.spree.theme_layout_sections
+    end
+
+    def theme_layout_sections=(value)
+      Rails.application.config.spree.theme_layout_sections = value
+    end
+
+    def pages
+      Rails.application.config.spree.pages
+    end
+
+    def pages=(value)
+      Rails.application.config.spree.pages = value
+    end
+
+    def page_sections
+      Rails.application.config.spree.page_sections
+    end
+
+    def page_sections=(value)
+      Rails.application.config.spree.page_sections = value
+    end
+
+    def page_blocks
+      Rails.application.config.spree.page_blocks
+    end
+
+    def page_blocks=(value)
+      Rails.application.config.spree.page_blocks = value
+    end
+  end
+
   module Core
     autoload :ProductFilters, 'spree/core/product_filters'
     autoload :TokenGenerator, 'spree/core/token_generator'

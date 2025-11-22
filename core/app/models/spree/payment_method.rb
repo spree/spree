@@ -29,7 +29,7 @@ module Spree
     has_many :gateway_customers, class_name: 'Spree::GatewayCustomer', dependent: :destroy
 
     def self.providers
-      Rails.application.config.spree.payment_methods
+      Spree.payment_methods
     end
 
     def provider_class

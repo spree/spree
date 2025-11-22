@@ -159,7 +159,7 @@ RSpec.describe Spree::Admin::PromotionRulesController, type: :controller do
   describe 'helper methods' do
     it 'provides allowed_rule_types' do
       get :new, params: { promotion_id: promotion.id }
-      expect(controller.send(:allowed_rule_types)).to eq(Rails.application.config.spree.promotions.rules)
+      expect(controller.send(:allowed_rule_types)).to eq(Spree.promotions.rules)
     end
   end
 end

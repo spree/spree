@@ -28,7 +28,7 @@ module Spree
       end
 
       def allowed_rule_types
-        Rails.application.config.spree.promotions.rules
+        Spree.promotions.rules
       end
 
       def location_after_save

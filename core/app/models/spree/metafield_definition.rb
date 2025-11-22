@@ -61,13 +61,13 @@ module Spree
     # Returns the available types
     # @return [Array<Class>]
     def self.available_types
-      Rails.application.config.spree.metafield_types
+      Spree.metafield_types
     end
 
     # Returns the available resources
     # @return [Array<Class>]
     def self.available_resources
-      Rails.application.config.spree.metafield_enabled_resources
+      Spree.metafield_enabled_resources
     end
 
     private
@@ -81,7 +81,7 @@ module Spree
     end
 
     def set_default_type
-      self.metafield_type ||= Rails.application.config.spree.metafield_types.first.to_s
+      self.metafield_type ||= Spree.metafield_types.first.to_s
     end
 
     def set_name_from_key

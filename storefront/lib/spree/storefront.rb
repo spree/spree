@@ -15,12 +15,19 @@ require 'spree/storefront/engine'
 require 'spree/core/partials'
 
 module Spree
-  module Storefront
-    def self.partials
+  def self.storefront
+    @storefront ||= StorefrontConfig.new
+  end
+
+  class StorefrontConfig
+    def partials
       @partials ||= Spree::Core::Partials.new(
         Rails.application.config.spree_storefront,
         Spree::Storefront::Engine::Environment
       )
     end
+  end
+
+  module Storefront
   end
 end

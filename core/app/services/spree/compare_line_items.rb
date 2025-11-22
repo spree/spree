@@ -4,7 +4,7 @@ module Spree
     prepend Spree::ServiceModule::Base
 
     def call(order:, line_item:, options: {}, comparison_hooks: nil)
-      comparison_hooks ||= Rails.application.config.spree.line_item_comparison_hooks
+      comparison_hooks ||= Spree.line_item_comparison_hooks
 
       legacy_part = comparison_hooks.all? do |hook|
         order.send(hook, line_item, options)

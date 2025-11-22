@@ -224,7 +224,7 @@ module Spree
       # Returns the available types for the import
       # @return [Array<Class>]
       def available_types
-        Rails.application.config.spree.import_types
+        Spree.import_types
       end
 
       # Returns the available models for the import
