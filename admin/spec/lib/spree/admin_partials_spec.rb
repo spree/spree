@@ -51,13 +51,13 @@ RSpec.describe 'Spree::Admin.partials' do
     let(:partials) { Spree::Admin.partials }
 
     it 'returns the config values' do
-      Rails.application.config.spree_admin.product_form_partials = ['form_widget']
+      allow(Rails.application.config.spree_admin).to receive(:product_form_partials).and_return(['form_widget'])
       expect(partials.product_form).to eq(['form_widget'])
     end
 
     it 'works with different partial types' do
-      Rails.application.config.spree_admin.dashboard_analytics_partials = ['analytics']
-      Rails.application.config.spree_admin.order_page_sidebar_partials = ['sidebar']
+      allow(Rails.application.config.spree_admin).to receive(:dashboard_analytics_partials).and_return(['analytics'])
+      allow(Rails.application.config.spree_admin).to receive(:order_page_sidebar_partials).and_return(['sidebar'])
 
       expect(partials.dashboard_analytics).to eq(['analytics'])
       expect(partials.order_page_sidebar).to eq(['sidebar'])
