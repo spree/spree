@@ -117,7 +117,7 @@ describe Spree::StorefrontHelper, type: :helper do
   describe '#render_storefront_partials' do
     before do
       # Set up test partials
-      Rails.application.config.spree_storefront.cart_partials = ['spree/storefront/cart/test_partial']
+      allow(Rails.application.config.spree_storefront).to receive(:cart_partials).and_return(['spree/storefront/cart/test_partial'])
     end
 
     context 'with new naming convention (without _partials suffix)' do
@@ -138,10 +138,10 @@ describe Spree::StorefrontHelper, type: :helper do
       end
 
       it 'renders multiple partials' do
-        Rails.application.config.spree_storefront.cart_partials = [
+        allow(Rails.application.config.spree_storefront).to receive(:cart_partials).and_return([
           'spree/storefront/cart/partial1',
           'spree/storefront/cart/partial2'
-        ]
+        ])
         allow(helper).to receive(:render).with('spree/storefront/cart/partial1', {}).and_return('content1')
         allow(helper).to receive(:render).with('spree/storefront/cart/partial2', {}).and_return('content2')
 
@@ -171,7 +171,7 @@ describe Spree::StorefrontHelper, type: :helper do
 
     context 'with empty partials array' do
       it 'returns empty string' do
-        Rails.application.config.spree_storefront.product_partials = []
+        allow(Rails.application.config.spree_storefront).to receive(:product_partials).and_return([])
 
         result = helper.render_storefront_partials(:product)
 

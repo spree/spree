@@ -37,7 +37,7 @@ describe Spree::Admin::BaseHelper do
   describe '#render_admin_partials' do
     before do
       # Set up test partials
-      Rails.application.config.spree_admin.product_form_partials = ['spree/admin/products/test_partial']
+      allow(Rails.application.config.spree_admin).to receive(:product_form_partials).and_return(['spree/admin/products/test_partial'])
     end
 
     context 'with new naming convention (without _partials suffix)' do
@@ -58,10 +58,10 @@ describe Spree::Admin::BaseHelper do
       end
 
       it 'renders multiple partials' do
-        Rails.application.config.spree_admin.product_form_partials = [
+        allow(Rails.application.config.spree_admin).to receive(:product_form_partials).and_return([
           'spree/admin/products/partial1',
           'spree/admin/products/partial2'
-        ]
+        ])
         allow(helper).to receive(:render).with('spree/admin/products/partial1', {}).and_return('content1')
         allow(helper).to receive(:render).with('spree/admin/products/partial2', {}).and_return('content2')
 
@@ -91,7 +91,7 @@ describe Spree::Admin::BaseHelper do
 
     context 'with empty partials array' do
       it 'returns empty string' do
-        Rails.application.config.spree_admin.dashboard_analytics_partials = []
+        allow(Rails.application.config.spree_admin).to receive(:dashboard_analytics_partials).and_return([])
 
         result = helper.render_admin_partials(:dashboard_analytics)
 
