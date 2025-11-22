@@ -113,4 +113,70 @@ describe Spree::StorefrontHelper, type: :helper do
       expect(svg_country_icon('fr')).to include('fi fi-fr')
     end
   end
+
+  describe '#render_storefront_partials' do
+    before do
+      # Set up test partials
+      allow(Rails.application.config.spree_storefront).to receive(:cart_partials).and_return(['spree/storefront/cart/test_partial'])
+    end
+
+    context 'with new naming convention (without _partials suffix)' do
+      it 'renders partials for the given section' do
+        allow(helper).to receive(:render).with('spree/storefront/cart/test_partial', {}).and_return('partial content')
+
+        result = helper.render_storefront_partials(:cart)
+
+        expect(result).to eq('partial content')
+      end
+
+      it 'passes options to the partials' do
+        allow(helper).to receive(:render).with('spree/storefront/cart/test_partial', { order: 'test' }).and_return('partial with options')
+
+        result = helper.render_storefront_partials(:cart, { order: 'test' })
+
+        expect(result).to eq('partial with options')
+      end
+
+      it 'renders multiple partials' do
+        allow(Rails.application.config.spree_storefront).to receive(:cart_partials).and_return([
+          'spree/storefront/cart/partial1',
+          'spree/storefront/cart/partial2'
+        ])
+        allow(helper).to receive(:render).with('spree/storefront/cart/partial1', {}).and_return('content1')
+        allow(helper).to receive(:render).with('spree/storefront/cart/partial2', {}).and_return('content2')
+
+        result = helper.render_storefront_partials(:cart)
+
+        expect(result).to eq('content1content2')
+      end
+    end
+
+    context 'with old naming convention (with _partials suffix)' do
+      it 'renders partials for the given section (backward compatibility)' do
+        allow(helper).to receive(:render).with('spree/storefront/cart/test_partial', {}).and_return('partial content')
+
+        result = helper.render_storefront_partials(:cart_partials)
+
+        expect(result).to eq('partial content')
+      end
+
+      it 'passes options to the partials' do
+        allow(helper).to receive(:render).with('spree/storefront/cart/test_partial', { order: 'test' }).and_return('partial with options')
+
+        result = helper.render_storefront_partials(:cart_partials, { order: 'test' })
+
+        expect(result).to eq('partial with options')
+      end
+    end
+
+    context 'with empty partials array' do
+      it 'returns empty string' do
+        allow(Rails.application.config.spree_storefront).to receive(:product_partials).and_return([])
+
+        result = helper.render_storefront_partials(:product)
+
+        expect(result).to eq('')
+      end
+    end
+  end
 end

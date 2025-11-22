@@ -18,6 +18,7 @@ require 'inline_svg'
 require 'spree/admin/action_callbacks'
 require 'spree/admin/callbacks'
 require 'spree/admin/engine'
+require 'spree/core/partials'
 
 require 'tinymce-rails'
 
@@ -29,6 +30,13 @@ module Spree
 
     def self.navigation=(navigation)
       Rails.application.config.spree_admin.navigation = navigation
+    end
+
+    def self.partials
+      @partials ||= Spree::Core::Partials.new(
+        Rails.application.config.spree_admin,
+        Spree::Admin::Engine::Environment
+      )
     end
   end
 end

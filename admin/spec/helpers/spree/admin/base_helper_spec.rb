@@ -33,4 +33,70 @@ describe Spree::Admin::BaseHelper do
       expect(helper.spree_time_ago(nil)).to eq('')
     end
   end
+
+  describe '#render_admin_partials' do
+    before do
+      # Set up test partials
+      allow(Rails.application.config.spree_admin).to receive(:product_form_partials).and_return(['spree/admin/products/test_partial'])
+    end
+
+    context 'with new naming convention (without _partials suffix)' do
+      it 'renders partials for the given section' do
+        allow(helper).to receive(:render).with('spree/admin/products/test_partial', {}).and_return('partial content')
+
+        result = helper.render_admin_partials(:product_form)
+
+        expect(result).to eq('partial content')
+      end
+
+      it 'passes options to the partials' do
+        allow(helper).to receive(:render).with('spree/admin/products/test_partial', { product: 'test' }).and_return('partial with options')
+
+        result = helper.render_admin_partials(:product_form, { product: 'test' })
+
+        expect(result).to eq('partial with options')
+      end
+
+      it 'renders multiple partials' do
+        allow(Rails.application.config.spree_admin).to receive(:product_form_partials).and_return([
+          'spree/admin/products/partial1',
+          'spree/admin/products/partial2'
+        ])
+        allow(helper).to receive(:render).with('spree/admin/products/partial1', {}).and_return('content1')
+        allow(helper).to receive(:render).with('spree/admin/products/partial2', {}).and_return('content2')
+
+        result = helper.render_admin_partials(:product_form)
+
+        expect(result).to eq('content1content2')
+      end
+    end
+
+    context 'with old naming convention (with _partials suffix)' do
+      it 'renders partials for the given section (backward compatibility)' do
+        allow(helper).to receive(:render).with('spree/admin/products/test_partial', {}).and_return('partial content')
+
+        result = helper.render_admin_partials(:product_form_partials)
+
+        expect(result).to eq('partial content')
+      end
+
+      it 'passes options to the partials' do
+        allow(helper).to receive(:render).with('spree/admin/products/test_partial', { product: 'test' }).and_return('partial with options')
+
+        result = helper.render_admin_partials(:product_form_partials, { product: 'test' })
+
+        expect(result).to eq('partial with options')
+      end
+    end
+
+    context 'with empty partials array' do
+      it 'returns empty string' do
+        allow(Rails.application.config.spree_admin).to receive(:dashboard_analytics_partials).and_return([])
+
+        result = helper.render_admin_partials(:dashboard_analytics)
+
+        expect(result).to eq('')
+      end
+    end
+  end
 end
