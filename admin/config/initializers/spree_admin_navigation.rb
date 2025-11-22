@@ -1,9 +1,14 @@
 # Default Admin Navigation Configuration
 # This file defines the default sidebar and settings navigation for Spree Admin
 
-Spree::Admin::Navigation.configure(:sidebar) do |nav|
+Rails.application.config.after_initialize do
+  # ===============================================
+  # Sidebar Navigation
+  # ===============================================
+  sidebar_nav = Rails.application.config.spree_admin.navigation[:sidebar]
+
   # Getting Started (onboarding)
-  nav.add :getting_started,
+  sidebar_nav.add :getting_started,
           label: 'admin.getting_started',
           url: :admin_getting_started_path,
           icon: 'map',
@@ -14,7 +19,7 @@ Spree::Admin::Navigation.configure(:sidebar) do |nav|
           active: -> { controller_name == 'dashboard' && action_name == 'getting_started' }
 
   # Dashboard / Home
-  nav.add :home,
+  sidebar_nav.add :home,
           label: :home,
           url: :admin_path,
           icon: 'home',
@@ -22,7 +27,7 @@ Spree::Admin::Navigation.configure(:sidebar) do |nav|
           active: -> { controller_name == 'dashboard' && action_name == 'show' }
 
   # Orders with submenu
-  nav.add :orders,
+  sidebar_nav.add :orders,
           label: :orders,
           url: :admin_orders_path,
           icon: 'inbox',
@@ -35,28 +40,28 @@ Spree::Admin::Navigation.configure(:sidebar) do |nav|
           } do |orders|
     # Orders to Fulfill submenu
     orders.add :orders_to_fulfill,
-               label: 'admin.orders.orders_to_fulfill',
-               url: -> { spree.admin_orders_path(q: {shipment_state_not_in: [:shipped, :canceled]}) },
-               position: 10,
-               active: -> { controller_name == 'orders' && params.dig(:q, :shipment_state_not_in).present? },
-               if: -> {
-                 ready_to_ship_orders_count&.positive?
-               },
-               badge: -> {
-                 ready_to_ship_orders_count if ready_to_ship_orders_count&.positive?
-               }
+              label: 'admin.orders.orders_to_fulfill',
+              url: -> { spree.admin_orders_path(q: {shipment_state_not_in: [:shipped, :canceled]}) },
+              position: 10,
+              active: -> { controller_name == 'orders' && params.dig(:q, :shipment_state_not_in).present? },
+              if: -> {
+                ready_to_ship_orders_count&.positive?
+              },
+              badge: -> {
+                ready_to_ship_orders_count if ready_to_ship_orders_count&.positive?
+              }
 
     # Draft Orders
     orders.add :draft_orders,
-               label: :draft_orders,
-               url: :admin_checkouts_path,
-               position: 20,
-               active: -> { controller_name == 'checkouts' || (@order.present? && !@order.completed?) },
-               if: -> { can?(:manage, :checkouts) }
+              label: :draft_orders,
+              url: :admin_checkouts_path,
+              position: 20,
+              active: -> { controller_name == 'checkouts' || (@order.present? && !@order.completed?) },
+              if: -> { can?(:manage, :checkouts) }
   end
 
   # Returns with submenu
-  nav.add :returns,
+  sidebar_nav.add :returns,
           label: :returns,
           url: :admin_customer_returns_path,
           icon: 'receipt-refund',
@@ -72,7 +77,7 @@ Spree::Admin::Navigation.configure(:sidebar) do |nav|
   end
 
   # Products with submenu
-  nav.add :products,
+  sidebar_nav.add :products,
           label: :products,
           url: :admin_products_path,
           icon: 'package',
@@ -81,38 +86,38 @@ Spree::Admin::Navigation.configure(:sidebar) do |nav|
           if: -> { can?(:manage, Spree::Product) } do |products|
     # Stock
     products.add :stock,
-                 label: :stock,
-                 url: :admin_stock_items_path,
-                 position: 10,
-                 active: -> { %w[stock_items stock_transfers].include?(controller_name) },
-                 if: -> { can?(:manage, Spree::StockItem) || can?(:manage, Spree::StockTransfer) }
+                label: :stock,
+                url: :admin_stock_items_path,
+                position: 10,
+                active: -> { %w[stock_items stock_transfers].include?(controller_name) },
+                if: -> { can?(:manage, Spree::StockItem) || can?(:manage, Spree::StockTransfer) }
 
     # Taxonomies
     products.add :taxonomies,
-                 label: :taxonomies,
-                 url: :admin_taxonomies_path,
-                 position: 20,
-                 active: -> { %w[taxonomies taxons].include?(controller_name) },
-                 if: -> { can?(:manage, Spree::Taxonomy) && can?(:manage, Spree::Taxon) }
+                label: :taxonomies,
+                url: :admin_taxonomies_path,
+                position: 20,
+                active: -> { %w[taxonomies taxons].include?(controller_name) },
+                if: -> { can?(:manage, Spree::Taxonomy) && can?(:manage, Spree::Taxon) }
 
     # Options
     products.add :options,
-                 label: :options,
-                 url: :admin_option_types_path,
-                 position: 30,
-                 active: -> { %w[option_types option_values].include?(controller_name) },
-                 if: -> { can?(:manage, Spree::OptionType) }
+                label: :options,
+                url: :admin_option_types_path,
+                position: 30,
+                active: -> { %w[option_types option_values].include?(controller_name) },
+                if: -> { can?(:manage, Spree::OptionType) }
 
     # Properties
     products.add :properties,
-                 label: :properties,
-                 url: :admin_properties_path,
-                 position: 40,
-                 if: -> { can?(:manage, Spree::Property) && Spree::Config.product_properties_enabled }
+                label: :properties,
+                url: :admin_properties_path,
+                position: 40,
+                if: -> { can?(:manage, Spree::Property) && Spree::Config.product_properties_enabled }
   end
 
   # Vendors (Enterprise Edition)
-  nav.add :vendors,
+  sidebar_nav.add :vendors,
           label: :vendors,
           url: 'https://spreecommerce.org/marketplace-ecommerce/',
           icon: 'heart-handshake',
@@ -123,7 +128,7 @@ Spree::Admin::Navigation.configure(:sidebar) do |nav|
           target: '_blank'
 
   # Customers with submenu
-  nav.add :customers,
+  sidebar_nav.add :customers,
           label: :customers,
           url: :admin_users_path,
           icon: 'users',
@@ -138,7 +143,7 @@ Spree::Admin::Navigation.configure(:sidebar) do |nav|
   end
 
   # Promotions with submenu
-  nav.add :promotions,
+  sidebar_nav.add :promotions,
           label: :promotions,
           url: :admin_promotions_path,
           icon: 'discount',
@@ -147,14 +152,14 @@ Spree::Admin::Navigation.configure(:sidebar) do |nav|
           if: -> { can?(:manage, Spree::Promotion) } do |promotions|
     # Gift Cards
     promotions.add :gift_cards,
-                   label: :gift_cards,
-                   url: :admin_gift_cards_path,
-                   position: 10,
-                   active: -> { %w[gift_cards gift_card_batches].include?(controller_name) }
+                  label: :gift_cards,
+                  url: :admin_gift_cards_path,
+                  position: 10,
+                  active: -> { %w[gift_cards gift_card_batches].include?(controller_name) }
   end
 
   # Reports
-  nav.add :reports,
+  sidebar_nav.add :reports,
           label: :reports,
           url: :admin_reports_path,
           icon: 'chart-bar',
@@ -162,7 +167,7 @@ Spree::Admin::Navigation.configure(:sidebar) do |nav|
           if: -> { can?(:manage, Spree::Report) }
 
   # Storefront with submenu
-  nav.add :storefront,
+  sidebar_nav.add :storefront,
           label: 'admin.storefront',
           url: :admin_themes_path,
           icon: 'building-store',
@@ -171,36 +176,36 @@ Spree::Admin::Navigation.configure(:sidebar) do |nav|
           if: -> { can?(:manage, Spree::Theme) } do |storefront|
     # Themes
     storefront.add :themes,
-                   label: :themes,
-                   url: :admin_themes_path,
-                   position: 10,
-                   if: -> { can?(:manage, Spree::Theme) }
+                  label: :themes,
+                  url: :admin_themes_path,
+                  position: 10,
+                  if: -> { can?(:manage, Spree::Theme) }
 
     # Pages
     storefront.add :pages,
-                   label: :pages,
-                   url: :admin_pages_path,
-                   position: 20,
-                   if: -> { can?(:manage, Spree::Page) }
+                  label: :pages,
+                  url: :admin_pages_path,
+                  position: 20,
+                  if: -> { can?(:manage, Spree::Page) }
 
     # Posts (Blog)
     storefront.add :posts,
-                   label: :posts,
-                   url: :admin_posts_path,
-                   position: 30,
-                   active: -> { %w[posts post_categories].include?(controller_name) },
-                   if: -> { can?(:manage, Spree::Post) }
+                  label: :posts,
+                  url: :admin_posts_path,
+                  position: 30,
+                  active: -> { %w[posts post_categories].include?(controller_name) },
+                  if: -> { can?(:manage, Spree::Post) }
 
     # Storefront Settings
     storefront.add :storefront_settings,
-                   label: :settings,
-                   url: :edit_admin_storefront_path,
-                   position: 40,
-                   if: -> { can?(:manage, current_store) }
+                  label: :settings,
+                  url: :edit_admin_storefront_path,
+                  position: 40,
+                  if: -> { can?(:manage, current_store) }
   end
 
   # Integrations
-  nav.add :integrations,
+  sidebar_nav.add :integrations,
           label: :integrations,
           url: :admin_integrations_path,
           icon: 'plug-connected',
@@ -208,7 +213,7 @@ Spree::Admin::Navigation.configure(:sidebar) do |nav|
           if: -> { can?(:manage, Spree::Integration) }
 
   # Settings (bottom of sidebar)
-  nav.add :settings,
+  sidebar_nav.add :settings,
           label: :settings,
           url: -> { spree.edit_admin_store_path(section: 'general-settings') },
           icon: 'settings',
@@ -216,18 +221,20 @@ Spree::Admin::Navigation.configure(:sidebar) do |nav|
           if: -> { can?(:manage, current_store) }
 
   # Admin Users (bottom of sidebar)
-  nav.add :admin_users,
+  sidebar_nav.add :admin_users,
           label: :users,
           url: :admin_admin_users_path,
           icon: 'users',
           position: 110,
           if: -> { can?(:manage, Spree.admin_user_class) }
-end
 
-# Settings Navigation
-Spree::Admin::Navigation.configure(:settings) do |nav|
+  # ===============================================
+  # Settings Navigation
+  # ===============================================
+  settings_nav = Rails.application.config.spree_admin.navigation[:settings]
+
   # Store Details
-  nav.add :general_settings,
+  settings_nav.add :general_settings,
           label: :store_details,
           url: -> { spree.edit_admin_store_path(section: 'general-settings') },
           icon: 'building-store',
@@ -236,7 +243,7 @@ Spree::Admin::Navigation.configure(:settings) do |nav|
           if: -> { can?(:manage, current_store) }
 
   # Admin Users
-  nav.add :users,
+  settings_nav.add :users,
           label: :users,
           url: :admin_admin_users_path,
           icon: 'users',
@@ -245,7 +252,7 @@ Spree::Admin::Navigation.configure(:settings) do |nav|
           if: -> { can?(:manage, Spree.admin_user_class) }
 
   # Emails
-  nav.add :emails,
+  settings_nav.add :emails,
           label: :emails,
           url: -> { spree.edit_admin_store_path(section: 'emails') },
           icon: 'send',
@@ -254,7 +261,7 @@ Spree::Admin::Navigation.configure(:settings) do |nav|
           if: -> { can?(:manage, current_store) }
 
   # Policies
-  nav.add :policies,
+  settings_nav.add :policies,
           label: :policies,
           url: :admin_policies_path,
           icon: 'list-check',
@@ -263,7 +270,7 @@ Spree::Admin::Navigation.configure(:settings) do |nav|
           if: -> { can?(:manage, Spree::Policy) }
 
   # Checkout
-  nav.add :checkout,
+  settings_nav.add :checkout,
           label: :checkout,
           url: -> { spree.edit_admin_store_path(section: 'checkout') },
           icon: 'shopping-cart',
@@ -272,7 +279,7 @@ Spree::Admin::Navigation.configure(:settings) do |nav|
           if: -> { can?(:manage, current_store) }
 
   # Domains
-  nav.add :domains,
+  settings_nav.add :domains,
           label: :domains,
           url: :admin_custom_domains_path,
           icon: 'world-www',
@@ -281,7 +288,7 @@ Spree::Admin::Navigation.configure(:settings) do |nav|
           if: -> { can?(:manage, Spree::CustomDomain) }
 
   # Payment Methods
-  nav.add :payment_methods,
+  settings_nav.add :payment_methods,
           label: :payments,
           url: :admin_payment_methods_path,
           icon: 'credit-card',
@@ -290,7 +297,7 @@ Spree::Admin::Navigation.configure(:settings) do |nav|
           if: -> { can?(:manage, Spree::PaymentMethod) }
 
   # Zones
-  nav.add :zones,
+  settings_nav.add :zones,
           label: :zones,
           url: :admin_zones_path,
           icon: 'world',
@@ -299,7 +306,7 @@ Spree::Admin::Navigation.configure(:settings) do |nav|
           if: -> { can?(:manage, Spree::Zone) }
 
   # Shipping Methods
-  nav.add :shipping_methods,
+  settings_nav.add :shipping_methods,
           label: :shipping,
           url: :admin_shipping_methods_path,
           icon: 'truck',
@@ -308,7 +315,7 @@ Spree::Admin::Navigation.configure(:settings) do |nav|
           if: -> { can?(:manage, Spree::ShippingMethod) }
 
   # Tax Settings
-  nav.add :tax_rates,
+  settings_nav.add :tax_rates,
           label: :tax,
           url: :admin_tax_rates_path,
           icon: 'receipt-tax',
@@ -317,7 +324,7 @@ Spree::Admin::Navigation.configure(:settings) do |nav|
           if: -> { can?(:manage, Spree::TaxRate) }
 
   # Returns
-  nav.add :return_settings,
+  settings_nav.add :return_settings,
           label: :returns,
           url: :admin_return_authorization_reasons_path,
           icon: 'receipt-refund',
@@ -326,7 +333,7 @@ Spree::Admin::Navigation.configure(:settings) do |nav|
           if: -> { can?(:manage, Spree::ReturnAuthorizationReason) }
 
   # Stock Locations
-  nav.add :stock_locations,
+  settings_nav.add :stock_locations,
           label: :stock_locations,
           url: :admin_stock_locations_path,
           icon: 'map-pin',
@@ -335,7 +342,7 @@ Spree::Admin::Navigation.configure(:settings) do |nav|
           if: -> { can?(:manage, Spree::StockLocation) }
 
   # Metafield Definitions
-  nav.add :metafield_definitions,
+  settings_nav.add :metafield_definitions,
           label: :metafield_definitions,
           url: :admin_metafield_definitions_path,
           icon: 'list-details',
@@ -344,7 +351,7 @@ Spree::Admin::Navigation.configure(:settings) do |nav|
           if: -> { can?(:manage, Spree::MetafieldDefinition) }
 
   # Audit Log
-  nav.add :audits,
+  settings_nav.add :audits,
           label: 'admin.audit_log',
           url: :admin_audits_path,
           icon: 'history',
@@ -357,7 +364,7 @@ Spree::Admin::Navigation.configure(:settings) do |nav|
           }
 
   # Developers
-  nav.add :developers,
+  settings_nav.add :developers,
           label: :developers,
           url: :admin_oauth_applications_path,
           icon: 'terminal',
@@ -366,142 +373,142 @@ Spree::Admin::Navigation.configure(:settings) do |nav|
           if: -> { can?(:manage, Spree::OauthApplication) }
 
   # Edit Profile
-  nav.add :edit_profile,
+  settings_nav.add :edit_profile,
           label: 'admin.edit_profile',
           url: :edit_admin_profile_path,
           icon: 'user-scan',
           position: 200,
           active: -> { controller_name == 'profiles' && action_name == 'edit' }
-end
 
-# ===============================================
-# Page Tab Navigations
-# ===============================================
+  # ===============================================
+  # Page Tab Navigations
+  # ===============================================
 
-# Tax Tab Navigation
-Spree::Admin::Navigation.configure(:tax_tabs) do |nav|
-  nav.add :tax_rates,
+  # Tax Tab Navigation
+  tax_tabs_nav = Rails.application.config.spree_admin.navigation[:tax_tabs]
+
+  tax_tabs_nav.add :tax_rates,
           label: :tax_rates,
           url: :admin_tax_rates_path,
           position: 10,
           if: -> { can?(:manage, Spree::TaxRate) }
 
-  nav.add :tax_categories,
+  tax_tabs_nav.add :tax_categories,
           label: :tax_categories,
           url: :admin_tax_categories_path,
           position: 20,
           if: -> { can?(:manage, Spree::TaxCategory) }
-end
 
-# Shipping Tab Navigation
-Spree::Admin::Navigation.configure(:shipping_tabs) do |nav|
-  nav.add :shipping_methods,
+  # Shipping Tab Navigation
+  shipping_tabs_nav = Rails.application.config.spree_admin.navigation[:shipping_tabs]
+
+  shipping_tabs_nav.add :shipping_methods,
           label: :shipping_methods,
           url: :admin_shipping_methods_path,
           position: 10,
           active: -> { controller_name == 'shipping_methods' && action_name == 'index' },
           if: -> { can?(:manage, Spree::ShippingMethod) }
 
-  nav.add :shipping_categories,
+  shipping_tabs_nav.add :shipping_categories,
           label: :shipping_categories,
           url: :admin_shipping_categories_path,
           position: 20,
           if: -> { can?(:manage, Spree::ShippingCategory) }
-end
 
-# Team Tab Navigation
-Spree::Admin::Navigation.configure(:team_tabs) do |nav|
-  nav.add :admin_users,
+  # Team Tab Navigation
+  team_tabs_nav = Rails.application.config.spree_admin.navigation[:team_tabs]
+
+  team_tabs_nav.add :admin_users,
           label: :users,
           url: :admin_admin_users_path,
           position: 10,
           if: -> { can?(:manage, Spree.admin_user_class) }
 
-  nav.add :invitations,
+  team_tabs_nav.add :invitations,
           label: :invitations,
           url: :admin_invitations_path,
           position: 20,
           if: -> { can?(:manage, Spree::Invitation) }
 
-  nav.add :roles,
+  team_tabs_nav.add :roles,
           label: :roles,
           url: :admin_roles_path,
           position: 30,
           if: -> { can?(:manage, Spree::Role) }
-end
 
-# Stock Tab Navigation
-Spree::Admin::Navigation.configure(:stock_tabs) do |nav|
-  nav.add :stock_items,
+  # Stock Tab Navigation
+  stock_tabs_nav = Rails.application.config.spree_admin.navigation[:stock_tabs]
+
+  stock_tabs_nav.add :stock_items,
           label: :stock_items,
           url: :admin_stock_items_path,
           position: 10,
           active: -> { controller_name == 'stock_items' },
           if: -> { can?(:manage, Spree::StockItem) }
 
-  nav.add :stock_transfers,
+  stock_tabs_nav.add :stock_transfers,
           label: :stock_transfers,
           url: :admin_stock_transfers_path,
           position: 20,
           active: -> { controller_name == 'stock_transfers' },
           if: -> { can?(:manage, Spree::StockTransfer) }
-end
 
-# Returns and Refunds Tab Navigation
-Spree::Admin::Navigation.configure(:returns_tabs) do |nav|
-  nav.add :return_authorization_reasons,
+  # Returns and Refunds Tab Navigation
+  returns_tabs_nav = Rails.application.config.spree_admin.navigation[:returns_tabs]
+
+  returns_tabs_nav.add :return_authorization_reasons,
           label: :return_authorization_reasons,
           url: :admin_return_authorization_reasons_path,
           position: 10,
           if: -> { can?(:manage, Spree::ReturnAuthorizationReason) }
 
-  nav.add :refund_reasons,
+  returns_tabs_nav.add :refund_reasons,
           label: :refund_reasons,
           url: :admin_refund_reasons_path,
           position: 20,
           if: -> { can?(:manage, Spree::RefundReason) }
 
-  nav.add :reimbursement_types,
+  returns_tabs_nav.add :reimbursement_types,
           label: :reimbursement_types,
           url: :admin_reimbursement_types_path,
           position: 30,
           if: -> { can?(:manage, Spree::ReimbursementType) }
-end
 
-# Developers Tab Navigation
-Spree::Admin::Navigation.configure(:developers_tabs) do |nav|
-  nav.add :api_keys,
+  # Developers Tab Navigation
+  developers_tabs_nav = Rails.application.config.spree_admin.navigation[:developers_tabs]
+
+  developers_tabs_nav.add :api_keys,
           label: :api_keys,
           url: :admin_oauth_applications_path,
           position: 10,
           active: -> { controller_name == 'oauth_applications' },
           if: -> { can?(:manage, Spree::OauthApplication) }
 
-  nav.add :webhooks,
+  developers_tabs_nav.add :webhooks,
           label: :webhooks,
           url: :admin_webhooks_subscribers_path,
           position: 20,
           active: -> { controller_name == 'webhooks_subscribers' },
           if: -> { can?(:manage, Spree::Webhooks::Subscriber) }
-end
 
-# Audit Tab Navigation
-Spree::Admin::Navigation.configure(:audit_tabs) do |nav|
-  nav.add :audit_log,
+  # Audit Tab Navigation
+  audit_tabs_nav = Rails.application.config.spree_admin.navigation[:audit_tabs]
+
+  audit_tabs_nav.add :audit_log,
           label: 'admin.audit_log',
           url: :admin_audits_path,
           position: 10,
           active: -> { controller_name == 'audits' },
           if: -> { can?(:manage, current_store) }
 
-  nav.add :exports,
+  audit_tabs_nav.add :exports,
           label: :exports,
           url: :admin_exports_path,
           position: 20,
           active: -> { controller_name == 'exports' },
           if: -> { can?(:manage, Spree::Export) }
 
-  nav.add :imports,
+  audit_tabs_nav.add :imports,
           label: :imports,
           url: :admin_imports_path,
           position: 30,
