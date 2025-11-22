@@ -7,10 +7,10 @@ module Spree
     extend DisplayMoney
     money_methods :total, :price
 
-    belongs_to :variant, class_name: 'Spree::Variant'
-    belongs_to :wishlist, class_name: 'Spree::Wishlist'
+    belongs_to :variant, -> { with_deleted }, class_name: 'Spree::Variant', touch: true
+    belongs_to :wishlist, class_name: 'Spree::Wishlist', touch: true, inverse_of: :wished_items
 
-    has_one :product, class_name: 'Spree::Product', through: :variant
+    has_one :product, -> { with_deleted }, class_name: 'Spree::Product', through: :variant, source: :product
 
     validates :variant, :wishlist, presence: true
     validates :variant, uniqueness: { scope: [:wishlist] }
