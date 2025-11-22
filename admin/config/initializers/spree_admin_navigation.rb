@@ -5,7 +5,7 @@ Rails.application.config.after_initialize do
   # ===============================================
   # Sidebar Navigation
   # ===============================================
-  sidebar_nav = Rails.application.config.spree_admin.navigation[:sidebar]
+  sidebar_nav = Spree::Admin.navigation.sidebar
 
   # Getting Started (onboarding)
   sidebar_nav.add :getting_started,
@@ -231,7 +231,7 @@ Rails.application.config.after_initialize do
   # ===============================================
   # Settings Navigation
   # ===============================================
-  settings_nav = Rails.application.config.spree_admin.navigation[:settings]
+  settings_nav = Spree::Admin.navigation.settings
 
   # Store Details
   settings_nav.add :general_settings,
@@ -385,7 +385,7 @@ Rails.application.config.after_initialize do
   # ===============================================
 
   # Tax Tab Navigation
-  tax_tabs_nav = Rails.application.config.spree_admin.navigation[:tax_tabs]
+  tax_tabs_nav = Spree::Admin.navigation.tax_tabs
 
   tax_tabs_nav.add :tax_rates,
           label: :tax_rates,
@@ -400,7 +400,7 @@ Rails.application.config.after_initialize do
           if: -> { can?(:manage, Spree::TaxCategory) }
 
   # Shipping Tab Navigation
-  shipping_tabs_nav = Rails.application.config.spree_admin.navigation[:shipping_tabs]
+  shipping_tabs_nav = Spree::Admin.navigation.shipping_tabs
 
   shipping_tabs_nav.add :shipping_methods,
           label: :shipping_methods,
@@ -416,7 +416,7 @@ Rails.application.config.after_initialize do
           if: -> { can?(:manage, Spree::ShippingCategory) }
 
   # Team Tab Navigation
-  team_tabs_nav = Rails.application.config.spree_admin.navigation[:team_tabs]
+  team_tabs_nav = Spree::Admin.navigation.team_tabs
 
   team_tabs_nav.add :admin_users,
           label: :users,
@@ -437,7 +437,7 @@ Rails.application.config.after_initialize do
           if: -> { can?(:manage, Spree::Role) }
 
   # Stock Tab Navigation
-  stock_tabs_nav = Rails.application.config.spree_admin.navigation[:stock_tabs]
+  stock_tabs_nav = Spree::Admin.navigation.stock_tabs
 
   stock_tabs_nav.add :stock_items,
           label: :stock_items,
@@ -454,7 +454,7 @@ Rails.application.config.after_initialize do
           if: -> { can?(:manage, Spree::StockTransfer) }
 
   # Returns and Refunds Tab Navigation
-  returns_tabs_nav = Rails.application.config.spree_admin.navigation[:returns_tabs]
+  returns_tabs_nav = Spree::Admin.navigation.returns_tabs
 
   returns_tabs_nav.add :return_authorization_reasons,
           label: :return_authorization_reasons,
@@ -475,7 +475,7 @@ Rails.application.config.after_initialize do
           if: -> { can?(:manage, Spree::ReimbursementType) }
 
   # Developers Tab Navigation
-  developers_tabs_nav = Rails.application.config.spree_admin.navigation[:developers_tabs]
+  developers_tabs_nav = Spree::Admin.navigation.developers_tabs
 
   developers_tabs_nav.add :api_keys,
           label: :api_keys,
@@ -492,7 +492,7 @@ Rails.application.config.after_initialize do
           if: -> { can?(:manage, Spree::Webhooks::Subscriber) }
 
   # Audit Tab Navigation
-  audit_tabs_nav = Rails.application.config.spree_admin.navigation[:audit_tabs]
+  audit_tabs_nav = Spree::Admin.navigation.audit_tabs
 
   audit_tabs_nav.add :audit_log,
           label: 'admin.audit_log',
