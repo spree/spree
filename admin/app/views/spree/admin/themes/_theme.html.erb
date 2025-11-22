@@ -39,7 +39,7 @@
       <div class="d-flex justify-content-end w-100">
         <%= link_to Spree.t('actions.publish'), publish_admin_theme_path(theme), class: 'btn btn-sm btn-light mr-2', data: { turbo_method: :put } unless theme.default? %>
         <%= dropdown do %>
-          <%= dropdown_toggle class: 'btn-light btn-sm' do %>
+          <%= dropdown_toggle class: 'btn-light btn-sm h-100' do %>
             <%= icon('dots-vertical', class: 'mr-0') %>
           <% end %>
           <%= dropdown_menu do %>
