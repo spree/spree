@@ -192,6 +192,7 @@ require 'spree/service_module'
 require 'spree/database_type_utilities'
 require 'spree/analytics'
 
+require 'spree/core/partials'
 require 'spree/core/importer'
 require 'spree/core/query_filters'
 require 'spree/core/controller_helpers/auth'
