@@ -29,7 +29,7 @@ module Spree
     # @param options [Hash] The options/variables to pass to the partials
     # @return [String] The rendered partials
     def render_storefront_partials(section, options = {})
-      Rails.application.config.spree_storefront.send(section).map do |partial|
+      Spree::Storefront.partials.send(section.to_s.gsub('_partials', '').to_sym).map do |partial|
         render partial, options
       end.join.html_safe
     end
