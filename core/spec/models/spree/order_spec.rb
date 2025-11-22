@@ -173,6 +173,24 @@ describe Spree::Order, type: :model do
 
       expect(order.payments.first).to be_void
     end
+
+    context 'with incomplete payments' do
+      let!(:payment) { create(:payment, order: order, amount: order.total - 10, state: 'pending', response_code: 'abc') }
+      let!(:other_payment) { create(:payment, order: order, amount: 10, state: 'checkout', response_code: 'def') }
+
+      it 'marks the incomplete payments as void' do
+        order.cancel
+
+        expect(order.reload.payments).to all(be_void)
+        expect(payment.reload).to be_void
+        expect(other_payment.reload).to be_void
+      end
+
+      it 'voids transactions for incomplete payments' do
+        order.cancel
+        expect(order.reload.payments.pluck(:response_code).uniq).to contain_exactly('void-12345') # Bogus gateway responds with void-12345 response code
+      end
+    end
   end
 
   describe '#after_cancel' do

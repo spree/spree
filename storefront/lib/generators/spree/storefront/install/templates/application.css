@@ -604,6 +604,7 @@ textarea.text-input {
 .badge,
 .badge-success,
 .badge-paid,
+.badge-balance_due,
 .badge-warning,
 .badge-canceled,
 .badge-failed,
@@ -630,6 +631,7 @@ textarea.text-input {
 .badge:last-child,
 .badge-success:last-child,
 .badge-paid:last-child,
+.badge-balance_due:last-child,
 .badge-warning:last-child,
 .badge-canceled:last-child,
 .badge-failed:last-child,
@@ -656,6 +658,7 @@ textarea.text-input {
 }
 
 .badge,
+.badge-balance_due,
 .badge-refunded,
 .badge-pending,
 .badge-void,

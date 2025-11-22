@@ -26,6 +26,19 @@ module Spree
         handle_payment_preconditions { process_purchase }
       end
 
+      # Confirms a payment by completing it or pending it depending on the payment method's auto_capture setting
+      # Useful for payments that are authorized/captured with SDK/Drop-in elements
+      def confirm!
+        started_processing! if checkout?
+
+        if payment_method&.auto_capture? && can_complete?
+          complete!
+          capture_events.create!(amount: amount)
+        elsif can_pend?
+          pend!
+        end
+      end
+
       # Takes the amount in cents to capture.
       # Can be used to capture partial amounts of a payment, and will create
       # a new pending payment record for the remaining amount to capture later.

@@ -910,6 +910,7 @@ module Spree
         payments.completed.store_credits.each(&:void!)
       else
         payments.completed.each(&:cancel!)
+        payments.incomplete.not_store_credits.each(&:void_transaction!)
         payments.store_credits.pending.each(&:void!)
       end
 

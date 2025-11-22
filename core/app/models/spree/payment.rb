@@ -255,6 +255,26 @@ module Spree
       payment_method&.source_required?
     end
 
+    def add_gateway_processing_error(error_message)
+      if has_metafield?('gateway.processing_errors')
+        errors = JSON.parse(get_metafield('gateway.processing_errors').value)
+        errors << { message: error_message }
+
+        set_metafield('gateway.processing_errors', errors.to_json)
+      else
+        set_metafield('gateway.processing_errors', [{ message: error_message }].to_json)
+      end
+    end
+
+    def gateway_processing_error_messages
+      @gateway_processing_error_messages ||= begin
+        errors = JSON.parse(get_metafield('gateway.processing_errors')&.value || '[]')
+        errors.map { |error| error['message'] }
+      rescue JSON::ParserError
+        []
+      end
+    end
+
     private
 
     def set_amount
