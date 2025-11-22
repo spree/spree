@@ -8,6 +8,9 @@ We welcome contributions to the documentation! We use [Mintlify](https://mintlif
 
 To run the documentation locally, you will need to install the Mintlify CLI.
 
+> [!IMPORTANT]
+> Mintlify requires Node.js version 20+ to run.
+
 ```bash
 npm i -g mintlify
 ```
