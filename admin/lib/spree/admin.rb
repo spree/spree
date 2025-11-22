@@ -20,3 +20,15 @@ require 'spree/admin/callbacks'
 require 'spree/admin/engine'
 
 require 'tinymce-rails'
+
+module Spree
+  module Admin
+    def self.navigation
+      Rails.application.config.spree_admin.navigation
+    end
+
+    def self.navigation=(navigation)
+      Rails.application.config.spree_admin.navigation = navigation
+    end
+  end
+end

@@ -334,7 +334,7 @@ module Spree
       # @return [Array<Spree::Admin::Navigation::Item>] the visible navigation items
       def navigation_items(context = :sidebar)
         # Pass the view context (self) so that can? and other helpers are available
-        Rails.application.config.spree_admin.navigation.send(context).visible_items(self)
+        Spree::Admin.navigation.send(context)&.visible_items(self) || []
       end
 
       # Renders page tab navigation for the given context
