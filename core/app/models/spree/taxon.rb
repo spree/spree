@@ -324,6 +324,7 @@ module Spree
     # indicate which filters should be used for a taxon
     # this method should be customized to your own site
     def applicable_filters
+      Spree::Deprecation.warn('applicable_filters is deprecated and will be removed in Spree 6.0')
       fs = []
       # fs << ProductFilters.taxons_below(self)
       ## unless it's a root taxon? left open for demo purposes
