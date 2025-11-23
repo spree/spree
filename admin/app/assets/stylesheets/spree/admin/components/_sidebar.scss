@@ -281,6 +281,13 @@ body.sidebar-collapsed {
       #nav-link-vendors .badge {
         display: none !important;
       }
+
+      .nav-section-header {
+        width: $sidebar-width-collapsed - 20px;
+        span {
+          display: none;
+        }
+      }
     }
 
     .nav {
