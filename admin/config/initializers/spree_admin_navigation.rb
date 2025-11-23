@@ -206,6 +206,11 @@ Rails.application.config.after_initialize do
           position: 80,
           if: -> { can?(:manage, Spree::Integration) }
 
+  # Section divider before settings
+  sidebar_nav.add :settings_section,
+          section_label: 'Settings',
+          position: 90
+
   # Settings (bottom of sidebar)
   sidebar_nav.add :settings,
           label: :settings,

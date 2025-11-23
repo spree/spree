@@ -28,13 +28,13 @@
   if tooltip_text.present?
     complete_label += tooltip(tooltip_text)
   end
-  complete_label = complete_label.html_safe
+  complete_label = complete_label&.html_safe
 %>
 
 <% if item.section? %>
   <%# Section header %>
-  <li class="nav-item nav-section-header mt-3">
-    <span class="text-muted text-uppercase small"><%= item.section_label %></span>
+  <li class="nav-item nav-section-header mt-3 border-top pt-3 pl-2">
+    <span class="text-muted text-uppercase font-weight-light font-size-sm"><%= item.section_label %></span>
   </li>
 <% else %>
   <% if has_children %>
