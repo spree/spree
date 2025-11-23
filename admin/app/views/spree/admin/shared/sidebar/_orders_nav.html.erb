@@ -4,9 +4,10 @@
   <% if ready_to_ship_orders_count&.positive? %>
     <% orders_label += content_tag(:span, ready_to_ship_orders_count, class: 'badge ml-auto') %>
   <% end %>
-  
+
   <%= nav_item(orders_label.html_safe, spree.admin_orders_path, icon: 'inbox', active: orders_active) %>
-  
+
+  <%# Submenu for expanded sidebar (only shown when active) %>
   <% if orders_active && (ready_to_ship_orders_count&.positive? || can?(:manage, :checkouts)) %>
     <ul class="nav-submenu">
       <% if ready_to_ship_orders_count&.positive? %>
@@ -17,6 +18,25 @@
 
       <% if can?(:manage, :checkouts) %>
         <%= nav_item(Spree.t(:draft_orders), spree.admin_checkouts_path, active: controller_name == 'checkouts' || (@order.present? && !@order.completed?)) %>
+      <% end %>
+
+      <%= render_admin_partials(:store_orders_nav_partials) %>
+    </ul>
+  <% end %>
+
+  <%# Submenu dropdown for collapsed sidebar (always rendered, shown on hover) %>
+  <% if ready_to_ship_orders_count&.positive? || can?(:manage, :checkouts) %>
+    <ul class="nav-submenu-dropdown d-none dropdown-container">
+      <%= nav_item(Spree.t(:orders), spree.admin_orders_path) %>
+
+      <% if ready_to_ship_orders_count&.positive? %>
+        <% fulfill_label = Spree.t('admin.orders.orders_to_fulfill') %>
+        <% fulfill_label += content_tag(:span, ready_to_ship_orders_count, class: 'badge ml-auto') %>
+        <%= nav_item(fulfill_label.html_safe, spree.admin_orders_path(q: {shipment_state_not_in: [:shipped, :canceled]})) %>
+      <% end %>
+
+      <% if can?(:manage, :checkouts) %>
+        <%= nav_item(Spree.t(:draft_orders), spree.admin_checkouts_path) %>
       <% end %>
 
       <%= render_admin_partials(:store_orders_nav_partials) %>

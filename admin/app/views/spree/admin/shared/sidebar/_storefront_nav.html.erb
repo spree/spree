@@ -2,19 +2,41 @@
   <% storefront_active = %w[themes posts post_categories pages storefront].include?(controller_name) %>
   <%= nav_item(Spree.t('admin.storefront'), spree.admin_themes_path, icon: 'building-store', active: storefront_active) %>
 
+  <%# Submenu for expanded sidebar (only shown when active) %>
   <ul class="nav-submenu <% unless storefront_active %>d-none<% end %>">
     <% if can?(:manage, Spree::Theme) %>
       <%= nav_item(Spree.t(:themes), spree.admin_themes_path) %>
     <% end %>
-    
+
     <% if can?(:manage, Spree::Page) %>
       <%= nav_item(Spree.t(:pages), spree.admin_pages_path) %>
     <% end %>
-    
+
     <% if can?(:manage, Spree::Post) %>
       <%= nav_item(Spree.t(:posts), spree.admin_posts_path, active: %w[posts post_categories].include?(controller_name)) %>
     <% end %>
-    
+
+    <% if can?(:manage, current_store) %>
+      <%= nav_item(Spree.t(:settings), spree.edit_admin_storefront_path) %>
+    <% end %>
+
+    <%= render_admin_partials(:storefront_nav_partials) %>
+  </ul>
+
+  <%# Submenu dropdown for collapsed sidebar (always rendered, shown on hover) %>
+  <ul class="nav-submenu-dropdown d-none dropdown-container">
+    <% if can?(:manage, Spree::Theme) %>
+      <%= nav_item(Spree.t(:themes), spree.admin_themes_path) %>
+    <% end %>
+
+    <% if can?(:manage, Spree::Page) %>
+      <%= nav_item(Spree.t(:pages), spree.admin_pages_path) %>
+    <% end %>
+
+    <% if can?(:manage, Spree::Post) %>
+      <%= nav_item(Spree.t(:posts), spree.admin_posts_path) %>
+    <% end %>
+
     <% if can?(:manage, current_store) %>
       <%= nav_item(Spree.t(:settings), spree.edit_admin_storefront_path) %>
     <% end %>

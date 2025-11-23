@@ -40,7 +40,19 @@
   <% if has_children %>
     <%# Item with children (submenu shows when parent is active) %>
     <%= nav_item(complete_label, item_url, icon: item.icon, active: is_active, data: data_attrs, **html_options) %>
+
+    <%# Submenu for expanded sidebar (only shown when active) %>
     <ul class="nav-submenu <% unless is_active %>d-none<% end %>" id="nav-submenu-<%= item.key %>">
+      <% item.children.select { |child| child.visible?(self) }.each do |child_item| %>
+        <%= render 'spree/admin/shared/navigation_item', item: child_item, context: context %>
+      <% end %>
+    </ul>
+
+    <%# Submenu dropdown for collapsed sidebar (always rendered, shown on hover) %>
+    <ul class="nav-submenu-dropdown d-none dropdown-container" id="nav-submenu-dropdown-<%= item.key %>">
+      <%# Add parent item as first item in dropdown %>
+      <%= nav_item(item_label, item_url, icon: nil) %>
+
       <% item.children.select { |child| child.visible?(self) }.each do |child_item| %>
         <%= render 'spree/admin/shared/navigation_item', item: child_item, context: context %>
       <% end %>

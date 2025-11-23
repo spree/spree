@@ -2,7 +2,14 @@
   <% customers_active = %w[users newsletter_subscribers].include?(controller_name) %>
   <%= nav_item(Spree.t(:customers), spree.admin_users_path, icon: 'users', active: customers_active) %>
 
+  <%# Submenu for expanded sidebar (only shown when active) %>
   <ul class="nav-submenu <% unless customers_active %>d-none<% end %>">
+    <%= nav_item(Spree.t(:newsletter_subscribers), spree.admin_newsletter_subscribers_path) %>
+  </ul>
+
+  <%# Submenu dropdown for collapsed sidebar (always rendered, shown on hover) %>
+  <ul class="nav-submenu-dropdown d-none dropdown-container">
+    <%= nav_item(Spree.t(:customers), spree.admin_users_path) %>
     <%= nav_item(Spree.t(:newsletter_subscribers), spree.admin_newsletter_subscribers_path) %>
   </ul>
 <% end %>
