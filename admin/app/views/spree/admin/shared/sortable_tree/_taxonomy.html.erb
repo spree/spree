@@ -33,7 +33,7 @@
       <%= dropdown_toggle class: 'btn-sm px-1 h-100' do %>
         <%= icon('dots-vertical', class: 'mr-0') %>
       <% end %>
-      <%= dropdown_menu class: 'dropdown-menu-right' do %>
+      <%= dropdown_menu do %>
         <% if can?(:create, Spree::Taxon) %>
           <%= link_to_with_icon 'plus', Spree.t(:new_nested_taxon), spree.new_admin_taxonomy_taxon_path(taxonomy, taxon: { parent_id: taxon.id }), class: 'dropdown-item' %>
           <div class="dropdown-divider"></div>

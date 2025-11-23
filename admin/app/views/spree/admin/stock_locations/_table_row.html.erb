@@ -20,7 +20,7 @@
             <%= dropdown_toggle class: 'btn-sm h-100' do %>
               <%= icon('dots-vertical', class: 'mr-0') %>
             <% end %>
-            <%= dropdown_menu class: 'dropdown-menu-right' do %>
+            <%= dropdown_menu do %>
               <%= link_to_with_icon 'check',
                 Spree.t(:mark_as_default),
                 spree.mark_as_default_admin_stock_location_path(stock_location),

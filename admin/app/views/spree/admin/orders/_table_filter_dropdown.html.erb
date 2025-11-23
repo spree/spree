@@ -6,7 +6,7 @@
       </span>
       <%= order_filter_dropdown_value %>
     <% end %>
-    <%= dropdown_menu class: 'dropdown-menu-right w-100', style: 'min-width: 200px' do %>
+    <%= dropdown_menu do %>
       <%= active_link_to Spree.t('admin.orders.all_orders'), params.to_unsafe_h.deep_merge({q: {shipment_state_eq: '', shipment_state_not_in: '', state_eq: '', state_in: '', refunded: '', partially_refunded: '' }}), class: 'dropdown-item', active: (params[:q] || {}).values_at(*%w[payment_state_not_eq shipment_state_not_in shipment_state_eq state_eq state_in refunded partially_refunded] ).all?(&:blank?) %>
       <%= link_to params.to_unsafe_h.deep_merge({q: {shipment_state_not_in: [:shipped, :canceled], shipment_state_eq: '', state_eq: '', state_in: '', refunded: '', partially_refunded: ''}}),
                   class: "dropdown-item d-flex align-items-center justify-content-between #{'active' if params[:q][:shipment_state_not_in] == ['shipped', 'canceled']}" do %>

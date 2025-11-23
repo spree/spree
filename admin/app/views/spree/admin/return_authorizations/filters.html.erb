@@ -13,7 +13,7 @@
           <%= Spree.t(:all) %>
         <% end %>
       <% end %>
-      <%= dropdown_menu class: 'dropdown-menu-right w-100', style: 'min-width: 200px' do %>
+      <%= dropdown_menu do %>
         <%= active_link_to Spree.t(:all),
         params.to_unsafe_h.deep_merge({ q: { state_eq: "" } }),
         class: "dropdown-item",

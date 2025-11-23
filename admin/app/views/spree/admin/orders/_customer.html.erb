@@ -8,7 +8,7 @@
         <%= dropdown_toggle class: 'btn-light btn-sm px-1', data: { test_id: 'dropdown-toggle' } do %>
           <%= icon 'dots-vertical', class: 'mr-0' %>
         <% end %>
-        <%= dropdown_menu class: 'dropdown-menu-right' do %>
+        <%= dropdown_menu do %>
           <% if can?(:update_customer, @order) && !@order.user.present? %>
             <%= link_to Spree.t('admin.edit_contact_information'), spree.edit_admin_order_contact_information_path(@order), class: 'dropdown-item', data: { turbo_frame: 'dialog', action: 'dialog#open' } %>
           <% end %>

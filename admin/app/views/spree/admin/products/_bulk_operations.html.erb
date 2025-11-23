@@ -18,7 +18,7 @@
       url: spree.bulk_status_update_admin_products_path(status: :draft)
     ) %>
 
-    <%= dropdown direction: 'top' do %>
+    <%= dropdown direction: 'top', portal: false do %>
       <%= dropdown_toggle do %>
         <%= icon('dots-vertical', class: "mr-0") %>
       <% end %>

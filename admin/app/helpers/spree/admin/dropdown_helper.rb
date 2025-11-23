@@ -16,10 +16,18 @@ module Spree
           options[:placement] || 'bottom-start'
         end
 
-        options[:data] = {
+        # Extract portal option
+        portal = options.delete(:portal)
+
+        data_attrs = {
           controller: 'dropdown',
           dropdown_placement_value: placement
-        }.merge(options[:data] || {})
+        }
+
+        # Add portal value if explicitly set
+        data_attrs[:dropdown_portal_value] = portal unless portal.nil?
+
+        options[:data] = data_attrs.merge(options[:data] || {})
         content_tag(:div, options, &block)
       end
 

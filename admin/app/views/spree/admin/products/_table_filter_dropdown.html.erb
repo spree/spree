@@ -13,7 +13,7 @@
       <%= product_filter_stock_dropdown_value if product_filter_stock_dropdown_value != Spree.t('admin.products.any_stock') %>
     <% end %>
   <% end %>
-  <%= dropdown_menu class: 'w-100', style: 'min-width: 200px' do %>
+  <%= dropdown_menu do %>
     <h6 class="dropdown-header"><%= Spree.t('admin.products.by_status') %>:</h6>
 
     <%= active_link_to Spree.t('admin.products.all_statuses'), params.to_unsafe_h.deep_merge({page: nil, q: {status_eq: nil}}), class: 'dropdown-item', active: (params[:q] || {}).values_at(*%w[status_eq in_stock_items out_of_stock_items] ).all?(&:blank?) %>
