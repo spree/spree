@@ -76,6 +76,7 @@ import SearchPickerController from 'spree/admin/controllers/search_picker_contro
 import SectionFormController from 'spree/admin/controllers/section_form_controller'
 import SelectController from 'spree/admin/controllers/select_controller'
 import SeoFormController from 'spree/admin/controllers/seo_form_controller'
+import SidebarController from 'spree/admin/controllers/sidebar_controller'
 import SlugFormController from 'spree/admin/controllers/slug_form_controller'
 import StickyController from 'spree/admin/controllers/sticky_controller'
 import SortableAutoSubmit from 'spree/admin/controllers/sortable_auto_submit_controller'
@@ -141,6 +142,7 @@ application.register('search-picker', SearchPickerController)
 application.register('section-form', SectionFormController)
 application.register('select', SelectController)
 application.register('seo-form', SeoFormController)
+application.register('sidebar', SidebarController)
 application.register('slug-form', SlugFormController)
 application.register('sticky', StickyController)
 application.register('sortable', Sortable)

@@ -48,7 +48,9 @@ en:
         special_instructions:
           description: Allow customers to add special instructions to their order.
           label: Display the special instructions field
+      close_sidebar: Close sidebar
       copied: Copied!
+      expand_sidebar: Expand sidebar
       copy_payment_link: Copy Payment Link
       copy_to_clipboard: Copy to clipboard
       coupon_codes:

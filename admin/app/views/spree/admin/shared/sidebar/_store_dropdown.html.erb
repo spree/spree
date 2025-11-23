@@ -2,7 +2,9 @@
   <%= dropdown do %>
     <%= dropdown_toggle class: 'store-dropdown-button dropdown-toggle' do %>
       <%= store_admin_icon(current_store, height: 32, width: 32) %>
-      <%= truncate(current_store.name, length: 10) %>
+      <span class="store-name d-none d-lg-block">
+        <%= truncate(current_store.name, length: 10) %>
+      </span>
     <% end %>
     <%= dropdown_menu class: 'ml-2' do %>
       <%= link_to current_store.formatted_url_or_custom_domain, class: 'dropdown-item', target: '_blank' do %>
