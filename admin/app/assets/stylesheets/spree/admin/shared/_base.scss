@@ -379,6 +379,10 @@ small,
   border: 2px dashed $blue !important;
 }
 
+.sort-handle {
+  cursor: grab;
+}
+
 .handle {
   cursor: grab !important;
 }
