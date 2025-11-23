@@ -8,7 +8,6 @@ import {
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["tooltip"]
   static values = {
     placement: { type: String, default: "top" },
     offset: { type: Number, default: 10 },
@@ -17,18 +16,34 @@ export default class extends Controller {
   }
 
   connect() {
+    // Find tooltip element by CSS class instead of Stimulus target
+    this.tooltip = this.element.querySelector('.tooltip-container')
+
+    // Early return if no tooltip element exists
+    if (!this.tooltip) {
+      return
+    }
+
     this._cleanup = null
     this.boundUpdate = this.update.bind(this)
     this._originalWidth = null
     this._isShown = false
+    this._originalParent = null
+    this._originalNextSibling = null
+    this._movedToBody = false
     this.startAutoUpdate()
     this.addEventListeners()
     this.prepareTooltip()
   }
 
   disconnect() {
+    if (!this.tooltip) {
+      return
+    }
+
     this.removeEventListeners()
     this.stopAutoUpdate()
+    this.restoreTooltipPosition()
     this.resetTooltip()
   }
 
@@ -44,43 +59,75 @@ export default class extends Controller {
 
   prepareTooltip() {
     // Ensure tooltip is rendered offscreen but measurable
-    if (this.tooltipTarget) {
+    if (this.tooltip) {
       // Save original display
-      this._originalDisplay = this.tooltipTarget.style.display
+      this._originalDisplay = this.tooltip.style.display
       // Temporarily show tooltip offscreen to measure size
-      this.tooltipTarget.style.visibility = "hidden"
-      this.tooltipTarget.style.display = "block"
-      this.tooltipTarget.style.left = "-9999px"
-      this.tooltipTarget.style.top = "-9999px"
+      this.tooltip.style.visibility = "hidden"
+      this.tooltip.style.display = "block"
+      this.tooltip.style.left = "-9999px"
+      this.tooltip.style.top = "-9999px"
       // Force reflow and measure
-      this._originalWidth = this.tooltipTarget.offsetWidth + 10
+      this._originalWidth = this.tooltip.offsetWidth + 10
       // Height is now dynamic, so we do not set or store it
-      this.tooltipTarget.style.width = `${this._originalWidth}px`
-      this.tooltipTarget.style.height = "" // Remove any fixed height
+      this.tooltip.style.width = `${this._originalWidth}px`
+      this.tooltip.style.height = "" // Remove any fixed height
       // Hide again
-      this.tooltipTarget.style.display = "none"
-      this.tooltipTarget.style.visibility = ""
-      this.tooltipTarget.style.left = ""
-      this.tooltipTarget.style.top = ""
+      this.tooltip.style.display = "none"
+      this.tooltip.style.visibility = ""
+      this.tooltip.style.left = ""
+      this.tooltip.style.top = ""
     }
   }
 
   resetTooltip() {
-    if (this.tooltipTarget) {
-      this.tooltipTarget.style.width = ""
-      this.tooltipTarget.style.height = ""
-      this.tooltipTarget.style.display = this._originalDisplay || ""
+    if (this.tooltip) {
+      this.tooltip.style.width = ""
+      this.tooltip.style.height = ""
+      this.tooltip.style.display = this._originalDisplay || ""
+    }
+  }
+
+  moveTooltipToBody() {
+    if (this.tooltip && this.tooltip.parentNode !== document.body) {
+      // Save original position for restoration
+      this._originalParent = this.tooltip.parentNode
+      this._originalNextSibling = this.tooltip.nextSibling
+
+      // Move tooltip to body to prevent clipping by sidebar overflow
+      document.body.appendChild(this.tooltip)
+    }
+  }
+
+  restoreTooltipPosition() {
+    if (this.tooltip && this._originalParent) {
+      // Restore tooltip to original position
+      if (this._originalNextSibling) {
+        this._originalParent.insertBefore(this.tooltip, this._originalNextSibling)
+      } else {
+        this._originalParent.appendChild(this.tooltip)
+      }
+      this._originalParent = null
+      this._originalNextSibling = null
     }
   }
 
   show = () => {
+    if (!this.tooltip) return
+
     if (!this._isShown) {
-      this.tooltipTarget.style.display = "block"
-      this.tooltipTarget.style.visibility = "visible"
+      // Move to body on first show
+      if (!this._movedToBody) {
+        this.moveTooltipToBody()
+        this._movedToBody = true
+      }
+
+      this.tooltip.style.display = "block"
+      this.tooltip.style.visibility = "visible"
       // Set explicit width, but let height be dynamic
       if (this._originalWidth) {
-        this.tooltipTarget.style.width = `${this._originalWidth}px`
-        this.tooltipTarget.style.height = ""
+        this.tooltip.style.width = `${this._originalWidth}px`
+        this.tooltip.style.height = ""
       }
       this.update() // Ensure immediate update when shown
       this._isShown = true
@@ -88,19 +135,21 @@ export default class extends Controller {
   }
 
   hide = () => {
+    if (!this.tooltip) return
+
     if (this._isShown) {
-      this.tooltipTarget.style.display = "none"
-      this.tooltipTarget.style.visibility = ""
+      this.tooltip.style.display = "none"
+      this.tooltip.style.visibility = ""
       // Keep width set to prevent flicker if quickly re-hovered
       this._isShown = false
     }
   }
 
   startAutoUpdate() {
-    if (!this._cleanup) {
+    if (!this._cleanup && this.tooltip) {
       this._cleanup = autoUpdate(
         this.element,
-        this.tooltipTarget,
+        this.tooltip,
         this.boundUpdate,
       )
     }
@@ -114,8 +163,10 @@ export default class extends Controller {
   }
 
   update() {
+    if (!this.tooltip) return
+
     // Update position even if not visible, to ensure correct positioning when shown
-    computePosition(this.element, this.tooltipTarget, {
+    computePosition(this.element, this.tooltip, {
       placement: this.placementValue,
       middleware: [
         offset({
@@ -127,10 +178,12 @@ export default class extends Controller {
         shift({ padding: 5 }),
       ],
     }).then(({ x, y }) => {
-      Object.assign(this.tooltipTarget.style, {
-        left: `${x}px`,
-        top: `${y}px`,
-      })
+      if (this.tooltip) {
+        Object.assign(this.tooltip.style, {
+          left: `${x}px`,
+          top: `${y}px`,
+        })
+      }
     })
   }
 }
