@@ -172,7 +172,7 @@ Rails.application.config.after_initialize do
           url: :admin_themes_path,
           icon: 'building-store',
           position: 70,
-          active: -> { %w[themes posts post_categories pages].include?(controller_name) || (controller_name == 'storefronts' && action_name == 'edit') },
+          active: -> { %w[themes posts post_categories pages storefront].include?(controller_name) || (controller_name == 'storefronts' && action_name == 'edit') },
           if: -> { can?(:manage, Spree::Theme) } do |storefront|
     # Themes
     storefront.add :themes,
