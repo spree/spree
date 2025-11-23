@@ -16,6 +16,7 @@
   # Build additional HTML options (like target)
   html_options = {}
   html_options[:target] = item.target if item.target.present?
+  html_options[:id] = "nav-link-#{item.key}" if item.key.present?
 
   # Build complete label with badge (like old menu pattern)
   complete_label = item_label
@@ -39,13 +40,11 @@
   <% if has_children %>
     <%# Item with children (submenu shows when parent is active) %>
     <%= nav_item(complete_label, item_url, icon: item.icon, active: is_active, data: data_attrs, **html_options) %>
-    <% if is_active %>
-      <ul class="nav-submenu">
-        <% item.children.select { |child| child.visible?(self) }.each do |child_item| %>
-          <%= render 'spree/admin/shared/navigation_item', item: child_item, context: context %>
-        <% end %>
-      </ul>
-    <% end %>
+    <ul class="nav-submenu <% unless is_active %>d-none<% end %>" id="nav-submenu-<%= item.key %>">
+      <% item.children.select { |child| child.visible?(self) }.each do |child_item| %>
+        <%= render 'spree/admin/shared/navigation_item', item: child_item, context: context %>
+      <% end %>
+    </ul>
   <% else %>
     <%# Regular item without children %>
     <%= nav_item(complete_label, item_url, icon: item.icon, active: is_active, data: data_attrs, **html_options) %>

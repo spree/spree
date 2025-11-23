@@ -320,51 +320,55 @@ body.sidebar-collapsed {
       // Keep content visible but modify layout
       opacity: 1;
       pointer-events: auto;
+
+      .nav > .nav-item > .nav-link {
+        justify-content: center;
+        padding-left: 0;
+        padding-right: 0;
+        width: 40px;
+        height: 40px;
+        margin: 0 auto;
+        overflow: visible;
+        font-size: 0;
+        position: relative;
+  
+        .ti {
+          margin-right: 0;
+          font-size: 1.25rem;
+        }
+  
+        // Hide text labels (direct text nodes)
+        span:not(.badge) {
+          display: none;
+        }
+  
+        // Position badges as notification counters
+        .badge {
+          display: flex;
+          position: absolute;
+          top: 0;
+          right: 0;
+          transform: translate(25%, -25%);
+          min-width: 18px;
+          height: 18px;
+          padding: 0 0.25rem;
+          font-size: 0.625rem;
+          line-height: 18px;
+          border-radius: 9px;
+          justify-content: center;
+          align-items: center;
+        }
+      }
+
+      #nav-link-vendors .badge {
+        display: none !important;
+      }
     }
 
     .nav {
       padding-left: 0;
       padding-right: 0;
       align-items: center;
-    }
-
-    .nav-link {
-      justify-content: center;
-      padding-left: 0;
-      padding-right: 0;
-      width: 40px;
-      height: 40px;
-      margin: 0 auto;
-      overflow: visible;
-      font-size: 0;
-      position: relative;
-
-      .ti {
-        margin-right: 0;
-        font-size: 1.25rem;
-      }
-
-      // Hide text labels (direct text nodes)
-      span:not(.badge) {
-        display: none;
-      }
-
-      // Position badges as notification counters
-      .badge {
-        display: flex;
-        position: absolute;
-        top: 0;
-        right: 0;
-        transform: translate(25%, -25%);
-        min-width: 18px;
-        height: 18px;
-        padding: 0 0.25rem;
-        font-size: 0.625rem;
-        line-height: 18px;
-        border-radius: 9px;
-        justify-content: center;
-        align-items: center;
-      }
     }
 
     // Hide submenus and dropdowns when collapsed
@@ -381,6 +385,10 @@ body.sidebar-collapsed {
     // Hide any mt-auto sections
     .mt-auto {
       display: none;
+    }
+
+    .nav-submenu {
+      gap: 0.25rem !important;
     }
   }
 
