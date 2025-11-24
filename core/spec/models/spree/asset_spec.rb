@@ -71,8 +71,8 @@ describe Spree::Asset, type: :model do
     describe '.with_external_url' do
       it 'returns assets with the given external URL' do
         asset = create(:asset)
-        asset.set_metafield('external.url', 'https://example.com')
-        expect(described_class.with_external_url('https://example.com')).to include(asset)
+        asset.set_metafield('external.url', 'https://example.com/Example-Image-001.png')
+        expect(described_class.with_external_url('https://example.com/Example-Image-001.png')).to include(asset)
       end
 
       it 'returns no assets if the external URL is blank' do
@@ -83,8 +83,8 @@ describe Spree::Asset, type: :model do
     describe '#external_url' do
       it 'returns the external URL' do
         asset = create(:asset)
-        asset.set_metafield('external.url', 'https://example.com')
-        expect(asset.external_url).to eq('https://example.com')
+        asset.set_metafield('external.url', 'https://example.com/Example-Image-001.png')
+        expect(asset.external_url).to eq('https://example.com/Example-Image-001.png')
       end
 
       it 'returns nil if the external URL is blank' do
@@ -96,8 +96,8 @@ describe Spree::Asset, type: :model do
     describe '#external_url=' do
       it 'sets the external URL' do
         asset = create(:asset)
-        asset.external_url = 'https://example.com'
-        expect(asset.external_url).to eq('https://example.com')
+        asset.external_url = 'https://example.com/Example-Image-001.png'
+        expect(asset.external_url).to eq('https://example.com/Example-Image-001.png')
       end
     end
   end

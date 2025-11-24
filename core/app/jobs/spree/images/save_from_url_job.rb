@@ -13,7 +13,7 @@ module Spree
 
         Spree::Image.ensure_metafield_definition_exists!(Spree::Image::EXTERNAL_URL_METAFIELD_KEY)
 
-        external_url = external_url.downcase.strip
+        external_url = external_url.strip
         external_id = external_id.to_s.downcase.strip if external_id.present?
 
         image = find_or_initialize_image(viewable, external_url, external_id)
