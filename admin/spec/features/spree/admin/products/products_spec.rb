@@ -1176,13 +1176,15 @@ describe 'Products', type: :feature do
       it 'renders selected filters' do
         visit spree.admin_products_path
 
+        fill_in 'q_multi_search', with: 'Backpack'
+
         within 'main' do
           click_on 'Filters'
         end
 
-        fill_in 'q_multi_search', with: 'Backpack'
-
-        within('main') { click_on 'Filter Results' }
+        within('#product-filters-drawer') do
+          click_on 'Filter Results'
+        end
 
         within('.filter-badges-container') do
           expect(page).to have_content('Query: Backpack')
@@ -1201,12 +1203,15 @@ describe 'Products', type: :feature do
         it 'filters products with tag only' do
           visit spree.admin_products_path
 
-          within('main') { click_on 'Filter' }
-          fill_in 'Tags', with: 'some tag'
+          within('main') { click_on 'Filters' }
 
-          find('.ts-dropdown').click
-          find('#q_tags_name_in-ts-label').click
-          click_on 'Filter Results'
+          within('#product-filters-drawer') do
+            fill_in 'Tags', with: 'some tag'
+
+            find('.ts-dropdown').click
+            find('#q_tags_name_in-ts-label').click
+            click_on 'Filter Results'
+          end
 
           expect(page).to have_content(product.name)
           expect(page).not_to have_content(product_without_tag.name)

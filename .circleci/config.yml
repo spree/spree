@@ -12,15 +12,15 @@ defaults: &defaults
     DB_USERNAME: postgres
   working_directory: ~/spree
   docker:
-    - image: &ruby_image cimg/ruby:3.3.0-browsers
+    - image: &ruby_image cimg/ruby:3.4-browsers
 
 commands:
   bundle_install:
     steps:
       - restore_cache:
           keys:
-            - spree-bundle-v11-ruby-{{ checksum ".ruby-version" }}-{{ .Branch }}
-            - spree-bundle-v11-ruby-{{ checksum ".ruby-version" }}
+            - spree-bundle-v12-ruby-{{ .Branch }}
+            - spree-bundle-v12-ruby
       - install_libvips
       - run:
           name: Install global dependencies
@@ -61,7 +61,7 @@ jobs:
       - checkout
       - bundle_install
       - save_cache:
-          key: spree-bundle-v11-ruby-{{ checksum ".ruby-version" }}-{{ .Branch }}
+          key: spree-bundle-v12-ruby-{{ .Branch }}
           paths:
             - ~/spree/vendor/bundle
   test: &test

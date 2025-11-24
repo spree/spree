@@ -172,14 +172,8 @@ Rails.application.config.after_initialize do
           url: :admin_themes_path,
           icon: 'building-store',
           position: 70,
-          active: -> { %w[themes posts post_categories pages].include?(controller_name) || (controller_name == 'storefronts' && action_name == 'edit') },
+          active: -> { %w[themes posts post_categories pages storefront].include?(controller_name) || (controller_name == 'storefronts' && action_name == 'edit') },
           if: -> { can?(:manage, Spree::Theme) } do |storefront|
-    # Themes
-    storefront.add :themes,
-                  label: :themes,
-                  url: :admin_themes_path,
-                  position: 10,
-                  if: -> { can?(:manage, Spree::Theme) }
 
     # Pages
     storefront.add :pages,
@@ -211,6 +205,11 @@ Rails.application.config.after_initialize do
           icon: 'plug-connected',
           position: 80,
           if: -> { can?(:manage, Spree::Integration) }
+
+  # Section divider before settings
+  sidebar_nav.add :settings_section,
+          section_label: 'Settings',
+          position: 90
 
   # Settings (bottom of sidebar)
   sidebar_nav.add :settings,

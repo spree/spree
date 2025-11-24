@@ -48,6 +48,7 @@ en:
         special_instructions:
           description: Allow customers to add special instructions to their order.
           label: Display the special instructions field
+      close_sidebar: Close sidebar
       copied: Copied!
       copy_payment_link: Copy Payment Link
       copy_to_clipboard: Copy to clipboard
@@ -75,6 +76,7 @@ en:
       edit_theme: Edit theme
       errors: Errors
       execution_time: Execution Time
+      expand_sidebar: Expand sidebar
       export_all: Export all records (can be slow for large datasets)
       export_coupons: Export coupons as CSV file
       export_created: Your export was started. You will receive an email with a download link when it is ready!

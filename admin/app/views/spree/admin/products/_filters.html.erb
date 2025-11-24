@@ -1,9 +1,10 @@
 <% frame_name ||= nil %>
 
+
 <%= search_form_for product_list_filters_search_form_path,
   class: "filter-wrap",
   data: {
-    controller: "filters dropdown",
+    controller: "filters dialog",
     filters_url_value: request.url
   } do |f| %>
   <%= hidden_field_tag :frame_name, frame_name if frame_name.present? %>
@@ -11,9 +12,15 @@
   <div class="d-flex flex-column flex-lg-row gap-2">
     <%= render 'spree/admin/shared/filters_search_bar', param: :multi_search %>
     <%= render "spree/admin/products/table_filter_dropdown" %>
-    <%= render 'spree/admin/shared/filters_button' %>
+    <%= button_tag type: 'button', class: 'btn btn-light d-flex align-items-center', data: { action: 'dialog#open' } do %>
+      <%= icon "adjustments", class: "mr-1" %>
+      <%= Spree.t("admin.filters") %>
+    <% end %>
   </div>
-  <div data-dropdown-target="menu" id="table-filter" class="hidden">
+
+  <dialog class="drawer" data-dialog-target="dialog" id="product-filters-drawer">
+    <%= drawer_header(Spree.t(:filter), 'dialog#close') %>
+    <div class="drawer-body">
     <%= f.hidden_field :status_eq, value: params.dig(:q, :status_eq) %>
     <div class="form-group">
       <%= f.label :taxons_id_in, Spree.t(:taxons) %>
@@ -44,10 +51,14 @@
         filters_target: "input",
       } %>
     </div>
-    
+
     <%= render_admin_partials(:products_filters_partials, f: f) %>
-    <%= render 'spree/admin/shared/filter_submit' %>
-  </div>
+    </div>
+    <div class="drawer-footer">
+      <%= drawer_discard_button('dialog#close') %>
+      <%= render 'spree/admin/shared/filter_submit' %>
+    </div>
+  </dialog>
 
   <%= render "spree/admin/shared/filter_badge_template" %>
 

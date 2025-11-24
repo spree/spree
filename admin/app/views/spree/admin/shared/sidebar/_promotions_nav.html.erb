@@ -1,7 +1,15 @@
 <% if can?(:manage, Spree::Promotion) %>
   <% discounts_active = %w[promotions gift_cards gift_card_batches coupon_codes].include?(controller_name) && @user.nil? %>
   <%= nav_item(Spree.t(:promotions), spree.admin_promotions_path, icon: 'discount', active: discounts_active) %>
+
+  <%# Submenu for expanded sidebar (only shown when active) %>
   <ul class="nav-submenu <% unless discounts_active %>d-none<% end %>">
     <%= nav_item(Spree.t(:gift_cards), spree.admin_gift_cards_path, active: %w[gift_cards gift_card_batches].include?(controller_name)) %>
+  </ul>
+
+  <%# Submenu dropdown for collapsed sidebar (always rendered, shown on hover) %>
+  <ul class="nav-submenu-dropdown d-none dropdown-container">
+    <%= nav_item(Spree.t(:promotions), spree.admin_promotions_path) %>
+    <%= nav_item(Spree.t(:gift_cards), spree.admin_gift_cards_path) %>
   </ul>
 <% end %>

@@ -16,6 +16,7 @@
   # Build additional HTML options (like target)
   html_options = {}
   html_options[:target] = item.target if item.target.present?
+  html_options[:id] = "nav-link-#{item.key}" if item.key.present?
 
   # Build complete label with badge (like old menu pattern)
   complete_label = item_label
@@ -27,25 +28,35 @@
   if tooltip_text.present?
     complete_label += tooltip(tooltip_text)
   end
-  complete_label = complete_label.html_safe
+  complete_label = complete_label&.html_safe
 %>
 
 <% if item.section? %>
   <%# Section header %>
-  <li class="nav-item nav-section-header mt-3">
-    <span class="text-muted text-uppercase small"><%= item.section_label %></span>
+  <li class="nav-item nav-section-header mt-3 border-top pt-3 pl-2">
+    <span class="text-muted text-uppercase font-weight-light font-size-sm"><%= item.section_label %></span>
   </li>
 <% else %>
   <% if has_children %>
     <%# Item with children (submenu shows when parent is active) %>
     <%= nav_item(complete_label, item_url, icon: item.icon, active: is_active, data: data_attrs, **html_options) %>
-    <% if is_active %>
-      <ul class="nav-submenu">
-        <% item.children.select { |child| child.visible?(self) }.each do |child_item| %>
-          <%= render 'spree/admin/shared/navigation_item', item: child_item, context: context %>
-        <% end %>
-      </ul>
-    <% end %>
+
+    <%# Submenu for expanded sidebar (only shown when active) %>
+    <ul class="nav-submenu <% unless is_active %>d-none<% end %>" id="nav-submenu-<%= item.key %>">
+      <% item.children.select { |child| child.visible?(self) }.each do |child_item| %>
+        <%= render 'spree/admin/shared/navigation_item', item: child_item, context: context %>
+      <% end %>
+    </ul>
+
+    <%# Submenu dropdown for collapsed sidebar (always rendered, shown on hover) %>
+    <ul class="nav-submenu-dropdown d-none dropdown-container" id="nav-submenu-dropdown-<%= item.key %>">
+      <%# Add parent item as first item in dropdown %>
+      <%= nav_item(item_label, item_url, icon: nil) %>
+
+      <% item.children.select { |child| child.visible?(self) }.each do |child_item| %>
+        <%= render 'spree/admin/shared/navigation_item', item: child_item, context: context %>
+      <% end %>
+    </ul>
   <% else %>
     <%# Regular item without children %>
     <%= nav_item(complete_label, item_url, icon: item.icon, active: is_active, data: data_attrs, **html_options) %>

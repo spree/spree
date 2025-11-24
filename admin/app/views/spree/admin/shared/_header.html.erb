@@ -1,11 +1,9 @@
 <div id="scroll-header"></div>
 
-<%= render 'spree/admin/shared/offcanvas_nav' %>
-
 <header id="header" class="sticky-top py-0">
   <nav class="navbar navbar-expand-lg p-0 d-flex align-items-center pr-3">
     <div class="d-lg-none pr-3 border-right">
-      <button type="button" class="btn btn-light pull-bs-canvas-left px-2 ml-3 text-decoration-none">
+      <button type="button" class="btn btn-light px-2 ml-3 text-decoration-none" data-action="click->sidebar#openMobile">
         <%= icon('menu-2', class: 'mr-0') %>
       </button>
     </div>
@@ -20,12 +18,12 @@
       <% end %>
     <% end %>
 
+    <button type="button" class="sidebar-toggle-btn ml-3 mr-3 d-none d-lg-block" data-action="click->sidebar#toggle" aria-label="<%= Spree.t('admin.expand_sidebar') %>">
+      <%= icon('layout-sidebar-left-collapse') %>
+    </button>
+
     <div class="d-none d-lg-block">
       <%= render 'spree/admin/shared/breadcrumbs' %>
-    </div>
-
-    <div class="ml-auto d-flex align-items-center">
-      <%= render 'spree/admin/shared/user_dropdown' %>
     </div>
   </nav>
 </header>

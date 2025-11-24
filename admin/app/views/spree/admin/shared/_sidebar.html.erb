@@ -1,7 +1,33 @@
-<aside id="main-sidebar" class="overflow-y-auto">
-  <% if defined?(current_vendor) && current_vendor.present? %>
-    <%= render 'spree/admin/shared/sidebar/vendor_nav' %>
-  <% else %>
-    <%= render 'spree/admin/shared/sidebar/store_nav' %>
-  <% end %>
+<%# Desktop Sidebar %>
+<aside id="main-sidebar" class="overflow-y-auto" data-sidebar-target="desktop">
+  <div class="sidebar-content">
+    <% if defined?(current_vendor) && current_vendor.present? %>
+      <%= render 'spree/admin/shared/sidebar/vendor_nav' %>
+    <% else %>
+      <%= render 'spree/admin/shared/sidebar/store_nav' %>
+    <% end %>
+  </div>
+
+  <%= render 'spree/admin/shared/user_dropdown' %>
 </aside>
+
+<%# Mobile Sidebar Overlay %>
+<div class="sidebar-mobile d-lg-none" data-sidebar-target="mobile">
+  <div class="sidebar-backdrop" data-action="click->sidebar#closeMobile"></div>
+  <div class="sidebar-panel">
+    <div class="sidebar-mobile-header">
+      <button type="button" class="btn btn-sm" data-action="click->sidebar#closeMobile" aria-label="<%= Spree.t('admin.close_sidebar') %>">
+        <%= icon('x') %>
+      </button>
+    </div>
+    <div class="sidebar-mobile-content">
+      <% if defined?(current_vendor) && current_vendor.present? %>
+        <%= render 'spree/admin/shared/sidebar/vendor_nav' %>
+      <% else %>
+        <%= render 'spree/admin/shared/sidebar/store_nav' %>
+      <% end %>
+    </div>
+
+    <%= render 'spree/admin/shared/user_dropdown' %>
+  </div>
+</div>

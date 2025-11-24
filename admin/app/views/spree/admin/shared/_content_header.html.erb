@@ -22,7 +22,7 @@
       <% end %>
 
       <% if show_record_subtitle || content_for(:page_actions_dropdown) %>
-        <%= dropdown id: 'page_actions_dropdown', class: 'h-100' do %>
+        <%= dropdown id: 'page_actions_dropdown', class: 'h-100', portal: false do %>
           <%= dropdown_toggle id: 'more-actions-link', class: 'btn-light h-100 p-2' do %>
             <%= icon 'dots-vertical', class: 'mr-0' %>
           <% end %>

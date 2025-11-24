@@ -379,6 +379,10 @@ small,
   border: 2px dashed $blue !important;
 }
 
+.sort-handle {
+  cursor: grab;
+}
+
 .handle {
   cursor: grab !important;
 }
@@ -702,8 +706,10 @@ div.uppy-Root {
 .breadcrumb {
   gap: 0.5rem;
   align-items: center;
-  color: $text-muted;
   font-weight: $font-weight-medium;
+  height: 32px;
+  border-left: 1px solid $gray-50;
+  border-radius: 0;
   
   li {
     a {
