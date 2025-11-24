@@ -70,17 +70,15 @@ FactoryBot.define do
 
       factory :completed_order_with_totals do
         state { 'complete' }
-        completed_at { Time.current }
 
         after(:create) do |order, evaluator|
           order.refresh_shipment_rates(evaluator.shipping_method_filter)
-          order.reload
+          order.update_column(:completed_at, order.completed_at || Time.current)
         end
 
         factory :completed_order_with_pending_payment do
           after(:create) do |order|
             create(:payment, amount: order.total, order: order)
-            order.reload
           end
         end
 
@@ -90,7 +88,6 @@ FactoryBot.define do
             payment_method = create(:store_credit_payment_method, stores: [order.store])
 
             create(:store_credit_payment, amount: order.total, order: order, source: store_credit, payment_method: payment_method)
-            order.reload
           end
         end
 
@@ -123,7 +120,6 @@ FactoryBot.define do
                   tracking: '1234567890'
                 )
               end
-              order.reload
             end
           end
         end
