@@ -74,11 +74,13 @@ FactoryBot.define do
 
         after(:create) do |order, evaluator|
           order.refresh_shipment_rates(evaluator.shipping_method_filter)
+          order.reload
         end
 
         factory :completed_order_with_pending_payment do
           after(:create) do |order|
             create(:payment, amount: order.total, order: order)
+            order.reload
           end
         end
 
@@ -88,6 +90,7 @@ FactoryBot.define do
             payment_method = create(:store_credit_payment_method, stores: [order.store])
 
             create(:store_credit_payment, amount: order.total, order: order, source: store_credit, payment_method: payment_method)
+            order.reload
           end
         end
 

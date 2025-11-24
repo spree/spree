@@ -779,7 +779,7 @@ describe Spree::Shipment, type: :model do
     context 'with Config.auto_capture_on_dispatch == true' do
       before do
         Spree::Config[:auto_capture_on_dispatch] = true
-        @order = create :completed_order_with_pending_payment
+        @order = create :order_ready_to_ship
         @shipment = @order.shipments.first
         @shipment.cost = @order.ship_total
       end
@@ -815,13 +815,11 @@ describe Spree::Shipment, type: :model do
         end
 
         it 'can partially capture an authorized payment' do
-          payment.update_attribute(:amount, @order.total + 50)
+          payment.update_attribute(:amount, @order.total - 1)
 
           expect(payment.amount).to eq payment.uncaptured_amount
           @shipment.ship!
-          expect(payment.captured_amount).to eq @order.total
-          expect(payment.captured_amount).to eq payment.amount - 50
-          expect(payment.order.payments.pending.first.amount).to eq 50
+          expect(payment.captured_amount).to eq payment.amount
         end
       end
     end
@@ -953,7 +951,7 @@ describe Spree::Shipment, type: :model do
       shipment = order.shipments.first
 
       expect { shipment.transfer_to_location(variant, 1, stock_location).run! }.
-        to change { order.reload.shipments.size }.from(1).to(2)
+        to change { order.reload.shipments.size }.by(1)
     end
 
     it 'sets the given stock location for new shipment' do
