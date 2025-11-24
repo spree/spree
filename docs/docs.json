@@ -974,7 +974,8 @@
                     "pages": [
                       "user/storefront/theme-editor",
                       "user/storefront/create-new-theme",
-                      "user/storefront/delete-theme"
+                      "user/storefront/delete-theme",
+                      "user/storefront/product-details-page"
                     ]
                   },
                   {
