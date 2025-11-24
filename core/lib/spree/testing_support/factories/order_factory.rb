@@ -115,7 +115,7 @@ FactoryBot.define do
             after(:create) do |order|
               order.shipments.each do |shipment|
                 shipment.inventory_units.update_all state: 'shipped'
-                shipment.update(
+                shipment.update_columns(
                   state: 'shipped',
                   tracking: '1234567890'
                 )
