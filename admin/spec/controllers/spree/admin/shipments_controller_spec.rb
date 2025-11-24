@@ -31,6 +31,11 @@ RSpec.describe Spree::Admin::ShipmentsController, type: :controller do
 
   describe '#ship' do
     context 'when shipment can be shipped' do
+      before do
+        shipment.update(tracking: '1234567890')
+        expect(shipment.tracking).to eq('1234567890')
+      end
+
       it 'ships the shipment' do
         post :ship, params: { order_id: order.number, id: shipment.number }
         expect(shipment.reload.state).to eq('shipped')

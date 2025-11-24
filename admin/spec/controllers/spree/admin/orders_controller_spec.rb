@@ -44,10 +44,10 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
       order
     end
 
-    let!(:shipped_order) { create(:shipped_order, with_payment: false, total: 100, store: store) }
-    let!(:order) { create(:completed_order_with_totals, line_items_count: 2, total: 100, store: store) }
+    let!(:shipped_order) { create(:shipped_order, with_payment: false, total: 100, store: store, completed_at: 2.days.ago) }
+    let!(:order) { create(:completed_order_with_totals, line_items_count: 2, total: 100, store: store, completed_at: 1.day.ago) }
     let!(:cancelled_order) do
-      order = create(:completed_order_with_totals, state: 'canceled', total: 100, store: store)
+      order = create(:completed_order_with_totals, state: 'canceled', total: 100, store: store, completed_at: 3.days.ago)
       create(:payment, state: 'completed', amount: order.total, order: order)
       update_payment_state_after_refund(order)
     end
@@ -69,32 +69,37 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
 
     it 'return all completed orders' do
       get :index
-      expect(assigns(:orders).to_a).to include(order)
-      expect(assigns(:orders).to_a).to include(shipped_order)
+      expect(assigns(:collection).to_a).to include(order)
+      expect(assigns(:collection).to_a).to include(shipped_order)
+    end
+
+    it 'returns all completed orders sorted by completed_at desc' do
+      get :index
+      expect(assigns(:collection).ids).to eq([order.id, shipped_order.id, cancelled_order.id])
     end
 
     it 'returns all fulfilled orders' do
       get :index, params: { q: { shipment_state_eq: :shipped } }
 
-      expect(assigns(:orders).to_a).to eq([shipped_order])
+      expect(assigns(:collection).to_a).to eq([shipped_order])
     end
 
     it 'returns all cancelled orders by shipment state' do
       get :index, params: { q: { state_eq: :canceled } }
 
-      expect(assigns(:orders).to_a).to eq([cancelled_order])
+      expect(assigns(:collection).to_a).to eq([cancelled_order])
     end
 
     it 'returns all refunded orders' do
       get :index, params: { q: { refunded: '1' } }
 
-      expect(assigns(:orders).to_a).to eq([shipped_order])
+      expect(assigns(:collection).to_a).to eq([shipped_order])
     end
 
     it 'returns all partially refunded orders' do
       get :index, params: { q: { partially_refunded: '1' } }
 
-      expect(assigns(:orders).to_a).to eq([order])
+      expect(assigns(:collection).to_a).to eq([order])
     end
 
     context 'filtering by payment state' do
@@ -107,36 +112,40 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
       it 'returns all paid orders' do
         get :index, params: { q: { payment_state_eq: :paid } }
 
-        expect(assigns(:orders).to_a).to contain_exactly(paid_order)
+        expect(assigns(:collection).to_a).to contain_exactly(paid_order)
       end
 
       it 'returns all orders with credit owed' do
         get :index, params: { q: { payment_state_eq: :credit_owed } }
 
-        expect(assigns(:orders).to_a).to contain_exactly(cancelled_order)
+        expect(assigns(:collection).to_a).to contain_exactly(cancelled_order)
       end
 
       it 'returns all orders with balance due' do
         get :index, params: { q: { payment_state_eq: :balance_due } }
 
-        expect(assigns(:orders).to_a).to contain_exactly(balance_due_order, order, shipped_order)
+        expect(assigns(:collection).to_a).to contain_exactly(balance_due_order, order, shipped_order)
       end
 
       it 'returns all refunded orders via payment_state filter' do
         get :index, params: { q: { payment_state_eq: :refunded } }
 
-        expect(assigns(:orders).to_a).to eq([shipped_order])
+        expect(assigns(:collection).to_a).to eq([shipped_order])
       end
 
       it 'returns all partially refunded orders via payment_state filter' do
         get :index, params: { q: { payment_state_eq: :partially_refunded } }
 
-        expect(assigns(:orders).to_a).to eq([order])
+        expect(assigns(:collection).to_a).to eq([order])
       end
     end
 
     context 'filtering by date' do
       subject { get :index, params: { q: q } }
+
+      before do
+        Spree::Order.delete_all
+      end
 
       let(:q) do
         {
@@ -145,29 +154,21 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
         }
       end
 
-      let!(:order1) { create(:completed_order_with_totals, store: store) }
+      let!(:order1) { create(:completed_order_with_totals, store: store, completed_at: 5.month.ago) }
       let!(:order2) { create(:completed_order_with_totals, store: store) }
 
       context 'for All Orders' do
-        before do
-          order1.update(completed_at: 5.month.ago)
-        end
-
         it 'uses completed_at column' do
           subject
 
-          expect(assigns(:orders).to_a).to include(order2)
-          expect(assigns(:orders).to_a).not_to include(order1)
+          expect(assigns(:collection).to_a).to include(order2)
+          expect(assigns(:collection).to_a).not_to include(order1)
         end
       end
 
       context 'filtering by "yesterday"' do
+        let!(:order1) { create(:completed_order_with_totals, completed_at: Date.yesterday + 3.hours, store: store) }
         let!(:order2) { create(:completed_order_with_totals, completed_at: Date.today, store: store) }
-
-        before do
-          order1.update(completed_at: Date.yesterday + 3.hours)
-          order2.update(completed_at: Date.yesterday + 16.hours)
-        end
 
         let(:q) do
           {
@@ -178,7 +179,7 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
 
         it 'filters by orders completed yesterday' do
           subject
-          expect(assigns(:orders).to_a).to contain_exactly(order1, order2)
+          expect(assigns(:collection).to_a).to contain_exactly(order1)
         end
       end
 
@@ -195,7 +196,7 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
 
         it 'filters by orders completed_at in the store timezone' do
           subject
-          expect(assigns(:orders).to_a).to contain_exactly(order1, order2)
+          expect(assigns(:collection).to_a).to contain_exactly(order1, order2)
         end
       end
     end
@@ -206,7 +207,7 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
         payment_state_eq: :balance_due
       } }
 
-      expect(assigns(:orders).to_a).to contain_exactly(order)
+      expect(assigns(:collection).to_a).to contain_exactly(order)
     end
   end
 
