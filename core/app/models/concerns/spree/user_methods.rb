@@ -160,7 +160,7 @@ module Spree
     private
 
     def check_completed_orders
-      raise Spree::Core::DestroyWithOrdersError if !has_spree_role?(Spree::Role::ADMIN_ROLE) && orders.complete.present?
+      raise Spree::Core::DestroyWithOrdersError if !spree_admin? && orders.complete.present?
     end
 
     def clone_billing_address
