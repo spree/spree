@@ -46,6 +46,13 @@
     <% end %>
   </div>
   <div class="card-body">
+    <% if payment.gateway_processing_error_messages.any? %>
+      <div class="alert alert-danger inline-block">
+        <strong><%= Spree.t(:payments_gateway_processing_errors, payment_method_name: payment.payment_method&.name) %>:</strong>
+        <%= payment.gateway_processing_error_messages.join(', ') %>
+      </div>
+    <% end %>
+
     <div class="d-flex">
       <div class="w-50">
         <p class="mb-1"><%= Spree.t(:amount) %>:</p>

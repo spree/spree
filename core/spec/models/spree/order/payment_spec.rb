@@ -139,12 +139,23 @@ module Spree
     context '#process_payments!' do
       let!(:order) { create(:order_with_line_items) }
       let!(:payment) do
-        payment = create(:payment, amount: 10, order: order)
+        payment = create(:payment, amount: 10, order: order, state: payment_state)
         order.payments << payment
         payment
       end
 
-      before { allow(order).to receive_messages unprocessed_payments: [payment], total: 10 }
+      let(:payment_state) { 'checkout' }
+      let(:unprocessed_payments) { [payment] }
+      let(:pending_payments) { [] }
+      let(:total) { 10 }
+
+      before do
+        allow(order).to receive_messages(
+          unprocessed_payments: unprocessed_payments,
+          pending_payments: pending_payments,
+          total: total
+        )
+      end
 
       it 'processes the payments' do
         expect(payment).to receive(:process!)
@@ -156,6 +167,33 @@ module Spree
         allow(order).to receive_messages unprocessed_payments: []
         expect(payment).not_to receive(:process!)
         expect(order.process_payments!).to be_falsey
+      end
+
+      context 'when there are pending payments' do
+        let(:payment_state) { 'pending' }
+        let(:pending_payments) { [payment] }
+        let(:unprocessed_payments) { [] }
+
+        it 'skips processing the payments' do
+          expect(payment).not_to receive(:process!)
+          expect(order.process_payments!).to be_nil
+        end
+
+        context 'when there is other unprocessed payment' do
+          let(:other_payment) { create(:payment, order: order, amount: 5, state: 'checkout') }
+          let(:unprocessed_payments) { [other_payment] }
+
+          before do
+            order.payments << other_payment
+          end
+
+          it 'processes only the other payment' do
+            expect(payment).not_to receive(:process!)
+            expect(other_payment).to receive(:process!)
+
+            expect(order.process_payments!).to be_truthy
+          end
+        end
       end
 
       context 'when a payment raises a GatewayError' do

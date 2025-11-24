@@ -44,6 +44,8 @@ module Spree
         def process_payments_with(method)
           # Don't run if there is nothing to pay.
           return if payment_total >= total
+          # Don't run if there are authorized payments
+          return if pending_payments.any? && unprocessed_payments.empty?
           # Prevent orders from transitioning to complete without a successfully processed payment.
           raise Core::GatewayError, Spree.t(:no_payment_found) if unprocessed_payments.empty?
 
