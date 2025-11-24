@@ -1,20 +1,28 @@
 <% if try_spree_current_user.present? %>
-  <%= dropdown id: dom_id(try_spree_current_user, 'account-dropdown') do %>
-    <%= dropdown_toggle class: 'd-flex align-items-center justify-content-between text-left w-100 pr-0 shadow-none' do %>
-      <%= render_avatar(try_spree_current_user, width: 32, height: 32) %>
-    <% end %>
-    <%= dropdown_menu class: 'dropdown-menu-right', style: 'min-width: 250px;' do %>
-      <div class="d-flex align-items-center p-2 bg-light rounded-lg">
-        <%= render_avatar(try_spree_current_user, width: 34, height: 34) %>
-        <span class="d-none d-lg-inline ml-lg-2">
+  <div class="user-dropdown" id="user-menu">
+    <%= dropdown do %>
+      <%= dropdown_toggle class: 'user-dropdown-button dropdown-toggle' do %>
+        <%= render_avatar(try_spree_current_user, width: 32, height: 32) %>
+        <span class="user-name d-none d-lg-block">
           <% if try_spree_current_user.name.present? %>
-            <%= try_spree_current_user.name&.full %><br />
-            <span class="small text-muted"><%= try_spree_current_user.email %></span>
+            <%= try_spree_current_user.name&.full %>
           <% else %>
-            <%= try_spree_current_user.email %><br />
+            <%= try_spree_current_user.email %>
           <% end %>
         </span>
-      </div>
+      <% end %>
+      <%= dropdown_menu class: 'ml-2', style: 'min-width: 250px;' do %>
+        <div class="d-flex align-items-center p-2 bg-light rounded-lg">
+          <%= render_avatar(try_spree_current_user, width: 34, height: 34) %>
+          <span class="d-flex flex-column ml-2">
+            <% if try_spree_current_user.name.present? %>
+              <%= try_spree_current_user.name&.full %>
+              <small class="text-muted"><%= try_spree_current_user.email %></small>
+            <% else %>
+              <%= try_spree_current_user.email %>
+            <% end %>
+          </span>
+        </div>
 
       <%= render_admin_partials(:user_dropdown_partials) %>
 
@@ -36,10 +44,11 @@
 
       <div class="dropdown-divider"></div>
 
-      <%= button_to spree_admin_logout_path, class: 'dropdown-item mb-0 btn-danger', method: :delete do %>
-        <%= icon('logout', class: "icon icon-logout")  %>
-        <%= Spree.t(:logout) %>
-      <% end if defined?(spree_admin_logout_path) %>
+        <%= button_to spree_admin_logout_path, class: 'dropdown-item mb-0 btn-danger', method: :delete do %>
+          <%= icon('logout', class: "icon icon-logout")  %>
+          <%= Spree.t(:logout) %>
+        <% end if defined?(spree_admin_logout_path) %>
+      <% end %>
     <% end %>
-  <% end %>
+  </div>
 <% end %>

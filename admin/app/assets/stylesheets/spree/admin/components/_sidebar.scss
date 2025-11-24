@@ -54,6 +54,50 @@
   }
 }
 
+// User dropdown in sidebar
+.user-dropdown {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 0.5rem;
+  background-color: $sidebar-bg;
+  width: $sidebar-width;
+  border-right: 1px solid $border-color;
+  border-top: 1px solid $border-color;
+  transition: width 0.1s ease;
+  z-index: 10;
+
+  @media (min-width: 992px) {
+    display: flex;
+  }
+}
+
+.user-dropdown-button {
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: left;
+  gap: 0.5rem;
+  box-shadow: none !important;
+  width: 100%;
+
+  &:hover {
+    background-color: $gray-50;
+  }
+
+  .user-name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.875rem;
+  }
+}
+
 // Toggle button
 .sidebar-toggle-btn {
   width: 32px;
@@ -217,6 +261,7 @@
 body.sidebar-no-transition {
   #main-sidebar,
   .store-dropdown,
+  .user-dropdown,
   #content,
   .sidebar-toggle-btn {
     transition: none !important;
@@ -369,6 +414,41 @@ body.sidebar-collapsed {
     }
   }
 
+  .user-dropdown {
+    width: $sidebar-width-collapsed;
+    overflow: visible;
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
+
+    .dropdown {
+      display: block !important;
+    }
+
+    .user-name {
+      display: none !important;
+    }
+
+    .user-dropdown-button {
+      width: 44px;
+      height: 44px;
+      padding: 0.25rem;
+      justify-content: center;
+      overflow: visible;
+
+      // Hide dropdown toggle arrow
+      &::after {
+        display: none;
+      }
+
+      // Keep avatar visible and centered
+      .avatar {
+        display: flex !important;
+        margin: 0;
+      }
+    }
+  }
+
   #content {
     @media (min-width: 992px) {
       margin-left: $sidebar-width-collapsed + 1px;
@@ -403,6 +483,8 @@ body.sidebar-collapsed {
     transform: translateX(-100%);
     transition: transform 0.1s ease;
     box-shadow: $box-shadow-lg;
+    display: flex;
+    flex-direction: column;
 
     .sidebar-mobile-header {
       display: flex;
@@ -426,6 +508,8 @@ body.sidebar-collapsed {
 
     .sidebar-mobile-content {
       padding-top: 0.5rem;
+      flex: 1;
+      overflow-y: auto;
 
       // Match desktop expanded sidebar styles
       .nav {
@@ -546,6 +630,16 @@ body.sidebar-collapsed {
           width: calc(100% - 1rem) !important;
         }
       }
+    }
+
+    // User dropdown in mobile sidebar
+    .user-dropdown {
+      position: relative;
+      display: flex;
+      width: 100%;
+      border-right: none;
+      border-top: 1px solid $border-color;
+      margin-top: auto;
     }
   }
 
