@@ -1,10 +1,16 @@
-<%= search_form_for [:admin, @search], class: "filter-wrap", data: {controller: "filters dropdown"} do |f| %>
-  <div class="d-flex flex-column flex-lg-row gap-2">
-    <%= render 'spree/admin/shared/filters_search_bar', param: :search_by_title, label: Spree.t(:title) %>
+<%= search_form_for [:admin, @search], class: "filter-wrap", data: {controller: "filters dialog"} do |f| %>
+    <div class="d-flex flex-column flex-lg-row gap-2">
+      <%= render 'spree/admin/shared/filters_search_bar', param: :search_by_title, label: Spree.t(:title) %>
 
-    <%= render 'spree/admin/shared/filters_button' %>
-  </div>
-  <div data-dropdown-target="menu" id="table-filter" class="hidden">
+      <%= button_tag type: 'button', class: 'btn btn-light d-flex align-items-center', data: { action: 'dialog#open' } do %>
+        <%= icon "adjustments", class: "mr-1" %>
+        <%= Spree.t("admin.filters") %>
+      <% end %>
+    </div>
+
+  <dialog class="drawer" data-dialog-target="dialog" id="posts-filters-drawer">
+    <%= drawer_header(Spree.t(:filter), 'dialog#close') %>
+    <div class="drawer-body">
     <div class="form-group">
       <%= f.label :author_id_eq, Spree.t(:author) %>
       <%= f.select :author_id_eq,
@@ -20,8 +26,12 @@
                { data: { filters_target: :input, controller: 'autocomplete-select' } } %>
     </div>
     <%= render_admin_partials(:posts_filters_partials, f: f) %>
-    <%= render 'spree/admin/shared/filter_submit' %>
-  </div>
+    </div>
+    <div class="drawer-footer">
+      <%= drawer_discard_button('dialog#close') %>
+      <%= render 'spree/admin/shared/filter_submit' %>
+    </div>
+  </dialog>
 
   <%= render "spree/admin/shared/filter_badge_template" %>
 
