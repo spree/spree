@@ -42,69 +42,52 @@ You will now be able to access the brands resource at `http://localhost:3000/adm
 
 Now that we've created a complete Admin Dashboard UI for the brand resource, let's add a navigation menu item to the main sidebar so we can access it from the admin dashboard.
 
-### Create Navigation Partial
+Add the following to your `config/initializers/spree.rb` file:
 
-Run the following command to create the navigation partial:
+```ruby
+# config/initializers/spree.rb
+Rails.application.config.after_initialize do
+  # Add Brands to the admin sidebar
+  sidebar_nav = Spree.admin.navigation.sidebar
 
-```bash
-mkdir -p app/views/spree/admin/shared && touch app/views/spree/admin/shared/_brands_nav.html.erb
+  sidebar_nav.add :brands,
+    label: :brands,
+    url: :admin_brands_path,
+    icon: 'award',
+    position: 35,
+    active: -> { controller_name == 'brands' },
+    if: -> { can?(:manage, Spree::Brand) }
+end
 ```
 
-And add the following content:
+This will add a "Brands" link to the admin sidebar between Products (30) and Customers (40).
 
-```erb app/views/spree/admin/shared/_brands_nav.html.erb
-<% if can?(:manage, Spree::Brand) %>
-  <%= nav_item(
-    Spree.t(:brands),
-    spree.admin_brands_path,
-    icon: 'tag',
-    active: controller_name == 'brands'
-  ) %>
-<% end %>
+### Adding to an Existing Submenu
+
+To add "Brands" to the Products submenu instead:
+
+```ruby
+# config/initializers/spree.rb
+Rails.application.config.after_initialize do
+  sidebar_nav = Spree.admin.navigation.sidebar
+  products_nav = sidebar_nav.find(:products)
+
+  if products_nav
+    products_nav.add :brands,
+      label: :brands,
+      url: :admin_brands_path,
+      position: 50,
+      active: -> { controller_name == 'brands' },
+      if: -> { can?(:manage, Spree::Brand) }
+  end
+end
 ```
 
-**Key elements:**
-- Wrap with `can?()` authorization check
-- Use `nav_item` helper for proper formatting
-- Specify icon from [Tabler Icons](https://tabler.io/icons)
-- Define active state based on controller name
-- Use `spree.` prefix for route helpers
+After restarting your server, you'll see the new "Brands" navigation link in the admin sidebar!
 
-### Register Navigation Partial
+<Info>
+For complete navigation API documentation including all available options, submenu creation, badges, and more, see the [Admin Navigation](/developer/admin/navigation) guide.
+</Info>
 
-Add to `config/initializers/spree.rb`:
 
-```ruby config/initializers/spree.rb
-Rails.application.config.spree_admin.store_nav_partials << 'spree/admin/shared/brands_nav'
-```
-
-This adds the navigation item to the main sidebar after Reports and before Storefront.
-
-### Alternative: Add as Submenu Item
-
-To add Brands under the existing Products menu, use the products injection point:
-
-Run the following command to create the products navigation partial:
-
-```bash
-mkdir -p app/views/spree/admin/shared && touch app/views/spree/admin/shared/_brands_products_nav.html.erb
-```
-
-And add the following content:
-
-```erb app/views/spree/admin/shared/_brands_products_nav.html.erb
-<% if can?(:manage, Spree::Brand) %>
-  <%= nav_item(
-    Spree.t(:brands),
-    spree.admin_brands_path,
-    active: controller_name == 'brands'
-  ) %>
-<% end %>
-```
-
-**Register:**
-
-```ruby config/initializers/spree.rb
-Rails.application.config.spree_admin.store_products_nav_partials << 'spree/admin/shared/brands_products_nav'
-```
 
