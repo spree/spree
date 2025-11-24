@@ -2,7 +2,7 @@ require 'spec_helper'
 
 RSpec.describe Spree::Images::SaveFromUrlJob, type: :job do
   let!(:variant) { create(:variant) }
-  let(:external_url) { "https://cdn.example.com/foo/bar_image.png" }
+  let(:external_url) { "https://cdn.example.com/foo/Bar_Image.png" }
   let(:position) { nil }
   let(:external_id) { nil }
   let(:viewable_id) { variant.id }
@@ -33,14 +33,14 @@ RSpec.describe Spree::Images::SaveFromUrlJob, type: :job do
     }
 
     before do
-      allow(URI).to receive(:parse).with(external_url.downcase.strip).and_return(uri_double)
+      allow(URI).to receive(:parse).with(external_url.strip).and_return(uri_double)
       allow(uri_double).to receive(:scheme).and_return('https')
     end
 
     it "downloads and attaches image from the URL" do
       expect { subject }.to change(Spree::Image, :count).by(1)
       expect(image.attachment).to be_attached
-      expect(image.external_url).to eq(external_url.downcase.strip)
+      expect(image.external_url).to eq(external_url.strip)
       expect(image.position).to eq(1)
     end
 
@@ -57,7 +57,7 @@ RSpec.describe Spree::Images::SaveFromUrlJob, type: :job do
       let!(:image) { create(:image, viewable: variant) }
 
       before do
-        image.external_url = external_url.downcase.strip
+        image.external_url = external_url.strip
         image.save!
       end
 
@@ -71,7 +71,7 @@ RSpec.describe Spree::Images::SaveFromUrlJob, type: :job do
     context 'when skip_import? returns true' do
       before do
         allow(image).to receive(:skip_import?).and_return(true)
-        image.external_url = external_url.downcase.strip
+        image.external_url = external_url.strip
         image.save!
       end
 
