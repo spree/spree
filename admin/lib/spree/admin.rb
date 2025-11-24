@@ -34,15 +34,9 @@ module Spree
         Spree::Admin::Engine::Environment
       )
     end
-  end
 
-  module Admin
-    def self.navigation
+    def navigation
       Rails.application.config.spree_admin.navigation
-    end
-
-    def self.navigation=(navigation)
-      Rails.application.config.spree_admin.navigation = navigation
     end
   end
 end
