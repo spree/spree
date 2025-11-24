@@ -22,8 +22,8 @@ describe Spree::CreditCards::Destroy, type: :service do
 
   describe '#invalidate_payments' do
     let!(:completed_order)        { create(:completed_order_with_pending_payment, user_id: order.user_id) }
-    let!(:payment)                { create(:payment, source: credit_card, order: order) }
-    let!(:complete_order_payment) { create(:payment, source: credit_card, order: completed_order, state: 'completed') }
+    let!(:payment)                { create(:payment, source: credit_card, order: order, amount: order.total) }
+    let!(:complete_order_payment) { create(:payment, source: credit_card, order: completed_order, state: 'completed', amount: completed_order.total) }
 
     it 'destroy credit_card and invalidate valid checkout payments' do
       res = subject
