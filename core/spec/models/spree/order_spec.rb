@@ -2005,7 +2005,7 @@ describe Spree::Order, type: :model do
 
     context 'when orders has refunds' do
       let!(:order) { create(:order_ready_to_ship) }
-      let(:refund) { create(:refund, amount: amount, payment: order.payments.first) }
+      let!(:refund) { create(:refund, amount: amount, payment: order.payments.first) }
 
       let!(:credit_card_payment_method) { create(:simple_credit_card_payment_method, stores: [store]) }
       let!(:store_credit) { create(:store_credit, user: order.user, amount: 15) }
@@ -2018,7 +2018,6 @@ describe Spree::Order, type: :model do
         order.payments.first.update_column(:amount, 95)
 
         create(:store_credit_payment, amount: 15, order: order)
-        refund
       end
 
       context 'when sum of refunds is less than max amount which could be refunded' do
@@ -2080,7 +2079,7 @@ describe Spree::Order, type: :model do
 
     context 'when orders has refunds' do
       let!(:order) { create(:order_ready_to_ship) }
-      let(:refund) { create(:refund, amount: amount, payment: order.payments.first) }
+      let!(:refund) { create(:refund, amount: amount, payment: order.payments.first) }
 
       let!(:credit_card_payment_method) { create(:simple_credit_card_payment_method, stores: [store]) }
       let!(:store_credit) { create(:store_credit, user: order.user, amount: 15) }
@@ -2093,7 +2092,6 @@ describe Spree::Order, type: :model do
         order.payments.first.update_column(:amount, 95)
 
         create(:store_credit_payment, amount: 15, order: order)
-        refund
       end
 
       context 'when sum of refunds is less than max amount which could be refunded' do
