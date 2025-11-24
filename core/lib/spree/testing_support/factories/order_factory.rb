@@ -70,10 +70,10 @@ FactoryBot.define do
 
       factory :completed_order_with_totals do
         state { 'complete' }
+        completed_at { Time.current }
 
         after(:create) do |order, evaluator|
           order.refresh_shipment_rates(evaluator.shipping_method_filter)
-          order.update_column(:completed_at, Time.current)
         end
 
         factory :completed_order_with_pending_payment do
@@ -110,13 +110,13 @@ FactoryBot.define do
           end
 
           factory :shipped_order do
+            shipment_state { 'shipped' }
+
             after(:create) do |order|
               order.shipments.each do |shipment|
                 shipment.inventory_units.update_all state: 'shipped'
                 shipment.update_column('state', 'shipped')
               end
-              order.update_column('shipment_state', 'shipped')
-              order.reload
             end
           end
         end
