@@ -119,7 +119,7 @@ describe Spree::Admin::NavigationHelper, type: :helper do
   end
 
   describe '#render_navigation' do
-    let(:nav) { Spree::Admin.navigation.sidebar }
+    let(:nav) { Spree.admin.navigation.sidebar }
 
     before do
       nav.clear
@@ -150,7 +150,7 @@ describe Spree::Admin::NavigationHelper, type: :helper do
   end
 
   describe '#navigation_items' do
-    let(:nav) { Spree::Admin.navigation.sidebar }
+    let(:nav) { Spree.admin.navigation.sidebar }
 
     before do
       nav.clear
