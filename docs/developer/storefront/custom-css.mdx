@@ -1,23 +1,46 @@
 ---
 title: "Custom CSS for Spree Storefront"
 sidebarTitle: "Custom CSS"
-description: "Learn how to add custom CSS stylesheets of your Spree storefront"
+description: "Learn how to add custom CSS stylesheets to your Spree storefront"
 ---
 
-Spree Storefront is built on top of Tailwind CSS. After installing Spree you should find 2 new files:
+Spree Storefront is built on top of [Tailwind CSS 4](https://tailwindcss.com/). After installing Spree you should find a main CSS file:
 
-* [app/assets/stylesheets/application.tailwind.css](https://github.com/spree/spree_starter/blob/main/app/assets/stylesheets/application.tailwind.css) - This is the main CSS file that includes all the Tailwind CSS classes and adds bare-bones styles to the storefront
-* [config/tailwind.config.js](https://github.com/spree/spree_starter/blob/main/config/tailwind.config.js) - This is the Tailwind CSS configuration (we recommend not changing this file, to allow for easier upgrades)
+* [app/assets/tailwind/application.css](https://github.com/spree/spree/blob/main/storefront/lib/generators/spree/storefront/install/templates/application.css) - This is the main CSS file that imports Tailwind and adds storefront styles
 
-You can add or modify styles to the storefront by adding new Tailwind classes to the `application.tailwind.css` but we recommend creating a new CSS file in the `app/assets/stylesheets` directory and then importing it in the `application.tailwind.css` file, eg.
-
-## Importing an additional CSS file
+If you're missing this file, or migrating from a previous version of Spree, you can generate it using the following command:
 
 ```bash
-touch app/assets/stylesheets/my_custom_styles.css
+bin/rails g spree:storefront:install
 ```
 
-in the `my_custom_styles.css` file, add the following:
+<Info>
+  Tailwind 4 uses a CSS-first configuration approach. There's no `tailwind.config.js` file - all configuration is done directly in CSS using the `@theme` directive.
+</Info>
+
+## Basic Structure
+
+Your [application.css](https://github.com/spree/spree/blob/main/storefront/lib/generators/spree/storefront/install/templates/application.css) file should look something like this:
+
+```css app/assets/tailwind/application.css
+@import "tailwindcss";
+
+@theme {
+  /* Theme customizations go here */
+}
+
+/* Your custom styles */
+```
+
+## Importing Additional CSS Files
+
+Create a new CSS file in the `app/assets/stylesheets` directory:
+
+```bash
+touch app/assets/tailwind/my_custom_styles.css
+```
+
+In the `my_custom_styles.css` file, add your styles:
 
 ```css
 .my-custom-class {
@@ -25,27 +48,29 @@ in the `my_custom_styles.css` file, add the following:
 }
 ```
 
-and on top of the `application.tailwind.css` file, add the following:
+Then import it in your `application.css` file:
 
-```css
-@import "my_custom_styles.css";
+```css app/assets/tailwind/application.css
+@import "tailwindcss";
+@import "my_custom_styles.css"; /* [!code ++] */
 ```
 
-## Importing a 3rd party CSS library
+## Importing 3rd Party CSS Libraries
 
-You can import a 3rd party CSS library directly from a CDN in the `application.tailwind.css` file, eg.
+You can import a 3rd party CSS library directly from a CDN:
 
-```css
-@import url("https://esm.sh/swiper@11.2.2/swiper-bundle.min.css");
+```css app/assets/tailwind/application.css
+@import "tailwindcss";
+@import url("https://esm.sh/swiper@11.2.2/swiper-bundle.min.css"); /* [!code ++] */
 ```
 
 ## CSS Variables
 
-Spree Storefront uses a handful of CSS variables that are automatically injected into the body tag. This allows customers to change colors, fonts, etc from the admin dashboard (via page builder).
+Spree Storefront uses CSS variables that are automatically injected into the page. This allows store owners to change colors, fonts, etc. from the admin dashboard via Page Builder.
 
-The default variables should be something like this:
+The default variables look like this:
 
-```css
+```css app/assets/tailwind/application.css
 :root {
   --primary: #000000;
   --accent: #F0EFE9;
@@ -60,7 +85,6 @@ The default variables should be something like this:
   --border-default-width: 1px;
   --border-default-radius: 6px;
 
-  /* --border-default-shadow: 0px 4px 5px rgba(0, 0, 0, 0); */
   --button: #000000;
   --button-rgb: 0, 0, 0;
   --button-text: #ffffff;
@@ -97,3 +121,142 @@ The default variables should be something like this:
 ```
 
 They are defined in the [app/views/themes/default/spree/shared/_css_variables.html.erb](https://github.com/spree/spree/blob/main/storefront/app/views/themes/default/spree/shared/_css_variables.html.erb) file which should be present in your theme.
+
+## Customizing with @theme
+
+Tailwind 4 uses the `@theme` directive for customizations. You can extend or override the default theme:
+
+```css app/assets/tailwind/application.css
+@import "tailwindcss";
+
+@theme {
+  /* Add custom colors using Spree's CSS variables */
+  --color-primary: var(--primary);
+  --color-accent: var(--accent);
+  --color-danger: var(--danger);
+  --color-success: var(--success);
+
+  /* Add custom fonts */
+  --font-display: "Playfair Display", serif;
+
+  /* Add custom spacing */
+  --spacing-18: 4.5rem;
+
+  /* Add custom border radius */
+  --radius-button: var(--button-border-radius);
+}
+```
+
+Then use them in your templates:
+
+```erb
+<div class="bg-primary text-white font-display p-18 rounded-button">
+  Custom styled content
+</div>
+```
+
+## Overriding Section Styles
+
+Each section has CSS classes you can target to customize its appearance:
+
+```css
+/* Section container classes follow the pattern: section-{section-type} */
+.section-image-with-text {
+  /* Custom styles for Image with Text section */
+}
+
+.section-featured-taxon {
+  /* Custom styles for Featured Taxon section */
+}
+
+/* Block-specific styles within sections */
+.image-with-text--heading {
+  font-family: serif;
+}
+
+.rich-text--text {
+  line-height: 1.8;
+}
+```
+
+## Using Tailwind Utility Classes
+
+You can use Tailwind utility classes directly in your templates:
+
+```erb
+<div class="flex items-center gap-4 p-6 bg-accent rounded-lg">
+  <%= product.name %>
+</div>
+```
+
+### Arbitrary Values
+
+Tailwind 4 supports arbitrary values for one-off customizations:
+
+```erb
+<div class="p-[17px] bg-[#1a1a1a] text-[13px] grid-cols-[1fr_2fr]">
+  Custom values
+</div>
+```
+
+### Variant Modifiers
+
+Use variant modifiers for responsive and state-based styles:
+
+```erb
+<div class="p-4 md:p-6 lg:p-8 hover:bg-accent active:scale-95">
+  Responsive and interactive
+</div>
+```
+
+## Adding Custom Utilities
+
+You can add custom utilities using standard CSS with the `@utility` directive:
+
+```css
+@import "tailwindcss";
+
+@utility content-auto {
+  content-visibility: auto;
+}
+
+@utility scrollbar-hidden {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+```
+
+Then use them like any other utility:
+
+```erb
+<div class="content-auto scrollbar-hidden">
+  <!-- Content -->
+</div>
+```
+
+## Adding Custom Variants
+
+Create custom variants with the `@variant` directive:
+
+```css
+@import "tailwindcss";
+
+@variant pointer-coarse (@media (pointer: coarse));
+@variant theme-dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+```
+
+Use them in your templates:
+
+```erb
+<button class="p-2 pointer-coarse:p-4 theme-dark:bg-gray-800">
+  Touch-friendly button
+</button>
+```
+
+## Related Documentation
+
+- [Themes](/developer/storefront/themes) - Theme settings and colors
+- [Custom JavaScript](/developer/storefront/custom-javascript) - Adding interactivity
+- [Tailwind CSS 4 Documentation](https://tailwindcss.com/docs) - Official Tailwind docs
