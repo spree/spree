@@ -1,0 +1,352 @@
+---
+title: Extending Core Models
+description: Learn how to extend Spree's core models to connect Brands with Products
+---
+
+In this tutorial, we'll connect our custom Brand model with Spree's core Product model. This is a common pattern when building features that need to integrate with existing Spree functionality.
+
+<Info>
+  This guide assumes you've completed the [Model](/developer/tutorial/model), [Admin](/developer/tutorial/admin), and [File Uploads](/developer/tutorial/file-uploads) tutorials.
+</Info>
+
+## What We're Building
+
+By the end of this tutorial, you'll have:
+
+- Products associated with Brands
+- A brand selector in the Product admin form
+- Understanding of how to safely extend Spree core models
+
+## Understanding Decorators
+
+When working with Spree, you'll often need to add functionality to existing models like `Spree::Product` or `Spree::Order`. However, you shouldn't modify these files directly because:
+
+1. **Upgrades** - Your changes would be lost when updating Spree
+2. **Maintainability** - It's hard to track what you've customized
+3. **Conflicts** - Direct modifications can conflict with Spree's code
+
+Instead, we use **decorators** - a Ruby pattern that lets you add or modify behavior of existing classes without changing their original source code.
+
+### How Decorators Work
+
+In Ruby, classes are "open" - you can add methods to them at any time. Decorators leverage this by:
+
+1. Creating a module with your new methods
+2. Using `Module#prepend` to inject your module into the class's inheritance chain
+3. Your methods run first, and can call `super` to invoke the original method
+
+```ruby
+# This is the basic pattern
+module Spree
+  module ProductDecorator
+    # Add a new method
+    def my_new_method
+      "Hello from decorator!"
+    end
+
+    # Override an existing method
+    def existing_method
+      # Do something before
+      result = super  # Call the original method
+      # Do something after
+      result
+    end
+  end
+
+  Product.prepend(ProductDecorator)
+end
+```
+
+The key line is `Product.prepend(ProductDecorator)` - this inserts your module at the beginning of the method lookup chain, so your methods are found first.
+
+## Step 1: Create the Migration
+
+First, add a `brand_id` column to the products table:
+
+```bash
+bin/rails g migration AddBrandIdToSpreeProducts brand_id:integer
+```
+
+Edit the migration to add an index (but no foreign key constraint, keeping it optional):
+
+```ruby db/migrate/XXXXXXXXXXXXXX_add_brand_id_to_spree_products.rb
+class AddBrandIdToSpreeProducts < ActiveRecord::Migration[8.0]
+  def change
+    add_column :spree_products, :brand_id, :integer
+    add_index :spree_products, :brand_id
+  end
+end
+```
+
+Run the migration:
+
+```bash
+bin/rails db:migrate
+```
+
+<Info>
+  We intentionally don't add a foreign key constraint. This keeps the association optional and avoids issues if brands are deleted. Spree follows this pattern for flexibility.
+</Info>
+
+## Step 2: Generate the Product Decorator
+
+Spree provides a generator to create decorator files with the correct structure:
+
+```bash
+bin/rails g spree:model_decorator Spree::Product
+```
+
+This creates `app/models/spree/product_decorator.rb`:
+
+```ruby app/models/spree/product_decorator.rb
+module Spree
+  module ProductDecorator
+    def self.prepended(base)
+      # Class-level configurations go here
+    end
+  end
+
+  Product.prepend(ProductDecorator)
+end
+```
+
+## Step 3: Add the Brand Association to Product
+
+Update the decorator to add the `belongs_to` association:
+
+```ruby app/models/spree/product_decorator.rb
+module Spree
+  module ProductDecorator
+    def self.prepended(base)
+      base.belongs_to :brand, class_name: 'Spree::Brand', optional: true
+    end
+  end
+
+  Product.prepend(ProductDecorator)
+end
+```
+
+### Understanding the Code
+
+- `self.prepended(base)` - This callback runs when the module is prepended to a class. The `base` parameter is the class being decorated (`Spree::Product`)
+- `base.belongs_to` - We call class methods on `base` to add associations, validations, scopes, etc.
+- `optional: true` - Products don't require a brand (the `brand_id` can be `NULL`)
+
+## Step 4: Add Products Association to Brand
+
+Now update your Brand model to define the reverse association:
+
+```ruby app/models/spree/brand.rb
+module Spree
+  class Brand < Spree::Base
+    # ... existing code ...
+
+    has_many :products, class_name: 'Spree::Product', dependent: :nullify
+
+    # ... rest of your model ...
+  end
+end
+```
+
+<Info>
+  We use `dependent: :nullify` instead of `dependent: :destroy`. When a brand is deleted, products will have their `brand_id` set to `NULL` rather than being deleted. This is safer for e-commerce data.
+</Info>
+
+## Step 5: Permit the Brand Parameter
+
+For the admin form to save the brand association, we need to permit the `brand_id` parameter.
+
+Add to your Spree initializer:
+
+```ruby config/initializers/spree.rb
+Spree::PermittedAttributes.product_attributes << :brand_id
+```
+
+## Step 6: Add Brand Selector to Product Admin Form
+
+Create a partial to inject the brand selector into the product form. Spree's admin product form has injection points for customization.
+
+Create the partial:
+
+```erb app/views/spree/admin/products/_brand_field.html.erb
+<div class="col-12 col-md-6">
+  <%= f.spree_select :brand_id,
+      Spree::Brand.order(:name).pluck(:name, :id),
+      { include_blank: true, label: Spree.t(:brand) } %>
+</div>
+```
+
+Register this partial to appear in the product form. Add to your initializer:
+
+<Tabs>
+  <Tab title="Spree 5.2+">
+    ```ruby config/initializers/spree.rb
+    Spree.admin.partials.product_form << 'spree/admin/products/brand_field'
+    ```
+  </Tab>
+  <Tab title="Spree 5.1 and below">
+    ```ruby config/initializers/spree.rb
+    Rails.application.config.spree_admin.product_form_partials << 'spree/admin/products/brand_field'
+    ```
+  </Tab>
+</Tabs>
+
+## Step 7: Add Translation
+
+Add the translation for the brand label:
+
+```yaml config/locales/en.yml
+en:
+  spree:
+    brand: Brand
+```
+
+## Testing the Association
+
+Verify everything works in the Rails console:
+
+```ruby
+# Create a brand and product
+brand = Spree::Brand.create!(name: 'Nike')
+product = Spree::Product.first
+product.update!(brand: brand)
+
+# Test associations
+product.brand        # => #<Spree::Brand id: 1, name: "Nike"...>
+brand.products       # => [#<Spree::Product...>]
+brand.products.count # => 1
+```
+
+## Decorator Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Use prepended callback" icon="code">
+    Always use `self.prepended(base)` for class-level additions like associations, validations, and scopes.
+  </Card>
+
+  <Card title="Keep decorators focused" icon="crosshairs">
+    Each decorator should have a single responsibility. Create multiple decorators if needed.
+  </Card>
+
+  <Card title="Call super when overriding" icon="arrow-up">
+    When overriding methods, call `super` to preserve original behavior unless you intentionally want to replace it.
+  </Card>
+
+  <Card title="Test decorated behavior" icon="flask-vial">
+    Write tests specifically for your decorated functionality to catch regressions.
+  </Card>
+</CardGroup>
+
+### Common Decorator Patterns
+
+#### Adding Validations
+
+```ruby
+def self.prepended(base)
+  base.validates :custom_field, presence: true
+end
+```
+
+#### Adding Scopes
+
+```ruby
+def self.prepended(base)
+  base.scope :featured, -> { where(featured: true) }
+end
+```
+
+#### Adding Callbacks
+
+```ruby
+def self.prepended(base)
+  base.before_save :do_something
+end
+
+def do_something
+  # Your callback logic
+end
+```
+
+#### Adding Class Methods
+
+```ruby
+def self.prepended(base)
+  base.extend ClassMethods
+end
+
+module ClassMethods
+  def my_class_method
+    # Class method logic
+  end
+end
+```
+
+## Complete Files
+
+### Product Decorator
+
+```ruby app/models/spree/product_decorator.rb
+module Spree
+  module ProductDecorator
+    def self.prepended(base)
+      base.belongs_to :brand, class_name: 'Spree::Brand', optional: true
+    end
+  end
+
+  Product.prepend(ProductDecorator)
+end
+```
+
+### Brand Model (Updated)
+
+```ruby app/models/spree/brand.rb
+module Spree
+  class Brand < Spree::Base
+    extend FriendlyId
+    friendly_id :slug_candidates, use: %i[slugged]
+
+    has_many :products, class_name: 'Spree::Product', dependent: :nullify
+
+    has_one_attached :logo
+    has_rich_text :description
+
+    validates :name, presence: true
+    validates :slug, presence: true, uniqueness: { scope: spree_base_uniqueness_scope }
+
+    scope :active, -> { where(active: true) }
+
+    def image
+      logo
+    end
+  end
+end
+```
+
+### Spree Initializer Additions
+
+```ruby config/initializers/spree.rb
+# Permit brand_id in product params
+Spree::PermittedAttributes.product_attributes << :brand_id
+```
+
+<Tabs>
+  <Tab title="Spree 5.2+">
+    ```ruby config/initializers/spree.rb
+    # Add brand field to product form
+    Spree.admin.partials.product_form << 'spree/admin/products/brand_field'
+    ```
+  </Tab>
+  <Tab title="Spree 5.1 and below">
+    ```ruby config/initializers/spree.rb
+    # Add brand field to product form
+    Rails.application.config.spree_admin.product_form_partials << 'spree/admin/products/brand_field'
+    ```
+  </Tab>
+</Tabs>
+
+## Related Documentation
+
+- [Model Tutorial](/developer/tutorial/model) - Creating the Brand model
+- [Admin Tutorial](/developer/tutorial/admin) - Building the admin interface
+- [Customization Overview](/developer/customization/overview) - More customization patterns
+- [Products](/developer/core-concepts/products) - Product model documentation

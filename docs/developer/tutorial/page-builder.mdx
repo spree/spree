@@ -130,7 +130,6 @@ module Spree
       TOP_PADDING_DEFAULT = 40
       BOTTOM_PADDING_DEFAULT = 40
 
-      preference :columns, :integer, default: 4
       preference :show_description, :boolean, default: false
 
       def icon_name
@@ -212,59 +211,35 @@ end
 
 ## Step 5: Create Admin Forms
 
+Admin section forms use Spree's Admin Form Builder, which provides helper methods like `spree_select` and `spree_check_box` for consistent styling and functionality.
+
 ### Brand Grid Admin Form
 
 ```erb app/views/spree/admin/page_sections/forms/_brand_grid.html.erb
-<div class="form-group">
-  <%= f.label :preferred_columns, Spree.t(:columns) %>
-  <%= f.select :preferred_columns,
-      options_for_select([2, 3, 4, 5, 6], @page_section.preferred_columns),
-      {},
-      { class: 'custom-select', data: { action: 'auto-submit#submit' } } %>
-</div>
-
-<div class="custom-control custom-checkbox mb-3">
-  <%= f.check_box :preferred_show_description,
-      class: 'custom-control-input',
-      data: { action: 'auto-submit#submit' } %>
-  <%= f.label :preferred_show_description,
-      Spree.t(:show_description),
-      class: 'custom-control-label' %>
-</div>
+<%= f.spree_check_box :preferred_show_description,
+    label: Spree.t(:show_description),
+    data: { action: 'auto-submit#submit' } %>
 ```
 
 ### Brand Banner Admin Form
 
 ```erb app/views/spree/admin/page_sections/forms/_brand_banner.html.erb
-<div class="custom-control custom-checkbox mb-3">
-  <%= f.check_box :preferred_show_logo,
-      class: 'custom-control-input',
-      data: { action: 'auto-submit#submit' } %>
-  <%= f.label :preferred_show_logo,
-      Spree.t(:show_logo),
-      class: 'custom-control-label' %>
-</div>
+<%= f.spree_check_box :preferred_show_logo,
+    label: Spree.t(:show_logo),
+    data: { action: 'auto-submit#submit' } %>
 
-<div class="custom-control custom-checkbox mb-3">
-  <%= f.check_box :preferred_show_description,
-      class: 'custom-control-input',
-      data: { action: 'auto-submit#submit' } %>
-  <%= f.label :preferred_show_description,
-      Spree.t(:show_description),
-      class: 'custom-control-label' %>
-</div>
+<%= f.spree_check_box :preferred_show_description,
+    label: Spree.t(:show_description),
+    data: { action: 'auto-submit#submit' } %>
 
 <% content_for(:design_tab) do %>
-  <div class="form-group">
-    <%= f.label :preferred_layout, Spree.t(:layout) %>
-    <%= f.select :preferred_layout,
-        options_for_select([
-          [Spree.t(:horizontal), 'horizontal'],
-          [Spree.t(:vertical), 'vertical']
-        ], @page_section.preferred_layout),
-        {},
-        { class: 'custom-select', data: { action: 'auto-submit#submit' } } %>
-  </div>
+  <%= f.spree_select :preferred_layout,
+      options_for_select([
+        [Spree.t(:horizontal), 'horizontal'],
+        [Spree.t(:vertical), 'vertical']
+      ], @page_section.preferred_layout),
+      { label: Spree.t(:layout) },
+      { data: { action: 'auto-submit#submit' } } %>
   <hr />
 <% end %>
 ```
@@ -279,7 +254,7 @@ end
     <div class="page-container">
       <% brands = section.brands %>
       <% if brands.any? %>
-        <div class="grid grid-cols-2 md:grid-cols-<%= section.preferred_columns %> gap-6">
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           <% brands.each do |brand| %>
             <%= link_to spree.brand_path(brand),
                 class: 'block group',
@@ -437,7 +412,6 @@ en:
     brands: Brands
     no_brands_found: No brands found.
     products_by_brand: "Products by %{brand}"
-    columns: Columns
     show_description: Show description
     show_logo: Show logo
     layout: Layout

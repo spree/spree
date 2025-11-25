@@ -14,9 +14,7 @@ To fix this we need to convert all `class_eval` decorators to modules and use [M
 
 Example of an old decorator:
 
-`app/models/spree/order_decorator.rb`
-
-```ruby
+```ruby app/models/spree/order_decorator.rb
 Spree::Order.class_eval do
   has_many :new_custom_model
 
@@ -28,9 +26,7 @@ end
 
 the same decorator in the new notation:
 
-`app/models/your_extension_name/order_decorator.rb`
-
-```ruby
+```ruby app/models/your_extension_name/order_decorator.rb
 module YourExtensionName::OrderDecorator
   def self.prepended(base)
     base.has_many :new_custom_model

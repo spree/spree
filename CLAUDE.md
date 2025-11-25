@@ -213,7 +213,7 @@ let(:variant) { build(:variant, product: product) }
 
 ```ruby
 # ✅ Proper migration structure
-class CreateSpreeMetafields < ActiveRecord::Migration[7.0]
+class CreateSpreeMetafields < ActiveRecord::Migration[8.0]
   def change
     create_table :spree_metafields do |t|
       t.string :key, null: false

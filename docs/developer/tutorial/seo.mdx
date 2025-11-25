@@ -40,13 +40,13 @@ Add FriendlyId to generate SEO-friendly URLs automatically:
 ```ruby app/models/spree/brand.rb
 module Spree
   class Brand < Spree::Base
-    extend FriendlyId
+    extend FriendlyId # [!code ++:2]
     friendly_id :slug_candidates, use: %i[slugged]
 
     # ... other code ...
 
     validates :name, presence: true
-    validates :slug, presence: true, uniqueness: { scope: spree_base_uniqueness_scope }
+    validates :slug, presence: true, uniqueness: { scope: spree_base_uniqueness_scope } # [!code ++]
   end
 end
 ```
@@ -69,24 +69,24 @@ This generates the slug from the name. If the name is taken, it appends a UUID.
 Spree provides a reusable SEO partial that handles slug, meta title, and meta description with a live search preview. Update your admin form:
 
 ```erb app/views/spree/admin/brands/_form.html.erb
-<div class="row" data-controller="slug-form seo-form">
+<div class="row" data-controller="slug-form seo-form"> <!-- [!code ++] -->
   <div class="col-lg-8">
     <div class="card mb-4">
       <div class="card-body">
         <%= f.spree_text_field :name,
             required: true,
-            data: {
+            data: { <!-- [!code ++:4] -->
               seo_form_target: 'sourceTitleInput',
               slug_form_target: 'name',
               action: 'slug-form#updateUrlFromName'
             } %>
         <%= f.spree_rich_text_area :description,
-            data: { seo_form_target: 'sourceDescriptionInput' } %>
+            data: { seo_form_target: 'sourceDescriptionInput' } %> <!-- [!code ++] -->
       </div>
     </div>
   </div>
 
-  <div class="col-lg-4">
+  <div class="col-lg-4"> <!-- [!code ++:11] -->
     <%= render 'spree/admin/shared/seo',
           f: f,
           title: @brand.name,
@@ -111,7 +111,12 @@ Don't forget to permit the SEO attributes in your controller:
 
 ```ruby app/controllers/spree/admin/brands_controller.rb
 def permitted_resource_params
-  params.require(:brand).permit(:name, :description, :slug, :meta_title, :meta_description)
+  params.require(:brand).permit(
+    :name, 
+    :description, 
+    :slug, # [!code ++:3]
+    :meta_title, 
+    :meta_description)
 end
 ```
 
