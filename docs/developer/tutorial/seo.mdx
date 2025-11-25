@@ -29,6 +29,9 @@ Add columns for slug and meta fields:
 
 ```bash
 bin/rails g migration AddSeoFieldsToSpreeBrands slug:string:uniq meta_title:string meta_description:text
+```
+
+```bash
 bin/rails db:migrate
 ```
 

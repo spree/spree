@@ -27,10 +27,6 @@
   "icons": {
     "library": "lucide"
   },
-  "banner": {
-    "content": "🚀 Spree 5.2 is now live! See our [changelog](/changelog) for details.",
-    "dismissible": true
-  },
   "redirects": [
     {
       "source": "/developer/storefront/images",
