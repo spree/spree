@@ -30,7 +30,7 @@ This will create the following files:
 
 It will also automatically add the following routes to your `config/routes.rb` file:
 
-```ruby
+```ruby config/routes.rb
 namespace :admin do
   resources :brands
 end
@@ -44,8 +44,7 @@ Now that we've created a complete Admin Dashboard UI for the brand resource, let
 
 Add the following to your `config/initializers/spree.rb` file:
 
-```ruby
-# config/initializers/spree.rb
+```ruby config/initializers/spree.rb
 Rails.application.config.after_initialize do
   # Add Brands to the admin sidebar
   sidebar_nav = Spree.admin.navigation.sidebar
@@ -66,8 +65,7 @@ This will add a "Brands" link to the admin sidebar between Products (30) and Cus
 
 To add "Brands" to the Products submenu instead:
 
-```ruby
-# config/initializers/spree.rb
+```ruby config/initializers/spree.rb
 Rails.application.config.after_initialize do
   sidebar_nav = Spree.admin.navigation.sidebar
   products_nav = sidebar_nav.find(:products)
@@ -88,6 +86,3 @@ After restarting your server, you'll see the new "Brands" navigation link in the
 <Info>
 For complete navigation API documentation including all available options, submenu creation, badges, and more, see the [Admin Navigation](/developer/admin/navigation) guide.
 </Info>
-
-
-

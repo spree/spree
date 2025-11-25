@@ -100,6 +100,21 @@
                 ]
               },
               {
+                "group": "Admin Dashboard",
+                "icon": "gauge",
+                "pages": [
+                  "developer/admin/admin",
+                  "developer/admin/extending-ui",
+                  "developer/admin/navigation",
+                  "developer/admin/form-builder",
+                  "developer/admin/authentication",
+                  "developer/admin/permissions",
+                  "developer/admin/helper-methods",
+                  "developer/admin/custom-javascript",
+                  "developer/admin/custom-css"
+                ]
+              },
+              {
                 "group": "Storefront",
                 "icon": "store",
                 "pages": [
@@ -113,24 +128,6 @@
                   "developer/storefront/helper-methods",
                   "developer/storefront/custom-javascript",
                   "developer/storefront/custom-css"
-                ]
-              },
-              {
-                "group": "Admin Dashboard",
-                "icon": "gauge",
-                "pages": [
-                  "developer/admin/admin",
-                  "developer/admin/form-builder",
-                  "developer/admin/extending-ui",
-                  "developer/admin/stimulus-controllers",
-                  "developer/admin/turbo-patterns",
-                  "developer/admin/common-patterns",
-                  "developer/admin/navigation",
-                  "developer/admin/authentication",
-                  "developer/admin/permissions",
-                  "developer/admin/helper-methods",
-                  "developer/admin/custom-javascript",
-                  "developer/admin/custom-css"
                 ]
               },
               {

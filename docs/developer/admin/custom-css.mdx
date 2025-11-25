@@ -42,15 +42,15 @@ Besides SASS you can still include standard CSS files. To do so:
     touch app/views/spree/admin/shared/custom_spree_admin_stylesheets.html.erb
     ```
 
-4. Use standard Ruby on Rails [stylesheet_link_tag](https://api.rubyonrails.org/v7.2/classes/ActionView/Helpers/AssetTagHelper.html#method-i-stylesheet_link_tag)
+4. Use standard Ruby on Rails [stylesheet_link_tag](https://api.rubyonrails.org/v8.0/classes/ActionView/Helpers/AssetTagHelper.html#method-i-stylesheet_link_tag)
 
-    ```erb
+    ```erb app/views/spree/admin/shared/custom_spree_admin_stylesheets.html.erb
     <%= stylesheet_link_tag 'custom_spree_admin' %>
     ```
 
 5. Register this template in the Spree initializer (`config/initializers/spree.rb`):
 
-    ```ruby
+    ```ruby config/initializers/spree.rb
     Rails.application.config.spree_admin.head_partials << 'spree/admin/shared/custom_spree_admin_stylesheets'
     ```
 

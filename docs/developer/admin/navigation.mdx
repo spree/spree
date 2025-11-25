@@ -13,8 +13,7 @@ Spree Admin Dashboard provides a flexible navigation system that allows you to e
 
 Add navigation items in your `config/initializers/spree.rb` file:
 
-```ruby
-# config/initializers/spree.rb
+```ruby config/initializers/spree.rb
 Rails.application.config.after_initialize do
   sidebar_nav = Spree.admin.navigation.sidebar
 
@@ -131,8 +130,7 @@ custom_tabs = Spree.admin.navigation.register_context(:custom_tabs)
 
 You can create custom tab contexts for your own admin pages using `register_context`:
 
-```ruby
-# config/initializers/spree.rb
+```ruby config/initializers/spree.rb
 Rails.application.config.after_initialize do
   # Register custom tab navigation for your brands page
   brand_tabs = Spree.admin.navigation.register_context(:brand_tabs)
@@ -153,8 +151,7 @@ end
 
 Then render the tabs in your view using the `render_tab_navigation` helper:
 
-```erb
-<!-- app/views/spree/admin/brands/index.html.erb -->
+```erb app/views/spree/admin/brands/index.html.erb
 <%= render_tab_navigation(:brand_tabs) %>
 ```
 
@@ -184,7 +181,7 @@ Spree.admin.navigation.context?(:brand_tabs)
 
 Add child items using a block:
 
-```ruby
+```ruby config/initializers/spree.rb
 sidebar_nav.add :brands,
   label: :brands,
   url: :admin_brands_path,
@@ -533,7 +530,7 @@ touch app/views/spree/admin/shared/_inventory_nav.html.erb
 
 #### Step 2: Add Navigation Code
 
-```erb
+```erb app/views/spree/admin/shared/_inventory_nav.html.erb
 <% if can?(:manage, Spree::Inventory) %>
   <%= nav_item(
     Spree.t(:inventory),
@@ -552,7 +549,7 @@ Always wrap your navigation items with authorization checks using `can?()` to en
 
 Add this to your `config/initializers/spree.rb`:
 
-```ruby
+```ruby config/initializers/spree.rb
 Rails.application.config.spree_admin.store_nav_partials << 'spree/admin/shared/inventory_nav'
 ```
 
@@ -560,7 +557,7 @@ Rails.application.config.spree_admin.store_nav_partials << 'spree/admin/shared/i
 
 In your `config/locales/en.yml`:
 
-```yaml
+```yaml config/locales/en.yml
 en:
   spree:
     inventory: "Inventory"
@@ -679,7 +676,7 @@ To add an item to an existing submenu (e.g., Products), use the appropriate inje
 
 **Register in** `config/initializers/spree.rb`:
 
-```ruby
+```ruby config/initializers/spree.rb
 Rails.application.config.spree_admin.store_products_nav_partials << 'spree/admin/shared/custom_products_nav'
 ```
 
@@ -696,7 +693,7 @@ When the admin is in "Settings mode" (the dedicated settings view), use the `set
 
 Register with:
 
-```ruby
+```ruby config/initializers/spree.rb
 Rails.application.config.spree_admin.settings_nav_partials << 'spree/admin/shared/custom_settings_nav'
 ```
 
