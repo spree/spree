@@ -550,7 +550,9 @@ module Spree
       super || variants_including_master.with_deleted.find_by(is_master: true)
     end
 
-    def brand
+    # Returns the brand taxon for the product
+    # @return [Spree::Taxon]
+    def brand_taxon
       @brand ||= if Spree.use_translations?
                    taxons.joins(:taxonomy).
                      join_translation_table(Taxonomy).
@@ -565,6 +567,13 @@ module Spree
     end
 
     def category
+      Spree::Deprecation.warn('Spree::Product#category is deprecated and will be removed in Spree 6. Please use Spree::Product#category_taxon instead.')
+      category_taxon
+    end
+
+    # Returns the category taxon for the product
+    # @return [Spree::Taxon]
+    def category_taxon
       @category ||= if Spree.use_translations?
                       taxons.joins(:taxonomy).
                         join_translation_table(Taxonomy).
