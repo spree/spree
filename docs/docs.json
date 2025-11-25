@@ -77,7 +77,8 @@
                   "developer/tutorial/rich-text",
                   "developer/tutorial/file-uploads",
                   "developer/tutorial/storefront",
-                  "developer/tutorial/seo-urls",
+                  "developer/tutorial/seo",
+                  "developer/tutorial/page-builder",
                   "developer/tutorial/api",
                   "developer/tutorial/testing"
                 ]

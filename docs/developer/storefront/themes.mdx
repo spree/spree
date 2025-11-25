@@ -22,8 +22,8 @@ This command will create a new theme called `my_theme` in the `app/views/themes`
 
 It will also add a line in your `config/initializers/spree.rb` file to load the new theme.
 
-```ruby
-Rails.application.config.spree.themes << Spree::Themes::MyTheme
+```ruby config/initializers/spree.rb
+Spree.page_builder.themes << Spree::Themes::MyTheme
 ```
 
 Now you can go to **Admin Dashboard -> Storefront -> Themes**, you should see a new section **Add new theme** with your theme name. Click **Add** button to activate the theme.
