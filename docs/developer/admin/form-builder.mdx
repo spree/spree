@@ -120,7 +120,7 @@ Creates a textarea with auto-grow functionality (expands as you type).
 
 **Options:**
 - `:rows` - Number of visible rows (default: 5)
-- `:data` - Data attributes (default includes auto-grow controller)
+- `:data` - Data attributes (default includes auto-grow Stimulus controller)
 - All standard Rails `text_area` options
 - All common FormBuilder options
 
@@ -154,19 +154,17 @@ Creates a select dropdown field.
     {},
     {} %>
 
-<%= f.spree_select :category_id,
-    Category.pluck(:name, :id),
-    { include_blank: 'Select a category' },
-    {} %>
+<%= f.spree_select :tax_category_id,
+    Spree::Category.pluck(:name, :id),
+    { include_blank: 'Select Tax Category' } %>
 ```
 
 **With autocomplete:**
 
 ```erb
 <%= f.spree_select :country_id,
-    Country.pluck(:name, :id),
-    { autocomplete: true },
-    { data: { controller: 'autocomplete-select' } } %>
+    Spree::Country.pluck(:name, :id),
+    { autocomplete: true } %>
 ```
 
 **Parameters:**
@@ -254,6 +252,50 @@ Creates a styled radio button with custom controls.
 <Warning>
   Radio buttons require unique IDs. Always specify the `:id` option.
 </Warning>
+
+## File Upload Methods
+
+### spree_file_field
+
+Creates a file upload field with image preview, drag-and-drop support, and optional cropping functionality.
+
+```erb
+<%= f.spree_file_field :image %>
+<%= f.spree_file_field :logo, width: 240, height: 240 %>
+<%= f.spree_file_field :avatar, crop: true %>
+<%= f.spree_file_field :featured_image, width: 1200, height: 600, crop: true %>
+```
+
+**Options:**
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `:width` | Integer | 300 | Width of the image preview in pixels |
+| `:height` | Integer | 300 | Height of the image preview in pixels |
+| `:crop` | Boolean | `false` | Enable image cropping with recommended size indicator |
+| `:auto_submit` | Boolean | `false` | Automatically submit form when file is selected |
+| `:can_delete` | Boolean | `true` | Show delete button for removing uploaded image |
+| `:css` | String | `''` | Additional CSS classes for the upload placeholder area |
+
+All common FormBuilder options (`:label`, `:required`, `:help`, `:help_bubble`) are also supported.
+
+**Features:**
+- Drag-and-drop file upload
+- Image preview after upload
+- Optional image cropping with size recommendations
+- Delete button to remove uploaded files
+- Uses Active Storage direct upload
+
+**Example with all options:**
+
+```erb
+<%= f.spree_file_field :social_image,
+    width: 1200,
+    height: 630,
+    crop: true,
+    label: 'Preview image',
+    help_bubble: "This image will be used when shared on social media" %>
+```
 
 ## Complete Form Example
 
