@@ -44,7 +44,10 @@ Let's say you want to add a new footer to the admin dashboard. You'll need to ge
         Rails.application.config.spree_admin.body_end << 'spree/admin/shared/additional_footer_partials'
         ```
 
-        For older versions of Spree you need to add `_partials` suffix for all injection points.
+        <Warning>
+          For older versions of Spree you need to add `_partials` suffix for all injection points, 
+          eg. `body_end_partials` instead of `body_end`.
+        </Warning>
       </Tab>
     </Tabs>
 
@@ -53,7 +56,7 @@ Let's say you want to add a new footer to the admin dashboard. You'll need to ge
     </Info>
 
     <Info>
-      Remember to use the correct path to your partial and skip the `_` prefix.
+      Remember to use the correct path to your template file and skip the `_` prefix.
     </Info>
 
 5. Restart your web server and you should see your new footer.
@@ -70,7 +73,57 @@ Let's say you want to add a new footer to the admin dashboard. You'll need to ge
   To summarize, we're injecting our code into the `body_end` array. This is a list of partials that will be rendered at the end of the body tag (before the closing `</body>` tag). The order of the partials in the array is the order in which they will be rendered.
 </Hint>
 
-## Admin Dashboard injection points
+## Partials API
+
+The `Spree.admin.partials` object provides a clean API for registering partials to injection points. This API is available in Spree 5.2 and later.
+
+### Accessing Available Injection Points
+
+You can list all available injection points programmatically:
+
+```ruby
+# In Rails console or initializer
+Spree.admin.partials.keys
+# => ["head", "body_start", "body_end", "dashboard_analytics", "product_form", ...]
+```
+
+### Registering Partials
+
+Each injection point is an array that you can append to:
+
+```ruby
+# config/initializers/spree.rb
+
+# Add a single partial
+Spree.admin.partials.product_form << 'spree/admin/products/erp_section'
+
+# Add multiple partials
+Spree.admin.partials.dashboard_sidebar << 'spree/admin/dashboard/analytics_widget'
+Spree.admin.partials.dashboard_sidebar << 'spree/admin/dashboard/inventory_widget'
+```
+
+### Viewing Registered Partials
+
+To see which partials are registered for a specific injection point:
+
+```ruby
+Spree.admin.partials.product_form
+# => ["spree/admin/products/erp_section"]
+```
+
+### Replacing All Partials
+
+You can also replace all partials for an injection point:
+
+```ruby
+Spree.admin.partials.product_form = ['my/custom/partial']
+```
+
+<Warning>
+  Replacing all partials will remove any partials registered by other extensions. Use this with caution.
+</Warning>
+
+## List of all injection points
 
 Here's a list of all places you can inject your custom code:
 
@@ -103,7 +156,7 @@ Here's a list of all places you can inject your custom code:
     `dashboard_analytics`
 
     <Frame>
-      <img src="/images/developer/admin/dashboard_analytics.png" />
+      <img src="/images/developer/admin/dashboard_analytics_partials.png" />
     </Frame>
 
     Injects code into the dashboard analytics section, eg.
@@ -124,7 +177,7 @@ Here's a list of all places you can inject your custom code:
     `dashboard_sidebar`
 
     <Frame>
-      <img src="/images/developer/admin/dashboard_sidebar.png" />
+      <img src="/images/developer/admin/dashboard_sidebar_partials.png" />
     </Frame>
 
     Injects code into the dashboard sidebar, eg.
@@ -176,20 +229,19 @@ Here's a list of all places you can inject your custom code:
 
     #### Variables
 
-    <ParamField path="f" type="ActionView::Helpers::FormBuilder">
-      The [ActionView::Helpers::FormBuilder](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html) object.
+    <ParamField path="f" type="Spree::Admin::FormBuilder">
+      The [Spree::Admin::FormBuilder](/developer/admin/form-builder) object.
     </ParamField>
 
-    Injects code into the orders list filters, to add custom filters. 
+    Injects code into the orders list filters, to add custom filters.
     This partial has access to the `f` variable, which is the form builder for the filters, eg.
 
     ```erb
-    <%= f.text_field :q_number_cont, class: "form-control", data: { filters_target: :input } %>
+    <%= f.spree_text_field :q_number_cont, data: { filters_target: :input } %>
     ```
 
     <Tip>
-    * `q_number_cont` - The name of the filter field. For filtering we're using [ransack](https://activerecord-hackery.github.io/ransack/) gem, so the name of the filter field is the name of the attribute we're filtering by. Learn more about [ransack search syntax](https://activerecord-hackery.github.io/ransack/getting-started/search-matches/).
-    * `form-control` - A bootstrap class for styling the input field.
+    * `q_number_cont` - The name of the filter field. For filtering we're using [ransack](/developer/core-concepts/search-filtering) gem, so the name of the filter field is the name of the attribute we're filtering by.
     * `data: { filters_target: :input }` - Needed for the [Stimulus Filters controller](https://github.com/spree/spree/blob/main/admin/app/javascript/spree/admin/controllers/filters_controller.js) to work.
     </Tip>
   </Accordion>
@@ -198,7 +250,7 @@ Here's a list of all places you can inject your custom code:
     `order_page_dropdown`
 
     <Frame>
-      <img src="/images/developer/admin/order_page_dropdown.png" />
+      <img src="/images/developer/admin/order_page_dropdown_partials.png" />
     </Frame>
 
     #### Variables
@@ -225,7 +277,7 @@ Here's a list of all places you can inject your custom code:
     `order_page_header`
 
     <Frame>
-      <img src="/images/developer/admin/order_page_header.png" />
+      <img src="/images/developer/admin/order_page_header_partials.png" />
     </Frame>
 
     #### Variables
@@ -273,7 +325,7 @@ Here's a list of all places you can inject your custom code:
     `order_page_body`
 
     <Frame>
-      <img src="/images/developer/admin/order_page_body.png" />
+      <img src="/images/developer/admin/order_page_body_partials.png" />
     </Frame>
 
     #### Variables
@@ -313,7 +365,7 @@ Here's a list of all places you can inject your custom code:
     `order_page_sidebar`
 
     <Frame>
-      <img src="/images/developer/admin/order_page_sidebar.png" />
+      <img src="/images/developer/admin/order_page_sidebar_partials.png" />
     </Frame>
 
     #### Variables
@@ -403,18 +455,21 @@ Here's a list of all places you can inject your custom code:
 
     #### Variables
 
-    <ParamField path="f" type="ActionView::Helpers::FormBuilder">
-      The [ActionView::Helpers::FormBuilder](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html) object.
+    <ParamField path="f" type="Spree::Admin::FormBuilder">
+      The [Spree::Admin::FormBuilder](/developer/admin/form-builder) object.
     </ParamField>
 
     Injects code into the stock items list filters.
 
     ```erb
-    <div class="form-group">
-      <%= f.label :count_on_hand_lt, "Stock Below" %>
-      <%= f.number_field :count_on_hand_lt, class: "form-control", data: { filters_target: :input } %>
-    </div>
+    <%= f.spree_number_field :count_on_hand_lt,
+        label: "Stock Below",
+        data: { filters_target: :input } %>
     ```
+
+    <Tip>
+    Use [ransack](/developer/core-concepts/search-filtering) search syntax for filter field names (e.g., `_lt` for "less than").
+    </Tip>
   </Accordion>
 </AccordionGroup>
 
@@ -552,18 +607,22 @@ Here's a list of all places you can inject your custom code:
 
     #### Variables
 
-    <ParamField path="f" type="ActionView::Helpers::FormBuilder">
-      The [ActionView::Helpers::FormBuilder](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html) object.
+    <ParamField path="f" type="Spree::Admin::FormBuilder">
+      The [Spree::Admin::FormBuilder](/developer/admin/form-builder) object.
     </ParamField>
 
     Injects code into the customer returns list filters.
 
     ```erb
-    <div class="form-group">
-      <%= f.label :reason_eq, "Return Reason" %>
-      <%= f.select :reason_eq, options_for_select([["Damaged", "damaged"], ["Wrong Item", "wrong_item"]]), { include_blank: true }, { class: "custom-select", data: { filters_target: :input } } %>
-    </div>
+    <%= f.spree_select :reason_eq,
+        [["Damaged", "damaged"], ["Wrong Item", "wrong_item"]],
+        { include_blank: true, label: "Return Reason" },
+        { data: { filters_target: :input } } %>
     ```
+
+    <Tip>
+    Use [ransack](/developer/core-concepts/search-filtering) search syntax for filter field names (e.g., `_eq` for "equals").
+    </Tip>
   </Accordion>
 </AccordionGroup>
 
@@ -649,18 +708,22 @@ Here's a list of all places you can inject your custom code:
 
     #### Variables
 
-    <ParamField path="f" type="ActionView::Helpers::FormBuilder">
-      The [ActionView::Helpers::FormBuilder](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html) object.
+    <ParamField path="f" type="Spree::Admin::FormBuilder">
+      The [Spree::Admin::FormBuilder](/developer/admin/form-builder) object.
     </ParamField>
 
     Injects code into the gift cards list filters.
 
     ```erb
-    <div class="form-group">
-      <%= f.label :balance_gt, "Balance Greater Than" %>
-      <%= f.number_field :balance_gt, step: 0.01, class: "form-control", data: { filters_target: :input } %>
-    </div>
+    <%= f.spree_number_field :balance_gt,
+        label: "Balance Greater Than",
+        step: 0.01,
+        data: { filters_target: :input } %>
     ```
+
+    <Tip>
+    Use [ransack](/developer/core-concepts/search-filtering) search syntax for filter field names (e.g., `_gt` for "greater than").
+    </Tip>
   </Accordion>
 </AccordionGroup>
 
@@ -876,18 +939,22 @@ Here's a list of all places you can inject your custom code:
 
     #### Variables
 
-    <ParamField path="f" type="ActionView::Helpers::FormBuilder">
-      The [ActionView::Helpers::FormBuilder](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html) object.
+    <ParamField path="f" type="Spree::Admin::FormBuilder">
+      The [Spree::Admin::FormBuilder](/developer/admin/form-builder) object.
     </ParamField>
 
     Injects code into the posts list filters.
 
     ```erb
-    <div class="form-group">
-      <%= f.label :published_eq, "Publication Status" %>
-      <%= f.select :published_eq, options_for_select([["Published", true], ["Draft", false]]), { include_blank: true }, { class: "custom-select", data: { filters_target: :input } } %>
-    </div>
+    <%= f.spree_select :published_eq,
+        [["Published", true], ["Draft", false]],
+        { include_blank: true, label: "Publication Status" },
+        { data: { filters_target: :input } } %>
     ```
+
+    <Tip>
+    Use [ransack](/developer/core-concepts/search-filtering) search syntax for filter field names.
+    </Tip>
   </Accordion>
 </AccordionGroup>
 
@@ -921,18 +988,22 @@ Here's a list of all places you can inject your custom code:
 
     #### Variables
 
-    <ParamField path="f" type="ActionView::Helpers::FormBuilder">
-      The [ActionView::Helpers::FormBuilder](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html) object.
+    <ParamField path="f" type="Spree::Admin::FormBuilder">
+      The [Spree::Admin::FormBuilder](/developer/admin/form-builder) object.
     </ParamField>
 
     Injects code into the promotions list filters.
 
     ```erb
-    <div class="form-group">
-      <%= f.label :active_eq, "Active Status" %>
-      <%= f.select :active_eq, options_for_select([["Active", true], ["Inactive", false]]), { include_blank: true }, { class: "custom-select", data: { filters_target: :input } } %>
-    </div>
+    <%= f.spree_select :active_eq,
+        [["Active", true], ["Inactive", false]],
+        { include_blank: true, label: "Active Status" },
+        { data: { filters_target: :input } } %>
     ```
+
+    <Tip>
+    Use [ransack](/developer/core-concepts/search-filtering) search syntax for filter field names.
+    </Tip>
   </Accordion>
 </AccordionGroup>
 
@@ -1226,18 +1297,22 @@ Here's a list of all places you can inject your custom code:
 
     #### Variables
 
-    <ParamField path="f" type="ActionView::Helpers::FormBuilder">
-      The [ActionView::Helpers::FormBuilder](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html) object.
+    <ParamField path="f" type="Spree::Admin::FormBuilder">
+      The [Spree::Admin::FormBuilder](/developer/admin/form-builder) object.
     </ParamField>
 
     Injects code into the stock transfers list filters.
 
     ```erb
-    <div class="form-group">
-      <%= f.label :status_eq, "Transfer Status" %>
-      <%= f.select :status_eq, options_for_select([["Pending", "pending"], ["Completed", "completed"]]), { include_blank: true }, { class: "custom-select", data: { filters_target: :input } } %>
-    </div>
+    <%= f.spree_select :status_eq,
+        [["Pending", "pending"], ["Completed", "completed"]],
+        { include_blank: true, label: "Transfer Status" },
+        { data: { filters_target: :input } } %>
     ```
+
+    <Tip>
+    Use [ransack](/developer/core-concepts/search-filtering) search syntax for filter field names.
+    </Tip>
   </Accordion>
 </AccordionGroup>
 
@@ -1483,8 +1558,8 @@ Here's a list of all places you can inject your custom code:
 
     #### Variables
 
-    <ParamField path="f" type="ActionView::Helpers::FormBuilder">
-      The [ActionView::Helpers::FormBuilder](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html) object.
+    <ParamField path="f" type="Spree::Admin::FormBuilder">
+      The [Spree::Admin::FormBuilder](/developer/admin/form-builder) object.
     </ParamField>
 
     Injects code into the products list filters. This partial has access to the `f` variable, which is the form builder for the filters.
@@ -1492,12 +1567,11 @@ Here's a list of all places you can inject your custom code:
     To add a new filter field, you can use the following code:
 
     ```erb
-    <%= f.text_field :q_name_cont, class: "form-control", data: { filters_target: :input } %>
+    <%= f.spree_text_field :q_name_cont, data: { filters_target: :input } %>
     ```
 
     <Tip>
-    * `q_name_cont` is the name of the filter field. For filtering we're using [ransack](https://activerecord-hackery.github.io/ransack/) gem, so the name of the filter field is the name of the attribute we're filtering by. Learn more about [ransack search syntax](https://activerecord-hackery.github.io/ransack/getting-started/search-matches/).
-    * `form-control` is a bootstrap class for styling the input field.
+    * `q_name_cont` is the name of the filter field. For filtering we're using [ransack](/developer/core-concepts/search-filtering) gem, so the name of the filter field is the name of the attribute we're filtering by.
     * `data: { filters_target: :input }` is needed for the [Stimulus Filters controller](https://github.com/spree/spree/blob/main/admin/app/javascript/spree/admin/controllers/filters_controller.js) to work.
     </Tip>
   </Accordion>
@@ -1531,8 +1605,8 @@ Here's a list of all places you can inject your custom code:
 
     #### Variables
 
-    <ParamField path="f" type="ActionView::Helpers::FormBuilder">
-      The [ActionView::Helpers::FormBuilder](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html) object.
+    <ParamField path="f" type="Spree::Admin::FormBuilder">
+      The [Spree::Admin::FormBuilder](/developer/admin/form-builder) object.
     </ParamField>
 
     <ParamField path="product" type="Spree::Product">
@@ -1549,7 +1623,7 @@ Here's a list of all places you can inject your custom code:
         <h5 class="card-title">ERP Integration</h5>
       </div>
       <div class="card-body">
-        <%= f.text_field :erp_product_id, class: "form-control" %>
+        <%= f.spree_text_field :erp_product_id %>
       </div>
     </div>
     ```
@@ -1587,8 +1661,8 @@ Here's a list of all places you can inject your custom code:
 
     #### Variables
 
-    <ParamField path="f" type="ActionView::Helpers::FormBuilder">
-      The [ActionView::Helpers::FormBuilder](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html) object.
+    <ParamField path="f" type="Spree::Admin::FormBuilder">
+      The [Spree::Admin::FormBuilder](/developer/admin/form-builder) object.
     </ParamField>
 
     <ParamField path="product" type="Spree::Product">
@@ -1605,7 +1679,7 @@ Here's a list of all places you can inject your custom code:
         <h5 class="card-title">ERP Integration</h5>
       </div>
       <div class="card-body">
-        <%= f.text_field :erp_product_id, class: "form-control" %>
+        <%= f.spree_text_field :erp_product_id %>
       </div>
     </div>
     ```
@@ -1642,8 +1716,8 @@ Here's a list of all places you can inject your custom code:
 
     #### Variables
 
-    <ParamField path="f" type="ActionView::Helpers::FormBuilder">
-      The [ActionView::Helpers::FormBuilder](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html) object.
+    <ParamField path="f" type="Spree::Admin::FormBuilder">
+      The [Spree::Admin::FormBuilder](/developer/admin/form-builder) object.
     </ParamField>
 
     <ParamField path="shipping_method" type="Spree::ShippingMethod">
@@ -1660,7 +1734,7 @@ Here's a list of all places you can inject your custom code:
         <h5 class="card-title">ERP Integration</h5>
       </div>
       <div class="card-body">
-        <%= f.text_field :erp_shipping_method_id, class: "form-control" %>
+        <%= f.spree_text_field :erp_shipping_method_id %>
       </div>
     </div>
     ```
@@ -1679,8 +1753,8 @@ Here's a list of all places you can inject your custom code:
 
     #### Variables
 
-    <ParamField path="f" type="ActionView::Helpers::FormBuilder">
-      The [ActionView::Helpers::FormBuilder](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html) object.
+    <ParamField path="f" type="Spree::Admin::FormBuilder">
+      The [Spree::Admin::FormBuilder](/developer/admin/form-builder) object.
     </ParamField>
 
     <ParamField path="store" type="Spree::Store">
@@ -1697,7 +1771,7 @@ Here's a list of all places you can inject your custom code:
         <h5 class="card-title">ERP Integration</h5>
       </div>
       <div class="card-body">
-        <%= f.text_field :erp_store_id, class: "form-control" %>
+        <%= f.spree_text_field :erp_store_id %>
       </div>
     </div>
     ```
