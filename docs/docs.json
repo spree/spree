@@ -31,6 +31,12 @@
     "content": "🚀 Spree 5.2 is now live! See our [changelog](/changelog) for details.",
     "dismissible": true
   },
+  "redirects": [
+    {
+      "source": "/developer/storefront/images",
+      "destination": "/developer/core-concepts/images-assets"
+    }
+  ],
   "contextual": {
     "options": [
       "copy",

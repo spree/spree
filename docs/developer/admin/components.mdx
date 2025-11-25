@@ -339,6 +339,71 @@ For backwards compatibility, legacy icon names are automatically translated:
 | <i class="ti ti-chevron-down"></i> | `chevron-down` | Expand |
 | <i class="ti ti-chevron-right"></i> | `chevron-right` | Navigate |
 
+## Image
+
+Displays optimized images with automatic WebP conversion and retina support.
+
+### Basic Usage
+
+```erb
+<%= spree_image_tag(product.images.first, width: 100, height: 100) %>
+<%= spree_image_tag(current_store.logo, width: 200, height: 60) %>
+<%= spree_image_tag(taxon.image, width: 400, height: 300, class: 'rounded') %>
+```
+
+### Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `image` | Asset/Attachment | required | `Spree::Asset` or ActiveStorage attachment |
+| `width` | Integer | - | Display width in pixels |
+| `height` | Integer | - | Display height in pixels |
+| `class` | String | - | CSS classes |
+| `alt` | String | - | Alt text for accessibility |
+| `loading` | Symbol | - | `:lazy` or `:eager` |
+
+### Features
+
+- **Retina support** - Automatically scales dimensions by 2x for sharp display
+- **WebP conversion** - Outputs optimized WebP format
+- **Smart cropping** - When both dimensions provided, crops to fill
+- **Aspect ratio preservation** - When one dimension provided, maintains ratio
+
+### Examples
+
+```erb
+<%# Product thumbnail in index table %>
+<% if product.images.any? %>
+  <%= spree_image_tag product.images.first, width: 48, height: 48, class: 'rounded' %>
+<% else %>
+  <div class="bg-light rounded d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+    <%= icon('photo-off', class: 'text-muted') %>
+  </div>
+<% end %>
+
+<%# Store logo in header %>
+<%= spree_image_tag current_store.logo, width: 120, height: 40, alt: current_store.name %>
+
+<%# Category image %>
+<%= spree_image_tag taxon.image, width: 300, height: 200, class: 'card-img-top' %>
+```
+
+### With Placeholder
+
+```erb
+<% if @brand.logo.attached? %>
+  <%= spree_image_tag @brand.logo, width: 100, height: 100 %>
+<% else %>
+  <div class="placeholder-image">
+    <%= icon('photo') %>
+  </div>
+<% end %>
+```
+
+<Info>
+  For comprehensive documentation on image handling, storage configuration, and best practices, see the [Images & Assets](/developer/core-concepts/images-assets) guide.
+</Info>
+
 ## Tooltip
 
 Tooltips provide additional context on hover.

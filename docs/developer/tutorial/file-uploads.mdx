@@ -92,7 +92,6 @@ Update the table header partial:
 <tr>
   <th><%= Spree.t(:logo) %></th> <!-- [!code ++] -->
   <th><%= Spree.t(:name) %></th>
-  <th><%= Spree.t(:active) %></th>
   <th></th>
 </tr>
 ```
@@ -100,25 +99,25 @@ Update the table header partial:
 Update the table row partial to display the logo:
 
 ```erb app/views/spree/admin/brands/_table_row.html.erb
-<tr>
-  <td> <!-- [!code ++] -->
-    <% if brand.logo.attached? %> <!-- [!code ++] -->
-      <%= spree_image_tag brand.logo, width: 48, height: 48, class: 'rounded' %> <!-- [!code ++] -->
-    <% else %> <!-- [!code ++] -->
-      <div class="bg-light rounded d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;"> <!-- [!code ++] -->
-        <%= icon('photo-off', class: 'text-muted') %> <!-- [!code ++] -->
-      </div> <!-- [!code ++] -->
-    <% end %> <!-- [!code ++] -->
-  </td> <!-- [!code ++] -->
-  <td>
-    <%= link_to brand.name, spree.edit_admin_brand_path(brand) %>
+<tr id="<%= spree_dom_id brand %>" class="cursor-pointer" data-controller="row-link">
+  <td data-action="click->row-link#openLink" class="w-70">
+    <%= brand.name %> <!-- [!code --] -->
+    <div class="d-flex align-items-center gap-2"> <!-- [!code ++:10] -->
+      <% if brand.logo.attached? %>
+        <%= spree_image_tag brand.logo, width: 48, height: 48, class: 'rounded' %>
+      <% else %>
+        <div class="bg-light rounded d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+          <%= icon('photo-off', class: 'text-muted') %>
+        </div>
+      <% end %>
+      <span class="font-weight-bold"><%= brand.name %></span>
+    </div>
   </td>
-  <td>
-    <%= active_badge(brand.active?) %>
+  <td data-action="click->row-link#openLink" class="w-20">
+    <%= spree_date(brand.created_at) %>
   </td>
-  <td class="text-end">
-    <%= link_to_edit(brand) %>
-    <%= link_to_delete(brand) %>
+  <td class="actions w-10">
+    <%= link_to_edit(brand, data: { row_link_target: :link, turbo_frame: '_top' }) if can? :edit, brand %>
   </td>
 </tr>
 ```
