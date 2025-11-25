@@ -549,9 +549,18 @@ Always wrap your navigation items with authorization checks using `can?()` to en
 
 Add this to your `config/initializers/spree.rb`:
 
-```ruby config/initializers/spree.rb
-Rails.application.config.spree_admin.store_nav_partials << 'spree/admin/shared/inventory_nav'
-```
+<Tabs>
+  <Tab title="Spree 5.2+">
+    ```ruby config/initializers/spree.rb
+    Spree.admin.navigation.store << 'spree/admin/shared/inventory_nav'
+    ```
+  </Tab>
+  <Tab title="Spree 5.1 and below">
+    ```ruby config/initializers/spree.rb
+    Rails.application.config.spree_admin.store_nav_partials << 'spree/admin/shared/inventory_nav'
+    ```
+  </Tab>
+</Tabs>
 
 #### Step 4: Add Translations
 
@@ -676,9 +685,18 @@ To add an item to an existing submenu (e.g., Products), use the appropriate inje
 
 **Register in** `config/initializers/spree.rb`:
 
-```ruby config/initializers/spree.rb
-Rails.application.config.spree_admin.store_products_nav_partials << 'spree/admin/shared/custom_products_nav'
-```
+<Tabs>
+  <Tab title="Spree 5.2+">
+    ```ruby config/initializers/spree.rb
+    Spree.admin.navigation.store_products << 'spree/admin/shared/custom_products_nav'
+    ```
+  </Tab>
+  <Tab title="Spree 5.1 and below">
+    ```ruby config/initializers/spree.rb
+    Rails.application.config.spree_admin.store_products_nav_partials << 'spree/admin/shared/custom_products_nav'
+    ```
+  </Tab>
+</Tabs>
 
 ### Navigation in Settings Mode
 
@@ -693,9 +711,18 @@ When the admin is in "Settings mode" (the dedicated settings view), use the `set
 
 Register with:
 
-```ruby config/initializers/spree.rb
-Rails.application.config.spree_admin.settings_nav_partials << 'spree/admin/shared/custom_settings_nav'
-```
+<Tabs>
+  <Tab title="Spree 5.2+">
+    ```ruby config/initializers/spree.rb
+    Spree.admin.navigation.settings << 'spree/admin/shared/custom_settings_nav'
+    ```
+  </Tab>
+  <Tab title="Spree 5.1 and below">
+    ```ruby config/initializers/spree.rb
+    Rails.application.config.spree_admin.settings_nav_partials << 'spree/admin/shared/custom_settings_nav'
+    ```
+  </Tab>
+</Tabs>
 
 ### Best Practices
 

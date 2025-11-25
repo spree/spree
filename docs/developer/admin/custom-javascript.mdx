@@ -94,9 +94,18 @@ If you need to add a small piece of JavaScript code (eg. tracking, marketing, an
 
 1. Declaring a new head partial in the `config/initializers/spree.rb` file, eg.
 
-    ```ruby
-    Rails.application.config.spree_admin.head_partials << 'spree/admin/shared/my_tracking_code'
-    ```
+    <Tabs>
+      <Tab title="Spree 5.2+">
+        ```ruby config/initializers/spree.rb
+        Spree.admin.partials.head << 'spree/admin/shared/my_tracking_code'
+        ```
+      </Tab>
+      <Tab title="Spree 5.1 and below">
+        ```ruby config/initializers/spree.rb
+        Rails.application.config.spree_admin.head_partials << 'spree/admin/shared/my_tracking_code'
+        ```
+      </Tab>
+    </Tabs>
 
 2. Creating a new file in the `app/views/spree/admin/shared/my_tracking_code.html.erb`, where you can add your tracking code, eg.
 

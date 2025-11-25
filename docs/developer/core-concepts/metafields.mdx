@@ -572,8 +572,8 @@ normalizes :value, with: ->(value) { value.to_b.to_s }
 Create a custom metafield type:
 
 ```ruby
-# app/models/my_app/metafields/url.rb
-module MyApp
+# app/models/spree/metafields/url.rb
+module Spree
   module Metafields
     class Url < Spree::Metafield
       validates :value, format: { with: URI::DEFAULT_PARSER.make_regexp }
@@ -592,20 +592,19 @@ end
 
 Register it in an initializer:
 
-```ruby
-# config/initializers/spree.rb
-Rails.application.config.spree.metafield_types << 'MyApp::Metafields::Url'
+```ruby config/initializers/spree.rb
+Rails.application.config.spree.metafield_types << 'Spree::Metafields::Url'
 ```
 
 ### Enabling Metafields for Custom Resources
 
-```ruby
-# config/initializers/spree.rb
-Rails.application.config.spree.metafield_enabled_resources << 'MyApp::CustomResource'
+```ruby config/initializers/spree.rb
+Rails.application.config.spree.metafield_enabled_resources << 'Spree::Brand'
+```
 
-# app/models/my_app/custom_resource.rb
-module MyApp
-  class CustomResource < ApplicationRecord
+```ruby app/models/spree/brand.rb
+module Spree
+  class Brand < Spree::Base
     include Spree::Metafields
   end
 end
