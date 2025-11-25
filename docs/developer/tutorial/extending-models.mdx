@@ -159,7 +159,9 @@ For the admin form to save the brand association, we need to permit the `brand_i
 Add to your Spree initializer:
 
 ```ruby config/initializers/spree.rb
-Spree::PermittedAttributes.product_attributes << :brand_id
+# .. other code ..
+
+Spree::PermittedAttributes.product_attributes << :brand_id # [!code ++]
 ```
 
 ## Step 6: Add Brand Selector to Product Admin Form

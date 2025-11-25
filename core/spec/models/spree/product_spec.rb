@@ -694,7 +694,7 @@ describe Spree::Product, type: :model do
     end
   end
 
-  describe '#brand' do
+  describe '#brand_taxon' do
     let(:taxonomy) { store.taxonomies.find_by(name: Spree.t(:taxonomy_brands_name)) }
     let(:product) { create(:product, taxons: [taxonomy.taxons.first], stores: [store]) }
 
@@ -703,7 +703,7 @@ describe Spree::Product, type: :model do
     end
   end
 
-  describe '#category' do
+  describe '#category_taxon' do
     let(:taxonomy) { store.taxonomies.find_by(name: Spree.t(:taxonomy_categories_name)) }
     let(:product) { create(:product, taxons: [taxonomy.taxons.first], stores: [store]) }
 
