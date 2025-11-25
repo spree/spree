@@ -302,25 +302,19 @@ end
 ```ruby app/models/spree/brand.rb
 module Spree
   class Brand < Spree::Base
-    extend FriendlyId
-    friendly_id :slug_candidates, use: %i[slugged]
-
     has_many :products, class_name: 'Spree::Product', dependent: :nullify
 
     has_one_attached :logo
     has_rich_text :description
 
     validates :name, presence: true
-    validates :slug, presence: true, uniqueness: { scope: spree_base_uniqueness_scope }
-
-    scope :active, -> { where(active: true) }
-
-    def image
-      logo
-    end
   end
 end
 ```
+
+<Info>
+  SEO features like slugs, meta titles, and FriendlyId are covered in the [SEO](/developer/tutorial/seo) tutorial.
+</Info>
 
 ### Spree Initializer Additions
 

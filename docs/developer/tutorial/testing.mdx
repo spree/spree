@@ -8,7 +8,7 @@ Spree uses [RSpec](https://rspec.info), [Factory Bot](https://github.com/thought
 We also provide the `spree_dev_tools` gem that helps you write Spree-specific tests.
 
 <Info>
-  This guide assumes you've completed the previous tutorials and have a working `Spree::Brand` model with admin and storefront controllers.
+  This guide assumes you've completed all previous tutorials through [Page Builder](/developer/tutorial/page-builder). You should have a complete `Spree::Brand` model with admin, storefront, and SEO features.
 </Info>
 
 ## Setup
@@ -53,9 +53,6 @@ Factories provide a convenient way to create test data. Create a factory for you
 FactoryBot.define do
   factory :brand, class: Spree::Brand do
     sequence(:name) { |n| "Brand #{n}" }
-    active { true }
-
-    association :store, factory: :store
 
     trait :with_description do
       description { '<div>A great brand for <strong>quality products</strong></div>' }
@@ -70,17 +67,15 @@ FactoryBot.define do
       end
     end
 
-    trait :inactive do
-      active { false }
-    end
-
     trait :with_products do
       transient do
         products_count { 3 }
+        store { nil }
       end
 
       after(:create) do |brand, evaluator|
-        create_list(:product, evaluator.products_count, brand: brand, stores: [brand.store])
+        store = evaluator.store || create(:store)
+        create_list(:product, evaluator.products_count, brand: brand, stores: [store])
       end
     end
   end
@@ -97,7 +92,7 @@ brand = create(:brand)
 brand = create(:brand, :with_description, :with_logo)
 
 # With custom attributes
-brand = create(:brand, name: 'Nike', active: true)
+brand = create(:brand, name: 'Nike')
 
 # Build without persisting (faster for unit tests)
 brand = build(:brand)
@@ -118,62 +113,41 @@ Model tests verify your business logic, validations, associations, and scopes.
 require 'spec_helper'
 
 RSpec.describe Spree::Brand, type: :model do
-  let(:store) { @default_store }
-
   describe 'associations' do
-    it { is_expected.to belong_to(:store).class_name('Spree::Store') }
     it { is_expected.to have_many(:products).class_name('Spree::Product') }
   end
 
   describe 'validations' do
-    subject { build(:brand, store: store) }
+    subject { build(:brand) }
 
     it { is_expected.to validate_presence_of(:name) }
 
     describe 'slug uniqueness' do
-      let!(:existing_brand) { create(:brand, slug: 'nike', store: store) }
+      let!(:existing_brand) { create(:brand, slug: 'nike') }
 
-      it 'validates uniqueness of slug within store scope' do
-        brand = build(:brand, slug: 'nike', store: store)
+      it 'validates uniqueness of slug' do
+        brand = build(:brand, slug: 'nike')
         expect(brand).not_to be_valid
         expect(brand.errors[:slug]).to include('has already been taken')
-      end
-
-      it 'allows same slug in different stores' do
-        other_store = create(:store)
-        brand = build(:brand, slug: 'nike', store: other_store)
-        expect(brand).to be_valid
-      end
-    end
-  end
-
-  describe 'scopes' do
-    describe '.active' do
-      let!(:active_brand) { create(:brand, active: true, store: store) }
-      let!(:inactive_brand) { create(:brand, active: false, store: store) }
-
-      it 'returns only active brands' do
-        expect(described_class.active).to include(active_brand)
-        expect(described_class.active).not_to include(inactive_brand)
       end
     end
   end
 
   describe 'FriendlyId' do
     it 'generates slug from name' do
-      brand = create(:brand, name: 'Nike Sportswear', store: store)
+      brand = create(:brand, name: 'Nike Sportswear')
       expect(brand.slug).to eq('nike-sportswear')
     end
 
     it 'handles duplicate names by appending UUID' do
-      create(:brand, name: 'Nike', store: store)
-      brand = create(:brand, name: 'Nike', store: store)
+      create(:brand, name: 'Nike')
+      brand = create(:brand, name: 'Nike')
       expect(brand.slug).to match(/nike-[a-f0-9-]+/)
     end
   end
 
   describe '#image' do
-    let(:brand) { create(:brand, :with_logo, store: store) }
+    let(:brand) { create(:brand, :with_logo) }
 
     it 'returns logo as image for Open Graph' do
       expect(brand.image).to eq(brand.logo)
@@ -201,7 +175,7 @@ require 'spec_helper'
 
 RSpec.describe 'Spree::Product brand association' do
   let(:store) { @default_store }
-  let(:brand) { create(:brand, store: store) }
+  let(:brand) { create(:brand) }
   let(:product) { create(:product, stores: [store]) }
 
   describe 'brand association' do
@@ -248,11 +222,9 @@ RSpec.describe Spree::Admin::BrandsController, type: :controller do
   stub_authorization!
   render_views
 
-  let(:store) { @default_store }
-
   describe 'GET #index' do
-    let!(:brand1) { create(:brand, name: 'Adidas', store: store) }
-    let!(:brand2) { create(:brand, name: 'Nike', store: store) }
+    let!(:brand1) { create(:brand, name: 'Adidas') }
+    let!(:brand2) { create(:brand, name: 'Nike') }
 
     it 'returns a successful response' do
       get :index
@@ -280,7 +252,7 @@ RSpec.describe Spree::Admin::BrandsController, type: :controller do
   describe 'POST #create' do
     context 'with valid params' do
       let(:valid_params) do
-        { brand: { name: 'New Brand', active: true } }
+        { brand: { name: 'New Brand' } }
       end
 
       it 'creates a new brand' do
@@ -314,7 +286,7 @@ RSpec.describe Spree::Admin::BrandsController, type: :controller do
   end
 
   describe 'GET #edit' do
-    let(:brand) { create(:brand, store: store) }
+    let(:brand) { create(:brand) }
 
     it 'returns a successful response' do
       get :edit, params: { id: brand.id }
@@ -323,7 +295,7 @@ RSpec.describe Spree::Admin::BrandsController, type: :controller do
   end
 
   describe 'PUT #update' do
-    let(:brand) { create(:brand, name: 'Old Name', store: store) }
+    let(:brand) { create(:brand, name: 'Old Name') }
 
     context 'with valid params' do
       it 'updates the brand' do
@@ -339,7 +311,7 @@ RSpec.describe Spree::Admin::BrandsController, type: :controller do
   end
 
   describe 'DELETE #destroy' do
-    let!(:brand) { create(:brand, store: store) }
+    let!(:brand) { create(:brand) }
 
     it 'removes the brand from the database' do
       expect {
@@ -358,26 +330,23 @@ require 'spec_helper'
 RSpec.describe Spree::BrandsController, type: :controller do
   render_views
 
-  let(:store) { @default_store }
-
   describe 'GET #index' do
-    let!(:active_brand) { create(:brand, active: true, store: store) }
-    let!(:inactive_brand) { create(:brand, active: false, store: store) }
+    let!(:brand1) { create(:brand, name: 'Nike') }
+    let!(:brand2) { create(:brand, name: 'Adidas') }
 
     it 'returns a successful response' do
       get :index
       expect(response).to be_successful
     end
 
-    it 'assigns only active brands' do
+    it 'assigns all brands' do
       get :index
-      expect(assigns(:brands)).to include(active_brand)
-      expect(assigns(:brands)).not_to include(inactive_brand)
+      expect(assigns(:brands)).to contain_exactly(brand1, brand2)
     end
   end
 
   describe 'GET #show' do
-    let(:brand) { create(:brand, store: store) }
+    let(:brand) { create(:brand) }
 
     it 'returns a successful response' do
       get :show, params: { id: brand.slug }
@@ -412,11 +381,9 @@ require 'spec_helper'
 RSpec.feature 'Admin Brands', type: :feature do
   stub_authorization!
 
-  let(:store) { @default_store }
-
   describe 'listing brands' do
-    let!(:brand1) { create(:brand, name: 'Nike', store: store) }
-    let!(:brand2) { create(:brand, name: 'Adidas', store: store) }
+    let!(:brand1) { create(:brand, name: 'Nike') }
+    let!(:brand2) { create(:brand, name: 'Adidas') }
 
     it 'displays all brands' do
       visit spree.admin_brands_path
@@ -451,7 +418,7 @@ RSpec.feature 'Admin Brands', type: :feature do
   end
 
   describe 'editing a brand' do
-    let!(:brand) { create(:brand, name: 'Nike', store: store) }
+    let!(:brand) { create(:brand, name: 'Nike') }
 
     it 'updates the brand successfully' do
       visit spree.admin_brands_path
@@ -467,7 +434,7 @@ RSpec.feature 'Admin Brands', type: :feature do
   end
 
   describe 'deleting a brand', js: true do
-    let!(:brand) { create(:brand, name: 'Nike', store: store) }
+    let!(:brand) { create(:brand, name: 'Nike') }
 
     it 'removes the brand' do
       visit spree.admin_brands_path
@@ -496,16 +463,14 @@ RSpec.feature 'Storefront Brands', type: :feature do
   let(:store) { @default_store }
 
   describe 'brands listing page' do
-    let!(:nike) { create(:brand, name: 'Nike', active: true, store: store) }
-    let!(:adidas) { create(:brand, name: 'Adidas', active: true, store: store) }
-    let!(:inactive) { create(:brand, name: 'Inactive Brand', active: false, store: store) }
+    let!(:nike) { create(:brand, name: 'Nike') }
+    let!(:adidas) { create(:brand, name: 'Adidas') }
 
-    it 'displays active brands' do
+    it 'displays all brands' do
       visit spree.brands_path
 
       expect(page).to have_content('Nike')
       expect(page).to have_content('Adidas')
-      expect(page).not_to have_content('Inactive Brand')
     end
 
     it 'links to individual brand pages' do
@@ -518,7 +483,7 @@ RSpec.feature 'Storefront Brands', type: :feature do
   end
 
   describe 'brand detail page' do
-    let(:brand) { create(:brand, :with_description, name: 'Nike', store: store) }
+    let(:brand) { create(:brand, :with_description, name: 'Nike') }
     let!(:product) { create(:product, brand: brand, stores: [store]) }
 
     it 'displays brand information' do
@@ -620,12 +585,10 @@ bundle exec rspec spec/features/
 
 ```ruby
 it 'creates brand with all attributes', :aggregate_failures do
-  brand = create(:brand, name: 'Nike', active: true, store: store)
+  brand = create(:brand, name: 'Nike')
 
   expect(brand.name).to eq('Nike')
-  expect(brand.active).to be(true)
   expect(brand.slug).to eq('nike')
-  expect(brand.store).to eq(store)
 end
 ```
 

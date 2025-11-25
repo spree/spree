@@ -3,6 +3,10 @@ title: SEO
 description: Learn how to optimize your Brands feature for search engines
 ---
 
+<Info>
+  This guide assumes you've completed the [Storefront](/developer/tutorial/storefront) tutorial. You should have working brand pages.
+</Info>
+
 This guide covers SEO best practices for your custom Spree features, including friendly URLs, meta tags, and Open Graph data.
 
 ## SEO-Friendly URLs
@@ -126,7 +130,7 @@ Update your controller to use `friendly.find`:
 
 ```ruby app/controllers/spree/brands_controller.rb
 def load_brand
-  @brand = current_store.brands.friendly.find(params[:id])
+  @brand = Spree::Brand.friendly.find(params[:id])
 end
 ```
 
@@ -238,8 +242,7 @@ module Spree
     extend FriendlyId
     friendly_id :slug_candidates, use: %i[slugged]
 
-    belongs_to :store, class_name: 'Spree::Store'
-    has_many :products, class_name: 'Spree::Product'
+    has_many :products, class_name: 'Spree::Product', dependent: :nullify
 
     has_one_attached :logo
     has_rich_text :description
@@ -248,8 +251,6 @@ module Spree
 
     validates :name, presence: true
     validates :slug, presence: true, uniqueness: { scope: spree_base_uniqueness_scope }
-
-    scope :active, -> { where(active: true) }
 
     # SEO: Use logo as Open Graph image
     def image
@@ -267,7 +268,7 @@ module Spree
     before_action :load_brand, only: [:show]
 
     def index
-      @brands = current_store.brands.active.order(:name)
+      @brands = Spree::Brand.order(:name)
     end
 
     def show
@@ -287,7 +288,7 @@ module Spree
     private
 
     def load_brand
-      @brand = current_store.brands.friendly.find(params[:id])
+      @brand = Spree::Brand.friendly.find(params[:id])
     end
 
     def accurate_title

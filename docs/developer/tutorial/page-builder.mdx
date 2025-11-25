@@ -84,7 +84,7 @@ module Spree
       def page_builder_url
         return unless page_builder_url_exists?(:brands_path)
 
-        brand = store.brands.first
+        brand = Spree::Brand.first
         return unless brand
 
         Spree::Core::Engine.routes.url_helpers.brand_path(brand)
@@ -142,7 +142,7 @@ module Spree
       end
 
       def brands
-        store.brands.active.order(:name)
+        Spree::Brand.order(:name)
       end
     end
   end
@@ -343,7 +343,7 @@ module Spree
       @current_page = current_theme.pages.find_by(type: 'Spree::Pages::BrandList')
 
       # Fallback data if sections need it
-      @brands = current_store.brands.active.order(:name)
+      @brands = Spree::Brand.order(:name)
     end
 
     def show
@@ -361,7 +361,7 @@ module Spree
     private
 
     def load_brand
-      @brand = current_store.brands.find(params[:id])
+      @brand = Spree::Brand.find(params[:id])
     end
 
     def accurate_title
