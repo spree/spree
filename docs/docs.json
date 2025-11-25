@@ -107,9 +107,10 @@
                   "developer/admin/extending-ui",
                   "developer/admin/navigation",
                   "developer/admin/form-builder",
+                  "developer/admin/components",
+                  "developer/admin/helper-methods",
                   "developer/admin/authentication",
                   "developer/admin/permissions",
-                  "developer/admin/helper-methods",
                   "developer/admin/custom-javascript",
                   "developer/admin/custom-css"
                 ]
