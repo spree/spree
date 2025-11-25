@@ -44,7 +44,7 @@
     </div>
 
   <dialog class="drawer" data-dialog-target="dialog" id="order-filters-drawer">
-    <%= drawer_header(Spree.t(:filter), 'dialog#close') %>
+    <%= drawer_header(Spree.t(:filter), 'dialog') %>
     <div class="drawer-body">
     <%= f.hidden_field :payment_state_not_eq, value: params.dig(:q, :payment_state_not_eq) %>
     <%= f.hidden_field :state_not_eq, value: params.dig(:q, :state_not_eq) %>
@@ -106,7 +106,7 @@
     <%= render_admin_partials(:orders_filters_partials, f: f) %>
     </div>
     <div class="drawer-footer">
-      <%= drawer_discard_button('dialog#close') %>
+      <%= drawer_discard_button('dialog') %>
       <%= render 'spree/admin/shared/filter_submit' %>
     </div>
   </dialog>

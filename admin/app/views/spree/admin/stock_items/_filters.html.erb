@@ -9,7 +9,7 @@
     </div>
 
   <dialog class="drawer" data-dialog-target="dialog" id="stock-items-filters-drawer">
-    <%= drawer_header(Spree.t(:filter), 'dialog#close') %>
+    <%= drawer_header(Spree.t(:filter), 'dialog') %>
     <div class="drawer-body">
     <div class="form-group">
       <%= f.label :variant_sku_cont, Spree.t(:sku) %>
@@ -25,7 +25,7 @@
     <%= render_admin_partials(:stock_items_filters_partials, f: f) %>
     </div>
     <div class="drawer-footer">
-      <%= drawer_discard_button('dialog#close') %>
+      <%= drawer_discard_button('dialog') %>
       <%= render 'spree/admin/shared/filter_submit' %>
     </div>
   </dialog>
