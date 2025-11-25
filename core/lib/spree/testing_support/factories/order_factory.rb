@@ -70,7 +70,6 @@ FactoryBot.define do
 
       factory :completed_order_with_totals do
         state { 'complete' }
-        completed_at { Time.current }
 
         after(:create) do |order, evaluator|
           order.refresh_shipment_rates(evaluator.shipping_method_filter)
