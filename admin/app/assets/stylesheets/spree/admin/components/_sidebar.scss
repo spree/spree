@@ -73,6 +73,11 @@
   @media (min-width: 992px) {
     display: flex;
   }
+
+  > .dropdown {
+    width: 100%;
+    overflow: hidden;
+  }
 }
 
 .user-dropdown-button {
@@ -84,6 +89,7 @@
   gap: 0.5rem;
   box-shadow: none !important;
   width: 100%;
+  overflow: hidden;
 
   &:hover {
     background-color: $gray-50;
@@ -91,6 +97,8 @@
 
   .user-name {
     flex: 1;
+    width: 0;
+    min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
