@@ -148,31 +148,6 @@ module Spree
         root_items
       end
 
-      # Get breadcrumb trail for a path
-      def breadcrumbs_for(current_path, context = nil)
-        breadcrumbs = []
-
-        # Find active item
-        active_item = find_active_item(current_path, context)
-
-        # Build breadcrumb trail
-        while active_item
-          breadcrumbs.unshift(active_item)
-          active_item = active_item.parent_key ? find(active_item.parent_key) : nil
-        end
-
-        breadcrumbs
-      end
-
-      # Find the active item for current path
-      def find_active_item(current_path, context = nil)
-        # Check all items, deepest match wins
-        active_items = @items.values.select { |item| item.active?(current_path, context) }
-
-        # Return the one with the longest URL match
-        active_items.max_by { |item| item.resolve_url(context)&.length || 0 }
-      end
-
       # Clear all items
       def clear
         @items.clear
