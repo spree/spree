@@ -96,7 +96,8 @@
                   "developer/core-concepts/metafields",
                   "developer/core-concepts/i18n",
                   "developer/core-concepts/search-filtering",
-                  "developer/core-concepts/slugs"
+                  "developer/core-concepts/slugs",
+                  "developer/core-concepts/images-assets"
                 ]
               },
               {
@@ -125,7 +126,6 @@
                   "developer/storefront/sections",
                   "developer/storefront/blocks",
                   "developer/storefront/links",
-                  "developer/storefront/images",
                   "developer/storefront/helper-methods",
                   "developer/storefront/custom-javascript",
                   "developer/storefront/custom-css"
