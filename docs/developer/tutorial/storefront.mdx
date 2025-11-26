@@ -87,17 +87,17 @@ module Spree
     end
 
     def show
-      @products = @brand.products
-                        .active(current_currency)
-                        .includes(:images, :variants)
-                        .page(params[:page])
-                        .per(12)
+      @products = storefront_products
     end
 
     private
 
     def load_brand
       @brand = Spree::Brand.find(params[:id])
+    end
+
+    def storefront_products_scope
+      @storefront_products_scope ||= super.where(brand: @brand)
     end
 
     # Override to set page title for SEO
@@ -224,17 +224,8 @@ app/views/themes/my_store/spree/brands/
     </h2>
 
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      <% @products.each do |product| %>
-        <%= render 'spree/products/product_card', product: product %>
-      <% end %>
+      <%= render 'spree/shared/products', products: @products %>
     </div>
-
-    <%# Pagination %>
-    <% if @products.total_pages > 1 %>
-      <div class="mt-8">
-        <%= paginate @products %>
-      </div>
-    <% end %>
   <% else %>
     <p class="text-neutral-600">
       <%= Spree.t(:no_products_found) %>
@@ -353,12 +344,7 @@ module Spree
     end
 
     def show
-      @products = @brand.products
-                        .active(current_currency)
-                        .includes(storefront_products_includes)
-                        .page(params[:page])
-                        .per(12)
-
+      @products = storefront_products
       @page_description = @brand.description&.to_plain_text&.truncate(160)
     end
 
@@ -366,6 +352,10 @@ module Spree
 
     def load_brand
       @brand = Spree::Brand.find(params[:id])
+    end
+
+    def storefront_products_scope
+      @storefront_products_scope ||= super.where(brand: @brand)
     end
 
     def accurate_title
