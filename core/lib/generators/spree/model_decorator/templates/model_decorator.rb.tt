@@ -1,0 +1,12 @@
+module Spree
+  module <%= decorator_name %>
+    def self.prepended(base)
+      # base.belongs_to :brand
+    end
+
+    # add custom methods here
+  end
+end
+
+Spree::<%= model_name %>.prepend Spree::<%= decorator_name %>
+
