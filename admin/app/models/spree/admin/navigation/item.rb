@@ -59,6 +59,9 @@ module Spree
           item_url = resolve_url(context)
           return true if item_url && current_path == item_url
 
+          # Check if any child item is active
+          return true if children.any? { |child| child.active?(current_path, context) }
+
           # Default: match if path starts with url (handled by active_link_to)
           if item_url
             current_path.start_with?(item_url)
