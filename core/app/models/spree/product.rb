@@ -598,7 +598,7 @@ module Spree
     end
 
     def main_taxon
-      category || taxons.first
+      category_taxon || taxons.first
     end
 
     def taxons_for_store(store)
