@@ -74,6 +74,15 @@ def install_spree
   end
 end
 
+def install_spree_dev_tools
+  say 'Running Spree Dev Tools installer...', :blue
+  if VERBOSE
+    rails_command "generate spree_dev_tools:install"
+  else
+    run "bin/rails generate spree_dev_tools:install >/dev/null 2>&1"
+  end
+end
+
 def configure_development_environment
   say 'Configuring development environment...', :blue
 
@@ -152,6 +161,7 @@ after_bundle do
   configure_development_environment
   setup_auth
   install_spree
+  install_spree_dev_tools
   setup_procfile
   setup_database
   load_sample_data
