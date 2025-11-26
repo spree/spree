@@ -120,6 +120,84 @@ RSpec.describe Spree::Admin::Navigation::Item do
 
       expect(item.active?('/admin/orders', context)).to be true
     end
+
+    context 'when no active_condition is set and item has children' do
+      let(:parent) { described_class.new(:products, url: '/admin/products') }
+      let(:child1) { described_class.new(:stock, url: '/admin/stock_items', active: -> { controller_name == 'stock_items' }) }
+      let(:child2) { described_class.new(:taxonomies, url: '/admin/taxonomies', active: -> { controller_name == 'taxonomies' }) }
+
+      before do
+        parent.add_child(child1)
+        parent.add_child(child2)
+      end
+
+      it 'returns true when a child item is active' do
+        context = Object.new
+        def context.controller_name
+          'stock_items'
+        end
+
+        expect(parent.active?('/admin/stock_items', context)).to be true
+      end
+
+      it 'returns true when any child item is active' do
+        context = Object.new
+        def context.controller_name
+          'taxonomies'
+        end
+
+        expect(parent.active?('/admin/taxonomies', context)).to be true
+      end
+
+      it 'returns false when no child item is active and path does not match' do
+        context = Object.new
+        def context.controller_name
+          'orders'
+        end
+
+        expect(parent.active?('/admin/orders', context)).to be false
+      end
+
+      it 'returns true for exact parent url match even when no child is active' do
+        context = Object.new
+        def context.controller_name
+          'products'
+        end
+
+        expect(parent.active?('/admin/products', context)).to be true
+      end
+
+      it 'checks children recursively' do
+        # Create a child without active_condition so it will check its own children
+        child_without_condition = described_class.new(:child, url: '/admin/child')
+        grandchild = described_class.new(:nested, url: '/admin/nested', active: -> { controller_name == 'nested' })
+        child_without_condition.add_child(grandchild)
+        parent.add_child(child_without_condition)
+
+        context = Object.new
+        def context.controller_name
+          'nested'
+        end
+
+        expect(parent.active?('/admin/nested', context)).to be true
+      end
+    end
+
+    context 'when active_condition is set' do
+      it 'does not check children and uses the condition instead' do
+        parent = described_class.new(:products, url: '/admin/products', active: -> { controller_name == 'products' })
+        child = described_class.new(:stock, url: '/admin/stock_items', active: -> { controller_name == 'stock_items' })
+        parent.add_child(child)
+
+        context = Object.new
+        def context.controller_name
+          'stock_items'
+        end
+
+        # Parent's active_condition returns false because controller_name is 'stock_items', not 'products'
+        expect(parent.active?('/admin/stock_items', context)).to be false
+      end
+    end
   end
 
   describe '#resolve_url' do

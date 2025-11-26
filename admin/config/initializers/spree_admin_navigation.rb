@@ -32,7 +32,6 @@ Rails.application.config.after_initialize do
           url: :admin_orders_path,
           icon: 'inbox',
           position: 20,
-          active: -> { %w[orders checkouts].include?(controller_name) || @order&.present? || @parent&.is_a?(Spree::Order) },
           if: -> { can?(:manage, Spree::Order) },
           badge: -> {
             # Evaluated in view context with access to helper methods
@@ -66,7 +65,6 @@ Rails.application.config.after_initialize do
           url: :admin_customer_returns_path,
           icon: 'receipt-refund',
           position: 25,
-          active: -> { %w[customer_returns return_authorizations].include?(controller_name) },
           if: -> { can?(:manage, Spree::CustomerReturn) || can?(:manage, Spree::ReturnAuthorization) } do |returns|
     # Return Authorizations
     returns.add :return_authorizations,
@@ -82,7 +80,6 @@ Rails.application.config.after_initialize do
           url: :admin_products_path,
           icon: 'package',
           position: 30,
-          active: -> { %w[products external_categories taxons taxonomies option_types option_values properties stock_items stock_transfers variants digital_assets].include?(controller_name) },
           if: -> { can?(:manage, Spree::Product) } do |products|
     # Stock
     products.add :stock,
@@ -133,7 +130,6 @@ Rails.application.config.after_initialize do
           url: :admin_users_path,
           icon: 'users',
           position: 40,
-          active: -> { %w[users newsletter_subscribers].include?(controller_name) },
           if: -> { can?(:manage, Spree.user_class) } do |customers|
     # Newsletter Subscribers
     customers.add :newsletter_subscribers,
@@ -148,7 +144,6 @@ Rails.application.config.after_initialize do
           url: :admin_promotions_path,
           icon: 'discount',
           position: 50,
-          active: -> { %w[promotions gift_cards gift_card_batches coupon_codes].include?(controller_name) },
           if: -> { can?(:manage, Spree::Promotion) } do |promotions|
     # Gift Cards
     promotions.add :gift_cards,
@@ -172,7 +167,6 @@ Rails.application.config.after_initialize do
           url: :admin_themes_path,
           icon: 'building-store',
           position: 70,
-          active: -> { %w[themes posts post_categories pages storefront].include?(controller_name) || (controller_name == 'storefronts' && action_name == 'edit') },
           if: -> { can?(:manage, Spree::Theme) } do |storefront|
 
     # Pages
