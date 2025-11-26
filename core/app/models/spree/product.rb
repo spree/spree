@@ -548,6 +548,11 @@ module Spree
       super || variants_including_master.with_deleted.find_by(is_master: true)
     end
 
+    def brand
+      Spree::Deprecation.warn('Spree::Product#brand is deprecated and will be removed in Spree 6. Please use Spree::Product#brand_taxon instead.')
+      brand_taxon
+    end
+
     # Returns the brand taxon for the product
     # @return [Spree::Taxon]
     def brand_taxon

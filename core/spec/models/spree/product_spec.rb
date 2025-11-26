@@ -699,7 +699,7 @@ describe Spree::Product, type: :model do
     let(:product) { create(:product, taxons: [taxonomy.taxons.first], stores: [store]) }
 
     it 'fetches Brand Taxon' do
-      expect(product.brand).to eql(taxonomy.taxons.first)
+      expect(product.brand_taxon).to eql(taxonomy.taxons.first)
     end
   end
 
@@ -708,7 +708,7 @@ describe Spree::Product, type: :model do
     let(:product) { create(:product, taxons: [taxonomy.taxons.first], stores: [store]) }
 
     it 'fetches Category Taxon' do
-      expect(product.category).to eql(taxonomy.taxons.first)
+      expect(product.category_taxon).to eql(taxonomy.taxons.first)
     end
   end
 
