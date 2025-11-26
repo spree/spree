@@ -68,16 +68,15 @@ To add "Brands" to the Products submenu instead add a new submenu item:
 ```ruby config/initializers/spree.rb
 Rails.application.config.after_initialize do
   sidebar_nav = Spree.admin.navigation.sidebar
-  products_nav = sidebar_nav.find(:products)
 
-  if products_nav
-    products_nav.add :brands,
-      label: :brands,
-      url: :admin_brands_path,
-      position: 50,
-      active: -> { controller_name == 'brands' },
-      if: -> { can?(:manage, Spree::Brand) }
-  end
+  # Add brands as a child of products
+  sidebar_nav.add :brands,
+    label: :brands,
+    url: :admin_brands_path,
+    position: 50,
+    parent: :products,
+    active: -> { controller_name == 'brands' },
+    if: -> { can?(:manage, Spree::Brand) }
 end
 ```
 
