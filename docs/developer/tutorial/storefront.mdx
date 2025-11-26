@@ -87,17 +87,13 @@ module Spree
     end
 
     def show
-      @products = storefront_products
+      @products = @brand.products.active(current_currency).includes(storefront_products_includes)
     end
 
     private
 
     def load_brand
       @brand = Spree::Brand.find(params[:id])
-    end
-
-    def storefront_products_scope
-      @storefront_products_scope ||= super.where(brand: @brand)
     end
 
     # Override to set page title for SEO
@@ -344,7 +340,7 @@ module Spree
     end
 
     def show
-      @products = storefront_products
+      @products = @brand.products.active(current_currency).includes(storefront_products_includes)
       @page_description = @brand.description&.to_plain_text&.truncate(160)
     end
 
@@ -352,10 +348,6 @@ module Spree
 
     def load_brand
       @brand = Spree::Brand.find(params[:id])
-    end
-
-    def storefront_products_scope
-      @storefront_products_scope ||= super.where(brand: @brand)
     end
 
     def accurate_title
