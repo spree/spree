@@ -8,7 +8,7 @@
     </div>
 
   <dialog class="drawer" data-dialog-target="dialog" id="stock-transfers-filters-drawer">
-    <%= drawer_header(Spree.t(:filter), 'dialog#close') %>
+    <%= drawer_header(Spree.t(:filter), 'dialog') %>
     <div class="drawer-body">
     <div class="form-group">
       <%= f.label :reference_cont, Spree.t(:reference) %>
@@ -37,7 +37,7 @@
     <%= render_admin_partials(:stock_transfers_filters_partials, f: f) %>
     </div>
     <div class="drawer-footer">
-      <%= drawer_discard_button('dialog#close') %>
+      <%= drawer_discard_button('dialog') %>
       <div class="form-actions">
         <%= button Spree.t(:search), "search" %>
       </div>

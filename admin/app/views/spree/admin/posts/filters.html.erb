@@ -9,7 +9,7 @@
     </div>
 
   <dialog class="drawer" data-dialog-target="dialog" id="posts-filters-drawer">
-    <%= drawer_header(Spree.t(:filter), 'dialog#close') %>
+    <%= drawer_header(Spree.t(:filter), 'dialog') %>
     <div class="drawer-body">
     <div class="form-group">
       <%= f.label :author_id_eq, Spree.t(:author) %>
@@ -28,7 +28,7 @@
     <%= render_admin_partials(:posts_filters_partials, f: f) %>
     </div>
     <div class="drawer-footer">
-      <%= drawer_discard_button('dialog#close') %>
+      <%= drawer_discard_button('dialog') %>
       <%= render 'spree/admin/shared/filter_submit' %>
     </div>
   </dialog>

@@ -15,7 +15,7 @@
     </div>
 
   <dialog class="drawer" data-dialog-target="dialog" id="user-filters-drawer">
-    <%= drawer_header(Spree.t(:filter), 'dialog#close') %>
+    <%= drawer_header(Spree.t(:filter), 'dialog') %>
     <div class="drawer-body">
     <div class="form-group">
       <%= f.label :bill_address_firstname_i_cont_any, Spree.t(:first_name) %>
@@ -70,7 +70,7 @@
     <%= render_admin_partials(:users_filters_partials, f: f) %>
     </div>
     <div class="drawer-footer">
-      <%= drawer_discard_button('dialog#close') %>
+      <%= drawer_discard_button('dialog') %>
       <%= render 'spree/admin/shared/filter_submit' %>
     </div>
   </dialog>

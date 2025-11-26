@@ -9,7 +9,7 @@
     </div>
 
   <dialog class="drawer" data-dialog-target="dialog" id="promotion-filters-drawer">
-    <%= drawer_header(Spree.t(:filter), 'dialog#close') %>
+    <%= drawer_header(Spree.t(:filter), 'dialog') %>
     <div class="drawer-body">
         <div class="form-group">
           <%= label_tag :q_code_or_coupon_codes_code_eq, Spree.t(:code) %>
@@ -18,7 +18,7 @@
       <%= render_admin_partials(:promotions_filters_partials, f: f) %>
     </div>
     <div class="drawer-footer">
-      <%= drawer_discard_button('dialog#close') %>
+      <%= drawer_discard_button('dialog') %>
       <%= render 'spree/admin/shared/filter_submit' %>
     </div>
   </dialog>
