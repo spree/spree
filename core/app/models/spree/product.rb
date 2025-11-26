@@ -255,8 +255,6 @@ module Spree
     delegate :display_amount, :display_price, :has_default_price?, :track_inventory?,
              :display_compare_at_price, :images, to: :default_variant
 
-    delegate :name, to: :brand, prefix: true, allow_nil: true
-
     alias master_images images
 
     state_machine :status, initial: :draft do
@@ -564,6 +562,12 @@ module Spree
                      taxons.joins(:taxonomy).find_by(Taxonomy.table_name => { name: Spree.t(:taxonomy_brands_name) })
                    end
                  end
+    end
+
+    # Returns the brand name for the product
+    # @return [String]
+    def brand_name
+      brand_taxon&.name
     end
 
     def category
