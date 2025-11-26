@@ -10,18 +10,20 @@ First we need to create a database migration to add the new brand model to the d
 Create a new model migration file by running the following command in your Spree application root directory:
 
 ```bash
-bin/rails g model spree/brand name:string:index --parent Spree::Base
+bin/rails g migration CreateSpreeBrands name:string:index --timestamps
 ```
 
-This will create a new migration file at `db/migrate/<YYYYMMDDHHMMSS>_create_spree_brands.rb` and a model file at `app/models/spree/brand.rb`.
-
-Now run the migration:
+And run the migration:
 
 ```bash
 bin/rails db:migrate
 ```
 
-This command will create the `spree_brands` table in the database and add the necessary indexes. It will also update your `db/schema.rb` file to reflect the changes.
+Now let's create the model file:
+
+```bash
+bin/rails g model spree/brand --parent Spree::Base
+```
 
 ## Step 2: Extend the Model file
 
