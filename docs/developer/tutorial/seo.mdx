@@ -76,13 +76,16 @@ This generates the slug from the name. If the name is taken, it appends a UUID.
 Spree provides a reusable SEO partial that handles slug, meta title, and meta description with a live search preview. Update your admin form:
 
 ```erb app/views/spree/admin/brands/_form.html.erb
-<div class="row" data-controller="slug-form seo-form"> <!-- [!code ++] -->
+<div class="row" data-controller="slug-form seo-form"> <!-- [!code ++:2] -->
   <div class="col-lg-8">
     <div class="card mb-4">
       <div class="card-body">
+        <%= f.spree_text_field :name, required: true, autofocus: true %> <!-- [!code --] -->
+        <%= f.spree_rich_text_area :description %> <!-- [!code --] -->
+        <!-- [!code ++:8] -->
         <%= f.spree_text_field :name,
             required: true,
-            data: { <!-- [!code ++:4] -->
+            data:
               seo_form_target: 'sourceTitleInput',
               slug_form_target: 'name',
               action: 'slug-form#updateUrlFromName'
@@ -93,7 +96,16 @@ Spree provides a reusable SEO partial that handles slug, meta title, and meta de
     </div>
   </div>
 
-  <div class="col-lg-4"> <!-- [!code ++:11] -->
+  <div class="col-lg-4"> <!-- [!code ++] -->
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="card-title"><%= Spree.t(:logo) %></h5>
+      </div>
+      <div class="card-body">
+        <%= f.spree_file_field :logo, width: 300, height: 300, crop: true %>
+      </div>
+    </div>
+    <!-- [!code ++:11] -->
     <%= render 'spree/admin/shared/seo',
           f: f,
           title: @brand.name,
