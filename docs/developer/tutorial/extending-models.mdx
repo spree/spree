@@ -118,7 +118,9 @@ Update the decorator to add the `belongs_to` association:
 module Spree
   module ProductDecorator
     def self.prepended(base)
-      base.belongs_to :brand, class_name: 'Spree::Brand', optional: true
+      # [!code --]
+      # Class-level configurations go here
+      base.belongs_to :brand, class_name: 'Spree::Brand', optional: true # [!code ++]
     end
   end
 
@@ -141,7 +143,7 @@ module Spree
   class Brand < Spree::Base
     # ... existing code ...
 
-    has_many :products, class_name: 'Spree::Product', dependent: :nullify
+    has_many :products, class_name: 'Spree::Product', dependent: :nullify # [!code ++]
 
     # ... rest of your model ...
   end
@@ -171,7 +173,11 @@ Create a partial to inject the brand selector into the product form. Spree's adm
 Create the partial:
 
 ```erb app/views/spree/admin/products/_brand_field.html.erb
-<div class="col-12 col-md-6">
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title"><%= Spree.t(:brand) %></h5>
+  </div>
+  <div class="card-body">
   <%= f.spree_select :brand_id,
       Spree::Brand.order(:name).pluck(:name, :id),
       { include_blank: true, label: Spree.t(:brand) } %>
@@ -183,12 +189,12 @@ Register this partial to appear in the product form. Add to your initializer:
 <Tabs>
   <Tab title="Spree 5.2+">
     ```ruby config/initializers/spree.rb
-    Spree.admin.partials.product_form << 'spree/admin/products/brand_field'
+    Spree.admin.partials.product_form_sidebar << 'spree/admin/products/brand_field'
     ```
   </Tab>
   <Tab title="Spree 5.1 and below">
     ```ruby config/initializers/spree.rb
-    Rails.application.config.spree_admin.product_form_partials << 'spree/admin/products/brand_field'
+    Rails.application.config.spree_admin.product_form_sidebar_partials << 'spree/admin/products/brand_field'
     ```
   </Tab>
 </Tabs>
