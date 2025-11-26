@@ -694,21 +694,21 @@ describe Spree::Product, type: :model do
     end
   end
 
-  describe '#brand' do
+  describe '#brand_taxon' do
     let(:taxonomy) { store.taxonomies.find_by(name: Spree.t(:taxonomy_brands_name)) }
     let(:product) { create(:product, taxons: [taxonomy.taxons.first], stores: [store]) }
 
     it 'fetches Brand Taxon' do
-      expect(product.brand).to eql(taxonomy.taxons.first)
+      expect(product.brand_taxon).to eql(taxonomy.taxons.first)
     end
   end
 
-  describe '#category' do
+  describe '#category_taxon' do
     let(:taxonomy) { store.taxonomies.find_by(name: Spree.t(:taxonomy_categories_name)) }
     let(:product) { create(:product, taxons: [taxonomy.taxons.first], stores: [store]) }
 
     it 'fetches Category Taxon' do
-      expect(product.category).to eql(taxonomy.taxons.first)
+      expect(product.category_taxon).to eql(taxonomy.taxons.first)
     end
   end
 

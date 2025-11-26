@@ -26,12 +26,6 @@ module Spree
       (Time.current - product.activated_at.in_time_zone(current_store.preferred_timezone)).seconds.in_weeks.to_i.abs
     end
 
-    def brand_name(product)
-      Spree::Deprecation.warn('brand_name is deprecated and will be removed in Spree 5.2. Please use `product.brand_name` instead.')
-
-      product.brand&.name || product.try(:vendor)&.display_name
-    end
-
     def product_not_selected_options(product, selected_variant, options_param_name: :options)
       product.option_types.map do |option_type|
         if product_selected_option_for_option(
