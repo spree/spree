@@ -255,8 +255,6 @@ module Spree
     delegate :display_amount, :display_price, :has_default_price?, :track_inventory?,
              :display_compare_at_price, :images, to: :default_variant
 
-    delegate :name, to: :brand, prefix: true, allow_nil: true
-
     alias master_images images
 
     state_machine :status, initial: :draft do
@@ -551,6 +549,13 @@ module Spree
     end
 
     def brand
+      Spree::Deprecation.warn('Spree::Product#brand is deprecated and will be removed in Spree 6. Please use Spree::Product#brand_taxon instead.')
+      brand_taxon
+    end
+
+    # Returns the brand taxon for the product
+    # @return [Spree::Taxon]
+    def brand_taxon
       @brand ||= if Spree.use_translations?
                    taxons.joins(:taxonomy).
                      join_translation_table(Taxonomy).
@@ -564,7 +569,20 @@ module Spree
                  end
     end
 
+    # Returns the brand name for the product
+    # @return [String]
+    def brand_name
+      brand_taxon&.name
+    end
+
     def category
+      Spree::Deprecation.warn('Spree::Product#category is deprecated and will be removed in Spree 6. Please use Spree::Product#category_taxon instead.')
+      category_taxon
+    end
+
+    # Returns the category taxon for the product
+    # @return [Spree::Taxon]
+    def category_taxon
       @category ||= if Spree.use_translations?
                       taxons.joins(:taxonomy).
                         join_translation_table(Taxonomy).
@@ -580,7 +598,7 @@ module Spree
     end
 
     def main_taxon
-      category || taxons.first
+      category_taxon || taxons.first
     end
 
     def taxons_for_store(store)
