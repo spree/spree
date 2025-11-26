@@ -1,9 +1,11 @@
 <tr id="<%%= spree_dom_id <%= @singular_name %> %>" class="cursor-pointer" data-controller="row-link">
-  <td data-action="click->row-link#openLink" class="w-70"><%%= <%= @singular_name %>.name %></td>
-  <td data-action="click->row-link#openLink" class="w-20"><%%= spree_date(<%= @singular_name %>.created_at) %></td>
-  <td class="actions w-10"">
-    <span class="d-flex justify-content-end">
-      <%%= link_to_edit(<%= @singular_name %>, data: { row_link_target: :link, turbo_frame: '_top' }) if can? :edit, <%= @singular_name %> %>
-    </span>
+  <td data-action="click->row-link#openLink" class="w-70">
+    <%%= <%= @singular_name %>.name %>
+  </td>
+  <td data-action="click->row-link#openLink" class="w-20">
+    <%%= spree_date(<%= @singular_name %>.created_at) %>
+  </td>
+  <td class="actions w-10">
+    <%%= link_to_edit(<%= @singular_name %>, data: { row_link_target: :link, turbo_frame: '_top' }) if can? :edit, <%= @singular_name %> %>
   </td>
 </tr>
