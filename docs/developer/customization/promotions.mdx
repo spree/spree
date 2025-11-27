@@ -1,6 +1,5 @@
 ---
 title: Custom Promotions
-icon: "ticket"
 description: >-
   In this guide we will show you how to create custom promotion rules and actions in Spree.
 ---
@@ -52,11 +51,22 @@ In this guide we will show you how to create custom promotion rules and actions 
   <Accordion title="4. Register the New Action">
     Register the new action with Spree.
     Open `config/initializers/spree.rb` and add the following line:
-    ```ruby
-    Rails.application.config.after_initialize do
-      Rails.application.config.spree.promotions.actions << Spree::Promotion::Actions::MyPromotionAction
-    end
-    ```
+
+    <Tabs>
+      <Tab title="Spree 5.2+">
+        ```ruby config/initializers/spree.rb
+        Spree.promotions.actions << Spree::Promotion::Actions::MyPromotionAction
+        ```
+      </Tab>
+      <Tab title="Spree 5.1 and below">
+        ```ruby config/initializers/spree.rb
+        Rails.application.config.after_initialize do
+          Rails.application.config.spree.promotions.actions << Spree::Promotion::Actions::MyPromotionAction
+        end
+        ```
+      </Tab>
+    </Tabs>
+
     Once this has been registered, it will be available within Spree's interface.
   </Accordion>
 
@@ -133,12 +143,21 @@ In this guide we will show you how to create custom promotion rules and actions 
   <Accordion title="4. Register the Custom Rule">
     To make your custom rule available, register it within Spree by adding the following block to your `config/initializers/spree.rb` file:
 
-    ```ruby
-    Rails.application.config.after_initialize do
-      Rails.application.config.spree.promotions.rules << Spree::Promotion::Rules::MyPromotionRule
-    end
-    ```
-    
+    <Tabs>
+      <Tab title="Spree 5.2+">
+        ```ruby config/initializers/spree.rb
+        Spree.promotions.rules << Spree::Promotion::Rules::MyPromotionRule
+        ```
+      </Tab>
+      <Tab title="Spree 5.1 and below">
+        ```ruby config/initializers/spree.rb
+        Rails.application.config.after_initialize do
+          Rails.application.config.spree.promotions.rules << Spree::Promotion::Rules::MyPromotionRule
+        end
+        ```
+      </Tab>
+    </Tabs>
+
     This step ensures that your custom rule is recognized and can be utilized within the Spree ecosystem.
   </Accordion>
 

@@ -7,7 +7,7 @@ Spree Admin Dashboard allows you easily extend existing pages and screens with y
 
 ## How it works
 
-The entire system works on the basis of injection points which are declared throughout the admin dashboard and allows you to push your own code there. Each injection point is identified by a key, eg. `body_end_partials`.
+The entire system works on the basis of injection points which are declared throughout the admin dashboard and allows you to push your own code there. Each injection point is identified by a key, eg. `body_end`.
 
 Let's say you want to add a new footer to the admin dashboard. You'll need to generate a template in your application:
 
@@ -33,16 +33,30 @@ Let's say you want to add a new footer to the admin dashboard. You'll need to ge
 
 4. Register your partial in `config/initializers/spree.rb`
 
-    ```ruby
-    Rails.application.config.spree_admin.body_end_partials << 'spree/admin/shared/additional_footer'
-    ```
+    <Tabs>
+      <Tab title="Spree 5.2+">
+        ```ruby config/initializers/spree.rb
+        Spree.admin.partials.body_end << 'spree/admin/shared/additional_footer'
+        ```
+      </Tab>
+      <Tab title="Spree 5.1 and below">
+        ```ruby config/initializers/spree.rb
+        Rails.application.config.spree_admin.body_end << 'spree/admin/shared/additional_footer_partials'
+        ```
+
+        <Warning>
+          For older versions of Spree you need to add `_partials` suffix for all injection points, 
+          eg. `body_end_partials` instead of `body_end`.
+        </Warning>
+      </Tab>
+    </Tabs>
 
     <Info>
-      The key is the name of the injection point, eg. `body_end_partials`.
+      The key is the name of the injection point, eg. `body_end`.
     </Info>
 
     <Info>
-      Remember to use the correct path to your partial and skip the `_` prefix.
+      Remember to use the correct path to your template file and skip the `_` prefix.
     </Info>
 
 5. Restart your web server and you should see your new footer.
@@ -56,10 +70,59 @@ Let's say you want to add a new footer to the admin dashboard. You'll need to ge
     </Info>
 
 <Hint>
-  To summarize, we're injecting our code into the `body_end_partials` array. This is a list of partials that will be rendered at the end of the body tag (before the closing `</body>` tag). The order of the partials in the array is the order in which they will be rendered.
+  To summarize, we're injecting our code into the `body_end` array. This is a list of partials that will be rendered at the end of the body tag (before the closing `</body>` tag). The order of the partials in the array is the order in which they will be rendered.
 </Hint>
 
-## Admin Dashboard injection points
+## Partials API
+
+The `Spree.admin.partials` object provides a clean API for registering partials to injection points. This API is available in Spree 5.2 and later.
+
+### Accessing Available Injection Points
+
+You can list all available injection points programmatically:
+
+```ruby
+# In Rails console or initializer
+Spree.admin.partials.keys
+# => ["head", "body_start", "body_end", "dashboard_analytics", "product_form", ...]
+```
+
+### Registering Partials
+
+Each injection point is an array that you can append to:
+
+```ruby config/initializers/spree.rb
+
+# Add a single partial
+Spree.admin.partials.product_form << 'spree/admin/products/erp_section'
+
+# Add multiple partials
+Spree.admin.partials.dashboard_sidebar << 'spree/admin/dashboard/analytics_widget'
+Spree.admin.partials.dashboard_sidebar << 'spree/admin/dashboard/inventory_widget'
+```
+
+### Viewing Registered Partials
+
+To see which partials are registered for a specific injection point:
+
+```ruby
+Spree.admin.partials.product_form
+# => ["spree/admin/products/erp_section"]
+```
+
+### Replacing All Partials
+
+You can also replace all partials for an injection point:
+
+```ruby
+Spree.admin.partials.product_form = ['my/custom/partial']
+```
+
+<Warning>
+  Replacing all partials will remove any partials registered by other extensions. Use this with caution.
+</Warning>
+
+## List of all injection points
 
 Here's a list of all places you can inject your custom code:
 
@@ -67,19 +130,19 @@ Here's a list of all places you can inject your custom code:
 
 <AccordionGroup>
   <Accordion title="<head>">
-    `head_partials`
+    `head`
 
     Injects code into the `<head>` tag
   </Accordion>
 
   <Accordion title="<body>">
-    `body_start_partials`
+    `body_start`
 
     Injects code into the `<body>` tag, before the main content
   </Accordion>
 
   <Accordion title="</body>">
-    `body_end_partials`
+    `body_end`
 
     Injects code into the `<body>` tag, after the main content
   </Accordion>
@@ -89,7 +152,7 @@ Here's a list of all places you can inject your custom code:
 
 <AccordionGroup>
   <Accordion title="Analytics">
-    `dashboard_analytics_partials`
+    `dashboard_analytics`
 
     <Frame>
       <img src="/images/developer/admin/dashboard_analytics_partials.png" />
@@ -110,7 +173,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Sidebar">
-    `dashboard_sidebar_partials`
+    `dashboard_sidebar`
 
     <Frame>
       <img src="/images/developer/admin/dashboard_sidebar_partials.png" />
@@ -135,7 +198,7 @@ Here's a list of all places you can inject your custom code:
 
 <AccordionGroup>
   <Accordion title="Orders Actions">
-    `orders_actions_partials`
+    `orders_actions`
 
     Injects code into the page actions area (top right of the page) for the orders list page. This is useful for adding custom buttons, export options, or other actions.
 
@@ -145,7 +208,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Orders Header">
-    `orders_header_partials`
+    `orders_header`
 
     Injects code between the page header and the main content area for the orders list page. This is useful for adding notifications, alerts, or additional information.
 
@@ -157,7 +220,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Orders Filters">
-    `orders_filters_partials`
+    `orders_filters`
 
     <Frame>
       <img src="/images/developer/admin/orders_filters_partials.png" />
@@ -165,26 +228,25 @@ Here's a list of all places you can inject your custom code:
 
     #### Variables
 
-    <ParamField path="f" type="ActionView::Helpers::FormBuilder">
-      The [ActionView::Helpers::FormBuilder](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html) object.
+    <ParamField path="f" type="Spree::Admin::FormBuilder">
+      The [Spree::Admin::FormBuilder](/developer/admin/form-builder) object.
     </ParamField>
 
-    Injects code into the orders list filters, to add custom filters. 
+    Injects code into the orders list filters, to add custom filters.
     This partial has access to the `f` variable, which is the form builder for the filters, eg.
 
     ```erb
-    <%= f.text_field :q_number_cont, class: "form-control", data: { filters_target: :input } %>
+    <%= f.spree_text_field :q_number_cont, data: { filters_target: :input } %>
     ```
 
     <Tip>
-    * `q_number_cont` - The name of the filter field. For filtering we're using [ransack](https://activerecord-hackery.github.io/ransack/) gem, so the name of the filter field is the name of the attribute we're filtering by. Learn more about [ransack search syntax](https://activerecord-hackery.github.io/ransack/getting-started/search-matches/).
-    * `form-control` - A bootstrap class for styling the input field.
+    * `q_number_cont` - The name of the filter field. For filtering we're using [ransack](/developer/core-concepts/search-filtering) gem, so the name of the filter field is the name of the attribute we're filtering by.
     * `data: { filters_target: :input }` - Needed for the [Stimulus Filters controller](https://github.com/spree/spree/blob/main/admin/app/javascript/spree/admin/controllers/filters_controller.js) to work.
     </Tip>
   </Accordion>
 
   <Accordion title="Order Page Dropdown">
-    `order_page_dropdown_partials`
+    `order_page_dropdown`
 
     <Frame>
       <img src="/images/developer/admin/order_page_dropdown_partials.png" />
@@ -211,7 +273,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Order Page Header">
-    `order_page_header_partials`
+    `order_page_header`
 
     <Frame>
       <img src="/images/developer/admin/order_page_header_partials.png" />
@@ -259,7 +321,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Order Page Body">
-    `order_page_body_partials`
+    `order_page_body`
 
     <Frame>
       <img src="/images/developer/admin/order_page_body_partials.png" />
@@ -299,7 +361,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Order Page Sidebar">
-    `order_page_sidebar_partials`
+    `order_page_sidebar`
 
     <Frame>
       <img src="/images/developer/admin/order_page_sidebar_partials.png" />
@@ -319,7 +381,7 @@ Here's a list of all places you can inject your custom code:
 
 <AccordionGroup>
   <Accordion title="Customers Actions">
-    `users_actions_partials`
+    `users_actions`
 
     Injects code into the page actions area (top right of the page) for the customers list page. This is useful for adding custom buttons, export options, or other actions.
 
@@ -329,7 +391,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Customers Header">
-    `users_header_partials`
+    `users_header`
 
     Injects code between the page header and the main content area for the customers list page. This is useful for adding notifications, alerts, or additional information.
 
@@ -341,25 +403,22 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Customers Filters">
-    `users_filters_partials`
+    `users_filters`
 
     #### Variables
 
     <ParamField path="f" type="ActionView::Helpers::FormBuilder">
-      The [ActionView::Helpers::FormBuilder](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html) object.
+      The [Spree::Admin::FormBuilder](/developer/admin/form-builder) object.
     </ParamField>
 
     Injects code into the customers list filters. This partial has access to the `f` variable, which is the form builder for the filters.
 
     ```erb
-    <div class="form-group">
-      <%= f.label :custom_field_eq, "Customer Type" %>
-      <%= f.select :custom_field_eq, options_for_select([["VIP", "vip"], ["Regular", "regular"]]), { include_blank: true }, { class: "custom-select", data: { filters_target: :input } } %>
-    </div>
+    <%= f.spree_select :custom_field_eq, [["VIP", "vip"], ["Regular", "regular"]], { include_blank: true }, { data: { filters_target: :input } } %>
     ```
 
     <Tip>
-    * Use [ransack](https://activerecord-hackery.github.io/ransack/) search syntax for filter field names
+    * Use [ransack](/developer/core-concepts/search-filtering) search syntax for filter field names
     * Include `data: { filters_target: :input }` for proper integration with the Stimulus Filters controller
     </Tip>
   </Accordion>
@@ -369,7 +428,7 @@ Here's a list of all places you can inject your custom code:
 
 <AccordionGroup>
   <Accordion title="Stock Items Actions">
-    `stock_items_actions_partials`
+    `stock_items_actions`
 
     Injects code into the page actions area for the stock items list page.
 
@@ -379,7 +438,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Stock Items Header">
-    `stock_items_header_partials`
+    `stock_items_header`
 
     Injects code between the page header and the main content area for the stock items list page.
 
@@ -391,22 +450,25 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Stock Items Filters">
-    `stock_items_filters_partials`
+    `stock_items_filters`
 
     #### Variables
 
-    <ParamField path="f" type="ActionView::Helpers::FormBuilder">
-      The [ActionView::Helpers::FormBuilder](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html) object.
+    <ParamField path="f" type="Spree::Admin::FormBuilder">
+      The [Spree::Admin::FormBuilder](/developer/admin/form-builder) object.
     </ParamField>
 
     Injects code into the stock items list filters.
 
     ```erb
-    <div class="form-group">
-      <%= f.label :count_on_hand_lt, "Stock Below" %>
-      <%= f.number_field :count_on_hand_lt, class: "form-control", data: { filters_target: :input } %>
-    </div>
+    <%= f.spree_number_field :count_on_hand_lt,
+        label: "Stock Below",
+        data: { filters_target: :input } %>
     ```
+
+    <Tip>
+    Use [ransack](/developer/core-concepts/search-filtering) search syntax for filter field names (e.g., `_lt` for "less than").
+    </Tip>
   </Accordion>
 </AccordionGroup>
 
@@ -414,7 +476,7 @@ Here's a list of all places you can inject your custom code:
 
 <AccordionGroup>
   <Accordion title="Admin Users Actions">
-    `admin_users_actions_partials`
+    `admin_users_actions`
 
     Injects code into the page actions area for the admin users list page.
 
@@ -424,7 +486,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Admin Users Header">
-    `admin_users_header_partials`
+    `admin_users_header`
 
     Injects code between the page header and the main content area for the admin users list page.
 
@@ -440,7 +502,7 @@ Here's a list of all places you can inject your custom code:
 
 <AccordionGroup>
   <Accordion title="Classifications Actions">
-    `classifications_actions_partials`
+    `classifications_actions`
 
     Injects code into the page actions area for the classifications list page.
 
@@ -450,7 +512,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Classifications Header">
-    `classifications_header_partials`
+    `classifications_header`
 
     Injects code between the page header and the main content area for the classifications list page.
 
@@ -466,7 +528,7 @@ Here's a list of all places you can inject your custom code:
 
 <AccordionGroup>
   <Accordion title="Coupon Codes Actions">
-    `coupon_codes_actions_partials`
+    `coupon_codes_actions`
 
     Injects code into the page actions area for the coupon codes list page.
 
@@ -476,7 +538,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Coupon Codes Header">
-    `coupon_codes_header_partials`
+    `coupon_codes_header`
 
     Injects code between the page header and the main content area for the coupon codes list page.
 
@@ -492,7 +554,7 @@ Here's a list of all places you can inject your custom code:
 
 <AccordionGroup>
   <Accordion title="Custom Domains Actions">
-    `custom_domains_actions_partials`
+    `custom_domains_actions`
 
     Injects code into the page actions area for the custom domains list page.
 
@@ -502,7 +564,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Custom Domains Header">
-    `custom_domains_header_partials`
+    `custom_domains_header`
 
     Injects code between the page header and the main content area for the custom domains list page.
 
@@ -518,7 +580,7 @@ Here's a list of all places you can inject your custom code:
 
 <AccordionGroup>
   <Accordion title="Customer Returns Actions">
-    `customer_returns_actions_partials`
+    `customer_returns_actions`
 
     Injects code into the page actions area for the customer returns list page.
 
@@ -528,7 +590,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Customer Returns Header">
-    `customer_returns_header_partials`
+    `customer_returns_header`
 
     Injects code between the page header and the main content area for the customer returns list page.
 
@@ -540,22 +602,26 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Customer Returns Filters">
-    `customer_returns_filters_partials`
+    `customer_returns_filters`
 
     #### Variables
 
-    <ParamField path="f" type="ActionView::Helpers::FormBuilder">
-      The [ActionView::Helpers::FormBuilder](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html) object.
+    <ParamField path="f" type="Spree::Admin::FormBuilder">
+      The [Spree::Admin::FormBuilder](/developer/admin/form-builder) object.
     </ParamField>
 
     Injects code into the customer returns list filters.
 
     ```erb
-    <div class="form-group">
-      <%= f.label :reason_eq, "Return Reason" %>
-      <%= f.select :reason_eq, options_for_select([["Damaged", "damaged"], ["Wrong Item", "wrong_item"]]), { include_blank: true }, { class: "custom-select", data: { filters_target: :input } } %>
-    </div>
+    <%= f.spree_select :reason_eq,
+        [["Damaged", "damaged"], ["Wrong Item", "wrong_item"]],
+        { include_blank: true, label: "Return Reason" },
+        { data: { filters_target: :input } } %>
     ```
+
+    <Tip>
+    Use [ransack](/developer/core-concepts/search-filtering) search syntax for filter field names (e.g., `_eq` for "equals").
+    </Tip>
   </Accordion>
 </AccordionGroup>
 
@@ -563,7 +629,7 @@ Here's a list of all places you can inject your custom code:
 
 <AccordionGroup>
   <Accordion title="Digital Assets Actions">
-    `digital_assets_actions_partials`
+    `digital_assets_actions`
 
     Injects code into the page actions area for the digital assets list page.
 
@@ -573,7 +639,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Digital Assets Header">
-    `digital_assets_header_partials`
+    `digital_assets_header`
 
     Injects code between the page header and the main content area for the digital assets list page.
 
@@ -589,7 +655,7 @@ Here's a list of all places you can inject your custom code:
 
 <AccordionGroup>
   <Accordion title="Exports Actions">
-    `exports_actions_partials`
+    `exports_actions`
 
     Injects code into the page actions area for the exports list page.
 
@@ -599,7 +665,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Exports Header">
-    `exports_header_partials`
+    `exports_header`
 
     Injects code between the page header and the main content area for the exports list page.
 
@@ -615,7 +681,7 @@ Here's a list of all places you can inject your custom code:
 
 <AccordionGroup>
   <Accordion title="Gift Cards Actions">
-    `gift_cards_actions_partials`
+    `gift_cards_actions`
 
     Injects code into the page actions area for the gift cards list page.
 
@@ -625,7 +691,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Gift Cards Header">
-    `gift_cards_header_partials`
+    `gift_cards_header`
 
     Injects code between the page header and the main content area for the gift cards list page.
 
@@ -637,22 +703,26 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Gift Cards Filters">
-    `gift_cards_filters_partials`
+    `gift_cards_filters`
 
     #### Variables
 
-    <ParamField path="f" type="ActionView::Helpers::FormBuilder">
-      The [ActionView::Helpers::FormBuilder](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html) object.
+    <ParamField path="f" type="Spree::Admin::FormBuilder">
+      The [Spree::Admin::FormBuilder](/developer/admin/form-builder) object.
     </ParamField>
 
     Injects code into the gift cards list filters.
 
     ```erb
-    <div class="form-group">
-      <%= f.label :balance_gt, "Balance Greater Than" %>
-      <%= f.number_field :balance_gt, step: 0.01, class: "form-control", data: { filters_target: :input } %>
-    </div>
+    <%= f.spree_number_field :balance_gt,
+        label: "Balance Greater Than",
+        step: 0.01,
+        data: { filters_target: :input } %>
     ```
+
+    <Tip>
+    Use [ransack](/developer/core-concepts/search-filtering) search syntax for filter field names (e.g., `_gt` for "greater than").
+    </Tip>
   </Accordion>
 </AccordionGroup>
 
@@ -660,7 +730,7 @@ Here's a list of all places you can inject your custom code:
 
 <AccordionGroup>
   <Accordion title="Integrations Actions">
-    `integrations_actions_partials`
+    `integrations_actions`
 
     Injects code into the page actions area for the integrations list page.
 
@@ -670,7 +740,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Integrations Header">
-    `integrations_header_partials`
+    `integrations_header`
 
     Injects code between the page header and the main content area for the integrations list page.
 
@@ -686,7 +756,7 @@ Here's a list of all places you can inject your custom code:
 
 <AccordionGroup>
   <Accordion title="Invitations Actions">
-    `invitations_actions_partials`
+    `invitations_actions`
 
     Injects code into the page actions area for the invitations list page.
 
@@ -696,7 +766,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Invitations Header">
-    `invitations_header_partials`
+    `invitations_header`
 
     Injects code between the page header and the main content area for the invitations list page.
 
@@ -712,7 +782,7 @@ Here's a list of all places you can inject your custom code:
 
 <AccordionGroup>
   <Accordion title="OAuth Applications Actions">
-    `oauth_applications_actions_partials`
+    `oauth_applications_actions`
 
     Injects code into the page actions area for the OAuth applications list page.
 
@@ -722,7 +792,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="OAuth Applications Header">
-    `oauth_applications_header_partials`
+    `oauth_applications_header`
 
     Injects code between the page header and the main content area for the OAuth applications list page.
 
@@ -738,7 +808,7 @@ Here's a list of all places you can inject your custom code:
 
 <AccordionGroup>
   <Accordion title="Option Types Actions">
-    `option_types_actions_partials`
+    `option_types_actions`
 
     Injects code into the page actions area for the option types list page.
 
@@ -748,7 +818,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Option Types Header">
-    `option_types_header_partials`
+    `option_types_header`
 
     Injects code between the page header and the main content area for the option types list page.
 
@@ -764,7 +834,7 @@ Here's a list of all places you can inject your custom code:
 
 <AccordionGroup>
   <Accordion title="Pages Actions">
-    `pages_actions_partials`
+    `pages_actions`
 
     Injects code into the page actions area for the pages list page.
 
@@ -774,7 +844,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Pages Header">
-    `pages_header_partials`
+    `pages_header`
 
     Injects code between the page header and the main content area for the pages list page.
 
@@ -790,7 +860,7 @@ Here's a list of all places you can inject your custom code:
 
 <AccordionGroup>
   <Accordion title="Payment Methods Actions">
-    `payment_methods_actions_partials`
+    `payment_methods_actions`
 
     Injects code into the page actions area for the payment methods list page.
 
@@ -800,7 +870,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Payment Methods Header">
-    `payment_methods_header_partials`
+    `payment_methods_header`
 
     Injects code between the page header and the main content area for the payment methods list page.
 
@@ -816,7 +886,7 @@ Here's a list of all places you can inject your custom code:
 
 <AccordionGroup>
   <Accordion title="Post Categories Actions">
-    `post_categories_actions_partials`
+    `post_categories_actions`
 
     Injects code into the page actions area for the post categories list page.
 
@@ -826,7 +896,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Post Categories Header">
-    `post_categories_header_partials`
+    `post_categories_header`
 
     Injects code between the page header and the main content area for the post categories list page.
 
@@ -842,7 +912,7 @@ Here's a list of all places you can inject your custom code:
 
 <AccordionGroup>
   <Accordion title="Posts Actions">
-    `posts_actions_partials`
+    `posts_actions`
 
     Injects code into the page actions area for the posts list page.
 
@@ -852,7 +922,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Posts Header">
-    `posts_header_partials`
+    `posts_header`
 
     Injects code between the page header and the main content area for the posts list page.
 
@@ -864,22 +934,26 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Posts Filters">
-    `posts_filters_partials`
+    `posts_filters`
 
     #### Variables
 
-    <ParamField path="f" type="ActionView::Helpers::FormBuilder">
-      The [ActionView::Helpers::FormBuilder](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html) object.
+    <ParamField path="f" type="Spree::Admin::FormBuilder">
+      The [Spree::Admin::FormBuilder](/developer/admin/form-builder) object.
     </ParamField>
 
     Injects code into the posts list filters.
 
     ```erb
-    <div class="form-group">
-      <%= f.label :published_eq, "Publication Status" %>
-      <%= f.select :published_eq, options_for_select([["Published", true], ["Draft", false]]), { include_blank: true }, { class: "custom-select", data: { filters_target: :input } } %>
-    </div>
+    <%= f.spree_select :published_eq,
+        [["Published", true], ["Draft", false]],
+        { include_blank: true, label: "Publication Status" },
+        { data: { filters_target: :input } } %>
     ```
+
+    <Tip>
+    Use [ransack](/developer/core-concepts/search-filtering) search syntax for filter field names.
+    </Tip>
   </Accordion>
 </AccordionGroup>
 
@@ -887,7 +961,7 @@ Here's a list of all places you can inject your custom code:
 
 <AccordionGroup>
   <Accordion title="Promotions Actions">
-    `promotions_actions_partials`
+    `promotions_actions`
 
     Injects code into the page actions area for the promotions list page.
 
@@ -897,7 +971,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Promotions Header">
-    `promotions_header_partials`
+    `promotions_header`
 
     Injects code between the page header and the main content area for the promotions list page.
 
@@ -909,22 +983,26 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Promotions Filters">
-    `promotions_filters_partials`
+    `promotions_filters`
 
     #### Variables
 
-    <ParamField path="f" type="ActionView::Helpers::FormBuilder">
-      The [ActionView::Helpers::FormBuilder](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html) object.
+    <ParamField path="f" type="Spree::Admin::FormBuilder">
+      The [Spree::Admin::FormBuilder](/developer/admin/form-builder) object.
     </ParamField>
 
     Injects code into the promotions list filters.
 
     ```erb
-    <div class="form-group">
-      <%= f.label :active_eq, "Active Status" %>
-      <%= f.select :active_eq, options_for_select([["Active", true], ["Inactive", false]]), { include_blank: true }, { class: "custom-select", data: { filters_target: :input } } %>
-    </div>
+    <%= f.spree_select :active_eq,
+        [["Active", true], ["Inactive", false]],
+        { include_blank: true, label: "Active Status" },
+        { data: { filters_target: :input } } %>
     ```
+
+    <Tip>
+    Use [ransack](/developer/core-concepts/search-filtering) search syntax for filter field names.
+    </Tip>
   </Accordion>
 </AccordionGroup>
 
@@ -932,7 +1010,7 @@ Here's a list of all places you can inject your custom code:
 
 <AccordionGroup>
   <Accordion title="Properties Actions">
-    `properties_actions_partials`
+    `properties_actions`
 
     Injects code into the page actions area for the properties list page.
 
@@ -942,7 +1020,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Properties Header">
-    `properties_header_partials`
+    `properties_header`
 
     Injects code between the page header and the main content area for the properties list page.
 
@@ -958,7 +1036,7 @@ Here's a list of all places you can inject your custom code:
 
 <AccordionGroup>
   <Accordion title="Refund Reasons Actions">
-    `refund_reasons_actions_partials`
+    `refund_reasons_actions`
 
     Injects code into the page actions area for the refund reasons list page.
 
@@ -968,7 +1046,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Refund Reasons Header">
-    `refund_reasons_header_partials`
+    `refund_reasons_header`
 
     Injects code between the page header and the main content area for the refund reasons list page.
 
@@ -984,7 +1062,7 @@ Here's a list of all places you can inject your custom code:
 
 <AccordionGroup>
   <Accordion title="Reimbursement Types Actions">
-    `reimbursement_types_actions_partials`
+    `reimbursement_types_actions`
 
     Injects code into the page actions area for the reimbursement types list page.
 
@@ -994,7 +1072,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Reimbursement Types Header">
-    `reimbursement_types_header_partials`
+    `reimbursement_types_header`
 
     Injects code between the page header and the main content area for the reimbursement types list page.
 
@@ -1010,7 +1088,7 @@ Here's a list of all places you can inject your custom code:
 
 <AccordionGroup>
   <Accordion title="Reports Actions">
-    `reports_actions_partials`
+    `reports_actions`
 
     Injects code into the page actions area for the reports list page.
 
@@ -1020,7 +1098,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Reports Header">
-    `reports_header_partials`
+    `reports_header`
 
     Injects code between the page header and the main content area for the reports list page.
 
@@ -1036,7 +1114,7 @@ Here's a list of all places you can inject your custom code:
 
 <AccordionGroup>
   <Accordion title="Return Authorization Reasons Actions">
-    `return_authorization_reasons_actions_partials`
+    `return_authorization_reasons_actions`
 
     Injects code into the page actions area for the return authorization reasons list page.
 
@@ -1046,7 +1124,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Return Authorization Reasons Header">
-    `return_authorization_reasons_header_partials`
+    `return_authorization_reasons_header`
 
     Injects code between the page header and the main content area for the return authorization reasons list page.
 
@@ -1062,7 +1140,7 @@ Here's a list of all places you can inject your custom code:
 
 <AccordionGroup>
   <Accordion title="Return Authorizations Actions">
-    `return_authorizations_actions_partials`
+    `return_authorizations_actions`
 
     Injects code into the page actions area for the return authorizations list page.
 
@@ -1072,7 +1150,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Return Authorizations Header">
-    `return_authorizations_header_partials`
+    `return_authorizations_header`
 
     Injects code between the page header and the main content area for the return authorizations list page.
 
@@ -1088,7 +1166,7 @@ Here's a list of all places you can inject your custom code:
 
 <AccordionGroup>
   <Accordion title="Roles Actions">
-    `roles_actions_partials`
+    `roles_actions`
 
     Injects code into the page actions area for the roles list page.
 
@@ -1098,7 +1176,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Roles Header">
-    `roles_header_partials`
+    `roles_header`
 
     Injects code between the page header and the main content area for the roles list page.
 
@@ -1114,7 +1192,7 @@ Here's a list of all places you can inject your custom code:
 
 <AccordionGroup>
   <Accordion title="Shipping Categories Actions">
-    `shipping_categories_actions_partials`
+    `shipping_categories_actions`
 
     Injects code into the page actions area for the shipping categories list page.
 
@@ -1124,7 +1202,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Shipping Categories Header">
-    `shipping_categories_header_partials`
+    `shipping_categories_header`
 
     Injects code between the page header and the main content area for the shipping categories list page.
 
@@ -1140,7 +1218,7 @@ Here's a list of all places you can inject your custom code:
 
 <AccordionGroup>
   <Accordion title="Shipping Methods Actions">
-    `shipping_methods_actions_partials`
+    `shipping_methods_actions`
 
     Injects code into the page actions area for the shipping methods list page.
 
@@ -1150,7 +1228,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Shipping Methods Header">
-    `shipping_methods_header_partials`
+    `shipping_methods_header`
 
     Injects code between the page header and the main content area for the shipping methods list page.
 
@@ -1166,7 +1244,7 @@ Here's a list of all places you can inject your custom code:
 
 <AccordionGroup>
   <Accordion title="Stock Locations Actions">
-    `stock_locations_actions_partials`
+    `stock_locations_actions`
 
     Injects code into the page actions area for the stock locations list page.
 
@@ -1176,7 +1254,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Stock Locations Header">
-    `stock_locations_header_partials`
+    `stock_locations_header`
 
     Injects code between the page header and the main content area for the stock locations list page.
 
@@ -1192,7 +1270,7 @@ Here's a list of all places you can inject your custom code:
 
 <AccordionGroup>
   <Accordion title="Stock Transfers Actions">
-    `stock_transfers_actions_partials`
+    `stock_transfers_actions`
 
     Injects code into the page actions area for the stock transfers list page.
 
@@ -1202,7 +1280,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Stock Transfers Header">
-    `stock_transfers_header_partials`
+    `stock_transfers_header`
 
     Injects code between the page header and the main content area for the stock transfers list page.
 
@@ -1214,22 +1292,26 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Stock Transfers Filters">
-    `stock_transfers_filters_partials`
+    `stock_transfers_filters`
 
     #### Variables
 
-    <ParamField path="f" type="ActionView::Helpers::FormBuilder">
-      The [ActionView::Helpers::FormBuilder](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html) object.
+    <ParamField path="f" type="Spree::Admin::FormBuilder">
+      The [Spree::Admin::FormBuilder](/developer/admin/form-builder) object.
     </ParamField>
 
     Injects code into the stock transfers list filters.
 
     ```erb
-    <div class="form-group">
-      <%= f.label :status_eq, "Transfer Status" %>
-      <%= f.select :status_eq, options_for_select([["Pending", "pending"], ["Completed", "completed"]]), { include_blank: true }, { class: "custom-select", data: { filters_target: :input } } %>
-    </div>
+    <%= f.spree_select :status_eq,
+        [["Pending", "pending"], ["Completed", "completed"]],
+        { include_blank: true, label: "Transfer Status" },
+        { data: { filters_target: :input } } %>
     ```
+
+    <Tip>
+    Use [ransack](/developer/core-concepts/search-filtering) search syntax for filter field names.
+    </Tip>
   </Accordion>
 </AccordionGroup>
 
@@ -1237,7 +1319,7 @@ Here's a list of all places you can inject your custom code:
 
 <AccordionGroup>
   <Accordion title="Store Credit Categories Actions">
-    `store_credit_categories_actions_partials`
+    `store_credit_categories_actions`
 
     Injects code into the page actions area for the store credit categories list page.
 
@@ -1247,7 +1329,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Store Credit Categories Header">
-    `store_credit_categories_header_partials`
+    `store_credit_categories_header`
 
     Injects code between the page header and the main content area for the store credit categories list page.
 
@@ -1263,7 +1345,7 @@ Here's a list of all places you can inject your custom code:
 
 <AccordionGroup>
   <Accordion title="Store Credits Actions">
-    `store_credits_actions_partials`
+    `store_credits_actions`
 
     Injects code into the page actions area for the store credits list page.
 
@@ -1273,7 +1355,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Store Credits Header">
-    `store_credits_header_partials`
+    `store_credits_header`
 
     Injects code between the page header and the main content area for the store credits list page.
 
@@ -1289,7 +1371,7 @@ Here's a list of all places you can inject your custom code:
 
 <AccordionGroup>
   <Accordion title="Tax Categories Actions">
-    `tax_categories_actions_partials`
+    `tax_categories_actions`
 
     Injects code into the page actions area for the tax categories list page.
 
@@ -1299,7 +1381,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Tax Categories Header">
-    `tax_categories_header_partials`
+    `tax_categories_header`
 
     Injects code between the page header and the main content area for the tax categories list page.
 
@@ -1315,7 +1397,7 @@ Here's a list of all places you can inject your custom code:
 
 <AccordionGroup>
   <Accordion title="Tax Rates Actions">
-    `tax_rates_actions_partials`
+    `tax_rates_actions`
 
     Injects code into the page actions area for the tax rates list page.
 
@@ -1325,7 +1407,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Tax Rates Header">
-    `tax_rates_header_partials`
+    `tax_rates_header`
 
     Injects code between the page header and the main content area for the tax rates list page.
 
@@ -1341,7 +1423,7 @@ Here's a list of all places you can inject your custom code:
 
 <AccordionGroup>
   <Accordion title="Taxonomies Actions">
-    `taxonomies_actions_partials`
+    `taxonomies_actions`
 
     Injects code into the page actions area for the taxonomies list page.
 
@@ -1351,7 +1433,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Taxonomies Header">
-    `taxonomies_header_partials`
+    `taxonomies_header`
 
     Injects code between the page header and the main content area for the taxonomies list page.
 
@@ -1367,7 +1449,7 @@ Here's a list of all places you can inject your custom code:
 
 <AccordionGroup>
   <Accordion title="Themes Actions">
-    `themes_actions_partials`
+    `themes_actions`
 
     Injects code into the page actions area for the themes list page.
 
@@ -1377,7 +1459,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Themes Header">
-    `themes_header_partials`
+    `themes_header`
 
     Injects code between the page header and the main content area for the themes list page.
 
@@ -1393,7 +1475,7 @@ Here's a list of all places you can inject your custom code:
 
 <AccordionGroup>
   <Accordion title="Webhooks Subscribers Actions">
-    `webhooks_subscribers_actions_partials`
+    `webhooks_subscribers_actions`
 
     Injects code into the page actions area for the webhooks subscribers list page.
 
@@ -1403,7 +1485,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Webhooks Subscribers Header">
-    `webhooks_subscribers_header_partials`
+    `webhooks_subscribers_header`
 
     Injects code between the page header and the main content area for the webhooks subscribers list page.
 
@@ -1419,7 +1501,7 @@ Here's a list of all places you can inject your custom code:
 
 <AccordionGroup>
   <Accordion title="Zones Actions">
-    `zones_actions_partials`
+    `zones_actions`
 
     Injects code into the page actions area for the zones list page.
 
@@ -1429,7 +1511,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Zones Header">
-    `zones_header_partials`
+    `zones_header`
 
     Injects code between the page header and the main content area for the zones list page.
 
@@ -1445,7 +1527,7 @@ Here's a list of all places you can inject your custom code:
 
 <AccordionGroup>
   <Accordion title="Products Actions">
-    `products_actions_partials`
+    `products_actions`
 
     Injects code into the page actions area (top right of the page) for the products list page. This is useful for adding custom buttons, export options, or other actions.
 
@@ -1455,7 +1537,7 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Products Header">
-    `products_header_partials`
+    `products_header`
 
     Injects code between the page header and the main content area for the products list page. This is useful for adding notifications, alerts, or additional information.
 
@@ -1467,16 +1549,16 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Products Filters">
-    `products_filters_partials`
+    `products_filters`
 
     <Frame>
-      <img src="/images/developer/admin/products_filters_partials.png" />
+      <img src="/images/developer/admin/products_filters.png" />
     </Frame>
 
     #### Variables
 
-    <ParamField path="f" type="ActionView::Helpers::FormBuilder">
-      The [ActionView::Helpers::FormBuilder](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html) object.
+    <ParamField path="f" type="Spree::Admin::FormBuilder">
+      The [Spree::Admin::FormBuilder](/developer/admin/form-builder) object.
     </ParamField>
 
     Injects code into the products list filters. This partial has access to the `f` variable, which is the form builder for the filters.
@@ -1484,21 +1566,20 @@ Here's a list of all places you can inject your custom code:
     To add a new filter field, you can use the following code:
 
     ```erb
-    <%= f.text_field :q_name_cont, class: "form-control", data: { filters_target: :input } %>
+    <%= f.spree_text_field :q_name_cont, data: { filters_target: :input } %>
     ```
 
     <Tip>
-    * `q_name_cont` is the name of the filter field. For filtering we're using [ransack](https://activerecord-hackery.github.io/ransack/) gem, so the name of the filter field is the name of the attribute we're filtering by. Learn more about [ransack search syntax](https://activerecord-hackery.github.io/ransack/getting-started/search-matches/).
-    * `form-control` is a bootstrap class for styling the input field.
+    * `q_name_cont` is the name of the filter field. For filtering we're using [ransack](/developer/core-concepts/search-filtering) gem, so the name of the filter field is the name of the attribute we're filtering by.
     * `data: { filters_target: :input }` is needed for the [Stimulus Filters controller](https://github.com/spree/spree/blob/main/admin/app/javascript/spree/admin/controllers/filters_controller.js) to work.
     </Tip>
   </Accordion>
 
   <Accordion title="Products Page Dropdown">
-    `product_dropdown_partials`
+    `product_dropdown`
 
     <Frame>
-      <img src="/images/developer/admin/product_dropdown_partials.png" />
+      <img src="/images/developer/admin/product_dropdown.png" />
     </Frame>
 
     Injects code into the products page dropdown. This partial has access to the `product` variable.
@@ -1515,16 +1596,16 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Products Page Form">
-    `product_form_partials`
+    `product_form`
 
     <Frame>
-      <img src="/images/developer/admin/product_form_partials.png" />
+      <img src="/images/developer/admin/product_form.png" />
     </Frame>
 
     #### Variables
 
-    <ParamField path="f" type="ActionView::Helpers::FormBuilder">
-      The [ActionView::Helpers::FormBuilder](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html) object.
+    <ParamField path="f" type="Spree::Admin::FormBuilder">
+      The [Spree::Admin::FormBuilder](/developer/admin/form-builder) object.
     </ParamField>
 
     <ParamField path="product" type="Spree::Product">
@@ -1541,7 +1622,7 @@ Here's a list of all places you can inject your custom code:
         <h5 class="card-title">ERP Integration</h5>
       </div>
       <div class="card-body">
-        <%= f.text_field :erp_product_id, class: "form-control" %>
+        <%= f.spree_text_field :erp_product_id %>
       </div>
     </div>
     ```
@@ -1571,16 +1652,16 @@ Here's a list of all places you can inject your custom code:
   </Accordion>
 
   <Accordion title="Products Page Sidebar">
-    `product_form_sidebar_partials`
+    `product_form_sidebar`
 
     <Frame>
-      <img src="/images/developer/admin/product_form_sidebar_partials.png" />
+      <img src="/images/developer/admin/product_form_sidebar.png" />
     </Frame>
 
     #### Variables
 
-    <ParamField path="f" type="ActionView::Helpers::FormBuilder">
-      The [ActionView::Helpers::FormBuilder](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html) object.
+    <ParamField path="f" type="Spree::Admin::FormBuilder">
+      The [Spree::Admin::FormBuilder](/developer/admin/form-builder) object.
     </ParamField>
 
     <ParamField path="product" type="Spree::Product">
@@ -1597,7 +1678,7 @@ Here's a list of all places you can inject your custom code:
         <h5 class="card-title">ERP Integration</h5>
       </div>
       <div class="card-body">
-        <%= f.text_field :erp_product_id, class: "form-control" %>
+        <%= f.spree_text_field :erp_product_id %>
       </div>
     </div>
     ```
@@ -1630,12 +1711,12 @@ Here's a list of all places you can inject your custom code:
 
 <AccordionGroup>
   <Accordion title="Shipping Methods Form">
-    `shipping_method_form_partials`
+    `shipping_method_form`
 
     #### Variables
 
-    <ParamField path="f" type="ActionView::Helpers::FormBuilder">
-      The [ActionView::Helpers::FormBuilder](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html) object.
+    <ParamField path="f" type="Spree::Admin::FormBuilder">
+      The [Spree::Admin::FormBuilder](/developer/admin/form-builder) object.
     </ParamField>
 
     <ParamField path="shipping_method" type="Spree::ShippingMethod">
@@ -1652,7 +1733,7 @@ Here's a list of all places you can inject your custom code:
         <h5 class="card-title">ERP Integration</h5>
       </div>
       <div class="card-body">
-        <%= f.text_field :erp_shipping_method_id, class: "form-control" %>
+        <%= f.spree_text_field :erp_shipping_method_id %>
       </div>
     </div>
     ```
@@ -1663,16 +1744,16 @@ Here's a list of all places you can inject your custom code:
 
 <AccordionGroup>
   <Accordion title="Store Settings Form">
-    `store_form_partials`
+    `store_form`
 
     <Frame>
-      <img src="/images/developer/admin/store_form_partials.png" />
+      <img src="/images/developer/admin/store_form.png" />
     </Frame>
 
     #### Variables
 
-    <ParamField path="f" type="ActionView::Helpers::FormBuilder">
-      The [ActionView::Helpers::FormBuilder](https://api.rubyonrails.org/classes/ActionView/Helpers/FormBuilder.html) object.
+    <ParamField path="f" type="Spree::Admin::FormBuilder">
+      The [Spree::Admin::FormBuilder](/developer/admin/form-builder) object.
     </ParamField>
 
     <ParamField path="store" type="Spree::Store">
@@ -1689,7 +1770,7 @@ Here's a list of all places you can inject your custom code:
         <h5 class="card-title">ERP Integration</h5>
       </div>
       <div class="card-body">
-        <%= f.text_field :erp_store_id, class: "form-control" %>
+        <%= f.spree_text_field :erp_store_id %>
       </div>
     </div>
     ```

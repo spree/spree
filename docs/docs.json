@@ -1,31 +1,86 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "name": "Spree Commerce documentation",
-  "theme": "maple",
+  "theme": "almond",
   "colors": {
     "primary": "#0A2242",
     "light": "#D7DFE9",
     "dark": "#0A2242"
   },
+  "styling": {
+    "eyebrows": "breadcrumbs",
+    "codeblocks": {
+      "theme": "night-owl"
+    }
+  },
+  "interaction": {
+    "drilldown": true
+  },
   "favicon": "/favicon.png",
   "seo": {
     "metatags": {
-      "canonical": "https://spreecommerce.org/docs"
+      "canonical": "https://spreecommerce.org/docs",
+      "og:locale": "en_US",
+      "twitter:site": "@spreecommerce"
     }
+  },
+  "icons": {
+    "library": "lucide"
+  },
+  "redirects": [
+    {
+      "source": "/developer/storefront/images",
+      "destination": "/developer/core-concepts/images-assets"
+    }
+  ],
+  "contextual": {
+    "options": [
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "mcp",
+      "cursor",
+      "vscode"
+    ]
   },
   "navigation": {
     "versions": [
       {
         "version": "v5",
         "default": true,
+        "pages": [
+          "index"
+        ],
         "tabs": [
           {
             "tab": "Developer Docs",
             "groups": [
               {
                 "group": "Getting started",
+                "icon": "rocket",
                 "pages": [
-                  "developer/getting-started/quickstart",
+                  "developer/getting-started/quickstart"
+                ]
+              },
+              {
+                "group": "Tutorial",
+                "icon": "graduation-cap",
+                "pages": [
+                  "developer/tutorial/introduction",
+                  "developer/tutorial/model",
+                  "developer/tutorial/admin",
+                  "developer/tutorial/rich-text",
+                  "developer/tutorial/file-uploads",
+                  "developer/tutorial/extending-models",
+                  "developer/tutorial/storefront",
+                  "developer/tutorial/testing"
+                ]
+              },
+              {
+                "group": "Core Concepts",
+                "icon": "brain",
+                "pages": [
                   "developer/core-concepts/architecture",
                   "developer/core-concepts/stores",
                   "developer/core-concepts/orders",
@@ -39,45 +94,50 @@
                   "developer/core-concepts/calculators",
                   "developer/core-concepts/adjustments",
                   "developer/core-concepts/addresses",
+                  "developer/core-concepts/metafields",
                   "developer/core-concepts/i18n",
-                  "developer/core-concepts/metafields"
+                  "developer/core-concepts/search-filtering",
+                  "developer/core-concepts/slugs",
+                  "developer/core-concepts/images-assets"
                 ]
               },
               {
-                "group": "Customizing Spree",
+                "group": "Admin Dashboard",
+                "icon": "gauge",
+                "pages": [
+                  "developer/admin/admin",
+                  "developer/admin/extending-ui",
+                  "developer/admin/navigation",
+                  "developer/admin/form-builder",
+                  "developer/admin/components",
+                  "developer/admin/helper-methods",
+                  "developer/admin/authentication",
+                  "developer/admin/permissions",
+                  "developer/admin/custom-javascript",
+                  "developer/admin/custom-css"
+                ]
+              },
+              {
+                "group": "Storefront",
+                "icon": "store",
+                "pages": [
+                  "developer/storefront/storefront",
+                  "developer/storefront/themes",
+                  "developer/storefront/pages",
+                  "developer/storefront/sections",
+                  "developer/storefront/blocks",
+                  "developer/storefront/links",
+                  "developer/storefront/helper-methods",
+                  "developer/storefront/custom-javascript",
+                  "developer/storefront/custom-css"
+                ]
+              },
+              {
+                "group": "Customization Reference",
+                "icon": "wrench",
                 "pages": [
                   "developer/customization/quickstart",
                   "developer/customization/configuration",
-                  {
-                    "group": "Storefront",
-                    "icon": "store",
-                    "pages": [
-                      "developer/storefront/storefront",
-                      "developer/storefront/themes",
-                      "developer/storefront/pages",
-                      "developer/storefront/sections",
-                      "developer/storefront/blocks",
-                      "developer/storefront/links",
-                      "developer/storefront/images",
-                      "developer/storefront/helper-methods",
-                      "developer/storefront/custom-javascript",
-                      "developer/storefront/custom-css"
-                    ]
-                  },
-                  {
-                    "group": "Admin Dashboard",
-                    "icon": "gauge",
-                    "pages": [
-                      "developer/admin/admin",
-                      "developer/admin/extending-ui",
-                      "developer/admin/navigation",
-                      "developer/admin/authentication",
-                      "developer/admin/permissions",
-                      "developer/admin/helper-methods",
-                      "developer/admin/custom-javascript",
-                      "developer/admin/custom-css"
-                    ]
-                  },
                   "developer/customization/authentication",
                   "developer/customization/checkout",
                   "developer/customization/permissions",
@@ -97,7 +157,6 @@
                 "pages": [
                   {
                     "group": "Multi-Store",
-                    "icon": "store",
                     "pages": [
                       "developer/multi-store/quickstart",
                       "developer/multi-store/setup"
@@ -105,7 +164,6 @@
                   },
                   {
                     "group": "Multi-Tenant",
-                    "icon": "building",
                     "pages": [
                       "developer/multi-tenant/quickstart",
                       "developer/multi-tenant/installation",
@@ -115,7 +173,6 @@
                   },
                   {
                     "group": "Multi-Vendor",
-                    "icon": "shop",
                     "pages": [
                       "developer/multi-vendor/quickstart",
                       "developer/multi-vendor/installation"
@@ -125,6 +182,7 @@
               },
               {
                 "group": "Deployment",
+                "icon": "server",
                 "pages": [
                   "developer/deployment/render",
                   "developer/deployment/aws",
@@ -138,6 +196,7 @@
               },
               {
                 "group": "Upgrading",
+                "icon": "circle-arrow-up",
                 "pages": [
                   "developer/upgrades/quickstart",
                   {
@@ -174,6 +233,7 @@
               },
               {
                 "group": "Contributing",
+                "icon": "heart",
                 "pages": [
                   "developer/contributing/quickstart",
                   "developer/contributing/developing-spree",
@@ -182,15 +242,10 @@
               },
               {
                 "group": "Security",
+                "icon": "shield",
                 "pages": [
                   "developer/security/security_policy",
                   "developer/security/pci_compliance"
-                ]
-              },
-              {
-                "group": "Advanced",
-                "pages": [
-                  "developer/advanced/adding_spree_to_rails_app"
                 ]
               }
             ]
@@ -1124,7 +1179,7 @@
                 ]
               },
               {
-                "group": "Customizing Spree",
+                "group": "Customization Reference",
                 "pages": [
                   "developer/customization/quickstart",
                   "developer/customization/v4/authentication",
@@ -1923,28 +1978,24 @@
           }
         ]
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Community",
-          "href": "http://slack.spreecommerce.org/",
-          "icon": "slack"
-        },
-        {
-          "anchor": "Github",
-          "href": "https://github.com/spree/spree",
-          "icon": "github"
-        }
-      ]
-    }
+    ]
   },
   "logo": {
     "light": "/logo/logo_light.png",
-    "dark": "/logo/logo_dark.png",
-    "href": "https://spreecommerce.org"
+    "dark": "/logo/logo_dark.png"
   },
   "api": {
+    "examples": {
+      "languages": [
+        "curl",
+        "javascript",
+        "ruby",
+        "python",
+        "php",
+        "java",
+        "c#"
+      ]
+    },
     "openapi": [
       "api-reference/storefront.yaml",
       "api-reference/platform.yaml"
@@ -1957,15 +2008,9 @@
     }
   },
   "navbar": {
-    "links": [
-      {
-        "label": "Support",
-        "href": "mailto:hello@spreecommerce.org"
-      }
-    ],
     "primary": {
       "type": "button",
-      "label": "Get started",
+      "label": "Support",
       "href": "https://spreecommerce.org/contact/"
     }
   },

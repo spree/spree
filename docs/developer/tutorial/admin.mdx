@@ -1,0 +1,87 @@
+---
+title: Admin Dashboard
+description: Learn how to create Admin Dashboard UI to manage Brands
+---
+
+Now that we've created a complete "Brand" model, let's create an Admin Dashboard interface so our admins can manage the brands.
+
+## Step 1: Create the boilerplate Admin Dashboard UI
+
+Admin Scaffold generator is a tool that helps us create a complete Admin Dashboard UI for our new resource.
+
+Run the following command in our Spree application root directory:
+
+```bash
+bin/rails g spree:admin:scaffold Spree::Brand
+```
+
+This will create the following files:
+
+| File Type | Path | Description |
+|-----------|------|------|
+| Controller | `app/controllers/spree/admin/brands_controller.rb` | Handles the logic for the brands resource. |
+| View | `app/views/spree/admin/brands/index.html.erb` | Handles displaying the list of brands in the Admin Dashboard. |
+| View | `app/views/spree/admin/brands/new.html.erb` | Handles displaying the new brand form in the Admin Dashboard. |
+| View | `app/views/spree/admin/brands/edit.html.erb` | Handles displaying the edit brand form in the Admin Dashboard. |
+| Partial | `app/views/spree/admin/brands/_table_header.html.erb` | Handles displaying the table header in the brands index view. |
+| Partial | `app/views/spree/admin/brands/_table_row.html.erb` | Handles displaying the table row in the brands index view. |
+| Partial | `app/views/spree/admin/brands/_filters.html.erb` | Handles displaying the filters in the brands index view. |
+| Partial | `app/views/spree/admin/brands/_form.html.erb` | Handles displaying the form in the new and edit brand views. |
+
+It will also automatically add the following routes to your `config/routes.rb` file:
+
+```ruby config/routes.rb
+namespace :admin do
+  resources :brands
+end
+```
+
+You will now be able to access the brands resource at `http://localhost:3000/admin/brands` in your browser. To reference this route in your code, you can use the `spree.admin_brands_path` helper.
+
+## Step 2: Add Navigation Menu Item
+
+Now that we've created a complete Admin Dashboard UI for the brand resource, let's add a navigation menu item to the main sidebar so we can access it from the admin dashboard.
+
+Add the following to your `config/initializers/spree.rb` file:
+
+```ruby config/initializers/spree.rb
+Rails.application.config.after_initialize do
+  # Add Brands to the admin sidebar
+  sidebar_nav = Spree.admin.navigation.sidebar
+
+  sidebar_nav.add :brands,
+    label: :brands,
+    url: :admin_brands_path,
+    icon: 'award',
+    position: 35,
+    active: -> { controller_name == 'brands' },
+    if: -> { can?(:manage, Spree::Brand) }
+end
+```
+
+This will add a "Brands" link to the admin sidebar between Products (30) and Customers (40).
+
+### Adding to an Existing Submenu
+
+To add "Brands" to the Products submenu instead add a new submenu item:
+
+```ruby config/initializers/spree.rb
+Rails.application.config.after_initialize do
+  sidebar_nav = Spree.admin.navigation.sidebar
+
+  # Add brands as a child of products
+  sidebar_nav.add :brands,
+    label: :brands,
+    url: :admin_brands_path,
+    position: 50,
+    parent: :products,
+    active: -> { controller_name == 'brands' },
+    if: -> { can?(:manage, Spree::Brand) }
+end
+```
+
+After restarting your server, you'll see the new "Brands" navigation link in the admin sidebar!
+
+<Info>
+For complete navigation API documentation including all available options, submenu creation, badges, and more, see the [Admin Navigation](/developer/admin/navigation) guide.
+</Info>

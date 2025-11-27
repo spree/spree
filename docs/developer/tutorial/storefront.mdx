@@ -1,0 +1,366 @@
+---
+title: Storefront
+description: Learn how to create storefront pages for your Brands feature
+---
+
+In this tutorial, we'll create storefront pages to display brands to your customers. We'll start with a simple Rails approach using controllers and views, then in the next guide we'll connect it to Page Builder.
+
+<Info>
+  This guide assumes you've completed the [Model](/developer/tutorial/model), [Admin](/developer/tutorial/admin), [Rich Text](/developer/tutorial/rich-text), [File Uploads](/developer/tutorial/file-uploads), and [Extending Core Models](/developer/tutorial/extending-models) tutorials. You should have a working `Spree::Brand` model with products associated to brands.
+</Info>
+
+## What We're Building
+
+By the end of this tutorial, you'll have:
+
+- A custom theme for your store
+- A brands listing page at `/brands`
+- Individual brand pages at `/brands/:id`
+- Styled views using Tailwind CSS
+
+## Step 1: Create a Custom Theme
+
+Before adding custom views, create your own theme. This is important because:
+
+- **Upgrade safety** - Your customizations won't be overwritten when updating Spree
+- **Clean separation** - Your code stays separate from Spree's default theme
+- **Full control** - You get a complete copy of all templates to customize
+
+Run the theme generator:
+
+```bash
+bin/rails g spree:storefront:theme MyStore
+```
+
+This creates:
+- `app/views/themes/my_store/` - Copy of all storefront templates
+- `app/models/spree/themes/my_store.rb` - Theme configuration class
+
+The generator also updates your `config/initializers/spree.rb`:
+
+```ruby config/initializers/spree.rb
+Spree.page_builder.themes << Spree::Themes::MyStore
+```
+
+### Activate Your Theme
+
+1. Go to **Admin → Storefront → Themes**
+2. Find your new theme in the "Add new theme" section
+3. Click **Add** to activate it
+
+<Warning>
+  Always create a custom theme for production stores. Never modify the default theme directly - your changes will be lost during Spree upgrades.
+</Warning>
+
+## Step 2: Add Routes
+
+Now let's add routes for our brand pages. Create or update your routes file:
+
+```ruby config/routes.rb
+Spree::Core::Engine.add_routes do
+  scope '(:locale)', locale: /#{Spree.available_locales.join('|')}/, defaults: { locale: nil } do
+    resources :brands, only: [:index, :show]
+  end
+end
+```
+
+<Info>
+  The `scope '(:locale)'` wrapper enables internationalization - URLs like `/fr/brands` will work automatically if you have French locale enabled.
+</Info>
+
+## Step 3: Create the Controller
+
+Create a controller that inherits from `Spree::StoreController`. This base controller provides:
+
+- Access to `current_store`, `current_theme`, `current_currency`
+- User authentication helpers
+- Storefront layout and helpers
+- SEO and meta tag support
+
+```ruby app/controllers/spree/brands_controller.rb
+module Spree
+  class BrandsController < StoreController
+    before_action :load_brand, only: [:show]
+
+    def index
+      @brands = Spree::Brand.order(:name)
+    end
+
+    def show
+      @products = @brand.products.active(current_currency).includes(storefront_products_includes)
+    end
+
+    private
+
+    def load_brand
+      @brand = Spree::Brand.find(params[:id])
+    end
+
+    # Override to set page title for SEO
+    def accurate_title
+      if @brand
+        @brand.name
+      else
+        Spree.t(:brands)
+      end
+    end
+  end
+end
+```
+
+### Key Points
+
+- **Inherit from `Spree::StoreController`** - Not `ApplicationController`. This gives you access to all storefront functionality.
+- **Use `current_store`** - Always scope queries to the current store for multi-store support.
+- **Override `accurate_title`** - This sets the page `<title>` tag.
+
+<Tip>
+  Want SEO-friendly URLs like `/brands/nike` instead of `/brands/123`? See the [SEO](/developer/tutorial/seo) tutorial to add slug support.
+</Tip>
+
+## Step 4: Create the Views
+
+Storefront views live in your theme directory. Create the brands views in your custom theme:
+
+```bash
+mkdir -p app/views/themes/my_store/spree/brands
+```
+
+Your theme's view structure:
+
+```
+app/views/themes/my_store/spree/brands/
+├── index.html.erb
+├── show.html.erb
+└── _brand_card.html.erb
+```
+
+### Brands Listing Page
+
+```erb app/views/themes/my_store/spree/brands/index.html.erb
+<div class="page-container py-8">
+  <h1 class="text-2xl lg:text-3xl font-medium mb-8">
+    <%= Spree.t(:brands) %>
+  </h1>
+
+  <% if @brands.any? %>
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <% @brands.each do |brand| %>
+        <%= render 'brand_card', brand: brand %>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="text-neutral-600">
+      <%= Spree.t(:no_brands_found) %>
+    </p>
+  <% end %>
+</div>
+```
+
+### Brand Card Partial
+
+```erb app/views/themes/my_store/spree/brands/_brand_card.html.erb
+<%= link_to spree.brand_path(brand),
+    class: 'block group',
+    data: { turbo_frame: '_top' } do %>
+  <div class="aspect-square bg-accent rounded-lg overflow-hidden mb-3">
+    <% if brand.logo.attached? %>
+      <%= spree_image_tag brand.logo,
+          width: 300,
+          height: 300,
+          class: 'w-full h-full object-contain p-6 group-hover:scale-105 transition-transform',
+          alt: brand.name %>
+    <% else %>
+      <div class="w-full h-full flex items-center justify-center">
+        <span class="text-4xl font-medium text-neutral-400">
+          <%= brand.name.first.upcase %>
+        </span>
+      </div>
+    <% end %>
+  </div>
+  <h2 class="font-medium group-hover:text-primary transition-colors">
+    <%= brand.name %>
+  </h2>
+<% end %>
+```
+
+### Single Brand Page
+
+```erb app/views/themes/my_store/spree/brands/show.html.erb
+<div class="page-container py-8">
+  <%# Brand Header %>
+  <div class="flex flex-col md:flex-row gap-8 mb-12">
+    <% if @brand.logo.attached? %>
+      <div class="w-32 h-32 bg-accent rounded-lg flex-shrink-0">
+        <%= spree_image_tag @brand.logo,
+            width: 128,
+            height: 128,
+            class: 'w-full h-full object-contain p-4',
+            alt: @brand.name %>
+      </div>
+    <% end %>
+
+    <div>
+      <h1 class="text-2xl lg:text-3xl font-medium mb-4">
+        <%= @brand.name %>
+      </h1>
+
+      <% if @brand.description.present? %>
+        <div class="prose max-w-none text-neutral-600">
+          <%= @brand.description %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <%# Products Grid %>
+  <% if @products.any? %>
+    <h2 class="text-xl font-medium mb-6">
+      <%= Spree.t(:products_by_brand, brand: @brand.name) %>
+    </h2>
+
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <%= render 'spree/shared/products', products: @products %>
+    </div>
+  <% else %>
+    <p class="text-neutral-600">
+      <%= Spree.t(:no_products_found) %>
+    </p>
+  <% end %>
+</div>
+```
+
+## Step 5: Add Translations
+
+Add the necessary translations:
+
+```yaml config/locales/en.yml
+en:
+  spree:
+    brands: Brands
+    no_brands_found: No brands found.
+    products_by_brand: "Products by %{brand}"
+```
+
+## Step 6: Add Navigation Link (Optional)
+
+To add a link to brands in your header navigation, you can use the Admin Dashboard:
+
+1. Go to **Storefront → Theme Editor**
+2. Click on **Header** section
+3. Add a new navigation link pointing to `/brands`
+
+Or programmatically in your header partial:
+
+```erb
+<%= link_to Spree.t(:brands), spree.brands_path, class: 'nav-link' %>
+```
+
+## Understanding the View Structure
+
+### Theme Directory
+
+Views are organized by theme in `app/views/themes/{theme_name}/spree/`:
+
+```
+app/views/themes/my_store/spree/
+├── brands/           # Your brand views
+├── products/         # Product views
+├── shared/           # Shared partials
+└── page_sections/    # Page Builder sections
+```
+
+<Info>
+  Spree looks for views in your active theme first. If a view isn't found, it falls back to the default theme. This means you only need to copy and customize the files you want to change.
+</Info>
+
+### Key CSS Classes
+
+Spree's default theme uses these common patterns:
+
+| Class | Purpose |
+|-------|---------|
+| `page-container` | Centered container with max-width and padding |
+| `bg-accent` | Uses theme's accent background color |
+| `text-primary` | Uses theme's primary text color |
+| `btn-primary` | Primary button style |
+| `btn-secondary` | Secondary button style |
+
+### Using Spree Helpers
+
+```erb
+<%# Image helper with automatic optimization %>
+<%= spree_image_tag image, width: 400, height: 400 %>
+
+<%# URL helpers %>
+<%= spree.brands_path %>
+<%= spree.brand_path(brand) %>
+
+<%# Translation helper %>
+<%= Spree.t(:brands) %>
+
+<%# Price display %>
+<%= display_price(product.price_in(current_currency)) %>
+```
+
+## Testing Your Pages
+
+Start your Rails server and visit:
+
+- `http://localhost:3000/brands` - Brand listing
+- `http://localhost:3000/brands/1` - Single brand (using the brand's ID)
+
+<Tip>
+  Want SEO-friendly URLs like `/brands/nike` instead of `/brands/1`? See the [SEO](/developer/tutorial/seo) tutorial to add slug support, meta tags, and Open Graph data.
+</Tip>
+
+## What's Next?
+
+You now have working brand pages using standard Rails MVC patterns. In the next guide, [Testing](/developer/tutorial/testing), we'll write automated tests for your feature to make sure it works as expected, also in the future when you make changes to your code.
+
+## Complete Controller Example
+
+Here's the complete controller with all features:
+
+```ruby app/controllers/spree/brands_controller.rb
+module Spree
+  class BrandsController < StoreController
+    before_action :load_brand, only: [:show]
+
+    def index
+      @brands = Spree::Brand.order(:name)
+                            .page(params[:page])
+                            .per(24)
+    end
+
+    def show
+      @products = @brand.products.active(current_currency).includes(storefront_products_includes)
+      @page_description = @brand.description&.to_plain_text&.truncate(160)
+    end
+
+    private
+
+    def load_brand
+      @brand = Spree::Brand.find(params[:id])
+    end
+
+    def accurate_title
+      if @brand
+        @brand.name
+      else
+        Spree.t(:brands)
+      end
+    end
+  end
+end
+```
+
+<Info>
+  To use SEO-friendly slugs like `/brands/nike` instead of `/brands/1`, follow the [SEO](/developer/tutorial/seo) tutorial.
+</Info>
+
+## Related Documentation
+
+- [Storefront Overview](/developer/storefront/storefront) - Storefront architecture
+- [Custom CSS](/developer/storefront/custom-css) - Styling with Tailwind
+- [Helper Methods](/developer/storefront/helper-methods) - Available helpers

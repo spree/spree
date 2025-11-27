@@ -1,6 +1,5 @@
 ---
 title: Payments
-icon: "credit-card"
 ---
 
 ## Overview
@@ -225,11 +224,20 @@ end
 
 Next, add your custom gateway to the list of available payment methods in `config/initializers/spree.rb`:
 
-```ruby
-Rails.application.config.after_initialize do
-  Rails.application.config.spree.payment_methods << FancyPaymentMethod
-end
-```
+<Tabs>
+  <Tab title="Spree 5.2+">
+    ```ruby config/initializers/spree.rb
+    Spree.payment_methods << FancyPaymentMethod
+    ```
+  </Tab>
+  <Tab title="Spree 5.1 and below">
+    ```ruby config/initializers/spree.rb
+    Rails.application.config.after_initialize do
+      Rails.application.config.spree.payment_methods << FancyPaymentMethod
+    end
+    ```
+  </Tab>
+</Tabs>
 
 ## Payment Method visibility
 

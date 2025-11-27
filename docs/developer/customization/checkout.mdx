@@ -2,7 +2,6 @@
 title: Checkout Flow
 description: Learn how to customize the checkout process in Spree.
 version: v5
-icon: "cart-shopping"
 ---
 
 ## Overview
@@ -78,15 +77,13 @@ This step is disabled by default, but can be enabled by two ways:
 
 1. globally for all orders by setting a preference in `config/initializers/spree.rb`:
 
-    ```ruby
+    ```ruby config/initializers/spree.rb
     Spree::Config[:always_include_confirm_step] = true
     ```
 
 2. conditionally for specific orders by overriding the `confirmation_required?` method in `Spree::Order` with a [decorator](/developer/customization/decorators), eg.
 
-   `app/models/spree/order_decorator.rb` file:
-
-    ```ruby
+    ```ruby app/models/spree/order_decorator.rb
     module Spree
       module OrderDecorator
         # require confirmation for orders with a US billing address
@@ -103,7 +100,7 @@ The [state_machines](https://github.com/state-machines/state_machines) gem allow
 
 So, for example, if you wanted to verify that the user provides a valid zip code before transitioning to the delivery step, you would first implement a `valid_zip_code?` method, and then tell the state machine to run this method before that transition, placing this code in a file called `app/models/spree/order_decorator.rb`:
 
-```ruby
+```ruby app/models/spree/order_decorator.rb
 module Spree
   module OrderDecorator
     def self.prepended(base)
@@ -128,7 +125,7 @@ To add or remove steps to the checkout flow, you can use the
 
 The `insert_checkout_step` method takes a `before` or `after` option to determine where to insert the step:
 
-```ruby
+```ruby app/models/spree/order_decorator.rb
 module Spree
   module OrderDecorator
     def self.prepended(base)
@@ -144,7 +141,7 @@ end
 
 The `remove_checkout_step` will remove just one checkout step at a time:
 
-```ruby
+```ruby app/models/spree/order_decorator.rb
 module Spree
   module OrderDecorator
     def self.prepended(base)
@@ -161,7 +158,7 @@ What will happen here is that when a user goes to checkout, they will be asked t
 
 To completely re-define the flow of the checkout, use the `checkout_flow` helper:
 
-```ruby
+```ruby app/models/spree/order_decorator.rb
 module Spree
   module OrderDecorator
     def self.prepended(base)

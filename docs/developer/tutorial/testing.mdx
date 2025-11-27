@@ -1,0 +1,622 @@
+---
+title: Testing
+description: Learn how to write automated tests for the Brands feature
+---
+
+Automated testing is a crucial part of the development process. It helps you ensure that your code works as expected and catches bugs early.
+Spree uses [RSpec](https://rspec.info), [Factory Bot](https://github.com/thoughtbot/factory_bot_rails), and [Capybara](https://github.com/teamcapybara/capybara) for testing.
+We also provide the `spree_dev_tools` gem that helps you write Spree-specific tests.
+
+<Info>
+  This guide assumes you've completed all previous tutorials through [Page Builder](/developer/tutorial/page-builder). You should have a complete `Spree::Brand` model with admin, storefront, and SEO features.
+</Info>
+
+## Setup
+
+### Step 1: Set RSpec as the Test Framework
+
+```bash
+bin/rails g rspec:install
+```
+
+### Step 2: Run the spree_dev_tools Generator
+
+```bash
+bin/rails g spree_dev_tools:install
+```
+
+This adds Spree-specific test helpers to your `spec/support/` directory, including:
+- Authorization helpers (`stub_authorization!`)
+- Factory Bot configuration
+- Capybara setup for feature tests
+- and more...
+
+### Step 3: Generate Test Files
+
+```bash
+bin/rails g rspec:model Spree::Brand
+```
+
+This creates `spec/models/spree/brand_spec.rb`.
+
+## Writing Factories
+
+Factories provide a convenient way to create test data. Create a factory for your Brand model:
+
+```ruby spec/factories/spree/brand_factory.rb
+FactoryBot.define do
+  factory :brand, class: Spree::Brand do
+    sequence(:name) { |n| "Brand #{n}" }
+
+    trait :with_description do
+      description { '<div>A great brand for <strong>quality products</strong></div>' }
+    end
+
+    trait :with_logo do
+      after(:create) do |brand|
+        brand.logo.attach(
+          io: File.new(Rails.root.join('spec', 'fixtures', 'files', 'logo.png')),
+          filename: 'logo.png'
+        )
+      end
+    end
+
+    trait :with_products do
+      transient do
+        products_count { 3 }
+        store { nil }
+      end
+
+      after(:create) do |brand, evaluator|
+        store = evaluator.store || create(:store)
+        create_list(:product, evaluator.products_count, brand: brand, stores: [store])
+      end
+    end
+  end
+end
+```
+
+### Factory Usage Examples
+
+```ruby
+# Basic factory
+brand = create(:brand)
+
+# With traits
+brand = create(:brand, :with_description, :with_logo)
+
+# With custom attributes
+brand = create(:brand, name: 'Nike')
+
+# Build without persisting (faster for unit tests)
+brand = build(:brand)
+
+# Create multiple records
+brands = create_list(:brand, 5)
+
+# With associated products
+brand = create(:brand, :with_products)
+brand = create(:brand, :with_products, products_count: 5)
+```
+
+## Writing Model Tests
+
+Model tests verify your business logic, validations, associations, and scopes.
+
+```ruby spec/models/spree/brand_spec.rb
+require 'spec_helper'
+
+RSpec.describe Spree::Brand, type: :model do
+  describe 'associations' do
+    it { is_expected.to have_many(:products).class_name('Spree::Product') }
+  end
+
+  describe 'validations' do
+    subject { build(:brand) }
+
+    it { is_expected.to validate_presence_of(:name) }
+
+    describe 'slug uniqueness' do
+      let!(:existing_brand) { create(:brand, slug: 'nike') }
+
+      it 'validates uniqueness of slug' do
+        brand = build(:brand, slug: 'nike')
+        expect(brand).not_to be_valid
+        expect(brand.errors[:slug]).to include('has already been taken')
+      end
+    end
+  end
+
+  describe 'FriendlyId' do
+    it 'generates slug from name' do
+      brand = create(:brand, name: 'Nike Sportswear')
+      expect(brand.slug).to eq('nike-sportswear')
+    end
+
+    it 'handles duplicate names by appending UUID' do
+      create(:brand, name: 'Nike')
+      brand = create(:brand, name: 'Nike')
+      expect(brand.slug).to match(/nike-[a-f0-9-]+/)
+    end
+  end
+
+  describe '#image' do
+    let(:brand) { create(:brand, :with_logo) }
+
+    it 'returns logo as image for Open Graph' do
+      expect(brand.image).to eq(brand.logo)
+    end
+  end
+end
+```
+
+### Testing with Shared Examples
+
+Spree provides shared examples for common patterns. Use them to test metadata support:
+
+```ruby
+RSpec.describe Spree::Brand, type: :model do
+  it_behaves_like 'metadata'
+end
+```
+
+### Testing Decorators
+
+When you extend core Spree models with decorators (see [Extending Core Models](/developer/tutorial/extending-models)), test the added functionality:
+
+```ruby spec/models/spree/product_decorator_spec.rb
+require 'spec_helper'
+
+RSpec.describe 'Spree::Product brand association' do
+  let(:store) { @default_store }
+  let(:brand) { create(:brand) }
+  let(:product) { create(:product, stores: [store]) }
+
+  describe 'brand association' do
+    it 'can be assigned a brand' do
+      product.brand = brand
+      product.save!
+
+      expect(product.reload.brand).to eq(brand)
+    end
+
+    it 'is optional' do
+      product.brand = nil
+      expect(product).to be_valid
+    end
+  end
+
+  describe 'brand.products' do
+    let!(:product1) { create(:product, brand: brand, stores: [store]) }
+    let!(:product2) { create(:product, brand: brand, stores: [store]) }
+    let!(:other_product) { create(:product, stores: [store]) }
+
+    it 'returns products for the brand' do
+      expect(brand.products).to contain_exactly(product1, product2)
+    end
+
+    it 'nullifies brand_id when brand is destroyed' do
+      brand.destroy
+      expect(product1.reload.brand_id).to be_nil
+    end
+  end
+end
+```
+
+## Writing Controller Tests
+
+Controller tests verify that your endpoints respond correctly and perform the expected actions.
+
+### Admin Controller Tests
+
+```ruby spec/controllers/spree/admin/brands_controller_spec.rb
+require 'spec_helper'
+
+RSpec.describe Spree::Admin::BrandsController, type: :controller do
+  stub_authorization!
+  render_views
+
+  describe 'GET #index' do
+    let!(:brand1) { create(:brand, name: 'Adidas') }
+    let!(:brand2) { create(:brand, name: 'Nike') }
+
+    it 'returns a successful response' do
+      get :index
+      expect(response).to be_successful
+    end
+
+    it 'assigns all brands' do
+      get :index
+      expect(assigns(:collection)).to contain_exactly(brand1, brand2)
+    end
+  end
+
+  describe 'GET #new' do
+    it 'returns a successful response' do
+      get :new
+      expect(response).to be_successful
+    end
+
+    it 'assigns a new brand' do
+      get :new
+      expect(assigns(:brand)).to be_a_new(Spree::Brand)
+    end
+  end
+
+  describe 'POST #create' do
+    context 'with valid params' do
+      let(:valid_params) do
+        { brand: { name: 'New Brand' } }
+      end
+
+      it 'creates a new brand' do
+        expect {
+          post :create, params: valid_params
+        }.to change(Spree::Brand, :count).by(1)
+      end
+
+      it 'redirects to the edit page' do
+        post :create, params: valid_params
+        expect(response).to redirect_to(spree.edit_admin_brand_path(Spree::Brand.last))
+      end
+    end
+
+    context 'with invalid params' do
+      let(:invalid_params) do
+        { brand: { name: '' } }
+      end
+
+      it 'does not create a new brand' do
+        expect {
+          post :create, params: invalid_params
+        }.not_to change(Spree::Brand, :count)
+      end
+
+      it 'renders the new template' do
+        post :create, params: invalid_params
+        expect(response).to render_template(:new)
+      end
+    end
+  end
+
+  describe 'GET #edit' do
+    let(:brand) { create(:brand) }
+
+    it 'returns a successful response' do
+      get :edit, params: { id: brand.id }
+      expect(response).to be_successful
+    end
+  end
+
+  describe 'PUT #update' do
+    let(:brand) { create(:brand, name: 'Old Name') }
+
+    context 'with valid params' do
+      it 'updates the brand' do
+        put :update, params: { id: brand.id, brand: { name: 'New Name' } }
+        expect(brand.reload.name).to eq('New Name')
+      end
+
+      it 'redirects to the edit page' do
+        put :update, params: { id: brand.id, brand: { name: 'New Name' } }
+        expect(response).to redirect_to(spree.edit_admin_brand_path(brand))
+      end
+    end
+  end
+
+  describe 'DELETE #destroy' do
+    let!(:brand) { create(:brand) }
+
+    it 'removes the brand from the database' do
+      expect {
+        delete :destroy, params: { id: brand.id }, format: :turbo_stream
+      }.to change(Spree::Brand, :count).by(-1)
+    end
+  end
+end
+```
+
+### Storefront Controller Tests
+
+```ruby spec/controllers/spree/brands_controller_spec.rb
+require 'spec_helper'
+
+RSpec.describe Spree::BrandsController, type: :controller do
+  render_views
+
+  describe 'GET #index' do
+    let!(:brand1) { create(:brand, name: 'Nike') }
+    let!(:brand2) { create(:brand, name: 'Adidas') }
+
+    it 'returns a successful response' do
+      get :index
+      expect(response).to be_successful
+    end
+
+    it 'assigns all brands' do
+      get :index
+      expect(assigns(:brands)).to contain_exactly(brand1, brand2)
+    end
+  end
+
+  describe 'GET #show' do
+    let(:brand) { create(:brand) }
+
+    it 'returns a successful response' do
+      get :show, params: { id: brand.slug }
+      expect(response).to be_successful
+    end
+
+    it 'assigns the brand' do
+      get :show, params: { id: brand.slug }
+      expect(assigns(:brand)).to eq(brand)
+    end
+
+    context 'with non-existent brand' do
+      it 'raises RecordNotFound' do
+        expect {
+          get :show, params: { id: 'non-existent' }
+        }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+  end
+end
+```
+
+## Writing Feature Tests
+
+Feature tests (also called system tests) simulate real user interactions using Capybara. They test the full stack including JavaScript.
+
+### Admin Feature Tests
+
+```ruby spec/features/spree/admin/brands_spec.rb
+require 'spec_helper'
+
+RSpec.feature 'Admin Brands', type: :feature do
+  stub_authorization!
+
+  describe 'listing brands' do
+    let!(:brand1) { create(:brand, name: 'Nike') }
+    let!(:brand2) { create(:brand, name: 'Adidas') }
+
+    it 'displays all brands' do
+      visit spree.admin_brands_path
+
+      expect(page).to have_content('Nike')
+      expect(page).to have_content('Adidas')
+    end
+  end
+
+  describe 'creating a brand' do
+    it 'creates a new brand successfully' do
+      visit spree.admin_brands_path
+      click_on 'New Brand'
+
+      fill_in 'Name', with: 'Puma'
+
+      click_on 'Create'
+      wait_for_turbo
+
+      expect(page).to have_content('Brand "Puma" has been successfully created!')
+      expect(Spree::Brand.find_by(name: 'Puma')).to be_present
+    end
+
+    it 'shows validation errors' do
+      visit spree.new_admin_brand_path
+
+      click_on 'Create'
+      wait_for_turbo
+
+      expect(page).to have_content("can't be blank")
+    end
+  end
+
+  describe 'editing a brand' do
+    let!(:brand) { create(:brand, name: 'Nike') }
+
+    it 'updates the brand successfully' do
+      visit spree.admin_brands_path
+      click_on 'Edit'
+
+      fill_in 'Name', with: 'Nike Inc.'
+      within('#page-header') { click_button 'Update' }
+
+      wait_for_turbo
+      expect(page).to have_content('Brand "Nike Inc." has been successfully updated!')
+      expect(brand.reload.name).to eq('Nike Inc.')
+    end
+  end
+
+  describe 'deleting a brand', js: true do
+    let!(:brand) { create(:brand, name: 'Nike') }
+
+    it 'removes the brand' do
+      visit spree.admin_brands_path
+      click_on 'Edit'
+
+      wait_for_turbo
+
+      accept_confirm do
+        click_on 'Delete'
+      end
+
+      wait_for_turbo
+      expect(page).to have_content('Brand "Nike" has been successfully removed!')
+      expect(Spree::Brand.find_by(name: 'Nike')).to be_nil
+    end
+  end
+end
+```
+
+### Storefront Feature Tests
+
+```ruby spec/features/spree/brands_spec.rb
+require 'spec_helper'
+
+RSpec.feature 'Storefront Brands', type: :feature do
+  let(:store) { @default_store }
+
+  describe 'brands listing page' do
+    let!(:nike) { create(:brand, name: 'Nike') }
+    let!(:adidas) { create(:brand, name: 'Adidas') }
+
+    it 'displays all brands' do
+      visit spree.brands_path
+
+      expect(page).to have_content('Nike')
+      expect(page).to have_content('Adidas')
+    end
+
+    it 'links to individual brand pages' do
+      visit spree.brands_path
+
+      click_link 'Nike'
+
+      expect(page).to have_current_path(spree.brand_path(nike))
+    end
+  end
+
+  describe 'brand detail page' do
+    let(:brand) { create(:brand, :with_description, name: 'Nike') }
+    let!(:product) { create(:product, brand: brand, stores: [store]) }
+
+    it 'displays brand information' do
+      visit spree.brand_path(brand)
+
+      expect(page).to have_content('Nike')
+      expect(page).to have_content(product.name)
+    end
+
+    it 'uses SEO-friendly URL' do
+      visit spree.brand_path(brand)
+
+      expect(page).to have_current_path("/brands/#{brand.slug}")
+    end
+  end
+end
+```
+
+## Test Helpers
+
+### Authorization Helper
+
+Use `stub_authorization!` to bypass authorization checks in admin tests:
+
+```ruby
+RSpec.describe Spree::Admin::BrandsController, type: :controller do
+  stub_authorization!  # Grants full admin access
+
+  # ... your tests
+end
+```
+
+### wait_for_turbo Helper
+
+When testing with Turbo/Hotwire, use `wait_for_turbo` to ensure the page has fully loaded:
+
+```ruby
+click_on 'Create'
+wait_for_turbo
+expect(page).to have_content('Success!')
+```
+
+### JavaScript Tests
+
+Add `js: true` to tests that require JavaScript:
+
+```ruby
+it 'handles JavaScript interactions', js: true do
+  visit spree.admin_brands_path
+
+  accept_confirm do
+    click_on 'Delete'
+  end
+
+  expect(page).to have_content('Deleted!')
+end
+```
+
+## Running Tests
+
+```bash
+# Run all tests
+bundle exec rspec
+
+# Run specific test file
+bundle exec rspec spec/models/spree/brand_spec.rb
+
+# Run specific test
+bundle exec rspec spec/models/spree/brand_spec.rb:15
+
+# Run with documentation format
+bundle exec rspec --format documentation
+
+# Run only feature tests
+bundle exec rspec spec/features/
+```
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Use build over create" icon="bolt">
+    Use `build` instead of `create` when you don't need a persisted record. It's faster because it skips database operations.
+  </Card>
+
+  <Card title="Use let over instance variables" icon="code">
+    Prefer `let` and `let!` over instance variables. They're lazily evaluated and scoped to each example.
+  </Card>
+
+  <Card title="One assertion per test" icon="check">
+    Keep tests focused on a single behavior. Use `aggregate_failures` if you need multiple assertions.
+  </Card>
+
+  <Card title="Test behavior, not implementation" icon="eye">
+    Focus on what the code does, not how it does it. This makes tests more resilient to refactoring.
+  </Card>
+</CardGroup>
+
+### Example: aggregate_failures
+
+```ruby
+it 'creates brand with all attributes', :aggregate_failures do
+  brand = create(:brand, name: 'Nike')
+
+  expect(brand.name).to eq('Nike')
+  expect(brand.slug).to eq('nike')
+end
+```
+
+## Complete Test Suite Structure
+
+After completing this tutorial, your test structure should look like:
+
+```
+spec/
+├── factories/
+│   └── spree/
+│       └── brand_factory.rb
+├── models/
+│   └── spree/
+│       ├── brand_spec.rb
+│       └── product_decorator_spec.rb
+├── controllers/
+│   └── spree/
+│       ├── admin/
+│       │   └── brands_controller_spec.rb
+│       └── brands_controller_spec.rb
+├── features/
+│   └── spree/
+│       ├── admin/
+│       │   └── brands_spec.rb
+│       └── brands_spec.rb
+└── spec_helper.rb
+```
+
+## Related Documentation
+
+- [Model Tutorial](/developer/tutorial/model) - Creating the Brand model
+- [Admin Tutorial](/developer/tutorial/admin) - Building the admin interface
+- [Extending Core Models](/developer/tutorial/extending-models) - Connecting Brands to Products
+- [Storefront Tutorial](/developer/tutorial/storefront) - Creating storefront pages
+- [RSpec Documentation](https://rspec.info/documentation/) - Official RSpec docs
+- [Factory Bot Documentation](https://github.com/thoughtbot/factory_bot/blob/main/GETTING_STARTED.md) - Factory Bot guide

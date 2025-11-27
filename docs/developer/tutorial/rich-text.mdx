@@ -1,0 +1,75 @@
+---
+title: Rich Text
+description: Learn how to add rich text content to the Brands feature using Action Text
+---
+
+<Info>
+  This guide assumes you've completed the [Model](/developer/tutorial/model) and [Admin](/developer/tutorial/admin) tutorials.
+</Info>
+
+Our Brand model has a `name` attribute to store the brand name. However it's missing a description. That's because we're going to use [Action Text](https://guides.rubyonrails.org/action_text_overview.html) to handle the rich text content.
+
+## Step 1: Add Action Text to the Model
+
+```ruby app/models/spree/brand.rb {4-5}
+module Spree
+  class Brand < Spree::Base
+    # Action text for rich text content
+    has_rich_text :description
+
+    # ... other code ...
+  end
+end
+```
+
+You don't need to run any migrations, as we won't be adding any new columns to the `spree_brands` table. That's because [Action Text](https://guides.rubyonrails.org/action_text_overview.html) stores all the rich text content in a separate table called `action_text_rich_texts`.
+
+You can access the description content in code like this:
+
+```ruby
+brand.description.to_s
+# => "<h1>Hello</h1><p>World</p>"
+```
+
+Or if you prefer plain text:
+
+```ruby
+brand.description.to_plain_text
+# => "Hello World"
+```
+
+## Step 2: Add a WYSIWYG editor to the Admin Dashboard
+
+In the Admin dashboard we want to use a WYSIWYG editor to add formatted text to the brand description. To do this, edit the `app/views/spree/admin/brands/_form.html.erb` file and add the following code:
+
+```erb app/views/spree/admin/brands/_form.html.erb {4}
+<div class="card mb-4">
+  <div class="card-body">
+    <%= f.spree_text_field :name %>
+    <%= f.spree_rich_text_area :description %>
+  </div>
+</div>
+```
+
+This will render a WYSIWYG editor to the brand description field in the Admin dashboard.
+
+## Step 3: Update permitted parameters in controller
+
+To permit the `description` attribute to be saved, we need to update the permitted parameters in the controller.   file and add the following code:
+
+```ruby app/controllers/spree/admin/brands_controller.rb {9}
+module Spree
+  module Admin
+    class BrandsController < ResourceController
+      private
+
+      def permitted_resource_params
+        params.require(:brand).permit(
+          :name,
+          :description
+        )
+      end
+    end
+  end
+end
+```

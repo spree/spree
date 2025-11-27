@@ -1,0 +1,410 @@
+---
+title: Admin Form Builder API
+sidebarTitle: Form Builder
+---
+
+Spree provides a custom `Spree::Admin::FormBuilder` that extends Rails' standard FormBuilder with additional helper methods designed specifically for the admin interface. This form builder ensures consistent styling, error handling, and behavior across all admin forms.
+
+## Using the FormBuilder
+
+The FormBuilder is automatically available in admin forms when using `form_with`:
+
+```erb
+<%= form_with model: [:admin, @product] do |f| %>
+  <%= f.spree_text_field :name %>
+  <%= f.spree_text_area :description %>
+<% end %>
+```
+
+## Common Options
+
+All FormBuilder methods support these common options:
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `:label` | String or `false` | Custom label text, or `false` to hide the label entirely |
+| `:required` | Boolean | Adds a red asterisk (*) indicator next to the label |
+| `:help` | String | Help text displayed below the field |
+| `:help_bubble` | String | Tooltip text displayed in a help bubble icon next to the label |
+| `:class` | String | Additional CSS classes for the input element |
+
+## Text Input Methods
+
+### spree_text_field
+
+Creates a text input field with Spree styling.
+
+```erb
+<%= f.spree_text_field :name %>
+<%= f.spree_text_field :sku, required: true %>
+<%= f.spree_text_field :code, help: "Leave blank to auto-generate" %>
+<%= f.spree_text_field :slug, help_bubble: "URL-friendly identifier" %>
+```
+
+**Options:**
+- All standard Rails `text_field` options
+- All common FormBuilder options
+
+### spree_number_field
+
+Creates a number input field with Spree styling.
+
+```erb
+<%= f.spree_number_field :price, required: true, step: 0.01 %>
+<%= f.spree_number_field :quantity, min: 0 %>
+```
+
+**Options:**
+- All standard Rails `number_field` options (`:min`, `:max`, `:step`)
+- All common FormBuilder options
+
+### spree_email_field
+
+Creates an email input field with Spree styling and HTML5 validation.
+
+```erb
+<%= f.spree_email_field :email, required: true %>
+<%= f.spree_email_field :contact_email,
+    help: "For customer support inquiries" %>
+```
+
+**Options:**
+- All standard Rails `email_field` options
+- All common FormBuilder options
+
+## Date and Time Methods
+
+### spree_date_field
+
+Creates a date picker input field.
+
+```erb
+<%= f.spree_date_field :available_on %>
+<%= f.spree_date_field :discontinue_on,
+    help: "Date when product will be discontinued" %>
+```
+
+**Options:**
+- All standard Rails `date_field` options (`:min`, `:max`)
+- All common FormBuilder options
+
+### spree_datetime_field
+
+Creates a datetime picker input field.
+
+```erb
+<%= f.spree_datetime_field :published_at %>
+<%= f.spree_datetime_field :sale_starts_at, required: true %>
+```
+
+**Options:**
+- All standard Rails `datetime_field` options
+- All common FormBuilder options
+
+## Text Area Methods
+
+### spree_text_area
+
+Creates a textarea with auto-grow functionality (expands as you type).
+
+```erb
+<%= f.spree_text_area :description %>
+<%= f.spree_text_area :notes, rows: 10 %>
+<%= f.spree_text_area :meta_description,
+    help: "Used for SEO, maximum 160 characters" %>
+```
+
+**Options:**
+- `:rows` - Number of visible rows (default: 5)
+- `:data` - Data attributes (default includes auto-grow Stimulus controller)
+- All standard Rails `text_area` options
+- All common FormBuilder options
+
+**Auto-grow behavior:**
+By default, the textarea automatically grows as the user types. This uses the `textarea-autogrow` Stimulus controller.
+
+### spree_rich_text_area
+
+Creates a rich text editor using Trix.
+
+```erb
+<%= f.spree_rich_text_area :description %>
+<%= f.spree_rich_text_area :content, label: "Page Content" %>
+```
+
+**Features:**
+- WYSIWYG editing
+- Basic formatting (bold, italic, lists, links)
+- File attachments via Active Storage
+- All common FormBuilder options
+
+## Select Methods
+
+### spree_select
+
+Creates a select dropdown field.
+
+```erb
+<%= f.spree_select :status,
+    ['draft', 'active', 'archived'],
+    {},
+    {} %>
+
+<%= f.spree_select :tax_category_id,
+    Spree::Category.pluck(:name, :id),
+    { include_blank: 'Select Tax Category' } %>
+```
+
+**With autocomplete:**
+
+```erb
+<%= f.spree_select :country_id,
+    Spree::Country.pluck(:name, :id),
+    { autocomplete: true } %>
+```
+
+**Parameters:**
+1. `method` - The attribute name
+2. `choices` - Array of options
+3. `options` - Select options (`:include_blank`, `:prompt`, `:autocomplete`)
+4. `html_options` - HTML attributes (`:class`, `:data`, `:disabled`)
+
+**Options:**
+- `:autocomplete` - Enables searchable dropdown with autocomplete functionality
+- All standard Rails `select` options
+- All common FormBuilder options
+
+### spree_collection_select
+
+Creates a select dropdown from a collection of objects.
+
+```erb
+<%= f.spree_collection_select :shipping_category_id,
+    ShippingCategory.all,
+    :id,
+    :name,
+    { include_blank: true },
+    {} %>
+
+<%= f.spree_collection_select :tax_category_id,
+    TaxCategory.all,
+    :id,
+    :name,
+    { autocomplete: true, required: true },
+    {} %>
+```
+
+**Parameters:**
+1. `method` - The attribute name
+2. `collection` - ActiveRecord collection or array of objects
+3. `value_method` - Method to call for option value (e.g., `:id`)
+4. `text_method` - Method to call for option text (e.g., `:name`)
+5. `options` - Select options (`:include_blank`, `:autocomplete`)
+6. `html_options` - HTML attributes
+
+**Options:**
+- `:autocomplete` - Enables searchable dropdown
+- All standard Rails `collection_select` options
+- All common FormBuilder options
+
+## Checkbox and Radio Methods
+
+### spree_check_box
+
+Creates a styled checkbox with custom controls.
+
+```erb
+<%= f.spree_check_box :active %>
+<%= f.spree_check_box :featured, label: "Feature on homepage" %>
+<%= f.spree_check_box :accept_terms, required: true %>
+```
+
+**Options:**
+- All standard Rails `check_box` options
+- All common FormBuilder options
+
+**Styling:**
+Uses custom control classes for consistent appearance across the admin interface.
+
+### spree_radio_button
+
+Creates a styled radio button with custom controls.
+
+```erb
+<%= f.spree_radio_button :status, 'draft', id: 'status_draft' %>
+<%= f.spree_radio_button :status, 'published', id: 'status_published' %>
+```
+
+**Parameters:**
+1. `method` - The attribute name
+2. `tag_value` - The value for this radio option
+3. `options` - Options hash (must include `:id`)
+
+**Options:**
+- `:id` - Required HTML ID for the radio button
+- All standard Rails `radio_button` options
+- All common FormBuilder options
+
+<Warning>
+  Radio buttons require unique IDs. Always specify the `:id` option.
+</Warning>
+
+## File Upload Methods
+
+### spree_file_field
+
+Creates a file upload field with image preview, drag-and-drop support, and optional cropping functionality.
+
+```erb
+<%= f.spree_file_field :image %>
+<%= f.spree_file_field :logo, width: 240, height: 240 %>
+<%= f.spree_file_field :avatar, crop: true %>
+<%= f.spree_file_field :featured_image, width: 1200, height: 600, crop: true %>
+```
+
+**Options:**
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `:width` | Integer | 300 | Width of the image preview in pixels |
+| `:height` | Integer | 300 | Height of the image preview in pixels |
+| `:crop` | Boolean | `false` | Enable image cropping with recommended size indicator |
+| `:auto_submit` | Boolean | `false` | Automatically submit form when file is selected |
+| `:can_delete` | Boolean | `true` | Show delete button for removing uploaded image |
+| `:css` | String | `''` | Additional CSS classes for the upload placeholder area |
+
+All common FormBuilder options (`:label`, `:required`, `:help`, `:help_bubble`) are also supported.
+
+**Features:**
+- Drag-and-drop file upload
+- Image preview after upload
+- Optional image cropping with size recommendations
+- Delete button to remove uploaded files
+- Uses Active Storage direct upload
+
+**Example with all options:**
+
+```erb
+<%= f.spree_file_field :social_image,
+    width: 1200,
+    height: 630,
+    crop: true,
+    label: 'Preview image',
+    help_bubble: "This image will be used when shared on social media" %>
+```
+
+## Complete Form Example
+
+Here's a complete example showing various FormBuilder methods:
+
+```erb
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title">
+      <%= Spree.t(:general_settings) %>
+    </h5>
+  </div>
+
+  <div class="card-body">
+    <%= f.spree_text_field :name,
+        required: true,
+        help: "Product name as displayed to customers" %>
+
+    <%= f.spree_text_field :sku,
+        label: "SKU",
+        help_bubble: "Stock Keeping Unit - unique product identifier" %>
+
+    <%= f.spree_number_field :price,
+        required: true,
+        step: 0.01,
+        min: 0 %>
+
+    <%= f.spree_rich_text_area :description,
+        help: "Detailed product description with rich formatting" %>
+
+    <%= f.spree_collection_select :tax_category_id,
+        Spree::TaxCategory.all,
+        :id,
+        :name,
+        { include_blank: 'None', required: true },
+        {} %>
+
+    <%= f.spree_date_field :available_on,
+        label: "Available Date",
+        help: "Date when product becomes available for purchase" %>
+
+    <%= f.spree_check_box :active,
+        label: "Active" %>
+  </div>
+</div>
+```
+
+## Error Handling
+
+All FormBuilder methods automatically display validation errors below the field when present:
+
+```erb
+<%= f.spree_text_field :name %>
+```
+
+If `@product.errors[:name]` contains errors, they will be displayed automatically in red text below the input field.
+
+## Internationalization
+
+Labels are automatically translated using Rails I18n. The FormBuilder looks for translations in this order:
+
+1. Custom label passed via `:label` option
+2. `spree.{attribute_name}` key
+3. `activerecord.attributes.spree/{model_name}.{attribute_name}` key
+
+Example translations:
+
+```yaml
+# config/locales/en.yml
+en:
+  spree:
+    name: "Product Name"
+    sku: "SKU Code"
+  activerecord:
+    attributes:
+      spree/product:
+        available_on: "Available On Date"
+        discontinue_on: "Discontinuation Date"
+```
+
+## Styling and CSS Classes
+
+All FormBuilder methods use consistent styling:
+
+- **Form groups:** Each field is wrapped in a `.form-group` div
+- **Input classes:** Text inputs use `.form-control` class
+- **Select classes:** Dropdowns use `.custom-select` class
+- **Checkboxes/Radios:** Use `.custom-control`, `.custom-checkbox`, `.custom-radio` classes
+
+You can add additional classes via the `:class` option:
+
+```erb
+<%= f.spree_text_field :name, class: 'form-control-lg' %>
+```
+
+## Best Practices
+
+<Check>
+  **Use the Spree FormBuilder methods** instead of standard Rails helpers for consistent styling
+</Check>
+
+<Check>
+  **Add `:required` option** to required fields for visual indication
+</Check>
+
+<Check>
+  **Use `:help` text** to provide guidance for complex fields
+</Check>
+
+<Check>
+  **Use `:help_bubble`** for additional context without cluttering the form
+</Check>
+
+<Check>
+  **Enable autocomplete** on selects with many options (> 20 items)
+</Check>

@@ -1,6 +1,5 @@
 ---
 title: Shipments
-icon: "truck-fast"
 ---
 
 ## Overview
@@ -327,28 +326,58 @@ For an example of a simple splitter, take a look at Spree's [weight based splitt
 
 After creating your splitter, you need to add it to the array of splitters Spree uses. To do this, add the following to your application's spree initializer `spree.rb` file:
 
-```ruby
-Rails.application.config.after_initialize do
-  Rails.application.config.spree.stock_splitters << Spree::Stock::Splitter::CustomSplitter
-end
-```
+<Tabs>
+  <Tab title="Spree 5.2+">
+    ```ruby config/initializers/spree.rb
+    Spree.stock_splitters << Spree::Stock::Splitter::CustomSplitter
+    ```
+  </Tab>
+  <Tab title="Spree 5.1 and below">
+    ```ruby config/initializers/spree.rb
+    Rails.application.config.after_initialize do
+      Rails.application.config.spree.stock_splitters << Spree::Stock::Splitter::CustomSplitter
+    end
+    ```
+  </Tab>
+</Tabs>
 
 You can also completely override the splitters used in Spree, rearrange them, etc. To do this, add the following to your `spree.rb` file:
 
-```ruby
-Rails.application.config.after_initialize do
-  Rails.application.config.spree.stock_splitters = [
-    Spree::Stock::Splitter::CustomSplitter,
-    Spree::Stock::Splitter::ShippingCategory
-  ]
-end
-```
+<Tabs>
+  <Tab title="Spree 5.2+">
+    ```ruby config/initializers/spree.rb
+    Spree.stock_splitters = [
+      Spree::Stock::Splitter::CustomSplitter,
+      Spree::Stock::Splitter::ShippingCategory
+    ]
+    ```
+  </Tab>
+  <Tab title="Spree 5.1 and below">
+    ```ruby config/initializers/spree.rb
+    Rails.application.config.after_initialize do
+      Rails.application.config.spree.stock_splitters = [
+        Spree::Stock::Splitter::CustomSplitter,
+        Spree::Stock::Splitter::ShippingCategory
+      ]
+    end
+    ```
+  </Tab>
+</Tabs>
 
 Or if you don't want to split packages just set the option above to an empty array. e.g. a store with the following configuration in spree.rb won't have any package splitted.
 
-```ruby
-Rails.application.config.spree.stock_splitters = []
-```
+<Tabs>
+  <Tab title="Spree 5.2+">
+    ```ruby config/initializers/spree.rb
+    Spree.stock_splitters = []
+    ```
+  </Tab>
+  <Tab title="Spree 5.1 and below">
+    ```ruby config/initializers/spree.rb
+    Rails.application.config.spree.stock_splitters = []
+    ```
+  </Tab>
+</Tabs>
 
 If you want to add different splitters for each `StockLocation`, you need to decorate the `Spree::Stock::Coordinator` class and override the `splitters` method.
 
@@ -365,9 +394,9 @@ The prioritizer is also a customization point. If you want to customize which pa
 The `Adjuster` visits each package in an order and ensures the correct number of items are in each package. To customize this functionality, you need to do two things:
 
 1. Subclass the [Spree::Stock::Adjuster](https://github.com/spree/spree/blob/main/core/app/models/spree/stock/adjuster.rb) class and override the the `adjust` method to get the desired functionality.
-2. Decorate the `Spree::Stock::Coordinator` and override the `prioritize_packages` method, passing in your custom adjuster class to the `Prioritizer` initializer. For example, if our adjuster was called `Spree::Stock::CustomAdjuster`, we would do the following in `app/my_store/spree/stock/coordinator_decorator.rb`:
+2. Decorate the `Spree::Stock::Coordinator` and override the `prioritize_packages` method, passing in your custom adjuster class to the `Prioritizer` initializer. For example, if our adjuster was called `Spree::Stock::CustomAdjuster`, we would do the following in `app/models/spree/stock/coordinator_decorator.rb`:
 
-```ruby
+```ruby app/models/spree/stock/coordinator_decorator.rb
 module Spree
   module Stock
     module CoordinatorDecorator do

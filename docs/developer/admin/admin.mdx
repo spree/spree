@@ -1,49 +1,236 @@
 ---
 title: Admin Dashboard
 sidebarTitle: Overview
+description: Learn how to customize and extend the Spree Admin Dashboard
 ---
 
-Spree Admin Dashboard is the main interface for managing your store. It's built with Ruby on Rails and is installable as a `spree_admin` gem. If you're using Spree Starter, this is already installed for you.
+The Spree Admin Dashboard is a full-featured administration interface for managing your e-commerce store. It's built with Ruby on Rails and ships as the `spree_admin` gem.
 
-## Overview
+<Frame>
+  <img src="/images/spree_admin_dashboard.png" alt="Spree Admin Dashboard" />
+</Frame>
 
-Admin Dashboard can be fully customized to your liking. You can extend the UI, include custom CSS and JavaScript, and you can add new sections to the dashboard or modify existing ones.
+## What You Can Do
 
-The basis of the admin dashboard is same as with any Ruby on Rails application:
+The Admin Dashboard allows store administrators to manage:
 
-## Templates (aka Views)
+- **Products** - Create and manage products, variants, images, and inventory
+- **Orders** - Process orders, refunds, and shipments
+- **Customers** - View customer accounts and order history
+- **Promotions** - Create discounts, coupon codes, and special offers
+- **Content** - Manage pages, menus, and blog posts
+- **Settings** - Configure store settings, shipping, taxes, and payments
 
-Views are the HTML templates that are used to generate the user interface. They are responsible for displaying the data to the user. Views use standard [Ruby on Rails ERB template system](https://guides.rubyonrails.org/action_view_overview.html#erb), eg.
+## Customization Options
+
+As a developer, you can fully customize the Admin Dashboard:
+
+<CardGroup cols={2}>
+  <Card title="Add New Sections" icon="plus" href="/developer/tutorial/admin">
+    Create entirely new admin pages for custom features like Brands, Vendors, or any custom model
+  </Card>
+  <Card title="Extend Existing UI" icon="puzzle-piece" href="/developer/admin/extending-ui">
+    Inject custom fields, buttons, and sections into existing admin pages
+  </Card>
+  <Card title="Custom Navigation" icon="bars" href="/developer/admin/navigation">
+    Add menu items to the sidebar or create custom navigation structures
+  </Card>
+  <Card title="Custom Styling" icon="palette" href="/developer/admin/custom-css">
+    Add your own CSS to match your brand or modify the look and feel
+  </Card>
+</CardGroup>
+
+## Architecture Overview
+
+Spree Admin follows standard Rails conventions with some Spree-specific patterns:
+
+```
+app/
+├── controllers/
+│   └── spree/
+│       └── admin/
+│           └── products_controller.rb    # Your custom controllers
+├── views/
+│   └── spree/
+│       └── admin/
+│           └── products/
+│               ├── index.html.erb        # List view
+│               ├── _form.html.erb        # Shared form partial
+│               └── _table_row.html.erb   # Table row partial
+├── helpers/
+│   └── spree/
+│       └── admin/
+│           └── products_helper.rb        # View helpers
+└── assets/
+    └── stylesheets/
+        └── spree/
+            └── admin/
+                └── custom.css            # Custom styles
+```
+
+## Key Concepts
+
+### Controllers
+
+Admin controllers inherit from `Spree::Admin::ResourceController` which provides:
+
+- Full CRUD operations (index, new, create, edit, update, destroy)
+- Automatic authorization checks
+- Flash messages and redirects
+- Search and filtering with Ransack
+
+```ruby
+# app/controllers/spree/admin/brands_controller.rb
+module Spree
+  module Admin
+    class BrandsController < ResourceController
+      # That's it! CRUD is handled automatically.
+      # Override methods only when needed.
+    end
+  end
+end
+```
+
+<Info>
+  Learn more about creating admin sections in the [Admin Dashboard Tutorial](/developer/tutorial/admin).
+</Info>
+
+### Views & Templates
+
+Views use standard Rails ERB templates with Spree's [Form Builder](/developer/admin/form-builder) and [Components](/developer/admin/components):
 
 ```erb
-<%# Example of a simple view %>
-<div>
-  <h1>Welcome to the <%= current_store.name %></h1>
+<%# app/views/spree/admin/brands/_form.html.erb %>
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title"><%= Spree.t(:general_settings) %></h5>
+  </div>
+  <div class="card-body">
+    <%= f.spree_text_field :name, required: true %>
+    <%= f.spree_text_area :description %>
+    <%= f.spree_file_field :logo, width: 300, height: 300 %>
+    <%= f.spree_check_box :active %>
+  </div>
 </div>
 ```
 
-In views you can use Ruby code and also helper methods defined in
+### JavaScript & Interactivity
 
-Spree Admin provides a way for you to inject your own templates into existing screens, eg. adding additional fields to forms or adding new navigation elements.
+Spree Admin uses [Hotwire](https://hotwire.dev/) (Turbo + Stimulus) for interactivity:
 
-## Controllers
+- **Turbo Drive** - Fast page navigation without full reloads
+- **Turbo Frames** - Update parts of the page independently
+- **Turbo Streams** - Real-time updates over WebSocket
+- **Stimulus** - Lightweight JavaScript controllers
 
-Controllers are the Ruby classes that handle requests from the user. They are responsible for processing the data and returning the appropriate response. Controllers use standard [Ruby on Rails controller system](https://guides.rubyonrails.org/action_controller_overview.html).
+```erb
+<%# Using Stimulus controllers %>
+<div data-controller="dropdown">
+  <button data-action="dropdown#toggle">Menu</button>
+  <div data-dropdown-target="menu">...</div>
+</div>
+```
 
-### Namespace
+<Info>
+  Add custom JavaScript using [Stimulus controllers](/developer/admin/custom-javascript).
+</Info>
 
-Every Admin controller should be placed in `Spree::Admin` namespace and [app/controllers/spree/admin](https://github.com/spree/spree/tree/main/admin/app/controllers/spree/admin) directory, eg. `Spree::Admin::ProductsController`.
+### Styling
 
-### BaseController
+The Admin Dashboard uses Bootstrap 5 with custom Spree styling. You can:
 
-The main Admin Controller is [Spree::Admin::BaseController](https://github.com/spree/spree/blob/main/admin/app/controllers/spree/admin/base_controller.rb). It provides a lot of functionality out of the box, such as authentication, authorization, and breadcrumbs.
+- Add custom CSS files
+- Override Bootstrap variables
+- Use Tailwind-style utility classes
 
-### ResourceController
+```css
+/* app/assets/stylesheets/spree/admin/custom.css */
+.my-custom-card {
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+```
 
-For easier and faster development Spree provides [Spree::Admin::ResourceController](https://github.com/spree/spree/blob/main/admin/app/controllers/spree/admin/resource_controller.rb) which provides all the necessary CRUD (Create, Read, Update, Delete) functionality for managing resources in a RESTful way so you can focus on building your application.
+<Info>
+  Learn how to add custom styles in [Custom CSS](/developer/admin/custom-css).
+</Info>
 
-You will learn more about this in the [Creating new Admin sections guide](/developer/admin/new-admin-sections).
+## Quick Reference
 
-## JavaScript
+### Available Tools
 
-Interactitivy in Spree Admin is handled by [Hotwire](https://hotwire.dev/) which is the default Ruby on Rails frontend framework. JavaScript bundling is done via [Importmaps](https://github.com/rails/importmap-rails), which is a modern JavaScript bundling solution that is easy to use and integrates well with Rails. Also, it doesn't require node at all.
+| Tool | Purpose | Documentation |
+|------|---------|---------------|
+| Form Builder | Create consistent forms with validation | [Form Builder](/developer/admin/form-builder) |
+| Components | Dropdowns, dialogs, icons, badges, etc. | [Components](/developer/admin/components) |
+| Helper Methods | Navigation, links, utilities | [Helper Methods](/developer/admin/helper-methods) |
+| UI Extensions | Inject content into existing pages | [Extending UI](/developer/admin/extending-ui) |
+
+### Common Tasks
+
+| Task | How To |
+|------|--------|
+| Add a new admin page | Use the scaffold generator: `bin/rails g spree:admin:scaffold Spree::Brand` |
+| Add sidebar navigation | Use `Spree.admin.navigation.sidebar.add` in an initializer |
+| Add form fields | Use `f.spree_text_field`, `f.spree_select`, etc. |
+| Show flash messages | They're automatic with `ResourceController` |
+| Check permissions | Use `can?(:update, @product)` in views |
+
+### Generator Commands
+
+```bash
+# Generate a complete admin section (controller, views, routes)
+bin/rails g spree:admin:scaffold Spree::Brand
+
+# Generate just a controller
+bin/rails g controller Spree::Admin::Brands --skip-routes
+```
+
+## Authentication & Authorization
+
+### Authentication
+
+Admin users must be authenticated to access the dashboard. Spree supports:
+
+- Built-in Devise authentication
+- Custom authentication adapters
+- SSO integration
+
+<Info>
+  See [Authentication](/developer/admin/authentication) for setup details.
+</Info>
+
+### Authorization
+
+Spree uses [CanCanCan](https://github.com/CanCanCommunity/cancancan) for authorization:
+
+```ruby
+# Check permissions in controllers
+authorize! :update, @product
+
+# Check permissions in views
+<% if can?(:destroy, @product) %>
+  <%= link_to_delete(@product) %>
+<% end %>
+```
+
+<Info>
+  See [Permissions](/developer/admin/permissions) for defining custom abilities.
+</Info>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Tutorial: Build Admin UI" icon="graduation-cap" href="/developer/tutorial/admin">
+    Step-by-step guide to creating a complete admin section
+  </Card>
+  <Card title="Form Builder" icon="rectangle-list" href="/developer/admin/form-builder">
+    Learn all available form field helpers
+  </Card>
+  <Card title="Components" icon="puzzle-piece" href="/developer/admin/components">
+    Explore UI components like dropdowns, dialogs, and icons
+  </Card>
+  <Card title="Extending UI" icon="expand" href="/developer/admin/extending-ui">
+    Add custom content to existing admin pages
+  </Card>
+</CardGroup>

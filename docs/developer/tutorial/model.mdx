@@ -1,0 +1,41 @@
+---
+title: Model
+description: Learn how to create a database model for the Brands feature
+---
+
+## Step 1: Create the Model and Database Migration
+
+To create a new model and database migration file, run the following command:
+
+```bash
+bin/rails g spree:model Spree::Brand name:string:index
+```
+
+This will create a couple of files:
+- `app/models/spree/brand.rb` - the model file
+- `db/migrate/XXXXXXXXXXXXXX_create_spree_brands.rb` - the database migration file
+
+Now run the migration:
+
+```bash
+bin/rails db:migrate
+```
+
+This will create the table `spree_brands` with the column `name` in the database. The `name` column is indexed for faster lookups. Also the model file `app/models/spree/brand.rb` is created.
+
+## Step 2: Extend the Model file
+
+Now that the model file is created, let's add some additional functionality to it, starting with validations:
+
+```ruby app/models/spree/brand.rb {3-4}
+module Spree
+  class Brand < Spree::Base
+    # Validations
+    validates :name, presence: true
+  end
+end
+```
+
+This is a standard [Ruby on Rails ActiveRecord model](https://guides.rubyonrails.org/active_record_basics.html). Let's break down each part:
+- Inherits from `Spree::Base` to automatically inherit all Spree functionality. Also the model itself is namespaced under `Spree::` module, so it's available as `Spree::Brand` in the application.
+- `validates :name, presence: true` - using ActiveRecord validations to ensure that the name is present.

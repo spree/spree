@@ -1,0 +1,508 @@
+---
+  title: Search & Filtering
+  sidebarTitle: Search & Filtering
+  description: "Learn how to search, filter and sort resources in Spree"
+---
+
+## Overview
+
+Spree uses the [Ransack](https://activerecord-hackery.github.io/ransack/) gem to provide powerful search, filtering, and sorting capabilities throughout the platform. Ransack is integrated into:
+
+- **Admin Dashboard** - For filtering and searching resources in index views
+- **Platform API** - For filtering collections via API requests
+
+Ransack allows you to build complex queries using URL parameters or API filters, supporting operations like:
+
+- Exact matches (`eq`)
+- Partial matches (`cont`, `start`, `end`)
+- Comparisons (`gt`, `lt`, `gteq`, `lteq`)
+- NULL checks (`null`, `not_null`)
+- Date ranges and much more
+
+## Security Model
+
+Spree uses a whitelist-based security model for Ransack to prevent unauthorized database queries. By default, models can only be searched on:
+
+- `id`
+- `name`
+- `created_at`
+- `updated_at`
+
+Additional attributes, associations, and scopes must be explicitly whitelisted in each model.
+
+## Making Models Searchable
+
+To enable searching on additional fields, inherit from `Spree::Base` and configure whitelisted attributes:
+
+### Basic Configuration
+
+```ruby
+module Spree
+  class Brand < Spree::Base
+    # Allow searching by these attributes
+    self.whitelisted_ransackable_attributes = %w[sku status available_on]
+
+    # Allow searching through these associations
+    self.whitelisted_ransackable_associations = %w[variants taxons master]
+
+    # Allow filtering by these scopes
+    self.whitelisted_ransackable_scopes = %w[active available in_stock]
+  end
+end
+```
+
+<Info>
+The attributes `id`, `name`, `created_at`, and `updated_at` are always searchable by default and don't need to be explicitly whitelisted.
+</Info>
+
+### Real-World Examples
+
+Here are examples from Spree's core models:
+
+#### User Model
+
+```ruby
+module Spree::UserMethods
+  included do
+    self.whitelisted_ransackable_associations = %w[bill_address ship_address addresses tags spree_roles]
+    self.whitelisted_ransackable_attributes = %w[id email first_name last_name accepts_email_marketing]
+    self.whitelisted_ransackable_scopes = %w[multi_search]
+  end
+end
+```
+
+#### Price Model
+
+```ruby
+module Spree
+  class Price < Spree.base_class
+    self.whitelisted_ransackable_attributes = %w[amount compare_at_amount]
+  end
+end
+```
+
+## Admin Dashboard Integration
+
+The `Spree::Admin::ResourceController` automatically integrates Ransack for all admin resources.
+
+### How It Works
+
+The `ResourceController` at [admin/app/controllers/spree/admin/resource_controller.rb:242-254](https://github.com/spree/spree/blob/main/admin/app/controllers/spree/admin/resource_controller.rb#L242-L254) implements:
+
+```ruby
+# keeping this as @search for backwards compatibility
+# @return [Ransack::Search]
+def search_collection
+  @search ||= begin
+    params[:q] ||= {}
+    params[:q][:s] ||= collection_default_sort if collection_default_sort.present?
+    scope.ransack(params[:q])
+  end
+end
+
+# Returns the filtered and paginated ransack results
+# @return [ActiveRecord::Relation]
+def collection
+  @collection ||= search_collection.result(distinct: true).page(params[:page]).per(params[:per_page])
+end
+```
+
+### Controller Configuration
+
+When building admin controllers, you can customize the search behavior:
+
+```ruby
+module Spree
+  module Admin
+    class BrandsController < ResourceController
+      # Set default sort order
+      def collection_default_sort
+        'name asc'
+      end
+
+      # Eager load associations to avoid N+1 queries
+      def collection_includes
+        [:logo_attachment]
+      end
+
+      # Customize the base scope (optional)
+      def scope
+        super.active
+      end
+    end
+  end
+end
+```
+
+### Filters View
+
+Admin index views typically include a filters partial (`_filters.html.erb`) that builds search forms:
+
+```erb
+<%= search_form_for @search, url: spree.admin_brands_path, method: :get do |f| %>
+  <div class="row">
+    <div class="col-md-4">
+      <%= f.label :name_cont, Spree.t(:name) %>
+      <%= f.search_field :name_cont, class: 'form-control' %>
+    </div>
+
+    <div class="col-md-4">
+      <%= f.label :active_eq, Spree.t(:status) %>
+      <%= f.select :active_eq,
+                   [[Spree.t(:active), true], [Spree.t(:inactive), false]],
+                   { include_blank: Spree.t(:all) },
+                   class: 'form-control' %>
+    </div>
+
+    <div class="col-md-4">
+      <%= f.label :created_at_gteq, Spree.t(:created_from) %>
+      <%= f.date_field :created_at_gteq, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <%= f.submit Spree.t(:search), class: 'btn btn-primary' %>
+    <%= link_to Spree.t(:clear), spree.admin_brands_path, class: 'btn btn-secondary' %>
+  </div>
+<% end %>
+```
+
+## Platform API Integration
+
+The Platform API uses Ransack via the `filter` parameter for all collection endpoints.
+
+### API Controller Implementation
+
+From [api/app/controllers/spree/api/v2/platform/resource_controller.rb:57-61](https://github.com/spree/spree/blob/main/api/app/controllers/spree/api/v2/platform/resource_controller.rb#L57-L61):
+
+### API Usage Examples
+
+#### Basic Filtering
+
+Filter products by name:
+
+```bash
+GET /api/v2/platform/products?filter[name_cont]=shirt
+```
+
+Filter users by email:
+
+```bash
+GET /api/v2/platform/users?filter[email_eq]=customer@example.com
+```
+
+#### Advanced Filtering
+
+Filter products by multiple criteria:
+
+```bash
+GET /api/v2/platform/products?filter[status_eq]=active&filter[price_gteq]=20&filter[price_lteq]=100
+```
+
+Filter through associations:
+
+```bash
+GET /api/v2/platform/products?filter[taxons_name_cont]=shirts
+```
+
+Filter by date ranges:
+
+```bash
+GET /api/v2/platform/orders?filter[created_at_gteq]=2024-01-01&filter[created_at_lteq]=2024-12-31
+```
+
+#### Using Scopes
+
+If a model defines `whitelisted_ransackable_scopes`, you can filter using them:
+
+```bash
+GET /api/v2/platform/products?filter[in_stock]=true
+```
+
+<Warning>
+Only attributes, associations, and scopes explicitly whitelisted in models can be used for filtering. Attempting to filter on non-whitelisted fields will be silently ignored for security reasons.
+</Warning>
+
+## Search Predicates
+
+Ransack provides numerous predicates (matchers) for building complex queries. Here are the most commonly used ones in Spree:
+
+### Equality Predicates
+
+| Predicate | Description | Example |
+|-----------|-------------|---------|
+| `eq` | Equals | `name_eq=Nike` |
+| `not_eq` | Not equals | `status_not_eq=archived` |
+| `in` | In array | `id_in[]=1&id_in[]=2&id_in[]=3` |
+| `not_in` | Not in array | `status_not_in[]=draft&status_not_in[]=archived` |
+
+### String Predicates
+
+| Predicate | Description | Example |
+|-----------|-------------|---------|
+| `cont` | Contains | `name_cont=shirt` |
+| `not_cont` | Does not contain | `name_not_cont=vintage` |
+| `start` | Starts with | `email_start=admin` |
+| `end` | Ends with | `email_end=@example.com` |
+| `i_cont` | Case-insensitive contains | `name_i_cont=SHIRT` |
+
+### Comparison Predicates
+
+| Predicate | Description | Example |
+|-----------|-------------|---------|
+| `gt` | Greater than | `price_gt=50` |
+| `gteq` | Greater than or equal | `quantity_gteq=10` |
+| `lt` | Less than | `price_lt=100` |
+| `lteq` | Less than or equal | `created_at_lteq=2024-12-31` |
+
+### NULL Predicates
+
+| Predicate | Description | Example |
+|-----------|-------------|---------|
+| `null` | Is NULL | `deleted_at_null=true` |
+| `not_null` | Is not NULL | `published_at_not_null=true` |
+| `blank` | Is NULL or empty | `description_blank=true` |
+| `present` | Is not NULL and not empty | `image_present=true` |
+
+### Date/Time Predicates
+
+```ruby
+# Products created this year
+products?filter[created_at_gteq]=2024-01-01
+
+# Orders completed today
+orders?filter[completed_at_gteq]=2024-01-15&filter[completed_at_lteq]=2024-01-15
+
+# Products available before a date
+products?filter[available_on_lteq]=2024-12-31
+```
+
+## Sorting
+
+### Admin Dashboard Sorting
+
+Ransack handles sorting via the `s` parameter in the `q` hash:
+
+```ruby
+# In controller
+params[:q][:s] = 'created_at desc'  # Sort by created_at descending
+params[:q][:s] = 'name asc'          # Sort by name ascending
+```
+
+In views, use `sort_link` helper:
+
+```erb
+<%= sort_link(@search, :name, Spree.t(:name)) %>
+<%= sort_link(@search, :created_at, Spree.t(:created_at)) %>
+<%= sort_link(@search, :status, Spree.t(:status)) %>
+```
+
+### Platform API Sorting
+
+The Platform API uses the standard JSON:API `sort` parameter:
+
+```bash
+# Sort by name ascending
+GET /api/v2/platform/products?sort=name
+
+# Sort by created_at descending
+GET /api/v2/platform/products?sort=-created_at
+
+# Multiple sorts
+GET /api/v2/platform/products?sort=status,-created_at
+```
+
+<Info>
+Platform API sorting is handled separately from Ransack's filter parameter and follows JSON:API conventions.
+</Info>
+
+## Custom Implementation Examples
+
+### Example 1: Brand Resource
+
+From the admin resources guide:
+
+```ruby
+module Spree
+  class Brand < Spree.base_class
+    include Spree::RansackableAttributes
+
+    # Enable searching
+    self.whitelisted_ransackable_attributes = %w[name slug status published_at]
+    self.whitelisted_ransackable_scopes = %w[published with_logo]
+
+    # Scopes that can be used in searches
+    scope :published, -> { where(status: 'published') }
+    scope :with_logo, -> { includes(:logo_attachment).where.not(logo_attachment: { blob: nil }) }
+  end
+end
+```
+
+Controller:
+
+```ruby
+module Spree
+  module Admin
+    class BrandsController < ResourceController
+      def collection_default_sort
+        'name asc'
+      end
+    end
+  end
+end
+```
+
+### Example 2: Custom Search Scope
+
+```ruby
+module Spree
+  class Product < Spree.base_class
+    # Custom search scope
+    scope :multi_search, ->(query) {
+      where('name ILIKE ? OR description ILIKE ?', "%#{query}%", "%#{query}%")
+    }
+
+    # Whitelist the scope
+    self.whitelisted_ransackable_scopes = %w[multi_search]
+  end
+end
+```
+
+Usage in admin:
+
+```ruby
+# Search across multiple fields
+products?q[multi_search]=keyword
+```
+
+## Best Practices
+
+### 1. Always Whitelist Searchable Fields
+
+```ruby
+# ✅ Good - explicit whitelist
+self.whitelisted_ransackable_attributes = %w[name email status]
+
+# ❌ Bad - exposes all columns
+# Never override ransackable_attributes without proper authorization
+```
+
+### 2. Include Default Timestamps
+
+The default ransackable attributes include `created_at` and `updated_at`, so you don't need to whitelist them:
+
+```ruby
+# ❌ Redundant
+self.whitelisted_ransackable_attributes = %w[name created_at updated_at]
+
+# ✅ Better
+self.whitelisted_ransackable_attributes = %w[name]
+```
+
+### 3. Use Scopes for Complex Filters
+
+```ruby
+# ✅ Good - encapsulate complex logic in scopes
+scope :premium, -> { where('price >= ?', 100).where(featured: true) }
+self.whitelisted_ransackable_scopes = %w[premium]
+
+# ❌ Bad - exposing internal implementation details
+self.whitelisted_ransackable_attributes = %w[price featured]
+```
+
+### 4. Use Appropriate Predicates
+
+Choose predicates that match your use case:
+
+```ruby
+# ✅ Good - case-insensitive search for user input
+name_i_cont=search_term
+
+# ✅ Good - exact match for status
+status_eq=active
+
+# ❌ Bad - expensive LIKE queries on large datasets
+id_cont=123  # Use id_eq instead
+```
+
+### 5. Sanitize User Input
+
+When building search forms, use Ransack's helpers to prevent injection:
+
+```erb
+<%# ✅ Good - uses search_form_for helper %>
+<%= search_form_for @search do |f| %>
+  <%= f.search_field :name_cont %>
+<% end %>
+
+<%# ❌ Bad - raw params manipulation %>
+<%= text_field_tag 'q[name_cont]', params[:q][:name_cont] %>
+```
+
+### 6. Test Ransackable Configuration
+
+Always test that your ransackable configuration works as expected:
+
+```ruby
+# spec/models/spree/brand_spec.rb
+RSpec.describe Spree::Brand, type: :model do
+  describe 'ransackable attributes' do
+    it 'includes whitelisted attributes' do
+      expect(described_class.ransackable_attributes)
+        .to include('id', 'name', 'status', 'created_at', 'updated_at')
+    end
+  end
+
+  describe 'ransackable scopes' do
+    it 'includes whitelisted scopes' do
+      expect(described_class.ransackable_scopes).to include('published', 'with_logo')
+    end
+  end
+end
+```
+
+## Troubleshooting
+
+### Fields Not Searchable
+
+If you can't search by a field, check:
+
+1. Is it whitelisted in `whitelisted_ransackable_attributes`?
+2. Are you using the correct predicate (e.g., `_cont` for partial match)?
+
+### Associations Not Searchable
+
+For searching through associations:
+
+1. Whitelist the association in `whitelisted_ransackable_associations`
+2. Ensure the associated model also whitelists its attributes
+3. Use the correct syntax: `association_field_predicate`
+
+Example:
+
+```ruby
+# Search for products through taxon names
+products?q[taxons_name_cont]=shirts
+```
+
+### Scopes Not Working
+
+For scope filtering:
+
+1. Define the scope in your model
+2. Whitelist it in `whitelisted_ransackable_scopes`
+3. Pass a value (usually `true`) when filtering
+
+```ruby
+# Model
+scope :in_stock, -> { where('quantity > 0') }
+self.whitelisted_ransackable_scopes = %w[in_stock]
+
+# Usage
+products?q[in_stock]=true
+```
+
+## Additional Resources
+
+- [Ransack Search Matchers](https://activerecord-hackery.github.io/ransack/getting-started/search-matches/)
+- [Platform API Documentation](/developer/api/v2/platform)

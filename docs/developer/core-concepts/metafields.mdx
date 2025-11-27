@@ -1,6 +1,5 @@
 ---
 title: Metafields
-icon: "database"
 ---
 
 ## Overview
@@ -16,14 +15,8 @@ Metafields enable you to extend resources with custom attributes without modifyi
 - Order metadata with validation
 
 <Note>
-Metafields are available from Spree 5.2 onwards. For earlier versions, use [metadata](/developer/customization/metadata) instead.
+Metafields are available from Spree 5.2 onwards.
 </Note>
-
-<Warning>
-**Starting with Spree 5.2**, Metafields are the **recommended default** for storing custom product attributes, replacing the legacy [Product Properties](/developer/core-concepts/products#product-properties) system. For new projects, use Metafields instead of Properties.
-
-Product Properties are still supported for backward compatibility (until Spree 6.0) but require enabling via `config.product_properties_enabled = true`. See the [upgrade guide](/developer/upgrades/5.1-to-5.2#3-migrate-to-metafields-or-keep-using-properties) for migration details.
-</Warning>
 
 ## Architecture
 
@@ -579,8 +572,8 @@ normalizes :value, with: ->(value) { value.to_b.to_s }
 Create a custom metafield type:
 
 ```ruby
-# app/models/my_app/metafields/url.rb
-module MyApp
+# app/models/spree/metafields/url.rb
+module Spree
   module Metafields
     class Url < Spree::Metafield
       validates :value, format: { with: URI::DEFAULT_PARSER.make_regexp }
@@ -599,20 +592,19 @@ end
 
 Register it in an initializer:
 
-```ruby
-# config/initializers/spree.rb
-Rails.application.config.spree.metafield_types << 'MyApp::Metafields::Url'
+```ruby config/initializers/spree.rb
+Spree.metafields.types << 'Spree::Metafields::Url'
 ```
 
 ### Enabling Metafields for Custom Resources
 
-```ruby
-# config/initializers/spree.rb
-Rails.application.config.spree.metafield_enabled_resources << 'MyApp::CustomResource'
+```ruby config/initializers/spree.rb
+Spree.metafields.enabled_resources << 'Spree::Brand'
+```
 
-# app/models/my_app/custom_resource.rb
-module MyApp
-  class CustomResource < ApplicationRecord
+```ruby app/models/spree/brand.rb
+module Spree
+  class Brand < Spree::Base
     include Spree::Metafields
   end
 end

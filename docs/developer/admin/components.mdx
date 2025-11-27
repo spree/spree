@@ -1,0 +1,725 @@
+---
+title: Admin Components
+sidebarTitle: Components
+---
+
+Spree Admin provides a set of reusable UI components that you can use in your custom admin views. These components are implemented as view helpers and integrate with Stimulus controllers for interactivity.
+
+## Dropdown
+
+The dropdown component creates accessible dropdown menus with automatic positioning using Floating UI.
+
+### Basic Usage
+
+```erb
+<%= dropdown do %>
+  <%= dropdown_toggle class: 'btn-light btn-sm' do %>
+    <%= icon('dots-vertical', class: 'mr-0') %>
+  <% end %>
+
+  <%= dropdown_menu do %>
+    <%= link_to_with_icon 'pencil', Spree.t(:edit), edit_path, class: 'dropdown-item' %>
+    <%= link_to_with_icon 'trash', Spree.t(:delete), delete_path,
+        class: 'dropdown-item text-danger',
+        data: { turbo_method: :delete, turbo_confirm: Spree.t(:are_you_sure) } %>
+  <% end %>
+<% end %>
+```
+
+### Features
+
+- **Automatic positioning** - Uses Floating UI to position the menu optimally
+- **Auto-flip** - Menu flips to stay within viewport
+- **Click outside to close** - Menu closes when clicking outside
+- **Escape to close** - Menu closes when pressing Escape key
+- **Keyboard navigation** - Full keyboard accessibility
+
+### `dropdown`
+
+Creates the dropdown container with Stimulus controller.
+
+```erb
+<%= dropdown do %>
+  <!-- toggle and menu -->
+<% end %>
+
+<%= dropdown placement: 'top-end' do %>
+  <!-- menu opens above, aligned to end -->
+<% end %>
+```
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `class` | String | - | Additional CSS classes |
+| `placement` | String | `bottom-start` | Menu placement: `bottom-start`, `bottom-end`, `top-start`, `top-end` |
+| `direction` | String | - | Legacy option: `left` → `bottom-end`, `top` → `top-start`, `top-left` → `top-end` |
+| `portal` | Boolean | - | Whether to portal the dropdown to body |
+| `data` | Hash | - | Additional data attributes |
+
+### `dropdown_toggle`
+
+Creates the button that toggles the dropdown menu.
+
+```erb
+<%= dropdown_toggle class: 'btn-primary' do %>
+  Actions <%= icon('chevron-down', class: 'ml-2') %>
+<% end %>
+```
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `class` | String | - | Additional CSS classes (added to `btn` base class) |
+| `data` | Hash | - | Additional data attributes |
+
+### `dropdown_menu`
+
+Creates the menu container for dropdown items.
+
+```erb
+<%= dropdown_menu do %>
+  <%= link_to 'Option 1', '#', class: 'dropdown-item' %>
+  <div class="dropdown-divider"></div>
+  <%= link_to 'Option 2', '#', class: 'dropdown-item text-danger' %>
+<% end %>
+```
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `class` | String | - | Additional CSS classes |
+| `data` | Hash | - | Additional data attributes |
+
+### Complete Example
+
+```erb
+<%= content_for :page_actions do %>
+  <%= dropdown do %>
+    <%= dropdown_toggle class: 'btn-primary' do %>
+      <%= icon('settings', class: 'mr-2') %>
+      Actions
+      <%= icon('chevron-down', class: 'ml-2') %>
+    <% end %>
+
+    <%= dropdown_menu do %>
+      <%= link_to_with_icon 'download', 'Export CSV', export_path(format: :csv), class: 'dropdown-item' %>
+      <%= link_to_with_icon 'file-export', 'Export Excel', export_path(format: :xlsx), class: 'dropdown-item' %>
+      <div class="dropdown-divider"></div>
+      <%= link_to_with_icon 'upload', 'Import', import_path, class: 'dropdown-item' %>
+      <div class="dropdown-divider"></div>
+      <%= link_to_with_icon 'trash', 'Delete All', bulk_delete_path,
+          class: 'dropdown-item text-danger',
+          data: { turbo_method: :delete, turbo_confirm: Spree.t(:are_you_sure) } %>
+    <% end %>
+  <% end %>
+<% end %>
+```
+
+## Dialog
+
+Dialogs (modals) are used for focused interactions that require user attention. They overlay the page content and must be dismissed before continuing.
+
+### Basic Usage
+
+```erb
+<div class="dialog" data-controller="dialog">
+  <%= dialog_header('Edit Product') %>
+
+  <div class="dialog-body">
+    <!-- Dialog content -->
+  </div>
+
+  <div class="dialog-footer">
+    <%= dialog_discard_button %>
+    <%= turbo_save_button_tag %>
+  </div>
+</div>
+```
+
+### `dialog_header`
+
+Creates a dialog header with title and close button.
+
+```erb
+<%= dialog_header('Confirm Action') %>
+<%= dialog_header('Custom Dialog', 'my-dialog') %>
+```
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `title` | String | required | The dialog title |
+| `controller_name` | String | `dialog` | Stimulus controller name for the close action |
+
+**Renders:**
+
+```html
+<div class="dialog-header">
+  <h5 class="dialog-title">Confirm Action</h5>
+  <button type="button" class="btn-close" data-action="dialog#close" data-dismiss="dialog"></button>
+</div>
+```
+
+### `dialog_close_button`
+
+Creates a standalone close button for dialogs.
+
+```erb
+<%= dialog_close_button %>
+<%= dialog_close_button('custom-controller') %>
+```
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `controller_name` | String | `dialog` | Stimulus controller name |
+
+### `dialog_discard_button`
+
+Creates a "Discard" button that closes the dialog.
+
+```erb
+<%= dialog_discard_button %>
+```
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `controller_name` | String | `dialog` | Stimulus controller name |
+
+**Renders:**
+
+```html
+<button type="button" class="btn btn-light" data-action="dialog#close" data-dismiss="dialog">
+  Discard
+</button>
+```
+
+### Complete Dialog Example
+
+```erb
+<%= turbo_frame_tag 'main-dialog' do %>
+  <div class="dialog-backdrop" data-controller="dialog" data-action="click->dialog#backdropClose keydown.esc@window->dialog#close">
+    <div class="dialog">
+      <%= dialog_header('Add New Item') %>
+
+      <%= form_with model: @item, url: items_path, data: { turbo_frame: '_top' } do |f| %>
+        <div class="dialog-body">
+          <%= f.spree_text_field :name, required: true %>
+          <%= f.spree_text_area :description %>
+        </div>
+
+        <div class="dialog-footer">
+          <%= dialog_discard_button %>
+          <%= turbo_save_button_tag 'Create Item' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+```
+
+## Drawer
+
+Drawers are slide-out panels typically used for filters, secondary forms, or detailed views without leaving the current page.
+
+### Basic Usage
+
+```erb
+<div class="drawer" data-controller="drawer">
+  <%= drawer_header('Filter Options') %>
+
+  <div class="drawer-body">
+    <!-- Drawer content -->
+  </div>
+
+  <div class="drawer-footer">
+    <%= drawer_discard_button %>
+    <button type="submit" class="btn btn-primary">Apply Filters</button>
+  </div>
+</div>
+```
+
+### `drawer_header`
+
+Creates a drawer header with title and close button.
+
+```erb
+<%= drawer_header('Filters') %>
+<%= drawer_header('Details', 'custom-drawer') %>
+```
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `title` | String | required | The drawer title |
+| `controller_name` | String | `drawer` | Stimulus controller name for the close action |
+
+**Renders:**
+
+```html
+<div class="drawer-header">
+  <h5 class="drawer-title">Filters</h5>
+  <button type="button" class="btn-close" data-action="drawer#close" data-dismiss="drawer"></button>
+</div>
+```
+
+### `drawer_close_button`
+
+Creates a standalone close button for drawers.
+
+```erb
+<%= drawer_close_button %>
+<%= drawer_close_button('custom-drawer') %>
+```
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `controller_name` | String | `drawer` | Stimulus controller name |
+
+### `drawer_discard_button`
+
+Creates a "Discard" button that closes the drawer.
+
+```erb
+<%= drawer_discard_button %>
+```
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `controller_name` | String | `drawer` | Stimulus controller name |
+
+## Icon
+
+Icons are rendered using the [Tabler Icons](https://tabler.io/icons) library.
+
+### Basic Usage
+
+```erb
+<%= icon('package') %>
+<%= icon('shopping-cart', class: 'text-primary') %>
+<%= icon('check', class: 'text-success', height: 24) %>
+```
+
+### Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `class` | String | - | Additional CSS classes |
+| `height` | Integer | - | Icon size in pixels |
+| `style` | String | - | Additional inline styles |
+
+### Output
+
+```html
+<i class="ti ti-package"></i>
+<i class="ti ti-shopping-cart text-primary"></i>
+<i class="ti ti-check text-success" style="font-size: 24px !important;"></i>
+```
+
+### Legacy Icon Names
+
+For backwards compatibility, legacy icon names are automatically translated:
+
+| Legacy Name | Tabler Icon |
+|-------------|-------------|
+| `save` | `device-floppy` |
+| `edit` | `pencil` |
+| `delete` | `trash` |
+| `add` | `plus` |
+| `cancel` | `x` |
+
+### Common Icons
+
+| Icon | Name | Usage |
+|------|------|-------|
+| <i class="ti ti-pencil"></i> | `pencil` | Edit actions |
+| <i class="ti ti-trash"></i> | `trash` | Delete actions |
+| <i class="ti ti-plus"></i> | `plus` | Add/create actions |
+| <i class="ti ti-eye"></i> | `eye` | View/preview |
+| <i class="ti ti-download"></i> | `download` | Download/export |
+| <i class="ti ti-upload"></i> | `upload` | Upload/import |
+| <i class="ti ti-check"></i> | `check` | Success/confirm |
+| <i class="ti ti-x"></i> | `x` | Close/cancel |
+| <i class="ti ti-dots-vertical"></i> | `dots-vertical` | More options |
+| <i class="ti ti-chevron-down"></i> | `chevron-down` | Expand |
+| <i class="ti ti-chevron-right"></i> | `chevron-right` | Navigate |
+
+## Image
+
+Displays optimized images with automatic WebP conversion and retina support.
+
+### Basic Usage
+
+```erb
+<%= spree_image_tag(product.images.first, width: 100, height: 100) %>
+<%= spree_image_tag(current_store.logo, width: 200, height: 60) %>
+<%= spree_image_tag(taxon.image, width: 400, height: 300, class: 'rounded') %>
+```
+
+### Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `image` | Asset/Attachment | required | `Spree::Asset` or ActiveStorage attachment |
+| `width` | Integer | - | Display width in pixels |
+| `height` | Integer | - | Display height in pixels |
+| `class` | String | - | CSS classes |
+| `alt` | String | - | Alt text for accessibility |
+| `loading` | Symbol | - | `:lazy` or `:eager` |
+
+### Features
+
+- **Retina support** - Automatically scales dimensions by 2x for sharp display
+- **WebP conversion** - Outputs optimized WebP format
+- **Smart cropping** - When both dimensions provided, crops to fill
+- **Aspect ratio preservation** - When one dimension provided, maintains ratio
+
+### Examples
+
+```erb
+<%# Product thumbnail in index table %>
+<% if product.images.any? %>
+  <%= spree_image_tag product.images.first, width: 48, height: 48, class: 'rounded' %>
+<% else %>
+  <div class="bg-light rounded d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+    <%= icon('photo-off', class: 'text-muted') %>
+  </div>
+<% end %>
+
+<%# Store logo in header %>
+<%= spree_image_tag current_store.logo, width: 120, height: 40, alt: current_store.name %>
+
+<%# Category image %>
+<%= spree_image_tag taxon.image, width: 300, height: 200, class: 'card-img-top' %>
+```
+
+### With Placeholder
+
+```erb
+<% if @brand.logo.attached? %>
+  <%= spree_image_tag @brand.logo, width: 100, height: 100 %>
+<% else %>
+  <div class="placeholder-image">
+    <%= icon('photo') %>
+  </div>
+<% end %>
+```
+
+<Info>
+  For comprehensive documentation on image handling, storage configuration, and best practices, see the [Images & Assets](/developer/core-concepts/images-assets) guide.
+</Info>
+
+## Tooltip
+
+Tooltips provide additional context on hover.
+
+### Basic Usage
+
+```erb
+<span data-controller="tooltip">
+  <%= icon('info-circle') %>
+  <%= tooltip('This is helpful information') %>
+</span>
+```
+
+### `tooltip`
+
+Creates a tooltip container.
+
+```erb
+<%= tooltip('Simple text tooltip') %>
+
+<%= tooltip do %>
+  <strong>Rich content</strong> with <em>formatting</em>
+<% end %>
+```
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `text` | String | Tooltip text (or use block for rich content) |
+
+### `help_bubble`
+
+Creates an info icon with a tooltip - commonly used for form field hints.
+
+```erb
+<%= help_bubble('This field is used for SEO optimization') %>
+<%= help_bubble('Shown below the field', 'bottom') %>
+<%= help_bubble('Custom styled', 'top', css: 'text-primary') %>
+```
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `text` | String | required | Tooltip text |
+| `placement` | String | `top` | Tooltip position: `top`, `bottom`, `left`, `right` |
+| `css` | String | `text-xs text-muted...` | CSS classes for the icon |
+
+**Output:**
+
+```html
+<span data-controller="tooltip" data-tooltip-placement-value="top">
+  <i class="ti ti-info-square-rounded text-xs text-muted cursor-default opacity-75"></i>
+  <span role="tooltip" data-tooltip-target="tooltip" class="tooltip-container">
+    This field is used for SEO optimization
+  </span>
+</span>
+```
+
+## Active Badge
+
+Displays a status badge indicating active/inactive state.
+
+### Basic Usage
+
+```erb
+<%= active_badge(product.active?) %>
+<%= active_badge(user.confirmed?) %>
+<%= active_badge(order.paid?, label: 'Paid') %>
+```
+
+### Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `condition` | Boolean | required | The condition to evaluate |
+| `label` | String | Yes/No | Custom label text |
+
+### Output
+
+When condition is `true`:
+
+```html
+<span class="badge badge-active">
+  <i class="ti ti-check"></i> Yes
+</span>
+```
+
+When condition is `false`:
+
+```html
+<span class="badge badge-inactive">No</span>
+```
+
+### Custom Labels
+
+```erb
+<%= active_badge(subscription.active?, label: subscription.active? ? 'Active' : 'Expired') %>
+<%= active_badge(feature.enabled?, label: feature.enabled? ? 'Enabled' : 'Disabled') %>
+```
+
+## Avatar
+
+Renders a user avatar with automatic fallback to initials.
+
+### Basic Usage
+
+```erb
+<%= render_avatar(current_user) %>
+<%= render_avatar(user, width: 48, height: 48) %>
+<%= render_avatar(admin, class: 'avatar-lg') %>
+```
+
+### Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `user` | Object | required | User object (must respond to `avatar` and `name`) |
+| `width` | Integer | 128 | Avatar width in pixels |
+| `height` | Integer | 128 | Avatar height in pixels |
+| `class` | String | `avatar` | CSS classes |
+
+### Behavior
+
+1. If user has an attached avatar image → displays the image
+2. Otherwise → displays user's initials on a colored background
+
+```erb
+<!-- With avatar image -->
+<img src="avatar.jpg" class="avatar" style="width: 128px; height: 128px;">
+
+<!-- Without avatar (fallback) -->
+<div class="avatar" style="width: 128px; height: 128px;">JD</div>
+```
+
+## Clipboard
+
+Copy-to-clipboard functionality with visual feedback.
+
+### Basic Usage
+
+```erb
+<%= clipboard_component(product.sku) %>
+<%= clipboard_component(api_key) %>
+```
+
+### `clipboard_component`
+
+Creates a complete clipboard component with hidden input and copy button.
+
+```erb
+<%= clipboard_component('ABC-123-XYZ') %>
+```
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `text` | String | The text to copy |
+
+**Output:**
+
+```html
+<span data-controller="clipboard" data-clipboard-success-content-value="<i class='ti ti-check mr-0 font-size-sm'></i>">
+  <input type="hidden" name="clipboard_source" value="ABC-123-XYZ" data-clipboard-target="source">
+  <button type="button" class="btn btn-clipboard" data-action="clipboard#copy" data-clipboard-target="button">
+    <i class="ti ti-copy mr-0 font-size-sm"></i>
+    <span role="tooltip" data-tooltip-target="tooltip" class="tooltip-container">Copy to clipboard</span>
+  </button>
+</span>
+```
+
+### `clipboard_button`
+
+Creates just the copy button (for custom layouts).
+
+```erb
+<div data-controller="clipboard">
+  <input type="text" data-clipboard-target="source" value="custom-value">
+  <%= clipboard_button %>
+</div>
+```
+
+### Inline with Text
+
+```erb
+<div class="d-flex align-items-center gap-2">
+  <code><%= product.sku %></code>
+  <%= clipboard_component(product.sku) %>
+</div>
+```
+
+## Progress Bar
+
+Displays a progress bar with customizable range.
+
+### Basic Usage
+
+```erb
+<%= progress_bar_component(75) %>
+<%= progress_bar_component(150, max: 200) %>
+<%= progress_bar_component(50, min: 0, max: 100) %>
+```
+
+### Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `value` | Integer | required | Current progress value |
+| `min` | Integer | 0 | Minimum value |
+| `max` | Integer | 100 | Maximum value |
+
+### Output
+
+```html
+<div class="progress">
+  <div class="progress-bar"
+       role="progressbar"
+       style="width: 75%"
+       aria-valuenow="75"
+       aria-valuemin="0"
+       aria-valuemax="100">
+  </div>
+</div>
+```
+
+### Examples
+
+```erb
+<!-- Inventory level -->
+<%= progress_bar_component(stock_item.count_on_hand, max: stock_item.backorderable_threshold || 100) %>
+
+<!-- Order fulfillment -->
+<%= progress_bar_component(order.shipments.shipped.count, max: order.shipments.count) %>
+
+<!-- Upload progress -->
+<%= progress_bar_component(uploaded_count, max: total_count) %>
+```
+
+## Date & Time
+
+Helpers for displaying dates and times in the user's local timezone.
+
+### `spree_date`
+
+Renders a date in the user's local format.
+
+```erb
+<%= spree_date(order.created_at) %>
+<%= spree_date(product.available_on) %>
+```
+
+### `spree_time`
+
+Renders a date and time in the user's local format.
+
+```erb
+<%= spree_time(order.completed_at) %>
+<%= spree_time(shipment.shipped_at) %>
+```
+
+### `spree_time_ago`
+
+Renders a relative time (e.g., "2 hours ago") with a tooltip showing the full timestamp.
+
+```erb
+<%= spree_time_ago(order.completed_at) %>
+<%= spree_time_ago(comment.created_at) %>
+```
+
+**Output:**
+
+```html
+<span data-controller="tooltip">
+  <time datetime="2024-01-15T10:30:00Z" data-local="time-ago">2 hours ago</time>
+  <span role="tooltip" data-tooltip-target="tooltip" class="tooltip-container">
+    January 15, 2024 10:30 AM
+  </span>
+</span>
+```
+
+### `local_time`
+
+The underlying helper from [local_time gem](https://github.com/basecamp/local_time) - displays time in user's browser timezone.
+
+```erb
+<%= local_time(order.completed_at) %>
+<%= local_time(event.starts_at, format: '%B %e, %Y at %l:%M %p') %>
+```
+
+### Comparison
+
+| Helper | Output | Use Case |
+|--------|--------|----------|
+| `spree_date` | "Jan 15, 2024" | Date-only display |
+| `spree_time` | "Jan 15, 2024 10:30 AM" | Full timestamp |
+| `spree_time_ago` | "2 hours ago" | Relative time with tooltip |
+| `local_time` | "January 15, 2024 10:30 AM" | Customizable format |
+
+## Best Practices
+
+<Check>
+  **Use semantic components** - Choose the right component for the interaction (Dialog for focused tasks, Drawer for contextual panels)
+</Check>
+
+<Check>
+  **Provide feedback** - Use tooltips and badges to give users context about their actions
+</Check>
+
+<Check>
+  **Keep dropdowns focused** - Limit dropdown menus to related actions, use dividers to group items
+</Check>
+
+<Check>
+  **Use appropriate icons** - Choose icons that clearly represent the action
+</Check>
+
+<Check>
+  **Handle loading states** - Use `turbo_save_button_tag` for forms to show loading feedback
+</Check>
+
+<Check>
+  **Consider accessibility** - Components include ARIA attributes and keyboard navigation
+</Check>

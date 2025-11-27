@@ -1,0 +1,124 @@
+---
+title: File Uploads
+description: Learn how to add file uploads to the Brands feature
+---
+
+<Info>
+  This guide assumes you've completed the [Model](/developer/tutorial/model), [Admin](/developer/tutorial/admin), and [Rich Text](/developer/tutorial/rich-text) tutorials.
+</Info>
+
+In this tutorial, we'll add a logo image upload to our Brand model. Spree uses [Rails Active Storage](https://guides.rubyonrails.org/active_storage_overview.html) for handling file attachments, image processing, and storage.
+
+## Step 1: Add Attachment to the Model
+
+First, let's add a logo attachment to the Brand model:
+
+```ruby app/models/spree/brand.rb {3}
+module Spree
+  class Brand < Spree::Base
+    has_one_attached :logo
+
+    # ... existing code ...
+  end
+end
+```
+
+## Step 2: Permit the Attachment Attribute
+
+For the admin form to accept the file upload, we need to permit the `logo` attribute in the controller.
+
+Update your brands controller:
+
+```ruby app/controllers/spree/admin/brands_controller.rb {10}
+module Spree
+  module Admin
+    class BrandsController < ResourceController
+      private
+
+      def permitted_resource_params
+        params.require(:brand).permit(
+          :name,
+          :description,
+          :logo
+        )
+      end
+    end
+  end
+end
+```
+
+## Step 3: Add File Upload Field to the Admin Form
+
+Now let's add the file upload field to the brand form. Spree provides a `spree_file_field` helper that handles everything including:
+
+- Drag and drop upload
+- Image preview
+- Direct upload to storage
+- Optional image cropping
+
+Update your brand form partial:
+
+```erb app/views/spree/admin/brands/_form.html.erb {11-19}
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title"><%= Spree.t(:general_settings) %></h5>
+  </div>
+  <div class="card-body">
+    <%= f.spree_text_field :name, required: true %>
+    <%= f.spree_rich_text_area :description %>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title"><%= Spree.t(:logo) %></h5>
+  </div>
+  <div class="card-body">
+    <%= f.spree_file_field :logo, width: 300, height: 300 %>
+  </div>
+</div>
+```
+
+### Add cropping functionality
+
+To enable cropping functionality, add the `crop: true` option to the `spree_file_field` helper.
+
+## Step 4: Display the Logo in the Index Table
+
+Let's show a thumbnail of the brand logo in the admin index view.
+
+Update the table header partial:
+
+```erb app/views/spree/admin/brands/_table_header.html.erb {2}
+<tr>
+  <th><%= Spree.t(:logo) %></th>
+  <th><%= Spree.t(:name) %></th>
+  <th></th>
+</tr>
+```
+
+Update the table row partial to display the logo:
+
+```erb app/views/spree/admin/brands/_table_row.html.erb {3-12}
+<tr id="<%= spree_dom_id brand %>" class="cursor-pointer" data-controller="row-link">
+  <td data-action="click->row-link#openLink" class="w-70">
+    <div class="d-flex align-items-center gap-2">
+      <% if brand.logo.attached? %>
+        <%= spree_image_tag brand.logo, width: 48, height: 48, class: 'rounded' %>
+      <% else %>
+        <div class="bg-light rounded d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+          <%= icon('photo-off', class: 'text-muted') %>
+        </div>
+      <% end %>
+      <span class="font-weight-bold"><%= brand.name %></span>
+    </div>
+  </td>
+  <td data-action="click->row-link#openLink" class="w-20">
+    <%= spree_date(brand.created_at) %>
+  </td>
+  <td class="actions w-10">
+    <%= link_to_edit(brand, data: { row_link_target: :link, turbo_frame: '_top' }) if can? :edit, brand %>
+  </td>
+</tr>
+```
+

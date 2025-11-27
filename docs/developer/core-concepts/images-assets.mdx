@@ -1,0 +1,431 @@
+---
+title: Images & Assets
+sidebarTitle: "Images & Assets"
+---
+
+Spree uses [Rails Active Storage](https://guides.rubyonrails.org/active_storage_overview.html) for all file uploads and image handling. This guide covers how images are stored, processed, and displayed in Spree.
+
+## How Spree Stores Images
+
+Spree provides two storage service configurations:
+
+| Service | Purpose | Example Models |
+|---------|---------|----------------|
+| `public_storage_service_name` | Public assets (images, logos) | Product images, Store logo, Taxon images |
+| `private_storage_service_name` | Private assets (exports, imports) | CSV exports, Digital downloads |
+
+### Configuration
+
+Configure storage services in your Spree initializer:
+
+```ruby config/initializers/spree.rb
+Spree.public_storage_service_name = :amazon_public   # S3 bucket for public assets
+Spree.private_storage_service_name = :amazon_private # S3 bucket for private assets
+```
+
+If not configured, Spree uses the default Active Storage service from `config/storage.yml`.
+
+<Info>
+  For production deployments, we recommend using cloud storage (S3, GCS, Azure) instead of local disk storage. See [Active Storage Configuration](/developer/deployment/assets) for details.
+</Info>
+
+## Adding Images to Your Models
+
+For most models, use Rails Active Storage directly with Spree's storage service:
+
+```ruby app/models/spree/brand.rb
+module Spree
+  class Brand < Spree::Base
+    # Public image (product photos, logos, etc.)
+    has_one_attached :logo, service: Spree.public_storage_service_name
+
+    # Multiple public images
+    has_many_attached :gallery_images, service: Spree.public_storage_service_name
+
+    # Private file (invoices, reports, etc.)
+    has_one_attached :contract, service: Spree.private_storage_service_name
+  end
+end
+```
+
+### Models Using Active Storage
+
+Most Spree models use Active Storage directly:
+
+| Model | Attachment | Type |
+|-------|------------|------|
+| `Spree::Store` | `logo`, `favicon_image`, `social_image`, `mailer_logo` | Public |
+| `Spree::Taxon` | `image`, `square_image` | Public |
+| `Spree::Post` | `image` | Public |
+| `Spree::User` | `avatar` | Public |
+| `Spree::PageSection` | `asset` | Public |
+| `Spree::PageBlock` | `asset` | Public |
+| `Spree::Digital` | `attachment` | Private |
+| `Spree::Export` | `attachment` | Private |
+| `Spree::Import` | `attachment` | Private |
+
+## Product & Variant Images
+
+Product images are a special case that use the `Spree::Image` model (a subclass of `Spree::Asset`). This provides additional features needed for e-commerce:
+
+- **Multiple images per variant** with ordering
+- **Alt text** for accessibility and SEO
+- **Position management** for image galleries
+- **Polymorphic association** to variants
+
+### How It Works
+
+```ruby
+# Images belong to variants, not products directly
+variant.images # => [Spree::Image, Spree::Image, ...]
+
+# Products access images through their variants
+product.images        # => Images from master variant
+product.variant_images # => Images from all variants including master
+
+# Each image wraps an Active Storage attachment
+image = variant.images.first
+image.attachment      # => ActiveStorage::Attached::One
+image.alt             # => "Red T-Shirt Front View"
+image.position        # => 1
+```
+
+### Creating Product Images
+
+```ruby
+# Add image to a variant
+variant.images.create!(
+  attachment: File.open('path/to/image.jpg'),
+  alt: 'Product front view'
+)
+
+# Or using Active Storage's attach method
+image = variant.images.new(alt: 'Product side view')
+image.attachment.attach(
+  io: File.open('path/to/image.jpg'),
+  filename: 'side-view.jpg',
+  content_type: 'image/jpeg'
+)
+image.save!
+```
+
+### Spree::Asset Class
+
+`Spree::Asset` is the base class for product images:
+
+```ruby
+# Key attributes and methods
+asset.attachment      # ActiveStorage attachment
+asset.attached?       # Check if file is attached
+asset.blob            # ActiveStorage blob
+asset.filename        # Original filename
+asset.key             # Storage key
+asset.viewable        # Parent record (e.g., Spree::Variant)
+asset.viewable_type   # "Spree::Variant"
+asset.position        # Order in gallery
+asset.alt             # Alt text (Spree::Image only)
+```
+
+<Warning>
+  `Spree::Asset` and `Spree::Image` are only used for product/variant images. For all other models, use Active Storage directly with `has_one_attached` or `has_many_attached`.
+</Warning>
+
+## Image Processing
+
+Spree uses [libvips](https://www.libvips.org/) for image processing. Images are automatically:
+
+- Converted to **WebP format** for optimal file size
+- **Resized on-the-fly** using Active Storage variants
+- **Cached** for subsequent requests
+
+### Installing libvips
+
+```bash
+# macOS
+brew install vips
+
+# Ubuntu/Debian
+apt-get install libvips
+
+# Alpine Linux
+apk add vips
+```
+
+### Image Variants
+
+Transform images on-the-fly using Active Storage variants:
+
+```ruby
+# Resize to fit within dimensions (maintains aspect ratio)
+image.variant(resize_to_limit: [400, 400])
+
+# Resize and crop to exact dimensions
+image.variant(resize_to_fill: [200, 200])
+
+# Resize by width only
+image.variant(resize_to_limit: [300, nil])
+
+# Resize by height only
+image.variant(resize_to_limit: [nil, 300])
+```
+
+## Helpers
+
+Spree provides several helper methods for working with images. These are defined in [Spree::ImagesHelper](https://github.com/spree/spree/blob/main/core/app/helpers/spree/images_helper.rb) and are available in Admin, Storefront, and API.
+
+### `spree_image_tag`
+
+Generates an optimized image tag with automatic WebP conversion and retina support.
+
+```erb
+<%= spree_image_tag(
+  product.images.first,
+  width: 400,
+  height: 400,
+  loading: :lazy,
+  class: 'product-image',
+  alt: product.name
+) %>
+```
+
+**Output:**
+
+```html
+<img
+  width="400"
+  height="400"
+  loading="lazy"
+  class="product-image"
+  alt="Red T-Shirt"
+  src="https://example.com/rails/active_storage/representations/...">
+```
+
+**Features:**
+- Automatically scales dimensions by 2x for retina displays
+- Converts to WebP format
+- Works with both `Spree::Asset` objects and Active Storage attachments
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `image` | Asset/Attachment | Spree::Asset or ActiveStorage attachment |
+| `width` | Integer | Display width in pixels |
+| `height` | Integer | Display height in pixels |
+| `loading` | Symbol | `:lazy` or `:eager` |
+| `class` | String | CSS classes |
+| `alt` | String | Alt text for accessibility |
+
+<Tip>
+  If both width and height are provided, the image is cropped to fill the dimensions. If only one is provided, the image maintains its aspect ratio.
+</Tip>
+
+### `spree_image_url`
+
+Generates a URL for an image with specified dimensions.
+
+```erb
+<%= spree_image_url(product.images.first, width: 800, height: 600) %>
+```
+
+**Output:**
+
+```
+https://example.com/rails/active_storage/representations/proxy/...
+```
+
+<Info>
+  URLs generated by this helper are static and can be cached by [CDNs](/developer/deployment/assets). Don't use this for private assets!
+</Info>
+
+### `spree_asset_aspect_ratio`
+
+Returns the aspect ratio of an image for CSS layouts.
+
+```erb
+<div style="aspect-ratio: <%= spree_asset_aspect_ratio(product.images.first) %>">
+  <%= spree_image_tag(product.images.first, width: 400) %>
+</div>
+```
+
+**Returns:** Float (e.g., `1.5`, `0.75`, `1.0`)
+
+## Displaying Images
+
+### Product Images in Views
+
+```erb
+<%# Display primary product image %>
+<% if product.images.any? %>
+  <%= spree_image_tag product.images.first,
+      width: 600,
+      height: 600,
+      alt: product.name,
+      class: 'product-main-image' %>
+<% end %>
+
+<%# Display image gallery %>
+<div class="product-gallery">
+  <% product.images.each do |image| %>
+    <%= spree_image_tag image,
+        width: 100,
+        height: 100,
+        alt: image.alt.presence || product.name,
+        class: 'gallery-thumbnail' %>
+  <% end %>
+</div>
+```
+
+### Active Storage Attachments
+
+```erb
+<%# Store logo %>
+<% if current_store.logo.attached? %>
+  <%= spree_image_tag current_store.logo,
+      width: 200,
+      height: 60,
+      alt: current_store.name %>
+<% end %>
+
+<%# Taxon image %>
+<% if taxon.image.attached? %>
+  <%= spree_image_tag taxon.image,
+      width: 400,
+      height: 300,
+      alt: taxon.name %>
+<% end %>
+
+<%# User avatar %>
+<% if user.avatar.attached? %>
+  <%= spree_image_tag user.avatar,
+      width: 48,
+      height: 48,
+      class: 'rounded-full' %>
+<% end %>
+```
+
+### Checking for Attached Images
+
+```erb
+<%# For Spree::Asset/Image %>
+<% if product.images.any? %>
+  <%= spree_image_tag product.images.first, width: 400 %>
+<% else %>
+  <%= image_tag 'placeholder.png', width: 400 %>
+<% end %>
+
+<%# For Active Storage attachments %>
+<% if @brand.logo.attached? %>
+  <%= spree_image_tag @brand.logo, width: 200 %>
+<% else %>
+  <div class="placeholder">No logo</div>
+<% end %>
+```
+
+## Admin Dashboard
+
+In the admin dashboard, use the `spree_file_field` form helper for image uploads:
+
+```erb
+<%= form_with model: @brand do |f| %>
+  <%= f.spree_file_field :logo,
+      width: 300,
+      height: 300,
+      crop: true,
+      help: "Recommended size: 300x300px" %>
+<% end %>
+```
+
+See the [Form Builder](/developer/admin/form-builder) and [Components](/developer/admin/components) documentation for more details.
+
+## API Serialization
+
+Product images are automatically serialized in API responses:
+
+```json
+{
+  "data": {
+    "id": "1",
+    "type": "product",
+    "attributes": {
+      "name": "Red T-Shirt"
+    },
+    "relationships": {
+      "images": {
+        "data": [
+          { "id": "1", "type": "image" }
+        ]
+      }
+    }
+  },
+  "included": [
+    {
+      "id": "1",
+      "type": "image",
+      "attributes": {
+        "position": 1,
+        "alt": "Front view",
+        "original_url": "https://...",
+        "styles": [
+          {
+            "url": "https://...",
+            "width": 650,
+            "height": 870,
+            "size": "650x870>"
+          }
+        ]
+      }
+    }
+  ]
+}
+```
+
+## Best Practices
+
+<Check>
+  **Use appropriate storage services** - Public assets use `public_storage_service_name`, private files use `private_storage_service_name`
+</Check>
+
+<Check>
+  **Always provide alt text** - For accessibility and SEO, always include meaningful alt text
+</Check>
+
+<Check>
+  **Use lazy loading** - Add `loading: :lazy` for images below the fold
+</Check>
+
+<Check>
+  **Specify dimensions** - Always provide width and height to prevent layout shifts
+</Check>
+
+<Check>
+  **Use CDN in production** - Configure Active Storage to use a [CDN](/developer/deployment/assets) for faster delivery
+</Check>
+
+<Check>
+  **Validate uploads** - Add file size and type validations to prevent abuse
+</Check>
+
+```ruby
+# Example validation
+class Brand < Spree::Base
+  has_one_attached :logo, service: Spree.public_storage_service_name
+
+  validate :acceptable_logo
+
+  private
+
+  def acceptable_logo
+    return unless logo.attached?
+
+    if logo.blob.byte_size > 5.megabytes
+      errors.add(:logo, 'must be less than 5MB')
+    end
+
+    acceptable = ['image/jpeg', 'image/png', 'image/webp']
+    unless acceptable.include?(logo.blob.content_type)
+      errors.add(:logo, 'must be JPEG, PNG, or WebP')
+    end
+  end
+end
+```

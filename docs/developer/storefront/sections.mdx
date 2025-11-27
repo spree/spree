@@ -130,6 +130,455 @@ Each section has set of default [preferences](/developer/customization/model-pre
 
 Particular sections can introduce their own preferences. For example, `Spree::PageSections::ImageWithText` has `desktop_image_alignment` and `vertical_alignment` preferences.
 
-## Creating a new section
+## Creating a New Section
 
-<Warning>Documentation on creating a new section is coming soon</Warning>
+This guide walks you through creating a custom section for your Spree storefront. We'll create a "Testimonials" section that displays customer reviews.
+
+### Step 1: Create the Model
+
+Create your section model that inherits from `Spree::PageSection`. Place it in `app/models/spree/page_sections/`:
+
+```ruby app/models/spree/page_sections/testimonials.rb
+module Spree
+  module PageSections
+    class Testimonials < Spree::PageSection
+      # Override default padding if needed
+      TOP_PADDING_DEFAULT = 60
+      BOTTOM_PADDING_DEFAULT = 60
+
+      # Define section-specific preferences
+      preference :heading, :string, default: 'What Our Customers Say'
+      preference :heading_size, :string, default: 'large'
+      preference :heading_alignment, :string, default: 'center'
+      preference :max_testimonials, :integer, default: 3
+      preference :show_rating, :boolean, default: true
+
+      # Validation for preferences
+      before_validation :ensure_valid_heading_size
+      before_validation :ensure_valid_alignment
+
+      # Icon displayed in the Page Builder sidebar
+      def icon_name
+        'quote'
+      end
+
+      # Define default blocks that are created with this section
+      def default_blocks
+        @default_blocks.presence || [
+          Spree::PageBlocks::Heading.new(
+            text: preferred_heading,
+            preferred_text_alignment: preferred_heading_alignment
+          )
+        ]
+      end
+
+      # Which block types can be added to this section
+      def available_blocks_to_add
+        [
+          Spree::PageBlocks::Heading,
+          Spree::PageBlocks::Text
+        ]
+      end
+
+      # Enable block management in admin
+      def blocks_available?
+        true
+      end
+
+      # Allow reordering blocks
+      def can_sort_blocks?
+        true
+      end
+
+      private
+
+      def ensure_valid_heading_size
+        self.preferred_heading_size = 'medium' unless %w[small medium large].include?(preferred_heading_size)
+      end
+
+      def ensure_valid_alignment
+        self.preferred_heading_alignment = 'center' unless %w[left center right].include?(preferred_heading_alignment)
+      end
+    end
+  end
+end
+```
+
+### Step 2: Register the Section
+
+Add your section to `Spree.page_builder.page_sections` in your Spree initializer:
+
+```ruby config/initializers/spree.rb
+Rails.application.config.after_initialize do
+  Spree.page_builder.page_sections += [
+    Spree::PageSections::Testimonials
+  ]
+end
+```
+
+<Info>
+  Sections are filtered by their `role` method. By default, sections have role `'content'` which makes them available in the Page Builder. Sections with role `'header'` or `'footer'` are layout sections.
+</Info>
+
+### Step 3: Create the Admin Form
+
+Create the admin form partial for configuring the section in the Page Builder. Place it in `app/views/spree/admin/page_sections/forms/`:
+
+```erb app/views/spree/admin/page_sections/forms/_testimonials.html.erb
+<div class="form-group">
+  <%= f.label :preferred_heading, Spree.t(:heading) %>
+  <%= f.text_field :preferred_heading,
+      class: 'form-control',
+      data: { action: 'auto-submit#submit' } %>
+</div>
+
+<div class="form-group">
+  <%= f.label :preferred_heading_size, Spree.t(:heading_size) %>
+  <%= f.select :preferred_heading_size,
+      options_for_select([
+        [Spree.t(:small), 'small'],
+        [Spree.t(:medium), 'medium'],
+        [Spree.t(:large), 'large']
+      ], @page_section.preferred_heading_size),
+      {},
+      { class: 'custom-select', data: { action: 'auto-submit#submit' } } %>
+</div>
+
+<div class="form-group">
+  <%= f.label :preferred_heading_alignment, Spree.t(:alignment) %>
+  <%= f.select :preferred_heading_alignment,
+      options_for_select([
+        [Spree.t(:left), 'left'],
+        [Spree.t(:center), 'center'],
+        [Spree.t(:right), 'right']
+      ], @page_section.preferred_heading_alignment),
+      {},
+      { class: 'custom-select', data: { action: 'auto-submit#submit' } } %>
+</div>
+
+<div class="form-group">
+  <%= f.label :preferred_max_testimonials, Spree.t(:max_items) %>
+  <%= f.number_field :preferred_max_testimonials,
+      class: 'form-control',
+      min: 1,
+      max: 10,
+      data: { action: 'auto-submit#submit' } %>
+</div>
+
+<div class="custom-control custom-checkbox mb-3">
+  <%= f.check_box :preferred_show_rating,
+      class: 'custom-control-input',
+      data: { action: 'auto-submit#submit' } %>
+  <%= f.label :preferred_show_rating, Spree.t(:show_rating), class: 'custom-control-label' %>
+</div>
+
+<%# Add design settings to the Design tab %>
+<% content_for(:design_tab) do %>
+  <hr />
+<% end %>
+```
+
+<Info>
+  The `data: { action: 'auto-submit#submit' }` attribute enables live preview in the Page Builder - changes are saved automatically as the user types.
+</Info>
+
+### Step 4: Create the Storefront View
+
+Create the storefront partial that renders the section. Place it in your theme's views directory:
+
+```erb app/views/themes/default/spree/page_sections/_testimonials.html.erb
+<% cache_unless page_builder_enabled?, spree_storefront_base_cache_scope.call(section) do %>
+  <div style="<%= section_styles(section) %>" class="testimonials-section">
+    <div class="page-container">
+      <%# Heading %>
+      <% if section.preferred_heading.present? %>
+        <%
+          heading_class = case section.preferred_heading_size
+                          when 'small' then 'text-lg'
+                          when 'medium' then 'text-xl lg:text-2xl'
+                          when 'large' then 'text-2xl lg:text-3xl'
+                          end
+        %>
+        <h2 class="<%= heading_class %> font-medium mb-8 text-<%= section.preferred_heading_alignment %>">
+          <%= section.preferred_heading %>
+        </h2>
+      <% end %>
+
+      <%# Render blocks %>
+      <% section.blocks.includes(:rich_text_text).each do |block| %>
+        <% case block.type %>
+        <% when 'Spree::PageBlocks::Heading' %>
+          <h3 class="text-xl font-medium" <%= block_attributes(block) %>>
+            <%= block.text %>
+          </h3>
+        <% when 'Spree::PageBlocks::Text' %>
+          <div class="prose" <%= block_attributes(block) %>>
+            <%= block.text %>
+          </div>
+        <% end %>
+      <% end %>
+
+      <%# Your custom testimonials content %>
+      <div class="grid grid-cols-1 md:grid-cols-<%= section.preferred_max_testimonials %> gap-6">
+        <%# Add your testimonials rendering logic here %>
+      </div>
+    </div>
+  </div>
+<% end %>
+```
+
+### Section Roles
+
+Sections have different roles that determine where they appear:
+
+| Role | Description | Example |
+|------|-------------|---------|
+| `content` | Available in Page Builder, can be added to any page | Rich Text, Image Banner |
+| `system` | Core page functionality, usually not removable | Product Details, Cart |
+| `header` | Header layout sections | Header, Announcement Bar |
+| `footer` | Footer layout sections | Footer, Newsletter |
+
+To set a section's role, override the `self.role` class method:
+
+```ruby
+def self.role
+  'content' # default
+end
+```
+
+### Section with Image Upload
+
+If your section needs an image, use the built-in `asset` attachment:
+
+```ruby app/models/spree/page_sections/hero_banner.rb
+module Spree
+  module PageSections
+    class HeroBanner < Spree::PageSection
+      include Spree::HasImageAltText
+
+      preference :image_alt, :string
+
+      def icon_name
+        'photo'
+      end
+    end
+  end
+end
+```
+
+Admin form with image upload:
+
+```erb app/views/spree/admin/page_sections/forms/_hero_banner.html.erb
+<%= render 'spree/admin/shared/page_section_image', f: f %>
+
+<div class="form-group">
+  <%= f.label :preferred_image_alt, Spree.t(:alt_text) %>
+  <%= f.text_field :preferred_image_alt,
+      class: 'form-control',
+      data: { action: 'auto-submit#submit' } %>
+</div>
+```
+
+Display in storefront:
+
+```erb
+<% if section.asset.attached? %>
+  <%= spree_image_tag section.asset,
+      width: 1200,
+      height: 600,
+      alt: section.image_alt,
+      class: 'w-full object-cover' %>
+<% end %>
+```
+
+### Section with Links
+
+To add clickable links to your section, include the `Spree::HasPageLinks` concern (included by default) and define links:
+
+```ruby
+module Spree
+  module PageSections
+    class PromoBanner < Spree::PageSection
+      has_one :link, ->(ps) { ps.links },
+              class_name: 'Spree::PageLink',
+              as: :parent,
+              dependent: :destroy,
+              inverse_of: :parent
+      accepts_nested_attributes_for :link
+
+      def default_links
+        @default_links.presence || [
+          Spree::PageLink.new(label: Spree.t(:shop_now))
+        ]
+      end
+    end
+  end
+end
+```
+
+### Lazy Loading Sections
+
+For sections that load external data (products, taxons), implement lazy loading to improve page performance:
+
+```ruby
+def lazy?
+  !Rails.env.test?
+end
+
+def lazy_path(variables)
+  url_options = variables[:url_options] || {}
+  Spree::Core::Engine.routes.url_helpers.page_section_path(self, **url_options)
+end
+```
+
+### Helper Methods
+
+These helper methods are available in storefront section views:
+
+| Helper | Description |
+|--------|-------------|
+| `section_styles(section)` | Returns inline CSS for section padding, colors, borders |
+| `block_attributes(block)` | Returns data attributes for Page Builder editing |
+| `page_builder_enabled?` | Returns true when in Page Builder preview mode |
+| `spree_storefront_base_cache_scope` | Cache key scope for the section |
+| `section_heading_styles(section)` | Returns inline CSS for heading text color |
+| `page_builder_link_to(link, **options)` | Renders a link with Page Builder support |
+
+### Adding Translations
+
+Add translations for your section in your locale files:
+
+```yaml config/locales/en.yml
+en:
+  spree:
+    page_sections:
+      testimonials:
+        heading_default: "What Our Customers Say"
+        text_default: "Read reviews from our happy customers"
+```
+
+### Complete Example
+
+Here's a complete example putting it all together - a "Brand Story" section:
+
+<Steps>
+  <Step title="Create the model">
+    ```ruby app/models/spree/page_sections/brand_story.rb
+    module Spree
+      module PageSections
+        class BrandStory < Spree::PageSection
+          include Spree::HasImageAltText
+
+          TOP_PADDING_DEFAULT = 80
+          BOTTOM_PADDING_DEFAULT = 80
+
+          preference :image_position, :string, default: 'left'
+          preference :image_alt, :string
+
+          def icon_name
+            'building-store'
+          end
+
+          def default_blocks
+            [
+              Spree::PageBlocks::Heading.new(text: 'Our Story'),
+              Spree::PageBlocks::Text.new(text: 'Share your brand story here...')
+            ]
+          end
+
+          def available_blocks_to_add
+            [Spree::PageBlocks::Heading, Spree::PageBlocks::Text, Spree::PageBlocks::Buttons]
+          end
+
+          def blocks_available?
+            true
+          end
+
+          def can_sort_blocks?
+            true
+          end
+        end
+      end
+    end
+    ```
+  </Step>
+
+  <Step title="Register the section">
+    ```ruby config/initializers/spree.rb
+    Rails.application.config.after_initialize do
+      Spree.page_builder.page_sections += [Spree::PageSections::BrandStory]
+    end
+    ```
+  </Step>
+
+  <Step title="Create admin form">
+    ```erb app/views/spree/admin/page_sections/forms/_brand_story.html.erb
+    <%= render 'spree/admin/shared/page_section_image', f: f %>
+
+    <div class="form-group">
+      <%= f.label :preferred_image_alt, Spree.t(:alt_text) %>
+      <%= f.text_field :preferred_image_alt,
+          class: 'form-control',
+          data: { action: 'auto-submit#submit' } %>
+    </div>
+
+    <% content_for(:design_tab) do %>
+      <div class="form-group">
+        <%= f.label :preferred_image_position, Spree.t(:image_position) %>
+        <%= f.select :preferred_image_position,
+            options_for_select([['Left', 'left'], ['Right', 'right']], @page_section.preferred_image_position),
+            {},
+            { class: 'custom-select', data: { action: 'auto-submit#submit' } } %>
+      </div>
+      <hr />
+    <% end %>
+    ```
+  </Step>
+
+  <Step title="Create storefront view">
+    ```erb app/views/themes/default/spree/page_sections/_brand_story.html.erb
+    <% cache_unless page_builder_enabled?, spree_storefront_base_cache_scope.call(section) do %>
+      <div style="<%= section_styles(section) %>" class="brand-story">
+        <div class="page-container">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+            <% image_order = section.preferred_image_position == 'right' ? 'lg:order-2' : '' %>
+
+            <div class="<%= image_order %>">
+              <% if section.asset.attached? %>
+                <%= spree_image_tag section.asset,
+                    width: 600,
+                    height: 400,
+                    alt: section.image_alt,
+                    class: 'w-full rounded-lg' %>
+              <% end %>
+            </div>
+
+            <div>
+              <% section.blocks.each do |block| %>
+                <% case block.type %>
+                <% when 'Spree::PageBlocks::Heading' %>
+                  <h2 class="text-2xl lg:text-3xl font-medium mb-4" <%= block_attributes(block) %>>
+                    <%= block.text %>
+                  </h2>
+                <% when 'Spree::PageBlocks::Text' %>
+                  <div class="prose" <%= block_attributes(block) %>>
+                    <%= block.text %>
+                  </div>
+                <% when 'Spree::PageBlocks::Buttons' %>
+                  <div class="mt-6" <%= block_attributes(block) %>>
+                    <% if block.link %>
+                      <%= page_builder_link_to block.link,
+                          class: 'btn-primary',
+                          target: (block.link.open_in_new_tab ? '_blank' : nil) %>
+                    <% end %>
+                  </div>
+                <% end %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+    ```
+  </Step>
+</Steps>

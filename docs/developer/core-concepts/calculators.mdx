@@ -1,6 +1,5 @@
 ---
 title: Calculators
-icon: "calculator"
 ---
 
 ## Overview
@@ -175,23 +174,43 @@ end
 
 The second thing is to register this calculator as a tax, shipping, or promotion adjustment calculator by calling code like this at the end of `config/initializers/spree.rb` inside your application `config` variable defined for brevity:
 
-```ruby
-Rails.application.config.spree.calculators.tax_rates << CustomCalculator
-Rails.application.config.spree.calculators.shipping_methods << CustomCalculator
-Rails.application.config.spree.calculators.promotion_actions_create_adjustments << CustomCalculator
-```
+<Tabs>
+  <Tab title="Spree 5.2+">
+    ```ruby config/initializers/spree.rb
+    Spree.calculators.tax_rates << CustomCalculator
+    Spree.calculators.shipping_methods << CustomCalculator
+    Spree.calculators.promotion_actions_create_adjustments << CustomCalculator
+    ```
+  </Tab>
+  <Tab title="Spree 5.1 and below">
+    ```ruby config/initializers/spree.rb
+    Rails.application.config.spree.calculators.tax_rates << CustomCalculator
+    Rails.application.config.spree.calculators.shipping_methods << CustomCalculator
+    Rails.application.config.spree.calculators.promotion_actions_create_adjustments << CustomCalculator
+    ```
+  </Tab>
+</Tabs>
 
 For example if your calculator is placed in `app/models/spree/calculator/shipping/my_own_calculator.rb` you should call:
 
-```ruby
-Rails.application.config.spree.calculators.shipping_methods << Spree::Calculator::Shipping::MyOwnCalculator
-```
+<Tabs>
+  <Tab title="Spree 5.2+">
+    ```ruby config/initializers/spree.rb
+    Spree.calculators.shipping_methods << Spree::Calculator::Shipping::MyOwnCalculator
+    ```
+  </Tab>
+  <Tab title="Spree 5.1 and below">
+    ```ruby config/initializers/spree.rb
+    Rails.application.config.spree.calculators.shipping_methods << Spree::Calculator::Shipping::MyOwnCalculator
+    ```
+  </Tab>
+</Tabs>
 
 ### Determining Availability
 
 By default, all shipping method calculators are available at all times. If you wish to make this dependent on something from the order, you can re-define the `available?` method inside your calculator:
 
-```ruby
+```ruby app/models/custom_calculator.rb
 class CustomCalculator < Spree::Calculator
   def available?(object)
     object.currency == "USD"
@@ -203,7 +222,7 @@ end
 
 If you wish to use Spree's calculator functionality for your own application, you can include the `Spree::Core::CalculatedAdjustments` module into a model of your choosing.
 
-```ruby
+```ruby app/models/plan.rb
 class Plan < ActiveRecord::Base
   include Spree::Core::CalculatedAdjustments
 end
@@ -211,9 +230,18 @@ end
 
 To have calculators available for this class, you will need to register them:
 
-```ruby
-config.spree.calculators.plans << CustomCalculator
-```
+<Tabs>
+  <Tab title="Spree 5.2+">
+    ```ruby config/initializers/spree.rb
+    Spree.calculators.plans << CustomCalculator
+    ```
+  </Tab>
+  <Tab title="Spree 5.1 and below">
+    ```ruby config/initializers/spree.rb
+    Rails.application.config.spree.calculators.plans << CustomCalculator
+    ```
+  </Tab>
+</Tabs>
 
 Then you can access these calculators by calling this method:
 

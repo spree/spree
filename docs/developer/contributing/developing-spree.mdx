@@ -29,6 +29,12 @@ Clone your fork repository
 
 ## Create a sandbox application
 
+Install gem dependencies:
+
+    ```bash
+    bundle install
+    ```
+
 Bellow command will setup a Rails application with Spree pre-installed with some data seeded:
 
     ```bash
@@ -41,15 +47,15 @@ This script will automatically install the necessary dependencies such as Ruby, 
 
 Go to the `sandbox` directory:
 
-```bash
-cd sandbox
-```
+    ```bash
+    cd sandbox
+    ```
 
 And run the application using the following command:
 
-```bash
-bin/dev
-```
+    ```bash
+    bin/dev
+    ```
 
 This will start the web server and all the necessary processes (such as Tailwind CSS compiler).
 
@@ -59,10 +65,10 @@ To access the Admin Panel, you can go to [http://localhost:3000/admin](http://lo
 
 The default credentials for the Admin Panel are:
 
-```
-Email: spree@example.com
-Password: spree123
-```
+    ```
+    Email: spree@example.com
+    Password: spree123
+    ```
 
 ### Performance in development mode
 
@@ -72,9 +78,9 @@ You may notice that your Spree store runs slower in development environment. Thi
 
 Caching is disabled by default. To turn on caching please run:
 
-```bash
-bin/rails dev:cache
-```
+    ```bash
+    bin/rails dev:cache
+    ```
 
 You will need to restart rails server after this change.
 
@@ -85,6 +91,10 @@ Create a new branch for your changes. Do not push changes to the main branch. Br
 * bug fixes: `fix/order-recalculation-total-bug`
 * features: `feature/my-new-amazing-feature`
 
+### Using AI tools for development
+
+Spree is ready to work nicely with AI tools such as Cursor or Claude Code. We already have Cursor rules for each module and global ones, as well as a global Claude Code rules file.
+
 ## Running Tests
 
 We use [CircleCI](https://circleci.com/) to run the tests for Spree.
@@ -93,39 +103,39 @@ You can see the build statuses at [https://circleci.com/gh/spree/spree](https://
 
 Each gem contains its own series of tests, and for each directory, you need to do a quick one-time creation of a test application and then you can use it to run the tests. For example, to run the tests for the core project.
 
-```bash
-cd core
-bundle exec rake test_app
-bundle exec rspec
-```
+    ```bash
+    cd core
+    bundle exec rake test_app
+    bundle exec rspec
+    ```
 
 If you would like to run specs against a particular database you may specify the dummy app's database, which defaults to sqlite3.
 
-```bash
-DB=postgres bundle exec rake test_app
-```
+    ```bash
+    DB=postgres DB_USERNAME=postgres DB_PASSWORD=password DB_HOST=localhost bundle exec rake test_app
+    ```
 
 If you want to run specs for only a single spec file
 
-```bash
-cd core
-bundle exec rspec spec/models/spree/state_spec.rb
-```
+    ```bash
+    cd core
+    bundle exec rspec spec/models/spree/state_spec.rb
+    ```
 
 If you want to run a particular line of spec
 
-```bash
-cd core
-bundle exec rspec spec/models/spree/state_spec.rb:7
-```
+    ```bash
+    cd core
+    bundle exec rspec spec/models/spree/state_spec.rb:7
+    ```
 
 ### Running integration tests on MacOS (only applicable for Admin Panel/Storefront)
 
 We use chromedriver to run integration tests. To install it please use this command:
 
-```bash
-brew cask install chromedriver
-```
+    ```bash
+    brew cask install chromedriver
+    ```
 
 ## Submitting Changes
 
@@ -153,9 +163,9 @@ This section will help you troubleshoot common issues with Spree.
 
 If you encounter the following libvips error:
 
-```bash
-LoadError: Could not open library 'vips.so.42'
-```
+    ```bash
+    LoadError: Could not open library 'vips.so.42'
+    ```
 
 This error is usually an indication that you do not have libvips installed locally on your machine. Check that libvips is installed with `vips -v`, and if it is not installed, follow [installation instructions here](https://www.libvips.org/install.html).
 

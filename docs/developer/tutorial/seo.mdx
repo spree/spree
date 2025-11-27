@@ -1,0 +1,344 @@
+---
+title: SEO
+description: Learn how to optimize your Brands feature for search engines
+---
+
+<Info>
+  This guide assumes you've completed the [Storefront](/developer/tutorial/storefront) tutorial. You should have working brand pages.
+</Info>
+
+This guide covers SEO best practices for your custom Spree features, including friendly URLs, meta tags, and Open Graph data.
+
+## SEO-Friendly URLs
+
+Rather than using database IDs in URLs:
+
+```
+https://example.com/brands/1
+```
+
+Create human-readable URLs that help with SEO:
+
+```
+https://example.com/brands/nike-sportswear
+```
+
+### Step 1: Add SEO Columns
+
+Add columns for slug and meta fields:
+
+```bash
+bin/rails g migration AddSeoFieldsToSpreeBrands slug:string:uniq meta_title:string meta_description:text
+```
+
+```bash
+bin/rails db:migrate
+```
+
+This adds:
+- `slug` - SEO-friendly URL with unique index
+- `meta_title` - Custom page title for search engines
+- `meta_description` - Description shown in search results
+
+### Step 2: Add FriendlyId to the Model
+
+Add FriendlyId to generate SEO-friendly URLs automatically:
+
+```ruby app/models/spree/brand.rb {3-4,9}
+module Spree
+  class Brand < Spree::Base
+    extend FriendlyId
+    friendly_id :slug_candidates, use: %i[slugged]
+
+    # ... other code ...
+
+    validates :name, presence: true
+    validates :slug, presence: true, uniqueness: { scope: spree_base_uniqueness_scope }
+  end
+end
+```
+
+The `slug_candidates` method is already defined in `Spree::Base`:
+
+```ruby
+def slug_candidates
+  [
+    :name,
+    [:name, :uuid_for_friendly_id]
+  ]
+end
+```
+
+This generates the slug from the name. If the name is taken, it appends a UUID.
+
+### Step 3: Add SEO Fields to Admin
+
+Spree provides a reusable SEO partial that handles slug, meta title, and meta description with a live search preview. Update your admin form:
+
+```erb app/views/spree/admin/brands/_form.html.erb {1-2,5-12,15,25-32}
+<div class="row" data-controller="slug-form seo-form">
+  <div class="col-lg-8">
+    <div class="card mb-4">
+      <div class="card-body">
+        <%= f.spree_text_field :name,
+            required: true,
+            data: {
+              seo_form_target: 'sourceTitleInput',
+              slug_form_target: 'name',
+              action: 'slug-form#updateUrlFromName'
+            } %>
+        <%= f.spree_rich_text_area :description,
+            data: { seo_form_target: 'sourceDescriptionInput' } %>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="card-title"><%= Spree.t(:logo) %></h5>
+      </div>
+      <div class="card-body">
+        <%= f.spree_file_field :logo, width: 300, height: 300, crop: true %>
+      </div>
+    </div>
+
+    <%= render 'spree/admin/shared/seo',
+          f: f,
+          title: @brand.name,
+          meta_title: @brand.meta_title,
+          description: @brand.description,
+          slug: @brand.slug,
+          slug_path: 'brands',
+          placeholder: 'Add a name and description to see how this brand might appear in a search engine listing' %>
+  </div>
+</div>
+```
+
+The SEO partial provides:
+- **Live preview** of how the page will appear in search results
+- **Meta title** field with character count
+- **Meta description** field
+- **Slug** field with auto-generation from name
+
+The `seo-form` Stimulus controller syncs the preview with your form inputs in real-time.
+
+Don't forget to permit the SEO attributes in your controller:
+
+```ruby app/controllers/spree/admin/brands_controller.rb {6-8}
+def permitted_resource_params
+  params.require(:brand).permit(
+    :name,
+    :description,
+    :logo,
+    :slug,
+    :meta_title,
+    :meta_description)
+end
+```
+
+### Step 4: Use Slugs in Storefront
+
+Update your controller to use `friendly.find`:
+
+```ruby app/controllers/spree/brands_controller.rb
+def load_brand
+  @brand = Spree::Brand.friendly.find(params[:id])
+end
+```
+
+The `friendly.find` method:
+- Finds by slug first (e.g., `/brands/nike-sportswear`)
+- Falls back to ID if no slug matches
+- Raises `ActiveRecord::RecordNotFound` if neither is found
+
+### URL Helpers
+
+Always pass the model object to path helpers:
+
+```erb
+<%= link_to brand.name, spree.brand_path(brand) %>
+<%# => /brands/nike-sportswear %>
+```
+
+FriendlyId overrides `to_param` to return the slug automatically.
+
+### Handling Slug Changes
+
+To redirect old URLs when slugs change, enable slug history:
+
+```ruby app/models/spree/brand.rb
+extend FriendlyId
+friendly_id :slug_candidates, use: %i[slugged history]
+```
+
+Old slugs will automatically resolve to the current slug.
+
+## Meta Tags & Open Graph
+
+Spree automatically generates meta tags and Open Graph data. The system uses a helper called `object` that finds the main instance variable based on your controller name.
+
+For `BrandsController`, Spree looks for `@brand` and generates:
+- Meta description
+- Open Graph tags (og:title, og:description, og:image)
+- Twitter Card tags
+
+### Page Title
+
+Override `accurate_title` in your controller to set the page `<title>`:
+
+```ruby app/controllers/spree/brands_controller.rb
+private
+
+def accurate_title
+  if @brand
+    @brand.meta_title.presence || @brand.name
+  else
+    Spree.t(:brands)
+  end
+end
+```
+
+### Meta Description
+
+Spree checks these sources in order:
+
+1. `@page_description` instance variable (if set)
+2. `@brand.meta_description` (if the model has this attribute)
+3. `current_store.meta_description` (fallback)
+
+#### Using the SEO Partial
+
+If you followed [Step 1](#step-1-add-seo-columns) and [Step 3](#step-3-add-seo-fields-to-admin), your model already has `meta_description` and the admin form uses the SEO partial. Spree will automatically use `@brand.meta_description` for the page description.
+
+#### Manual Override
+
+For custom logic, set `@page_description` directly:
+
+```ruby
+def show
+  @page_description = "Shop #{@brand.name} - #{@brand.products.count} products available"
+end
+```
+
+### Social Sharing Image
+
+For Open Graph images, Spree checks:
+
+1. `@page_image` instance variable (if set)
+2. `@brand.image` (if the model responds to `image`)
+3. `current_store.social_image` (fallback)
+
+If your Brand model has `logo` but not `image`, add an alias:
+
+```ruby app/models/spree/brand.rb
+def image
+  logo
+end
+```
+
+Or set it manually:
+
+```ruby
+def show
+  @page_image = @brand.logo if @brand.logo.attached?
+end
+```
+
+## Complete SEO-Optimized Model
+
+Here's a complete Brand model with full SEO support:
+
+```ruby app/models/spree/brand.rb
+module Spree
+  class Brand < Spree::Base
+    extend FriendlyId
+    friendly_id :slug_candidates, use: %i[slugged]
+
+    has_many :products, class_name: 'Spree::Product', dependent: :nullify
+
+    has_one_attached :logo
+    has_rich_text :description
+
+    # Database columns: slug, meta_title, meta_description
+
+    validates :name, presence: true
+    validates :slug, presence: true, uniqueness: { scope: spree_base_uniqueness_scope }
+
+    # SEO: Use logo as Open Graph image
+    def image
+      logo
+    end
+  end
+end
+```
+
+## Complete SEO-Optimized Controller
+
+```ruby app/controllers/spree/brands_controller.rb
+module Spree
+  class BrandsController < StoreController
+    before_action :load_brand, only: [:show]
+
+    def index
+      @brands = Spree::Brand.order(:name)
+    end
+
+    def show
+      @products = @brand.products
+                        .active(current_currency)
+                        .includes(storefront_products_includes)
+                        .page(params[:page])
+                        .per(12)
+
+      # Optional: Custom page description
+      # @page_description = "Shop #{@brand.name} products"
+
+      # Optional: Custom social image
+      # @page_image = @brand.logo if @brand.logo.attached?
+    end
+
+    private
+
+    def load_brand
+      @brand = Spree::Brand.friendly.find(params[:id])
+    end
+
+    def accurate_title
+      if @brand
+        @brand.meta_title.presence || @brand.name
+      else
+        Spree.t(:brands)
+      end
+    end
+  end
+end
+```
+
+## SEO Checklist
+
+<Check>
+  **Friendly URLs** - Use slugs instead of IDs (`/brands/nike` not `/brands/1`)
+</Check>
+
+<Check>
+  **Page Titles** - Override `accurate_title` for descriptive titles
+</Check>
+
+<Check>
+  **Meta Descriptions** - Add `meta_description` field or set `@page_description`
+</Check>
+
+<Check>
+  **Social Images** - Provide `image` method or set `@page_image` for Open Graph
+</Check>
+
+<Check>
+  **Slug History** - Enable FriendlyId history to handle URL changes gracefully
+</Check>
+
+## Related Documentation
+
+- [Storefront Tutorial](/developer/tutorial/storefront) - Building storefront pages
+- [Model Tutorial](/developer/tutorial/model) - Creating the Brand model
+- [Admin Tutorial](/developer/tutorial/admin) - Building the admin interface

@@ -8,13 +8,63 @@ import SpreeOrder from '/snippets/objects/spree_order.mdx'
 import SpreeStore from '/snippets/objects/spree_store.mdx'
 import SpreeUser from '/snippets/objects/spree_user.mdx'
 
-Here you can find a list of helper methods provided by Spree that are available in the Storefront that you can use in every template.
+Here you can find a list of helper methods provided by Spree that are available in the Storefront. These methods can be used in every template.
 
-<Warning>
-The list is incomplete. We're working on it!
-</Warning>
+## Context Helpers
 
-## `current_currency`
+### `current_store`
+
+<ResponseField name="current_store" type="Spree::Store" description="The current store object.">
+  <SpreeStore />
+</ResponseField>
+
+Returns the current store [Spree::Store](https://github.com/spree/spree/blob/master/core/app/models/spree/store.rb) instance.
+
+### `current_theme`
+
+<ResponseField name="current_theme" type="Spree::Theme" description="The current theme object.">
+  <SpreeTheme />
+</ResponseField>
+
+Returns the current theme [Spree::Theme](https://github.com/spree/spree/blob/master/core/app/models/spree/theme.rb) instance.
+
+### `current_page`
+
+Returns the current [Spree::Page](https://github.com/spree/spree/blob/main/core/app/models/spree/page.rb) instance for the current route.
+
+```erb
+<%= current_page.name %>
+```
+
+### `current_order`
+
+<ResponseField name="current_order" type="Spree::Order" description="The current order object.">
+  <SpreeOrder />
+</ResponseField>
+
+Returns the current order object. If no order is found, it will return `nil`.
+
+<Tip>
+  Order is automatically created when a user adds a product to the cart.
+</Tip>
+
+### `try_spree_current_user`
+
+<ResponseField name="try_spree_current_user" type="Spree.user_class" description="The current user object.">
+  <SpreeUser />
+</ResponseField>
+
+Returns the current user object (class depends on the `Spree.user_class` configuration). If the user is not signed in, it will return `nil`.
+
+<Tip>
+  If you want to check if the user is signed in, you can use the following:
+
+  ```erb
+  <%= try_spree_current_user.present? %>
+  ```
+</Tip>
+
+### `current_currency`
 
 Returns the currently selected currency. By default in the Storefront this will be `store.default_currency`. This can be changed in the `Settings -> Store Defaults` page.
 
@@ -28,7 +78,7 @@ will return
 USD
 ```
 
-## `current_locale`
+### `current_locale`
 
 Returns the currently selected locale. By default in the Storefront this will be `store.default_locale`. This can be changed in the `Settings -> Store Defaults` page. If there are multiple locales available, it will return the locale that is currently selected by the user.
 
@@ -40,45 +90,110 @@ Returns the currently selected locale. By default in the Storefront this will be
   Locale also affects the storefront URLs. For example, if the default locale is `en` and the user selects `fr`, the URL will be `/fr/products/123`.
 </Info>
 
-## `current_order`
+### `current_taxon`
 
-<ResponseField name="current_order" type="Spree::Order" description="The current order object.">
-  <SpreeOrder />
-</ResponseField>
-
-Returns the current order object. If no order is found, it will return `nil`. 
-
-<Tip>
-  Order is automatically created when a user adds a product to the cart.
-</Tip>
-
-## `current_store`
-
-<ResponseField name="current_store" type="Spree::Store" description="The current store object.">
-  <SpreeStore />
-</ResponseField>
-
-Returns the current store [Spree::Store](https://github.com/spree/spree/blob/master/core/app/models/spree/store.rb) instance.
-
-## `current_theme`
-
-<ResponseField name="current_theme" type="Spree::Theme" description="The current theme object.">
-  <SpreeTheme />
-</ResponseField>
-
-Returns the current theme [Spree::Theme](https://github.com/spree/spree/blob/master/core/app/models/spree/theme.rb) instance.
-
-## `local_time`
-
-Displays a time in the user's timezone in a human readable format (based on the browser's timezone).
+Returns the current taxon when viewing a category/collection page.
 
 ```erb
-<%= local_time(order.sent_to_erp_at) %>
+<%= current_taxon&.name %>
 ```
 
-Provided by [local_time gem](https://github.com/basecamp/local_time).
+### `current_wishlist`
 
-## `supported_currencies`
+Returns the current user's default wishlist for the current store.
+
+```erb
+<% if current_wishlist.present? %>
+  <%= current_wishlist.wished_items.count %> items
+<% end %>
+```
+
+## Page Rendering Helpers
+
+### `render_page`
+
+Renders a page with all its sections. This is the main method for rendering page content.
+
+```erb
+<%= render_page(current_page, pickup_locations: @pickup_locations) %>
+```
+
+**Parameters:**
+- `page` - The page to render (defaults to `current_page`)
+- `variables` - Hash of variables to pass to section templates
+
+### `render_section`
+
+Renders a single section.
+
+```erb
+<%= render_section(section, product: @product) %>
+```
+
+### `render_header_sections`
+
+Renders all header sections (announcement bar, header).
+
+```erb
+<%= render_header_sections %>
+```
+
+### `render_footer_sections`
+
+Renders all footer sections (newsletter, footer).
+
+```erb
+<%= render_footer_sections %>
+```
+
+## Section & Block Helpers
+
+### `section_styles`
+
+Returns inline CSS styles for a section based on its preferences (padding, colors, borders).
+
+```erb
+<div style="<%= section_styles(section) %>">
+  <!-- Section content -->
+</div>
+```
+
+### `block_attributes`
+
+Returns data attributes for a block (used for Page Builder editing).
+
+```erb
+<h2 <%= block_attributes(block) %>>
+  <%= block.text %>
+</h2>
+```
+
+### `page_builder_enabled?`
+
+Returns `true` when the page is being viewed in Page Builder preview mode.
+
+```erb
+<% cache_unless page_builder_enabled?, cache_key do %>
+  <!-- Cached content -->
+<% end %>
+```
+
+### `page_builder_link_to`
+
+Renders a link from a `Spree::PageLink` object.
+
+```erb
+<%= page_builder_link_to section.link, class: 'btn-primary' %>
+
+<%# With custom content %>
+<%= page_builder_link_to section.link do %>
+  <span class="icon">→</span> Click here
+<% end %>
+```
+
+## Currency & Price Helpers
+
+### `supported_currencies`
 
 Returns the list of supported currencies for the current store as an array of strings.
 
@@ -92,18 +207,129 @@ will return
 ["USD", "EUR"]
 ```
 
-## `try_spree_current_user`
+### `display_price`
 
-<ResponseField name="try_spree_current_user" type="Spree.user_class" description="The current user object.">
-  <SpreeUser />
-</ResponseField>
+Displays a formatted price with currency symbol.
 
-Returns the current user object (class depends on the `Spree.admin_user_class` configuration). If the user is not signed in, it will return `nil`.
+```erb
+<%= display_price(product.price_in(current_currency)) %>
+```
 
-<Tip>
-  If you want to check if the user is signed in, you can use the following:
+## Date & Time Helpers
 
-  ```erb
-  <%= try_spree_current_user.present? %>
-  ```
-</Tip>
+### `local_time`
+
+Displays a time in the user's timezone in a human readable format (based on the browser's timezone).
+
+```erb
+<%= local_time(order.sent_to_erp_at) %>
+```
+
+Provided by [local_time gem](https://github.com/basecamp/local_time).
+
+## URL Helpers
+
+### `spree_storefront_resource_url`
+
+Generates a URL for a Spree resource (product, taxon, post, page).
+
+```erb
+<%= link_to product.name, spree_storefront_resource_url(product) %>
+<%= link_to taxon.name, spree_storefront_resource_url(taxon) %>
+```
+
+### `spree.nested_taxons_path`
+
+Generates a URL for a taxon using its full permalink.
+
+```erb
+<%= link_to taxon.name, spree.nested_taxons_path(taxon) %>
+<%# => /t/categories/clothing/shirts %>
+```
+
+## Image Helpers
+
+### `spree_image_tag`
+
+Renders an optimized image tag with automatic WebP conversion and retina support.
+
+```erb
+<%= spree_image_tag product.images.first,
+    width: 400,
+    height: 400,
+    alt: product.name,
+    loading: :lazy %>
+```
+
+### `spree_image_url`
+
+Generates a URL for an image with specified dimensions.
+
+```erb
+<%= spree_image_url(product.images.first, width: 800, height: 600) %>
+```
+
+<Info>
+  See [Images & Assets](/developer/core-concepts/images-assets) for more details on image helpers.
+</Info>
+
+## Product Helpers
+
+### `taxon_products`
+
+Returns products for a given taxon, useful in section templates.
+
+```erb
+<% taxon_products(section.taxon).limit(4).each do |product| %>
+  <%= render 'spree/products/card', product: product %>
+<% end %>
+```
+
+### `storefront_products`
+
+Returns products based on current filters and sorting.
+
+```erb
+<% storefront_products.each do |product| %>
+  <%= render 'spree/products/card', product: product %>
+<% end %>
+```
+
+## Cache Helpers
+
+### `spree_storefront_base_cache_key`
+
+Returns the base cache key for storefront caching.
+
+```erb
+<% cache [spree_storefront_base_cache_key, product] do %>
+  <%= render 'product_card', product: product %>
+<% end %>
+```
+
+### `spree_storefront_base_cache_scope`
+
+Returns a cache scope proc for section caching.
+
+```erb
+<% cache_unless page_builder_enabled?, spree_storefront_base_cache_scope.call(section) do %>
+  <!-- Section content -->
+<% end %>
+```
+
+## Preview Helpers
+
+These helpers are used for Page Builder preview functionality:
+
+| Helper | Description |
+|--------|-------------|
+| `current_theme_preview` | Returns the theme preview if in preview mode |
+| `current_page_preview` | Returns the page preview if in preview mode |
+| `current_theme_or_preview` | Returns theme preview or active theme |
+| `current_page_or_preview` | Returns page preview or active page |
+
+## Related Documentation
+
+- [Sections](/developer/storefront/sections) - Section rendering and customization
+- [Blocks](/developer/storefront/blocks) - Block rendering
+- [Images & Assets](/developer/core-concepts/images-assets) - Image helper methods

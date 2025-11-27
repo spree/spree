@@ -1,58 +1,51 @@
 ---
 title: Decorators
 description: Decorators allow you to add or modify behavior of Spree classes in your application.
-icon: "code"
 ---
+
+<Info>
+  Decorators should be used as a last resort. They make upgrades difficult. Please use [Spree Dependencies](/developer/customization/dependencies) if possible.
+</Info>
 
 ## Overview
 
-All of Spree's models, controllers, services,helpers, etc can easily be extended or overridden to meet your exact requirements using standard Ruby idioms.
+All of Spree's models, controllers, helpers, etc can easily be extended or overridden to meet your exact requirements using standard Ruby idioms.
 
-Standard practice for including such changes in your application or extension is to create a file within the relevant **app/models/spree** or **app/controllers/spree** directory with the original class name with **_decorator** appended, eg. for the `Spree::Product` model, create a file called `app/models/spree/product_decorator.rb`.
+Standard practice for including such changes in your application or extension is to create a file within the relevant **app/models/spree** or **app/controllers/spree** directory with the original class name with **_decorator** appended.
 
-## Decorating Models
+## Why Use Decorators?
 
-### Changing behavior of existing methods
+When working with Spree, you'll often need to add functionality to existing models like `Spree::Product` or `Spree::Order`. However, you shouldn't modify these files directly because:
 
-Changing the behavior of existing methods is the most common use case for decorators. 
+1. **Upgrades** - Your changes would be lost when updating Spree
+2. **Maintainability** - It's hard to track what you've customized
+3. **Conflicts** - Direct modifications can conflict with Spree's code
 
-Let's say you want to change the behavior of the `available?` in the [Product](https://github.com/spree/spree/blob/main/core/app/models/spree/product.rb) model.
+Instead, we use **decorators** - a Ruby pattern that lets you add or modify behavior of existing classes without changing their original source code.
 
-1. Let's start with creating a file in `app/models/spree/product_decorator.rb`
+## How Decorators Work
 
-    ```bash
-    mkdir -p app/models/spree && touch app/models/spree/product_decorator.rb
-    ```
+In Ruby, classes are "open" - you can add methods to them at any time. Decorators leverage this by:
 
-2. And add the following code to the file:
-
-    ```ruby
-    module Spree
-      module ProductDecorator
-        def available?
-          # your code here
-        end
-      end
-
-      Product.prepend(ProductDecorator)
-    end
-    ```
-
-### Adding a new method to the model
-
-You can also add a new method to the model. Or even add custom validations, callbacks, etc.
+1. Creating a module with your new methods
+2. Using `Module#prepend` to inject your module into the class's inheritance chain
+3. Your methods run first, and can call `super` to invoke the original method
 
 ```ruby
+# This is the basic pattern
 module Spree
   module ProductDecorator
-    def self.prepended(base)
-      base.before_validation :strip_whitespaces
+    # Add a new method
+    def my_new_method
+      "Hello from decorator!"
     end
 
-    protected
-
-    def strip_whitespaces
-      self.name = name.strip
+    # Override an existing method
+    def existing_method
+      # Do something before
+      result = super  # Call the original method
+      # Do something after
+      result
     end
   end
 
@@ -60,33 +53,110 @@ module Spree
 end
 ```
 
-### Adding new associations to Spree models
+The key line is `Product.prepend(ProductDecorator)` - this inserts your module at the beginning of the method lookup chain, so your methods are found first.
 
-Assume you want to add a new model called `Video` associated to `Spree::Product`. Let's start with creating a database migration:
+## Generating Decorators
+
+Spree provides generators to create decorator files with the correct structure:
+
+### Model Decorator Generator
 
 ```bash
-bin/rails g migration CreateSpreeVideos url:string product:references
-bin/rails db:migrate
+bin/rails g spree:model_decorator Spree::Product
 ```
 
-Create a model and add the association to `Spree::Product`:
-
-```ruby
-module Spree
-  class Video < Spree.base_class
-    belongs_to :product, class_name: 'Spree::Product'
-
-    has_one_attached :video_file
-  end
-end
-```
-
-Finally add the association in `ProductDecorator` in `app/models/spree/product_decorator.rb`:
+This creates `app/models/spree/product_decorator.rb`:
 
 ```ruby
 module Spree
   module ProductDecorator
     def self.prepended(base)
+      # Class-level configurations go here
+    end
+  end
+
+  Product.prepend(ProductDecorator)
+end
+```
+
+### Controller Decorator Generator
+
+```bash
+bin/rails g spree:controller_decorator Spree::Admin::ProductsController
+```
+
+This creates `app/controllers/spree/admin/products_controller_decorator.rb`:
+
+```ruby
+module Spree
+  module Admin
+    module ProductsControllerDecorator
+      def self.prepended(base)
+        # Class-level configurations go here
+      end
+    end
+
+    ProductsController.prepend(ProductsControllerDecorator)
+  end
+end
+```
+
+## Decorating Models
+
+### Changing Behavior of Existing Methods
+
+The most common use case is changing the behavior of existing methods. When overriding a method, you can call `super` to invoke the original implementation:
+
+```ruby app/models/spree/product_decorator.rb
+module Spree
+  module ProductDecorator
+    def available?
+      # Add custom logic before
+      return false if discontinued?
+
+      # Call the original method
+      super
+    end
+  end
+
+  Product.prepend(ProductDecorator)
+end
+```
+
+<Warning>
+  Always consider whether you need to call `super` when overriding methods. Omitting it completely replaces the original behavior, which may break functionality.
+</Warning>
+
+### Adding New Methods
+
+Add new instance methods directly in the decorator module:
+
+```ruby app/models/spree/product_decorator.rb
+module Spree
+  module ProductDecorator
+    def featured?
+      metadata[:featured] == true
+    end
+
+    def days_until_available
+      return 0 if available_on.nil? || available_on <= Time.current
+      (available_on.to_date - Date.current).to_i
+    end
+  end
+
+  Product.prepend(ProductDecorator)
+end
+```
+
+### Adding Associations
+
+Use the `self.prepended(base)` callback to add associations:
+
+```ruby app/models/spree/product_decorator.rb
+module Spree
+  module ProductDecorator
+    def self.prepended(base)
+      base.belongs_to :brand, class_name: 'Spree::Brand', optional: true
       base.has_many :videos, class_name: 'Spree::Video', dependent: :destroy
     end
   end
@@ -95,45 +165,117 @@ module Spree
 end
 ```
 
-## Decorating Controllers
+### Adding Validations
 
-Adding a custom action to the [ProductsController](https://github.com/spree/spree/blob/main/frontend/app/controllers/spree/products_controller.rb)
-
-1. Create a file in `app/controllers/spree/products_controller_decorator.rb`
-
-    ```bash
-    mkdir -p app/controllers/spree && touch app/controllers/spree/products_controller_decorator.rb
-    ```
-
-2. Add the following code:
-
-    ```ruby
-    module Spree
-      module ProductsControllerDecorator
-        def some_action
-          # your code here
-        end
-      end
-
-      ProductsController.prepend(ProductsControllerDecorator)
+```ruby app/models/spree/product_decorator.rb
+module Spree
+  module ProductDecorator
+    def self.prepended(base)
+      base.validates :external_id, presence: true, uniqueness: true
+      base.validates :weight, numericality: { greater_than: 0 }, allow_nil: true
     end
-    ```
+  end
 
-The exact same format can be used to redefine an existing method.
+  Product.prepend(ProductDecorator)
+end
+```
 
-### Accessing Product Data
+### Adding Scopes
 
-If you extend the Products controller with a new method, you may very well want to access product data in that method. You can do so by using the `:load_data before_action`.
+```ruby app/models/spree/product_decorator.rb
+module Spree
+  module ProductDecorator
+    def self.prepended(base)
+      base.scope :featured, -> { where("metadata->>'featured' = ?", 'true') }
+      base.scope :recently_added, -> { where('created_at > ?', 30.days.ago) }
+      base.scope :on_sale, -> { joins(:variants).where('spree_prices.compare_at_amount > spree_prices.amount') }
+    end
+  end
+
+  Product.prepend(ProductDecorator)
+end
+```
+
+### Adding Callbacks
+
+```ruby app/models/spree/product_decorator.rb
+module Spree
+  module ProductDecorator
+    def self.prepended(base)
+      base.before_validation :normalize_name
+      base.after_save :sync_to_external_service
+      base.after_destroy :cleanup_external_data
+    end
+
+    private
+
+    def normalize_name
+      self.name = name.strip.titleize if name.present?
+    end
+
+    def sync_to_external_service
+      ExternalSyncJob.perform_later(self) if saved_change_to_name?
+    end
+
+    def cleanup_external_data
+      ExternalCleanupJob.perform_later(id)
+    end
+  end
+
+  Product.prepend(ProductDecorator)
+end
+```
+
+### Adding Class Methods
+
+Use `extend` within the `prepended` callback to add class methods:
+
+```ruby app/models/spree/product_decorator.rb
+module Spree
+  module ProductDecorator
+    def self.prepended(base)
+      base.extend ClassMethods
+    end
+
+    module ClassMethods
+      def search_by_name(query)
+        where('LOWER(name) LIKE ?', "%#{query.downcase}%")
+      end
+    end
+  end
+
+  Product.prepend(ProductDecorator)
+end
+```
+
+Usage:
 
 ```ruby
+Spree::Product.search_by_name('shirt')
+```
+
+## Decorating Controllers
+
+### Adding a New Action
+
+```ruby app/controllers/spree/products_controller_decorator.rb
 module Spree
   module ProductsControllerDecorator
     def self.prepended(base)
-      base.before_action :load_data, only: :some_action
+      base.before_action :load_product, only: [:quick_view]
     end
 
-    def some_action
-      # your code here
+    def quick_view
+      respond_to do |format|
+        format.html { render partial: 'quick_view', locals: { product: @product } }
+        format.json { render json: @product }
+      end
+    end
+
+    private
+
+    def load_product
+      @product = current_store.products.friendly.find(params[:id])
     end
   end
 
@@ -141,4 +283,159 @@ module Spree
 end
 ```
 
-`:load_data` will use `params[:id]` to lookup the product by its permalink.
+Don't forget to add the route:
+
+```ruby config/routes.rb
+Spree::Core::Engine.add_routes do
+  get 'products/:id/quick_view', to: 'products#quick_view', as: :product_quick_view
+end
+```
+
+### Modifying Existing Actions
+
+```ruby app/controllers/spree/admin/products_controller_decorator.rb
+module Spree
+  module Admin
+    module ProductsControllerDecorator
+      def create
+        # Add custom logic before
+        log_product_creation_attempt
+
+        # Call original method
+        super
+
+        # Add custom logic after
+        notify_team_of_new_product if @product.persisted?
+      end
+
+      private
+
+      def log_product_creation_attempt
+        Rails.logger.info "Product creation attempted by #{current_spree_user.email}"
+      end
+
+      def notify_team_of_new_product
+        ProductNotificationJob.perform_later(@product)
+      end
+    end
+
+    ProductsController.prepend(ProductsControllerDecorator)
+  end
+end
+```
+
+### Adding Before Actions
+
+```ruby app/controllers/spree/checkout_controller_decorator.rb
+module Spree
+  module CheckoutControllerDecorator
+    def self.prepended(base)
+      base.before_action :check_minimum_order, only: [:update]
+    end
+
+    private
+
+    def check_minimum_order
+      if @order.total < 25.0 && params[:state] == 'payment'
+        flash[:error] = 'Minimum order amount is $25'
+        redirect_to checkout_state_path(@order.state)
+      end
+    end
+  end
+
+  CheckoutController.prepend(CheckoutControllerDecorator)
+end
+```
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Use the prepended callback" icon="code">
+    Always use `self.prepended(base)` for class-level additions like associations, validations, scopes, and callbacks.
+  </Card>
+
+  <Card title="Keep decorators focused" icon="crosshairs">
+    Each decorator should have a single responsibility. Create multiple decorators for different concerns if needed.
+  </Card>
+
+  <Card title="Call super when overriding" icon="arrow-up">
+    When overriding methods, call `super` to preserve original behavior unless you intentionally want to replace it entirely.
+  </Card>
+
+  <Card title="Test decorated behavior" icon="flask-vial">
+    Write tests specifically for your decorated functionality to catch regressions during upgrades.
+  </Card>
+</CardGroup>
+
+### Organizing Multiple Decorators
+
+If you have many customizations for a single class, consider splitting them into focused decorators:
+
+```
+app/models/spree/
+├── product_decorator.rb           # Main decorator (loads others)
+├── product/
+│   ├── brand_decorator.rb         # Brand association
+│   ├── inventory_decorator.rb     # Inventory customizations
+│   └── seo_decorator.rb           # SEO-related methods
+```
+
+```ruby app/models/spree/product_decorator.rb
+# Load focused decorators
+require_dependency 'spree/product/brand_decorator'
+require_dependency 'spree/product/inventory_decorator'
+require_dependency 'spree/product/seo_decorator'
+```
+
+## Common Pitfalls
+
+### Forgetting to Call Super
+
+```ruby
+# ❌ Bad - completely replaces original behavior
+def available?
+  in_stock? && active?
+end
+
+# ✅ Good - extends original behavior
+def available?
+  super && custom_availability_check
+end
+```
+
+### Using Instance Variables in prepended
+
+```ruby
+# ❌ Bad - instance variables don't work in prepended
+def self.prepended(base)
+  @custom_setting = true  # This won't work as expected
+end
+
+# ✅ Good - use class attributes or methods
+def self.prepended(base)
+  base.class_attribute :custom_setting, default: true
+end
+```
+
+### Circular Dependencies
+
+Be careful when decorators depend on each other:
+
+```ruby
+# ❌ Bad - can cause loading issues
+# product_decorator.rb
+def self.prepended(base)
+  base.has_many :variants  # Variant decorator might not be loaded yet
+end
+
+# ✅ Good - use strings for class names
+def self.prepended(base)
+  base.has_many :variants, class_name: 'Spree::Variant'
+end
+```
+
+## Related Documentation
+
+- [Extending Core Models Tutorial](/developer/tutorial/extending-models) - Step-by-step guide to connecting custom models with Spree core
+- [Customization Overview](/developer/customization/overview) - General customization patterns
+- [Logic Customization](/developer/customization/logic) - Customizing business logic

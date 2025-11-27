@@ -1,0 +1,48 @@
+---
+title: Tutorial
+sidebarTitle: Introduction
+description: Learn how to build a custom feature from scratch, covering models, Admin dashboard, API and Storefront.
+---
+
+This tutorial walks you through creating a complete Spree feature from scratch, covering models, Admin dashboard, API and Storefront. 
+You will also learn how to extend core Spree features to connect them with your new feature.
+By the end, you'll understand how to add new manageable features to the Spree platform.
+
+## Overview
+
+Spree is built on top of [Ruby on Rails framework](https://rubyonrails.org) and follows Model-View-Controller (MVC) architecture. To fully implement a new feature, you will typically create the following components:
+
+* Database model
+* Admin Dashboard controllers and views
+* Storefront views
+* Automated tests
+
+## Tutorial Sections
+
+<CardGroup cols={2}>
+  <Card title="1. Model" icon="database" href="/developer/tutorial/model">
+    Create the Brand model with migrations, validations, and associations
+  </Card>
+  <Card title="2. Admin Dashboard" icon="gauge" href="/developer/tutorial/admin">
+    Build admin interface for managing brands
+  </Card>
+  <Card title="3. Rich Text" icon="align-left" href="/developer/tutorial/rich-text">
+    Add rich text descriptions using Action Text
+  </Card>
+  <Card title="4. File Uploads" icon="image" href="/developer/tutorial/file-uploads">
+    Add logo images with Active Storage
+  </Card>
+  <Card title="5. Extending Core Models" icon="plug" href="/developer/tutorial/extending-models">
+    Connect Brands to Products using decorators
+  </Card>
+  <Card title="6. Storefront" icon="store" href="/developer/tutorial/storefront">
+    Create customer-facing brand pages
+  </Card>
+  <Card title="7. Testing" icon="flask-vial" href="/developer/tutorial/testing">
+    Write automated tests for your feature
+  </Card>
+</CardGroup>
+
+## Example: Building a Brands Feature
+
+In this guide we will create a complete "Brands" feature that allows admins to manage [Product](/developer/core-concepts/products) brands.

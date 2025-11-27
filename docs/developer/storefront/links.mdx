@@ -1,8 +1,298 @@
 ---
 title: "Links"
 sidebarTitle: "Links"
+description: "Learn how to use links for navigation in your Spree Storefront"
 ---
 
-<Warning>Documentation on links is coming soon</Warning>
+Links are used to create navigation throughout the storefront. They can be assigned to [sections](/developer/storefront/sections) and [blocks](/developer/storefront/blocks), enabling users to navigate to different pages, products, categories, or external URLs.
 
-Links are used to create the navigation of the storefront. They can be assigned to Sections and Blocks.
+## How Links Work
+
+The `Spree::PageLink` model provides a flexible way to link to various content types:
+
+- **Internal pages** - Link to Pages, Products, Taxons, Posts
+- **External URLs** - Link to any external website
+- **Special links** - Email (`mailto:`) and phone (`tel:`) links
+
+Links are managed through the Page Builder interface, where store staff can select what each link points to.
+
+## Link Model
+
+The [Spree::PageLink](https://github.com/spree/spree/blob/main/core/app/models/spree/page_link.rb) model has these key attributes:
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `label` | String | Display text for the link |
+| `url` | String | Custom URL (for external links) |
+| `linkable` | Polymorphic | Reference to internal content (Page, Product, etc.) |
+| `parent` | Polymorphic | Section or Block the link belongs to |
+| `open_in_new_tab` | Boolean | Whether to open in new browser tab |
+| `position` | Integer | Order when multiple links exist |
+
+## Linkable Types
+
+Links can point to various Spree models:
+
+| Linkable Type | Description |
+|---------------|-------------|
+| `Spree::Page` | Internal pages (Home, Shop All, Custom pages) |
+| `Spree::Product` | Product detail pages |
+| `Spree::Taxon` | Category/collection pages |
+| `Spree::Post` | Blog posts |
+| Custom URL | Any external or internal URL |
+
+## Using Links in Sections
+
+### Single Link
+
+For sections that need one link (like a banner):
+
+```ruby app/models/spree/page_sections/promo_banner.rb
+module Spree
+  module PageSections
+    class PromoBanner < Spree::PageSection
+      has_one :link, ->(ps) { ps.links },
+              class_name: 'Spree::PageLink',
+              as: :parent,
+              dependent: :destroy,
+              inverse_of: :parent
+      accepts_nested_attributes_for :link
+
+      def default_links
+        @default_links.presence || [
+          Spree::PageLink.new(label: Spree.t(:shop_now))
+        ]
+      end
+    end
+  end
+end
+```
+
+### Multiple Links
+
+For sections that need multiple links (like navigation):
+
+```ruby app/models/spree/page_sections/footer.rb
+module Spree
+  module PageSections
+    class Footer < Spree::PageSection
+      # Links are provided by Spree::HasPageLinks concern
+      # which is included in Spree::PageSection by default
+
+      def default_links
+        @default_links.presence || [
+          Spree::PageLink.new(label: 'About Us'),
+          Spree::PageLink.new(label: 'Contact'),
+          Spree::PageLink.new(label: 'Privacy Policy')
+        ]
+      end
+    end
+  end
+end
+```
+
+## Using Links in Blocks
+
+Blocks can also have links. Use the `Spree::HasOneLink` concern for single links:
+
+```ruby app/models/spree/page_blocks/cta_button.rb
+module Spree
+  module PageBlocks
+    class CtaButton < Spree::PageBlock
+      include Spree::HasOneLink
+
+      preference :button_style, :string, default: 'primary'
+
+      # Called when the link is deleted
+      def link_destroyed(_link)
+        destroy if page_links_count.zero?
+      end
+    end
+  end
+end
+```
+
+## Accessing Links
+
+```ruby
+# Single link on a section
+section.link
+section.link.label
+section.link.linkable_url
+
+# Multiple links on a section
+section.links
+section.links.each do |link|
+  link.label
+  link.linkable_url
+end
+
+# Link on a block
+block.link
+block.link.label if block.link.present?
+```
+
+## Rendering Links
+
+### Using the Helper
+
+The `page_builder_link_to` helper renders links with Page Builder support:
+
+```erb
+<%# Basic usage %>
+<%= page_builder_link_to section.link %>
+
+<%# With custom label %>
+<%= page_builder_link_to section.link, label: 'Click Here' %>
+
+<%# With CSS class %>
+<%= page_builder_link_to section.link, class: 'btn-primary' %>
+
+<%# Open in new tab %>
+<%= page_builder_link_to section.link,
+    target: (section.link.open_in_new_tab ? '_blank' : nil),
+    rel: (section.link.open_in_new_tab ? 'noopener noreferrer' : nil) %>
+
+<%# With block content %>
+<%= page_builder_link_to section.link do %>
+  <span class="icon">→</span>
+  <%= section.link.label %>
+<% end %>
+```
+
+### Manual Link Rendering
+
+For more control, you can render links manually:
+
+```erb
+<% if section.link.present? %>
+  <%= link_to section.link.linkable_url,
+      target: (section.link.open_in_new_tab ? '_blank' : nil),
+      rel: (section.link.open_in_new_tab ? 'noopener noreferrer' : nil),
+      class: 'btn-primary' do %>
+    <%= section.link.label %>
+  <% end %>
+<% end %>
+```
+
+### Rendering Multiple Links
+
+```erb
+<nav class="footer-links">
+  <% section.links.each do |link| %>
+    <%= page_builder_link_to link, class: 'footer-link' %>
+  <% end %>
+</nav>
+```
+
+## Admin Form for Links
+
+In your section's admin form, render the link editor:
+
+### Single Link
+
+```erb app/views/spree/admin/page_sections/forms/_promo_banner.html.erb
+<%= render 'spree/admin/shared/page_section_image', f: f %>
+
+<div class="py-2">
+  <%= f.fields_for :link do |lf| %>
+    <div class="form-group">
+      <%= lf.label :linkable_type, Spree.t(:link) %>
+      <%= lf.select :linkable_type,
+          @page_section.allowed_linkable_types,
+          { include_blank: false },
+          { class: 'custom-select mb-3', data: { action: 'auto-submit#submit' } } %>
+
+      <div id="linkable_type_dropdown">
+        <%= render 'spree/admin/page_links/linkable_type_dropdown',
+            page_link: lf.object,
+            form_name: 'page_section[link_attributes]' %>
+      </div>
+    </div>
+
+    <div class="custom-control custom-checkbox">
+      <%= lf.check_box :open_in_new_tab,
+          class: 'custom-control-input',
+          data: { action: 'auto-submit#submit' } %>
+      <%= lf.label :open_in_new_tab, class: 'custom-control-label' %>
+    </div>
+  <% end %>
+</div>
+```
+
+## Link URL Resolution
+
+The `linkable_url` method returns the appropriate URL:
+
+```ruby
+link = Spree::PageLink.new(linkable: product)
+link.linkable_url
+# => "/products/red-shirt"
+
+link = Spree::PageLink.new(url: "https://example.com")
+link.linkable_url
+# => "https://example.com"
+
+link = Spree::PageLink.new(url: "example.com")
+link.formatted_url
+# => "http://example.com"  # Adds protocol automatically
+
+link = Spree::PageLink.new(url: "mailto:info@example.com")
+link.formatted_url
+# => "mailto:info@example.com"  # Preserves mailto: protocol
+```
+
+## Creating Links Programmatically
+
+```ruby
+# Link to an internal page
+link = Spree::PageLink.create!(
+  parent: section,
+  label: 'Shop Now',
+  linkable: store.pages.find_by(type: 'Spree::Pages::ShopAll')
+)
+
+# Link to a product
+link = Spree::PageLink.create!(
+  parent: section,
+  label: product.name,
+  linkable: product
+)
+
+# Link to a taxon
+link = Spree::PageLink.create!(
+  parent: section,
+  label: 'New Arrivals',
+  linkable: store.taxons.find_by(name: 'New Arrivals')
+)
+
+# External link
+link = Spree::PageLink.create!(
+  parent: section,
+  label: 'Visit Our Blog',
+  url: 'https://blog.example.com',
+  open_in_new_tab: true
+)
+```
+
+## Automatic Label Setting
+
+When a link's `linkable` is set, the label is automatically populated from the linked resource:
+
+```ruby
+link = Spree::PageLink.new(linkable: product)
+link.valid?
+link.label
+# => "Red T-Shirt" (from product.name)
+```
+
+The label is derived from (in order):
+1. `linkable.title`
+2. `linkable.display_name`
+3. `linkable.name`
+
+## Related Documentation
+
+- [Sections](/developer/storefront/sections) - Adding links to sections
+- [Blocks](/developer/storefront/blocks) - Adding links to blocks
+- [Pages](/developer/storefront/pages) - Understanding internal page linking

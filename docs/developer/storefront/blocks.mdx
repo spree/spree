@@ -3,18 +3,283 @@ title: "Blocks"
 description: "Learn how to utilize blocks to build your Spree Storefront"
 ---
 
-<Warning>Documentation on blocks is coming soon</Warning>
+Blocks are the lowest level of components in Spree Storefront. They are nested inside [sections](/developer/storefront/sections) and represent individual content elements like headings, text, buttons, and images.
 
-Blocks are the lowest level of components in Spree Storefront. They are nested inside sections.
+## How Blocks Work
 
-Similarly to sections each block can be customized in terms of its content, styles, and layout.
+Each section can contain multiple blocks that store staff can manage through the Page Builder:
 
-Every block has a set of default preferences, such as:
+- Add new blocks
+- Edit block content and settings
+- Reorder blocks via drag-and-drop
+- Remove blocks
 
-* `text_alignment`
-* `container_alignment`
-* `size`
-* `width_desktop`
-* `top_padding`
-* `bottom_padding`
+Not all sections support blocks. A section must explicitly enable block support by implementing `blocks_available?` and `available_blocks_to_add` methods.
 
+## Built-in Block Types
+
+Spree comes with several built-in block types:
+
+### Content Blocks
+
+| Block | Description | Class |
+|-------|-------------|-------|
+| Heading | Large text headings | [Spree::PageBlocks::Heading](https://github.com/spree/spree/blob/main/core/app/models/spree/page_blocks/heading.rb) |
+| Subheading | Smaller secondary headings | [Spree::PageBlocks::Subheading](https://github.com/spree/spree/blob/main/core/app/models/spree/page_blocks/subheading.rb) |
+| Text | Rich text content | [Spree::PageBlocks::Text](https://github.com/spree/spree/blob/main/core/app/models/spree/page_blocks/text.rb) |
+| Buttons | Call-to-action buttons with links | [Spree::PageBlocks::Buttons](https://github.com/spree/spree/blob/main/core/app/models/spree/page_blocks/buttons.rb) |
+| Image | Image with optional link | [Spree::PageBlocks::Image](https://github.com/spree/spree/blob/main/core/app/models/spree/page_blocks/image.rb) |
+
+### Navigation Blocks
+
+| Block | Description | Class |
+|-------|-------------|-------|
+| Nav | Simple navigation links | [Spree::PageBlocks::Nav](https://github.com/spree/spree/blob/main/core/app/models/spree/page_blocks/nav.rb) |
+| Mega Nav | Mega menu navigation | [Spree::PageBlocks::MegaNav](https://github.com/spree/spree/blob/main/core/app/models/spree/page_blocks/mega_nav.rb) |
+| Link | Single link item | [Spree::PageBlocks::Link](https://github.com/spree/spree/blob/main/core/app/models/spree/page_blocks/link.rb) |
+
+### Product Blocks
+
+These blocks are used in the Product Details section:
+
+| Block | Description | Class |
+|-------|-------------|-------|
+| Title | Product title | [Spree::PageBlocks::Products::Title](https://github.com/spree/spree/blob/main/core/app/models/spree/page_blocks/products/title.rb) |
+| Price | Product price display | [Spree::PageBlocks::Products::Price](https://github.com/spree/spree/blob/main/core/app/models/spree/page_blocks/products/price.rb) |
+| Description | Product description | [Spree::PageBlocks::Products::Description](https://github.com/spree/spree/blob/main/core/app/models/spree/page_blocks/products/description.rb) |
+| Variant Picker | Size/color selector | [Spree::PageBlocks::Products::VariantPicker](https://github.com/spree/spree/blob/main/core/app/models/spree/page_blocks/products/variant_picker.rb) |
+| Quantity Selector | Quantity input | [Spree::PageBlocks::Products::QuantitySelector](https://github.com/spree/spree/blob/main/core/app/models/spree/page_blocks/products/quantity_selector.rb) |
+| Buy Buttons | Add to cart button | [Spree::PageBlocks::Products::BuyButtons](https://github.com/spree/spree/blob/main/core/app/models/spree/page_blocks/products/buy_buttons.rb) |
+| Share | Social sharing buttons | [Spree::PageBlocks::Products::Share](https://github.com/spree/spree/blob/main/core/app/models/spree/page_blocks/products/share.rb) |
+
+## Architecture
+
+### Base Class
+
+All blocks inherit from [Spree::PageBlock](https://github.com/spree/spree/blob/main/core/app/models/spree/page_block.rb):
+
+```ruby
+module Spree
+  class PageBlock < Spree.base_class
+    include Spree::HasPageLinks
+
+    belongs_to :section, class_name: 'Spree::PageSection'
+
+    has_rich_text :text
+    has_one_attached :asset
+
+    # Default preferences
+    preference :text_alignment, :string, default: 'left'
+    preference :container_alignment, :string, default: 'left'
+    preference :size, :string, default: 'medium'
+    preference :width_desktop, :integer, default: 100
+    preference :top_padding, :integer, default: 0
+    preference :bottom_padding, :integer, default: 0
+  end
+end
+```
+
+### Default Preferences
+
+Every block has these default preferences:
+
+| Preference | Type | Default | Description |
+|------------|------|---------|-------------|
+| `text_alignment` | String | `left` | Text alignment (left, center, right) |
+| `container_alignment` | String | `left` | Container alignment |
+| `size` | String | `medium` | Block size (small, medium, large) |
+| `width_desktop` | Integer | `100` | Width percentage on desktop |
+| `top_padding` | Integer | `0` | Top padding in pixels |
+| `bottom_padding` | Integer | `0` | Bottom padding in pixels |
+
+### Associations
+
+- **Section**: Each block belongs to a section (`section`)
+- **Links**: Blocks can have multiple links (`links`) via `Spree::HasPageLinks`
+- **Asset**: Blocks can have an attached image (`asset`)
+- **Rich Text**: Blocks can have rich text content (`text`)
+
+## Accessing Blocks
+
+```ruby
+# Get all blocks for a section
+section.blocks
+
+# Get blocks with eager loading
+section.blocks.includes(:rich_text_text, :links)
+
+# Find specific block type
+section.blocks.where(type: 'Spree::PageBlocks::Heading')
+```
+
+## Rendering Blocks
+
+In storefront section views, blocks are rendered within their parent section:
+
+```erb
+<% section.blocks.each do |block| %>
+  <% case block.type %>
+  <% when 'Spree::PageBlocks::Heading' %>
+    <h2 <%= block_attributes(block) %>>
+      <%= block.text %>
+    </h2>
+  <% when 'Spree::PageBlocks::Text' %>
+    <div <%= block_attributes(block) %>>
+      <%= block.text %>
+    </div>
+  <% when 'Spree::PageBlocks::Buttons' %>
+    <div <%= block_attributes(block) %>>
+      <% if block.link %>
+        <%= page_builder_link_to block.link, class: 'btn-primary' %>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>
+```
+
+The `block_attributes(block)` helper returns data attributes needed for Page Builder editing.
+
+## Creating a Custom Block
+
+### Step 1: Create the Model
+
+```ruby app/models/spree/page_blocks/quote.rb
+module Spree
+  module PageBlocks
+    class Quote < Spree::PageBlock
+      SIZE_DEFAULT = 'large'
+      TEXT_ALIGNMENT_DEFAULT = 'center'
+
+      preference :author_name, :string
+      preference :author_title, :string
+      preference :text_color, :string
+      preference :background_color, :string
+
+      def icon_name
+        'quote'
+      end
+
+      def display_name
+        text.to_plain_text.truncate(30)
+      end
+    end
+  end
+end
+```
+
+### Step 2: Register the Block
+
+```ruby config/initializers/spree.rb
+Rails.application.config.after_initialize do
+  Spree.page_builder.page_blocks += [
+    Spree::PageBlocks::Quote
+  ]
+end
+```
+
+### Step 3: Add to Section's Available Blocks
+
+In your section model, add the new block type:
+
+```ruby
+def available_blocks_to_add
+  [
+    Spree::PageBlocks::Heading,
+    Spree::PageBlocks::Text,
+    Spree::PageBlocks::Quote  # Your new block
+  ]
+end
+```
+
+### Step 4: Create Admin Form
+
+```erb app/views/spree/admin/page_blocks/forms/_quote.html.erb
+<div class="form-group">
+  <%= f.label :text, Spree.t(:quote_text) %>
+  <%= f.rich_text_area :text, data: { action: 'auto-submit#submit' } %>
+</div>
+
+<div class="form-group">
+  <%= f.label :preferred_author_name, Spree.t(:author_name) %>
+  <%= f.text_field :preferred_author_name,
+      class: 'form-control',
+      data: { action: 'auto-submit#submit' } %>
+</div>
+
+<div class="form-group">
+  <%= f.label :preferred_author_title, Spree.t(:author_title) %>
+  <%= f.text_field :preferred_author_title,
+      class: 'form-control',
+      data: { action: 'auto-submit#submit' } %>
+</div>
+```
+
+### Step 5: Render in Section View
+
+Add rendering logic to your section's storefront view:
+
+```erb
+<% when 'Spree::PageBlocks::Quote' %>
+  <blockquote <%= block_attributes(block) %> class="text-<%= block.preferred_text_alignment %>">
+    <p class="text-xl italic"><%= block.text %></p>
+    <% if block.preferred_author_name.present? %>
+      <footer class="mt-4">
+        <cite>
+          <strong><%= block.preferred_author_name %></strong>
+          <% if block.preferred_author_title.present? %>
+            <br><span class="text-sm text-gray-500"><%= block.preferred_author_title %></span>
+          <% end %>
+        </cite>
+      </footer>
+    <% end %>
+  </blockquote>
+```
+
+## Block with Links
+
+To add link support to your block, include the `Spree::HasOneLink` concern:
+
+```ruby
+module Spree
+  module PageBlocks
+    class CallToAction < Spree::PageBlock
+      include Spree::HasOneLink
+
+      preference :button_style, :string, default: 'primary'
+
+      # Called when the link is destroyed
+      def link_destroyed(_link)
+        destroy if page_links_count.zero?
+      end
+    end
+  end
+end
+```
+
+## Block with Image
+
+Blocks automatically have an `asset` attachment available:
+
+```ruby
+# Check if image is attached
+block.asset.attached?
+
+# Display image in view
+<% if block.asset.attached? %>
+  <%= spree_image_tag block.asset, width: 400, height: 300 %>
+<% end %>
+```
+
+## Key Methods
+
+| Method | Description |
+|--------|-------------|
+| `display_name` | Name shown in Page Builder sidebar |
+| `icon_name` | Icon from [Tabler Icons](https://tabler.io/icons) |
+| `form_partial_name` | Name of the admin form partial |
+
+## Related Documentation
+
+- [Sections](/developer/storefront/sections) - Parent containers for blocks
+- [Links](/developer/storefront/links) - Adding links to blocks
+- [Images & Assets](/developer/core-concepts/images-assets) - Working with images

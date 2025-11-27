@@ -1,6 +1,5 @@
 ---
 title: Adjustments
-icon: "pencil"
 ---
 
 ## Overview
@@ -102,7 +101,7 @@ order.shipment_adjustments
 
 To create a new adjuster for Spree, create a new ruby object that inherits from `Spree::Adjustable::Adjuster::Base` and implements an `update` method:
 
-```ruby
+```ruby app/models/spree/adjustable/adjuster/my_adjuster.rb
 module Spree
   module Adjustable
     module Adjuster
@@ -131,15 +130,27 @@ module Spree
 end
 ```
 
-Next you need to add the class to spree `Rails.application.config.spree.adjusters` so it is included whenever adjustments are updated Promotion and Tax are included by default:
+Next you need to add the class to spree `Spree.adjusters` so it is included whenever adjustments are updated Promotion and Tax are included by default:
 
-```ruby
-# NOTE: it is advisable that that Tax be implemented last so Tax is calculated correctly
-app.config.spree.adjusters = [
-          Spree::Adjustable::Adjuster::MyAdjuster,
-          Spree::Adjustable::Adjuster::Promotion,
-          Spree::Adjustable::Adjuster::Tax
-          ]
-```
+<Tabs>
+  <Tab title="Spree 5.2+">
+    ```ruby config/initializers/spree.rb
+    Spree.adjusters = [
+      Spree::Adjustable::Adjuster::MyAdjuster,
+      Spree::Adjustable::Adjuster::Promotion,
+      Spree::Adjustable::Adjuster::Tax
+    ]
+    ```
+  </Tab>
+  <Tab title="Spree 5.1 and below">
+    ```ruby config/initializers/spree.rb
+    Rails.application.config.spree.adjusters = [
+      Spree::Adjustable::Adjuster::MyAdjuster,
+      Spree::Adjustable::Adjuster::Promotion,
+      Spree::Adjustable::Adjuster::Tax
+    ]
+    ```
+  </Tab>
+</Tabs>
 
 That's it! Your custom adjuster is ready to go.

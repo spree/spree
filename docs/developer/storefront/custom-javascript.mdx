@@ -94,18 +94,76 @@ If you need to add a small piece of JavaScript code (eg. tracking, marketing, an
 
 1. Declaring a new head partial in the `config/initializers/spree.rb` file, eg.
 
-    ```ruby
-    Rails.application.config.spree_storefront.head_partials << 'spree/shared/my_tracking_code'
-    ```
+    <Tabs>
+      <Tab title="Spree 5.2+">
+        ```ruby config/initializers/spree.rb
+        Spree.storefront.partials.head << 'spree/shared/my_tracking_code'
+        ```
+      </Tab>
+      <Tab title="Spree 5.1 and below">
+        ```ruby config/initializers/spree.rb
+        Rails.application.config.spree_storefront.head_partials << 'spree/shared/my_tracking_code'
+        ```
+      </Tab>
+    </Tabs>
 
 2. Creating a new file in the `app/views/spree/shared/my_tracking_code.html.erb`, where you can add your tracking code, eg.
 
-    ```erb
+    ```erb app/views/spree/shared/my_tracking_code.html.erb
     <script>
       console.log("I'm a spy!");
     </script>
     ```
 
 <Info>
-With Spree 5.1 we're going to release a new integrations feature which will allow you to easily connect your storefront to third party services, eg. Google Analytics, Facebook Pixel, etc.
+  Check out the [Integrations](/integrations) for existing integrations you can plug into your storefront.
 </Info>
+
+## Extending Existing Stimulus Controllers
+
+You can extend or override existing Storefront Stimulus controllers:
+
+```js
+// app/javascript/controllers/cart_controller.js
+import CartController from 'spree/storefront/controllers/cart_controller'
+
+export default class extends CartController {
+  connect() {
+    super.connect()
+    console.log('Extended cart controller connected!')
+  }
+
+  // Override existing method
+  addItem(event) {
+    // Custom logic before adding
+    console.log('Adding item...')
+    super.addItem(event)
+    // Custom logic after adding
+  }
+}
+```
+
+## Turbo Events
+
+Spree Storefront uses [Turbo](https://turbo.hotwired.dev/) for navigation. You can hook into Turbo events:
+
+```js
+// app/javascript/application.js
+document.addEventListener('turbo:load', () => {
+  console.log('Page loaded via Turbo')
+})
+
+document.addEventListener('turbo:before-visit', (event) => {
+  console.log('About to visit:', event.detail.url)
+})
+
+document.addEventListener('turbo:frame-load', (event) => {
+  console.log('Turbo frame loaded:', event.target.id)
+})
+```
+
+## Related Documentation
+
+- [Custom CSS](/developer/storefront/custom-css) - Styling your storefront
+- [Sections](/developer/storefront/sections) - Creating custom sections
+- [Blocks](/developer/storefront/blocks) - Creating custom blocks

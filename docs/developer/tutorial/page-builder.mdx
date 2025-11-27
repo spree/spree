@@ -1,0 +1,489 @@
+---
+title: Page Builder Integration
+description: Learn how to connect your Brands feature to Page Builder for admin-manageable pages
+---
+
+In this tutorial, we'll enhance our brand pages by integrating them with Spree's Page Builder. This allows store administrators to customize page layouts, add sections, and modify designs without touching code.
+
+<Info>
+  This guide assumes you've completed the [Storefront](/developer/tutorial/storefront) tutorial and have working brand pages.
+</Info>
+
+## What We're Building
+
+By the end of this tutorial, you'll have:
+
+- A **Brand List** page type manageable via Page Builder
+- A **Brand** page type for individual brand pages
+- Custom sections: `BrandGrid` and `BrandBanner`
+- Full admin customization support
+
+## Understanding Page Builder Architecture
+
+Page Builder uses three main components:
+
+| Component | Purpose |
+|-----------|---------|
+| **Page** | Defines the page type (e.g., Homepage, Product Details, Brand List) |
+| **Section** | Reusable content blocks within a page (e.g., Hero Banner, Product Grid) |
+| **Block** | Smallest units within sections (e.g., Heading, Text, Button) |
+
+## Step 1: Create Page Types
+
+### Brand List Page
+
+Create a page type for the brands listing:
+
+```ruby app/models/spree/pages/brand_list.rb
+module Spree
+  module Pages
+    class BrandList < Spree::Page
+      def icon_name
+        'building-store'
+      end
+
+      def customizable?
+        true
+      end
+
+      def page_builder_url
+        return unless page_builder_url_exists?(:brands_path)
+
+        Spree::Core::Engine.routes.url_helpers.brands_path
+      end
+
+      def default_sections
+        [
+          Spree::PageSections::PageTitle.new(
+            preferred_heading: Spree.t(:brands)
+          ),
+          Spree::PageSections::BrandGrid.new
+        ]
+      end
+    end
+  end
+end
+```
+
+### Brand Page
+
+Create a page type for individual brand pages:
+
+```ruby app/models/spree/pages/brand.rb
+module Spree
+  module Pages
+    class Brand < Spree::Page
+      def icon_name
+        'tag'
+      end
+
+      def customizable?
+        true
+      end
+
+      def page_builder_url
+        return unless page_builder_url_exists?(:brands_path)
+
+        brand = Spree::Brand.first
+        return unless brand
+
+        Spree::Core::Engine.routes.url_helpers.brand_path(brand)
+      end
+
+      def default_sections
+        [
+          Spree::PageSections::BrandBanner.new,
+          Spree::PageSections::ProductGrid.new(
+            preferred_heading: Spree.t(:products)
+          )
+        ]
+      end
+    end
+  end
+end
+```
+
+## Step 2: Register Pages
+
+Add your pages to the Spree configuration:
+
+```ruby config/initializers/spree.rb
+Rails.application.config.after_initialize do
+  # Register custom pages
+  Spree.page_builder.pages += [
+    Spree::Pages::BrandList,
+    Spree::Pages::Brand
+  ]
+end
+```
+
+## Step 3: Create Custom Sections
+
+### Brand Grid Section
+
+This section displays a grid of all brands:
+
+```ruby app/models/spree/page_sections/brand_grid.rb
+module Spree
+  module PageSections
+    class BrandGrid < Spree::PageSection
+      TOP_PADDING_DEFAULT = 40
+      BOTTOM_PADDING_DEFAULT = 40
+
+      preference :show_description, :boolean, default: false
+
+      def icon_name
+        'layout-grid'
+      end
+
+      # Content sections can be added/removed in Page Builder
+      def self.role
+        'content'
+      end
+
+      def brands
+        Spree::Brand.order(:name)
+      end
+    end
+  end
+end
+```
+
+### Brand Banner Section
+
+This section displays the brand header with logo and description:
+
+```ruby app/models/spree/page_sections/brand_banner.rb
+module Spree
+  module PageSections
+    class BrandBanner < Spree::PageSection
+      TOP_PADDING_DEFAULT = 60
+      BOTTOM_PADDING_DEFAULT = 40
+
+      preference :show_logo, :boolean, default: true
+      preference :show_description, :boolean, default: true
+      preference :layout, :string, default: 'horizontal'
+
+      before_validation :ensure_valid_layout
+
+      def icon_name
+        'id-badge'
+      end
+
+      # System sections are part of the core page functionality
+      def self.role
+        'system'
+      end
+
+      def can_be_deleted?
+        false
+      end
+
+      private
+
+      def ensure_valid_layout
+        self.preferred_layout = 'horizontal' unless %w[horizontal vertical].include?(preferred_layout)
+      end
+    end
+  end
+end
+```
+
+## Step 4: Register Sections
+
+Add your sections to the configuration:
+
+```ruby config/initializers/spree.rb
+Rails.application.config.after_initialize do
+  # Register custom pages
+  Spree.page_builder.pages += [
+    Spree::Pages::BrandList,
+    Spree::Pages::Brand
+  ]
+
+  # Register custom sections
+  Spree.page_builder.page_sections += [
+    Spree::PageSections::BrandGrid,
+    Spree::PageSections::BrandBanner
+  ]
+end
+```
+
+## Step 5: Create Admin Forms
+
+Admin section forms use Spree's Admin Form Builder, which provides helper methods like `spree_select` and `spree_check_box` for consistent styling and functionality.
+
+### Brand Grid Admin Form
+
+```erb app/views/spree/admin/page_sections/forms/_brand_grid.html.erb
+<%= f.spree_check_box :preferred_show_description,
+    label: Spree.t(:show_description),
+    data: { action: 'auto-submit#submit' } %>
+```
+
+### Brand Banner Admin Form
+
+```erb app/views/spree/admin/page_sections/forms/_brand_banner.html.erb
+<%= f.spree_check_box :preferred_show_logo,
+    label: Spree.t(:show_logo),
+    data: { action: 'auto-submit#submit' } %>
+
+<%= f.spree_check_box :preferred_show_description,
+    label: Spree.t(:show_description),
+    data: { action: 'auto-submit#submit' } %>
+
+<% content_for(:design_tab) do %>
+  <%= f.spree_select :preferred_layout,
+      options_for_select([
+        [Spree.t(:horizontal), 'horizontal'],
+        [Spree.t(:vertical), 'vertical']
+      ], @page_section.preferred_layout),
+      { label: Spree.t(:layout) },
+      { data: { action: 'auto-submit#submit' } } %>
+  <hr />
+<% end %>
+```
+
+## Step 6: Create Storefront Views
+
+### Brand Grid Section View
+
+```erb app/views/themes/default/spree/page_sections/_brand_grid.html.erb
+<% cache_unless page_builder_enabled?, spree_storefront_base_cache_scope.call(section) do %>
+  <div style="<%= section_styles(section) %>">
+    <div class="page-container">
+      <% brands = section.brands %>
+      <% if brands.any? %>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <% brands.each do |brand| %>
+            <%= link_to spree.brand_path(brand),
+                class: 'block group',
+                data: { turbo_frame: '_top' } do %>
+              <div class="aspect-square bg-accent rounded-lg overflow-hidden mb-3">
+                <% if brand.logo.attached? %>
+                  <%= spree_image_tag brand.logo,
+                      width: 300,
+                      height: 300,
+                      class: 'w-full h-full object-contain p-6 group-hover:scale-105 transition-transform',
+                      alt: brand.name %>
+                <% else %>
+                  <div class="w-full h-full flex items-center justify-center">
+                    <span class="text-4xl font-medium text-neutral-400">
+                      <%= brand.name.first.upcase %>
+                    </span>
+                  </div>
+                <% end %>
+              </div>
+              <h3 class="font-medium group-hover:text-primary transition-colors">
+                <%= brand.name %>
+              </h3>
+              <% if section.preferred_show_description && brand.description.present? %>
+                <p class="mt-1 text-sm text-neutral-600 line-clamp-2">
+                  <%= brand.description.to_plain_text.truncate(100) %>
+                </p>
+              <% end %>
+            <% end %>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="text-neutral-600"><%= Spree.t(:no_brands_found) %></p>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+```
+
+### Brand Banner Section View
+
+```erb app/views/themes/default/spree/page_sections/_brand_banner.html.erb
+<% cache_unless page_builder_enabled?, spree_storefront_base_cache_scope.call(section) do %>
+  <div style="<%= section_styles(section) %>">
+    <div class="page-container">
+      <% if brand.present? %>
+        <div class="<%= section.preferred_layout == 'horizontal' ? 'flex flex-col md:flex-row gap-8 items-start' : 'text-center' %>">
+          <% if section.preferred_show_logo && brand.logo.attached? %>
+            <div class="<%= section.preferred_layout == 'horizontal' ? 'w-32 h-32 flex-shrink-0' : 'w-40 h-40 mx-auto mb-6' %> bg-accent rounded-lg">
+              <%= spree_image_tag brand.logo,
+                  width: 160,
+                  height: 160,
+                  class: 'w-full h-full object-contain p-4',
+                  alt: brand.name %>
+            </div>
+          <% end %>
+
+          <div>
+            <h1 class="text-2xl lg:text-3xl font-medium mb-4">
+              <%= brand.name %>
+            </h1>
+
+            <% if section.preferred_show_description && brand.description.present? %>
+              <div class="prose max-w-none text-neutral-600">
+                <%= brand.description %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+```
+
+## Step 7: Update the Controller
+
+Update your controller to use Page Builder pages:
+
+```ruby app/controllers/spree/brands_controller.rb
+module Spree
+  class BrandsController < StoreController
+    before_action :load_brand, only: [:show]
+
+    def index
+      # Load the Page Builder page
+      @current_page = current_theme.pages.find_by(type: 'Spree::Pages::BrandList')
+
+      # Fallback data if sections need it
+      @brands = Spree::Brand.order(:name)
+    end
+
+    def show
+      # Load the Page Builder page
+      @current_page = current_theme.pages.find_by(type: 'Spree::Pages::Brand')
+
+      # Load products for the ProductGrid section
+      @products = @brand.products
+                        .active(current_currency)
+                        .includes(storefront_products_includes)
+                        .page(params[:page])
+                        .per(12)
+    end
+
+    private
+
+    def load_brand
+      @brand = Spree::Brand.find(params[:id])
+    end
+
+    def accurate_title
+      if @brand
+        @brand.meta_title.presence || @brand.name
+      else
+        Spree.t(:brands)
+      end
+    end
+  end
+end
+```
+
+## Step 8: Update Views to Use Page Builder
+
+### Brand List Index View
+
+```erb app/views/themes/default/spree/brands/index.html.erb
+<%= render_page(@current_page, brands: @brands) %>
+```
+
+### Brand Show View
+
+```erb app/views/themes/default/spree/brands/show.html.erb
+<%= render_page(@current_page, brand: @brand, products: @products) %>
+```
+
+The `render_page` helper automatically renders all sections in the order defined in Page Builder.
+
+## Step 9: Passing Variables to Sections
+
+Section views receive variables passed to `render_page`. Update your section views to use them:
+
+```erb app/views/themes/default/spree/page_sections/_brand_banner.html.erb
+<% # 'brand' variable is passed from the controller via render_page %>
+<% cache_unless page_builder_enabled?, [spree_storefront_base_cache_scope.call(section), brand] do %>
+  <div style="<%= section_styles(section) %>">
+    <%# ... use 'brand' variable ... %>
+  </div>
+<% end %>
+```
+
+## Step 10: Add Translations
+
+```yaml config/locales/en.yml
+en:
+  spree:
+    brands: Brands
+    no_brands_found: No brands found.
+    products_by_brand: "Products by %{brand}"
+    show_description: Show description
+    show_logo: Show logo
+    layout: Layout
+    horizontal: Horizontal
+    vertical: Vertical
+```
+
+## Testing Page Builder Integration
+
+1. Start your Rails server
+2. Go to **Admin → Storefront → Pages**
+3. You should see "Brand List" and "Brand" pages
+4. Click on a page to customize it in Page Builder
+5. Add, remove, or reorder sections
+6. Customize section settings
+7. Preview changes in real-time
+
+## Section Roles Explained
+
+| Role | Description | Can Delete? | Example |
+|------|-------------|-------------|---------|
+| `content` | General content sections | Yes | BrandGrid, ImageBanner |
+| `system` | Core page functionality | No | BrandBanner, ProductDetails |
+| `header` | Layout header sections | No | Header, AnnouncementBar |
+| `footer` | Layout footer sections | No | Footer, Newsletter |
+
+## Complete File Structure
+
+After completing this tutorial, you should have:
+
+```
+app/
+├── controllers/spree/
+│   └── brands_controller.rb
+├── models/spree/
+│   ├── pages/
+│   │   ├── brand.rb
+│   │   └── brand_list.rb
+│   └── page_sections/
+│       ├── brand_banner.rb
+│       └── brand_grid.rb
+└── views/
+    ├── spree/admin/page_sections/forms/
+    │   ├── _brand_banner.html.erb
+    │   └── _brand_grid.html.erb
+    └── themes/default/spree/
+        ├── brands/
+        │   ├── index.html.erb
+        │   └── show.html.erb
+        └── page_sections/
+            ├── _brand_banner.html.erb
+            └── _brand_grid.html.erb
+
+config/
+├── initializers/
+│   └── spree.rb  (updated)
+└── locales/
+    └── en.yml    (updated)
+```
+
+## Benefits of Page Builder Integration
+
+| Without Page Builder | With Page Builder |
+|---------------------|-------------------|
+| Developers edit views for layout changes | Admins customize layouts in browser |
+| Code deployment required for design changes | Real-time preview and publish |
+| Fixed page structure | Drag-and-drop section ordering |
+| Hardcoded settings | Admin-configurable preferences |
+
+## Related Documentation
+
+- [Sections](/developer/storefront/sections) - Creating custom sections
+- [Blocks](/developer/storefront/blocks) - Adding blocks to sections
+- [Pages](/developer/storefront/pages) - Page types and routing
+- [Themes](/developer/storefront/themes) - Theme customization

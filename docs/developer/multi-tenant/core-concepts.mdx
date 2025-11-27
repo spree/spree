@@ -18,12 +18,7 @@ All models that are tenanted inherit from `SpreeMultiTenant::Base` class. `spree
 When creating a new model that you want to be tenanted remember to inherit from `SpreeMultiTenant::Base` and not from `Spree::Base` and add `tenant_id` column to the table, eg.
 
 ```bash
-bin/rails g model Spree::NewModel tenant:references name:string
-```
-
-```ruby
-class Spree::NewModel < SpreeMultiTenant::Base
-end
+bin/rails g model Spree::NewModel tenant:references name:string --parent SpreeMultiTenant::Base
 ```
 
 <Info>

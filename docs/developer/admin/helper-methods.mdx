@@ -6,75 +6,312 @@ sidebarTitle: Helper Methods
 import SpreeStore from '/snippets/objects/spree_store.mdx'
 import SpreeVendor from '/snippets/objects/spree_vendor.mdx'
 
-Here you can find a list of helper methods that are available in the Admin Dashboard that you can use in every template.
+Helper methods available in the Admin Dashboard for navigation, links, and utility functions.
 
-<Warning>
-The list is incomplete.
-</Warning>
+<Info>
+  For UI components that render HTML elements (Dropdowns, Dialogs, Icons, etc.), see the [Components](/developer/admin/components) documentation.
+</Info>
 
-## `active_badge`
+## Navigation Helpers
 
-Displays a badge with a color based on the condition.
+### `nav_item`
 
-```erb
-<%= active_badge(order.sent_to_erp_at.blank?) %>
-```
-
-If the condition is true, it will render
-
-```html
-<span class="badge badge-success">Active</span>
-```
-
-If the condition is false, it will render
-
-```html
-<span class="badge badge-danger">Inactive</span>
-```
-
-You can also pass a custom label to the badge:
-
-<ParamField query="label" type="string">
-  Custom text to display in the badge. If not provided, will show "Active"/"Inactive" based on the condition.
-</ParamField>
-
-## `active_link_to_with_icon`
-
-Same as [link_to_with_icon](/developer/admin/helper-methods#link-to-with-icon), but it will add the `active` class if the current page is the same as the link.
+Creates a navigation item with optional icon.
 
 ```erb
-<%= active_link_to_with_icon 'eye', "View Order in ERP", spree.admin_order_path(order), class: "btn btn-primary" %>
+<%= nav_item 'Dashboard', spree.admin_dashboard_path %>
+<%= nav_item 'Products', spree.admin_products_path, icon: 'package' %>
+<%= nav_item 'Orders', spree.admin_orders_path, active: true %>
 ```
 
-You can also pass a custom `active` condition.
+With a block for custom content:
 
 ```erb
-<%= active_link_to_with_icon 'eye', "View Order in ERP", spree.admin_order_path(order), class: "btn btn-primary", active: order.sent_to_erp_at.blank? %>
+<%= nav_item spree.admin_products_path do %>
+  Products <span class="badge badge-primary">New</span>
+<% end %>
 ```
 
-## `current_currency`
+| Option | Type | Description |
+|--------|------|-------------|
+| `label` | String | The text to display |
+| `url` | String | The URL for the link (required) |
+| `icon` | String | Icon name to prepend |
+| `active` | Boolean | Force active state |
+| `data` | Hash | Data attributes |
 
-Returns the currently selected currency. By default in Admin Dashboard this will be `store.default_currency`. This can be changed in the `Settings -> Store Defaults` page.
+### `link_to_with_icon`
+
+Creates a link with an icon.
 
 ```erb
-<%= current_currency %>
+<%= link_to_with_icon 'eye', "View Order", spree.admin_order_path(order), class: "btn btn-primary" %>
+<%= link_to_with_icon 'pencil', "Edit", edit_path, class: "dropdown-item" %>
+<%= link_to_with_icon 'trash', "Delete", delete_path, no_text: true, title: "Delete item" %>
 ```
 
-will return
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `icon_name` | String | Icon name from [Tabler Icons](https://tabler.io/icons) |
+| `text` | String | Link text |
+| `url` | String | Link URL (use `spree.` routes for internal links) |
+| `no_text` | Boolean | Show only icon with text as tooltip |
+| `title` | String | Tooltip text |
 
-```
-USD
+### `active_link_to_with_icon`
+
+Same as `link_to_with_icon`, but adds the `active` class if the current page matches the URL.
+
+```erb
+<%= active_link_to_with_icon 'package', "Products", spree.admin_products_path, class: "nav-link" %>
 ```
 
-## `current_store`
+### `link_to_edit`
+
+Renders an edit button for a resource. Only renders if the user has `update` permission.
+
+```erb
+<%= link_to_edit(@product) %>
+<%= link_to_edit(@product, url: custom_edit_path(@product)) %>
+<%= link_to_edit(@order, class: 'btn btn-primary') %>
+```
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `url` | String | auto | Custom URL (defaults to `edit_object_url(resource)`) |
+| `class` | String | `btn btn-light btn-sm` | CSS classes |
+| `data` | Hash | `{action: 'edit'}` | Data attributes |
+
+### `link_to_delete`
+
+Renders a delete button with confirmation. Only renders if the user has `destroy` permission.
+
+```erb
+<%= link_to_delete(@product) %>
+<%= link_to_delete(@product, name: 'Remove') %>
+<%= link_to_delete(@product, no_text: true) %>
+<%= link_to_delete(@product, icon: 'x') %>
+```
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `url` | String | auto | Custom URL (defaults to `object_url(resource)`) |
+| `name` | String | "Delete" | Button text |
+| `icon` | String | `trash` | Custom icon |
+| `no_text` | Boolean | false | Show only icon |
+| `class` | String | `btn btn-danger btn-sm` | CSS classes |
+| `data` | Hash | confirm + method | Data attributes |
+
+### `button`
+
+Renders a submit button with optional icon and loading state.
+
+```erb
+<%= button(Spree.t('actions.save')) %>
+<%= button(Spree.t('actions.save'), 'device-floppy') %>
+<%= button('Submit', 'send', 'submit', class: 'btn-success') %>
+```
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `text` | String | required | Button text |
+| `icon_name` | String | nil | Optional icon |
+| `button_type` | String | `submit` | Button type |
+| `class` | String | `btn-primary` | CSS classes |
+
+### `external_link_to`
+
+Renders an external link that opens in a new tab with an indicator icon.
+
+```erb
+<%= external_link_to 'Documentation', 'https://docs.spreecommerce.org' %>
+<%= external_link_to 'GitHub', 'https://github.com/spree/spree' %>
+```
+
+With a block:
+
+```erb
+<%= external_link_to 'https://example.com' do %>
+  <strong>Custom content</strong>
+<% end %>
+```
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `label` | String | Link text |
+| `url` | String | External URL |
+| `target` | Symbol | Default: `:blank` |
+| `rel` | Symbol | Default: `:nofollow` |
+
+### `external_page_preview_link`
+
+Renders a link to preview a resource on the storefront.
+
+```erb
+<%= external_page_preview_link(@product) %>
+<%= external_page_preview_link(@post) %>
+```
+
+### `page_header_back_button`
+
+Renders a back button for page headers with smart return URL handling.
+
+```erb
+<%= page_header_back_button(spree.admin_products_path) %>
+<%= page_header_back_button(spree.admin_products_path, @product) %>
+<%= page_header_back_button(spree.admin_orders_path, @order, 'Back to Orders') %>
+```
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `default_url` | String | Default URL to navigate back to |
+| `object` | Object | Optional object to check for stored return URL in session |
+| `label` | String | Optional label text |
+
+### `per_page_dropdown`
+
+Renders a dropdown for selecting items per page on index pages.
+
+```erb
+<%= per_page_dropdown %>
+```
+
+Automatically detects the resource type and provides appropriate options based on configuration.
+
+### `link_to_export_modal`
+
+Renders a button to open the export modal. Only renders if user can create exports.
+
+```erb
+<%= link_to_export_modal %>
+```
+
+## Store Helpers
+
+Helpers for store-specific options and unit systems.
+
+### `weight_units`
+
+Returns weight unit options based on the store's unit system.
+
+```erb
+<%= f.select :weight_unit, weight_units %>
+```
+
+**Returns:**
+- Metric: `[["Kilogram", "kg"], ["Gram", "g"]]`
+- Imperial: `[["Pound", "lb"], ["Ounce", "oz"]]`
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `store` | Spree::Store | `current_store` | Store to check unit system |
+
+### `dimension_units`
+
+Returns dimension unit options based on the store's unit system.
+
+```erb
+<%= f.select :dimension_unit, dimension_units %>
+```
+
+**Returns:**
+- Metric: `[["Centimeter", "cm"], ["Millimeter", "mm"]]`
+- Imperial: `[["Inch", "in"], ["Foot", "ft"]]`
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `store` | Spree::Store | `current_store` | Store to check unit system |
+
+### `unit_systems`
+
+Returns available unit system options.
+
+```erb
+<%= f.select :unit_system, unit_systems %>
+```
+
+**Returns:** `[["Metric System", "metric"], ["Imperial System", "imperial"]]`
+
+### `display_on_options`
+
+Returns display location options for calculators and payment/shipping methods.
+
+```erb
+<%= f.select :display_on, display_on_options %>
+```
+
+**Returns:** `[["Both", "both"], ["Backend", "back_end"], ["Frontend", "front_end"]]`
+
+## Turbo Helpers
+
+Helpers for Turbo Streams and Turbo-enhanced forms.
+
+### `turbo_close_dialog`
+
+Returns a Turbo Stream response that closes the main dialog.
+
+```erb
+<%# In a turbo_stream.erb response %>
+<%= turbo_close_dialog %>
+```
+
+### `turbo_render_alerts`
+
+Returns a Turbo Stream response that updates the alerts frame.
+
+```erb
+<%= turbo_render_alerts %>
+<%= turbo_render_alerts(:custom_alerts) %>
+```
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `frame_name` | Symbol | `:alerts` | Turbo frame to update |
+
+### `turbo_save_button_tag`
+
+Creates a save button with loading state for Turbo forms.
+
+```erb
+<%= turbo_save_button_tag %>
+<%= turbo_save_button_tag('Update Product') %>
+<%= turbo_save_button_tag('Save', class: 'btn btn-success') %>
+```
+
+**Features:**
+- Shows spinner during submission
+- Integrates with `turbo-submit-button` Stimulus controller
+- Prevents double submissions
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `label` | String | "Save" | Button label |
+| `class` | String | `btn btn-primary text-center` | CSS classes |
+
+## Context Helpers
+
+### `current_store`
+
+Returns the current store instance.
 
 <ResponseField name="current_store" type="Spree::Store" description="The current store object.">
   <SpreeStore />
 </ResponseField>
 
-Returns the current store [Spree::Store](https://github.com/spree/spree/blob/master/core/app/models/spree/store.rb) instance.
+```erb
+<%= current_store.name %>
+<%= current_store.default_currency %>
+```
 
-## `current_vendor`
+### `current_currency`
+
+Returns the currently selected currency for the admin session.
+
+```erb
+<%= current_currency %> <%# => "USD" %>
+```
+
+### `current_vendor`
 
 <Info>
   Available only in [Spree Enterprise Edition](https://spreecommerce.com/pricing).
@@ -84,93 +321,144 @@ Returns the current store [Spree::Store](https://github.com/spree/spree/blob/mas
   <SpreeVendor />
 </ResponseField>
 
-## `icon`
+### `supported_currencies`
 
-Displays an icon.
-
-```erb
-<%= icon('eye') %>
-```
-
-Will render
-
-```html
-<i class="ti ti-eye"></i>
-```
-
-We use [Tabler Icons](https://tabler.io/icons) library for icons.
-
-You can also pass additional options such as:
-
-<ParamField query="class" type="string">
-  Add additional CSS classes to the icon
-</ParamField>
-
-<ParamField query="style" type="string">
-  Add additional inline styles to the icon
-</ParamField>
-
-<ParamField query="height" type="integer">
-  Set the height of the icon in pixels
-</ParamField>
+Returns the list of supported currencies for the current store.
 
 ```erb
-<%= icon('eye', class: 'mr-2', height: 20, style: 'color: red;') %>
+<%= supported_currencies %> <%# => ["USD", "EUR", "GBP"] %>
 ```
 
-will render
+### `try_spree_current_user`
 
-```html
-<i class="ti ti-eye mr-2" style="font-size: 20px; color: red;"></i>
-```
-
-## `local_time`
-
-Displays a time in the user's timezone in a human readable format (based on the browser's timezone).
+Returns the current user object or `nil` if not signed in.
 
 ```erb
-<%= local_time(order.sent_to_erp_at) %>
+<%= try_spree_current_user&.email %>
+
+<% if try_spree_current_user.present? %>
+  Signed in as <%= try_spree_current_user.email %>
+<% end %>
 ```
 
-Provided by [local_time gem](https://github.com/basecamp/local_time).
+### `available_countries_iso`
 
-## `link_to_with_icon`
-
-Creates a link with an icon.
+Returns ISO codes for countries available for checkout in the current store.
 
 ```erb
-<%= link_to_with_icon 'eye', "View Order in ERP", "https://erp.com/orders/#{order.number}", class: "btn btn-primary" %>
+<%= available_countries_iso %> <%# => ["US", "CA", "GB"] %>
 ```
 
-* `eye` is the icon name.
-* `View Order in ERP` is the link text.
-* `https://erp.com/orders/#{order.number}` is the link url. For internal links, please use `spree.` routes helper, eg. `spree.admin_order_path(order)`.
-* `btn btn-primary` is the bootstrap class for styling the link
+## Utility Helpers
 
-## `supported_currencies`
+### `flag_emoji`
 
-Returns the list of supported currencies for the current store as an array of strings.
+Returns the flag emoji for a country ISO code.
 
 ```erb
-<%= supported_currencies %>
+<%= flag_emoji('US') %> <%# => 🇺🇸 %>
+<%= flag_emoji('GB') %> <%# => 🇬🇧 %>
+<%= flag_emoji('JP') %> <%# => 🇯🇵 %>
 ```
 
-will return
+### `required_span_tag`
 
-```ruby
-["USD", "EUR"]
-```
-
-## `try_spree_current_user`
-
-Returns the current user object (class depends on the `Spree.admin_user_class` configuration). If the user is not signed in, it will return `nil`.
+Renders a red asterisk indicator for required fields.
 
 ```erb
-<%= try_spree_current_user.email %>
+<%= label_tag :name %>
+<%= required_span_tag %>
 ```
 
-If you want to check if the user is signed in, you can use the following:
+**Renders:** `<span class="required font-weight-bold text-danger"> *</span>`
+
+### `error_message_on`
+
+Renders validation error messages for a form field.
 
 ```erb
-<%= try_spree_current_user.present? %>
+<%= error_message_on(@product, :name) %>
+<%= error_message_on(@order, :email) %>
 ```
+
+**Renders:** `<span class="formError">can't be blank</span>`
+
+### `settings_area?`
+
+Returns `true` if the current page is in the settings area.
+
+```erb
+<% if settings_area? %>
+  <%= render 'spree/admin/shared/settings_sidebar' %>
+<% end %>
+```
+
+### `enterprise_edition?`
+
+Returns `true` if Spree Enterprise Edition is installed.
+
+```erb
+<% if enterprise_edition? %>
+  <%= render 'spree/admin/vendors/selector' %>
+<% end %>
+```
+
+### `allowed_file_types_for_upload`
+
+Returns allowed file types for Active Storage uploads.
+
+```erb
+<%= allowed_file_types_for_upload %>
+<%# => ["image/png", "image/jpeg", "image/gif", "image/webp"] %>
+```
+
+### `render_admin_partials`
+
+Renders all registered partials for an injection point.
+
+```erb
+<%= render_admin_partials(:product_form, f: f, product: @product) %>
+<%= render_admin_partials(:order_page_sidebar, order: @order) %>
+```
+
+See [Extending UI](/developer/admin/extending-ui) for more information about injection points.
+
+## Preference Helpers
+
+Helpers for rendering preference fields in settings forms.
+
+### `preference_fields`
+
+Renders all preference fields for an object.
+
+```erb
+<%= preference_fields(@payment_method, f) %>
+<%= preference_fields(@calculator, f, i18n_scope: 'spree.calculator') %>
+```
+
+### `preference_field`
+
+Renders a single preference field.
+
+```erb
+<%= preference_field(@payment_method, f, :api_key) %>
+```
+
+### `preference_field_for`
+
+Renders a form field based on preference type.
+
+```erb
+<%= preference_field_for(f, :preferred_api_key, type: :string) %>
+<%= preference_field_for(f, :preferred_test_mode, type: :boolean) %>
+<%= preference_field_for(f, :preferred_amount, type: :decimal, step: 0.01) %>
+```
+
+| Type | Rendered Field |
+|------|----------------|
+| `:integer` | Number field |
+| `:decimal` | Number field with step |
+| `:boolean` | Checkbox |
+| `:string` | Text field |
+| `:password` | Password field |
+| `:text` | Text area |

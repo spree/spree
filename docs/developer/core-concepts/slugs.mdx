@@ -1,0 +1,851 @@
+---
+title: Slugs
+---
+
+## Overview
+
+Spree uses the [FriendlyId](https://github.com/norman/friendly_id) library to generate SEO-friendly URLs for resources like products, taxons, stores, and more. Instead of accessing resources via database IDs (e.g., `/products/123`), FriendlyId enables clean, readable URLs based on resource names (e.g., `/products/ruby-on-rails-tshirt`).
+
+Slugs are URL-safe strings derived from resource attributes (typically the `name` field) that:
+
+- Improve SEO by including relevant keywords in URLs
+- Enhance user experience with readable, memorable URLs
+- Maintain URL consistency across translations
+- Preserve historical URLs through slug history
+
+Slugs are primarily used in:
+
+- **Storefront**: Product pages, category pages (taxons), blog posts, and other customer-facing pages
+- **API**: Both Platform API and Storefront API accept slugs or IDs interchangeably for resource lookups
+
+<Info>
+Spree integrates FriendlyId with [Mobility](https://github.com/shioyama/mobility) for internationalization and [Paranoia](https://github.com/rubysherpas/paranoia) for soft-delete support, making slugs translation-aware and deletion-safe.
+</Info>
+
+## Core Concepts
+
+### Slug Generation
+
+Slugs are automatically generated from resource attributes using the `to_url` method (provided by the [Stringex](https://github.com/rsl/stringex) gem). This method:
+
+- Converts strings to lowercase
+- Replaces spaces and special characters with hyphens
+- Removes invalid URL characters
+- Ensures URL safety
+
+```ruby
+# Example slug generation
+"Ruby on Rails T-Shirt".to_url  # => "ruby-on-rails-t-shirt"
+"Café & Restaurant".to_url      # => "cafe-and-restaurant"
+```
+
+### Slug Candidates
+
+When FriendlyId generates a slug, it tries multiple "candidate" patterns to ensure uniqueness. If the first candidate is taken, it tries the next pattern, and so on.
+
+[Spree::Base](https://github.com/spree/spree/blob/main/core/app/models/spree/base.rb) provides a default `slug_candidates` method that all models inherit:
+
+```ruby
+def slug_candidates
+  if defined?(deleted_at) && deleted_at.present?
+    [
+      ['deleted', :name],
+      ['deleted', :name, :uuid_for_friendly_id]
+    ]
+  else
+    [
+      [:name],
+      [:name, :uuid_for_friendly_id]
+    ]
+  end
+end
+```
+
+For products, the slug candidates are customized to include SKU:
+
+```ruby
+# Product slug candidates (from core/app/models/spree/product/slugs.rb:66-78)
+[
+  [:name],                          # Try product name first
+  [:name, :sku],                    # If taken, append SKU
+  [:name, :uuid_for_friendly_id]    # If still taken, append UUID
+]
+
+# Example progression:
+# 1st attempt: "ruby-on-rails-tshirt"
+# 2nd attempt: "ruby-on-rails-tshirt-TSHIRT-001" (includes SKU)
+# 3rd attempt: "ruby-on-rails-tshirt-a1b2c3d4-e5f6-..." (includes UUID)
+```
+
+### Reserved Words
+
+FriendlyId prevents using certain reserved words that would conflict with application routes:
+
+```ruby
+# From core/config/initializers/friendly_id.rb
+RESERVED_WORDS = %w(
+  new edit index session login logout users admin
+  stylesheets assets javascripts images
+)
+```
+
+## Models with Slugs
+
+### Product
+
+Products use the [Spree::Product::Slugs](https://github.com/spree/spree/blob/main/core/app/models/spree/product/slugs.rb) concern which provides comprehensive slug handling with translation support.
+
+```ruby
+include Spree::Product::Slugs
+```
+
+**Configuration:**
+- **Slug column**: `slug`
+- **Slug source**: `name`
+- **Modules**: `:history`, `:slugged`, `:scoped`, `:mobility`
+- **Scope**: `spree_base_uniqueness_scope` (typically `store_id`)
+- **Limit**: 255 characters
+
+**Key features:**
+- Translatable slugs (different slug per locale)
+- Slug history preserved when changed
+- Soft-delete slug renaming with `deleted-` prefix
+- Automatic fallback to SKU or UUID for uniqueness
+
+```ruby
+# Creating a product with a slug
+product = Spree::Product.create!(
+  name: 'Ruby on Rails T-Shirt',
+  stores: [store]
+)
+product.slug # => "ruby-on-rails-t-shirt"
+
+# Accessing by slug
+Spree::Product.friendly.find('ruby-on-rails-t-shirt')
+
+# Setting a custom slug
+product.update!(slug: 'custom-rails-shirt')
+
+# Translated slugs
+product.set_friendly_id('t-shirt-ruby-on-rails', :fr)
+product.save!
+```
+
+### Taxon
+
+Taxons use a custom implementation with hierarchical permalink generation. Unlike products, taxons use `permalink` as their slug column.
+
+```ruby
+# core/app/models/spree/taxon.rb:33
+friendly_id :permalink, slug_column: :permalink, use: :history
+```
+
+**Configuration:**
+- **Slug column**: `permalink` (not `slug`)
+- **Modules**: `:history` only
+- **Hierarchical**: Includes parent path
+
+**Key features:**
+- Parent path included in permalink (e.g., `categories/clothing/t-shirts`)
+- Automatically regenerates when parent changes
+- Translation support via custom implementation
+- Helper methods: `slug` and `slug=` alias to `permalink`
+
+```ruby
+# Creating a taxon
+taxonomy = store.taxonomies.first
+root = taxonomy.root
+clothing = root.children.create!(name: 'Clothing', taxonomy: taxonomy)
+tshirts = clothing.children.create!(name: 'T-Shirts', taxonomy: taxonomy)
+
+clothing.permalink  # => "clothing"
+tshirts.permalink   # => "clothing/t-shirts"
+tshirts.slug        # => "clothing/t-shirts" (aliased)
+
+# When parent changes, children update automatically
+clothing.update!(name: 'Apparel')
+tshirts.reload.permalink # => "apparel/t-shirts"
+```
+
+### Store
+
+Stores use `code` as their slug column, and the slug is used for internal routing and multi-store identification.
+
+```ruby
+# core/app/models/spree/store.rb:24
+friendly_id :slug_candidates, use: [:slugged, :history], slug_column: :code
+```
+
+**Configuration:**
+- **Slug column**: `code` (not `slug`)
+- **Modules**: `:slugged`, `:history`
+- **Reserved codes**: Admin, default, app, api, www, cdn, files, assets, checkout, etc.
+
+**Key features:**
+- Code is parameterized from store name
+- Uniqueness enforced across soft-deleted stores
+- History tracking for code changes
+- Custom validation against reserved words
+
+```ruby
+# Creating a store
+store = Spree::Store.create!(
+  name: 'My Awesome Store',
+  url: 'mystore.example.com',
+  default_currency: 'USD',
+  default_country: Spree::Country.find_by(iso: 'US')
+)
+store.code # => "my-awesome-store"
+
+# Code is read-only after creation (doesn't regenerate on name change)
+store.update!(name: 'My Better Store')
+store.code # => "my-awesome-store" (unchanged)
+```
+
+### Other Models
+
+Other Spree models that use FriendlyId:
+
+- **Pages** (`Spree::Page`): Uses `slug` column with history
+- **Posts** (`Spree::Post`): Uses `slug` column with history and translations
+- **Post Categories** (`Spree::PostCategory`): Uses `slug` column with history
+- **Policies** (`Spree::Policy`): Uses `slug` column with history
+
+## Internationalization
+
+Spree integrates FriendlyId with Mobility for multi-language slug support using the `friendly_id-mobility` gem.
+
+### Translatable Models
+
+Products, Posts, and Post Categories support translatable slugs:
+
+```ruby
+# Products include TranslatableResourceSlug concern
+include Spree::TranslatableResourceSlug
+
+# Each translation has its own slug
+product = Spree::Product.create!(
+  name: 'Red Shoes',
+  stores: [store]
+)
+product.slug # => "red-shoes" (default locale)
+
+# Add French translation
+product.translations.create!(
+  locale: :fr,
+  name: 'Chaussures Rouges',
+  slug: nil  # Auto-generated from name
+)
+
+# Access localized slugs
+I18n.with_locale(:fr) do
+  product.slug # => "chaussures-rouges"
+end
+
+# Or use the helper method
+product.localized_slugs_for_store(store)
+# => {
+#   "en" => "red-shoes",
+#   "fr" => "chaussures-rouges"
+# }
+```
+
+### Translation Slug Generation
+
+When creating translations, slugs are automatically generated with this priority:
+
+1. **Custom slug** - If provided, it's normalized (e.g., `'Custom Slug!'` → `'custom-slug'`)
+2. **Translated name** - Generated from the translation's name field
+3. **Fallback to default** - Uses default locale's name if translation name is blank
+
+```ruby
+# Example from core/app/models/spree/product/slugs.rb:29-36
+def generate_slug
+  if name.blank? && slug.blank?
+    translated_model.name.to_url  # Use default locale name
+  elsif slug.blank?
+    name.to_url                   # Use translation name
+  else
+    slug.to_url                   # Use custom slug
+  end
+end
+```
+
+### Translation Uniqueness
+
+Slugs must be unique within the same locale but can be duplicated across locales:
+
+```ruby
+# Same slug in different locales - OK
+product1.translations.create!(locale: :fr, slug: 'tshirt')
+product2.translations.create!(locale: :es, slug: 'tshirt')  # ✅ Allowed
+
+# Duplicate slug in same locale - Auto-fixed with UUID
+product1.translations.create!(locale: :fr, slug: 'tshirt')
+product2.translations.create!(locale: :fr, slug: 'tshirt')  # ❌ "tshirt-<uuid>"
+```
+
+## Slug History
+
+FriendlyId's history feature preserves old slugs when they change, ensuring existing URLs continue to work. This is critical for:
+
+- SEO (avoiding broken links)
+- Bookmarks and external references
+- Graceful URL migration
+
+```ruby
+product = Spree::Product.create!(name: 'Original Name', stores: [store])
+product.slug # => "original-name"
+
+# Change the name (generates new slug)
+product.update!(name: 'New Name', slug: nil)
+product.slug # => "new-name"
+
+# Old slug still works (redirects to new slug)
+Spree::Product.friendly.find('original-name') # => Still finds the product
+
+# View slug history
+product.slugs.pluck(:slug)
+# => ["original-name", "new-name"]
+```
+
+### Slug History Table
+
+FriendlyId maintains a separate `friendly_id_slugs` table:
+
+```ruby
+# Schema
+create_table :friendly_id_slugs do |t|
+  t.string   :slug,           null: false
+  t.integer  :sluggable_id,   null: false
+  t.string   :sluggable_type, limit: 50
+  t.string   :scope
+  t.string   :locale          # Added by Spree for multi-language
+  t.datetime :created_at
+  t.datetime :deleted_at      # Added by Spree for soft-delete
+end
+```
+
+## Soft Deletes and Slugs
+
+Spree extends FriendlyId to work with soft-deleted records (using Paranoia gem). When a resource is deleted:
+
+1. The record is marked as deleted (`deleted_at` timestamp)
+2. The slug is prefixed with `deleted-` and a UUID
+3. Slug history records are also soft-deleted
+4. Original slug becomes available for new records
+
+```ruby
+product = Spree::Product.create!(name: 'Test Product', stores: [store])
+product.slug # => "test-product"
+
+# Soft delete the product
+product.destroy!
+
+# Slug is renamed with deleted prefix
+product.slug # => "deleted-test-product-a1b2c3d4-..."
+
+# Original slug is now available
+new_product = Spree::Product.create!(name: 'Test Product', stores: [store])
+new_product.slug # => "test-product" ✅
+```
+
+### Restoration
+
+When restoring a soft-deleted record, the slug is regenerated:
+
+```ruby
+product.restore(recursive: true)
+product.slug # => "test-product" (original slug restored if available)
+```
+
+### Implementation
+
+```ruby
+# From core/app/models/spree/product/slugs.rb:93-107
+def punch_slugs
+  return if new_record? || frozen?
+
+  self.slug = nil
+  set_slug
+  update_column(:slug, slug)
+
+  new_slug = ->(rec) { "deleted-#{rec.slug}-#{uuid_for_friendly_id}"[..254] }
+
+  # Update both translations and slug history
+  translations.with_deleted.each { |rec| rec.update_columns(slug: new_slug.call(rec)) }
+  slugs.with_deleted.each { |rec| rec.update_column(:slug, new_slug.call(rec)) }
+end
+```
+
+## Working with Slugs
+
+### Finding by Slug
+
+Use the `friendly` scope to find records by slug:
+
+```ruby
+# Find by slug
+product = Spree::Product.friendly.find('ruby-on-rails-tshirt')
+
+# Find by ID still works
+product = Spree::Product.friendly.find(123)
+
+# Find by historical slug (auto-redirects)
+product = Spree::Product.friendly.find('old-slug-name')
+```
+
+### Setting Custom Slugs
+
+You can override auto-generated slugs:
+
+```ruby
+# Auto-generated slug
+product = Spree::Product.create!(
+  name: 'Ruby on Rails T-Shirt',
+  stores: [store]
+)
+product.slug # => "ruby-on-rails-t-shirt"
+
+# Custom slug
+product.update!(slug: 'rails-tshirt')
+product.slug # => "rails-tshirt"
+
+# Reset to auto-generate (set to nil)
+product.update!(slug: nil)
+product.slug # => "ruby-on-rails-t-shirt" (regenerated from name)
+```
+
+### Slug Normalization
+
+Slugs are automatically normalized on validation:
+
+```ruby
+product = Spree::Product.new(
+  name: 'Test',
+  slug: 'Hey//Joe',  # Invalid format
+  stores: [store]
+)
+product.valid?
+product.slug # => "hey-joe" (normalized)
+```
+
+### Checking Slug Availability
+
+```ruby
+# Check if a slug is available
+Spree::Product.slug_available?('my-slug', product.id) # => true/false
+
+# Ensure slug uniqueness manually
+def ensure_unique_slug(candidate)
+  return candidate if Spree::Product.slug_available?(candidate, id)
+
+  "#{candidate}-#{SecureRandom.uuid}"
+end
+```
+
+### Localized Slug Retrieval
+
+For multi-store, multi-language applications:
+
+```ruby
+# Get all localized slugs for a store
+product.localized_slugs_for_store(store)
+# => {
+#   "en" => "ruby-tshirt",
+#   "fr" => "tshirt-ruby",
+#   "es" => "camiseta-ruby"
+# }
+```
+
+## Adding Slugs to Custom Models
+
+To add FriendlyId slugs to your custom models, inherit from `Spree::Base` which provides the base slug functionality.
+
+### Basic Implementation
+
+```ruby
+# app/models/spree/brand.rb
+module Spree
+  class Brand < Spree::Base
+    extend FriendlyId
+    friendly_id :slug_candidates, use: [:slugged, :history]
+
+    validates :name, presence: true
+    validates :slug, presence: true, uniqueness: true
+
+    # slug_candidates is already defined in Spree::Base
+    # No need to override unless you need custom behavior
+  end
+end
+```
+
+<Info>
+Models inheriting from `Spree::Base` automatically get the `slug_candidates` and `uuid_for_friendly_id` methods. You only need to override `slug_candidates` if you need custom slug generation logic (like Product does with SKU).
+</Info>
+
+### With Translation Support
+
+```ruby
+# app/models/spree/brand.rb
+module Spree
+  class Brand < Spree::Base
+    extend FriendlyId
+    include Spree::TranslatableResource
+    include Spree::TranslatableResourceSlug
+
+    translates :name, :slug
+    friendly_id :slug_candidates,
+                use: [:history, :slugged, :scoped, :mobility],
+                scope: spree_base_uniqueness_scope
+
+    validates :name, presence: true
+    validates :slug, presence: true,
+              uniqueness: { scope: spree_base_uniqueness_scope }
+
+    # Inherited slug_candidates from Spree::Base work for most cases
+    # Override only if needed for custom logic
+  end
+end
+```
+
+### With Soft Deletes
+
+```ruby
+# app/models/spree/brand.rb
+module Spree
+  class Brand < Spree::Base
+    extend FriendlyId
+    acts_as_paranoid
+
+    friendly_id :slug_candidates, use: [:slugged, :history]
+
+    validates :name, presence: true
+    validates :slug, presence: true, uniqueness: { conditions: -> { with_deleted } }
+
+    after_destroy :rename_slug_on_delete
+    after_restore :regenerate_slug_on_restore
+
+    private
+
+    def rename_slug_on_delete
+      return if new_record?
+
+      new_slug = "deleted-#{slug}-#{uuid_for_friendly_id}"[..254]
+      update_column(:slug, new_slug)
+    end
+
+    def regenerate_slug_on_restore
+      self.slug = nil
+      save!
+    end
+
+    # slug_candidates inherited from Spree::Base handles deleted records
+  end
+end
+```
+
+## Routing
+
+Spree uses `:id` as the route parameter for all resources, but the `.friendly` finder allows both IDs and slugs to work interchangeably.
+
+### Default Spree Routes
+
+```ruby
+# Spree's default routes use :id parameter
+# GET /products/:id -> handles both numeric IDs and slugs
+
+# Both of these URLs work:
+# /products/123            (finds by ID)
+# /products/ruby-tshirt    (finds by slug)
+```
+
+### Custom Resources with Slugs
+
+```ruby
+# config/routes.rb
+Spree::Core::Engine.routes.draw do
+  resources :brands, only: [:show]
+end
+```
+
+<Warning>
+Always use `:id` as the route parameter, not `:slug`. This allows FriendlyId's `.friendly` finder to accept both numeric IDs and slugs, maintaining backward compatibility.
+</Warning>
+
+### Controller Implementation
+
+```ruby
+# app/controllers/spree/brands_controller.rb
+module Spree
+  class BrandsController < Spree::StoreController
+    def show
+      # Use .friendly to find by both ID and slug
+      @brand = Spree::Brand.friendly.find(params[:id])
+
+      # Optional: Redirect if using old ID or non-canonical slug
+      redirect_if_legacy_path
+    end
+
+    private
+
+    def redirect_if_legacy_path
+      # If an old id or a numeric id was used to find the record,
+      # do a 301 redirect that uses the current friendly id.
+      if params[:id] != @brand.friendly_id
+        redirect_to brand_path(@brand), status: :moved_permanently
+      end
+    end
+  end
+end
+```
+
+### Storefront Examples
+
+```ruby
+# From storefront/app/controllers/spree/products_controller.rb:43-45
+def load_product
+  @product ||= find_with_fallback_default_locale do
+    current_store.products.friendly.find(params[:id])
+  end
+end
+
+# From storefront/app/controllers/spree/taxons_controller.rb:22-24
+def load_taxon
+  @taxon ||= find_with_fallback_default_locale do
+    current_store.taxons.friendly.find(params[:id])
+  end
+end
+```
+
+`find_with_fallback_default_locale` is a helper method that is used to find a resource in the current locale or the default store locale.
+
+### API Routes
+
+Both Storefront API and Platform API accept slugs or IDs:
+
+```ruby
+# From api/app/controllers/spree/api/v2/storefront/products_controller.rb:20
+@resource ||= find_with_fallback_default_locale do
+  scope.includes(variants: variant_includes, master: variant_includes)
+       .friendly.find(params[:id])
+end
+
+# API Examples:
+# GET /api/v2/storefront/products/123
+# GET /api/v2/storefront/products/ruby-on-rails-tshirt
+```
+
+## Best Practices
+
+### 1. Always Use the `friendly` Scope
+
+```ruby
+# ✅ Good - handles both slugs and IDs
+product = Spree::Product.friendly.find(params[:id])
+
+# ❌ Bad - only works with IDs
+product = Spree::Product.find(params[:id])
+```
+
+### 2. Set Slugs to `nil` to Regenerate
+
+```ruby
+# ✅ Good - regenerates slug from name
+product.update!(slug: nil)
+
+# ❌ Bad - keeps old slug even if name changed
+product.update!(name: 'New Name')  # slug unchanged
+```
+
+### 3. Validate Slug Uniqueness with Scope
+
+```ruby
+# Always use the appropriate scope
+validates :slug,
+          presence: true,
+          uniqueness: {
+            scope: spree_base_uniqueness_scope,  # eg [:tenant_id]
+            case_sensitive: true
+          }
+```
+
+### 4. Eager Load Slugs When Needed
+
+```ruby
+# ✅ Good - includes slug history
+products = Spree::Product.includes(:slugs)
+
+# For routing, slug history isn't needed
+products = Spree::Product.all  # Just uses slug column
+```
+
+### 5. Preserve Slug History
+
+```ruby
+# ✅ Good - maintains URL consistency
+product.update!(name: 'New Name', slug: nil)  # Old slug still works
+
+# ❌ Bad - breaks existing URLs
+product.update!(slug: 'completely-different')  # Old slug breaks
+```
+
+### 6. Handle Locale-Specific Slugs
+
+```ruby
+# ✅ Good - provide translations
+product.translations.create!(
+  locale: :fr,
+  name: 'Nom Français',
+  slug: nil  # Auto-generates
+)
+
+# ❌ Bad - reusing English slug
+product.translations.create!(
+  locale: :fr,
+  name: 'Nom Français',
+  slug: product.slug  # Not SEO-friendly for French
+)
+```
+
+### 7. Use Route Helpers with :id Parameter
+
+```ruby
+# ✅ Good - uses Spree routes with :id parameter
+spree.product_path(product)  # Works with both slug and ID
+# Generates: /products/ruby-tshirt (uses slug automatically)
+
+# ✅ Good - explicit slug
+spree.product_path(product.slug)
+# Generates: /products/ruby-tshirt
+
+# ✅ Good - explicit ID
+spree.product_path(product.id)
+# Generates: /products/123
+
+# ❌ Bad - manual URL construction
+"/products/#{product.slug}"  # Doesn't handle edge cases
+
+# ❌ Bad - using :slug as route parameter
+resources :products, param: :slug  # Don't do this - breaks ID lookup
+```
+
+### 8. Test Slug Behavior
+
+```ruby
+# Example spec
+RSpec.describe Spree::Brand, type: :model do
+  describe 'slugs' do
+    it 'generates slug from name' do
+      brand = create(:brand, name: 'Test Name')
+      expect(brand.slug).to eq('test-name')
+    end
+
+    it 'ensures slug uniqueness' do
+      create(:brand, name: 'Test')
+      duplicate = create(:brand, name: 'Test')
+      expect(duplicate.slug).to match(/test-.+/)
+    end
+
+    it 'preserves old slugs in history' do
+      brand = create(:brand, name: 'Original')
+      brand.update!(name: 'Changed', slug: nil)
+
+      expect(brand.slug).to eq('changed')
+      expect(brand.slugs.pluck(:slug)).to include('original')
+    end
+  end
+end
+```
+
+## Troubleshooting
+
+### Slug Not Updating When Name Changes
+
+**Problem**: Changing a product's name doesn't update the slug.
+
+**Solution**: Explicitly set slug to `nil` to trigger regeneration:
+
+```ruby
+product.update!(name: 'New Name', slug: nil)
+```
+
+### Duplicate Slug Errors
+
+**Problem**: Getting uniqueness validation errors on slug.
+
+**Solution**: Check if you're properly scoping uniqueness:
+
+```ruby
+# Ensure correct scope in validation
+validates :slug,
+          uniqueness: {
+            scope: spree_base_uniqueness_scope,
+            case_sensitive: true
+          }
+```
+
+### Slugs Not Working After Restore
+
+**Problem**: Restored products have `deleted-` prefix in slug.
+
+**Solution**: Ensure you have the `after_restore` callback:
+
+```ruby
+after_restore :regenerate_slug
+
+def regenerate_slug
+  self.slug = nil
+  save!
+end
+```
+
+### Translation Slugs Not Generated
+
+**Problem**: Translation slugs are blank or invalid.
+
+**Solution**: Ensure you're setting slugs correctly in Translation model:
+
+```ruby
+# In your Translation class
+before_validation :set_slug
+
+def set_slug
+  self.slug = generate_slug
+end
+
+def generate_slug
+  if name.blank? && slug.blank?
+    translated_model.name.to_url
+  elsif slug.blank?
+    name.to_url
+  else
+    slug.to_url
+  end
+end
+```
+
+## Reference
+
+### Key Files
+
+- `core/app/models/spree/product/slugs.rb` - Product slug implementation
+- `core/app/models/spree/taxon.rb` - Taxon permalink implementation (lines 33, 230-365)
+- `core/app/models/spree/store.rb` - Store code implementation (lines 24, 543-568)
+- `core/app/models/concerns/spree/translatable_resource_slug.rb` - Translation helper
+- `core/config/initializers/friendly_id.rb` - Global FriendlyId config
+- `core/lib/friendly_id/paranoia.rb` - Paranoia integration
+
+### Useful Methods
+
+| Method | Description |
+|--------|-------------|
+| `Model.friendly.find(slug)` | Find by slug or ID |
+| `resource.slug` | Get current slug |
+| `resource.slug = 'custom'` | Set custom slug |
+| `resource.slugs` | Access slug history |
+| `resource.localized_slugs_for_store(store)` | Get all locale slugs |
+| `Model.slug_available?(slug, id)` | Check slug availability |
+| `resource.friendly_id` | Current friendly ID |
+| `resource.set_friendly_id(slug, locale)` | Set slug for locale |
+
