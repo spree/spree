@@ -276,20 +276,8 @@ module Spree
     Rails.application.config.spree.translatable_resources = value
   end
 
-  def self.metafield_types
-    Rails.application.config.spree.metafield_types
-  end
-
-  def self.metafield_types=(value)
-    Rails.application.config.spree.metafield_types = value
-  end
-
-  def self.metafield_enabled_resources
-    Rails.application.config.spree.metafield_enabled_resources
-  end
-
-  def self.metafield_enabled_resources=(value)
-    Rails.application.config.spree.metafield_enabled_resources = value
+  def self.metafields
+    Rails.application.config.spree.metafields
   end
 
   def self.analytics_events

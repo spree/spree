@@ -68,14 +68,14 @@ RSpec.describe 'Spree environment accessors' do
       expect(Spree.translatable_resources).to be_an(Array)
     end
 
-    it 'provides access to metafield_types' do
-      expect(Spree.metafield_types).to eq(Rails.application.config.spree.metafield_types)
-      expect(Spree.metafield_types).to be_an(Array)
+    it 'provides access to metafields.types' do
+      expect(Spree.metafields.types).to eq(Rails.application.config.spree.metafields.types)
+      expect(Spree.metafields.types).to be_an(Array)
     end
 
-    it 'provides access to metafield_enabled_resources' do
-      expect(Spree.metafield_enabled_resources).to eq(Rails.application.config.spree.metafield_enabled_resources)
-      expect(Spree.metafield_enabled_resources).to be_an(Array)
+    it 'provides access to metafields.enabled_resources' do
+      expect(Spree.metafields.enabled_resources).to eq(Rails.application.config.spree.metafields.enabled_resources)
+      expect(Spree.metafields.enabled_resources).to be_an(Array)
     end
 
     it 'provides access to analytics_events' do
