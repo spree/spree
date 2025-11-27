@@ -3,27 +3,25 @@ title: Model
 description: Learn how to create a database model for the Brands feature
 ---
 
-## Step 1: Create Database Migration
+## Step 1: Create the Model and Database Migration
 
-First we need to create a database migration to add the new brand model to the database. Database migrations are used to create or modify the database schema. They are typically created using the `rails g migration` command. Each migration file is named after the change it makes, date and time of creation, and contains the SQL commands to perform the change.
-
-Create a new model migration file by running the following command in your Spree application root directory:
+To create a new model and database migration file, run the following command:
 
 ```bash
-bin/rails g migration CreateSpreeBrands name:string:index --timestamps
+bin/rails g spree:model Spree::Brand name:string:index
 ```
 
-And run the migration:
+This will create a couple of files:
+- `app/models/spree/brand.rb` - the model file
+- `db/migrate/XXXXXXXXXXXXXX_create_spree_brands.rb` - the database migration file
+
+Now run the migration:
 
 ```bash
 bin/rails db:migrate
 ```
 
-Now let's create the model file:
-
-```bash
-bin/rails g model spree/brand --parent Spree::Base
-```
+This will create the table `spree_brands` with the column `name` in the database. The `name` column is indexed for faster lookups. Also the model file `app/models/spree/brand.rb` is created.
 
 ## Step 2: Extend the Model file
 
