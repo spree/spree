@@ -280,20 +280,8 @@ module Spree
     Rails.application.config.spree.metafields
   end
 
-  def self.analytics_events
-    Rails.application.config.spree.analytics_events
-  end
-
-  def self.analytics_events=(value)
-    Rails.application.config.spree.analytics_events = value
-  end
-
-  def self.analytics_event_handlers
-    Rails.application.config.spree.analytics_event_handlers
-  end
-
-  def self.analytics_event_handlers=(value)
-    Rails.application.config.spree.analytics_event_handlers = value
+  def self.analytics
+    Rails.application.config.spree.analytics
   end
 
   def self.integrations
@@ -373,7 +361,6 @@ require 'spree/money'
 require 'spree/permitted_attributes'
 require 'spree/service_module'
 require 'spree/database_type_utilities'
-require 'spree/analytics'
 
 require 'spree/core/partials'
 require 'spree/core/importer'

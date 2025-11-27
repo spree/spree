@@ -25,13 +25,13 @@ module Spree
                                :reports,
                                :translatable_resources,
                                :metafields,
-                               :analytics_events,
-                               :analytics_event_handlers,
+                               :analytics,
                                :integrations)
       SpreeCalculators = Struct.new(:shipping_methods, :tax_rates, :promotion_actions_create_adjustments, :promotion_actions_create_item_adjustments)
       PromoEnvironment = Struct.new(:rules, :actions)
       SpreeValidators = Struct.new(:addresses)
       MetafieldsEnvironment = Struct.new(:types, :enabled_resources)
+      AnalyticsEnvironment = Struct.new(:events, :handlers)
       isolate_namespace Spree
       engine_name 'spree'
 
@@ -70,6 +70,12 @@ module Spree
         app.config.spree.metafields = MetafieldsEnvironment.new
         app.config.spree.metafields.types = []
         app.config.spree.metafields.enabled_resources = []
+      end
+
+      initializer 'spree.register.analytics' do |app|
+        app.config.spree.analytics = AnalyticsEnvironment.new
+        app.config.spree.analytics.events = {}
+        app.config.spree.analytics.handlers = []
       end
 
       # We need to define promotions rules here so extensions and existing apps
@@ -309,7 +315,7 @@ module Spree
           Spree.user_class
         ]
 
-        Rails.application.config.spree.analytics_events = {
+        Rails.application.config.spree.analytics.events = {
           product_viewed: 'Product Viewed',
           product_list_viewed: 'Product List Viewed',
           product_searched: 'Product Searched',
@@ -334,7 +340,7 @@ module Spree
           checkout_step_completed: 'Checkout Step Completed',
           order_completed: 'Order Completed',
         }
-        Rails.application.config.spree.analytics_event_handlers = []
+        Rails.application.config.spree.analytics.handlers = []
 
         Rails.application.config.spree.integrations = []
 
