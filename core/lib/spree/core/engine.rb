@@ -24,14 +24,14 @@ module Spree
                                :page_blocks,
                                :reports,
                                :translatable_resources,
-                               :metafield_types,
-                               :metafield_enabled_resources,
+                               :metafields,
                                :analytics_events,
                                :analytics_event_handlers,
                                :integrations)
       SpreeCalculators = Struct.new(:shipping_methods, :tax_rates, :promotion_actions_create_adjustments, :promotion_actions_create_item_adjustments)
       PromoEnvironment = Struct.new(:rules, :actions)
       SpreeValidators = Struct.new(:addresses)
+      MetafieldsEnvironment = Struct.new(:types, :enabled_resources)
       isolate_namespace Spree
       engine_name 'spree'
 
@@ -64,6 +64,12 @@ module Spree
       end
 
       initializer 'spree.register.adjustable_adjusters' do |app|
+      end
+
+      initializer 'spree.register.metafields' do |app|
+        app.config.spree.metafields = MetafieldsEnvironment.new
+        app.config.spree.metafields.types = []
+        app.config.spree.metafields.enabled_resources = []
       end
 
       # We need to define promotions rules here so extensions and existing apps
@@ -260,7 +266,7 @@ module Spree
           Spree::Policy
         ]
 
-        Rails.application.config.spree.metafield_types = [
+        Rails.application.config.spree.metafields.types = [
           Spree::Metafields::ShortText,
           Spree::Metafields::LongText,
           Spree::Metafields::RichText,
@@ -269,7 +275,7 @@ module Spree
           Spree::Metafields::Json
         ]
 
-        Rails.application.config.spree.metafield_enabled_resources = [
+        Rails.application.config.spree.metafields.enabled_resources = [
           Spree::Address,
           Spree::Asset,
           Spree::CreditCard,
