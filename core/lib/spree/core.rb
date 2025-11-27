@@ -280,22 +280,6 @@ module Spree
     Rails.application.config.spree.metafields
   end
 
-  def self.analytics_events
-    Rails.application.config.spree.analytics_events
-  end
-
-  def self.analytics_events=(value)
-    Rails.application.config.spree.analytics_events = value
-  end
-
-  def self.analytics_event_handlers
-    Rails.application.config.spree.analytics_event_handlers
-  end
-
-  def self.analytics_event_handlers=(value)
-    Rails.application.config.spree.analytics_event_handlers = value
-  end
-
   def self.integrations
     Rails.application.config.spree.integrations
   end
@@ -348,6 +332,29 @@ module Spree
 
     def page_blocks=(value)
       Rails.application.config.spree.page_blocks = value
+    end
+  end
+
+  def self.analytics
+    @analytics ||= AnalyticsConfig.new
+  end
+
+  # Group analytics configuration options together, but still make it backwards compatible.
+  class AnalyticsConfig
+    def events
+      Rails.application.config.spree.analytics_events
+    end
+
+    def events=(value)
+      Rails.application.config.spree.analytics_events = value
+    end
+
+    def handlers
+      Rails.application.config.spree.analytics_event_handlers
+    end
+
+    def handlers=(value)
+      Rails.application.config.spree.analytics_event_handlers = value
     end
   end
 
