@@ -548,9 +548,17 @@ module Spree
       super || variants_including_master.with_deleted.find_by(is_master: true)
     end
 
+    # Returns the brand for the product
+    # If a brand association is defined (e.g., belongs_to :brand), it will be used
+    # Otherwise, falls back to brand_taxon for compatibility
+    # @return [Spree::Brand, Spree::Taxon]
     def brand
-      Spree::Deprecation.warn('Spree::Product#brand is deprecated and will be removed in Spree 6. Please use Spree::Product#brand_taxon instead.')
-      brand_taxon
+      if self.class.reflect_on_association(:brand)
+        super
+      else
+        Spree::Deprecation.warn('Spree::Product#brand is deprecated and will be removed in Spree 6. Please use Spree::Product#brand_taxon instead.')
+        brand_taxon
+      end
     end
 
     # Returns the brand taxon for the product
@@ -572,12 +580,20 @@ module Spree
     # Returns the brand name for the product
     # @return [String]
     def brand_name
-      brand_taxon&.name
+      brand&.name
     end
 
+    # Returns the category for the product
+    # If a category association is defined (e.g., belongs_to :category), it will be used
+    # Otherwise, falls back to category_taxon for compatibility
+    # @return [Spree::Category, Spree::Taxon]
     def category
-      Spree::Deprecation.warn('Spree::Product#category is deprecated and will be removed in Spree 6. Please use Spree::Product#category_taxon instead.')
-      category_taxon
+      if self.class.reflect_on_association(:category)
+        super
+      else
+        Spree::Deprecation.warn('Spree::Product#category is deprecated and will be removed in Spree 6. Please use Spree::Product#category_taxon instead.')
+        category_taxon
+      end
     end
 
     # Returns the category taxon for the product
