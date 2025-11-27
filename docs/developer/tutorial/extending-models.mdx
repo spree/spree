@@ -64,7 +64,7 @@ The key line is `Product.prepend(ProductDecorator)` - this inserts your module a
 First, add a `brand_id` column to the products table:
 
 ```bash
-bin/rails g migration AddBrandIdToSpreeProducts brand_id:integer
+bin/rails g migration AddBrandIdToSpreeProducts brand_id:integer:index
 ```
 
 Edit the migration to add an index (but no foreign key constraint, keeping it optional):
