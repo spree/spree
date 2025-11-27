@@ -13,10 +13,10 @@ In this tutorial, we'll add a logo image upload to our Brand model. Spree uses [
 
 First, let's add a logo attachment to the Brand model:
 
-```ruby app/models/spree/brand.rb
+```ruby app/models/spree/brand.rb {3}
 module Spree
   class Brand < Spree::Base
-    has_one_attached :logo # [!code ++]
+    has_one_attached :logo
 
     # ... existing code ...
   end
@@ -29,7 +29,7 @@ For the admin form to accept the file upload, we need to permit the `logo` attri
 
 Update your brands controller:
 
-```ruby app/controllers/spree/admin/brands_controller.rb
+```ruby app/controllers/spree/admin/brands_controller.rb {10}
 module Spree
   module Admin
     class BrandsController < ResourceController
@@ -38,9 +38,8 @@ module Spree
       def permitted_resource_params
         params.require(:brand).permit(
           :name,
-          :description # [!code --]
-          :description, # [!code ++]
-          :logo # [!code ++]
+          :description,
+          :logo
         )
       end
     end
@@ -59,7 +58,7 @@ Now let's add the file upload field to the brand form. Spree provides a `spree_f
 
 Update your brand form partial:
 
-```erb app/views/spree/admin/brands/_form.html.erb
+```erb app/views/spree/admin/brands/_form.html.erb {11-19}
 <div class="card mb-4">
   <div class="card-header">
     <h5 class="card-title"><%= Spree.t(:general_settings) %></h5>
@@ -70,14 +69,14 @@ Update your brand form partial:
   </div>
 </div>
 
-<div class="card mb-4"> <!-- [!code ++] -->
-  <div class="card-header"> <!-- [!code ++] -->
-    <h5 class="card-title"><%= Spree.t(:logo) %></h5> <!-- [!code ++] -->
-  </div> <!-- [!code ++] -->
-  <div class="card-body"> <!-- [!code ++] -->
-    <%= f.spree_file_field :logo, width: 300, height: 300 %> <!-- [!code ++] -->
-  </div> <!-- [!code ++] -->
-</div> <!-- [!code ++] -->
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title"><%= Spree.t(:logo) %></h5>
+  </div>
+  <div class="card-body">
+    <%= f.spree_file_field :logo, width: 300, height: 300 %>
+  </div>
+</div>
 ```
 
 ### Add cropping functionality
@@ -90,9 +89,9 @@ Let's show a thumbnail of the brand logo in the admin index view.
 
 Update the table header partial:
 
-```erb app/views/spree/admin/brands/_table_header.html.erb
+```erb app/views/spree/admin/brands/_table_header.html.erb {2}
 <tr>
-  <th><%= Spree.t(:logo) %></th> <!-- [!code ++] -->
+  <th><%= Spree.t(:logo) %></th>
   <th><%= Spree.t(:name) %></th>
   <th></th>
 </tr>
@@ -100,11 +99,10 @@ Update the table header partial:
 
 Update the table row partial to display the logo:
 
-```erb app/views/spree/admin/brands/_table_row.html.erb
+```erb app/views/spree/admin/brands/_table_row.html.erb {3-12}
 <tr id="<%= spree_dom_id brand %>" class="cursor-pointer" data-controller="row-link">
   <td data-action="click->row-link#openLink" class="w-70">
-    <%= brand.name %> <!-- [!code --] -->
-    <div class="d-flex align-items-center gap-2"> <!-- [!code ++:10] -->
+    <div class="d-flex align-items-center gap-2">
       <% if brand.logo.attached? %>
         <%= spree_image_tag brand.logo, width: 48, height: 48, class: 'rounded' %>
       <% else %>

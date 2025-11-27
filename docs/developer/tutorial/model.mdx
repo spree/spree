@@ -27,10 +27,9 @@ This will create the table `spree_brands` with the column `name` in the database
 
 Now that the model file is created, let's add some additional functionality to it, starting with validations:
 
-```ruby app/models/spree/brand.rb
+```ruby app/models/spree/brand.rb {3-4}
 module Spree
   class Brand < Spree::Base
-    # [!code ++:2]
     # Validations
     validates :name, presence: true
   end

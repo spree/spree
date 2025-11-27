@@ -44,16 +44,16 @@ This adds:
 
 Add FriendlyId to generate SEO-friendly URLs automatically:
 
-```ruby app/models/spree/brand.rb
+```ruby app/models/spree/brand.rb {3-4,9}
 module Spree
   class Brand < Spree::Base
-    extend FriendlyId # [!code ++:2]
+    extend FriendlyId
     friendly_id :slug_candidates, use: %i[slugged]
 
     # ... other code ...
 
     validates :name, presence: true
-    validates :slug, presence: true, uniqueness: { scope: spree_base_uniqueness_scope } # [!code ++]
+    validates :slug, presence: true, uniqueness: { scope: spree_base_uniqueness_scope }
   end
 end
 ```
@@ -75,28 +75,25 @@ This generates the slug from the name. If the name is taken, it appends a UUID.
 
 Spree provides a reusable SEO partial that handles slug, meta title, and meta description with a live search preview. Update your admin form:
 
-```erb app/views/spree/admin/brands/_form.html.erb
-<div class="row" data-controller="slug-form seo-form"> <!-- [!code ++:2] -->
+```erb app/views/spree/admin/brands/_form.html.erb {1-2,5-12,15,25-32}
+<div class="row" data-controller="slug-form seo-form">
   <div class="col-lg-8">
     <div class="card mb-4">
       <div class="card-body">
-        <%= f.spree_text_field :name, required: true, autofocus: true %> <!-- [!code --] -->
-        <%= f.spree_rich_text_area :description %> <!-- [!code --] -->
-        <!-- [!code ++:8] -->
         <%= f.spree_text_field :name,
             required: true,
-            data:
+            data: {
               seo_form_target: 'sourceTitleInput',
               slug_form_target: 'name',
               action: 'slug-form#updateUrlFromName'
             } %>
         <%= f.spree_rich_text_area :description,
-            data: { seo_form_target: 'sourceDescriptionInput' } %> <!-- [!code ++] -->
+            data: { seo_form_target: 'sourceDescriptionInput' } %>
       </div>
     </div>
   </div>
 
-  <div class="col-lg-4"> <!-- [!code ++] -->
+  <div class="col-lg-4">
     <div class="card mb-4">
       <div class="card-header">
         <h5 class="card-title"><%= Spree.t(:logo) %></h5>
@@ -105,7 +102,7 @@ Spree provides a reusable SEO partial that handles slug, meta title, and meta de
         <%= f.spree_file_field :logo, width: 300, height: 300, crop: true %>
       </div>
     </div>
-    <!-- [!code ++:11] -->
+
     <%= render 'spree/admin/shared/seo',
           f: f,
           title: @brand.name,
@@ -128,13 +125,14 @@ The `seo-form` Stimulus controller syncs the preview with your form inputs in re
 
 Don't forget to permit the SEO attributes in your controller:
 
-```ruby app/controllers/spree/admin/brands_controller.rb
+```ruby app/controllers/spree/admin/brands_controller.rb {6-8}
 def permitted_resource_params
   params.require(:brand).permit(
-    :name, 
-    :description, 
-    :slug, # [!code ++:3]
-    :meta_title, 
+    :name,
+    :description,
+    :logo,
+    :slug,
+    :meta_title,
     :meta_description)
 end
 ```

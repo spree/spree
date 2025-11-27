@@ -114,13 +114,11 @@ end
 
 Update the decorator to add the `belongs_to` association:
 
-```ruby app/models/spree/product_decorator.rb
+```ruby app/models/spree/product_decorator.rb {4}
 module Spree
   module ProductDecorator
     def self.prepended(base)
-      # [!code --]
-      # Class-level configurations go here
-      base.belongs_to :brand, class_name: 'Spree::Brand', optional: true # [!code ++]
+      base.belongs_to :brand, class_name: 'Spree::Brand', optional: true
     end
   end
 
@@ -138,12 +136,12 @@ end
 
 Now update your Brand model to define the reverse association:
 
-```ruby app/models/spree/brand.rb
+```ruby app/models/spree/brand.rb {5}
 module Spree
   class Brand < Spree::Base
     # ... existing code ...
 
-    has_many :products, class_name: 'Spree::Product', dependent: :nullify # [!code ++]
+    has_many :products, class_name: 'Spree::Product', dependent: :nullify
 
     # ... rest of your model ...
   end
@@ -160,10 +158,10 @@ For the admin form to save the brand association, we need to permit the `brand_i
 
 Add to your Spree initializer:
 
-```ruby config/initializers/spree.rb
+```ruby config/initializers/spree.rb {3}
 # .. other code ..
 
-Spree::PermittedAttributes.product_attributes << :brand_id # [!code ++]
+Spree::PermittedAttributes.product_attributes << :brand_id
 ```
 
 ## Step 6: Add Brand Selector to Product Admin Form
