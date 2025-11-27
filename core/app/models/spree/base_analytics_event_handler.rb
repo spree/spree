@@ -35,7 +35,7 @@ module Spree
     # @param event_name [String] eg. 'order_completed'
     # @return [String] eg. 'Order Completed'
     def event_human_name(event_name)
-      Analytics.events[event_name.to_sym]
+      Spree.analytics.events[event_name.to_sym]
     end
 
     protected
