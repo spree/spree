@@ -75,6 +75,10 @@ All navigation items support the following options:
   Creates a section divider with the given label instead of a clickable link.
 </ParamField>
 
+<ParamField path="parent" type="Symbol">
+  The key of an existing navigation item to nest this item under. This is the simplest way to add items to existing submenus.
+</ParamField>
+
 ## Navigation Contexts
 
 The navigation system supports multiple contexts. Spree provides predefined contexts for common use cases, and you can register custom contexts for your specific needs.
@@ -179,7 +183,7 @@ Spree.admin.navigation.context?(:brand_tabs)
 
 ## Creating Submenus
 
-Add child items using a block:
+Add a parent item, then add child items using the `parent` option:
 
 ```ruby config/initializers/spree.rb
 sidebar_nav.add :brands,
@@ -187,23 +191,27 @@ sidebar_nav.add :brands,
   url: :admin_brands_path,
   icon: 'award',
   position: 35,
-  active: -> { %w[brands brand_categories].include?(controller_name) },
-  if: -> { can?(:manage, Spree::Brand) } do |brands|
+  if: -> { can?(:manage, Spree::Brand) }
 
-  brands.add :all_brands,
-    label: 'All Brands',
-    url: :admin_brands_path,
-    position: 10,
-    active: -> { controller_name == 'brands' }
+sidebar_nav.add :all_brands,
+  label: 'All Brands',
+  url: :admin_brands_path,
+  position: 10,
+  parent: :brands,
+  active: -> { controller_name == 'brands' }
 
-  brands.add :brand_categories,
-    label: 'Brand Categories',
-    url: :admin_brand_categories_path,
-    position: 20,
-    active: -> { controller_name == 'brand_categories' },
-    if: -> { can?(:manage, Spree::BrandCategory) }
-end
+sidebar_nav.add :brand_categories,
+  label: 'Brand Categories',
+  url: :admin_brand_categories_path,
+  position: 20,
+  parent: :brands,
+  active: -> { controller_name == 'brand_categories' },
+  if: -> { can?(:manage, Spree::BrandCategory) }
 ```
+
+<Info>
+Parent items are automatically marked as active when any of their children are active. You don't need to manually define the `active` option for parent items.
+</Info>
 
 ## Modifying Existing Navigation
 
@@ -216,17 +224,16 @@ products_nav = sidebar_nav.find(:products)
 
 ### Adding to Existing Submenus
 
-```ruby
-products_nav = sidebar_nav.find(:products)
+Use the `parent` option to add an item to an existing submenu:
 
-if products_nav
-  products_nav.add :brands,
-    label: :brands,
-    url: :admin_brands_path,
-    position: 50,
-    active: -> { controller_name == 'brands' },
-    if: -> { can?(:manage, Spree::Brand) }
-end
+```ruby
+sidebar_nav.add :brands,
+  label: :brands,
+  url: :admin_brands_path,
+  position: 50,
+  parent: :products,
+  active: -> { controller_name == 'brands' },
+  if: -> { can?(:manage, Spree::Brand) }
 ```
 
 ### Removing Navigation Items
