@@ -593,13 +593,13 @@ end
 Register it in an initializer:
 
 ```ruby config/initializers/spree.rb
-Rails.application.config.spree.metafield_types << 'Spree::Metafields::Url'
+Spree.metafields.types << 'Spree::Metafields::Url'
 ```
 
 ### Enabling Metafields for Custom Resources
 
 ```ruby config/initializers/spree.rb
-Rails.application.config.spree.metafield_enabled_resources << 'Spree::Brand'
+Spree.metafields.enabled_resources << 'Spree::Brand'
 ```
 
 ```ruby app/models/spree/brand.rb
