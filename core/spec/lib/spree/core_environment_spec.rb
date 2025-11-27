@@ -78,14 +78,14 @@ RSpec.describe 'Spree environment accessors' do
       expect(Spree.metafields.enabled_resources).to be_an(Array)
     end
 
-    it 'provides access to analytics.events' do
-      expect(Spree.analytics.events).to eq(Rails.application.config.spree.analytics.events)
-      expect(Spree.analytics.events).to be_a(Hash)
+    it 'provides access to analytics_events' do
+      expect(Spree.analytics_events).to eq(Rails.application.config.spree.analytics_events)
+      expect(Spree.analytics_events).to be_a(Hash)
     end
 
-    it 'provides access to analytics.handlers' do
-      expect(Spree.analytics.handlers).to eq(Rails.application.config.spree.analytics.handlers)
-      expect(Spree.analytics.handlers).to be_an(Array)
+    it 'provides access to analytics_event_handlers' do
+      expect(Spree.analytics_event_handlers).to eq(Rails.application.config.spree.analytics_event_handlers)
+      expect(Spree.analytics_event_handlers).to be_an(Array)
     end
 
     it 'provides access to integrations' do
