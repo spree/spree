@@ -23,7 +23,7 @@
     ·
     <a href="https://demo.spreecommerce.org">Demo</a>
     ·
-    <a href="https://spreecommerce.org/pricing/">Pricing</a>
+    <a href="https://spreecommerce.org/enterprise/">Enterprise</a>
     ·
     <a href="https://github.com/spree/spree/milestones?direction=asc&sort=due_date&state=open">Roadmap</a>
   </p>
@@ -42,7 +42,14 @@
 
 Visit the [Quickstart Guide](https://spreecommerce.org/docs/developer/getting-started/quickstart) to set up Spree in 5 minutes.
 
-Make sure to check out the latest [Spree 5 release announcement](https://github.com/spree/spree#spree-5-announcement--demo) and demo.
+Make sure to check out [Spree 5 release announcement](https://github.com/spree/spree#spree-5-announcement--demo) and the latest [Spree 5.2 release](https://github.com/orgs/spree/discussions/13318), including:
+* [New Spree Installer CLI](https://spreecommerce.org/docs/developer/getting-started/quickstart) — spin up a project in seconds, with recommended defaults.
+* Spree Generators — instantly scaffold models, admin dashboard components, and boilerplate.
+* [End-to-End Spree Tutorial](https://spreecommerce.org/docs/developer/tutorial/introduction) — taking beginners from zero to production-ready Spree developers.
+* [Storefront on Tailwind 4](https://spreecommerce.org/docs/developer/upgrades/5.1-to-5.2#update-storefront-to-tailwind-v4-or-stay-on-v3) — build modern, responsive storefronts using the latest Tailwind CSS.
+* [Admin SDK Enhancements](https://spreecommerce.org/docs/developer/admin/components#admin-components) — improved [Navigation](https://spreecommerce.org/docs/developer/admin/navigation) system, [Component](https://spreecommerce.org/docs/developer/admin/components) library, and [Form Builder](https://spreecommerce.org/docs/developer/admin/form-builder) for rapid admin UI development.
+* [Spree Dev Tools Gem](https://spreecommerce.org/docs/developer/tutorial/testing) — write automated tests faster with opinions, helpers, and best practices built in.
+* [AI Tool Integrations](https://spreecommerce.org/docs/developer/contributing/developing-spree#using-ai-tools-for-development) — import Spree-optimized Cursor/Claude rules to streamline agentic coding workflows.
 
 If you like what you see, consider giving Spree a GitHub star :star:
 
