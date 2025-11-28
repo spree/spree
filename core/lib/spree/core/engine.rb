@@ -23,6 +23,7 @@ module Spree
                                :page_sections,
                                :page_blocks,
                                :reports,
+                               :report_attributes,
                                :translatable_resources,
                                :metafield_types,
                                :metafield_enabled_resources,
@@ -249,6 +250,36 @@ module Spree
           Spree::Reports::ProductsPerformance,
           Spree::Reports::SalesTotal
         ]
+
+        Rails.application.config.spree.report_attributes = {
+          products_performance: [
+            { name: :sku, type: :string },
+            { name: :name, type: :string },
+            { name: :vendor, type: :string },
+            { name: :brand, type: :string },
+            { name: :category_lvl0, type: :string },
+            { name: :category_lvl1, type: :string },
+            { name: :category_lvl2, type: :string },
+            { name: :price, type: :string },
+            { name: :weeks_online, type: :integer },
+            { name: :pre_tax_amount, type: :string },
+            { name: :tax_total, type: :string },
+            { name: :quantity, type: :integer },
+            { name: :promo_total, type: :string },
+            { name: :total, type: :string }
+          ],
+          sales_total: [
+            { name: :date, type: :string },
+            { name: :order, type: :string },
+            { name: :product, type: :string },
+            { name: :quantity, type: :integer },
+            { name: :pre_tax_amount, type: :decimal },
+            { name: :promo_total, type: :decimal },
+            { name: :shipment_total, type: :decimal },
+            { name: :tax_total, type: :decimal },
+            { name: :total, type: :decimal }
+          ]
+        }
 
         Rails.application.config.spree.translatable_resources = [
           Spree::OptionType,
