@@ -23,5 +23,12 @@ module Spree
         send(attribute)
       end
     end
+
+    def self.add_report_attributes(report_type)
+      report_attributes = Spree.report_attributes || {}
+      report_attributes.fetch(report_type.to_sym, []).each do |attribute|
+        attribute attribute[:name], attribute[:type]
+      end
+    end
   end
 end

@@ -268,6 +268,14 @@ module Spree
     Rails.application.config.spree.reports = value
   end
 
+  def self.report_attributes
+    Rails.application.config.spree.report_attributes
+  end
+
+  def self.report_attributes=(value)
+    Rails.application.config.spree.report_attributes = value
+  end
+
   def self.translatable_resources
     Rails.application.config.spree.translatable_resources
   end

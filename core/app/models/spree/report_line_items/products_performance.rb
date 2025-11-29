@@ -1,20 +1,7 @@
 module Spree
   module ReportLineItems
     class ProductsPerformance < Spree::ReportLineItem
-      attribute :sku, :string
-      attribute :name, :string
-      attribute :vendor, :string
-      attribute :brand, :string
-      attribute :category_lvl0, :string
-      attribute :category_lvl1, :string
-      attribute :category_lvl2, :string
-      attribute :price, :string
-      attribute :weeks_online, :integer
-      attribute :pre_tax_amount, :string
-      attribute :tax_total, :string
-      attribute :quantity, :integer
-      attribute :promo_total, :string
-      attribute :total, :string
+      add_report_attributes :products_performance
 
       delegate :sku, :name, to: :record
 
