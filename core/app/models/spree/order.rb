@@ -137,6 +137,10 @@ module Spree
 
     has_many :order_promotions, class_name: 'Spree::OrderPromotion'
     has_many :promotions, through: :order_promotions, class_name: 'Spree::Promotion'
+    has_many :create_line_items_promotions, lambda {
+      joins(:promotion_actions).
+        where("#{Spree::PromotionAction.table_name}.type" => Spree::Promotion::Actions::CreateLineItems.to_s)
+    }, class_name: 'Spree::Promotion', through: :order_promotions, source: :promotion
 
     has_many :shipments, class_name: 'Spree::Shipment', dependent: :destroy, inverse_of: :order do
       def states
@@ -826,9 +830,7 @@ module Spree
     end
 
     def valid_coupon_promotions
-      promotions.
-        where(id: valid_promotion_ids).
-        coupons
+      promotions.coupons.where(id: valid_promotion_ids + create_line_items_promotions.coupons.ids)
     end
 
     # Returns item and whole order discount amount for Order
