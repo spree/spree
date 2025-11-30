@@ -504,7 +504,7 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
 
       before do
         # Add a non-default locale to the store
-        store.update(supported_locales: 'en,da')
+        allow(store).to receive(:supported_locales).and_return('en,da')
       end
 
       it 'finds product by slug using locale fallback when viewing in non-default locale' do
