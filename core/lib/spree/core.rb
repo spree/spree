@@ -358,6 +358,22 @@ module Spree
     end
   end
 
+  # Permission configuration accessor for managing role-to-permission-set mappings.
+  #
+  # @example Assigning permission sets to a role
+  #   Spree.permissions.assign(:customer_service, [
+  #     Spree::PermissionSets::OrderDisplay,
+  #     Spree::PermissionSets::UserManagement
+  #   ])
+  #
+  # @example Clearing permission sets from a role
+  #   Spree.permissions.clear(:customer_service)
+  #
+  # @return [Spree::PermissionConfiguration] the permission configuration instance
+  def self.permissions
+    @permissions ||= PermissionConfiguration.new
+  end
+
   module Core
     autoload :ProductFilters, 'spree/core/product_filters'
     autoload :TokenGenerator, 'spree/core/token_generator'
@@ -400,3 +416,4 @@ require 'spree/core/preferences/scoped_store'
 require 'spree/core/preferences/runtime_configuration'
 
 require 'spree/core/webhooks'
+require 'spree/core/permission_configuration'

@@ -341,6 +341,16 @@ module Spree
         Rails.application.config.spree.validators.addresses = [
           Spree::Addresses::PhoneValidator
         ]
+
+        # Setup default permission sets for roles
+        # Users can override these in their application initializer
+        Spree.permissions.assign(:default, [
+          Spree::PermissionSets::DefaultCustomer
+        ])
+
+        Spree.permissions.assign(:admin, [
+          Spree::PermissionSets::SuperUser
+        ])
       end
 
       initializer 'spree.promo.register.promotions.actions' do |app|
