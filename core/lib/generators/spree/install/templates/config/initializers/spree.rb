@@ -95,6 +95,31 @@ Rails.application.config.after_initialize do
 
   # Admin partials
   # Spree.admin.partials.product_form << 'spree/admin/products/custom_section'
+
+  # Role-based permissions
+  # Configure which permission sets are assigned to each role
+  # More on permission sets: https://spreecommerce.org/docs/developer/customization/permissions
+  Spree.permissions.assign(:default, [Spree::PermissionSets::DefaultCustomer])
+  Spree.permissions.assign(:admin, [Spree::PermissionSets::SuperUser])
+
+  # Example: Create a custom role with specific permissions
+  # Spree.permissions.assign(:customer_service, [
+  #   Spree::PermissionSets::DashboardDisplay,
+  #   Spree::PermissionSets::OrderManagement,
+  #   Spree::PermissionSets::UserDisplay
+  # ])
+  #
+  # Available permission sets:
+  # - Spree::PermissionSets::SuperUser (full admin access)
+  # - Spree::PermissionSets::DefaultCustomer (storefront access)
+  # - Spree::PermissionSets::DashboardDisplay (view admin dashboard)
+  # - Spree::PermissionSets::OrderDisplay / OrderManagement
+  # - Spree::PermissionSets::ProductDisplay / ProductManagement
+  # - Spree::PermissionSets::UserDisplay / UserManagement
+  # - Spree::PermissionSets::StockDisplay / StockManagement
+  # - Spree::PermissionSets::PromotionManagement
+  # - Spree::PermissionSets::ConfigurationManagement
+  # - Spree::PermissionSets::RoleManagement
 end
 
 Spree.user_class = <%= (options[:user_class].blank? ? 'Spree::LegacyUser' : options[:user_class]).inspect %>
