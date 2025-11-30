@@ -498,6 +498,35 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
         expect(response).to render_template(:edit)
       end
     end
+
+    context 'with multi-locale' do
+      let!(:product) { create(:product, name: 'Test Product', slug: 'test-product', stores: [store], status: 'active') }
+
+      before do
+        # Add a non-default locale to the store
+        store.update(supported_locales: 'en,da')
+      end
+
+      it 'finds product by slug using locale fallback when viewing in non-default locale' do
+        # Switch to non-default locale (Danish)
+        I18n.with_locale(:da) do
+          # Product only has English slug, should fall back to default locale
+          get :edit, params: { id: 'test-product' }
+
+          expect(response).to render_template(:edit)
+          expect(assigns(:product)).to eq(product)
+        end
+      end
+
+      it 'finds product by ID in any locale' do
+        I18n.with_locale(:da) do
+          get :edit, params: { id: product.id }
+
+          expect(response).to render_template(:edit)
+          expect(assigns(:product)).to eq(product)
+        end
+      end
+    end
   end
 
   describe 'PUT #update' do
