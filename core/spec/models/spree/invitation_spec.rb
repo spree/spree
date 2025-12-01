@@ -131,4 +131,28 @@ RSpec.describe Spree::Invitation, type: :model do
       invitation.resend!
     end
   end
+
+  describe 'custom events' do
+    describe 'invitation.accept' do
+      it 'publishes invitation.accept event when accepted' do
+        invitation.invitee = create(:admin_user, :without_admin_role)
+
+        Spree::Events.activate!
+
+        received_event = nil
+        subscriber = Spree::Events.subscribe('invitation.accept') do |event|
+          received_event = event
+        end
+
+        invitation.accept
+
+        expect(received_event).to be_present
+        expect(received_event.metadata['model_class']).to eq('Spree::Invitation')
+        expect(received_event.metadata['model_id']).to eq(invitation.id.to_s)
+
+        Spree::Events.unsubscribe('invitation.accept', subscriber)
+        Spree::Events.reset!
+      end
+    end
+  end
 end

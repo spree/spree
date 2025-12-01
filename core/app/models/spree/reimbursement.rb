@@ -76,6 +76,7 @@ module Spree
       event :reimbursed do
         transition to: :reimbursed, from: [:pending, :errored]
       end
+      after_transition to: :reimbursed, do: :send_reimbursement_reimbursed_event
     end
 
     class << self
@@ -137,6 +138,10 @@ module Spree
     end
 
     private
+
+    def send_reimbursement_reimbursed_event
+      publish_event('reimbursement.reimbursed')
+    end
 
     def validate_return_items_belong_to_same_order
       if return_items.any? { |ri| ri.inventory_unit.order_id != order_id }

@@ -192,4 +192,52 @@ RSpec.describe Spree::GiftCard, type: :model do
     end
   end
   end
+
+  describe 'custom events' do
+    let(:store) { Spree::Store.default }
+
+    describe 'gift_card.redeem' do
+      let(:gift_card) { create(:gift_card, state: :active, amount: 100, amount_used: 0, store: store) }
+
+      it 'publishes gift_card.redeem event when fully redeemed' do
+        Spree::Events.activate!
+
+        received_event = nil
+        subscriber = Spree::Events.subscribe('gift_card.redeem') do |event|
+          received_event = event
+        end
+
+        gift_card.redeem!
+
+        expect(received_event).to be_present
+        expect(received_event.metadata['model_class']).to eq('Spree::GiftCard')
+        expect(received_event.metadata['model_id']).to eq(gift_card.id.to_s)
+
+        Spree::Events.unsubscribe('gift_card.redeem', subscriber)
+        Spree::Events.reset!
+      end
+    end
+
+    describe 'gift_card.partial_redeem' do
+      let(:gift_card) { create(:gift_card, state: :active, amount: 100, amount_used: 0, store: store) }
+
+      it 'publishes gift_card.partial_redeem event when partially redeemed' do
+        Spree::Events.activate!
+
+        received_event = nil
+        subscriber = Spree::Events.subscribe('gift_card.partial_redeem') do |event|
+          received_event = event
+        end
+
+        gift_card.partial_redeem!
+
+        expect(received_event).to be_present
+        expect(received_event.metadata['model_class']).to eq('Spree::GiftCard')
+        expect(received_event.metadata['model_id']).to eq(gift_card.id.to_s)
+
+        Spree::Events.unsubscribe('gift_card.partial_redeem', subscriber)
+        Spree::Events.reset!
+      end
+    end
+  end
 end
