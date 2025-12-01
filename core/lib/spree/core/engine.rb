@@ -305,6 +305,11 @@ module Spree
         Rails.application.config.spree.eventable_models.each do |model|
           model.publishes_lifecycle_events if model.respond_to?(:publishes_lifecycle_events)
         end
+
+        # Attach event log subscriber if enabled
+        if Spree::Config.events_log_enabled
+          Spree::EventLogSubscriber.attach_to_notifications
+        end
       end
 
       initializer 'spree.promo.register.promotions.actions' do |app|
