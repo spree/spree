@@ -3,7 +3,7 @@ require 'spec_helper'
 RSpec.describe Spree::InvitationMailer, type: :mailer do
   let(:store) { @default_store }
   let(:inviter) { create(:admin_user) }
-  let(:invitation) { create(:invitation, email: 'invited@example.com', inviter: inviter, resource: store) }
+  let(:invitation) { create(:invitation, email: 'invited@example.com', inviter: inviter, resource: store, skip_email: true) }
   let(:spree) { Spree::Core::Engine.routes.url_helpers }
 
   before do
@@ -43,7 +43,7 @@ RSpec.describe Spree::InvitationMailer, type: :mailer do
     let(:invitee) { create(:admin_user, first_name: 'John', last_name: 'Doe') }
 
     before do
-      allow(invitation).to receive(:invitee).and_return(invitee)
+      invitation.update!(invitee: invitee)
     end
 
     it 'renders the subject' do

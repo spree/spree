@@ -81,7 +81,7 @@ module Spree
     def resend!
       return if expired? || deleted? || accepted?
 
-      send_invitation_email
+      publish_event('invitation.resend')
     end
 
     private
@@ -90,7 +90,6 @@ module Spree
     def after_accept
       create_role_user
       set_accepted_at
-      send_acceptance_notification
     end
 
     def send_invitation_accepted_event
@@ -98,11 +97,13 @@ module Spree
     end
 
     def send_invitation_email
-      Spree::InvitationMailer.invitation_email(self).deliver_later
+      publish_event('invitation.create')
     end
 
+    # This method is kept for backwards compatibility.
+    # Email sending is now handled by the InvitationEmailSubscriber via the 'invitation.accept' event.
     def send_acceptance_notification
-      Spree::InvitationMailer.invitation_accepted(self).deliver_later
+      # no-op - email is sent via event subscriber
     end
 
     def set_defaults
