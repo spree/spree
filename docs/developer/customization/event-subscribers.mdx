@@ -1,0 +1,390 @@
+---
+title: Event Subscribers
+description: Learn how to listen and react to events in Spree using the subscriber pattern.
+---
+
+## Overview
+
+Spree includes a powerful event system that allows you to react to various actions happening in your store. When something happens (an order is completed, a product is created, etc.), Spree publishes an event that your code can subscribe to and handle.
+
+This pattern enables loose coupling between components and makes it easy to:
+
+- Send email notifications when orders are placed
+- Sync data with external services when products change
+- Log audit trails for compliance
+- Trigger webhooks to notify third-party systems
+- Update caches when inventory changes
+
+## How Events Work
+
+Spree's event system is built on top of `ActiveSupport::Notifications` but provides a cleaner, more Rails-like API through:
+
+1. **`Spree::Events`** - The main module for publishing and subscribing to events
+2. **`Spree::Subscriber`** - Base class for creating event subscribers
+3. **`Spree::Publishable`** - Concern that enables models to publish events
+
+When an event is published, all matching subscribers are notified. By default, subscribers run asynchronously via ActiveJob to avoid blocking the main request.
+
+## Creating a Subscriber
+
+Create a subscriber class in `app/subscribers/` that inherits from `Spree::Subscriber`:
+
+```ruby app/subscribers/my_app/order_completed_subscriber.rb
+module MyApp
+  class OrderCompletedSubscriber < Spree::Subscriber
+    subscribes_to 'order.complete'
+
+    def handle(event)
+      order_id = event.payload['id']
+      order = Spree::Order.find_by(id: order_id)
+      return unless order
+
+      # Your custom logic here
+      ExternalService.notify_order_placed(order)
+    end
+  end
+end
+```
+
+### Subscriber DSL
+
+The `Spree::Subscriber` class provides a clean DSL for declaring subscriptions:
+
+```ruby
+class MySubscriber < Spree::Subscriber
+  # Subscribe to a single event
+  subscribes_to 'order.complete'
+
+  # Subscribe to multiple events
+  subscribes_to 'order.complete', 'order.cancel', 'order.resume'
+
+  # Subscribe to all events matching a pattern
+  subscribes_to 'order.*'  # All order events
+  subscribes_to '*.*'      # All events (use sparingly!)
+
+  # Run synchronously instead of via ActiveJob
+  subscribes_to 'order.complete', async: false
+end
+```
+
+### Handling Multiple Events
+
+When subscribing to multiple events, use the `on` DSL to route events to specific methods:
+
+```ruby app/subscribers/my_app/order_audit_subscriber.rb
+module MyApp
+  class OrderAuditSubscriber < Spree::Subscriber
+    subscribes_to 'order.complete', 'order.cancel', 'order.resume'
+
+    on 'order.complete', :log_order_completed
+    on 'order.cancel', :log_order_canceled
+    on 'order.resume', :log_order_resumed
+
+    private
+
+    def log_order_completed(event)
+      create_audit_log(event, 'completed')
+    end
+
+    def log_order_canceled(event)
+      create_audit_log(event, 'canceled')
+    end
+
+    def log_order_resumed(event)
+      create_audit_log(event, 'resumed')
+    end
+
+    def create_audit_log(event, action)
+      AuditLog.create!(
+        resource_type: 'Spree::Order',
+        resource_id: event.payload['id'],
+        action: action,
+        occurred_at: event.timestamp
+      )
+    end
+  end
+end
+```
+
+## Working with Events
+
+### Event Object
+
+When your subscriber receives an event, you get a `Spree::Event` object with:
+
+```ruby
+def handle(event)
+  event.name      # => "order.complete"
+  event.payload   # => { "id" => 1, "number" => "R123456", ... }
+  event.metadata  # => { "model_class" => "Spree::Order", "model_id" => 1 }
+  event.timestamp # => Time when event was published
+end
+```
+
+### Finding the Record
+
+The payload contains serialized attributes, not the actual record. To get the record:
+
+```ruby
+def handle(event)
+  model_class = event.metadata['model_class'].constantize
+  record = model_class.find_by(id: event.metadata['model_id'])
+  return unless record
+
+  # Work with the record
+end
+```
+
+<Warning>
+For destroy events, the record no longer exists in the database. Use the payload data instead, or capture what you need before deletion.
+</Warning>
+
+## Available Events
+
+### Lifecycle Events
+
+Models that include `Spree::Publishable` and call `publishes_lifecycle_events` automatically publish:
+
+| Event Pattern | Description |
+|---------------|-------------|
+| `{model}.create` | Record was created |
+| `{model}.update` | Record was updated |
+| `{model}.destroy` | Record was deleted |
+
+For example, `Spree::Price` publishes `price.create`, `price.update`, and `price.destroy`.
+
+Models with lifecycle events enabled include: `Order`, `Payment`, `Price`, `Shipment`, `Variant`, `LineItem`, `StockItem`, and many others.
+
+### Order Events
+
+| Event | Description |
+|-------|-------------|
+| `order.create` | Order was created |
+| `order.update` | Order was updated |
+| `order.complete` | Order checkout completed |
+| `order.cancel` | Order was canceled |
+| `order.resume` | Canceled order was resumed |
+
+### Shipment Events
+
+| Event | Description |
+|-------|-------------|
+| `shipment.create` | Shipment was created |
+| `shipment.update` | Shipment was updated |
+| `shipment.ship` | Shipment was shipped |
+
+### Payment Events
+
+| Event | Description |
+|-------|-------------|
+| `payment.create` | Payment was created |
+| `payment.update` | Payment was updated |
+
+### Price Events
+
+| Event | Description |
+|-------|-------------|
+| `price.create` | Price was created |
+| `price.update` | Price was updated |
+| `price.destroy` | Price was deleted |
+
+### Product Events
+
+| Event | Description |
+|-------|-------------|
+| `product.activate` | Product status changed to active |
+| `product.archive` | Product status changed to archived |
+
+## Publishing Custom Events
+
+You can publish custom events from anywhere in your application:
+
+### From a Model
+
+Models including `Spree::Publishable` can use `publish_event`:
+
+```ruby
+class Spree::Order < Spree.base_class
+  def mark_as_fraudulent!
+    update!(fraudulent: true)
+    publish_event('order.marked_fraudulent')
+  end
+end
+```
+
+### From Anywhere
+
+Use `Spree::Events.publish` directly:
+
+```ruby
+Spree::Events.publish(
+  'inventory.low_stock',
+  { variant_id: variant.id, quantity: variant.total_on_hand },
+  { model_class: 'Spree::Variant', model_id: variant.id }
+)
+```
+
+## Registering Subscribers
+
+Subscribers in `app/subscribers/` are automatically registered during Rails initialization.
+
+For subscribers in other locations, register them manually in an initializer:
+
+```ruby config/initializers/event_subscribers.rb
+Rails.application.config.after_initialize do
+  MyApp::CustomSubscriber.register!
+end
+```
+
+To unregister a subscriber:
+
+```ruby
+MyApp::CustomSubscriber.unregister!
+```
+
+## Synchronous vs Asynchronous
+
+By default, subscribers run asynchronously via `Spree::Events::SubscriberJob`. This prevents slow subscriber code from blocking HTTP requests.
+
+For critical operations that must complete before the request finishes, use synchronous mode:
+
+```ruby
+class CriticalOrderHandler < Spree::Subscriber
+  subscribes_to 'order.complete', async: false
+
+  def handle(event)
+    # This runs immediately, blocking the request
+  end
+end
+```
+
+<Warning>
+Use synchronous subscribers sparingly. They can significantly slow down your application if the handler code is slow or makes external API calls.
+</Warning>
+
+## Temporarily Disabling Events
+
+You can disable event publishing temporarily:
+
+```ruby
+Spree::Events.disable do
+  # Events published in this block won't trigger subscribers
+  order.complete!
+end
+```
+
+This is useful for:
+- Data migrations where you don't want to trigger side effects
+- Test setup where subscribers would interfere
+- Bulk operations where individual events would be too noisy
+
+## Testing Subscribers
+
+### Testing Event Handling
+
+```ruby spec/subscribers/my_app/order_completed_subscriber_spec.rb
+require 'spec_helper'
+
+RSpec.describe MyApp::OrderCompletedSubscriber do
+  let(:order) { create(:completed_order_with_totals) }
+  let(:event) do
+    Spree::Event.new(
+      'order.complete',
+      order.serializable_hash,
+      { model_class: 'Spree::Order', model_id: order.id }
+    )
+  end
+
+  describe '#handle' do
+    it 'notifies external service' do
+      expect(ExternalService).to receive(:notify_order_placed).with(order)
+      described_class.new.handle(event)
+    end
+  end
+end
+```
+
+### Testing Event Publishing
+
+Use the `emit_webhook_event` matcher (if available) or stub the events:
+
+```ruby
+it 'publishes order.complete event' do
+  expect(Spree::Events).to receive(:publish).with(
+    'order.complete',
+    hash_including('id' => order.id),
+    hash_including(model_class: 'Spree::Order')
+  )
+
+  order.complete!
+end
+```
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Keep handlers fast" icon="bolt">
+    Move slow operations to background jobs. Subscribers should do minimal work and delegate heavy lifting.
+  </Card>
+
+  <Card title="Handle missing records" icon="shield">
+    Always check if the record exists before processing. It may have been deleted between event publish and handler execution.
+  </Card>
+
+  <Card title="Be idempotent" icon="rotate">
+    Design handlers to be safely re-run. Events might be delivered more than once in edge cases.
+  </Card>
+
+  <Card title="Use specific patterns" icon="crosshairs">
+    Subscribe to specific events rather than wildcards when possible. This makes code easier to understand and debug.
+  </Card>
+</CardGroup>
+
+## Example: Inventory Alert Subscriber
+
+Here's a complete example of a subscriber that sends alerts when inventory is low:
+
+```ruby app/subscribers/my_app/inventory_alert_subscriber.rb
+module MyApp
+  class InventoryAlertSubscriber < Spree::Subscriber
+    subscribes_to 'stock_item.update'
+
+    LOW_STOCK_THRESHOLD = 10
+
+    def handle(event)
+      stock_item = find_stock_item(event)
+      return unless stock_item
+      return unless stock_dropped_below_threshold?(event, stock_item)
+
+      send_low_stock_alert(stock_item)
+    end
+
+    private
+
+    def find_stock_item(event)
+      Spree::StockItem.find_by(id: event.metadata['model_id'])
+    end
+
+    def stock_dropped_below_threshold?(event, stock_item)
+      previous_count = event.payload['count_on_hand_before_last_save']
+      current_count = stock_item.count_on_hand
+
+      previous_count >= LOW_STOCK_THRESHOLD && current_count < LOW_STOCK_THRESHOLD
+    end
+
+    def send_low_stock_alert(stock_item)
+      InventoryMailer.low_stock_alert(
+        variant: stock_item.variant,
+        stock_location: stock_item.stock_location,
+        count_on_hand: stock_item.count_on_hand
+      ).deliver_later
+    end
+  end
+end
+```
+
+## Related Documentation
+
+- [Webhooks](/developer/core-concepts/webhooks) - HTTP callbacks for external integrations
+- [Dependencies](/developer/customization/dependencies) - Customizing Spree services
+- [Decorators](/developer/customization/decorators) - Extending Spree classes
