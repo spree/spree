@@ -195,34 +195,6 @@ RSpec.describe Spree::Events do
     end
   end
 
-  describe '.event_name' do
-    it 'returns standard event names' do
-      expect(described_class.event_name(:order_complete)).to eq('order.complete')
-      expect(described_class.event_name(:product_create)).to eq('product.create')
-    end
-
-    it 'returns nil for unknown keys' do
-      expect(described_class.event_name(:unknown_event)).to be_nil
-    end
-  end
-
-  describe 'STANDARD_EVENTS' do
-    it 'defines order events' do
-      expect(described_class::STANDARD_EVENTS[:order_complete]).to eq('order.complete')
-      expect(described_class::STANDARD_EVENTS[:order_cancel]).to eq('order.cancel')
-    end
-
-    it 'defines product events' do
-      expect(described_class::STANDARD_EVENTS[:product_create]).to eq('product.create')
-      expect(described_class::STANDARD_EVENTS[:product_update]).to eq('product.update')
-    end
-
-    it 'defines payment events' do
-      expect(described_class::STANDARD_EVENTS[:payment_complete]).to eq('payment.complete')
-      expect(described_class::STANDARD_EVENTS[:payment_refund]).to eq('payment.refund')
-    end
-  end
-
   describe 'multiple subscribers' do
     it 'notifies all matching subscribers' do
       received1 = []

@@ -141,9 +141,11 @@ RSpec.describe Spree::Publishable do
       expect(received_event.name).to eq('test_product.create')
     end
 
+    # Note: These specs use ApplicationRecord directly to test Publishable in isolation
+    # since Spree::Base now has lifecycle events enabled by default
     context 'with only option' do
       let(:limited_class) do
-        Class.new(Spree::Base) do
+        Class.new(ApplicationRecord) do
           self.table_name = 'spree_products'
 
           include Spree::Publishable
@@ -152,7 +154,6 @@ RSpec.describe Spree::Publishable do
       end
 
       it 'only registers specified callbacks' do
-        # Verify that only create callback is registered
         expect(limited_class._commit_callbacks.map(&:filter)).to include(:publish_create_event)
         expect(limited_class._commit_callbacks.map(&:filter)).not_to include(:publish_update_event)
         expect(limited_class._commit_callbacks.map(&:filter)).not_to include(:publish_destroy_event)
@@ -161,7 +162,7 @@ RSpec.describe Spree::Publishable do
 
     context 'with except option' do
       let(:except_class) do
-        Class.new(Spree::Base) do
+        Class.new(ApplicationRecord) do
           self.table_name = 'spree_products'
 
           include Spree::Publishable
@@ -178,7 +179,7 @@ RSpec.describe Spree::Publishable do
 
     context 'with serialize option' do
       let(:serialize_class) do
-        Class.new(Spree::Base) do
+        Class.new(ApplicationRecord) do
           self.table_name = 'spree_products'
 
           include Spree::Publishable
@@ -192,6 +193,19 @@ RSpec.describe Spree::Publishable do
 
       it 'uses custom serialization options' do
         expect(serialize_class.event_serialization_options).to eq({ only: [:id] })
+      end
+    end
+
+    context 'with skip_lifecycle_events' do
+      let(:skipped_class) do
+        Class.new(Spree::Base) do
+          self.table_name = 'spree_products'
+          skip_lifecycle_events
+        end
+      end
+
+      it 'disables event publishing for the model' do
+        expect(skipped_class.publish_events).to be false
       end
     end
   end

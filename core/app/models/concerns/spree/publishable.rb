@@ -3,35 +3,24 @@
 module Spree
   # Concern for models that publish events.
   #
-  # Include this concern in models that need to publish events
-  # to the Spree event system. It provides helper methods for
-  # publishing events with the model's serialized data.
+  # This concern is included in Spree::Base, so all Spree models
+  # automatically emit lifecycle events (create, update, destroy).
   #
-  # @example Basic usage
+  # @example Disabling events for a specific model
+  #   class Spree::LogEntry < Spree.base_class
+  #     self.publish_events = false
+  #   end
+  #
+  # @example Publishing custom events
   #   class Spree::Order < Spree.base_class
-  #     include Spree::Publishable
-  #
   #     def complete!
   #       # ... completion logic ...
   #       publish_event('order.complete')
   #     end
   #   end
   #
-  # @example With automatic lifecycle events
-  #   class Spree::Product < Spree.base_class
-  #     include Spree::Publishable
-  #
-  #     publishes_lifecycle_events
-  #   end
-  #   # This will automatically publish:
-  #   # - 'product.create' after create
-  #   # - 'product.update' after update
-  #   # - 'product.destroy' after destroy
-  #
   # @example With custom serialization
   #   class Spree::Order < Spree.base_class
-  #     include Spree::Publishable
-  #
   #     def event_payload
   #       serializable_hash(
   #         only: [:id, :number, :state, :total],
@@ -44,6 +33,7 @@ module Spree
     extend ActiveSupport::Concern
 
     included do
+      class_attribute :publish_events, default: true
       class_attribute :lifecycle_events_enabled, default: false
       class_attribute :event_serialization_options, default: {}
     end
@@ -72,16 +62,28 @@ module Spree
         events -= Array(options[:except]) if options[:except]
 
         if events.include?(:create)
-          after_commit :publish_create_event, on: :create
+          after_commit :publish_create_event, on: :create, if: :should_publish_events?
         end
 
         if events.include?(:update)
-          after_commit :publish_update_event, on: :update
+          after_commit :publish_update_event, on: :update, if: :should_publish_events?
         end
 
         if events.include?(:destroy)
-          after_commit :publish_destroy_event, on: :destroy
+          before_destroy :capture_pre_destroy_payload, if: :should_publish_events?
+          after_commit :publish_destroy_event, on: :destroy, if: :should_publish_events?
         end
+      end
+
+      # Disable lifecycle events for this model
+      #
+      # @example
+      #   class Spree::LogEntry < Spree.base_class
+      #     skip_lifecycle_events
+      #   end
+      #
+      def skip_lifecycle_events
+        self.publish_events = false
       end
 
       # Get the event name prefix for this model
@@ -138,6 +140,10 @@ module Spree
 
     private
 
+    def should_publish_events?
+      self.class.publish_events && Spree::Events.enabled?
+    end
+
     def default_serialization_options
       {}
     end
@@ -164,7 +170,6 @@ module Spree
       publish_event("#{event_prefix}.destroy", @_pre_destroy_payload || event_payload)
     end
 
-    # Capture payload before destroy for the after_commit callback
     def capture_pre_destroy_payload
       @_pre_destroy_payload = event_payload
     end

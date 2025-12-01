@@ -23,68 +23,6 @@ module Spree
   #   Spree::Events.subscribe('*', GlobalEventLogger)       # All events
   #
   module Events
-    # Standard Spree event names
-    #
-    # This provides a reference for the standard events that Spree publishes.
-    # Developers can use these constants or the string versions.
-    #
-    # @return [Hash<Symbol, String>]
-    STANDARD_EVENTS = {
-      # Product events
-      product_create: 'product.create',
-      product_update: 'product.update',
-      product_destroy: 'product.destroy',
-
-      # Variant events
-      variant_create: 'variant.create',
-      variant_update: 'variant.update',
-      variant_destroy: 'variant.destroy',
-
-      # Order lifecycle events
-      order_create: 'order.create',
-      order_update: 'order.update',
-      order_destroy: 'order.destroy',
-      order_complete: 'order.complete',
-      order_cancel: 'order.cancel',
-      order_resume: 'order.resume',
-      order_approve: 'order.approve',
-
-      # Payment events
-      payment_create: 'payment.create',
-      payment_complete: 'payment.complete',
-      payment_void: 'payment.void',
-      payment_refund: 'payment.refund',
-
-      # Shipment events
-      shipment_create: 'shipment.create',
-      shipment_ship: 'shipment.ship',
-      shipment_deliver: 'shipment.deliver',
-      shipment_cancel: 'shipment.cancel',
-
-      # Inventory events
-      stock_item_update: 'stock_item.update',
-      stock_item_low_stock: 'stock_item.low_stock',
-      stock_item_out_of_stock: 'stock_item.out_of_stock',
-
-      # User events
-      user_create: 'user.create',
-      user_update: 'user.update',
-      user_password_reset: 'user.password_reset',
-      user_signup: 'user.signup',
-
-      # Checkout events
-      checkout_progress: 'checkout.progress',
-      checkout_complete: 'checkout.complete',
-
-      # Refund events
-      refund_create: 'refund.create',
-
-      # Return events
-      return_create: 'return.create',
-      return_approve: 'return.approve',
-      return_cancel: 'return.cancel'
-    }.freeze
-
     class << self
       # Publish an event to all matching subscribers
       #
@@ -205,14 +143,6 @@ module Spree
         yield
       ensure
         RequestStore.store[:spree_events_disabled] = previous
-      end
-
-      # Get standard event name by key
-      #
-      # @param key [Symbol] The event key
-      # @return [String, nil] The event name
-      def event_name(key)
-        STANDARD_EVENTS[key]
       end
     end
   end
