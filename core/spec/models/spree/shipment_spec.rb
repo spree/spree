@@ -1038,4 +1038,61 @@ describe Spree::Shipment, type: :model do
       expect(subject).not_to include(*shipped_shipments)
     end
   end
+
+  describe 'events' do
+    let(:order) { create(:order_ready_to_ship) }
+    let(:shipment) { order.shipments.first }
+    let(:received_events) { [] }
+
+    before do
+      Spree::Events.reset!
+      Spree::Events.activate!
+    end
+
+    after { Spree::Events.reset! }
+
+    describe 'shipped state transition' do
+      before do
+        Spree::Events.subscribe('shipment.ship', async: false) { |e| received_events << e }
+        shipment.update_column(:tracking, 'TRACK123')
+      end
+
+      it 'publishes shipment.ship event' do
+        shipment.ship!
+
+        expect(received_events.size).to eq(1)
+        expect(received_events.first.payload['id']).to eq(shipment.id)
+        expect(received_events.first.payload['number']).to eq(shipment.number)
+      end
+    end
+
+    describe 'canceled state transition' do
+      before do
+        Spree::Events.subscribe('shipment.cancel', async: false) { |e| received_events << e }
+      end
+
+      it 'publishes shipment.cancel event' do
+        shipment.cancel!
+
+        expect(received_events.size).to eq(1)
+        expect(received_events.first.payload['id']).to eq(shipment.id)
+        expect(received_events.first.payload['number']).to eq(shipment.number)
+      end
+    end
+
+    describe 'resume state transition' do
+      before do
+        Spree::Events.subscribe('shipment.resume', async: false) { |e| received_events << e }
+        shipment.cancel!
+      end
+
+      it 'publishes shipment.resume event' do
+        shipment.resume!
+
+        expect(received_events.size).to eq(1)
+        expect(received_events.first.payload['id']).to eq(shipment.id)
+        expect(received_events.first.payload['number']).to eq(shipment.number)
+      end
+    end
+  end
 end

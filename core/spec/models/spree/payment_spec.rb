@@ -1291,4 +1291,44 @@ describe Spree::Payment, type: :model do
       expect(payment.gateway_processing_error_messages).to eq(['Gateway processing error', 'Another gateway processing error'])
     end
   end
+
+  describe 'events' do
+    let(:received_events) { [] }
+
+    before do
+      Spree::Events.reset!
+      Spree::Events.activate!
+    end
+
+    after { Spree::Events.reset! }
+
+    describe 'completed state transition' do
+      before do
+        Spree::Events.subscribe('payment.complete', async: false) { |e| received_events << e }
+      end
+
+      it 'publishes payment.complete event' do
+        payment.started_processing!
+        payment.complete!
+
+        expect(received_events.size).to eq(1)
+        expect(received_events.first.payload['id']).to eq(payment.id)
+      end
+    end
+
+    describe 'void state transition' do
+      before do
+        Spree::Events.subscribe('payment.void', async: false) { |e| received_events << e }
+        payment.started_processing!
+        payment.pend!
+      end
+
+      it 'publishes payment.void event' do
+        payment.void!
+
+        expect(received_events.size).to eq(1)
+        expect(received_events.first.payload['id']).to eq(payment.id)
+      end
+    end
+  end
 end

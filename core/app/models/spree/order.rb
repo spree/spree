@@ -526,6 +526,8 @@ module Spree
       send_order_placed_webhook
 
       consider_risk
+
+      send_order_completed_event
     end
 
     def fulfill!
@@ -925,12 +927,14 @@ module Spree
       send_cancel_email
       update_with_updater!
       send_order_canceled_webhook
+      send_order_canceled_event
     end
 
     def after_resume
       shipments.each(&:resume!)
       consider_risk
       send_order_resumed_webhook
+      send_order_resumed_event
     end
 
     def use_billing?
@@ -967,6 +971,18 @@ module Spree
       elsif using_store_credit?
         Spree.checkout_add_store_credit_service.call(order: self)
       end
+    end
+
+    def send_order_completed_event
+      publish_event('order.complete')
+    end
+
+    def send_order_canceled_event
+      publish_event('order.cancel')
+    end
+
+    def send_order_resumed_event
+      publish_event('order.resume')
     end
   end
 end

@@ -221,6 +221,49 @@ describe Spree::Order, type: :model do
         expect(order.payments.store_credits).to all(have_attributes(state: 'void'))
       end
     end
+
+    context 'events' do
+      let(:order) { create(:completed_order_with_totals, store: store) }
+      let(:received_events) { [] }
+
+      before do
+        Spree::Events.reset!
+        Spree::Events.subscribe('order.cancel', async: false) { |e| received_events << e }
+        Spree::Events.activate!
+      end
+
+      after { Spree::Events.reset! }
+
+      it 'publishes order.cancel event' do
+        order.cancel!
+
+        expect(received_events.size).to eq(1)
+        expect(received_events.first.payload['id']).to eq(order.id)
+        expect(received_events.first.payload['number']).to eq(order.number)
+      end
+    end
+  end
+
+  describe '#after_resume' do
+    let(:order) { create(:completed_order_with_totals, store: store) }
+    let(:received_events) { [] }
+
+    before do
+      Spree::Events.reset!
+      Spree::Events.subscribe('order.resume', async: false) { |e| received_events << e }
+      Spree::Events.activate!
+      order.cancel!
+    end
+
+    after { Spree::Events.reset! }
+
+    it 'publishes order.resume event' do
+      order.resume!
+
+      expect(received_events.size).to eq(1)
+      expect(received_events.first.payload['id']).to eq(order.id)
+      expect(received_events.first.payload['number']).to eq(order.number)
+    end
   end
 
   describe '#canceled_by' do
@@ -365,6 +408,28 @@ describe Spree::Order, type: :model do
           order.finalize!
           expect(order.state).to eq 'complete'
         end
+      end
+    end
+
+    context 'events' do
+      let(:order) { create(:order_with_line_items, store: store) }
+      let(:received_events) { [] }
+
+      before do
+        Spree::Events.reset!
+        Spree::Events.subscribe('order.complete', async: false) { |e| received_events << e }
+        Spree::Events.activate!
+        order.update_column(:state, 'complete')
+      end
+
+      after { Spree::Events.reset! }
+
+      it 'publishes order.complete event' do
+        order.finalize!
+
+        expect(received_events.size).to eq(1)
+        expect(received_events.first.payload['id']).to eq(order.id)
+        expect(received_events.first.payload['number']).to eq(order.number)
       end
     end
   end

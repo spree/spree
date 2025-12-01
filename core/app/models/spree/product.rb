@@ -262,12 +262,12 @@ module Spree
       event :activate do
         transition to: :active
       end
-      after_transition to: :active, do: [:after_activate, :send_product_activated_webhook]
+      after_transition to: :active, do: [:after_activate, :send_product_activated_webhook, :send_product_activated_event]
 
       event :archive do
         transition to: :archived
       end
-      after_transition to: :archived, do: [:after_archive, :send_product_archived_webhook]
+      after_transition to: :archived, do: [:after_archive, :send_product_archived_webhook, :send_product_archived_event]
 
       event :draft do
         transition to: :draft
@@ -847,6 +847,14 @@ module Spree
 
     def after_draft
       # Implement your logic here
+    end
+
+    def send_product_activated_event
+      publish_event('product.activate')
+    end
+
+    def send_product_archived_event
+      publish_event('product.archive')
     end
   end
 end

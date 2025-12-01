@@ -46,6 +46,7 @@ module Spree
         transition pending: :accepted
       end
       after_transition to: :accepted, do: :after_accept
+      after_transition to: :accepted, do: :send_invitation_accepted_event
     end
 
     #
@@ -90,6 +91,10 @@ module Spree
       create_role_user
       set_accepted_at
       send_acceptance_notification
+    end
+
+    def send_invitation_accepted_event
+      publish_event('invitation.accept')
     end
 
     def send_invitation_email

@@ -1654,4 +1654,50 @@ describe Spree::Product, type: :model do
       end
     end
   end
+
+  describe 'custom events' do
+    describe 'product.activate' do
+      let(:product) { create(:product, status: 'draft', stores: [store]) }
+
+      it 'publishes product.activate event when activated' do
+        Spree::Events.activate!
+
+        received_event = nil
+        subscriber = Spree::Events.subscribe('product.activate') do |event|
+          received_event = event
+        end
+
+        product.activate!
+
+        expect(received_event).to be_present
+        expect(received_event.metadata['model_class']).to eq('Spree::Product')
+        expect(received_event.metadata['model_id']).to eq(product.id.to_s)
+
+        Spree::Events.unsubscribe('product.activate', subscriber)
+        Spree::Events.reset!
+      end
+    end
+
+    describe 'product.archive' do
+      let(:product) { create(:product, status: 'active', stores: [store]) }
+
+      it 'publishes product.archive event when archived' do
+        Spree::Events.activate!
+
+        received_event = nil
+        subscriber = Spree::Events.subscribe('product.archive') do |event|
+          received_event = event
+        end
+
+        product.archive!
+
+        expect(received_event).to be_present
+        expect(received_event.metadata['model_class']).to eq('Spree::Product')
+        expect(received_event.metadata['model_id']).to eq(product.id.to_s)
+
+        Spree::Events.unsubscribe('product.archive', subscriber)
+        Spree::Events.reset!
+      end
+    end
+  end
 end

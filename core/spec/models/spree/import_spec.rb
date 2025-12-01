@@ -382,4 +382,33 @@ RSpec.describe Spree::Import, :job, type: :model do
       expect(Spree::Imports::Products.model_class).to eq(Spree::Product)
     end
   end
+
+  describe 'custom events' do
+    describe 'import.complete' do
+      before do
+        import.save!
+        import.start_mapping!
+        import.complete_mapping!
+        import.start_processing!
+      end
+
+      it 'publishes import.complete event when completed' do
+        Spree::Events.activate!
+
+        received_event = nil
+        subscriber = Spree::Events.subscribe('import.complete') do |event|
+          received_event = event
+        end
+
+        import.complete!
+
+        expect(received_event).to be_present
+        expect(received_event.metadata['model_class']).to eq('Spree::Imports::Products')
+        expect(received_event.metadata['model_id']).to eq(import.id.to_s)
+
+        Spree::Events.unsubscribe('import.complete', subscriber)
+        Spree::Events.reset!
+      end
+    end
+  end
 end
