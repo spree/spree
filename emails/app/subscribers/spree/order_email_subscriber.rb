@@ -2,10 +2,11 @@
 
 module Spree
   class OrderEmailSubscriber < Spree::Subscriber
-    subscribes_to 'order.complete', 'order.cancel'
+    subscribes_to 'order.complete', 'order.cancel', 'order.resend_confirmation_email'
 
     on 'order.complete', :send_confirmation_email
     on 'order.cancel', :send_cancel_email
+    on 'order.resend_confirmation_email', :resend_confirmation_email
 
     private
 
@@ -21,6 +22,17 @@ module Spree
       order.update_column(:confirmation_delivered, true)
 
       send_store_owner_notification(order) if should_notify_store_owner?(order)
+    end
+
+    def resend_confirmation_email(event)
+      order = find_order(event)
+      return unless order
+
+      store = order.store
+      return unless store.prefers_send_consumer_transactional_emails?
+
+      OrderMailer.confirm_email(order.id).deliver_later
+      order.update_column(:confirmation_delivered, true)
     end
 
     def send_cancel_email(event)
