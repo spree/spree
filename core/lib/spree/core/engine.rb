@@ -35,6 +35,9 @@ module Spree
       isolate_namespace Spree
       engine_name 'spree'
 
+      # Add app/subscribers to autoload paths
+      config.paths.add 'app/subscribers', eager_load: true
+
       rake_tasks do
         load File.join(root, 'lib', 'tasks', 'exchanges.rake')
       end
@@ -315,6 +318,16 @@ module Spree
         Dir.glob(File.join(File.dirname(__FILE__), '../../../app/**/*_decorator*.rb')) do |c|
           Rails.configuration.cache_classes ? require(c) : load(c)
         end
+
+        # Reset and re-register event subscribers on code reload
+        Spree::Events.reset!
+
+        # Auto-register all Spree::Subscriber subclasses
+        # Subscribers are auto-loaded from app/subscribers directories
+        Spree::Subscriber.descendants.each(&:register!)
+
+        # Activate the event system
+        Spree::Events.activate!
       end
     end
   end

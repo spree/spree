@@ -20,6 +20,7 @@ end
 
 # Background job queue names
 # Spree.queues.default = :default
+# Spree.queues.events = :default  # Event subscribers (Spree::Events::SubscriberJob)
 # Spree.queues.variants = :default
 # Spree.queues.stock_location_stock_items = :default
 # Spree.queues.coupon_codes = :default

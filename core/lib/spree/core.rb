@@ -97,6 +97,7 @@ module Spree
   def self.queues
     @@queues ||= OpenStruct.new(
       default: :default,
+      events: :default,
       exports: :default,
       images: :default,
       imports: :default,
