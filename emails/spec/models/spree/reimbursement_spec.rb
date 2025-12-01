@@ -1,8 +1,14 @@
 require 'spec_helper'
 
 describe Spree::Reimbursement, type: :model do
+  include ActiveJob::TestHelper
+
   describe '#perform!' do
-    subject { reimbursement.perform! }
+    subject do
+      perform_enqueued_jobs(only: Spree::Events::SubscriberJob) do
+        reimbursement.perform!
+      end
+    end
 
     let!(:adjustments)            { [] } # placeholder to ensure it gets run prior the "before" at this level
 
@@ -28,9 +34,17 @@ describe Spree::Reimbursement, type: :model do
     before do
       customer_return.save!
       return_item.accept!
+
+      # Ensure subscriber is registered
+      Spree::ReimbursementEmailSubscriber.unregister!
+      Spree::ReimbursementEmailSubscriber.register!
     end
 
-    it 'triggers the reimbursement mailer to be sent' do
+    after do
+      Spree::ReimbursementEmailSubscriber.unregister!
+    end
+
+    it 'triggers the reimbursement mailer to be sent via subscriber' do
       expect(Spree::ReimbursementMailer).to receive(:reimbursement_email).with(reimbursement.id) { double(deliver_later: true) }
       subject
     end

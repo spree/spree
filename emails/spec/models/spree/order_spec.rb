@@ -1,9 +1,21 @@
 require 'spec_helper'
 
 describe Spree::Order, type: :model do
+  include ActiveJob::TestHelper
+
   let(:store) { @default_store }
   let(:user) { create(:user) }
   let(:order) { create(:order, user: user, store: store) }
+
+  before do
+    # Ensure subscriber is registered
+    Spree::OrderEmailSubscriber.unregister!
+    Spree::OrderEmailSubscriber.register!
+  end
+
+  after do
+    Spree::OrderEmailSubscriber.unregister!
+  end
 
   context '#finalize!' do
     let(:order) { create(:order, email: 'test@example.com', store: store) }
@@ -12,85 +24,77 @@ describe Spree::Order, type: :model do
       order.update_column :state, 'complete'
     end
 
-    it 'sends an order confirmation email to customer' do
+    it 'sends an order confirmation email to customer via subscriber' do
       mail_message = double 'Mail::Message'
       expect(Spree::OrderMailer).to receive(:confirm_email).with(order.id).and_return mail_message
       expect(mail_message).to receive :deliver_later
-      order.finalize!
-    end
 
-    context 'when send_consumer_transactional_emails store setting is set to false' do
-      before do
-        allow(order.store).to receive(:prefers_send_consumer_transactional_emails?).and_return(false)
-      end
-
-      it 'does not send order confirmation email to customer' do
-        expect(Spree::OrderMailer).not_to receive(:confirm_email)
+      perform_enqueued_jobs(only: Spree::Events::SubscriberJob) do
         order.finalize!
       end
     end
 
-    it 'sets confirmation delivered when finalizing' do
+    context 'when send_consumer_transactional_emails store setting is set to false' do
+      before do
+        # Update store preferences in DB since subscriber reloads order
+        order.store.update!(preferences: order.store.preferences.merge(send_consumer_transactional_emails: false))
+      end
+
+      it 'does not send order confirmation email to customer' do
+        expect(Spree::OrderMailer).not_to receive(:confirm_email)
+
+        perform_enqueued_jobs(only: Spree::Events::SubscriberJob) do
+          order.finalize!
+        end
+      end
+    end
+
+    it 'sets confirmation delivered when finalizing via subscriber' do
+      allow(Spree::OrderMailer).to receive(:confirm_email).and_return(double(deliver_later: true))
+      allow(Spree::OrderMailer).to receive(:store_owner_notification_email).and_return(double(deliver_later: true))
+
       expect(order.confirmation_delivered?).to be false
-      order.finalize!
-      expect(order.confirmation_delivered?).to be true
+
+      perform_enqueued_jobs(only: Spree::Events::SubscriberJob) do
+        order.finalize!
+      end
+
+      expect(order.reload.confirmation_delivered?).to be true
     end
 
     it 'does not send duplicate confirmation emails' do
-      allow(order).to receive_messages(confirmation_delivered?: true)
+      order.update_column(:confirmation_delivered, true)
       expect(Spree::OrderMailer).not_to receive(:confirm_email)
-      order.finalize!
+
+      perform_enqueued_jobs(only: Spree::Events::SubscriberJob) do
+        order.finalize!
+      end
     end
 
     context 'new order notifications' do
       it 'sends a new order notification email to store owner when notification email address is set' do
         mail_message = double 'Mail::Message'
-        allow(store).to receive(:new_order_notifications_email).and_return('test@example.com')
+        allow(Spree::OrderMailer).to receive(:confirm_email).and_return(double(deliver_later: true))
+        # Update store in DB since subscriber reloads order
+        store.update!(new_order_notifications_email: 'test@example.com')
         expect(Spree::OrderMailer).to receive(:store_owner_notification_email).with(order.id).and_return mail_message
         expect(mail_message).to receive :deliver_later
-        order.finalize!
+
+        perform_enqueued_jobs(only: Spree::Events::SubscriberJob) do
+          order.finalize!
+        end
       end
 
       it 'does not send a new order notification email to store owner when notification email address is blank' do
-        allow(store).to receive(:new_order_notifications_email).and_return(nil)
+        allow(Spree::OrderMailer).to receive(:confirm_email).and_return(double(deliver_later: true))
+        # Update store in DB since subscriber reloads order
+        store.update!(new_order_notifications_email: nil)
 
-        mail_message = double 'Mail::Message'
         expect(Spree::OrderMailer).to_not receive(:store_owner_notification_email)
-        order.finalize!
-      end
-    end
-  end
 
-  describe '#deliver_order_confirmation_email' do
-    let(:order) { create(:completed_order_with_totals, email: 'test@example.com', store: store) }
-
-    context 'when send_consumer_transactional_emails store setting is enabled' do
-      before do
-        allow(order.store).to receive(:prefers_send_consumer_transactional_emails?).and_return(true)
-      end
-
-      it 'sends order confirmation email' do
-        mail_message = double 'Mail::Message'
-        expect(Spree::OrderMailer).to receive(:confirm_email).with(order.id).and_return(mail_message)
-        expect(mail_message).to receive(:deliver_later)
-        order.deliver_order_confirmation_email
-      end
-    end
-
-    context 'when send_consumer_transactional_emails store setting is disabled' do
-      before do
-        allow(order.store).to receive(:prefers_send_consumer_transactional_emails?).and_return(false)
-      end
-
-      it 'does not send order confirmation email' do
-        expect(Spree::OrderMailer).not_to receive(:confirm_email)
-        order.deliver_order_confirmation_email
-      end
-
-      it 'still sets confirmation_delivered to true' do
-        expect(order.confirmation_delivered?).to be false
-        order.deliver_order_confirmation_email
-        expect(order.confirmation_delivered?).to be true
+        perform_enqueued_jobs(only: Spree::Events::SubscriberJob) do
+          order.finalize!
+        end
       end
     end
   end
@@ -122,7 +126,7 @@ describe Spree::Order, type: :model do
       allow_any_instance_of(Spree::OrderUpdater).to receive(:update_adjustment_total).and_return(10)
     end
 
-    it 'sends a cancel email' do
+    it 'sends a cancel email via subscriber' do
       # Stub methods that cause side-effects in this test
       allow(shipment).to receive(:cancel!)
       allow(order).to receive :restock_items!
@@ -133,7 +137,11 @@ describe Spree::Order, type: :model do
         mail_message
       }
       expect(mail_message).to receive :deliver_later
-      order.cancel!
+
+      perform_enqueued_jobs(only: Spree::Events::SubscriberJob) do
+        order.cancel!
+      end
+
       expect(order_id).to eq(order.id)
     end
   end
