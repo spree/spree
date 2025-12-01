@@ -289,6 +289,17 @@ module Spree
     Rails.application.config.spree.integrations = value
   end
 
+  # Models that automatically emit lifecycle events (create, update, destroy)
+  # @example Adding a custom model to emit events
+  #   Spree.eventable_models << MyCustomModel
+  def self.eventable_models
+    Rails.application.config.spree.eventable_models
+  end
+
+  def self.eventable_models=(value)
+    Rails.application.config.spree.eventable_models = value
+  end
+
   def self.analytics
     @analytics ||= AnalyticsConfig.new
   end

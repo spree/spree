@@ -3,6 +3,7 @@ class Spree::Base < ApplicationRecord
   include Spree::RansackableAttributes
   include Spree::TranslatableResourceScopes
   include Spree::IntegrationsConcern
+  include Spree::Publishable
 
   after_initialize do
     if has_attribute?(:preferences) && !preferences.nil?
