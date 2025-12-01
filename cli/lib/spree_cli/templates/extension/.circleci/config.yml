@@ -9,7 +9,7 @@ defaults: &defaults
     BUNDLE_PATH: ~/spree/vendor/bundle
   working_directory: ~/spree
   docker:
-    - image: &ruby_image cimg/ruby:3.3-browsers
+    - image: &ruby_image cimg/ruby:3.4-browsers
 
 run_tests: &run_tests
   <<: *defaults
@@ -83,7 +83,7 @@ jobs:
       DB_USERNAME: postgres
     docker:
       - image: *ruby_image
-      - image: &postgres_image cimg/postgres:16.2
+      - image: &postgres_image cimg/postgres:18.0
         environment:
           POSTGRES_USER: postgres
 
