@@ -281,7 +281,6 @@ module Spree
           Spree::GiftCard,
           Spree::GiftCardBatch,
           Spree::Import,
-          Spree::Invitation,
           Spree::LineItem,
           Spree::NewsletterSubscriber,
           Spree::Order,
@@ -310,6 +309,9 @@ module Spree
         if Spree::Config.events_log_enabled
           Spree::EventLogSubscriber.attach_to_notifications
         end
+
+        # Register invitation email subscriber
+        Spree::InvitationEmailSubscriber.register!
       end
 
       initializer 'spree.promo.register.promotions.actions' do |app|

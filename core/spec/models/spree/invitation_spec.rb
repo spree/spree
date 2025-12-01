@@ -49,8 +49,22 @@ RSpec.describe Spree::Invitation, type: :model do
       expect(invitation.role).to eq(Spree::Role.default_admin_role)
     end
 
-    it 'sends invitation email after create' do
-      expect { invitation.save }.to have_enqueued_job(ActionMailer::MailDeliveryJob)
+    it 'publishes invitation.create event after create' do
+      Spree::Events.activate!
+
+      received_event = nil
+      subscriber = Spree::Events.subscribe('invitation.create') do |event|
+        received_event = event
+      end
+
+      invitation = build(:invitation)
+      invitation.save
+
+      expect(received_event).to be_present
+      expect(received_event.payload['id']).to eq(invitation.id)
+
+      Spree::Events.unsubscribe('invitation.create', subscriber)
+      Spree::Events.reset!
     end
 
     it 'sets invitee from email before validation' do
@@ -82,10 +96,23 @@ RSpec.describe Spree::Invitation, type: :model do
         expect(invitation.accepted_at).to be_present
       end
 
-      it 'sends acceptance notification' do
+      it 'publishes invitation.accept event' do
         invitation.invitee = create(:admin_user, :without_admin_role)
-        clear_enqueued_jobs
-        expect { invitation.accept }.to have_enqueued_job(ActionMailer::MailDeliveryJob)
+
+        Spree::Events.activate!
+
+        received_event = nil
+        subscriber = Spree::Events.subscribe('invitation.accept') do |event|
+          received_event = event
+        end
+
+        invitation.accept
+
+        expect(received_event).to be_present
+        expect(received_event.payload['id']).to eq(invitation.id)
+
+        Spree::Events.unsubscribe('invitation.accept', subscriber)
+        Spree::Events.reset!
       end
 
       it 'creates a resource user' do
@@ -112,47 +139,57 @@ RSpec.describe Spree::Invitation, type: :model do
   end
 
   describe '#resend!' do
-    it 'sends invitation email if invitation is pending and not expired' do
-      invitation
-      clear_enqueued_jobs
-      expect { invitation.resend! }.to have_enqueued_job(ActionMailer::MailDeliveryJob)
-    end
+    it 'publishes invitation.resend event if invitation is pending and not expired' do
+      Spree::Events.activate!
 
-    it 'does not send invitation email if invitation is expired' do
-      allow(invitation).to receive(:expired?).and_return(true)
-      expect(invitation).not_to receive(:send_invitation_email)
+      received_event = nil
+      subscriber = Spree::Events.subscribe('invitation.resend') do |event|
+        received_event = event
+      end
+
       invitation.resend!
+
+      expect(received_event).to be_present
+      expect(received_event.payload['id']).to eq(invitation.id)
+
+      Spree::Events.unsubscribe('invitation.resend', subscriber)
+      Spree::Events.reset!
     end
 
-    it 'does not send invitation email if invitation is accepted' do
+    it 'does not publish event if invitation is expired' do
+      Spree::Events.activate!
+
+      received_event = nil
+      subscriber = Spree::Events.subscribe('invitation.resend') do |event|
+        received_event = event
+      end
+
+      allow(invitation).to receive(:expired?).and_return(true)
+      invitation.resend!
+
+      expect(received_event).to be_nil
+
+      Spree::Events.unsubscribe('invitation.resend', subscriber)
+      Spree::Events.reset!
+    end
+
+    it 'does not publish event if invitation is accepted' do
+      Spree::Events.activate!
+
+      received_event = nil
+      subscriber = Spree::Events.subscribe('invitation.resend') do |event|
+        received_event = event
+      end
+
       invitation.invitee = create(:admin_user, spree_roles: [])
       invitation.accept
-      expect(invitation).not_to receive(:send_invitation_email)
       invitation.resend!
+
+      expect(received_event).to be_nil
+
+      Spree::Events.unsubscribe('invitation.resend', subscriber)
+      Spree::Events.reset!
     end
   end
 
-  describe 'custom events' do
-    describe 'invitation.accept' do
-      it 'publishes invitation.accept event when accepted' do
-        invitation.invitee = create(:admin_user, :without_admin_role)
-
-        Spree::Events.activate!
-
-        received_event = nil
-        subscriber = Spree::Events.subscribe('invitation.accept') do |event|
-          received_event = event
-        end
-
-        invitation.accept
-
-        expect(received_event).to be_present
-        expect(received_event.metadata['model_class']).to eq('Spree::Invitation')
-        expect(received_event.metadata['model_id']).to eq(invitation.id.to_s)
-
-        Spree::Events.unsubscribe('invitation.accept', subscriber)
-        Spree::Events.reset!
-      end
-    end
-  end
 end
