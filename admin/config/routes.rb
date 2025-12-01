@@ -118,6 +118,7 @@ Spree::Core::Engine.add_routes do
       resources :coupon_codes, only: :index
     end
     get 'search/option_values', defaults: { format: :json }, to: 'search#option_values'
+    get 'search/tags', defaults: { format: :json }, to: 'search#tags'
 
     # gift cards
     resources :gift_cards
