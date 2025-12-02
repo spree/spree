@@ -31,6 +31,10 @@
     {
       "source": "/developer/storefront/images",
       "destination": "/developer/core-concepts/images-assets"
+    },
+    {
+      "source": "/developer/admin/permissions",
+      "destination": "/developer/customization/permissions"
     }
   ],
   "contextual": {
@@ -112,7 +116,6 @@
                   "developer/admin/components",
                   "developer/admin/helper-methods",
                   "developer/admin/authentication",
-                  "developer/admin/permissions",
                   "developer/admin/custom-javascript",
                   "developer/admin/custom-css"
                 ]
