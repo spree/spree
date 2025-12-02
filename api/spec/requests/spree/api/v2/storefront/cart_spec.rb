@@ -775,7 +775,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
   end
 
   describe 'cart#remove_coupon_code' do
-    let(:execute) { delete "/api/v2/storefront/cart/remove_coupon_code/#{coupon_code}?include=promotions", headers: headers }
+    let(:execute) { delete "/api/v2/storefront/cart/remove_coupon_code/#{coupon_code}?include=promotions,line_items", headers: headers }
 
     include_context 'coupon codes'
 
@@ -854,6 +854,43 @@ describe 'API V2 Storefront Cart Spec', type: :request do
               expect(order.reload.gift_card_id).to be_nil
             end
           end
+        end
+      end
+
+      context 'with coupon code for item discount' do
+        let(:params) { { coupon_code: coupon_code, include: 'promotions,line_items' } }
+
+        let!(:promotion) { create(:promotion, name: '10% off', code: '10off', stores: [store]) }
+        let!(:promotion_action) { Spree::Promotion::Actions::CreateItemAdjustments.create(promotion_id: promotion.id, calculator: calculator) }
+        let(:calculator) { Spree::Calculator::PercentOnLineItem.new(preferred_percent: 10) }
+
+        let(:coupon_code) { promotion.code }
+
+        before do
+          order.coupon_code = promotion.code
+          Spree::PromotionHandler::Coupon.new(order).apply
+          order.save!
+        end
+
+        it 'changes the promo totals on order and line item' do
+          expect(order.reload.promotions).to include(promotion)
+          expect(order.promo_total).to eq(-1.0)
+          expect(order.line_items.first.reload.promo_total).to eq(-1.0)
+
+          execute
+
+          expect(json_response['data']).to have_attribute(:item_total).with_value('10.0')
+          expect(json_response['data']).to have_attribute(:ship_total).with_value('100.0')
+          expect(json_response['data']).to have_attribute(:total).with_value('110.0')
+          expect(json_response['data']).to have_attribute(:promo_total).with_value('0.0')
+          expect(json_response['data']).to have_attribute(:display_promo_total).with_value('$0.00')
+
+          expect(json_response['included']).to include(have_type('line_item').and(have_attribute(:price).with_value('10.0')))
+          expect(json_response['included']).to include(have_type('line_item').and(have_attribute(:display_price).with_value('$10.00')))
+          expect(json_response['included']).to include(have_type('line_item').and(have_attribute(:total).with_value('10.0')))
+          expect(json_response['included']).to include(have_type('line_item').and(have_attribute(:display_total).with_value('$10.00')))
+          expect(json_response['included']).to include(have_type('line_item').and(have_attribute(:promo_total).with_value('0.0')))
+          expect(json_response['included']).to include(have_type('line_item').and(have_attribute(:display_promo_total).with_value('$0.00')))
         end
       end
 
