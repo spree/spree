@@ -308,6 +308,21 @@ describe Spree::Order, type: :model do
         end
       end
     end
+
+    context 'events' do
+      let(:order) { create(:completed_order_with_totals) }
+
+      it 'publishes order.update event' do
+        events = []
+        Spree::Events.subscribe('order.update', async: false) { |e| events << e }
+
+        order.canceled_by(admin_user)
+
+        update_event = events.find { |e| e.payload['canceler_id'] == admin_user.id }
+        expect(update_event).not_to be_nil
+        expect(update_event.payload).to include('id' => order.id)
+      end
+    end
   end
 
   describe '#create' do
@@ -706,6 +721,20 @@ describe Spree::Order, type: :model do
         expect { order.restart_checkout_flow }.to change { order.state }.from('delivery').to('cart')
       end
     end
+
+    context 'events' do
+      it 'publishes order.update event' do
+        order = create(:order_with_totals, state: 'delivery')
+        events = []
+        Spree::Events.subscribe('order.update', async: false) { |e| events << e }
+
+        order.restart_checkout_flow
+
+        update_event = events.find { |e| e.payload['state'] == 'cart' }
+        expect(update_event).not_to be_nil
+        expect(update_event.payload).to include('id' => order.id)
+      end
+    end
   end
 
   # Regression tests for #4072
@@ -975,6 +1004,21 @@ describe Spree::Order, type: :model do
 
       it_behaves_like '#associate_user!', true
     end
+
+    context 'events' do
+      let(:order) { create(:order, order_attributes) }
+
+      it 'publishes order.update event' do
+        events = []
+        Spree::Events.subscribe('order.update', async: false) { |e| events << e }
+
+        order.associate_user!(user)
+
+        expect(events.size).to eq(1)
+        expect(events.first.payload).to include('id' => order.id)
+        expect(events.first.payload).to include('user_id' => user.id)
+      end
+    end
   end
 
   describe '#disassociate_user!' do
@@ -996,6 +1040,139 @@ describe Spree::Order, type: :model do
     it 'disassociates a user from an order' do
       order.disassociate_user!
       expect(order).to have_attributes(expected_order_attributes)
+    end
+  end
+
+  describe '#approved_by' do
+    let(:admin_user) { create(:admin_user) }
+    let(:order) { create(:order_ready_to_ship) }
+
+    it 'sets approver_id' do
+      order.approved_by(admin_user)
+      expect(order.reload.approver_id).to eq(admin_user.id)
+    end
+
+    it 'sets approved_at' do
+      Timecop.freeze(Time.current) do
+        order.approved_by(admin_user)
+        expect(order.reload.approved_at.to_s).to eq(Time.current.to_s)
+      end
+    end
+
+    it 'calls approve!' do
+      expect(order).to receive(:approve!)
+      order.approved_by(admin_user)
+    end
+
+    context 'events' do
+      it 'publishes order.update event' do
+        events = []
+        Spree::Events.subscribe('order.update', async: false) { |e| events << e }
+
+        order.approved_by(admin_user)
+
+        update_event = events.find { |e| e.payload['approver_id'] == admin_user.id }
+        expect(update_event).not_to be_nil
+        expect(update_event.payload).to include('id' => order.id)
+      end
+    end
+  end
+
+  describe '#considered_risky!' do
+    let(:order) { create(:completed_order_with_totals) }
+
+    it 'sets considered_risky to true' do
+      order.considered_risky!
+      expect(order.reload.considered_risky).to be true
+    end
+
+    context 'events' do
+      it 'publishes order.update event' do
+        events = []
+        Spree::Events.subscribe('order.update', async: false) { |e| events << e }
+
+        order.considered_risky!
+
+        update_event = events.find { |e| e.payload['considered_risky'] == true }
+        expect(update_event).not_to be_nil
+        expect(update_event.payload).to include('id' => order.id)
+      end
+    end
+  end
+
+  describe '#approve!' do
+    let(:order) { create(:completed_order_with_totals) }
+
+    before do
+      order.update_column(:considered_risky, true)
+    end
+
+    it 'sets considered_risky to false' do
+      order.approve!
+      expect(order.reload.considered_risky).to be false
+    end
+
+    context 'events' do
+      it 'publishes order.update event' do
+        events = []
+        Spree::Events.subscribe('order.update', async: false) { |e| events << e }
+
+        order.approve!
+
+        update_event = events.find { |e| e.payload['considered_risky'] == false }
+        expect(update_event).not_to be_nil
+        expect(update_event.payload).to include('id' => order.id)
+      end
+    end
+  end
+
+  describe '#ensure_updated_shipments' do
+    let(:order) { create(:order_with_line_items) }
+
+    context 'when order has shipments and is not completed' do
+      before do
+        order.create_proposed_shipments
+      end
+
+      it 'destroys all shipments' do
+        expect(order.shipments).to be_present
+        order.ensure_updated_shipments
+        expect(order.reload.shipments).to be_empty
+      end
+
+      it 'resets shipment_total to 0' do
+        order.update_column(:shipment_total, 10.0)
+        order.ensure_updated_shipments
+        expect(order.reload.shipment_total).to eq(0)
+      end
+
+      it 'restarts checkout flow' do
+        order.update_column(:state, 'delivery')
+        order.ensure_updated_shipments
+        # restart_checkout_flow sets state to 'cart' then calls next! which goes to 'address'
+        expect(order.reload.state).to eq('address')
+      end
+
+      context 'events' do
+        it 'publishes order.update event' do
+          events = []
+          Spree::Events.subscribe('order.update', async: false) { |e| events << e }
+
+          order.ensure_updated_shipments
+
+          update_event = events.find { |e| e.payload['shipment_total'].to_f == 0 }
+          expect(update_event).not_to be_nil
+          expect(update_event.payload).to include('id' => order.id)
+        end
+      end
+    end
+
+    context 'when order is completed' do
+      let(:order) { create(:completed_order_with_totals) }
+
+      it 'does not destroy shipments' do
+        expect { order.ensure_updated_shipments }.not_to change { order.shipments.count }
+      end
     end
   end
 
