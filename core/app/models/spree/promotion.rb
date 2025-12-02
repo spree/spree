@@ -33,6 +33,11 @@ module Spree
     alias rules promotion_rules
     has_many :promotion_actions, autosave: true, dependent: :destroy
     alias actions promotion_actions
+
+    has_many :create_line_items_promotion_actions, lambda {
+      where(type: Spree::Promotion::Actions::CreateLineItems.to_s)
+    }, class_name: 'Spree::PromotionAction'
+
     has_many :coupon_codes, -> { order(created_at: :asc) }, dependent: :destroy, class_name: 'Spree::CouponCode'
     has_many :order_promotions, class_name: 'Spree::OrderPromotion'
     has_many :orders, through: :order_promotions, class_name: 'Spree::Order'

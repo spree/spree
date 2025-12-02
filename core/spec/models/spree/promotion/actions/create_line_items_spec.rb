@@ -34,9 +34,30 @@ describe Spree::Promotion::Actions::CreateLineItems, type: :model do
       it 'adds line items to order with correct variant and quantity' do
         action.perform(payload)
         expect(order.line_items.count).to eq(2)
-        line_item = order.line_items.find_by(variant_id: mug.id)
-        expect(line_item).not_to be_nil
-        expect(line_item.quantity).to eq(1)
+
+        line_item_1 = order.line_items.find_by(variant_id: mug.id)
+        expect(line_item_1).not_to be_nil
+        expect(line_item_1.quantity).to eq(1)
+
+        line_item_2 = order.line_items.find_by(variant_id: shirt.id)
+        expect(line_item_2).not_to be_nil
+        expect(line_item_2.quantity).to eq(2)
+      end
+
+      it 'adds the product item in draft state' do
+        mug.product.update!(status: 'draft')
+        shirt.product.update!(status: 'draft')
+
+        action.perform(payload)
+        expect(order.reload.line_items.count).to eq(2)
+
+        line_item_1 = order.line_items.find_by(variant_id: mug.id)
+        expect(line_item_1).not_to be_nil
+        expect(line_item_1.quantity).to eq(1)
+
+        line_item_2 = order.line_items.find_by(variant_id: shirt.id)
+        expect(line_item_2).not_to be_nil
+        expect(line_item_2.quantity).to eq(2)
       end
 
       it 'only adds the delta of quantity to an order' do

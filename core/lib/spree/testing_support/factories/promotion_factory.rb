@@ -76,5 +76,18 @@ FactoryBot.define do
 
       factory :free_shipping_promotion_with_item_total_rule, traits: [:with_item_total_rule]
     end
+
+    factory :free_item_promotion do
+      name { 'Free item' }
+
+      transient do
+        variant { create(:variant, price: 10) }
+      end
+
+      after(:create) do |promotion, evaluator|
+        action = Spree::Promotion::Actions::CreateLineItems.create(promotion: promotion)
+        action.promotion_action_line_items.create(variant: evaluator.variant)
+      end
+    end
   end
 end
