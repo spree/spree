@@ -1,10 +1,10 @@
 <%= form_for section.blocks.new, url: spree.admin_page_section_blocks_path(section), html: { class: 'list-group-item sidebar-page-block px-0 py-1 border-0 rounded'}, data: { controller: 'block-form', block_form_target: :form } do |f| %>
   <%= f.hidden_field :type, data: { block_form_target: 'type' } %>
 
-  <%= dropdown do %>
+  <%= dropdown portal: false do %>
     <%= dropdown_toggle class: 'btn-sm btn-secondary d-flex-inline' do %>
       <%= icon("circle-plus") %>
-      Add block
+      <%= Spree.t(:add_page_block) %>
     <% end %>
     <%= dropdown_menu do %>
     <% section.available_blocks_to_add.each do |block_class| %>

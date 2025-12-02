@@ -23,7 +23,7 @@
     </div>
     <div class="w-5">
       <% if can?(:edit, line_item) %>
-        <%= dropdown do %>
+        <%= dropdown portal: false do %>
           <%= dropdown_toggle class: 'btn-light btn-sm' do %>
             <%= icon "dots-vertical", class: "mr-0" %>
           <% end %>
