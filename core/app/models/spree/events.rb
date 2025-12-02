@@ -86,9 +86,12 @@ module Spree
 
       # Get the adapter instance
       #
-      # @return [Spree::Events::Adapters::ActiveSupportNotifications]
+      # The adapter class can be configured via Spree.events_adapter_class
+      # Default: Spree::Events::Adapters::ActiveSupportNotifications
+      #
+      # @return [Object] the configured adapter instance
       def adapter
-        @adapter ||= Adapters::ActiveSupportNotifications.new(registry)
+        @adapter ||= Spree.events_adapter_class.new(registry)
       end
 
       # Activate the event system (called during Rails initialization)

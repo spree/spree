@@ -40,7 +40,7 @@ StateMachines::Machine.ignore_method_conflicts = true
 module Spree
   mattr_accessor :base_class, :user_class, :admin_user_class,
                  :private_storage_service_name, :public_storage_service_name,
-                 :cdn_host, :root_domain, :searcher_class, :queues,
+                 :cdn_host, :root_domain, :searcher_class, :events_adapter_class, :queues,
                  :google_places_api_key, :screenshot_api_token
 
   def self.base_class(constantize: true)
@@ -120,6 +120,23 @@ module Spree
       raise 'Spree.searcher_class MUST be a String or Symbol object, not a Class object.'
     elsif @@searcher_class.is_a?(String) || @@searcher_class.is_a?(Symbol)
       constantize ? @@searcher_class.to_s.constantize : @@searcher_class.to_s
+    end
+  end
+
+  # Returns the events adapter class used for publishing and subscribing to events.
+  #
+  # @example Using a custom adapter
+  #   Spree.events_adapter_class = 'MyApp::Events::KafkaAdapter'
+  #
+  # @param constantize [Boolean] whether to return the class or the string
+  # @return [Class, String] the adapter class or its name
+  def self.events_adapter_class(constantize: true)
+    @@events_adapter_class ||= 'Spree::Events::Adapters::ActiveSupportNotifications'
+
+    if @@events_adapter_class.is_a?(Class)
+      raise 'Spree.events_adapter_class MUST be a String or Symbol object, not a Class object.'
+    elsif @@events_adapter_class.is_a?(String) || @@events_adapter_class.is_a?(Symbol)
+      constantize ? @@events_adapter_class.to_s.constantize : @@events_adapter_class.to_s
     end
   end
 
