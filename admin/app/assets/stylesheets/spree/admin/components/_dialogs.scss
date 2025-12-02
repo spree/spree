@@ -80,7 +80,7 @@ dialog:open {
 
   .alerts-container {
     position: absolute;
-  } 
+  }
 
   @media (max-width: 991.98px) {
     max-width: 100vw;
@@ -93,6 +93,7 @@ dialog:open {
     height: 100%;
     flex-direction: column;
     justify-content: space-between;
+    overflow: hidden;
   }
 
   .drawer-header {
@@ -110,8 +111,6 @@ dialog:open {
   }
 
   .drawer-footer {
-    position: sticky;
-    bottom: 0;
     padding: $modal-inner-padding;
     display: flex;
     justify-content: space-between;
