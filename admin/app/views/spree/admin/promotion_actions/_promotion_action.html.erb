@@ -4,7 +4,7 @@
       <h5 class="card-title"><%= promotion_action.human_name %></h5>
 
       <% if can?(:update, promotion_action) || can?(:destroy, promotion_action) %>
-        <%= dropdown do %>
+        <%= dropdown portal: false do %>
           <%= dropdown_toggle class: 'btn-light btn-sm px-1' do %>
             <%= icon('dots-vertical', class: 'mr-0') %>
           <% end %>
