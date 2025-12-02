@@ -6,7 +6,7 @@ module Spree
       def call(order:, line_item:, quantity: nil)
         ActiveRecord::Base.transaction do
           run :change_item_quantity
-          run Spree::Dependencies.cart_recalculate_service.constantize
+          run Spree.cart_recalculate_service
         end
       end
 

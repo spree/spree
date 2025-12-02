@@ -217,7 +217,7 @@ module Spree
     # Returns the current ability for the import
     # @return [Spree::Ability]
     def current_ability
-      @current_ability ||= Spree::Dependencies.ability_class.constantize.new(user, { store: store })
+      @current_ability ||= Spree.ability_class.new(user, { store: store })
     end
 
     class << self

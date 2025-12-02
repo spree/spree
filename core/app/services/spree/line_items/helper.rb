@@ -4,7 +4,7 @@ module Spree
       protected
 
       def recalculate_service
-        Spree::Dependencies.cart_recalculate_service.constantize
+        Spree.cart_recalculate_service
       end
     end
   end

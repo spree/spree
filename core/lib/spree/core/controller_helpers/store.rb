@@ -64,7 +64,7 @@ module Spree
         end
 
         def current_store_finder
-          Spree::Dependencies.current_store_finder.constantize
+          Spree.current_store_finder
         end
 
         def raise_record_not_found_if_store_is_not_found

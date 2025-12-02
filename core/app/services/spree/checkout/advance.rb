@@ -15,7 +15,7 @@ module Spree
         transitions_count = 0
 
         until cannot_make_transition?(order, state)
-          next_result = Spree::Dependencies.checkout_next_service.constantize.call(order: order)
+          next_result = Spree.checkout_next_service.call(order: order)
           return failure(order, order.errors) if next_result.failure? && (transitions_count.zero? || state.present?)
 
           transitions_count +=1

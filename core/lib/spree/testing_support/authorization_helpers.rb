@@ -30,7 +30,7 @@ module Spree
 
         def stub_authorization!
           ability = build_ability
-          ability_class = Spree::Dependencies.ability_class.constantize
+          ability_class = Spree.ability_class
 
           after(:all) do
             ability_class.remove_ability(ability)
@@ -51,7 +51,7 @@ module Spree
 
         def custom_authorization!(&block)
           ability = build_ability(&block)
-          ability_class = Spree::Dependencies.ability_class.constantize
+          ability_class = Spree.ability_class
 
           after(:all) do
             ability_class.remove_ability(ability)

@@ -6,7 +6,7 @@ module Spree
       def call(order:, variant:, quantity: nil, public_metadata: {}, private_metadata: {}, options: {})
         ApplicationRecord.transaction do
           run :add_to_line_item
-          run Spree::Dependencies.cart_recalculate_service.constantize
+          run Spree.cart_recalculate_service
         end
       end
 
@@ -18,7 +18,7 @@ module Spree
 
         return failure(variant, "#{variant.name} is not available in #{order.currency}") if variant.amount_in(order.currency).nil?
 
-        line_item = Spree::Dependencies.line_item_by_variant_finder.constantize.new.execute(order: order, variant: variant, options: options)
+        line_item = Spree.line_item_by_variant_finder.new.execute(order: order, variant: variant, options: options)
 
         line_item_created = line_item.nil?
         if line_item.nil?

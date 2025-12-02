@@ -374,6 +374,40 @@ module Spree
     @permissions ||= PermissionConfiguration.new
   end
 
+  class << self
+    # Dynamic methods for core dependencies
+    #
+    # @example Getting a dependency (returns resolved class)
+    #   Spree.cart_add_item_service.call(order: order, variant: variant)
+    #
+    # @example Setting a dependency
+    #   Spree.cart_add_item_service = MyApp::CartAddItem
+    def method_missing(method_name, *args, &block)
+      base_name = method_name.to_s.chomp('=').to_sym
+
+      return super unless core_dependency?(base_name)
+
+      if method_name.to_s.end_with?('=')
+        Spree::Dependencies.send(method_name, args.first)
+      else
+        # Returns resolved class (not string)
+        Spree::Dependencies.send("#{method_name}_class")
+      end
+    end
+
+    def respond_to_missing?(method_name, include_private = false)
+      base_name = method_name.to_s.chomp('=').to_sym
+      core_dependency?(base_name) || super
+    end
+
+    private
+
+    def core_dependency?(name)
+      defined?(Spree::Dependencies) &&
+        Spree::Dependencies.class::INJECTION_POINTS.include?(name)
+    end
+  end
+
   module Core
     autoload :ProductFilters, 'spree/core/product_filters'
     autoload :TokenGenerator, 'spree/core/token_generator'

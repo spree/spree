@@ -4,7 +4,7 @@ module Spree
       prepend Spree::ServiceModule::Base
 
       def call(order:)
-        Spree::Dependencies.checkout_next_service.constantize.call(order: order) until cannot_make_transition?(order)
+        Spree.checkout_next_service.call(order: order) until cannot_make_transition?(order)
 
         if order.reload.complete?
           success(order)

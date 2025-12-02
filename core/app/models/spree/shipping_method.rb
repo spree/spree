@@ -77,7 +77,7 @@ module Spree
 
     # your shipping method subclasses can override this method to provide a custom tracking number service
     def tracking_number_service(tracking)
-      @tracking_number_service ||= Spree::Dependencies.tracking_number_service.constantize.new(tracking)
+      @tracking_number_service ||= Spree.tracking_number_service.new(tracking)
     end
 
     def self.calculators

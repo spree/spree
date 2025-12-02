@@ -49,7 +49,7 @@ module Spree
       end
 
       def cart_remove_line_item_service
-        Spree::Dependencies.cart_remove_line_item_service.constantize
+        Spree.cart_remove_line_item_service
       end
     end
   end
