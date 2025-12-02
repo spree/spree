@@ -5,7 +5,8 @@ module Spree
   #
   # Enabled by default. To disable, set Spree::Config.events_log_enabled = false
   #
-  # Events are logged at info level.
+  # Events are logged at info level. Sensitive parameters are filtered using
+  # Rails.application.config.filter_parameters.
   #
   # @example Output
   #   [Spree Event] order.complete | payload: {"id"=>1} | 0.5ms
@@ -44,10 +45,20 @@ module Spree
         return unless spree_event
 
         event_name = spree_event.name
-        event_payload = spree_event.payload
+        event_payload = filter_sensitive_params(spree_event.payload)
         duration = ((finish - start) * 1000).round(2)
 
         Rails.logger.info "  \e[36m[Spree Event]\e[0m \e[1m#{event_name}\e[0m | payload: #{event_payload.inspect} | #{duration}ms"
+      end
+
+      def filter_sensitive_params(payload)
+        parameter_filter.filter(payload)
+      end
+
+      def parameter_filter
+        @parameter_filter ||= ActiveSupport::ParameterFilter.new(
+          Rails.application.config.filter_parameters
+        )
       end
     end
   end
