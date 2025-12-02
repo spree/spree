@@ -383,6 +383,85 @@ module MyApp
 end
 ```
 
+## Custom Event Adapters
+
+Spree's event system uses an adapter pattern, making it possible to swap the underlying event infrastructure. By default, Spree uses `ActiveSupport::Notifications`, but you can create custom adapters for other backends like Kafka, RabbitMQ, or Redis Pub/Sub.
+
+### Configuring a Custom Adapter
+
+Set your adapter class in an initializer:
+
+```ruby config/initializers/spree.rb
+Spree.events_adapter_class = 'MyApp::Events::KafkaAdapter'
+```
+
+### Creating a Custom Adapter
+
+Inherit from `Spree::Events::Adapters::Base` and implement the required methods:
+
+```ruby app/models/my_app/events/kafka_adapter.rb
+module MyApp
+  module Events
+    class KafkaAdapter < Spree::Events::Adapters::Base
+      def publish(event_name, payload, metadata = {})
+        event = build_event(event_name, payload, metadata)
+
+        # Publish to Kafka
+        kafka_producer.produce(
+          event.to_json,
+          topic: "spree.#{event_name}"
+        )
+
+        event
+      end
+
+      def subscribe(pattern, subscriber, options = {})
+        registry.register(pattern, subscriber, options)
+      end
+
+      def unsubscribe(pattern, subscriber)
+        registry.unregister(pattern, subscriber)
+      end
+
+      def activate!
+        @kafka_producer = Kafka.new(
+          seed_brokers: ENV['KAFKA_BROKERS']
+        ).producer
+      end
+
+      def deactivate!
+        @kafka_producer&.shutdown
+      end
+
+      private
+
+      attr_reader :kafka_producer
+    end
+  end
+end
+```
+
+### Base Class Interface
+
+The `Spree::Events::Adapters::Base` class defines the required interface:
+
+| Method | Description |
+|--------|-------------|
+| `publish(event_name, payload, metadata)` | Publish an event, return `Spree::Event` |
+| `subscribe(pattern, subscriber, options)` | Register a subscriber for a pattern |
+| `unsubscribe(pattern, subscriber)` | Remove a subscriber |
+| `activate!` | Called during Rails initialization |
+| `deactivate!` | Called during shutdown |
+
+The base class also provides helper methods:
+- `build_event(name, payload, metadata)` - Creates a `Spree::Event` instance
+- `subscriptions_for(event_name)` - Finds matching subscriptions from the registry
+- `registry` - Access to the `Spree::Events::Registry` instance
+
+<Info>
+See `Spree::Events::Adapters::ActiveSupportNotifications` for a complete reference implementation.
+</Info>
+
 ## Related Documentation
 
 - [Webhooks](/developer/core-concepts/webhooks) - HTTP callbacks for external integrations
