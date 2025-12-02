@@ -26,6 +26,15 @@ describe Spree::Product::Slugs, type: :model do
     it 'soft deletes slug record' do
       expect { product.destroy! }.to change { product.slugs.with_deleted.first.deleted? }.to be_truthy
     end
+
+    it 'allows re-using the slug from history' do
+      previous_slug = product.slugs.where.not(slug: product.slug).first.slug
+      product.update!(slug: previous_slug)
+
+      expect(product.slug).to eq(previous_slug)
+      expect(product.slugs.count).to eq(2)
+      expect(product.slugs.first.slug).to eq(previous_slug)
+    end
   end
 
   describe 'ability to retake a slug of deleted record with the same name' do
