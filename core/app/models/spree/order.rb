@@ -391,6 +391,9 @@ module Spree
       ActiveRecord::Base.connected_to(role: :writing) do
         self.class.unscoped.where(id: self).update_all(changes)
       end
+
+      # Manually publish update event since update_all bypasses callbacks
+      publish_event('order.update') if changes.present?
     end
 
     def disassociate_user!
@@ -693,6 +696,10 @@ module Spree
       if shipments.any? && !completed?
         shipments.destroy_all
         update_column(:shipment_total, 0)
+
+        # Manually publish update event since update_column bypasses callbacks
+        publish_event('order.update')
+
         restart_checkout_flow
       end
     end
@@ -702,6 +709,10 @@ module Spree
         state: 'cart',
         updated_at: Time.current
       )
+
+      # Manually publish update event since update_columns bypasses callbacks
+      publish_event('order.update')
+
       next! unless line_items.empty?
     end
 
@@ -735,24 +746,28 @@ module Spree
 
     def canceled_by(user, canceled_at = nil)
       canceled_at ||= Time.current
+      changes = { canceler_id: user.id, canceled_at: canceled_at }
 
       transaction do
-        update_columns(
-          canceler_id: user.id,
-          canceled_at: canceled_at
-        )
+        update_columns(changes)
         cancel!
       end
+
+      # Manually publish update event since update_columns bypasses callbacks
+      publish_event('order.update')
     end
 
     def approved_by(user)
+      approved_at = Time.current
+      changes = { approver_id: user.id, approved_at: approved_at }
+
       transaction do
         approve!
-        update_columns(
-          approver_id: user.id,
-          approved_at: Time.current
-        )
+        update_columns(changes)
       end
+
+      # Manually publish update event since update_columns bypasses callbacks
+      publish_event('order.update')
     end
 
     def approved?
@@ -778,10 +793,16 @@ module Spree
 
     def considered_risky!
       update_column(:considered_risky, true)
+
+      # Manually publish update event since update_column bypasses callbacks
+      publish_event('order.update')
     end
 
     def approve!
       update_column(:considered_risky, false)
+
+      # Manually publish update event since update_column bypasses callbacks
+      publish_event('order.update')
     end
 
     def tax_total
