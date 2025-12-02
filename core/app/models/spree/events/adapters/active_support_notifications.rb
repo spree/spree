@@ -14,13 +14,11 @@ module Spree
       #   adapter = ActiveSupportNotifications.new(registry)
       #   adapter.publish('order.complete', { id: 1 })
       #
-      class ActiveSupportNotifications
+      class ActiveSupportNotifications < Base
         NAMESPACE = 'spree'
 
-        attr_reader :registry
-
         def initialize(registry)
-          @registry = registry
+          super
           @as_subscription = nil
           @mutex = Mutex.new
         end
@@ -32,12 +30,7 @@ module Spree
         # @param metadata [Hash] Additional metadata
         # @return [Spree::Event] The published event
         def publish(event_name, payload, metadata = {})
-          event = Spree::Event.new(
-            name: event_name,
-            payload: payload,
-            metadata: metadata
-          )
-
+          event = build_event(event_name, payload, metadata)
           instrument_name = namespaced_event(event_name)
 
           ::ActiveSupport::Notifications.instrument(instrument_name, event: event) do
@@ -113,54 +106,6 @@ module Spree
           end
         end
 
-        def invoke_subscribers(event)
-          # Check if events are enabled (can be disabled via Spree::Events.disable)
-          return unless Spree::Events.enabled?
-
-          subscriptions = registry.subscriptions_for(event.name)
-
-          subscriptions.each do |subscription|
-            invoke_subscriber(subscription.subscriber, event, subscription.options)
-          rescue StandardError => e
-            handle_subscriber_error(e, event, subscription)
-          end
-        end
-
-        def invoke_subscriber(subscriber, event, options)
-          async = options.fetch(:async, true)
-
-          if subscriber.is_a?(Proc)
-            # Block subscribers run synchronously
-            subscriber.call(event)
-          elsif subscriber.respond_to?(:call)
-            # Callable objects (including subscriber instances)
-            if async && defined?(Spree::Events::SubscriberJob)
-              Spree::Events::SubscriberJob.perform_later(subscriber.name, event.to_h)
-            else
-              subscriber.call(event)
-            end
-          elsif subscriber.is_a?(Class) && subscriber < Spree::Subscriber
-            # Subscriber classes
-            if async && defined?(Spree::Events::SubscriberJob)
-              Spree::Events::SubscriberJob.perform_later(subscriber.name, event.to_h)
-            else
-              subscriber.new.call(event)
-            end
-          else
-            raise ArgumentError, "Invalid subscriber: #{subscriber.inspect}. Must be a Proc, callable, or Spree::Subscriber subclass."
-          end
-        end
-
-        def handle_subscriber_error(error, event, subscription)
-          Rails.error.report(error, context: {
-            event_name: event.name,
-            subscriber: subscription.subscriber.to_s,
-            event_id: event.metadata['event_id']
-          })
-
-          # Re-raise in development/test for visibility
-          raise if Rails.env.development? || Rails.env.test?
-        end
       end
     end
   end
