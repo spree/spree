@@ -120,6 +120,7 @@ module Spree
             result_errors = coupon_codes.count > 1 ? select_errors(coupon_codes) : select_error(coupon_codes)
 
             if result_errors.blank?
+              spree_current_order.reload
               render_serialized_payload { serialized_current_order }
             else
               render_error_payload(result_errors)
