@@ -31,8 +31,9 @@ describe Spree::Api::ApiDependencies, type: :model do
         Spree::Dependencies.cart_create_service = MyCustomCreateService
         expect(deps.storefront_cart_create_service).to eq(MyCustomCreateService)
       ensure
-        Spree::Dependencies.instance_variable_set(:@cart_create_service, original_value)
-        Spree::Dependencies.remove_instance_variable(:@cart_create_service_resolved) if Spree::Dependencies.instance_variable_defined?(:@cart_create_service_resolved)
+        # Use setter to properly clear memoization
+        Spree::Dependencies.cart_create_service = original_value
+        Spree::Dependencies.instance_variable_get(:@overrides)&.delete(:cart_create_service)
       end
     end
   end
