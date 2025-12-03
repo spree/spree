@@ -158,9 +158,11 @@ describe 'Spree module dependency accessors' do
   end
 
   describe 'Spree.<dependency>=' do
-    let(:original_value) { Spree::Dependencies.cart_add_item_service }
-
-    after do
+    # Use around hook with ensure to guarantee cleanup even if test fails
+    around do |example|
+      original_value = Spree::Dependencies.cart_add_item_service
+      example.run
+    ensure
       # Restore original value using setter (which clears memoization)
       Spree::Dependencies.cart_add_item_service = original_value
       # Clear override tracking for this test

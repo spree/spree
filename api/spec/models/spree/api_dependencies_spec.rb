@@ -93,9 +93,11 @@ describe 'Spree.api accessor' do
   end
 
   describe 'Spree.api.<dependency>=' do
-    let(:original_value) { Spree::Api::Dependencies.storefront_coupon_handler }
-
-    after do
+    # Use around hook with ensure to guarantee cleanup even if test fails
+    around do |example|
+      original_value = Spree::Api::Dependencies.storefront_coupon_handler
+      example.run
+    ensure
       # Restore original value using setter (which clears memoization)
       Spree::Api::Dependencies.storefront_coupon_handler = original_value
       # Clear override tracking for this test

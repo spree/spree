@@ -78,7 +78,9 @@ module Spree
           name: point,
           current: current,
           default: default_val,
-          overridden: current != default_val,
+          # Use overridden? to check if setter was called, not value comparison
+          # Value comparison fails for proc-based defaults that reference other dependencies
+          overridden: overridden?(point),
           override_info: overrides[point]
         }
       end
