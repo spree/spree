@@ -111,6 +111,15 @@ describe 'Spree.api accessor' do
       Spree.api.storefront_coupon_handler = MyCustomCouponHandler
       expect(Spree.api.storefront_coupon_handler).to eq MyCustomCouponHandler
     end
+
+    it 'tracks override source correctly (not internal routing code)' do
+      Spree.api.storefront_coupon_handler = MyCustomCouponHandler
+      info = Spree::Api::Dependencies.override_info(:storefront_coupon_handler)
+
+      # Should point to this spec file, not api.rb method_missing
+      expect(info[:source]).to include('api_dependencies_spec.rb')
+      expect(info[:source]).not_to include('lib/spree/api.rb')
+    end
   end
 
   describe 'Spree.api.dependencies' do

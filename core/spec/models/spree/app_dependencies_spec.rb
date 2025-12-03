@@ -176,5 +176,14 @@ describe 'Spree module dependency accessors' do
       Spree.cart_add_item_service = MyCustomAddItemService
       expect(Spree.cart_add_item_service).to eq MyCustomAddItemService
     end
+
+    it 'tracks override source correctly (not internal routing code)' do
+      Spree.cart_add_item_service = MyCustomAddItemService
+      info = Spree::Dependencies.override_info(:cart_add_item_service)
+
+      # Should point to this spec file, not core.rb method_missing
+      expect(info[:source]).to include('app_dependencies_spec.rb')
+      expect(info[:source]).not_to include('lib/spree/core.rb')
+    end
   end
 end

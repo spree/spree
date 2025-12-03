@@ -2,6 +2,12 @@ module Spree
   class DependencyError < StandardError; end
 
   module DependenciesHelper
+    # Patterns to skip when finding the actual caller (internal routing code)
+    INTERNAL_CALLER_PATTERNS = [
+      %r{lib/spree/core\.rb.*method_missing},
+      %r{lib/spree/api\.rb.*method_missing}
+    ].freeze
+
     def self.included(base)
       injection_points = base::INJECTION_POINTS_WITH_DEFAULTS.keys.freeze
       base.const_set(:INJECTION_POINTS, injection_points)
@@ -17,7 +23,7 @@ module Spree
           @overrides ||= {}
           @overrides[point] = {
             value: value,
-            source: caller_locations(1, 1).first.to_s,
+            source: find_caller_source,
             set_at: Time.current
           }
           # Clear memoized class when value changes
@@ -99,6 +105,19 @@ module Spree
         value = default_value.respond_to?(:call) ? default_value.call : default_value
         instance_variable_set("@#{injection_point}", value)
       end
+    end
+
+    # Find the actual caller source, skipping internal DSL routing code
+    # This ensures Spree.foo = X reports the user's code location, not method_missing
+    def find_caller_source
+      caller_locations(2, 10).each do |location|
+        location_str = location.to_s
+        next if INTERNAL_CALLER_PATTERNS.any? { |pattern| location_str.match?(pattern) }
+
+        return location_str
+      end
+      # Fallback to immediate caller if no external caller found
+      caller_locations(2, 1).first.to_s
     end
   end
 end
