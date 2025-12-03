@@ -12,11 +12,11 @@ module Spree
       end
 
       def add_item_service
-        Spree::Dependencies.cart_add_item_service.constantize
+        Spree.cart_add_item_service
       end
 
       def remove_item_service
-        Spree::Dependencies.cart_remove_item_service.constantize
+        Spree.cart_remove_item_service
       end
     end
   end

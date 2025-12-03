@@ -210,7 +210,7 @@ module Spree
 
     def self.current(url = nil)
       if url.present?
-        Spree::Dependencies.current_store_finder.constantize.new(url: url).execute
+        Spree.current_store_finder.new(url: url).execute
       else
         Spree::Current.store
       end

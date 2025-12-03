@@ -87,19 +87,19 @@ module Spree
         end
 
         def optional_attributes
-          Spree::Dependencies.data_feeds_google_optional_attributes_service.constantize.new
+          Spree.data_feeds_google_optional_attributes_service.new
         end
 
         def required_attributes
-          Spree::Dependencies.data_feeds_google_required_attributes_service.constantize.new
+          Spree.data_feeds_google_required_attributes_service.new
         end
 
         def optional_sub_attributes
-          Spree::Dependencies.data_feeds_google_optional_sub_attributes_service.constantize.new
+          Spree.data_feeds_google_optional_sub_attributes_service.new
         end
 
         def products_list
-          Spree::Dependencies.data_feeds_google_products_list.constantize.new
+          Spree.data_feeds_google_products_list.new
         end
       end
     end

@@ -349,7 +349,7 @@ module Spree
     end
 
     def updater
-      @updater ||= Spree::Dependencies.order_updater.constantize.new(self)
+      @updater ||= Spree.order_updater.new(self)
     end
 
     def update_with_updater!
@@ -407,7 +407,7 @@ module Spree
     def find_line_item_by_variant(variant, options = {})
       line_items.detect do |line_item|
         line_item.variant_id == variant.id &&
-          Spree::Dependencies.cart_compare_line_items_service.constantize.new.call(order: self, line_item: line_item, options: options).value
+          Spree.cart_compare_line_items_service.new.call(order: self, line_item: line_item, options: options).value
       end
     end
 
@@ -578,7 +578,7 @@ module Spree
     def empty!
       raise Spree.t(:cannot_empty_completed_order) if completed?
 
-      result = Spree::Dependencies.cart_empty_service.constantize.call(order: self)
+      result = Spree.cart_empty_service.call(order: self)
       result.value
     end
 
@@ -957,7 +957,7 @@ module Spree
       if gift_card.present?
         recalculate_gift_card
       elsif using_store_credit?
-        Spree::Dependencies.checkout_add_store_credit_service.constantize.call(order: self)
+        Spree.checkout_add_store_credit_service.call(order: self)
       end
     end
   end

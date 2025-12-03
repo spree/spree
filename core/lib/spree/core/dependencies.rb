@@ -97,8 +97,8 @@ module Spree
         # finders
         address_finder: 'Spree::Addresses::Find',
         country_finder: 'Spree::Countries::Find',
-        cms_page_finder: 'Spree::CmsPages::Find', # LEGACY
-        menu_finder: 'Spree::Menus::Find', # LEGACY
+        cms_page_finder: nil, # LEGACY
+        menu_finder: nil, # LEGACY
         current_order_finder: 'Spree::Orders::FindCurrent',
         current_store_finder: 'Spree::Stores::FindCurrent',
         completed_order_finder: 'Spree::Orders::FindComplete',

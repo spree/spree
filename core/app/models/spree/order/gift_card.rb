@@ -25,13 +25,13 @@ module Spree
       # @param gift_card [Spree::GiftCard] the gift card to apply
       # @return [Spree::Order] the order with the gift card applied
       def apply_gift_card(gift_card)
-        Spree::Dependencies.gift_card_apply_service.constantize.call(gift_card: gift_card, order: self)
+        Spree.gift_card_apply_service.call(gift_card: gift_card, order: self)
       end
 
       # Removes a gift card from the order
       # @return [Spree::Order] the order with the gift card removed
       def remove_gift_card
-        Spree::Dependencies.gift_card_remove_service.constantize.call(order: self)
+        Spree.gift_card_remove_service.call(order: self)
       end
 
       def recalculate_gift_card
@@ -44,7 +44,7 @@ module Spree
       def redeem_gift_card
         return unless gift_card.present?
 
-        Spree::Dependencies.gift_card_redeem_service.constantize.call(gift_card: gift_card)
+        Spree.gift_card_redeem_service.call(gift_card: gift_card)
       end
     end
   end

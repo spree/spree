@@ -17,7 +17,7 @@ module Spree
 
         # Needs to be overridden so that we use Spree's Ability rather than anyone else's.
         def current_ability
-          @current_ability ||= Spree::Dependencies.ability_class.constantize.new(try_spree_current_user, { store: current_store })
+          @current_ability ||= Spree.ability_class.new(try_spree_current_user, { store: current_store })
         end
 
         def redirect_back_or_default(default)

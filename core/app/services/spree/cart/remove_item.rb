@@ -9,9 +9,9 @@ module Spree
 
         ActiveRecord::Base.transaction do
           line_item = remove_from_line_item(order: order, variant: variant, quantity: quantity, options: options)
-          Spree::Dependencies.cart_recalculate_service.constantize.call(line_item: line_item,
-                                                                        order: order,
-                                                                        options: options)
+          Spree.cart_recalculate_service.call(line_item: line_item,
+                                              order: order,
+                                              options: options)
           success(line_item)
         end
       end
@@ -19,7 +19,7 @@ module Spree
       private
 
       def remove_from_line_item(order:, variant:, quantity:, options:)
-        line_item = Spree::Dependencies.line_item_by_variant_finder.constantize.new.execute(order: order, variant: variant, options: options)
+        line_item = Spree.line_item_by_variant_finder.new.execute(order: order, variant: variant, options: options)
 
         raise ActiveRecord::RecordNotFound if line_item.nil?
 

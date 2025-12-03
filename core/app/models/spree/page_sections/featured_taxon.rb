@@ -61,8 +61,7 @@ module Spree
             sort_by: 'default'
           }
 
-          products_finder = Spree::Dependencies.products_finder.constantize
-          products_finder.new(scope: store.products, params: finder_params).execute.limit(preferred_max_products_to_show)
+          Spree.products_finder.new(scope: store.products, params: finder_params).execute.limit(preferred_max_products_to_show)
         end
       end
 
