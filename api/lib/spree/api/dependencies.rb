@@ -53,10 +53,10 @@ module Spree
         # serializers
         storefront_address_serializer: 'Spree::V2::Storefront::AddressSerializer',
         storefront_cart_serializer: 'Spree::V2::Storefront::CartSerializer',
-        storefront_cms_page_serializer: 'Spree::V2::Storefront::CmsPageSerializer', # LEGACY
+        storefront_cms_page_serializer: nil, # LEGACY
         storefront_credit_card_serializer: 'Spree::V2::Storefront::CreditCardSerializer',
         storefront_country_serializer: 'Spree::V2::Storefront::CountrySerializer',
-        storefront_menu_serializer: 'Spree::V2::Storefront::MenuSerializer', # LEGACY
+        storefront_menu_serializer: nil, # LEGACY
         storefront_user_serializer: 'Spree::V2::Storefront::UserSerializer',
         storefront_shipment_serializer: 'Spree::V2::Storefront::ShipmentSerializer',
         storefront_taxon_serializer: 'Spree::V2::Storefront::TaxonSerializer',
