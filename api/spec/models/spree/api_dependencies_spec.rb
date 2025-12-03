@@ -95,9 +95,10 @@ describe 'Spree.api accessor' do
     let(:original_value) { Spree::Api::Dependencies.storefront_coupon_handler }
 
     after do
-      # Restore original value
-      Spree::Api::Dependencies.instance_variable_set(:@storefront_coupon_handler, original_value)
-      Spree::Api::Dependencies.instance_variable_set(:@overrides, {})
+      # Restore original value using setter (which clears memoization)
+      Spree::Api::Dependencies.storefront_coupon_handler = original_value
+      # Clear override tracking for this test
+      Spree::Api::Dependencies.instance_variable_get(:@overrides)&.delete(:storefront_coupon_handler)
     end
 
     it 'sets the dependency via Spree.api' do

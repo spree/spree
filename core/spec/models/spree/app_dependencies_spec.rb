@@ -161,9 +161,10 @@ describe 'Spree module dependency accessors' do
     let(:original_value) { Spree::Dependencies.cart_add_item_service }
 
     after do
-      # Restore original value
-      Spree::Dependencies.instance_variable_set(:@cart_add_item_service, original_value)
-      Spree::Dependencies.instance_variable_set(:@overrides, {})
+      # Restore original value using setter (which clears memoization)
+      Spree::Dependencies.cart_add_item_service = original_value
+      # Clear override tracking for this test
+      Spree::Dependencies.instance_variable_get(:@overrides)&.delete(:cart_add_item_service)
     end
 
     it 'sets the dependency via Spree module' do
