@@ -1050,8 +1050,7 @@
                       "user/storefront/create-post",
                       "user/storefront/edit-post",
                       "user/storefront/search-posts",
-                      "user/storefront/delete-post",
-                      "user/storefront/import-posts"
+                      "user/storefront/delete-post"
                     ]
                   },
                   "user/storefront/storefront-settings",
