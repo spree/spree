@@ -68,8 +68,12 @@
 
   .sort_link {
     color: var(--color-gray-600);
-    padding: 0.25rem;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
     border-radius: var(--radius-sm);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .sort_link:hover {
