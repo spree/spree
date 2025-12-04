@@ -62,6 +62,7 @@
 
   .page-header-title {
     font-size: var(--font-size-xl);
+    margin-bottom: 0.5rem;
   }
 
   /* Page Tabs */

@@ -17,17 +17,16 @@
   .ts-dropdown,
   .ts-dropdown.form-control {
     position: absolute;
-    top: 100%;
+    top: 110%;
     left: 0;
     width: 100%;
     height: auto;
-    padding: 0;
-    margin: 0.25rem 0 0 0;
-    z-index: 1000;
+    padding: 0.25rem;
+    margin: 0;
+    z-index: 10000000 !important;
     background: var(--color-surface);
-    border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+    box-shadow: var(--shadow-dropdown);
   }
 
   .ts-dropdown .optgroup-header {
@@ -55,7 +54,7 @@
   }
 
   .ts-dropdown-content {
-    padding: 5px 0;
+    padding: 0;
     overflow-y: auto;
     overflow-x: hidden;
     max-height: 200px;
@@ -77,7 +76,8 @@
   .ts-dropdown .optgroup-header,
   .ts-dropdown .no-results,
   .ts-dropdown .create {
-    padding: 3px 0.75rem;
+    padding: 0.5rem;
+    border-radius: var(--radius-sm);
   }
 
   .ts-dropdown .option,
@@ -217,6 +217,26 @@
   }
 
   /* Disabled state */
+  .ts-wrapper.disabled {
+    pointer-events: none;
+    cursor: not-allowed !important;
+  }
+
+  .ts-wrapper.disabled:hover:not(:focus) {
+    border: 0 none !important;
+  }
+
+  .ts-wrapper.disabled .ts-control {
+    pointer-events: none;
+    cursor: not-allowed !important;
+    opacity: 0.5;
+    background-color: var(--color-gray-100);
+  }
+
+  .ts-wrapper.disabled .ts-control:hover:not(:focus) {
+    border: 1px solid transparent !important;
+  }
+
   .disabled .ts-control,
   .disabled .ts-control * {
     cursor: default !important;
@@ -285,23 +305,7 @@
   }
 
   .ts-wrapper.single .ts-control:after {
-    content: ' ';
-    display: block;
-    position: absolute;
-    top: 50%;
-    right: 15px;
-    margin-top: -3px;
-    width: 0;
-    height: 0;
-    border-style: solid;
-    border-width: 5px 5px 0 5px;
-    border-color: var(--color-gray-800) transparent transparent transparent;
-  }
-
-  .ts-wrapper.single.dropdown-active .ts-control::after {
-    margin-top: -4px;
-    border-width: 0 5px 5px 5px;
-    border-color: transparent transparent var(--color-gray-800) transparent;
+    content: none;
   }
 
   .ts-wrapper.single.input-active .ts-control,
@@ -370,6 +374,10 @@
   }
 
   /* Remove button plugin */
+  .ts-wrapper.plugin-remove_button .item .remove {
+    padding: 3px 6px;
+  }
+
   .ts-wrapper .ts-control > .item .remove {
     display: inline-block;
     margin-left: 3px;

@@ -1,7 +1,7 @@
 <% resource_name ||= model_class.name.demodulize.underscore.humanize %>
 
-<div class="text-muted p-5 d-flex align-items-center w-100 justify-content-center flex-column">
-  <%= icon 'map-search', class: 'mb-3 opacity-50', style: 'font-size: 2rem;' %>
+<div class="text-muted p-5 d-flex align-items-center w-100 justify-content-center flex-column gap-3">
+  <%= icon 'map-search', class: 'opacity-50', style: 'font-size: 2rem;' %>
   <p>
     <%= Spree.t(:no_resource_found, resource: resource_name) %>
   </p>
