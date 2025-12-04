@@ -78,7 +78,7 @@
     height: var(--spacing-header-height);
     padding-left: 1rem;
     padding-right: 1rem;
-    max-width: 100%;
+    max-width: 100% !important;
     border-bottom: 1px solid var(--color-border);
   }
 
