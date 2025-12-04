@@ -51,7 +51,7 @@
         <% end %>
       </div>
     <% end %>
-    <h6 class="<%= defined?(current_vendor) && current_vendor ? "" : "mt-4" %> font-weight-bold"><%= Spree.t(:shipping_address) %></h6>
+    <h6 class="mt-4 font-weight-bold mb-2"><%= Spree.t(:shipping_address) %></h6>
     <%= turbo_frame_tag :order_ship_address do %>
       <% if @order.ship_address.present? %>
         <%= render 'spree/admin/shared/address', address: @order.ship_address %>
@@ -61,7 +61,7 @@
         <span class="text-muted"><%= Spree.t(:no_shipping_address_available) %></span>
       <% end %>
     <% end %>
-    <h6 class="mt-4 font-weight-bold"><%= Spree.t(:billing_address) %></h6>
+    <h6 class="mt-4 font-weight-bold mb-2"><%= Spree.t(:billing_address) %></h6>
     <%= turbo_frame_tag :order_bill_address do %>
       <% if @order.shipping_eq_billing_address? && @order.bill_address.present? %>
         <span class="text-muted"><%= Spree.t(:same_as_shipping_address) %></span>
