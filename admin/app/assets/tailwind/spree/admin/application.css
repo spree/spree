@@ -1,3 +1,11 @@
+@import url('https://unpkg.com/trix@2.1.12/dist/trix.css');
+@import url('https://esm.sh/@uppy/core@4.2.0/dist/style.min.css');
+@import url('https://esm.sh/@uppy/dashboard@4.1.0/dist/style.min.css');
+@import url('https://esm.sh/@uppy/image-editor@3.1.0/dist/style.min.css');
+@import url('https://esm.sh/animate.css@4.1.1/animate.min.css');
+@import url('https://esm.sh/@simonwep/pickr@1.8.2/dist/themes/classic.min.css');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css');
+
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 @plugin "@tailwindcss/forms";
