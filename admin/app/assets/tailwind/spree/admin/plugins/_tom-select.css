@@ -169,7 +169,7 @@
   }
 
   .focus .ts-control {
-    border-color: var(--color-primary);
+    border-color: var(--color-blue);
     outline: 0;
     box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
   }
@@ -255,6 +255,7 @@
     line-height: inherit !important;
     user-select: auto !important;
     box-shadow: none !important;
+    font-size: var(--font-size-base);
   }
 
   .ts-control > input:focus {
@@ -423,7 +424,7 @@
   }
 
   .ts-dropdown.plugin-dropdown_input .dropdown-input:focus {
-    border-color: var(--color-primary);
+    border-color: var(--color-blue);
     outline: 0;
     box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
   }

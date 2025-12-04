@@ -23,7 +23,7 @@
     font-weight: var(--font-weight-medium);
   }
 
-  .form-control, .text-input {
+  .form-control, .text-input, .form-input {
     display: block;
     width: 100%;
     padding: 0.5rem 0.75rem;
@@ -39,7 +39,7 @@
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
   }
 
-  .form-control:focus {
+  .form-control:focus, .form-input:focus, .text-input:focus {
     color: var(--color-text);
     background-color: var(--color-surface);
     border-color: var(--color-blue);
@@ -47,13 +47,17 @@
     box-shadow: 0 0 0 0.18rem rgba(0, 144, 254, 0.25);
   }
 
-  .form-control::placeholder {
+  .form-control::placeholder, .form-input::placeholder, .text-input::placeholder {
     color: var(--color-gray-500);
     opacity: 1;
   }
 
   .form-control:disabled,
-  .form-control[readonly] {
+  .form-control[readonly],
+  .form-input:disabled,
+  .form-input[readonly],
+  .text-input:disabled,
+  .text-input[readonly] {
     background-color: var(--color-gray-50) !important;
     border: 1px solid var(--color-border) !important;
     color: var(--color-text-muted);
