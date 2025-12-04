@@ -32,7 +32,7 @@
     background-color: var(--color-surface);
     background-clip: padding-box;
     border: 1px solid var(--color-gray-200);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-default);
     box-shadow: var(--shadow-xs);
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
   }
@@ -52,8 +52,11 @@
 
   .form-control:disabled,
   .form-control[readonly] {
-    background-color: var(--color-gray-25);
-    opacity: 1;
+    background-color: var(--color-gray-50) !important;
+    border: 1px solid var(--color-border) !important;
+    color: var(--color-text-muted);
+    box-shadow: none;
+    cursor: not-allowed;
   }
 
   .form-control-plaintext {
@@ -82,8 +85,8 @@
 
   .form-text {
     display: block;
-    margin-top: 0.25rem;
-    font-size: var(--font-size-sm);
+    margin-top: 0;
+    font-size: var(--font-size-base);
     color: var(--color-text-muted);
   }
 
@@ -152,7 +155,7 @@
     width: 1rem;
     height: 1rem;
     margin-left: -1.5rem;
-    margin-top: 0.25rem;
+    margin-top: 0.2rem;
     vertical-align: top;
     background-color: var(--color-surface);
     border: 1px solid var(--color-gray-300);
@@ -231,22 +234,39 @@
     border-color: var(--color-blue);
   }
 
+  .custom-control-label {
+    font-weight: var(--font-weight-normal);
+  }
+
+  .custom-control a {
+    color: var(--color-text);
+  }
+
+  .custom-radio:hover {
+    color: unset;
+    text-decoration: unset;
+  }
+
   /* Select */
   .custom-select {
     display: block;
     width: 100%;
-    padding: 0.5rem 2rem 0.5rem 0.75rem;
+    padding: 0.5rem 2.5rem 0.5rem 0.75rem;
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-normal);
     line-height: 1.5;
     color: var(--color-text);
     background-color: var(--color-surface);
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23333' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
-    background-repeat: no-repeat;
-    background-position: right 0.75rem center;
-    background-size: 16px 12px;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-repeat: no-repeat !important;
+    background-position: right 0.5rem center !important;
+    background-size: 1.5em 1.5em !important;
     border: 1px solid var(--color-gray-200);
     border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xs);
+    transition-property: box-shadow, border-color;
+    transition-duration: 0.15s;
+    transition-timing-function: ease;
     appearance: none;
   }
 
@@ -256,10 +276,25 @@
     box-shadow: 0 0 0 0.18rem rgba(0, 144, 254, 0.25);
   }
 
-  .custom-select:disabled {
-    background-color: var(--color-gray-50);
+  .custom-select:disabled,
+  .custom-select[readonly] {
+    background-color: var(--color-gray-50) !important;
+    border: 1px solid var(--color-border) !important;
+    color: var(--color-text-muted);
+    box-shadow: none;
+    cursor: not-allowed;
   }
 
+  /* Custom Select Small */
+  .custom-select-sm {
+    height: calc(1.5em + 0.5rem + 2px);
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+    padding-left: 0.5rem;
+    font-size: var(--font-size-sm);
+    border-radius: var(--radius-sm);
+  }
+  
   /* Input Group */
   .input-group {
     position: relative;
@@ -322,5 +357,46 @@
   .input-group-append .input-group-text {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
+  }
+
+  .input-group-text {
+    background-color: transparent;
+  }
+
+  /* File input */
+  input[type="file"] {
+    width: fit-content;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Form control icon */
+  .form-control .ti-search {
+    opacity: 0.5;
+  }
+
+  /* Custom checkbox box-shadow */
+  .custom-checkbox .custom-control-label::before {
+    border-radius: 0.25rem !important;
+    border-color: var(--color-gray-200);
+    box-shadow: var(--shadow-xs);
+  }
+
+  .custom-checkbox .custom-control-label::before,
+  .custom-checkbox .custom-control-label::after {
+    top: 0rem;
+  }
+
+  /* Turbo frame busy state */
+  turbo-frame.blur-busy[busy] {
+    opacity: 0.5;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+
+  turbo-frame.blur-busy[busy] * {
+    pointer-events: none;
   }
 }
