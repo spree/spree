@@ -14,7 +14,7 @@
 <% end %>
 <%= turbo_frame_tag dom_id(@shipment, :tracking) do %>
   <%= form_with model: @shipment, url: spree.admin_order_shipment_path(@order, @shipment), class: "w-100 py-1 d-flex justify-content-between align-items-center" do |f| %>
-    <div class="form-inline">
+    <div class="d-flex align-items-center">
       <%= f.label :tracking, Spree.t(:tracking_number) %>
       <%= f.text_field :tracking, class: 'form-control ml-3', required: true, autofocus: true %>
     </div>

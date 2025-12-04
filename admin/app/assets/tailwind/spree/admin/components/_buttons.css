@@ -1,0 +1,221 @@
+/* ==========================================================================
+   BUTTONS
+   ========================================================================== */
+
+@layer components {
+  /* Tabler Icons base styles */
+  .ti {
+    font-size: 120%;
+    vertical-align: middle;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    vertical-align: middle;
+    padding: 0.35rem 0.75rem;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+    border: 1px solid transparent;
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    user-select: none;
+    text-decoration: none;
+    transition: background-color 0.1s linear, border-color 0.2s linear, color 0.1s linear;
+  }
+
+  .btn:hover {
+    text-decoration: none;
+  }
+
+  .btn:focus {
+    outline: none;
+    box-shadow: none;
+  }
+
+  .btn:disabled,
+  .btn.disabled {
+    opacity: 0.7;
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+
+  .btn i,
+  .btn .ti {
+    margin-right: 0.5rem;
+  }
+
+  .btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: var(--font-size-sm);
+    border-radius: var(--radius-default);
+  }
+
+  .btn-sm i,
+  .btn-sm .ti {
+    margin-right: 0.25rem;
+  }
+
+  .btn-lg {
+    padding: 0.5rem 1rem;
+    font-size: var(--font-size-lg);
+    border-radius: var(--radius-lg);
+  }
+
+  /* Button Variants */
+  .btn-primary {
+    color: white;
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-xs);
+  }
+
+  .btn-primary:hover {
+    background-color: var(--color-primary-hover);
+    border-color: var(--color-primary-hover);
+  }
+
+  .btn-secondary {
+    color: var(--color-primary);
+    background-color: rgba(0, 144, 254, 0.05);
+    border-color: rgba(6, 25, 50, 0.1);
+    box-shadow: var(--shadow-xs);
+  }
+
+  .btn-secondary:hover,
+  .btn-secondary:focus {
+    background-color: rgba(0, 144, 254, 0.1);
+    border-color: rgba(6, 25, 50, 0.2);
+    color: var(--color-primary);
+  }
+
+  .btn-secondary .arrow {
+    color: var(--color-primary);
+  }
+
+  .btn-light {
+    color: var(--color-gray-700);
+    background-color: var(--color-gray-25);
+    border-color: var(--color-border);
+    box-shadow: var(--shadow-xs);
+  }
+
+  .btn-light:hover,
+  .btn-light:focus {
+    background-color: var(--color-gray-50);
+    border-color: var(--color-border);
+    color: var(--color-gray-900);
+  }
+
+  .btn-light:active {
+    background: var(--color-gray-50);
+    box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.025);
+  }
+
+  .btn-light.bg-transparent {
+    background: transparent;
+  }
+
+  .btn-dark {
+    color: var(--color-gray-200);
+    background-color: var(--color-gray-900);
+    border-color: var(--color-gray-900);
+  }
+
+  .btn-dark:hover,
+  .btn-dark:focus {
+    background: linear-gradient(var(--color-gray-900), var(--color-primary));
+    border-color: var(--color-gray-700);
+    color: white;
+  }
+
+  .btn-danger {
+    color: var(--color-danger);
+    background-color: var(--color-gray-25);
+    border-color: var(--color-border);
+  }
+
+  .btn-danger:hover {
+    background: rgba(238, 66, 102, 0.1);
+    border-color: rgba(238, 66, 102, 0.1);
+    color: var(--color-danger);
+  }
+
+  .btn-success {
+    color: white;
+    background-color: var(--color-success);
+    border-color: var(--color-success);
+  }
+
+  .btn-success:hover {
+    background-color: var(--color-success-hover);
+    border-color: var(--color-success-hover);
+  }
+
+  .btn-outline-primary {
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+    background-color: transparent;
+  }
+
+  .btn-outline-primary:hover {
+    color: white;
+    background-color: var(--color-primary);
+  }
+
+  .btn-outline-secondary {
+    color: var(--color-gray-600);
+    border-color: var(--color-gray-600);
+    background-color: transparent;
+  }
+
+  .btn-outline-secondary:hover {
+    color: white;
+    background-color: var(--color-gray-600);
+  }
+
+  .btn-close {
+    background: transparent url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414z'/%3e%3c/svg%3e") center/0.85em auto no-repeat;
+    width: 0.85em;
+    height: 0.85em;
+    opacity: 0.5;
+    padding: 12px;
+    border: none;
+    border-radius: var(--radius-default);
+  }
+
+  .btn-close:hover {
+    opacity: 0.8;
+    background-color: var(--color-gray-50);
+  }
+
+  .btn-clipboard {
+    min-width: 24px;
+    height: 24px;
+    padding: 0.25rem;
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-700);
+    background-color: var(--color-gray-25);
+    border-color: var(--color-border);
+    margin-left: 0.5rem;
+  }
+
+  .payment-action-save {
+    color: white;
+    background-color: var(--color-success);
+    border-color: var(--color-success);
+  }
+
+  /* Button states for Turbo */
+  button .show-when-disabled { display: none; }
+  button[disabled] .show-when-disabled { display: initial; }
+  button .show-when-enabled { display: initial; }
+  button[disabled] .show-when-enabled { display: none; }
+
+  .actions .btn {
+    margin-left: 5px;
+  }
+}

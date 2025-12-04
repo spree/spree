@@ -12,7 +12,16 @@
       "Bash(curl:*)",
       "Bash(bundle exec rake:*)",
       "Bash(bin/importmap:*)",
-      "Bash(ruby -c:*)"
+      "Bash(ruby -c:*)",
+      "Bash(cat:*)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(grep:*)",
+      "Bash(npx tailwindcss:*)",
+      "Bash(wc:*)",
+      "Bash(ls:*)",
+      "Bash(ruby -e \"require 'tailwindcss/ruby'; puts Tailwindcss::Ruby.executable\":*)",
+      "Bash(/Users/damian/.rbenv/versions/3.4.7/lib/ruby/gems/3.4.0/gems/tailwindcss-ruby-4.1.16-arm64-darwin/exe/arm64-darwin/tailwindcss:*)"
     ],
     "deny": []
   }

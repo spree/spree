@@ -1,0 +1,190 @@
+/* ==========================================================================
+   BADGES
+   ========================================================================== */
+
+@layer components {
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25em 0.5em;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-normal);
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: var(--radius-sm);
+    cursor: default;
+  }
+
+  .badge i {
+    margin-right: 0.25rem;
+    font-size: 100%;
+  }
+
+  .badge .ti {
+    font-size: var(--font-size-xs);
+    line-height: var(--font-size-xs);
+  }
+
+  .badge-primary {
+    color: white;
+    background-color: var(--color-primary);
+  }
+
+  .badge-secondary {
+    color: white;
+    background-color: var(--color-gray-600);
+  }
+
+  .badge-success {
+    color: white;
+    background-color: var(--color-success);
+  }
+
+  .badge-danger {
+    color: white;
+    background-color: var(--color-danger);
+  }
+
+  .badge-warning {
+    color: var(--color-gray-900);
+    background-color: var(--color-warning);
+  }
+
+  .badge-info {
+    color: white;
+    background-color: var(--color-info);
+  }
+
+  .badge-light {
+    color: var(--color-gray-900);
+    background-color: var(--color-gray-100);
+  }
+
+  .badge-dark {
+    color: white;
+    background-color: var(--color-gray-900);
+  }
+
+  /* Status badges - Green */
+  .badge-completed,
+  .badge-complete,
+  .badge-resumed,
+  .badge-considered_safe,
+  .badge-paid,
+  .badge-shipped,
+  .badge-active,
+  .badge-success,
+  .badge-sold,
+  .badge-open,
+  .badge-authorized,
+  .badge-published,
+  .badge-live,
+  .badge-processed,
+  .badge-create,
+  .badge-approved,
+  .badge-resolved,
+  .badge-reimbursed,
+  .badge-allocation {
+    border: 1px solid transparent !important;
+    background-color: #C6F6D5 !important;
+    color: #22543D !important;
+  }
+
+  /* Status badges - Red */
+  .badge-failed,
+  .badge-considered_risky,
+  .badge-error,
+  .badge-errored,
+  .badge-invalid,
+  .badge-rejected,
+  .badge-destroy,
+  .badge-closed,
+  .badge-canceled,
+  .badge-partially_canceled,
+  .badge-void,
+  .badge-danger {
+    border: 1px solid transparent;
+    background-color: #fee2e1 !important;
+    color: #8e1f0b !important;
+  }
+
+  /* Status badges - Orange/Warning */
+  .badge-returned,
+  .badge-credit_owed,
+  .badge-balance_due,
+  .badge-backorder,
+  .badge-checkout,
+  .badge-suspended,
+  .badge-archived,
+  .badge-warning,
+  .badge-ready {
+    border: 1px solid transparent;
+    background-color: rgba(255, 235, 120, 1);
+    color: rgba(79, 71, 0, 1);
+  }
+
+  /* Status badges - Light/Neutral */
+  .badge-processing,
+  .badge-pending,
+  .badge-paused,
+  .badge-awaiting_return,
+  .badge-cart,
+  .badge-inactive,
+  .badge-address,
+  .badge-delivery,
+  .badge-payment,
+  .badge-confirm,
+  .badge-disabled,
+  .badge-draft,
+  .badge-onboarding,
+  .badge-light,
+  .badge-authorize,
+  .badge-eligible,
+  .badge-invited {
+    background-color: white;
+    color: var(--color-text-muted);
+    border: 1px solid var(--color-border);
+    font-weight: var(--font-weight-normal);
+  }
+
+  .badge-processing:hover,
+  .badge-pending:hover,
+  .badge-paused:hover,
+  .badge-awaiting_return:hover,
+  .badge-cart:hover,
+  .badge-inactive:hover,
+  .badge-address:hover,
+  .badge-delivery:hover,
+  .badge-payment:hover,
+  .badge-confirm:hover,
+  .badge-disabled:hover,
+  .badge-draft:hover,
+  .badge-onboarding:hover,
+  .badge-light:hover,
+  .badge-authorize:hover,
+  .badge-eligible:hover,
+  .badge-invited:hover {
+    background-color: white;
+    color: var(--color-text-muted);
+  }
+
+  /* Status badges - Info/Notice */
+  .badge-notice,
+  .badge-update,
+  .badge-partial,
+  .badge-capture,
+  .badge-info {
+    border: 1px solid transparent;
+    background-color: #E0EFFE;
+    color: #00527c;
+  }
+
+  /* Pill badges */
+  .badge-pill {
+    padding-right: 0.6em;
+    padding-left: 0.6em;
+    border-radius: var(--radius-full);
+  }
+}

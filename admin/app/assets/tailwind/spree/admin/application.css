@@ -1,0 +1,59 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/forms";
+
+/* Content sources for class detection */
+@source "../../../../views/**/*.erb";
+@source "../../../../helpers/**/*.rb";
+@source "../../../../javascript/**/*.js";
+@source "./**/*.css";
+
+/* ==========================================================================
+   SPREE ADMIN TAILWIND CSS
+   ========================================================================== */
+
+/* Base */
+@import "./base/_theme.css";
+@import "./base/_base.css";
+
+/* Utilities */
+@import "./utilities/_bootstrap.css";
+
+/* Components - Core */
+@import "./components/_grid.css";
+@import "./components/_forms.css";
+@import "./components/_buttons.css";
+@import "./components/_cards.css";
+@import "./components/_badges.css";
+@import "./components/_alerts.css";
+@import "./components/_tables.css";
+@import "./components/_dialogs.css";
+@import "./components/_navigation.css";
+@import "./components/_dropdowns.css";
+@import "./components/_list-groups.css";
+@import "./components/_tooltips.css";
+@import "./components/_pagination.css";
+@import "./components/_breadcrumbs.css";
+@import "./components/_progress.css";
+@import "./components/_misc.css";
+
+/* Components - Layout */
+@import "./components/_layout.css";
+@import "./components/_filters.css";
+@import "./components/_search-picker.css";
+@import "./components/_sortable-tree.css";
+@import "./components/_bulk-panel.css";
+@import "./components/_wizard.css";
+@import "./components/_variants-form.css";
+@import "./components/_media-form.css";
+@import "./components/_seo-form.css";
+@import "./components/_line-items.css";
+
+/* Views */
+@import "./views/_dashboard.css";
+@import "./views/_page-builder.css";
+
+/* Plugins */
+@import "./plugins/_tinymce.css";
+@import "./plugins/_trix.css";
+@import "./plugins/_uppy.css";
+@import "./plugins/_tom-select.css";

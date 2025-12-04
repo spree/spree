@@ -1,0 +1,230 @@
+/* ==========================================================================
+   CARDS
+   ========================================================================== */
+
+@layer components {
+  .card,
+  .card-lg {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: var(--color-surface);
+    background-clip: border-box;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+  }
+
+  .card-lg {
+    margin-bottom: 1rem;
+    padding: 0;
+  }
+
+  .card .card {
+    border-radius: var(--radius-default);
+  }
+
+  /* Card with table */
+  .card > .table,
+  .card .table-responsive > .table {
+    border-right: 0;
+    border-left: 0;
+    margin-bottom: 0;
+  }
+
+  .card > .table:last-child,
+  .card > .table:last-of-type,
+  .card .table-responsive > .table:last-child,
+  .card .table-responsive > .table:last-of-type {
+    border-bottom: 0;
+  }
+
+  .card > .table td:first-child,
+  .card > .table th:first-child,
+  .card .table-responsive > .table td:first-child,
+  .card .table-responsive > .table th:first-child {
+    border-left: 0;
+  }
+
+  .card > .table td:last-child,
+  .card > .table th:last-child,
+  .card .table-responsive > .table td:last-child,
+  .card .table-responsive > .table th:last-child {
+    border-right: 0;
+  }
+
+  .card > .table tr:first-child td,
+  .card > .table tr:first-child th,
+  .card .table-responsive > .table tr:first-child td,
+  .card .table-responsive > .table tr:first-child th {
+    border-top: 0;
+  }
+
+  .card > .table tr:last-child td,
+  .card .table-responsive > .table tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .card .card-header + .table,
+  .card .card-header + .table-responsive > .table {
+    border-top: 0;
+  }
+
+  .card-body {
+    flex: 1 1 auto;
+    padding: 1rem;
+  }
+
+  .card-body .form-group:last-child {
+    margin-bottom: 0;
+  }
+
+  .card-header,
+  .card-footer {
+    background-color: transparent;
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    height: 54px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0;
+    border-bottom: 1px solid var(--color-gray-50);
+    padding-right: 1rem;
+  }
+
+  .card-header:first-child {
+    border-radius: calc(var(--radius-xl) - 1px) calc(var(--radius-xl) - 1px) 0 0;
+  }
+
+  .card-header .card-title {
+    margin-bottom: 0;
+    font-size: var(--font-size-base);
+    font-family: var(--font-sans);
+  }
+
+  .card-header .arrow {
+    width: auto;
+  }
+
+  .card-header .arrow:before {
+    transition: 0.3s transform ease-in-out;
+  }
+
+  .card-header .collapsed .arrow:before {
+    transform: rotate(-90deg);
+  }
+
+  .card-footer {
+    padding: 0.75rem 1rem;
+    border-top-width: 0;
+  }
+
+  .card-footer:last-child {
+    border-radius: 0 0 calc(var(--radius-xl) - 1px) calc(var(--radius-xl) - 1px);
+  }
+
+  .card-footer.border-top,
+  .card-body.border-top,
+  .card .border-top,
+  .card .border-bottom,
+  .card .list-group-item {
+    border-color: var(--color-gray-50) !important;
+  }
+
+  .card-title {
+    margin-bottom: 0.5rem;
+    font-weight: var(--font-weight-bold);
+  }
+
+  .card-subtitle {
+    margin-top: -0.25rem;
+    margin-bottom: 0;
+    color: var(--color-text-muted);
+  }
+
+  .card-text {
+    overflow-wrap: anywhere;
+  }
+
+  .card-text:last-child {
+    margin-bottom: 0;
+  }
+
+  .card-link + .card-link {
+    margin-left: 1rem;
+  }
+
+  .card-img-top {
+    width: 100%;
+    border-top-left-radius: calc(var(--radius-xl) - 1px);
+    border-top-right-radius: calc(var(--radius-xl) - 1px);
+  }
+
+  .card-img-bottom {
+    width: 100%;
+    border-bottom-left-radius: calc(var(--radius-xl) - 1px);
+    border-bottom-right-radius: calc(var(--radius-xl) - 1px);
+  }
+
+  /* Collapsable Card */
+  .collapsable-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: var(--color-surface);
+    background-clip: border-box;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+  }
+
+  .collapsable-card .card-header:hover {
+    background-color: var(--color-gray-25) !important;
+  }
+
+  .collapsable-card .card-body {
+    border-top: 1px solid var(--color-gray-50);
+  }
+
+  .collapsable-card[open] .arrow {
+    transform: rotate(90deg) !important;
+  }
+
+  .collapsable-card:not([open]) .arrow {
+    transform: rotate(0deg) !important;
+  }
+
+  /* Details/Summary styling for cards */
+  .collapsable-card details summary,
+  .card details summary {
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+  }
+
+  .collapsable-card details summary::-webkit-details-marker,
+  .card details summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .collapsable-card details summary::marker,
+  .card details summary::marker {
+    display: none;
+  }
+
+  .collapsable-card details summary[role="button"],
+  .card details summary[role="button"] {
+    outline: none;
+  }
+
+  .collapsable-card details summary[role="button"]:focus,
+  .card details summary[role="button"]:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: -2px;
+  }
+}

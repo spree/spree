@@ -1,0 +1,101 @@
+/* ==========================================================================
+   THEME - Design Tokens (CSS Custom Properties)
+   ========================================================================== */
+
+@theme {
+  /* Gray Scale */
+  --color-gray-25: #FAFAFA;
+  --color-gray-50: #F3F3F3;
+  --color-gray-100: #E3E3E3;
+  --color-gray-200: #D5D5D5;
+  --color-gray-300: #B3B3B3;
+  --color-gray-400: #999999;
+  --color-gray-500: #808080;
+  --color-gray-600: #666666;
+  --color-gray-700: #4D4D4D;
+  --color-gray-800: #333333;
+  --color-gray-900: #1A1A1A;
+
+  /* Brand Colors */
+  --color-primary: #061932;
+  --color-primary-hover: #0a2548;
+  --color-blue: #0090FE;
+  --color-action: #F4F9FF;
+  --color-action-border: #e2ecff;
+
+  /* Semantic Colors */
+  --color-success: #28a745;
+  --color-success-hover: #218838;
+  --color-danger: #ee4266;
+  --color-danger-hover: #d63355;
+  --color-warning: #ffe17d;
+  --color-warning-dark: #ffc107;
+  --color-info: #44c1ff;
+  --color-partial: #E2E8F0;
+
+  /* Surface Colors */
+  --color-surface: #ffffff;
+  --color-surface-muted: #FAFAFA;
+  --color-surface-hover: #F3F3F3;
+
+  /* Border */
+  --color-border: rgba(227, 227, 227, 0.85);
+  --color-border-light: #F3F3F3;
+
+  /* Text */
+  --color-text: #333333;
+  --color-text-muted: #666666;
+  --color-text-light: #999999;
+
+  /* Typography */
+  --font-sans: Inter, sans-serif;
+  --font-size-2xs: 0.625rem;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.75rem;
+  --font-size-base: 0.875rem;
+  --font-size-lg: 1rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.75rem;
+  --font-size-4xl: 2rem;
+  --line-height-base: 21px;
+
+  /* Border Radius - matches Bootstrap/Spree Admin variables */
+  --radius-sm: 0.4rem;      /* $border-radius-sm */
+  --radius-default: 0.5rem; /* $border-radius */
+  --radius-lg: 0.75rem;     /* $border-radius-lg, $btn-border-radius */
+  --radius-xl: 1rem;        /* $card-border-radius, $dropdown-border-radius */
+  --radius-2xl: 1rem;       /* $modal-content-border-radius */
+  --radius-full: 9999px;
+
+  /* Font Weights - matches Bootstrap/Spree Admin variables */
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 600;  /* Note: Spree uses 600, not 700 */
+
+  /* Shadows */
+  --shadow-xs: rgba(43, 34, 51, 0.05) 0px 1px 1px;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-default: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: rgba(0, 5, 13, 0.5) 0px 4px 8px 2px;
+  --shadow-dropdown: 0px 0px 0px 1px rgba(179, 179, 179, 0.5), 0px 6px 12px -3px rgba(179, 179, 179, 0.35), 0px 6px 18px 0px rgba(179, 179, 179, 0.35);
+
+  /* Spacing - Bootstrap scale */
+  --spacing-0: 0;
+  --spacing-1: 0.25rem;
+  --spacing-2: 0.5rem;
+  --spacing-3: 1rem;
+  --spacing-4: 1.5rem;
+  --spacing-5: 3rem;
+
+  /* Layout Spacing */
+  --spacing-sidebar-width: 220px;
+  --spacing-sidebar-collapsed: 59px;
+  --spacing-header-height: 58px;
+
+  /* Transitions */
+  --transition-fast: 0.1s ease-in-out;
+  --transition-default: 0.15s ease-in-out;
+  --transition-slow: 0.3s ease-in-out;
+}

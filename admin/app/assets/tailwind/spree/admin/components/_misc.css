@@ -1,0 +1,352 @@
+/* ==========================================================================
+   MISCELLANEOUS COMPONENTS
+   ========================================================================== */
+
+@layer components {
+  /* Collapse */
+  .collapse:not(.show) {
+    display: none;
+  }
+
+  .collapsing {
+    height: 0;
+    overflow: hidden;
+    transition: height 0.35s ease;
+  }
+
+  /* Accordion */
+  .accordion-button {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 1rem 1.25rem;
+    font-size: var(--font-size-base);
+    color: var(--color-text);
+    text-align: left;
+    background-color: var(--color-surface);
+    border: 0;
+    border-radius: 0;
+    overflow-anchor: none;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, border-radius 0.15s ease;
+  }
+
+  .accordion-button:not(.collapsed) {
+    color: var(--color-primary);
+    background-color: rgba(0, 144, 254, 0.05);
+    box-shadow: inset 0 -1px 0 var(--color-border);
+  }
+
+  .accordion-button::after {
+    flex-shrink: 0;
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-left: auto;
+    content: "";
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23212529'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-size: 1.25rem;
+    transition: transform 0.2s ease-in-out;
+  }
+
+  .accordion-button:not(.collapsed)::after {
+    transform: rotate(-180deg);
+  }
+
+  .accordion-header {
+    margin-bottom: 0;
+  }
+
+  .accordion-item {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+  }
+
+  .accordion-item:first-of-type {
+    border-top-left-radius: var(--radius-lg);
+    border-top-right-radius: var(--radius-lg);
+  }
+
+  .accordion-item:last-of-type {
+    border-bottom-right-radius: var(--radius-lg);
+    border-bottom-left-radius: var(--radius-lg);
+  }
+
+  .accordion-item:not(:first-of-type) {
+    border-top: 0;
+  }
+
+  .accordion-body {
+    padding: 1rem 1.25rem;
+  }
+
+  .accordion-flush .accordion-item {
+    border-right: 0;
+    border-left: 0;
+    border-radius: 0;
+  }
+
+  /* Media object */
+  .media {
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .media-body {
+    flex: 1;
+  }
+
+  /* Close button */
+  .close {
+    float: right;
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    line-height: 1;
+    color: black;
+    text-shadow: 0 1px 0 white;
+    opacity: 0.5;
+    padding: 0;
+    background-color: transparent;
+    border: 0;
+  }
+
+  .close:hover {
+    color: black;
+    text-decoration: none;
+    opacity: 0.75;
+  }
+
+  button.close {
+    padding: 0;
+    background-color: transparent;
+    border: 0;
+  }
+
+  /* Jumbotron (legacy) */
+  .jumbotron {
+    padding: 2rem 1rem;
+    margin-bottom: 2rem;
+    background-color: var(--color-gray-100);
+    border-radius: var(--radius-lg);
+  }
+
+  @media (min-width: 576px) {
+    .jumbotron {
+      padding: 4rem 2rem;
+    }
+  }
+
+  /* Lead text */
+  .lead {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-light);
+  }
+
+  /* Blockquote */
+  .blockquote {
+    margin-bottom: 1rem;
+    font-size: var(--font-size-xl);
+  }
+
+  .blockquote-footer {
+    display: block;
+    font-size: 0.875em;
+    color: var(--color-text-muted);
+  }
+
+  .blockquote-footer::before {
+    content: "\2014\00A0";
+  }
+
+  /* Figure */
+  .figure {
+    display: inline-block;
+  }
+
+  .figure-img {
+    margin-bottom: 0.5rem;
+    line-height: 1;
+  }
+
+  .figure-caption {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+  }
+
+  /* Embed responsive */
+  .embed-responsive {
+    position: relative;
+    display: block;
+    width: 100%;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .embed-responsive::before {
+    display: block;
+    content: "";
+  }
+
+  .embed-responsive .embed-responsive-item,
+  .embed-responsive iframe,
+  .embed-responsive embed,
+  .embed-responsive object,
+  .embed-responsive video {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  .embed-responsive-16by9::before {
+    padding-top: 56.25%;
+  }
+
+  .embed-responsive-4by3::before {
+    padding-top: 75%;
+  }
+
+  .embed-responsive-1by1::before {
+    padding-top: 100%;
+  }
+
+  /* Toast */
+  .toast {
+    width: 350px;
+    max-width: 100%;
+    font-size: var(--font-size-sm);
+    pointer-events: auto;
+    background-color: var(--color-surface);
+    background-clip: padding-box;
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-md);
+    border-radius: var(--radius-lg);
+  }
+
+  .toast-container {
+    width: max-content;
+    max-width: 100%;
+    pointer-events: none;
+  }
+
+  .toast-header {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 0.75rem;
+    color: var(--color-text-muted);
+    background-color: var(--color-surface);
+    background-clip: padding-box;
+    border-bottom: 1px solid var(--color-border);
+    border-top-left-radius: calc(var(--radius-lg) - 1px);
+    border-top-right-radius: calc(var(--radius-lg) - 1px);
+  }
+
+  .toast-body {
+    padding: 0.75rem;
+    word-wrap: break-word;
+  }
+
+  /* Ratio (for responsive embeds) */
+  .ratio {
+    position: relative;
+    width: 100%;
+  }
+
+  .ratio::before {
+    display: block;
+    padding-top: var(--aspect-ratio);
+    content: "";
+  }
+
+  .ratio > * {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .ratio-1x1 {
+    --aspect-ratio: 100%;
+  }
+
+  .ratio-4x3 {
+    --aspect-ratio: 75%;
+  }
+
+  .ratio-16x9 {
+    --aspect-ratio: 56.25%;
+  }
+
+  .ratio-21x9 {
+    --aspect-ratio: 42.857143%;
+  }
+
+  /* Visually hidden (screen reader only) */
+  .visually-hidden,
+  .visually-hidden-focusable:not(:focus):not(:focus-within),
+  .sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+  }
+
+  /* Stretched link */
+  .stretched-link::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    content: "";
+  }
+
+  /* Text truncation */
+  .text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Horizontal rule */
+  .hr {
+    margin: 1rem 0;
+    color: inherit;
+    background-color: currentColor;
+    border: 0;
+    opacity: 0.25;
+  }
+
+  .hr:not([size]) {
+    height: 1px;
+  }
+
+  /* Initialism */
+  .initialism {
+    font-size: var(--font-size-sm);
+    text-transform: uppercase;
+  }
+
+  /* Mark/highlight */
+  mark,
+  .mark {
+    padding: 0.2em;
+    background-color: #fcf8e3;
+  }
+
+  /* Small */
+  small,
+  .small {
+    font-size: var(--font-size-sm);
+  }
+}

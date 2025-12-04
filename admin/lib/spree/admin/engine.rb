@@ -187,29 +187,29 @@ module Spree
         Spree::Admin::RuntimeConfig = Spree::Admin::RuntimeConfiguration.new
       end
 
-      initializer 'spree.admin.dartsass_fix' do |app|
-        if app.config.respond_to?(:assets) && defined?(Sprockets)
-          # we're not using any sass compressors, as we're using dartsass-rails
-          # some gems however like payment_icons still have sassc-rails as a dependency
-          # which sets the css_compressor to :sass and breaks the assets pipeline
-          app.config.assets.css_compressor = nil if app.config.assets.css_compressor == :sass
-        end
-      end
-
       # Rails 7.1 introduced a new feature that raises an error if a callback action is missing.
       # We need to disable it as we use a lot of concerns that add callback actions.
       initializer 'spree.admin.disable_raise_on_missing_callback_actions' do |app|
         app.config.action_controller.raise_on_missing_callback_actions = false
       end
 
+      initializer 'spree.admin.tailwind_path', before: :load_config_initializers do
+        ENV['SPREE_ADMIN_PATH'] ||= root.to_s
+      end
+
       initializer 'spree.admin.assets' do |app|
         if app.config.respond_to?(:assets)
           app.config.assets.paths << root.join('app/javascript')
           app.config.assets.paths << root.join('vendor/javascript')
-          app.config.assets.precompile += %w[ spree_admin_manifest bootstrap.bundle.min.js jquery3.min.js ] if defined?(Sprockets)
+          app.config.assets.paths << root.join('app/assets/tailwind')
+          app.config.assets.precompile += %w[ spree_admin_manifest ] if defined?(Sprockets)
           # fix for TinyMCE-rails gem to work with both propshaft and sprockets
           app.config.assets.excluded_paths ||= [] if defined?(Sprockets)
         end
+      end
+
+      rake_tasks do
+        load root.join('lib/tasks/tailwind.rake')
       end
 
       initializer 'spree.admin.importmap', after: 'importmap' do |app|

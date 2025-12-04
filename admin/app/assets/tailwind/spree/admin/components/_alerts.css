@@ -1,0 +1,128 @@
+/* ==========================================================================
+   ALERTS
+   ========================================================================== */
+
+@layer components {
+  .alert {
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    padding: 0.75rem 1rem;
+    padding-left: 44px;
+    margin-bottom: 1rem;
+    min-height: 2.5rem;
+    border: 1px solid transparent;
+    border-radius: var(--radius-lg);
+    background-repeat: no-repeat;
+    background-position: 1rem center;
+    background-size: 1rem 1rem;
+  }
+
+  .alert > p:last-child {
+    margin-bottom: 0;
+  }
+
+  .alert a {
+    font-weight: var(--font-weight-medium);
+    color: var(--color-primary);
+  }
+
+  .alert-primary {
+    color: #084298;
+    background-color: #cfe2ff;
+    border-color: #b6d4fe;
+  }
+
+  .alert-secondary {
+    color: var(--color-gray-700);
+    background-color: var(--color-gray-100);
+    border-color: var(--color-gray-200);
+  }
+
+  .alert-success {
+    background-color: #ECFDF5;
+    color: #092E26;
+    border-color: #D5F9E6;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='icon icon-tabler icons-tabler-outline icon-tabler-check-circle'%3E%3Cpath stroke='none' d='M0 0h24v24H0z' fill='none'/%3E%3Cpath d='M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0' /%3E%3Cpath d='M9 12l2 2l4 -4' /%3E%3C/svg%3E");
+  }
+
+  .alert-danger {
+    background-color: #FEF2F2;
+    border-color: #FBE3E3;
+    color: #450A09;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='icon icon-tabler icons-tabler-outline icon-tabler-exclamation-circle'%3E%3Cpath stroke='none' d='M0 0h24v24H0z' fill='none'/%3E%3Cpath d='M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0' /%3E%3Cpath d='M12 9v4' /%3E%3Cpath d='M12 16v.01' /%3E%3C/svg%3E");
+  }
+
+  .alert-warning {
+    color: inherit;
+    background-color: #fff3cd;
+    border-color: rgba(255, 193, 7, 0.1) !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='icon icon-tabler icons-tabler-outline icon-tabler-alert-circle'%3E%3Cpath stroke='none' d='M0 0h24v24H0z' fill='none'/%3E%3Cpath d='M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0' /%3E%3Cpath d='M12 8v4' /%3E%3Cpath d='M12 16h.01' /%3E%3C/svg%3E");
+  }
+
+  .alert-info {
+    background-color: #f7fcff;
+    border-color: rgba(68, 193, 255, 0.1) !important;
+    color: #055160;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='icon icon-tabler icons-tabler-outline icon-tabler-info-circle'%3E%3Cpath stroke='none' d='M0 0h24v24H0z' fill='none'/%3E%3Cpath d='M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0' /%3E%3Cpath d='M12 9h.01' /%3E%3Cpath d='M11 12h1v4h1' /%3E%3C/svg%3E");
+  }
+
+  .alert-light {
+    color: var(--color-gray-700);
+    background-color: var(--color-gray-50);
+    border-color: var(--color-gray-100);
+  }
+
+  .alert-dark {
+    color: var(--color-gray-100);
+    background-color: var(--color-gray-800);
+    border-color: var(--color-gray-700);
+  }
+
+  .alert-dismissible {
+    padding-right: 3rem;
+  }
+
+  .alert-dismissible .btn-close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 2;
+    padding: 0.9375rem 1rem;
+  }
+
+  .alert-heading {
+    color: inherit;
+  }
+
+  .alert-link {
+    font-weight: var(--font-weight-bold);
+  }
+
+  /* Page alerts */
+  .page-alerts .alert {
+    border-radius: var(--radius-lg);
+  }
+
+  /* Fixed alerts container */
+  .alerts-container {
+    position: fixed;
+    width: 100%;
+    z-index: 1070;
+    top: 0.4rem;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    pointer-events: none;
+  }
+
+  .alerts-container .alert {
+    border-width: 1px;
+    box-shadow: var(--shadow-sm);
+    border-radius: var(--radius-lg);
+    pointer-events: auto;
+  }
+}

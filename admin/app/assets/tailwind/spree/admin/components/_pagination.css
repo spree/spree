@@ -1,0 +1,96 @@
+/* ==========================================================================
+   PAGINATION
+   ========================================================================== */
+
+@layer components {
+  .pagination {
+    display: flex;
+    padding-left: 0;
+    list-style: none;
+  }
+
+  .page-link {
+    position: relative;
+    display: block;
+    padding: 0.375rem 0.75rem;
+    color: var(--color-primary);
+    text-decoration: none;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  }
+
+  .page-link:hover {
+    z-index: 2;
+    color: var(--color-primary-hover);
+    background-color: var(--color-gray-50);
+    border-color: var(--color-border);
+  }
+
+  .page-link:focus {
+    z-index: 3;
+    color: var(--color-primary-hover);
+    background-color: var(--color-gray-50);
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(0, 144, 254, 0.25);
+  }
+
+  .page-item:not(:first-child) .page-link {
+    margin-left: -1px;
+  }
+
+  .page-item:first-child .page-link {
+    border-top-left-radius: var(--radius-default);
+    border-bottom-left-radius: var(--radius-default);
+  }
+
+  .page-item:last-child .page-link {
+    border-top-right-radius: var(--radius-default);
+    border-bottom-right-radius: var(--radius-default);
+  }
+
+  .page-item.active .page-link {
+    z-index: 3;
+    color: white;
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+  }
+
+  .page-item.disabled .page-link {
+    color: var(--color-gray-500);
+    pointer-events: none;
+    background-color: var(--color-surface);
+    border-color: var(--color-border);
+  }
+
+  /* Pagination sizes */
+  .pagination-lg .page-link {
+    padding: 0.75rem 1.5rem;
+    font-size: var(--font-size-lg);
+  }
+
+  .pagination-lg .page-item:first-child .page-link {
+    border-top-left-radius: var(--radius-lg);
+    border-bottom-left-radius: var(--radius-lg);
+  }
+
+  .pagination-lg .page-item:last-child .page-link {
+    border-top-right-radius: var(--radius-lg);
+    border-bottom-right-radius: var(--radius-lg);
+  }
+
+  .pagination-sm .page-link {
+    padding: 0.25rem 0.5rem;
+    font-size: var(--font-size-sm);
+  }
+
+  .pagination-sm .page-item:first-child .page-link {
+    border-top-left-radius: var(--radius-sm);
+    border-bottom-left-radius: var(--radius-sm);
+  }
+
+  .pagination-sm .page-item:last-child .page-link {
+    border-top-right-radius: var(--radius-sm);
+    border-bottom-right-radius: var(--radius-sm);
+  }
+}

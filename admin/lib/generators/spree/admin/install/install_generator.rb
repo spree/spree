@@ -16,9 +16,13 @@ module Spree
 
         def install
           if Rails.root && Rails.root.join("Procfile.dev").exist?
-            append_to_file 'Procfile.dev', "\nadmin_css: bin/rails dartsass:watch" unless File.read('Procfile.dev').include?('admin_css:')
+            # Remove old dartsass entry if present
+            if File.read('Procfile.dev').include?('dartsass:watch')
+              gsub_file 'Procfile.dev', /^admin_css:.*dartsass:watch.*\n?/, ''
+            end
+            append_to_file 'Procfile.dev', "\nadmin_css: bin/rails spree:admin:tailwindcss:watch" unless File.read('Procfile.dev').include?('spree:admin:tailwindcss:watch')
           else
-            create_file 'Procfile.dev', "admin_css: bin/rails dartsass:watch\n"
+            create_file 'Procfile.dev', "admin_css: bin/rails spree:admin:tailwindcss:watch\n"
           end
 
           say "Add bin/dev to start foreman"
