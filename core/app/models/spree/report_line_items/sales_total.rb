@@ -1,15 +1,7 @@
 module Spree
   module ReportLineItems
     class SalesTotal < Spree::ReportLineItem
-      attribute :date, :string
-      attribute :order, :string
-      attribute :product, :string
-      attribute :quantity, :integer
-      attribute :pre_tax_amount, :decimal
-      attribute :promo_total, :decimal
-      attribute :shipment_total, :decimal
-      attribute :tax_total, :decimal
-      attribute :total, :decimal
+      add_report_attributes :sales_total
 
       delegate :quantity, to: :record
 
