@@ -3,40 +3,32 @@
    ========================================================================== */
 
 @layer components {
-  .container {
+  .container, .container-fluid {
     width: 100%;
-    padding-right: 0.5rem;
-    padding-left: 0.5rem;
+    padding-right: 1rem;
+    padding-left: 1rem;
     margin-right: auto;
     margin-left: auto;
   }
 
-  @media (min-width: 576px) { .container { max-width: 540px; } }
-  @media (min-width: 768px) { .container { max-width: 720px; } }
-  @media (min-width: 992px) { .container { max-width: 960px; } }
-  @media (min-width: 1200px) { .container { max-width: 1250px; } }
-
-  .container-fluid {
-    width: 100%;
-    padding-right: 0.5rem;
-    padding-left: 0.5rem;
-    margin-right: auto;
-    margin-left: auto;
-  }
+  @media (min-width: 576px) { .container { max-width: 540px !important; } }
+  @media (min-width: 768px) { .container { max-width: 720px !important; } }
+  @media (min-width: 992px) { .container { max-width: 960px !important; } }
+  @media (min-width: 1200px) { .container { max-width: 1250px !important; } }
 
   .row {
     display: flex;
     flex-wrap: wrap;
-    margin-right: -0.5rem;
-    margin-left: -0.5rem;
+    margin-right: -1rem;
+    margin-left: -1rem;
   }
 
   .row > * {
     flex-shrink: 0;
     width: 100%;
     max-width: 100%;
-    padding-right: 0.5rem;
-    padding-left: 0.5rem;
+    padding-right: 1rem;
+    padding-left: 1rem;
   }
 
   .col { flex: 1 0 0%; }
