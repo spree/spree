@@ -37,6 +37,10 @@
     width: 100%;
     max-width: 100%;
   }
+  #page-header.container.sticky-top {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
 
   @keyframes slideDown {
     from {
@@ -470,7 +474,7 @@
   }
 
   body.sidebar-collapsed #main-sidebar .nav-submenu,
-  body.sidebar-collapsed #main-sidebar .dropdown {
+  body.sidebar-collapsed #main-sidebar .sidebar-content .dropdown {
     display: none;
   }
 
@@ -504,13 +508,7 @@
   }
 
   /* Keep the icon/logo element visible */
-  body.sidebar-collapsed .store-dropdown .store-dropdown-button .rounded-sm,
-  body.sidebar-collapsed .store-dropdown .store-dropdown-button .bg-white,
-  body.sidebar-collapsed .store-dropdown .store-dropdown-button .border,
-  body.sidebar-collapsed .store-dropdown .store-dropdown-button .text-dark,
-  body.sidebar-collapsed .store-dropdown .store-dropdown-button .bg-gray-200,
-  body.sidebar-collapsed .store-dropdown .store-dropdown-button div[class*="rounded"],
-  body.sidebar-collapsed .store-dropdown .store-dropdown-button div[class*="bg-"] {
+  body.sidebar-collapsed .store-dropdown .store-dropdown-button .store-icon {
     display: flex !important;
     width: 32px;
     height: 32px;
@@ -518,17 +516,8 @@
   }
 
   /* Hide all text spans and chevron when collapsed */
-  body.sidebar-collapsed .store-dropdown .store-dropdown-button span:not([class*="rounded"]):not([class*="bg-"]),
-  body.sidebar-collapsed .store-dropdown .store-dropdown-button .ti-chevron-down,
-  body.sidebar-collapsed .store-dropdown .store-dropdown-button small,
-  body.sidebar-collapsed .store-dropdown .store-dropdown-button strong {
+  body.sidebar-collapsed .store-dropdown .store-dropdown-button :not(.store-icon) {
     display: none;
-  }
-
-  /* Keep only icons/logos visible */
-  body.sidebar-collapsed .store-dropdown .store-dropdown-button img,
-  body.sidebar-collapsed .store-dropdown .store-dropdown-button .ti:not(.ti-chevron-down) {
-    display: block;
   }
 
   body.sidebar-collapsed .user-dropdown {
