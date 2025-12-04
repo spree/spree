@@ -6,7 +6,7 @@
   label {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    gap: 0.5rem;
     font-weight: var(--font-weight-medium);
     font-size: 100%;
     margin-bottom: 0.5rem;
@@ -23,7 +23,7 @@
     font-weight: var(--font-weight-medium);
   }
 
-  .form-control {
+  .form-control, .text-input {
     display: block;
     width: 100%;
     padding: 0.5rem 0.75rem;
@@ -71,6 +71,7 @@
     background-color: transparent;
     border: solid transparent;
     border-width: 1px 0;
+    font-size: var(--font-size-base);
   }
 
   .form-control-bare {
@@ -250,7 +251,7 @@
   }
 
   /* Select */
-  .custom-select {
+  .custom-select, .ts-control, .select-input {
     display: block;
     width: 100%;
     padding: 0.5rem 2.5rem 0.5rem 0.75rem;
