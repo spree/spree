@@ -8,6 +8,17 @@
     height: var(--spacing-header-height);
     background-color: var(--color-surface);
     box-shadow: inset 0 -1px 0 var(--color-border);
+    transition: margin-left 0.1s ease;
+  }
+
+  @media (min-width: 992px) {
+    #header {
+      margin-left: var(--spacing-sidebar-width);
+    }
+  }
+
+  body.sidebar-collapsed #header {
+    margin-left: var(--spacing-sidebar-collapsed);
   }
 
   #page-header {
@@ -45,6 +56,17 @@
     display: flex;
     align-items: center;
     padding: 0;
+    transition: margin-left 0.1s ease;
+  }
+
+  @media (min-width: 992px) {
+    #settings-header {
+      margin-left: var(--spacing-sidebar-width);
+    }
+  }
+
+  body.sidebar-collapsed #settings-header {
+    margin-left: var(--spacing-sidebar-collapsed);
   }
 
   #settings-header #page-header {
@@ -109,13 +131,10 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding-left: 0.5rem;
-    padding-right: 0.75rem;
-    background-color: var(--color-gray-25);
-    width: var(--spacing-sidebar-width);
-    border-right: 1px solid var(--color-border);
-    height: calc(var(--spacing-header-height) + 1px);
-    transition: width 0.1s ease;
+    padding-right: 0.5rem;
+    transition: padding 0.1s ease;
+    height: var(--spacing-header-height);
+    margin-right: 1px;
   }
 
   .store-dropdown-button {
@@ -163,19 +182,14 @@
 
   /* User Dropdown */
   .user-dropdown {
-    position: fixed;
-    bottom: 0;
-    left: 0;
     display: none;
     align-items: center;
     justify-content: space-between;
     padding: 0.75rem 0.5rem;
     background-color: var(--color-gray-25);
-    width: var(--spacing-sidebar-width);
-    border-right: 1px solid var(--color-border);
     border-top: 1px solid var(--color-border);
-    transition: width 0.1s ease;
-    z-index: 10;
+    margin-top: auto;
+    margin-right: 1px;
   }
 
   @media (min-width: 992px) {
@@ -233,19 +247,22 @@
     background-color: var(--color-gray-50);
   }
 
+  body.sidebar-collapsed .sidebar-toggle-btn {
+    transform: rotate(180deg);
+  }
+
   /* Main Sidebar */
   #main-sidebar {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0;
     width: var(--spacing-sidebar-width);
     background-color: var(--color-gray-25);
     box-shadow: inset -1px 0 0 var(--color-border);
-    height: calc(100vh - var(--spacing-header-height));
+    height: 100vh;
     overflow-x: hidden;
     position: fixed;
-    top: var(--spacing-header-height);
-    padding-top: 0.8rem;
+    top: 0;
     transition: width 0.1s ease, padding 0.1s ease;
   }
 
@@ -258,6 +275,9 @@
   #main-sidebar .sidebar-content {
     opacity: 1;
     transition: opacity 0.2s ease;
+    padding-top: 0.5rem;
+    flex: 1;
+    overflow-y: auto;
   }
 
   #main-sidebar .nav {
@@ -390,12 +410,9 @@
   body.sidebar-no-transition .store-dropdown,
   body.sidebar-no-transition .user-dropdown,
   body.sidebar-no-transition #content,
-  body.sidebar-no-transition .sidebar-toggle-btn {
+  body.sidebar-no-transition #header,
+  body.sidebar-no-transition #settings-header {
     transition: none !important;
-  }
-
-  body.sidebar-collapsed .sidebar-toggle-btn {
-    transform: rotate(180deg);
   }
 
   body.sidebar-collapsed #main-sidebar {
@@ -458,11 +475,9 @@
   }
 
   body.sidebar-collapsed .store-dropdown {
-    width: var(--spacing-sidebar-collapsed);
     overflow: visible;
     justify-content: center;
-    padding-left: 0;
-    padding-right: 0;
+    padding: 0.5rem;
   }
 
   body.sidebar-collapsed .store-dropdown #new-item-dropdown,
@@ -471,8 +486,8 @@
   }
 
   body.sidebar-collapsed .store-dropdown .store-dropdown-button {
-    width: 44px;
-    height: 44px;
+    width: 40px;
+    height: 40px;
     padding: 0.25rem;
     justify-content: center;
     overflow: hidden;
@@ -517,11 +532,9 @@
   }
 
   body.sidebar-collapsed .user-dropdown {
-    width: var(--spacing-sidebar-collapsed);
     overflow: visible;
     justify-content: center;
-    padding-left: 0;
-    padding-right: 0;
+    padding: 0.5rem;
   }
 
   body.sidebar-collapsed .user-dropdown .dropdown {
@@ -612,13 +625,19 @@
 
   .sidebar-mobile .sidebar-mobile-header {
     display: flex;
-    justify-content: flex-end;
-    padding: 0.75rem;
+    align-items: center;
+    padding: 0.5rem;
     border-bottom: 1px solid var(--color-border);
     background-color: var(--color-gray-25);
     position: sticky;
     top: 0;
     z-index: 1;
+  }
+
+  .sidebar-mobile .sidebar-mobile-header .store-dropdown {
+    flex: 1;
+    border-bottom: none;
+    padding: 0;
   }
 
   .sidebar-mobile .sidebar-mobile-header .btn {
@@ -628,6 +647,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
   }
 
   .sidebar-mobile .sidebar-mobile-content {

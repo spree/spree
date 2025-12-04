@@ -1,5 +1,15 @@
 <%# Desktop Sidebar %>
 <aside id="main-sidebar" class="overflow-y-auto" data-sidebar-target="desktop">
+  <% if settings_area? %>
+    <%= render 'spree/admin/shared/back_to_dashboard' %>
+  <% else %>
+    <% if defined?(current_vendor) && current_vendor.present? %>
+      <%= render 'spree/admin/shared/sidebar/vendor_dropdown' %>
+    <% else %>
+      <%= render 'spree/admin/shared/sidebar/store_dropdown' %>
+    <% end %>
+  <% end %>
+
   <div class="sidebar-content">
     <% if defined?(current_vendor) && current_vendor.present? %>
       <%= render 'spree/admin/shared/sidebar/vendor_nav' %>
@@ -16,7 +26,14 @@
   <div class="sidebar-backdrop" data-action="click->sidebar#closeMobile"></div>
   <div class="sidebar-panel">
     <div class="sidebar-mobile-header">
-      <button type="button" class="btn btn-sm" data-action="click->sidebar#closeMobile" aria-label="<%= Spree.t('admin.close_sidebar') %>">
+      <% unless settings_area? %>
+        <% if defined?(current_vendor) && current_vendor.present? %>
+          <%= render 'spree/admin/shared/sidebar/vendor_dropdown' %>
+        <% else %>
+          <%= render 'spree/admin/shared/sidebar/store_dropdown' %>
+        <% end %>
+      <% end %>
+      <button type="button" class="btn btn-sm ml-auto" data-action="click->sidebar#closeMobile" aria-label="<%= Spree.t('admin.close_sidebar') %>">
         <%= icon('x') %>
       </button>
     </div>
