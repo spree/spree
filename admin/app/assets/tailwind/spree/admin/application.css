@@ -1,5 +1,7 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 @plugin "@tailwindcss/forms";
+@plugin "@tailwindcss/aspect-ratio";
 
 /* Content sources for class detection */
 @source "../../../../views/**/*.erb";
