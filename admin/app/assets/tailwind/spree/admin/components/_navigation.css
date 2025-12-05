@@ -5,18 +5,13 @@
 @layer components {
   /* Nav base */
   .nav {
-    display: flex;
-    flex-wrap: wrap;
-    padding-left: 0;
-    margin-bottom: 0;
-    list-style: none;
+    @apply flex flex-wrap pl-0 mb-0 list-none;
   }
 
   .nav-link {
-    display: block;
-    padding: 0.5rem 1rem;
+    @apply block no-underline;
+    padding: var(--spacing-2) var(--spacing-3);
     color: var(--color-primary);
-    text-decoration: none;
     transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
   }
 
@@ -26,28 +21,24 @@
   }
 
   .nav-link.disabled {
+    @apply pointer-events-none cursor-default;
     color: var(--color-gray-500);
-    pointer-events: none;
-    cursor: default;
   }
 
   /* Nav tabs */
   .nav-tabs {
-    border-bottom: 1px solid var(--color-border);
+    @apply border-b border-[var(--color-border)];
   }
 
   .nav-tabs .nav-link {
-    margin-bottom: -1px;
-    background: none;
+    @apply -mb-px bg-none rounded-t-default;
     border: 1px solid transparent;
-    border-top-left-radius: var(--radius-default);
-    border-top-right-radius: var(--radius-default);
   }
 
   .nav-tabs .nav-link:hover,
   .nav-tabs .nav-link:focus {
+    @apply isolate;
     border-color: var(--color-gray-200) var(--color-gray-200) var(--color-border);
-    isolation: isolate;
   }
 
   .nav-tabs .nav-link.active,
@@ -59,104 +50,84 @@
 
   /* Nav pills */
   .nav-pills .nav-link {
-    background: none;
-    border: 0;
+    @apply bg-none border-0;
     border-radius: var(--radius-default);
   }
 
   .nav-pills .nav-link.active,
   .nav-pills .show > .nav-link {
-    color: white;
+    @apply text-white;
     background-color: var(--color-primary);
   }
 
   /* Nav fill and justified */
   .nav-fill > .nav-link,
   .nav-fill .nav-item {
-    flex: 1 1 auto;
-    text-align: center;
+    @apply flex-auto text-center;
   }
 
   .nav-justified > .nav-link,
   .nav-justified .nav-item {
-    flex-basis: 0;
-    flex-grow: 1;
-    text-align: center;
+    @apply grow basis-0 text-center;
   }
 
   /* Tab content */
   .tab-content > .tab-pane {
-    display: none;
+    @apply hidden;
   }
 
   .tab-content > .active {
-    display: block;
+    @apply block;
   }
 
   /* Navbar */
   .navbar {
-    position: relative;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
+    @apply relative flex flex-wrap items-center justify-between;
+    padding-top: var(--spacing-2);
+    padding-bottom: var(--spacing-2);
   }
 
   .navbar > .container,
   .navbar > .container-fluid {
-    display: flex;
-    flex-wrap: inherit;
-    align-items: center;
-    justify-content: space-between;
+    @apply flex flex-wrap items-center justify-between;
   }
 
   .navbar-brand {
+    @apply no-underline whitespace-nowrap;
     padding-top: 0.3125rem;
     padding-bottom: 0.3125rem;
-    margin-right: 1rem;
+    margin-right: var(--spacing-3);
     font-size: var(--font-size-lg);
-    text-decoration: none;
-    white-space: nowrap;
   }
 
   .navbar-nav {
-    display: flex;
-    flex-direction: column;
-    padding-left: 0;
-    margin-bottom: 0;
-    list-style: none;
+    @apply flex flex-col pl-0 mb-0 list-none;
   }
 
   .navbar-nav .nav-link {
-    padding-right: 0;
-    padding-left: 0;
+    @apply px-0;
   }
 
   .navbar-collapse {
-    flex-basis: 100%;
-    flex-grow: 1;
-    align-items: center;
+    @apply basis-full grow items-center;
   }
 
   .navbar-toggler {
-    padding: 0.25rem 0.75rem;
+    @apply bg-transparent;
+    padding: var(--spacing-1) var(--spacing-2-5);
     font-size: var(--font-size-lg);
     line-height: 1;
-    background-color: transparent;
     border: 1px solid transparent;
     border-radius: var(--radius-default);
     transition: box-shadow 0.15s ease-in-out;
   }
 
   .navbar-toggler:hover {
-    text-decoration: none;
+    @apply no-underline;
   }
 
   .navbar-toggler:focus {
-    text-decoration: none;
-    outline: 0;
+    @apply no-underline outline-0;
     box-shadow: 0 0 0 0.25rem;
   }
 
@@ -205,8 +176,8 @@
     }
 
     .navbar-expand-lg .navbar-nav .nav-link {
-      padding-right: 0.5rem;
-      padding-left: 0.5rem;
+      padding-right: var(--spacing-2);
+      padding-left: var(--spacing-2);
     }
 
     .navbar-expand-lg .navbar-collapse {

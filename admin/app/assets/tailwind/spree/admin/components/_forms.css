@@ -4,29 +4,26 @@
 
 @layer components {
   label {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    @apply flex items-center cursor-pointer;
+    gap: var(--spacing-2);
     font-weight: var(--font-weight-medium);
     font-size: 100%;
-    margin-bottom: 0.5rem;
-    cursor: pointer;
+    margin-bottom: var(--spacing-2);
   }
 
   .form-group {
-    margin-bottom: 1rem;
+    margin-bottom: var(--spacing-3);
   }
 
   .form-label {
-    display: inline-block;
-    margin-bottom: 0.5rem;
+    @apply inline-block;
+    margin-bottom: var(--spacing-2);
     font-weight: var(--font-weight-medium);
   }
 
   .form-control, .text-input, .form-input {
-    display: block;
-    width: 100%;
-    padding: 0.5rem 0.75rem;
+    @apply block w-full;
+    padding: var(--spacing-2) var(--spacing-2-5);
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-normal);
     line-height: 1.5;
@@ -40,10 +37,10 @@
   }
 
   .form-control:focus, .form-input:focus, .text-input:focus {
+    @apply outline-0;
     color: var(--color-text);
     background-color: var(--color-surface);
     border-color: var(--color-blue);
-    outline: 0;
     box-shadow: 0 0 0 0.18rem rgba(0, 144, 254, 0.25);
   }
 
@@ -58,55 +55,45 @@
   .form-input[readonly],
   .text-input:disabled,
   .text-input[readonly] {
+    @apply shadow-none cursor-not-allowed;
     background-color: var(--color-gray-50) !important;
     border: 1px solid var(--color-border) !important;
     color: var(--color-text-muted);
-    box-shadow: none;
-    cursor: not-allowed;
   }
 
   .form-control-plaintext {
-    display: block;
-    width: 100%;
-    padding: 0.5rem 0;
+    @apply block w-full bg-transparent;
+    padding: var(--spacing-2) 0;
     margin-bottom: 0;
     line-height: 1.5;
     color: var(--color-text);
-    background-color: transparent;
     border: solid transparent;
     border-width: 1px 0;
     font-size: var(--font-size-base);
   }
 
   .form-control-bare {
-    border: none;
-    background: transparent;
-    padding: 0;
-    box-shadow: none;
+    @apply border-none bg-transparent p-0 shadow-none;
   }
 
   .form-control-bare:focus {
-    box-shadow: none;
-    border: none;
+    @apply shadow-none border-none;
   }
 
   .form-text {
-    display: block;
+    @apply block;
     margin-top: 0;
     font-size: var(--font-size-base);
     color: var(--color-text-muted);
   }
 
   .form-inline {
-    display: flex;
-    flex-flow: row wrap;
-    align-items: center;
+    @apply flex flex-row flex-wrap items-center;
   }
 
   .form-actions {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
+    @apply flex items-center;
+    gap: var(--spacing-2);
   }
 
   /* Form validation states */
@@ -120,20 +107,19 @@
   }
 
   .invalid-feedback {
-    display: none;
-    width: 100%;
-    margin-top: 0.25rem;
+    @apply hidden w-full;
+    margin-top: var(--spacing-1);
     font-size: var(--font-size-sm);
     color: var(--color-danger);
   }
 
   .is-invalid ~ .invalid-feedback,
   .was-validated :invalid ~ .invalid-feedback {
-    display: block;
+    @apply block;
   }
 
   .field_with_errors {
-    display: contents;
+    @apply contents;
   }
 
   .field_with_errors input,
@@ -144,34 +130,32 @@
 
   .formError {
     display: block;
-    margin-top: 0.25rem;
+    margin-top: var(--spacing-1);
     font-size: var(--font-size-sm);
     color: var(--color-danger);
   }
 
   /* Checkboxes and Radios */
   .form-check {
-    display: block;
-    min-height: 1.5rem;
-    padding-left: 1.5rem;
+    @apply block;
+    min-height: var(--spacing-4);
+    padding-left: var(--spacing-4);
     margin-bottom: 0.125rem;
   }
 
   .form-check-input {
-    float: left;
-    width: 1rem;
-    height: 1rem;
-    margin-left: -1.5rem;
+    @apply float-left align-top appearance-none;
+    width: var(--spacing-3);
+    height: var(--spacing-3);
+    margin-left: calc(-1 * var(--spacing-4));
     margin-top: 0.2rem;
-    vertical-align: top;
     background-color: var(--color-surface);
     border: 1px solid var(--color-gray-300);
-    border-radius: 0.25rem;
-    appearance: none;
+    border-radius: var(--spacing-1);
   }
 
   .form-check-input[type="radio"] {
-    border-radius: 50%;
+    @apply rounded-full;
   }
 
   .form-check-input:checked {
@@ -188,52 +172,44 @@
   }
 
   .form-check-label {
-    cursor: pointer;
+    @apply cursor-pointer;
   }
 
   /* Custom Controls (legacy Bootstrap) */
   .custom-control {
-    position: relative;
-    display: block;
-    min-height: 1.5rem;
-    padding-left: 1.5rem;
+    @apply relative block;
+    min-height: var(--spacing-4);
+    padding-left: var(--spacing-4);
   }
 
   .custom-control-input {
-    position: absolute;
-    left: 0;
-    z-index: -1;
-    width: 1rem;
+    @apply absolute left-0 -z-1 opacity-0;
+    width: var(--spacing-3);
     height: 1.25rem;
-    opacity: 0;
   }
 
   .custom-control-label {
-    position: relative;
-    margin-bottom: 0;
-    vertical-align: top;
-    cursor: pointer;
+    @apply relative mb-0 align-top cursor-pointer;
   }
 
   .custom-control-label::before {
-    position: absolute;
-    top: 0.25rem;
-    left: -1.5rem;
-    display: block;
-    width: 1rem;
-    height: 1rem;
+    @apply absolute block;
+    top: var(--spacing-1);
+    left: calc(-1 * var(--spacing-4));
+    width: var(--spacing-3);
+    height: var(--spacing-3);
     content: "";
     background-color: var(--color-surface);
     border: 1px solid var(--color-gray-300);
-    border-radius: 0.25rem;
+    border-radius: var(--spacing-1);
   }
 
   .custom-checkbox .custom-control-label::before {
-    border-radius: 0.25rem;
+    border-radius: var(--spacing-1);
   }
 
   .custom-radio .custom-control-label::before {
-    border-radius: 50%;
+    @apply rounded-full;
   }
 
   .custom-control-input:checked ~ .custom-control-label::before {
@@ -250,15 +226,13 @@
   }
 
   .custom-radio:hover {
-    color: unset;
-    text-decoration: unset;
+    @apply text-inherit no-underline;
   }
 
   /* Select */
   .custom-select, .ts-control, .select-input {
-    display: block;
-    width: 100%;
-    padding: 0.5rem 2.5rem 0.5rem 0.75rem;
+    @apply block w-full appearance-none;
+    padding: var(--spacing-2) 2.5rem var(--spacing-2) var(--spacing-2-5);
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-normal);
     line-height: 1.5;
@@ -266,7 +240,7 @@
     background-color: var(--color-surface);
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
     background-repeat: no-repeat !important;
-    background-position: right 0.5rem center !important;
+    background-position: right var(--spacing-2) center !important;
     background-size: 1.5em 1.5em !important;
     border: 1px solid var(--color-gray-200);
     border-radius: var(--radius-default);
@@ -274,63 +248,53 @@
     transition-property: box-shadow, border-color;
     transition-duration: 0.15s;
     transition-timing-function: ease;
-    appearance: none;
   }
 
   .custom-select:focus {
+    @apply outline-0;
     border-color: var(--color-blue);
-    outline: 0;
     box-shadow: 0 0 0 0.18rem rgba(0, 144, 254, 0.25);
   }
 
   .custom-select:disabled,
   .custom-select[readonly] {
+    @apply shadow-none cursor-not-allowed;
     background-color: var(--color-gray-50) !important;
     border: 1px solid var(--color-border) !important;
     color: var(--color-text-muted);
-    box-shadow: none;
-    cursor: not-allowed;
   }
 
   /* Custom Select Small */
   .custom-select-sm {
-    height: calc(1.5em + 0.5rem + 2px);
-    padding-top: 0.25rem;
-    padding-bottom: 0.25rem;
-    padding-left: 0.5rem;
+    height: calc(1.5em + var(--spacing-2) + 2px);
+    padding-top: var(--spacing-1);
+    padding-bottom: var(--spacing-1);
+    padding-left: var(--spacing-2);
     font-size: var(--font-size-sm);
     border-radius: var(--radius-sm);
   }
   
   /* Input Group */
   .input-group {
-    position: relative;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: stretch;
-    width: 100%;
+    @apply relative flex flex-wrap items-stretch w-full;
   }
 
   .input-group > .form-control {
-    position: relative;
-    flex: 1 1 auto;
+    @apply relative flex-auto min-w-0;
     width: 1%;
-    min-width: 0;
   }
 
   .input-group > .form-control:not(:last-child) {
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
+    @apply rounded-tr-none rounded-br-none;
   }
 
   .input-group > .form-control:not(:first-child) {
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
+    @apply rounded-tl-none rounded-bl-none;
   }
 
   .input-group-append,
   .input-group-prepend {
-    display: flex;
+    @apply flex;
   }
 
   .input-group-prepend {
@@ -342,46 +306,33 @@
   }
 
   .input-group-text {
-    display: flex;
-    align-items: center;
-    padding: 0.5rem 0.75rem;
+    @apply flex items-center text-center whitespace-nowrap bg-transparent;
+    padding: var(--spacing-2) var(--spacing-2-5);
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-normal);
     line-height: 1.5;
     color: var(--color-text);
-    text-align: center;
-    white-space: nowrap;
-    background-color: var(--color-gray-50);
     border: 1px solid var(--color-gray-200);
     border-radius: var(--radius-lg);
   }
 
   .input-group-prepend .input-group-text {
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
+    @apply rounded-tr-none rounded-br-none;
   }
 
   .input-group-append .input-group-text {
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-  }
-
-  .input-group-text {
-    background-color: transparent;
+    @apply rounded-tl-none rounded-bl-none;
   }
 
   /* File input */
   input[type="file"] {
+    @apply max-w-full whitespace-nowrap overflow-hidden text-ellipsis;
     width: fit-content;
-    max-width: 100%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
 
   /* Form control icon */
   .form-control .ti-search {
-    opacity: 0.5;
+    @apply opacity-50;
   }
 
   /* Custom checkbox box-shadow */
@@ -398,12 +349,11 @@
 
   /* Turbo frame busy state */
   turbo-frame.blur-busy[busy] {
-    opacity: 0.5;
+    @apply opacity-50 pointer-events-none;
     transition: opacity 0.3s;
-    pointer-events: none;
   }
 
   turbo-frame.blur-busy[busy] * {
-    pointer-events: none;
+    @apply pointer-events-none;
   }
 }

@@ -5,11 +5,7 @@
 @layer components {
   .card,
   .card-lg {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    word-wrap: break-word;
+    @apply relative flex flex-col min-w-0 break-words;
     background-color: var(--color-surface);
     background-clip: border-box;
     border: 1px solid var(--color-border);
@@ -17,8 +13,8 @@
   }
 
   .card-lg {
-    margin-bottom: 1rem;
-    padding: 0;
+    @apply p-0;
+    margin-bottom: var(--spacing-3);
   }
 
   .card .card {
@@ -28,71 +24,67 @@
   /* Card with table */
   .card > .table,
   .card .table-responsive > .table {
-    border-right: 0;
-    border-left: 0;
-    margin-bottom: 0;
+    @apply border-x-0 mb-0;
   }
 
   .card > .table:last-child,
   .card > .table:last-of-type,
   .card .table-responsive > .table:last-child,
   .card .table-responsive > .table:last-of-type {
-    border-bottom: 0;
+    @apply border-b-0;
   }
 
   .card > .table td:first-child,
   .card > .table th:first-child,
   .card .table-responsive > .table td:first-child,
   .card .table-responsive > .table th:first-child {
-    border-left: 0;
+    @apply border-l-0;
   }
 
   .card > .table td:last-child,
   .card > .table th:last-child,
   .card .table-responsive > .table td:last-child,
   .card .table-responsive > .table th:last-child {
-    border-right: 0;
+    @apply border-r-0;
   }
 
   .card > .table tr:first-child td,
   .card > .table tr:first-child th,
   .card .table-responsive > .table tr:first-child td,
   .card .table-responsive > .table tr:first-child th {
-    border-top: 0;
+    @apply border-t-0;
   }
 
   .card > .table tr:last-child td,
   .card .table-responsive > .table tr:last-child td {
-    border-bottom: 0;
+    @apply border-b-0;
   }
 
   .card .card-header + .table,
   .card .card-header + .table-responsive > .table {
-    border-top: 0;
+    @apply border-t-0;
   }
 
   .card-body {
-    flex: 1 1 auto;
-    padding: 1rem;
+    @apply flex-auto;
+    padding: var(--spacing-3);
   }
 
   .card-body .form-group:last-child {
-    margin-bottom: 0;
+    @apply mb-0;
   }
 
   .card-header,
   .card-footer {
-    background-color: transparent;
+    @apply bg-transparent;
   }
 
   .card-header {
-    display: flex;
-    align-items: center;
+    @apply flex items-center mb-0;
     height: 54px;
-    padding: 0.75rem 1rem;
-    margin-bottom: 0;
+    padding: var(--spacing-2-5) var(--spacing-3);
     border-bottom: 1px solid var(--color-gray-50);
-    padding-right: 1rem;
+    padding-right: var(--spacing-3);
   }
 
   .card-header:first-child {
@@ -100,13 +92,13 @@
   }
 
   .card-header .card-title {
-    margin-bottom: 0;
+    @apply mb-0;
     font-size: var(--font-size-base);
     font-family: var(--font-sans);
   }
 
   .card-header .arrow {
-    width: auto;
+    @apply w-auto;
   }
 
   .card-header .arrow:before {
@@ -114,12 +106,12 @@
   }
 
   .card-header .collapsed .arrow:before {
-    transform: rotate(-90deg);
+    @apply -rotate-90;
   }
 
   .card-footer {
-    padding: 0.75rem 1rem;
-    border-top-width: 0;
+    @apply border-t-0;
+    padding: var(--spacing-2-5) var(--spacing-3);
   }
 
   .card-footer:last-child {
@@ -135,52 +127,47 @@
   }
 
   .card-title {
-    margin-bottom: 0.5rem;
+    margin-bottom: var(--spacing-2);
     font-weight: var(--font-weight-bold);
   }
 
   .card-subtitle {
-    margin-top: -0.25rem;
-    margin-bottom: 0;
+    @apply mb-0;
+    margin-top: calc(-1 * var(--spacing-1));
     color: var(--color-text-muted);
   }
 
   .card-text {
-    overflow-wrap: anywhere;
+    @apply break-words;
   }
 
   .card-text:last-child {
-    margin-bottom: 0;
+    @apply mb-0;
   }
 
   .card-link + .card-link {
-    margin-left: 1rem;
+    margin-left: var(--spacing-3);
   }
 
   .card-img-top {
-    width: 100%;
+    @apply w-full;
     border-top-left-radius: calc(var(--radius-xl) - 1px);
     border-top-right-radius: calc(var(--radius-xl) - 1px);
   }
 
   .card-img-bottom {
-    width: 100%;
+    @apply w-full;
     border-bottom-left-radius: calc(var(--radius-xl) - 1px);
     border-bottom-right-radius: calc(var(--radius-xl) - 1px);
   }
 
   /* Collapsable Card */
   .collapsable-card {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    word-wrap: break-word;
+    @apply relative flex flex-col min-w-0 break-words overflow-hidden;
     background-color: var(--color-surface);
     background-clip: border-box;
     border: 1px solid var(--color-border);
     border-radius: var(--radius-xl);
-    overflow: hidden;
   }
 
   .collapsable-card .card-header:hover {
@@ -192,34 +179,32 @@
   }
 
   .collapsable-card[open] .arrow {
-    transform: rotate(90deg) !important;
+    @apply rotate-90!;
   }
 
   .collapsable-card:not([open]) .arrow {
-    transform: rotate(0deg) !important;
+    @apply rotate-0!;
   }
 
   /* Details/Summary styling for cards */
   .collapsable-card details summary,
   .card details summary {
-    cursor: pointer;
-    list-style: none;
-    user-select: none;
+    @apply cursor-pointer list-none select-none;
   }
 
   .collapsable-card details summary::-webkit-details-marker,
   .card details summary::-webkit-details-marker {
-    display: none;
+    @apply hidden;
   }
 
   .collapsable-card details summary::marker,
   .card details summary::marker {
-    display: none;
+    @apply hidden;
   }
 
   .collapsable-card details summary[role="button"],
   .card details summary[role="button"] {
-    outline: none;
+    @apply outline-none;
   }
 
   .collapsable-card details summary[role="button"]:focus,

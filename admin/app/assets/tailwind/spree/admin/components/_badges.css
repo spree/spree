@@ -4,21 +4,16 @@
 
 @layer components {
   .badge {
-    display: inline-flex;
-    align-items: center;
+    @apply inline-flex items-center text-center whitespace-nowrap align-baseline cursor-default;
     padding: 0.25em 0.5em;
     font-size: var(--font-size-xs);
     font-weight: var(--font-weight-normal);
     line-height: 1;
-    text-align: center;
-    white-space: nowrap;
-    vertical-align: baseline;
     border-radius: var(--radius-sm);
-    cursor: default;
   }
 
   .badge i {
-    margin-right: 0.25rem;
+    margin-right: var(--spacing-1);
     font-size: 100%;
   }
 

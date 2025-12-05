@@ -5,62 +5,53 @@
 @layer components {
   /* Tabler Icons base styles */
   .ti {
+    @apply align-middle;
     font-size: 120%;
-    vertical-align: middle;
   }
 
   .btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    vertical-align: middle;
-    padding: 0.35rem 0.75rem;
+    @apply inline-flex items-center justify-center text-center align-middle;
+    @apply cursor-pointer select-none no-underline;
+    padding: 0.35rem var(--spacing-2-5);
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-medium);
     line-height: 1.5;
     border: 1px solid transparent;
     border-radius: var(--radius-lg);
-    cursor: pointer;
-    user-select: none;
-    text-decoration: none;
     transition: background-color 0.1s linear, border-color 0.2s linear, color 0.1s linear;
   }
 
   .btn:hover {
-    text-decoration: none;
+    @apply no-underline;
   }
 
   .btn:focus {
-    outline: none;
-    box-shadow: none;
+    @apply outline-none shadow-none;
   }
 
   .btn:disabled,
   .btn.disabled {
-    opacity: 0.7;
-    pointer-events: none;
-    cursor: not-allowed;
+    @apply opacity-70 pointer-events-none cursor-not-allowed;
   }
 
   .btn i,
   .btn .ti {
-    margin-right: 0.5rem;
+    margin-right: var(--spacing-2);
   }
 
   .btn-sm {
-    padding: 0.25rem 0.5rem;
+    padding: var(--spacing-1) var(--spacing-2);
     font-size: var(--font-size-sm);
     border-radius: var(--radius-default);
   }
 
   .btn-sm i,
   .btn-sm .ti {
-    margin-right: 0.25rem;
+    margin-right: var(--spacing-1);
   }
 
   .btn-lg {
-    padding: 0.5rem 1rem;
+    padding: var(--spacing-2) var(--spacing-3);
     font-size: var(--font-size-lg);
     border-radius: var(--radius-lg);
   }
@@ -178,29 +169,28 @@
   }
 
   .btn-close {
+    @apply border-none opacity-50;
     background: transparent url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414z'/%3e%3c/svg%3e") center/0.85em auto no-repeat;
     width: 0.85em;
     height: 0.85em;
-    opacity: 0.5;
     padding: 12px;
-    border: none;
     border-radius: var(--radius-default);
   }
 
   .btn-close:hover {
-    opacity: 0.8;
+    @apply opacity-80;
     background-color: var(--color-gray-50);
   }
 
   .btn-clipboard {
     min-width: 24px;
     height: 24px;
-    padding: 0.25rem;
+    padding: var(--spacing-1);
     font-size: var(--font-size-sm);
     color: var(--color-gray-700);
     background-color: var(--color-gray-25);
     border-color: var(--color-border);
-    margin-left: 0.5rem;
+    margin-left: var(--spacing-2);
   }
 
   .payment-action-save {

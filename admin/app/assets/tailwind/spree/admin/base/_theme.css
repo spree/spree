@@ -85,6 +85,7 @@
   --spacing-0: 0;
   --spacing-1: 0.25rem;
   --spacing-2: 0.5rem;
+  --spacing-2-5: 0.75rem;
   --spacing-3: 1rem;
   --spacing-4: 1.5rem;
   --spacing-5: 3rem;
@@ -98,4 +99,12 @@
   --transition-fast: 0.1s ease-in-out;
   --transition-default: 0.15s ease-in-out;
   --transition-slow: 0.3s ease-in-out;
+
+  /* Animations */
+  --animate-fade-in: fade-in 0.15s ease-in-out;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }

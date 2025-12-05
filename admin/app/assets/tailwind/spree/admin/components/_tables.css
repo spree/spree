@@ -4,17 +4,15 @@
 
 @layer components {
   .table {
-    width: 100%;
-    margin-bottom: 1rem;
+    @apply w-full align-top;
+    margin-bottom: var(--spacing-3);
     color: var(--color-text);
-    vertical-align: top;
     border-color: var(--color-border);
   }
 
   .table > :not(caption) > * > * {
-    padding: 1rem 0.75rem;
-    background-color: transparent;
-    border-bottom-width: 1px;
+    @apply bg-transparent border-b;
+    padding: var(--spacing-3) var(--spacing-2-5);
     box-shadow: inset 0 0 0 9999px transparent;
   }
 
@@ -23,24 +21,21 @@
   }
 
   .table > thead {
-    vertical-align: bottom;
+    @apply align-bottom;
   }
 
   .table th {
-    border-top: 0;
-    border-bottom: 0;
-    white-space: nowrap;
+    @apply border-t-0 border-b-0 whitespace-nowrap;
   }
 
   .table thead th {
+    @apply align-middle text-left;
     background-color: var(--color-gray-25);
     color: var(--color-text-muted);
     font-size: var(--font-size-sm);
     font-weight: var(--font-weight-medium);
-    vertical-align: middle;
     padding-top: 0.45rem;
     padding-bottom: 0.45rem;
-    text-align: left;
     border-bottom: 1px solid var(--color-border);
   }
 
@@ -53,23 +48,22 @@
   }
 
   .table tbody tr td {
-    vertical-align: middle;
+    @apply align-middle;
   }
 
   .table tbody tr td .filterable {
+    @apply cursor-pointer opacity-25;
     margin-left: 0.2em;
-    cursor: pointer;
     width: 0.9rem;
     height: 0.9rem;
-    opacity: 0.25;
   }
 
   .table tbody tr td .filterable:hover {
-    opacity: 1;
+    @apply opacity-100;
   }
 
   .table tbody tr td a:hover {
-    text-decoration: none;
+    @apply no-underline;
   }
 
   .table tbody tr td > a:not(.btn):not(.text-primary) {
@@ -86,8 +80,7 @@
   }
 
   .table tbody tr:last-child td {
-    border-bottom: 0;
-    padding-bottom: 0;
+    @apply border-b-0 pb-0;
   }
 
   .table tbody tr:last-child td:first-child {
@@ -100,12 +93,12 @@
 
   .table tr > td:first-child,
   .table tr > th:first-child {
-    padding-left: 1rem;
+    padding-left: var(--spacing-3);
   }
 
   .table tr > td:last-child,
   .table tr > th:last-child {
-    padding-right: 1rem;
+    padding-right: var(--spacing-3);
   }
 
   .table th.handel-head {
@@ -117,7 +110,7 @@
   }
 
   .table th a.sort_link {
-    white-space: nowrap;
+    @apply whitespace-nowrap;
   }
 
   .table-bordered {
@@ -125,11 +118,11 @@
   }
 
   .table-bordered > :not(caption) > * > * {
-    border-width: 1px;
+    @apply border;
   }
 
   .table-borderless > :not(caption) > * > * {
-    border-bottom-width: 0;
+    @apply border-b-0;
   }
 
   .table-striped > tbody > tr:nth-of-type(odd) > * {
@@ -141,11 +134,11 @@
   }
 
   .table-sm > :not(caption) > * > * {
-    padding: 0.25rem 0.25rem;
+    padding: var(--spacing-1) var(--spacing-1);
   }
 
   .table-responsive {
-    overflow-x: auto;
+    @apply overflow-x-auto;
     -webkit-overflow-scrolling: touch;
   }
 
@@ -234,25 +227,20 @@
 
   /* Pagination container */
   .pagination-container {
+    @apply sticky bottom-0 z-100;
     border-top: 1px solid var(--color-border);
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-    position: sticky;
-    bottom: 0;
+    padding-top: var(--spacing-2);
+    padding-bottom: var(--spacing-2);
     background-color: var(--color-surface);
-    z-index: 100;
     border-bottom-left-radius: var(--radius-xl);
     border-bottom-right-radius: var(--radius-xl);
   }
 
   .pagination-container .page-link {
-    display: inline-block;
+    @apply inline-block text-center align-middle select-none;
     font-weight: var(--font-weight-normal);
-    text-align: center;
-    vertical-align: middle;
-    user-select: none;
-    padding: 0.5rem;
-    margin-left: 0.25rem;
+    padding: var(--spacing-2);
+    margin-left: var(--spacing-1);
     font-size: var(--text-xs);
     line-height: 1.5;
     border-radius: var(--radius-default);
@@ -262,12 +250,11 @@
   }
 
   .pagination-container .page-link .ti {
-    margin-right: 0;
+    @apply mr-0;
   }
 
   .pagination-container .page-item.disabled {
-    cursor: not-allowed;
-    opacity: 0.2;
+    @apply cursor-not-allowed opacity-20;
   }
 
   /* Filters search bar */
@@ -278,7 +265,7 @@
 
   /* Table active filters */
   .table-active-filters {
-    padding: 0.75rem;
+    padding: var(--spacing-2-5);
   }
 
   .table-active-filters:not(:has(:first-child)) {
@@ -286,27 +273,27 @@
   }
 
   .table-active-filters .js-filter .icon {
-    cursor: pointer;
+    @apply cursor-pointer;
   }
 
   .table-active-filters .badge-secondary .icon {
-    filter: invert(1);
+    @apply invert;
   }
 
   .table-active-filters .badge {
-    display: inline-block;
+    @apply inline-block;
     margin-right: 0.5em;
     margin-bottom: 0.5em;
   }
 
   .table-active-filters .badge:hover {
-    opacity: 0.8;
+    @apply opacity-80;
   }
 
   /* Table responsive overflow handling */
   .table-responsive tr td,
   .table-responsive tr th {
-    white-space: nowrap;
+    @apply whitespace-nowrap;
   }
 
   .table-responsive.border {
@@ -314,43 +301,40 @@
   }
 
   .table-responsive:has(.dropdown.show) {
-    overflow: visible;
+    @apply overflow-visible;
   }
 
   /* Sortable drag */
   .sortable-drag-v {
+    @apply w-full text-right opacity-0;
     border: 1px solid var(--color-info);
     border-radius: var(--radius-default);
-    width: 100%;
-    text-align: right;
-    opacity: 0;
   }
 
   .sortable-drag-v td {
-    border-top: none;
-    opacity: 0;
+    @apply border-t-0 opacity-0;
   }
 
   .sortable-drag-v td:first-child {
-    opacity: 1;
+    @apply opacity-100;
   }
 
   /* Actions column */
   td.actions {
-    text-align: right;
+    @apply text-right;
   }
 
   td.actions .btn {
-    white-space: nowrap;
+    @apply whitespace-nowrap;
   }
 
   td.actions .btn:not(.btn-sm) {
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
+    padding-top: var(--spacing-2);
+    padding-bottom: var(--spacing-2);
   }
 
   td.actions .btn-sm {
-    padding-top: 0.25rem;
-    padding-bottom: 0.25rem;
+    padding-top: var(--spacing-1);
+    padding-bottom: var(--spacing-1);
   }
 }

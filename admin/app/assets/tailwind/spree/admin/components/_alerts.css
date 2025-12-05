@@ -4,23 +4,19 @@
 
 @layer components {
   .alert {
-    display: inline-flex;
-    flex-direction: column;
-    justify-content: center;
-    position: relative;
-    padding: 0.75rem 1rem;
+    @apply inline-flex flex-col justify-center relative bg-no-repeat;
+    padding: var(--spacing-2-5) var(--spacing-3);
     padding-left: 44px;
-    margin-bottom: 1rem;
+    margin-bottom: var(--spacing-3);
     min-height: 2.5rem;
     border: 1px solid transparent;
     border-radius: var(--radius-lg);
-    background-repeat: no-repeat;
-    background-position: 1rem center;
-    background-size: 1rem 1rem;
+    background-position: var(--spacing-3) center;
+    background-size: var(--spacing-3) var(--spacing-3);
   }
 
   .alert > p:last-child {
-    margin-bottom: 0;
+    @apply mb-0;
   }
 
   .alert a {
@@ -81,19 +77,16 @@
   }
 
   .alert-dismissible {
-    padding-right: 3rem;
+    padding-right: var(--spacing-5);
   }
 
   .alert-dismissible .btn-close {
-    position: absolute;
-    top: 0;
-    right: 0;
-    z-index: 2;
-    padding: 0.9375rem 1rem;
+    @apply absolute top-0 right-0 z-2;
+    padding: 0.9375rem var(--spacing-3);
   }
 
   .alert-heading {
-    color: inherit;
+    @apply text-inherit;
   }
 
   .alert-link {
@@ -107,22 +100,12 @@
 
   /* Fixed alerts container */
   .alerts-container {
-    position: fixed;
-    width: 100%;
-    z-index: 1070;
-    top: 0.4rem;
-    left: 0;
-    right: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    pointer-events: none;
+    @apply fixed w-full z-1070 top-1 left-0 right-0 flex flex-col items-center pointer-events-none;
   }
 
   .alerts-container .alert {
-    border-width: 1px;
+    @apply border pointer-events-auto;
     box-shadow: var(--shadow-sm);
     border-radius: var(--radius-lg);
-    pointer-events: auto;
   }
 }
