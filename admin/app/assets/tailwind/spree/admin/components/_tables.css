@@ -29,11 +29,7 @@
   }
 
   .table thead th {
-    @apply align-middle text-left;
-    background-color: var(--color-gray-25);
-    color: var(--color-text-muted);
-    font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-medium);
+    @apply align-middle text-left text-sm font-medium text-text-muted bg-gray-25;
     padding-top: 0.45rem;
     padding-bottom: 0.45rem;
     border-bottom: 1px solid var(--color-border);
@@ -237,15 +233,10 @@
   }
 
   .pagination-container .page-link {
-    @apply inline-block text-center align-middle select-none;
-    font-weight: var(--font-weight-normal);
+    @apply inline-block text-center align-middle select-none text-xs font-normal text-gray-900 bg-gray-50 rounded-default;
     padding: var(--spacing-2);
     margin-left: var(--spacing-1);
-    font-size: var(--text-xs);
     line-height: 1.5;
-    border-radius: var(--radius-default);
-    color: var(--color-gray-900);
-    background-color: var(--color-gray-50);
     border: 1px solid var(--color-border);
   }
 

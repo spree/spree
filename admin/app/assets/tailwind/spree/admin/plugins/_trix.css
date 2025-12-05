@@ -100,13 +100,8 @@
   }
 
   trix-toolbar .trix-dialog .trix-input {
-    display: block;
-    width: 100%;
+    @apply block w-full text-sm leading-normal text-gray-900 bg-surface;
     padding: 0.375rem var(--spacing-2-5);
-    font-size: var(--text-sm);
-    line-height: 1.5;
-    color: var(--color-gray-900);
-    background-color: var(--color-surface);
     background-clip: padding-box;
     border: 1px solid var(--color-border);
     border-radius: var(--radius-default);
@@ -114,17 +109,11 @@
   }
 
   trix-toolbar .trix-dialog .trix-button {
-    display: inline-block;
+    @apply inline-block text-center align-middle select-none text-sm leading-normal bg-gray-50;
     font-weight: var(--font-weight-normal);
-    text-align: center;
-    vertical-align: middle;
-    user-select: none;
     padding: var(--spacing-2) var(--spacing-3);
     margin: 0 var(--spacing-1) 0 0;
-    font-size: var(--text-sm);
-    line-height: 1.5;
     border-radius: var(--radius-default);
-    background-color: var(--color-gray-50);
     border: 1px solid var(--color-gray-200) !important;
   }
 

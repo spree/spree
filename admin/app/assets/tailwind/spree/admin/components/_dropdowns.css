@@ -54,15 +54,11 @@
   /* Dropdown Menu */
   .dropdown-menu,
   .dropdown-container {
-    @apply absolute z-1050 hidden text-left list-none border-0 overflow-hidden!;
+    @apply absolute z-1050 hidden text-left list-none border-0 overflow-hidden! text-base font-normal text-text bg-surface;
     min-width: 10rem;
     max-width: 20rem;
     margin-top: var(--spacing-1) !important;
     padding: var(--spacing-1);
-    font-size: var(--font-size-base);
-    font-weight: var(--font-weight-normal);
-    color: var(--color-text);
-    background-color: var(--color-surface);
     background-clip: padding-box;
     border-radius: var(--spacing-3);
     box-shadow: var(--shadow-dropdown);
@@ -91,10 +87,9 @@
 
   .dropdown-menu .dropdown-header,
   .dropdown-container .dropdown-header {
+    @apply text-base font-normal;
     margin-bottom: var(--spacing-1);
     margin-top: var(--spacing-1);
-    font-weight: var(--font-weight-normal);
-    font-size: var(--font-size-base);
   }
 
   .dropdown-item {
@@ -175,10 +170,8 @@
   }
 
   .dropdown-header {
-    @apply block mb-0 whitespace-nowrap;
+    @apply block mb-0 whitespace-nowrap text-sm text-text-muted;
     padding: var(--spacing-2) var(--spacing-3);
-    font-size: var(--font-size-sm);
-    color: var(--color-text-muted);
   }
 
   .dropdown-item-text {

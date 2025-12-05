@@ -5,20 +5,16 @@
 @layer components {
   .card,
   .card-lg {
-    @apply relative flex flex-col min-w-0 break-words;
-    background-color: var(--color-surface);
+    @apply relative flex flex-col min-w-0 break-words bg-surface border border-border rounded-xl;
     background-clip: border-box;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-xl);
   }
 
   .card-lg {
-    @apply p-0;
-    margin-bottom: var(--spacing-3);
+    @apply p-0 mb-3;
   }
 
   .card .card {
-    border-radius: var(--radius-default);
+    @apply rounded-default;
   }
 
   /* Card with table */
@@ -66,8 +62,7 @@
   }
 
   .card-body {
-    @apply flex-auto;
-    padding: var(--spacing-3);
+    @apply flex-auto p-3;
   }
 
   .card-body .form-group:last-child {
@@ -80,11 +75,8 @@
   }
 
   .card-header {
-    @apply flex items-center mb-0;
+    @apply flex items-center mb-0 py-2-5 px-3 border-b border-gray-50;
     height: 54px;
-    padding: var(--spacing-2-5) var(--spacing-3);
-    border-bottom: 1px solid var(--color-gray-50);
-    padding-right: var(--spacing-3);
   }
 
   .card-header:first-child {
@@ -92,9 +84,7 @@
   }
 
   .card-header .card-title {
-    @apply mb-0;
-    font-size: var(--font-size-base);
-    font-family: var(--font-sans);
+    @apply mb-0 text-base font-sans;
   }
 
   .card-header .arrow {
@@ -110,8 +100,7 @@
   }
 
   .card-footer {
-    @apply border-t-0;
-    padding: var(--spacing-2-5) var(--spacing-3);
+    @apply border-t-0 py-2-5 px-3;
   }
 
   .card-footer:last-child {
@@ -127,14 +116,11 @@
   }
 
   .card-title {
-    margin-bottom: var(--spacing-2);
-    font-weight: var(--font-weight-bold);
+    @apply mb-2 font-bold;
   }
 
   .card-subtitle {
-    @apply mb-0;
-    margin-top: calc(-1 * var(--spacing-1));
-    color: var(--color-text-muted);
+    @apply mb-0 -mt-1 text-text-muted;
   }
 
   .card-text {
@@ -146,7 +132,7 @@
   }
 
   .card-link + .card-link {
-    margin-left: var(--spacing-3);
+    @apply ml-3;
   }
 
   .card-img-top {
@@ -164,18 +150,16 @@
   /* Collapsable Card */
   .collapsable-card {
     @apply relative flex flex-col min-w-0 break-words overflow-hidden;
-    background-color: var(--color-surface);
+    @apply bg-surface border border-border rounded-xl;
     background-clip: border-box;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-xl);
   }
 
   .collapsable-card .card-header:hover {
-    background-color: var(--color-gray-25) !important;
+    @apply bg-gray-25!;
   }
 
   .collapsable-card .card-body {
-    border-top: 1px solid var(--color-gray-50);
+    @apply border-t border-gray-50;
   }
 
   .collapsable-card[open] .arrow {

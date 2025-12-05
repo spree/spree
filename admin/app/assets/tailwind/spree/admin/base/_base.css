@@ -18,11 +18,8 @@
   }
 
   body {
+    @apply text-base font-normal text-text bg-surface;
     font-family: var(--font-sans);
-    font-size: var(--font-size-base);
-    font-weight: var(--font-weight-normal);
-    color: var(--color-text);
-    background-color: var(--color-surface);
     line-height: var(--line-height-base);
   }
 
@@ -45,12 +42,12 @@
     font-weight: var(--font-weight-bold);
   }
 
-  h1 { font-size: var(--font-size-4xl); }
-  h2 { font-size: var(--font-size-3xl); }
-  h3 { font-size: var(--font-size-2xl); }
-  h4 { font-size: var(--font-size-xl); }
-  h5 { font-size: var(--font-size-lg); }
-  h6 { font-size: var(--font-size-base); }
+  h1 { @apply text-4xl; }
+  h2 { @apply text-3xl; }
+  h3 { @apply text-2xl; }
+  h4 { @apply text-xl; }
+  h5 { @apply text-lg; }
+  h6 { @apply text-base; }
 
   hr {
     border-color: var(--color-border);

@@ -4,10 +4,8 @@
 
 @layer components {
   .uppy-Root {
+    @apply text-base! text-text! leading-normal!;
     font-family: var(--font-sans) !important;
-    font-size: var(--font-size-base) !important;
-    color: var(--color-text) !important;
-    line-height: 1.5 !important;
   }
 
   .uppy-Dashboard-inner {
@@ -59,17 +57,10 @@
 
   .uppy-Dashboard-browse,
   .uppy-DashboardContent-back {
-    display: inline-block;
+    @apply inline-block text-center align-middle select-none text-sm leading-normal text-gray-900 bg-gray-50;
     font-weight: var(--font-weight-normal);
-    text-align: center;
-    vertical-align: middle;
-    user-select: none;
     padding: 0.375rem var(--spacing-2-5);
-    font-size: var(--text-sm);
-    line-height: 1.5;
     border-radius: var(--radius-default);
-    color: var(--color-gray-900);
-    background-color: var(--color-gray-50);
     border: 1px solid var(--color-border);
     transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
   }
@@ -85,17 +76,10 @@
   }
 
   .uppy-DashboardContent-save {
-    display: inline-block;
+    @apply inline-block text-center align-middle select-none text-sm leading-normal text-surface bg-primary;
     font-weight: var(--font-weight-normal);
-    text-align: center;
-    vertical-align: middle;
-    user-select: none;
     padding: 0.375rem var(--spacing-2-5);
-    font-size: var(--text-sm);
-    line-height: 1.5;
     border-radius: var(--radius-default);
-    color: var(--color-surface);
-    background-color: var(--color-primary);
     border: 1px solid var(--color-primary);
     transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
   }
@@ -126,17 +110,10 @@
   }
 
   .uppy-StatusBar-actionBtn {
-    display: inline-block;
+    @apply inline-block text-center align-middle select-none text-xs leading-normal text-gray-900 bg-gray-50;
     font-weight: var(--font-weight-normal);
-    text-align: center;
-    vertical-align: middle;
-    user-select: none;
     padding: var(--spacing-1) var(--spacing-2);
-    font-size: var(--text-xs);
-    line-height: 1.5;
     border-radius: var(--radius-default);
-    color: var(--color-gray-900);
-    background-color: var(--color-gray-50);
     border: 1px solid var(--color-border);
   }
 
@@ -145,8 +122,7 @@
   }
 
   .uppy-Dashboard-AddFiles-title {
-    font-weight: var(--font-weight-normal) !important;
-    font-size: var(--text-sm) !important;
+    @apply text-sm! font-normal!;
   }
 
   .uppy-size--md .uppy-DashboardContent-bar {

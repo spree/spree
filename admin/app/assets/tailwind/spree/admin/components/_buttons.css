@@ -12,12 +12,9 @@
   .btn {
     @apply inline-flex items-center justify-center text-center align-middle;
     @apply cursor-pointer select-none no-underline;
-    padding: 0.35rem var(--spacing-2-5);
-    font-size: var(--font-size-base);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
-    border: 1px solid transparent;
-    border-radius: var(--radius-lg);
+    @apply px-2-5 text-base font-medium leading-normal border border-transparent rounded-lg;
+    padding-top: 0.35rem;
+    padding-bottom: 0.35rem;
     transition: background-color 0.1s linear, border-color 0.2s linear, color 0.1s linear;
   }
 
@@ -36,167 +33,129 @@
 
   .btn i,
   .btn .ti {
-    margin-right: var(--spacing-2);
+    @apply mr-2;
   }
 
   .btn-sm {
-    padding: var(--spacing-1) var(--spacing-2);
-    font-size: var(--font-size-sm);
-    border-radius: var(--radius-default);
+    @apply px-2 py-1 text-sm rounded-default;
   }
 
   .btn-sm i,
   .btn-sm .ti {
-    margin-right: var(--spacing-1);
+    @apply mr-1;
   }
 
   .btn-lg {
-    padding: var(--spacing-2) var(--spacing-3);
-    font-size: var(--font-size-lg);
-    border-radius: var(--radius-lg);
+    @apply px-3 py-2 text-lg rounded-lg;
   }
 
   /* Button Variants */
   .btn-primary {
-    color: white;
-    background-color: var(--color-primary);
-    border-color: var(--color-primary);
-    box-shadow: var(--shadow-xs);
+    @apply text-white bg-primary border-primary shadow-xs;
   }
 
   .btn-primary:hover {
-    background-color: var(--color-primary-hover);
-    border-color: var(--color-primary-hover);
+    @apply bg-primary-hover border-primary-hover;
   }
 
   .btn-secondary {
-    color: var(--color-primary);
+    @apply text-primary shadow-xs;
     background-color: rgba(0, 144, 254, 0.05);
     border-color: rgba(6, 25, 50, 0.1);
-    box-shadow: var(--shadow-xs);
   }
 
   .btn-secondary:hover,
   .btn-secondary:focus {
+    @apply text-primary;
     background-color: rgba(0, 144, 254, 0.1);
     border-color: rgba(6, 25, 50, 0.2);
-    color: var(--color-primary);
   }
 
   .btn-secondary .arrow {
-    color: var(--color-primary);
+    @apply text-primary;
   }
 
   .btn-light {
-    color: var(--color-gray-700);
-    background-color: var(--color-gray-25);
-    border-color: var(--color-border);
-    box-shadow: var(--shadow-xs);
+    @apply text-gray-700 bg-gray-25 border-border shadow-xs;
   }
 
   .btn-light:hover,
   .btn-light:focus {
-    background-color: var(--color-gray-50);
-    border-color: var(--color-border);
-    color: var(--color-gray-900);
+    @apply bg-gray-50 border-border text-gray-900;
   }
 
   .btn-light:active {
-    background: var(--color-gray-50);
+    @apply bg-gray-50;
     box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.025);
   }
 
   .btn-light.bg-transparent {
-    background: transparent;
+    @apply bg-transparent;
   }
 
   .btn-dark {
-    color: var(--color-gray-200);
-    background-color: var(--color-gray-900);
-    border-color: var(--color-gray-900);
+    @apply text-gray-200 bg-gray-900 border-gray-900;
   }
 
   .btn-dark:hover,
   .btn-dark:focus {
+    @apply text-white border-gray-700;
     background: linear-gradient(var(--color-gray-900), var(--color-primary));
-    border-color: var(--color-gray-700);
-    color: white;
   }
 
   .btn-danger {
-    color: var(--color-danger);
-    background-color: var(--color-gray-25);
-    border-color: var(--color-border);
+    @apply text-danger bg-gray-25 border-border;
   }
 
   .btn-danger:hover {
+    @apply text-danger;
     background: rgba(238, 66, 102, 0.1);
     border-color: rgba(238, 66, 102, 0.1);
-    color: var(--color-danger);
   }
 
   .btn-success {
-    color: white;
-    background-color: var(--color-success);
-    border-color: var(--color-success);
+    @apply text-white bg-success border-success;
   }
 
   .btn-success:hover {
-    background-color: var(--color-success-hover);
-    border-color: var(--color-success-hover);
+    @apply bg-success-hover border-success-hover;
   }
 
   .btn-outline-primary {
-    color: var(--color-primary);
-    border-color: var(--color-primary);
-    background-color: transparent;
+    @apply text-primary border-primary bg-transparent;
   }
 
   .btn-outline-primary:hover {
-    color: white;
-    background-color: var(--color-primary);
+    @apply text-white bg-primary;
   }
 
   .btn-outline-secondary {
-    color: var(--color-gray-600);
-    border-color: var(--color-gray-600);
-    background-color: transparent;
+    @apply text-gray-600 border-gray-600 bg-transparent;
   }
 
   .btn-outline-secondary:hover {
-    color: white;
-    background-color: var(--color-gray-600);
+    @apply text-white bg-gray-600;
   }
 
   .btn-close {
-    @apply border-none opacity-50;
+    @apply border-none opacity-50 p-3 rounded-default;
     background: transparent url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414z'/%3e%3c/svg%3e") center/0.85em auto no-repeat;
     width: 0.85em;
     height: 0.85em;
-    padding: 12px;
-    border-radius: var(--radius-default);
   }
 
   .btn-close:hover {
-    @apply opacity-80;
-    background-color: var(--color-gray-50);
+    @apply opacity-80 bg-gray-50;
   }
 
   .btn-clipboard {
+    @apply p-1 text-sm text-gray-700 bg-gray-25 border-border ml-2;
     min-width: 24px;
     height: 24px;
-    padding: var(--spacing-1);
-    font-size: var(--font-size-sm);
-    color: var(--color-gray-700);
-    background-color: var(--color-gray-25);
-    border-color: var(--color-border);
-    margin-left: var(--spacing-2);
   }
 
   .payment-action-save {
-    color: white;
-    background-color: var(--color-success);
-    border-color: var(--color-success);
+    @apply text-white bg-success border-success;
   }
 
   /* Button states for Turbo */

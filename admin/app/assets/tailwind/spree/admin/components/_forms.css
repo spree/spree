@@ -4,49 +4,32 @@
 
 @layer components {
   label {
-    @apply flex items-center cursor-pointer;
-    gap: var(--spacing-2);
-    font-weight: var(--font-weight-medium);
+    @apply flex items-center cursor-pointer gap-2 font-medium mb-2;
     font-size: 100%;
-    margin-bottom: var(--spacing-2);
   }
 
   .form-group {
-    margin-bottom: var(--spacing-3);
+    @apply mb-3;
   }
 
   .form-label {
-    @apply inline-block;
-    margin-bottom: var(--spacing-2);
-    font-weight: var(--font-weight-medium);
+    @apply inline-block mb-2 font-medium;
   }
 
   .form-control, .text-input, .form-input {
-    @apply block w-full;
-    padding: var(--spacing-2) var(--spacing-2-5);
-    font-size: var(--font-size-base);
-    font-weight: var(--font-weight-normal);
-    line-height: 1.5;
-    color: var(--color-text);
-    background-color: var(--color-surface);
+    @apply block w-full py-2 px-2-5 text-base font-normal leading-normal;
+    @apply text-text bg-surface border border-gray-200 rounded-default shadow-xs;
     background-clip: padding-box;
-    border: 1px solid var(--color-gray-200);
-    border-radius: var(--radius-default);
-    box-shadow: var(--shadow-xs);
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
   }
 
   .form-control:focus, .form-input:focus, .text-input:focus {
-    @apply outline-0;
-    color: var(--color-text);
-    background-color: var(--color-surface);
-    border-color: var(--color-blue);
+    @apply outline-0 text-text bg-surface border-blue;
     box-shadow: 0 0 0 0.18rem rgba(0, 144, 254, 0.25);
   }
 
   .form-control::placeholder, .form-input::placeholder, .text-input::placeholder {
-    color: var(--color-gray-500);
-    opacity: 1;
+    @apply text-gray-500 opacity-100;
   }
 
   .form-control:disabled,
@@ -55,21 +38,15 @@
   .form-input[readonly],
   .text-input:disabled,
   .text-input[readonly] {
-    @apply shadow-none cursor-not-allowed;
+    @apply shadow-none cursor-not-allowed text-text-muted;
     background-color: var(--color-gray-50) !important;
     border: 1px solid var(--color-border) !important;
-    color: var(--color-text-muted);
   }
 
   .form-control-plaintext {
-    @apply block w-full bg-transparent;
-    padding: var(--spacing-2) 0;
-    margin-bottom: 0;
-    line-height: 1.5;
-    color: var(--color-text);
+    @apply block w-full bg-transparent py-2 px-0 mb-0 leading-normal text-base text-text;
     border: solid transparent;
     border-width: 1px 0;
-    font-size: var(--font-size-base);
   }
 
   .form-control-bare {
@@ -81,10 +58,7 @@
   }
 
   .form-text {
-    @apply block;
-    margin-top: 0;
-    font-size: var(--font-size-base);
-    color: var(--color-text-muted);
+    @apply block mt-0 text-base text-text-muted;
   }
 
   .form-inline {
@@ -92,25 +66,21 @@
   }
 
   .form-actions {
-    @apply flex items-center;
-    gap: var(--spacing-2);
+    @apply flex items-center gap-2;
   }
 
   /* Form validation states */
   .is-invalid {
-    border-color: var(--color-danger);
+    @apply border-danger;
   }
 
   .is-invalid:focus {
-    border-color: var(--color-danger);
+    @apply border-danger;
     box-shadow: 0 0 0 0.18rem rgba(238, 66, 102, 0.25);
   }
 
   .invalid-feedback {
-    @apply hidden w-full;
-    margin-top: var(--spacing-1);
-    font-size: var(--font-size-sm);
-    color: var(--color-danger);
+    @apply hidden w-full mt-1 text-sm text-danger;
   }
 
   .is-invalid ~ .invalid-feedback,
@@ -125,33 +95,22 @@
   .field_with_errors input,
   .field_with_errors select,
   .field_with_errors textarea {
-    border-color: var(--color-danger);
+    @apply border-danger;
   }
 
   .formError {
-    display: block;
-    margin-top: var(--spacing-1);
-    font-size: var(--font-size-sm);
-    color: var(--color-danger);
+    @apply block mt-1 text-sm text-danger;
   }
 
   /* Checkboxes and Radios */
   .form-check {
-    @apply block;
-    min-height: var(--spacing-4);
-    padding-left: var(--spacing-4);
+    @apply block min-h-4 pl-4;
     margin-bottom: 0.125rem;
   }
 
   .form-check-input {
-    @apply float-left align-top appearance-none;
-    width: var(--spacing-3);
-    height: var(--spacing-3);
-    margin-left: calc(-1 * var(--spacing-4));
+    @apply float-left align-top appearance-none w-3 h-3 -ml-4 bg-surface border border-gray-300 rounded;
     margin-top: 0.2rem;
-    background-color: var(--color-surface);
-    border: 1px solid var(--color-gray-300);
-    border-radius: var(--spacing-1);
   }
 
   .form-check-input[type="radio"] {
@@ -159,8 +118,7 @@
   }
 
   .form-check-input:checked {
-    background-color: var(--color-blue);
-    border-color: var(--color-blue);
+    @apply bg-blue border-blue;
   }
 
   .form-check-input:checked[type="checkbox"] {
@@ -177,35 +135,25 @@
 
   /* Custom Controls (legacy Bootstrap) */
   .custom-control {
-    @apply relative block;
-    min-height: var(--spacing-4);
-    padding-left: var(--spacing-4);
+    @apply relative block min-h-4 pl-4;
   }
 
   .custom-control-input {
-    @apply absolute left-0 -z-1 opacity-0;
-    width: var(--spacing-3);
+    @apply absolute left-0 -z-1 opacity-0 w-3;
     height: 1.25rem;
   }
 
   .custom-control-label {
-    @apply relative mb-0 align-top cursor-pointer;
+    @apply relative mb-0 align-top cursor-pointer font-normal;
   }
 
   .custom-control-label::before {
-    @apply absolute block;
-    top: var(--spacing-1);
-    left: calc(-1 * var(--spacing-4));
-    width: var(--spacing-3);
-    height: var(--spacing-3);
+    @apply absolute block top-1 -left-4 w-3 h-3 bg-surface border border-gray-300 rounded;
     content: "";
-    background-color: var(--color-surface);
-    border: 1px solid var(--color-gray-300);
-    border-radius: var(--spacing-1);
   }
 
   .custom-checkbox .custom-control-label::before {
-    border-radius: var(--spacing-1);
+    @apply rounded;
   }
 
   .custom-radio .custom-control-label::before {
@@ -213,16 +161,11 @@
   }
 
   .custom-control-input:checked ~ .custom-control-label::before {
-    background-color: var(--color-blue);
-    border-color: var(--color-blue);
-  }
-
-  .custom-control-label {
-    font-weight: var(--font-weight-normal);
+    @apply bg-blue border-blue;
   }
 
   .custom-control a {
-    color: var(--color-text);
+    @apply text-text;
   }
 
   .custom-radio:hover {
@@ -231,47 +174,33 @@
 
   /* Select */
   .custom-select, .ts-control, .select-input {
-    @apply block w-full appearance-none;
-    padding: var(--spacing-2) 2.5rem var(--spacing-2) var(--spacing-2-5);
-    font-size: var(--font-size-base);
-    font-weight: var(--font-weight-normal);
-    line-height: 1.5;
-    color: var(--color-text);
-    background-color: var(--color-surface);
+    @apply block w-full appearance-none py-2 pr-10 pl-2-5 text-base font-normal leading-normal;
+    @apply text-text bg-surface border border-gray-200 rounded-default shadow-xs;
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
     background-repeat: no-repeat !important;
     background-position: right var(--spacing-2) center !important;
     background-size: 1.5em 1.5em !important;
-    border: 1px solid var(--color-gray-200);
-    border-radius: var(--radius-default);
-    box-shadow: var(--shadow-xs);
     transition-property: box-shadow, border-color;
     transition-duration: 0.15s;
     transition-timing-function: ease;
   }
 
   .custom-select:focus {
-    @apply outline-0;
-    border-color: var(--color-blue);
+    @apply outline-0 border-blue;
     box-shadow: 0 0 0 0.18rem rgba(0, 144, 254, 0.25);
   }
 
   .custom-select:disabled,
   .custom-select[readonly] {
-    @apply shadow-none cursor-not-allowed;
+    @apply shadow-none cursor-not-allowed text-text-muted;
     background-color: var(--color-gray-50) !important;
     border: 1px solid var(--color-border) !important;
-    color: var(--color-text-muted);
   }
 
   /* Custom Select Small */
   .custom-select-sm {
+    @apply py-1 pl-2 text-sm rounded-sm;
     height: calc(1.5em + var(--spacing-2) + 2px);
-    padding-top: var(--spacing-1);
-    padding-bottom: var(--spacing-1);
-    padding-left: var(--spacing-2);
-    font-size: var(--font-size-sm);
-    border-radius: var(--radius-sm);
   }
   
   /* Input Group */
@@ -307,13 +236,8 @@
 
   .input-group-text {
     @apply flex items-center text-center whitespace-nowrap bg-transparent;
-    padding: var(--spacing-2) var(--spacing-2-5);
-    font-size: var(--font-size-base);
-    font-weight: var(--font-weight-normal);
-    line-height: 1.5;
-    color: var(--color-text);
-    border: 1px solid var(--color-gray-200);
-    border-radius: var(--radius-lg);
+    @apply py-2 px-2-5 text-base font-normal leading-normal text-text;
+    @apply border border-gray-200 rounded-lg;
   }
 
   .input-group-prepend .input-group-text {
@@ -337,14 +261,13 @@
 
   /* Custom checkbox box-shadow */
   .custom-checkbox .custom-control-label::before {
+    @apply border-gray-200 shadow-xs;
     border-radius: 0.25rem !important;
-    border-color: var(--color-gray-200);
-    box-shadow: var(--shadow-xs);
   }
 
   .custom-checkbox .custom-control-label::before,
   .custom-checkbox .custom-control-label::after {
-    top: 0rem;
+    @apply top-0;
   }
 
   /* Turbo frame busy state */

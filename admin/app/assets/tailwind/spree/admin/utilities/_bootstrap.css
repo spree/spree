@@ -440,10 +440,10 @@
   .font-weight-semibold { font-weight: var(--font-weight-medium); }
   .font-weight-bold { font-weight: var(--font-weight-bold); }
 
-  .font-size-sm { font-size: var(--font-size-sm); }
-  .font-size-base { font-size: var(--font-size-base); }
-  .font-size-lg { font-size: var(--font-size-lg); }
-  .font-size-plus { font-size: var(--font-size-base); }
+  .font-size-sm { @apply text-sm; }
+  .font-size-base { @apply text-base; }
+  .font-size-lg { @apply text-lg; }
+  .font-size-plus { @apply text-base; }
 
   .text-muted { color: var(--color-text-muted); }
   .text-primary { color: var(--color-primary); }

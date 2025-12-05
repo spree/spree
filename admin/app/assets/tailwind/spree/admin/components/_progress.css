@@ -5,12 +5,7 @@
 @layer components {
   /* Progress bar */
   .progress {
-    display: flex;
-    height: 1rem;
-    overflow: hidden;
-    font-size: var(--font-size-xs);
-    background-color: var(--color-gray-100);
-    border-radius: var(--radius-full);
+    @apply flex h-4 overflow-hidden text-xs bg-gray-100 rounded-full;
   }
 
   .progress-bar {

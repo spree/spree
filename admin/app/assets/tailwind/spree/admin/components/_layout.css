@@ -87,8 +87,7 @@
   }
 
   .page-header-title {
-    font-size: var(--font-size-xl);
-    margin-bottom: var(--spacing-2);
+    @apply text-xl mb-2;
   }
 
   /* Page Tabs */
@@ -224,13 +223,7 @@
   }
 
   .user-dropdown-button .user-name {
-    flex: 1;
-    width: 0;
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    font-size: var(--font-size-base);
+    @apply flex-1 w-0 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap text-base;
   }
 
   /* Sidebar Toggle Button */
@@ -443,8 +436,8 @@
   }
 
   body.sidebar-collapsed #main-sidebar .sidebar-content .nav > .nav-item > .nav-link .ti {
+    @apply text-xl;
     margin-right: 0;
-    font-size: var(--font-size-xl);
   }
 
   body.sidebar-collapsed #main-sidebar .sidebar-content .nav > .nav-item > .nav-link span:not(.badge) {
@@ -452,19 +445,13 @@
   }
 
   body.sidebar-collapsed #main-sidebar .sidebar-content .nav > .nav-item > .nav-link .badge {
-    display: flex;
-    position: absolute;
-    top: 0;
-    right: 0;
+    @apply flex absolute top-0 right-0 justify-center items-center text-2xs;
     transform: translate(25%, -25%);
     min-width: 18px;
     height: 18px;
     padding: 0 var(--spacing-1);
-    font-size: var(--font-size-2xs);
     line-height: 18px;
     border-radius: 9px;
-    justify-content: center;
-    align-items: center;
   }
 
   body.sidebar-collapsed #main-sidebar .nav {
@@ -509,10 +496,9 @@
 
   /* Keep the icon/logo element visible */
   body.sidebar-collapsed .store-dropdown .store-dropdown-button .store-icon {
-    display: flex !important;
+    @apply flex! text-lg;
     width: 32px;
     height: 32px;
-    font-size: var(--font-size-lg);
   }
 
   /* Hide all text spans and chevron when collapsed */
@@ -798,9 +784,8 @@
 
   /* Enterprise Edition Notice */
   #enterprise-edition-notice {
+    @apply relative text-sm;
     background-image: none;
-    position: relative;
-    font-size: var(--font-size-sm);
     padding: var(--spacing-2) var(--spacing-3);
     margin: var(--spacing-2-5);
     border-width: 1px;
@@ -827,9 +812,7 @@
 
   /* Documentation Link */
   .documentation-link-container {
-    font-size: var(--font-size-sm);
-    text-align: center;
+    @apply text-sm text-center text-gray-400;
     margin-top: 2rem;
-    color: var(--color-gray-400);
   }
 }

@@ -5,19 +5,10 @@
 @layer components {
   /* Custom Tooltip Container (Floating UI) */
   .tooltip-container {
-    position: absolute;
-    display: none;
+    @apply absolute hidden pointer-events-none z-1080 bg-surface text-text border-0 rounded-lg text-base! font-normal!;
     opacity: 1 !important;
-    pointer-events: none;
-    z-index: 1080;
-    background-color: var(--color-surface);
-    color: var(--color-text);
-    border: 0 none;
     box-shadow: 0px 0px 0px 1px var(--color-border), 0px 3px 6px -1px rgba(209, 213, 219, 0.35), 0px 3px 6px 0px rgba(209, 213, 219, 0.35);
-    border-radius: var(--radius-lg);
     padding: 0.25rem 0.5rem;
-    font-size: var(--font-size-base) !important;
-    font-weight: var(--font-weight-normal) !important;
     max-width: 200px;
     white-space: normal;
     overflow-wrap: anywhere;

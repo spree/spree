@@ -93,11 +93,9 @@
   }
 
   .navbar-brand {
-    @apply no-underline whitespace-nowrap;
+    @apply no-underline whitespace-nowrap text-lg mr-3;
     padding-top: 0.3125rem;
     padding-bottom: 0.3125rem;
-    margin-right: var(--spacing-3);
-    font-size: var(--font-size-lg);
   }
 
   .navbar-nav {
@@ -113,12 +111,9 @@
   }
 
   .navbar-toggler {
-    @apply bg-transparent;
+    @apply bg-transparent text-lg leading-none rounded-default;
     padding: var(--spacing-1) var(--spacing-2-5);
-    font-size: var(--font-size-lg);
-    line-height: 1;
     border: 1px solid transparent;
-    border-radius: var(--radius-default);
     transition: box-shadow 0.15s ease-in-out;
   }
 

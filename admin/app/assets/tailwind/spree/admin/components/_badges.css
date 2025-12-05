@@ -4,12 +4,8 @@
 
 @layer components {
   .badge {
-    @apply inline-flex items-center text-center whitespace-nowrap align-baseline cursor-default;
+    @apply inline-flex items-center text-center whitespace-nowrap align-baseline cursor-default text-xs font-normal leading-none rounded-sm;
     padding: 0.25em 0.5em;
-    font-size: var(--font-size-xs);
-    font-weight: var(--font-weight-normal);
-    line-height: 1;
-    border-radius: var(--radius-sm);
   }
 
   .badge i {
@@ -18,8 +14,8 @@
   }
 
   .badge .ti {
-    font-size: var(--font-size-xs);
-    line-height: var(--font-size-xs);
+    @apply text-xs;
+    line-height: var(--text-xs);
   }
 
   .badge-primary {

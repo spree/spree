@@ -226,7 +226,7 @@
   }
 
   .page-builder .radio-buttons-header input ~ p {
-    font-size: var(--font-size-sm);
+    @apply text-sm;
     border-radius: 0.22rem;
     padding: 0.22rem 0.5rem;
   }

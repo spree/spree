@@ -49,15 +49,18 @@
 
   /* Typography */
   --font-sans: Inter, sans-serif;
-  --font-size-2xs: 0.625rem;
-  --font-size-xs: 0.75rem;
-  --font-size-sm: 0.75rem;
-  --font-size-base: 0.875rem;
-  --font-size-lg: 1rem;
-  --font-size-xl: 1.25rem;
-  --font-size-2xl: 1.5rem;
-  --font-size-3xl: 1.75rem;
-  --font-size-4xl: 2rem;
+
+  /* Override Tailwind's text-* scale to match Spree design system */
+  --text-2xs: 0.625rem;
+  --text-xs: 0.75rem;
+  --text-sm: 0.75rem;
+  --text-base: 0.875rem;
+  --text-lg: 1rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.75rem;
+  --text-4xl: 2rem;
+
   --line-height-base: 21px;
 
   /* Border Radius - matches Bootstrap/Spree Admin variables */

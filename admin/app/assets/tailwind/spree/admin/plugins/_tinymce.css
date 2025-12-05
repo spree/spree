@@ -55,21 +55,21 @@
 
   /* Override TinyMCE UI font size */
   .tox-toolbar__group {
-    font-size: var(--text-sm) !important;
+    @apply text-sm!;
   }
 
   .tox-mbtn__select-label {
-    font-size: var(--text-sm) !important;
+    @apply text-sm!;
   }
 
   /* Override TinyMCE Content font size */
   .tox-tinymce {
-    font-size: var(--text-sm) !important;
+    @apply text-sm!;
   }
 
   .tox .tox-collection__item-label,
   .tox-tbtn__select-label {
-    font-size: var(--text-sm) !important;
+    @apply text-sm!;
     font-family: var(--font-sans);
   }
 

@@ -65,8 +65,8 @@
 
   /* Pagination sizes */
   .pagination-lg .page-link {
+    @apply text-lg;
     padding: 0.75rem 1.5rem;
-    font-size: var(--font-size-lg);
   }
 
   .pagination-lg .page-item:first-child .page-link {
@@ -80,8 +80,8 @@
   }
 
   .pagination-sm .page-link {
+    @apply text-sm;
     padding: 0.25rem 0.5rem;
-    font-size: var(--font-size-sm);
   }
 
   .pagination-sm .page-item:first-child .page-link {

@@ -16,17 +16,8 @@
 
   /* Accordion */
   .accordion-button {
-    position: relative;
-    display: flex;
-    align-items: center;
-    width: 100%;
+    @apply relative flex items-center w-full text-base text-text text-left bg-surface border-0 rounded-none;
     padding: 1rem 1.25rem;
-    font-size: var(--font-size-base);
-    color: var(--color-text);
-    text-align: left;
-    background-color: var(--color-surface);
-    border: 0;
-    border-radius: 0;
     overflow-anchor: none;
     transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, border-radius 0.15s ease;
   }
@@ -98,16 +89,10 @@
 
   /* Close button */
   .close {
-    float: right;
-    font-size: var(--font-size-2xl);
-    font-weight: var(--font-weight-bold);
-    line-height: 1;
+    @apply float-right text-2xl font-bold leading-none p-0 bg-transparent border-0;
     color: black;
     text-shadow: 0 1px 0 white;
     opacity: 0.5;
-    padding: 0;
-    background-color: transparent;
-    border: 0;
   }
 
   .close:hover {
@@ -138,14 +123,12 @@
 
   /* Lead text */
   .lead {
-    font-size: var(--font-size-xl);
-    font-weight: var(--font-weight-light);
+    @apply text-xl font-light;
   }
 
   /* Blockquote */
   .blockquote {
-    margin-bottom: 1rem;
-    font-size: var(--font-size-xl);
+    @apply text-xl mb-4;
   }
 
   .blockquote-footer {
@@ -169,8 +152,7 @@
   }
 
   .figure-caption {
-    font-size: var(--font-size-sm);
-    color: var(--color-text-muted);
+    @apply text-sm text-text-muted;
   }
 
   /* Embed responsive */
@@ -215,15 +197,13 @@
 
   /* Toast */
   .toast {
+    @apply text-sm bg-surface rounded-lg;
     width: 350px;
     max-width: 100%;
-    font-size: var(--font-size-sm);
     pointer-events: auto;
-    background-color: var(--color-surface);
     background-clip: padding-box;
     border: 1px solid var(--color-border);
     box-shadow: var(--shadow-md);
-    border-radius: var(--radius-lg);
   }
 
   .toast-container {
@@ -333,8 +313,7 @@
 
   /* Initialism */
   .initialism {
-    font-size: var(--font-size-sm);
-    text-transform: uppercase;
+    @apply text-sm uppercase;
   }
 
   /* Mark/highlight */
@@ -347,6 +326,6 @@
   /* Small */
   small,
   .small {
-    font-size: var(--font-size-sm);
+    @apply text-sm;
   }
 }
