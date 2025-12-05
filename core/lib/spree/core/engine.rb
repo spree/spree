@@ -27,13 +27,17 @@ module Spree
                                :metafields,
                                :analytics_events,
                                :analytics_event_handlers,
-                               :integrations)
+                               :integrations,
+                               :eventable_models)
       SpreeCalculators = Struct.new(:shipping_methods, :tax_rates, :promotion_actions_create_adjustments, :promotion_actions_create_item_adjustments)
       PromoEnvironment = Struct.new(:rules, :actions)
       SpreeValidators = Struct.new(:addresses)
       MetafieldsEnvironment = Struct.new(:types, :enabled_resources)
       isolate_namespace Spree
       engine_name 'spree'
+
+      # Add app/subscribers to autoload paths
+      config.paths.add 'app/subscribers', eager_load: true
 
       rake_tasks do
         load File.join(root, 'lib', 'tasks', 'exchanges.rake')
@@ -341,6 +345,50 @@ module Spree
         Rails.application.config.spree.validators.addresses = [
           Spree::Addresses::PhoneValidator
         ]
+
+        # Models that automatically emit lifecycle events (create, update, destroy)
+        # Developers can add/remove models from this list in their initializers
+        Rails.application.config.spree.eventable_models = [
+          Spree::Asset,
+          Spree::CustomerReturn,
+          Spree::Digital,
+          Spree::DigitalLink,
+          Spree::Export,
+          Spree::GiftCard,
+          Spree::GiftCardBatch,
+          Spree::Import,
+          Spree::LineItem,
+          Spree::NewsletterSubscriber,
+          Spree::Order,
+          Spree::Payment,
+          Spree::Post,
+          Spree::PostCategory,
+          Spree::Price,
+          Spree::Promotion,
+          Spree::Refund,
+          Spree::ReturnAuthorization,
+          Spree::Shipment,
+          Spree::StockItem,
+          Spree::StockMovement,
+          Spree::StockTransfer,
+          Spree::StoreCredit,
+          Spree::Variant,
+          Spree::WishedItem,
+          Spree::Wishlist
+        ]
+
+        # Enable lifecycle events for configured models
+        Rails.application.config.spree.eventable_models.each do |model|
+          model.publishes_lifecycle_events if model.respond_to?(:publishes_lifecycle_events)
+        end
+
+        # Attach event log subscriber if enabled
+        if Spree::Config.events_log_enabled
+          Spree::EventLogSubscriber.attach_to_notifications
+        end
+
+        # Register invitation email subscriber
+        Spree::InvitationEmailSubscriber.register!
       end
 
       initializer 'spree.promo.register.promotions.actions' do |app|
@@ -391,6 +439,16 @@ module Spree
         Dir.glob(File.join(File.dirname(__FILE__), '../../../app/**/*_decorator*.rb')) do |c|
           Rails.configuration.cache_classes ? require(c) : load(c)
         end
+
+        # Reset and re-register event subscribers on code reload
+        Spree::Events.reset!
+
+        # Auto-register all Spree::Subscriber subclasses
+        # Subscribers are auto-loaded from app/subscribers directories
+        Spree::Subscriber.descendants.each(&:register!)
+
+        # Activate the event system
+        Spree::Events.activate!
       end
     end
   end

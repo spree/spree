@@ -252,10 +252,19 @@ RSpec.describe Spree::Admin::InvitationsController, type: :controller do
   describe 'PUT #resend' do
     stub_authorization!
 
-    it 'resends the invitation' do
+    before do
+      Spree::InvitationEmailSubscriber.unregister!
+      Spree::InvitationEmailSubscriber.register!
+    end
+
+    after do
+      Spree::InvitationEmailSubscriber.unregister!
+    end
+
+    it 'publishes invitation.resend event' do
       invitation
       clear_enqueued_jobs
-      expect { put :resend, params: { id: invitation.id } }.to have_enqueued_job(ActionMailer::MailDeliveryJob)
+      expect { put :resend, params: { id: invitation.id } }.to have_enqueued_job(Spree::Events::SubscriberJob)
     end
 
     it 'redirects to invitations path' do

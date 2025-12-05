@@ -9,7 +9,12 @@ module Spree
     include Spree::AdminUserMethods
     include Spree::RansackableAttributes
     include Spree::MultiSearchable
+    include Spree::Publishable
+
     included do
+      # Enable lifecycle events for user models
+      publishes_lifecycle_events
+
       # we need to have this callback before any dependent: :destroy associations
       # https://github.com/rails/rails/issues/3458
       before_validation :clone_billing_address, if: :use_billing?
