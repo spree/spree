@@ -1,8 +1,8 @@
-<%= link_to spree.admin_user_path(user), class: 'rounded p-2 flex justify-start items-center text-decoration-none hover-light', data: {turbo_frame: :_top, row_link_target: :link} do %>
+<%= link_to spree.admin_user_path(user), class: 'rounded p-2 flex justify-start items-center text-decoration-none hover-light gap-4', data: {turbo_frame: :_top, row_link_target: :link} do %>
   <% if user.name.present? %>
-    <%= render_avatar(user, width: 48, height: 48, class: 'mr-4 avatar') %>
+    <%= render_avatar(user, width: 48, height: 48) %>
   <% else %>
-    <div style="width: 48px; height: 48px" class="mr-4 avatar bg-light"></div>
+    <div class="flex items-center justify-center bg-gray-200 rounded-full text-gray-600 w-12 h-12"></div>
   <% end %>
   <div class="text-left">
     <% if customer_full_name(user) %>

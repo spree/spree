@@ -64,7 +64,7 @@ module Spree
 
         options[:width] ||= 128
         options[:height] ||= 128
-        options[:class] ||= 'avatar'
+        options[:class] ||= 'flex items-center justify-center bg-gray-200 rounded-full text-gray-600'
 
         if user.respond_to?(:avatar) && user.avatar.attached? && user.avatar.variable?
           spree_image_tag(
