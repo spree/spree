@@ -3,6 +3,8 @@ module Spree
     class AnnouncementBar < Spree::PageSection
       before_validation :set_default_text, on: :create
 
+      preference :enabled, :boolean, default: true
+
       BACKGROUND_COLOR_DEFAULT = '#F5F5F4'
       TOP_PADDING_DEFAULT = 8
       BOTTOM_PADDING_DEFAULT = 8
