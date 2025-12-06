@@ -8,6 +8,10 @@ module Spree
       BOTTOM_PADDING_DEFAULT = 8
       TOP_BORDER_WIDTH_DEFAULT = 0
 
+      def can_be_deleted?
+        true
+      end
+
       def self.role
         'header'
       end
