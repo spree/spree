@@ -7,7 +7,7 @@
 <% end %>
 
 <%= form_with model: [:admin, @object], url: object_url, scope: @resource.object_name, id: "edit_#{controller_name.singularize}_#{@object.id}", data: local_assigns[:data] || {} do |f| %>
-  <div class="grid grid-cols-12 gap-4">
+  <div class="grid grid-cols-12 gap-6">
     <div class="<%= col_class %>">
       <%= render 'spree/admin/shared/error_messages', target: @object %>
       <%= render 'form', f: f %>

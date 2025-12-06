@@ -4,7 +4,7 @@
 
     <%= dropdown do %>
       <%= dropdown_toggle class: 'btn-light dropdown-toggle' do %>
-        <span class="text-muted font-weight-normal mr-1">
+        <span class="text-muted font-normal mr-1">
           <%= Spree.t(:show) %>:
         </span>
         <% if params.dig(:q, :state_eq).present? %>

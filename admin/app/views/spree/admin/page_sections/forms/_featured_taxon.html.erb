@@ -45,9 +45,9 @@
   <div data-controller="better-slider">
     <label><%= Spree.t('admin.page_builder.maximum_products_to_show') %>: <span data-better-slider-target="currentValueLabel"></span></label>
     <div class="flex flex-row w-full">
-      <span class="mr-2">3</span>
+      <span class="mr-3">3</span>
       <%= f.range_field :preferred_max_products_to_show, class: "custom-range w-full", min: 3, max: 20, data: {'better-slider-target': 'rangeInput', action: 'auto-submit#submit'} %>
-      <span class="ml-2">20</span>
+      <span class="ml-3">20</span>
     </div>
   </div>
 </div>

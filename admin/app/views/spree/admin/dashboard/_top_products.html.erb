@@ -13,7 +13,7 @@
     <div class="table-responsive">
       <table class="table">
         <thead>
-          <tr class="border-bottom">
+          <tr class="border-b">
             <th scope="col">
               <%= Spree.t(:product) %>
             </th>
@@ -40,7 +40,7 @@
             <tr>
               <% cache_unless @vendor, spree_base_cache_scope.call(product) do %>
                 <td>
-                  <%= link_to spree.edit_admin_product_path(product), class: 'd-flex align-items-center font-weight-bold', data: { 'turbo-frame': '_top' } do %>
+                  <%= link_to spree.edit_admin_product_path(product), class: 'd-flex align-items-center font-bold', data: { 'turbo-frame': '_top' } do %>
                     <div class="mr-3">
                       <%= render 'spree/admin/shared/product_image', object: product %>
                     </div>
@@ -75,7 +75,7 @@
     </table>
   </div>
   <% if @top_products.any? && can?(:manage, Spree::Report) %>
-    <p class="text-center mt-0 border-top py-2 mb-0">
+    <p class="text-center mt-0 border-t py-2 mb-0">
       <%= link_to Spree.t('admin.dashboard.view_report'), report_link, class: 'm-2 w-50 btn btn-light mt-2', data: { turbo_frame: '_top' } %>
     </p>
   <% end %>

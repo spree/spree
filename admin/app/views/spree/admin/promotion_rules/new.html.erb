@@ -14,7 +14,7 @@
           <%= link_to spree.new_admin_promotion_rule_path(@promotion, promotion_rule: { type: rule_type }), class: 'd-flex align-items-top w-100 py-2 px-3 hover-gray rounded-lg mb-2', data: { turbo_prefetch: false } do %>
             <%= radio_button_tag :type, rule_type %>
             <div class="ml-3">
-              <h6 class="font-weight-bold mb-1"><%= Spree.t("promotion_rule_types.#{key}.name") %></h6>
+              <h6 class="font-bold mb-1"><%= Spree.t("promotion_rule_types.#{key}.name") %></h6>
               <p class="text-muted mb-0"><%= Spree.t("promotion_rule_types.#{key}.description") %></p>
             </div>
           <% end %>

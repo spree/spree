@@ -84,15 +84,6 @@
   --shadow-lg: rgba(0, 5, 13, 0.5) 0px 4px 8px 2px;
   --shadow-dropdown: 0px 0px 0px 1px rgba(179, 179, 179, 0.5), 0px 6px 12px -3px rgba(179, 179, 179, 0.35), 0px 6px 18px 0px rgba(179, 179, 179, 0.35);
 
-  /* Spacing - Bootstrap scale */
-  --spacing-0: 0;
-  --spacing-1: 0.25rem;
-  --spacing-2: 0.5rem;
-  --spacing-2-5: 0.75rem;
-  --spacing-3: 1rem;
-  --spacing-4: 1.5rem;
-  --spacing-5: 3rem;
-
   /* Layout Spacing */
   --spacing-sidebar-width: 220px;
   --spacing-sidebar-collapsed: 59px;

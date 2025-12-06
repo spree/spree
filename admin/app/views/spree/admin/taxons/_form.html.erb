@@ -1,6 +1,6 @@
-<div class="grid grid-cols-12 gap-4" data-controller="slug-form seo-form">
+<div class="grid grid-cols-12 gap-6" data-controller="slug-form seo-form">
   <div class="col-span-12 lg:col-span-8">
-    <div class="card mb-4">
+    <div class="card mb-6">
       <div class="card-body pb-0 pt-3">
         <%= f.spree_text_field :name, required: true, autofocus: @taxon.new_record?, data: { seo_form_target: 'sourceTitleInput', slug_form_target: 'name', action: 'slug-form#updateUrlFromName' } %>
         <%= f.spree_rich_text_area :description, data: { seo_form_target: 'sourceDescriptionInput' } %>
@@ -26,14 +26,14 @@
             <span class="text-muted"><%= Spree.t('admin.taxon_types.automatic_info') %></span>
           </div>
         </div>
-        <div class="card-body border-top pt-4 d-none" data-reveal-target="item">
+        <div class="card-body border-t pt-6 d-none" data-reveal-target="item">
           <h6><%= Spree.t(:rules) %></h6>
           <%= render 'spree/admin/taxons/rules_form', f: f %>
         </div>
       </div>
     <% else %>
       <% if @taxon.automatic? %>
-        <div class="card mb-4">
+        <div class="card mb-6">
           <div class="card-header">
             <h5 class="card-title"><%= Spree.t(:rules) %></h5>
           </div>
@@ -44,7 +44,7 @@
         </div>
       <% end %>
 
-      <div class="card mb-4">
+      <div class="card mb-6">
         <div class="card-header d-flex align-items-center justify-content-between">
           <h5 class="card-title">
             <%= Spree.t(:products) %>
@@ -58,7 +58,7 @@
           <% end %>
         </div>
 
-        <div class="card-body border-bottom pb-0">
+        <div class="card-body border-b pb-0">
           <div class="d-flex align-items-center">
             <%= f.spree_select :sort_order, taxon_sort_options_for_select, {}, { class: 'custom-select custom-select-sm w-auto ml-2',  data: { action: 'change->auto-submit#submit' } } %>
           </div>
@@ -76,7 +76,7 @@
   </div>
 
   <div class="col-span-12 lg:col-span-4">
-    <div class="card mb-4">
+    <div class="card mb-6">
       <div class="card-header">
         <h5 class="card-title"><%= Spree.t(:images) %></h5>
       </div>
@@ -88,7 +88,7 @@
       </div>
     </div>
 
-    <div class="card mb-4">
+    <div class="card mb-6">
       <div class="card-header">
         <h5 class="card-title">
           <%= Spree.t(:navigation) %>

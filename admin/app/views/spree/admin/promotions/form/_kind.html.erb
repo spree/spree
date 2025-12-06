@@ -3,18 +3,18 @@
     <%= f.radio_button :kind, :coupon_code, data: { action: 'change->reveal#show' }, class: 'custom-control-input' %>
     <%= f.label :kind_coupon_code, Spree.t(:coupon_code), class: 'custom-control-label' %>
 
-    <div data-reveal-target="item" class="rounded p-3 bg-light mt-3 <% if @promotion.automatic? %>hidden<% end %>">
+    <div data-reveal-target="item" class="rounded p-6 bg-light mt-6 <% if @promotion.automatic? %>hidden<% end %>">
       <div data-controller="reveal" data-reveal-hidden-class="hidden">
         <div class="d-flex align-items-start custom-control custom-radio">
           <%= f.radio_button :multi_codes, false, data: { action: 'change->reveal#toggle' }, class: 'custom-control-input' %>
           <%= f.label :multi_codes_false, class: 'custom-control-label' do %>
             One code for all customers
-            <span class="form-text font-weight-normal mr-1 mt-2">
+            <span class="form-text font-normal mr-1 mt-2">
               You can limit the number of times this code can be used.
             </span>
           <% end %>
         </div>
-        <div data-reveal-target="item" class="mb-4 mt-2 ml-4 <% if @promotion.multi_codes? %>hidden<% end %>">
+        <div data-reveal-target="item" class="mb-6 mt-2 ml-6 <% if @promotion.multi_codes? %>hidden<% end %>">
           <%= f.text_field :code, class: 'form-control text-uppercase', placeholder: 'Your coupon code' %>
         </div>
 
@@ -22,12 +22,12 @@
           <%= f.radio_button :multi_codes, true, data: { action: 'change->reveal#toggle' }, class: 'custom-control-input' %>
           <%= f.label :multi_codes_true, class: 'custom-control-label' do %>
             Generate unique codes
-            <span class="form-text font-weight-normal mr-1 mt-2">
+            <span class="form-text font-normal mr-1 mt-2">
               These codes are generated automatically and can be downloaded as a CSV file. Codes are unique and can only be used once.
             </span>
           <% end %>
         </div>
-        <div data-reveal-target="item" class="ml-3 mt-2 grid grid-cols-12 gap-4 <% unless @promotion.multi_codes? %>hidden<% end %>">
+        <div data-reveal-target="item" class="ml-6 mt-2 grid grid-cols-12 gap-6 <% unless @promotion.multi_codes? %>hidden<% end %>">
           <div class="col-span-6">
             <%= f.text_field :code_prefix, class: 'form-control text-uppercase', placeholder: 'Coupon Prefix (optional)' %>
             <span class="form-text mt-2">
@@ -50,7 +50,7 @@
     </div>
   </div>
 
-  <div class="mt-4 custom-control custom-radio">
+  <div class="mt-6 custom-control custom-radio">
     <%= f.radio_button :kind, :automatic, data: { action: 'change->reveal#hide' }, class: 'custom-control-input' %>
     <%= f.label :kind_automatic, Spree.t(:automatic_promotion), class: 'custom-control-label' %>
 

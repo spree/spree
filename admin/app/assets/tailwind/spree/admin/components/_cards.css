@@ -75,7 +75,7 @@
   }
 
   .card-header {
-    @apply flex items-center mb-0 py-2-5 px-3 border-b border-gray-50;
+    @apply flex items-center mb-0 py-3 px-3 border-b border-gray-50;
     height: 54px;
   }
 
@@ -100,7 +100,7 @@
   }
 
   .card-footer {
-    @apply border-t-0 py-2-5 px-3;
+    @apply border-t-0 py-3 px-3;
   }
 
   .card-footer:last-child {

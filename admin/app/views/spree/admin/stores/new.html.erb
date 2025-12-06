@@ -1,9 +1,9 @@
 <%= form_for @store, url: spree.admin_stores_path, data: { turbo: false, controller: 'store-form enable-button' } do |f| %>
-  <div class="container pt-5">
+  <div class="container pt-48">
     <h1><%= Spree.t(:new_store) %></h1>
 
     <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @store } %>
-    <div class="grid grid-cols-12 gap-4">
+    <div class="grid grid-cols-12 gap-16">
       <div class="col-span-12 lg:col-span-6">
           <div class="form-group">
             <%= f.label :name %>
@@ -59,7 +59,7 @@
             <li>
               <%= icon('check', class: 'text-success') %>
               <%= Spree.t(:products) %>, <%= Spree.t(:stock_locations) %> & <%= Spree.t(:inventory) %><br />
-              <em class="ml-4 text-muted font-size-sm">you can select which ones will be available for this store</em>
+              <em class="ml-24 text-muted text-sm">you can select which ones will be available for this store</em>
             </li>
             <li>
               <%= icon('check', class: 'text-success') %>
@@ -72,7 +72,7 @@
             <li>
               <%= icon('check', class: 'text-success') %>
               <%= Spree.t(:payment_methods) %><br />
-              <em class="ml-4 text-muted font-size-sm">you can select which ones will be available for this store</em>
+              <em class="ml-24 text-muted text-sm">you can select which ones will be available for this store</em>
             </li>
             <li>
               <%= icon('check', class: 'text-success') %>

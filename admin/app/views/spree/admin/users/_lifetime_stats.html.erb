@@ -2,27 +2,27 @@
   <div class="card-body">
     <div class="grid grid-cols-12 gap-4">
       <div class="col-span-12 lg:col-span-4">
-        <div class="d-flex justify-content-center flex-column mb-3 mb-lg-0 border-right">
+        <div class="d-flex justify-content-center flex-column mb-4 mb-lg-0 border-r">
           <span class="text-muted"><%= Spree.t('admin.amount_spent') %></span>
-          <span class="font-size-lg text-dark font-weight-bold mt-1">
+          <span class="text-lg text-dark font-bold mt-1">
             <%= @user.display_lifetime_value %>
           </span>
         </div>
       </div>
 
       <div class="col-span-12 lg:col-span-4">
-        <div class="d-flex justify-content-center flex-column mb-3 mb-lg-0 border-right">
+        <div class="d-flex justify-content-center flex-column mb-4 mb-lg-0 border-r">
           <span class="text-muted"><%= Spree.t(:orders) %></span>
-          <span class="font-size-lg text-dark font-weight-bold mt-1 me-3">
+          <span class="text-lg text-dark font-bold mt-1 me-6">
             <%= @user.completed_orders.count %>
           </span>
         </div>
       </div>
 
       <div class="col-span-12 lg:col-span-4">
-        <div class="d-flex justify-content-center flex-column mb-3 mb-lg-0">
+        <div class="d-flex justify-content-center flex-column mb-4 mb-lg-0">
           <span class="text-muted"><%= Spree.t('admin.avg_order_value') %></span>
-          <span class="font-size-lg text-dark font-weight-bold mt-1 me-3">
+          <span class="text-lg text-dark font-bold mt-1 me-6">
             <%= @user.display_average_order_value %>
           </span>
         </div>
@@ -33,18 +33,18 @@
 
     <div class="grid grid-cols-12 gap-4">
       <div class="col-span-12 lg:col-span-4">
-        <div class="d-flex justify-content-center flex-column mb-3 mb-lg-0 border-right">
+        <div class="d-flex justify-content-center flex-column mb-4 mb-lg-0 border-r">
           <span class="text-muted"><%= Spree.t(:store_credits) %></span>
-          <span class="font-size-lg text-dark font-weight-bold mt-1 me-3">
+          <span class="text-lg text-dark font-bold mt-1 me-6">
             <%= Spree::Money.new(@user.total_available_store_credit(current_currency, current_store), currency: current_currency) %>
           </span>
         </div>
       </div>
 
       <div class="col-span-12 lg:col-span-4">
-        <div class="d-flex justify-content-center flex-column mb-3 mb-lg-0 border-right">
+        <div class="d-flex justify-content-center flex-column mb-4 mb-lg-0 border-r">
           <span class="text-muted"><%= Spree.t(:created_at) %></span>
-          <span class="font-size-lg text-dark font-weight-bold mt-1 me-3">
+          <span class="text-lg text-dark font-bold mt-1 me-6">
             <%= spree_time(@user.created_at) %>
           </span>
         </div>
@@ -52,9 +52,9 @@
 
       <% if @visits_count.present? %>
         <div class="col-span-12 lg:col-span-4">
-          <div class="d-flex justify-content-center flex-column mb-3 mb-lg-0 border-right">
+          <div class="d-flex justify-content-center flex-column mb-4 mb-lg-0 border-r">
             <span class="text-muted"><%= Spree.t(:visits) %></span>
-            <span class="font-size-lg text-dark font-weight-bold mt-1 me-3">
+            <span class="text-lg text-dark font-bold mt-1 me-6">
               <%= @visits_count %>
             </span>
           </div>

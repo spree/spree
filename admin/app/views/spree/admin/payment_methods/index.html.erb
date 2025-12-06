@@ -26,7 +26,7 @@
 </div>
 
 <% if available_payment_methods.present? && can?(:create, Spree::PaymentMethod) %>
-  <h6 class="pb-2 pt-3">Available Payment Methods</h6>
+  <h6 class="pb-2 pt-4">Available Payment Methods</h6>
   <div class="card-lg">
     <div class="table-responsive">
       <table class="table">
@@ -44,6 +44,6 @@
   </div>
 <% end %>
 
-<p class="text-muted text-center my-5">
-  Find more payment methods in <%= external_link_to 'Integrations Directory', 'https://spreecommerce.org/docs/integrations/integrations', class: 'text-decoration-none font-weight-bold', target: '_blank' %>
+<p class="text-muted text-center my-12">
+  Find more payment methods in <%= external_link_to 'Integrations Directory', 'https://spreecommerce.org/docs/integrations/integrations', class: 'text-decoration-none font-bold', target: '_blank' %>
 </p>

@@ -52,7 +52,7 @@
           <% end %>
         <% else %>
           <%= form_for [:admin, @user], as: :user, url: spree.admin_user_path(@user), method: :put, data: { controller: 'auto-submit' } do |f| %>
-            <div class="custom-control custom-radio mb-4">
+            <div class="custom-control custom-radio mb-6">
               <%= f.radio_button :bill_address_id, @user.ship_address_id,
                 checked: false,
                 id: 'user_bill_address_id',
@@ -69,7 +69,7 @@
       </div>
     <% else %>
       <%= turbo_frame_tag :new_address_billing do %>
-        <div class="text-center p-5 text-muted">
+        <div class="text-center p-12 text-muted">
           <%= Spree.t(:not_available) %>
         </div>
       <% end %>

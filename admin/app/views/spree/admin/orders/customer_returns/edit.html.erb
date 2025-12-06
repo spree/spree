@@ -1,6 +1,6 @@
 <% content_for :page_title do %>
   <%= page_header_back_button spree.edit_admin_order_path(@order) %>
-  <div class="d-flex gap-3 align-items-center">
+  <div class="d-flex gap-6 align-items-center">
     <%= @customer_return.number %>
 
     <% if @customer_return.fully_reimbursed? %>
@@ -11,7 +11,7 @@
   </div>
 <% end %>
 
-<ul class="list-group bg-white mb-4">
+<ul class="list-group bg-white mb-6">
   <% if @customer_return.order %>
     <li class="list-group-item d-flex justify-content-between align-items-center">
       <%= Spree.t(:customer) %>
@@ -39,7 +39,7 @@
   </li>
 </ul>
 <% if @manual_intervention_return_items.any? %>
-  <div class="card mb-4">
+  <div class="card mb-6">
     <div class="card-header">
       <h5><%= Spree.t(:manual_intervention_required) %></h5>
     </div>
@@ -54,7 +54,7 @@
 <% end %>
 
 <% if @pending_return_items.any? %>
-  <div class="card mb-4">
+  <div class="card mb-6">
     <div class="card-header">
       <h5><%= Spree.t(:pending) %></h5>
     </div>
@@ -69,7 +69,7 @@
 <% end %>
 
 <% if @accepted_return_items.any? %>
-  <div class="card mb-4">
+  <div class="card mb-6">
     <div class="card-header">
       <h5><%= Spree.t(:accepted) %></h5>
     </div>
@@ -84,7 +84,7 @@
 <% end %>
 
 <% if @rejected_return_items.any? %>
-  <div class="card mb-4">
+  <div class="card mb-6">
     <div class="card-header">
       <h5><%= Spree.t(:rejected) %></h5>
     </div>
@@ -98,7 +98,7 @@
   </div>
 <% end %>
 
-<div class="card mb-4">
+<div class="card mb-6">
   <div class="card-header">
     <h5><%= plural_resource_name(Spree::Reimbursement) %></h5>
   </div>
@@ -127,7 +127,7 @@
 <% if !@customer_return.fully_reimbursed? && @customer_return.no_pending_reimbursements? && !@customer_return.completely_decided? %>
   <div
     class="
-      text-muted p-5 d-flex align-items-center w-100 justify-content-center
+      text-muted p-12 d-flex align-items-center w-100 justify-content-center
     "
   >
     <%= Spree.t(:unable_to_create_reimbursements) %>

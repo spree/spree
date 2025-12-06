@@ -1,4 +1,4 @@
-<div class="grid grid-cols-12 gap-4 nested-form-wrapper border-bottom mb-3 pr-2" data-controller="rule-form" data-new-record="<%= rf.object.new_record? %>">
+<div class="grid grid-cols-12 gap-6 nested-form-wrapper border-b mb-3 pr-2" data-controller="rule-form" data-new-record="<%= rf.object.new_record? %>">
   <% @taxon_rules.each do |taxon_rule| %>
     <template id="rule-form-template-<%= taxon_rule.to_s.demodulize %>" data-rule-form-target="template">
       <%= render "spree/admin/taxons/rule_forms/#{taxon_rule.to_s.demodulize.underscore}", rule_form: rf %>

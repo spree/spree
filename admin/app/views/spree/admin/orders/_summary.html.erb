@@ -6,14 +6,14 @@
     <% if @order.canceled? && @order.canceled_at %>
       <li class="list-group-item d-flex justify-content-between align-items-center border-0">
         <span><%= Spree.t(:canceled_at) %></span>
-        <span class="text-rightfont-weight-bold">
+        <span class="text-rightfont-bold">
           <%= spree_time(@order.canceled_at) %>
         </span>
       </li>
       <% if @order.canceler.present? %>
         <li class="list-group-item d-flex justify-content-between align-items-center border-0">
           <span><%= Spree.t(:canceler) %></span>
-          <span class="text-rightfont-weight-bold">
+          <span class="text-rightfont-bold">
             <%= @order.canceler.name %>
           </span>
         </li>
@@ -85,12 +85,12 @@
 
     <li class="list-group-item d-flex justify-content-between align-items-center border-0">
       <span data-hook='admin_order_tab_total_title'><%= Spree.t(:total) %></span>
-      <span class="font-weight-bold text-capitalize" id='order_total'>
+      <span class="font-bold text-capitalize" id='order_total'>
         <%= @order.display_total.to_html %>
       </span>
     </li>
 
-    <li class="list-group-item d-flex justify-content-between align-items-center border-top bg-light">
+    <li class="list-group-item d-flex justify-content-between align-items-center border-t bg-light">
       <span data-hook='admin_order_tab_payment_total_title'><%= Spree.t(:payment_total) %></span>
       <span id='payment_total'>
         <%= @order.display_payment_total.to_html %>

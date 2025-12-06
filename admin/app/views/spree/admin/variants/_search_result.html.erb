@@ -5,10 +5,10 @@
       <div class="variant-image">
         <%= render 'spree/admin/shared/product_image', object: variant %>
       </div>
-      <div class="ml-3 variant-info">
+      <div class="ml-4 variant-info">
         <strong class="variant-name"><%= highlight(variant.name, params.dig(:q)) %></strong>
         <% if variant.options_text.present? %>
-          <p class="text-muted my-1 font-size-sm">
+          <p class="text-muted my-1 text-sm">
             <%= variant.options_text %>
           </p>
         <% end %>

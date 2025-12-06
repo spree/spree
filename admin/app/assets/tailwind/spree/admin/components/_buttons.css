@@ -12,7 +12,7 @@
   .btn {
     @apply inline-flex items-center justify-center text-center align-middle;
     @apply cursor-pointer select-none no-underline;
-    @apply px-2-5 text-base font-medium leading-normal border border-transparent rounded-lg;
+    @apply px-3 text-base font-medium leading-normal border border-transparent rounded-lg;
     padding-top: 0.35rem;
     padding-bottom: 0.35rem;
     transition: background-color 0.1s linear, border-color 0.2s linear, color 0.1s linear;

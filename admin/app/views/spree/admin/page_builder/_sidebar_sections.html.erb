@@ -2,7 +2,7 @@
 <div class="d-none d-md-block">
   <h6 class="sidebar-header">Page sections</h6>
   <% if @page_preview.layout_sections? %>
-    <div class="list-group-flush border-bottom mb-1 pb-2">
+    <div class="list-group-flush border-b mb-1 pb-2">
       <div data-controller="sortable"
          data-sortable-handle-value=".handle-section"
          data-sortable-resource-name-value="page_section"
@@ -25,7 +25,7 @@
     <%= link_to_with_icon 'new-section', Spree.t(:add_section), spree.new_admin_page_section_path(@page_preview), class: 'btn btn-primary rounded-pill text-uppercase w-100 my-2 py-2' %>
   </div>
   <% if @page_preview.layout_sections? %>
-    <div class="list-group-flush border-top py-2">
+    <div class="list-group-flush border-t py-2">
       <div data-controller="sortable"
          data-sortable-handle-value=".handle-section"
          data-sortable-resource-name-value="page_section"

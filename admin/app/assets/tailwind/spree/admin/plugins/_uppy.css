@@ -57,14 +57,14 @@
   .uppy-Dashboard-browse,
   .uppy-DashboardContent-back {
     @apply inline-block text-center align-middle select-none text-sm leading-normal text-gray-900 bg-gray-50 font-normal border-border;
-    padding: 0.375rem var(--spacing-2-5);
+    padding: 0.375rem 0.75rem;
     border-radius: var(--radius-default);
     border-width: 1px;
     transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
   }
 
   .uppy-Dashboard-browse {
-    margin-left: var(--spacing-2);
+    margin-left: 0.5rem;
   }
 
   .uppy-Dashboard-browse:hover,
@@ -74,7 +74,7 @@
 
   .uppy-DashboardContent-save {
     @apply inline-block text-center align-middle select-none text-sm leading-normal text-surface bg-primary font-normal border-primary;
-    padding: 0.375rem var(--spacing-2-5);
+    padding: 0.375rem 0.75rem;
     border-radius: var(--radius-default);
     border-width: 1px;
     transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
@@ -85,14 +85,14 @@
   }
 
   .uppy-Dashboard-close {
-    width: var(--spacing-3);
-    height: var(--spacing-3);
-    padding: var(--spacing-1);
+    width: 1rem;
+    height: 1rem;
+    padding: 0.25rem;
     background-color: var(--color-surface) !important;
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e");
     background-repeat: no-repeat;
     background-position: center;
-    background-size: var(--spacing-3);
+    background-size: 1rem;
     border-radius: var(--radius-default);
     opacity: 0.5;
   }
@@ -107,7 +107,7 @@
 
   .uppy-StatusBar-actionBtn {
     @apply inline-block text-center align-middle select-none text-xs leading-normal text-gray-900 bg-gray-50 font-normal border-border;
-    padding: var(--spacing-1) var(--spacing-2);
+    padding: 0.25rem 0.5rem;
     border-radius: var(--radius-default);
     border-width: 1px;
   }

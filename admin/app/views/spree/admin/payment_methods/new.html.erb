@@ -5,7 +5,7 @@
 
 <%= form_for @payment_method, as: :payment_method, url: spree.admin_payment_methods_path do |f| %>
   <%= f.hidden_field :type %>
-  <div class="grid grid-cols-12 gap-4">
+  <div class="grid grid-cols-12 gap-6">
     <div class="col-span-12 lg:col-span-6 lg:col-start-4">
       <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @payment_method } %>
       <%= render 'form', f: f %>

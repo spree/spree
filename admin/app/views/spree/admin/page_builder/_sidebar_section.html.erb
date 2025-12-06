@@ -7,7 +7,7 @@
       <div class="d-flex align-items-center flex-fill py-1 px-2">
         <%= icon("#{section.icon_name}", height: 18, class: 'mr-2') if section.icon_name.present? %>
         <%= link_to section.display_name, spree.edit_admin_page_section_path(section),
-            class: 'section-edit-link flex-fill font-weight-bold text-dark',
+            class: 'section-edit-link flex-fill font-bold text-dark',
             data: {
               turbo_frame: :page_sidebar,
               action: 'click->page-builder#makeOverlayActive',

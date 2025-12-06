@@ -20,7 +20,7 @@
     </div>
   </div>
 
-  <div class="overflow-hidden text-muted font-size-sm ml-auto">
+  <div class="overflow-hidden text-muted text-sm ml-auto">
     <% if taxon.classifications.count > 0 %>
       <%= pluralize(taxon.classifications.count, Spree.t(:product)) %>
     <% end %>

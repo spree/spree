@@ -7,7 +7,7 @@
     <% end %>
   </div>
   <div class="card-body">
-    <div class="custom-control custom-checkbox mb-4">
+    <div class="custom-control custom-checkbox mb-6">
       <%= f.check_box :track_inventory,
             class: 'custom-control-input',
             data: {
@@ -21,13 +21,13 @@
       class="master-variant-quantity-form <%= @product.has_variants? || !@product.track_inventory ? 'd-none' : '' %>"
       data-product-form-target="<%= @product.has_variants? ? '' : 'quantityForm' %>"
     >
-      <h6 class="font-weight-bold"><%= Spree.t(:quantity) %></h6>
+      <h6 class="font-bold"><%= Spree.t(:quantity) %></h6>
       <hr class="mt-0">
-      <div class="mb-4">
+      <div class="mb-6">
         <%= f.fields_for :master, @product.master do |vf| %>
           <%= vf.fields_for :stock_items do |sif| %>
             <%= sif.hidden_field :stock_location_id %>
-            <div class="grid grid-cols-12 gap-4 mb-2">
+            <div class="grid grid-cols-12 gap-6 mb-2">
               <div class="col-span-12 md:col-span-6 d-flex align-items-center">
                 <%= sif.object.stock_location.name %>
               </div>
@@ -45,7 +45,7 @@
         <% end %>
       </div>
     </div>
-    <div class="grid grid-cols-12 gap-4">
+    <div class="grid grid-cols-12 gap-6">
       <div class="col-span-12 md:col-span-6">
         <div class="form-group">
           <%= f.label :sku, Spree.t('admin.products.inventory.sku') %>

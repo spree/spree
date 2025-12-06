@@ -2,7 +2,7 @@
 
 <tr id="<%= spree_dom_id gift_card %>" data-controller="row-link">
   <td class="w-25 py-0">
-    <%= link_to gift_card.code.upcase, link, class: 'font-weight-bold d-block w-100 h-100 py-2', data: { 'turbo-frame': '_top', row_link_target: :link } %>
+    <%= link_to gift_card.code.upcase, link, class: 'font-bold d-block w-100 h-100 py-2', data: { 'turbo-frame': '_top', row_link_target: :link } %>
   </td>
   <td class="w-10 cursor-pointer" data-action="click->row-link#openLink"><%= gift_card.display_amount %></td>
   <td class="w-10 cursor-pointer" data-action="click->row-link#openLink"><%= gift_card.display_amount_used %></td>

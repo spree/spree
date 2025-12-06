@@ -1,6 +1,6 @@
 <% content_for(:title, Spree.t(:forgot_password)) %>
 
-<h1 class="mb-3 font-weight-light"><%= Spree.t(:change_password) %></h1>
+<h1 class="mb-3 font-light"><%= Spree.t(:change_password) %></h1>
 <%= form_for(resource, as: resource_name, url: password_path(:admin_user), html: { method: :put }, data: { turbo_frame: :_top, turbo: false }) do |f| %>
   <%= render partial: 'spree/admin/shared/error_messages', locals: { target: resource } %>
   <%= f.hidden_field :reset_password_token %>

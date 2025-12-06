@@ -4,7 +4,7 @@
       <%= f.spree_text_field :name, required: true, autofocus: f.object.new_record? %>
     </div>
 
-    <div class="grid grid-cols-12 gap-4">
+    <div class="grid grid-cols-12 gap-6">
       <div class="form-group col-span-12 lg:col-span-4">
         <%= f.spree_text_field :namespace, required: true, placeholder: 'eg. custom' %>
       </div>
@@ -28,12 +28,12 @@
 
       <div class="form-group">
         <%= f.label :resource_type, Spree.t(:resource) %>
-        <p class="font-weight-bold"><%= f.object.resource_type.demodulize.titleize %></p>
+        <p class="font-bold"><%= f.object.resource_type.demodulize.titleize %></p>
       </div>
 
       <div class="form-group">
         <%= f.label :metafield_type, Spree.t(:type) %>
-        <p class="font-weight-bold"><%= f.object.metafield_type.demodulize.titleize %></p>
+        <p class="font-bold"><%= f.object.metafield_type.demodulize.titleize %></p>
       </div>
     <% end %>
 

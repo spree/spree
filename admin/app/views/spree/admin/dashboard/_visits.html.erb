@@ -1,5 +1,5 @@
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-  <div class="col mb-4">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+  <div class="col mb-6">
     <div class="card h-100">
       <div class="card-header">
         <h5 class="card-title">
@@ -16,8 +16,8 @@
           <% end %>
         </ul>
       <% else %>
-        <p class="m-5 text-center text-muted">
-          <%= icon 'share', height: 50, class: 'mb-3', style: 'opacity: 0.5' %>
+        <p class="m-12 text-center text-muted">
+          <%= icon 'share', height: 50, class: 'mb-4', style: 'opacity: 0.5' %>
           <br />
           <strong>No data</strong>
           <br />
@@ -26,7 +26,7 @@
       <% end %>
     </div>
   </div>
-  <div class="col mb-4">
+  <div class="col mb-6">
     <div class="card h-100">
       <div class="card-header">
         <h5 class="card-title">
@@ -43,8 +43,8 @@
           <% end %>
         </ul>
       <% else %>
-        <p class="m-5 text-center text-muted">
-          <%= icon 'pointer', height: 50, class: 'mb-3', style: 'opacity: 0.5' %>
+        <p class="m-12 text-center text-muted">
+          <%= icon 'pointer', height: 50, class: 'mb-4', style: 'opacity: 0.5' %>
           <br />
           <strong>No data</strong>
           <br />
@@ -53,7 +53,7 @@
       <% end %>
     </div>
   </div>
-  <div class="col mb-4">
+  <div class="col mb-6">
     <div class="card h-100">
       <div class="card-header">
         <h5 class="card-title">
@@ -77,8 +77,8 @@
           <% end %>
         </ul>
       <% else %>
-        <p class="m-5 text-center text-muted">
-          <%= icon 'world', height: 50, class: 'mb-3', style: 'opacity: 0.5' %>
+        <p class="m-12 text-center text-muted">
+          <%= icon 'world', height: 50, class: 'mb-4', style: 'opacity: 0.5' %>
           <br />
           <strong>No data</strong>
           <br />
@@ -87,7 +87,7 @@
       <% end %>
     </div>
   </div>
-  <div class="col mb-4">
+  <div class="col mb-6">
     <div class="card">
       <div class="card-header">
         <h5 class="card-title">
@@ -99,8 +99,8 @@
           <%= pie_chart @top_devices, legend: "bottom", suffix: "%" %>
         </div>
       <% else %>
-        <p class="m-5 text-center text-muted">
-          <%= icon 'device-mobile', height: 50, class: 'mb-3', style: 'opacity: 0.5' %>
+        <p class="m-12 text-center text-muted">
+          <%= icon 'device-mobile', height: 50, class: 'mb-4', style: 'opacity: 0.5' %>
           <br />
           <strong>No data</strong>
           <br />

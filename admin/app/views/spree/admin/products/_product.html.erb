@@ -4,10 +4,10 @@
   </td>
   <td scope="row" class="w-40 py-0 text-wrap" data-action="click->row-link#openLink">
     <%= link_to spree.edit_admin_product_path(product), class: 'd-flex align-items-center w-100 text-decoration-none h-100 py-2', data: { row_link_target: :link, 'turbo-frame': '_top' } do %>
-      <div class="mr-3">
+      <div class="mr-4">
         <%= render 'spree/admin/shared/product_image', object: product %>
       </div>
-      <span class="text-dark font-weight-semibold">
+      <span class="text-dark font-medium">
         <%= product.name %>
       </span>
     <% end %>

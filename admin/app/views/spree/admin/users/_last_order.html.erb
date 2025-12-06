@@ -12,7 +12,7 @@
             <div class="grid grid-cols-12 gap-4">
               <div class="col-span-12 lg:col-span-9">
                 <p class="mb-1">
-                  <%= link_to @last_order.number, spree.edit_admin_order_path(@last_order), class: 'font-weight-bold' %>
+                  <%= link_to @last_order.number, spree.edit_admin_order_path(@last_order), class: 'font-bold' %>
                   <%= order_payment_state(@last_order, class: 'ml-2') %>
                   <%= order_shipment_state(@last_order, class: 'ml-2') %>
                 </p>
@@ -21,7 +21,7 @@
                   <%= tooltip(spree_time(@last_order.completed_at)) %>
                 </span>
               </div>
-              <div class="col-span-12 lg:col-span-3 text-lg-right font-weight-bold">
+              <div class="col-span-12 lg:col-span-3 text-lg-right font-bold">
                 <%= @last_order.display_total %>
               </div>
             </div>

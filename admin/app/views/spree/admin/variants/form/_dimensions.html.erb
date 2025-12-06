@@ -1,4 +1,4 @@
-<div class="grid grid-cols-12 gap-4">
+<div class="grid grid-cols-12 gap-6">
   <div class="col-span-12 lg:col-span-6">
     <%= f.spree_text_field :width, value: number_with_precision(f.object.width, precision: 2) %>
     <%= f.spree_text_field :height, value: number_with_precision(f.object.height, precision: 2) %>
@@ -14,6 +14,6 @@
   <%= f.label :weight %>
   <div class="form-control d-flex align-items-center py-0 focus-border focus-shadow">
     <%= f.text_field :weight, value: number_with_precision(f.object.weight, precision: 2), class: 'form-control-plaintext pl-0' %>
-    <%= f.select :weight_unit, options_for_select(weight_units(current_store), f.object.weight_unit), { include_blank: false }, { class: 'form-control-plaintext w-auto border-left' } %>
+    <%= f.select :weight_unit, options_for_select(weight_units(current_store), f.object.weight_unit), { include_blank: false }, { class: 'form-control-plaintext w-auto border-l' } %>
   </div>
 </div>

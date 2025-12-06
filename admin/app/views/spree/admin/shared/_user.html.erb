@@ -6,7 +6,7 @@
   <% end %>
   <div class="text-left">
     <% if customer_full_name(user) %>
-      <span class="font-weight-bold text-dark"><%= customer_full_name(user) %></span>
+      <span class="font-bold text-dark"><%= customer_full_name(user) %></span>
       <br />
     <% end %>
     <% unless defined?(current_vendor) && current_vendor %>

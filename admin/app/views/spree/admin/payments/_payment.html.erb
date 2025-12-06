@@ -14,10 +14,10 @@
       <%= payment_method_icon_tag(payment.payment_method.payment_icon_name) %>
     <% end %>
     <strong><%= payment.number.upcase %></strong>
-    <%= spree_time(payment.created_at, class: 'ml-auto text-muted font-size-sm') %>
+    <%= spree_time(payment.created_at, class: 'ml-auto text-muted text-sm') %>
 
     <%= dropdown do %>
-      <%= dropdown_toggle class: 'btn-light btn-sm px-1' do %>
+      <%= dropdown_toggle class: 'btn-light btn-sm px-0.5' do %>
         <%= icon('dots-vertical', class: 'mr-0') %>
       <% end %>
       <%= dropdown_menu do %>
@@ -55,14 +55,14 @@
 
     <div class="d-flex">
       <div class="w-50">
-        <p class="mb-1"><%= Spree.t(:amount) %>:</p>
+        <p class="mb-0.5"><%= Spree.t(:amount) %>:</p>
         <strong><%= payment.display_amount %></strong>
 
-        <p class="mb-1 mt-2"><%= Spree.t(:payment_method) %>:</p>
+        <p class="mb-0.5 mt-2"><%= Spree.t(:payment_method) %>:</p>
         <strong><%= payment_method_name(payment) %></strong>
 
         <% if payment.transaction_id.present? %>
-          <p class="mb-1 mt-2">
+          <p class="mb-0.5 mt-2">
             <%= Spree.t(:transaction_id) %>
             <%= help_bubble(Spree.t(:transaction_id_help)) %>
           </p>
@@ -72,7 +72,7 @@
       <% if payment.source.present? %>
         <div class="w-50">
           <p class="mb-2"><%= Spree.t(:payment_source) %>:</p>
-          <div class="rounded-lg bg-light border shadow-xs p-3">
+          <div class="rounded-lg bg-light border shadow-xs p-6">
             <%= render 'spree/shared/payment', payment: payment %>
           </div>
         </div>
@@ -80,7 +80,7 @@
     </div>
   </div>
   <% if payment.transaction_id.present? && !payment.store_credit? %>
-    <div class="card-footer border-top border-top-dashed" data-controller="reveal">
+    <div class="card-footer border-t border-t-dashed" data-controller="reveal">
       <p class="mb-0 d-flex justify-content-between align-items-center">
         <span>
           <%= Spree.t(:risk_analysis) %>
@@ -93,7 +93,7 @@
         </span>
         <button type="button" class="btn btn-light btn-sm" data-action="click->reveal#toggle">
           <%= Spree.t(:show_details) %>
-          <%= icon('selector', class: 'mr-0 ml-1') %>
+          <%= icon('selector', class: 'mr-0 ml-0.5') %>
         </button>
       </p>
       <%= render 'spree/admin/orders/risk_analysis', payment: payment %>

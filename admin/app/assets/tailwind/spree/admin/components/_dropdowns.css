@@ -57,10 +57,10 @@
     @apply absolute z-1050 hidden text-left list-none border-0 overflow-hidden! text-base font-normal text-text bg-surface;
     min-width: 10rem;
     max-width: 20rem;
-    margin-top: var(--spacing-1) !important;
-    padding: var(--spacing-1);
+    margin-top: 0.25rem !important;
+    padding: 0.25rem;
     background-clip: padding-box;
-    border-radius: var(--spacing-3);
+    border-radius: 1rem;
     box-shadow: var(--shadow-dropdown);
   }
 
@@ -70,7 +70,7 @@
 
   .dropdown-divider {
     @apply h-0 overflow-hidden;
-    margin: var(--spacing-1) 0;
+    margin: 0.25rem 0;
     border-top: 1px solid var(--color-gray-50);
   }
 
@@ -79,8 +79,8 @@
   .dropdown-menu .dropdown-header,
   .dropdown-container .dropdown-item,
   .dropdown-container .dropdown-header {
-    padding-top: var(--spacing-2);
-    padding-bottom: var(--spacing-2);
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
     padding-left: 0.65rem;
     padding-right: 0.65rem;
   }
@@ -88,14 +88,14 @@
   .dropdown-menu .dropdown-header,
   .dropdown-container .dropdown-header {
     @apply text-base font-normal;
-    margin-bottom: var(--spacing-1);
-    margin-top: var(--spacing-1);
+    margin-bottom: 0.25rem;
+    margin-top: 0.25rem;
   }
 
   .dropdown-item {
     @apply flex items-center justify-start w-full clear-both text-inherit no-underline whitespace-nowrap bg-transparent border-0 font-normal text-text;
     height: 2rem;
-    margin-bottom: var(--spacing-1);
+    margin-bottom: 0.25rem;
     padding-right: 2rem;
     border-radius: 0.8rem;
     transition-property: background-color, color;
@@ -104,7 +104,7 @@
   }
 
   .dropdown-item i {
-    margin-right: var(--spacing-2);
+    margin-right: 0.5rem;
   }
 
   .dropdown-item .badge {
@@ -129,9 +129,9 @@
   .dropdown-item.active::after {
     @apply inline-block absolute;
     content: '';
-    right: var(--spacing-2-5);
-    width: var(--spacing-3);
-    height: var(--spacing-3);
+    right: 0.75rem;
+    width: 1rem;
+    height: 1rem;
     background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-check text-primary"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l5 5l10 -10"/></svg>') no-repeat center center;
   }
 
@@ -163,12 +163,12 @@
 
   .dropdown-header {
     @apply block mb-0 whitespace-nowrap text-sm text-text-muted;
-    padding: var(--spacing-2) var(--spacing-3);
+    padding: 0.5rem 1rem;
   }
 
   .dropdown-item-text {
     @apply block;
-    padding: var(--spacing-1) var(--spacing-3);
+    padding: 0.25rem 1rem;
     color: var(--color-text);
   }
 

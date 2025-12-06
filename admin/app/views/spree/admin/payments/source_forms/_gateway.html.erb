@@ -1,5 +1,5 @@
 <% if previous_cards.any? %>
-  <div class="card my-3">
+  <div class="card my-4">
     <div class="card-header">
       <h5 class="card-title mb-0 h6"><%= Spree.t(:previously_used_card) %></h5>
     </div>
@@ -23,7 +23,7 @@
   </div>
 <% end %>
 
-<div id="card_form<%= payment_method.id %>" class="mt-3 grid grid-cols-12 gap-4">
+<div id="card_form<%= payment_method.id %>" class="mt-4 grid grid-cols-12 gap-6">
   <% param_prefix = "payment_source[#{payment_method.id}]" %>
 
   <div class="form-group col-span-12">

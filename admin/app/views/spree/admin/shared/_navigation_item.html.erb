@@ -33,8 +33,8 @@
 
 <% if item.section? %>
   <%# Section header %>
-  <li class="nav-item nav-section-header mt-3 border-top pt-3 pl-2">
-    <span class="text-muted text-uppercase font-weight-light font-size-sm"><%= item.section_label %></span>
+  <li class="nav-item nav-section-header mt-3 border-t pt-3 pl-2">
+    <span class="text-muted text-uppercase font-light text-sm"><%= item.section_label %></span>
   </li>
 <% else %>
   <% if has_children %>

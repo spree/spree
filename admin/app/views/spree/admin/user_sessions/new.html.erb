@@ -1,6 +1,6 @@
 <% content_for(:title, Spree.t(:login)) %>
 
-<h1 class="mb-3 font-weight-light">Welcome back</h1>
+<h1 class="mb-3 font-light">Welcome back</h1>
 <%= form_for resource, as: resource_name, url: session_path(resource_name), data: { controller: 'enable-button', turbo: false } do |f| %>
   <div class="form-group mb-3">
     <%= f.label :email, Spree.t(:email), required: true, class: 'form-label' %>

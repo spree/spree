@@ -1,4 +1,4 @@
-<div class="grid grid-cols-12 gap-4 mb-3">
+<div class="grid grid-cols-12 gap-6 mb-6">
   <div class="col-span-6">
     <%= f.select :preferred_operator_min,
                  options_for_select(Spree::Promotion::Rules::ItemTotal::OPERATORS_MIN.map{|o| [Spree.t("item_total_rule.operators.#{o}"),o]}, f.object.preferred_operator_min),
@@ -9,7 +9,7 @@
     <%= f.number_field :preferred_amount_min, class: 'form-control', required: true %>
   </div>
 </div>
-<div class="grid grid-cols-12 gap-4">
+<div class="grid grid-cols-12 gap-6">
   <div class="col-span-6">
     <%= f.select :preferred_operator_max,
                  options_for_select(Spree::Promotion::Rules::ItemTotal::OPERATORS_MAX.map{|o| [Spree.t("item_total_rule.operators.#{o}"),o]}, f.object.preferred_operator_max),

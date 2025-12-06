@@ -1,5 +1,5 @@
 <% if @product.has_variants? || can?(:manage_option_types, @product) %>
-  <div class="card mb-4">
+  <div class="card mb-16">
     <div class="card-header">
       <h5 class="card-title"><%= Spree.t(:variants) %></h5>
     </div>
@@ -121,7 +121,7 @@
           <% end %>
         </div>
         <div class="variants-table <% unless @product.has_variants? %>d-none<% end %>" data-variants-form-target="variantsTable">
-          <div class="variants-table__actions gap-3">
+          <div class="variants-table__actions gap-16">
             <% if supported_currencies.length > 1 %>
               <div class="d-flex flex-row align-items-center gap-2">
                 <label for="currency" class="mb-0"><%= Spree.t(:currency) %></label>
@@ -135,7 +135,7 @@
               </div>
             <% end %>
           </div>
-          <div class="variants-table__header border-top border-bottom">
+          <div class="variants-table__header border-t border-b">
             <% if can?(:destroy, @product.default_variant)  %>
               <div class="variants-table__body__cell column-checkbox">
                 <div class="custom-control custom-checkbox">
@@ -146,7 +146,7 @@
             <% end%>
             <div class="variants-table__header__cell column-variant">
               <%= Spree.t(:variant) %>
-              <button data-variants-form-target="deleteButton" data-action="variants-form#deleteSelected" type="button" class="delete-button d-none ml-3">
+              <button data-variants-form-target="deleteButton" data-action="variants-form#deleteSelected" type="button" class="delete-button d-none ml-12">
                 <i class="ti ti-trash"></i> <%= Spree.t(:delete_selected) %>
               </button>
             </div>
@@ -162,7 +162,7 @@
           <%= render 'spree/admin/products/form/variants/variant_template', default_stock_location: default_stock_location_for_product(@product) %>
           <div class="variants-table__body" data-variants-form-target="variantsContainer" data-test-id="product-variants-table">
           </div>
-          <div class="variants-table__footer font-size-sm">
+          <div class="variants-table__footer text-sm">
             <%= Spree.t('admin.variants_form.total_inventory_html', stock_location: current_store.default_stock_location.name, count: raw("<span data-variants-form-target='stockItemsCount'>#{@product.total_on_hand}</span>") )%>
           </div>
         </div>

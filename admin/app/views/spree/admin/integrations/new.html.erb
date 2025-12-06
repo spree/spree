@@ -7,7 +7,7 @@
   <%= form.hidden_field :type %>
   <%= form.hidden_field :active, value: true %>
 
-  <div class="grid grid-cols-12 gap-4">
+  <div class="grid grid-cols-12 gap-6">
     <div class="col-span-12 lg:col-span-6 lg:col-start-4">
       <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @integration } %>
       <%= render "spree/admin/integrations/forms/#{@integration.key}", form: form %>

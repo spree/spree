@@ -21,7 +21,7 @@
       <span class="badge badge-warning"><%= Spree.t(:expired) %></span>
     <% else %>
       <span class="badge badge-light"><%= Spree.t(:pending) %></span>
-      <p class="text-muted font-size-sm mb-0 mt-2 pl-1">Expires at: <%= spree_time(invitation.expires_at) %></p>
+      <p class="text-muted text-sm mb-0 mt-2 pl-1">Expires at: <%= spree_time(invitation.expires_at) %></p>
     <% end %>
   </td>
   <td class="w-10">

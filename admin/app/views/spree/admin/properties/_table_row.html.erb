@@ -6,7 +6,7 @@
     <code><%= property.name %></code>
   </td>
   <td class="w-20 cursor-pointer" data-action="click->row-link#openLink">
-    <%= link_to property.presentation, spree.edit_admin_property_path(property), class: 'text-decoration-none d-flex align-items-center font-weight-bold text-dark', data: { row_link_target: :link, turbo_frame: '_top' } %>
+    <%= link_to property.presentation, spree.edit_admin_property_path(property), class: 'text-decoration-none d-flex align-items-center font-bold text-dark', data: { row_link_target: :link, turbo_frame: '_top' } %>
   </td>
   <td class="w-20 cursor-pointer" data-action="click->row-link#openLink">
     <span class="badge badge-light"><%= property.kind.humanize %></span>

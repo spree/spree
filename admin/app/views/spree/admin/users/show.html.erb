@@ -1,7 +1,7 @@
 <% content_for :page_title do %>
   <%= page_header_back_button spree.admin_users_path, @user %>
   <%= customer_full_name(@user) || @user.email %>
-  <span class="font-size-base font-weight-normal">
+  <span class="text-base font-normal">
     <%= customer_location_flag(@user) %>
     <%= customer_location(@user) %>
   </span>

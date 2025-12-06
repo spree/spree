@@ -1,9 +1,9 @@
 <% data_action = (@page_link.persisted? && !@page_link.parent.is_a?(Spree::Store) ? { action: 'blur->auto-submit#submit' } : {}) %>
 
-<%= f.spree_select :linkable_type, @page_link.parent.allowed_linkable_types, { label: 'Link', include_blank: false }, { class: 'custom-select mb-3', data: { action: 'auto-submit#submit' } } %>
+<%= f.spree_select :linkable_type, @page_link.parent.allowed_linkable_types, { label: 'Link', include_blank: false }, { class: 'custom-select mb-4', data: { action: 'auto-submit#submit' } } %>
 <%= render 'spree/admin/page_links/linkable_type_dropdown', page_link: @page_link, form_name: 'page_link' %>
 
-<hr class="my-4" />
+<hr class="my-6" />
 
 <%= f.spree_text_field :label, label: Spree.t(:name), data: data_action, required: true %>
 

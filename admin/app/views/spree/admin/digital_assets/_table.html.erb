@@ -17,7 +17,7 @@
         <td colspan="4">
           <div
             class="
-              text-muted p-5 d-flex align-items-center w-100 justify-content-center
+              text-muted p-12 d-flex align-items-center w-100 justify-content-center
             "
           >
             <%= Spree.t(:no_resource_found, resource: Spree.t(:digital_assets)) %>
@@ -25,7 +25,7 @@
               <%= link_to_with_icon "plus",
               Spree.t(:add_one),
               spree.new_admin_product_digital_asset_path(@product),
-              class: "btn btn-light ml-3",
+              class: "btn btn-light ml-12",
               data: {
                 turbo_frame: "dialog",
                 action: 'dialog#open',

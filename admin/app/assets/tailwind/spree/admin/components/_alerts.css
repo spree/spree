@@ -5,14 +5,14 @@
 @layer components {
   .alert {
     @apply inline-flex flex-col justify-center relative bg-no-repeat;
-    padding: var(--spacing-2-5) var(--spacing-3);
+    padding: 0.75rem 1rem;
     padding-left: 44px;
-    margin-bottom: var(--spacing-3);
+    margin-bottom: 1rem;
     min-height: 2.5rem;
     border: 1px solid transparent;
     border-radius: var(--radius-lg);
-    background-position: var(--spacing-3) center;
-    background-size: var(--spacing-3) var(--spacing-3);
+    background-position: 1rem center;
+    background-size: 1rem 1rem;
   }
 
   .alert > p:last-child {
@@ -70,12 +70,12 @@
   }
 
   .alert-dismissible {
-    padding-right: var(--spacing-5);
+    padding-right: 3rem;
   }
 
   .alert-dismissible .btn-close {
     @apply absolute top-0 right-0 z-2;
-    padding: 0.9375rem var(--spacing-3);
+    padding: 0.9375rem 1rem;
   }
 
   .alert-heading {

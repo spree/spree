@@ -5,7 +5,7 @@
   </div>
   <div class="card-body d-flex flex-column">
     <div class="seo__preview <% if title.blank? && description.blank? %>d-none<% else %>d-flex flex-column<% end %>" data-seo-form-target="preview">
-      <div class="seo__preview__title h4 font-weight-normal mb-0 text-break" data-seo-form-target="titlePreview">
+      <div class="seo__preview__title h4 font-normal mb-0 text-break" data-seo-form-target="titlePreview">
         <%= meta_title.presence || title %>
       </div>
       <div class="seo__preview__link">

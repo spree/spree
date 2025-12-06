@@ -4,7 +4,7 @@
 <% end %>
 
 <%= form_for @payment_method, as: :payment_method, url: spree.admin_payment_method_path(@payment_method), html: { id: "edit_payment_method_#{@payment_method.id}" } do |f| %>
-  <div class="grid grid-cols-12 gap-4">
+  <div class="grid grid-cols-12 gap-6">
     <div class="col-span-12 lg:col-span-6 lg:col-start-4">
       <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @payment_method } %>
       <%= render 'form', f: f %>

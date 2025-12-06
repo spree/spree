@@ -18,13 +18,13 @@
     <% if @user.shipping_address %>
       <%= turbo_frame_tag :edit_address_shipping do %>
         <%= render 'spree/admin/shared/map', map_object: @user.ship_address, label: customer_full_name(@user) || @user.email %>
-        <div class="mt-3">
+        <div class="mt-4">
           <%= render 'spree/admin/shared/address', address: @user.shipping_address %>
         </div>
       <% end %>
     <% else %>
       <%= turbo_frame_tag :new_address_shipping do %>
-        <div class="text-center p-5 text-muted">
+        <div class="text-center p-12 text-muted">
           <%= Spree.t(:not_available) %>
         </div>
       <% end %>

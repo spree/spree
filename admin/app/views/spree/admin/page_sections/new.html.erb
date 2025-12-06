@@ -5,7 +5,7 @@
     <% end %>
     <%= Spree.t(:add_section) %>
   </h6>
-  <div class="pb-5 mb-5 edit-block">
+  <div class="pb-12 mb-12 edit-block">
     <%= form_for @page_preview.sections.new, url: spree.admin_page_sections_path(@page_preview), data: { controller: 'section-form', section_form_target: :form } do |f| %>
       <%= f.hidden_field :type, data: { section_form_target: 'type' } %>
       <%= f.hidden_field :pageable_id %>

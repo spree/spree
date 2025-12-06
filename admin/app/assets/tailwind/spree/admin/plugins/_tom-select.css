@@ -21,7 +21,7 @@
     left: 0;
     width: 100%;
     height: auto;
-    padding: var(--spacing-1);
+    padding: 0.25rem;
     margin: 0;
     z-index: 10000000 !important;
     background: var(--color-surface);
@@ -41,15 +41,15 @@
     content: ' ';
     display: block;
     height: 0;
-    margin: var(--spacing-2) 0;
+    margin: 0.5rem 0;
     overflow: hidden;
     border-top: 1px solid var(--color-border);
-    margin-left: calc(-1 * var(--spacing-2-5));
-    margin-right: calc(-1 * var(--spacing-2-5));
+    margin-left: calc(-1 * 0.75rem);
+    margin-right: calc(-1 * 0.75rem);
   }
 
   .ts-dropdown .create {
-    padding-left: var(--spacing-2-5);
+    padding-left: 0.75rem;
   }
 
   .ts-dropdown-content {
@@ -75,7 +75,7 @@
   .ts-dropdown .optgroup-header,
   .ts-dropdown .no-results,
   .ts-dropdown .create {
-    padding: var(--spacing-2);
+    padding: 0.5rem;
     border-radius: var(--radius-sm);
   }
 
@@ -118,7 +118,7 @@
     display: inline-block;
     width: 30px;
     height: 30px;
-    margin: 3px var(--spacing-2-5);
+    margin: 3px 0.75rem;
   }
 
   .ts-dropdown .spinner:after {
@@ -145,7 +145,7 @@
   /* Control */
   .ts-control {
     border: 1px solid var(--color-gray-200);
-    padding: var(--spacing-2) var(--spacing-2-5);
+    padding: 0.5rem 0.75rem;
     width: 100%;
     overflow: hidden;
     position: relative;
@@ -156,7 +156,7 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    min-height: calc(1.5em + var(--spacing-3) + 2px);
+    min-height: calc(1.5em + 1rem + 2px);
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
     background: var(--color-surface);
   }
@@ -212,7 +212,7 @@
   }
 
   .ts-wrapper.multi.has-items .ts-control {
-    padding-left: calc(var(--spacing-2-5) - 5px);
+    padding-left: calc(0.75rem - 5px);
   }
 
   /* Disabled state */
@@ -320,15 +320,15 @@
   .input-group-sm > .ts-wrapper .ts-control,
   .ts-wrapper.form-control-sm .ts-control {
     @apply text-xs;
-    min-height: calc(1.5em + var(--spacing-2) + 2px);
-    padding: 0 var(--spacing-2-5);
+    min-height: calc(1.5em + 0.5rem + 2px);
+    padding: 0 0.75rem;
     border-radius: var(--radius-sm);
   }
 
   .input-group-sm > .ts-wrapper.has-items .ts-control,
   .ts-wrapper.form-control-sm.has-items .ts-control {
     @apply text-xs;
-    min-height: calc(1.5em + var(--spacing-2) + 2px) !important;
+    min-height: calc(1.5em + 0.5rem + 2px) !important;
     padding-bottom: 0;
   }
 
@@ -336,7 +336,7 @@
   .input-group-lg > .ts-wrapper > .ts-control,
   .ts-wrapper.form-control-lg .ts-control {
     @apply text-xl;
-    min-height: calc(1.5em + var(--spacing-3) + 2px);
+    min-height: calc(1.5em + 1rem + 2px);
     border-radius: var(--radius-lg);
   }
 
@@ -390,7 +390,7 @@
   /* Clear button plugin */
   .ts-wrapper .clear-button {
     position: absolute;
-    right: calc(var(--spacing-2-5) + 20px);
+    right: calc(0.75rem + 20px);
     top: 50%;
     transform: translateY(-50%);
     opacity: 0;
@@ -409,13 +409,13 @@
 
   /* Dropdown input plugin */
   .ts-dropdown.plugin-dropdown_input .dropdown-input-wrap {
-    padding: 5px var(--spacing-2-5);
+    padding: 5px 0.75rem;
     border-bottom: 1px solid var(--color-border);
   }
 
   .ts-dropdown.plugin-dropdown_input .dropdown-input {
     @apply w-full text-sm bg-surface;
-    padding: 0.375rem var(--spacing-2-5);
+    padding: 0.375rem 0.75rem;
     border: 1px solid var(--color-border);
     border-radius: var(--radius-default);
   }

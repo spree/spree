@@ -1,8 +1,8 @@
-<div class="mb-4">
-  <h5 class="font-weight-bold">Links</h5>
+<div class="mb-6">
+  <h5 class="font-bold">Links</h5>
 
   <% if parent.links.any? %>
-    <ul class="list-group mb-3"
+    <ul class="list-group mb-4"
         data-controller="sortable"
         data-sortable-handle-value=".handle"
         data-sortable-resource-name-value="page_link"
@@ -11,7 +11,7 @@
         <li class="list-group-item p-0 d-flex align-items-center hover-gray"
             data-sortable-update-url="<%= spree.admin_page_link_path(link, sorting_only: true, format: :turbo_stream) %>"
         >
-          <%= link_to link.label, spree.edit_admin_page_link_path(link), class: 'd-block py-2 px-3 text-dark flex-fill' %>
+          <%= link_to link.label, spree.edit_admin_page_link_path(link), class: 'd-block py-3 px-4 text-dark flex-fill' %>
           <button class="btn btn-sm pr-0 handle hover-gray-200 h-100 mr-1 px-1 shadow-none">
             <%= icon 'grip-vertical', class: 'mr-0' %>
           </button>
@@ -19,7 +19,7 @@
       <% end %>
     </ul>
   <% else %>
-    <p class="text-muted text-center p-5">
+    <p class="text-muted text-center p-12">
       <%= Spree.t(:no_resource_found, resource: Spree::PageLink.model_name.human) %>
     </p>
   <% end %>

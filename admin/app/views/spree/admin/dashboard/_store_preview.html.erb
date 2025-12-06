@@ -1,7 +1,7 @@
 <% if current_store.default_theme %>
   <div class="card mb-4">
-    <%= link_to spree.edit_admin_theme_path(current_store.default_theme), class: 'd-block border rounded mx-2 mt-2 mb-0 overflow-auto bg-light position-relative store-preview-link', data: { turbo_prefetch: false } do %>
-      <div class="position-absolute w-100 h-100 align-items-center justify-content-center overlay-background store-preview-actions">
+    <%= link_to spree.edit_admin_theme_path(current_store.default_theme), class: 'd-block border rounded mx-2 mt-2 mb-0 overflow-auto bg-light relative store-preview-link', data: { turbo_prefetch: false } do %>
+      <div class="absolute w-100 h-100 align-items-center justify-content-center overlay-background store-preview-actions">
         <button class="btn btn-primary">
           <%= icon('tools') %>
           <%= Spree.t('admin.edit_theme') %>
@@ -31,7 +31,7 @@
       </div>
     </div>
     <% unless current_store.default_custom_domain&.active? %>
-      <div class="card-footer border-top p-2">
+      <div class="card-footer border-t p-2">
         <%= link_to_with_icon 'world-www', 'Connect your own domain', spree.admin_custom_domains_path, class: 'btn btn-secondary w-100 py-2' %>
       </div>
     <% end %>

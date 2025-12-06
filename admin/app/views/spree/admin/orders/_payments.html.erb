@@ -1,5 +1,5 @@
 <% if can?(:read, Spree::Payment) && (@order.payment_required? && @order.bill_address.present?) || @payments.any? %>
-  <div class="card mb-4">
+  <div class="card mb-6">
     <div class="card-header d-flex align-items-center border-0">
       <h6 class="card-title">
         <%= icon('credit-card-pay', class: 'mr-2') %>
@@ -14,7 +14,7 @@
       <%= render collection: @payments, partial: 'spree/admin/payments/payment', as: :payment %>
 
       <% if @order.payment_total < @order.total && can?(:create, Spree::Payment.new(order: @order)) %>
-        <div class="d-flex justify-content-center w-100 gap-3 p-3">
+        <div class="d-flex justify-content-center w-100 gap-6 p-6">
           <%= link_to_with_icon 'plus', Spree.t(:new_payment), spree.new_admin_order_payment_path(@order), class: 'btn btn-primary' %>
 
           <% if spree.respond_to?(:checkout_state_url) %>

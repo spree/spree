@@ -8,10 +8,10 @@
 <% end %>
 
 <%= form_for @order, url: spree.admin_orders_path do |f| %>
-  <div class="grid grid-cols-12 gap-4">
+  <div class="grid grid-cols-12 gap-6">
     <div class="col-span-12 lg:col-span-6 lg:col-start-4">
       <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @order } %>
-      <div class="card mb-4">
+      <div class="card mb-6">
         <div class="card-body">
           <%= render 'form', f: f %>
         </div>

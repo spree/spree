@@ -3,13 +3,13 @@
 <% end %>
 
 <% content_for :steps do %>
-  <li class="border-right flex-grow-1 h-100 d-flex align-items-center justify-content-center <% if @import.mapping? %>active bg-white font-weight-bold<% end %>">1. Map fields</li>
-  <li class="border-right flex-grow-1 h-100 d-flex align-items-center justify-content-center <% if @import.processing? %>active bg-white font-weight-bold<% end %>">2. Process rows</li>
-  <li class="flex-grow-1 h-100 d-flex align-items-center justify-content-center <% if @import.complete? %>active bg-white font-weight-bold<% end %>">3. Complete</li>
+  <li class="border-r flex-grow-1 h-100 d-flex align-items-center justify-content-center <% if @import.mapping? %>active bg-white font-bold<% end %>">1. Map fields</li>
+  <li class="border-r flex-grow-1 h-100 d-flex align-items-center justify-content-center <% if @import.processing? %>active bg-white font-bold<% end %>">2. Process rows</li>
+  <li class="flex-grow-1 h-100 d-flex align-items-center justify-content-center <% if @import.complete? %>active bg-white font-bold<% end %>">3. Complete</li>
 <% end %>
 
 <% if @import.status == 'mapping' %>
-  <div class="d-flex justify-content-between align-items-center bg-light border-top border-bottom text-muted mt-3 sticky-top">
+  <div class="d-flex justify-content-between align-items-center bg-light border-t border-b text-muted mt-3 sticky top-0 z-[1070]">
     <div class="w-10 p-2 text-center">
       <%= Spree.t('admin.imports.field_required') %>
     </div>
@@ -30,7 +30,7 @@
   <%= turbo_stream_from "import_#{@import.id}_footer" %>
   <%= turbo_stream_from "import_#{@import.id}_loader" %>
 
-  <div class="d-flex justify-content-between align-items-center bg-light border-top border-bottom text-muted mt-3 sticky-top">
+  <div class="d-flex justify-content-between align-items-center bg-light border-t border-b text-muted mt-3 sticky top-0 z-[1070]">
     <div class="w-10 p-2 text-center">
       <%= I18n.t('activerecord.attributes.spree/import_row.row_number') %>
     </div>

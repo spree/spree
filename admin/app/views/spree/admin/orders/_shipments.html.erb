@@ -1,4 +1,4 @@
-<div class="card mb-4">
+<div class="card mb-6">
   <div class="card-header d-flex align-items-center border-0">
     <h6 class="card-title">
       <%= icon('truck', class: 'mr-2') %>
@@ -14,7 +14,7 @@
     <% if @shipments.any? %>
       <%= render partial: "shipment", collection: @shipments %>
     <% else %>
-      <p class="text-center text-muted p-5">
+      <p class="text-center text-muted p-12">
         <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Shipment)) %>
       </p>
     <% end %>

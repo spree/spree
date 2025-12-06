@@ -1,6 +1,6 @@
 <tr id="<%= dom_id(order) %>" data-controller="row-link">
   <td class="p-0 w-10">
-    <%= link_to order.number, spree.edit_admin_order_path(order), class: 'font-weight-bolder d-block p-2 px-3 text-decoration-none', data: { 'turbo-frame': '_top', row_link_target: :link } %>
+    <%= link_to order.number, spree.edit_admin_order_path(order), class: 'font-bolder d-block p-2 px-3 text-decoration-none', data: { 'turbo-frame': '_top', row_link_target: :link } %>
   </td>
   <td class="w-15 cursor-pointer" data-action="click->row-link#openLink">
     <%= spree_time_ago(order.completed? ? order.completed_at : order.created_at, format: '%b %e, %Y %l:%M%P') %>

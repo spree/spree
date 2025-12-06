@@ -2,9 +2,9 @@
   <%= turbo_save_button_tag Spree.t('actions.update'), class: 'btn btn-primary', form: "edit_store_#{current_store.id}", data: { admin_target: 'save' } %>
 <% end %>
 
-<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @store }, class: 'mb-5 pb-5' %>
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @store }, class: 'mb-12 pb-12' %>
 
-<div class="grid grid-cols-12 gap-4">
+<div class="grid grid-cols-12 gap-16">
   <div class="col-span-12 lg:col-span-6 lg:col-start-4">
     <%= form_for current_store, url: spree.admin_store_path(section: params[:section]), method: :patch do |f| %>
       <%= render partial: 'spree/admin/stores/form/basic', locals: { f: f } if params[:section].blank? || params[:section] == 'general-settings' %>
