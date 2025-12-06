@@ -173,6 +173,52 @@ describe 'Product scopes', type: :model do
       end
     end
 
+    context 'with_property_range' do
+      let(:name) { property.name }
+      let(:value) { '36.6' }
+
+      let(:product_property) { create(:product_property, property: property, value: value) }
+      let(:property) { create(:property, :brand) }
+
+      subject(:with_property_range) { Spree::Product.method(:with_property_range) }
+
+      it "finds by a property's name" do
+        expect(with_property_range.call(name, 0, 100).count).to eq(1)
+      end
+
+      it "cannot find by an unknown property's name" do
+        expect(with_property_range.call('fake', 0, 100).count).to eq(0)
+      end
+
+      it 'cannot find with a name outside the range (lower value)' do
+        expect(with_property_range.call(name, 40, 100).count).to eq(0)
+      end
+
+      it 'cannot find with a name outside the range (higher value)' do
+        expect(with_property_range.call(name, 0, 36).count).to eq(0)
+      end
+
+      it 'finds by a property' do
+        expect(with_property_range.call(property, 0, 100).count).to eq(1)
+      end
+
+      it 'finds by an id with a value' do
+        expect(with_property_range.call(property.id, 0, 100).count).to eq(1)
+      end
+
+      it 'cannot find with an invalid id' do
+        expect(with_property_range.call(0, 0, 100).count).to eq(0)
+      end
+
+      it 'finds by and id with value only if beginning of range is given' do
+        expect(with_property_range.call(property.id, 0, nil).count).to eq(1)
+      end
+
+      it 'finds by and id with value only if end of range is given' do
+        expect(with_property_range.call(property.id, nil, 100).count).to eq(1)
+      end
+    end
+
     context 'with_property_values' do
       subject(:with_property_values) { Spree::Product.method(:with_property_values) }
 
