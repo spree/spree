@@ -14,7 +14,7 @@
     cursor: pointer;
     align-items: center;
     border: 1px solid transparent;
-    border-radius: var(--radius-default);
+    border-radius: var(--radius-md);
     padding-right: 2rem;
   }
 

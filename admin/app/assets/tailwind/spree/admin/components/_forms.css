@@ -15,11 +15,15 @@
     @apply inline-block mb-2 font-medium;
   }
 
-  .form-control, .text-input, .form-input, .custom-select, .ts-control, .select-input {
+  .form-control, .text-input, .form-input, .custom-select, .ts-control, .select-input, .form-control-sm {
     @apply block w-full py-2 px-3 text-base font-normal leading-normal;
-    @apply text-text bg-surface border border-gray-200 rounded-default shadow-xs;
+    @apply text-text bg-surface border border-gray-200 rounded-lg shadow-xs;
     @apply focus:outline-offset-2 focus:outline-blue focus:border-gray-200 focus:ring-0;
     @apply transition-all duration-100 ease-in-out;
+  }
+
+  .form-control-sm {
+    @apply py-1 px-2 text-sm;
   }
 
   .form-control::placeholder, .form-input::placeholder, .text-input::placeholder {

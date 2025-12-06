@@ -63,14 +63,6 @@
 
   --line-height-base: 21px;
 
-  /* Border Radius - matches Bootstrap/Spree Admin variables */
-  --radius-sm: 0.4rem;      /* $border-radius-sm */
-  --radius-default: 0.5rem; /* $border-radius */
-  --radius-lg: 0.75rem;     /* $border-radius-lg, $btn-border-radius */
-  --radius-xl: 1rem;        /* $card-border-radius, $dropdown-border-radius */
-  --radius-2xl: 1rem;       /* $modal-content-border-radius */
-  --radius-full: 9999px;
-
   /* Font Weights - matches Bootstrap/Spree Admin variables */
   --font-weight-light: 300;
   --font-weight-normal: 400;

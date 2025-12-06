@@ -70,7 +70,7 @@
     width: 100%;
     height: 100%;
     aspect-ratio: 1/1;
-    border-radius: var(--radius-default);
+    border-radius: var(--radius-lg);
     position: relative;
     justify-content: space-between;
     align-items: flex-start;

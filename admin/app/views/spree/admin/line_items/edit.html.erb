@@ -7,7 +7,7 @@
       <%= @line_item.single_money.to_html %>
     </div>
 
-    <div class="w-40 border rounded p-2 bg-white shadow-xs mx-auto">
+    <div class="w-40 border rounded-lg  p-2 bg-white shadow-xs mx-auto">
       <%= form_with model: @line_item, url: spree.admin_order_line_item_path(@order, @line_item), class: "flex items-center gap-2 justify-between" do |f| %>
         <%= f.label :quantity, Spree.t('quantity'), class: 'm-0' %>
         <%= f.number_field :quantity, class: 'form-control form-control-sm', required: true, max: @line_item.variant.should_track_inventory? && !@line_item.variant.backorderable? ? @line_item.variant.total_on_hand + @line_item.quantity : nil, min: 1, autofocus: true %>

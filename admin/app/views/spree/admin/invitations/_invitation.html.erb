@@ -43,7 +43,7 @@
               class: "dropdown-item", 
               data: { turbo_method: :put, turbo_confirm: Spree.t(:are_you_sure) } %>
           <%= link_to_with_icon 'trash', Spree.t('actions.destroy'), spree.admin_invitation_path(invitation),
-              class: "dropdown-item btn-danger",
+              class: "dropdown-item text-red-600 hover:bg-red-100",
               data: { turbo_method: :delete, turbo_confirm: Spree.t(:are_you_sure) } if can?(:destroy, invitation) %>
         <% end %>
       <% end %>

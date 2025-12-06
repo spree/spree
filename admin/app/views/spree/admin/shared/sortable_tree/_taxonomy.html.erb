@@ -2,7 +2,7 @@
 <% taxon = child_resource %>
 
 
-<div class="sortable-tree-item-row flex items-center w-full rounded-lg hover-light border" data-controller="row-link">
+<div class="sortable-tree-item-row flex items-center w-full rounded-xl hover-light border" data-controller="row-link">
   <div class="move-handle mr-3 ml-2">
     <%= icon('grip-vertical', class: 'rounded hover:bg-gray-100 p-2 cursor-grab') %>
   </div>
@@ -38,7 +38,7 @@
           <%= link_to_with_icon 'plus', Spree.t(:new_nested_taxon), spree.new_admin_taxonomy_taxon_path(taxonomy, taxon: { parent_id: taxon.id }), class: 'dropdown-item' %>
           <div class="dropdown-divider"></div>
         <% end %>
-        <%= link_to_delete(taxon, icon: 'trash', url: spree.admin_taxonomy_taxon_path(taxonomy, taxon.id), class: 'dropdown-item btn-danger') if can?(:destroy, taxon) %>
+        <%= link_to_delete(taxon, icon: 'trash', url: spree.admin_taxonomy_taxon_path(taxonomy, taxon.id), class: 'dropdown-item text-red-600 hover:bg-red-100') if can?(:destroy, taxon) %>
       <% end %>
     <% end %>
   </div>

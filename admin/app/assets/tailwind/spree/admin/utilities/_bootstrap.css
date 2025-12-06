@@ -146,53 +146,11 @@
   .w-90 { width: 90%; }
 
   /* ==========================================================================
-     BACKGROUNDS
-     ========================================================================== */
-  .bg-secondary { @apply bg-gray-600; }
-  .bg-success { @apply bg-green-200; }
-  .bg-danger { @apply bg-red-600; }
-  .bg-warning { @apply bg-yellow-500; }
-  .bg-info { @apply bg-blue-500; }
-  .bg-light { @apply bg-gray-25; }
-  .bg-dark { @apply bg-gray-800; }
-  .bg-body { @apply bg-surface; }
-
-  /* ==========================================================================
-     POSITION
-     ========================================================================== */
-  .position-static { @apply static; }
-  .position-relative { @apply relative; }
-  .position-absolute { @apply absolute; }
-  .position-fixed { @apply fixed; }
-  .position-sticky { @apply sticky; }
-
-  .top-0 { @apply top-0; }
-  .top-50 { @apply top-1/2; }
-  .top-100 { @apply top-full; }
-  .bottom-0 { @apply bottom-0; }
-  .bottom-50 { @apply bottom-1/2; }
-  .bottom-100 { @apply bottom-full; }
-  .start-0 { @apply left-0; }
-  .start-50 { @apply left-1/2; }
-  .start-100 { @apply left-full; }
-  .end-0 { @apply right-0; }
-  .end-50 { @apply right-1/2; }
-  .end-100 { @apply right-full; }
-
-  .translate-middle { @apply -translate-x-1/2 -translate-y-1/2; }
-  .translate-middle-x { @apply -translate-x-1/2; }
-  .translate-middle-y { @apply -translate-y-1/2; }
-
-
-  /* ==========================================================================
      MISC
      ========================================================================== */
   .list-unstyled { @apply list-none p-0; }
   .list-inline { @apply list-none p-0 flex flex-wrap; }
   .list-inline-item { @apply inline-block; }
-
-  .img-fluid { @apply max-w-full h-auto; }
-  .img-thumbnail { @apply max-w-full h-auto p-1 bg-white border rounded; }
 
   /* ==========================================================================
      HOVER UTILITIES

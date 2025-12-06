@@ -19,7 +19,7 @@
             <%= link_to_with_icon 'edit', Spree.t(:edit), spree.edit_admin_theme_path(current_store.default_theme, page_id: page.id), class: 'dropdown-item', data: { turbo_frame: '_top', turbo_prefetch: false } %>
           </li>
           <li>
-            <%= link_to_delete(page, class: 'dropdown-item btn-danger', icon: 'trash') %>
+            <%= link_to_delete(page, class: 'dropdown-item text-red-600 hover:bg-red-100', icon: 'trash') %>
           </li>
         </ul>
       <% end %>

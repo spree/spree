@@ -278,7 +278,7 @@
   .sortable-drag-v {
     @apply w-full text-right opacity-0;
     border: 1px solid var(--color-info);
-    border-radius: var(--radius-default);
+    border-radius: var(--radius-md);
   }
 
   .sortable-drag-v td {

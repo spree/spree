@@ -58,7 +58,7 @@
   .uppy-DashboardContent-back {
     @apply inline-block text-center align-middle select-none text-sm leading-normal text-gray-900 bg-gray-50 font-normal border-border;
     padding: 0.375rem 0.75rem;
-    border-radius: var(--radius-default);
+    border-radius: var(--radius-md);
     border-width: 1px;
     transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
   }
@@ -75,7 +75,7 @@
   .uppy-DashboardContent-save {
     @apply inline-block text-center align-middle select-none text-sm leading-normal text-surface bg-primary font-normal border-primary;
     padding: 0.375rem 0.75rem;
-    border-radius: var(--radius-default);
+    border-radius: var(--radius-md);
     border-width: 1px;
     transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
   }
@@ -93,7 +93,7 @@
     background-repeat: no-repeat;
     background-position: center;
     background-size: 1rem;
-    border-radius: var(--radius-default);
+    border-radius: var(--radius-md);
     opacity: 0.5;
   }
 
@@ -108,7 +108,7 @@
   .uppy-StatusBar-actionBtn {
     @apply inline-block text-center align-middle select-none text-xs leading-normal text-gray-900 bg-gray-50 font-normal border-border;
     padding: 0.25rem 0.5rem;
-    border-radius: var(--radius-default);
+    border-radius: var(--radius-md);
     border-width: 1px;
   }
 

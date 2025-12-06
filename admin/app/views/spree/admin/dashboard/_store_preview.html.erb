@@ -1,6 +1,6 @@
 <% if current_store.default_theme %>
   <div class="card mb-6">
-    <%= link_to spree.edit_admin_theme_path(current_store.default_theme), class: 'block border rounded mx-2 mt-2 mb-0 overflow-auto bg-light relative store-preview-link', data: { turbo_prefetch: false } do %>
+    <%= link_to spree.edit_admin_theme_path(current_store.default_theme), class: 'block border rounded-lg  mx-2 mt-2 mb-0 overflow-auto bg-light relative store-preview-link', data: { turbo_prefetch: false } do %>
       <div class="absolute w-full h-full items-center justify-center overlay-background store-preview-actions">
         <button class="btn btn-primary">
           <%= icon('tools') %>
@@ -12,7 +12,7 @@
     <% end %>
 
     <div class="card-body px-2 pt-0 pb-2">
-      <div class="flex my-2 p-1 w-full rounded border">
+      <div class="flex my-2 p-1 w-full rounded-lg  border">
         <%= text_field_tag :domain, current_store.url_or_custom_domain, readonly: true, class: 'form-control-plaintext py-0' %>
         <%= clipboard_component(current_store.url_or_custom_domain) %>
       </div>

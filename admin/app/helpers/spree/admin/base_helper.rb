@@ -52,7 +52,7 @@ module Spree
       end
 
       # render an avatar for a user
-      # if user doesn't have an avatar, the user's initials will be displayed on a rounded background
+      # if user doesn't have an avatar, the user's initials will be displayed on a rounded-lg  background
       # @param user [Spree::User] the user to render the avatar for
       # @param options [Hash] the options for the avatar
       # @option options [Integer] :width the width of the avatar, default: 128

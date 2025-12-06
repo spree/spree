@@ -5,7 +5,9 @@
 @layer components {
   .trix-container {
     @apply border border-border bg-surface;
-    border-radius: var(--radius-default);
+    @apply focus-within:outline-offset-2 focus-within:outline-blue focus-within:border-gray-200 focus-within:ring-0;
+    @apply transition-all duration-100 ease-in-out;
+    border-radius: var(--radius-lg);
   }
 
   trix-toolbar {
@@ -43,7 +45,7 @@
 
   trix-editor {
     margin: 0.5rem;
-    border-radius: var(--radius-default);
+    border-radius: var(--radius-lg);
     border: 0 none !important;
   }
 
@@ -94,7 +96,7 @@
   trix-toolbar .trix-dialog {
     background-color: var(--color-surface) !important;
     border-top: 0 none !important;
-    border-radius: var(--radius-default) !important;
+    border-radius: var(--radius-lg) !important;
     top: 4px !important;
   }
 
@@ -103,7 +105,7 @@
     padding: 0.375rem 0.75rem;
     background-clip: padding-box;
     border: 1px solid var(--color-border);
-    border-radius: var(--radius-default);
+    border-radius: var(--radius-lg);
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
   }
 
@@ -111,7 +113,7 @@
     @apply inline-block text-center align-middle select-none text-sm leading-normal bg-gray-50 font-normal;
     padding: 0.5rem 1rem;
     margin: 0 0.25rem 0 0;
-    border-radius: var(--radius-default);
+    border-radius: var(--radius-lg);
     border: 1px solid var(--color-gray-200) !important;
   }
 

@@ -46,7 +46,7 @@
             <%= link_to_edit theme, class: 'dropdown-item', data: { turbo_prefetch: false } %>
             <%= link_to_with_icon 'copy', Spree.t(:clone), spree.clone_admin_theme_path(theme), class: 'dropdown-item', data: { turbo_method: :post } %>
             <% unless theme.default? %>
-            <%= link_to_delete(theme, icon: 'trash', class: 'dropdown-item btn-danger shadow-none') if can?(:delete, theme) %>
+            <%= link_to_delete(theme, icon: 'trash', class: 'dropdown-item text-red-600 hover:bg-red-100 shadow-none') if can?(:delete, theme) %>
           <% end %>
           <% end %>
         <% end %>

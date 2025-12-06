@@ -11,7 +11,7 @@
       <%= f.hidden_field :pageable_id %>
       <%= f.hidden_field :pageable_type %>
       <% cache spree_base_cache_scope.call('new-section-list'), expires_in: 1.hour do %>
-        <ul class="list-group list-group-flush m-2 mx-4 border p-1 rounded-lg bg-white">
+        <ul class="list-group list-group-flush m-2 mx-4 border p-1 rounded-xl bg-white">
           <% @theme.available_page_sections.each do |section_class| %>
             <li class="list-group-item p-2 list-group-item-action cursor-pointer flex items-center hover-action text-primary"
               data-action="click->section-form#addSection"

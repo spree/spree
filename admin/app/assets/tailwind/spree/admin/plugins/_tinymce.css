@@ -9,7 +9,7 @@
   }
 
   .tox.tox-tinymce {
-    border-radius: var(--radius-default) !important;
+    border-radius: var(--radius-md) !important;
     border: 0 none !important;
   }
 
@@ -33,7 +33,7 @@
   }
 
   .tox .tox-tbtn {
-    border-radius: var(--radius-default) !important;
+    border-radius: var(--radius-md) !important;
     color: rgba(0, 0, 0, 0.6) !important;
   }
 
@@ -75,6 +75,6 @@
 
   .tox.tox-tinymce-aux .tox-toolbar__overflow,
   .tox .tox-menu {
-    border-radius: var(--radius-default) !important;
+    border-radius: var(--radius-md) !important;
   }
 }

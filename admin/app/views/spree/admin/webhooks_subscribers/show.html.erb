@@ -11,7 +11,7 @@
   <%= link_to_with_icon 'edit', Spree.t(:edit), spree.edit_admin_webhooks_subscriber_path(@webhooks_subscriber), class: 'btn btn-light' %>
 <% end %>
 
-<ul class="list-group bg-white mb-6 rounded-lg">
+<ul class="list-group bg-white mb-6 rounded-xl">
   <li class="list-group-item flex justify-between">
     <strong class="uppercase"><%= Spree.t(:url) %></strong>
     <%= external_link_to @webhooks_subscriber.url, @webhooks_subscriber.url, class: 'text-blue no-underline' %>

@@ -18,7 +18,7 @@
           <% end %>
           <% if can?(:update_customer, @order) %>
             <% if @order.user.present? %>
-              <%= link_to Spree.t('admin.orders.remove_user_from_this_order'), spree.admin_order_user_path(@order), class: 'dropdown-item btn-danger', data: { turbo_method: :delete, turbo_confirm: Spree.t(:are_you_sure), turbo_frame: :_top } %>
+              <%= link_to Spree.t('admin.orders.remove_user_from_this_order'), spree.admin_order_user_path(@order), class: 'dropdown-item text-red-600 hover:bg-red-100', data: { turbo_method: :delete, turbo_confirm: Spree.t(:are_you_sure), turbo_frame: :_top } %>
             <% else %>
               <%= link_to Spree.t('admin.orders.add_user_to_this_order'), spree.new_admin_order_user_path(@order), class: 'dropdown-item' %>
             <% end %>

@@ -184,7 +184,7 @@
     background: #efefef;
     color: var(--color-gray-800);
     border: 0px solid var(--color-border);
-    border-radius: calc(var(--radius-default) - 1px);
+    border-radius: calc(var(--radius-md) - 1px);
   }
 
   .ts-wrapper.multi .ts-control > div.active {
@@ -399,6 +399,6 @@
     @apply w-full text-sm bg-surface;
     padding: 0.375rem 0.75rem;
     border: 1px solid var(--color-border);
-    border-radius: var(--radius-default);
+    border-radius: var(--radius-md);
   }
 }

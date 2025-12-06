@@ -14,7 +14,7 @@
   }
 
   .card .card {
-    @apply rounded-default;
+    @apply rounded-xl;
   }
 
   /* Card with table */

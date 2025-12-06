@@ -10,7 +10,7 @@
           <% end %>
           <%= dropdown_menu do %>
             <%= link_to_with_icon 'pencil', Spree.t('actions.edit'), spree.edit_admin_promotion_rule_path(promotion_rule.promotion, promotion_rule), class: 'dropdown-item' if can?(:update, promotion_rule) %>
-            <%= link_to_with_icon 'trash', Spree.t('actions.destroy'), spree.admin_promotion_rule_path(promotion_rule.promotion, promotion_rule), class: 'dropdown-item btn-danger', data: { turbo_method: :delete, turbo_confirm: Spree.t(:are_you_sure), turbo_frame: '_top' } if can?(:destroy, promotion_rule) %>
+            <%= link_to_with_icon 'trash', Spree.t('actions.destroy'), spree.admin_promotion_rule_path(promotion_rule.promotion, promotion_rule), class: 'dropdown-item text-red-600 hover:bg-red-100', data: { turbo_method: :delete, turbo_confirm: Spree.t(:are_you_sure), turbo_frame: '_top' } if can?(:destroy, promotion_rule) %>
           <% end %>
         <% end %>
       <% end %>

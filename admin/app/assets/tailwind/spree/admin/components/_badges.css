@@ -4,7 +4,7 @@
 
 @layer components {
   .badge {
-    @apply inline-flex items-center text-center whitespace-nowrap align-baseline cursor-default text-xs font-normal leading-none rounded-sm;
+    @apply inline-flex items-center text-center whitespace-nowrap align-baseline cursor-default text-xs font-normal leading-none rounded-md;
     padding: 0.25em 0.5em;
   }
 
