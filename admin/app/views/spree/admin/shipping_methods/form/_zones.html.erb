@@ -14,7 +14,7 @@
           <%= check_box_tag('shipping_method[zone_ids][]', zone.id, @shipping_method.zone_ids.include?(zone.id), id: "shipping_method_zones_#{zone.id}", class: 'custom-control-input') %>
           <%= label_tag "shipping_method_zones_#{zone.id}", class: 'custom-control-label' do %>
             <span ><%= zone.name.gsub('_',  ' ') %></span>
-            <p class="text-muted small mb-0">
+            <p class="text-gray-600 small mb-0">
               <%= zone.zone_members.map {|zone_member| zone_member.zoneable.name }.join(', ') %>
             </p>
           <% end %>

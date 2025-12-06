@@ -10,7 +10,7 @@
     @apply relative;
   }
 
-  .dropdown .btn .text-muted {
+  .dropdown .btn .text-gray-600 {
     color: var(--color-gray-500) !important;
   }
 
@@ -162,7 +162,7 @@
   }
 
   .dropdown-header {
-    @apply block mb-0 whitespace-nowrap text-sm text-text-muted;
+    @apply block mb-0 whitespace-nowrap text-sm text-gray-600;
     padding: 0.5rem 1rem;
   }
 

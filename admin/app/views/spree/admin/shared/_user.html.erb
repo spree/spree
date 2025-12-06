@@ -10,7 +10,7 @@
       <br />
     <% end %>
     <% unless defined?(current_vendor) && current_vendor %>
-      <span class="text-muted" data-controller="tooltip">
+      <span class="text-gray-600" data-controller="tooltip">
         <%= user.email %>
         <%= tooltip(user.email) %>
       </span>

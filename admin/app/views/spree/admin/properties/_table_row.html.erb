@@ -1,6 +1,6 @@
 <tr id="<%= spree_dom_id property %>" data-controller="row-link" data-sortable-update-url="<%= spree.admin_property_path(property) %>">
   <td class="w-5 move-handle text-center">
-    <%= icon('grip-vertical', class: 'rounded hover:bg-gray-100 p-2') %>
+    <%= icon('grip-vertical', class: 'rounded-md hover:bg-gray-100 p-2') %>
   </td>
   <td class="w-20 cursor-pointer py-0" data-action="click->row-link#openLink">
     <code><%= property.name %></code>

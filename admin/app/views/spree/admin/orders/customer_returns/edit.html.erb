@@ -127,7 +127,7 @@
 <% if !@customer_return.fully_reimbursed? && @customer_return.no_pending_reimbursements? && !@customer_return.completely_decided? %>
   <div
     class="
-      text-muted p-12 flex items-center w-full justify-center
+      text-gray-600 p-12 flex items-center w-full justify-center
     "
   >
     <%= Spree.t(:unable_to_create_reimbursements) %>

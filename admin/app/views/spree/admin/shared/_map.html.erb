@@ -1,5 +1,5 @@
 <% if Mapkick.options[:access_token] && map_object.latitude.present? && map_object.longitude.present? %>
-  <div class="rounded overflow-hidden">
+  <div class="rounded-md overflow-hidden">
     <%= js_map [{
       latitude: map_object.latitude,
       longitude: map_object.longitude,

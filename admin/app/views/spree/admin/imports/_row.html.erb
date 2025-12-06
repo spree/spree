@@ -22,7 +22,7 @@
       <%= render "spree/admin/import_rows/#{row.item_type.demodulize.underscore}", item: row.item %>
     <% else %>
       <div class="flex items-center gap-2">
-        <div class="spinner-border text-muted" role="status">
+        <div class="spinner-border text-gray-600" role="status">
           <span class="sr-only"><%= Spree.t(:processing) %>...</span>
         </div>
         <%= Spree.t(:processing) %>...

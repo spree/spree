@@ -9,14 +9,14 @@
     </div>
     <% if @page.custom? %>
       <div class="px-3">
-        <span class="text-muted mr-1"><%= I18n.t('activerecord.models.spree/page.one') %>:</span>
+        <span class="text-gray-600 mr-1"><%= I18n.t('activerecord.models.spree/page.one') %>:</span>
         <strong><%= @page.display_name %></strong>
       </div>
 
       <%= link_to_with_icon 'settings', Spree.t(:settings), spree.edit_admin_page_path(@page.id), class: 'btn btn-light', data: { turbo_frame: 'dialog', action: 'dialog#open' } %>
     <% else %>
       <div class="px-3">
-        <span class="text-muted mr-1"><%= Spree.t(:theme) %>:</span>
+        <span class="text-gray-600 mr-1"><%= Spree.t(:theme) %>:</span>
         <strong class="mr-1"><%= @theme.name %></strong>
         &nbsp;
         <% if @theme.default? %>

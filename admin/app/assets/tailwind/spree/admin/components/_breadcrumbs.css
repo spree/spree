@@ -23,7 +23,7 @@
   }
 
   .breadcrumb-item.active {
-    @apply text-text-muted;
+    @apply text-gray-600;
   }
 
   .breadcrumb-item a {

@@ -12,7 +12,7 @@
     <% if gift_card.expires_at.present? %>
       <%= spree_date(gift_card.expires_at) %>
     <% else %>
-      <span class="text-muted">
+      <span class="text-gray-600">
         <%= Spree.t(:not_available) %>
       </span>
     <% end %></td>
@@ -20,7 +20,7 @@
     <% if gift_card.user.present? %>
       <%= gift_card.user.email %>
     <% else %>
-      <span class="text-muted">
+      <span class="text-gray-600">
         <%= Spree.t(:not_available) %>
       </span>
     <% end %>

@@ -27,7 +27,7 @@
     color: rgba(6, 25, 50, 0.75);
   }
 
-  .upload-area:hover .text-muted {
+  .upload-area:hover .text-gray-600 {
     color: rgba(6, 25, 50, 0.5) !important;
   }
 

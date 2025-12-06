@@ -11,7 +11,7 @@ module Spree
 
       def display_inventory(product_or_variant)
         if product_or_variant.total_on_hand == BigDecimal::INFINITY
-          content_tag :span, class: 'text-muted' do
+          content_tag :span, class: 'text-gray-600' do
             Spree.t('admin.not_tracking_inventory')
           end
         else

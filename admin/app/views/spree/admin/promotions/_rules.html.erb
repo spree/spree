@@ -1,7 +1,7 @@
 <div class="card mb-6">
-  <div class="card-header flex justify-between px-6">
+  <div class="card-header flex justify-between">
     <h5 class="card-title">
-      <%= icon('checklist', class: 'mr-6') %>
+      <%= icon('checklist', class: 'mr-2') %>
       <%= Spree.t(:rules) %>
     </h5>
     <% if can?(:create, Spree::PromotionRule.new(promotion: @promotion)) %>
@@ -24,7 +24,7 @@
   </div>
   <div class="card-body p-2 flex flex-col gap-2">
     <% if @promotion.promotion_rules.empty? %>
-      <div class="text-muted p-12 flex items-center w-full justify-center">
+      <div class="text-gray-600 p-12 flex items-center w-full justify-center">
         <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::PromotionRule)) %>
         <% if can?(:create, Spree::PromotionRule.new(promotion: @promotion)) %>
           <%= link_to_with_icon 'plus', Spree.t(:add_one), spree.new_admin_promotion_rule_path(@promotion), class: 'btn btn-light btn-sm ml-6', data: { turbo_frame: 'dialog', action: 'dialog#open' } %>

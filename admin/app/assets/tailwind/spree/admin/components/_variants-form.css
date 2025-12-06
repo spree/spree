@@ -158,7 +158,7 @@
   .variants-form .variants-table__header,
   .variants-form .variants-table__footer {
     display: flex;
-    color: var(--color-text-muted);
+    color: var(--color-text-gray-600);
     width: 100%;
     padding: 0 1rem;
     gap: 0.25rem;

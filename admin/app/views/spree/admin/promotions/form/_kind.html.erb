@@ -3,7 +3,7 @@
     <%= f.radio_button :kind, :coupon_code, data: { action: 'change->reveal#show' }, class: 'custom-control-input' %>
     <%= f.label :kind_coupon_code, Spree.t(:coupon_code), class: 'custom-control-label' %>
 
-    <div data-reveal-target="item" class="rounded p-6 bg-gray-25 mt-6 <% if @promotion.automatic? %>hidden<% end %>">
+    <div data-reveal-target="item" class="rounded-md p-6 bg-gray-25 mt-6 <% if @promotion.automatic? %>hidden<% end %>">
       <div data-controller="reveal" data-reveal-hidden-class="hidden">
         <div class="flex items-start custom-control custom-radio">
           <%= f.radio_button :multi_codes, false, data: { action: 'change->reveal#toggle' }, class: 'custom-control-input' %>

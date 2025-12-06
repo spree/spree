@@ -134,7 +134,7 @@
   .badge-authorize,
   .badge-eligible,
   .badge-invited {
-    @apply bg-white text-text-muted border border-border font-normal;
+    @apply bg-white text-gray-600 border border-border font-normal;
   }
 
   .badge-processing:hover,
@@ -155,7 +155,7 @@
   .badge-eligible:hover,
   .badge-invited:hover {
     background-color: white;
-    color: var(--color-text-muted);
+    color: var(--color-text-gray-600);
   }
 
   /* Status badges - Info/Notice */

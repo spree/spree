@@ -12,7 +12,7 @@
   <h5 class="mb-6">Internal URL</h5>
   <div class="grid grid-cols-12 gap-6 mb-6">
     <div class="col-span-12 lg:col-span-4">
-      <p class="text-muted">
+      <p class="text-gray-600">
         This is your internal Admin URL.
       </p>
     </div>
@@ -21,7 +21,7 @@
         <% if Spree.root_domain.present? %>
           <div class="flex items-center gap-6">
             <div class="form-control flex items-center py-0 focus-shadow focus-border pr-2 gap-1 <% if current_store.custom_domains.any? %>disabled<% end %>">
-              <span class="text-muted">https://</span>
+              <span class="text-gray-600">https://</span>
               <%= f.text_field :code, class: 'form-control-plaintext pl-0', data: { enable_button_target: 'input' }, required: true, disabled: current_store.custom_domains.any? %>
               <span>.<%= Spree.root_domain %></span>
 
@@ -34,7 +34,7 @@
         <% else %>
           <div class="flex items-center gap-6">
             <div class="form-control flex items-center py-0 focus-shadow focus-border pr-2 gap-1">
-              <span class="text-muted">https://</span>
+              <span class="text-gray-600">https://</span>
               <%= f.text_field :url, class: 'form-control-plaintext pl-0', required: true, data: { enable_button_target: 'input' } %>
               <%= clipboard_component(current_store.formatted_url) %>
             </div>
@@ -48,7 +48,7 @@
   <h5><%= Spree.t(:custom_domains) %></h5>
   <div class="grid grid-cols-12 gap-6">
     <div class="col-span-12 lg:col-span-4">
-      <p class="text-muted">
+      <p class="text-gray-600">
         Connect your domain or subdomain to your storefront.
       </p>
     </div>

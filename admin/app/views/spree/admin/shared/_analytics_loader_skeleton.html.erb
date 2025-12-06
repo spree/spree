@@ -4,7 +4,7 @@
         <div class="col-span-6 lg:col-span-4 gap-2">
           <div class="analytics-card-tab active" style="min-height: 82px;">
             <div class="flex justify-center flex-col mb-6 lg:mb-0">
-              <span class="text-sm text-muted">Total Sales</span>
+              <span class="text-sm text-gray-600">Total Sales</span>
               <span class="text-lg text-gray-900 font-bold mt-1">
                 <%= @sales_total %>
               </span>
@@ -18,7 +18,7 @@
         <div class="col-span-6 lg:col-span-2">
           <div class="analytics-card-tab" >
             <div class="flex justify-center flex-col mb-6 lg:mb-0">
-              <span class="text-sm text-muted">Avg. Order Value</span>
+              <span class="text-sm text-gray-600">Avg. Order Value</span>
               <span class="text-lg text-gray-900 font-bold mt-1 mr-3"><%= @orders_average %></span>
               <div>
                 <%= render 'spree/admin/shared/growth_rate_badge', growth_rate: 0 %>
@@ -30,7 +30,7 @@
         <div class="col-span-6 lg:col-span-2">
           <div class="analytics-card-tab" >
             <div class="flex justify-center flex-col mb-6 lg:mb-0">
-              <span class="text-sm text-muted">Total Orders</span>
+              <span class="text-sm text-gray-600">Total Orders</span>
               <span class="text-lg text-gray-900 font-bold mt-1 mr-3"><%= @orders_total  %></span>
               <div>
                 <%= render 'spree/admin/shared/growth_rate_badge', growth_rate: 0 %>
@@ -42,7 +42,7 @@
           <div class="col-span-6 lg:col-span-2">
             <div class="analytics-card-tab" >
               <div class="flex justify-center flex-col">
-                <span class="text-sm text-muted">Visits</span>
+                <span class="text-sm text-gray-600">Visits</span>
                 <span class="text-lg text-gray-900 font-bold mt-1 mr-3"><%= @visits_total %></span>
                 <div>
                   <%= render 'spree/admin/shared/growth_rate_badge', growth_rate: 0 %>
@@ -55,7 +55,7 @@
         <div class="col-span-6 lg:col-span-2">
           <div class="analytics-card-tab" >
             <div class="flex justify-center flex-col">
-              <span class="text-sm text-muted">Sign-ups</span>
+              <span class="text-sm text-gray-600">Sign-ups</span>
               <span class="text-lg text-gray-900 font-bold mt-1 mr-3"><%= @audience_total %></span>
               <div>
                 <%= render 'spree/admin/shared/growth_rate_badge', growth_rate: 0 %>
@@ -67,7 +67,7 @@
     </div>
   <div class="card-body p-2">
     <div class="flex items-center justify-center min-h-[300px]" id="pills-tabContent">
-      <div class="spinner-border text-muted align-middle opacity-50" role="status">
+      <div class="spinner-border text-gray-600 align-middle opacity-50" role="status">
         <span class="sr-only"><%= Spree.t(:loading) %>...</span>
       </div>
     </div>

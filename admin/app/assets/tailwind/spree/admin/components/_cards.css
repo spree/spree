@@ -120,7 +120,7 @@
   }
 
   .card-subtitle {
-    @apply mb-0 -mt-1 text-text-muted;
+    @apply mb-0 -mt-1 text-gray-600;
   }
 
   .card-text {

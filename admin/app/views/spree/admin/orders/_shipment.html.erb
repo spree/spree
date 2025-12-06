@@ -5,14 +5,14 @@
       <span class="flex items-center"><%= shipment_state(shipment.state) %></span>
       <strong class="shipment-number"><%= shipment.number %></strong>
       <% if shipment.shipped_at.present? %>
-        <small class="text-muted">
+        <small class="text-gray-600">
           <%= spree_time_ago(shipment.shipped_at) %>
         </small>
       <% end %>
     </div>
 
     <span class="flex justify-between items-center gap-2">
-      <small class="text-muted"><%= Spree.t(:package_from).downcase %></small>
+      <small class="text-gray-600"><%= Spree.t(:package_from).downcase %></small>
       <strong>
         <% if can?(:edit, shipment.stock_location) %>
           <%= link_to shipment.stock_location.name, spree.edit_admin_stock_location_path(shipment.stock_location), data: { turbo_frame: '_top' } %>
@@ -24,7 +24,7 @@
   </div>
   <div class="card-body mb-0 p-0">
     <div class="shipment-line-items">
-      <div class="text-muted text-center border-b py-2 px-4 text-sm shipment-line-items__row">
+      <div class="text-gray-600 text-center border-b py-2 px-4 text-sm shipment-line-items__row">
         <span class="text-left">
           <%= Spree.t(:item_description) %>
         </span>
@@ -70,7 +70,7 @@
               <span><%= shipment.tracking %></span>
             <% end %>
           <% else %>
-            <span class="text-muted"><%= Spree.t(:no_tracking_present) %></span>
+            <span class="text-gray-600"><%= Spree.t(:no_tracking_present) %></span>
           <% end %>
         </div>
 
@@ -95,7 +95,7 @@
             <%= tooltip(Spree.t('admin.shipment.please_provide_tracking_details')) %>
           </span>
         <% else %>
-          <span class="text-muted w-full">
+          <span class="text-gray-600 w-full">
             <%= Spree.t('admin.digital_shipment_fulfillment_note') %>
           </span>
         <% end %>

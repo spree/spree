@@ -17,7 +17,7 @@
     <% if grouped_available_store_integrations.any? %>
       <% grouped_available_store_integrations.each do |group, integrations| %>
         <% if group.present? %>
-          <div class="my-2 text-muted font-light uppercase"><%= Spree.t(group) %></div>
+          <div class="my-2 text-gray-600 font-light uppercase"><%= Spree.t(group) %></div>
         <% end %>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
@@ -27,11 +27,11 @@
         </div>
       <% end %>
 
-      <p class="text-muted text-center my-12">
+      <p class="text-gray-600 text-center my-12">
         Find more integrations in <%= external_link_to 'Integrations Directory', 'https://spreecommerce.org/docs/integrations/integrations', class: 'no-underline font-bold', target: '_blank' %>
       </p>
     <% else %>
-      <p class="text-muted text-center my-12">
+      <p class="text-gray-600 text-center my-12">
         No integrations installed yet. Find integrations in 
 
         <%= external_link_to 'Integrations Directory', 'https://spreecommerce.org/docs/integrations/integrations', class: 'no-underline font-bold', target: '_blank' %>

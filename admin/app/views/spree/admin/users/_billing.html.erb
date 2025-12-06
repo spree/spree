@@ -22,7 +22,7 @@
     <% if @user.billing_address %>
       <div data-reveal-target="item">
         <% if @user.billing_address == @user.shipping_address %>
-          <div class="text-muted">
+          <div class="text-gray-600">
             <%= Spree.t(:same_as_shipping_address) %>
           </div>
         <% else %>
@@ -69,7 +69,7 @@
       </div>
     <% else %>
       <%= turbo_frame_tag :new_address_billing do %>
-        <div class="text-center p-12 text-muted">
+        <div class="text-center p-12 text-gray-600">
           <%= Spree.t(:not_available) %>
         </div>
       <% end %>

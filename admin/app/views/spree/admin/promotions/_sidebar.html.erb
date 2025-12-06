@@ -36,7 +36,7 @@
     <div class="card-body p-0">
       <ul class="list-group list-group-flush">
         <li class="list-group-item flex justify-between items-center">
-          <span class="text-muted">
+          <span class="text-gray-600">
             <%= Spree.t(:name) %>
           </span>
           <span>
@@ -45,7 +45,7 @@
         </li>
 
         <li class="list-group-item flex justify-between items-center">
-          <span class="text-muted">
+          <span class="text-gray-600">
             <%= Spree.t(:created_at) %>
           </span>
           <span>
@@ -54,7 +54,7 @@
         </li>
 
         <li class="list-group-item flex justify-between items-center">
-          <span class="text-muted">
+          <span class="text-gray-600">
             <%= Spree.t(:updated_at) %>
           </span>
           <span>
@@ -63,7 +63,7 @@
         </li>
 
         <li class="list-group-item flex justify-between items-center">
-          <span class="text-muted">
+          <span class="text-gray-600">
             <%= Spree.t(:kind) %>
           </span>
           <span class="badge badge-light">
@@ -73,7 +73,7 @@
 
         <% if @promotion.code.present? %>
           <li class="list-group-item flex justify-between items-center py-2">
-            <span class="text-muted"><%= Spree.t(:coupon_code) %></span>
+            <span class="text-gray-600"><%= Spree.t(:coupon_code) %></span>
             <div class="flex items-center gap-1">
               <code><%= @promotion.code.upcase %></code>
               <%= clipboard_component(@promotion.code.upcase) %>
@@ -97,28 +97,28 @@
       <ul class="list-group list-group-flush">
         <% unless @promotion.multi_codes? %>
           <li class="list-group-item flex justify-between items-center">
-            <span class="text-muted"><%= Spree.t(:usage_limit) %></span>
+            <span class="text-gray-600"><%= Spree.t(:usage_limit) %></span>
             <%= render 'spree/admin/promotions/usage_limit', promotion: @promotion %>
           </li>
         <% end %>
         <li class="list-group-item flex justify-between items-center">
-          <span class="text-muted">
+          <span class="text-gray-600">
             <%= I18n.t('activerecord.attributes.spree/promotion.starts_at') %>
           </span>
           <% if @promotion.starts_at %>
             <span><%= spree_time(@promotion.starts_at) %></span>
           <% else %>
-            <span class="text-muted"><%= Spree.t(:not_available) %></span>
+            <span class="text-gray-600"><%= Spree.t(:not_available) %></span>
           <% end %>
         </li>
         <li class="list-group-item flex justify-between items-center">
-          <span class="text-muted">
+          <span class="text-gray-600">
             <%= Spree.t(:expires_at) %>
           </span>
           <% if @promotion.expires_at %>
             <span><%= spree_time(@promotion.expires_at) %></span>
           <% else %>
-            <span class="text-muted"><%= Spree.t(:not_available) %></span>
+            <span class="text-gray-600"><%= Spree.t(:not_available) %></span>
           <% end %>
         </li>
       </ul>

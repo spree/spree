@@ -42,7 +42,7 @@
             <%= clipboard_component(@order.email) %>
           </div>
         <% else %>
-          <span class="text-muted">
+          <span class="text-gray-600">
             <%= Spree.t(:no_email_provided) %>
           </span>
         <% end %>
@@ -58,19 +58,19 @@
       <% elsif can?(:update_addresses, @order) %>
         <%= link_to_with_icon 'plus', Spree.t(:new_shipping_address), spree.new_admin_order_shipping_address_path(@order), class: "btn btn-secondary w-full", data: { turbo_frame: 'dialog', action: 'dialog#open' } %>
       <% else %>
-        <span class="text-muted"><%= Spree.t(:no_shipping_address_available) %></span>
+        <span class="text-gray-600"><%= Spree.t(:no_shipping_address_available) %></span>
       <% end %>
     <% end %>
     <h6 class="mt-6 font-bold mb-2"><%= Spree.t(:billing_address) %></h6>
     <%= turbo_frame_tag :order_bill_address do %>
       <% if @order.shipping_eq_billing_address? && @order.bill_address.present? %>
-        <span class="text-muted"><%= Spree.t(:same_as_shipping_address) %></span>
+        <span class="text-gray-600"><%= Spree.t(:same_as_shipping_address) %></span>
       <% elsif @order.bill_address.present? %>
         <%= render 'spree/admin/shared/address', address: @order.bill_address %>
       <% elsif can?(:update_addresses, @order) %>
         <%= link_to_with_icon 'plus', Spree.t(:new_billing_address), spree.new_admin_order_billing_address_path(@order), class: "btn btn-secondary w-full", data: { turbo_frame: 'dialog', action: 'dialog#open' } %>
       <% else %>
-        <span class="text-muted"><%= Spree.t(:no_billing_address_available) %></span>
+        <span class="text-gray-600"><%= Spree.t(:no_billing_address_available) %></span>
       <% end %>
     <% end %>
   </div>

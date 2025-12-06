@@ -15,12 +15,12 @@
             <%= radio_button_tag :type, rule_type %>
             <div class="ml-4">
               <h6 class="font-bold mb-1"><%= Spree.t("promotion_rule_types.#{key}.name") %></h6>
-              <p class="text-muted mb-0"><%= Spree.t("promotion_rule_types.#{key}.description") %></p>
+              <p class="text-gray-600 mb-0"><%= Spree.t("promotion_rule_types.#{key}.description") %></p>
             </div>
           <% end %>
         <% end %>
       <% else %>
-        <p class="text-muted">
+        <p class="text-gray-600">
           <%= @promotion_rule.human_description %>
         </p>
         <%= f.hidden_field :type, value: @promotion_rule.type %>

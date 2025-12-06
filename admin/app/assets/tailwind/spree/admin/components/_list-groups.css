@@ -17,7 +17,6 @@
     padding: 0.5rem 1rem;
     color: var(--color-text);
     text-decoration: none;
-    background-color: var(--color-surface);
     border: 1px solid var(--color-border);
   }
 
@@ -35,23 +34,10 @@
   .list-group-item:disabled {
     color: var(--color-gray-500);
     pointer-events: none;
-    background-color: var(--color-surface);
-  }
-
-  .list-group-item.active {
-    z-index: 2;
-    color: white;
-    background-color: var(--color-primary);
-    border-color: var(--color-primary);
   }
 
   .list-group-item + .list-group-item {
     border-top-width: 0;
-  }
-
-  .list-group-item + .list-group-item.active {
-    margin-top: -1px;
-    border-top-width: 1px;
   }
 
   /* Flush list group */

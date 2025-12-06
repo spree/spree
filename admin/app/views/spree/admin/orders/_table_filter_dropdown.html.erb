@@ -1,7 +1,7 @@
 <% if controller_name == 'orders' %>
   <%= dropdown do %>
     <%= dropdown_toggle class: 'btn-light dropdown-toggle' do %>
-      <span class="text-muted font-normal mr-1">
+      <span class="text-gray-600 font-normal mr-1">
         <%= Spree.t(:show) %>
       </span>
       <%= order_filter_dropdown_value %>

@@ -1,6 +1,6 @@
 <% resource_name ||= model_class.name.demodulize.underscore.humanize %>
 
-<div class="text-muted p-12 flex items-center w-full justify-center flex-col gap-4">
+<div class="text-gray-600 p-12 flex items-center w-full justify-center flex-col gap-4">
   <%= icon 'map-search', class: 'opacity-50', style: 'font-size: 2rem;' %>
   <p>
     <%= Spree.t(:no_resource_found, resource: resource_name) %>

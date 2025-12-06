@@ -15,10 +15,10 @@
       <% if f.object.variant.present? %>
         <%= f.object.variant.name %>
         <% if f.object.variant.sku.present? %>
-          <span class="text-muted"><strong><%= Spree.t(:sku) %>:</strong> <%= f.object.variant.sku %></span>
+          <span class="text-gray-600"><strong><%= Spree.t(:sku) %>:</strong> <%= f.object.variant.sku %></span>
         <% end %>
 
-        <span class="text-muted">
+        <span class="text-gray-600">
           <%= "(#{f.object.variant.options_text})" if f.object.variant.options_text.present? %>
         </span>
       <% else %>

@@ -13,7 +13,7 @@
       <% if storefront_serializer_exists?(@object) %>
         <pre class="m-0"><code data-highlight-target="code" class="language-json block overflow-auto" style="height: calc(100dvh - 11rem);"><%= serialize_to_json(@object, api_type: :storefront) %></code></pre>
       <% else %>
-        <div class="text-muted p-12 flex items-center w-full justify-center flex-col">
+        <div class="text-gray-600 p-12 flex items-center w-full justify-center flex-col">
           <%= icon 'map-search', class: 'mb-12 opacity-50', style: 'font-size: 2rem;' %>
           <p>
             <%= Spree.t('admin.json_preview.no_api_response') %>
@@ -25,7 +25,7 @@
       <% if platform_serializer_exists?(@object) %>
         <pre class="m-0"><code data-highlight-target="code" class="language-json block overflow-auto" style="height: calc(100dvh - 11rem);"><%= serialize_to_json(@object, api_type: :platform) %></code></pre>
       <% else %>
-        <div class="text-muted p-12 flex items-center w-full justify-center flex-col">
+        <div class="text-gray-600 p-12 flex items-center w-full justify-center flex-col">
           <%= icon 'map-search', class: 'mb-12 opacity-50', style: 'font-size: 2rem;' %>
           <p>
             <%= Spree.t('admin.json_preview.no_api_response') %>

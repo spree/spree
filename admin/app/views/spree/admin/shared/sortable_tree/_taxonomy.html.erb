@@ -4,15 +4,15 @@
 
 <div class="sortable-tree-item-row flex items-center w-full rounded-xl hover-light border" data-controller="row-link">
   <div class="move-handle mr-3 ml-2">
-    <%= icon('grip-vertical', class: 'rounded hover:bg-gray-100 p-2 cursor-grab') %>
+    <%= icon('grip-vertical', class: 'rounded-md hover:bg-gray-100 p-2 cursor-grab') %>
   </div>
 
   <div class="grow cursor-pointer" data-action="click->row-link#openLink">
     <div class="flex items-center overflow-hidden w-full <% if taxon.square_image&.attached? || taxon.image&.attached? %>py-2<% else %>py-3<% end %>">
       <% if taxon.square_image&.attached? && taxon.square_image.variable? %>
-        <%= spree_image_tag(taxon.square_image, class: 'rounded mr-4', width: 48, height: 48, loading: :lazy) %>
+        <%= spree_image_tag(taxon.square_image, class: 'rounded-md mr-4', width: 48, height: 48, loading: :lazy) %>
       <% elsif taxon.image&.attached? && taxon.image.variable? %>
-        <%= spree_image_tag(taxon.image, class: 'rounded mr-4', width: 48, height: 48, loading: :lazy) %>
+        <%= spree_image_tag(taxon.image, class: 'rounded-md mr-4', width: 48, height: 48, loading: :lazy) %>
       <% end %>
       <div class="overflow-hidden">
         <%= taxon.name %>
@@ -20,7 +20,7 @@
     </div>
   </div>
 
-  <div class="overflow-hidden text-muted text-sm ml-auto">
+  <div class="overflow-hidden text-gray-600 text-sm ml-auto">
     <% if taxon.classifications.count > 0 %>
       <%= pluralize(taxon.classifications.count, Spree.t(:product)) %>
     <% end %>

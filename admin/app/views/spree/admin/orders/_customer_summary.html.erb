@@ -8,12 +8,12 @@
       <% end %>
     </span>
   <% elsif order.email.present? %>
-    <span class="text-muted">
+    <span class="text-gray-600">
       <%= order.full_name %>
     </span>
     <%= help_bubble('This order was placed by a guest customer') %>
   <% else %>
-    <span class="text-muted">
+    <span class="text-gray-600">
       <%= Spree.t(:not_available) %>
     </span>
   <% end %>

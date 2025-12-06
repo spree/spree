@@ -18,7 +18,7 @@
     <% if store_credit_event.order %>
       <%= link_to store_credit_event.order.number, spree.edit_admin_order_path(store_credit_event.order) %>
     <% else %>
-      <span class="text-muted">
+      <span class="text-gray-600">
         <%= Spree.t(:not_available) %>
       </span>
     <% end %>

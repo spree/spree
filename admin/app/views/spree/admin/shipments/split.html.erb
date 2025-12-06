@@ -2,7 +2,7 @@
   <%= form_with url: transfer_admin_order_shipment_path(@order, @shipment), class: "shipment-line-items__form" do |f| %>
     <%= hidden_field_tag :variant_id, @variant.id %>
     <div class="flex flex-row gap-2 items-center w-full form-group mb-0">
-      <%= label_tag :destination, Spree.t(:move_variant_to), class: 'mb-0 text-muted text-sm font-bold' %>
+      <%= label_tag :destination, Spree.t(:move_variant_to), class: 'mb-0 text-gray-600 text-sm font-bold' %>
       <%= tom_select_tag :destination, grouped_options: { Spree.t('existing_shipments') => shipments_for_transfer(@shipment), Spree.t('new_shipment_at_location') => stock_locations_for_split(@variant) }, class: "grow" %>
     </div>
     <%= number_field_tag :quantity, 1, max: @max_quantity, class: "form-control", style: "grid-column-start: quantity", min: 0, data: { test_id: :move_quantity} %>

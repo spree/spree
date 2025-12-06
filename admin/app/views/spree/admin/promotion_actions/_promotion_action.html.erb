@@ -16,7 +16,7 @@
       <% end %>
     </div>
     <div class="card-body">
-      <p class="text-muted"><%= promotion_action.human_description %></p>
+      <p class="text-gray-600"><%= promotion_action.human_description %></p>
 
       <% if promotion_action.preferences.present? %>
         <%= render 'spree/admin/shared/preferences', object: promotion_action %>

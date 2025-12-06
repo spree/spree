@@ -1,6 +1,6 @@
 <tr id="<%= spree_dom_id option_type %>" data-controller="row-link" data-sortable-update-url="<%= spree.admin_option_type_path(option_type) %>">
   <td class="move-handle text-center w-5">
-    <%= icon('grip-vertical', class: 'rounded hover:bg-gray-100 p-2') %>
+    <%= icon('grip-vertical', class: 'rounded-md hover:bg-gray-100 p-2') %>
   </td>
   <td class="w-20 cursor-pointer" data-action="click->row-link#openLink"><code><%= option_type.name %></code></td>
   <td class="w-35 cursor-pointer font-bold" data-action="click->row-link#openLink"><%= option_type.presentation %></td>

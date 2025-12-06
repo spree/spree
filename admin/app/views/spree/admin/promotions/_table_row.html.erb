@@ -8,7 +8,7 @@
       <% elsif promotion.multi_codes? && promotion.code_prefix.present? %>
         <code><%= promotion.code_prefix %>-<%= '*' * 6 %></code>
       <% else %>
-        <span class="text-muted small"><%= Spree.t(:not_available) %></span>
+        <span class="text-gray-600 small"><%= Spree.t(:not_available) %></span>
       <% end %>
     </td>
   </td>

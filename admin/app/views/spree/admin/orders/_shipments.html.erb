@@ -14,7 +14,7 @@
     <% if @shipments.any? %>
       <%= render partial: "shipment", collection: @shipments %>
     <% else %>
-      <p class="text-center text-muted p-12">
+      <p class="text-center text-gray-600 p-12">
         <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Shipment)) %>
       </p>
     <% end %>

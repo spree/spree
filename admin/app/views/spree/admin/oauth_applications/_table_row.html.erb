@@ -25,7 +25,7 @@
     <% if oauth_application.last_used_at %>
       <%= spree_time(oauth_application.last_used_at) %>
     <% else %>
-      <span class="text-muted"><%= Spree.t('admin.oauth_applications.never') %></span>
+      <span class="text-gray-600"><%= Spree.t('admin.oauth_applications.never') %></span>
     <% end %>
   </td>
   <td class="actions w-10">

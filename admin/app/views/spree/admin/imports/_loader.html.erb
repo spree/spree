@@ -6,9 +6,9 @@
   </div>
 <% else %>
   <div class="flex justify-center items-center my-12 flex-col" style="height: 200px;">
-    <div class="spinner-border mb-4 text-muted" role="status" style="width: 4rem; height: 4rem;">
+    <div class="spinner-border mb-4 text-gray-600" role="status" style="width: 4rem; height: 4rem;">
       <span class="sr-only"><%= Spree.t(:processing) %>...</span>
     </div>
-    <p class="text-muted"><%= Spree.t(:processing) %>...</p>
+    <p class="text-gray-600"><%= Spree.t(:processing) %>...</p>
   </div>
 <% end %>

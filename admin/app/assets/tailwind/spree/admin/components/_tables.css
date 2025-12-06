@@ -28,7 +28,7 @@
   }
 
   .table thead th {
-    @apply align-middle text-left text-sm font-medium text-text-muted bg-gray-25;
+    @apply align-middle text-left text-sm font-medium text-gray-600 bg-gray-25;
     padding-top: 0.45rem;
     padding-bottom: 0.45rem;
     border-bottom: 1px solid var(--color-border);

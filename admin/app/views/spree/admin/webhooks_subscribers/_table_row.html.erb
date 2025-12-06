@@ -12,7 +12,7 @@
     <% if webhooks_subscriber.latest_event_at %>
       <%= spree_time(webhooks_subscriber.latest_event_at) %>
     <% else %>
-      <span class="text-muted"><%= Spree.t(:not_available) %></span>
+      <span class="text-gray-600"><%= Spree.t(:not_available) %></span>
     <% end %>
   </td>
   <td class="w-15">

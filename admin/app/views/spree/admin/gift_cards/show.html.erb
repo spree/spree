@@ -100,7 +100,7 @@
         <div class="card-body p-0">
           <ul class="list-group list-group-flush">
             <li class="list-group-item flex justify-between items-center">
-              <span class="text-muted">
+              <span class="text-gray-600">
                 <%= Spree.t(:code) %>
               </span>
               <span>
@@ -110,14 +110,14 @@
             </li>
 
             <li class="list-group-item flex justify-between items-center">
-              <span class="text-muted">
+              <span class="text-gray-600">
                 <%= Spree.t(:customer) %>
               </span>
               <span>
                 <% if @object.user %>
                   <%= link_to @object.user.email, spree.admin_user_path(@object.user), data: { turbo_frame: '_top' } %>
                 <% else %>
-                  <span class="text-muted">
+                  <span class="text-gray-600">
                     <%= Spree.t(:not_available) %>
                   </span>
                 <% end %>
@@ -125,7 +125,7 @@
             </li>
 
             <li class="list-group-item flex justify-between items-center">
-              <span class="text-muted">
+              <span class="text-gray-600">
                 <%= Spree.t(:amount) %>
               </span>
               <span>
@@ -133,7 +133,7 @@
               </span>
             </li>
             <li class="list-group-item flex justify-between items-center">
-              <span class="text-muted">
+              <span class="text-gray-600">
                 <%= Spree.t(:used) %>
               </span>
               <span>
@@ -142,7 +142,7 @@
             </li>
 
             <li class="list-group-item flex justify-between items-center">
-              <span class="text-muted">
+              <span class="text-gray-600">
                 <%= Spree.t('store_credit.remaining') %>
               </span>
               <span>
@@ -151,7 +151,7 @@
             </li>
 
             <li class="list-group-item flex justify-between items-center">
-              <span class="text-muted">
+              <span class="text-gray-600">
                 <%= Spree.t(:currency) %>
               </span>
               <span>
@@ -160,25 +160,25 @@
             </li>
 
             <li class="list-group-item flex justify-between items-center">
-              <span class="text-muted">
+              <span class="text-gray-600">
                 <%= Spree.t(:expires_at) %>
               </span>
               <% if @object.expires_at %>
                 <span><%= spree_time(@object.expires_at) %></span>
               <% else %>
-                <span class="text-muted"><%= Spree.t(:not_available) %></span>
+                <span class="text-gray-600"><%= Spree.t(:not_available) %></span>
               <% end %>
             </li>
 
             <li class="list-group-item flex justify-between items-center">
-              <span class="text-muted">
+              <span class="text-gray-600">
                 <%= Spree.t(:created_by) %>
               </span>
               <span>
                 <% if @object.created_by %>
                   <%= link_to @object.created_by.email, spree.admin_admin_user_path(@object.created_by), data: { turbo_frame: '_top' } %>
                 <% else %>
-                  <span class="text-muted">
+                  <span class="text-gray-600">
                     <%= Spree.t(:not_available) %>
                   </span>
                 <% end %>
@@ -186,7 +186,7 @@
             </li>
 
             <li class="list-group-item flex justify-between items-center">
-              <span class="text-muted">
+              <span class="text-gray-600">
                 <%= Spree.t(:created_at) %>
               </span>
               <span><%= spree_time(@object.created_at) %></span>

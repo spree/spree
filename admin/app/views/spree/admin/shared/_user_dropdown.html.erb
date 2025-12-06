@@ -17,7 +17,7 @@
           <span class="flex flex-col ml-2">
             <% if try_spree_current_user.name.present? %>
               <%= try_spree_current_user.name&.full %>
-              <small class="text-muted"><%= try_spree_current_user.email %></small>
+              <small class="text-gray-600"><%= try_spree_current_user.email %></small>
             <% else %>
               <%= try_spree_current_user.email %>
             <% end %>

@@ -17,13 +17,13 @@
             <%= f.radio_button :automatic, false, id: 'customRadio1', class: 'custom-control-input', checked: true, data: { action: 'reveal#hide' } %>
             <label class="custom-control-label" for="customRadio1"><%= Spree.t('admin.taxon_types.manual') %></label>
             <br />
-            <span class="text-muted"><%= Spree.t('admin.taxon_types.manual_info') %></span>
+            <span class="text-gray-600"><%= Spree.t('admin.taxon_types.manual_info') %></span>
           </div>
           <div class="custom-control custom-radio">
             <%= f.radio_button :automatic, true, id: 'customRadio2', class: 'custom-control-input', data: { action: 'reveal#show' } %>
             <label class="custom-control-label" for="customRadio2"><%= Spree.t('admin.taxon_types.automatic') %></label>
             <br />
-            <span class="text-muted"><%= Spree.t('admin.taxon_types.automatic_info') %></span>
+            <span class="text-gray-600"><%= Spree.t('admin.taxon_types.automatic_info') %></span>
           </div>
         </div>
         <div class="card-body border-t pt-6 hidden" data-reveal-target="item">
