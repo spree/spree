@@ -132,6 +132,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding-left: 0.5rem;
     padding-right: 0.5rem;
     transition: padding 0.1s ease;
     height: var(--spacing-header-height);
@@ -367,12 +368,6 @@
     height: 80%;
     border-radius: var(--radius-sm);
   }
-
-  #main-sidebar .dropdown {
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
-  }
-
   #main-sidebar .dropdown .btn {
     padding: 0.25rem;
     border-radius: var(--radius-default);
@@ -767,8 +762,6 @@
     margin: 0.75rem;
     border-width: 1px;
     box-shadow: var(--shadow-xs);
-    color: #1e40af;
-    background-color: #dbeafe;
     border-radius: var(--radius-default);
   }
 
