@@ -1,7 +1,7 @@
 <div class="grid grid-cols-12 gap-6 mx-0 hover-light rounded" id="<%= spree_dom_id(classification) %>" data-sortable-update-url="<%= spree.admin_taxon_classification_path(classification.taxon_id, classification, format: :turbo_stream) %>">
   <% if classification.taxon.manual_sort_order? %>
     <div class="col-span-1 text-center self-center">
-      <span class="rounded p-2 hover:bg-gray-100 move-handle cursor-grab">
+      <span class="rounded-md p-2 hover:bg-gray-100 move-handle cursor-grab">
         <%= icon('grip-vertical', class: 'mr-0') %>
       </span>
     </div>

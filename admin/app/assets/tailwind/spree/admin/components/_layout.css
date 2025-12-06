@@ -180,7 +180,6 @@
     @apply flex flex-col gap-0 bg-gray-25 h-screen overflow-x-hidden fixed top-0;
     width: var(--spacing-sidebar-width);
     box-shadow: inset -1px 0 0 var(--color-border);
-    transition: width 0.1s ease, padding 0.1s ease;
   }
 
   @media (max-width: 992px) {
@@ -191,7 +190,6 @@
 
   #main-sidebar .sidebar-content {
     @apply opacity-100 pt-2 flex-1 overflow-y-auto;
-    transition: opacity 0.2s ease;
   }
 
   #main-sidebar .nav {
@@ -426,15 +424,13 @@
   }
 
   .sidebar-mobile .sidebar-backdrop {
-    @apply absolute inset-0 bg-black/50 opacity-0;
-    transition: opacity 0.1s ease;
+    @apply absolute inset-0 bg-black/50 opacity-0 transition-opacity duration-500;
   }
 
   .sidebar-mobile .sidebar-panel {
-    @apply absolute left-0 top-0 bottom-0 bg-gray-25 overflow-y-auto flex flex-col shadow-lg;
+    @apply absolute left-0 top-0 bottom-0 bg-gray-25 overflow-y-auto flex flex-col shadow-lg transition-transform duration-500;
     width: var(--spacing-sidebar-width);
     transform: translateX(-100%);
-    transition: transform 0.1s ease;
   }
 
   .sidebar-mobile .sidebar-mobile-header {
@@ -461,8 +457,7 @@
   }
 
   .sidebar-mobile .sidebar-mobile-content .nav-link {
-    @apply flex items-center whitespace-nowrap font-normal p-1 rounded-lg text-inherit;
-    transition: background-color 0.1s ease-in-out;
+    @apply flex items-center whitespace-nowrap font-normal p-1 rounded-lg text-inherit transition-colors duration-500;
   }
 
   .sidebar-mobile .sidebar-mobile-content .nav-link .ti {

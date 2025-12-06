@@ -23,6 +23,7 @@
 /* Base */
 @import "./base/_theme.css";
 @import "./base/_base.css";
+@import "./base/_utilities.css";
 
 /* Utilities */
 @import "./utilities/_bootstrap.css";

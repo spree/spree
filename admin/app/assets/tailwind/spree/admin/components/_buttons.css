@@ -18,14 +18,6 @@
     transition: background-color 0.1s linear, border-color 0.2s linear, color 0.1s linear;
   }
 
-  .btn:hover {
-    @apply no-underline;
-  }
-
-  .btn:focus {
-    /* @apply outline-none shadow-none; */
-  }
-
   .btn:disabled,
   .btn.disabled {
     @apply opacity-70 pointer-events-none cursor-not-allowed;
@@ -65,7 +57,7 @@
     @apply text-primary;
   }
 
-  .btn-light {
+  .btn-light, .btn-danger {
     @apply text-gray-700 bg-gray-25 border-border shadow-xs;
   }
 
@@ -94,13 +86,7 @@
   }
 
   .btn-danger {
-    @apply text-danger bg-gray-25 border-border;
-  }
-
-  .btn-danger:hover {
-    @apply text-danger;
-    background: rgba(238, 66, 102, 0.1);
-    border-color: rgba(238, 66, 102, 0.1);
+    @apply text-red-600 bg-gray-25 hover:bg-red-100;
   }
 
   .btn-success {
