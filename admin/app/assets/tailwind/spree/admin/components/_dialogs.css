@@ -62,7 +62,7 @@
   dialog {
     display: none;
     z-index: 1055;
-    border-radius: var(--radius-xl);
+    border-radius: var(--radius-2xl);
     border: none;
     background: var(--color-surface);
     box-shadow: 0px 0px 0px 1px rgba(179, 179, 179, 0.5), 0px 6px 12px -3px rgba(179, 179, 179, 0.35), 0px 6px 18px 0px rgba(179, 179, 179, 0.35);
@@ -226,7 +226,7 @@
     justify-content: space-between;
     border-top: 1px solid var(--color-gray-50);
     background-color: var(--color-gray-25);
-    border-radius: 0 0 calc(var(--radius-xl) - 1px) calc(var(--radius-xl) - 1px);
+    border-radius: 0 0 calc(var(--radius-2xl) - 1px) calc(var(--radius-2xl) - 1px);
   }
 
   .dialog-footer .btn {
@@ -293,7 +293,7 @@
     background-color: var(--color-surface);
     background-clip: padding-box;
     border: none;
-    border-radius: var(--radius-xl);
+    border-radius: var(--radius-2xl2);
     outline: 0;
     box-shadow: 0px 0px 0px 1px rgba(179, 179, 179, 0.5), 0px 6px 12px -3px rgba(179, 179, 179, 0.35), 0px 6px 18px 0px rgba(179, 179, 179, 0.35);
   }
@@ -315,8 +315,8 @@
     justify-content: space-between;
     padding: 1rem;
     border-bottom: 1px solid var(--color-gray-50);
-    border-top-left-radius: calc(var(--radius-xl) - 1px);
-    border-top-right-radius: calc(var(--radius-xl) - 1px);
+    border-top-left-radius: calc(var(--radius-2xl) - 1px);
+    border-top-right-radius: calc(var(--radius-2xl) - 1px);
   }
 
   .modal-header .btn-close {
@@ -337,8 +337,8 @@
     @apply flex shrink-0 items-center justify-end bg-gray-25;
     padding: 1rem;
     border-top: 1px solid var(--color-gray-50);
-    border-bottom-right-radius: calc(var(--radius-xl) - 1px);
-    border-bottom-left-radius: calc(var(--radius-xl) - 1px);
+    border-bottom-right-radius: calc(var(--radius-2xl) - 1px);
+    border-bottom-left-radius: calc(var(--radius-2xl) - 1px);
   }
 
   .modal-footer .btn {

@@ -149,7 +149,7 @@ module Spree
           html_options[:data] ||= {}
           html_options[:data][:controller] ||= 'autocomplete-select'
         else
-          html_options[:class] ||= 'custom-select'
+          html_options[:class] ||= 'custom-select form-select'
         end
 
         @template.content_tag(:div, class: 'form-group') do
@@ -193,9 +193,9 @@ module Spree
       def spree_check_box(method, options = {})
         @template.content_tag(:div, class: 'form-group') do
           @template.content_tag(:div, class: 'custom-control custom-checkbox') do
-            @template.check_box(@object_name, method, objectify_options(options.merge(class: 'custom-control-input'))) +
+            @template.check_box(@object_name, method, objectify_options(options.merge(class: 'custom-control-input form-checkbox'))) +
             @template.label(@object_name, method, get_label(method, options), class: 'custom-control-label')
-          end + @template.error_message_on(@object_name, method) + spree_field_help(method, options.merge!(class: 'form-text mt-2 ml-6'))
+          end + @template.error_message_on(@object_name, method) + spree_field_help(method, options.merge!(class: 'form-text mt-2 ml-6 pl-1'))
         end
       end
 
@@ -210,7 +210,7 @@ module Spree
       def spree_radio_button(method, tag_value, options = {})
         @template.content_tag(:div, class: 'form-group') do
           @template.content_tag(:div, class: 'custom-control custom-radio') do
-            @template.radio_button(@object_name, method, tag_value, objectify_options(options.merge(class: 'custom-control-input'))) +
+            @template.radio_button(@object_name, method, tag_value, objectify_options(options.merge(class: 'custom-control-input form-radio'))) +
               @template.label(@object_name, method, get_label(method, options), class: 'custom-control-label', for: options[:id])
           end + @template.error_message_on(@object_name, method) + spree_field_help(method, options.merge(class: 'form-text mt-2'))
         end

@@ -16,7 +16,7 @@
 
     <%= f.spree_select :default_country_iso, Spree::Country.pluck(:name, :iso), { include_blank: false, label: Spree.t(:default_country), autocomplete: true, help: Spree.t(:default_country_help) } %>
 
-    <hr />
+    <hr class="my-6" />
 
     <%= f.spree_check_box :preferred_guest_checkout, label: Spree.t('admin.checkout_settings.guest_checkout.label'), help: Spree.t('admin.checkout_settings.guest_checkout.description') %>
     <%= f.spree_check_box :preferred_company_field_enabled, label: Spree.t('admin.store_form.company_field.label'), help: Spree.t('admin.store_form.company_field.description') %>

@@ -58,4 +58,14 @@
     border-radius: var(--radius-sm);
     font-size: 0.875em;
   }
+
+  /* Turbo frame busy state */
+  turbo-frame.blur-busy[busy] {
+    @apply opacity-50 pointer-events-none;
+    transition: opacity 0.3s;
+  }
+
+  turbo-frame.blur-busy[busy] * {
+    @apply pointer-events-none;
+  }
 }
