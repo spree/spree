@@ -183,10 +183,6 @@
 
 
   /* Typography */
-  @media (min-width: 992px) {
-    .text-lg-right { text-align: right; }
-  }
-
   .text-uppercase { text-transform: uppercase; }
   .text-capitalize { text-transform: capitalize; }
 
