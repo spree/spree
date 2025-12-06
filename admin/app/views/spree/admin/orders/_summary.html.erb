@@ -90,14 +90,14 @@
       </span>
     </li>
 
-    <li class="list-group-item flex justify-between items-center border-t bg-light">
+    <li class="list-group-item flex justify-between items-center border-t bg-gray-25">
       <span data-hook='admin_order_tab_payment_total_title'><%= Spree.t(:payment_total) %></span>
       <span id='payment_total'>
         <%= @order.display_payment_total.to_html %>
       </span>
     </li>
 
-    <li class="list-group-item flex justify-between items-center bg-light">
+    <li class="list-group-item flex justify-between items-center bg-gray-25">
       <span data-hook='admin_order_tab_outstanding_balance_title'><%= Spree.t(:outstanding_balance) %></span>
       <span id='outstanding_balance'>
         <%= @order.display_outstanding_balance.to_html %>

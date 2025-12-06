@@ -1,6 +1,6 @@
 <% if current_store.default_theme %>
   <div class="card mb-6">
-    <%= link_to spree.edit_admin_theme_path(current_store.default_theme), class: 'block border rounded-lg  mx-2 mt-2 mb-0 overflow-auto bg-light relative store-preview-link', data: { turbo_prefetch: false } do %>
+    <%= link_to spree.edit_admin_theme_path(current_store.default_theme), class: 'block border rounded-lg  mx-2 mt-2 mb-0 overflow-auto bg-gray-25 relative store-preview-link', data: { turbo_prefetch: false } do %>
       <div class="absolute w-full h-full items-center justify-center overlay-background store-preview-actions">
         <button class="btn btn-primary">
           <%= icon('tools') %>

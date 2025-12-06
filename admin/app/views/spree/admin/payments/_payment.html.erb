@@ -72,7 +72,7 @@
       <% if payment.source.present? %>
         <div class="w-1/2">
           <p class="mb-2"><%= Spree.t(:payment_source) %>:</p>
-          <div class="rounded-xl bg-light border shadow-xs p-4">
+          <div class="rounded-xl bg-gray-25 border shadow-xs p-4">
             <%= render 'spree/shared/payment', payment: payment %>
           </div>
         </div>
