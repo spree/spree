@@ -10,7 +10,7 @@
     margin-bottom: 1rem;
     min-height: 2.5rem;
     border: 1px solid transparent;
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-xl);
     background-position: 1rem center;
     background-size: 1rem 1rem;
   }
@@ -88,7 +88,7 @@
 
   /* Page alerts */
   .page-alerts .alert {
-    border-radius: var(--radius-lg);
+    @apply rounded-xl;
   }
 
   /* Fixed alerts container */

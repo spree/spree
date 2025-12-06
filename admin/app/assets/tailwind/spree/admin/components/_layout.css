@@ -197,7 +197,7 @@
   }
 
   #main-sidebar .nav-link {
-    @apply flex items-center whitespace-nowrap font-normal p-1 rounded-lg text-inherit;
+    @apply flex items-center whitespace-nowrap font-normal p-1 rounded-xl text-inherit;
     transition: background-color 0.1s ease-in-out;
   }
 
