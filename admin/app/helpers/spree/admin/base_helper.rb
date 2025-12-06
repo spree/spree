@@ -264,7 +264,7 @@ module Spree
       # @option options [String] :title the title of the button
       # @return [String] the button
       def clipboard_button(options = {})
-        options[:class] ||= 'btn btn-clipboard'
+        options[:class] ||= 'btn btn-light btn-sm btn-clipboard'
         options[:type] ||= 'button'
         options[:data] ||= {}
         options[:data][:action] = 'clipboard#copy'

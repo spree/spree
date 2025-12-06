@@ -4,8 +4,7 @@
 
 @layer components {
   label {
-    @apply flex items-center cursor-pointer gap-2 font-medium mb-2;
-    font-size: 100%;
+    @apply flex items-center cursor-pointer gap-2 font-medium mb-2 text-base;
   }
 
   .form-group {
@@ -16,16 +15,11 @@
     @apply inline-block mb-2 font-medium;
   }
 
-  .form-control, .text-input, .form-input {
+  .form-control, .text-input, .form-input, .custom-select, .ts-control, .select-input {
     @apply block w-full py-2 px-3 text-base font-normal leading-normal;
     @apply text-text bg-surface border border-gray-200 rounded-default shadow-xs;
-    background-clip: padding-box;
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-  }
-
-  .form-control:focus, .form-input:focus, .text-input:focus {
-    @apply outline-0 text-text bg-surface border-blue;
-    box-shadow: 0 0 0 0.18rem rgba(0, 144, 254, 0.25);
+    @apply focus:outline-offset-2 focus:outline-blue focus:border-gray-200 focus:ring-0;
+    @apply transition-all duration-100 ease-in-out;
   }
 
   .form-control::placeholder, .form-input::placeholder, .text-input::placeholder {
@@ -174,20 +168,10 @@
 
   /* Select */
   .custom-select, .ts-control, .select-input {
-    @apply block w-full appearance-none py-2 pr-10 pl-3 text-base font-normal leading-normal;
-    @apply text-text bg-surface border border-gray-200 rounded-default shadow-xs;
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
     background-repeat: no-repeat !important;
     background-position: right 0.5rem center !important;
     background-size: 1.5em 1.5em !important;
-    transition-property: box-shadow, border-color;
-    transition-duration: 0.15s;
-    transition-timing-function: ease;
-  }
-
-  .custom-select:focus {
-    @apply outline-0 border-blue;
-    box-shadow: 0 0 0 0.18rem rgba(0, 144, 254, 0.25);
   }
 
   .custom-select:disabled,

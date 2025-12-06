@@ -16,13 +16,13 @@
   /* Dropdown */
   .ts-dropdown,
   .ts-dropdown.form-control {
+    @apply mt-1!;
     position: absolute;
     top: 110%;
     left: 0;
     width: 100%;
     height: auto;
     padding: 0.25rem;
-    margin: 0;
     z-index: 10000000 !important;
     background: var(--color-surface);
     border-radius: var(--radius-lg);
@@ -143,23 +143,7 @@
   }
 
   /* Control */
-  .ts-control {
-    border: 1px solid var(--color-gray-200);
-    padding: 0.5rem 0.75rem;
-    width: 100%;
-    overflow: hidden;
-    position: relative;
-    z-index: 1;
-    box-sizing: border-box;
-    box-shadow: var(--shadow-xs);
-    border-radius: var(--radius-default);
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    min-height: calc(1.5em + 1rem + 2px);
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    background: var(--color-surface);
-  }
+
 
   .ts-control,
   .ts-wrapper.single.input-active .ts-control {
@@ -168,9 +152,7 @@
   }
 
   .focus .ts-control {
-    border-color: var(--color-blue);
-    outline: 0;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    @apply outline-2 outline-offset-2 outline-blue border-gray-200 ring-0;
   }
 
   /* Validation states */
@@ -418,11 +400,5 @@
     padding: 0.375rem 0.75rem;
     border: 1px solid var(--color-border);
     border-radius: var(--radius-default);
-  }
-
-  .ts-dropdown.plugin-dropdown_input .dropdown-input:focus {
-    border-color: var(--color-blue);
-    outline: 0;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
   }
 }

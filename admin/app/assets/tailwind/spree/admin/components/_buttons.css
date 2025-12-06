@@ -139,9 +139,7 @@
   }
 
   .btn-clipboard {
-    @apply p-1 text-sm text-gray-700 bg-gray-25 border-border ml-2;
-    min-width: 24px;
-    height: 24px;
+    @apply w-6 h-6 px-1;
   }
 
   .payment-action-save {
