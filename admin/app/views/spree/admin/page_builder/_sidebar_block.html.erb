@@ -5,7 +5,7 @@
                                        page_builder_editor_id_param: "block-#{block.id}",
                                        sortable_update_url: spree.admin_page_section_block_path(block.section, block, format: :turbo_stream)
                                      } do %>
-    <div class="flex items-center justify-between sidebar-block-title p-1 rounded-sm">
+    <div class="flex items-center justify-between sidebar-block-title p-1 rounded-md">
       <div class="flex items-center flex-1">
         <%= link_to(edit_admin_page_section_block_path(block.section, block),
           class: 'block-edit-link flex-1 text-gray-900',

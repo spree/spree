@@ -14,11 +14,10 @@
         <%= f.radio_button :record_selection, 'filtered', class: 'custom-control-input' %>
         <%= f.label :record_selection, for: :export_record_selection_filtered, class: 'custom-control-label' do %>
           <%= Spree.t(:filtered_records) %>
-          <br />
-          <span class="text-gray-600 font-normal mr-1">
-            <%= Spree.t('admin.export_only_filtered_records') %>
-          </span>
         <% end %>
+        <span class="text-gray-600 font-normal ml-7 mt-2">
+          <%= Spree.t('admin.export_only_filtered_records') %>
+        </span>
       </div>
       <div class="custom-control custom-radio mt-4">
         <%= f.radio_button :record_selection, 'all', class: 'custom-control-input' %>

@@ -1,7 +1,7 @@
 <% if section.persisted? %>
   <%= turbo_frame_tag dom_id(section), class: 'list-group-item py-0 border-0 sidebar-page-section draggable rounded-sm',
                                        data: { sortable_update_url: spree.admin_page_section_path(section, format: :turbo_stream) } do %>
-    <div class="flex items-center justify-between sidebar-section-title py-1 rounded"
+    <div class="flex items-center justify-between sidebar-section-title py-1 rounded-xl"
          data-action="mouseover->page-builder#toggleHighlightElement mouseout->page-builder#toggleHighlightElement"
       data-page-builder-editor-id-param="section-<%= section.id %>">
       <div class="flex items-center flex-1 py-1 px-2">

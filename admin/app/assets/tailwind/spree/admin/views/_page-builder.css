@@ -28,9 +28,7 @@
   }
 
   #page-builder .nav-pills {
-    background-color: var(--color-gray-50);
-    padding: 0.25rem;
-    border-radius: var(--radius-lg);
+    @apply bg-gray-50 rounded-xl p-1;
   }
 
   #page-builder .nav-pills .nav-link {

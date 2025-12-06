@@ -92,45 +92,4 @@
     color: var(--color-text);
     background-color: var(--color-gray-100);
   }
-
-  /* Contextual list group items */
-  .list-group-item-primary {
-    color: #084298;
-    background-color: #cfe2ff;
-  }
-
-  .list-group-item-secondary {
-    color: var(--color-gray-700);
-    background-color: var(--color-gray-100);
-  }
-
-  .list-group-item-success {
-    color: #0f5132;
-    background-color: #d1e7dd;
-  }
-
-  .list-group-item-danger {
-    color: #842029;
-    background-color: #f8d7da;
-  }
-
-  .list-group-item-warning {
-    color: #664d03;
-    background-color: #fff3cd;
-  }
-
-  .list-group-item-info {
-    color: #055160;
-    background-color: #cff4fc;
-  }
-
-  .list-group-item-light {
-    color: var(--color-gray-700);
-    background-color: var(--color-gray-50);
-  }
-
-  .list-group-item-dark {
-    color: var(--color-gray-100);
-    background-color: var(--color-gray-800);
-  }
 }

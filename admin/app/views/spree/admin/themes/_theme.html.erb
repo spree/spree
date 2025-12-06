@@ -36,7 +36,7 @@
   </td>
   <td class="w-20">
     <% if theme.ready? %>
-      <div class="flex justify-end w-full">
+      <div class="flex justify-end w-full gap-2">
         <%= link_to Spree.t('actions.publish'), publish_admin_theme_path(theme), class: 'btn btn-sm btn-light', data: { turbo_method: :put } unless theme.default? %>
         <%= dropdown do %>
           <%= dropdown_toggle class: 'btn-light btn-sm h-full' do %>
