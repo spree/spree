@@ -12,15 +12,15 @@
 <% end %>
 
 <ul class="list-group bg-white mb-6 rounded-lg">
-  <li class="list-group-item d-flex justify-content-between">
-    <strong class="text-uppercase"><%= Spree.t(:url) %></strong>
+  <li class="list-group-item flex justify-between">
+    <strong class="uppercase"><%= Spree.t(:url) %></strong>
     <%= external_link_to @webhooks_subscriber.url, @webhooks_subscriber.url, class: 'text-blue text-decoration-none' %>
   </li>
-  <li class="list-group-item d-flex justify-content-between">
+  <li class="list-group-item flex justify-between">
     <strong><%= Spree.t(:active) %></strong>
     <%= active_badge(@webhooks_subscriber.active) %>
   </li>
-  <li class="list-group-item d-flex justify-content-between">
+  <li class="list-group-item flex justify-between">
     <strong><%= Spree.t('admin.webhooks_subscribers.subscriptions') %></strong>
     <div>
       <% @webhooks_subscriber.subscriptions&.sort&.each do |subscription| %>

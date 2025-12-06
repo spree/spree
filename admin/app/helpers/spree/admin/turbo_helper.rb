@@ -33,7 +33,7 @@ module Spree
 
       def turbo_save_button_tag(label = Spree.t('actions.save'), opts = {}, &block)
         opts[:class] ||= 'btn btn-primary text-center'
-        opts[:class] << ' d-flex align-items-center justify-content-center' if opts[:class].exclude?('d-block') && opts[:class].exclude?('d-flex')
+        opts[:class] << ' flex items-center justify-center' if opts[:class].exclude?('block') && opts[:class].exclude?('flex')
 
         opts['data-turbo-submits-with'] ||= "#{content_tag(:span, '', class: 'spinner-border spinner-border-sm', role: 'status')}"
         opts['data-enable-button-target'] = 'button'

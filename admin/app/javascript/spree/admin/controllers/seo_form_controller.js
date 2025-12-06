@@ -63,14 +63,14 @@ export default class extends Controller {
       this.slugPreviewTarget.textContent = ''
       this.descriptionPreviewTarget.textContent = ''
 
-      this.previewTarget.classList.add('d-none')
-      this.placeholderTarget.classList.remove('d-none')
+      this.previewTarget.classList.add('hidden')
+      this.placeholderTarget.classList.remove('hidden', 'd-none')
 
       return
     }
 
-    this.previewTarget.classList.remove('d-none')
-    this.placeholderTarget.classList.add('d-none')
+    this.previewTarget.classList.remove('hidden', 'd-none')
+    this.placeholderTarget.classList.add('hidden')
 
     this.titlePreviewTarget.textContent = this.metaTitle
     this.slugPreviewTarget.textContent = this.slugInputTarget.value
@@ -78,7 +78,7 @@ export default class extends Controller {
   }
 
   toggleInputs() {
-    this.inputsContainerTarget.classList.toggle('d-none')
+    this.inputsContainerTarget.classList.toggle('hidden')
   }
 
   get metaTitle() {

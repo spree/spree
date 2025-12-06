@@ -1,8 +1,8 @@
-<div class="import_row d-flex justify-content-between align-items-center border-b hover-light" id="<%= dom_id(row) %>">
+<div class="import_row flex justify-between items-center border-b hover-light" id="<%= dom_id(row) %>">
   <div class="text-center w-10">
     <%= row.row_number %>
   </div>
-  <div class="text-wrap w-20 px-2 py-4">
+  <div class="whitespace-normal w-20 px-2 py-4">
     <% badge_class = case row.status
        when 'completed'
          'success'
@@ -21,7 +21,7 @@
     <% elsif row.status == 'completed' && row.item.present? %>
       <%= render "spree/admin/import_rows/#{row.item_type.demodulize.underscore}", item: row.item %>
     <% else %>
-      <div class="d-flex align-items-center gap-2">
+      <div class="flex items-center gap-2">
         <div class="spinner-border text-muted" role="status">
           <span class="sr-only"><%= Spree.t(:processing) %>...</span>
         </div>

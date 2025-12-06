@@ -1,5 +1,5 @@
 <div class="card mb-6">
-  <div class="card-header d-flex justify-content-between px-6 border-0">
+  <div class="card-header flex justify-between px-6 border-0">
     <h5 class="card-title">
       <%= icon('bolt', class: 'mr-6') %>
       <%= Spree.t(:promotion_actions) %>
@@ -8,9 +8,9 @@
       <%= link_to_with_icon 'plus', Spree.t(:add_one), spree.new_admin_promotion_action_path(@promotion), class: 'btn btn-primary btn-sm', data: { turbo_frame: 'dialog', action: 'dialog#open' } %>
     <% end %>
   </div>
-  <div class="card-body d-flex flex-column gap-2 px-2 pt-0 pb-2">
+  <div class="card-body flex flex-col gap-2 px-2 pt-0 pb-2">
     <% if @promotion.promotion_actions.empty? %>
-      <div class="text-muted p-12 d-flex align-items-center w-100 justify-content-center">
+      <div class="text-muted p-12 flex items-center w-full justify-center">
         <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::PromotionAction)) %>
         <% if can?(:create, Spree::PromotionAction.new(promotion: @promotion)) %>
           <%= link_to_with_icon 'plus', Spree.t(:add_one), spree.new_admin_promotion_action_path(@promotion), class: 'btn btn-light btn-sm ml-6', data: { turbo_frame: 'dialog', action: 'dialog#open' } %>

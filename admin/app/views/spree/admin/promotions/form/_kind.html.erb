@@ -5,7 +5,7 @@
 
     <div data-reveal-target="item" class="rounded p-6 bg-light mt-6 <% if @promotion.automatic? %>hidden<% end %>">
       <div data-controller="reveal" data-reveal-hidden-class="hidden">
-        <div class="d-flex align-items-start custom-control custom-radio">
+        <div class="flex items-start custom-control custom-radio">
           <%= f.radio_button :multi_codes, false, data: { action: 'change->reveal#toggle' }, class: 'custom-control-input' %>
           <%= f.label :multi_codes_false, class: 'custom-control-label' do %>
             One code for all customers
@@ -15,10 +15,10 @@
           <% end %>
         </div>
         <div data-reveal-target="item" class="mb-6 mt-2 ml-6 <% if @promotion.multi_codes? %>hidden<% end %>">
-          <%= f.text_field :code, class: 'form-control text-uppercase', placeholder: 'Your coupon code' %>
+          <%= f.text_field :code, class: 'form-control uppercase', placeholder: 'Your coupon code' %>
         </div>
 
-        <div class="mt-2 d-flex align-items-start custom-control custom-radio">
+        <div class="mt-2 flex items-start custom-control custom-radio">
           <%= f.radio_button :multi_codes, true, data: { action: 'change->reveal#toggle' }, class: 'custom-control-input' %>
           <%= f.label :multi_codes_true, class: 'custom-control-label' do %>
             Generate unique codes
@@ -29,7 +29,7 @@
         </div>
         <div data-reveal-target="item" class="ml-6 mt-2 grid grid-cols-12 gap-6 <% unless @promotion.multi_codes? %>hidden<% end %>">
           <div class="col-span-6">
-            <%= f.text_field :code_prefix, class: 'form-control text-uppercase', placeholder: 'Coupon Prefix (optional)' %>
+            <%= f.text_field :code_prefix, class: 'form-control uppercase', placeholder: 'Coupon Prefix (optional)' %>
             <span class="form-text mt-2">
               eg. <strong>ABC</strong>
             </span>

@@ -1,5 +1,5 @@
 <div class="card mb-6">
-  <div class="card-header d-flex align-items-center justify-content-between">
+  <div class="card-header flex items-center justify-between">
     <h5 class="card-title"><%= Spree.t(:properties) %></h5>
 
     <% if can?(:manage, Spree::Property) %>
@@ -20,10 +20,10 @@
           <%= product_property_form.hidden_field :id %>
           <%= product_property_form.hidden_field :property_id %>
           <tr>
-            <td class="align-top pt-4 w-25">
+            <td class="align-top pt-4 w-1/4">
               <code><%= property.name %></code>
             </td>
-            <td class="w-75">
+            <td class="w-3/4">
               <div class="form-group">
                 <% if property.long_text? %>
                   <%= product_property_form.text_area :value, { class: 'form-control', data: { controller: 'textarea-autogrow'} } %>

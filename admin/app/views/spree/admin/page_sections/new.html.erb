@@ -1,6 +1,6 @@
 <%= turbo_frame_tag :page_sidebar do %>
   <h6 class="sidebar-header">
-    <%= link_to collection_url, data: { action: 'click->page-builder#clearActiveOverlays' }, class: 'btn hover-gray shadow-none px-2' do %>
+    <%= link_to collection_url, data: { action: 'click->page-builder#clearActiveOverlays' }, class: 'btn hover:bg-gray-100 shadow-none px-2' do %>
       <%= icon 'chevron-left', class: 'mr-0 back' %>
     <% end %>
     <%= Spree.t(:add_section) %>
@@ -13,7 +13,7 @@
       <% cache spree_base_cache_scope.call('new-section-list'), expires_in: 1.hour do %>
         <ul class="list-group list-group-flush m-2 mx-4 border p-1 rounded-lg bg-white">
           <% @theme.available_page_sections.each do |section_class| %>
-            <li class="list-group-item p-2 list-group-item-action cursor-pointer d-flex align-items-center hover-action text-primary"
+            <li class="list-group-item p-2 list-group-item-action cursor-pointer flex items-center hover-action text-primary"
               data-action="click->section-form#addSection"
               data-section-form-type-param="<%= section_class %>"
             >

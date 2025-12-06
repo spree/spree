@@ -1,13 +1,13 @@
 <div id="<%= spree_dom_id(asset) %>" class="media-form__image" data-sortable-update-url="<%= spree.admin_asset_path(asset) %>">
-  <div class="custom-control custom-checkbox d-none">
+  <div class="custom-control custom-checkbox hidden">
     <%= check_box_tag "ids[]", asset.id, false, class: "custom-control-input", id: "#{asset.id}-checkbox", data: { media_form_target: "checkbox", action: 'media-form#showDeleteButton' } %>
     <label class="custom-control-label" for="<%= asset.id %>-checkbox"><span></span></label>
   </div>
-  <div class="move-handle text-center d-none ml-auto">
+  <div class="move-handle text-center hidden ml-auto">
     <button class="btn btn-light btn-sm px-1"><%= icon('grip-vertical', class: 'mr-0') %></button>
   </div>
 
   <%= link_to spree.edit_admin_asset_path(asset), data: { turbo_frame: 'dialog', action: 'dialog#open' } do %>
-    <%= spree_image_tag(asset.attachment, width: 200, height: 200, alt: asset.alt, class: 'w-100 d-block h-100 absolute') %>
+    <%= spree_image_tag(asset.attachment, width: 200, height: 200, alt: asset.alt, class: 'w-full block h-full absolute') %>
   <% end %>
 </div>

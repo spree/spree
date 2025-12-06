@@ -10,7 +10,7 @@
   }
 
   .btn {
-    @apply inline-flex items-center justify-center text-center align-middle;
+    @apply inline-flex items-center justify-center text-center align-middle gap-2;
     @apply cursor-pointer select-none no-underline;
     @apply px-3 text-base font-medium leading-normal border border-transparent rounded-lg;
     padding-top: 0.35rem;
@@ -23,7 +23,7 @@
   }
 
   .btn:focus {
-    @apply outline-none shadow-none;
+    /* @apply outline-none shadow-none; */
   }
 
   .btn:disabled,
@@ -31,18 +31,8 @@
     @apply opacity-70 pointer-events-none cursor-not-allowed;
   }
 
-  .btn i,
-  .btn .ti {
-    @apply mr-2;
-  }
-
   .btn-sm {
     @apply px-2 py-1 text-sm rounded-default;
-  }
-
-  .btn-sm i,
-  .btn-sm .ti {
-    @apply mr-1;
   }
 
   .btn-lg {

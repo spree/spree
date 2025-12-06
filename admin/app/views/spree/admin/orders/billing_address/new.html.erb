@@ -1,7 +1,7 @@
 <%= turbo_frame_tag :dialog do %>
   <%= form_for @address, url: spree.admin_order_billing_address_path(@order), data: {controller: 'auto-submit', form_target: 'form', turbo_frame: :_top}, method: :post do |f| %>
     <%= dialog_header(Spree.t(:billing_address)) %>
-    <div class="dialog-body d-flex flex-col gap-4" data-controller="order-billing-address">
+    <div class="dialog-body flex flex-col gap-4" data-controller="order-billing-address">
       <div>
         <% if @order.shipping_address.present? %>
           <%= label_tag nil, class: 'form-control custom-radio' do %>

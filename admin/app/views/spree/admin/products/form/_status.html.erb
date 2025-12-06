@@ -11,7 +11,7 @@
                              }
                            } %>
       </div>
-      <div class="col-span-6 <%= 'd-none' if @product.active? %>" data-product-form-target="makeActiveAt">
+      <div class="col-span-6 <%= 'hidden' if @product.active? %>" data-product-form-target="makeActiveAt">
         <% if can?(:activate, @product) %>
           <%= f.spree_datetime_field :make_active_at,
                                      help_bubble: Spree.t('admin.products.status_form.make_active_at'),

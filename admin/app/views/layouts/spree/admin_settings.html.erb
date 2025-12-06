@@ -4,14 +4,14 @@
     <%= render "spree/admin/shared/head" %>
   </head>
 
-  <body class="admin admin-settings min-vh-100 <%= controller_name %> <%= action_name %>"
+  <body class="admin admin-settings min-h-screen <%= controller_name %> <%= action_name %>"
     data-controller="admin drawer dialog"
     data-action="keydown.ctrl+s->admin#save keydown.meta+s->admin#save"
   >
     <%= render_admin_partials(:body_start_partials) %>
 
     <header id="settings-header">
-      <div class="flex-grow-1">
+      <div class="grow">
         <%= render 'spree/admin/shared/content_header' %>
       </div>
     </header>

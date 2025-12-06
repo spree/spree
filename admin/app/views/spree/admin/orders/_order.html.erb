@@ -1,6 +1,6 @@
 <tr id="<%= dom_id(order) %>" data-controller="row-link">
   <td class="p-0 w-10">
-    <%= link_to order.number, spree.edit_admin_order_path(order), class: 'font-bolder d-block p-2 px-4 text-decoration-none', data: { 'turbo-frame': '_top', row_link_target: :link } %>
+    <%= link_to order.number, spree.edit_admin_order_path(order), class: 'font-bolder block p-2 px-4 text-decoration-none', data: { 'turbo-frame': '_top', row_link_target: :link } %>
   </td>
   <td class="w-15 cursor-pointer" data-action="click->row-link#openLink">
     <%= spree_time_ago(order.completed? ? order.completed_at : order.created_at, format: '%b %e, %Y %l:%M%P') %>
@@ -8,7 +8,7 @@
   <td class="d-customer w-15 cursor-pointer" data-action="click->row-link#openLink">
     <%= render 'spree/admin/orders/customer_summary', order: order %>
   </td>
-  <td class="text-wrap w-20 cursor-pointer" data-action="click->row-link#openLink">
+  <td class="whitespace-normal w-20 cursor-pointer" data-action="click->row-link#openLink">
     <% order.shipments.map(&:stock_location).compact.uniq.each_with_index do |stock_location, index| %>
       <% if index > 0 %>, <% end %><%= stock_location.name %>
     <% end %>

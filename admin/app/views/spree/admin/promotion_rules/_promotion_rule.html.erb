@@ -1,6 +1,6 @@
 <%= turbo_frame_tag promotion_rule do  %>
   <div class="card" id="<%= spree_dom_id(promotion_rule) %>">
-    <div class="card-header d-flex justify-content-between align-items-center">
+    <div class="card-header flex justify-between items-center">
       <h5 class="card-title"><%= promotion_rule.human_name %></h5>
 
       <% if can?(:update, promotion_rule) || can?(:destroy, promotion_rule) %>
@@ -25,7 +25,7 @@
       <% if promotion_rule.respond_to?(:preferred_eligible_values) %>
         <div class="mt-4">
           <span><%= Spree.t(:option_values) %>:</span>
-          <div class="d-flex flex-wrap gap-2">
+          <div class="flex flex-wrap gap-2">
             <% promotion_rule_option_values(promotion_rule.preferred_eligible_values).each do |value| %>
               <strong><%= value %></strong>
             <% end %>
@@ -36,7 +36,7 @@
       <% if promotion_rule.respond_to?(:products) %>
         <div class="mt-4">
           <span><%= Spree.t(:products) %>:</span>
-          <div class="d-flex flex-wrap gap-2">
+          <div class="flex flex-wrap gap-2">
             <% promotion_rule.products.pluck(:name).each do |product_name| %>
             <strong><%= product_name %></strong>
             <% end %>
@@ -47,7 +47,7 @@
       <% if promotion_rule.respond_to?(:taxons) %>
         <div class="mt-4">
           <span><%= Spree.t(:taxons) %>:</span>
-          <div class="d-flex flex-wrap gap-2">
+          <div class="flex flex-wrap gap-2">
             <% promotion_rule.taxons.pluck(:pretty_name).each do |taxon_name| %>
               <strong><%= taxon_name %></strong>
             <% end %>
@@ -58,7 +58,7 @@
       <% if promotion_rule.respond_to?(:users) %>
         <div class="mt-4">
           <span><%= Spree.t(:users) %>:</span>
-          <div class="d-flex flex-wrap gap-2">
+          <div class="flex flex-wrap gap-2">
             <% promotion_rule.users.pluck(:email).each do |user_email| %>
               <strong><%= user_email %></strong>
             <% end %>

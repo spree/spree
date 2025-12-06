@@ -3,7 +3,7 @@
     <%= newsletter_subscriber.email %>
     <%= clipboard_component(newsletter_subscriber.email) %>
   </td>
-  <td class="w-25">
+  <td class="w-1/4">
     <% if newsletter_subscriber.user.present? %>
       <%= link_to newsletter_subscriber.user.full_name, spree.admin_user_path(newsletter_subscriber.user) %>
     <% else %>

@@ -45,7 +45,7 @@
                       true, 
                       nil %>
                       
-                    <%= f.label resource_name, class: 'custom-control-label w-100' do %>
+                    <%= f.label resource_name, class: 'custom-control-label w-full' do %>
                       <%= Spree.t("#{resource_name.to_s.pluralize}") %>
                       <p class="gap-2 mb-0 mt-1">
                         <% event.last.each do |event| %>

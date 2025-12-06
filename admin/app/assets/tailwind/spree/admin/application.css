@@ -2,7 +2,6 @@
 @import url('https://esm.sh/@uppy/core@4.2.0/dist/style.min.css');
 @import url('https://esm.sh/@uppy/dashboard@4.1.0/dist/style.min.css');
 @import url('https://esm.sh/@uppy/image-editor@3.1.0/dist/style.min.css');
-@import url('https://esm.sh/animate.css@4.1.1/animate.min.css');
 @import url('https://esm.sh/@simonwep/pickr@1.8.2/dist/themes/classic.min.css');
 @import url('https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css');
 
@@ -40,7 +39,6 @@
 @import "./components/_dropdowns.css";
 @import "./components/_list-groups.css";
 @import "./components/_tooltips.css";
-@import "./components/_pagination.css";
 @import "./components/_breadcrumbs.css";
 @import "./components/_progress.css";
 @import "./components/_misc.css";
@@ -62,6 +60,7 @@
 @import "./views/_page-builder.css";
 
 /* Plugins */
+@import "./plugins/_actiontext.css";
 @import "./plugins/_tinymce.css";
 @import "./plugins/_trix.css";
 @import "./plugins/_uppy.css";

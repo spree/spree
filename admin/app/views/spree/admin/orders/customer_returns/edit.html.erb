@@ -1,6 +1,6 @@
 <% content_for :page_title do %>
   <%= page_header_back_button spree.edit_admin_order_path(@order) %>
-  <div class="d-flex gap-6 align-items-center">
+  <div class="flex gap-6 items-center">
     <%= @customer_return.number %>
 
     <% if @customer_return.fully_reimbursed? %>
@@ -13,19 +13,19 @@
 
 <ul class="list-group bg-white mb-6">
   <% if @customer_return.order %>
-    <li class="list-group-item d-flex justify-content-between align-items-center">
+    <li class="list-group-item flex justify-between items-center">
       <%= Spree.t(:customer) %>
       <div>
         <%= render "spree/admin/orders/customer_summary", order: @customer_return.order %>
       </div>
     </li>
-    <li class="list-group-item d-flex justify-content-between align-items-center">
+    <li class="list-group-item flex justify-between items-center">
       <%= Spree.t(:order) %>
       <strong><%= link_to @customer_return.order.number,
         spree.edit_admin_order_path(@customer_return.order) %></strong>
     </li>
   <% end %>
-  <li class="list-group-item d-flex justify-content-between align-items-center">
+  <li class="list-group-item flex justify-between items-center">
     <%= Spree.t(:reimbursement_status) %>
     <% if @customer_return.fully_reimbursed? %>
       <span class="badge badge-success"><%= Spree.t(:reimbursed) %></span>
@@ -33,7 +33,7 @@
       <span class="badge badge-inactive"><%= Spree.t(:incomplete) %></span>
     <% end %>
   </li>
-  <li class="list-group-item d-flex justify-content-between align-items-center">
+  <li class="list-group-item flex justify-between items-center">
     <%= Spree.t(:pre_tax_total) %>
     <span><%= @customer_return.display_pre_tax_total.to_html %></span>
   </li>
@@ -127,7 +127,7 @@
 <% if !@customer_return.fully_reimbursed? && @customer_return.no_pending_reimbursements? && !@customer_return.completely_decided? %>
   <div
     class="
-      text-muted p-12 d-flex align-items-center w-100 justify-content-center
+      text-muted p-12 flex items-center w-full justify-center
     "
   >
     <%= Spree.t(:unable_to_create_reimbursements) %>

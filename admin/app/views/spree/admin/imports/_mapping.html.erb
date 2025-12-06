@@ -1,12 +1,12 @@
-<div class="d-flex justify-content-between align-items-center border-b hover-light" id="<%= spree_dom_id(mapping) %>">
+<div class="flex justify-between items-center border-b hover-light" id="<%= spree_dom_id(mapping) %>">
   <div class="text-center w-10">
     <%= render 'spree/admin/imports/mapping_icon', mapping: mapping %>
   </div>
-  <div class="text-wrap w-40 px-2 py-4">
+  <div class="whitespace-normal w-40 px-2 py-4">
     <%= mapping.schema_field_label %>
     <code class="ml-2"><%= mapping.schema_field %></code>
   </div>
-  <div class="w-50 px-2 py-4">
+  <div class="w-1/2 px-2 py-4">
     <%= render 'spree/admin/imports/mapping_form', import: @import, mapping: mapping, options: options %>
   </div>
 </div>

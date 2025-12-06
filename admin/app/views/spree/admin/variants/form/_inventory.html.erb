@@ -4,12 +4,12 @@
       <%= Spree.t(:inventory) %>
     </h5>
   </div>
-  <div class="card-body p-0" data-controller="reveal" data-reveal-hidden-class="d-none">
+  <div class="card-body p-0" data-controller="reveal" data-reveal-hidden-class="hidden">
     <div class="mb-24 m-16">
       <%= f.spree_check_box :track_inventory, data: { action: 'change->reveal#toggle' } %>
     </div>
 
-    <table class="table <%= 'd-none' unless f.object.track_inventory? %>" data-reveal-target="item">
+    <table class="table <%= 'hidden' unless f.object.track_inventory? %>" data-reveal-target="item">
       <thead>
         <tr>
           <th scope="col"><%= Spree.t(:stock_location) %></th>

@@ -8,13 +8,13 @@
 <div class="grid grid-cols-12 gap-4">
   <div class="col-span-12 lg:col-span-8">
     <div class="card mb-12">
-      <div class="card-header d-flex align-items-center justify-content-between">
+      <div class="card-header flex items-center justify-between">
         <h5 class="card-title">
           <%= Spree.t(:products) %>
         </h5>
       </div>
       <div class="card-body p-0" style="min-height: 300px">
-        <div class="d-block overflow-y-auto overflow-x-hidden" style="max-height: 300px">
+        <div class="block overflow-y-auto overflow-x-hidden" style="max-height: 300px">
           <div class="table-responsive rounded bg-white">
             <table class="table sortable">
               <thead>
@@ -35,20 +35,20 @@
   </div>
   <div class="col-span-12 lg:col-span-4">
     <div class="card mb-12">
-      <div class="card-header d-flex align-items-center justify-content-between">
+      <div class="card-header flex items-center justify-between">
         <h5 class="card-title">
           <%= Spree.t(:details) %>
         </h5>
       </div>
       <div class="card-body">
         <ul class="list-group">
-          <li class="list-group-item d-flex justify-content-between">
+          <li class="list-group-item flex justify-between">
             <%= Spree.t(:origin) %> <span><%= @stock_transfer.source_location&.display_name.presence || Spree.t(:none) %></span>
           </li>
-          <li class="list-group-item d-flex justify-content-between">
+          <li class="list-group-item flex justify-between">
             <%= Spree.t(:destination) %> <span><%= @stock_transfer.destination_location.display_name %></span>
           </li>
-          <li class="list-group-item d-flex justify-content-between">
+          <li class="list-group-item flex justify-between">
             <%= Spree.t(:reference) %> <span><%= @stock_transfer.reference %></span>
           </li>
         </ul>

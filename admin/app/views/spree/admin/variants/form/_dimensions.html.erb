@@ -12,7 +12,7 @@
 
 <div class="form-group">
   <%= f.label :weight %>
-  <div class="form-control d-flex align-items-center py-0 focus-border focus-shadow">
+  <div class="form-control flex items-center py-0 focus-border focus-shadow">
     <%= f.text_field :weight, value: number_with_precision(f.object.weight, precision: 2), class: 'form-control-plaintext pl-0' %>
     <%= f.select :weight_unit, options_for_select(weight_units(current_store), f.object.weight_unit), { include_blank: false }, { class: 'form-control-plaintext w-auto border-l' } %>
   </div>

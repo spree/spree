@@ -35,13 +35,13 @@ export default class extends CheckboxSelectAll {
 
   hidePanel() {
     this.panelTarget.classList.add('animate__fadeOutDown')
-    this.panelTarget.classList.add('d-none')
+    this.panelTarget.classList.add('hidden')
   }
 
   togglePanel() {
     if (this.checked.length > 0) {
       this.panelTarget.classList.remove('animate__fadeOutDown')
-      this.panelTarget.classList.remove('d-none')
+      this.panelTarget.classList.remove('hidden', 'd-none')
       if (this.counterTarget) {
         this.counterTarget.textContent = this.checked.length
       }

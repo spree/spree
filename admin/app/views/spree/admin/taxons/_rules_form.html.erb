@@ -1,6 +1,6 @@
 <div id="rules-form">
   <div class="form-group mb-1">
-    <span class="d-block d-lg-inline mb-6"><%= Spree.t('admin.taxon_rules.products_must_match') %></span>
+    <span class="block lg:inline mb-6"><%= Spree.t('admin.taxon_rules.products_must_match') %></span>
 
     <div class="custom-control custom-radio custom-control-inline ml-lg-6 mb-6">
       <%= f.radio_button :rules_match_policy, :all, class: 'custom-control-input' %>
@@ -26,7 +26,7 @@
     <!-- Inserted elements will be injected before that target. -->
     <div data-nested-form-target="target" class="mb-4"></div>
 
-    <button type="button" class="btn btn-secondary w-100 py-6" data-action="nested-form#add">
+    <button type="button" class="btn btn-secondary w-full py-6" data-action="nested-form#add">
       <%= icon('plus', class: 'mr-4') %>
       <%= Spree.t(:add_one)%>
     </button>

@@ -1,10 +1,10 @@
 <div class="card mb-6">
-  <div class="card-header d-flex align-items-center">
+  <div class="card-header flex items-center">
     <h5 class="card-title">
       <%= Spree.t(:zones) %>
     </h5>
 
-    <%= link_to_with_icon('adjustments', Spree.t('admin.manage_zones'), spree.admin_zones_path, class: 'btn btn-sm btn-light ml-auto h-100') if can?(:manage, Spree::Zone) %>
+    <%= link_to_with_icon('adjustments', Spree.t('admin.manage_zones'), spree.admin_zones_path, class: 'btn btn-sm btn-light ml-auto h-full') if can?(:manage, Spree::Zone) %>
   </div>
 
   <div class="card-body">

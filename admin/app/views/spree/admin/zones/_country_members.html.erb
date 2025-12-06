@@ -9,7 +9,7 @@
     <div class="card-body">
       <div class="form-group">
         <%= zone_form.label :country_ids, Spree.t(:countries) %>
-        <%= tom_select_tag 'zone[country_ids]', multiple: true, class: 'w-100', options: Spree::Country.all.to_tom_select_json, active_option: @zone.country_ids %>
+        <%= tom_select_tag 'zone[country_ids]', multiple: true, class: 'w-full', options: Spree::Country.all.to_tom_select_json, active_option: @zone.country_ids %>
       </div>
     </div>
   </div>

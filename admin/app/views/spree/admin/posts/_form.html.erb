@@ -37,7 +37,7 @@
 
         <div class="form-group mb-0">
           <%= f.label :tag_list, Spree.t(:tags) %>
-          <%= tom_select_tag 'post[tag_list]', multiple: true, class: 'w-100', options: post_tags_json_array, active_option: @post.tag_list, value_field: :name, create: true %>
+          <%= tom_select_tag 'post[tag_list]', multiple: true, class: 'w-full', options: post_tags_json_array, active_option: @post.tag_list, value_field: :name, create: true %>
         </div>
       </div>
     </div>

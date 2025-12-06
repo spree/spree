@@ -136,7 +136,7 @@ module Spree
 
         button_tag(type: 'button', class: 'btn btn-light', data: { action: 'click->export-dialog#open' }) do
           icon('table-export', class: 'mr-0 mr-lg-2') +
-          content_tag(:span, Spree.t(:export), class: 'd-none d-lg-inline')
+          content_tag(:span, Spree.t(:export), class: 'hidden lg:inline')
         end
       end
 
@@ -247,8 +247,8 @@ module Spree
           url = session[session_key] if session[session_key].present?
         end
 
-        link_to url, class: 'd-flex align-items-center text-decoration-none' do
-          content_tag(:span, icon('chevron-left', class: 'mr-0'), class: 'btn hover-gray shadow-none px-2 d-flex align-items-center shadow-none') +
+        link_to url, class: 'flex items-center text-decoration-none' do
+          content_tag(:span, icon('chevron-left', class: 'mr-0'), class: 'btn hover:bg-gray-100 shadow-none px-2 flex items-center shadow-none') +
             content_tag(:span, label, class: 'font-size-base text-black')
         end
       end
@@ -261,7 +261,7 @@ module Spree
       def external_link_to(label, url, opts = {}, &block)
         opts[:target] ||= :blank
         opts[:rel] ||= :nofollow
-        opts[:class] ||= "d-inline-flex align-items-center text-blue text-decoration-none"
+        opts[:class] ||= "inline-flex items-center text-blue text-decoration-none"
 
         if block_given?
           link_to url, opts, &block

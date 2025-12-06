@@ -19,8 +19,8 @@
     <div class="col-span-12 lg:col-span-7 lg:col-start-6">
       <%= form_for current_store, url: spree.admin_store_path, data: { turbo: false, controller: 'enable-button', 'enable-button-disable-when-not-changed-value': true } do |f| %>
         <% if Spree.root_domain.present? %>
-          <div class="d-flex align-items-center gap-6">
-            <div class="form-control d-flex align-items-center py-0 focus-shadow focus-border pr-2 gap-1 <% if current_store.custom_domains.any? %>disabled<% end %>">
+          <div class="flex items-center gap-6">
+            <div class="form-control flex items-center py-0 focus-shadow focus-border pr-2 gap-1 <% if current_store.custom_domains.any? %>disabled<% end %>">
               <span class="text-muted">https://</span>
               <%= f.text_field :code, class: 'form-control-plaintext pl-0', data: { enable_button_target: 'input' }, required: true, disabled: current_store.custom_domains.any? %>
               <span>.<%= Spree.root_domain %></span>
@@ -32,8 +32,8 @@
             <% end %>
           </div>
         <% else %>
-          <div class="d-flex align-items-center gap-6">
-            <div class="form-control d-flex align-items-center py-0 focus-shadow focus-border pr-2 gap-1">
+          <div class="flex items-center gap-6">
+            <div class="form-control flex items-center py-0 focus-shadow focus-border pr-2 gap-1">
               <span class="text-muted">https://</span>
               <%= f.text_field :url, class: 'form-control-plaintext pl-0', required: true, data: { enable_button_target: 'input' } %>
               <%= clipboard_component(current_store.formatted_url) %>

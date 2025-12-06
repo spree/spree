@@ -55,7 +55,7 @@
         </div>
         <div class="col-span-12 lg:col-span-5 lg:col-start-8">
           <h5>What will be shared with this new store:</h5>
-          <ul class="list-unstyled">
+          <ul class="list-none p-0">
             <li>
               <%= icon('check', class: 'text-success') %>
               <%= Spree.t(:products) %>, <%= Spree.t(:stock_locations) %> & <%= Spree.t(:inventory) %><br />
@@ -81,7 +81,7 @@
           </ul>
 
           <h5>What will not be shared with this new store:</h5>
-          <ul class="list-unstyled">
+          <ul class="list-none p-0">
             <li>
               <%= icon('x', class: 'text-danger') %>
               <%= Spree.t(:orders) %>
@@ -122,7 +122,7 @@
       </div>
     </div>
   </div>
-  <footer id="footer" class="d-flex justify-content-end">
+  <footer id="footer" class="flex justify-end">
     <%= turbo_save_button_tag Spree.t('actions.create'), data: { admin_target: 'save' } %>
   </footer>
 <% end %>

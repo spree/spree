@@ -4,7 +4,7 @@
     <% used_coupon_codes_count = @promotion.coupon_codes.used.count %>
 
     <div class="card mb-6">
-      <div class="card-header d-flex justify-content-between">
+      <div class="card-header flex justify-between">
         <h5 class="card-title">
           <%= Spree.t(:coupon_codes) %>
         </h5>
@@ -13,7 +13,7 @@
       <div class="card-body">
         <%= progress_bar_component(used_coupon_codes_count, max: coupon_codes_count) %>
       </div>
-      <div class="card-footer d-flex justify-content-between">
+      <div class="card-footer flex justify-between">
         <span class="badge badge-light">
           <%= Spree.t(:used) %>: <%= used_coupon_codes_count %> / <%= coupon_codes_count %>
         </span>
@@ -27,7 +27,7 @@
 
 <%= turbo_frame_tag :promotion_edit_details do %>
   <div class="card mb-6">
-    <div class="card-header d-flex justify-content-between">
+    <div class="card-header flex justify-between">
       <h5 class="card-title">
         <%= Spree.t(:details) %>
       </h5>
@@ -35,7 +35,7 @@
     </div>
     <div class="card-body p-0">
       <ul class="list-group list-group-flush">
-        <li class="list-group-item d-flex justify-content-between align-items-center">
+        <li class="list-group-item flex justify-between items-center">
           <span class="text-muted">
             <%= Spree.t(:name) %>
           </span>
@@ -44,7 +44,7 @@
           </span>
         </li>
 
-        <li class="list-group-item d-flex justify-content-between align-items-center">
+        <li class="list-group-item flex justify-between items-center">
           <span class="text-muted">
             <%= Spree.t(:created_at) %>
           </span>
@@ -53,7 +53,7 @@
           </span>
         </li>
 
-        <li class="list-group-item d-flex justify-content-between align-items-center">
+        <li class="list-group-item flex justify-between items-center">
           <span class="text-muted">
             <%= Spree.t(:updated_at) %>
           </span>
@@ -62,7 +62,7 @@
           </span>
         </li>
 
-        <li class="list-group-item d-flex justify-content-between align-items-center">
+        <li class="list-group-item flex justify-between items-center">
           <span class="text-muted">
             <%= Spree.t(:kind) %>
           </span>
@@ -72,9 +72,9 @@
         </li>
 
         <% if @promotion.code.present? %>
-          <li class="list-group-item d-flex justify-content-between align-items-center py-2">
+          <li class="list-group-item flex justify-between items-center py-2">
             <span class="text-muted"><%= Spree.t(:coupon_code) %></span>
-            <div class="d-flex align-items-center gap-1">
+            <div class="flex items-center gap-1">
               <code><%= @promotion.code.upcase %></code>
               <%= clipboard_component(@promotion.code.upcase) %>
             </div>
@@ -87,7 +87,7 @@
 
 <%= turbo_frame_tag :promotion_edit_settings do %>
   <div class="card">
-    <div class="card-header d-flex justify-content-between">
+    <div class="card-header flex justify-between">
       <h5 class="card-title">
         <%= Spree.t(:settings) %>
       </h5>
@@ -96,12 +96,12 @@
     <div class="card-body p-0">
       <ul class="list-group list-group-flush">
         <% unless @promotion.multi_codes? %>
-          <li class="list-group-item d-flex justify-content-between align-items-center">
+          <li class="list-group-item flex justify-between items-center">
             <span class="text-muted"><%= Spree.t(:usage_limit) %></span>
             <%= render 'spree/admin/promotions/usage_limit', promotion: @promotion %>
           </li>
         <% end %>
-        <li class="list-group-item d-flex justify-content-between align-items-center">
+        <li class="list-group-item flex justify-between items-center">
           <span class="text-muted">
             <%= I18n.t('activerecord.attributes.spree/promotion.starts_at') %>
           </span>
@@ -111,7 +111,7 @@
             <span class="text-muted"><%= Spree.t(:not_available) %></span>
           <% end %>
         </li>
-        <li class="list-group-item d-flex justify-content-between align-items-center">
+        <li class="list-group-item flex justify-between items-center">
           <span class="text-muted">
             <%= Spree.t(:expires_at) %>
           </span>

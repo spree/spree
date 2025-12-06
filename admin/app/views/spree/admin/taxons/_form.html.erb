@@ -8,7 +8,7 @@
     </div>
 
     <% if @taxon.new_record? %>
-      <div class="card mb-6" data-controller="reveal" data-reveal-hidden-class="d-none">
+      <div class="card mb-6" data-controller="reveal" data-reveal-hidden-class="hidden">
         <div class="card-header">
           <h5 class="card-title"><%= Spree.t('admin.taxon_type') %></h5>
         </div>
@@ -26,7 +26,7 @@
             <span class="text-muted"><%= Spree.t('admin.taxon_types.automatic_info') %></span>
           </div>
         </div>
-        <div class="card-body border-t pt-6 d-none" data-reveal-target="item">
+        <div class="card-body border-t pt-6 hidden" data-reveal-target="item">
           <h6><%= Spree.t(:rules) %></h6>
           <%= render 'spree/admin/taxons/rules_form', f: f %>
         </div>
@@ -45,7 +45,7 @@
       <% end %>
 
       <div class="card mb-6">
-        <div class="card-header d-flex align-items-center justify-content-between">
+        <div class="card-header flex items-center justify-between">
           <h5 class="card-title">
             <%= Spree.t(:products) %>
             <span class="badge badge-info ml-2" id="product_count">
@@ -59,13 +59,13 @@
         </div>
 
         <div class="card-body border-b pb-0">
-          <div class="d-flex align-items-center">
+          <div class="flex items-center">
             <%= f.spree_select :sort_order, taxon_sort_options_for_select, {}, { class: 'custom-select custom-select-sm w-auto ml-2',  data: { action: 'change->auto-submit#submit' } } %>
           </div>
         </div>
 
         <div class="card-body p-2" style="min-height: 300px">
-          <div class="d-block overflow-y-auto overflow-x-hidden" style="max-height: 300px">
+          <div class="block overflow-y-auto overflow-x-hidden" style="max-height: 300px">
             <%= turbo_frame_tag :classifications, src: spree.admin_taxon_classifications_path(@taxon.id), loading: :lazy do %>
               <%= render 'spree/admin/shared/spinner' %>
             <% end %>

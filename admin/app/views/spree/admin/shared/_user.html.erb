@@ -1,4 +1,4 @@
-<%= link_to spree.admin_user_path(user), class: 'rounded p-2 d-flex justify-content-start align-items-center text-decoration-none hover-light', data: {turbo_frame: :_top, row_link_target: :link} do %>
+<%= link_to spree.admin_user_path(user), class: 'rounded p-2 flex justify-start items-center text-decoration-none hover-light', data: {turbo_frame: :_top, row_link_target: :link} do %>
   <% if user.name.present? %>
     <%= render_avatar(user, width: 48, height: 48, class: 'mr-4 avatar') %>
   <% else %>
@@ -6,7 +6,7 @@
   <% end %>
   <div class="text-left">
     <% if customer_full_name(user) %>
-      <span class="font-bold text-dark"><%= customer_full_name(user) %></span>
+      <span class="font-bold text-gray-900"><%= customer_full_name(user) %></span>
       <br />
     <% end %>
     <% unless defined?(current_vendor) && current_vendor %>

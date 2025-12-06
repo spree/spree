@@ -2,13 +2,13 @@
 <% taxon = child_resource %>
 
 
-<div class="sortable-tree-item-row d-flex align-items-center w-100 rounded-lg hover-light border" data-controller="row-link">
-  <div class="move-handle mr-4 ml-2">
-    <%= icon('grip-vertical', class: 'rounded hover-gray p-2') %>
+<div class="sortable-tree-item-row flex items-center w-full rounded-lg hover-light border" data-controller="row-link">
+  <div class="move-handle mr-3 ml-2">
+    <%= icon('grip-vertical', class: 'rounded hover:bg-gray-100 p-2 cursor-grab') %>
   </div>
 
-  <div class="flex-grow-1 cursor-pointer" data-action="click->row-link#openLink">
-    <div class="d-flex align-items-center overflow-hidden w-100 <% if taxon.square_image&.attached? || taxon.image&.attached? %>py-2<% else %>py-4<% end %>">
+  <div class="grow cursor-pointer" data-action="click->row-link#openLink">
+    <div class="flex items-center overflow-hidden w-full <% if taxon.square_image&.attached? || taxon.image&.attached? %>py-2<% else %>py-3<% end %>">
       <% if taxon.square_image&.attached? && taxon.square_image.variable? %>
         <%= spree_image_tag(taxon.square_image, class: 'rounded mr-4', width: 48, height: 48, loading: :lazy) %>
       <% elsif taxon.image&.attached? && taxon.image.variable? %>
@@ -26,11 +26,11 @@
     <% end %>
   </div>
 
-  <div class="d-flex align-items-center px-4 ml-4 gap-2">
+  <div class="flex items-center px-3 ml-3 gap-2">
     <%= link_to_edit(taxon, url: spree.edit_admin_taxonomy_taxon_path(taxonomy, taxon.id), data: { row_link_target: :link, turbo_frame: '_top' }) if can?(:edit, taxon) %>
 
-    <%= dropdown class: 'h-100' do %>
-      <%= dropdown_toggle class: 'btn-sm px-1 h-100' do %>
+    <%= dropdown class: 'h-full' do %>
+      <%= dropdown_toggle class: 'btn-sm btn-light px-1 h-full' do %>
         <%= icon('dots-vertical', class: 'mr-0') %>
       <% end %>
       <%= dropdown_menu do %>

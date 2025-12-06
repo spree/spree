@@ -1,6 +1,6 @@
 <% if can?(:manage, current_store) && !enterprise_edition? %>
   <% unless session[:spree_enterprise_edition_notice_dismissed] %>
-    <section class="d-none d-lg-block">
+    <section class="hidden lg:block">
       <div id="enterprise-edition-notice">
         <%= link_to '', spree.admin_dismiss_enterprise_edition_notice_path, data: { turbo_method: :patch }, class: 'btn-close' %>
         <p>You're using Spree Community Edition. To get access to all features, please upgrade to Enterprise Edition.</p>

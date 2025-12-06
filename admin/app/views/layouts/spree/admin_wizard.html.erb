@@ -4,17 +4,17 @@
     <%= render "spree/admin/shared/head" %>
   </head>
 
-  <body class="admin admin-wizard min-vh-100 <%= controller_name %> <%= action_name %>"
+  <body class="admin admin-wizard min-h-screen <%= controller_name %> <%= action_name %>"
     data-controller="admin drawer dialog"
     data-action="keydown.ctrl+s->admin#save keydown.meta+s->admin#save"
   >
     <%= render_admin_partials(:body_start_partials) %>
 
-    <header id="header" class="d-flex align-items-center p-0">
+    <header id="header" class="flex items-center p-0">
       <%= render 'spree/admin/shared/back_to_dashboard' %>
 
       <% if content_for?(:steps) %>
-        <ol class="d-flex align-items-center list-unstyled flex-grow-1 justify-content-between align-items-center m-0" style="height: 60px;" id="steps">
+        <ol class="flex items-center list-none p-0 grow justify-between items-center m-0" style="height: 60px;" id="steps">
           <%= yield :steps %>
         </ol>
       <% end %>

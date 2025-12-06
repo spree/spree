@@ -14,7 +14,7 @@
   </p>
 <% end %>
 
-<div class="d-flex gap-4">
+<div class="flex gap-4">
   <%= link_to_with_icon 'plus', Spree.t(:add_product), spree.new_admin_product_path, class: 'btn btn-primary', data: { turbo_frame: '_top' } if can?(:create, Spree::Product) %>
   <%= link_to_with_icon 'table-import', Spree.t(:import), spree.new_admin_import_path(type: 'Spree::Imports::Products'), class: 'btn btn-light', data: { action: 'drawer#open',turbo_frame: :drawer } if can?(:create, Spree::Import) %>
   

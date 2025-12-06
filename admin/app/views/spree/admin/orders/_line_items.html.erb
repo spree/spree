@@ -1,23 +1,23 @@
 <% if @line_items.any? %>
   <details class="card mb-6" <% if !@order.completed? || params[:line_item_updated].present? %>open<% end %>>
-    <summary class="card-header d-flex justify-content-between align-items-center list-style-none cursor-pointer border-0 bg-transparent">
-      <h5 class="card-title d-flex align-items-center">
+    <summary class="card-header flex justify-between items-center list-none cursor-pointer border-0 bg-transparent">
+      <h5 class="card-title flex items-center">
         <%= icon('shopping-cart', class: 'mr-2') %>
         <%= Spree.t(:line_items) %>
         <span class="badge badge-info ml-2"><%= @line_items.count %></span>
       </h5>
-      <div class="d-flex gap-2">
+      <div class="flex gap-2">
         <% if can?(:create, Spree::LineItem.new(order: @order)) %>
           <%= link_to_with_icon 'plus', Spree.t(:new_line_item), spree.new_admin_order_line_item_path(@order), data: { turbo_frame: 'dialog', action: 'dialog#open' }, class: "btn btn-secondary btn-sm" %>
         <% end %>
-        <span class="btn btn-light btn-sm d-inline-flex align-items-center">
+        <span class="btn btn-light btn-sm inline-flex items-center">
           <%= Spree.t(:show_details) %>
           <%= icon('selector', class: 'mr-0 ml-1 arrow') %>
         </span>
       </div>
     </summary>
     <div class="card-body mb-0 p-0" id="line-items">
-      <div class="d-flex align-items-center text-muted border-b py-2 px-4 text-sm order-line-items__row bg-light border-t">
+      <div class="flex items-center text-muted border-b py-2 px-4 text-sm order-line-items__row bg-light border-t">
         <div class="w-35">
           <%= Spree.t(:item_description) %>
         </div>
@@ -54,7 +54,7 @@
       </h5>
     </div>
     <div class="card-body">
-      <%= link_to_with_icon 'plus', Spree.t(:new_line_item), spree.new_admin_order_line_item_path(@order), data: { turbo_frame: 'dialog', action: 'dialog#open' }, class: "btn btn-secondary w-100 py-4" %>
+      <%= link_to_with_icon 'plus', Spree.t(:new_line_item), spree.new_admin_order_line_item_path(@order), data: { turbo_frame: 'dialog', action: 'dialog#open' }, class: "btn btn-secondary w-full py-4" %>
     </div>
   </div>
 <% end %>

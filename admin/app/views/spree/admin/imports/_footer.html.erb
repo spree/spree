@@ -1,6 +1,6 @@
 <footer id="footer">
   <% if import.rows.any? %>
-    <div class="flex-grow-1 d-flex flex-column">  
+    <div class="grow flex flex-col">  
       <%= progress_bar_component(import.rows.processed.count, min: 0, max: import.rows_count) %>
     </div>
 

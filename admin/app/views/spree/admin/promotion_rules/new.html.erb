@@ -11,7 +11,7 @@
         <%= render 'spree/admin/shared/spinner' %>
         <% options_for_promotion_rule_types(@promotion).each do |rule_type| %>
           <% key = rule_type.demodulize.underscore %>
-          <%= link_to spree.new_admin_promotion_rule_path(@promotion, promotion_rule: { type: rule_type }), class: 'd-flex align-items-top w-100 py-2 px-4 hover-gray rounded-lg mb-2', data: { turbo_prefetch: false } do %>
+          <%= link_to spree.new_admin_promotion_rule_path(@promotion, promotion_rule: { type: rule_type }), class: 'flex align-items-top w-full py-2 px-4 hover:bg-gray-100 rounded-lg mb-2', data: { turbo_prefetch: false } do %>
             <%= radio_button_tag :type, rule_type %>
             <div class="ml-4">
               <h6 class="font-bold mb-1"><%= Spree.t("promotion_rule_types.#{key}.name") %></h6>

@@ -1,12 +1,12 @@
 <tr id="<%= spree_dom_id property %>" data-controller="row-link" data-sortable-update-url="<%= spree.admin_property_path(property) %>">
   <td class="w-5 move-handle text-center">
-    <%= icon('grip-vertical', class: 'rounded hover-gray p-2') %>
+    <%= icon('grip-vertical', class: 'rounded hover:bg-gray-100 p-2') %>
   </td>
   <td class="w-20 cursor-pointer py-0" data-action="click->row-link#openLink">
     <code><%= property.name %></code>
   </td>
   <td class="w-20 cursor-pointer" data-action="click->row-link#openLink">
-    <%= link_to property.presentation, spree.edit_admin_property_path(property), class: 'text-decoration-none d-flex align-items-center font-bold text-dark', data: { row_link_target: :link, turbo_frame: '_top' } %>
+    <%= link_to property.presentation, spree.edit_admin_property_path(property), class: 'text-decoration-none flex items-center font-bold text-gray-900', data: { row_link_target: :link, turbo_frame: '_top' } %>
   </td>
   <td class="w-20 cursor-pointer" data-action="click->row-link#openLink">
     <span class="badge badge-light"><%= property.kind.humanize %></span>

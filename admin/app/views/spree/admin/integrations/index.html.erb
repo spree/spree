@@ -17,7 +17,7 @@
     <% if grouped_available_store_integrations.any? %>
       <% grouped_available_store_integrations.each do |group, integrations| %>
         <% if group.present? %>
-          <div class="my-2 text-muted font-light text-uppercase"><%= Spree.t(group) %></div>
+          <div class="my-2 text-muted font-light uppercase"><%= Spree.t(group) %></div>
         <% end %>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">

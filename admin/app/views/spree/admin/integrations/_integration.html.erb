@@ -3,10 +3,10 @@
 
 <% integration_description ||= Spree.t("admin.integrations.#{integration_class.integration_key}.description") %>
 
-<div id="integration-<%= integration_class.integration_key %>" class="col mb-6 d-flex align-items-stretch">
+<div id="integration-<%= integration_class.integration_key %>" class="col mb-6 flex items-stretch">
   <div class="card w-full">
-    <div class="card-header border-b d-flex align-items-center justify-content-between h-auto pr-4 <% if integration.present? %>bg-success<% end %>">
-      <div style="height: 36px" class="d-flex align-items-center">
+    <div class="card-header border-b flex items-center justify-between h-auto pr-4 <% if integration.present? %>bg-success<% end %>">
+      <div style="height: 36px" class="flex items-center">
         <%= image_tag integration_class.icon_path, alt: integration_name, height: 36 if integration_class.icon_path.present? %>
       </div>
 
@@ -22,7 +22,7 @@
       <p><%= integration_description %></p>
     </div>
 
-    <div class="card-footer d-flex <% if integration.present? %>align-items-baseline justify-content-between<% else %>flex-column<% end %>">
+    <div class="card-footer flex <% if integration.present? %>items-baseline justify-between<% else %>flex-col<% end %>">
       <% if integration.present? %>
         <%= link_to spree.edit_admin_integration_path(integration), class: 'card-link btn btn-sm btn-light' do %>
           <%= icon 'settings' %>

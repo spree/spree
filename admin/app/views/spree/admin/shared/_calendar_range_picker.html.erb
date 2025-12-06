@@ -1,13 +1,13 @@
 <% date_from_input_name ||= :date_from %>
 <% date_to_input_name ||= :date_to %>
-<% css_classes ||= "btn btn-light d-inline-flex align-items-center dropdown-toggle" %>
+<% css_classes ||= "btn btn-light inline-flex items-center dropdown-toggle" %>
 
 <% date_from_value ||= params[date_from_input_name] %>
 <% date_to_value ||= params[date_to_input_name] %>
 
 <% dropdown_direction ||= 'left' %>
 
-<%= dropdown direction: dropdown_direction, data: { controller: 'dropdown calendar-range', action: 'click->calendar-range#open' }, class: 'h-100', portal: false do %>
+<%= dropdown direction: dropdown_direction, data: { controller: 'dropdown calendar-range', action: 'click->calendar-range#open' }, class: 'h-full', portal: false do %>
   <%= dropdown_toggle class: css_classes do %>
     <%= icon('calendar', class: 'mr-2') %>
     <div data-calendar-range-target="label">
@@ -19,7 +19,7 @@
     </div>
   <% end %>
   <%= dropdown_menu class: "pt-2 px-2 pb-1", style: 'min-width: 29rem' do %>
-    <div data-calendar-range-target="picker" class="d-none"></div>
+    <div data-calendar-range-target="picker" class="hidden"></div>
   <% end %>
 
   <%= hidden_field_tag date_from_input_name, date_from_value&.to_date, data: { 'calendar-range-target': 'dateFrom' } %>

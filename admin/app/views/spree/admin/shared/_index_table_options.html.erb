@@ -7,9 +7,9 @@
 
 <% if collection.any? && collection.respond_to?(:current_page) %>
   <div class="pagination-container">
-    <div class="index-pagination-row d-flex align-items-center justify-content-between">
+    <div class="index-pagination-row flex items-center justify-between p-2">
       <%= per_page_dropdown %>
-      <div class="d-none d-lg-block text-center text-muted">
+      <div class="hidden lg:block text-center text-muted">
         <%= page_entries_info(collection, entry_name: entry_name) %>
       </div>
       <div class="text-right">

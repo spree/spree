@@ -35,9 +35,9 @@
             <%= Spree.t(:security) %>
           </h5>
         </div>
-        <div class="card-body" data-controller="reveal" data-reveal-hidden-class="d-none">
+        <div class="card-body" data-controller="reveal" data-reveal-hidden-class="hidden">
           <%= f.spree_check_box :preferred_password_protected, label: Spree.t(:password_protected), help: 'Checking this box will put your storefront behind a password.', data: { action: 'reveal#toggle' } %>
-          <div class="d-none" data-reveal-target="item">
+          <div class="hidden" data-reveal-target="item">
             <%= f.spree_text_field :storefront_password, label: Spree.t(:password), help: 'Enter a password to protect your storefront.' %>
           </div>
         </div>

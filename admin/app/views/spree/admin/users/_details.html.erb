@@ -1,6 +1,6 @@
 <div class="card mb-6" id="user-details">
   <%= turbo_frame_tag :edit_user do %>
-    <div class="card-header d-flex align-items-center justify-content-between">
+    <div class="card-header flex items-center justify-between">
       <h5 class="card-title">
         <%= Spree.t(:details) %>
       </h5>
@@ -8,30 +8,30 @@
     </div>
     <div class="card-body p-0">    
       <ul class="list-group list-group-flush">
-        <li class="list-group-item d-flex justify-content-between align-items-center">
+        <li class="list-group-item flex justify-between items-center">
           <%= Spree.t(:email) %>
           <span>
             <%= @user.email %>
             <%= clipboard_component(@user.email) %>
           </span>
         </li>
-        <li class="list-group-item d-flex justify-content-between align-items-center">
+        <li class="list-group-item flex justify-between items-center">
           <%= Spree.t(:phone) %>
           <span>
             <%= @user.phone.presence || Spree.t(:not_available) %>
           </span>
         </li>
-        <li class="list-group-item d-flex justify-content-between align-items-center">
+        <li class="list-group-item flex justify-between items-center">
           <%= Spree.t(:name) %>
           <span>
             <%= customer_full_name(@user) %>
           </span>
         </li>
-        <li class="list-group-item d-flex justify-content-between align-items-center">
+        <li class="list-group-item flex justify-between items-center">
           <%= Spree.t(:email_marketing) %>
           <%= active_badge(@user.accepts_email_marketing?) %>
         </li>
-        <li class="list-group-item d-flex justify-content-between align-items-center">
+        <li class="list-group-item flex justify-between items-center">
           <%= Spree.t(:tags) %>
           <span>
             <% @user.tag_list.each do |tag| %>
@@ -39,7 +39,7 @@
             <% end %>
           </span>
         </li>
-        <li class="list-group-item d-flex justify-content-between align-items-center">
+        <li class="list-group-item flex justify-between items-center">
           <%= Spree.t(:roles) %>
           <span>
             <% @user.spree_roles.each do |role| %>

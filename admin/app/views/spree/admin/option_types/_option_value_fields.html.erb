@@ -10,7 +10,7 @@
   >
   <td class="w-5 <%= f.object.id.present? ? 'move-handle text-center' : 'text-center' %>">
     <% if f.object.id.present? %>
-      <%= icon('grip-vertical', class: 'rounded hover-gray p-2') %>
+      <%= icon('grip-vertical', class: 'rounded hover:bg-gray-100 p-2') %>
     <% end %>
     <%= f.hidden_field :id %>
   </td>

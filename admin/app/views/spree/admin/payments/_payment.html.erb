@@ -1,5 +1,5 @@
 <div class="card" id="<%= dom_id(payment) %>">
-  <div class="card-header d-flex align-items-center gap-2">
+  <div class="card-header flex items-center gap-2">
     <span class="badge badge-<%= payment.state %> gap-1">
       <% if payment.completed? %>
         <%= icon('check') %>
@@ -53,8 +53,8 @@
       </div>
     <% end %>
 
-    <div class="d-flex">
-      <div class="w-50">
+    <div class="flex">
+      <div class="w-1/2">
         <p class="mb-0.5"><%= Spree.t(:amount) %>:</p>
         <strong><%= payment.display_amount %></strong>
 
@@ -70,7 +70,7 @@
         <% end %>
       </div>
       <% if payment.source.present? %>
-        <div class="w-50">
+        <div class="w-1/2">
           <p class="mb-2"><%= Spree.t(:payment_source) %>:</p>
           <div class="rounded-lg bg-light border shadow-xs p-6">
             <%= render 'spree/shared/payment', payment: payment %>
@@ -81,7 +81,7 @@
   </div>
   <% if payment.transaction_id.present? && !payment.store_credit? %>
     <div class="card-footer border-t border-t-dashed" data-controller="reveal">
-      <p class="mb-0 d-flex justify-content-between align-items-center">
+      <p class="mb-0 flex justify-between items-center">
         <span>
           <%= Spree.t(:risk_analysis) %>
           &nbsp;

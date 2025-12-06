@@ -1,5 +1,5 @@
 <div class="card mb-6">
-  <div class="card-header d-flex align-items-center border-0">
+  <div class="card-header flex items-center border-0">
     <h6 class="card-title">
       <%= icon('truck', class: 'mr-2') %>
       <%= Spree.t(:shipments) %>
@@ -10,7 +10,7 @@
       <%= order_shipment_state(@order, class: "ml-auto") %>
     <% end %>
   </div>
-  <div class="card-body px-2 pt-0 pb-2 d-flex flex-column gap-2">
+  <div class="card-body px-2 pt-0 pb-2 flex flex-col gap-2">
     <% if @shipments.any? %>
       <%= render partial: "shipment", collection: @shipments %>
     <% else %>

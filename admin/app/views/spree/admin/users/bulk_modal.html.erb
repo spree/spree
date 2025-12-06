@@ -4,7 +4,7 @@
     <p><%= @body %></p>
 
     <% if params[:kind] == 'add_tags' || params[:kind] == 'remove_tags' %>
-      <%= tom_select_tag 'tags', multiple: true, class: 'w-100', options: user_tags_json_array, required: true, value_field: :name, create: params[:kind] == 'add_tags' %>
+      <%= tom_select_tag 'tags', multiple: true, class: 'w-full', options: user_tags_json_array, required: true, value_field: :name, create: params[:kind] == 'add_tags' %>
     <% end %>
   </div>
   <div class="dialog-footer">

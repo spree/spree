@@ -10,10 +10,10 @@
 
 <% if content_for?(:page_title) %>
   <header id="page-header" class="container mx-auto px-6 max-w-screen-xl" data-controller="sticky">
-    <h3 class="page-header-title mb-0 d-flex align-items-center gap-6">
+    <h3 class="page-header-title mb-0 flex items-center gap-6">
       <%= yield :page_title %>
     </h3>
-    <div id="page_actions" class="ml-auto page-actions d-flex align-items-center gap-2">
+    <div id="page_actions" class="ml-auto page-actions flex items-center gap-2">
       <%= yield :page_actions if content_for?(:page_actions) %>
 
       <% if action_name == 'edit' && @object %>
@@ -22,8 +22,8 @@
       <% end %>
 
       <% if show_record_subtitle || content_for(:page_actions_dropdown) %>
-        <%= dropdown id: 'page_actions_dropdown', class: 'h-100', portal: false do %>
-          <%= dropdown_toggle id: 'more-actions-link', class: 'btn-light h-100' do %>
+        <%= dropdown id: 'page_actions_dropdown', class: 'h-full', portal: false do %>
+          <%= dropdown_toggle id: 'more-actions-link', class: 'btn-light h-full' do %>
             <%= icon 'dots-vertical', class: 'mr-0' %>
           <% end %>
           <%= dropdown_menu id: 'page_actions_dropdown_menu' do %>

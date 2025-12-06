@@ -14,10 +14,10 @@
   <div class="col-span-12 lg:col-span-4 mb-4" data-rule-form-target="value">
     <%= render "spree/admin/taxons/rule_forms/#{rf.object.type.demodulize.underscore}", rule_form: rf %>
   </div>
-  <div class="col-span-12 lg:col-span-1 mb-4 d-flex align-items-center justify-content-center">
+  <div class="col-span-12 lg:col-span-1 mb-4 flex items-center justify-center">
     <button type="button" data-action="nested-form#remove" class="btn btn-sm btn-danger px-2" data-controller="tooltip" aria-label="<%= Spree.t(:remove_condition) %>">
       <%= icon('x', class: 'mr-0') %>
-      <span class="d-lg-none"><%= Spree.t(:remove_condition) %></span>
+      <span class="lg:hidden"><%= Spree.t(:remove_condition) %></span>
       <%= tooltip(Spree.t(:remove_condition)) %>
     </button>
     <%= rf.hidden_field :_destroy if rf.object.persisted? %>

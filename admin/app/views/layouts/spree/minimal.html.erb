@@ -3,15 +3,15 @@
   <head>
     <%= render "spree/admin/shared/head" %>
   </head>
-  <body class="admin min-vh-100 <%= controller_name %> <%= action_name %>" data-controller="dialog">
+  <body class="admin min-h-screen <%= controller_name %> <%= action_name %>" data-controller="dialog">
     <div class="container">
       <div class="grid grid-cols-12 gap-6 bg-white">
         <div
-          class="col-span-12 lg:col-span-5 d-none d-lg-flex bg-light min-vh-100"
+          class="col-span-12 lg:col-span-5 hidden lg:flex bg-light min-h-screen"
           style="background-image: url('<%= asset_path('login_sidebar_background.png') %>');background-repeat: no-repeat;background-size: cover;background-position: center')"
         >
         </div>
-        <div class="col-span-12 lg:col-span-6 xl:col-span-4 xl:col-start-2 py-6 d-flex flex-column justify-content-center vh-100">
+        <div class="col-span-12 lg:col-span-6 xl:col-span-4 xl:col-start-2 py-6 flex flex-col justify-center h-screen">
           <%= yield %>
         </div>
       </div>

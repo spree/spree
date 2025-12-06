@@ -1,7 +1,7 @@
 <%= turbo_frame_tag :dialog do %>
   <%= form_for @address, url: spree.admin_order_shipping_address_path(@order), data: {turbo_frame: :_top}, method: :post do |f| %>
     <%= dialog_header(Spree.t(:new_shipping_address)) %>
-    <div class="dialog-body d-flex flex-col gap-4">
+    <div class="dialog-body flex flex-col gap-4">
       <%= render 'form', address: @address, f: f%>
     </div>
     <div class="dialog-footer">

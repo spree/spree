@@ -6,12 +6,12 @@
   <div data-controller="tabs">
     <ul class="nav nav-pills nav-fill m-4" id="pills-tab" role="tablist">
       <li class="nav-item" role="presentation">
-        <button class="nav-link w-100 active" id="pills-standard" data-tabs-target="tab" data-action="click->tabs#select" type="button" role="tab" aria-controls="pills-standard" aria-selected="true">
+        <button class="nav-link w-full active" id="pills-standard" data-tabs-target="tab" data-action="click->tabs#select" type="button" role="tab" aria-controls="pills-standard" aria-selected="true">
           Standard
         </button>
       </li>
       <li class="nav-item" role="presentation">
-        <button class="nav-link w-100" id="pills-custom" data-tabs-target="tab" data-action="click->tabs#select" type="button" role="tab" aria-controls="pills-custom" aria-selected="false">
+        <button class="nav-link w-full" id="pills-custom" data-tabs-target="tab" data-action="click->tabs#select" type="button" role="tab" aria-controls="pills-custom" aria-selected="false">
           Custom
         </button>
       </li>
@@ -21,7 +21,7 @@
         <div class="px-4 py-2">
           <div class="mb-4 form-group">
             <%= f.label :preferred_font_family, Spree.t(:font_family) %>
-            <%= f.select :preferred_font_family, options_for_select(all_fonts_options, f.object.preferred_font_family), { include_blank: true }, class: 'd-none', data: { action: 'change->page-builder#refreshFontPreview', controller: 'font-picker', font_picker_fonts_from_google_value: google_fonts_list.to_json } %>
+            <%= f.select :preferred_font_family, options_for_select(all_fonts_options, f.object.preferred_font_family), { include_blank: true }, class: 'hidden', data: { action: 'change->page-builder#refreshFontPreview', controller: 'font-picker', font_picker_fonts_from_google_value: google_fonts_list.to_json } %>
           </div>
           <div class="mb-3 form-group" data-controller="range-input">
             <%= f.label :preferred_font_size_scale, Spree.t(:font_size_scale) %>
@@ -36,7 +36,7 @@
           <hr />
           <div class="mb-4 form-group">
             <%= f.label :preferred_header_font_family, Spree.t(:header_font_family) %>
-            <%= f.select :preferred_header_font_family, options_for_select(all_fonts_options, f.object.preferred_header_font_family), { include_blank: true }, class: 'd-none', data: { action: 'change->page-builder#refreshFontPreview', controller: 'font-picker', font_picker_fonts_from_google_value: google_fonts_list.to_json } %>
+            <%= f.select :preferred_header_font_family, options_for_select(all_fonts_options, f.object.preferred_header_font_family), { include_blank: true }, class: 'hidden', data: { action: 'change->page-builder#refreshFontPreview', controller: 'font-picker', font_picker_fonts_from_google_value: google_fonts_list.to_json } %>
           </div>
           <div class="mb-3 form-group" data-controller="range-input">
             <%= f.label :preferred_header_font_size_scale, Spree.t(:header_font_size_scale) %>
@@ -67,7 +67,7 @@
           <hr class="my-6" />
 
           <h6>Example how to add custom fonts</h6>
-          <textarea class="bg-gray-100 rounded w-100 border-0 p-2 text-muted" style="height: 250px"><link rel="stylesheet" href="https://url.to.your.font.com/font.js" />
+          <textarea class="bg-gray-100 rounded w-full border-0 p-2 text-muted" style="height: 250px"><link rel="stylesheet" href="https://url.to.your.font.com/font.js" />
 <style>
   /* set font for body */
   body {

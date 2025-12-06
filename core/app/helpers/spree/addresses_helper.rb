@@ -23,7 +23,7 @@ module Spree
       method_name = Spree.t(:zipcode)
       form.label(:zipcode, method_name, id: address_id + '_zipcode_label', class: 'block text-xs text-neutral-600 mb-1') +
       form.text_field(:zipcode,
-                      class: 'text-input h-full',
+                      class: 'text-input',
                       placeholder: method_name,
                       required: country&.zipcode_required?,
                       data: { 'address-form-target': 'zipcode', address_autocomplete_target: 'zipcode' },

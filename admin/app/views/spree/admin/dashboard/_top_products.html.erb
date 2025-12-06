@@ -1,7 +1,7 @@
 <% report_link = spree.new_admin_report_path(type: 'products_performance', date_from: params[:date_from], date_to: params[:date_to], vendor_id: @vendor.try(:id)) %>
 
 <div class="card mt-4 mb-6">
-  <div class="card-header d-flex justify-content-between align-items-center">
+  <div class="card-header flex justify-between items-center">
     <h5 class="card-title">
       <%= Spree.t('admin.dashboard.top_products') %>
     </h5>
@@ -40,7 +40,7 @@
             <tr>
               <% cache_unless @vendor, spree_base_cache_scope.call(product) do %>
                 <td>
-                  <%= link_to spree.edit_admin_product_path(product), class: 'd-flex align-items-center font-bold', data: { 'turbo-frame': '_top' } do %>
+                  <%= link_to spree.edit_admin_product_path(product), class: 'flex items-center font-bold', data: { 'turbo-frame': '_top' } do %>
                     <div class="mr-4">
                       <%= render 'spree/admin/shared/product_image', object: product %>
                     </div>
@@ -76,7 +76,7 @@
   </div>
   <% if @top_products.any? && can?(:manage, Spree::Report) %>
     <p class="text-center mt-0 border-t py-2 mb-0">
-      <%= link_to Spree.t('admin.dashboard.view_report'), report_link, class: 'm-2 w-50 btn btn-light mt-2', data: { turbo_frame: '_top' } %>
+      <%= link_to Spree.t('admin.dashboard.view_report'), report_link, class: 'm-2 w-1/2 btn btn-light mt-2', data: { turbo_frame: '_top' } %>
     </p>
   <% end %>
   </div>

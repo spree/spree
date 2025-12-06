@@ -8,7 +8,7 @@ export default class extends Controller {
 
   connect() {
     this.prepareLinkTag()
-    this.element.classList.remove('d-none')
+    this.element.classList.remove('hidden', 'd-none')
     this.tomSelect = new TomSelect(this.element, {
       create: false,
       maxOptions: 110,

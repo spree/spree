@@ -1,7 +1,7 @@
 <%= turbo_frame_tag 'media-form', class: 'card mb-6', data: { controller: 'media-form', media_form_delete_url_value: spree.bulk_destroy_admin_assets_path(viewable_id: viewable&.id) } do %>
   <div class="card-header">
     <h5 class="card-title mr-2"><%= Spree.t(:media) %></h5>
-    <button type="button" data-media-form-target="deleteButton" class="btn btn-sm btn-danger btn-outline d-none ml-auto" data-action="media-form#deleteSelected">
+    <button type="button" data-media-form-target="deleteButton" class="btn btn-sm btn-danger btn-outline hidden ml-auto" data-action="media-form#deleteSelected">
       <%= icon('trash') %>
       <%= Spree.t(:delete_selected) %>
     </button>

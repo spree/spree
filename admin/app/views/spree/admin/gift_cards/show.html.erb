@@ -20,17 +20,17 @@
   <div class="col-span-12 md:col-span-8">
 
     <div class="card mb-6">
-      <div class="card-header d-flex justify-content-between align-items-center">
+      <div class="card-header flex justify-between items-center">
         <h5 class="card-title">
           <%= Spree.t('admin.gift_cards.usage') %>
         </h5>
       </div>
       <div class="card-body border-b">
-        <div class="d-flex justify-content-between align-items-center">
-          <div class="w-75">
+        <div class="flex justify-between items-center">
+          <div class="w-3/4">
             <%= progress_bar_component(@object.amount_used, max: @object.amount) %>
           </div>
-          <div class="w-25 text-right">
+          <div class="w-1/4 text-right">
             <%= @object.display_amount_used %> <%= Spree.t(:used).downcase %> / <%= @object.display_amount %>
           </div>
         </div>
@@ -52,7 +52,7 @@
                 <% @orders.each do |order| %>
                   <tr>
                     <td>
-                      <%= link_to order.number, spree.edit_admin_order_path(order), class: 'text-dark font-bold' %>
+                      <%= link_to order.number, spree.edit_admin_order_path(order), class: 'text-gray-900 font-bold' %>
                     </td>
                     <td>
                       <% if order.completed? %>
@@ -91,7 +91,7 @@
   <div class="col-span-12 md:col-span-4">
     <%= turbo_frame_tag :gift_card_settings do %>
       <div class="card">
-        <div class="card-header d-flex justify-content-between">
+        <div class="card-header flex justify-between">
           <h5 class="card-title">
             <%= Spree.t(:settings) %>
           </h5>
@@ -99,7 +99,7 @@
         </div>
         <div class="card-body p-0">
           <ul class="list-group list-group-flush">
-            <li class="list-group-item d-flex justify-content-between align-items-center">
+            <li class="list-group-item flex justify-between items-center">
               <span class="text-muted">
                 <%= Spree.t(:code) %>
               </span>
@@ -109,7 +109,7 @@
               </span>
             </li>
 
-            <li class="list-group-item d-flex justify-content-between align-items-center">
+            <li class="list-group-item flex justify-between items-center">
               <span class="text-muted">
                 <%= Spree.t(:customer) %>
               </span>
@@ -124,7 +124,7 @@
               </span>
             </li>
 
-            <li class="list-group-item d-flex justify-content-between align-items-center">
+            <li class="list-group-item flex justify-between items-center">
               <span class="text-muted">
                 <%= Spree.t(:amount) %>
               </span>
@@ -132,7 +132,7 @@
                 <%= @object.display_amount %>
               </span>
             </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
+            <li class="list-group-item flex justify-between items-center">
               <span class="text-muted">
                 <%= Spree.t(:used) %>
               </span>
@@ -141,7 +141,7 @@
               </span>
             </li>
 
-            <li class="list-group-item d-flex justify-content-between align-items-center">
+            <li class="list-group-item flex justify-between items-center">
               <span class="text-muted">
                 <%= Spree.t('store_credit.remaining') %>
               </span>
@@ -150,7 +150,7 @@
               </span>
             </li>
 
-            <li class="list-group-item d-flex justify-content-between align-items-center">
+            <li class="list-group-item flex justify-between items-center">
               <span class="text-muted">
                 <%= Spree.t(:currency) %>
               </span>
@@ -159,7 +159,7 @@
               </span>
             </li>
 
-            <li class="list-group-item d-flex justify-content-between align-items-center">
+            <li class="list-group-item flex justify-between items-center">
               <span class="text-muted">
                 <%= Spree.t(:expires_at) %>
               </span>
@@ -170,7 +170,7 @@
               <% end %>
             </li>
 
-            <li class="list-group-item d-flex justify-content-between align-items-center">
+            <li class="list-group-item flex justify-between items-center">
               <span class="text-muted">
                 <%= Spree.t(:created_by) %>
               </span>
@@ -185,7 +185,7 @@
               </span>
             </li>
 
-            <li class="list-group-item d-flex justify-content-between align-items-center">
+            <li class="list-group-item flex justify-between items-center">
               <span class="text-muted">
                 <%= Spree.t(:created_at) %>
               </span>

@@ -47,7 +47,7 @@
       </div>
     </div>
     <div class="card mb-12">
-      <div class="card-header d-flex align-items-center justify-content-between">
+      <div class="card-header flex items-center justify-between">
         <h5 class="card-title">
           <%= Spree.t(:products) %>
         </h5>
@@ -60,10 +60,10 @@
         </span>
       </div>
       <div class="card-body p-0" style="min-height: 300px">
-        <div class="d-flex flex-column gap-6 overflow-y-auto overflow-x-hidden p-6" style="max-height: 300px">
+        <div class="flex flex-col gap-6 overflow-y-auto overflow-x-hidden p-6" style="max-height: 300px">
           <%= f.fields_for :stock_movements do |smf| %>
             <% if smf.object.errors[:quantity].present? %>
-              <div class="alert alert-danger w-100 mb-0">
+              <div class="alert alert-danger w-full mb-0">
                 <% details = smf.object.errors.details[:quantity].first %>
                 <% error_message = smf.object.errors.generate_message(:quantity, :less_than_or_equal_to, {count: -details[:count], value: details[:value]}) %>
                 <%= smf.object.errors.full_message(:quantity, error_message) %>

@@ -1,5 +1,5 @@
 <div class="card mb-6">
-  <div class="card-header d-flex justify-content-between px-6">
+  <div class="card-header flex justify-between px-6">
     <h5 class="card-title">
       <%= icon('checklist', class: 'mr-6') %>
       <%= Spree.t(:rules) %>
@@ -10,7 +10,7 @@
   </div>
   <div class="card-body">
     <div class="form-group mb-0">
-      <div class="d-block d-lg-flex gap-6">
+      <div class="block lg:flex gap-6">
         <%= form_with model: @promotion, url: spree.admin_promotion_path(@promotion), method: :put, data: { controller: 'auto-submit' } do |f| %>
           <% Spree::Promotion::MATCH_POLICIES.each do |policy| %>
             <div class="custom-control custom-radio custom-control-inline">
@@ -22,9 +22,9 @@
       </div>
     </div>
   </div>
-  <div class="card-body p-2 d-flex flex-column gap-2">
+  <div class="card-body p-2 flex flex-col gap-2">
     <% if @promotion.promotion_rules.empty? %>
-      <div class="text-muted p-12 d-flex align-items-center w-100 justify-content-center">
+      <div class="text-muted p-12 flex items-center w-full justify-center">
         <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::PromotionRule)) %>
         <% if can?(:create, Spree::PromotionRule.new(promotion: @promotion)) %>
           <%= link_to_with_icon 'plus', Spree.t(:add_one), spree.new_admin_promotion_rule_path(@promotion), class: 'btn btn-light btn-sm ml-6', data: { turbo_frame: 'dialog', action: 'dialog#open' } %>

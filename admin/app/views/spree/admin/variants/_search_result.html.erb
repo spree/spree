@@ -1,7 +1,7 @@
 <div class="search-picker__option <% if variant.purchasable? || params[:all] %>cursor-pointer<% else %>opacity-50 disabled<% end %>" data-action="click->search-picker#toggle">
   <%= radio_button_tag "#{params[:param_name]}[variant_id]", variant.id, false, class: "custom-control-input", id: "ids_#{variant.id}", data: { action: 'search-picker#toggle', search_picker_target: "checkbox" }, disabled: !params[:all] && !variant.purchasable? %>
   <label for="ids_<%= variant.id %>" class="pr-2 <% unless variant.purchasable? %>cursor-not-allowed<% end %>">
-    <div class="w-70 d-flex align-items-center">
+    <div class="w-70 flex items-center">
       <div class="variant-image">
         <%= render 'spree/admin/shared/product_image', object: variant %>
       </div>

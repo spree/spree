@@ -1,6 +1,6 @@
 <tr data-controller="row-link">
   <td class="cursor-pointer w-30" data-action="click->row-link#openLink">
-    <div class="d-flex align-items-center">
+    <div class="flex items-center">
       <% if payment_method_icon_tag(payment_method.payment_icon_name).present? %>
         <%= payment_method_icon_tag(payment_method.payment_icon_name, height: 30, class: 'mr-2') %>
       <% end %>
@@ -8,13 +8,13 @@
       <%= payment_method.name %>
     </div>
   </td>
-  <td class="cursor-pointer w-40 text-wrap" data-action="click->row-link#openLink">
+  <td class="cursor-pointer w-40 whitespace-normal" data-action="click->row-link#openLink">
     <% if payment_method.try(:description_partial_name) %>
       <%= render "spree/admin/payment_methods/descriptions/#{payment_method.description_partial_name}", payment_method: payment_method %>
     <% end %>
   </td>
   <td class="actions w-30">
-    <div class="d-flex justify-content-end">
+    <div class="flex justify-end">
       <%= link_to_with_icon 'plus', Spree.t(:add), spree.new_admin_payment_method_path(payment_method: { type: payment_method.type }), class: 'btn btn-light btn-sm', data: { row_link_target: :link, turbo_frame: '_top' } %>
     </div>
   </td>

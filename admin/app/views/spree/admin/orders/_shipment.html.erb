@@ -1,8 +1,8 @@
 <% order ||= shipment.order %>
 <%= turbo_frame_tag dom_id(shipment), class: "card" do %>
-  <div class="card-header align-items-center justify-content-between">
-    <div class="d-flex align-items-center gap-2">
-      <span class="d-flex align-items-center"><%= shipment_state(shipment.state) %></span>
+  <div class="card-header items-center justify-between">
+    <div class="flex items-center gap-2">
+      <span class="flex items-center"><%= shipment_state(shipment.state) %></span>
       <strong class="shipment-number"><%= shipment.number %></strong>
       <% if shipment.shipped_at.present? %>
         <small class="text-muted">
@@ -11,7 +11,7 @@
       <% end %>
     </div>
 
-    <span class="d-flex justify-content-between align-items-center gap-2">
+    <span class="flex justify-between items-center gap-2">
       <small class="text-muted"><%= Spree.t(:package_from).downcase %></small>
       <strong>
         <% if can?(:edit, shipment.stock_location) %>
@@ -42,7 +42,7 @@
       </div>
       <%= render collection: shipment.manifest, partial: 'spree/admin/orders/shipment_manifest_item', as: :item, locals: { shipment: shipment } %>
     </div>
-    <%= turbo_frame_tag dom_id(shipment, :shipping_method), class: "py-2 px-4 d-flex justify-content-between align-items-center min-h-14" do %>
+    <%= turbo_frame_tag dom_id(shipment, :shipping_method), class: "py-2 px-4 flex justify-between items-center min-h-14" do %>
       <div>
         <% if rate = shipment.selected_shipping_rate %>
           <strong><%= rate.name %></strong>
@@ -60,7 +60,7 @@
     <% end %>
 
     <% unless shipment.digital? %>
-      <%= turbo_frame_tag dom_id(shipment, :tracking), class: "border-t px-4 d-flex justify-content-between align-items-center min-h-14" do %>
+      <%= turbo_frame_tag dom_id(shipment, :tracking), class: "border-t px-4 flex justify-between items-center min-h-14" do %>
         <div class="py-4">
           <strong><%= Spree.t(:tracking) %>: </strong>
           <% if shipment.tracked? %>
@@ -85,7 +85,7 @@
     <% end %>
 
     <% if can_ship?(shipment) %>
-      <div class="card-footer d-flex justify-content-end border-t bg-light">
+      <div class="card-footer flex justify-end border-t bg-light">
         <% if shipment.tracked? %>
           <%= link_to_with_icon 'send.svg', Spree.t(:ship), spree.ship_admin_order_shipment_path(order, shipment), class: 'ml-auto btn btn-primary mb-0', data: {turbo_method: :post, turbo_confirm: Spree.t(:are_you_sure)} %>
         <% elsif !shipment.digital? %>
@@ -95,7 +95,7 @@
             <%= tooltip(Spree.t('admin.shipment.please_provide_tracking_details')) %>
           </span>
         <% else %>
-          <span class="text-muted w-100">
+          <span class="text-muted w-full">
             <%= Spree.t('admin.digital_shipment_fulfillment_note') %>
           </span>
         <% end %>

@@ -1,6 +1,6 @@
 <%= turbo_frame_tag promotion_action do  %>
   <div class="card" id="<%= spree_dom_id(promotion_action) %>">
-    <div class="card-header d-flex justify-content-between align-items-center">
+    <div class="card-header flex justify-between items-center">
       <h5 class="card-title"><%= promotion_action.human_name %></h5>
 
       <% if can?(:update, promotion_action) || can?(:destroy, promotion_action) %>
@@ -31,7 +31,7 @@
         <h6><%= Spree.t(:line_items) %></h6>
         <ul class="list-group">
           <% promotion_action.promotion_action_line_items.each do |line_item| %>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
+            <li class="list-group-item flex justify-between items-center">
               <%= link_to line_item.variant.descriptive_name, spree.edit_admin_product_variant_path(line_item.variant.product, line_item.variant) %>
               <span>
                 <%= Spree.t(:quantity) %>: <%= line_item.quantity %>

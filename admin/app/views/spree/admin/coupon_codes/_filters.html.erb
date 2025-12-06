@@ -1,8 +1,8 @@
 <%= search_form_for [:admin, @promotion, @search], class: "filter-wrap", data: {controller: "filters"} do |f| %>
-  <div class="d-flex flex-column flex-lg-row gap-2">
+  <div class="flex flex-col lg:flex-row gap-2">
     <%= render 'spree/admin/shared/filters_search_bar', param: :code_i_cont %>
 
-    <div class="d-flex align-items-center justify-content-between">
+    <div class="flex items-center justify-between">
       <%= dropdown do %>
         <%= dropdown_toggle class: 'btn-light dropdown-toggle' do %>
           <span class="text-muted font-normal mr-1">

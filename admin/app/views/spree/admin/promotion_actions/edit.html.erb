@@ -1,14 +1,14 @@
 <%= turbo_frame_tag @promotion_action do %>
   <%= form_with model: @promotion_action, url: spree.admin_promotion_action_path(@promotion, @promotion_action), method: :put, scope: :promotion_action do |f| %>
     <div class="card" id="<%= spree_dom_id(@promotion_action) %>">
-      <div class="card-header d-flex justify-content-between align-items-center">
+      <div class="card-header flex justify-between items-center">
         <h5 class="card-title"><%= @promotion_action.human_name %></h5>
       </div>
       <div class="card-body">
         <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @promotion_action } %>
         <%= render "spree/admin/promotion_actions/forms/#{@promotion_action.key}", f: f %>
       </div>
-      <div class="card-footer d-flex justify-content-between">
+      <div class="card-footer flex justify-between">
         <%= turbo_save_button_tag Spree.t('actions.update') %>
         <%= link_to Spree.t('actions.discard'), spree.admin_promotion_path(@promotion), class: 'btn btn-light' %>
       </div>

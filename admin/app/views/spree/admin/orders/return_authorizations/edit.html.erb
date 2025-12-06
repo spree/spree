@@ -1,7 +1,7 @@
 <% content_for :page_title do %>
   <%= page_header_back_button spree.edit_admin_order_path(@order) %>
 
-  <div class="d-flex gap-6 align-items-center">
+  <div class="flex gap-6 items-center">
     <%= @return_authorization.number %>
 
     <span class="badge badge-<%= @return_authorization.state %>">
@@ -20,7 +20,7 @@ locals: {
 
   <div class="form-actions">
     <%= turbo_save_button_tag Spree.t("actions.update") %>
-    <div class="ml-auto d-flex gap-6">
+    <div class="ml-auto flex gap-6">
       <% if f.object.can_cancel? && can?(:cancel, f.object) %>
         <%= link_to Spree.t("actions.cancel"),
         spree.cancel_admin_return_authorization_path(f.object),

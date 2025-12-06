@@ -11,13 +11,13 @@
 
 <div class="grid grid-cols-12 gap-6">
   <div class="col-span-12 lg:col-span-8">
-    <div class="mb-2 d-flex gap-2">
+    <div class="mb-2 flex gap-2">
       <%= form_tag spree.admin_dashboard_analytics_path, method: :get, data: { turbo_frame: :analytics } do %>
         <%= hidden_field_tag :vendor_id, @vendor.id if @vendor.present? %>
         <%= render 'spree/admin/shared/calendar_range_picker',
           date_from_value: params[:date_from] || 1.month.ago.end_of_day,
           date_to_value: params[:date_to] || Time.zone.now.beginning_of_day,
-          css_classes: "btn btn-sm border rounded-lg hover-light d-inline-flex align-items-center h-100 dropdown-toggle" %>
+          css_classes: "btn btn-sm border rounded-lg hover-light inline-flex items-center h-full dropdown-toggle" %>
       <% end %>
     </div>
     <%= render 'analytics' %>
