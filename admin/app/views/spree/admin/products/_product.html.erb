@@ -3,7 +3,7 @@
     <%= bulk_operations_checkbox(product) %>
   </td>
   <td scope="row" class="w-40 py-0 whitespace-normal" data-action="click->row-link#openLink">
-    <%= link_to spree.edit_admin_product_path(product), class: 'flex items-center w-full text-decoration-none h-full py-2', data: { row_link_target: :link, 'turbo-frame': '_top' } do %>
+    <%= link_to spree.edit_admin_product_path(product), class: 'flex items-center w-full no-underline h-full py-2', data: { row_link_target: :link, 'turbo-frame': '_top' } do %>
       <div class="mr-6">
         <%= render 'spree/admin/shared/product_image', object: product %>
       </div>

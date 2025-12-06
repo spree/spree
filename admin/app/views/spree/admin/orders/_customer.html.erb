@@ -37,7 +37,7 @@
           <%= render 'spree/admin/shared/user', user: @order.user %>
           <%= render 'spree/admin/orders/user_overview', user: @order.user %>
         <% elsif @order.email.present? %>
-          <div class="flex items-center w-full">
+          <div class="flex items-center w-full gap-2 py-2">
             <%= mail_to @order.email, @order.email, class: 'text-blue' %>
             <%= clipboard_component(@order.email) %>
           </div>

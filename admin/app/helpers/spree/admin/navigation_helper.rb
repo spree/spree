@@ -247,7 +247,7 @@ module Spree
           url = session[session_key] if session[session_key].present?
         end
 
-        link_to url, class: 'flex items-center text-decoration-none' do
+        link_to url, class: 'flex items-center no-underline' do
           content_tag(:span, icon('chevron-left', class: 'mr-0'), class: 'btn hover:bg-gray-100 shadow-none px-2 flex items-center shadow-none') +
             content_tag(:span, label, class: 'font-size-base text-black')
         end
@@ -261,7 +261,7 @@ module Spree
       def external_link_to(label, url, opts = {}, &block)
         opts[:target] ||= :blank
         opts[:rel] ||= :nofollow
-        opts[:class] ||= "inline-flex items-center text-blue text-decoration-none"
+        opts[:class] ||= "inline-flex items-center text-blue no-underline"
 
         if block_given?
           link_to url, opts, &block

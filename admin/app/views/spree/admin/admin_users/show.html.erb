@@ -102,7 +102,7 @@
               <li class="list-group-item flex justify-between items-center">
                 <%= Spree.t(:invited_by) %>
                 <span>
-                  <%= link_to @admin_user.invited_by.email, spree.admin_admin_user_path(@admin_user.invited_by), class: 'text-decoration-none', data: { turbo_frame: '_top' } %>
+                  <%= link_to @admin_user.invited_by.email, spree.admin_admin_user_path(@admin_user.invited_by), class: 'no-underline', data: { turbo_frame: '_top' } %>
                 </span>
               </li>
             <% end %>

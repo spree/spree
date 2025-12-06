@@ -1,6 +1,6 @@
 <tr id="<%= spree_dom_id policy %>" data-controller="row-link">
   <td class="w-30 cursor-pointer" data-action="click->row-link#openLink">
-    <%= link_to policy.name, spree.edit_admin_policy_path(policy.id), class: 'text-decoration-none flex items-center font-bold text-gray-900', data: { row_link_target: :link, turbo_frame: '_top' } %>
+    <%= link_to policy.name, spree.edit_admin_policy_path(policy.id), class: 'no-underline flex items-center font-bold text-gray-900', data: { row_link_target: :link, turbo_frame: '_top' } %>
   </td>
   <td class="w-1/4 cursor-pointer" data-action="click->row-link#openLink">
     <code><%= policy.slug %></code>

@@ -3,7 +3,7 @@
     <%= icon('grip-vertical', class: 'rounded hover:bg-gray-100 p-2') %>
   </td>
   <td class="w-1/2 cursor-pointer py-0" data-action="click->row-link#openLink">
-    <%= link_to taxonomy.name, spree.admin_taxonomy_path(taxonomy), class: 'text-decoration-none flex items-center font-bold text-gray-900', data: { row_link_target: :link, turbo_frame: '_top' } %>
+    <%= link_to taxonomy.name, spree.admin_taxonomy_path(taxonomy), class: 'no-underline flex items-center font-bold text-gray-900', data: { row_link_target: :link, turbo_frame: '_top' } %>
   </td>
   <td class="w-15 cursor-pointer" data-action="click->row-link#openLink">
     <!-- We don't want to include the root taxon -->
