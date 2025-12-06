@@ -1,5 +1,7 @@
-<% if done %>
-  <%= Spree.t('admin.store_setup_tasks.payment_methods.done', link: spree.admin_payment_methods_path).html_safe %>
+  <% if done %>
+  <p>
+    <%= Spree.t('admin.store_setup_tasks.payment_methods.done', link: spree.admin_payment_methods_path).html_safe %>
+  </p>
 <% else %>
   <p><%= Spree.t('admin.store_setup_tasks.payment_methods.copy') %></p>
   <%= link_to Spree.t('admin.store_setup_tasks.payment_methods.setup'), spree.admin_payment_methods_path, class: 'btn btn-primary', data: { turbo_frame: '_top' } %>

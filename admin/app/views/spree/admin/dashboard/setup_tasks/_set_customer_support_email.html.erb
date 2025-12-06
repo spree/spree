@@ -5,7 +5,7 @@
   </div>
 
   <% if done %>
-    <p>
+    <p class="mb-3">
       Your customer support email is <strong><%= current_store.customer_support_email %>.</strong>
     </p>
     <%= link_to_with_icon 'edit', Spree.t(:edit), spree.edit_emails_admin_store_path, class: 'btn btn-light' %>

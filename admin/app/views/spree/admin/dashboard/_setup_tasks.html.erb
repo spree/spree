@@ -7,13 +7,13 @@
     <% end %>
 
     <details class="collapsable-card mb-6" <% if task_in_progress == task %>open<% end %> id="setup_task_<%= task %>">
-      <summary class="card-header border-0 h-auto text-decoration-none flex items-center p-6 text-gray-900 font-normal w-full card-title bg-transparent list-none" role="button" tabindex="0">
+      <summary class="card-header border-0 h-auto text-decoration-none flex items-center p-3 text-gray-900 font-normal w-full card-title bg-transparent list-none mb-0" role="button" tabindex="0">
         <%= onboarding_check_circle(done) %>
         <span class="ml-6"><%= Spree.t("admin.store_setup_tasks.#{task}") %></span>
         <%= icon('chevron-right', class: 'arrow ml-auto') %>
       </summary>
       <div class="animate__animated animate__fadeIn animate__faster">
-        <div class="card-body">
+        <div class="card-body flex flex-col gap-3">
           <%= render "spree/admin/dashboard/setup_tasks/#{task}", done: done %>
         </div>
       </div>

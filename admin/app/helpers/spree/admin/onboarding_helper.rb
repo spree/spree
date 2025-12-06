@@ -8,7 +8,7 @@ module Spree
         end
 
         if condition == true
-          icon('check', class: 'rounded-full inline-flex items-center bg-success text-success p-1', style: 'border: 3px solid #C6F6D5')
+          icon('check', class: 'rounded-full inline-flex items-center bg-green-200 text-green-600 border-green-200 p-1')
         else
           icon('check', class: 'rounded-full inline-flex items-center border-dashed text-gray-300 p-1')
         end.html_safe

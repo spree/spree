@@ -124,167 +124,6 @@
   }
 
   /* ==========================================================================
-     SPACING - Margin
-     ========================================================================== */
-  /* Margin all sides */
-  .m-0 { @apply m-0; }
-  .m-1 { @apply m-1; }
-  .m-2 { @apply m-2; }
-  .m-3 { @apply m-4; }
-  .m-4 { @apply m-6; }
-  .m-5 { @apply m-12; }
-  .m-auto { @apply m-auto; }
-
-  /* Margin top */
-  .mt-0 { @apply mt-0; }
-  .mt-1 { @apply mt-1; }
-  .mt-2 { @apply mt-2; }
-  .mt-3 { @apply mt-4; }
-  .mt-4 { @apply mt-6; }
-  .mt-5 { @apply mt-12; }
-  .mt-auto { @apply mt-auto; }
-
-  /* Margin bottom */
-  .mb-0 { @apply mb-0; }
-  .mb-1 { @apply mb-1; }
-  .mb-2 { @apply mb-2; }
-  .mb-3 { @apply mb-4; }
-  .mb-4 { @apply mb-6; }
-  .mb-5 { @apply mb-12; }
-  .mb-auto { @apply mb-auto; }
-
-  /* Margin start (left) */
-  .ms-0 { @apply ml-0; }
-  .ms-1 { @apply ml-1; }
-  .ms-2 { @apply ml-2; }
-  .ms-3 { @apply ml-4; }
-  .ms-4 { @apply ml-6; }
-  .ms-5 { @apply ml-12; }
-  .ms-auto { @apply ml-auto; }
-  .ml-0 { @apply ml-0; }
-  .ml-1 { @apply ml-1; }
-  .ml-2 { @apply ml-2; }
-  .ml-3 { @apply ml-4; }
-  .ml-4 { @apply ml-6; }
-  .ml-5 { @apply ml-12; }
-  .ml-auto { @apply ml-auto; }
-
-  /* Margin end (right) */
-  .me-0 { @apply mr-0; }
-  .me-1 { @apply mr-1; }
-  .me-2 { @apply mr-2; }
-  .me-3 { @apply mr-4; }
-  .me-4 { @apply mr-6; }
-  .me-5 { @apply mr-12; }
-  .me-auto { @apply mr-auto; }
-  .mr-0 { @apply mr-0; }
-  .mr-1 { @apply mr-1; }
-  .mr-2 { @apply mr-2; }
-  .mr-3 { @apply mr-4; }
-  .mr-4 { @apply mr-6; }
-  .mr-5 { @apply mr-12; }
-  .mr-auto { @apply mr-auto; }
-
-  /* Margin X (horizontal) */
-  .mx-0 { @apply mx-0; }
-  .mx-1 { @apply mx-1; }
-  .mx-2 { @apply mx-2; }
-  .mx-3 { @apply mx-4; }
-  .mx-4 { @apply mx-6; }
-  .mx-5 { @apply mx-12; }
-  .mx-auto { @apply mx-auto; }
-
-  /* Margin Y (vertical) */
-  .my-0 { @apply my-0; }
-  .my-1 { @apply my-1; }
-  .my-2 { @apply my-2; }
-  .my-3 { @apply my-4; }
-  .my-4 { @apply my-6; }
-  .my-5 { @apply my-12; }
-  .my-auto { @apply my-auto; }
-
-  /* ==========================================================================
-     SPACING - Padding
-     ========================================================================== */
-  /* Padding all sides */
-  .p-0 { @apply p-0; }
-  .p-1 { @apply p-1; }
-  .p-2 { @apply p-2; }
-  .p-3 { @apply p-4; }
-  .p-4 { @apply p-6; }
-  .p-5 { @apply p-12; }
-
-  /* Padding top */
-  .pt-0 { @apply pt-0; }
-  .pt-1 { @apply pt-1; }
-  .pt-2 { @apply pt-2; }
-  .pt-3 { @apply pt-4; }
-  .pt-4 { @apply pt-6; }
-  .pt-5 { @apply pt-12; }
-
-  /* Padding bottom */
-  .pb-0 { @apply pb-0; }
-  .pb-1 { @apply pb-1; }
-  .pb-2 { @apply pb-2; }
-  .pb-3 { @apply pb-4; }
-  .pb-4 { @apply pb-6; }
-  .pb-5 { @apply pb-12; }
-
-  /* Padding start (left) */
-  .ps-0 { @apply pl-0; }
-  .ps-1 { @apply pl-1; }
-  .ps-2 { @apply pl-2; }
-  .ps-3 { @apply pl-4; }
-  .ps-4 { @apply pl-6; }
-  .ps-5 { @apply pl-12; }
-  .pl-0 { @apply pl-0; }
-  .pl-1 { @apply pl-1; }
-  .pl-2 { @apply pl-2; }
-  .pl-3 { @apply pl-4; }
-  .pl-4 { @apply pl-6; }
-  .pl-5 { @apply pl-12; }
-
-  /* Padding end (right) */
-  .pe-0 { @apply pr-0; }
-  .pe-1 { @apply pr-1; }
-  .pe-2 { @apply pr-2; }
-  .pe-3 { @apply pr-4; }
-  .pe-4 { @apply pr-6; }
-  .pe-5 { @apply pr-12; }
-  .pr-0 { @apply pr-0; }
-  .pr-1 { @apply pr-1; }
-  .pr-2 { @apply pr-2; }
-  .pr-3 { @apply pr-4; }
-  .pr-4 { @apply pr-6; }
-  .pr-5 { @apply pr-12; }
-
-  /* Padding X (horizontal) */
-  .px-0 { @apply px-0; }
-  .px-1 { @apply px-1; }
-  .px-2 { @apply px-2; }
-  .px-3 { @apply px-4; }
-  .px-4 { @apply px-6; }
-  .px-5 { @apply px-12; }
-
-  /* Padding Y (vertical) */
-  .py-0 { @apply py-0; }
-  .py-1 { @apply py-1; }
-  .py-2 { @apply py-2; }
-  .py-3 { @apply py-4; }
-  .py-4 { @apply py-6; }
-  .py-5 { @apply py-12; }
-
-  /* ==========================================================================
-     SPACING - Gap
-     ========================================================================== */
-  .gap-0 { @apply gap-0; }
-  .gap-1 { @apply gap-1; }
-  .gap-2 { @apply gap-2; }
-  .gap-3 { @apply gap-4; }
-  .gap-4 { @apply gap-6; }
-  .gap-5 { @apply gap-12; }
-
-  /* ==========================================================================
      WIDTH & HEIGHT
      ========================================================================== */
   .w-25 { @apply w-1/4; }
@@ -292,18 +131,6 @@
   .w-75 { @apply w-3/4; }
   .w-100 { @apply w-full; }
   .w-auto { @apply w-auto; }
-  .mw-100 { @apply max-w-full; }
-  .vw-100 { @apply w-screen; }
-  .min-vw-100 { @apply min-w-full; }
-
-  .h-25 { @apply h-1/4; }
-  .h-50 { @apply h-1/2; }
-  .h-75 { @apply h-3/4; }
-  .h-100 { @apply h-full; }
-  .h-auto { @apply h-auto; }
-  .mh-100 { @apply max-h-full; }
-  .vh-100 { @apply h-screen; }
-  .min-vh-100 { @apply min-h-screen; }
 
   /* Custom percentage widths (not in Tailwind's default scale) */
   .w-5 { width: 5%; }
@@ -319,128 +146,16 @@
   .w-90 { width: 90%; }
 
   /* ==========================================================================
-     TYPOGRAPHY
-     ========================================================================== */
-  .text-start { @apply text-left; }
-  .text-end { @apply text-right; }
-  .text-center { @apply text-center; }
-  .text-justify { @apply text-justify; }
-
-  .text-lowercase { @apply lowercase; }
-  .text-uppercase { @apply uppercase; }
-  .text-capitalize { @apply capitalize; }
-
-  .text-wrap { @apply text-wrap; }
-  .text-nowrap { @apply text-nowrap; }
-  .text-truncate { @apply truncate; }
-  .text-break { @apply break-words; }
-
-  .fw-light { @apply font-light; }
-  .fw-lighter { @apply font-extralight; }
-  .fw-normal { @apply font-normal; }
-  .fw-medium { @apply font-medium; }
-  .fw-semibold { @apply font-semibold; }
-  .fw-bold { @apply font-bold; }
-  .fw-bolder { @apply font-extrabold; }
-
-  .fst-italic { @apply italic; }
-  .fst-normal { @apply not-italic; }
-
-  .lh-1 { @apply leading-none; }
-  .lh-sm { @apply leading-tight; }
-  .lh-base { @apply leading-normal; }
-  .lh-lg { @apply leading-relaxed; }
-
-  .text-decoration-none { @apply no-underline; }
-  .text-decoration-underline { @apply underline; }
-  .text-decoration-line-through { @apply line-through; }
-
-  /* Text colors */
-  .text-muted { @apply text-text-muted; }
-  .text-primary { @apply text-primary; }
-  .text-secondary { @apply text-gray-600; }
-  .text-success { @apply text-green-600; }
-  .text-danger { @apply text-red-600; }
-  .text-warning { @apply text-yellow-600; }
-  .text-info { @apply text-blue-600; }
-  .text-light { @apply text-gray-100; }
-  .text-dark { @apply text-gray-900; }
-  .text-body { @apply text-text; }
-  .text-white { @apply text-white; }
-  .text-black { @apply text-black; }
-
-  /* Font sizes */
-  .fs-1 { @apply text-4xl; }
-  .fs-2 { @apply text-3xl; }
-  .fs-3 { @apply text-2xl; }
-  .fs-4 { @apply text-xl; }
-  .fs-5 { @apply text-lg; }
-  .fs-6 { @apply text-base; }
-  .small { @apply text-sm; }
-
-  /* ==========================================================================
      BACKGROUNDS
      ========================================================================== */
-  .bg-primary { @apply bg-primary; }
   .bg-secondary { @apply bg-gray-600; }
-  .bg-success { @apply bg-green-600; }
+  .bg-success { @apply bg-green-200; }
   .bg-danger { @apply bg-red-600; }
   .bg-warning { @apply bg-yellow-500; }
   .bg-info { @apply bg-blue-500; }
   .bg-light { @apply bg-gray-25; }
   .bg-dark { @apply bg-gray-800; }
   .bg-body { @apply bg-surface; }
-  .bg-white { @apply bg-white; }
-  .bg-transparent { @apply bg-transparent; }
-
-  /* ==========================================================================
-     BORDERS
-     ========================================================================== */
-  .border { @apply border; }
-  .border-0 { @apply border-0; }
-  .border-top { @apply border-t; }
-  .border-end { @apply border-r; }
-  .border-bottom { @apply border-b; }
-  .border-start { @apply border-l; }
-  .border-top-0 { @apply border-t-0; }
-  .border-end-0 { @apply border-r-0; }
-  .border-bottom-0 { @apply border-b-0; }
-  .border-start-0 { @apply border-l-0; }
-
-  .border-primary { @apply border-primary; }
-  .border-secondary { @apply border-gray-600; }
-  .border-success { @apply border-green-600; }
-  .border-danger { @apply border-red-600; }
-  .border-warning { @apply border-yellow-500; }
-  .border-info { @apply border-blue-500; }
-  .border-light { @apply border-gray-200; }
-  .border-dark { @apply border-gray-800; }
-  .border-white { @apply border-white; }
-
-  .border-1 { @apply border; }
-  .border-2 { @apply border-2; }
-  .border-3 { border-width: 3px; }
-  .border-4 { @apply border-4; }
-  .border-5 { border-width: 5px; }
-
-  /* Border radius */
-  .rounded { border-radius: var(--radius-default); }
-  .rounded-sm { border-radius: var(--radius-sm); }
-  .rounded-lg { border-radius: var(--radius-lg); }
-  .rounded-xl { border-radius: var(--radius-xl); }
-  .rounded-0 { @apply rounded-none; }
-  .rounded-1 { @apply rounded-sm; }
-  .rounded-2 { @apply rounded; }
-  .rounded-3 { @apply rounded-lg; }
-  .rounded-4 { @apply rounded-xl; }
-  .rounded-5 { @apply rounded-2xl; }
-  .rounded-circle { @apply rounded-full; }
-  .rounded-pill { @apply rounded-full; }
-
-  .rounded-top { @apply rounded-t; }
-  .rounded-end { @apply rounded-r; }
-  .rounded-bottom { @apply rounded-b; }
-  .rounded-start { @apply rounded-l; }
 
   /* ==========================================================================
      POSITION
@@ -468,47 +183,6 @@
   .translate-middle-x { @apply -translate-x-1/2; }
   .translate-middle-y { @apply -translate-y-1/2; }
 
-  /* ==========================================================================
-     OVERFLOW
-     ========================================================================== */
-  .overflow-auto { @apply overflow-auto; }
-  .overflow-hidden { @apply overflow-hidden; }
-  .overflow-visible { @apply overflow-visible; }
-  .overflow-scroll { @apply overflow-scroll; }
-  .overflow-x-auto { @apply overflow-x-auto; }
-  .overflow-x-hidden { @apply overflow-x-hidden; }
-  .overflow-y-auto { @apply overflow-y-auto; }
-  .overflow-y-hidden { @apply overflow-y-hidden; }
-
-  /* ==========================================================================
-     SHADOWS
-     ========================================================================== */
-  .shadow { @apply shadow; }
-  .shadow-sm { @apply shadow-sm; }
-  .shadow-lg { @apply shadow-lg; }
-  .shadow-none { @apply shadow-none; }
-
-  /* ==========================================================================
-     VISIBILITY & OPACITY
-     ========================================================================== */
-  .visible { @apply visible; }
-  .invisible { @apply invisible; }
-
-  .opacity-0 { @apply opacity-0; }
-  .opacity-25 { @apply opacity-25; }
-  .opacity-50 { @apply opacity-50; }
-  .opacity-75 { @apply opacity-75; }
-  .opacity-100 { @apply opacity-100; }
-
-  /* ==========================================================================
-     INTERACTIONS
-     ========================================================================== */
-  .pe-none { @apply pointer-events-none; }
-  .pe-auto { @apply pointer-events-auto; }
-
-  .user-select-all { @apply select-all; }
-  .user-select-auto { @apply select-auto; }
-  .user-select-none { @apply select-none; }
 
   /* ==========================================================================
      MISC
@@ -519,29 +193,6 @@
 
   .img-fluid { @apply max-w-full h-auto; }
   .img-thumbnail { @apply max-w-full h-auto p-1 bg-white border rounded; }
-
-  .clearfix::after {
-    display: block;
-    clear: both;
-    content: "";
-  }
-
-  .float-start { @apply float-left; }
-  .float-end { @apply float-right; }
-  .float-none { @apply float-none; }
-
-  .object-fit-contain { @apply object-contain; }
-  .object-fit-cover { @apply object-cover; }
-  .object-fit-fill { @apply object-fill; }
-  .object-fit-scale { @apply object-scale-down; }
-  .object-fit-none { @apply object-none; }
-
-  /* Z-index */
-  .z-n1 { z-index: -1; }
-  .z-0 { @apply z-0; }
-  .z-1 { @apply z-10; }
-  .z-2 { @apply z-20; }
-  .z-3 { @apply z-30; }
 
   /* ==========================================================================
      HOVER UTILITIES
