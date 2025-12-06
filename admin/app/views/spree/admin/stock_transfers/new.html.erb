@@ -16,8 +16,8 @@
     <% stock_locations = available_stock_locations.to_tom_select_json %>
     <div class="card mb-4">
       <div class="card-body" >
-        <div class="row">
-          <div class="form-group col-12 col-lg-6">
+        <div class="grid grid-cols-12 gap-4">
+          <div class="form-group col-span-12 lg:col-span-6">
             <%= f.label :source_location_id, Spree.t(:origin), class: 'form-label' %>
             <%= tom_select_tag "stock_transfer[source_location_id]",
               empty_option: Spree.t(:none),
@@ -28,7 +28,7 @@
                 action: 'stock-transfer#updateSourceLocation'
               } %>
           </div>
-          <div class="form-group col-12 col-lg-6">
+          <div class="form-group col-span-12 lg:col-span-6">
             <%= f.label :destination_location_id, Spree.t(:destination), class: 'form-label' %>
             <%= tom_select_tag "stock_transfer[destination_location_id]",
               options: stock_locations,

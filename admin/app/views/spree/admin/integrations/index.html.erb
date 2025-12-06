@@ -8,8 +8,8 @@
 
 <%= render_admin_partials(:integrations_header_partials) %>
 
-<div class="row">
-  <div class="col-lg-8 offset-lg-2">
+<div class="grid grid-cols-12 gap-4">
+  <div class="col-span-12 lg:col-span-8 lg:col-start-3">
     <div class="alert alert-info mb-4">
       <%= Spree.t('admin.integrations.page_subtitle') %>
     </div>
@@ -20,7 +20,7 @@
           <div class="my-2 text-muted font-weight-light text-uppercase"><%= Spree.t(group) %></div>
         <% end %>
 
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 mb-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
           <% integrations.each do |integration| %>
             <%= render 'spree/admin/integrations/integration', integration_class: integration %>
           <% end %>

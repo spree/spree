@@ -17,14 +17,14 @@
   <% end %>
 <% end %>
 
-<div class="row">
-  <div class="col-lg-8 mb-4">
+<div class="grid grid-cols-12 gap-4">
+  <div class="col-span-12 lg:col-span-8 mb-4">
     <%= render 'spree/admin/users/lifetime_stats' %>
     <%= render 'spree/admin/users/last_order' %>
 
     <%= render 'spree/admin/users/tabs' %>
   </div>
-  <div class="col-lg-4">
+  <div class="col-span-12 lg:col-span-4">
     <%= render 'spree/admin/users/details' %>
     <%= render 'spree/admin/users/shipping' %>
     <%= render 'spree/admin/users/billing' %>

@@ -23,10 +23,10 @@
   </div>
 <% end %>
 
-<div id="card_form<%= payment_method.id %>" class="mt-3 row">
+<div id="card_form<%= payment_method.id %>" class="mt-3 grid grid-cols-12 gap-4">
   <% param_prefix = "payment_source[#{payment_method.id}]" %>
 
-  <div class="form-group col-12">
+  <div class="form-group col-span-12">
     <%= hidden_field_tag "#{param_prefix}[cc_type]", '', {class: 'ccType'} %>
     <%= label_tag "card_number#{payment_method.id}", raw(Spree.t(:card_number) + required_span_tag) %>
     <%= text_field_tag "#{param_prefix}[number]", '', class: 'required form-control cardNumber', id: "card_number#{payment_method.id}", maxlength: 19 %>
@@ -37,17 +37,17 @@
     </span>
   </div>
 
-  <div class="form-group col-12">
+  <div class="form-group col-span-12">
     <%= label_tag "card_name#{payment_method.id}", raw(Spree.t(:name) + required_span_tag) %>
     <%= text_field_tag "#{param_prefix}[name]", '', id: "card_name#{payment_method.id}", class: 'required form-control', maxlength: 19 %>
   </div>
 
-  <div class="form-group col-6">
+  <div class="form-group col-span-6">
     <%= label_tag "card_expiry#{payment_method.id}", raw(Spree.t(:expiration) + required_span_tag) %><br>
     <%= text_field_tag "#{param_prefix}[expiry]", '', id: "card_expiry#{payment_method.id}", class: "required cardExpiry form-control", placeholder: Spree.t(:card_expiration_placeholder) %>
   </div>
 
-  <div class="form-group col-6">
+  <div class="form-group col-span-6">
     <%= label_tag "card_code#{payment_method.id}", raw(Spree.t(:card_code) + required_span_tag) %>
     <%= text_field_tag "#{param_prefix}[verification_value]", '', id: "card_code#{payment_method.id}", class: 'required form-control cardCode', size: 5 %>
   </div>

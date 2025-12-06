@@ -7,8 +7,8 @@
        data-controller="tabs"
        data-tabs-active-tab-class-value="active">
     <div class="card-header d-block border-0 h-auto p-2">
-      <div class="row">
-        <div class="col-6 col-lg-4 pr-2">
+      <div class="grid grid-cols-12 gap-4">
+        <div class="col-span-6 lg:col-span-4 pr-2">
           <div class="analytics-card-tab active" data-tabs-target="tab" data-action="click->tabs#select">
             <div class="d-flex justify-content-center flex-column mb-3 mb-lg-0">
               <span class="font-size-sm text-muted">Total Sales</span>
@@ -22,7 +22,7 @@
           </div>
         </div>
 
-        <div class="col-6 col-lg-2 pl-0 pr-2">
+        <div class="col-span-6 lg:col-span-2 pl-0 pr-2">
           <div class="analytics-card-tab" data-tabs-target="tab" data-action="click->tabs#select">
             <div class="d-flex justify-content-center flex-column mb-3 mb-lg-0">
               <span class="font-size-sm text-muted">Avg. Order Value</span>
@@ -34,7 +34,7 @@
           </div>
         </div>
 
-        <div class="col-6 col-lg-2 pl-0 pr-2">
+        <div class="col-span-6 lg:col-span-2 pl-0 pr-2">
           <div class="analytics-card-tab" data-tabs-target="tab" data-action="click->tabs#select">
             <div class="d-flex justify-content-center flex-column mb-3 mb-lg-0">
               <span class="font-size-sm text-muted">Total Orders</span>
@@ -46,7 +46,7 @@
           </div>
         </div>
         <% if @visits_total && @visits_growth_rate %>
-          <div class="col-6 col-lg-2 pl-0 pr-2">
+          <div class="col-span-6 lg:col-span-2 pl-0 pr-2">
             <div class="analytics-card-tab" data-tabs-target="tab" data-action="click->tabs#select">
               <div class="d-flex justify-content-center flex-column">
                 <span class="font-size-sm text-muted">Visits</span>
@@ -60,7 +60,7 @@
         <% end %>
 
         <% if @audience_total && @audience_growth_rate %>
-          <div class="col-6 col-lg-2 pl-0">
+          <div class="col-span-6 lg:col-span-2 pl-0">
             <div class="analytics-card-tab" data-tabs-target="tab" data-action="click->tabs#select">
               <div class="d-flex justify-content-center flex-column">
                 <span class="font-size-sm text-muted">Sign-ups</span>

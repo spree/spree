@@ -1,5 +1,5 @@
-<div class="row pt-4">
-  <div class="col-12">
+<div class="grid grid-cols-12 gap-4 pt-4">
+  <div class="col-span-12">
     <h2 class="page-header-title">
       <%= Spree.t('admin.dashboard.hi') %> <%= try_spree_current_user.first_name %>!
     </h2>
@@ -9,8 +9,8 @@
   </div>
 </div>
 
-<div class="row">
-  <div class="col-lg-8">
+<div class="grid grid-cols-12 gap-4">
+  <div class="col-span-12 lg:col-span-8">
     <div class="mb-2 d-flex gap-2">
       <%= form_tag spree.admin_dashboard_analytics_path, method: :get, data: { turbo_frame: :analytics } do %>
         <%= hidden_field_tag :vendor_id, @vendor.id if @vendor.present? %>
@@ -22,7 +22,7 @@
     </div>
     <%= render 'analytics' %>
   </div>
-  <div class="col-lg-4">
+  <div class="col-span-12 lg:col-span-4">
     <%= render 'sidebar' %>
     <%= render_admin_partials(:dashboard_sidebar_partials) %>
   </div>

@@ -1,5 +1,5 @@
-<div class="row" data-controller="slug-form seo-form">
-  <div class="col-lg-8">
+<div class="grid grid-cols-12 gap-4" data-controller="slug-form seo-form">
+  <div class="col-span-12 lg:col-span-8">
     <div class="card mb-4">
       <div class="card-body pb-0 pt-3">
         <%= f.spree_text_field :name, required: true, autofocus: @taxon.new_record?, data: { seo_form_target: 'sourceTitleInput', slug_form_target: 'name', action: 'slug-form#updateUrlFromName' } %>
@@ -75,7 +75,7 @@
     <% end %>
   </div>
 
-  <div class="col-lg-4">
+  <div class="col-span-12 lg:col-span-4">
     <div class="card mb-4">
       <div class="card-header">
         <h5 class="card-title"><%= Spree.t(:images) %></h5>

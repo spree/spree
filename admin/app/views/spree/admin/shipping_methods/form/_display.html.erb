@@ -1,7 +1,7 @@
 <div class="card mb-4">
   <div class="card-body">
-    <div class="row">
-      <div class="col-lg-6">
+    <div class="grid grid-cols-12 gap-4">
+      <div class="col-span-12 lg:col-span-6">
         <div class="form-group">
           <%= f.label :name, Spree.t(:name) %>
           <%= f.text_field :name, class: 'form-control', required: true, autofocus: f.object.new_record? %>
@@ -13,7 +13,7 @@
         </p>
       </div>
 
-      <div class="col-lg-6">
+      <div class="col-span-12 lg:col-span-6">
         <div class="form-group">
           <%= f.label :display_on %>
           <%= f.select :display_on, display_on_options, {}, { class: 'custom-select custom-select' } %>
@@ -22,8 +22,8 @@
       </div>
     </div>
 
-    <div class="row">
-      <div class="col-lg-6">
+    <div class="grid grid-cols-12 gap-4">
+      <div class="col-span-12 lg:col-span-6">
         <div class="form-group">
           <%= f.label :admin_name, Spree.t(:internal_name) %>
           <%= f.text_field :admin_name, class: 'form-control' %>
@@ -35,7 +35,7 @@
         </p>
       </div>
 
-      <div class="col-lg-6">
+      <div class="col-span-12 lg:col-span-6">
         <div class="form-group">
           <%= f.label :code, Spree.t(:code) %>
           <%= f.text_field :code, class: 'form-control' %>

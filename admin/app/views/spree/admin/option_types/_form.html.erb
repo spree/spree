@@ -3,17 +3,17 @@
       <h5 class="card-title"><%= Spree.t(:general_information) %></h5>
     </div>
     <div class="card-body" data-controller="slug-form">
-      <div class="row mb-3">
-        <div class="col-md-6">
+      <div class="grid grid-cols-12 gap-4 mb-3">
+        <div class="col-span-12 md:col-span-6">
           <%= f.spree_text_field :presentation, required: true, autofocus: f.object.new_record?, data: { slug_form_target: :name, action: 'slug-form#updateUrlFromName' }, help_text: "This is used to display the option type on the storefront." %>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-span-12 md:col-span-6">
           <%= f.spree_text_field :name, label: Spree.t(:internal_name), data: { slug_form_target: :url }, help_text: raw("This is used internally to identify the option type. <strong>It must be unique.</strong>") %>
         </div>
       </div>
-      <div class="row">
-        <div class="col-12 col-md-6">
+      <div class="grid grid-cols-12 gap-4">
+        <div class="col-span-12 md:col-span-6">
           <%= f.spree_check_box :filterable, help_text: raw(Spree.t('option_type_filterable_info')) %>
         </div>
       </div>

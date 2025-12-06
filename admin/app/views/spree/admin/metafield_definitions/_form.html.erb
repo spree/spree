@@ -4,11 +4,11 @@
       <%= f.spree_text_field :name, required: true, autofocus: f.object.new_record? %>
     </div>
 
-    <div class="row">
-      <div class="form-group col-lg-4">
+    <div class="grid grid-cols-12 gap-4">
+      <div class="form-group col-span-12 lg:col-span-4">
         <%= f.spree_text_field :namespace, required: true, placeholder: 'eg. custom' %>
       </div>
-      <div class="form-group col-lg-8">
+      <div class="form-group col-span-12 lg:col-span-8">
         <%= f.spree_text_field :key, required: true, placeholder: 'eg. id' %>
       </div>
     </div>

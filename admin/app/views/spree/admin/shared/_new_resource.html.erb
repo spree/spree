@@ -1,4 +1,4 @@
-<% col_class ||= 'col-lg-6 offset-lg-3' %>
+<% col_class ||= 'col-span-12 lg:col-span-6 lg:col-start-4' %>
 <% page_header_back_button_url ||= collection_url %>
 <% form_url ||= collection_url %>
 
@@ -8,7 +8,7 @@
 <% end %>
 
 <%= form_with model: [:admin, @object], url: form_url, id: "new_#{controller_name.singularize}", data: local_assigns[:data] || {} do |f| %>
-  <div class="row">
+  <div class="grid grid-cols-12 gap-4">
     <div class="<%= col_class %>">
       <%= render 'spree/admin/shared/error_messages', target: @object %>
       <%= render 'form', f: f %>

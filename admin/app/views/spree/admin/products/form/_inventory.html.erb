@@ -27,14 +27,14 @@
         <%= f.fields_for :master, @product.master do |vf| %>
           <%= vf.fields_for :stock_items do |sif| %>
             <%= sif.hidden_field :stock_location_id %>
-            <div class="row mb-2">
-              <div class="col-md-6 d-flex align-items-center">
+            <div class="grid grid-cols-12 gap-4 mb-2">
+              <div class="col-span-12 md:col-span-6 d-flex align-items-center">
                 <%= sif.object.stock_location.name %>
               </div>
-              <div class="col-md-2">
+              <div class="col-span-12 md:col-span-2">
                 <%= sif.number_field :count_on_hand, class: 'form-control' %>
               </div>
-              <div class="col-md-4">
+              <div class="col-span-12 md:col-span-4">
                 <div class="custom-control custom-checkbox d-flex align-items-center h-100">
                   <%= sif.check_box :backorderable, class: 'custom-control-input' %>
                   <%= sif.label :backorderable, Spree.t(:continue_selling_when_out_of_stock), class: 'custom-control-label' %>
@@ -45,14 +45,14 @@
         <% end %>
       </div>
     </div>
-    <div class="row">
-      <div class="col-md-6">
+    <div class="grid grid-cols-12 gap-4">
+      <div class="col-span-12 md:col-span-6">
         <div class="form-group">
           <%= f.label :sku, Spree.t('admin.products.inventory.sku') %>
           <%= f.text_field :sku, class: 'form-control' %>
         </div>
       </div>
-      <div class="col-md-6">
+      <div class="col-span-12 md:col-span-6">
         <div class="form-group">
           <%= f.label :barcode, Spree.t('admin.products.inventory.barcode') %>
           <%= f.text_field :barcode, class: 'form-control' %>

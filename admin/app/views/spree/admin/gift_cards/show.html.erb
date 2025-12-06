@@ -16,8 +16,8 @@
   <%= @object.code.upcase %>
 <% end %>
 
-<div class="row">
-  <div class="col-md-8">
+<div class="grid grid-cols-12 gap-4">
+  <div class="col-span-12 md:col-span-8">
 
     <div class="card mb-4">
       <div class="card-header d-flex justify-content-between align-items-center">
@@ -88,7 +88,7 @@
 
     </div>
 
-  <div class="col-md-4">
+  <div class="col-span-12 md:col-span-4">
     <%= turbo_frame_tag :gift_card_settings do %>
       <div class="card">
         <div class="card-header d-flex justify-content-between">

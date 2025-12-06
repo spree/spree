@@ -1,7 +1,7 @@
 <div class="card mb-4">
   <div class="card-body">
-    <div class="row mb-3">
-      <div class="col-6">
+    <div class="grid grid-cols-12 gap-4 mb-3">
+      <div class="col-span-6">
         <%= f.spree_select :status,
                            available_status_options(@product),
                            { selected: @product.status, help_bubble: show_product_status_help_bubble? ? Spree.t('admin.products.status_form.status') : nil },
@@ -11,7 +11,7 @@
                              }
                            } %>
       </div>
-      <div class="col-6 <%= 'd-none' if @product.active? %>" data-product-form-target="makeActiveAt">
+      <div class="col-span-6 <%= 'd-none' if @product.active? %>" data-product-form-target="makeActiveAt">
         <% if can?(:activate, @product) %>
           <%= f.spree_datetime_field :make_active_at,
                                      help_bubble: Spree.t('admin.products.status_form.make_active_at'),
@@ -19,13 +19,13 @@
         <% end %>
       </div>
     </div>
-    <div class="row">
-      <div data-product-form-target="availableOn" class="col-6">
+    <div class="grid grid-cols-12 gap-4">
+      <div data-product-form-target="availableOn" class="col-span-6">
         <%= f.spree_datetime_field :available_on,
                                    help_bubble: Spree.t('admin.products.status_form.available_on'),
                                    max: @product.discontinue_on %>
       </div>
-      <div data-product-form-target="discontinueOn" class="col-6">
+      <div data-product-form-target="discontinueOn" class="col-span-6">
         <%= f.spree_datetime_field :discontinue_on,
                                    help_bubble: Spree.t('admin.products.status_form.discontinue_on'),
                                    min: @product.make_active_at %>

@@ -4,8 +4,8 @@
 
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @store }, class: 'mb-5 pb-5' %>
 
-<div class="row">
-  <div class="col-lg-6 offset-lg-3">
+<div class="grid grid-cols-12 gap-4">
+  <div class="col-span-12 lg:col-span-6 lg:col-start-4">
     <%= form_for current_store, url: spree.admin_store_path(section: params[:section]), method: :patch do |f| %>
       <%= render partial: 'spree/admin/stores/form/basic', locals: { f: f } if params[:section].blank? || params[:section] == 'general-settings' %>
       <%= render partial: 'spree/admin/stores/form/emails', locals: { f: f } if params[:section] == 'emails' %>

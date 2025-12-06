@@ -1,5 +1,5 @@
-<div class="row" data-controller="slug-form seo-form">
-  <div class="col-lg-8">
+<div class="grid grid-cols-12 gap-4" data-controller="slug-form seo-form">
+  <div class="col-span-12 lg:col-span-8">
     <div class="card mb-4">
       <div class="card-body">
         <%= f.spree_text_field :title,
@@ -22,7 +22,7 @@
     </div>
   </div>
 
-  <div class="col-lg-4">
+  <div class="col-span-12 lg:col-span-4">
     <div class="card mb-4">
       <div class="card-body">
         <%= f.spree_file_field :image, width: 1200, height: 600, crop: true, css: 'flex-col', label: Spree.t(:featured_image) %>

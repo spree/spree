@@ -1,6 +1,6 @@
 <li class="list-group-item">
-  <div class="row">
-    <div class="col-8">
+  <div class="grid grid-cols-12 gap-4">
+    <div class="col-span-8">
       <%= link_to spree.edit_admin_product_path(line_item.product), class: 'd-flex text-decoration-none' do %>
         <%= render 'spree/admin/shared/product_image', object: line_item.product %>
         <span class="ml-3 text-dark">
@@ -9,10 +9,10 @@
         </span>
       <% end %>
     </div>
-    <div class="col-2 text-lg-right">
+    <div class="col-span-2 text-lg-right">
       x <%= line_item.quantity %>
     </div>
-    <div class="col-2 text-lg-right">
+    <div class="col-span-2 text-lg-right">
       <%= line_item.display_total %>
     </div>
   </div>

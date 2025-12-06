@@ -29,7 +29,6 @@
 @import "./utilities/_bootstrap.css";
 
 /* Components - Core */
-@import "./components/_grid.css";
 @import "./components/_forms.css";
 @import "./components/_buttons.css";
 @import "./components/_cards.css";

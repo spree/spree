@@ -10,16 +10,16 @@
 
 <div class="card-lg p-4">
   <h5 class="mb-3">Internal URL</h5>
-  <div class="row mb-4">
-    <div class="col-lg-4">
+  <div class="grid grid-cols-12 gap-4 mb-4">
+    <div class="col-span-12 lg:col-span-4">
       <p class="text-muted">
         This is your internal Admin URL.
       </p>
     </div>
-    <div class="col-lg-7 offset-lg-1">
+    <div class="col-span-12 lg:col-span-7 lg:col-start-6">
       <%= form_for current_store, url: spree.admin_store_path, data: { turbo: false, controller: 'enable-button', 'enable-button-disable-when-not-changed-value': true } do |f| %>
         <% if Spree.root_domain.present? %>
-          <div class="d-flex align-items-center gap-3">
+          <div class="d-flex align-items-center gap-4">
             <div class="form-control d-flex align-items-center py-0 focus-shadow focus-border pr-2 gap-1 <% if current_store.custom_domains.any? %>disabled<% end %>">
               <span class="text-muted">https://</span>
               <%= f.text_field :code, class: 'form-control-plaintext pl-0', data: { enable_button_target: 'input' }, required: true, disabled: current_store.custom_domains.any? %>
@@ -32,7 +32,7 @@
             <% end %>
           </div>
         <% else %>
-          <div class="d-flex align-items-center gap-3">
+          <div class="d-flex align-items-center gap-4">
             <div class="form-control d-flex align-items-center py-0 focus-shadow focus-border pr-2 gap-1">
               <span class="text-muted">https://</span>
               <%= f.text_field :url, class: 'form-control-plaintext pl-0', required: true, data: { enable_button_target: 'input' } %>
@@ -46,13 +46,13 @@
   </div>
   <hr class="my-5" />
   <h5><%= Spree.t(:custom_domains) %></h5>
-  <div class="row">
-    <div class="col-lg-4">
+  <div class="grid grid-cols-12 gap-4">
+    <div class="col-span-12 lg:col-span-4">
       <p class="text-muted">
         Connect your domain or subdomain to your storefront.
       </p>
     </div>
-    <div class="col-lg-7 offset-lg-1">
+    <div class="col-span-12 lg:col-span-7 lg:col-start-6">
       <div class="text-right">
         <%= link_to Spree.t(:new_domain), spree.new_admin_custom_domain_path, class: "btn btn-primary" %>
       </div>

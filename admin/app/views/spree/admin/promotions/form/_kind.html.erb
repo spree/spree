@@ -27,14 +27,14 @@
             </span>
           <% end %>
         </div>
-        <div data-reveal-target="item" class="ml-3 mt-2 row <% unless @promotion.multi_codes? %>hidden<% end %>">
-          <div class="col-6">
+        <div data-reveal-target="item" class="ml-3 mt-2 grid grid-cols-12 gap-4 <% unless @promotion.multi_codes? %>hidden<% end %>">
+          <div class="col-span-6">
             <%= f.text_field :code_prefix, class: 'form-control text-uppercase', placeholder: 'Coupon Prefix (optional)' %>
             <span class="form-text mt-2">
               eg. <strong>ABC</strong>
             </span>
           </div>
-          <div class="col-6">
+          <div class="col-span-6">
             <% minimum_number_of_codes = @promotion.persisted? && @promotion.coupon_codes.count.positive? ? @promotion.coupon_codes.count : 1 %>
             <% maximum_number_of_codes = ENV.fetch('PROMOTION_MAX_NUMBER_OF_CODES', 5000) %>
             <%= f.number_field :number_of_codes, class: 'form-control', placeholder: 'Number of codes', min: minimum_number_of_codes, max: maximum_number_of_codes, step: 1 %>

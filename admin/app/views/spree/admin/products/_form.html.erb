@@ -1,5 +1,5 @@
-<div class="row" data-controller="product-form slug-form seo-form" data-seo-form-editor-value="tinymce">
-  <div class="col-md-8">
+<div class="grid grid-cols-12 gap-4" data-controller="product-form slug-form seo-form" data-seo-form-editor-value="tinymce">
+  <div class="col-span-12 md:col-span-8">
     <%= render 'spree/admin/products/form/base', f: f %>
     <%= render 'spree/admin/shared/media_form', viewable: @product.master, viewable_type: 'Spree::Variant' %>
     <%= f.fields_for :master, @product.master do |vf| %>
@@ -11,7 +11,7 @@
 
     <%= render_admin_partials(:product_form_partials, f: f, product: @product) %>
   </div>
-  <div class="col-md-4">
+  <div class="col-span-12 md:col-span-4">
     <%= render 'spree/admin/products/form/status', f: f %>
     <%= render 'spree/admin/products/form/categorization', f: f %>
     <%= render 'spree/admin/products/form/shipping', f: f %>

@@ -1,7 +1,7 @@
 <%= render 'spree/admin/orders/header' %>
 
-<div class="row">
-  <div class="col-lg-6 offset-lg-3">
+<div class="grid grid-cols-12 gap-4">
+  <div class="col-span-12 lg:col-span-6 lg:col-start-4">
     <%= render 'spree/admin/shared/error_messages', target: @payment %>
 
     <%= form_with url: spree.admin_order_payments_path(@order), model: @payment, method: :post do |f| %>
