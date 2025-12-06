@@ -1,4 +1,4 @@
-<%= turbo_frame_tag dom_id(@order, :customer_information), class: "card mb-4 blur-busy" do  %>
+<%= turbo_frame_tag dom_id(@order, :customer_information), class: "card mb-6 blur-busy" do  %>
   <div class="card-header">
     <h5 class="card-title">
       <%= Spree.t(:customer) %>
@@ -47,11 +47,11 @@
           </span>
         <% end %>
         <% if !@order.user.present? && can?(:update_customer, @order) %>
-          <%= link_to_with_icon 'plus', Spree.t('admin.orders.add_user_to_this_order'), spree.new_admin_order_user_path(@order), class: "btn btn-secondary mt-3" %>
+          <%= link_to_with_icon 'plus', Spree.t('admin.orders.add_user_to_this_order'), spree.new_admin_order_user_path(@order), class: "btn btn-secondary mt-4" %>
         <% end %>
       </div>
     <% end %>
-    <h6 class="mt-4 font-bold mb-2"><%= Spree.t(:shipping_address) %></h6>
+    <h6 class="mt-6 font-bold mb-2"><%= Spree.t(:shipping_address) %></h6>
     <%= turbo_frame_tag :order_ship_address do %>
       <% if @order.ship_address.present? %>
         <%= render 'spree/admin/shared/address', address: @order.ship_address %>
@@ -61,7 +61,7 @@
         <span class="text-muted"><%= Spree.t(:no_shipping_address_available) %></span>
       <% end %>
     <% end %>
-    <h6 class="mt-4 font-bold mb-2"><%= Spree.t(:billing_address) %></h6>
+    <h6 class="mt-6 font-bold mb-2"><%= Spree.t(:billing_address) %></h6>
     <%= turbo_frame_tag :order_bill_address do %>
       <% if @order.shipping_eq_billing_address? && @order.bill_address.present? %>
         <span class="text-muted"><%= Spree.t(:same_as_shipping_address) %></span>

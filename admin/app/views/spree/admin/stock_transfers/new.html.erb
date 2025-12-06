@@ -16,7 +16,7 @@
     <% stock_locations = available_stock_locations.to_tom_select_json %>
     <div class="card mb-12">
       <div class="card-body" >
-        <div class="grid grid-cols-12 gap-4">
+        <div class="grid grid-cols-12 gap-6">
           <div class="form-group col-span-12 lg:col-span-6">
             <%= f.label :source_location_id, Spree.t(:origin), class: 'form-label' %>
             <%= tom_select_tag "stock_transfer[source_location_id]",
@@ -60,7 +60,7 @@
         </span>
       </div>
       <div class="card-body p-0" style="min-height: 300px">
-        <div class="d-flex flex-column gap-4 overflow-y-auto overflow-x-hidden p-4" style="max-height: 300px">
+        <div class="d-flex flex-column gap-6 overflow-y-auto overflow-x-hidden p-6" style="max-height: 300px">
           <%= f.fields_for :stock_movements do |smf| %>
             <% if smf.object.errors[:quantity].present? %>
               <div class="alert alert-danger w-100 mb-0">

@@ -3,7 +3,7 @@
   <% if coupon_codes_count.positive? %>
     <% used_coupon_codes_count = @promotion.coupon_codes.used.count %>
 
-    <div class="card mb-4">
+    <div class="card mb-6">
       <div class="card-header d-flex justify-content-between">
         <h5 class="card-title">
           <%= Spree.t(:coupon_codes) %>
@@ -26,7 +26,7 @@
 <% end %>
 
 <%= turbo_frame_tag :promotion_edit_details do %>
-  <div class="card mb-4">
+  <div class="card mb-6">
     <div class="card-header d-flex justify-content-between">
       <h5 class="card-title">
         <%= Spree.t(:details) %>

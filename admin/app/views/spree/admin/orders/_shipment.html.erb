@@ -24,7 +24,7 @@
   </div>
   <div class="card-body mb-0 p-0">
     <div class="shipment-line-items">
-      <div class="text-muted text-center border-b py-2 px-3 text-sm shipment-line-items__row">
+      <div class="text-muted text-center border-b py-2 px-4 text-sm shipment-line-items__row">
         <span class="text-left">
           <%= Spree.t(:item_description) %>
         </span>
@@ -42,7 +42,7 @@
       </div>
       <%= render collection: shipment.manifest, partial: 'spree/admin/orders/shipment_manifest_item', as: :item, locals: { shipment: shipment } %>
     </div>
-    <%= turbo_frame_tag dom_id(shipment, :shipping_method), class: "py-2 px-3 d-flex justify-content-between align-items-center min-h-14" do %>
+    <%= turbo_frame_tag dom_id(shipment, :shipping_method), class: "py-2 px-4 d-flex justify-content-between align-items-center min-h-14" do %>
       <div>
         <% if rate = shipment.selected_shipping_rate %>
           <strong><%= rate.name %></strong>
@@ -60,8 +60,8 @@
     <% end %>
 
     <% unless shipment.digital? %>
-      <%= turbo_frame_tag dom_id(shipment, :tracking), class: "border-t px-3 d-flex justify-content-between align-items-center min-h-14" do %>
-        <div class="py-3">
+      <%= turbo_frame_tag dom_id(shipment, :tracking), class: "border-t px-4 d-flex justify-content-between align-items-center min-h-14" do %>
+        <div class="py-4">
           <strong><%= Spree.t(:tracking) %>: </strong>
           <% if shipment.tracked? %>
             <% if shipment.tracking_url.present? %>

@@ -11,7 +11,7 @@
   <%= link_to_with_icon 'edit', Spree.t(:edit), spree.edit_admin_webhooks_subscriber_path(@webhooks_subscriber), class: 'btn btn-light' %>
 <% end %>
 
-<ul class="list-group bg-white mb-4 rounded-lg">
+<ul class="list-group bg-white mb-6 rounded-lg">
   <li class="list-group-item d-flex justify-content-between">
     <strong class="text-uppercase"><%= Spree.t(:url) %></strong>
     <%= external_link_to @webhooks_subscriber.url, @webhooks_subscriber.url, class: 'text-blue text-decoration-none' %>
@@ -30,7 +30,7 @@
   </li>
 </ul>
 
-<div class="card mb-4">
+<div class="card mb-6">
   <div class="card-header">
     <h5 class="card-title">
       <%= Spree.t('admin.webhooks_subscribers.webhooks_events') %>

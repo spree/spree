@@ -1,20 +1,20 @@
-<div class="grid grid-cols-12 gap-6 nested-form-wrapper border-b mb-3 pr-2" data-controller="rule-form" data-new-record="<%= rf.object.new_record? %>">
+<div class="grid grid-cols-12 gap-6 nested-form-wrapper border-b mb-4 pr-2" data-controller="rule-form" data-new-record="<%= rf.object.new_record? %>">
   <% @taxon_rules.each do |taxon_rule| %>
     <template id="rule-form-template-<%= taxon_rule.to_s.demodulize %>" data-rule-form-target="template">
       <%= render "spree/admin/taxons/rule_forms/#{taxon_rule.to_s.demodulize.underscore}", rule_form: rf %>
     </template>
   <% end %>
 
-  <div class="col-span-12 lg:col-span-4 mb-3">
+  <div class="col-span-12 lg:col-span-4 mb-4">
     <%= rf.select :type, @rule_types, {}, { class: 'custom-select', data: { action: 'rule-form#replace' } } %>
   </div>
-  <div class="col-span-12 lg:col-span-3 mb-3">
+  <div class="col-span-12 lg:col-span-3 mb-4">
     <%= rf.select :match_policy, @rule_match_policies, {}, { class: 'custom-select' } %>
   </div>
-  <div class="col-span-12 lg:col-span-4 mb-3" data-rule-form-target="value">
+  <div class="col-span-12 lg:col-span-4 mb-4" data-rule-form-target="value">
     <%= render "spree/admin/taxons/rule_forms/#{rf.object.type.demodulize.underscore}", rule_form: rf %>
   </div>
-  <div class="col-span-12 lg:col-span-1 mb-3 d-flex align-items-center justify-content-center">
+  <div class="col-span-12 lg:col-span-1 mb-4 d-flex align-items-center justify-content-center">
     <button type="button" data-action="nested-form#remove" class="btn btn-sm btn-danger px-2" data-controller="tooltip" aria-label="<%= Spree.t(:remove_condition) %>">
       <%= icon('x', class: 'mr-0') %>
       <span class="d-lg-none"><%= Spree.t(:remove_condition) %></span>

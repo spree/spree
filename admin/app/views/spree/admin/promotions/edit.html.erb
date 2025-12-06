@@ -2,7 +2,7 @@
 
 <%= turbo_frame_tag :promotion_edit_details do %>
   <%= form_for @promotion, url: object_url, method: :put, data: { turbo_frame: '_top' } do |f| %>
-    <div class="card mb-4">
+    <div class="card mb-6">
       <div class="card-header d-flex justify-content-between">
         <h5 class="card-title">
           <%= Spree.t(:details) %>

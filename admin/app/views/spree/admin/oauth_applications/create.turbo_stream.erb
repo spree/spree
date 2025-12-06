@@ -17,7 +17,7 @@
               <%= text_field_tag :client_secret, @object.plaintext_secret, class: 'form-control-plaintext bg-light rounded', readonly: true %>
               <%= clipboard_component(@object.plaintext_secret) %>
             </div>
-            <div class="alert alert-warning mt-4">
+            <div class="alert alert-warning mt-6">
               This is your application's secret token, copy it now and keep it safe. It won't be shown again.
             </div>
           </div>

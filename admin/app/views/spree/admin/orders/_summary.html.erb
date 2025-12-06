@@ -1,4 +1,4 @@
-<div class="card mb-4" id="order_tab_summary">
+<div class="card mb-6" id="order_tab_summary">
   <div class="card-header">
     <h5 class="card-title"><%= Spree.t(:summary) %></h5>
   </div>
@@ -70,7 +70,7 @@
           <% if tax_lines.any? %>
             <button type="button" class="btn btn-light btn-sm mr-2" data-action="click->reveal#toggle">
               <%= Spree.t(:show_details) %>
-              <%= icon('selector', height: 12, class: 'mr-0 ml-1') %>
+              <%= icon('selector', height: 12, class: 'mr-0 ml-2') %>
             </button>
           <% end %>
 

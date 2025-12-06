@@ -3,9 +3,9 @@
 
 <% integration_description ||= Spree.t("admin.integrations.#{integration_class.integration_key}.description") %>
 
-<div id="integration-<%= integration_class.integration_key %>" class="col mb-4 d-flex align-items-stretch">
+<div id="integration-<%= integration_class.integration_key %>" class="col mb-6 d-flex align-items-stretch">
   <div class="card w-full">
-    <div class="card-header border-b d-flex align-items-center justify-content-between h-auto pr-3 <% if integration.present? %>bg-success<% end %>">
+    <div class="card-header border-b d-flex align-items-center justify-content-between h-auto pr-4 <% if integration.present? %>bg-success<% end %>">
       <div style="height: 36px" class="d-flex align-items-center">
         <%= image_tag integration_class.icon_path, alt: integration_name, height: 36 if integration_class.icon_path.present? %>
       </div>

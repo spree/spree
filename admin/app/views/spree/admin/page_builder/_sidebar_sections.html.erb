@@ -21,7 +21,7 @@
                  as: :section  %>
     </div>
   </div>
-  <div class="px-3">
+  <div class="px-4">
     <%= link_to_with_icon 'new-section', Spree.t(:add_section), spree.new_admin_page_section_path(@page_preview), class: 'btn btn-primary rounded-pill text-uppercase w-100 my-2 py-2' %>
   </div>
   <% if @page_preview.layout_sections? %>
@@ -35,7 +35,7 @@
     </div>
   <% end %>
 </div>
-<div class="d-flex justify-content-center pt-5 d-md-none align-items-center">
+<div class="d-flex justify-content-center pt-12 d-md-none align-items-center">
   <div class="spinner-border" role="status">
   </div>
   <p class="ml-2 m-0"><%= Spree.t(:loading) %>...</p>

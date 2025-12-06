@@ -1,8 +1,8 @@
 <% content_for(:title, Spree.t(:forgot_password)) %>
 
-<h1 class="mb-3 font-light"><%= Spree.t(:forgot_password) %></h1>
+<h1 class="mb-4 font-light"><%= Spree.t(:forgot_password) %></h1>
 <%= form_for(resource, as: resource_name, url: password_path(:admin_user), data: { turbo_frame: :_top }) do |f| %>
-  <div class="form-group mb-3">
+  <div class="form-group mb-4">
     <%= f.label :email, Spree.t(:email), required: true, class: 'form-label' %>
     <%= f.email_field :email, required: true, class: 'form-control form-control-lg rounded-sm', placeholder: 'steve@apple.com', data: { enable_button_target: :input }, autocomplete: :email, autofocus: true %>
   </div>

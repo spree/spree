@@ -1,4 +1,4 @@
-<%= turbo_frame_tag dom_id(item.variant, :shipment_item), class: "border-b py-2 px-3 shipment-line-items__row" do %>
+<%= turbo_frame_tag dom_id(item.variant, :shipment_item), class: "border-b py-2 px-4 shipment-line-items__row" do %>
   <%= render 'spree/admin/variants/variant', variant: item.variant %>
   <span class="d-flex align-items-center justify-content-center"><%= item.line_item.single_money.to_html %></span>
   <span class="d-flex align-items-center justify-content-center">

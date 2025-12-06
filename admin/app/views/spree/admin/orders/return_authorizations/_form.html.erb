@@ -7,7 +7,7 @@
         <tr>
           <th scope="col">
             <% if allow_return_item_changes %>
-              <div class="custom-control custom-checkbox ml-1">
+              <div class="custom-control custom-checkbox ml-0.5">
                 <input
                   type="checkbox"
                   class="custom-control-input"
@@ -38,7 +38,7 @@
           <tr>
             <td class="inventory-unit-checkbox">
               <% if editable %>
-                <div class="custom-control custom-checkbox ml-1">
+                <div class="custom-control custom-checkbox ml-0.5">
 
                   <%= item_fields.hidden_field :inventory_unit_id %>
                   <%= item_fields.check_box :_destroy,

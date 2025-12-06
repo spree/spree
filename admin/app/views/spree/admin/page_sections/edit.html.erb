@@ -1,15 +1,15 @@
 <%= turbo_frame_tag :page_sidebar do %>
   <% tab_selected ||= :content %>
   <h6 class="sidebar-header">
-    <%= link_to collection_url, data: { action: 'click->page-builder#clearActiveOverlays' }, class: 'btn hover-gray shadow-none px-3' do %>
+    <%= link_to collection_url, data: { action: 'click->page-builder#clearActiveOverlays' }, class: 'btn hover-gray shadow-none px-4' do %>
       <%= icon 'chevron-left', class: 'mr-0 back' %>
     <% end %>
     <%= @page_section.display_name %>
   </h6>
-  <div class="px-4 pb-12 mb-12 edit-block" style="margin-bottom: 6rem;">
+  <div class="px-6 pb-12 mb-12 edit-block" style="margin-bottom: 6rem;">
     <%= form_for @page_section, url: spree.admin_page_section_path(@page_section), data: { controller: 'auto-submit' }, as: :page_section do |f| %>
       <div data-controller="tabs">
-        <ul class="nav nav-pills nav-fill mb-4" id="pills-tab" role="tablist">
+        <ul class="nav nav-pills nav-fill mb-6" id="pills-tab" role="tablist">
           <li class="nav-item" role="presentation">
             <button class="nav-link w-100 <%= tab_selected == :content ? 'active' : '' %>" id="pills-home-tab" data-tabs-target="tab" data-action="click->tabs#select" type="button" role="tab" aria-controls="pills-home" aria-selected="<%= tab_selected == :content %>">Content</button>
           </li>

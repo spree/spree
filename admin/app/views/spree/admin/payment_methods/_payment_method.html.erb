@@ -13,7 +13,7 @@
         <% end %>
       </div>
 
-      <div class="mx-4">
+      <div class="mx-6">
         <% if payment_method.try(:description_partial_name) %>
           <%= render "spree/admin/payment_methods/descriptions/#{payment_method.description_partial_name}", payment_method: payment_method %>
         <% else %>

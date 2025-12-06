@@ -1,14 +1,14 @@
 <div class="grid grid-cols-12 gap-6" data-controller="slug-form seo-form">
   <div class="col-span-12 lg:col-span-8">
     <div class="card mb-6">
-      <div class="card-body pb-0 pt-3">
+      <div class="card-body pb-0 pt-4">
         <%= f.spree_text_field :name, required: true, autofocus: @taxon.new_record?, data: { seo_form_target: 'sourceTitleInput', slug_form_target: 'name', action: 'slug-form#updateUrlFromName' } %>
         <%= f.spree_rich_text_area :description, data: { seo_form_target: 'sourceDescriptionInput' } %>
       </div>
     </div>
 
     <% if @taxon.new_record? %>
-      <div class="card mb-4" data-controller="reveal" data-reveal-hidden-class="d-none">
+      <div class="card mb-6" data-controller="reveal" data-reveal-hidden-class="d-none">
         <div class="card-header">
           <h5 class="card-title"><%= Spree.t('admin.taxon_type') %></h5>
         </div>
@@ -38,7 +38,7 @@
             <h5 class="card-title"><%= Spree.t(:rules) %></h5>
           </div>
           <div class="card-body">
-            <div class="alert alert-info mb-3"><%= Spree.t('admin.taxon_types.automatic_info') %></div>
+            <div class="alert alert-info mb-4"><%= Spree.t('admin.taxon_types.automatic_info') %></div>
             <%= render 'spree/admin/taxons/rules_form', f: f %>
           </div>
         </div>

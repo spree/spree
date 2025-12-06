@@ -2,7 +2,7 @@
   <div class="text-center w-10">
     <%= row.row_number %>
   </div>
-  <div class="text-wrap w-20 px-2 py-3">
+  <div class="text-wrap w-20 px-2 py-4">
     <% badge_class = case row.status
        when 'completed'
          'success'
@@ -15,7 +15,7 @@
       <%= Spree.t(row.status) %>
     </span>
   </div>
-  <div class="w-60 px-2 py-3">
+  <div class="w-60 px-2 py-4">
     <% if row.status == 'failed' %>
       <div class="text-danger"><%= row.validation_errors %></div>
     <% elsif row.status == 'completed' && row.item.present? %>
@@ -29,7 +29,7 @@
       </div>
     <% end %>
   </div>
-  <div class="w-10 px-2 py-3">
+  <div class="w-10 px-2 py-4">
     <%= link_to_with_icon 'eye', Spree.t(:details), spree.admin_import_row_path(import, row), class: 'btn btn-sm btn-light', data: { action: 'drawer#open', turbo_frame: :drawer }, no_text: true %>
   </div>
 </div>

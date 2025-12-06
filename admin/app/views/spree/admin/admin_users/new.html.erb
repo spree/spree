@@ -1,7 +1,7 @@
 <%= form_with model: @admin_user, url: spree.admin_admin_users_path(token: @invitation.token), method: :post, scope: :admin_user do |f| %>
       <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @admin_user } %>
 
-      <div class="rounded border p-4 mb-4 d-flex align-items-center gap-2">
+      <div class="rounded border p-6 mb-6 d-flex align-items-center gap-2">
         <%= render_avatar(@invitation.inviter, height: 32, width: 32) %>
         <%= @invitation.inviter.name %> has invited you to join <strong><%= @invitation.resource.name %></strong>
       </div>

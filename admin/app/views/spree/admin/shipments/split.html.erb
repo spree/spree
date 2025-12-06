@@ -1,4 +1,4 @@
-<%= turbo_frame_tag dom_id(@variant, :shipment_item), class: "border-b py-2 px-3 shipment-line-items__row" do %>
+<%= turbo_frame_tag dom_id(@variant, :shipment_item), class: "border-b py-2 px-4 shipment-line-items__row" do %>
   <%= form_with url: transfer_admin_order_shipment_path(@order, @shipment), class: "shipment-line-items__form" do |f| %>
     <%= hidden_field_tag :variant_id, @variant.id %>
     <div class="d-flex flex-row gap-2 align-items-center w-full form-group mb-0">

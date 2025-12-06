@@ -6,10 +6,10 @@
       <% task_in_progress ||= task %>
     <% end %>
 
-    <details class="collapsable-card mb-4" <% if task_in_progress == task %>open<% end %> id="setup_task_<%= task %>">
-      <summary class="card-header border-0 h-auto text-decoration-none d-flex align-items-center p-4 text-dark font-normal w-100 card-title bg-transparent list-style-none" role="button" tabindex="0">
+    <details class="collapsable-card mb-6" <% if task_in_progress == task %>open<% end %> id="setup_task_<%= task %>">
+      <summary class="card-header border-0 h-auto text-decoration-none d-flex align-items-center p-6 text-dark font-normal w-100 card-title bg-transparent list-style-none" role="button" tabindex="0">
         <%= onboarding_check_circle(done) %>
-        <span class="ml-4"><%= Spree.t("admin.store_setup_tasks.#{task}") %></span>
+        <span class="ml-6"><%= Spree.t("admin.store_setup_tasks.#{task}") %></span>
         <%= icon('chevron-right', class: 'arrow ml-auto') %>
       </summary>
       <div class="animate__animated animate__fadeIn animate__faster">

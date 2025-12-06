@@ -8,9 +8,9 @@
   <% end %>
 
   <div class="<%= classification.taxon.manual_sort_order? ? 'col-span-5' : 'col-span-6' %>">
-    <%= link_to spree.edit_admin_product_path(classification.product), data: { 'turbo-frame': '_top' }, class: "d-flex align-items-center text-dark hover-none #{classification.taxon.manual_sort_order? ? 'py-3' : 'p-3'}" do  %>
+    <%= link_to spree.edit_admin_product_path(classification.product), data: { 'turbo-frame': '_top' }, class: "d-flex align-items-center text-dark hover-none #{classification.taxon.manual_sort_order? ? 'py-4' : 'p-4'}" do  %>
       <%= render 'spree/admin/shared/product_image', object: classification.product %>
-      <span class="ml-3">
+      <span class="ml-4">
         <%= classification.product.name %>
       </span>
     <% end %>

@@ -1,7 +1,7 @@
 <%= f.fields_for :link do |lf| %>
   <div class="form-group">
     <%= lf.label :linkable_type, 'Link' %>
-    <%= lf.select :linkable_type, @page_block.allowed_linkable_types, { include_blank: false }, { class: 'custom-select mb-4', data: { action: 'auto-submit#submit' } } %>
+    <%= lf.select :linkable_type, @page_block.allowed_linkable_types, { include_blank: false }, { class: 'custom-select mb-6', data: { action: 'auto-submit#submit' } } %>
     <div id="linkable_type_dropdown">
       <%= render 'spree/admin/page_links/linkable_type_dropdown', page_link: lf.object, form_name: 'page_block[link_attributes]' %>
     </div>
@@ -12,7 +12,7 @@
     <%= lf.text_field :label, class: 'form-control', data: { action: 'blur->auto-submit#submit' }, placeholder: 'eg. About us', required: true %>
   </div>
 
-  <div class="custom-control custom-checkbox mb-12">
+  <div class="custom-control custom-checkbox mb-6">
     <%= lf.check_box :open_in_new_tab, class: 'custom-control-input', data: { action: 'auto-submit#submit' } %>
     <%= lf.label :open_in_new_tab, class: 'custom-control-label' %>
   </div>

@@ -21,7 +21,7 @@
         <span>
           You don't have domain connected to your store
         </span>
-        <%= link_to 'Connect your own domain', spree.admin_custom_domains_path, class: 'btn btn-secondary ml-3' %>
+        <%= link_to 'Connect your own domain', spree.admin_custom_domains_path, class: 'btn btn-secondary ml-4' %>
       </div>
     </div>
   <% end %>
@@ -54,7 +54,7 @@
 
       <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3">
         <% available_themes.each do |theme| %>
-          <div class="col mb-4">
+          <div class="col mb-6">
             <div class="card hover-light">
               <% if theme.preview_image_url.present? %>
                 <%= image_tag theme.preview_image_url, class: 'card-img-top' %>

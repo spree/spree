@@ -1,4 +1,4 @@
-<%= turbo_frame_tag 'media-form', class: 'card mb-4', data: { controller: 'media-form', media_form_delete_url_value: spree.bulk_destroy_admin_assets_path(viewable_id: viewable&.id) } do %>
+<%= turbo_frame_tag 'media-form', class: 'card mb-6', data: { controller: 'media-form', media_form_delete_url_value: spree.bulk_destroy_admin_assets_path(viewable_id: viewable&.id) } do %>
   <div class="card-header">
     <h5 class="card-title mr-2"><%= Spree.t(:media) %></h5>
     <button type="button" data-media-form-target="deleteButton" class="btn btn-sm btn-danger btn-outline d-none ml-auto" data-action="media-form#deleteSelected">
@@ -23,8 +23,8 @@
           action: 'asset-uploader#open',
           media_form_target: 'addButton'
         }  do %>
-        <%= icon('upload', class: 'mt-5', style: 'font-size: 2rem;') %>
-        <p class="form-text mt-2 mb-5">
+        <%= icon('upload', class: 'mt-12', style: 'font-size: 2rem;') %>
+        <p class="form-text mt-2 mb-12">
           <%= Spree.t('admin.upload_new_asset') %>
         </p>
       <% end %>

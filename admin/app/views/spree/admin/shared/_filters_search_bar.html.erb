@@ -2,8 +2,8 @@
 <% badge_name ||= label %>
 <% placeholder ||= [Spree.t(:search), controller_name.humanize.downcase].join(' ') %>
 
-<div class="form-control d-flex align-items-center py-0 focus-shadow focus-border flex-grow-1 mb-3 mb-lg-0" id="filters-search-bar">
-  <%= icon "search", class: "mr-3 text-muted" %>
+<div class="form-control d-flex align-items-center py-0 focus-shadow focus-border flex-grow-1 mb-4 mb-lg-0" id="filters-search-bar">
+  <%= icon "search", class: "mr-4 text-muted" %>
   <%= search_field_tag "q[#{param}]",
   params.dig(:q, param),
   class: "form-control-plaintext px-0",

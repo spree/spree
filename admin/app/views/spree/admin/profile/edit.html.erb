@@ -9,7 +9,7 @@
 <div class="grid grid-cols-12 gap-6">
   <div class="col-span-12 lg:col-span-6 lg:col-start-4">
     <%= form_for @user, url: spree.admin_profile_path, method: :put, as: :user do |f| %>
-      <div class="card mb-4">
+      <div class="card mb-6">
         <div class="card-header">
           <h5 class="card-title"><%= Spree.t('admin.personal_details') %></h5>
         </div>

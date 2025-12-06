@@ -1,14 +1,14 @@
 <div id="scroll-header"></div>
 
 <header id="header" class="sticky top-0 z-[1070] py-0">
-  <nav class="navbar navbar-expand-lg p-0 d-flex align-items-center px-3 h-100">
+  <nav class="navbar navbar-expand-lg p-0 d-flex align-items-center px-4 h-100">
     <div class="d-lg-none">
       <button type="button" class="btn btn-light px-2 text-decoration-none" data-action="click->sidebar#openMobile">
         <%= icon('menu-2', class: 'mr-0') %>
       </button>
     </div>
 
-    <button type="button" class="sidebar-toggle-btn d-none d-lg-flex mr-3" data-action="click->sidebar#toggle" aria-label="<%= Spree.t('admin.expand_sidebar') %>">
+    <button type="button" class="sidebar-toggle-btn d-none d-lg-flex mr-4" data-action="click->sidebar#toggle" aria-label="<%= Spree.t('admin.expand_sidebar') %>">
       <%= icon('layout-sidebar-left-collapse') %>
     </button>
 

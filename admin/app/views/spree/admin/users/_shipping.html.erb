@@ -1,4 +1,4 @@
-<div class="card mb-4" id="user-ship-address">
+<div class="card mb-6" id="user-ship-address">
   <div class="card-header d-flex align-items-center justify-content-between">
     <h5 class="card-title"><%= Spree.t(:shipping_address) %></h5>
 
@@ -18,7 +18,7 @@
     <% if @user.shipping_address %>
       <%= turbo_frame_tag :edit_address_shipping do %>
         <%= render 'spree/admin/shared/map', map_object: @user.ship_address, label: customer_full_name(@user) || @user.email %>
-        <div class="mt-4">
+        <div class="mt-6">
           <%= render 'spree/admin/shared/address', address: @user.shipping_address %>
         </div>
       <% end %>

@@ -195,7 +195,7 @@ module Spree
           @template.content_tag(:div, class: 'custom-control custom-checkbox') do
             @template.check_box(@object_name, method, objectify_options(options.merge(class: 'custom-control-input'))) +
             @template.label(@object_name, method, get_label(method, options), class: 'custom-control-label')
-          end + @template.error_message_on(@object_name, method) + spree_field_help(method, options.merge!(class: 'form-text mt-2 ml-4'))
+          end + @template.error_message_on(@object_name, method) + spree_field_help(method, options.merge!(class: 'form-text mt-2 ml-6'))
         end
       end
 

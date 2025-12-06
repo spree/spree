@@ -11,13 +11,13 @@
       <%= f.hidden_field :pageable_id %>
       <%= f.hidden_field :pageable_type %>
       <% cache spree_base_cache_scope.call('new-section-list'), expires_in: 1.hour do %>
-        <ul class="list-group list-group-flush m-2 mx-3 border p-1 rounded-lg bg-white">
+        <ul class="list-group list-group-flush m-2 mx-4 border p-1 rounded-lg bg-white">
           <% @theme.available_page_sections.each do |section_class| %>
             <li class="list-group-item p-2 list-group-item-action cursor-pointer d-flex align-items-center hover-action text-primary"
               data-action="click->section-form#addSection"
               data-section-form-type-param="<%= section_class %>"
             >
-              <%= icon section_class.new.icon_name, class: 'mr-3' if section_class.new.icon_name.present? %>
+              <%= icon section_class.new.icon_name, class: 'mr-4' if section_class.new.icon_name.present? %>
               <%= section_class.to_s.demodulize.titleize %>
             </li>
           <% end %>
