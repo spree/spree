@@ -273,7 +273,7 @@ module Spree
         options[:aria_label] ||= Spree.t('admin.copy_to_clipboard') # screen-reader label
 
         content_tag(:button, options) do
-          icon('copy', class: 'mr-0 font-size-sm') + tooltip(Spree.t('admin.copy_to_clipboard'))
+          icon('copy', class: 'mr-0 text-sm') + tooltip(Spree.t('admin.copy_to_clipboard'))
         end
       end
 
@@ -287,7 +287,7 @@ module Spree
       def clipboard_component(text, options = {})
         options[:data] ||= {}
         options[:data][:controller] = 'clipboard'
-        options[:data][:clipboard_success_content_value] ||= raw(icon('check', class: 'mr-0 font-size-sm'))
+        options[:data][:clipboard_success_content_value] ||= raw(icon('check', class: 'mr-0 text-sm'))
 
         content_tag(:span, data: options[:data]) do
           hidden_field_tag(:clipboard_source, text, data: { clipboard_target: 'source' }) +
