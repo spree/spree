@@ -9,7 +9,7 @@
 <% end %>
 
 <% if @import.status == 'mapping' %>
-  <div class="flex justify-between items-center bg-light border-t border-b text-muted mt-4 sticky top-0 z-[1070]">
+  <div class="flex justify-between items-center bg-light border-t border-b text-muted mt-4 sticky top-0 z-[1020]">
     <div class="w-10 p-2 text-center">
       <%= Spree.t('admin.imports.field_required') %>
     </div>
@@ -30,7 +30,7 @@
   <%= turbo_stream_from "import_#{@import.id}_footer" %>
   <%= turbo_stream_from "import_#{@import.id}_loader" %>
 
-  <div class="flex justify-between items-center bg-light border-t border-b text-muted mt-4 sticky top-0 z-[1070]">
+  <div class="flex justify-between items-center bg-light border-t border-b text-muted mt-4 sticky top-0 z-[1020]">
     <div class="w-10 p-2 text-center">
       <%= I18n.t('activerecord.attributes.spree/import_row.row_number') %>
     </div>

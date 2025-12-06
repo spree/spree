@@ -1,4 +1,3 @@
-//= link spree/admin/actiontext.css
 //= link spree/admin/application.css
 
 //= link_tree ../images

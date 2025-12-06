@@ -18,11 +18,11 @@ export default class extends Controller {
     if (window.scrollY > this.thresholdValue) {
       this.element.classList.add('sticky')
       this.element.classList.add('top-0')
-      this.element.classList.add('z-[1070]')
+      this.element.classList.add('z-[1020]')
     } else {
       this.element.classList.remove('sticky')
       this.element.classList.remove('top-0')
-      this.element.classList.remove('z-[1070]')
+      this.element.classList.remove('z-[1020]')
     }
   }
 }
