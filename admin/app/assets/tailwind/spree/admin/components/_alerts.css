@@ -20,8 +20,7 @@
   }
 
   .alert a {
-    font-weight: var(--font-weight-medium);
-    color: var(--color-primary);
+    @apply font-medium text-primary;
   }
 
   .alert-primary {
@@ -31,9 +30,7 @@
   }
 
   .alert-secondary {
-    color: var(--color-gray-700);
-    background-color: var(--color-gray-100);
-    border-color: var(--color-gray-200);
+    @apply text-gray-700 bg-gray-100 border-gray-200;
   }
 
   .alert-success {
@@ -65,15 +62,11 @@
   }
 
   .alert-light {
-    color: var(--color-gray-700);
-    background-color: var(--color-gray-50);
-    border-color: var(--color-gray-100);
+    @apply text-gray-700 bg-gray-50 border-gray-100;
   }
 
   .alert-dark {
-    color: var(--color-gray-100);
-    background-color: var(--color-gray-800);
-    border-color: var(--color-gray-700);
+    @apply text-gray-100 bg-gray-800 border-gray-700;
   }
 
   .alert-dismissible {
@@ -90,7 +83,7 @@
   }
 
   .alert-link {
-    font-weight: var(--font-weight-bold);
+    @apply font-bold;
   }
 
   /* Page alerts */

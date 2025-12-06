@@ -134,10 +134,7 @@
   .badge-authorize,
   .badge-eligible,
   .badge-invited {
-    background-color: white;
-    color: var(--color-text-muted);
-    border: 1px solid var(--color-border);
-    font-weight: var(--font-weight-normal);
+    @apply bg-white text-text-muted border border-border font-normal;
   }
 
   .badge-processing:hover,

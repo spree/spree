@@ -113,9 +113,7 @@
   }
 
   #page-tabs .nav .nav-link.active {
-    background-color: transparent;
-    color: var(--color-primary);
-    font-weight: var(--font-weight-bold);
+    @apply bg-transparent text-primary font-bold;
   }
 
   /* Main Content */
@@ -286,16 +284,13 @@
   }
 
   #main-sidebar .nav-link {
+    @apply flex items-center whitespace-nowrap font-normal;
     border-radius: var(--radius-lg);
-    display: flex;
-    align-items: center;
     padding-left: var(--spacing-1);
     padding-right: var(--spacing-1);
     padding-top: var(--spacing-1);
     padding-bottom: var(--spacing-1);
     color: inherit;
-    white-space: nowrap;
-    font-weight: var(--font-weight-normal);
     transition: background-color 0.1s ease-in-out;
   }
 
@@ -307,23 +302,20 @@
   }
 
   #main-sidebar .nav-link:hover {
-    background-color: var(--color-gray-50);
+    @apply bg-gray-50;
   }
 
   #main-sidebar .nav-link:hover .ti {
-    color: var(--color-primary);
+    @apply text-primary;
   }
 
   #main-sidebar .nav-link.active {
-    color: var(--color-primary);
-    background-color: var(--color-surface);
+    @apply text-primary bg-surface font-normal;
     box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.04) 0px 0px 0px 1px, rgba(0, 0, 0, 0.04) 0px 1px 2px -1px, rgba(0, 0, 0, 0.02) 0px 2px 4px 0px;
-    font-weight: var(--font-weight-normal);
   }
 
   #main-sidebar .nav-link.active .ti {
-    background-color: var(--color-primary);
-    color: var(--color-surface);
+    @apply bg-primary text-surface;
   }
 
   #main-sidebar .nav-link .badge:not(.badge-info) {
@@ -340,43 +332,39 @@
   }
 
   #main-sidebar .nav-submenu:before {
+    @apply absolute bg-gray-200;
     content: '';
-    position: absolute;
     left: var(--spacing-3);
     top: 0;
     bottom: var(--spacing-1);
     width: 1px;
-    background-color: var(--color-gray-200);
   }
 
   #main-sidebar .nav-submenu .nav-link {
-    font-weight: var(--font-weight-normal);
+    @apply font-normal;
     padding-top: var(--spacing-1);
     padding-bottom: var(--spacing-1);
   }
 
   #main-sidebar .nav-submenu .nav-link:hover {
-    background-color: var(--color-gray-50);
+    @apply bg-gray-50;
   }
 
   #main-sidebar .nav-submenu .nav-link.active,
   #main-sidebar .nav-submenu .nav-link:active,
   #main-sidebar .nav-submenu .nav-link:focus {
-    font-weight: var(--font-weight-bold);
-    background-color: transparent !important;
-    box-shadow: none;
+    @apply font-bold bg-transparent! shadow-none;
   }
 
   #main-sidebar .nav-submenu .nav-link.active:before,
   #main-sidebar .nav-submenu .nav-link:active:before,
   #main-sidebar .nav-submenu .nav-link:focus:before {
+    @apply absolute bg-primary;
     content: '';
-    position: absolute;
     left: calc(-1rem - 1px);
     top: 10%;
     width: 3px;
     height: 80%;
-    background-color: var(--color-primary);
     border-radius: var(--radius-sm);
   }
 
@@ -641,16 +629,13 @@
   }
 
   .sidebar-mobile .sidebar-mobile-content .nav-link {
+    @apply flex items-center whitespace-nowrap font-normal;
     border-radius: var(--radius-lg);
-    display: flex;
-    align-items: center;
     padding-left: var(--spacing-1);
     padding-right: var(--spacing-1);
     padding-top: var(--spacing-1);
     padding-bottom: var(--spacing-1);
     color: inherit;
-    white-space: nowrap;
-    font-weight: var(--font-weight-normal);
     transition: background-color 0.1s ease-in-out;
   }
 
@@ -662,28 +647,24 @@
   }
 
   .sidebar-mobile .sidebar-mobile-content .nav-link:hover {
-    background-color: var(--color-gray-50);
+    @apply bg-gray-50;
   }
 
   .sidebar-mobile .sidebar-mobile-content .nav-link:hover .ti {
-    color: var(--color-primary);
+    @apply text-primary;
   }
 
   .sidebar-mobile .sidebar-mobile-content .nav-link.active {
-    color: var(--color-primary);
-    background-color: var(--color-surface);
+    @apply text-primary bg-surface font-normal;
     box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.04) 0px 0px 0px 1px, rgba(0, 0, 0, 0.04) 0px 1px 2px -1px, rgba(0, 0, 0, 0.02) 0px 2px 4px 0px;
-    font-weight: var(--font-weight-normal);
   }
 
   .sidebar-mobile .sidebar-mobile-content .nav-link.active .ti {
-    background-color: var(--color-primary);
-    color: var(--color-surface);
+    @apply bg-primary text-surface;
   }
 
   .sidebar-mobile .sidebar-mobile-content .nav-link .badge:not(.badge-info) {
-    background-color: var(--color-gray-100);
-    color: var(--color-gray-700);
+    @apply bg-gray-100 text-gray-700;
     border-radius: var(--radius-default);
   }
 
@@ -697,43 +678,39 @@
   }
 
   .sidebar-mobile .sidebar-mobile-content .nav-submenu:before {
+    @apply absolute bg-gray-200;
     content: '';
-    position: absolute;
     left: var(--spacing-3);
     top: 0;
     bottom: var(--spacing-1);
     width: 1px;
-    background-color: var(--color-gray-200);
   }
 
   .sidebar-mobile .sidebar-mobile-content .nav-submenu .nav-link {
-    font-weight: var(--font-weight-normal);
+    @apply font-normal;
     padding-top: var(--spacing-1);
     padding-bottom: var(--spacing-1);
   }
 
   .sidebar-mobile .sidebar-mobile-content .nav-submenu .nav-link:hover {
-    background-color: var(--color-gray-50);
+    @apply bg-gray-50;
   }
 
   .sidebar-mobile .sidebar-mobile-content .nav-submenu .nav-link.active,
   .sidebar-mobile .sidebar-mobile-content .nav-submenu .nav-link:active,
   .sidebar-mobile .sidebar-mobile-content .nav-submenu .nav-link:focus {
-    font-weight: var(--font-weight-bold);
-    background-color: transparent !important;
-    box-shadow: none;
+    @apply font-bold bg-transparent! shadow-none;
   }
 
   .sidebar-mobile .sidebar-mobile-content .nav-submenu .nav-link.active:before,
   .sidebar-mobile .sidebar-mobile-content .nav-submenu .nav-link:active:before,
   .sidebar-mobile .sidebar-mobile-content .nav-submenu .nav-link:focus:before {
+    @apply absolute bg-primary;
     content: '';
-    position: absolute;
     left: calc(-1rem - 1px);
     top: 10%;
     width: 3px;
     height: 80%;
-    background-color: var(--color-primary);
     border-radius: var(--radius-sm);
   }
 
@@ -752,7 +729,7 @@
   .sidebar-mobile .sidebar-mobile-content .dropdown .btn:hover,
   .sidebar-mobile .sidebar-mobile-content .dropdown .btn:focus,
   .sidebar-mobile .sidebar-mobile-content .dropdown .btn:active {
-    background-color: var(--color-gray-50);
+    @apply bg-gray-50;
   }
 
   .sidebar-mobile .sidebar-mobile-content .dropdown .dropdown-menu {

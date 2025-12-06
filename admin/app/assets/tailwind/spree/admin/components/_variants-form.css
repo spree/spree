@@ -40,9 +40,8 @@
   }
 
   .variants-form .options-creator__option .label {
+    @apply inline-block font-medium;
     margin-bottom: 0.5rem;
-    font-weight: var(--font-weight-medium);
-    display: inline-block;
   }
 
   .variants-form .options-creator__option .draggable {
@@ -61,7 +60,7 @@
   }
 
   .variants-form .options-creator__option .draggable:hover {
-    background-color: var(--color-gray-25);
+    @apply bg-gray-25;
   }
 
   .variants-form .options-creator__option--new {

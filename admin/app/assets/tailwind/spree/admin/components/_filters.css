@@ -77,19 +77,17 @@
   }
 
   .sort_link:hover {
-    color: var(--color-primary) !important;
-    text-decoration: none !important;
-    background-color: var(--color-gray-50);
+    @apply text-primary! no-underline! bg-gray-50;
   }
 
   .sort_link.asc,
   .sort_link.desc {
-    font-weight: var(--font-weight-medium);
+    @apply font-medium;
   }
 
   .sort_link.asc svg,
   .sort_link.desc svg {
-    color: var(--color-gray-600) !important;
+    @apply text-gray-600!;
   }
 
   .sort_link .icon,

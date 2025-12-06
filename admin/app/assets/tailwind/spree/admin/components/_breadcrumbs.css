@@ -4,19 +4,12 @@
 
 @layer components {
   .breadcrumb {
-    display: flex;
-    flex-wrap: wrap;
+    @apply flex flex-wrap items-center mb-0 list-none font-medium bg-transparent rounded-none;
     gap: 0.5rem;
-    align-items: center;
     padding: 0;
     padding-left: 1rem;
-    margin-bottom: 0;
-    list-style: none;
-    font-weight: var(--font-weight-medium);
     height: 32px;
     border-left: 1px solid var(--color-gray-50);
-    border-radius: 0;
-    background-color: transparent;
   }
 
   .breadcrumb-item + .breadcrumb-item {
@@ -24,14 +17,13 @@
   }
 
   .breadcrumb-item + .breadcrumb-item::before {
-    float: left;
+    @apply float-left text-gray-500;
     padding-right: 0.5rem;
-    color: var(--color-gray-500);
     content: "/";
   }
 
   .breadcrumb-item.active {
-    color: var(--color-text-muted);
+    @apply text-text-muted;
   }
 
   .breadcrumb-item a {
@@ -40,16 +32,14 @@
   }
 
   .breadcrumb-item a:hover {
-    color: var(--color-primary);
-    text-decoration: underline;
+    @apply text-primary underline;
   }
 
   .breadcrumb li a {
-    text-decoration: none;
+    @apply no-underline;
   }
 
   .breadcrumb li a:hover {
-    color: var(--color-primary);
-    text-decoration: underline;
+    @apply text-primary underline;
   }
 }

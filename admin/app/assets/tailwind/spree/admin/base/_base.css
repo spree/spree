@@ -33,13 +33,12 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
+    @apply font-bold leading-none;
     font-family: var(--font-sans);
-    line-height: 1;
-    font-weight: var(--font-weight-bold);
   }
 
   strong, b {
-    font-weight: var(--font-weight-bold);
+    @apply font-bold;
   }
 
   h1 { @apply text-4xl; }
@@ -50,12 +49,11 @@
   h6 { @apply text-base; }
 
   hr {
-    border-color: var(--color-border);
+    @apply border-border;
   }
 
   code {
-    color: var(--color-text);
-    background-color: var(--color-gray-50);
+    @apply text-text bg-gray-50;
     padding: 0.125rem 0.25rem;
     border-radius: var(--radius-sm);
     font-size: 0.875em;

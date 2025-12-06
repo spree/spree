@@ -4,9 +4,8 @@
 
 @layer components {
   .trix-container {
-    border: 1px solid var(--color-border);
+    @apply border border-border bg-surface;
     border-radius: var(--radius-default);
-    background-color: var(--color-surface);
   }
 
   trix-toolbar {
@@ -109,8 +108,7 @@
   }
 
   trix-toolbar .trix-dialog .trix-button {
-    @apply inline-block text-center align-middle select-none text-sm leading-normal bg-gray-50;
-    font-weight: var(--font-weight-normal);
+    @apply inline-block text-center align-middle select-none text-sm leading-normal bg-gray-50 font-normal;
     padding: var(--spacing-2) var(--spacing-3);
     margin: 0 var(--spacing-1) 0 0;
     border-radius: var(--radius-default);

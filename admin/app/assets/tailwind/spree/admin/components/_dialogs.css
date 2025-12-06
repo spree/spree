@@ -133,8 +133,7 @@
   }
 
   .drawer-title {
-    margin-bottom: 0;
-    font-weight: var(--font-weight-bold);
+    @apply mb-0 font-bold;
   }
 
   .drawer-body {
@@ -144,12 +143,9 @@
   }
 
   .drawer-footer {
+    @apply flex justify-between items-center bg-gray-25;
     padding: 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     border-top: 1px solid var(--color-gray-50);
-    background-color: var(--color-gray-25);
   }
 
   /* ==========================================================================
@@ -210,8 +206,7 @@
   }
 
   .dialog-title {
-    margin-bottom: 0;
-    font-weight: var(--font-weight-medium);
+    @apply mb-0 font-medium;
   }
 
   .dialog-body {
@@ -329,9 +324,7 @@
   }
 
   .modal-title {
-    margin-bottom: 0;
-    line-height: 1.5;
-    font-weight: var(--font-weight-medium);
+    @apply mb-0 leading-normal font-medium;
   }
 
   .modal-body {
@@ -341,12 +334,8 @@
   }
 
   .modal-footer {
-    display: flex;
-    flex-shrink: 0;
-    align-items: center;
-    justify-content: flex-end;
+    @apply flex shrink-0 items-center justify-end bg-gray-25;
     padding: 1rem;
-    background-color: var(--color-gray-25);
     border-top: 1px solid var(--color-gray-50);
     border-bottom-right-radius: calc(var(--radius-xl) - 1px);
     border-bottom-left-radius: calc(var(--radius-xl) - 1px);

@@ -9,8 +9,7 @@
   }
 
   .uppy-Dashboard-inner {
-    background-color: var(--color-gray-25);
-    border-color: var(--color-border);
+    @apply bg-gray-25 border-border;
   }
 
   .uppy-Dashboard-innerWrap,
@@ -57,11 +56,10 @@
 
   .uppy-Dashboard-browse,
   .uppy-DashboardContent-back {
-    @apply inline-block text-center align-middle select-none text-sm leading-normal text-gray-900 bg-gray-50;
-    font-weight: var(--font-weight-normal);
+    @apply inline-block text-center align-middle select-none text-sm leading-normal text-gray-900 bg-gray-50 font-normal border-border;
     padding: 0.375rem var(--spacing-2-5);
     border-radius: var(--radius-default);
-    border: 1px solid var(--color-border);
+    border-width: 1px;
     transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
   }
 
@@ -71,21 +69,19 @@
 
   .uppy-Dashboard-browse:hover,
   .uppy-DashboardContent-back:hover {
-    background-color: var(--color-gray-100);
-    border-color: var(--color-gray-300);
+    @apply bg-gray-100 border-gray-300;
   }
 
   .uppy-DashboardContent-save {
-    @apply inline-block text-center align-middle select-none text-sm leading-normal text-surface bg-primary;
-    font-weight: var(--font-weight-normal);
+    @apply inline-block text-center align-middle select-none text-sm leading-normal text-surface bg-primary font-normal border-primary;
     padding: 0.375rem var(--spacing-2-5);
     border-radius: var(--radius-default);
-    border: 1px solid var(--color-primary);
+    border-width: 1px;
     transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
   }
 
   .uppy-DashboardContent-save:hover {
-    background-color: var(--color-primary-hover);
+    @apply bg-primary-hover;
   }
 
   .uppy-Dashboard-close {
@@ -110,11 +106,10 @@
   }
 
   .uppy-StatusBar-actionBtn {
-    @apply inline-block text-center align-middle select-none text-xs leading-normal text-gray-900 bg-gray-50;
-    font-weight: var(--font-weight-normal);
+    @apply inline-block text-center align-middle select-none text-xs leading-normal text-gray-900 bg-gray-50 font-normal border-border;
     padding: var(--spacing-1) var(--spacing-2);
     border-radius: var(--radius-default);
-    border: 1px solid var(--color-border);
+    border-width: 1px;
   }
 
   .uppy-StatusBar.is-complete .uppy-StatusBar-progress {

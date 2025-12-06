@@ -93,12 +93,10 @@
   }
 
   .dropdown-item {
-    @apply flex items-center justify-start w-full clear-both text-inherit no-underline whitespace-nowrap bg-transparent border-0;
+    @apply flex items-center justify-start w-full clear-both text-inherit no-underline whitespace-nowrap bg-transparent border-0 font-normal text-text;
     height: 2rem;
     margin-bottom: var(--spacing-1);
     padding-right: 2rem;
-    font-weight: var(--font-weight-normal);
-    color: var(--color-text);
     border-radius: 0.8rem;
     transition-property: background-color, color;
     transition-duration: 0.01s;
@@ -115,20 +113,17 @@
 
   .dropdown-item:hover,
   .dropdown-item:focus {
-    @apply no-underline;
-    color: var(--color-gray-900);
+    @apply no-underline text-gray-900;
     background-color: rgba(227, 227, 227, 0.5);
   }
 
   .dropdown-item.active {
-    @apply relative;
-    color: var(--color-gray-900) !important;
-    font-weight: var(--font-weight-bold) !important;
+    @apply relative text-gray-900! font-bold!;
     background-color: rgba(227, 227, 227, 0.5) !important;
   }
 
   .dropdown-item.active i {
-    color: var(--color-gray-900) !important;
+    @apply text-gray-900!;
   }
 
   .dropdown-item.active::after {
@@ -141,19 +136,16 @@
   }
 
   .dropdown-item:active {
-    @apply no-underline;
-    color: var(--color-gray-900);
-    background-color: var(--color-gray-100);
+    @apply no-underline text-gray-900 bg-gray-100;
   }
 
   .dropdown-item.disabled,
   .dropdown-item:disabled {
-    @apply pointer-events-none bg-transparent;
-    color: var(--color-gray-500);
+    @apply pointer-events-none bg-transparent text-gray-500;
   }
 
   .dropdown-item.btn {
-    font-weight: var(--font-weight-normal) !important;
+    @apply font-normal!;
   }
 
   .dropdown-item.btn-danger {
