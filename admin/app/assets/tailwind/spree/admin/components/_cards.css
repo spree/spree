@@ -62,7 +62,7 @@
   }
 
   .card-body {
-    @apply flex-auto p-3;
+    @apply flex-auto p-4;
   }
 
   .card-body .form-group:last-child {
@@ -75,7 +75,7 @@
   }
 
   .card-header {
-    @apply flex items-center mb-0 py-3 px-3 border-b border-gray-50;
+    @apply flex items-center mb-0 p-4 border-b border-gray-50;
     height: 54px;
   }
 
@@ -100,7 +100,7 @@
   }
 
   .card-footer {
-    @apply border-t-0 py-3 px-3;
+    @apply p-4;
   }
 
   .card-footer:last-child {
