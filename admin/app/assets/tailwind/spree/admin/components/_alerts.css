@@ -97,7 +97,7 @@
   }
 
   .alerts-container .alert {
-    @apply border pointer-events-auto rounded-2xl;
+    @apply border pointer-events-auto rounded-2xl ease-in-out transition-all duration-200;
     box-shadow: var(--shadow-sm);
   }
 }
