@@ -24,6 +24,7 @@
 @import "./base/_theme.css";
 @import "./base/_base.css";
 @import "./base/_utilities.css";
+@import "./base/_animations.css";
 
 /* Utilities */
 @import "./utilities/_bootstrap.css";

@@ -9,7 +9,7 @@
         <a class="nav-link" data-tabs-target="tab" data-action="click->tabs#select"><%= Spree.t('apis.platform') %></a>
       </li>
     </ul>
-    <div data-tabs-target="panel" class="animate__animated">
+    <div data-tabs-target="panel" class="animate-fade-in">
       <% if storefront_serializer_exists?(@object) %>
         <pre class="m-0"><code data-highlight-target="code" class="language-json block overflow-auto" style="height: calc(100dvh - 11rem);"><%= serialize_to_json(@object, api_type: :storefront) %></code></pre>
       <% else %>
@@ -21,7 +21,7 @@
         </div>
       <% end %>
     </div>
-    <div data-tabs-target="panel" class="animate__animated" hidden>
+    <div data-tabs-target="panel" class="animate-fade-in" hidden>
       <% if platform_serializer_exists?(@object) %>
         <pre class="m-0"><code data-highlight-target="code" class="language-json block overflow-auto" style="height: calc(100dvh - 11rem);"><%= serialize_to_json(@object, api_type: :platform) %></code></pre>
       <% else %>

@@ -14,7 +14,7 @@
         </li>
       </ul>
       <div id="pills-tabContent">
-        <div data-tabs-target="panel" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab" class="animate__animated animate__fadeIn">
+        <div data-tabs-target="panel" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab" class="animate-fade-in">
           <div class="px-4 py-2" data-controller="color-palette">
             <% color_palettes.each do |color_palette| %>
               <%#= render 'spree/admin/page_builder/color_palette',
@@ -65,7 +65,7 @@
                           value: @theme_preview.preferred_success_color, action: 'change->page-builder#refreshPreview' %>
           </div>
         </div>
-        <div data-tabs-target="panel" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab" hidden class="animate__animated animate__fadeIn">
+        <div data-tabs-target="panel" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab" hidden class="animate-fade-in">
           <div class="px-4 py-2">
             <%= render 'spree/admin/page_builder/range_input',
               f: f, field: :preferred_button_border_radius, min: 0, max: 100, unit: 'px', action: 'change->page-builder#refreshPreview'

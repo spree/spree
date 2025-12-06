@@ -12,7 +12,7 @@
         <span class="ml-6"><%= Spree.t("admin.store_setup_tasks.#{task}") %></span>
         <%= icon('chevron-right', class: 'arrow ml-auto') %>
       </summary>
-      <div class="animate__animated animate__fadeIn animate__faster">
+      <div class="animate-fade-in-fast">
         <div class="card-body flex flex-col gap-3">
           <%= render "spree/admin/dashboard/setup_tasks/#{task}", done: done %>
         </div>

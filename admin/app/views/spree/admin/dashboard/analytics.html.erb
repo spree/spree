@@ -75,7 +75,7 @@
       </div>
     </div>
     <div class="card-body p-2">
-      <div data-tabs-target="panel" class="animate__animated animate__fadeIn">
+      <div data-tabs-target="panel" class="animate-fade-in">
         <% if currency_money(current_currency).symbol_first? %>
           <%= line_chart @grouped_orders_scope.sum(:total), prefix: currency_money(current_currency).symbol, zeros: true, points: false, library: {
             animation: {
@@ -92,19 +92,19 @@
           } %>
         <% end %>
       </div>
-      <div data-tabs-target="panel" class="animate__animated animate__fadeIn" hidden>
+      <div data-tabs-target="panel" class="animate-fade-in" hidden>
         <%= line_chart @grouped_orders_scope.average(:total), suffix: currency_money(current_currency).symbol, zeros: true, points: false %>
       </div>
-      <div data-tabs-target="panel" class="animate__animated animate__fadeIn" hidden>
+      <div data-tabs-target="panel" class="animate-fade-in" hidden>
         <%= line_chart @grouped_orders_scope.count, points: false %>
       </div>
       <% if @visits %>
-        <div data-tabs-target="panel" class="animate__animated animate__fadeIn" hidden>
+        <div data-tabs-target="panel" class="animate-fade-in" hidden>
           <%= line_chart @visits.count, points: false %>
         </div>
       <% end %>
       <% if @audience %>
-        <div data-tabs-target="panel" class="animate__animated animate__fadeIn" hidden>
+        <div data-tabs-target="panel" class="animate-fade-in" hidden>
           <%= line_chart @audience.count, points: false %>
         </div>
       <% end %>

@@ -48,8 +48,9 @@
 
   /* Dropdown Container using Floating UI */
   .dropdown-container {
-    @apply absolute z-1050 hidden text-left list-none border-0 overflow-hidden! text-base font-normal text-text bg-surface;
-    @apply block animate-fade-in transition-all duration-200 ease-in-out;
+    @apply absolute z-1050 text-left list-none border-0 overflow-hidden text-base font-normal text-text bg-surface;
+    transform-origin: top center;
+    animation: popIn 0.15s ease-out both;
     min-width: 10rem;
     max-width: 20rem;
     margin-top: 0.25rem !important;
@@ -57,6 +58,11 @@
     background-clip: padding-box;
     border-radius: 1rem;
     box-shadow: var(--shadow-dropdown);
+  }
+
+  /* When hidden, disable animation so it doesn't play on page load */
+  .dropdown-container.hidden {
+    animation: none;
   }
 
   .dropdown-divider {
