@@ -10,10 +10,10 @@
   } do |f| %>
     <%= hidden_field_tag :frame_name, frame_name if frame_name.present? %>
 
-    <div class="d-flex flex-column flex-lg-row gap-2">
+    <div class="flex flex-col lg:flex-row gap-2">
       <%= render 'spree/admin/shared/filters_search_bar', param: :code_i_cont, label: Spree.t(:code) %>
       <%= render "table_filter_dropdown" %>
-      <%= button_tag type: 'button', class: 'btn btn-light d-flex align-items-center', data: { action: 'dialog#open' } do %>
+      <%= button_tag type: 'button', class: 'btn btn-light flex items-center', data: { action: 'dialog#open' } do %>
         <%= icon "adjustments", class: "mr-1" %>
         <%= Spree.t("admin.filters") %>
       <% end %>

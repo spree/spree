@@ -1,4 +1,4 @@
-<div data-controller="slug-form" class="card mb-4">
+<div data-controller="slug-form" class="card mb-6">
   <div class="card-body">
     <%= f.spree_text_field :presentation, data: { slug_form_target: :name, action: 'input->slug-form#updateUrlFromName' }, required: true, autofocus: f.object.new_record? %>
     <%= f.spree_text_field :name, label: Spree.t(:internal_name), data: { slug_form_target: :url }, required: true %>

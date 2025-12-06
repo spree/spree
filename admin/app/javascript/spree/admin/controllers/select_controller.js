@@ -105,7 +105,7 @@ export default class extends Controller {
       if (this.activeOptionValue) settings.items = [this.activeOptionValue]
     }
 
-    this.inputTarget.classList.remove('d-none')
+    this.inputTarget.classList.remove('hidden', 'd-none')
     this.select = new TomSelect(this.inputTarget, settings)
   }
 }

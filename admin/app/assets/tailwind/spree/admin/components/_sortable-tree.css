@@ -1,0 +1,71 @@
+/* ==========================================================================
+   SORTABLE TREE
+   ========================================================================== */
+
+@layer components {
+  #itemImgContainer {
+    width: 200px;
+  }
+
+  #itemImgContainer img {
+    max-width: 100%;
+  }
+
+  #sortableTreeArea .space-buttons {
+    box-shadow: -11px 0 16px 6px white;
+    z-index: 9;
+  }
+
+  #sortableTreeArea .space-buttons a {
+    margin: 2px;
+  }
+
+  #sortableTreeArea .sortable-tree-item-row {
+    margin: 2px;
+    background-color: white;
+  }
+
+  #sortableTreeArea .sortable-tree-item {
+    border: solid 1px transparent;
+    padding: 0;
+  }
+
+  #sortableTreeArea .sortable-tree-item [data-sortable-tree-parent-id-value] {
+    margin-left: 25px;
+  }
+
+  @media (min-width: 576px) {
+    #sortableTreeArea .sortable-tree-item [data-sortable-tree-parent-id-value] {
+      margin-left: 50px;
+    }
+  }
+
+  #sortableTreeArea .sortable-chosen {
+    background-color: transparent !important;
+    border-color: transparent !important;
+  }
+
+  #sortableTreeArea .sortable-chosen .sortable-tree-item-row {
+    background-color: var(--color-action) !important;
+    border: 2px solid var(--color-blue) !important;
+    margin: -1px;
+  }
+
+  #sortableTreeArea .item_image_holder {
+    position: relative;
+    border: 1px solid var(--color-border);
+    border-radius: 7px;
+    overflow: hidden;
+    width: 45px;
+    height: 45px;
+  }
+
+  #sortableTreeArea .item_image_holder img {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    height: 100%;
+    width: auto;
+    transform: translate(-50%, -50%);
+  }
+}

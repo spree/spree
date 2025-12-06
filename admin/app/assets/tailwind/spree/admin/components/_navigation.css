@@ -1,0 +1,45 @@
+/* ==========================================================================
+   NAVIGATION
+   ========================================================================== */
+
+@layer components {
+  /* Nav base */
+  .nav {
+    @apply flex flex-wrap pl-0 mb-0 list-none;
+  }
+
+  .nav-link {
+    @apply block no-underline;
+    padding: 0.5rem 1rem;
+    color: var(--color-primary);
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+  }
+
+  .nav-link:hover,
+  .nav-link:focus {
+    color: var(--color-primary-hover);
+  }
+
+  .nav-link.disabled {
+    @apply pointer-events-none cursor-default;
+    color: var(--color-gray-500);
+  }
+
+  /* Nav pills */
+  .nav-pills .nav-link {
+    @apply bg-none border-0;
+    border-radius: var(--radius-lg);
+  }
+
+  .nav-pills .nav-link.active,
+  .nav-pills .show > .nav-link {
+    @apply text-white;
+    background-color: var(--color-primary);
+  }
+
+  /* Nav fill and justified */
+  .nav-fill > .nav-link,
+  .nav-fill .nav-item {
+    @apply flex-auto text-center;
+  }
+}

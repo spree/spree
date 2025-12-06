@@ -1,5 +1,5 @@
 <%= turbo_frame_tag :page_sidebar_toolbar do %>
-  <div class="d-none">
+  <div class="hidden">
     <% sections =
       @page_preview.sections.includes(:blocks).map { |s| [@page_preview, s] } %>
 

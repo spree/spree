@@ -2,7 +2,7 @@
   <% if products.any? %>
     <%= render collection: products, partial: 'spree/admin/products/search_result', as: :product, cached: spree_base_cache_scope %>
   <% else %>
-    <p class="text-muted text-center py-5">
+    <p class="text-muted text-center py-12">
       <%= Spree.t('admin.products.search_results.no_products') %>
     </p>
   <% end %>

@@ -1,4 +1,4 @@
-<div class="mb-2 d-flex justify-content-between">
+<div class="mb-2 flex justify-between">
   <div>
     <% if defined?(devise_mapping) && devise_mapping.rememberable? && controller_name == 'user_sessions' %>
       <div class="custom-control custom-checkbox">
@@ -7,7 +7,7 @@
       </div>
     <% end %>
   </div>
-  <div class="d-flex align-items-center gap-2">
+  <div class="flex items-center gap-2">
     <% if controller_name != 'user_sessions' %>
       <p><%= link_to Spree.t(:log_in), new_session_path(resource_name) %></p>
     <% end %>

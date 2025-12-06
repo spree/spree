@@ -57,3 +57,4 @@ vendor/bundle
 .ignore
 TODO
 brakeman-*.*
+*/app/assets/builds

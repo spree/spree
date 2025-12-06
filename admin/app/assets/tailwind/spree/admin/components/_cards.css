@@ -1,0 +1,199 @@
+/* ==========================================================================
+   CARDS
+   ========================================================================== */
+
+@layer components {
+  .card,
+  .card-lg {
+    @apply relative flex flex-col min-w-0 break-words bg-surface border border-border rounded-xl;
+    background-clip: border-box;
+  }
+
+  .card-lg {
+    @apply p-0 mb-3;
+  }
+
+  .card .card {
+    @apply rounded-xl;
+  }
+
+  /* Card with table */
+  .card > .table,
+  .card .table-responsive > .table {
+    @apply border-x-0 mb-0;
+  }
+
+  .card > .table:last-child,
+  .card > .table:last-of-type,
+  .card .table-responsive > .table:last-child,
+  .card .table-responsive > .table:last-of-type {
+    @apply border-b-0;
+  }
+
+  .card > .table td:first-child,
+  .card > .table th:first-child,
+  .card .table-responsive > .table td:first-child,
+  .card .table-responsive > .table th:first-child {
+    @apply border-l-0;
+  }
+
+  .card > .table td:last-child,
+  .card > .table th:last-child,
+  .card .table-responsive > .table td:last-child,
+  .card .table-responsive > .table th:last-child {
+    @apply border-r-0;
+  }
+
+  .card > .table tr:first-child td,
+  .card > .table tr:first-child th,
+  .card .table-responsive > .table tr:first-child td,
+  .card .table-responsive > .table tr:first-child th {
+    @apply border-t-0;
+  }
+
+  .card > .table tr:last-child td,
+  .card .table-responsive > .table tr:last-child td {
+    @apply border-b-0;
+  }
+
+  .card .card-header + .table,
+  .card .card-header + .table-responsive > .table {
+    @apply border-t-0;
+  }
+
+  .card-body {
+    @apply flex-auto p-4;
+  }
+
+  .card-body .form-group:last-child {
+    @apply mb-0;
+  }
+
+  .card-header,
+  .card-footer {
+    @apply bg-transparent;
+  }
+
+  .card-header {
+    @apply flex items-center mb-0 p-4 border-b border-gray-50;
+    height: 54px;
+  }
+
+  .card-header:first-child {
+    border-radius: calc(var(--radius-xl) - 1px) calc(var(--radius-xl) - 1px) 0 0;
+  }
+
+  .card-header .card-title {
+    @apply mb-0 text-base font-sans;
+  }
+
+  .card-header .arrow {
+    @apply w-auto;
+  }
+
+  .card-header .arrow:before {
+    transition: 0.3s transform ease-in-out;
+  }
+
+  .card-header .collapsed .arrow:before {
+    @apply -rotate-90;
+  }
+
+  .card-footer {
+    @apply p-4;
+  }
+
+  .card-footer:last-child {
+    border-radius: 0 0 calc(var(--radius-xl) - 1px) calc(var(--radius-xl) - 1px);
+  }
+
+  .card-footer.border-top,
+  .card-body.border-top,
+  .card .border-top,
+  .card .border-bottom,
+  .card .list-group-item {
+    border-color: var(--color-gray-50) !important;
+  }
+
+  .card-title {
+    @apply mb-2 font-bold;
+  }
+
+  .card-subtitle {
+    @apply mb-0 -mt-1 text-text-muted;
+  }
+
+  .card-text {
+    @apply break-words;
+  }
+
+  .card-text:last-child {
+    @apply mb-0;
+  }
+
+  .card-link + .card-link {
+    @apply ml-3;
+  }
+
+  .card-img-top {
+    @apply w-full;
+    border-top-left-radius: calc(var(--radius-xl) - 1px);
+    border-top-right-radius: calc(var(--radius-xl) - 1px);
+  }
+
+  .card-img-bottom {
+    @apply w-full;
+    border-bottom-left-radius: calc(var(--radius-xl) - 1px);
+    border-bottom-right-radius: calc(var(--radius-xl) - 1px);
+  }
+
+  /* Collapsable Card */
+  .collapsable-card {
+    @apply relative flex flex-col min-w-0 break-words overflow-hidden;
+    @apply bg-surface border border-border rounded-xl;
+    background-clip: border-box;
+  }
+
+  .collapsable-card .card-header:hover {
+    @apply bg-gray-25!;
+  }
+
+  .collapsable-card .card-body {
+    @apply border-t border-gray-50;
+  }
+
+  .collapsable-card[open] .arrow {
+    @apply rotate-90!;
+  }
+
+  .collapsable-card:not([open]) .arrow {
+    @apply rotate-0!;
+  }
+
+  /* Details/Summary styling for cards */
+  .collapsable-card details summary,
+  .card details summary {
+    @apply cursor-pointer list-none select-none;
+  }
+
+  .collapsable-card details summary::-webkit-details-marker,
+  .card details summary::-webkit-details-marker {
+    @apply hidden;
+  }
+
+  .collapsable-card details summary::marker,
+  .card details summary::marker {
+    @apply hidden;
+  }
+
+  .collapsable-card details summary[role="button"],
+  .card details summary[role="button"] {
+    @apply outline-none;
+  }
+
+  .collapsable-card details summary[role="button"]:focus,
+  .card details summary[role="button"]:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: -2px;
+  }
+}

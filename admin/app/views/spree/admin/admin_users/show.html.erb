@@ -7,9 +7,9 @@
   <%= @admin_user.name %>
 <% end %>
 
-<div class="row">
-  <div class="col-lg-8">
-    <div class="card mb-4">
+<div class="grid grid-cols-12 gap-6">
+  <div class="col-span-12 lg:col-span-8">
+    <div class="card mb-6">
       <div class="card-header">
         <h5 class="card-title">
           <%= icon 'history', class: 'mr-1' %>
@@ -22,10 +22,10 @@
     </div>
   </div>
 
-  <div class="col-lg-4">
-    <div class="card mb-4" id="user-details">
+  <div class="col-span-12 lg:col-span-4">
+    <div class="card mb-6" id="user-details">
       <%= turbo_frame_tag :edit_user do %>
-        <div class="card-header d-flex align-items-center justify-content-between">
+        <div class="card-header flex items-center justify-between">
           <h5 class="card-title">
             <%= Spree.t(:details) %>
           </h5>
@@ -33,20 +33,20 @@
         </div>
         <div class="card-body p-0">    
           <ul class="list-group list-group-flush">
-            <li class="list-group-item d-flex justify-content-between align-items-center">
+            <li class="list-group-item flex justify-between items-center">
               <%= Spree.t(:email) %>
               <span>
                 <%= @admin_user.email %>
                 <%= clipboard_component(@admin_user.email) %>
               </span>
             </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
+            <li class="list-group-item flex justify-between items-center">
               <%= Spree.t(:name) %>
               <span>
                 <%= @admin_user.name %>
               </span>
             </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
+            <li class="list-group-item flex justify-between items-center">
               <%= Spree.t(:roles) %>
               <span>
                 <% @role_users.each do |role_user| %>
@@ -55,7 +55,7 @@
               </span>
             </li>
             <% if @admin_user.respond_to?(:sign_in_count) %>
-              <li class="list-group-item d-flex justify-content-between align-items-center">
+              <li class="list-group-item flex justify-between items-center">
                 <%= I18n.t('activerecord.attributes.user.sign_in_count') %>
                 <span>
                   <%= @admin_user.sign_in_count %>
@@ -63,7 +63,7 @@
               </li>
             <% end %>
             <% if @admin_user.respond_to?(:last_sign_in_at) %>
-              <li class="list-group-item d-flex justify-content-between align-items-center">
+              <li class="list-group-item flex justify-between items-center">
                 <%= I18n.t('activerecord.attributes.user.last_sign_in') %>
                 <span>
                   <% if @admin_user.last_sign_in_at %>
@@ -75,7 +75,7 @@
               </li>
             <% end %>
             <% if @admin_user.respond_to?(:current_sign_in_at) %>
-              <li class="list-group-item d-flex justify-content-between align-items-center">
+              <li class="list-group-item flex justify-between items-center">
                 <%= I18n.t('activerecord.attributes.user.current_sign_in') %>
                 <span>
                   <% if @admin_user.current_sign_in_at %>
@@ -86,23 +86,23 @@
                 </span>
               </li>
             <% end %>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
+            <li class="list-group-item flex justify-between items-center">
               <%= Spree.t(:created_at) %>
               <span>
                 <%= spree_time(@admin_user.created_at) %>
               </span>
             </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
+            <li class="list-group-item flex justify-between items-center">
               <%= Spree.t(:updated_at) %>
               <span>
                 <%= spree_time(@admin_user.updated_at) %>
               </span>
             </li>
             <% if @admin_user.invited_by %>
-              <li class="list-group-item d-flex justify-content-between align-items-center">
+              <li class="list-group-item flex justify-between items-center">
                 <%= Spree.t(:invited_by) %>
                 <span>
-                  <%= link_to @admin_user.invited_by.email, spree.admin_admin_user_path(@admin_user.invited_by), class: 'text-decoration-none', data: { turbo_frame: '_top' } %>
+                  <%= link_to @admin_user.invited_by.email, spree.admin_admin_user_path(@admin_user.invited_by), class: 'no-underline', data: { turbo_frame: '_top' } %>
                 </span>
               </li>
             <% end %>

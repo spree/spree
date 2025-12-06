@@ -1,0 +1,120 @@
+/* ==========================================================================
+   BULK PANEL
+   ========================================================================== */
+
+@layer components {
+  .bulk-panel-container {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 1rem;
+    background-color: var(--color-surface);
+    box-shadow: var(--shadow-dropdown);
+    animation: bounceInUp;
+    animation-duration: 0.5s;
+    height: 3rem;
+    gap: 0.5rem;
+  }
+
+  @keyframes bounceInUp {
+    from,
+    60%,
+    75%,
+    90%,
+    to {
+      animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    }
+
+    from {
+      opacity: 0;
+      transform: translate3d(0, 3000px, 0) scaleY(5);
+    }
+
+    60% {
+      opacity: 1;
+      transform: translate3d(0, -20px, 0) scaleY(0.9);
+    }
+
+    75% {
+      transform: translate3d(0, 10px, 0) scaleY(0.95);
+    }
+
+    90% {
+      transform: translate3d(0, -5px, 0) scaleY(0.985);
+    }
+
+    to {
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  .bulk-panel-container .btn {
+    height: 2.5rem;
+  }
+
+  .bulk-panel-container .btn:hover {
+    background-color: var(--color-gray-50);
+  }
+
+  .bulk-panel-container > * {
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .bulk-panel-container > *:first-child {
+    border-top-left-radius: var(--radius-lg);
+    border-bottom-left-radius: var(--radius-lg);
+  }
+
+  .bulk-panel-container > *:last-child {
+    border-top-right-radius: var(--radius-lg);
+    border-bottom-right-radius: var(--radius-lg);
+  }
+
+  .bulk-panel-container > *:last-child .btn {
+    border-top-right-radius: var(--radius-lg);
+    border-bottom-right-radius: var(--radius-lg);
+  }
+
+  .bulk-panel-container .btn-close {
+    width: 2.5rem;
+  }
+
+  #bulk-panel {
+    position: fixed;
+    width: 100%;
+    text-align: center;
+    bottom: 1rem;
+    left: 0;
+    z-index: 1020;
+  }
+
+  @media (min-width: 992px) {
+    #bulk-panel {
+      left: 25%;
+      width: 75%;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    #bulk-panel {
+      left: 16.66666667%;
+      width: 83.33333333%;
+    }
+  }
+
+  .bulk-operations-counter {
+    padding-left: 1rem;
+    padding-right: 0;
+  }
+
+  .bulk-operations-counter .bulk-operations-counter-label {
+    padding-right: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-right: 1px solid var(--color-border);
+  }
+}

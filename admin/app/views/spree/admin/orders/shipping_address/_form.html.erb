@@ -6,7 +6,7 @@
                   address: address %>
 <% if @order.user.present? && @order.user.addresses.many? %>
   <div>
-    <div class="w-100 text-center mb-2"><%= Spree.t(:or_select_other_address) %></div>
+    <div class="w-full text-center mb-2"><%= Spree.t(:or_select_other_address) %></div>
     <%= label_tag :shipping_address_id, Spree.t(:existing_address), class: 'sr-only' %>
     <%= select_tag :shipping_address_id, 
                    options_for_select(@order.user.addresses.map { |a| [a.to_s.gsub('<br/>', ", "), a.id]}), 

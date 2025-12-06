@@ -12,13 +12,13 @@
     <%= form_with model: @line_item, url: spree.admin_order_line_items_path(@order), data: {turbo_frame: '_top'} do |form| %>
       <div class="dialog-body">
         <div id="variants_search_results" class="search-results">
-          <p class="text-muted text-center py-5">
+          <p class="text-muted text-center py-12">
             <%= Spree.t(:start_typing_to_search_for_variants) %>
           </p>
         </div>
       </div>
       <div class="dialog-footer">
-        <div class="d-flex gap-2 m-0 align-items-center mr-auto">
+        <div class="flex gap-2 m-0 items-center mr-auto">
           <%= form.label :quantity, Spree.t(:quantity), class: "mb-0" %>
           <%= form.number_field :quantity, class: "form-control", min: 1 %>
         </div>

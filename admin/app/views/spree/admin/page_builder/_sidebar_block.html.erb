@@ -5,10 +5,10 @@
                                        page_builder_editor_id_param: "block-#{block.id}",
                                        sortable_update_url: spree.admin_page_section_block_path(block.section, block, format: :turbo_stream)
                                      } do %>
-    <div class="d-flex align-items-center justify-content-between sidebar-block-title p-1 rounded-sm">
-      <div class="d-flex align-items-center flex-fill">
+    <div class="flex items-center justify-between sidebar-block-title p-1 rounded-sm">
+      <div class="flex items-center flex-1">
         <%= link_to(edit_admin_page_section_block_path(block.section, block),
-          class: 'block-edit-link flex-fill text-dark',
+          class: 'block-edit-link flex-1 text-gray-900',
           data: {
             turbo_frame: :page_sidebar,
             action: 'click->page-builder#makeOverlayActive',
@@ -18,9 +18,9 @@
           <%= block.display_name %>
         <% end %>
       </div>
-      <div class="d-flex align-items-center d-none">
+      <div class="flex items-center hidden">
         <% if block.section.can_sort_blocks? %>
-          <button class="btn btn-sm pr-0 handle hover-gray-200 h-100 px-1 handle-block shadow-none">
+          <button class="btn btn-sm pr-0 handle hover:bg-gray-100-200 h-full px-1 handle-block shadow-none">
             <%= icon('grip-vertical', class: 'mr-0') %>
           </button>
         <% end %>

@@ -52,7 +52,7 @@ module Spree
       end
 
       # render an avatar for a user
-      # if user doesn't have an avatar, the user's initials will be displayed on a rounded background
+      # if user doesn't have an avatar, the user's initials will be displayed on a rounded-lg  background
       # @param user [Spree::User] the user to render the avatar for
       # @param options [Hash] the options for the avatar
       # @option options [Integer] :width the width of the avatar, default: 128
@@ -64,7 +64,7 @@ module Spree
 
         options[:width] ||= 128
         options[:height] ||= 128
-        options[:class] ||= 'avatar'
+        options[:class] ||= 'flex items-center justify-center bg-gray-200 rounded-full text-gray-600'
 
         if user.respond_to?(:avatar) && user.avatar.attached? && user.avatar.variable?
           spree_image_tag(
@@ -264,7 +264,7 @@ module Spree
       # @option options [String] :title the title of the button
       # @return [String] the button
       def clipboard_button(options = {})
-        options[:class] ||= 'btn btn-clipboard'
+        options[:class] ||= 'btn btn-light btn-sm btn-clipboard'
         options[:type] ||= 'button'
         options[:data] ||= {}
         options[:data][:action] = 'clipboard#copy'
@@ -273,7 +273,7 @@ module Spree
         options[:aria_label] ||= Spree.t('admin.copy_to_clipboard') # screen-reader label
 
         content_tag(:button, options) do
-          icon('copy', class: 'mr-0 font-size-sm') + tooltip(Spree.t('admin.copy_to_clipboard'))
+          icon('copy', class: 'mr-0 text-sm') + tooltip(Spree.t('admin.copy_to_clipboard'))
         end
       end
 
@@ -287,7 +287,7 @@ module Spree
       def clipboard_component(text, options = {})
         options[:data] ||= {}
         options[:data][:controller] = 'clipboard'
-        options[:data][:clipboard_success_content_value] ||= raw(icon('check', class: 'mr-0 font-size-sm'))
+        options[:data][:clipboard_success_content_value] ||= raw(icon('check', class: 'mr-0 text-sm'))
 
         content_tag(:span, data: options[:data]) do
           hidden_field_tag(:clipboard_source, text, data: { clipboard_target: 'source' }) +

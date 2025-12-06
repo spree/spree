@@ -41,19 +41,19 @@ export default class extends Controller {
   }
 
   show(element) {
-    element.classList.remove('d-none')
+    element.classList.remove('hidden', 'd-none')
   }
 
   hide(element) {
-    element.classList.add('d-none')
+    element.classList.add('hidden')
   }
 
   toggleQuantityFormVisibility() {
     if (this.hasQuantityFormTarget) {
       if (!this.hasVariantsValue && this.trackInventoryCheckboxTarget.checked) {
-        this.quantityFormTarget.classList.remove('d-none')
+        this.quantityFormTarget.classList.remove('hidden', 'd-none')
       } else {
-        this.quantityFormTarget.classList.add('d-none')
+        this.quantityFormTarget.classList.add('hidden')
       }
     }
   }
@@ -61,9 +61,9 @@ export default class extends Controller {
   togglePricesFormVisibility() {
     if (this.hasPricesFormTarget) {
       if (this.hasVariantsValue) {
-        this.pricesFormTarget.classList.add('d-none')
+        this.pricesFormTarget.classList.add('hidden')
       } else {
-        this.pricesFormTarget.classList.remove('d-none')
+        this.pricesFormTarget.classList.remove('hidden', 'd-none')
       }
     }
   }

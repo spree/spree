@@ -9,8 +9,7 @@
 <% pagination_class ||= '' %>
 
 <%= paginator.render do %>
-  <ul class="pagination d-inline-flex <%= pagination_class %> mb-0">
-
+  <ul class="pagination inline-flex <%= pagination_class %> mb-0 gap-2">
     <%= prev_page_tag %>
     <%= next_page_tag %>
   </ul>

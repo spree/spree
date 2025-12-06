@@ -1,6 +1,6 @@
-<div class="row" data-controller="slug-form seo-form">
-  <div class="col-lg-8">
-    <div class="card mb-4">
+<div class="grid grid-cols-12 gap-6" data-controller="slug-form seo-form">
+  <div class="col-span-12 lg:col-span-8">
+    <div class="card mb-6">
       <div class="card-body">
         <%= f.spree_text_field :title,
               required: true,
@@ -22,14 +22,14 @@
     </div>
   </div>
 
-  <div class="col-lg-4">
-    <div class="card mb-4">
+  <div class="col-span-12 lg:col-span-4">
+    <div class="card mb-6">
       <div class="card-body">
         <%= f.spree_file_field :image, width: 1200, height: 600, crop: true, css: 'flex-col', label: Spree.t(:featured_image) %>
       </div>
     </div>
 
-    <div class="card mb-4">
+    <div class="card mb-6">
       <div class="card-body">
         <%= f.spree_select :author_id, options_for_select(post_authors_select_options, @post.author_id || try_spree_current_user.id), { label: Spree.t(:author), autocomplete: true } %>
         <%= f.spree_select :post_category_id, options_for_select(@post_categories.pluck(:title, :id), @post.post_category_id), { label: Spree.t(:category), include_blank: true, autocomplete: true } %>
@@ -37,7 +37,7 @@
 
         <div class="form-group mb-0">
           <%= f.label :tag_list, Spree.t(:tags) %>
-          <%= tom_select_tag 'post[tag_list]', multiple: true, class: 'w-100', options: post_tags_json_array, active_option: @post.tag_list, value_field: :name, create: true %>
+          <%= tom_select_tag 'post[tag_list]', multiple: true, class: 'w-full', options: post_tags_json_array, active_option: @post.tag_list, value_field: :name, create: true %>
         </div>
       </div>
     </div>

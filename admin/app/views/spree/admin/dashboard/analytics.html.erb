@@ -3,16 +3,16 @@
 <% end %>
 
 <%= turbo_frame_tag :analytics do %>
-  <div class="card mb-4"
+  <div class="card mb-6"
        data-controller="tabs"
        data-tabs-active-tab-class-value="active">
-    <div class="card-header d-block border-0 h-auto p-2">
-      <div class="row">
-        <div class="col-6 col-lg-4 pr-2">
+    <div class="card-header block border-0 h-auto p-2">
+      <div class="grid grid-cols-12 gap-2">
+        <div class="col-span-6 lg:col-span-4 gap-2">
           <div class="analytics-card-tab active" data-tabs-target="tab" data-action="click->tabs#select">
-            <div class="d-flex justify-content-center flex-column mb-3 mb-lg-0">
-              <span class="font-size-sm text-muted">Total Sales</span>
-              <span class="font-size-lg text-dark font-weight-bold mt-1">
+            <div class="flex justify-center flex-col mb-6 lg:mb-0">
+              <span class="text-sm text-muted">Total Sales</span>
+              <span class="text-lg text-gray-900 font-bold mt-1">
                 <%= @sales_total %>
               </span>
               <div>
@@ -22,11 +22,11 @@
           </div>
         </div>
 
-        <div class="col-6 col-lg-2 pl-0 pr-2">
+        <div class="col-span-6 lg:col-span-2">
           <div class="analytics-card-tab" data-tabs-target="tab" data-action="click->tabs#select">
-            <div class="d-flex justify-content-center flex-column mb-3 mb-lg-0">
-              <span class="font-size-sm text-muted">Avg. Order Value</span>
-              <span class="font-size-lg text-dark font-weight-bold mt-1 me-3"><%= @orders_average %></span>
+            <div class="flex justify-center flex-col mb-6 lg:mb-0">
+              <span class="text-sm text-muted">Avg. Order Value</span>
+              <span class="text-lg text-gray-900 font-bold mt-1 mr-3"><%= @orders_average %></span>
               <div>
                 <%= render 'spree/admin/shared/growth_rate_badge', growth_rate: @orders_average_growth_rate %>
               </div>
@@ -34,11 +34,11 @@
           </div>
         </div>
 
-        <div class="col-6 col-lg-2 pl-0 pr-2">
+        <div class="col-span-6 lg:col-span-2">
           <div class="analytics-card-tab" data-tabs-target="tab" data-action="click->tabs#select">
-            <div class="d-flex justify-content-center flex-column mb-3 mb-lg-0">
-              <span class="font-size-sm text-muted">Total Orders</span>
-              <span class="font-size-lg text-dark font-weight-bold mt-1 me-3"><%= @orders_total  %></span>
+            <div class="flex justify-center flex-col mb-6 lg:mb-0">
+              <span class="text-sm text-muted">Total Orders</span>
+              <span class="text-lg text-gray-900 font-bold mt-1 mr-3"><%= @orders_total  %></span>
               <div>
                 <%= render 'spree/admin/shared/growth_rate_badge', growth_rate: @orders_growth_rate %>
               </div>
@@ -46,11 +46,11 @@
           </div>
         </div>
         <% if @visits_total && @visits_growth_rate %>
-          <div class="col-6 col-lg-2 pl-0 pr-2">
+          <div class="col-span-6 lg:col-span-2">
             <div class="analytics-card-tab" data-tabs-target="tab" data-action="click->tabs#select">
-              <div class="d-flex justify-content-center flex-column">
-                <span class="font-size-sm text-muted">Visits</span>
-                <span class="font-size-lg text-dark font-weight-bold mt-1 me-3"><%= @visits_total %></span>
+              <div class="flex justify-center flex-col">
+                <span class="text-sm text-muted">Visits</span>
+                <span class="text-lg text-gray-900 font-bold mt-1 mr-3"><%= @visits_total %></span>
                 <div>
                   <%= render 'spree/admin/shared/growth_rate_badge', growth_rate: @visits_growth_rate %>
                 </div>
@@ -60,11 +60,11 @@
         <% end %>
 
         <% if @audience_total && @audience_growth_rate %>
-          <div class="col-6 col-lg-2 pl-0">
+          <div class="col-span-6 lg:col-span-2">
             <div class="analytics-card-tab" data-tabs-target="tab" data-action="click->tabs#select">
-              <div class="d-flex justify-content-center flex-column">
-                <span class="font-size-sm text-muted">Sign-ups</span>
-                <span class="font-size-lg text-dark font-weight-bold mt-1 me-3"><%= @audience_total %></span>
+              <div class="flex justify-center flex-col">
+                <span class="text-sm text-muted">Sign-ups</span>
+                <span class="text-lg text-gray-900 font-bold mt-1 mr-3"><%= @audience_total %></span>
                 <div>
                   <%= render 'spree/admin/shared/growth_rate_badge', growth_rate: @audience_growth_rate %>
                 </div>

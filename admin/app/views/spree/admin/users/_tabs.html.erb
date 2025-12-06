@@ -1,5 +1,5 @@
 <div data-controller="tabs">
-  <ul class="nav nav-pills mb-3" role="tablist">
+  <ul class="nav nav-pills mb-4" role="tablist">
     <% if spree.respond_to?(:admin_user_visits_path) %>
       <li class="nav-item" role="presentation">
         <a class="nav-link active" id="pills-overview-tab" data-tabs-target="tab" data-action="click->tabs#select" role="tab" aria-controls="pills-overview" aria-selected="true">Timeline</a>
@@ -29,7 +29,7 @@
   </ul>
 
   <% if spree.respond_to?(:admin_user_visits_path) %>
-    <div data-tabs-target="panel" id="pills-overview" role="tabpanel" aria-labelledby="pills-overview" class="pt-3 animate__animated animate__fadeIn">
+    <div data-tabs-target="panel" id="pills-overview" role="tabpanel" aria-labelledby="pills-overview" class="pt-4 animate__animated animate__fadeIn">
       <%= turbo_frame_tag :user_visits, src: spree.admin_user_visits_path(@user), target: '_top' %>
     </div>
   <% end %>

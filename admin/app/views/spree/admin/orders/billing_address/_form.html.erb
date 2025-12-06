@@ -1,4 +1,4 @@
-<div data-form="new_address" class="d-none">
+<div data-form="new_address" class="hidden">
   <%= render 'spree/admin/shared/error_messages', target: address %>
   <%= render 'spree/addresses/form',
                    address_name: 'address',
@@ -7,7 +7,7 @@
                    address: address %>
 </div>
 <% if @order.user.present? && @order.user.addresses.many? %>
-  <div data-form="existing_address" class="d-none">
+  <div data-form="existing_address" class="hidden">
     <%= label_tag :billing_address_id, Spree.t(:existing_address), class: 'sr-only' %>
     <%= select_tag :billing_address_id, 
                    options_for_select(@order.user.addresses.map { |a| [a.to_s.gsub('<br/>', ", "), a.id]}), 

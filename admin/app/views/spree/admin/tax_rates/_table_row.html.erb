@@ -1,5 +1,5 @@
 <tr id="<%= spree_dom_id tax_rate %>" data-controller="row-link" class="cursor-pointer">
-  <td class="w-25" data-action="click->row-link#openLink"><%= tax_rate.name %></td>
+  <td class="w-1/4" data-action="click->row-link#openLink"><%= tax_rate.name %></td>
   <td class="w-15" data-action="click->row-link#openLink">
     <%= tax_rate.tax_category.try(:name) || Spree.t(:not_available) %>
   </td>

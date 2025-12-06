@@ -1,8 +1,8 @@
 <% if order %>
   <% if order.user %>
-    <span class="d-flex">
+    <span class="flex">
       <% if can?(:manage, order.user) %>
-        <%= link_to order.full_name, spree.admin_user_path(order.user), class: 'text-dark', data: { 'turbo-frame': '_top' } %>
+        <%= link_to order.full_name, spree.admin_user_path(order.user), class: 'text-gray-900', data: { 'turbo-frame': '_top' } %>
       <% else %>
         <%= order.full_name %>
       <% end %>

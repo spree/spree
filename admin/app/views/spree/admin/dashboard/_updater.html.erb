@@ -1,7 +1,7 @@
 <% if show_spree_updater_notice? %>
   <div id="updater-notice" class="mb-3">
     <%= image_tag 'favicon_256x256.png', alt: 'Spree', width: 32, height: 32 %>
-    <div class="d-flex flex-column">
+    <div class="flex flex-col">
       <p class="mb-1">
         <strong>Spree <%= spree_updater.latest_release['name'] %></strong> is available.
         <br />Your current version is <strong>Spree <%= spree_updater.current_release %></strong>. 

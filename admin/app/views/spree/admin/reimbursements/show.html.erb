@@ -1,6 +1,6 @@
 <% content_for :page_title do %>
   <%= page_header_back_button spree.edit_admin_order_path(@reimbursement.order) %>
-  <div class="d-flex gap-3 align-items-center">
+  <div class="flex gap-6 items-center">
     <span><%= Spree.t(:reimbursement) %></span>
     <span><%= @reimbursement.number %></span>
 
@@ -15,7 +15,7 @@ locals: {
   target: @reimbursement,
 } %>
 
-<div class="card mb-4">
+<div class="card mb-6">
   <div class="card-header">
     <h5 class="card-title"><%= Spree.t(:items_reimbursed) %></h5>
   </div>
@@ -60,7 +60,7 @@ locals: {
   </div>
 </div>
 
-<div class="card mb-4">
+<div class="card mb-6">
   <div class="card-header">
     <h5 class="card-title"><%= Spree.t(:refunds) %></h5>
   </div>

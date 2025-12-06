@@ -1,6 +1,6 @@
 <% show_form ||= params[:show_form] %>
 <%= turbo_frame_tag dom_id(@order, :customer_information), class: "card mb-4 blur-busy" do  %>
-  <div class="card-header d-flex justify-content-between">
+  <div class="card-header flex justify-between">
     <h5 class="card-title">
       <%= Spree.t(:customer) %>
     </h5>
@@ -11,19 +11,19 @@
       <%= form_with model: @user, scope: :user, url: spree.admin_order_user_path(@order) do |f| %>
         <%= render 'spree/admin/shared/error_messages', target: @user %>
         <%= render 'spree/admin/users/form', f: f %>
-        <div class="d-flex justify-content-between">
+        <div class="flex justify-between">
           <%= link_to Spree.t('actions.discard'), spree.edit_admin_order_path(@order), class: "btn btn-light btn-sm" %>
           <%= turbo_save_button_tag Spree.t('actions.save'), data: { turbo_frame: dom_id(@order, :edit) }, type: :submit, class: 'btn btn-primary text-center btn-sm' %>
         </div>
       <% end %>
     <% else %>
-      <div class="d-flex gap-2 flex-column">
+      <div class="flex gap-2 flex-col">
         <%= form_with url: spree.admin_order_user_path(@order), data: {  controller: 'auto-submit' }, method: :patch do  %>
           <%= label_tag :user_id, Spree.t(:select_user), class: "sr-only" %>
           <%= tom_select_tag :user_id, { include_blank: Spree.t(:select_user), options: users_for_select_options, select_data: {action: 'auto-submit#submit'}, disable_with: "<span class='spinner-border spinner-border-sm' role='status'></span>" } %>
         <% end %>
-        <span class="d-flex w-100 justify-content-center align-items-center"><%= Spree.t(:or) %></span>
-        <%= link_to Spree.t(:create_new), spree.new_admin_order_user_path(@order, show_form: true), class: "btn btn-secondary w-100" %>
+        <span class="flex w-full justify-center items-center"><%= Spree.t(:or) %></span>
+        <%= link_to Spree.t(:create_new), spree.new_admin_order_user_path(@order, show_form: true), class: "btn btn-secondary w-full" %>
       </div>
     <% end %>
   </div>

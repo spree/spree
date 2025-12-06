@@ -2,17 +2,17 @@
   <td class="pr-0 w-5">
     <%= bulk_operations_checkbox(user) %>
   </td>
-  <td class='w-50 text-nowrap py-0 pl-1 pr-0'>
+  <td class='w-1/2 whitespace-nowrap py-0 pl-1 pr-0'>
     <%= render 'spree/admin/shared/user', user: user %>
   </td>
   <td class="cursor-pointer" data-action="click->row-link#openLink">
     <%= active_badge(user.accepts_email_marketing?) %>
   </td>
-  <td class="w-25 cursor-pointer" data-action="click->row-link#openLink">
+  <td class="w-1/4 cursor-pointer" data-action="click->row-link#openLink">
     <%= customer_location_flag(user) %>
     <%= customer_location(user) %>
   </td>
-  <td class='w-10 text-nowrap cursor-pointer' data-action="click->row-link#openLink"><%= user.completed_orders_for_store(current_store).count %></td>
-  <td class='w-10 text-nowrap cursor-pointer' data-action="click->row-link#openLink"><%= user.display_amount_spent_in(current_currency) %></td>
-  <td class='w-10 text-nowrap cursor-pointer' data-action="click->row-link#openLink"><%= spree_time(user.created_at) %></td>
+  <td class='w-10 whitespace-nowrap cursor-pointer' data-action="click->row-link#openLink"><%= user.completed_orders_for_store(current_store).count %></td>
+  <td class='w-10 whitespace-nowrap cursor-pointer' data-action="click->row-link#openLink"><%= user.display_amount_spent_in(current_currency) %></td>
+  <td class='w-10 whitespace-nowrap cursor-pointer' data-action="click->row-link#openLink"><%= spree_time(user.created_at) %></td>
 </tr>

@@ -7,7 +7,7 @@
       </span>
     <% end %>
   </td>
-  <td data-action="click->row-link#openLink" class="w-25 text-wrap">
+  <td data-action="click->row-link#openLink" class="w-1/4 whitespace-normal">
     <% shipping_method.zones.each do |zone| %>
       <% if can?(:manage, zone) %>
         <%= link_to zone.name, spree.edit_admin_zone_path(zone), class: 'badge badge-light border mb-2' %>

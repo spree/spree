@@ -14,8 +14,6 @@ pin 'chartkick', to: 'chartkick.js', preload: ['application-spree-admin']
 pin 'Chart.bundle', to: 'Chart.bundle.js', preload: ['application-spree-admin']
 pin 'local-time', preload: ['application-spree-admin'] # @3.0.2
 pin 'mapkick/bundle', to: 'mapkick.bundle.js', preload: ['application-spree-admin']
-pin "jquery", to: 'jquery.min.js', preload: ['application-spree-admin'] # @3.7.1
-pin 'bootstrap', to: 'bootstrap--dist--js--bootstrap.bundle.min.js.js', preload: ['application-spree-admin'] # @4.6.2
 pin 'dompurify', preload: ['application-spree-admin'] # @3.2.5
 
 # Stimulus components

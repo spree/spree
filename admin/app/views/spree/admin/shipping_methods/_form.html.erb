@@ -1,12 +1,12 @@
-<div class="row">
-  <div class="col-lg-6">
+<div class="grid grid-cols-12 gap-6">
+  <div class="col-span-12 lg:col-span-6">
     <%= render 'spree/admin/shipping_methods/form/display', f: f %>
     <%= render 'spree/admin/shipping_methods/form/tracking_url', f: f %>
     <%= render 'spree/admin/shipping_methods/form/zones', f: f %>
     <%= render 'spree/admin/shipping_methods/form/shipping_categories', f: f %>
     <%= render 'spree/admin/shipping_methods/form/tax_category', f: f %>
   </div>
-  <div class="col-lg-6">
+  <div class="col-span-12 lg:col-span-6">
     <%= render partial: 'spree/admin/shared/calculator_fields', locals: { f: f, calculators: @calculators } %>
     <%= render 'spree/admin/shipping_methods/form/estimated_transit_business_days', f: f %>
     <%= render_admin_partials(:shipping_method_form_partials, f: f, shipping_method: @shipping_method) %>

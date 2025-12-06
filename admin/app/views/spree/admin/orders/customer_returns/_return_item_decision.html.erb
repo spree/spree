@@ -35,7 +35,7 @@
           end %>
         </td>
         <% if show_decision %>
-          <td class='actions d-flex gap-2'>
+          <td class='actions flex gap-2'>
             <% if can?(:accept, return_item) %>
               <%= button_to [:admin, return_item], { class: 'with-tip display-inline btn btn-primary btn-sm', params: { "return_item[acceptance_status]" => 'accepted' }, title: Spree.t(:accept), method: 'put' } do %>
                 <%= Spree.t(:accept) %>

@@ -2,14 +2,14 @@
 <%= Spree.t(:checkout) %> <%= Spree.t(:settings) %>
 <% end %>
 
-<div class="card mb-4">
+<div class="card mb-6">
   <div class="card-header">
     <h5 class="card-title"><%= Spree.t(:settings) %></h5>
   </div>
 
   <div class="card-body">
     <%= f.spree_select :checkout_zone_id, options_for_select(@zones, @store.checkout_zone_id), { label: Spree.t(:shipping_zone), autocomplete: true } %>
-    <span class="form-text mb-3">
+    <span class="form-text mb-4">
       <%= Spree.t(:shipping_zone_help) %>
       <%= link_to Spree.t('admin.manage_zones'), spree.admin_zones_path, class: 'text-blue' %>
     </span>
@@ -24,7 +24,7 @@
   </div>
 </div>
 
-<div class="card mb-4">
+<div class="card mb-6">
   <div class="card-header">
     <h5 class="card-title"><%= Spree.t(:checkout_message) %></h5>
   </div>
@@ -34,7 +34,7 @@
   </div>
 </div>
 
-<div class="card mb-4">
+<div class="card mb-6">
   <div class="card-header">
     <h5 class="card-title"><%= Spree.t('admin.checkout_settings.checkout_links.label') %></h5>
   </div>

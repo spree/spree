@@ -1,17 +1,17 @@
 <% variant_id = f.object.variant&.id || 'VARIANT_ID' %>
 <% location_id ||= 'DESTINATION_ID' %>
 
-<div class="d-flex align-items-center justify-content-between nested-form-wrapper" data-new-record="true">
+<div class="flex items-center justify-between nested-form-wrapper" data-new-record="true">
   <%= f.hidden_field :variant_id, value: variant_id %>
   <%= f.hidden_field :stock_item_id %>
   <%= f.hidden_field :location_id, data: { stock_transfer_target: "destinationInput" }, value: location_id %>
-  <div class="d-flex align-items-center gap-2">
+  <div class="flex items-center gap-2">
     <% if f.object.variant.present? %>
       <%= render 'spree/admin/shared/product_image', object: f.object.variant %>
     <% else %>
       VARIANT_IMAGE
     <% end %>
-    <div class="d-flex flex-column align-items-start justify-content-center">
+    <div class="flex flex-col items-start justify-center">
       <% if f.object.variant.present? %>
         <%= f.object.variant.name %>
         <% if f.object.variant.sku.present? %>
@@ -26,7 +26,7 @@
       <% end %>
     </div>
   </div>
-  <div class="d-flex align-items-center gap-2">
+  <div class="flex items-center gap-2">
     <%= f.number_field :quantity, class: 'form-control w-auto', value: f.object.quantity.zero? ? 1 : f.object.quantity, required: true, min: 1, data: { action: "stock-transfer#updateQuantity", variant_id: variant_id } %>
     <%= button_tag class: 'btn btn-sm btn-danger', type: :button, data: { action: 'stock-transfer#remove', variant_id: variant_id } do %>
       <%= icon('trash', class: 'icon icon-trash') %>

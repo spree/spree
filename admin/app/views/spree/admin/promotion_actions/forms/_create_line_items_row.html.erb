@@ -6,7 +6,7 @@
       <%= tom_select_tag "#{line_item_fields.object_name}[variant_id]",
             url: spree.admin_variants_search_path,
             remote_search: true,
-            class: 'w-100',
+            class: 'w-full',
             required: true %>
     <% else %>
       <%= link_to spree.edit_admin_product_variant_path(line_item_fields.object.variant.product, line_item_fields.object.variant), target: '_blank' do %>

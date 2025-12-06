@@ -1,9 +1,9 @@
 <tr id="<%= spree_dom_id webhooks_subscriber %>" data-controller="row-link" class="cursor-pointer">
-  <td class="w-40 text-wrap" data-action="click->row-link#openLink">
+  <td class="w-40 whitespace-normal" data-action="click->row-link#openLink">
     <%= webhooks_subscriber.url %>
   </td>
   <td class="w-5" data-action="click->row-link#openLink"><%= active_badge(webhooks_subscriber.active) %></td>
-  <td class="w-30 text-wrap" data-action="click->row-link#openLink">
+  <td class="w-30 whitespace-normal" data-action="click->row-link#openLink">
     <% webhooks_subscriber.subscriptions&.sort&.each do |subscription| %>
       <span class="badge badge-light"><%= subscription %></span>
     <% end %>
