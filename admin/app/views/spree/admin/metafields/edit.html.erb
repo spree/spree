@@ -33,8 +33,8 @@
     <% end %>
   <% else %>
     <div class="drawer-body">
-      <div class="text-gray-600 p-12 flex items-center w-full justify-center flex-col">
-        <%= icon 'map-search', class: 'mb-12 text-4xl' %>
+      <div class="text-gray-600 p-12 flex items-center w-full justify-center flex-col gap-4">
+        <%= icon 'map-search', class: 'text-4xl' %>
         <p>No metafield definitions configured for <%= model_class.name.demodulize.titleize.pluralize %>.</p>
         <%= link_to_with_icon 'plus', Spree.t(:add_one), spree.new_admin_metafield_definition_path(resource_type: model_class.to_s), class: 'btn btn-primary ml-12', data: { 'turbo-frame': '_top' } if can?(:create, Spree::MetafieldDefinition) %>
       </div>
