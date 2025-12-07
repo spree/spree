@@ -41,23 +41,6 @@
     @apply border-b-0;
   }
 
-  /* Horizontal list group */
-  .list-group-horizontal {
-    @apply flex-row;
-  }
-
-  .list-group-horizontal > .list-group-item:first-child {
-    @apply rounded-bl-lg rounded-tr-none;
-  }
-
-  .list-group-horizontal > .list-group-item:last-child {
-    @apply rounded-tr-lg rounded-bl-none;
-  }
-
-  .list-group-horizontal > .list-group-item + .list-group-item {
-    @apply border-t border-l-0;
-  }
-
   /* Actionable list group items */
   .list-group-item-action {
     @apply w-full text-gray-700 text-left;

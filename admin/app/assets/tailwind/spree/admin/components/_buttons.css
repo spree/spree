@@ -69,16 +69,6 @@
     @apply bg-transparent;
   }
 
-  .btn-dark {
-    @apply text-gray-200 bg-gray-900 border-gray-900;
-  }
-
-  .btn-dark:hover,
-  .btn-dark:focus {
-    @apply text-white border-gray-700;
-    background: linear-gradient(var(--color-gray-900), var(--color-primary));
-  }
-
   .btn-danger {
     @apply text-red-600 bg-gray-25 hover:bg-red-100;
   }
@@ -89,22 +79,6 @@
 
   .btn-success:hover {
     @apply bg-success-hover border-success-hover;
-  }
-
-  .btn-outline-primary {
-    @apply text-primary border-primary bg-transparent;
-  }
-
-  .btn-outline-primary:hover {
-    @apply text-white bg-primary;
-  }
-
-  .btn-outline-secondary {
-    @apply text-gray-600 border-gray-600 bg-transparent;
-  }
-
-  .btn-outline-secondary:hover {
-    @apply text-white bg-gray-600;
   }
 
   .btn-close {

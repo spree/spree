@@ -197,18 +197,6 @@
     min-height: calc(100% - 1rem);
   }
 
-  .modal-dialog-scrollable {
-    height: calc(100% - 1rem);
-  }
-
-  .modal-dialog-scrollable .modal-content {
-    @apply max-h-full overflow-hidden;
-  }
-
-  .modal-dialog-scrollable .modal-body {
-    @apply overflow-y-auto;
-  }
-
   .modal-content {
     @apply relative flex flex-col w-full pointer-events-auto bg-surface border-none rounded-2xl outline-none;
     background-clip: padding-box;

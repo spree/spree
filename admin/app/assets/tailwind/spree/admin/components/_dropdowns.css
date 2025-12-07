@@ -3,10 +3,7 @@
    ========================================================================== */
 
 @layer components {
-  .dropdown,
-  .dropup,
-  .dropstart,
-  .dropend {
+  .dropdown {
     @apply relative;
   }
 

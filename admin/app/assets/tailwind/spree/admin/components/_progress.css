@@ -28,23 +28,4 @@
       transform: rotate(360deg);
     }
   }
-
-  .spinner-grow {
-    @apply inline-block w-8 h-8 align-[-0.125em] bg-current rounded-full opacity-0;
-    animation: spinner-grow 0.75s linear infinite;
-  }
-
-  .spinner-grow-sm {
-    @apply w-4 h-4;
-  }
-
-  @keyframes spinner-grow {
-    0% {
-      transform: scale(0);
-    }
-    50% {
-      opacity: 1;
-      transform: none;
-    }
-  }
 }

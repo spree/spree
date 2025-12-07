@@ -114,10 +114,6 @@
     @apply mb-2 font-bold;
   }
 
-  .card-subtitle {
-    @apply mb-0 -mt-1 text-gray-600;
-  }
-
   .card-text {
     @apply break-words;
   }
@@ -132,10 +128,6 @@
 
   .card-img-top {
     @apply w-full rounded-t-[calc(var(--radius-xl)-1px)];
-  }
-
-  .card-img-bottom {
-    @apply w-full rounded-b-[calc(var(--radius-xl)-1px)];
   }
 
   /* Collapsable Card */
