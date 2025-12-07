@@ -7,7 +7,7 @@
     "url": <%= spree.product_url(product, host: current_store.url_or_custom_domain).to_json.html_safe %>,
   <% if product.featured_image %>
     "image": [
-      <%= spree_image_url(product.featured_image, width: 630, height: 630).to_json.html_safe %>
+      <%= spree_image_url(product.featured_image, variant: :large).to_json.html_safe %>
     ],
   <% end %>
   <% if product.description.present? %>

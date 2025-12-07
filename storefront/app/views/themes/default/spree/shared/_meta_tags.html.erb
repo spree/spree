@@ -22,7 +22,11 @@
 <meta property="og:description" content="<%= h(og_description) %>">
 
 <% if page_image.present? && page_image.attached? && page_image.variable? %>
-  <% image_url = spree_image_url(page_image, width: 1200, height: 630) %>
+  <% if @product %>
+    <% image_url = spree_image_url(page_image, variant: :og_image) %>
+  <% else %>
+    <% image_url = spree_image_url(page_image, width: 1200, height: 630) %>
+  <% end %>
 
   <meta property="og:image" content="<%= image_url %>">
   <meta property="og:image:secure_url" content="<%= image_url %>">

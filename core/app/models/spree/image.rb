@@ -51,7 +51,8 @@ module Spree
     end
 
     def plp_url
-      generate_url(size: self.class.styles[:plp_and_carousel])
+      Spree::Deprecation.warn "Image#plp_url is deprecated. Use variant(:large) instead."
+      generate_url(size: self.class.styles[:large])
     end
 
     private
