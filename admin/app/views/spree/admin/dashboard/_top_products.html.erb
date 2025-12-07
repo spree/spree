@@ -14,7 +14,7 @@
       <table class="table">
         <thead>
           <tr class="border-b">
-            <th scope="col">
+            <th scope="col" class="rounded-none">
               <%= Spree.t(:product) %>
             </th>
             <% if defined?(Spree::Vendor) && !@vendor %>
@@ -28,7 +28,7 @@
             <th class="text-center">
               <%= Spree.t(:quantity) %>
             </th>
-            <th class="text-right">
+            <th class="text-right rounded-none">
               <%= Spree.t(:total_sales) %>
             </th>
           </tr>

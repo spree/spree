@@ -1,7 +1,6 @@
 /* ==========================================================================
    FORMS
    ========================================================================== */
-
 @layer components {
   label {
     @apply flex items-center cursor-pointer gap-2 font-medium mb-2 text-base;

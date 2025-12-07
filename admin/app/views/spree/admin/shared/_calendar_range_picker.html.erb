@@ -9,7 +9,7 @@
 
 <%= dropdown direction: dropdown_direction, data: { controller: 'dropdown calendar-range', action: 'click->calendar-range#open' }, class: 'h-full', portal: false do %>
   <%= dropdown_toggle class: css_classes do %>
-    <%= icon('calendar', class: 'mr-2') %>
+    <%= icon('calendar') %>
     <div data-calendar-range-target="label">
       <% if date_from_value.present? && date_to_value.present? %>
         <%= date_from_value.to_date %> - <%= date_to_value.to_date %>

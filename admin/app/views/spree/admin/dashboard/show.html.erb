@@ -17,7 +17,7 @@
         <%= render 'spree/admin/shared/calendar_range_picker',
           date_from_value: params[:date_from] || 1.month.ago.end_of_day,
           date_to_value: params[:date_to] || Time.zone.now.beginning_of_day,
-          css_classes: "btn btn-sm border rounded-xl hover-light inline-flex items-center h-full dropdown-toggle" %>
+          css_classes: "btn btn-sm btn-light rounded-xl hover-light inline-flex items-center h-full dropdown-toggle bg-transparent" %>
       <% end %>
     </div>
     <%= render 'analytics' %>
