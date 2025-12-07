@@ -7,7 +7,7 @@
   }
 
   .form-group {
-    @apply mb-3;
+    @apply mb-4;
   }
 
   .form-label {
