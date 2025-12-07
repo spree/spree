@@ -50,12 +50,12 @@
     }
   }
 
-  /* Add animations */
-  dialog[data-dialog-target="dialog"][open] {
+  /* Add animations for centered dialogs (not drawers) */
+  dialog.dialog[data-dialog-target="dialog"][open] {
     animation: fade-in 200ms forwards;
   }
 
-  dialog[data-dialog-target="dialog"][closing] {
+  dialog.dialog[data-dialog-target="dialog"][closing] {
     animation: fade-out 200ms forwards;
   }
 
@@ -101,6 +101,11 @@
   .drawer:open,
   .drawer[open] {
     display: flex;
+    animation: slideInRight 0.25s ease-out forwards;
+  }
+
+  dialog.drawer[closing] {
+    animation: slideOutRight 0.2s ease-in forwards;
   }
 
   .drawer .alerts-container {

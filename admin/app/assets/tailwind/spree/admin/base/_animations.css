@@ -56,6 +56,28 @@
       transform: scale(0.95) translateY(-4px);
     }
   }
+
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slideOutRight {
+    from {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+  }
 }
 
 @layer utilities {
@@ -94,5 +116,14 @@
   .animate-pop-out {
     animation: popOut 0.1s ease-in both;
     transform-origin: top center;
+  }
+
+  /* Slide animations (for drawers, sidebars, etc.) */
+  .animate-slide-in-right {
+    animation: slideInRight 0.25s ease-out both;
+  }
+
+  .animate-slide-out-right {
+    animation: slideOutRight 0.2s ease-in both;
   }
 }
