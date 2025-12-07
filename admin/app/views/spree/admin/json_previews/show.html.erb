@@ -1,7 +1,7 @@
 <%= turbo_frame_tag :drawer do %>
   <%= drawer_header(Spree.t('admin.show_json')) %>
   <div class="drawer-body" data-controller="highlight tabs">
-    <ul class="nav nav-pills mb-12">
+    <ul class="nav nav-pills mb-3">
       <li class="nav-item">
         <a class="nav-link active" data-tabs-target="tab" data-action="click->tabs#select"><%= Spree.t('apis.storefront') %></a>
       </li>
@@ -14,7 +14,7 @@
         <pre class="m-0"><code data-highlight-target="code" class="language-json block overflow-auto" style="height: calc(100dvh - 11rem);"><%= serialize_to_json(@object, api_type: :storefront) %></code></pre>
       <% else %>
         <div class="text-gray-600 p-12 flex items-center w-full justify-center flex-col">
-          <%= icon 'map-search', class: 'mb-12 opacity-50', style: 'font-size: 2rem;' %>
+          <%= icon 'map-search', class: 'mb-12 opacity-50 text-4xl' %>
           <p>
             <%= Spree.t('admin.json_preview.no_api_response') %>
           </p>
@@ -26,7 +26,7 @@
         <pre class="m-0"><code data-highlight-target="code" class="language-json block overflow-auto" style="height: calc(100dvh - 11rem);"><%= serialize_to_json(@object, api_type: :platform) %></code></pre>
       <% else %>
         <div class="text-gray-600 p-12 flex items-center w-full justify-center flex-col">
-          <%= icon 'map-search', class: 'mb-12 opacity-50', style: 'font-size: 2rem;' %>
+          <%= icon 'map-search', class: 'mb-12 opacity-50 text-4xl' %>
           <p>
             <%= Spree.t('admin.json_preview.no_api_response') %>
           </p>

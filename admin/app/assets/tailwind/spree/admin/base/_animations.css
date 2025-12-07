@@ -78,6 +78,28 @@
       transform: translateX(100%);
     }
   }
+
+  @keyframes expandDown {
+    from {
+      opacity: 0;
+      grid-template-rows: 0fr;
+    }
+    to {
+      opacity: 1;
+      grid-template-rows: 1fr;
+    }
+  }
+
+  @keyframes collapseUp {
+    from {
+      opacity: 1;
+      grid-template-rows: 1fr;
+    }
+    to {
+      opacity: 0;
+      grid-template-rows: 0fr;
+    }
+  }
 }
 
 @layer utilities {

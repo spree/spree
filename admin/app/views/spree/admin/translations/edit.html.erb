@@ -3,7 +3,7 @@
   <% if @locales.any? %>
     <%= form_for @object, url: spree.admin_translation_path(@object.id, resource_type: model_class.to_s), method: :put do |f| %>
       <div class="drawer-body">
-        <ul class="nav nav-pills mb-12">
+        <ul class="nav nav-pills mb-3">
           <% @locales.each do |locale| %>
             <% normalized = normalized_locale(locale) %>
             <%= nav_item(
@@ -28,7 +28,7 @@
   <% else %>
     <div class="drawer-body">
       <div class="text-gray-600 p-12 flex items-center w-full justify-center flex-col">
-        <%= icon 'language', class: 'mb-12 opacity-50', style: 'font-size: 2rem;' %>
+        <%= icon 'language', class: 'mb-12 opacity-50 text-4xl' %>
         <p class="text-center"><%= Spree.t('admin.translations.no_translations_configured') %></p>
 
         <% if can?(:edit, current_store) %>

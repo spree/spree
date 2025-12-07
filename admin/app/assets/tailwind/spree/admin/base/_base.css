@@ -61,11 +61,10 @@
 
   /* Turbo frame busy state */
   turbo-frame.blur-busy[busy] {
-    @apply opacity-50 pointer-events-none;
-    transition: opacity 0.3s;
+    @apply opacity-50 pointer-events-none transition-opacity duration-300 ease-in-out;
   }
 
   turbo-frame.blur-busy[busy] * {
-    @apply pointer-events-none;
+    @apply pointer-events-none transition-opacity duration-300 ease-in-out;
   }
 }

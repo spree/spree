@@ -149,9 +149,10 @@
 
   /* Collapsable Card */
   .collapsable-card {
-    @apply relative flex flex-col min-w-0 break-words overflow-hidden;
+    @apply relative flex flex-col min-w-0 break-words;
     @apply bg-surface border border-border rounded-xl;
     background-clip: border-box;
+    overflow: hidden;
   }
 
   .collapsable-card .card-header:hover {
@@ -163,11 +164,29 @@
   }
 
   .collapsable-card[open] .arrow {
-    @apply rotate-90!;
+    @apply rotate-90 transition-transform duration-200 ease-in-out;
   }
 
   .collapsable-card:not([open]) .arrow {
-    @apply rotate-0!;
+    @apply rotate-0 transition-transform duration-200 ease-in-out;
+  }
+
+  /* Animate details content */
+  .collapsable-card > *:not(summary) {
+    display: grid;
+    grid-template-rows: 0fr;
+    overflow: hidden;
+    transition: grid-template-rows 0.25s ease-out, opacity 0.2s ease-out;
+    opacity: 0;
+  }
+
+  .collapsable-card[open] > *:not(summary) {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+
+  .collapsable-card > *:not(summary) > * {
+    min-height: 0;
   }
 
   /* Details/Summary styling for cards */
