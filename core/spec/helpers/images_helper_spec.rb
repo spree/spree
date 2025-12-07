@@ -20,6 +20,20 @@ describe Spree::ImagesHelper, type: :helper do
       expect(helper).to receive(:image_tag).with('image_url', { width: 100, height: 100 }).and_return('image_tag')
       expect(helper.spree_image_tag(image, width: 100, height: 100)).to eq('image_tag')
     end
+
+    context 'when variant option is provided' do
+      it 'passes only variant to spree_image_url and excludes it from image_tag options' do
+        expect(helper).to receive(:spree_image_url).with(image, { variant: :mini }).and_return('image_url')
+        expect(helper).to receive(:image_tag).with('image_url', { class: 'test-class' }).and_return('image_tag')
+        expect(helper.spree_image_tag(image, variant: :mini, class: 'test-class')).to eq('image_tag')
+      end
+
+      it 'ignores width, height, and format when variant is provided' do
+        expect(helper).to receive(:spree_image_url).with(image, { variant: :small }).and_return('image_url')
+        expect(helper).to receive(:image_tag).with('image_url', { width: 100, height: 100 }).and_return('image_tag')
+        expect(helper.spree_image_tag(image, variant: :small, width: 100, height: 100, format: :png)).to eq('image_tag')
+      end
+    end
   end
 
   describe '#spree_image_url' do
@@ -68,9 +82,25 @@ describe Spree::ImagesHelper, type: :helper do
     context 'when format is provided' do
       it 'returns a url with the correct format' do
         variant = double('variant')
-        expect(image).to receive(:variant).with(hash_including(resize_to_fill: [200, 200], format: :png)).and_return(variant)
+        expect(image).to receive(:variant).with(hash_including(resize_to_fill: [200, 200], format: "png")).and_return(variant)
         expect(Rails.application.routes.url_helpers).to receive(:cdn_image_url).and_return('cdn_url')
         expect(helper.spree_image_url(image, width: 100, height: 100, format: :png)).to eq('cdn_url')
+      end
+    end
+
+    context 'when variant option is provided' do
+      it 'uses the named variant directly' do
+        variant = double('variant')
+        expect(image).to receive(:variant).with(:mini).and_return(variant)
+        expect(Rails.application.routes.url_helpers).to receive(:cdn_image_url).and_return('cdn_url')
+        expect(helper.spree_image_url(image, variant: :mini)).to eq('cdn_url')
+      end
+
+      it 'ignores width and height when variant is provided' do
+        variant = double('variant')
+        expect(image).to receive(:variant).with(:small).and_return(variant)
+        expect(Rails.application.routes.url_helpers).to receive(:cdn_image_url).and_return('cdn_url')
+        expect(helper.spree_image_url(image, variant: :small, width: 100, height: 100)).to eq('cdn_url')
       end
     end
   end

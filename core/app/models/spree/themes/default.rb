@@ -85,10 +85,13 @@ module Spree
       preference :border_shadow_blur, :integer, default: 5
 
       # PRODUCT IMAGES
-      preference :product_listing_image_height, :integer, default: 300
-      preference :product_listing_image_width, :integer, default: 300
-      preference :product_listing_image_height_mobile, :integer, default: 190
-      preference :product_listing_image_width_mobile, :integer, default: 190
+      # These defaults match preprocessed variant sizes for optimal performance:
+      # Desktop (360x360) → large variant (720x720 at 2x)
+      # Mobile (200x200) → medium variant (400x400 at 2x)
+      preference :product_listing_image_height, :integer, default: 360
+      preference :product_listing_image_width, :integer, default: 360
+      preference :product_listing_image_height_mobile, :integer, default: 200
+      preference :product_listing_image_width_mobile, :integer, default: 200
     end
   end
 end

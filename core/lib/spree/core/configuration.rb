@@ -46,6 +46,36 @@ module Spree
       preference :expedited_exchanges_days_window, :integer, default: 14 # the amount of days the customer has to return their item after the expedited exchange is shipped in order to avoid being charged
       preference :geocode_addresses, :boolean, default: true
       preference :images_save_from_url_job_attempts, :integer, default: 5
+
+      # Preprocessed product image variant sizes at 2x retina resolution.
+      # These variants are generated on upload to reduce runtime processing.
+      # When using spree_image_tag, pass half these values (e.g., width: 64 for mini).
+      #
+      # Default sizes:
+      #   mini (128x128)     - admin thumbnails, checkout line items
+      #   small (256x256)    - cart/order items, gallery thumbnails
+      #   medium (400x400)   - mobile listing, admin media
+      #   large (720x720)    - product listing, mobile gallery
+      #   xlarge (2000x2000) - gallery main, lightbox
+      #
+      # To customize, override in your initializer:
+      #   Spree::Config.product_image_variant_sizes = {
+      #     mini: [128, 128],
+      #     small: [256, 256],
+      #     # ... your custom sizes
+      #   }
+      attr_writer :product_image_variant_sizes
+
+      def product_image_variant_sizes
+        @product_image_variant_sizes ||= {
+          mini: [128, 128],
+          small: [256, 256],
+          medium: [400, 400],
+          large: [720, 720],
+          xlarge: [2000, 2000],
+          og_image: [1200, 630]
+        }
+      end
       preference :layout, :string, deprecated: 'Please use Spree::Frontend::Config[:layout] instead'
       preference :logo, :string, deprecated: true
       preference :mailer_logo, :string, deprecated: true
