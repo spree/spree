@@ -4,7 +4,7 @@
 
 @layer components {
   .alert {
-    @apply inline-flex flex-col justify-center relative bg-no-repeat py-3 px-4 pl-11 mb-4 min-h-10 border border-transparent rounded-xl;
+    @apply inline-flex flex-col justify-center relative bg-no-repeat py-3 px-4 pl-11 mb-4 min-h-10 border border-transparent rounded-lg;
     background-position: 1rem center;
     background-size: 1rem 1rem;
   }
@@ -48,6 +48,6 @@
   }
 
   .alerts-container .alert {
-    @apply border pointer-events-auto rounded-2xl ease-in-out transition-all duration-200 shadow-sm;
+    @apply border pointer-events-auto ease-in-out transition-all duration-200 shadow-sm;
   }
 }

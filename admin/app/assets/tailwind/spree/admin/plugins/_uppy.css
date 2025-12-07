@@ -1,130 +1,117 @@
-/* ==========================================================================
-   UPPY CUSTOM STYLES
-   ========================================================================== */
+.uppy-Root {
+  @apply text-base! text-text! leading-normal!;
+  font-family: var(--font-sans) !important;
+}
 
-@layer components {
-  .uppy-Root {
-    @apply text-base! text-text! leading-normal!;
-    font-family: var(--font-sans) !important;
-  }
+.uppy-Dashboard-inner {
+  @apply bg-gray-25 border-border;
+}
 
-  .uppy-Dashboard-inner {
-    @apply bg-gray-25 border-border;
-  }
+.uppy-Dashboard-innerWrap,
+.uppy-Dashboard-inner,
+.uppy-Dashboard-AddFiles {
+  @apply rounded-lg!;
+}
 
-  .uppy-Dashboard-innerWrap,
-  .uppy-Dashboard-inner,
-  .uppy-Dashboard-AddFiles {
-    border-radius: var(--radius-lg) !important;
-  }
+.uppy-Dashboard-Item-previewInnerWrap {
+  @apply bg-transparent! rounded-lg! shadow-none!;
+}
 
-  .uppy-Dashboard-Item-previewInnerWrap {
-    background-color: transparent !important;
-    border-radius: var(--radius-lg) !important;
-    box-shadow: none !important;
-  }
+/* Modal mode - overlay and positioning */
+.uppy-Dashboard--modal {
+  @apply z-[1055];
+}
 
-  /* Modal mode - overlay and positioning */
-  .uppy-Dashboard--modal {
-    z-index: 1055;
-  }
+.uppy-Dashboard--modal .uppy-Dashboard-overlay {
+  @apply opacity-100! z-[1050];
+  background-color: rgba(255, 255, 255, 0.8) !important;
+}
 
-  .uppy-Dashboard--modal .uppy-Dashboard-overlay {
-    background-color: rgba(255, 255, 255, 0.8) !important;
-    opacity: 1 !important;
-    z-index: 1050;
-  }
+.uppy-Dashboard--modal .uppy-Dashboard-inner {
+  @apply border-border! z-[1055];
+  box-shadow: 0px 0px 0px 1px rgba(179, 179, 179, 0.5), 0px 6px 12px -3px rgba(179, 179, 179, 0.35), 0px 6px 18px 0px rgba(179, 179, 179, 0.35) !important;
+}
 
-  .uppy-Dashboard--modal .uppy-Dashboard-inner {
-    box-shadow: 0px 0px 0px 1px rgba(179, 179, 179, 0.5), 0px 6px 12px -3px rgba(179, 179, 179, 0.35), 0px 6px 18px 0px rgba(179, 179, 179, 0.35) !important;
-    border-color: var(--color-border) !important;
-    z-index: 1055;
-  }
+/* Hide modal when not open */
+.uppy-Dashboard--modal[aria-hidden="true"] {
+  @apply hidden!;
+}
 
-  /* Hide modal when not open */
-  .uppy-Dashboard--modal[aria-hidden="true"] {
-    display: none !important;
-  }
+.uppy-Dashboard--modal[aria-hidden="true"] .uppy-Dashboard-overlay {
+  @apply hidden!;
+}
 
-  .uppy-Dashboard--modal[aria-hidden="true"] .uppy-Dashboard-overlay {
-    display: none !important;
-  }
+.uppy-Dashboard--modal[aria-hidden="true"] .uppy-Dashboard-inner {
+  @apply hidden!;
+}
 
-  .uppy-Dashboard--modal[aria-hidden="true"] .uppy-Dashboard-inner {
-    display: none !important;
-  }
+/* Uppy buttons - btn btn-light btn-sm styles */
+.uppy-Dashboard-browse,
+.uppy-DashboardContent-back,
+.uppy-StatusBar-actionBtn {
+  /* btn base */
+  @apply inline-flex items-center justify-center text-center align-middle gap-2;
+  @apply cursor-pointer select-none no-underline;
+  @apply font-medium leading-normal border transition-colors duration-100 ease-linear;
+  /* btn-sm */
+  @apply px-2 py-1 text-base rounded-lg;
+  /* btn-light */
+  @apply text-gray-700 bg-gray-25! border-border! shadow-xs!;
+}
 
-  .uppy-Dashboard-browse,
-  .uppy-DashboardContent-back {
-    @apply inline-block text-center align-middle select-none text-sm leading-normal text-gray-900 bg-gray-50 font-normal border-border;
-    padding: 0.375rem 0.75rem;
-    border-radius: var(--radius-md);
-    border-width: 1px;
-    transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
-  }
+.uppy-Dashboard-browse:hover,
+.uppy-DashboardContent-back:hover,
+.uppy-StatusBar-actionBtn:hover {
+  @apply bg-gray-50 border-border text-gray-900;
+}
 
-  .uppy-Dashboard-browse {
-    margin-left: 0.5rem;
-  }
+.uppy-Dashboard-browse {
+  @apply ml-2;
+}
 
-  .uppy-Dashboard-browse:hover,
-  .uppy-DashboardContent-back:hover {
-    @apply bg-gray-100 border-gray-300;
-  }
+/* Save button - btn btn-primary btn-sm styles */
+.uppy-DashboardContent-save {
+  /* btn base */
+  @apply inline-flex items-center justify-center text-center align-middle gap-2;
+  @apply cursor-pointer select-none no-underline;
+  @apply font-medium leading-normal border transition-colors duration-100 ease-linear;
+  /* btn-sm */
+  @apply px-2 py-1 text-sm rounded-lg;
+  /* btn-primary */
+  @apply text-white! bg-primary border-primary shadow-xs;
+}
 
-  .uppy-DashboardContent-save {
-    @apply inline-block text-center align-middle select-none text-sm leading-normal text-surface bg-primary font-normal border-primary;
-    padding: 0.375rem 0.75rem;
-    border-radius: var(--radius-md);
-    border-width: 1px;
-    transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
-  }
+.uppy-DashboardContent-save:hover {
+  @apply bg-primary-hover border-primary-hover;
+}
 
-  .uppy-DashboardContent-save:hover {
-    @apply bg-primary-hover;
-  }
+/* Close button */
+.uppy-Dashboard-close {
+  @apply w-4 h-4 p-1 bg-surface! rounded-md opacity-50 bg-no-repeat bg-center;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e");
+  background-size: 1rem;
+}
 
-  .uppy-Dashboard-close {
-    width: 1rem;
-    height: 1rem;
-    padding: 0.25rem;
-    background-color: var(--color-surface) !important;
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e");
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 1rem;
-    border-radius: var(--radius-md);
-    opacity: 0.5;
-  }
+.uppy-Dashboard-close:hover {
+  @apply opacity-100;
+}
 
-  .uppy-Dashboard-close:hover {
-    opacity: 1;
-  }
+.uppy-Dashboard-close span {
+  @apply hidden;
+}
 
-  .uppy-Dashboard-close span {
-    display: none;
-  }
+.uppy-StatusBar.is-complete .uppy-StatusBar-progress {
+  @apply bg-blue!;
+}
 
-  .uppy-StatusBar-actionBtn {
-    @apply inline-block text-center align-middle select-none text-xs leading-normal text-gray-900 bg-gray-50 font-normal border-border;
-    padding: 0.25rem 0.5rem;
-    border-radius: var(--radius-md);
-    border-width: 1px;
-  }
+.uppy-Dashboard-AddFiles-title {
+  @apply text-base! font-normal!;
+}
 
-  .uppy-StatusBar.is-complete .uppy-StatusBar-progress {
-    background-color: var(--color-blue) !important;
-  }
+.uppy-size--md .uppy-DashboardContent-bar {
+  @apply h-14!;
+}
 
-  .uppy-Dashboard-AddFiles-title {
-    @apply text-sm! font-normal!;
-  }
-
-  .uppy-size--md .uppy-DashboardContent-bar {
-    height: 56px !important;
-  }
-
-  .uppy-size--md .uppy-DashboardContent-title {
-    line-height: 56px !important;
-  }
+.uppy-size--md .uppy-DashboardContent-title {
+  @apply leading-[56px]!;
 }

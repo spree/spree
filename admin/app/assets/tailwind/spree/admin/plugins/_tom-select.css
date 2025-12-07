@@ -5,27 +5,18 @@
 @layer components {
   /* Base wrapper */
   .ts-wrapper {
-    position: relative;
+    @apply relative;
   }
 
   .ts-wrapper.form-control,
   .ts-wrapper.form-select {
-    padding: 0 !important;
+    @apply p-0!;
   }
 
   /* Dropdown */
   .ts-dropdown,
   .ts-dropdown.form-control {
-    @apply mt-1!;
-    position: absolute;
-    top: 110%;
-    left: 0;
-    width: 100%;
-    height: auto;
-    padding: 0.25rem;
-    z-index: 10000000 !important;
-    background: var(--color-surface);
-    border-radius: var(--radius-lg);
+    @apply absolute mt-1! top-[110%] left-0 w-full h-auto p-1 z-[10000000]! bg-surface rounded-lg;
     box-shadow: var(--shadow-dropdown);
   }
 
@@ -34,121 +25,83 @@
   }
 
   .ts-dropdown .optgroup:first-child:before {
-    display: none;
+    @apply hidden;
   }
 
   .ts-dropdown .optgroup:before {
+    @apply block h-0 my-2 overflow-hidden border-t border-border -mx-3;
     content: ' ';
-    display: block;
-    height: 0;
-    margin: 0.5rem 0;
-    overflow: hidden;
-    border-top: 1px solid var(--color-border);
-    margin-left: calc(-1 * 0.75rem);
-    margin-right: calc(-1 * 0.75rem);
   }
 
   .ts-dropdown .create {
-    padding-left: 0.75rem;
+    @apply pl-3;
   }
 
   .ts-dropdown-content {
-    padding: 0;
-    overflow-y: auto;
-    overflow-x: hidden;
-    max-height: 200px;
+    @apply p-0 overflow-y-auto overflow-x-hidden max-h-[200px] scroll-smooth;
     overflow-scrolling: touch;
-    scroll-behavior: smooth;
   }
 
   .ts-dropdown [data-selectable] {
-    cursor: pointer;
-    overflow: hidden;
+    @apply cursor-pointer overflow-hidden;
   }
 
   .ts-dropdown [data-selectable] .highlight {
+    @apply rounded-sm;
     background: rgba(255, 237, 40, 0.4);
-    border-radius: 1px;
   }
 
   .ts-dropdown .option,
   .ts-dropdown .optgroup-header,
   .ts-dropdown .no-results,
   .ts-dropdown .create {
-    padding: 0.5rem;
-    border-radius: var(--radius-sm);
+    @apply p-2 rounded-sm;
   }
 
   .ts-dropdown .option,
   .ts-dropdown [data-disabled],
   .ts-dropdown [data-disabled] [data-selectable].option {
-    cursor: inherit;
-    opacity: 0.5;
+    @apply cursor-default opacity-50;
   }
 
   .ts-dropdown [data-selectable].option {
-    opacity: 1;
-    cursor: pointer;
+    @apply opacity-100 cursor-pointer;
   }
 
   .ts-dropdown .optgroup:first-child .optgroup-header {
-    border-top: 0 none;
+    @apply border-t-0;
   }
 
   .ts-dropdown .optgroup-header {
-    color: var(--color-gray-600);
-    background: var(--color-surface);
-    cursor: default;
+    @apply text-gray-600 bg-surface cursor-default;
   }
 
   .ts-dropdown .active {
-    background-color: var(--color-gray-50);
-    color: var(--color-gray-900);
+    @apply bg-gray-50 text-gray-900;
   }
 
   .ts-dropdown .active.create {
-    color: var(--color-gray-900);
+    @apply text-gray-900;
   }
 
   .ts-dropdown .create {
-    color: var(--color-gray-500);
+    @apply text-gray-500;
   }
 
   .ts-dropdown .spinner {
-    display: inline-block;
-    width: 30px;
-    height: 30px;
-    margin: 3px 0.75rem;
+    @apply inline-block w-[30px] h-[30px] my-[3px] mx-3;
   }
 
   .ts-dropdown .spinner:after {
+    @apply block w-6 h-6 m-[3px] rounded-full border-[5px] border-border animate-spin;
     content: " ";
-    display: block;
-    width: 24px;
-    height: 24px;
-    margin: 3px;
-    border-radius: 50%;
-    border: 5px solid var(--color-border);
     border-color: var(--color-border) transparent var(--color-border) transparent;
-    animation: ts-spinner 1.2s linear infinite;
-  }
-
-  @keyframes ts-spinner {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
   }
 
   /* Control */
-
-
   .ts-control,
   .ts-wrapper.single.input-active .ts-control {
-    background: var(--color-surface);
-    cursor: text;
+    @apply bg-surface cursor-text;
   }
 
   .focus .ts-control {
@@ -178,227 +131,169 @@
 
   /* Multi-select items */
   .ts-wrapper.multi .ts-control > div {
-    cursor: pointer;
-    margin: 0 3px 3px 0;
-    padding: 1px 5px;
+    @apply cursor-pointer mr-[3px] mb-[3px] py-[1px] px-[5px] text-gray-800 border-0 border-border rounded-[calc(var(--radius-md)-1px)];
     background: #efefef;
-    color: var(--color-gray-800);
-    border: 0px solid var(--color-border);
-    border-radius: calc(var(--radius-md) - 1px);
   }
 
   .ts-wrapper.multi .ts-control > div.active {
-    background: var(--color-primary);
-    color: var(--color-surface);
-    border: 0px solid transparent;
+    @apply bg-primary text-surface border-0 border-transparent;
   }
 
   .ts-wrapper.multi.has-items .ts-control {
-    padding-left: calc(0.75rem - 5px);
+    @apply pl-[calc(0.75rem-5px)];
   }
 
   /* Disabled state */
   .ts-wrapper.disabled {
-    pointer-events: none;
-    cursor: not-allowed !important;
+    @apply pointer-events-none cursor-not-allowed!;
   }
 
   .ts-wrapper.disabled:hover:not(:focus) {
-    border: 0 none !important;
+    @apply border-0!;
   }
 
   .ts-wrapper.disabled .ts-control {
-    pointer-events: none;
-    cursor: not-allowed !important;
-    opacity: 0.5;
-    background-color: var(--color-gray-100);
+    @apply pointer-events-none cursor-not-allowed! opacity-50 bg-gray-100;
   }
 
   .ts-wrapper.disabled .ts-control:hover:not(:focus) {
-    border: 1px solid transparent !important;
+    @apply border border-transparent!;
   }
 
   .disabled .ts-control,
   .disabled .ts-control * {
-    cursor: default !important;
+    @apply cursor-default!;
   }
 
   .disabled .ts-control {
-    opacity: 0.5;
-    background-color: var(--color-gray-100);
+    @apply opacity-50 bg-gray-100;
   }
 
   .ts-wrapper.multi.disabled .ts-control > div,
   .ts-wrapper.multi.disabled .ts-control > div.active {
-    color: var(--color-gray-500);
-    background: var(--color-gray-100);
-    border: 0px solid var(--color-gray-200);
+    @apply text-gray-500 bg-gray-100 border-0 border-gray-200;
   }
 
   /* Input styling */
   .ts-control > * {
-    vertical-align: baseline;
-    display: inline-block;
+    @apply align-baseline inline-block;
   }
 
   .ts-control > input {
-    @apply flex-auto inline-block! p-0! m-0! max-w-full! text-base;
-    min-width: 7rem;
-    min-height: 0 !important;
-    max-height: none !important;
-    text-indent: 0 !important;
-    border: 0 none !important;
-    background: none !important;
-    line-height: inherit !important;
-    user-select: auto !important;
-    box-shadow: none !important;
+    @apply flex-auto inline-block! p-0! m-0! max-w-full! text-base min-w-28 min-h-0! max-h-none! indent-0! border-0! bg-none! leading-[inherit]! select-auto! shadow-none!;
   }
 
   .ts-control > input:focus {
-    outline: none !important;
+    @apply outline-none! ring-0!;
   }
 
   .has-items .ts-control > input {
-    margin: 0px 4px !important;
+    @apply mx-1!;
   }
 
   /* Hidden input */
   .input-hidden .ts-control > input {
-    opacity: 0;
-    position: absolute;
-    left: -10000px;
+    @apply opacity-0 absolute -left-[10000px];
   }
 
   /* Single select caret */
   .ts-wrapper.single .ts-control {
-    padding-right: 2rem;
-    cursor: default;
+    @apply pr-8 cursor-default;
   }
 
   .ts-wrapper.single .ts-control,
   .ts-wrapper.single .ts-control input {
-    cursor: default;
+    @apply cursor-default;
   }
 
   .ts-wrapper.single .ts-control:after {
-    content: none;
+    @apply content-none;
   }
 
   .ts-wrapper.single.input-active .ts-control,
   .ts-wrapper.single.input-active .ts-control input {
-    cursor: text;
+    @apply cursor-text focus:outline-none focus:ring-0;
   }
 
   /* Form control integration */
   .form-control.ts-wrapper {
-    padding: 0;
-    height: auto;
-    border: none;
-    background: none;
-    border-radius: 0;
+    @apply p-0 h-auto border-none bg-none rounded-none;
   }
 
   /* Small size */
   .input-group-sm > .ts-wrapper .ts-control,
   .ts-wrapper.form-control-sm .ts-control {
-    @apply text-xs;
+    @apply text-xs px-3 rounded-sm;
     min-height: calc(1.5em + 0.5rem + 2px);
-    padding: 0 0.75rem;
-    border-radius: var(--radius-sm);
   }
 
   .input-group-sm > .ts-wrapper.has-items .ts-control,
   .ts-wrapper.form-control-sm.has-items .ts-control {
-    @apply text-xs;
+    @apply text-xs pb-0;
     min-height: calc(1.5em + 0.5rem + 2px) !important;
-    padding-bottom: 0;
   }
 
   /* Large size */
   .input-group-lg > .ts-wrapper > .ts-control,
   .ts-wrapper.form-control-lg .ts-control {
-    @apply text-xl;
+    @apply text-xl rounded-lg;
     min-height: calc(1.5em + 1rem + 2px);
-    border-radius: var(--radius-lg);
   }
 
   /* Input group integration */
   .input-group > .ts-wrapper {
-    flex-grow: 1;
+    @apply grow;
   }
 
   .input-group > .ts-wrapper:not(:nth-child(2)) > .ts-control {
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
+    @apply rounded-tl-none rounded-bl-none;
   }
 
   .input-group > .ts-wrapper:not(:last-child) > .ts-control {
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
+    @apply rounded-tr-none rounded-br-none;
   }
 
   /* Hidden accessible */
   .ts-hidden-accessible {
-    border: 0 !important;
+    @apply border-0! overflow-hidden! p-0! absolute! w-px! whitespace-nowrap!;
     clip: rect(0 0 0 0) !important;
     clip-path: inset(50%) !important;
-    overflow: hidden !important;
-    padding: 0 !important;
-    position: absolute !important;
-    width: 1px !important;
-    white-space: nowrap !important;
   }
 
   /* Remove button plugin */
   .ts-wrapper.plugin-remove_button .item .remove {
-    padding: 3px 6px;
+    @apply py-[3px] px-[6px];
   }
 
   .ts-wrapper .ts-control > .item .remove {
-    @apply inline-block align-middle text-base font-bold;
-    margin-left: 3px;
-    padding: 0 3px;
-    color: inherit;
-    text-decoration: none;
-    border-radius: 2px;
-    opacity: 0.5;
+    @apply inline-block align-middle text-base font-bold ml-[3px] py-0 px-[3px] text-inherit no-underline rounded-sm opacity-50;
   }
 
   .ts-wrapper .ts-control > .item .remove:hover {
-    opacity: 1;
+    @apply opacity-100;
     background: rgba(0, 0, 0, 0.05);
   }
 
   /* Clear button plugin */
   .ts-wrapper .clear-button {
-    position: absolute;
-    right: calc(0.75rem + 20px);
-    top: 50%;
-    transform: translateY(-50%);
-    opacity: 0;
-    cursor: pointer;
-    transition: opacity 0.2s;
+    @apply absolute right-[calc(0.75rem+20px)] top-1/2 -translate-y-1/2 opacity-0 cursor-pointer transition-opacity duration-200;
   }
 
   .ts-wrapper.focus .clear-button,
   .ts-wrapper:hover .clear-button {
-    opacity: 0.5;
+    @apply opacity-50;
   }
 
   .ts-wrapper .clear-button:hover {
-    opacity: 1;
+    @apply opacity-100;
   }
 
   /* Dropdown input plugin */
   .ts-dropdown.plugin-dropdown_input .dropdown-input-wrap {
-    padding: 5px 0.75rem;
-    border-bottom: 1px solid var(--color-border);
+    @apply py-[5px] px-3 border-b border-border;
   }
 
   .ts-dropdown.plugin-dropdown_input .dropdown-input {
-    @apply w-full text-sm bg-surface;
-    padding: 0.375rem 0.75rem;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
+    @apply w-full text-sm bg-surface py-1.5 px-3 border border-border rounded-md;
   }
 }

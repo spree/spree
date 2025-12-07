@@ -11,8 +11,8 @@
     top: var(--spacing-header-height);
     z-index: 1000;
     background-color: var(--color-surface);
-    border-top-left-radius: var(--radius-xl);
-    border-top-right-radius: var(--radius-xl);
+    border-top-left-radius: var(--radius-2xl);
+    border-top-right-radius: var(--radius-2xl);
   }
 
   .filter-wrap .btn {
@@ -23,7 +23,7 @@
   #table-filter {
     position: absolute;
     padding: 1rem;
-    border-radius: var(--radius-xl);
+    border-radius: var(--radius-2xl);
     box-shadow: var(--shadow-dropdown);
     background-color: var(--color-surface);
     margin-top: 0.5rem;

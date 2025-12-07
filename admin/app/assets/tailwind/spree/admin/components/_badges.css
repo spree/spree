@@ -35,10 +35,6 @@
     @apply text-gray-900 bg-warning;
   }
 
-  .badge-info {
-    @apply text-white bg-info;
-  }
-
   .badge-light {
     @apply text-gray-900 bg-gray-100;
   }
@@ -146,7 +142,7 @@
   .badge-partial,
   .badge-capture,
   .badge-info {
-    @apply border border-transparent bg-blue-100 text-blue-900;
+    @apply border border-transparent bg-blue-50 text-blue-900;
   }
 
   /* Pill badges */

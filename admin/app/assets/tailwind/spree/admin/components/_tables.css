@@ -116,7 +116,7 @@
 
   /* Pagination container */
   .pagination-container {
-    @apply sticky bottom-0 z-100 border-t bg-surface rounded-b-xl;
+    @apply sticky bottom-0 z-100 border-t bg-surface rounded-b-2xl;
   }
 
   /* Filters search bar */

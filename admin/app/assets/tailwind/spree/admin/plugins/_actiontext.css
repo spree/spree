@@ -7,30 +7,29 @@
 */
 
 /*
- * We need to override trix.css’s image gallery styles to accommodate the
+ * We need to override trix.css's image gallery styles to accommodate the
  * <action-text-attachment> element we wrap around attachments. Otherwise,
  * images in galleries will be squished by the max-width: 33%; rule.
 */
-.trix-content .attachment-gallery > action-text-attachment,
-.trix-content .attachment-gallery > .attachment {
-  flex: 1 0 33%;
-  padding: 0 0.5em;
-  max-width: 33%;
-}
 
-.trix-content .attachment-gallery.attachment-gallery--2 > action-text-attachment,
-.trix-content .attachment-gallery.attachment-gallery--2 > .attachment, .trix-content .attachment-gallery.attachment-gallery--4 > action-text-attachment,
-.trix-content .attachment-gallery.attachment-gallery--4 > .attachment {
-  flex-basis: 50%;
-  max-width: 50%;
-}
+@layer components {
+  .trix-content .attachment-gallery > action-text-attachment,
+  .trix-content .attachment-gallery > .attachment {
+    @apply flex-[1_0_33%] px-2 max-w-[33%];
+  }
 
-.trix-content action-text-attachment .attachment {
-  padding: 0 !important;
-  max-width: 100% !important;
-}
+  .trix-content .attachment-gallery.attachment-gallery--2 > action-text-attachment,
+  .trix-content .attachment-gallery.attachment-gallery--2 > .attachment,
+  .trix-content .attachment-gallery.attachment-gallery--4 > action-text-attachment,
+  .trix-content .attachment-gallery.attachment-gallery--4 > .attachment {
+    @apply flex-[0_0_50%] max-w-[50%];
+  }
 
-.trix-button--dialog {
-  width: auto !important;
-  height: auto !important;
+  .trix-content action-text-attachment .attachment {
+    @apply p-0! max-w-full!;
+  }
+
+  .trix-button--dialog {
+    @apply w-auto! h-auto!;
+  }
 }

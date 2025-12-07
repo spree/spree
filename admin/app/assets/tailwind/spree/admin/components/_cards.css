@@ -5,7 +5,7 @@
 @layer components {
   .card,
   .card-lg {
-    @apply relative flex flex-col min-w-0 break-words bg-surface border border-border rounded-xl;
+    @apply relative flex flex-col min-w-0 break-words bg-surface border border-border rounded-2xl;
     background-clip: border-box;
   }
 
@@ -14,7 +14,7 @@
   }
 
   .card .card {
-    @apply rounded-xl;
+    @apply rounded-2xl;
   }
 
   /* Card with table */
@@ -62,7 +62,7 @@
   }
 
   .card-body {
-    @apply flex-auto p-4;
+    @apply flex-auto p-5;
   }
 
   .card-body .form-group:last-child {
@@ -75,7 +75,7 @@
   }
 
   .card-header {
-    @apply flex items-center mb-0 p-4 h-14 border-b border-gray-50 rounded-t-[calc(var(--radius-xl)-1px)];
+    @apply flex items-center mb-0 p-5 h-14 border-b border-gray-50 rounded-t-[calc(var(--radius-2xl)-1px)];
   }
 
   .card-header .card-title {
@@ -95,11 +95,11 @@
   }
 
   .card-footer {
-    @apply p-4;
+    @apply p-5;
   }
 
   .card-footer:last-child {
-    @apply rounded-b-[calc(var(--radius-xl)-1px)];
+    @apply rounded-b-[calc(var(--radius-2xl)-1px)];
   }
 
   .card-footer.border-top,
@@ -127,13 +127,13 @@
   }
 
   .card-img-top {
-    @apply w-full rounded-t-[calc(var(--radius-xl)-1px)];
+    @apply w-full rounded-t-[calc(var(--radius-2xl)-1px)];
   }
 
   /* Collapsable Card */
   .collapsable-card {
     @apply relative flex flex-col min-w-0 break-words overflow-hidden;
-    @apply bg-surface border border-border rounded-xl;
+    @apply bg-surface border border-border rounded-2xl;
     background-clip: border-box;
   }
 
