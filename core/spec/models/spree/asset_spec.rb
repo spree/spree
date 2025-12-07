@@ -3,6 +3,25 @@ require 'spec_helper'
 describe Spree::Asset, type: :model do
   it_behaves_like 'metadata'
 
+  describe 'named variants' do
+    let(:reflection) { described_class.attachment_reflections['attachment'] }
+
+    it 'defines preprocessed variants based on config' do
+      expected_variants = Spree::Config.product_image_variant_sizes.keys
+      expect(reflection.named_variants.keys).to match_array(expected_variants)
+    end
+
+    Spree::Config.product_image_variant_sizes.each do |name, (width, height)|
+      it "defines :#{name} variant with correct options" do
+        named_variant = reflection.named_variants[name]
+        expect(named_variant).to be_present
+        expect(named_variant.transformations[:resize_to_fill]).to eq([width, height])
+        expect(named_variant.transformations[:format]).to eq("webp")
+        expect(named_variant.instance_variable_get(:@preprocessed)).to eq(true)
+      end
+    end
+  end
+
   describe '#product' do
     it 'returns the product for the asset' do
       variant = create(:variant)
