@@ -11,19 +11,19 @@
   }
 
   .dropdown .btn .text-gray-600 {
-    color: var(--color-gray-500) !important;
+    @apply text-gray-500!;
   }
 
   .dropdown .arrow {
-    color: var(--color-gray-300);
+    @apply text-gray-300;
   }
 
   .dropdown:hover .arrow {
-    color: var(--color-gray-500);
+    @apply text-gray-500;
   }
 
   .dropdown.show .arrow {
-    transform: rotate(3.142rad);
+    @apply rotate-180;
   }
 
   /* Dropdown Toggle */
@@ -35,7 +35,7 @@
     @apply border-none inline-block align-middle opacity-50 rotate-0 transition-transform duration-200 ease-in-out;
     content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='icon icon-tabler icons-tabler-outline icon-tabler-chevron-down'%3E%3Cpath stroke='none' d='M0 0h24v24H0z' fill='none'/%3E%3Cpath d='M6 12l6 6l6 -6'/%3E%3C/svg%3E");
   }
-  
+
   .dropdown-toggle:focus::after,
   .dropdown-toggle:active::after,
   .dropdown-toggle[aria-expanded="true"]::after {
@@ -49,56 +49,38 @@
   /* Dropdown Container using Floating UI */
   .dropdown-container {
     @apply absolute z-1050 text-left list-none border-0 overflow-hidden text-base font-normal text-text bg-surface;
-    transform-origin: top center;
+    @apply origin-top mt-1! p-1 rounded-2xl min-w-40 max-w-80;
     animation: popIn 0.15s ease-out both;
-    min-width: 10rem;
-    max-width: 20rem;
-    margin-top: 0.25rem !important;
-    padding: 0.25rem;
     background-clip: padding-box;
-    border-radius: 1rem;
     box-shadow: var(--shadow-dropdown);
   }
 
   /* When hidden, disable animation so it doesn't play on page load */
   .dropdown-container.hidden {
-    animation: none;
+    @apply animate-none;
   }
 
   .dropdown-divider {
-    @apply h-0 overflow-hidden;
-    margin: 0.25rem 0;
-    border-top: 1px solid var(--color-gray-50);
+    @apply h-0 my-1 overflow-hidden border-t border-gray-50;
   }
 
   /* Dropdown Item */
   .dropdown-container .dropdown-item,
   .dropdown-container .dropdown-header {
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-    padding-left: 0.65rem;
-    padding-right: 0.65rem;
+    @apply py-2 px-2.5;
   }
 
   .dropdown-container .dropdown-header {
-    @apply text-base font-normal;
-    margin-bottom: 0.25rem;
-    margin-top: 0.25rem;
+    @apply text-base font-normal my-1;
   }
 
   .dropdown-item {
     @apply flex items-center justify-start w-full clear-both text-inherit no-underline whitespace-nowrap bg-transparent border-0 font-normal text-text;
-    height: 2rem;
-    margin-bottom: 0.25rem;
-    padding-right: 2rem;
-    border-radius: 0.8rem;
-    transition-property: background-color, color;
-    transition-duration: 0.01s;
-    transition-timing-function: ease;
+    @apply h-8 mb-1 pr-8 rounded-xl transition-colors duration-75 ease-linear;
   }
 
   .dropdown-item i {
-    margin-right: 0.5rem;
+    @apply mr-2;
   }
 
   .dropdown-item .badge {
@@ -107,13 +89,11 @@
 
   .dropdown-item:hover,
   .dropdown-item:focus {
-    @apply no-underline text-gray-900;
-    background-color: rgba(227, 227, 227, 0.5);
+    @apply no-underline text-gray-900 bg-gray-200/50;
   }
 
   .dropdown-item.active {
-    @apply relative text-gray-900! font-bold!;
-    background-color: rgba(227, 227, 227, 0.5) !important;
+    @apply relative text-gray-900! font-bold! bg-gray-200/50!;
   }
 
   .dropdown-item.active i {
@@ -121,11 +101,8 @@
   }
 
   .dropdown-item.active::after {
-    @apply inline-block absolute;
+    @apply inline-block absolute right-3 w-4 h-4;
     content: '';
-    right: 0.75rem;
-    width: 1rem;
-    height: 1rem;
     background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-check text-primary"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l5 5l10 -10"/></svg>') no-repeat center center;
   }
 
@@ -155,13 +132,10 @@
   }
 
   .dropdown-header {
-    @apply block mb-0 whitespace-nowrap text-sm text-gray-600;
-    padding: 0.5rem 1rem;
+    @apply block mb-0 whitespace-nowrap text-sm text-gray-600 py-2 px-4;
   }
 
   .dropdown-item-text {
-    @apply block;
-    padding: 0.25rem 1rem;
-    color: var(--color-text);
+    @apply block py-1 px-4 text-text;
   }
 }

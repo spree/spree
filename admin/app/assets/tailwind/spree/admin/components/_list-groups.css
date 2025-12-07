@@ -4,92 +4,71 @@
 
 @layer components {
   .list-group {
-    display: flex;
-    flex-direction: column;
-    padding-left: 0;
-    margin-bottom: 0;
-    border-radius: var(--radius-lg);
+    @apply flex flex-col pl-0 mb-0 rounded-lg;
   }
 
   .list-group-item {
-    position: relative;
-    display: block;
-    padding: 0.5rem 1rem;
-    color: var(--color-text);
-    text-decoration: none;
-    border: 1px solid var(--color-border);
+    @apply relative block py-2 px-4 text-text no-underline border border-border;
   }
 
   .list-group-item:first-child {
-    border-top-left-radius: inherit;
-    border-top-right-radius: inherit;
+    @apply rounded-t-[inherit];
   }
 
   .list-group-item:last-child {
-    border-bottom-right-radius: inherit;
-    border-bottom-left-radius: inherit;
+    @apply rounded-b-[inherit];
   }
 
   .list-group-item.disabled,
   .list-group-item:disabled {
-    color: var(--color-gray-500);
-    pointer-events: none;
+    @apply text-gray-500 pointer-events-none;
   }
 
   .list-group-item + .list-group-item {
-    border-top-width: 0;
+    @apply border-t-0;
   }
 
   /* Flush list group */
   .list-group-flush {
-    border-radius: 0;
+    @apply rounded-none;
   }
 
   .list-group-flush > .list-group-item {
-    border-width: 0 0 1px;
+    @apply border-x-0 border-t-0 border-b;
   }
 
   .list-group-flush > .list-group-item:last-child {
-    border-bottom-width: 0;
+    @apply border-b-0;
   }
 
   /* Horizontal list group */
   .list-group-horizontal {
-    flex-direction: row;
+    @apply flex-row;
   }
 
   .list-group-horizontal > .list-group-item:first-child {
-    border-bottom-left-radius: var(--radius-lg);
-    border-top-right-radius: 0;
+    @apply rounded-bl-lg rounded-tr-none;
   }
 
   .list-group-horizontal > .list-group-item:last-child {
-    border-top-right-radius: var(--radius-lg);
-    border-bottom-left-radius: 0;
+    @apply rounded-tr-lg rounded-bl-none;
   }
 
   .list-group-horizontal > .list-group-item + .list-group-item {
-    border-top-width: 1px;
-    border-left-width: 0;
+    @apply border-t border-l-0;
   }
 
   /* Actionable list group items */
   .list-group-item-action {
-    width: 100%;
-    color: var(--color-gray-700);
-    text-align: inherit;
+    @apply w-full text-gray-700 text-left;
   }
 
   .list-group-item-action:hover,
   .list-group-item-action:focus {
-    z-index: 1;
-    color: var(--color-gray-700);
-    text-decoration: none;
-    background-color: var(--color-gray-50);
+    @apply z-1 text-gray-700 no-underline bg-gray-50;
   }
 
   .list-group-item-action:active {
-    color: var(--color-text);
-    background-color: var(--color-gray-100);
+    @apply text-text bg-gray-100;
   }
 }

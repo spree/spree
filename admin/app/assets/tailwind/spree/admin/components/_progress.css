@@ -9,26 +9,18 @@
   }
 
   .progress-bar {
-    background-color: var(--color-blue);
-    transition: width 0.6s ease;
+    @apply bg-blue transition-[width] duration-600 ease-out;
   }
 
   /* Spinner */
   .spinner-border {
-    display: inline-block;
-    width: 2rem;
-    height: 2rem;
-    vertical-align: -0.125em;
-    border: 0.25em solid currentColor;
+    @apply inline-block w-8 h-8 align-[-0.125em] border-4 border-current rounded-full;
     border-right-color: transparent;
-    border-radius: 50%;
     animation: spinner-border 0.75s linear infinite;
   }
 
   .spinner-border-sm {
-    width: 1rem;
-    height: 1rem;
-    border-width: 0.2em;
+    @apply w-4 h-4 border-2;
   }
 
   @keyframes spinner-border {
@@ -38,19 +30,12 @@
   }
 
   .spinner-grow {
-    display: inline-block;
-    width: 2rem;
-    height: 2rem;
-    vertical-align: -0.125em;
-    background-color: currentColor;
-    border-radius: 50%;
-    opacity: 0;
+    @apply inline-block w-8 h-8 align-[-0.125em] bg-current rounded-full opacity-0;
     animation: spinner-grow 0.75s linear infinite;
   }
 
   .spinner-grow-sm {
-    width: 1rem;
-    height: 1rem;
+    @apply w-4 h-4;
   }
 
   @keyframes spinner-grow {

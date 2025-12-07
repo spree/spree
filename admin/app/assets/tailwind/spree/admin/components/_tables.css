@@ -4,19 +4,16 @@
 
 @layer components {
   .table {
-    @apply w-full align-top;
-    color: var(--color-text);
-    border-color: var(--color-border);
+    @apply w-full align-top text-text border-border;
   }
 
   .table > :not(caption) > * > * {
-    @apply bg-transparent border-b;
-    padding: 1rem 0.75rem;
+    @apply bg-transparent border-b py-4 px-3;
     box-shadow: inset 0 0 0 9999px transparent;
   }
 
   .table > tbody {
-    vertical-align: inherit;
+    @apply align-middle;
   }
 
   .table > thead {
@@ -28,18 +25,15 @@
   }
 
   .table thead th {
-    @apply align-middle text-left text-sm font-medium text-gray-600 bg-gray-25;
-    padding-top: 0.45rem;
-    padding-bottom: 0.45rem;
-    border-bottom: 1px solid var(--color-border);
+    @apply align-middle text-left text-sm font-medium text-gray-600 bg-gray-25 py-2 border-b border-border;
   }
 
   .table thead th:first-child {
-    border-top-left-radius: var(--radius-xl);
+    @apply rounded-tl-xl;
   }
 
   .table thead th:last-child {
-    border-top-right-radius: var(--radius-xl);
+    @apply rounded-tr-xl;
   }
 
   .table tbody tr td {
@@ -47,10 +41,7 @@
   }
 
   .table tbody tr td .filterable {
-    @apply cursor-pointer opacity-25;
-    margin-left: 0.2em;
-    width: 0.9rem;
-    height: 0.9rem;
+    @apply cursor-pointer opacity-25 ml-1 w-4 h-4;
   }
 
   .table tbody tr td .filterable:hover {
@@ -62,16 +53,15 @@
   }
 
   .table tbody tr td > a:not(.btn):not(.text-primary) {
-    color: var(--color-gray-900);
+    @apply text-gray-900;
   }
 
   .table tbody tr.active td {
-    background-color: var(--color-action);
-    border-color: var(--color-action-border);
+    @apply bg-action border-action-border;
   }
 
   .table tbody tr:hover:not(.active):not(.sortable-chosen) td {
-    background-color: rgba(250, 250, 250, 0.75);
+    @apply bg-gray-50/75;
   }
 
   .table tbody tr:last-child td {
@@ -79,57 +69,33 @@
   }
 
   .table tbody tr:last-child td:first-child {
-    border-bottom-left-radius: var(--radius-xl);
+    @apply rounded-bl-xl;
   }
 
   .table tbody tr:last-child td:last-child {
-    border-bottom-right-radius: var(--radius-xl);
+    @apply rounded-br-xl;
   }
 
   .table tr > td:first-child,
   .table tr > th:first-child {
-    padding-left: 1rem;
+    @apply pl-4;
   }
 
   .table tr > td:last-child,
   .table tr > th:last-child {
-    padding-right: 1rem;
+    @apply pr-4;
   }
 
   .table th.handel-head {
-    width: 50px;
+    @apply w-12;
   }
 
   .table td.move-handle {
-    width: 45px;
+    @apply w-11;
   }
 
   .table th a.sort_link {
     @apply whitespace-nowrap;
-  }
-
-  .table-bordered {
-    border: 1px solid var(--color-border);
-  }
-
-  .table-bordered > :not(caption) > * > * {
-    @apply border;
-  }
-
-  .table-borderless > :not(caption) > * > * {
-    @apply border-b-0;
-  }
-
-  .table-striped > tbody > tr:nth-of-type(odd) > * {
-    background-color: rgba(0, 0, 0, 0.02);
-  }
-
-  .table-hover > tbody > tr:hover > * {
-    background-color: rgba(0, 0, 0, 0.04);
-  }
-
-  .table-sm > :not(caption) > * > * {
-    padding: 0.25rem 0.25rem;
   }
 
   .table-responsive {
@@ -137,109 +103,34 @@
     -webkit-overflow-scrolling: touch;
   }
 
-  @media (max-width: 575.98px) {
-    .table-responsive-sm {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-  }
-
-  @media (max-width: 767.98px) {
-    .table-responsive-md {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-  }
-
-  @media (max-width: 991.98px) {
-    .table-responsive-lg {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-  }
-
-  /* Table context colors */
-  .table-primary {
-    background-color: rgba(0, 144, 254, 0.1);
-  }
-
-  .table-secondary {
-    background-color: var(--color-gray-100);
-  }
-
-  .table-success {
-    background-color: rgba(16, 185, 129, 0.1);
-  }
-
-  .table-danger {
-    background-color: rgba(238, 66, 102, 0.1);
-  }
-
-  .table-warning {
-    background-color: rgba(245, 158, 11, 0.1);
-  }
-
-  .table-info {
-    background-color: rgba(6, 182, 212, 0.1);
-  }
-
-  .table-light {
-    background-color: var(--color-gray-50);
-  }
-
-  .table-dark {
-    background-color: var(--color-gray-800);
-    color: white;
-  }
-
-  /* thead variants */
-  .thead-light {
-    background-color: var(--color-gray-50);
-  }
-
-  .thead-light th {
-    color: var(--color-gray-700);
-  }
-
-  .thead-dark {
-    background-color: var(--color-gray-800);
-  }
-
-  .thead-dark th {
-    color: white;
-  }
-
   /* Card-lg table styles */
   .card-lg .with-filters table thead th:first-child,
   .card-lg turbo-frame table thead th:first-child {
-    border-top-left-radius: 0;
+    @apply rounded-tl-none;
   }
 
   .card-lg .with-filters table thead th:last-child,
   .card-lg turbo-frame table thead th:last-child {
-    border-top-right-radius: 0;
+    @apply rounded-tr-none;
   }
 
   /* Pagination container */
   .pagination-container {
-    @apply sticky bottom-0 z-100 border-t bg-surface;
-    border-bottom-left-radius: var(--radius-xl);
-    border-bottom-right-radius: var(--radius-xl);
+    @apply sticky bottom-0 z-100 border-t bg-surface rounded-b-xl;
   }
 
   /* Filters search bar */
   #filters-search-bar {
-    max-width: 300px;
-    margin-right: auto;
+    @apply max-w-xs mr-auto;
   }
 
   /* Table active filters */
   .table-active-filters {
-    padding: 0.75rem;
+    @apply p-3;
   }
 
   .table-active-filters:not(:has(:first-child)) {
-    display: none;
+    @apply hidden;
   }
 
   .table-active-filters .js-filter .icon {
@@ -251,9 +142,7 @@
   }
 
   .table-active-filters .badge {
-    @apply inline-block;
-    margin-right: 0.5em;
-    margin-bottom: 0.5em;
+    @apply inline-block mr-2 mb-2;
   }
 
   .table-active-filters .badge:hover {
@@ -267,7 +156,7 @@
   }
 
   .table-responsive.border {
-    border-color: var(--color-border) !important;
+    @apply border-border!;
   }
 
   .table-responsive:has(.dropdown.show) {
@@ -276,9 +165,7 @@
 
   /* Sortable drag */
   .sortable-drag-v {
-    @apply w-full text-right opacity-0;
-    border: 1px solid var(--color-info);
-    border-radius: var(--radius-md);
+    @apply w-full text-right opacity-0 border border-info rounded-md;
   }
 
   .sortable-drag-v td {
@@ -299,12 +186,10 @@
   }
 
   td.actions .btn:not(.btn-sm) {
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
+    @apply py-2;
   }
 
   td.actions .btn-sm {
-    padding-top: 0.25rem;
-    padding-bottom: 0.25rem;
+    @apply py-1;
   }
 }

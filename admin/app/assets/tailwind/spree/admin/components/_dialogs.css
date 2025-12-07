@@ -6,13 +6,11 @@
   /* Body modal-open state */
   body.modal-open,
   .modal.fade.show {
-    padding-right: 0 !important;
+    @apply pr-0!;
   }
 
   body.modal-open {
-    width: 100%;
-    overflow-y: scroll !important;
-    overflow-x: clip;
+    @apply w-full overflow-y-scroll! overflow-x-clip;
   }
 
   /* ==========================================================================
@@ -33,21 +31,13 @@
   }
 
   @keyframes fade-in {
-    0% {
-      opacity: 0;
-    }
-    100% {
-      opacity: 1;
-    }
+    0% { opacity: 0; }
+    100% { opacity: 1; }
   }
 
   @keyframes fade-out {
-    0% {
-      opacity: 1;
-    }
-    100% {
-      opacity: 0;
-    }
+    0% { opacity: 1; }
+    100% { opacity: 0; }
   }
 
   /* Add animations for centered dialogs (not drawers) */
@@ -60,20 +50,13 @@
   }
 
   dialog {
-    display: none;
-    z-index: 1055;
-    border-radius: var(--radius-2xl);
-    border: none;
-    background: var(--color-surface);
+    @apply hidden z-1050 rounded-2xl border-none bg-surface overflow-y-auto overflow-x-hidden p-0;
     box-shadow: 0px 0px 0px 1px rgba(179, 179, 179, 0.5), 0px 6px 12px -3px rgba(179, 179, 179, 0.35), 0px 6px 18px 0px rgba(179, 179, 179, 0.35);
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 0;
   }
 
   dialog:open,
   dialog[open] {
-    display: block;
+    @apply block;
   }
 
   /* ==========================================================================
@@ -81,26 +64,18 @@
      ========================================================================== */
 
   .drawer {
-    position: fixed;
-    top: 0;
-    right: 0;
-    left: auto;
+    @apply fixed top-0 right-0 left-auto flex-col justify-between p-0 overflow-hidden;
     height: calc(100dvh - 2rem);
     max-height: calc(100dvh - 2rem);
     width: calc(100vw - 2rem);
     max-width: 600px;
     min-width: 320px;
     margin: 1rem;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 0;
-    overflow-y: hidden;
-    overflow-x: hidden;
   }
 
   .drawer:open,
   .drawer[open] {
-    display: flex;
+    @apply flex;
     animation: slideInRight 0.25s ease-out forwards;
   }
 
@@ -109,7 +84,7 @@
   }
 
   .drawer .alerts-container {
-    position: absolute;
+    @apply absolute;
   }
 
   @media (max-width: 991.98px) {
@@ -121,20 +96,11 @@
 
   .drawer > turbo-frame:not(#drawer_alerts),
   .drawer turbo-frame > form {
-    display: flex;
-    width: 100%;
-    height: 100%;
-    flex-direction: column;
-    justify-content: space-between;
-    overflow: hidden;
+    @apply flex w-full h-full flex-col justify-between overflow-hidden;
   }
 
   .drawer-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem;
-    border-bottom: 1px solid var(--color-gray-50);
+    @apply flex justify-between items-center p-4 border-b border-gray-50;
   }
 
   .drawer-title {
@@ -142,15 +108,11 @@
   }
 
   .drawer-body {
-    flex: 1 1 auto;
-    overflow-y: auto;
-    padding: 1rem;
+    @apply flex-auto overflow-y-auto p-4;
   }
 
   .drawer-footer {
-    @apply flex justify-between items-center bg-gray-25;
-    padding: 1rem;
-    border-top: 1px solid var(--color-gray-50);
+    @apply flex justify-between items-center p-4 bg-gray-25 border-t border-gray-50;
   }
 
   /* ==========================================================================
@@ -158,56 +120,38 @@
      ========================================================================== */
 
   .dialog {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 90%;
-    max-width: 500px;
+    @apply fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-[500px] m-0 p-0 flex-col overflow-hidden;
     max-height: 90vh;
-    margin: 0;
-    padding: 0;
-    flex-direction: column;
-    overflow-y: hidden;
-    overflow-x: hidden;
   }
 
   .dialog.dialog-lg {
-    max-width: 800px;
+    @apply max-w-[800px];
   }
 
   .dialog.dialog-xl {
-    max-width: 1140px;
+    @apply max-w-[1140px];
   }
 
   .dialog:open,
   .dialog[open] {
-    display: flex;
+    @apply flex;
   }
 
   .dialog .alerts-container {
-    position: absolute;
+    @apply absolute;
   }
 
   .dialog > turbo-frame:not(#dialog_alerts),
   .dialog turbo-frame > form {
-    display: flex;
-    width: 100%;
-    height: 100%;
-    flex-direction: column;
-    justify-content: space-between;
+    @apply flex w-full h-full flex-col justify-between;
   }
 
   .dialog-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem;
-    border-bottom: 1px solid var(--color-gray-50);
+    @apply flex justify-between items-center p-4 border-b border-gray-50;
   }
 
   .dialog-header .btn-close {
-    margin-right: -0.25rem;
+    @apply -mr-1;
   }
 
   .dialog-title {
@@ -215,27 +159,17 @@
   }
 
   .dialog-body {
-    flex: 1 1 auto;
-    overflow-y: auto;
-    padding: 1rem;
+    @apply flex-auto overflow-y-auto p-4;
     max-height: calc(90vh - 200px);
   }
 
   .dialog-footer {
-    position: sticky;
-    bottom: 0;
-    padding: 1rem;
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-    justify-content: space-between;
-    border-top: 1px solid var(--color-gray-50);
-    background-color: var(--color-gray-25);
+    @apply sticky bottom-0 p-4 flex gap-2 items-center justify-between border-t border-gray-50 bg-gray-25;
     border-radius: 0 0 calc(var(--radius-2xl) - 1px) calc(var(--radius-2xl) - 1px);
   }
 
   .dialog-footer .btn {
-    display: inline-flex;
+    @apply inline-flex;
   }
 
   /* ==========================================================================
@@ -243,36 +177,23 @@
      ========================================================================== */
 
   .modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1055;
-    display: none;
-    width: 100%;
-    height: 100%;
-    overflow-x: hidden;
-    overflow-y: auto;
-    outline: 0;
+    @apply fixed top-0 left-0 z-1050 hidden w-full h-full overflow-x-hidden overflow-y-auto outline-none;
   }
 
   .modal.show {
-    display: block;
+    @apply block;
   }
 
   .modal-dialog {
-    position: relative;
-    width: auto;
-    margin: 0.5rem;
-    pointer-events: none;
+    @apply relative w-auto m-2 pointer-events-none;
   }
 
   .modal.show .modal-dialog {
-    transform: none;
+    @apply transform-none;
   }
 
   .modal-dialog-centered {
-    display: flex;
-    align-items: center;
+    @apply flex items-center;
     min-height: calc(100% - 1rem);
   }
 
@@ -281,51 +202,32 @@
   }
 
   .modal-dialog-scrollable .modal-content {
-    max-height: 100%;
-    overflow: hidden;
+    @apply max-h-full overflow-hidden;
   }
 
   .modal-dialog-scrollable .modal-body {
-    overflow-y: auto;
+    @apply overflow-y-auto;
   }
 
   .modal-content {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    pointer-events: auto;
-    background-color: var(--color-surface);
+    @apply relative flex flex-col w-full pointer-events-auto bg-surface border-none rounded-2xl outline-none;
     background-clip: padding-box;
-    border: none;
-    border-radius: var(--radius-2xl2);
-    outline: 0;
     box-shadow: 0px 0px 0px 1px rgba(179, 179, 179, 0.5), 0px 6px 12px -3px rgba(179, 179, 179, 0.35), 0px 6px 18px 0px rgba(179, 179, 179, 0.35);
   }
 
   .modal-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1050;
-    width: 100vw;
-    height: 100vh;
+    @apply fixed top-0 left-0 z-1050 w-screen h-screen;
     background-color: rgba(255, 255, 255, 0.8);
   }
 
   .modal-header {
-    display: flex;
-    flex-shrink: 0;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem;
-    border-bottom: 1px solid var(--color-gray-50);
+    @apply flex shrink-0 items-center justify-between p-4 border-b border-gray-50;
     border-top-left-radius: calc(var(--radius-2xl) - 1px);
     border-top-right-radius: calc(var(--radius-2xl) - 1px);
   }
 
   .modal-header .btn-close {
-    margin-right: -0.25rem;
+    @apply -mr-1;
   }
 
   .modal-title {
@@ -333,38 +235,32 @@
   }
 
   .modal-body {
-    position: relative;
-    flex: 1 1 auto;
-    padding: 1rem;
+    @apply relative flex-auto p-4;
   }
 
   .modal-footer {
-    @apply flex shrink-0 items-center justify-end bg-gray-25;
-    padding: 1rem;
-    border-top: 1px solid var(--color-gray-50);
+    @apply flex shrink-0 items-center justify-end p-4 bg-gray-25 border-t border-gray-50;
     border-bottom-right-radius: calc(var(--radius-2xl) - 1px);
     border-bottom-left-radius: calc(var(--radius-2xl) - 1px);
   }
 
   .modal-footer .btn {
-    display: inline-flex;
-    width: auto !important;
-    height: 2.5rem;
+    @apply inline-flex w-auto! h-10;
   }
 
   .modal-footer > * {
-    margin: 0.25rem;
+    @apply m-1;
   }
 
   .modal-dialog turbo-frame {
-    display: block;
-    width: 100%;
+    @apply block w-full;
   }
 
   @media (min-width: 576px) {
     .modal-dialog {
-      max-width: 500px;
-      margin: 1.75rem auto;
+      @apply max-w-[500px] mx-auto;
+      margin-top: 1.75rem;
+      margin-bottom: 1.75rem;
     }
 
     .modal-dialog-centered {
@@ -372,20 +268,20 @@
     }
 
     .modal-sm {
-      max-width: 300px;
+      @apply max-w-[300px];
     }
   }
 
   @media (min-width: 992px) {
     .modal-lg,
     .modal-xl {
-      max-width: 800px;
+      @apply max-w-[800px];
     }
   }
 
   @media (min-width: 1200px) {
     .modal-xl {
-      max-width: 1140px;
+      @apply max-w-[1140px];
     }
   }
 }

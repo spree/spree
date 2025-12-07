@@ -75,12 +75,7 @@
   }
 
   .card-header {
-    @apply flex items-center mb-0 p-4 border-b border-gray-50;
-    height: 54px;
-  }
-
-  .card-header:first-child {
-    border-radius: calc(var(--radius-xl) - 1px) calc(var(--radius-xl) - 1px) 0 0;
+    @apply flex items-center mb-0 p-4 h-14 border-b border-gray-50 rounded-t-[calc(var(--radius-xl)-1px)];
   }
 
   .card-header .card-title {
@@ -92,7 +87,7 @@
   }
 
   .card-header .arrow:before {
-    transition: 0.3s transform ease-in-out;
+    @apply transition-transform duration-300 ease-in-out;
   }
 
   .card-header .collapsed .arrow:before {
@@ -104,7 +99,7 @@
   }
 
   .card-footer:last-child {
-    border-radius: 0 0 calc(var(--radius-xl) - 1px) calc(var(--radius-xl) - 1px);
+    @apply rounded-b-[calc(var(--radius-xl)-1px)];
   }
 
   .card-footer.border-top,
@@ -112,7 +107,7 @@
   .card .border-top,
   .card .border-bottom,
   .card .list-group-item {
-    border-color: var(--color-gray-50) !important;
+    @apply border-gray-50!;
   }
 
   .card-title {
@@ -136,23 +131,18 @@
   }
 
   .card-img-top {
-    @apply w-full;
-    border-top-left-radius: calc(var(--radius-xl) - 1px);
-    border-top-right-radius: calc(var(--radius-xl) - 1px);
+    @apply w-full rounded-t-[calc(var(--radius-xl)-1px)];
   }
 
   .card-img-bottom {
-    @apply w-full;
-    border-bottom-left-radius: calc(var(--radius-xl) - 1px);
-    border-bottom-right-radius: calc(var(--radius-xl) - 1px);
+    @apply w-full rounded-b-[calc(var(--radius-xl)-1px)];
   }
 
   /* Collapsable Card */
   .collapsable-card {
-    @apply relative flex flex-col min-w-0 break-words;
+    @apply relative flex flex-col min-w-0 break-words overflow-hidden;
     @apply bg-surface border border-border rounded-xl;
     background-clip: border-box;
-    overflow: hidden;
   }
 
   .collapsable-card .card-header:hover {
@@ -173,20 +163,18 @@
 
   /* Animate details content */
   .collapsable-card > *:not(summary) {
-    display: grid;
+    @apply grid overflow-hidden opacity-0;
     grid-template-rows: 0fr;
-    overflow: hidden;
     transition: grid-template-rows 0.25s ease-out, opacity 0.2s ease-out;
-    opacity: 0;
   }
 
   .collapsable-card[open] > *:not(summary) {
+    @apply opacity-100;
     grid-template-rows: 1fr;
-    opacity: 1;
   }
 
   .collapsable-card > *:not(summary) > * {
-    min-height: 0;
+    @apply min-h-0;
   }
 
   /* Details/Summary styling for cards */
@@ -212,7 +200,6 @@
 
   .collapsable-card details summary[role="button"]:focus,
   .card details summary[role="button"]:focus {
-    outline: 2px solid var(--color-primary);
-    outline-offset: -2px;
+    @apply outline-2 outline-primary outline-offset-[-2px];
   }
 }

@@ -4,58 +4,47 @@
 
 @layer components {
   .badge {
-    @apply inline-flex items-center text-center whitespace-nowrap align-baseline cursor-default text-xs font-normal leading-none rounded-md;
-    padding: 0.25em 0.5em;
+    @apply inline-flex items-center text-center whitespace-nowrap align-baseline cursor-default text-xs font-normal leading-none rounded-md py-1 px-2;
   }
 
   .badge i {
-    margin-right: 0.25rem;
-    font-size: 100%;
+    @apply mr-1 text-[100%];
   }
 
   .badge .ti {
-    @apply text-xs;
-    line-height: var(--text-xs);
+    @apply text-xs leading-3;
   }
 
   .badge-primary {
-    color: white;
-    background-color: var(--color-primary);
+    @apply text-white bg-primary;
   }
 
   .badge-secondary {
-    color: white;
-    background-color: var(--color-gray-600);
+    @apply text-white bg-gray-600;
   }
 
   .badge-success {
-    color: white;
-    background-color: var(--color-success);
+    @apply text-white bg-success;
   }
 
   .badge-danger {
-    color: white;
-    background-color: var(--color-danger);
+    @apply text-white bg-danger;
   }
 
   .badge-warning {
-    color: var(--color-gray-900);
-    background-color: var(--color-warning);
+    @apply text-gray-900 bg-warning;
   }
 
   .badge-info {
-    color: white;
-    background-color: var(--color-info);
+    @apply text-white bg-info;
   }
 
   .badge-light {
-    color: var(--color-gray-900);
-    background-color: var(--color-gray-100);
+    @apply text-gray-900 bg-gray-100;
   }
 
   .badge-dark {
-    color: white;
-    background-color: var(--color-gray-900);
+    @apply text-white bg-gray-900;
   }
 
   /* Status badges - Green */
@@ -78,9 +67,7 @@
   .badge-resolved,
   .badge-reimbursed,
   .badge-allocation {
-    border: 1px solid transparent !important;
-    background-color: #C6F6D5 !important;
-    color: #22543D !important;
+    @apply border border-transparent! bg-green-200! text-green-900!;
   }
 
   /* Status badges - Red */
@@ -96,9 +83,7 @@
   .badge-partially_canceled,
   .badge-void,
   .badge-danger {
-    border: 1px solid transparent;
-    background-color: #fee2e1 !important;
-    color: #8e1f0b !important;
+    @apply border border-transparent bg-red-100! text-red-900!;
   }
 
   /* Status badges - Orange/Warning */
@@ -111,9 +96,7 @@
   .badge-archived,
   .badge-warning,
   .badge-ready {
-    border: 1px solid transparent;
-    background-color: rgba(255, 235, 120, 1);
-    color: rgba(79, 71, 0, 1);
+    @apply border border-transparent bg-yellow-200 text-yellow-900;
   }
 
   /* Status badges - Light/Neutral */
@@ -154,8 +137,7 @@
   .badge-authorize:hover,
   .badge-eligible:hover,
   .badge-invited:hover {
-    background-color: white;
-    color: var(--color-text-gray-600);
+    @apply bg-white text-gray-600;
   }
 
   /* Status badges - Info/Notice */
@@ -164,15 +146,11 @@
   .badge-partial,
   .badge-capture,
   .badge-info {
-    border: 1px solid transparent;
-    background-color: #E0EFFE;
-    color: #00527c;
+    @apply border border-transparent bg-blue-100 text-blue-900;
   }
 
   /* Pill badges */
   .badge-pill {
-    padding-right: 0.6em;
-    padding-left: 0.6em;
-    border-radius: var(--radius-full);
+    @apply px-2.5 rounded-full;
   }
 }
