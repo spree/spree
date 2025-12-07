@@ -56,7 +56,7 @@ describe Spree::Admin::NavigationHelper, type: :helper do
     it 'creates a button with spinner for turbo' do
       result = helper.button('Submit', 'save')
       expect(result).to include('data-turbo-submits-with')
-      expect(result).to include('spinner-border')
+      expect(result).to include('animate-spin')
     end
   end
 

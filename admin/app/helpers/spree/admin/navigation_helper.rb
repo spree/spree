@@ -189,7 +189,7 @@ module Spree
           options.merge(
             type: button_type,
             class: "btn #{css_classes}",
-            'data-turbo-submits-with' => content_tag(:span, '', class: 'spinner-border spinner-border-sm', role: 'status')
+            'data-turbo-submits-with' => content_tag(:span, '', class: 'inline-block w-4 h-4 border-2 border-current border-r-transparent rounded-full animate-spin', role: 'status')
           )
         )
       end

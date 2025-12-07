@@ -66,11 +66,7 @@
       </div>
     </div>
   <div class="card-body p-2">
-    <div class="flex items-center justify-center min-h-[300px]" id="pills-tabContent">
-      <div class="spinner-border text-gray-600 align-middle opacity-50" role="status">
-        <span class="sr-only"><%= Spree.t(:loading) %>...</span>
-      </div>
-    </div>
+    <%= render 'spree/admin/shared/spinner' %>
   </div>
   <!-- End Body -->
 </div>

@@ -8,7 +8,6 @@
     <div class="dialog-body">
       <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @promotion_rule } %>
       <% if @promotion_rule.type.nil? %>
-        <%= render 'spree/admin/shared/spinner' %>
         <% options_for_promotion_rule_types(@promotion).each do |rule_type| %>
           <% key = rule_type.demodulize.underscore %>
           <%= link_to spree.new_admin_promotion_rule_path(@promotion, promotion_rule: { type: rule_type }), class: 'flex align-items-top w-full py-2 px-4 hover:bg-gray-100 rounded-xl mb-2', data: { turbo_prefetch: false } do %>

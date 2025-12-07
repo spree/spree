@@ -3,10 +3,8 @@
     <%= turbo_frame_tag :dialog_modal do %>
       <div class="modal-content">
         <%= modal_header(Spree.t(:loading)) %>
-        <div class="modal-body text-center">
-          <div class="spinner-border text-gray-300 mx-auto my-12" role="status">
-            <span class="sr-only"><%= Spree.t(:loading) %>...</span>
-          </div>
+        <div class="modal-body text-center min-h-[300px]">
+          <%= render 'spree/admin/shared/spinner' %>
         </div>
       </div>
     <% end %>
@@ -18,10 +16,8 @@
     <%= turbo_frame_tag :dialog_modal_lg do %>
       <div class="modal-content">
         <%= modal_header(Spree.t(:loading)) %>
-        <div class="modal-body text-center" style="min-height: 200px">
-          <div class="spinner-border text-gray-300" role="status">
-            <span class="sr-only"><%= Spree.t(:loading) %>...</span>
-          </div>
+        <div class="modal-body text-center min-h-[300px]">
+          <%= render 'spree/admin/shared/spinner' %>
         </div>
       </div>
     <% end %>

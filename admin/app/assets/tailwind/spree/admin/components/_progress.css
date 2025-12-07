@@ -11,21 +11,4 @@
   .progress-bar {
     @apply bg-blue transition-[width] duration-600 ease-out;
   }
-
-  /* Spinner */
-  .spinner-border {
-    @apply inline-block w-8 h-8 align-[-0.125em] border-4 border-current rounded-full;
-    border-right-color: transparent;
-    animation: spinner-border 0.75s linear infinite;
-  }
-
-  .spinner-border-sm {
-    @apply w-4 h-4 border-2;
-  }
-
-  @keyframes spinner-border {
-    to {
-      transform: rotate(360deg);
-    }
-  }
 }

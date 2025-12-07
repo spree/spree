@@ -20,7 +20,7 @@
       <div class="flex gap-2 flex-col">
         <%= form_with url: spree.admin_order_user_path(@order), data: {  controller: 'auto-submit' }, method: :patch do  %>
           <%= label_tag :user_id, Spree.t(:select_user), class: "sr-only" %>
-          <%= tom_select_tag :user_id, { include_blank: Spree.t(:select_user), options: users_for_select_options, select_data: {action: 'auto-submit#submit'}, disable_with: "<span class='spinner-border spinner-border-sm' role='status'></span>" } %>
+          <%= tom_select_tag :user_id, { include_blank: Spree.t(:select_user), options: users_for_select_options, select_data: {action: 'auto-submit#submit'}, disable_with: "<span class='inline-block w-4 h-4 border-2 border-current border-r-transparent rounded-full animate-spin' role='status'></span>" } %>
         <% end %>
         <span class="flex w-full justify-center items-center"><%= Spree.t(:or) %></span>
         <%= link_to Spree.t(:create_new), spree.new_admin_order_user_path(@order, show_form: true), class: "btn btn-secondary w-full" %>
