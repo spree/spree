@@ -29,11 +29,11 @@
   }
 
   .table thead th:first-child {
-    @apply rounded-tl-xl;
+    @apply rounded-tl-2xl;
   }
 
   .table thead th:last-child {
-    @apply rounded-tr-xl;
+    @apply rounded-tr-2xl;
   }
 
   .table tbody tr td {

@@ -8,7 +8,7 @@
   }
 
   .list-group-item {
-    @apply relative block py-2 px-4 text-text no-underline border border-border;
+    @apply relative block py-4 px-5 text-text no-underline border border-border;
   }
 
   .list-group-item:first-child {
