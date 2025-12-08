@@ -85,6 +85,7 @@ module Spree
 
     def svg_country_icon(country_code)
       language_to_country = {
+        'el' => 'gr',
         'en' => 'us',
         'ja' => 'jp',
         'uk' => 'ua'
