@@ -135,7 +135,7 @@ asset.alt             # Alt text (Spree::Image only)
 Spree uses [libvips](https://www.libvips.org/) for image processing. Images are automatically:
 
 - Converted to **WebP format** for optimal file size
-- **Resized on-the-fly** using Active Storage variants
+- **Preprocessed on upload** using named variants for common sizes
 - **Cached** for subsequent requests
 
 ### Installing libvips
@@ -151,9 +151,85 @@ apt-get install libvips
 apk add vips
 ```
 
-### Image Variants
+### Preprocessed Named Variants
 
-Transform images on-the-fly using Active Storage variants:
+Product images (`Spree::Image`) use **preprocessed named variants** for optimal performance. When an image is uploaded, Spree automatically generates optimized versions in the background, so they're ready to serve immediately without on-demand processing.
+
+#### Available Variant Sizes
+
+| Name | Dimensions | Use Case |
+|------|------------|----------|
+| `:mini` | 128×128 | Thumbnails, cart items |
+| `:small` | 256×256 | Product listings, galleries |
+| `:medium` | 400×400 | Product cards, category pages |
+| `:large` | 720×720 | Product detail pages |
+| `:xlarge` | 2000×2000 | Zoom, high-resolution displays |
+
+All variants are:
+- Cropped to fill the exact dimensions (`resize_to_fill`)
+- Converted to WebP format for smaller file sizes
+- Optimized with quality settings balanced for size and clarity
+
+#### Using Named Variants
+
+```ruby
+# In views - recommended approach
+<%= spree_image_tag product.images.first, variant: :medium %>
+
+# Get URL only
+<%= spree_image_url product.images.first, variant: :large %>
+
+# Direct Active Storage access
+image.attachment.variant(:small)
+```
+
+<Tip>
+  Always use named variants (`:mini`, `:small`, `:medium`, `:large`, `:xlarge`) instead of custom dimensions for product images. Named variants are preprocessed on upload, resulting in faster page loads.
+</Tip>
+
+#### Configuring Variant Sizes
+
+Customize variant dimensions in your Spree initializer:
+
+```ruby config/initializers/spree.rb
+Spree.configure do |config|
+  config.product_image_variant_sizes = {
+    mini: [128, 128],
+    small: [256, 256],
+    medium: [400, 400],
+    large: [720, 720],
+    xlarge: [2000, 2000]
+  }
+end
+```
+
+<Warning>
+  Changing variant sizes only affects newly uploaded images. Existing images will retain their original variant dimensions until reprocessed.
+</Warning>
+
+#### Reprocessing Existing Images
+
+After changing variant sizes or upgrading Spree, reprocess existing images:
+
+```ruby
+# Reprocess all product images (queues background jobs)
+Spree::Image.find_each do |image|
+  next unless image.attached?
+  image.attachment.preprocess_variants
+end
+
+# Or process synchronously (slower but immediate)
+Spree::Image.find_each do |image|
+  next unless image.attached?
+  [:mini, :small, :medium, :large, :xlarge].each do |variant_name|
+    image.attachment.variant(variant_name).processed
+  end
+end
+```
+
+### Dynamic Variants
+
+For non-product images or custom dimensions, you can still generate variants on-the-fly:
 
 ```ruby
 # Resize to fit within dimensions (maintains aspect ratio)
@@ -169,6 +245,10 @@ image.variant(resize_to_limit: [300, nil])
 image.variant(resize_to_limit: [nil, 300])
 ```
 
+<Info>
+  Dynamic variants are generated on first request and cached. For frequently accessed images, consider using preprocessed named variants instead.
+</Info>
+
 ## Helpers
 
 Spree provides several helper methods for working with images. These are defined in [Spree::ImagesHelper](https://github.com/spree/spree/blob/main/core/app/helpers/spree/images_helper.rb) and are available in Admin, Storefront, and API.
@@ -178,6 +258,16 @@ Spree provides several helper methods for working with images. These are defined
 Generates an optimized image tag with automatic WebP conversion and retina support.
 
 ```erb
+<%# Using preprocessed named variant (recommended for product images) %>
+<%= spree_image_tag(
+  product.images.first,
+  variant: :medium,
+  loading: :lazy,
+  class: 'product-image',
+  alt: product.name
+) %>
+
+<%# Using custom dimensions (generates variant on-the-fly) %>
 <%= spree_image_tag(
   product.images.first,
   width: 400,
@@ -192,8 +282,6 @@ Generates an optimized image tag with automatic WebP conversion and retina suppo
 
 ```html
 <img
-  width="400"
-  height="400"
   loading="lazy"
   class="product-image"
   alt="Red T-Shirt"
@@ -201,30 +289,58 @@ Generates an optimized image tag with automatic WebP conversion and retina suppo
 ```
 
 **Features:**
-- Automatically scales dimensions by 2x for retina displays
+- Automatically scales dimensions by 2x for retina displays (when using width/height)
 - Converts to WebP format
 - Works with both `Spree::Asset` objects and Active Storage attachments
+- Supports preprocessed named variants for optimal performance
 
 **Parameters:**
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `image` | Asset/Attachment | Spree::Asset or ActiveStorage attachment |
-| `width` | Integer | Display width in pixels |
-| `height` | Integer | Display height in pixels |
-| `loading` | Symbol | `:lazy` or `:eager` |
-| `class` | String | CSS classes |
-| `alt` | String | Alt text for accessibility |
+<ParamField body="image" type="Asset | Attachment" required>
+  Spree::Asset or ActiveStorage attachment
+</ParamField>
+
+<ParamField body="variant" type="Symbol">
+  Named variant (`:mini`, `:small`, `:medium`, `:large`, `:xlarge`). When set, `width`, `height`, and `format` are ignored.
+</ParamField>
+
+<ParamField body="width" type="Integer">
+  Display width in pixels. Ignored if `variant` is set.
+</ParamField>
+
+<ParamField body="height" type="Integer">
+  Display height in pixels. Ignored if `variant` is set.
+</ParamField>
+
+<ParamField body="format" type="Symbol">
+  Output format, e.g., `:png`. Ignored if `variant` is set.
+</ParamField>
+
+<ParamField body="loading" type="Symbol">
+  Loading strategy: `:lazy` or `:eager`
+</ParamField>
+
+<ParamField body="class" type="String">
+  CSS classes for the image tag
+</ParamField>
+
+<ParamField body="alt" type="String">
+  Alt text for accessibility
+</ParamField>
 
 <Tip>
-  If both width and height are provided, the image is cropped to fill the dimensions. If only one is provided, the image maintains its aspect ratio.
+  Use the `variant` parameter with named variants for product images. These are preprocessed on upload and load faster than dynamic width/height variants.
 </Tip>
 
 ### `spree_image_url`
 
-Generates a URL for an image with specified dimensions.
+Generates a URL for an image variant.
 
 ```erb
+<%# Using preprocessed named variant (recommended) %>
+<%= spree_image_url(product.images.first, variant: :large) %>
+
+<%# Using custom dimensions %>
 <%= spree_image_url(product.images.first, width: 800, height: 600) %>
 ```
 
@@ -233,6 +349,28 @@ Generates a URL for an image with specified dimensions.
 ```
 https://example.com/rails/active_storage/representations/proxy/...
 ```
+
+**Parameters:**
+
+<ParamField body="image" type="Asset | Attachment" required>
+  Spree::Asset or ActiveStorage attachment
+</ParamField>
+
+<ParamField body="variant" type="Symbol">
+  Named variant (`:mini`, `:small`, `:medium`, `:large`, `:xlarge`). When set, `width`, `height`, and `format` are ignored.
+</ParamField>
+
+<ParamField body="width" type="Integer">
+  Width in pixels. Ignored if `variant` is set.
+</ParamField>
+
+<ParamField body="height" type="Integer">
+  Height in pixels. Ignored if `variant` is set.
+</ParamField>
+
+<ParamField body="format" type="Symbol">
+  Output format, e.g., `:png`. Ignored if `variant` is set.
+</ParamField>
 
 <Info>
   URLs generated by this helper are static and can be cached by [CDNs](/developer/deployment/assets). Don't use this for private assets!
@@ -255,25 +393,29 @@ Returns the aspect ratio of an image for CSS layouts.
 ### Product Images in Views
 
 ```erb
-<%# Display primary product image %>
+<%# Display primary product image using named variant %>
 <% if product.images.any? %>
   <%= spree_image_tag product.images.first,
-      width: 600,
-      height: 600,
+      variant: :large,
       alt: product.name,
       class: 'product-main-image' %>
 <% end %>
 
-<%# Display image gallery %>
+<%# Display image gallery with thumbnails %>
 <div class="product-gallery">
   <% product.images.each do |image| %>
     <%= spree_image_tag image,
-        width: 100,
-        height: 100,
+        variant: :small,
         alt: image.alt.presence || product.name,
         class: 'gallery-thumbnail' %>
   <% end %>
 </div>
+
+<%# High-resolution image for zoom %>
+<%= spree_image_tag product.images.first,
+    variant: :xlarge,
+    alt: product.name,
+    class: 'product-zoom-image' %>
 ```
 
 ### Active Storage Attachments
