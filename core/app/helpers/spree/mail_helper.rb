@@ -5,7 +5,7 @@ module Spree
 
     def variant_image_url(variant)
       image = variant.default_image
-      image.present? && image.attached? ? spree_image_url(image, width: 100, height: 100, format: :png) : image_url('noimage/small.png')
+      image.present? && image.attached? ? spree_image_url(image, variant: :mini) : image_url('noimage/small.png')
     end
 
     def name_for(order)

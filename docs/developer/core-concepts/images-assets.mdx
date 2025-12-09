@@ -135,7 +135,8 @@ asset.alt             # Alt text (Spree::Image only)
 Spree uses [libvips](https://www.libvips.org/) for image processing. Images are automatically:
 
 - Converted to **WebP format** for optimal file size
-- **Preprocessed on upload** using named variants for common sizes
+- **Preprocessed on upload** using named variants for common sizes for Products
+- **Processed on demand** for other models
 - **Cached** for subsequent requests
 
 ### Installing libvips
@@ -153,7 +154,11 @@ apk add vips
 
 ### Preprocessed Named Variants
 
-Product images (`Spree::Image`) use **preprocessed named variants** for optimal performance. When an image is uploaded, Spree automatically generates optimized versions in the background, so they're ready to serve immediately without on-demand processing.
+<Warning>
+  Preprocessed named variants are only available for product images (`Spree::Image`). For other models, images are processed on demand.
+</Warning>
+
+When an image is uploaded, Spree automatically generates optimized versions in the background, so they're ready to serve immediately without on-demand processing. You can still generate on-the-fly variants if you wish, but we recommend using the preprocessed named variants for optimal performance.
 
 #### Available Variant Sizes
 
@@ -179,7 +184,7 @@ All variants are:
 # Get URL only
 <%= spree_image_url product.images.first, variant: :large %>
 
-# Direct Active Storage access
+# Command line (rails console)
 image.attachment.variant(:small)
 ```
 
@@ -244,20 +249,20 @@ For non-product images or custom dimensions, you can still generate variants on-
 
 ```ruby
 # Resize to fit within dimensions (maintains aspect ratio)
-image.variant(resize_to_limit: [400, 400])
+spree_image_tag(image, width: 400, height: 400)
 
 # Resize and crop to exact dimensions
-image.variant(resize_to_fill: [200, 200])
+spree_image_tag(image, width: 200, height: 200, crop: true)
 
 # Resize by width only
-image.variant(resize_to_limit: [300, nil])
+spree_image_tag(image, width: 300, height: nil)
 
 # Resize by height only
-image.variant(resize_to_limit: [nil, 300])
+spree_image_tag(image, width: nil, height: 300)
 ```
 
 <Info>
-  Dynamic variants are generated on first request and cached. For frequently accessed images, consider using preprocessed named variants instead.
+  Dynamic variants are generated on first request and cached.
 </Info>
 
 ## Helpers
