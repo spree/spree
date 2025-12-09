@@ -135,10 +135,7 @@ module Spree
       private
 
       def image_url_options
-        {
-          width: 1000,
-          height: 1000
-        }
+        { variant: :xlarge }
       end
     end
   end
