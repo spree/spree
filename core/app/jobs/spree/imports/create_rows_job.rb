@@ -31,7 +31,7 @@ module Spree
 
         upsert_options = {}
         if %w[PostgreSQL SQLite].include?(ActiveRecord::Base.connection.adapter_name)
-          upsert_options[:unique_by] = %i[import_id row_number]
+          upsert_options[:unique_by] = :index_spree_import_rows_on_import_id_and_row_number
         end
         # NOTE: Ensure a DB-level unique index on [:import_id, :row_number] for all adapters.
 
