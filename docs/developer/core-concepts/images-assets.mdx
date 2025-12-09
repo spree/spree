@@ -209,16 +209,27 @@ end
 
 #### Reprocessing Existing Images
 
-After changing variant sizes or upgrading Spree, reprocess existing images:
+After changing variant sizes or upgrading Spree, reprocess existing images in background jobs:
 
 ```ruby
-# Reprocess all product images (queues background jobs)
 Spree::Image.find_each do |image|
-  next unless image.attached?
-  image.attachment.preprocess_variants
+  next unless image.attachment.attached?
+  
+  blob = image.attachment.blob
+  
+  %i[mini small medium large xlarge og_image].each do |variant_name|
+    transformations = Spree::Image.attachment_reflections['attachment']
+                                  .named_variants[variant_name]
+                                  .transformations
+    
+    ActiveStorage::TransformJob.perform_later(blob, transformations)
+  end
 end
+```
 
-# Or process synchronously (slower but immediate)
+Or process synchronously (slower but immediate)
+
+```ruby
 Spree::Image.find_each do |image|
   next unless image.attached?
   [:mini, :small, :medium, :large, :xlarge].each do |variant_name|
