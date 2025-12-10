@@ -70,6 +70,8 @@ describe Spree::Admin::ReportsController, type: :controller do
   end
 
   describe '#create' do
+    subject { post :create, params: { report: report_params }, format: :turbo_stream }
+
     let(:report_params) do
       {
         type: 'sales_total',
@@ -78,8 +80,6 @@ describe Spree::Admin::ReportsController, type: :controller do
         currency: 'USD'
       }
     end
-
-    subject { post :create, params: { report: report_params }, format: :turbo_stream }
 
     it 'creates a new report' do
       expect { subject }.to change(Spree::Report, :count).by(1)
