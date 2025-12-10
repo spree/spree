@@ -178,7 +178,7 @@ module Spree
         # Calculate proportional shipping cost
         return BigDecimal('0') if line_item_units.zero?
 
-        shipment.cost * (line_item_units.to_d / total_units)
+        shipment.cost * (line_item_units.to_d / total_units.count)
       end
     end
 
