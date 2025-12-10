@@ -7,7 +7,7 @@ module Spree
             currency: currency,
             completed_at: (date_from.to_time.beginning_of_day)..(date_to.to_time.end_of_day)
           )
-        ).includes(:order, variant: :product)
+        ).includes(:order, shipments: :inventory_units, variant: :product)
 
         scope = scope.where(vendor_id: vendor.id) if defined?(vendor) && vendor.present?
 
