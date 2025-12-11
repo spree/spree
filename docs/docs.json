@@ -1033,7 +1033,8 @@
                       "user/storefront/theme-editor",
                       "user/storefront/create-new-theme",
                       "user/storefront/delete-theme",
-                      "user/storefront/product-details-page"
+                      "user/storefront/product-details-page",
+                      "user/storefront/product-listing-page"
                     ]
                   },
                   {
