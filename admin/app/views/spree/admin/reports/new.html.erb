@@ -9,6 +9,11 @@
     <%= f.hidden_field :date_from %>
     <%= f.hidden_field :date_to %>
     <%= f.hidden_field :currency %>
+
+    <% if defined?(Spree::Vendor) %>
+      <%= f.hidden_field :vendor_id %>
+    <% end %>
+
     <button class="btn btn-primary" data-controller="tooltip">
       <%= icon('table-export') %>
       <%= Spree.t(:export) %>
@@ -33,6 +38,16 @@
           class: 'custom-select bg-transparent',
           data: { action: 'change->auto-submit#submit' } %>
       </div>
+
+      <% if defined?(Spree::Vendor) %>
+        <div class="form-group">
+          <%= select_tag :vendor_id,
+            options_for_select(Spree::Vendor.pluck(:name, :id), @report.vendor_id),
+            include_blank: "-- #{Spree.t(:select_vendor)} --",
+            class: 'custom-select bg-transparent',
+            data: { action: 'change->auto-submit#submit' } %>
+        </div>
+      <% end %>
     </div>
   <% end %>
 </div>

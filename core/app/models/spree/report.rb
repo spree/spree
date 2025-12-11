@@ -25,6 +25,10 @@ module Spree
     #
     has_one_attached :attachment, service: Spree.private_storage_service_name
 
+    def self.report_type
+      name.demodulize.underscore
+    end
+
     # Returns a scope of records to be used for generating report lines
     #
     # @return [ActiveRecord::Relation]
@@ -43,7 +47,11 @@ module Spree
     end
 
     def to_partial_path
-      "spree/admin/reports/report"
+      'spree/admin/reports/report'
+    end
+
+    def no_report_data_partial_path
+      'spree/admin/reports/no_report_data'
     end
 
     def human_name
