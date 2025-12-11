@@ -2,7 +2,7 @@
   <%= check_box_tag "product_ids[]", product.id, false, id: "ids_#{product.id}", data: { action: 'search-picker#toggle', search_picker_target: "checkbox" } %>
   <label for="ids_<%= product.id %>">
     <%= render 'spree/admin/shared/product_image', object: product %>
-    <div class="ml-3">
+    <div class="ml-6">
       <%= highlight(product.name, params.dig(:q)) %>
     </div>
   </label>

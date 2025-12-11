@@ -154,7 +154,7 @@ export default class extends Controller {
     }
 
     // Show dropdown
-    dropdown.classList.remove('d-none');
+    dropdown.classList.remove('hidden', 'd-none');
 
     // Style dropdown items
     dropdown.querySelectorAll('.nav-link').forEach((item, index) => {
@@ -209,7 +209,7 @@ export default class extends Controller {
     }
 
     // Hide dropdown
-    this.activeDropdown.classList.add('d-none');
+    this.activeDropdown.classList.add('hidden');
 
     // Restore dropdown to original position in sidebar
     if (this.activeDropdown._originalParent) {

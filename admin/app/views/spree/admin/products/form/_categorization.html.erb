@@ -1,5 +1,5 @@
 <% if can?(:manage, Spree::Classification) || can?(:manage, ActsAsTaggableOn::Tag) %>
-  <div class="card mb-4">
+  <div class="card mb-6">
     <div class="card-header">
       <h5 class="card-title">
         <%= Spree.t(:categorization) %>
@@ -14,7 +14,7 @@
             multiple: true,
             active_option: @product.taxon_ids,
             url: spree.admin_taxons_select_options_path(format: :json),
-            class: 'w-100' %>
+            class: 'w-full' %>
         <% elsif @product.taxons.any? %>
           <%= f.label :taxon_ids, Spree.t(:taxonomies) %>
 
@@ -31,7 +31,7 @@
       <% if can?(:manage, ActsAsTaggableOn::Tag) %>
         <div class="form-group">
           <%= f.label :tag_list, Spree.t(:tags) %>
-          <%= tom_select_tag 'product[tag_list]', multiple: true, class: 'w-100', options: tags_json_array, active_option: @product.tag_list, value_field: :name, create: true %>
+          <%= tom_select_tag 'product[tag_list]', multiple: true, class: 'w-full', options: tags_json_array, active_option: @product.tag_list, value_field: :name, create: true %>
         </div>
       <% end %>
     </div>

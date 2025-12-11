@@ -3,11 +3,11 @@
     <%= newsletter_subscriber.email %>
     <%= clipboard_component(newsletter_subscriber.email) %>
   </td>
-  <td class="w-25">
+  <td class="w-1/4">
     <% if newsletter_subscriber.user.present? %>
       <%= link_to newsletter_subscriber.user.full_name, spree.admin_user_path(newsletter_subscriber.user) %>
     <% else %>
-      <span class="text-muted"><%= Spree.t(:not_available) %></span>
+      <span class="text-gray-600"><%= Spree.t(:not_available) %></span>
     <% end %>
   </td>
   <td class="w-10">
@@ -17,7 +17,7 @@
     <% if newsletter_subscriber.verified_at.present? %>
       <%= spree_date(newsletter_subscriber.verified_at) %>
     <% else %>
-      <span class="text-muted"><%= Spree.t(:not_available) %></span>
+      <span class="text-gray-600"><%= Spree.t(:not_available) %></span>
     <% end %>
   </td>
   <td class="w-15">

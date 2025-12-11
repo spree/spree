@@ -15,7 +15,7 @@
 
   <%# Submenu dropdown for collapsed sidebar (always rendered, shown on hover) %>
   <% if can?(:manage, Spree::ReturnAuthorization) %>
-    <ul class="nav-submenu-dropdown d-none dropdown-container">
+    <ul class="nav-submenu-dropdown hidden dropdown-container">
       <%= nav_item(Spree.t(:returns), spree.admin_customer_returns_path) %>
 
       <%= nav_item(Spree.t(:return_authorizations), spree.admin_return_authorizations_path) %>

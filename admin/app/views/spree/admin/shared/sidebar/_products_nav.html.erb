@@ -3,7 +3,7 @@
   <%= nav_item(Spree.t(:products), spree.admin_products_path, icon: 'package', active: products_active) %>
 
   <%# Submenu for expanded sidebar (only shown when active) %>
-  <ul class="nav-submenu <% unless products_active %>d-none<% end %>">
+  <ul class="nav-submenu <% unless products_active %>hidden<% end %>">
     <% if can?(:manage, Spree::StockItem) || can?(:manage, Spree::StockTransfer) %>
       <%= nav_item(Spree.t(:stock), spree.admin_stock_items_path, active: %w[stock_items stock_transfers].include?(controller_name)) %>
     <% end %>
@@ -21,7 +21,7 @@
   </ul>
 
   <%# Submenu dropdown for collapsed sidebar (always rendered, shown on hover) %>
-  <ul class="nav-submenu-dropdown d-none dropdown-container">
+  <ul class="nav-submenu-dropdown hidden dropdown-container">
     <%= nav_item(Spree.t(:products), spree.admin_products_path) %>
 
     <% if can?(:manage, Spree::StockItem) || can?(:manage, Spree::StockTransfer) %>

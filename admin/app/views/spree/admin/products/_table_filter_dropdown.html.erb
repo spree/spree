@@ -1,6 +1,6 @@
 <%= dropdown do %>
   <%= dropdown_toggle class: 'btn-light dropdown-toggle' do %>
-    <span class="text-muted font-weight-normal mr-1">
+    <span class="text-gray-600 font-normal mr-1">
       <%= Spree.t(:show) %>
     </span>
     <% if product_filter_status_dropdown_value == Spree.t('admin.products.all_statuses') && product_filter_stock_dropdown_value == Spree.t('admin.products.any_stock') %>

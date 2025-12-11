@@ -9,24 +9,24 @@
         <a class="nav-link" data-tabs-target="tab" data-action="click->tabs#select"><%= Spree.t('apis.platform') %></a>
       </li>
     </ul>
-    <div data-tabs-target="panel" class="animate__animated">
+    <div data-tabs-target="panel" class="animate-fade-in">
       <% if storefront_serializer_exists?(@object) %>
-        <pre class="m-0"><code data-highlight-target="code" class="language-json d-block overflow-auto" style="height: calc(100dvh - 11rem);"><%= serialize_to_json(@object, api_type: :storefront) %></code></pre>
+        <pre class="m-0"><code data-highlight-target="code" class="language-json block overflow-auto" style="height: calc(100dvh - 11rem);"><%= serialize_to_json(@object, api_type: :storefront) %></code></pre>
       <% else %>
-        <div class="text-muted p-5 d-flex align-items-center w-100 justify-content-center flex-column">
-          <%= icon 'map-search', class: 'mb-3 opacity-50', style: 'font-size: 2rem;' %>
+        <div class="text-gray-600 p-12 flex items-center w-full justify-center flex-col">
+          <%= icon 'map-search', class: 'mb-12 opacity-50 text-4xl' %>
           <p>
             <%= Spree.t('admin.json_preview.no_api_response') %>
           </p>
         </div>
       <% end %>
     </div>
-    <div data-tabs-target="panel" class="animate__animated" hidden>
+    <div data-tabs-target="panel" class="animate-fade-in" hidden>
       <% if platform_serializer_exists?(@object) %>
-        <pre class="m-0"><code data-highlight-target="code" class="language-json d-block overflow-auto" style="height: calc(100dvh - 11rem);"><%= serialize_to_json(@object, api_type: :platform) %></code></pre>
+        <pre class="m-0"><code data-highlight-target="code" class="language-json block overflow-auto" style="height: calc(100dvh - 11rem);"><%= serialize_to_json(@object, api_type: :platform) %></code></pre>
       <% else %>
-        <div class="text-muted p-5 d-flex align-items-center w-100 justify-content-center flex-column">
-          <%= icon 'map-search', class: 'mb-3 opacity-50', style: 'font-size: 2rem;' %>
+        <div class="text-gray-600 p-12 flex items-center w-full justify-center flex-col">
+          <%= icon 'map-search', class: 'mb-12 opacity-50 text-4xl' %>
           <p>
             <%= Spree.t('admin.json_preview.no_api_response') %>
           </p>

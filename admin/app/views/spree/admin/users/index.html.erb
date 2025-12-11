@@ -19,7 +19,7 @@
       <div data-controller="bulk-operation bulk-dialog" data-action="keydown.esc->bulk-operation#cancel" tabindex="0">
         <%= form_tag spree.admin_users_path, data: { 'bulk-operation-target': 'form' } do %>
           <%= render 'spree/admin/shared/bulk_modal' %>
-          <div id="bulk-panel" class="d-none" data-bulk-operation-target="panel">
+          <div id="bulk-panel" class="hidden" data-bulk-operation-target="panel">
             <div class="bulk-panel-container">
               <%= bulk_operations_counter %>
 

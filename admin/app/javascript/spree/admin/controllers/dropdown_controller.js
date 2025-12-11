@@ -73,7 +73,7 @@ export default class extends Controller {
     }
 
     this.menu.classList.remove("hidden")
-    this.menu.style.display = "block"
+    this.menu.style.height = "auto" 
     this._isOpen = true
 
     // Start automatic positioning
@@ -92,7 +92,7 @@ export default class extends Controller {
     if (!this.menu || !this._isOpen) return
 
     this.menu.classList.add("hidden")
-    this.menu.style.display = ""
+    this.menu.style.height = 0
     this._isOpen = false
 
     // Stop automatic positioning

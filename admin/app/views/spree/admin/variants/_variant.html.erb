@@ -5,12 +5,12 @@
     <% variant_url = spree.edit_admin_product_variant_path(variant.product, variant) %>
   <% end %>
 
-  <%= link_to variant_url, id: spree_dom_id(variant), data: { turbo_permanent: true, turbo_frame: :_top }, class: 'd-flex align-items-center justify-content-start text-decoration-none' do %>
+  <%= link_to variant_url, id: spree_dom_id(variant), data: { turbo_permanent: true, turbo_frame: :_top }, class: 'flex items-center justify-start no-underline' do %>
     <%= render "spree/admin/shared/product_image", object: variant %>
-    <div class="ml-3">
+    <div class="ml-6">
       <strong><%= variant.name %></strong>
       <% if !variant.is_master? && variant.options_text.present? %>
-        <p class="text-muted my-1 font-size-sm">
+        <p class="text-gray-600 my-1 text-sm">
           <%= variant.options_text %>
         </p>
       <% end %>

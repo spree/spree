@@ -1,5 +1,5 @@
 <%= turbo_frame_tag dom_id(line_item) do %>
-  <div class="order-line-items__form d-flex align-items-center">
+  <div class="order-line-items__form flex items-center">
     <div class="w-35">
       <%= render "spree/admin/variants/variant", variant: line_item.variant %>
     </div>
@@ -46,7 +46,7 @@
 
             <% if can?(:destroy, line_item) %>
               <div class="dropdown-divider"></div>
-              <%= link_to_with_icon "trash", Spree.t('actions.destroy'), spree.admin_order_line_item_path(@order, line_item), data: { turbo_method: :delete, turbo_frame: '_top', turbo_confirm: Spree.t(:are_you_sure )}, class: 'dropdown-item btn-danger' %>
+              <%= link_to_with_icon "trash", Spree.t('actions.destroy'), spree.admin_order_line_item_path(@order, line_item), data: { turbo_method: :delete, turbo_frame: '_top', turbo_confirm: Spree.t(:are_you_sure )}, class: 'dropdown-item text-red-600 hover:bg-red-100' %>
             <% end %>
           <% end %>
         <% end %>

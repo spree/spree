@@ -1,10 +1,10 @@
 <%= dropdown id: 'pages_dropdown', direction: 'left' do %>
   <%= dropdown_toggle class: 'btn-light' do %>
-    <span class="d-flex align-items-center pr-5">
+    <span class="flex items-center pr-12">
       <%= icon @page.icon_name, class: 'mr-2' %>
       <%= @page.display_name %>
     </span>
-    <%= icon 'selector', class: 'mr-0 ml-2 mb-0 text-muted' %>
+    <%= icon 'selector', class: 'mr-0 ml-2 mb-0 text-gray-600' %>
   <% end %>
   <%= dropdown_menu style: 'min-width: 250px' do %>
     <% @theme.pages.standard.order(name: :asc).find_all(&:customizable?).each do |page| %>

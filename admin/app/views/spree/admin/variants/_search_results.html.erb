@@ -2,7 +2,7 @@
   <% if variants.any? %>
     <%= render collection: variants, partial: 'spree/admin/variants/search_result', as: :variant %>
   <% else %>
-    <p class="text-muted text-center py-5">
+    <p class="text-gray-600 text-center py-12">
       <%= Spree.t('admin.variants.search_results.no_variants') %>
     </p>
   <% end %>

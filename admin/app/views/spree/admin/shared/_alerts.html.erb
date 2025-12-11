@@ -3,16 +3,16 @@
 <%= turbo_frame_tag frame_name do %>
   <% flash.to_h.each do |msg_type, text| %>
     <div class="alerts-container" style="pointer-events: none;">
-      <div class="d-flex justify-content-center px-2">
+      <div class="flex justify-center px-2">
         <div
           data-controller="notification"
           data-notification-delay-value="5000"
-          class="animate__animated animate__fadeInDown animate__faster hidden alert pr-2 d-flex align-items-center <%= admin_flash_class_for(msg_type) %> align-items-center" style="min-width: 300px; pointer-events: all;">
-          <div class="d-flex align-items-center justify-content-between w-100">
-            <div class="d-flex align-items-center justify-content-between">
+          class="animate-fade-in-down-fast hidden alert pr-2 flex items-center <%= admin_flash_class_for(msg_type) %> items-center" style="min-width: 300px; pointer-events: all;">
+          <div class="flex items-center justify-between w-full">
+            <div class="flex items-center justify-between">
               <span><%= text %></span>
             </div>
-            <button type="button" class="btn ml-3 p-1" data-action="notification#hide" aria-label="<%= Spree.t(:close) %>">
+            <button type="button" class="btn ml-4 p-1" data-action="notification#hide" aria-label="<%= Spree.t(:close) %>">
               <%= icon('x', height: 20, class: 'mr-0') %>
             </button>
           </div>

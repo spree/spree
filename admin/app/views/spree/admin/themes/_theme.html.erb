@@ -1,14 +1,14 @@
 <tr id="<%= spree_dom_id theme %>">
   <td class="w-70 p-0">
-    <%= link_to theme.ready? ? spree.edit_admin_theme_path(theme) : '#', class: 'd-flex align-items-top p-3', data: { turbo_prefetch: false } do %>
+    <%= link_to theme.ready? ? spree.edit_admin_theme_path(theme) : '#', class: 'flex align-items-top p-6', data: { turbo_prefetch: false } do %>
       <div class="w-20">
-        <%= render 'spree/admin/themes/theme_preview_image', theme: theme, css_class: 'img-thumbnail w-100' %>
+        <%= render 'spree/admin/themes/theme_preview_image', theme: theme, css_class: 'border rounded-lg w-full' %>
       </div>
 
-      <div class="d-flex flex-column ml-3 w-80">
+      <div class="flex flex-col ml-6 w-80">
         <strong><%= theme.name %></strong>
         <p class="mb-0 mt-1">
-          <span class="text-muted">
+          <span class="text-gray-600">
             <%= Spree.t(:updated_at) %>: 
             <%= spree_time_ago(theme.updated_at) %>
           </span>
@@ -36,17 +36,17 @@
   </td>
   <td class="w-20">
     <% if theme.ready? %>
-      <div class="d-flex justify-content-end w-100">
-        <%= link_to Spree.t('actions.publish'), publish_admin_theme_path(theme), class: 'btn btn-sm btn-light mr-2', data: { turbo_method: :put } unless theme.default? %>
+      <div class="flex justify-end w-full gap-2">
+        <%= link_to Spree.t('actions.publish'), publish_admin_theme_path(theme), class: 'btn btn-sm btn-light', data: { turbo_method: :put } unless theme.default? %>
         <%= dropdown do %>
-          <%= dropdown_toggle class: 'btn-light btn-sm h-100' do %>
+          <%= dropdown_toggle class: 'btn-light btn-sm h-full' do %>
             <%= icon('dots-vertical', class: 'mr-0') %>
           <% end %>
           <%= dropdown_menu do %>
             <%= link_to_edit theme, class: 'dropdown-item', data: { turbo_prefetch: false } %>
             <%= link_to_with_icon 'copy', Spree.t(:clone), spree.clone_admin_theme_path(theme), class: 'dropdown-item', data: { turbo_method: :post } %>
             <% unless theme.default? %>
-            <%= link_to_delete(theme, icon: 'trash', class: 'dropdown-item btn-danger shadow-none') if can?(:delete, theme) %>
+            <%= link_to_delete(theme, icon: 'trash', class: 'dropdown-item text-red-600 hover:bg-red-100 shadow-none') if can?(:delete, theme) %>
           <% end %>
           <% end %>
         <% end %>

@@ -2,11 +2,11 @@
   <%= dropdown do %>
     <%= dropdown_toggle class: 'store-dropdown-button dropdown-toggle' do %>
       <%= store_admin_icon(current_store, height: 32, width: 32) %>
-      <span class="store-name d-none d-lg-block">
+      <span class="store-name hidden lg:block">
         <%= truncate(current_store.name, length: 10) %>
       </span>
     <% end %>
-    <%= dropdown_menu class: 'ml-2' do %>
+    <%= dropdown_menu do %>
       <%= link_to current_store.formatted_url_or_custom_domain, class: 'dropdown-item', target: '_blank' do %>
         <%= icon 'eye' %>
         <%= Spree.t(:view_store) %>
@@ -26,9 +26,9 @@
             <% if store.id == current_store.id %>
               <div class="store-chooser-item active">
                 <%= store_admin_icon(store, height: 32, width: 32) %>
-                <span class="d-flex flex-column mr-2">
+                <span class="flex flex-col mr-2">
                   <%= store.name %>
-                  <small class="text-muted">
+                  <small class="text-gray-600">
                     <%= store.url_or_custom_domain %>
                   </small>
                 </span>
@@ -37,9 +37,9 @@
             <% else %>
               <%= link_to spree.admin_dashboard_url(host: store.url), class: 'store-chooser-item' do %>
                 <%= store_admin_icon(store, height: 32, width: 32) %>
-                <span class="d-flex flex-column">
+                <span class="flex flex-col">
                   <%= store.name %>
-                  <small class="text-muted">
+                  <small class="text-gray-600">
                     <%= store.url_or_custom_domain %>
                   </small>
                 </span>

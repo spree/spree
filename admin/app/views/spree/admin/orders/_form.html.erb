@@ -7,6 +7,6 @@
   <%= tom_select_tag 'order[user_id]', { include_blank: Spree.t(:select_user), options: users_for_select_options } %>
 </div>
 
-<p class="text-center text-muted my-0"><%= Spree.t(:or) %></p>
+<p class="text-center text-gray-600 my-0"><%= Spree.t(:or) %></p>
 
 <%= f.spree_email_field :email, autofocus: f.object.new_record?, label: Spree.t('admin.orders.provide_email') %>

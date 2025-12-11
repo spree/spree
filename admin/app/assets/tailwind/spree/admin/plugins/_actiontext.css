@@ -1,0 +1,35 @@
+/*
+ * Provides a drop-in pointer for the default Trix stylesheet that will format the toolbar and
+ * the trix-editor content (whether displayed or under editing). Feel free to incorporate this
+ * inclusion directly in any other asset bundle and remove this file.
+ *
+ *= require trix
+*/
+
+/*
+ * We need to override trix.css's image gallery styles to accommodate the
+ * <action-text-attachment> element we wrap around attachments. Otherwise,
+ * images in galleries will be squished by the max-width: 33%; rule.
+*/
+
+@layer components {
+  .trix-content .attachment-gallery > action-text-attachment,
+  .trix-content .attachment-gallery > .attachment {
+    @apply flex-[1_0_33%] px-2 max-w-[33%];
+  }
+
+  .trix-content .attachment-gallery.attachment-gallery--2 > action-text-attachment,
+  .trix-content .attachment-gallery.attachment-gallery--2 > .attachment,
+  .trix-content .attachment-gallery.attachment-gallery--4 > action-text-attachment,
+  .trix-content .attachment-gallery.attachment-gallery--4 > .attachment {
+    @apply flex-[0_0_50%] max-w-[50%];
+  }
+
+  .trix-content action-text-attachment .attachment {
+    @apply p-0! max-w-full!;
+  }
+
+  .trix-button--dialog {
+    @apply w-auto! h-auto!;
+  }
+}

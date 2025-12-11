@@ -1,15 +1,15 @@
-<div class="card mb-4">
+<div class="card mb-16">
   <div class="card-header">
     <h5 class="card-title">
       <%= Spree.t(:inventory) %>
     </h5>
   </div>
-  <div class="card-body p-0" data-controller="reveal" data-reveal-hidden-class="d-none">
-    <div class="mb-4 m-3">
+  <div class="card-body p-0" data-controller="reveal" data-reveal-hidden-class="hidden">
+    <div class="p-3">
       <%= f.spree_check_box :track_inventory, data: { action: 'change->reveal#toggle' } %>
     </div>
 
-    <table class="table <%= 'd-none' unless f.object.track_inventory? %>" data-reveal-target="item">
+    <table class="table <%= 'hidden' unless f.object.track_inventory? %>" data-reveal-target="item">
       <thead>
         <tr>
           <th scope="col"><%= Spree.t(:stock_location) %></th>
@@ -42,7 +42,7 @@
         <% end %>
       </tbody>
     </table>
-    <div class="card-footer border-top text-center bg-light text-muted">
+    <div class="card-footer border-t text-center bg-gray-25 text-gray-600">
       <%= Spree.t('admin.variants_form.stock_locations_link', link: spree.admin_stock_locations_path).html_safe %>
     </div>
   </div>

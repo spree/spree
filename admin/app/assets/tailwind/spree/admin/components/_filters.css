@@ -1,0 +1,106 @@
+/* ==========================================================================
+   FILTERS
+   ========================================================================== */
+
+@layer components {
+  .filter-wrap {
+    padding: 0.55rem;
+    border-bottom: 1px solid var(--color-border);
+    gap: 0.55rem;
+    position: sticky;
+    top: var(--spacing-header-height);
+    z-index: 1000;
+    background-color: var(--color-surface);
+    border-top-left-radius: var(--radius-2xl);
+    border-top-right-radius: var(--radius-2xl);
+  }
+
+  .filter-wrap .btn {
+    height: 2.125rem;
+  }
+
+
+  #table-filter {
+    position: absolute;
+    padding: 1rem;
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-dropdown);
+    background-color: var(--color-surface);
+    margin-top: 0.5rem;
+    right: 0.5rem;
+    animation: fadeIn 0.2s ease-in-out;
+    width: 100%;
+    z-index: 1050;
+    max-height: calc(100vh - var(--spacing-header-height) - 4rem);
+    overflow-y: auto;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @media (min-width: 768px) {
+    #table-filter {
+      width: 50%;
+      flex-direction: column;
+    }
+  }
+
+  #table-filter.hidden,
+  #table-filter.d-none {
+    display: none !important;
+  }
+
+  .collapsed .arrow {
+    transform: rotate(-90deg);
+    transition: 0.3s ease-in-out;
+  }
+
+  i.js-delete-filter {
+    margin-bottom: 0;
+  }
+
+  .sort_link {
+    color: var(--color-gray-600);
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+    border-radius: var(--radius-sm);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .sort_link:hover {
+    @apply text-primary! no-underline! bg-gray-50;
+  }
+
+  .sort_link.asc,
+  .sort_link.desc {
+    @apply font-medium;
+  }
+
+  .sort_link.asc svg,
+  .sort_link.desc svg {
+    @apply text-gray-600!;
+  }
+
+  .sort_link .icon,
+  .sort_link svg {
+    margin-left: 5px;
+    margin-bottom: 2px;
+    width: 0.8rem;
+    height: 0.8rem;
+  }
+
+  .sort_link svg.default-filter-arrow {
+    opacity: 0.3;
+  }
+
+  .filter-badges-container:has(*) {
+    margin-top: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+}

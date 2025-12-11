@@ -3,12 +3,12 @@
 <% end %>
 
 
-<div class="card mb-4">
+<div class="card mb-6">
   <div class="card-header">
     <h5 class="card-title"><%= Spree.t(:name) %> & <%= Spree.t(:logo) %></h5>
   </div>
   <div class="card-body">
-    <p class="text-muted">
+    <p class="text-gray-600">
       <%= Spree.t(:store_name_help) %>
     </p>
     <%= f.spree_text_field :name, required: true, autofocus: f.object.new_record? %>
@@ -17,7 +17,7 @@
   </div>
 </div>
 
-<div class="card mb-4">
+<div class="card mb-6">
   <div class="card-header">
     <h5 class="card-title"><%= Spree.t(:currencies) %> & <%= Spree.t(:translations) %></h5>
   </div>
@@ -30,15 +30,15 @@
   </div>
 </div>
 
-<div class="card mb-4">
+<div class="card mb-6">
   <div class="card-header">
     <h5 class="card-title"><%= Spree.t(:standards_and_formats) %></h5>
   </div>
   <div class="card-body">
-    <p class="text-muted">
+    <p class="text-gray-600">
       <%= Spree.t(:standards_and_formats_help) %>
     </p>
-    <div class="form-group mb-3">
+    <div class="form-group mb-6">
       <%= label_tag :preferred_timezone, raw(Spree.t(:timezone) + required_span_tag) %>
       <%= time_zone_select :store, :preferred_timezone, nil, {}, { data: { controller: 'autocomplete-select' } } %>
     </div>
@@ -49,7 +49,7 @@
   </div>
 </div>
 
-<div class="card mb-4">
+<div class="card mb-6">
   <div class="card-header">
     <h5 class="card-title"><%= Spree.t(:phone) %> & <%= Spree.t(:address) %></h5>
   </div>
@@ -59,12 +59,12 @@
   </div>
 </div>
 
-<div class="card mb-4">
+<div class="card mb-6">
   <div class="card-header">
     <h5 class="card-title"><%= Spree.t(:digital_assets) %></h5>
   </div>
   <div class="card-body">
-    <p class="text-muted">
+    <p class="text-gray-600">
       <%= Spree.t(:digital_assets_help) %>
     </p>
     <%= f.spree_check_box :preferred_limit_digital_download_days %>

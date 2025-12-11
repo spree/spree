@@ -1,6 +1,6 @@
 <% if @refunds.any? %>
-  <div class="card mb-4">
-    <div class="card-header d-flex align-items-center">
+  <div class="card mb-6">
+    <div class="card-header flex items-center">
       <h6 class="card-title">
         <%= icon('credit-card-refund', class: 'mr-2') %>
         <%= Spree.t(:refunds) %>
@@ -11,7 +11,7 @@
       <div class="table-responsive">
         <table class="table table-condensed" id='refunds' data-order-id='<%= @order.number %>'>
           <thead>
-            <tr data-hook="refunds_header" class="border-bottom">
+            <tr data-hook="refunds_header" class="border-b">
               <th scope="col"><%= Spree.t(:amount) %></th>
               <th scope="col"><%= Spree.t(:status) %></th>
               <th scope="col"><%= Spree.t(:reason) %></th>

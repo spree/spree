@@ -55,7 +55,7 @@ Trix.config.toolbar.getDefaultHTML = function() {
           </div>
         </div>
 
-        <div class="trix-dialog--error-container mt-2 d-none">
+        <div class="trix-dialog--error-container mt-2 hidden">
           <small class="trix-dialog--error-message text-danger"></small>
         </div>
       </div>
@@ -123,8 +123,8 @@ function initializeTrixEditor(editor) {
       const errorContainer = dialog.querySelector(".trix-dialog--error-container")
       const errorMessage = errorContainer.querySelector(".trix-dialog--error-message")
 
-      if (!errorContainer.classList.contains('d-none')) {
-        errorContainer.classList.add('d-none')
+      if (!errorContainer.classList.contains('hidden')) {
+        errorContainer.classList.add('hidden')
       }
 
       errorMessage.innerHTML = ''
@@ -145,8 +145,8 @@ function initializeTrixEditor(editor) {
       } else {
         const { error } = await response.json
 
-        if (errorContainer.classList.contains('d-none')) {
-          errorContainer.classList.remove('d-none')
+        if (errorContainer.classList.contains('hidden')) {
+          errorContainer.classList.remove('hidden', 'd-none')
         }
 
         errorMessage.innerHTML = error

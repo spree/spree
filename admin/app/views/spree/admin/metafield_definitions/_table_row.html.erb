@@ -13,7 +13,7 @@
       <%= metafield_definition.metafields.count %>
       <%= Spree.t(metafield_definition.resource_type.demodulize.pluralize.to_sym) %>
     <% else %>
-      <span class="text-muted"><%= Spree.t(:not_available) %></span>
+      <span class="text-gray-600"><%= Spree.t(:not_available) %></span>
     <% end %>
   </td>
   <td class="text-right">
