@@ -151,7 +151,9 @@ module Spree
       protected
 
       def find_resource
-        current_store.products.accessible_by(current_ability, :manage).friendly.find(params[:id])
+        find_with_fallback_default_locale do
+          current_store.products.accessible_by(current_ability, :manage).friendly.find(params[:id])
+        end
       end
 
       def load_data
