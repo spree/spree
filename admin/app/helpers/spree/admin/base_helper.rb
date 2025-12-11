@@ -51,34 +51,6 @@ module Spree
         @available_countries_iso ||= current_store.countries_available_for_checkout.pluck(:iso)
       end
 
-      # render an avatar for a user
-      # if user doesn't have an avatar, the user's initials will be displayed on a rounded-lg  background
-      # @param user [Spree::User] the user to render the avatar for
-      # @param options [Hash] the options for the avatar
-      # @option options [Integer] :width the width of the avatar, default: 128
-      # @option options [Integer] :height the height of the avatar, default: 128
-      # @option options [String] :class the CSS class(es) of the avatar, default: 'avatar'
-      # @return [String] the avatar
-      def render_avatar(user, options = {})
-        return unless user.present?
-
-        options[:width] ||= 128
-        options[:height] ||= 128
-        options[:class] ||= 'flex items-center justify-center bg-gray-200 rounded-full text-gray-600'
-
-        if user.respond_to?(:avatar) && user.avatar.attached? && user.avatar.variable?
-          spree_image_tag(
-            user.avatar,
-            width: options[:width],
-            height: options[:height],
-            class: options[:class],
-            style: "width: #{options[:width]}px; height: #{options[:height]}px;"
-          )
-        else
-          content_tag(:div, user.name&.initials, class: options[:class], style: "width: #{options[:width]}px; height: #{options[:height]}px;")
-        end
-      end
-
       # returns the available display on options, eg backend, frontend, both
       # @return [Array<Array<String, String>>] the available display on options
       def display_on_options(model = nil)
@@ -172,12 +144,12 @@ module Spree
                         when :integer
                           {
                             size: 10,
-                            class: 'input_integer form-control'
+                            class: 'input_integer form-input'
                           }
                         when :decimal
                           {
                             size: 10,
-                            class: 'input_decimal form-control',
+                            class: 'input_decimal form-input',
                             step: options[:step] || 0.01
                           }
                         when :boolean
@@ -187,23 +159,23 @@ module Spree
                         when :string
                           {
                             size: 10,
-                            class: 'input_string form-control'
+                            class: 'input_string form-input'
                           }
                         when :password
                           {
                             size: 10,
-                            class: 'password_string form-control'
+                            class: 'password_string form-input'
                           }
                         when :text
                           {
                             rows: 15,
                             cols: 85,
-                            class: 'form-control'
+                            class: 'form-input'
                           }
                         else
                           {
                             size: 10,
-                            class: 'input_string form-control'
+                            class: 'input_string form-input'
                           }
                         end
 
@@ -234,7 +206,7 @@ module Spree
                       class: 'form-group', id: [object.class.to_s.parameterize, 'preference', key].join('-'))
         else
           if object.preference_type(key).to_sym == :boolean
-            content_tag(:div, class: 'form-group custom-control custom-checkbox') do
+            content_tag(:div, class: 'form-group custom-control form-checkbox') do
               preference_field_for(form, "preferred_#{key}", type: object.preference_type(key)) +
                 form.label(
                   "preferred_#{key}",
@@ -307,7 +279,9 @@ module Spree
         percentage = (value.to_f / max * 100).round
 
         content_tag(:div, class: 'progress') do
-          content_tag(:div, { class: 'progress-bar', role: 'progressbar', style: "width: #{percentage}%", aria: { valuenow: value, valuemin: min, valuemax: max } }) do
+          content_tag(:div,
+                      { class: 'progress-bar', role: 'progressbar', style: "width: #{percentage}%",
+                        aria: { valuenow: value, valuemin: min, valuemax: max } }) do
           end
         end
       end
@@ -337,6 +311,7 @@ module Spree
       # @return [String] the local time ago
       def spree_time_ago(time, options = {})
         return '' if time.blank?
+
         options[:data] ||= {}
         options[:data][:controller] = 'tooltip'
 
