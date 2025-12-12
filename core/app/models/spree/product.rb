@@ -175,14 +175,25 @@ module Spree
                                 Spree::Variant.search_by_sku(query).pluck(:product_id)
                               end
 
-        where(id: (product_ids + variant_product_ids).uniq.compact)
+        tag_product_ids = ActsAsTaggableOn::Tag.search_by_name(query)
+                                               .joins(:taggings)
+                                               .where(ActsAsTaggableOn.taggings_table => { taggable_type: 'Spree::Product' })
+                                               .pluck(:taggable_id)
+
+        where(id: (product_ids + variant_product_ids + tag_product_ids).uniq.compact)
       }
     else
       scope :multi_search, lambda { |query|
         return none if query.blank?
 
         product_ids = Spree::Variant.search_by_product_name_or_sku(query).pluck(:product_id)
-        where(id: product_ids.uniq.compact)
+
+        tag_product_ids = ActsAsTaggableOn::Tag.search_by_name(query)
+                                               .joins(:taggings)
+                                               .where(ActsAsTaggableOn.taggings_table => { taggable_type: 'Spree::Product' })
+                                               .pluck(:taggable_id)
+
+        where(id: (product_ids + tag_product_ids).uniq.compact)
       }
     end
 
