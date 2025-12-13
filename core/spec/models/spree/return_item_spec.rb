@@ -768,4 +768,44 @@ describe Spree::ReturnItem, type: :model do
       end
     end
   end
+
+  describe 'custom events' do
+    describe 'return_item.received' do
+      let(:inventory_unit) { create(:inventory_unit, state: 'shipped') }
+      let(:return_item) { create(:return_item, inventory_unit: inventory_unit, reception_status: 'awaiting') }
+
+      before do
+        allow(return_item).to receive(:eligible_for_return?).and_return(true)
+      end
+
+      it 'publishes return_item.received event when received' do
+        expect(return_item).to receive(:publish_event).with('return_item.received')
+        allow(return_item).to receive(:publish_event).with(anything)
+
+        return_item.receive!
+      end
+    end
+
+    describe 'return_item.canceled' do
+      let(:return_item) { create(:return_item, reception_status: 'awaiting') }
+
+      it 'publishes return_item.canceled event when canceled' do
+        expect(return_item).to receive(:publish_event).with('return_item.canceled')
+        allow(return_item).to receive(:publish_event).with(anything)
+
+        return_item.cancel!
+      end
+    end
+
+    describe 'return_item.given' do
+      let(:return_item) { create(:return_item, reception_status: 'awaiting') }
+
+      it 'publishes return_item.given event when given to customer' do
+        expect(return_item).to receive(:publish_event).with('return_item.given')
+        allow(return_item).to receive(:publish_event).with(anything)
+
+        return_item.give!
+      end
+    end
+  end
 end

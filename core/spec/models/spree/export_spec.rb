@@ -7,10 +7,13 @@ RSpec.describe Spree::Export, :job, type: :model do
   let(:search_params) { nil }
   let(:export) { build(:product_export, store: store, user: user, format: 'csv', search_params: search_params) }
 
-  context 'Callbacks' do
-    describe 'after_create' do
-      it 'generates the export' do
-        expect { export.save! }.to have_enqueued_job(Spree::Exports::GenerateJob).with(export.id)
+  describe 'custom events' do
+    describe 'export.created' do
+      it 'publishes export.created event when saved' do
+        expect(export).to receive(:publish_event).with('export.created')
+        allow(export).to receive(:publish_event).with(anything)
+
+        export.save!
       end
     end
   end

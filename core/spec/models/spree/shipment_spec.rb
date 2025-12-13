@@ -1037,4 +1037,34 @@ describe Spree::Shipment, type: :model do
       expect(subject).not_to include(*shipped_shipments)
     end
   end
+
+  describe 'events' do
+    let(:order) { create(:order_ready_to_ship) }
+    let(:shipment) { order.shipments.first }
+
+    describe 'shipped state transition' do
+      before { shipment.update_column(:tracking, 'TRACK123') }
+
+      it 'publishes shipment.shipped event' do
+        expect(shipment).to receive(:publish_event).with('shipment.shipped')
+        shipment.ship!
+      end
+    end
+
+    describe 'canceled state transition' do
+      it 'publishes shipment.canceled event' do
+        expect(shipment).to receive(:publish_event).with('shipment.canceled')
+        shipment.cancel!
+      end
+    end
+
+    describe 'resumed state transition' do
+      before { shipment.cancel! }
+
+      it 'publishes shipment.resumed event' do
+        expect(shipment).to receive(:publish_event).with('shipment.resumed')
+        shipment.resume!
+      end
+    end
+  end
 end

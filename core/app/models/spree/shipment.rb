@@ -82,12 +82,12 @@ module Spree
       event :ship do
         transition from: %i(ready canceled), to: :shipped
       end
-      after_transition to: :shipped, do: [:after_ship, :send_shipment_shipped_webhook]
+      after_transition to: :shipped, do: [:after_ship, :send_shipment_shipped_webhook, :publish_shipment_shipped_event]
 
       event :cancel do
         transition to: :canceled, from: %i(pending ready)
       end
-      after_transition to: :canceled, do: :after_cancel
+      after_transition to: :canceled, do: [:after_cancel, :publish_shipment_canceled_event]
 
       event :resume do
         transition from: :canceled, to: :ready, if: lambda { |shipment|
@@ -95,7 +95,7 @@ module Spree
         }
         transition from: :canceled, to: :pending
       end
-      after_transition from: :canceled, to: %i(pending ready shipped), do: :after_resume
+      after_transition from: :canceled, to: %i(pending ready shipped), do: [:after_resume, :publish_shipment_resumed_event]
 
       after_transition do |shipment, transition|
         shipment.state_changes.create!(
@@ -452,6 +452,18 @@ module Spree
 
     def after_ship
       ShipmentHandler.factory(self).perform
+    end
+
+    def publish_shipment_shipped_event
+      publish_event('shipment.shipped')
+    end
+
+    def publish_shipment_canceled_event
+      publish_event('shipment.canceled')
+    end
+
+    def publish_shipment_resumed_event
+      publish_event('shipment.resumed')
     end
 
     def can_get_rates?

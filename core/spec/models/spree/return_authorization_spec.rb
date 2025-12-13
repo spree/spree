@@ -235,4 +235,17 @@ describe Spree::ReturnAuthorization, type: :model do
       it { is_expected.to eq true }
     end
   end
+
+  describe 'custom events' do
+    describe 'return_authorization.canceled' do
+      let(:return_authorization) { create(:return_authorization) }
+
+      it 'publishes return_authorization.canceled event when canceled' do
+        expect(return_authorization).to receive(:publish_event).with('return_authorization.canceled')
+        allow(return_authorization).to receive(:publish_event).with(anything)
+
+        return_authorization.cancel!
+      end
+    end
+  end
 end

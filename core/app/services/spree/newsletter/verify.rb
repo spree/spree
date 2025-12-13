@@ -8,6 +8,7 @@ module Spree
       def call
         verify_subscriber
         set_user_email_marketing_to_true
+        publish_event
 
         subscriber
       end
@@ -24,6 +25,10 @@ module Spree
         return if subscriber.user.blank?
 
         subscriber.user.update!(accepts_email_marketing: true)
+      end
+
+      def publish_event
+        subscriber.publish_event('newsletter_subscriber.verified')
       end
     end
   end

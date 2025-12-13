@@ -48,13 +48,18 @@ RSpec.describe Spree::Report, type: :model do
     end
   end
 
-  describe 'callbacks' do
-    describe 'after_commit on create' do
-      it 'enqueues generate job' do
-        expect { report.save! }.to have_enqueued_job(Spree::Reports::GenerateJob).with(report.id)
+  describe 'custom events' do
+    describe 'report.created' do
+      it 'publishes report.created event when saved' do
+        expect(report).to receive(:publish_event).with('report.created')
+        allow(report).to receive(:publish_event).with(anything)
+
+        report.save!
       end
     end
+  end
 
+  describe 'callbacks' do
     describe 'after_initialize' do
       let(:new_report) { Spree::Report.new(store: store) }
 

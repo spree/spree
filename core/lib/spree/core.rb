@@ -40,7 +40,7 @@ StateMachines::Machine.ignore_method_conflicts = true
 module Spree
   mattr_accessor :base_class, :user_class, :admin_user_class,
                  :private_storage_service_name, :public_storage_service_name,
-                 :cdn_host, :root_domain, :searcher_class, :queues,
+                 :cdn_host, :root_domain, :searcher_class, :events_adapter_class, :queues,
                  :google_places_api_key, :screenshot_api_token
 
   def self.base_class(constantize: true)
@@ -97,6 +97,7 @@ module Spree
   def self.queues
     @@queues ||= OpenStruct.new(
       default: :default,
+      events: :default,
       exports: :default,
       images: :default,
       imports: :default,
@@ -119,6 +120,23 @@ module Spree
       raise 'Spree.searcher_class MUST be a String or Symbol object, not a Class object.'
     elsif @@searcher_class.is_a?(String) || @@searcher_class.is_a?(Symbol)
       constantize ? @@searcher_class.to_s.constantize : @@searcher_class.to_s
+    end
+  end
+
+  # Returns the events adapter class used for publishing and subscribing to events.
+  #
+  # @example Using a custom adapter
+  #   Spree.events_adapter_class = 'MyApp::Events::KafkaAdapter'
+  #
+  # @param constantize [Boolean] whether to return the class or the string
+  # @return [Class, String] the adapter class or its name
+  def self.events_adapter_class(constantize: true)
+    @@events_adapter_class ||= 'Spree::Events::Adapters::ActiveSupportNotifications'
+
+    if @@events_adapter_class.is_a?(Class)
+      raise 'Spree.events_adapter_class MUST be a String or Symbol object, not a Class object.'
+    elsif @@events_adapter_class.is_a?(String) || @@events_adapter_class.is_a?(Symbol)
+      constantize ? @@events_adapter_class.to_s.constantize : @@events_adapter_class.to_s
     end
   end
 
@@ -286,6 +304,30 @@ module Spree
 
   def self.integrations=(value)
     Rails.application.config.spree.integrations = value
+  end
+
+  # Models that automatically emit lifecycle events (create, update, destroy)
+  # @example Adding a custom model to emit events
+  #   Spree.eventable_models << MyCustomModel
+  def self.eventable_models
+    Rails.application.config.spree.eventable_models
+  end
+
+  def self.eventable_models=(value)
+    Rails.application.config.spree.eventable_models = value
+  end
+
+  # Event subscribers that handle lifecycle and custom events
+  # @example Adding a custom subscriber
+  #   Spree.subscribers << MyApp::OrderNotificationSubscriber
+  # @example Removing a built-in subscriber
+  #   Spree.subscribers.delete(Spree::ExportSubscriber)
+  def self.subscribers
+    Rails.application.config.spree.subscribers
+  end
+
+  def self.subscribers=(value)
+    Rails.application.config.spree.subscribers = value
   end
 
   # Page Builder configuration accessor

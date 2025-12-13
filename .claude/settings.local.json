@@ -12,7 +12,8 @@
       "Bash(curl:*)",
       "Bash(bundle exec rake:*)",
       "Bash(bin/importmap:*)",
-      "Bash(ruby -c:*)"
+      "Bash(ruby -c:*)",
+      "Bash(tree:*)"
     ],
     "deny": []
   }

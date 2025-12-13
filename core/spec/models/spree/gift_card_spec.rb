@@ -192,4 +192,30 @@ RSpec.describe Spree::GiftCard, type: :model do
     end
   end
   end
+
+  describe 'custom events' do
+    let(:store) { Spree::Store.default }
+
+    describe 'gift_card.redeemed' do
+      let(:gift_card) { create(:gift_card, state: :active, amount: 100, amount_used: 0, store: store) }
+
+      it 'publishes gift_card.redeemed event when fully redeemed' do
+        expect(gift_card).to receive(:publish_event).with('gift_card.redeemed')
+        allow(gift_card).to receive(:publish_event).with(anything)
+
+        gift_card.redeem!
+      end
+    end
+
+    describe 'gift_card.partially_redeemed' do
+      let(:gift_card) { create(:gift_card, state: :active, amount: 100, amount_used: 0, store: store) }
+
+      it 'publishes gift_card.partially_redeemed event when partially redeemed' do
+        expect(gift_card).to receive(:publish_event).with('gift_card.partially_redeemed')
+        allow(gift_card).to receive(:publish_event).with(anything)
+
+        gift_card.partial_redeem!
+      end
+    end
+  end
 end

@@ -1417,4 +1417,52 @@ describe Spree::Product, type: :model do
       end
     end
   end
+
+  describe 'custom events' do
+    describe 'product.activated' do
+      let(:product) { create(:product, status: 'draft', stores: [store]) }
+
+      it 'publishes product.activated event when activated' do
+        expect(product).to receive(:publish_event).with('product.activated')
+        product.activate!
+      end
+    end
+
+    describe 'product.archived' do
+      let(:product) { create(:product, status: 'active', stores: [store]) }
+
+      it 'publishes product.archived event when archived' do
+        expect(product).to receive(:publish_event).with('product.archived')
+        product.archive!
+      end
+    end
+  end
+
+  describe 'lifecycle events' do
+    describe 'product.created' do
+      it 'publishes product.created event when product is created' do
+        product = build(:product, stores: [store])
+        expect(product).to receive(:publish_event).with('product.created')
+        product.save!
+      end
+    end
+
+    describe 'product.updated' do
+      let!(:product) { create(:product, name: 'Original Name', stores: [store]) }
+
+      it 'publishes product.updated event when product is updated' do
+        expect(product).to receive(:publish_event).with('product.updated')
+        product.update!(name: 'Updated Name')
+      end
+    end
+
+    describe 'product.destroyed' do
+      let!(:product) { create(:product, name: 'To Be Destroyed', stores: [store]) }
+
+      it 'publishes product.destroyed event when product is destroyed' do
+        expect(product).to receive(:publish_event).with('product.destroyed')
+        product.destroy!
+      end
+    end
+  end
 end
