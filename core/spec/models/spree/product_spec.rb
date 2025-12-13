@@ -1700,4 +1700,83 @@ describe Spree::Product, type: :model do
       end
     end
   end
+
+  describe 'lifecycle events' do
+    before { Spree::Events.activate! }
+
+    after { Spree::Events.reset! }
+
+    describe 'product.create' do
+      it 'publishes product.create event when product is created' do
+        received_event = nil
+        Spree::Events.subscribe('product.create', async: false) do |event|
+          received_event = event
+        end
+
+        product = create(:product, name: 'Test Product', stores: [store])
+
+        expect(received_event).to be_present
+        expect(received_event.name).to eq('product.create')
+        expect(received_event.payload['id']).to eq(product.id)
+        expect(received_event.payload['name']).to eq('Test Product')
+        expect(received_event.metadata['model_class']).to eq('Spree::Product')
+        expect(received_event.metadata['model_id']).to eq(product.id.to_s)
+      end
+
+      it 'includes serialized product data in the payload' do
+        received_event = nil
+        Spree::Events.subscribe('product.create', async: false) do |event|
+          received_event = event
+        end
+
+        product = create(:product, stores: [store])
+
+        expect(received_event.payload).to have_key('slug')
+        expect(received_event.payload).to have_key('status')
+        expect(received_event.payload).to have_key('created_at')
+        expect(received_event.payload).to have_key('updated_at')
+      end
+    end
+
+    describe 'product.update' do
+      let!(:product) { create(:product, name: 'Original Name', stores: [store]) }
+
+      it 'publishes product.update event when product is updated' do
+        received_event = nil
+        Spree::Events.subscribe('product.update', async: false) do |event|
+          received_event = event
+        end
+
+        product.update!(name: 'Updated Name')
+
+        expect(received_event).to be_present
+        expect(received_event.name).to eq('product.update')
+        expect(received_event.payload['id']).to eq(product.id)
+        expect(received_event.payload['name']).to eq('Updated Name')
+        expect(received_event.metadata['model_class']).to eq('Spree::Product')
+        expect(received_event.metadata['model_id']).to eq(product.id.to_s)
+      end
+    end
+
+    describe 'product.destroy' do
+      let!(:product) { create(:product, name: 'To Be Destroyed', stores: [store]) }
+
+      it 'publishes product.destroy event when product is destroyed' do
+        received_event = nil
+        product_id = product.id
+        Spree::Events.subscribe('product.destroy', async: false) do |event|
+          received_event = event
+        end
+
+        product.destroy!
+
+        expect(received_event).to be_present
+        expect(received_event.name).to eq('product.destroy')
+        expect(received_event.payload['id']).to eq(product_id)
+        expect(received_event.payload['name']).to eq('To Be Destroyed')
+        expect(received_event.metadata['model_class']).to eq('Spree::Product')
+        expect(received_event.metadata['model_id']).to eq(product_id.to_s)
+      end
+    end
+  end
 end
