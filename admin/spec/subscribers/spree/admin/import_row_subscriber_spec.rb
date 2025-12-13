@@ -3,26 +3,23 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Admin::ImportRowSubscriber do
-  before { Spree::Events.activate! }
-  after { Spree::Events.reset! }
-
   describe '.subscription_patterns' do
-    it 'subscribes to import_row.complete event' do
-      expect(described_class.subscription_patterns).to include('import_row.complete')
+    it 'subscribes to import_row.completed event' do
+      expect(described_class.subscription_patterns).to include('import_row.completed')
     end
 
-    it 'subscribes to import_row.fail event' do
-      expect(described_class.subscription_patterns).to include('import_row.fail')
+    it 'subscribes to import_row.failed event' do
+      expect(described_class.subscription_patterns).to include('import_row.failed')
     end
   end
 
   describe '.event_handlers' do
-    it 'routes import_row.complete to update_import_view' do
-      expect(described_class.event_handlers['import_row.complete']).to eq(:update_import_view)
+    it 'routes import_row.completed to update_import_view' do
+      expect(described_class.event_handlers['import_row.completed']).to eq(:update_import_view)
     end
 
-    it 'routes import_row.fail to update_import_view' do
-      expect(described_class.event_handlers['import_row.fail']).to eq(:update_import_view)
+    it 'routes import_row.failed to update_import_view' do
+      expect(described_class.event_handlers['import_row.failed']).to eq(:update_import_view)
     end
   end
 
@@ -36,7 +33,7 @@ RSpec.describe Spree::Admin::ImportRowSubscriber do
       it 'updates the import view' do
         subscriber = described_class.new
         event = Spree::Event.new(
-          name: 'import_row.complete',
+          name: 'import_row.completed',
           payload: { 'id' => import_row.id }
         )
 
@@ -51,7 +48,7 @@ RSpec.describe Spree::Admin::ImportRowSubscriber do
       it 'does nothing' do
         subscriber = described_class.new
         event = Spree::Event.new(
-          name: 'import_row.complete',
+          name: 'import_row.completed',
           payload: {}
         )
 
@@ -66,7 +63,7 @@ RSpec.describe Spree::Admin::ImportRowSubscriber do
       it 'does nothing' do
         subscriber = described_class.new
         event = Spree::Event.new(
-          name: 'import_row.complete',
+          name: 'import_row.completed',
           payload: { 'id' => -999 }
         )
 

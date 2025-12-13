@@ -1293,41 +1293,23 @@ describe Spree::Payment, type: :model do
   end
 
   describe 'events' do
-    let(:received_events) { [] }
-
-    before do
-      Spree::Events.reset!
-      Spree::Events.activate!
-    end
-
-    after { Spree::Events.reset! }
-
     describe 'completed state transition' do
-      before do
-        Spree::Events.subscribe('payment.complete', async: false) { |e| received_events << e }
-      end
-
-      it 'publishes payment.complete event' do
+      it 'publishes payment.completed event' do
         payment.started_processing!
+        expect(payment).to receive(:publish_event).with('payment.completed')
         payment.complete!
-
-        expect(received_events.size).to eq(1)
-        expect(received_events.first.payload['id']).to eq(payment.id)
       end
     end
 
-    describe 'void state transition' do
+    describe 'voided state transition' do
       before do
-        Spree::Events.subscribe('payment.void', async: false) { |e| received_events << e }
         payment.started_processing!
         payment.pend!
       end
 
-      it 'publishes payment.void event' do
+      it 'publishes payment.voided event' do
+        expect(payment).to receive(:publish_event).with('payment.voided')
         payment.void!
-
-        expect(received_events.size).to eq(1)
-        expect(received_events.first.payload['id']).to eq(payment.id)
       end
     end
   end

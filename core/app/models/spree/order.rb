@@ -202,8 +202,8 @@ module Spree
       joins(:refunds).group(:id).having("sum(#{Spree::Refund.table_name}.amount) = #{Spree::Order.table_name}.total")
     }
     scope :partially_refunded, lambda {
-                                joins(:refunds).group(:id).having("sum(#{Spree::Refund.table_name}.amount) < #{Spree::Order.table_name}.total")
-                              }
+      joins(:refunds).group(:id).having("sum(#{Spree::Refund.table_name}.amount) < #{Spree::Order.table_name}.total")
+    }
     scope :with_deleted_bill_address, -> { joins(:bill_address).where.not(Address.table_name => { deleted_at: nil }) }
     scope :with_deleted_ship_address, -> { joins(:ship_address).where.not(Address.table_name => { deleted_at: nil }) }
 
@@ -522,9 +522,6 @@ module Spree
       updater.run_hooks
 
       touch :completed_at
-
-      deliver_order_confirmation_email unless confirmation_delivered?
-      deliver_store_owner_order_notification_email if deliver_store_owner_order_notification_email?
 
       send_order_placed_webhook
 

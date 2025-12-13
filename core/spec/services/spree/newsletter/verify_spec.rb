@@ -41,22 +41,11 @@ module Spree
     describe 'custom events' do
       let(:user) { nil }
 
-      it 'publishes newsletter_subscriber.verify event when verified' do
-        Spree::Events.activate!
-
-        received_event = nil
-        event_subscriber = Spree::Events.subscribe('newsletter_subscriber.verify') do |event|
-          received_event = event
-        end
+      it 'publishes newsletter_subscriber.verified event when verified' do
+        expect(subscriber).to receive(:publish_event).with('newsletter_subscriber.verified')
+        allow(subscriber).to receive(:publish_event).with(anything)
 
         service
-
-        expect(received_event).to be_present
-        expect(received_event.metadata['model_class']).to eq('Spree::NewsletterSubscriber')
-        expect(received_event.metadata['model_id']).to eq(subscriber.id.to_s)
-
-        Spree::Events.unsubscribe('newsletter_subscriber.verify', event_subscriber)
-        Spree::Events.reset!
       end
     end
   end

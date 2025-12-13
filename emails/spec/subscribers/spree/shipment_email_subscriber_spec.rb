@@ -3,33 +3,24 @@
 require 'spec_helper'
 
 RSpec.describe Spree::ShipmentEmailSubscriber do
-  include ActiveJob::TestHelper
-
   let(:store) { create(:store) }
   let(:order) { create(:completed_order_with_totals, store: store) }
   let(:shipment) { order.shipments.first }
+  let(:subscriber) { described_class.new }
 
-  def publish_event(event_name)
-    perform_enqueued_jobs(only: Spree::Events::SubscriberJob) do
-      Spree::Events.publish(
-        event_name,
-        { 'id' => shipment.id }
-      )
-    end
+  def mock_event(shipment)
+    double('Event', payload: { 'id' => shipment.id })
   end
 
   before do
     store.update!(preferences: store.preferences.merge(send_consumer_transactional_emails: true))
-    Spree::Events.activate!
   end
 
-  after { Spree::Events.reset! }
-
-  describe 'shipment.ship event' do
+  describe 'shipment.shipped event' do
     it 'sends shipped email' do
       expect(Spree::ShipmentMailer).to receive(:shipped_email).with(shipment.id).and_return(double(deliver_later: true))
 
-      publish_event('shipment.ship')
+      subscriber.handle(mock_event(shipment))
     end
 
     context 'when store does not prefer transactional emails' do
@@ -40,7 +31,7 @@ RSpec.describe Spree::ShipmentEmailSubscriber do
       it 'does not send shipped email' do
         expect(Spree::ShipmentMailer).not_to receive(:shipped_email)
 
-        publish_event('shipment.ship')
+        subscriber.handle(mock_event(shipment))
       end
     end
 
@@ -48,7 +39,7 @@ RSpec.describe Spree::ShipmentEmailSubscriber do
       it 'does not raise an error' do
         shipment.destroy
 
-        expect { publish_event('shipment.ship') }.not_to raise_error
+        expect { subscriber.handle(mock_event(shipment)) }.not_to raise_error
       end
     end
   end

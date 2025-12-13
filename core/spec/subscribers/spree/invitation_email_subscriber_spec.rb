@@ -3,30 +3,22 @@
 require 'spec_helper'
 
 RSpec.describe Spree::InvitationEmailSubscriber do
-  include ActiveJob::TestHelper
-
   let(:store) { @default_store }
   let(:inviter) { create(:admin_user) }
   let(:invitee) { create(:admin_user) }
   let(:invitation) { create(:invitation, email: 'invited@example.com', inviter: inviter, resource: store, skip_email: true) }
 
-  def publish_event(event_name, invitation)
-    perform_enqueued_jobs(only: Spree::Events::SubscriberJob) do
-      Spree::Events.publish(
-        event_name,
-        { 'id' => invitation.id }
-      )
-    end
+  let(:subscriber) { described_class.new }
+
+  def mock_event(invitation)
+    double('Event', payload: { 'id' => invitation.id })
   end
 
-  before { Spree::Events.activate! }
-  after { Spree::Events.reset! }
-
-  describe 'invitation.create event' do
+  describe 'invitation.created event' do
     it 'sends invitation email' do
       expect(Spree::InvitationMailer).to receive(:invitation_email).with(kind_of(Spree::Invitation)).and_return(double(deliver_later: true))
 
-      publish_event('invitation.create', invitation)
+      subscriber.send(:send_invitation_email, mock_event(invitation))
     end
 
     context 'when invitation not found' do
@@ -34,12 +26,12 @@ RSpec.describe Spree::InvitationEmailSubscriber do
         invitation_id = invitation.id
         invitation.destroy
 
-        expect { publish_event('invitation.create', OpenStruct.new(id: invitation_id)) }.not_to raise_error
+        expect { subscriber.send(:send_invitation_email, mock_event(OpenStruct.new(id: invitation_id))) }.not_to raise_error
       end
     end
   end
 
-  describe 'invitation.accept event' do
+  describe 'invitation.accepted event' do
     before do
       invitation.update!(invitee: invitee)
     end
@@ -47,7 +39,7 @@ RSpec.describe Spree::InvitationEmailSubscriber do
     it 'sends acceptance notification email' do
       expect(Spree::InvitationMailer).to receive(:invitation_accepted).with(kind_of(Spree::Invitation)).and_return(double(deliver_later: true))
 
-      publish_event('invitation.accept', invitation)
+      subscriber.send(:send_acceptance_notification, mock_event(invitation))
     end
 
     context 'when invitation not found' do
@@ -55,16 +47,16 @@ RSpec.describe Spree::InvitationEmailSubscriber do
         invitation_id = invitation.id
         invitation.destroy
 
-        expect { publish_event('invitation.accept', OpenStruct.new(id: invitation_id)) }.not_to raise_error
+        expect { subscriber.send(:send_acceptance_notification, mock_event(OpenStruct.new(id: invitation_id))) }.not_to raise_error
       end
     end
   end
 
-  describe 'invitation.resend event' do
+  describe 'invitation.resent event' do
     it 'resends invitation email' do
       expect(Spree::InvitationMailer).to receive(:invitation_email).with(kind_of(Spree::Invitation)).and_return(double(deliver_later: true))
 
-      publish_event('invitation.resend', invitation)
+      subscriber.send(:resend_invitation_email, mock_event(invitation))
     end
 
     context 'when invitation is expired' do
@@ -75,7 +67,7 @@ RSpec.describe Spree::InvitationEmailSubscriber do
       it 'does not send invitation email' do
         expect(Spree::InvitationMailer).not_to receive(:invitation_email)
 
-        publish_event('invitation.resend', invitation)
+        subscriber.send(:resend_invitation_email, mock_event(invitation))
       end
     end
 
@@ -88,7 +80,7 @@ RSpec.describe Spree::InvitationEmailSubscriber do
       it 'does not send invitation email' do
         expect(Spree::InvitationMailer).not_to receive(:invitation_email)
 
-        publish_event('invitation.resend', invitation)
+        subscriber.send(:resend_invitation_email, mock_event(invitation))
       end
     end
 
@@ -100,7 +92,7 @@ RSpec.describe Spree::InvitationEmailSubscriber do
       it 'does not send invitation email' do
         expect(Spree::InvitationMailer).not_to receive(:invitation_email)
 
-        publish_event('invitation.resend', invitation)
+        subscriber.send(:resend_invitation_email, mock_event(invitation))
       end
     end
 
@@ -109,7 +101,7 @@ RSpec.describe Spree::InvitationEmailSubscriber do
         invitation_id = invitation.id
         invitation.destroy!
 
-        expect { publish_event('invitation.resend', OpenStruct.new(id: invitation_id)) }.not_to raise_error
+        expect { subscriber.send(:resend_invitation_email, mock_event(OpenStruct.new(id: invitation_id))) }.not_to raise_error
       end
     end
   end

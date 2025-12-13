@@ -3,32 +3,23 @@
 require 'spec_helper'
 
 RSpec.describe Spree::ReimbursementEmailSubscriber do
-  include ActiveJob::TestHelper
-
   let(:reimbursement) { create(:reimbursement) }
   let(:store) { reimbursement.store }
+  let(:subscriber) { described_class.new }
 
-  def publish_event(event_name, reimbursement_id = reimbursement.id)
-    perform_enqueued_jobs(only: Spree::Events::SubscriberJob) do
-      Spree::Events.publish(
-        event_name,
-        { 'id' => reimbursement_id }
-      )
-    end
+  def mock_event(reimbursement_id)
+    double('Event', payload: { 'id' => reimbursement_id })
   end
 
   before do
     store.update!(preferences: store.preferences.merge(send_consumer_transactional_emails: true))
-    Spree::Events.activate!
   end
-
-  after { Spree::Events.reset! }
 
   describe 'reimbursement.reimbursed event' do
     it 'sends reimbursement email' do
       expect(Spree::ReimbursementMailer).to receive(:reimbursement_email).with(reimbursement.id).and_return(double(deliver_later: true))
 
-      publish_event('reimbursement.reimbursed')
+      subscriber.handle(mock_event(reimbursement.id))
     end
 
     context 'when store does not prefer transactional emails' do
@@ -39,13 +30,13 @@ RSpec.describe Spree::ReimbursementEmailSubscriber do
       it 'does not send reimbursement email' do
         expect(Spree::ReimbursementMailer).not_to receive(:reimbursement_email)
 
-        publish_event('reimbursement.reimbursed')
+        subscriber.handle(mock_event(reimbursement.id))
       end
     end
 
     context 'when reimbursement not found' do
       it 'does not raise an error' do
-        expect { publish_event('reimbursement.reimbursed', -1) }.not_to raise_error
+        expect { subscriber.handle(mock_event(-1)) }.not_to raise_error
       end
     end
   end
