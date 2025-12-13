@@ -16,14 +16,10 @@ describe Spree::Shipment, type: :model do
 
     allow(shipment).to receive_messages shipping_method: shipping_method
 
-    # Ensure subscriber is registered
-    Spree::ShipmentEmailSubscriber.unregister!
-    Spree::ShipmentEmailSubscriber.register!
+    Spree::Events.activate!
   end
 
-  after do
-    Spree::ShipmentEmailSubscriber.unregister!
-  end
+  after { Spree::Events.reset! }
 
   ['ready', 'canceled'].each do |state|
     context "from #{state}" do

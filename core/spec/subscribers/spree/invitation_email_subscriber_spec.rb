@@ -19,15 +19,8 @@ RSpec.describe Spree::InvitationEmailSubscriber do
     end
   end
 
-  before do
-    # Unregister first to avoid duplicate subscriptions from engine initialization
-    described_class.unregister!
-    described_class.register!
-  end
-
-  after do
-    described_class.unregister!
-  end
+  before { Spree::Events.activate! }
+  after { Spree::Events.reset! }
 
   describe 'invitation.create event' do
     it 'sends invitation email' do

@@ -7,15 +7,8 @@ describe Spree::Order, type: :model do
   let(:user) { create(:user) }
   let(:order) { create(:order, user: user, store: store) }
 
-  before do
-    # Ensure subscriber is registered
-    Spree::OrderEmailSubscriber.unregister!
-    Spree::OrderEmailSubscriber.register!
-  end
-
-  after do
-    Spree::OrderEmailSubscriber.unregister!
-  end
+  before { Spree::Events.activate! }
+  after { Spree::Events.reset! }
 
   context '#finalize!' do
     let(:order) { create(:order, email: 'test@example.com', store: store) }

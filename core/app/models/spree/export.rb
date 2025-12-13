@@ -11,6 +11,10 @@ module Spree
 
     include Spree::Core::NumberGenerator.new(prefix: 'EF')
 
+    # Set event prefix for all Export subclasses
+    # This ensures Spree::Exports::Products publishes 'export.create' not 'products.create'
+    self.event_prefix = 'export'
+
     #
     # Associations
     #
@@ -44,7 +48,7 @@ module Spree
     before_validation :set_default_format, on: :create
     before_validation :normalize_search_params, on: :create, if: -> { search_params.present? }
     before_create :clear_search_params, if: -> { record_selection == 'all' }
-    after_commit :generate_async, on: :create
+    # NOTE: generate_async is now handled by Spree::ExportSubscriber listening to 'export.create' event
 
     #
     # Virtual attributes

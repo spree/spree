@@ -252,14 +252,8 @@ RSpec.describe Spree::Admin::InvitationsController, type: :controller do
   describe 'PUT #resend' do
     stub_authorization!
 
-    before do
-      Spree::InvitationEmailSubscriber.unregister!
-      Spree::InvitationEmailSubscriber.register!
-    end
-
-    after do
-      Spree::InvitationEmailSubscriber.unregister!
-    end
+    before { Spree::Events.activate! }
+    after { Spree::Events.reset! }
 
     it 'publishes invitation.resend event' do
       invitation

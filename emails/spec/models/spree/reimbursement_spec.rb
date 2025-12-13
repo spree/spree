@@ -34,15 +34,10 @@ describe Spree::Reimbursement, type: :model do
     before do
       customer_return.save!
       return_item.accept!
-
-      # Ensure subscriber is registered
-      Spree::ReimbursementEmailSubscriber.unregister!
-      Spree::ReimbursementEmailSubscriber.register!
+      Spree::Events.activate!
     end
 
-    after do
-      Spree::ReimbursementEmailSubscriber.unregister!
-    end
+    after { Spree::Events.reset! }
 
     it 'triggers the reimbursement mailer to be sent via subscriber' do
       expect(Spree::ReimbursementMailer).to receive(:reimbursement_email).with(reimbursement.id) { double(deliver_later: true) }

@@ -20,14 +20,10 @@ RSpec.describe Spree::ShipmentEmailSubscriber do
 
   before do
     store.update!(preferences: store.preferences.merge(send_consumer_transactional_emails: true))
-    # Unregister first to avoid duplicate subscriptions from engine initialization
-    described_class.unregister!
-    described_class.register!
+    Spree::Events.activate!
   end
 
-  after do
-    described_class.unregister!
-  end
+  after { Spree::Events.reset! }
 
   describe 'shipment.ship event' do
     it 'sends shipped email' do

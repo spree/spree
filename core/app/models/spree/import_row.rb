@@ -1,5 +1,8 @@
 module Spree
   class ImportRow < Spree.base_class
+    # Set event prefix for ImportRow
+    self.event_prefix = 'import_row'
+
     #
     # Associations
     #
@@ -24,15 +27,16 @@ module Spree
       event :fail do
         transition to: :failed
       end
-      after_transition to: :failed, do: :add_row_to_import_view
-      after_transition to: :failed, do: :update_footer_in_import_view
+      after_transition to: :failed, do: :publish_import_row_failed_event
+      # NOTE: add_row_to_import_view and update_footer_in_import_view
+      # are now handled by Spree::Admin::ImportRowSubscriber
 
       event :complete do
         transition to: :completed
       end
-
-      after_transition to: :completed, do: :add_row_to_import_view
-      after_transition to: :completed, do: :update_footer_in_import_view
+      after_transition to: :completed, do: :publish_import_row_completed_event
+      # NOTE: add_row_to_import_view and update_footer_in_import_view
+      # are now handled by Spree::Admin::ImportRowSubscriber
     end
 
     #
@@ -81,29 +85,12 @@ module Spree
       fail!
     end
 
-    def add_row_to_import_view
-      return unless defined?(broadcast_append_to)
-
-      # we need to render this partial with store context to properly generate image URLs
-      with_store_context do
-        broadcast_append_to "import_#{import.id}_rows", target: 'rows', partial: 'spree/admin/imports/row', locals: { row: self, import: import }
-      end
+    def publish_import_row_completed_event
+      publish_event('import_row.complete')
     end
 
-    def update_footer_in_import_view
-      return unless defined?(broadcast_replace_to)
-
-      broadcast_replace_to "import_#{import_id}_footer", target: 'footer', partial: 'spree/admin/imports/footer', locals: { import: import }
-    end
-
-    private
-
-    def with_store_context
-      Spree::Current.store = store
-      Rails.application.routes.default_url_options[:host] = store.url_or_custom_domain
-      yield
-    ensure
-      Spree::Current.reset if defined?(Spree::Current)
+    def publish_import_row_failed_event
+      publish_event('import_row.fail')
     end
   end
 end

@@ -131,29 +131,6 @@ module Spree
         @event_handlers ||= {}
       end
 
-      # Register this subscriber with the event system
-      #
-      # Called automatically during Rails initialization for subscribers
-      # in the app/subscribers directory.
-      #
-      # @return [void]
-      def register!
-        return if subscription_patterns.empty?
-
-        subscription_patterns.each do |pattern|
-          Spree::Events.subscribe(pattern, self, subscription_options)
-        end
-      end
-
-      # Unregister this subscriber from the event system
-      #
-      # @return [void]
-      def unregister!
-        subscription_patterns.each do |pattern|
-          Spree::Events.unsubscribe(pattern, self)
-        end
-      end
-
       # Class-level call method for when the class itself is used as subscriber
       #
       # @param event [Spree::Event]

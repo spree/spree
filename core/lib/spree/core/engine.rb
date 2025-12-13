@@ -28,7 +28,8 @@ module Spree
                                :analytics_events,
                                :analytics_event_handlers,
                                :integrations,
-                               :eventable_models)
+                               :eventable_models,
+                               :subscribers)
       SpreeCalculators = Struct.new(:shipping_methods, :tax_rates, :promotion_actions_create_adjustments, :promotion_actions_create_item_adjustments)
       PromoEnvironment = Struct.new(:rules, :actions)
       SpreeValidators = Struct.new(:addresses)
@@ -52,6 +53,11 @@ module Spree
         Spree::RuntimeConfig = app.config.spree.preferences # for compatibility
         Spree::Dependencies = app.config.spree.dependencies
         Spree::Deprecation = ActiveSupport::Deprecation.new('6.0', 'Spree')
+      end
+
+      initializer 'spree.register.subscribers', before: :load_config_initializers do |app|
+        # Initialize subscribers array early so engines can add subscribers via initializers
+        app.config.spree.subscribers = []
       end
 
       initializer 'spree.register.calculators', before: :after_initialize do |app|
@@ -291,6 +297,7 @@ module Spree
           Spree::Product,
           Spree::Promotion,
           Spree::Refund,
+          Spree::Report,
           Spree::ReturnAuthorization,
           Spree::Shipment,
           Spree::StockItem,
@@ -312,8 +319,13 @@ module Spree
           Spree::EventLogSubscriber.attach_to_notifications
         end
 
-        # Register invitation email subscriber
-        Spree::InvitationEmailSubscriber.register!
+        # Add core event subscribers
+        # Other engines add their subscribers in their own after_initialize blocks
+        Spree.subscribers.concat [
+          Spree::ExportSubscriber,
+          Spree::ReportSubscriber,
+          Spree::InvitationEmailSubscriber
+        ]
       end
 
       initializer 'spree.promo.register.promotions.actions' do |app|
@@ -352,6 +364,15 @@ module Spree
         end
       end
 
+      # Activate event subscribers after all engines have registered their subscribers
+      # This registers an after_initialize callback late, ensuring it runs after all engine callbacks
+      # Needed for console, jobs, and other contexts where to_prepare doesn't run
+      initializer 'spree.events.schedule_activation', after: :load_config_initializers do |app|
+        app.config.after_initialize do
+          Spree::Events.activate!
+        end
+      end
+
       config.to_prepare do
         # Ensure spree locale paths are present before decorators
         I18n.load_path.unshift(*(Dir.glob(
@@ -365,14 +386,9 @@ module Spree
           Rails.configuration.cache_classes ? require(c) : load(c)
         end
 
-        # Reset and re-register event subscribers on code reload
+        # Reset and re-activate event subscribers on code reload
+        # activate! will register all subscribers from Spree.subscribers
         Spree::Events.reset!
-
-        # Auto-register all Spree::Subscriber subclasses
-        # Subscribers are auto-loaded from app/subscribers directories
-        Spree::Subscriber.descendants.each(&:register!)
-
-        # Activate the event system
         Spree::Events.activate!
       end
     end

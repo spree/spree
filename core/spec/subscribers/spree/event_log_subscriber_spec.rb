@@ -4,6 +4,11 @@ require 'spec_helper'
 
 RSpec.describe Spree::EventLogSubscriber do
   describe '.attach_to_notifications' do
+    before do
+      # Detach first since it may be attached by the engine's after_initialize
+      described_class.detach_from_notifications
+    end
+
     after do
       described_class.detach_from_notifications
     end

@@ -9,11 +9,13 @@ module Spree
       # Add app/subscribers to autoload paths
       config.paths.add 'app/subscribers', eager_load: true
 
-      # Register email subscribers after initialization
+      # Add email event subscribers
       config.after_initialize do
-        Spree::OrderEmailSubscriber.register!
-        Spree::ShipmentEmailSubscriber.register!
-        Spree::ReimbursementEmailSubscriber.register!
+        Spree.subscribers.concat [
+          Spree::OrderEmailSubscriber,
+          Spree::ShipmentEmailSubscriber,
+          Spree::ReimbursementEmailSubscriber
+        ]
       end
     end
   end

@@ -112,8 +112,24 @@ module Spree
 
       # Get the event name prefix for this model
       #
+      # If a parent class has explicitly set an event_prefix, it will be inherited.
+      # Otherwise, uses model_name.element (e.g., 'order' for Spree::Order)
+      #
       # @return [String] e.g., 'order' for Spree::Order
       def event_prefix
+        # If this class has an explicitly set prefix, use it
+        return @event_prefix if defined?(@event_prefix) && @event_prefix.present?
+
+        # Check if a parent class has an explicitly set prefix
+        parent = superclass
+        while parent && parent.respond_to?(:event_prefix)
+          if parent.instance_variable_defined?(:@event_prefix) && parent.instance_variable_get(:@event_prefix).present?
+            return parent.instance_variable_get(:@event_prefix)
+          end
+          parent = parent.superclass
+        end
+
+        # Default to model_name.element
         @event_prefix ||= model_name.element
       end
 
@@ -165,12 +181,27 @@ module Spree
     # Find the event serializer class for this model
     #
     # Looks for Spree::Events::ModelNameSerializer (e.g., Spree::Events::OrderSerializer)
+    # Also walks up the class hierarchy to find a serializer for parent classes.
+    # This allows subclasses like Spree::Exports::Products to use ExportSerializer.
     #
     # @return [Class, nil] The serializer class or nil if not found
     def event_serializer_class
       return nil unless self.class.name
 
-      "Spree::Events::#{self.class.name.demodulize}Serializer".safe_constantize
+      # Try this class and walk up the hierarchy
+      klass = self.class
+      while klass && klass != Object && klass != BasicObject
+        class_name = klass.name&.demodulize
+        # Skip looking for BaseSerializer - that's the parent class for all serializers
+        if class_name.present? && class_name != 'Base'
+          serializer = "Spree::Events::#{class_name}Serializer".safe_constantize
+          return serializer if serializer
+        end
+
+        klass = klass.superclass
+      end
+
+      nil
     end
 
     # Context passed to the event serializer

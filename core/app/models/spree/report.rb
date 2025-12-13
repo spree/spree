@@ -3,6 +3,10 @@ module Spree
     include Spree::SingleStoreResource
     include Spree::VendorConcern if defined?(Spree::VendorConcern)
 
+    # Set event prefix for all Report subclasses
+    # This ensures Spree::Reports::SalesTotal publishes 'report.create' not 'sales_total.create'
+    self.event_prefix = 'report'
+
     #
     # Associations
     #
@@ -13,7 +17,7 @@ module Spree
     # Callbacks
     #
     after_initialize :set_default_values
-    after_commit :generate_async, on: :create
+    # NOTE: generate_async is now handled by Spree::ReportSubscriber listening to 'report.create' event
 
     #
     # Validations

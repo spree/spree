@@ -95,7 +95,12 @@ module Spree
       end
 
       # Activate the event system (called during Rails initialization)
+      # Also registers all subscribers from Spree.subscribers
+      # This method is idempotent - calling it multiple times has no effect
       def activate!
+        return if registry.size > 0
+
+        register_subscribers!
         adapter.activate!
       end
 
@@ -104,6 +109,22 @@ module Spree
         adapter.deactivate! if @adapter
         @registry = nil
         @adapter = nil
+      end
+
+      # Register all subscribers from Spree.subscribers
+      #
+      # This is called automatically during Rails initialization.
+      # Can also be called in tests after reset! to re-register subscribers.
+      #
+      # @return [void]
+      def register_subscribers!
+        return unless defined?(Spree) && Spree.respond_to?(:subscribers)
+
+        Spree.subscribers&.each do |subscriber|
+          subscriber.subscription_patterns.each do |pattern|
+            subscribe(pattern, subscriber, subscriber.subscription_options)
+          end
+        end
       end
 
       # List all registered subscriber patterns

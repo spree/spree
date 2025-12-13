@@ -61,37 +61,6 @@ RSpec.describe Spree::Subscriber do
     end
   end
 
-  describe '.register!' do
-    it 'registers the subscriber with the event system' do
-      subscriber_class = Class.new(described_class) do
-        subscribes_to 'order.complete'
-      end
-
-      subscriber_class.register!
-
-      expect(Spree::Events.patterns).to include('order.complete')
-    end
-
-    it 'does nothing when no patterns defined' do
-      subscriber_class = Class.new(described_class)
-
-      expect { subscriber_class.register! }.not_to change { Spree::Events.patterns.size }
-    end
-  end
-
-  describe '.unregister!' do
-    it 'removes the subscriber from the event system' do
-      subscriber_class = Class.new(described_class) do
-        subscribes_to 'order.complete'
-      end
-
-      subscriber_class.register!
-      subscriber_class.unregister!
-
-      expect(Spree::Events.subscriptions).to be_empty
-    end
-  end
-
   describe '#call' do
     context 'without event handlers' do
       it 'calls the handle method' do
@@ -193,7 +162,10 @@ RSpec.describe Spree::Subscriber do
         end
       end
 
-      subscriber_class.register!
+      # Subscribe the class directly
+      subscriber_class.subscription_patterns.each do |pattern|
+        Spree::Events.subscribe(pattern, subscriber_class, subscriber_class.subscription_options)
+      end
       Spree::Events.activate!
 
       Spree::Events.publish('test.event', { key: 'value' })
