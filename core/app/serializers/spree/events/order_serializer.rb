@@ -24,8 +24,12 @@ module Spree
           email: resource.email,
           user_id: resource.user_id,
           store_id: resource.store_id,
+          canceler_id: resource.canceler_id,
+          approver_id: resource.approver_id,
+          considered_risky: resource.considered_risky,
           completed_at: timestamp(resource.completed_at),
           canceled_at: timestamp(resource.canceled_at),
+          approved_at: timestamp(resource.approved_at),
           created_at: timestamp(resource.created_at),
           updated_at: timestamp(resource.updated_at)
         }

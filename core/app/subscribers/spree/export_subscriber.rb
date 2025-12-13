@@ -12,9 +12,9 @@ module Spree
   # so there's no benefit to running the subscriber itself asynchronously.
   #
   class ExportSubscriber < Spree::Subscriber
-    subscribes_to 'export.create', async: false
+    subscribes_to 'export.created', async: false
 
-    on 'export.create', :generate_export_async
+    on 'export.created', :generate_export_async
 
     def generate_export_async(event)
       export_id = event.payload['id']

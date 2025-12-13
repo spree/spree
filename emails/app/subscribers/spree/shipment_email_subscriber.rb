@@ -2,7 +2,7 @@
 
 module Spree
   class ShipmentEmailSubscriber < Spree::Subscriber
-    subscribes_to 'shipment.ship'
+    subscribes_to 'shipment.shipped'
 
     def handle(event)
       shipment = find_shipment(event)

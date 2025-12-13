@@ -46,7 +46,7 @@ module Spree
         transition pending: :accepted
       end
       after_transition to: :accepted, do: :after_accept
-      after_transition to: :accepted, do: :send_invitation_accepted_event
+      after_transition to: :accepted, do: :publish_invitation_accepted_event
     end
 
     #
@@ -54,7 +54,7 @@ module Spree
     #
     after_initialize :set_defaults, if: :new_record?
     before_validation :set_invitee_from_email, on: :create
-    after_create :send_invitation_email, unless: :skip_email
+    after_create :publish_invitation_created_event, unless: :skip_email
 
     # returns the store for the invitation
     # if the resource is a store, return the resource
@@ -81,7 +81,7 @@ module Spree
     def resend!
       return if expired? || deleted? || accepted?
 
-      publish_event('invitation.resend')
+      publish_event('invitation.resent')
     end
 
     private
@@ -92,12 +92,12 @@ module Spree
       set_accepted_at
     end
 
-    def send_invitation_accepted_event
-      publish_event('invitation.accept')
+    def publish_invitation_accepted_event
+      publish_event('invitation.accepted')
     end
 
-    def send_invitation_email
-      publish_event('invitation.create')
+    def publish_invitation_created_event
+      publish_event('invitation.created')
     end
 
     # This method is kept for backwards compatibility.

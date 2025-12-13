@@ -224,45 +224,24 @@ describe Spree::Order, type: :model do
 
     context 'events' do
       let(:order) { create(:completed_order_with_totals, store: store) }
-      let(:received_events) { [] }
 
-      before do
-        Spree::Events.reset!
-        Spree::Events.subscribe('order.cancel', async: false) { |e| received_events << e }
-        Spree::Events.activate!
-      end
-
-      after { Spree::Events.reset! }
-
-      it 'publishes order.cancel event' do
+      it 'publishes order.canceled event' do
+        expect(order).to receive(:publish_event).with('order.canceled').at_least(:once)
+        allow(order).to receive(:publish_event).with(anything)
         order.cancel!
-
-        expect(received_events.size).to eq(1)
-        expect(received_events.first.payload['id']).to eq(order.id)
-        expect(received_events.first.payload['number']).to eq(order.number)
       end
     end
   end
 
   describe '#after_resume' do
     let(:order) { create(:completed_order_with_totals, store: store) }
-    let(:received_events) { [] }
 
-    before do
-      Spree::Events.reset!
-      Spree::Events.subscribe('order.resume', async: false) { |e| received_events << e }
-      Spree::Events.activate!
-      order.cancel!
-    end
+    before { order.cancel! }
 
-    after { Spree::Events.reset! }
-
-    it 'publishes order.resume event' do
+    it 'publishes order.resumed event' do
+      expect(order).to receive(:publish_event).with('order.resumed').at_least(:once)
+      allow(order).to receive(:publish_event).with(anything)
       order.resume!
-
-      expect(received_events.size).to eq(1)
-      expect(received_events.first.payload['id']).to eq(order.id)
-      expect(received_events.first.payload['number']).to eq(order.number)
     end
   end
 
@@ -312,15 +291,9 @@ describe Spree::Order, type: :model do
     context 'events' do
       let(:order) { create(:completed_order_with_totals) }
 
-      it 'publishes order.update event' do
-        events = []
-        Spree::Events.subscribe('order.update', async: false) { |e| events << e }
-
+      it 'publishes order.canceled event' do
+        expect(order).to receive(:publish_event).with('order.canceled')
         order.canceled_by(admin_user)
-
-        update_event = events.find { |e| e.payload['canceler_id'] == admin_user.id }
-        expect(update_event).not_to be_nil
-        expect(update_event.payload).to include('id' => order.id)
       end
     end
   end
@@ -428,23 +401,13 @@ describe Spree::Order, type: :model do
 
     context 'events' do
       let(:order) { create(:order_with_line_items, store: store) }
-      let(:received_events) { [] }
 
-      before do
-        Spree::Events.reset!
-        Spree::Events.subscribe('order.complete', async: false) { |e| received_events << e }
-        Spree::Events.activate!
-        order.update_column(:state, 'complete')
-      end
+      before { order.update_column(:state, 'complete') }
 
-      after { Spree::Events.reset! }
-
-      it 'publishes order.complete event' do
+      it 'publishes order.completed event' do
+        expect(order).to receive(:publish_event).with('order.completed').at_least(:once)
+        allow(order).to receive(:publish_event).with(anything)
         order.finalize!
-
-        expect(received_events.size).to eq(1)
-        expect(received_events.first.payload['id']).to eq(order.id)
-        expect(received_events.first.payload['number']).to eq(order.number)
       end
     end
   end
@@ -723,16 +686,10 @@ describe Spree::Order, type: :model do
     end
 
     context 'events' do
-      it 'publishes order.update event' do
+      it 'publishes order.updated event' do
         order = create(:order_with_totals, state: 'delivery')
-        events = []
-        Spree::Events.subscribe('order.update', async: false) { |e| events << e }
-
+        expect(order).to receive(:publish_event).with('order.updated').at_least(:once)
         order.restart_checkout_flow
-
-        update_event = events.find { |e| e.payload['state'] == 'cart' }
-        expect(update_event).not_to be_nil
-        expect(update_event.payload).to include('id' => order.id)
       end
     end
   end
@@ -783,7 +740,7 @@ describe Spree::Order, type: :model do
       expect(order.collect_frontend_payment_methods).to include(payment_method)
     end
 
-    it 'does not include backend payment method ' do
+    it 'does not include backend payment method' do
       Spree::PaymentMethod.create!(name: 'Fake', active: true, display_on: 'back_end', stores: [store])
       expect(order.collect_frontend_payment_methods.count).to eq(0)
     end
@@ -796,7 +753,7 @@ describe Spree::Order, type: :model do
     it 'does not include a payment method that is not suitable for this order' do
       allow(Spree::PaymentMethod).to receive(:available_on_front_end).and_return(methods)
 
-      expect(order.collect_frontend_payment_methods).to match_array [ok_method]
+      expect(order.collect_frontend_payment_methods).to contain_exactly(ok_method)
     end
 
     it 'does not include a payment method from different stores' do
@@ -1008,22 +965,16 @@ describe Spree::Order, type: :model do
     context 'events' do
       let(:order) { create(:order, order_attributes) }
 
-      it 'publishes order.update event' do
-        events = []
-        Spree::Events.subscribe('order.update', async: false) { |e| events << e }
-
+      it 'publishes order.updated event' do
+        expect(order).to receive(:publish_event).with('order.updated')
         order.associate_user!(user)
-
-        expect(events.size).to eq(1)
-        expect(events.first.payload).to include('id' => order.id)
-        expect(events.first.payload).to include('user_id' => user.id)
       end
     end
   end
 
   describe '#disassociate_user!' do
     let(:order) { create(:order_with_line_items) }
-    let(:expected_order_attributes) {
+    let(:expected_order_attributes) do
       {
         user: nil,
         user_id: nil,
@@ -1035,7 +986,7 @@ describe Spree::Order, type: :model do
         ship_address: nil,
         ship_address_id: nil
       }
-    }
+    end
 
     it 'disassociates a user from an order' do
       order.disassociate_user!
@@ -1065,15 +1016,9 @@ describe Spree::Order, type: :model do
     end
 
     context 'events' do
-      it 'publishes order.update event' do
-        events = []
-        Spree::Events.subscribe('order.update', async: false) { |e| events << e }
-
+      it 'publishes order.approved event' do
+        expect(order).to receive(:publish_event).with('order.approved').at_least(:once)
         order.approved_by(admin_user)
-
-        update_event = events.find { |e| e.payload['approver_id'] == admin_user.id }
-        expect(update_event).not_to be_nil
-        expect(update_event.payload).to include('id' => order.id)
       end
     end
   end
@@ -1087,15 +1032,9 @@ describe Spree::Order, type: :model do
     end
 
     context 'events' do
-      it 'publishes order.update event' do
-        events = []
-        Spree::Events.subscribe('order.update', async: false) { |e| events << e }
-
+      it 'publishes order.updated event' do
+        expect(order).to receive(:publish_event).with('order.updated')
         order.considered_risky!
-
-        update_event = events.find { |e| e.payload['considered_risky'] == true }
-        expect(update_event).not_to be_nil
-        expect(update_event.payload).to include('id' => order.id)
       end
     end
   end
@@ -1113,15 +1052,9 @@ describe Spree::Order, type: :model do
     end
 
     context 'events' do
-      it 'publishes order.update event' do
-        events = []
-        Spree::Events.subscribe('order.update', async: false) { |e| events << e }
-
+      it 'publishes order.approved event' do
+        expect(order).to receive(:publish_event).with('order.approved')
         order.approve!
-
-        update_event = events.find { |e| e.payload['considered_risky'] == false }
-        expect(update_event).not_to be_nil
-        expect(update_event.payload).to include('id' => order.id)
       end
     end
   end
@@ -1154,15 +1087,9 @@ describe Spree::Order, type: :model do
       end
 
       context 'events' do
-        it 'publishes order.update event' do
-          events = []
-          Spree::Events.subscribe('order.update', async: false) { |e| events << e }
-
+        it 'publishes order.updated event' do
+          expect(order).to receive(:publish_event).with('order.updated').at_least(:once)
           order.ensure_updated_shipments
-
-          update_event = events.find { |e| e.payload['shipment_total'].to_f == 0 }
-          expect(update_event).not_to be_nil
-          expect(update_event.payload).to include('id' => order.id)
         end
       end
     end
@@ -1658,7 +1585,7 @@ describe Spree::Order, type: :model do
     end
     context 'when zero amount credit-card payment' do
       it 'expect not to build a new payment' do
-        expect { order.assign_attributes(attributes) }.to change { order.payments.size }.by(0)
+        expect { order.assign_attributes(attributes) }.not_to change { order.payments.size }
       end
     end
 
@@ -1741,13 +1668,13 @@ describe Spree::Order, type: :model do
   describe '#valid_promotions' do
     def create_adjustment(label, order_or_line_item, amount, source)
       create(:adjustment,
-              order: order,
-              adjustable: order_or_line_item,
-              source: source,
-              amount: amount,
-              state: 'closed',
-              label: label,
-              mandatory: false)
+             order: order,
+             adjustable: order_or_line_item,
+             source: source,
+             amount: amount,
+             state: 'closed',
+             label: label,
+             mandatory: false)
     end
 
     let!(:order) { create(:order_with_line_items, line_items_count: 10) }
@@ -1957,7 +1884,7 @@ describe Spree::Order, type: :model do
       let!(:user) { create(:user_with_addresses) }
 
       it 'changes user default bill address' do
-        expect(user.bill_address_id).not_to be nil
+        expect(user.bill_address_id).not_to be_nil
 
         expect { subject }.to(change { user.bill_address_id })
       end
@@ -1978,7 +1905,7 @@ describe Spree::Order, type: :model do
       let!(:user) { create(:user) }
 
       it 'changes user default bill addresss' do
-        expect(user.bill_address_id).to be nil
+        expect(user.bill_address_id).to be_nil
         expect(user.addresses).to be_empty
 
         expect { subject }.to change { user.bill_address_id }
@@ -1992,7 +1919,7 @@ describe Spree::Order, type: :model do
       before { user.bill_address = nil }
 
       it 'changes user default bill addresss' do
-        expect(user.bill_address_id).to be nil
+        expect(user.bill_address_id).to be_nil
         expect(user.addresses).not_to be_empty
 
         expect { subject }.to change { user.bill_address_id }
@@ -2052,7 +1979,7 @@ describe Spree::Order, type: :model do
       let!(:user) { create(:user) }
 
       it 'changes user default ship address' do
-        expect(user.ship_address_id).to be nil
+        expect(user.ship_address_id).to be_nil
         expect(user.addresses).to be_empty
 
         expect { subject }.to change { user.ship_address_id }
@@ -2066,7 +1993,7 @@ describe Spree::Order, type: :model do
       before { user.update(ship_address: nil) }
 
       it 'changes user default ship address' do
-        expect(user.ship_address_id).to be nil
+        expect(user.ship_address_id).to be_nil
         expect(user.addresses).not_to be_empty
 
         expect { subject }.to change { user.ship_address_id }

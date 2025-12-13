@@ -16,7 +16,7 @@ module Spree
   #   class Spree::Order < Spree.base_class
   #     def complete!
   #       # ... completion logic ...
-  #       publish_event('order.complete')
+  #       publish_event('order.completed')
   #     end
   #   end
   #
@@ -149,9 +149,9 @@ module Spree
     # @return [Spree::Event] The published event
     #
     # @example
-    #   order.publish_event('order.complete')
-    #   order.publish_event('order.complete', { custom: 'data' })
-    #   order.publish_event('order.complete', metadata: { user_id: 1 })
+    #   order.publish_event('order.completed')
+    #   order.publish_event('order.completed', { custom: 'data' })
+    #   order.publish_event('order.completed', metadata: { user_id: 1 })
     #
     def publish_event(event_name, payload = nil, metadata = {})
       return unless Spree::Events.enabled?
@@ -235,18 +235,18 @@ module Spree
     end
 
     def publish_create_event
-      publish_event("#{event_prefix}.create")
+      publish_event("#{event_prefix}.created")
     end
 
     def publish_update_event
-      publish_event("#{event_prefix}.update")
+      publish_event("#{event_prefix}.updated")
     end
 
     def publish_destroy_event
       # For destroy, we need to capture the data before it's gone
       # The after_commit runs after the record is deleted, so we use
       # the previously captured payload
-      publish_event("#{event_prefix}.destroy", @_pre_destroy_payload || event_payload)
+      publish_event("#{event_prefix}.destroyed", @_pre_destroy_payload || event_payload)
     end
 
     def capture_pre_destroy_payload

@@ -85,7 +85,7 @@ module Spree
     state_machine :reception_status, initial: :awaiting do
       after_transition to: :received, do: :attempt_accept
       after_transition to: :received, do: :process_inventory_unit!
-      after_transition to: :received, do: :send_return_item_received_event
+      after_transition to: :received, do: :publish_return_item_received_event
 
       event :receive do
         transition to: :received, from: :awaiting
@@ -94,12 +94,12 @@ module Spree
       event :cancel do
         transition to: :cancelled, from: :awaiting
       end
-      after_transition to: :cancelled, do: :send_return_item_canceled_event
+      after_transition to: :cancelled, do: :publish_return_item_canceled_event
 
       event :give do
         transition to: :given_to_customer, from: :awaiting
       end
-      after_transition to: :given_to_customer, do: :send_return_item_given_event
+      after_transition to: :given_to_customer, do: :publish_return_item_given_event
     end
 
     extend DisplayMoney
@@ -274,16 +274,16 @@ module Spree
       resellable? && variant.should_track_inventory? && stock_item && Spree::Config[:restock_inventory]
     end
 
-    def send_return_item_received_event
-      publish_event('return_item.receive')
+    def publish_return_item_received_event
+      publish_event('return_item.received')
     end
 
-    def send_return_item_canceled_event
-      publish_event('return_item.cancel')
+    def publish_return_item_canceled_event
+      publish_event('return_item.canceled')
     end
 
-    def send_return_item_given_event
-      publish_event('return_item.give')
+    def publish_return_item_given_event
+      publish_event('return_item.given')
     end
   end
 end

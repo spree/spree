@@ -393,7 +393,7 @@ module Spree
       end
 
       # Manually publish update event since update_all bypasses callbacks
-      publish_event('order.update') if changes.present?
+      publish_event('order.updated') if changes.present?
     end
 
     def disassociate_user!
@@ -530,7 +530,7 @@ module Spree
 
       consider_risk
 
-      send_order_completed_event
+      publish_order_completed_event
     end
 
     def fulfill!
@@ -698,7 +698,7 @@ module Spree
         update_column(:shipment_total, 0)
 
         # Manually publish update event since update_column bypasses callbacks
-        publish_event('order.update')
+        publish_event('order.updated')
 
         restart_checkout_flow
       end
@@ -711,7 +711,7 @@ module Spree
       )
 
       # Manually publish update event since update_columns bypasses callbacks
-      publish_event('order.update')
+      publish_event('order.updated')
 
       next! unless line_items.empty?
     end
@@ -754,7 +754,7 @@ module Spree
       end
 
       # Manually publish update event since update_columns bypasses callbacks
-      publish_event('order.update')
+      publish_event('order.canceled')
     end
 
     def approved_by(user)
@@ -767,7 +767,7 @@ module Spree
       end
 
       # Manually publish update event since update_columns bypasses callbacks
-      publish_event('order.update')
+      publish_event('order.approved')
     end
 
     def approved?
@@ -795,14 +795,14 @@ module Spree
       update_column(:considered_risky, true)
 
       # Manually publish update event since update_column bypasses callbacks
-      publish_event('order.update')
+      publish_event('order.updated')
     end
 
     def approve!
       update_column(:considered_risky, false)
 
       # Manually publish update event since update_column bypasses callbacks
-      publish_event('order.update')
+      publish_event('order.approved')
     end
 
     def tax_total
@@ -928,7 +928,7 @@ module Spree
           errors.add(:base, Spree.t(:items_cannot_be_shipped))
         end
 
-        return false
+        false
       end
     end
 
@@ -948,14 +948,14 @@ module Spree
       send_cancel_email
       update_with_updater!
       send_order_canceled_webhook
-      send_order_canceled_event
+      publish_order_canceled_event
     end
 
     def after_resume
       shipments.each(&:resume!)
       consider_risk
       send_order_resumed_webhook
-      send_order_resumed_event
+      publish_order_resumed_event
     end
 
     def use_billing?
@@ -994,16 +994,16 @@ module Spree
       end
     end
 
-    def send_order_completed_event
-      publish_event('order.complete')
+    def publish_order_completed_event
+      publish_event('order.completed')
     end
 
-    def send_order_canceled_event
-      publish_event('order.cancel')
+    def publish_order_canceled_event
+      publish_event('order.canceled')
     end
 
-    def send_order_resumed_event
-      publish_event('order.resume')
+    def publish_order_resumed_event
+      publish_event('order.resumed')
     end
   end
 end

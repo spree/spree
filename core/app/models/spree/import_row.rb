@@ -86,11 +86,11 @@ module Spree
     end
 
     def publish_import_row_completed_event
-      publish_event('import_row.complete')
+      publish_event('import_row.completed')
     end
 
     def publish_import_row_failed_event
-      publish_event('import_row.fail')
+      publish_event('import_row.failed')
     end
   end
 end

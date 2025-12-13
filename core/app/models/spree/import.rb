@@ -60,9 +60,9 @@ module Spree
       event :complete do
         transition from: :processing, to: :completed
       end
-      after_transition to: :completed, do: :send_import_completed_event
+      after_transition to: :completed, do: :publish_import_completed_event
       # NOTE: send_import_completed_email and update_loader_in_import_view
-      # are now handled by Spree::ImportSubscriber listening to 'import.complete' event
+      # are now handled by Spree::Admin::ImportSubscriber listening to 'import.completed' event
 
       event :fail do
         transition to: :failed
@@ -164,8 +164,8 @@ module Spree
       "#{Spree.t(type.demodulize.pluralize.downcase)} #{number}"
     end
 
-    def send_import_completed_event
-      publish_event('import.complete')
+    def publish_import_completed_event
+      publish_event('import.completed')
     end
 
     # Returns the headers of the csv file

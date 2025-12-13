@@ -12,9 +12,9 @@ module Spree
   # so there's no benefit to running the subscriber itself asynchronously.
   #
   class ReportSubscriber < Spree::Subscriber
-    subscribes_to 'report.create', async: false
+    subscribes_to 'report.created', async: false
 
-    on 'report.create', :generate_report_async
+    on 'report.created', :generate_report_async
 
     def generate_report_async(event)
       report_id = event.payload['id']

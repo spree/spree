@@ -114,11 +114,11 @@ module Spree
       event :complete do
         transition from: [:processing, :pending, :checkout], to: :completed
       end
-      after_transition to: :completed, do: [:after_completed, :send_payment_completed_webhook, :send_payment_completed_event]
+      after_transition to: :completed, do: [:after_completed, :send_payment_completed_webhook, :publish_payment_completed_event]
       event :void do
         transition from: [:pending, :processing, :completed, :checkout], to: :void
       end
-      after_transition to: :void, do: [:after_void, :send_payment_voided_webhook, :send_payment_voided_event]
+      after_transition to: :void, do: [:after_void, :send_payment_voided_webhook, :publish_payment_voided_event]
       # when the card brand isn't supported
       event :invalidate do
         transition from: [:checkout], to: :invalid
@@ -291,12 +291,12 @@ module Spree
     def after_completed
     end
 
-    def send_payment_completed_event
-      publish_event('payment.complete')
+    def publish_payment_completed_event
+      publish_event('payment.completed')
     end
 
-    def send_payment_voided_event
-      publish_event('payment.void')
+    def publish_payment_voided_event
+      publish_event('payment.voided')
     end
 
     def has_invalid_state?

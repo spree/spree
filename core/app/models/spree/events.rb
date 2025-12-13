@@ -8,13 +8,13 @@ module Spree
   # allowing for future changes without affecting subscriber code.
   #
   # @example Publishing an event
-  #   Spree::Events.publish('order.complete', order.serializable_hash)
+  #   Spree::Events.publish('order.completed', order.serializable_hash)
   #
   # @example Subscribing with a class
-  #   Spree::Events.subscribe('order.complete', OrderCompleteHandler)
+  #   Spree::Events.subscribe('order.completed', OrderCompletedHandler)
   #
   # @example Subscribing with a block
-  #   Spree::Events.subscribe('order.complete') do |event|
+  #   Spree::Events.subscribe('order.completed') do |event|
   #     puts "Order completed: #{event.payload['number']}"
   #   end
   #
@@ -32,8 +32,8 @@ module Spree
       # @return [Spree::Event] The published event
       #
       # @example
-      #   Spree::Events.publish('product.create', product.serializable_hash)
-      #   Spree::Events.publish('order.complete', order.serializable_hash, { user_id: current_user.id })
+      #   Spree::Events.publish('product.created', product.serializable_hash)
+      #   Spree::Events.publish('order.completed', order.serializable_hash, { user_id: current_user.id })
       #
       def publish(name, payload = {}, metadata = {})
         adapter.publish(name, payload, metadata)
@@ -50,16 +50,16 @@ module Spree
       # @return [void]
       #
       # @example With a subscriber class
-      #   Spree::Events.subscribe('order.complete', SendConfirmationEmail)
+      #   Spree::Events.subscribe('order.completed', SendConfirmationEmail)
       #
       # @example With a block
-      #   Spree::Events.subscribe('order.complete') { |event| puts event.name }
+      #   Spree::Events.subscribe('order.completed') { |event| puts event.name }
       #
       # @example With pattern matching
       #   Spree::Events.subscribe('order.*', OrderAuditLogger)
       #
       # @example Synchronous execution
-      #   Spree::Events.subscribe('order.complete', MyHandler, async: false)
+      #   Spree::Events.subscribe('order.completed', MyHandler, async: false)
       #
       def subscribe(pattern, subscriber = nil, options = {}, &block)
         subscriber = block if block_given?

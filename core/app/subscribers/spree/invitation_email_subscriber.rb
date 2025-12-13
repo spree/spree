@@ -2,11 +2,11 @@
 
 module Spree
   class InvitationEmailSubscriber < Spree::Subscriber
-    subscribes_to 'invitation.create', 'invitation.accept', 'invitation.resend'
+    subscribes_to 'invitation.created', 'invitation.accepted', 'invitation.resent'
 
-    on 'invitation.create', :send_invitation_email
-    on 'invitation.accept', :send_acceptance_notification
-    on 'invitation.resend', :resend_invitation_email
+    on 'invitation.created', :send_invitation_email
+    on 'invitation.accepted', :send_acceptance_notification
+    on 'invitation.resent', :resend_invitation_email
 
     private
 

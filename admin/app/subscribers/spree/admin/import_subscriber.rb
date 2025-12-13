@@ -4,16 +4,16 @@ module Spree
   module Admin
     # Handles Import events for the admin interface.
     #
-    # This subscriber listens to import.complete event and handles:
+    # This subscriber listens to import.completed event and handles:
     # - Updating the loader in the import view (Turbo Streams)
     #
     # We use async: false because the UI update should happen immediately
     # after the import completes.
     #
     class ImportSubscriber < Spree::Subscriber
-      subscribes_to 'import.complete', async: false
+      subscribes_to 'import.completed', async: false
 
-      on 'import.complete', :update_loader_in_import_view
+      on 'import.completed', :update_loader_in_import_view
 
       def update_loader_in_import_view(event)
         import_id = event.payload['id']

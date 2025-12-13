@@ -18,13 +18,13 @@ module Spree
         transition partially_redeemed: :redeemed
       end
       after_transition to: :redeemed, do: :after_redeem
-      after_transition to: :redeemed, do: :send_gift_card_redeemed_event
+      after_transition to: :redeemed, do: :publish_gift_card_redeemed_event
 
       event :partial_redeem do
         transition active: :partially_redeemed
         transition partially_redeemed: :partially_redeemed
       end
-      after_transition to: :partially_redeemed, do: :send_gift_card_partial_redeemed_event
+      after_transition to: :partially_redeemed, do: :publish_gift_card_partially_redeemed_event
     end
 
     #
@@ -158,12 +158,12 @@ module Spree
       update!(redeemed_at: Time.current)
     end
 
-    def send_gift_card_redeemed_event
-      publish_event('gift_card.redeem')
+    def publish_gift_card_redeemed_event
+      publish_event('gift_card.redeemed')
     end
 
-    def send_gift_card_partial_redeemed_event
-      publish_event('gift_card.partial_redeem')
+    def publish_gift_card_partially_redeemed_event
+      publish_event('gift_card.partially_redeemed')
     end
 
     def ensure_can_be_deleted

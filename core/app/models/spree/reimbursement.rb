@@ -76,7 +76,7 @@ module Spree
       event :reimbursed do
         transition to: :reimbursed, from: [:pending, :errored]
       end
-      after_transition to: :reimbursed, do: :send_reimbursement_reimbursed_event
+      after_transition to: :reimbursed, do: :publish_reimbursement_reimbursed_event
     end
 
     class << self
@@ -139,7 +139,7 @@ module Spree
 
     private
 
-    def send_reimbursement_reimbursed_event
+    def publish_reimbursement_reimbursed_event
       publish_event('reimbursement.reimbursed')
     end
 

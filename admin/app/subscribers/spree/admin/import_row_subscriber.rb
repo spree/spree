@@ -4,7 +4,7 @@ module Spree
   module Admin
     # Handles ImportRow events for the admin interface.
     #
-    # This subscriber listens to import_row.complete and import_row.fail events
+    # This subscriber listens to import_row.completed and import_row.failed events
     # and handles:
     # - Adding the row to the import view (Turbo Streams)
     # - Updating the footer in the import view (Turbo Streams)
@@ -12,10 +12,10 @@ module Spree
     # We use async: false because the UI updates should happen immediately.
     #
     class ImportRowSubscriber < Spree::Subscriber
-      subscribes_to 'import_row.complete', 'import_row.fail', async: false
+      subscribes_to 'import_row.completed', 'import_row.failed', async: false
 
-      on 'import_row.complete', :update_import_view
-      on 'import_row.fail', :update_import_view
+      on 'import_row.completed', :update_import_view
+      on 'import_row.failed', :update_import_view
 
       def update_import_view(event)
         import_row_id = event.payload['id']

@@ -13,15 +13,15 @@ RSpec.describe Spree::Events do
 
   describe '.publish' do
     it 'publishes an event' do
-      event = described_class.publish('order.complete', { id: 1 })
+      event = described_class.publish('order.completed', { id: 1 })
 
       expect(event).to be_a(Spree::Event)
-      expect(event.name).to eq('order.complete')
+      expect(event.name).to eq('order.completed')
       expect(event.payload).to eq({ 'id' => 1 })
     end
 
     it 'includes metadata with IDs as strings' do
-      event = described_class.publish('order.complete', { id: 1 }, { user_id: 5 })
+      event = described_class.publish('order.completed', { id: 1 }, { user_id: 5 })
 
       expect(event.metadata['user_id']).to eq('5')
     end
@@ -29,12 +29,12 @@ RSpec.describe Spree::Events do
     it 'notifies subscribers synchronously when async: false' do
       received_events = []
 
-      described_class.subscribe('order.complete', async: false) do |event|
+      described_class.subscribe('order.completed', async: false) do |event|
         received_events << event
       end
 
       described_class.activate!
-      described_class.publish('order.complete', { id: 1 })
+      described_class.publish('order.completed', { id: 1 })
 
       expect(received_events.size).to eq(1)
     end
@@ -44,12 +44,12 @@ RSpec.describe Spree::Events do
     it 'subscribes with a block' do
       called = false
 
-      described_class.subscribe('order.complete', async: false) do |_event|
+      described_class.subscribe('order.completed', async: false) do |_event|
         called = true
       end
 
       described_class.activate!
-      described_class.publish('order.complete', {})
+      described_class.publish('order.completed', {})
 
       expect(called).to be true
     end
@@ -62,9 +62,9 @@ RSpec.describe Spree::Events do
         end
       end
 
-      described_class.subscribe('order.complete', handler_class, async: false)
+      described_class.subscribe('order.completed', handler_class, async: false)
       described_class.activate!
-      described_class.publish('order.complete', {})
+      described_class.publish('order.completed', {})
 
       expect(received.size).to eq(1)
     end
@@ -77,12 +77,12 @@ RSpec.describe Spree::Events do
       end
 
       described_class.activate!
-      described_class.publish('order.complete', {})
-      described_class.publish('order.cancel', {})
-      described_class.publish('product.create', {})
+      described_class.publish('order.completed', {})
+      described_class.publish('order.canceled', {})
+      described_class.publish('product.created', {})
 
       expect(received_events.size).to eq(2)
-      expect(received_events.map(&:name)).to contain_exactly('order.complete', 'order.cancel')
+      expect(received_events.map(&:name)).to contain_exactly('order.completed', 'order.canceled')
     end
 
     it 'supports global wildcard' do
@@ -93,14 +93,14 @@ RSpec.describe Spree::Events do
       end
 
       described_class.activate!
-      described_class.publish('order.complete', {})
-      described_class.publish('product.create', {})
+      described_class.publish('order.completed', {})
+      described_class.publish('product.created', {})
 
       expect(received_events.size).to eq(2)
     end
 
     it 'raises error when no subscriber provided' do
-      expect { described_class.subscribe('order.complete') }.to raise_error(ArgumentError)
+      expect { described_class.subscribe('order.completed') }.to raise_error(ArgumentError)
     end
   end
 
@@ -109,10 +109,10 @@ RSpec.describe Spree::Events do
       received_events = []
       handler = ->(event) { received_events << event }
 
-      described_class.subscribe('order.complete', handler, async: false)
-      described_class.unsubscribe('order.complete', handler)
+      described_class.subscribe('order.completed', handler, async: false)
+      described_class.unsubscribe('order.completed', handler)
       described_class.activate!
-      described_class.publish('order.complete', {})
+      described_class.publish('order.completed', {})
 
       expect(received_events).to be_empty
     end
@@ -120,17 +120,17 @@ RSpec.describe Spree::Events do
 
   describe '.patterns' do
     it 'returns all registered patterns' do
-      described_class.subscribe('order.complete', async: false) { }
+      described_class.subscribe('order.completed', async: false) { }
       described_class.subscribe('order.*', async: false) { }
 
-      expect(described_class.patterns).to contain_exactly('order.complete', 'order.*')
+      expect(described_class.patterns).to contain_exactly('order.completed', 'order.*')
     end
   end
 
   describe '.subscriptions' do
     it 'returns all subscriptions' do
-      described_class.subscribe('order.complete', async: false) { }
-      described_class.subscribe('order.cancel', async: false) { }
+      described_class.subscribe('order.completed', async: false) { }
+      described_class.subscribe('order.canceled', async: false) { }
 
       expect(described_class.subscriptions.size).to eq(2)
     end
@@ -140,14 +140,14 @@ RSpec.describe Spree::Events do
     it 'disables events within the block' do
       received = false
 
-      described_class.subscribe('order.complete', async: false) do
+      described_class.subscribe('order.completed', async: false) do
         received = true
       end
 
       described_class.activate!
 
       described_class.disable do
-        described_class.publish('order.complete', {})
+        described_class.publish('order.completed', {})
       end
 
       expect(received).to be false
@@ -187,7 +187,7 @@ RSpec.describe Spree::Events do
 
   describe '.reset!' do
     it 'clears all subscriptions' do
-      described_class.subscribe('order.complete', async: false) { }
+      described_class.subscribe('order.completed', async: false) { }
 
       described_class.reset!
 
@@ -200,11 +200,11 @@ RSpec.describe Spree::Events do
       received1 = []
       received2 = []
 
-      described_class.subscribe('order.complete', async: false) { |e| received1 << e }
-      described_class.subscribe('order.complete', async: false) { |e| received2 << e }
+      described_class.subscribe('order.completed', async: false) { |e| received1 << e }
+      described_class.subscribe('order.completed', async: false) { |e| received2 << e }
 
       described_class.activate!
-      described_class.publish('order.complete', {})
+      described_class.publish('order.completed', {})
 
       expect(received1.size).to eq(1)
       expect(received2.size).to eq(1)
@@ -214,12 +214,12 @@ RSpec.describe Spree::Events do
       exact_received = []
       pattern_received = []
 
-      described_class.subscribe('order.complete', async: false) { |e| exact_received << e }
+      described_class.subscribe('order.completed', async: false) { |e| exact_received << e }
       described_class.subscribe('order.*', async: false) { |e| pattern_received << e }
 
       described_class.activate!
-      described_class.publish('order.complete', {})
-      described_class.publish('order.cancel', {})
+      described_class.publish('order.completed', {})
+      described_class.publish('order.canceled', {})
 
       expect(exact_received.size).to eq(1)
       expect(pattern_received.size).to eq(2)

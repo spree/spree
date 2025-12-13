@@ -34,7 +34,7 @@ module Spree
 
     state_machine initial: :authorized do
       before_transition to: :canceled, do: :cancel_return_items
-      after_transition to: :canceled, do: :send_return_authorization_canceled_event
+      after_transition to: :canceled, do: :publish_return_authorization_canceled_event
 
       event :cancel do
         transition to: :canceled, from: :authorized, if: ->(return_authorization) { return_authorization.can_cancel_return_items? }
@@ -80,8 +80,8 @@ module Spree
       return_items.each { |item| item.cancel! if item.can_cancel? }
     end
 
-    def send_return_authorization_canceled_event
-      publish_event('return_authorization.cancel')
+    def publish_return_authorization_canceled_event
+      publish_event('return_authorization.canceled')
     end
 
     def generate_expedited_exchange_reimbursements
