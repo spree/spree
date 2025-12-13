@@ -3,18 +3,15 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Admin::ImportSubscriber do
-  before { Spree::Events.activate! }
-  after { Spree::Events.reset! }
-
   describe '.subscription_patterns' do
-    it 'subscribes to import.complete event' do
-      expect(described_class.subscription_patterns).to include('import.complete')
+    it 'subscribes to import.completed event' do
+      expect(described_class.subscription_patterns).to include('import.completed')
     end
   end
 
   describe '.event_handlers' do
-    it 'routes import.complete to update_loader_in_import_view' do
-      expect(described_class.event_handlers['import.complete']).to eq(:update_loader_in_import_view)
+    it 'routes import.completed to update_loader_in_import_view' do
+      expect(described_class.event_handlers['import.completed']).to eq(:update_loader_in_import_view)
     end
   end
 
@@ -27,7 +24,7 @@ RSpec.describe Spree::Admin::ImportSubscriber do
       it 'broadcasts update to import loader' do
         subscriber = described_class.new
         event = Spree::Event.new(
-          name: 'import.complete',
+          name: 'import.completed',
           payload: { 'id' => import.id }
         )
 
@@ -50,7 +47,7 @@ RSpec.describe Spree::Admin::ImportSubscriber do
       it 'does nothing' do
         subscriber = described_class.new
         event = Spree::Event.new(
-          name: 'import.complete',
+          name: 'import.completed',
           payload: {}
         )
 
@@ -64,7 +61,7 @@ RSpec.describe Spree::Admin::ImportSubscriber do
       it 'does nothing' do
         subscriber = described_class.new
         event = Spree::Event.new(
-          name: 'import.complete',
+          name: 'import.completed',
           payload: { 'id' => -999 }
         )
 

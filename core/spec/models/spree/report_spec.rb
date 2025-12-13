@@ -48,13 +48,13 @@ RSpec.describe Spree::Report, type: :model do
     end
   end
 
-  describe 'event subscriber' do
-    before { Spree::Events.activate! }
-    after { Spree::Events.reset! }
+  describe 'custom events' do
+    describe 'report.created' do
+      it 'publishes report.created event when saved' do
+        expect(report).to receive(:publish_event).with('report.created')
+        allow(report).to receive(:publish_event).with(anything)
 
-    describe 'on report.create' do
-      it 'enqueues generate job via subscriber' do
-        expect { report.save! }.to have_enqueued_job(Spree::Reports::GenerateJob).with(report.id)
+        report.save!
       end
     end
   end

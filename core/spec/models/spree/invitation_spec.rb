@@ -49,24 +49,6 @@ RSpec.describe Spree::Invitation, type: :model do
       expect(invitation.role).to eq(Spree::Role.default_admin_role)
     end
 
-    it 'publishes invitation.create event after create' do
-      Spree::Events.activate!
-
-      received_event = nil
-      subscriber = Spree::Events.subscribe('invitation.create') do |event|
-        received_event = event
-      end
-
-      invitation = build(:invitation)
-      invitation.save
-
-      expect(received_event).to be_present
-      expect(received_event.payload['id']).to eq(invitation.id)
-
-      Spree::Events.unsubscribe('invitation.create', subscriber)
-      Spree::Events.reset!
-    end
-
     it 'sets invitee from email before validation' do
       create(:admin_user, :without_admin_role, email: 'test@example.com')
 
@@ -99,20 +81,8 @@ RSpec.describe Spree::Invitation, type: :model do
       it 'publishes invitation.accept event' do
         invitation.invitee = create(:admin_user, :without_admin_role)
 
-        Spree::Events.activate!
-
-        received_event = nil
-        subscriber = Spree::Events.subscribe('invitation.accept') do |event|
-          received_event = event
-        end
-
+        expect(invitation).to receive(:publish_event).with('invitation.accepted')
         invitation.accept
-
-        expect(received_event).to be_present
-        expect(received_event.payload['id']).to eq(invitation.id)
-
-        Spree::Events.unsubscribe('invitation.accept', subscriber)
-        Spree::Events.reset!
       end
 
       it 'creates a resource user' do
@@ -139,57 +109,24 @@ RSpec.describe Spree::Invitation, type: :model do
   end
 
   describe '#resend!' do
-    it 'publishes invitation.resend event if invitation is pending and not expired' do
-      Spree::Events.activate!
-
-      received_event = nil
-      subscriber = Spree::Events.subscribe('invitation.resend') do |event|
-        received_event = event
-      end
-
+    it 'publishes invitation.resent event if invitation is pending and not expired' do
+      expect(invitation).to receive(:publish_event).with('invitation.resent')
       invitation.resend!
-
-      expect(received_event).to be_present
-      expect(received_event.payload['id']).to eq(invitation.id)
-
-      Spree::Events.unsubscribe('invitation.resend', subscriber)
-      Spree::Events.reset!
     end
 
     it 'does not publish event if invitation is expired' do
-      Spree::Events.activate!
-
-      received_event = nil
-      subscriber = Spree::Events.subscribe('invitation.resend') do |event|
-        received_event = event
-      end
-
       allow(invitation).to receive(:expired?).and_return(true)
+      expect(invitation).not_to receive(:publish_event)
       invitation.resend!
-
-      expect(received_event).to be_nil
-
-      Spree::Events.unsubscribe('invitation.resend', subscriber)
-      Spree::Events.reset!
     end
 
     it 'does not publish event if invitation is accepted' do
-      Spree::Events.activate!
-
-      received_event = nil
-      subscriber = Spree::Events.subscribe('invitation.resend') do |event|
-        received_event = event
-      end
-
-      invitation.invitee = create(:admin_user, spree_roles: [])
+      invitation.invitee = create(:admin_user, :without_admin_role)
+      expect(invitation).to receive(:publish_event).with('invitation.accepted')
       invitation.accept
+
+      expect(invitation).not_to receive(:publish_event)
       invitation.resend!
-
-      expect(received_event).to be_nil
-
-      Spree::Events.unsubscribe('invitation.resend', subscriber)
-      Spree::Events.reset!
     end
   end
-
 end

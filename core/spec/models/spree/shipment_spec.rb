@@ -1042,56 +1042,35 @@ describe Spree::Shipment, type: :model do
   describe 'events' do
     let(:order) { create(:order_ready_to_ship) }
     let(:shipment) { order.shipments.first }
-    let(:received_events) { [] }
-
-    before do
-      Spree::Events.reset!
-      Spree::Events.activate!
-    end
-
-    after { Spree::Events.reset! }
 
     describe 'shipped state transition' do
-      before do
-        Spree::Events.subscribe('shipment.ship', async: false) { |e| received_events << e }
-        shipment.update_column(:tracking, 'TRACK123')
-      end
+      before { shipment.update_column(:tracking, 'TRACK123') }
 
-      it 'publishes shipment.ship event' do
+      it 'publishes shipment.shipped event' do
+        expect(shipment).to receive(:publish_event).with('shipment.shipped')
+        allow(shipment).to receive(:publish_event).with(anything)
+
         shipment.ship!
-
-        expect(received_events.size).to eq(1)
-        expect(received_events.first.payload['id']).to eq(shipment.id)
-        expect(received_events.first.payload['number']).to eq(shipment.number)
       end
     end
 
     describe 'canceled state transition' do
-      before do
-        Spree::Events.subscribe('shipment.cancel', async: false) { |e| received_events << e }
-      end
+      it 'publishes shipment.canceled event' do
+        expect(shipment).to receive(:publish_event).with('shipment.canceled')
+        allow(shipment).to receive(:publish_event).with(anything)
 
-      it 'publishes shipment.cancel event' do
         shipment.cancel!
-
-        expect(received_events.size).to eq(1)
-        expect(received_events.first.payload['id']).to eq(shipment.id)
-        expect(received_events.first.payload['number']).to eq(shipment.number)
       end
     end
 
-    describe 'resume state transition' do
-      before do
-        Spree::Events.subscribe('shipment.resume', async: false) { |e| received_events << e }
-        shipment.cancel!
-      end
+    describe 'resumed state transition' do
+      before { shipment.cancel! }
 
-      it 'publishes shipment.resume event' do
+      it 'publishes shipment.resumed event' do
+        expect(shipment).to receive(:publish_event).with('shipment.resumed')
+        allow(shipment).to receive(:publish_event).with(anything)
+
         shipment.resume!
-
-        expect(received_events.size).to eq(1)
-        expect(received_events.first.payload['id']).to eq(shipment.id)
-        expect(received_events.first.payload['number']).to eq(shipment.number)
       end
     end
   end

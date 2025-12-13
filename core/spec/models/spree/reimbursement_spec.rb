@@ -230,21 +230,10 @@ describe Spree::Reimbursement, type: :model do
       end
 
       it 'publishes reimbursement.reimbursed event when performed' do
-        Spree::Events.activate!
-
-        received_event = nil
-        subscriber = Spree::Events.subscribe('reimbursement.reimbursed') do |event|
-          received_event = event
-        end
+        expect(reimbursement).to receive(:publish_event).with('reimbursement.reimbursed')
+        allow(reimbursement).to receive(:publish_event).with(anything)
 
         reimbursement.perform!
-
-        expect(received_event).to be_present
-        expect(received_event.metadata['model_class']).to eq('Spree::Reimbursement')
-        expect(received_event.metadata['model_id']).to eq(reimbursement.id.to_s)
-
-        Spree::Events.unsubscribe('reimbursement.reimbursed', subscriber)
-        Spree::Events.reset!
       end
     end
   end

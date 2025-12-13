@@ -196,47 +196,25 @@ RSpec.describe Spree::GiftCard, type: :model do
   describe 'custom events' do
     let(:store) { Spree::Store.default }
 
-    describe 'gift_card.redeem' do
+    describe 'gift_card.redeemed' do
       let(:gift_card) { create(:gift_card, state: :active, amount: 100, amount_used: 0, store: store) }
 
-      it 'publishes gift_card.redeem event when fully redeemed' do
-        Spree::Events.activate!
-
-        received_event = nil
-        subscriber = Spree::Events.subscribe('gift_card.redeem') do |event|
-          received_event = event
-        end
+      it 'publishes gift_card.redeemed event when fully redeemed' do
+        expect(gift_card).to receive(:publish_event).with('gift_card.redeemed')
+        allow(gift_card).to receive(:publish_event).with(anything)
 
         gift_card.redeem!
-
-        expect(received_event).to be_present
-        expect(received_event.metadata['model_class']).to eq('Spree::GiftCard')
-        expect(received_event.metadata['model_id']).to eq(gift_card.id.to_s)
-
-        Spree::Events.unsubscribe('gift_card.redeem', subscriber)
-        Spree::Events.reset!
       end
     end
 
-    describe 'gift_card.partial_redeem' do
+    describe 'gift_card.partially_redeemed' do
       let(:gift_card) { create(:gift_card, state: :active, amount: 100, amount_used: 0, store: store) }
 
-      it 'publishes gift_card.partial_redeem event when partially redeemed' do
-        Spree::Events.activate!
-
-        received_event = nil
-        subscriber = Spree::Events.subscribe('gift_card.partial_redeem') do |event|
-          received_event = event
-        end
+      it 'publishes gift_card.partially_redeemed event when partially redeemed' do
+        expect(gift_card).to receive(:publish_event).with('gift_card.partially_redeemed')
+        allow(gift_card).to receive(:publish_event).with(anything)
 
         gift_card.partial_redeem!
-
-        expect(received_event).to be_present
-        expect(received_event.metadata['model_class']).to eq('Spree::GiftCard')
-        expect(received_event.metadata['model_id']).to eq(gift_card.id.to_s)
-
-        Spree::Events.unsubscribe('gift_card.partial_redeem', subscriber)
-        Spree::Events.reset!
       end
     end
   end

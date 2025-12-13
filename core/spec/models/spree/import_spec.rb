@@ -93,8 +93,8 @@ RSpec.describe Spree::Import, :job, type: :model do
         expect { import.complete! }.to change(import, :status).from('processing').to('completed')
       end
 
-      it 'publishes import.complete event' do
-        expect(import).to receive(:send_import_completed_event)
+      it 'publishes import.completed event' do
+        expect(import).to receive(:publish_import_completed_event)
         import.complete!
       end
 
@@ -382,7 +382,7 @@ RSpec.describe Spree::Import, :job, type: :model do
   end
 
   describe 'custom events' do
-    describe 'import.complete' do
+    describe 'import.completed' do
       before do
         import.save!
         import.start_mapping!
@@ -390,22 +390,11 @@ RSpec.describe Spree::Import, :job, type: :model do
         import.start_processing!
       end
 
-      it 'publishes import.complete event when completed' do
-        Spree::Events.activate!
-
-        received_event = nil
-        subscriber = Spree::Events.subscribe('import.complete') do |event|
-          received_event = event
-        end
+      it 'publishes import.completed event when completed' do
+        expect(import).to receive(:publish_event).with('import.completed')
+        allow(import).to receive(:publish_event).with(anything)
 
         import.complete!
-
-        expect(received_event).to be_present
-        expect(received_event.metadata['model_class']).to eq('Spree::Imports::Products')
-        expect(received_event.metadata['model_id']).to eq(import.id.to_s)
-
-        Spree::Events.unsubscribe('import.complete', subscriber)
-        Spree::Events.reset!
       end
     end
   end

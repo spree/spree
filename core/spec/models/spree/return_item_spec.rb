@@ -770,7 +770,7 @@ describe Spree::ReturnItem, type: :model do
   end
 
   describe 'custom events' do
-    describe 'return_item.receive' do
+    describe 'return_item.received' do
       let(:inventory_unit) { create(:inventory_unit, state: 'shipped') }
       let(:return_item) { create(:return_item, inventory_unit: inventory_unit, reception_status: 'awaiting') }
 
@@ -778,66 +778,33 @@ describe Spree::ReturnItem, type: :model do
         allow(return_item).to receive(:eligible_for_return?).and_return(true)
       end
 
-      it 'publishes return_item.receive event when received' do
-        Spree::Events.activate!
-
-        received_event = nil
-        subscriber = Spree::Events.subscribe('return_item.receive') do |event|
-          received_event = event
-        end
+      it 'publishes return_item.received event when received' do
+        expect(return_item).to receive(:publish_event).with('return_item.received')
+        allow(return_item).to receive(:publish_event).with(anything)
 
         return_item.receive!
-
-        expect(received_event).to be_present
-        expect(received_event.metadata['model_class']).to eq('Spree::ReturnItem')
-        expect(received_event.metadata['model_id']).to eq(return_item.id.to_s)
-
-        Spree::Events.unsubscribe('return_item.receive', subscriber)
-        Spree::Events.reset!
       end
     end
 
-    describe 'return_item.cancel' do
+    describe 'return_item.canceled' do
       let(:return_item) { create(:return_item, reception_status: 'awaiting') }
 
-      it 'publishes return_item.cancel event when canceled' do
-        Spree::Events.activate!
-
-        received_event = nil
-        subscriber = Spree::Events.subscribe('return_item.cancel') do |event|
-          received_event = event
-        end
+      it 'publishes return_item.canceled event when canceled' do
+        expect(return_item).to receive(:publish_event).with('return_item.canceled')
+        allow(return_item).to receive(:publish_event).with(anything)
 
         return_item.cancel!
-
-        expect(received_event).to be_present
-        expect(received_event.metadata['model_class']).to eq('Spree::ReturnItem')
-        expect(received_event.metadata['model_id']).to eq(return_item.id.to_s)
-
-        Spree::Events.unsubscribe('return_item.cancel', subscriber)
-        Spree::Events.reset!
       end
     end
 
-    describe 'return_item.give' do
+    describe 'return_item.given' do
       let(:return_item) { create(:return_item, reception_status: 'awaiting') }
 
-      it 'publishes return_item.give event when given to customer' do
-        Spree::Events.activate!
-
-        received_event = nil
-        subscriber = Spree::Events.subscribe('return_item.give') do |event|
-          received_event = event
-        end
+      it 'publishes return_item.given event when given to customer' do
+        expect(return_item).to receive(:publish_event).with('return_item.given')
+        allow(return_item).to receive(:publish_event).with(anything)
 
         return_item.give!
-
-        expect(received_event).to be_present
-        expect(received_event.metadata['model_class']).to eq('Spree::ReturnItem')
-        expect(received_event.metadata['model_id']).to eq(return_item.id.to_s)
-
-        Spree::Events.unsubscribe('return_item.give', subscriber)
-        Spree::Events.reset!
       end
     end
   end

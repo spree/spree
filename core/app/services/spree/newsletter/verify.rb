@@ -28,7 +28,7 @@ module Spree
       end
 
       def publish_event
-        subscriber.publish_event('newsletter_subscriber.verify')
+        subscriber.publish_event('newsletter_subscriber.verified')
       end
     end
   end

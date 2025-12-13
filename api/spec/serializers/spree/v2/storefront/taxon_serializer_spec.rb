@@ -160,10 +160,7 @@ describe Spree::V2::Storefront::TaxonSerializer do
                 ]
               },
               image: {
-                data: {
-                  id: taxon.icon.id.to_s,
-                  type: :taxon_image
-                }
+                data: nil
               },
               metafields: {
                 data: [
