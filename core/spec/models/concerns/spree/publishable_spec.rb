@@ -11,62 +11,77 @@ RSpec.describe Spree::Publishable do
     Spree::Events.reset!
   end
 
+  # Define a test serializer for the spec
+  let(:test_serializer_class) do
+    Class.new(Spree::Events::BaseSerializer) do
+      protected
+
+      def attributes
+        {
+          id: resource.id,
+          name: resource.name,
+          updated_at: timestamp(resource.updated_at)
+        }
+      end
+    end
+  end
+
   let(:publishable_class) do
     Class.new(Spree::Base) do
       self.table_name = 'spree_products'
 
       include Spree::Publishable
-
-      # Simulate ActiveModel::Serialization
-      def serializable_hash(options = {})
-        { 'id' => id, 'name' => name }.merge(options[:extra] || {})
-      end
     end
   end
 
-  let(:instance) { publishable_class.new(id: 1, name: 'Test Product') }
+  let(:instance) { publishable_class.new(id: 1, name: 'Test Product', updated_at: Time.current) }
 
   describe '#publish_event' do
+    before do
+      stub_const('Spree::TestProduct', publishable_class)
+      stub_const('Spree::Events::TestProductSerializer', test_serializer_class)
+    end
+
     it 'publishes an event with the model payload' do
       received_event = nil
-      Spree::Events.subscribe('product.custom', async: false) { |e| received_event = e }
+      Spree::Events.subscribe('test_product.custom', async: false) { |e| received_event = e }
       Spree::Events.activate!
 
-      instance.publish_event('product.custom')
+      instance.publish_event('test_product.custom')
 
       expect(received_event).to be_present
-      expect(received_event.name).to eq('product.custom')
+      expect(received_event.name).to eq('test_product.custom')
       expect(received_event.payload['id']).to eq(1)
       expect(received_event.payload['name']).to eq('Test Product')
     end
 
     it 'allows custom payload' do
       received_event = nil
-      Spree::Events.subscribe('product.custom', async: false) { |e| received_event = e }
+      Spree::Events.subscribe('test_product.custom', async: false) { |e| received_event = e }
       Spree::Events.activate!
 
-      instance.publish_event('product.custom', { custom: 'data' })
+      instance.publish_event('test_product.custom', { custom: 'data' })
 
       expect(received_event.payload).to eq({ 'custom' => 'data' })
     end
 
     it 'includes model metadata with IDs as strings' do
       received_event = nil
-      Spree::Events.subscribe('product.custom', async: false) { |e| received_event = e }
+      Spree::Events.subscribe('test_product.custom', async: false) { |e| received_event = e }
       Spree::Events.activate!
 
-      instance.publish_event('product.custom')
+      instance.publish_event('test_product.custom')
 
       expect(received_event.metadata['model_id']).to eq('1')
     end
 
     it 'does not publish when events are disabled' do
       received = false
-      Spree::Events.subscribe('product.custom', async: false) { received = true }
+      Spree::Events.subscribe('test_product.custom', async: false) { received = true }
       Spree::Events.activate!
 
       Spree::Events.disable do
-        instance.publish_event('product.custom')
+        instance.publish_event('test_product.custom')
       end
 
       expect(received).to be false
@@ -74,34 +89,72 @@ RSpec.describe Spree::Publishable do
   end
 
   describe '#event_payload' do
-    it 'returns serializable_hash by default' do
-      expect(instance.event_payload).to eq({ 'id' => 1, 'name' => 'Test Product' })
+    context 'with a serializer defined' do
+      before do
+        stub_const('Spree::TestProduct', publishable_class)
+        stub_const('Spree::Events::TestProductSerializer', test_serializer_class)
+      end
+
+      it 'returns the serialized payload' do
+        payload = instance.event_payload
+
+        expect(payload[:id]).to eq(1)
+        expect(payload[:name]).to eq('Test Product')
+        expect(payload[:updated_at]).to be_present
+      end
     end
 
-    context 'with custom serialization options' do
-      let(:custom_class) do
+    context 'without a serializer defined' do
+      let(:no_serializer_class) do
         Class.new(Spree::Base) do
           self.table_name = 'spree_products'
-
           include Spree::Publishable
-          self.event_serialization_options = { extra: { 'custom' => 'field' } }
-
-          def serializable_hash(options = {})
-            { 'id' => id }.merge(options[:extra] || {})
-          end
         end
       end
 
-      it 'uses the custom serialization options' do
-        instance = custom_class.new(id: 1)
-        expect(instance.event_payload).to eq({ 'id' => 1, 'custom' => 'field' })
+      before do
+        stub_const('Spree::NoSerializer', no_serializer_class)
+      end
+
+      it 'raises MissingSerializerError with helpful message' do
+        instance = no_serializer_class.new(id: 1, name: 'Test')
+
+        expect { instance.event_payload }.to raise_error(
+          Spree::Publishable::MissingSerializerError,
+          /Missing event serializer for Spree::NoSerializer/
+        )
+      end
+
+      it 'includes example code in the error message' do
+        instance = no_serializer_class.new(id: 1, name: 'Test')
+
+        expect { instance.event_payload }.to raise_error(
+          Spree::Publishable::MissingSerializerError,
+          /class Spree::Events::NoSerializerSerializer < Spree::Events::BaseSerializer/
+        )
+      end
+    end
+
+    context 'with anonymous class' do
+      it 'returns nil for event_serializer_class' do
+        anon_class = Class.new(Spree::Base) do
+          self.table_name = 'spree_products'
+          include Spree::Publishable
+        end
+
+        instance = anon_class.new(id: 1)
+        expect(instance.event_serializer_class).to be_nil
       end
     end
   end
 
   describe '#event_prefix' do
-    it 'returns the model name element' do
+    before do
       stub_const('Spree::Product', publishable_class)
+      stub_const('Spree::Events::ProductSerializer', test_serializer_class)
+    end
+
+    it 'returns the model name element' do
       instance = Spree::Product.new
 
       expect(instance.event_prefix).to eq('product')
@@ -115,15 +168,12 @@ RSpec.describe Spree::Publishable do
 
         include Spree::Publishable
         publishes_lifecycle_events
-
-        def serializable_hash(_options = {})
-          { 'id' => id, 'name' => name }
-        end
       end
     end
 
     before do
       stub_const('Spree::TestProduct', lifecycle_class)
+      stub_const('Spree::Events::TestProductSerializer', test_serializer_class)
     end
 
     it 'enables lifecycle events' do
@@ -177,25 +227,6 @@ RSpec.describe Spree::Publishable do
       end
     end
 
-    context 'with serialize option' do
-      let(:serialize_class) do
-        Class.new(ApplicationRecord) do
-          self.table_name = 'spree_products'
-
-          include Spree::Publishable
-          publishes_lifecycle_events serialize: { only: [:id] }
-
-          def serializable_hash(options = {})
-            options[:only] ? { 'id' => id } : { 'id' => id, 'name' => name }
-          end
-        end
-      end
-
-      it 'uses custom serialization options' do
-        expect(serialize_class.event_serialization_options).to eq({ only: [:id] })
-      end
-    end
-
     context 'with skip_lifecycle_events' do
       let(:skipped_class) do
         Class.new(Spree::Base) do
@@ -211,13 +242,18 @@ RSpec.describe Spree::Publishable do
   end
 
   describe '.event_prefix' do
-    it 'derives from model name' do
+    before do
       stub_const('Spree::OrderLineItem', publishable_class)
+      stub_const('Spree::Events::OrderLineItemSerializer', test_serializer_class)
+    end
+
+    it 'derives from model name' do
       expect(Spree::OrderLineItem.event_prefix).to eq('order_line_item')
     end
 
     it 'can be customized' do
       stub_const('Spree::CustomModel', publishable_class)
+      stub_const('Spree::Events::CustomModelSerializer', test_serializer_class)
       Spree::CustomModel.event_prefix = 'custom'
       expect(Spree::CustomModel.event_prefix).to eq('custom')
     end

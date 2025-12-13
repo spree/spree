@@ -4,7 +4,8 @@ module Spree
   # Concern for models that publish events.
   #
   # This concern is included in Spree::Base, so all Spree models
-  # automatically emit lifecycle events (create, update, destroy).
+  # can emit events. Event payloads are generated using dedicated
+  # serializers from the Spree::Events namespace.
   #
   # @example Disabling events for a specific model
   #   class Spree::LogEntry < Spree.base_class
@@ -19,23 +20,49 @@ module Spree
   #     end
   #   end
   #
-  # @example With custom serialization
-  #   class Spree::Order < Spree.base_class
-  #     def event_payload
-  #       serializable_hash(
-  #         only: [:id, :number, :state, :total],
-  #         include: { line_items: { only: [:id, :quantity] } }
-  #       )
+  # @example Creating an event serializer (required for each model that publishes events)
+  #   # app/serializers/spree/events/order_serializer.rb
+  #   class Spree::Events::OrderSerializer < Spree::Events::BaseSerializer
+  #     protected
+  #
+  #     def attributes
+  #       {
+  #         id: resource.id,
+  #         number: resource.number,
+  #         state: resource.state.to_s,
+  #         # ... other attributes
+  #       }
   #     end
   #   end
   #
   module Publishable
     extend ActiveSupport::Concern
 
+    # Error raised when a model tries to publish an event but has no serializer defined
+    class MissingSerializerError < StandardError
+      def initialize(model_class)
+        serializer_name = "Spree::Events::#{model_class.name.demodulize}Serializer"
+        super(
+          "Missing event serializer for #{model_class.name}. " \
+          "Please create #{serializer_name} that inherits from Spree::Events::BaseSerializer. " \
+          "Example:\n\n" \
+          "  class #{serializer_name} < Spree::Events::BaseSerializer\n" \
+          "    protected\n\n" \
+          "    def attributes\n" \
+          "      {\n" \
+          "        id: resource.id,\n" \
+          "        # add other attributes here\n" \
+          "        updated_at: timestamp(resource.updated_at)\n" \
+          "      }\n" \
+          "    end\n" \
+          "  end"
+        )
+      end
+    end
+
     included do
       class_attribute :publish_events, default: true
       class_attribute :lifecycle_events_enabled, default: false
-      class_attribute :event_serialization_options, default: {}
     end
 
     class_methods do
@@ -44,18 +71,15 @@ module Spree
       # @param options [Hash] Options for lifecycle events
       # @option options [Array<Symbol>] :only Limit to specific events (:create, :update, :destroy)
       # @option options [Array<Symbol>] :except Exclude specific events
-      # @option options [Hash] :serialize Options passed to serializable_hash
       # @return [void]
       #
       # @example
       #   publishes_lifecycle_events
       #   publishes_lifecycle_events only: [:create, :destroy]
       #   publishes_lifecycle_events except: [:update]
-      #   publishes_lifecycle_events serialize: { only: [:id, :name] }
       #
       def publishes_lifecycle_events(options = {})
         self.lifecycle_events_enabled = true
-        self.event_serialization_options = options.fetch(:serialize, {})
 
         events = [:create, :update, :destroy]
         events &= Array(options[:only]) if options[:only]
@@ -116,19 +140,47 @@ module Spree
     def publish_event(event_name, payload = nil, metadata = {})
       return unless Spree::Events.enabled?
 
+      @_current_event_name = event_name
       payload ||= event_payload
       Spree::Events.publish(event_name, payload, metadata.merge(default_event_metadata))
+    ensure
+      @_current_event_name = nil
     end
 
     # Get the payload for events
     #
-    # Override this method to customize the data sent with events.
-    # By default, uses ActiveModel::Serialization#serializable_hash.
+    # Uses dedicated event serializer (Spree::Events::ModelSerializer).
+    # Raises MissingSerializerError if no serializer is defined.
     #
     # @return [Hash]
+    # @raise [MissingSerializerError] if no serializer is defined for this model
     def event_payload
-      options = self.class.event_serialization_options.presence || default_serialization_options
-      serializable_hash(options)
+      serializer = event_serializer_class
+
+      raise MissingSerializerError, self.class unless serializer
+
+      serializer.serialize(self, event_context)
+    end
+
+    # Find the event serializer class for this model
+    #
+    # Looks for Spree::Events::ModelNameSerializer (e.g., Spree::Events::OrderSerializer)
+    #
+    # @return [Class, nil] The serializer class or nil if not found
+    def event_serializer_class
+      return nil unless self.class.name
+
+      "Spree::Events::#{self.class.name.demodulize}Serializer".safe_constantize
+    end
+
+    # Context passed to the event serializer
+    #
+    # @return [Hash]
+    def event_context
+      {
+        event_name: @_current_event_name,
+        triggered_at: Time.current
+      }
     end
 
     # Get the event prefix for this instance
@@ -142,10 +194,6 @@ module Spree
 
     def should_publish_events?
       self.class.publish_events && Spree::Events.enabled?
-    end
-
-    def default_serialization_options
-      {}
     end
 
     def default_event_metadata
