@@ -219,7 +219,6 @@ Spree::Core::Engine.add_routes do
 
     # developer tools
     resources :oauth_applications
-    resources :webhooks_subscribers
 
     # errors
     get '/forbidden', to: 'errors#show', code: 403, as: :forbidden

@@ -70,7 +70,6 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
-    Spree::Webhooks.disabled = true
     reset_spree_preferences
     I18n.locale = :en
     ActionMailer::Base.default_url_options = {}

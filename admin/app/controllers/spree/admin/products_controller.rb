@@ -99,7 +99,7 @@ module Spree
         if bulk_collection.update_all(status: params[:status], updated_at: Time.current)
           product_ids = bulk_collection.ids
 
-          if Spree::Webhooks::Subscriber.any?
+          if defined?(Spree::Webhooks::Subscriber) && Spree::Webhooks::Subscriber.any?
             ::Spree::Products::QueueStatusChangedWebhook.call(
               ids: product_ids,
               event: Spree::Product::STATUS_TO_WEBHOOK_EVENT[params[:status]]

@@ -406,13 +406,6 @@ module Spree
       end
     end
 
-    # Returns all active webhooks subscribers for the store
-    #
-    # @return [Array<Spree::Webhooks::Subscriber>]
-    def active_webhooks_subscribers
-      @active_webhooks_subscribers ||= Spree::Webhooks::Subscriber.active
-    end
-
     private
 
     def countries_available_for_checkout_cache_key
