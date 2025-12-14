@@ -6,6 +6,8 @@ describe Spree::DigitalLink, type: :model do
   let(:variant) { digital.variant }
   let(:line_item) { create(:line_item, variant: variant) }
 
+  it_behaves_like 'lifecycle events'
+
   it 'validates presence of digital and line_item' do
     expect(described_class.new(digital: digital, line_item: line_item)).to be_valid
   end

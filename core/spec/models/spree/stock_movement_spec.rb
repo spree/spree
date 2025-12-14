@@ -1,6 +1,19 @@
 require 'spec_helper'
 
 describe Spree::StockMovement, type: :model do
+  # Note: StockMovement is marked as readonly after creation, so we only test the created event
+  describe 'lifecycle events' do
+    describe 'stock_movement.created' do
+      it 'publishes created event when record is created' do
+        record = build(:stock_movement)
+        expect(record).to receive(:publish_event).with('stock_movement.created')
+        allow(record).to receive(:publish_event).with(anything)
+
+        record.save!
+      end
+    end
+  end
+
   describe 'Constants' do
     describe 'QUANTITY_LIMITS[:max]' do
       it 'return 2**31 - 1' do

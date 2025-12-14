@@ -13,6 +13,39 @@ describe Spree::ReturnAuthorization, type: :model do
                                    return_authorization_reason_id: rma_reason.id)
   end
 
+  describe 'lifecycle events' do
+    describe 'return_authorization.created' do
+      it 'publishes created event when record is created' do
+        shipped_order = create(:shipped_order)
+        record = build(:new_return_authorization, order: shipped_order)
+        expect(record).to receive(:publish_event).with('return_authorization.created')
+        allow(record).to receive(:publish_event).with(anything)
+
+        record.save!
+      end
+    end
+
+    describe 'return_authorization.updated' do
+      it 'publishes updated event when record is updated' do
+        record = create(:return_authorization)
+        expect(record).to receive(:publish_event).with('return_authorization.updated')
+        allow(record).to receive(:publish_event).with(anything)
+
+        record.touch
+      end
+    end
+
+    describe 'return_authorization.destroyed' do
+      it 'publishes destroyed event when record is destroyed' do
+        record = create(:return_authorization)
+        expect(record).to receive(:publish_event).with('return_authorization.destroyed', kind_of(Hash))
+        allow(record).to receive(:publish_event).with(anything)
+
+        record.destroy!
+      end
+    end
+  end
+
   context 'save' do
     let(:order) { Spree::Order.create }
 

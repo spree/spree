@@ -6,6 +6,7 @@ describe Spree::LineItem, type: :model do
   let(:line_item) { order.line_items.first }
 
   it_behaves_like 'metadata'
+  it_behaves_like 'lifecycle events'
 
   describe 'Validations' do
     describe 'ensure_proper_currency' do

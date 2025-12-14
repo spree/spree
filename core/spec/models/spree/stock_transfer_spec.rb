@@ -17,6 +17,7 @@ module Spree
     let(:variant) { stock_item.variant }
 
     it_behaves_like 'metadata'
+    it_behaves_like 'lifecycle events'
 
     describe '#reference' do
       subject { stock_transfer.reference }

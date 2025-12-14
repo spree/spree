@@ -10,6 +10,37 @@ describe Spree::Wishlist, type: :model do
   let!(:wishlist_belonging_to_other_store) { create(:wishlist, user: user, name: 'My Wishlist', store: other_store, is_default: true) }
   let!(:wishlist_belonging_to_other_user) { create(:wishlist, user: other_user, name: 'My Wishlist', store: store, is_default: true) }
 
+  describe 'lifecycle events' do
+    describe 'wishlist.created' do
+      it 'publishes created event when record is created' do
+        record = build(:wishlist, user: user, store: store)
+        expect(record).to receive(:publish_event).with('wishlist.created')
+        allow(record).to receive(:publish_event).with(anything)
+
+        record.save!
+      end
+    end
+
+    describe 'wishlist.updated' do
+      it 'publishes updated event when record is updated' do
+        expect(wishlist).to receive(:publish_event).with('wishlist.updated')
+        allow(wishlist).to receive(:publish_event).with(anything)
+
+        wishlist.touch
+      end
+    end
+
+    describe 'wishlist.destroyed' do
+      it 'publishes destroyed event when record is destroyed' do
+        record = create(:wishlist, user: user, store: store)
+        expect(record).to receive(:publish_event).with('wishlist.destroyed', kind_of(Hash))
+        allow(record).to receive(:publish_event).with(anything)
+
+        record.destroy!
+      end
+    end
+  end
+
   it 'has a valid factory' do
     expect(wishlist).to be_valid
   end

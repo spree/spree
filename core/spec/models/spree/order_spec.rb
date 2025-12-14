@@ -7,6 +7,8 @@ class FakeCalculator < Spree::Calculator
 end
 
 describe Spree::Order, type: :model do
+  it_behaves_like 'lifecycle events'
+
   let(:user) { create(:user) }
   let!(:store) { @default_store }
   let(:order) { create(:order, user: user, store: store) }

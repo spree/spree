@@ -1,22 +1,13 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Export, :job, type: :model do
+  it_behaves_like 'lifecycle events', factory: :product_export
+
   let(:store) { create(:store, code: 'my-store') }
   let(:user) { create(:admin_user) }
 
   let(:search_params) { nil }
   let(:export) { build(:product_export, store: store, user: user, format: 'csv', search_params: search_params) }
-
-  describe 'custom events' do
-    describe 'export.created' do
-      it 'publishes export.created event when saved' do
-        expect(export).to receive(:publish_event).with('export.created')
-        allow(export).to receive(:publish_event).with(anything)
-
-        export.save!
-      end
-    end
-  end
 
   describe '#model_class' do
     it 'returns the correct record class' do

@@ -7,6 +7,8 @@ RSpec.describe Spree::Import, :job, type: :model do
   let(:csv_content) { File.read(File.join(Spree::Core::Engine.root, 'spec/fixtures/files', 'products_import.csv')) }
   let(:import) { build(:product_import, owner: store, user: user) }
 
+  it_behaves_like 'lifecycle events', factory: :product_import
+
   before do
     # Stub the file content reading since ActiveStorage doesn't persist files properly in transactional tests
     allow(import).to receive(:attachment_file_content).and_return(csv_content)

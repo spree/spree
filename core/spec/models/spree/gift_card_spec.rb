@@ -3,6 +3,8 @@ require 'spec_helper'
 RSpec.describe Spree::GiftCard, type: :model do
   let(:store) { @default_store }
 
+  it_behaves_like 'lifecycle events'
+
   describe 'Callbacks' do
     describe '#ensure_can_be_deleted' do
       it "ensures a used gift card can't be destroyed" do

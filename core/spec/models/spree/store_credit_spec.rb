@@ -6,6 +6,7 @@ describe Spree::StoreCredit, type: :model do
   let(:store_credit_attrs) { {} }
 
   it_behaves_like 'metadata'
+  it_behaves_like 'lifecycle events'
 
   describe 'callbacks' do
     subject { store_credit.save }

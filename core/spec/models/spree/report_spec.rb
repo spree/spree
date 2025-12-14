@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Report, type: :model do
+  it_behaves_like 'lifecycle events', factory: :report
+
   let(:store) { @default_store }
   let(:user) { create(:admin_user) }
   let(:report) { build(:report, store: store, user: user) }
@@ -45,17 +47,6 @@ RSpec.describe Spree::Report, type: :model do
 
     it 'returns the correct file name format' do
       expect(report.attachment_file_name).to match(/#{store.code}-salestotal-report-\d{14}\.csv/)
-    end
-  end
-
-  describe 'custom events' do
-    describe 'report.created' do
-      it 'publishes report.created event when saved' do
-        expect(report).to receive(:publish_event).with('report.created')
-        allow(report).to receive(:publish_event).with(anything)
-
-        report.save!
-      end
     end
   end
 

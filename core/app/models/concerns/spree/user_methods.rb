@@ -162,6 +162,14 @@ module Spree
       name&.full
     end
 
+    def event_serializer_class
+      Spree::Events::UserSerializer
+    end
+
+    def event_prefix
+      'user'
+    end
+
     private
 
     def check_completed_orders

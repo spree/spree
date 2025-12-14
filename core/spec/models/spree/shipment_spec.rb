@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe Spree::Shipment, type: :model do
+  it_behaves_like 'lifecycle events'
+
   let(:inventory_units) { create_list(:inventory_unit, 2) }
   let(:variant) { line_item.variant }
   let!(:line_item) { create(:line_item) }
