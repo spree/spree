@@ -2,10 +2,6 @@ module Spree
   class ReturnItem < Spree.base_class
     COMPLETED_RECEPTION_STATUSES = %w(received given_to_customer)
 
-    if defined?(Spree::Webhooks::HasWebhooks)
-      include Spree::Webhooks::HasWebhooks
-    end
-
     class_attribute :return_eligibility_validator
     self.return_eligibility_validator = ReturnItem::EligibilityValidator::Default
 

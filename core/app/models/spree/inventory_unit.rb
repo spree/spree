@@ -1,9 +1,6 @@
 module Spree
   class InventoryUnit < Spree.base_class
     extend Spree::DisplayMoney
-    if defined?(Spree::Webhooks::HasWebhooks)
-      include Spree::Webhooks::HasWebhooks
-    end
 
     with_options inverse_of: :inventory_units do
       belongs_to :variant, -> { with_deleted }, class_name: 'Spree::Variant'

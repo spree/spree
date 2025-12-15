@@ -3,9 +3,6 @@ module Spree
     include Support::ActiveStorage
     include Spree::Metafields
     include Spree::Metadata
-    if defined?(Spree::Webhooks::HasWebhooks)
-      include Spree::Webhooks::HasWebhooks
-    end
 
     EXTERNAL_URL_METAFIELD_KEY = 'external.url'
 

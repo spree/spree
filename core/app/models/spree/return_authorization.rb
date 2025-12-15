@@ -2,9 +2,6 @@ module Spree
   class ReturnAuthorization < Spree.base_class
     include Spree::Core::NumberGenerator.new(prefix: 'RA', length: 9)
     include Spree::NumberIdentifier
-    if defined?(Spree::Webhooks::HasWebhooks)
-      include Spree::Webhooks::HasWebhooks
-    end
 
     belongs_to :order, class_name: 'Spree::Order', inverse_of: :return_authorizations
 

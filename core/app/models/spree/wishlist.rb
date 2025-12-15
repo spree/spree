@@ -1,9 +1,6 @@
 module Spree
   class Wishlist < Spree.base_class
     include Spree::SingleStoreResource
-    if defined?(Spree::Webhooks::HasWebhooks)
-      include Spree::Webhooks::HasWebhooks
-    end
 
     if Rails::VERSION::STRING >= '7.1.0'
       has_secure_token on: :save
