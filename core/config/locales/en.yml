@@ -1410,6 +1410,7 @@ en:
       oops: Oops!
     no_products_added: No products added
     no_products_found: No products found
+    no_report_data: No report data
     no_resource_found: No %{resource} found
     no_results: No results
     no_returns_found: No returns found
@@ -1909,6 +1910,7 @@ en:
     select_stock: Select stock
     select_stores: Select Store(s)
     select_user: Select customer
+    select_vendor: Select vendor
     selected_quantity_not_available: selected of %{item} is not available.
     send_consumer_transactional_emails: Send Customer Transactional Emails
     send_copy_of_all_mails_to: Send Copy of All Mails To

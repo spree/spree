@@ -18,13 +18,13 @@
         </tr>
       </thead>
       <tbody>
-        <% Spree.t(:report_names).keys.each do |report_type| %>
+        <% Spree.reports.each do |report_class| %>
           <tr data-controller="row-link">
             <td class="cursor-pointer w-90" data-action="click->row-link#openLink">
-              <%= Spree.t("report_names.#{report_type}") %>
+              <%= Spree.t("report_names.#{report_class.report_type}") %>
             </td>
             <td class="text-right w-10">
-              <%= link_to Spree.t(:show_report), spree.new_admin_report_path(type: report_type), class: 'btn btn-light btn-sm', data: { row_link_target: :link, turbo_frame: '_top' } %>
+              <%= link_to Spree.t(:show_report), spree.new_admin_report_path(type: report_class.report_type), class: 'btn btn-light btn-sm', data: { row_link_target: :link, turbo_frame: '_top' } %>
             </td>
           </tr>
         <% end %>

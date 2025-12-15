@@ -1,22 +1,30 @@
+<% if @report.try(:summary_partial_name) %>
+  <%= render "spree/admin/reports/summaries/#{@report.summary_partial_name}", report: @report %>
+<% end %>
+
 <div class="card-lg">
   <div class="table-responsive">
-    <table class="table">
-      <thead>
-        <tr>
-          <% @report.line_item_class.headers.each do |header| %>
-            <th scope="col"><%= header[:label] %></th>
-          <% end %>
-        </tr>
-      </thead>
-      <tbody>
-        <% @report.line_items.each do |line_item| %>
+    <% if @report_line_items.any? %>
+      <table class="table">
+        <thead>
           <tr>
-            <% line_item.class.attribute_types.keys.each do |key| %>
-              <td><%= line_item.send(key) %></td>
+            <% @report.line_item_class.headers.each do |header| %>
+              <th scope="col"><%= header[:label] %></th>
             <% end %>
           </tr>
-        <% end %>
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          <% @report_line_items.each do |line_item| %>
+            <tr>
+              <% line_item.class.attribute_types.keys.each do |key| %>
+                <td><%= line_item.send(key) %></td>
+              <% end %>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <%= render @report.no_report_data_partial_path %>
+    <% end %>
   </div>
 </div>

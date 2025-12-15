@@ -37,7 +37,7 @@ describe Spree::Admin::ReportsController, type: :controller do
       subject { get :new, params: { type: 'invalid_type' } }
 
       it 'raises an error' do
-        expect { subject }.to raise_error('Unknown report type')
+        expect { subject }.to raise_error('Unknown report type: invalid_type')
       end
     end
 
@@ -70,19 +70,19 @@ describe Spree::Admin::ReportsController, type: :controller do
   end
 
   describe '#create' do
+    subject { post :create, params: { report: report_params }, format: :turbo_stream }
+
     let(:report_params) do
       {
-        type: 'sales_total',
+        type: 'Spree::Reports::SalesTotal',
         date_from: 1.month.ago,
         date_to: Time.current,
         currency: 'USD'
       }
     end
 
-    subject { post :create, params: { report: report_params }, format: :turbo_stream }
-
     it 'creates a new report' do
-      expect { subject }.to change(Spree::Report, :count).by(1)
+      expect { subject }.to change(Spree::Reports::SalesTotal, :count).by(1)
     end
 
     it 'sets the store' do
@@ -106,7 +106,7 @@ describe Spree::Admin::ReportsController, type: :controller do
 
       let(:report_params) do
         {
-          type: 'sales_total',
+          type: 'Spree::Reports::SalesTotal',
           date_from: date_from,
           date_to: date_to,
           currency: 'USD'
@@ -121,7 +121,7 @@ describe Spree::Admin::ReportsController, type: :controller do
     end
 
     context 'when no dates are provided' do
-      let(:report_params) { { type: 'sales_total', currency: 'USD' } }
+      let(:report_params) { { type: 'Spree::Reports::SalesTotal', currency: 'USD' } }
 
       before { Timecop.freeze(Time.current) }
 
