@@ -98,8 +98,8 @@
                 </div>
               </div>
               <div class="flex justify-between">
-                <button class="btn btn-light btn-sm" data-action="variants-form#hideNewOptionForm" type="button"><%= Spree.t('actions.discard') %></button>
-                <button class="btn btn-primary btn-sm" data-action="variants-form#handleNewOption" type="button"><%= Spree.t(:done) %></button>
+                <button class="btn btn-light" data-action="variants-form#hideNewOptionForm" type="button"><%= Spree.t('actions.discard') %></button>
+                <button class="btn btn-primary" data-action="variants-form#handleNewOption" type="button"><%= Spree.t(:done) %></button>
               </div>
             </div>
           </div>
@@ -146,9 +146,9 @@
             <% end%>
             <div class="variants-table__header__cell column-variant">
               <%= Spree.t(:variant) %>
-              <button data-variants-form-target="deleteButton" data-action="variants-form#deleteSelected" type="button" class="delete-button hidden ml-12">
-                <i class="ti ti-trash"></i> <%= Spree.t(:delete_selected) %>
-              </button>
+            <button data-variants-form-target="deleteButton" data-action="variants-form#deleteSelected" type="button" class="btn btn-danger btn-sm hidden ml-12">
+              <%= icon('trash') %> <%= Spree.t(:delete_selected) %>
+            </button>
             </div>
             <div class="variants-table__header__cell  column-price">
               <%= Spree.t(:price) %>
@@ -162,7 +162,7 @@
           <%= render 'spree/admin/products/form/variants/variant_template', default_stock_location: default_stock_location_for_product(@product) %>
           <div class="variants-table__body" data-variants-form-target="variantsContainer" data-test-id="product-variants-table">
           </div>
-          <div class="variants-table__footer text-sm">
+          <div class="variants-table__footer text-sm rounded-b-2xl">
             <%= Spree.t('admin.variants_form.total_inventory_html', stock_location: current_store.default_stock_location.name, count: raw("<span data-variants-form-target='stockItemsCount'>#{@product.total_on_hand}</span>") )%>
           </div>
         </div>

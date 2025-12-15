@@ -22,8 +22,8 @@
       <% end %>
 
       <% if show_record_subtitle || content_for(:page_actions_dropdown) %>
-        <%= dropdown id: 'page_actions_dropdown', class: 'h-full', portal: false do %>
-          <%= dropdown_toggle id: 'more-actions-link', class: 'btn-light h-full' do %>
+        <%= dropdown id: 'page_actions_dropdown', portal: false do %>
+          <%= dropdown_toggle id: 'more-actions-link', class: 'btn-light h-[35px] px-2' do %>
             <%= icon 'dots-vertical', class: 'mr-0' %>
           <% end %>
           <%= dropdown_menu id: 'page_actions_dropdown_menu' do %>

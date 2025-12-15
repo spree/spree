@@ -15,11 +15,11 @@
     <div class="variants-table__body__cell column-variant" data-slot="variantName">
       Medium
     </div>
-    <div class="variants-table__body__cell column-price">
+    <div class="variants-table__body__cell column-price mr-2">
       <% supported_currencies.each_with_index do |currency, i| %>
-        <div class="form-input items-center py-0 focus-shadow focus-border mr-2 price-input-container <%= current_currency != currency ? 'hidden' : 'flex' %>" <%= !can_manage_prices ? 'readonly' : '' %>>
-          <%= text_field_tag "product[variants_attributes][prices_attributes][#{i}][amount]", '',  class: 'form-input-plaintext px-0', data: { slot: "[prices_attributes][#{currency}][amount]_input", action: 'variants-form#updatePrice', currency: currency.to_s }, readonly: !can_manage_prices %>
-          <span><%= currency_symbol(currency) %></span>
+        <div class="input-group price-input-container <%= current_currency != currency ? 'hidden' : 'flex' %>" <%= !can_manage_prices ? 'readonly' : '' %>>
+          <%= text_field_tag "product[variants_attributes][prices_attributes][#{i}][amount]", '',  class: 'border-0 focus:ring-0 focus:outline-none', data: { slot: "[prices_attributes][#{currency}][amount]_input", action: 'variants-form#updatePrice', currency: currency.to_s }, readonly: !can_manage_prices %>
+          <span class="px-3"><%= currency_symbol(currency) %></span>
         </div>
         <%= hidden_field_tag "product[variants_attributes][prices_attributes][#{i}][currency]", currency, data: {slot: "[prices_attributes][#{currency}][currency]_input"} %>
         <%= hidden_field_tag "product[variants_attributes][prices_attributes][#{i}][id]", "", data: {slot: "[prices_attributes][#{currency}][id]_input"} %>
@@ -34,7 +34,7 @@
     </div>
     <% if can?(:manage, @product.default_variant) %>
       <div class="variants-table__body__cell column-actions flex items-center">
-        <a href="#" class="btn btn-sm btn-light invisible ml-2" data-slot="variantEditButton">
+        <a href="#" class="btn btn-light invisible ml-2" data-slot="variantEditButton">
           <%= icon('edit') %>
           <%= Spree.t(:edit)%>
         </a>

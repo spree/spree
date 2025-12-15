@@ -242,11 +242,11 @@
     @apply inline-flex mr-4;
   }
 
-  .custom-range {
+  .custom-range, .form-range {
     @apply w-full h-2 p-0 bg-transparent border rounded-full appearance-none cursor-pointer bg-gray-200;
   }
 
-  .custom-range::-webkit-slider-thumb {
+  .custom-range::-webkit-slider-thumb, .form-range::-webkit-slider-thumb {
     @apply w-4 h-4 appearance-none bg-blue rounded-full cursor-pointer ring-2 ring-blue/25 ring-offset-1 focus:outline-none;
   }
 }

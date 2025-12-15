@@ -8,19 +8,12 @@
       <%= link_to_with_icon 'plus', Spree.t(:add_one), spree.new_admin_promotion_rule_path(@promotion), class: 'btn btn-primary btn-sm', data: { turbo_frame: 'dialog', action: 'dialog#open' } %>
     <% end %>
   </div>
-  <div class="card-body">
-    <div class="form-group mb-0">
-      <div class="block lg:flex gap-6">
-        <%= form_with model: @promotion, url: spree.admin_promotion_path(@promotion), method: :put, data: { controller: 'auto-submit' } do |f| %>
-          <% Spree::Promotion::MATCH_POLICIES.each do |policy| %>
-            <div class="custom-control custom-radio custom-control-inline">
-              <%= f.radio_button :match_policy, policy, class: 'custom-control-input', data: { action: 'auto-submit#submit' } %>
-              <%= f.label "match_policy_#{policy}", class: 'custom-control-label' %>
-            </div>
-          <% end %>
-        <% end %>
-      </div>
-    </div>
+  <div class="card-body pb-0">
+    <%= form_with model: @promotion, url: spree.admin_promotion_path(@promotion), method: :put, data: { controller: 'auto-submit' }, html: { class: 'flex gap-x-6' } do |f| %>
+      <% Spree::Promotion::MATCH_POLICIES.each do |policy| %>
+        <%= f.spree_radio_button :match_policy, policy, { data: { action: 'click->auto-submit#submit' }, label: Spree.t("promotion_form.match_policies.#{policy}") } %>
+      <% end %>
+    <% end %>
   </div>
   <div class="card-body p-2 flex flex-col gap-2">
     <% if @promotion.promotion_rules.empty? %>

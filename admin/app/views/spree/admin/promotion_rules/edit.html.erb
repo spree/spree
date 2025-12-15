@@ -6,6 +6,9 @@
       </div>
       <div class="card-body">
         <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @promotion_rule } %>
+        <p class="text-gray-600 mb-3">
+          <%= @promotion_rule.human_description %>
+        </p>
         <%= render "spree/admin/promotion_rules/forms/#{@promotion_rule.key}", f: f %>
       </div>
       <div class="card-footer flex justify-between">

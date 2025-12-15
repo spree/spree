@@ -80,7 +80,7 @@
     </div>
   </div>
   <% if payment.transaction_id.present? && !payment.store_credit? %>
-    <div class="card-footer border-t border-t-dashed" data-controller="reveal">
+    <div class="card-footer border-t border-dashed py-3" data-controller="reveal">
       <p class="mb-0 flex justify-between items-center">
         <span>
           <%= Spree.t(:risk_analysis) %>

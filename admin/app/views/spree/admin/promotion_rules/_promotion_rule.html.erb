@@ -16,7 +16,9 @@
       <% end %>
     </div>
     <div class="card-body">
-      <p class="text-gray-600"><%= promotion_rule.human_description %></p>
+      <p class="text-gray-600 mb-3">
+      <%= promotion_rule.human_description %>
+      </p>
 
       <% if promotion_rule.preferences.present? %>
         <%= render 'spree/admin/shared/preferences', object: promotion_rule %>
@@ -46,7 +48,6 @@
 
       <% if promotion_rule.respond_to?(:taxons) %>
         <div class="mt-4">
-          <span><%= Spree.t(:taxons) %>:</span>
           <div class="flex flex-wrap gap-2">
             <% promotion_rule.taxons.pluck(:pretty_name).each do |taxon_name| %>
               <strong><%= taxon_name %></strong>
@@ -57,7 +58,6 @@
 
       <% if promotion_rule.respond_to?(:users) %>
         <div class="mt-4">
-          <span><%= Spree.t(:users) %>:</span>
           <div class="flex flex-wrap gap-2">
             <% promotion_rule.users.pluck(:email).each do |user_email| %>
               <strong><%= user_email %></strong>

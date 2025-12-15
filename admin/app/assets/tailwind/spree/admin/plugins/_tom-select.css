@@ -16,7 +16,7 @@
   /* Dropdown */
   .ts-dropdown,
   .ts-dropdown.form-input {
-    @apply absolute mt-1! top-[110%] left-0 w-full h-auto p-1 z-[10000000]! bg-surface rounded-lg;
+    @apply absolute mt-2! top-full left-0 w-full h-auto p-1 z-[10000000]! bg-surface rounded-lg;
     box-shadow: var(--shadow-dropdown);
   }
 
