@@ -44,18 +44,10 @@ export default class ToggleMenu extends Toggle {
   updateDynamicHeight() {
     if (!this.hasContentTarget) return
     
-    const navElement = this.element.querySelector('nav[aria-label="Top"]')
-    const navPaddingBottom = navElement ? 
-      parseInt(getComputedStyle(navElement).paddingBottom, 10) || 0 : 0
-    
     const contentTopDistance = this.contentTarget.getBoundingClientRect().top
     const calculatedHeight = `calc(100dvh - ${contentTopDistance}px)`
     
     this.contentTarget.style.height = calculatedHeight
-    const firstChild = this.contentTarget.firstElementChild
-    if (firstChild) {
-      firstChild.style.marginTop = `${navPaddingBottom}px`
-    }
   }
 
   setupObservers() {
