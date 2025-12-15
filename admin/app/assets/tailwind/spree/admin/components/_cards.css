@@ -79,7 +79,7 @@
   }
 
   .card-header .card-title {
-    @apply mb-0 text-base font-sans;
+    @apply mb-0 font-sans;
   }
 
   .card-header .arrow {
