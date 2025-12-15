@@ -7,7 +7,7 @@
     <% end %>
   </div>
   <div class="card-body">
-    <div class="custom-control custom-checkbox mb-6">
+    <div class="custom-control form-checkbox mb-6">
       <%= f.check_box :track_inventory,
             class: 'custom-control-input',
             data: {
@@ -32,10 +32,10 @@
                 <%= sif.object.stock_location.name %>
               </div>
               <div class="col-span-12 md:col-span-2">
-                <%= sif.number_field :count_on_hand, class: 'form-control' %>
+                <%= sif.number_field :count_on_hand, class: 'form-input' %>
               </div>
               <div class="col-span-12 md:col-span-4">
-                <div class="custom-control custom-checkbox flex items-center h-full">
+                <div class="custom-control form-checkbox flex items-center h-full">
                   <%= sif.check_box :backorderable, class: 'custom-control-input' %>
                   <%= sif.label :backorderable, Spree.t(:continue_selling_when_out_of_stock), class: 'custom-control-label' %>
                 </div>
@@ -49,13 +49,13 @@
       <div class="col-span-12 md:col-span-6">
         <div class="form-group">
           <%= f.label :sku, Spree.t('admin.products.inventory.sku') %>
-          <%= f.text_field :sku, class: 'form-control' %>
+          <%= f.text_field :sku, class: 'form-input' %>
         </div>
       </div>
       <div class="col-span-12 md:col-span-6">
         <div class="form-group">
           <%= f.label :barcode, Spree.t('admin.products.inventory.barcode') %>
-          <%= f.text_field :barcode, class: 'form-control' %>
+          <%= f.text_field :barcode, class: 'form-input' %>
         </div>
       </div>
     </div>

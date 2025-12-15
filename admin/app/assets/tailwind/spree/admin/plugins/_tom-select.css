@@ -8,14 +8,14 @@
     @apply relative;
   }
 
-  .ts-wrapper.form-control,
+  .ts-wrapper.form-input,
   .ts-wrapper.form-select {
     @apply p-0!;
   }
 
   /* Dropdown */
   .ts-dropdown,
-  .ts-dropdown.form-control {
+  .ts-dropdown.form-input {
     @apply absolute mt-1! top-[110%] left-0 w-full h-auto p-1 z-[10000000]! bg-surface rounded-lg;
     box-shadow: var(--shadow-dropdown);
   }
@@ -216,26 +216,26 @@
   }
 
   /* Form control integration */
-  .form-control.ts-wrapper {
+  .form-input.ts-wrapper {
     @apply p-0 h-auto border-none bg-none rounded-none;
   }
 
   /* Small size */
   .input-group-sm > .ts-wrapper .ts-control,
-  .ts-wrapper.form-control-sm .ts-control {
+  .ts-wrapper.form-input-sm .ts-control {
     @apply text-xs px-3 rounded-sm;
     min-height: calc(1.5em + 0.5rem + 2px);
   }
 
   .input-group-sm > .ts-wrapper.has-items .ts-control,
-  .ts-wrapper.form-control-sm.has-items .ts-control {
+  .ts-wrapper.form-input-sm.has-items .ts-control {
     @apply text-xs pb-0;
     min-height: calc(1.5em + 0.5rem + 2px) !important;
   }
 
   /* Large size */
   .input-group-lg > .ts-wrapper > .ts-control,
-  .ts-wrapper.form-control-lg .ts-control {
+  .ts-wrapper.form-input-lg .ts-control {
     @apply text-xl rounded-lg;
     min-height: calc(1.5em + 1rem + 2px);
   }

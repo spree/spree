@@ -233,9 +233,9 @@ export default class extends CheckboxSelectAll {
         .forEach((el) => {
           if (currency === newCurrency) {
             el.classList.remove('hidden', 'd-none')
-            el.classList.add('d-flex')
+            el.classList.add('flex')
           } else {
-            el.classList.remove('d-flex')
+            el.classList.remove('flex')
             el.classList.add('hidden')
           }
         })
@@ -705,9 +705,9 @@ export default class extends CheckboxSelectAll {
       priceInput.name = `product[variants_attributes][${idx}][prices_attributes][${currency}]`
       if (currency === this.currentCurrencyValue) {
         priceInput.parentElement.classList.remove('hidden', 'd-none')
-        priceInput.parentElement.classList.add('d-flex')
+        priceInput.parentElement.classList.add('flex')
       } else {
-        priceInput.parentElement.classList.remove('d-flex')
+        priceInput.parentElement.classList.remove('flex')
         priceInput.parentElement.classList.add('hidden')
       }
 

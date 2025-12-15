@@ -29,16 +29,16 @@
           <tr>
             <td><%= price_form.object.currency %></td>
             <td>
-              <div class="form-control items-center py-0 focus-shadow focus-border mr-2 price-input-container flex">
-                <%= price_form.text_field :amount, class: 'form-control-plaintext px-0', disabled: !can?(:manage, price_form.object), value: price_form.object.amount.present? ? Spree::Money.new(price_form.object.amount, currency: price_form.object.currency, symbol: '').to_s : '' %>
-                <span><%= currency_symbol(price_form.object.currency) %></span>
-              </div>
+              <%= price_form.spree_text_field :amount, disabled: !can?(:manage, price_form.object),
+                                                       value: price_form.object.amount.present? ? Spree::Money.new(price_form.object.amount, currency: price_form.object.currency, symbol: '').to_s : '',
+                                                       append: currency_symbol(price_form.object.currency), 
+                                                       label: false %>
             </td>
             <td>
-              <div class="form-control items-center py-0 focus-shadow focus-border mr-2 price-input-container flex">
-                <%= price_form.text_field :compare_at_amount, class: 'form-control-plaintext px-0', disabled: !can?(:manage, price_form.object), value: price_form.object.compare_at_amount.present? ? Spree::Money.new(price_form.object.compare_at_amount, currency: price_form.object.currency, symbol: '').to_s : '' %>
-                <span><%= currency_symbol(price_form.object.currency) %></span>
-              </div>
+              <%= price_form.spree_text_field :compare_at_amount, disabled: !can?(:manage, price_form.object),
+                                                                  value: price_form.object.compare_at_amount.present? ? Spree::Money.new(price_form.object.compare_at_amount, currency: price_form.object.currency, symbol: '').to_s : '',
+                                                                  append: currency_symbol(price_form.object.currency), 
+                                                                  label: false %>
             </td>
           </tr>
         <% end %>
@@ -46,4 +46,3 @@
     </table>
   </div>
 </div>
-

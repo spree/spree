@@ -90,11 +90,11 @@
     color: white;
   }
 
-  .media-form__image .custom-checkbox:has(input:checked) {
+  .media-form__image .form-checkbox:has(input:checked) {
     display: inline !important;
   }
 
-  .media-form__image:hover .custom-checkbox {
+  .media-form__image:hover .form-checkbox {
     display: inline !important;
   }
 

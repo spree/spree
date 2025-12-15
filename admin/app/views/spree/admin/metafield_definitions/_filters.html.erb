@@ -6,7 +6,7 @@
           options_for_select(metafield_definition_resource_types, params.dig(:q, :resource_type_eq)),
           { 
             include_blank: Spree.t(:all),
-            class: 'custom-select w-20',
+            class: 'form-select w-20',
             data: { 
               filters_target: :input,
               action: 'auto-submit#submit'

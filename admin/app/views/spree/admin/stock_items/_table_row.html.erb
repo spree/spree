@@ -15,7 +15,7 @@
                url: spree.admin_stock_item_path(stock_item),
                method: :put,
                html: { data: { controller: 'auto-submit'}, class: 'flex items-center justify-center' } do |f| %>
-        <div class="custom-control custom-checkbox">
+        <div class="custom-control form-checkbox">
           <%= f.check_box :backorderable, class: 'custom-control-input', id: "stock_item_backorderable_#{stock_item.id}", data: { action: 'auto-submit#submit' } %>
           <label class="custom-control-label" for="stock_item_backorderable_<%= stock_item.id %>"><span></span></label>
         </div>
@@ -32,7 +32,7 @@
                     method: :put,
                     html: { class: 'flex' } do |f| %>
 
-          <%= f.number_field :count_on_hand, class: 'form-control mr-2', required: true, min: 0 %>
+          <%= f.number_field :count_on_hand, class: 'form-input mr-2', required: true, min: 0 %>
           <%= turbo_save_button_tag Spree.t('actions.update'), class: 'btn btn-primary' %>
         <% end %>
       <% end %>

@@ -15,10 +15,10 @@
     <%= f.hidden_field :id %>
   </td>
   <td class="w-45 presentation">
-    <%= f.text_field :presentation, class: "form-control", data: { slug_form_target: :name, action: 'slug-form#updateUrlFromName' } %>
+    <%= f.text_field :presentation, class: "form-input", data: { slug_form_target: :name, action: 'slug-form#updateUrlFromName' } %>
   </td>
   <td class="w-40 name">
-    <%= f.text_field :name, class: "form-control", data: { slug_form_target: :url } %>
+    <%= f.text_field :name, class: "form-input", data: { slug_form_target: :url } %>
   </td>
   <td class="w-10 actions">
     <button type="button" class="btn btn-danger btn-sm remove_option_value_button" data-action="nested-form#remove">

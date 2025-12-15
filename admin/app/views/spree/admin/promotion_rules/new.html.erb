@@ -5,21 +5,21 @@
     <% else %>
       <%= dialog_header(@promotion_rule.human_name) %>
     <% end %>
-    <div class="dialog-body">
+    <div class="dialog-body overflow-visible">
       <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @promotion_rule } %>
       <% if @promotion_rule.type.nil? %>
         <% options_for_promotion_rule_types(@promotion).each do |rule_type| %>
           <% key = rule_type.demodulize.underscore %>
-          <%= link_to spree.new_admin_promotion_rule_path(@promotion, promotion_rule: { type: rule_type }), class: 'flex align-items-top w-full py-2 px-4 hover:bg-gray-100 rounded-xl mb-2', data: { turbo_prefetch: false } do %>
-            <%= radio_button_tag :type, rule_type %>
-            <div class="ml-4">
+          <%= link_to spree.new_admin_promotion_rule_path(@promotion, promotion_rule: { type: rule_type }), class: 'flex align-items-top w-full py-2 px-4 hover:bg-gray-50 rounded-xl mb-2 no-underline', data: { turbo_prefetch: false } do %>
+            <%= radio_button_tag :type, rule_type, class: 'hidden' %>
+            <div class="">
               <h6 class="font-bold mb-1"><%= Spree.t("promotion_rule_types.#{key}.name") %></h6>
               <p class="text-gray-600 mb-0"><%= Spree.t("promotion_rule_types.#{key}.description") %></p>
             </div>
           <% end %>
         <% end %>
       <% else %>
-        <p class="text-gray-600">
+        <p class="text-gray-600 mb-3">
           <%= @promotion_rule.human_description %>
         </p>
         <%= f.hidden_field :type, value: @promotion_rule.type %>

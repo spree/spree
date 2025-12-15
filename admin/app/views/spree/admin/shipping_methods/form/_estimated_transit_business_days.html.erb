@@ -9,15 +9,9 @@
       This is the estimated number of business days it will take for the package to arrive at the customer's address.
       It will be displayed on the checkout page.
     </div>
-    <div class="grid grid-cols-12 gap-6">
-      <div class="col-span-12">
-        <%= f.label :estimated_transit_business_days_min, Spree.t(:min) %>
-        <%= f.number_field :estimated_transit_business_days_min, class: 'form-control w-auto', size: 2, placeholder: Spree.t(:min), min: 1 %>
-      </div>
-      <div class="col-span-12">
-        <%= f.label :estimated_transit_business_days_max, Spree.t(:max) %>
-        <%= f.number_field :estimated_transit_business_days_max, class: 'form-control w-auto', size: 2, placeholder: Spree.t(:max), min: 1 %>
-      </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <%= f.spree_number_field :estimated_transit_business_days_min, size: 2, placeholder: Spree.t(:min), min: 1, label: Spree.t(:min) %>
+      <%= f.spree_number_field :estimated_transit_business_days_max, size: 2, placeholder: Spree.t(:max), min: 1, label: Spree.t(:max) %>
     </div>
   </div>
 </div>

@@ -4,7 +4,7 @@
     <div class="dialog-body border-b">
       <%= form_with url: spree.search_admin_products_path, method: :post, data: { controller: 'auto-submit'} do |form| %>
         <%= form.hidden_field :omit_ids, value: parent.product_ids.join(',') %>
-        <%= form.search_field :q, value: params[:q], class: 'form-control', data: { search_picker_target: :search, action: 'auto-submit#submit' }, autofocus: true %>
+        <%= form.search_field :q, value: params[:q], class: 'form-input', data: { search_picker_target: :search, action: 'auto-submit#submit' }, autofocus: true %>
       <% end %>
     </div>
     <%= form_with url: url do |form| %>

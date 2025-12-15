@@ -8,15 +8,15 @@
   }
 
   .list-group-item {
-    @apply relative block py-4 px-5 text-text no-underline border border-border;
+    @apply relative block py-3 px-5 text-text no-underline border border-border hover:bg-gray-25;
   }
 
   .list-group-item:first-child {
-    @apply rounded-t-[inherit];
+    @apply rounded-t-2xl;
   }
 
   .list-group-item:last-child {
-    @apply rounded-b-[inherit];
+    @apply rounded-b-2xl;
   }
 
   .list-group-item.disabled,

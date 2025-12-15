@@ -125,20 +125,20 @@
             <% if supported_currencies.length > 1 %>
               <div class="flex flex-row items-center gap-2">
                 <label for="currency" class="mb-0"><%= Spree.t(:currency) %></label>
-                <%= select_tag 'currency', options_for_select(supported_currencies, current_store.default_currency), class: 'variants-table__actions__select custom-select', data: { action: 'variants-form#updateCurrency' } %>
+                <%= select_tag 'currency', options_for_select(supported_currencies, current_store.default_currency), class: 'variants-table__actions__select form-select', data: { action: 'variants-form#updateCurrency' } %>
               </div>
             <% end %>
             <% if available_stock_locations_for_product(@product).size > 1 %>
               <div class="flex flex-row items-center gap-2">
                 <label for="stock_location" class="mb-0"><%= Spree.t(:stock_location) %></label>
-                <%= select_tag 'stock_location', variant_form_stock_location_options, class: 'variants-table__actions__select custom-select', data: { action: 'variants-form#updateStockLocationId' } %>
+                <%= select_tag 'stock_location', variant_form_stock_location_options, class: 'variants-table__actions__select form-select', data: { action: 'variants-form#updateStockLocationId' } %>
               </div>
             <% end %>
           </div>
           <div class="variants-table__header border-t border-b">
             <% if can?(:destroy, @product.default_variant)  %>
               <div class="variants-table__body__cell column-checkbox">
-                <div class="custom-control custom-checkbox">
+                <div class="custom-control form-checkbox">
                   <%= check_box_tag "ids[]", nil, false, class: "custom-control-input", id: "ids", data: { variants_form_target: "checkboxAll" } %>
                   <label class="custom-control-label" for="ids"><span></span></label>
                 </div>

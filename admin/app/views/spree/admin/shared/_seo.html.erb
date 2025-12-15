@@ -23,10 +23,10 @@
       <div class="form-group">
         <% if defined?(slug_attribute_name) %>
           <%= label_tag slug_attribute_name, Spree.t(:slug) %>
-          <%= text_field_tag slug_attribute_name, slug, class: 'form-control',  data: { seo_form_target: 'slugInput', action: 'input->seo-form#updatePreviews', slug_form_target: 'url' } %>
+          <%= text_field_tag slug_attribute_name, slug, class: 'form-input',  data: { seo_form_target: 'slugInput', action: 'input->seo-form#updatePreviews', slug_form_target: 'url' } %>
         <% else %>
           <%= f.label :slug, Spree.t(:slug) %>
-          <%= f.text_field :slug, class: 'form-control', data: { seo_form_target: 'slugInput', action: 'input->seo-form#updatePreviews', slug_form_target: 'url' } %>
+          <%= f.text_field :slug, class: 'form-input', data: { seo_form_target: 'slugInput', action: 'input->seo-form#updatePreviews', slug_form_target: 'url' } %>
         <% end %>
       </div>
     </div>

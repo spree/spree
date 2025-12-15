@@ -1,7 +1,7 @@
 <%= turbo_frame_tag :bulk_dialog do %>
   <%= dialog_header(@title, 'bulk-dialog') %>
   <div class="dialog-body overflow-visible">
-    <p><%= @body %></p>
+    <p class="mb-3"><%= @body %></p>
 
     <% if params[:kind] == 'add_to_taxons' || params[:kind] == 'remove_from_taxons' %>
       <%= tom_select_tag 'taxon_ids', multiple: true, class: 'w-full', url: spree.admin_taxons_select_options_path(format: :json), required: true %>

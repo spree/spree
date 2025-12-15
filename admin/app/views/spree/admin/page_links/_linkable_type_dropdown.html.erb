@@ -11,5 +11,5 @@
 <% elsif page_link.linkable_type == 'Spree::Vendor' %>
   <%= tom_select_tag "#{form_name}[linkable_id]", class: 'w-full', url: spree.select_options_admin_vendors_path(format: :json), active_option: page_link.linkable_id, select_data: { action: 'auto-submit#submit' } %>
 <% else %>
-  <%= text_field_tag "#{form_name}[url]", page_link.url, class: "form-control", required: true, placeholder: 'eg. google.com', data: { action: 'blur->auto-submit#submit' } %>
+  <%= text_field_tag "#{form_name}[url]", page_link.url, class: "form-input", required: true, placeholder: 'eg. google.com', data: { action: 'blur->auto-submit#submit' } %>
 <% end %>

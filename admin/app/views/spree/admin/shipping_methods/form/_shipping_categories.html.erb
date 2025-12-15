@@ -8,7 +8,7 @@
   <div class="card-body">
     <div class="form-group">
       <% @shipping_categories.each do |category| %>
-        <div class="custom-control custom-checkbox mb-2">
+        <div class="custom-control form-checkbox mb-2">
           <%= check_box_tag('shipping_method[shipping_category_ids][]', category.id, @shipping_method.shipping_categories.include?(category), id: "shipping_method_categories_#{category.id}", class: 'custom-control-input') %>
           <%= label_tag "shipping_method_categories_#{category.id}", class: 'custom-control-label' do %>
             <%= category.name.gsub('_',  ' ') %>

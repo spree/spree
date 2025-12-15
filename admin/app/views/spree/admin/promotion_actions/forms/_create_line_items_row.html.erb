@@ -17,7 +17,7 @@
     <% end %>
   </td>
   <td class="w-20">
-    <%= line_item_fields.number_field :quantity, min: 1, max: line_item_fields.object.variant&.total_on_hand, class: 'form-control', required: true %>
+    <%= line_item_fields.number_field :quantity, min: 1, max: line_item_fields.object.variant&.total_on_hand, class: 'form-input', required: true %>
   </td>
   <td class="w-10 text-right">
     <button type="button" class="btn btn-danger btn-sm" data-action="nested-form#remove">

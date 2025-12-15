@@ -5,7 +5,7 @@
       <%= form_with url: spree.admin_variants_search_path, method: :post, data: { controller: 'auto-submit', turbo_frame: '_top' } do |form| %>
         <%= form.hidden_field :omit_ids, value: @order.variant_ids.join(',') %>
         <%= form.hidden_field :param_name, value: 'line_item' %>
-        <%= form.search_field :q, value: params[:q], class: 'form-control', data: { search_picker_target: :search, action: 'auto-submit#submit' }, autofocus: true %>
+        <%= form.search_field :q, value: params[:q], class: 'form-input', data: { search_picker_target: :search, action: 'auto-submit#submit' }, autofocus: true %>
         <%= form.hidden_field :currency, value: @order.currency %>
       <% end %>
     </div>
@@ -20,7 +20,7 @@
       <div class="dialog-footer">
         <div class="flex gap-2 m-0 items-center mr-auto">
           <%= form.label :quantity, Spree.t(:quantity), class: "mb-0" %>
-          <%= form.number_field :quantity, class: "form-control", min: 1 %>
+          <%= form.number_field :quantity, class: "form-input", min: 1 %>
         </div>
         <%= turbo_save_button_tag Spree.t(:add_selected_variant), disabled: true, data: { search_picker_target: :submit } %>
       </div>

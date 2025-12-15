@@ -9,11 +9,11 @@
     <% if @minimum_password_length %>
       <em>(<%= @minimum_password_length %> characters minimum)</em>
     <% end %>
-    <%= f.password_field :password, autofocus: true, autocomplete: "new-password", class: 'form-control form-control-lg', min: @minimum_password_length %>
+    <%= f.password_field :password, autofocus: true, autocomplete: "new-password", class: 'form-input form-input-lg', min: @minimum_password_length %>
   </div>
   <div class="form-group mb-4">
     <%= f.label :password_confirmation, Spree.t(:confirm_password), required: true, class: 'form-label' %>
-    <%= f.password_field :password_confirmation, autocomplete: "new-password", class: 'form-control form-control-lg', min: @minimum_password_length %>
+    <%= f.password_field :password_confirmation, autocomplete: "new-password", class: 'form-input form-input-lg', min: @minimum_password_length %>
   </div>
   <%= render 'spree/admin/shared/devise/links', f: f %>
   <%= turbo_save_button_tag Spree.t(:reset_password), class: 'btn btn-primary btn-lg w-full' %>

@@ -5,7 +5,7 @@
       <%= button_tag class: 'btn btn-light btn-sm px-1', data: { action: 'click->password-toggle#password' } do %>
         <%= icon 'eye', class: 'mr-0' %>
       <% end %>
-      <%= password_field_tag :password, oauth_application.uid, class: 'form-control-plaintext', data: { password_toggle_target: 'unhide' }, readonly: true %>
+      <%= password_field_tag :password, oauth_application.uid, class: 'form-input-plaintext', data: { password_toggle_target: 'unhide' }, readonly: true %>
     </div>
   </td>
   <td class="w-15">

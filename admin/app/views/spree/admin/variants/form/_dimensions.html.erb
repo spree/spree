@@ -1,19 +1,14 @@
-<div class="grid grid-cols-12 gap-6">
-  <div class="col-span-12 lg:col-span-6">
-    <%= f.spree_text_field :width, value: number_with_precision(f.object.width, precision: 2) %>
-    <%= f.spree_text_field :height, value: number_with_precision(f.object.height, precision: 2) %>
-  </div>
-
-  <div class="col-span-12 lg:col-span-6">
-    <%= f.spree_text_field :depth, value: number_with_precision(f.object.depth, precision: 2) %>
-    <%= f.spree_select :dimensions_unit, options_for_select(dimension_units(current_store), f.object.dimensions_unit), { include_blank: false, label: Spree.t(:unit) } %>
-  </div>
+<div class="grid grid-cols-2 gap-3">
+  <%= f.spree_text_field :width, value: number_with_precision(f.object.width, precision: 2) %>
+  <%= f.spree_text_field :height, value: number_with_precision(f.object.height, precision: 2) %>
+  <%= f.spree_text_field :depth, value: number_with_precision(f.object.depth, precision: 2) %>
+  <%= f.spree_select :dimensions_unit, options_for_select(dimension_units(current_store), f.object.dimensions_unit), { include_blank: false, label: Spree.t(:unit) } %>
 </div>
 
 <div class="form-group">
   <%= f.label :weight %>
-  <div class="form-control flex items-center py-0 focus-border focus-shadow">
-    <%= f.text_field :weight, value: number_with_precision(f.object.weight, precision: 2), class: 'form-control-plaintext pl-0' %>
-    <%= f.select :weight_unit, options_for_select(weight_units(current_store), f.object.weight_unit), { include_blank: false }, { class: 'form-control-plaintext w-auto border-l' } %>
+  <div class="input-group">
+    <%= f.text_field :weight, value: number_with_precision(f.object.weight, precision: 2), class: 'border-0 focus:ring-0 focus:outline-none grow rounded-lg text-base' %>
+    <%= f.select :weight_unit, options_for_select(weight_units(current_store), f.object.weight_unit), { include_blank: false }, { class: 'border-0 focus:ring-0 focus:outline-none rounded-lg text-base' } %>
   </div>
 </div>

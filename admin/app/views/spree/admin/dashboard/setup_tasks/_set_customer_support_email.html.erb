@@ -13,7 +13,7 @@
     <%= form_for current_store, url: spree.admin_store_path, as: :store do |f| %>
       <div class="form-group">
         <%= f.label :customer_support_email, 'Customer support email' %>
-        <%= f.email_field :customer_support_email, class: 'form-control', required: true %>
+        <%= f.email_field :customer_support_email, class: 'form-input', required: true %>
       </div>
       <div class="flex justify-between">
         <%= turbo_save_button_tag %>

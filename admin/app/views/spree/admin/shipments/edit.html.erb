@@ -2,7 +2,7 @@
   <%= form_with model: @shipment, url: spree.admin_order_shipment_path(@order, @shipment), class: "w-full flex justify-between items-center" do |f| %>
     <div>
       <%= f.select :selected_shipping_rate_id, options_for_select(@shipment.shipping_rates.map {|sr| ["#{sr.name} #{sr.display_price}", sr.id] }, @shipment.selected_shipping_rate_id),
-        {},  class: 'custom-select', autofocus: true %>
+        {},  class: 'form-select', autofocus: true %>
     </div>
     <div class="flex h-full items-center">
       <% if can? :update, @shipment %>
@@ -16,7 +16,7 @@
   <%= form_with model: @shipment, url: spree.admin_order_shipment_path(@order, @shipment), class: "w-full py-1 flex justify-between items-center" do |f| %>
     <div class="flex items-center">
       <%= f.label :tracking, Spree.t(:tracking_number) %>
-      <%= f.text_field :tracking, class: 'form-control ml-4', required: true, autofocus: true %>
+      <%= f.text_field :tracking, class: 'form-input ml-4', required: true, autofocus: true %>
     </div>
     <div class="flex h-full items-center">
       <% if can? :update, @shipment %>

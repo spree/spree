@@ -26,15 +26,15 @@
             <td class="w-3/4">
               <div class="form-group">
                 <% if property.long_text? %>
-                  <%= product_property_form.text_area :value, { class: 'form-control', data: { controller: 'textarea-autogrow'} } %>
+                  <%= product_property_form.text_area :value, { class: 'form-input', data: { controller: 'textarea-autogrow'} } %>
                 <% elsif property.number? %>
-                  <%= product_property_form.number_field :value, class: 'form-control' %>
+                  <%= product_property_form.number_field :value, class: 'form-input' %>
                 <% elsif property.rich_text? %>
                   <div class="trix-container">
                     <%= product_property_form.rich_text_area :value %>
                   </div>
                 <% else %>
-                  <%= product_property_form.text_field :value, class: 'form-control' %>
+                  <%= product_property_form.text_field :value, class: 'form-input' %>
                 <% end %>
               </div>
             </td>

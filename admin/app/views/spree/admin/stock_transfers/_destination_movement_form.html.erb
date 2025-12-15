@@ -27,7 +27,7 @@
     </div>
   </div>
   <div class="flex items-center gap-2">
-    <%= f.number_field :quantity, class: 'form-control w-auto', value: f.object.quantity.zero? ? 1 : f.object.quantity, required: true, min: 1, data: { action: "stock-transfer#updateQuantity", variant_id: variant_id } %>
+    <%= f.number_field :quantity, class: 'form-input w-auto', value: f.object.quantity.zero? ? 1 : f.object.quantity, required: true, min: 1, data: { action: "stock-transfer#updateQuantity", variant_id: variant_id } %>
     <%= button_tag class: 'btn btn-sm btn-danger', type: :button, data: { action: 'stock-transfer#remove', variant_id: variant_id } do %>
       <%= icon('trash', class: 'icon icon-trash') %>
       <%= Spree.t(:remove) %>

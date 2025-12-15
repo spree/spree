@@ -6,7 +6,7 @@
           <div class="form-group">
             <%= label_tag :client_id, Spree.t('admin.oauth_applications.client_id') %>
             <div class="flex gap-2 items-center">
-              <%= text_field_tag :client_id, @object.uid, class: 'form-control-plaintext bg-gray-25 rounded', readonly: true %>
+              <%= text_field_tag :client_id, @object.uid, class: 'form-input-plaintext bg-gray-25 rounded', readonly: true %>
               <%= clipboard_component(@object.uid) %>
             </div>
           </div>
@@ -14,7 +14,7 @@
           <div class="form-group">
             <%= label_tag :client_secret, Spree.t('admin.oauth_applications.client_secret') %>
             <div class="flex gap-2 items-center">
-              <%= text_field_tag :client_secret, @object.plaintext_secret, class: 'form-control-plaintext bg-gray-25 rounded', readonly: true %>
+              <%= text_field_tag :client_secret, @object.plaintext_secret, class: 'form-input-plaintext bg-gray-25 rounded', readonly: true %>
               <%= clipboard_component(@object.plaintext_secret) %>
             </div>
             <div class="alert alert-warning mt-6">

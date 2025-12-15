@@ -7,7 +7,7 @@
         <tr>
           <th scope="col">
             <% if allow_return_item_changes %>
-              <div class="custom-control custom-checkbox ml-0.5">
+              <div class="custom-control form-checkbox ml-0.5">
                 <input
                   type="checkbox"
                   class="custom-control-input"
@@ -38,7 +38,7 @@
           <tr>
             <td class="inventory-unit-checkbox">
               <% if editable %>
-                <div class="custom-control custom-checkbox ml-0.5">
+                <div class="custom-control form-checkbox ml-0.5">
 
                   <%= item_fields.hidden_field :inventory_unit_id %>
                   <%= item_fields.check_box :_destroy,
@@ -79,7 +79,7 @@
               <% if editable %>
                 <%= item_fields.number_field :return_quantity,
                                          {
-                                           class: "refund-quantity-input form-control",
+                                           class: "refund-quantity-input form-input",
                                            min: 0,
                                            required: true,
                                            data: {
@@ -95,7 +95,7 @@
               <% if editable %>
                 <%= item_fields.text_field :pre_tax_amount,
                                          {
-                                           class: "refund-amount-input form-control",
+                                           class: "refund-amount-input form-input",
                                            required: true,
                                            data: {
                                              action: "return-items#updateTotalRefundAmount",
@@ -110,7 +110,7 @@
                 <%= item_fields.select :preferred_reimbursement_type_id,
                                    @reimbursement_types.collect { |r| [r.name.humanize, r.id] },
                                    { include_blank: true },
-                                   { class: "custom-select" } %>
+                                   { class: "form-select" } %>
               <% end %>
             </td>
             <td>
@@ -125,7 +125,7 @@
                                                 { include_blank: true },
                                                 {
                                                   class:
-                                                    "custom-select return-item-exchange-selection",
+                                                    "form-select return-item-exchange-selection",
                                                 } %>
                 <% end %>
               <% end %>

@@ -48,7 +48,7 @@
               <%= f.object.preferred_header_font_size_scale %>
             </span>%
           </div>
-          <div class="mb-4 custom-control custom-checkbox">
+          <div class="mb-4 custom-control form-checkbox">
             <%= f.check_box :preferred_headings_uppercase, class: "custom-control-input", data: { action: 'change->page-builder#refreshFontPreview' } %>
             <%= f.label :preferred_headings_uppercase, "Make all headings uppercase", class: "custom-control-label" %>
           </div>

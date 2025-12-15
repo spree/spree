@@ -12,7 +12,7 @@
         <%= render 'spree/admin/shared/error_messages', target: @promotion %>
         <div class="form-group">
           <%= f.label :name %>
-          <%= f.text_field :name, class: 'form-control', required: true, autofocus: true %>
+          <%= f.text_field :name, class: 'form-input', required: true, autofocus: true %>
           <%= f.error_message_on :name %>
           <span class="form-text mt-2">
             Customers will see this in their cart and at checkout.
@@ -22,7 +22,7 @@
         <% if @promotion.coupon_code? && !@promotion.multi_codes? %>
           <div class="form-group">   
             <%= f.label :code %>
-            <%= f.text_field :code, class: 'form-control uppercase', placeholder: 'Your coupon code' %>
+            <%= f.text_field :code, class: 'form-input uppercase', placeholder: 'Your coupon code' %>
           </div>
         <% end %>
       </div>

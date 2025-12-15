@@ -4,13 +4,13 @@
       <%= Spree.t(:zones) %>
     </h5>
 
-    <%= link_to_with_icon('adjustments', Spree.t('admin.manage_zones'), spree.admin_zones_path, class: 'btn btn-sm btn-light ml-auto h-full') if can?(:manage, Spree::Zone) %>
+    <%= link_to_with_icon('adjustments', Spree.t('admin.manage_zones'), spree.admin_zones_path, class: 'btn btn-sm btn-light ml-auto') if can?(:manage, Spree::Zone) %>
   </div>
 
   <div class="card-body">
     <div class="form-group">
       <% @available_zones.each do |zone| %>
-        <div class="custom-control custom-checkbox mb-2">
+        <div class="custom-control form-checkbox mb-2">
           <%= check_box_tag('shipping_method[zone_ids][]', zone.id, @shipping_method.zone_ids.include?(zone.id), id: "shipping_method_zones_#{zone.id}", class: 'custom-control-input') %>
           <%= label_tag "shipping_method_zones_#{zone.id}", class: 'custom-control-label' do %>
             <span ><%= zone.name.gsub('_',  ' ') %></span>

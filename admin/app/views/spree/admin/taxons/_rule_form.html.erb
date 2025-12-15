@@ -6,10 +6,10 @@
   <% end %>
 
   <div class="col-span-12 lg:col-span-4 mb-4">
-    <%= rf.select :type, @rule_types, {}, { class: 'custom-select', data: { action: 'rule-form#replace' } } %>
+    <%= rf.select :type, @rule_types, {}, { class: 'form-select', data: { action: 'rule-form#replace' } } %>
   </div>
   <div class="col-span-12 lg:col-span-3 mb-4">
-    <%= rf.select :match_policy, @rule_match_policies, {}, { class: 'custom-select' } %>
+    <%= rf.select :match_policy, @rule_match_policies, {}, { class: 'form-select' } %>
   </div>
   <div class="col-span-12 lg:col-span-4 mb-4" data-rule-form-target="value">
     <%= render "spree/admin/taxons/rule_forms/#{rf.object.type.demodulize.underscore}", rule_form: rf %>

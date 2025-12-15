@@ -53,7 +53,7 @@ locals: {
               </td>
               <td>
                 <%= item_fields.text_field :pre_tax_amount,
-                                       { class: "refund-amount-input form-control" } %>
+                                       { class: "refund-amount-input form-input" } %>
               </td>
               <td>
                 <%= return_item.display_total %>
@@ -69,7 +69,7 @@ locals: {
                                                 { include_blank: true },
                                                 {
                                                   class:
-                                                    "custom-select return-item-exchange-selection",
+                                                    "form-select return-item-exchange-selection",
                                                 } %>
                 <% end %>
               </td>

@@ -11,6 +11,6 @@
     <%= label_tag :billing_address_id, Spree.t(:existing_address), class: 'sr-only' %>
     <%= select_tag :billing_address_id, 
                    options_for_select(@order.user.addresses.map { |a| [a.to_s.gsub('<br/>', ", "), a.id]}), 
-                   { include_blank: Spree.t(:select_existing_address), class: "custom-select", data: { action: 'auto-submit#submit' } } %>
+                   { include_blank: Spree.t(:select_existing_address), class: "form-select", data: { action: 'auto-submit#submit' } } %>
   </div>
 <% end %>

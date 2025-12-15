@@ -15,7 +15,7 @@
           <% end %>
         </div>
         <div data-reveal-target="item" class="mb-6 mt-2 ml-6 <% if @promotion.multi_codes? %>hidden<% end %>">
-          <%= f.text_field :code, class: 'form-control uppercase', placeholder: 'Your coupon code' %>
+          <%= f.text_field :code, class: 'form-input uppercase', placeholder: 'Your coupon code' %>
         </div>
 
         <div class="mt-2 flex items-start custom-control custom-radio">
@@ -29,7 +29,7 @@
         </div>
         <div data-reveal-target="item" class="ml-6 mt-2 grid grid-cols-12 gap-6 <% unless @promotion.multi_codes? %>hidden<% end %>">
           <div class="col-span-6">
-            <%= f.text_field :code_prefix, class: 'form-control uppercase', placeholder: 'Coupon Prefix (optional)' %>
+            <%= f.text_field :code_prefix, class: 'form-input uppercase', placeholder: 'Coupon Prefix (optional)' %>
             <span class="form-text mt-2">
               eg. <strong>ABC</strong>
             </span>
@@ -37,7 +37,7 @@
           <div class="col-span-6">
             <% minimum_number_of_codes = @promotion.persisted? && @promotion.coupon_codes.count.positive? ? @promotion.coupon_codes.count : 1 %>
             <% maximum_number_of_codes = ENV.fetch('PROMOTION_MAX_NUMBER_OF_CODES', 5000) %>
-            <%= f.number_field :number_of_codes, class: 'form-control', placeholder: 'Number of codes', min: minimum_number_of_codes, max: maximum_number_of_codes, step: 1 %>
+            <%= f.number_field :number_of_codes, class: 'form-input', placeholder: 'Number of codes', min: minimum_number_of_codes, max: maximum_number_of_codes, step: 1 %>
             <span class="form-text mt-2">
               How many codes you want to generate.
               <% if @promotion.persisted? %>

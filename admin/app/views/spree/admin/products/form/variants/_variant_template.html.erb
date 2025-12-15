@@ -6,7 +6,7 @@
   <div class="variants-table__body__row hover-light" data-variants-form-target="variant">
     <% if can?(:destroy, @product.default_variant) %>
       <div class="variants-table__body__cell column-checkbox">
-        <div class="custom-control custom-checkbox">
+        <div class="custom-control form-checkbox">
           <input type="checkbox" value="1" class="custom-control-input"  data-variants-form-target="checkbox" id="checkbox_"  data-action="change->variants-form#refresh">
           <label class="custom-control-label" for="checkbox_"><span></span></label>
         </div>
@@ -17,8 +17,8 @@
     </div>
     <div class="variants-table__body__cell column-price">
       <% supported_currencies.each_with_index do |currency, i| %>
-        <div class="form-control items-center py-0 focus-shadow focus-border mr-2 price-input-container <%= current_currency != currency ? 'hidden' : 'flex' %>" <%= !can_manage_prices ? 'readonly' : '' %>>
-          <%= text_field_tag "product[variants_attributes][prices_attributes][#{i}][amount]", '',  class: 'form-control-plaintext px-0', data: { slot: "[prices_attributes][#{currency}][amount]_input", action: 'variants-form#updatePrice', currency: currency.to_s }, readonly: !can_manage_prices %>
+        <div class="form-input items-center py-0 focus-shadow focus-border mr-2 price-input-container <%= current_currency != currency ? 'hidden' : 'flex' %>" <%= !can_manage_prices ? 'readonly' : '' %>>
+          <%= text_field_tag "product[variants_attributes][prices_attributes][#{i}][amount]", '',  class: 'form-input-plaintext px-0', data: { slot: "[prices_attributes][#{currency}][amount]_input", action: 'variants-form#updatePrice', currency: currency.to_s }, readonly: !can_manage_prices %>
           <span><%= currency_symbol(currency) %></span>
         </div>
         <%= hidden_field_tag "product[variants_attributes][prices_attributes][#{i}][currency]", currency, data: {slot: "[prices_attributes][#{currency}][currency]_input"} %>
@@ -27,7 +27,7 @@
     </div>
     <div class="variants-table__body__cell column-quantity">
       <% available_stock_locations_for_product(@product).ids.each_with_index do |id, i|  %>
-        <%= number_field_tag "product[variants_attributes][stock_items_attributes][#{i}][count_on_hand]", 0, class: class_names('form-control', default_stock_location.id == id ? 'block' : 'hidden'), data: {slot: "[stock_items_attributes][#{id}][count_on_hand]_input", stock_location_id: id, action: "variants-form#updateCountOnHand blur->variants-form#replaceBlankWithZero" }, readonly: !can_manage_stock %>
+        <%= number_field_tag "product[variants_attributes][stock_items_attributes][#{i}][count_on_hand]", 0, class: class_names('form-input', default_stock_location.id == id ? 'block' : 'hidden'), data: {slot: "[stock_items_attributes][#{id}][count_on_hand]_input", stock_location_id: id, action: "variants-form#updateCountOnHand blur->variants-form#replaceBlankWithZero" }, readonly: !can_manage_stock %>
         <%= hidden_field_tag "product[variants_attributes][stock_items_attributes][#{i}][stock_location_id]", id, data: { slot: "[stock_items_attributes][#{id}][stock_location_id]_input" } %>
         <%= hidden_field_tag "product[variants_attributes][stock_items_attributes][#{i}][id]", "", data: { slot: "[stock_items_attributes][#{id}][id]_input" } %>
       <% end %>

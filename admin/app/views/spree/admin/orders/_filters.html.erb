@@ -64,20 +64,20 @@
     <% unless @user %>
       <div class="form-group">
         <%= label_tag :q_bill_address_firstname_i_cont_any, Spree.t(:first_name) %>
-        <%= f.text_field :bill_address_firstname_i_cont_any, class: "form-control", data: { filters_target: :input } %>
+        <%= f.text_field :bill_address_firstname_i_cont_any, class: "form-input", data: { filters_target: :input } %>
       </div>
       <div class="form-group">
         <%= label_tag :q_bill_address_lastname_eq, Spree.t(:last_name) %>
-        <%= f.text_field :bill_address_lastname_eq, class: "form-control", data: { filters_target: :input } %>
+        <%= f.text_field :bill_address_lastname_eq, class: "form-input", data: { filters_target: :input } %>
       </div>
       <div class="form-group">
         <%= label_tag :q_email_eq, Spree.t(:email) %>
-        <%= f.email_field :email_eq, class: "form-control", data: { filters_target: :input } %>
+        <%= f.email_field :email_eq, class: "form-input", data: { filters_target: :input } %>
       </div>
     <% end %>
     <div class="form-group">
       <%= label_tag :q_line_items_variant_sku_eq, Spree.t(:sku) %>
-      <%= f.text_field :line_items_variant_sku_eq, class: "form-control", data: { filters_target: :input } %>
+      <%= f.text_field :line_items_variant_sku_eq, class: "form-input", data: { filters_target: :input } %>
     </div>
 
     <div class="form-group">
@@ -100,7 +100,7 @@
       <%= f.select :payment_state_eq,
                     payment_state_options,
                     { include_blank: true },
-                    { class: "custom-select", data: { filters_target: :input } } %>
+                    { class: "form-select", data: { filters_target: :input } } %>
     </div>
 
     <%= render_admin_partials(:orders_filters_partials, f: f) %>

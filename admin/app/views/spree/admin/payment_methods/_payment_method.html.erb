@@ -24,7 +24,7 @@
   </td>
   <td class="w-20">
     <%= form_for payment_method, as: :payment_method, url: spree.admin_payment_method_path(payment_method), method: :patch, data: { controller: 'auto-submit' } do |f| %>
-      <%= f.select :display_on, display_on_options, {}, { class: 'custom-select custom-select-sm w-auto', data: { action: 'auto-submit#submit' } } %>
+      <%= f.select :display_on, display_on_options, {}, { class: 'form-select form-select-sm w-auto', data: { action: 'auto-submit#submit' } } %>
     <% end %>
   </td>
   <td class="w-10 text-center">

@@ -19,7 +19,7 @@
     <div id="preference-settings" class="card-body">
       <div class="form-group">
         <%= f.label(:calculator_type, Spree.t(:calculator), for: 'calculator_type') %>
-        <%= select_tag(:calculator_type, options_for_select(calculators.map { |c| [c.description, c.name] }, @object.calculator_type), {id: 'calculator_type', class: 'custom-select', data: { action: 'calculator-fields#replaceFields' }}) %>
+        <%= select_tag(:calculator_type, options_for_select(calculators.map { |c| [c.description, c.name] }, @object.calculator_type), {id: 'calculator_type', class: 'form-select', data: { action: 'calculator-fields#replaceFields' }}) %>
       </div>
       <div class="form-group" data-calculator-fields-target="container">
         <div class="calculator-settings">

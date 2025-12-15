@@ -68,7 +68,15 @@ module Spree
       # @return [String] the error message
       def error_message_on(object, method, _options = {})
         object = convert_to_model(object)
-        obj = object.respond_to?(:errors) ? object : instance_variable_get("@#{object}")
+
+        obj = if object.respond_to?(:errors)
+                object
+              else
+                # Handle nested attributes like "variant[prices_attributes][0]"
+                # by extracting the base object name
+                object_name = object.to_s.split('[').first
+                instance_variable_get("@#{object_name}") if object_name.present?
+              end
 
         if obj && obj.errors[method].present?
           errors = safe_join(obj.errors[method], '<br />'.html_safe)

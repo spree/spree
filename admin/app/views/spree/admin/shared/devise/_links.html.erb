@@ -1,7 +1,7 @@
 <div class="mb-2 flex justify-between">
   <div>
     <% if defined?(devise_mapping) && devise_mapping.rememberable? && controller_name == 'user_sessions' %>
-      <div class="custom-control custom-checkbox">
+      <div class="custom-control form-checkbox">
         <%= f.check_box :remember_me, class: "custom-control-input" %>
         <%= f.label :remember_me, Spree.t(:remember_me), class: "custom-control-label" %>
       </div>
