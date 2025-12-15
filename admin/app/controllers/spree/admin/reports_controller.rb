@@ -49,26 +49,18 @@ module Spree
       def model_class
         report_type = params[:type] || params.dig(:report, :type)
         @model_class = if report_type.present?
-                         # Find the actual class from allowed types rather than using constantize
-                         if allowed_report_types.include?(report_type)
-                           report_class = report_type
-                         else
-                           report_type = "Spree::Reports::#{report_type.classify}"
-                           report_class = allowed_report_types.find { |type| type == report_type }
-                         end
+                         report_class = find_report_class(report_type)
+                         raise "Unknown report type: #{report_type}" if report_class.blank?
 
-                         if report_class
-                           Object.const_get(report_class)
-                         else
-                           raise 'Unknown report type'
-                         end
+                         report_class
                        else
                          Spree::Report
                        end
       end
 
-      def allowed_report_types
-        Spree.reports.map(&:to_s)
+      def find_report_class(report_type)
+        prefixed_type = "Spree::Reports::#{report_type.classify}"
+        Spree.reports.find { |klass| [report_type, prefixed_type].include?(klass.to_s) }
       end
 
       def permitted_resource_params
