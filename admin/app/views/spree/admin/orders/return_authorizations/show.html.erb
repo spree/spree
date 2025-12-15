@@ -76,7 +76,7 @@ locals: {
 <% if @return_authorization.reason.present? %>
   <div class="card mb-6">
     <div class="card-header">
-      <h6 class="card-title"><%= Spree.t(:reason) %></h6>
+      <h5 class="card-title"><%= Spree.t(:reason) %></h5>
     </div>
     <div class="card-body">
       <%= @return_authorization.reason.name %>
@@ -87,7 +87,7 @@ locals: {
 <% if @return_authorization.memo.present? %>
   <div class="card mb-6">
     <div class="card-header">
-      <h6 class="card-title"><%= Spree.t(:memo) %></h6>
+      <h5 class="card-title"><%= Spree.t(:memo) %></h5>
     </div>
     <div class="card-body">
       <%= @return_authorization.memo %>

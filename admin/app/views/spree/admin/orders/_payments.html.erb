@@ -1,10 +1,10 @@
 <% if can?(:read, Spree::Payment) && (@order.payment_required? && @order.bill_address.present?) || @payments.any? %>
   <div class="card mb-6">
     <div class="card-header flex items-center border-0">
-      <h6 class="card-title">
+      <h5 class="card-title">
         <%= icon('credit-card-pay', class: 'mr-2') %>
         <%= Spree.t(:payments) %>
-      </h6>
+      </h5>
       <% if @payments.any? %>
         <span class="badge badge-info ml-2"><%= @payments.count %></span>
         <%= order_payment_state(@order, class: "ml-auto") %>

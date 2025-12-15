@@ -1,10 +1,10 @@
 <% if @refunds.any? %>
   <div class="card mb-6">
     <div class="card-header flex items-center">
-      <h6 class="card-title">
+      <h5 class="card-title">
         <%= icon('credit-card-refund', class: 'mr-2') %>
         <%= Spree.t(:refunds) %>
-      </h6>
+      </h5>
       <span class="badge badge-info ml-2"><%= @refunds.count %></span>
     </div>
     <div class="card-body p-0">
