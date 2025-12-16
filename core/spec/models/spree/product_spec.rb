@@ -8,9 +8,10 @@ module ThirdParty
 end
 
 describe Spree::Product, type: :model do
+  let!(:store) { Spree::Store.default }
+
   it_behaves_like 'metadata'
 
-  let!(:store) { Spree::Store.default }
 
   describe 'after_initialize :assign_default_tax_category' do
     let!(:tax_category_1) { create(:tax_category, is_default: false) }
@@ -57,9 +58,6 @@ describe Spree::Product, type: :model do
 
     context 'when product is persisted' do
       let(:product) { create(:product, stores: [store]) }
-
-      before do
-      end
 
       it 'does not assign the default shipping category' do
         product.update(shipping_category: nil)
@@ -1230,11 +1228,13 @@ describe Spree::Product, type: :model do
 
       context 'when master variant is available' do
         let(:currency) { 'USD' }
+
         it { is_expected.to be(true) }
       end
 
       context 'when master variant is not available' do
         let(:currency) { 'PLN' }
+
         it { is_expected.to be(false) }
       end
     end
@@ -1252,11 +1252,13 @@ describe Spree::Product, type: :model do
 
       context 'when all variants are available' do
         let(:currency) { 'USD' }
+
         it { is_expected.to be(true) }
       end
 
       context 'when no variants are available' do
         let(:currency) { 'PLN' }
+
         it { is_expected.to be(false) }
       end
     end
@@ -1392,6 +1394,93 @@ describe Spree::Product, type: :model do
           # Both have 2 orders, but product_2 has higher total
           expect(products.first.name).to eq('Product 2')
           expect(products.second.name).to eq('Product 1')
+          
+          product_1_result = products.find { |p| p.id == product_1.id }
+          product_2_result = products.find { |p| p.id == product_2.id }
+          
+          expect(product_2_result.completed_orders_total).to be > product_1_result.completed_orders_total
+        end
+      end
+
+      context 'with varying quantities' do
+        before do
+          # Product 1: 1 order with 2 line items (same product, different quantities)
+          # Line item 1: price $50, quantity 2 = $100
+          # Line item 2: price $50, quantity 3 = $150
+          # Total: $250
+          order1 = create(:order_with_line_items, line_items_count: 0, store: store)
+          create(:line_item, order: order1, variant: product_1.master, price: 50, quantity: 2)
+          create(:line_item, order: order1, variant: product_1.master, price: 50, quantity: 3)
+          order1.update!(completed_at: Time.current)
+
+          # Product 2: 1 order with 1 line item
+          # Line item: price $100, quantity 2 = $200
+          # Total: $200
+          order2 = create(:order_with_line_items, line_items_count: 0, store: store)
+          create(:line_item, order: order2, variant: product_2.master, price: 100, quantity: 2)
+          order2.update!(completed_at: Time.current)
+        end
+
+        it 'calculates total correctly with price * quantity for each line item' do
+          products = described_class.where(id: test_product_ids).by_best_selling
+          
+          product_1_result = products.find { |p| p.id == product_1.id }
+          product_2_result = products.find { |p| p.id == product_2.id }
+
+          # Both have 1 completed order
+          expect(product_1_result.completed_orders_count).to eq(1)
+          expect(product_2_result.completed_orders_count).to eq(1)
+
+          # Product 1 should have total of $250 (50*2 + 50*3)
+          # Product 2 should have total of $200 (100*2)
+          expect(product_1_result.completed_orders_total).to eq(250)
+          expect(product_2_result.completed_orders_total).to eq(200)
+          
+          # Product 1 should be ranked higher due to higher total
+          expect(products.first.name).to eq('Product 1')
+        end
+      end
+
+      context 'with multiple orders containing multiple line items' do
+        before do
+          # Product 1: 2 completed orders with varying quantities
+          # Order 1: price $50, quantity 3 = $150
+          # Order 2: price $50, quantity 2 = $100
+          # Total: $250, Orders: 2
+          order1 = create(:order_with_line_items, line_items_count: 0, store: store)
+          create(:line_item, order: order1, variant: product_1.master, price: 50, quantity: 3)
+          order1.update!(completed_at: Time.current)
+
+          order2 = create(:order_with_line_items, line_items_count: 0, store: store)
+          create(:line_item, order: order2, variant: product_1.master, price: 50, quantity: 2)
+          order2.update!(completed_at: Time.current)
+
+          # Product 2: 1 completed order with higher total
+          # Order 1: price $100, quantity 4 = $400
+          # Total: $400, Orders: 1
+          order3 = create(:order_with_line_items, line_items_count: 0, store: store)
+          create(:line_item, order: order3, variant: product_2.master, price: 100, quantity: 4)
+          order3.update!(completed_at: Time.current)
+        end
+
+        it 'prioritizes order count over total when ranking' do
+          products = described_class.where(id: test_product_ids).by_best_selling
+          
+          product_1_result = products.find { |p| p.id == product_1.id }
+          product_2_result = products.find { |p| p.id == product_2.id }
+
+          # Verify counts
+          expect(product_1_result.completed_orders_count).to eq(2)
+          expect(product_2_result.completed_orders_count).to eq(1)
+
+          # Verify totals
+          expect(product_1_result.completed_orders_total).to eq(250)
+          expect(product_2_result.completed_orders_total).to eq(400)
+          
+          # Product 1 should rank first because it has more orders (2 vs 1)
+          # even though Product 2 has a higher total ($400 vs $250)
+          expect(products.first.name).to eq('Product 1')
+          expect(products.second.name).to eq('Product 2')
         end
       end
 
@@ -1513,6 +1602,7 @@ describe Spree::Product, type: :model do
 
       context 'when show_products_without_price is true' do
         subject(:available_products) { described_class.available(nil, 'USD') }
+
         before do
           Spree::Config.show_products_without_price = true
         end

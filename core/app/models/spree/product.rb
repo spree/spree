@@ -204,11 +204,11 @@ module Spree
                          }
 
     scope :by_best_selling, lambda { |order_direction = :desc|
-      left_joins(:orders).
+      left_joins(variants_including_master: { line_items: :order }).
         select(
           "#{Spree::Product.table_name}.*",
-          "COUNT(CASE WHEN #{Spree::Order.table_name}.completed_at IS NOT NULL THEN #{Spree::Order.table_name}.id END) AS completed_orders_count",
-          "COALESCE(SUM(CASE WHEN #{Spree::Order.table_name}.completed_at IS NOT NULL THEN #{Spree::Order.table_name}.total END), 0) AS completed_orders_total"
+          "COUNT(DISTINCT CASE WHEN #{Spree::Order.table_name}.completed_at IS NOT NULL THEN #{Spree::Order.table_name}.id END) AS completed_orders_count",
+          "COALESCE(SUM(CASE WHEN #{Spree::Order.table_name}.completed_at IS NOT NULL THEN (#{Spree::LineItem.table_name}.price * #{Spree::LineItem.table_name}.quantity) END), 0) AS completed_orders_total"
         ).
         group("#{Spree::Product.table_name}.id").
         order(completed_orders_count: order_direction, completed_orders_total: order_direction)
