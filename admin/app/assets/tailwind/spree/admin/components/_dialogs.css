@@ -117,7 +117,7 @@
   }
 
   .drawer-footer {
-    @apply flex justify-between items-center p-4 bg-gray-25 border-t border-gray-50;
+    @apply flex justify-between items-center p-4 bg-gray-25 border-t border-gray-50 rounded-b-2xl;
   }
 
   /* ==========================================================================
