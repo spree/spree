@@ -1,0 +1,27 @@
+/*
+ * Spree Admin Tailwind CSS
+ *
+ * This file is the entry point for Spree Admin's Tailwind CSS.
+ * It imports the base styles from the Spree Admin gem and allows
+ * you to add custom admin styles.
+ *
+ * The import path below is automatically set during installation.
+ * If you need to reinstall or update, run: rails g spree:admin:install
+ */
+
+/* Import Spree Admin base styles from the gem */
+@import "<%= Spree::Admin::Engine.root.join('app/assets/tailwind/spree/admin/index.css') %>";
+
+/* Scan host app's custom admin code for Tailwind classes */
+@source "../../views/spree/admin/**/*.erb";
+@source "../../helpers/spree/admin/**/*.rb";
+@source "../../javascript/spree/admin/**/*.js";
+
+/* Add your custom admin styles below */
+/* Example:
+@layer components {
+  .my-custom-admin-component {
+    @apply bg-primary-500 text-white rounded-lg p-4;
+  }
+}
+*/

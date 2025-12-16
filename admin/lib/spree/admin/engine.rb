@@ -201,7 +201,8 @@ module Spree
         if app.config.respond_to?(:assets)
           app.config.assets.paths << root.join('app/javascript')
           app.config.assets.paths << root.join('vendor/javascript')
-          app.config.assets.paths << root.join('app/assets/tailwind')
+          # Add host app's builds directory for compiled Tailwind CSS
+          app.config.assets.paths << Rails.root.join('app/assets/builds')
           app.config.assets.precompile += %w[ spree_admin_manifest ] if defined?(Sprockets)
           # fix for TinyMCE-rails gem to work with both propshaft and sprockets
           app.config.assets.excluded_paths ||= [] if defined?(Sprockets)

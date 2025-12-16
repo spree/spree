@@ -22,19 +22,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
 
 <%= stylesheet_link_tag 'spree/admin/application', media: :all, data: { turbo_track: "reload" } %>
+<%= tinymce_assets %>
+
 <%= action_cable_meta_tag %>
-
-<%= favicon_link_tag 'favicon_256x256.png' %>
-
-<link
-  rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.31.0/dist/tabler-icons.min.css"
-/>
-
 <%= tag.meta name: "direct-upload-url", content: main_app.rails_direct_uploads_path %>
 
-<%= tinymce_assets %>
-<link rel="stylesheet" type="text/css" href="https://unpkg.com/trix@2.1.12/dist/trix.css">
+<%= favicon_link_tag 'favicon_256x256.png' %>
 
 <% if Rails.application.importmap.packages["application"].present? && Spree::Admin::RuntimeConfig.include_application_importmap %>
   <%= javascript_importmap_tags "application" %>
