@@ -1,14 +1,12 @@
-<aside id="page-builder-sidebar" class="overflow-y-auto">
-  <div class="mb5">
-    <div data-tabs-target="panel" id="sections" role="tabpanel" aria-labelledby="sidebar-icon-page" class="animate-fade-in">
-      <%= render 'spree/admin/page_builder/sidebar_sections' %>
-      <%= render 'spree/admin/page_builder/sidebar_sections_toolbar' %>
-    </div>
-    <div data-tabs-target="panel" role="tabpanel" aria-labelledby="sidebar-icon-colors" id="colors" hidden class="animate-fade-in">
-      <%= render 'spree/admin/page_builder/sidebar_colors' %>
-    </div>
-    <div data-tabs-target="panel" role="tabpanel" aria-labelledby="sidebar-icon-fonts" id="fonts" hidden class="animate-fade-in">
-      <%= render 'spree/admin/page_builder/sidebar_fonts' %>
-    </div>
+<aside id="page-builder-sidebar" class="overflow-y-scroll">
+  <div data-tabs-target="panel" id="sections" role="tabpanel" aria-labelledby="sidebar-icon-page" class="animate-fade-in">
+    <%= render 'spree/admin/page_builder/sidebar_sections' %>
+    <%= render 'spree/admin/page_builder/sidebar_sections_toolbar' %>
+  </div>
+  <div data-tabs-target="panel" role="tabpanel" aria-labelledby="sidebar-icon-colors" id="colors" hidden class="animate-fade-in">
+    <%= render 'spree/admin/page_builder/sidebar_colors' %>
+  </div>
+  <div data-tabs-target="panel" role="tabpanel" aria-labelledby="sidebar-icon-fonts" id="fonts" hidden class="animate-fade-in">
+    <%= render 'spree/admin/page_builder/sidebar_fonts' %>
   </div>
 </aside>

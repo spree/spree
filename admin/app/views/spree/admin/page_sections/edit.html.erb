@@ -6,7 +6,7 @@
     <% end %>
     <%= @page_section.display_name %>
   </h6>
-  <div class="px-6 pb-12 mb-12 edit-block" style="margin-bottom: 6rem;">
+  <div class="p-3 edit-block">
     <%= form_for @page_section, url: spree.admin_page_section_path(@page_section), data: { controller: 'auto-submit' }, as: :page_section do |f| %>
       <div data-controller="tabs">
         <ul class="nav nav-pills nav-fill mb-6" id="pills-tab" role="tablist">
