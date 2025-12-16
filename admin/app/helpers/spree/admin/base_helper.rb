@@ -1,8 +1,6 @@
 module Spree
   module Admin
     module BaseHelper
-      include Spree::ImagesHelper
-
       def render_admin_partials(section, options = {})
         Spree.admin.partials.send(section.to_s.gsub('_partials', '').to_sym).map do |partial|
           render partial, options
