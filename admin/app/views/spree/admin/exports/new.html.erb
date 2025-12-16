@@ -23,11 +23,10 @@
         <%= f.radio_button :record_selection, 'all', class: 'custom-control-input' %>
         <%= f.label :record_selection, for: :export_record_selection_all, class: 'custom-control-label' do %>
           <%= Spree.t(:all) %>
-          <br />
-          <span class="text-gray-600 font-normal mr-1">
-            <%= Spree.t('admin.export_all') %>
-          </span>
         <% end %>
+        <span class="text-gray-600 font-normal ml-7 mt-2">
+          <%= Spree.t('admin.export_all') %>
+        </span>
       </div>
     </div>
     <div class="dialog-footer">

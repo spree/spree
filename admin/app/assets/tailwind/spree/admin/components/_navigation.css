@@ -22,12 +22,15 @@
   }
 
   /* Nav pills */
+  .nav-pills {
+    @apply gap-1;
+  }
   .nav-pills .nav-link {
-    @apply bg-none rounded-xl py-1.5 px-3 cursor-pointer transition-colors duration-300 ease-in-out;
+    @apply bg-none rounded-xl py-1.5 px-3 cursor-pointer transition-background-color duration-300 ease-in-out text-gray-900 hover:bg-gray-25;
   }
 
   .nav-pills .nav-link.active {
-    @apply bg-gray-50 text-primary;
+    @apply bg-gray-50;
   }
 
   /* Nav fill and justified */

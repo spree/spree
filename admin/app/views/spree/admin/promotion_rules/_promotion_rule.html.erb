@@ -1,7 +1,7 @@
 <%= turbo_frame_tag promotion_rule do  %>
   <div class="card" id="<%= spree_dom_id(promotion_rule) %>">
-    <div class="card-header flex justify-between items-center">
-      <h5 class="card-title"><%= promotion_rule.human_name %></h5>
+    <div class="card-header flex justify-between items-center py-3">
+      <h5 class="card-title text-base"><%= promotion_rule.human_name %></h5>
 
       <% if can?(:update, promotion_rule) || can?(:destroy, promotion_rule) %>
         <%= dropdown portal: false do %>
