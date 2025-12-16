@@ -20,7 +20,8 @@ RSpec.describe Spree::Themes::DuplicateComponentsJob do
         top_padding: 20,
         bottom_padding: 20,
         top_border_width: 2,
-        bottom_border_width: 4
+        bottom_border_width: 4,
+        enabled: true
       }
     )
   end
