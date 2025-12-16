@@ -41,13 +41,13 @@
   }
 
   #sortableTreeArea .sortable-chosen {
-    background-color: transparent !important;
-    border-color: transparent !important;
+    background-color: transparent;
+    border-color: transparent;
   }
 
   #sortableTreeArea .sortable-chosen .sortable-tree-item-row {
-    @apply bg-blue-50 border-blue-100 !important;
-    border: 2px solid var(--color-blue) !important;
+    @apply bg-blue-50 border-blue-100;
+    border: 2px solid var(--color-blue);
     margin: -1px;
   }
 
