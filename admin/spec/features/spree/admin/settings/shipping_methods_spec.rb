@@ -12,7 +12,7 @@ RSpec.feature 'Shipping methods', js: true do
   it 'allows Store Owner to create new shipping method' do
     visit spree.new_admin_shipping_method_path
 
-    fill_in 'Name', with: 'New Shipping Method'
+    fill_in 'Name', with: 'New Shipping Method', match: :first
     select 'Flat rate', from: 'Calculator'
 
     expect(page).to have_content 'Flat rate'
@@ -46,7 +46,7 @@ RSpec.feature 'Shipping methods', js: true do
 
     visit spree.edit_admin_shipping_method_path(shipping_method)
 
-    fill_in 'Name', with: 'Express'
+    fill_in 'Name', with: 'Express', match: :first
     select 'Flat Percent', from: 'Calculator'
 
     expect(page).to have_content 'Flat Percent'
