@@ -29,7 +29,7 @@
   </td>
   <td class="w-10 actions">
     <% if invitation.pending? && !invitation.expired? %>
-      <%= dropdown do %>
+      <%= dropdown portal: false do %>
         <%= dropdown_toggle class: 'btn-light btn-sm' do %>
           <%= icon('dots-vertical', class: 'mr-0') %>
         <% end %>

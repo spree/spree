@@ -54,6 +54,11 @@
     box-shadow: 0px 0px 0px 1px rgba(179, 179, 179, 0.5), 0px 6px 12px -3px rgba(179, 179, 179, 0.35), 0px 6px 18px 0px rgba(179, 179, 179, 0.35);
   }
 
+  /* Allow tom-select dropdowns to overflow the dialog */
+  dialog:has(.ts-dropdown) {
+    @apply overflow-visible;
+  }
+
   dialog:open,
   dialog[open] {
     @apply block;

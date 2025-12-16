@@ -9,7 +9,7 @@
       <% selected_keys = f.object.preferred_metafield_definition_ids.map(&:to_s) %>
       <% sorted_definitions = f.object.available_metafield_definitions.sort_by { |definition| selected_keys.index(definition.id.to_s) || selected_keys.length } %>
       <% sorted_definitions.each do |definition| %>
-        <div class="rounded-md hover-light pl-4 pr-1 py-1 flex items-center justify-between"
+        <div class="rounded-md hover:bg-gray-25 pl-4 pr-1 py-1 flex items-center justify-between"
              id="<%= spree_dom_id(definition) %>"
         >
           <div class="custom-control form-checkbox grow flex">

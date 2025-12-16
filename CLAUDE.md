@@ -271,7 +271,7 @@ For edit resource form:
 And the re-usable form partial should be in `app/views/spree/admin/products/_form.html.erb`, eg.
 
 ```erb
-<div class="card mb-4">
+<div class="card mb-6">
   <div class="card-header">
     <h5 class="card-title">
       <%= Spree.t(:general_settings) %>

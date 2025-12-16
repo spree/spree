@@ -20,8 +20,6 @@
   --color-primary: #061932;
   --color-primary-hover: #0a2548;
   --color-blue: #0090FE;
-  --color-action: #F4F9FF;
-  --color-action-border: #e2ecff;
 
   /* Semantic Colors */
   --color-success: #28a745;
@@ -51,7 +49,7 @@
   /* Override Tailwind's text-* scale to match Spree design system */
   --text-2xs: 0.625rem;
   --text-xs: 0.75rem;
-  --text-sm: 0.75rem;
+  --text-sm: 0.813rem;
   --text-base: 0.875rem;
   --text-lg: 1rem;
   --text-xl: 1.25rem;

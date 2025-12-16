@@ -9,7 +9,7 @@
       <% if @top_referrers.any? %>
         <ul class="list-group list-group-flush small rounded-none">
           <% @top_referrers.each do |referrer| %>
-            <li class="list-group-item flex justify-between hover-light">
+            <li class="list-group-item flex justify-between hover:bg-gray-25">
               <span><%= referrer.first %></span>
               <span><%= referrer.second %></span>
             </li>
@@ -36,7 +36,7 @@
       <% if @top_landing_pages.any? %>
         <ul class="list-group list-group-flush small rounded-none">
           <% @top_landing_pages.each do |landing_page| %>
-            <li class="list-group-item flex justify-between hover-light">
+            <li class="list-group-item flex justify-between hover:bg-gray-25">
               <span><%= landing_page.first %></span>
               <span><%= landing_page.second %></span>
             </li>
@@ -63,7 +63,7 @@
       <% if @top_locations.any? %>
         <ul class="list-group list-group-flush small rounded-none">
           <% @top_locations.each do |location| %>
-            <li class="list-group-item flex justify-between hover-light">
+            <li class="list-group-item flex justify-between hover:bg-gray-25">
               <% cache [*spree_base_cache_key, "visits-country/#{location.first}"] do %>
                 <span>
                   <span class="mr-1">

@@ -57,7 +57,7 @@
   }
 
   .table tbody tr.active td {
-    @apply bg-action border-action-border;
+    @apply bg-blue-50 border-blue-100;
   }
 
   .table tbody tr:hover:not(.active):not(.sortable-chosen) td {

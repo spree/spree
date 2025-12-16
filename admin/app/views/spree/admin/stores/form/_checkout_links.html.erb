@@ -1,19 +1,19 @@
 <div id="checkout_links">
   <% if current_store.links.any? %>
-    <ul class="list-group mb-6"
+    <ul class="list-group rounded-lg mb-6"
         data-controller="sortable"
         data-sortable-handle-value=".handle"
         data-sortable-resource-name-value="page_link"
         data-sortable-response-kind-value="turbo-stream">
       <% current_store.links.each do |link| %>
-        <li class="list-group-item p-0 hover-light"
+        <li class="list-group-item p-0 hover:bg-gray-25"
             data-sortable-update-url="<%= spree.admin_page_link_path(link, sorting_only: true, format: :turbo_stream) %>"
         >
           <%= turbo_frame_tag spree_dom_id(link), class: 'flex items-center w-full py-2 pl-6 pr-2' do %>
-            <%= link_to link.label, spree.edit_admin_page_link_path(link), class: 'block text-gray-900 flex-1' %>
-            <button class="btn btn-sm pr-0 handle shadow-none hover:bg-gray-100-200 px-1">
+            <%= link_to link.label, spree.edit_admin_page_link_path(link), class: 'block text-gray-900 flex-1 no-underline' %>
+            <span class="btn btn-sm handle shadow-none hover:bg-gray-100 px-1 cursor-move ml-4">
               <%= icon 'grip-vertical', class: 'mr-0' %>
-            </button>
+            </span>
           <% end %>
         </li>
       <% end %>

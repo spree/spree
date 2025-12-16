@@ -4,114 +4,73 @@
 
 @layer components {
   .upload-area {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    border-radius: var(--radius-lg);
-    border: 1px dashed var(--color-border);
-    background-color: var(--color-gray-25);
-    padding: 0.5rem;
-    cursor: pointer;
-    color: var(--color-gray-500);
-    transition-property: background-color, border-color, color;
-    transition-duration: 0.5s;
-    transition-timing-function: ease;
+    @apply flex flex-col gap-2 justify-center items-center overflow-hidden rounded-lg border border-dashed border-border bg-gray-25 p-2 cursor-pointer text-gray-500 transition-all duration-500 ease-out;
   }
 
   .upload-area:hover {
-    background-color: var(--color-action);
-    border-color: rgba(0, 144, 254, 0.25);
-    color: rgba(6, 25, 50, 0.75);
+    @apply bg-blue-50 border-blue/25 text-blue-800;
   }
 
-  .upload-area:hover .text-gray-600 {
-    color: rgba(6, 25, 50, 0.5) !important;
+  .upload-area:hover .text-lg {
+    @apply text-blue-800;
+  }
+  .upload-area:hover .text-sm {
+    @apply text-blue-600;
   }
 
   .upload-area:active {
-    background-color: var(--color-action);
-    border-color: rgba(0, 144, 254, 0.5);
-    box-shadow: 0 0 0 2px var(--color-surface), 0 0 0 4px var(--color-blue) !important;
+    @apply bg-blue-50 border-blue-100 !ring-2 !ring-blue !ring-offset-2 !ring-offset-surface;
   }
 
   .media-form {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    grid-gap: 0.5rem;
-    width: 100%;
-    height: 100%;
-    user-select: none;
+    @apply grid grid-cols-6 gap-2 w-full h-full select-none;
   }
 
   .media-form__add-button {
-    aspect-ratio: 1/1;
+    @apply aspect-square;
   }
 
   .media-form__add-button:only-child {
-    grid-column: 1 / span 6;
-    grid-row: 1 / span 1;
-    aspect-ratio: 12/1;
-    max-width: 200px;
-    height: 200px;
+    @apply col-span-6 row-span-1 aspect-[12/1] max-w-[200px] h-[200px];
   }
 
   .media-form__add-button:not(:only-child) {
-    height: 100% !important;
+    @apply !h-full;
   }
 
   .media-form__image {
-    padding: 0.5rem;
-    border: none;
-    overflow: hidden;
-    display: flex;
-    width: 100%;
-    height: 100%;
-    aspect-ratio: 1/1;
-    border-radius: var(--radius-lg);
-    position: relative;
-    justify-content: space-between;
-    align-items: flex-start;
-    transition-property: box-shadow;
-    transition-duration: 0.2s;
-    transition-timing-function: ease-in-out;
-    box-shadow: rgba(209, 217, 224, 0.5) 0px 0px 0px 1px;
+    @apply p-2 border-none overflow-hidden flex w-full h-full aspect-square rounded-lg relative justify-between items-start transition-shadow duration-200 ease-in-out shadow-[rgba(209,217,224,0.5)_0px_0px_0px_1px];
   }
 
   .media-form__image img {
-    top: 0;
-    left: 0;
+    @apply top-0 left-0;
   }
 
   .media-form__image .move-handle {
-    z-index: 2;
-    color: white;
+    @apply z-[2] text-white;
   }
 
   .media-form__image .form-checkbox:has(input:checked) {
-    display: inline !important;
+    @apply !inline;
   }
 
   .media-form__image:hover .form-checkbox {
-    display: inline !important;
+    @apply !inline;
   }
 
   .media-form__image:hover .move-handle {
-    display: inline !important;
+    @apply !inline;
   }
 
   .media-form__image:hover {
-    box-shadow: rgba(209, 217, 224, 0.8) 0px 0px 0px 1px, rgba(37, 41, 46, 0.04) 0px 3px 6px -3px, rgba(37, 41, 46, 0.12) 0px 2px 6px 0px !important;
+    @apply !shadow-[rgba(209,217,224,0.8)_0px_0px_0px_1px,rgba(37,41,46,0.04)_0px_3px_6px_-3px,rgba(37,41,46,0.12)_0px_2px_6px_0px];
   }
 
   .media-form__image:has(input:checked) {
-    box-shadow: 0 0 0 2px var(--color-blue) !important;
+    @apply !ring-2 !ring-blue;
   }
 
   .media-form__image:first-of-type {
-    grid-column: 1 / span 2;
-    grid-row: 1 / span 2;
+    @apply col-span-2 row-span-2;
   }
 }

@@ -3,7 +3,7 @@
 <% can_manage_stock = @product.new_record? ? true : can?(:manage, test_stock_item) %>
 <% can_manage_prices = @product.new_record? ? true : can?(:manage, test_price) %>
 <template data-variants-form-target="variantTemplate">
-  <div class="variants-table__body__row hover-light" data-variants-form-target="variant">
+  <div class="variants-table__body__row hover:bg-gray-25" data-variants-form-target="variant">
     <% if can?(:destroy, @product.default_variant) %>
       <div class="variants-table__body__cell column-checkbox">
         <div class="custom-control form-checkbox">

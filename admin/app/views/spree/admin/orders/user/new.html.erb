@@ -1,5 +1,5 @@
 <% show_form ||= params[:show_form] %>
-<%= turbo_frame_tag dom_id(@order, :customer_information), class: "card mb-4 blur-busy" do  %>
+<%= turbo_frame_tag dom_id(@order, :customer_information), class: "card mb-6 blur-busy" do  %>
   <div class="card-header flex justify-between">
     <h5 class="card-title">
       <%= Spree.t(:customer) %>

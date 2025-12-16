@@ -5,7 +5,7 @@
       <%= Spree.t(:promotion_actions) %>
     </h5>
     <% if can?(:create, Spree::PromotionAction.new(promotion: @promotion)) %>
-      <%= link_to_with_icon 'plus', Spree.t(:add_one), spree.new_admin_promotion_action_path(@promotion), class: 'btn btn-primary btn-sm', data: { turbo_frame: 'dialog', action: 'dialog#open' } %>
+      <%= link_to_with_icon 'plus', Spree.t(:add_one), spree.new_admin_promotion_action_path(@promotion), class: 'btn btn-secondary btn-sm', data: { turbo_frame: 'dialog', action: 'dialog#open' } %>
     <% end %>
   </div>
   <div class="card-body flex flex-col gap-2 px-2 pt-0 pb-2">

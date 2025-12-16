@@ -152,20 +152,7 @@
   .list-inline { @apply list-none p-0 flex flex-wrap; }
   .list-inline-item { @apply inline-block; }
 
-  /* ==========================================================================
-     HOVER UTILITIES
-     ========================================================================== */
-  .hover-gray:hover,
-  .hover-gray:focus {
-    @apply bg-gray-50 no-underline;
-  }
-
-  .hover-light:hover,
-  .hover-light:focus {
-    @apply bg-gray-25;
-  }
-
-  .hover-none:hover {
-    @apply no-underline;
+  .move-handle {
+    @apply cursor-grab;
   }
 }

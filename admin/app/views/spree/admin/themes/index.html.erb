@@ -55,7 +55,7 @@
       <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3">
         <% available_themes.each do |theme| %>
           <div class="col mb-6">
-            <div class="card hover-light">
+            <div class="card hover:bg-gray-25">
               <% if theme.preview_image_url.present? %>
                 <%= image_tag theme.preview_image_url, class: 'card-img-top' %>
               <% end %>

@@ -29,7 +29,7 @@
           <ul class="list-group mb-6">
             <% @payment_methods.each do |payment_method| %>
               <li class="list-group-item p-0">
-                <%= link_to spree.new_admin_order_payment_path(@order, payment_method_id: payment_method.id), class: "form-check-label flex items-center gap-4 px-6 py-6 w-full cursor-pointer hover-light text-gray-900" do %>
+                <%= link_to spree.new_admin_order_payment_path(@order, payment_method_id: payment_method.id), class: "form-check-label flex items-center gap-4 px-6 py-6 w-full cursor-pointer hover:bg-gray-25 text-gray-900" do %>
                   <div class="form-check flex items-center">
                     <%= f.radio_button :payment_method_id, payment_method.id, class: "form-check-input" %>
                   </div>

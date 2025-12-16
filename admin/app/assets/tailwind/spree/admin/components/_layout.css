@@ -130,12 +130,12 @@
   }
 
   .store-chooser .store-chooser-item.active {
-    @apply cursor-not-allowed bg-action;
+    @apply cursor-not-allowed bg-blue-50;
   }
 
   /* User Dropdown */
   .user-dropdown {
-    @apply hidden items-center justify-between py-3 px-2 bg-gray-25 border-t border-border mt-auto mr-px;
+    @apply hidden items-center justify-between p-2 bg-gray-25 border-t border-border mt-auto mr-px;
   }
 
   @media (min-width: 992px) {
@@ -558,7 +558,7 @@
 
   /* Enterprise Edition Notice */
   #enterprise-edition-notice {
-    @apply relative text-sm py-2 px-3 m-3 border shadow-xs rounded-lg;
+    @apply relative text-xs py-2 px-3 m-3 border shadow-xs rounded-lg;
     background-image: none;
   }
 

@@ -30,16 +30,15 @@
 
   .search-picker__option input[type="checkbox"],
   .search-picker__option input[type="radio"] {
-    display: none;
+    @apply hidden;
   }
 
   .search-picker__option:hover {
-    background-color: var(--color-gray-25);
+    @apply bg-gray-25;
   }
 
   .search-picker__option:has(input:checked) {
-    background-color: var(--color-action);
-    border: 1px solid var(--color-action-border);
+    @apply bg-blue-50 border-blue-100;
   }
 
   .search-picker__option:has(input:checked)::after {

@@ -46,7 +46,7 @@
   }
 
   #sortableTreeArea .sortable-chosen .sortable-tree-item-row {
-    background-color: var(--color-action) !important;
+    @apply bg-blue-50 border-blue-100 !important;
     border: 2px solid var(--color-blue) !important;
     margin: -1px;
   }

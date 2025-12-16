@@ -1,4 +1,4 @@
-<%= link_to spree.admin_user_path(user), class: 'rounded-md p-2 flex justify-start items-center no-underline hover-light gap-4', data: {turbo_frame: :_top, row_link_target: :link} do %>
+<%= link_to spree.admin_user_path(user), class: 'rounded-md p-2 flex justify-start items-center no-underline hover:bg-gray-25 gap-4', data: {turbo_frame: :_top, row_link_target: :link} do %>
   <% if user.name.present? %>
     <%= render_avatar(user, width: 48, height: 48) %>
   <% else %>

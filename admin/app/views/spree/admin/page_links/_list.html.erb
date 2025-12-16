@@ -12,7 +12,7 @@
             data-sortable-update-url="<%= spree.admin_page_link_path(link, sorting_only: true, format: :turbo_stream) %>"
         >
           <%= link_to link.label, spree.edit_admin_page_link_path(link), class: 'block py-4 px-6 text-gray-900 flex-1' %>
-          <button class="btn btn-sm pr-0 handle hover:bg-gray-100-200 h-full mr-1 px-1 shadow-none">
+          <button class="btn btn-sm pr-0 handle hover:bg-gray-100 h-full mr-1 px-1 shadow-none">
             <%= icon 'grip-vertical', class: 'mr-0' %>
           </button>
         </li>

@@ -64,13 +64,22 @@
     <h5 class="card-title"><%= Spree.t(:digital_assets) %></h5>
   </div>
   <div class="card-body">
-    <p class="text-gray-600">
+    <p class="text-gray-600 mb-4">
       <%= Spree.t(:digital_assets_help) %>
     </p>
-    <%= f.spree_check_box :preferred_limit_digital_download_days %>
-    <%= f.spree_number_field :preferred_digital_asset_authorized_days, min: 1 %>
-    <%= f.spree_check_box :preferred_limit_digital_download_count %>
-    <%= f.spree_number_field :preferred_digital_asset_authorized_clicks, min: 1 %>
+    <div data-controller="reveal">
+      <%= f.spree_check_box :preferred_limit_digital_download_days, data: { action: 'reveal#toggle' } %>
+      <div data-reveal-target="item" <% unless f.object.preferred_limit_digital_download_days %>class="hidden"<% end %>>
+        <%= f.spree_number_field :preferred_digital_asset_authorized_days, min: 1 %>
+      </div>
+    </div>
+    <hr class="my-6" />
+    <div data-controller="reveal">
+      <%= f.spree_check_box :preferred_limit_digital_download_count, data: { action: 'reveal#toggle' } %>
+      <div data-reveal-target="item" <% unless f.object.preferred_limit_digital_download_count %>class="hidden"<% end %>>
+        <%= f.spree_number_field :preferred_digital_asset_authorized_clicks, min: 1 %>
+      </div>
+    </div>
   </div>
 </div>
 

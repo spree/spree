@@ -38,12 +38,12 @@
   }
 
   .btn-secondary {
-    @apply text-primary shadow-xs bg-blue/5 border-gray-900/10;
+    @apply text-blue-900 shadow-xs bg-blue-50 border-gray-100;
   }
 
   .btn-secondary:hover,
   .btn-secondary:focus {
-    @apply text-primary bg-blue/10 border-gray-900/20;
+    @apply border-blue-200;
   }
 
   .btn-secondary .arrow {

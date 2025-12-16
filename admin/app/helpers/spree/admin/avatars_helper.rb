@@ -34,7 +34,7 @@ module Spree
 
         options[:width] ||= 128
         options[:height] ||= 128
-        options[:class] ||= 'avatar rounded-full flex items-center justify-center text-white text-lg'
+        options[:class] ||= 'avatar rounded-lg flex items-center justify-center text-white text-lg'
 
         if user.respond_to?(:avatar) && user.avatar.attached? && user.avatar.variable?
           spree_image_tag(

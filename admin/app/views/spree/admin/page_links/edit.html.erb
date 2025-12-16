@@ -1,8 +1,6 @@
 <% if @page_link.parent.is_a?(Spree::Store) %>
-  <%= turbo_frame_tag spree_dom_id(@page_link), class: 'flex items-center w-full py-4 pl-6 pr-4' do %>
-    <%= link_to collection_url, class: 'btn-close absolute top-0 right-0 mt-4 mr-4' do %>
-      <%= icon 'x', class: 'mr-0' %>
-    <% end %>
+  <%= turbo_frame_tag spree_dom_id(@page_link), class: 'flex items-center w-full py-2 pl-6 pr-2' do %>
+    <%= link_to '', collection_url, class: 'btn-close absolute top-0 right-0 mt-4 mr-4' %>
     <%= form_for @page_link, url: spree.admin_page_link_path(@page_link), data: { controller: 'auto-submit' }, html: { class: 'w-full mt-4 mr-1 mb-4' } do |f| %>
       <%= render 'spree/admin/page_links/form', f: f %>
       <hr class="my-6">

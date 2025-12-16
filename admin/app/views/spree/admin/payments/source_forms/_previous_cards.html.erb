@@ -3,7 +3,7 @@
     <%= f.fields_for :source, @payment.source do |source_form| %>
       <% previous_cards.each do |card| %>
         <li class="list-group-item p-0">
-          <%= source_form.label :id, value: card.id, class: "form-check-label flex items-center gap-4 px-6 py-6 w-full cursor-pointer hover-light" do %>
+          <%= source_form.label :id, value: card.id, class: "form-check-label flex items-center gap-4 px-6 py-6 w-full cursor-pointer hover:bg-gray-25" do %>
             <div class="form-check flex items-center">
               <%= source_form.radio_button :id, card.id, class: "form-check-input" %>
             </div>

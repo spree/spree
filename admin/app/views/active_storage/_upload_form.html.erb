@@ -32,10 +32,12 @@
 
       <div class="flex flex-col justify-center items-center h-full p-12 rounded-xl <%= css %>" data-active-storage-upload-target="placeholder" <% if form.object.send(field_name).attached? && form.object.send(field_name).variable? %>style="display: none !important"<% end %>>
         <%= icon('upload', class: 'mr-0 mb-6 text-4xl') %>
-        <%= Spree.t('admin.upload_new_asset') %>
+        <span class="text-lg font-medium">
+          <%= Spree.t('admin.upload_new_asset') %>
+        </span>
 
         <% if crop %>
-          <span class="text-gray-600 ml-2 text-center small mt-2">
+          <span class="ml-2 text-center text-sm mt-2">
             <%= Spree.t('admin.recommended_size') %>: <%= width %>x<%= height %>px
           </span>
         <% end %>
