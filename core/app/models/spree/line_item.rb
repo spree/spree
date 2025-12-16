@@ -163,16 +163,22 @@ module Spree
         # Skip cancelled shipments
         return BigDecimal('0') if shipment.canceled?
 
-        # Get all inventory units in this shipment for this line item
-        line_item_units = shipment.inventory_units.where(line_item_id: id).count
+        # Skip shipments with no cost/zero cost
+        return BigDecimal('0') if shipment.cost.zero?
 
         # Get total inventory units in this shipment
-        total_units = shipment.inventory_units.count
+        total_units = shipment.inventory_units
 
         # Calculate proportional shipping cost
-        return BigDecimal('0') if total_units.zero? || line_item_units.zero? || shipment.cost.zero?
+        return BigDecimal('0') if total_units.empty?
 
-        shipment.cost * (line_item_units.to_d / total_units)
+        # Get all inventory units in this shipment for this line item
+        line_item_units = shipment.inventory_units.find_all { |unit| unit.line_item_id == id }.count
+
+        # Calculate proportional shipping cost
+        return BigDecimal('0') if line_item_units.zero?
+
+        shipment.cost * (line_item_units.to_d / total_units.count)
       end
     end
 
