@@ -1310,6 +1310,181 @@ describe Spree::Product, type: :model do
       end
     end
 
+    describe '.by_best_selling' do
+      let!(:product_1) { create(:product, name: 'Product 1', stores: [store]) }
+      let!(:product_2) { create(:product, name: 'Product 2', stores: [store]) }
+      let!(:product_3) { create(:product, name: 'Product 3', stores: [store]) }
+      let!(:product_4) { create(:product, name: 'Product 4', stores: [store]) }
+      let(:test_product_ids) { [product_1.id, product_2.id, product_3.id, product_4.id] }
+
+      context 'with completed orders' do
+        before do
+          # Product 2: 3 completed orders, total: $300
+          3.times do
+            order = create(:completed_order_with_totals, line_items_price: 100, store: store)
+            order.line_items.first.update!(product: product_2)
+          end
+
+          # Product 1: 2 completed orders, total: $200
+          2.times do
+            order = create(:completed_order_with_totals, line_items_price: 100, store: store)
+            order.line_items.first.update!(product: product_1)
+          end
+
+          # Product 3: 1 completed order, total: $150
+          order = create(:completed_order_with_totals, line_items_price: 150, store: store)
+          order.line_items.first.update!(product: product_3)
+
+          # Product 4: no completed orders
+        end
+
+        it 'orders products by completed orders count in descending order by default' do
+          products = described_class.where(id: test_product_ids).by_best_selling
+          expect(products.map(&:name)).to eq(['Product 2', 'Product 1', 'Product 3', 'Product 4'])
+        end
+
+        it 'orders products by completed orders count in ascending order when specified' do
+          products = described_class.where(id: test_product_ids).by_best_selling(:asc)
+          expect(products.map(&:name)).to eq(['Product 4', 'Product 3', 'Product 1', 'Product 2'])
+        end
+
+        it 'includes completed_orders_count attribute' do
+          products = described_class.where(id: test_product_ids).by_best_selling
+          product_2_result = products.find { |p| p.id == product_2.id }
+          expect(product_2_result.completed_orders_count).to eq(3)
+        end
+
+        it 'includes completed_orders_total attribute' do
+          products = described_class.where(id: test_product_ids).by_best_selling
+          product_1_result = products.find { |p| p.id == product_1.id }
+          expect(product_1_result.completed_orders_total).to be > 0
+        end
+      end
+
+      context 'with incomplete orders' do
+        before do
+          # Product 1: 2 completed orders
+          2.times do
+            order = create(:completed_order_with_totals, line_items_price: 100, store: store)
+            order.line_items.first.update!(product: product_1)
+          end
+
+          # Product 2: 1 completed order + 2 incomplete orders (should not be counted)
+          order = create(:completed_order_with_totals, line_items_price: 100, store: store)
+          order.line_items.first.update!(product: product_2)
+
+          2.times do
+            order = create(:order_with_totals, line_items_price: 100, store: store)
+            order.line_items.first.update!(product: product_2)
+          end
+        end
+
+        it 'only counts completed orders' do
+          products = described_class.where(id: test_product_ids).by_best_selling
+          expect(products.first.name).to eq('Product 1')
+
+          product_1_result = products.find { |p| p.id == product_1.id }
+          product_2_result = products.find { |p| p.id == product_2.id }
+
+          expect(product_1_result.completed_orders_count).to eq(2)
+          expect(product_2_result.completed_orders_count).to eq(1)
+        end
+      end
+
+      context 'when products have same order count' do
+        before do
+          # Both products have 2 completed orders, but different totals
+          # Product 1: total $200
+          2.times do
+            order = create(:completed_order_with_totals, line_items_price: 100, store: store)
+            order.line_items.first.update!(product: product_1)
+          end
+
+          # Product 2: total $300
+          2.times do
+            order = create(:completed_order_with_totals, line_items_price: 150, store: store)
+            order.line_items.first.update!(product: product_2)
+          end
+        end
+
+        it 'uses completed_orders_total as secondary sort criteria' do
+          products = described_class.where(id: test_product_ids).by_best_selling
+          # Both have 2 orders, but product_2 has higher total
+          expect(products.first.name).to eq('Product 2')
+          expect(products.second.name).to eq('Product 1')
+        end
+      end
+
+      context 'with products having no orders' do
+        it 'includes products with no orders at the end' do
+          products = described_class.where(id: test_product_ids).by_best_selling
+          expect(products.length).to eq(4)
+          # All products should be included, those without orders have count = 0
+          products.select { |p| p.completed_orders_count.zero? }.each do |product|
+            expect(test_product_ids).to include(product.id)
+          end
+        end
+      end
+
+      context 'with products having only pending orders (no completed_at)' do
+        before do
+          # Product 1: 2 completed orders
+          2.times do
+            order = create(:completed_order_with_totals, line_items_price: 100, store: store)
+            order.line_items.first.update!(product: product_1)
+          end
+
+          # Product 2: 1 pending order (no completed_at)
+          order = create(:order_with_line_items, line_items_count: 1, store: store)
+          order.line_items.first.update!(product: product_2)
+
+          # Product 3: 2 pending orders (no completed_at) + 1 completed order
+          2.times do
+            order = create(:order_with_line_items, line_items_count: 1, store: store)
+            order.line_items.first.update!(product: product_3)
+          end
+          order = create(:completed_order_with_totals, line_items_price: 100, store: store)
+          order.line_items.first.update!(product: product_3)
+
+          # Product 4: no orders at all
+        end
+
+        it 'includes products with only pending orders with count = 0' do
+          products = described_class.where(id: test_product_ids).by_best_selling
+
+          # All products should be included
+          expect(products.length).to eq(4)
+
+          product_1_result = products.find { |p| p.id == product_1.id }
+          product_2_result = products.find { |p| p.id == product_2.id }
+          product_3_result = products.find { |p| p.id == product_3.id }
+          product_4_result = products.find { |p| p.id == product_4.id }
+
+          # Product 2 has pending orders but no completed orders - count should be 0
+          expect(product_2_result.completed_orders_count).to eq(0)
+          expect(product_2_result.completed_orders_total).to eq(0)
+
+          # Product 1 has 2 completed orders
+          expect(product_1_result.completed_orders_count).to eq(2)
+
+          # Product 3 has 1 completed order (pending orders not counted)
+          expect(product_3_result.completed_orders_count).to eq(1)
+
+          # Product 4 has no orders at all - count should be 0
+          expect(product_4_result.completed_orders_count).to eq(0)
+          expect(product_4_result.completed_orders_total).to eq(0)
+        end
+
+        it 'orders products correctly with pending orders included' do
+          products = described_class.where(id: test_product_ids).by_best_selling
+          # Product 1: 2 completed orders (first)
+          # Product 3: 1 completed order (second)
+          # Product 2 & 4: 0 completed orders (last, but Product 2 still included despite having pending orders)
+          expect(products.map(&:name)).to eq(['Product 1', 'Product 3', 'Product 2', 'Product 4'])
+        end
+      end
+    end
+
     describe '.available' do
       let!(:discontinued_product) { create(:product, discontinue_on: 1.day.ago, stores: [store]) }
       let!(:future_product) { create(:product, available_on: 1.day.from_now, status: 'active', stores: [store]) }
