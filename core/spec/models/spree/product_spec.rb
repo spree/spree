@@ -1320,20 +1320,13 @@ describe Spree::Product, type: :model do
       context 'with completed orders' do
         before do
           # Product 2: 3 completed orders, total: $300
-          3.times do
-            order = create(:completed_order_with_totals, line_items_price: 100, store: store)
-            order.line_items.first.update!(product: product_2)
-          end
+          create_list(:completed_order_with_totals, 3, line_items_price: 100, store: store, variants: [product_2.master])
 
           # Product 1: 2 completed orders, total: $200
-          2.times do
-            order = create(:completed_order_with_totals, line_items_price: 100, store: store)
-            order.line_items.first.update!(product: product_1)
-          end
+          create_list(:completed_order_with_totals, 2, line_items_price: 100, store: store, variants: [product_1.master])
 
           # Product 3: 1 completed order, total: $150
-          order = create(:completed_order_with_totals, line_items_price: 150, store: store)
-          order.line_items.first.update!(product: product_3)
+          create(:completed_order_with_totals, line_items_price: 150, store: store, variants: [product_3.master])
 
           # Product 4: no completed orders
         end
@@ -1364,19 +1357,12 @@ describe Spree::Product, type: :model do
       context 'with incomplete orders' do
         before do
           # Product 1: 2 completed orders
-          2.times do
-            order = create(:completed_order_with_totals, line_items_price: 100, store: store)
-            order.line_items.first.update!(product: product_1)
-          end
+          create_list(:completed_order_with_totals, 2, line_items_price: 100, store: store, variants: [product_1.master])
 
           # Product 2: 1 completed order + 2 incomplete orders (should not be counted)
-          order = create(:completed_order_with_totals, line_items_price: 100, store: store)
-          order.line_items.first.update!(product: product_2)
+          create(:completed_order_with_totals, line_items_price: 100, store: store, variants: [product_2.master])
 
-          2.times do
-            order = create(:order_with_totals, line_items_price: 100, store: store)
-            order.line_items.first.update!(product: product_2)
-          end
+          create_list(:order_with_totals, 2, line_items_price: 100, store: store, variants: [product_2.master])
         end
 
         it 'only counts completed orders' do
@@ -1395,16 +1381,10 @@ describe Spree::Product, type: :model do
         before do
           # Both products have 2 completed orders, but different totals
           # Product 1: total $200
-          2.times do
-            order = create(:completed_order_with_totals, line_items_price: 100, store: store)
-            order.line_items.first.update!(product: product_1)
-          end
+          create_list(:completed_order_with_totals, 2, line_items_price: 100, store: store, variants: [product_1.master])
 
           # Product 2: total $300
-          2.times do
-            order = create(:completed_order_with_totals, line_items_price: 150, store: store)
-            order.line_items.first.update!(product: product_2)
-          end
+          create_list(:completed_order_with_totals, 2, line_items_price: 150, store: store, variants: [product_2.master])
         end
 
         it 'uses completed_orders_total as secondary sort criteria' do
@@ -1429,22 +1409,14 @@ describe Spree::Product, type: :model do
       context 'with products having only pending orders (no completed_at)' do
         before do
           # Product 1: 2 completed orders
-          2.times do
-            order = create(:completed_order_with_totals, line_items_price: 100, store: store)
-            order.line_items.first.update!(product: product_1)
-          end
+          create_list(:completed_order_with_totals, 2, line_items_price: 100, store: store, variants: [product_1.master])
 
           # Product 2: 1 pending order (no completed_at)
-          order = create(:order_with_line_items, line_items_count: 1, store: store)
-          order.line_items.first.update!(product: product_2)
+          create(:order_with_line_items, line_items_count: 1, store: store, variants: [product_2.master])
 
           # Product 3: 2 pending orders (no completed_at) + 1 completed order
-          2.times do
-            order = create(:order_with_line_items, line_items_count: 1, store: store)
-            order.line_items.first.update!(product: product_3)
-          end
-          order = create(:completed_order_with_totals, line_items_price: 100, store: store)
-          order.line_items.first.update!(product: product_3)
+          create_list(:order_with_line_items, 2, line_items_count: 1, store: store, variants: [product_3.master])
+          create(:completed_order_with_totals, line_items_price: 100, store: store, variants: [product_3.master])
 
           # Product 4: no orders at all
         end
