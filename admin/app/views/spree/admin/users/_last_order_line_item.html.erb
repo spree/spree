@@ -1,8 +1,8 @@
 <li class="list-group-item">
   <div class="grid grid-cols-12 gap-4">
     <div class="col-span-8">
-      <%= link_to spree.edit_admin_product_path(line_item.product), class: 'flex no-underline' do %>
-        <%= render 'spree/admin/shared/product_image', object: line_item.product %>
+      <%= link_to spree.edit_admin_product_path(line_item.variant), class: 'flex no-underline' do %>
+        <%= render 'spree/admin/shared/product_image', object: line_item.variant %>
         <span class="ml-6 text-gray-900">
           <strong><%= line_item.name %></strong><br />
           <%= line_item.options_text %>

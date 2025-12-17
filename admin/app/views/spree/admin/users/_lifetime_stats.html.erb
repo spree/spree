@@ -1,54 +1,56 @@
-<div class="card mb-6">
-  <div class="card-body">
-    <div class="grid grid-cols-2 lg:grid-cols-3 gap-6">
-      <div class="flex flex-col mb-6 lg:mb-0 border-r gap-2">
-        <span class="text-sm text-gray-500"><%= Spree.t('admin.amount_spent') %></span>
-        <span class="text-lg text-gray-900 font-bold">
-          <%= @user.display_lifetime_value %>
-        </span>
-      </div>
-
-      <div class="flex flex-col mb-6 lg:mb-0 border-r gap-2">
-        <span class="text-sm text-gray-500"><%= Spree.t(:orders) %></span>
-        <span class="text-lg text-gray-900 font-bold">
-          <%= @user.completed_orders.count %>
-        </span>
-      </div>
-
-      <div class="flex flex-col mb-6 lg:mb-0 gap-2">
-        <span class="text-sm text-gray-500"><%= Spree.t('admin.avg_order_value') %></span>
-        <span class="text-lg text-gray-900 font-bold">
-          <%= @user.display_average_order_value %>
-        </span>
-      </div>
-
-      <div class="flex flex-col mb-6 lg:mb-0 border-r gap-2">
-        <span class="text-sm text-gray-500"><%= Spree.t(:store_credits) %></span>
-        <span class="text-lg text-gray-900 font-bold">
-          <%= Spree::Money.new(@user.total_available_store_credit(current_currency, current_store), currency: current_currency) %>
-        </span>
-        <% if can?(:create, Spree::StoreCredit) %>
-          <span>
-            <%= link_to_with_icon 'plus', Spree.t(:add_store_credit), spree.new_admin_user_store_credit_path(@user), class: 'btn btn-secondary btn-sm' %>
-          </span>
-        <% end %>
-      </div>
-
-      <div class="flex flex-col mb-6 lg:mb-0 border-r gap-2">
-        <span class="text-sm text-gray-500"><%= Spree.t(:created_at) %></span>
-        <span class="text-lg text-gray-900 font-bold">
-          <%= spree_time(@user.created_at) %>
-        </span>
-      </div>
-
-      <% if @visits_count.present? %>
+<% cache [spree_base_cache_key, @user, can?(:create, Spree::StoreCredit)], expires_in: 1.hour do %>
+  <div class="card mb-6">
+    <div class="card-body">
+      <div class="grid grid-cols-2 lg:grid-cols-3 gap-6">
         <div class="flex flex-col mb-6 lg:mb-0 border-r gap-2">
-          <span class="text-sm text-gray-500"><%= Spree.t(:visits) %></span>
+          <span class="text-sm text-gray-500"><%= Spree.t('admin.amount_spent') %></span>
           <span class="text-lg text-gray-900 font-bold">
-            <%= @visits_count %>
+            <%= @user.display_lifetime_value %>
           </span>
         </div>
-      <% end %>
+
+        <div class="flex flex-col mb-6 lg:mb-0 border-r gap-2">
+          <span class="text-sm text-gray-500"><%= Spree.t(:orders) %></span>
+          <span class="text-lg text-gray-900 font-bold">
+            <%= @user.completed_orders.count %>
+          </span>
+        </div>
+
+        <div class="flex flex-col mb-6 lg:mb-0 gap-2">
+          <span class="text-sm text-gray-500"><%= Spree.t('admin.avg_order_value') %></span>
+          <span class="text-lg text-gray-900 font-bold">
+            <%= @user.display_average_order_value %>
+          </span>
+        </div>
+
+        <div class="flex flex-col mb-6 lg:mb-0 border-r gap-2">
+          <span class="text-sm text-gray-500"><%= Spree.t(:store_credits) %></span>
+          <span class="text-lg text-gray-900 font-bold">
+            <%= Spree::Money.new(@user.total_available_store_credit(current_currency, current_store), currency: current_currency) %>
+          </span>
+          <% if can?(:create, Spree::StoreCredit) %>
+            <span>
+              <%= link_to_with_icon 'plus', Spree.t(:add_store_credit), spree.new_admin_user_store_credit_path(@user), class: 'btn btn-secondary btn-sm' %>
+            </span>
+          <% end %>
+        </div>
+
+        <div class="flex flex-col mb-6 lg:mb-0 border-r gap-2">
+          <span class="text-sm text-gray-500"><%= Spree.t(:created_at) %></span>
+          <span class="text-lg text-gray-900 font-bold">
+            <%= spree_time(@user.created_at) %>
+          </span>
+        </div>
+
+        <% if @visits_count.present? %>
+          <div class="flex flex-col mb-6 lg:mb-0 border-r gap-2">
+            <span class="text-sm text-gray-500"><%= Spree.t(:visits) %></span>
+            <span class="text-lg text-gray-900 font-bold">
+              <%= @visits_count %>
+            </span>
+          </div>
+        <% end %>
+      </div>
     </div>
   </div>
-</div>
+<% end %>
