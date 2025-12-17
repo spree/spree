@@ -71,7 +71,7 @@
   }
 
   .page-header-title {
-    @apply text-xl mb-2;
+    @apply text-xl mb-2 font-medium;
   }
 
   /* Page Tabs */

@@ -27,37 +27,22 @@
         <%= f.fields_for :master, @product.master do |vf| %>
           <%= vf.fields_for :stock_items do |sif| %>
             <%= sif.hidden_field :stock_location_id %>
-            <div class="grid grid-cols-12 gap-6 mb-2">
-              <div class="col-span-12 md:col-span-6 flex items-center">
+            <div class="grid lg:grid-cols-3 gap-x-6 gap-y-2 items-center mb-6 border-b border-gray-200 pb-6">
+              <% if can?(:manage, sif.object.stock_location) %>
+                <%= link_to sif.object.stock_location.name, spree.edit_admin_stock_location_path(sif.object.stock_location) %>
+              <% else %>
                 <%= sif.object.stock_location.name %>
-              </div>
-              <div class="col-span-12 md:col-span-2">
-                <%= sif.number_field :count_on_hand, class: 'form-input' %>
-              </div>
-              <div class="col-span-12 md:col-span-4">
-                <div class="custom-control form-checkbox flex items-center h-full">
-                  <%= sif.check_box :backorderable, class: 'custom-control-input' %>
-                  <%= sif.label :backorderable, Spree.t(:continue_selling_when_out_of_stock), class: 'custom-control-label' %>
-                </div>
-              </div>
+              <% end %>
+              <%= sif.number_field :count_on_hand, class: 'form-input' %>
+              <%= sif.spree_check_box :backorderable, label: Spree.t(:continue_selling_when_out_of_stock) %>
             </div>
           <% end %>
         <% end %>
       </div>
     </div>
-    <div class="grid grid-cols-12 gap-6">
-      <div class="col-span-12 md:col-span-6">
-        <div class="form-group">
-          <%= f.label :sku, Spree.t('admin.products.inventory.sku') %>
-          <%= f.text_field :sku, class: 'form-input' %>
-        </div>
-      </div>
-      <div class="col-span-12 md:col-span-6">
-        <div class="form-group">
-          <%= f.label :barcode, Spree.t('admin.products.inventory.barcode') %>
-          <%= f.text_field :barcode, class: 'form-input' %>
-        </div>
-      </div>
+    <div class="grid lg:grid-cols-2 gap-x-6 gap-y-2">
+      <%= f.spree_text_field :sku, label: Spree.t(:sku) %>
+      <%= f.spree_text_field :barcode, label: Spree.t(:barcode) %>
     </div>
   </div>
 </div>
