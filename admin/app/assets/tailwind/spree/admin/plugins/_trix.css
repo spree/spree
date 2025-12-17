@@ -10,7 +10,7 @@
   }
 
   trix-toolbar {
-    @apply p-1 w-full border-b border-border bg-gray-25!;
+    @apply p-1 w-full border-b border-gray-200 bg-gray-25!;
   }
 
   trix-toolbar .trix-button.trix-active {
@@ -68,7 +68,7 @@
   }
 
   trix-toolbar .trix-button:hover {
-    @apply bg-border! text-gray-900!;
+    @apply bg-gray-200! text-gray-900!;
   }
 
   trix-toolbar .trix-button-row {
@@ -80,7 +80,7 @@
   }
 
   trix-toolbar .trix-dialog .trix-input {
-    @apply block w-full text-sm leading-normal text-gray-900 bg-white py-1.5 px-3 border border-border rounded-lg transition-all duration-150 ease-in-out;
+    @apply block w-full text-sm leading-normal text-gray-900 bg-white py-1.5 px-3 border border-gray-200 rounded-lg transition-all duration-150 ease-in-out;
     background-clip: padding-box;
   }
 

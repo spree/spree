@@ -48,7 +48,7 @@
 
   #page-builder-header {
     z-index: 1031;
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-gray-200);
     height: var(--pb-header-height);
   }
 
@@ -67,7 +67,7 @@
     top: var(--pb-header-height);
     left: 0;
     background-color: var(--color-white);
-    border-right: 1px solid var(--color-border);
+    border-right: 1px solid var(--color-gray-200);
     overflow-x: hidden;
     height: calc(100vh - var(--pb-header-height));
   }
@@ -76,7 +76,7 @@
     height: 48px;
     padding: 0.5rem 0.7rem;
     background-color: var(--color-white);
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-gray-200);
     display: flex;
     align-items: center;
     margin-bottom: 0.5rem;
@@ -93,7 +93,7 @@
     width: calc(var(--pb-sidebar-width) - 1px);
     padding: 0.5rem;
     background-color: var(--color-white);
-    box-shadow: 0 0 0 1px var(--color-border);
+    box-shadow: 0 0 0 1px var(--color-gray-200);
     z-index: 1031;
     display: flex;
     align-items: center;

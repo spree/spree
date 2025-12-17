@@ -7,7 +7,7 @@
   #header {
     height: var(--spacing-header-height);
     background-color: var(--color-white);
-    box-shadow: inset 0 -1px 0 var(--color-border);
+    box-shadow: inset 0 -1px 0 var(--color-gray-200);
     transition: margin-left 0.1s ease;
   }
 
@@ -27,7 +27,7 @@
   }
 
   #page-header.sticky {
-    @apply px-4 w-full max-w-full border-b border-border;
+    @apply px-4 w-full max-w-full border-b border-gray-200;
     animation: slideDown 0.3s ease-out;
     height: var(--spacing-header-height);
   }
@@ -62,12 +62,12 @@
   }
 
   #settings-header #page-header {
-    @apply mb-0 px-4 max-w-full! border-b border-border;
+    @apply mb-0 px-4 max-w-full! border-b border-gray-200;
     height: var(--spacing-header-height);
   }
 
   #settings-header #page-tabs {
-    @apply border-b border-border;
+    @apply border-b border-gray-200;
   }
 
   .page-header-title {
@@ -114,7 +114,7 @@
   }
 
   .store-chooser {
-    @apply flex flex-col gap-1 p-1 m-1 border border-border rounded-lg;
+    @apply flex flex-col gap-1 p-1 m-1 border border-gray-200 rounded-lg;
   }
 
   .store-chooser .store-chooser-item {
@@ -131,7 +131,7 @@
 
   /* User Dropdown */
   .user-dropdown {
-    @apply hidden items-center justify-between p-2 bg-gray-25 border-t border-border mt-auto mr-px;
+    @apply hidden items-center justify-between p-2 bg-gray-25 border-t border-gray-200 mt-auto mr-px;
   }
 
   @media (min-width: 992px) {
@@ -175,7 +175,7 @@
   #main-sidebar {
     @apply flex flex-col gap-0 bg-gray-25 h-screen overflow-x-hidden fixed top-0;
     width: var(--spacing-sidebar-width);
-    box-shadow: inset -1px 0 0 var(--color-border);
+    box-shadow: inset -1px 0 0 var(--color-gray-200);
   }
 
   @media (max-width: 992px) {
@@ -430,7 +430,7 @@
   }
 
   .sidebar-mobile .sidebar-mobile-header {
-    @apply flex items-center p-2 border-b border-border bg-gray-25 sticky top-0 z-1;
+    @apply flex items-center p-2 border-b border-gray-200 bg-gray-25 sticky top-0 z-1;
   }
 
   .sidebar-mobile .sidebar-mobile-header .store-dropdown {
@@ -537,7 +537,7 @@
 
   /* User dropdown in mobile sidebar */
   .sidebar-mobile .sidebar-panel .user-dropdown {
-    @apply relative flex w-full border-r-0 border-t border-border mt-auto;
+    @apply relative flex w-full border-r-0 border-t border-gray-200 mt-auto;
   }
 
   .sidebar-mobile.sidebar-mobile-open {

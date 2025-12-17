@@ -133,7 +133,7 @@
   /* Collapsable Card */
   .collapsable-card {
     @apply relative flex flex-col min-w-0 break-words overflow-hidden;
-    @apply bg-white border border-border rounded-2xl;
+    @apply bg-white border border-gray-200 rounded-2xl;
     background-clip: border-box;
   }
 

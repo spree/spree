@@ -4,7 +4,7 @@
 
 @layer components {
   .admin-wizard .store-dropdown {
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-gray-200);
   }
 
   .admin-wizard h1 {
@@ -16,7 +16,7 @@
     bottom: 0;
     left: 0;
     width: 100%;
-    border-top: 1px solid var(--color-border);
+    border-top: 1px solid var(--color-gray-200);
     padding-left: 1.5rem;
     padding-right: 1.5rem;
     padding-top: 1rem;

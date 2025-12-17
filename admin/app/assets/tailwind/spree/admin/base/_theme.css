@@ -12,15 +12,10 @@
 
   /* Semantic Colors */
   --color-success: #28a745;
-  --color-success-hover: #218838;
   --color-danger: #ee4266;
-  --color-danger-hover: #d63355;
   --color-warning: #ffe17d;
   --color-info: #44c1ff;
   --color-partial: #E2E8F0;
-
-  /* Border */
-  --color-border: var(--color-gray-200);
 
   /* Typography */
   --font-sans: Inter, sans-serif;

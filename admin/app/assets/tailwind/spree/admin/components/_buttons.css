@@ -52,13 +52,13 @@
 
   .btn-light,
   .btn-danger {
-    @apply text-gray-700 bg-gray-25 border-border shadow-xs;
+    @apply text-gray-700 bg-gray-25 border-gray-200 shadow-xs;
   }
 
   .btn-light:hover,
   .btn-light:focus,
   .btn-light:active {
-    @apply bg-gray-100 border-border text-gray-900;
+    @apply bg-gray-100 border-gray-200 text-gray-900;
   }
 
   .btn-light:active {
@@ -72,14 +72,6 @@
 
   .btn-danger {
     @apply text-red-600 bg-gray-25 hover:bg-red-100;
-  }
-
-  .btn-success {
-    @apply text-white bg-success border-success;
-  }
-
-  .btn-success:hover {
-    @apply bg-success-hover border-success-hover;
   }
 
   .btn-close {

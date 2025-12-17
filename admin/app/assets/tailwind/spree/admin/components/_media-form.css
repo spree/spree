@@ -4,7 +4,7 @@
 
 @layer components {
   .upload-area {
-    @apply flex flex-col gap-2 justify-center items-center overflow-hidden rounded-lg border border-dashed border-border bg-gray-25 p-2 cursor-pointer text-gray-500 transition-all duration-500 ease-out;
+    @apply flex flex-col gap-2 justify-center items-center overflow-hidden rounded-lg border border-dashed border-gray-200 bg-gray-25 p-2 cursor-pointer text-gray-500 transition-all duration-500 ease-out;
   }
 
   .upload-area:hover {

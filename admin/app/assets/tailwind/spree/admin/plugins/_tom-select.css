@@ -29,7 +29,7 @@
   }
 
   .ts-dropdown .optgroup:before {
-    @apply block h-0 my-2 overflow-hidden border-t border-border -mx-3;
+    @apply block h-0 my-2 overflow-hidden border-t border-gray-200 -mx-3;
     content: ' ';
   }
 
@@ -93,9 +93,9 @@
   }
 
   .ts-dropdown .spinner:after {
-    @apply block w-6 h-6 m-[3px] rounded-full border-[5px] border-border animate-spin;
+    @apply block w-6 h-6 m-[3px] rounded-full border-[5px] border-gray-200 animate-spin;
     content: " ";
-    border-color: var(--color-border) transparent var(--color-border) transparent;
+    border-color: var(--color-gray-200) transparent var(--color-gray-200) transparent;
   }
 
   /* Control */
@@ -131,7 +131,7 @@
 
   /* Multi-select items */
   .ts-wrapper.multi .ts-control > div {
-    @apply cursor-pointer mr-[3px] mb-[3px] py-[1px] px-[5px] text-gray-800 border-0 border-border rounded-[calc(var(--radius-md)-1px)];
+    @apply cursor-pointer mr-[3px] mb-[3px] py-[1px] px-[5px] text-gray-800 border-0 border-gray-200 rounded-[calc(var(--radius-md)-1px)];
     background: #efefef;
   }
 
@@ -290,10 +290,10 @@
 
   /* Dropdown input plugin */
   .ts-dropdown.plugin-dropdown_input .dropdown-input-wrap {
-    @apply py-[5px] px-3 border-b border-border;
+    @apply py-[5px] px-3 border-b border-gray-200;
   }
 
   .ts-dropdown.plugin-dropdown_input .dropdown-input {
-    @apply w-full text-sm bg-white py-1.5 px-3 border border-border rounded-md;
+    @apply w-full text-sm bg-white py-1.5 px-3 border border-gray-200 rounded-md;
   }
 }

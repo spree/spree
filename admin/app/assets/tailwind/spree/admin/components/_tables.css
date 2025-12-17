@@ -4,7 +4,7 @@
 
 @layer components {
   .table {
-    @apply w-full align-top text-gray-950 border-border;
+    @apply w-full align-top text-gray-950 border-gray-200;
   }
 
   .table > :not(caption) > * > * {
@@ -25,7 +25,7 @@
   }
 
   .table thead th {
-    @apply align-middle text-left text-sm font-medium text-gray-600 bg-gray-25 py-2 border-b border-border;
+    @apply align-middle text-left text-sm font-medium text-gray-600 bg-gray-25 py-2 border-b border-gray-200;
   }
 
   .table thead th:first-child {
@@ -156,7 +156,7 @@
   }
 
   .table-responsive.border {
-    @apply border-border!;
+    @apply border-gray-200!;
   }
 
   .table-responsive:has(.dropdown.show) {

@@ -113,7 +113,7 @@
   .badge-authorize,
   .badge-eligible,
   .badge-invited {
-    @apply bg-white text-gray-600 border border-border font-normal;
+    @apply bg-white text-gray-600 border border-gray-200 font-normal;
   }
 
   .badge-processing:hover,

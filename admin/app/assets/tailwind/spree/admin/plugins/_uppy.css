@@ -4,7 +4,7 @@
 }
 
 .uppy-Dashboard-inner {
-  @apply bg-gray-25 border-border;
+  @apply bg-gray-25 border-gray-200;
 }
 
 .uppy-Dashboard-innerWrap,
@@ -28,7 +28,7 @@
 }
 
 .uppy-Dashboard--modal .uppy-Dashboard-inner {
-  @apply border-border! z-[1055];
+  @apply border-gray-200! z-[1055];
   box-shadow: 0px 0px 0px 1px rgba(179, 179, 179, 0.5), 0px 6px 12px -3px rgba(179, 179, 179, 0.35), 0px 6px 18px 0px rgba(179, 179, 179, 0.35) !important;
 }
 
@@ -56,13 +56,13 @@
   /* btn-sm */
   @apply px-2 py-1 text-base rounded-lg;
   /* btn-light */
-  @apply text-gray-700 bg-gray-25! border-border! shadow-xs!;
+  @apply text-gray-700 bg-gray-25! border-gray-200! shadow-xs!;
 }
 
 .uppy-Dashboard-browse:hover,
 .uppy-DashboardContent-back:hover,
 .uppy-StatusBar-actionBtn:hover {
-  @apply bg-gray-50 border-border text-gray-900;
+  @apply bg-gray-50 border-gray-200 text-gray-900;
 }
 
 .uppy-Dashboard-browse {

@@ -5,7 +5,7 @@
 @layer components {
   .filter-wrap {
     padding: 0.55rem;
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-gray-200);
     gap: 0.55rem;
     position: sticky;
     top: var(--spacing-header-height);

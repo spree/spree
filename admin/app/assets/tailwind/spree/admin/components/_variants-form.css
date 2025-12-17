@@ -12,7 +12,7 @@
   .variants-form .options-creator {
     margin: 1rem;
     padding: 0.5rem;
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--color-gray-200);
     border-radius: var(--radius-md);
   }
 
@@ -26,7 +26,7 @@
   }
 
   .variants-form .options-creator:has(.options-creator__option--new:not(.d-none)) {
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--color-gray-200);
     border-radius: var(--radius-md);
     margin: 1rem;
     margin-bottom: 1rem;
@@ -34,7 +34,7 @@
 
   .variants-form .options-creator__option {
     display: flex;
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-gray-200);
     padding: 0.5rem 0.5rem 1rem 0;
     margin-bottom: 0.5rem;
   }
@@ -192,7 +192,7 @@
     width: 100%;
     display: flex;
     gap: 0.25rem;
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-gray-200);
   }
 
   .variants-form .variants-table__body__row.nested .column-checkbox,

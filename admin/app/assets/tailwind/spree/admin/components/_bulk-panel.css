@@ -115,6 +115,6 @@
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    border-right: 1px solid var(--color-border);
+    border-right: 1px solid var(--color-gray-200);
   }
 }
