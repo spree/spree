@@ -7,24 +7,19 @@
     --pb-sidebar-width: 345px;
     --pb-header-height: 50px;
 
-    background-color: var(--color-gray-100);
-    height: 100vh;
-    overflow: hidden;
+    @apply bg-gray-100 h-screen overflow-hidden;
   }
 
   #page-builder #content {
-    margin-left: 0;
-    padding-top: 0;
+    @apply ml-0 pt-0;
   }
 
   #page-builder #main-part {
-    padding-bottom: 0;
-    padding-left: 2rem;
-    padding-right: 2rem;
+    @apply pb-0 px-8;
   }
 
   #page-builder #main-part .embed-responsive {
-    min-height: 100vh;
+    @apply min-h-screen;
   }
 
   #page-builder .nav-pills {
@@ -32,81 +27,55 @@
   }
 
   #page-builder .nav-pills .nav-link {
-    background-color: transparent;
-    padding: 0.25rem 0.5rem;
-    border-radius: var(--radius-lg);
+    @apply bg-transparent py-1 px-2 rounded-lg;
   }
 
   #page-builder .nav-pills .nav-link.active {
-    background-color: var(--color-white);
+    @apply bg-white;
   }
 
   #page-builder-sidebar,
   #page-builder-header {
-    background-color: var(--color-white);
+    @apply bg-white;
   }
 
   #page-builder-header {
+    @apply border-b border-gray-200;
     z-index: 1031;
-    border-bottom: 1px solid var(--color-gray-200);
     height: var(--pb-header-height);
   }
 
   #page-builder-header nav {
-    width: 100%;
+    @apply w-full flex items-center gap-2 py-1 px-2;
     height: var(--pb-header-height);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.25rem 0.5rem;
   }
 
   #page-builder-sidebar {
-    position: fixed;
+    @apply fixed left-0 bg-white border-r border-gray-200 overflow-x-hidden;
     width: var(--pb-sidebar-width);
     top: var(--pb-header-height);
-    left: 0;
-    background-color: var(--color-white);
-    border-right: 1px solid var(--color-gray-200);
-    overflow-x: hidden;
     height: calc(100vh - var(--pb-header-height));
   }
 
   #page-builder-sidebar .sidebar-header {
-    height: 48px;
+    @apply h-12 bg-white border-b border-gray-200 flex items-center mb-2 gap-2 sticky top-0;
     padding: 0.5rem 0.7rem;
-    background-color: var(--color-white);
-    border-bottom: 1px solid var(--color-gray-200);
-    display: flex;
-    align-items: center;
-    margin-bottom: 0.5rem;
-    gap: 0.5rem;
-    position: sticky;
-    top: 0;
     z-index: 1031;
   }
 
   #page-builder-sidebar .sidebar-footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
+    @apply fixed bottom-0 left-0 p-2 bg-white flex items-center justify-between;
     width: calc(var(--pb-sidebar-width) - 1px);
-    padding: 0.5rem;
-    background-color: var(--color-white);
     box-shadow: 0 0 0 1px var(--color-gray-200);
     z-index: 1031;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
   }
 
   #page-builder-sidebar .list-group-item {
-    padding: 0.5rem;
+    @apply p-2;
   }
 
   #page-builder-preview {
-    border-radius: var(--radius-md);
-    border: 1px solid var(--color-gray-200);
+    @apply rounded-md border border-gray-200;
     margin-top: calc(var(--pb-header-height) + 1rem);
   }
 
@@ -114,28 +83,26 @@
   .sidebar-section-title:focus,
   .sidebar-block-title:hover,
   .sidebar-block-title:focus {
-    color: var(--color-gray-900) !important;
-    background-color: var(--color-gray-100) !important;
+    @apply !text-gray-900 !bg-gray-100;
   }
 
   .sidebar-section-title:hover a,
   .sidebar-section-title:focus a,
   .sidebar-block-title:hover a,
   .sidebar-block-title:focus a {
-    text-decoration: none !important;
+    @apply !no-underline;
   }
 
   .sidebar-section-title:hover .btn-light,
   .sidebar-section-title:focus .btn-light,
   .sidebar-block-title:hover .btn-light,
   .sidebar-block-title:focus .btn-light {
-    visibility: visible;
+    @apply visible;
   }
 
   .sidebar-section-title .btn-light,
   .sidebar-block-title .btn-light {
-    visibility: hidden;
-    background: transparent !important;
+    @apply invisible !bg-transparent;
   }
 
   .sidebar-section-title .btn-light:hover,
@@ -144,7 +111,7 @@
   .sidebar-block-title .btn-light:hover,
   .sidebar-block-title .btn-light:focus,
   .sidebar-block-title .btn-light:active {
-    background-color: var(--color-gray-100) !important;
+    @apply !bg-gray-100;
   }
 
   .sidebar-page-block {
@@ -157,56 +124,43 @@
   .edit-block .trix-button--icon-increase-nesting-level,
   .edit-block .trix-button--icon-strike,
   .edit-block .trix-button-group--history-tools {
-    display: none !important;
+    @apply !hidden;
   }
 
   .mobileLiveView #page-builder-preview {
-    width: 100%;
-    height: 100vh;
+    @apply w-full h-screen -translate-x-1/2 overflow-auto;
     inset: 0 50%;
-    transform: translate(-50%, 0);
     max-width: 375px;
     min-width: 375px;
-    overflow: auto;
   }
 
   .editor-add-section {
-    position: fixed;
-    right: 20px;
-    bottom: 20px;
+    @apply fixed right-5 bottom-5 opacity-0 pointer-events-none flex justify-center items-center;
     z-index: 999999;
-    opacity: 0;
     padding: 0.6rem 1.3rem;
-    pointer-events: none;
-    display: flex;
-    justify-content: center;
-    align-items: center;
   }
 
   @media (max-width: 768px) {
     #page-builder-preview {
-      border: 0px none !important;
+      @apply !border-0;
     }
 
     .page-builder .sidebar {
-      opacity: 0;
-      pointer-events: none;
+      @apply opacity-0 pointer-events-none;
     }
 
     .page-builder .sidebar .right-sidebar,
     .page-builder .sidebar .bottom-bar {
-      width: 100vw !important;
+      @apply !w-screen;
     }
 
     .mobile_sidebar_open.page-builder .sidebar,
     .editor-add-section {
-      opacity: 1;
-      pointer-events: auto;
+      @apply opacity-100 pointer-events-auto;
     }
 
     .mobile_sidebar_open .editor-add-section {
-      opacity: 0;
-      pointer-events: none;
+      @apply opacity-0 pointer-events-none;
     }
   }
 
@@ -230,13 +184,11 @@
   }
 
   .page-builder .radio-buttons-header {
-    justify-content: space-around;
+    @apply justify-around;
   }
 
   .page-builder .radio-buttons-header input:checked ~ p {
-    color: var(--color-gray-900) !important;
-    background-color: var(--color-gray-25) !important;
-    border: 1px solid var(--color-primary) !important;
+    @apply !text-gray-900 !bg-gray-25 !border !border-primary;
   }
 
   .checkered-background {

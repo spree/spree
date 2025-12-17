@@ -4,11 +4,11 @@
 
 @layer components {
   .seo-form .card-body {
-    gap: 1rem;
+    @apply gap-4;
   }
 
   .seo-form .seo__preview {
-    gap: 0.125rem;
+    @apply gap-0.5;
   }
 
   .seo-form .seo__preview__title {

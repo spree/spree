@@ -4,15 +4,11 @@
 
 @layer components {
   .filter-wrap {
+    @apply sticky bg-white border-b border-gray-200 rounded-t-2xl;
     padding: 0.55rem;
-    border-bottom: 1px solid var(--color-gray-200);
     gap: 0.55rem;
-    position: sticky;
     top: var(--spacing-header-height);
     z-index: 1000;
-    background-color: var(--color-white);
-    border-top-left-radius: var(--radius-2xl);
-    border-top-right-radius: var(--radius-2xl);
   }
 
   .filter-wrap .btn {
@@ -21,18 +17,10 @@
 
 
   #table-filter {
-    position: absolute;
-    padding: 1rem;
-    border-radius: var(--radius-2xl);
-    box-shadow: var(--shadow-dropdown);
-    background-color: var(--color-white);
-    margin-top: 0.5rem;
-    right: 0.5rem;
+    @apply absolute p-4 rounded-2xl shadow-dropdown bg-white mt-2 right-2 w-full overflow-y-auto;
     animation: fadeIn 0.2s ease-in-out;
-    width: 100%;
     z-index: 1050;
     max-height: calc(100vh - var(--spacing-header-height) - 4rem);
-    overflow-y: auto;
   }
 
   @keyframes fadeIn {
@@ -42,33 +30,25 @@
 
   @media (min-width: 768px) {
     #table-filter {
-      width: 50%;
-      flex-direction: column;
+      @apply w-1/2 flex-col;
     }
   }
 
   #table-filter.hidden,
   #table-filter.d-none {
-    display: none !important;
+    @apply !hidden;
   }
 
   .collapsed .arrow {
-    transform: rotate(-90deg);
-    transition: 0.3s ease-in-out;
+    @apply -rotate-90 transition-transform duration-300 ease-in-out;
   }
 
   i.js-delete-filter {
-    margin-bottom: 0;
+    @apply mb-0;
   }
 
   .sort_link {
-    color: var(--color-gray-600);
-    padding-left: 0.25rem;
-    padding-right: 0.25rem;
-    border-radius: var(--radius-sm);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    @apply text-gray-600 px-1 rounded-sm inline-flex items-center justify-center;
   }
 
   .sort_link:hover {
@@ -94,13 +74,10 @@
   }
 
   .sort_link svg.default-filter-arrow {
-    opacity: 0.3;
+    @apply opacity-30;
   }
 
   .filter-badges-container:has(*) {
-    margin-top: 1rem;
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
+    @apply mt-4 flex gap-2 flex-wrap;
   }
 }

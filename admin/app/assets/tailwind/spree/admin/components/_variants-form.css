@@ -4,59 +4,41 @@
 
 @layer components {
   .variants-form {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
+    @apply flex flex-col gap-8;
   }
 
   .variants-form .options-creator {
-    margin: 1rem;
-    padding: 0.5rem;
-    border: 1px solid var(--color-gray-200);
-    border-radius: var(--radius-md);
+    @apply m-4 p-2 border border-gray-200 rounded-md;
   }
 
   .variants-form .options-creator:not(:has(.options-creator__options_container .options-creator__option)) {
-    margin: 0;
-    border: none;
+    @apply m-0 border-none;
   }
 
   .variants-form .options-creator:not(:has(.options-creator__options_container .options-creator__option)) .options-creator__option--new {
-    padding-left: 1rem;
+    @apply pl-4;
   }
 
   .variants-form .options-creator:has(.options-creator__option--new:not(.d-none)) {
-    border: 1px solid var(--color-gray-200);
-    border-radius: var(--radius-md);
-    margin: 1rem;
-    margin-bottom: 1rem;
+    @apply border border-gray-200 rounded-md m-4 mb-4;
   }
 
   .variants-form .options-creator__option {
-    display: flex;
-    border-bottom: 1px solid var(--color-gray-200);
+    @apply flex border-b border-gray-200 mb-2;
     padding: 0.5rem 0.5rem 1rem 0;
-    margin-bottom: 0.5rem;
   }
 
   .variants-form .options-creator__option .label {
-    @apply inline-block font-medium;
-    margin-bottom: 0.5rem;
+    @apply inline-block font-medium mb-2;
   }
 
   .variants-form .options-creator__option .draggable {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 0.5rem;
-    margin-right: 0.75rem;
-    cursor: grab !important;
-    padding-right: 1rem;
+    @apply inline-flex items-center justify-center px-2 mr-3 !cursor-grab pr-4;
     min-width: calc(16px + 1rem);
   }
 
   .variants-form .options-creator__option .draggable i {
-    margin-right: 0;
+    @apply mr-0;
   }
 
   .variants-form .options-creator__option .draggable:hover {
@@ -64,39 +46,29 @@
   }
 
   .variants-form .options-creator__option--new {
+    @apply border-b-0 mb-0 pb-2;
     padding-left: calc(1.13px + 3.25rem);
-    border-bottom: none;
-    margin-bottom: 0;
-    padding-bottom: 0.5rem;
   }
 
   .variants-form .options-creator__option--new .values-inputs {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
+    @apply flex flex-col gap-1;
   }
 
   .variants-form .options-creator__option--form {
+    @apply border-b-0 mb-0 pb-2;
     padding-left: calc(1.13px + 3.25rem);
-    border-bottom: none;
-    margin-bottom: 0;
-    padding-bottom: 0.5rem;
   }
 
   .variants-form .options-creator__option:first-child {
-    border-top: 0;
+    @apply border-t-0;
   }
 
   .variants-form .options-creator .new_option_button {
-    width: 100%;
-    justify-content: flex-start;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
+    @apply w-full justify-start py-2;
   }
 
   .variants-form .variants-table {
-    display: flex;
-    flex-direction: column;
+    @apply flex flex-col;
   }
 
   .variants-form .variants-table .column-checkbox,
@@ -104,101 +76,68 @@
   .variants-form .variants-table .column-price,
   .variants-form .variants-table .column-quantity,
   .variants-form .variants-table .column-actions {
-    display: inline-flex;
-    align-items: center;
+    @apply inline-flex items-center;
   }
 
   .variants-form .variants-table .column-checkbox {
-    justify-content: center;
-    flex-grow: 0;
-    flex-basis: 2rem;
+    @apply justify-center grow-0 basis-8;
   }
 
   .variants-form .variants-table .column-variant {
-    user-select: none;
-    flex-grow: 3;
-    flex-basis: 0;
+    @apply select-none grow-[3] basis-0;
   }
 
   .variants-form .variants-table .column-price {
-    flex-grow: 1;
-    flex-basis: 0;
+    @apply grow basis-0;
   }
 
   .variants-form .variants-table .column-actions {
-    flex-grow: 0;
-    flex-basis: 5rem;
+    @apply grow-0 basis-20;
   }
 
   .variants-form .variants-table .column-quantity {
-    justify-content: space-between;
-    width: 100%;
+    @apply justify-between w-full grow basis-0;
     line-height: 28px;
-    flex-grow: 1;
-    flex-basis: 0;
   }
 
   .variants-form .variants-table__actions {
-    display: none;
-    width: 100%;
-    justify-content: flex-end;
-    padding: 1rem;
-    padding-top: 0;
+    @apply hidden w-full justify-end p-4 pt-0;
   }
 
   .variants-form .variants-table__actions:has(*) {
-    display: flex;
+    @apply flex;
   }
 
   .variants-form .variants-table__actions__select {
-    width: min-content;
-    padding-right: 1.75rem;
+    @apply w-min pr-7;
   }
 
   .variants-form .variants-table__header,
   .variants-form .variants-table__footer {
-    display: flex;
-    color: var(--color-text-gray-600);
-    width: 100%;
-    padding: 0 1rem;
-    gap: 0.25rem;
+    @apply flex text-gray-600 w-full px-4 gap-1;
     background-color: rgba(250, 250, 250, 0.5);
   }
 
   .variants-form .variants-table__header__cell,
   .variants-form .variants-table__footer__cell {
-    display: inline-block;
+    @apply inline-block;
   }
 
   .variants-form .variants-table__footer {
-    justify-content: center;
-    align-items: center;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-    border-radius: var(--radius-md);
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-    border-bottom-left-radius: var(--radius-lg);
-    border-bottom-right-radius: var(--radius-lg);
+    @apply justify-center items-center py-2 rounded-t-none rounded-b-lg;
   }
 
   .variants-form .variants-table__body {
-    display: flex;
-    flex-direction: column;
+    @apply flex flex-col;
   }
 
   .variants-form .variants-table__body__row {
-    padding: 0 1rem;
-    width: 100%;
-    display: flex;
-    gap: 0.25rem;
-    border-bottom: 1px solid var(--color-gray-200);
+    @apply px-4 w-full flex gap-1 border-b border-gray-200;
   }
 
   .variants-form .variants-table__body__row.nested .column-checkbox,
   .variants-form .variants-table__body__row.nested .column-variant {
-    left: 1.25rem;
-    position: relative;
+    @apply left-5 relative;
   }
 
   .variants-form .variants-table__body__row.nested .column-variant {
@@ -206,7 +145,6 @@
   }
 
   .variants-form .variants-table__body__cell {
-    padding: 0.5rem 0;
-    display: block;
+    @apply py-2 block;
   }
 }

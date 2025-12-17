@@ -4,29 +4,25 @@
 
 @layer components {
   .order-line-items__form {
-    padding: 0.75rem;
-    border-bottom: 1px solid #e9ecef;
+    @apply p-3 border-b border-gray-200;
   }
 
   .order-line-items__form:last-child {
-    border-bottom: none;
+    @apply border-b-0;
   }
 
   .order-line-items__form:hover {
-    background-color: var(--color-gray-25);
+    @apply bg-gray-25;
   }
 
   .shipment-line-items__row,
   .shipment-line-items__form {
-    display: grid;
+    @apply grid grid-flow-row py-3;
     grid-template-columns: [product_description] 1fr [price] 10% [quantity] 15% [total] 10% [actions] 5%;
-    grid-auto-flow: row;
-    padding-bottom: 0.75rem;
-    padding-top: 0.75rem;
   }
 
   .shipment-line-items__form {
+    @apply gap-y-2;
     grid-column: 1/-1;
-    row-gap: 0.5rem;
   }
 }

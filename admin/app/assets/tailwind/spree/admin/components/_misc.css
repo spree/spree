@@ -3,37 +3,13 @@
    ========================================================================== */
 
 @layer components {
-  /* Close button */
-  .close {
-    @apply float-right text-2xl font-bold leading-none p-0 bg-transparent border-0;
-    color: black;
-    text-shadow: 0 1px 0 white;
-    opacity: 0.5;
-  }
-
-  .close:hover {
-    color: black;
-    text-decoration: none;
-    opacity: 0.75;
-  }
-
-  button.close {
-    padding: 0;
-    background-color: transparent;
-    border: 0;
-  }
-
   /* Embed responsive */
   .embed-responsive {
-    position: relative;
-    display: block;
-    width: 100%;
-    padding: 0;
-    overflow: hidden;
+    @apply relative block w-full p-0 overflow-hidden;
   }
 
   .embed-responsive::before {
-    display: block;
+    @apply block;
     content: "";
   }
 
@@ -42,13 +18,7 @@
   .embed-responsive embed,
   .embed-responsive object,
   .embed-responsive video {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: 0;
+    @apply absolute top-0 bottom-0 left-0 w-full h-full border-0;
   }
 
   .embed-responsive-16by9::before {
