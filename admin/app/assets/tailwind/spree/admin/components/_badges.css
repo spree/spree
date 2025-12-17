@@ -15,34 +15,6 @@
     @apply text-xs leading-3;
   }
 
-  .badge-primary {
-    @apply text-white bg-primary;
-  }
-
-  .badge-secondary {
-    @apply text-white bg-gray-600;
-  }
-
-  .badge-success {
-    @apply text-white bg-success;
-  }
-
-  .badge-danger {
-    @apply text-white bg-danger;
-  }
-
-  .badge-warning {
-    @apply text-gray-900 bg-warning;
-  }
-
-  .badge-light {
-    @apply text-gray-900 bg-gray-100;
-  }
-
-  .badge-dark {
-    @apply text-white bg-gray-900;
-  }
-
   /* Status badges - Green */
   .badge-completed,
   .badge-complete,
@@ -63,7 +35,7 @@
   .badge-resolved,
   .badge-reimbursed,
   .badge-allocation {
-    @apply border border-transparent! bg-green-200! text-green-900!;
+    @apply border border-transparent bg-green-200 text-green-900;
   }
 
   /* Status badges - Red */
@@ -79,7 +51,7 @@
   .badge-partially_canceled,
   .badge-void,
   .badge-danger {
-    @apply border border-transparent bg-red-100! text-red-900!;
+    @apply border border-transparent bg-red-100! text-red-900;
   }
 
   /* Status badges - Orange/Warning */
