@@ -371,7 +371,7 @@ Rails.application.config.after_initialize do
           url: :edit_admin_profile_path,
           icon: 'user-scan',
           position: 200,
-          active: -> { controller_name == 'profiles' && action_name == 'edit' }
+          active: -> { controller_name == 'profile' && action_name == 'edit' }
 
   # ===============================================
   # Page Tab Navigations
