@@ -4,41 +4,27 @@
 
 @layer components {
   .analytics-card-tab {
-    border-radius: var(--radius-md);
-    cursor: pointer;
-    padding: 0.5rem;
-    height: 100%;
-    transition: background-color 0.2s ease-in-out;
+    @apply rounded-md cursor-pointer p-2 h-full transition-colors duration-200 ease-in-out;
   }
 
   .analytics-card-tab.active,
   .analytics-card-tab:hover {
-    background-color: var(--color-gray-25);
+    @apply bg-gray-25;
   }
 
   .store-preview-link {
-    transition: background-color 0.2s ease-in-out;
+    @apply transition-colors duration-200 ease-in-out;
   }
 
   .store-preview-link .store-preview-actions {
-    display: none;
+    @apply hidden;
   }
 
   .store-preview-link:hover .store-preview-actions {
-    display: flex;
+    @apply flex;
   }
 
   #updater-notice {
-    background-color: var(--color-white);
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    gap: 1rem;
-    justify-content: flex-start;
-    align-items: center;
-    padding: 0.5rem;
-    border: 1px solid var(--color-gray-200);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-xs);
+    @apply bg-white w-full flex flex-row gap-4 justify-start items-center p-2 border border-gray-200 rounded-lg shadow-xs;
   }
 }
