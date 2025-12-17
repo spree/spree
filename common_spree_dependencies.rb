@@ -54,6 +54,9 @@ group :test, :development do
   gem 'pry-byebug'
   gem 'puma'
   gem 'ffaker'
+
+  # Ruby 3.4+ removed observer from stdlib
+  gem 'observer'
 end
 
 group :development do
