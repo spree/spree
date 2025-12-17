@@ -11,13 +11,6 @@
     @apply bg-blue-50/50 border-blue-500/25 text-blue-800;
   }
 
-  .upload-area:hover .text-lg {
-    @apply text-blue-800;
-  }
-  .upload-area:hover .text-sm {
-    @apply text-blue-700;
-  }
-
   .upload-area:active {
     @apply bg-blue-50 border-blue-100 !ring-2 !ring-blue-500 !ring-offset-2 !ring-offset-white;
   }

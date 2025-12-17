@@ -78,11 +78,11 @@
   /* btn-sm */
   @apply px-2 py-1 text-sm rounded-lg;
   /* btn-primary */
-  @apply text-white! bg-primary border-primary shadow-xs;
+  @apply text-white! bg-zinc-950 border-primary shadow-xs;
 }
 
 .uppy-DashboardContent-save:hover {
-  @apply bg-primary-hover border-primary-hover;
+  @apply bg-blue-900 border-blue-900;
 }
 
 /* Close button */

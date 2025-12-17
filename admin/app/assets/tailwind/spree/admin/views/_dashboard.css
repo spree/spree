@@ -24,14 +24,6 @@
     display: none;
   }
 
-  .store-preview-link .store-preview-actions .btn-outline-primary {
-    background-color: var(--color-white);
-  }
-
-  .store-preview-link .store-preview-actions .btn-outline-primary:hover {
-    background-color: var(--color-primary);
-  }
-
   .store-preview-link:hover .store-preview-actions {
     display: flex;
   }

@@ -52,7 +52,7 @@
     @apply no-underline;
   }
 
-  .table tbody tr td > a:not(.btn):not(.text-primary) {
+  .table tbody tr td > a:not(.btn):not(.text-zinc-950) {
     @apply text-gray-900;
   }
 

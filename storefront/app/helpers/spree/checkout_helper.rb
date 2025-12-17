@@ -21,7 +21,7 @@ module Spree
                      end
 
           text = link_to(link_content, link_url)
-          css_classes << 'text-primary'
+          css_classes << 'text-zinc-950'
           content_tag('li', text, class: css_classes.join(' '))
         else
           content_tag('li', text, class: "breadcrumb-item #{state == @order.state ? 'font-bold' : 'text-gray-950'}")

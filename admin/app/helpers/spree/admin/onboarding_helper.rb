@@ -4,7 +4,7 @@ module Spree
       def onboarding_check_circle(condition, pending: false)
         if pending
           return icon('exclamation-circle', height: height,
-                                            class: 'rounded-full inline-flex items-center bg-warning text-primary p-1').html_safe
+                                            class: 'rounded-full inline-flex items-center bg-warning text-zinc-950 p-1').html_safe
         end
 
         if condition == true

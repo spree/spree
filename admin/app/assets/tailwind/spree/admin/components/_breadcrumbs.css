@@ -26,7 +26,7 @@
   }
 
   .breadcrumb-item a:hover {
-    @apply text-primary underline;
+    @apply text-zinc-950 underline;
   }
 
   .breadcrumb li a {
@@ -34,6 +34,6 @@
   }
 
   .breadcrumb li a:hover {
-    @apply text-primary underline;
+    @apply text-zinc-950 underline;
   }
 }

@@ -72,7 +72,7 @@
   }
 
   .sort_link:hover {
-    @apply text-primary! no-underline! bg-gray-50;
+    @apply text-zinc-950! no-underline! bg-gray-50;
   }
 
   .sort_link.asc,

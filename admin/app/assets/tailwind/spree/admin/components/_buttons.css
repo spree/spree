@@ -30,11 +30,11 @@
 
   /* Button Variants */
   .btn-primary {
-    @apply text-white bg-primary border-primary shadow-xs;
+    @apply text-white bg-zinc-950 border-zinc-950 shadow-xs;
   }
 
   .btn-primary:hover {
-    @apply bg-primary-hover border-primary-hover;
+    @apply bg-zinc-800 border-zinc-800;
   }
 
   .btn-secondary {
@@ -47,7 +47,7 @@
   }
 
   .btn-secondary .arrow {
-    @apply text-primary;
+    @apply text-zinc-950;
   }
 
   .btn-light,

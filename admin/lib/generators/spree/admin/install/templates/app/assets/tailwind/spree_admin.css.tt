@@ -21,7 +21,7 @@
 /* Example:
 @layer components {
   .my-custom-admin-component {
-    @apply bg-primary-500 text-white rounded-lg p-4;
+    @apply bg-zinc-950-500 text-white rounded-lg p-4;
   }
 }
 */

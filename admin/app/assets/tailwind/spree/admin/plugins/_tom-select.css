@@ -77,7 +77,7 @@
   }
 
   .ts-dropdown .active {
-    @apply bg-gray-50 text-gray-900;
+    @apply bg-gray-100 text-gray-900;
   }
 
   .ts-dropdown .active.create {
@@ -136,7 +136,7 @@
   }
 
   .ts-wrapper.multi .ts-control > div.active {
-    @apply bg-primary text-white border-0 border-transparent;
+    @apply bg-zinc-950 text-white border-0 border-transparent;
   }
 
   .ts-wrapper.multi.has-items .ts-control {

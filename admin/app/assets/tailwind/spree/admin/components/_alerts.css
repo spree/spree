@@ -14,7 +14,7 @@
   }
 
   .alert a {
-    @apply font-medium text-primary;
+    @apply font-medium text-zinc-950;
   }
 
   .alert-success {
