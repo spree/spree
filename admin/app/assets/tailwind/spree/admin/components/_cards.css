@@ -169,6 +169,41 @@
     @apply min-h-0;
   }
 
+  /* Collapsible Card (Stimulus reveal controller version) */
+  .card .card-header--collapsible:hover {
+    @apply bg-gray-25;
+  }
+
+  .card .card-header--collapsible:focus {
+    @apply outline-2 outline-primary outline-offset-[-2px];
+  }
+
+  .card .card-header--collapsible .arrow {
+    @apply rotate-90 transition-transform duration-200 ease-in-out;
+  }
+
+  .card:has(.collapsible-content.is-collapsed) .card-header--collapsible .arrow {
+    @apply rotate-0;
+  }
+
+  .card .collapsible-content {
+    @apply grid overflow-hidden;
+    grid-template-rows: 1fr;
+    transition: grid-template-rows 0.25s ease-out, opacity 0.2s ease-out;
+  }
+
+  .card .collapsible-content.is-collapsed {
+    grid-template-rows: 0fr;
+  }
+
+  .card .collapsible-content > * {
+    @apply overflow-hidden min-h-0;
+  }
+
+  .card .collapsible-content .card-body {
+    @apply border-t border-gray-100;
+  }
+
   /* Details/Summary styling for cards */
   .collapsable-card details summary,
   .card details summary {

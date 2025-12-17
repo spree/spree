@@ -2,28 +2,28 @@
   <div class="card-body">
     <div class="grid grid-cols-2 lg:grid-cols-3 gap-6">
       <div class="flex flex-col mb-6 lg:mb-0 border-r gap-2">
-        <span class="text-gray-600 uppercase text-sm font-light"><%= Spree.t('admin.amount_spent') %></span>
+        <span class="text-sm text-gray-500"><%= Spree.t('admin.amount_spent') %></span>
         <span class="text-lg text-gray-900 font-bold">
           <%= @user.display_lifetime_value %>
         </span>
       </div>
 
       <div class="flex flex-col mb-6 lg:mb-0 border-r gap-2">
-        <span class="text-gray-600 uppercase text-sm font-light"><%= Spree.t(:orders) %></span>
+        <span class="text-sm text-gray-500"><%= Spree.t(:orders) %></span>
         <span class="text-lg text-gray-900 font-bold">
           <%= @user.completed_orders.count %>
         </span>
       </div>
 
       <div class="flex flex-col mb-6 lg:mb-0 gap-2">
-        <span class="text-gray-600 uppercase text-sm font-light"><%= Spree.t('admin.avg_order_value') %></span>
+        <span class="text-sm text-gray-500"><%= Spree.t('admin.avg_order_value') %></span>
         <span class="text-lg text-gray-900 font-bold">
           <%= @user.display_average_order_value %>
         </span>
       </div>
 
       <div class="flex flex-col mb-6 lg:mb-0 border-r gap-2">
-        <span class="text-gray-600 uppercase text-sm font-light"><%= Spree.t(:store_credits) %></span>
+        <span class="text-sm text-gray-500"><%= Spree.t(:store_credits) %></span>
         <span class="text-lg text-gray-900 font-bold">
           <%= Spree::Money.new(@user.total_available_store_credit(current_currency, current_store), currency: current_currency) %>
         </span>
@@ -35,7 +35,7 @@
       </div>
 
       <div class="flex flex-col mb-6 lg:mb-0 border-r gap-2">
-        <span class="text-gray-600 uppercase text-sm font-light"><%= Spree.t(:created_at) %></span>
+        <span class="text-sm text-gray-500"><%= Spree.t(:created_at) %></span>
         <span class="text-lg text-gray-900 font-bold">
           <%= spree_time(@user.created_at) %>
         </span>
@@ -43,7 +43,7 @@
 
       <% if @visits_count.present? %>
         <div class="flex flex-col mb-6 lg:mb-0 border-r gap-2">
-          <span class="text-gray-600 uppercase text-sm font-light"><%= Spree.t(:visits) %></span>
+          <span class="text-sm text-gray-500"><%= Spree.t(:visits) %></span>
           <span class="text-lg text-gray-900 font-bold">
             <%= @visits_count %>
           </span>

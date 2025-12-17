@@ -1,6 +1,8 @@
 <% if @line_items.any? %>
-  <details class="collapsable-card mb-6" <% if !@order.completed? || params[:line_item_updated].present? %>open<% end %>>
-    <summary class="card-header flex justify-between items-center list-none cursor-pointer border-0 bg-transparent">
+  <% line_items_expanded = !@order.completed? || params[:line_item_updated].present? %>
+  <div class="card mb-6" data-controller="reveal" data-reveal-hidden-class="is-collapsed">
+    <div class="card-header card-header--collapsible flex justify-between items-center cursor-pointer border-0 bg-transparent"
+         data-action="click->reveal#toggle">
       <h5 class="card-title flex items-center">
         <%= icon('shopping-cart', class: 'mr-2') %>
         <%= Spree.t(:line_items) %>
@@ -8,45 +10,48 @@
       </h5>
       <div class="flex gap-2">
         <% if can?(:create, Spree::LineItem.new(order: @order)) %>
-          <%= link_to_with_icon 'plus', Spree.t(:new_line_item), spree.new_admin_order_line_item_path(@order), data: { turbo_frame: 'dialog', action: 'dialog#open' }, class: "btn btn-secondary btn-sm" %>
+          <%= link_to_with_icon 'plus', Spree.t(:new_line_item), spree.new_admin_order_line_item_path(@order), data: { turbo_frame: 'dialog', action: 'dialog#open click->reveal:stop' }, class: "btn btn-secondary btn-sm" %>
         <% end %>
         <span class="btn btn-light btn-sm inline-flex items-center">
           <%= Spree.t(:show_details) %>
-          <%= icon('selector', class: 'mr-0 ml-1 arrow') %>
+          <%= icon('selector', class: 'mr-0 ml-1 transition-transform duration-200') %>
         </span>
       </div>
-    </summary>
-    <div>
-      <div class="card-body mb-0 p-0" id="line-items">
-        <div class="flex items-center text-gray-600 border-b py-2 px-4 text-sm order-line-items__row bg-gray-25 border-t">
-          <div class="w-35">
-            <%= Spree.t(:item_description) %>
+    </div>
+    <div data-reveal-target="item"
+         class="collapsible-content <%= 'is-collapsed' unless line_items_expanded %>">
+      <div>
+        <div class="card-body mb-0 p-0" id="line-items">
+          <div class="flex items-center text-gray-600 border-b py-2 px-4 text-sm order-line-items__row bg-gray-25 border-t">
+            <div class="w-35">
+              <%= Spree.t(:item_description) %>
+            </div>
+            <div class="w-10">
+              <%= Spree.t(:price) %>
+            </div>
+            <div class="w-10">
+              <%= Spree.t(:quantity) %>
+            </div>
+            <div class="w-10">
+              <%= Spree.t(:subtotal) %>
+            </div>
+            <div class="w-10">
+              <%= Spree.t(:tax) %>
+            </div>
+            <div class="w-10">
+              <%= Spree.t(:discount) %>
+            </div>
+            <div class="w-10">
+              <%= Spree.t(:total) %>
+            </div>
+            <div class="w-5">
+            </div>
           </div>
-          <div class="w-10">
-            <%= Spree.t(:price) %>
-          </div>
-          <div class="w-10">
-            <%= Spree.t(:quantity) %>
-          </div>
-          <div class="w-10">
-            <%= Spree.t(:subtotal) %>
-          </div>
-          <div class="w-10">
-            <%= Spree.t(:tax) %>
-          </div>
-          <div class="w-10">
-            <%= Spree.t(:discount) %>
-          </div>
-          <div class="w-10">
-            <%= Spree.t(:total) %>
-          </div>
-          <div class="w-5">
-          </div>
+          <%= render collection: @line_items, partial: 'spree/admin/orders/line_item', cached: spree_base_cache_scope %>
         </div>
-        <%= render collection: @line_items, partial: 'spree/admin/orders/line_item', cached: spree_base_cache_scope %>
       </div>
     </div>
-  </details>
+  </div>
 <% elsif can?(:create, Spree::LineItem.new(order: @order)) %>
   <div class="card mb-6">
     <div class="card-header">

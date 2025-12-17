@@ -1,8 +1,8 @@
 <tr id="<%= spree_dom_id payment_method %>" data-controller="row-link" data-sortable-update-url="<%= spree.admin_payment_method_path(payment_method) %>">
-  <td class="w-10 move-handle text-center">
+  <td class="w-5 move-handle text-center">
     <%= icon('grip-vertical', class: 'rounded-md hover:bg-gray-100 p-2') %>
   </td>
-  <td class="cursor-pointer w-55 whitespace-normal" data-action="click->row-link#openLink">
+  <td class="cursor-pointer w-50 whitespace-normal" data-action="click->row-link#openLink">
     <div class="flex items-center">
       <div class="bg-gray-25 rounded" style="width: 95px; height: 60px;">
         <% if payment_method_icon_tag(payment_method.payment_icon_name).present? %>
@@ -35,7 +35,7 @@
       </div>
     <% end %>
   </td>
-  <td class="actions w-5">
+  <td class="actions w-10">
     <%= link_to_edit(payment_method, data: { row_link_target: :link, turbo_frame: '_top' }) %>
   </td>
 </tr>
