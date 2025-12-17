@@ -8,45 +8,47 @@
     </div>
     <div class="card-body p-0">    
       <ul class="list-group list-group-flush">
-        <li class="list-group-item flex justify-between items-center">
-          <%= Spree.t(:email) %>
-          <span>
-            <%= @user.email %>
-            <%= clipboard_component(@user.email) %>
-          </span>
-        </li>
-        <li class="list-group-item flex justify-between items-center">
-          <%= Spree.t(:phone) %>
-          <span>
-            <%= @user.phone.presence || Spree.t(:not_available) %>
-          </span>
-        </li>
-        <li class="list-group-item flex justify-between items-center">
-          <%= Spree.t(:name) %>
-          <span>
-            <%= customer_full_name(@user) %>
-          </span>
-        </li>
-        <li class="list-group-item flex justify-between items-center">
-          <%= Spree.t(:email_marketing) %>
-          <%= active_badge(@user.accepts_email_marketing?) %>
-        </li>
-        <li class="list-group-item flex justify-between items-center">
-          <%= Spree.t(:tags) %>
-          <span>
-            <% @user.tag_list.each do |tag| %>
-              <span class="tag small"><%= tag %></span>
-            <% end %>
-          </span>
-        </li>
-        <li class="list-group-item flex justify-between items-center">
-          <%= Spree.t(:roles) %>
-          <span>
-            <% @user.spree_roles.each do |role| %>
-              <span class="tag small"><%= role.name %></span>
-            <% end %>
-          </span>
-        </li>
+        <% cache [spree_base_cache_key, @user] do %>
+          <li class="list-group-item flex justify-between items-center">
+            <%= Spree.t(:email) %>
+            <span>
+              <%= @user.email %>
+              <%= clipboard_component(@user.email) %>
+            </span>
+          </li>
+          <li class="list-group-item flex justify-between items-center">
+            <%= Spree.t(:phone) %>
+            <span>
+              <%= @user.phone.presence || Spree.t(:not_available) %>
+            </span>
+          </li>
+          <li class="list-group-item flex justify-between items-center">
+            <%= Spree.t(:name) %>
+            <span>
+              <%= customer_full_name(@user) %>
+            </span>
+          </li>
+          <li class="list-group-item flex justify-between items-center">
+            <%= Spree.t(:email_marketing) %>
+            <%= active_badge(@user.accepts_email_marketing?) %>
+          </li>
+          <li class="list-group-item flex justify-between items-center">
+            <%= Spree.t(:tags) %>
+            <span>
+              <% @user.tag_list.each do |tag| %>
+                <span class="badge badge-light"><%= tag %></span>
+              <% end %>
+            </span>
+          </li>
+          <li class="list-group-item flex justify-between items-center">
+            <%= Spree.t(:roles) %>
+            <span>
+              <% @user.spree_roles.pluck(:name).each do |role_name| %>
+                <span class="badge badge-light"><%= role_name %></span>
+              <% end %>
+            </span>
+          </li>
+        <% end %>
       </ul>
     </div>
   <% end %>
