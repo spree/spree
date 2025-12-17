@@ -88,7 +88,7 @@
           <% if @order.is_risky? %>
             <span class="badge badge-warning"><%= icon('shield-off') %> <%= Spree.t(:risky) %></span>
           <% else %>
-            <span class="text-success"><%= icon('shield-check-filled') %> <%= Spree.t(:not_risky) %></span>
+            <span class="text-green-700"><%= icon('shield-check-filled') %> <%= Spree.t(:not_risky) %></span>
           <% end %>
         </span>
         <button type="button" class="btn btn-light btn-sm" data-action="click->reveal#toggle">

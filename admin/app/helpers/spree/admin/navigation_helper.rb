@@ -299,7 +299,7 @@ module Spree
       # @param css [String] the css class of the help bubble
       # @return [String] the help bubble with the icon
       def help_bubble(text = '', placement = 'top', css: nil)
-        css ||= 'text-gray-600 cursor-default opacity-75'
+        css ||= 'text-gray-500 cursor-default opacity-75'
         content_tag :span, data: { controller: 'tooltip', tooltip_placement_value: placement } do
           icon('info-square-rounded', class: css) + tooltip(text)
         end

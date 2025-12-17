@@ -1,6 +1,6 @@
 <% if mapping.required? %>
   <div id="<%= spree_dom_id(mapping) %>-icon" data-controller="tooltip">
-    <%= icon('checklist', class: mapping.mapped? ? 'text-success' : 'text-gray-600') %>
+    <%= icon('checklist', class: mapping.mapped? ? 'text-green-700' : 'text-gray-600') %>
     <%= tooltip(Spree.t('admin.imports.mapping_required')) %>
   </div>
 <% end %>

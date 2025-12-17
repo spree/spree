@@ -1,8 +1,8 @@
-<footer id="footer">
+<footer id="footer" class="fixed bottom-0 left-0 w-full border-t border-gray-200 px-6 py-4 bg-gray-25 flex items-center justify-between gap-4 z-[1000]">
   <div class="grow flex flex-col">
     <% if import.mapping_done? %>
-      <p>
-        <%= icon('check', class: 'text-success') %>
+      <p class="mb-3 text-green-700">
+        <%= icon('check') %>
         <%= Spree.t('admin.imports.all_required_columns_mapped') %>
       </p>
     <% else %>

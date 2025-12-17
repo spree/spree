@@ -1,6 +1,6 @@
 <%= form_for @store, url: spree.admin_stores_path, data: { turbo: false, controller: 'store-form enable-button' } do |f| %>
   <div class="container pt-48">
-    <h1><%= Spree.t(:new_store) %></h1>
+    <h1 class="mb-6"><%= Spree.t(:new_store) %></h1>
 
     <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @store } %>
     <div class="grid grid-cols-12 gap-16">
@@ -57,25 +57,25 @@
           <h5>What will be shared with this new store:</h5>
           <ul class="list-none p-0">
             <li>
-              <%= icon('check', class: 'text-success') %>
+              <%= icon('check', class: 'text-green-700') %>
               <%= Spree.t(:products) %>, <%= Spree.t(:stock_locations) %> & <%= Spree.t(:inventory) %><br />
               <em class="ml-24 text-gray-600 text-sm">you can select which ones will be available for this store</em>
             </li>
             <li>
-              <%= icon('check', class: 'text-success') %>
+              <%= icon('check', class: 'text-green-700') %>
               <%= Spree.t(:customers) %>
             </li>
             <li>
-              <%= icon('check', class: 'text-success') %>
+              <%= icon('check', class: 'text-green-700') %>
               Shipping methods, rates and markets
             </li>
             <li>
-              <%= icon('check', class: 'text-success') %>
+              <%= icon('check', class: 'text-green-700') %>
               <%= Spree.t(:payment_methods) %><br />
               <em class="ml-24 text-gray-600 text-sm">you can select which ones will be available for this store</em>
             </li>
             <li>
-              <%= icon('check', class: 'text-success') %>
+              <%= icon('check', class: 'text-green-700') %>
               Admin user privileges
             </li>
           </ul>
@@ -122,7 +122,7 @@
       </div>
     </div>
   </div>
-  <footer id="footer" class="flex justify-end">
+  <footer id="footer" class="fixed bottom-0 left-0 w-full border-t border-gray-200 px-6 py-4 bg-gray-25 flex items-center justify-end gap-4 z-[1000]">
     <%= turbo_save_button_tag Spree.t('actions.create'), data: { admin_target: 'save' } %>
   </footer>
 <% end %>

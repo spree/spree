@@ -1,7 +1,7 @@
 <% if import.completed? %>
   <div class="flex justify-center items-center my-12 flex-col pb-12">
-    <%= icon('check', class: 'text-success', style: 'font-size: 4rem;') %>
-    <p class="text-success"><%= Spree.t('admin.imports.import_done') %>!</p>
+    <%= icon('check', class: 'text-green-700', style: 'font-size: 4rem;') %>
+    <p class="text-green-700 mb-3"><%= Spree.t('admin.imports.import_done') %>!</p>
     <%= link_to_with_icon 'arrow-back-up', Spree.t('admin.back_to_dashboard'), spree.admin_path, class: 'btn btn-light mb-12' %>
   </div>
 <% else %>

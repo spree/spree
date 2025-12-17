@@ -3,9 +3,9 @@
 <% end %>
 
 <% content_for :steps do %>
-  <li class="border-r grow h-full flex items-center justify-center <% if @import.mapping? %>active bg-white font-bold<% end %>">1. Map fields</li>
-  <li class="border-r grow h-full flex items-center justify-center <% if @import.processing? %>active bg-white font-bold<% end %>">2. Process rows</li>
-  <li class="grow h-full flex items-center justify-center <% if @import.complete? %>active bg-white font-bold<% end %>">3. Complete</li>
+  <li class="border-r grow h-full flex items-center justify-center <% if @import.mapping? %>bg-gray-100 font-bold<% end %>">1. Map fields</li>
+  <li class="border-r grow h-full flex items-center justify-center <% if @import.processing? %>bg-gray-100 font-bold<% end %>">2. Process rows</li>
+  <li class="grow h-full flex items-center justify-center <% if @import.complete? %>bg-gray-100 font-bold<% end %>">3. Complete</li>
 <% end %>
 
 <% if @import.status == 'mapping' %>
