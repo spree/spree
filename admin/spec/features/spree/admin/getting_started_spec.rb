@@ -11,7 +11,7 @@ RSpec.feature 'Getting Started' do
       context 'when there are no tax rates' do
         it 'asks to setup taxes' do
           visit spree.admin_getting_started_path
-          find('#setup_task_setup_taxes_collection summary').click
+          find('#setup_task_setup_taxes_collection .card-header').click
 
           expect(page).to have_text Spree.t('admin.store_setup_tasks.taxes.copy', link: spree.admin_tax_rates_path)
         end
@@ -24,7 +24,7 @@ RSpec.feature 'Getting Started' do
         end
 
         it 'confirms the setup' do
-          find('#setup_task_setup_taxes_collection summary').click
+          find('#setup_task_setup_taxes_collection .card-header').click
 
           expect(page).to have_text("You're all set! You can always manage your taxes")
         end
@@ -37,7 +37,7 @@ RSpec.feature 'Getting Started' do
       end
 
       scenario 'adds and updates the customer support email' do
-        find('#setup_task_set_customer_support_email summary').click
+        find('#setup_task_set_customer_support_email .card-header').click
         within '#set_customer_support_email' do
           click_on 'Edit'
 
