@@ -88,7 +88,7 @@
   }
 
   .payment-action-save {
-    @apply text-white bg-success border-success;
+    @apply text-white bg-green-300 border-green-300;
   }
 
   /* Button states for Turbo */

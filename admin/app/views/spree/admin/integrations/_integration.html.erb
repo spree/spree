@@ -5,7 +5,7 @@
 
 <div id="integration-<%= integration_class.integration_key %>" class="col mb-6 flex items-stretch">
   <div class="card w-full">
-    <div class="card-header border-b flex items-center justify-between h-auto pr-4 <% if integration.present? %>bg-success<% end %>">
+    <div class="card-header border-b flex items-center justify-between h-auto pr-4 <% if integration.present? %>bg-green-100<% end %>">
       <div class="flex items-center py-1">
         <%= image_tag integration_class.icon_path, alt: integration_name, height: 36 if integration_class.icon_path.present? %>
       </div>
