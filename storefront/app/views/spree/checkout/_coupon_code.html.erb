@@ -16,7 +16,7 @@
       <%= hidden_field_tag :coupon_code, promotion.code_for_order(@order) %>
       <div class="m-0">
         <div class="flex items-center justify-between text-sm">
-          <span class="max-w-[250px] truncate flex items-center p-2 rounded-sm bg-gray-200">
+          <span class="max-w-[250px] truncate flex items-center p-2 rounded-sm bg-border">
             <%= heroicon('tag', options: { class: 'h-4 w-4 mr-2' }) %>
             <%= promotion.name_for_order(@order) %>
           </span>
@@ -31,7 +31,7 @@
       <%= hidden_field_tag :gift_card, @order.gift_card.code %>
       <div class="m-0">
         <div class="flex items-center justify-between text-sm">
-          <span class="max-w-[250px] truncate flex items-center p-2 rounded-sm bg-gray-200">
+          <span class="max-w-[250px] truncate flex items-center p-2 rounded-sm bg-border">
             <%= heroicon('gift', options: { class: 'h-4 w-4 mr-2' }) %>
             <%= @order.gift_card.code.upcase %>
           </span>

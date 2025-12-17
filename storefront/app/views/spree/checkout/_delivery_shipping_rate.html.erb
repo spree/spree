@@ -12,7 +12,7 @@
     <label class="select-none cursor-pointer px-2 word-break w-full" for="<%= "shipping-rate-#{rate.id}" %>">
       <%= rate.name %>
       <% if rate.delivery_range %>
-        <span class="text-gray-600 text-xs ml-3"><%= rate.display_delivery_range %></span>
+        <span class="text-muted text-xs ml-3"><%= rate.display_delivery_range %></span>
       <% end %>
     </label>
     <span class="text-right">

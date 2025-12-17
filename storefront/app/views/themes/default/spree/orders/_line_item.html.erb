@@ -13,7 +13,7 @@
       </div>
       <div class="ml-3 w-full">
         <div class="flex justify-between">
-          <%= link_to line_item.name, spree_storefront_resource_url(line_item.product), class: 'font-semibold text-gray-950', data: { 'turbo-frame': '_top' } %>
+          <%= link_to line_item.name, spree_storefront_resource_url(line_item.product), class: 'font-semibold text-text', data: { 'turbo-frame': '_top' } %>
 
           <%= form_for line_item, url: spree.line_item_url(line_item, order_token: line_item.order.token), method: :delete, data: { controller: 'turbo-stream-form' } do |item_form| %>
             <%= button_tag type: :submit, class: 'remove-line-item-button', data: { action: "click->cart#disableCart turbo-stream-form:submit-end->cart#enableCart" } do %>

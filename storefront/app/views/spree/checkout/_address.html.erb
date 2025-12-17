@@ -73,8 +73,8 @@
           </h5>
           <% if !already_have_an_account? && defined?(spree_login_path) %>
             <div class="lg:text-right">
-              <span class="text-gray-600 text-sm">
-                <%= Spree.t('storefront.checkout.already_have_an_account') %> <span class="text-zinc-950"><%= link_to Spree.t(:login), spree_login_path, data: { turbo_frame: '_top' } %></span>
+              <span class="text-muted text-sm">
+                <%= Spree.t('storefront.checkout.already_have_an_account') %> <span class="text-primary"><%= link_to Spree.t(:login), spree_login_path, data: { turbo_frame: '_top' } %></span>
               </span>
             </div>
           <% end %>
@@ -104,7 +104,7 @@
       <% unless try_spree_current_user %>
         <% if already_have_an_account? %>
           <div class="py-2 text-sm">
-            <%= Spree.t("storefront.checkout.it_seems_you_already_have_an_account_html", link: link_to(Spree.t(:login), spree_login_path, class: 'text-zinc-950 font-semibold')) %>
+            <%= Spree.t("storefront.checkout.it_seems_you_already_have_an_account_html", link: link_to(Spree.t(:login), spree_login_path, class: 'text-primary font-semibold')) %>
           </div>
         <% end %>
       <% end %>

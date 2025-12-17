@@ -33,7 +33,7 @@
       </div>
 
       <div class="flex flex-col items-center gap-4">
-        <p class="text-sm text-gray-600"><%= Spree.t(:continue_without_logging_in) %></p>
+        <p class="text-sm text-muted"><%= Spree.t(:continue_without_logging_in) %></p>
         <%= link_to Spree.t(:continue_as_guest), spree.checkout_path(current_order.token, guest: true), class: 'btn btn-secondary w-full max-w-sm', data: { turbo: false } %>
       </div>
     <% end %>

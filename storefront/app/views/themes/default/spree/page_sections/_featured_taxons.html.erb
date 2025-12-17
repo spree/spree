@@ -14,11 +14,11 @@
         <%= page_builder_link_to link, title: link.label, class: 'group block overflow-hidden', target: link.open_in_new_tab.presence && '_blank' do %>
           <% if link.linkable.page_builder_image&.attached? && link.linkable.page_builder_image&.variable? %>
             <div class="flex space-y-2 flex-col">
-              <%= spree_image_tag(link.linkable.page_builder_image, height: 300, width: 300, class: 'h-full w-full object-cover object-center group-hover:opacity-75 rounded-md bg-gray-200', loading: :lazy, alt: link.label) %>
+              <%= spree_image_tag(link.linkable.page_builder_image, height: 300, width: 300, class: 'h-full w-full object-cover object-center group-hover:opacity-75 rounded-md bg-border', loading: :lazy, alt: link.label) %>
               <span><%= link.label %></span>
             </div>
           <% else %>
-            <div class="aspect-1 w-full group-hover:bg-gray-100 bg-gray-200 rounded-md flex items-center justify-center relative">
+            <div class="aspect-1 w-full group-hover:bg-gray-100 bg-border rounded-md flex items-center justify-center relative">
               <span><%= link.label %></span>
             </div>
           <% end %>
@@ -49,10 +49,10 @@
               <%= page_builder_link_to link, title: link.label, class: 'group block overflow-hidden', target: link.open_in_new_tab.presence && '_blank' do %>
                 <% if link.linkable.page_builder_image.attached? %>
                   <div class="flex space-y-2 flex-col">
-                    <%= spree_image_tag(link.linkable.page_builder_image, height: 200, width: 200, class: 'h-full w-full object-cover object-center group-hover:opacity-75 rounded-md bg-gray-200', loading: :lazy, alt: link.label) %>
+                    <%= spree_image_tag(link.linkable.page_builder_image, height: 200, width: 200, class: 'h-full w-full object-cover object-center group-hover:opacity-75 rounded-md bg-border', loading: :lazy, alt: link.label) %>
                   </div>
                 <% else %>
-                  <div class="aspect-1 w-full group-hover:bg-gray-100 bg-gray-200 flex items-center justify-center relative">
+                  <div class="aspect-1 w-full group-hover:bg-gray-100 bg-border flex items-center justify-center relative">
                     <span><%= link.label %></span>
                   </div>
                 <% end %>
