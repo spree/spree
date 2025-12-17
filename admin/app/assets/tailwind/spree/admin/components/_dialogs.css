@@ -61,7 +61,7 @@
 
   dialog:open,
   dialog[open] {
-    @apply block;
+    @apply flex;
   }
 
   /* ==========================================================================
@@ -78,7 +78,6 @@
     margin: 1rem;
   }
 
-  .drawer:open,
   .drawer[open] {
     @apply flex;
     animation: slideInRight 0.25s ease-out forwards;
@@ -129,15 +128,6 @@
     max-height: 90vh;
   }
 
-  .dialog.dialog-lg {
-    @apply max-w-[800px];
-  }
-
-  .dialog.dialog-xl {
-    @apply max-w-[1140px];
-  }
-
-  .dialog:open,
   .dialog[open] {
     @apply flex;
   }
@@ -148,7 +138,9 @@
 
   .dialog > turbo-frame:not(#dialog_alerts),
   .dialog turbo-frame > form {
-    @apply flex w-full h-full flex-col justify-between;
+    @apply flex w-full flex-col;
+    flex: 1 1 auto;
+    min-height: 0;
   }
 
   .dialog-header {
