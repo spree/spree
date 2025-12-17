@@ -13,7 +13,7 @@
   }
 
   .tox-edit-area__iframe {
-    @apply bg-surface!;
+    @apply bg-white!;
   }
 
   .tox-tinymce--disabled .tox-edit-area__iframe {

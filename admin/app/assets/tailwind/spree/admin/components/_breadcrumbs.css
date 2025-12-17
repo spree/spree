@@ -5,7 +5,7 @@
 @layer components {
   .breadcrumb {
     @apply flex flex-wrap items-center mb-0 list-none font-medium bg-transparent rounded-none;
-    @apply gap-2 p-0 pl-4 h-8 border-l border-gray-50;
+    @apply gap-2 p-0 pl-4 h-8 border-l border-gray-100;
   }
 
   .breadcrumb-item + .breadcrumb-item {

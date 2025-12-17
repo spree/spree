@@ -45,7 +45,7 @@
 
   /* Dropdown Container using Floating UI */
   .dropdown-container {
-    @apply absolute z-1050 text-left list-none border-0 overflow-hidden text-base font-normal text-text bg-surface;
+    @apply absolute z-1050 text-left list-none border-0 overflow-hidden text-base font-normal text-gray-950 bg-white;
     @apply origin-top mt-1! p-1 rounded-2xl min-w-40 max-w-80;
     animation: popIn 0.15s ease-out both;
     background-clip: padding-box;
@@ -58,7 +58,7 @@
   }
 
   .dropdown-divider {
-    @apply h-0 my-1 overflow-hidden border-t border-gray-50;
+    @apply h-0 my-1 overflow-hidden border-t border-gray-100;
   }
 
   /* Dropdown Item */
@@ -130,6 +130,6 @@
   }
 
   .dropdown-item-text {
-    @apply block py-1 px-4 text-text;
+    @apply block py-1 px-4 text-gray-950;
   }
 }

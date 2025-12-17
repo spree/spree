@@ -1,5 +1,5 @@
 .uppy-Root {
-  @apply text-base! text-text! leading-normal!;
+  @apply text-base! text-gray-950! leading-normal!;
   font-family: var(--font-sans) !important;
 }
 
@@ -87,7 +87,7 @@
 
 /* Close button */
 .uppy-Dashboard-close {
-  @apply w-4 h-4 p-1 bg-surface! rounded-md opacity-50 bg-no-repeat bg-center;
+  @apply w-4 h-4 p-1 bg-white! rounded-md opacity-50 bg-no-repeat bg-center;
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e");
   background-size: 1rem;
 }
@@ -101,7 +101,7 @@
 }
 
 .uppy-StatusBar.is-complete .uppy-StatusBar-progress {
-  @apply bg-blue!;
+  @apply bg-blue-500!;
 }
 
 .uppy-Dashboard-AddFiles-title {

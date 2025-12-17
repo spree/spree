@@ -28,8 +28,8 @@
   <% else %>
     <div class="drawer-body">
       <div class="text-gray-600 p-12 flex items-center w-full justify-center flex-col">
-        <%= icon 'language', class: 'mb-12 opacity-50 text-4xl' %>
-        <p class="text-center"><%= Spree.t('admin.translations.no_translations_configured') %></p>
+        <%= icon 'language', class: 'mb-5 opacity-50 text-4xl' %>
+        <p class="text-center mb-3"><%= Spree.t('admin.translations.no_translations_configured') %></p>
 
         <% if can?(:edit, current_store) %>
           <%= link_to_with_icon 'settings', Spree.t('admin.translations.configure_store'), spree.edit_admin_store_path(section: 'general-settings'), class: 'btn btn-primary', data: { 'turbo-frame': '_top' } %>

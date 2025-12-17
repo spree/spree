@@ -12,7 +12,7 @@
     <% end %>
 
     <div class="card-body px-2 pt-0 pb-2">
-      <div class="flex my-2 p-1 w-full rounded-lg border items-center focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-blue">
+      <div class="flex my-2 p-1 w-full rounded-lg border items-center focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-blue-500">
         <%= text_field_tag :domain, current_store.url_or_custom_domain, readonly: true, class: 'border-none bg-transparent focus:outline-none focus:ring-0 text-base p-1 w-full' %>
         <%= clipboard_component(current_store.url_or_custom_domain) %>
       </div>

@@ -24,8 +24,8 @@
   .form-control-sm, 
   .custom-select-sm {
     @apply block w-full py-2 px-3 text-base font-normal leading-normal;
-    @apply text-text bg-surface border border-gray-200 rounded-lg shadow-xs;
-    @apply focus:outline-offset-2 focus:outline-blue focus:border-gray-200 focus:ring-0;
+    @apply text-gray-950 bg-white border border-gray-200 rounded-lg shadow-xs;
+    @apply focus:outline-offset-2 focus:outline-blue-500 focus:border-gray-200 focus:ring-0;
     @apply transition-all duration-100 ease-in-out;
   }
 
@@ -51,7 +51,7 @@
   .text-input[readonly] {
     @apply shadow-none cursor-not-allowed text-gray-600;
     background-color: var(--color-gray-50) !important;
-    border: 1px solid var(--color-border) !important;
+    border: 1px solid var(--color-gray-100) !important;
   }
 
   .form-text {
@@ -94,7 +94,7 @@
 
   /* Input Group */
   .input-group {
-    @apply flex items-center gap-3 bg-surface border border-gray-200 rounded-lg shadow-xs focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-blue focus-within:ring-0 transition-all duration-100 ease-in-out;
+    @apply flex items-center gap-3 bg-white border border-gray-200 rounded-lg shadow-xs focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-blue-500 focus-within:ring-0 transition-all duration-100 ease-in-out;
   }
   .input-group > input {
     @apply text-base border-0 focus:ring-0 focus:outline-none rounded-lg;
@@ -120,7 +120,7 @@
   }
 
   .custom-control-label::before {
-    @apply absolute left-0 top-0.5 block pointer-events-none bg-surface border border-gray-300 rounded;
+    @apply absolute left-0 top-0.5 block pointer-events-none bg-white border border-gray-300 rounded;
     content: "";
     width: 1.125rem;
     height: 1.125rem;
@@ -140,7 +140,7 @@
 
   /* Checkbox checked state */
   .form-checkbox .custom-control-input:checked ~ .custom-control-label::before {
-    @apply border-blue bg-blue;
+    @apply border-blue-500 bg-blue-500;
   }
 
   .form-checkbox .custom-control-input:checked ~ .custom-control-label::after {
@@ -151,7 +151,7 @@
   .form-checkbox
     .custom-control-input:indeterminate
     ~ .custom-control-label::before {
-    @apply border-blue bg-blue;
+    @apply border-blue-500 bg-blue-500;
   }
 
   .form-checkbox
@@ -162,7 +162,7 @@
 
   /* Focus state */
   .custom-control-input:focus ~ .custom-control-label::before {
-    @apply ring-2 ring-blue/25 ring-offset-1;
+    @apply ring-2 ring-blue-500/25 ring-offset-1;
   }
 
   /* Disabled state */
@@ -175,7 +175,7 @@
   }
 
   .custom-control-input:disabled:checked ~ .custom-control-label::before {
-    @apply bg-blue/50 border-blue/50;
+    @apply bg-blue-500/50 border-blue-500/50;
   }
 
   /* Radio button specific styles */
@@ -184,7 +184,7 @@
   }
 
   .custom-radio .custom-control-input:checked ~ .custom-control-label::before {
-    @apply border-blue bg-blue;
+    @apply border-blue-500 bg-blue-500;
   }
 
   .custom-radio .custom-control-input:checked ~ .custom-control-label::after {
@@ -210,7 +210,7 @@
   }
 
   .custom-switch .custom-control-label::after {
-    @apply left-0.5 top-1 rounded-full bg-surface shadow;
+    @apply left-0.5 top-1 rounded-full bg-white shadow;
     width: 1rem;
     height: 1rem;
     transition:
@@ -219,16 +219,16 @@
   }
 
   .custom-switch .custom-control-input:checked ~ .custom-control-label::before {
-    @apply bg-blue border-blue;
+    @apply bg-blue-500 border-blue-500;
   }
 
   .custom-switch .custom-control-input:checked ~ .custom-control-label::after {
-    @apply bg-surface;
+    @apply bg-white;
     transform: translateX(1.25rem);
   }
 
   .custom-switch .custom-control-input:focus ~ .custom-control-label::before {
-    @apply ring-2 ring-blue/25 ring-offset-1;
+    @apply ring-2 ring-blue-500/25 ring-offset-1;
   }
 
   .custom-switch
@@ -243,6 +243,6 @@
   }
 
   .custom-range::-webkit-slider-thumb, .form-range::-webkit-slider-thumb {
-    @apply w-4 h-4 appearance-none bg-blue rounded-full cursor-pointer ring-2 ring-blue/25 ring-offset-1 focus:outline-none;
+    @apply w-4 h-4 appearance-none bg-blue-500 rounded-full cursor-pointer ring-2 ring-blue-500/25 ring-offset-1 focus:outline-none;
   }
 }

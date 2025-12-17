@@ -30,7 +30,7 @@
   }
 
   .nav-pills .nav-link.active {
-    @apply bg-gray-50;
+    @apply bg-gray-100;
   }
 
   /* Nav fill and justified */

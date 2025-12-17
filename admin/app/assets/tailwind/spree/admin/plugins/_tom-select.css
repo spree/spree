@@ -16,7 +16,7 @@
   /* Dropdown */
   .ts-dropdown,
   .ts-dropdown.form-input {
-    @apply absolute mt-2! top-full left-0 w-full h-auto p-1 z-[10000000]! bg-surface rounded-lg;
+    @apply absolute mt-2! top-full left-0 w-full h-auto p-1 z-[10000000]! bg-white rounded-lg;
     box-shadow: var(--shadow-dropdown);
   }
 
@@ -73,7 +73,7 @@
   }
 
   .ts-dropdown .optgroup-header {
-    @apply text-gray-600 bg-surface cursor-default;
+    @apply text-gray-600 bg-white cursor-default;
   }
 
   .ts-dropdown .active {
@@ -101,11 +101,11 @@
   /* Control */
   .ts-control,
   .ts-wrapper.single.input-active .ts-control {
-    @apply bg-surface cursor-text;
+    @apply bg-white cursor-text;
   }
 
   .focus .ts-control {
-    @apply outline-2 outline-offset-2 outline-blue border-gray-200 ring-0;
+    @apply outline-2 outline-offset-2 outline-blue-500 border-gray-200 ring-0;
   }
 
   /* Validation states */
@@ -136,7 +136,7 @@
   }
 
   .ts-wrapper.multi .ts-control > div.active {
-    @apply bg-primary text-surface border-0 border-transparent;
+    @apply bg-primary text-white border-0 border-transparent;
   }
 
   .ts-wrapper.multi.has-items .ts-control {
@@ -294,6 +294,6 @@
   }
 
   .ts-dropdown.plugin-dropdown_input .dropdown-input {
-    @apply w-full text-sm bg-surface py-1.5 px-3 border border-border rounded-md;
+    @apply w-full text-sm bg-white py-1.5 px-3 border border-border rounded-md;
   }
 }

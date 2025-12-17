@@ -8,18 +8,18 @@
   }
 
   .upload-area:hover {
-    @apply bg-blue-50 border-blue/25 text-blue-800;
+    @apply bg-blue-50/50 border-blue-500/25 text-blue-800;
   }
 
   .upload-area:hover .text-lg {
     @apply text-blue-800;
   }
   .upload-area:hover .text-sm {
-    @apply text-blue-600;
+    @apply text-blue-700;
   }
 
   .upload-area:active {
-    @apply bg-blue-50 border-blue-100 !ring-2 !ring-blue !ring-offset-2 !ring-offset-surface;
+    @apply bg-blue-50 border-blue-100 !ring-2 !ring-blue-500 !ring-offset-2 !ring-offset-white;
   }
 
   .media-form {
@@ -67,7 +67,7 @@
   }
 
   .media-form__image:has(input:checked) {
-    @apply !ring-2 !ring-blue;
+    @apply !ring-2 !ring-blue-500;
   }
 
   .media-form__image:first-of-type {

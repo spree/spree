@@ -12,7 +12,7 @@
       <%= f.hidden_field :pageable_type %>
       <div class="flex flex-col gap-1 p-3">
         <% @theme.available_page_sections.each do |section_class| %>
-          <button class="cursor-pointer flex items-center gap-4 hover:bg-gray-50 p-2 rounded-lg focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-blue"
+          <button class="cursor-pointer flex items-center gap-4 hover:bg-gray-100 p-2 rounded-lg focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-blue-500"
             data-action="click->section-form#addSection keydown.enter->section-form#addSection"
             data-section-form-type-param="<%= section_class %>"
           >

@@ -6,7 +6,7 @@
   /* Header */
   #header {
     height: var(--spacing-header-height);
-    background-color: var(--color-surface);
+    background-color: var(--color-white);
     box-shadow: inset 0 -1px 0 var(--color-border);
     transition: margin-left 0.1s ease;
   }
@@ -22,7 +22,7 @@
   }
 
   #page-header {
-    @apply flex items-center bg-surface;
+    @apply flex items-center bg-white;
     height: 80px;
   }
 
@@ -46,7 +46,7 @@
   }
 
   #settings-header {
-    @apply sticky top-0 flex items-center p-0 bg-surface z-1000;
+    @apply sticky top-0 flex items-center p-0 bg-white z-1000;
     height: var(--spacing-header-height);
     transition: margin-left 0.1s ease;
   }
@@ -110,11 +110,7 @@
   }
 
   .store-dropdown-button {
-    @apply flex items-center justify-between text-left gap-2 p-1 shadow-none!;
-  }
-
-  .store-dropdown-button:hover {
-    @apply bg-gray-50;
+    @apply flex items-center justify-between text-left gap-2 p-1 shadow-none! hover:bg-gray-200;
   }
 
   .store-chooser {
@@ -153,7 +149,7 @@
   }
 
   .user-dropdown-button:hover {
-    @apply bg-gray-50;
+    @apply bg-gray-200/50;
   }
 
   .user-dropdown-button .user-name {
@@ -168,7 +164,7 @@
   }
 
   .sidebar-toggle-btn:hover {
-    @apply bg-gray-50;
+    @apply bg-gray-200/50;
   }
 
   body.sidebar-collapsed .sidebar-toggle-btn {
@@ -207,7 +203,7 @@
   }
 
   #main-sidebar .nav-link:hover {
-    @apply bg-gray-50;
+    @apply bg-gray-200/50;
   }
 
   #main-sidebar .nav-link:hover .ti {
@@ -215,12 +211,12 @@
   }
 
   #main-sidebar .nav-link.active {
-    @apply text-primary bg-surface font-normal;
+    @apply text-primary bg-white font-normal;
     box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.04) 0px 0px 0px 1px, rgba(0, 0, 0, 0.04) 0px 1px 2px -1px, rgba(0, 0, 0, 0.02) 0px 2px 4px 0px;
   }
 
   #main-sidebar .nav-link.active .ti {
-    @apply bg-primary text-surface;
+    @apply bg-primary text-white;
   }
 
   #main-sidebar .nav-link .badge:not(.badge-info) {
@@ -269,7 +265,7 @@
   #main-sidebar .dropdown .btn:hover,
   #main-sidebar .dropdown .btn:focus,
   #main-sidebar .dropdown .btn:active {
-    @apply bg-gray-50;
+    @apply bg-gray-200/50;
   }
 
   #main-sidebar .dropdown .dropdown-menu {
@@ -466,7 +462,7 @@
   }
 
   .sidebar-mobile .sidebar-mobile-content .nav-link:hover {
-    @apply bg-gray-50;
+    @apply bg-gray-200/50;
   }
 
   .sidebar-mobile .sidebar-mobile-content .nav-link:hover .ti {
@@ -474,16 +470,16 @@
   }
 
   .sidebar-mobile .sidebar-mobile-content .nav-link.active {
-    @apply text-primary bg-surface font-normal;
+    @apply text-primary bg-white font-normal;
     box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.04) 0px 0px 0px 1px, rgba(0, 0, 0, 0.04) 0px 1px 2px -1px, rgba(0, 0, 0, 0.02) 0px 2px 4px 0px;
   }
 
   .sidebar-mobile .sidebar-mobile-content .nav-link.active .ti {
-    @apply bg-primary text-surface;
+    @apply bg-primary text-white;
   }
 
   .sidebar-mobile .sidebar-mobile-content .nav-link .badge:not(.badge-info) {
-    @apply bg-gray-100 text-gray-700 rounded-lg;
+    @apply bg-gray-200/50 text-gray-700 rounded-lg;
   }
 
   .sidebar-mobile .sidebar-mobile-content .nav-submenu {
@@ -501,7 +497,7 @@
   }
 
   .sidebar-mobile .sidebar-mobile-content .nav-submenu .nav-link:hover {
-    @apply bg-gray-50;
+    @apply bg-gray-200/50;
   }
 
   .sidebar-mobile .sidebar-mobile-content .nav-submenu .nav-link.active,
@@ -532,7 +528,7 @@
   .sidebar-mobile .sidebar-mobile-content .dropdown .btn:hover,
   .sidebar-mobile .sidebar-mobile-content .dropdown .btn:focus,
   .sidebar-mobile .sidebar-mobile-content .dropdown .btn:active {
-    @apply bg-gray-50;
+    @apply bg-gray-200/50;
   }
 
   .sidebar-mobile .sidebar-mobile-content .dropdown .dropdown-menu {

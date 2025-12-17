@@ -7,7 +7,7 @@
     display: inline-flex;
     align-items: center;
     border-radius: 1rem;
-    background-color: var(--color-surface);
+    background-color: var(--color-white);
     box-shadow: var(--shadow-dropdown);
     animation: bounceInUp;
     animation-duration: 0.5s;
@@ -52,7 +52,7 @@
   }
 
   .bulk-panel-container .btn:hover {
-    background-color: var(--color-gray-50);
+    background-color: var(--color-gray-100);
   }
 
   .bulk-panel-container > * {

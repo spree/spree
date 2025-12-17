@@ -24,7 +24,7 @@ module Spree
           css_classes << 'text-primary'
           content_tag('li', text, class: css_classes.join(' '))
         else
-          content_tag('li', text, class: "breadcrumb-item #{state == @order.state ? 'font-bold' : 'text-text'}")
+          content_tag('li', text, class: "breadcrumb-item #{state == @order.state ? 'font-bold' : 'text-gray-950'}")
         end
       end
       content_tag('ol', raw(items.join("\n")), class: 'breadcrumb flex items-center py-6 gap-2', id: "checkout-step-#{@order.state}")

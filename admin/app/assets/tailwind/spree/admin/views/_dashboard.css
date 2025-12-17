@@ -25,7 +25,7 @@
   }
 
   .store-preview-link .store-preview-actions .btn-outline-primary {
-    background-color: var(--color-surface);
+    background-color: var(--color-white);
   }
 
   .store-preview-link .store-preview-actions .btn-outline-primary:hover {
@@ -37,7 +37,7 @@
   }
 
   #updater-notice {
-    background-color: var(--color-surface);
+    background-color: var(--color-white);
     width: 100%;
     display: flex;
     flex-direction: row;

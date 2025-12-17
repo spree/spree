@@ -10,7 +10,7 @@
   <div class="card-body">
     <div class="form-group flex flex-col gap-2">
       <% @available_zones.each do |zone| %>
-        <div class="custom-control form-checkbox rounded-lg hover:bg-gray-50 p-2">
+        <div class="custom-control form-checkbox rounded-lg hover:bg-gray-100 p-2 transition-colors duration-100 ease-linear">
           <%= check_box_tag('shipping_method[zone_ids][]', zone.id, @shipping_method.zone_ids.include?(zone.id), id: "shipping_method_zones_#{zone.id}", class: 'custom-control-input') %>
           <%= label_tag "shipping_method_zones_#{zone.id}", class: 'custom-control-label flex flex-col items-start' do %>
             <span ><%= zone.name.gsub('_',  ' ') %></span>

@@ -24,7 +24,7 @@
   <div class="card-body">
     <%= f.spree_select :default_currency, currency_options(@store.default_currency), { label: Spree.t(:default_currency), autocomplete: true } %>
     <%= f.spree_select :supported_currencies, currency_options(@store.supported_currencies&.split(',')), { prompt: false, multiple: true, autocomplete: true } %>
-    <hr />
+    <hr class="my-6" />
     <%= f.spree_select :default_locale, options_from_collection_for_select(all_locales_options, :last, :first, @store.default_locale || I18n.locale), { autocomplete: true } %>
     <%= f.spree_select :supported_locales, options_from_collection_for_select(all_locales_options, :last, :first, @store.supported_locales&.split(',')), { multiple: true, autocomplete: true } %>
   </div>

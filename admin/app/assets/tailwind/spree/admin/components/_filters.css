@@ -10,7 +10,7 @@
     position: sticky;
     top: var(--spacing-header-height);
     z-index: 1000;
-    background-color: var(--color-surface);
+    background-color: var(--color-white);
     border-top-left-radius: var(--radius-2xl);
     border-top-right-radius: var(--radius-2xl);
   }
@@ -25,7 +25,7 @@
     padding: 1rem;
     border-radius: var(--radius-2xl);
     box-shadow: var(--shadow-dropdown);
-    background-color: var(--color-surface);
+    background-color: var(--color-white);
     margin-top: 0.5rem;
     right: 0.5rem;
     animation: fadeIn 0.2s ease-in-out;

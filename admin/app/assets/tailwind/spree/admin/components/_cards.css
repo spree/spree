@@ -5,7 +5,7 @@
 @layer components {
   .card,
   .card-lg {
-    @apply relative flex flex-col min-w-0 break-words bg-surface border border-border rounded-2xl;
+    @apply relative flex flex-col min-w-0 break-words bg-white border border-gray-200 rounded-2xl;
     background-clip: border-box;
   }
 
@@ -75,7 +75,7 @@
   }
 
   .card-header {
-    @apply flex items-center mb-0 p-5 h-14 border-b border-gray-50 rounded-t-[calc(var(--radius-2xl)-1px)];
+    @apply flex items-center mb-0 p-5 h-14 border-b border-gray-100 rounded-t-[calc(var(--radius-2xl)-1px)];
   }
 
   .card-header .card-title {
@@ -107,7 +107,7 @@
   .card .border-top,
   .card .border-bottom,
   .card .list-group-item {
-    @apply border-gray-50!;
+    @apply border-gray-100!;
   }
 
   .card-title {
@@ -133,7 +133,7 @@
   /* Collapsable Card */
   .collapsable-card {
     @apply relative flex flex-col min-w-0 break-words overflow-hidden;
-    @apply bg-surface border border-border rounded-2xl;
+    @apply bg-white border border-border rounded-2xl;
     background-clip: border-box;
   }
 
@@ -142,7 +142,7 @@
   }
 
   .collapsable-card .card-body {
-    @apply border-t border-gray-50;
+    @apply border-t border-gray-100;
   }
 
   .collapsable-card[open] .arrow {

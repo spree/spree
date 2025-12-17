@@ -8,7 +8,7 @@
     <%= render 'spree/shared/head' %>
     <%= render 'spree/shared/custom_head' %>
   </head>
-  <body id="checkout-page" class="theme-<%= current_theme.class.name.demodulize.underscore %> w-full bg-background text-text">
+  <body id="checkout-page" class="theme-<%= current_theme.class.name.demodulize.underscore %> w-full bg-background text-gray-950">
     <%= render_storefront_partials(:body_start_partials) %>
     <%= current_store.storefront_custom_code_body_start&.html_safe %>
 

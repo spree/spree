@@ -5,7 +5,7 @@
 @layer components {
   .trix-container {
     @apply border border-gray-200 rounded-lg shadow-xs overflow-hidden;
-    @apply focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-blue;
+    @apply focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-blue-500;
     @apply transition-all duration-100 ease-in-out;
   }
 
@@ -39,7 +39,7 @@
 
   .trix-container,
   trix-editor {
-    @apply bg-surface;
+    @apply bg-white;
   }
 
   .trix-container:has(trix-editor[contenteditable='false']) {
@@ -76,11 +76,11 @@
   }
 
   trix-toolbar .trix-dialog {
-    @apply bg-surface! border-t-0! rounded-lg! top-1!;
+    @apply bg-white! border-t-0! rounded-lg! top-1!;
   }
 
   trix-toolbar .trix-dialog .trix-input {
-    @apply block w-full text-sm leading-normal text-gray-900 bg-surface py-1.5 px-3 border border-border rounded-lg transition-all duration-150 ease-in-out;
+    @apply block w-full text-sm leading-normal text-gray-900 bg-white py-1.5 px-3 border border-border rounded-lg transition-all duration-150 ease-in-out;
     background-clip: padding-box;
   }
 

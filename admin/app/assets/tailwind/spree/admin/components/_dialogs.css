@@ -50,7 +50,7 @@
   }
 
   dialog {
-    @apply hidden z-1050 rounded-2xl border-none bg-surface overflow-y-auto overflow-x-hidden p-0;
+    @apply hidden z-1050 rounded-2xl border-none bg-white overflow-y-auto overflow-x-hidden p-0;
     box-shadow: 0px 0px 0px 1px rgba(179, 179, 179, 0.5), 0px 6px 12px -3px rgba(179, 179, 179, 0.35), 0px 6px 18px 0px rgba(179, 179, 179, 0.35);
   }
 
@@ -105,7 +105,7 @@
   }
 
   .drawer-header {
-    @apply flex justify-between items-center p-4 border-b border-gray-50;
+    @apply flex justify-between items-center p-4 border-b border-gray-100;
   }
 
   .drawer-title {
@@ -117,7 +117,7 @@
   }
 
   .drawer-footer {
-    @apply flex justify-between items-center p-4 bg-gray-25 border-t border-gray-50 rounded-b-2xl;
+    @apply flex justify-between items-center p-4 bg-gray-25 border-t border-gray-100 rounded-b-2xl;
   }
 
   /* ==========================================================================
@@ -152,7 +152,7 @@
   }
 
   .dialog-header {
-    @apply flex justify-between items-center p-4 border-b border-gray-50;
+    @apply flex justify-between items-center p-4 border-b border-gray-100;
   }
 
   .dialog-header .btn-close {
@@ -169,7 +169,7 @@
   }
 
   .dialog-footer {
-    @apply sticky bottom-0 p-4 flex gap-2 items-center justify-between border-t border-gray-50 bg-gray-25;
+    @apply sticky bottom-0 p-4 flex gap-2 items-center justify-between border-t border-gray-100 bg-gray-25;
     border-radius: 0 0 calc(var(--radius-2xl) - 1px) calc(var(--radius-2xl) - 1px);
   }
 
@@ -203,7 +203,7 @@
   }
 
   .modal-content {
-    @apply relative flex flex-col w-full pointer-events-auto bg-surface border-none rounded-2xl outline-none;
+    @apply relative flex flex-col w-full pointer-events-auto bg-white border-none rounded-2xl outline-none;
     background-clip: padding-box;
     box-shadow: 0px 0px 0px 1px rgba(179, 179, 179, 0.5), 0px 6px 12px -3px rgba(179, 179, 179, 0.35), 0px 6px 18px 0px rgba(179, 179, 179, 0.35);
   }
@@ -214,7 +214,7 @@
   }
 
   .modal-header {
-    @apply flex shrink-0 items-center justify-between p-4 border-b border-gray-50;
+    @apply flex shrink-0 items-center justify-between p-4 border-b border-gray-100;
     border-top-left-radius: calc(var(--radius-2xl) - 1px);
     border-top-right-radius: calc(var(--radius-2xl) - 1px);
   }
@@ -232,7 +232,7 @@
   }
 
   .modal-footer {
-    @apply flex shrink-0 items-center justify-end p-4 bg-gray-25 border-t border-gray-50;
+    @apply flex shrink-0 items-center justify-end p-4 bg-gray-25 border-t border-gray-100;
     border-bottom-right-radius: calc(var(--radius-2xl) - 1px);
     border-bottom-left-radius: calc(var(--radius-2xl) - 1px);
   }

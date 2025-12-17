@@ -5,21 +5,10 @@
 @theme {
   /* Gray Scale */
   --color-gray-25: #FAFAFA;
-  --color-gray-50: #F3F3F3;
-  --color-gray-100: #E3E3E3;
-  --color-gray-200: #D5D5D5;
-  --color-gray-300: #B3B3B3;
-  --color-gray-400: #999999;
-  --color-gray-500: #808080;
-  --color-gray-600: #666666;
-  --color-gray-700: #4D4D4D;
-  --color-gray-800: #333333;
-  --color-gray-900: #1A1A1A;
 
   /* Brand Colors */
   --color-primary: #061932;
   --color-primary-hover: #0a2548;
-  --color-blue: #0090FE;
 
   /* Semantic Colors */
   --color-success: #28a745;
@@ -27,21 +16,11 @@
   --color-danger: #ee4266;
   --color-danger-hover: #d63355;
   --color-warning: #ffe17d;
-  --color-warning-dark: #ffc107;
   --color-info: #44c1ff;
   --color-partial: #E2E8F0;
 
-  /* Surface Colors */
-  --color-surface: #ffffff;
-  --color-surface-muted: #FAFAFA;
-  --color-surface-hover: #F3F3F3;
-
   /* Border */
-  --color-border: rgba(227, 227, 227, 0.85);
-  --color-border-light: #F3F3F3;
-
-  /* Text */
-  --color-text: #333333;
+  --color-border: var(--color-gray-200);
 
   /* Typography */
   --font-sans: Inter, sans-serif;

@@ -18,7 +18,7 @@
   }
 
   body {
-    @apply text-base font-normal text-text bg-surface;
+    @apply text-base font-normal text-gray-950 bg-white;
     font-family: var(--font-sans);
     line-height: var(--line-height-base);
   }
@@ -53,7 +53,7 @@
   }
 
   code {
-    @apply text-text bg-gray-50;
+    @apply text-gray-950 bg-gray-50;
     padding: 0.125rem 0.25rem;
     border-radius: var(--radius-sm);
     font-size: 0.875em;

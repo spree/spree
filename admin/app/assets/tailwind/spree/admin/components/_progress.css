@@ -9,6 +9,6 @@
   }
 
   .progress-bar {
-    @apply bg-blue transition-[width] duration-600 ease-out;
+    @apply bg-blue-500 transition-[width] duration-600 ease-out;
   }
 }

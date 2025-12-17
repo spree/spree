@@ -8,7 +8,7 @@
   }
 
   .list-group-item {
-    @apply relative block py-3 px-5 text-text no-underline border border-border hover:bg-gray-25;
+    @apply relative block py-3 px-5 text-gray-950 no-underline border border-gray-200 hover:bg-gray-25;
   }
 
   .list-group-item:first-child {
@@ -52,6 +52,6 @@
   }
 
   .list-group-item-action:active {
-    @apply text-text bg-gray-100;
+    @apply text-gray-950 bg-gray-100;
   }
 }
