@@ -2,9 +2,7 @@
   <%= turbo_frame_tag :bulk_dialog do %>
     <%= dialog_header(Spree.t(:loading), 'bulk-dialog') %>
     <div class="dialog-body text-center overflow-visible">
-      <div class="spinner-border text-muted" role="status">
-        <span class="sr-only"><%= Spree.t(:loading) %>...</span>
-      </div>
+      <%= render 'spree/admin/shared/spinner' %>
     </div>
     <div class="dialog-footer">
       <%= dialog_discard_button('bulk-dialog') %>

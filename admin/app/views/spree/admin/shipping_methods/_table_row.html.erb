@@ -7,7 +7,7 @@
       </span>
     <% end %>
   </td>
-  <td data-action="click->row-link#openLink" class="w-25 text-wrap">
+  <td data-action="click->row-link#openLink" class="w-1/4 whitespace-normal">
     <% shipping_method.zones.each do |zone| %>
       <% if can?(:manage, zone) %>
         <%= link_to zone.name, spree.edit_admin_zone_path(zone), class: 'badge badge-light border mb-2' %>
@@ -24,7 +24,7 @@
   </td>
   <td class="w-10">
     <%= form_with model: shipping_method, url: spree.admin_shipping_method_path(shipping_method), method: :patch, data: { controller: 'auto-submit' } do |f| %>
-      <%= f.select :display_on, display_on_options, {}, { class: 'custom-select custom-select-sm w-auto', data: { action: 'auto-submit#submit' } } %>
+      <%= f.select :display_on, display_on_options, {}, { class: 'form-select form-select-sm w-auto', data: { action: 'auto-submit#submit' } } %>
     <% end %>
   </td>
   <td class="actions w-10">

@@ -1,16 +1,16 @@
-<%= link_to spree.admin_user_path(user), class: 'rounded p-2 d-flex justify-content-start align-items-center text-decoration-none hover-light', data: {turbo_frame: :_top, row_link_target: :link} do %>
+<%= link_to spree.admin_user_path(user), class: 'rounded-md p-2 flex justify-start items-center no-underline hover:bg-gray-25 gap-4', data: {turbo_frame: :_top, row_link_target: :link} do %>
   <% if user.name.present? %>
-    <%= render_avatar(user, width: 48, height: 48, class: 'mr-3 avatar') %>
+    <%= render_avatar(user, width: 48, height: 48) %>
   <% else %>
-    <div style="width: 48px; height: 48px" class="mr-3 avatar bg-light"></div>
+    <div class="flex items-center justify-center bg-gray-200 rounded-full text-gray-600 w-12 h-12"></div>
   <% end %>
   <div class="text-left">
     <% if customer_full_name(user) %>
-      <span class="font-weight-bold text-dark"><%= customer_full_name(user) %></span>
+      <span class="font-bold text-gray-900"><%= customer_full_name(user) %></span>
       <br />
     <% end %>
     <% unless defined?(current_vendor) && current_vendor %>
-      <span class="text-muted" data-controller="tooltip">
+      <span class="text-gray-600" data-controller="tooltip">
         <%= user.email %>
         <%= tooltip(user.email) %>
       </span>

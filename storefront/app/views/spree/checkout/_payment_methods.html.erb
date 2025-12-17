@@ -11,7 +11,7 @@
         <%= Spree.t('storefront.checkout.order_already_paid') %>
       </p>
     </div>
-    <div class="flex justify-end w-full">
+    <div class="flex justify-end w-full gap-2">
       <%= button_tag Spree.t(:place_order),
                       class: 'btn-primary w-full lg:w-2/5 font-semibold checkout-content-save-continue-button my-5 !py-4',
                       data: { 'turbo-submits-with': (render 'spree/checkout/button_processing', is_hidden: false) } %>
@@ -20,7 +20,7 @@
     <h5 class="mb-3 font-body font-semibold">
       <%= Spree.t(:payment) %>
     </h5>
-    <p class="text-muted mb-3 text-neutral-600">
+    <p class="text-gray-600 mb-3 text-neutral-600">
       <%= Spree.t('storefront.checkout.all_transactions_are_secure_and_encrypted') %>
     </p>
 
@@ -39,7 +39,7 @@
 
   <%= render 'spree/checkout/terms_and_conditions' %>
 
-  <div class="flex justify-end w-full">
+  <div class="flex justify-end w-full gap-2">
     <button type="submit"
             id="checkout-payment-submit"
             class="btn-primary w-full lg:w-2/5 font-semibold checkout-content-save-continue-button my-5 !py-4"

@@ -1,0 +1,35 @@
+/* ==========================================================================
+   MISCELLANEOUS COMPONENTS
+   ========================================================================== */
+
+@layer components {
+  /* Embed responsive */
+  .embed-responsive {
+    @apply relative block w-full p-0 overflow-hidden;
+  }
+
+  .embed-responsive::before {
+    @apply block;
+    content: "";
+  }
+
+  .embed-responsive .embed-responsive-item,
+  .embed-responsive iframe,
+  .embed-responsive embed,
+  .embed-responsive object,
+  .embed-responsive video {
+    @apply absolute top-0 bottom-0 left-0 w-full h-full border-0;
+  }
+
+  .embed-responsive-16by9::before {
+    padding-top: 56.25%;
+  }
+
+  .embed-responsive-4by3::before {
+    padding-top: 75%;
+  }
+
+  .embed-responsive-1by1::before {
+    padding-top: 100%;
+  }
+}

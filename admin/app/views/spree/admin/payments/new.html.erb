@@ -1,23 +1,23 @@
 <%= render 'spree/admin/orders/header' %>
 
-<div class="row">
-  <div class="col-lg-6 offset-lg-3">
+<div class="grid grid-cols-12 gap-6">
+  <div class="col-span-12 lg:col-span-6 lg:col-start-4">
     <%= render 'spree/admin/shared/error_messages', target: @payment %>
 
     <%= form_with url: spree.admin_order_payments_path(@order), model: @payment, method: :post do |f| %>
-      <div class="card mb-4">
+      <div class="card mb-6">
         <div class="card-header">
           <h5 class="card-title"><%= Spree.t(:new_payment) %></h5>
         </div>
         <div class="card-body">
-          <div class="form-group mb-3">
+          <div class="form-group mb-6">
             <%= f.label :amount, Spree.t(:amount) %>
             <div class="input-group">
               <%= f.number_field :amount,
                 value: @payment.max_amount,
                 max: @payment.max_amount,
                 step: '.01',
-                class: 'form-control',
+                class: 'form-input',
                 required: true %>
               <div class="input-group-append">
                 <span class="input-group-text"><%= currency_symbol(@order.currency) %></span>
@@ -26,11 +26,11 @@
           </div>
 
           <%= f.label :payment_method_id, Spree.t(:payment_method) %>
-          <ul class="list-group mb-3">
+          <ul class="list-group mb-6">
             <% @payment_methods.each do |payment_method| %>
               <li class="list-group-item p-0">
-                <%= link_to spree.new_admin_order_payment_path(@order, payment_method_id: payment_method.id), class: "form-check-label d-flex align-items-center gap-3 px-3 py-3 w-100 cursor-pointer hover-light text-dark" do %>
-                  <div class="form-check flex align-items-center">
+                <%= link_to spree.new_admin_order_payment_path(@order, payment_method_id: payment_method.id), class: "form-check-label flex items-center gap-4 px-6 py-6 w-full cursor-pointer hover:bg-gray-25 text-gray-900" do %>
+                  <div class="form-check flex items-center">
                     <%= f.radio_button :payment_method_id, payment_method.id, class: "form-check-input" %>
                   </div>
 
@@ -46,7 +46,7 @@
 
           <% if @payment.payment_method.present? && @payment.payment_method.source_required? %>
             <%= f.label :source, Spree.t(:payment_source) %>
-            <div class="my-3">
+            <div class="my-6">
               <%= render partial: "spree/admin/payments/source_forms/#{@payment.payment_method.method_type}",
                         locals: {
                           f: f,

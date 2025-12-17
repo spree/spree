@@ -1,12 +1,12 @@
 <%= search_form_for [:admin, @search], class: "filter-wrap", data: {controller: "filters auto-submit"} do |f| %>
-  <div class="d-flex">
+  <div class="flex">
     <%= render 'spree/admin/shared/filters_search_bar', param: :multi_search, label: Spree.t(:title) %>
 
     <%= select_tag 'q[resource_type_eq]',
           options_for_select(metafield_definition_resource_types, params.dig(:q, :resource_type_eq)),
           { 
             include_blank: Spree.t(:all),
-            class: 'custom-select w-20',
+            class: 'form-select w-20',
             data: { 
               filters_target: :input,
               action: 'auto-submit#submit'

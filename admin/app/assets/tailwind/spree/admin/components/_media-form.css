@@ -1,0 +1,69 @@
+/* ==========================================================================
+   MEDIA FORM
+   ========================================================================== */
+
+@layer components {
+  .upload-area {
+    @apply flex flex-col gap-2 justify-center items-center overflow-hidden rounded-lg border border-dashed border-gray-200 bg-gray-25 p-2 cursor-pointer text-gray-500 transition-all duration-500 ease-out;
+  }
+
+  .upload-area:hover {
+    @apply bg-blue-50/50 border-blue-500/25 text-blue-800;
+  }
+
+  .upload-area:active {
+    @apply bg-blue-50 border-blue-100 !ring-2 !ring-blue-500 !ring-offset-2 !ring-offset-white;
+  }
+
+  .media-form {
+    @apply grid grid-cols-6 gap-2 w-full h-full select-none;
+  }
+
+  .media-form__add-button {
+    @apply aspect-square;
+  }
+
+  .media-form__add-button:only-child {
+    @apply col-span-6 row-span-1 aspect-[12/1] max-w-[200px] h-[200px];
+  }
+
+  .media-form__add-button:not(:only-child) {
+    @apply !h-full;
+  }
+
+  .media-form__image {
+    @apply p-2 border-none overflow-hidden flex w-full h-full aspect-square rounded-lg relative justify-between items-start transition-shadow duration-200 ease-in-out shadow-[rgba(209,217,224,0.5)_0px_0px_0px_1px];
+  }
+
+  .media-form__image img {
+    @apply top-0 left-0;
+  }
+
+  .media-form__image .move-handle {
+    @apply z-[2] text-white;
+  }
+
+  .media-form__image .form-checkbox:has(input:checked) {
+    @apply !inline;
+  }
+
+  .media-form__image:hover .form-checkbox {
+    @apply !inline;
+  }
+
+  .media-form__image:hover .move-handle {
+    @apply !inline;
+  }
+
+  .media-form__image:hover {
+    @apply !shadow-[rgba(209,217,224,0.8)_0px_0px_0px_1px,rgba(37,41,46,0.04)_0px_3px_6px_-3px,rgba(37,41,46,0.12)_0px_2px_6px_0px];
+  }
+
+  .media-form__image:has(input:checked) {
+    @apply !ring-2 !ring-blue-500;
+  }
+
+  .media-form__image:first-of-type {
+    @apply col-span-2 row-span-2;
+  }
+}

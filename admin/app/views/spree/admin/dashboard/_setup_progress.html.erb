@@ -1,10 +1,10 @@
-<div class="card mb-3" id="setup_progress">
+<div class="card mb-6" id="setup_progress">
   <div class="card-body">
-    <div class="mb-3">
+    <div class="mb-4">
       Your overall setup progress
       <span class="float-right badge badge-<%= current_store.setup_completed? ? 'success' : 'info' %>">
         <% if current_store.setup_completed? %>
-          <%= icon('check', class: 'text-success') %>
+          <%= icon('check', class: 'text-green-700') %>
         <% end %>
 
         <span>

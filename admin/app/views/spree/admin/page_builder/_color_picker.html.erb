@@ -5,8 +5,8 @@
   data-controller="color-picker"
   data-color-picker-clear-value="<%= defined?(clear) ? clear : false %>"
   data-color-picker-default-color-value="<%= color_picker_value %>">
-  <div class="d-flex align-items-center">
-    <%= f.hidden_field field, class: 'form-control mr-2', data: {
+  <div class="flex items-center">
+    <%= f.hidden_field field, class: 'form-input mr-1', data: {
       'color-picker-target': 'input',
       'color-palette-target': field.to_s.camelize(:lower),
       action: action,
@@ -14,12 +14,12 @@
     <div>
       <label class="mb-0"><%= label %></label>
       <br />
-      <span data-color-picker-target="value" class="text-muted">
+      <span data-color-picker-target="value" class="text-gray-600">
         <%= color_picker_value&.upcase || Spree.t('admin.page_builder.not_set') %>
       </span>
     </div>
-    <div class="ml-auto d-flex align-items-center" style="width:40px">
-      <div data-color-picker-target="picker" class="border d-inline-block rounded-circle <% unless color_picker_value.present? %>checkered-background<% end %>" style="height: 40px;width: 40px; background-color: <%= color_picker_value %>;">
+    <div class="ml-auto flex items-center" style="width:40px">
+      <div data-color-picker-target="picker" class="border inline-block rounded-full <% unless color_picker_value.present? %>checkered-background<% end %>" style="height: 40px;width: 40px; background-color: <%= color_picker_value %>;">
       </div>
     </div>
   </div>

@@ -1,0 +1,62 @@
+/* ==========================================================================
+   THEME - Design Tokens (CSS Custom Properties)
+   ========================================================================== */
+
+@theme {
+  /* Gray Scale */
+  --color-gray-25: #FAFAFA;
+
+  /* Legacy Colors, kept for old HTML from extensions/developer apps work properly */
+  --color-primary: var(--color-zinc-950);
+  --color-success: var(--color-green-900);
+  --color-danger: var(--color-red-900);
+  --color-warning: var(--color-yellow-900);
+  --color-info: var(--color-blue-900);
+
+  /* Typography */
+  --font-sans: Inter, sans-serif;
+
+  /* Override Tailwind's text-* scale to match Spree design system */
+  --text-2xs: 0.625rem;
+  --text-xs: 0.75rem;
+  --text-sm: 0.813rem;
+  --text-base: 0.875rem;
+  --text-lg: 1rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.75rem;
+  --text-4xl: 2rem;
+
+  --line-height-base: 21px;
+
+  /* Font Weights - matches Bootstrap/Spree Admin variables */
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 600;  /* Note: Spree uses 600, not 700 */
+
+  /* Shadows */
+  --shadow-xs: rgba(43, 34, 51, 0.05) 0px 1px 1px;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-default: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: rgba(0, 5, 13, 0.5) 0px 4px 8px 2px;
+  --shadow-dropdown: 0px 0px 0px 1px rgba(179, 179, 179, 0.5), 0px 6px 12px -3px rgba(179, 179, 179, 0.35), 0px 6px 18px 0px rgba(179, 179, 179, 0.35);
+
+  /* Layout Spacing */
+  --spacing-sidebar-width: 220px;
+  --spacing-sidebar-collapsed: 59px;
+  --spacing-header-height: 58px;
+
+  /* Transitions */
+  --transition-fast: 0.1s ease-in-out;
+  --transition-default: 0.15s ease-in-out;
+  --transition-slow: 0.3s ease-in-out;
+
+  /* Animations */
+  --animate-fade-in: fade-in 0.15s ease-in-out;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

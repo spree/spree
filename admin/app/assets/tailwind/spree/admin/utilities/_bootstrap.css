@@ -1,0 +1,158 @@
+/* ==========================================================================
+   BOOTSTRAP COMPATIBILITY UTILITIES
+   Aliases for Bootstrap utility classes mapped to Tailwind equivalents.
+   These ensure backwards compatibility for existing templates.
+   ========================================================================== */
+
+@layer utilities {
+  /* ==========================================================================
+     DISPLAY
+     ========================================================================== */
+  .d-none { @apply hidden; }
+  .d-inline { @apply inline; }
+  .d-inline-block { @apply inline-block; }
+  .d-block { @apply block; }
+  .d-flex { @apply flex; }
+  .d-inline-flex { @apply inline-flex; }
+  .d-grid { @apply grid; }
+
+  /* Responsive display */
+  @media (width >= 768px) {
+    .d-md-none { @apply hidden; }
+    .d-md-inline { @apply inline; }
+    .d-md-inline-block { @apply inline-block; }
+    .d-md-block { @apply block; }
+    .d-md-flex { @apply flex; }
+    .d-md-inline-flex { @apply inline-flex; }
+    .d-md-grid { @apply grid; }
+  }
+
+  @media (width >= 992px) {
+    .d-lg-none { @apply hidden; }
+    .d-lg-inline { @apply inline; }
+    .d-lg-inline-block { @apply inline-block; }
+    .d-lg-block { @apply block; }
+    .d-lg-flex { @apply flex; }
+    .d-lg-inline-flex { @apply inline-flex; }
+    .d-lg-grid { @apply grid; }
+  }
+
+  @media (width >= 1200px) {
+    .d-xl-none { @apply hidden; }
+    .d-xl-inline { @apply inline; }
+    .d-xl-inline-block { @apply inline-block; }
+    .d-xl-block { @apply block; }
+    .d-xl-flex { @apply flex; }
+    .d-xl-inline-flex { @apply inline-flex; }
+    .d-xl-grid { @apply grid; }
+  }
+
+  /* ==========================================================================
+     FLEXBOX
+     ========================================================================== */
+  .flex-row { @apply flex-row; }
+  .flex-column { @apply flex-col; }
+  .flex-row-reverse { @apply flex-row-reverse; }
+  .flex-column-reverse { @apply flex-col-reverse; }
+  .flex-wrap { @apply flex-wrap; }
+  .flex-nowrap { @apply flex-nowrap; }
+  .flex-wrap-reverse { @apply flex-wrap-reverse; }
+  .flex-fill { @apply flex-1; }
+  .flex-grow-0 { @apply grow-0; }
+  .flex-grow-1 { @apply grow; }
+  .flex-shrink-0 { @apply shrink-0; }
+  .flex-shrink-1 { @apply shrink; }
+
+  /* Justify content */
+  .justify-content-start { @apply justify-start; }
+  .justify-content-end { @apply justify-end; }
+  .justify-content-center { @apply justify-center; }
+  .justify-content-between { @apply justify-between; }
+  .justify-content-around { @apply justify-around; }
+  .justify-content-evenly { @apply justify-evenly; }
+
+  /* Align items */
+  .align-items-start { @apply items-start; }
+  .align-items-end { @apply items-end; }
+  .align-items-center { @apply items-center; }
+  .align-items-baseline { @apply items-baseline; }
+  .align-items-stretch { @apply items-stretch; }
+
+  /* Align self */
+  .align-self-auto { @apply self-auto; }
+  .align-self-start { @apply self-start; }
+  .align-self-end { @apply self-end; }
+  .align-self-center { @apply self-center; }
+  .align-self-baseline { @apply self-baseline; }
+  .align-self-stretch { @apply self-stretch; }
+
+  /* Align content */
+  .align-content-start { @apply content-start; }
+  .align-content-end { @apply content-end; }
+  .align-content-center { @apply content-center; }
+  .align-content-between { @apply content-between; }
+  .align-content-around { @apply content-around; }
+  .align-content-stretch { @apply content-stretch; }
+
+  /* Responsive flexbox */
+  @media (width >= 768px) {
+    .flex-md-row { @apply flex-row; }
+    .flex-md-column { @apply flex-col; }
+    .flex-md-wrap { @apply flex-wrap; }
+    .flex-md-nowrap { @apply flex-nowrap; }
+    .justify-content-md-start { @apply justify-start; }
+    .justify-content-md-end { @apply justify-end; }
+    .justify-content-md-center { @apply justify-center; }
+    .justify-content-md-between { @apply justify-between; }
+    .align-items-md-start { @apply items-start; }
+    .align-items-md-end { @apply items-end; }
+    .align-items-md-center { @apply items-center; }
+  }
+
+  @media (width >= 992px) {
+    .flex-lg-row { @apply flex-row; }
+    .flex-lg-column { @apply flex-col; }
+    .flex-lg-wrap { @apply flex-wrap; }
+    .flex-lg-nowrap { @apply flex-nowrap; }
+    .justify-content-lg-start { @apply justify-start; }
+    .justify-content-lg-end { @apply justify-end; }
+    .justify-content-lg-center { @apply justify-center; }
+    .justify-content-lg-between { @apply justify-between; }
+    .align-items-lg-start { @apply items-start; }
+    .align-items-lg-end { @apply items-end; }
+    .align-items-lg-center { @apply items-center; }
+  }
+
+  /* ==========================================================================
+     WIDTH & HEIGHT
+     ========================================================================== */
+  .w-25 { @apply w-1/4; }
+  .w-50 { @apply w-1/2; }
+  .w-75 { @apply w-3/4; }
+  .w-100 { @apply w-full; }
+  .w-auto { @apply w-auto; }
+
+  /* Custom percentage widths (not in Tailwind's default scale) */
+  .w-5 { width: 5%; }
+  .w-10 { width: 10%; }
+  .w-15 { width: 15%; }
+  .w-20 { width: 20%; }
+  .w-30 { width: 30%; }
+  .w-35 { width: 35%; }
+  .w-40 { width: 40%; }
+  .w-60 { width: 60%; }
+  .w-70 { width: 70%; }
+  .w-80 { width: 80%; }
+  .w-90 { width: 90%; }
+
+  /* ==========================================================================
+     MISC
+     ========================================================================== */
+  .list-unstyled { @apply list-none p-0; }
+  .list-inline { @apply list-none p-0 flex flex-wrap; }
+  .list-inline-item { @apply inline-block; }
+
+  .move-handle {
+    @apply cursor-grab;
+  }
+}

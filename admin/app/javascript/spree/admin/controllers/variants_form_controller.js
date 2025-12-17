@@ -73,11 +73,11 @@ export default class extends CheckboxSelectAll {
   }
 
   toggleQuantityTracked() {
-    this.element.querySelectorAll('.column-quantity').forEach((el) => el.classList.toggle('d-none'))
+    this.element.querySelectorAll('.column-quantity').forEach((el) => this.toggleHidden(el))
 
     this.variantTemplateTarget.content
       .querySelectorAll('.column-quantity')
-      .forEach((el) => el.classList.toggle('d-none'))
+      .forEach((el) => this.toggleHidden(el))
   }
 
   toggle(e) {
@@ -111,9 +111,9 @@ export default class extends CheckboxSelectAll {
 
   toggleDeleteButton() {
     if (this.checked.length > 0) {
-      this.deleteButtonTarget.classList.remove('d-none')
+      this.deleteButtonTarget.classList.remove('hidden', 'd-none')
     } else {
-      this.deleteButtonTarget.classList.add('d-none')
+      this.deleteButtonTarget.classList.add('hidden')
     }
   }
 
@@ -212,11 +212,11 @@ export default class extends CheckboxSelectAll {
         .querySelectorAll(`input[data-slot='[stock_items_attributes][${stockLocationId}][count_on_hand]_input']`)
         .forEach((el) => {
           if (stockLocationId === newStockLocationId) {
-            el.classList.remove('d-none')
+            el.classList.remove('hidden', 'd-none')
             el.classList.add('d-block')
           } else {
             el.classList.remove('d-block')
-            el.classList.add('d-none')
+            el.classList.add('hidden')
           }
         })
     })
@@ -232,11 +232,11 @@ export default class extends CheckboxSelectAll {
         )
         .forEach((el) => {
           if (currency === newCurrency) {
-            el.classList.remove('d-none')
-            el.classList.add('d-flex')
+            el.classList.remove('hidden', 'd-none')
+            el.classList.add('flex')
           } else {
-            el.classList.remove('d-flex')
-            el.classList.add('d-none')
+            el.classList.remove('flex')
+            el.classList.add('hidden')
           }
         })
     })
@@ -464,7 +464,7 @@ export default class extends CheckboxSelectAll {
     const currentVariants = new Set()
 
     if (keys.length) {
-      this.variantsTableTarget.classList.remove('d-none')
+      this.variantsTableTarget.classList.remove('hidden', 'd-none')
 
       const nestingLevel = Math.min(keys.length, 2)
 
@@ -572,7 +572,7 @@ export default class extends CheckboxSelectAll {
         })
       }
     } else {
-      this.variantsTableTarget.classList.add('d-none')
+      this.variantsTableTarget.classList.add('hidden')
     }
 
     this.variantsContainerTarget.querySelectorAll('[data-variants-form-target="variant"]').forEach((variant) => {
@@ -681,11 +681,11 @@ export default class extends CheckboxSelectAll {
 
       stockInput.value = stockItem.count_on_hand
       if (String(stockLocationId) === String(this.currentStockLocationIdValue)) {
-        stockInput.classList.remove('d-none')
+        stockInput.classList.remove('hidden', 'd-none')
         stockInput.classList.add('d-block')
       } else {
         stockInput.classList.remove('d-block')
-        stockInput.classList.add('d-none')
+        stockInput.classList.add('hidden')
       }
       if (stockItem.id) {
         stockIdInput.value = stockItem.id
@@ -704,11 +704,11 @@ export default class extends CheckboxSelectAll {
       const idInput = variantTarget.querySelector(`input[data-slot="[prices_attributes][${currency}][id]_input"]`)
       priceInput.name = `product[variants_attributes][${idx}][prices_attributes][${currency}]`
       if (currency === this.currentCurrencyValue) {
-        priceInput.parentElement.classList.remove('d-none')
-        priceInput.parentElement.classList.add('d-flex')
+        priceInput.parentElement.classList.remove('hidden', 'd-none')
+        priceInput.parentElement.classList.add('flex')
       } else {
-        priceInput.parentElement.classList.remove('d-flex')
-        priceInput.parentElement.classList.add('d-none')
+        priceInput.parentElement.classList.remove('flex')
+        priceInput.parentElement.classList.add('hidden')
       }
 
       const existingPrice = this.priceForVariant(internalName, currency)
@@ -810,9 +810,9 @@ export default class extends CheckboxSelectAll {
     this.newOptionNameInputTarget.tomselect.clear()
     this.newOptionValuesSelectContainerTarget.reset()
 
-    this.newOptionFormTarget.classList.add('d-none')
+    this.newOptionFormTarget.classList.add('hidden')
 
-    this.newOptionButtonTarget.classList.remove('d-none')
+    this.newOptionButtonTarget.classList.remove('hidden', 'd-none')
   }
 
   editOption(event) {
@@ -891,8 +891,8 @@ export default class extends CheckboxSelectAll {
 
   showNewOptionForm(event) {
     event.preventDefault()
-    this.newOptionFormTarget.classList.remove('d-none')
-    this.newOptionButtonTarget.classList.add('d-none')
+    this.newOptionFormTarget.classList.remove('hidden', 'd-none')
+    this.newOptionButtonTarget.classList.add('hidden')
     this.refreshOptionNameSelect()
   }
 
@@ -1119,9 +1119,17 @@ export default class extends CheckboxSelectAll {
     if (!this.inventoryFormTarget) return
 
     if (value) {
-      this.inventoryFormTarget.classList.remove('d-none')
+      this.inventoryFormTarget.classList.remove('hidden', 'd-none')
     } else {
-      this.inventoryFormTarget.classList.add('d-none')
+      this.inventoryFormTarget.classList.add('hidden')
+    }
+  }
+
+  toggleHidden(el) {
+    if (el.classList.contains('hidden') || el.classList.contains('d-none')) {
+      el.classList.remove('hidden', 'd-none')
+    } else {
+      el.classList.add('hidden')
     }
   }
 }

@@ -6,7 +6,7 @@
     <%= render 'spree/shared/json_ld' %>
     <%= current_store.storefront_custom_code_head&.html_safe %>
   </head>
-  <body class="theme-<%= current_theme.class.name.demodulize.underscore %> bg-background w-full text-text <%= current_page&.slug %>-page <% if current_theme_preview.present? %>inside-page-builder<% end %>">
+  <body class="theme-<%= current_theme.class.name.demodulize.underscore %> bg-background w-full text-gray-950 <%= current_page&.slug %>-page <% if current_theme_preview.present? %>inside-page-builder<% end %>">
     <%= render_storefront_partials(:body_start_partials) %>
     <%= current_store.storefront_custom_code_body_start&.html_safe %>
 

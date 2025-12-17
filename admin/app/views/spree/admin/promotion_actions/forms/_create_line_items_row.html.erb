@@ -6,7 +6,7 @@
       <%= tom_select_tag "#{line_item_fields.object_name}[variant_id]",
             url: spree.admin_variants_search_path,
             remote_search: true,
-            class: 'w-100',
+            class: 'w-full',
             required: true %>
     <% else %>
       <%= link_to spree.edit_admin_product_variant_path(line_item_fields.object.variant.product, line_item_fields.object.variant), target: '_blank' do %>
@@ -17,7 +17,7 @@
     <% end %>
   </td>
   <td class="w-20">
-    <%= line_item_fields.number_field :quantity, min: 1, max: line_item_fields.object.variant&.total_on_hand, class: 'form-control', required: true %>
+    <%= line_item_fields.number_field :quantity, min: 1, max: line_item_fields.object.variant&.total_on_hand, class: 'form-input', required: true %>
   </td>
   <td class="w-10 text-right">
     <button type="button" class="btn btn-danger btn-sm" data-action="nested-form#remove">

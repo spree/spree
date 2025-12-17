@@ -12,7 +12,8 @@
       "Bash(curl:*)",
       "Bash(bundle exec rake:*)",
       "Bash(bin/importmap:*)",
-      "Bash(ruby -c:*)"
+      "Bash(ruby -c:*)",
+      "Bash(~/.rbenv/versions/3.4.7/lib/ruby/gems/3.4.0/gems/tailwindcss-ruby-4.1.16-arm64-darwin/exe/arm64-darwin/tailwindcss:*)"
     ],
     "deny": []
   }

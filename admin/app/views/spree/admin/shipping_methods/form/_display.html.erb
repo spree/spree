@@ -1,47 +1,10 @@
-<div class="card mb-4">
-  <div class="card-body">
-    <div class="row">
-      <div class="col-lg-6">
-        <div class="form-group">
-          <%= f.label :name, Spree.t(:name) %>
-          <%= f.text_field :name, class: 'form-control', required: true, autofocus: f.object.new_record? %>
-          <%= f.error_message_on :name %>
-        </div>
-
-        <p class="form-text small mt-2">
-          This will be displayed to customers.
-        </p>
-      </div>
-
-      <div class="col-lg-6">
-        <div class="form-group">
-          <%= f.label :display_on %>
-          <%= f.select :display_on, display_on_options, {}, { class: 'custom-select custom-select' } %>
-          <%= f.error_message_on :display_on %>
-        </div>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-lg-6">
-        <div class="form-group">
-          <%= f.label :admin_name, Spree.t(:internal_name) %>
-          <%= f.text_field :admin_name, class: 'form-control' %>
-          <%= f.error_message_on :admin_name %>
-        </div>
-
-        <p class="form-text small mt-2">
-          This will be displayed to admins.
-        </p>
-      </div>
-
-      <div class="col-lg-6">
-        <div class="form-group">
-          <%= f.label :code, Spree.t(:code) %>
-          <%= f.text_field :code, class: 'form-control' %>
-          <%= f.error_message_on :code %>
-        </div>
-      </div>
+<div class="card mb-6">
+  <div class="card-body pb-0">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
+      <%= f.spree_text_field :name, required: true, autofocus: f.object.new_record?, help: 'This will be displayed to customers'  %>
+      <%= f.spree_select :display_on, display_on_options, { label: Spree.t(:display_on) }, { required: true } %>
+      <%= f.spree_text_field :admin_name, label: Spree.t(:internal_name), help: 'This will be displayed to admins' %>
+      <%= f.spree_text_field :code, label: Spree.t(:code)%>
     </div>
   </div>
 </div>

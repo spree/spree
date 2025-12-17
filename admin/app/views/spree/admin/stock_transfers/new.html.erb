@@ -14,10 +14,10 @@
   <%= form_with model: [:admin, @stock_transfer] do |f| %>
     <%= render 'spree/admin/stock_transfers/new_variant_template', f: f %>
     <% stock_locations = available_stock_locations.to_tom_select_json %>
-    <div class="card mb-4">
+    <div class="card mb-12">
       <div class="card-body" >
-        <div class="row">
-          <div class="form-group col-12 col-lg-6">
+        <div class="grid grid-cols-12 gap-6">
+          <div class="form-group col-span-12 lg:col-span-6">
             <%= f.label :source_location_id, Spree.t(:origin), class: 'form-label' %>
             <%= tom_select_tag "stock_transfer[source_location_id]",
               empty_option: Spree.t(:none),
@@ -28,7 +28,7 @@
                 action: 'stock-transfer#updateSourceLocation'
               } %>
           </div>
-          <div class="form-group col-12 col-lg-6">
+          <div class="form-group col-span-12 lg:col-span-6">
             <%= f.label :destination_location_id, Spree.t(:destination), class: 'form-label' %>
             <%= tom_select_tag "stock_transfer[destination_location_id]",
               options: stock_locations,
@@ -42,12 +42,12 @@
         </div>
         <div class="form-group">
           <%= f.label :reference, class: 'form-label' %>
-          <%= f.text_field :reference, class: 'form-control' %>
+          <%= f.text_field :reference, class: 'form-input' %>
         </div>
       </div>
     </div>
-    <div class="card mb-4">
-      <div class="card-header d-flex align-items-center justify-content-between">
+    <div class="card mb-12">
+      <div class="card-header flex items-center justify-between">
         <h5 class="card-title">
           <%= Spree.t(:products) %>
         </h5>
@@ -60,10 +60,10 @@
         </span>
       </div>
       <div class="card-body p-0" style="min-height: 300px">
-        <div class="d-flex flex-column gap-3 overflow-y-auto overflow-x-hidden p-3" style="max-height: 300px">
+        <div class="flex flex-col gap-6 overflow-y-auto overflow-x-hidden p-6" style="max-height: 300px">
           <%= f.fields_for :stock_movements do |smf| %>
             <% if smf.object.errors[:quantity].present? %>
-              <div class="alert alert-danger w-100 mb-0">
+              <div class="alert alert-danger w-full mb-0">
                 <% details = smf.object.errors.details[:quantity].first %>
                 <% error_message = smf.object.errors.generate_message(:quantity, :less_than_or_equal_to, {count: -details[:count], value: details[:value]}) %>
                 <%= smf.object.errors.full_message(:quantity, error_message) %>

@@ -1,7 +1,9 @@
 <% if @page_link.parent.is_a?(Spree::Store) %>
-  <%= turbo_stream.replace spree_dom_id(@page_link) do %>
+  <% unless params[:sorting_only] %>
+    <%= turbo_stream.replace spree_dom_id(@page_link) do %>
       <%= render template: 'spree/admin/page_links/edit' %>
     <% end %>
+  <% end %>
 <% else %>
   <% unless params[:sorting_only] %>
     <%= turbo_stream.replace :page_sidebar do %>

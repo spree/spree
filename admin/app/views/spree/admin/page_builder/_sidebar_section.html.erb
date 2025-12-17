@@ -1,13 +1,13 @@
 <% if section.persisted? %>
   <%= turbo_frame_tag dom_id(section), class: 'list-group-item py-0 border-0 sidebar-page-section draggable rounded-sm',
                                        data: { sortable_update_url: spree.admin_page_section_path(section, format: :turbo_stream) } do %>
-    <div class="d-flex align-items-center justify-content-between sidebar-section-title py-1 rounded"
+    <div class="flex items-center justify-between sidebar-section-title py-1 rounded-xl"
          data-action="mouseover->page-builder#toggleHighlightElement mouseout->page-builder#toggleHighlightElement"
       data-page-builder-editor-id-param="section-<%= section.id %>">
-      <div class="d-flex align-items-center flex-fill py-1 px-2">
+      <div class="flex items-center flex-1 py-1 px-2">
         <%= icon("#{section.icon_name}", height: 18, class: 'mr-2') if section.icon_name.present? %>
         <%= link_to section.display_name, spree.edit_admin_page_section_path(section),
-            class: 'section-edit-link flex-fill font-weight-bold text-dark',
+            class: 'section-edit-link flex-1 font-bold text-gray-900',
             data: {
               turbo_frame: :page_sidebar,
               action: 'click->page-builder#makeOverlayActive',
@@ -15,14 +15,14 @@
             }
         %>
       </div>
-      <div class="d-flex align-items-center d-none">
-        <button class="btn btn-sm pr-0 handle hover-gray-200 h-100 mr-1 px-1 handle-section shadow-none">
+      <div class="flex items-center hidden">
+        <button class="btn btn-sm pr-0 handle hover:bg-gray-100 h-full mr-1 px-1 handle-section shadow-none">
           <%= icon('grip-vertical', class: 'mr-0') %>
         </button>
       </div>
     </div>
     <% if section.blocks_available?  %>
-      <div class="d-flex flex-column ml-1 mb-2">
+      <div class="flex flex-col ml-1 mb-2">
         <%= turbo_frame_tag [:blocks, section.id].join('_'), class: 'list-group-flush' do %>
           <% if section.can_sort_blocks? %>
           <div data-controller="sortable"

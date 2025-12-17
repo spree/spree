@@ -1,12 +1,12 @@
-<%= turbo_frame_tag dom_id(@variant, :shipment_item), class: "border-bottom py-2 px-3 shipment-line-items__row" do %>
+<%= turbo_frame_tag dom_id(@variant, :shipment_item), class: "border-b py-2 px-4 shipment-line-items__row" do %>
   <%= form_with url: transfer_admin_order_shipment_path(@order, @shipment), class: "shipment-line-items__form" do |f| %>
     <%= hidden_field_tag :variant_id, @variant.id %>
-    <div class="d-flex flex-row gap-2 align-items-center w-full form-group mb-0">
-      <%= label_tag :destination, Spree.t(:move_variant_to), class: 'mb-0 text-muted font-size-sm font-weight-bold' %>
-      <%= tom_select_tag :destination, grouped_options: { Spree.t('existing_shipments') => shipments_for_transfer(@shipment), Spree.t('new_shipment_at_location') => stock_locations_for_split(@variant) }, class: "flex-grow-1" %>
+    <div class="flex flex-row gap-2 items-center w-full form-group mb-0">
+      <%= label_tag :destination, Spree.t(:move_variant_to), class: 'mb-0 text-gray-600 text-sm font-bold' %>
+      <%= tom_select_tag :destination, grouped_options: { Spree.t('existing_shipments') => shipments_for_transfer(@shipment), Spree.t('new_shipment_at_location') => stock_locations_for_split(@variant) }, class: "grow" %>
     </div>
-    <%= number_field_tag :quantity, 1, max: @max_quantity, class: "form-control", style: "grid-column-start: quantity", min: 0, data: { test_id: :move_quantity} %>
-    <span class="d-flex justify-content-end align-items-center gap-2 w-100"  style="grid-column: quantity/-1">
+    <%= number_field_tag :quantity, 1, max: @max_quantity, class: "form-input", style: "grid-column-start: quantity", min: 0, data: { test_id: :move_quantity} %>
+    <span class="flex justify-end items-center gap-2 w-full"  style="grid-column: quantity/-1">
       <% if can?(:split, @shipment) %>
         <%= turbo_save_button_tag Spree.t(:move), data: { turbo_frame: '_top' }, type: :submit, class: 'btn btn-primary text-center btn-sm' %>
       <% end %>

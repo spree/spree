@@ -1,11 +1,11 @@
-<%= turbo_frame_tag :set_customer_support_email, class: 'w-100' do %>
+<%= turbo_frame_tag :set_customer_support_email, class: 'w-full' do %>
   <div class="alert alert-info">
     We need your customer support email to display on your storefront.
     This email will work as a contact point for your customers to reach out to you for any queries or support.
   </div>
 
   <% if done %>
-    <p>
+    <p class="mb-3">
       Your customer support email is <strong><%= current_store.customer_support_email %>.</strong>
     </p>
     <%= link_to_with_icon 'edit', Spree.t(:edit), spree.edit_emails_admin_store_path, class: 'btn btn-light' %>
@@ -13,9 +13,9 @@
     <%= form_for current_store, url: spree.admin_store_path, as: :store do |f| %>
       <div class="form-group">
         <%= f.label :customer_support_email, 'Customer support email' %>
-        <%= f.email_field :customer_support_email, class: 'form-control', required: true %>
+        <%= f.email_field :customer_support_email, class: 'form-input', required: true %>
       </div>
-      <div class="d-flex justify-content-between">
+      <div class="flex justify-between">
         <%= turbo_save_button_tag %>
       </div>
     <% end %>

@@ -1,0 +1,14 @@
+/* ==========================================================================
+   PROGRESS & SPINNERS
+   ========================================================================== */
+
+@layer components {
+  /* Progress bar */
+  .progress {
+    @apply flex h-2 overflow-hidden text-xs bg-gray-100 rounded-full;
+  }
+
+  .progress-bar {
+    @apply bg-blue-500 transition-[width] duration-600 ease-out;
+  }
+}

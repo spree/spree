@@ -2,14 +2,7 @@
 <% badge_name ||= label %>
 <% placeholder ||= [Spree.t(:search), controller_name.humanize.downcase].join(' ') %>
 
-<div class="form-control d-flex align-items-center py-0 focus-shadow focus-border flex-grow-1 mb-3 mb-lg-0" id="filters-search-bar">
-  <%= icon "search", class: "mr-3 text-muted" %>
-  <%= search_field_tag "q[#{param}]",
-  params.dig(:q, param),
-  class: "form-control-plaintext px-0",
-  placeholder: placeholder,
-  data: {
-    filters_target: :input,
-    badge_name: badge_name,
-  } %>
+<div class="form-input flex items-center py-0 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-blue-500 grow max-lg:max-w-[300px] mr-auto h-[2.125rem] max-lg:mb-4 transition-all duration-100 ease-in-out" id="filters-search-bar">
+  <%= icon "search", class: "mr-4 text-gray-600" %>
+  <%= search_field_tag "q[#{param}]", params.dig(:q, param), class: "outline-none border-0 h-full focus:border-0 focus:ring-0 p-0 text-base w-full", placeholder: placeholder, data: { filters_target: :input, badge_name: badge_name } %>
 </div>

@@ -1,7 +1,7 @@
 <% if current_store.default_theme %>
-  <div class="card mb-4">
-    <%= link_to spree.edit_admin_theme_path(current_store.default_theme), class: 'd-block border rounded mx-2 mt-2 mb-0 overflow-auto bg-light position-relative store-preview-link', data: { turbo_prefetch: false } do %>
-      <div class="position-absolute w-100 h-100 align-items-center justify-content-center overlay-background store-preview-actions">
+  <div class="card mb-6">
+    <%= link_to spree.edit_admin_theme_path(current_store.default_theme), class: 'block border rounded-lg mx-2 mt-2 mb-0 overflow-auto bg-gray-25 relative store-preview-link hover:shadow-xs transition-shadow duration-200', data: { turbo_prefetch: false } do %>
+      <div class="absolute w-full h-full items-center justify-center hover:opacity-100 opacity-0 transition-opacity duration-200 store-preview-actions">
         <button class="btn btn-primary">
           <%= icon('tools') %>
           <%= Spree.t('admin.edit_theme') %>
@@ -12,18 +12,18 @@
     <% end %>
 
     <div class="card-body px-2 pt-0 pb-2">
-      <div class="flex my-2 p-1 w-100 rounded border">
-        <%= text_field_tag :domain, current_store.url_or_custom_domain, readonly: true, class: 'form-control-plaintext py-0' %>
+      <div class="flex my-2 p-1 w-full rounded-lg border items-center focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-blue-500">
+        <%= text_field_tag :domain, current_store.url_or_custom_domain, readonly: true, class: 'border-none bg-transparent focus:outline-none focus:ring-0 text-base p-1 w-full' %>
         <%= clipboard_component(current_store.url_or_custom_domain) %>
       </div>
 
-      <div class="d-flex gap-2">
-        <%= link_to current_store.formatted_url_or_custom_domain, class: 'btn btn-light w-50', target: '_blank' do %>
+      <div class="flex gap-2">
+        <%= link_to current_store.formatted_url_or_custom_domain, class: 'btn btn-light w-1/2', target: '_blank' do %>
           <%= icon 'eye', class: 'mr-1' %>
           &nbsp;
           <%= Spree.t(:view_store) %>
         <% end %>
-        <%= link_to spree.edit_admin_theme_path(current_store.default_theme), class: 'btn btn-light w-50', data: { turbo_prefetch: false } do %>
+        <%= link_to spree.edit_admin_theme_path(current_store.default_theme), class: 'btn btn-light w-1/2', data: { turbo_prefetch: false } do %>
           <%= icon 'tools', class: 'mr-1' %>
           &nbsp;
           <%= Spree.t('admin.edit_theme') %>
@@ -31,8 +31,8 @@
       </div>
     </div>
     <% unless current_store.default_custom_domain&.active? %>
-      <div class="card-footer border-top p-2">
-        <%= link_to_with_icon 'world-www', 'Connect your own domain', spree.admin_custom_domains_path, class: 'btn btn-secondary w-100 py-2' %>
+      <div class="card-footer border-t p-2">
+        <%= link_to_with_icon 'world-www', 'Connect your own domain', spree.admin_custom_domains_path, class: 'btn btn-secondary w-full py-2' %>
       </div>
     <% end %>
   </div>

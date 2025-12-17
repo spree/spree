@@ -5,8 +5,8 @@
 
 <% if image.present? && image.attached? && image.variable? %>
   <% alt ||= image.alt || object.name %>
-  <div class="admin-product-image-container">
-    <%= spree_image_tag(image, variant: variant, alt: alt, width: width, height: height) %>
+  <div class="overflow-hidden rounded-md border border-gray-300" style="width: <%= width %>px; height: <%= height %>px;">
+    <%= spree_image_tag(image, variant: variant, width: width, height: height, alt: alt, class: 'object-cover transition-transform duration-300 ease-out hover:scale-120') %>
   </div>
 <% else %>
   <%= render 'spree/admin/shared/no_image', width: width, height: height %>

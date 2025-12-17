@@ -1,22 +1,22 @@
 <%= turbo_stream.update :dialog do %>
   <%= form_for @address, url: spree.admin_order_billing_address_path(@order), data: {controller: 'auto-submit', form_target: 'form', turbo_frame: :_top}, method: :put do |f| %>
     <%= dialog_header(Spree.t(:update_billing_address)) %>
-    <div class="dialog-body d-flex flex-col gap-3" data-controller="order-billing-address">
+    <div class="dialog-body flex flex-col gap-4" data-controller="order-billing-address">
       <div>
         <% if @order.shipping_address.present? %>
-          <%= label_tag nil, class: 'form-control custom-radio' do %>
+          <%= label_tag nil, class: 'custom-radio' do %>
             <%= radio_button_tag :billing_address_type, :same_as_shipping, true, class: 'custom-control-input', data: {action: 'order-billing-address#hideForms'} %>
-            <span class="custom-control-label ml-4"><%= Spree.t(:same_as_shipping_address) %></span>
+            <span class="custom-control-label"><%= Spree.t(:same_as_shipping_address) %></span>
           <% end %>
         <% end %>
-        <%= label_tag nil, class: 'form-control custom-radio' do %>
+        <%= label_tag nil, class: 'custom-radio' do %>
           <%= radio_button_tag :billing_address_type, :new, !@order.shipping_eq_billing_address?, class: 'custom-control-input', data: {action: 'order-billing-address#showForm', order_billing_address_form_name_param: "new_address"} %>
-          <span class="custom-control-label ml-4"><%= Spree.t(:update_address) %></span>
+          <span class="custom-control-label"><%= Spree.t(:update_address) %></span>
         <% end %>
         <% if @order.user.present? && @order.user.addresses.many? %>
-          <%= label_tag nil, class: 'form-control custom-radio' do %>
+          <%= label_tag nil, class: 'custom-radio' do %>
             <%= radio_button_tag :billing_address_type, :existing, false, class: 'custom-control-input', data: {action: 'order-billing-address#showForm', order_billing_address_form_name_param: "existing_address"} %>
-            <span class="custom-control-label ml-4"><%= Spree.t(:select_existing_address) %></span>
+            <span class="custom-control-label"><%= Spree.t(:select_existing_address) %></span>
           <% end %>
         <% end %>
       </div>

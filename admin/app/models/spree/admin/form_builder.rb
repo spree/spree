@@ -19,7 +19,7 @@ module Spree
       #
       # @param method [Symbol] the field name
       # @param options [Hash] field options including:
-      #   - :class [String] CSS classes (defaults to 'form-control')
+      #   - :class [String] CSS classes (defaults to 'form-input')
       #   - :label [String, Boolean] label text or false to hide label
       #   - :required [Boolean] whether field is required
       #   - :help [String] help text to display below the field
@@ -28,12 +28,20 @@ module Spree
       #   - :append [String] text to append after the input field
       # @return [String] HTML string containing the complete form group
       def spree_text_field(method, options = {})
-        options[:class] ||= 'form-control'
+        options[:class] ||= 'form-input'
         prepend = options.delete(:prepend)
         append = options.delete(:append)
 
+        if prepend.present? || append.present?
+          options[:class] = 'border-0 focus:ring-0 focus:outline-none text-base grow'
+
+          if prepend.present?
+            options[:class] += ' pl-0'
+          end
+        end
+
         @template.content_tag(:div, class: 'form-group') do
-          @template.label(@object_name, method, get_label(method, options)) +
+          spree_label(method, options) +
             wrap_with_input_group(@template.text_field(@object_name, method, objectify_options(options)), prepend, append) +
             @template.error_message_on(@object_name, method) + spree_field_help(method, options.merge(class: 'form-text mt-2'))
         end
@@ -45,12 +53,16 @@ module Spree
       # @param options [Hash] field options (see {#spree_text_field} for available options)
       # @return [String] HTML string containing the complete form group
       def spree_number_field(method, options = {})
-        options[:class] ||= 'form-control'
+        options[:class] ||= 'form-input'
         prepend = options.delete(:prepend)
         append = options.delete(:append)
 
+        if prepend.present? || append.present?
+          options[:class] ||= 'border-0 focus:ring-0 focus:outline-none'
+        end
+
         @template.content_tag(:div, class: 'form-group') do
-          @template.label(@object_name, method, get_label(method, options)) +
+          spree_label(method, options) +
             wrap_with_input_group(@template.number_field(@object_name, method, objectify_options(options)), prepend, append) +
             @template.error_message_on(@object_name, method) + spree_field_help(method, options.merge(class: 'form-text mt-2'))
         end
@@ -62,9 +74,9 @@ module Spree
       # @param options [Hash] field options (see {#spree_text_field} for available options)
       # @return [String] HTML string containing the complete form group
       def spree_email_field(method, options = {})
-        options[:class] ||= 'form-control'
+        options[:class] ||= 'form-input'
         @template.content_tag(:div, class: 'form-group') do
-          @template.label(@object_name, method, get_label(method, options)) +
+          spree_label(method, options) +
             @template.email_field(@object_name, method, objectify_options(options)) +
             @template.error_message_on(@object_name, method) + spree_field_help(method, options.merge(class: 'form-text mt-2'))
         end
@@ -76,9 +88,9 @@ module Spree
       # @param options [Hash] field options (see {#spree_text_field} for available options)
       # @return [String] HTML string containing the complete form group
       def spree_date_field(method, options = {})
-        options[:class] ||= 'form-control'
+        options[:class] ||= 'form-input'
         @template.content_tag(:div, class: 'form-group') do
-          @template.label(@object_name, method, get_label(method, options)) +
+          spree_label(method, options) +
             @template.date_field(@object_name, method, objectify_options(options)) +
             @template.error_message_on(@object_name, method) + spree_field_help(method, options.merge(class: 'form-text mt-2'))
         end
@@ -90,9 +102,9 @@ module Spree
       # @param options [Hash] field options (see {#spree_text_field} for available options)
       # @return [String] HTML string containing the complete form group
       def spree_datetime_field(method, options = {})
-        options[:class] ||= 'form-control'
+        options[:class] ||= 'form-input'
         @template.content_tag(:div, class: 'form-group') do
-          @template.label(@object_name, method, get_label(method, options)) +
+          spree_label(method, options) +
             @template.datetime_field(@object_name, method, objectify_options(options)) +
             @template.error_message_on(@object_name, method) + spree_field_help(method, options.merge(class: 'form-text mt-2'))
         end
@@ -102,18 +114,18 @@ module Spree
       #
       # @param method [Symbol] the field name
       # @param options [Hash] field options including:
-      #   - :class [String] CSS classes (defaults to 'form-control')
+      #   - :class [String] CSS classes (defaults to 'form-input')
       #   - :rows [Integer] number of rows (defaults to 5)
       #   - :data [Hash] data attributes (defaults to textarea-autogrow controller)
       #   - other options from {#spree_text_field}
       # @return [String] HTML string containing the complete form group
       def spree_text_area(method, options = {})
         @template.content_tag(:div, class: 'form-group') do
-          options[:class] ||= 'form-control'
+          options[:class] ||= 'form-input'
           options[:rows] ||= 5
           options[:data] ||= { controller: 'textarea-autogrow' }
 
-          @template.label(@object_name, method, get_label(method, options)) +
+          spree_label(method, options) +
             @template.text_area(@object_name, method, objectify_options(options)) +
             @template.error_message_on(@object_name, method) + spree_field_help(method, options.merge(class: 'form-text mt-2'))
         end
@@ -126,7 +138,7 @@ module Spree
       # @return [String] HTML string containing the complete form group with Trix editor
       def spree_rich_text_area(method, options = {})
         @template.content_tag(:div, class: 'form-group') do
-          @template.label(@object_name, method, get_label(method, options)) +
+          spree_label(method, options) +
             @template.content_tag(:div, class: 'trix-container') do
               @template.rich_text_area(@object_name, method, objectify_options(options))
             end +
@@ -149,11 +161,11 @@ module Spree
           html_options[:data] ||= {}
           html_options[:data][:controller] ||= 'autocomplete-select'
         else
-          html_options[:class] ||= 'custom-select'
+          html_options[:class] ||= 'form-select'
         end
 
         @template.content_tag(:div, class: 'form-group') do
-          @template.label(@object_name, method, get_label(method, options)) +
+          spree_label(method, options) +
             @template.select(@object_name, method, choices, objectify_options(options), html_options, &block) +
             @template.error_message_on(@object_name, method) + spree_field_help(method, options.merge(class: 'form-text mt-2'))
         end
@@ -175,11 +187,11 @@ module Spree
           html_options[:data] ||= {}
           html_options[:data][:controller] ||= 'autocomplete-select'
         else
-          html_options[:class] ||= 'custom-select'
+          html_options[:class] ||= 'form-select'
         end
 
         @template.content_tag(:div, class: 'form-group') do
-          @template.label(@object_name, method, get_label(method, options)) +
+          spree_label(method, options) +
             @template.collection_select(@object_name, method, collection, value_method, text_method, objectify_options(options), html_options) +
             @template.error_message_on(@object_name, method) + spree_field_help(method, options.merge(class: 'form-text mt-2'))
         end
@@ -192,10 +204,11 @@ module Spree
       # @return [String] HTML string containing the complete form group with custom checkbox
       def spree_check_box(method, options = {})
         @template.content_tag(:div, class: 'form-group') do
-          @template.content_tag(:div, class: 'custom-control custom-checkbox') do
-            @template.check_box(@object_name, method, objectify_options(options.merge(class: 'custom-control-input'))) +
-            @template.label(@object_name, method, get_label(method, options), class: 'custom-control-label')
-          end + @template.error_message_on(@object_name, method) + spree_field_help(method, options.merge!(class: 'form-text mt-2 ml-4'))
+          @template.content_tag(:div, class: 'form-checkbox') do
+            checkbox = @template.check_box(@object_name, method, objectify_options(options.merge(class: 'custom-control-input')))
+            label = options[:label] == false ? ''.html_safe : @template.label(@object_name, method, get_label(method, options), class: 'custom-control-label')
+            checkbox + label
+          end + @template.error_message_on(@object_name, method) + spree_field_help(method, options.merge!(class: 'form-text mt-2 ml-6 pl-1'))
         end
       end
 
@@ -210,8 +223,9 @@ module Spree
       def spree_radio_button(method, tag_value, options = {})
         @template.content_tag(:div, class: 'form-group') do
           @template.content_tag(:div, class: 'custom-control custom-radio') do
-            @template.radio_button(@object_name, method, tag_value, objectify_options(options.merge(class: 'custom-control-input'))) +
-              @template.label(@object_name, method, get_label(method, options), class: 'custom-control-label', for: options[:id])
+            radio = @template.radio_button(@object_name, method, tag_value, objectify_options(options.merge(class: 'custom-control-input form-radio')))
+            label = options[:label] == false ? ''.html_safe : @template.label(@object_name, method, get_label(method, options), class: 'custom-control-label', value: tag_value)
+            radio + label
           end + @template.error_message_on(@object_name, method) + spree_field_help(method, options.merge(class: 'form-text mt-2'))
         end
       end
@@ -230,9 +244,9 @@ module Spree
       # @return [String] HTML string containing the complete form group with direct file upload field
       def spree_file_field(method, options = {})
         @template.content_tag(:div, class: 'form-group') do
-          @template.label(@object_name, method, get_label(method, options)) +
-          @template.render('active_storage/upload_form', form: self, field_name: method, **options) +
-          @template.error_message_on(@object_name, method) + spree_field_help(method, options.merge(class: 'form-text mt-2'))
+          spree_label(method, options) +
+            @template.render('active_storage/upload_form', form: self, field_name: method, **options) +
+            @template.error_message_on(@object_name, method) + spree_field_help(method, options.merge(class: 'form-text mt-2'))
         end
       end
 
@@ -249,17 +263,29 @@ module Spree
         @template.content_tag(:span, options[:help], class: options[:class])
       end
 
-      # Generate the label for a field with required indicator and help bubble
+      # Generate the label element for a field with required indicator and help bubble
       #
       # @param method [Symbol] the field name
       # @param options [Hash] field options
       # @option options [String, Boolean] :label label text or false to hide label
       # @option options [Boolean] :required whether field is required
       # @option options [String] :help_bubble help bubble text
-      # @return [String] HTML string containing the complete label
-      def get_label(method, options)
-        return '' if options[:label] == false
+      # @return [String] HTML string containing the complete label element or empty string
+      def spree_label(method, options)
+        return ''.html_safe if options[:label] == false
 
+        @template.label(@object_name, method, get_label(method, options))
+      end
+
+      # Generate the label content for a field with required indicator and help bubble
+      #
+      # @param method [Symbol] the field name
+      # @param options [Hash] field options
+      # @option options [String, Boolean] :label label text
+      # @option options [Boolean] :required whether field is required
+      # @option options [String] :help_bubble help bubble text
+      # @return [String] HTML string containing the label content
+      def get_label(method, options)
         translated_label = if options[:label]
                               options[:label]
                             elsif I18n.exists?("spree.#{method}")
@@ -286,17 +312,13 @@ module Spree
 
         @template.content_tag(:div, class: 'input-group') do
           prepend_html = if prepend.present?
-                           @template.content_tag(:div, class: 'input-group-prepend') do
-                             @template.content_tag(:span, prepend, class: 'input-group-text')
-                           end
+                           @template.content_tag(:div, prepend, class: 'pl-3 text-gray-400')
                          else
                            ''.html_safe
                          end
 
           append_html = if append.present?
-                          @template.content_tag(:div, class: 'input-group-append') do
-                            @template.content_tag(:span, append, class: 'input-group-text')
-                          end
+                          @template.content_tag(:div, append, class: 'px-3')
                         else
                           ''.html_safe
                         end

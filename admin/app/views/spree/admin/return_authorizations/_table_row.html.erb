@@ -21,7 +21,7 @@
   <td data-action="click->row-link#openLink">
     <%= link_to return_authorization.number,
     return_url,
-    class: "font-weight-bold",
+    class: "font-bold",
     data: {
       row_link_target: :link,
     } %>
@@ -29,7 +29,7 @@
   <td data-action="click->row-link#openLink">
     <%= link_to spree_time_ago(return_authorization.created_at),
     return_url,
-    class: "text-dark" %>
+    class: "text-gray-900" %>
   </td>
   <td data-action="click->row-link#openLink">
     <%= render "spree/admin/orders/customer_summary", order: return_authorization.order %>

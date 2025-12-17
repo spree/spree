@@ -5,7 +5,7 @@
 <% end %>
 
 <% if resource.option_values.any? %>
-  <tr class="bg-light">
+  <tr class="bg-gray-25">
     <th colspan="3"><%= Spree.t(:option_values) %></th>
   </tr>
 
@@ -14,7 +14,7 @@
       <tr>
         <td><%= Spree.t(field) %></td>
         <td><%= ff.object.send(field) %></td>
-        <td><%= ff.text_field "#{field}_#{locale}", class: 'form-control' %></td>
+        <td><%= ff.text_field "#{field}_#{locale}", class: 'form-input' %></td>
       </tr>
     <% end %>
   <% end %>

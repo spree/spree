@@ -4,29 +4,28 @@
     <%= render "spree/admin/shared/head" %>
   </head>
 
-  <body class="admin admin-wizard min-vh-100 <%= controller_name %> <%= action_name %>"
+  <body class="admin min-h-screen <%= controller_name %> <%= action_name %>"
     data-controller="admin drawer dialog"
     data-action="keydown.ctrl+s->admin#save keydown.meta+s->admin#save"
   >
     <%= render_admin_partials(:body_start_partials) %>
 
-    <header id="header" class="d-flex align-items-center p-0">
-      <%= render 'spree/admin/shared/back_to_dashboard' %>
+    <header class="flex items-center border-b border-gray-200">
+      <%= link_to_with_icon 'arrow-back', Spree.t('admin.back_to_dashboard'), spree.admin_path, class: 'hover:bg-gray-100 flex justify-start gap-2 px-8 no-underline h-16 items-center' %>
 
       <% if content_for?(:steps) %>
-        <ol class="d-flex align-items-center list-unstyled flex-grow-1 justify-content-between align-items-center m-0" style="height: 60px;" id="steps">
+        <ol class="flex items-center list-none p-0 grow justify-between h-16 border-l border-gray-200" id="steps">
           <%= yield :steps %>
         </ol>
       <% end %>
     </header>
 
-    <main class="pb-5">
+    <main class="pb-12">
       <%= yield %>
     </main>
     
     <%= render 'spree/admin/shared/drawer' %>
     <%= render "spree/admin/shared/dialog" %>
-    <%= render "spree/admin/shared/modal" %>
     <%= render "spree/admin/shared/alerts" %>
 
     <%= render_admin_partials(:body_end_partials) %>

@@ -11,12 +11,12 @@
   <%= turbo_save_button_tag Spree.t('actions.update'), form: "edit_store_#{@store.id}" %>
 <% end %>
 
-<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @store }, class: 'mb-5 pb-5' %>
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @store }, class: 'mb-12 pb-12' %>
 
 <%= form_for @store, url: spree.admin_storefront_path, method: :patch do |f| %>
-  <div class="row">
-    <div class="col-lg-6 offset-lg-3">
-      <div class="card mb-4">
+  <div class="grid grid-cols-12 gap-16">
+    <div class="col-span-12 lg:col-span-6 lg:col-start-4">
+      <div class="card mb-6">
         <div class="card-header">
           <h5 class="card-title">
             <%= Spree.t(:seo) %>
@@ -29,21 +29,21 @@
         </div>
       </div>
 
-      <div class="card mb-4">
+      <div class="card mb-6">
         <div class="card-header">
           <h5 class="card-title">
             <%= Spree.t(:security) %>
           </h5>
         </div>
-        <div class="card-body" data-controller="reveal" data-reveal-hidden-class="d-none">
+        <div class="card-body" data-controller="reveal" data-reveal-hidden-class="hidden">
           <%= f.spree_check_box :preferred_password_protected, label: Spree.t(:password_protected), help: 'Checking this box will put your storefront behind a password.', data: { action: 'reveal#toggle' } %>
-          <div class="d-none" data-reveal-target="item">
+          <div class="hidden" data-reveal-target="item">
             <%= f.spree_text_field :storefront_password, label: Spree.t(:password), help: 'Enter a password to protect your storefront.' %>
           </div>
         </div>
       </div>
 
-      <div class="card mb-4">
+      <div class="card mb-6">
         <div class="card-header">
           <h5 class="card-title">
             <%= Spree.t(:custom_code) %>
@@ -56,7 +56,7 @@
         </div>
       </div>
 
-      <div class="card mb-4">
+      <div class="card mb-6">
         <div class="card-header">
           <h5 class="card-title">
             <%= Spree.t(:images) %>
@@ -69,7 +69,7 @@
         </div>
       </div>
 
-      <div class="card mb-4">
+      <div class="card mb-6">
         <div class="card-header">
           <h5 class="card-title">
             <%= Spree.t(:social_media) %>

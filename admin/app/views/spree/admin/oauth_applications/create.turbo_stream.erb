@@ -1,28 +1,28 @@
 <%= turbo_stream.replace "new_oauth_application" do %>
-  <div class="row">
-    <div class="col-lg-6 offset-lg-3">
+  <div class="grid grid-cols-12 gap-6">
+    <div class="col-span-12 lg:col-span-6 lg:col-start-4">
       <div class="card">
         <div class="card-body">
           <div class="form-group">
             <%= label_tag :client_id, Spree.t('admin.oauth_applications.client_id') %>
-            <div class="d-flex gap-2 align-items-center">
-              <%= text_field_tag :client_id, @object.uid, class: 'form-control-plaintext bg-light rounded', readonly: true %>
+            <div class="flex gap-2 items-center">
+              <%= text_field_tag :client_id, @object.uid, class: 'form-input-plaintext bg-gray-25 rounded', readonly: true %>
               <%= clipboard_component(@object.uid) %>
             </div>
           </div>
 
           <div class="form-group">
             <%= label_tag :client_secret, Spree.t('admin.oauth_applications.client_secret') %>
-            <div class="d-flex gap-2 align-items-center">
-              <%= text_field_tag :client_secret, @object.plaintext_secret, class: 'form-control-plaintext bg-light rounded', readonly: true %>
+            <div class="flex gap-2 items-center">
+              <%= text_field_tag :client_secret, @object.plaintext_secret, class: 'form-input-plaintext bg-gray-25 rounded', readonly: true %>
               <%= clipboard_component(@object.plaintext_secret) %>
             </div>
-            <div class="alert alert-warning mt-3">
+            <div class="alert alert-warning mt-6">
               This is your application's secret token, copy it now and keep it safe. It won't be shown again.
             </div>
           </div>
         </div>
-        <div class="card-footer border-top">
+        <div class="card-footer border-t">
           <%= link_to 'Back to list', spree.admin_oauth_applications_url, class: 'btn btn-light' %>
         </div>
       </div>

@@ -1,16 +1,16 @@
-<%= turbo_frame_tag dom_id(item.variant, :shipment_item), class: "border-bottom py-2 px-3 shipment-line-items__row" do %>
+<%= turbo_frame_tag dom_id(item.variant, :shipment_item), class: "border-b py-2 px-4 shipment-line-items__row" do %>
   <%= render 'spree/admin/variants/variant', variant: item.variant %>
-  <span class="d-flex align-items-center justify-content-center"><%= item.line_item.single_money.to_html %></span>
-  <span class="d-flex align-items-center justify-content-center">
+  <span class="flex items-center justify-center"><%= item.line_item.single_money.to_html %></span>
+  <span class="flex items-center justify-center">
     <% item.states.each do |state,count| %>
       <%= count %> x <%= Spree.t(state).downcase %>
     <% end %>
   </span>
-  <span class="d-flex align-items-center justify-content-center">
+  <span class="flex items-center justify-center">
     <%= line_item_shipment_price(item.line_item, item.quantity) %>
   </span>
   <% if can?(:split, shipment) %>
-    <span class="d-flex align-items-center justify-content-end">
+    <span class="flex items-center justify-end">
       <%= link_to_with_icon 'arrows-split', Spree.t(:split), spree.split_admin_order_shipment_path(@order, shipment, variant_id: item.variant), class: "btn btn-sm btn-light", no_text: true, data: { test_id: :split_item } %>
     </span>
   <% end %>

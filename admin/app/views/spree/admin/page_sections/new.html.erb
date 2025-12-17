@@ -1,28 +1,26 @@
 <%= turbo_frame_tag :page_sidebar do %>
   <h6 class="sidebar-header">
-    <%= link_to collection_url, data: { action: 'click->page-builder#clearActiveOverlays' }, class: 'btn hover-gray shadow-none px-2' do %>
+    <%= link_to collection_url, data: { action: 'click->page-builder#clearActiveOverlays' }, class: 'btn hover:bg-gray-100 shadow-none px-2' do %>
       <%= icon 'chevron-left', class: 'mr-0 back' %>
     <% end %>
     <%= Spree.t(:add_section) %>
   </h6>
-  <div class="pb-5 mb-5 edit-block">
+  <div class="pb-12 mb-12 edit-block">
     <%= form_for @page_preview.sections.new, url: spree.admin_page_sections_path(@page_preview), data: { controller: 'section-form', section_form_target: :form } do |f| %>
       <%= f.hidden_field :type, data: { section_form_target: 'type' } %>
       <%= f.hidden_field :pageable_id %>
       <%= f.hidden_field :pageable_type %>
-      <% cache spree_base_cache_scope.call('new-section-list'), expires_in: 1.hour do %>
-        <ul class="list-group list-group-flush m-2 mx-3 border p-1 rounded-lg bg-white">
-          <% @theme.available_page_sections.each do |section_class| %>
-            <li class="list-group-item p-2 list-group-item-action cursor-pointer d-flex align-items-center hover-action text-primary"
-              data-action="click->section-form#addSection"
-              data-section-form-type-param="<%= section_class %>"
-            >
-              <%= icon section_class.new.icon_name, class: 'mr-3' if section_class.new.icon_name.present? %>
-              <%= section_class.to_s.demodulize.titleize %>
-            </li>
-          <% end %>
-        </ul>
-      <% end %>
+      <div class="flex flex-col gap-1 p-3">
+        <% @theme.available_page_sections.each do |section_class| %>
+          <button class="cursor-pointer flex items-center gap-4 hover:bg-gray-100 p-2 rounded-lg focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-blue-500"
+            data-action="click->section-form#addSection keydown.enter->section-form#addSection"
+            data-section-form-type-param="<%= section_class %>"
+          >
+            <%= icon section_class.new.icon_name if section_class.new.icon_name.present? %>
+            <%= section_class.to_s.demodulize.titleize %>
+          </button>
+        <% end %>
+      </ul>
     <% end %>
   </div>
 <% end %>

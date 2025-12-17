@@ -1,0 +1,21 @@
+/* ==========================================================================
+   SEO FORM
+   ========================================================================== */
+
+@layer components {
+  .seo-form .card-body {
+    @apply gap-4;
+  }
+
+  .seo-form .seo__preview {
+    @apply gap-0.5;
+  }
+
+  .seo-form .seo__preview__title {
+    color: #1a0dab;
+  }
+
+  .seo-form .seo__preview__link {
+    color: #006625;
+  }
+}

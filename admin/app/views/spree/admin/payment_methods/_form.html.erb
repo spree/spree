@@ -3,7 +3,7 @@
 <% end %>
 
 <% if !preference_fields(@object, f).empty? || @object.respond_to?(:custom_form_fields_partial_name) %>
-  <div class="card mb-4">
+  <div class="card mb-6">
     <div class="card-header">
       <h5 class="card-title"><%= Spree.t(:payment_provider_settings) %></h5>
     </div>
@@ -17,7 +17,7 @@
   </div>
 <% end %>
 
-<div class="card mb-4">
+<div class="card mb-6">
   <div class="card-header">
     <h5 class="card-title"><%= Spree.t(:display_settings) %></h5>
   </div>
@@ -28,7 +28,7 @@
       <div class="form-group">
         <%= label_tag :payment_method_stores, Spree.t(:stores) %>
         <%= f.collection_check_boxes :store_ids, available_stores, :id, :name do |b| %>
-          <div class="custom-control custom-checkbox mb-1">
+          <div class="custom-control form-checkbox mb-1">
             <%= b.check_box(class: 'custom-control-input') %>
             <%= b.label(class: 'custom-control-label') %>
           </div>

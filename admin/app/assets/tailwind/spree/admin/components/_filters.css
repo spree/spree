@@ -1,0 +1,83 @@
+/* ==========================================================================
+   FILTERS
+   ========================================================================== */
+
+@layer components {
+  .filter-wrap {
+    @apply sticky bg-white border-b border-gray-200 rounded-t-2xl;
+    padding: 0.55rem;
+    gap: 0.55rem;
+    top: var(--spacing-header-height);
+    z-index: 1000;
+  }
+
+  .filter-wrap .btn {
+    height: 2.125rem;
+  }
+
+
+  #table-filter {
+    @apply absolute p-4 rounded-2xl shadow-dropdown bg-white mt-2 right-2 w-full overflow-y-auto;
+    animation: fadeIn 0.2s ease-in-out;
+    z-index: 1050;
+    max-height: calc(100vh - var(--spacing-header-height) - 4rem);
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @media (min-width: 768px) {
+    #table-filter {
+      @apply w-1/2 flex-col;
+    }
+  }
+
+  #table-filter.hidden,
+  #table-filter.d-none {
+    @apply !hidden;
+  }
+
+  .collapsed .arrow {
+    @apply -rotate-90 transition-transform duration-300 ease-in-out;
+  }
+
+  i.js-delete-filter {
+    @apply mb-0;
+  }
+
+  .sort_link {
+    @apply text-gray-600 px-1 rounded-sm inline-flex items-center justify-center;
+  }
+
+  .sort_link:hover {
+    @apply text-zinc-950! no-underline! bg-gray-50;
+  }
+
+  .sort_link.asc,
+  .sort_link.desc {
+    @apply font-medium;
+  }
+
+  .sort_link.asc svg,
+  .sort_link.desc svg {
+    @apply text-gray-600!;
+  }
+
+  .sort_link .icon,
+  .sort_link svg {
+    margin-left: 5px;
+    margin-bottom: 2px;
+    width: 0.8rem;
+    height: 0.8rem;
+  }
+
+  .sort_link svg.default-filter-arrow {
+    @apply opacity-30;
+  }
+
+  .filter-badges-container:has(*) {
+    @apply mt-4 flex gap-2 flex-wrap;
+  }
+}

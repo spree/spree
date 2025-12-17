@@ -1,23 +1,23 @@
-<div class="row row-cols-1 row-cols-md-2">
-  <div class="col mb-4">
-    <div class="card h-100">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+  <div class="col mb-6">
+    <div class="card h-full">
       <div class="card-header">
         <h5 class="card-title">
           Where are visitors coming from?
         </h5>
       </div>
       <% if @top_referrers.any? %>
-        <ul class="list-group list-group-flush small rounded-0">
+        <ul class="list-group list-group-flush small rounded-none">
           <% @top_referrers.each do |referrer| %>
-            <li class="list-group-item d-flex justify-content-between hover-light">
+            <li class="list-group-item flex justify-between hover:bg-gray-25">
               <span><%= referrer.first %></span>
               <span><%= referrer.second %></span>
             </li>
           <% end %>
         </ul>
       <% else %>
-        <p class="m-5 text-center text-muted">
-          <%= icon 'share', height: 50, class: 'mb-3', style: 'opacity: 0.5' %>
+        <p class="m-12 text-center text-gray-600">
+          <%= icon 'share', height: 50, class: 'mb-4', style: 'opacity: 0.5' %>
           <br />
           <strong>No data</strong>
           <br />
@@ -26,25 +26,25 @@
       <% end %>
     </div>
   </div>
-  <div class="col mb-4">
-    <div class="card h-100">
+  <div class="col mb-6">
+    <div class="card h-full">
       <div class="card-header">
         <h5 class="card-title">
           Top landing pages
         </h5>
       </div>
       <% if @top_landing_pages.any? %>
-        <ul class="list-group list-group-flush small rounded-0">
+        <ul class="list-group list-group-flush small rounded-none">
           <% @top_landing_pages.each do |landing_page| %>
-            <li class="list-group-item d-flex justify-content-between hover-light">
+            <li class="list-group-item flex justify-between hover:bg-gray-25">
               <span><%= landing_page.first %></span>
               <span><%= landing_page.second %></span>
             </li>
           <% end %>
         </ul>
       <% else %>
-        <p class="m-5 text-center text-muted">
-          <%= icon 'pointer', height: 50, class: 'mb-3', style: 'opacity: 0.5' %>
+        <p class="m-12 text-center text-gray-600">
+          <%= icon 'pointer', height: 50, class: 'mb-4', style: 'opacity: 0.5' %>
           <br />
           <strong>No data</strong>
           <br />
@@ -53,17 +53,17 @@
       <% end %>
     </div>
   </div>
-  <div class="col mb-4">
-    <div class="card h-100">
+  <div class="col mb-6">
+    <div class="card h-full">
       <div class="card-header">
         <h5 class="card-title">
           Visitor location
         </h5>
       </div>
       <% if @top_locations.any? %>
-        <ul class="list-group list-group-flush small rounded-0">
+        <ul class="list-group list-group-flush small rounded-none">
           <% @top_locations.each do |location| %>
-            <li class="list-group-item d-flex justify-content-between hover-light">
+            <li class="list-group-item flex justify-between hover:bg-gray-25">
               <% cache [*spree_base_cache_key, "visits-country/#{location.first}"] do %>
                 <span>
                   <span class="mr-1">
@@ -77,8 +77,8 @@
           <% end %>
         </ul>
       <% else %>
-        <p class="m-5 text-center text-muted">
-          <%= icon 'world', height: 50, class: 'mb-3', style: 'opacity: 0.5' %>
+        <p class="m-12 text-center text-gray-600">
+          <%= icon 'world', height: 50, class: 'mb-4', style: 'opacity: 0.5' %>
           <br />
           <strong>No data</strong>
           <br />
@@ -87,7 +87,7 @@
       <% end %>
     </div>
   </div>
-  <div class="col mb-4">
+  <div class="col mb-6">
     <div class="card">
       <div class="card-header">
         <h5 class="card-title">
@@ -99,8 +99,8 @@
           <%= pie_chart @top_devices, legend: "bottom", suffix: "%" %>
         </div>
       <% else %>
-        <p class="m-5 text-center text-muted">
-          <%= icon 'device-mobile', height: 50, class: 'mb-3', style: 'opacity: 0.5' %>
+        <p class="m-12 text-center text-gray-600">
+          <%= icon 'device-mobile', height: 50, class: 'mb-4', style: 'opacity: 0.5' %>
           <br />
           <strong>No data</strong>
           <br />

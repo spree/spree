@@ -6,6 +6,10 @@
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @integration } %>
 
 <%= form_for @integration, as: :integration, url: spree.admin_integration_path(@integration) do |form| %>
-  <%= render "spree/admin/integrations/forms/#{@integration.key}", form: form %>
-  <%= render 'spree/admin/shared/edit_resource_links', f: form %>
+  <div class="grid grid-cols-12 gap-6">
+    <div class="col-span-12 lg:col-span-6 lg:col-start-4">
+      <%= render "spree/admin/integrations/forms/#{@integration.key}", form: form %>
+      <%= render 'spree/admin/shared/edit_resource_links', f: form %>
+    </div>
+  </div>
 <% end %>

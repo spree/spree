@@ -30,7 +30,6 @@ namespace :common do
     Spree::DummyGenerator.start dummy_app_args
 
     unless skip_javascript
-      system('bundle add sprockets-rails') # we need this until we will remove bootstrap/popper_js gems
       system('bundle exec rails importmap:install turbo:install stimulus:install')
     end
 
@@ -53,11 +52,6 @@ namespace :common do
       "--authentication=#{args[:authentication]}"
     ]
 
-    if !skip_javascript || ENV['LIB_NAME'] == 'spree/emails'
-      puts 'Precompiling assets...'
-      system('bundle exec rake assets:precompile > /dev/null 2>&1')
-    end
-
     unless ENV['NO_MIGRATE']
       puts 'Setting up dummy database...'
       system('bundle exec rails db:environment:set RAILS_ENV=test > /dev/null 2>&1')
@@ -77,6 +71,13 @@ namespace :common do
       end
     rescue LoadError
       puts 'Skipping installation no generator to run...'
+    end
+
+    # Precompile assets after all generators have run
+    # This ensures CSS entry points (like Spree Admin's Tailwind CSS) are created first
+    if !skip_javascript || ENV['LIB_NAME'] == 'spree/emails'
+      puts 'Precompiling assets...'
+      system('bundle exec rake assets:precompile')
     end
   end
 

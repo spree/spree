@@ -8,8 +8,8 @@
         <i class="ti ti-grip-vertical"></i>
       </button>
     <% end %>
-    <div class="w-100">
-      <div class="d-flex justify-content-between">
+    <div class="w-full">
+      <div class="flex justify-between">
         <h6 data-slot="optionName"></h6>
         <% if can?(:manage_option_types, @product) %>
           <button class="btn btn-light btn-sm" type="button" data-action="variants-form#editOption" data-variants-form-option-id-param=""><%= Spree.t(:edit) %></button>
@@ -20,8 +20,8 @@
   </div>
 </template>
 <template data-variants-form-target="optionFormTemplate">
-  <div class="options-creator__option options-creator__option--form" data-slot="optionForm">
-    <div class="w-100">
+  <div class="options-creator__option options-creator__option--form border-b border-gray-100 mb-4 pb-4" data-slot="optionForm">
+    <div class="w-full">
       <div class="form-group">
         <label class="label" for="option_name"><%= Spree.t(:option_name) %></label>
         <%= tom_select_tag :option_name,
@@ -35,7 +35,7 @@
       </div>
       <div class="form-group">
         <span class="label"><%= Spree.t(:option_values) %></span>
-        <div data-controller="multi-tom-select" class="values-inputs" data-variants-form-target="newOptionValuesSelectContainer" data-slot="optionValuesSelectContainer">
+        <div data-controller="multi-tom-select" class="values-inputs flex flex-col gap-2" data-variants-form-target="newOptionValuesSelectContainer" data-slot="optionValuesSelectContainer">
           <%= tom_select_tag "new_option_values[]",
             template: true,
             multiple: false,
@@ -50,9 +50,9 @@
             } %>
         </div>
       </div>
-      <div class="d-flex justify-content-between">
-        <button class="btn btn-danger btn-outline btn-sm" data-action="variants-form#discardOption" data-variants-form-option-id-param="" type="button"><%= Spree.t('actions.destroy') %></button>
-        <button class="btn btn-primary btn-sm" data-variants-form-option-id-param="" data-action="variants-form#saveOption" type="button"><%= Spree.t(:done) %></button>
+      <div class="flex justify-between">
+        <button class="btn btn-danger" data-action="variants-form#discardOption" data-variants-form-option-id-param="" type="button"><%= Spree.t('actions.destroy') %></button>
+        <button class="btn btn-primary" data-variants-form-option-id-param="" data-action="variants-form#saveOption" type="button"><%= Spree.t(:done) %></button>
       </div>
     </div>
   </div>

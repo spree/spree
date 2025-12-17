@@ -1,5 +1,5 @@
 <%= search_form_for [:admin, @search], url: spree.admin_users_url, class: "filter-wrap", data: {controller: "filters dialog"} do |f| %>
-    <div class="d-flex flex-column flex-lg-row gap-2">
+    <div class="flex flex-col lg:flex-row gap-2">
       <%= render 'spree/admin/shared/filters_search_bar', param: :multi_search, placeholder: Spree.t('admin.users.filters.search_placeholder') %>
 
       <%= render "spree/admin/shared/calendar_range_picker",
@@ -8,7 +8,7 @@
             date_from_value: params.dig(:q, :created_at_gt),
             date_to_value: params.dig(:q, :created_at_lt) %>
 
-      <%= button_tag type: 'button', class: 'btn btn-light d-flex align-items-center', data: { action: 'dialog#open' } do %>
+      <%= button_tag type: 'button', class: 'btn btn-light flex items-center', data: { action: 'dialog#open' } do %>
         <%= icon "adjustments", class: "mr-1" %>
         <%= Spree.t("admin.filters") %>
       <% end %>
@@ -19,11 +19,11 @@
     <div class="drawer-body">
     <div class="form-group">
       <%= f.label :bill_address_firstname_i_cont_any, Spree.t(:first_name) %>
-      <%= f.text_field :bill_address_firstname_i_cont_any, class: "form-control", data: { filters_target: :input } %>
+      <%= f.text_field :bill_address_firstname_i_cont_any, class: "form-input", data: { filters_target: :input } %>
     </div>
     <div class="form-group">
       <%= f.label :bill_address_lastname_eq, Spree.t(:last_name) %>
-      <%= f.text_field :bill_address_lastname_eq, class: "form-control", data: { filters_target: :input } %>
+      <%= f.text_field :bill_address_lastname_eq, class: "form-input", data: { filters_target: :input } %>
     </div>
     <div class="form-group">
       <%= f.label :addresses_country_name_eq, Spree.t(:location) %>
@@ -31,7 +31,7 @@
       active_option: params.dig(:q, :addresses_country_name_eq),
       options: Spree::Country.all.to_tom_select_json,
       value_field: :name,
-      select_class: "w-100",
+      select_class: "w-full",
       select_data: {
         filters_target: "input",
       } %>
@@ -43,7 +43,7 @@
       options: user_tags_json_array,
       multiple: true,
       value_field: :name,
-      select_class: "w-100",
+      select_class: "w-full",
       select_data: {
         filters_target: "input",
       } %>
@@ -53,7 +53,7 @@
       <%= f.select :accepts_email_marketing_eq,
                 options_for_select([["Yes", true], ["No", false]], params.dig(:q, :accepts_email_marketing_eq)),
                 { include_blank: true },
-                { class: "custom-select", data: { filters_target: :input } } %>
+                { class: "form-select", data: { filters_target: :input } } %>
     </div>
     <div class="form-group">
       <%= f.label :spree_roles_name_in, Spree.t(:roles) %>
@@ -62,7 +62,7 @@
       options: user_roles_json_array,
       multiple: true,
       value_field: :name,
-      select_class: "w-100",
+      select_class: "w-full",
       select_data: {
         filters_target: "input",
       } %>

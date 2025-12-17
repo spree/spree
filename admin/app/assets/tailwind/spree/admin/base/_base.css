@@ -1,0 +1,70 @@
+/* ==========================================================================
+   BASE STYLES
+   ========================================================================== */
+
+@layer base {
+  html {
+    min-height: 100%;
+    letter-spacing: normal;
+    text-rendering: optimizeLegibility;
+    text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  *,
+  *::before,
+  *::after {
+    border-color: var(--color-gray-200);
+  }
+
+  body {
+    @apply text-base font-normal text-gray-950 bg-white;
+    font-family: var(--font-sans);
+    line-height: var(--line-height-base);
+  }
+
+  a {
+    color: var(--color-primary);
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold leading-none;
+    font-family: var(--font-sans);
+  }
+
+  strong, b {
+    @apply font-bold;
+  }
+
+  h1 { @apply text-4xl; }
+  h2 { @apply text-3xl; }
+  h3 { @apply text-2xl; }
+  h4 { @apply text-xl; }
+  h5 { @apply text-lg; }
+  h6 { @apply text-base; }
+
+  hr {
+    @apply border-gray-200;
+  }
+
+  code {
+    @apply text-gray-950 bg-gray-50;
+    padding: 0.125rem 0.25rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.875em;
+  }
+
+  /* Turbo frame busy state */
+  turbo-frame.blur-busy[busy] {
+    @apply opacity-50 pointer-events-none transition-opacity duration-300 ease-in-out;
+  }
+
+  turbo-frame.blur-busy[busy] * {
+    @apply pointer-events-none transition-opacity duration-300 ease-in-out;
+  }
+}

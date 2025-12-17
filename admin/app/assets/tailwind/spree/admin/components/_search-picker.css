@@ -1,0 +1,36 @@
+/* ==========================================================================
+   SEARCH PICKER
+   ========================================================================== */
+
+@layer components {
+  .search-results {
+    height: 250px;
+  }
+
+  .search-picker__option {
+    @apply relative mb-2 flex cursor-pointer items-center border border-transparent rounded-md pr-8;
+  }
+
+  .search-picker__option label {
+    @apply mb-0 w-full h-full p-2 flex items-center justify-start;
+  }
+
+  .search-picker__option input[type="checkbox"],
+  .search-picker__option input[type="radio"] {
+    @apply hidden;
+  }
+
+  .search-picker__option:hover {
+    @apply bg-gray-25;
+  }
+
+  .search-picker__option:has(input:checked) {
+    @apply bg-blue-50 border-blue-100;
+  }
+
+  .search-picker__option:has(input:checked)::after {
+    @apply inline-block absolute right-2 w-6 h-6;
+    content: '';
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-check text-zinc-950"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l5 5l10 -10"/></svg>') no-repeat center center;
+  }
+}

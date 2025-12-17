@@ -11,9 +11,9 @@
   } %>
 
   <%= form_for [:admin, @order, @customer_return] do |f| %>
-    <div class="card mb-4" data-controller="checkbox-select-all">
+    <div class="card mb-6" data-controller="checkbox-select-all">
       <div class="card-header">
-        <h6 class="card-title"><%= Spree.t(:items_in_rmas) %></h6>
+        <h5 class="card-title"><%= Spree.t(:items_in_rmas) %></h5>
       </div>
       <div class="card-body p-0">
         <% if @rma_return_items.any? %>
@@ -25,7 +25,7 @@
         <% else %>
           <div
             class="
-              text-muted p-5 d-flex align-items-center w-100 justify-content-center
+              text-gray-600 p-12 flex items-center w-full justify-center
             "
           >
             <%= Spree.t(:none) %>
@@ -34,7 +34,7 @@
       </div>
     </div>
 
-    <div class="card mb-4">
+    <div class="card mb-6">
       <div class="card-body">
         <%= f.spree_select :stock_location_id,
                    available_stock_locations_list,
@@ -50,8 +50,8 @@
   <div class="card">
     <div
       class="
-        card-body text-muted d-flex align-items-center justify-content-center
-        flex-column gap-2
+        card-body text-gray-600 flex items-center justify-center
+        flex-col gap-2
       "
     >
       <%= Spree.t(:all_items_have_been_returned) %>,

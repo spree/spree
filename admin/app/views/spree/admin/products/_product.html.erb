@@ -2,18 +2,18 @@
   <td class="pr-0 w-5">
     <%= bulk_operations_checkbox(product) %>
   </td>
-  <td scope="row" class="w-40 py-0 text-wrap" data-action="click->row-link#openLink">
-    <%= link_to spree.edit_admin_product_path(product), class: 'd-flex align-items-center w-100 text-decoration-none h-100 py-2', data: { row_link_target: :link, 'turbo-frame': '_top' } do %>
-      <div class="mr-3">
+  <td scope="row" class="w-40 py-0 whitespace-normal" data-action="click->row-link#openLink">
+    <%= link_to spree.edit_admin_product_path(product), class: 'flex items-center w-full no-underline h-full py-2', data: { row_link_target: :link, 'turbo-frame': '_top' } do %>
+      <div class="mr-6">
         <%= render 'spree/admin/shared/product_image', object: product %>
       </div>
-      <span class="text-dark font-weight-semibold">
+      <span class="text-gray-900 font-medium">
         <%= product.name %>
       </span>
     <% end %>
   </td>
   <%= render 'spree/admin/products/product_status', product: product %>
-  <td class="w-20 cursor-pointer text-wrap" data-action="click->row-link#openLink">
+  <td class="w-20 cursor-pointer whitespace-normal" data-action="click->row-link#openLink">
     <%= display_inventory(product) %>
   </td>
   <% if defined?(current_vendor) %>

@@ -1,0 +1,30 @@
+/* ==========================================================================
+   DASHBOARD
+   ========================================================================== */
+
+@layer components {
+  .analytics-card-tab {
+    @apply rounded-md cursor-pointer p-2 h-full transition-colors duration-200 ease-in-out;
+  }
+
+  .analytics-card-tab.active,
+  .analytics-card-tab:hover {
+    @apply bg-gray-25;
+  }
+
+  .store-preview-link {
+    @apply transition-colors duration-200 ease-in-out;
+  }
+
+  .store-preview-link .store-preview-actions {
+    @apply hidden;
+  }
+
+  .store-preview-link:hover .store-preview-actions {
+    @apply flex;
+  }
+
+  #updater-notice {
+    @apply bg-white w-full flex flex-row gap-4 justify-start items-center p-2 border border-gray-200 rounded-lg shadow-xs;
+  }
+}

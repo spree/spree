@@ -1,14 +1,14 @@
 <div class="search-picker__option <% if variant.purchasable? || params[:all] %>cursor-pointer<% else %>opacity-50 disabled<% end %>" data-action="click->search-picker#toggle">
   <%= radio_button_tag "#{params[:param_name]}[variant_id]", variant.id, false, class: "custom-control-input", id: "ids_#{variant.id}", data: { action: 'search-picker#toggle', search_picker_target: "checkbox" }, disabled: !params[:all] && !variant.purchasable? %>
   <label for="ids_<%= variant.id %>" class="pr-2 <% unless variant.purchasable? %>cursor-not-allowed<% end %>">
-    <div class="w-70 d-flex align-items-center">
+    <div class="w-70 flex items-center">
       <div class="variant-image">
         <%= render 'spree/admin/shared/product_image', object: variant %>
       </div>
-      <div class="ml-3 variant-info">
+      <div class="ml-6 variant-info">
         <strong class="variant-name"><%= highlight(variant.name, params.dig(:q)) %></strong>
         <% if variant.options_text.present? %>
-          <p class="text-muted my-1 font-size-sm">
+          <p class="text-gray-600 my-1 text-sm">
             <%= variant.options_text %>
           </p>
         <% end %>
@@ -18,7 +18,7 @@
       <% if params[:stock_location_id].present? %>
         <% stock_item = variant.stock_items.find { |si| si.stock_location_id == params[:stock_location_id] } %>
         <span><%= stock_item&.count_on_hand || 0 %> at location</span>
-        <% if stock_item&.backorderable? %> <span class="text-muted"><%= Spree.t(:backorderable) %></span><% end %>
+        <% if stock_item&.backorderable? %> <span class="text-gray-600"><%= Spree.t(:backorderable) %></span><% end %>
       <% else %>
         <%= display_inventory(variant) %>
       <% end %>

@@ -1,22 +1,28 @@
-<div id="setup_tasks">
+<div id="setup_tasks" class="flex flex-col gap-4">
   <% task_in_progress = nil %>
   <% current_store.setup_tasks_list.each_with_index do |task, index| %>
     <% done = current_store.setup_task_done?(task) %>
     <% unless done %>
       <% task_in_progress ||= task %>
     <% end %>
+    <% is_expanded = task_in_progress == task %>
 
-    <details class="collapsable-card mb-3" <% if task_in_progress == task %>open<% end %> id="setup_task_<%= task %>">
-      <summary class="card-header border-0 h-auto text-decoration-none d-flex align-items-center p-3 text-dark font-weight-normal w-100 card-title bg-transparent list-style-none" role="button" tabindex="0">
+    <div class="card overflow-hidden" data-controller="reveal" data-reveal-hidden-class="is-collapsed" id="setup_task_<%= task %>">
+      <div class="card-header card-header--collapsible border-0 h-auto no-underline flex items-center p-3 text-gray-900 font-normal w-full bg-transparent cursor-pointer focus:outline-none focus:ring-0 hover:bg-gray-50"
+           role="button"
+           tabindex="0"
+           data-action="click->reveal#toggle keydown.enter->reveal#toggle keydown.space->reveal#toggle">
         <%= onboarding_check_circle(done) %>
-        <span class="ml-3"><%= Spree.t("admin.store_setup_tasks.#{task}") %></span>
-        <%= icon('chevron-right', class: 'arrow ml-auto') %>
-      </summary>
-      <div class="animate__animated animate__fadeIn animate__faster">
-        <div class="card-body">
-          <%= render "spree/admin/dashboard/setup_tasks/#{task}", done: done %>
+        <span class="ml-6 font-medium"><%= Spree.t("admin.store_setup_tasks.#{task}") %></span>
+        <%= icon('chevron-right', class: 'arrow ml-auto transition-transform duration-200') %>
+      </div>
+      <div data-reveal-target="item" class="collapsible-content <%= 'is-collapsed' unless is_expanded %>">
+        <div>
+          <div class="card-body flex flex-col gap-3">
+            <%= render "spree/admin/dashboard/setup_tasks/#{task}", done: done %>
+          </div>
         </div>
       </div>
-    </details>
+    </div>
   <% end %>
 </div>

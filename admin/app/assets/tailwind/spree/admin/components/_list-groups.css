@@ -1,0 +1,57 @@
+/* ==========================================================================
+   LIST GROUPS
+   ========================================================================== */
+
+@layer components {
+  .list-group {
+    @apply flex flex-col pl-0 mb-0 rounded-lg;
+  }
+
+  .list-group-item {
+    @apply relative block py-3 px-5 text-gray-950 no-underline border border-gray-200 hover:bg-gray-25;
+  }
+
+  .list-group-item:first-child {
+    @apply rounded-t-2xl;
+  }
+
+  .list-group-item:last-child {
+    @apply rounded-b-2xl;
+  }
+
+  .list-group-item.disabled,
+  .list-group-item:disabled {
+    @apply text-gray-500 pointer-events-none;
+  }
+
+  .list-group-item + .list-group-item {
+    @apply border-t-0;
+  }
+
+  /* Flush list group */
+  .list-group-flush {
+    @apply rounded-none;
+  }
+
+  .list-group-flush > .list-group-item {
+    @apply border-x-0 border-t-0 border-b;
+  }
+
+  .list-group-flush > .list-group-item:last-child {
+    @apply border-b-0;
+  }
+
+  /* Actionable list group items */
+  .list-group-item-action {
+    @apply w-full text-gray-700 text-left;
+  }
+
+  .list-group-item-action:hover,
+  .list-group-item-action:focus {
+    @apply z-1 text-gray-700 no-underline bg-gray-50;
+  }
+
+  .list-group-item-action:active {
+    @apply text-gray-950 bg-gray-100;
+  }
+}

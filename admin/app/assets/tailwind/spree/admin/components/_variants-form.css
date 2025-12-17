@@ -1,0 +1,150 @@
+/* ==========================================================================
+   VARIANTS FORM
+   ========================================================================== */
+
+@layer components {
+  .variants-form {
+    @apply flex flex-col gap-8;
+  }
+
+  .variants-form .options-creator {
+    @apply m-4 p-2 border border-gray-200 rounded-md;
+  }
+
+  .variants-form .options-creator:not(:has(.options-creator__options_container .options-creator__option)) {
+    @apply m-0 border-none;
+  }
+
+  .variants-form .options-creator:not(:has(.options-creator__options_container .options-creator__option)) .options-creator__option--new {
+    @apply pl-4;
+  }
+
+  .variants-form .options-creator:has(.options-creator__option--new:not(.d-none)) {
+    @apply border border-gray-200 rounded-md m-4 mb-4;
+  }
+
+  .variants-form .options-creator__option {
+    @apply flex border-b border-gray-200 mb-2;
+    padding: 0.5rem 0.5rem 1rem 0;
+  }
+
+  .variants-form .options-creator__option .label {
+    @apply inline-block font-medium mb-2;
+  }
+
+  .variants-form .options-creator__option .draggable {
+    @apply inline-flex items-center justify-center px-2 mr-3 !cursor-grab pr-4;
+    min-width: calc(16px + 1rem);
+  }
+
+  .variants-form .options-creator__option .draggable i {
+    @apply mr-0;
+  }
+
+  .variants-form .options-creator__option .draggable:hover {
+    @apply bg-gray-25;
+  }
+
+  .variants-form .options-creator__option--new {
+    @apply border-b-0 mb-0 pb-2;
+    padding-left: calc(1.13px + 3.25rem);
+  }
+
+  .variants-form .options-creator__option--new .values-inputs {
+    @apply flex flex-col gap-1;
+  }
+
+  .variants-form .options-creator__option--form {
+    @apply border-b-0 mb-0 pb-2;
+    padding-left: calc(1.13px + 3.25rem);
+  }
+
+  .variants-form .options-creator__option:first-child {
+    @apply border-t-0;
+  }
+
+  .variants-form .options-creator .new_option_button {
+    @apply w-full justify-start py-2;
+  }
+
+  .variants-form .variants-table {
+    @apply flex flex-col;
+  }
+
+  .variants-form .variants-table .column-checkbox,
+  .variants-form .variants-table .column-variant,
+  .variants-form .variants-table .column-price,
+  .variants-form .variants-table .column-quantity,
+  .variants-form .variants-table .column-actions {
+    @apply inline-flex items-center;
+  }
+
+  .variants-form .variants-table .column-checkbox {
+    @apply justify-center grow-0 basis-8;
+  }
+
+  .variants-form .variants-table .column-variant {
+    @apply select-none grow-[3] basis-0;
+  }
+
+  .variants-form .variants-table .column-price {
+    @apply grow basis-0;
+  }
+
+  .variants-form .variants-table .column-actions {
+    @apply grow-0 basis-20;
+  }
+
+  .variants-form .variants-table .column-quantity {
+    @apply justify-between w-full grow basis-0;
+    line-height: 28px;
+  }
+
+  .variants-form .variants-table__actions {
+    @apply hidden w-full justify-end p-4 pt-0;
+  }
+
+  .variants-form .variants-table__actions:has(*) {
+    @apply flex;
+  }
+
+  .variants-form .variants-table__actions__select {
+    @apply w-min pr-7;
+  }
+
+  .variants-form .variants-table__header,
+  .variants-form .variants-table__footer {
+    @apply flex text-gray-600 w-full px-4 gap-1;
+    background-color: rgba(250, 250, 250, 0.5);
+  }
+
+  .variants-form .variants-table__header__cell,
+  .variants-form .variants-table__footer__cell {
+    @apply inline-block;
+  }
+
+  .variants-form .variants-table__footer {
+    @apply justify-center items-center py-2 rounded-t-none rounded-b-lg;
+  }
+
+  .variants-form .variants-table__body {
+    @apply flex flex-col;
+  }
+
+  .variants-form .variants-table__body__row {
+    @apply px-4 w-full flex gap-1 border-b border-gray-200;
+  }
+
+  .variants-form .variants-table__body__row.nested .column-checkbox,
+  .variants-form .variants-table__body__row.nested .column-variant {
+    @apply left-5 relative;
+  }
+
+  .variants-form .variants-table__body__row.nested .column-variant {
+    width: calc(100% - 1.25rem);
+  }
+
+  .variants-form .variants-table__body__cell {
+    @apply py-2 block;
+  }
+}

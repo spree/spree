@@ -26,14 +26,14 @@ export default class extends Controller {
     this.observer.disconnect()
 
     const form = this.element.querySelector(`[data-form="${formName}"]`)
-    form.classList.remove('d-none')
+    form.classList.remove('hidden', 'd-none')
     form.querySelectorAll('input:required, select:required').forEach((input) => (input.disabled = false))
   }
 
   hideForms() {
     this.observer.observe(this.element, { subtree: true, attributes: true, attributeFilter: ['required'] })
 
-    this.element.querySelectorAll('[data-form]').forEach((form) => form.classList.add('d-none'))
+    this.element.querySelectorAll('[data-form]').forEach((form) => form.classList.add('hidden'))
     this.element.querySelectorAll('input:required, select:required').forEach((input) => (input.disabled = true))
   }
 }

@@ -1,22 +1,20 @@
 <%= render 'header' %>
 <%= render_admin_partials(:order_page_header_partials, order: @order) %>
 
-<div class="container px-0">
-  <div class="row">
-    <div class="col-lg-8">
-      <%= render 'line_items' %>
-      <%= render 'shipments' %>
-      <%= render 'customer_returns' %>
-      <%= render 'return_authorizations' %>
-      <%= render 'payments'%>
-      <%= render 'refunds'%>
-      <%= render_admin_partials(:order_page_body_partials, order: @order) %>
-      <%= render 'summary' %>
-    </div>
-    <div class="col-lg-4">
-      <%= render 'customer' %>
-      <%= render 'special_instructions' %>
-      <%= render_admin_partials(:order_page_sidebar_partials, order: @order) %>
-    </div>
+<div class="grid grid-cols-12 gap-6">
+  <div class="col-span-12 lg:col-span-8">
+    <%= render 'line_items' %>
+    <%= render 'shipments' %>
+    <%= render 'customer_returns' %>
+    <%= render 'return_authorizations' %>
+    <%= render 'payments'%>
+    <%= render 'refunds'%>
+    <%= render_admin_partials(:order_page_body_partials, order: @order) %>
+    <%= render 'summary' %>
+  </div>
+  <div class="col-span-12 lg:col-span-4">
+    <%= render 'customer' %>
+    <%= render 'special_instructions' %>
+    <%= render_admin_partials(:order_page_sidebar_partials, order: @order) %>
   </div>
 </div>

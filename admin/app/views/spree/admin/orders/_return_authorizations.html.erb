@@ -1,13 +1,13 @@
 <% if @return_authorizations.exists? && can?(:read, Spree::ReturnAuthorization) %>
-  <div class="card mb-4">
-    <div class="card-header justify-content-between">
+  <div class="card mb-6">
+    <div class="card-header justify-between">
       <h5 class="card-title">
         <%= Spree.t(:return_authorizations) %></h5>
     </div>
     <div class="card-body p-0">
       <div class="table-responsive">
         <table class="table">
-          <thead class="border-bottom">
+          <thead class="border-b">
             <tr>
               <th scope="col"><%= Spree.t(:rma_number) %></th>
               <th scope="col"><%= Spree.t(:status) %></th>

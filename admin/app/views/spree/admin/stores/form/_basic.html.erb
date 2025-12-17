@@ -3,12 +3,12 @@
 <% end %>
 
 
-<div class="card mb-4">
+<div class="card mb-6">
   <div class="card-header">
     <h5 class="card-title"><%= Spree.t(:name) %> & <%= Spree.t(:logo) %></h5>
   </div>
   <div class="card-body">
-    <p class="text-muted">
+    <p class="text-gray-600">
       <%= Spree.t(:store_name_help) %>
     </p>
     <%= f.spree_text_field :name, required: true, autofocus: f.object.new_record? %>
@@ -17,28 +17,28 @@
   </div>
 </div>
 
-<div class="card mb-4">
+<div class="card mb-6">
   <div class="card-header">
     <h5 class="card-title"><%= Spree.t(:currencies) %> & <%= Spree.t(:translations) %></h5>
   </div>
   <div class="card-body">
     <%= f.spree_select :default_currency, currency_options(@store.default_currency), { label: Spree.t(:default_currency), autocomplete: true } %>
     <%= f.spree_select :supported_currencies, currency_options(@store.supported_currencies&.split(',')), { prompt: false, multiple: true, autocomplete: true } %>
-    <hr />
+    <hr class="my-6" />
     <%= f.spree_select :default_locale, options_from_collection_for_select(all_locales_options, :last, :first, @store.default_locale || I18n.locale), { autocomplete: true } %>
     <%= f.spree_select :supported_locales, options_from_collection_for_select(all_locales_options, :last, :first, @store.supported_locales&.split(',')), { multiple: true, autocomplete: true } %>
   </div>
 </div>
 
-<div class="card mb-4">
+<div class="card mb-6">
   <div class="card-header">
     <h5 class="card-title"><%= Spree.t(:standards_and_formats) %></h5>
   </div>
   <div class="card-body">
-    <p class="text-muted">
+    <p class="text-gray-600">
       <%= Spree.t(:standards_and_formats_help) %>
     </p>
-    <div class="form-group mb-3">
+    <div class="form-group mb-6">
       <%= label_tag :preferred_timezone, raw(Spree.t(:timezone) + required_span_tag) %>
       <%= time_zone_select :store, :preferred_timezone, nil, {}, { data: { controller: 'autocomplete-select' } } %>
     </div>
@@ -49,7 +49,7 @@
   </div>
 </div>
 
-<div class="card mb-4">
+<div class="card mb-6">
   <div class="card-header">
     <h5 class="card-title"><%= Spree.t(:phone) %> & <%= Spree.t(:address) %></h5>
   </div>
@@ -59,18 +59,27 @@
   </div>
 </div>
 
-<div class="card mb-4">
+<div class="card mb-6">
   <div class="card-header">
     <h5 class="card-title"><%= Spree.t(:digital_assets) %></h5>
   </div>
   <div class="card-body">
-    <p class="text-muted">
+    <p class="text-gray-600 mb-4">
       <%= Spree.t(:digital_assets_help) %>
     </p>
-    <%= f.spree_check_box :preferred_limit_digital_download_days %>
-    <%= f.spree_number_field :preferred_digital_asset_authorized_days, min: 1 %>
-    <%= f.spree_check_box :preferred_limit_digital_download_count %>
-    <%= f.spree_number_field :preferred_digital_asset_authorized_clicks, min: 1 %>
+    <div data-controller="reveal">
+      <%= f.spree_check_box :preferred_limit_digital_download_days, data: { action: 'reveal#toggle' } %>
+      <div data-reveal-target="item" <% unless f.object.preferred_limit_digital_download_days %>class="hidden"<% end %>>
+        <%= f.spree_number_field :preferred_digital_asset_authorized_days, min: 1 %>
+      </div>
+    </div>
+    <hr class="my-6" />
+    <div data-controller="reveal">
+      <%= f.spree_check_box :preferred_limit_digital_download_count, data: { action: 'reveal#toggle' } %>
+      <div data-reveal-target="item" <% unless f.object.preferred_limit_digital_download_count %>class="hidden"<% end %>>
+        <%= f.spree_number_field :preferred_digital_asset_authorized_clicks, min: 1 %>
+      </div>
+    </div>
   </div>
 </div>
 

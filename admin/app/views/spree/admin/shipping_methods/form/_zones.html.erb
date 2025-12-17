@@ -1,20 +1,20 @@
-<div class="card mb-4">
-  <div class="card-header d-flex align-items-center">
+<div class="card mb-6">
+  <div class="card-header flex items-center">
     <h5 class="card-title">
       <%= Spree.t(:zones) %>
     </h5>
 
-    <%= link_to_with_icon('adjustments', Spree.t('admin.manage_zones'), spree.admin_zones_path, class: 'btn btn-sm btn-light ml-auto h-100') if can?(:manage, Spree::Zone) %>
+    <%= link_to_with_icon('adjustments', Spree.t('admin.manage_zones'), spree.admin_zones_path, class: 'btn btn-sm btn-light ml-auto') if can?(:manage, Spree::Zone) %>
   </div>
 
   <div class="card-body">
-    <div class="form-group">
+    <div class="form-group flex flex-col gap-2">
       <% @available_zones.each do |zone| %>
-        <div class="custom-control custom-checkbox mb-2">
+        <div class="custom-control form-checkbox rounded-lg hover:bg-gray-100 p-2 transition-colors duration-100 ease-linear">
           <%= check_box_tag('shipping_method[zone_ids][]', zone.id, @shipping_method.zone_ids.include?(zone.id), id: "shipping_method_zones_#{zone.id}", class: 'custom-control-input') %>
-          <%= label_tag "shipping_method_zones_#{zone.id}", class: 'custom-control-label' do %>
+          <%= label_tag "shipping_method_zones_#{zone.id}", class: 'custom-control-label flex flex-col items-start' do %>
             <span ><%= zone.name.gsub('_',  ' ') %></span>
-            <p class="text-muted small mb-0">
+            <p class="text-gray-600 small mb-0">
               <%= zone.zone_members.map {|zone_member| zone_member.zoneable.name }.join(', ') %>
             </p>
           <% end %>

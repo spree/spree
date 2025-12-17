@@ -1,15 +1,15 @@
-<div class="card mb-4">
+<div class="card mb-6">
   <div class="card-header">
     <h5 class="card-title">
       <%= Spree.t(:inventory) %>
     </h5>
   </div>
-  <div class="card-body p-0" data-controller="reveal" data-reveal-hidden-class="d-none">
-    <div class="mb-4 m-3">
+  <div class="card-body p-0" data-controller="reveal" data-reveal-hidden-class="hidden!">
+    <div class="p-3">
       <%= f.spree_check_box :track_inventory, data: { action: 'change->reveal#toggle' } %>
     </div>
 
-    <table class="table <%= 'd-none' unless f.object.track_inventory? %>" data-reveal-target="item">
+    <table class="table <%= 'hidden!' unless f.object.track_inventory? %>" data-reveal-target="item">
       <thead>
         <tr>
           <th scope="col"><%= Spree.t(:stock_location) %></th>
@@ -30,19 +30,16 @@
               <%= link_to stock_item_form.object.stock_location.name, spree.edit_admin_stock_location_path(stock_item_form.object.stock_location) %>
             </td>
             <td class="w-20">
-              <%= stock_item_form.number_field :count_on_hand, min: 0, class: 'form-control', disabled: !can?(:manage, stock_item_form.object) %>
+              <%= stock_item_form.spree_number_field :count_on_hand, min: 0, disabled: !can?(:manage, stock_item_form.object), label: false %>
             </td>
             <td class="w-40">
-              <div class="custom-control custom-checkbox">
-                <%= stock_item_form.check_box :backorderable, class: 'custom-control-input', disabled: !can?(:manage, stock_item_form.object) %>
-                <%= stock_item_form.label :backorderable, Spree.t(:continue_selling_when_out_of_stock),class: 'custom-control-label' %>
-              </div>
+              <%= stock_item_form.spree_check_box :backorderable, disabled: !can?(:manage, stock_item_form.object), label: Spree.t(:continue_selling_when_out_of_stock) %>
             </td>
           </tr>
         <% end %>
       </tbody>
     </table>
-    <div class="card-footer border-top text-center bg-light text-muted">
+    <div class="card-footer border-t text-center bg-gray-25 text-gray-600 py-2 text-sm">
       <%= Spree.t('admin.variants_form.stock_locations_link', link: spree.admin_stock_locations_path).html_safe %>
     </div>
   </div>

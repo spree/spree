@@ -1,0 +1,248 @@
+/* ==========================================================================
+   FORMS
+   ========================================================================== */
+@layer components {
+  label {
+    @apply flex items-center cursor-pointer gap-2 font-medium mb-2 text-base;
+  }
+
+  .form-group {
+    @apply mb-4;
+  }
+
+  .form-label {
+    @apply inline-block mb-2 font-medium;
+  }
+
+  .form-control, 
+  .text-input, 
+  .form-input, 
+  .form-select,
+  .custom-select, 
+  .ts-control, 
+  .select-input, 
+  .form-control-sm, 
+  .custom-select-sm {
+    @apply block w-full py-2 px-3 text-base font-normal leading-normal;
+    @apply text-gray-950 bg-white border border-gray-200 rounded-lg shadow-xs;
+    @apply focus:outline-offset-2 focus:outline-blue-500 focus:border-gray-200 focus:ring-0;
+    @apply transition-all duration-100 ease-in-out;
+  }
+
+  .form-input-sm,
+  .form-select-sm,
+  .form-control-sm,
+  .custom-select-sm {
+    @apply py-1 px-2 text-sm;
+  }
+
+  .form-control::placeholder,
+  .form-input::placeholder,
+  .text-input::placeholder,
+  .form-select::placeholder {
+    @apply text-gray-500 opacity-100;
+  }
+
+  .form-control:disabled,
+  .form-control[readonly],
+  .form-input:disabled,
+  .form-input[readonly],
+  .text-input:disabled,
+  .text-input[readonly] {
+    @apply shadow-none cursor-not-allowed text-gray-600;
+    background-color: var(--color-gray-50) !important;
+    border: 1px solid var(--color-gray-100) !important;
+  }
+
+  .form-text {
+    @apply block mt-0 text-base text-gray-600;
+  }
+
+  .form-actions {
+    @apply flex items-center gap-2;
+  }
+
+  .field_with_errors {
+    @apply contents;
+  }
+
+  .field_with_errors input,
+  .field_with_errors select,
+  .field_with_errors textarea {
+    @apply border-danger;
+  }
+
+  .formError {
+    @apply block mt-1 text-sm text-danger;
+  }
+
+  /* Select */
+  .custom-select:disabled,
+  .custom-select[readonly],
+  .form-select:disabled,
+  .form-select[readonly] {
+    @apply shadow-none cursor-not-allowed text-gray-600;
+    background-color: var(--color-gray-50);
+    border: 1px solid var(--color-gray-200);
+  }
+
+  /* Custom Select Small */
+  .custom-select-sm,
+  .form-select-sm {
+    height: calc(1.5em + 0.5rem + 2px);
+  }
+
+  /* Input Group */
+  .input-group {
+    @apply flex items-center gap-3 bg-white border border-gray-200 rounded-lg shadow-xs focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-blue-500 focus-within:ring-0 transition-all duration-100 ease-in-out;
+  }
+  .input-group > input {
+    @apply text-base border-0 focus:ring-0 focus:outline-none rounded-lg;
+  }
+
+  /* File input */
+  input[type="file"] {
+    @apply max-w-full whitespace-nowrap overflow-hidden text-ellipsis;
+    width: fit-content;
+  }
+
+  /* Custom Controls (Checkboxes & Radios) */
+  .custom-control {
+    @apply relative block min-h-6;
+  }
+
+  .custom-control-input {
+    @apply absolute opacity-0 z-[-1];
+  }
+
+  .custom-control-label {
+    @apply relative mb-0 align-top cursor-pointer select-none pl-7 font-normal;
+  }
+
+  .custom-control-label::before {
+    @apply absolute left-0 top-0.5 block pointer-events-none bg-white border border-gray-300 rounded;
+    content: "";
+    width: 1.125rem;
+    height: 1.125rem;
+    transition:
+      background-color 0.15s ease-in-out,
+      border-color 0.15s ease-in-out,
+      box-shadow 0.15s ease-in-out;
+  }
+
+  .custom-control-label::after {
+    @apply absolute left-0 top-0.5 block bg-no-repeat bg-center;
+    content: "";
+    width: 1.125rem;
+    height: 1.125rem;
+    background-size: 60% 60%;
+  }
+
+  /* Checkbox checked state */
+  .form-checkbox .custom-control-input:checked ~ .custom-control-label::before {
+    @apply border-blue-500 bg-blue-500;
+  }
+
+  .form-checkbox .custom-control-input:checked ~ .custom-control-label::after {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='white'%3e%3cpath fill-rule='evenodd' d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z' clip-rule='evenodd'/%3e%3c/svg%3e");
+  }
+
+  /* Checkbox indeterminate state */
+  .form-checkbox
+    .custom-control-input:indeterminate
+    ~ .custom-control-label::before {
+    @apply border-blue-500 bg-blue-500;
+  }
+
+  .form-checkbox
+    .custom-control-input:indeterminate
+    ~ .custom-control-label::after {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='white'%3e%3cpath fill-rule='evenodd' d='M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z' clip-rule='evenodd'/%3e%3c/svg%3e");
+  }
+
+  /* Focus state */
+  .custom-control-input:focus ~ .custom-control-label::before {
+    @apply ring-2 ring-blue-500/25 ring-offset-1;
+  }
+
+  /* Disabled state */
+  .custom-control-input:disabled ~ .custom-control-label {
+    @apply text-gray-400 cursor-not-allowed;
+  }
+
+  .custom-control-input:disabled ~ .custom-control-label::before {
+    @apply bg-gray-100 border-gray-200;
+  }
+
+  .custom-control-input:disabled:checked ~ .custom-control-label::before {
+    @apply bg-blue-500/50 border-blue-500/50;
+  }
+
+  /* Radio button specific styles */
+  .custom-radio .custom-control-label::before {
+    @apply rounded-full;
+  }
+
+  .custom-radio .custom-control-input:checked ~ .custom-control-label::before {
+    @apply border-blue-500 bg-blue-500;
+  }
+
+  .custom-radio .custom-control-input:checked ~ .custom-control-label::after {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='2' fill='white'/%3e%3c/svg%3e");
+  }
+
+  /* Hover state for unchecked */
+  .custom-control-input:not(:checked):not(:disabled)
+    ~ .custom-control-label:hover::before {
+    @apply border-gray-400;
+  }
+
+  /* Custom switch styles */
+  .custom-switch {
+    @apply pl-12;
+  }
+
+  .custom-switch .custom-control-label::before {
+    @apply left-0 rounded-full bg-gray-200 border-gray-200;
+    width: 2.5rem;
+    height: 1.25rem;
+    pointer-events: all;
+  }
+
+  .custom-switch .custom-control-label::after {
+    @apply left-0.5 top-1 rounded-full bg-white shadow;
+    width: 1rem;
+    height: 1rem;
+    transition:
+      transform 0.15s ease-in-out,
+      background-color 0.15s ease-in-out;
+  }
+
+  .custom-switch .custom-control-input:checked ~ .custom-control-label::before {
+    @apply bg-blue-500 border-blue-500;
+  }
+
+  .custom-switch .custom-control-input:checked ~ .custom-control-label::after {
+    @apply bg-white;
+    transform: translateX(1.25rem);
+  }
+
+  .custom-switch .custom-control-input:focus ~ .custom-control-label::before {
+    @apply ring-2 ring-blue-500/25 ring-offset-1;
+  }
+
+  .custom-switch
+    .custom-control-input:disabled
+    ~ .custom-control-label::before {
+    @apply bg-gray-100 border-gray-100;
+  }
+
+  /* Inline controls */
+  .custom-range, .form-range {
+    @apply w-full h-2 p-0 bg-transparent border rounded-full appearance-none cursor-pointer bg-gray-200;
+  }
+
+  .custom-range::-webkit-slider-thumb, .form-range::-webkit-slider-thumb {
+    @apply w-4 h-4 appearance-none bg-blue-500 rounded-full cursor-pointer ring-2 ring-blue-500/25 ring-offset-1 focus:outline-none;
+  }
+}

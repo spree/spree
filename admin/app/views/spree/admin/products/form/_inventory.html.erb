@@ -1,5 +1,5 @@
-<div class="inventory-form card mb-4">
-  <div class="card-header d-flex align-items-center justify-content-between">
+<div class="inventory-form card mb-6">
+  <div class="card-header flex items-center justify-between">
     <h5 class="card-title"><%= Spree.t(:inventory) %></h5>
 
     <% if can?(:manage, Spree::StockLocation) %>
@@ -7,7 +7,7 @@
     <% end %>
   </div>
   <div class="card-body">
-    <div class="custom-control custom-checkbox mb-4">
+    <div class="custom-control form-checkbox mb-6">
       <%= f.check_box :track_inventory,
             class: 'custom-control-input',
             data: {
@@ -18,46 +18,31 @@
       <%= f.label :track_inventory, Spree.t(:track_quantity), class: 'custom-control-label' %>
     </div>
     <div
-      class="master-variant-quantity-form <%= @product.has_variants? || !@product.track_inventory ? 'd-none' : '' %>"
+      class="master-variant-quantity-form <%= @product.has_variants? || !@product.track_inventory ? 'hidden' : '' %>"
       data-product-form-target="<%= @product.has_variants? ? '' : 'quantityForm' %>"
     >
-      <h6 class="font-weight-bold"><%= Spree.t(:quantity) %></h6>
-      <hr class="mt-0">
-      <div class="mb-4">
+      <h6 class="font-bold"><%= Spree.t(:quantity) %></h6>
+      <hr class="my-6">
+      <div>
         <%= f.fields_for :master, @product.master do |vf| %>
           <%= vf.fields_for :stock_items do |sif| %>
             <%= sif.hidden_field :stock_location_id %>
-            <div class="row mb-2">
-              <div class="col-md-6 d-flex align-items-center">
+            <div class="grid lg:grid-cols-3 gap-x-6 gap-y-2 items-center mb-6 border-b border-gray-200 pb-6">
+              <% if can?(:manage, sif.object.stock_location) %>
+                <%= link_to sif.object.stock_location.name, spree.edit_admin_stock_location_path(sif.object.stock_location) %>
+              <% else %>
                 <%= sif.object.stock_location.name %>
-              </div>
-              <div class="col-md-2">
-                <%= sif.number_field :count_on_hand, class: 'form-control' %>
-              </div>
-              <div class="col-md-4">
-                <div class="custom-control custom-checkbox d-flex align-items-center h-100">
-                  <%= sif.check_box :backorderable, class: 'custom-control-input' %>
-                  <%= sif.label :backorderable, Spree.t(:continue_selling_when_out_of_stock), class: 'custom-control-label' %>
-                </div>
-              </div>
+              <% end %>
+              <%= sif.number_field :count_on_hand, class: 'form-input' %>
+              <%= sif.spree_check_box :backorderable, label: Spree.t(:continue_selling_when_out_of_stock) %>
             </div>
           <% end %>
         <% end %>
       </div>
     </div>
-    <div class="row">
-      <div class="col-md-6">
-        <div class="form-group">
-          <%= f.label :sku, Spree.t('admin.products.inventory.sku') %>
-          <%= f.text_field :sku, class: 'form-control' %>
-        </div>
-      </div>
-      <div class="col-md-6">
-        <div class="form-group">
-          <%= f.label :barcode, Spree.t('admin.products.inventory.barcode') %>
-          <%= f.text_field :barcode, class: 'form-control' %>
-        </div>
-      </div>
+    <div class="grid lg:grid-cols-2 gap-x-6 gap-y-2">
+      <%= f.spree_text_field :sku, label: Spree.t(:sku) %>
+      <%= f.spree_text_field :barcode, label: Spree.t(:barcode) %>
     </div>
   </div>
 </div>

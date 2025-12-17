@@ -1,5 +1,5 @@
 <% if @product.has_variants? || can?(:manage_option_types, @product) %>
-  <div class="card mb-4">
+  <div class="card mb-6">
     <div class="card-header">
       <h5 class="card-title"><%= Spree.t(:variants) %></h5>
     </div>
@@ -33,8 +33,8 @@
                     <i class="ti ti-grip-vertical"></i>
                   </button>
                 <% end%>
-                <div class="w-100">
-                  <div class="d-flex justify-content-between align-items-center">
+                <div class="w-full">
+                  <div class="flex justify-between items-center">
                     <h6 data-slot="optionName"><%= option_type.presentation %></h6>
                     <% if can?(:manage_option_types, @product) %>
                       <button class="btn btn-light btn-sm" type="button" data-action="variants-form#editOption" data-variants-form-option-id-param="<%= option_type.id %>"><%= Spree.t(:edit) %></button>
@@ -49,8 +49,8 @@
               </div>
             <% end %>
           </div>
-          <div class="options-creator__option options-creator__option--new d-none" data-variants-form-target="newOptionForm">
-            <div class="w-100">
+          <div class="options-creator__option options-creator__option--new hidden" data-variants-form-target="newOptionForm">
+            <div class="w-full">
               <div class="form-group">
                 <label class="label" for="new_option_name"><%= Spree.t(:option_name) %></label>
                 <%= tom_select_tag :new_option_name,
@@ -97,15 +97,15 @@
                     } %>
                 </div>
               </div>
-              <div class="d-flex justify-content-between">
-                <button class="btn btn-light btn-sm" data-action="variants-form#hideNewOptionForm" type="button"><%= Spree.t('actions.discard') %></button>
-                <button class="btn btn-primary btn-sm" data-action="variants-form#handleNewOption" type="button"><%= Spree.t(:done) %></button>
+              <div class="flex justify-between">
+                <button class="btn btn-light" data-action="variants-form#hideNewOptionForm" type="button"><%= Spree.t('actions.discard') %></button>
+                <button class="btn btn-primary" data-action="variants-form#handleNewOption" type="button"><%= Spree.t(:done) %></button>
               </div>
             </div>
           </div>
           <% if can?(:manage_option_types, @product) %>
             <button
-              class="new_option_button"
+              class="new_option_button btn btn-secondary justify-center"
               type="button"
               data-variants-form-target="newOptionButton" data-action="variants-form#showNewOptionForm"
             >
@@ -120,25 +120,25 @@
             </button>
           <% end %>
         </div>
-        <div class="variants-table <% unless @product.has_variants? %>d-none<% end %>" data-variants-form-target="variantsTable">
-          <div class="variants-table__actions gap-3">
+        <div class="variants-table <% unless @product.has_variants? %>hidden<% end %>" data-variants-form-target="variantsTable">
+          <div class="variants-table__actions gap-16">
             <% if supported_currencies.length > 1 %>
-              <div class="d-flex flex-row align-items-center gap-2">
+              <div class="flex flex-row items-center gap-2">
                 <label for="currency" class="mb-0"><%= Spree.t(:currency) %></label>
-                <%= select_tag 'currency', options_for_select(supported_currencies, current_store.default_currency), class: 'variants-table__actions__select custom-select', data: { action: 'variants-form#updateCurrency' } %>
+                <%= select_tag 'currency', options_for_select(supported_currencies, current_store.default_currency), class: 'variants-table__actions__select form-select', data: { action: 'variants-form#updateCurrency' } %>
               </div>
             <% end %>
             <% if available_stock_locations_for_product(@product).size > 1 %>
-              <div class="d-flex flex-row align-items-center gap-2">
+              <div class="flex flex-row items-center gap-2">
                 <label for="stock_location" class="mb-0"><%= Spree.t(:stock_location) %></label>
-                <%= select_tag 'stock_location', variant_form_stock_location_options, class: 'variants-table__actions__select custom-select', data: { action: 'variants-form#updateStockLocationId' } %>
+                <%= select_tag 'stock_location', variant_form_stock_location_options, class: 'variants-table__actions__select form-select', data: { action: 'variants-form#updateStockLocationId' } %>
               </div>
             <% end %>
           </div>
-          <div class="variants-table__header border-top border-bottom">
+          <div class="variants-table__header border-t border-b">
             <% if can?(:destroy, @product.default_variant)  %>
               <div class="variants-table__body__cell column-checkbox">
-                <div class="custom-control custom-checkbox">
+                <div class="custom-control form-checkbox">
                   <%= check_box_tag "ids[]", nil, false, class: "custom-control-input", id: "ids", data: { variants_form_target: "checkboxAll" } %>
                   <label class="custom-control-label" for="ids"><span></span></label>
                 </div>
@@ -146,9 +146,9 @@
             <% end%>
             <div class="variants-table__header__cell column-variant">
               <%= Spree.t(:variant) %>
-              <button data-variants-form-target="deleteButton" data-action="variants-form#deleteSelected" type="button" class="delete-button d-none ml-3">
-                <i class="ti ti-trash"></i> <%= Spree.t(:delete_selected) %>
-              </button>
+            <button data-variants-form-target="deleteButton" data-action="variants-form#deleteSelected" type="button" class="btn btn-danger btn-sm hidden ml-12">
+              <%= icon('trash') %> <%= Spree.t(:delete_selected) %>
+            </button>
             </div>
             <div class="variants-table__header__cell  column-price">
               <%= Spree.t(:price) %>
@@ -162,7 +162,7 @@
           <%= render 'spree/admin/products/form/variants/variant_template', default_stock_location: default_stock_location_for_product(@product) %>
           <div class="variants-table__body" data-variants-form-target="variantsContainer" data-test-id="product-variants-table">
           </div>
-          <div class="variants-table__footer font-size-sm">
+          <div class="variants-table__footer text-sm rounded-b-2xl">
             <%= Spree.t('admin.variants_form.total_inventory_html', stock_location: current_store.default_stock_location.name, count: raw("<span data-variants-form-target='stockItemsCount'>#{@product.total_on_hand}</span>") )%>
           </div>
         </div>

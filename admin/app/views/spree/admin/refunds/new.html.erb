@@ -3,16 +3,16 @@
   <%= Spree.t(:new_refund) %>
 <% end %>
 
-<div class="row">
-  <div class="col-lg-6 offset-lg-3">
+<div class="grid grid-cols-12 gap-6">
+  <div class="col-span-12 lg:col-span-6 lg:col-start-4">
     <%= render 'spree/admin/shared/error_messages', target: @refund %>
 
     <%= form_for [:admin, @refund.payment.order, @refund.payment, @refund] do |f| %>
-      <div class="card mb-4">
+      <div class="card mb-6">
         <div class="card-header">
-          <h6 class="card-title">
+          <h5 class="card-title">
             <%= Spree.t(:new_refund) %>
-          </h6>
+          </h5>
         </div>
         <div class="card-body">
           <div class="form-group">

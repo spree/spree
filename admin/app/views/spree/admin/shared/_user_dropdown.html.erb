@@ -3,7 +3,7 @@
     <%= dropdown do %>
       <%= dropdown_toggle class: 'user-dropdown-button dropdown-toggle' do %>
         <%= render_avatar(try_spree_current_user, width: 32, height: 32) %>
-        <span class="user-name d-none d-lg-block">
+        <span class="user-name hidden lg:block">
           <% if try_spree_current_user.name.present? %>
             <%= try_spree_current_user.name&.full %>
           <% else %>
@@ -12,12 +12,12 @@
         </span>
       <% end %>
       <%= dropdown_menu class: 'ml-2', style: 'min-width: 250px;' do %>
-        <div class="d-flex align-items-center p-2 bg-light rounded-lg">
+        <div class="flex items-center p-2 bg-gray-25 rounded-xl">
           <%= render_avatar(try_spree_current_user, width: 34, height: 34) %>
-          <span class="d-flex flex-column ml-2">
+          <span class="flex flex-col ml-2">
             <% if try_spree_current_user.name.present? %>
               <%= try_spree_current_user.name&.full %>
-              <small class="text-muted"><%= try_spree_current_user.email %></small>
+              <small class="text-gray-600"><%= try_spree_current_user.email %></small>
             <% else %>
               <%= try_spree_current_user.email %>
             <% end %>
@@ -44,7 +44,7 @@
 
       <div class="dropdown-divider"></div>
 
-        <%= button_to spree_admin_logout_path, class: 'dropdown-item mb-0 btn-danger', method: :delete do %>
+        <%= button_to spree_admin_logout_path, class: 'dropdown-item text-danger hover:bg-red-100 mb-0', method: :delete do %>
           <%= icon('logout', class: "icon icon-logout")  %>
           <%= Spree.t(:logout) %>
         <% end if defined?(spree_admin_logout_path) %>

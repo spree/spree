@@ -1,6 +1,6 @@
 <% width ||= 120 %>
 <% height ||= 72 %>
-<% css_class ||= 'img-thumbnail border-0' %>
+<% css_class ||= '' %>
 
 <% if theme.screenshot.attached? && theme.screenshot.variable? %>
   <%= image_tag(spree_image_url(theme.screenshot, width: width, height: height), class: css_class, loading: :lazy) %>
@@ -11,7 +11,7 @@
   loading: :lazy
 ) %>
 <% else %>
-  <div class="rounded bg-light text-muted d-flex align-items-center justify-content-center img-fluid" style="height: <%= height %>px">
-    <%= icon('camera-off', class: 'text-muted opacity-50') %>
+  <div class="rounded-md bg-gray-25 text-gray-600 flex items-center justify-center img-fluid" style="height: <%= height %>px">
+    <%= icon('camera-off', class: 'text-gray-600 opacity-50') %>
   </div>
 <% end %>

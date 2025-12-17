@@ -4,31 +4,29 @@
     <%= render "spree/admin/shared/head" %>
   </head>
 
-  <body class="admin admin-settings min-vh-100 <%= controller_name %> <%= action_name %>"
+  <body class="admin admin-settings min-h-screen <%= controller_name %> <%= action_name %>"
     data-controller="admin drawer dialog"
     data-action="keydown.ctrl+s->admin#save keydown.meta+s->admin#save"
   >
     <%= render_admin_partials(:body_start_partials) %>
 
     <header id="settings-header">
-      <%= render 'spree/admin/shared/back_to_dashboard' %>
-      <div class="flex-grow-1">
+      <div class="grow">
         <%= render 'spree/admin/shared/content_header' %>
       </div>
     </header>
 
     <%= render "spree/admin/shared/sidebar" %>
-    <main id="content" class="pt-4">
+    <main id="content" class="pt-6">
       <%= render "spree/admin/shared/page_tabs" %>
       <%= render "spree/admin/shared/page_alerts" %>
-      <div class="container">
+      <div class="container mx-auto px-4 max-w-screen-xl">
         <%= yield %>
       </div>
       <%= render "spree/admin/shared/footer" %>
       <%= render 'spree/admin/shared/drawer' %>
     </main>
     <%= render "spree/admin/shared/dialog" %>
-    <%= render "spree/admin/shared/modal" %>
     <%= render "spree/admin/shared/alerts" %>
 
     <%= render_admin_partials(:body_end_partials) %>

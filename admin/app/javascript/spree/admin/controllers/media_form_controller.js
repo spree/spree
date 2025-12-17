@@ -23,16 +23,16 @@ export default class extends Controller {
 
       if (response.ok) {
         this.deleteButtonTarget.disabled = false
-        this.deleteButtonTarget.classList.add('d-none')
+        this.deleteButtonTarget.classList.add('hidden')
       }
     }
   }
 
   showDeleteButton = () => {
     if (this.checkboxTargets.some((el) => el.checked)) {
-      this.deleteButtonTarget.classList.remove('d-none')
+      this.deleteButtonTarget.classList.remove('hidden', 'd-none')
     } else {
-      this.deleteButtonTarget.classList.add('d-none')
+      this.deleteButtonTarget.classList.add('hidden')
     }
   }
 }

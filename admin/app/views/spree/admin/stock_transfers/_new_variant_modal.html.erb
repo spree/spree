@@ -2,7 +2,7 @@
   <%= dialog_header(Spree.t(:add_variant)) %>
   <div class="dialog-body">
     <%= form_with url: spree.admin_variants_search_path, method: :post, data: { controller: 'auto-submit', turbo_frame: '_top' } do |form| %>
-      <%= form.search_field :q, value: params[:q], class: 'form-control', data: { search_picker_target: :search, action: 'auto-submit#submit' }, autofocus: true %>
+      <%= form.search_field :q, value: params[:q], class: 'form-input', data: { search_picker_target: :search, action: 'auto-submit#submit' }, autofocus: true %>
       <%= form.hidden_field :param_name, value: 'stock_transfer' %>
       <%= form.hidden_field :all, value: true %>
       <%= form.hidden_field :eligible, value: true %>
@@ -12,7 +12,7 @@
   </div>
   <div class="dialog-body">
     <div id="variants_search_results" class="search-results" data-search-picker-target="results">
-      <p class="text-muted text-center py-5">
+      <p class="text-gray-600 text-center py-12">
         <%= Spree.t(:start_typing_to_search_for_variants) %>
       </p>
     </div>

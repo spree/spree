@@ -4,7 +4,7 @@ module Spree
       # render a checkbox to select all items for bulk operations
       # @return [String]
       def bulk_operations_select_all_checkbox
-        content_tag :div, class: "custom-control custom-checkbox ml-1" do
+        content_tag :div, class: "custom-control form-checkbox ml-1" do
           check_box_tag(
             nil,
             nil,
@@ -21,7 +21,7 @@ module Spree
       # @param object [Spree::Product, Spree::User, Spree::Order]
       # @return [String]
       def bulk_operations_checkbox(object)
-        content_tag :div, class: "custom-control custom-checkbox ml-1" do
+        content_tag :div, class: "custom-control form-checkbox ml-1" do
           check_box_tag(
             "ids[]",
             object.id,

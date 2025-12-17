@@ -1,0 +1,232 @@
+/* ==========================================================================
+   CARDS
+   ========================================================================== */
+
+@layer components {
+  .card,
+  .card-lg {
+    @apply relative flex flex-col min-w-0 break-words bg-white border border-gray-200 rounded-2xl;
+    background-clip: border-box;
+  }
+
+  .card-lg {
+    @apply p-0 mb-3;
+  }
+
+  .card .card {
+    @apply rounded-2xl;
+  }
+
+  /* Card with table */
+  .card > .table,
+  .card .table-responsive > .table {
+    @apply border-x-0 mb-0;
+  }
+
+  .card > .table:last-child,
+  .card > .table:last-of-type,
+  .card .table-responsive > .table:last-child,
+  .card .table-responsive > .table:last-of-type {
+    @apply border-b-0;
+  }
+
+  .card > .table td:first-child,
+  .card > .table th:first-child,
+  .card .table-responsive > .table td:first-child,
+  .card .table-responsive > .table th:first-child {
+    @apply border-l-0;
+  }
+
+  .card > .table td:last-child,
+  .card > .table th:last-child,
+  .card .table-responsive > .table td:last-child,
+  .card .table-responsive > .table th:last-child {
+    @apply border-r-0;
+  }
+
+  .card > .table tr:first-child td,
+  .card > .table tr:first-child th,
+  .card .table-responsive > .table tr:first-child td,
+  .card .table-responsive > .table tr:first-child th {
+    @apply border-t-0;
+  }
+
+  .card > .table tr:last-child td,
+  .card .table-responsive > .table tr:last-child td {
+    @apply border-b-0;
+  }
+
+  .card .card-header + .table,
+  .card .card-header + .table-responsive > .table {
+    @apply border-t-0;
+  }
+
+  .card-body {
+    @apply flex-auto p-5;
+  }
+
+  .card-body .form-group:last-child {
+    @apply mb-0;
+  }
+
+  .card-header,
+  .card-footer {
+    @apply bg-transparent;
+  }
+
+  .card-header {
+    @apply flex items-center mb-0 p-5 h-14 border-b border-gray-100 rounded-t-[calc(var(--radius-2xl)-1px)];
+  }
+
+  .card-header .card-title {
+    @apply mb-0 font-sans;
+  }
+
+  .card-header .arrow {
+    @apply w-auto;
+  }
+
+  .card-header .arrow:before {
+    @apply transition-transform duration-300 ease-in-out;
+  }
+
+  .card-header .collapsed .arrow:before {
+    @apply -rotate-90;
+  }
+
+  .card-footer {
+    @apply p-5;
+  }
+
+  .card-footer:last-child {
+    @apply rounded-b-[calc(var(--radius-2xl)-1px)];
+  }
+
+  .card-footer.border-top,
+  .card-body.border-top,
+  .card .border-top,
+  .card .border-bottom,
+  .card .list-group-item {
+    @apply border-gray-100!;
+  }
+
+  .card-title {
+    @apply mb-2 font-bold;
+  }
+
+  .card-text {
+    @apply break-words;
+  }
+
+  .card-text:last-child {
+    @apply mb-0;
+  }
+
+  .card-link + .card-link {
+    @apply ml-3;
+  }
+
+  .card-img-top {
+    @apply w-full rounded-t-[calc(var(--radius-2xl)-1px)];
+  }
+
+  /* Collapsable Card */
+  .collapsable-card {
+    @apply relative flex flex-col min-w-0 break-words overflow-hidden;
+    @apply bg-white border border-gray-200 rounded-2xl;
+    background-clip: border-box;
+  }
+
+  .collapsable-card .card-header:hover {
+    @apply bg-gray-25!;
+  }
+
+  .collapsable-card .card-body {
+    @apply border-t border-gray-100;
+  }
+
+  .collapsable-card[open] .arrow {
+    @apply rotate-90 transition-transform duration-200 ease-in-out;
+  }
+
+  .collapsable-card:not([open]) .arrow {
+    @apply rotate-0 transition-transform duration-200 ease-in-out;
+  }
+
+  /* Animate details content */
+  .collapsable-card > *:not(summary) {
+    @apply grid overflow-hidden opacity-0;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.25s ease-out, opacity 0.2s ease-out;
+  }
+
+  .collapsable-card[open] > *:not(summary) {
+    @apply opacity-100;
+    grid-template-rows: 1fr;
+  }
+
+  .collapsable-card > *:not(summary) > * {
+    @apply min-h-0;
+  }
+
+  /* Collapsible Card (Stimulus reveal controller version) */
+  .card .card-header--collapsible:hover {
+    @apply bg-gray-25;
+  }
+
+  .card .card-header--collapsible:focus {
+    @apply outline-2 outline-primary outline-offset-[-2px];
+  }
+
+  .card .card-header--collapsible .arrow {
+    @apply rotate-90 transition-transform duration-200 ease-in-out;
+  }
+
+  .card:has(.collapsible-content.is-collapsed) .card-header--collapsible .arrow {
+    @apply rotate-0;
+  }
+
+  .card .collapsible-content {
+    @apply grid overflow-hidden;
+    grid-template-rows: 1fr;
+    transition: grid-template-rows 0.25s ease-out, opacity 0.2s ease-out;
+  }
+
+  .card .collapsible-content.is-collapsed {
+    grid-template-rows: 0fr;
+  }
+
+  .card .collapsible-content > * {
+    @apply overflow-hidden min-h-0;
+  }
+
+  .card .collapsible-content .card-body {
+    @apply border-t border-gray-100;
+  }
+
+  /* Details/Summary styling for cards */
+  .collapsable-card details summary,
+  .card details summary {
+    @apply cursor-pointer list-none select-none;
+  }
+
+  .collapsable-card details summary::-webkit-details-marker,
+  .card details summary::-webkit-details-marker {
+    @apply hidden;
+  }
+
+  .collapsable-card details summary::marker,
+  .card details summary::marker {
+    @apply hidden;
+  }
+
+  .collapsable-card details summary[role="button"],
+  .card details summary[role="button"] {
+    @apply outline-none;
+  }
+
+  .collapsable-card details summary[role="button"]:focus,
+  .card details summary[role="button"]:focus {
+    @apply outline-2 outline-primary outline-offset-[-2px];
+  }
+}

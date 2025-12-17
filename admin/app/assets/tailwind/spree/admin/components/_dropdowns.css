@@ -1,0 +1,135 @@
+/* ==========================================================================
+   DROPDOWNS
+   ========================================================================== */
+
+@layer components {
+  .dropdown {
+    @apply relative;
+  }
+
+  .dropdown .btn .text-gray-600 {
+    @apply text-gray-500!;
+  }
+
+  .dropdown .arrow {
+    @apply text-gray-300;
+  }
+
+  .dropdown:hover .arrow {
+    @apply text-gray-500;
+  }
+
+  .dropdown.show .arrow {
+    @apply rotate-180;
+  }
+
+  /* Dropdown Toggle */
+  .dropdown-toggle {
+    @apply whitespace-nowrap;
+  }
+
+  .dropdown-toggle::after {
+    @apply border-none inline-block align-middle opacity-50 rotate-0 transition-transform duration-200 ease-in-out;
+    content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='icon icon-tabler icons-tabler-outline icon-tabler-chevron-down'%3E%3Cpath stroke='none' d='M0 0h24v24H0z' fill='none'/%3E%3Cpath d='M6 12l6 6l6 -6'/%3E%3C/svg%3E");
+  }
+
+  .dropdown-toggle:focus::after,
+  .dropdown-toggle:active::after,
+  .dropdown-toggle[aria-expanded="true"]::after {
+    @apply rotate-180 opacity-100;
+  }
+
+  .dropdown-toggle:empty::after {
+    @apply ml-0;
+  }
+
+  /* Dropdown Container using Floating UI */
+  .dropdown-container {
+    @apply absolute z-1050 text-left list-none border-0 overflow-hidden text-base font-normal text-gray-950 bg-white;
+    @apply origin-top mt-1! p-1 rounded-2xl min-w-40 max-w-80;
+    animation: popIn 0.15s ease-out both;
+    background-clip: padding-box;
+    box-shadow: var(--shadow-dropdown);
+  }
+
+  /* When hidden, disable animation so it doesn't play on page load */
+  .dropdown-container.hidden {
+    @apply animate-none;
+  }
+
+  .dropdown-divider {
+    @apply h-0 my-1 overflow-hidden border-t border-gray-100;
+  }
+
+  /* Dropdown Item */
+  .dropdown-container .dropdown-item,
+  .dropdown-container .dropdown-header {
+    @apply py-2 px-2.5;
+  }
+
+  .dropdown-container .dropdown-header {
+    @apply text-base font-normal my-1;
+  }
+
+  .dropdown-item {
+    @apply flex items-center justify-start w-full clear-both text-inherit no-underline whitespace-nowrap bg-transparent border-0 font-normal;
+    @apply h-8 mb-1 pr-8 rounded-xl transition-colors duration-75 ease-linear gap-3;
+  }
+
+  .dropdown-item .badge {
+    @apply ml-auto self-center;
+  }
+
+  .dropdown-item:hover,
+  .dropdown-item:focus {
+    @apply no-underline text-gray-900 bg-gray-200/50;
+  }
+
+  .dropdown-item.active {
+    @apply relative text-gray-900! font-bold! bg-gray-200/50!;
+  }
+
+  .dropdown-item.active i {
+    @apply text-gray-900!;
+  }
+
+  .dropdown-item.active::after {
+    @apply inline-block absolute right-3 w-4 h-4;
+    content: "";
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-check text-zinc-950"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l5 5l10 -10"/></svg>')
+      no-repeat center center;
+  }
+
+  .dropdown-item:active {
+    @apply no-underline text-gray-900 bg-gray-100;
+  }
+
+  .dropdown-item.disabled,
+  .dropdown-item:disabled {
+    @apply pointer-events-none bg-transparent text-gray-500;
+  }
+
+  .dropdown-item.btn {
+    @apply font-normal!;
+  }
+
+  .dropdown-item.btn-danger {
+    @apply shadow-none;
+  }
+
+  .dropdown-item:last-child {
+    @apply mb-0;
+  }
+
+  .dropdown-container .button_to {
+    @apply w-full;
+  }
+
+  .dropdown-header {
+    @apply block mb-0 whitespace-nowrap text-sm text-gray-600 py-2 px-4;
+  }
+
+  .dropdown-item-text {
+    @apply block py-1 px-4 text-gray-950;
+  }
+}

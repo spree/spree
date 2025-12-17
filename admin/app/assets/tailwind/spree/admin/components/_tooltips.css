@@ -1,0 +1,15 @@
+/* ==========================================================================
+   TOOLTIPS & POPOVERS
+   ========================================================================== */
+
+@layer components {
+  /* Custom Tooltip Container (Floating UI) */
+  .tooltip-container {
+    @apply absolute hidden pointer-events-none z-1080 bg-white text-gray-950 border-0 rounded-lg;
+    @apply text-base! font-normal! opacity-100! py-1 px-2 max-w-[200px];
+    @apply whitespace-normal break-words;
+    box-shadow: 0px 0px 0px 1px var(--color-gray-200), 0px 3px 6px -1px rgba(209, 213, 219, 0.35), 0px 3px 6px 0px rgba(209, 213, 219, 0.35);
+    overflow-wrap: anywhere;
+    text-wrap: wrap;
+  }
+}

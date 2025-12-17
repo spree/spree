@@ -1,0 +1,195 @@
+/* ==========================================================================
+   TABLES
+   ========================================================================== */
+
+@layer components {
+  .table {
+    @apply w-full align-top text-gray-950 border-gray-200;
+  }
+
+  .table > :not(caption) > * > * {
+    @apply bg-transparent border-b py-4 px-3;
+    box-shadow: inset 0 0 0 9999px transparent;
+  }
+
+  .table > tbody {
+    @apply align-middle;
+  }
+
+  .table > thead {
+    @apply align-bottom;
+  }
+
+  .table th {
+    @apply border-t-0 border-b-0 whitespace-nowrap;
+  }
+
+  .table thead th {
+    @apply align-middle text-left text-sm font-medium text-gray-600 bg-gray-25 py-2 border-b border-gray-200;
+  }
+
+  .table thead th:first-child {
+    @apply rounded-tl-2xl;
+  }
+
+  .table thead th:last-child {
+    @apply rounded-tr-2xl;
+  }
+
+  .table tbody tr td {
+    @apply align-middle;
+  }
+
+  .table tbody tr td .filterable {
+    @apply cursor-pointer opacity-25 ml-1 w-4 h-4;
+  }
+
+  .table tbody tr td .filterable:hover {
+    @apply opacity-100;
+  }
+
+  .table tbody tr td a:hover {
+    @apply no-underline;
+  }
+
+  .table tbody tr td > a:not(.btn):not(.text-zinc-950) {
+    @apply text-gray-900;
+  }
+
+  .table tbody tr.active td {
+    @apply bg-blue-50 border-blue-100;
+  }
+
+  .table tbody tr:hover:not(.active):not(.sortable-chosen) td {
+    @apply bg-gray-50/75;
+  }
+
+  .table tbody tr:last-child td {
+    @apply border-b-0;
+  }
+
+  .table tbody tr:last-child td:first-child {
+    @apply rounded-bl-xl;
+  }
+
+  .table tbody tr:last-child td:last-child {
+    @apply rounded-br-xl;
+  }
+
+  .table tr > td:first-child,
+  .table tr > th:first-child {
+    @apply pl-4;
+  }
+
+  .table tr > td:last-child,
+  .table tr > th:last-child {
+    @apply pr-4;
+  }
+
+  .table th.handel-head {
+    @apply w-12;
+  }
+
+  .table td.move-handle {
+    @apply w-11;
+  }
+
+  .table th a.sort_link {
+    @apply whitespace-nowrap;
+  }
+
+  .table-responsive {
+    @apply overflow-x-auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Card-lg table styles */
+  .card-lg .with-filters table thead th:first-child,
+  .card-lg turbo-frame table thead th:first-child {
+    @apply rounded-tl-none;
+  }
+
+  .card-lg .with-filters table thead th:last-child,
+  .card-lg turbo-frame table thead th:last-child {
+    @apply rounded-tr-none;
+  }
+
+  /* Pagination container */
+  .pagination-container {
+    @apply sticky bottom-0 z-100 border-t bg-white rounded-b-2xl;
+  }
+
+  /* Filters search bar */
+  #filters-search-bar {
+    @apply max-w-xs mr-auto;
+  }
+
+  /* Table active filters */
+  .table-active-filters {
+    @apply p-3;
+  }
+
+  .table-active-filters:not(:has(:first-child)) {
+    @apply hidden;
+  }
+
+  .table-active-filters .js-filter .icon {
+    @apply cursor-pointer;
+  }
+
+  .table-active-filters .badge-secondary .icon {
+    @apply invert;
+  }
+
+  .table-active-filters .badge {
+    @apply inline-block mr-2 mb-2;
+  }
+
+  .table-active-filters .badge:hover {
+    @apply opacity-80;
+  }
+
+  /* Table responsive overflow handling */
+  .table-responsive tr td,
+  .table-responsive tr th {
+    @apply whitespace-nowrap;
+  }
+
+  .table-responsive.border {
+    @apply border-gray-200!;
+  }
+
+  .table-responsive:has(.dropdown.show) {
+    @apply overflow-visible;
+  }
+
+  /* Sortable drag */
+  .sortable-drag-v {
+    @apply w-full text-right opacity-0 border border-info rounded-md;
+  }
+
+  .sortable-drag-v td {
+    @apply border-t-0 opacity-0;
+  }
+
+  .sortable-drag-v td:first-child {
+    @apply opacity-100;
+  }
+
+  /* Actions column */
+  td.actions {
+    @apply text-right;
+  }
+
+  td.actions .btn {
+    @apply whitespace-nowrap;
+  }
+
+  td.actions .btn:not(.btn-sm) {
+    @apply py-2;
+  }
+
+  td.actions .btn-sm {
+    @apply py-1;
+  }
+}

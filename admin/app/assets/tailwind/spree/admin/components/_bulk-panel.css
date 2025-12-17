@@ -1,0 +1,97 @@
+/* ==========================================================================
+   BULK PANEL
+   ========================================================================== */
+
+@layer components {
+  .bulk-panel-container {
+    @apply inline-flex items-center rounded-2xl bg-white shadow-dropdown h-12 gap-2;
+    animation: bounceInUp;
+    animation-duration: 0.5s;
+  }
+
+  @keyframes bounceInUp {
+    from,
+    60%,
+    75%,
+    90%,
+    to {
+      animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    }
+
+    from {
+      opacity: 0;
+      transform: translate3d(0, 3000px, 0) scaleY(5);
+    }
+
+    60% {
+      opacity: 1;
+      transform: translate3d(0, -20px, 0) scaleY(0.9);
+    }
+
+    75% {
+      transform: translate3d(0, 10px, 0) scaleY(0.95);
+    }
+
+    90% {
+      transform: translate3d(0, -5px, 0) scaleY(0.985);
+    }
+
+    to {
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  .bulk-panel-container .btn {
+    @apply h-10;
+  }
+
+  .bulk-panel-container .btn:hover {
+    @apply bg-gray-100;
+  }
+
+  .bulk-panel-container > * {
+    @apply h-10 flex items-center justify-center;
+  }
+
+  .bulk-panel-container > *:first-child {
+    @apply rounded-l-lg;
+  }
+
+  .bulk-panel-container > *:last-child {
+    @apply rounded-r-lg;
+  }
+
+  .bulk-panel-container > *:last-child .btn {
+    @apply rounded-r-lg;
+  }
+
+  .bulk-panel-container .btn-close {
+    @apply w-10;
+  }
+
+  #bulk-panel {
+    @apply fixed w-full text-center bottom-4 left-0;
+    z-index: 1020;
+  }
+
+  @media (min-width: 992px) {
+    #bulk-panel {
+      @apply left-1/4 w-3/4;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    #bulk-panel {
+      left: 16.66666667%;
+      width: 83.33333333%;
+    }
+  }
+
+  .bulk-operations-counter {
+    @apply pl-4 pr-0;
+  }
+
+  .bulk-operations-counter .bulk-operations-counter-label {
+    @apply pr-4 flex items-center justify-center gap-2 border-r border-gray-200;
+  }
+}

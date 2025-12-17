@@ -1,0 +1,61 @@
+/* ==========================================================================
+   SORTABLE TREE
+   ========================================================================== */
+
+@layer components {
+  #itemImgContainer {
+    width: 200px;
+  }
+
+  #itemImgContainer img {
+    @apply max-w-full;
+  }
+
+  #sortableTreeArea .space-buttons {
+    box-shadow: -11px 0 16px 6px white;
+    z-index: 9;
+  }
+
+  #sortableTreeArea .space-buttons a {
+    margin: 2px;
+  }
+
+  #sortableTreeArea .sortable-tree-item-row {
+    @apply bg-white;
+    margin: 2px;
+  }
+
+  #sortableTreeArea .sortable-tree-item {
+    @apply border border-transparent p-0;
+  }
+
+  #sortableTreeArea .sortable-tree-item [data-sortable-tree-parent-id-value] {
+    margin-left: 25px;
+  }
+
+  @media (min-width: 576px) {
+    #sortableTreeArea .sortable-tree-item [data-sortable-tree-parent-id-value] {
+      margin-left: 50px;
+    }
+  }
+
+  #sortableTreeArea .sortable-chosen {
+    @apply bg-transparent border-transparent;
+  }
+
+  #sortableTreeArea .sortable-chosen .sortable-tree-item-row {
+    @apply bg-blue-50 border-2 border-blue-500;
+    margin: -1px;
+  }
+
+  #sortableTreeArea .item_image_holder {
+    @apply relative border border-gray-200 overflow-hidden;
+    border-radius: 7px;
+    width: 45px;
+    height: 45px;
+  }
+
+  #sortableTreeArea .item_image_holder img {
+    @apply absolute left-1/2 top-1/2 h-full w-auto -translate-x-1/2 -translate-y-1/2;
+  }
+}

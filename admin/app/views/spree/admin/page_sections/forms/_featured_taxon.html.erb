@@ -1,24 +1,24 @@
 <div class="form-group">
   <%= f.label :preferred_heading, Spree.t('admin.page_builder.heading') %>
-  <%= f.text_field :preferred_heading, data: { action: 'auto-submit#submit' }, class: "form-control" %>
+  <%= f.text_field :preferred_heading, data: { action: 'auto-submit#submit' }, class: "form-input" %>
 </div>
 <div class="form-group">
   <%= f.label :preferred_heading_size, Spree.t('admin.page_builder.heading_size') %>
-  <%= f.select :preferred_heading_size, options_for_select([ ["Small", 'small'], ["Medium", 'medium'], ["Large", 'large'] ], @page_section.preferred_heading_size ), {}, data: { action: 'auto-submit#submit' }, class: "custom-select" %>
+  <%= f.select :preferred_heading_size, options_for_select([ ["Small", 'small'], ["Medium", 'medium'], ["Large", 'large'] ], @page_section.preferred_heading_size ), {}, data: { action: 'auto-submit#submit' }, class: "form-select" %>
 </div>
 <div class="form-group">
   <%= f.label :preferred_heading_alignment, Spree.t('admin.page_builder.heading_alignment') %>
-  <%= f.select :preferred_heading_alignment, options_for_select([ ["Left", "left"], ["Center", "center"], ["Right", "right"] ], @page_section.preferred_heading_alignment ), {}, data: { action: 'auto-submit#submit' }, class: "custom-select" %>
+  <%= f.select :preferred_heading_alignment, options_for_select([ ["Left", "left"], ["Center", "center"], ["Right", "right"] ], @page_section.preferred_heading_alignment ), {}, data: { action: 'auto-submit#submit' }, class: "form-select" %>
 </div>
 <div class="form-group">
   <%= f.label :description %>
   <div class="trix-container">
-    <%= f.rich_text_area :description, data: {action: 'trix-change->auto-submit#submit'}, class: 'mb-3 w-full' %>
+    <%= f.rich_text_area :description, data: {action: 'trix-change->auto-submit#submit'}, class: 'mb-4 w-full' %>
   </div>
 </div>
 <div class="form-group">
   <%= f.label :preferred_description_alignment, Spree.t('admin.page_builder.description_alignment') %>
-  <%= f.select :preferred_description_alignment, options_for_select([ ["Left", "left"], ["Center", "center"], ["Right", "right"] ], @page_section.preferred_description_alignment ), {}, data: { action: 'auto-submit#submit' }, class: "custom-select" %>
+  <%= f.select :preferred_description_alignment, options_for_select([ ["Left", "left"], ["Center", "center"], ["Right", "right"] ], @page_section.preferred_description_alignment ), {}, data: { action: 'auto-submit#submit' }, class: "form-select" %>
 </div>
 <div class="form-group">
   <%= f.check_box :preferred_use_description_from_admin, class: "checkbox-input", data: { action: 'auto-submit#submit' } %>
@@ -27,7 +27,7 @@
 </div>
 <div class="form-group">
   <%= f.label :preferred_button_text, Spree.t('admin.page_builder.button_text') %>
-  <%= f.text_field :preferred_button_text, class: 'form-control', data: { action: 'blur->auto-submit#submit' }, placeholder: 'eg. Explore category', required: true %>
+  <%= f.text_field :preferred_button_text, class: 'form-input', data: { action: 'blur->auto-submit#submit' }, placeholder: 'eg. Explore category', required: true %>
 </div>
 <div class="form-group">
   <%= f.check_box :preferred_show_taxon_image, class: "checkbox-input", data: { action: 'auto-submit#submit' } %>
@@ -35,7 +35,7 @@
 </div>
 <div class="form-group">
   <%= f.label :preferred_taxon, Spree.t('admin.page_builder.category') %>
-  <%= tom_select_tag 'page_section[preferred_taxon_id]', active_option: @page_section.preferred_taxon_id, class: 'w-100', url: spree.admin_taxons_select_options_path(format: :json, with_automatic: true), select_data: {action: 'auto-submit#submit'} %>
+  <%= tom_select_tag 'page_section[preferred_taxon_id]', active_option: @page_section.preferred_taxon_id, class: 'w-full', url: spree.admin_taxons_select_options_path(format: :json, with_automatic: true), select_data: {action: 'auto-submit#submit'} %>
 </div>
 <div class="form-group">
   <%= f.check_box :preferred_show_more_button, class: "checkbox-input", data: { action: 'auto-submit#submit' } %>
@@ -45,15 +45,15 @@
   <div data-controller="better-slider">
     <label><%= Spree.t('admin.page_builder.maximum_products_to_show') %>: <span data-better-slider-target="currentValueLabel"></span></label>
     <div class="flex flex-row w-full">
-      <span class="mr-2">3</span>
+      <span class="mr-4">3</span>
       <%= f.range_field :preferred_max_products_to_show, class: "custom-range w-full", min: 3, max: 20, data: {'better-slider-target': 'rangeInput', action: 'auto-submit#submit'} %>
-      <span class="ml-2">20</span>
+      <span class="ml-4">20</span>
     </div>
   </div>
 </div>
 <% content_for(:design_tab) do %>
   <div class="form-group">
     <%= f.label :preferred_button_style, Spree.t('admin.page_builder.button_style') %>
-    <%= f.select :preferred_button_style, options_for_select([['Primary', 'primary'], ['Secondary', 'secondary']], @page_section.preferred_button_style), {}, data: {  action: 'auto-submit#submit' },  class: 'custom-select' %>
+    <%= f.select :preferred_button_style, options_for_select([['Primary', 'primary'], ['Secondary', 'secondary']], @page_section.preferred_button_style), {}, data: {  action: 'auto-submit#submit' },  class: 'form-select' %>
   </div>
 <% end %>

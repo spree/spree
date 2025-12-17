@@ -1,19 +1,19 @@
-<div class="card mb-4">
+<div class="card mb-6">
     <div class="card-header">
       <h5 class="card-title"><%= Spree.t(:general_information) %></h5>
     </div>
     <div class="card-body" data-controller="slug-form">
-      <div class="row mb-3">
-        <div class="col-md-6">
+      <div class="grid grid-cols-12 gap-6 mb-6">
+        <div class="col-span-12 md:col-span-6">
           <%= f.spree_text_field :presentation, required: true, autofocus: f.object.new_record?, data: { slug_form_target: :name, action: 'slug-form#updateUrlFromName' }, help_text: "This is used to display the option type on the storefront." %>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-span-12 md:col-span-6">
           <%= f.spree_text_field :name, label: Spree.t(:internal_name), data: { slug_form_target: :url }, help_text: raw("This is used internally to identify the option type. <strong>It must be unique.</strong>") %>
         </div>
       </div>
-      <div class="row">
-        <div class="col-12 col-md-6">
+      <div class="grid grid-cols-12 gap-6">
+        <div class="col-span-12 md:col-span-6">
           <%= f.spree_check_box :filterable, help_text: raw(Spree.t('option_type_filterable_info')) %>
         </div>
       </div>
@@ -26,15 +26,15 @@
     <% end %>
   </template>
 
-  <div class="card mb-4">
-    <div class="card-header d-flex justify-content-between align-items-center">
+  <div class="card mb-6">
+    <div class="card-header flex justify-between items-center">
       <h5 class="card-title"><%= Spree.t(:option_values) %></h5>
     </div>
     <div class="card-body p-0">
       <div class="table-responsive">
         <table class="table">
           <thead>
-            <tr class="border-bottom">
+            <tr class="border-b">
               <th scope="col"></th>
               <th scope="col"><%= raw(Spree.t(:presentation) + required_span_tag) %></th>
               <th scope="col"><%= raw(Spree.t(:internal_name) + required_span_tag) %></th>
@@ -52,7 +52,7 @@
 
             <tr class="hover-none">
               <td colspan="4" class="text-center p-2">
-                <button type="button" data-action="nested-form#add" class="btn btn-secondary py-3 w-100" id="add_option_value_button">
+                <button type="button" data-action="nested-form#add" class="btn btn-secondary py-3 w-full" id="add_option_value_button">
                   <%= icon('plus') %>
                   <%= Spree.t(:add_one) %>
                 </button>

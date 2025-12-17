@@ -9,7 +9,7 @@
   <%= order_payment_state(@order) %>
   <%= order_shipment_state(@order) %>
   <% if @order.completed? %>
-    <span class="text-muted font-size-sm font-weight-normal">
+    <span class="text-gray-600 text-sm font-normal">
       <%= I18n.t('activerecord.attributes.spree/order.completed_at') %>
       <%= spree_time_ago(@order.completed_at) %>
     </span>
@@ -60,7 +60,7 @@
   <% if can?(:cancel, @order) %>
     <div class="dropdown-divider"></div>
     <%= link_to spree.cancel_admin_order_path(@order),
-                class: 'text-left btn-danger dropdown-item',
+                class: 'dropdown-item text-danger hover:bg-red-100',
                 data: { turbo_method: :put, turbo_confirm: Spree.t(:are_you_sure) } do %>
       <%= icon "cancel" %>
       <%= Spree.t(:cancel_order) %>

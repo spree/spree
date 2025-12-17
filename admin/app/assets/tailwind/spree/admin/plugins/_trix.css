@@ -1,0 +1,100 @@
+/* ==========================================================================
+   TRIX CUSTOM STYLES
+   ========================================================================== */
+
+@layer components {
+  .trix-container {
+    @apply border border-gray-200 rounded-lg shadow-xs overflow-hidden;
+    @apply focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-blue-500;
+    @apply transition-all duration-100 ease-in-out;
+  }
+
+  trix-toolbar {
+    @apply p-1 w-full border-b border-gray-200 bg-gray-25!;
+  }
+
+  trix-toolbar .trix-button.trix-active {
+    @apply bg-gray-100!;
+  }
+
+  trix-toolbar .trix-button-group {
+    @apply gap-1 ml-0!;
+  }
+
+  trix-toolbar .trix-button {
+    @apply rounded-md! w-9! h-[30px]! p-1.5!;
+  }
+
+  trix-toolbar .trix-dialogs > .trix-dialog > .trix-dialog__link-fields > .trix-button-group > .trix-button--dialog {
+    @apply w-full! h-full! py-2 px-3!;
+  }
+
+  trix-toolbar .trix-dialog--x-video-embed {
+    @apply max-w-[600px];
+  }
+
+  trix-editor {
+    @apply m-2 rounded-lg border-0!;
+  }
+
+  .trix-container,
+  trix-editor {
+    @apply bg-white;
+  }
+
+  .trix-container:has(trix-editor[contenteditable='false']) {
+    @apply bg-gray-50;
+  }
+
+  .trix-container:has(trix-editor[contenteditable='false']):active {
+    @apply bg-gray-50!;
+  }
+
+  .trix-container:has(trix-editor[contenteditable='false']) trix-editor {
+    @apply bg-gray-50;
+  }
+
+  trix-toolbar .trix-button--icon::before {
+    @apply m-1;
+  }
+
+  trix-toolbar .trix-button,
+  trix-toolbar .trix-button-group {
+    @apply border-0! mb-0!;
+  }
+
+  trix-toolbar .trix-button {
+    @apply w-8! h-7! p-1;
+  }
+
+  trix-toolbar .trix-button:hover {
+    @apply bg-gray-200! text-gray-900!;
+  }
+
+  trix-toolbar .trix-button-row {
+    @apply flex flex-wrap! w-full;
+  }
+
+  trix-toolbar .trix-dialog {
+    @apply bg-white! border-t-0! rounded-lg! top-1!;
+  }
+
+  trix-toolbar .trix-dialog .trix-input {
+    @apply block w-full text-sm leading-normal text-gray-900 bg-white py-1.5 px-3 border border-gray-200 rounded-lg transition-all duration-150 ease-in-out;
+    background-clip: padding-box;
+  }
+
+  trix-toolbar .trix-dialog .trix-button {
+    @apply inline-block text-center align-middle select-none text-sm leading-normal bg-gray-50 font-normal py-2 px-4 mr-1 mb-0 rounded-lg border border-gray-200!;
+  }
+
+  trix-toolbar .trix-dialog__link-fields {
+    @apply items-center;
+  }
+
+  /* Video embed icon */
+  .trix-button--icon-embed::before {
+    @apply top-[8%]!;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-youtube" viewBox="0 0 16 16"><path d="M8.051 1.999h.089c.822.003 4.987.033 6.11.335a2.01 2.01 0 0 1 1.415 1.42c.101.38.172.883.22 1.402l.01.104.022.26.008.104c.065.914.073 1.77.074 1.957v.075c-.001.194-.01 1.108-.082 2.06l-.008.105-.009.104c-.05.572-.124 1.14-.235 1.558a2.01 2.01 0 0 1-1.415 1.42c-1.16.312-5.569.334-6.18.335h-.142c-.309 0-1.587-.006-2.927-.052l-.17-.006-.087-.004-.171-.007-.171-.007c-1.11-.049-2.167-.128-2.654-.26a2.01 2.01 0 0 1-1.415-1.419c-.111-.417-.185-.986-.235-1.558L.09 9.82l-.008-.104A31 31 0 0 1 0 7.68v-.123c.002-.215.01-.958.064-1.778l.007-.103.003-.052.008-.104.022-.26.01-.104c.048-.519.119-1.023.22-1.402a2.01 2.01 0 0 1 1.415-1.42c.487-.13 1.544-.21 2.654-.26l.17-.007.172-.006.086-.003.171-.007A100 100 0 0 1 7.858 2zM6.4 5.209v4.818l4.157-2.408z"/></svg>');
+  }
+}

@@ -21,7 +21,7 @@
       <span class="badge badge-warning"><%= Spree.t(:expired) %></span>
     <% else %>
       <span class="badge badge-light"><%= Spree.t(:pending) %></span>
-      <p class="text-muted font-size-sm mb-0 mt-2 pl-1">Expires at: <%= spree_time(invitation.expires_at) %></p>
+      <p class="text-gray-600 text-sm mb-0 mt-2 pl-1">Expires at: <%= spree_time(invitation.expires_at) %></p>
     <% end %>
   </td>
   <td class="w-10">
@@ -29,7 +29,7 @@
   </td>
   <td class="w-10 actions">
     <% if invitation.pending? && !invitation.expired? %>
-      <%= dropdown do %>
+      <%= dropdown portal: false do %>
         <%= dropdown_toggle class: 'btn-light btn-sm' do %>
           <%= icon('dots-vertical', class: 'mr-0') %>
         <% end %>
@@ -43,7 +43,7 @@
               class: "dropdown-item", 
               data: { turbo_method: :put, turbo_confirm: Spree.t(:are_you_sure) } %>
           <%= link_to_with_icon 'trash', Spree.t('actions.destroy'), spree.admin_invitation_path(invitation),
-              class: "dropdown-item btn-danger",
+              class: "dropdown-item text-red-600 hover:bg-red-100",
               data: { turbo_method: :delete, turbo_confirm: Spree.t(:are_you_sure) } if can?(:destroy, invitation) %>
         <% end %>
       <% end %>

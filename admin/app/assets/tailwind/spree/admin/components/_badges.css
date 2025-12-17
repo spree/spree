@@ -1,0 +1,124 @@
+/* ==========================================================================
+   BADGES
+   ========================================================================== */
+
+@layer components {
+  .badge {
+    @apply inline-flex items-center text-center whitespace-nowrap align-baseline cursor-default text-xs font-normal leading-none rounded-md py-1 px-2;
+  }
+
+  .badge i {
+    @apply mr-1 text-[100%];
+  }
+
+  .badge .ti {
+    @apply text-xs leading-3;
+  }
+
+  /* Status badges - Green */
+  .badge-completed,
+  .badge-complete,
+  .badge-resumed,
+  .badge-considered_safe,
+  .badge-paid,
+  .badge-shipped,
+  .badge-active,
+  .badge-success,
+  .badge-sold,
+  .badge-open,
+  .badge-authorized,
+  .badge-published,
+  .badge-live,
+  .badge-processed,
+  .badge-create,
+  .badge-approved,
+  .badge-resolved,
+  .badge-reimbursed,
+  .badge-allocation {
+    @apply border border-transparent bg-green-200 text-green-900;
+  }
+
+  /* Status badges - Red */
+  .badge-failed,
+  .badge-considered_risky,
+  .badge-error,
+  .badge-errored,
+  .badge-invalid,
+  .badge-rejected,
+  .badge-destroy,
+  .badge-closed,
+  .badge-canceled,
+  .badge-partially_canceled,
+  .badge-void,
+  .badge-danger {
+    @apply border border-transparent bg-red-100! text-red-900;
+  }
+
+  /* Status badges - Orange/Warning */
+  .badge-returned,
+  .badge-credit_owed,
+  .badge-balance_due,
+  .badge-backorder,
+  .badge-checkout,
+  .badge-suspended,
+  .badge-archived,
+  .badge-warning,
+  .badge-ready {
+    @apply border border-transparent bg-yellow-200 text-yellow-900;
+  }
+
+  /* Status badges - Light/Neutral */
+  .badge-processing,
+  .badge-pending,
+  .badge-paused,
+  .badge-awaiting_return,
+  .badge-cart,
+  .badge-inactive,
+  .badge-address,
+  .badge-delivery,
+  .badge-payment,
+  .badge-confirm,
+  .badge-disabled,
+  .badge-draft,
+  .badge-onboarding,
+  .badge-light,
+  .badge-authorize,
+  .badge-eligible,
+  .badge-invited {
+    @apply bg-white text-gray-600 border border-gray-200 font-normal;
+  }
+
+  .badge-processing:hover,
+  .badge-pending:hover,
+  .badge-paused:hover,
+  .badge-awaiting_return:hover,
+  .badge-cart:hover,
+  .badge-inactive:hover,
+  .badge-address:hover,
+  .badge-delivery:hover,
+  .badge-payment:hover,
+  .badge-confirm:hover,
+  .badge-disabled:hover,
+  .badge-draft:hover,
+  .badge-onboarding:hover,
+  .badge-light:hover,
+  .badge-authorize:hover,
+  .badge-eligible:hover,
+  .badge-invited:hover {
+    @apply bg-white text-gray-600;
+  }
+
+  /* Status badges - Info/Notice */
+  .badge-notice,
+  .badge-update,
+  .badge-partial,
+  .badge-capture,
+  .badge-info {
+    @apply border border-transparent bg-blue-50 text-blue-900;
+  }
+
+  /* Pill badges */
+  .badge-pill {
+    @apply px-2.5 rounded-full;
+  }
+}

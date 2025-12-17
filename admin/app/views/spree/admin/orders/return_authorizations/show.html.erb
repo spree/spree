@@ -1,6 +1,6 @@
 <% content_for :page_title do %>
   <%= page_header_back_button spree.edit_admin_order_path(@order) %>
-  <div class="d-flex gap-3 align-items-center">
+  <div class="flex gap-6 items-center">
     <span><%= Spree.t(:return_authorization) %></span>
     <span><%= @return_authorization.number %></span>
     <span class="badge badge-<%= @return_authorization.state %>">
@@ -19,12 +19,12 @@ locals: {
 } %>
 
 <% if flash[:errors].present? %>
-  <div class="alert alert-danger border-danger text-break">
+  <div class="alert alert-danger border-danger break-words">
     <%= flash[:errors].to_sentence %>
   </div>
 <% end %>
 
-<div class="card-lg mb-4">
+<div class="card-lg mb-6">
   <div class="table-responsive">
     <table class="table table-condensed return-items-table">
       <thead>
@@ -74,9 +74,9 @@ locals: {
 </div>
 
 <% if @return_authorization.reason.present? %>
-  <div class="card mb-4">
+  <div class="card mb-6">
     <div class="card-header">
-      <h6 class="card-title"><%= Spree.t(:reason) %></h6>
+      <h5 class="card-title"><%= Spree.t(:reason) %></h5>
     </div>
     <div class="card-body">
       <%= @return_authorization.reason.name %>
@@ -85,9 +85,9 @@ locals: {
 <% end %>
 
 <% if @return_authorization.memo.present? %>
-  <div class="card mb-4">
+  <div class="card mb-6">
     <div class="card-header">
-      <h6 class="card-title"><%= Spree.t(:memo) %></h6>
+      <h5 class="card-title"><%= Spree.t(:memo) %></h5>
     </div>
     <div class="card-body">
       <%= @return_authorization.memo %>
@@ -96,7 +96,7 @@ locals: {
 <% end %>
 
 <% if @refunds.any? %>
-  <div class="card mb-4">
+  <div class="card mb-6">
     <div class="card-header">
       <h5><%= Spree.t(:reimbursement) %></h5>
     </div>

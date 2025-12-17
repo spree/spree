@@ -4,7 +4,7 @@ module TomSelectHelper
   #
   # @param [String] name
   # @param [Hash] options
-  def tom_select_tag(name, options = { template: false, multiple: false, url: nil, active_option: nil, class: 'w-100', create: false, select_data: {} })
+  def tom_select_tag(name, options = { template: false, multiple: false, url: nil, active_option: nil, class: 'w-full', create: false, select_data: {} })
     stimulus_options = options[:data] || {}
     stimulus_options[:controller] = 'select' unless options[:template].present?
     stimulus_options['select-active-option-value'] = options[:active_option].as_json if options[:active_option]
@@ -32,7 +32,7 @@ module TomSelectHelper
       select_tag name, html_select_options,
                  multiple: options[:multiple],
                  data: { 'select-target': 'input', **(options[:select_data] || {}) },
-                 class: options[:select_class] || 'd-none',
+                 class: options[:select_class] || 'hidden',
                  required: options[:required],
                  disabled: options[:disabled],
                  include_blank: options[:include_blank],

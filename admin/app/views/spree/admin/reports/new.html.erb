@@ -4,7 +4,7 @@
 <% end %>
 
 <%= content_for :page_actions do %>
-  <%= form_for @report, url: spree.admin_reports_path, as: :report, html: { class: 'd-inline-block' } do |f| %>
+  <%= form_for @report, url: spree.admin_reports_path, as: :report, html: { class: 'inline-block' } do |f| %>
     <%= f.hidden_field :type %>
     <%= f.hidden_field :date_from %>
     <%= f.hidden_field :date_to %>
@@ -26,16 +26,15 @@
   <%= form_tag spree.new_admin_report_path, method: :get, data: { controller: 'auto-submit' } do %>
     <%= hidden_field_tag :type, params[:type] %>
 
-    <div class="d-flex gap-2">
+    <div class="flex gap-2">
       <%= render 'spree/admin/shared/calendar_range_picker',
         date_from_value: @report.date_from,
-        date_to_value: @report.date_to,
-        css_classes: 'custom-select d-flex cursor-default bg-transparent' %>
+        date_to_value: @report.date_to %>
 
       <div class="form-group">
         <%= select_tag :currency,
           options_for_select(current_store.supported_currencies_list, @report.currency),
-          class: 'custom-select bg-transparent',
+          class: 'form-select bg-transparent pr-8!',
           data: { action: 'change->auto-submit#submit' } %>
       </div>
 

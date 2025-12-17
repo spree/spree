@@ -1,0 +1,114 @@
+/* ==========================================================================
+   BUTTONS
+   ========================================================================== */
+
+@layer components {
+  /* Tabler Icons base styles */
+  .ti {
+    @apply align-middle text-[120%];
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center text-center align-middle gap-2;
+    @apply cursor-pointer select-none no-underline;
+    @apply px-3 py-1.5 text-base font-medium leading-normal border border-transparent rounded-xl;
+    @apply transition-colors duration-100 ease-linear;
+  }
+
+  .btn:disabled,
+  .btn.disabled {
+    @apply opacity-70 pointer-events-none cursor-not-allowed;
+  }
+
+  .btn-sm {
+    @apply px-2 py-1 text-sm rounded-lg;
+  }
+
+  .btn-lg {
+    @apply px-3 py-2 text-lg rounded-xl;
+  }
+
+  /* Button Variants */
+  .btn-primary {
+    @apply text-white bg-zinc-950 border-zinc-950 shadow-xs;
+  }
+
+  .btn-primary:hover {
+    @apply bg-zinc-800 border-zinc-800;
+  }
+
+  .btn-secondary {
+    @apply text-blue-900 shadow-xs bg-blue-50 border-blue-100/75;
+  }
+
+  .btn-secondary:hover,
+  .btn-secondary:focus {
+    @apply border-blue-200;
+  }
+
+  .btn-secondary .arrow {
+    @apply text-zinc-950;
+  }
+
+  .btn-light,
+  .btn-danger {
+    @apply text-gray-700 bg-gray-25 border-gray-200 shadow-xs;
+  }
+
+  .btn-light:hover,
+  .btn-light:focus,
+  .btn-light:active {
+    @apply bg-gray-100 border-gray-200 text-gray-900;
+  }
+
+  .btn-light:active {
+    @apply bg-gray-50;
+    box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.025);
+  }
+
+  .btn-light.bg-transparent {
+    @apply bg-transparent;
+  }
+
+  .btn-danger {
+    @apply text-red-600 bg-gray-25 hover:bg-red-100;
+  }
+
+  .btn-close {
+    @apply border-none opacity-50 p-3 rounded-md w-3.5 h-3.5;
+    background: transparent url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414z'/%3e%3c/svg%3e") center/0.85em auto no-repeat;
+  }
+
+  .btn-close:hover {
+    @apply opacity-80 bg-gray-100;
+  }
+
+  .btn-clipboard {
+    @apply w-6 h-6 px-1;
+  }
+
+  .payment-action-save {
+    @apply text-white bg-green-300 border-green-300;
+  }
+
+  /* Button states for Turbo */
+  button .show-when-disabled {
+    @apply hidden;
+  }
+
+  button[disabled] .show-when-disabled {
+    @apply inline;
+  }
+
+  button .show-when-enabled {
+    @apply inline;
+  }
+
+  button[disabled] .show-when-enabled {
+    @apply hidden;
+  }
+
+  .actions .btn {
+    @apply ml-1;
+  }
+}

@@ -1,4 +1,4 @@
-<div class="card mb-4">
+<div class="card mb-6">
   <div class="card-header">
     <h5 class="card-title">
       <%= Spree.t(:general_settings) %>
@@ -13,7 +13,7 @@
     <%= f.spree_collection_select :zone_id, @available_zones, :id, :name, label: Spree.t(:zone) %>
     <%= f.spree_collection_select :tax_category_id, @available_categories, :id, :name, label: Spree.t(:tax_category) %>
 
-    <hr class="my-4" />
+    <hr class="my-6" />
 
     <%= f.spree_check_box :included_in_price %>
     <%= f.spree_check_box :show_rate_in_label %>

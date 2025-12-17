@@ -1,7 +1,7 @@
 <% if previous_cards.any? %>
   <%= render 'spree/admin/payments/source_forms/previous_cards', previous_cards: previous_cards, f: f %>
 <% else %>
-  <span class="text-muted">
+  <span class="text-gray-600">
     <%= Spree.t(:no_saved_cards) %>
   </span>
 <% end %>

@@ -26,7 +26,7 @@
 
   <%# Submenu dropdown for collapsed sidebar (always rendered, shown on hover) %>
   <% if ready_to_ship_orders_count&.positive? || can?(:manage, :checkouts) %>
-    <ul class="nav-submenu-dropdown d-none dropdown-container">
+    <ul class="nav-submenu-dropdown hidden dropdown-container">
       <%= nav_item(Spree.t(:orders), spree.admin_orders_path) %>
 
       <% if ready_to_ship_orders_count&.positive? %>

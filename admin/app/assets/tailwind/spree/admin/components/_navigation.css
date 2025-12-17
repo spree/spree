@@ -1,0 +1,41 @@
+/* ==========================================================================
+   NAVIGATION
+   ========================================================================== */
+
+@layer components {
+  /* Nav base */
+  .nav {
+    @apply flex flex-wrap pl-0 mb-0 list-none;
+  }
+
+  .nav-link {
+    @apply block no-underline py-2 px-4 transition-colors duration-150 ease-in-out;
+  }
+
+  .nav-link:hover,
+  .nav-link:focus {
+    @apply text-zinc-950;
+  }
+
+  .nav-link.disabled {
+    @apply pointer-events-none cursor-default text-gray-500;
+  }
+
+  /* Nav pills */
+  .nav-pills {
+    @apply gap-1;
+  }
+  .nav-pills .nav-link {
+    @apply bg-none rounded-xl py-1.5 px-3 cursor-pointer transition-colors duration-300 ease-in-out text-gray-900 hover:bg-gray-25;
+  }
+
+  .nav-pills .nav-link.active {
+    @apply bg-gray-100;
+  }
+
+  /* Nav fill and justified */
+  .nav-fill > .nav-link,
+  .nav-fill .nav-item {
+    @apply flex-auto text-center;
+  }
+}

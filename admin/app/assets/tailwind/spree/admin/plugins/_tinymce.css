@@ -1,0 +1,79 @@
+/* ==========================================================================
+   TINYMCE CUSTOM STYLES
+   ========================================================================== */
+
+@layer components {
+  /* Hide TinyMCE branding */
+  .tox-statusbar__branding {
+    @apply hidden;
+  }
+
+  .tox.tox-tinymce {
+    @apply rounded-md! border-0!;
+  }
+
+  .tox-edit-area__iframe {
+    @apply bg-white!;
+  }
+
+  .tox-tinymce--disabled .tox-edit-area__iframe {
+    @apply bg-gray-50!;
+  }
+
+  .tox .tox-edit-area::before {
+    @apply border-primary!;
+  }
+
+  /* Grey out the readonly textarea */
+  .rich-text-area-container:has(textarea.spree-rte[contenteditable='false']) {
+    textarea.spree-rte + .tox-tinymce .tox-edit-area__iframe {
+      @apply bg-gray-50!;
+    }
+  }
+
+  .tox .tox-tbtn {
+    @apply rounded-md!;
+    color: rgba(0, 0, 0, 0.6) !important;
+  }
+
+  .tox .tox-tbtn svg {
+    fill: rgba(0, 0, 0, 0.6) !important;
+  }
+
+  .tox .tox-editor-header {
+    @apply p-0!;
+  }
+
+  .tox .tox-edit-focus {
+    @apply hidden!;
+  }
+
+  .tox-statusbar {
+    @apply hidden!;
+  }
+
+  /* Override TinyMCE UI font size */
+  .tox-toolbar__group {
+    @apply text-sm!;
+  }
+
+  .tox-mbtn__select-label {
+    @apply text-sm!;
+  }
+
+  /* Override TinyMCE Content font size */
+  .tox-tinymce {
+    @apply text-sm!;
+  }
+
+  .tox .tox-collection__item-label,
+  .tox-tbtn__select-label {
+    @apply text-sm!;
+    font-family: var(--font-sans);
+  }
+
+  .tox.tox-tinymce-aux .tox-toolbar__overflow,
+  .tox .tox-menu {
+    @apply rounded-md!;
+  }
+}

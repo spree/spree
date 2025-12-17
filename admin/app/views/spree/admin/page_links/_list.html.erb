@@ -1,25 +1,25 @@
-<div class="mb-4">
-  <h5 class="font-weight-bold">Links</h5>
+<div class="mb-6">
+  <h5 class="font-bold">Links</h5>
 
   <% if parent.links.any? %>
-    <ul class="list-group mb-3"
+    <ul class="list-group mb-6"
         data-controller="sortable"
         data-sortable-handle-value=".handle"
         data-sortable-resource-name-value="page_link"
         data-sortable-response-kind-value="turbo-stream">
       <% parent.links.each do |link| %>
-        <li class="list-group-item p-0 d-flex align-items-center hover-gray"
+        <li class="list-group-item p-0 flex items-center hover:bg-gray-100"
             data-sortable-update-url="<%= spree.admin_page_link_path(link, sorting_only: true, format: :turbo_stream) %>"
         >
-          <%= link_to link.label, spree.edit_admin_page_link_path(link), class: 'd-block py-2 px-3 text-dark flex-fill' %>
-          <button class="btn btn-sm pr-0 handle hover-gray-200 h-100 mr-1 px-1 shadow-none">
+          <%= link_to link.label, spree.edit_admin_page_link_path(link), class: 'block py-4 px-6 text-gray-900 flex-1' %>
+          <button class="btn btn-sm pr-0 handle hover:bg-gray-100 h-full mr-1 px-1 shadow-none">
             <%= icon 'grip-vertical', class: 'mr-0' %>
           </button>
         </li>
       <% end %>
     </ul>
   <% else %>
-    <p class="text-muted text-center p-5">
+    <p class="text-gray-600 text-center p-12">
       <%= Spree.t(:no_resource_found, resource: Spree::PageLink.model_name.human) %>
     </p>
   <% end %>
@@ -31,6 +31,6 @@
       <% add_url = spree.admin_page_section_block_links_path(parent.section, parent) %>
     <% end %>
 
-    <%= link_to_with_icon 'plus', Spree.t(:add_link), add_url, class: 'btn btn-primary w-100', data: { turbo_method: :post } if add_url && can?(:create, Spree::PageLink.new(parent: parent)) %>
+    <%= link_to_with_icon 'plus', Spree.t(:add_link), add_url, class: 'btn btn-primary w-full', data: { turbo_method: :post } if add_url && can?(:create, Spree::PageLink.new(parent: parent)) %>
   <% end %>
 </div>

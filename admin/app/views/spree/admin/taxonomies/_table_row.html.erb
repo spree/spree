@@ -1,9 +1,9 @@
 <tr id="<%= spree_dom_id taxonomy %>" data-controller="row-link" data-sortable-update-url="<%= spree.admin_taxonomy_path(taxonomy) %>">
   <td class="w-5 move-handle text-center">
-    <%= icon('grip-vertical', class: 'rounded hover-gray p-2') %>
+    <%= icon('grip-vertical', class: 'rounded-md hover:bg-gray-100 p-2') %>
   </td>
-  <td class="w-50 cursor-pointer py-0" data-action="click->row-link#openLink">
-    <%= link_to taxonomy.name, spree.admin_taxonomy_path(taxonomy), class: 'text-decoration-none d-flex align-items-center font-weight-bold text-dark', data: { row_link_target: :link, turbo_frame: '_top' } %>
+  <td class="w-1/2 cursor-pointer py-0" data-action="click->row-link#openLink">
+    <%= link_to taxonomy.name, spree.admin_taxonomy_path(taxonomy), class: 'no-underline flex items-center font-bold text-gray-900', data: { row_link_target: :link, turbo_frame: '_top' } %>
   </td>
   <td class="w-15 cursor-pointer" data-action="click->row-link#openLink">
     <!-- We don't want to include the root taxon -->

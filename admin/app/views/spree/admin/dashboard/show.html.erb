@@ -1,28 +1,28 @@
-<div class="row pt-4">
-  <div class="col-12">
+<div class="grid grid-cols-12 gap-6 pt-6">
+  <div class="col-span-12">
     <h2 class="page-header-title">
       <%= Spree.t('admin.dashboard.hi') %> <%= try_spree_current_user.first_name %>!
     </h2>
-    <p>
+    <p class="mb-4">
       <%= Spree.t('admin.dashboard.whats_happening_on', store_name: current_store.name).html_safe %>
     </p>
   </div>
 </div>
 
-<div class="row">
-  <div class="col-lg-8">
-    <div class="mb-2 d-flex gap-2">
+<div class="grid grid-cols-12 gap-6">
+  <div class="col-span-12 lg:col-span-8">
+    <div class="mb-2 flex gap-2">
       <%= form_tag spree.admin_dashboard_analytics_path, method: :get, data: { turbo_frame: :analytics } do %>
         <%= hidden_field_tag :vendor_id, @vendor.id if @vendor.present? %>
         <%= render 'spree/admin/shared/calendar_range_picker',
           date_from_value: params[:date_from] || 1.month.ago.end_of_day,
           date_to_value: params[:date_to] || Time.zone.now.beginning_of_day,
-          css_classes: "btn btn-sm border rounded-lg hover-light d-inline-flex align-items-center h-100 dropdown-toggle" %>
+          css_classes: "btn btn-sm btn-light rounded-xl hover:bg-gray-25 inline-flex items-center h-full dropdown-toggle bg-transparent" %>
       <% end %>
     </div>
     <%= render 'analytics' %>
   </div>
-  <div class="col-lg-4">
+  <div class="col-span-12 lg:col-span-4">
     <%= render 'sidebar' %>
     <%= render_admin_partials(:dashboard_sidebar_partials) %>
   </div>

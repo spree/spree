@@ -1,0 +1,151 @@
+/* ==========================================================================
+   ANIMATIONS
+   Native Tailwind animations replacing animate.css
+   ========================================================================== */
+
+@layer base {
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadeInDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeOutDown {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+  }
+
+  @keyframes popIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95) translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  @keyframes popOut {
+    from {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: scale(0.95) translateY(-4px);
+    }
+  }
+
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slideOutRight {
+    from {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+  }
+
+  @keyframes expandDown {
+    from {
+      opacity: 0;
+      grid-template-rows: 0fr;
+    }
+    to {
+      opacity: 1;
+      grid-template-rows: 1fr;
+    }
+  }
+
+  @keyframes collapseUp {
+    from {
+      opacity: 1;
+      grid-template-rows: 1fr;
+    }
+    to {
+      opacity: 0;
+      grid-template-rows: 0fr;
+    }
+  }
+}
+
+@layer utilities {
+  /* Base animation classes */
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out both;
+  }
+
+  .animate-fade-in-down {
+    animation: fadeInDown 0.3s ease-out both;
+  }
+
+  .animate-fade-out-down {
+    animation: fadeOutDown 0.3s ease-out both;
+  }
+
+  /* Fast variants (matching animate__faster: 0.5s -> we use 0.15s for snappier feel) */
+  .animate-fade-in-fast {
+    animation: fadeIn 0.15s ease-out both;
+  }
+
+  .animate-fade-in-down-fast {
+    animation: fadeInDown 0.15s ease-out both;
+  }
+
+  .animate-fade-out-down-fast {
+    animation: fadeOutDown 0.15s ease-out both;
+  }
+
+  /* Pop animations (for dropdowns, modals, etc.) */
+  .animate-pop-in {
+    animation: popIn 0.15s ease-out both;
+    transform-origin: top center;
+  }
+
+  .animate-pop-out {
+    animation: popOut 0.1s ease-in both;
+    transform-origin: top center;
+  }
+
+  /* Slide animations (for drawers, sidebars, etc.) */
+  .animate-slide-in-right {
+    animation: slideInRight 0.25s ease-out both;
+  }
+
+  .animate-slide-out-right {
+    animation: slideOutRight 0.2s ease-in both;
+  }
+}

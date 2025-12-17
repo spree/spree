@@ -9,11 +9,11 @@
 <% end if show_record_subtitle && !content_for(:page_subtitle) %>
 
 <% if content_for?(:page_title) %>
-  <header id="page-header" class="container" data-controller="sticky">
-    <h3 class="page-header-title mb-0 d-flex align-items-center gap-3">
+  <header id="page-header" class="container mx-auto px-4 max-w-screen-xl" data-controller="sticky">
+    <h3 class="page-header-title mb-0 flex items-center gap-4">
       <%= yield :page_title %>
     </h3>
-    <div id="page_actions" class="ml-auto page-actions d-flex align-items-center gap-2">
+    <div id="page_actions" class="ml-auto page-actions flex items-center gap-2">
       <%= yield :page_actions if content_for?(:page_actions) %>
 
       <% if action_name == 'edit' && @object %>
@@ -22,8 +22,8 @@
       <% end %>
 
       <% if show_record_subtitle || content_for(:page_actions_dropdown) %>
-        <%= dropdown id: 'page_actions_dropdown', class: 'h-100', portal: false do %>
-          <%= dropdown_toggle id: 'more-actions-link', class: 'btn-light h-100 p-2' do %>
+        <%= dropdown id: 'page_actions_dropdown', portal: false do %>
+          <%= dropdown_toggle id: 'more-actions-link', class: 'btn-light h-[35px] px-2' do %>
             <%= icon 'dots-vertical', class: 'mr-0' %>
           <% end %>
           <%= dropdown_menu id: 'page_actions_dropdown_menu' do %>
@@ -61,7 +61,7 @@
 
               <% if defined?(object_url) && %w[show edit].include?(action_name) && record.respond_to?(:can_be_deleted?) && record.can_be_deleted? && can?(:destroy, record) %>
                 <div class="dropdown-divider"></div>
-                <%= link_to_with_icon 'trash', Spree.t('actions.destroy'), object_url, class: 'dropdown-item btn-danger', data: { turbo_method: :delete, turbo_confirm: Spree.t(:are_you_sure) } %>
+                <%= link_to_with_icon 'trash', Spree.t('actions.destroy'), object_url, class: 'dropdown-item text-red-600 hover:bg-red-100', data: { turbo_method: :delete, turbo_confirm: Spree.t(:are_you_sure) } %>
               <% end %>
             <% end %>
           <% end %>

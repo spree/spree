@@ -136,7 +136,7 @@ module Spree
 
         button_tag(type: 'button', class: 'btn btn-light', data: { action: 'click->export-dialog#open' }) do
           icon('table-export', class: 'mr-0 mr-lg-2') +
-          content_tag(:span, Spree.t(:export), class: 'd-none d-lg-inline')
+          content_tag(:span, Spree.t(:export), class: 'hidden lg:inline')
         end
       end
 
@@ -189,7 +189,7 @@ module Spree
           options.merge(
             type: button_type,
             class: "btn #{css_classes}",
-            'data-turbo-submits-with' => content_tag(:span, '', class: 'spinner-border spinner-border-sm', role: 'status')
+            'data-turbo-submits-with' => content_tag(:span, '', class: 'inline-block w-4 h-4 border-2 border-current border-r-transparent rounded-full animate-spin', role: 'status')
           )
         )
       end
@@ -247,8 +247,8 @@ module Spree
           url = session[session_key] if session[session_key].present?
         end
 
-        link_to url, class: 'd-flex align-items-center text-decoration-none' do
-          content_tag(:span, icon('chevron-left', class: 'mr-0'), class: 'btn hover-gray shadow-none px-2 d-flex align-items-center shadow-none') +
+        link_to url, class: 'flex items-center no-underline' do
+          content_tag(:span, icon('chevron-left', class: 'mr-0'), class: 'btn hover:bg-gray-100 shadow-none px-2 flex items-center shadow-none') +
             content_tag(:span, label, class: 'font-size-base text-black')
         end
       end
@@ -261,7 +261,7 @@ module Spree
       def external_link_to(label, url, opts = {}, &block)
         opts[:target] ||= :blank
         opts[:rel] ||= :nofollow
-        opts[:class] ||= "d-inline-flex align-items-center text-blue text-decoration-none"
+        opts[:class] ||= "inline-flex items-center text-blue-500 no-underline hover:text-blue-600 hover:bg-blue-50 p-1 rounded"
 
         if block_given?
           link_to url, opts, &block
@@ -299,7 +299,7 @@ module Spree
       # @param css [String] the css class of the help bubble
       # @return [String] the help bubble with the icon
       def help_bubble(text = '', placement = 'top', css: nil)
-        css ||= 'text-xs text-muted cursor-default opacity-75'
+        css ||= 'text-gray-500 cursor-default opacity-75'
         content_tag :span, data: { controller: 'tooltip', tooltip_placement_value: placement } do
           icon('info-square-rounded', class: css) + tooltip(text)
         end

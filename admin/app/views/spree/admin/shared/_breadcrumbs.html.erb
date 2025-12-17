@@ -5,9 +5,9 @@
       <li>
         <%= active_link_to Spree.t(:settings), spree.edit_admin_store_path %>
       </li>
-      <%= icon('slash', class: 'text-muted font-size-sm') %>
+      <%= icon('slash', class: 'text-gray-600 text-sm') %>
     <% end %>
 
-    <%= render_breadcrumbs tag: :li, separator: icon('slash', class: 'text-muted font-size-sm') %>
+    <%= render_breadcrumbs tag: :li, separator: icon('slash', class: 'text-gray-600 text-sm') %>
   </ol>
 </nav>
