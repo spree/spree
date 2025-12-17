@@ -6,10 +6,8 @@
   /* Gray Scale */
   --color-gray-25: #FAFAFA;
 
-  /* Brand Colors */
-  --color-primary: var(--color-zinc-950);
-
   /* Legacy Colors, kept for old HTML from extensions/developer apps work properly */
+  --color-primary: var(--color-zinc-950);
   --color-success: var(--color-green-900);
   --color-danger: var(--color-red-900);
   --color-warning: var(--color-yellow-900);
