@@ -6,4 +6,5 @@
 //= link_tree ../../javascript/spree/admin/helpers .js
 //= link_tree ../../../vendor/javascript .js
 //= link spree/admin/application.js
+//= link tinymce.js
 
