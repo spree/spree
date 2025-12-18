@@ -16,8 +16,8 @@ module Spree
 
         def install
           empty_directory Rails.root.join('app/assets/tailwind') if Rails.root && !Rails.root.join('app/assets/tailwind').exist?
-          template 'application.css', 'app/assets/tailwind/application.css'
-          template 'tailwind.config.js', 'config/tailwind.config.js'
+          template 'application.css', 'app/assets/tailwind/application.css', force: options[:force]
+          template 'tailwind.config.js', 'config/tailwind.config.js', force: options[:force]
 
           if Rails.root && Rails.root.join("Procfile.dev").exist?
             append_to_file 'Procfile.dev', "\nstorefront_css: bin/rails tailwindcss:watch" unless File.read('Procfile.dev').include?('storefront_css:')

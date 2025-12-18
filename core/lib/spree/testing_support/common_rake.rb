@@ -30,7 +30,8 @@ namespace :common do
     Spree::DummyGenerator.start dummy_app_args
 
     unless skip_javascript
-      system('bundle exec rails importmap:install turbo:install stimulus:install')
+      system('yes | bundle exec rails importmap:install turbo:install stimulus:install')
+      system('yes | bundle exec rails tailwindcss:install')
     end
 
     # install devise if it's not the legacy user, useful for testing storefront
@@ -43,6 +44,7 @@ namespace :common do
     Spree::InstallGenerator.start [
       "--lib_name=#{ENV['LIB_NAME']}",
       '--auto-accept',
+      '--force',
       '--migrate=false',
       '--seed=false',
       '--sample=false',
@@ -65,9 +67,9 @@ namespace :common do
       puts 'Running extension installation generator...'
 
       if ENV['NO_MIGRATE']
-        "#{ENV['LIB_NAME'].camelize}::Generators::InstallGenerator".constantize.start([])
+        "#{ENV['LIB_NAME'].camelize}::Generators::InstallGenerator".constantize.start(['--force'])
       else
-        "#{ENV['LIB_NAME'].camelize}::Generators::InstallGenerator".constantize.start(['--auto-run-migrations'])
+        "#{ENV['LIB_NAME'].camelize}::Generators::InstallGenerator".constantize.start(['--force', '--auto-run-migrations'])
       end
     rescue LoadError
       puts 'Skipping installation no generator to run...'
