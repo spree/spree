@@ -54,12 +54,12 @@ def setup_auth
 
   if VERBOSE
     rails_command 'generate devise:install'
-    rails_command 'generate devise Spree::User --skip-routes'
-    rails_command 'generate devise Spree::AdminUser --skip-routes'
+    rails_command 'generate devise Spree::User'
+    rails_command 'generate devise Spree::AdminUser'
   else
     run 'bin/rails generate devise:install >/dev/null 2>&1'
-    run 'bin/rails generate devise Spree::User --skip-routes >/dev/null 2>&1'
-    run 'bin/rails generate devise Spree::AdminUser --skip-routes >/dev/null 2>&1'
+    run 'bin/rails generate devise Spree::User >/dev/null 2>&1'
+    run 'bin/rails generate devise Spree::AdminUser >/dev/null 2>&1'
   end
 end
 
