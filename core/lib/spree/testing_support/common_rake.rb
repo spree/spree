@@ -38,6 +38,7 @@ namespace :common do
     if args[:authentication] == 'devise' && args[:user_class] != 'Spree::LegacyUser'
       system('bundle exec rails g devise:install --force --auto-accept')
       system("bundle exec rails g devise #{args[:user_class]} --force --auto-accept --skip-routes")
+      system("bundle exec rails g devise #{args[:admin_user_class]} --force --auto-accept --skip-routes") if args[:admin_user_class].present? && args[:admin_user_class] != args[:user_class]
       system('rm -rf spec') # we need to cleanup factories created by devise to avoid naming conflict
     end
 
@@ -51,6 +52,7 @@ namespace :common do
       "--install_storefront=#{args[:install_storefront]}",
       "--install_admin=#{args[:install_admin]}",
       "--user_class=#{args[:user_class]}",
+      "--admin_user_class=#{args[:admin_user_class]}",
       "--authentication=#{args[:authentication]}"
     ]
 
