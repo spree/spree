@@ -74,7 +74,7 @@ namespace :gem do
   desc "Install all spree gems"
   task install: :build do
     for_each_gem do |gem_path|
-      Bundler.with_clean_env do
+      Bundler.with_unbundled_env do
         sh "gem install #{gem_path}"
       end
     end
