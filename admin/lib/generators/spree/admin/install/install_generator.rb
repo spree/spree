@@ -57,7 +57,8 @@ module Spree
         def install_tailwind_css
           template(
             'app/assets/tailwind/spree_admin.css',
-            'app/assets/tailwind/spree_admin.css'
+            'app/assets/tailwind/spree_admin.css',
+            force: options[:force]
           )
           say "Created app/assets/tailwind/spree_admin.css for Tailwind CSS customization"
         end

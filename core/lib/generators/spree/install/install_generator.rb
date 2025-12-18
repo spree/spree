@@ -58,22 +58,22 @@ module Spree
 
     def install_storefront
       if @install_storefront && Spree::Core::Engine.frontend_available?
-        generate 'spree:storefront:install'
+        generate "spree:storefront:install#{' --force' if options[:force]}"
 
         # generate devise controllers if authentication is devise
         if @authentication == 'devise'
-          generate 'spree:storefront:devise'
+          generate "spree:storefront:devise#{' --force' if options[:force]}"
         end
       end
     end
 
     def install_admin
       if @install_admin && Spree::Core::Engine.admin_available?
-        generate 'spree:admin:install'
+        generate "spree:admin:install#{' --force' if options[:force]}"
 
         # generate devise controllers if authentication is devise
         if @authentication == 'devise'
-          generate 'spree:admin:devise'
+          generate "spree:admin:devise#{' --force' if options[:force]}"
         end
       end
     end
