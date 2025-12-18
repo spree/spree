@@ -68,26 +68,6 @@ namespace :spree do
   end
 end
 
-# Override the default tailwindcss:build task from tailwindcss-rails gem.
-# Spree Admin handles its own Tailwind build, so we make the default task
-# a no-op unless the host app has additional Tailwind CSS outside of Spree Admin.
-if Rake::Task.task_defined?("tailwindcss:build")
-  Rake::Task["tailwindcss:build"].clear
-
-  namespace :tailwindcss do
-    desc "Build Tailwind CSS (overridden by Spree Admin)"
-    task build: :environment do
-      # Spree Admin's tailwind build handles everything through spree:admin:tailwindcss:build
-      # This task is intentionally empty to prevent the default tailwindcss-rails behavior
-      # which would fail if app/assets/tailwind/application.css doesn't exist in the host app.
-      #
-      # If you have host app CSS that needs separate compilation, you can:
-      # 1. Add your styles to app/assets/tailwind/application.css and let Spree Admin compile it
-      # 2. Create a separate rake task for your host app's CSS
-    end
-  end
-end
-
 # Hook into assets:precompile
 if Rake::Task.task_defined?("assets:precompile")
   Rake::Task["assets:precompile"].enhance(["spree:admin:tailwindcss:build"])
