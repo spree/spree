@@ -36,7 +36,7 @@ namespace :common do
     # install devise if it's not the legacy user, useful for testing storefront
     if args[:authentication] == 'devise' && args[:user_class] != 'Spree::LegacyUser'
       system('bundle exec rails g devise:install --force --auto-accept')
-      system("bundle exec rails g devise #{args[:user_class]} --force --auto-accept")
+      system("bundle exec rails g devise #{args[:user_class]} --force --auto-accept --skip-routes")
       system('rm -rf spec') # we need to cleanup factories created by devise to avoid naming conflict
     end
 
