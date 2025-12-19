@@ -3,7 +3,7 @@ FactoryBot.define do
 
   factory :store_credit, class: Spree::StoreCredit do
     user
-    created_by { create(:user) }
+    created_by { create(:admin_user) }
     category { create(:store_credit_category) }
     amount { 150.00 }
     currency { 'USD' }
