@@ -37,7 +37,16 @@ require 'spree/testing_support/store'
 require 'spree/testing_support/controller_requests'
 require 'spree/testing_support/url_helpers'
 
+require 'spree/page_builder/testing_support/factories'
+
 RSpec.configure do |config|
+  config.color = true
+  config.default_formatter = 'doc'
+  config.fail_fast = ENV['FAIL_FAST'] || false
+  config.infer_spec_type_from_file_location!
+  config.mock_with :rspec
+  config.raise_errors_for_deprecations!
+
   config.include FactoryBot::Syntax::Methods
 
   config.use_transactional_fixtures = false
@@ -54,15 +63,7 @@ RSpec.configure do |config|
   end
 
   config.include Spree::TestingSupport::Preferences
-  config.include Spree::TestingSupport::Store
   config.include Spree::TestingSupport::UrlHelpers
   config.include Spree::TestingSupport::ControllerRequests, type: :controller
   config.include Spree::TestingSupport::AuthorizationHelpers::Controller, type: :controller
-
-  config.fail_fast = ENV['FAIL_FAST'] || false
-  config.order = :random
-  config.filter_run focus: true
-  config.run_all_when_everything_filtered = true
-
-  config.example_status_persistence_file_path = './spec/examples.txt'
 end

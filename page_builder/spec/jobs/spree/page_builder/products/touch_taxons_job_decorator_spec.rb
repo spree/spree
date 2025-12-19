@@ -9,19 +9,13 @@ describe Spree::Products::TouchTaxonsJob, type: :job do
     let!(:taxon_2) { create(:taxon, taxonomy: taxonomy) }
     let!(:other_taxon) { create(:taxon) }
 
+    let!(:featured_section) { create(:featured_taxon_page_section, preferred_taxon_id: taxon_1.id) }
+
     let(:taxon_ids) { [taxon_1.id, taxon_2.id] }
     let(:taxonomy_ids) { [taxonomy.id] }
 
-    it 'touches all specified taxons' do
-      expect { subject }.to change { Spree::Taxon.where(id: taxon_ids).pluck(:updated_at) }
-    end
-
-    it 'touches all specified taxonomies' do
-      expect { subject }.to change { Spree::Taxonomy.where(id: taxonomy_ids).pluck(:updated_at) }
-    end
-
-    it 'does not touch other taxons' do
-      expect { subject }.not_to change { other_taxon.reload.updated_at }
+    it 'touches featured sections for the specified taxons' do
+      expect { subject }.to change { Spree::PageSections::FeaturedTaxon.where(id: featured_section.id).pluck(:updated_at) }
     end
   end
 end

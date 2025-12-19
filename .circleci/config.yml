@@ -121,7 +121,7 @@ jobs:
     parallelism: 2
     environment:
       <<: *environment
-      PROJECTS: storefront
+      PROJECTS: storefront,page_builder
   test_other_postgres:
     <<: *test
     environment:
@@ -152,7 +152,7 @@ jobs:
     parallelism: 2
     environment:
       <<: *mysql_environment
-      PROJECTS: storefront
+      PROJECTS: storefront,page_builder
   test_other_mysql:
     <<: *test_mysql
     environment:

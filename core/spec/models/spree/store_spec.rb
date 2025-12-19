@@ -158,7 +158,7 @@ describe Spree::Store, type: :model, without_global_store: true do
         let(:store) { build(:store) }
 
         it 'creates default policies' do
-          expect { store.save! }.to change(Spree::Policy, :count).by(4).and change(store.links, :count).by(4)
+          expect { store.save! }.to change(Spree::Policy, :count).by(4)
         end
       end
     end
@@ -210,15 +210,6 @@ describe Spree::Store, type: :model, without_global_store: true do
         expect(store.reload.taxons.automatic.count).to eq(2)
         expect(store.taxons.automatic.pluck(:name)).to contain_exactly('New arrivals', 'On sale')
         expect(store.taxons.automatic.pluck(:taxonomy_id).uniq).to contain_exactly(collections_taxonomy.id)
-      end
-    end
-
-    describe '#create_default_theme' do
-      let(:store) { build(:store) }
-
-      it 'creates a default theme' do
-        expect(store).to receive(:create_default_theme)
-        store.save!
       end
     end
 

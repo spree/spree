@@ -2,7 +2,6 @@ module Spree
   class Policy < Spree.base_class
     extend FriendlyId
     include Spree::TranslatableResource
-    include Spree::Linkable
 
     UNIQUENESS_SCOPE = %i[owner_id owner_type].freeze
 

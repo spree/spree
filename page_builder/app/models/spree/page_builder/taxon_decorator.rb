@@ -2,6 +2,8 @@ module Spree
   module PageBuilder
     module TaxonDecorator
       def self.prepended(base)
+        base.include Spree::Linkable
+
         base.class_eval do
           after_commit :touch_featured_sections, on: [:update]
           after_touch :touch_featured_sections

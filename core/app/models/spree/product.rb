@@ -30,7 +30,6 @@ module Spree
     include Spree::MemoizedData
     include Spree::Metafields
     include Spree::Metadata
-    include Spree::Linkable
     include Spree::Product::Webhooks
     include Spree::Product::Slugs
     if defined?(Spree::VendorConcern)

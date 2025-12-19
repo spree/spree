@@ -50,8 +50,7 @@ describe Spree::Api::V2::Platform::StoreSerializer do
             favicon_path: nil,
             storefront_custom_code_body_end: nil,
             storefront_custom_code_body_start: nil,
-            storefront_custom_code_head: nil,
-            page_links_count: store.page_links_count
+            storefront_custom_code_head: nil
           },
           relationships: {
             default_country: {

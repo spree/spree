@@ -21,7 +21,7 @@ class Project
     @name = name
   end
 
-  ALL = %w[emails api core sample admin storefront].freeze
+  ALL = %w[emails api core sample admin storefront page_builder].freeze
   CORE_GEMS = %w[api core].freeze
 
   # Install subproject

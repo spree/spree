@@ -1,7 +1,6 @@
 module Spree
   class Post < Spree.base_class
     include Spree::SingleStoreResource
-    include Spree::Linkable
     include Spree::Metafields
     extend FriendlyId
 
