@@ -4,6 +4,7 @@ module Spree
       extend ActiveSupport::Concern
 
       included do
+        helper 'spree/admin/page_builder'
         before_action :set_variables
       end
 
