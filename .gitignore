@@ -58,3 +58,5 @@ vendor/bundle
 TODO
 brakeman-*.*
 */app/assets/builds
+.claude
+*/.claude

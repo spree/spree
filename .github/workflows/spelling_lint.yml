@@ -22,7 +22,7 @@ jobs:
           pip install codespell
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       - name: Check spelling with codespell
-        run: codespell --ignore-words=codespell.txt --skip="./vendor/*,**/vendor/*" || exit 0
+        run: codespell --ignore-words=.github/codespell.txt --skip="./vendor/*,**/vendor/*" || exit 0
   misspell:
     name: Check spelling all files in commit with misspell
     runs-on: ubuntu-latest
