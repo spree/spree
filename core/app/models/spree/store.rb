@@ -15,7 +15,6 @@ module Spree
     include Spree::Webhooks::HasWebhooks if defined?(Spree::Webhooks::HasWebhooks)
     include Spree::Security::Stores if defined?(Spree::Security::Stores)
     include Spree::UserManagement
-    include Spree::HasPageLinks
 
     #
     # Magic methods
@@ -116,24 +115,6 @@ module Spree
     has_many :policies, class_name: 'Spree::Policy', dependent: :destroy, as: :owner
 
     #
-    # Page Builder associations
-    #
-    has_many :themes, -> { without_previews }, class_name: 'Spree::Theme', dependent: :destroy, inverse_of: :store
-    has_many :theme_previews,
-             -> { only_previews },
-             class_name: 'Spree::Theme',
-             through: :themes,
-             source: :previews,
-             inverse_of: :store,
-             dependent: :destroy
-    has_one :default_theme, -> { without_previews.where(default: true) }, class_name: 'Spree::Theme', inverse_of: :store
-    alias theme default_theme
-    has_many :theme_pages, class_name: 'Spree::Page', through: :themes, source: :pages
-    has_many :theme_page_previews, class_name: 'Spree::Page', through: :theme_pages, source: :previews
-    has_many :pages, -> { without_previews.custom }, class_name: 'Spree::Pages::Custom', dependent: :destroy, as: :pageable
-    has_many :page_previews, class_name: 'Spree::Pages::Custom', through: :pages, as: :pageable, source: :previews
-
-    #
     # ActionText
     #
     has_rich_text :checkout_message
@@ -189,7 +170,6 @@ module Spree
     after_create :ensure_default_post_categories_are_created
     after_create :import_products_from_store, if: -> { import_products_from_store_id.present? }
     after_create :import_payment_methods_from_store, if: -> { import_payment_methods_from_store_id.present? }
-    after_create :create_default_theme
     after_create :create_default_policies
     before_destroy :validate_not_last, unless: :skip_validate_not_last
     before_destroy :pass_default_flag_to_other_store
@@ -531,11 +511,6 @@ module Spree
       policies.find_or_create_by(name: Spree.t('privacy_policy'))
       policies.find_or_create_by(name: Spree.t('returns_policy'))
       policies.find_or_create_by(name: Spree.t('shipping_policy'))
-
-      # Create checkout links to the policies
-      policies.each do |policy|
-        links.find_or_create_by(linkable: policy)
-      end
     end
 
     # code is slug, so we don't want to generate new slug when code changes
@@ -574,13 +549,6 @@ module Spree
       return unless Spree.root_domain.present?
 
       self.url = [code, Spree.root_domain].join('.')
-    end
-
-    def create_default_theme
-      themes.find_or_initialize_by(default: true) do |theme|
-        theme.name = Spree.t(:default_theme_name)
-        theme.save!
-      end
     end
   end
 end

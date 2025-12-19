@@ -198,14 +198,14 @@ module Spree
         params = "?#{params}" if params.present?
 
         "#{base_url + localize}/products/#{resource.slug}#{params}"
-      elsif resource.is_a?(Post)
+      elsif defined?(Spree::Post) && resource.is_a?(Spree::Post)
         preview_id = options[:preview_id].present? ? "?preview_id=#{options[:preview_id]}" : ''
         "#{base_url + localize}/posts/#{resource.slug}#{preview_id}"
       elsif resource.is_a?(Spree::Taxon)
         "#{base_url + localize}/t/#{resource.permalink}"
-      elsif resource.is_a?(Spree::Page) || resource.is_a?(Spree::Policy)
+      elsif defined?(Spree::Page) && (resource.is_a?(Spree::Page) || resource.is_a?(Spree::Policy))
         "#{base_url + localize}#{resource.page_builder_url}"
-      elsif resource.is_a?(Spree::PageLink)
+      elsif defined?(Spree::PageLink) && resource.is_a?(Spree::PageLink)
         resource.linkable_url
       elsif localize.blank?
         base_url

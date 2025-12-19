@@ -53,12 +53,6 @@ module Spree
       store.policies.or(where.not(owner_type: 'Spree::Store'))
     end
 
-    def page_builder_url
-      return unless Spree::Core::Engine.routes.url_helpers.respond_to?(:policy_path)
-
-      Spree::Core::Engine.routes.url_helpers.policy_path(self)
-    end
-
     def with_body?
       body.present?
     end

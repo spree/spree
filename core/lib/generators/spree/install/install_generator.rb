@@ -111,6 +111,7 @@ module Spree
         silence_warnings { rake 'action_text:install:migrations' }
         silence_warnings { rake 'spree:install:migrations' }
         silence_warnings { rake 'spree_api:install:migrations' }
+        silence_warnings { rake 'spree_page_builder:install:migrations' } if @install_storefront
       end
     end
 

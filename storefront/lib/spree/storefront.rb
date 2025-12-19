@@ -1,4 +1,5 @@
 require 'spree_core'
+require 'spree_page_builder'
 
 require 'active_link_to'
 require 'canonical-rails'

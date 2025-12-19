@@ -25,6 +25,7 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
 
   s.add_dependency 'spree_core', ">= #{s.version}"
+  s.add_dependency 'spree_page_builder', ">= #{s.version}"
 
   s.add_dependency 'active_link_to'
   s.add_dependency 'canonical-rails', '~> 0.2.14'

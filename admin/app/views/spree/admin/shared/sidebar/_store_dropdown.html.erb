@@ -14,7 +14,7 @@
       <%= link_to spree.edit_admin_theme_path(current_store.default_theme), class: 'dropdown-item', data: { turbo_prefetch: false } do %>
         <%= icon 'tools' %>
         <%= Spree.t('admin.edit_theme') %>
-      <% end if current_store.default_theme && can?(:manage, Spree::Theme) %>
+      <% end if current_store.respond_to?(:default_theme) && current_store.default_theme && can?(:manage, Spree::Theme) %>
 
       <% if available_stores.count > 1 %>
         <div class="dropdown-divider"></div>

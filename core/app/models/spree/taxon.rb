@@ -85,10 +85,6 @@ module Spree
     after_move :regenerate_pretty_name_and_permalink
     after_move :regenerate_translations_pretty_name_and_permalink
 
-    after_commit :touch_featured_sections, on: [:update]
-    after_touch :touch_featured_sections
-    after_destroy :remove_featured_sections, if: -> { featured? }
-
     #
     # Scopes
     #
@@ -165,10 +161,6 @@ module Spree
 
     def manual_sort_order?
       sort_order == 'manual'
-    end
-
-    def page_builder_image
-      square_image.presence || image
     end
 
     def active_products_with_descendants
@@ -401,20 +393,6 @@ module Spree
       move_to_child_with_index(parent, idx.to_i) unless new_record?
     end
 
-    def page_builder_url
-      return unless Spree::Core::Engine.routes.url_helpers.respond_to?(:nested_taxons_path)
-
-      Spree::Core::Engine.routes.url_helpers.nested_taxons_path(self)
-    end
-
-    def featured?
-      featured_sections.any?
-    end
-
-    def featured_sections
-      @featured_sections ||= Spree::PageSections::FeaturedTaxon.published.by_taxon_id(id)
-    end
-
     private
 
     def should_regenerate_pretty_name_and_permalink?
@@ -454,14 +432,6 @@ module Spree
 
     def regenerate_translations_pretty_name_and_permalink
       translations.each(&:regenerate_pretty_name_and_permalink)
-    end
-
-    def touch_featured_sections
-      Spree::Taxons::TouchFeaturedSections.call(taxon_ids: [id])
-    end
-
-    def remove_featured_sections
-      featured_sections.destroy_all
     end
   end
 end
