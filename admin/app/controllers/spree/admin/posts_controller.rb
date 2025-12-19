@@ -3,7 +3,6 @@ module Spree
     class PostsController < ResourceController
       before_action :load_post_categories
 
-      include StorefrontBreadcrumbConcern
       add_breadcrumb Spree.t(:posts), :admin_posts_path
 
       before_action :add_breadcrumb_for_post, only: [:edit, :update]
