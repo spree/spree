@@ -161,36 +161,14 @@ Rails.application.config.after_initialize do
           position: 60,
           if: -> { can?(:manage, Spree::Report) }
 
-  # Storefront with submenu
-  sidebar_nav.add :storefront,
-          label: 'admin.storefront',
-          url: :admin_themes_path,
-          icon: 'building-store',
+  # Posts (Blog)
+  sidebar_nav.add :posts,
+          label: :posts,
+          url: :admin_posts_path,
+          icon: 'article',
           position: 70,
-          if: -> { can?(:manage, Spree::Theme) } do |storefront|
-
-    # Pages
-    storefront.add :pages,
-                  label: :pages,
-                  url: :admin_pages_path,
-                  position: 20,
-                  if: -> { can?(:manage, Spree::Page) }
-
-    # Posts (Blog)
-    storefront.add :posts,
-                  label: :posts,
-                  url: :admin_posts_path,
-                  position: 30,
-                  active: -> { %w[posts post_categories].include?(controller_name) },
-                  if: -> { can?(:manage, Spree::Post) }
-
-    # Storefront Settings
-    storefront.add :storefront_settings,
-                  label: :settings,
-                  url: :edit_admin_storefront_path,
-                  position: 40,
-                  if: -> { can?(:manage, current_store) }
-  end
+          active: -> { %w[posts post_categories].include?(controller_name) },
+          if: -> { can?(:manage, Spree::Post) }
 
   # Integrations
   sidebar_nav.add :integrations,
@@ -261,15 +239,6 @@ Rails.application.config.after_initialize do
           position: 40,
           active: -> { controller_name == 'policies' },
           if: -> { can?(:manage, Spree::Policy) }
-
-  # Checkout
-  settings_nav.add :checkout,
-          label: :checkout,
-          url: -> { spree.edit_admin_store_path(section: 'checkout') },
-          icon: 'shopping-cart',
-          position: 50,
-          active: -> { controller_name == 'stores' && params[:section] == 'checkout' },
-          if: -> { can?(:manage, current_store) }
 
   # Domains
   settings_nav.add :domains,

@@ -4,6 +4,7 @@ module Spree
       layout :choose_layout
 
       include StorefrontBreadcrumbConcern
+      helper 'spree/admin/page_builder'
       add_breadcrumb Spree.t(:themes), :admin_themes_path
 
       def edit

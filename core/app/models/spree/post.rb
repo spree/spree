@@ -1,7 +1,6 @@
 module Spree
   class Post < Spree.base_class
     include Spree::SingleStoreResource
-    include Spree::Linkable
     include Spree::Metafields
     extend FriendlyId
 
@@ -74,12 +73,6 @@ module Spree
 
     def published?
       published_at.present?
-    end
-
-    def page_builder_url
-      return unless Spree::Core::Engine.routes.url_helpers.respond_to?(:post_path)
-
-      Spree::Core::Engine.routes.url_helpers.post_path(self)
     end
 
     def publish(date = nil)

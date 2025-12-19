@@ -288,53 +288,6 @@ module Spree
     Rails.application.config.spree.integrations = value
   end
 
-  # Page Builder configuration accessor
-  def self.page_builder
-    @page_builder ||= PageBuilderConfig.new
-  end
-
-  class PageBuilderConfig
-    def themes
-      Rails.application.config.spree.themes
-    end
-
-    def themes=(value)
-      Rails.application.config.spree.themes = value
-    end
-
-    def theme_layout_sections
-      Rails.application.config.spree.theme_layout_sections
-    end
-
-    def theme_layout_sections=(value)
-      Rails.application.config.spree.theme_layout_sections = value
-    end
-
-    def pages
-      Rails.application.config.spree.pages
-    end
-
-    def pages=(value)
-      Rails.application.config.spree.pages = value
-    end
-
-    def page_sections
-      Rails.application.config.spree.page_sections
-    end
-
-    def page_sections=(value)
-      Rails.application.config.spree.page_sections = value
-    end
-
-    def page_blocks
-      Rails.application.config.spree.page_blocks
-    end
-
-    def page_blocks=(value)
-      Rails.application.config.spree.page_blocks = value
-    end
-  end
-
   def self.analytics
     @analytics ||= AnalyticsConfig.new
   end

@@ -40,7 +40,7 @@ module Spree
 
         all_affected_taxons = (taxons_to_remove + taxons_to_add).uniq
 
-        if all_affected_taxons.any?
+        if all_affected_taxons.any? && defined?(Spree::Taxons::TouchFeaturedSections)
           Spree::Taxons::TouchFeaturedSections.call(taxon_ids: all_affected_taxons.pluck(:id))
           product.touch
         end

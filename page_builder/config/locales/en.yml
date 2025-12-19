@@ -1,0 +1,42 @@
+en:
+  spree:
+    admin:
+      edit_theme: Edit theme
+      page_builder:
+        background_color: Background color
+        border_bottom_width: Border bottom width
+        border_color: Border color
+        border_top_width: Border top width
+        bottom_padding: Bottom padding
+        button_alignment: Button alignment
+        button_background_color: Button background color
+        button_style: Button style
+        button_text: Button's text
+        button_text_color: Button text color
+        category: Category
+        description: Description
+        description_alignment: Description alignment
+        desktop_image_alignment: Image alignment for desktop
+        desktop_logo_height: Logo height (desktop)
+        heading: Heading
+        heading_alignment: Heading alignment
+        heading_size: Heading size
+        height: Height
+        image_click_hint: Clicking on the image will send the user to the selected page/URL
+        left_aligned: Left aligned
+        logo_centered: Logo centered
+        max_video_width_on_desktop: Max video width on desktop
+        maximum_posts_to_show: Maximum posts to show
+        maximum_products_to_show: Maximum products to show
+        nav_centered: Nav centered
+        not_set: Not set
+        separated: Separated
+        show_more_button: Show explore category button
+        show_taxon_image: Show taxon image
+        text_color: Text color
+        title: Title
+        top_padding: Top padding
+        use_description_from_admin: Use description from admin
+        vertical_alignment: Vertical alignment
+        youtube_video_url: Youtube video URL
+    default_theme_name: Default Theme

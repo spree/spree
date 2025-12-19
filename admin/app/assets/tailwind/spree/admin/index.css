@@ -19,6 +19,11 @@
 @source "../../../../javascript/**/*.js";
 @source "./**/*.css";
 
+/* Page Builder sources (optional - no matches if page_builder gem not present) */
+@source "../../../../../../page_builder/app/views/**/*.erb";
+@source "../../../../../../page_builder/app/helpers/**/*.rb";
+@source "../../../../../../page_builder/app/javascript/**/*.js";
+
 /* Base */
 @import "./base/_theme.css";
 @import "./base/_base.css";

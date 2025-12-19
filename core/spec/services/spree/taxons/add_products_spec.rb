@@ -5,7 +5,6 @@ module Spree
     let(:service) { described_class }
     let(:taxons) { create_list(:taxon, 2) }
     let(:products) { create_list(:product, 3) }
-    let!(:featured_sections) { create_list(:featured_taxon_page_section, 2, preferred_taxon_id: taxons.first.id) }
 
     describe '#call' do
       subject { service.call(taxons: taxons, products: products) }
@@ -27,10 +26,6 @@ module Spree
 
       it 'touches all taxons' do
         expect { subject }.to change { Spree::Taxon.where(id: taxons.pluck(:id)).pluck(:updated_at) }
-      end
-
-      it 'touches all featured sections' do
-        expect { subject }.to change { Spree::PageSections::FeaturedTaxon.where(id: featured_sections.pluck(:id)).pluck(:updated_at) }
       end
 
       it 'returns a successful result' do

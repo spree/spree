@@ -30,7 +30,6 @@ module Spree
     include Spree::MemoizedData
     include Spree::Metafields
     include Spree::Metadata
-    include Spree::Linkable
     include Spree::Product::Webhooks
     include Spree::Product::Slugs
     if defined?(Spree::VendorConcern)
@@ -681,12 +680,6 @@ module Spree
       end
 
       csv_lines
-    end
-
-    def page_builder_url
-      return unless Spree::Core::Engine.routes.url_helpers.respond_to?(:product_path)
-
-      Spree::Core::Engine.routes.url_helpers.product_path(self)
     end
 
     private

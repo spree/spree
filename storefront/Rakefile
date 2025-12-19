@@ -13,9 +13,10 @@ task :test_app do
   ENV['LIB_NAME'] = 'spree/storefront'
 
   Rake::Task['common:test_app'].execute(
-    user_class: 'User',
+    user_class: 'Spree::User',
+    admin_user_class: 'Spree::AdminUser',
     authentication: 'devise',
     install_storefront: 'true',
-    install_admin: 'false'
+    install_admin: 'true'
   )
 end

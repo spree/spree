@@ -46,6 +46,24 @@ describe Spree::Admin::StoresController do
     end
   end
 
+  describe 'GET #edit' do
+    subject { get :edit }
+
+    it 'renders the edit template' do
+      subject
+      expect(response).to render_template('spree/admin/stores/edit')
+    end
+
+    context 'checkout form' do
+      subject { get :edit, params: { section: 'checkout' } }
+
+      it 'renders the checkout form' do
+        subject
+        expect(response.body).to include('Checkout Settings')
+      end
+    end
+  end
+
   describe 'PUT #update' do
     subject { patch :update, params: { id: store.id, store: store_params, **other_params } }
 

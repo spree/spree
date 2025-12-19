@@ -33,7 +33,7 @@ module Spree
 
         taxon_ids = taxons.pluck(:id)
         Spree::Taxon.where(id: taxon_ids).touch_all
-        Spree::Taxons::TouchFeaturedSections.call(taxon_ids: taxon_ids)
+        Spree::Taxons::TouchFeaturedSections.call(taxon_ids: taxon_ids) if defined?(Spree::Taxons::TouchFeaturedSections)
 
         success(true)
       end
