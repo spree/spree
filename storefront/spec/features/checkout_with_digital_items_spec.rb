@@ -57,7 +57,7 @@ describe 'Checkout with digital items', js: true do
       let(:order) { create(:order, user: user, store: store) }
 
       before do
-        login_as(user)
+        login_as(user, scope: :user)
         Spree::Cart::AddItem.call(order: order, variant: digital_variant, quantity: 1)
         order.reload
       end
