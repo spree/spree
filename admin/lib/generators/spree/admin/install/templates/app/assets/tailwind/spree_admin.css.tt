@@ -5,12 +5,11 @@
  * It imports the base styles from the Spree Admin gem and allows
  * you to add custom admin styles.
  *
- * The import path below is automatically set during installation.
- * If you need to reinstall or update, run: rails g spree:admin:install
+ * The $SPREE_ADMIN_PATH variable is automatically resolved at build time.
  */
 
 /* Import Spree Admin base styles from the gem */
-@import "<%= Spree::Admin::Engine.root.join('app/assets/tailwind/spree/admin/index.css') %>";
+@import "$SPREE_ADMIN_PATH/app/assets/tailwind/spree/admin/index.css";
 
 /* Scan host app's custom admin code for Tailwind classes */
 @source "../../views/spree/admin/**/*.erb";

@@ -2,14 +2,16 @@ module Spree
   module Admin
     module TailwindHelper
       class << self
-        # Returns the input CSS path from the host app
-        # Created by the install generator (rails g spree:admin:install)
         def input_path
           Rails.root.join("app/assets/tailwind/spree_admin.css")
         end
 
         def output_path
           Rails.root.join("app/assets/builds/spree/admin/application.css")
+        end
+
+        def resolved_input_css
+          File.read(input_path).gsub("$SPREE_ADMIN_PATH", Spree::Admin::Engine.root.to_s)
         end
       end
     end
@@ -23,23 +25,20 @@ namespace :spree do
       task build: :environment do
         require "tailwindcss/ruby"
 
-        input_path = Spree::Admin::TailwindHelper.input_path
         output_path = Spree::Admin::TailwindHelper.output_path
-
-        # Ensure output directory exists
         FileUtils.mkdir_p(output_path.dirname)
 
-        command = [
-          Tailwindcss::Ruby.executable,
-          "-i", input_path.to_s,
-          "-o", output_path.to_s
-        ]
-
+        command = [Tailwindcss::Ruby.executable, "-i", "-", "-o", output_path.to_s]
         command << "--minify" unless Rails.env.development? || Rails.env.test?
 
         puts "Building Spree Admin Tailwind CSS..."
-        puts "  Input: #{input_path}"
-        system(*command) || raise("Spree Admin Tailwind build failed")
+        puts "  Input: #{Spree::Admin::TailwindHelper.input_path}"
+
+        IO.popen(command, "w") do |io|
+          io.write(Spree::Admin::TailwindHelper.resolved_input_css)
+        end
+
+        raise("Spree Admin Tailwind build failed") unless $?.success?
         puts "Done! Output: #{output_path}"
       end
 
@@ -47,22 +46,17 @@ namespace :spree do
       task watch: :environment do
         require "tailwindcss/ruby"
 
-        input_path = Spree::Admin::TailwindHelper.input_path
         output_path = Spree::Admin::TailwindHelper.output_path
-
-        # Ensure output directory exists
         FileUtils.mkdir_p(output_path.dirname)
 
-        command = [
-          Tailwindcss::Ruby.executable,
-          "-i", input_path.to_s,
-          "-o", output_path.to_s,
-          "--watch"
-        ]
+        command = [Tailwindcss::Ruby.executable, "-i", "-", "-o", output_path.to_s, "--watch"]
 
         puts "Watching Spree Admin Tailwind CSS for changes..."
-        puts "  Input: #{input_path}"
-        system(*command)
+        puts "  Input: #{Spree::Admin::TailwindHelper.input_path}"
+
+        IO.popen(command, "w") do |io|
+          io.write(Spree::Admin::TailwindHelper.resolved_input_css)
+        end
       end
     end
   end
