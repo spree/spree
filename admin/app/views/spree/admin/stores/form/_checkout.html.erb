@@ -34,17 +34,19 @@
   </div>
 </div>
 
-<div class="card mb-6">
-  <div class="card-header">
-    <h5 class="card-title"><%= Spree.t('admin.checkout_settings.checkout_links.label') %></h5>
-  </div>
-
-  <div class="card-body">
-    <div class="alert alert-info">
-      <div>
-        <%= Spree.t('admin.checkout_settings.checkout_links.description') %>
-      </div>
+<% if current_store.respond_to?(:links) %>
+  <div class="card mb-6">
+    <div class="card-header">
+      <h5 class="card-title"><%= Spree.t('admin.checkout_settings.checkout_links.label') %></h5>
     </div>
-    <%= render 'spree/admin/stores/form/checkout_links' %>
+
+    <div class="card-body">
+      <div class="alert alert-info">
+        <div>
+          <%= Spree.t('admin.checkout_settings.checkout_links.description') %>
+        </div>
+      </div>
+      <%= render 'spree/admin/stores/form/checkout_links' %>
+    </div>
   </div>
-</div>
+<% end %>
