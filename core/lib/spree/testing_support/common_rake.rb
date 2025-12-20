@@ -19,12 +19,15 @@ namespace :common do
     ENV['RAILS_ENV'] = 'test'
     Rails.env = 'test'
 
-    skip_javascript = ['spree/api', 'spree/core', 'spree/sample', 'spree/emails'].include?(ENV['LIB_NAME'])
+    api_only = ['spree/api', 'spree/core', 'spree/sample'].include?(ENV['LIB_NAME'])
+    skip_javascript = api_only || ENV['LIB_NAME'] == 'spree/emails'
 
     dummy_app_args = [
       "--lib_name=#{ENV['LIB_NAME']}"
     ]
-    if skip_javascript
+    if api_only
+      dummy_app_args << '--api'
+    elsif skip_javascript
       dummy_app_args << '--skip_javascript'
     end
     Spree::DummyGenerator.start dummy_app_args
