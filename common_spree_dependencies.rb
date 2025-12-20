@@ -4,7 +4,7 @@
 source 'https://rubygems.org'
 
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]
-gem 'rails', ENV.fetch('RAILS_VERSION', '~> 8.0.0'), require: false
+gem 'rails', ENV.fetch('RAILS_VERSION', '~> 8.1.0'), require: false
 
 platforms :jruby do
   gem 'jruby-openssl'
@@ -16,8 +16,6 @@ platforms :ruby do
 
   gem 'sqlite3', '>= 2.0'
 end
-
-gem 'sprockets-rails', '>= 3.5.2'
 
 group :test do
   gem 'capybara'

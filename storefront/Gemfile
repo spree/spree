@@ -7,6 +7,8 @@ gem 'spree_emails', path: '../emails'
 gem 'spree_page_builder', path: '../page_builder'
 
 gem 'devise'
+gem 'canonical-rails', github: 'commonlit/canonical-rails', branch: "bump-rails-8-1" # temporary fix for Rails 8.1 compatibility
+gem 'sprockets-rails', '>= 3.5.2'
 
 group :test, :development do
   gem 'selenium-webdriver'

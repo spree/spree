@@ -4,6 +4,8 @@ gem 'spree_core', path: '../core'
 gem 'spree_api', path: '../api'
 gem 'spree_emails', path: '../emails'
 
+gem 'sprockets-rails', '>= 3.5.2'
+
 group :test, :development do
   gem 'selenium-webdriver'
 end

@@ -6,4 +6,6 @@ gem 'spree_admin', path: '../admin'
 
 gem 'devise'
 
+gem 'sprockets-rails', '>= 3.5.2'
+
 gemspec
