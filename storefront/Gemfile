@@ -5,6 +5,7 @@ gem 'spree_api', path: '../api'
 gem 'spree_emails', path: '../emails'
 
 gem 'devise'
+gem 'canonical-rails', github: 'commonlit/canonical-rails', branch: "bump-rails-8-1" # temporary fix for Rails 8.1 compatibility
 
 group :test, :development do
   gem 'selenium-webdriver'

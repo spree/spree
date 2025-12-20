@@ -15,6 +15,8 @@ def add_gems
   # Core dependencies
   gem 'devise'
 
+  gem 'canonical-rails', github: 'commonlit/canonical-rails', branch: "bump-rails-8-1" # temporary fix for Rails 8.1 compatibility
+
   # Spree gems - using main branch for latest
   gem 'spree', USE_LOCAL_SPREE ? { path: '../' } : { version: SPREE_VERSION }
   gem 'spree_emails', USE_LOCAL_SPREE ? { path: '../' } : { version: SPREE_VERSION }
