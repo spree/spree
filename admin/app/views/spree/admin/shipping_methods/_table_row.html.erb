@@ -24,7 +24,7 @@
   </td>
   <td class="w-10">
     <%= form_with model: shipping_method, url: spree.admin_shipping_method_path(shipping_method), method: :patch, data: { controller: 'auto-submit' } do |f| %>
-      <%= f.select :display_on, display_on_options, {}, { class: 'form-select form-select-sm w-auto', data: { action: 'auto-submit#submit' } } %>
+      <%= f.select :display_on, display_on_options, {}, { class: 'form-select form-select-sm', data: { action: 'auto-submit#submit' } } %>
     <% end %>
   </td>
   <td class="actions w-10">

@@ -2,7 +2,7 @@
   <%= form_with model: @promotion_rule, url: spree.admin_promotion_rule_path(@promotion, @promotion_rule), method: :put, scope: :promotion_rule do |f| %>
     <div class="card" id="<%= spree_dom_id(@promotion_rule) %>">
       <div class="card-header flex justify-between items-center">
-        <h5 class="card-title"><%= @promotion_rule.human_name %></h5>
+        <h5 class="card-title text-base"><%= @promotion_rule.human_name %></h5>
       </div>
       <div class="card-body">
         <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @promotion_rule } %>

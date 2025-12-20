@@ -15,9 +15,7 @@
         <%= f.label :customer_support_email, 'Customer support email' %>
         <%= f.email_field :customer_support_email, class: 'form-input', required: true %>
       </div>
-      <div class="flex justify-between">
-        <%= turbo_save_button_tag %>
-      </div>
+      <%= turbo_save_button_tag %>
     <% end %>
   <% end %>
 <% end %>

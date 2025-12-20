@@ -256,6 +256,8 @@ module Spree
       opts[:width] ||= opts[:height] * 1.5 if opts[:height]
       opts[:size] = "#{opts[:width]}x#{opts[:height]}" if opts[:width] && opts[:height]
 
+      opts[:fallback] = 'payment_icons/storecredit.svg'
+
       inline_svg "payment_icons/#{payment_method}.svg", opts
     end
 

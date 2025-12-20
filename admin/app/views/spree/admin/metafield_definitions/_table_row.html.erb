@@ -5,7 +5,7 @@
   <td><span class="badge badge-light"><%= metafield_definition.metafield_type.demodulize.titleize %></span></td>
   <td>
     <%= form_with model: metafield_definition, url: admin_metafield_definition_path(metafield_definition), method: :patch, data: { controller: 'auto-submit' } do |f| %>
-      <%= f.select :display_on, display_on_options(Spree::MetafieldDefinition), {}, { class: 'form-select form-select-sm w-auto', data: { action: 'auto-submit#submit' } } %>
+      <%= f.select :display_on, display_on_options(Spree::MetafieldDefinition), {}, { class: 'form-select form-select-sm', data: { action: 'auto-submit#submit' } } %>
     <% end %>
   </td>
   <td>

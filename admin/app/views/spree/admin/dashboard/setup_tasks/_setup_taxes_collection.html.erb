@@ -2,5 +2,7 @@
   <p><%= Spree.t('admin.store_setup_tasks.taxes.done', link: spree.admin_tax_rates_path).html_safe %></p>
 <% else %>
   <p><%= Spree.t('admin.store_setup_tasks.taxes.copy') %></p>
-  <%= link_to Spree.t('admin.store_setup_tasks.taxes.setup'), spree.admin_tax_rates_path, class: 'btn btn-primary', data: { turbo_frame: '_top' } %>
+  <div>
+    <%= link_to Spree.t('admin.store_setup_tasks.taxes.setup'), spree.admin_tax_rates_path, class: 'btn btn-primary', data: { turbo_frame: '_top' } %>
+  </div>
 <% end %>
