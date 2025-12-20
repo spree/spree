@@ -10,6 +10,7 @@ module Spree
 
     class_option :lib_name, default: ''
     class_option :database, default: ''
+    class_option :api, type: :boolean, default: false
 
     def self.source_paths
       paths = superclass.source_paths
@@ -21,34 +22,35 @@ module Spree
       remove_directory_if_exists(dummy_path)
     end
 
-    PASSTHROUGH_OPTIONS = [
-      :skip_active_record, :skip_javascript, :database, :javascript, :quiet, :pretend, :force, :skip
-    ]
-
     def generate_test_dummy
-      # calling slice on a Thor::CoreExtensions::HashWithIndifferentAccess
-      # object has been known to return nil
-      opts = {}.merge(options).slice(*PASSTHROUGH_OPTIONS)
-      opts[:database] = 'sqlite3' if opts[:database].blank?
-      opts[:force] = true
-      opts[:skip_bundle] = true
-      opts[:skip_git] = true
-      opts[:skip_listen] = true
-      opts[:skip_rc] = true
-      opts[:skip_spring] = true
-      opts[:skip_test] = true
-      opts[:skip_bootsnap] = true
-      opts[:skip_docker] = true
-      opts[:skip_rubocop] = true
-      opts[:skip_brakeman] = true
-      opts[:skip_ci] = true
-      opts[:skip_kamal] = true
-      opts[:skip_devcontainer] = true
-      opts[:skip_solid] = true
-
       puts 'Generating dummy Rails application...'
-      invoke Rails::Generators::AppGenerator,
-        [File.expand_path(dummy_path, destination_root)], opts
+
+      args = [File.expand_path(dummy_path, destination_root)]
+
+      # Database
+      args << "--database=#{options[:database].presence || 'sqlite3'}"
+
+      # Skip options
+      args << '--force'
+      args << '--skip-bundle'
+      args << '--skip-git'
+      args << '--skip-keeps'
+      args << '--skip-rc'
+      args << '--skip-spring'
+      args << '--skip-test'
+      args << '--skip-bootsnap'
+      args << '--skip-docker'
+      args << '--skip-rubocop'
+      args << '--skip-brakeman'
+      args << '--skip-ci'
+      args << '--skip-kamal'
+      args << '--skip-devcontainer'
+      args << '--skip-solid'
+
+      # API mode (implies skip-asset-pipeline, skip-javascript, skip-hotwire)
+      args << '--api' if options[:api]
+
+      Rails::Generators.invoke('app', args)
       inject_yaml_permitted_classes
     end
 
@@ -62,7 +64,7 @@ module Spree
       template 'rails/routes.rb', "#{dummy_path}/config/routes.rb", force: true
       template 'rails/test.rb', "#{dummy_path}/config/environments/test.rb", force: true
       template 'initializers/devise.rb', "#{dummy_path}/config/initializers/devise.rb", force: true
-      template "app/assets/config/manifest.js", "#{dummy_path}/app/assets/config/manifest.js", force: true
+      template "app/assets/config/manifest.js", "#{dummy_path}/app/assets/config/manifest.js", force: true unless options[:api]
     end
 
     def test_dummy_inject_extension_requirements

@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 class FakesController < ApplicationController
+  include ActionController::Cookies
   include Spree::Core::ControllerHelpers::Store
   include Spree::Core::ControllerHelpers::Order
   include Spree::Core::ControllerHelpers::Currency

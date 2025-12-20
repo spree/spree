@@ -2,6 +2,7 @@ require 'spec_helper'
 require 'spree/testing_support/url_helpers'
 
 class FakesController < ApplicationController
+  include ActionController::Cookies
   include Spree::Core::ControllerHelpers::Auth
   def index
     render plain: 'index'
