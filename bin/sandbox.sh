@@ -8,5 +8,5 @@ cd "$(dirname "$0")/.."
 
 echo "Creating Spree sandbox application..."
 
-./install.sh --app-name=sandbox --verbose --auto-accept --local --force
+RAILS_VERSION="${RAILS_VERSION:-8.1.1}" ./install.sh --app-name=sandbox --verbose --auto-accept --local --force
 rm -rf sandbox/.git
