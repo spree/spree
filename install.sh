@@ -21,7 +21,7 @@ BOLD='\033[1m'
 NC='\033[0m' # No Color
 
 # Configuration
-RAILS_VERSION="8.0.4"
+RAILS_VERSION="8.1.1"
 APP_NAME=""
 LOAD_SAMPLE_DATA="false"
 TEMPLATE_URL="https://raw.githubusercontent.com/spree/spree/main/template.rb"
