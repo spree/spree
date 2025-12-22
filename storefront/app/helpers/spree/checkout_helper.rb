@@ -49,7 +49,9 @@ module Spree
     end
 
     def quick_checkout_enabled?(order)
-      order.quick_checkout_available?
+      Rails.cache.fetch("#{order.cache_key_with_version}/quick-checkout-enabled") do
+        order.quick_checkout_available?
+      end
     end
 
     def can_use_store_credit_on_checkout?(order)
