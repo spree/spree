@@ -4,10 +4,6 @@ module Spree
       isolate_namespace Spree
       engine_name 'spree_page_builder'
 
-      initializer 'spree.page_builder.checking_migrations' do
-        Spree::Migrations.new(config, engine_name).check unless Rails.env.test?
-      end
-
       # Add page builder fields to the core Environment struct
       initializer 'spree.page_builder.environment', before: :load_config_initializers do |app|
         # These will be initialized in after_initialize
