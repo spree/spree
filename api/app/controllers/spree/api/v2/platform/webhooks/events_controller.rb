@@ -15,7 +15,7 @@ module Spree
             end
 
             def resource_serializer
-              Spree::Api::Dependencies.platform_webhooks_event_serializer.constantize
+              Spree.api.platform_webhooks_event_serializer
             end
           end
         end

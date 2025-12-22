@@ -21,7 +21,7 @@ module Spree
             wished_item.display_total(currency: params[:currency]).to_s
           end
 
-          belongs_to :variant, serializer: Spree::Api::Dependencies.platform_variant_serializer.constantize
+          belongs_to :variant, serializer: Spree.api.platform_variant_serializer
         end
       end
     end

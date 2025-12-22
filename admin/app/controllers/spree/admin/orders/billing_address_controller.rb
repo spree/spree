@@ -36,7 +36,7 @@ module Spree
                             'address'
                           end
 
-              advance_to_payment_result = Spree::Dependencies.checkout_advance_service.constantize.call(order: @order, state: max_state)
+              advance_to_payment_result = Spree.checkout_advance_service.call(order: @order, state: max_state)
 
               unless advance_to_payment_result.success?
                 flash[:error] = advance_to_payment_result.error.value.full_messages.to_sentence
@@ -76,7 +76,7 @@ module Spree
                             'address'
                           end
 
-              advance_to_payment_result = Spree::Dependencies.checkout_advance_service.constantize.call(order: @order, state: max_state)
+              advance_to_payment_result = Spree.checkout_advance_service.call(order: @order, state: max_state)
 
               unless advance_to_payment_result.success?
                 flash[:error] = advance_to_payment_result.error.value.full_messages.to_sentence

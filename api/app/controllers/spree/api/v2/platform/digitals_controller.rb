@@ -14,7 +14,7 @@ module Spree
           end
 
           def resource_serializer
-            Spree::Api::Dependencies.platform_digital_serializer.constantize
+            Spree.api.platform_digital_serializer
           end
         end
       end

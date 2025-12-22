@@ -28,11 +28,11 @@ module Spree
           end
 
           def collection_sorter
-            Spree::Api::Dependencies.platform_products_sorter.constantize
+            Spree.api.platform_products_sorter
           end
 
           def resource_serializer
-            Spree::Api::Dependencies.platform_product_serializer.constantize
+            Spree.api.platform_product_serializer
           end
         end
       end

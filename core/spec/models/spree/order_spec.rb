@@ -769,12 +769,12 @@ describe Spree::Order, type: :model do
 
       it 'matches line item when options match' do
         allow(order).to receive(:foos_match).and_return(true)
-        expect(Spree::Dependencies.cart_compare_line_items_service.constantize.new.call(order: order, line_item: line_items.first, options: { foos: { bar: :zoo } }).value).to be true
+        expect(Spree.cart_compare_line_items_service.new.call(order: order, line_item: line_items.first, options: { foos: { bar: :zoo } }).value).to be true
       end
 
       it 'does not match line item without options' do
         allow(order).to receive(:foos_match).and_return(false)
-        expect(Spree::Dependencies.cart_compare_line_items_service.constantize.new.call(order: order, line_item: line_items.first).value).to be false
+        expect(Spree.cart_compare_line_items_service.new.call(order: order, line_item: line_items.first).value).to be false
       end
     end
   end

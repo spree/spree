@@ -14,7 +14,7 @@ module Spree
           end
 
           def resource_serializer
-            Spree::Api::Dependencies.platform_gift_card_serializer.constantize
+            Spree.api.platform_gift_card_serializer
           end
         end
       end

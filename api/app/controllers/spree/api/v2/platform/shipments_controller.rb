@@ -118,27 +118,27 @@ module Spree
           end
 
           def create_service
-            Spree::Api::Dependencies.platform_shipment_create_service.constantize
+            Spree.api.platform_shipment_create_service
           end
 
           def update_service
-            Spree::Api::Dependencies.platform_shipment_update_service.constantize
+            Spree.api.platform_shipment_update_service
           end
 
           def change_state_service
-            Spree::Api::Dependencies.platform_shipment_change_state_service.constantize
+            Spree.api.platform_shipment_change_state_service
           end
 
           def add_item_service
-            Spree::Api::Dependencies.platform_shipment_add_item_service.constantize
+            Spree.api.platform_shipment_add_item_service
           end
 
           def remove_item_service
-            Spree::Api::Dependencies.platform_shipment_remove_item_service.constantize
+            Spree.api.platform_shipment_remove_item_service
           end
 
           def resource_serializer
-            Spree::Api::Dependencies.platform_shipment_serializer.constantize
+            Spree.api.platform_shipment_serializer
           end
         end
       end

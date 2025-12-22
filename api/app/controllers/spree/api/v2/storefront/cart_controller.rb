@@ -141,7 +141,7 @@ module Spree
 
           def associate
             guest_order_token = params[:guest_order_token]
-            guest_order = ::Spree::Api::Dependencies.storefront_current_order_finder.constantize.new.execute(
+            guest_order = ::Spree.api.storefront_current_order_finder.new.execute(
               store: current_store,
               user: nil,
               token: guest_order_token,
@@ -170,47 +170,47 @@ module Spree
           private
 
           def resource_serializer
-            Spree::Api::Dependencies.storefront_cart_serializer.constantize
+            Spree.api.storefront_cart_serializer
           end
 
           def create_service
-            Spree::Api::Dependencies.storefront_cart_create_service.constantize
+            Spree.api.storefront_cart_create_service
           end
 
           def add_item_service
-            Spree::Api::Dependencies.storefront_cart_add_item_service.constantize
+            Spree.api.storefront_cart_add_item_service
           end
 
           def empty_cart_service
-            Spree::Api::Dependencies.storefront_cart_empty_service.constantize
+            Spree.api.storefront_cart_empty_service
           end
 
           def destroy_cart_service
-            Spree::Api::Dependencies.storefront_cart_destroy_service.constantize
+            Spree.api.storefront_cart_destroy_service
           end
 
           def set_item_quantity_service
-            Spree::Api::Dependencies.storefront_cart_set_item_quantity_service.constantize
+            Spree.api.storefront_cart_set_item_quantity_service
           end
 
           def remove_line_item_service
-            Spree::Api::Dependencies.storefront_cart_remove_line_item_service.constantize
+            Spree.api.storefront_cart_remove_line_item_service
           end
 
           def coupon_handler
-            Spree::Api::Dependencies.storefront_coupon_handler.constantize
+            Spree.api.storefront_coupon_handler
           end
 
           def estimate_shipping_rates_service
-            Spree::Api::Dependencies.storefront_cart_estimate_shipping_rates_service.constantize
+            Spree.api.storefront_cart_estimate_shipping_rates_service
           end
 
           def associate_service
-            Spree::Api::Dependencies.storefront_cart_associate_service.constantize
+            Spree.api.storefront_cart_associate_service
           end
 
           def change_currency_service
-            Spree::Api::Dependencies.storefront_cart_change_currency_service.constantize
+            Spree.api.storefront_cart_change_currency_service
           end
 
           def line_item
@@ -226,7 +226,7 @@ module Spree
           end
 
           def estimate_shipping_rates_serializer
-            Spree::Api::Dependencies.storefront_estimated_shipment_serializer.constantize
+            Spree.api.storefront_estimated_shipment_serializer
           end
 
           def serialize_estimated_shipping_rates(shipping_rates)

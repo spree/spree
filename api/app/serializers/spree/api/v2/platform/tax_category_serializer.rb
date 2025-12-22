@@ -5,7 +5,7 @@ module Spree
         class TaxCategorySerializer < BaseSerializer
           include ResourceSerializerConcern
 
-          has_many :tax_rates, serializer: Spree::Api::Dependencies.platform_tax_rate_serializer.constantize
+          has_many :tax_rates, serializer: Spree.api.platform_tax_rate_serializer
         end
       end
     end

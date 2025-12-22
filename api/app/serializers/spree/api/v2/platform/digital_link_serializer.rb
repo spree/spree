@@ -7,8 +7,8 @@ module Spree
 
           attributes :token, :access_counter
 
-          belongs_to :digital, serializer: Spree::Api::Dependencies.platform_digital_serializer.constantize
-          belongs_to :line_item, serializer: Spree::Api::Dependencies.platform_line_item_serializer.constantize
+          belongs_to :digital, serializer: Spree.api.platform_digital_serializer
+          belongs_to :line_item, serializer: Spree.api.platform_line_item_serializer
         end
       end
     end

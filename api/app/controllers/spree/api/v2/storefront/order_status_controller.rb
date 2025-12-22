@@ -17,11 +17,11 @@ module Spree
           end
 
           def resource_finder
-            Spree::Api::Dependencies.storefront_completed_order_finder.constantize
+            Spree.api.storefront_completed_order_finder
           end
 
           def resource_serializer
-            Spree::Api::Dependencies.storefront_cart_serializer.constantize
+            Spree.api.storefront_cart_serializer
           end
 
           def ensure_order_token

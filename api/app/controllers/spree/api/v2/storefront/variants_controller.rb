@@ -19,11 +19,11 @@ module Spree
           end
 
           def collection_finder
-            Spree::Api::Dependencies.storefront_variant_finder.constantize
+            Spree.api.storefront_variant_finder
           end
 
           def collection_serializer
-            Spree::Api::Dependencies.storefront_variant_serializer.constantize
+            Spree.api.storefront_variant_serializer
           end
 
           def scope_includes

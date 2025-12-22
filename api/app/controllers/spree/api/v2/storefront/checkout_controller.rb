@@ -114,51 +114,51 @@ module Spree
           private
 
           def resource_serializer
-            Spree::Api::Dependencies.storefront_cart_serializer.constantize
+            Spree.api.storefront_cart_serializer
           end
 
           def next_service
-            Spree::Api::Dependencies.storefront_checkout_next_service.constantize
+            Spree.api.storefront_checkout_next_service
           end
 
           def advance_service
-            Spree::Api::Dependencies.storefront_checkout_advance_service.constantize
+            Spree.api.storefront_checkout_advance_service
           end
 
           def add_store_credit_service
-            Spree::Api::Dependencies.storefront_checkout_add_store_credit_service.constantize
+            Spree.api.storefront_checkout_add_store_credit_service
           end
 
           def remove_store_credit_service
-            Spree::Api::Dependencies.storefront_checkout_remove_store_credit_service.constantize
+            Spree.api.storefront_checkout_remove_store_credit_service
           end
 
           def complete_service
-            Spree::Api::Dependencies.storefront_checkout_complete_service.constantize
+            Spree.api.storefront_checkout_complete_service
           end
 
           def update_service
-            Spree::Api::Dependencies.storefront_checkout_update_service.constantize
+            Spree.api.storefront_checkout_update_service
           end
 
           def payment_methods_serializer
-            Spree::Api::Dependencies.storefront_payment_method_serializer.constantize
+            Spree.api.storefront_payment_method_serializer
           end
 
           def shipping_rates_service
-            Spree::Api::Dependencies.storefront_checkout_get_shipping_rates_service.constantize
+            Spree.api.storefront_checkout_get_shipping_rates_service
           end
 
           def shipping_rates_serializer
-            Spree::Api::Dependencies.storefront_shipment_serializer.constantize
+            Spree.api.storefront_shipment_serializer
           end
 
           def create_payment_service
-            Spree::Api::Dependencies.storefront_payment_create_service.constantize
+            Spree.api.storefront_payment_create_service
           end
 
           def select_shipping_method_service
-            Spree::Api::Dependencies.storefront_checkout_select_shipping_method_service.constantize
+            Spree.api.storefront_checkout_select_shipping_method_service
           end
 
           def serialize_payment_methods(payment_methods)

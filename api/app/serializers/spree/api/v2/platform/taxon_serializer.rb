@@ -27,19 +27,19 @@ module Spree
             taxon.leaf?
           end
 
-          belongs_to :parent,   record_type: :taxon, serializer: Spree::Api::Dependencies.platform_taxon_serializer.constantize
-          belongs_to :taxonomy, record_type: :taxonomy, serializer: Spree::Api::Dependencies.platform_taxonomy_serializer.constantize
+          belongs_to :parent,   record_type: :taxon, serializer: Spree.api.platform_taxon_serializer
+          belongs_to :taxonomy, record_type: :taxonomy, serializer: Spree.api.platform_taxonomy_serializer
 
-          has_many   :children, record_type: :taxon, serializer: Spree::Api::Dependencies.platform_taxon_serializer.constantize
+          has_many   :children, record_type: :taxon, serializer: Spree.api.platform_taxon_serializer
           has_many   :products, record_type: :product,
-                                serializer: Spree::Api::Dependencies.platform_product_serializer.constantize,
+                                serializer: Spree.api.platform_product_serializer,
                                 if: proc { |_taxon, params| params && params[:include_products] == true }
 
           has_one    :image,
                      object_method_name: :icon,
                      id_method_name: :icon_id,
                      record_type: :taxon_image,
-                     serializer: Spree::Api::Dependencies.platform_taxon_image_serializer.constantize
+                     serializer: Spree.api.platform_taxon_image_serializer
         end
       end
     end

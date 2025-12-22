@@ -11,7 +11,7 @@ module Spree
                    :default, :supported_currencies, :facebook, :twitter, :instagram, :default_locale,
                    :customer_support_email, :description, :address, :contact_phone, :supported_locales
 
-        has_one :default_country, serializer: Spree::Api::Dependencies.storefront_country_serializer.constantize, record_type: :country, id_method_name: :default_country_id
+        has_one :default_country, serializer: Spree.api.storefront_country_serializer, record_type: :country, id_method_name: :default_country_id
       end
     end
   end

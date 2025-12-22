@@ -5,13 +5,13 @@ module Spree
         class ReimbursementSerializer < BaseSerializer
           include ResourceSerializerConcern
 
-          belongs_to :order, serializer: Spree::Api::Dependencies.platform_order_serializer.constantize
-          belongs_to :customer_return, serializer: Spree::Api::Dependencies.platform_customer_return_serializer.constantize
-          belongs_to :performed_by, serializer: Spree::Api::Dependencies.platform_admin_user_serializer.constantize
+          belongs_to :order, serializer: Spree.api.platform_order_serializer
+          belongs_to :customer_return, serializer: Spree.api.platform_customer_return_serializer
+          belongs_to :performed_by, serializer: Spree.api.platform_admin_user_serializer
 
-          has_many :refunds, serializer: Spree::Api::Dependencies.platform_refund_serializer.constantize
-          has_many :reimbursement_credits, object_method_name: :credits, id_method_name: :credit_ids, serializer: Spree::Api::Dependencies.platform_reimbursement_credit_serializer.constantize
-          has_many :return_items, serializer: Spree::Api::Dependencies.platform_return_item_serializer.constantize
+          has_many :refunds, serializer: Spree.api.platform_refund_serializer
+          has_many :reimbursement_credits, object_method_name: :credits, id_method_name: :credit_ids, serializer: Spree.api.platform_reimbursement_credit_serializer
+          has_many :return_items, serializer: Spree.api.platform_return_item_serializer
         end
       end
     end

@@ -44,7 +44,7 @@ module Spree
           url_helpers.cdn_image_url(post.image.attachment) if post.image.present? && post.image.attached?
         end
 
-        belongs_to :post_category, serializer: Spree::Api::Dependencies.storefront_post_category_serializer.constantize, record_type: :post_category
+        belongs_to :post_category, serializer: Spree.api.storefront_post_category_serializer, record_type: :post_category
       end
     end
   end

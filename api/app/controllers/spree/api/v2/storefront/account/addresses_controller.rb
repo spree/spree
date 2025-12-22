@@ -47,23 +47,23 @@ module Spree
             end
 
             def collection_finder
-              Spree::Api::Dependencies.storefront_address_finder.constantize
+              Spree.api.storefront_address_finder
             end
 
             def collection_serializer
-              Spree::Api::Dependencies.storefront_address_serializer.constantize
+              Spree.api.storefront_address_serializer
             end
 
             def resource_serializer
-              Spree::Api::Dependencies.storefront_address_serializer.constantize
+              Spree.api.storefront_address_serializer
             end
 
             def create_service
-              Spree::Api::Dependencies.storefront_address_create_service.constantize
+              Spree.api.storefront_address_create_service
             end
 
             def update_service
-              Spree::Api::Dependencies.storefront_address_update_service.constantize
+              Spree.api.storefront_address_update_service
             end
 
             def address_params

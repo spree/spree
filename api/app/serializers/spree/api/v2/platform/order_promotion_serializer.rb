@@ -5,8 +5,8 @@ module Spree
         class OrderPromotionSerializer < BaseSerializer
           include ResourceSerializerConcern
 
-          belongs_to :order, serializer: Spree::Api::Dependencies.platform_order_serializer.constantize
-          belongs_to :promotion, serializer: Spree::Api::Dependencies.platform_promotion_serializer.constantize
+          belongs_to :order, serializer: Spree.api.platform_order_serializer
+          belongs_to :promotion, serializer: Spree.api.platform_promotion_serializer
         end
       end
     end

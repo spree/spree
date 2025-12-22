@@ -8,7 +8,7 @@ module Spree
 
         attributes :name, :presentation, :position, :public_metadata
 
-        has_many   :option_values, serializer: Spree::Api::Dependencies.storefront_option_value_serializer.constantize
+        has_many   :option_values, serializer: Spree.api.storefront_option_value_serializer
       end
     end
   end

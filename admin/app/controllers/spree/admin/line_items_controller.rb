@@ -20,7 +20,7 @@ module Spree
                             'address'
                           end
 
-              result = Spree::Dependencies.checkout_advance_service.constantize.call(order: @order, state: max_state)
+              result = Spree.checkout_advance_service.call(order: @order, state: max_state)
 
               unless result.success?
                 flash[:error] = result.error.value.full_messages.to_sentence
@@ -53,7 +53,7 @@ module Spree
                             'address'
                           end
 
-              result = Spree::Dependencies.checkout_advance_service.constantize.call(order: @order, state: max_state)
+              result = Spree.checkout_advance_service.call(order: @order, state: max_state)
 
               unless result.success?
                 flash[:error] = result.error.value.full_messages.to_sentence
@@ -98,15 +98,15 @@ module Spree
       end
 
       def update_service
-        Spree::Dependencies.line_item_update_service.constantize
+        Spree.line_item_update_service
       end
 
       def destroy_service
-        Spree::Dependencies.line_item_destroy_service.constantize
+        Spree.line_item_destroy_service
       end
 
       def create_service
-        Spree::Dependencies.line_item_create_service.constantize
+        Spree.line_item_create_service
       end
 
       def build_resource

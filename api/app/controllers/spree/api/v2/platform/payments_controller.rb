@@ -12,7 +12,7 @@ module Spree
           end
 
           def resource_serializer
-            Spree::Api::Dependencies.platform_payment_serializer.constantize
+            Spree.api.platform_payment_serializer
           end
         end
       end

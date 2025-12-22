@@ -5,11 +5,11 @@ module Spree
         class PromotionSerializer < BaseSerializer
           include ResourceSerializerConcern
 
-          belongs_to :promotion_category, serializer: Spree::Api::Dependencies.platform_promotion_category_serializer.constantize
+          belongs_to :promotion_category, serializer: Spree.api.platform_promotion_category_serializer
 
-          has_many :promotion_rules, serializer: Spree::Api::Dependencies.platform_promotion_rule_serializer.constantize
-          has_many :promotion_actions, serializer: Spree::Api::Dependencies.platform_promotion_action_serializer.constantize
-          has_many :stores, serializer: Spree::Api::Dependencies.platform_store_serializer.constantize
+          has_many :promotion_rules, serializer: Spree.api.platform_promotion_rule_serializer
+          has_many :promotion_actions, serializer: Spree.api.platform_promotion_action_serializer
+          has_many :stores, serializer: Spree.api.platform_store_serializer
         end
       end
     end

@@ -5,13 +5,13 @@ module Spree
         class AdjustmentSerializer < BaseSerializer
           include ResourceSerializerConcern
 
-          belongs_to :order, serializer: Spree::Api::Dependencies.platform_order_serializer.constantize
+          belongs_to :order, serializer: Spree.api.platform_order_serializer
           belongs_to :adjustable, polymorphic: true
           belongs_to :source, polymorphic: {
-            Spree::Promotion::Actions::FreeShipping => Spree::Api::Dependencies.platform_promotion_action_serializer.constantize,
-            Spree::Promotion::Actions::CreateAdjustment => Spree::Api::Dependencies.platform_promotion_action_serializer.constantize,
-            Spree::Promotion::Actions::CreateItemAdjustments => Spree::Api::Dependencies.platform_promotion_action_serializer.constantize,
-            Spree::Promotion::Actions::CreateLineItems => Spree::Api::Dependencies.platform_promotion_action_serializer.constantize
+            Spree::Promotion::Actions::FreeShipping => Spree.api.platform_promotion_action_serializer,
+            Spree::Promotion::Actions::CreateAdjustment => Spree.api.platform_promotion_action_serializer,
+            Spree::Promotion::Actions::CreateItemAdjustments => Spree.api.platform_promotion_action_serializer,
+            Spree::Promotion::Actions::CreateLineItems => Spree.api.platform_promotion_action_serializer
           }
         end
       end

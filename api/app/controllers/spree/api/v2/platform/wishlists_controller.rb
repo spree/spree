@@ -14,7 +14,7 @@ module Spree
           end
 
           def resource_serializer
-            Spree::Api::Dependencies.platform_wishlist_serializer.constantize
+            Spree.api.platform_wishlist_serializer
           end
         end
       end
