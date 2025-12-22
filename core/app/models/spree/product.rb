@@ -639,7 +639,7 @@ module Spree
     #
     # @return [Boolean]
     def digital?
-      @digital ||= shipping_methods&.digital&.exists?
+      @digital ||= shipping_category&.includes_digital_shipping_method?
     end
 
     def auto_match_taxons

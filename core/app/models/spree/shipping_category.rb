@@ -16,5 +16,11 @@ module Spree
     def self.digital
       find_by(name: DIGITAL_NAME)
     end
+
+    def includes_digital_shipping_method?
+      Rails.cache.fetch("#{cache_key_with_version}/includes-digital-shipping-method") do
+        shipping_methods.digital.exists?
+      end
+    end
   end
 end
