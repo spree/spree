@@ -14,26 +14,25 @@ RSpec.describe Spree::Event do
       expect(event.payload).to eq({ 'id' => 1, 'number' => 'R123' })
     end
 
-    it 'freezes the name, payload, and metadata' do
+    it 'freezes the payload and metadata' do
       event = described_class.new(
         name: 'order.complete',
         payload: { id: 1 }
       )
 
-      expect(event.name).to be_frozen
       expect(event.payload).to be_frozen
       expect(event.metadata).to be_frozen
     end
 
-    it 'sets a timestamp' do
+    it 'sets created_at' do
       event = described_class.new(name: 'test', payload: {})
-      expect(event.timestamp).to be_within(1.second).of(Time.current)
+      expect(event.created_at).to be_within(1.second).of(Time.current)
     end
 
-    it 'generates an event_id in metadata' do
+    it 'generates an id' do
       event = described_class.new(name: 'test', payload: {})
-      expect(event.metadata['event_id']).to be_present
-      expect(event.metadata['event_id']).to match(/\A[0-9a-f-]{36}\z/)
+      expect(event.id).to be_present
+      expect(event.id).to match(/\A[0-9a-f-]{36}\z/)
     end
 
     it 'includes spree_version in metadata' do
@@ -126,27 +125,27 @@ RSpec.describe Spree::Event do
     end
   end
 
-  describe '#to_h' do
-    it 'returns a hash representation with IDs as strings' do
+  describe '#attributes' do
+    it 'returns a hash representation with string keys' do
       event = described_class.new(
         name: 'order.complete',
         payload: { id: 1 },
         metadata: { user_id: 5 }
       )
 
-      hash = event.to_h
+      hash = event.attributes
 
-      expect(hash[:name]).to eq('order.complete')
-      expect(hash[:payload]).to eq({ 'id' => 1 })
-      expect(hash[:metadata]['user_id']).to eq('5')
-      expect(hash[:timestamp]).to eq(event.timestamp)
+      expect(hash['name']).to eq('order.complete')
+      expect(hash['payload']).to eq({ 'id' => 1 })
+      expect(hash['metadata']['user_id']).to eq('5')
+      expect(hash['created_at']).to eq(event.created_at)
     end
   end
 
   describe '#inspect' do
     it 'returns a readable string representation' do
       event = described_class.new(name: 'order.complete', payload: {})
-      expect(event.inspect).to match(/Spree::Event name="order.complete"/)
+      expect(event.inspect).to match(/Spree::Event id="[0-9a-f-]{36}" name="order.complete" created_at=/)
     end
   end
 end

@@ -426,6 +426,7 @@ require 'spree/permitted_attributes'
 require 'spree/service_module'
 require 'spree/database_type_utilities'
 require 'spree/analytics'
+require 'spree/events'
 
 require 'spree/core/partials'
 require 'spree/core/importer'

@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+require_relative 'events/registry'
+require_relative 'events/adapters/base'
+require_relative 'events/adapters/active_support_notifications'
+
 module Spree
   # Main entry point for the Spree event system.
   #
