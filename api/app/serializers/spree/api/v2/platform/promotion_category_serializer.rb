@@ -5,7 +5,7 @@ module Spree
         class PromotionCategorySerializer < BaseSerializer
           include ResourceSerializerConcern
 
-          has_many :promotions, serializer: Spree::Api::Dependencies.platform_promotion_serializer.constantize
+          has_many :promotions, serializer: Spree.api.platform_promotion_serializer
         end
       end
     end

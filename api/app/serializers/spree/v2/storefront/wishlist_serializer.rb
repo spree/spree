@@ -10,7 +10,7 @@ module Spree
           wishlist.include?(params[:is_variant_included])
         end
 
-        has_many :wished_items, serializer: Spree::Api::Dependencies.storefront_wished_item_serializer.constantize
+        has_many :wished_items, serializer: Spree.api.storefront_wished_item_serializer
       end
     end
   end

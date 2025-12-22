@@ -10,7 +10,7 @@ module Spree
           end
 
           def resource_serializer
-            Spree::Api::Dependencies.platform_user_serializer.constantize
+            Spree.api.platform_user_serializer
           end
 
           def scope_includes

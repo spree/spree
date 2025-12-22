@@ -14,7 +14,7 @@ module Spree
           end
 
           def data_feeds_google_rss_service
-            Spree::Dependencies.data_feeds_google_rss_service.constantize.new.call(settings)
+            Spree.data_feeds_google_rss_service.new.call(settings)
           end
         end
       end

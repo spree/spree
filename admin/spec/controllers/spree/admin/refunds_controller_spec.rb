@@ -7,7 +7,7 @@ describe Spree::Admin::RefundsController, type: :controller do
   let(:user) { create(:admin_user) }
 
   before do
-    allow(controller).to receive(:current_ability).and_return(Spree::Dependencies.ability_class.constantize.new(user))
+    allow(controller).to receive(:current_ability).and_return(Spree.ability_class.new(user))
   end
 
   let(:order) { create(:completed_order_with_totals) }

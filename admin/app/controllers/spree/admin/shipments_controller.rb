@@ -11,7 +11,7 @@ module Spree
       before_action :refresh_shipping_rates, only: :edit
 
       def update
-        @result = Spree::Dependencies.shipment_update_service.constantize.call(shipment: @shipment, shipment_attributes: permitted_resource_params)
+        @result = Spree.shipment_update_service.call(shipment: @shipment, shipment_attributes: permitted_resource_params)
         flash[:success] = Spree.t(:successfully_updated, resource: Spree.t(:shipment)) if @result.success?
 
         redirect_back fallback_location: spree.edit_admin_order_path(@order)

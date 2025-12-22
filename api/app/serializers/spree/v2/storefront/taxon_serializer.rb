@@ -37,18 +37,18 @@ module Spree
           taxon.localized_slugs_for_store(params[:store])
         end
 
-        belongs_to :parent,   record_type: :taxon, serializer: Spree::Api::Dependencies.storefront_taxon_serializer.constantize
-        belongs_to :taxonomy, record_type: :taxonomy, serializer: Spree::Api::Dependencies.storefront_taxonomy_serializer.constantize
+        belongs_to :parent,   record_type: :taxon, serializer: Spree.api.storefront_taxon_serializer
+        belongs_to :taxonomy, record_type: :taxonomy, serializer: Spree.api.storefront_taxonomy_serializer
 
-        has_many   :children, record_type: :taxon, serializer: Spree::Api::Dependencies.storefront_taxon_serializer.constantize
-        has_many   :products, record_type: :product, serializer: Spree::Api::Dependencies.storefront_product_serializer.constantize,
+        has_many   :children, record_type: :taxon, serializer: Spree.api.storefront_taxon_serializer
+        has_many   :products, record_type: :product, serializer: Spree.api.storefront_product_serializer,
                               if: proc { |_taxon, params| params && params[:include_products] == true }
 
         has_one    :image,
                    object_method_name: :icon,
                    id_method_name: :icon_id,
                    record_type: :taxon_image,
-                   serializer: Spree::Api::Dependencies.storefront_taxon_image_serializer.constantize
+                   serializer: Spree.api.storefront_taxon_image_serializer
       end
     end
   end

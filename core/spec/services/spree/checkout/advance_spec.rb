@@ -133,7 +133,7 @@ RSpec.describe Spree::Checkout::Advance do
 
     context 'when next service fails' do
       before do
-        allow_next_instance_of(Spree::Dependencies.checkout_next_service.constantize) do |instance|
+        allow_next_instance_of(Spree.checkout_next_service) do |instance|
           allow(instance).to receive(:call).and_return(Spree::ServiceModule::Result.new(false, order))
         end
       end
@@ -151,7 +151,7 @@ RSpec.describe Spree::Checkout::Advance do
       let(:order) { create(:order_ready_to_ship) }
 
       it 'stops advancement' do
-        expect(Spree::Dependencies.checkout_next_service.constantize).not_to receive(:new)
+        expect(Spree.checkout_next_service).not_to receive(:new)
 
         result = service.call(order: order)
 

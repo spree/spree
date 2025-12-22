@@ -11,7 +11,7 @@ module Spree
             wishlist.include?(params[:is_variant_included])
           end
 
-          has_many :wished_items, serializer: Spree::Api::Dependencies.platform_wished_item_serializer.constantize
+          has_many :wished_items, serializer: Spree.api.platform_wished_item_serializer
         end
       end
     end

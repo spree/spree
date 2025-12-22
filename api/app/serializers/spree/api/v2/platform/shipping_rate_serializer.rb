@@ -5,9 +5,9 @@ module Spree
         class ShippingRateSerializer < BaseSerializer
           include ResourceSerializerConcern
 
-          belongs_to :shipment, serializer: Spree::Api::Dependencies.platform_shipment_serializer.constantize
-          belongs_to :tax_rate, serializer: Spree::Api::Dependencies.platform_tax_rate_serializer.constantize
-          belongs_to :shipping_method, serializer: Spree::Api::Dependencies.platform_shipping_method_serializer.constantize
+          belongs_to :shipment, serializer: Spree.api.platform_shipment_serializer
+          belongs_to :tax_rate, serializer: Spree.api.platform_tax_rate_serializer
+          belongs_to :shipping_method, serializer: Spree.api.platform_shipping_method_serializer
         end
       end
     end

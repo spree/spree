@@ -140,7 +140,7 @@ describe 'Storefront API v2 Account spec', type: :request do
       let(:error) { instance_double(ActiveModel::Errors) }
 
       before do
-        allow(Spree::Api::Dependencies).to receive_message_chain(:storefront_account_create_service, :constantize).and_return(service)
+        allow(Spree).to receive_message_chain(:api, :storefront_account_create_service).and_return(service)
       end
 
       include_context 'stubs for failed user saving'
@@ -148,7 +148,7 @@ describe 'Storefront API v2 Account spec', type: :request do
       describe 'mocks' do
         after { post "/api/v2/storefront/account", params: params }
 
-        it { expect(Spree::Api::Dependencies).to receive_message_chain(:storefront_account_create_service, :constantize).and_return(service) }
+        it { expect(Spree).to receive_message_chain(:api, :storefront_account_create_service).and_return(service) }
 
         it_behaves_like 'mock tests for failed user saving'
       end
@@ -246,7 +246,7 @@ describe 'Storefront API v2 Account spec', type: :request do
         let(:error) { instance_double(ActiveModel::Errors) }
 
         before do
-          allow(Spree::Api::Dependencies).to receive_message_chain(:storefront_account_update_service, :constantize).and_return(service)
+          allow(Spree).to receive_message_chain(:api, :storefront_account_update_service).and_return(service)
         end
 
         include_context 'stubs for failed user saving'
@@ -254,7 +254,7 @@ describe 'Storefront API v2 Account spec', type: :request do
         describe 'mocks' do
           after { patch "/api/v2/storefront/account", params: params, headers: headers }
 
-          it { expect(Spree::Api::Dependencies).to receive_message_chain(:storefront_account_update_service, :constantize).and_return(service) }
+          it { expect(Spree).to receive_message_chain(:api, :storefront_account_update_service).and_return(service) }
 
           it_behaves_like 'mock tests for failed user saving'
         end

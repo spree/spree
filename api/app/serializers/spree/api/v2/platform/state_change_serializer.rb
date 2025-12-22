@@ -5,7 +5,7 @@ module Spree
         class StateChangeSerializer < BaseSerializer
           include ResourceSerializerConcern
 
-          belongs_to :user, serializer: Spree::Api::Dependencies.platform_user_serializer.constantize
+          belongs_to :user, serializer: Spree.api.platform_user_serializer
         end
       end
     end

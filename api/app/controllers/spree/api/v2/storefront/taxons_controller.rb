@@ -6,15 +6,15 @@ module Spree
           private
 
           def collection_serializer
-            Spree::Api::Dependencies.storefront_taxon_serializer.constantize
+            Spree.api.storefront_taxon_serializer
           end
 
           def resource_serializer
-            Spree::Api::Dependencies.storefront_taxon_serializer.constantize
+            Spree.api.storefront_taxon_serializer
           end
 
           def collection_finder
-            Spree::Api::Dependencies.storefront_taxon_finder.constantize
+            Spree.api.storefront_taxon_finder
           end
 
           def paginated_collection

@@ -23,7 +23,7 @@ module Spree
             @order.shipments.update_all(address_id: @order.ship_address.id, updated_at: Time.current)
             if !@order.completed? && @order.line_items.any?
               @order.ensure_updated_shipments
-              advance_to_payment_result = Spree::Dependencies.checkout_advance_service.constantize.call(order: @order, state: 'payment')
+              advance_to_payment_result = Spree.checkout_advance_service.call(order: @order, state: 'payment')
 
               unless advance_to_payment_result.success?
                 flash[:error] = advance_to_payment_result.error.value.full_messages.to_sentence
@@ -57,7 +57,7 @@ module Spree
             @order.shipments.update_all(address_id: @order.ship_address.id, updated_at: Time.current)
             if !@order.completed? && @order.line_items.any?
               @order.ensure_updated_shipments
-              advance_to_payment_result = Spree::Dependencies.checkout_advance_service.constantize.call(order: @order, state: 'payment')
+              advance_to_payment_result = Spree.checkout_advance_service.call(order: @order, state: 'payment')
 
               unless advance_to_payment_result.success?
                 flash[:error] = advance_to_payment_result.error.value.full_messages.to_sentence

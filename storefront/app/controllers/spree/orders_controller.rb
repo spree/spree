@@ -81,15 +81,15 @@ module Spree
     end
 
     def cart_remove_out_of_stock_items_service
-      Spree::Dependencies.cart_remove_out_of_stock_items_service.constantize
+      Spree.cart_remove_out_of_stock_items_service
     end
 
     def cart_update_service
-      Spree::Dependencies.cart_update_service.constantize
+      Spree.cart_update_service
     end
 
     def complete_order_finder
-      Spree::Dependencies.completed_order_finder.constantize
+      Spree.completed_order_finder
     end
 
     def remove_out_of_stock_items

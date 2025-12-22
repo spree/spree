@@ -5,8 +5,8 @@ module Spree
         class TaxonomySerializer < BaseSerializer
           include ResourceSerializerConcern
 
-          has_many :taxons, serializer: Spree::Api::Dependencies.platform_taxon_serializer.constantize
-          has_one :root, serializer: Spree::Api::Dependencies.platform_taxon_serializer.constantize
+          has_many :taxons, serializer: Spree.api.platform_taxon_serializer
+          has_one :root, serializer: Spree.api.platform_taxon_serializer
         end
       end
     end

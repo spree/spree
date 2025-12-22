@@ -42,24 +42,24 @@ module Spree
             display_compare_at_price(product, params[:currency])
           end
 
-          belongs_to :tax_category, serializer: Spree::Api::Dependencies.platform_tax_category_serializer.constantize
+          belongs_to :tax_category, serializer: Spree.api.platform_tax_category_serializer
 
           has_one :primary_variant,
                   object_method_name: :master,
                   id_method_name: :master_id,
                   record_type: :variant,
-                  serializer: Spree::Api::Dependencies.platform_variant_serializer.constantize
+                  serializer: Spree.api.platform_variant_serializer
 
           has_one :default_variant,
                   object_method_name: :default_variant,
                   id_method_name: :default_variant_id,
                   record_type: :variant,
-                  serializer: Spree::Api::Dependencies.platform_variant_serializer.constantize
+                  serializer: Spree.api.platform_variant_serializer
 
-          has_many :variants, serializer: Spree::Api::Dependencies.platform_variant_serializer.constantize
-          has_many :option_types, serializer: Spree::Api::Dependencies.platform_option_type_serializer.constantize
-          has_many :product_properties, serializer: Spree::Api::Dependencies.platform_product_property_serializer.constantize
-          has_many :taxons, serializer: Spree::Api::Dependencies.platform_taxon_serializer.constantize, record_type: :taxon do |object, params|
+          has_many :variants, serializer: Spree.api.platform_variant_serializer
+          has_many :option_types, serializer: Spree.api.platform_option_type_serializer
+          has_many :product_properties, serializer: Spree.api.platform_product_property_serializer
+          has_many :taxons, serializer: Spree.api.platform_taxon_serializer, record_type: :taxon do |object, params|
             if params[:store].present?
               object.taxons_for_store(params[:store])
             else
@@ -71,7 +71,7 @@ module Spree
                    object_method_name: :variant_images,
                    id_method_name: :variant_image_ids,
                    record_type: :image,
-                   serializer: Spree::Api::Dependencies.platform_image_serializer.constantize
+                   serializer: Spree.api.platform_image_serializer
 
           # TODO: add stock items
           # TODO: add prices

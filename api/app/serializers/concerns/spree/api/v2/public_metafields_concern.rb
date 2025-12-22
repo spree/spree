@@ -5,7 +5,7 @@ module Spree
         extend ActiveSupport::Concern
 
         included do
-          has_many :metafields, serializer: Spree::Api::Dependencies.storefront_metafield_serializer.constantize,
+          has_many :metafields, serializer: Spree.api.storefront_metafield_serializer,
                                 record_type: :metafield,
                                 object_method_name: :public_metafields
         end

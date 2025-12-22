@@ -53,7 +53,7 @@ module Spree
         # Returns the collection paginator
         # @return [Class] The collection paginator class, default is Spree::Shared::Paginate
         def collection_paginator
-          Spree::Api::Dependencies.storefront_collection_paginator.constantize
+          Spree.api.storefront_collection_paginator
         end
 
         # Renders a serialized payload with the given status code
@@ -120,7 +120,7 @@ module Spree
 
         # Needs to be overridden so that we use Spree's Ability rather than anyone else's.
         def current_ability
-          @current_ability ||= Spree::Dependencies.ability_class.constantize.new(spree_current_user, ability_options)
+          @current_ability ||= Spree.ability_class.new(spree_current_user, ability_options)
         end
 
         # this method can be extended in extensions or developer applications

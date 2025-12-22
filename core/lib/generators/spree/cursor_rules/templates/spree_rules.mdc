@@ -148,7 +148,7 @@ class MyAddToCartService < Spree::Cart::AddItem
   def call(order:, variant:, quantity: nil, public_metadata: {}, private_metadata: {}, options: {})
     ApplicationRecord.transaction do
       run :add_to_line_item
-      run Spree::Dependencies.cart_recalculate_service.constantize
+      run Spree.cart_recalculate_service
       run :update_external_system
     end
   end
@@ -363,7 +363,7 @@ module Spree
         private
 
         def serialized_collection
-          Spree::Api::Dependencies.storefront_product_serializer.constantize.new(
+          Spree.api.storefront_product_serializer.new(
             collection,
             include: resource_includes,
             fields: sparse_fields

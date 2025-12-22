@@ -4,8 +4,8 @@ module Spree
       class PaymentSourceSerializer < BaseSerializer
         include Spree::Api::V2::PublicMetafieldsConcern
 
-        belongs_to :payment_method, serializer: Spree::Api::Dependencies.storefront_payment_method_serializer.constantize
-        belongs_to :user, serializer: Spree::Api::Dependencies.storefront_user_serializer.constantize
+        belongs_to :payment_method, serializer: Spree.api.storefront_payment_method_serializer
+        belongs_to :user, serializer: Spree.api.storefront_user_serializer
       end
     end
   end
