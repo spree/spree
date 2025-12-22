@@ -5,8 +5,13 @@ module Spree
 
       def call(order:)
         @messages = []
+
+        return success([order, @messages]) if order.item_count.zero? || order.line_items.none?
+
+        line_items = order.line_items.includes(variant: [:product, :stock_items, :stock_locations, { stock_items: :stock_location }])
+
         ActiveRecord::Base.transaction do
-          line_items(order).each do |line_item|
+          line_items.each do |line_item|
             cart_remove_line_item_service.call(order: order, line_item: line_item) if !valid_status?(line_item) || !stock_available?(line_item)
           end
         end
@@ -19,17 +24,6 @@ module Spree
       end
 
       private
-
-      def line_items(order)
-        if order.line_items.empty?
-          []
-        elsif order.line_items.first.association_cached?(:variant) && order.line_items.first.variant.association_cached?(:product)
-          # Don't include associations if it is already included, because it breaks other includes
-          order.line_items
-        else
-          order.line_items.includes(variant: :product)
-        end
-      end
 
       def valid_status?(line_item)
         product = line_item.product

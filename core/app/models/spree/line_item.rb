@@ -50,7 +50,7 @@ module Spree
     delegate :name, :description, :sku, :should_track_inventory?, :product, :options_text, :slug, :product_id, :dimensions_unit, :weight_unit, to: :variant
     delegate :brand, :category, to: :product
     delegate :tax_zone, to: :order
-    delegate :digital?, to: :variant
+    delegate :digital?, :can_supply?, to: :variant
 
     scope :with_digital_assets, -> { joins(:variant).merge(Spree::Variant.with_digital_assets) }
 
@@ -134,7 +134,7 @@ module Spree
     alias money display_total
 
     def sufficient_stock?
-      Spree::Stock::Quantifier.new(variant).can_supply? quantity
+      can_supply? quantity
     end
 
     def insufficient_stock?
