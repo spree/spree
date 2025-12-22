@@ -209,7 +209,8 @@ module Spree
     #
     # @return [Boolean]
     def with_free_shipping_promotion?
-      adjustments.promotion.includes(:source).any? { |p| p.source.respond_to?(:free_shipping?) && p.source.free_shipping? }
+      adjustments.promotion.joins("INNER JOIN #{Spree::PromotionAction.table_name} ON #{Spree::PromotionAction.table_name}.id = #{Spree::Adjustment.table_name}.source_id").
+        where("#{Spree::PromotionAction.table_name}.type = 'Spree::Promotion::Actions::FreeShipping'").exists?
     end
 
     def finalize!

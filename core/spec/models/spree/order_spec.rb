@@ -2314,14 +2314,14 @@ describe Spree::Order, type: :model do
     describe '#quick_checkout_available?' do
       it 'returns true if the order is fully digital' do
         digital_line_item
-        order.update_totals
+        order.update_with_updater!
 
         expect(order.quick_checkout_available?).to be true
       end
 
       it 'returns true if the order has no digital products at all' do
         physical_line_item
-        order.update_totals
+        order.update_with_updater!
 
         expect(order.quick_checkout_available?).to be true
       end
@@ -2329,7 +2329,7 @@ describe Spree::Order, type: :model do
       it 'returns false if the order has physical products and some digital products' do
         physical_line_item
         digital_line_item
-        order.update_totals
+        order.update_with_updater!
 
         expect(order.quick_checkout_available?).to be false
       end
@@ -2337,7 +2337,7 @@ describe Spree::Order, type: :model do
       it 'returns false if order has many shipments' do
         physical_line_item
         digital_line_item
-        order.update_totals
+        order.update_with_updater!
         order.create_proposed_shipments
 
         expect(order.shipments.count).to eq(2)
@@ -2347,7 +2347,7 @@ describe Spree::Order, type: :model do
 
       it 'returns false if order does not require payment' do
         physical_line_item.update(price: 0)
-        order.update_totals
+        order.update_with_updater!
 
         expect(order.total).to eq(0)
         expect(order.payment_required?).to be false
@@ -2365,7 +2365,7 @@ describe Spree::Order, type: :model do
 
       it 'returns false if the order is digital' do
         digital_line_item
-        order.update_totals
+        order.update_with_updater!
 
         expect(order.quick_checkout_require_address?).to be false
       end

@@ -24,6 +24,9 @@ FactoryBot.define do
       after(:create) do |order, evaluator|
         create(:line_item, order: order, price: evaluator.line_items_price)
         order.line_items.reload # to ensure order.line_items is accessible after
+
+        order.update_column(:item_count, order.line_items.count)
+        order.reload
       end
     end
 
