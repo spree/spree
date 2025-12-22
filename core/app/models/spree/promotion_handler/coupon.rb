@@ -177,8 +177,8 @@ module Spree
 
         # Check for applied adjustments.
         discount = order.all_adjustments.promotion.eligible.detect do |p|
-          p.source.promotion.code.try(:downcase) == coupon_code ||
-            p.source.promotion.coupon_codes.unused.where(code: coupon_code).exists?
+          p.cached_source.promotion.code.try(:downcase) == coupon_code ||
+            Spree::CouponCode.unused.where(promotion_id: p.cached_source.promotion_id, code: coupon_code).exists?
         end
 
         # Check for applied line items.
