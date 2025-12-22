@@ -137,7 +137,7 @@ RSpec.describe Spree::Event do
 
       expect(hash['name']).to eq('order.complete')
       expect(hash['payload']).to eq({ 'id' => 1 })
-      expect(hash['metadata']['user_id']).to eq('5')
+      expect(hash['metadata']['user_id']).to eq(5)
       expect(hash['created_at']).to eq(event.created_at)
     end
   end

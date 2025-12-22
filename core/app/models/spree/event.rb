@@ -33,17 +33,18 @@ module Spree
     attribute :metadata, default: -> { {} }
     attribute :created_at, :datetime
 
+    # @param id [String] Optional UUID (generated if not provided)
     # @param name [String] The event name (e.g., 'order.complete')
     # @param payload [Hash] The serialized event data
     # @param metadata [Hash] Additional contextual information
-    def initialize(name: nil, payload: {}, metadata: {})
+    # @param created_at [Time, String] Optional timestamp (generated if not provided)
+    def initialize(id: nil, name: nil, payload: {}, metadata: {}, created_at: nil)
       super()
-      @created_at = Time.current.freeze
-      self.id = SecureRandom.uuid
+      self.id = id || SecureRandom.uuid
+      self.created_at = created_at ? Time.zone.parse(created_at.to_s) : Time.current
       self.name = name.to_s.freeze if name
       self.payload = (payload || {}).deep_stringify_keys.freeze
       self.metadata = build_metadata(metadata).freeze
-      self.created_at = @created_at
     end
 
     # Returns the resource type from the event name
@@ -103,7 +104,6 @@ module Spree
 
     def build_metadata(custom_metadata)
       base_metadata = {
-        'created_at' => @created_at.iso8601,
         'spree_version' => Spree.version
       }
 
@@ -118,23 +118,7 @@ module Spree
         base_metadata['request_id'] = Current.request_id
       end
 
-      # Merge custom metadata and ensure IDs are strings for JSON consistency
-      base_metadata.merge(stringify_metadata(custom_metadata || {}))
-    end
-
-    def stringify_metadata(hash)
-      hash.deep_stringify_keys.transform_values do |value|
-        case value
-        when Integer, BigDecimal
-          value.to_s
-        when Hash
-          stringify_metadata(value)
-        when Array
-          value.map { |v| v.is_a?(Hash) ? stringify_metadata(v) : v }
-        else
-          value
-        end
-      end
+      base_metadata.merge((custom_metadata || {}).deep_stringify_keys)
     end
   end
 end
