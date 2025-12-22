@@ -41,9 +41,9 @@ module Spree
           display_compare_at_price(product, params[:currency])
         end
 
-        belongs_to :product, serializer: Spree::Api::Dependencies.storefront_product_serializer.constantize
-        has_many :images, serializer: Spree::Api::Dependencies.storefront_image_serializer.constantize
-        has_many :option_values, serializer: Spree::Api::Dependencies.storefront_option_value_serializer.constantize
+        belongs_to :product, serializer: Spree.api.storefront_product_serializer
+        has_many :images, serializer: Spree.api.storefront_image_serializer
+        has_many :option_values, serializer: Spree.api.storefront_option_value_serializer
       end
     end
   end

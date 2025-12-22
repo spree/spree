@@ -28,19 +28,19 @@ module Spree
           end
 
           def collection_sorter
-            Spree::Api::Dependencies.storefront_products_sorter.constantize
+            Spree.api.storefront_products_sorter
           end
 
           def collection_finder
-            Spree::Api::Dependencies.storefront_products_finder.constantize
+            Spree.api.storefront_products_finder
           end
 
           def collection_serializer
-            Spree::Api::Dependencies.storefront_product_serializer.constantize
+            Spree.api.storefront_product_serializer
           end
 
           def resource_serializer
-            Spree::Api::Dependencies.storefront_product_serializer.constantize
+            Spree.api.storefront_product_serializer
           end
 
           def model_class

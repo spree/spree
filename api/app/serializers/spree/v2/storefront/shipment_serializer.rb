@@ -13,11 +13,11 @@ module Spree
           shipment.free?
         end
 
-        has_many :shipping_rates, serializer: Spree::Api::Dependencies.storefront_shipping_rate_serializer.constantize
-        has_one :selected_shipping_rate, serializer: Spree::Api::Dependencies.storefront_shipping_rate_serializer.constantize
+        has_many :shipping_rates, serializer: Spree.api.storefront_shipping_rate_serializer
+        has_one :selected_shipping_rate, serializer: Spree.api.storefront_shipping_rate_serializer
 
-        belongs_to :stock_location, serializer: Spree::Api::Dependencies.storefront_stock_location_serializer.constantize
-        has_many :line_items, serializer: Spree::Api::Dependencies.storefront_line_item_serializer.constantize do |shipment|
+        belongs_to :stock_location, serializer: Spree.api.storefront_stock_location_serializer
+        has_many :line_items, serializer: Spree.api.storefront_line_item_serializer do |shipment|
           shipment.line_items
         end
       end

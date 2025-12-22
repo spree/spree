@@ -6,11 +6,11 @@ module Spree
           private
 
           def collection_serializer
-            Spree::Api::Dependencies.storefront_policy_serializer.constantize
+            Spree.api.storefront_policy_serializer
           end
 
           def resource_serializer
-            Spree::Api::Dependencies.storefront_policy_serializer.constantize
+            Spree.api.storefront_policy_serializer
           end
 
           def resource

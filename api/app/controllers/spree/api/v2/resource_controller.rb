@@ -68,7 +68,7 @@ module Spree
         end
 
         def collection_sorter
-          Spree::Api::Dependencies.storefront_collection_sorter.constantize
+          Spree.api.storefront_collection_sorter
         end
       end
     end

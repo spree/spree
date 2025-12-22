@@ -22,7 +22,7 @@ module Spree
           wished_item.display_total(currency: params[:currency]).to_s
         end
 
-        belongs_to :variant, serializer: Spree::Api::Dependencies.storefront_variant_serializer.constantize
+        belongs_to :variant, serializer: Spree.api.storefront_variant_serializer
       end
     end
   end

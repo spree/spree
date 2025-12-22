@@ -106,43 +106,43 @@ module Spree
           end
 
           def update_service
-            Spree::Api::Dependencies.platform_order_update_service.constantize
+            Spree.api.platform_order_update_service
           end
 
           def next_service
-            Spree::Api::Dependencies.platform_order_next_service.constantize
+            Spree.api.platform_order_next_service
           end
 
           def advance_service
-            Spree::Api::Dependencies.platform_order_advance_service.constantize
+            Spree.api.platform_order_advance_service
           end
 
           def use_store_credit_service
-            Spree::Api::Dependencies.platform_order_use_store_credit_service.constantize
+            Spree.api.platform_order_use_store_credit_service
           end
 
           def complete_service
-            Spree::Api::Dependencies.platform_order_complete_service.constantize
+            Spree.api.platform_order_complete_service
           end
 
           def empty_service
-            Spree::Api::Dependencies.platform_order_empty_service.constantize
+            Spree.api.platform_order_empty_service
           end
 
           def destroy_service
-            Spree::Api::Dependencies.platform_order_destroy_service.constantize
+            Spree.api.platform_order_destroy_service
           end
 
           def approve_service
-            Spree::Api::Dependencies.platform_order_approve_service.constantize
+            Spree.api.platform_order_approve_service
           end
 
           def cancel_service
-            Spree::Api::Dependencies.platform_order_cancel_service.constantize
+            Spree.api.platform_order_cancel_service
           end
 
           def coupon_handler
-            Spree::Api::Dependencies.platform_coupon_handler.constantize
+            Spree.api.platform_coupon_handler
           end
 
           def spree_permitted_attributes
@@ -158,7 +158,7 @@ module Spree
           end
 
           def resource_serializer
-            Spree::Api::Dependencies.platform_order_serializer.constantize
+            Spree.api.platform_order_serializer
           end
         end
       end

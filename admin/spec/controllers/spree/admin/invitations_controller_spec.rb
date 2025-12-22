@@ -230,7 +230,7 @@ RSpec.describe Spree::Admin::InvitationsController, type: :controller do
     let(:another_user) { create(:user) }
 
     before do
-      allow(controller).to receive(:current_ability).and_return(Spree::Dependencies.ability_class.constantize.new(another_user))
+      allow(controller).to receive(:current_ability).and_return(Spree.ability_class.new(another_user))
       allow(controller).to receive(:try_spree_current_user).and_return(another_user)
       put :accept, params: { id: invitation.id }
     end

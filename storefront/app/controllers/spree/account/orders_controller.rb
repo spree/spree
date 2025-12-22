@@ -26,7 +26,7 @@ module Spree
       end
 
       def order_finder
-        Spree::Dependencies.completed_order_finder.constantize
+        Spree.completed_order_finder
       end
 
       def load_order_details

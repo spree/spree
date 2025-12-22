@@ -91,11 +91,11 @@ module Spree
     end
 
     def create_service
-      Spree::Dependencies.address_create_service.constantize
+      Spree.address_create_service
     end
 
     def update_service
-      Spree::Dependencies.address_update_service.constantize
+      Spree.address_update_service
     end
 
     def load_and_authorize_address

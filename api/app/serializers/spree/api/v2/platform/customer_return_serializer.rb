@@ -5,11 +5,11 @@ module Spree
         class CustomerReturnSerializer < BaseSerializer
           include ResourceSerializerConcern
 
-          belongs_to :stock_location, serializer: Spree::Api::Dependencies.platform_stock_location_serializer.constantize
+          belongs_to :stock_location, serializer: Spree.api.platform_stock_location_serializer
 
-          has_many :reimbursements, serializer: Spree::Api::Dependencies.platform_reimbursement_serializer.constantize
-          has_many :return_items, serializer: Spree::Api::Dependencies.platform_return_item_serializer.constantize
-          has_many :return_authorizations, serializer: Spree::Api::Dependencies.platform_return_authorization_serializer.constantize
+          has_many :reimbursements, serializer: Spree.api.platform_reimbursement_serializer
+          has_many :return_items, serializer: Spree.api.platform_return_item_serializer
+          has_many :return_authorizations, serializer: Spree.api.platform_return_authorization_serializer
         end
       end
     end

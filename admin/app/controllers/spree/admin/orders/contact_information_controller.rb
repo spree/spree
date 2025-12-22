@@ -18,7 +18,7 @@ module Spree
                             'address'
                           end
 
-              result = Spree::Dependencies.checkout_advance_service.constantize.call(order: @order, state: max_state)
+              result = Spree.checkout_advance_service.call(order: @order, state: max_state)
 
               unless result.success?
                 flash[:error] = result.error.value.full_messages.to_sentence

@@ -5,7 +5,7 @@ module Spree
         class ZoneSerializer < BaseSerializer
           include ResourceSerializerConcern
 
-          has_many :zone_members, serializer: Spree::Api::Dependencies.platform_zone_member_serializer.constantize
+          has_many :zone_members, serializer: Spree.api.platform_zone_member_serializer
         end
       end
     end

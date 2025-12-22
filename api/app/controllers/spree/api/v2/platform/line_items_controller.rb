@@ -42,19 +42,19 @@ module Spree
           end
 
           def create_service
-            Spree::Api::Dependencies.platform_line_item_create_service.constantize
+            Spree.api.platform_line_item_create_service
           end
 
           def update_service
-            Spree::Api::Dependencies.platform_line_item_update_service.constantize
+            Spree.api.platform_line_item_update_service
           end
 
           def destroy_service
-            Spree::Api::Dependencies.platform_line_item_destroy_service.constantize
+            Spree.api.platform_line_item_destroy_service
           end
 
           def resource_serializer
-            Spree::Api::Dependencies.platform_line_item_serializer.constantize
+            Spree.api.platform_line_item_serializer
           end
         end
       end

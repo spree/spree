@@ -10,7 +10,7 @@ module Spree
           end
 
           def resource_serializer
-            Spree::Api::Dependencies.platform_store_credit_type_serializer.constantize
+            Spree.api.platform_store_credit_type_serializer
           end
         end
       end

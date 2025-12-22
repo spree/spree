@@ -5,8 +5,8 @@ module Spree
         class PromotionActionLineItemSerializer < BaseSerializer
           include ResourceSerializerConcern
 
-          belongs_to :promotion_action, serializer: Spree::Api::Dependencies.platform_promotion_action_serializer.constantize
-          belongs_to :variant, serializer: Spree::Api::Dependencies.platform_variant_serializer.constantize
+          belongs_to :promotion_action, serializer: Spree.api.platform_promotion_action_serializer
+          belongs_to :variant, serializer: Spree.api.platform_variant_serializer
         end
       end
     end

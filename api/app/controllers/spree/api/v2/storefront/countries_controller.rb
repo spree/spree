@@ -31,15 +31,15 @@ module Spree
           end
 
           def resource_serializer
-            Spree::Api::Dependencies.storefront_country_serializer.constantize
+            Spree.api.storefront_country_serializer
           end
 
           def collection_serializer
-            Spree::Api::Dependencies.storefront_country_serializer.constantize
+            Spree.api.storefront_country_serializer
           end
 
           def collection_finder
-            Spree::Api::Dependencies.storefront_country_finder.constantize
+            Spree.api.storefront_country_finder
           end
 
           def model_class

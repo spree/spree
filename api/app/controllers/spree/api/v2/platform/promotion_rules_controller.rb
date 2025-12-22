@@ -20,7 +20,7 @@ module Spree
           end
 
           def resource_serializer
-            Spree::Api::Dependencies.platform_promotion_rule_serializer.constantize
+            Spree.api.platform_promotion_rule_serializer
           end
         end
       end

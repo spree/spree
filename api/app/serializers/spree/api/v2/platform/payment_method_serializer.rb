@@ -10,7 +10,7 @@ module Spree
             payment_method.preferences
           end
 
-          has_many :stores, serializer: Spree::Api::Dependencies.platform_store_serializer.constantize
+          has_many :stores, serializer: Spree.api.platform_store_serializer
         end
       end
     end

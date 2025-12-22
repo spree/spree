@@ -8,7 +8,7 @@ module Spree
 
         attributes :cc_type, :last_digits, :month, :year, :name, :default, :gateway_payment_profile_id, :public_metadata
 
-        belongs_to :payment_method, serializer: Spree::Api::Dependencies.storefront_payment_method_serializer.constantize
+        belongs_to :payment_method, serializer: Spree.api.storefront_payment_method_serializer
       end
     end
   end

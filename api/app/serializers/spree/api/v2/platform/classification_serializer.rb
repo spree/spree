@@ -5,8 +5,8 @@ module Spree
         class ClassificationSerializer < BaseSerializer
           include ResourceSerializerConcern
 
-          belongs_to :product, serializer: Spree::Api::Dependencies.platform_product_serializer.constantize
-          belongs_to :taxon, serializer: Spree::Api::Dependencies.platform_taxon_serializer.constantize
+          belongs_to :product, serializer: Spree.api.platform_product_serializer
+          belongs_to :taxon, serializer: Spree.api.platform_taxon_serializer
         end
       end
     end

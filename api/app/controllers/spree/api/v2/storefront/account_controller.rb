@@ -23,7 +23,7 @@ module Spree
           end
 
           def resource_serializer
-            Spree::Api::Dependencies.storefront_user_serializer.constantize
+            Spree.api.storefront_user_serializer
           end
 
           def model_class
@@ -31,11 +31,11 @@ module Spree
           end
 
           def create_service
-            Spree::Api::Dependencies.storefront_account_create_service.constantize
+            Spree.api.storefront_account_create_service
           end
 
           def update_service
-            Spree::Api::Dependencies.storefront_account_update_service.constantize
+            Spree.api.storefront_account_update_service
           end
 
           def user_create_params

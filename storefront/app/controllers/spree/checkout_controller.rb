@@ -342,7 +342,7 @@ module Spree
         packages = @order.shipments.map(&:to_package)
         @differentiator = Spree::Stock::Differentiator.new(@order, packages)
         @differentiator.missing.each do |variant, quantity|
-          Spree::Dependencies.cart_remove_item_service.constantize.call(order: @order, variant: variant, quantity: quantity)
+          Spree.cart_remove_item_service.call(order: @order, variant: variant, quantity: quantity)
         end
       end
     end
@@ -365,19 +365,19 @@ module Spree
     end
 
     def add_store_credit_service
-      Spree::Dependencies.checkout_add_store_credit_service.constantize
+      Spree.checkout_add_store_credit_service
     end
 
     def remove_store_credit_service
-      Spree::Dependencies.checkout_remove_store_credit_service.constantize
+      Spree.checkout_remove_store_credit_service
     end
 
     def remove_line_item_service
-      Spree::Dependencies.cart_remove_line_item_service.constantize
+      Spree.cart_remove_line_item_service
     end
 
     def coupon_handler
-      Spree::Dependencies.coupon_handler.constantize
+      Spree.coupon_handler
     end
 
     def accurate_title
@@ -387,7 +387,7 @@ module Spree
     def remove_expired_gift_card
       return unless @order.gift_card.present? && @order.gift_card.expired?
 
-      Spree::Dependencies.gift_card_remove_service.constantize.call(order: @order)
+      Spree.gift_card_remove_service.call(order: @order)
     end
   end
 end

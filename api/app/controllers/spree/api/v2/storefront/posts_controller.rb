@@ -18,11 +18,11 @@ module Spree
           end
 
           def collection_finder
-            Spree::Api::Dependencies.storefront_posts_finder.constantize
+            Spree.api.storefront_posts_finder
           end
 
           def collection_sorter
-            Spree::Api::Dependencies.storefront_posts_sorter.constantize
+            Spree.api.storefront_posts_sorter
           end
 
           def collection_serializer

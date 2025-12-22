@@ -24,19 +24,19 @@ module Spree
             end
 
             def collection_serializer
-              Spree::Api::Dependencies.storefront_order_serializer.constantize
+              Spree.api.storefront_order_serializer
             end
 
             def resource_serializer
-              Spree::Api::Dependencies.storefront_order_serializer.constantize
+              Spree.api.storefront_order_serializer
             end
 
             def collection_finder
-              Spree::Api::Dependencies.storefront_completed_order_finder.constantize
+              Spree.api.storefront_completed_order_finder
             end
 
             def resource_finder
-              Spree::Api::Dependencies.storefront_completed_order_finder.constantize
+              Spree.api.storefront_completed_order_finder
             end
 
             def model_class

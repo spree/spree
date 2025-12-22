@@ -7,7 +7,7 @@ module Spree
         set_type :payment
 
         has_one :source, polymorphic: true
-        has_one :payment_method, serializer: Spree::Api::Dependencies.storefront_payment_method_serializer.constantize
+        has_one :payment_method, serializer: Spree.api.storefront_payment_method_serializer
 
         attributes :amount, :response_code, :number, :cvv_response_code, :cvv_response_message, :payment_method_name, :state, :public_metadata
 

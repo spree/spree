@@ -26,7 +26,7 @@ module Spree
           end
 
           def find_spree_current_order
-            Spree::Api::Dependencies.storefront_current_order_finder.constantize.new.execute(
+            Spree.api.storefront_current_order_finder.new.execute(
               store: current_store,
               user: spree_current_user,
               token: order_token,

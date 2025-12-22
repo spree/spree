@@ -30,19 +30,19 @@ module Spree
             end
 
             def collection_serializer
-              Spree::Api::Dependencies.storefront_credit_card_serializer.constantize
+              Spree.api.storefront_credit_card_serializer
             end
 
             def collection_finder
-              Spree::Api::Dependencies.storefront_credit_card_finder.constantize
+              Spree.api.storefront_credit_card_finder
             end
 
             def resource_serializer
-              Spree::Api::Dependencies.storefront_credit_card_serializer.constantize
+              Spree.api.storefront_credit_card_serializer
             end
 
             def destroy_service
-              Spree::Api::Dependencies.storefront_credit_cards_destroy_service.constantize
+              Spree.api.storefront_credit_cards_destroy_service
             end
           end
         end

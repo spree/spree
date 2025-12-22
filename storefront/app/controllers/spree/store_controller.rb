@@ -124,7 +124,7 @@ module Spree
     end
 
     def storefront_products_finder
-      @storefront_products_finder ||= Spree::Dependencies.products_finder.constantize
+      @storefront_products_finder ||= Spree.products_finder
     end
 
     def storefront_products_scope
