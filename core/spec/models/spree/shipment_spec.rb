@@ -384,6 +384,7 @@ describe Spree::Shipment, type: :model do
     it 'returns true if order is digital and it does not have a ship address' do
       order.ship_address = nil
       order.line_items = [digital_line_item]
+      order.update_with_updater!
       expect(order.digital?).to eq(true)
       expect(shipment.send(:can_get_rates?)).to be_truthy
     end
