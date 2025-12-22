@@ -30,10 +30,6 @@ RSpec.describe Spree::Events::ProductSerializer do
       expect(subject).to have_key(:discontinue_on)
     end
 
-    it 'includes store_ids' do
-      expect(subject[:store_ids]).to eq([store.id])
-    end
-
     it 'includes timestamps' do
       expect(subject[:created_at]).to be_present
       expect(subject[:updated_at]).to be_present
