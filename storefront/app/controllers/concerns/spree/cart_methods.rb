@@ -39,12 +39,14 @@ module Spree
       {
         variant: [
           :images,
+          :prices,
+          { stock_items: :stock_location },
           { option_values: [:option_type] },
           {
             product: [
-              :variants,
               :variant_images,
-              { master: :images }
+              { master: :images },
+              { variants: :images }
             ]
           }
         ]

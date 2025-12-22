@@ -1,4 +1,4 @@
-<% options = line_item.variant.option_values.includes(:option_type) %>
+<% options = line_item.variant.option_values %>
 
 <% options.select { |ov| ov.option_type.color? }.each do |option| %>
   <div>
