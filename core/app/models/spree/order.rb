@@ -817,14 +817,22 @@ module Spree
       Spree::CouponCode.find_by(order: self, promotion: promotions).try(:code) || promotions.pluck(:code).compact.first
     end
 
+    # Returns the valid promotions for the order
+    # @return [Array<Spree::OrderPromotion>]
     def valid_promotions
-      order_promotions.where(promotion_id: valid_promotion_ids).uniq(&:promotion_id)
+      order_promotions.includes(:promotion).where(promotion_id: valid_promotion_ids).uniq(&:promotion_id)
     end
 
+    # Returns the IDs of the valid promotions for the order
+    # @return [Array<Integer>]
     def valid_promotion_ids
-      all_adjustments.eligible.nonzero.promotion.map { |a| a.source.promotion_id }.uniq
+      all_adjustments.eligible.nonzero.promotion.promotion.eligible.nonzero.promotion.
+        joins("INNER JOIN #{Spree::PromotionAction.table_name} ON #{Spree::PromotionAction.table_name}.id = #{Spree::Adjustment.table_name}.source_id").
+        pluck("#{Spree::PromotionAction.table_name}.promotion_id").compact.uniq
     end
 
+    # Returns the valid coupon promotions for the order
+    # @return [Array<Spree::Promotion>]
     def valid_coupon_promotions
       promotions.
         where(id: valid_promotion_ids).
@@ -832,7 +840,7 @@ module Spree
     end
 
     # Returns item and whole order discount amount for Order
-    # without Shipment disccounts (eg. Free Shipping)
+    # without Shipment discounts (eg. Free Shipping)
     # @return [BigDecimal]
     def cart_promo_total
       all_adjustments.eligible.nonzero.promotion.

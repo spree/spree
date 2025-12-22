@@ -209,7 +209,7 @@ module Spree
       end
 
       def handle_coupon_code(discount, coupon_code)
-        discount.source.promotion.coupon_codes.unused.find_by(code: coupon_code)&.apply_order!(order)
+        Spree::CouponCode.unused.find_by(promotion_id: discount.cached_source.promotion_id, code: coupon_code)&.apply_order!(order)
       end
 
       def load_gift_card_code
