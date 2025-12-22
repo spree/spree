@@ -99,7 +99,7 @@ module MyApp
         resource_type: 'Spree::Order',
         resource_id: event.payload['id'],
         action: action,
-        occurred_at: event.timestamp
+        occurred_at: event.created_at
       )
     end
   end
@@ -114,10 +114,11 @@ When your subscriber receives an event, you get a `Spree::Event` object with:
 
 ```ruby
 def handle(event)
-  event.name      # => "order.complete"
-  event.payload   # => { "id" => 1, "number" => "R123456", ... }
-  event.metadata  # => { "model_class" => "Spree::Order", "model_id" => 1 }
-  event.timestamp # => Time when event was published
+  event.id         # => "550e8400-e29b-41d4-a716-446655440000" (UUID)
+  event.name       # => "order.complete"
+  event.payload    # => { "id" => 1, "number" => "R123456", ... }
+  event.metadata   # => { "spree_version" => "5.1.0", "store_id" => "1" }
+  event.created_at # => Time when event was published
 end
 ```
 
@@ -127,8 +128,8 @@ The payload contains serialized attributes, not the actual record. To get the re
 
 ```ruby
 def handle(event)
-  model_class = event.metadata['model_class'].constantize
-  record = model_class.find_by(id: event.metadata['model_id'])
+  record_id = event.payload['id']
+  record = Spree::Order.find_by(id: record_id)
   return unless record
 
   # Work with the record
@@ -289,9 +290,8 @@ RSpec.describe MyApp::OrderCompletedSubscriber do
   let(:order) { create(:completed_order_with_totals) }
   let(:event) do
     Spree::Event.new(
-      'order.complete',
-      order.serializable_hash,
-      { model_class: 'Spree::Order', model_id: order.id }
+      name: 'order.complete',
+      payload: Spree::Events::OrderSerializer.serialize(order)
     )
   end
 
@@ -362,7 +362,7 @@ module MyApp
     private
 
     def find_stock_item(event)
-      Spree::StockItem.find_by(id: event.metadata['model_id'])
+      Spree::StockItem.find_by(id: event.payload['id'])
     end
 
     def stock_dropped_below_threshold?(event, stock_item)

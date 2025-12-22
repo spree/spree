@@ -20,12 +20,6 @@ RSpec.describe Spree::Events do
       expect(event.payload).to eq({ 'id' => 1 })
     end
 
-    it 'includes metadata with IDs as strings' do
-      event = described_class.publish('order.completed', { id: 1 }, { user_id: 5 })
-
-      expect(event.metadata['user_id']).to eq('5')
-    end
-
     it 'notifies subscribers synchronously when async: false' do
       received_events = []
 

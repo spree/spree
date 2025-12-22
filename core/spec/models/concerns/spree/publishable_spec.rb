@@ -65,16 +65,6 @@ RSpec.describe Spree::Publishable do
       expect(received_event.payload).to eq({ 'custom' => 'data' })
     end
 
-    it 'includes model metadata with IDs as strings' do
-      received_event = nil
-      Spree::Events.subscribe('test_product.custom', async: false) { |e| received_event = e }
-      Spree::Events.activate!
-
-      instance.publish_event('test_product.custom')
-
-      expect(received_event.metadata['model_id']).to eq('1')
-    end
-
     it 'does not publish when events are disabled' do
       received = false
       Spree::Events.subscribe('test_product.custom', async: false) { received = true }
