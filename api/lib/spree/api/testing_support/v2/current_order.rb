@@ -1,6 +1,5 @@
 def ensure_order_totals
-  order.update_totals
-  order.persist_totals
+  order.update_with_updater!
 end
 
 shared_context 'creates order with line item' do
