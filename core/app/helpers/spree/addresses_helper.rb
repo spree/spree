@@ -1,6 +1,14 @@
 # https://github.com/spree-contrib/spree_address_book/blob/master/app/helpers/spree/addresses_helper.rb
 module Spree
   module AddressesHelper
+    def address_form_countries_states_cache_key
+      @address_form_countries_states_cache_key ||= [
+        I18n.locale,
+        current_store.cache_key_with_version,
+        current_store.checkout_zone&.cache_key_with_version
+      ].compact
+    end
+
     def address_field(form, method, address_id = 'b', required = false, text_field_attributes: {}, &handler)
       content_tag :div, id: [address_id, method].join, class: 'mb-4' do
         if handler
