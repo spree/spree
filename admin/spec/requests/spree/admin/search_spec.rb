@@ -74,4 +74,78 @@ RSpec.describe Spree::Admin::SearchController, type: :request do
       end
     end
   end
+
+  describe 'GET /admin/search/tags' do
+    let!(:tag1) { ActsAsTaggableOn::Tag.create!(name: 'summer') }
+    let!(:tag2) { ActsAsTaggableOn::Tag.create!(name: 'winter') }
+    let!(:tag3) { ActsAsTaggableOn::Tag.create!(name: 'autumn') }
+    let!(:tag4) { ActsAsTaggableOn::Tag.create!(name: 'spring') }
+
+    context 'when query is present' do
+      it 'returns matching tags' do
+        get '/admin/search/tags', params: { q: 'summer' }
+
+        expect(response).to have_http_status(:ok)
+        expect(JSON.parse(response.body)).to eq([
+          {
+            'id' => tag1.id,
+            'name' => 'summer'
+          }
+        ])
+      end
+
+      it 'returns multiple matching tags' do
+        get '/admin/search/tags', params: { q: 'er' }
+
+        expect(response).to have_http_status(:ok)
+        json_response = JSON.parse(response.body)
+        expect(json_response.length).to eq(2)
+        expect(json_response.map { |tag| tag['name'] }).to match_array(['summer', 'winter'])
+      end
+
+      it 'returns tags case-insensitively' do
+        get '/admin/search/tags', params: { q: 'SUMMER' }
+
+        expect(response).to have_http_status(:ok)
+        expect(JSON.parse(response.body)).to eq([
+          {
+            'id' => tag1.id,
+            'name' => 'summer'
+          }
+        ])
+      end
+
+      it 'returns empty array when no matches found' do
+        get '/admin/search/tags', params: { q: 'tropical' }
+
+        expect(response).to have_http_status(:ok)
+        expect(JSON.parse(response.body)).to eq([])
+      end
+    end
+
+    context 'when query is empty' do
+      it 'returns empty array' do
+        get '/admin/search/tags', params: { q: '' }
+
+        expect(response).to have_http_status(:ok)
+        expect(JSON.parse(response.body)).to eq([])
+      end
+
+      it 'returns empty array when query is only whitespace' do
+        get '/admin/search/tags', params: { q: '   ' }
+
+        expect(response).to have_http_status(:ok)
+        expect(JSON.parse(response.body)).to eq([])
+      end
+    end
+
+    context 'when query parameter is missing' do
+      it 'returns empty array' do
+        get '/admin/search/tags'
+
+        expect(response).to have_http_status(:ok)
+        expect(JSON.parse(response.body)).to eq([])
+      end
+    end
+  end
 end
