@@ -218,6 +218,17 @@ describe Spree::Adjustment, type: :model do
           end
         end
       end
+
+      context 'when amount and eligible are the same' do
+        it "does not update the adjustment" do
+          expect(adjustment).to_not receive(:update_column)
+          adjustment.amount = 10
+          adjustment.eligible = true
+          subject
+          expect(adjustment.amount).to eq(10)
+          expect(adjustment.eligible).to eq(true)
+        end
+      end
     end
   end
 
