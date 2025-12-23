@@ -79,15 +79,33 @@ module Spree
 
     def update_adjustment_total
       recalculate_adjustments
-      order.adjustment_total = line_items.sum(:adjustment_total) +
-        shipments.sum(:adjustment_total) +
-        adjustments.eligible.sum(:amount)
-      order.included_tax_total = line_items.sum(:included_tax_total) + shipments.sum(:included_tax_total)
-      order.additional_tax_total = line_items.sum(:additional_tax_total) + shipments.sum(:additional_tax_total)
 
-      order.promo_total = line_items.sum(:promo_total) +
-        shipments.sum(:promo_total) +
-        adjustments.promotion.eligible.sum(:amount)
+      # Fetch all line item totals in a single query
+      line_item_totals = line_items.pick(
+        Arel.sql('COALESCE(SUM(adjustment_total), 0)'),
+        Arel.sql('COALESCE(SUM(included_tax_total), 0)'),
+        Arel.sql('COALESCE(SUM(additional_tax_total), 0)'),
+        Arel.sql('COALESCE(SUM(promo_total), 0)')
+      ) || [0, 0, 0, 0]
+
+      # Fetch all shipment totals in a single query
+      shipment_totals = shipments.pick(
+        Arel.sql('COALESCE(SUM(adjustment_total), 0)'),
+        Arel.sql('COALESCE(SUM(included_tax_total), 0)'),
+        Arel.sql('COALESCE(SUM(additional_tax_total), 0)'),
+        Arel.sql('COALESCE(SUM(promo_total), 0)')
+      ) || [0, 0, 0, 0]
+
+      # Fetch order-level adjustment totals in a single query
+      order_adjustment_totals = adjustments.eligible.pick(
+        Arel.sql('COALESCE(SUM(amount), 0)'),
+        Arel.sql("COALESCE(SUM(CASE WHEN source_type = 'Spree::PromotionAction' THEN amount ELSE 0 END), 0)")
+      ) || [0, 0]
+
+      order.adjustment_total = line_item_totals[0] + shipment_totals[0] + order_adjustment_totals[0]
+      order.included_tax_total = line_item_totals[1] + shipment_totals[1]
+      order.additional_tax_total = line_item_totals[2] + shipment_totals[2]
+      order.promo_total = line_item_totals[3] + shipment_totals[3] + order_adjustment_totals[1]
 
       update_order_total
     end
