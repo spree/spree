@@ -12,7 +12,7 @@ describe Spree::Promotion::Rules::Product, type: :model do
     let(:product3) { products.third }
 
     it 'is eligible if there are no products' do
-      allow(rule).to receive_messages(eligible_products: [])
+      allow(rule).to receive_messages(eligible_product_ids: [])
       expect(rule).to be_eligible(order)
     end
 
@@ -20,15 +20,15 @@ describe Spree::Promotion::Rules::Product, type: :model do
       let(:rule_options) { super().merge(preferred_match_policy: 'any') }
 
       it 'is eligible if any of the products is in eligible products' do
-        allow(order).to receive_messages(products: [product1, product2])
-        allow(rule).to receive_messages(eligible_products: [product2, product3])
+        allow(order).to receive_messages(product_ids: [product1.id, product2.id])
+        allow(rule).to receive_messages(eligible_product_ids: [product2.id, product3.id])
         expect(rule).to be_eligible(order)
       end
 
       context 'when none of the products are eligible products' do
         before do
-          allow(order).to receive_messages(products: [product1])
-          allow(rule).to receive_messages(eligible_products: [product2, product3])
+          allow(order).to receive_messages(product_ids: [product1.id])
+          allow(rule).to receive_messages(eligible_product_ids: [product2.id, product3.id])
         end
 
         it { expect(rule).not_to be_eligible(order) }
@@ -44,15 +44,15 @@ describe Spree::Promotion::Rules::Product, type: :model do
       let(:rule_options) { super().merge(preferred_match_policy: 'all') }
 
       it 'is eligible if all of the eligible products are ordered' do
-        allow(order).to receive_messages(products: [product3, product2, product1])
-        allow(rule).to receive_messages(eligible_products: [product2, product3])
+        allow(order).to receive_messages(product_ids: [product3.id, product2.id, product1.id])
+        allow(rule).to receive_messages(eligible_product_ids: [product2.id, product3.id])
         expect(rule).to be_eligible(order)
       end
 
       context 'when any of the eligible products is not ordered' do
         before do
-          allow(order).to receive_messages(products: [product1, product2])
-          allow(rule).to receive_messages(eligible_products: [product1, product2, product3])
+          allow(order).to receive_messages(product_ids: [product1.id, product2.id])
+          allow(rule).to receive_messages(eligible_product_ids: [product1.id, product2.id, product3.id])
         end
 
         it { expect(rule).not_to be_eligible(order) }
@@ -68,15 +68,15 @@ describe Spree::Promotion::Rules::Product, type: :model do
       let(:rule_options) { super().merge(preferred_match_policy: 'none') }
 
       it "is eligible if none of the order's products are in eligible products" do
-        allow(order).to receive_messages(products: [product1])
-        allow(rule).to receive_messages(eligible_products: [product2, product3])
+        allow(order).to receive_messages(product_ids: [product1.id])
+        allow(rule).to receive_messages(eligible_product_ids: [product2.id, product3.id])
         expect(rule).to be_eligible(order)
       end
 
       context "when any of the order's products are in eligible products" do
         before do
-          allow(order).to receive_messages(products: [product1, product2])
-          allow(rule).to receive_messages(eligible_products: [product2, product3])
+          allow(order).to receive_messages(product_ids: [product1.id, product2.id])
+          allow(rule).to receive_messages(eligible_product_ids: [product2.id, product3.id])
         end
 
         it { expect(rule).not_to be_eligible(order) }
@@ -94,12 +94,14 @@ describe Spree::Promotion::Rules::Product, type: :model do
       rule.actionable?(line_item)
     end
 
-    let(:rule_line_item) { Spree::LineItem.new(product: rule_product) }
-    let(:other_line_item) { Spree::LineItem.new(product: other_product) }
-
-    let(:rule_options) { super().merge(products: [rule_product]) }
     let(:rule_product) { create(:product) }
     let(:other_product) { create(:product) }
+    let(:rule_line_item) { build(:line_item, variant: rule_product.master) }
+    let(:other_line_item) { build(:line_item, variant: other_product.master) }
+
+    before do
+      allow(rule).to receive(:eligible_product_ids).and_return([rule_product.id])
+    end
 
     context "with 'any' match policy" do
       let(:rule_options) { super().merge(preferred_match_policy: 'any') }
@@ -158,7 +160,7 @@ describe Spree::Promotion::Rules::Product, type: :model do
     it 'adds the products to the rule' do
       rule.product_ids_to_add = products.map(&:id)
       rule.save!
-      expect(rule.products).to match_array(products)
+      expect(rule.reload.eligible_product_ids).to match_array(products.map(&:id))
     end
 
     it 'removes the products from the rule' do
@@ -166,7 +168,7 @@ describe Spree::Promotion::Rules::Product, type: :model do
       rule.save!
       rule.product_ids_to_add = []
       rule.save!
-      expect(rule.products).to be_empty
+      expect(rule.reload.eligible_product_ids).to be_empty
     end
 
     it 'does not remove the products when nil is passed' do
@@ -174,7 +176,7 @@ describe Spree::Promotion::Rules::Product, type: :model do
       rule.save!
       rule.product_ids_to_add = nil
       rule.save!
-      expect(rule.products).to match_array(products)
+      expect(rule.reload.eligible_product_ids).to match_array(products.map(&:id))
     end
   end
 end

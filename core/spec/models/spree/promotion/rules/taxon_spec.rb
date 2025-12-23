@@ -1,19 +1,15 @@
 require 'spec_helper'
 
 describe Spree::Promotion::Rules::Taxon, type: :model do
-  let(:rule) { subject }
-
   let(:store) { @default_store }
+  let(:promotion) { create(:promotion) }
+  let(:rule) { create(:promotion_rule_taxon, promotion: promotion) }
 
   describe '#eligible?(order)' do
     let(:taxonomy) { create(:taxonomy, store: store) }
     let(:taxon) { create :taxon, name: 'first', taxonomy: taxonomy }
     let(:taxon2) { create :taxon, name: 'second', taxonomy: taxonomy }
     let(:order) { create :order_with_line_items, store: store }
-
-    before do
-      rule.save
-    end
 
     context 'with any match policy' do
       before do

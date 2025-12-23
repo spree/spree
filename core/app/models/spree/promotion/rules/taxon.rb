@@ -30,14 +30,21 @@ module Spree
           promotable.is_a?(Spree::Order)
         end
 
+        def eligible_taxon_ids
+          @eligible_taxon_ids ||= promotion_rule_taxons.pluck(:taxon_id)
+        end
+
         def eligible?(order, _options = {})
+          return true if eligible_taxon_ids.empty?
+
           if preferred_match_policy == 'all'
-            unless (taxons.to_a - taxons_in_order_including_parents(order)).empty?
+            order_taxon_ids_with_ancestors = taxon_ids_in_order_including_ancestors(order)
+            unless eligible_taxon_ids.all? { |id| order_taxon_ids_with_ancestors.include?(id) }
               eligibility_errors.add(:base, eligibility_error_message(:missing_taxon))
             end
           else
-            order_taxons = taxons_in_order_including_parents(order)
-            unless taxons.any? { |taxon| order_taxons.include? taxon }
+            order_taxon_ids_with_ancestors = taxon_ids_in_order_including_ancestors(order)
+            unless eligible_taxon_ids.any? { |id| order_taxon_ids_with_ancestors.include?(id) }
               eligibility_errors.add(:base, eligibility_error_message(:no_matching_taxons))
             end
           end
@@ -46,12 +53,7 @@ module Spree
         end
 
         def actionable?(line_item)
-          store = line_item.order.store
-
-          store.products.
-            joins(:classifications).
-            where(Spree::Classification.table_name => { taxon_id: taxon_ids, product_id: line_item.product_id }).
-            exists?
+          Spree::Classification.where(taxon_id: eligible_taxon_ids_including_children, product_id: line_item.product_id).exists?
         end
 
         def taxon_ids_string
@@ -71,34 +73,40 @@ module Spree
 
         private
 
-        # All taxons in an order
-        def order_taxons(order)
-          taxon_ids = Spree::Classification.where(product_id: order.product_ids).pluck(:taxon_id).uniq
+        # IDs of taxons in rule including all their children
+        def eligible_taxon_ids_including_children
+          @eligible_taxon_ids_including_children ||= begin
+            return [] if eligible_taxon_ids.empty?
 
-          order.store.taxons.where(id: taxon_ids)
+            Spree::Taxon.where(id: eligible_taxon_ids).flat_map(&:cached_self_and_descendants_ids).uniq
+          end
         end
 
-        # ids of taxons rules and taxons rules children
-        def taxons_including_children_ids
-          taxons.inject([]) { |ids, taxon| ids += taxon.self_and_descendants.ids }
-        end
+        # IDs of taxons in order that match rule taxons (or their children), plus all ancestors
+        def taxon_ids_in_order_including_ancestors(order)
+          # Get taxon IDs from order products that are within rule taxons or their children
+          order_taxon_ids = Spree::Classification.where(product_id: order.product_ids, taxon_id: eligible_taxon_ids_including_children).pluck(:taxon_id).uniq
 
-        # taxons order vs taxons rules and taxons rules children
-        def order_taxons_in_taxons_and_children(order)
-          order_taxons(order).where(id: taxons_including_children_ids)
-        end
+          return [] if order_taxon_ids.empty?
 
-        def taxons_in_order_including_parents(order)
-          order_taxons_in_taxons_and_children(order).inject([]) { |taxons, taxon| taxons << taxon.self_and_ancestors }.flatten.uniq
+          # Get those taxons plus all their ancestors
+          Spree::Taxon.where(id: order_taxon_ids).flat_map { |taxon| taxon.self_and_ancestors.ids }.uniq
         end
 
         def add_taxons
           return if taxon_ids_to_add.nil?
 
           promotion_rule_taxons.delete_all
-          promotion_rule_taxons.insert_all(
-            taxon_ids_to_add.map { |taxon_id| { taxon_id: taxon_id, promotion_rule_id: id } }
-          )
+
+          if taxon_ids_to_add.any?
+            Spree::PromotionRuleTaxon.insert_all(
+              taxon_ids_to_add.map { |taxon_id| { taxon_id: taxon_id, promotion_rule_id: id } }
+            )
+          end
+
+          # Clear memoized values
+          @eligible_taxon_ids = nil
+          @eligible_taxon_ids_including_children = nil
         end
       end
     end
