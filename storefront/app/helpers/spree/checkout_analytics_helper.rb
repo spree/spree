@@ -19,12 +19,9 @@ module Spree
     end
 
     def order_tracking_params
-      tracking_params = {
+      {
         last_ip_address: request.remote_ip,
       }
-
-      tracking_params[:ahoy_visit_id] = current_visit.id if @order.respond_to?(:ahoy_visit) && defined?(current_visit) && current_visit&.id
-      tracking_params
     end
 
     def track_checkout_started
