@@ -13,15 +13,24 @@ module Spree
         end
 
         def eligible?(promotable, _options = {})
+          return false if eligible_option_value_variant_ids.empty?
+
           case preferred_match_policy
           when 'any'
-            promotable.line_items.any? { |item| actionable?(item) }
+            Spree::OptionValueVariant.where(id: eligible_option_value_variant_ids, variant_id: promotable.variant_ids).exists?
           end
         end
 
         def actionable?(line_item)
-          option_value_variant_ids = line_item.variant.option_value_variant_ids.map(&:to_s)
-          (preferred_eligible_values & option_value_variant_ids).any?
+          return false if eligible_option_value_variant_ids.empty?
+
+          Spree::OptionValueVariant.where(id: eligible_option_value_variant_ids, variant_id: line_item.variant_id).exists?
+        end
+
+        private
+
+        def eligible_option_value_variant_ids
+          @eligible_option_value_variant_ids ||= preferred_eligible_values.map(&:to_s)
         end
       end
     end

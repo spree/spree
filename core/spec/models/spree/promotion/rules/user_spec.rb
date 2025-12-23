@@ -16,7 +16,7 @@ describe Spree::Promotion::Rules::User, type: :model do
       let(:users) { [user_placing_order, random_user] }
 
       it 'is eligible if users include user placing the order' do
-        allow(rule).to receive_messages(user_ids: users.map(&:id))
+        allow(rule).to receive_messages(eligible_user_ids: users.map(&:id))
 
         expect(rule).to be_eligible(order)
       end
@@ -26,7 +26,7 @@ describe Spree::Promotion::Rules::User, type: :model do
       let(:users) { create_list(:user, 2) }
 
       it 'is not eligible if user placing the order is not listed' do
-        allow(rule).to receive_messages(user_ids: users.map(&:id))
+        allow(rule).to receive_messages(eligible_user_ids: users.map(&:id))
 
         expect(rule).not_to be_eligible(order)
       end

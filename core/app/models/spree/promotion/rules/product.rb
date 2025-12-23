@@ -34,23 +34,27 @@ module Spree
           products
         end
 
+        def eligible_product_ids
+          @eligible_product_ids ||= product_promotion_rules.pluck(:product_id)
+        end
+
         def applicable?(promotable)
           promotable.is_a?(Spree::Order)
         end
 
         def eligible?(order, _options = {})
-          return true if eligible_products.empty?
+          return true if eligible_product_ids.empty?
 
           if preferred_match_policy == 'all'
-            unless eligible_products.all? { |p| order.products.include?(p) }
+            unless eligible_product_ids.all? { |p| order.product_ids.include?(p) }
               eligibility_errors.add(:base, eligibility_error_message(:missing_product))
             end
           elsif preferred_match_policy == 'any'
-            unless order.products.any? { |p| eligible_products.include?(p) }
+            unless order.product_ids.any? { |p| eligible_product_ids.include?(p) }
               eligibility_errors.add(:base, eligibility_error_message(:no_applicable_products))
             end
           else
-            unless order.products.none? { |p| eligible_products.include?(p) }
+            unless order.product_ids.none? { |p| eligible_product_ids.include?(p) }
               eligibility_errors.add(:base, eligibility_error_message(:has_excluded_product))
             end
           end
@@ -61,9 +65,9 @@ module Spree
         def actionable?(line_item)
           case preferred_match_policy
           when 'any', 'all'
-            product_ids.include? line_item.variant.product_id
+            eligible_product_ids.include? line_item.variant.product_id
           when 'none'
-            product_ids.exclude? line_item.variant.product_id
+            eligible_product_ids.exclude? line_item.variant.product_id
           else
             raise "unexpected match policy: #{preferred_match_policy.inspect}"
           end
@@ -89,9 +93,15 @@ module Spree
           return if product_ids_to_add.nil?
 
           product_promotion_rules.delete_all
-          product_promotion_rules.insert_all(
-            product_ids_to_add.map { |product_id| { product_id: product_id, promotion_rule_id: id } }
-          )
+
+          if product_ids_to_add.any?
+            Spree::ProductPromotionRule.insert_all(
+              product_ids_to_add.map { |product_id| { product_id: product_id, promotion_rule_id: id } }
+            )
+          end
+
+          # Clear memoized values
+          @eligible_product_ids = nil
         end
       end
     end

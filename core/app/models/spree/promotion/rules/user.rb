@@ -24,8 +24,12 @@ module Spree
           promotable.is_a?(Spree::Order)
         end
 
+        def eligible_user_ids
+          @eligible_user_ids ||= promotion_rule_users.pluck(:user_id)
+        end
+
         def eligible?(order, _options = {})
-          user_ids.include?(order.user_id)
+          eligible_user_ids.include?(order.user_id)
         end
 
         def user_ids_string
@@ -50,9 +54,15 @@ module Spree
           return if user_ids_to_add.nil?
 
           promotion_rule_users.delete_all
-          promotion_rule_users.insert_all(
-            user_ids_to_add.map { |user_id| { user_id: user_id, promotion_rule_id: id } }
-          )
+
+          if user_ids_to_add.any?
+            Spree::PromotionRuleUser.insert_all(
+              user_ids_to_add.map { |user_id| { user_id: user_id, promotion_rule_id: id } }
+            )
+          end
+
+          # Clear memoized values
+          @eligible_user_ids = nil
         end
       end
     end
