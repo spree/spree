@@ -24,8 +24,12 @@ module Spree
           promotable.is_a?(Spree::Order)
         end
 
+        def eligible_user_ids
+          @eligible_user_ids ||= promotion_rule_users.pluck(:user_id)
+        end
+
         def eligible?(order, _options = {})
-          user_ids.include?(order.user_id)
+          eligible_user_ids.include?(order.user_id)
         end
 
         def user_ids_string
