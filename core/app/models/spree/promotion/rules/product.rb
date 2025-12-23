@@ -95,7 +95,10 @@ module Spree
           product_promotion_rules.delete_all
           product_promotion_rules.insert_all(
             product_ids_to_add.map { |product_id| { product_id: product_id, promotion_rule_id: id } }
-          )
+          ) if product_ids_to_add.any?
+
+          # Clear memoized values
+          @eligible_product_ids = nil
         end
       end
     end

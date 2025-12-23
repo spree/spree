@@ -99,7 +99,11 @@ module Spree
           promotion_rule_taxons.delete_all
           promotion_rule_taxons.insert_all(
             taxon_ids_to_add.map { |taxon_id| { taxon_id: taxon_id, promotion_rule_id: id } }
-          )
+          ) if taxon_ids_to_add.any?
+
+          # Clear memoized values
+          @eligible_taxon_ids = nil
+          @eligible_taxon_ids_including_children = nil
         end
       end
     end

@@ -56,7 +56,10 @@ module Spree
           promotion_rule_users.delete_all
           promotion_rule_users.insert_all(
             user_ids_to_add.map { |user_id| { user_id: user_id, promotion_rule_id: id } }
-          )
+          ) if user_ids_to_add.any?
+
+          # Clear memoized values
+          @eligible_user_ids = nil
         end
       end
     end
