@@ -3,8 +3,10 @@
 
 <div class="inner"
      data-controller="address-form address-autocomplete"
-     data-address-form-countries-value="<%= available_countries.to_json %>"
-     data-address-form-states-value="<%= available_states.to_json %>"
+     <% cache address_form_countries_states_cache_key do %>
+      data-address-form-countries-value="<%= available_countries.to_json %>"
+      data-address-form-states-value="<%= available_states.to_json %>"
+     <% end %>
      data-address-form-current-state-id-value="<%= address.state_id || address_form.object.state_id %>"
 >
   <div id="<%= "#{address_id}country" %>">
