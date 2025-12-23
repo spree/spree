@@ -160,7 +160,7 @@ describe Spree::Promotion::Rules::Product, type: :model do
     it 'adds the products to the rule' do
       rule.product_ids_to_add = products.map(&:id)
       rule.save!
-      expect(rule.eligible_product_ids).to match_array(products.map(&:id))
+      expect(rule.reload.eligible_product_ids).to match_array(products.map(&:id))
     end
 
     it 'removes the products from the rule' do
@@ -168,7 +168,7 @@ describe Spree::Promotion::Rules::Product, type: :model do
       rule.save!
       rule.product_ids_to_add = []
       rule.save!
-      expect(rule.eligible_product_ids).to be_empty
+      expect(rule.reload.eligible_product_ids).to be_empty
     end
 
     it 'does not remove the products when nil is passed' do
@@ -176,7 +176,7 @@ describe Spree::Promotion::Rules::Product, type: :model do
       rule.save!
       rule.product_ids_to_add = nil
       rule.save!
-      expect(rule.eligible_product_ids).to match_array(products.map(&:id))
+      expect(rule.reload.eligible_product_ids).to match_array(products.map(&:id))
     end
   end
 end

@@ -93,9 +93,12 @@ module Spree
           return if product_ids_to_add.nil?
 
           product_promotion_rules.delete_all
-          product_promotion_rules.insert_all(
-            product_ids_to_add.map { |product_id| { product_id: product_id, promotion_rule_id: id } }
-          ) if product_ids_to_add.any?
+
+          if product_ids_to_add.any?
+            Spree::ProductPromotionRule.insert_all(
+              product_ids_to_add.map { |product_id| { product_id: product_id, promotion_rule_id: id } }
+            )
+          end
 
           # Clear memoized values
           @eligible_product_ids = nil
