@@ -122,13 +122,19 @@ module Spree
       src = cached_source
       return amount if closed? || src.blank?
 
-      amount = src.compute_amount(target)
-      attributes = { amount: amount, updated_at: Time.current }
-      attributes[:eligible] = src.promotion.eligible?(target) if promotion?
+      new_amount = src.compute_amount(target)
+      new_eligible = promotion? ? src.promotion.eligible?(target) : eligible
 
-      update_columns(attributes)
+      changed_attributes = {}
+      changed_attributes[:amount] = new_amount if new_amount != amount
+      changed_attributes[:eligible] = new_eligible if new_eligible != eligible
 
-      amount
+      if changed_attributes.any?
+        changed_attributes[:updated_at] = Time.current
+        update_columns(changed_attributes)
+      end
+
+      new_amount
     end
 
     private
