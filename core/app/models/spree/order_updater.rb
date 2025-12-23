@@ -81,7 +81,8 @@ module Spree
       recalculate_adjustments
 
       # Fetch all line item totals in a single query
-      line_item_totals = line_items.pick(
+      # Use reorder(nil) to remove default ordering which conflicts with aggregates in PostgreSQL
+      line_item_totals = line_items.reorder(nil).pick(
         Arel.sql('COALESCE(SUM(adjustment_total), 0)'),
         Arel.sql('COALESCE(SUM(included_tax_total), 0)'),
         Arel.sql('COALESCE(SUM(additional_tax_total), 0)'),
@@ -89,7 +90,7 @@ module Spree
       ) || [0, 0, 0, 0]
 
       # Fetch all shipment totals in a single query
-      shipment_totals = shipments.pick(
+      shipment_totals = shipments.reorder(nil).pick(
         Arel.sql('COALESCE(SUM(adjustment_total), 0)'),
         Arel.sql('COALESCE(SUM(included_tax_total), 0)'),
         Arel.sql('COALESCE(SUM(additional_tax_total), 0)'),
@@ -97,7 +98,7 @@ module Spree
       ) || [0, 0, 0, 0]
 
       # Fetch order-level adjustment totals in a single query
-      order_adjustment_totals = adjustments.eligible.pick(
+      order_adjustment_totals = adjustments.eligible.reorder(nil).pick(
         Arel.sql('COALESCE(SUM(amount), 0)'),
         Arel.sql("COALESCE(SUM(CASE WHEN source_type = 'Spree::PromotionAction' THEN amount ELSE 0 END), 0)")
       ) || [0, 0]
