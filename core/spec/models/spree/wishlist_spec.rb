@@ -30,10 +30,10 @@ describe Spree::Wishlist, type: :model do
       end
     end
 
-    describe 'wishlist.destroyed' do
-      it 'publishes destroyed event when record is destroyed' do
+    describe 'wishlist.deleted' do
+      it 'publishes deleted event when record is destroyed' do
         record = create(:wishlist, user: user, store: store)
-        expect(record).to receive(:publish_event).with('wishlist.destroyed', kind_of(Hash))
+        expect(record).to receive(:publish_event).with('wishlist.deleted', kind_of(Hash))
         allow(record).to receive(:publish_event).with(anything)
 
         record.destroy!
