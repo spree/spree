@@ -1,7 +1,7 @@
 module Spree
   class Digital < Spree.base_class
-    belongs_to :variant
-    has_many :digital_links, dependent: :destroy
+    belongs_to :variant, class_name: 'Spree::Variant', touch: true
+    has_many :digital_links, class_name: 'Spree::DigitalLink', dependent: :destroy_async, inverse_of: :digital
 
     if defined?(Spree::Webhooks::HasWebhooks)
       include Spree::Webhooks::HasWebhooks

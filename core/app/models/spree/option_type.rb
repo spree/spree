@@ -27,10 +27,10 @@ module Spree
     #
     # Associations
     with_options dependent: :destroy, inverse_of: :option_type do
-      has_many :option_values, -> { order(:position) }
-      has_many :product_option_types
+      has_many :option_values, -> { order(:position) }, class_name: 'Spree::OptionValue'
+      has_many :product_option_types, class_name: 'Spree::ProductOptionType'
     end
-    has_many :products, through: :product_option_types
+    has_many :products, class_name: 'Spree::Product', through: :product_option_types
     has_many :option_type_prototypes, class_name: 'Spree::OptionTypePrototype'
     has_many :prototypes, through: :option_type_prototypes, class_name: 'Spree::Prototype'
 
