@@ -31,10 +31,10 @@ describe Spree::CustomerReturn, type: :model do
       end
     end
 
-    describe 'customer_return.destroyed' do
-      it 'publishes destroyed event when record is destroyed' do
+    describe 'customer_return.deleted' do
+      it 'publishes deleted event when record is destroyed' do
         record = create(:customer_return)
-        expect(record).to receive(:publish_event).with('customer_return.destroyed', kind_of(Hash))
+        expect(record).to receive(:publish_event).with('customer_return.deleted', kind_of(Hash))
         allow(record).to receive(:publish_event).with(anything)
 
         record.destroy!

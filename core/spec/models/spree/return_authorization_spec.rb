@@ -35,10 +35,10 @@ describe Spree::ReturnAuthorization, type: :model do
       end
     end
 
-    describe 'return_authorization.destroyed' do
-      it 'publishes destroyed event when record is destroyed' do
+    describe 'return_authorization.deleted' do
+      it 'publishes deleted event when record is destroyed' do
         record = create(:return_authorization)
-        expect(record).to receive(:publish_event).with('return_authorization.destroyed', kind_of(Hash))
+        expect(record).to receive(:publish_event).with('return_authorization.deleted', kind_of(Hash))
         allow(record).to receive(:publish_event).with(anything)
 
         record.destroy!

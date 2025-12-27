@@ -24,10 +24,10 @@ RSpec.describe Spree::GiftCardBatch, type: :model do
       end
     end
 
-    describe 'gift_card_batch.destroyed' do
-      it 'publishes destroyed event when record is destroyed' do
+    describe 'gift_card_batch.deleted' do
+      it 'publishes deleted event when record is destroyed' do
         record = create(:gift_card_batch, gift_card_batch_attrs)
-        expect(record).to receive(:publish_event).with('gift_card_batch.destroyed', kind_of(Hash))
+        expect(record).to receive(:publish_event).with('gift_card_batch.deleted', kind_of(Hash))
         allow(record).to receive(:publish_event).with(anything)
 
         record.destroy!

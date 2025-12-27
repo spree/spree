@@ -148,11 +148,11 @@ Models that include `Spree::Publishable` and call `publishes_lifecycle_events` a
 
 | Event Pattern | Description |
 |---------------|-------------|
-| `{model}.create` | Record was created |
-| `{model}.update` | Record was updated |
-| `{model}.destroy` | Record was deleted |
+| `{model}.created` | Record was created |
+| `{model}.updated` | Record was updated |
+| `{model}.deleted` | Record was deleted |
 
-For example, `Spree::Price` publishes `price.create`, `price.update`, and `price.destroy`.
+For example, `Spree::Price` publishes `price.created`, `price.updated`, and `price.deleted`.
 
 Models with lifecycle events enabled include: `Order`, `Payment`, `Price`, `Shipment`, `Variant`, `LineItem`, `StockItem`, and many others.
 
@@ -160,34 +160,46 @@ Models with lifecycle events enabled include: `Order`, `Payment`, `Price`, `Ship
 
 | Event | Description |
 |-------|-------------|
-| `order.create` | Order was created |
-| `order.update` | Order was updated |
-| `order.complete` | Order checkout completed |
-| `order.cancel` | Order was canceled |
-| `order.resume` | Canceled order was resumed |
+| `order.created` | Order was created |
+| `order.updated` | Order was updated |
+| `order.completed` | Order checkout completed |
+| `order.canceled` | Order was canceled |
+| `order.resumed` | Canceled order was resumed |
+| `order.paid` | Order is fully paid |
+| `order.shipped` | All order shipments are shipped |
 
 ### Shipment Events
 
 | Event | Description |
 |-------|-------------|
-| `shipment.create` | Shipment was created |
-| `shipment.update` | Shipment was updated |
-| `shipment.ship` | Shipment was shipped |
+| `shipment.created` | Shipment was created |
+| `shipment.updated` | Shipment was updated |
+| `shipment.shipped` | Shipment was shipped |
+| `shipment.canceled` | Shipment was canceled |
+| `shipment.resumed` | Shipment was resumed |
 
 ### Payment Events
 
 | Event | Description |
 |-------|-------------|
-| `payment.create` | Payment was created |
-| `payment.update` | Payment was updated |
+| `payment.created` | Payment was created |
+| `payment.updated` | Payment was updated |
+| `payment.paid` | Payment was completed |
 
 ### Price Events
 
 | Event | Description |
 |-------|-------------|
-| `price.create` | Price was created |
-| `price.update` | Price was updated |
-| `price.destroy` | Price was deleted |
+| `price.created` | Price was created |
+| `price.updated` | Price was updated |
+| `price.deleted` | Price was deleted |
+
+### Stock Events
+
+| Event | Description |
+|-------|-------------|
+| `product.out_of_stock` | Product has no stock left for any variant |
+| `product.back_in_stock` | Product was out of stock and now has stock again |
 
 ### Product Events
 

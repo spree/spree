@@ -69,19 +69,19 @@ module Spree
       # Enable automatic lifecycle event publishing
       #
       # @param options [Hash] Options for lifecycle events
-      # @option options [Array<Symbol>] :only Limit to specific events (:create, :update, :destroy)
+      # @option options [Array<Symbol>] :only Limit to specific events (:create, :update, :delete)
       # @option options [Array<Symbol>] :except Exclude specific events
       # @return [void]
       #
       # @example
       #   publishes_lifecycle_events
-      #   publishes_lifecycle_events only: [:create, :destroy]
+      #   publishes_lifecycle_events only: [:create, :delete]
       #   publishes_lifecycle_events except: [:update]
       #
       def publishes_lifecycle_events(options = {})
         self.lifecycle_events_enabled = true
 
-        events = [:create, :update, :destroy]
+        events = [:create, :update, :delete]
         events &= Array(options[:only]) if options[:only]
         events -= Array(options[:except]) if options[:except]
 
@@ -93,9 +93,9 @@ module Spree
           after_commit :publish_update_event, on: :update, if: :should_publish_events?
         end
 
-        if events.include?(:destroy)
+        if events.include?(:delete)
           before_destroy :capture_pre_destroy_payload, if: :should_publish_events?
-          after_commit :publish_destroy_event, on: :destroy, if: :should_publish_events?
+          after_commit :publish_delete_event, on: :destroy, if: :should_publish_events?
         end
       end
 
@@ -242,11 +242,11 @@ module Spree
       publish_event("#{event_prefix}.updated")
     end
 
-    def publish_destroy_event
-      # For destroy, we need to capture the data before it's gone
+    def publish_delete_event
+      # For delete, we need to capture the data before it's gone
       # The after_commit runs after the record is deleted, so we use
       # the previously captured payload
-      publish_event("#{event_prefix}.destroyed", @_pre_destroy_payload || event_payload)
+      publish_event("#{event_prefix}.deleted", @_pre_destroy_payload || event_payload)
     end
 
     def capture_pre_destroy_payload
