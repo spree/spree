@@ -213,7 +213,7 @@ RSpec.describe Spree::Publishable do
       it 'excludes specified callbacks' do
         expect(except_class._commit_callbacks.map(&:filter)).to include(:publish_create_event)
         expect(except_class._commit_callbacks.map(&:filter)).not_to include(:publish_update_event)
-        expect(except_class._commit_callbacks.map(&:filter)).to include(:publish_destroy_event)
+        expect(except_class._commit_callbacks.map(&:filter)).to include(:publish_delete_event)
       end
     end
 
