@@ -167,7 +167,11 @@ module Spree
     end
 
     def event_prefix
-      'user'
+      if self.class == Spree.admin_user_class
+        'admin'
+      else
+        'customer'
+      end
     end
 
     private
