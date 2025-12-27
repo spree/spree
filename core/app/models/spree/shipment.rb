@@ -15,6 +15,7 @@ module Spree
     end
     include Spree::Shipment::Emails
     include Spree::Shipment::Webhooks
+    include Spree::Shipment::CustomEvents
 
     with_options inverse_of: :shipments do
       belongs_to :address, class_name: 'Spree::Address'
@@ -455,17 +456,8 @@ module Spree
       ShipmentHandler.factory(self).perform
     end
 
-    def publish_shipment_shipped_event
-      publish_event('shipment.shipped')
-    end
-
-    def publish_shipment_canceled_event
-      publish_event('shipment.canceled')
-    end
-
-    def publish_shipment_resumed_event
-      publish_event('shipment.resumed')
-    end
+    # publish_shipment_shipped_event, publish_shipment_canceled_event, and
+    # publish_shipment_resumed_event are defined in Spree::Shipment::CustomEvents
 
     def can_get_rates?
       return true unless order.requires_ship_address?
