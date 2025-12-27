@@ -5,9 +5,6 @@ module Spree
     include Spree::NumberAsParam
     include Spree::Metafields
     include Spree::Metadata
-    if defined?(Spree::Webhooks::HasWebhooks)
-      include Spree::Webhooks::HasWebhooks
-    end
 
     has_many :stock_movements, as: :originator
     accepts_nested_attributes_for :stock_movements, reject_if: proc { |attributes|

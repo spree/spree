@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe Spree::Payment, type: :model do
+  it_behaves_like 'lifecycle events'
+
   let(:store) { @default_store }
   let(:order) { create(:order, store: store, total: 200) }
   let(:refund_reason) { create(:refund_reason) }
@@ -1289,6 +1291,32 @@ describe Spree::Payment, type: :model do
 
     it 'returns the gateway processing error messages' do
       expect(payment.gateway_processing_error_messages).to eq(['Gateway processing error', 'Another gateway processing error'])
+    end
+  end
+
+  describe 'events' do
+    describe 'completed state transition' do
+      it 'publishes payment.completed event' do
+        payment.started_processing!
+        expect(payment).to receive(:publish_event).with('payment.completed')
+        allow(payment).to receive(:publish_event).with(anything)
+
+        payment.complete!
+      end
+    end
+
+    describe 'voided state transition' do
+      before do
+        payment.started_processing!
+        payment.pend!
+      end
+
+      it 'publishes payment.voided event' do
+        expect(payment).to receive(:publish_event).with('payment.voided')
+        allow(payment).to receive(:publish_event).with(anything)
+
+        payment.void!
+      end
     end
   end
 end

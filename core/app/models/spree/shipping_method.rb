@@ -5,9 +5,6 @@ module Spree
     include Spree::Metafields
     include Spree::Metadata
     include Spree::DisplayOn
-    if defined?(Spree::Webhooks::HasWebhooks)
-      include Spree::Webhooks::HasWebhooks
-    end
     if defined?(Spree::VendorConcern)
       include Spree::VendorConcern
     end

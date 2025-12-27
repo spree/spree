@@ -3,9 +3,6 @@ module Spree
     include Spree::MultiStoreResource
     include Spree::Metafields
     include Spree::Metadata
-    if defined?(Spree::Webhooks::HasWebhooks)
-      include Spree::Webhooks::HasWebhooks
-    end
     if defined?(Spree::Security::Promotions)
       include Spree::Security::Promotions
     end

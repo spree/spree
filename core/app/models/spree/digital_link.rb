@@ -6,9 +6,6 @@ module Spree
       has_secure_token
     end
 
-    if defined?(Spree::Webhooks::HasWebhooks)
-      include Spree::Webhooks::HasWebhooks
-    end
     if defined?(Spree::Security::DigitalLinks)
       include Spree::Security::DigitalLinks
     end

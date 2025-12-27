@@ -7,24 +7,37 @@ rescue LoadError
   raise "Could not find spree/testing_support/common_rake. You need to run this command using Bundler."
 end
 
-SPREE_GEMS = %w(core api cli emails sample admin storefront).freeze
+SPREE_GEMS = %w(core api cli emails sample admin storefront legacy_webhooks).freeze
+PACKAGES = %w(legacy_webhooks).freeze
 
 task default: :test
 
 desc "Runs all tests in all Spree engines"
 task test: :test_app do
-  SPREE_GEMS.each do |gem_name|
-    Dir.chdir("#{File.dirname(__FILE__)}/#{gem_name}") do
-      sh 'rspec'
+  (SPREE_GEMS + PACKAGES).each do |gem_name|
+    if PACKAGES.include?(gem_name)
+      Dir.chdir("#{File.dirname(__FILE__)}/packages/#{gem_name}") do
+        sh 'rake test'
+      end
+    else
+      Dir.chdir("#{File.dirname(__FILE__)}/#{gem_name}") do
+        sh 'rspec'
+      end
     end
   end
 end
 
 desc "Generates a dummy app for testing for every Spree engine"
 task :test_app do
-  SPREE_GEMS.each do |gem_name|
-    Dir.chdir("#{File.dirname(__FILE__)}/#{gem_name}") do
-      sh 'rake test_app'
+  (SPREE_GEMS + PACKAGES).each do |gem_name|
+    if PACKAGES.include?(gem_name)
+      Dir.chdir("#{File.dirname(__FILE__)}/packages/#{gem_name}") do
+        sh 'rake test_app'
+      end
+    else
+      Dir.chdir("#{File.dirname(__FILE__)}/#{gem_name}") do
+        sh 'rake test_app'
+      end
     end
   end
 end
@@ -35,10 +48,16 @@ task :clean do
   rm_rf "sandbox"
   rm_rf "pkg"
 
-  SPREE_GEMS.each do |gem_name|
-    rm_f  "#{gem_name}/Gemfile.lock"
-    rm_rf "#{gem_name}/pkg"
-    rm_rf "#{gem_name}/spec/dummy"
+  (SPREE_GEMS + PACKAGES).each do |gem_name|
+    if PACKAGES.include?(gem_name)
+      Dir.chdir("#{File.dirname(__FILE__)}/packages/#{gem_name}") do
+        sh 'rake clean'
+      end
+    else
+      rm_f  "#{gem_name}/Gemfile.lock"
+      rm_rf "#{gem_name}/pkg"
+      rm_rf "#{gem_name}/spec/dummy"
+    end
   end
 end
 
@@ -49,8 +68,14 @@ namespace :gem do
   end
 
   def for_each_gem
-    SPREE_GEMS.each do |gem_name|
+    (SPREE_GEMS + PACKAGES).each do |gem_name|
+      if PACKAGES.include?(gem_name)
+        Dir.chdir("#{File.dirname(__FILE__)}/packages/#{gem_name}") do
+          sh 'rake gem:build'
+        end
+      else
       yield "pkg/spree_#{gem_name}-#{version}.gem"
+      end
     end
     yield "pkg/spree-#{version}.gem"
   end
@@ -61,9 +86,16 @@ namespace :gem do
     FileUtils.mkdir_p pkgdir
 
     SPREE_GEMS.each do |gem_name|
-      Dir.chdir(gem_name) do
-        sh "gem build spree_#{gem_name}.gemspec"
-        mv "spree_#{gem_name}-#{version}.gem", pkgdir
+      if PACKAGES.include?(gem_name)
+        Dir.chdir("#{File.dirname(__FILE__)}/packages/#{gem_name}") do
+          sh "gem build spree_#{gem_name}.gemspec"
+          mv "spree_#{gem_name}-#{version}.gem", pkgdir
+        end
+      else
+        Dir.chdir(gem_name) do
+          sh "gem build spree_#{gem_name}.gemspec"
+          mv "spree_#{gem_name}-#{version}.gem", pkgdir
+        end
       end
     end
 

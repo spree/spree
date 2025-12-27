@@ -1,9 +1,9 @@
 require 'spec_helper'
 
 describe Spree::Api::V2::Platform::TaxonSerializer do
-  include_context 'API v2 serializers params'
-
   subject { described_class.new(taxon.reload, params: serializer_params).serializable_hash }
+
+  include_context 'API v2 serializers params'
 
   let(:taxonomy) { create(:taxonomy, store: store) }
   let(:taxon) { create(:taxon, :with_description, taxonomy: taxonomy, products: create_list(:product, 2, stores: [store])) }
@@ -56,10 +56,7 @@ describe Spree::Api::V2::Platform::TaxonSerializer do
                 }
               },
               image: {
-                data: {
-                  id: taxon.icon.id.to_s,
-                  type: :taxon_image
-                }
+                data: nil
               },
               children: {
                 data: [
@@ -133,10 +130,7 @@ describe Spree::Api::V2::Platform::TaxonSerializer do
                 }
               },
               image: {
-                data: {
-                  id: taxon.icon.id.to_s,
-                  type: :taxon_image
-                }
+                data: nil
               },
               products: {
                 data: [

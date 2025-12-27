@@ -4,9 +4,6 @@ module Spree
     include Spree::Metafields
     include Spree::Metadata
     include Spree::TranslatableResource
-    if defined?(Spree::Webhooks::HasWebhooks)
-      include Spree::Webhooks::HasWebhooks
-    end
 
     TRANSLATABLE_FIELDS = %i[presentation].freeze
     translates(*TRANSLATABLE_FIELDS, column_fallback: !Spree.always_use_translations?)

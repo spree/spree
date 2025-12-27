@@ -7,6 +7,10 @@ module Spree
 
     include Spree::Core::NumberGenerator.new(prefix: 'IM')
 
+    # Set event prefix for all Import subclasses
+    # This ensures Spree::Imports::Products publishes 'import.create' not 'products.create'
+    self.event_prefix = 'import'
+
     #
     # Associations
     #
@@ -56,8 +60,9 @@ module Spree
       event :complete do
         transition from: :processing, to: :completed
       end
-      after_transition to: :completed, do: :send_import_completed_email
-      after_transition to: :completed, do: :update_loader_in_import_view
+      after_transition to: :completed, do: :publish_import_completed_event
+      # NOTE: send_import_completed_email and update_loader_in_import_view
+      # are now handled by Spree::Admin::ImportSubscriber listening to 'import.completed' event
 
       event :fail do
         transition to: :failed
@@ -159,8 +164,8 @@ module Spree
       "#{Spree.t(type.demodulize.pluralize.downcase)} #{number}"
     end
 
-    def send_import_completed_email
-      # Spree::ImportMailer.import_done(self).deliver_later
+    def publish_import_completed_event
+      publish_event('import.completed')
     end
 
     # Returns the headers of the csv file
@@ -205,13 +210,11 @@ module Spree
     # Returns the store for the import
     # @return [Spree::Store]
     def store
-      owner.is_a?(Spree::Store) ? owner : owner.respond_to?(:store) ? owner.store : Spree::Store.default
-    end
-
-    def update_loader_in_import_view
-      return unless defined?(broadcast_update_to)
-
-      broadcast_update_to "import_#{id}_loader", target: 'loader', partial: 'spree/admin/imports/loader', locals: { import: self }
+      if owner.is_a?(Spree::Store)
+        owner
+      else
+        owner.respond_to?(:store) ? owner.store : Spree::Store.default
+      end
     end
 
     # Returns the current ability for the import
@@ -243,7 +246,7 @@ module Spree
       def model_class
         klass = "Spree::#{to_s.demodulize.singularize}".safe_constantize
 
-        raise NameError, "Missing model class for #{to_s}" unless klass
+        raise NameError, "Missing model class for #{self}" unless klass
 
         klass
       end

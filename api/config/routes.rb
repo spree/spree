@@ -206,8 +206,6 @@ Spree::Core::Engine.add_routes do
 
         # Webhooks API
         namespace :webhooks do
-          resources :events, only: :index
-          resources :subscribers
         end
 
         # Gift Cards API

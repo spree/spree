@@ -3,6 +3,8 @@ require 'spec_helper'
 RSpec.describe Spree::Post, type: :model do
   let(:post) { create(:post) }
 
+  it_behaves_like 'lifecycle events'
+
   context 'Validations' do
     describe 'image' do
       it 'validates content type' do

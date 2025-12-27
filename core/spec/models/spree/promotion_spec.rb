@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe Spree::Promotion, type: :model do
   it_behaves_like 'metadata'
+  it_behaves_like 'lifecycle events'
 
   let(:store) { @default_store }
   let(:promotion) { create(:promotion, kind: :automatic) }

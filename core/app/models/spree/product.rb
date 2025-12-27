@@ -262,12 +262,12 @@ module Spree
       event :activate do
         transition to: :active
       end
-      after_transition to: :active, do: [:after_activate, :send_product_activated_webhook]
+      after_transition to: :active, do: [:after_activate, :send_product_activated_webhook, :publish_product_activated_event]
 
       event :archive do
         transition to: :archived
       end
-      after_transition to: :archived, do: [:after_archive, :send_product_archived_webhook]
+      after_transition to: :archived, do: [:after_archive, :send_product_archived_webhook, :publish_product_archived_event]
 
       event :draft do
         transition to: :draft
@@ -673,7 +673,8 @@ module Spree
 
       if has_variants?
         variants_including_master.each_with_index do |variant, index|
-          csv_lines << Spree::CSV::ProductVariantPresenter.new(self, variant, index, properties_for_csv, taxons_for_csv, store, metafields_for_csv).call
+          csv_lines << Spree::CSV::ProductVariantPresenter.new(self, variant, index, properties_for_csv, taxons_for_csv, store,
+                                                               metafields_for_csv).call
         end
       else
         csv_lines << Spree::CSV::ProductVariantPresenter.new(self, master, 0, properties_for_csv, taxons_for_csv, store, metafields_for_csv).call
@@ -847,6 +848,14 @@ module Spree
 
     def after_draft
       # Implement your logic here
+    end
+
+    def publish_product_activated_event
+      publish_event('product.activated')
+    end
+
+    def publish_product_archived_event
+      publish_event('product.archived')
     end
   end
 end

@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 RSpec.describe Spree::WishedItem, type: :model do
+  it_behaves_like 'lifecycle events'
+
   describe '.quantity' do
     subject { build(:wished_item) }
 

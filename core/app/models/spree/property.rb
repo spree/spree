@@ -6,9 +6,6 @@ module Spree
     include Spree::UniqueName
     include Spree::DisplayOn
     include Spree::TranslatableResource
-    if defined?(Spree::Webhooks::HasWebhooks)
-      include Spree::Webhooks::HasWebhooks
-    end
 
     TRANSLATABLE_FIELDS = %i[presentation].freeze
     translates(*TRANSLATABLE_FIELDS, column_fallback: !Spree.always_use_translations?)

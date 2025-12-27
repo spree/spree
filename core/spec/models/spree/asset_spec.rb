@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe Spree::Asset, type: :model do
   it_behaves_like 'metadata'
+  it_behaves_like 'lifecycle events'
 
   describe 'named variants' do
     let(:reflection) { described_class.attachment_reflections['attachment'] }
@@ -16,7 +17,7 @@ describe Spree::Asset, type: :model do
         named_variant = reflection.named_variants[name]
         expect(named_variant).to be_present
         expect(named_variant.transformations[:resize_to_fill]).to eq([width, height])
-        expect(named_variant.transformations[:format]).to eq("webp")
+        expect(named_variant.transformations[:format]).to eq('webp')
         expect(named_variant.instance_variable_get(:@preprocessed)).to eq(true)
       end
     end
@@ -78,7 +79,7 @@ describe Spree::Asset, type: :model do
     let(:uuid) { SecureRandom.uuid }
 
     it 'returns assets with the given uuid' do
-      expect(subject).to contain_exactly(*assets)
+      expect(subject).to match_array(assets)
     end
   end
 

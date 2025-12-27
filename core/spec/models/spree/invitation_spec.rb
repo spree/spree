@@ -49,10 +49,6 @@ RSpec.describe Spree::Invitation, type: :model do
       expect(invitation.role).to eq(Spree::Role.default_admin_role)
     end
 
-    it 'sends invitation email after create' do
-      expect { invitation.save }.to have_enqueued_job(ActionMailer::MailDeliveryJob)
-    end
-
     it 'sets invitee from email before validation' do
       create(:admin_user, :without_admin_role, email: 'test@example.com')
 
@@ -82,10 +78,11 @@ RSpec.describe Spree::Invitation, type: :model do
         expect(invitation.accepted_at).to be_present
       end
 
-      it 'sends acceptance notification' do
+      it 'publishes invitation.accept event' do
         invitation.invitee = create(:admin_user, :without_admin_role)
-        clear_enqueued_jobs
-        expect { invitation.accept }.to have_enqueued_job(ActionMailer::MailDeliveryJob)
+
+        expect(invitation).to receive(:publish_event).with('invitation.accepted')
+        invitation.accept
       end
 
       it 'creates a resource user' do
@@ -112,22 +109,23 @@ RSpec.describe Spree::Invitation, type: :model do
   end
 
   describe '#resend!' do
-    it 'sends invitation email if invitation is pending and not expired' do
-      invitation
-      clear_enqueued_jobs
-      expect { invitation.resend! }.to have_enqueued_job(ActionMailer::MailDeliveryJob)
-    end
-
-    it 'does not send invitation email if invitation is expired' do
-      allow(invitation).to receive(:expired?).and_return(true)
-      expect(invitation).not_to receive(:send_invitation_email)
+    it 'publishes invitation.resent event if invitation is pending and not expired' do
+      expect(invitation).to receive(:publish_event).with('invitation.resent')
       invitation.resend!
     end
 
-    it 'does not send invitation email if invitation is accepted' do
-      invitation.invitee = create(:admin_user, spree_roles: [])
+    it 'does not publish event if invitation is expired' do
+      allow(invitation).to receive(:expired?).and_return(true)
+      expect(invitation).not_to receive(:publish_event)
+      invitation.resend!
+    end
+
+    it 'does not publish event if invitation is accepted' do
+      invitation.invitee = create(:admin_user, :without_admin_role)
+      expect(invitation).to receive(:publish_event).with('invitation.accepted')
       invitation.accept
-      expect(invitation).not_to receive(:send_invitation_email)
+
+      expect(invitation).not_to receive(:publish_event)
       invitation.resend!
     end
   end

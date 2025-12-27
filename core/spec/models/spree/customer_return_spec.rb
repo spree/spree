@@ -7,6 +7,41 @@ describe Spree::CustomerReturn, type: :model do
 
   it_behaves_like 'metadata'
 
+  describe 'lifecycle events' do
+    describe 'customer_return.created' do
+      it 'publishes created event when record is created' do
+        customer_return = build(:customer_return_without_return_items, store: create(:store))
+        shipped_order = create(:shipped_order, line_items_count: 1, store: customer_return.store)
+        customer_return.return_items << build(:return_item, inventory_unit: shipped_order.inventory_units.first)
+
+        expect(customer_return).to receive(:publish_event).with('customer_return.created')
+        allow(customer_return).to receive(:publish_event).with(anything)
+
+        customer_return.save!
+      end
+    end
+
+    describe 'customer_return.updated' do
+      it 'publishes updated event when record is updated' do
+        record = create(:customer_return)
+        expect(record).to receive(:publish_event).with('customer_return.updated')
+        allow(record).to receive(:publish_event).with(anything)
+
+        record.touch
+      end
+    end
+
+    describe 'customer_return.deleted' do
+      it 'publishes deleted event when record is destroyed' do
+        record = create(:customer_return)
+        expect(record).to receive(:publish_event).with('customer_return.deleted', kind_of(Hash))
+        allow(record).to receive(:publish_event).with(anything)
+
+        record.destroy!
+      end
+    end
+  end
+
   describe '.validation' do
     describe '#must_have_return_authorization' do
       subject { customer_return.valid? }

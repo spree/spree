@@ -9,7 +9,12 @@ module Spree
     include Spree::AdminUserMethods
     include Spree::RansackableAttributes
     include Spree::MultiSearchable
+    include Spree::Publishable
+
     included do
+      # Enable lifecycle events for user models
+      publishes_lifecycle_events
+
       # we need to have this callback before any dependent: :destroy associations
       # https://github.com/rails/rails/issues/3458
       before_validation :clone_billing_address, if: :use_billing?
@@ -155,6 +160,18 @@ module Spree
     # @return [String]
     def full_name
       name&.full
+    end
+
+    def event_serializer_class
+      Spree::Events::UserSerializer
+    end
+
+    def event_prefix
+      if self.class == Spree.admin_user_class && Spree.admin_user_class != Spree.user_class
+        'admin'
+      else
+        'user'
+      end
     end
 
     private

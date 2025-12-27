@@ -1,6 +1,14 @@
 require 'spec_helper'
 
 describe Spree::LegacyUser, type: :model do # rubocop:disable RSpec/MultipleDescribes
+  it_behaves_like 'lifecycle events', factory: :user, event_prefix: 'user'
+
+  describe '#event_serializer_class' do
+    subject { build(:user).event_serializer_class }
+
+    it { is_expected.to eq(Spree::Events::UserSerializer) }
+  end
+
   describe '#can_be_deleted?' do
     subject { user.can_be_deleted? }
 
@@ -19,7 +27,7 @@ describe Spree::LegacyUser, type: :model do # rubocop:disable RSpec/MultipleDesc
 
   describe '#full_name' do
     context 'when names are present' do
-      let(:user) { create(:user, first_name: 'John', last_name: 'Doe') }
+      let(:user) { build(:user, first_name: 'John', last_name: 'Doe') }
 
       it 'returns the full name of the user' do
         expect(user.full_name).to eq('John Doe')
@@ -27,7 +35,7 @@ describe Spree::LegacyUser, type: :model do # rubocop:disable RSpec/MultipleDesc
     end
 
     context 'when both first and last names are nil' do
-      let(:user) { create(:user, first_name: nil, last_name: nil) }
+      let(:user) { build(:user, first_name: nil, last_name: nil) }
 
       it 'does not raise error and returns nil' do
         expect { user.full_name }.not_to raise_error
@@ -37,7 +45,7 @@ describe Spree::LegacyUser, type: :model do # rubocop:disable RSpec/MultipleDesc
   end
 
   # Regression test for #2844 + #3346
-  context '#last_incomplete_order' do
+  describe '#last_incomplete_order' do
     let!(:user) { create(:user) }
     let!(:order) { create(:order, store: store, bill_address: create(:address), ship_address: create(:address)) }
     let(:store) { @default_store }
@@ -45,6 +53,7 @@ describe Spree::LegacyUser, type: :model do # rubocop:disable RSpec/MultipleDesc
     let(:order_1) { create(:order, created_at: 1.day.ago, user: user, created_by: user, store: store) }
     let(:order_2) { create(:order, user: user, created_by: user, store: store) }
     let(:order_3) { create(:order, user: user, created_by: create(:user), store: store) }
+
     it 'returns correct order' do
       Timecop.scale(3600) do
         order_1
@@ -175,16 +184,16 @@ describe Spree.user_class, type: :model do
 
         context 'lifetime_value' do
           it 'returns a list of store lifetime values' do
-            expect(subject.report_values_for(:lifetime_value, store)).to eq([Spree::Money.new((order_count * order_value), currency: currency),
-                                                                             Spree::Money.new((eur_order_count * eur_order_value), currency: eur_currency)])
+            expect(subject.report_values_for(:lifetime_value, store)).to eq([Spree::Money.new(order_count * order_value, currency: currency),
+                                                                             Spree::Money.new(eur_order_count * eur_order_value, currency: eur_currency)])
           end
         end
 
         context 'average_order_value' do
           context 'with orders' do
             it 'returns a list of average completed order prices for the user' do
-              expect(subject.report_values_for(:average_order_value, store)).to eq([Spree::Money.new((order_value), currency: currency),
-                                                                                    Spree::Money.new((eur_order_value), currency: eur_currency)])
+              expect(subject.report_values_for(:average_order_value, store)).to eq([Spree::Money.new(order_value, currency: currency),
+                                                                                    Spree::Money.new(eur_order_value, currency: eur_currency)])
             end
           end
         end
@@ -295,9 +304,7 @@ describe Spree.user_class, type: :model do
         end
 
         it 'returns sum of amounts' do
-          expect(subject.available_store_credits(store)).to match_array([Spree::Money.new(usd_amount, currency: 'USD'),
-                                                                         Spree::Money.new(gbp_amount, currency: 'GBP'),
-                                                                         Spree::Money.new(eur_amount, currency: 'EUR')])
+          expect(subject.available_store_credits(store)).to contain_exactly(Spree::Money.new(usd_amount, currency: 'USD'), Spree::Money.new(gbp_amount, currency: 'GBP'), Spree::Money.new(eur_amount, currency: 'EUR'))
         end
       end
     end
@@ -348,19 +355,19 @@ describe Spree.user_class, type: :model do
         context 'when default bill address does not belong to any user' do
           let(:assigned_user) { nil }
 
-          it_should_behave_like 'valid'
+          it_behaves_like 'valid'
         end
 
         context 'when default bill address belongs to user' do
           let(:assigned_user) { user }
 
-          it_should_behave_like 'valid'
+          it_behaves_like 'valid'
         end
 
         context 'when associated bill address belongs to other user' do
           let(:assigned_user) { other_user }
 
-          it_should_behave_like 'invalid'
+          it_behaves_like 'invalid'
 
           it 'assigns error to bill address' do
             expect(subject.errors.messages.keys).to include(:bill_address_id)
@@ -374,19 +381,19 @@ describe Spree.user_class, type: :model do
         context 'when default ship address does not belong to any user' do
           let(:assigned_user) { nil }
 
-          it_should_behave_like 'valid'
+          it_behaves_like 'valid'
         end
 
         context 'when default ship address belongs to user' do
           let(:assigned_user) { user }
 
-          it_should_behave_like 'valid'
+          it_behaves_like 'valid'
         end
 
         context 'when associated ship address belongs to other user' do
           let(:assigned_user) { other_user }
 
-          it_should_behave_like 'invalid'
+          it_behaves_like 'invalid'
 
           it 'assigns error to ship address' do
             expect(subject.errors.messages.keys).to include(:ship_address_id)
@@ -414,13 +421,13 @@ describe Spree.user_class, type: :model do
         context 'when default bill address is not associated to completed order' do
           let!(:completed_order) { create(:completed_order_with_totals, user: user) }
 
-          it_should_behave_like 'valid'
+          it_behaves_like 'valid'
         end
 
         context 'when default bill address is associated to uncompleted order' do
           let!(:uncompleted_order) { create(:order, user: user, bill_address: address, ship_address: address) }
 
-          it_should_behave_like 'valid'
+          it_behaves_like 'valid'
         end
 
         context 'when default bill address is associated to completed order' do
@@ -429,7 +436,7 @@ describe Spree.user_class, type: :model do
           context 'when default bill address is the same as associated to order' do
             it { expect(user.addresses).to include(address) }
 
-            it_should_behave_like 'valid'
+            it_behaves_like 'valid'
           end
 
           context 'when user changed bill address which was used in completed order so the old one is deprecated' do
@@ -437,7 +444,7 @@ describe Spree.user_class, type: :model do
 
             it { expect(user.addresses).not_to include(address) }
 
-            it_should_behave_like 'invalid'
+            it_behaves_like 'invalid'
 
             it 'assigns error to bill address' do
               expect(subject.valid?).to be false
@@ -453,13 +460,13 @@ describe Spree.user_class, type: :model do
         context 'when default ship address is not associated to completed order' do
           let!(:completed_order) { create(:completed_order_with_totals, user: user) }
 
-          it_should_behave_like 'valid'
+          it_behaves_like 'valid'
         end
 
         context 'when default ship address is associated to uncompleted order' do
           let!(:uncompleted_order) { create(:order, user: user, ship_address: address) }
 
-          it_should_behave_like 'valid'
+          it_behaves_like 'valid'
         end
 
         context 'when default ship address is associated to completed order' do
@@ -468,7 +475,7 @@ describe Spree.user_class, type: :model do
           context 'when default ship address is the same as associated to order' do
             it { expect(user.addresses).to include(address) }
 
-            it_should_behave_like 'valid'
+            it_behaves_like 'valid'
           end
 
           context 'when user changed ship address which was used in completed order so the old one is deprecated' do
@@ -476,7 +483,7 @@ describe Spree.user_class, type: :model do
 
             it { expect(user.addresses).not_to include(address) }
 
-            it_should_behave_like 'invalid'
+            it_behaves_like 'invalid'
 
             it 'assigns error to ship address' do
               expect(subject.valid?).to be false

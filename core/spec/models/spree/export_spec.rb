@@ -1,19 +1,13 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Export, :job, type: :model do
+  it_behaves_like 'lifecycle events', factory: :product_export
+
   let(:store) { create(:store, code: 'my-store') }
   let(:user) { create(:admin_user) }
 
   let(:search_params) { nil }
   let(:export) { build(:product_export, store: store, user: user, format: 'csv', search_params: search_params) }
-
-  context 'Callbacks' do
-    describe 'after_create' do
-      it 'generates the export' do
-        expect { export.save! }.to have_enqueued_job(Spree::Exports::GenerateJob).with(export.id)
-      end
-    end
-  end
 
   describe '#model_class' do
     it 'returns the correct record class' do

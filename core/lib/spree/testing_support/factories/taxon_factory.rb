@@ -3,7 +3,6 @@ FactoryBot.define do
     sequence(:name) { |n| "taxon_#{n}" }
 
     association :taxonomy, strategy: :create
-    association :icon, factory: :taxon_image
     parent_id { taxonomy.root.id }
 
     trait :with_description do

@@ -3,6 +3,8 @@ require 'spec_helper'
 RSpec.describe Spree::PostCategory, type: :model do
   let(:post_category) { build(:post_category) }
 
+  it_behaves_like 'lifecycle events'
+
   context 'Associations' do
     describe 'posts' do
       it 'has many posts' do

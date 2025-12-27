@@ -6,9 +6,6 @@ module Spree
     include Spree::AdjustmentSource
     include Spree::Metafields
     include Spree::Metadata
-    if defined?(Spree::Webhooks::HasWebhooks)
-      include Spree::Webhooks::HasWebhooks
-    end
 
     with_options inverse_of: :tax_rates do
       belongs_to :zone, class_name: 'Spree::Zone', optional: true

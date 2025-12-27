@@ -30,7 +30,6 @@ RSpec.configure do |config|
   config.include Spree::TestingSupport::Preferences
 
   config.before do
-    Spree::Webhooks.disabled = true
     reset_spree_preferences
   end
 

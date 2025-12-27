@@ -178,6 +178,9 @@ module Spree
         end
       end
 
+      # Add app/subscribers to autoload paths
+      config.paths.add 'app/subscribers', eager_load: true
+
       # accessible via Rails.application.config.spree_admin
       initializer 'spree.admin.environment', before: :load_config_initializers do |app|
         app.config.spree_admin = Environment.new
@@ -251,6 +254,14 @@ module Spree
         app.config.spree_admin.navigation.register_context(:returns_tabs)
         app.config.spree_admin.navigation.register_context(:developers_tabs)
         app.config.spree_admin.navigation.register_context(:audit_tabs)
+      end
+
+      # Add admin event subscribers
+      config.after_initialize do
+        Spree.subscribers.concat [
+          Spree::Admin::ImportSubscriber,
+          Spree::Admin::ImportRowSubscriber
+        ]
       end
     end
   end

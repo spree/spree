@@ -55,11 +55,11 @@ module Spree
 
       # POST /admin/orders/:id/resend
       def resend
-        @order.deliver_order_confirmation_email
-        if @order.errors.any?
-          flash[:error] = @order.errors.full_messages.join(', ')
-        else
+        if @order.completed?
+          Spree::Events.publish('order.resend_confirmation_email', { 'id' => @order.id })
           flash[:success] = Spree.t(:order_email_resent)
+        else
+          flash[:error] = Spree.t(:order_email_resent_error)
         end
 
         redirect_back fallback_location: spree.edit_admin_order_url(@order)

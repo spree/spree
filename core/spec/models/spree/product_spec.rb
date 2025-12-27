@@ -11,6 +11,7 @@ describe Spree::Product, type: :model do
   let!(:store) { Spree::Store.default }
 
   it_behaves_like 'metadata'
+  it_behaves_like 'lifecycle events'
 
 
   describe 'after_initialize :assign_default_tax_category' do
@@ -1654,4 +1655,29 @@ describe Spree::Product, type: :model do
       end
     end
   end
+
+  describe 'custom events' do
+    describe 'product.activated' do
+      let(:product) { create(:product, status: 'draft', stores: [store]) }
+
+      it 'publishes product.activated event when activated' do
+        expect(product).to receive(:publish_event).with('product.activated')
+        allow(product).to receive(:publish_event).with(anything)
+
+        product.activate!
+      end
+    end
+
+    describe 'product.archived' do
+      let(:product) { create(:product, status: 'active', stores: [store]) }
+
+      it 'publishes product.archived event when archived' do
+        expect(product).to receive(:publish_event).with('product.archived')
+        allow(product).to receive(:publish_event).with(anything)
+
+        product.archive!
+      end
+    end
+  end
+
 end
