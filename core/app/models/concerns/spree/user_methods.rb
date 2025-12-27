@@ -167,10 +167,10 @@ module Spree
     end
 
     def event_prefix
-      if self.class == Spree.admin_user_class
+      if self.class == Spree.admin_user_class && Spree.admin_user_class != Spree.user_class
         'admin'
       else
-        'customer'
+        'user'
       end
     end
 
