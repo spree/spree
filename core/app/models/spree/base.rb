@@ -41,7 +41,7 @@ class Spree::Base < ApplicationRecord
   end
 
   def self.spree_base_uniqueness_scope
-    ApplicationRecord.try(:spree_base_uniqueness_scope) || []
+    Spree.uniqueness_scopes[name] || ApplicationRecord.try(:spree_base_uniqueness_scope) || []
   end
 
   # FIXME: https://github.com/rails/rails/issues/40943
