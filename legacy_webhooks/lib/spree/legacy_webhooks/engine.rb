@@ -10,10 +10,6 @@ module Spree
 
       config.autoload_paths << "#{config.root}/app/models/concerns"
 
-      initializer 'spree.legacy_webhooks.checking_migrations' do
-        Migrations.new(config, engine_name).check unless Rails.env.test?
-      end
-
       # Include HasWebhooks concern in configured models
       config.after_initialize do
         # Models that should have legacy webhooks

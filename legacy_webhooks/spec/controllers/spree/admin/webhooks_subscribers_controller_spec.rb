@@ -3,8 +3,6 @@ require 'spec_helper'
 describe Spree::Admin::WebhooksSubscribersController, type: :controller do
   stub_authorization!
 
-  render_views
-
   describe '#index' do
     let!(:webhook_subscriber) { create(:webhook_subscriber) }
 
