@@ -21,8 +21,9 @@ class Project
     @name = name
   end
 
-  ALL = %w[emails api core sample admin storefront page_builder legacy_webhooks].freeze
+  ALL = %w[emails api core sample admin storefront page_builder].freeze
   CORE_GEMS = %w[api core].freeze
+  PACKAGES = %w[legacy_webhooks].freeze
 
   # Install subproject
   #
@@ -131,7 +132,11 @@ class Project
   #
   # @return [undefined]
   def chdir(&block)
-    Dir.chdir(ROOT.join(name), &block)
+    if PACKAGES.include?(name)
+      Dir.chdir(ROOT.join('packages', name), &block)
+    else
+      Dir.chdir(ROOT.join(name), &block)
+    end
   end
 
   # Install subprojects
