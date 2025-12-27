@@ -196,8 +196,14 @@ module Spree
 
       # completed orders shouldn't be updated anymore
       unless @order.completed?
-        @order.assign_attributes(order_tracking_params)
-        @order.update_columns(order_tracking_params)
+        tracking_params = order_tracking_params
+        changed_params = tracking_params.reject { |key, value| @order.public_send(key) == value }
+
+        if changed_params.any?
+          @order.assign_attributes(changed_params)
+          @order.update_columns(changed_params)
+        end
+
         @order.associate_user!(try_spree_current_user) if try_spree_current_user && @order.user.nil?
       end
       @current_order = @order # for compatibility with the rest of storefront, analytics, etc
