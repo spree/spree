@@ -16,9 +16,10 @@ module Spree
 
     class << self
       def attach_to_notifications
-        return if @attached
+        # Always detach first to ensure clean state after code reload
+        detach_from_notifications
 
-        @subscription = ActiveSupport::Notifications.subscribe(/\.#{NAMESPACE}$/) do |name, start, finish, id, payload|
+        @subscription = ActiveSupport::Notifications.subscribe(/\.#{NAMESPACE}$/) do |name, start, finish, _id, payload|
           log_event(name, start, finish, payload)
         end
 
@@ -27,8 +28,6 @@ module Spree
       end
 
       def detach_from_notifications
-        return unless @attached
-
         ActiveSupport::Notifications.unsubscribe(@subscription) if @subscription
         @subscription = nil
         @attached = false
