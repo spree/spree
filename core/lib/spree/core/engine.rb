@@ -390,6 +390,11 @@ module Spree
         # activate! will register all subscribers from Spree.subscribers
         Spree::Events.reset!
         Spree::Events.activate!
+
+        # Re-attach event log subscriber if enabled
+        if Spree::Config.events_log_enabled
+          Spree::EventLogSubscriber.attach_to_notifications
+        end
       end
     end
   end

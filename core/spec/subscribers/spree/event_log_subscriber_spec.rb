@@ -19,10 +19,13 @@ RSpec.describe Spree::EventLogSubscriber do
       expect(described_class.attached?).to be true
     end
 
-    it 'only attaches once' do
+    it 'can be called multiple times safely (for code reload support)' do
       described_class.attach_to_notifications
-      expect(ActiveSupport::Notifications).not_to receive(:subscribe)
+      expect(described_class.attached?).to be true
+
+      # Calling again should still work (detaches and re-attaches)
       described_class.attach_to_notifications
+      expect(described_class.attached?).to be true
     end
   end
 
