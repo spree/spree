@@ -386,10 +386,21 @@ module Spree
           Rails.configuration.cache_classes ? require(c) : load(c)
         end
 
+        # Re-enable lifecycle events for configured models after code reload
+        # This is needed because after_commit callbacks are lost when classes are reloaded
+        Rails.application.config.spree.eventable_models&.each do |model|
+          model.publishes_lifecycle_events if model.respond_to?(:publishes_lifecycle_events)
+        end
+
         # Reset and re-activate event subscribers on code reload
         # activate! will register all subscribers from Spree.subscribers
         Spree::Events.reset!
         Spree::Events.activate!
+
+        # Re-attach event log subscriber if enabled
+        if Spree::Config.events_log_enabled
+          Spree::EventLogSubscriber.attach_to_notifications
+        end
       end
     end
   end
