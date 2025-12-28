@@ -48,9 +48,6 @@ module Spree
         payload: payload
       )
 
-      # Add webhook_delivery_id to payload
-      delivery.update_column(:payload, payload.merge(webhook_delivery_id: delivery.id))
-
       # Queue the delivery job
       Spree::WebhookDeliveryJob.perform_later(delivery.id, endpoint.secret_key)
     rescue StandardError => e
@@ -61,9 +58,10 @@ module Spree
     def build_payload(event)
       {
         id: event.id,
-        event: event.name,
+        name: event.name,
         created_at: event.created_at.iso8601,
-        data: event.payload
+        data: event.payload,
+        metadata: event.metadata
       }
     end
   end

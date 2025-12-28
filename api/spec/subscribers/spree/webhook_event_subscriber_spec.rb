@@ -40,13 +40,12 @@ module Spree
           expect(delivery.url).to eq(webhook_endpoint.url)
           expect(delivery.webhook_endpoint).to eq(webhook_endpoint)
 
-          # Reload to get the updated payload with webhook_delivery_id
           delivery.reload
           expect(delivery.payload).to include(
             'id' => event_id,
-            'event' => event_name,
-            'webhook_delivery_id' => delivery.id,
-            'data' => event_payload.stringify_keys
+            'name' => event_name,
+            'data' => event_payload.stringify_keys,
+            'metadata' => event_metadata.stringify_keys
           )
           expect(delivery.payload['created_at']).to eq(event_created_at.iso8601)
         end

@@ -161,7 +161,7 @@ module Spree
 
       @_current_event_name = event_name
       payload ||= event_payload
-      Spree::Events.publish(event_name, payload, metadata.merge(default_event_metadata))
+      Spree::Events.publish(event_name, payload, metadata)
     ensure
       @_current_event_name = nil
     end
@@ -229,13 +229,6 @@ module Spree
 
     def should_publish_events?
       self.class.publish_events && Spree::Events.enabled?
-    end
-
-    def default_event_metadata
-      {
-        model_class: self.class.name,
-        model_id: try(:id)
-      }
     end
 
     def publish_create_event

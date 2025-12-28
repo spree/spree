@@ -104,19 +104,9 @@ module Spree
 
     def build_metadata(custom_metadata)
       base_metadata = {
-        'spree_version' => Spree.version
+        'spree_version' => Spree.version,
+        'store_id' => Spree::Store.current&.id
       }
-
-      # Add store context if available
-      if defined?(Spree::Store) && Spree::Store.respond_to?(:current)
-        current_store = Spree::Store.current
-        base_metadata['store_id'] = current_store&.id&.to_s
-      end
-
-      # Add request context if available (via CurrentAttributes or similar)
-      if defined?(Current) && Current.respond_to?(:request_id)
-        base_metadata['request_id'] = Current.request_id
-      end
 
       base_metadata.merge((custom_metadata || {}).deep_stringify_keys)
     end
