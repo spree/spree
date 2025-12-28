@@ -11,7 +11,7 @@
     </ul>
     <div data-tabs-target="panel" class="animate-fade-in">
       <% if storefront_serializer_exists?(@object) %>
-        <pre class="m-0"><code data-highlight-target="code" class="language-json block overflow-auto" style="height: calc(100dvh - 11rem);"><%= serialize_to_json(@object, api_type: :storefront) %></code></pre>
+        <%= code_block serialize_to_json(@object, api_type: :storefront), style: 'height: calc(100dvh - 11rem);' %>
       <% else %>
         <div class="text-gray-600 p-12 flex items-center w-full justify-center flex-col">
           <%= icon 'map-search', class: 'mb-12 opacity-50 text-4xl' %>
@@ -23,7 +23,7 @@
     </div>
     <div data-tabs-target="panel" class="animate-fade-in" hidden>
       <% if platform_serializer_exists?(@object) %>
-        <pre class="m-0"><code data-highlight-target="code" class="language-json block overflow-auto" style="height: calc(100dvh - 11rem);"><%= serialize_to_json(@object, api_type: :platform) %></code></pre>
+        <%= code_block serialize_to_json(@object, api_type: :platform), style: 'height: calc(100dvh - 11rem);' %>
       <% else %>
         <div class="text-gray-600 p-12 flex items-center w-full justify-center flex-col">
           <%= icon 'map-search', class: 'mb-12 opacity-50 text-4xl' %>

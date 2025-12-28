@@ -1,6 +1,6 @@
 <%= turbo_frame_tag :drawer do %>
   <%= drawer_header(Spree.t(:details)) %>
-  <div class="drawer-body flex flex-col gap-6" data-controller="highlight">
+  <div class="drawer-body flex flex-col gap-6">
 
     <ul class="list-group">
       <li class="list-group-item flex justify-between items-center">
@@ -21,11 +21,11 @@
     </ul>
 
     <h5 class="text-lg font-bold"><%= Spree.t('admin.webhook_deliveries.request_payload') %></h5>
-    <pre class="m-0"><code data-highlight-target="code" class="language-json block overflow-auto rounded-lg"><%= JSON.pretty_generate(@webhook_delivery.payload) rescue @webhook_delivery.payload.to_s %></code></pre>
+    <%= code_block JSON.pretty_generate(@webhook_delivery.payload) %>
 
     <% if @webhook_delivery.response_body.present? %>
       <h5 class="text-lg font-bold"><%= Spree.t('admin.webhook_deliveries.response_body') %></h5>
-      <pre class="m-0"><code data-highlight-target="code" class="language-json block overflow-auto rounded-lg"><%= @webhook_delivery.response_body.truncate(2000) %></code></pre>
+      <%= code_block @webhook_delivery.response_body.truncate(2000) %>
     <% end %>
 
   </div>
