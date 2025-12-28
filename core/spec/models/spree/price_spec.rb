@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe Spree::Price, type: :model do
+  it_behaves_like 'lifecycle events'
+
   describe 'Callbacks' do
     context 'when compare_at_amount is equal to amount' do
       let(:variant) { create(:variant) }

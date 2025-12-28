@@ -12,86 +12,11 @@ describe Spree::Order, type: :model do
       order.update_column :state, 'complete'
     end
 
-    it 'sends an order confirmation email to customer' do
-      mail_message = double 'Mail::Message'
-      expect(Spree::OrderMailer).to receive(:confirm_email).with(order.id).and_return mail_message
-      expect(mail_message).to receive :deliver_later
+    it 'publishes order.completed event when finalizing' do
+      expect(order).to receive(:publish_event).with('order.completed')
+      allow(order).to receive(:publish_event).with(anything)
+
       order.finalize!
-    end
-
-    context 'when send_consumer_transactional_emails store setting is set to false' do
-      before do
-        allow(order.store).to receive(:prefers_send_consumer_transactional_emails?).and_return(false)
-      end
-
-      it 'does not send order confirmation email to customer' do
-        expect(Spree::OrderMailer).not_to receive(:confirm_email)
-        order.finalize!
-      end
-    end
-
-    it 'sets confirmation delivered when finalizing' do
-      expect(order.confirmation_delivered?).to be false
-      order.finalize!
-      expect(order.confirmation_delivered?).to be true
-    end
-
-    it 'does not send duplicate confirmation emails' do
-      allow(order).to receive_messages(confirmation_delivered?: true)
-      expect(Spree::OrderMailer).not_to receive(:confirm_email)
-      order.finalize!
-    end
-
-    context 'new order notifications' do
-      it 'sends a new order notification email to store owner when notification email address is set' do
-        mail_message = double 'Mail::Message'
-        allow(store).to receive(:new_order_notifications_email).and_return('test@example.com')
-        expect(Spree::OrderMailer).to receive(:store_owner_notification_email).with(order.id).and_return mail_message
-        expect(mail_message).to receive :deliver_later
-        order.finalize!
-      end
-
-      it 'does not send a new order notification email to store owner when notification email address is blank' do
-        allow(store).to receive(:new_order_notifications_email).and_return(nil)
-
-        mail_message = double 'Mail::Message'
-        expect(Spree::OrderMailer).to_not receive(:store_owner_notification_email)
-        order.finalize!
-      end
-    end
-  end
-
-  describe '#deliver_order_confirmation_email' do
-    let(:order) { create(:completed_order_with_totals, email: 'test@example.com', store: store) }
-
-    context 'when send_consumer_transactional_emails store setting is enabled' do
-      before do
-        allow(order.store).to receive(:prefers_send_consumer_transactional_emails?).and_return(true)
-      end
-
-      it 'sends order confirmation email' do
-        mail_message = double 'Mail::Message'
-        expect(Spree::OrderMailer).to receive(:confirm_email).with(order.id).and_return(mail_message)
-        expect(mail_message).to receive(:deliver_later)
-        order.deliver_order_confirmation_email
-      end
-    end
-
-    context 'when send_consumer_transactional_emails store setting is disabled' do
-      before do
-        allow(order.store).to receive(:prefers_send_consumer_transactional_emails?).and_return(false)
-      end
-
-      it 'does not send order confirmation email' do
-        expect(Spree::OrderMailer).not_to receive(:confirm_email)
-        order.deliver_order_confirmation_email
-      end
-
-      it 'still sets confirmation_delivered to true' do
-        expect(order.confirmation_delivered?).to be false
-        order.deliver_order_confirmation_email
-        expect(order.confirmation_delivered?).to be true
-      end
     end
   end
 
@@ -122,19 +47,14 @@ describe Spree::Order, type: :model do
       allow_any_instance_of(Spree::OrderUpdater).to receive(:update_adjustment_total).and_return(10)
     end
 
-    it 'sends a cancel email' do
-      # Stub methods that cause side-effects in this test
+    it 'publishes order.canceled event when canceling' do
       allow(shipment).to receive(:cancel!)
       allow(order).to receive :restock_items!
-      mail_message = double 'Mail::Message'
-      order_id = nil
-      expect(Spree::OrderMailer).to receive(:cancel_email) { |*args|
-        order_id = args[0]
-        mail_message
-      }
-      expect(mail_message).to receive :deliver_later
+
+      expect(order).to receive(:publish_event).with('order.canceled')
+      allow(order).to receive(:publish_event).with(anything)
+
       order.cancel!
-      expect(order_id).to eq(order.id)
     end
   end
 end

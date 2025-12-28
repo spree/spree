@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Report, type: :model do
+  it_behaves_like 'lifecycle events', factory: :report
+
   let(:store) { @default_store }
   let(:user) { create(:admin_user) }
   let(:report) { build(:report, store: store, user: user) }
@@ -49,12 +51,6 @@ RSpec.describe Spree::Report, type: :model do
   end
 
   describe 'callbacks' do
-    describe 'after_commit on create' do
-      it 'enqueues generate job' do
-        expect { report.save! }.to have_enqueued_job(Spree::Reports::GenerateJob).with(report.id)
-      end
-    end
-
     describe 'after_initialize' do
       let(:new_report) { Spree::Report.new(store: store) }
 

@@ -1,12 +1,13 @@
 require 'spec_helper'
 
 describe Spree::Refund, type: :model do
-  describe 'metadata' do
+  describe 'shared examples' do
     before do
       allow_any_instance_of(Spree::Refund).to receive(:amount_is_less_than_or_equal_to_allowed_amount)
     end
 
     it_behaves_like 'metadata'
+    it_behaves_like 'lifecycle events'
   end
 
   describe 'create' do

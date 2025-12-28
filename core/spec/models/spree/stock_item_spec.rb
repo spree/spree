@@ -6,6 +6,7 @@ describe Spree::StockItem, type: :model do
   let(:stock_location) { create(:stock_location_with_items) }
 
   it_behaves_like 'metadata'
+  it_behaves_like 'lifecycle events'
 
   it 'maintains the count on hand for a variant' do
     expect(subject.count_on_hand).to eq 10

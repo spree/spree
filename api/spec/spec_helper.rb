@@ -46,8 +46,6 @@ require 'spree/testing_support/next_instance_of'
 require 'spree/testing_support/rspec_retry_config'
 
 require 'spree/api/testing_support/serializers'
-require 'spree/api/testing_support/spree_webhooks'
-require 'spree/api/testing_support/matchers/webhooks'
 require 'spree/api/testing_support/v2/base'
 require 'spree/api/testing_support/v2/current_order'
 require 'spree/api/testing_support/v2/platform_contexts'
@@ -84,7 +82,6 @@ RSpec.configure do |config|
   end
 
   config.before do
-    Spree::Webhooks.disabled = true
     reset_spree_preferences
 
     # Request specs to paths with ?locale=xx don't reset the locale afterwards

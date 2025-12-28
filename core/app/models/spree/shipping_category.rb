@@ -3,9 +3,6 @@ module Spree
     DIGITAL_NAME = 'Digital'
 
     include Spree::UniqueName
-    if defined?(Spree::Webhooks::HasWebhooks)
-      include Spree::Webhooks::HasWebhooks
-    end
 
     with_options inverse_of: :shipping_category do
       has_many :products

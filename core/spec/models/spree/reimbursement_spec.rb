@@ -212,4 +212,29 @@ describe Spree::Reimbursement, type: :model do
       expect(subject.customer_return).to eq customer_return
     end
   end
+
+  describe 'custom events' do
+    describe 'reimbursement.reimbursed' do
+      let(:order) { create(:shipped_order, line_items_count: 1, line_items_price: BigDecimal(10), shipment_cost: 0, store: store) }
+      let(:line_item) { order.line_items.first }
+      let(:inventory_unit) { line_item.inventory_units.first }
+      let(:customer_return) { build(:customer_return, return_items: [return_item], store: store) }
+      let(:return_item) { build(:return_item, inventory_unit: inventory_unit) }
+      let(:reimbursement) { create(:reimbursement, customer_return: customer_return, order: order, return_items: [return_item]) }
+
+      let!(:default_refund_reason) { Spree::RefundReason.find_or_create_by!(name: Spree::RefundReason::RETURN_PROCESSING_REASON, mutable: false) }
+
+      before do
+        customer_return.save!
+        return_item.accept!
+      end
+
+      it 'publishes reimbursement.reimbursed event when performed' do
+        expect(reimbursement).to receive(:publish_event).with('reimbursement.reimbursed')
+        allow(reimbursement).to receive(:publish_event).with(anything)
+
+        reimbursement.perform!
+      end
+    end
+  end
 end

@@ -61,15 +61,13 @@ RSpec.describe Spree::ImportRow, :job, type: :model do
         expect { import_row.fail! }.to change(import_row, :status).from('processing').to('failed')
       end
 
-      it 'adds row to import view after transition' do
-        expect(import_row).to receive(:add_row_to_import_view)
+      it 'publishes import_row.fail event' do
+        expect(import_row).to receive(:publish_import_row_failed_event)
         import_row.fail!
       end
 
-      it 'updates footer in import view after transition' do
-        expect(import_row).to receive(:update_footer_in_import_view)
-        import_row.fail!
-      end
+      # UI updates (add_row_to_import_view, update_footer_in_import_view)
+      # are now handled by Spree::Admin::ImportRowSubscriber
     end
 
     describe 'complete event' do
@@ -79,15 +77,13 @@ RSpec.describe Spree::ImportRow, :job, type: :model do
         expect { import_row.complete! }.to change(import_row, :status).from('processing').to('completed')
       end
 
-      it 'adds row to import view after transition' do
-        expect(import_row).to receive(:add_row_to_import_view)
+      it 'publishes import_row.complete event' do
+        expect(import_row).to receive(:publish_import_row_completed_event)
         import_row.complete!
       end
 
-      it 'updates footer in import view after transition' do
-        expect(import_row).to receive(:update_footer_in_import_view)
-        import_row.complete!
-      end
+      # UI updates (add_row_to_import_view, update_footer_in_import_view)
+      # are now handled by Spree::Admin::ImportRowSubscriber
     end
   end
 

@@ -2,9 +2,6 @@ module Spree
   class Reimbursement < Spree.base_class
     include Spree::Core::NumberGenerator.new(prefix: 'RI', length: 9)
     include Spree::NumberIdentifier
-    if defined?(Spree::Webhooks::HasWebhooks)
-      include Spree::Webhooks::HasWebhooks
-    end
     include Spree::Reimbursement::Emails
 
     class IncompleteReimbursementError < StandardError; end
@@ -76,6 +73,7 @@ module Spree
       event :reimbursed do
         transition to: :reimbursed, from: [:pending, :errored]
       end
+      after_transition to: :reimbursed, do: :publish_reimbursement_reimbursed_event
     end
 
     class << self
@@ -137,6 +135,10 @@ module Spree
     end
 
     private
+
+    def publish_reimbursement_reimbursed_event
+      publish_event('reimbursement.reimbursed')
+    end
 
     def validate_return_items_belong_to_same_order
       if return_items.any? { |ri| ri.inventory_unit.order_id != order_id }

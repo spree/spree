@@ -1,0 +1,8 @@
+<tr>
+  <th scope="col"><%= sort_link(@search, :event_name, Spree.t('admin.webhook_deliveries.event')) %></th>
+  <th scope="col"><%= sort_link(@search, :success, Spree.t(:status)) %></th>
+  <th scope="col"><%= sort_link(@search, :delivered_at, Spree.t('admin.webhook_deliveries.delivered_at')) %></th>
+  <th scope="col"><%= sort_link(@search, :execution_time, Spree.t('admin.webhook_deliveries.execution_time')) %></th>
+  <th scope="col"><%= sort_link(@search, :response_code, Spree.t('admin.webhook_deliveries.response_code')) %></th>
+  <th scope="col"><%= Spree.t(:details) %></th>
+</tr>

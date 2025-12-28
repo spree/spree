@@ -27,13 +27,18 @@ module Spree
                                :metafields,
                                :analytics_events,
                                :analytics_event_handlers,
-                               :integrations)
+                               :integrations,
+                               :eventable_models,
+                               :subscribers)
       SpreeCalculators = Struct.new(:shipping_methods, :tax_rates, :promotion_actions_create_adjustments, :promotion_actions_create_item_adjustments)
       PromoEnvironment = Struct.new(:rules, :actions)
       SpreeValidators = Struct.new(:addresses)
       MetafieldsEnvironment = Struct.new(:types, :enabled_resources)
       isolate_namespace Spree
       engine_name 'spree'
+
+      # Add app/subscribers to autoload paths
+      config.paths.add 'app/subscribers', eager_load: true
 
       rake_tasks do
         load File.join(root, 'lib', 'tasks', 'exchanges.rake')
@@ -48,6 +53,11 @@ module Spree
         Spree::RuntimeConfig = app.config.spree.preferences # for compatibility
         Spree::Dependencies = app.config.spree.dependencies
         Spree::Deprecation = ActiveSupport::Deprecation.new('6.0', 'Spree')
+      end
+
+      initializer 'spree.register.subscribers', before: :load_config_initializers do |app|
+        # Initialize subscribers array early so engines can add subscribers via initializers
+        app.config.spree.subscribers = []
       end
 
       initializer 'spree.register.calculators', before: :after_initialize do |app|
@@ -265,6 +275,57 @@ module Spree
         Rails.application.config.spree.validators.addresses = [
           Spree::Addresses::PhoneValidator
         ]
+
+        # Models that automatically emit lifecycle events (create, update, destroy)
+        # Developers can add/remove models from this list in their initializers
+        Rails.application.config.spree.eventable_models = [
+          Spree::Asset,
+          Spree::CustomerReturn,
+          Spree::Digital,
+          Spree::DigitalLink,
+          Spree::Export,
+          Spree::GiftCard,
+          Spree::GiftCardBatch,
+          Spree::Import,
+          Spree::LineItem,
+          Spree::NewsletterSubscriber,
+          Spree::Order,
+          Spree::Payment,
+          Spree::Post,
+          Spree::PostCategory,
+          Spree::Price,
+          Spree::Product,
+          Spree::Promotion,
+          Spree::Refund,
+          Spree::Report,
+          Spree::ReturnAuthorization,
+          Spree::Shipment,
+          Spree::StockItem,
+          Spree::StockMovement,
+          Spree::StockTransfer,
+          Spree::StoreCredit,
+          Spree::Variant,
+          Spree::WishedItem,
+          Spree::Wishlist
+        ]
+
+        # Enable lifecycle events for configured models
+        Rails.application.config.spree.eventable_models.each do |model|
+          model.publishes_lifecycle_events if model.respond_to?(:publishes_lifecycle_events)
+        end
+
+        # Attach event log subscriber if enabled
+        if Spree::Config.events_log_enabled
+          Spree::EventLogSubscriber.attach_to_notifications
+        end
+
+        # Add core event subscribers
+        # Other engines add their subscribers in their own after_initialize blocks
+        Spree.subscribers.concat [
+          Spree::ExportSubscriber,
+          Spree::ReportSubscriber,
+          Spree::InvitationEmailSubscriber
+        ]
       end
 
       initializer 'spree.promo.register.promotions.actions' do |app|
@@ -303,6 +364,15 @@ module Spree
         end
       end
 
+      # Activate event subscribers after all engines have registered their subscribers
+      # This registers an after_initialize callback late, ensuring it runs after all engine callbacks
+      # Needed for console, jobs, and other contexts where to_prepare doesn't run
+      initializer 'spree.events.schedule_activation', after: :load_config_initializers do |app|
+        app.config.after_initialize do
+          Spree::Events.activate!
+        end
+      end
+
       config.to_prepare do
         # Ensure spree locale paths are present before decorators
         I18n.load_path.unshift(*(Dir.glob(
@@ -314,6 +384,35 @@ module Spree
         # Load application's model / class decorators
         Dir.glob(File.join(File.dirname(__FILE__), '../../../app/**/*_decorator*.rb')) do |c|
           Rails.configuration.cache_classes ? require(c) : load(c)
+        end
+
+        # Re-enable lifecycle events for configured models after code reload
+        # This is needed because after_commit callbacks are lost when classes are reloaded
+        # We must resolve the constants fresh because Zeitwerk creates new class objects
+        Rails.application.config.spree.eventable_models&.each do |model|
+          # Resolve the model constant fresh to handle code reload
+          resolved_model = begin
+            model.is_a?(String) ? model.constantize : model.name.constantize
+          rescue NameError
+            nil
+          end
+
+          next unless resolved_model
+
+          # Reset lifecycle_events_enabled so callbacks can be re-registered
+          resolved_model.lifecycle_events_enabled = false if resolved_model.respond_to?(:lifecycle_events_enabled=)
+          resolved_model.publishes_lifecycle_events if resolved_model.respond_to?(:publishes_lifecycle_events)
+        end
+
+        # Reset and re-activate event subscribers on code reload
+        # activate! will register all subscribers from Spree.subscribers
+        # Note: resolve_subscriber in register_subscribers! handles stale class references
+        Spree::Events.reset!
+        Spree::Events.activate!
+
+        # Re-attach event log subscriber if enabled
+        if Spree::Config.events_log_enabled
+          Spree::EventLogSubscriber.attach_to_notifications
         end
       end
     end

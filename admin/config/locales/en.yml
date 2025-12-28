@@ -302,6 +302,33 @@ en:
         total_inventory_html: 'Total inventory at %{stock_location} location: %{count} available'
       vendors:
         enterprise_feature: Multi-Vendor Marketplace is available in the Enterprise Edition
+      webhook_deliveries:
+        delivered_at: Delivered at
+        delivery_details: Delivery Details
+        delivery_info: Delivery Information
+        endpoint_inactive: Cannot retry - endpoint is inactive
+        error_type: Error Type
+        event: Event
+        execution_time: Execution Time
+        failed: Failed
+        pending: Pending
+        request_errors: Request Errors
+        request_payload: Request Payload
+        response_body: Response Body
+        response_code: Response Code
+      webhook_endpoints:
+        back_to_endpoint: Back to endpoint
+        deliveries: Deliveries
+        endpoint_settings: Endpoint Settings
+        event_subscriptions: Event Subscriptions
+        event_subscriptions_help: Select which events should trigger a webhook delivery to this endpoint.
+        events: events
+        failed_deliveries: Failed Deliveries
+        new: New Webhook Endpoint
+        secret_key: Secret Key
+        secret_key_help: Use this key to verify webhook signatures. Keep it secure and do not share it publicly.
+        subscriptions: Subscriptions
+        successful_deliveries: Successful Deliveries
       webhooks_subscribers:
         all_events: All Events
         new_webhooks_subscriber: New Webhooks Subscriber

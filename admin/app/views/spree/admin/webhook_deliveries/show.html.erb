@@ -1,0 +1,61 @@
+<%= turbo_frame_tag :drawer do %>
+  <%= drawer_header(Spree.t(:details)) %>
+  <div class="drawer-body flex flex-col gap-6">
+
+    <ul class="list-group">
+      <li class="list-group-item flex justify-between items-center">
+        <span class="text-gray-600"><%= Spree.t(:event) %></span> 
+        <span><code><%= @webhook_delivery.event_name %></code></span>
+      </li>
+      <li class="list-group-item flex justify-between items-center">
+        <span class="text-gray-600"><%= Spree.t(:status) %></span> 
+        <span><%= webhook_delivery_status_badge(@webhook_delivery) %></span>
+      </li>
+
+      <li class="list-group-item flex justify-between items-center">
+        <span class="text-gray-600"><%= Spree.t(:url) %></span> 
+        <span><%= external_link_to(@webhook_delivery.url, @webhook_delivery.url) %></span>
+      </li>
+      <% if @webhook_delivery.delivered_at.present? %>
+        <li class="list-group-item flex justify-between items-center">
+          <span class="text-gray-600"><%= Spree.t('admin.webhook_deliveries.delivered_at') %></span> 
+          
+          <span><%= l(@webhook_delivery.delivered_at, format: :long) %></span>
+        </li>
+      <% end %>
+      <% if @webhook_delivery.response_code.present? %>
+        <li class="list-group-item flex justify-between items-center">
+          <span class="text-gray-600"><%= Spree.t(:response_code) %></span> 
+          <code><%= @webhook_delivery.response_code %></code>
+        </li>
+      <% end %>
+      <% if @webhook_delivery.execution_time.present? %>
+        <li class="list-group-item flex justify-between items-center">
+          <span class="text-gray-600"><%= Spree.t('admin.webhook_deliveries.execution_time') %></span> 
+          <code><%= @webhook_delivery.execution_time %>ms</code>
+        </li>
+      <% end %>
+      <% if @webhook_delivery.error_type.present? %>
+        <li class="list-group-item flex justify-between items-center">
+          <span class="text-gray-600"><%= Spree.t('admin.webhook_deliveries.error_type') %></span> 
+          <code><%= @webhook_delivery.error_type %></code>
+        </li>
+      <% end %>
+      <% if @webhook_delivery.request_errors.present? %>
+        <li class="list-group-item flex justify-between items-center">
+          <span class="text-gray-600"><%= Spree.t('admin.webhook_deliveries.request_errors') %></span>
+          <code><%= @webhook_delivery.request_errors %></code>
+        </li>
+      <% end %>
+    </ul>
+
+    <h5 class="text-lg font-bold"><%= Spree.t('admin.webhook_deliveries.request_payload') %></h5>
+    <%= code_block JSON.pretty_generate(@webhook_delivery.payload) %>
+
+    <% if @webhook_delivery.response_body.present? %>
+      <h5 class="text-lg font-bold"><%= Spree.t('admin.webhook_deliveries.response_body') %></h5>
+      <%= code_block @webhook_delivery.response_body.truncate(2000) %>
+    <% end %>
+
+  </div>
+<% end %>

@@ -2,9 +2,6 @@ module Spree
   class ReturnAuthorization < Spree.base_class
     include Spree::Core::NumberGenerator.new(prefix: 'RA', length: 9)
     include Spree::NumberIdentifier
-    if defined?(Spree::Webhooks::HasWebhooks)
-      include Spree::Webhooks::HasWebhooks
-    end
 
     belongs_to :order, class_name: 'Spree::Order', inverse_of: :return_authorizations
 
@@ -34,6 +31,7 @@ module Spree
 
     state_machine initial: :authorized do
       before_transition to: :canceled, do: :cancel_return_items
+      after_transition to: :canceled, do: :publish_return_authorization_canceled_event
 
       event :cancel do
         transition to: :canceled, from: :authorized, if: ->(return_authorization) { return_authorization.can_cancel_return_items? }
@@ -77,6 +75,10 @@ module Spree
 
     def cancel_return_items
       return_items.each { |item| item.cancel! if item.can_cancel? }
+    end
+
+    def publish_return_authorization_canceled_event
+      publish_event('return_authorization.canceled')
     end
 
     def generate_expedited_exchange_reimbursements

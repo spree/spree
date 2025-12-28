@@ -15,6 +15,7 @@ module Spree
 
     include Spree::Payment::Processing
     include Spree::Payment::Webhooks
+    include Spree::Payment::CustomEvents
 
     NON_RISKY_AVS_CODES = ['B', 'D', 'H', 'J', 'M', 'Q', 'T', 'V', 'X', 'Y'].freeze
     RISKY_AVS_CODES     = ['A', 'C', 'E', 'F', 'G', 'I', 'K', 'L', 'N', 'O', 'P', 'R', 'S', 'U', 'W', 'Z'].freeze
@@ -114,11 +115,11 @@ module Spree
       event :complete do
         transition from: [:processing, :pending, :checkout], to: :completed
       end
-      after_transition to: :completed, do: [:after_completed, :send_payment_completed_webhook]
+      after_transition to: :completed, do: [:after_completed, :send_payment_completed_webhook, :publish_payment_completed_event]
       event :void do
         transition from: [:pending, :processing, :completed, :checkout], to: :void
       end
-      after_transition to: :void, do: [:after_void, :send_payment_voided_webhook]
+      after_transition to: :void, do: [:after_void, :send_payment_voided_webhook, :publish_payment_voided_event]
       # when the card brand isn't supported
       event :invalidate do
         transition from: [:checkout], to: :invalid
@@ -286,11 +287,17 @@ module Spree
     end
 
     def after_void
-      # Implement your logic here
     end
 
     def after_completed
-      # Implement your logic here
+    end
+
+    def publish_payment_completed_event
+      publish_event('payment.completed')
+    end
+
+    def publish_payment_voided_event
+      publish_event('payment.voided')
     end
 
     def has_invalid_state?

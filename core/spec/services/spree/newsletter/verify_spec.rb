@@ -37,5 +37,16 @@ module Spree
           and change { subscriber.reload.verification_token }.to(nil)
       end
     end
+
+    describe 'custom events' do
+      let(:user) { nil }
+
+      it 'publishes newsletter_subscriber.verified event when verified' do
+        expect(subscriber).to receive(:publish_event).with('newsletter_subscriber.verified')
+        allow(subscriber).to receive(:publish_event).with(anything)
+
+        service
+      end
+    end
   end
 end

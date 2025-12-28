@@ -144,6 +144,7 @@
                   "developer/customization/authentication",
                   "developer/customization/checkout",
                   "developer/customization/permissions",
+                  "developer/customization/event-subscribers",
                   "developer/customization/dependencies",
                   "developer/customization/decorators",
                   "developer/customization/model-preferences",

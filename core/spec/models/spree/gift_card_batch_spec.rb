@@ -1,6 +1,40 @@
 require 'spec_helper'
 
 RSpec.describe Spree::GiftCardBatch, type: :model do
+  describe 'lifecycle events' do
+    let(:gift_card_batch_attrs) { { codes_count: 2, prefix: 'batch_', amount: 10 } }
+
+    describe 'gift_card_batch.created' do
+      it 'publishes created event when record is created' do
+        record = build(:gift_card_batch, gift_card_batch_attrs)
+        expect(record).to receive(:publish_event).with('gift_card_batch.created')
+        allow(record).to receive(:publish_event).with(anything)
+
+        record.save!
+      end
+    end
+
+    describe 'gift_card_batch.updated' do
+      it 'publishes updated event when record is updated' do
+        record = create(:gift_card_batch, gift_card_batch_attrs)
+        expect(record).to receive(:publish_event).with('gift_card_batch.updated')
+        allow(record).to receive(:publish_event).with(anything)
+
+        record.touch
+      end
+    end
+
+    describe 'gift_card_batch.deleted' do
+      it 'publishes deleted event when record is destroyed' do
+        record = create(:gift_card_batch, gift_card_batch_attrs)
+        expect(record).to receive(:publish_event).with('gift_card_batch.deleted', kind_of(Hash))
+        allow(record).to receive(:publish_event).with(anything)
+
+        record.destroy!
+      end
+    end
+  end
+
   describe '#create_gift_cards' do
     subject(:gift_card_batch) { build(:gift_card_batch, codes_count: 2, prefix: 'batch_', amount: 10) }
 

@@ -202,8 +202,8 @@ module Spree
       joins(:refunds).group(:id).having("sum(#{Spree::Refund.table_name}.amount) = #{Spree::Order.table_name}.total")
     }
     scope :partially_refunded, lambda {
-                                joins(:refunds).group(:id).having("sum(#{Spree::Refund.table_name}.amount) < #{Spree::Order.table_name}.total")
-                              }
+      joins(:refunds).group(:id).having("sum(#{Spree::Refund.table_name}.amount) < #{Spree::Order.table_name}.total")
+    }
     scope :with_deleted_bill_address, -> { joins(:bill_address).where.not(Address.table_name => { deleted_at: nil }) }
     scope :with_deleted_ship_address, -> { joins(:ship_address).where.not(Address.table_name => { deleted_at: nil }) }
 
@@ -391,6 +391,9 @@ module Spree
       ActiveRecord::Base.connected_to(role: :writing) do
         self.class.unscoped.where(id: self).update_all(changes)
       end
+
+      # Manually publish update event since update_all bypasses callbacks
+      publish_event('order.updated') if changes.present?
     end
 
     def disassociate_user!
@@ -520,12 +523,11 @@ module Spree
 
       touch :completed_at
 
-      deliver_order_confirmation_email unless confirmation_delivered?
-      deliver_store_owner_order_notification_email if deliver_store_owner_order_notification_email?
-
       send_order_placed_webhook
 
       consider_risk
+
+      publish_order_completed_event
     end
 
     def fulfill!
@@ -691,6 +693,10 @@ module Spree
       if shipments.any? && !completed?
         shipments.destroy_all
         update_column(:shipment_total, 0)
+
+        # Manually publish update event since update_column bypasses callbacks
+        publish_event('order.updated')
+
         restart_checkout_flow
       end
     end
@@ -700,6 +706,10 @@ module Spree
         state: 'cart',
         updated_at: Time.current
       )
+
+      # Manually publish update event since update_columns bypasses callbacks
+      publish_event('order.updated')
+
       next! unless line_items.empty?
     end
 
@@ -733,24 +743,28 @@ module Spree
 
     def canceled_by(user, canceled_at = nil)
       canceled_at ||= Time.current
+      changes = { canceler_id: user.id, canceled_at: canceled_at }
 
       transaction do
-        update_columns(
-          canceler_id: user.id,
-          canceled_at: canceled_at
-        )
+        update_columns(changes)
         cancel!
       end
+
+      # Manually publish update event since update_columns bypasses callbacks
+      publish_event('order.canceled')
     end
 
     def approved_by(user)
+      approved_at = Time.current
+      changes = { approver_id: user.id, approved_at: approved_at }
+
       transaction do
         approve!
-        update_columns(
-          approver_id: user.id,
-          approved_at: Time.current
-        )
+        update_columns(changes)
       end
+
+      # Manually publish update event since update_columns bypasses callbacks
+      publish_event('order.approved')
     end
 
     def approved?
@@ -776,10 +790,16 @@ module Spree
 
     def considered_risky!
       update_column(:considered_risky, true)
+
+      # Manually publish update event since update_column bypasses callbacks
+      publish_event('order.updated')
     end
 
     def approve!
       update_column(:considered_risky, false)
+
+      # Manually publish update event since update_column bypasses callbacks
+      publish_event('order.approved')
     end
 
     def tax_total
@@ -905,7 +925,7 @@ module Spree
           errors.add(:base, Spree.t(:items_cannot_be_shipped))
         end
 
-        return false
+        false
       end
     end
 
@@ -925,12 +945,14 @@ module Spree
       send_cancel_email
       update_with_updater!
       send_order_canceled_webhook
+      publish_order_canceled_event
     end
 
     def after_resume
       shipments.each(&:resume!)
       consider_risk
       send_order_resumed_webhook
+      publish_order_resumed_event
     end
 
     def use_billing?
@@ -967,6 +989,18 @@ module Spree
       elsif using_store_credit?
         Spree.checkout_add_store_credit_service.call(order: self)
       end
+    end
+
+    def publish_order_completed_event
+      publish_event('order.completed')
+    end
+
+    def publish_order_canceled_event
+      publish_event('order.canceled')
+    end
+
+    def publish_order_resumed_event
+      publish_event('order.resumed')
     end
   end
 end

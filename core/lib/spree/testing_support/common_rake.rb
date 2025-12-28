@@ -20,7 +20,7 @@ namespace :common do
     Rails.env = 'test'
 
     api_only = ['spree/api', 'spree/core', 'spree/sample'].include?(ENV['LIB_NAME'])
-    skip_javascript = api_only || ENV['LIB_NAME'] == 'spree/emails'
+    skip_javascript = api_only || ['spree/emails', 'spree/legacy_webhooks'].include?(ENV['LIB_NAME'])
 
     dummy_app_args = [
       "--lib_name=#{ENV['LIB_NAME']}"
@@ -76,7 +76,8 @@ namespace :common do
       else
         "#{ENV['LIB_NAME'].camelize}::Generators::InstallGenerator".constantize.start(['--force', '--auto-run-migrations'])
       end
-    rescue LoadError
+    rescue LoadError => e
+      puts "Error loading generator: #{e.message}"
       puts 'Skipping installation no generator to run...'
     end
 

@@ -7,6 +7,7 @@ describe Spree::Variant, type: :model do
 
   it_behaves_like 'default_price'
   it_behaves_like 'metadata'
+  it_behaves_like 'lifecycle events'
 
   context 'sorting' do
     it 'responds to set_list_position' do

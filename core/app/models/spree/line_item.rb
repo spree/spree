@@ -2,9 +2,6 @@ module Spree
   class LineItem < Spree.base_class
     include Spree::Metafields
     include Spree::Metadata
-    if defined?(Spree::Webhooks::HasWebhooks)
-      include Spree::Webhooks::HasWebhooks
-    end
 
     attribute :quantity, :integer, default: 1
 

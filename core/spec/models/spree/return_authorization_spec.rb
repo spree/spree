@@ -13,6 +13,39 @@ describe Spree::ReturnAuthorization, type: :model do
                                    return_authorization_reason_id: rma_reason.id)
   end
 
+  describe 'lifecycle events' do
+    describe 'return_authorization.created' do
+      it 'publishes created event when record is created' do
+        shipped_order = create(:shipped_order)
+        record = build(:new_return_authorization, order: shipped_order)
+        expect(record).to receive(:publish_event).with('return_authorization.created')
+        allow(record).to receive(:publish_event).with(anything)
+
+        record.save!
+      end
+    end
+
+    describe 'return_authorization.updated' do
+      it 'publishes updated event when record is updated' do
+        record = create(:return_authorization)
+        expect(record).to receive(:publish_event).with('return_authorization.updated')
+        allow(record).to receive(:publish_event).with(anything)
+
+        record.touch
+      end
+    end
+
+    describe 'return_authorization.deleted' do
+      it 'publishes deleted event when record is destroyed' do
+        record = create(:return_authorization)
+        expect(record).to receive(:publish_event).with('return_authorization.deleted', kind_of(Hash))
+        allow(record).to receive(:publish_event).with(anything)
+
+        record.destroy!
+      end
+    end
+  end
+
   context 'save' do
     let(:order) { Spree::Order.create }
 
@@ -233,6 +266,19 @@ describe Spree::ReturnAuthorization, type: :model do
       let(:return_items) { [] }
 
       it { is_expected.to eq true }
+    end
+  end
+
+  describe 'custom events' do
+    describe 'return_authorization.canceled' do
+      let(:return_authorization) { create(:return_authorization) }
+
+      it 'publishes return_authorization.canceled event when canceled' do
+        expect(return_authorization).to receive(:publish_event).with('return_authorization.canceled')
+        allow(return_authorization).to receive(:publish_event).with(anything)
+
+        return_authorization.cancel!
+      end
     end
   end
 end

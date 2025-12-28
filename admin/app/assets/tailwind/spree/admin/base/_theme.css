@@ -9,7 +9,7 @@
   /* Legacy Colors, kept for old HTML from extensions/developer apps work properly */
   --color-primary: var(--color-zinc-950);
   --color-success: var(--color-green-900);
-  --color-danger: var(--color-red-900);
+  --color-danger: var(--color-red-600);
   --color-warning: var(--color-yellow-900);
   --color-info: var(--color-blue-900);
 

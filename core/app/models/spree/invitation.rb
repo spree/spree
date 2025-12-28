@@ -46,6 +46,7 @@ module Spree
         transition pending: :accepted
       end
       after_transition to: :accepted, do: :after_accept
+      after_transition to: :accepted, do: :publish_invitation_accepted_event
     end
 
     #
@@ -53,7 +54,7 @@ module Spree
     #
     after_initialize :set_defaults, if: :new_record?
     before_validation :set_invitee_from_email, on: :create
-    after_create :send_invitation_email, unless: :skip_email
+    after_create :publish_invitation_created_event, unless: :skip_email
 
     # returns the store for the invitation
     # if the resource is a store, return the resource
@@ -80,7 +81,7 @@ module Spree
     def resend!
       return if expired? || deleted? || accepted?
 
-      send_invitation_email
+      publish_event('invitation.resent')
     end
 
     private
@@ -89,15 +90,20 @@ module Spree
     def after_accept
       create_role_user
       set_accepted_at
-      send_acceptance_notification
     end
 
-    def send_invitation_email
-      Spree::InvitationMailer.invitation_email(self).deliver_later
+    def publish_invitation_accepted_event
+      publish_event('invitation.accepted')
     end
 
+    def publish_invitation_created_event
+      publish_event('invitation.created')
+    end
+
+    # This method is kept for backwards compatibility.
+    # Email sending is now handled by the InvitationEmailSubscriber via the 'invitation.accept' event.
     def send_acceptance_notification
-      Spree::InvitationMailer.invitation_accepted(self).deliver_later
+      # no-op - email is sent via event subscriber
     end
 
     def set_defaults

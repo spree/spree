@@ -243,6 +243,7 @@ module Spree
       # @return [String] the button
       def clipboard_button(options = {})
         options[:class] ||= 'btn btn-light btn-sm btn-clipboard'
+        options[:icon_class] ||= 'mr-0 text-sm'
         options[:type] ||= 'button'
         options[:data] ||= {}
         options[:data][:action] = 'clipboard#copy'
@@ -251,7 +252,7 @@ module Spree
         options[:aria_label] ||= Spree.t('admin.copy_to_clipboard') # screen-reader label
 
         content_tag(:button, options) do
-          icon('copy', class: 'mr-0 text-sm') + tooltip(Spree.t('admin.copy_to_clipboard'))
+          icon('copy', class: options[:icon_class]) + tooltip(Spree.t('admin.copy_to_clipboard'))
         end
       end
 
@@ -261,15 +262,17 @@ module Spree
       # @option options [String] :class the CSS class(es) of the component
       # @option options [Hash] :data the data attributes for the component
       # @option options [String] :title the title of the component
+      # @option options [String] :button_class the CSS class(es) of the button
+      # @option options [String] :icon_class the CSS class(es) of the icon
       # @return [String] the component
       def clipboard_component(text, options = {})
         options[:data] ||= {}
         options[:data][:controller] = 'clipboard'
-        options[:data][:clipboard_success_content_value] ||= raw(icon('check', class: 'mr-0 text-sm'))
+        options[:data][:clipboard_success_content_value] ||= raw(icon('check', class: options[:icon_class]))
 
-        content_tag(:span, data: options[:data]) do
+        content_tag(:span, data: options[:data], class: options[:class]) do
           hidden_field_tag(:clipboard_source, text, data: { clipboard_target: 'source' }) +
-            clipboard_button
+            clipboard_button(class: options[:button_class], icon_class: options[:icon_class])
         end
       end
 

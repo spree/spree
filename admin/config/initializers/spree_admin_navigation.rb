@@ -331,7 +331,7 @@ Rails.application.config.after_initialize do
           url: :admin_oauth_applications_path,
           icon: 'terminal',
           position: 150,
-          active: -> { %w[oauth_applications webhooks_subscribers].include?(controller_name) },
+          active: -> { %w[oauth_applications webhooks_subscribers webhook_endpoints webhook_deliveries].include?(controller_name) },
           if: -> { can?(:manage, Spree::OauthApplication) }
 
   # Edit Profile
@@ -446,12 +446,12 @@ Rails.application.config.after_initialize do
           active: -> { controller_name == 'oauth_applications' },
           if: -> { can?(:manage, Spree::OauthApplication) }
 
-  developers_tabs_nav.add :webhooks,
-          label: :webhooks,
-          url: :admin_webhooks_subscribers_path,
+  developers_tabs_nav.add :webhook_endpoints,
+          label: :webhook_endpoints,
+          url: :admin_webhook_endpoints_path,
           position: 20,
-          active: -> { controller_name == 'webhooks_subscribers' },
-          if: -> { can?(:manage, Spree::Webhooks::Subscriber) }
+          active: -> { %w[webhook_endpoints webhook_deliveries].include?(controller_name) },
+          if: -> { can?(:manage, Spree::WebhookEndpoint) }
 
   # Audit Tab Navigation
   audit_tabs_nav = Spree.admin.navigation.audit_tabs

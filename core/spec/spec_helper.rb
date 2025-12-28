@@ -45,6 +45,7 @@ require 'spree/testing_support/factories'
 require 'spree/testing_support/jobs'
 require 'spree/testing_support/store'
 require 'spree/testing_support/metadata'
+require 'spree/testing_support/lifecycle_events'
 require 'spree/testing_support/preferences'
 require 'spree/testing_support/url_helpers'
 require 'spree/testing_support/kernel'
@@ -77,7 +78,6 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
-    Spree::Webhooks.disabled = true
     reset_spree_preferences
   end
 

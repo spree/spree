@@ -4,10 +4,7 @@ module Spree
       extend ActiveSupport::Concern
 
       def deliver_order_confirmation_email
-        # you can overwrite this method in your application / extension to send out the confirmation email
-        # or use `spree_emails` gem
-        # YourEmailVendor.deliver_order_confirmation_email(id) # `id` = ID of the Order being sent, you can also pass the entire Order object using `self`
-        # update_column(:confirmation_delivered, true) # if you would like to mark that the email was sent
+        Spree::Deprecation.warn('Spree::Order#deliver_order_confirmation_email is deprecated and will be removed in Spree 6.0. Please create a Subscriber for order.completed event.')
       end
 
       # If you would like to also send confirmation email to store owner(s)
@@ -16,16 +13,11 @@ module Spree
       end
 
       def deliver_store_owner_order_notification_email
-        # you can overwrite this method in your application / extension to send out the confirmation email
-        # or use `spree_emails` gem
-        # YourEmailVendor.deliver_store_owner_notification_email(id) # `id` = ID of the Order being sent, you can also pass the entire Order object using `self`
-        # update_column(:store_owner_notification_delivered, true) # if you would like to mark that the email was sent
+        Spree::Deprecation.warn('Spree::Order#deliver_store_owner_order_notification_email is deprecated and will be removed in Spree 6.0. Please create a Subscriber for order.completed event.')
       end
 
       def send_cancel_email
-        # you can overwrite this method in your application / extension to send out the confirmation email
-        # or use `spree_emails` gem
-        # YourEmailVendor.deliver_cancel_email(id) # `id` = ID of the Order being sent, you can also pass the entire Order object using `self`
+        Spree::Deprecation.warn('Spree::Order#send_cancel_email is deprecated and will be removed in Spree 6.0. Please create a Subscriber for order.canceled event.')
       end
     end
   end

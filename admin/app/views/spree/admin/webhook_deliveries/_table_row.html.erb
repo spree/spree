@@ -1,0 +1,22 @@
+<tr id="<%= spree_dom_id webhook_delivery %>">
+  <td class="w-40">
+    <code><%= webhook_delivery.event_name %></code>
+  </td>
+  <td class="text-center w-10">
+    <%= webhook_delivery_status_badge(webhook_delivery) %>
+  </td>
+  <td class="w-20">
+    <%= webhook_delivery.delivered_at ? spree_time(webhook_delivery.delivered_at) : '-' %>
+  </td>
+  <td class="w-20">
+    <%= webhook_delivery.execution_time ? "#{webhook_delivery.execution_time}ms" : '-' %>
+  </td>
+  <td class="w-20">
+    <code><%= webhook_delivery.response_code || '-' %></code>
+  </td>
+  <td class="w-20">
+    <%= link_to icon('eye'), spree.admin_webhook_endpoint_webhook_delivery_path(webhook_delivery.webhook_endpoint, webhook_delivery), 
+            class: 'btn btn-sm btn-light px-2', 
+            data: { action: 'drawer#open', turbo_frame: :drawer } %>
+  </td>
+</tr>

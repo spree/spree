@@ -12,7 +12,6 @@ module Spree
     include Spree::Metadata
     include Spree::Stores::Setup
     include Spree::Stores::Socials
-    include Spree::Webhooks::HasWebhooks if defined?(Spree::Webhooks::HasWebhooks)
     include Spree::Security::Stores if defined?(Spree::Security::Stores)
     include Spree::UserManagement
 
@@ -113,6 +112,9 @@ module Spree
     has_many :gift_cards, class_name: 'Spree::GiftCard', dependent: :destroy
 
     has_many :policies, class_name: 'Spree::Policy', dependent: :destroy, as: :owner
+
+    has_many :webhook_endpoints, class_name: 'Spree::WebhookEndpoint', dependent: :destroy, inverse_of: :store
+    has_many :webhook_deliveries, through: :webhook_endpoints, class_name: 'Spree::WebhookDelivery'
 
     #
     # ActionText
@@ -404,13 +406,6 @@ module Spree
 
         ActionText::RichText.find_by(name: policy_method, record: self)
       end
-    end
-
-    # Returns all active webhooks subscribers for the store
-    #
-    # @return [Array<Spree::Webhooks::Subscriber>]
-    def active_webhooks_subscribers
-      @active_webhooks_subscribers ||= Spree::Webhooks::Subscriber.active
     end
 
     private

@@ -15,14 +15,6 @@ describe Spree::Api::V2::Platform::ResourceController, type: :controller do
   describe '#resource_serializer' do
     subject { dummy_controller.send(:resource_serializer) }
 
-    context 'when controller model class is nested more than 2 levels' do
-      before do
-        allow(dummy_controller).to receive(:model_class).and_return(Spree::Webhooks::Subscriber)
-      end
-
-      it { expect(subject).to eq(Spree::Api::V2::Platform::Webhooks::SubscriberSerializer) }
-    end
-
     it { expect(subject).to be Spree::Api::V2::Platform::ProductSerializer }
   end
 

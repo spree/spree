@@ -5,6 +5,8 @@ describe Spree::NewsletterSubscriber, type: :model, newsletter: true do
 
   let(:email) { 'joe#example.com' }
 
+  it_behaves_like 'lifecycle events'
+
   describe 'normalizations' do
     it { is_expected.to normalize(:email).from(" ME@XYZ.COM\n").to('me@xyz.com') }
     it { is_expected.to normalize(:email).from('').to(nil) }

@@ -42,7 +42,7 @@ module Spree
         selected_option = (params[:per_page].try(:to_i) || per_page_default).to_i
         selected_option_label = selected_option.to_s + icon('chevron-down', class: 'ml-1 mr-0 arrow')
 
-        dropdown(id: 'per-page-dropdown') do
+        dropdown(id: 'per-page-dropdown', portal: false) do
           dropdown_toggle(class: 'btn-light btn-sm') do
             raw(selected_option_label)
           end +

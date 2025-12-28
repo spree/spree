@@ -7,6 +7,8 @@ RSpec.describe Spree::Import, :job, type: :model do
   let(:csv_content) { File.read(File.join(Spree::Core::Engine.root, 'spec/fixtures/files', 'products_import.csv')) }
   let(:import) { build(:product_import, owner: store, user: user) }
 
+  it_behaves_like 'lifecycle events', factory: :product_import
+
   before do
     # Stub the file content reading since ActiveStorage doesn't persist files properly in transactional tests
     allow(import).to receive(:attachment_file_content).and_return(csv_content)
@@ -93,15 +95,13 @@ RSpec.describe Spree::Import, :job, type: :model do
         expect { import.complete! }.to change(import, :status).from('processing').to('completed')
       end
 
-      it 'sends import completed email after transition' do
-        expect(import).to receive(:send_import_completed_email)
+      it 'publishes import.completed event' do
+        expect(import).to receive(:publish_import_completed_event)
         import.complete!
       end
 
-      it 'updates loader in import view after transition' do
-        expect(import).to receive(:update_loader_in_import_view)
-        import.complete!
-      end
+      # Email and loader updates are now handled by ImportSubscriber
+      # See spec/subscribers/spree/import_subscriber_spec.rb
     end
   end
 
@@ -380,6 +380,24 @@ RSpec.describe Spree::Import, :job, type: :model do
   describe '.model_class' do
     it 'returns the model class for the import type' do
       expect(Spree::Imports::Products.model_class).to eq(Spree::Product)
+    end
+  end
+
+  describe 'custom events' do
+    describe 'import.completed' do
+      before do
+        import.save!
+        import.start_mapping!
+        import.complete_mapping!
+        import.start_processing!
+      end
+
+      it 'publishes import.completed event when completed' do
+        expect(import).to receive(:publish_event).with('import.completed')
+        allow(import).to receive(:publish_event).with(anything)
+
+        import.complete!
+      end
     end
   end
 end

@@ -1,0 +1,5 @@
+<%= turbo_render_alerts :drawer_alerts %>
+
+<%= turbo_stream.replace spree_dom_id(@webhook_endpoint) + '_details' do %>
+  <%= render 'spree/admin/webhook_endpoints/details', webhook_endpoint: @webhook_endpoint %>
+<% end %>

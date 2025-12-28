@@ -2,8 +2,6 @@ require 'spec_helper'
 
 describe Spree::Reimbursement, type: :model do
   describe '#perform!' do
-    subject { reimbursement.perform! }
-
     let!(:adjustments)            { [] } # placeholder to ensure it gets run prior the "before" at this level
 
     let!(:tax_rate)               { nil }
@@ -30,20 +28,11 @@ describe Spree::Reimbursement, type: :model do
       return_item.accept!
     end
 
-    it 'triggers the reimbursement mailer to be sent' do
-      expect(Spree::ReimbursementMailer).to receive(:reimbursement_email).with(reimbursement.id) { double(deliver_later: true) }
-      subject
-    end
+    it 'publishes reimbursement.reimbursed event when performing' do
+      expect(reimbursement).to receive(:publish_event).with('reimbursement.reimbursed')
+      allow(reimbursement).to receive(:publish_event).with(anything)
 
-    context 'when send_consumer_transactional_emails store setting is set to false' do
-      before do
-        allow_any_instance_of(Spree::Store).to receive(:prefers_send_consumer_transactional_emails?).and_return(false)
-      end
-
-      it 'does not trigger the reimbursement mailer to be sent' do
-        expect(Spree::ReimbursementMailer).not_to receive(:reimbursement_email)
-        subject
-      end
+      reimbursement.perform!
     end
   end
 end
