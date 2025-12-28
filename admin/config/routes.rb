@@ -220,11 +220,7 @@ Spree::Core::Engine.add_routes do
     # developer tools
     resources :oauth_applications
     resources :webhook_endpoints do
-      resources :webhook_deliveries, only: [:index, :show] do
-        member do
-          post :retry
-        end
-      end
+      resources :webhook_deliveries, only: [:index, :show]
     end
 
     # errors

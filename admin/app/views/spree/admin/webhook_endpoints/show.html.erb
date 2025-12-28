@@ -7,7 +7,7 @@
   <div class="col-span-12 lg:col-span-8">
     <%= render 'summary' %>
 
-    <%= turbo_frame_tag :webhook_deliveries, src: spree.admin_webhook_endpoint_webhook_deliveries_path(@webhook_endpoint), loading: :lazy, autoscroll: true, data: { autoscroll_block: :nearest, autoscroll_behavior: :smooth } do %>
+    <%= turbo_frame_tag :webhook_deliveries, src: spree.admin_webhook_endpoint_webhook_deliveries_path(@webhook_endpoint), loading: :lazy do %>
       <%= render 'spree/admin/shared/spinner' %>
     <% end %>
   </div>

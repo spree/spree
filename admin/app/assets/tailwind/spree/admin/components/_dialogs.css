@@ -70,12 +70,12 @@
 
   .drawer {
     @apply fixed top-0 right-0 left-auto flex-col justify-between p-0 overflow-hidden;
-    height: calc(100dvh - 2rem);
-    max-height: calc(100dvh - 2rem);
-    width: calc(100vw - 2rem);
+    height: calc(100dvh - 1rem);
+    max-height: calc(100dvh - 1rem);
+    width: calc(100vw - 1rem);
     max-width: 600px;
     min-width: 320px;
-    margin: 1rem;
+    margin: 0.5rem;
   }
 
   .drawer[open] {

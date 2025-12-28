@@ -16,6 +16,10 @@ module Spree
       def location_after_save
         spree.admin_webhook_endpoint_path(@object)
       end
+
+      def update_turbo_stream_enabled?
+        true
+      end
     end
   end
 end

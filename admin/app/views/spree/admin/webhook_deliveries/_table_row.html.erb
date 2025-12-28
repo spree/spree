@@ -6,7 +6,7 @@
     <%= webhook_delivery_status_badge(webhook_delivery) %>
   </td>
   <td class="w-20">
-    <%= spree_time(webhook_delivery.delivered_at) %>
+    <%= webhook_delivery.delivered_at ? spree_time(webhook_delivery.delivered_at) : '-' %>
   </td>
   <td class="w-20">
     <%= webhook_delivery.execution_time ? "#{webhook_delivery.execution_time}ms" : '-' %>
