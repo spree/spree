@@ -4,7 +4,7 @@ gem 'spree_core', path: '../core'
 gem 'spree_api', path: '../api'
 gem 'spree_admin', path: '../admin'
 gem 'spree_emails', path: '../emails'
-gem 'spree_page_builder', path: '../page_builder'
+gem 'spree_page_builder', path: '../packages/page_builder'
 
 gem 'devise'
 gem 'canonical-rails', github: 'commonlit/canonical-rails', branch: "bump-rails-8-1" # temporary fix for Rails 8.1 compatibility
