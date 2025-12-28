@@ -79,6 +79,9 @@ module Spree
       #   publishes_lifecycle_events except: [:update]
       #
       def publishes_lifecycle_events(options = {})
+        # Guard against duplicate callback registration (important for code reload in development)
+        return if lifecycle_events_enabled
+
         self.lifecycle_events_enabled = true
 
         events = [:create, :update, :delete]
@@ -210,6 +213,7 @@ module Spree
     def event_context
       {
         event_name: @_current_event_name,
+        store_id: Spree::Current.store&.id,
         triggered_at: Time.current
       }
     end

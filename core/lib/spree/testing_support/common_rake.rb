@@ -76,7 +76,8 @@ namespace :common do
       else
         "#{ENV['LIB_NAME'].camelize}::Generators::InstallGenerator".constantize.start(['--force', '--auto-run-migrations'])
       end
-    rescue LoadError
+    rescue LoadError => e
+      puts "Error loading generator: #{e.message}"
       puts 'Skipping installation no generator to run...'
     end
 

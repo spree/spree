@@ -1,0 +1,24 @@
+<tr id="<%= spree_dom_id webhook_endpoint %>" data-controller="row-link">
+  <td class="w-40 p-0">
+    <%= link_to webhook_endpoint.url, 
+                spree.admin_webhook_endpoint_path(webhook_endpoint), 
+                class: 'font-bold w-full h-full block p-3',
+                data: { row_link_target: 'link', turbo_frame: '_top' } %>
+  </td>
+  <td class="text-center w-10 cursor-pointer" data-action="click->row-link#openLink">
+    <%= active_badge(webhook_endpoint.active?) %>
+  </td>
+  <td class="w-10 cursor-pointer" data-action="click->row-link#openLink">
+    <span class="text-gray-600">
+      <%= webhook_endpoint.subscriptions.size %> <%= Spree.t('admin.webhook_endpoints.events') %>
+    </span>
+  </td>
+  <td class="w-20 cursor-pointer" data-action="click->row-link#openLink">
+    <span class="text-green-500">
+      <%= webhook_endpoint.webhook_deliveries.successful.count %>
+    </span> / <%= webhook_endpoint.webhook_deliveries.count %>
+  </td>
+  <td class="w-20 cursor-pointer" data-action="click->row-link#openLink">
+    <%= spree_time(webhook_endpoint.created_at) %>
+  </td>
+</tr>

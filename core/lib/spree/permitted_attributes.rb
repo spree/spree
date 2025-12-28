@@ -68,6 +68,7 @@ module Spree
       :theme_attributes,
       :user_attributes,
       :variant_attributes,
+      :webhook_endpoint_attributes,
       :wishlist_attributes,
       :wished_item_attributes,
       :zone_attributes
@@ -307,6 +308,8 @@ module Spree
         option_value_ids: []
       }
     ]
+
+    @@webhook_endpoint_attributes = [:url, :secret, :active, subscriptions: []]
 
     @@wishlist_attributes = [:name, :is_default, :is_private]
 

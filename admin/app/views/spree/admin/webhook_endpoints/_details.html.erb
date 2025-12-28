@@ -1,0 +1,40 @@
+<div class="card mb-6">
+  <div class="card-header flex justify-between">
+    <h5 class="card-title">
+      <%= Spree.t(:details) %>
+    </h5>
+    <%= link_to_with_icon 'edit', Spree.t(:edit), spree.edit_admin_webhook_endpoint_path(@webhook_endpoint), icon: 'pencil', class: 'btn btn-sm btn-light' %>
+  </div>
+  <div class="card-body p-0">
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item flex justify-between items-top gap-10">
+        <span class="text-gray-600">
+          <%= Spree.t('admin.webhook_endpoints.event_subscriptions') %>
+        </span>
+        <span class="flex gap-2 flex-wrap justify-end">
+          <% @webhook_endpoint.subscriptions.each do |subscription| %>
+            <span class="badge badge-light"><%= subscription %></span>
+          <% end %>
+        </span>
+      </li>
+
+      <li class="list-group-item flex justify-between items-center">
+        <span class="text-gray-600">
+          <%= Spree.t(:created_at) %>
+        </span>
+        <span>
+          <%= spree_time(@webhook_endpoint.created_at, format: :long) %>
+        </span>
+      </li>
+
+      <li class="list-group-item flex justify-between items-center">
+        <span class="text-gray-600">
+          <%= Spree.t(:updated_at) %>
+        </span>
+        <span>
+          <%= spree_time(@webhook_endpoint.updated_at, format: :long) %>
+        </span>
+      </li>
+    </ul>
+  </div>
+</div>

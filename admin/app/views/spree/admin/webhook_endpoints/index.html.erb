@@ -1,0 +1,9 @@
+<%= render 'spree/admin/shared/developers_nav' %>
+
+<%= content_for(:title, Spree.t(:webhook_endpoints)) %>
+
+<% content_for :page_actions do %>
+  <%= link_to_with_icon 'plus', Spree.t(:new_webhook_endpoint), new_object_url, class: "btn btn-primary" if can? :create, Spree::WebhookEndpoint %>
+<% end %>
+
+<%= render 'spree/admin/shared/index_table' %>

@@ -18,6 +18,11 @@ module Spree
         Migrations.new(config, engine_name).check unless Rails.env.test?
       end
 
+      # Add API event subscribers
+      config.after_initialize do
+        Spree.subscribers << Spree::WebhookEventSubscriber
+      end
+
       def self.root
         @root ||= Pathname.new(File.expand_path('../../..', __dir__))
       end

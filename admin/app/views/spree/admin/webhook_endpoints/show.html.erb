@@ -1,0 +1,18 @@
+<%= content_for :page_title do %>
+  <%= page_header_back_button(collection_url) %>
+  <%= @webhook_endpoint.url %>
+<% end %>
+
+<div class="grid grid-cols-12 gap-6">
+  <div class="col-span-12 lg:col-span-8">
+    <%= render 'summary' %>
+
+    <%= turbo_frame_tag :webhook_deliveries, src: spree.admin_webhook_endpoint_webhook_deliveries_path(@webhook_endpoint), loading: :lazy, autoscroll: true, data: { autoscroll_block: :nearest, autoscroll_behavior: :smooth } do %>
+      <%= render 'spree/admin/shared/spinner' %>
+    <% end %>
+  </div>
+
+  <div class="col-span-12 lg:col-span-4">
+    <%= render 'details' %>
+    <%= render 'secret_key' %>
+</div>

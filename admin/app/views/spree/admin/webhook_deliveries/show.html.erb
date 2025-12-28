@@ -1,0 +1,32 @@
+<%= turbo_frame_tag :drawer do %>
+  <%= drawer_header(Spree.t(:details)) %>
+  <div class="drawer-body flex flex-col gap-6" data-controller="highlight">
+
+    <ul class="list-group">
+      <li class="list-group-item flex justify-between items-center">
+        <span class="text-gray-600"><%= Spree.t(:event) %></span> 
+        <span><code><%= @webhook_delivery.event_name %></code></span>
+      </li>
+      <li class="list-group-item flex justify-between items-center">
+        <span class="text-gray-600"><%= Spree.t(:url) %></span> 
+        <span><%= external_link_to(@webhook_delivery.url, @webhook_delivery.url) %></span>
+      </li>
+      <% if @webhook_delivery.delivered_at.present? %>
+        <li class="list-group-item flex justify-between items-center">
+          <span class="text-gray-600"><%= Spree.t('admin.webhook_deliveries.delivered_at') %></span> 
+          
+          <span><%= l(@webhook_delivery.delivered_at, format: :long) %></span>
+        </li>
+      <% end %>
+    </ul>
+
+    <h5 class="text-lg font-bold"><%= Spree.t('admin.webhook_deliveries.request_payload') %></h5>
+    <pre class="m-0"><code data-highlight-target="code" class="language-json block overflow-auto rounded-lg"><%= JSON.pretty_generate(@webhook_delivery.payload) rescue @webhook_delivery.payload.to_s %></code></pre>
+
+    <% if @webhook_delivery.response_body.present? %>
+      <h5 class="text-lg font-bold"><%= Spree.t('admin.webhook_deliveries.response_body') %></h5>
+      <pre class="m-0"><code data-highlight-target="code" class="language-json block overflow-auto rounded-lg"><%= @webhook_delivery.response_body.truncate(2000) %></code></pre>
+    <% end %>
+
+  </div>
+<% end %>

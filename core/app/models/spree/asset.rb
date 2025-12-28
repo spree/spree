@@ -60,5 +60,9 @@ module Spree
     def skip_import?
       false
     end
+
+    def event_prefix
+      'asset'
+    end
   end
 end

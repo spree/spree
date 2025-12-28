@@ -198,7 +198,7 @@
   }
 
   #main-sidebar .nav-link .ti {
-    @apply mr-2 rounded-lg shrink-0 text-gray-400;
+    @apply mr-2 rounded-lg shrink-0 text-gray-400 transition-colors duration-200 ease-in-out;
     padding: 0.2rem;
   }
 

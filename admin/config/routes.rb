@@ -219,6 +219,13 @@ Spree::Core::Engine.add_routes do
 
     # developer tools
     resources :oauth_applications
+    resources :webhook_endpoints do
+      resources :webhook_deliveries, only: [:index, :show] do
+        member do
+          post :retry
+        end
+      end
+    end
 
     # errors
     get '/forbidden', to: 'errors#show', code: 403, as: :forbidden

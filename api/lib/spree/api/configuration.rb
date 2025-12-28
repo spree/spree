@@ -8,6 +8,9 @@ module Spree
       preference :api_v2_collection_cache_namespace, :string, default: 'api_v2_collection_cache'
       preference :api_v2_content_type, :string, default: 'application/vnd.api+json'
       preference :api_v2_per_page_limit, :integer, default: 500
+
+      preference :webhooks_enabled, :boolean, default: true
+      preference :webhooks_verify_ssl, :boolean, default: !Rails.env.development?
     end
   end
 end

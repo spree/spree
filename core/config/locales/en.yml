@@ -1380,6 +1380,7 @@ en:
     new_tracker: New Tracker
     new_user: New User
     new_variant: New Variant
+    new_webhook_endpoint: New Webhook Endpoint
     new_zone: New Zone
     newsletter_mailer:
       email_confirmation:
@@ -2319,6 +2320,7 @@ en:
     we_are_busy_updating: We're updating the %{store_name} homepage.
     we_are_busy_updating_page: We're busy updating this page.
     we_will_be_back: We will be back.
+    webhook_endpoints: Webhook Endpoints
     webhooks: Webhooks
     weight: Weight
     weight_unit: Weight unit

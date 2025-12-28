@@ -1,0 +1,28 @@
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title"><%= Spree.t('admin.webhook_endpoints.endpoint_settings') %></h5>
+  </div>
+  <div class="card-body">
+    <%= f.spree_text_field :url, required: true, autofocus: f.object.new_record?, placeholder: 'https://example.com/webhooks', disabled: f.object.persisted? %>
+    <%= f.spree_check_box :active %>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <h5 class="card-title"><%= Spree.t('admin.webhook_endpoints.event_subscriptions') %></h5>
+  </div>
+  <div class="card-body">
+    <p class="text-gray-600 mb-3"><%= Spree.t('admin.webhook_endpoints.event_subscriptions_help') %></p>
+    <div class="grid lg:grid-cols-2 gap-4">
+      <% available_webhook_events.each do |event| %>
+        <div class="form-checkbox">
+          <%= check_box_tag 'webhook_endpoint[subscriptions][]', event, @webhook_endpoint.subscriptions&.include?(event), id: "subscription_#{event.parameterize}", class: 'custom-control-input' %>
+          <label class="custom-control-label" for="subscription_<%= event.parameterize %>">
+            <code><%= event %></code>
+          </label>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
