@@ -1,4 +1,4 @@
-require_relative '../core/lib/spree/core/version'
+require_relative '../../core/lib/spree/core/version'
 
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
