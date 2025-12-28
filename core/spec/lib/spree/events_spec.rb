@@ -219,4 +219,84 @@ RSpec.describe Spree::Events do
       expect(pattern_received.size).to eq(2)
     end
   end
+
+  describe '.resolve_subscriber' do
+    it 'returns the subscriber directly in production' do
+      allow(Rails.env).to receive(:development?).and_return(false)
+      allow(Rails.env).to receive(:test?).and_return(false)
+
+      subscriber = Class.new(Spree::Subscriber)
+      result = described_class.resolve_subscriber(subscriber)
+
+      expect(result).to eq(subscriber)
+    end
+
+    it 'resolves subscriber by name in development' do
+      allow(Rails.env).to receive(:development?).and_return(true)
+
+      result = described_class.resolve_subscriber(Spree::Subscriber)
+
+      expect(result).to eq(Spree::Subscriber)
+    end
+
+    it 'handles string class names' do
+      allow(Rails.env).to receive(:development?).and_return(true)
+
+      result = described_class.resolve_subscriber('Spree::Subscriber')
+
+      expect(result).to eq(Spree::Subscriber)
+    end
+
+    it 'returns nil for invalid class names' do
+      allow(Rails.env).to receive(:development?).and_return(true)
+
+      result = described_class.resolve_subscriber('NonExistent::Class')
+
+      expect(result).to be_nil
+    end
+
+    it 'returns nil for anonymous classes' do
+      allow(Rails.env).to receive(:development?).and_return(true)
+
+      anonymous_class = Class.new
+      result = described_class.resolve_subscriber(anonymous_class)
+
+      expect(result).to be_nil
+    end
+  end
+
+  describe '.register_subscribers!' do
+    let(:test_subscriber) do
+      Class.new(Spree::Subscriber) do
+        subscribes_to 'test.event'
+
+        def handle(event)
+          # no-op for test
+        end
+      end
+    end
+
+    before do
+      stub_const('TestEventSubscriber', test_subscriber)
+      allow(Spree).to receive(:subscribers).and_return([TestEventSubscriber])
+    end
+
+    it 'registers subscribers from Spree.subscribers' do
+      described_class.register_subscribers!
+
+      expect(described_class.patterns).to include('test.event')
+    end
+
+    it 'resolves subscriber classes fresh (for code reload support)' do
+      # Simulate what happens during code reload:
+      # The class in Spree.subscribers is stale but has the same name
+      old_class = test_subscriber
+      allow(Spree).to receive(:subscribers).and_return([old_class])
+
+      described_class.register_subscribers!
+
+      # The constant TestEventSubscriber should be resolved, not the old_class directly
+      expect(described_class.subscriptions.first.subscriber).to eq(TestEventSubscriber)
+    end
+  end
 end

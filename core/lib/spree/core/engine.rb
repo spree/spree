@@ -388,12 +388,25 @@ module Spree
 
         # Re-enable lifecycle events for configured models after code reload
         # This is needed because after_commit callbacks are lost when classes are reloaded
+        # We must resolve the constants fresh because Zeitwerk creates new class objects
         Rails.application.config.spree.eventable_models&.each do |model|
-          model.publishes_lifecycle_events if model.respond_to?(:publishes_lifecycle_events)
+          # Resolve the model constant fresh to handle code reload
+          resolved_model = begin
+            model.is_a?(String) ? model.constantize : model.name.constantize
+          rescue NameError
+            nil
+          end
+
+          next unless resolved_model
+
+          # Reset lifecycle_events_enabled so callbacks can be re-registered
+          resolved_model.lifecycle_events_enabled = false if resolved_model.respond_to?(:lifecycle_events_enabled=)
+          resolved_model.publishes_lifecycle_events if resolved_model.respond_to?(:publishes_lifecycle_events)
         end
 
         # Reset and re-activate event subscribers on code reload
         # activate! will register all subscribers from Spree.subscribers
+        # Note: resolve_subscriber in register_subscribers! handles stale class references
         Spree::Events.reset!
         Spree::Events.activate!
 

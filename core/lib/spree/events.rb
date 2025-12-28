@@ -120,15 +120,44 @@ module Spree
       # This is called automatically during Rails initialization.
       # Can also be called in tests after reset! to re-register subscribers.
       #
+      # In development, class objects in Spree.subscribers may become stale after
+      # code reload (Zeitwerk creates new class objects). We resolve the constant
+      # fresh from the class name to ensure we're using the reloaded class.
+      #
       # @return [void]
       def register_subscribers!
         return unless defined?(Spree) && Spree.respond_to?(:subscribers)
 
         Spree.subscribers&.each do |subscriber|
-          subscriber.subscription_patterns.each do |pattern|
-            subscribe(pattern, subscriber, subscriber.subscription_options)
+          # Resolve the subscriber constant fresh to handle code reload in development
+          # The array may contain stale class objects after Zeitwerk reload
+          resolved_subscriber = resolve_subscriber(subscriber)
+          next unless resolved_subscriber
+
+          resolved_subscriber.subscription_patterns.each do |pattern|
+            subscribe(pattern, resolved_subscriber, resolved_subscriber.subscription_options)
           end
         end
+      end
+
+      # Resolve a subscriber to its current class object
+      #
+      # In development, Zeitwerk may have reloaded the class, creating a new
+      # class object while the old one is still referenced in Spree.subscribers.
+      # This method resolves the constant fresh to get the current class.
+      #
+      # @param subscriber [Class, String] The subscriber class or class name
+      # @return [Class, nil] The resolved class or nil if not found
+      def resolve_subscriber(subscriber)
+        return subscriber unless Rails.env.development? || Rails.env.test?
+
+        class_name = subscriber.is_a?(String) ? subscriber : subscriber.name
+        return nil unless class_name
+
+        class_name.constantize
+      rescue NameError => e
+        Rails.logger.warn "[Spree Events] Could not resolve subscriber #{class_name}: #{e.message}"
+        nil
       end
 
       # List all registered subscriber patterns
