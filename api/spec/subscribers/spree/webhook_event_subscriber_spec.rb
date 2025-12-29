@@ -11,10 +11,9 @@ module Spree
     let(:event_id) { SecureRandom.uuid }
     let(:event_created_at) { Time.current }
     let(:event_metadata) { {} }
-    let(:event) { double('Event', id: event_id, name: event_name, payload: event_payload, metadata: event_metadata, created_at: event_created_at) }
+    let(:event) { double('Event', id: event_id, name: event_name, store_id: store.id, payload: event_payload, metadata: event_metadata, created_at: event_created_at) }
 
     before do
-      allow(Spree::Current).to receive(:store).and_return(store)
       allow(Spree::Api::Config).to receive(:webhooks_enabled).and_return(true)
     end
 
@@ -110,7 +109,7 @@ module Spree
         let!(:wildcard_endpoint) { create(:webhook_endpoint, :all_events, store: store) }
 
         it 'creates delivery for any event' do
-          random_event = double('Event', id: SecureRandom.uuid, name: 'random.event', payload: {}, metadata: event_metadata, created_at: event_created_at)
+          random_event = double('Event', id: SecureRandom.uuid, name: 'random.event', store_id: store.id, payload: {}, metadata: {}, created_at: event_created_at)
 
           expect {
             described_class.new.handle(random_event)
@@ -126,6 +125,45 @@ module Spree
           expect {
             described_class.new.handle(event)
           }.to change(pattern_endpoint.webhook_deliveries, :count).by(1)
+        end
+      end
+
+      context 'with store isolation' do
+        let(:other_store) { create(:store) }
+        let!(:other_store_endpoint) { create(:webhook_endpoint, store: other_store, subscriptions: ['order.created']) }
+
+        it 'only creates deliveries for endpoints in the event store' do
+          expect {
+            described_class.new.handle(event)
+          }.to change(webhook_endpoint.webhook_deliveries, :count).by(1)
+            .and change(other_store_endpoint.webhook_deliveries, :count).by(0)
+        end
+
+        it 'does not create deliveries for other store endpoints' do
+          described_class.new.handle(event)
+
+          expect(other_store_endpoint.webhook_deliveries.count).to eq(0)
+        end
+
+        context 'when event has different store_id' do
+          let(:event) { double('Event', id: event_id, name: event_name, store_id: other_store.id, payload: event_payload, metadata: event_metadata, created_at: event_created_at) }
+
+          it 'creates deliveries for endpoints matching the event store_id' do
+            expect {
+              described_class.new.handle(event)
+            }.to change(other_store_endpoint.webhook_deliveries, :count).by(1)
+              .and change(webhook_endpoint.webhook_deliveries, :count).by(0)
+          end
+        end
+
+        context 'when event has no store_id' do
+          let(:event) { double('Event', id: event_id, name: event_name, store_id: nil, payload: event_payload, metadata: event_metadata, created_at: event_created_at) }
+
+          it 'does not create any deliveries' do
+            expect {
+              described_class.new.handle(event)
+            }.not_to change(Spree::WebhookDelivery, :count)
+          end
         end
       end
 

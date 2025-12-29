@@ -19,11 +19,10 @@ module Spree
 
     def handle(event)
       return unless Spree::Api::Config.webhooks_enabled
-
-      store = Spree::Current.store
+      return if event.store_id.blank?
 
       # Find all active endpoints for this store subscribed to this event
-      endpoints = Spree::WebhookEndpoint.active.where(store: store).select { |endpoint| endpoint.subscribed_to?(event.name) }
+      endpoints = Spree::WebhookEndpoint.active.where(store_id: event.store_id).select { |endpoint| endpoint.subscribed_to?(event.name) }
 
       return if endpoints.empty?
 
