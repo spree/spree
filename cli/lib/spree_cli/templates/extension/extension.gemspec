@@ -21,7 +21,6 @@ Gem::Specification.new do |s|
   s.requirements << 'none'
 
   s.add_dependency 'spree', '>= <%= Gem.loaded_specs['spree_cli'].version %>'
-  s.add_dependency 'spree_storefront', '>= <%= Gem.loaded_specs['spree_cli'].version %>'
   s.add_dependency 'spree_admin', '>= <%= Gem.loaded_specs['spree_cli'].version %>'
   s.add_dependency 'spree_extension'
 
