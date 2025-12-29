@@ -166,9 +166,7 @@ module Spree
         Rails.application.config.spree.pricing.rules.concat [
           'Spree::PriceRules::ZoneRule',
           'Spree::PriceRules::UserRule',
-          'Spree::PriceRules::DateRangeRule',
-          'Spree::PriceRules::VolumeRule',
-          'Spree::PriceRules::ProductTaxonRule'
+          'Spree::PriceRules::VolumeRule'
         ]
 
         Rails.application.config.spree.promotions.actions = [

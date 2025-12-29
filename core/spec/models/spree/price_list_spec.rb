@@ -131,18 +131,15 @@ describe Spree::PriceList, type: :model do
     end
 
     context 'with rules and match_policy = all' do
-      let!(:passing_rule) do
-        rule = create(:zone_price_rule, price_list: price_list)
-        allow(rule).to receive(:applicable?).and_return(true)
-        rule
-      end
-      let!(:failing_rule) do
-        rule = create(:date_range_price_rule, price_list: price_list)
-        allow(rule).to receive(:applicable?).and_return(false)
-        rule
-      end
+      let!(:passing_rule) { create(:zone_price_rule, price_list: price_list) }
+      let!(:failing_rule) { create(:user_price_rule, price_list: price_list) }
 
-      before { price_list.update(match_policy: 'all') }
+      before do
+        price_list.update(match_policy: 'all')
+        price_list.price_rules.reload
+        allow(price_list.price_rules.first).to receive(:applicable?).and_return(true)
+        allow(price_list.price_rules.second).to receive(:applicable?).and_return(false)
+      end
 
       it 'returns false if any rule fails' do
         expect(price_list.applicable?(context)).to be false
@@ -150,18 +147,15 @@ describe Spree::PriceList, type: :model do
     end
 
     context 'with rules and match_policy = any' do
-      let!(:passing_rule) do
-        rule = create(:zone_price_rule, price_list: price_list)
-        allow(rule).to receive(:applicable?).and_return(true)
-        rule
-      end
-      let!(:failing_rule) do
-        rule = create(:date_range_price_rule, price_list: price_list)
-        allow(rule).to receive(:applicable?).and_return(false)
-        rule
-      end
+      let!(:passing_rule) { create(:zone_price_rule, price_list: price_list) }
+      let!(:failing_rule) { create(:user_price_rule, price_list: price_list) }
 
-      before { price_list.update(match_policy: 'any') }
+      before do
+        price_list.update(match_policy: 'any')
+        price_list.price_rules.reload
+        allow(price_list.price_rules.first).to receive(:applicable?).and_return(true)
+        allow(price_list.price_rules.second).to receive(:applicable?).and_return(false)
+      end
 
       it 'returns true if any rule passes' do
         expect(price_list.applicable?(context)).to be true

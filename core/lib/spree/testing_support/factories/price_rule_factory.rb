@@ -13,18 +13,6 @@ FactoryBot.define do
       end
     end
 
-    factory :date_range_price_rule, class: Spree::PriceRules::DateRangeRule do
-      after(:build) do |rule, evaluator|
-        rule.preferred_starts_at = evaluator.starts_at if evaluator.starts_at.present?
-        rule.preferred_ends_at = evaluator.ends_at if evaluator.ends_at.present?
-      end
-
-      transient do
-        starts_at { nil }
-        ends_at { nil }
-      end
-    end
-
     factory :volume_price_rule, class: Spree::PriceRules::VolumeRule do
       after(:build) do |rule, evaluator|
         rule.preferred_min_quantity = evaluator.min_quantity if evaluator.min_quantity.present?
@@ -36,18 +24,6 @@ FactoryBot.define do
         min_quantity { nil }
         max_quantity { nil }
         apply_to { nil }
-      end
-    end
-
-    factory :product_taxon_price_rule, class: Spree::PriceRules::ProductTaxonRule do
-      after(:build) do |rule, evaluator|
-        rule.preferred_taxon_ids = evaluator.taxon_ids if evaluator.respond_to?(:taxon_ids)
-        rule.preferred_include_descendants = evaluator.include_descendants if evaluator.respond_to?(:include_descendants)
-      end
-
-      transient do
-        taxon_ids { [] }
-        include_descendants { true }
       end
     end
 
