@@ -35,7 +35,7 @@ module Spree
 
       def applicable_price_lists
         @applicable_price_lists ||= begin
-          lists = Spree::PriceList.includes(price_rules: :preference_store)
+          lists = Spree::PriceList.includes(:price_rules)
                                    .for_context(context)
                                    .to_a
 

@@ -86,10 +86,11 @@ describe Spree::Pricing::Resolver do
       end
 
       it 'returns base price when outside date range' do
-        travel_to 2.days.from_now do
+        Timecop.travel(2.days.from_now) do
           price = resolver.resolve
           expect(price).to eq(base_price)
         end
+        Timecop.return
       end
     end
 
