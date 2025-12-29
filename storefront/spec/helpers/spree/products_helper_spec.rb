@@ -30,7 +30,7 @@ describe Spree::ProductsHelper, type: :helper do
       end
 
       it 'uses order.tax_zone when available' do
-        order.update(tax_address: create(:address))
+        order.update(ship_address: create(:address))
         tax_zone = create(:zone)
         allow(order).to receive(:tax_zone).and_return(tax_zone)
 

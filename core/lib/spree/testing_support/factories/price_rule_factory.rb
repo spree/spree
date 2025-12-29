@@ -25,15 +25,13 @@ FactoryBot.define do
 
     factory :date_range_price_rule, class: Spree::PriceRules::DateRangeRule do
       after(:build) do |rule, evaluator|
-        rule.preferred_starts_at = evaluator.starts_at if evaluator.respond_to?(:starts_at)
-        rule.preferred_ends_at = evaluator.ends_at if evaluator.respond_to?(:ends_at)
-        rule.preferred_timezone = evaluator.timezone if evaluator.respond_to?(:timezone)
+        rule.preferred_starts_at = evaluator.starts_at if evaluator.starts_at.present?
+        rule.preferred_ends_at = evaluator.ends_at if evaluator.ends_at.present?
       end
 
       transient do
         starts_at { nil }
         ends_at { nil }
-        timezone { 'UTC' }
       end
     end
 
