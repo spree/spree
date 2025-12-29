@@ -89,7 +89,7 @@ module Spree
     def inject_yaml_permitted_classes
       inside dummy_path do
         inject_into_file 'config/application.rb', %Q[
-    config.active_record.yaml_column_permitted_classes = [Symbol, BigDecimal, ActiveSupport::HashWithIndifferentAccess]
+    config.active_record.yaml_column_permitted_classes = [Symbol, BigDecimal, ActiveSupport::HashWithIndifferentAccess, ActiveSupport::TimeWithZone]
         ], after: /config\.load_defaults.*$/, verbose: true
       end
     end
