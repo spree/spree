@@ -28,5 +28,5 @@ Rails.application.config.after_initialize do
   # Spree.page_builder.page_blocks << Spree::PageBlocks::BigRedButtonToCallSales
 
   # Storefront partials
-  Spree.storefront.partials.head << '<%= file_name %>/head'
+  # Spree.storefront.partials.head << '<%= file_name %>/head'
 end
