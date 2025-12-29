@@ -135,8 +135,10 @@ describe Spree::ProductsHelper, type: :helper do
     end
 
     context 'with a product' do
+      let(:product_with_compare_at_price) { create(:product, price: 10, compare_at_price: 15) }
+
       it 'uses the default variant' do
-        expect(helper.should_display_compare_at_price?(product)).to be true
+        expect(helper.should_display_compare_at_price?(product_with_compare_at_price)).to be true
       end
     end
   end

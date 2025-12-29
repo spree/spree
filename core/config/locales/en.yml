@@ -1693,9 +1693,6 @@ en:
       product_taxon_rule:
         description: Apply pricing to products in specific categories
         name: Product Category
-      store_rule:
-        description: Apply different pricing per store
-        name: Store
       user_rule:
         description: Apply pricing to specific customers
         name: User
