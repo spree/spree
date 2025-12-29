@@ -44,19 +44,46 @@ module Spree
       end
 
       def find_price_for_list(price_list)
-        context.variant.prices
-               .with_currency(context.currency)
-               .where(price_list_id: price_list.id)
-               .non_zero
-               .first
+        currency = context.currency&.upcase
+
+        if prices.loaded?
+          prices.detect do |p|
+            p.currency == currency &&
+              p.price_list_id == price_list.id &&
+              p.amount.present? &&
+              !p.amount.zero?
+          end
+        else
+          context.variant.prices
+                 .with_currency(currency)
+                 .where(price_list_id: price_list.id)
+                 .non_zero
+                 .first
+        end
       end
 
       def find_base_price
+        currency = context.currency&.upcase
+
+        price = if prices.loaded?
+                  prices.detect do |p|
+                    p.currency == currency &&
+                      p.price_list_id.nil? &&
+                      p.amount.present?
+                  end
+                else
+                  context.variant.prices
+                         .with_currency(currency)
+                         .where(price_list_id: nil)
+                         .where.not(amount: nil)
+                         .first
+                end
+
+        price || build_empty_price
+      end
+
+      def prices
         context.variant.prices
-               .with_currency(context.currency)
-               .where(price_list_id: nil)
-               .where.not(amount: nil)
-               .first || build_empty_price
       end
 
       def build_empty_price
