@@ -44,8 +44,7 @@ describe Spree::V2::Storefront::ProductSerializer do
     end
 
     context 'with store-specific pricing' do
-      let!(:price_list) { create(:price_list, status: 'active', priority: 100) }
-      let!(:store_rule) { create(:store_price_rule, price_list: price_list, store_ids: [other_store.id]) }
+      let!(:price_list) { create(:price_list, :active, store: other_store) }
       let!(:price_list_price) { create(:price, variant: product.master, currency: currency, amount: 12.50, price_list: price_list) }
 
       context 'when store matches' do
@@ -74,7 +73,7 @@ describe Spree::V2::Storefront::ProductSerializer do
     end
 
     context 'with zone-specific pricing' do
-      let!(:price_list) { create(:price_list, status: 'active', priority: 100) }
+      let!(:price_list) { create(:price_list, :active, store: store) }
       let!(:zone_rule) { create(:zone_price_rule, price_list: price_list, zone_ids: [other_zone.id]) }
       let!(:price_list_price) { create(:price, variant: product.master, currency: currency, amount: 15.00, price_list: price_list) }
 
@@ -104,7 +103,7 @@ describe Spree::V2::Storefront::ProductSerializer do
     end
 
     context 'with user-specific pricing' do
-      let!(:price_list) { create(:price_list, status: 'active', priority: 100) }
+      let!(:price_list) { create(:price_list, :active, store: store) }
       let!(:user_rule) { create(:user_price_rule, price_list: price_list, user_ids: [user.id]) }
       let!(:price_list_price) { create(:price, variant: product.master, currency: currency, amount: 14.00, price_list: price_list) }
 
@@ -134,7 +133,7 @@ describe Spree::V2::Storefront::ProductSerializer do
     end
 
     context 'with taxon-specific pricing' do
-      let!(:price_list) { create(:price_list, status: 'active', priority: 100) }
+      let!(:price_list) { create(:price_list, :active, store: store) }
       let!(:taxon_rule) { create(:product_taxon_price_rule, price_list: price_list, taxon_ids: [taxon.id]) }
       let!(:price_list_price) { create(:price, variant: product.master, currency: currency, amount: 11.00, price_list: price_list) }
 
@@ -144,18 +143,18 @@ describe Spree::V2::Storefront::ProductSerializer do
       end
     end
 
-    context 'with combined rules (store AND zone)' do
-      let!(:price_list) { create(:price_list, status: 'active', priority: 100, match_policy: 'all') }
-      let!(:store_rule) { create(:store_price_rule, price_list: price_list, store_ids: [other_store.id]) }
+    context 'with combined rules (zone AND user)' do
+      let!(:price_list) { create(:price_list, :active, store: store, match_policy: 'all') }
       let!(:zone_rule) { create(:zone_price_rule, price_list: price_list, zone_ids: [other_zone.id]) }
+      let!(:user_rule) { create(:user_price_rule, price_list: price_list, user_ids: [user.id]) }
       let!(:price_list_price) { create(:price, variant: product.master, currency: currency, amount: 9.00, price_list: price_list) }
 
-      context 'when both store and zone match' do
+      context 'when both zone and user match' do
         let(:serializer_params) do
           {
-            store: other_store,
+            store: store,
             currency: currency,
-            user: nil,
+            user: user,
             locale: locale,
             price_options: { tax_zone: other_zone }
           }
@@ -167,14 +166,14 @@ describe Spree::V2::Storefront::ProductSerializer do
         end
       end
 
-      context 'when only store matches' do
+      context 'when only zone matches' do
         let(:serializer_params) do
           {
-            store: other_store,
+            store: store,
             currency: currency,
             user: nil,
             locale: locale,
-            price_options: { tax_zone: zone }
+            price_options: { tax_zone: other_zone }
           }
         end
 
@@ -186,14 +185,12 @@ describe Spree::V2::Storefront::ProductSerializer do
     end
 
     context 'with multiple price lists' do
-      let!(:low_priority_list) { create(:price_list, status: 'active', priority: 50) }
-      let!(:high_priority_list) { create(:price_list, status: 'active', priority: 150) }
-      let!(:store_rule_low) { create(:store_price_rule, price_list: low_priority_list, store_ids: [store.id]) }
-      let!(:store_rule_high) { create(:store_price_rule, price_list: high_priority_list, store_ids: [store.id]) }
-      let!(:low_price) { create(:price, variant: product.master, currency: currency, amount: 16.00, price_list: low_priority_list) }
-      let!(:high_price) { create(:price, variant: product.master, currency: currency, amount: 10.00, price_list: high_priority_list) }
+      let!(:second_position_list) { create(:price_list, :active, store: store, position: 2) }
+      let!(:first_position_list) { create(:price_list, :active, store: store, position: 1) }
+      let!(:second_price) { create(:price, variant: product.master, currency: currency, amount: 16.00, price_list: second_position_list) }
+      let!(:first_price) { create(:price, variant: product.master, currency: currency, amount: 10.00, price_list: first_position_list) }
 
-      it 'returns the highest priority price' do
+      it 'returns the first position price' do
         expect(subject[:data][:attributes][:price]).to eq(BigDecimal('10.00'))
         expect(subject[:data][:attributes][:display_price]).to eq('$10.00')
       end

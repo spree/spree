@@ -48,8 +48,7 @@ describe Spree::V2::Storefront::VariantSerializer do
     let(:user) { create(:user) }
 
     context 'with store-specific pricing' do
-      let!(:price_list) { create(:price_list, status: 'active', priority: 100) }
-      let!(:store_rule) { create(:store_price_rule, price_list: price_list, store_ids: [other_store.id]) }
+      let!(:price_list) { create(:price_list, :active, store: other_store) }
       let!(:price_list_price) { create(:price, variant: variant, currency: currency, amount: 7.50, price_list: price_list) }
 
       context 'when store matches' do
@@ -78,7 +77,7 @@ describe Spree::V2::Storefront::VariantSerializer do
     end
 
     context 'with zone-specific pricing' do
-      let!(:price_list) { create(:price_list, status: 'active', priority: 100) }
+      let!(:price_list) { create(:price_list, :active, store: store) }
       let!(:zone_rule) { create(:zone_price_rule, price_list: price_list, zone_ids: [other_zone.id]) }
       let!(:price_list_price) { create(:price, variant: variant, currency: currency, amount: 8.00, price_list: price_list) }
 
@@ -108,7 +107,7 @@ describe Spree::V2::Storefront::VariantSerializer do
     end
 
     context 'with user-specific pricing' do
-      let!(:price_list) { create(:price_list, status: 'active', priority: 100) }
+      let!(:price_list) { create(:price_list, :active, store: store) }
       let!(:user_rule) { create(:user_price_rule, price_list: price_list, user_ids: [user.id]) }
       let!(:price_list_price) { create(:price, variant: variant, currency: currency, amount: 6.50, price_list: price_list) }
 
@@ -138,21 +137,19 @@ describe Spree::V2::Storefront::VariantSerializer do
     end
 
     context 'with multiple price lists' do
-      let!(:low_priority_list) { create(:price_list, status: 'active', priority: 50) }
-      let!(:high_priority_list) { create(:price_list, status: 'active', priority: 100) }
-      let!(:store_rule_low) { create(:store_price_rule, price_list: low_priority_list, store_ids: [store.id]) }
-      let!(:store_rule_high) { create(:store_price_rule, price_list: high_priority_list, store_ids: [store.id]) }
-      let!(:low_price) { create(:price, variant: variant, currency: currency, amount: 8.00, price_list: low_priority_list) }
-      let!(:high_price) { create(:price, variant: variant, currency: currency, amount: 5.00, price_list: high_priority_list) }
+      let!(:second_position_list) { create(:price_list, :active, store: store, position: 2) }
+      let!(:first_position_list) { create(:price_list, :active, store: store, position: 1) }
+      let!(:second_price) { create(:price, variant: variant, currency: currency, amount: 8.00, price_list: second_position_list) }
+      let!(:first_price) { create(:price, variant: variant, currency: currency, amount: 5.00, price_list: first_position_list) }
 
-      it 'returns the highest priority price' do
+      it 'returns the first position price' do
         expect(subject[:data][:attributes][:price]).to eq(BigDecimal('5.00'))
         expect(subject[:data][:attributes][:display_price]).to eq('$5.00')
       end
     end
 
     context 'with date-based pricing' do
-      let!(:price_list) { create(:price_list, status: 'active', priority: 100, starts_at: 1.day.ago, ends_at: 1.day.from_now) }
+      let!(:price_list) { create(:price_list, :active, store: store, starts_at: 1.day.ago, ends_at: 1.day.from_now) }
       let!(:date_rule) { create(:date_range_price_rule, price_list: price_list, starts_at: 1.day.ago, ends_at: 1.day.from_now) }
       let!(:price_list_price) { create(:price, variant: variant, currency: currency, amount: 7.00, price_list: price_list) }
 
@@ -162,7 +159,7 @@ describe Spree::V2::Storefront::VariantSerializer do
       end
 
       context 'when outside date range' do
-        let!(:price_list) { create(:price_list, status: 'active', priority: 100, starts_at: 2.days.from_now, ends_at: 3.days.from_now) }
+        let!(:price_list) { create(:price_list, :active, store: store, starts_at: 2.days.from_now, ends_at: 3.days.from_now) }
 
         it 'returns the base price' do
           expect(subject[:data][:attributes][:price]).to eq(BigDecimal(10))
