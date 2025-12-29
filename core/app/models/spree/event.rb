@@ -7,8 +7,9 @@ module Spree
   # that happened in the system. They contain:
   # - An id (UUID)
   # - A name (e.g., 'order.complete', 'product.create')
+  # - A store_id (the store where the event originated)
   # - A payload (serialized data about the event)
-  # - Metadata (contextual information like store_id, timestamps)
+  # - Metadata (contextual information like spree_version)
   #
   # @example Creating an event
   #   event = Spree::Event.new(
@@ -19,6 +20,7 @@ module Spree
   # @example Accessing event data
   #   event.id         # => "550e8400-e29b-41d4-a716-446655440000"
   #   event.name       # => 'order.complete'
+  #   event.store_id   # => 1
   #   event.payload    # => { 'id' => 1, 'number' => 'R123456' }
   #   event.created_at # => 2024-01-15 10:30:00 UTC
   #
@@ -27,24 +29,35 @@ module Spree
     include ActiveModel::Attributes
     include ActiveModel::Serializers::JSON
 
-    attribute :id, :string
+    attribute :id, :string, default: -> { SecureRandom.uuid }
     attribute :name, :string
-    attribute :payload, default: -> { {} }
-    attribute :metadata, default: -> { {} }
-    attribute :created_at, :datetime
+    attribute :store_id, :integer, default: -> { Spree::Current.store&.id }
+    attribute :payload, default: -> { {}.freeze }
+    attribute :metadata, default: -> { { 'spree_version' => Spree.version }.freeze }
+    attribute :created_at, :datetime, default: -> { Time.current }
 
-    # @param id [String] Optional UUID (generated if not provided)
-    # @param name [String] The event name (e.g., 'order.complete')
-    # @param payload [Hash] The serialized event data
-    # @param metadata [Hash] Additional contextual information
-    # @param created_at [Time, String] Optional timestamp (generated if not provided)
-    def initialize(id: nil, name: nil, payload: {}, metadata: {}, created_at: nil)
-      super()
-      self.id = id || SecureRandom.uuid
-      self.created_at = created_at ? Time.zone.parse(created_at.to_s) : Time.current
-      self.name = name.to_s.freeze if name
-      self.payload = (payload || {}).deep_stringify_keys.freeze
-      self.metadata = build_metadata(metadata).freeze
+    validates :name, presence: true
+    validates :store_id, presence: true
+
+    def name=(value)
+      super(value.to_s.freeze) if value
+    end
+
+    def payload=(value)
+      super((value || {}).deep_stringify_keys.freeze)
+    end
+
+    def metadata=(value)
+      base = { 'spree_version' => Spree.version }
+      super(base.merge((value || {}).deep_stringify_keys).freeze)
+    end
+
+    # Returns the store where the event originated
+    # @return [Spree::Store, nil]
+    def store
+      return nil if store_id.blank?
+
+      @store ||= Spree::Store.find_by(id: store_id)
     end
 
     # Returns the resource type from the event name
@@ -82,33 +95,10 @@ module Spree
       end
     end
 
-    def attributes
-      {
-        'id' => id,
-        'name' => name,
-        'payload' => payload,
-        'metadata' => metadata,
-        'created_at' => created_at
-      }
-    end
-
-    def to_h
-      attributes.symbolize_keys
-    end
+    alias_method :to_h, :attributes
 
     def inspect
-      "#<Spree::Event id=#{id.inspect} name=#{name.inspect} created_at=#{created_at&.iso8601}>"
-    end
-
-    private
-
-    def build_metadata(custom_metadata)
-      base_metadata = {
-        'spree_version' => Spree.version,
-        'store_id' => Spree::Store.current&.id
-      }
-
-      base_metadata.merge((custom_metadata || {}).deep_stringify_keys)
+      "#<Spree::Event id=#{id.inspect} name=#{name.inspect} store_id=#{store_id.inspect} created_at=#{created_at&.iso8601}>"
     end
   end
 end

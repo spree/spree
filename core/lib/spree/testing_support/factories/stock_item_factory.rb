@@ -5,10 +5,12 @@ FactoryBot.define do
     variant
 
     before(:create) do |stock_item|
-      Spree::StockItem.find_by(
-        variant: stock_item.variant,
-        stock_location: stock_item.stock_location
-      )&.destroy
+      # Use really_destroy! (hard delete) to avoid unique index conflicts
+      # with deleted_at timestamps in MySQL when tests run quickly
+      Spree::StockItem.where(
+        variant_id: stock_item.variant_id,
+        stock_location_id: stock_item.stock_location_id
+      ).delete_all
     end
 
     transient do

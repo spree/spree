@@ -51,11 +51,7 @@ module Spree
 
       def reconstruct_event(event_hash)
         event_hash = event_hash.deep_symbolize_keys
-        Spree::Event.new(
-          name: event_hash[:name],
-          payload: event_hash[:payload],
-          metadata: event_hash[:metadata]
-        )
+        Spree::Event.new(**event_hash.slice(:id, :name, :store_id, :payload, :metadata, :created_at))
       end
     end
   end

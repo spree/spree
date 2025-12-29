@@ -3,6 +3,12 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Event do
+  let(:store) { create(:store) }
+
+  before do
+    allow(Spree::Current).to receive(:store).and_return(store)
+  end
+
   describe '#initialize' do
     it 'creates an event with name and payload' do
       event = described_class.new(
@@ -57,6 +63,65 @@ RSpec.describe Spree::Event do
       )
 
       expect(event.payload).to eq({ 'nested' => { 'deep_key' => 'value' } })
+    end
+
+    it 'sets store_id from Spree::Current.store' do
+      event = described_class.new(name: 'test', payload: {})
+
+      expect(event.store_id).to eq(store.id)
+    end
+
+    it 'accepts explicit store_id' do
+      other_store = create(:store)
+      event = described_class.new(name: 'test', store_id: other_store.id, payload: {})
+
+      expect(event.store_id).to eq(other_store.id)
+    end
+  end
+
+  describe 'validations' do
+    it 'requires name' do
+      event = described_class.new(store_id: store.id, payload: {})
+
+      expect(event).not_to be_valid
+      expect(event.errors[:name]).to include("can't be blank")
+    end
+
+    it 'requires store_id' do
+      allow(Spree::Current).to receive(:store).and_return(nil)
+      event = described_class.new(name: 'test', payload: {})
+
+      expect(event).not_to be_valid
+      expect(event.errors[:store_id]).to include("can't be blank")
+    end
+
+    it 'is valid with name and store_id' do
+      event = described_class.new(name: 'test', store_id: store.id, payload: {})
+
+      expect(event).to be_valid
+    end
+  end
+
+  describe '#store' do
+    it 'returns the store for the store_id' do
+      event = described_class.new(name: 'order.complete', store_id: store.id)
+
+      expect(event.store).to eq(store)
+    end
+
+    it 'returns nil when store_id is blank' do
+      allow(Spree::Current).to receive(:store).and_return(nil)
+      event = described_class.new(name: 'order.complete', store_id: nil)
+
+      expect(event.store).to be_nil
+    end
+
+    it 'memoizes the store lookup' do
+      event = described_class.new(name: 'order.complete', store_id: store.id)
+
+      expect(Spree::Store).to receive(:find_by).once.and_return(store)
+
+      2.times { event.store }
     end
   end
 
@@ -136,6 +201,7 @@ RSpec.describe Spree::Event do
       hash = event.attributes
 
       expect(hash['name']).to eq('order.complete')
+      expect(hash['store_id']).to eq(store.id)
       expect(hash['payload']).to eq({ 'id' => 1 })
       expect(hash['metadata']['user_id']).to eq(5)
       expect(hash['created_at']).to eq(event.created_at)
@@ -145,7 +211,7 @@ RSpec.describe Spree::Event do
   describe '#inspect' do
     it 'returns a readable string representation' do
       event = described_class.new(name: 'order.complete', payload: {})
-      expect(event.inspect).to match(/Spree::Event id="[0-9a-f-]{36}" name="order.complete" created_at=/)
+      expect(event.inspect).to match(/Spree::Event id="[0-9a-f-]{36}" name="order.complete" store_id=#{store.id} created_at=/)
     end
   end
 end
