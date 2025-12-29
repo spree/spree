@@ -164,7 +164,6 @@ module Spree
         ]
 
         Rails.application.config.spree.pricing.rules.concat [
-          'Spree::PriceRules::StoreRule',
           'Spree::PriceRules::ZoneRule',
           'Spree::PriceRules::UserRule',
           'Spree::PriceRules::DateRangeRule',
