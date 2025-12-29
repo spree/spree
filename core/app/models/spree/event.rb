@@ -27,7 +27,6 @@ module Spree
   class Event
     include ActiveModel::Model
     include ActiveModel::Attributes
-    include ActiveModel::Attributes::Normalization
     include ActiveModel::Serializers::JSON
 
     attribute :id, :string, default: -> { SecureRandom.uuid }
@@ -40,12 +39,18 @@ module Spree
     validates :name, presence: true
     validates :store_id, presence: true
 
-    normalizes :name, with: ->(value) { value.to_s.freeze }
-    normalizes :payload, with: ->(value) { (value || {}).deep_stringify_keys.freeze }
-    normalizes :metadata, with: ->(value) {
+    def name=(value)
+      super(value.to_s.freeze) if value
+    end
+
+    def payload=(value)
+      super((value || {}).deep_stringify_keys.freeze)
+    end
+
+    def metadata=(value)
       base = { 'spree_version' => Spree.version }
-      base.merge((value || {}).deep_stringify_keys).freeze
-    }
+      super(base.merge((value || {}).deep_stringify_keys).freeze)
+    end
 
     # Returns the store where the event originated
     # @return [Spree::Store, nil]
