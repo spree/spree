@@ -162,6 +162,17 @@ module Spree::Preferences::Preferable
       else
         value.class.ancestors.include?(Hash) ? value : {}
       end
+    when :datetime
+      return nil if value.blank?
+
+      case value
+      when Time, Date, DateTime, ActiveSupport::TimeWithZone
+        value
+      when String
+        Time.zone.parse(value)
+      else
+        value.to_time
+      end
     else
       value
     end
