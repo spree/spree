@@ -3,16 +3,6 @@ FactoryBot.define do
     price_list
     priority { 0 }
 
-    factory :store_price_rule, class: Spree::PriceRules::StoreRule do
-      after(:build) do |rule, evaluator|
-        rule.preferred_store_ids = evaluator.store_ids if evaluator.respond_to?(:store_ids)
-      end
-
-      transient do
-        store_ids { [] }
-      end
-    end
-
     factory :zone_price_rule, class: Spree::PriceRules::ZoneRule do
       after(:build) do |rule, evaluator|
         rule.preferred_zone_ids = evaluator.zone_ids if evaluator.respond_to?(:zone_ids)

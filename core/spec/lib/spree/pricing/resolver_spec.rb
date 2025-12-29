@@ -24,7 +24,7 @@ describe Spree::Pricing::Resolver do
     end
 
     context 'when no matching price list exists' do
-      let!(:price_list) { create(:price_list, status: 'inactive') }
+      let!(:price_list) { create(:price_list, store: store) }
       let!(:list_price) { create(:price, variant: variant, currency: currency, amount: 15.99, price_list: price_list) }
 
       it 'falls back to base price' do
@@ -36,12 +36,8 @@ describe Spree::Pricing::Resolver do
     end
 
     context 'with applicable price list' do
-      let!(:price_list) { create(:price_list, status: 'active', priority: 10) }
+      let!(:price_list) { create(:price_list, :active, store: store) }
       let!(:list_price) { create(:price, variant: variant, currency: currency, amount: 15.99, price_list: price_list) }
-
-      before do
-        create(:store_price_rule, price_list: price_list, store_ids: [store.id])
-      end
 
       it 'returns the price list price' do
         price = resolver.resolve
@@ -52,29 +48,24 @@ describe Spree::Pricing::Resolver do
     end
 
     context 'with multiple applicable price lists' do
-      let!(:low_priority_list) { create(:price_list, status: 'active', priority: 10) }
-      let!(:low_priority_price) { create(:price, variant: variant, currency: currency, amount: 17.99, price_list: low_priority_list) }
+      let!(:second_position_list) { create(:price_list, :active, store: store, position: 2) }
+      let!(:second_position_price) { create(:price, variant: variant, currency: currency, amount: 17.99, price_list: second_position_list) }
 
-      let!(:high_priority_list) { create(:price_list, status: 'active', priority: 100) }
-      let!(:high_priority_price) { create(:price, variant: variant, currency: currency, amount: 15.99, price_list: high_priority_list) }
+      let!(:first_position_list) { create(:price_list, :active, store: store, position: 1) }
+      let!(:first_position_price) { create(:price, variant: variant, currency: currency, amount: 15.99, price_list: first_position_list) }
 
-      before do
-        create(:store_price_rule, price_list: low_priority_list, store_ids: [store.id])
-        create(:store_price_rule, price_list: high_priority_list, store_ids: [store.id])
-      end
-
-      it 'returns the highest priority price list price' do
+      it 'returns the first position price list price' do
         price = resolver.resolve
-        expect(price).to eq(high_priority_price)
+        expect(price).to eq(first_position_price)
         expect(price.amount).to eq(15.99)
-        expect(price.price_list_id).to eq(high_priority_list.id)
+        expect(price.price_list_id).to eq(first_position_list.id)
       end
     end
 
     context 'with date range price list' do
       let!(:price_list) do
-        create(:price_list,
-               status: 'active',
+        create(:price_list, :active,
+               store: store,
                starts_at: 1.day.ago,
                ends_at: 1.day.from_now)
       end
@@ -96,7 +87,7 @@ describe Spree::Pricing::Resolver do
     end
 
     context 'with volume-based pricing' do
-      let!(:bulk_list) { create(:price_list, status: 'active', priority: 50) }
+      let!(:bulk_list) { create(:price_list, :active, store: store) }
       let!(:bulk_price) { create(:price, variant: variant, currency: currency, amount: 8.00, price_list: bulk_list) }
 
       before do
@@ -146,6 +137,19 @@ describe Spree::Pricing::Resolver do
         expect(price).not_to be_persisted
         expect(price.amount).to be_nil
         expect(price.currency).to eq(currency)
+      end
+    end
+
+    context 'with price list from different store' do
+      let(:other_store) { create(:store) }
+      let!(:other_store_list) { create(:price_list, :active, store: other_store) }
+      let!(:other_store_price) { create(:price, variant: variant, currency: currency, amount: 5.00, price_list: other_store_list) }
+
+      it 'does not return price from other store price list' do
+        base_price = variant.prices.base_prices.with_currency(currency).first
+        price = resolver.resolve
+        expect(price).to eq(base_price)
+        expect(price.price_list_id).to be_nil
       end
     end
   end

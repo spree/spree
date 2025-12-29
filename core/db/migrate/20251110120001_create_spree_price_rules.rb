@@ -1,7 +1,7 @@
 class CreateSpreePriceRules < ActiveRecord::Migration[7.0]
   def change
     create_table :spree_price_rules do |t|
-      t.references :price_list, null: false
+      t.belongs_to :price_list, null: false, foreign_key: false, index: true
       t.string :type, null: false
       t.integer :priority, null: false, default: 0
       t.text :preferences
