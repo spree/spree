@@ -1688,12 +1688,6 @@ en:
       scheduled: Scheduled
     price_range: Price Range
     price_rule_types:
-      date_range_rule:
-        description: Apply pricing during specific dates
-        name: Date Range
-      product_taxon_rule:
-        description: Apply pricing to products in specific categories
-        name: Product Category
       user_rule:
         description: Apply pricing to specific customers
         name: User

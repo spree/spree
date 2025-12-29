@@ -150,7 +150,6 @@ describe Spree::V2::Storefront::VariantSerializer do
 
     context 'with date-based pricing' do
       let!(:price_list) { create(:price_list, :active, store: store, starts_at: 1.day.ago, ends_at: 1.day.from_now) }
-      let!(:date_rule) { create(:date_range_price_rule, price_list: price_list, starts_at: 1.day.ago, ends_at: 1.day.from_now) }
       let!(:price_list_price) { create(:price, variant: variant, currency: currency, amount: 7.00, price_list: price_list) }
 
       it 'returns the date-specific price when within range' do
