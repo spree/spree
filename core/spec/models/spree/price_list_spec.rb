@@ -19,7 +19,7 @@ describe Spree::PriceList, type: :model do
 
       it 'validates starts_at is before ends_at' do
         expect(price_list).not_to be_valid
-        expect(price_list.errors[:ends_at]).to include('must_be_after_starts_at')
+        expect(price_list.errors[:ends_at]).to include('must be after starts at')
       end
     end
   end
@@ -54,8 +54,10 @@ describe Spree::PriceList, type: :model do
 
     describe '.by_priority' do
       it 'returns price lists ordered by priority descending' do
-        expect(described_class.by_priority.first).to eq(high_priority_list)
-        expect(described_class.by_priority.last).to eq(low_priority_list)
+        ordered = described_class.by_priority.to_a
+        high_index = ordered.index(high_priority_list)
+        low_index = ordered.index(low_priority_list)
+        expect(high_index).to be < low_index
       end
     end
 

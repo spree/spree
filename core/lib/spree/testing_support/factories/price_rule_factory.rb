@@ -39,15 +39,15 @@ FactoryBot.define do
 
     factory :volume_price_rule, class: Spree::PriceRules::VolumeRule do
       after(:build) do |rule, evaluator|
-        rule.preferred_min_quantity = evaluator.min_quantity if evaluator.respond_to?(:min_quantity)
-        rule.preferred_max_quantity = evaluator.max_quantity if evaluator.respond_to?(:max_quantity)
-        rule.preferred_apply_to = evaluator.apply_to if evaluator.respond_to?(:apply_to)
+        rule.preferred_min_quantity = evaluator.min_quantity if evaluator.min_quantity.present?
+        rule.preferred_max_quantity = evaluator.max_quantity if evaluator.max_quantity.present?
+        rule.preferred_apply_to = evaluator.apply_to if evaluator.apply_to.present?
       end
 
       transient do
-        min_quantity { 1 }
+        min_quantity { nil }
         max_quantity { nil }
-        apply_to { 'line_item' }
+        apply_to { nil }
       end
     end
 

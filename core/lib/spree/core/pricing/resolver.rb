@@ -55,7 +55,7 @@ module Spree
         context.variant.prices
                .with_currency(context.currency)
                .where(price_list_id: nil)
-               .non_zero
+               .where.not(amount: nil)
                .first || build_empty_price
       end
 

@@ -2,7 +2,7 @@ module Spree
   module PriceRules
     class VolumeRule < Spree::PriceRule
       preference :min_quantity, :integer, default: 1
-      preference :max_quantity, :integer, default: nil
+      preference :max_quantity, :integer
       preference :apply_to, :string, default: 'line_item'
 
       APPLY_TO_OPTIONS = %w[line_item cart_total].freeze

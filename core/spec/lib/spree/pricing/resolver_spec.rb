@@ -7,11 +7,15 @@ describe Spree::Pricing::Resolver do
   let(:context) { Spree::Pricing::Context.new(variant: variant, currency: currency, store: store) }
   let(:resolver) { described_class.new(context) }
 
+  # Clear cache before each test to avoid stale cached prices
+  before do
+    Rails.cache.clear
+  end
+
   describe '#resolve' do
     context 'when no price lists exist' do
-      let!(:base_price) { create(:price, variant: variant, currency: currency, amount: 19.99, price_list: nil) }
-
       it 'returns the base price' do
+        base_price = variant.prices.base_prices.with_currency(currency).first
         price = resolver.resolve
         expect(price).to eq(base_price)
         expect(price.amount).to eq(19.99)
@@ -20,11 +24,11 @@ describe Spree::Pricing::Resolver do
     end
 
     context 'when no matching price list exists' do
-      let!(:base_price) { create(:price, variant: variant, currency: currency, amount: 19.99, price_list: nil) }
       let!(:price_list) { create(:price_list, status: 'inactive') }
       let!(:list_price) { create(:price, variant: variant, currency: currency, amount: 15.99, price_list: price_list) }
 
       it 'falls back to base price' do
+        base_price = variant.prices.base_prices.with_currency(currency).first
         price = resolver.resolve
         expect(price).to eq(base_price)
         expect(price.amount).to eq(19.99)
@@ -32,7 +36,6 @@ describe Spree::Pricing::Resolver do
     end
 
     context 'with applicable price list' do
-      let!(:base_price) { create(:price, variant: variant, currency: currency, amount: 19.99, price_list: nil) }
       let!(:price_list) { create(:price_list, status: 'active', priority: 10) }
       let!(:list_price) { create(:price, variant: variant, currency: currency, amount: 15.99, price_list: price_list) }
 
@@ -49,8 +52,6 @@ describe Spree::Pricing::Resolver do
     end
 
     context 'with multiple applicable price lists' do
-      let!(:base_price) { create(:price, variant: variant, currency: currency, amount: 19.99, price_list: nil) }
-
       let!(:low_priority_list) { create(:price_list, status: 'active', priority: 10) }
       let!(:low_priority_price) { create(:price, variant: variant, currency: currency, amount: 17.99, price_list: low_priority_list) }
 
@@ -71,7 +72,6 @@ describe Spree::Pricing::Resolver do
     end
 
     context 'with date range price list' do
-      let!(:base_price) { create(:price, variant: variant, currency: currency, amount: 19.99, price_list: nil) }
       let!(:price_list) do
         create(:price_list,
                status: 'active',
@@ -86,20 +86,22 @@ describe Spree::Pricing::Resolver do
       end
 
       it 'returns base price when outside date range' do
+        base_price = variant.prices.base_prices.with_currency(currency).first
         Timecop.travel(2.days.from_now) do
+          Rails.cache.clear # Clear cache for the new time context
           price = resolver.resolve
           expect(price).to eq(base_price)
         end
-        Timecop.return
       end
     end
 
     context 'with volume-based pricing' do
-      let!(:base_price) { create(:price, variant: variant, currency: currency, amount: 10.00, price_list: nil) }
       let!(:bulk_list) { create(:price_list, status: 'active', priority: 50) }
       let!(:bulk_price) { create(:price, variant: variant, currency: currency, amount: 8.00, price_list: bulk_list) }
 
       before do
+        # Update the base price to 10.00 for this test
+        variant.prices.base_prices.with_currency(currency).update_all(amount: 10.00)
         create(:volume_price_rule, price_list: bulk_list, min_quantity: 10)
       end
 
@@ -118,6 +120,7 @@ describe Spree::Pricing::Resolver do
       end
 
       it 'returns base price when quantity threshold not met' do
+        base_price = variant.prices.base_prices.with_currency(currency).first
         context_with_quantity = Spree::Pricing::Context.new(
           variant: variant,
           currency: currency,
@@ -133,6 +136,10 @@ describe Spree::Pricing::Resolver do
     end
 
     context 'when no base price exists' do
+      before do
+        variant.prices.destroy_all
+      end
+
       it 'returns a new unpersisted price object' do
         price = resolver.resolve
         expect(price).to be_a(Spree::Price)
