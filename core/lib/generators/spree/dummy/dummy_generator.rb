@@ -46,6 +46,11 @@ module Spree
       args << '--skip-kamal'
       args << '--skip-devcontainer'
       args << '--skip-solid'
+      args << '--skip-thruster'
+      args << '--skip-bundler-audit'
+      args << '--skip-dev-gems'
+      args << '--skip-action-mailbox'
+      args << '--skip-jbuilder'
 
       # API mode (implies skip-asset-pipeline, skip-javascript, skip-hotwire)
       args << '--api' if options[:api]
