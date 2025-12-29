@@ -241,8 +241,27 @@ module Spree
 
     def update_adjustments
       if saved_change_to_quantity?
+        recalculate_price unless previously_new_record?
         recalculate_adjustments
         update_tax_charge # Called to ensure pre_tax_amount is updated.
+      end
+    end
+
+    def recalculate_price
+      context = Spree::Pricing::Context.from_order(variant, order, quantity: quantity)
+      currency_price = variant.price_for(context)
+
+      return unless currency_price.present?
+
+      new_price = currency_price.price_including_vat_for(tax_zone: tax_zone)
+
+      return unless new_price.present?
+
+      new_price_list_id = currency_price.price_list_id
+
+      # Only update if price or price list changed
+      if new_price != price || new_price_list_id != price_list_id
+        update_columns(price: new_price, price_list_id: new_price_list_id)
       end
     end
 
