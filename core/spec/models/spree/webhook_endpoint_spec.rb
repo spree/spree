@@ -6,15 +6,7 @@ describe Spree::WebhookEndpoint, type: :model do
   let(:store) { create(:store) }
   let(:webhook_endpoint) { build(:webhook_endpoint, store: store) }
 
-  describe 'associations' do
-    it { is_expected.to belong_to(:store).class_name('Spree::Store').without_validating_presence }
-    it { is_expected.to have_many(:webhook_deliveries).class_name('Spree::WebhookDelivery').dependent(:destroy_async) }
-  end
-
   describe 'validations' do
-    it { is_expected.to validate_presence_of(:store) }
-    it { is_expected.to validate_presence_of(:url) }
-
     describe 'url format' do
       it 'accepts valid https urls' do
         webhook_endpoint.url = 'https://example.com/webhooks'

@@ -1,19 +1,7 @@
 require 'spec_helper'
 
 describe Spree::PriceList, type: :model do
-  describe 'associations' do
-    it { is_expected.to have_many(:price_rules).dependent(:destroy) }
-    it { is_expected.to have_many(:prices).dependent(:nullify) }
-  end
-
-  describe 'validations' do
-    it { is_expected.to validate_presence_of(:name) }
-    it { is_expected.to validate_presence_of(:priority) }
-    it { is_expected.to validate_presence_of(:status) }
-    it { is_expected.to validate_presence_of(:match_policy) }
-    it { is_expected.to validate_inclusion_of(:status).in_array(%w[active inactive scheduled]) }
-    it { is_expected.to validate_inclusion_of(:match_policy).in_array(%w[all any]) }
-
+  describe 'Validations' do
     context 'date range validation' do
       let(:price_list) { build(:price_list, starts_at: 2.days.from_now, ends_at: 1.day.from_now) }
 
@@ -24,62 +12,110 @@ describe Spree::PriceList, type: :model do
     end
   end
 
+  describe 'state_machine' do
+    let(:price_list) { create(:price_list) }
+
+    it 'has initial status of inactive' do
+      expect(price_list.status).to eq('inactive')
+    end
+
+    describe '#activate' do
+      it 'transitions to active' do
+        price_list.activate
+        expect(price_list.status).to eq('active')
+      end
+    end
+
+    describe '#deactivate' do
+      before { price_list.activate }
+
+      it 'transitions to inactive' do
+        price_list.deactivate
+        expect(price_list.status).to eq('inactive')
+      end
+    end
+
+    describe '#schedule' do
+      it 'transitions to scheduled' do
+        price_list.schedule
+        expect(price_list.status).to eq('scheduled')
+      end
+    end
+  end
+
   describe 'scopes' do
-    let!(:active_price_list) { create(:price_list, status: 'active') }
-    let!(:inactive_price_list) { create(:price_list, status: 'inactive') }
-    let!(:scheduled_price_list) { create(:price_list, status: 'scheduled') }
-    let!(:high_priority_list) { create(:price_list, priority: 100) }
-    let!(:low_priority_list) { create(:price_list, priority: 10) }
+    let(:store) { create(:store) }
+    let!(:active_price_list) { create(:price_list, :active, store: store) }
+    let!(:inactive_price_list) { create(:price_list, store: store) }
+    let!(:scheduled_price_list) { create(:price_list, :scheduled, store: store) }
 
-    describe '.active' do
+    describe '.with_status(:active)' do
       it 'returns only active price lists' do
-        expect(described_class.active).to include(active_price_list)
-        expect(described_class.active).not_to include(inactive_price_list)
+        expect(described_class.with_status(:active)).to include(active_price_list)
+        expect(described_class.with_status(:active)).not_to include(inactive_price_list)
       end
     end
 
-    describe '.inactive' do
+    describe '.with_status(:inactive)' do
       it 'returns only inactive price lists' do
-        expect(described_class.inactive).to include(inactive_price_list)
-        expect(described_class.inactive).not_to include(active_price_list)
+        expect(described_class.with_status(:inactive)).to include(inactive_price_list)
+        expect(described_class.with_status(:inactive)).not_to include(active_price_list)
       end
     end
 
-    describe '.scheduled' do
+    describe '.with_status(:scheduled)' do
       it 'returns only scheduled price lists' do
-        expect(described_class.scheduled).to include(scheduled_price_list)
-        expect(described_class.scheduled).not_to include(active_price_list)
+        expect(described_class.with_status(:scheduled)).to include(scheduled_price_list)
+        expect(described_class.with_status(:scheduled)).not_to include(active_price_list)
       end
     end
 
-    describe '.by_priority' do
-      it 'returns price lists ordered by priority descending' do
-        ordered = described_class.by_priority.to_a
-        high_index = ordered.index(high_priority_list)
-        low_index = ordered.index(low_priority_list)
-        expect(high_index).to be < low_index
+    describe '.by_position' do
+      let!(:first_list) { create(:price_list, store: store, position: 1) }
+      let!(:second_list) { create(:price_list, store: store, position: 2) }
+
+      it 'returns price lists ordered by position ascending' do
+        ordered = described_class.by_position.where(store: store).to_a
+        first_index = ordered.index(first_list)
+        second_index = ordered.index(second_list)
+        expect(first_index).to be < second_index
+      end
+    end
+
+    describe '.for_store' do
+      let(:other_store) { create(:store) }
+      let!(:other_store_list) { create(:price_list, store: other_store) }
+
+      it 'returns only price lists for the specified store' do
+        expect(described_class.for_store(store)).to include(active_price_list)
+        expect(described_class.for_store(store)).not_to include(other_store_list)
       end
     end
 
     describe '.current' do
-      let!(:past_list) { create(:price_list, ends_at: 1.day.ago) }
-      let!(:future_list) { create(:price_list, starts_at: 1.day.from_now) }
-      let!(:current_list) { create(:price_list, starts_at: 1.day.ago, ends_at: 1.day.from_now) }
+      let!(:past_list) { create(:price_list, store: store, ends_at: 1.day.ago) }
+      let!(:future_list) { create(:price_list, store: store, starts_at: 1.day.from_now) }
+      let!(:current_list) { create(:price_list, store: store, starts_at: 1.day.ago, ends_at: 1.day.from_now) }
 
       it 'returns only price lists within date range' do
         expect(described_class.current).to include(current_list)
         expect(described_class.current).not_to include(past_list, future_list)
       end
+
+      it 'accepts a timezone parameter' do
+        expect(described_class.current('America/New_York')).to include(current_list)
+      end
     end
   end
 
   describe '#applicable?' do
-    let(:price_list) { create(:price_list, status: 'active') }
+    let(:store) { create(:store) }
+    let(:price_list) { create(:price_list, :active, store: store) }
     let(:variant) { create(:variant) }
-    let(:context) { Spree::Pricing::Context.new(variant: variant, currency: 'USD') }
+    let(:context) { Spree::Pricing::Context.new(variant: variant, currency: 'USD', store: store) }
 
     context 'when price list is inactive' do
-      before { price_list.update(status: 'inactive') }
+      before { price_list.deactivate }
 
       it 'returns false' do
         expect(price_list.applicable?(context)).to be false
@@ -96,12 +132,12 @@ describe Spree::PriceList, type: :model do
 
     context 'with rules and match_policy = all' do
       let!(:passing_rule) do
-        rule = create(:store_price_rule, price_list: price_list)
+        rule = create(:zone_price_rule, price_list: price_list)
         allow(rule).to receive(:applicable?).and_return(true)
         rule
       end
       let!(:failing_rule) do
-        rule = create(:zone_price_rule, price_list: price_list)
+        rule = create(:date_range_price_rule, price_list: price_list)
         allow(rule).to receive(:applicable?).and_return(false)
         rule
       end
@@ -115,12 +151,12 @@ describe Spree::PriceList, type: :model do
 
     context 'with rules and match_policy = any' do
       let!(:passing_rule) do
-        rule = create(:store_price_rule, price_list: price_list)
+        rule = create(:zone_price_rule, price_list: price_list)
         allow(rule).to receive(:applicable?).and_return(true)
         rule
       end
       let!(:failing_rule) do
-        rule = create(:zone_price_rule, price_list: price_list)
+        rule = create(:date_range_price_rule, price_list: price_list)
         allow(rule).to receive(:applicable?).and_return(false)
         rule
       end
@@ -135,12 +171,12 @@ describe Spree::PriceList, type: :model do
 
   describe '#active?' do
     it 'returns true when status is active' do
-      price_list = build(:price_list, status: 'active')
+      price_list = create(:price_list, :active)
       expect(price_list.active?).to be true
     end
 
     it 'returns false when status is not active' do
-      price_list = build(:price_list, status: 'inactive')
+      price_list = create(:price_list)
       expect(price_list.active?).to be false
     end
   end

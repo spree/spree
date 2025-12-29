@@ -1,32 +1,48 @@
 module Spree
   class PriceList < Spree::Base
     acts_as_paranoid
+    acts_as_list scope: :store
 
-    STATUSES = %w[active inactive scheduled].freeze
     MATCH_POLICIES = %w[all any].freeze
 
-    has_many :price_rules, class_name: 'Spree::PriceRule', dependent: :destroy
-    has_many :prices, class_name: 'Spree::Price', dependent: :nullify
+    belongs_to :store, class_name: 'Spree::Store'
 
-    validates :name, presence: true
-    validates :priority, presence: true, numericality: { only_integer: true }
-    validates :status, presence: true, inclusion: { in: STATUSES }
+    has_many :price_rules, class_name: 'Spree::PriceRule', dependent: :destroy
+    has_many :prices, class_name: 'Spree::Price', dependent: :destroy_async
+
+    validates :name, :store, presence: true
     validates :match_policy, presence: true, inclusion: { in: MATCH_POLICIES }
     validate :starts_at_before_ends_at
 
-    scope :active, -> { where(status: 'active') }
-    scope :inactive, -> { where(status: 'inactive') }
-    scope :scheduled, -> { where(status: 'scheduled') }
-    scope :by_priority, -> { order(priority: :desc) }
-    scope :current, lambda {
-      where('starts_at IS NULL OR starts_at <= ?', Time.current)
-        .where('ends_at IS NULL OR ends_at >= ?', Time.current)
+    scope :by_position, -> { order(position: :asc) }
+    scope :for_store, ->(store) { where(store: store) }
+    scope :current, lambda { |timezone = nil|
+      timezone ||= Rails.application.config.time_zone
+      current_time = Time.current.in_time_zone(timezone)
+      where('starts_at IS NULL OR starts_at <= ?', current_time)
+        .where('ends_at IS NULL OR ends_at >= ?', current_time)
     }
 
+    state_machine :status, initial: :inactive do
+      event :activate do
+        transition to: :active
+      end
+
+      event :deactivate do
+        transition to: :inactive
+      end
+
+      event :schedule do
+        transition to: :scheduled
+      end
+    end
+
     def self.for_context(context)
-      active
-        .current
-        .by_priority
+      timezone = context.store&.preferred_timezone || 'UTC'
+      for_store(context.store)
+        .with_status(:active)
+        .current(timezone)
+        .by_position
     end
 
     def applicable?(context)
@@ -47,18 +63,6 @@ module Spree
       else
         false
       end
-    end
-
-    def active?
-      status == 'active'
-    end
-
-    def inactive?
-      status == 'inactive'
-    end
-
-    def scheduled?
-      status == 'scheduled'
     end
 
     def active_or_scheduled?
