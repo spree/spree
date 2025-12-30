@@ -1,7 +1,6 @@
 <% if current_store.default_theme %>
   <div class="card mb-6">
-    <%= link_to spree.edit_admin_theme_path(current_store.default_theme), class: 'block border rounded-lg mx-2 mt-2 mb-0 overflow-auto bg-gray-25 relative store-preview-link hover:shadow-xs transition-shadow duration-200', data: { turbo_prefetch: false } do %>
-      <div class="absolute w-full h-full items-center justify-center hover:opacity-100 opacity-0 transition-opacity duration-200 store-preview-actions">
+    <%= link_to spree.edit_admin_theme_path(current_store.default_theme), class: 'block border rounded-lg m-2 overflow-auto bg-gray-25 relative store-preview-link hover:shadow-xs transition-shadow duration-200', data: { turbo_prefetch: false } do %>      <div class="absolute w-full h-full items-center justify-center hover:opacity-100 opacity-0 transition-opacity duration-200 store-preview-actions">
         <button class="btn btn-primary">
           <%= icon('tools') %>
           <%= Spree.t('admin.edit_theme') %>
@@ -11,9 +10,9 @@
       <%= render 'spree/admin/themes/theme_preview_image', theme: current_store.default_theme, height: 172, width: 330 %>
     <% end %>
 
-    <div class="card-body px-2 pt-0 pb-2">
-      <div class="flex my-2 p-1 w-full rounded-lg border items-center focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-blue-500">
-        <%= text_field_tag :domain, current_store.url_or_custom_domain, readonly: true, class: 'border-none bg-transparent focus:outline-none focus:ring-0 text-base p-1 w-full' %>
+    <div class="card-body px-2 pt-0 pb-2 flex flex-col gap-2">
+      <div class="input-group pr-2">
+        <%= text_field_tag :domain, current_store.url_or_custom_domain, readonly: true, class: 'focus:outline-none focus:ring-0 text-base w-full' %>
         <%= clipboard_component(current_store.url_or_custom_domain) %>
       </div>
 
