@@ -187,24 +187,6 @@ module Spree
       end
     end
 
-    protected
-
-    def javascript_exists?(script)
-      extensions = %w(.js.coffee .js.erb .js.coffee.erb .js)
-      file_exists?(extensions, script)
-    end
-
-    def stylesheet_exists?(stylesheet)
-      extensions = %w(.css.scss .css.erb .css.scss.erb .css)
-      file_exists?(extensions, stylesheet)
-    end
-
-    def file_exists?(extensions, filename)
-      extensions.detect do |extension|
-        File.exist?("#{filename}#{extension}")
-      end
-    end
-
     private
 
     def silence_stream(stream)
