@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.name        = '<%= file_name %>'
   s.version     = <%= class_name %>::VERSION
   s.summary     = "Spree Commerce <%= human_name %> Extension"
-  s.required_ruby_version = '>= 3.0'
+  s.required_ruby_version = '>= 3.2'
 
   s.author    = 'You'
   s.email     = 'you@example.com'
