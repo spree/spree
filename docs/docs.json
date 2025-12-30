@@ -35,6 +35,14 @@
     {
       "source": "/developer/admin/permissions",
       "destination": "/developer/customization/permissions"
+    },
+    {
+      "source": "/developer/customization/event-subscribers",
+      "destination": "/developer/core-concepts/events"
+    },
+    {
+      "source": "/developer/customization/webhooks",
+      "destination": "/developer/core-concepts/webhooks"
     }
   ],
   "contextual": {
@@ -99,6 +107,8 @@
                   "developer/core-concepts/adjustments",
                   "developer/core-concepts/addresses",
                   "developer/core-concepts/metafields",
+                  "developer/core-concepts/events",
+                  "developer/core-concepts/webhooks",
                   "developer/core-concepts/i18n",
                   "developer/core-concepts/search-filtering",
                   "developer/core-concepts/slugs",
@@ -144,7 +154,6 @@
                   "developer/customization/authentication",
                   "developer/customization/checkout",
                   "developer/customization/permissions",
-                  "developer/customization/event-subscribers",
                   "developer/customization/dependencies",
                   "developer/customization/decorators",
                   "developer/customization/model-preferences",

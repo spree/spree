@@ -1,0 +1,362 @@
+---
+title: Webhooks
+description: Send real-time HTTP notifications to external services when events occur in your store.
+---
+
+<Warning>
+  Webhooks are part of the upcoming Spree 5.3 release slated for January 2026.
+</Warning>
+
+## Overview
+
+Webhooks allow your Spree store to send real-time HTTP POST notifications to external services when events occur. When an order is completed, a product is updated, or inventory changes, Spree can automatically notify your CRM, fulfillment service, analytics platform, or any other system.
+
+Webhooks are built on top of Spree's [event system](/developer/core-concepts/events), providing:
+
+- **Multi-store support** - Each store has its own webhook endpoints
+- **Event filtering** - Subscribe to specific events or patterns with wildcards
+- **Secure delivery** - HMAC-SHA256 signatures for payload verification
+- **Automatic retries** - Failed deliveries retry with exponential backoff
+- **Full audit trail** - Track every delivery attempt with response codes and timing
+
+## How Webhooks Work
+
+```
+Event Published → WebhookEventSubscriber → Find Matching Endpoints → Queue Delivery Jobs → HTTP POST with Signature
+```
+
+1. An event is published (e.g., `order.completed`)
+2. The `WebhookEventSubscriber` receives all events
+3. It finds active webhook endpoints subscribed to that event
+4. For each endpoint, it creates a `WebhookDelivery` record and queues a job
+5. The job sends an HTTP POST request with the event payload and HMAC signature
+
+## Creating Webhook Endpoints
+
+### Via Admin Panel
+
+Navigate to **Settings → Developers → Webhooks** in the admin panel to create and manage webhook endpoints.
+
+### Via Code
+
+```ruby
+endpoint = Spree::WebhookEndpoint.create!(
+  store: Spree::Store.default,
+  url: 'https://example.com/webhooks/spree',
+  subscriptions: ['order.*', 'product.created'],
+  active: true
+)
+
+# The secret_key is auto-generated
+endpoint.secret_key # => "a1b2c3d4e5f6..." (64-character hex string)
+```
+
+### Endpoint Attributes
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `url` | String | The HTTPS endpoint URL to receive webhooks |
+| `active` | Boolean | Enable/disable delivery to this endpoint |
+| `subscriptions` | Array | Event patterns to subscribe to |
+| `secret_key` | String | Auto-generated key for HMAC signature verification |
+| `store_id` | Integer | The store this endpoint belongs to |
+
+## Event Subscriptions
+
+The `subscriptions` attribute controls which events trigger webhooks to this endpoint.
+
+### Subscribe to Specific Events
+
+```ruby
+endpoint.subscriptions = ['order.completed', 'order.canceled']
+```
+
+### Subscribe to Event Patterns
+
+Use wildcards to subscribe to multiple related events:
+
+```ruby
+# All order events
+endpoint.subscriptions = ['order.*']
+
+# All creation events
+endpoint.subscriptions = ['*.created']
+
+# Multiple patterns
+endpoint.subscriptions = ['order.*', 'payment.*', 'shipment.shipped']
+```
+
+### Subscribe to All Events
+
+Leave subscriptions empty or use `*` to receive all events:
+
+```ruby
+endpoint.subscriptions = []    # All events
+endpoint.subscriptions = ['*'] # All events (explicit)
+```
+
+## Webhook Payload
+
+Each webhook delivery sends a JSON payload with the following structure:
+
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "name": "order.completed",
+  "created_at": "2024-01-15T10:30:00Z",
+  "data": {
+    "id": 123,
+    "number": "R123456789",
+    "state": "complete",
+    "total": "99.99",
+    "item_count": 3
+  },
+  "metadata": {
+    "spree_version": "5.1.0"
+  }
+}
+```
+
+| Field | Description |
+|-------|-------------|
+| `id` | Unique UUID for this event |
+| `name` | Event name (e.g., `order.completed`) |
+| `created_at` | ISO8601 timestamp when event occurred |
+| `data` | Serialized resource data |
+| `metadata` | Additional context including Spree version |
+
+## HTTP Request Details
+
+### Headers
+
+Each webhook request includes these headers:
+
+| Header | Description |
+|--------|-------------|
+| `Content-Type` | `application/json` |
+| `User-Agent` | `Spree-Webhooks/1.0` |
+| `X-Spree-Webhook-Event` | Event name (e.g., `order.completed`) |
+| `X-Spree-Webhook-Signature` | HMAC-SHA256 signature for verification |
+
+### Verifying Webhook Signatures
+
+To ensure webhooks are genuinely from your Spree store, verify the signature:
+
+```ruby
+# In your webhook receiver
+def verify_webhook(request)
+  payload = request.body.read
+  signature = request.headers['X-Spree-Webhook-Signature']
+  secret_key = ENV['SPREE_WEBHOOK_SECRET'] # Your endpoint's secret_key
+
+  expected = OpenSSL::HMAC.hexdigest('SHA256', secret_key, payload)
+
+  ActiveSupport::SecurityUtils.secure_compare(signature, expected)
+end
+```
+
+Example in a Rails controller:
+
+```ruby
+class WebhooksController < ApplicationController
+  skip_before_action :verify_authenticity_token
+
+  def receive
+    unless verify_signature
+      head :unauthorized
+      return
+    end
+
+    event = JSON.parse(request.body.read)
+
+    case event['name']
+    when 'order.completed'
+      handle_order_completed(event['data'])
+    when 'product.updated'
+      handle_product_updated(event['data'])
+    end
+
+    head :ok
+  end
+
+  private
+
+  def verify_signature
+    payload = request.body.read
+    request.body.rewind
+
+    signature = request.headers['X-Spree-Webhook-Signature']
+    expected = OpenSSL::HMAC.hexdigest('SHA256', ENV['SPREE_WEBHOOK_SECRET'], payload)
+
+    ActiveSupport::SecurityUtils.secure_compare(signature.to_s, expected)
+  end
+end
+```
+
+## Delivery Status & Retries
+
+### Automatic Retries
+
+Failed webhook deliveries automatically retry up to 5 times with exponential backoff. This handles temporary network issues and endpoint downtime.
+
+### Checking Delivery Status
+
+```ruby
+endpoint = Spree::WebhookEndpoint.find(id)
+
+# Recent deliveries
+endpoint.webhook_deliveries.recent
+
+# Filter by status
+endpoint.webhook_deliveries.successful
+endpoint.webhook_deliveries.failed
+endpoint.webhook_deliveries.pending
+
+# Filter by event
+endpoint.webhook_deliveries.for_event('order.completed')
+```
+
+### Delivery Attributes
+
+| Attribute | Description |
+|-----------|-------------|
+| `event_name` | Name of the event delivered |
+| `payload` | Complete webhook payload sent |
+| `response_code` | HTTP status code (nil if pending) |
+| `success` | Boolean indicating 2xx response |
+| `execution_time` | Delivery time in milliseconds |
+| `error_type` | `'timeout'`, `'connection_error'`, or nil |
+| `request_errors` | Error message details |
+| `response_body` | Response from endpoint (truncated) |
+| `delivered_at` | Timestamp of delivery attempt |
+
+## Configuration
+
+### Enabling/Disabling Webhooks
+
+Webhooks are enabled by default. To disable globally:
+
+```ruby
+# config/initializers/spree.rb
+Spree::Api::Config.webhooks_enabled = false
+```
+
+### SSL Verification
+
+SSL verification is enabled by default in production. In development, it's disabled to allow testing with self-signed certificates:
+
+```ruby
+# config/initializers/spree.rb
+Spree::Api::Config.webhooks_verify_ssl = true  # Force SSL verification
+Spree::Api::Config.webhooks_verify_ssl = false # Disable (not recommended for production)
+```
+
+## Available Events
+
+Webhooks can subscribe to any event in Spree's event system. See [Events](/developer/core-concepts/events#available-events) for a complete list.
+
+Common webhook events include:
+
+| Event | Description |
+|-------|-------------|
+| `order.completed` | Order checkout finished |
+| `order.canceled` | Order was canceled |
+| `order.paid` | Order is fully paid |
+| `shipment.shipped` | Shipment was shipped |
+| `payment.paid` | Payment was completed |
+| `product.created` | New product created |
+| `product.updated` | Product was modified |
+| `customer.created` | New customer registered |
+
+## Testing Webhooks
+
+### In Development
+
+Use tools like [ngrok](https://ngrok.com) or [webhook.site](https://webhook.site) to test webhooks locally:
+
+```ruby
+# Create a test endpoint
+endpoint = Spree::WebhookEndpoint.create!(
+  store: Spree::Store.default,
+  url: 'https://your-ngrok-url.ngrok.io/webhooks',
+  subscriptions: ['order.*'],
+  active: true
+)
+
+# Trigger an event
+order = Spree::Order.complete.last
+order.publish_event('order.completed')
+
+# Check delivery
+endpoint.webhook_deliveries.last.success?
+```
+
+### In Tests
+
+```ruby
+RSpec.describe 'Webhook delivery' do
+  let(:store) { create(:store) }
+  let(:endpoint) { create(:webhook_endpoint, store: store, subscriptions: ['order.completed']) }
+  let(:order) { create(:completed_order_with_totals, store: store) }
+
+  it 'delivers webhook when order completes' do
+    stub_request(:post, endpoint.url).to_return(status: 200)
+
+    expect {
+      order.publish_event('order.completed')
+    }.to have_enqueued_job(Spree::WebhookDeliveryJob)
+  end
+end
+```
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Respond quickly" icon="bolt">
+    Return a 2xx response as fast as possible. Process webhook data asynchronously in a background job.
+  </Card>
+
+  <Card title="Verify signatures" icon="shield">
+    Always verify the `X-Spree-Webhook-Signature` header to ensure the webhook is authentic.
+  </Card>
+
+  <Card title="Handle duplicates" icon="copy">
+    Use the event `id` to detect and handle duplicate deliveries. Webhooks may be retried.
+  </Card>
+
+  <Card title="Subscribe selectively" icon="filter">
+    Only subscribe to events you need. Use specific patterns rather than `*` when possible.
+  </Card>
+</CardGroup>
+
+## Troubleshooting
+
+### Webhooks Not Delivering
+
+1. Check that webhooks are enabled: `Spree::Api::Config.webhooks_enabled`
+2. Verify the endpoint is active: `endpoint.active?`
+3. Confirm the endpoint subscribes to the event: `endpoint.subscribed_to?('order.completed')`
+4. Check the event has a `store_id` matching the endpoint's store
+
+### Signature Verification Failing
+
+1. Ensure you're using the raw request body (not parsed JSON)
+2. Verify you're using the correct `secret_key` for this endpoint
+3. Check that no middleware is modifying the request body
+
+### Deliveries Failing
+
+Check the delivery record for details:
+
+```ruby
+delivery = endpoint.webhook_deliveries.failed.last
+delivery.error_type      # => 'timeout' or 'connection_error'
+delivery.request_errors  # => Error message
+delivery.response_code   # => HTTP status code
+delivery.response_body   # => Response from your endpoint
+```
+
+## Related Documentation
+
+- [Events](/developer/core-concepts/events) - Understanding Spree's event system
+- [Dependencies](/developer/customization/dependencies) - Customizing Spree services
