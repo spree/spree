@@ -20,8 +20,7 @@ Gem::Specification.new do |s|
     "source_code_uri"   => "https://github.com/spree/spree/tree/v#{s.version}",
   }
 
-  s.required_ruby_version     = '>= 3.0'
-  s.required_rubygems_version = '>= 1.8.23'
+  s.required_ruby_version     = '>= 3.2'
 
   s.files        = Dir["{app,config,db,lib,vendor}/**/*", "LICENSE.md", "Rakefile", "README.md"].reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
   s.require_path = 'lib'

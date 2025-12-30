@@ -2,21 +2,28 @@
 
 module Spree
   module Events
-    # Registry for managing event subscribers.
+    # Registry for managing event subscribers across different adapters.
     #
-    # The registry keeps track of all registered subscribers and their
-    # event subscriptions. It supports pattern matching for event names.
+    # The registry provides an adapter-agnostic way to track subscriptions.
+    # This allows Spree to support different event backends (ActiveSupport::Notifications,
+    # Kafka, Redis Pub/Sub, etc.) while maintaining a consistent subscription API.
     #
-    # @example Registering a subscriber
+    # Thread safety: Uses a Mutex for safe concurrent access during subscription
+    # registration/unregistration, which may happen during Rails initialization
+    # or hot reloading in development.
+    #
+    # @example
     #   registry = Spree::Events::Registry.new
-    #   registry.register('order.complete', MySubscriber)
-    #
-    # @example Finding subscribers for an event
-    #   registry.subscribers_for('order.complete')
-    #   # => [MySubscriber, AnotherSubscriber]
+    #   registry.register('order.*', MySubscriber, async: true)
+    #   registry.subscriptions_for('order.complete') # => [Subscription]
     #
     class Registry
-      Subscription = Struct.new(:pattern, :subscriber, :options, keyword_init: true)
+      # Immutable subscription data using Ruby 3.2+ Data class
+      Subscription = Data.define(:pattern, :subscriber, :options) do
+        def async?
+          options.fetch(:async, true)
+        end
+      end
 
       def initialize
         @subscriptions = []
@@ -27,19 +34,16 @@ module Spree
       #
       # @param pattern [String] Event pattern (supports wildcards like 'order.*')
       # @param subscriber [Class, Proc] The subscriber class or callable
-      # @param options [Hash] Additional options for the subscription
-      # @return [Subscription] The created subscription
+      # @param options [Hash] Subscription options (:async, etc.)
+      # @return [Subscription]
       def register(pattern, subscriber, options = {})
         subscription = Subscription.new(
           pattern: pattern.to_s,
           subscriber: subscriber,
-          options: options
+          options: options.freeze
         )
 
-        @mutex.synchronize do
-          @subscriptions << subscription
-        end
-
+        @mutex.synchronize { @subscriptions << subscription }
         subscription
       end
 
@@ -47,63 +51,48 @@ module Spree
       #
       # @param pattern [String] Event pattern
       # @param subscriber [Class, Proc] The subscriber to remove
-      # @return [Boolean] true if removed, false if not found
+      # @return [Boolean] true if removed
       def unregister(pattern, subscriber)
         @mutex.synchronize do
           original_size = @subscriptions.size
-          @subscriptions.reject! do |sub|
-            sub.pattern == pattern.to_s && sub.subscriber == subscriber
-          end
+          @subscriptions.reject! { |s| s.pattern == pattern.to_s && s.subscriber == subscriber }
           @subscriptions.size < original_size
         end
       end
 
-      # Find all subscribers that match an event name
+      # Find all subscriptions matching an event name
       #
-      # @param event_name [String] The event name to match
-      # @return [Array<Subscription>] Matching subscriptions
+      # @param event_name [String] The event name
+      # @return [Array<Subscription>]
       def subscriptions_for(event_name)
         @mutex.synchronize do
-          @subscriptions.select do |subscription|
-            Spree::Event.matches?(event_name, subscription.pattern)
-          end
+          @subscriptions.select { |s| Spree::Event.matches?(event_name, s.pattern) }
         end
       end
 
-      # Get all registered subscriptions
-      #
       # @return [Array<Subscription>]
       def all_subscriptions
         @mutex.synchronize { @subscriptions.dup }
       end
 
-      # Get all unique patterns
-      #
-      # @return [Array<String>]
+      # @return [Array<String>] Unique patterns
       def patterns
         @mutex.synchronize { @subscriptions.map(&:pattern).uniq }
       end
 
-      # Clear all subscriptions
-      def clear!
-        @mutex.synchronize { @subscriptions.clear }
-      end
-
-      # Number of subscriptions
-      #
       # @return [Integer]
       def size
         @mutex.synchronize { @subscriptions.size }
       end
 
-      # Check if a pattern is registered
-      #
       # @param pattern [String]
       # @return [Boolean]
       def registered?(pattern)
-        @mutex.synchronize do
-          @subscriptions.any? { |sub| sub.pattern == pattern.to_s }
-        end
+        @mutex.synchronize { @subscriptions.any? { |s| s.pattern == pattern.to_s } }
+      end
+
+      def clear!
+        @mutex.synchronize { @subscriptions.clear }
       end
     end
   end

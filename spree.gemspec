@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
     "source_code_uri"   => "https://github.com/spree/spree/tree/v#{s.version}",
   }
 
-  s.required_ruby_version = '>= 3.0'
+  s.required_ruby_version = '>= 3.2'
 
   s.files        = Dir['README.md', 'lib/**/*']
   s.require_path = 'lib'
