@@ -13,6 +13,8 @@ module Spree
 
       preference :include_application_importmap, :boolean, default: false
       preference :legacy_sidebar_navigation, :boolean, default: false
+
+      preference :reports_line_items_limit, :integer, default: 1000
     end
   end
 end

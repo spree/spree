@@ -7,7 +7,7 @@ module Spree
       add_breadcrumb Spree.t(:reports), :admin_reports_path
 
       before_action :set_user, only: [:new, :create]
-      before_action :load_report_line_items, only: [:new, :create]
+      before_action :load_report_line_items, only: :new
 
       def show
         redirect_to @object.attachment.url, status: :see_other, allow_other_host: true
@@ -20,7 +20,7 @@ module Spree
       end
 
       def load_report_line_items
-        @report_line_items = @object.line_items
+        @report_line_items = @object.line_items(limit: Spree::Admin::RuntimeConfig.reports_line_items_limit.to_i)
       end
 
       def create_turbo_stream_enabled?
