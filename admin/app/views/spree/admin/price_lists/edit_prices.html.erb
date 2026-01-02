@@ -25,12 +25,10 @@
           <kbd class="px-1 py-0.5 bg-gray-100 rounded ml-2"><%= icon 'command', class: 'inline w-3 h-3' %>V</kbd> paste
           <kbd class="px-1 py-0.5 bg-gray-100 rounded ml-2"><%= icon 'command', class: 'inline w-3 h-3' %>D</kbd> fill down
         </div>
-        <%= form_with url: spree.edit_prices_admin_price_list_path(@price_list), method: :get do %>
-          <%= select_tag :currency,
-              options_for_select(current_store.supported_currencies_list, @currency),
-              class: 'form-select',
-              onchange: 'this.form.submit()' %>
-        <% end %>
+        <%= select_tag :currency,
+            options_for_select(current_store.supported_currencies_list, @currency),
+            class: 'form-select',
+            onchange: "window.Turbo.visit('#{spree.edit_prices_admin_price_list_path(@price_list)}?currency=' + this.value)" %>
       </div>
     </div>
 
@@ -107,14 +105,14 @@
     <% else %>
       <div class="p-8 text-center text-gray-500">
         <p class="mb-4"><%= Spree.t(:no_products_in_price_list) %></p>
-        <%= link_to Spree.t(:add_products), edit_admin_price_list_path(@price_list), class: 'btn btn-primary' %>
+        <%= link_to Spree.t(:add_products), spree.admin_price_list_path(@price_list), class: 'btn btn-primary' %>
       </div>
     <% end %>
   </div>
 
   <% if @prices.any? %>
     <div class="flex gap-3 justify-end">
-      <%= link_to Spree.t(:cancel), edit_admin_price_list_path(@price_list), class: 'btn btn-secondary' %>
+      <%= link_to Spree.t(:cancel), spree.admin_price_list_path(@price_list), class: 'btn btn-secondary' %>
       <%= f.submit Spree.t(:save_changes),
           class: 'btn btn-primary',
           data: { bulk_editor_target: 'saveButton' } %>

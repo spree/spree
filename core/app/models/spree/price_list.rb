@@ -82,6 +82,32 @@ module Spree
       active? || scheduled?
     end
 
+    def add_products(product_ids)
+      return if product_ids.blank?
+
+      currencies = store.supported_currencies_list.map(&:iso_code)
+      variant_ids = Spree::Variant.eligible.where(product_id: product_ids).pluck(:id)
+
+      currencies.each do |currency|
+        existing_variant_ids = prices.where(currency: currency).pluck(:variant_id)
+        new_variant_ids = variant_ids - existing_variant_ids
+
+        new_variant_ids.each do |variant_id|
+          prices.create!(
+            variant_id: variant_id,
+            currency: currency,
+            amount: nil
+          )
+        end
+      end
+    end
+
+    def remove_products(product_ids)
+      return if product_ids.blank?
+
+      prices.joins(:variant).where(spree_variants: { product_id: product_ids }).destroy_all
+    end
+
     private
 
     def starts_at_before_ends_at
