@@ -557,7 +557,7 @@ module Spree
       if self.class.reflect_on_association(:brand)
         super
       else
-        Spree::Deprecation.warn('Spree::Product#brand is deprecated and will be removed in Spree 6. Please use Spree::Product#brand_taxon instead.')
+        Spree::Deprecation.warn('Spree::Product#brand is deprecated and will be removed in Spree 5.5. Please use Spree::Product#brand_taxon instead.')
         brand_taxon
       end
     end
@@ -592,7 +592,7 @@ module Spree
       if self.class.reflect_on_association(:category)
         super
       else
-        Spree::Deprecation.warn('Spree::Product#category is deprecated and will be removed in Spree 6. Please use Spree::Product#category_taxon instead.')
+        Spree::Deprecation.warn('Spree::Product#category is deprecated and will be removed in Spree 5.5. Please use Spree::Product#category_taxon instead.')
         category_taxon
       end
     end
@@ -721,7 +721,7 @@ module Spree
     end
 
     def default_variant_cache_key
-      Spree::Deprecation.warn('Spree::Product#default_variant_cache_key is deprecated and will be removed in Spree 6. Please remove any occurrences of it.')
+      Spree::Deprecation.warn('Spree::Product#default_variant_cache_key is deprecated and will be removed in Spree 5.5. Please remove any occurrences of it.')
 
       "spree/default-variant/#{cache_key_with_version}/#{Spree::Config[:track_inventory_levels]}"
     end

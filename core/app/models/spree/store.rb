@@ -355,7 +355,7 @@ module Spree
     end
 
     def admin_users
-      Spree::Deprecation.warn('Store#admin_users is deprecated and will be removed in Spree 6.0. Please use Store#users instead.')
+      Spree::Deprecation.warn('Store#admin_users is deprecated and will be removed in Spree 5.5. Please use Store#users instead.')
 
       users
     end
@@ -402,7 +402,7 @@ module Spree
 
     %w[customer_terms_of_service customer_privacy_policy customer_returns_policy customer_shipping_policy].each do |policy_method|
       define_method policy_method do
-        Spree::Deprecation.warn("Store##{policy_method} is deprecated and will be removed in Spree 6.0. Please use Store#policies instead.")
+        Spree::Deprecation.warn("Store##{policy_method} is deprecated and will be removed in Spree 5.5. Please use Store#policies instead.")
 
         ActionText::RichText.find_by(name: policy_method, record: self)
       end

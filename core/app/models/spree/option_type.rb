@@ -59,7 +59,7 @@ module Spree
 
     # legacy, name itself is now parameterized before saving
     def filter_param
-      Spree::Deprecation.warn('Spree::OptionType#filter_param is deprecated and will be removed in Spree 6. Please use Spree::OptionType#name instead.')
+      Spree::Deprecation.warn('Spree::OptionType#filter_param is deprecated and will be removed in Spree 5.5. Please use Spree::OptionType#name instead.')
       name.parameterize
     end
 

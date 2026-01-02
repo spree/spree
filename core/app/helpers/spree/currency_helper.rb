@@ -45,12 +45,12 @@ module Spree
     # Returns the list of supported currencies for the current store.
     # @return [Array<Money::Currency>] the list of supported currencies
     def preferred_currencies
-      Spree::Deprecation.warn('preferred_currencies is deprecated and will be removed in Spree 6.0. Use current_store.supported_currencies_list instead.')
+      Spree::Deprecation.warn('preferred_currencies is deprecated and will be removed in Spree 5.5. Use current_store.supported_currencies_list instead.')
       @preferred_currencies ||= current_store.supported_currencies_list
     end
 
     def preferred_currencies_select_options
-      Spree::Deprecation.warn('preferred_currencies_select_options is deprecated and will be removed in Spree 6.0. Use supported_currency_options instead.')
+      Spree::Deprecation.warn('preferred_currencies_select_options is deprecated and will be removed in Spree 5.5. Use supported_currency_options instead.')
       preferred_currencies.map { |currency| currency_presentation(currency) }
     end
 

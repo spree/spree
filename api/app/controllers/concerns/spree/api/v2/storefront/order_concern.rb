@@ -39,7 +39,7 @@ module Spree
           end
 
           def serialize_order(order)
-            Spree::Deprecation.warn('OrderConcern#serialize_order is deprecated and will be removed in Spree 6.0. Please use `serialize_resource` method')
+            Spree::Deprecation.warn('OrderConcern#serialize_order is deprecated and will be removed in Spree 5.5. Please use `serialize_resource` method')
             serialize_resource(order)
           end
         end

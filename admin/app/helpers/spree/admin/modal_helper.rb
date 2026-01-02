@@ -5,7 +5,7 @@ module Spree
       # @param title [String, Proc] the title of the modal
       # @return [String]
       def modal_header(title)
-        Spree::Deprecation.warn('Bootstrap modals are deprecated and will be removed in Spree 6. Please use native dialogs with `dialog_header` helper.')
+        Spree::Deprecation.warn('Bootstrap modals are deprecated and will be removed in Spree 5.5. Please use native dialogs with `dialog_header` helper.')
 
         title = capture(&title) if block_given?
         content_tag(:div, class: 'modal-header') do
