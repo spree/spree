@@ -17,7 +17,7 @@ module Spree
     end
 
     def logo_path
-      Spree::Deprecation.warn('logo_path is deprecated and will be removed in Spree 6.0. Please use Active Storage URL helpers instead.')
+      Spree::Deprecation.warn('logo_path is deprecated and will be removed in Spree 5.5. Please use Active Storage URL helpers instead.')
 
       return main_app.cdn_image_url(store_logo.variant(resize_to_limit: [244, 104])) if store_logo&.variable?
 

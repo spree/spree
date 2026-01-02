@@ -37,7 +37,7 @@ module Spree
       end
 
       def settings_active?
-        Spree::Deprecation.warn('settings_active? is deprecated and will be removed in Spree 6.0. Please use settings_area? instead')
+        Spree::Deprecation.warn('settings_active? is deprecated and will be removed in Spree 5.5. Please use settings_area? instead')
         @settings_active || %w[admin_users audits custom_domains exports invitations oauth_applications
                                payment_methods refund_reasons reimbursement_types return_authorization_reasons roles
                                shipping_categories shipping_methods stock_locations store_credit_categories

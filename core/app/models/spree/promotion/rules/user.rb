@@ -34,7 +34,7 @@ module Spree
 
         def user_ids_string
           ActiveSupport::Deprecation.warn(
-            'Spree::Promotion::Rules::User#user_ids_string is deprecated and will be removed in Spree 6.0. ' \
+            'Spree::Promotion::Rules::User#user_ids_string is deprecated and will be removed in Spree 5.5. ' \
             'Please use `user_ids` instead.'
           )
           user_ids.join(',')
@@ -42,7 +42,7 @@ module Spree
 
         def user_ids_string=(s)
           ActiveSupport::Deprecation.warn(
-            'Spree::Promotion::Rules::User#user_ids_string= is deprecated and will be removed in Spree 6.0. ' \
+            'Spree::Promotion::Rules::User#user_ids_string= is deprecated and will be removed in Spree 5.5. ' \
             'Please use `user_ids=` instead.'
           )
           self.user_ids = s

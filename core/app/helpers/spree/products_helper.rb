@@ -121,7 +121,7 @@ module Spree
     end
 
     def related_products
-      Spree::Deprecation.warn('ProductsHelper#related_products is deprecated and will be removed in Spree 6.0. Please use ProductsHelper#relations from now on.')
+      Spree::Deprecation.warn('ProductsHelper#related_products is deprecated and will be removed in Spree 5.5. Please use ProductsHelper#relations from now on.')
 
       return [] unless @product.respond_to?(:has_related_products?)
 

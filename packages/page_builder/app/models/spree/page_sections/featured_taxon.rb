@@ -49,7 +49,7 @@ module Spree
 
       def products(currency)
         Spree::Deprecation.warn(
-          'FeaturedTaxon#products is deprecated and will be removed in Spree 6.0. ' \
+          'FeaturedTaxon#products is deprecated and will be removed in Spree 5.5. ' \
           'Please use taxon_products(featured_taxon.taxon) helper method in views instead'
         )
 

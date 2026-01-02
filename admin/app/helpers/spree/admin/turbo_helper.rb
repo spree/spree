@@ -2,7 +2,7 @@ module Spree
   module Admin
     module TurboHelper
       def turbo_close_modal(modal_id = nil)
-        Spree::Deprecation.warn('turbo_close_modal is deprecated and will be removed in Spree 6. Use turbo_close_dialog instead.')
+        Spree::Deprecation.warn('turbo_close_modal is deprecated and will be removed in Spree 5.5. Use turbo_close_dialog instead.')
 
         modal_id ||= 'modal'
 

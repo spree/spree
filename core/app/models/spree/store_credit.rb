@@ -183,7 +183,7 @@ module Spree
 
     class << self
       def default_created_by
-        Spree::Deprecation.warn('StoreCredit#default_created_by is deprecated and will be removed in Spree 6.0. Please use store.users.first instead.')
+        Spree::Deprecation.warn('StoreCredit#default_created_by is deprecated and will be removed in Spree 5.5. Please use store.users.first instead.')
 
         Spree::Store.current.users.first
       end
