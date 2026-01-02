@@ -36,6 +36,7 @@ module Spree
       :policy_attributes,
       :post_attributes,
       :post_category_attributes,
+      :price_list_attributes,
       :product_attributes,
       :promotion_attributes,
       :promotion_rule_attributes,
@@ -162,6 +163,8 @@ module Spree
     @@post_attributes = [:title, :meta_title, :meta_description, :slug, :author_id, :post_category_id, :published_at, :content, :excerpt, :image, tag_list: []]
 
     @@post_category_attributes = [:title, :slug, :description]
+
+    @@price_list_attributes = [:name, :description, :match_policy, :starts_at, :ends_at, :status, :position]
 
     @@product_properties_attributes = [:property_name, :property_id, :value, :position, :_destroy]
 

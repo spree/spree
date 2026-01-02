@@ -1,0 +1,50 @@
+/* Bulk Editor - Spreadsheet-style price editing */
+
+/* Cell states */
+[data-bulk-editor-target="cell"] {
+  @apply transition-colors duration-75 bg-gray-50 cursor-cell;
+  caret-color: transparent; /* Hide caret in selection mode */
+}
+
+/* Focused cell in selection mode - still gray, cell cursor */
+[data-bulk-editor-target="cell"]:focus {
+  @apply bg-gray-100;
+}
+
+/* Editing mode - white background, text cursor, visible caret */
+[data-bulk-editor-target="cell"].editing {
+  @apply bg-white cursor-text;
+  caret-color: auto;
+}
+
+/* Form container needs relative positioning for fill handle */
+[data-controller="bulk-editor"] {
+  @apply relative;
+}
+
+/* Prevent text selection during drag operations */
+[data-controller="bulk-editor"].fill-dragging {
+  user-select: none;
+  cursor: crosshair;
+}
+
+[data-controller="bulk-editor"].fill-dragging [data-bulk-editor-target="cell"] {
+  cursor: crosshair;
+}
+
+/* Fill handle - blue dot at bottom-right corner of focused cell */
+.fill-handle {
+  @apply absolute w-2 h-2 bg-blue-600 border border-white rounded-sm cursor-crosshair z-10;
+  display: none;
+  transform: translate(50%, 50%);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.fill-handle:hover {
+  @apply bg-blue-700 scale-125;
+}
+
+/* Keyboard shortcut hints */
+.bulk-editor-shortcuts kbd {
+  @apply px-1.5 py-0.5 text-xs font-mono bg-gray-100 border border-gray-200 rounded;
+}

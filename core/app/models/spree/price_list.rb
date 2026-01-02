@@ -3,12 +3,21 @@ module Spree
     acts_as_paranoid
     acts_as_list scope: :store
 
+    include Spree::SingleStoreResource
+
     MATCH_POLICIES = %w[all any].freeze
 
     belongs_to :store, class_name: 'Spree::Store'
 
     has_many :price_rules, class_name: 'Spree::PriceRule', dependent: :destroy
     has_many :prices, class_name: 'Spree::Price', dependent: :destroy_async
+    has_many :variants, -> { where(spree_prices: { deleted_at: nil }) }, through: :prices, source: :variant
+    has_many :products, -> { where(spree_prices: { deleted_at: nil }) }, through: :variants, source: :product
+    alias price_list_products products
+
+    accepts_nested_attributes_for :prices,
+                                  allow_destroy: true,
+                                  reject_if: ->(attrs) { attrs['amount'].blank? && attrs['id'].blank? }
 
     validates :name, :store, presence: true
     validates :match_policy, presence: true, inclusion: { in: MATCH_POLICIES }
@@ -43,6 +52,10 @@ module Spree
         .with_status(:active)
         .current(timezone)
         .by_position
+    end
+
+    def self.match_policies
+      MATCH_POLICIES.map { |key| [Spree.t(key), key] }
     end
 
     def applicable?(context)

@@ -20,11 +20,11 @@ module Spree
       less_than_or_equal_to: MAXIMUM_AMOUNT
     }, if: -> { Spree::Config.allow_empty_price_amount }
 
-    # new behavior
+    # new behavior - prices on a price_list can have nil amounts (placeholder prices)
     validates :amount, allow_nil: false, numericality: {
       greater_than_or_equal_to: 0,
       less_than_or_equal_to: MAXIMUM_AMOUNT
-    }, unless: -> { Spree::Config.allow_empty_price_amount }
+    }, unless: -> { Spree::Config.allow_empty_price_amount || price_list_id.present? }
 
     validates :compare_at_amount, allow_nil: true, numericality: {
       greater_than_or_equal_to: 0,
@@ -61,7 +61,7 @@ module Spree
     end
 
     def amount=(amount)
-      self[:amount] = Spree::LocalizedNumber.parse(amount)
+      self[:amount] = amount.blank? ? nil : Spree::LocalizedNumber.parse(amount)
     end
 
     def compare_at_money
