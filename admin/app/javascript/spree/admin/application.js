@@ -89,6 +89,7 @@ import TooltipController from 'spree/admin/controllers/tooltip_controller'
 import TurboSubmitButtonController from 'spree/admin/controllers/turbo_submit_button_controller'
 import UnitSystemController from 'spree/admin/controllers/unit_system_controller'
 import VariantsFormController from 'spree/admin/controllers/variants_form_controller'
+import BulkEditorController from 'spree/admin/controllers/bulk_editor_controller'
 import AddressAutocompleteController from 'spree/core/controllers/address_autocomplete_controller'
 import AddressFormController from 'spree/core/controllers/address_form_controller'
 import DisableSubmitButtonController from 'spree/core/controllers/disable_submit_button_controller'
@@ -160,6 +161,7 @@ application.register('turbo-submit-button', TurboSubmitButtonController)
 application.register('textarea-autogrow', TextareaAutogrow)
 application.register('unit-system', UnitSystemController)
 application.register('variants-form', VariantsFormController)
+application.register('bulk-editor', BulkEditorController)
 
 LocalTime.start()
 

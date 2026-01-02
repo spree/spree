@@ -53,6 +53,8 @@ module Spree
         :posts_actions_partials,
         :posts_filters_partials,
         :posts_header_partials,
+        :price_lists_actions_partials,
+        :price_lists_header_partials,
         :product_dropdown_partials,
         :product_page_title_partials,
         :product_form_partials,

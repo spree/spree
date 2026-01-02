@@ -651,6 +651,7 @@ en:
     add_products: Add Products
     add_rule_of_type: Add rule of type
     add_section: Add section
+    add_selected: Add Selected
     add_selected_products: Add selected products
     add_selected_variant: Add selected variant
     add_state: Add State
@@ -723,6 +724,9 @@ en:
     amount: Amount
     analytics: Analytics
     and: and
+    and_n_more:
+      one: "...and %{count} more"
+      other: "...and %{count} more"
     api_keys: API keys
     apis:
       platform: Platform API
@@ -1016,6 +1020,7 @@ en:
     duplicating: Duplicating
     edit: Edit
     edit_address: Edit address
+    edit_prices: Edit Prices
     edit_refund: Edit refund
     editing_resource: Editing %{resource}
     editing_rma_reason: Editing RMA Reason
@@ -1436,6 +1441,7 @@ en:
       oops: Oops!
     no_products_added: No products added
     no_products_found: No products found
+    no_products_in_price_list: No products in this price list
     no_report_data: No report data
     no_resource_found: No %{resource} found
     no_results: No results
@@ -1720,6 +1726,8 @@ en:
         manual: Manually choose
     product_sold_out: This item is sold out
     products: Products
+    products_added: Products added
+    products_removed: Products removed
     products_cannot_be_shipped: We cannot ship %{product_names} to your current location at the moment. Please change your shipping address or remove %{product_names} from your cart.
     products_sort_options:
       best_selling: Best Selling
@@ -1916,6 +1924,7 @@ en:
     sales_totals: Sales Totals
     same_as_shipping_address: Same as shipping address
     save_and_continue: Save and Continue
+    save_changes: Save Changes
     save_my_address: Save my address
     saving: Saving
     say_no: 'No'
@@ -1929,6 +1938,7 @@ en:
     search_order_number: Order Number
     search_results: Search results for '%{keywords}'
     search_results_for: Search results for %{query}
+    search_products: Search products
     searching: Searching
     secure_connection_type: Secure Connection Type
     security: Security
@@ -2291,6 +2301,7 @@ en:
     twitter: Twitter
     type: Type
     type_to_search: Type to search
+    type_to_search_products: Type to search for products
     unable_to_connect_to_gateway: Unable to connect to gateway.
     unable_to_create_reimbursements: Unable to create reimbursements because there are items pending manual intervention.
     under_price: Under %{price}

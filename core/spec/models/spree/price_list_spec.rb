@@ -174,4 +174,111 @@ describe Spree::PriceList, type: :model do
       expect(price_list.active?).to be false
     end
   end
+
+  describe '#add_products' do
+    let(:store) { create(:store, supported_currencies: 'USD,EUR,GBP') }
+    let(:price_list) { create(:price_list, store: store) }
+    let(:product1) { create(:product, stores: [store]) }
+    let(:product2) { create(:product, stores: [store]) }
+
+    it 'creates prices for all variants of the given products' do
+      expect {
+        price_list.add_products([product1.id, product2.id])
+      }.to change { price_list.prices.count }.by(6) # 2 products * 3 currencies
+    end
+
+    it 'creates prices for all supported currencies' do
+      price_list.add_products([product1.id])
+
+      currencies = price_list.prices.where(variant_id: product1.master.id).pluck(:currency)
+      expect(currencies).to match_array(%w[USD EUR GBP])
+    end
+
+    it 'creates prices with nil amount' do
+      price_list.add_products([product1.id])
+
+      expect(price_list.prices.pluck(:amount).uniq).to eq([nil])
+    end
+
+    it 'does not create duplicate prices for existing variants' do
+      price_list.prices.create!(variant: product1.master, currency: 'USD', amount: nil)
+
+      expect {
+        price_list.add_products([product1.id])
+      }.to change { price_list.prices.count }.by(2) # Only EUR and GBP, not USD
+    end
+
+    it 'handles empty product_ids' do
+      expect {
+        price_list.add_products([])
+      }.not_to change { price_list.prices.count }
+    end
+
+    it 'handles nil product_ids' do
+      expect {
+        price_list.add_products(nil)
+      }.not_to change { price_list.prices.count }
+    end
+
+    context 'with products having multiple variants' do
+      let(:product_with_variants) { create(:product, stores: [store]) }
+      let!(:variant1) { create(:variant, product: product_with_variants) }
+      let!(:variant2) { create(:variant, product: product_with_variants) }
+
+      it 'creates prices for all eligible variants' do
+        eligible_count = Spree::Variant.eligible.where(product_id: product_with_variants.id).count
+
+        expect {
+          price_list.add_products([product_with_variants.id])
+        }.to change { price_list.prices.count }.by(eligible_count * 3) # variants * 3 currencies
+      end
+    end
+  end
+
+  describe '#remove_products' do
+    let(:store) { create(:store, supported_currencies: 'USD,EUR,GBP') }
+    let(:price_list) { create(:price_list, store: store) }
+    let(:product1) { create(:product, stores: [store]) }
+    let(:product2) { create(:product, stores: [store]) }
+
+    before do
+      price_list.add_products([product1.id, product2.id])
+    end
+
+    it 'removes all prices for the given products' do
+      expect {
+        price_list.remove_products([product1.id])
+      }.to change { price_list.prices.count }.by(-3) # 1 product * 3 currencies
+    end
+
+    it 'removes prices for all currencies' do
+      price_list.remove_products([product1.id])
+
+      expect(price_list.prices.joins(:variant).where(spree_variants: { product_id: product1.id }).count).to eq(0)
+    end
+
+    it 'does not remove prices for other products' do
+      price_list.remove_products([product1.id])
+
+      expect(price_list.prices.joins(:variant).where(spree_variants: { product_id: product2.id }).count).to eq(3)
+    end
+
+    it 'handles empty product_ids' do
+      expect {
+        price_list.remove_products([])
+      }.not_to change { price_list.prices.count }
+    end
+
+    it 'handles nil product_ids' do
+      expect {
+        price_list.remove_products(nil)
+      }.not_to change { price_list.prices.count }
+    end
+
+    it 'removes prices for multiple products at once' do
+      expect {
+        price_list.remove_products([product1.id, product2.id])
+      }.to change { price_list.prices.count }.by(-6) # 2 products * 3 currencies
+    end
+  end
 end

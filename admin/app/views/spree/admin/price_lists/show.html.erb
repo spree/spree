@@ -1,0 +1,14 @@
+<%= content_for :page_title do %>
+  <%= page_header_back_button(spree.admin_price_lists_path) %>
+  <%= @price_list.name %>
+<% end %>
+
+<div class="grid grid-cols-12 gap-6">
+  <div class="col-span-12 lg:col-span-8">
+    <%= turbo_frame_tag :price_list_products, src: spree.admin_price_list_products_path(@price_list) %>
+  </div>
+
+  <div class="col-span-12 lg:col-span-4">
+
+  </div>
+</div>

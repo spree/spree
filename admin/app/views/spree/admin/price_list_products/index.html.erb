@@ -1,0 +1,56 @@
+<%= turbo_frame_tag :price_list_products do %>
+  <div class="card mb-6" data-controller="media-form" data-media-form-delete-url-value="<%= spree.bulk_destroy_admin_price_list_products_path(@parent) %>">
+    <div class="card-header flex justify-between items-center">
+      <h5 class="card-title">
+        <%= Spree.t(:products) %>
+        <span class="badge badge-info ml-2" id="products_count"><%= @price_list.products.distinct.count %></span>
+      </h5>
+      <div class="flex gap-2">
+        <button type="button"
+                data-media-form-target="deleteButton"
+                data-action="media-form#deleteSelected"
+                class="btn btn-sm btn-danger btn-outline hidden">
+          <%= icon('trash') %>
+          <%= Spree.t(:delete_selected) %>
+        </button>
+        <%= link_to Spree.t(:add_products),
+            spree.bulk_new_admin_price_list_products_path(@price_list),
+            class: 'btn btn-sm btn-light',
+            data: { action: 'drawer#open', turbo_frame: :drawer } %>
+        <% if @price_list.prices.any? %>
+          <%= link_to Spree.t(:edit_prices),
+              spree.edit_prices_admin_price_list_path(@price_list),
+              class: 'btn btn-sm btn-primary',
+              data: { turbo_frame: '_top' } %>
+        <% end %>
+      </div>
+    </div>
+
+    <% if @collection.any? %>
+      <div class="table-responsive">
+        <table class="table" id="listing_price_list_products">
+          <thead>
+            <tr>
+              <th scope="col" class="pr-0 w-5"></th>
+              <th scope="col"><%= Spree.t(:name) %></th>
+              <th scope="col" class="text-center"><%= Spree.t(:status) %></th>
+              <th scope="col"><%= Spree.t(:inventory) %></th>
+              <th scope="col"><%= Spree.t(:price) %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <%= render partial: 'table_row', collection: @collection, as: :product %>
+          </tbody>
+        </table>
+      </div>
+
+      <%= render partial: 'spree/admin/shared/index_table_options', locals: { collection: @collection } %>
+    <% else %>
+      <div class="card-body">
+        <p class="text-gray-500 text-center py-8">
+          <%= Spree.t(:no_products_in_price_list) %>
+        </p>
+      </div>
+    <% end %>
+  </div>
+<% end %>

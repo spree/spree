@@ -3,12 +3,21 @@ module Spree
     acts_as_paranoid
     acts_as_list scope: :store
 
+    include Spree::SingleStoreResource
+
     MATCH_POLICIES = %w[all any].freeze
 
     belongs_to :store, class_name: 'Spree::Store'
 
     has_many :price_rules, class_name: 'Spree::PriceRule', dependent: :destroy
     has_many :prices, class_name: 'Spree::Price', dependent: :destroy_async
+    has_many :variants, -> { where(spree_prices: { deleted_at: nil }) }, through: :prices, source: :variant
+    has_many :products, -> { where(spree_prices: { deleted_at: nil }) }, through: :variants, source: :product
+    alias price_list_products products
+
+    accepts_nested_attributes_for :prices,
+                                  allow_destroy: true,
+                                  reject_if: ->(attrs) { attrs['amount'].blank? && attrs['id'].blank? }
 
     validates :name, :store, presence: true
     validates :match_policy, presence: true, inclusion: { in: MATCH_POLICIES }
@@ -45,6 +54,10 @@ module Spree
         .by_position
     end
 
+    def self.match_policies
+      MATCH_POLICIES.map { |key| [Spree.t(key), key] }
+    end
+
     def applicable?(context)
       return false unless active_or_scheduled?
       return false unless within_date_range?(context.date || Time.current)
@@ -67,6 +80,32 @@ module Spree
 
     def active_or_scheduled?
       active? || scheduled?
+    end
+
+    def add_products(product_ids)
+      return if product_ids.blank?
+
+      currencies = store.supported_currencies_list.map(&:iso_code)
+      variant_ids = Spree::Variant.eligible.where(product_id: product_ids).pluck(:id)
+
+      currencies.each do |currency|
+        existing_variant_ids = prices.where(currency: currency).pluck(:variant_id)
+        new_variant_ids = variant_ids - existing_variant_ids
+
+        new_variant_ids.each do |variant_id|
+          prices.create!(
+            variant_id: variant_id,
+            currency: currency,
+            amount: nil
+          )
+        end
+      end
+    end
+
+    def remove_products(product_ids)
+      return if product_ids.blank?
+
+      prices.joins(:variant).where(spree_variants: { product_id: product_ids }).destroy_all
     end
 
     private

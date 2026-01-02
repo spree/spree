@@ -94,11 +94,19 @@ Rails.application.config.after_initialize do
           icon: 'package',
           position: 30,
           if: -> { can?(:manage, Spree::Product) } do |products|
+
+    # Price Lists
+    products.add :price_lists,
+                label: :price_lists,
+                url: :admin_price_lists_path,
+                position: 10,
+                active: -> { %w[price_lists price_rules].include?(controller_name) },
+                if: -> { can?(:manage, Spree::PriceList) }
     # Stock
     products.add :stock,
                 label: :stock,
                 url: :admin_stock_items_path,
-                position: 10,
+                position: 20,
                 active: -> { %w[stock_items stock_transfers].include?(controller_name) },
                 if: -> { can?(:manage, Spree::StockItem) || can?(:manage, Spree::StockTransfer) }
 
@@ -106,7 +114,7 @@ Rails.application.config.after_initialize do
     products.add :taxonomies,
                 label: :taxonomies,
                 url: :admin_taxonomies_path,
-                position: 20,
+                position: 30,
                 active: -> { %w[taxonomies taxons].include?(controller_name) },
                 if: -> { can?(:manage, Spree::Taxonomy) && can?(:manage, Spree::Taxon) }
 
@@ -114,7 +122,7 @@ Rails.application.config.after_initialize do
     products.add :options,
                 label: :options,
                 url: :admin_option_types_path,
-                position: 30,
+                position: 40,
                 active: -> { %w[option_types option_values].include?(controller_name) },
                 if: -> { can?(:manage, Spree::OptionType) }
 
@@ -122,7 +130,7 @@ Rails.application.config.after_initialize do
     products.add :properties,
                 label: :properties,
                 url: :admin_properties_path,
-                position: 40,
+                position: 50,
                 if: -> { can?(:manage, Spree::Property) && Spree::Config.product_properties_enabled }
   end
 
