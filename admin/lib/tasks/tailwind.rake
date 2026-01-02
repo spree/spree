@@ -10,8 +10,20 @@ module Spree
           Rails.root.join("app/assets/builds/spree/admin/application.css")
         end
 
+        def resolved_input_path
+          Spree::Admin::Engine.root.join("app/assets/builds/spree_admin_resolved.css")
+        end
+
         def resolved_input_css
           File.read(input_path).gsub("$SPREE_ADMIN_PATH", Spree::Admin::Engine.root.to_s)
+        end
+
+        # Write resolved CSS to a temp file in the gem directory
+        # This ensures @source directives with relative paths resolve correctly
+        def write_resolved_input!
+          FileUtils.mkdir_p(resolved_input_path.dirname)
+          File.write(resolved_input_path, resolved_input_css)
+          resolved_input_path
         end
       end
     end
@@ -28,15 +40,21 @@ namespace :spree do
         output_path = Spree::Admin::TailwindHelper.output_path
         FileUtils.mkdir_p(output_path.dirname)
 
-        command = [Tailwindcss::Ruby.executable, "-i", "-", "-o", output_path.to_s]
+        # Write resolved CSS to temp file in gem directory so relative @source paths work
+        resolved_input = Spree::Admin::TailwindHelper.write_resolved_input!
+
+        command = [
+          Tailwindcss::Ruby.executable,
+          "-i", resolved_input.to_s,
+          "-o", output_path.to_s,
+          "--cwd", Spree::Admin::Engine.root.join("app/assets/tailwind/spree/admin").to_s
+        ]
         command << "--minify" unless Rails.env.development? || Rails.env.test?
 
         puts "Building Spree Admin Tailwind CSS..."
         puts "  Input: #{Spree::Admin::TailwindHelper.input_path}"
 
-        IO.popen(command, "w") do |io|
-          io.write(Spree::Admin::TailwindHelper.resolved_input_css)
-        end
+        system(*command)
 
         raise("Spree Admin Tailwind build failed") unless $?.success?
         puts "Done! Output: #{output_path}"
@@ -49,14 +67,21 @@ namespace :spree do
         output_path = Spree::Admin::TailwindHelper.output_path
         FileUtils.mkdir_p(output_path.dirname)
 
-        command = [Tailwindcss::Ruby.executable, "-i", "-", "-o", output_path.to_s, "--watch"]
+        # Write resolved CSS to temp file in gem directory so relative @source paths work
+        resolved_input = Spree::Admin::TailwindHelper.write_resolved_input!
+
+        command = [
+          Tailwindcss::Ruby.executable,
+          "-i", resolved_input.to_s,
+          "-o", output_path.to_s,
+          "--cwd", Spree::Admin::Engine.root.join("app/assets/tailwind/spree/admin").to_s,
+          "--watch"
+        ]
 
         puts "Watching Spree Admin Tailwind CSS for changes..."
         puts "  Input: #{Spree::Admin::TailwindHelper.input_path}"
 
-        IO.popen(command, "w") do |io|
-          io.write(Spree::Admin::TailwindHelper.resolved_input_css)
-        end
+        system(*command)
       end
     end
   end
