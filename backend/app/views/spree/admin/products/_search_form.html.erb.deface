@@ -1,0 +1,5 @@
+<!-- insert_after '[data-hook="search_products"] .field.actions' -->
+<div class="field">
+  <%= f.label :tags_name_cont, Spree.t(:tag) %>
+  <%= f.text_field :tags_name_cont, class: 'fullwidth' %>
+</div>
