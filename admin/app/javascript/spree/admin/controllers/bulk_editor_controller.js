@@ -341,11 +341,11 @@ export default class extends Controller {
       return
     }
 
-    // Escape key - exit edit mode without moving
+    // Escape key - exit edit mode and revert changes
     if (event.key === 'Escape') {
       if (this.editingCell) {
         event.preventDefault()
-        this.exitEditMode()
+        this.exitEditMode(true) // true = revert to original value
       }
       return
     }
@@ -375,18 +375,25 @@ export default class extends Controller {
     }
 
     this.editingCell = cell
+    this.editingCellOriginalValue = cell.value // Store value for Escape revert
     cell.readOnly = false
     cell.classList.add('editing')
     // Select all text for easy replacement
     cell.select()
   }
 
-  exitEditMode() {
+  exitEditMode(revert = false) {
     if (!this.editingCell) return
+
+    // Revert value if Escape was pressed
+    if (revert && this.editingCellOriginalValue !== undefined) {
+      this.editingCell.value = this.editingCellOriginalValue
+    }
 
     this.editingCell.readOnly = true
     this.editingCell.classList.remove('editing')
     this.editingCell = null
+    this.editingCellOriginalValue = undefined
   }
 
   // ==================== Keyboard Navigation ====================

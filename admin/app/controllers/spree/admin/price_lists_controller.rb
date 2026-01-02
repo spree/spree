@@ -6,11 +6,11 @@ module Spree
       # GET /admin/price_lists/:price_list_id/edit_prices
       def edit_prices
         @currency = params[:currency] || current_store.default_currency
-        @prices = @price_list.prices
-                             .includes(variant: [:product, :option_values])
-                             .where(currency: @currency)
-                             .joins(variant: :product)
-                             .order('spree_products.name ASC', 'spree_variants.position ASC')
+        @prices = @price_list.prices.
+                  includes(variant: [:product, { option_values: :option_type }]).
+                  where(currency: @currency).
+                  joins(variant: :product).
+                  order("#{Spree::Product.table_name}.name ASC", "#{Spree::Variant.table_name}.position ASC")
       end
 
       private

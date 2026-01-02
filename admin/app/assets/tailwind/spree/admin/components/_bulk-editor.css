@@ -2,19 +2,17 @@
 
 /* Cell states */
 [data-bulk-editor-target="cell"] {
-  @apply transition-colors duration-75 bg-gray-50 cursor-cell;
-  caret-color: transparent; /* Hide caret in selection mode */
+  @apply transition-colors duration-75 cursor-cell caret-transparent;
 }
 
 /* Focused cell in selection mode - still gray, cell cursor */
 [data-bulk-editor-target="cell"]:focus {
-  @apply bg-gray-100;
+  @apply bg-blue-100/50;
 }
 
 /* Editing mode - white background, text cursor, visible caret */
 [data-bulk-editor-target="cell"].editing {
-  @apply bg-white cursor-text;
-  caret-color: auto;
+  @apply bg-white cursor-text caret-inherit;
 }
 
 /* Form container needs relative positioning for fill handle */
@@ -24,20 +22,16 @@
 
 /* Prevent text selection during drag operations */
 [data-controller="bulk-editor"].fill-dragging {
-  user-select: none;
-  cursor: crosshair;
+  @apply select-none cursor-crosshair;
 }
 
 [data-controller="bulk-editor"].fill-dragging [data-bulk-editor-target="cell"] {
-  cursor: crosshair;
+  @apply cursor-crosshair;
 }
 
 /* Fill handle - blue dot at bottom-right corner of focused cell */
 .fill-handle {
-  @apply absolute w-2 h-2 bg-blue-600 border border-white rounded-sm cursor-crosshair z-10;
-  display: none;
-  transform: translate(50%, 50%);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  @apply absolute w-3 h-3 bg-blue-600 border border-white rounded-lg cursor-crosshair z-10 shadow-xs hidden;
 }
 
 .fill-handle:hover {
