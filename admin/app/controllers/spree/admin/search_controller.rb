@@ -17,6 +17,23 @@ module Spree
           render json: []
         end
       end
+
+      def tags
+        query = params[:q]&.strip
+
+        if query.present?
+          json = ActsAsTaggableOn::Tag.search_by_name(query).map do |tag|
+            {
+              id: tag.id,
+              name: tag.name
+            }
+          end
+
+          render json: json
+        else
+          render json: []
+        end
+      end
     end
   end
 end
