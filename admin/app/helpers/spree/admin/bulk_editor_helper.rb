@@ -11,6 +11,7 @@ module Spree
           'blur->bulk-editor#onCellBlur',
           'mousedown->bulk-editor#onCellMouseDown',
           'mouseenter->bulk-editor#onCellMouseEnter',
+          'dblclick->bulk-editor#onCellDoubleClick',
           'input->bulk-editor#markDirty',
           'keydown->bulk-editor#handleKeydown',
           # Copy/Paste/Fill (Ctrl for Windows/Linux, Meta for Mac)

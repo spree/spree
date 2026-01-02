@@ -48,10 +48,6 @@ import { Controller } from '@hotwired/stimulus'
 //
 export default class extends Controller {
   static targets = ['table', 'row', 'cell', 'saveButton', 'statusBar']
-  static values = {
-    dirtyClass: { type: String, default: 'bg-amber-50' },
-    selectedClass: { type: String, default: 'ring-2 ring-blue-500 ring-inset bg-blue-50' }
-  }
 
   connect() {
     this.dirtyInputs = new Set()
@@ -258,6 +254,11 @@ export default class extends Controller {
     }, 150)
   }
 
+  onCellDoubleClick(event) {
+    const cell = event.target
+    this.enterEditMode(cell)
+  }
+
   onCellMouseDown(event) {
     const cell = event.target
 
@@ -279,13 +280,14 @@ export default class extends Controller {
   }
 
   selectCell(cell) {
-    cell.classList.add(...this.selectedClassValue.split(' '))
+    cell.classList.add('selected')
     this.selectedCells.add(cell)
     this.updateStatusBar()
+    this.updateSelectionOverlay()
   }
 
   deselectCell(cell) {
-    cell.classList.remove(...this.selectedClassValue.split(' '))
+    cell.classList.remove('selected')
     this.selectedCells.delete(cell)
   }
 
@@ -293,6 +295,7 @@ export default class extends Controller {
     this.selectedCells.forEach(cell => this.deselectCell(cell))
     this.selectedCells.clear()
     this.updateStatusBar()
+    this.hideSelectionOverlay()
   }
 
   selectRange(startCell, endCell) {
@@ -304,15 +307,68 @@ export default class extends Controller {
     const minCol = Math.min(startCoords.col, endCoords.col)
     const maxCol = Math.max(startCoords.col, endCoords.col)
 
+    // Store selection bounds
+    this.selectionBounds = { minRow, maxRow, minCol, maxCol }
+
     this.clearSelection()
 
     this.cellTargets.forEach(cell => {
       const coords = this.getCellCoords(cell)
       if (coords.row >= minRow && coords.row <= maxRow &&
           coords.col >= minCol && coords.col <= maxCol) {
-        this.selectCell(cell)
+        cell.classList.add('selected')
+        this.selectedCells.add(cell)
       }
     })
+
+    this.updateStatusBar()
+    this.updateSelectionOverlay()
+  }
+
+  // Selection overlay - draws a single border around the entire selection
+  createSelectionOverlay() {
+    if (this.selectionOverlay) return
+
+    this.selectionOverlay = document.createElement('div')
+    this.selectionOverlay.className = 'selection-overlay'
+    this.element.appendChild(this.selectionOverlay)
+  }
+
+  updateSelectionOverlay() {
+    if (this.selectedCells.size === 0) {
+      this.hideSelectionOverlay()
+      return
+    }
+
+    this.createSelectionOverlay()
+
+    // Get bounding rect of all selected cells
+    const cells = Array.from(this.selectedCells)
+    const containerRect = this.element.getBoundingClientRect()
+
+    let minLeft = Infinity, minTop = Infinity
+    let maxRight = -Infinity, maxBottom = -Infinity
+
+    cells.forEach(cell => {
+      const rect = cell.getBoundingClientRect()
+      minLeft = Math.min(minLeft, rect.left)
+      minTop = Math.min(minTop, rect.top)
+      maxRight = Math.max(maxRight, rect.right)
+      maxBottom = Math.max(maxBottom, rect.bottom)
+    })
+
+    // Position overlay relative to container
+    this.selectionOverlay.style.display = 'block'
+    this.selectionOverlay.style.left = `${minLeft - containerRect.left}px`
+    this.selectionOverlay.style.top = `${minTop - containerRect.top}px`
+    this.selectionOverlay.style.width = `${maxRight - minLeft}px`
+    this.selectionOverlay.style.height = `${maxBottom - minTop}px`
+  }
+
+  hideSelectionOverlay() {
+    if (this.selectionOverlay) {
+      this.selectionOverlay.style.display = 'none'
+    }
   }
 
   selectAll(event) {
@@ -625,8 +681,12 @@ export default class extends Controller {
     }
   }
 
-  setCellValue(cell, value) {
+  setCellValue(cell, value, updateOriginal = false) {
     cell.value = value
+    // Optionally update the original value so cell doesn't appear dirty
+    if (updateOriginal) {
+      cell.dataset.originalValue = value
+    }
     cell.dispatchEvent(new Event('input', { bubbles: true }))
   }
 
@@ -638,10 +698,8 @@ export default class extends Controller {
     const currentValue = input.value
 
     if (currentValue !== originalValue) {
-      input.classList.add(this.dirtyClassValue)
       this.dirtyInputs.add(input)
     } else {
-      input.classList.remove(this.dirtyClassValue)
       this.dirtyInputs.delete(input)
     }
 

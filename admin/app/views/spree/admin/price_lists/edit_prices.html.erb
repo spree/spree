@@ -64,7 +64,7 @@
               <%# Variant rows %>
               <% prices.each do |price| %>
                 <%= f.fields_for :prices, price, index: row_index do |pf| %>
-                  <tr class="border-b border-gray-100" data-bulk-editor-target="row">
+                  <tr data-bulk-editor-target="row">
                     <td class="pl-14 pr-4 py-2 text-sm text-gray-600"><%= price.variant.options_text.presence %></td>
                     <td class="px-4 py-2 text-sm text-gray-400 font-mono"><%= price.variant.sku %></td>
                     <td class="p-0">
@@ -74,7 +74,7 @@
                       <%= pf.number_field :amount,
                           step: 0.01,
                           placeholder: '0.00',
-                          class: 'w-full px-4 py-2 border-0 focus:outline-none text-right tabular-nums',
+                          class: 'w-full px-4 py-2 focus:outline-none text-right tabular-nums',
                           data: {
                             bulk_editor_target: 'cell',
                             row: row_index,
@@ -87,7 +87,7 @@
                       <%= pf.number_field :compare_at_amount,
                           step: 0.01,
                           placeholder: '0.00',
-                          class: 'w-full px-4 py-2 border-0 focus:outline-none text-right tabular-nums',
+                          class: 'w-full px-4 py-2 focus:outline-none text-right tabular-nums',
                           data: {
                             bulk_editor_target: 'cell',
                             row: row_index,

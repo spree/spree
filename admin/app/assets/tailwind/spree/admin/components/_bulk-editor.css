@@ -1,18 +1,38 @@
 /* Bulk Editor - Spreadsheet-style price editing */
 
-/* Cell states */
-[data-bulk-editor-target="cell"] {
-  @apply transition-colors duration-75 cursor-cell caret-transparent;
+/* Table with collapsed borders */
+[data-bulk-editor-target="table"] {
+  border-collapse: collapse;
 }
 
-/* Focused cell in selection mode - still gray, cell cursor */
+/* Table cells with borders */
+[data-bulk-editor-target="table"] td {
+  @apply border border-gray-200;
+}
+
+/* Input cell states */
+[data-bulk-editor-target="cell"] {
+  @apply transition-colors duration-75 cursor-cell caret-transparent border-0;
+}
+
+/* Selected cells - light background, no individual border */
+[data-bulk-editor-target="cell"].selected {
+  @apply bg-blue-50;
+}
+
+/* Focused cell in selection mode */
 [data-bulk-editor-target="cell"]:focus {
-  @apply bg-blue-100/50;
+  @apply bg-blue-100;
 }
 
 /* Editing mode - white background, text cursor, visible caret */
 [data-bulk-editor-target="cell"].editing {
   @apply bg-white cursor-text caret-inherit;
+}
+
+/* Selection overlay - single border around entire selection */
+.selection-overlay {
+  @apply absolute pointer-events-none border-2 border-blue-500 z-10 hidden;
 }
 
 /* Form container needs relative positioning for fill handle */
