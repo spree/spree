@@ -694,6 +694,19 @@ describe Spree::Payment, type: :model do
           payment.void_transaction!
         end
       end
+
+      context 'if response_code is blank' do
+        before do
+          payment.response_code = nil
+          payment.state = 'pending'
+        end
+
+        it 'voids the payment without calling the gateway' do
+          expect(payment.payment_method).not_to receive(:void)
+          payment.void_transaction!
+          expect(payment.state).to eq('void')
+        end
+      end
     end
   end
 
