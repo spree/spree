@@ -63,6 +63,7 @@ module Spree
 
       def void_transaction!
         return true if void?
+        return void if response_code.blank?
 
         protect_from_connection_error do
           if payment_method.payment_profiles_supported?
