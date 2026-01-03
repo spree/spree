@@ -25,6 +25,12 @@ module Spree
         end
       end
 
+      def turbo_close_drawer
+        turbo_stream.replace 'drawer-dialog' do
+          render 'spree/admin/shared/drawer'
+        end
+      end
+
       def turbo_render_alerts(frame_name = :alerts)
         turbo_stream.replace frame_name do
           render 'spree/admin/shared/alerts', frame_name: frame_name

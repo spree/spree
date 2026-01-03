@@ -32,6 +32,20 @@ Spree::Core::Engine.add_routes do
     # stock
     resources :stock_items, only: [:index, :update, :destroy]
     resources :stock_transfers, except: [:edit, :update]
+    # price lists
+    resources :price_lists do
+      resources :price_rules, only: [:new, :create, :edit, :update, :destroy]
+      resources :products, only: [:index], controller: 'price_list_products' do
+        collection do
+          get :bulk_new
+          post :bulk_create
+          delete :bulk_destroy
+        end
+      end
+      member do
+        get :edit_prices
+      end
+    end
     # taxonomies and taxons
     resources :taxonomies do
       resources :taxons do

@@ -5,11 +5,24 @@ options_param_name ||= :options
 not_selected_options = product_not_selected_options(product, selected_variant, options_param_name: options_param_name)
 all_options_selected = (params[options_param_name].present? || @variant_from_options.present?) && not_selected_options.empty?
 not_all_options_selected = !all_options_selected && product.any_variant_available?(current_currency)
+
+# Build pricing context for selected variant
+if selected_variant
+  variant_pricing_context = pricing_context_for_variant(selected_variant)
+  variant_price = selected_variant.price_for(variant_pricing_context)
+else
+  variant_price = nil
+end
+
 variant_not_available = selected_variant.nil? ||
                         product.discontinued? ||
                         selected_variant.discontinued? ||
                         !selected_variant.purchasable? ||
-                        selected_variant.price_in(current_currency).amount.nil?
+                        variant_price&.amount.nil?
+
+# Build pricing context for product
+product_pricing_context = pricing_context_for_variant(product)
+product_price = product.default_variant.price_for(product_pricing_context)
 %>
 
 <div class='<%= sticky_button_classes %> bottom-0 flex flex-col gap-4 z-10' data-sticky-button-target='stickyButton'>
@@ -22,7 +35,7 @@ variant_not_available = selected_variant.nil? ||
                     ].compact.join(' '),
                     product_form_target: 'submit'
                   },
-                  disabled: product.price_in(current_currency).zero? do %>
+                  disabled: product_price.zero? do %>
     <% if not_selected_options.size == 1 %>
       <span><%= Spree.t('storefront.variant_picker.please_choose', option_type: not_selected_options[0].presentation) %></span>
     <% elsif not_all_options_selected %>
@@ -47,7 +60,7 @@ variant_not_available = selected_variant.nil? ||
                     ].compact.join(' '),
                     product_form_target: 'submit'
                   },
-                  disabled: product.price_in(current_currency).zero? do %>
+                  disabled: product_price.zero? do %>
       <% if not_selected_options.size == 1 %>
         <span><%= Spree.t('storefront.variant_picker.please_choose', option_type: not_selected_options[0].presentation) %></span>
       <% elsif not_all_options_selected %>

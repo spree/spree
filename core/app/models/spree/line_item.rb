@@ -14,6 +14,7 @@ module Spree
       belongs_to :variant, -> { with_deleted }, class_name: 'Spree::Variant'
     end
     belongs_to :tax_category, -> { with_deleted }, class_name: 'Spree::TaxCategory'
+    belongs_to :price_list, class_name: 'Spree::PriceList', optional: true
 
     has_one :product, -> { with_deleted }, class_name: 'Spree::Product', through: :variant
 
@@ -71,9 +72,11 @@ module Spree
     end
 
     def update_price
-      currency_price = variant.price_in(order.currency)
+      context = Spree::Pricing::Context.from_order(variant, order, quantity: quantity)
+      currency_price = variant.price_for(context)
 
       self.price = currency_price.price_including_vat_for(tax_zone: tax_zone) if currency_price.present?
+      self.price_list_id = currency_price.price_list_id if currency_price.present?
     end
 
     def copy_tax_category
@@ -238,8 +241,27 @@ module Spree
 
     def update_adjustments
       if saved_change_to_quantity?
+        recalculate_price unless previously_new_record?
         recalculate_adjustments
         update_tax_charge # Called to ensure pre_tax_amount is updated.
+      end
+    end
+
+    def recalculate_price
+      context = Spree::Pricing::Context.from_order(variant, order, quantity: quantity)
+      currency_price = variant.price_for(context)
+
+      return unless currency_price.present?
+
+      new_price = currency_price.price_including_vat_for(tax_zone: tax_zone)
+
+      return unless new_price.present?
+
+      new_price_list_id = currency_price.price_list_id
+
+      # Only update if price or price list changed
+      if new_price != price || new_price_list_id != price_list_id
+        update_columns(price: new_price, price_list_id: new_price_list_id)
       end
     end
 

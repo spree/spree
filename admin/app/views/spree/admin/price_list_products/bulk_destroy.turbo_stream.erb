@@ -1,0 +1,3 @@
+<% params[:ids]&.each do |id| %>
+  <%= turbo_stream.remove("product_#{id}") %>
+<% end %>

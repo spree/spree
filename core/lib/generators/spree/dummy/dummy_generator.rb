@@ -46,6 +46,11 @@ module Spree
       args << '--skip-kamal'
       args << '--skip-devcontainer'
       args << '--skip-solid'
+      args << '--skip-thruster'
+      args << '--skip-bundler-audit'
+      args << '--skip-dev-gems'
+      args << '--skip-action-mailbox'
+      args << '--skip-jbuilder'
 
       # API mode (implies skip-asset-pipeline, skip-javascript, skip-hotwire)
       args << '--api' if options[:api]
@@ -89,7 +94,7 @@ module Spree
     def inject_yaml_permitted_classes
       inside dummy_path do
         inject_into_file 'config/application.rb', %Q[
-    config.active_record.yaml_column_permitted_classes = [Symbol, BigDecimal, ActiveSupport::HashWithIndifferentAccess]
+    config.active_record.yaml_column_permitted_classes = [Symbol, BigDecimal, ActiveSupport::HashWithIndifferentAccess, ActiveSupport::TimeWithZone]
         ], after: /config\.load_defaults.*$/, verbose: true
       end
     end

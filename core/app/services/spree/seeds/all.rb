@@ -4,28 +4,30 @@ module Spree
       prepend Spree::ServiceModule::Base
 
       def call
-        # GEO
-        Countries.call
-        States.call
-        Zones.call
+        Spree::Events.disable do
+          # GEO
+          Countries.call
+          States.call
+          Zones.call
 
-        # user roles
-        Roles.call
+          # user roles
+          Roles.call
 
-        # additional data
-        ReturnsEnvironment.call
-        ShippingCategories.call
-        StoreCreditCategories.call
-        TaxCategories.call
-        DigitalDelivery.call
+          # additional data
+          ReturnsEnvironment.call
+          ShippingCategories.call
+          StoreCreditCategories.call
+          TaxCategories.call
+          DigitalDelivery.call
 
-        # store & stock location
-        Stores.call
-        StockLocations.call
-        AdminUser.call
+          # store & stock location
+          Stores.call
+          StockLocations.call
+          AdminUser.call
 
-        # add store resources
-        PaymentMethods.call
+          # add store resources
+          PaymentMethods.call
+        end
       end
     end
   end

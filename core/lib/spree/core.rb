@@ -436,3 +436,5 @@ require 'spree/core/preferences/scoped_store'
 require 'spree/core/preferences/runtime_configuration'
 
 require 'spree/core/permission_configuration'
+require 'spree/core/pricing/context'
+require 'spree/core/pricing/resolver'
