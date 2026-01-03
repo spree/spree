@@ -100,13 +100,11 @@ module Spree
     end
 
     def required_quantity
-      return @required_quantity unless @required_quantity.nil?
-
-      @required_quantity = if exchanged_unit?
-                             original_return_item.return_quantity
-                           else
-                             line_item.quantity
-                           end
+      @required_quantity ||= if exchanged_unit?
+                               original_return_item.return_quantity
+                             else
+                               quantity
+                             end
     end
 
     def exchanged_unit?
