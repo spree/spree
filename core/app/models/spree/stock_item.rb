@@ -6,6 +6,8 @@ module Spree
     include Spree::Metadata
     include Spree::StockItem::Webhooks
 
+    publishes_lifecycle_events
+
     with_options inverse_of: :stock_items do
       belongs_to :stock_location, class_name: 'Spree::StockLocation'
       belongs_to :variant, -> { with_deleted }, class_name: 'Spree::Variant'

@@ -5,6 +5,8 @@ module Spree
     include Spree::Metafields
     include Spree::Metadata
 
+    publishes_lifecycle_events
+
     belongs_to :stock_location
     belongs_to :store, class_name: 'Spree::Store', inverse_of: :customer_returns
 

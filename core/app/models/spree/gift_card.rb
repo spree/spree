@@ -5,6 +5,8 @@ module Spree
     include Spree::Metafields
     include Spree::Security::GiftCards if defined?(Spree::Security::GiftCards)
 
+    publishes_lifecycle_events
+
     #
     # State machine
     #

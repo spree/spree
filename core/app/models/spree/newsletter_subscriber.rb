@@ -5,6 +5,8 @@ module Spree
     include Spree::NewsletterSubscriber::Emails
     include Spree::Metafields
 
+    publishes_lifecycle_events
+
     has_secure_token :verification_token
 
     #

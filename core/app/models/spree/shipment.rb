@@ -17,6 +17,8 @@ module Spree
     include Spree::Shipment::Webhooks
     include Spree::Shipment::CustomEvents
 
+    publishes_lifecycle_events
+
     with_options inverse_of: :shipments do
       belongs_to :address, class_name: 'Spree::Address'
       belongs_to :order, class_name: 'Spree::Order', touch: true

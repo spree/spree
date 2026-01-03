@@ -1,5 +1,7 @@
 module Spree
   class Digital < Spree.base_class
+    publishes_lifecycle_events
+
     belongs_to :variant
     has_many :digital_links, dependent: :destroy
 

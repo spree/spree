@@ -2,6 +2,8 @@ module Spree
   class Wishlist < Spree.base_class
     include Spree::SingleStoreResource
 
+    publishes_lifecycle_events
+
     if Rails::VERSION::STRING >= '7.1.0'
       has_secure_token on: :save
     else

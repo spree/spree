@@ -3,6 +3,8 @@ module Spree
     include Spree::Core::NumberGenerator.new(prefix: 'RA', length: 9)
     include Spree::NumberIdentifier
 
+    publishes_lifecycle_events
+
     belongs_to :order, class_name: 'Spree::Order', inverse_of: :return_authorizations
 
     has_many :return_items, inverse_of: :return_authorization, dependent: :destroy

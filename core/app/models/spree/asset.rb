@@ -4,6 +4,8 @@ module Spree
     include Spree::Metafields
     include Spree::Metadata
 
+    publishes_lifecycle_events
+
     EXTERNAL_URL_METAFIELD_KEY = 'external.url'
 
     belongs_to :viewable, polymorphic: true, touch: true
