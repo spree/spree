@@ -3,6 +3,8 @@ module Spree
     extend DisplayMoney
     money_methods :total, :price
 
+    publishes_lifecycle_events
+
     belongs_to :variant, class_name: 'Spree::Variant'
     belongs_to :wishlist, class_name: 'Spree::Wishlist'
 

@@ -28,6 +28,8 @@ module Spree
     include Spree::NumberIdentifier
     include Spree::NumberAsParam
     include Spree::SingleStoreResource
+
+    publishes_lifecycle_events
     include Spree::MemoizedData
     include Spree::Metafields
     include Spree::Metadata

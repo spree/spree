@@ -3,6 +3,8 @@ module Spree
     extend DisplayMoney
     include Spree::SingleStoreResource
 
+    publishes_lifecycle_events
+
     #
     # Associations
     #

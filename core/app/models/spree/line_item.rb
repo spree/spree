@@ -3,6 +3,8 @@ module Spree
     include Spree::Metafields
     include Spree::Metadata
 
+    publishes_lifecycle_events
+
     attribute :quantity, :integer, default: 1
 
     before_validation :ensure_valid_quantity

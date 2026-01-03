@@ -8,6 +8,8 @@ module Spree
     include Spree::StockMovement::Webhooks
     include Spree::StockMovement::CustomEvents
 
+    publishes_lifecycle_events
+
     belongs_to :stock_item, class_name: 'Spree::StockItem', inverse_of: :stock_movements
     belongs_to :originator, polymorphic: true
 

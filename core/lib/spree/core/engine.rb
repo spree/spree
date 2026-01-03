@@ -28,7 +28,6 @@ module Spree
                                :analytics_events,
                                :analytics_event_handlers,
                                :integrations,
-                               :eventable_models,
                                :subscribers)
       SpreeCalculators = Struct.new(:shipping_methods, :tax_rates, :promotion_actions_create_adjustments, :promotion_actions_create_item_adjustments)
       PromoEnvironment = Struct.new(:rules, :actions)
@@ -276,44 +275,6 @@ module Spree
           Spree::Addresses::PhoneValidator
         ]
 
-        # Models that automatically emit lifecycle events (create, update, destroy)
-        # Developers can add/remove models from this list in their initializers
-        Rails.application.config.spree.eventable_models = [
-          Spree::Asset,
-          Spree::CustomerReturn,
-          Spree::Digital,
-          Spree::DigitalLink,
-          Spree::Export,
-          Spree::GiftCard,
-          Spree::GiftCardBatch,
-          Spree::Import,
-          Spree::LineItem,
-          Spree::NewsletterSubscriber,
-          Spree::Order,
-          Spree::Payment,
-          Spree::Post,
-          Spree::PostCategory,
-          Spree::Price,
-          Spree::Product,
-          Spree::Promotion,
-          Spree::Refund,
-          Spree::Report,
-          Spree::ReturnAuthorization,
-          Spree::Shipment,
-          Spree::StockItem,
-          Spree::StockMovement,
-          Spree::StockTransfer,
-          Spree::StoreCredit,
-          Spree::Variant,
-          Spree::WishedItem,
-          Spree::Wishlist
-        ]
-
-        # Enable lifecycle events for configured models
-        Rails.application.config.spree.eventable_models.each do |model|
-          model.publishes_lifecycle_events if model.respond_to?(:publishes_lifecycle_events)
-        end
-
         # Attach event log subscriber if enabled
         if Spree::Config.events_log_enabled
           Spree::EventLogSubscriber.attach_to_notifications
@@ -384,24 +345,6 @@ module Spree
         # Load application's model / class decorators
         Dir.glob(File.join(File.dirname(__FILE__), '../../../app/**/*_decorator*.rb')) do |c|
           Rails.configuration.cache_classes ? require(c) : load(c)
-        end
-
-        # Re-enable lifecycle events for configured models after code reload
-        # This is needed because after_commit callbacks are lost when classes are reloaded
-        # We must resolve the constants fresh because Zeitwerk creates new class objects
-        Rails.application.config.spree.eventable_models&.each do |model|
-          # Resolve the model constant fresh to handle code reload
-          resolved_model = begin
-            model.is_a?(String) ? model.constantize : model.name.constantize
-          rescue NameError
-            nil
-          end
-
-          next unless resolved_model
-
-          # Reset lifecycle_events_enabled so callbacks can be re-registered
-          resolved_model.lifecycle_events_enabled = false if resolved_model.respond_to?(:lifecycle_events_enabled=)
-          resolved_model.publishes_lifecycle_events if resolved_model.respond_to?(:publishes_lifecycle_events)
         end
 
         # Reset and re-activate event subscribers on code reload

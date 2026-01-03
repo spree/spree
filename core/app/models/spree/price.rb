@@ -2,6 +2,8 @@ module Spree
   class Price < Spree.base_class
     include Spree::VatPriceCalculation
 
+    publishes_lifecycle_events
+
     acts_as_paranoid
 
     MAXIMUM_AMOUNT = BigDecimal('99_999_999.99')

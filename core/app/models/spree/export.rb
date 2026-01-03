@@ -11,6 +11,8 @@ module Spree
 
     include Spree::Core::NumberGenerator.new(prefix: 'EF')
 
+    publishes_lifecycle_events
+
     # Set event prefix for all Export subclasses
     # This ensures Spree::Exports::Products publishes 'export.create' not 'products.create'
     self.event_prefix = 'export'

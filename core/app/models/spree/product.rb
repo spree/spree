@@ -36,6 +36,8 @@ module Spree
       include Spree::VendorConcern
     end
 
+    publishes_lifecycle_events
+
     MEMOIZED_METHODS = %w[total_on_hand taxonomy_ids taxon_and_ancestors category
                           default_variant_id tax_category default_variant
                           default_image secondary_image

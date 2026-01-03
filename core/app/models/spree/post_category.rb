@@ -4,6 +4,8 @@ module Spree
     include Spree::Metafields
     extend FriendlyId
 
+    publishes_lifecycle_events
+
     friendly_id :slug_candidates, use: %i[slugged scoped history], scope: %i[store_id]
 
     #

@@ -8,6 +8,8 @@ module Spree
     include Spree::Metadata
     include Spree::Variant::Webhooks
 
+    publishes_lifecycle_events
+
     MEMOIZED_METHODS = %w(purchasable in_stock on_sale backorderable tax_category options_text compare_at_price)
 
     DIMENSION_UNITS = %w[mm cm in ft]

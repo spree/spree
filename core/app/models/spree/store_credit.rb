@@ -4,6 +4,8 @@ module Spree
     include Spree::Metafields
     include Spree::Metadata
 
+    publishes_lifecycle_events
+
     acts_as_paranoid
 
     VOID_ACTION       = 'void'.freeze

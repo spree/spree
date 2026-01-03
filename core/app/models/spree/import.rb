@@ -7,6 +7,8 @@ module Spree
 
     include Spree::Core::NumberGenerator.new(prefix: 'IM')
 
+    publishes_lifecycle_events
+
     # Set event prefix for all Import subclasses
     # This ensures Spree::Imports::Products publishes 'import.create' not 'products.create'
     self.event_prefix = 'import'
