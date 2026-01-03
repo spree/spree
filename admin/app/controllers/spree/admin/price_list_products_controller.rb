@@ -13,7 +13,10 @@ module Spree
       def bulk_create
         parent.add_products(params[:product_ids])
 
-        flash[:success] = Spree.t(:products_added)
+        @collection = collection
+        @price_list = parent
+
+        flash.now[:success] = Spree.t(:products_added)
       end
 
       # DELETE /admin/price_lists/:price_list_id/products/bulk_destroy.turbo_stream
@@ -25,6 +28,10 @@ module Spree
 
       def model_class
         Spree::Product
+      end
+
+      def scope
+        parent.products.distinct
       end
     end
   end

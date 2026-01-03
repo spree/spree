@@ -45,22 +45,21 @@ RSpec.describe Spree::Admin::PriceListProductsController, type: :controller do
   end
 
   describe 'POST #bulk_create' do
-    subject(:bulk_create) { post :bulk_create, params: params }
+    subject(:bulk_create) { post :bulk_create, params: params, format: :turbo_stream }
 
     let(:product1) { create(:product, stores: [store]) }
     let(:product2) { create(:product, stores: [store]) }
-    let(:currency) { 'USD' }
 
     let(:params) do
       {
         price_list_id: price_list.id,
-        product_ids: [product1.id, product2.id],
-        currency: currency
+        product_ids: [product1.id, product2.id]
       }
     end
 
-    it 'creates price records for all variants of the products' do
-      expect { bulk_create }.to change(Spree::Price.for_price_list(price_list), :count).by(2)
+    it 'creates price records for all variants of the products in all currencies' do
+      # 2 products * 3 currencies = 6 prices
+      expect { bulk_create }.to change(Spree::Price.for_price_list(price_list), :count).by(6)
     end
 
     it 'creates prices with nil amount' do
@@ -70,23 +69,22 @@ RSpec.describe Spree::Admin::PriceListProductsController, type: :controller do
       expect(prices.pluck(:amount).uniq).to eq([nil])
     end
 
-    it 'creates prices with the specified currency' do
+    it 'creates prices for all supported currencies' do
       bulk_create
 
-      prices = Spree::Price.for_price_list(price_list)
-      expect(prices.pluck(:currency).uniq).to eq([currency])
+      prices = Spree::Price.for_price_list(price_list).where(variant: product1.master)
+      expect(prices.pluck(:currency)).to match_array(store.supported_currencies_list.map(&:iso_code))
     end
 
-    it 'redirects to the edit page with a success notice' do
+    it 'sets a flash success message' do
       bulk_create
 
-      expect(response).to redirect_to(edit_admin_price_list_path(price_list))
-      expect(flash[:notice]).to eq(Spree.t(:products_added))
+      expect(flash[:success]).to eq(Spree.t(:products_added))
     end
 
     context 'when some products already have prices' do
       let!(:existing_price) do
-        create(:price, variant: product1.master, price_list: price_list, currency: currency, amount: 99.99)
+        create(:price, variant: product1.master, price_list: price_list, currency: 'USD', amount: 99.99)
       end
 
       it 'does not overwrite existing prices' do
@@ -96,8 +94,11 @@ RSpec.describe Spree::Admin::PriceListProductsController, type: :controller do
         expect(existing_price.amount).to eq(99.99)
       end
 
-      it 'only creates prices for products without existing prices' do
-        expect { bulk_create }.to change(Spree::Price.for_price_list(price_list), :count).by(1)
+      it 'only creates prices for currencies without existing prices' do
+        # product1 already has USD, so only EUR and GBP are created for product1
+        # product2 gets all 3 currencies
+        # Total: 2 (product1: EUR, GBP) + 3 (product2: USD, EUR, GBP) = 5
+        expect { bulk_create }.to change(Spree::Price.for_price_list(price_list), :count).by(5)
       end
     end
 
@@ -109,13 +110,13 @@ RSpec.describe Spree::Admin::PriceListProductsController, type: :controller do
       let(:params) do
         {
           price_list_id: price_list.id,
-          product_ids: [product_with_variants.id],
-          currency: currency
+          product_ids: [product_with_variants.id]
         }
       end
 
       it 'creates prices for non-master variants only (skips master)' do
-        expect { bulk_create }.to change(Spree::Price.for_price_list(price_list), :count).by(2)
+        # 2 variants * 3 currencies = 6 prices
+        expect { bulk_create }.to change(Spree::Price.for_price_list(price_list), :count).by(6)
       end
     end
 
@@ -125,36 +126,30 @@ RSpec.describe Spree::Admin::PriceListProductsController, type: :controller do
       let(:params) do
         {
           price_list_id: price_list.id,
-          product_ids: [product_master_only.id],
-          currency: currency
+          product_ids: [product_master_only.id]
         }
       end
 
-      it 'creates price for master variant' do
-        expect { bulk_create }.to change(Spree::Price.for_price_list(price_list), :count).by(1)
+      it 'creates price for master variant in all currencies' do
+        # 1 variant * 3 currencies = 3 prices
+        expect { bulk_create }.to change(Spree::Price.for_price_list(price_list), :count).by(3)
 
-        price = Spree::Price.for_price_list(price_list).last
-        expect(price.variant).to eq(product_master_only.master)
+        prices = Spree::Price.for_price_list(price_list).where(variant: product_master_only.master)
+        expect(prices.count).to eq(3)
       end
     end
 
     context 'with empty product_ids' do
-      let(:params) { { price_list_id: price_list.id, product_ids: [], currency: currency } }
+      let(:params) { { price_list_id: price_list.id, product_ids: [] } }
 
       it 'does not create any prices' do
         expect { bulk_create }.not_to change(Spree::Price.for_price_list(price_list), :count)
-      end
-
-      it 'redirects to the edit page' do
-        bulk_create
-
-        expect(response).to redirect_to(edit_admin_price_list_path(price_list))
       end
     end
   end
 
   describe 'DELETE #bulk_destroy' do
-    subject(:bulk_destroy) { delete :bulk_destroy, params: params }
+    subject(:bulk_destroy) { delete :bulk_destroy, params: params, format: :turbo_stream }
 
     let(:product1) { create(:product, stores: [store]) }
     let(:product2) { create(:product, stores: [store]) }
@@ -178,13 +173,6 @@ RSpec.describe Spree::Admin::PriceListProductsController, type: :controller do
       bulk_destroy
 
       expect(Spree::Price.for_price_list(price_list)).to include(price3)
-    end
-
-    it 'redirects to the edit page with a success notice' do
-      bulk_destroy
-
-      expect(response).to redirect_to(edit_admin_price_list_path(price_list))
-      expect(flash[:notice]).to eq(Spree.t(:products_removed))
     end
 
     context 'with product with multiple variants' do

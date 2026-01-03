@@ -86,29 +86,46 @@ module Spree
       return if product_ids.blank?
 
       currencies = store.supported_currencies_list.map(&:iso_code)
-      variant_ids = Spree::Variant.eligible.where(product_id: product_ids).pluck(:id)
+      variant_ids = Spree::Variant.eligible.where(product_id: product_ids).distinct.pluck(:id)
+      now = Time.current
+
+      prices_to_insert = []
 
       currencies.each do |currency|
         existing_variant_ids = prices.where(currency: currency).pluck(:variant_id)
         new_variant_ids = variant_ids - existing_variant_ids
 
         new_variant_ids.each do |variant_id|
-          prices.create!(
+          prices_to_insert << {
             variant_id: variant_id,
             currency: currency,
-            amount: nil
-          )
+            amount: nil,
+            price_list_id: id,
+            created_at: now,
+            updated_at: now
+          }
         end
+      end
+
+      if prices_to_insert.any?
+        Spree::Price.insert_all(prices_to_insert)
+        touch_variants(variant_ids)
       end
     end
 
     def remove_products(product_ids)
       return if product_ids.blank?
 
-      prices.joins(:variant).where(spree_variants: { product_id: product_ids }).destroy_all
+      variant_ids = Spree::Variant.where(product_id: product_ids).distinct.pluck(:id)
+      prices.where(variant_id: variant_ids).delete_all
+      touch_variants(variant_ids)
     end
 
     private
+
+    def touch_variants(variant_ids)
+      Spree::Variant.where(id: variant_ids).each(&:touch)
+    end
 
     def starts_at_before_ends_at
       return if starts_at.blank? || ends_at.blank?
