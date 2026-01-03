@@ -28,7 +28,6 @@ module Spree
                                :analytics_events,
                                :analytics_event_handlers,
                                :integrations,
-                               :eventable_models,
                                :subscribers)
       SpreeCalculators = Struct.new(:shipping_methods, :tax_rates, :promotion_actions_create_adjustments, :promotion_actions_create_item_adjustments)
       PromoEnvironment = Struct.new(:rules, :actions)
