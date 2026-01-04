@@ -139,7 +139,6 @@ module Spree
     def bulk_update_prices(prices_attributes)
       return true if prices_attributes.blank?
 
-      now = Time.current
       records_to_upsert = []
       variant_ids = Set.new
 
@@ -170,8 +169,7 @@ module Spree
           currency: attrs[:currency],
           amount: amount,
           compare_at_amount: compare_at_amount,
-          price_list_id: id,
-          updated_at: now
+          price_list_id: id
         }
 
         variant_ids << attrs[:variant_id].to_i
@@ -182,7 +180,7 @@ module Spree
       Spree::Price.upsert_all(
         records_to_upsert,
         unique_by: :id,
-        update_only: [:amount, :compare_at_amount, :updated_at]
+        update_only: [:amount, :compare_at_amount]
       )
 
       touch_variants(variant_ids.to_a)
