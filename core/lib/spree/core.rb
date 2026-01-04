@@ -109,7 +109,8 @@ module Spree
       themes: :default,
       addresses: :default,
       gift_cards: :default,
-      webhooks: :default
+      webhooks: :default,
+      workflows: :default
     )
   end
 
@@ -417,6 +418,7 @@ require 'spree/database_type_utilities'
 require 'spree/analytics'
 require 'spree/events'
 require 'spree/webhooks'
+require 'spree/workflows'
 
 require 'spree/core/partials'
 require 'spree/core/importer'
