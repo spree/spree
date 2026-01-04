@@ -24,7 +24,7 @@ describe Spree::Pricing::Resolver do
     end
 
     context 'when no matching price list exists' do
-      let!(:price_list) { create(:price_list, store: store) }
+      let!(:price_list) { create(:price_list, :inactive, store: store) }
       let!(:list_price) { create(:price, variant: variant, currency: currency, amount: 15.99, price_list: price_list) }
 
       it 'falls back to base price' do
