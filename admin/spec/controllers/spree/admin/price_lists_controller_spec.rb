@@ -97,6 +97,12 @@ RSpec.describe Spree::Admin::PriceListsController, type: :controller do
       expect(price.compare_at_amount).to eq(35.00)
     end
 
+    it 'enqueues a job to touch affected variants' do
+      expect {
+        update_price_list
+      }.to have_enqueued_job(Spree::Variants::TouchJob).with([variant.id])
+    end
+
     context 'when updating multiple prices' do
       let(:product2) { create(:product, stores: [store]) }
       let(:variant2) { product2.master }

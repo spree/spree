@@ -15,9 +15,21 @@ module Spree
     has_many :products, -> { where(spree_prices: { deleted_at: nil }) }, through: :variants, source: :product
     alias price_list_products products
 
-    accepts_nested_attributes_for :prices,
-                                  allow_destroy: true,
-                                  reject_if: ->(attrs) { attrs['amount'].blank? && attrs['id'].blank? }
+    # Override default nested attributes to use bulk_update_prices for performance
+    attr_reader :prices_attributes
+
+    def prices_attributes=(attributes)
+      @prices_attributes = attributes.values
+    end
+
+    after_update :process_bulk_prices_update
+
+    def process_bulk_prices_update
+      return if @prices_attributes.blank?
+
+      bulk_update_prices(@prices_attributes)
+      @prices_attributes = nil
+    end
 
     validates :name, :store, presence: true
     validates :match_policy, presence: true, inclusion: { in: MATCH_POLICIES }
@@ -32,7 +44,7 @@ module Spree
         .where('ends_at IS NULL OR ends_at >= ?', current_time)
     }
 
-    state_machine :status, initial: :inactive do
+    state_machine :status do
       event :activate do
         transition to: :active
       end
@@ -121,10 +133,68 @@ module Spree
       touch_variants(variant_ids)
     end
 
+    # Bulk update prices using upsert_all for performance
+    # @param prices_attributes [Array<Hash>] array of price attributes with :id, :amount, :compare_at_amount
+    # @return [Boolean] true if successful
+    def bulk_update_prices(prices_attributes)
+      return true if prices_attributes.blank?
+
+      now = Time.current
+      records_to_upsert = []
+      variant_ids = Set.new
+
+      # Get current values for comparison
+      price_ids = prices_attributes.map { |a| a[:id] || a['id'] }.compact.map(&:to_i)
+      current_values = prices.where(id: price_ids).pluck(:id, :amount, :compare_at_amount).to_h { |id, amount, compare_at| [id, { amount: amount, compare_at_amount: compare_at }] }
+
+      prices_attributes.each do |attrs|
+        attrs = (attrs.respond_to?(:to_unsafe_h) ? attrs.to_unsafe_h : attrs.to_h).with_indifferent_access
+        next if attrs[:id].blank?
+
+        price_id = attrs[:id].to_i
+        current = current_values[price_id] || {}
+
+        # Parse amounts using LocalizedNumber for proper decimal handling
+        amount = attrs[:amount].present? ? Spree::LocalizedNumber.parse(attrs[:amount]) : nil
+        compare_at_amount = attrs[:compare_at_amount].present? ? Spree::LocalizedNumber.parse(attrs[:compare_at_amount]) : nil
+
+        # Clear compare_at_amount if it equals amount
+        compare_at_amount = nil if compare_at_amount == amount
+
+        # Skip if nothing changed
+        next if amount == current[:amount] && compare_at_amount == current[:compare_at_amount]
+
+        records_to_upsert << {
+          id: price_id,
+          variant_id: attrs[:variant_id].to_i,
+          currency: attrs[:currency],
+          amount: amount,
+          compare_at_amount: compare_at_amount,
+          price_list_id: id,
+          updated_at: now
+        }
+
+        variant_ids << attrs[:variant_id].to_i
+      end
+
+      return true if records_to_upsert.empty?
+
+      Spree::Price.upsert_all(
+        records_to_upsert,
+        unique_by: :id,
+        update_only: [:amount, :compare_at_amount, :updated_at]
+      )
+
+      touch_variants(variant_ids.to_a)
+      true
+    end
+
     private
 
     def touch_variants(variant_ids)
-      Spree::Variant.where(id: variant_ids).each(&:touch)
+      return if variant_ids.blank?
+
+      Spree::Variants::TouchJob.perform_later(variant_ids)
     end
 
     def starts_at_before_ends_at

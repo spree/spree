@@ -3,17 +3,18 @@ FactoryBot.define do
     sequence(:name) { |n| "Price List #{n}" }
     store { Spree::Store.default || create(:store) }
     match_policy { 'all' }
+    status { 'active' }
 
     trait :active do
-      after(:create) do |price_list|
-        price_list.activate!
-      end
+      status { 'active' }
+    end
+
+    trait :inactive do
+      status { 'inactive' }
     end
 
     trait :scheduled do
-      after(:create) do |price_list|
-        price_list.schedule!
-      end
+      status { 'scheduled' }
     end
 
     trait :with_date_range do

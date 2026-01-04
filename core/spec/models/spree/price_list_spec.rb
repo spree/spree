@@ -15,8 +15,8 @@ describe Spree::PriceList, type: :model do
   describe 'state_machine' do
     let(:price_list) { create(:price_list) }
 
-    it 'has initial status of inactive' do
-      expect(price_list.status).to eq('inactive')
+    it 'has initial status of active' do
+      expect(price_list.status).to eq('active')
     end
 
     describe '#activate' do
@@ -27,8 +27,6 @@ describe Spree::PriceList, type: :model do
     end
 
     describe '#deactivate' do
-      before { price_list.activate }
-
       it 'transitions to inactive' do
         price_list.deactivate
         expect(price_list.status).to eq('inactive')
@@ -46,7 +44,7 @@ describe Spree::PriceList, type: :model do
   describe 'scopes' do
     let(:store) { create(:store) }
     let!(:active_price_list) { create(:price_list, :active, store: store) }
-    let!(:inactive_price_list) { create(:price_list, store: store) }
+    let!(:inactive_price_list) { create(:price_list, :inactive, store: store) }
     let!(:scheduled_price_list) { create(:price_list, :scheduled, store: store) }
 
     describe '.with_status(:active)' do
@@ -170,7 +168,7 @@ describe Spree::PriceList, type: :model do
     end
 
     it 'returns false when status is not active' do
-      price_list = create(:price_list)
+      price_list = create(:price_list, :inactive)
       expect(price_list.active?).to be false
     end
   end
@@ -206,6 +204,12 @@ describe Spree::PriceList, type: :model do
       expect {
         price_list.add_products([product1.id])
       }.to change { price_list.prices.count }.by(2) # Only EUR and GBP, not USD
+    end
+
+    it 'enqueues a job to touch affected variants' do
+      expect {
+        price_list.add_products([product1.id])
+      }.to have_enqueued_job(Spree::Variants::TouchJob).with([product1.master.id])
     end
 
     it 'handles empty product_ids' do
@@ -279,6 +283,117 @@ describe Spree::PriceList, type: :model do
       expect {
         price_list.remove_products([product1.id, product2.id])
       }.to change { price_list.prices.count }.by(-6) # 2 products * 3 currencies
+    end
+
+    it 'enqueues a job to touch affected variants' do
+      expect {
+        price_list.remove_products([product1.id])
+      }.to have_enqueued_job(Spree::Variants::TouchJob).with([product1.master.id])
+    end
+  end
+
+  describe '#bulk_update_prices' do
+    let(:store) { create(:store, supported_currencies: 'USD,EUR') }
+    let(:price_list) { create(:price_list, store: store) }
+    let(:product) { create(:product, stores: [store]) }
+    let!(:price1) { create(:price, variant: product.master, price_list: price_list, currency: 'USD', amount: nil) }
+    let!(:price2) { create(:price, variant: product.master, price_list: price_list, currency: 'EUR', amount: nil) }
+
+    it 'updates prices in bulk using upsert_all' do
+      prices_attributes = [
+        { id: price1.id, variant_id: price1.variant_id, currency: 'USD', amount: '19.99', compare_at_amount: '29.99' },
+        { id: price2.id, variant_id: price2.variant_id, currency: 'EUR', amount: '17.99', compare_at_amount: '' }
+      ]
+
+      price_list.bulk_update_prices(prices_attributes)
+
+      price1.reload
+      price2.reload
+      expect(price1.amount).to eq(BigDecimal('19.99'))
+      expect(price1.compare_at_amount).to eq(BigDecimal('29.99'))
+      expect(price2.amount).to eq(BigDecimal('17.99'))
+      expect(price2.compare_at_amount).to be_nil
+    end
+
+    it 'clears compare_at_amount when it equals amount' do
+      prices_attributes = [
+        { id: price1.id, variant_id: price1.variant_id, currency: 'USD', amount: '19.99', compare_at_amount: '19.99' }
+      ]
+
+      price_list.bulk_update_prices(prices_attributes)
+
+      price1.reload
+      expect(price1.amount).to eq(BigDecimal('19.99'))
+      expect(price1.compare_at_amount).to be_nil
+    end
+
+    it 'clears amount when user removes existing value' do
+      price1.update!(amount: BigDecimal('10.00'))
+
+      prices_attributes = [
+        { id: price1.id, variant_id: price1.variant_id, currency: 'USD', amount: '', compare_at_amount: '' }
+      ]
+
+      price_list.bulk_update_prices(prices_attributes)
+
+      price1.reload
+      expect(price1.amount).to be_nil # cleared
+    end
+
+    it 'skips prices where nothing changed' do
+      price1.update!(amount: BigDecimal('19.99'), compare_at_amount: BigDecimal('29.99'))
+
+      prices_attributes = [
+        { id: price1.id, variant_id: price1.variant_id, currency: 'USD', amount: '19.99', compare_at_amount: '29.99' }
+      ]
+
+      # Should not include this in upsert (no actual change)
+      expect(Spree::Price).not_to receive(:upsert_all)
+
+      price_list.bulk_update_prices(prices_attributes)
+    end
+
+    it 'updates when only compare_at_amount changed' do
+      price1.update!(amount: BigDecimal('19.99'), compare_at_amount: nil)
+
+      prices_attributes = [
+        { id: price1.id, variant_id: price1.variant_id, currency: 'USD', amount: '19.99', compare_at_amount: '29.99' }
+      ]
+
+      price_list.bulk_update_prices(prices_attributes)
+
+      price1.reload
+      expect(price1.amount).to eq(BigDecimal('19.99'))
+      expect(price1.compare_at_amount).to eq(BigDecimal('29.99'))
+    end
+
+    it 'enqueues a job to touch affected variants' do
+      prices_attributes = [
+        { id: price1.id, variant_id: price1.variant_id, currency: 'USD', amount: '19.99', compare_at_amount: '' }
+      ]
+
+      expect {
+        price_list.bulk_update_prices(prices_attributes)
+      }.to have_enqueued_job(Spree::Variants::TouchJob).with([price1.variant_id])
+    end
+
+    it 'returns true for empty attributes' do
+      expect(price_list.bulk_update_prices([])).to be true
+      expect(price_list.bulk_update_prices(nil)).to be true
+    end
+
+    it 'skips entries without id' do
+      prices_attributes = [
+        { id: price1.id, variant_id: price1.variant_id, currency: 'USD', amount: '19.99' },
+        { variant_id: price2.variant_id, currency: 'EUR', amount: '17.99' } # no id
+      ]
+
+      price_list.bulk_update_prices(prices_attributes)
+
+      price1.reload
+      price2.reload
+      expect(price1.amount).to eq(BigDecimal('19.99'))
+      expect(price2.amount).to be_nil # not updated
     end
   end
 end

@@ -26,7 +26,7 @@ module Spree
       def permitted_resource_params
         params.require(:price_list).permit(
           permitted_price_list_attributes,
-          prices_attributes: [:id, :variant_id, :currency, :amount, :compare_at_amount, :_destroy]
+          prices_attributes: [:id, :variant_id, :currency, :amount, :compare_at_amount]
         )
       end
     end
