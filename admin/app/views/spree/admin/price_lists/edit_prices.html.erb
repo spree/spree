@@ -1,71 +1,71 @@
 <% content_for :page_title do %>
-  <%= Spree.t(:edit_prices) %> - <%= @price_list.name %>
+  <%= page_header_back_button(spree.admin_price_list_path(@price_list)) %>
+  <%= @price_list.name %>
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= link_to Spree.t(:back), edit_admin_price_list_path(@price_list), class: 'btn btn-secondary' %>
+  <%= turbo_save_button_tag Spree.t('actions.save'), form: "edit_price_list_#{@price_list.id}" %>
 <% end %>
 
 <%= form_with model: [:admin, @price_list],
               method: :patch,
+              html: { class: 'relative', id: "edit_price_list_#{@price_list.id}" },
               data: {
                 controller: 'bulk-editor',
-                action: 'keydown.ctrl+a->bulk-editor#selectAll keydown.meta+a->bulk-editor#selectAll'
+                action: 'keydown.ctrl+a->bulk-editor#selectAll keydown.meta+a->bulk-editor#selectAll',
               } do |f| %>
 
   <div class="card mb-6">
-    <div class="card-header flex justify-between items-center">
+    <div class="card-header flex justify-between items-center border-gray-200 pr-2">
       <div class="flex items-center gap-4">
         <h5 class="card-title"><%= Spree.t(:prices) %> (<%= @currency %>)</h5>
         <span class="text-sm text-gray-500 hidden" data-bulk-editor-target="statusBar"></span>
       </div>
-      <div class="flex gap-2 items-center">
-        <div class="text-xs text-gray-400 hidden lg:block">
-          <kbd class="px-1 py-0.5 bg-gray-100 rounded"><%= icon 'command', class: 'inline w-3 h-3' %>C</kbd> copy
-          <kbd class="px-1 py-0.5 bg-gray-100 rounded ml-2"><%= icon 'command', class: 'inline w-3 h-3' %>V</kbd> paste
-          <kbd class="px-1 py-0.5 bg-gray-100 rounded ml-2"><%= icon 'command', class: 'inline w-3 h-3' %>D</kbd> fill down
-        </div>
-        <%= select_tag :currency,
-            options_for_select(current_store.supported_currencies_list, @currency),
-            class: 'form-select',
-            onchange: "window.Turbo.visit('#{spree.edit_prices_admin_price_list_path(@price_list)}?currency=' + this.value)" %>
-      </div>
+      <%= select_tag :currency,
+          options_for_select(current_store.supported_currencies_list, @currency),
+          class: 'form-select w-auto',
+          onchange: "window.Turbo.visit('#{spree.edit_prices_admin_price_list_path(@price_list)}?currency=' + this.value)" %>
     </div>
 
-    <% if @prices.any? %>
-      <%
-        # Group prices by product for display
-        prices_by_product = @prices.group_by { |price| price.variant.product }
-        row_index = 0
-      %>
-      <div class="overflow-x-auto">
-        <table class="w-full" data-bulk-editor-target="table">
-          <thead class="bg-gray-50 border-b border-gray-200">
+    <div class="card-body p-0">
+
+      <% if @prices.any? %>
+        <%
+          # Group prices by product for display
+          prices_by_product = @prices.group_by { |price| price.variant.product }
+          row_index = 0
+        %>
+
+        <table class="table" data-bulk-editor-target="table">
+          <thead>
             <tr>
-              <th class="px-4 py-3 text-left text-sm font-medium text-gray-600"><%= Spree.t(:title) %></th>
-              <th class="px-4 py-3 text-left text-sm font-medium text-gray-600"><%= Spree.t(:sku) %></th>
-              <th class="px-4 py-3 text-left text-sm font-medium text-gray-600 w-36"><%= Spree.t(:price) %></th>
-              <th class="px-4 py-3 text-left text-sm font-medium text-gray-600 w-36"><%= Spree.t(:compare_at_price) %></th>
+              <th class="border-r rounded-none"><%= Spree.t(:title) %></th>
+              <th class="border-r"><%= Spree.t(:sku) %></th>
+              <th class="border-r w-36"><%= Spree.t(:price) %></th>
+              <th class="rounded-none"><%= Spree.t(:compare_at_price) %></th>
             </tr>
           </thead>
           <tbody>
             <% prices_by_product.each do |product, prices| %>
               <%# Product header row %>
-              <tr class="bg-gray-50 border-t border-b border-gray-200">
-                <td colspan="4" class="px-4 py-3">
+              <tr class="bg-gray-50">
+                <td class="border-r">
                   <div class="flex items-center gap-3">
-                    <%= render 'spree/admin/shared/product_image', object: product, variant: :mini %>
+                    <%= render 'spree/admin/shared/product_image', object: product, variant: :mini, width: 32, height: 32 %>
                     <span class="font-medium text-gray-900"><%= product.name %></span>
                   </div>
                 </td>
+                <td class="border-r"></td>
+                <td class="border-r"></td>
+                <td></td>
               </tr>
               <%# Variant rows %>
               <% prices.each do |price| %>
-                <%= f.fields_for :prices, price, index: row_index do |pf| %>
+                <%= f.fields_for :prices, price, child_index: row_index do |pf| %>
                   <tr data-bulk-editor-target="row">
-                    <td class="pl-14 pr-4 py-2 text-sm text-gray-600"><%= price.variant.options_text.presence %></td>
-                    <td class="px-4 py-2 text-sm text-gray-400 font-mono"><%= price.variant.sku %></td>
-                    <td class="p-0">
+                    <td class="pl-14 pr-4 py-2 text-sm text-gray-600 border-r w-40"><%= price.variant.options_text.presence %></td>
+                    <td class="px-4 py-2 text-sm text-gray-400 font-mono border-r w-30"><%= price.variant.sku %></td>
+                    <td class="p-0 border-r w-15">
                       <%= pf.hidden_field :id %>
                       <%= pf.hidden_field :variant_id %>
                       <%= pf.hidden_field :currency %>
@@ -81,7 +81,7 @@
                             original_value: price.amount
                           } %>
                     </td>
-                    <td class="p-0">
+                    <td class="p-0 w-15">
                       <%= pf.number_field :compare_at_amount,
                           step: 0.01,
                           placeholder: '0.00',
@@ -112,8 +112,8 @@
 
   <% if @prices.any? %>
     <div class="flex gap-3 justify-end">
-      <%= link_to Spree.t(:cancel), spree.admin_price_list_path(@price_list), class: 'btn btn-secondary' %>
-      <%= f.submit Spree.t(:save_changes),
+      <%= link_to Spree.t('actions.discard'), spree.admin_price_list_path(@price_list), class: 'btn btn-light' %>
+      <%= f.submit Spree.t('actions.save'),
           class: 'btn btn-primary',
           data: { bulk_editor_target: 'saveButton' } %>
     </div>

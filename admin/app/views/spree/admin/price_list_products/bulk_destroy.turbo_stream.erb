@@ -1,3 +1,7 @@
 <% params[:ids]&.each do |id| %>
   <%= turbo_stream.remove("product_#{id}") %>
 <% end %>
+
+<%= turbo_stream.update :products_count do %>
+  <%= @price_list.products.distinct.count %>
+<% end %>

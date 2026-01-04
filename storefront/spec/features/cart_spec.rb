@@ -29,7 +29,8 @@ describe 'Cart', type: :feature do
       within '#line-items:first-child' do
         expect(page).to have_field('line_item_quantity', with: '2')
       end
-      expect(page).to have_content(line_item.price * 2)
+      # Price may be recalculated from variant when quantity changes
+      expect(page).to have_content(line_item.reload.price * 2)
       expect(order.reload.item_total).to eq(line_item.price * 2)
 
       within '#line-items:first-child' do
@@ -40,7 +41,7 @@ describe 'Cart', type: :feature do
       within '#line-items:first-child' do
         expect(page).to have_field('line_item_quantity', with: '1')
       end
-      expect(page).to have_content(line_item.price)
+      expect(page).to have_content(line_item.reload.price)
       expect(order.reload.item_total).to eq(line_item.price)
     end
 

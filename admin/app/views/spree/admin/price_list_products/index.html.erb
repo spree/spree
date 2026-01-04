@@ -1,9 +1,9 @@
 <%= turbo_frame_tag :price_list_products do %>
   <div class="card mb-6" data-controller="media-form" data-media-form-delete-url-value="<%= spree.bulk_destroy_admin_price_list_products_path(@parent) %>">
-    <div class="card-header flex justify-between items-center">
-      <h5 class="card-title">
+    <div class="card-header flex justify-between items-center border-gray-200 pr-3">
+      <h5 class="card-title flex items-center gap-2">
         <%= Spree.t(:products) %>
-        <span class="badge badge-info ml-2" id="products_count"><%= @price_list.products.distinct.count %></span>
+        <span class="badge badge-info" id="products_count"><%= @price_list.products.distinct.count %></span>
       </h5>
       <div class="flex gap-2">
         <button type="button"
@@ -31,11 +31,11 @@
         <table class="table" id="listing_price_list_products">
           <thead>
             <tr>
-              <th scope="col" class="pr-0 w-5"></th>
+              <th scope="col" class="pr-0 w-5 rounded-none"></th>
               <th scope="col"><%= Spree.t(:name) %></th>
               <th scope="col" class="text-center"><%= Spree.t(:status) %></th>
               <th scope="col"><%= Spree.t(:inventory) %></th>
-              <th scope="col"><%= Spree.t(:price) %></th>
+              <th scope="col" class="rounded-none"><%= Spree.t(:price) %></th>
             </tr>
           </thead>
           <tbody>

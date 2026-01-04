@@ -1,15 +1,5 @@
 /* Bulk Editor - Spreadsheet-style price editing */
 
-/* Table with collapsed borders */
-[data-bulk-editor-target="table"] {
-  border-collapse: collapse;
-}
-
-/* Table cells with borders */
-[data-bulk-editor-target="table"] td {
-  @apply border border-gray-200;
-}
-
 /* Input cell states */
 [data-bulk-editor-target="cell"] {
   @apply transition-colors duration-75 cursor-cell caret-transparent border-0;
@@ -35,11 +25,6 @@
   @apply absolute pointer-events-none border-2 border-blue-500 z-10 hidden;
 }
 
-/* Form container needs relative positioning for fill handle */
-[data-controller="bulk-editor"] {
-  @apply relative;
-}
-
 /* Prevent text selection during drag operations */
 [data-controller="bulk-editor"].fill-dragging {
   @apply select-none cursor-crosshair;
@@ -56,9 +41,4 @@
 
 .fill-handle:hover {
   @apply bg-blue-700 scale-125;
-}
-
-/* Keyboard shortcut hints */
-.bulk-editor-shortcuts kbd {
-  @apply px-1.5 py-0.5 text-xs font-mono bg-gray-100 border border-gray-200 rounded;
 }

@@ -1,18 +1,18 @@
 <%= turbo_frame_tag :drawer do %>
-  <div data-controller="search-picker">
+  <div data-controller="search-picker" class="flex flex-col justify-between h-full">
     <%= drawer_header(Spree.t(:add_products)) %>
 
-    <div class="drawer-body border-b">
+    <div class="drawer-body border-b flex-none">
       <%= form_with url: spree.search_admin_products_path, method: :post, data: { controller: 'auto-submit' } do |form| %>
         <%= form.hidden_field :omit_ids, value: @price_list.products.pluck(:id).join(',') %>
         <%= form.search_field :q, value: params[:q], class: 'form-input w-full', placeholder: Spree.t(:search_products), data: { search_picker_target: :search, action: 'auto-submit#submit' }, autofocus: true %>
       <% end %>
     </div>
 
-    <%= form_with url: spree.bulk_create_admin_price_list_products_path(@parent), method: :post do |form| %>
+    <%= form_with url: spree.bulk_create_admin_price_list_products_path(@parent), method: :post, class: 'grow flex flex-col justify-between' do |form| %>
       <%= form.hidden_field :currency, value: @currency %>
 
-      <div class="drawer-body">
+      <div class="drawer-body grow">
         <div id="products_search_results" class="search-results overflow-y-auto max-h-96">
           <p class="text-gray-500 text-center py-8">
             <%= Spree.t(:type_to_search_products) %>
