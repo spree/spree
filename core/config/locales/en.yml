@@ -1381,6 +1381,7 @@ en:
     new_policy: New Policy
     new_post: New Post
     new_post_category: New Post Category
+    new_price_list: New Price List
     new_product: New Product
     new_promotion: New Promotion
     new_promotion_category: New Promotion Category
@@ -1692,6 +1693,7 @@ en:
       active: Active
       inactive: Inactive
       scheduled: Scheduled
+    price_lists: Price Lists
     price_range: Price Range
     price_rule_types:
       user_rule:
@@ -1727,8 +1729,8 @@ en:
     product_sold_out: This item is sold out
     products: Products
     products_added: Products added
-    products_removed: Products removed
     products_cannot_be_shipped: We cannot ship %{product_names} to your current location at the moment. Please change your shipping address or remove %{product_names} from your cart.
+    products_removed: Products removed
     products_sort_options:
       best_selling: Best Selling
       manual: Manual
@@ -1936,9 +1938,9 @@ en:
     search_by: 'Search by:'
     search_engine_listing: Search engine listing
     search_order_number: Order Number
+    search_products: Search products
     search_results: Search results for '%{keywords}'
     search_results_for: Search results for %{query}
-    search_products: Search products
     searching: Searching
     secure_connection_type: Secure Connection Type
     security: Security
@@ -2074,6 +2076,7 @@ en:
     start_typing_to_search_for_products: Start typing to search for products
     start_typing_to_search_for_variants: Start typing to search for variants
     starting_from: Starts at
+    starts_at: Starts at
     state: State
     state_based: State Based
     state_changes: State Changes
