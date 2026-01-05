@@ -15,6 +15,7 @@ module Spree
     helper 'spree/base'
     helper 'spree/locale'
     helper 'spree/storefront_locale'
+    helper 'spree/canonical_url'
     helper 'spree/currency'
     helper 'spree/addresses'
     helper 'spree/wishlist'
