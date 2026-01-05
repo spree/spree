@@ -29,5 +29,10 @@ describe Spree::PriceRules::VolumeRule, type: :model do
         expect(rule.applicable?(context)).to be false
       end
     end
+
+    it 'returns false when quantity is nil' do
+      context = Spree::Pricing::Context.new(variant: variant, currency: 'USD', quantity: nil)
+      expect(rule.applicable?(context)).to be false
+    end
   end
 end
