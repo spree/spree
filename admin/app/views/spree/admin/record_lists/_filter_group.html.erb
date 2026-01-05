@@ -1,0 +1,33 @@
+<%# Template for a nested OR filter group - populated by JavaScript %>
+<div class="p-4 border-2 border-dashed border-gray-300 rounded-lg bg-white"
+     data-group-id=""
+     data-combinator="or">
+  <div class="flex items-center justify-between mb-3">
+    <div class="flex items-center gap-2">
+      <span class="text-sm text-gray-600"><%= Spree.t('admin.record_lists.match') %></span>
+      <button type="button"
+              class="btn btn-sm btn-outline-secondary px-2 py-1"
+              data-action="query-builder#toggleGroupCombinator">
+        <span data-group-combinator-label>OR</span>
+      </button>
+      <span class="text-sm text-gray-600"><%= Spree.t('admin.record_lists.of_the_following') %></span>
+    </div>
+    <button type="button"
+            class="btn btn-sm btn-light text-red-600 hover:text-red-700 hover:bg-red-50 p-1.5"
+            data-action="query-builder#removeGroup"
+            title="<%= Spree.t(:remove) %>">
+      <%= icon 'x', class: 'w-4 h-4' %>
+    </button>
+  </div>
+
+  <div data-group-filters-container class="space-y-3 mb-3">
+    <%# Filter rows within this group will be added here %>
+  </div>
+
+  <button type="button"
+          class="btn btn-sm btn-light flex items-center gap-1"
+          data-action="query-builder#addFilterToGroup">
+    <%= icon 'plus', class: 'w-4 h-4' %>
+    <%= Spree.t('admin.record_lists.add_filter') %>
+  </button>
+</div>

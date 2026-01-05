@@ -338,3 +338,34 @@ en:
         subscriptions: Subscriptions
         time_of_last_event: Time of Last Event
         webhooks_events: Webhooks Events
+      record_lists:
+        add_filter: Add filter
+        add_or_group: Add OR group
+        apply: Apply
+        apply_filters: Apply Filters
+        clear_all: Clear All
+        columns: Columns
+        enter_value: Enter value...
+        filter_builder: Filter Builder
+        filters: Filters
+        match: Match
+        of_the_following: of the following
+        operators:
+          contains: contains
+          does_not_contain: does not contain
+          ends_with: ends with
+          equals: equals
+          greater_than: greater than
+          greater_than_or_equal: greater than or equal
+          is_any_of: is any of
+          is_empty: is empty
+          is_none_of: is none of
+          is_not_empty: is not empty
+          less_than: less than
+          less_than_or_equal: less than or equal
+          not_equals: does not equal
+          starts_with: starts with
+        reset_to_default: Reset to Default
+        select_field: Select field...
+        sort_by: Sort by
+        visible_columns: Visible Columns

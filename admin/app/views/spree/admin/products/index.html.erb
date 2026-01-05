@@ -11,20 +11,7 @@
 
 <%= render_admin_partials(:products_header_partials) %>
 
-<div class="card-lg">
-  <% if params[:frame_name].present? %>
-    <%= turbo_frame_tag params[:frame_name], autoscroll: true, data: { autoscroll_block: :start, autoscroll_behavior: :smooth } do %>
-      <%= render 'filters', frame_name: params[:frame_name] %>
-      <%= render 'list' %>
-    <% end %>
-  <% else %>
-    <%= turbo_frame_tag "products", autoscroll: true, data: { autoscroll_behavior: :smooth, turbo_action: 'advance' } do %>
-      <%= render 'spree/admin/shared/export_modal', export_type: Spree::Exports::Products %>
-      <%= render 'filters' %>
-      <%= render 'list' %>
-    <% end %>
-  <% end %>
-</div>
+<%= render_record_list @collection, :products, bulk_operations: true %>
 
 <p class="documentation-link-container">
   Learn more about

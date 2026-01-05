@@ -1,0 +1,26 @@
+<%# locals: (record:, columns:, record_list:, bulk_operations: false, sortable: false) %>
+<tr id="<%= dom_id record %>" class="group">
+  <% if bulk_operations %>
+    <td class="pr-0 w-5">
+      <%= bulk_operations_checkbox(record) %>
+    </td>
+  <% end %>
+
+  <% columns.each_with_index do |column, index| %>
+    <td class="<%= column_cell_class(column) %>">
+      <% if index == 0 %>
+        <%= link_to edit_object_url(record),
+                    class: 'flex items-center w-full no-underline hover:text-primary',
+                    data: { 'turbo-frame': '_top' } do %>
+          <%= render_column_value(record, column, record_list) %>
+        <% end %>
+      <% else %>
+        <%= render_column_value(record, column, record_list) %>
+      <% end %>
+    </td>
+  <% end %>
+
+  <td class="w-10 text-right">
+    <%= render 'spree/admin/record_lists/row_actions', record: record %>
+  </td>
+</tr>

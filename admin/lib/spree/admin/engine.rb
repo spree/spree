@@ -126,7 +126,8 @@ module Spree
         :vendors_nav_partials,
         :zones_actions_partials,
         :zones_header_partials,
-        :navigation
+        :navigation,
+        :record_lists
       )
 
       class NavigationEnvironment
@@ -175,6 +176,58 @@ module Spree
 
         def respond_to_missing?(method_name, include_private = false)
           method_name.to_s.end_with?('=') ? false : context?(method_name)
+        end
+      end
+
+      class RecordListsEnvironment
+        def initialize
+          @registries = {}
+        end
+
+        # Register a new record list
+        # @param name [Symbol] The name of the record list (e.g., :products, :orders)
+        # @param model_class [Class, nil] The model class for this list
+        # @param search_param [Symbol] The ransack parameter for text search (default: :name_cont)
+        # @param search_placeholder [String, nil] Custom placeholder for search field
+        # @return [Spree::Admin::RecordList] The record list instance
+        def register(name, model_class: nil, search_param: :name_cont, search_placeholder: nil)
+          name = name.to_sym
+          @registries[name] ||= Spree::Admin::RecordList.new(name, model_class: model_class, search_param: search_param, search_placeholder: search_placeholder)
+        end
+
+        # Get a registered record list
+        # @param name [Symbol] The name of the record list
+        # @return [Spree::Admin::RecordList] The record list instance
+        # @raise [NoMethodError] if the record list hasn't been registered
+        def get(name)
+          name = name.to_sym
+          @registries[name] || raise(NoMethodError, "Record list '#{name}' has not been registered. Use Spree.admin.record_lists.register(:#{name}) first.")
+        end
+
+        # Check if a record list is registered
+        # @param name [Symbol] The record list name
+        # @return [Boolean]
+        def registered?(name)
+          @registries.key?(name.to_sym)
+        end
+
+        # List all registered record lists
+        # @return [Array<Symbol>]
+        def registries
+          @registries.keys
+        end
+
+        # Define accessor methods for registered record lists
+        def method_missing(method_name, *args)
+          if method_name.to_s.end_with?('=')
+            super
+          else
+            get(method_name)
+          end
+        end
+
+        def respond_to_missing?(method_name, include_private = false)
+          method_name.to_s.end_with?('=') ? false : registered?(method_name)
         end
       end
 
@@ -254,6 +307,9 @@ module Spree
         app.config.spree_admin.navigation.register_context(:returns_tabs)
         app.config.spree_admin.navigation.register_context(:developers_tabs)
         app.config.spree_admin.navigation.register_context(:audit_tabs)
+
+        # Register record lists environment
+        app.config.spree_admin.record_lists = RecordListsEnvironment.new
       end
 
       # Add admin event subscribers

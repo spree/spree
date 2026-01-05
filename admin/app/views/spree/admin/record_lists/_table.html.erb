@@ -1,0 +1,92 @@
+<%# locals: (collection:, columns:, record_list:, bulk_operations: false, sortable: false) %>
+<% if bulk_operations %>
+  <div data-controller="bulk-operation bulk-dialog" data-action="keydown.esc->bulk-operation#cancel" tabindex="0">
+    <%= form_tag url_for(action: :index), method: :put, data: { 'bulk-operation-target': 'form' } do %>
+      <%= render 'spree/admin/shared/bulk_modal' %>
+
+      <div class="table-responsive">
+        <table class="table" id="listing_<%= controller_name %>">
+          <thead>
+            <tr>
+              <th scope="col" class="pr-0 w-5">
+                <%= bulk_operations_select_all_checkbox %>
+              </th>
+
+              <% columns.each do |column| %>
+                <th scope="col" class="<%= column_header_class(column) %>">
+                  <% if column.sortable? && @search %>
+                    <%= sort_link @search, column.ransack_attribute, column.resolve_label,
+                                  default_order: 'desc',
+                                  title: "#{controller_name}_listing_#{column.key}_title" %>
+                  <% else %>
+                    <%= column.resolve_label %>
+                  <% end %>
+                </th>
+              <% end %>
+
+              <th scope="col" class="w-10"></th>
+            </tr>
+          </thead>
+          <tbody
+            <% if sortable %>
+              data-controller="sortable"
+              data-sortable-handle-value=".move-handle"
+              data-sortable-resource-name-value="<%= controller_name.singularize %>"
+              data-sortable-response-kind-value="turbo-stream"
+            <% end %>
+          >
+            <%= render partial: 'spree/admin/record_lists/table_row',
+                       collection: collection,
+                       as: :record,
+                       locals: {
+                         columns: columns,
+                         record_list: record_list,
+                         bulk_operations: bulk_operations,
+                         sortable: sortable
+                       } %>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <div class="table-responsive">
+    <table class="table" id="listing_<%= controller_name %>">
+      <thead>
+        <tr>
+          <% columns.each do |column| %>
+            <th scope="col" class="<%= column_header_class(column) %>">
+              <% if column.sortable? && @search %>
+                <%= sort_link @search, column.ransack_attribute, column.resolve_label,
+                              default_order: 'desc',
+                              title: "#{controller_name}_listing_#{column.key}_title" %>
+              <% else %>
+                <%= column.resolve_label %>
+              <% end %>
+            </th>
+          <% end %>
+
+          <th scope="col" class="w-10"></th>
+        </tr>
+      </thead>
+      <tbody
+        <% if sortable %>
+          data-controller="sortable"
+          data-sortable-handle-value=".move-handle"
+          data-sortable-resource-name-value="<%= controller_name.singularize %>"
+          data-sortable-response-kind-value="turbo-stream"
+        <% end %>
+      >
+        <%= render partial: 'spree/admin/record_lists/table_row',
+                   collection: collection,
+                   as: :record,
+                   locals: {
+                     columns: columns,
+                     record_list: record_list,
+                     bulk_operations: false,
+                     sortable: sortable
+                   } %>
+      </tbody>
+    </table>
+  </div>
+<% end %>

@@ -44,6 +44,7 @@ Spree::Core::Engine.add_routes do
       resources :classifications, only: %i[index new create update destroy]
     end
     get '/taxons/select_options' => 'taxons#select_options', as: :taxons_select_options, defaults: { format: :json }
+    get '/tags/select_options' => 'tags#select_options', as: :tags_select_options, defaults: { format: :json }
 
     # media library
     resources :assets, only: [:create, :edit, :update, :destroy] do
@@ -229,6 +230,9 @@ Spree::Core::Engine.add_routes do
       get '/errors', to: 'errors#show'
       get '/errors/:path', to: 'errors#show', as: :pathed_errors
     end
+
+    # record list columns (for session-based column selection)
+    post 'record_list_columns', to: 'record_list_columns#update', as: :record_list_columns
 
     # dashboard
     resource :dashboard, controller: 'dashboard'

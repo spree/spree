@@ -52,6 +52,7 @@ import CalendarRangeController from 'spree/admin/controllers/calendar_range_cont
 import Clipboard from 'spree/admin/controllers/clipboard_controller'
 import CodeMirrorController from 'spree/admin/controllers/codemirror_controller'
 import ColorPaletteController from 'spree/admin/controllers/color_palette_controller'
+import ColumnSelectorController from 'spree/admin/controllers/column_selector_controller'
 import ColorPickerController from 'spree/admin/controllers/color_picker_controller'
 import DropdownController from 'spree/admin/controllers/dropdown_controller'
 import FiltersController from 'spree/admin/controllers/filters_controller'
@@ -65,7 +66,9 @@ import OrderBillingAddressController from 'spree/admin/controllers/order_billing
 import PageBuilderController from 'spree/admin/controllers/page_builder_controller'
 import PasswordToggle from 'spree/admin/controllers/password_toggle_controller'
 import ProductFormController from 'spree/admin/controllers/product_form_controller'
+import QueryBuilderController from 'spree/admin/controllers/query_builder_controller'
 import RangeInputController from 'spree/admin/controllers/range_input_controller'
+import RecordListController from 'spree/admin/controllers/record_list_controller'
 import ReturnItemsController from 'spree/admin/controllers/return_items_controller'
 import ReplaceController from 'spree/admin/controllers/replace_controller'
 import RowLinkController from 'spree/admin/controllers/row_link_controller'
@@ -110,6 +113,7 @@ application.register('clipboard', Clipboard)
 application.register('codemirror', CodeMirrorController)
 application.register('color-palette', ColorPaletteController)
 application.register('color-picker', ColorPickerController)
+application.register('column-selector', ColumnSelectorController)
 application.register('dialog', Dialog)
 application.register('drawer', Dialog)
 application.register('disable-submit-button', DisableSubmitButtonController)
@@ -130,7 +134,9 @@ application.register('page-builder', PageBuilderController)
 application.register('password-toggle', PasswordToggle)
 application.register('password-visibility', PasswordVisibility)
 application.register('product-form', ProductFormController)
+application.register('query-builder', QueryBuilderController)
 application.register('range-input', RangeInputController)
+application.register('record-list', RecordListController)
 application.register('replace', ReplaceController)
 application.register('return-items', ReturnItemsController)
 application.register('reveal', Reveal)
