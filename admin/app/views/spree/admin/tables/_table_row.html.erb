@@ -1,4 +1,4 @@
-<%# locals: (record:, columns:, record_list:, bulk_operations: false, sortable: false, row_actions: true) %>
+<%# locals: (record:, columns:, table:, bulk_operations: false, sortable: false, row_actions: true) %>
 <tr id="<%= dom_id record %>" class="group"<% if sortable %> data-sortable-update-url="<%= edit_object_url(record) %>"<% end %>>
   <% if sortable %>
     <td class="w-5 move-handle text-center">
@@ -18,17 +18,17 @@
         <%= link_to edit_object_url(record),
                     class: 'flex items-center w-full no-underline hover:text-primary',
                     data: { 'turbo-frame': '_top' } do %>
-          <%= render_column_value(record, column, record_list) %>
+          <%= render_column_value(record, column, table) %>
         <% end %>
       <% else %>
-        <%= render_column_value(record, column, record_list) %>
+        <%= render_column_value(record, column, table) %>
       <% end %>
     </td>
   <% end %>
 
   <% if row_actions %>
     <td class="w-10 text-right">
-      <%= render 'spree/admin/record_lists/row_actions', record: record %>
+      <%= render 'spree/admin/tables/row_actions', record: record, table: table %>
     </td>
   <% end %>
 </tr>

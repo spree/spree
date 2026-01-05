@@ -1,49 +1,50 @@
 module Spree
   module Admin
-    module RecordListHelper
-      # Main helper to render a record list
+    module TableHelper
+      # Main helper to render a table
       # @param collection [ActiveRecord::Relation] the collection to render
-      # @param list_key [Symbol] the record list registry key (e.g., :products)
+      # @param table_key [Symbol] the table registry key (e.g., :products)
       # @param options [Hash] additional options
       # @option options [Boolean] :bulk_operations enable bulk operations
       # @option options [Boolean] :sortable enable drag-and-drop sorting
       # @option options [String] :frame_name custom turbo frame name
+      # @option options [Class] :export_type export class (e.g., Spree::Exports::Customers)
       # @return [String] rendered HTML
-      def render_record_list(collection, list_key, **options)
-        record_list = Spree.admin.record_lists.get(list_key)
-        selected_columns = session_selected_columns(list_key)
+      def render_table(collection, table_key, **options)
+        table = Spree.admin.tables.get(table_key)
+        selected_columns = session_selected_columns(table_key)
 
-        render 'spree/admin/record_lists/record_list',
+        render 'spree/admin/tables/table',
                collection: collection,
-               record_list: record_list,
-               list_key: list_key,
+               table: table,
+               table_key: table_key,
                selected_columns: selected_columns,
                **options
       end
 
       # Get selected column keys from session
-      # @param list_key [Symbol] record list key
+      # @param table_key [Symbol] table key
       # @return [Array<Symbol>, nil]
-      def session_selected_columns(list_key)
-        keys = session["record_list_columns_#{list_key}"]
+      def session_selected_columns(table_key)
+        keys = session["table_columns_#{table_key}"]
         return nil if keys.blank?
 
         keys.split(',').map(&:to_sym)
       end
 
       # Save selected columns to session
-      # @param list_key [Symbol] record list key
+      # @param table_key [Symbol] table key
       # @param column_keys [Array<Symbol>] selected column keys
-      def save_selected_columns(list_key, column_keys)
-        session["record_list_columns_#{list_key}"] = column_keys.join(',')
+      def save_selected_columns(table_key, column_keys)
+        session["table_columns_#{table_key}"] = column_keys.join(',')
       end
 
       # Render a single column value based on its type
       # @param record [Object] the record
-      # @param column [Spree::Admin::RecordList::Column] the column definition
-      # @param record_list [Spree::Admin::RecordList] the record list
+      # @param column [Spree::Admin::Table::Column] the column definition
+      # @param table [Spree::Admin::Table] the table
       # @return [String] rendered HTML
-      def render_column_value(record, column, record_list)
+      def render_column_value(record, column, table)
         value = column.resolve_value(record, self)
 
         case column.type
@@ -62,7 +63,9 @@ module Spree
         when :image
           render_image_column(record, value, column)
         when :custom
-          render partial: column.partial, locals: { record: record, column: column, value: value }
+          extra_locals = column.partial_locals.is_a?(Proc) ? column.partial_locals.call(record) : column.partial_locals
+          locals = { record: record, column: column, value: value }.merge(extra_locals)
+          render partial: column.partial, locals: locals
         when :association
           render_association_column(value, column)
         else
@@ -72,7 +75,7 @@ module Spree
 
       # Render currency column
       # @param value [Object] the value
-      # @param column [Spree::Admin::RecordList::Column] column definition
+      # @param column [Spree::Admin::Table::Column] column definition
       # @return [String]
       def render_currency_column(value, column)
         return content_tag(:span, '-', class: 'text-gray-400') if value.blank?
@@ -86,7 +89,7 @@ module Spree
 
       # Render date column
       # @param value [Object] the value
-      # @param column [Spree::Admin::RecordList::Column] column definition
+      # @param column [Spree::Admin::Table::Column] column definition
       # @return [String]
       def render_date_column(value, column)
         return content_tag(:span, '-', class: 'text-gray-400') if value.blank?
@@ -100,7 +103,7 @@ module Spree
 
       # Render datetime column
       # @param value [Object] the value
-      # @param column [Spree::Admin::RecordList::Column] column definition
+      # @param column [Spree::Admin::Table::Column] column definition
       # @return [String]
       def render_datetime_column(value, column)
         return content_tag(:span, '-', class: 'text-gray-400') if value.blank?
@@ -114,7 +117,7 @@ module Spree
 
       # Render status column as badge
       # @param value [Object] the value
-      # @param column [Spree::Admin::RecordList::Column] column definition
+      # @param column [Spree::Admin::Table::Column] column definition
       # @return [String]
       def render_status_column(value, column)
         return content_tag(:span, '-', class: 'text-gray-400') if value.blank?
@@ -135,7 +138,7 @@ module Spree
 
       # Render boolean column
       # @param value [Object] the value
-      # @param column [Spree::Admin::RecordList::Column] column definition
+      # @param column [Spree::Admin::Table::Column] column definition
       # @return [String]
       def render_boolean_column(value, column)
         active_badge(value)
@@ -144,7 +147,7 @@ module Spree
       # Render link column
       # @param record [Object] the record
       # @param value [Object] the value
-      # @param column [Spree::Admin::RecordList::Column] column definition
+      # @param column [Spree::Admin::Table::Column] column definition
       # @return [String]
       def render_link_column(record, value, column)
         return content_tag(:span, '-', class: 'text-gray-400') if value.blank?
@@ -155,7 +158,7 @@ module Spree
       # Render image column
       # @param record [Object] the record
       # @param value [Object] the value
-      # @param column [Spree::Admin::RecordList::Column] column definition
+      # @param column [Spree::Admin::Table::Column] column definition
       # @return [String]
       def render_image_column(record, value, column)
         return content_tag(:span, '-', class: 'text-gray-400') if value.blank?
@@ -171,7 +174,7 @@ module Spree
 
       # Render string column
       # @param value [Object] the value
-      # @param column [Spree::Admin::RecordList::Column] column definition
+      # @param column [Spree::Admin::Table::Column] column definition
       # @return [String]
       def render_string_column(value, column)
         return content_tag(:span, '-', class: 'text-gray-400') if value.blank?
@@ -185,7 +188,7 @@ module Spree
 
       # Render association column (e.g., taxons, tags)
       # @param value [Object] the value (expected to be a string from method lambda)
-      # @param column [Spree::Admin::RecordList::Column] column definition
+      # @param column [Spree::Admin::Table::Column] column definition
       # @return [String]
       def render_association_column(value, column)
         return content_tag(:span, '-', class: 'text-gray-400') if value.blank?
@@ -194,11 +197,11 @@ module Spree
       end
 
       # Render sort dropdown for sortable columns
-      # @param record_list [Spree::Admin::RecordList] the record list
+      # @param table [Spree::Admin::Table] the table
       # @param current_sort [String, nil] current sort value (e.g., "name asc")
       # @return [String]
-      def record_list_sort_dropdown(record_list, current_sort)
-        sortable = record_list.sortable_columns
+      def table_sort_dropdown(table, current_sort)
+        sortable = table.sortable_columns
         return '' if sortable.empty?
 
         current_label = find_sort_label(sortable, current_sort)
@@ -227,7 +230,7 @@ module Spree
       end
 
       # Get column header CSS class
-      # @param column [Spree::Admin::RecordList::Column] column definition
+      # @param column [Spree::Admin::Table::Column] column definition
       # @return [String]
       def column_header_class(column)
         classes = []
@@ -237,7 +240,7 @@ module Spree
       end
 
       # Get column cell CSS class
-      # @param column [Spree::Admin::RecordList::Column] column definition
+      # @param column [Spree::Admin::Table::Column] column definition
       # @return [String]
       def column_cell_class(column)
         classes = []
@@ -246,17 +249,17 @@ module Spree
       end
 
       # Build query builder fields JSON for Stimulus controller
-      # @param record_list [Spree::Admin::RecordList] the record list
+      # @param table [Spree::Admin::Table] the table
       # @return [String] JSON string
-      def query_builder_fields_json(record_list)
-        query_builder = Spree::Admin::RecordList::QueryBuilder.new(record_list)
+      def query_builder_fields_json(table)
+        query_builder = Spree::Admin::Table::QueryBuilder.new(table)
         query_builder.available_fields.to_json
       end
 
       # Build available operators JSON for Stimulus controller
       # @return [String] JSON string
       def query_builder_operators_json
-        Spree::Admin::RecordList::Filter.operators_for_select.to_json
+        Spree::Admin::Table::Filter.operators_for_select.to_json
       end
 
       # Count the number of applied filters from query_state parameter
@@ -274,7 +277,7 @@ module Spree
       end
 
       # Render a single bulk action button or link
-      # @param action [Spree::Admin::RecordList::BulkAction] the bulk action
+      # @param action [Spree::Admin::Table::BulkAction] the bulk action
       # @param options [Hash] additional options for the link
       # @return [String] rendered HTML
       def render_bulk_action(action, **options)
@@ -300,12 +303,12 @@ module Spree
         link_to content, action.modal_path, link_options
       end
 
-      # Render bulk actions panel for a record list
-      # @param record_list [Spree::Admin::RecordList] the record list
+      # Render bulk actions panel for a table
+      # @param table [Spree::Admin::Table] the table
       # @param options [Hash] additional options
       # @return [String] rendered HTML
-      def render_bulk_actions_panel(record_list)
-        actions = record_list.visible_bulk_actions(self)
+      def render_bulk_actions_panel(table)
+        actions = table.visible_bulk_actions(self)
         return if actions.empty?
 
         # Split actions into primary (first 2) and secondary (rest in dropdown)
@@ -332,7 +335,7 @@ module Spree
       end
 
       # Render dropdown for secondary bulk actions
-      # @param actions [Array<Spree::Admin::RecordList::BulkAction>] the actions
+      # @param actions [Array<Spree::Admin::Table::BulkAction>] the actions
       # @return [String] rendered HTML
       def render_bulk_actions_dropdown(actions)
         dropdown(direction: 'top', portal: false) do
@@ -354,7 +357,7 @@ module Spree
       private
 
       def find_sort_label(sortable, current_sort)
-        return Spree.t('admin.record_lists.sort_by') if current_sort.blank?
+        return Spree.t('admin.tables.sort_by') if current_sort.blank?
 
         field, direction = current_sort.split(' ')
         column = sortable.find { |c| c.ransack_attribute == field }
@@ -363,7 +366,7 @@ module Spree
           dir_label = direction == 'asc' ? 'ASC' : 'DESC'
           "#{column.resolve_label} (#{dir_label})"
         else
-          Spree.t('admin.record_lists.sort_by')
+          Spree.t('admin.tables.sort_by')
         end
       end
 

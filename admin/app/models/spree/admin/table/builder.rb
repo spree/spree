@@ -1,6 +1,6 @@
 module Spree
   module Admin
-    class RecordList
+    class Table
       class Builder
         attr_reader :registry, :parent_column
 

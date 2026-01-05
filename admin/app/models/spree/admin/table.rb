@@ -1,10 +1,10 @@
 module Spree
   module Admin
-    class RecordList
+    class Table
       attr_reader :columns, :bulk_actions, :context, :model_class
-      attr_accessor :search_param, :search_placeholder, :row_actions
+      attr_accessor :search_param, :search_placeholder, :row_actions, :row_actions_edit, :row_actions_delete
 
-      def initialize(context, model_class: nil, search_param: :name_cont, search_placeholder: nil, row_actions: true)
+      def initialize(context, model_class: nil, search_param: :name_cont, search_placeholder: nil, row_actions: true, row_actions_edit: true, row_actions_delete: false)
         @context = context
         @model_class = model_class
         @columns = {}
@@ -12,12 +12,26 @@ module Spree
         @search_param = search_param
         @search_placeholder = search_placeholder
         @row_actions = row_actions
+        @row_actions_edit = row_actions_edit
+        @row_actions_delete = row_actions_delete
       end
 
       # Check if row actions are enabled
       # @return [Boolean]
       def row_actions?
         @row_actions
+      end
+
+      # Check if edit row action is enabled
+      # @return [Boolean]
+      def row_actions_edit?
+        @row_actions_edit
+      end
+
+      # Check if delete row action is enabled
+      # @return [Boolean]
+      def row_actions_delete?
+        @row_actions_delete
       end
 
       # Add a column definition
@@ -219,9 +233,17 @@ module Spree
       end
 
       # Deep clone the registry
-      # @return [RecordList]
+      # @return [Table]
       def deep_clone
-        cloned = self.class.new(context, model_class: model_class, search_param: search_param, search_placeholder: search_placeholder, row_actions: row_actions)
+        cloned = self.class.new(
+          context,
+          model_class: model_class,
+          search_param: search_param,
+          search_placeholder: search_placeholder,
+          row_actions: row_actions,
+          row_actions_edit: row_actions_edit,
+          row_actions_delete: row_actions_delete
+        )
         @columns.each do |key, column|
           cloned.columns[key] = column.deep_clone
         end
@@ -242,7 +264,7 @@ module Spree
       end
 
       def inspect
-        "#<Spree::Admin::RecordList context=#{context} columns=#{@columns.size} bulk_actions=#{@bulk_actions.size}>"
+        "#<Spree::Admin::Table context=#{context} columns=#{@columns.size} bulk_actions=#{@bulk_actions.size}>"
       end
 
       private

@@ -127,7 +127,7 @@ module Spree
         :zones_actions_partials,
         :zones_header_partials,
         :navigation,
-        :record_lists
+        :tables
       )
 
       class NavigationEnvironment
@@ -179,45 +179,56 @@ module Spree
         end
       end
 
-      class RecordListsEnvironment
+      class TablesEnvironment
         def initialize
           @registries = {}
         end
 
-        # Register a new record list
-        # @param name [Symbol] The name of the record list (e.g., :products, :orders)
-        # @param model_class [Class, nil] The model class for this list
+        # Register a new table
+        # @param name [Symbol] The name of the table (e.g., :products, :orders)
+        # @param model_class [Class, nil] The model class for this table
         # @param search_param [Symbol] The ransack parameter for text search (default: :name_cont)
         # @param search_placeholder [String, nil] Custom placeholder for search field
-        # @return [Spree::Admin::RecordList] The record list instance
-        def register(name, model_class: nil, search_param: :name_cont, search_placeholder: nil)
+        # @param row_actions [Boolean] Whether to show row actions (default: true)
+        # @param row_actions_edit [Boolean] Whether to show edit button in row actions (default: true)
+        # @param row_actions_delete [Boolean] Whether to show delete button in row actions (default: false)
+        # @return [Spree::Admin::Table] The table instance
+        def register(name, model_class: nil, search_param: :name_cont, search_placeholder: nil, row_actions: true, row_actions_edit: true, row_actions_delete: false)
           name = name.to_sym
-          @registries[name] ||= Spree::Admin::RecordList.new(name, model_class: model_class, search_param: search_param, search_placeholder: search_placeholder)
+          @registries[name] ||= Spree::Admin::Table.new(
+            name,
+            model_class: model_class,
+            search_param: search_param,
+            search_placeholder: search_placeholder,
+            row_actions: row_actions,
+            row_actions_edit: row_actions_edit,
+            row_actions_delete: row_actions_delete
+          )
         end
 
-        # Get a registered record list
-        # @param name [Symbol] The name of the record list
-        # @return [Spree::Admin::RecordList] The record list instance
-        # @raise [NoMethodError] if the record list hasn't been registered
+        # Get a registered table
+        # @param name [Symbol] The name of the table
+        # @return [Spree::Admin::Table] The table instance
+        # @raise [NoMethodError] if the table hasn't been registered
         def get(name)
           name = name.to_sym
-          @registries[name] || raise(NoMethodError, "Record list '#{name}' has not been registered. Use Spree.admin.record_lists.register(:#{name}) first.")
+          @registries[name] || raise(NoMethodError, "Table '#{name}' has not been registered. Use Spree.admin.tables.register(:#{name}) first.")
         end
 
-        # Check if a record list is registered
-        # @param name [Symbol] The record list name
+        # Check if a table is registered
+        # @param name [Symbol] The table name
         # @return [Boolean]
         def registered?(name)
           @registries.key?(name.to_sym)
         end
 
-        # List all registered record lists
+        # List all registered tables
         # @return [Array<Symbol>]
         def registries
           @registries.keys
         end
 
-        # Define accessor methods for registered record lists
+        # Define accessor methods for registered tables
         def method_missing(method_name, *args)
           if method_name.to_s.end_with?('=')
             super
@@ -308,8 +319,8 @@ module Spree
         app.config.spree_admin.navigation.register_context(:developers_tabs)
         app.config.spree_admin.navigation.register_context(:audit_tabs)
 
-        # Register record lists environment
-        app.config.spree_admin.record_lists = RecordListsEnvironment.new
+        # Register tables environment
+        app.config.spree_admin.tables = TablesEnvironment.new
       end
 
       # Add admin event subscribers

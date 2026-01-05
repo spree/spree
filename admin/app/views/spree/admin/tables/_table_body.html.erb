@@ -1,11 +1,11 @@
-<%# locals: (collection:, columns:, record_list:, bulk_operations: false, sortable: false) %>
-<% has_bulk_actions = bulk_operations && record_list.bulk_operations_enabled? %>
-<% has_row_actions = record_list.row_actions? %>
+<%# locals: (collection:, columns:, table:, bulk_operations: false, sortable: false) %>
+<% has_bulk_actions = bulk_operations && table.bulk_operations_enabled? %>
+<% has_row_actions = table.row_actions? %>
 <% if has_bulk_actions %>
   <div data-controller="bulk-operation bulk-dialog" data-action="keydown.esc->bulk-operation#cancel" tabindex="0">
     <%= form_tag url_for(action: :index), method: :put, data: { 'bulk-operation-target': 'form' } do %>
       <%= render 'spree/admin/shared/bulk_modal' %>
-      <%= render_bulk_actions_panel(record_list) %>
+      <%= render_bulk_actions_panel(table) %>
 
       <div class="table-responsive">
         <table class="table" id="listing_<%= controller_name %>">
@@ -38,12 +38,12 @@
               data-sortable-response-kind-value="turbo-stream"
             <% end %>
           >
-            <%= render partial: 'spree/admin/record_lists/table_row',
+            <%= render partial: 'spree/admin/tables/table_row',
                        collection: collection,
                        as: :record,
                        locals: {
                          columns: columns,
-                         record_list: record_list,
+                         table: table,
                          bulk_operations: has_bulk_actions,
                          sortable: sortable,
                          row_actions: has_row_actions
@@ -81,12 +81,12 @@
           data-sortable-response-kind-value="turbo-stream"
         <% end %>
       >
-        <%= render partial: 'spree/admin/record_lists/table_row',
+        <%= render partial: 'spree/admin/tables/table_row',
                    collection: collection,
                    as: :record,
                    locals: {
                      columns: columns,
-                     record_list: record_list,
+                     table: table,
                      bulk_operations: false,
                      sortable: sortable,
                      row_actions: has_row_actions

@@ -281,7 +281,7 @@ module Spree
                       per(params[:per_page] || Spree::Admin::RuntimeConfig.admin_products_per_page)
 
         # Apply custom sort scope if configured (e.g., for price sorting)
-        @collection = apply_record_list_sort(@collection) if custom_sort
+        @collection = apply_table_sort(@collection) if custom_sort
 
         @collection
       end

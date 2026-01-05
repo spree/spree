@@ -1,12 +1,16 @@
-<%# locals: (collection:, record_list:, list_key:, selected_columns: nil, frame_name: nil, bulk_operations: false, sortable: false) %>
+<%# locals: (collection:, table:, table_key:, selected_columns: nil, frame_name: nil, bulk_operations: false, sortable: false, export_type: nil) %>
 <% frame_name ||= controller_name %>
-<% columns = record_list.visible_columns(selected_columns, self) %>
+<% columns = table.visible_columns(selected_columns, self) %>
 <% current_sort = params.dig(:q, :s) %>
-<% search_param = record_list.respond_to?(:search_param) ? record_list.search_param : :name_cont %>
-<% search_placeholder = (record_list.respond_to?(:search_placeholder) && record_list.search_placeholder) || [Spree.t(:search), controller_name.humanize.downcase].join(' ') %>
+<% search_param = table.respond_to?(:search_param) ? table.search_param : :name_cont %>
+<% search_placeholder = (table.respond_to?(:search_placeholder) && table.search_placeholder) || [Spree.t(:search), controller_name.humanize.downcase].join(' ') %>
+
+<% if export_type.present? %>
+  <%= render 'spree/admin/shared/export_modal', export_type: export_type %>
+<% end %>
 
 <%= turbo_frame_tag frame_name, autoscroll: true, data: { autoscroll_block: :start, turbo_action: 'advance' } do %>
-  <div class="card-lg" data-controller="record-list" data-record-list-url-value="<%= request.path %>">
+  <div class="card-lg" data-controller="table" data-table-url-value="<%= request.path %>">
     <div class="p-2 border-b border-gray-200">
       <div class="flex flex-col lg:flex-row gap-3 items-start lg:items-center justify-between">
         <div class="flex gap-2 items-center flex-wrap">
@@ -22,11 +26,11 @@
         </div>
 
         <div class="flex gap-2 items-center h-full">
-          <%= render 'spree/admin/record_lists/query_builder', record_list: record_list, list_key: list_key, frame_name: frame_name %>
-          <%= record_list_sort_dropdown(record_list, current_sort) %>
-          <%= render 'spree/admin/record_lists/column_selector',
-                     record_list: record_list,
-                     list_key: list_key,
+          <%= render 'spree/admin/tables/query_builder', table: table, table_key: table_key, frame_name: frame_name %>
+          <%= table_sort_dropdown(table, current_sort) %>
+          <%= render 'spree/admin/tables/column_selector',
+                     table: table,
+                     table_key: table_key,
                      selected_columns: selected_columns,
                      frame_name: frame_name %>
         </div>
@@ -34,17 +38,17 @@
     </div>
 
     <% if collection.any? %>
-      <%= render 'spree/admin/record_lists/table',
+      <%= render 'spree/admin/tables/table_body',
                  collection: collection,
                  columns: columns,
-                 record_list: record_list,
+                 table: table,
                  bulk_operations: bulk_operations,
                  sortable: sortable %>
 
       <%= render 'spree/admin/shared/index_table_options', collection: collection %>
     <% else %>
       <%= render 'spree/admin/shared/no_resource_found',
-                 new_object_url: (new_object_url if respond_to?(:new_object_url) && can?(:create, record_list.model_class)) %>
+                 new_object_url: (new_object_url if respond_to?(:new_object_url) && can?(:create, table.model_class)) %>
     <% end %>
   </div>
 <% end %>

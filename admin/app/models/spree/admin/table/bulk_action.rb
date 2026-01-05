@@ -1,6 +1,6 @@
 module Spree
   module Admin
-    class RecordList
+    class Table
       class BulkAction
         attr_accessor :key, :label, :label_options, :icon, :modal_path, :action_path, :position, :condition, :confirm, :method
 
@@ -71,7 +71,7 @@ module Spree
         end
 
         def inspect
-          "#<Spree::Admin::RecordList::BulkAction key=#{key}>"
+          "#<Spree::Admin::Table::BulkAction key=#{key}>"
         end
       end
     end

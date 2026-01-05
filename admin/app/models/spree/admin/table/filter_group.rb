@@ -1,6 +1,6 @@
 module Spree
   module Admin
-    class RecordList
+    class Table
       class FilterGroup
         COMBINATORS = %i[and or].freeze
 

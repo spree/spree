@@ -233,8 +233,8 @@ Spree::Core::Engine.add_routes do
       get '/errors/:path', to: 'errors#show', as: :pathed_errors
     end
 
-    # record list columns (for session-based column selection)
-    post 'record_list_columns', to: 'record_list_columns#update', as: :record_list_columns
+    # table columns (for session-based column selection)
+    post 'table_columns', to: 'table_columns#update', as: :table_columns
 
     # dashboard
     resource :dashboard, controller: 'dashboard'

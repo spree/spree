@@ -1,12 +1,12 @@
 module Spree
   module Admin
-    class RecordList
+    class Table
       class Column
         TYPES = %i[string number date datetime currency status link boolean image custom].freeze
         FILTER_TYPES = %i[string number date datetime currency status boolean autocomplete].freeze
 
         attr_accessor :key, :label, :type, :filter_type, :sortable, :filterable, :displayable, :default, :position,
-                      :partial, :method, :width, :align, :format, :condition,
+                      :partial, :partial_locals, :method, :width, :align, :format, :condition,
                       :ransack_attribute, :operators, :value_options, :search_url,
                       :sort_scope_asc, :sort_scope_desc
 
@@ -21,6 +21,7 @@ module Spree
           @default = options.fetch(:default, false)
           @position = options[:position] || 999
           @partial = options[:partial]
+          @partial_locals = options[:partial_locals] || {}
           @method = options[:method] || key
           @width = options[:width]
           @align = options[:align] || :left
@@ -155,7 +156,7 @@ module Spree
         end
 
         def inspect
-          "#<Spree::Admin::RecordList::Column key=#{key} type=#{type} default=#{default}>"
+          "#<Spree::Admin::Table::Column key=#{key} type=#{type} default=#{default}>"
         end
       end
     end

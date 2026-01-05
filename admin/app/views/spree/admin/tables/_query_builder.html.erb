@@ -1,5 +1,5 @@
-<%# locals: (record_list:, list_key:, frame_name:) %>
-<% fields_json = query_builder_fields_json(record_list) %>
+<%# locals: (table:, table_key:, frame_name:) %>
+<% fields_json = query_builder_fields_json(table) %>
 <% operators_json = query_builder_operators_json %>
 <% current_state = params[:query_state] || '{}' %>
 <% filter_count = count_applied_filters(current_state) %>
@@ -9,7 +9,7 @@
           class="btn btn-light btn-sm flex items-center gap-1 h-full"
           data-action="dialog#open">
     <%= icon 'filter', class: 'w-4 h-4' %>
-    <span><%= Spree.t('admin.record_lists.filters') %></span>
+    <span><%= Spree.t('admin.tables.filters') %></span>
     <% if filter_count > 0 %>
       <span class="badge badge-primary rounded-full text-xs px-1.5 py-0.5 min-w-[1.25rem]"><%= filter_count %></span>
     <% end %>
@@ -17,8 +17,8 @@
 
   <dialog class="drawer"
           data-dialog-target="dialog"
-          id="query-builder-drawer-<%= list_key %>">
-    <%= drawer_header(Spree.t('admin.record_lists.filter_builder'), 'dialog') %>
+          id="query-builder-drawer-<%= table_key %>">
+    <%= drawer_header(Spree.t('admin.tables.filter_builder'), 'dialog') %>
 
     <div data-controller="query-builder"
          data-query-builder-fields-value="<%= fields_json %>"
@@ -28,7 +28,7 @@
         <div class="drawer-body">
           <div class="mb-4 flex items-center gap-2 flex-wrap">
             <span class="text-sm text-gray-600">
-              <%= Spree.t('admin.record_lists.match') %>
+              <%= Spree.t('admin.tables.match') %>
             </span>
             <button type="button"
                     class="btn btn-sm btn-outline-secondary px-2 py-1"
@@ -37,7 +37,7 @@
               <span data-query-builder-target="combinatorLabel">AND</span>
             </button>
             <span class="text-sm text-gray-600">
-              <%= Spree.t('admin.record_lists.of_the_following') %>
+              <%= Spree.t('admin.tables.of_the_following') %>
             </span>
           </div>
 
@@ -54,13 +54,13 @@
                     class="btn btn-sm btn-light flex items-center gap-1"
                     data-action="query-builder#addFilter">
               <%= icon 'plus', class: 'w-4 h-4' %>
-              <%= Spree.t('admin.record_lists.add_filter') %>
+              <%= Spree.t('admin.tables.add_filter') %>
             </button>
             <button type="button"
                     class="btn btn-sm btn-light flex items-center gap-1"
                     data-action="query-builder#addOrGroup">
               <%= icon 'brackets', class: 'w-4 h-4' %>
-              <%= Spree.t('admin.record_lists.add_or_group') %>
+              <%= Spree.t('admin.tables.add_or_group') %>
             </button>
           </div>
 
@@ -75,21 +75,21 @@
           <button type="button"
                   class="btn btn-light"
                   data-action="query-builder#clear">
-            <%= Spree.t('admin.record_lists.clear_all') %>
+            <%= Spree.t('admin.tables.clear_all') %>
           </button>
-          <%= f.submit Spree.t('admin.record_lists.apply_filters'),
+          <%= f.submit Spree.t('admin.tables.apply_filters'),
                        class: 'btn btn-primary cursor-pointer' %>
         </div>
       <% end %>
 
       <%# Filter row template %>
       <template data-query-builder-target="filterTemplate">
-        <%= render 'spree/admin/record_lists/filter_row' %>
+        <%= render 'spree/admin/tables/filter_row' %>
       </template>
 
       <%# Filter group template %>
       <template data-query-builder-target="groupTemplate">
-        <%= render 'spree/admin/record_lists/filter_group' %>
+        <%= render 'spree/admin/tables/filter_group' %>
       </template>
     </div>
   </dialog>

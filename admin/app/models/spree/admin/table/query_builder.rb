@@ -1,11 +1,11 @@
 module Spree
   module Admin
-    class RecordList
+    class Table
       class QueryBuilder
-        attr_reader :root_group, :record_list
+        attr_reader :root_group, :table
 
-        def initialize(record_list)
-          @record_list = record_list
+        def initialize(table)
+          @table = table
           @root_group = FilterGroup.new(combinator: :and)
         end
 
@@ -69,10 +69,10 @@ module Spree
           @root_group = FilterGroup.new(combinator: :and)
         end
 
-        # Get available fields for filtering based on record_list configuration
+        # Get available fields for filtering based on table configuration
         # @return [Array<Hash>]
         def available_fields
-          @record_list.filterable_columns.map do |column|
+          @table.filterable_columns.map do |column|
             {
               key: column.ransack_attribute,
               label: column.resolve_label,

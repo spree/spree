@@ -1,20 +1,20 @@
 module Spree
   module Admin
-    class RecordListColumnsController < Spree::Admin::BaseController
-      # POST /admin/record_list_columns
-      # Updates the selected columns for a record list in the session
+    class TableColumnsController < Spree::Admin::BaseController
+      # POST /admin/table_columns
+      # Updates the selected columns for a table in the session
       def update
-        list_key = params[:list_key]
+        table_key = params[:table_key]
         columns = params[:columns]
 
-        if list_key.present?
+        if table_key.present?
           if columns.present?
             # Filter to only include valid column keys
             column_keys = Array(columns).map(&:to_sym)
-            session["record_list_columns_#{list_key}"] = column_keys.join(',')
+            session["table_columns_#{table_key}"] = column_keys.join(',')
           else
             # Clear selection to use defaults
-            session.delete("record_list_columns_#{list_key}")
+            session.delete("table_columns_#{table_key}")
           end
         end
 

@@ -1,6 +1,6 @@
 module Spree
   module Admin
-    class RecordList
+    class Table
       class Filter
         OPERATORS = {
           eq: { label: 'equals', predicate: '_eq' },
@@ -53,11 +53,18 @@ module Spree
         def extract_ransack_value
           return value unless value.is_a?(Array)
 
-          # If array contains hashes with 'id' key, extract the IDs
-          if value.first.is_a?(Hash) && (value.first.key?('id') || value.first.key?(:id))
-            value.map { |item| item['id'] || item[:id] }
+          # Extract IDs if array contains hashes with 'id' key (from autocomplete)
+          extracted = if value.first.is_a?(Hash) && (value.first.key?('id') || value.first.key?(:id))
+                        value.map { |item| item['id'] || item[:id] }
+                      else
+                        value
+                      end
+
+          # For eq/not_eq operators, use single value instead of array
+          if %i[eq not_eq].include?(@operator) && extracted.is_a?(Array) && extracted.size == 1
+            extracted.first
           else
-            value
+            extracted
           end
         end
 

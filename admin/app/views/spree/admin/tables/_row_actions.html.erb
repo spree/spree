@@ -1,11 +1,15 @@
-<%# locals: (record:) %>
+<%# locals: (record:, table:) %>
 <div class="flex items-center justify-end gap-1">
-  <% if respond_to?(:edit_object_url) && can?(:update, record) %>
+  <% if table.row_actions_edit? && respond_to?(:edit_object_url) && can?(:update, record) %>
     <%= link_to edit_object_url(record),
                 class: 'btn btn-sm btn-light',
                 title: Spree.t(:edit),
                 data: { 'turbo-frame': '_top' } do %>
       <%= icon 'pencil', class: 'w-4 h-4' %>
     <% end %>
+  <% end %>
+
+  <% if table.row_actions_delete? && can?(:destroy, record) %>
+    <%= link_to_delete(record, no_text: true, class: 'btn btn-sm btn-light text-danger') %>
   <% end %>
 </div>

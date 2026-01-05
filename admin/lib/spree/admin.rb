@@ -38,8 +38,8 @@ module Spree
       Rails.application.config.spree_admin.navigation
     end
 
-    def record_lists
-      Rails.application.config.spree_admin.record_lists
+    def tables
+      Rails.application.config.spree_admin.tables
     end
   end
 end
