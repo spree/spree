@@ -177,11 +177,10 @@ module Spree
 
       return true if records_to_upsert.empty?
 
-      Spree::Price.upsert_all(
-        records_to_upsert,
-        unique_by: :id,
-        update_only: [:amount, :compare_at_amount]
-      )
+      opts = { update_only: [:amount, :compare_at_amount] }
+      opts[:unique_by] = :id unless ActiveRecord::Base.connection.adapter_name == 'Mysql2'
+
+      Spree::Price.upsert_all(records_to_upsert, **opts)
 
       touch_variants(variant_ids.to_a)
       true
