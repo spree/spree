@@ -1,30 +1,33 @@
 <%# locals: (collection:, columns:, record_list:, bulk_operations: false, sortable: false) %>
-<% if bulk_operations %>
+<% has_bulk_actions = bulk_operations && record_list.bulk_operations_enabled? %>
+<% has_row_actions = record_list.row_actions? %>
+<% if has_bulk_actions %>
   <div data-controller="bulk-operation bulk-dialog" data-action="keydown.esc->bulk-operation#cancel" tabindex="0">
     <%= form_tag url_for(action: :index), method: :put, data: { 'bulk-operation-target': 'form' } do %>
       <%= render 'spree/admin/shared/bulk_modal' %>
+      <%= render_bulk_actions_panel(record_list) %>
 
       <div class="table-responsive">
         <table class="table" id="listing_<%= controller_name %>">
           <thead>
             <tr>
+              <% if sortable %>
+                <th scope="col" class="w-5"></th>
+              <% end %>
+
               <th scope="col" class="pr-0 w-5">
                 <%= bulk_operations_select_all_checkbox %>
               </th>
 
               <% columns.each do |column| %>
                 <th scope="col" class="<%= column_header_class(column) %>">
-                  <% if column.sortable? && @search %>
-                    <%= sort_link @search, column.ransack_attribute, column.resolve_label,
-                                  default_order: 'desc',
-                                  title: "#{controller_name}_listing_#{column.key}_title" %>
-                  <% else %>
-                    <%= column.resolve_label %>
-                  <% end %>
+                  <%= column.resolve_label %>
                 </th>
               <% end %>
 
-              <th scope="col" class="w-10"></th>
+              <% if has_row_actions %>
+                <th scope="col" class="w-10"></th>
+              <% end %>
             </tr>
           </thead>
           <tbody
@@ -41,8 +44,9 @@
                        locals: {
                          columns: columns,
                          record_list: record_list,
-                         bulk_operations: bulk_operations,
-                         sortable: sortable
+                         bulk_operations: has_bulk_actions,
+                         sortable: sortable,
+                         row_actions: has_row_actions
                        } %>
           </tbody>
         </table>
@@ -54,19 +58,19 @@
     <table class="table" id="listing_<%= controller_name %>">
       <thead>
         <tr>
+          <% if sortable %>
+            <th scope="col" class="w-5"></th>
+          <% end %>
+
           <% columns.each do |column| %>
             <th scope="col" class="<%= column_header_class(column) %>">
-              <% if column.sortable? && @search %>
-                <%= sort_link @search, column.ransack_attribute, column.resolve_label,
-                              default_order: 'desc',
-                              title: "#{controller_name}_listing_#{column.key}_title" %>
-              <% else %>
-                <%= column.resolve_label %>
-              <% end %>
+              <%= column.resolve_label %>
             </th>
           <% end %>
 
-          <th scope="col" class="w-10"></th>
+          <% if has_row_actions %>
+            <th scope="col" class="w-10"></th>
+          <% end %>
         </tr>
       </thead>
       <tbody
@@ -84,7 +88,8 @@
                      columns: columns,
                      record_list: record_list,
                      bulk_operations: false,
-                     sortable: sortable
+                     sortable: sortable,
+                     row_actions: has_row_actions
                    } %>
       </tbody>
     </table>

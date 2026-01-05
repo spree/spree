@@ -265,15 +265,23 @@ module Spree
         # That's because we sort products by name
         @collection = @collection.group(:name) if params.dig(:q, :out_of_stock_items) == '1'
 
+        # Check if custom sort scope is needed (e.g., for price sorting)
+        custom_sort = custom_sort_active?
+        ransack_params = params[:q].except(:deleted_at_null)
+        ransack_params = ransack_params.except(:s) if custom_sort
+
         # @search needs to be defined as this is passed to search_form_for
         # Temporarily remove params[:q][:deleted_at_null] from params[:q] to ransack products.
         # This is to include all products and not just deleted products.
-        @search = @collection.ransack(params[:q].except(:deleted_at_null))
+        @search = @collection.ransack(ransack_params)
         @collection = @search.result(distinct: true).
                       for_ordering_with_translations(model_class, :name).
                       includes(product_includes).
                       page(params[:page]).
                       per(params[:per_page] || Spree::Admin::RuntimeConfig.admin_products_per_page)
+
+        # Apply custom sort scope if configured (e.g., for price sorting)
+        @collection = apply_record_list_sort(@collection) if custom_sort
 
         @collection
       end

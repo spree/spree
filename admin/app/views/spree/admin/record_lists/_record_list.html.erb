@@ -7,29 +7,30 @@
 
 <%= turbo_frame_tag frame_name, autoscroll: true, data: { autoscroll_block: :start, turbo_action: 'advance' } do %>
   <div class="card-lg" data-controller="record-list" data-record-list-url-value="<%= request.path %>">
-    <div class="p-4 border-b border-gray-200">
-      <%= search_form_for @search, url: url_for, html: { data: { turbo_frame: frame_name, turbo_action: 'advance' } } do |f| %>
-        <div class="flex flex-col lg:flex-row gap-3 items-start lg:items-center justify-between">
-          <div class="flex gap-2 items-center flex-wrap grow">
-            <div class="form-input flex items-center py-0 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-blue-500 grow max-lg:max-w-[300px] mr-auto h-[2.125rem] transition-all duration-100 ease-in-out">
+    <div class="p-2 border-b border-gray-200">
+      <div class="flex flex-col lg:flex-row gap-3 items-start lg:items-center justify-between">
+        <div class="flex gap-2 items-center flex-wrap">
+          <%= search_form_for @search, url: url_for, html: { data: { turbo_frame: frame_name, turbo_action: 'advance' } } do |f| %>
+            <div class="form-input flex items-center py-0 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-blue-500 lg:w-[300px] mr-auto h-[2.125rem] transition-all duration-100 ease-in-out">
               <%= icon "search", class: "mr-4 text-gray-600" %>
               <%= search_field_tag "q[#{search_param}]",
                                    params.dig(:q, search_param),
                                    class: "outline-none border-0 h-full focus:border-0 focus:ring-0 p-0 text-base w-full",
                                    placeholder: search_placeholder %>
             </div>
-            <%= render 'spree/admin/record_lists/query_builder', record_list: record_list, list_key: list_key %>
-          </div>
-
-          <div class="flex gap-2 items-center">
-            <%= record_list_sort_dropdown(record_list, current_sort) %>
-            <%= render 'spree/admin/record_lists/column_selector',
-                       record_list: record_list,
-                       list_key: list_key,
-                       selected_columns: selected_columns %>
-          </div>
+          <% end %>
         </div>
-      <% end %>
+
+        <div class="flex gap-2 items-center h-full">
+          <%= render 'spree/admin/record_lists/query_builder', record_list: record_list, list_key: list_key, frame_name: frame_name %>
+          <%= record_list_sort_dropdown(record_list, current_sort) %>
+          <%= render 'spree/admin/record_lists/column_selector',
+                     record_list: record_list,
+                     list_key: list_key,
+                     selected_columns: selected_columns,
+                     frame_name: frame_name %>
+        </div>
+      </div>
     </div>
 
     <% if collection.any? %>

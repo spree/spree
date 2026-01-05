@@ -259,6 +259,98 @@ module Spree
         Spree::Admin::RecordList::Filter.operators_for_select.to_json
       end
 
+      # Count the number of applied filters from query_state parameter
+      # @param query_state [String] JSON string of query state
+      # @return [Integer] total number of filters applied
+      def count_applied_filters(query_state)
+        return 0 if query_state.blank? || query_state == '{}'
+
+        begin
+          state = JSON.parse(query_state)
+          count_filters_in_state(state)
+        rescue JSON::ParserError
+          0
+        end
+      end
+
+      # Render a single bulk action button or link
+      # @param action [Spree::Admin::RecordList::BulkAction] the bulk action
+      # @param options [Hash] additional options for the link
+      # @return [String] rendered HTML
+      def render_bulk_action(action, **options)
+        return unless action.visible?(self)
+
+        link_options = {
+          class: options[:class] || 'btn',
+          data: {
+            action: 'click->bulk-operation#setBulkAction click->bulk-dialog#open',
+            turbo_frame: :bulk_dialog,
+            url: action.action_path
+          }
+        }
+
+        link_options[:data][:confirm] = action.confirm if action.confirm.present?
+
+        content = if action.icon.present?
+                    icon(action.icon) + ' ' + action.resolve_label
+                  else
+                    action.resolve_label
+                  end
+
+        link_to content, action.modal_path, link_options
+      end
+
+      # Render bulk actions panel for a record list
+      # @param record_list [Spree::Admin::RecordList] the record list
+      # @param options [Hash] additional options
+      # @return [String] rendered HTML
+      def render_bulk_actions_panel(record_list)
+        actions = record_list.visible_bulk_actions(self)
+        return if actions.empty?
+
+        # Split actions into primary (first 2) and secondary (rest in dropdown)
+        primary_actions = actions.first(2)
+        secondary_actions = actions.drop(2)
+
+        content_tag(:div, id: 'bulk-panel', class: 'hidden', data: { bulk_operation_target: 'panel' }) do
+          content_tag(:div, class: 'bulk-panel-container') do
+            parts = []
+            parts << bulk_operations_counter
+
+            primary_actions.each do |action|
+              parts << render_bulk_action(action)
+            end
+
+            if secondary_actions.any?
+              parts << render_bulk_actions_dropdown(secondary_actions)
+            end
+
+            parts << bulk_operations_close_button
+            safe_join(parts)
+          end
+        end
+      end
+
+      # Render dropdown for secondary bulk actions
+      # @param actions [Array<Spree::Admin::RecordList::BulkAction>] the actions
+      # @return [String] rendered HTML
+      def render_bulk_actions_dropdown(actions)
+        dropdown(direction: 'top', portal: false) do
+          toggle = dropdown_toggle do
+            icon('dots-vertical', class: 'mr-0')
+          end
+
+          menu = dropdown_menu(class: 'mb-2') do
+            items = actions.map do |action|
+              render_bulk_action(action, class: 'dropdown-item')
+            end
+            safe_join(items)
+          end
+
+          safe_join([toggle, menu])
+        end
+      end
+
       private
 
       def find_sort_label(sortable, current_sort)
@@ -288,6 +380,29 @@ module Spree
                 url_for(q: current_q.merge(s: sort_value)),
                 class: "dropdown-item #{'active' if is_active}",
                 data: { turbo_action: 'advance' }
+      end
+
+      # Recursively count filters in a state object (including nested groups)
+      # @param state [Hash] the state object
+      # @return [Integer] count of filters
+      def count_filters_in_state(state)
+        return 0 unless state.is_a?(Hash)
+
+        count = 0
+
+        # Count filters at this level (only those with a field selected)
+        if state['filters'].is_a?(Array)
+          count += state['filters'].count { |f| f['field'].present? }
+        end
+
+        # Count filters in nested groups
+        if state['groups'].is_a?(Array)
+          state['groups'].each do |group|
+            count += count_filters_in_state(group)
+          end
+        end
+
+        count
       end
     end
   end

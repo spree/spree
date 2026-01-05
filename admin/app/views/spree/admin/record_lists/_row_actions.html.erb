@@ -1,24 +1,11 @@
 <%# locals: (record:) %>
-<div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<div class="flex items-center justify-end gap-1">
   <% if respond_to?(:edit_object_url) && can?(:update, record) %>
     <%= link_to edit_object_url(record),
                 class: 'btn btn-sm btn-light',
                 title: Spree.t(:edit),
                 data: { 'turbo-frame': '_top' } do %>
       <%= icon 'pencil', class: 'w-4 h-4' %>
-    <% end %>
-  <% end %>
-
-  <% if respond_to?(:object_url) && can?(:destroy, record) %>
-    <%= link_to object_url(record),
-                method: :delete,
-                class: 'btn btn-sm btn-light text-red-600 hover:text-red-700',
-                title: Spree.t(:delete),
-                data: {
-                  turbo_method: :delete,
-                  turbo_confirm: Spree.t(:are_you_sure)
-                } do %>
-      <%= icon 'trash', class: 'w-4 h-4' %>
     <% end %>
   <% end %>
 </div>

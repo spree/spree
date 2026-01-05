@@ -18,10 +18,8 @@ module Spree
           end
         end
 
-        respond_to do |format|
-          format.html { redirect_back fallback_location: spree.admin_path }
-          format.turbo_stream { redirect_back fallback_location: spree.admin_path }
-        end
+        redirect_url = params[:redirect_url].presence || request.referer || spree.admin_path
+        redirect_to redirect_url, status: :see_other
       end
     end
   end

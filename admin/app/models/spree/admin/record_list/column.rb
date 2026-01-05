@@ -7,7 +7,8 @@ module Spree
 
         attr_accessor :key, :label, :type, :filter_type, :sortable, :filterable, :displayable, :default, :position,
                       :partial, :method, :width, :align, :format, :condition,
-                      :ransack_attribute, :operators, :value_options, :search_url
+                      :ransack_attribute, :operators, :value_options, :search_url,
+                      :sort_scope_asc, :sort_scope_desc
 
         def initialize(key, **options)
           @key = key.to_sym
@@ -29,6 +30,14 @@ module Spree
           @value_options = options[:value_options]
           @search_url = options[:search_url]
           @operators = options[:operators] || default_operators_for_type
+          @sort_scope_asc = options[:sort_scope_asc]
+          @sort_scope_desc = options[:sort_scope_desc]
+        end
+
+        # Check if column uses custom sort scopes instead of ransack
+        # @return [Boolean]
+        def custom_sort?
+          sort_scope_asc.present? || sort_scope_desc.present?
         end
 
         def sortable?
@@ -133,7 +142,9 @@ module Spree
             ransack_attribute: ransack_attribute,
             operators: operators,
             value_options: value_options,
-            search_url: search_url
+            search_url: search_url,
+            sort_scope_asc: sort_scope_asc,
+            sort_scope_desc: sort_scope_desc
           }
         end
 

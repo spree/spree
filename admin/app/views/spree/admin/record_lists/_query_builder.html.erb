@@ -1,14 +1,18 @@
-<%# locals: (record_list:, list_key:) %>
+<%# locals: (record_list:, list_key:, frame_name:) %>
 <% fields_json = query_builder_fields_json(record_list) %>
 <% operators_json = query_builder_operators_json %>
 <% current_state = params[:query_state] || '{}' %>
+<% filter_count = count_applied_filters(current_state) %>
 
-<div data-controller="dialog">
+<div data-controller="dialog" class="h-full">
   <button type="button"
-          class="btn btn-light btn-sm flex items-center gap-1"
+          class="btn btn-light btn-sm flex items-center gap-1 h-full"
           data-action="dialog#open">
     <%= icon 'filter', class: 'w-4 h-4' %>
     <span><%= Spree.t('admin.record_lists.filters') %></span>
+    <% if filter_count > 0 %>
+      <span class="badge badge-primary rounded-full text-xs px-1.5 py-0.5 min-w-[1.25rem]"><%= filter_count %></span>
+    <% end %>
   </button>
 
   <dialog class="drawer"

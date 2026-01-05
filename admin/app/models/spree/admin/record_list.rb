@@ -1,15 +1,23 @@
 module Spree
   module Admin
     class RecordList
-      attr_reader :columns, :context, :model_class
-      attr_accessor :search_param, :search_placeholder
+      attr_reader :columns, :bulk_actions, :context, :model_class
+      attr_accessor :search_param, :search_placeholder, :row_actions
 
-      def initialize(context, model_class: nil, search_param: :name_cont, search_placeholder: nil)
+      def initialize(context, model_class: nil, search_param: :name_cont, search_placeholder: nil, row_actions: true)
         @context = context
         @model_class = model_class
         @columns = {}
+        @bulk_actions = {}
         @search_param = search_param
         @search_placeholder = search_placeholder
+        @row_actions = row_actions
+      end
+
+      # Check if row actions are enabled
+      # @return [Boolean]
+      def row_actions?
+        @row_actions
       end
 
       # Add a column definition
@@ -123,18 +131,102 @@ module Spree
         @columns.values.select(&:sortable?).sort_by(&:position)
       end
 
+      # Find column with custom sort scope for the given sort param
+      # @param sort_param [String] the sort param (e.g., "master_price desc")
+      # @return [Column, nil] column with custom sort scope or nil
+      def find_custom_sort_column(sort_param)
+        return nil if sort_param.blank?
+
+        attribute = sort_param.to_s.split.first
+        @columns.values.find { |c| c.ransack_attribute == attribute && c.custom_sort? }
+      end
+
+      # Apply custom sort scope to collection
+      # @param collection [ActiveRecord::Relation] the collection to sort
+      # @param sort_param [String] the sort param (e.g., "master_price desc")
+      # @return [ActiveRecord::Relation] sorted collection
+      def apply_custom_sort(collection, sort_param)
+        column = find_custom_sort_column(sort_param)
+        return collection unless column
+
+        direction = sort_param.to_s.include?('desc') ? :desc : :asc
+        scope_name = direction == :desc ? column.sort_scope_desc : column.sort_scope_asc
+
+        return collection unless scope_name.present?
+
+        collection.send(scope_name)
+      end
+
       # Get filterable columns (columns that can be used in query builder)
       # @return [Array<Column>]
       def filterable_columns
         @columns.values.select(&:filterable?).sort_by(&:position)
       end
 
+      # Add a bulk action definition
+      # @param key [Symbol] unique action identifier
+      # @param options [Hash] action options (label, icon, modal_path, action_path, position, etc.)
+      # @return [BulkAction] the created action
+      def add_bulk_action(key, **options)
+        key = key.to_sym
+        action = BulkAction.new(key, **options)
+        @bulk_actions[key] = action
+        sort_bulk_actions!
+        action
+      end
+
+      # Remove a bulk action
+      # @param key [Symbol] action key to remove
+      # @return [BulkAction, nil] the removed action or nil
+      def remove_bulk_action(key)
+        @bulk_actions.delete(key.to_sym)
+      end
+
+      # Update an existing bulk action
+      # @param key [Symbol] action key to update
+      # @param options [Hash] attributes to update
+      # @return [BulkAction, nil] the updated action or nil
+      def update_bulk_action(key, **options)
+        action = @bulk_actions[key.to_sym]
+        return nil unless action
+
+        options.each do |attr, value|
+          action.send("#{attr}=", value) if action.respond_to?("#{attr}=")
+        end
+
+        sort_bulk_actions!
+        action
+      end
+
+      # Find a bulk action by key
+      # @param key [Symbol] action key
+      # @return [BulkAction, nil]
+      def find_bulk_action(key)
+        @bulk_actions[key.to_sym]
+      end
+
+      # Get visible bulk actions for the given context
+      # @param view_context [Object, nil] view context for visibility checks
+      # @return [Array<BulkAction>]
+      def visible_bulk_actions(view_context = nil)
+        @bulk_actions.values.select { |a| a.visible?(view_context) }.sort_by(&:position)
+      end
+
+      # Check if bulk operations are enabled (has any bulk actions)
+      # @return [Boolean]
+      def bulk_operations_enabled?
+        @bulk_actions.any?
+      end
+
       # Deep clone the registry
       # @return [RecordList]
       def deep_clone
-        cloned = self.class.new(context, model_class: model_class, search_param: search_param, search_placeholder: search_placeholder)
+        cloned = self.class.new(context, model_class: model_class, search_param: search_param, search_placeholder: search_placeholder, row_actions: row_actions)
         @columns.each do |key, column|
           cloned.columns[key] = column.deep_clone
+        end
+        @bulk_actions.each do |key, action|
+          cloned.bulk_actions[key] = action.deep_clone
         end
         cloned
       end
@@ -144,14 +236,23 @@ module Spree
         @columns.clear
       end
 
+      # Clear all bulk actions
+      def clear_bulk_actions
+        @bulk_actions.clear
+      end
+
       def inspect
-        "#<Spree::Admin::RecordList context=#{context} columns=#{@columns.size}>"
+        "#<Spree::Admin::RecordList context=#{context} columns=#{@columns.size} bulk_actions=#{@bulk_actions.size}>"
       end
 
       private
 
       def sort_columns!
         @columns = @columns.sort_by { |_key, col| [col.position, col.key.to_s] }.to_h
+      end
+
+      def sort_bulk_actions!
+        @bulk_actions = @bulk_actions.sort_by { |_key, action| [action.position, action.key.to_s] }.to_h
       end
     end
   end

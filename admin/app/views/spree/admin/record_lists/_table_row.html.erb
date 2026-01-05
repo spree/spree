@@ -1,5 +1,11 @@
-<%# locals: (record:, columns:, record_list:, bulk_operations: false, sortable: false) %>
-<tr id="<%= dom_id record %>" class="group">
+<%# locals: (record:, columns:, record_list:, bulk_operations: false, sortable: false, row_actions: true) %>
+<tr id="<%= dom_id record %>" class="group"<% if sortable %> data-sortable-update-url="<%= edit_object_url(record) %>"<% end %>>
+  <% if sortable %>
+    <td class="w-5 move-handle text-center">
+      <%= icon('grip-vertical', class: 'rounded-md hover:bg-gray-100 p-2 cursor-grab') %>
+    </td>
+  <% end %>
+
   <% if bulk_operations %>
     <td class="pr-0 w-5">
       <%= bulk_operations_checkbox(record) %>
@@ -7,7 +13,7 @@
   <% end %>
 
   <% columns.each_with_index do |column, index| %>
-    <td class="<%= column_cell_class(column) %>">
+    <td class="<%= column_cell_class(column) %>" id="<%= dom_id record, column.key %>">
       <% if index == 0 %>
         <%= link_to edit_object_url(record),
                     class: 'flex items-center w-full no-underline hover:text-primary',
@@ -20,7 +26,9 @@
     </td>
   <% end %>
 
-  <td class="w-10 text-right">
-    <%= render 'spree/admin/record_lists/row_actions', record: record %>
-  </td>
+  <% if row_actions %>
+    <td class="w-10 text-right">
+      <%= render 'spree/admin/record_lists/row_actions', record: record %>
+    </td>
+  <% end %>
 </tr>

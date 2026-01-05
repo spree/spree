@@ -56,6 +56,28 @@ module Spree
         order(price_table_name => { amount: :desc })
       end
 
+      # Price sorting scopes that use subqueries to get prices across all variants
+      # These ensure products with only variant prices (no master price) are included in results
+      add_search_scope :ascend_by_price do
+        price_subquery = Price
+          .non_zero
+          .joins(:variant)
+          .where("#{Variant.table_name}.product_id = #{Product.table_name}.id")
+          .select('MIN(amount)')
+
+        order(Arel.sql("COALESCE((#{price_subquery.to_sql}), 999999999) ASC"))
+      end
+
+      add_search_scope :descend_by_price do
+        price_subquery = Price
+          .non_zero
+          .joins(:variant)
+          .where("#{Variant.table_name}.product_id = #{Product.table_name}.id")
+          .select('MAX(amount)')
+
+        order(Arel.sql("COALESCE((#{price_subquery.to_sql}), 0) DESC"))
+      end
+
       add_search_scope :price_between do |low, high|
         where(Price.table_name => { amount: low..high })
       end

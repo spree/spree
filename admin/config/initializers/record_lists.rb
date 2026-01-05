@@ -68,6 +68,8 @@ Rails.application.config.after_initialize do
                                         default: true,
                                         position: 40,
                                         ransack_attribute: 'master_price',
+                                        sort_scope_asc: :ascend_by_price,
+                                        sort_scope_desc: :descend_by_price,
                                         method: ->(product) { product.price }
 
   Spree.admin.record_lists.products.add :created_at,
@@ -125,6 +127,64 @@ Rails.application.config.after_initialize do
                                         operators: %i[in],
                                         search_url: '/admin/tags/select_options.json?taggable_type=Spree::Product',
                                         method: ->(product) { product.tag_list.join(', ') }
+
+  # Products bulk actions
+  Spree.admin.record_lists.products.add_bulk_action :set_active,
+                                                    label: 'admin.bulk_ops.products.title.set_status',
+                                                    label_options: { status: :active },
+                                                    icon: 'circle-check',
+                                                    modal_path: '/admin/products/bulk_modal?kind=set_status&status=active',
+                                                    action_path: '/admin/products/bulk_status_update?status=active',
+                                                    position: 10,
+                                                    condition: -> { can?(:activate, Spree::Product) }
+
+  Spree.admin.record_lists.products.add_bulk_action :set_draft,
+                                                    label: 'admin.bulk_ops.products.title.set_status',
+                                                    label_options: { status: :draft },
+                                                    icon: 'circle-dotted',
+                                                    modal_path: '/admin/products/bulk_modal?kind=set_status&status=draft',
+                                                    action_path: '/admin/products/bulk_status_update?status=draft',
+                                                    position: 20
+
+  Spree.admin.record_lists.products.add_bulk_action :set_archived,
+                                                    label: 'admin.bulk_ops.products.title.set_status',
+                                                    label_options: { status: :archived },
+                                                    icon: 'archive',
+                                                    modal_path: '/admin/products/bulk_modal?kind=set_status&status=archived',
+                                                    action_path: '/admin/products/bulk_status_update?status=archived',
+                                                    position: 30
+
+  Spree.admin.record_lists.products.add_bulk_action :add_to_taxons,
+                                                    label: 'admin.bulk_ops.products.title.add_to_taxons',
+                                                    icon: 'category-plus',
+                                                    modal_path: '/admin/products/bulk_modal?kind=add_to_taxons',
+                                                    action_path: '/admin/products/bulk_add_to_taxons',
+                                                    position: 40,
+                                                    condition: -> { can?(:manage, Spree::Classification) }
+
+  Spree.admin.record_lists.products.add_bulk_action :remove_from_taxons,
+                                                    label: 'admin.bulk_ops.products.title.remove_from_taxons',
+                                                    icon: 'category-minus',
+                                                    modal_path: '/admin/products/bulk_modal?kind=remove_from_taxons',
+                                                    action_path: '/admin/products/bulk_remove_from_taxons',
+                                                    position: 50,
+                                                    condition: -> { can?(:manage, Spree::Classification) }
+
+  Spree.admin.record_lists.products.add_bulk_action :add_tags,
+                                                    label: 'admin.bulk_ops.products.title.add_tags',
+                                                    icon: 'tag-plus',
+                                                    modal_path: '/admin/products/bulk_modal?kind=add_tags',
+                                                    action_path: '/admin/products/bulk_add_tags',
+                                                    position: 60,
+                                                    condition: -> { can?(:manage_tags, Spree::Product) }
+
+  Spree.admin.record_lists.products.add_bulk_action :remove_tags,
+                                                    label: 'admin.bulk_ops.products.title.remove_tags',
+                                                    icon: 'tag-minus',
+                                                    modal_path: '/admin/products/bulk_modal?kind=remove_tags',
+                                                    action_path: '/admin/products/bulk_remove_tags',
+                                                    position: 70,
+                                                    condition: -> { can?(:manage_tags, Spree::Product) }
 
   # Register Orders record list
   Spree.admin.record_lists.register(:orders, model_class: Spree::Order, search_param: :number_or_email_cont)
@@ -254,6 +314,25 @@ Rails.application.config.after_initialize do
                                      filterable: true,
                                      default: true,
                                      position: 40
+
+  # Users bulk actions
+  Spree.admin.record_lists.users.add_bulk_action :add_tags,
+                                                 label: 'admin.bulk_ops.users.title.add_tags',
+                                                 icon: 'tag-plus',
+                                                 modal_path: '/admin/users/bulk_modal?kind=add_tags',
+                                                 action_path: '/admin/users/bulk_add_tags',
+                                                 method: :post,
+                                                 position: 10,
+                                                 condition: -> { can?(:manage_tags, Spree.user_class) }
+
+  Spree.admin.record_lists.users.add_bulk_action :remove_tags,
+                                                 label: 'admin.bulk_ops.users.title.remove_tags',
+                                                 icon: 'tag-minus',
+                                                 modal_path: '/admin/users/bulk_modal?kind=remove_tags',
+                                                 action_path: '/admin/users/bulk_remove_tags',
+                                                 method: :post,
+                                                 position: 20,
+                                                 condition: -> { can?(:manage_tags, Spree.user_class) }
 
   # Register Promotions record list
   Spree.admin.record_lists.register(:promotions, model_class: Spree::Promotion, search_param: :name_cont)

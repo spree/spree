@@ -1,9 +1,10 @@
-<%# locals: (record_list:, list_key:, selected_columns:) %>
+<%# locals: (record_list:, list_key:, selected_columns:, frame_name:) %>
 <div data-controller="column-selector">
   <%= form_with url: spree.admin_record_list_columns_path,
                 method: :post,
-                data: { turbo_frame: '_top' } do |f| %>
+                data: { turbo_frame: frame_name } do |f| %>
     <%= hidden_field_tag :list_key, list_key %>
+    <%= hidden_field_tag :redirect_url, request.fullpath %>
 
     <%= dropdown(portal: false) do %>
       <%= dropdown_toggle(class: 'btn-light btn-sm flex items-center gap-1') do %>
@@ -12,12 +13,10 @@
         <%= icon 'chevron-down', class: 'w-3 h-3' %>
       <% end %>
 
-      <%= dropdown_menu(class: 'min-w-[250px] p-4') do %>
-        <div class="mb-3">
-          <h6 class="font-semibold text-gray-700 text-sm">
-            <%= Spree.t('admin.record_lists.visible_columns') %>
-          </h6>
-        </div>
+      <%= dropdown_menu(class: 'min-w-[250px]') do %>
+        <h6 class="font-semibold text-gray-700 text-sm p-3">
+          <%= Spree.t('admin.record_lists.visible_columns') %>
+        </h6>
 
         <div class="space-y-2 max-h-[300px] overflow-y-auto mb-4">
           <% record_list.available_columns.each do |column| %>
@@ -38,7 +37,7 @@
           <% end %>
         </div>
 
-        <div class="flex gap-2 pt-3 border-t border-gray-200">
+        <div class="flex gap-2 p-2 pt-3 border-t border-gray-200">
           <button type="button"
                   class="btn btn-sm btn-light flex-1"
                   data-action="column-selector#reset">
