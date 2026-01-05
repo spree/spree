@@ -54,11 +54,9 @@
 
   <% if spree.respond_to?(:admin_user_gift_cards_path) && can?(:read, Spree::GiftCard) %>
     <div data-tabs-target="panel" id="pills-gift-cards" role="tabpanel" aria-labelledby="pills-gift-cards" hidden class="animate-fade-in">
-      <div class="card-lg">
-        <%= turbo_frame_tag :gift_cards_list, src: spree.admin_user_gift_cards_path(@user, frame_name: :gift_cards_list), loading: :lazy, autoscroll: true, data: { autoscroll_block: :nearest, autoscroll_behavior: :smooth } do %>
-          <%= render 'spree/admin/shared/spinner' %>
-        <% end %>
-      </div>
+      <%= turbo_frame_tag :gift_cards, src: spree.admin_user_gift_cards_path(@user), loading: :lazy, autoscroll: true, data: { autoscroll_block: :nearest, autoscroll_behavior: :smooth } do %>
+        <%= render 'spree/admin/shared/spinner' %>
+      <% end %>
     </div>
   <% end %>
 

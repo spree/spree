@@ -48,7 +48,7 @@
       <%= render 'spree/admin/shared/index_table_options', collection: collection %>
     <% else %>
       <%= render 'spree/admin/shared/no_resource_found',
-                 new_object_url: (new_object_url if respond_to?(:new_object_url) && can?(:create, table.model_class)) %>
+                 new_object_url: (new_object_url if table.new_resource && respond_to?(:new_object_url) && can?(:create, table.model_class)) %>
     <% end %>
   </div>
 <% end %>

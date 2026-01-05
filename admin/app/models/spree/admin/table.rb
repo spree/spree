@@ -2,9 +2,9 @@ module Spree
   module Admin
     class Table
       attr_reader :columns, :bulk_actions, :context, :model_class
-      attr_accessor :search_param, :search_placeholder, :row_actions, :row_actions_edit, :row_actions_delete
+      attr_accessor :search_param, :search_placeholder, :row_actions, :row_actions_edit, :row_actions_delete, :new_resource
 
-      def initialize(context, model_class: nil, search_param: :name_cont, search_placeholder: nil, row_actions: true, row_actions_edit: true, row_actions_delete: false)
+      def initialize(context, model_class: nil, search_param: :name_cont, search_placeholder: nil, row_actions: false, row_actions_edit: true, row_actions_delete: false, new_resource: true)
         @context = context
         @model_class = model_class
         @columns = {}
@@ -14,6 +14,7 @@ module Spree
         @row_actions = row_actions
         @row_actions_edit = row_actions_edit
         @row_actions_delete = row_actions_delete
+        @new_resource = new_resource
       end
 
       # Check if row actions are enabled
@@ -242,7 +243,8 @@ module Spree
           search_placeholder: search_placeholder,
           row_actions: row_actions,
           row_actions_edit: row_actions_edit,
-          row_actions_delete: row_actions_delete
+          row_actions_delete: row_actions_delete,
+          new_resource: new_resource
         )
         @columns.each do |key, column|
           cloned.columns[key] = column.deep_clone

@@ -464,7 +464,7 @@ Rails.application.config.after_initialize do
                                           position: 50
 
   # Register Posts table
-  Spree.admin.tables.register(:posts, model_class: Spree::Post, search_param: :title_cont)
+  Spree.admin.tables.register(:posts, model_class: Spree::Post, search_param: :title_cont, row_actions: true)
 
   Spree.admin.tables.posts.add :title,
                                      label: :title,
@@ -503,7 +503,7 @@ Rails.application.config.after_initialize do
                                      position: 40
 
   # Register Customer Returns table
-  Spree.admin.tables.register(:customer_returns, model_class: Spree::CustomerReturn, search_param: :number_cont, row_actions: false)
+  Spree.admin.tables.register(:customer_returns, model_class: Spree::CustomerReturn, search_param: :number_cont, row_actions: false, new_resource: false)
 
   Spree.admin.tables.customer_returns.add :number,
                                                 label: :number,
@@ -559,7 +559,7 @@ Rails.application.config.after_initialize do
                                                 method: ->(cr) { cr.display_pre_tax_total }
 
   # Register Option Types table
-  Spree.admin.tables.register(:option_types, model_class: Spree::OptionType, search_param: :name_cont)
+  Spree.admin.tables.register(:option_types, model_class: Spree::OptionType, search_param: :name_cont, row_actions: true)
 
   Spree.admin.tables.option_types.add :name,
                                             label: :internal_name,
@@ -605,7 +605,7 @@ Rails.application.config.after_initialize do
                                             method: ->(ot) { ot.products.count }
 
   # Register Newsletter Subscribers table
-  Spree.admin.tables.register(:newsletter_subscribers, model_class: Spree::NewsletterSubscriber, search_param: :email_cont, row_actions_edit: false, row_actions_delete: true)
+  Spree.admin.tables.register(:newsletter_subscribers, model_class: Spree::NewsletterSubscriber, search_param: :email_cont, row_actions: false, new_resource: false)
 
   Spree.admin.tables.newsletter_subscribers.add :email,
                                                       label: :email,
@@ -651,7 +651,7 @@ Rails.application.config.after_initialize do
                                                       position: 50
 
   # Register Policies table
-  Spree.admin.tables.register(:policies, model_class: Spree::Policy, search_param: :name_cont)
+  Spree.admin.tables.register(:policies, model_class: Spree::Policy, search_param: :name_cont, row_actions: true)
 
   Spree.admin.tables.policies.add :name,
                                         label: :name,
@@ -750,7 +750,7 @@ Rails.application.config.after_initialize do
                                                position: 60
 
   # Register Metafield Definitions table
-  Spree.admin.tables.register(:metafield_definitions, model_class: Spree::MetafieldDefinition, search_param: :multi_search)
+  Spree.admin.tables.register(:metafield_definitions, model_class: Spree::MetafieldDefinition, search_param: :multi_search, row_actions: true)
 
   Spree.admin.tables.metafield_definitions.add :key,
                                                      label: :key,

@@ -189,11 +189,12 @@ module Spree
         # @param model_class [Class, nil] The model class for this table
         # @param search_param [Symbol] The ransack parameter for text search (default: :name_cont)
         # @param search_placeholder [String, nil] Custom placeholder for search field
-        # @param row_actions [Boolean] Whether to show row actions (default: true)
+        # @param row_actions [Boolean] Whether to show row actions (default: false)
         # @param row_actions_edit [Boolean] Whether to show edit button in row actions (default: true)
         # @param row_actions_delete [Boolean] Whether to show delete button in row actions (default: false)
+        # @param new_resource [Boolean] Whether to show "Create new" button in empty state (default: true)
         # @return [Spree::Admin::Table] The table instance
-        def register(name, model_class: nil, search_param: :name_cont, search_placeholder: nil, row_actions: true, row_actions_edit: true, row_actions_delete: false)
+        def register(name, model_class: nil, search_param: :name_cont, search_placeholder: nil, row_actions: false, row_actions_edit: true, row_actions_delete: false, new_resource: true)
           name = name.to_sym
           @registries[name] ||= Spree::Admin::Table.new(
             name,
@@ -202,7 +203,8 @@ module Spree
             search_placeholder: search_placeholder,
             row_actions: row_actions,
             row_actions_edit: row_actions_edit,
-            row_actions_delete: row_actions_delete
+            row_actions_delete: row_actions_delete,
+            new_resource: new_resource
           )
         end
 
