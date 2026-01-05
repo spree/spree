@@ -622,8 +622,7 @@ Rails.application.config.after_initialize do
                                                       filterable: false,
                                                       default: true,
                                                       position: 20,
-                                                      partial: 'spree/admin/shared/user',
-                                                      partial_locals: ->(record) { { user: record.user } }
+                                                      partial: 'spree/admin/tables/columns/newsletter_subscriber_customer'
 
   Spree.admin.tables.newsletter_subscribers.add :verified,
                                                       label: :verified,

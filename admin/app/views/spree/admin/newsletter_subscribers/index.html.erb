@@ -6,4 +6,4 @@
   <%= link_to_export_modal %>
 <% end %>
 
-<%= render_table @collection, :newsletter_subscribers, export_type: Spree::Exports::NewsletterSubscribers %>
+<%= render_table @collection, :newsletter_subscribers, export_type: Spree::Exports::NewsletterSubscribers, edit_object_url: nil %>

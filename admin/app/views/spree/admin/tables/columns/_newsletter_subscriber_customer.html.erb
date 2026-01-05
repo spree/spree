@@ -1,0 +1,6 @@
+<%# locals: (record:, column:, value:) %>
+<% if record.user.present? %>
+  <%= render 'spree/admin/shared/user', user: record.user %>
+<% else %>
+  <span class="text-gray-400">-</span>
+<% end %>
