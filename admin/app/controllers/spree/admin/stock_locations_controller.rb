@@ -13,6 +13,12 @@ module Spree
         redirect_to spree.admin_stock_locations_path
       end
 
+      # GET /admin/stock_locations/select_options
+      def select_options
+        @stock_locations = Spree::StockLocation.active.ransack(name_cont: params[:q]).result.limit(50).order(:name)
+        render json: @stock_locations.map { |sl| { id: sl.id, name: sl.display_name } }
+      end
+
       private
 
       def scope

@@ -1,4 +1,4 @@
-<%# locals: (collection:, table:, table_key:, selected_columns: nil, frame_name: nil, bulk_operations: false, sortable: false, export_type: nil) %>
+<%# locals: (collection:, table:, table_key:, selected_columns: nil, frame_name: nil, bulk_operations: false, sortable: false, export_type: nil, edit_object_url: :default) %>
 <% frame_name ||= controller_name %>
 <% columns = table.visible_columns(selected_columns, self) %>
 <% current_sort = params.dig(:q, :s) %>
@@ -43,7 +43,8 @@
                  columns: columns,
                  table: table,
                  bulk_operations: bulk_operations,
-                 sortable: sortable %>
+                 sortable: sortable,
+                 link_to_edit: edit_object_url != nil %>
 
       <%= render 'spree/admin/shared/index_table_options', collection: collection %>
     <% else %>

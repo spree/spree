@@ -882,4 +882,64 @@ Rails.application.config.after_initialize do
                                           operators: %i[eq],
                                           search_url: '/admin/users/select_options.json',
                                           method: ->(gc) { gc.user&.email }
+
+  # Register Stock Items table
+  Spree.admin.tables.register(:stock_items, model_class: Spree::StockItem, search_param: :variant_product_name_cont, row_actions: false, new_resource: false)
+
+  # Variant with image (custom partial)
+  Spree.admin.tables.stock_items.add :variant,
+                                           label: :variant,
+                                           type: :custom,
+                                           sortable: false,
+                                           filterable: true,
+                                           default: true,
+                                           position: 10,
+                                           ransack_attribute: 'variant_product_name',
+                                           partial: 'spree/admin/variants/variant',
+                                           partial_locals: ->(record) { { variant: record.variant } }
+
+  # Stock location
+  Spree.admin.tables.stock_items.add :stock_location,
+                                           label: :stock_location,
+                                           type: :custom,
+                                           filter_type: :autocomplete,
+                                           sortable: false,
+                                           filterable: true,
+                                           default: true,
+                                           position: 20,
+                                           ransack_attribute: 'stock_location_id',
+                                           operators: %i[eq],
+                                           search_url: '/admin/stock_locations/select_options.json',
+                                           partial: 'spree/admin/tables/columns/stock_item_location'
+
+  # Backorderable (inline editable checkbox)
+  Spree.admin.tables.stock_items.add :backorderable,
+                                           label: :backorderable,
+                                           type: :custom,
+                                           sortable: false,
+                                           filterable: false,
+                                           default: true,
+                                           position: 30,
+                                           partial: 'spree/admin/tables/columns/stock_item_backorderable'
+
+  # Count on hand (inline editable number field)
+  Spree.admin.tables.stock_items.add :count_on_hand,
+                                           label: :count_on_hand,
+                                           type: :custom,
+                                           sortable: true,
+                                           filterable: true,
+                                           default: true,
+                                           position: 40,
+                                           partial: 'spree/admin/tables/columns/stock_item_count_on_hand'
+
+  # SKU (filter-only)
+  Spree.admin.tables.stock_items.add :sku,
+                                           label: :sku,
+                                           type: :string,
+                                           sortable: false,
+                                           filterable: true,
+                                           displayable: false,
+                                           default: false,
+                                           position: 50,
+                                           ransack_attribute: 'variant_sku'
 end

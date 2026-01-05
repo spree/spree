@@ -1,0 +1,14 @@
+<%# locals: (record:, column:, value:) %>
+<% if can?(:update, record) %>
+  <%= turbo_frame_tag record do %>
+    <%= form_for record,
+                url: spree.admin_stock_item_path(record),
+                method: :put,
+                html: { class: 'flex' } do |f| %>
+      <%= f.number_field :count_on_hand, class: 'form-input mr-2', required: true, min: 0 %>
+      <%= turbo_save_button_tag Spree.t('actions.update'), class: 'btn btn-primary' %>
+    <% end %>
+  <% end %>
+<% else %>
+  <%= record.count_on_hand %>
+<% end %>

@@ -2,6 +2,7 @@ module Spree
   module Admin
     class StockItemsController < ResourceController
       include ProductsBreadcrumbConcern
+      include TableConcern
 
       before_action :add_breadcrumbs
 

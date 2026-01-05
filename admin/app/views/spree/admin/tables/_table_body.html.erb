@@ -1,4 +1,4 @@
-<%# locals: (collection:, columns:, table:, bulk_operations: false, sortable: false) %>
+<%# locals: (collection:, columns:, table:, bulk_operations: false, sortable: false, link_to_edit: true) %>
 <% has_bulk_actions = bulk_operations && table.bulk_operations_enabled? %>
 <% has_row_actions = table.row_actions? %>
 <% if has_bulk_actions %>
@@ -12,21 +12,21 @@
           <thead>
             <tr>
               <% if sortable %>
-                <th scope="col" class="w-5"></th>
+                <th scope="col" class="w-5 rounded-none"></th>
               <% end %>
 
-              <th scope="col" class="pr-0 w-5">
+              <th scope="col" class="pr-0 w-5 rounded-none">
                 <%= bulk_operations_select_all_checkbox %>
               </th>
 
               <% columns.each do |column| %>
-                <th scope="col" class="<%= column_header_class(column) %>">
+                <th class="rounded-none" scope="col" class="<%= column_header_class(column) %>">
                   <%= column.resolve_label %>
                 </th>
               <% end %>
 
               <% if has_row_actions %>
-                <th scope="col" class="w-10"></th>
+                <th scope="col" class="w-10 rounded-none"></th>
               <% end %>
             </tr>
           </thead>
@@ -46,7 +46,8 @@
                          table: table,
                          bulk_operations: has_bulk_actions,
                          sortable: sortable,
-                         row_actions: has_row_actions
+                         row_actions: has_row_actions,
+                         link_to_edit: link_to_edit
                        } %>
           </tbody>
         </table>
@@ -59,17 +60,17 @@
       <thead>
         <tr>
           <% if sortable %>
-            <th scope="col" class="w-5"></th>
+            <th scope="col" class="w-5 rounded-none"></th>
           <% end %>
 
           <% columns.each do |column| %>
-            <th scope="col" class="<%= column_header_class(column) %>">
+            <th class="rounded-none" scope="col" class="<%= column_header_class(column) %>">
               <%= column.resolve_label %>
             </th>
           <% end %>
 
           <% if has_row_actions %>
-            <th scope="col" class="w-10"></th>
+            <th scope="col" class="w-10 rounded-none"></th>
           <% end %>
         </tr>
       </thead>
@@ -89,7 +90,8 @@
                      table: table,
                      bulk_operations: false,
                      sortable: sortable,
-                     row_actions: has_row_actions
+                     row_actions: has_row_actions,
+                     link_to_edit: link_to_edit
                    } %>
       </tbody>
     </table>

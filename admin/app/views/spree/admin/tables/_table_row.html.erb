@@ -1,4 +1,4 @@
-<%# locals: (record:, columns:, table:, bulk_operations: false, sortable: false, row_actions: true) %>
+<%# locals: (record:, columns:, table:, bulk_operations: false, sortable: false, row_actions: true, link_to_edit: true) %>
 <tr id="<%= dom_id record %>" class="group"<% if sortable %> data-sortable-update-url="<%= edit_object_url(record) %>"<% end %>>
   <% if sortable %>
     <td class="w-5 move-handle text-center">
@@ -14,7 +14,7 @@
 
   <% columns.each_with_index do |column, index| %>
     <td class="<%= column_cell_class(column) %>" id="<%= dom_id record, column.key %>">
-      <% if index == 0 %>
+      <% if index == 0 && link_to_edit %>
         <%= link_to edit_object_url(record),
                     class: 'flex items-center w-full no-underline hover:text-primary',
                     data: { 'turbo-frame': '_top' } do %>
