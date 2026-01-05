@@ -35,8 +35,8 @@ describe 'Products', type: :feature do
           within_row(1) { expect(page).to have_content('apache baseball cap') }
           within_row(2) { expect(page).to have_content('zomg shirt') }
 
-          # Name DESC
-          click_link 'admin_products_listing_name_title'
+          # Name DESC - use sort dropdown
+          visit spree.admin_products_path(q: { s: 'name desc' })
           within_row(1) { expect(page).to have_content('zomg shirt') }
           within_row(2) { expect(page).to have_content('apache baseball cap') }
         end
