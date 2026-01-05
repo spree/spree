@@ -16,7 +16,7 @@
 
 <%= render_admin_partials(:option_types_header_partials) %>
 
-<%= render 'spree/admin/shared/index_table', sortable: true %>
+<%= render_table @collection, :option_types, sortable: true %>
 
 <p class="documentation-link-container">
   <%= external_link_to "Learn more about options", "https://spreecommerce.org/docs/user/manage-products/product-options" %>

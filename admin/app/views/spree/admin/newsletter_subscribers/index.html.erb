@@ -6,4 +6,4 @@
   <%= link_to_export_modal %>
 <% end %>
 
-<%= render 'spree/admin/shared/index_table', new_object_url: nil, export_type: Spree::Exports::NewsletterSubscribers %>
+<%= render_table @collection, :newsletter_subscribers, export_type: Spree::Exports::NewsletterSubscribers %>

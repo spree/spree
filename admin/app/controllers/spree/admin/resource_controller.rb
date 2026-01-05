@@ -242,6 +242,9 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   # @return [Ransack::Search]
   def search_collection
     @search ||= begin
+      # Process query_state from table query builder if present
+      process_table_query_state if table_registered?
+
       params[:q] ||= {}
       params[:q][:s] ||= collection_default_sort if collection_default_sort.present?
       scope.ransack(params[:q])
@@ -251,7 +254,14 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   # Returns the filtered and paginated ransack results
   # @return [ActiveRecord::Relation]
   def collection
-    @collection ||= search_collection.result(distinct: true).page(params[:page]).per(params[:per_page])
+    @collection ||= begin
+      result = search_collection.result(distinct: true)
+
+      # Apply custom sort scope if configured (e.g., for price sorting)
+      result = apply_table_sort(result) if table_registered? && custom_sort_active?
+
+      result.page(params[:page]).per(params[:per_page])
+    end
   end
 
   def collection_includes

@@ -1,0 +1,9 @@
+<%# locals: (record:, column:, value:) %>
+<span class="badge badge-<% if record.automatic? %>info<% else %>light<% end %>">
+  <% if record.automatic? %>
+    <%= icon('automation', class: 'mr-2') %>
+  <% else %>
+    <%= icon('ticket', class: 'mr-2') %>
+  <% end %>
+  <%= record.kind.humanize %>
+</span>
