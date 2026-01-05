@@ -1,7 +1,6 @@
 require 'spree_core'
 
 require 'active_link_to'
-require 'canonical-rails'
 require 'heroicon'
 require 'importmap-rails'
 require 'local_time'
