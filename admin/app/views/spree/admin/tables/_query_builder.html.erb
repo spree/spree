@@ -22,9 +22,10 @@
 
     <div data-controller="query-builder"
          data-query-builder-fields-value="<%= fields_json %>"
-         data-query-builder-operators-value="<%= operators_json %>">
+         data-query-builder-operators-value="<%= operators_json %>"
+         class="grow flex flex-col justify-between">
 
-      <%= form_with url: url_for, method: :get, data: { turbo_frame: '_top', query_builder_target: 'form', action: 'submit->query-builder#submitForm' } do |f| %>
+      <%= form_with url: url_for, method: :get, html: { class: 'grow flex flex-col justify-between' },data: { turbo_frame: '_top', query_builder_target: 'form', action: 'submit->query-builder#submitForm' } do |f| %>
         <div class="drawer-body">
           <div class="mb-4 flex items-center gap-2 flex-wrap">
             <span class="text-sm text-gray-600">
