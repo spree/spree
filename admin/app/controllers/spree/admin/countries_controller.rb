@@ -5,7 +5,7 @@ module Spree
         search_params = params[:q].is_a?(String) ? { name_cont: params[:q] } : params[:q]
         countries = Spree::Country.ransack(search_params).result.order(:name).limit(50)
 
-        render json: countries.map { |c| { id: c.id, name: c.name } }
+        render json: countries.pluck(:id, :name).map { |id, name| { id: id, name: name } }
       end
     end
   end

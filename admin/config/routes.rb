@@ -46,6 +46,7 @@ Spree::Core::Engine.add_routes do
     get '/taxons/select_options' => 'taxons#select_options', as: :taxons_select_options, defaults: { format: :json }
     get '/tags/select_options' => 'tags#select_options', as: :tags_select_options, defaults: { format: :json }
     get '/countries/select_options' => 'countries#select_options', as: :countries_select_options, defaults: { format: :json }
+    get '/users/select_options' => 'users#select_options', as: :users_select_options, defaults: { format: :json }
 
     # media library
     resources :assets, only: [:create, :edit, :update, :destroy] do
