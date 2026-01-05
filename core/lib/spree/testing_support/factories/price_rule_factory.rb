@@ -1,7 +1,6 @@
 FactoryBot.define do
   factory :price_rule, class: Spree::PriceRule do
     price_list
-    priority { 0 }
 
     factory :zone_price_rule, class: Spree::PriceRules::ZoneRule do
       after(:build) do |rule, evaluator|

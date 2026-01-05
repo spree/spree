@@ -6,9 +6,6 @@ module Spree
     belongs_to :price_list, class_name: 'Spree::PriceList'
 
     validates :type, presence: true
-    validates :priority, presence: true, numericality: { only_integer: true }
-
-    scope :by_priority, -> { order(priority: :desc) }
 
     def applicable?(context)
       raise NotImplementedError, "#{self.class.name} must implement #applicable?"

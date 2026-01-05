@@ -3,7 +3,6 @@ class CreateSpreePriceRules < ActiveRecord::Migration[7.0]
     create_table :spree_price_rules do |t|
       t.belongs_to :price_list, null: false, foreign_key: false, index: true
       t.string :type, null: false
-      t.integer :priority, null: false, default: 0
       t.text :preferences
       t.timestamps
       t.datetime :deleted_at
@@ -11,7 +10,6 @@ class CreateSpreePriceRules < ActiveRecord::Migration[7.0]
 
     add_index :spree_price_rules, [:price_list_id, :type]
     add_index :spree_price_rules, :type
-    add_index :spree_price_rules, :priority
     add_index :spree_price_rules, :deleted_at
   end
 end
