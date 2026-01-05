@@ -16,6 +16,11 @@ describe Spree::Core::ControllerHelpers::Currency, type: :controller do
     it 'returns current store default currency' do
       expect(controller.current_currency).to eq('GBP')
     end
+
+    it 'sets Spree::Current.currency' do
+      controller.current_currency
+      expect(Spree::Current.currency).to eq('GBP')
+    end
   end
 
   describe '#supported_currencies' do

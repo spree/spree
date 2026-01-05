@@ -17,15 +17,19 @@ module Spree
         # Returns the currently selected currency.
         # @return [String] the currently selected currency, eg. `USD`
         def current_currency
-          @current_currency ||= if defined?(session) && session.key?(:currency) && supported_currency?(session[:currency])
-                                  session[:currency]
-                                elsif params[:currency].present? && supported_currency?(params[:currency])
-                                  params[:currency]
-                                elsif current_store.present?
-                                  current_store.default_currency
-                                else
-                                  Spree::Store.default.default_currency
-                                end&.upcase
+          @current_currency ||= begin
+            currency = if defined?(session) && session.key?(:currency) && supported_currency?(session[:currency])
+                         session[:currency]
+                       elsif params[:currency].present? && supported_currency?(params[:currency])
+                         params[:currency]
+                       elsif current_store.present?
+                         current_store.default_currency
+                       else
+                         Spree::Store.default.default_currency
+                       end&.upcase
+            Spree::Current.currency = currency
+            currency
+          end
         end
 
         # Returns the list of supported currencies for the current store.
