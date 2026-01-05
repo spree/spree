@@ -135,7 +135,7 @@ html {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
-body .section-header {
+body:not(.inside-page-builder) > div.section-header {
   @apply sticky top-0 z-50;
 }
 
