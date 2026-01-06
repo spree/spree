@@ -141,27 +141,6 @@ workflows:
           run_file_path: ./bin/tests_database_ci.sh
           requires:
               - bundle_ruby
-      - tests_postgres:
-          name: tests_rails_7_1_postgres
-          rails_version: '~> 7.1.0'
-          store_artefacts: true
-          run_file_path: ./bin/tests_database_ci.sh
-          requires:
-              - bundle_ruby
-      - tests_postgres:
-          name: tests_rails_7_0_postgres
-          rails_version: '~> 7.0.0'
-          store_artefacts: true
-          run_file_path: ./bin/tests_database_ci.sh
-          requires:
-              - bundle_ruby
-      - tests_postgres:
-          name: tests_rails_6_1_postgres
-          rails_version: '~> 6.1.0'
-          store_artefacts: true
-          run_file_path: ./bin/tests_database_ci.sh
-          requires:
-              - bundle_ruby
       - tests_mysql:
           name: tests_rails_mysql
           store_artefacts: true
