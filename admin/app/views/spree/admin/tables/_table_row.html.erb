@@ -1,4 +1,12 @@
-<%# locals: (record:, columns:, table:, bulk_operations: false, sortable: false, row_actions: true, link_to_edit: true) %>
+<%# locals: (record:, columns:, table:, bulk_operations: false, sortable: false, row_actions: true) %>
+<%
+  row_link_url = nil
+  if table.link_to_action == :show && respond_to?(:object_url)
+    row_link_url = object_url(record) rescue nil
+  elsif respond_to?(:edit_object_url)
+    row_link_url = edit_object_url(record) rescue nil
+  end
+%>
 <tr id="<%= dom_id record %>" class="group"<% if sortable %> data-sortable-update-url="<%= edit_object_url(record) %>"<% end %>>
   <% if sortable %>
     <td class="w-5 move-handle text-center">
@@ -12,18 +20,20 @@
     </td>
   <% end %>
 
-  <% columns.each_with_index do |column, index| %>
-    <td class="<%= column_cell_class(column) %>" id="<%= dom_id record, column.key %>">
-      <% if index == 0 && link_to_edit %>
-        <%= link_to edit_object_url(record),
-                    class: 'flex items-center w-full no-underline hover:text-primary',
-                    data: { 'turbo-frame': '_top' } do %>
-          <%= render_column_value(record, column, table) %>
-        <% end %>
-      <% else %>
+  <% columns.each do |column| %>
+    <% if row_link_url %>
+      <td class="<%= column_cell_class(column) %> cursor-pointer"
+          id="<%= dom_id record, column.key %>"
+          data-controller="row-link"
+          data-action="click->row-link#openLink">
+        <%= link_to '', row_link_url, class: 'hidden', data: { row_link_target: 'link', turbo_frame: '_top' } %>
         <%= render_column_value(record, column, table) %>
-      <% end %>
-    </td>
+      </td>
+    <% else %>
+      <td class="<%= column_cell_class(column) %>" id="<%= dom_id record, column.key %>">
+        <%= render_column_value(record, column, table) %>
+      </td>
+    <% end %>
   <% end %>
 
   <% if row_actions %>

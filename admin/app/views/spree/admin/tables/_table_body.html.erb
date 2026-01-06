@@ -1,4 +1,4 @@
-<%# locals: (collection:, columns:, table:, bulk_operations: false, sortable: false, link_to_edit: true) %>
+<%# locals: (collection:, columns:, table:, bulk_operations: false, sortable: false) %>
 <% has_bulk_actions = bulk_operations && table.bulk_operations_enabled? %>
 <% has_row_actions = table.row_actions? %>
 <% if has_bulk_actions %>
@@ -46,8 +46,7 @@
                          table: table,
                          bulk_operations: has_bulk_actions,
                          sortable: sortable,
-                         row_actions: has_row_actions,
-                         link_to_edit: link_to_edit
+                         row_actions: has_row_actions
                        } %>
           </tbody>
         </table>
@@ -90,8 +89,7 @@
                      table: table,
                      bulk_operations: false,
                      sortable: sortable,
-                     row_actions: has_row_actions,
-                     link_to_edit: link_to_edit
+                     row_actions: has_row_actions
                    } %>
       </tbody>
     </table>

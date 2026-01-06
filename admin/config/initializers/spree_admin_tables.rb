@@ -408,7 +408,7 @@ Rails.application.config.after_initialize do
                                         position: 70
 
   # Register Users table
-  Spree.admin.tables.register(:users, model_class: Spree.user_class, search_param: :multi_search, row_actions: false)
+  Spree.admin.tables.register(:users, model_class: Spree.user_class, search_param: :multi_search, row_actions: false, link_to_action: :show)
 
   # User name with avatar
   Spree.admin.tables.users.add :name,
@@ -528,7 +528,7 @@ Rails.application.config.after_initialize do
                                                  condition: -> { can?(:manage_tags, Spree.user_class) }
 
   # Register Promotions table
-  Spree.admin.tables.register(:promotions, model_class: Spree::Promotion, search_param: :name_cont)
+  Spree.admin.tables.register(:promotions, model_class: Spree::Promotion, search_param: :name_cont, link_to_action: :show)
 
   Spree.admin.tables.promotions.add :name,
                                           label: :name,
@@ -785,7 +785,7 @@ Rails.application.config.after_initialize do
                                         method: ->(policy) { policy.owner.name }
 
   # Register Stock Transfers table
-  Spree.admin.tables.register(:stock_transfers, model_class: Spree::StockTransfer, search_param: :number_or_reference_cont)
+  Spree.admin.tables.register(:stock_transfers, model_class: Spree::StockTransfer, search_param: :number_or_reference_cont, link_to_action: :show)
 
   Spree.admin.tables.stock_transfers.add :number,
                                                label: :number,
@@ -903,7 +903,7 @@ Rails.application.config.after_initialize do
                                                      }
 
   # Register Gift Cards table
-  Spree.admin.tables.register(:gift_cards, model_class: Spree::GiftCard, search_param: :code_i_cont, row_actions: false)
+  Spree.admin.tables.register(:gift_cards, model_class: Spree::GiftCard, search_param: :code_i_cont, row_actions: false, link_to_action: :show)
 
   Spree.admin.tables.gift_cards.add :code,
                                           label: :code,

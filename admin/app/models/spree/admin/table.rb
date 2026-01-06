@@ -3,9 +3,9 @@ module Spree
     class Table
       attr_reader :columns, :bulk_actions, :context, :model_class
       attr_accessor :search_param, :search_placeholder, :row_actions, :row_actions_edit, :row_actions_delete, :new_resource,
-                    :date_range_param, :date_range_label
+                    :date_range_param, :date_range_label, :link_to_action
 
-      def initialize(context, model_class: nil, search_param: :name_cont, search_placeholder: nil, row_actions: false, row_actions_edit: true, row_actions_delete: false, new_resource: true, date_range_param: nil, date_range_label: nil)
+      def initialize(context, model_class: nil, search_param: :name_cont, search_placeholder: nil, row_actions: false, row_actions_edit: true, row_actions_delete: false, new_resource: true, date_range_param: nil, date_range_label: nil, link_to_action: :edit)
         @context = context
         @model_class = model_class
         @columns = {}
@@ -18,6 +18,7 @@ module Spree
         @new_resource = new_resource
         @date_range_param = date_range_param
         @date_range_label = date_range_label
+        @link_to_action = link_to_action
       end
 
       # Check if date range filter is enabled
@@ -255,7 +256,8 @@ module Spree
           row_actions_delete: row_actions_delete,
           new_resource: new_resource,
           date_range_param: date_range_param,
-          date_range_label: date_range_label
+          date_range_label: date_range_label,
+          link_to_action: link_to_action
         )
         @columns.each do |key, column|
           cloned.columns[key] = column.deep_clone

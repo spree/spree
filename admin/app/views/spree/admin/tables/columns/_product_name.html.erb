@@ -1,8 +1,8 @@
 <%# locals: (record:, column:, value:) %>
 <% product = record %>
-<div class="flex items-center gap-3">
+<%= link_to edit_object_url(product), class: 'flex items-center gap-3 no-underline', data: { turbo_frame: '_top' } do %>
   <%= render 'spree/admin/shared/product_image', object: product %>
   <span class="text-gray-900 font-medium">
     <%= product.name %>
   </span>
-</div>
+<% end %>

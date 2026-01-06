@@ -59,7 +59,7 @@ module Spree
         when :boolean
           render_boolean_column(value, column)
         when :link
-          render_link_column(record, value, column)
+          render_link_column(record, value, column, table)
         when :image
           render_image_column(record, value, column)
         when :custom
@@ -148,11 +148,23 @@ module Spree
       # @param record [Object] the record
       # @param value [Object] the value
       # @param column [Spree::Admin::Table::Column] column definition
+      # @param table [Spree::Admin::Table] the table
       # @return [String]
-      def render_link_column(record, value, column)
+      def render_link_column(record, value, column, table = nil)
         return content_tag(:span, '-', class: 'text-gray-400') if value.blank?
 
-        h(value.to_s.truncate(100))
+        url = nil
+        if table&.link_to_action == :show && respond_to?(:object_url)
+          url = object_url(record) rescue nil
+        elsif respond_to?(:edit_object_url)
+          url = edit_object_url(record) rescue nil
+        end
+
+        if url
+          link_to h(value.to_s.truncate(100)), url, data: { turbo_frame: '_top' }
+        else
+          h(value.to_s.truncate(100))
+        end
       end
 
       # Render image column
