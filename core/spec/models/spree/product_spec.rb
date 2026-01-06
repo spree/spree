@@ -1624,6 +1624,106 @@ describe Spree::Product, type: :model do
         end
       end
     end
+
+    describe '.ascend_by_price' do
+      let!(:product_cheap) { create(:product, name: 'Cheap Product', stores: [store]) }
+      let!(:product_mid) { create(:product, name: 'Mid Product', stores: [store]) }
+      let!(:product_expensive) { create(:product, name: 'Expensive Product', stores: [store]) }
+      let!(:product_no_price) { create(:product, name: 'No Price Product', stores: [store]) }
+
+      before do
+        product_cheap.master.prices.delete_all
+        product_mid.master.prices.delete_all
+        product_expensive.master.prices.delete_all
+        product_no_price.master.prices.delete_all
+
+        create(:price, variant: product_cheap.master, amount: 10.00)
+        create(:price, variant: product_mid.master, amount: 50.00)
+        create(:price, variant: product_expensive.master, amount: 100.00)
+      end
+
+      it 'orders products by minimum price ascending' do
+        products = described_class.where(id: [product_cheap.id, product_mid.id, product_expensive.id]).ascend_by_price
+        expect(products.map(&:name)).to eq(['Cheap Product', 'Mid Product', 'Expensive Product'])
+      end
+
+      it 'places products without prices at the end' do
+        products = described_class.where(id: [product_cheap.id, product_no_price.id]).ascend_by_price
+        expect(products.map(&:name)).to eq(['Cheap Product', 'No Price Product'])
+      end
+
+      context 'with variant prices' do
+        let!(:product_with_variants) { create(:product, name: 'Variant Product', stores: [store]) }
+        let!(:variant1) { create(:variant, product: product_with_variants) }
+        let!(:variant2) { create(:variant, product: product_with_variants) }
+
+        before do
+          product_with_variants.master.prices.delete_all
+          variant1.prices.delete_all
+          variant2.prices.delete_all
+
+          # Variant prices only (no master price)
+          create(:price, variant: variant1, amount: 5.00)
+          create(:price, variant: variant2, amount: 15.00)
+        end
+
+        it 'uses minimum variant price for sorting' do
+          products = described_class.where(id: [product_cheap.id, product_with_variants.id]).ascend_by_price
+          # product_with_variants has min price 5.00, product_cheap has 10.00
+          expect(products.map(&:name)).to eq(['Variant Product', 'Cheap Product'])
+        end
+      end
+    end
+
+    describe '.descend_by_price' do
+      let!(:product_cheap) { create(:product, name: 'Cheap Product', stores: [store]) }
+      let!(:product_mid) { create(:product, name: 'Mid Product', stores: [store]) }
+      let!(:product_expensive) { create(:product, name: 'Expensive Product', stores: [store]) }
+      let!(:product_no_price) { create(:product, name: 'No Price Product', stores: [store]) }
+
+      before do
+        product_cheap.master.prices.delete_all
+        product_mid.master.prices.delete_all
+        product_expensive.master.prices.delete_all
+        product_no_price.master.prices.delete_all
+
+        create(:price, variant: product_cheap.master, amount: 10.00)
+        create(:price, variant: product_mid.master, amount: 50.00)
+        create(:price, variant: product_expensive.master, amount: 100.00)
+      end
+
+      it 'orders products by maximum price descending' do
+        products = described_class.where(id: [product_cheap.id, product_mid.id, product_expensive.id]).descend_by_price
+        expect(products.map(&:name)).to eq(['Expensive Product', 'Mid Product', 'Cheap Product'])
+      end
+
+      it 'places products without prices at the end' do
+        products = described_class.where(id: [product_expensive.id, product_no_price.id]).descend_by_price
+        expect(products.map(&:name)).to eq(['Expensive Product', 'No Price Product'])
+      end
+
+      context 'with variant prices' do
+        let!(:product_with_variants) { create(:product, name: 'Variant Product', stores: [store]) }
+        let!(:variant1) { create(:variant, product: product_with_variants) }
+        let!(:variant2) { create(:variant, product: product_with_variants) }
+
+        before do
+          product_with_variants.master.prices.delete_all
+          variant1.prices.delete_all
+          variant2.prices.delete_all
+
+          # Variant prices only (no master price)
+          create(:price, variant: variant1, amount: 200.00)
+          create(:price, variant: variant2, amount: 150.00)
+        end
+
+        it 'uses maximum variant price for sorting' do
+          products = described_class.where(id: [product_expensive.id, product_with_variants.id]).descend_by_price
+          # product_with_variants has max price 200.00, product_expensive has 100.00
+          expect(products.map(&:name)).to eq(['Variant Product', 'Expensive Product'])
+        end
+      end
+    end
   end
 
   describe 'after_touch :touch_taxons' do

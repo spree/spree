@@ -67,7 +67,8 @@ module Spree
         # Deep clone the action
         # @return [BulkAction]
         def deep_clone
-          self.class.new(key, to_h.merge(condition: condition))
+          options = to_h.except(:key).merge(condition: condition)
+          self.class.new(key, **options)
         end
 
         def inspect

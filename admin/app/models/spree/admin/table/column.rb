@@ -152,7 +152,8 @@ module Spree
         # Deep clone the column
         # @return [Column]
         def deep_clone
-          self.class.new(key, to_h.merge(condition: condition, method: method))
+          options = to_h.except(:key).merge(condition: condition, method: method)
+          self.class.new(key, **options)
         end
 
         def inspect
