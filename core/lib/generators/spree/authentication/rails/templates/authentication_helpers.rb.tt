@@ -1,0 +1,58 @@
+module Spree
+  module AuthenticationHelpers
+    extend ActiveSupport::Concern
+
+    included do
+      helper_method(
+        :spree_current_user,
+        :spree_login_path,
+        :spree_signup_path,
+        :spree_logout_path,
+        :spree_forgot_password_path,
+        :spree_admin_login_path,
+        :spree_admin_logout_path
+      ) if respond_to?(:helper_method)
+    end
+
+    # Storefront current user - uses Rails 8 Current model
+    def spree_current_user
+      Current.user if defined?(Current) && Current.respond_to?(:user)
+    end
+
+    # Admin current user - uses Rails 8 Current model
+    # Note: If using separate admin user class, Current should have admin_user attribute
+    def spree_current_admin_user
+      if defined?(Current)
+        Current.respond_to?(:admin_user) ? Current.admin_user : Current.user
+      end
+    end
+
+    # Storefront authentication paths
+    def spree_login_path(opts = {})
+      spree.new_user_session_path(opts)
+    end
+
+    def spree_signup_path(opts = {})
+      spree.new_user_registration_path(opts)
+    end
+
+    def spree_logout_path(opts = {})
+      spree.user_session_path(opts)
+    end
+
+    def spree_forgot_password_path(opts = {})
+      spree.new_user_password_path(opts)
+    end
+
+    # Admin authentication paths
+    def spree_admin_login_path(opts = {})
+      spree.new_admin_session_path(opts)
+    end
+
+    def spree_admin_logout_path(opts = {})
+      spree.admin_session_path(opts)
+    end
+  end
+end
+
+ApplicationController.include Spree::AuthenticationHelpers if defined?(ApplicationController)

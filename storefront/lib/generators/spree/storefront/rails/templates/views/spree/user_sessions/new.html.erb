@@ -1,0 +1,44 @@
+<%%= turbo_frame_tag :login do %>
+  <div class="card-dialog max-w-xl mx-auto py-10 px-4">
+    <h2 class="text-xl lg:text-2xl font-medium mb-4"><%%= Spree.t(:login) %></h2>
+    <%%= form_with url: spree.user_session_path, method: :post, data: { turbo: false } do |f| %>
+      <div class="flex flex-col mb-4">
+        <%%= f.label :email_address, Spree.t(:email) %>
+        <%%= f.email_field :email_address, autofocus: true, autocomplete: "username", class: 'text-input', required: true %>
+      </div>
+      <div class="flex flex-col mb-4">
+        <%%= f.label :password, Spree.t(:password) %>
+        <%%= f.password_field :password, autocomplete: "current-password", class: 'text-input', required: true, maxlength: 72 %>
+      </div>
+      <div class="actions">
+        <%%= f.submit Spree.t(:login), class: 'btn btn-primary w-full', id: 'login-button' %>
+      </div>
+    <%% end %>
+
+    <div class="mt-4 text-center space-y-2">
+      <p class="text-sm text-muted">
+        <%%= link_to Spree.t(:forgot_password), spree.new_user_password_path, class: 'text-link' %>
+      </p>
+      <p class="text-sm text-muted">
+        <%%= Spree.t(:dont_have_account) %>
+        <%%= link_to Spree.t(:sign_up), spree.new_user_registration_path, class: 'text-link' %>
+      </p>
+    </div>
+
+    <%% if defined?(current_order) && current_order.present? &&
+          current_store&.prefers_guest_checkout? &&
+          stored_location&.include?(spree.checkout_path(current_order.token))
+    %>
+      <div class="relative my-5 flex items-center">
+        <div class="flex-grow border-t border-gray-200"></div>
+        <span class="mx-4 text-sm text-gray-500 uppercase"><%%= Spree.t(:or) %></span>
+        <div class="flex-grow border-t border-gray-200"></div>
+      </div>
+
+      <div class="flex flex-col items-center gap-4">
+        <p class="text-sm text-muted"><%%= Spree.t(:continue_without_logging_in) %></p>
+        <%%= link_to Spree.t(:continue_as_guest), spree.checkout_path(current_order.token, guest: true), class: 'btn btn-secondary w-full max-w-sm', data: { turbo: false } %>
+      </div>
+    <%% end %>
+  </div>
+<%% end %>

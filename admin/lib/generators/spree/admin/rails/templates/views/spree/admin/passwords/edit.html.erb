@@ -1,0 +1,33 @@
+<div class="text-center mb-8">
+  <h1 class="text-2xl font-semibold text-gray-900"><%%= Spree.t(:reset_password) %></h1>
+  <p class="text-sm text-gray-500 mt-2"><%%= Spree.t(:enter_new_password) %></p>
+</div>
+
+<%%= form_with url: spree.admin_password_path(params[:token]), method: :patch, data: { turbo: false } do |f| %>
+  <div class="mb-4">
+    <%%= f.label :password, Spree.t(:new_password), class: 'block text-sm font-medium text-gray-700 mb-1' %>
+    <%%= f.password_field :password,
+                          required: true,
+                          autofocus: true,
+                          autocomplete: 'new-password',
+                          maxlength: 72,
+                          class: 'w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500' %>
+  </div>
+
+  <div class="mb-4">
+    <%%= f.label :password_confirmation, Spree.t(:confirm_password), class: 'block text-sm font-medium text-gray-700 mb-1' %>
+    <%%= f.password_field :password_confirmation,
+                          required: true,
+                          autocomplete: 'new-password',
+                          maxlength: 72,
+                          class: 'w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500' %>
+  </div>
+
+  <div class="mb-6">
+    <%%= f.submit Spree.t(:update_password), class: 'w-full bg-blue-600 text-white font-medium py-2.5 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors' %>
+  </div>
+<%% end %>
+
+<div class="text-center">
+  <%%= link_to Spree.t(:back_to_login), spree.new_admin_session_path, class: 'text-sm text-blue-600 hover:text-blue-800' %>
+</div>

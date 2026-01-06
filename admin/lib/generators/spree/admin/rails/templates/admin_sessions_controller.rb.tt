@@ -1,0 +1,38 @@
+module Spree
+  module Admin
+    class SessionsController < Spree::Admin::BaseController
+      include Authentication
+
+      layout 'spree/minimal'
+
+      allow_unauthenticated_access only: %i[new create]
+      skip_before_action :authorize_admin, only: %i[new create destroy]
+
+      rate_limit to: 10, within: 3.minutes, only: :create, with: -> { redirect_to spree.new_admin_session_path, alert: Spree.t(:try_again_later) }
+
+      def new
+      end
+
+      def create
+        if admin_user = Spree.admin_user_class.authenticate_by(email_address: params[:email_address], password: params[:password])
+          start_new_session_for(admin_user, session_class: AdminSession)
+          redirect_to after_authentication_url, allow_other_host: true
+        else
+          flash.now[:error] = Spree.t(:invalid_email_or_password)
+          render :new, status: :unprocessable_entity
+        end
+      end
+
+      def destroy
+        terminate_session
+        redirect_to spree.new_admin_session_path, status: :see_other
+      end
+
+      private
+
+      def after_authentication_url
+        session.delete(:return_to_after_authenticating) || spree.admin_root_path
+      end
+    end
+  end
+end

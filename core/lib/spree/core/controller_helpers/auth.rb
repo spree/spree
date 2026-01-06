@@ -69,6 +69,9 @@ module Spree
           # This one will be defined by Devise
           elsif respond_to?(:current_spree_user)
             current_spree_user
+          # Rails 8 built-in authentication via Current
+          elsif defined?(Current) && Current.respond_to?(:user)
+            Current.user
           end
         end
       end

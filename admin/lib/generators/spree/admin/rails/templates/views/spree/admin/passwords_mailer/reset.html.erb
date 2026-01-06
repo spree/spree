@@ -1,0 +1,7 @@
+<p><%%= Spree.t(:reset_password_email_greeting) %></p>
+
+<p><%%= Spree.t(:reset_password_email_body) %></p>
+
+<p><%%= link_to Spree.t(:reset_password), spree.edit_admin_password_url(token: @admin_user.password_reset_token) %></p>
+
+<p><%%= Spree.t(:reset_password_email_footer) %></p>

@@ -642,6 +642,7 @@ en:
     add_variant: Add Variant
     added_to_cart: Added to cart successfully!
     additional_item: Additional Item
+    admin_login: Admin Login
     address: Address
     address1: Address
     address2: Address (contd.)
@@ -734,6 +735,7 @@ en:
     back_to_payment: Back To Payment
     back_to_resource_list: Back To %{resource} List
     back_to_rma_reason_list: Back To RMA Reason List
+    back_to_login: Back to login
     back_to_store: Back to Store
     back_to_users_list: Back To Users List
     backorderable: Backorderable
@@ -1025,6 +1027,7 @@ en:
     ending_in: Ending in
     ends_at: Ends at
     enter: Enter
+    enter_new_password: Enter your new password below.
     enter_using_password: Enter using password
     error: error
     error_user_destroy_with_orders: User associated with orders cannot be destroyed
@@ -1115,6 +1118,7 @@ en:
     forbidden: Access denied
     forbidden_message: You are not authorized to access this page.
     forgot_password: Forgot password?
+    forgot_password_instructions: Enter your email address and we'll send you instructions to reset your password.
     free: Free
     free_shipping: Free Shipping
     free_shipping_amount: "-"
@@ -1201,6 +1205,7 @@ en:
     internal_server_error_message: The server encountered an internal error and was unable to complete your request.
     internationalization: Internationalization
     invalid_credit_card: Invalid credit card.
+    invalid_email_or_password: Invalid email address or password.
     invalid_exchange_variant: Invalid exchange variant.
     invalid_or_expired_invitation: Invalid or expired invitation
     invalid_payment_provider: Invalid payment provider.
@@ -1591,7 +1596,11 @@ en:
       previous_page: "&laquo; previous page"
       truncate: "&hellip;"
     password: Password
+    password_has_been_reset: Your password has been reset successfully.
     password_protected: Password protected
+    password_reset_instructions_sent: Password reset instructions sent (if an account with that email exists).
+    password_reset_link_invalid_or_expired: Password reset link is invalid or has expired.
+    passwords_did_not_match: Passwords did not match.
     paste: Paste
     path: Path
     pay: Pay
@@ -1832,6 +1841,10 @@ en:
     resellable: Resellable
     resend: Resend
     reset_password: Reset my password
+    reset_password_email_body: Someone requested a password reset for your account. If this was you, click the link below to reset your password.
+    reset_password_email_footer: If you did not request a password reset, please ignore this email.
+    reset_password_email_greeting: Hello,
+    reset_your_password: Reset your password
     resource: Resource
     response_code: Response Code
     restore_defaults: Restore defaults
@@ -1915,6 +1928,7 @@ en:
     selected_quantity_not_available: selected of %{item} is not available.
     send_consumer_transactional_emails: Send Customer Transactional Emails
     send_copy_of_all_mails_to: Send Copy of All Mails To
+    send_reset_instructions: Send reset instructions
     send_mails_as: Send Mails As
     send_message: Send message
     send_payment_link: Send payment link
@@ -1999,6 +2013,7 @@ en:
     show_store_selector:
       long: Display the Store selector in the main nav bar of Storefront and allow users to change Store and Currency
       short: Show Store selector
+    sign_in_to_continue: Sign in to continue
     sign_in_with_provider: Sign in with %{provider}
     sign_out: Sign out
     sign_up: Sign Up
@@ -2248,6 +2263,7 @@ en:
     translations_for: "%{resource_name} translations"
     tree: Tree
     true_label: 'TRUE'
+    try_again_later: Too many attempts. Please try again later.
     try_removing_filters: Try removing some filters to see more products
     twitter: Twitter
     type: Type
@@ -2271,6 +2287,7 @@ en:
     update_address: Update address
     update_billing_address: Update billing address
     update_contact_information: Update contact information
+    update_password: Update password
     update_shipping_address: Update shipping address
     updated_at: Updated at
     updating: Updating
@@ -2320,6 +2337,7 @@ en:
     we_are_busy_updating: We're updating the %{store_name} homepage.
     we_are_busy_updating_page: We're busy updating this page.
     we_will_be_back: We will be back.
+    welcome: Welcome! Your account has been created successfully.
     webhook_endpoints: Webhook Endpoints
     webhooks: Webhooks
     weight: Weight

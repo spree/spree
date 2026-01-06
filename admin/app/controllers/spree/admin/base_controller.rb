@@ -56,7 +56,13 @@ module Spree
 
       def try_spree_current_user
         if Spree.admin_user_class && Spree.admin_user_class != Spree.user_class
-          send("current_#{Spree.admin_user_class.model_name.singular_route_key}")
+          # Devise authentication
+          if respond_to?("current_#{Spree.admin_user_class.model_name.singular_route_key}", true)
+            send("current_#{Spree.admin_user_class.model_name.singular_route_key}")
+          # Rails 8 built-in authentication via Current
+          elsif defined?(Current) && Current.respond_to?(:admin_user)
+            Current.admin_user
+          end
         else
           # use Spree::Core::ControllerHelpers::Auth#try_spree_current_user
           super

@@ -1,0 +1,39 @@
+<%%= turbo_frame_tag :registration do %>
+  <div class="card-dialog max-w-xl mx-auto py-10 px-4">
+    <h2 class="text-xl lg:text-2xl font-medium mb-4"><%%= Spree.t(:sign_up) %></h2>
+    <%%= form_with model: @user, url: spree.user_registration_path, method: :post, data: { turbo: false } do |f| %>
+      <%% if @user.errors.any? %>
+        <div class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+          <ul class="text-sm text-red-600">
+            <%% @user.errors.full_messages.each do |message| %>
+              <li><%%= message %></li>
+            <%% end %>
+          </ul>
+        </div>
+      <%% end %>
+
+      <div class="flex flex-col mb-4">
+        <%%= f.label :email_address, Spree.t(:email) %>
+        <%%= f.email_field :email_address, autofocus: true, autocomplete: "email", class: 'text-input', required: true %>
+      </div>
+      <div class="flex flex-col mb-4">
+        <%%= f.label :password, Spree.t(:password) %>
+        <%%= f.password_field :password, autocomplete: "new-password", class: 'text-input', required: true, maxlength: 72 %>
+      </div>
+      <div class="flex flex-col mb-4">
+        <%%= f.label :password_confirmation, Spree.t(:confirm_password) %>
+        <%%= f.password_field :password_confirmation, autocomplete: "new-password", class: 'text-input', required: true, maxlength: 72 %>
+      </div>
+      <div class="actions">
+        <%%= f.submit Spree.t(:sign_up), class: 'btn btn-primary w-full', id: 'signup-button' %>
+      </div>
+    <%% end %>
+
+    <div class="mt-4 text-center">
+      <p class="text-sm text-muted">
+        <%%= Spree.t(:already_have_account) %>
+        <%%= link_to Spree.t(:login), spree.new_user_session_path, class: 'text-link' %>
+      </p>
+    </div>
+  </div>
+<%% end %>
