@@ -6,4 +6,4 @@
   <%= link_to_with_icon 'plus', Spree.t(:new_webhook_endpoint), new_object_url, class: "btn btn-primary" if can? :create, Spree::WebhookEndpoint %>
 <% end %>
 
-<%= render 'spree/admin/shared/index_table' %>
+<%= render_table @collection, :webhook_endpoints %>

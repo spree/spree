@@ -1098,4 +1098,114 @@ Rails.application.config.after_initialize do
                                                default: true,
                                                position: 20,
                                                method: ->(post_category) { post_category.posts.count }
+
+  # ==========================================
+  # Webhook Endpoints Table
+  # ==========================================
+  Spree.admin.tables.register(:webhook_endpoints, model_class: Spree::WebhookEndpoint, search_param: :url_cont, row_actions: false, link_to_action: :show)
+
+  Spree.admin.tables.webhook_endpoints.add :url,
+                                                 label: :url,
+                                                 type: :link,
+                                                 sortable: true,
+                                                 filterable: true,
+                                                 default: true,
+                                                 position: 10
+
+  Spree.admin.tables.webhook_endpoints.add :active,
+                                                 label: :active,
+                                                 type: :boolean,
+                                                 sortable: true,
+                                                 filterable: true,
+                                                 default: true,
+                                                 position: 20,
+                                                 filter_type: :select,
+                                                 value_options: [
+                                                   { value: 'true', label: 'Active' },
+                                                   { value: 'false', label: 'Inactive' }
+                                                 ]
+
+  Spree.admin.tables.webhook_endpoints.add :subscriptions_count,
+                                                 label: 'admin.webhook_endpoints.events',
+                                                 type: :string,
+                                                 sortable: false,
+                                                 filterable: false,
+                                                 default: true,
+                                                 position: 30,
+                                                 method: ->(endpoint) { "#{endpoint.subscriptions.size} #{I18n.t('spree.admin.webhook_endpoints.events')}" }
+
+  Spree.admin.tables.webhook_endpoints.add :deliveries_stats,
+                                                 label: :deliveries,
+                                                 type: :custom,
+                                                 sortable: false,
+                                                 filterable: false,
+                                                 default: true,
+                                                 position: 40,
+                                                 partial: 'spree/admin/tables/columns/webhook_deliveries_stats'
+
+  Spree.admin.tables.webhook_endpoints.add :created_at,
+                                                 label: :created_at,
+                                                 type: :datetime,
+                                                 sortable: true,
+                                                 filterable: true,
+                                                 default: true,
+                                                 position: 50
+
+  # ==========================================
+  # Webhook Deliveries Table
+  # ==========================================
+  Spree.admin.tables.register(:webhook_deliveries, model_class: Spree::WebhookDelivery, search_param: :event_name_cont, row_actions: false, new_resource: false)
+
+  Spree.admin.tables.webhook_deliveries.add :event_name,
+                                                  label: :event,
+                                                  type: :string,
+                                                  sortable: true,
+                                                  filterable: true,
+                                                  default: true,
+                                                  position: 10,
+                                                  method: ->(delivery) { delivery.event_name }
+
+  Spree.admin.tables.webhook_deliveries.add :status,
+                                                  label: :status,
+                                                  type: :custom,
+                                                  sortable: false,
+                                                  filterable: false,
+                                                  default: true,
+                                                  position: 20,
+                                                  partial: 'spree/admin/tables/columns/webhook_delivery_status'
+
+  Spree.admin.tables.webhook_deliveries.add :delivered_at,
+                                                  label: :delivered_at,
+                                                  type: :datetime,
+                                                  sortable: true,
+                                                  filterable: true,
+                                                  default: true,
+                                                  position: 30
+
+  Spree.admin.tables.webhook_deliveries.add :execution_time,
+                                                  label: :execution_time,
+                                                  type: :string,
+                                                  sortable: true,
+                                                  filterable: false,
+                                                  default: true,
+                                                  position: 40,
+                                                  method: ->(delivery) { delivery.execution_time ? "#{delivery.execution_time}ms" : '-' }
+
+  Spree.admin.tables.webhook_deliveries.add :response_code,
+                                                  label: :response_code,
+                                                  type: :string,
+                                                  sortable: true,
+                                                  filterable: false,
+                                                  default: true,
+                                                  position: 50,
+                                                  method: ->(delivery) { delivery.response_code || '-' }
+
+  Spree.admin.tables.webhook_deliveries.add :actions,
+                                                  label: :actions,
+                                                  type: :custom,
+                                                  sortable: false,
+                                                  filterable: false,
+                                                  default: true,
+                                                  position: 60,
+                                                  partial: 'spree/admin/tables/columns/webhook_delivery_actions'
 end

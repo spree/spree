@@ -1,0 +1,3 @@
+<%# locals: (record:, column:, value:) %>
+<% endpoint = record %>
+<span class="text-green-500"><%= endpoint.webhook_deliveries.successful.count %></span> / <%= endpoint.webhook_deliveries.count %>
