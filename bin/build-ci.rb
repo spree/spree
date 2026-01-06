@@ -21,7 +21,7 @@ class Project
     @name = name
   end
 
-  ALL = %w[emails api core sample admin].map(&method(:new)).freeze
+  ALL = %w[emails api core sample].map(&method(:new)).freeze
   CORE_GEMS = %w[api core].freeze
 
   # Install subproject

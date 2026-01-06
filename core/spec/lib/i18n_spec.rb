@@ -28,7 +28,7 @@ describe 'i18n' do
 
       it 'returns all locales from the SpreeI18n' do
         locales = Spree.available_locales
-        expected_locales = [:en, :de, :nl, :ar, :az, :bg, :ca, :cs, :da, :el, :es, :fa, :fi, :fr, :hu, :id, :it, :ja, :"pt-BR", :ro, :ru, :sk, :sv, :tr, :"zh-CN", :"zh-TW", :pl, :uk, :vi]
+        expected_locales = [:en, :de, :nl, :ar, :az, :bg, :ca, :cs, :da, :el, :es, :fa, :fi, :fr, :hu, :id, :it, :ja, :ko, :"pt-BR", :ro, :ru, :sk, :sv, :tr, :"zh-CN", :"zh-TW", :pl, :uk, :vi]
 
         expect(locales).to match_array(expected_locales)
       end
@@ -44,7 +44,7 @@ describe 'i18n' do
       it 'returns just default locales' do
         locales = Spree.available_locales
 
-        expected_locales = [:en, :ar, :az, :bg, :ca, :cs, :da, :de, :el, :es, :fa, :fi, :fr, :hu, :id, :it, :ja, :nl, :"pt-BR", :ro, :ru, :sv, :sk, :tr, :"zh-CN", :"zh-TW", :pl, :uk, :vi]
+        expected_locales = [:en, :ar, :az, :bg, :ca, :cs, :da, :de, :el, :es, :fa, :fi, :fr, :hu, :id, :it, :ja, :ko, :nl, :"pt-BR", :ro, :ru, :sv, :sk, :tr, :"zh-CN", :"zh-TW", :pl, :uk, :vi]
 
         expect(locales).to match_array(expected_locales)
       end

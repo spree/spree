@@ -56,3 +56,5 @@ vendor/bundle
 */vendor/bundle
 .ignore
 TODO
+.claude
+*/app/assets/builds/*
