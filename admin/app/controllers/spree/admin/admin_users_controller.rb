@@ -4,8 +4,8 @@ module Spree
       include Spree::Admin::SettingsConcern
 
       skip_before_action :authorize_admin, only: [:new, :create]
-      before_action :load_parent, except: [:new, :create]
-      before_action :load_roles, except: [:index]
+      before_action :load_parent, except: [:new, :create, :select_options]
+      before_action :load_roles, except: [:index, :select_options]
       before_action :load_invitation, only: [:new, :create]
       before_action :load_admin_user, only: [:show, :edit, :update, :destroy]
 
@@ -17,6 +17,14 @@ module Spree
                   where(role_users: { resource: @parent }).
                   ransack(params[:q])
         @collection = @search.result
+      end
+
+      # GET /admin/admin_users/select_options.json
+      def select_options
+        search_params = params[:q].is_a?(String) ? { email_cont: params[:q] } : params[:q]
+        users = Spree.admin_user_class.accessible_by(current_ability).ransack(search_params).result.order(:email).limit(50)
+
+        render json: users.pluck(:id, :email).map { |id, email| { id: id, name: email } }
       end
 
       # GET /admin/admin_users/:id

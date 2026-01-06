@@ -592,45 +592,6 @@ Rails.application.config.after_initialize do
                                           default: false,
                                           position: 50
 
-  # Register Posts table
-  Spree.admin.tables.register(:posts, model_class: Spree::Post, search_param: :title_cont, row_actions: true)
-
-  Spree.admin.tables.posts.add :title,
-                                     label: :title,
-                                     type: :link,
-                                     sortable: true,
-                                     filterable: true,
-                                     default: true,
-                                     position: 10
-
-  Spree.admin.tables.posts.add :status,
-                                     label: :status,
-                                     type: :status,
-                                     sortable: true,
-                                     filterable: true,
-                                     default: true,
-                                     position: 20,
-                                     value_options: [
-                                       { value: 'draft', label: 'Draft' },
-                                       { value: 'published', label: 'Published' }
-                                     ]
-
-  Spree.admin.tables.posts.add :published_at,
-                                     label: :published_at,
-                                     type: :datetime,
-                                     sortable: true,
-                                     filterable: true,
-                                     default: true,
-                                     position: 30
-
-  Spree.admin.tables.posts.add :created_at,
-                                     label: :created_at,
-                                     type: :datetime,
-                                     sortable: true,
-                                     filterable: true,
-                                     default: false,
-                                     position: 40
-
   # Register Customer Returns table
   Spree.admin.tables.register(:customer_returns, model_class: Spree::CustomerReturn, search_param: :number_cont, row_actions: false, new_resource: false)
 
@@ -935,7 +896,7 @@ Rails.application.config.after_initialize do
                                                      method: ->(md) {
                                                        count = md.metafields.count
                                                        if count.positive?
-                                                         "#{count} #{Spree.t(md.resource_type.demodulize.pluralize.to_sym)}"
+                                                         "#{count} #{Spree.t(md.resource_type.demodulize.downcase.pluralize.to_sym)}"
                                                        else
                                                          Spree.t(:not_available)
                                                        end
@@ -1070,4 +1031,71 @@ Rails.application.config.after_initialize do
                                            default: false,
                                            position: 50,
                                            ransack_attribute: 'variant_sku'
+
+  # ==========================================
+  # Posts Table
+  # ==========================================
+  Spree.admin.tables.register(:posts, model_class: Spree::Post, search_param: :title_cont)
+
+  Spree.admin.tables.posts.add :title,
+                                     label: :title,
+                                     type: :link,
+                                     sortable: true,
+                                     filterable: true,
+                                     default: true,
+                                     position: 10
+
+  Spree.admin.tables.posts.add :post_category,
+                                     label: :category,
+                                     type: :string,
+                                     filter_type: :autocomplete,
+                                     sortable: false,
+                                     filterable: true,
+                                     default: true,
+                                     position: 20,
+                                     method: ->(post) { post.post_category_title },
+                                     ransack_attribute: 'post_category_id',
+                                     search_url: '/admin/post_categories/select_options.json'
+
+  Spree.admin.tables.posts.add :author,
+                                     label: :author,
+                                     type: :string,
+                                     filter_type: :autocomplete,
+                                     sortable: false,
+                                     filterable: true,
+                                     default: true,
+                                     position: 30,
+                                     method: ->(post) { post.author_name },
+                                     ransack_attribute: 'author_id',
+                                     search_url: '/admin/admin_users/select_options.json'
+
+  Spree.admin.tables.posts.add :published_at,
+                                     label: :published_at,
+                                     type: :date,
+                                     sortable: true,
+                                     filterable: true,
+                                     default: true,
+                                     position: 40
+
+  # ==========================================
+  # Post Categories Table
+  # ==========================================
+  Spree.admin.tables.register(:post_categories, model_class: Spree::PostCategory, search_param: :title_cont)
+
+  Spree.admin.tables.post_categories.add :title,
+                                               label: :title,
+                                               type: :link,
+                                               sortable: true,
+                                               filterable: true,
+                                               default: true,
+                                               position: 10
+
+  Spree.admin.tables.post_categories.add :posts_count,
+                                               label: :posts,
+                                               type: :number,
+                                               sortable: false,
+                                               filterable: false,
+                                               default: true,
+                                               position: 20,
+                                               method: ->(post_category) { post_category.posts.count }
 end

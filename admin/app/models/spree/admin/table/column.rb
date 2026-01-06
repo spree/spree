@@ -78,6 +78,10 @@ module Spree
         # @return [String]
         def resolve_label
           if label.is_a?(String) && label.present?
+            # Check if it looks like a translation key (contains dots)
+            if label.include?('.')
+              return I18n.t(label, default: label.split('.').last.humanize)
+            end
             return label
           end
 

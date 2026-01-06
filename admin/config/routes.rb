@@ -207,7 +207,11 @@ Spree::Core::Engine.add_routes do
         get :select_options, defaults: { format: :json }
       end
     end
-    resources :post_categories
+    resources :post_categories do
+      collection do
+        get :select_options, defaults: { format: :json }
+      end
+    end
 
     # account management
     resources :roles, except: :show
@@ -217,7 +221,11 @@ Spree::Core::Engine.add_routes do
         put :resend
       end
     end
-    resources :admin_users
+    resources :admin_users do
+      collection do
+        get :select_options, defaults: { format: :json }
+      end
+    end
 
     # Action Text
     namespace :action_text do

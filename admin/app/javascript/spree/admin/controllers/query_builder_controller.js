@@ -310,7 +310,7 @@ export default class extends Controller {
           wrapper.dataset.selectOptionsValue = JSON.stringify(selectOptions)
 
           input = document.createElement("select")
-          input.className = "form-select text-sm"
+          input.className = "text-sm"
           input.multiple = true
           input.dataset.selectTarget = "input"
           input.dataset.valueInput = ""
@@ -366,7 +366,7 @@ export default class extends Controller {
         }
 
         input = document.createElement("select")
-        input.className = "form-select text-sm"
+        input.className = "text-sm"
         input.multiple = true
         input.dataset.selectTarget = "input"
         input.dataset.valueInput = "" // Mark as value input for serialization

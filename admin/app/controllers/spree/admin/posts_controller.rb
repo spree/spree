@@ -1,6 +1,8 @@
 module Spree
   module Admin
     class PostsController < ResourceController
+      include Spree::Admin::TableConcern
+
       before_action :load_post_categories
 
       add_breadcrumb Spree.t(:posts), :admin_posts_path

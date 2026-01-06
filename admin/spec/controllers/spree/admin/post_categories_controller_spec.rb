@@ -17,6 +17,31 @@ RSpec.describe Spree::Admin::PostCategoriesController, type: :controller do
     end
   end
 
+  describe 'GET #select_options' do
+    subject(:select_options) { get :select_options, format: :json }
+
+    let!(:post_categories) { create_list(:post_category, 3, store: store) }
+    let!(:other_store_category) { create(:post_category, store: create(:store)) }
+
+    it 'returns post categories for the current store' do
+      select_options
+
+      json = JSON.parse(response.body)
+      ids = json.map { |c| c['id'] }
+      post_categories.each do |category|
+        expect(ids).to include(category.id)
+        expect(json).to include({ 'id' => category.id, 'name' => category.title })
+      end
+    end
+
+    it 'does not include categories from other stores' do
+      select_options
+
+      json = JSON.parse(response.body)
+      expect(json.map { |c| c['id'] }).not_to include(other_store_category.id)
+    end
+  end
+
   describe 'GET #new' do
     subject(:new) { get :new }
 
