@@ -123,6 +123,32 @@ RSpec.describe Spree::PermissionSets::DefaultCustomer do
       it 'prevents managing other user address' do
         expect(ability.can?(:manage, other_address)).to be false
       end
+
+      context 'with guest user (non-persisted)' do
+        let(:guest_user) { Spree.user_class.new }
+        let(:guest_ability) { Spree::Ability.new(guest_user) }
+        let(:guest_permission_set) { described_class.new(guest_ability) }
+        let(:guest_address) { build(:address, user_id: nil) }
+        let(:other_guest_address) { create(:address, user_id: nil) }
+
+        before { guest_permission_set.activate! }
+
+        it 'prevents guest user from managing addresses with nil user_id (IDOR protection)' do
+          expect(guest_ability.can?(:manage, guest_address)).to be false
+        end
+
+        it 'prevents guest user from editing other guest addresses (IDOR protection)' do
+          expect(guest_ability.can?(:edit, other_guest_address)).to be false
+        end
+
+        it 'prevents guest user from updating other guest addresses (IDOR protection)' do
+          expect(guest_ability.can?(:update, other_guest_address)).to be false
+        end
+
+        it 'prevents guest user from reading other guest addresses (IDOR protection)' do
+          expect(guest_ability.can?(:read, other_guest_address)).to be false
+        end
+      end
     end
 
     context 'credit card permissions' do

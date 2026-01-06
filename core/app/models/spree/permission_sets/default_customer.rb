@@ -43,8 +43,8 @@ module Spree
         can :create, Spree.user_class
         can [:show, :update, :destroy], Spree.user_class, id: user.id
 
-        # Address management
-        can :manage, Spree::Address, user_id: user.id
+        # Address management - only for persisted users with matching user_id
+        can :manage, Spree::Address, user_id: user.id if user.persisted?
 
         # Credit card management
         can [:read, :destroy], Spree::CreditCard, user_id: user.id
