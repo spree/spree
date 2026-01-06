@@ -38,30 +38,42 @@ RSpec.describe Spree::Admin::Table do
 
   describe '#add' do
     it 'adds a column' do
-      column = table.add(:name, label: 'Name', type: :string)
+      column = table.add(:name, label: :name, type: :string)
 
       expect(table.find(:name)).to eq(column)
     end
 
     it 'converts key to symbol' do
-      table.add('name', label: 'Name')
+      table.add('name', label: :name)
 
       expect(table.find(:name)).to be_present
     end
 
     it 'sorts columns by position' do
-      table.add(:status, position: 20)
-      table.add(:name, position: 10)
-      table.add(:price, position: 30)
+      table.add(:status, label: :status, position: 20)
+      table.add(:name, label: :name, position: 10)
+      table.add(:price, label: :price, position: 30)
 
       keys = table.available_columns.map(&:key)
-      expect(keys).to eq([:name, :status, :price])
+      expect(keys).to eq(%w[name status price])
+    end
+
+    it 'raises ArgumentError with helpful message when column is invalid' do
+      expect {
+        table.add(:bad_column)
+      }.to raise_error(ArgumentError, "Invalid column 'bad_column' in table 'products': Label can't be blank")
+    end
+
+    it 'raises ArgumentError when type is invalid' do
+      expect {
+        table.add(:bad_column, label: :test, type: :invalid_type)
+      }.to raise_error(ArgumentError, /Invalid column 'bad_column' in table 'products':.*Type is not included/)
     end
   end
 
   describe '#remove' do
     it 'removes a column' do
-      table.add(:name, label: 'Name')
+      table.add(:name, label: :name)
       table.remove(:name)
 
       expect(table.find(:name)).to be_nil
@@ -74,7 +86,7 @@ RSpec.describe Spree::Admin::Table do
 
   describe '#update' do
     it 'updates an existing column' do
-      table.add(:name, label: 'Name', sortable: false)
+      table.add(:name, label: :name, sortable: false)
       table.update(:name, label: 'Product Name', sortable: true)
 
       column = table.find(:name)
@@ -91,7 +103,7 @@ RSpec.describe Spree::Admin::Table do
 
   describe '#find' do
     it 'finds a column by key' do
-      column = table.add(:name, label: 'Name')
+      column = table.add(:name, label: :name)
 
       expect(table.find(:name)).to eq(column)
     end
@@ -103,7 +115,7 @@ RSpec.describe Spree::Admin::Table do
 
   describe '#exists?' do
     it 'returns true when column exists' do
-      table.add(:name, label: 'Name')
+      table.add(:name, label: :name)
 
       expect(table.exists?(:name)).to be true
     end
@@ -115,8 +127,8 @@ RSpec.describe Spree::Admin::Table do
 
   describe '#insert_before' do
     it 'inserts column before target' do
-      table.add(:status, label: 'Status', position: 20)
-      table.insert_before(:status, :name, label: 'Name')
+      table.add(:status, label: :status, position: 20)
+      table.insert_before(:status, :name, label: :name)
 
       name = table.find(:name)
       status = table.find(:status)
@@ -125,7 +137,7 @@ RSpec.describe Spree::Admin::Table do
     end
 
     it 'returns nil if target does not exist' do
-      result = table.insert_before(:nonexistent, :name, label: 'Name')
+      result = table.insert_before(:nonexistent, :name, label: :name)
 
       expect(result).to be_nil
     end
@@ -133,8 +145,8 @@ RSpec.describe Spree::Admin::Table do
 
   describe '#insert_after' do
     it 'inserts column after target' do
-      table.add(:name, label: 'Name', position: 10)
-      table.insert_after(:name, :status, label: 'Status')
+      table.add(:name, label: :name, position: 10)
+      table.insert_after(:name, :status, label: :status)
 
       name = table.find(:name)
       status = table.find(:status)
@@ -145,67 +157,67 @@ RSpec.describe Spree::Admin::Table do
 
   describe '#visible_columns' do
     before do
-      table.add(:name, label: 'Name', default: true)
-      table.add(:status, label: 'Status', default: true)
-      table.add(:hidden, label: 'Hidden', default: false)
+      table.add(:name, label: :name, default: true)
+      table.add(:status, label: :status, default: true)
+      table.add(:hidden, label: :hidden, default: false)
     end
 
     it 'returns default columns when no selection' do
       columns = table.visible_columns
-      expect(columns.map(&:key)).to contain_exactly(:name, :status)
+      expect(columns.map(&:key)).to contain_exactly('name', 'status')
     end
 
     it 'returns selected columns when provided' do
       columns = table.visible_columns([:name, :hidden])
-      expect(columns.map(&:key)).to contain_exactly(:name, :hidden)
+      expect(columns.map(&:key)).to contain_exactly('name', 'hidden')
     end
 
     it 'filters based on visibility condition' do
-      table.add(:conditional, label: 'Conditional', default: true, if: -> { false })
+      table.add(:conditional, label: :conditional, default: true, if: -> { false })
 
       columns = table.visible_columns(nil, Object.new)
-      expect(columns.map(&:key)).to contain_exactly(:name, :status)
+      expect(columns.map(&:key)).to contain_exactly('name', 'status')
     end
   end
 
   describe '#default_columns' do
     it 'returns only default columns' do
-      table.add(:name, default: true)
-      table.add(:status, default: true)
-      table.add(:hidden, default: false)
+      table.add(:name, label: :name, default: true)
+      table.add(:status, label: :status, default: true)
+      table.add(:hidden, label: :hidden, default: false)
 
       columns = table.default_columns
-      expect(columns.map(&:key)).to contain_exactly(:name, :status)
+      expect(columns.map(&:key)).to contain_exactly('name', 'status')
     end
 
     it 'returns columns sorted by position' do
-      table.add(:status, default: true, position: 20)
-      table.add(:name, default: true, position: 10)
+      table.add(:status, label: :status, default: true, position: 20)
+      table.add(:name, label: :name, default: true, position: 10)
 
       columns = table.default_columns
-      expect(columns.map(&:key)).to eq([:name, :status])
+      expect(columns.map(&:key)).to eq(%w[name status])
     end
   end
 
   describe '#sortable_columns' do
     it 'returns only sortable columns' do
-      table.add(:name, sortable: true)
-      table.add(:description, sortable: false)
-      table.add(:status, sortable: true)
+      table.add(:name, label: :name, sortable: true)
+      table.add(:description, label: :description, sortable: false)
+      table.add(:status, label: :status, sortable: true)
 
       columns = table.sortable_columns
-      expect(columns.map(&:key)).to contain_exactly(:name, :status)
+      expect(columns.map(&:key)).to contain_exactly('name', 'status')
     end
   end
 
   describe '#filterable_columns' do
     it 'returns only filterable columns' do
-      table.add(:name, filterable: true)
-      table.add(:image, filterable: false)
-      table.add(:status, filterable: true)
+      table.add(:name, label: :name, filterable: true)
+      table.add(:image, label: :image, filterable: false)
+      table.add(:status, label: :status, filterable: true)
 
       columns = table.filterable_columns
-      expect(columns.map(&:key)).to contain_exactly(:name, :status)
+      expect(columns.map(&:key)).to contain_exactly('name', 'status')
     end
   end
 
@@ -222,6 +234,12 @@ RSpec.describe Spree::Admin::Table do
 
       actions = table.visible_bulk_actions
       expect(actions.map(&:key)).to eq([:delete, :export])
+    end
+
+    it 'raises ArgumentError when method is invalid' do
+      expect {
+        table.add_bulk_action(:bad_action, method: :invalid)
+      }.to raise_error(ArgumentError, /Invalid bulk action 'bad_action' in table 'products':.*Method is not included/)
     end
   end
 
@@ -258,25 +276,25 @@ RSpec.describe Spree::Admin::Table do
 
   describe '#deep_clone' do
     it 'creates a deep copy of the table' do
-      table.add(:name, label: 'Name', default: true)
+      table.add(:name, label: :name, default: true)
       table.add_bulk_action(:delete, label: 'Delete', position: 10)
 
       cloned = table.deep_clone
 
       expect(cloned.context).to eq(table.context)
-      expect(cloned.find(:name).label).to eq('Name')
+      expect(cloned.find(:name).label).to eq(:name)
       expect(cloned.find_bulk_action(:delete).label).to eq('Delete')
 
       # Verify it's a deep copy
       cloned.update(:name, label: 'Changed')
-      expect(table.find(:name).label).to eq('Name')
+      expect(table.find(:name).label).to eq(:name)
     end
   end
 
   describe '#clear' do
     it 'removes all columns' do
-      table.add(:name)
-      table.add(:status)
+      table.add(:name, label: :name)
+      table.add(:status, label: :status)
       table.clear
 
       expect(table.available_columns).to be_empty
@@ -295,15 +313,15 @@ RSpec.describe Spree::Admin::Table do
 
   describe 'custom sort' do
     it 'finds column with custom sort scope' do
-      table.add(:price, sortable: true, ransack_attribute: 'price', sort_scope_asc: :ascend_by_price)
+      table.add(:price, label: :price, sortable: true, ransack_attribute: 'price', sort_scope_asc: :ascend_by_price)
 
       column = table.find_custom_sort_column('price asc')
       expect(column).to be_present
-      expect(column.key).to eq(:price)
+      expect(column.key).to eq('price')
     end
 
     it 'returns nil for standard sort' do
-      table.add(:name, sortable: true)
+      table.add(:name, label: :name, sortable: true)
 
       column = table.find_custom_sort_column('name asc')
       expect(column).to be_nil

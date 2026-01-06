@@ -2,19 +2,31 @@ module Spree
   module Admin
     class Table
       class BulkAction
-        attr_accessor :key, :label, :label_options, :icon, :modal_path, :action_path, :position, :condition, :confirm, :method
+        include ActiveModel::Model
+        include ActiveModel::Attributes
 
-        def initialize(key, **options)
-          @key = key.to_sym
-          @label = options[:label]
-          @label_options = options[:label_options] || {}
-          @icon = options[:icon]
-          @modal_path = options[:modal_path]
-          @action_path = options[:action_path]
-          @position = options[:position] || 999
-          @condition = options.key?(:if) ? options[:if] : options[:condition]
-          @confirm = options[:confirm]
-          @method = options[:method] || :put
+        METHODS = %i[get post put patch delete].freeze
+
+        attribute :key
+        attribute :label
+        attribute :label_options, default: -> { {} }
+        attribute :icon, :string
+        attribute :modal_path, :string
+        attribute :action_path, :string
+        attribute :position, :integer, default: 999
+        attribute :condition
+        attribute :confirm, :string
+        attribute :method, default: :put
+
+        validates :key, presence: true
+        validates :method, presence: true, inclusion: { in: METHODS }
+
+        def initialize(attributes = {})
+          # Handle :if as alias for :condition
+          attributes[:condition] = attributes.delete(:if) if attributes.key?(:if)
+          super
+          self.key = key.to_sym if key.is_a?(String)
+          self.method = self.method.to_sym if self.method.is_a?(String)
         end
 
         # Check if action is visible for the given context
@@ -48,27 +60,10 @@ module Spree
           end
         end
 
-        # Convert to hash
-        # @return [Hash]
-        def to_h
-          {
-            key: key,
-            label: label,
-            label_options: label_options,
-            icon: icon,
-            modal_path: modal_path,
-            action_path: action_path,
-            position: position,
-            confirm: confirm,
-            method: method
-          }
-        end
-
         # Deep clone the action
         # @return [BulkAction]
         def deep_clone
-          options = to_h.except(:key).merge(condition: condition)
-          self.class.new(key, **options)
+          self.class.new(**attributes.symbolize_keys.merge(condition: condition))
         end
 
         def inspect

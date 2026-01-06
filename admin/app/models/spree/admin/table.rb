@@ -49,9 +49,18 @@ module Spree
       # @param key [Symbol] unique column identifier
       # @param options [Hash] column options (label, type, sortable, filterable, default, position, etc.)
       # @return [Column] the created column
+      # @raise [ArgumentError] if column configuration is invalid
       def add(key, **options, &block)
         key = key.to_sym
-        column = Column.new(key, **options)
+        # Handle :if as alias for :condition
+        options[:condition] = options.delete(:if) if options.key?(:if)
+        column = Column.new(**options.merge(key: key.to_s))
+
+        unless column.valid?
+          errors = column.errors.full_messages.join(', ')
+          raise ArgumentError, "Invalid column '#{key}' in table '#{@context}': #{errors}"
+        end
+
         @columns[key] = column
 
         if block_given?
@@ -192,9 +201,16 @@ module Spree
       # @param key [Symbol] unique action identifier
       # @param options [Hash] action options (label, icon, modal_path, action_path, position, etc.)
       # @return [BulkAction] the created action
+      # @raise [ArgumentError] if action configuration is invalid
       def add_bulk_action(key, **options)
         key = key.to_sym
-        action = BulkAction.new(key, **options)
+        action = BulkAction.new(**options.merge(key: key))
+
+        unless action.valid?
+          errors = action.errors.full_messages.join(', ')
+          raise ArgumentError, "Invalid bulk action '#{key}' in table '#{@context}': #{errors}"
+        end
+
         @bulk_actions[key] = action
         sort_bulk_actions!
         action
