@@ -279,6 +279,7 @@ export default class extends Controller {
         `
         break
       case "status":
+      case "select":
         input = document.createElement("select")
         input.className = "form-select text-sm"
         input.innerHTML = '<option value="">Select...</option>'

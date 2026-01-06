@@ -204,25 +204,83 @@ module Spree
         sortable = table.sortable_columns
         return '' if sortable.empty?
 
+        current_field, current_direction = parse_current_sort(current_sort)
         current_label = find_sort_label(sortable, current_sort)
 
+        # Convert params[:q] to a regular hash to avoid unpermitted parameters error
+        current_q = params[:q].respond_to?(:to_unsafe_h) ? params[:q].to_unsafe_h : (params[:q] || {})
+
         dropdown(portal: false) do
-          toggle = dropdown_toggle(class: 'btn-light btn-sm flex items-center gap-1') do
+          toggle = dropdown_toggle(class: 'btn-light btn-sm h-[2.125rem]') do
             safe_join([
-              icon('arrows-sort', class: 'w-4 h-4'),
+              current_direction == 'asc' ? icon('sort-ascending') : icon('sort-descending'),
               content_tag(:span, current_label),
-              icon('chevron-down', class: 'w-3 h-3')
+              icon('chevron-down')
             ])
           end
 
           menu = dropdown_menu(class: 'min-w-[200px]') do
-            items = sortable.flat_map do |column|
-              [
-                sort_dropdown_item(column, 'asc', current_sort),
-                sort_dropdown_item(column, 'desc', current_sort)
-              ]
+            sections = []
+
+            # Sort by section header
+            sections << content_tag(:div, class: 'dropdown-header') do
+              Spree.t('admin.tables.sort_by')
             end
-            safe_join(items)
+
+            # Sort field options
+            sortable.each do |column|
+              is_active = current_field == column.ransack_attribute
+              sort_value = "#{column.ransack_attribute} #{current_direction || 'desc'}"
+
+              sections << link_to(
+                url_for(q: current_q.merge(s: sort_value)),
+                class: "dropdown-item flex items-center justify-between #{'active' if is_active}",
+                data: { turbo_action: 'advance' }
+              ) do
+                safe_join([
+                  content_tag(:span, column.resolve_label),
+                  is_active ? icon('check') : ''
+                ])
+              end
+            end
+
+            # Divider
+            sections << content_tag(:hr, '', class: 'dropdown-divider')
+
+            # Order section header
+            sections << content_tag(:div, class: 'dropdown-header') do
+              Spree.t('admin.tables.order')
+            end
+
+            # Ascending option
+            asc_active = current_direction == 'asc'
+            asc_sort_value = current_field.present? ? "#{current_field} asc" : "#{sortable.first.ransack_attribute} asc"
+            sections << link_to(
+              url_for(q: current_q.merge(s: asc_sort_value)),
+              class: "dropdown-item flex items-center justify-between #{'active' if asc_active}",
+              data: { turbo_action: 'advance' }
+            ) do
+              safe_join([
+                content_tag(:span, Spree.t('admin.tables.ascending')),
+                asc_active ? icon('check') : ''
+              ])
+            end
+
+            # Descending option
+            desc_active = current_direction == 'desc' || current_direction.nil?
+            desc_sort_value = current_field.present? ? "#{current_field} desc" : "#{sortable.first.ransack_attribute} desc"
+            sections << link_to(
+              url_for(q: current_q.merge(s: desc_sort_value)),
+              class: "dropdown-item flex items-center justify-between #{'active' if desc_active}",
+              data: { turbo_action: 'advance' }
+            ) do
+              safe_join([
+                content_tag(:span, Spree.t('admin.tables.descending')),
+                desc_active ? icon('check') : ''
+              ])
+            end
+
+            safe_join(sections)
           end
 
           safe_join([toggle, menu])
@@ -356,33 +414,24 @@ module Spree
 
       private
 
+      def parse_current_sort(current_sort)
+        return [nil, nil] if current_sort.blank?
+
+        parts = current_sort.split(' ')
+        [parts[0], parts[1]]
+      end
+
       def find_sort_label(sortable, current_sort)
         return Spree.t('admin.tables.sort_by') if current_sort.blank?
 
-        field, direction = current_sort.split(' ')
+        field, _direction = parse_current_sort(current_sort)
         column = sortable.find { |c| c.ransack_attribute == field }
 
         if column
-          dir_label = direction == 'asc' ? 'ASC' : 'DESC'
-          "#{column.resolve_label} (#{dir_label})"
+          column.resolve_label
         else
           Spree.t('admin.tables.sort_by')
         end
-      end
-
-      def sort_dropdown_item(column, direction, current_sort)
-        sort_value = "#{column.ransack_attribute} #{direction}"
-        is_active = current_sort == sort_value
-        dir_label = direction == 'asc' ? 'ASC' : 'DESC'
-        label = "#{column.resolve_label} (#{dir_label})"
-
-        # Convert params[:q] to a regular hash to avoid unpermitted parameters error
-        current_q = params[:q].respond_to?(:to_unsafe_h) ? params[:q].to_unsafe_h : (params[:q] || {})
-
-        link_to label,
-                url_for(q: current_q.merge(s: sort_value)),
-                class: "dropdown-item #{'active' if is_active}",
-                data: { turbo_action: 'advance' }
       end
 
       # Recursively count filters in a state object (including nested groups)

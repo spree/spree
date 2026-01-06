@@ -193,8 +193,10 @@ module Spree
         # @param row_actions_edit [Boolean] Whether to show edit button in row actions (default: true)
         # @param row_actions_delete [Boolean] Whether to show delete button in row actions (default: false)
         # @param new_resource [Boolean] Whether to show "Create new" button in empty state (default: true)
+        # @param date_range_param [Symbol, nil] Ransack parameter base for date range filter (e.g., :completed_at)
+        # @param date_range_label [String, nil] Label for date range filter
         # @return [Spree::Admin::Table] The table instance
-        def register(name, model_class: nil, search_param: :name_cont, search_placeholder: nil, row_actions: false, row_actions_edit: true, row_actions_delete: false, new_resource: true)
+        def register(name, model_class: nil, search_param: :name_cont, search_placeholder: nil, row_actions: false, row_actions_edit: true, row_actions_delete: false, new_resource: true, date_range_param: nil, date_range_label: nil)
           name = name.to_sym
           @registries[name] ||= Spree::Admin::Table.new(
             name,
@@ -204,7 +206,9 @@ module Spree
             row_actions: row_actions,
             row_actions_edit: row_actions_edit,
             row_actions_delete: row_actions_delete,
-            new_resource: new_resource
+            new_resource: new_resource,
+            date_range_param: date_range_param,
+            date_range_label: date_range_label
           )
         end
 

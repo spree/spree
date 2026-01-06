@@ -368,4 +368,7 @@ en:
         reset_to_default: Reset to Default
         select_field: Select field...
         sort_by: Sort by
+        order: Order
+        ascending: Ascending
+        descending: Descending
         visible_columns: Visible Columns

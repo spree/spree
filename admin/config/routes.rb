@@ -114,6 +114,9 @@ Spree::Core::Engine.add_routes do
 
     # promotions
     resources :promotions do
+      collection do
+        get :select_options
+      end
       member do
         post :clone
       end

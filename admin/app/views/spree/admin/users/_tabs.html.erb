@@ -36,19 +36,15 @@
 
   <% if can?(:read, Spree::Order) %>
     <div data-tabs-target="panel" id="pills-orders2" role="tabpanel" aria-labelledby="pills-orders2" class="animate-fade-in" <%= 'hidden' if spree.respond_to?(:admin_user_visits_path) %>>
-      <div class="card-lg">
-        <%= turbo_frame_tag :orders_list, src: spree.admin_user_orders_path(@user, frame_name: :orders_list), loading: :lazy, autoscroll: true, data: { autoscroll_block: :nearest, autoscroll_behavior: :smooth } do %>
-          <%= render 'spree/admin/shared/spinner' %>
-        <% end %>
-      </div>
+      <%= turbo_frame_tag :orders, src: spree.admin_user_orders_path(@user), loading: :lazy, autoscroll: true, data: { autoscroll_block: :nearest, autoscroll_behavior: :smooth } do %>
+        <%= render 'spree/admin/shared/spinner' %>
+      <% end %>
     </div>
 
     <div data-tabs-target="panel" id="pills-checkouts" role="tabpanel" aria-labelledby="pills-checkouts" hidden class="animate-fade-in">
-      <div class="card-lg">
-        <%= turbo_frame_tag :orders_list, src: spree.admin_user_checkouts_path(@user, frame_name: :orders_list), loading: :lazy, autoscroll: true, data: { autoscroll_block: :nearest, autoscroll_behavior: :smooth } do %>
-          <%= render 'spree/admin/shared/spinner' %>
-        <% end %>
-      </div>
+      <%= turbo_frame_tag :checkouts, src: spree.admin_user_checkouts_path(@user), loading: :lazy, autoscroll: true, data: { autoscroll_block: :nearest, autoscroll_behavior: :smooth } do %>
+        <%= render 'spree/admin/shared/spinner' %>
+      <% end %>
     </div>
   <% end %>
 

@@ -187,63 +187,76 @@ Rails.application.config.after_initialize do
                                                     condition: -> { can?(:manage_tags, Spree::Product) }
 
   # Register Orders table
-  Spree.admin.tables.register(:orders, model_class: Spree::Order, search_param: :number_or_email_cont)
+  Spree.admin.tables.register(:orders, model_class: Spree::Order, search_param: :multi_search, date_range_param: :completed_at)
 
   Spree.admin.tables.orders.add :number,
-                                      label: :order_number,
+                                      label: :number,
                                       type: :link,
                                       sortable: true,
                                       filterable: true,
                                       default: true,
                                       position: 10
 
-  Spree.admin.tables.orders.add :state,
-                                      label: :state,
-                                      type: :status,
+  Spree.admin.tables.orders.add :completed_at,
+                                      label: :completed_at,
+                                      type: :datetime,
                                       sortable: true,
-                                      filterable: true,
+                                      filterable: false,
                                       default: true,
-                                      position: 20,
-                                      value_options: [
-                                        { value: 'cart', label: 'Cart' },
-                                        { value: 'address', label: 'Address' },
-                                        { value: 'delivery', label: 'Delivery' },
-                                        { value: 'payment', label: 'Payment' },
-                                        { value: 'confirm', label: 'Confirm' },
-                                        { value: 'complete', label: 'Complete' },
-                                        { value: 'canceled', label: 'Canceled' }
-                                      ]
+                                      position: 20
+
+  Spree.admin.tables.orders.add :customer,
+                                      label: :customer,
+                                      type: :custom,
+                                      sortable: false,
+                                      filterable: false,
+                                      default: true,
+                                      position: 30,
+                                      partial: 'spree/admin/orders/customer_summary',
+                                      partial_locals: ->(record) { { order: record } }
+
+  Spree.admin.tables.orders.add :stock_location,
+                                      label: :package_from,
+                                      type: :custom,
+                                      sortable: false,
+                                      filterable: false,
+                                      default: true,
+                                      position: 40,
+                                      partial: 'spree/admin/tables/columns/order_stock_locations'
 
   Spree.admin.tables.orders.add :payment_state,
                                       label: :payment_state,
-                                      type: :status,
+                                      type: :custom,
+                                      filter_type: :select,
                                       sortable: true,
                                       filterable: true,
                                       default: true,
-                                      position: 30,
-                                      value_options: [
-                                        { value: 'balance_due', label: 'Balance Due' },
-                                        { value: 'credit_owed', label: 'Credit Owed' },
-                                        { value: 'failed', label: 'Failed' },
-                                        { value: 'paid', label: 'Paid' },
-                                        { value: 'void', label: 'Void' }
-                                      ]
+                                      position: 50,
+                                      partial: 'spree/admin/tables/columns/order_payment_state',
+                                      operators: %i[eq not_eq],
+                                      value_options: Spree::Order::PAYMENT_STATES.map { |s| { value: s, label: I18n.t("spree.payment_states.#{s}", default: s.humanize) } }
 
   Spree.admin.tables.orders.add :shipment_state,
                                       label: :shipment_state,
-                                      type: :status,
+                                      type: :custom,
+                                      filter_type: :select,
                                       sortable: true,
                                       filterable: true,
-                                      default: false,
-                                      position: 35,
-                                      value_options: [
-                                        { value: 'backorder', label: 'Backorder' },
-                                        { value: 'canceled', label: 'Canceled' },
-                                        { value: 'partial', label: 'Partial' },
-                                        { value: 'pending', label: 'Pending' },
-                                        { value: 'ready', label: 'Ready' },
-                                        { value: 'shipped', label: 'Shipped' }
-                                      ]
+                                      default: true,
+                                      position: 60,
+                                      partial: 'spree/admin/tables/columns/order_shipment_state',
+                                      operators: %i[eq not_eq],
+                                      value_options: Spree::Order::SHIPMENT_STATES.map { |s| { value: s, label: I18n.t("spree.shipment_states.#{s}", default: s.humanize) } }
+
+  Spree.admin.tables.orders.add :item_count,
+                                      label: :item_count,
+                                      type: :number,
+                                      sortable: true,
+                                      filterable: false,
+                                      default: true,
+                                      position: 70,
+                                      align: :right,
+                                      method: ->(order) { pluralize(order.item_count, 'item') }
 
   Spree.admin.tables.orders.add :total,
                                       label: :total,
@@ -251,8 +264,20 @@ Rails.application.config.after_initialize do
                                       sortable: true,
                                       filterable: true,
                                       default: true,
-                                      position: 40,
+                                      position: 80,
+                                      align: :right,
                                       method: ->(order) { order.display_total }
+
+  Spree.admin.tables.orders.add :state,
+                                      label: :state,
+                                      type: :status,
+                                      filter_type: :select,
+                                      sortable: true,
+                                      filterable: true,
+                                      default: false,
+                                      position: 90,
+                                      operators: %i[eq not_eq in not_in],
+                                      value_options: -> { Spree::Order.state_machine(:state).states.map { |s| { value: s.name.to_s, label: s.name.to_s.humanize } } }
 
   Spree.admin.tables.orders.add :email,
                                       label: :email,
@@ -260,23 +285,59 @@ Rails.application.config.after_initialize do
                                       sortable: true,
                                       filterable: true,
                                       default: false,
-                                      position: 45
-
-  Spree.admin.tables.orders.add :completed_at,
-                                      label: :completed_at,
-                                      type: :datetime,
-                                      sortable: true,
-                                      filterable: true,
-                                      default: true,
-                                      position: 50
+                                      position: 100
 
   Spree.admin.tables.orders.add :created_at,
                                       label: :created_at,
                                       type: :datetime,
                                       sortable: true,
-                                      filterable: true,
+                                      filterable: false,
                                       default: false,
-                                      position: 60
+                                      position: 110
+
+  # Filter-only fields (not displayed as columns)
+  Spree.admin.tables.orders.add :first_name,
+                                      label: :first_name,
+                                      type: :string,
+                                      sortable: false,
+                                      filterable: true,
+                                      displayable: false,
+                                      default: false,
+                                      position: 120,
+                                      ransack_attribute: 'bill_address_firstname_i'
+
+  Spree.admin.tables.orders.add :last_name,
+                                      label: :last_name,
+                                      type: :string,
+                                      sortable: false,
+                                      filterable: true,
+                                      displayable: false,
+                                      default: false,
+                                      position: 130,
+                                      ransack_attribute: 'bill_address_lastname'
+
+  Spree.admin.tables.orders.add :sku,
+                                      label: :sku,
+                                      type: :string,
+                                      sortable: false,
+                                      filterable: true,
+                                      displayable: false,
+                                      default: false,
+                                      position: 140,
+                                      ransack_attribute: 'line_items_variant_sku'
+
+  Spree.admin.tables.orders.add :promotion,
+                                      label: :promotion,
+                                      type: :association,
+                                      filter_type: :autocomplete,
+                                      sortable: false,
+                                      filterable: true,
+                                      displayable: false,
+                                      default: false,
+                                      position: 150,
+                                      ransack_attribute: 'promotions_id',
+                                      operators: %i[in],
+                                      search_url: '/admin/promotions/select_options.json'
 
   # Register Users table
   Spree.admin.tables.register(:users, model_class: Spree.user_class, search_param: :multi_search, row_actions: false)

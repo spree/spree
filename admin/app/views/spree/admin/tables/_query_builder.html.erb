@@ -6,12 +6,12 @@
 
 <div data-controller="dialog" class="h-full">
   <button type="button"
-          class="btn btn-light btn-sm flex items-center gap-1 h-full"
+          class="btn btn-light btn-sm h-[2.125rem]"
           data-action="dialog#open">
-    <%= icon 'filter', class: 'w-4 h-4' %>
+    <%= icon 'filter' %>
     <span><%= Spree.t('admin.tables.filters') %></span>
     <% if filter_count > 0 %>
-      <span class="badge badge-primary rounded-full text-xs px-1.5 py-0.5 min-w-[1.25rem]"><%= filter_count %></span>
+      <span class="badge badge-light"><%= filter_count %></span>
     <% end %>
   </button>
 

@@ -2,9 +2,10 @@ module Spree
   module Admin
     class Table
       attr_reader :columns, :bulk_actions, :context, :model_class
-      attr_accessor :search_param, :search_placeholder, :row_actions, :row_actions_edit, :row_actions_delete, :new_resource
+      attr_accessor :search_param, :search_placeholder, :row_actions, :row_actions_edit, :row_actions_delete, :new_resource,
+                    :date_range_param, :date_range_label
 
-      def initialize(context, model_class: nil, search_param: :name_cont, search_placeholder: nil, row_actions: false, row_actions_edit: true, row_actions_delete: false, new_resource: true)
+      def initialize(context, model_class: nil, search_param: :name_cont, search_placeholder: nil, row_actions: false, row_actions_edit: true, row_actions_delete: false, new_resource: true, date_range_param: nil, date_range_label: nil)
         @context = context
         @model_class = model_class
         @columns = {}
@@ -15,6 +16,14 @@ module Spree
         @row_actions_edit = row_actions_edit
         @row_actions_delete = row_actions_delete
         @new_resource = new_resource
+        @date_range_param = date_range_param
+        @date_range_label = date_range_label
+      end
+
+      # Check if date range filter is enabled
+      # @return [Boolean]
+      def date_range?
+        @date_range_param.present?
       end
 
       # Check if row actions are enabled
@@ -244,7 +253,9 @@ module Spree
           row_actions: row_actions,
           row_actions_edit: row_actions_edit,
           row_actions_delete: row_actions_delete,
-          new_resource: new_resource
+          new_resource: new_resource,
+          date_range_param: date_range_param,
+          date_range_label: date_range_label
         )
         @columns.each do |key, column|
           cloned.columns[key] = column.deep_clone

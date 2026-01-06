@@ -5,6 +5,15 @@ module Spree
 
       before_action :load_form_data, except: :index
 
+      # GET /admin/promotions/select_options
+      def select_options
+        promotions = current_store.promotions.applied
+        promotions = promotions.where('name ILIKE ?', "%#{params[:q]}%") if params[:q].present?
+        promotions = promotions.order(:name).limit(25)
+
+        render json: promotions.pluck(:id, :name).map { |id, name| { id: id, name: name } }
+      end
+
       # POST /admin/promotions/:id/clone
       def clone
         promotion = current_store.promotions.find(params[:id])

@@ -4,6 +4,7 @@
 <% current_sort = params.dig(:q, :s) %>
 <% search_param = table.respond_to?(:search_param) ? table.search_param : :name_cont %>
 <% search_placeholder = (table.respond_to?(:search_placeholder) && table.search_placeholder) || [Spree.t(:search), controller_name.humanize.downcase].join(' ') %>
+<% date_range_param = table.date_range_param %>
 
 <% if export_type.present? %>
   <%= render 'spree/admin/shared/export_modal', export_type: export_type %>
@@ -25,7 +26,17 @@
           <% end %>
         </div>
 
-        <div class="flex gap-2 items-center h-full">
+        <div class="flex gap-2 items-center">
+          <% if date_range_param.present? %>
+            <%= form_with url: url_for, method: :get, data: { turbo_frame: frame_name, turbo_action: 'advance' }, class: 'h-full' do %>
+              <%= render "spree/admin/shared/calendar_range_picker",
+                         date_from_input_name: "q[#{date_range_param}_gt]",
+                         date_to_input_name: "q[#{date_range_param}_lt]",
+                         date_from_value: params.dig(:q, :"#{date_range_param}_gt"),
+                         date_to_value: params.dig(:q, :"#{date_range_param}_lt"),
+                         css_classes: "btn-light btn-sm dropdown-toggle h-[2.125rem]" %>
+            <% end %>
+          <% end %>
           <%= render 'spree/admin/tables/query_builder', table: table, table_key: table_key, frame_name: frame_name %>
           <%= table_sort_dropdown(table, current_sort) %>
           <%= render 'spree/admin/tables/column_selector',

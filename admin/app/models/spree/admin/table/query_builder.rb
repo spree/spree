@@ -95,7 +95,12 @@ module Spree
         def format_value_options(options)
           return nil if options.blank?
 
-          options.map do |opt|
+          # Resolve Proc/lambda options at runtime
+          resolved_options = options.is_a?(Proc) ? options.call : options
+
+          return nil if resolved_options.blank?
+
+          resolved_options.map do |opt|
             if opt.is_a?(Hash)
               { value: opt[:value] || opt['value'], label: opt[:label] || opt['label'] }
             else

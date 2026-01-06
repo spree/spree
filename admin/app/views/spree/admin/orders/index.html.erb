@@ -1,30 +1,13 @@
-  <% content_for :page_title do %>
-  <% if controller_name == 'checkouts' %>
-    <%= Spree.t(:draft_orders) %>
-  <% else %>
-    <%= Spree.t(:orders) %>
-  <% end %>
+<% content_for :page_title do %>
+  <%= Spree.t(:orders) %>
 <% end %>
 
 <% content_for :page_actions do %>
   <%= render_admin_partials(:orders_actions_partials) %>
   <%= link_to_export_modal %>
-  <%= link_to_with_icon 'plus', Spree.t(:new_order), spree.new_admin_order_path, class: "btn btn-primary" if can?(:create, Spree::Order)  %>
+  <%= link_to_with_icon 'plus', Spree.t(:new_order), spree.new_admin_order_path, class: "btn btn-primary" if can?(:create, Spree::Order) %>
 <% end %>
 
 <%= render_admin_partials(:orders_header_partials) %>
 
-<div class="card-lg">
-  <% if params[:frame_name].present? %>
-    <%= turbo_frame_tag params[:frame_name], autoscroll: true, data: { autoscroll_block: :nearest, autoscroll_behavior: :smooth } do %>
-      <%= render 'spree/admin/orders/filters', frame_name: params[:frame_name] %>
-      <%= render 'spree/admin/orders/list' %>
-    <% end %>
-  <% else %>
-    <%= turbo_frame_tag "orders", autoscroll: true, data: { autoscroll_behavior: :smooth, turbo_action: 'advance' } do %>
-      <%= render 'spree/admin/shared/export_modal', export_type: Spree::Exports::Orders %>
-      <%= render 'spree/admin/orders/filters' %>
-      <%= render 'spree/admin/orders/list' %>
-    <% end %>
-  <% end %>
-</div>
+<%= render_table @collection, :orders, export_type: Spree::Exports::Orders %>
