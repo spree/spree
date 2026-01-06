@@ -233,8 +233,8 @@ Rails.application.config.after_initialize do
                                       default: true,
                                       position: 50,
                                       partial: 'spree/admin/tables/columns/order_payment_state',
-                                      operators: %i[eq not_eq],
-                                      value_options: Spree::Order::PAYMENT_STATES.map { |s| { value: s, label: I18n.t("spree.payment_states.#{s}", default: s.humanize) } }
+                                      operators: %i[eq not_eq in not_in],
+                                      value_options: -> { Spree::Order::PAYMENT_STATES.map { |s| { value: s, label: I18n.t("spree.payment_states.#{s}", default: s.humanize) } } }
 
   Spree.admin.tables.orders.add :shipment_state,
                                       label: :shipment_state,
@@ -245,8 +245,8 @@ Rails.application.config.after_initialize do
                                       default: true,
                                       position: 60,
                                       partial: 'spree/admin/tables/columns/order_shipment_state',
-                                      operators: %i[eq not_eq],
-                                      value_options: Spree::Order::SHIPMENT_STATES.map { |s| { value: s, label: I18n.t("spree.shipment_states.#{s}", default: s.humanize) } }
+                                      operators: %i[eq not_eq in not_in],
+                                      value_options: -> { Spree::Order::SHIPMENT_STATES.map { |s| { value: s, label: I18n.t("spree.shipment_states.#{s}", default: s.humanize) } } }
 
   Spree.admin.tables.orders.add :item_count,
                                       label: :item_count,
@@ -338,6 +338,74 @@ Rails.application.config.after_initialize do
                                       ransack_attribute: 'promotions_id',
                                       operators: %i[in],
                                       search_url: '/admin/promotions/select_options.json'
+
+  # Register Checkouts table (draft orders)
+  Spree.admin.tables.register(:checkouts, model_class: Spree::Order, search_param: :multi_search, date_range_param: :created_at, new_resource: false)
+
+  Spree.admin.tables.checkouts.add :number,
+                                        label: :number,
+                                        type: :link,
+                                        sortable: true,
+                                        filterable: true,
+                                        default: true,
+                                        position: 10
+
+  Spree.admin.tables.checkouts.add :created_at,
+                                        label: :created_at,
+                                        type: :datetime,
+                                        sortable: true,
+                                        filterable: false,
+                                        default: true,
+                                        position: 20
+
+  Spree.admin.tables.checkouts.add :customer,
+                                        label: :customer,
+                                        type: :custom,
+                                        sortable: false,
+                                        filterable: false,
+                                        default: true,
+                                        position: 30,
+                                        partial: 'spree/admin/orders/customer_summary',
+                                        partial_locals: ->(record) { { order: record } }
+
+  Spree.admin.tables.checkouts.add :state,
+                                        label: :state,
+                                        type: :status,
+                                        filter_type: :select,
+                                        sortable: true,
+                                        filterable: true,
+                                        default: true,
+                                        position: 40,
+                                        operators: %i[eq not_eq in not_in],
+                                        value_options: -> { Spree::Order.state_machine(:state).states.map { |s| { value: s.name.to_s, label: s.name.to_s.humanize } } }
+
+  Spree.admin.tables.checkouts.add :item_count,
+                                        label: :item_count,
+                                        type: :number,
+                                        sortable: true,
+                                        filterable: false,
+                                        default: true,
+                                        position: 50,
+                                        align: :right,
+                                        method: ->(order) { pluralize(order.item_count, 'item') }
+
+  Spree.admin.tables.checkouts.add :total,
+                                        label: :total,
+                                        type: :currency,
+                                        sortable: true,
+                                        filterable: true,
+                                        default: true,
+                                        position: 60,
+                                        align: :right,
+                                        method: ->(order) { order.display_total }
+
+  Spree.admin.tables.checkouts.add :email,
+                                        label: :email,
+                                        type: :string,
+                                        sortable: true,
+                                        filterable: true,
+                                        default: false,
+                                        position: 70
 
   # Register Users table
   Spree.admin.tables.register(:users, model_class: Spree.user_class, search_param: :multi_search, row_actions: false)

@@ -2,6 +2,7 @@ module Spree
   module Admin
     class CheckoutsController < ResourceController
       include Spree::Admin::OrdersFiltersHelper
+      include Spree::Admin::TableConcern
 
       before_action :load_user, only: [:index]
 
@@ -10,8 +11,10 @@ module Spree
       add_breadcrumb_icon 'inbox'
 
       def index
+        params[:q] ||= {}
+        params[:q][:s] ||= 'created_at desc'
+
         load_orders
-        render template: 'spree/admin/orders/index'
       end
 
       private

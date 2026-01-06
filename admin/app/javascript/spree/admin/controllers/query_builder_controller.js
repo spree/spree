@@ -101,7 +101,7 @@ export default class extends Controller {
       const fieldConfig = this.fieldsValue.find(f => f.key === filterData.field)
       if (fieldConfig) {
         this.updateOperatorOptions(row, fieldConfig.operators, filterData.operator)
-        this.updateValueInput(row, fieldConfig, filterData.value)
+        this.updateValueInput(row, fieldConfig, filterData.value, filterData.operator)
       }
     }
 
@@ -190,7 +190,8 @@ export default class extends Controller {
 
     if (fieldConfig) {
       this.updateOperatorOptions(filterRow, fieldConfig.operators)
-      this.updateValueInput(filterRow, fieldConfig)
+      const operator = filterRow.querySelector("[data-operator-select]")?.value
+      this.updateValueInput(filterRow, fieldConfig, null, operator)
     }
 
     this.updateHiddenInput()
@@ -206,6 +207,12 @@ export default class extends Controller {
       valueContainer.style.display = "none"
     } else {
       valueContainer.style.display = ""
+      // Rebuild value input when switching between single/multi operators
+      const field = filterRow.querySelector("[data-field-select]")?.value
+      const fieldConfig = this.fieldsValue.find(f => f.key === field)
+      if (fieldConfig && (fieldConfig.type === "select" || fieldConfig.type === "status")) {
+        this.updateValueInput(filterRow, fieldConfig, null, operator)
+      }
     }
 
     this.updateHiddenInput()
@@ -247,9 +254,12 @@ export default class extends Controller {
     })
   }
 
-  updateValueInput(filterRow, fieldConfig, existingValue = null) {
+  updateValueInput(filterRow, fieldConfig, existingValue = null, operator = null) {
     const valueContainer = filterRow.querySelector("[data-value-container]")
     valueContainer.innerHTML = ""
+
+    // Check if operator requires multi-select
+    const isMultiOperator = ["in", "not_in"].includes(operator)
 
     let input
     switch (fieldConfig.type) {
@@ -280,16 +290,60 @@ export default class extends Controller {
         break
       case "status":
       case "select":
-        input = document.createElement("select")
-        input.className = "form-select text-sm"
-        input.innerHTML = '<option value="">Select...</option>'
-        if (fieldConfig.value_options) {
-          fieldConfig.value_options.forEach(opt => {
-            const option = document.createElement("option")
-            option.value = opt.value || opt
-            option.textContent = opt.label || opt
-            input.appendChild(option)
-          })
+        // For in/not_in operators, use multi-select with tom-select
+        if (isMultiOperator) {
+          const wrapper = document.createElement("div")
+          wrapper.className = "w-full"
+          wrapper.dataset.controller = "select"
+          wrapper.dataset.selectMultipleValue = "true"
+
+          // Build options array for tom-select
+          const selectOptions = []
+          if (fieldConfig.value_options) {
+            fieldConfig.value_options.forEach(opt => {
+              selectOptions.push({
+                id: opt.value || opt,
+                name: opt.label || opt
+              })
+            })
+          }
+          wrapper.dataset.selectOptionsValue = JSON.stringify(selectOptions)
+
+          input = document.createElement("select")
+          input.className = "form-select text-sm"
+          input.multiple = true
+          input.dataset.selectTarget = "input"
+          input.dataset.valueInput = ""
+
+          // Restore existing values for multi-select
+          if (existingValue !== null && existingValue !== undefined && Array.isArray(existingValue)) {
+            const selectedIds = existingValue.map(item => {
+              if (typeof item === 'object') {
+                return item.id
+              } else {
+                return item
+              }
+            })
+            wrapper.dataset.selectActiveOptionValue = JSON.stringify(selectedIds)
+          }
+
+          input.dataset.action = "change->query-builder#onValueChange"
+          wrapper.appendChild(input)
+          valueContainer.appendChild(wrapper)
+          return // Early return since we already appended
+        } else {
+          // Single select for eq/not_eq operators
+          input = document.createElement("select")
+          input.className = "form-select text-sm"
+          input.innerHTML = '<option value="">Select...</option>'
+          if (fieldConfig.value_options) {
+            fieldConfig.value_options.forEach(opt => {
+              const option = document.createElement("option")
+              option.value = opt.value || opt
+              option.textContent = opt.label || opt
+              input.appendChild(option)
+            })
+          }
         }
         break
       case "autocomplete":
