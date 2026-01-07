@@ -122,6 +122,7 @@
                   "developer/admin/admin",
                   "developer/admin/extending-ui",
                   "developer/admin/navigation",
+                  "developer/admin/tables",
                   "developer/admin/form-builder",
                   "developer/admin/components",
                   "developer/admin/helper-methods",

@@ -1,0 +1,564 @@
+---
+title: Admin Tables
+sidebarTitle: Tables
+---
+
+<Warning>
+  Admin Tables are part of the upcoming Spree 5.3 release slated for January 2026.
+</Warning>
+
+Spree Admin provides a flexible table system for displaying resource listings with customizable columns, sorting, filtering, and bulk actions. The Tables DSL allows you to define table configurations for your resources and extend existing ones.
+
+<Info>
+  The Tables system uses a declarative API accessible via `Spree.admin.tables`. This allows you to programmatically add, modify, and remove table columns and bulk actions directly in your initializers.
+</Info>
+
+## Basic Usage
+
+### Creating a New Table
+
+Register a new table for your resource in `config/initializers/spree.rb`:
+
+```ruby config/initializers/spree.rb
+Rails.application.config.after_initialize do
+  # Register a new table
+  Spree.admin.tables.register(:brands, model_class: Spree::Brand, search_param: :name_cont)
+
+  # Add columns
+  Spree.admin.tables.brands.add :name,
+    label: :name,
+    type: :link,
+    sortable: true,
+    default: true,
+    position: 10
+
+  Spree.admin.tables.brands.add :products_count,
+    label: :products,
+    type: :number,
+    sortable: false,
+    default: true,
+    position: 20,
+    method: ->(brand) { brand.products.count }
+
+  Spree.admin.tables.brands.add :created_at,
+    label: :created_at,
+    type: :datetime,
+    sortable: true,
+    default: false,
+    position: 30
+end
+```
+
+### Using the Table in Views
+
+Render the table in your index view using the `render_table` helper:
+
+```erb app/views/spree/admin/brands/index.html.erb
+<%= render_table @collection, :brands %>
+```
+
+With additional options:
+
+```erb
+<%= render_table @collection, :brands,
+                 bulk_operations: true,
+                 export_type: Spree::Exports::Brands %>
+```
+
+## Table Registration Options
+
+When registering a table, you can specify these options:
+
+<ParamField path="model_class" type="Class" required>
+  The model class for the table (e.g., `Spree::Brand`).
+</ParamField>
+
+<ParamField path="search_param" type="Symbol" default=":name_cont">
+  The Ransack search parameter for the search box.
+</ParamField>
+
+<ParamField path="search_placeholder" type="String">
+  Custom placeholder text for the search box.
+</ParamField>
+
+<ParamField path="row_actions" type="Boolean" default="false">
+  Enable row action buttons (edit/delete dropdown).
+</ParamField>
+
+<ParamField path="row_actions_edit" type="Boolean" default="true">
+  Show edit action in row actions dropdown.
+</ParamField>
+
+<ParamField path="row_actions_delete" type="Boolean" default="false">
+  Show delete action in row actions dropdown.
+</ParamField>
+
+<ParamField path="new_resource" type="Boolean" default="true">
+  Show "New Resource" button when collection is empty.
+</ParamField>
+
+<ParamField path="date_range_param" type="Symbol">
+  Enable date range filter for the specified column (e.g., `:created_at`).
+</ParamField>
+
+<ParamField path="link_to_action" type="Symbol" default=":edit">
+  Action for link columns (`:edit` or `:show`).
+</ParamField>
+
+## Column Options
+
+All columns support the following options:
+
+<ParamField path="label" type="Symbol or String" required>
+  The column header label. Can be a symbol (translation key using `Spree.t`) or a string.
+</ParamField>
+
+<ParamField path="type" type="String" default="string">
+  The column type. Determines how the value is rendered.
+
+  Available types:
+  - `string` - Plain text
+  - `number` - Numeric value
+  - `date` - Date formatted with `spree_date` helper
+  - `datetime` - Relative time with `spree_time_ago` helper
+  - `money` - Currency formatted with `Spree::Money`
+  - `status` - Badge with status-based styling
+  - `link` - Clickable link to resource
+  - `boolean` - Active/inactive badge
+  - `image` - Thumbnail image
+  - `association` - Associated record name(s)
+  - `custom` - Custom partial rendering
+</ParamField>
+
+<ParamField path="sortable" type="Boolean" default="true">
+  Whether the column can be sorted.
+</ParamField>
+
+<ParamField path="filterable" type="Boolean" default="true">
+  Whether the column appears in the query builder filter options.
+</ParamField>
+
+<ParamField path="displayable" type="Boolean" default="true">
+  Whether the column can be shown/hidden by users. Set to `false` for filter-only columns.
+</ParamField>
+
+<ParamField path="default" type="Boolean" default="false">
+  Whether the column is visible by default.
+</ParamField>
+
+<ParamField path="position" type="Integer" default="999">
+  Column order. Lower numbers appear first.
+</ParamField>
+
+<ParamField path="method" type="Symbol or Lambda">
+  Custom method to extract the column value. Can be a method name or lambda.
+</ParamField>
+
+<ParamField path="align" type="String" default="left">
+  Text alignment: `left`, `center`, or `right`.
+</ParamField>
+
+<ParamField path="width" type="String">
+  Column width class (e.g., `"20"` for `w-20`).
+</ParamField>
+
+<ParamField path="if" type="Lambda">
+  Conditional visibility. Column only appears if lambda returns true.
+</ParamField>
+
+### Filter-specific Options
+
+<ParamField path="filter_type" type="String">
+  Override the filter input type. Available: `string`, `number`, `date`, `datetime`, `money`, `status`, `boolean`, `autocomplete`, `select`.
+</ParamField>
+
+<ParamField path="ransack_attribute" type="String">
+  Custom Ransack attribute name for filtering/sorting (defaults to column key).
+</ParamField>
+
+<ParamField path="operators" type="Array">
+  Available filter operators. Defaults based on column type.
+</ParamField>
+
+<ParamField path="value_options" type="Array or Lambda">
+  Options for select/status filters. Array of hashes with `value` and `label` keys.
+</ParamField>
+
+<ParamField path="search_url" type="String">
+  URL for autocomplete filter type.
+</ParamField>
+
+### Custom Sort Options
+
+<ParamField path="sort_scope_asc" type="Symbol">
+  Custom scope name for ascending sort (bypasses Ransack).
+</ParamField>
+
+<ParamField path="sort_scope_desc" type="Symbol">
+  Custom scope name for descending sort (bypasses Ransack).
+</ParamField>
+
+### Custom Partial Options
+
+<ParamField path="partial" type="String">
+  Partial path for `custom` type columns.
+</ParamField>
+
+<ParamField path="partial_locals" type="Hash or Lambda">
+  Additional locals to pass to the partial. Lambda receives the record.
+</ParamField>
+
+## Column Types Examples
+
+### String Column
+
+```ruby
+Spree.admin.tables.brands.add :name,
+  label: :name,
+  type: :string,
+  sortable: true,
+  default: true
+```
+
+### Link Column
+
+Links to the resource edit or show page:
+
+```ruby
+Spree.admin.tables.brands.add :name,
+  label: :name,
+  type: :link,
+  sortable: true,
+  default: true
+```
+
+### Money Column
+
+Displays formatted currency:
+
+```ruby
+Spree.admin.tables.products.add :price,
+  label: :price,
+  type: :money,
+  sortable: true,
+  default: true,
+  align: :right,
+  method: ->(product) { product.display_price }
+```
+
+### Status Column
+
+Displays a colored badge based on the status value:
+
+```ruby
+Spree.admin.tables.orders.add :state,
+  label: :state,
+  type: :status,
+  filter_type: :select,
+  sortable: true,
+  default: true,
+  value_options: -> {
+    Spree::Order.state_machine(:state).states.map { |s|
+      { value: s.name.to_s, label: s.name.to_s.humanize }
+    }
+  }
+```
+
+Status values are automatically styled:
+- **Green** (`badge-active`): `active`, `complete`, `completed`, `paid`, `shipped`, `available`
+- **Yellow** (`badge-warning`): `draft`, `pending`, `processing`, `ready`
+- **Gray** (`badge-inactive`): `archived`, `canceled`, `cancelled`, `failed`, `void`, `inactive`
+
+### Boolean Column
+
+```ruby
+Spree.admin.tables.products.add :available,
+  label: :available,
+  type: :boolean,
+  sortable: true,
+  default: true
+```
+
+### DateTime Column
+
+Displays relative time (e.g., "2 hours ago"):
+
+```ruby
+Spree.admin.tables.orders.add :completed_at,
+  label: :completed_at,
+  type: :datetime,
+  sortable: true,
+  default: true
+```
+
+### Association Column
+
+For displaying related records:
+
+```ruby
+Spree.admin.tables.products.add :taxons,
+  label: :taxons,
+  type: :association,
+  filter_type: :autocomplete,
+  sortable: false,
+  filterable: true,
+  default: false,
+  ransack_attribute: 'taxons_id',
+  operators: [:in],
+  search_url: '/admin/taxons/select_options.json',
+  method: ->(product) { product.taxons.map(&:pretty_name).join(', ') }
+```
+
+### Custom Partial Column
+
+For complex rendering:
+
+```ruby
+Spree.admin.tables.products.add :name,
+  label: :name,
+  type: :custom,
+  sortable: true,
+  default: true,
+  partial: 'spree/admin/tables/columns/product_name'
+
+# With dynamic locals
+Spree.admin.tables.orders.add :customer,
+  label: :customer,
+  type: :custom,
+  default: true,
+  partial: 'spree/admin/orders/customer_summary',
+  partial_locals: ->(record) { { order: record } }
+```
+
+The partial receives `record`, `column`, and `value` locals plus any custom locals.
+
+### Filter-only Column
+
+Columns that can be filtered but not displayed:
+
+```ruby
+Spree.admin.tables.orders.add :sku,
+  label: :sku,
+  type: :string,
+  sortable: false,
+  filterable: true,
+  displayable: false,
+  ransack_attribute: 'line_items_variant_sku'
+```
+
+## Modifying Existing Tables
+
+### Adding Columns to Existing Tables
+
+```ruby config/initializers/spree.rb
+Rails.application.config.after_initialize do
+  # Add a custom column to products
+  Spree.admin.tables.products.add :vendor,
+    label: 'Vendor',
+    type: :string,
+    sortable: false,
+    default: true,
+    position: 25,
+    method: ->(product) { product.vendor&.name },
+    if: -> { defined?(Spree::Vendor) }
+end
+```
+
+### Updating Existing Columns
+
+```ruby
+Rails.application.config.after_initialize do
+  # Change the position of an existing column
+  Spree.admin.tables.products.update :price, position: 15
+
+  # Make a column default
+  Spree.admin.tables.products.update :sku, default: true
+
+  # Change column label
+  Spree.admin.tables.orders.update :number, label: 'Order #'
+end
+```
+
+### Removing Columns
+
+```ruby
+Rails.application.config.after_initialize do
+  # Remove a column entirely
+  Spree.admin.tables.products.remove :sku
+end
+```
+
+### Inserting Columns at Specific Positions
+
+```ruby
+Rails.application.config.after_initialize do
+  # Insert before an existing column
+  Spree.admin.tables.products.insert_before :price, :cost_price,
+    label: 'Cost Price',
+    type: :money,
+    default: false
+
+  # Insert after an existing column
+  Spree.admin.tables.products.insert_after :name, :brand,
+    label: 'Brand',
+    type: :string,
+    default: true,
+    method: ->(product) { product.brand&.name }
+end
+```
+
+## Bulk Actions
+
+Add bulk actions that appear when users select multiple rows:
+
+```ruby
+Rails.application.config.after_initialize do
+  Spree.admin.tables.products.add_bulk_action :set_active,
+    label: 'admin.bulk_ops.products.title.set_status',
+    label_options: { status: :active },
+    icon: 'circle-check',
+    modal_path: '/admin/products/bulk_modal?kind=set_status&status=active',
+    action_path: '/admin/products/bulk_status_update?status=active',
+    position: 10,
+    if: -> { can?(:activate, Spree::Product) }
+end
+```
+
+### Bulk Action Options
+
+<ParamField path="label" type="String" required>
+  Translation key or text for the action button.
+</ParamField>
+
+<ParamField path="label_options" type="Hash">
+  Interpolation options for the label translation.
+</ParamField>
+
+<ParamField path="icon" type="String">
+  Icon name from [Tabler Icons](https://tabler.io/icons).
+</ParamField>
+
+<ParamField path="modal_path" type="String" required>
+  URL for the confirmation modal.
+</ParamField>
+
+<ParamField path="action_path" type="String" required>
+  URL for the bulk action endpoint.
+</ParamField>
+
+<ParamField path="method" type="Symbol" default=":put">
+  HTTP method for the action (`:get`, `:post`, `:put`, `:patch`, `:delete`).
+</ParamField>
+
+<ParamField path="position" type="Integer" default="999">
+  Order in the bulk actions menu.
+</ParamField>
+
+<ParamField path="if" type="Lambda">
+  Conditional visibility based on user permissions.
+</ParamField>
+
+<ParamField path="confirm" type="String">
+  Confirmation message before executing the action.
+</ParamField>
+
+### Managing Bulk Actions
+
+```ruby
+# Update a bulk action
+Spree.admin.tables.products.update_bulk_action :set_active, position: 5
+
+# Remove a bulk action
+Spree.admin.tables.products.remove_bulk_action :set_archived
+```
+
+## Custom Sorting
+
+For columns that need custom database queries:
+
+```ruby
+# In your model
+class Spree::Product < Spree.base_class
+  scope :ascend_by_price, -> { joins(:master).order('spree_variants.price ASC') }
+  scope :descend_by_price, -> { joins(:master).order('spree_variants.price DESC') }
+end
+
+# In your initializer
+Spree.admin.tables.products.add :price,
+  label: :price,
+  type: :money,
+  sortable: true,
+  default: true,
+  sort_scope_asc: :ascend_by_price,
+  sort_scope_desc: :descend_by_price,
+  method: ->(product) { product.price }
+```
+
+## Available Tables
+
+Spree registers tables for all built-in resources:
+
+| Table Key | Model Class |
+|-----------|-------------|
+| `:products` | `Spree::Product` |
+| `:orders` | `Spree::Order` |
+| `:checkouts` | `Spree::Order` (draft) |
+| `:users` | `Spree.user_class` |
+| `:promotions` | `Spree::Promotion` |
+| `:customer_returns` | `Spree::CustomerReturn` |
+| `:option_types` | `Spree::OptionType` |
+| `:newsletter_subscribers` | `Spree::NewsletterSubscriber` |
+| `:policies` | `Spree::Policy` |
+| `:stock_transfers` | `Spree::StockTransfer` |
+| `:metafield_definitions` | `Spree::MetafieldDefinition` |
+| `:gift_cards` | `Spree::GiftCard` |
+| `:stock_items` | `Spree::StockItem` |
+| `:posts` | `Spree::Post` |
+| `:post_categories` | `Spree::PostCategory` |
+| `:webhook_endpoints` | `Spree::WebhookEndpoint` |
+| `:webhook_deliveries` | `Spree::WebhookDelivery` |
+
+## API Reference
+
+### Table Methods
+
+```ruby
+table = Spree.admin.tables.products
+
+# Column management
+table.add(key, **options)           # Add a new column
+table.remove(key)                   # Remove a column
+table.update(key, **options)        # Update column options
+table.find(key)                     # Find a column by key
+table.exists?(key)                  # Check if column exists
+table.insert_before(target, key, **options)
+table.insert_after(target, key, **options)
+
+# Query columns
+table.available_columns             # All displayable columns
+table.default_columns               # Columns shown by default
+table.visible_columns(selected, ctx) # Columns for current view
+table.sortable_columns              # Columns that can be sorted
+table.filterable_columns            # Columns for query builder
+
+# Bulk actions
+table.add_bulk_action(key, **options)
+table.remove_bulk_action(key)
+table.update_bulk_action(key, **options)
+table.find_bulk_action(key)
+table.visible_bulk_actions(context)
+table.bulk_operations_enabled?
+```
+
+### Registry Methods
+
+```ruby
+# Check if a table is registered
+Spree.admin.tables.registered?(:brands)
+
+# Get a table
+Spree.admin.tables.get(:products)
+
+# Shorthand access
+Spree.admin.tables.products
+```
