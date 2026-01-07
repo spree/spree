@@ -1,0 +1,52 @@
+<%# locals: (table:, table_key:, selected_columns:, frame_name:) %>
+<div data-controller="column-selector">
+  <%= form_with url: spree.admin_table_columns_path,
+                method: :post,
+                data: { turbo_frame: frame_name } do |f| %>
+    <%= hidden_field_tag :table_key, table_key %>
+    <%= hidden_field_tag :redirect_url, request.fullpath %>
+
+    <%= dropdown(portal: false) do %>
+      <%= dropdown_toggle(class: 'btn-light btn-sm h-[2.125rem]') do %>
+        <%= icon 'columns-3' %>
+        <span><%= Spree.t('admin.tables.columns') %></span>
+        <%= icon 'chevron-down' %>
+      <% end %>
+
+      <%= dropdown_menu(class: 'min-w-[250px]') do %>
+        <h6 class="font-semibold text-gray-700 text-sm p-3">
+          <%= Spree.t('admin.tables.visible_columns') %>
+        </h6>
+
+        <div class="space-y-2 max-h-[300px] overflow-y-auto mb-4">
+          <% table.available_columns.each do |column| %>
+            <% next unless column.visible?(self) %>
+            <% is_selected = selected_columns.nil? ? column.default? : selected_columns.include?(column.key) %>
+            <label class="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-1.5 rounded">
+              <%= check_box_tag 'columns[]',
+                                column.key,
+                                is_selected,
+                                id: "column_#{column.key}",
+                                data: {
+                                  column_selector_target: 'checkbox',
+                                  default: column.default?
+                                },
+                                class: 'form-checkbox rounded' %>
+              <span class="text-sm text-gray-700"><%= column.resolve_label %></span>
+            </label>
+          <% end %>
+        </div>
+
+        <div class="flex gap-2 p-2 pt-3 border-t border-gray-200">
+          <button type="button"
+                  class="btn btn-sm btn-light flex-1"
+                  data-action="column-selector#reset">
+            <%= Spree.t('admin.tables.reset_to_default') %>
+          </button>
+          <%= f.submit Spree.t('admin.tables.apply'),
+                       class: 'btn btn-sm btn-primary flex-1 cursor-pointer' %>
+        </div>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>

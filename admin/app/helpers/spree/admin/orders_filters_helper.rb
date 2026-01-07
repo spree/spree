@@ -63,7 +63,7 @@ module Spree
       end
 
       def load_orders
-        @search = scope.preload(:user).accessible_by(current_ability, :index).
+        @search = scope.preload(:user, shipments: :stock_location).accessible_by(current_ability, :index).
                   ransack(params_to_filters(search_params: params[:q].clone, vendor: @vendor, user: @user))
 
         # lazy loading other models here (via includes) may result in an invalid query

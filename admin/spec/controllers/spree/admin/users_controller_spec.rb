@@ -196,4 +196,67 @@ RSpec.describe Spree::Admin::UsersController, type: :controller do
       end
     end
   end
+
+  describe 'GET #select_options' do
+    let!(:user_1) { create(:user, email: 'alice@example.com') }
+    let!(:user_2) { create(:user, email: 'bob@example.com') }
+    let!(:user_3) { create(:user, email: 'alice.smith@example.com') }
+
+    it 'returns users matching the search query as JSON' do
+      get :select_options, params: { q: 'alice' }, format: :json
+
+      expect(response).to have_http_status(:ok)
+      json = JSON.parse(response.body)
+
+      expect(json.size).to eq(2)
+      expect(json.map { |u| u['name'] }).to contain_exactly('alice@example.com', 'alice.smith@example.com')
+    end
+
+    it 'returns users with id and name (email) attributes' do
+      get :select_options, params: { q: 'bob' }, format: :json
+
+      json = JSON.parse(response.body)
+
+      expect(json.size).to eq(1)
+      expect(json.first).to eq({ 'id' => user_2.id, 'name' => 'bob@example.com' })
+    end
+
+    it 'returns empty array when no users match' do
+      get :select_options, params: { q: 'nonexistent' }, format: :json
+
+      json = JSON.parse(response.body)
+
+      expect(json).to eq([])
+    end
+
+    it 'limits results to 50 users' do
+      55.times { |i| create(:user, email: "test#{i}@example.com") }
+
+      get :select_options, params: { q: 'test' }, format: :json
+
+      json = JSON.parse(response.body)
+
+      expect(json.size).to eq(50)
+    end
+
+    it 'orders results by email' do
+      get :select_options, params: { q: 'example.com' }, format: :json
+
+      json = JSON.parse(response.body)
+      emails = json.map { |u| u['name'] }
+
+      expect(emails.size).to be > 1
+    end
+
+    context 'with hash search params' do
+      it 'accepts ransack-style hash params' do
+        get :select_options, params: { q: { email_cont: 'bob' } }, format: :json
+
+        json = JSON.parse(response.body)
+
+        expect(json.size).to eq(1)
+        expect(json.first['name']).to eq('bob@example.com')
+      end
+    end
+  end
 end

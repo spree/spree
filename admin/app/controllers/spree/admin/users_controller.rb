@@ -13,6 +13,13 @@ module Spree
       add_breadcrumb_icon 'users'
       add_breadcrumb Spree.t(:customers), :admin_users_path
 
+      def select_options
+        search_params = params[:q].is_a?(String) ? { email_cont: params[:q] } : params[:q]
+        users = model_class.ransack(search_params).result.order(:email).limit(50)
+
+        render json: users.pluck(:id, :email).map { |id, email| { id: id, name: email } }
+      end
+
       def show
         add_breadcrumb @user.name, spree.admin_user_path(@user)
       end

@@ -12,4 +12,4 @@
 
 <%= render_admin_partials(:customer_returns_header_partials) %>
 
-<%= render 'spree/admin/shared/index_table', new_object_url: nil %>
+<%= render_table @collection, :customer_returns, edit_object_url: nil %>

@@ -6,4 +6,4 @@
   <%= link_to_with_icon 'plus', Spree.t(:new_metafield_definition), new_object_url, class: 'btn btn-primary' %>
 <% end %>
 
-<%= render 'spree/admin/shared/index_table' %>
+<%= render_table @collection, :metafield_definitions %>

@@ -1,0 +1,6 @@
+<%# locals: (record:, column:, value:) %>
+<% if can?(:manage, record.stock_location) %>
+  <%= link_to record.stock_location.display_name, spree.edit_admin_stock_location_path(record.stock_location), data: { turbo_frame: '_top' } %>
+<% else %>
+  <%= record.stock_location.display_name %>
+<% end %>

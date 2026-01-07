@@ -37,5 +37,9 @@ module Spree
     def navigation
       Rails.application.config.spree_admin.navigation
     end
+
+    def tables
+      Rails.application.config.spree_admin.tables
+    end
   end
 end

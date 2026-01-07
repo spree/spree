@@ -1,0 +1,4 @@
+<%# locals: (record:, column:, value:) %>
+<% record.shipments.map(&:stock_location).compact.uniq.each_with_index do |stock_location, index| %>
+  <% if index > 0 %>, <% end %><%= stock_location.name %>
+<% end %>

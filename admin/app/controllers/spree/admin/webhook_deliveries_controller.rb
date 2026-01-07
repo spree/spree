@@ -4,6 +4,7 @@ module Spree
   module Admin
     class WebhookDeliveriesController < ResourceController
       include Spree::Admin::SettingsConcern
+      include Spree::Admin::TableConcern
 
       helper 'spree/admin/webhook_endpoints'
 

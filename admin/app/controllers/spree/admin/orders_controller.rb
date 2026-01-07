@@ -4,6 +4,7 @@ module Spree
       include Spree::Admin::OrderConcern
       include Spree::Admin::OrdersFiltersHelper
       include Spree::Admin::OrderBreadcrumbConcern
+      include Spree::Admin::TableConcern
 
       before_action :initialize_order_events
       before_action :load_order, only: %i[edit cancel resend destroy]

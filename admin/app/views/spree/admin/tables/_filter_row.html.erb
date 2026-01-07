@@ -1,0 +1,29 @@
+<%# Template for a single filter row - populated by JavaScript %>
+<div class="flex items-center gap-2 p-3 bg-gray-50 rounded-lg" data-filter-id="">
+  <select class="form-select flex-1 text-sm"
+          data-field-select
+          data-action="change->query-builder#onFieldChange">
+    <option value=""><%= Spree.t('admin.tables.select_field') %></option>
+  </select>
+
+  <select class="form-select flex-shrink-0 w-[160px] text-sm"
+          data-operator-select
+          data-action="change->query-builder#onOperatorChange">
+    <option value="eq"><%= Spree.t('admin.tables.operators.equals') %></option>
+  </select>
+
+  <div data-value-container class="flex-1">
+    <input type="text"
+           class="form-input text-sm"
+           placeholder="<%= Spree.t('admin.tables.enter_value') %>"
+           data-value-input
+           data-action="input->query-builder#onValueChange">
+  </div>
+
+  <button type="button"
+          class="btn btn-sm btn-light text-red-600 hover:text-red-700 hover:bg-red-50 p-1.5"
+          data-action="query-builder#removeFilter"
+          title="<%= Spree.t(:remove) %>">
+    <%= icon 'x', class: 'w-4 h-4' %>
+  </button>
+</div>

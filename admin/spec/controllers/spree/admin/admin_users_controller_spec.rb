@@ -7,6 +7,31 @@ RSpec.describe Spree::Admin::AdminUsersController, type: :controller do
   let(:admin_user) { create(:admin_user) }
   let(:role) { Spree::Role.find_or_create_by!(name: 'admin') }
 
+  describe 'GET #select_options' do
+    stub_authorization!
+
+    let!(:admin_users) { create_list(:admin_user, 3) }
+
+    it 'returns admin users as select options' do
+      get :select_options, format: :json
+
+      json = JSON.parse(response.body)
+      ids = json.map { |u| u['id'] }
+      admin_users.each do |user|
+        expect(ids).to include(user.id)
+        expect(json).to include({ 'id' => user.id, 'name' => user.email })
+      end
+    end
+
+    it 'filters by email when q param is provided' do
+      target_user = admin_users.first
+      get :select_options, params: { q: target_user.email[0..5] }, format: :json
+
+      json = JSON.parse(response.body)
+      expect(json.map { |u| u['id'] }).to include(target_user.id)
+    end
+  end
+
   describe 'GET #index' do
     stub_authorization!
 

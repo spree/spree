@@ -44,6 +44,10 @@ Spree::Core::Engine.add_routes do
       resources :classifications, only: %i[index new create update destroy]
     end
     get '/taxons/select_options' => 'taxons#select_options', as: :taxons_select_options, defaults: { format: :json }
+    get '/tags/select_options' => 'tags#select_options', as: :tags_select_options, defaults: { format: :json }
+    get '/countries/select_options' => 'countries#select_options', as: :countries_select_options, defaults: { format: :json }
+    get '/users/select_options' => 'users#select_options', as: :users_select_options, defaults: { format: :json }
+    get '/stock_locations/select_options' => 'stock_locations#select_options', as: :stock_locations_select_options, defaults: { format: :json }
 
     # media library
     resources :assets, only: [:create, :edit, :update, :destroy] do
@@ -110,6 +114,9 @@ Spree::Core::Engine.add_routes do
 
     # promotions
     resources :promotions do
+      collection do
+        get :select_options
+      end
       member do
         post :clone
       end
@@ -200,7 +207,11 @@ Spree::Core::Engine.add_routes do
         get :select_options, defaults: { format: :json }
       end
     end
-    resources :post_categories
+    resources :post_categories do
+      collection do
+        get :select_options, defaults: { format: :json }
+      end
+    end
 
     # account management
     resources :roles, except: :show
@@ -210,7 +221,11 @@ Spree::Core::Engine.add_routes do
         put :resend
       end
     end
-    resources :admin_users
+    resources :admin_users do
+      collection do
+        get :select_options, defaults: { format: :json }
+      end
+    end
 
     # Action Text
     namespace :action_text do
@@ -229,6 +244,9 @@ Spree::Core::Engine.add_routes do
       get '/errors', to: 'errors#show'
       get '/errors/:path', to: 'errors#show', as: :pathed_errors
     end
+
+    # table columns (for session-based column selection)
+    post 'table_columns', to: 'table_columns#update', as: :table_columns
 
     # dashboard
     resource :dashboard, controller: 'dashboard'

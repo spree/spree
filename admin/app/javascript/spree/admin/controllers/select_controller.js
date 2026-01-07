@@ -72,8 +72,14 @@ export default class extends Controller {
 
       if (this.remoteSearchActiveOptionValue) {
         const items = JSON.parse(this.remoteSearchActiveOptionValue)
-        settings.options = items
-        settings.items = items.map(item => item.id)
+        // Tom-select uses string values internally, ensure IDs are strings for matching
+        const normalizedItems = items.map(item => ({
+          ...item,
+          id: String(item.id),
+          name: item.name
+        }))
+        settings.options = normalizedItems
+        settings.items = normalizedItems.map(item => item[this.valueFieldValue])
       }
     }
 

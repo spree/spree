@@ -126,7 +126,8 @@ module Spree
         :vendors_nav_partials,
         :zones_actions_partials,
         :zones_header_partials,
-        :navigation
+        :navigation,
+        :tables
       )
 
       class NavigationEnvironment
@@ -175,6 +176,77 @@ module Spree
 
         def respond_to_missing?(method_name, include_private = false)
           method_name.to_s.end_with?('=') ? false : context?(method_name)
+        end
+      end
+
+      class TablesEnvironment
+        def initialize
+          @registries = {}
+        end
+
+        # Register a new table
+        # @param name [Symbol] The name of the table (e.g., :products, :orders)
+        # @param model_class [Class, nil] The model class for this table
+        # @param search_param [Symbol] The ransack parameter for text search (default: :name_cont)
+        # @param search_placeholder [String, nil] Custom placeholder for search field
+        # @param row_actions [Boolean] Whether to show row actions (default: false)
+        # @param row_actions_edit [Boolean] Whether to show edit button in row actions (default: true)
+        # @param row_actions_delete [Boolean] Whether to show delete button in row actions (default: false)
+        # @param new_resource [Boolean] Whether to show "Create new" button in empty state (default: true)
+        # @param date_range_param [Symbol, nil] Ransack parameter base for date range filter (e.g., :completed_at)
+        # @param date_range_label [String, nil] Label for date range filter
+        # @param link_to_action [Symbol] Action to link to for :link columns (:edit or :show, default: :edit)
+        # @return [Spree::Admin::Table] The table instance
+        def register(name, model_class: nil, search_param: :name_cont, search_placeholder: nil, row_actions: false, row_actions_edit: true, row_actions_delete: false, new_resource: true, date_range_param: nil, date_range_label: nil, link_to_action: :edit)
+          name = name.to_sym
+          @registries[name] ||= Spree::Admin::Table.new(
+            name,
+            model_class: model_class,
+            search_param: search_param,
+            search_placeholder: search_placeholder,
+            row_actions: row_actions,
+            row_actions_edit: row_actions_edit,
+            row_actions_delete: row_actions_delete,
+            new_resource: new_resource,
+            date_range_param: date_range_param,
+            date_range_label: date_range_label,
+            link_to_action: link_to_action
+          )
+        end
+
+        # Get a registered table
+        # @param name [Symbol] The name of the table
+        # @return [Spree::Admin::Table] The table instance
+        # @raise [NoMethodError] if the table hasn't been registered
+        def get(name)
+          name = name.to_sym
+          @registries[name] || raise(NoMethodError, "Table '#{name}' has not been registered. Use Spree.admin.tables.register(:#{name}) first.")
+        end
+
+        # Check if a table is registered
+        # @param name [Symbol] The table name
+        # @return [Boolean]
+        def registered?(name)
+          @registries.key?(name.to_sym)
+        end
+
+        # List all registered tables
+        # @return [Array<Symbol>]
+        def registries
+          @registries.keys
+        end
+
+        # Define accessor methods for registered tables
+        def method_missing(method_name, *args)
+          if method_name.to_s.end_with?('=')
+            super
+          else
+            get(method_name)
+          end
+        end
+
+        def respond_to_missing?(method_name, include_private = false)
+          method_name.to_s.end_with?('=') ? false : registered?(method_name)
         end
       end
 
@@ -254,6 +326,9 @@ module Spree
         app.config.spree_admin.navigation.register_context(:returns_tabs)
         app.config.spree_admin.navigation.register_context(:developers_tabs)
         app.config.spree_admin.navigation.register_context(:audit_tabs)
+
+        # Register tables environment
+        app.config.spree_admin.tables = TablesEnvironment.new
       end
 
       # Add admin event subscribers

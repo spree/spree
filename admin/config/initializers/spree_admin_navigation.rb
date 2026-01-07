@@ -40,7 +40,20 @@ Rails.application.config.after_initialize do
     # Orders to Fulfill submenu
     orders.add :orders_to_fulfill,
               label: 'admin.orders.orders_to_fulfill',
-              url: -> { spree.admin_orders_path(q: {shipment_state_not_in: [:shipped, :canceled]}) },
+              url: -> {
+                query_state = {
+                  id: 'root',
+                  combinator: 'and',
+                  filters: [
+                    { id: 'f1', field: 'shipment_state', operator: 'not_in', value: [
+                      { id: 'shipped', name: I18n.t('spree.shipment_states.shipped', default: 'Shipped') },
+                      { id: 'canceled', name: I18n.t('spree.shipment_states.canceled', default: 'Canceled') }
+                    ] }
+                  ],
+                  groups: []
+                }.to_json
+                spree.admin_orders_path(q: { shipment_state_not_in: ['shipped', 'canceled'] }, query_state: query_state)
+              },
               position: 10,
               active: -> { controller_name == 'orders' && params.dig(:q, :shipment_state_not_in).present? },
               if: -> {
