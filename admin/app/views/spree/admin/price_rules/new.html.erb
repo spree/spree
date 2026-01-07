@@ -1,0 +1,37 @@
+<%= turbo_frame_tag :dialog do %>
+  <%= form_with model: @price_rule, url: spree.admin_price_list_price_rules_path(@price_list), method: :post, scope: :price_rule do |f| %>
+    <% if @price_rule.type.nil? %>
+      <%= dialog_header(Spree.t(:add_rule_of_type)) %>
+    <% else %>
+      <%= dialog_header(@price_rule.class.human_name) %>
+    <% end %>
+    <div class="dialog-body">
+      <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @price_rule } %>
+      <% if @price_rule.type.nil? %>
+        <% allowed_rule_types.each do |rule_type| %>
+          <% rule_class = rule_type.constantize %>
+          <% key = rule_class.name.demodulize.underscore %>
+          <%= link_to spree.new_admin_price_list_price_rule_path(@price_list, price_rule: { type: rule_type }), class: 'flex align-items-top w-full py-2 px-4 hover:bg-gray-100 rounded-xl mb-2 no-underline', data: { turbo_prefetch: false } do %>
+            <%= radio_button_tag :type, rule_type, class: 'hidden' %>
+            <div class="">
+              <h6 class="font-bold mb-1"><%= rule_class.human_name %></h6>
+              <p class="text-gray-600 mb-0"><%= rule_class.description %></p>
+            </div>
+          <% end %>
+        <% end %>
+      <% else %>
+        <p class="text-gray-600 mb-3">
+          <%= @price_rule.class.description %>
+        </p>
+        <%= f.hidden_field :type, value: @price_rule.type %>
+        <%= render "spree/admin/price_rules/forms/#{@price_rule.class.name.demodulize.underscore}", f: f %>
+      <% end %>
+    </div>
+    <% if @price_rule.type.present? %>
+      <div class="dialog-footer">
+        <%= dialog_discard_button %>
+        <%= turbo_save_button_tag Spree.t('actions.create'), data: { turbo_frame: '_top' } %>
+      </div>
+    <% end %>
+  <% end %>
+<% end %>

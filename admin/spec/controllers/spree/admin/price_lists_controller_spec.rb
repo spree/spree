@@ -20,6 +20,26 @@ RSpec.describe Spree::Admin::PriceListsController, type: :controller do
     end
   end
 
+  describe 'GET #show' do
+    subject(:show) { get :show, params: { id: price_list.id } }
+
+    it 'renders the show page' do
+      show
+
+      expect(response).to render_template(:show)
+    end
+
+    context 'with price rules' do
+      let!(:price_rule) { create(:volume_price_rule, price_list: price_list) }
+
+      it 'displays the price rules' do
+        show
+
+        expect(response.body).to include(price_rule.class.human_name)
+      end
+    end
+  end
+
   describe 'GET #edit_prices' do
     subject(:edit_prices) { get :edit_prices, params: { id: price_list.id, currency: currency } }
 

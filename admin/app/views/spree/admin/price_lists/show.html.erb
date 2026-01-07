@@ -5,6 +5,7 @@
 
 <div class="grid grid-cols-12 gap-6">
   <div class="col-span-12 lg:col-span-8">
+    <%= render 'rules' %>
     <%= turbo_frame_tag :price_list_products, src: spree.admin_price_list_products_path(@price_list) %>
   </div>
 

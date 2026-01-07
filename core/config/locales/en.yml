@@ -1693,6 +1693,10 @@ en:
       active: Active
       inactive: Inactive
       scheduled: Scheduled
+    price_list_form:
+      match_policies:
+        all: Match all of these rules
+        any: Match any of these rules
     price_lists: Price Lists
     price_range: Price Range
     price_rule_types:
@@ -1706,6 +1710,12 @@ en:
         description: Apply pricing based on geographic zone
         name: Zone
     price_sack: Price Sack
+    min_quantity: Min Quantity
+    max_quantity: Max Quantity
+    unlimited: Unlimited
+    volume_rule:
+      line_item: Line Item Quantity
+      cart_total: Cart Total Quantity
     prices: Prices
     pricing: Pricing
     privacy_policy: Privacy Policy
