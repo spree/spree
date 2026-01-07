@@ -220,13 +220,13 @@ module Spree
       #
       # @param method [Symbol] the field name
       # @param options [Hash] field options
-      # @option options [Boolean] :crop whether to crop the image
-      # @option options [Boolean] :auto_submit whether to auto-submit the form when the file is uploaded
-      # @option options [Boolean] :can_delete whether to show the delete button
-      # @option options [Boolean] :inline whether to display the uploader inline
-      # @option options [Integer] :height the height of the uploader
-      # @option options [Integer] :width the width of the uploader
-      # @option options [Array] :allowed_file_types the allowed file types, defaults to image types
+      # @option options [Integer] :width Width of the image preview in pixels
+      # @option options [Integer] :height Height of the image preview in pixels
+      # @option options [Boolean] :crop Enable image cropping with recommended size indicator
+      # @option options [Boolean] :auto_submit Automatically submit form when file is selected
+      # @option options [Boolean] :can_delete Show delete button for removing uploaded image
+      # @option options [String] :css Additional CSS classes for the upload placeholder area
+      # @option options [Array] :allowed_file_types Specify the allowed file types
       # @return [String] HTML string containing the complete form group with direct file upload field
       def spree_file_field(method, options = {})
         @template.content_tag(:div, class: 'form-group') do

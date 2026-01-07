@@ -272,6 +272,7 @@ Creates a file upload field with image preview, drag-and-drop support, and optio
 | `:auto_submit` | Boolean | `false` | Automatically submit form when file is selected |
 | `:can_delete` | Boolean | `true` | Show delete button for removing uploaded image |
 | `:css` | String | `''` | Additional CSS classes for the upload placeholder area |
+| `:allowed_file_types` | Array | Image types | Specify the allowed file types |
 
 All common FormBuilder options (`:label`, `:required`, `:help`, `:help_bubble`) are also supported.
 
@@ -285,12 +286,15 @@ All common FormBuilder options (`:label`, `:required`, `:help`, `:help_bubble`) 
 **Example with all options:**
 
 ```erb
-<%= f.spree_file_field :social_image,
+<%= f.spree_file_field :hero_video_background,
     width: 1200,
     height: 630,
-    crop: true,
-    label: 'Preview image',
-    help_bubble: "This image will be used when shared on social media" %>
+    crop: false,
+    auto_submit: false,
+    can_delete: true,
+    help_bubble: "This video will loop in the background",
+    label: 'Hero video background',
+    allowed_file_types: %w[video/mp4 video/webm video/ogg] %>
 ```
 
 ## Complete Form Example
