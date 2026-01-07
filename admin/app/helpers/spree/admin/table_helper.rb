@@ -24,12 +24,12 @@ module Spree
 
       # Get selected column keys from session
       # @param table_key [Symbol] table key
-      # @return [Array<Symbol>, nil]
+      # @return [Array<String>, nil]
       def session_selected_columns(table_key)
         keys = session["table_columns_#{table_key}"]
         return nil if keys.blank?
 
-        keys.split(',').map(&:to_sym)
+        keys.split(',')
       end
 
       # Render a single column value based on its type

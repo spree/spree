@@ -16,12 +16,12 @@ RSpec.describe Spree::Admin::TableHelper, type: :helper do
       expect(helper.session_selected_columns(:products)).to be_nil
     end
 
-    it 'returns array of symbols when columns are in session' do
+    it 'returns array of strings when columns are in session' do
       session['table_columns_products'] = 'name,price,status'
 
       result = helper.session_selected_columns(:products)
 
-      expect(result).to eq([:name, :price, :status])
+      expect(result).to eq(%w[name price status])
     end
 
     it 'returns nil for empty string' do
