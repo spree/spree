@@ -295,6 +295,14 @@ Rails.application.config.after_initialize do
                                       default: false,
                                       position: 110
 
+  Spree.admin.tables.orders.add :updated_at,
+                                      label: :updated_at,
+                                      type: :datetime,
+                                      sortable: true,
+                                      filterable: false,
+                                      default: false,
+                                      position: 115
+
   # Filter-only fields (not displayed as columns)
   Spree.admin.tables.orders.add :first_name,
                                       label: :first_name,
@@ -407,6 +415,14 @@ Rails.application.config.after_initialize do
                                         default: false,
                                         position: 70
 
+  Spree.admin.tables.checkouts.add :updated_at,
+                                        label: :updated_at,
+                                        type: :datetime,
+                                        sortable: true,
+                                        filterable: false,
+                                        default: false,
+                                        position: 80
+
   # Register Users table
   Spree.admin.tables.register(:users, model_class: Spree.user_class, search_param: :multi_search, row_actions: false, link_to_action: :show)
 
@@ -473,6 +489,14 @@ Rails.application.config.after_initialize do
                                      filterable: true,
                                      default: true,
                                      position: 60
+
+  Spree.admin.tables.users.add :updated_at,
+                                     label: :updated_at,
+                                     type: :datetime,
+                                     sortable: true,
+                                     filterable: true,
+                                     default: false,
+                                     position: 65
 
   # Filter-only fields (not displayed as columns)
   Spree.admin.tables.users.add :first_name,
@@ -592,6 +616,22 @@ Rails.application.config.after_initialize do
                                           default: false,
                                           position: 50
 
+  Spree.admin.tables.promotions.add :created_at,
+                                          label: :created_at,
+                                          type: :datetime,
+                                          sortable: true,
+                                          filterable: true,
+                                          default: false,
+                                          position: 60
+
+  Spree.admin.tables.promotions.add :updated_at,
+                                          label: :updated_at,
+                                          type: :datetime,
+                                          sortable: true,
+                                          filterable: true,
+                                          default: false,
+                                          position: 70
+
   # Register Customer Returns table
   Spree.admin.tables.register(:customer_returns, model_class: Spree::CustomerReturn, search_param: :number_cont, row_actions: false, new_resource: false)
 
@@ -648,6 +688,14 @@ Rails.application.config.after_initialize do
                                                 position: 60,
                                                 method: ->(cr) { cr.display_pre_tax_total }
 
+  Spree.admin.tables.customer_returns.add :updated_at,
+                                                label: :updated_at,
+                                                type: :datetime,
+                                                sortable: true,
+                                                filterable: true,
+                                                default: false,
+                                                position: 70
+
   # Register Option Types table
   Spree.admin.tables.register(:option_types, model_class: Spree::OptionType, search_param: :name_cont, row_actions: true)
 
@@ -694,6 +742,22 @@ Rails.application.config.after_initialize do
                                             position: 50,
                                             method: ->(ot) { ot.products.count }
 
+  Spree.admin.tables.option_types.add :created_at,
+                                            label: :created_at,
+                                            type: :datetime,
+                                            sortable: true,
+                                            filterable: true,
+                                            default: false,
+                                            position: 60
+
+  Spree.admin.tables.option_types.add :updated_at,
+                                            label: :updated_at,
+                                            type: :datetime,
+                                            sortable: true,
+                                            filterable: true,
+                                            default: false,
+                                            position: 70
+
   # Register Newsletter Subscribers table
   Spree.admin.tables.register(:newsletter_subscribers, model_class: Spree::NewsletterSubscriber, search_param: :email_cont, row_actions: false, new_resource: false)
 
@@ -739,6 +803,14 @@ Rails.application.config.after_initialize do
                                                       default: true,
                                                       position: 50
 
+  Spree.admin.tables.newsletter_subscribers.add :updated_at,
+                                                      label: :updated_at,
+                                                      type: :datetime,
+                                                      sortable: true,
+                                                      filterable: true,
+                                                      default: false,
+                                                      position: 60
+
   # Register Policies table
   Spree.admin.tables.register(:policies, model_class: Spree::Policy, search_param: :name_cont, row_actions: true)
 
@@ -766,6 +838,14 @@ Rails.application.config.after_initialize do
                                         default: true,
                                         position: 30,
                                         method: ->(policy) { policy.with_body? }
+
+  Spree.admin.tables.policies.add :created_at,
+                                        label: :created_at,
+                                        type: :datetime,
+                                        sortable: true,
+                                        filterable: true,
+                                        default: false,
+                                        position: 35
 
   Spree.admin.tables.policies.add :updated_at,
                                         label: :updated_at,
@@ -838,6 +918,14 @@ Rails.application.config.after_initialize do
                                                default: true,
                                                position: 60
 
+  Spree.admin.tables.stock_transfers.add :updated_at,
+                                               label: :updated_at,
+                                               type: :datetime,
+                                               sortable: true,
+                                               filterable: true,
+                                               default: false,
+                                               position: 70
+
   # Register Metafield Definitions table
   Spree.admin.tables.register(:metafield_definitions, model_class: Spree::MetafieldDefinition, search_param: :multi_search, row_actions: true)
 
@@ -901,6 +989,22 @@ Rails.application.config.after_initialize do
                                                          Spree.t(:not_available)
                                                        end
                                                      }
+
+  Spree.admin.tables.metafield_definitions.add :created_at,
+                                                     label: :created_at,
+                                                     type: :datetime,
+                                                     sortable: true,
+                                                     filterable: true,
+                                                     default: false,
+                                                     position: 70
+
+  Spree.admin.tables.metafield_definitions.add :updated_at,
+                                                     label: :updated_at,
+                                                     type: :datetime,
+                                                     sortable: true,
+                                                     filterable: true,
+                                                     default: false,
+                                                     position: 80
 
   # Register Gift Cards table
   Spree.admin.tables.register(:gift_cards, model_class: Spree::GiftCard, search_param: :code_i_cont, row_actions: false, link_to_action: :show)
@@ -972,6 +1076,22 @@ Rails.application.config.after_initialize do
                                           search_url: '/admin/users/select_options.json',
                                           method: ->(gc) { gc.user&.email }
 
+  Spree.admin.tables.gift_cards.add :created_at,
+                                          label: :created_at,
+                                          type: :datetime,
+                                          sortable: true,
+                                          filterable: true,
+                                          default: false,
+                                          position: 80
+
+  Spree.admin.tables.gift_cards.add :updated_at,
+                                          label: :updated_at,
+                                          type: :datetime,
+                                          sortable: true,
+                                          filterable: true,
+                                          default: false,
+                                          position: 90
+
   # Register Stock Items table
   Spree.admin.tables.register(:stock_items, model_class: Spree::StockItem, search_param: :variant_product_name_cont, row_actions: false, new_resource: false)
 
@@ -1032,6 +1152,22 @@ Rails.application.config.after_initialize do
                                            position: 50,
                                            ransack_attribute: 'variant_sku'
 
+  Spree.admin.tables.stock_items.add :created_at,
+                                           label: :created_at,
+                                           type: :datetime,
+                                           sortable: true,
+                                           filterable: true,
+                                           default: false,
+                                           position: 60
+
+  Spree.admin.tables.stock_items.add :updated_at,
+                                           label: :updated_at,
+                                           type: :datetime,
+                                           sortable: true,
+                                           filterable: true,
+                                           default: false,
+                                           position: 70
+
   # ==========================================
   # Posts Table
   # ==========================================
@@ -1077,6 +1213,22 @@ Rails.application.config.after_initialize do
                                      default: true,
                                      position: 40
 
+  Spree.admin.tables.posts.add :created_at,
+                                     label: :created_at,
+                                     type: :datetime,
+                                     sortable: true,
+                                     filterable: true,
+                                     default: false,
+                                     position: 50
+
+  Spree.admin.tables.posts.add :updated_at,
+                                     label: :updated_at,
+                                     type: :datetime,
+                                     sortable: true,
+                                     filterable: true,
+                                     default: false,
+                                     position: 60
+
   # ==========================================
   # Post Categories Table
   # ==========================================
@@ -1098,6 +1250,22 @@ Rails.application.config.after_initialize do
                                                default: true,
                                                position: 20,
                                                method: ->(post_category) { post_category.posts.count }
+
+  Spree.admin.tables.post_categories.add :created_at,
+                                               label: :created_at,
+                                               type: :datetime,
+                                               sortable: true,
+                                               filterable: true,
+                                               default: false,
+                                               position: 30
+
+  Spree.admin.tables.post_categories.add :updated_at,
+                                               label: :updated_at,
+                                               type: :datetime,
+                                               sortable: true,
+                                               filterable: true,
+                                               default: false,
+                                               position: 40
 
   # ==========================================
   # Webhook Endpoints Table
@@ -1150,6 +1318,14 @@ Rails.application.config.after_initialize do
                                                  filterable: true,
                                                  default: true,
                                                  position: 50
+
+  Spree.admin.tables.webhook_endpoints.add :updated_at,
+                                                 label: :updated_at,
+                                                 type: :datetime,
+                                                 sortable: true,
+                                                 filterable: true,
+                                                 default: false,
+                                                 position: 60
 
   # ==========================================
   # Webhook Deliveries Table
@@ -1208,4 +1384,20 @@ Rails.application.config.after_initialize do
                                                   default: true,
                                                   position: 60,
                                                   partial: 'spree/admin/tables/columns/webhook_delivery_actions'
+
+  Spree.admin.tables.webhook_deliveries.add :created_at,
+                                                  label: :created_at,
+                                                  type: :datetime,
+                                                  sortable: true,
+                                                  filterable: true,
+                                                  default: false,
+                                                  position: 70
+
+  Spree.admin.tables.webhook_deliveries.add :updated_at,
+                                                  label: :updated_at,
+                                                  type: :datetime,
+                                                  sortable: true,
+                                                  filterable: true,
+                                                  default: false,
+                                                  position: 80
 end
