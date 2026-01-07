@@ -2,6 +2,7 @@
 <% height ||= 300 %>
 <% crop ||= false unless defined?(crop) %>
 <% auto_submit ||= false %>
+<% allowed_file_types ||= Rails.application.config.active_storage.web_image_content_types %>
 <% show_delete_button = defined?(can_delete) ? can_delete : true %>
 <% css ||= '' %>
 
@@ -12,7 +13,7 @@
       data-active-storage-upload-crop-value="<%= crop.presence || false %>"
       data-active-storage-upload-auto-submit-value="<%= auto_submit %>"
       data-active-storage-upload-field-name-value="<%= form.object_name %>[<%= field_name %>]"
-      data-active-storage-upload-allowed-file-types-value="<%= Rails.application.config.active_storage.web_image_content_types %>"
+      data-active-storage-upload-allowed-file-types-value="<%= allowed_file_types %>"
       class="flex flex-col justify-center w-full relative">
     <div class="upload-area"
          data-action="click->active-storage-upload#open"
