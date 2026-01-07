@@ -32,13 +32,6 @@ module Spree
         keys.split(',').map(&:to_sym)
       end
 
-      # Save selected columns to session
-      # @param table_key [Symbol] table key
-      # @param column_keys [Array<Symbol>] selected column keys
-      def save_selected_columns(table_key, column_keys)
-        session["table_columns_#{table_key}"] = column_keys.join(',')
-      end
-
       # Render a single column value based on its type
       # @param record [Object] the record
       # @param column [Spree::Admin::Table::Column] the column definition
@@ -47,37 +40,37 @@ module Spree
       def render_column_value(record, column, table)
         value = column.resolve_value(record, self)
 
-        case column.type
-        when :currency
-          render_currency_column(value, column)
-        when :date
+        case column.type.to_s
+        when 'money'
+          render_money_column(value, column)
+        when 'date'
           render_date_column(value, column)
-        when :datetime
+        when 'datetime'
           render_datetime_column(value, column)
-        when :status
+        when 'status'
           render_status_column(value, column)
-        when :boolean
+        when 'boolean'
           render_boolean_column(value, column)
-        when :link
+        when 'link'
           render_link_column(record, value, column, table)
-        when :image
+        when 'image'
           render_image_column(record, value, column)
-        when :custom
+        when 'custom'
           extra_locals = column.partial_locals.is_a?(Proc) ? column.partial_locals.call(record) : column.partial_locals
           locals = { record: record, column: column, value: value }.merge(extra_locals)
           render partial: column.partial, locals: locals
-        when :association
+        when 'association'
           render_association_column(value, column)
         else
           render_string_column(value, column)
         end
       end
 
-      # Render currency column
-      # @param value [Object] the value
+      # Render money column
+      # @param value [Object] the value (Spree::Money or numeric)
       # @param column [Spree::Admin::Table::Column] column definition
       # @return [String]
-      def render_currency_column(value, column)
+      def render_money_column(value, column)
         return content_tag(:span, '-', class: 'text-gray-400') if value.blank?
 
         if value.respond_to?(:display_amount)
@@ -97,7 +90,7 @@ module Spree
         if column.format.present? && respond_to?(column.format)
           send(column.format, value)
         else
-          l(value.to_date, format: :short)
+          spree_date(value)
         end
       end
 
@@ -111,7 +104,7 @@ module Spree
         if column.format.present? && respond_to?(column.format)
           send(column.format, value)
         else
-          local_time_ago(value)
+          spree_time_ago(value)
         end
       end
 
@@ -169,14 +162,14 @@ module Spree
 
       # Render image column
       # @param record [Object] the record
-      # @param value [Object] the value
+      # @param value [Object] the value (ActiveStorage attachment or URL string)
       # @param column [Spree::Admin::Table::Column] column definition
       # @return [String]
       def render_image_column(record, value, column)
         return content_tag(:span, '-', class: 'text-gray-400') if value.blank?
 
         if value.respond_to?(:attached?) && value.attached?
-          image_tag url_for(value.variant(resize_to_limit: [50, 50])), class: 'rounded', loading: 'lazy'
+          spree_image_tag(value, width: 50, height: 50, class: 'rounded', loading: 'lazy')
         elsif value.is_a?(String) && value.present?
           image_tag value, class: 'rounded', style: 'max-width: 50px; max-height: 50px;', loading: 'lazy'
         else
@@ -304,7 +297,7 @@ module Spree
       # @return [String]
       def column_header_class(column)
         classes = []
-        classes << "text-#{column.align}" if column.align != :left
+        classes << "text-#{column.align}" if column.align.to_s != 'left'
         classes << "w-#{column.width}" if column.width.present?
         classes.join(' ')
       end
@@ -314,7 +307,7 @@ module Spree
       # @return [String]
       def column_cell_class(column)
         classes = []
-        classes << "text-#{column.align}" if column.align != :left
+        classes << "text-#{column.align}" if column.align.to_s != 'left'
         classes.join(' ')
       end
 

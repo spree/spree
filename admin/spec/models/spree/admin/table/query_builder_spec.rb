@@ -7,7 +7,7 @@ RSpec.describe Spree::Admin::Table::QueryBuilder do
   before do
     table.add(:name, label: 'Name', type: :string, filterable: true)
     table.add(:status, label: 'Status', type: :status, filterable: true, value_options: %w[active draft archived])
-    table.add(:price, label: 'Price', type: :currency, filterable: true)
+    table.add(:price, label: 'Price', type: :money, filterable: true)
     table.add(:created_at, label: 'Created', type: :datetime, filterable: true)
   end
 

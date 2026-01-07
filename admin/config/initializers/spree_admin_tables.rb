@@ -62,7 +62,7 @@ Rails.application.config.after_initialize do
 
   Spree.admin.tables.products.add :price,
                                         label: :price,
-                                        type: :currency,
+                                        type: :money,
                                         sortable: true,
                                         filterable: true,
                                         default: true,
@@ -260,7 +260,7 @@ Rails.application.config.after_initialize do
 
   Spree.admin.tables.orders.add :total,
                                       label: :total,
-                                      type: :currency,
+                                      type: :money,
                                       sortable: true,
                                       filterable: true,
                                       default: true,
@@ -391,7 +391,7 @@ Rails.application.config.after_initialize do
 
   Spree.admin.tables.checkouts.add :total,
                                         label: :total,
-                                        type: :currency,
+                                        type: :money,
                                         sortable: true,
                                         filterable: true,
                                         default: true,
@@ -459,7 +459,7 @@ Rails.application.config.after_initialize do
   # Amount spent
   Spree.admin.tables.users.add :amount_spent,
                                      label: 'admin.amount_spent',
-                                     type: :currency,
+                                     type: :money,
                                      sortable: false,
                                      filterable: false,
                                      default: true,
@@ -641,7 +641,7 @@ Rails.application.config.after_initialize do
 
   Spree.admin.tables.customer_returns.add :pre_tax_total,
                                                 label: :pre_tax_total,
-                                                type: :currency,
+                                                type: :money,
                                                 sortable: false,
                                                 filterable: false,
                                                 default: true,
@@ -916,7 +916,7 @@ Rails.application.config.after_initialize do
 
   Spree.admin.tables.gift_cards.add :amount,
                                           label: :amount,
-                                          type: :currency,
+                                          type: :money,
                                           sortable: true,
                                           filterable: true,
                                           default: true,
@@ -925,7 +925,7 @@ Rails.application.config.after_initialize do
 
   Spree.admin.tables.gift_cards.add :used,
                                           label: :used,
-                                          type: :currency,
+                                          type: :money,
                                           sortable: false,
                                           filterable: false,
                                           default: true,

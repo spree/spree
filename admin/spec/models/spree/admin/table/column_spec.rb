@@ -20,7 +20,7 @@ RSpec.describe Spree::Admin::Table::Column do
       column = described_class.new(
         key: 'price',
         label: 'Product Price',
-        type: 'currency',
+        type: 'money',
         sortable: false,
         filterable: true,
         default: true,
@@ -30,8 +30,8 @@ RSpec.describe Spree::Admin::Table::Column do
       )
 
       expect(column.label).to eq('Product Price')
-      expect(column.type).to eq('currency')
-      expect(column.filter_type).to eq('currency')
+      expect(column.type).to eq('money')
+      expect(column.filter_type).to eq('money')
       expect(column.sortable).to be false
       expect(column.default).to be true
       expect(column.position).to eq(10)

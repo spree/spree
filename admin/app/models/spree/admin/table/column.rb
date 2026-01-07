@@ -5,8 +5,8 @@ module Spree
         include ActiveModel::Model
         include ActiveModel::Attributes
 
-        TYPES = %w[string number date datetime currency status link boolean image custom association].freeze
-        FILTER_TYPES = %w[string number date datetime currency status boolean autocomplete select].freeze
+        TYPES = %w[string number date datetime money status link boolean image custom association].freeze
+        FILTER_TYPES = %w[string number date datetime money status boolean autocomplete select].freeze
 
         attribute :key, :string
         attribute :label
@@ -114,7 +114,7 @@ module Spree
           case filter_type
           when 'string'
             %i[eq not_eq cont not_cont start end in not_in null not_null]
-          when 'number', 'currency'
+          when 'number', 'money'
             %i[eq not_eq gt gteq lt lteq in not_in null not_null]
           when 'date', 'datetime'
             %i[eq not_eq gt gteq lt lteq null not_null]
