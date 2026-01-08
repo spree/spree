@@ -548,6 +548,7 @@ en:
       successfully_updated: "Updated successfully"
       unsuccessfully_updated: "There was an update while trying to update your address."
       save: "Save"
+    address_not_owned_by_user: The specified address does not belong to this user.
     adjustable: Adjustable
     adjustment: Adjustment
     adjustment_amount: Amount

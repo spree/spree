@@ -187,6 +187,118 @@ describe Spree::Checkout::Update, type: :service do
     end
   end
 
+  describe 'address ownership validation' do
+    let(:user) { create(:user_with_addresses) }
+    let(:other_user) { create(:user_with_addresses) }
+    let(:order) { create(:order_with_line_items, user: user, state: 'address') }
+    let(:permitted_attributes) do
+      Spree::PermittedAttributes.checkout_attributes + [
+        bill_address_attributes: Spree::PermittedAttributes.address_attributes,
+        ship_address_attributes: Spree::PermittedAttributes.address_attributes
+      ]
+    end
+
+    context 'when bill_address_attributes contains id of another user address' do
+      let(:other_user_address) { other_user.bill_address }
+      let(:order_params) do
+        ActionController::Parameters.new(
+          order: {
+            bill_address_attributes: { id: other_user_address.id }
+          }
+        )
+      end
+
+      it 'returns failure' do
+        result = described_class.call(order: order, params: order_params, permitted_attributes: permitted_attributes, request_env: nil)
+        expect(result).to be_failure
+      end
+
+      it 'does not associate the other user address with the order' do
+        described_class.call(order: order, params: order_params, permitted_attributes: permitted_attributes, request_env: nil)
+        expect(order.reload.bill_address_id).not_to eq other_user_address.id
+      end
+    end
+
+    context 'when ship_address_attributes contains id of another user address' do
+      let(:other_user_address) { other_user.ship_address }
+      let(:order_params) do
+        ActionController::Parameters.new(
+          order: {
+            ship_address_attributes: { id: other_user_address.id }
+          }
+        )
+      end
+
+      it 'returns failure' do
+        result = described_class.call(order: order, params: order_params, permitted_attributes: permitted_attributes, request_env: nil)
+        expect(result).to be_failure
+      end
+
+      it 'does not associate the other user address with the order' do
+        described_class.call(order: order, params: order_params, permitted_attributes: permitted_attributes, request_env: nil)
+        expect(order.reload.ship_address_id).not_to eq other_user_address.id
+      end
+    end
+
+    context 'when address_attributes contains id of the same user address' do
+      let(:user_address) { create(:address, user: user) }
+      let(:order_params) do
+        ActionController::Parameters.new(
+          order: {
+            bill_address_attributes: { id: user_address.id }
+          }
+        )
+      end
+
+      it 'returns success' do
+        result = described_class.call(order: order, params: order_params, permitted_attributes: permitted_attributes, request_env: nil)
+        expect(result).to be_success
+      end
+    end
+
+    context 'when address_attributes contains id of address with no user' do
+      let(:guest_address) { create(:address, user: nil) }
+      let(:order_params) do
+        ActionController::Parameters.new(
+          order: {
+            bill_address_attributes: { id: guest_address.id }
+          }
+        )
+      end
+
+      it 'returns success' do
+        result = described_class.call(order: order, params: order_params, permitted_attributes: permitted_attributes, request_env: nil)
+        expect(result).to be_success
+      end
+    end
+
+    context 'when address_attributes does not contain id' do
+      let(:state) { create(:state) }
+      let(:country) { state.country }
+      let(:order_params) do
+        ActionController::Parameters.new(
+          order: {
+            bill_address_attributes: {
+              firstname: 'John',
+              lastname: 'Doe',
+              address1: '123 Main St',
+              city: 'Anytown',
+              zipcode: '12345',
+              country_iso: country.iso,
+              state_id: state.id,
+              phone: '555-1234'
+            }
+          }
+        )
+      end
+
+      it 'returns success' do
+        result = described_class.call(order: order, params: order_params, permitted_attributes: permitted_attributes, request_env: nil)
+        expect(result).to be_success
+      end
+    end
+  end
+
   describe 'update selected shipping rate' do
     let(:update_service) { described_class.new }
     let(:order) { create(:order_with_line_items) }
