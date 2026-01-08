@@ -4,6 +4,8 @@ gem 'spree_core', path: '../core'
 gem 'spree_api', path: '../api'
 gem 'spree_emails', path: '../emails'
 
+gem 'sassc' # needed for payment_icons gem
+
 group :test, :development do
   gem 'selenium-webdriver'
 end

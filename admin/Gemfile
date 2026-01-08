@@ -8,4 +8,6 @@ group :test, :development do
   gem 'selenium-webdriver'
 end
 
+gem 'sassc' # needed for payment_icons gem
+
 gemspec
