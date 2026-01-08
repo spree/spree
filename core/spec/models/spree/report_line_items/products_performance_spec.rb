@@ -8,6 +8,8 @@ RSpec.describe Spree::ReportLineItems::ProductsPerformance do
   let!(:product) { order.line_items.first.product }
   let!(:variant) { order.line_items.first.variant }
 
+  before { order.update(completed_at: report.date_from + 1.day) }
+
   subject { report.line_items.first }
 
   describe '#vendor' do
