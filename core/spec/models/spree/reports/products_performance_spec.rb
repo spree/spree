@@ -36,6 +36,42 @@ RSpec.describe Spree::Reports::ProductsPerformance do
       end
     end
 
+    context 'date range boundary conditions' do
+      before { line_item.save! }
+
+      context 'when order completed exactly at date_from' do
+        before { order.update(completed_at: report.date_from) }
+
+        it 'includes products' do
+          expect(report.line_items_scope).not_to be_empty
+        end
+      end
+
+      context 'when order completed exactly at date_to' do
+        before { order.update(completed_at: report.date_to) }
+
+        it 'includes products' do
+          expect(report.line_items_scope).not_to be_empty
+        end
+      end
+
+      context 'when order completed 1 minute before date_from' do
+        before { order.update(completed_at: report.date_from - 1.minute) }
+
+        it 'excludes products' do
+          expect(report.line_items_scope).to be_empty
+        end
+      end
+
+      context 'when order completed 1 minute after date_to' do
+        before { order.update(completed_at: report.date_to + 1.minute) }
+
+        it 'excludes products' do
+          expect(report.line_items_scope).to be_empty
+        end
+      end
+    end
+
     context 'when order has different currency' do
       before do
         order.update(currency: 'EUR')

@@ -27,6 +27,40 @@ RSpec.describe Spree::Reports::SalesTotal do
       end
     end
 
+    context 'date range boundary conditions' do
+      context 'when order completed exactly at date_from' do
+        before { order.update(completed_at: report.date_from) }
+
+        it 'includes line items' do
+          expect(report.line_items_scope).to include(line_item)
+        end
+      end
+
+      context 'when order completed exactly at date_to' do
+        before { order.update(completed_at: report.date_to) }
+
+        it 'includes line items' do
+          expect(report.line_items_scope).to include(line_item)
+        end
+      end
+
+      context 'when order completed 1 minute before date_from' do
+        before { order.update(completed_at: report.date_from - 1.minute) }
+
+        it 'excludes line items' do
+          expect(report.line_items_scope).not_to include(line_item)
+        end
+      end
+
+      context 'when order completed 1 minute after date_to' do
+        before { order.update(completed_at: report.date_to + 1.minute) }
+
+        it 'excludes line items' do
+          expect(report.line_items_scope).not_to include(line_item)
+        end
+      end
+    end
+
     context 'when order has different currency' do
       before do
         order.update(currency: 'EUR')
@@ -50,6 +84,8 @@ RSpec.describe Spree::Reports::SalesTotal do
 
   describe '#return_line_items' do
     let(:return_line_item) { report.line_items.first }
+
+    before { order.update(completed_at: report.date_from + 1.day) }
 
     it 'returns line items' do
       expect(return_line_item).to be_a(Spree::ReportLineItems::SalesTotal)

@@ -28,8 +28,8 @@
 
     <div class="flex gap-2">
       <%= render 'spree/admin/shared/calendar_range_picker',
-        date_from_value: @report.date_from,
-        date_to_value: @report.date_to %>
+        date_from_value: params.dig(:q, :completed_at_gt),
+        date_to_value: params.dig(:q, :completed_at_lt) %>
 
       <div class="form-group">
         <%= select_tag :currency,
