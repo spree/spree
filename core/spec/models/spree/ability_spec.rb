@@ -293,5 +293,54 @@ describe Spree::Ability, type: :model do
         it_behaves_like 'read only'
       end
     end
+
+    context 'for Address (IDOR vulnerability prevention)' do
+      let(:guest_address) { create(:address, user_id: nil) }
+
+      context 'with non-persisted guest user' do
+        let(:guest_user) { Spree.user_class.new }
+        let(:guest_ability) { Spree::Ability.new(guest_user) }
+
+        it 'cannot read guest addresses with nil user_id' do
+          expect(guest_ability).not_to be_able_to :read, guest_address
+        end
+
+        it 'cannot edit guest addresses with nil user_id' do
+          expect(guest_ability).not_to be_able_to :edit, guest_address
+        end
+
+        it 'cannot update guest addresses with nil user_id' do
+          expect(guest_ability).not_to be_able_to :update, guest_address
+        end
+
+        it 'cannot destroy guest addresses with nil user_id' do
+          expect(guest_ability).not_to be_able_to :destroy, guest_address
+        end
+
+        it 'cannot manage any address' do
+          expect(guest_ability).not_to be_able_to :manage, guest_address
+        end
+      end
+
+      context 'with persisted user' do
+        let(:persisted_user) { create(:user) }
+        let(:persisted_ability) { Spree::Ability.new(persisted_user) }
+        let(:own_address) { create(:address, user_id: persisted_user.id) }
+
+        it 'can manage own address' do
+          expect(persisted_ability).to be_able_to :manage, own_address
+        end
+
+        it 'cannot manage guest addresses' do
+          expect(persisted_ability).not_to be_able_to :manage, guest_address
+        end
+
+        it 'cannot manage other user addresses' do
+          other_user = create(:user)
+          other_address = create(:address, user_id: other_user.id)
+          expect(persisted_ability).not_to be_able_to :manage, other_address
+        end
+      end
+    end
   end
 end
