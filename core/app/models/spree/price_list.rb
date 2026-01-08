@@ -58,10 +58,13 @@ module Spree
       end
     end
 
+    # Returns price lists applicable for a given pricing context
+    # - active: always applies (within date range)
+    # - scheduled: applies only within starts_at/ends_at date range
     def self.for_context(context)
       timezone = context.store&.preferred_timezone || 'UTC'
       for_store(context.store)
-        .with_status(:active)
+        .with_status(:active, :scheduled)
         .current(timezone)
         .by_position
     end
@@ -92,6 +95,15 @@ module Spree
 
     def active_or_scheduled?
       active? || scheduled?
+    end
+
+    # Returns true if the price list is currently in effect
+    # (active, or scheduled and within date range)
+    def currently_active?
+      return true if active? && within_date_range?(Time.current)
+      return true if scheduled? && within_date_range?(Time.current)
+
+      false
     end
 
     def add_products(product_ids)
@@ -203,8 +215,11 @@ module Spree
     end
 
     def within_date_range?(date)
-      return false if starts_at.present? && date < starts_at
-      return false if ends_at.present? && date > ends_at
+      timezone = store&.preferred_timezone || Rails.application.config.time_zone
+      date_in_tz = date.in_time_zone(timezone)
+
+      return false if starts_at.present? && date_in_tz < starts_at
+      return false if ends_at.present? && date_in_tz > ends_at
 
       true
     end

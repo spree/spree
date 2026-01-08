@@ -18,6 +18,8 @@ FactoryBot.define do
 
     trait :scheduled do
       status { 'scheduled' }
+      starts_at { 1.hour.from_now }
+      ends_at { 1.week.from_now }
     end
 
     trait :with_date_range do
