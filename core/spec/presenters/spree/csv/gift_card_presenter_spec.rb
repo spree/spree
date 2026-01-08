@@ -10,7 +10,7 @@ RSpec.describe Spree::CSV::GiftCardPresenter, type: :model do
            amount_used: 10.00,
            currency: 'USD',
            state: 'active',
-           expires_at: Date.new(2025, 12, 31),
+           expires_at: Date.new(Time.now.year, 12, 31),
            user: user,
            store: store)
   end
@@ -24,7 +24,7 @@ RSpec.describe Spree::CSV::GiftCardPresenter, type: :model do
       expect(subject[0]).to eq('ABC123')           # Code
       expect(subject[4]).to eq('USD')              # Currency
       expect(subject[5]).to eq('active')           # Status
-      expect(subject[6]).to eq('2025-12-31')       # Expires At
+      expect(subject[6]).to eq(Date.new(Time.now.year, 12, 31).strftime('%Y-%m-%d'))       # Expires At
       expect(subject[7]).to eq('john@example.com') # Customer Email
       expect(subject[8]).to eq('John')             # Customer First Name
       expect(subject[9]).to eq('Doe')              # Customer Last Name
