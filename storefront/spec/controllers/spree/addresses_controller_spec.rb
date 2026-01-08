@@ -209,4 +209,160 @@ describe Spree::AddressesController, type: :controller do
       end
     end
   end
+
+end
+
+# Separate describe block for security tests - without mocked authorization
+describe Spree::AddressesController, 'security', type: :controller do
+  let(:store) { @default_store }
+  let(:country) { store.default_country || create(:country_us) }
+  let(:state) { create(:state, country: country, name: 'New York', abbr: 'NY') }
+  let(:user) { create(:user) }
+
+  render_views
+
+  context 'authentication requirement (IDOR vulnerability fix)' do
+    let(:guest_address) { create(:address, user_id: nil, country: country, state: state) }
+
+    before do
+      allow(controller).to receive_messages try_spree_current_user: nil
+      allow(controller).to receive_messages spree_current_user: nil
+    end
+
+    describe '#edit' do
+      it 'requires authentication and redirects to login' do
+        get :edit, params: { id: guest_address.id }
+        expect(response).to have_http_status(:redirect)
+      end
+    end
+
+    describe '#update' do
+      let(:address_params) { guest_address.attributes.symbolize_keys.merge(firstname: 'Hacker') }
+
+      it 'requires authentication and redirects to login' do
+        put :update, params: { id: guest_address.id, address: address_params }
+        expect(response).to have_http_status(:redirect)
+      end
+
+      it 'does not update the address when not authenticated' do
+        original_firstname = guest_address.firstname
+        put :update, params: { id: guest_address.id, address: address_params }
+        expect(guest_address.reload.firstname).to eq(original_firstname)
+      end
+    end
+
+    describe '#destroy' do
+      it 'requires authentication and redirects to login' do
+        delete :destroy, params: { id: guest_address.id }
+        expect(response).to have_http_status(:redirect)
+      end
+
+      it 'does not destroy the address when not authenticated' do
+        delete :destroy, params: { id: guest_address.id }
+        expect(Spree::Address.find_by(id: guest_address.id)).to be_present
+      end
+    end
+
+    describe '#new' do
+      it 'requires authentication and redirects to login' do
+        get :new
+        expect(response).to have_http_status(:redirect)
+      end
+    end
+
+    describe '#create' do
+      let(:address_params) do
+        build(:address, country: country, state: state).attributes.except('created_at', 'updated_at')
+      end
+
+      it 'requires authentication and redirects to login' do
+        post :create, params: { address: address_params }
+        expect(response).to have_http_status(:redirect)
+      end
+    end
+  end
+
+  context 'when authenticated user tries to access another users address' do
+    let(:other_user) { create(:user) }
+    let(:other_user_address) { create(:address, user: other_user, country: country, state: state) }
+
+    before do
+      allow(controller).to receive_messages try_spree_current_user: user
+      allow(controller).to receive_messages spree_current_user: user
+    end
+
+    describe '#edit' do
+      it 'denies access to other users address' do
+        get :edit, params: { id: other_user_address.id }
+        expect(response).to have_http_status(:redirect)
+        expect(response).to redirect_to(spree.root_path)
+        expect(flash[:error]).to eq(Spree.t(:authorization_failure))
+      end
+    end
+
+    describe '#update' do
+      let(:address_params) { other_user_address.attributes.symbolize_keys.merge(firstname: 'Hacker') }
+
+      it 'denies update to other users address' do
+        put :update, params: { id: other_user_address.id, address: address_params }
+        expect(response).to have_http_status(:redirect)
+        expect(response).to redirect_to(spree.root_path)
+        expect(flash[:error]).to eq(Spree.t(:authorization_failure))
+      end
+
+      it 'does not update the address when denied' do
+        original_firstname = other_user_address.firstname
+        put :update, params: { id: other_user_address.id, address: address_params }
+        expect(other_user_address.reload.firstname).to eq(original_firstname)
+      end
+    end
+
+    describe '#destroy' do
+      it 'denies destroy of other users address' do
+        delete :destroy, params: { id: other_user_address.id }
+        expect(response).to have_http_status(:redirect)
+        expect(response).to redirect_to(spree.root_path)
+        expect(flash[:error]).to eq(Spree.t(:authorization_failure))
+      end
+
+      it 'does not destroy the address when denied' do
+        delete :destroy, params: { id: other_user_address.id }
+        expect(Spree::Address.find_by(id: other_user_address.id)).to be_present
+      end
+    end
+  end
+
+  context 'when authenticated user accesses their own address' do
+    let(:own_address) { create(:address, user: user, country: country, state: state) }
+
+    before do
+      allow(controller).to receive_messages try_spree_current_user: user
+      allow(controller).to receive_messages spree_current_user: user
+    end
+
+    describe '#edit' do
+      it 'allows access to own address' do
+        get :edit, params: { id: own_address.id }
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
+    describe '#update' do
+      let(:address_params) { own_address.attributes.symbolize_keys.merge(firstname: 'Updated') }
+
+      it 'allows update to own address' do
+        put :update, params: { id: own_address.id, address: address_params }
+        expect(response).to have_http_status(:redirect)
+        expect(response).not_to redirect_to(spree.root_path)
+        expect(flash[:error]).to be_nil
+      end
+    end
+
+    describe '#destroy' do
+      it 'allows destroy of own address' do
+        delete :destroy, params: { id: own_address.id }
+        expect(response).to have_http_status(:see_other)
+      end
+    end
+  end
 end

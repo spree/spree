@@ -1,6 +1,8 @@
 module Spree
   class AddressesController < Spree::StoreController
     helper Spree::AddressesHelper
+
+    before_action :require_user
     load_and_authorize_resource class: Spree::Address
 
     def create
