@@ -11,8 +11,8 @@ module Spree
 
     has_many :price_rules, class_name: 'Spree::PriceRule', dependent: :destroy
     has_many :prices, class_name: 'Spree::Price', dependent: :destroy_async
-    has_many :variants, -> { where(spree_prices: { deleted_at: nil }) }, through: :prices, source: :variant
-    has_many :products, -> { where(spree_prices: { deleted_at: nil }) }, through: :variants, source: :product
+    has_many :variants, -> { where(spree_prices: { deleted_at: nil }).distinct }, through: :prices, source: :variant
+    has_many :products, -> { where(spree_prices: { deleted_at: nil }).distinct }, through: :variants, source: :product
     alias price_list_products products
 
     # Override default nested attributes to use bulk_update_prices for performance

@@ -1400,4 +1400,55 @@ Rails.application.config.after_initialize do
                                                   filterable: true,
                                                   default: false,
                                                   position: 80
+
+  # ==========================================
+  # Price List Products Table
+  # ==========================================
+  Spree.admin.tables.register(:price_list_products, model_class: Spree::Product, search_param: :multi_search, row_actions: false, new_resource: false)
+
+  Spree.admin.tables.price_list_products.add :name,
+                                                   label: :name,
+                                                   type: :custom,
+                                                   sortable: true,
+                                                   filterable: true,
+                                                   default: true,
+                                                   position: 10,
+                                                   partial: 'spree/admin/tables/columns/product_name'
+
+  Spree.admin.tables.price_list_products.add :status,
+                                                   label: :status,
+                                                   type: :custom,
+                                                   filter_type: :status,
+                                                   sortable: true,
+                                                   filterable: true,
+                                                   default: true,
+                                                   position: 20,
+                                                   partial: 'spree/admin/tables/columns/product_status',
+                                                   ransack_attribute: 'status',
+                                                   value_options: -> { Spree::Product::STATUSES.map { |s| { value: s, label: s.humanize } } }
+
+  Spree.admin.tables.price_list_products.add :inventory,
+                                                   label: :inventory,
+                                                   type: :custom,
+                                                   sortable: false,
+                                                   filterable: false,
+                                                   default: true,
+                                                   position: 30,
+                                                   partial: 'spree/admin/tables/columns/product_inventory'
+
+  Spree.admin.tables.price_list_products.add :created_at,
+                                                   label: :created_at,
+                                                   type: :datetime,
+                                                   sortable: true,
+                                                   filterable: true,
+                                                   default: false,
+                                                   position: 50
+
+  Spree.admin.tables.price_list_products.add :updated_at,
+                                                   label: :updated_at,
+                                                   type: :datetime,
+                                                   sortable: true,
+                                                   filterable: true,
+                                                   default: false,
+                                                   position: 60
 end

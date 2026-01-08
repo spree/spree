@@ -33,6 +33,10 @@ module Spree
       def scope
         parent.products.distinct
       end
+
+      def edit_object_url(object, options = {})
+        spree.edit_admin_product_path(object, options)
+      end
     end
   end
 end
