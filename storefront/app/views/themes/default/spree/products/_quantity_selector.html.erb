@@ -5,19 +5,21 @@
     <%= button_tag class: 'decrease-quantity',
                      type: 'button',
                      data: { action: 'click->quantity-picker#decrease',
-                            'quantity-picker-target': 'decrease' } do %>
+                            'quantity-picker-target': 'decrease' },
+                    aria: { label: Spree.t(:decrease_quantity) } do %>
       <%= render 'spree/shared/icons/minus' %>
     <% end %>
     <%= number_field_tag :quantity, 1,
                           min: 1,
                           max: selected_variant&.backorderable? ? nil : selected_variant&.total_on_hand,
                           class: 'quantity-input',
-                          'aria-label': 'Quantity',
-                          data: { 'quantity-picker-target': 'quantity' } %>
+                          data: { 'quantity-picker-target': 'quantity' },
+                          aria: { label: Spree.t(:quantity) } %>
     <%= button_tag class: 'increase-quantity',
                      type: 'button',
                      data: { action: 'click->quantity-picker#increase',
-                            'quantity-picker-target': 'increase' } do %>
+                            'quantity-picker-target': 'increase' },
+                     aria: { label: Spree.t(:increase_quantity) } do %>
       <%= render 'spree/shared/icons/plus' %>
     <% end %>
   </div>
