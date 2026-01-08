@@ -143,7 +143,8 @@ module Spree
       can :update, ::Spree::Order do |order, token|
         !order.completed? && (order.user == user || order.token && token == order.token)
       end
-      can :manage, ::Spree::Address, user_id: user.id
+      # Address management - only for persisted users with matching user_id
+      can :manage, ::Spree::Address, user_id: user.id if user.persisted?
       can [:read, :destroy], ::Spree::CreditCard, user_id: user.id
       can :read, ::Spree::Product
       can :read, ::Spree::ProductProperty
