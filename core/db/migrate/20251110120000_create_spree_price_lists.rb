@@ -5,7 +5,7 @@ class CreateSpreePriceLists < ActiveRecord::Migration[7.0]
       t.string :name, null: false
       t.text :description
       t.integer :position, null: false, default: 0
-      t.string :status, null: false, default: 'active'
+      t.string :status, null: false, default: 'draft'
       t.datetime :starts_at
       t.datetime :ends_at
       t.string :match_policy, null: false, default: 'all'

@@ -44,7 +44,7 @@ module Spree
         .where('ends_at IS NULL OR ends_at >= ?', current_time)
     }
 
-    state_machine :status do
+    state_machine :status, initial: :draft do
       event :activate do
         transition to: :active
       end

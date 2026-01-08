@@ -15,8 +15,8 @@ describe Spree::PriceList, type: :model do
   describe 'state_machine' do
     let(:price_list) { create(:price_list) }
 
-    it 'has initial status of active' do
-      expect(price_list.status).to eq('active')
+    it 'has initial status of draft' do
+      expect(price_list.status).to eq('draft')
     end
 
     describe '#activate' do

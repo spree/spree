@@ -3,7 +3,10 @@ FactoryBot.define do
     sequence(:name) { |n| "Price List #{n}" }
     store { Spree::Store.default || create(:store) }
     match_policy { 'all' }
-    status { 'active' }
+
+    trait :draft do
+      status { 'draft' }
+    end
 
     trait :active do
       status { 'active' }
