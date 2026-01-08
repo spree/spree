@@ -1,6 +1,7 @@
 module Spree
   class AddressesController < Spree::StoreController
     helper Spree::AddressesHelper
+    before_action :require_user
     before_action :load_and_authorize_address, except: [:index]
 
     def create
