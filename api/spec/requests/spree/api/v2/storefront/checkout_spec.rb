@@ -489,6 +489,104 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
     end
   end
 
+  describe 'checkout#update address ownership validation (IDOR protection)' do
+    let!(:state) { create(:state) }
+    let!(:country) { state.country }
+    let(:other_user) { create(:user_with_addresses) }
+    let(:other_user_address) { other_user.bill_address }
+    let(:execute) { patch '/api/v2/storefront/checkout', params: params, headers: headers }
+
+    context 'as a signed in user' do
+      include_context 'creates order with line item'
+
+      context 'when attempting to use another user\'s address via bill_address_attributes' do
+        let(:params) do
+          {
+            order: {
+              bill_address_attributes: { id: other_user_address.id }
+            }
+          }
+        end
+
+        before { execute }
+
+        it 'returns 422 error' do
+          expect(response.status).to eq(422)
+        end
+
+        it 'does not associate the other user\'s address with the order' do
+          expect(order.reload.bill_address_id).not_to eq(other_user_address.id)
+        end
+
+        it 'returns an error message' do
+          expect(json_response['error']).to be_present
+        end
+      end
+
+      context 'when attempting to use another user\'s address via ship_address_attributes' do
+        let(:params) do
+          {
+            order: {
+              ship_address_attributes: { id: other_user_address.id }
+            }
+          }
+        end
+
+        before { execute }
+
+        it 'returns 422 error' do
+          expect(response.status).to eq(422)
+        end
+
+        it 'does not associate the other user\'s address with the order' do
+          expect(order.reload.ship_address_id).not_to eq(other_user_address.id)
+        end
+      end
+
+      context 'when using own address' do
+        let(:user) { create(:user_with_addresses) }
+        let(:user_address) { user.bill_address }
+        let(:params) do
+          {
+            order: {
+              bill_address_attributes: { id: user_address.id }
+            }
+          }
+        end
+
+        before { execute }
+
+        it 'returns success' do
+          expect(response.status).to eq(200)
+        end
+      end
+    end
+
+    context 'as a guest user' do
+      include_context 'creates guest order with guest token'
+
+      context 'when attempting to use another user\'s address' do
+        let(:params) do
+          {
+            order: {
+              bill_address_attributes: { id: other_user_address.id }
+            }
+          }
+        end
+
+        before { execute }
+
+        it 'returns 422 error' do
+          expect(response.status).to eq(422)
+        end
+
+        it 'does not associate the other user\'s address with the order' do
+          expect(order.reload.bill_address_id).not_to eq(other_user_address.id)
+        end
+      end
+    end
+  end
+
   describe 'checkout#add_store_credit' do
     let(:order_total) { 500.00 }
     let(:params) { { order_token: order.token } }

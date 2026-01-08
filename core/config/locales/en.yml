@@ -608,6 +608,7 @@ en:
       successfully_updated: Updated successfully
       unsuccessfully_saved: There was an error while trying to save your address.
       unsuccessfully_updated: There was an update while trying to update your address.
+    address_not_owned_by_user: The specified address does not belong to this user.
     addresses: Addresses
     adjustable: Adjustable
     adjustment: Adjustment
