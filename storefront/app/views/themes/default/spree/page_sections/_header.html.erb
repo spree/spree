@@ -103,11 +103,12 @@
               <% if show_account_pane? %>
                 <button
                   data-action='click->slideover-account#toggle click@window->slideover-account#hide click->toggle-menu#hide touch->toggle-menu#hide'
+                  aria-label='Open account panel'
                   >
                   <%= render 'spree/shared/icons/account', color: section.preferred_text_color, section: section %>
                 </button>
               <% else %>
-                <%= link_to spree.account_path do %>
+                <%= link_to spree.account_path, 'aria-label': 'Open account panel' do %>
                   <%= render 'spree/shared/icons/account', color: section.preferred_text_color, section: section %>
                 <% end %>
               <% end %>
@@ -117,12 +118,13 @@
                 <button
                   type="submit"
                   id="wishlist-icon"
+                  aria-label='Open wishlist'
                   class="flex items-end">
                   <%= render 'spree/shared/wishlist_icon', wishlist: current_wishlist, background_color: section.preferred_background_color %>
                 </button>
               <% end %>
             <% else %>
-              <%= link_to spree.account_wishlist_path, id: "wishlist-icon" do %>
+              <%= link_to spree.account_wishlist_path, id: "wishlist-icon", 'aria-label': 'Open wishlist' do %>
                 <%= render 'spree/shared/wishlist_icon', background_color: section.preferred_background_color %>
               <% end %>
             <% end %>
@@ -141,6 +143,7 @@
       data-toggle-menu-target='toggleable'
       role='dialog'
       aria-modal='true'
+      aria-label='Mobile menu'
     >
       <div
         class='flex justify-between flex-col lg:hidden w-full transition-transform has-[.currency-and-locale-modal:not(.hidden)]:transform-none body header--mobile-menu'
