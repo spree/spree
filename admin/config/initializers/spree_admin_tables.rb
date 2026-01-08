@@ -1427,6 +1427,67 @@ Rails.application.config.after_initialize do
                                                   position: 80
 
   # ==========================================
+  # Price Lists Table
+  # ==========================================
+  Spree.admin.tables.register(:price_lists, model_class: Spree::PriceList, search_param: :name_cont, row_actions: true, link_to_action: :show)
+
+  Spree.admin.tables.price_lists.add :name,
+                                           label: :name,
+                                           type: :link,
+                                           sortable: true,
+                                           filterable: true,
+                                           default: true,
+                                           position: 10
+
+  Spree.admin.tables.price_lists.add :status,
+                                           label: :status,
+                                           type: :custom,
+                                           filter_type: :select,
+                                           sortable: true,
+                                           filterable: true,
+                                           default: true,
+                                           position: 20,
+                                           partial: 'spree/admin/tables/columns/price_list_status',
+                                           value_options: [
+                                             { value: 'draft', label: 'Draft' },
+                                             { value: 'active', label: 'Active' },
+                                             { value: 'scheduled', label: 'Scheduled' },
+                                             { value: 'inactive', label: 'Inactive' }
+                                           ]
+
+  Spree.admin.tables.price_lists.add :starts_at,
+                                           label: :starts_at,
+                                           type: :datetime,
+                                           sortable: true,
+                                           filterable: true,
+                                           default: true,
+                                           position: 30
+
+  Spree.admin.tables.price_lists.add :ends_at,
+                                           label: :ends_at,
+                                           type: :datetime,
+                                           sortable: true,
+                                           filterable: true,
+                                           default: true,
+                                           position: 40
+
+  Spree.admin.tables.price_lists.add :created_at,
+                                           label: :created_at,
+                                           type: :datetime,
+                                           sortable: true,
+                                           filterable: true,
+                                           default: false,
+                                           position: 50
+
+  Spree.admin.tables.price_lists.add :updated_at,
+                                           label: :updated_at,
+                                           type: :datetime,
+                                           sortable: true,
+                                           filterable: true,
+                                           default: false,
+                                           position: 60
+
+  # ==========================================
   # Price List Products Table
   # ==========================================
   Spree.admin.tables.register(:price_list_products, model_class: Spree::Product, search_param: :multi_search, row_actions: false, new_resource: false)
@@ -1476,4 +1537,14 @@ Rails.application.config.after_initialize do
                                                    filterable: true,
                                                    default: false,
                                                    position: 60
+
+  Spree.admin.tables.price_list_products.add_bulk_action :remove_from_price_list,
+                                                               label: 'admin.bulk_ops.price_list_products.title.remove',
+                                                               icon: 'trash',
+                                                               modal_path: ->(view_context) { view_context.spree.bulk_modal_admin_price_list_products_path(view_context.instance_variable_get(:@price_list), kind: :remove_from_price_list) },
+                                                               action_path: ->(view_context) { view_context.spree.bulk_destroy_admin_price_list_products_path(view_context.instance_variable_get(:@price_list)) },
+                                                               title: 'admin.bulk_ops.price_list_products.title.remove',
+                                                               body: 'admin.bulk_ops.price_list_products.body.remove',
+                                                               method: :delete,
+                                                               position: 10
 end

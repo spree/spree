@@ -38,6 +38,7 @@ Spree::Core::Engine.add_routes do
       resources :products, only: [:index], controller: 'price_list_products' do
         collection do
           get :bulk_new
+          get :bulk_modal
           post :bulk_create
           delete :bulk_destroy
         end

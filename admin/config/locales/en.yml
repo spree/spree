@@ -7,6 +7,11 @@ en:
       avg_order_value: Avg. Order Value
       back_to_dashboard: Back to dashboard
       bulk_ops:
+        price_list_products:
+          body:
+            remove: Are you sure you want to remove the selected products from this price list? This will also remove their prices.
+          title:
+            remove: Remove from Price List
         products:
           body:
             add_tags: 'Select tags to add to the products:'

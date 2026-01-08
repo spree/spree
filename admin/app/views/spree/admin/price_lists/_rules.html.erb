@@ -20,7 +20,7 @@
       <div class="text-gray-600 p-12 flex items-center w-full justify-center">
         <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::PriceRule)) %>
         <% if can?(:create, Spree::PriceRule.new(price_list: @price_list)) %>
-          <%= link_to_with_icon 'plus', Spree.t(:add_one), spree.new_admin_price_list_price_rule_path(@price_list), class: 'btn btn-light btn-sm ml-6', data: { turbo_frame: 'dialog', action: 'dialog#open' } %>
+          <%= link_to_with_icon 'plus', Spree.t(:add_one), spree.new_admin_price_list_price_rule_path(@price_list), class: 'btn btn-secondary btn-sm ml-6', data: { turbo_frame: 'dialog', action: 'dialog#open' } %>
         <% end %>
       </div>
     <% else %>
