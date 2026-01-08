@@ -1,0 +1,5 @@
+<%= tom_select_tag 'taxon_ids',
+                   multiple: true,
+                   class: 'w-full',
+                   url: spree.admin_taxons_select_options_path(format: :json),
+                   required: true %>

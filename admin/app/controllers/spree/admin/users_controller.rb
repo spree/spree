@@ -50,11 +50,6 @@ module Spree
         Spree.user_class
       end
 
-      def bulk_modal
-        @title = Spree.t("admin.bulk_ops.users.title.#{params[:kind]}")
-        @body = Spree.t("admin.bulk_ops.users.body.#{params[:kind]}")
-      end
-
       protected
 
       def collection_includes

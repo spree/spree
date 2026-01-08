@@ -1,7 +1,9 @@
-<% params[:ids]&.each do |id| %>
-  <%= turbo_stream.remove("product_#{id}") %>
+<%= turbo_render_alerts %>
+
+<%= turbo_stream.replace 'bulk-dialog' do %>
+  <%= render 'spree/admin/shared/bulk_modal' %>
 <% end %>
 
-<%= turbo_stream.update :products_count do %>
-  <%= @price_list.products.distinct.count %>
+<% params[:ids]&.each do |id| %>
+  <%= turbo_stream.remove("product_#{id}") %>
 <% end %>

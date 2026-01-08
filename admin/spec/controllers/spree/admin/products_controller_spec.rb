@@ -1505,10 +1505,18 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
 
   describe 'GET #bulk_modal' do
     context 'as admin' do
-      it 'renders modal' do
-        get :bulk_modal
+      it 'renders modal for set_active' do
+        get :bulk_modal, params: { kind: 'set_active' }
 
-        expect(response).to render_template('bulk_modal')
+        expect(response).to have_http_status(:ok)
+        expect(assigns[:title]).to eq(Spree.t('admin.bulk_ops.products.title.set_active'))
+        expect(assigns[:body]).to eq(Spree.t('admin.bulk_ops.products.body.set_active'))
+      end
+
+      it 'returns not found for unknown kind' do
+        get :bulk_modal, params: { kind: 'unknown' }
+
+        expect(response).to have_http_status(:not_found)
       end
     end
   end

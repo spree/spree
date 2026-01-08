@@ -1,5 +1,5 @@
 <div class="search-picker__option" data-action="click->search-picker#toggle">
-  <%= check_box_tag "product_ids[]", product.id, false, id: "ids_#{product.id}", data: { action: 'search-picker#toggle', search_picker_target: "checkbox" } %>
+  <%= check_box_tag "ids[]", product.id, false, id: "ids_#{product.id}", data: { action: 'search-picker#toggle', search_picker_target: "checkbox" } %>
   <label for="ids_<%= product.id %>">
     <%= render 'spree/admin/shared/product_image', object: product %>
     <div class="ml-6">

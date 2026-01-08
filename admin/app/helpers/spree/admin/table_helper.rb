@@ -346,16 +346,21 @@ module Spree
       def render_bulk_action(action, **options)
         return unless action.visible?(self)
 
+        action_path = action.action_path.is_a?(Proc) ? action.action_path.call(self) : action.action_path
+        modal_path = action.modal_path.is_a?(Proc) ? action.modal_path.call(self) : action.modal_path
+        confirm_message = resolve_bulk_action_confirm(action.confirm)
+
         link_options = {
           class: options[:class] || 'btn',
           data: {
             action: 'click->bulk-operation#setBulkAction click->bulk-dialog#open',
             turbo_frame: :bulk_dialog,
-            url: action.action_path
+            url: action_path,
+            method: action.method
           }
         }
 
-        link_options[:data][:confirm] = action.confirm if action.confirm.present?
+        link_options[:data][:confirm] = confirm_message if confirm_message.present?
 
         content = if action.icon.present?
                     icon(action.icon) + ' ' + action.resolve_label
@@ -363,7 +368,22 @@ module Spree
                     action.resolve_label
                   end
 
-        link_to content, action.modal_path, link_options
+        link_to content, modal_path, link_options
+      end
+
+      # Resolve confirm message for bulk action
+      # @param confirm [String, Symbol, nil] the confirm value (can be i18n key or plain string)
+      # @return [String, nil]
+      def resolve_bulk_action_confirm(confirm)
+        return nil if confirm.blank?
+
+        if confirm.is_a?(Symbol)
+          Spree.t(confirm)
+        elsif confirm.is_a?(String) && confirm.start_with?('admin.')
+          Spree.t(confirm, default: confirm)
+        else
+          confirm
+        end
       end
 
       # Render bulk actions panel for a table

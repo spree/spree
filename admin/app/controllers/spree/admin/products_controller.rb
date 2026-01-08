@@ -85,16 +85,6 @@ module Spree
         end
       end
 
-      def bulk_modal
-        if params[:kind] == 'set_status'
-          @title = Spree.t('admin.bulk_ops.products.title.set_status', status: params[:status].titleize)
-          @body = Spree.t("admin.bulk_ops.products.body.set_status.#{params[:status]}")
-        else
-          @title = Spree.t("admin.bulk_ops.products.title.#{params[:kind]}")
-          @body = Spree.t("admin.bulk_ops.products.body.#{params[:kind]}")
-        end
-      end
-
       def bulk_status_update
         if bulk_collection.update_all(status: params[:status], updated_at: Time.current)
           product_ids = bulk_collection.ids

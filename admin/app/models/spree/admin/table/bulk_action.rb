@@ -11,12 +11,20 @@ module Spree
         attribute :label
         attribute :label_options, default: -> { {} }
         attribute :icon, :string
-        attribute :modal_path, :string
-        attribute :action_path, :string
+        attribute :modal_path
+        attribute :action_path
         attribute :position, :integer, default: 999
         attribute :condition
-        attribute :confirm, :string
+        attribute :confirm
         attribute :method, default: :put
+
+        # Modal content attributes - used by generic bulk_modal action
+        attribute :title
+        attribute :title_options, default: -> { {} }
+        attribute :body
+        attribute :body_options, default: -> { {} }
+        attribute :form_partial, :string
+        attribute :form_partial_locals, default: -> { {} }
 
         validates :key, presence: true
         validates :method, presence: true, inclusion: { in: METHODS }
@@ -60,6 +68,18 @@ module Spree
           end
         end
 
+        # Resolve title for modal dialog (handles i18n keys)
+        # @return [String]
+        def resolve_title
+          resolve_i18n_attribute(title, title_options, "#{key}.title")
+        end
+
+        # Resolve body for modal dialog (handles i18n keys)
+        # @return [String]
+        def resolve_body
+          resolve_i18n_attribute(body, body_options, "#{key}.body")
+        end
+
         # Deep clone the action
         # @return [BulkAction]
         def deep_clone
@@ -68,6 +88,22 @@ module Spree
 
         def inspect
           "#<Spree::Admin::Table::BulkAction key=#{key}>"
+        end
+
+        private
+
+        def resolve_i18n_attribute(value, options, default_key)
+          return nil if value.blank?
+
+          if value.is_a?(Symbol)
+            Spree.t(value, **options)
+          elsif value.is_a?(String) && value.start_with?('admin.')
+            Spree.t(value, **options.merge(default: default_key.to_s.humanize))
+          elsif value.is_a?(String) && value.present?
+            value
+          else
+            Spree.t(default_key, scope: 'admin.bulk_ops', default: default_key.to_s.humanize, **options)
+          end
         end
       end
     end

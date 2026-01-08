@@ -14,11 +14,9 @@ en:
             add_to_taxons: 'Select which taxons to add the products to:'
             remove_from_taxons: 'Select which taxons to remove the products from:'
             remove_tags: 'Select tags to remove from the products:'
-            set_return_rule: Select return rule for products
-            set_status:
-              active: Setting products to active will make those products available on the storefront.
-              archived: Setting products to archived will hide them from storefront.
-              draft: Setting products to draft will hide them from storefront.
+            set_active: Setting products to active will make those products available on the storefront.
+            set_archived: Setting products to archived will hide them from storefront.
+            set_draft: Setting products to draft will hide them from storefront.
           status_updated: Status updated
           title:
             add_tags: Add tags
@@ -27,9 +25,9 @@ en:
             remove_from_brand: Remove from brand
             remove_from_taxons: Remove from taxons
             remove_tags: Remove tags
-            set_return_rule: Set Return Rule
-            set_size_chart: Set Size Chart
-            set_status: Set as %{status}
+            set_active: Set as Active
+            set_archived: Set as Archived
+            set_draft: Set as Draft
         users:
           body:
             add_tags: 'Select tags to add to the customers:'
