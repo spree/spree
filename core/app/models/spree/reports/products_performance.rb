@@ -17,7 +17,7 @@ module Spree
                                currency: currency
                              },
                              spree_orders: {
-                               completed_at: (date_from.to_time.beginning_of_day)..(date_to.to_time.end_of_day)
+                               completed_at: date_from..date_to
                              }
                            )
 
