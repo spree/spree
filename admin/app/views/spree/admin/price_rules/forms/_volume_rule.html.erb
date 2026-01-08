@@ -6,6 +6,6 @@
 
   <div class="form-group">
     <%= f.label :preferred_max_quantity, Spree.t(:max_quantity) %>
-    <%= f.number_field :preferred_max_quantity, class: 'form-control', min: 1, value: f.object.preferred_max_quantity, placeholder: Spree.t(:unlimited) %>
+    <%= f.number_field :preferred_max_quantity, class: 'form-control', min: 0, value: f.object.preferred_max_quantity, placeholder: Spree.t(:unlimited) %>
   </div>
 </div>

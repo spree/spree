@@ -1323,6 +1323,7 @@ en:
       any: Match ANY rule
     max: Max
     max_items: Max Items
+    max_quantity: Max Quantity
     media: Media
     memo: Memo
     meta_description: Meta Description
@@ -1332,6 +1333,7 @@ en:
     metafield_definitions: Metafield Definitions
     metafields: Metafields
     min: Min
+    min_quantity: Min Quantity
     minimal_amount: Minimal Amount
     minimum_password_length:
       one: "(%{count} character minimum)"
@@ -1710,12 +1712,6 @@ en:
         description: Apply pricing based on geographic zone
         name: Zone
     price_sack: Price Sack
-    min_quantity: Min Quantity
-    max_quantity: Max Quantity
-    unlimited: Unlimited
-    volume_rule:
-      line_item: Line Item Quantity
-      cart_total: Cart Total Quantity
     prices: Prices
     pricing: Pricing
     privacy_policy: Privacy Policy
@@ -2324,6 +2320,7 @@ en:
       imperial_system: Imperial system
       metric: metric
       metric_system: Metric system
+    unlimited: Unlimited
     unlock: Unlock
     unprocessable_entity: Unprocessable Entity
     unprocessable_entity_message: Your request could not be processed. Please check the form for errors and try again.
@@ -2379,6 +2376,9 @@ en:
     visibility: Visibility
     visits: Visits
     void: Void
+    volume_rule:
+      cart_total: Cart Total Quantity
+      line_item: Line Item Quantity
     we_are_busy_updating: We're updating the %{store_name} homepage.
     we_are_busy_updating_page: We're busy updating this page.
     we_will_be_back: We will be back.
