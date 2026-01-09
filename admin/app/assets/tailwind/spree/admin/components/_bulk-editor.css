@@ -2,22 +2,31 @@
 
 /* Input cell states */
 [data-bulk-editor-target="cell"] {
-  @apply transition-colors duration-75 cursor-cell caret-transparent border-0;
+  @apply transition-colors duration-75 cursor-cell caret-transparent;
+  /* Override any form styling */
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
 }
 
-/* Selected cells - light background, no individual border */
-[data-bulk-editor-target="cell"].selected {
+/* Selected cells - light background on parent cell container */
+.bulk-editor-cell:has([data-bulk-editor-target="cell"].selected) {
   @apply bg-blue-50;
 }
 
-/* Focused cell in selection mode */
-[data-bulk-editor-target="cell"]:focus {
+/* Focused cell in selection mode - background on parent */
+.bulk-editor-cell:has([data-bulk-editor-target="cell"]:focus) {
   @apply bg-blue-100;
 }
 
 /* Editing mode - white background, text cursor, visible caret */
+.bulk-editor-cell:has([data-bulk-editor-target="cell"].editing) {
+  @apply bg-white;
+}
+
 [data-bulk-editor-target="cell"].editing {
-  @apply bg-white cursor-text caret-inherit;
+  @apply cursor-text caret-inherit;
 }
 
 /* Selection overlay - single border around entire selection */

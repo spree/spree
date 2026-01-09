@@ -65,34 +65,40 @@
                   <tr data-bulk-editor-target="row">
                     <td class="pl-14 pr-4 py-2 text-sm text-gray-600 border-r w-40"><%= price.variant.options_text.presence %></td>
                     <td class="px-4 py-2 text-sm text-gray-400 font-mono border-r w-30"><%= price.variant.sku %></td>
-                    <td class="p-0 border-r w-15">
+                    <td class="p-0 border-r w-15 bulk-editor-cell">
                       <%= pf.hidden_field :id %>
                       <%= pf.hidden_field :variant_id %>
                       <%= pf.hidden_field :currency %>
-                      <%= pf.number_field :amount,
-                          step: 0.01,
-                          placeholder: '0.00',
-                          class: 'w-full px-4 py-2 focus:outline-none text-right tabular-nums',
-                          data: {
-                            bulk_editor_target: 'cell',
-                            row: row_index,
-                            col: 0,
-                            action: bulk_editor_cell_actions,
-                            original_value: price.amount
-                          } %>
+                      <label class="flex items-center cursor-cell m-0">
+                        <span class="pl-4 text-gray-500 pointer-events-none"><%= @currency_symbol %></span>
+                        <%= pf.number_field :amount,
+                            step: 0.01,
+                            placeholder: '0.00',
+                            class: 'w-full pl-1 pr-4 py-2 border-0 shadow-none outline-none text-right tabular-nums bg-transparent',
+                            data: {
+                              bulk_editor_target: 'cell',
+                              row: row_index,
+                              col: 0,
+                              action: bulk_editor_cell_actions,
+                              original_value: price.amount
+                            } %>
+                      </label>
                     </td>
-                    <td class="p-0 w-15">
-                      <%= pf.number_field :compare_at_amount,
-                          step: 0.01,
-                          placeholder: '0.00',
-                          class: 'w-full px-4 py-2 focus:outline-none text-right tabular-nums',
-                          data: {
-                            bulk_editor_target: 'cell',
-                            row: row_index,
-                            col: 1,
-                            action: bulk_editor_cell_actions,
-                            original_value: price.compare_at_amount
-                          } %>
+                    <td class="p-0 w-15 bulk-editor-cell">
+                      <label class="flex items-center cursor-cell m-0">
+                        <span class="pl-4 text-gray-500 pointer-events-none"><%= @currency_symbol %></span>
+                        <%= pf.number_field :compare_at_amount,
+                            step: 0.01,
+                            placeholder: '0.00',
+                            class: 'w-full pl-1 pr-4 py-2 border-0 shadow-none outline-none text-right tabular-nums bg-transparent',
+                            data: {
+                              bulk_editor_target: 'cell',
+                              row: row_index,
+                              col: 1,
+                              action: bulk_editor_cell_actions,
+                              original_value: price.compare_at_amount
+                            } %>
+                      </label>
                     </td>
                   </tr>
                   <% row_index += 1 %>

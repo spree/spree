@@ -6,6 +6,7 @@ module Spree
       # GET /admin/price_lists/:price_list_id/edit_prices
       def edit_prices
         @currency = params[:currency] || current_store.default_currency
+        @currency_symbol = ::Money::Currency.find(@currency).symbol
         @prices = @price_list.prices.
                   includes(variant: [:product, { option_values: :option_type }]).
                   where(currency: @currency).

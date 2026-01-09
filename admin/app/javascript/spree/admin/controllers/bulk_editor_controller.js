@@ -105,7 +105,9 @@ export default class extends Controller {
     }
 
     const cell = this.focusedCell
-    const cellRect = cell.getBoundingClientRect()
+    // Use parent .bulk-editor-cell or <td> if available for proper positioning
+    const cellContainer = cell.closest('.bulk-editor-cell') || cell.closest('td') || cell
+    const cellRect = cellContainer.getBoundingClientRect()
     const containerRect = this.element.getBoundingClientRect()
 
     // Position at bottom-right corner of the focused cell
@@ -350,7 +352,9 @@ export default class extends Controller {
     let maxRight = -Infinity, maxBottom = -Infinity
 
     cells.forEach(cell => {
-      const rect = cell.getBoundingClientRect()
+      // Use parent .bulk-editor-cell or <td> if available for proper bounds
+      const cellContainer = cell.closest('.bulk-editor-cell') || cell.closest('td') || cell
+      const rect = cellContainer.getBoundingClientRect()
       minLeft = Math.min(minLeft, rect.left)
       minTop = Math.min(minTop, rect.top)
       maxRight = Math.max(maxRight, rect.right)
