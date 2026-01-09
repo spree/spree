@@ -3,6 +3,15 @@ module Spree
     class Context
       attr_reader :variant, :currency, :store, :zone, :user, :quantity, :date, :order
 
+      # Initializes the context
+      # @param variant [Spree::Variant]
+      # @param currency [String]
+      # @param store [Spree::Store]
+      # @param zone [Spree::Zone]
+      # @param user [Spree::User]
+      # @param quantity [Integer]
+      # @param date [Time]
+      # @param order [Spree::Order]
       def initialize(variant:, currency:, store: nil, zone: nil, user: nil, quantity: nil, date: nil, order: nil)
         @variant = variant
         @currency = currency
@@ -14,6 +23,10 @@ module Spree
         @order = order
       end
 
+      # Returns a new context from a variant and currency
+      # @param variant [Spree::Variant]
+      # @param currency [String]
+      # @return [Spree::Pricing::Context]
       def self.from_currency(variant, currency)
         new(variant: variant, currency: currency)
       end
@@ -30,6 +43,8 @@ module Spree
         )
       end
 
+      # Returns the cache key for the context
+      # @return [String]
       def cache_key
         [
           'spree',

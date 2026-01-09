@@ -1,5 +1,5 @@
 module Spree
-  class PriceList < Spree::Base
+  class PriceList < Spree.base_class
     acts_as_paranoid
     acts_as_list scope: :store
 
@@ -18,12 +18,17 @@ module Spree
     # Override default nested attributes to use bulk_update_prices for performance
     attr_reader :prices_attributes
 
+    # Sets the prices attributes for bulk update
+    # @param attributes [Array<Hash>] array of price attributes with :id, :amount, :compare_at_amount
+    # @return [Array<Hash>] array of price attributes with :id, :amount, :compare_at_amount
     def prices_attributes=(attributes)
       @prices_attributes = attributes.values
     end
 
     after_update :process_bulk_prices_update
 
+    # Processes the bulk prices update
+    # @return [void]
     def process_bulk_prices_update
       return if @prices_attributes.blank?
 
@@ -73,6 +78,9 @@ module Spree
       MATCH_POLICIES.map { |key| [Spree.t(key), key] }
     end
 
+    # Returns true if the price list is applicable to the context
+    # @param context [Spree::Pricing::Context]
+    # @return [Boolean]
     def applicable?(context)
       return false unless active_or_scheduled?
       return false unless within_date_range?(context.date || Time.current)
@@ -80,6 +88,9 @@ module Spree
       rules_applicable?(context)
     end
 
+    # Returns true if the price list rules are applicable to the context
+    # @param context [Spree::Pricing::Context]
+    # @return [Boolean]
     def rules_applicable?(context)
       return true if price_rules.none?
 
@@ -93,6 +104,8 @@ module Spree
       end
     end
 
+    # Returns true if the price list is active or scheduled
+    # @return [Boolean]
     def active_or_scheduled?
       active? || scheduled?
     end
@@ -103,6 +116,9 @@ module Spree
       active_or_scheduled? && within_date_range?(Time.current)
     end
 
+    # Adds products to the price list
+    # @param product_ids [Array<String>] of product ids
+    # @return [void]
     def add_products(product_ids)
       return if product_ids.blank?
 
@@ -134,6 +150,9 @@ module Spree
       end
     end
 
+    # Removes products from the price list
+    # @param product_ids [Array<String>] of product ids
+    # @return [void]
     def remove_products(product_ids)
       return if product_ids.blank?
 
@@ -197,6 +216,9 @@ module Spree
 
     private
 
+    # Touches the variants in a background job
+    # @param variant_ids [Array<String>] array of variant ids
+    # @return [void]
     def touch_variants(variant_ids)
       return if variant_ids.blank?
 
@@ -211,6 +233,9 @@ module Spree
       end
     end
 
+    # Returns true if the date is within the price list date range
+    # @param date [Time] the date to check
+    # @return [Boolean]
     def within_date_range?(date)
       timezone = store&.preferred_timezone || Rails.application.config.time_zone
       date_in_tz = date.in_time_zone(timezone)
