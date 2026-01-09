@@ -14,6 +14,7 @@ module Spree
       belongs_to :variant, -> { with_deleted }, class_name: 'Spree::Variant'
     end
     belongs_to :tax_category, -> { with_deleted }, class_name: 'Spree::TaxCategory'
+    belongs_to :price_list, class_name: 'Spree::PriceList', optional: true
 
     has_one :product, -> { with_deleted }, class_name: 'Spree::Product', through: :variant
 
@@ -71,9 +72,11 @@ module Spree
     end
 
     def update_price
-      currency_price = variant.price_in(order.currency)
+      context = Spree::Pricing::Context.from_order(variant, order, quantity: quantity)
+      currency_price = variant.price_for(context)
 
       self.price = currency_price.price_including_vat_for(tax_zone: tax_zone) if currency_price.present?
+      self.price_list_id = currency_price.price_list_id if currency_price.present?
     end
 
     def copy_tax_category
@@ -94,16 +97,25 @@ module Spree
       price - (promo_total.abs / quantity)
     end
 
+    # Returns the amount (price * quantity) of the line item
+    #
+    # @return [BigDecimal]
     def amount
       price * quantity
     end
 
+    # Returns the compare at amount (compare at price * quantity) of the line item
+    #
+    # @return [BigDecimal]
     def compare_at_amount
       (variant.compare_at_amount_in(currency) || 0) * quantity
     end
 
     alias subtotal amount
 
+    # Returns the taxable amount (amount + taxable adjustment total) of the line item
+    #
+    # @return [BigDecimal]
     def taxable_amount
       amount + taxable_adjustment_total
     end
@@ -118,6 +130,9 @@ module Spree
     alias discounted_money display_discounted_amount
     alias discounted_amount taxable_amount
 
+    # Returns the final amount of the line item
+    #
+    # @return [BigDecimal]
     def final_amount
       amount + adjustment_total
     end
@@ -132,10 +147,16 @@ module Spree
     alias total final_amount
     alias money display_total
 
+    # Returns true if the line item has sufficient stock
+    #
+    # @return [Boolean]
     def sufficient_stock?
       can_supply? quantity
     end
 
+    # Returns true if the line item has insufficient stock
+    #
+    # @return [Boolean]
     def insufficient_stock?
       !sufficient_stock?
     end
@@ -199,6 +220,9 @@ module Spree
       @maximum_quantity ||= variant.backorderable? ? Spree::DatabaseTypeUtilities.maximum_value_for(:integer) : variant.total_on_hand
     end
 
+    # Returns true if the line item variant has digital assets
+    #
+    # @return [Boolean]
     def with_digital_assets?
       variant.with_digital_assets?
     end
@@ -238,8 +262,35 @@ module Spree
 
     def update_adjustments
       if saved_change_to_quantity?
+        recalculate_price if should_update_price? && !previously_new_record?
         recalculate_adjustments
         update_tax_charge # Called to ensure pre_tax_amount is updated.
+      end
+    end
+
+    # Returns true if the price should be updated when quantity changes
+    # Override this method to customize when prices should be recalculated
+    # By default, prices are not updated after an order is completed
+    # @return [Boolean]
+    def should_update_price?
+      !order.completed?
+    end
+
+    def recalculate_price
+      context = Spree::Pricing::Context.from_order(variant, order, quantity: quantity)
+      currency_price = variant.price_for(context)
+
+      return unless currency_price.present?
+
+      new_price = currency_price.price_including_vat_for(tax_zone: tax_zone)
+
+      return unless new_price.present?
+
+      new_price_list_id = currency_price.price_list_id
+
+      # Only update if price or price list changed
+      if new_price != price || new_price_list_id != price_list_id
+        update_columns(price: new_price, price_list_id: new_price_list_id)
       end
     end
 

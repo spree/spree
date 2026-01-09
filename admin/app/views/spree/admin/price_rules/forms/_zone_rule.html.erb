@@ -1,0 +1,7 @@
+<div class="form-group">
+  <%= f.label :preferred_zone_ids, Spree.t(:zones) %>
+  <%= f.select :preferred_zone_ids,
+              Spree::Zone.order(:name).pluck(:name, :id),
+              { selected: f.object.preferred_zone_ids },
+              { multiple: true, data: { controller: 'autocomplete-select' } } %>
+</div>

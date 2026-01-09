@@ -29,19 +29,27 @@ module Spree
           end
 
           attribute :price do |object, params|
-            price(object, params[:currency])
+            price(object, params[:currency], pricing_context_options(params))
           end
 
           attribute :display_price do |object, params|
-            display_price(object, params[:currency])
+            display_price(object, params[:currency], pricing_context_options(params))
           end
 
           attribute :compare_at_price do |object, params|
-            compare_at_price(object, params[:currency])
+            compare_at_price(object, params[:currency], pricing_context_options(params))
           end
 
           attribute :display_compare_at_price do |object, params|
-            display_compare_at_price(object, params[:currency])
+            display_compare_at_price(object, params[:currency], pricing_context_options(params))
+          end
+
+          def self.pricing_context_options(params)
+            {
+              store: params[:store],
+              user: params[:user],
+              tax_zone: params.dig(:price_options, :tax_zone)
+            }
           end
 
           belongs_to :product, serializer: Spree.api.platform_product_serializer

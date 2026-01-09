@@ -1,0 +1,23 @@
+<dialog id="turbo-confirm-dialog" class="dialog" data-dialog-target="dialog" data-controller="dialog">
+  <div class="dialog-header">
+    <h5 class="dialog-title"><%= Spree.t(:are_you_sure) %></h5>
+    <form method="dialog">
+      <button type="submit" value="cancel" class="btn-close" aria-label="<%= Spree.t(:close) %>"></button>
+    </form>
+  </div>
+  <div class="dialog-body">
+    <p id="turbo-confirm-message" class="text-base text-gray-700 m-0"></p>
+  </div>
+  <div class="dialog-footer">
+    <form method="dialog">
+      <button type="submit" value="cancel" class="btn btn-light">
+        <%= Spree.t(:cancel) %>
+      </button>
+    </form>
+    <form method="dialog">
+      <button type="submit" value="confirm" id="turbo-confirm-button" class="btn btn-primary">
+        <%= Spree.t(:confirm) %>
+      </button>
+    </form>
+  </div>
+</dialog>

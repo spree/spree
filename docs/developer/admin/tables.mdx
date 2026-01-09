@@ -414,15 +414,16 @@ Add bulk actions that appear when users select multiple rows:
 ```ruby
 Rails.application.config.after_initialize do
   Spree.admin.tables.products.add_bulk_action :set_active,
-    label: 'admin.bulk_ops.products.title.set_status',
-    label_options: { status: :active },
+    label: 'admin.bulk_ops.products.title.set_active',
     icon: 'circle-check',
-    modal_path: '/admin/products/bulk_modal?kind=set_status&status=active',
     action_path: '/admin/products/bulk_status_update?status=active',
+    body: 'admin.bulk_ops.products.body.set_active',
     position: 10,
     if: -> { can?(:activate, Spree::Product) }
 end
 ```
+
+The modal is automatically rendered via `/admin/bulk_operations/new?kind=:action_key&table_key=:table_key`.
 
 ### Bulk Action Options
 
@@ -430,20 +431,12 @@ end
   Translation key or text for the action button.
 </ParamField>
 
-<ParamField path="label_options" type="Hash">
-  Interpolation options for the label translation.
-</ParamField>
-
 <ParamField path="icon" type="String">
   Icon name from [Tabler Icons](https://tabler.io/icons).
 </ParamField>
 
-<ParamField path="modal_path" type="String" required>
-  URL for the confirmation modal.
-</ParamField>
-
-<ParamField path="action_path" type="String" required>
-  URL for the bulk action endpoint.
+<ParamField path="action_path" type="String | Lambda" required>
+  URL for the bulk action endpoint. Use a Lambda for dynamic paths: `action_path: ->(view_context) { view_context.custom_path }`.
 </ParamField>
 
 <ParamField path="method" type="Symbol" default=":put">
@@ -460,6 +453,14 @@ end
 
 <ParamField path="confirm" type="String">
   Confirmation message before executing the action.
+</ParamField>
+
+<ParamField path="button_text" type="String">
+  Custom text for the modal submit button. Supports translation keys. Defaults to "Confirm".
+</ParamField>
+
+<ParamField path="button_class" type="String" default="btn-primary">
+  CSS class for the modal submit button (e.g., `btn-danger` for destructive actions).
 </ParamField>
 
 ### Managing Bulk Actions
@@ -517,6 +518,7 @@ Spree registers tables for all built-in resources:
 | `:post_categories` | `Spree::PostCategory` |
 | `:webhook_endpoints` | `Spree::WebhookEndpoint` |
 | `:webhook_deliveries` | `Spree::WebhookDelivery` |
+| `:price_list_products` | `Spree::Product` (nested) |
 
 ## API Reference
 

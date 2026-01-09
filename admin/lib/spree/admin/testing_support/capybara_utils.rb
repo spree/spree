@@ -54,6 +54,47 @@ module Spree
           # The old headless mode is better but still needs a brief render pause
           sleep 0.3
         end
+
+        # Handles the custom turbo confirm dialog
+        # Replaces accept_confirm for elements using data-turbo-confirm
+        #
+        # @example
+        #   accept_turbo_confirm { click_on 'Delete' }
+        #
+        # @param timeout [Integer] seconds to wait for the dialog
+        # @yield the block containing the action that triggers the confirm dialog
+        def accept_turbo_confirm(timeout: 5, &block)
+          yield
+
+          # Wait for the confirm dialog to open
+          dialog_selector = '#turbo-confirm-dialog'
+          has_css?("#{dialog_selector}[open]", visible: :all, wait: timeout)
+
+          # Click the confirm button
+          within(dialog_selector) do
+            click_button 'turbo-confirm-button'
+          end
+        end
+
+        # Dismisses the custom turbo confirm dialog by clicking cancel
+        #
+        # @example
+        #   dismiss_turbo_confirm { click_on 'Delete' }
+        #
+        # @param timeout [Integer] seconds to wait for the dialog
+        # @yield the block containing the action that triggers the confirm dialog
+        def dismiss_turbo_confirm(timeout: 5, &block)
+          yield
+
+          # Wait for the confirm dialog to open
+          dialog_selector = '#turbo-confirm-dialog'
+          has_css?("#{dialog_selector}[open]", visible: :all, wait: timeout)
+
+          # Click the cancel button
+          within(dialog_selector) do
+            click_button class: 'btn-light'
+          end
+        end
       end
     end
   end

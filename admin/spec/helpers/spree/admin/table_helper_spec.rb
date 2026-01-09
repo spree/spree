@@ -562,26 +562,26 @@ RSpec.describe Spree::Admin::TableHelper, type: :helper do
         key: :delete,
         label: 'Delete',
         icon: 'trash',
-        modal_path: '/admin/bulk/delete',
         action_path: '/admin/products/bulk_delete'
       )
     end
 
     before do
       allow(helper).to receive(:icon).and_return('<svg></svg>'.html_safe)
+      allow(helper).to receive(:spree).and_return(double(new_admin_bulk_operation_path: '/admin/bulk_operations/new?kind=delete&table_key=products'))
     end
 
     it 'renders link with action data attributes' do
-      result = helper.render_bulk_action(action)
+      result = helper.render_bulk_action(action, table: table)
 
       expect(result).to include('Delete')
-      expect(result).to include('href="/admin/bulk/delete"')
+      expect(result).to include('href="/admin/bulk_operations/new?kind=delete&amp;table_key=products"')
       expect(result).to include('data-action')
       expect(result).to include('bulk-operation#setBulkAction')
     end
 
     it 'includes icon when present' do
-      result = helper.render_bulk_action(action)
+      helper.render_bulk_action(action, table: table)
 
       expect(helper).to have_received(:icon).with('trash')
     end
@@ -593,7 +593,7 @@ RSpec.describe Spree::Admin::TableHelper, type: :helper do
         condition: false
       )
 
-      result = helper.render_bulk_action(action)
+      result = helper.render_bulk_action(action, table: table)
 
       expect(result).to be_nil
     end
@@ -602,11 +602,10 @@ RSpec.describe Spree::Admin::TableHelper, type: :helper do
       action = Spree::Admin::Table::BulkAction.new(
         key: :delete,
         label: 'Delete',
-        modal_path: '/admin/bulk/delete',
         confirm: 'Are you sure?'
       )
 
-      result = helper.render_bulk_action(action)
+      result = helper.render_bulk_action(action, table: table)
 
       expect(result).to include('data-confirm="Are you sure?"')
     end
@@ -617,6 +616,7 @@ RSpec.describe Spree::Admin::TableHelper, type: :helper do
       allow(helper).to receive(:bulk_operations_counter).and_return('<span>0 selected</span>'.html_safe)
       allow(helper).to receive(:bulk_operations_close_button).and_return('<button>Close</button>'.html_safe)
       allow(helper).to receive(:icon).and_return('<svg></svg>'.html_safe)
+      allow(helper).to receive(:spree).and_return(double(new_admin_bulk_operation_path: '/admin/bulk_operations/new'))
     end
 
     it 'returns nil when no bulk actions' do
@@ -626,7 +626,7 @@ RSpec.describe Spree::Admin::TableHelper, type: :helper do
     end
 
     it 'renders panel with bulk actions' do
-      table.add_bulk_action(:delete, label: 'Delete', modal_path: '/delete')
+      table.add_bulk_action(:delete, label: 'Delete', action_path: '/delete')
 
       result = helper.render_bulk_actions_panel(table)
 
@@ -635,8 +635,8 @@ RSpec.describe Spree::Admin::TableHelper, type: :helper do
     end
 
     it 'renders first 2 actions as primary' do
-      table.add_bulk_action(:delete, label: 'Delete', modal_path: '/delete', position: 10)
-      table.add_bulk_action(:export, label: 'Export', modal_path: '/export', position: 20)
+      table.add_bulk_action(:delete, label: 'Delete', action_path: '/delete', position: 10)
+      table.add_bulk_action(:export, label: 'Export', action_path: '/export', position: 20)
 
       result = helper.render_bulk_actions_panel(table)
 

@@ -46,7 +46,7 @@ RSpec.describe Spree::Admin::ClassificationsController, type: :controller do
   end
 
   describe 'POST #create' do
-    subject { post :create, params: { taxon_id: taxon.id, product_ids: [product1.id, product2.id], format: :turbo_stream } }
+    subject { post :create, params: { taxon_id: taxon.id, ids: [product1.id, product2.id], format: :turbo_stream } }
 
     it 'creates classifications' do
       expect { subject }.to change(Spree::Classification, :count).by(2)

@@ -7,6 +7,11 @@ en:
       avg_order_value: Avg. Order Value
       back_to_dashboard: Back to dashboard
       bulk_ops:
+        price_list_products:
+          body:
+            remove: Are you sure you want to remove the selected products from this price list? This will also remove their prices.
+          title:
+            remove: Remove from Price List
         products:
           body:
             add_tags: 'Select tags to add to the products:'
@@ -14,11 +19,9 @@ en:
             add_to_taxons: 'Select which taxons to add the products to:'
             remove_from_taxons: 'Select which taxons to remove the products from:'
             remove_tags: 'Select tags to remove from the products:'
-            set_return_rule: Select return rule for products
-            set_status:
-              active: Setting products to active will make those products available on the storefront.
-              archived: Setting products to archived will hide them from storefront.
-              draft: Setting products to draft will hide them from storefront.
+            set_active: Setting products to active will make those products available on the storefront.
+            set_archived: Setting products to archived will hide them from storefront.
+            set_draft: Setting products to draft will hide them from storefront.
           status_updated: Status updated
           title:
             add_tags: Add tags
@@ -27,9 +30,9 @@ en:
             remove_from_brand: Remove from brand
             remove_from_taxons: Remove from taxons
             remove_tags: Remove tags
-            set_return_rule: Set Return Rule
-            set_size_chart: Set Size Chart
-            set_status: Set as %{status}
+            set_active: Set as Active
+            set_archived: Set as Archived
+            set_draft: Set as Draft
         users:
           body:
             add_tags: 'Select tags to add to the customers:'
@@ -191,6 +194,18 @@ en:
         vertical_alignment: Vertical alignment
         youtube_video_url: Youtube video URL
       personal_details: Personal Details
+      price_lists:
+        activate: Activate
+        activated: Price list has been activated
+        confirm_activate: Are you sure you want to activate this price list? It will immediately affect pricing.
+        confirm_deactivate: Are you sure you want to deactivate this price list?
+        confirm_schedule: Are you sure you want to schedule this price list?
+        confirm_unschedule: Are you sure you want to unschedule this price list?
+        deactivate: Deactivate
+        deactivated: Price list has been deactivated
+        schedule: Schedule
+        scheduled: Price list has been scheduled
+        unschedule: Unschedule
       products:
         active: Active
         all_statuses: All statuses

@@ -594,6 +594,69 @@ describe Spree::Variant, type: :model do
         expect(subject.to_s).to eql '£0.00'
       end
     end
+
+    context 'when price exists in a price list' do
+      let(:currency) { 'GBP' }
+      let(:price_list) { create(:price_list) }
+
+      before do
+        create(:price, variant: variant, currency: 'GBP', amount: 50.00, price_list: price_list)
+      end
+
+      it 'does not return price list price' do
+        expect(subject.to_s).to eql '£0.00'
+      end
+
+      context 'when base price also exists' do
+        before do
+          create(:price, variant: variant, currency: 'GBP', amount: 25.00)
+        end
+
+        it 'returns the base price, not the price list price' do
+          expect(subject.to_s).to eql '£25.00'
+        end
+      end
+    end
+  end
+
+  describe '#set_price' do
+    let(:currency) { 'GBP' }
+
+    it 'creates a base price for the currency' do
+      variant.set_price(currency, 25.00)
+
+      price = variant.prices.find_by(currency: currency)
+      expect(price.amount).to eq(25.00)
+      expect(price.price_list_id).to be_nil
+    end
+
+    it 'updates existing base price' do
+      create(:price, variant: variant, currency: currency, amount: 10.00)
+
+      variant.set_price(currency, 30.00)
+
+      expect(variant.prices.where(currency: currency).count).to eq(1)
+      expect(variant.prices.find_by(currency: currency).amount).to eq(30.00)
+    end
+
+    it 'does not update price list price' do
+      price_list = create(:price_list)
+      price_list_price = create(:price, variant: variant, currency: currency, amount: 50.00, price_list: price_list)
+
+      variant.set_price(currency, 25.00)
+
+      expect(variant.prices.where(currency: currency).count).to eq(2)
+      expect(price_list_price.reload.amount).to eq(50.00)
+      expect(variant.prices.base_prices.find_by(currency: currency).amount).to eq(25.00)
+    end
+
+    it 'sets compare_at_amount when provided' do
+      variant.set_price(currency, 25.00, 35.00)
+
+      price = variant.prices.find_by(currency: currency)
+      expect(price.amount).to eq(25.00)
+      expect(price.compare_at_amount).to eq(35.00)
+    end
   end
 
   describe '#on_sale?' do

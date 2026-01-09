@@ -7,7 +7,7 @@
     row_link_url = edit_object_url(record) rescue nil
   end
 %>
-<tr id="<%= dom_id record %>" class="group"<% if sortable %> data-sortable-update-url="<%= edit_object_url(record) %>"<% end %>>
+<tr id="<%= dom_id record %>" class="group"<% if sortable %> data-sortable-update-url="<%= object_url(record) %>"<% end %>>
   <% if sortable %>
     <td class="w-5 move-handle text-center">
       <%= icon('grip-vertical', class: 'rounded-md hover:bg-gray-100 p-2 cursor-grab') %>

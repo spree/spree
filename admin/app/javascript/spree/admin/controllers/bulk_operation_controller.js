@@ -72,7 +72,33 @@ export default class extends CheckboxSelectAll {
   setBulkAction(e) {
     this.formTarget.action = e.target.dataset.url
     if (e.target.dataset.method) {
-      this.formTarget.method = e.target.dataset.method
+      const method = e.target.dataset.method.toLowerCase()
+      // HTML forms only support GET and POST, so use hidden _method field for others
+      if (method === 'get' || method === 'post') {
+        this.formTarget.method = method
+        this.removeMethodInput()
+      } else {
+        this.formTarget.method = 'post'
+        this.setMethodInput(method)
+      }
+    }
+  }
+
+  setMethodInput(method) {
+    let methodInput = this.formTarget.querySelector('input[name="_method"]')
+    if (!methodInput) {
+      methodInput = document.createElement('input')
+      methodInput.type = 'hidden'
+      methodInput.name = '_method'
+      this.formTarget.appendChild(methodInput)
+    }
+    methodInput.value = method
+  }
+
+  removeMethodInput() {
+    const methodInput = this.formTarget.querySelector('input[name="_method"]')
+    if (methodInput) {
+      methodInput.remove()
     }
   }
 }

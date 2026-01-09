@@ -15,8 +15,37 @@ module Spree
       ]
     end
 
+    # Builds a pricing context for a variant with current request context
+    #
+    # @param product_or_variant [Spree::Product, Spree::Variant] The product or variant to build context for
+    # @param options [Hash] Optional overrides for context attributes
+    # @option options [String] :currency Override the currency (defaults to current_currency)
+    # @option options [Spree::Store] :store Override the store (defaults to current_store)
+    # @option options [Spree::Zone] :zone Override the zone (defaults to current_order.tax_zone || current_store.checkout_zone)
+    # @option options [Spree::User] :user Override the user (defaults to try_spree_current_user)
+    # @option options [Integer] :quantity Specify quantity for volume pricing
+    # @option options [Time] :date Specify date for date-based pricing
+    # @option options [Spree::Order] :order Specify the order
+    # @return [Spree::Pricing::Context] The pricing context
+    def pricing_context_for_variant(product_or_variant, **options)
+      variant = product_or_variant.is_a?(Spree::Product) ? product_or_variant.default_variant : product_or_variant
+
+      Spree::Pricing::Context.new(
+        variant: variant,
+        currency: options[:currency] || current_currency,
+        store: options[:store] || current_store,
+        zone: options[:zone] || current_order&.tax_zone || current_store.checkout_zone,
+        user: options[:user] || try_spree_current_user,
+        quantity: options[:quantity],
+        date: options[:date],
+        order: options[:order] || current_order
+      )
+    end
+
     def should_display_compare_at_price?(product_or_variant)
-      price = product_or_variant.price_in(current_currency)
+      variant = product_or_variant.is_a?(Spree::Product) ? product_or_variant.default_variant : product_or_variant
+      context = pricing_context_for_variant(variant)
+      price = variant.price_for(context)
       price.compare_at_amount.present? && (price.compare_at_amount > price.amount)
     end
 

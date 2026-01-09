@@ -79,7 +79,7 @@ RSpec.feature 'Shipping methods', js: true do
 
     visit spree.edit_admin_shipping_method_path(shipping_method)
 
-    accept_confirm do
+    accept_turbo_confirm do
       click_on 'Delete'
     end
 

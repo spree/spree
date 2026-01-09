@@ -4,9 +4,24 @@ module Spree
       class Column
         include ActiveModel::Model
         include ActiveModel::Attributes
+        include Visibility
 
         TYPES = %w[string number date datetime money status link boolean image custom association].freeze
         FILTER_TYPES = %w[string number date datetime money status boolean autocomplete select].freeze
+
+        DEFAULT_OPERATORS = {
+          'string' => %i[eq not_eq cont not_cont start end in not_in null not_null],
+          'number' => %i[eq not_eq gt gteq lt lteq in not_in null not_null],
+          'money' => %i[eq not_eq gt gteq lt lteq in not_in null not_null],
+          'date' => %i[eq not_eq gt gteq lt lteq null not_null],
+          'datetime' => %i[eq not_eq gt gteq lt lteq null not_null],
+          'boolean' => %i[eq],
+          'status' => %i[eq not_eq in not_in],
+          'select' => %i[eq not_eq in not_in],
+          'association' => %i[in not_in],
+          'tags' => %i[in not_in],
+          'autocomplete' => %i[in not_in]
+        }.freeze
 
         attribute :key, :string
         attribute :label
@@ -51,29 +66,10 @@ module Spree
           sort_scope_asc.present? || sort_scope_desc.present?
         end
 
-        # Check if column is visible for the given context
-        def visible?(context = nil)
-          return true if condition.nil?
-
-          if condition.respond_to?(:call)
-            if context&.respond_to?(:instance_exec)
-              context.instance_exec(&condition)
-            else
-              condition.call(context)
-            end
-          else
-            condition
-          end
-        end
-
         # Resolve label (handles i18n keys)
         def resolve_label
-          if label.is_a?(String) && label.present?
-            if label.include?('.')
-              return I18n.t(label, default: label.split('.').last.humanize)
-            end
-            return label
-          end
+          return I18n.t(label, default: label.split('.').last.humanize) if label.is_a?(String) && label.include?('.')
+          return label if label.is_a?(String) && label.present?
 
           key_to_translate = label || key
           Spree.t(key_to_translate, default: key_to_translate.to_s.humanize)
@@ -82,11 +78,7 @@ module Spree
         # Resolve value from record
         def resolve_value(record, context = nil)
           if self.method.respond_to?(:call)
-            if context&.respond_to?(:instance_exec)
-              context.instance_exec(record, &self.method)
-            else
-              self.method.call(record)
-            end
+            context&.respond_to?(:instance_exec) ? context.instance_exec(record, &self.method) : self.method.call(record)
           elsif record.respond_to?(self.method)
             record.send(self.method)
           end
@@ -111,22 +103,7 @@ module Spree
         end
 
         def default_operators_for_type
-          case filter_type
-          when 'string'
-            %i[eq not_eq cont not_cont start end in not_in null not_null]
-          when 'number', 'money'
-            %i[eq not_eq gt gteq lt lteq in not_in null not_null]
-          when 'date', 'datetime'
-            %i[eq not_eq gt gteq lt lteq null not_null]
-          when 'boolean'
-            %i[eq]
-          when 'status', 'select'
-            %i[eq not_eq in not_in]
-          when 'association', 'tags', 'autocomplete'
-            %i[in not_in]
-          else
-            %i[eq not_eq cont null not_null]
-          end
+          DEFAULT_OPERATORS[filter_type] || %i[eq not_eq cont null not_null]
         end
       end
     end

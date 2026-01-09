@@ -130,59 +130,62 @@ Rails.application.config.after_initialize do
 
   # Products bulk actions
   Spree.admin.tables.products.add_bulk_action :set_active,
-                                                    label: 'admin.bulk_ops.products.title.set_status',
-                                                    label_options: { status: :active },
+                                                    label: 'admin.bulk_ops.products.title.set_active',
                                                     icon: 'circle-check',
-                                                    modal_path: '/admin/products/bulk_modal?kind=set_status&status=active',
                                                     action_path: '/admin/products/bulk_status_update?status=active',
+                                                    body: 'admin.bulk_ops.products.body.set_active',
                                                     position: 10,
                                                     condition: -> { can?(:activate, Spree::Product) }
 
   Spree.admin.tables.products.add_bulk_action :set_draft,
-                                                    label: 'admin.bulk_ops.products.title.set_status',
-                                                    label_options: { status: :draft },
+                                                    label: 'admin.bulk_ops.products.title.set_draft',
                                                     icon: 'circle-dotted',
-                                                    modal_path: '/admin/products/bulk_modal?kind=set_status&status=draft',
                                                     action_path: '/admin/products/bulk_status_update?status=draft',
+                                                    body: 'admin.bulk_ops.products.body.set_draft',
                                                     position: 20
 
   Spree.admin.tables.products.add_bulk_action :set_archived,
-                                                    label: 'admin.bulk_ops.products.title.set_status',
-                                                    label_options: { status: :archived },
+                                                    label: 'admin.bulk_ops.products.title.set_archived',
                                                     icon: 'archive',
-                                                    modal_path: '/admin/products/bulk_modal?kind=set_status&status=archived',
                                                     action_path: '/admin/products/bulk_status_update?status=archived',
+                                                    body: 'admin.bulk_ops.products.body.set_archived',
                                                     position: 30
 
   Spree.admin.tables.products.add_bulk_action :add_to_taxons,
                                                     label: 'admin.bulk_ops.products.title.add_to_taxons',
                                                     icon: 'category-plus',
-                                                    modal_path: '/admin/products/bulk_modal?kind=add_to_taxons',
                                                     action_path: '/admin/products/bulk_add_to_taxons',
+                                                    body: 'admin.bulk_ops.products.body.add_to_taxons',
+                                                    form_partial: 'spree/admin/bulk_operations/forms/taxon_picker',
                                                     position: 40,
                                                     condition: -> { can?(:manage, Spree::Classification) }
 
   Spree.admin.tables.products.add_bulk_action :remove_from_taxons,
                                                     label: 'admin.bulk_ops.products.title.remove_from_taxons',
                                                     icon: 'category-minus',
-                                                    modal_path: '/admin/products/bulk_modal?kind=remove_from_taxons',
                                                     action_path: '/admin/products/bulk_remove_from_taxons',
+                                                    body: 'admin.bulk_ops.products.body.remove_from_taxons',
+                                                    form_partial: 'spree/admin/bulk_operations/forms/taxon_picker',
                                                     position: 50,
                                                     condition: -> { can?(:manage, Spree::Classification) }
 
   Spree.admin.tables.products.add_bulk_action :add_tags,
                                                     label: 'admin.bulk_ops.products.title.add_tags',
                                                     icon: 'tag-plus',
-                                                    modal_path: '/admin/products/bulk_modal?kind=add_tags',
                                                     action_path: '/admin/products/bulk_add_tags',
+                                                    body: 'admin.bulk_ops.products.body.add_tags',
+                                                    form_partial: 'spree/admin/bulk_operations/forms/tag_picker',
+                                                    form_partial_locals: { allow_create: true },
                                                     position: 60,
                                                     condition: -> { can?(:manage_tags, Spree::Product) }
 
   Spree.admin.tables.products.add_bulk_action :remove_tags,
                                                     label: 'admin.bulk_ops.products.title.remove_tags',
                                                     icon: 'tag-minus',
-                                                    modal_path: '/admin/products/bulk_modal?kind=remove_tags',
                                                     action_path: '/admin/products/bulk_remove_tags',
+                                                    body: 'admin.bulk_ops.products.body.remove_tags',
+                                                    form_partial: 'spree/admin/bulk_operations/forms/tag_picker',
+                                                    form_partial_locals: { allow_create: false },
                                                     position: 70,
                                                     condition: -> { can?(:manage_tags, Spree::Product) }
 
@@ -536,8 +539,10 @@ Rails.application.config.after_initialize do
   Spree.admin.tables.users.add_bulk_action :add_tags,
                                                  label: 'admin.bulk_ops.users.title.add_tags',
                                                  icon: 'tag-plus',
-                                                 modal_path: '/admin/users/bulk_modal?kind=add_tags',
                                                  action_path: '/admin/users/bulk_add_tags',
+                                                 body: 'admin.bulk_ops.users.body.add_tags',
+                                                 form_partial: 'spree/admin/bulk_operations/forms/tag_picker',
+                                                 form_partial_locals: { allow_create: true },
                                                  method: :post,
                                                  position: 10,
                                                  condition: -> { can?(:manage_tags, Spree.user_class) }
@@ -545,8 +550,10 @@ Rails.application.config.after_initialize do
   Spree.admin.tables.users.add_bulk_action :remove_tags,
                                                  label: 'admin.bulk_ops.users.title.remove_tags',
                                                  icon: 'tag-minus',
-                                                 modal_path: '/admin/users/bulk_modal?kind=remove_tags',
                                                  action_path: '/admin/users/bulk_remove_tags',
+                                                 body: 'admin.bulk_ops.users.body.remove_tags',
+                                                 form_partial: 'spree/admin/bulk_operations/forms/tag_picker',
+                                                 form_partial_locals: { allow_create: false },
                                                  method: :post,
                                                  position: 20,
                                                  condition: -> { can?(:manage_tags, Spree.user_class) }
@@ -1400,4 +1407,126 @@ Rails.application.config.after_initialize do
                                                   filterable: true,
                                                   default: false,
                                                   position: 80
+
+  # ==========================================
+  # Price Lists Table
+  # ==========================================
+  Spree.admin.tables.register(:price_lists, model_class: Spree::PriceList, search_param: :name_cont, row_actions: true, link_to_action: :show)
+
+  Spree.admin.tables.price_lists.add :name,
+                                           label: :name,
+                                           type: :link,
+                                           sortable: true,
+                                           filterable: true,
+                                           default: true,
+                                           position: 10
+
+  Spree.admin.tables.price_lists.add :status,
+                                           label: :status,
+                                           type: :custom,
+                                           filter_type: :select,
+                                           sortable: true,
+                                           filterable: true,
+                                           default: true,
+                                           position: 20,
+                                           partial: 'spree/admin/tables/columns/price_list_status',
+                                           value_options: [
+                                             { value: 'draft', label: 'Draft' },
+                                             { value: 'active', label: 'Active' },
+                                             { value: 'scheduled', label: 'Scheduled' },
+                                             { value: 'inactive', label: 'Inactive' }
+                                           ]
+
+  Spree.admin.tables.price_lists.add :starts_at,
+                                           label: :starts_at,
+                                           type: :datetime,
+                                           sortable: true,
+                                           filterable: true,
+                                           default: true,
+                                           position: 30
+
+  Spree.admin.tables.price_lists.add :ends_at,
+                                           label: :ends_at,
+                                           type: :datetime,
+                                           sortable: true,
+                                           filterable: true,
+                                           default: true,
+                                           position: 40
+
+  Spree.admin.tables.price_lists.add :created_at,
+                                           label: :created_at,
+                                           type: :datetime,
+                                           sortable: true,
+                                           filterable: true,
+                                           default: false,
+                                           position: 50
+
+  Spree.admin.tables.price_lists.add :updated_at,
+                                           label: :updated_at,
+                                           type: :datetime,
+                                           sortable: true,
+                                           filterable: true,
+                                           default: false,
+                                           position: 60
+
+  # ==========================================
+  # Price List Products Table
+  # ==========================================
+  Spree.admin.tables.register(:price_list_products, model_class: Spree::Product, search_param: :multi_search, row_actions: false, new_resource: false)
+
+  Spree.admin.tables.price_list_products.add :name,
+                                                   label: :name,
+                                                   type: :custom,
+                                                   sortable: true,
+                                                   filterable: true,
+                                                   default: true,
+                                                   position: 10,
+                                                   partial: 'spree/admin/tables/columns/product_name'
+
+  Spree.admin.tables.price_list_products.add :status,
+                                                   label: :status,
+                                                   type: :custom,
+                                                   filter_type: :status,
+                                                   sortable: true,
+                                                   filterable: true,
+                                                   default: true,
+                                                   position: 20,
+                                                   partial: 'spree/admin/tables/columns/product_status',
+                                                   ransack_attribute: 'status',
+                                                   value_options: -> { Spree::Product::STATUSES.map { |s| { value: s, label: s.humanize } } }
+
+  Spree.admin.tables.price_list_products.add :inventory,
+                                                   label: :inventory,
+                                                   type: :custom,
+                                                   sortable: false,
+                                                   filterable: false,
+                                                   default: true,
+                                                   position: 30,
+                                                   partial: 'spree/admin/tables/columns/product_inventory'
+
+  Spree.admin.tables.price_list_products.add :created_at,
+                                                   label: :created_at,
+                                                   type: :datetime,
+                                                   sortable: true,
+                                                   filterable: true,
+                                                   default: false,
+                                                   position: 50
+
+  Spree.admin.tables.price_list_products.add :updated_at,
+                                                   label: :updated_at,
+                                                   type: :datetime,
+                                                   sortable: true,
+                                                   filterable: true,
+                                                   default: false,
+                                                   position: 60
+
+  Spree.admin.tables.price_list_products.add_bulk_action :remove_from_price_list,
+                                                               label: 'admin.bulk_ops.price_list_products.title.remove',
+                                                               icon: 'trash',
+                                                               action_path: ->(view_context) { view_context.spree.bulk_destroy_admin_price_list_products_path(view_context.instance_variable_get(:@price_list)) },
+                                                               body: 'admin.bulk_ops.price_list_products.body.remove',
+                                                               button_text: :remove,
+                                                               button_class: 'btn-danger',
+                                                               method: :delete,
+                                                               position: 10
 end

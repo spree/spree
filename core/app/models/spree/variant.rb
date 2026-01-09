@@ -210,6 +210,8 @@ module Spree
       product_name_or_sku_cont(query)
     end
 
+    # Returns the human name of the variant.
+    # @return [String] the human name of the variant
     def human_name
       @human_name ||= option_values.
                       joins(option_type: :product_option_types).
@@ -218,10 +220,14 @@ module Spree
                       pluck(:presentation).join('/')
     end
 
+    # Returns true if the variant is available.
+    # @return [Boolean] true if the variant is available
     def available?
       !discontinued? && product.available?
     end
 
+    # Returns true if the variant is in stock or backorderable.
+    # @return [Boolean] true if the variant is in stock or backorderable
     def in_stock_or_backorderable?
       self.class.in_stock_or_backorderable.exists?(id: id)
     end
@@ -246,15 +252,20 @@ module Spree
                            end
     end
 
+    # Returns the options text of the variant.
+    # @return [String] the options text of the variant
     def options_text
       @options_text ||= Spree::Variants::OptionsPresenter.new(self).to_sentence
     end
 
-    # Default to master name
+    # Returns the exchange name of the variant.
+    # @return [String] the exchange name of the variant
     def exchange_name
       is_master? ? name : options_text
     end
 
+    # Returns the descriptive name of the variant.
+    # @return [String] the descriptive name of the variant
     def descriptive_name
       is_master? ? name + ' - Master' : name + ' - ' + options_text
     end
@@ -308,6 +319,9 @@ module Spree
                    end
     end
 
+    # Sets the option values for the variant
+    # @param options [Array<Hash>] the options to set
+    # @return [void]
     def options=(options = {})
       options.each do |option|
         next if option[:name].blank? || option[:value].blank?
@@ -316,6 +330,11 @@ module Spree
       end
     end
 
+    # Sets the option value for the given option name.
+    # @param opt_name [String] the option name to set the option value for
+    # @param opt_value [String] the option value to set
+    # @param opt_type_position [Integer] the position of the option type
+    # @return [void]
     def set_option_value(opt_name, opt_value, opt_type_position = nil)
       # no option values on master
       return if is_master
@@ -352,10 +371,16 @@ module Spree
       save
     end
 
+    # Returns the option value for the given option name.
+    # @param opt_name [String] the option name to get the option value for
+    # @return [Spree::OptionValue] the option value for the given option name
     def find_option_value(opt_name)
       option_values.includes(:option_type).detect { |o| o.option_type.name.parameterize == opt_name.parameterize }
     end
 
+    # Returns the presentation of the option value for the given option type.
+    # @param option_type [Spree::OptionType] the option type to get the option value for
+    # @return [String] the presentation of the option value for the given option type
     def option_value(option_type)
       if option_type.is_a?(Spree::OptionType)
         option_values.detect { |o| o.option_type_id == option_type.id }.try(:presentation)
@@ -364,13 +389,17 @@ module Spree
       end
     end
 
+    # Returns the base price (global price, not from a price list) for the given currency.
+    # Use price_for(context) when you need to resolve prices including price lists.
+    # @param currency [String] the currency to get the price for
+    # @return [Spree::Price] the base price for the given currency
     def price_in(currency)
       currency = currency&.upcase
 
       price = if prices.loaded? && prices.any?
-                prices.detect { |p| p.currency == currency }
+                prices.detect { |p| p.currency == currency && p.price_list_id.nil? }
               else
-                prices.find_by(currency: currency)
+                prices.base_prices.find_by(currency: currency)
               end
 
       if price.nil?
@@ -388,21 +417,52 @@ module Spree
       )
     end
 
+    # Returns the amount for the given currency.
+    # @param currency [String] the currency to get the amount for
+    # @return [BigDecimal] the amount for the given currency
     def amount_in(currency)
       price_in(currency).try(:amount)
     end
 
+    # Returns the compare at amount for the given currency.
+    # @param currency [String] the currency to get the compare at amount for
+    # @return [BigDecimal] the compare at amount for the given currency
     def compare_at_amount_in(currency)
       price_in(currency).try(:compare_at_amount)
     end
 
+    # Sets the base price (global price, not for a price list) for the given currency.
+    # @param currency [String] the currency to set the price for
+    # @param amount [BigDecimal] the amount to set
+    # @param compare_at_amount [BigDecimal] the compare at amount to set
+    # @return [void]
     def set_price(currency, amount, compare_at_amount = nil)
-      price = prices.find_or_initialize_by(currency: currency)
+      price = prices.base_prices.find_or_initialize_by(currency: currency)
       price.amount = amount
       price.compare_at_amount = compare_at_amount if compare_at_amount.present?
       price.save!
     end
 
+    # Returns the price for the given context or options.
+    # @param context_or_options [Spree::Pricing::Context|Hash] the context or options to get the price for
+    # @return [Spree::Price] the price for the given context or options
+    def price_for(context_or_options)
+      context = if context_or_options.is_a?(Spree::Pricing::Context)
+                  context_or_options
+                elsif context_or_options.is_a?(Hash)
+                  Spree::Pricing::Context.new(**context_or_options.merge(variant: self))
+                else
+                  raise ArgumentError, 'Must provide a Pricing::Context or options hash'
+                end
+
+      Spree::Pricing::Resolver.new(context).resolve
+    end
+
+    # Sets the stock for the variant
+    # @param count_on_hand [Integer] the count on hand
+    # @param backorderable [Boolean] the backorderable flag
+    # @param stock_location [Spree::StockLocation] the stock location to set the stock for
+    # @return [void]
     def set_stock(count_on_hand, backorderable = nil, stock_location = nil)
       stock_location ||= Spree::Store.current.default_stock_location
       stock_item = stock_items.find_or_initialize_by(stock_location: stock_location)
@@ -424,6 +484,9 @@ module Spree
       end.sum
     end
 
+    # Returns the price modifier amount of the variant.
+    # @param options [Hash] the options to get the price modifier amount for
+    # @return [BigDecimal] the price modifier amount of the variant
     def price_modifier_amount(options = {})
       return 0 unless options.present?
 
@@ -437,18 +500,26 @@ module Spree
       end.sum
     end
 
+    # Returns the compare at price of the variant.
+    # @return [BigDecimal] the compare at price of the variant
     def compare_at_price
       @compare_at_price ||= price_in(cost_currency).try(:compare_at_amount)
     end
 
+    # Returns the name and sku of the variant.
+    # @return [String] the name and sku of the variant
     def name_and_sku
       "#{name} - #{sku}"
     end
 
+    # Returns the sku and options text of the variant.
+    # @return [String] the sku and options text of the variant
     def sku_and_options_text
       "#{sku} #{options_text}".strip
     end
 
+    # Returns true if the variant is in stock.
+    # @return [Boolean] true if the variant is in stock
     def in_stock?
       @in_stock ||= if association(:stock_items).loaded? && association(:stock_locations).loaded?
                       total_on_hand.positive?
@@ -459,6 +530,8 @@ module Spree
                     end
     end
 
+    # Returns true if the variant is backorderable.
+    # @return [Boolean] true if the variant is backorderable
     def backorderable?
       @backorderable ||= Rails.cache.fetch(['variant-backorderable', cache_key_with_version]) do
         quantifier.backorderable?
