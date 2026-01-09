@@ -43,7 +43,7 @@ module Spree
 
     has_secure_token :token, length: 35
 
-    MEMOIZED_METHODS = %w(tax_zone)
+    MEMOIZED_METHODS = %w(tax_zone coupon_code)
 
     money_methods :outstanding_balance, :item_total,           :adjustment_total,
                   :included_tax_total,  :additional_tax_total, :tax_total,
