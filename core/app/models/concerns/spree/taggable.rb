@@ -18,6 +18,14 @@ module Spree
         # Include instance methods
         include Spree::Taggable::InstanceMethods
 
+        # Add general taggings association (all contexts)
+        unless reflect_on_association(:taggings)
+          has_many :taggings,
+                   as: :taggable,
+                   class_name: 'Spree::Tagging',
+                   dependent: :destroy
+        end
+
         # Setup associations and methods for each tag type
         tag_types.each do |tag_type|
           setup_taggable(tag_type)
