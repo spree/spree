@@ -194,6 +194,18 @@ en:
         vertical_alignment: Vertical alignment
         youtube_video_url: Youtube video URL
       personal_details: Personal Details
+      price_lists:
+        activate: Activate
+        activated: Price list has been activated
+        confirm_activate: Are you sure you want to activate this price list? It will immediately affect pricing.
+        confirm_deactivate: Are you sure you want to deactivate this price list?
+        confirm_schedule: Are you sure you want to schedule this price list?
+        confirm_unschedule: Are you sure you want to unschedule this price list?
+        deactivate: Deactivate
+        deactivated: Price list has been deactivated
+        schedule: Schedule
+        scheduled: Price list has been scheduled
+        unschedule: Unschedule
       products:
         active: Active
         all_statuses: All statuses

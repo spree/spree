@@ -14,6 +14,25 @@ module Spree
                   order("#{Spree::Product.table_name}.name ASC", "#{Spree::Variant.table_name}.position ASC")
       end
 
+      # PUT /admin/price_lists/:id/activate
+      def activate
+        if @price_list.starts_at.present?
+          @price_list.schedule!
+          flash[:success] = Spree.t('admin.price_lists.scheduled')
+        else
+          @price_list.activate!
+          flash[:success] = Spree.t('admin.price_lists.activated')
+        end
+        redirect_to spree.admin_price_list_path(@price_list)
+      end
+
+      # PUT /admin/price_lists/:id/deactivate
+      def deactivate
+        @price_list.deactivate!
+        flash[:success] = Spree.t('admin.price_lists.deactivated')
+        redirect_to spree.admin_price_list_path(@price_list)
+      end
+
       private
 
       def location_after_save

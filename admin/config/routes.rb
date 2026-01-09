@@ -45,6 +45,8 @@ Spree::Core::Engine.add_routes do
       end
       member do
         get :edit_prices
+        put :activate
+        put :deactivate
       end
     end
     # taxonomies and taxons

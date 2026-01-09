@@ -170,4 +170,99 @@ RSpec.describe Spree::Admin::PriceListsController, type: :controller do
       end
     end
   end
+
+  describe 'PUT #activate' do
+    subject(:activate) { put :activate, params: { id: price_list.id } }
+
+    context 'when price list has no starts_at' do
+      let(:price_list) { create(:price_list, store: store, status: 'draft', starts_at: nil) }
+
+      it 'activates the price list' do
+        activate
+        price_list.reload
+
+        expect(price_list.status).to eq('active')
+      end
+
+      it 'redirects to show page with success message' do
+        activate
+
+        expect(response).to redirect_to(spree.admin_price_list_path(price_list))
+        expect(flash[:success]).to eq(Spree.t('admin.price_lists.activated'))
+      end
+    end
+
+    context 'when price list has starts_at' do
+      let(:price_list) { create(:price_list, store: store, status: 'draft', starts_at: 1.day.from_now) }
+
+      it 'schedules the price list' do
+        activate
+        price_list.reload
+
+        expect(price_list.status).to eq('scheduled')
+      end
+
+      it 'redirects to show page with scheduled message' do
+        activate
+
+        expect(response).to redirect_to(spree.admin_price_list_path(price_list))
+        expect(flash[:success]).to eq(Spree.t('admin.price_lists.scheduled'))
+      end
+    end
+
+    context 'when price list is inactive' do
+      let(:price_list) { create(:price_list, store: store, status: 'inactive', starts_at: nil) }
+
+      it 'reactivates the price list' do
+        activate
+        price_list.reload
+
+        expect(price_list.status).to eq('active')
+      end
+    end
+
+    context 'when price list is inactive with starts_at' do
+      let(:price_list) { create(:price_list, store: store, status: 'inactive', starts_at: 1.day.from_now) }
+
+      it 'schedules the price list' do
+        activate
+        price_list.reload
+
+        expect(price_list.status).to eq('scheduled')
+      end
+    end
+  end
+
+  describe 'PUT #deactivate' do
+    subject(:deactivate) { put :deactivate, params: { id: price_list.id } }
+
+    context 'when price list is active' do
+      let(:price_list) { create(:price_list, store: store, status: 'active') }
+
+      it 'deactivates the price list' do
+        deactivate
+        price_list.reload
+
+        expect(price_list.status).to eq('inactive')
+      end
+
+      it 'redirects to show page with success message' do
+        deactivate
+
+        expect(response).to redirect_to(spree.admin_price_list_path(price_list))
+        expect(flash[:success]).to eq(Spree.t('admin.price_lists.deactivated'))
+      end
+    end
+
+    context 'when price list is scheduled' do
+      let(:price_list) { create(:price_list, store: store, status: 'scheduled', starts_at: 1.day.from_now) }
+
+      it 'deactivates the price list' do
+        deactivate
+        price_list.reload
+
+        expect(price_list.status).to eq('inactive')
+      end
+    end
+  end
 end
