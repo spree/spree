@@ -565,6 +565,30 @@ describe Spree::LineItem, type: :model do
     end
   end
 
+  describe '#should_update_price?' do
+    let(:variant) { create(:variant, price: 10) }
+    let(:order) { create(:order, store: store) }
+    let(:line_item) { create(:line_item, order: order, variant: variant) }
+
+    context 'when order is not completed' do
+      it 'returns true' do
+        expect(order.completed?).to be false
+        expect(line_item.send(:should_update_price?)).to be true
+      end
+    end
+
+    context 'when order is completed' do
+      before do
+        order.update_column(:completed_at, Time.current)
+      end
+
+      it 'returns false' do
+        expect(order.completed?).to be true
+        expect(line_item.send(:should_update_price?)).to be false
+      end
+    end
+  end
+
   describe '#recalculate_price' do
     let(:variant) { create(:variant, price: 10) }
     let(:order) { create(:order, store: store) }
@@ -594,6 +618,22 @@ describe Spree::LineItem, type: :model do
         line_item.update!(quantity: 50)
         expect(line_item.reload.price).to eq(10.00)
         expect(line_item.price_list_id).to be_nil
+      end
+
+      context 'when order is completed' do
+        before do
+          order.update_column(:completed_at, Time.current)
+        end
+
+        it 'does not update price when quantity changes' do
+          original_price = line_item.price
+          original_price_list_id = line_item.price_list_id
+
+          line_item.update!(quantity: 120)
+
+          expect(line_item.reload.price).to eq(original_price)
+          expect(line_item.price_list_id).to eq(original_price_list_id)
+        end
       end
     end
 

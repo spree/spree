@@ -97,16 +97,25 @@ module Spree
       price - (promo_total.abs / quantity)
     end
 
+    # Returns the amount (price * quantity) of the line item
+    #
+    # @return [BigDecimal]
     def amount
       price * quantity
     end
 
+    # Returns the compare at amount (compare at price * quantity) of the line item
+    #
+    # @return [BigDecimal]
     def compare_at_amount
       (variant.compare_at_amount_in(currency) || 0) * quantity
     end
 
     alias subtotal amount
 
+    # Returns the taxable amount (amount + taxable adjustment total) of the line item
+    #
+    # @return [BigDecimal]
     def taxable_amount
       amount + taxable_adjustment_total
     end
@@ -121,6 +130,9 @@ module Spree
     alias discounted_money display_discounted_amount
     alias discounted_amount taxable_amount
 
+    # Returns the final amount of the line item
+    #
+    # @return [BigDecimal]
     def final_amount
       amount + adjustment_total
     end
@@ -135,10 +147,16 @@ module Spree
     alias total final_amount
     alias money display_total
 
+    # Returns true if the line item has sufficient stock
+    #
+    # @return [Boolean]
     def sufficient_stock?
       can_supply? quantity
     end
 
+    # Returns true if the line item has insufficient stock
+    #
+    # @return [Boolean]
     def insufficient_stock?
       !sufficient_stock?
     end
@@ -202,6 +220,9 @@ module Spree
       @maximum_quantity ||= variant.backorderable? ? Spree::DatabaseTypeUtilities.maximum_value_for(:integer) : variant.total_on_hand
     end
 
+    # Returns true if the line item variant has digital assets
+    #
+    # @return [Boolean]
     def with_digital_assets?
       variant.with_digital_assets?
     end
@@ -241,10 +262,18 @@ module Spree
 
     def update_adjustments
       if saved_change_to_quantity?
-        recalculate_price unless previously_new_record?
+        recalculate_price if should_update_price? && !previously_new_record?
         recalculate_adjustments
         update_tax_charge # Called to ensure pre_tax_amount is updated.
       end
+    end
+
+    # Returns true if the price should be updated when quantity changes
+    # Override this method to customize when prices should be recalculated
+    # By default, prices are not updated after an order is completed
+    # @return [Boolean]
+    def should_update_price?
+      !order.completed?
     end
 
     def recalculate_price
