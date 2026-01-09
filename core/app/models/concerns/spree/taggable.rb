@@ -4,8 +4,8 @@ module Spree
 
     class_methods do
       # Macro to define tagging on specific contexts
-      # Example: acts_as_taggable_on :tags, :labels
-      def acts_as_taggable_on(*tag_types)
+      # Example: spree_taggable_on :tags, :labels
+      def spree_taggable_on(*tag_types)
         tag_types = tag_types.to_a.flatten.compact.map(&:to_sym)
 
         class_attribute :tag_types unless respond_to?(:tag_types)
@@ -28,9 +28,29 @@ module Spree
       end
 
       # Macro to set tenant column for multi-tenancy support
-      # Example: acts_as_taggable_tenant :store_id
-      def acts_as_taggable_tenant(tenant_column)
+      # Example: spree_taggable_tenant :store_id
+      def spree_taggable_tenant(tenant_column)
         self.taggable_tenant_column = tenant_column.to_sym
+      end
+
+      # @deprecated Use {#spree_taggable_on} instead. This method will be removed in Spree 5.5.
+      def acts_as_taggable_on(*tag_types)
+        Spree::Deprecation.warn(
+          'acts_as_taggable_on is deprecated and will be removed in Spree 5.5. ' \
+          'Please use spree_taggable_on instead.',
+          caller
+        )
+        spree_taggable_on(*tag_types)
+      end
+
+      # @deprecated Use {#spree_taggable_tenant} instead. This method will be removed in Spree 5.5.
+      def acts_as_taggable_tenant(tenant_column)
+        Spree::Deprecation.warn(
+          'acts_as_taggable_tenant is deprecated and will be removed in Spree 5.5. ' \
+          'Please use spree_taggable_tenant instead.',
+          caller
+        )
+        spree_taggable_tenant(tenant_column)
       end
 
       private

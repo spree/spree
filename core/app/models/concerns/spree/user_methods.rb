@@ -25,7 +25,7 @@ module Spree
 
       has_person_name
       auto_strip_attributes :email, :first_name, :last_name
-      acts_as_taggable_on :tags
+      spree_taggable_on :tags
 
       #
       # Associations

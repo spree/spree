@@ -23,7 +23,7 @@ module Spree
     include Spree::Taggable
 
     acts_as_paranoid
-    acts_as_taggable_on :tags, :labels
+    spree_taggable_on :tags, :labels
     auto_strip_attributes :name
 
     include Spree::ProductScopes
