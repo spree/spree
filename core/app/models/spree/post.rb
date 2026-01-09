@@ -2,14 +2,15 @@ module Spree
   class Post < Spree.base_class
     include Spree::SingleStoreResource
     include Spree::Metafields
+    include Spree::Taggable
     extend FriendlyId
 
     publishes_lifecycle_events
 
     friendly_id :slug_candidates, use: %i[slugged scoped history], scope: %i[store_id deleted?]
     acts_as_paranoid
-    acts_as_taggable_on :tags
-    acts_as_taggable_tenant :store_id
+    spree_taggable_on :tags
+    spree_taggable_tenant :store_id
 
     if defined?(PgSearch)
       include PgSearch::Model

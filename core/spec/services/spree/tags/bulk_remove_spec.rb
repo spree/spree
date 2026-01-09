@@ -15,11 +15,11 @@ module Spree
       end
 
       it 'removes taggings for each product-tag pair' do
-        expect { subject }.to change { ActsAsTaggableOn::Tagging.count }.by(-(products.size * tag_names.size))
+        expect { subject }.to change { Spree::Tagging.count }.by(-(products.size * tag_names.size))
       end
 
       it 'does not remove tags' do
-        expect { subject }.not_to change { ActsAsTaggableOn::Tag.count }
+        expect { subject }.not_to change { Spree::Tag.count }
       end
 
       it 'removes correct taggings' do

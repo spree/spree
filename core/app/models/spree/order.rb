@@ -41,6 +41,8 @@ module Spree
       include Spree::VendorConcern
     end
 
+    include Spree::Taggable
+
     has_secure_token :token, length: 35
 
     MEMOIZED_METHODS = %w(tax_zone)
@@ -94,8 +96,8 @@ module Spree
 
     attribute :state_machine_resumed, :boolean
 
-    acts_as_taggable_on :tags
-    acts_as_taggable_tenant :store_id
+    spree_taggable_on :tags
+    spree_taggable_tenant :store_id
 
     ASSOCIATED_USER_ATTRIBUTES = [:user_id, :email, :created_by_id, :bill_address_id, :ship_address_id]
 
