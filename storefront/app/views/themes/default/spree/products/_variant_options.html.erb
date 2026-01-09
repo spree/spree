@@ -32,8 +32,8 @@
     <% end %>
   <% end %>
   <% if option_type.color? %>
-    <li>
-      <label class="cursor-pointer">
+    <li role="option" aria-label="<%= value.presentation %>">
+      <label class="cursor-pointer"  aria-label="<%= value.presentation %>">
         <%= radio_button_tag option_type.presentation, value.name, selected_option == value,
           name: option_type.presentation,
           id: "product-option-#{product.id}-#{position}-#{index}",
@@ -56,10 +56,14 @@
         option_id: option_type.id
       },
       name: option_type.presentation,
+      role: 'menuitemradio',
+      aria: { label: value.presentation },
       id: "product-option-#{product.id}-#{position}-#{index}"
     %>
     <label
       for='product-option-<%= product.id %>-<%= position %>-<%= index %>'
+      role="menuitem"
+      aria-label="<%= value.presentation %>"
       class='text-sm cursor-pointer flex items-center justify-between px-4 py-2.5 hover:bg-accent focus:outline-hidden focus:bg-accent transition duration-150 ease-in-out <%= option_disabled ? "opacity-50 cursor-not-allowed" : "hover:bg-accent" %>'
     >
       <p><%=h value.presentation %></p>

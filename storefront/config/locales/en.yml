@@ -59,6 +59,8 @@ en:
         join: Email me about new products, sales, and more. You can unsubscribe at any time.
         status: You are currently %{status} to the newsletters.
       products:
+        decrease_quantity: Decrease quantity
+        increase_quantity: Increase quantity
         pinch_to_zoom_html: Pinch to<br>zoom
         primary_image: primary image
         secondary_image: secondary image
