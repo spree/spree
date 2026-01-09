@@ -94,6 +94,7 @@ module Spree
       preference :show_products_without_price, :boolean, default: false
       preference :show_raw_product_description, :boolean, deprecated: true
       preference :tax_using_ship_address, :boolean, default: true
+      preference :timezones, :array, default: [:store]
       preference :title_site_name_separator, :string, deprecated: true
       preference :track_inventory_levels, :boolean, default: true # Determines whether to track on_hand values for variants / products.
       preference :use_user_locale, :boolean, default: true

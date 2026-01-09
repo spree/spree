@@ -48,10 +48,10 @@ module Spree
         @orders_average_growth_rate = calc_growth_rate(orders_avg, previous_orders_average)
 
         @grouped_orders_scope = if same_day?
-                                  @orders_scope.group_by_hour(:completed_at, range: analytics_time_range, time_zone: current_store.preferred_timezone,
+                                  @orders_scope.group_by_hour(:completed_at, range: analytics_time_range, time_zone: current_timezone,
                                                                              default_value: 0.0)
                                 else
-                                  @orders_scope.group_by_day(:completed_at, range: analytics_time_range, time_zone: current_store.preferred_timezone,
+                                  @orders_scope.group_by_day(:completed_at, range: analytics_time_range, time_zone: current_timezone,
                                                                             default_value: 0.0)
                                 end
 
@@ -123,10 +123,10 @@ module Spree
         @audience_growth_rate = calc_growth_rate(@audience_total, previous_audience_total)
 
         @audience = if same_day?
-                      @audience_scope.group_by_hour(:created_at, range: analytics_time_range, time_zone: current_store.preferred_timezone,
+                      @audience_scope.group_by_hour(:created_at, range: analytics_time_range, time_zone: current_timezone,
                                                                  default_value: 0)
                     else
-                      @audience_scope.group_by_day(:created_at, range: analytics_time_range, time_zone: current_store.preferred_timezone,
+                      @audience_scope.group_by_day(:created_at, range: analytics_time_range, time_zone: current_timezone,
                                                                 default_value: 0)
                     end
 
@@ -138,10 +138,10 @@ module Spree
         @visits_growth_rate = calc_growth_rate(@visits_total, previous_visits_total)
 
         @visits = if same_day?
-                    @visits_scope.group_by_hour(:started_at, range: analytics_time_range, time_zone: current_store.preferred_timezone,
+                    @visits_scope.group_by_hour(:started_at, range: analytics_time_range, time_zone: current_timezone,
                                                              default_value: 0)
                   else
-                    @visits_scope.group_by_day(:started_at, range: analytics_time_range, time_zone: current_store.preferred_timezone,
+                    @visits_scope.group_by_day(:started_at, range: analytics_time_range, time_zone: current_timezone,
                                                             default_value: 0)
                   end
 
