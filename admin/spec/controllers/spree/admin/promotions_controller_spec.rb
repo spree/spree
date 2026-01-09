@@ -149,7 +149,7 @@ RSpec.describe Spree::Admin::PromotionsController, type: :controller do
   describe 'PATCH #update' do
     before do
       allow(controller).to receive(:current_timezone).and_return('Europe/Warsaw')
-      Timecop.freeze('2026-01-01 00:00:00')
+      Timecop.freeze('2014-05-01 00:00:00')
     end
 
     after do
@@ -167,7 +167,7 @@ RSpec.describe Spree::Admin::PromotionsController, type: :controller do
     it 'saves datetime in the correct timezone' do
       patch :update, params: { id: promotion.id, promotion: promotion_params.merge(starts_at: '2026-01-01 00:00:00') }
 
-      expect(promotion.reload.starts_at.iso8601).to eq('2026-01-01T00:00:00+01:00')
+      expect(promotion.reload.starts_at.utc.iso8601).to eq('2025-12-31T23:00:00Z')
     end
 
     it 'redirects to the edit page' do
