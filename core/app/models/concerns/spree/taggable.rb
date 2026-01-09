@@ -136,13 +136,17 @@ module Spree
           tag_ids = Spree::Tag.named_any(tag_names).pluck(:id)
           return none if tag_ids.empty?
 
+          # Use unique alias to support chaining multiple tagged_with calls
+          tagging_alias = "tagging_#{context}_#{tag_ids.hash.abs}"
           tagging_table = connection.quote_table_name(Spree::Tagging.table_name)
+          tagging_alias_quoted = connection.quote_table_name(tagging_alias)
           model_table = connection.quote_table_name(table_name)
           model_pk = connection.quote_column_name(primary_key)
           model_name = connection.quote(name)
+          context_quoted = connection.quote(context)
 
-          joins("INNER JOIN #{tagging_table} ON #{tagging_table}.taggable_id = #{model_table}.#{model_pk} AND #{tagging_table}.taggable_type = #{model_name}")
-            .where(Spree::Tagging.table_name => { tag_id: tag_ids, context: context })
+          # Put all conditions in JOIN to avoid WHERE conflicts when chaining
+          joins("INNER JOIN #{tagging_table} #{tagging_alias_quoted} ON #{tagging_alias_quoted}.taggable_id = #{model_table}.#{model_pk} AND #{tagging_alias_quoted}.taggable_type = #{model_name} AND #{tagging_alias_quoted}.context = #{context_quoted} AND #{tagging_alias_quoted}.tag_id IN (#{tag_ids.join(',')})")
             .distinct
         end
 
@@ -151,15 +155,29 @@ module Spree
           tag_ids = Spree::Tag.named_any(tag_names).pluck(:id)
           return none if tag_ids.empty? || tag_ids.size < tag_names.size
 
+          # Use unique alias to support chaining multiple tagged_with calls
+          tagging_alias = "tagging_#{context}_#{tag_ids.hash.abs}"
           tagging_table = connection.quote_table_name(Spree::Tagging.table_name)
+          tagging_alias_quoted = connection.quote_table_name(tagging_alias)
           model_table = connection.quote_table_name(table_name)
           model_pk = connection.quote_column_name(primary_key)
           model_name = connection.quote(name)
+          context_quoted = connection.quote(context)
 
-          joins("INNER JOIN #{tagging_table} ON #{tagging_table}.taggable_id = #{model_table}.#{model_pk} AND #{tagging_table}.taggable_type = #{model_name}")
-            .where(Spree::Tagging.table_name => { tag_id: tag_ids, context: context })
-            .group("#{model_table}.#{model_pk}")
-            .having("COUNT(DISTINCT #{tagging_table}.tag_id) = ?", tag_names.size)
+          if tag_names.size == 1
+            # Single tag: simple join with all conditions in ON clause
+            joins("INNER JOIN #{tagging_table} #{tagging_alias_quoted} ON #{tagging_alias_quoted}.taggable_id = #{model_table}.#{model_pk} AND #{tagging_alias_quoted}.taggable_type = #{model_name} AND #{tagging_alias_quoted}.context = #{context_quoted} AND #{tagging_alias_quoted}.tag_id = #{tag_ids.first}")
+              .distinct
+          else
+            # Multiple tags: need subquery to find records with ALL tags
+            subquery = Spree::Tagging
+              .select(:taggable_id)
+              .where(taggable_type: name, context: context, tag_id: tag_ids)
+              .group(:taggable_id)
+              .having("COUNT(DISTINCT tag_id) = ?", tag_names.size)
+
+            where(id: subquery)
+          end
         end
 
         # Scope to exclude records tagged with given tags
