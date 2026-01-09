@@ -7,24 +7,7 @@
   <div class="col-span-12 lg:col-span-8">
     <%= render 'rules' %>
     <div class="card mb-6">
-      <div class="card-header flex justify-between items-center border-gray-200 pr-3">
-        <h5 class="card-title flex items-center gap-2">
-          <%= Spree.t(:products) %>
-          <span class="badge badge-info" id="products_count"><%= @price_list.products.distinct.count %></span>
-        </h5>
-        <div class="flex gap-2">
-          <%= link_to Spree.t(:add_products),
-              spree.bulk_new_admin_price_list_products_path(@price_list),
-              class: 'btn btn-sm btn-light',
-              data: { action: 'drawer#open', turbo_frame: :drawer } %>
-          <% if @price_list.prices.any? %>
-            <%= link_to Spree.t(:edit_prices),
-                spree.edit_prices_admin_price_list_path(@price_list),
-                class: 'btn btn-sm btn-primary',
-                data: { turbo_frame: '_top' } %>
-          <% end %>
-        </div>
-      </div>
+      <%= render 'products_header' %>
       <%= turbo_frame_tag :price_list_products, src: spree.admin_price_list_products_path(@price_list) do %>
         <%= render 'spree/admin/shared/spinner' %>
       <% end %>
