@@ -5,11 +5,9 @@ class CreateSpreePriceRules < ActiveRecord::Migration[7.0]
       t.string :type, null: false
       t.text :preferences
       t.timestamps
-      t.datetime :deleted_at
     end
 
     add_index :spree_price_rules, [:price_list_id, :type]
     add_index :spree_price_rules, :type
-    add_index :spree_price_rules, :deleted_at
   end
 end
