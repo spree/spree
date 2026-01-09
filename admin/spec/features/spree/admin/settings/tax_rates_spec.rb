@@ -84,7 +84,7 @@ RSpec.feature 'Tax Rates', js: true do
     click_on 'Edit'
     wait_for_turbo
 
-    accept_confirm do
+    accept_turbo_confirm do
       click_on 'Delete'
     end
 

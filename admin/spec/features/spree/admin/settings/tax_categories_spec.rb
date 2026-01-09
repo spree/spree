@@ -64,7 +64,7 @@ RSpec.feature 'Tax categories' do
     click_on 'Edit'
     wait_for_turbo
 
-    accept_confirm do
+    accept_turbo_confirm do
       click_on 'Delete'
     end
 

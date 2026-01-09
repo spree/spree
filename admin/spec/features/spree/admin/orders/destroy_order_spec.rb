@@ -11,9 +11,9 @@ describe 'Destroy Order Spec', type: :feature, js: true do
       visit spree.edit_admin_order_path(order)
       within('#page_actions_dropdown') do
         click_on 'more-actions-link'
-        accept_confirm do
-          click_on 'Delete'
-        end
+      end
+      accept_turbo_confirm do
+        click_on 'Delete'
       end
 
       expect(page).to have_content('Order has been successfully removed!')

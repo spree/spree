@@ -16,6 +16,7 @@ import "mapkick/bundle"
 // Helpers
 import 'spree/admin/helpers/tinymce'
 import 'spree/admin/helpers/trix/video_embed'
+import 'spree/admin/helpers/turbo_confirm'
 
 // Stimulus controllers
 import { Application } from "@hotwired/stimulus"
