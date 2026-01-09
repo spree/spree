@@ -44,7 +44,6 @@ module Spree
       def edit_object_url(object, options = {})
         spree.edit_admin_product_path(object, options)
       end
-
     end
   end
 end

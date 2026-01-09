@@ -10,9 +10,7 @@ module Spree
 
         attribute :key
         attribute :label
-        attribute :label_options, default: -> { {} }
         attribute :icon, :string
-        attribute :modal_path
         attribute :action_path
         attribute :position, :integer, default: 999
         attribute :condition
@@ -21,11 +19,11 @@ module Spree
 
         # Modal content attributes - used by generic bulk_modal action
         attribute :title
-        attribute :title_options, default: -> { {} }
         attribute :body
-        attribute :body_options, default: -> { {} }
         attribute :form_partial, :string
         attribute :form_partial_locals, default: -> { {} }
+        attribute :button_text
+        attribute :button_class, :string, default: 'btn-primary'
 
         validates :key, presence: true
         validates :method, presence: true, inclusion: { in: METHODS }
@@ -41,21 +39,28 @@ module Spree
         # Resolve label (handles i18n keys)
         # @return [String]
         def resolve_label
-          resolve_i18n_attribute(label || key, label_options, key.to_s) || key.to_s.humanize
+          resolve_i18n_attribute(label || key, key.to_s) || key.to_s.humanize
         end
 
         # Resolve title for modal dialog (handles i18n keys)
         # Falls back to label if title is not set
         # @return [String]
         def resolve_title
-          resolve_i18n_attribute(title, title_options, "#{key}.title") ||
-            resolve_i18n_attribute(label, label_options, key.to_s)
+          resolve_i18n_attribute(title, "#{key}.title") ||
+            resolve_i18n_attribute(label, key.to_s)
         end
 
         # Resolve body for modal dialog (handles i18n keys)
         # @return [String]
         def resolve_body
-          resolve_i18n_attribute(body, body_options, "#{key}.body")
+          resolve_i18n_attribute(body, "#{key}.body")
+        end
+
+        # Resolve button text for modal dialog (handles i18n keys)
+        # Falls back to 'Confirm' if not set
+        # @return [String]
+        def resolve_button_text
+          resolve_i18n_attribute(button_text, "#{key}.button") || Spree.t(:confirm)
         end
 
         # Deep clone the action
@@ -70,18 +75,18 @@ module Spree
 
         private
 
-        def resolve_i18n_attribute(value, options, default_key)
+        def resolve_i18n_attribute(value, default_key)
           return nil if value.blank?
 
           case value
           when Symbol
-            Spree.t(value, **options)
+            Spree.t(value)
           when /\Aadmin\./
-            Spree.t(value, **options.merge(default: default_key.to_s.humanize))
+            Spree.t(value, default: default_key.to_s.humanize)
           when String
             value
           else
-            Spree.t(default_key, scope: 'admin.bulk_ops', default: default_key.to_s.humanize, **options)
+            Spree.t(default_key, scope: 'admin.bulk_ops', default: default_key.to_s.humanize)
           end
         end
       end

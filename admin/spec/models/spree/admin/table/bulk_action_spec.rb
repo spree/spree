@@ -8,7 +8,7 @@ RSpec.describe Spree::Admin::Table::BulkAction do
       expect(action.key).to eq(:delete)
       expect(action.position).to eq(999)
       expect(action.method).to eq(:put)
-      expect(action.label_options).to eq({})
+      expect(action.button_class).to eq('btn-primary')
     end
 
     it 'accepts custom options' do
@@ -16,7 +16,6 @@ RSpec.describe Spree::Admin::Table::BulkAction do
         key: :export,
         label: 'Export Products',
         icon: 'download',
-        modal_path: '/admin/exports/new',
         action_path: '/admin/exports',
         position: 10,
         method: :post
@@ -24,7 +23,6 @@ RSpec.describe Spree::Admin::Table::BulkAction do
 
       expect(action.label).to eq('Export Products')
       expect(action.icon).to eq('download')
-      expect(action.modal_path).to eq('/admin/exports/new')
       expect(action.action_path).to eq('/admin/exports')
       expect(action.position).to eq(10)
       expect(action.method).to eq(:post)
@@ -123,11 +121,34 @@ RSpec.describe Spree::Admin::Table::BulkAction do
       action = described_class.new(key: :delete_selected)
       expect(action.resolve_label).to include('Delete')
     end
+  end
 
-    it 'supports label_options' do
-      action = described_class.new(key: :delete, label: :delete_count, label_options: { count: 5 })
-      # Translation with options
-      expect(action.resolve_label).to be_a(String)
+  describe '#resolve_button_text' do
+    it 'returns string button_text directly' do
+      action = described_class.new(key: :delete, button_text: 'Remove Items')
+      expect(action.resolve_button_text).to eq('Remove Items')
+    end
+
+    it 'translates symbol button_text' do
+      action = described_class.new(key: :delete, button_text: :remove)
+      expect(action.resolve_button_text).to be_a(String)
+    end
+
+    it 'falls back to Confirm when not set' do
+      action = described_class.new(key: :delete)
+      expect(action.resolve_button_text).to eq(Spree.t(:confirm))
+    end
+  end
+
+  describe '#button_class' do
+    it 'defaults to btn-primary' do
+      action = described_class.new(key: :delete)
+      expect(action.button_class).to eq('btn-primary')
+    end
+
+    it 'can be customized' do
+      action = described_class.new(key: :delete, button_class: 'btn-danger')
+      expect(action.button_class).to eq('btn-danger')
     end
   end
 
@@ -137,7 +158,6 @@ RSpec.describe Spree::Admin::Table::BulkAction do
         key: :delete,
         label: 'Delete',
         icon: 'trash',
-        modal_path: '/modal',
         action_path: '/action',
         position: 10,
         confirm: 'Are you sure?',
@@ -148,7 +168,6 @@ RSpec.describe Spree::Admin::Table::BulkAction do
       expect(attrs['key']).to eq(:delete)
       expect(attrs['label']).to eq('Delete')
       expect(attrs['icon']).to eq('trash')
-      expect(attrs['modal_path']).to eq('/modal')
       expect(attrs['action_path']).to eq('/action')
       expect(attrs['position']).to eq(10)
       expect(attrs['confirm']).to eq('Are you sure?')

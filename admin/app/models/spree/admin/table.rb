@@ -1,12 +1,13 @@
 module Spree
   module Admin
     class Table
-      attr_reader :columns, :bulk_actions, :context, :model_class
+      attr_reader :columns, :bulk_actions, :context, :model_class, :key
       attr_accessor :search_param, :search_placeholder, :row_actions, :row_actions_edit, :row_actions_delete, :new_resource,
                     :date_range_param, :date_range_label, :link_to_action
 
-      def initialize(context, model_class: nil, search_param: :name_cont, search_placeholder: nil, row_actions: false, row_actions_edit: true, row_actions_delete: false, new_resource: true, date_range_param: nil, date_range_label: nil, link_to_action: :edit)
+      def initialize(context, key: nil, model_class: nil, search_param: :name_cont, search_placeholder: nil, row_actions: false, row_actions_edit: true, row_actions_delete: false, new_resource: true, date_range_param: nil, date_range_label: nil, link_to_action: :edit)
         @context = context
+        @key = key
         @model_class = model_class
         @columns = {}
         @bulk_actions = {}
@@ -196,7 +197,7 @@ module Spree
 
       # Add a bulk action definition
       # @param key [Symbol] unique action identifier
-      # @param options [Hash] action options (label, icon, modal_path, action_path, position, etc.)
+      # @param options [Hash] action options (label, icon, action_path, position, etc.)
       # @return [BulkAction] the created action
       # @raise [ArgumentError] if action configuration is invalid
       def add_bulk_action(key, **options)

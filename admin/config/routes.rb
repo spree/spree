@@ -13,7 +13,6 @@ Spree::Core::Engine.add_routes do
       collection do
         get :select_options, defaults: { format: :json }
         post :search
-        get :bulk_modal
         put :bulk_status_update
         put :bulk_add_to_taxons
         put :bulk_remove_from_taxons
@@ -38,7 +37,6 @@ Spree::Core::Engine.add_routes do
       resources :products, only: [:index], controller: 'price_list_products' do
         collection do
           get :bulk_new
-          get :bulk_modal
           post :bulk_create
           delete :bulk_destroy
         end
@@ -121,7 +119,6 @@ Spree::Core::Engine.add_routes do
       resources :gift_cards
 
       collection do
-        get :bulk_modal
         post :bulk_add_tags
         post :bulk_remove_tags
       end
@@ -264,6 +261,9 @@ Spree::Core::Engine.add_routes do
 
     # table columns (for session-based column selection)
     post 'table_columns', to: 'table_columns#update', as: :table_columns
+
+    # bulk operations modal
+    resources :bulk_operations, only: [:new]
 
     # dashboard
     resource :dashboard, controller: 'dashboard'

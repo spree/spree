@@ -13,6 +13,6 @@
   </div>
   <div class="dialog-footer">
     <%= dialog_discard_button('bulk-dialog') %>
-    <%= turbo_save_button_tag %>
+    <%= turbo_save_button_tag(@button_text, class: "btn #{@button_class}") %>
   </div>
 <% end %>

@@ -1,10 +1,10 @@
 {
   "ignored_warnings": [
     {
-      "fingerprint": "49c48c04e8e7307b26d32cfd6caf251970baaf0a8f3910a1c681600f7b995a53",
-      "note": "form_partial comes from BulkAction registry configuration, not directly from user input. The params[:kind] is used to look up a pre-registered BulkAction object, and only the form_partial attribute from that registered configuration is rendered."
+      "fingerprint": "a79f90265cecf812d03f170da32bf27c2b68fcb14fe1317ad22b17a01bfc252d",
+      "note": "form_partial comes from BulkAction registry configuration, not directly from user input. The params[:kind] and params[:table_key] are used to look up a pre-registered BulkAction object from the tables registry, and only the form_partial attribute from that registered configuration is rendered."
     }
   ],
-  "updated": "2026-01-08",
+  "updated": "2026-01-09",
   "brakeman_version": "7.1.2"
 }

@@ -255,13 +255,14 @@ module Spree
 
       # Render a single bulk action button or link
       # @param action [Spree::Admin::Table::BulkAction] the bulk action
+      # @param table [Spree::Admin::Table] the table (required for generating modal path)
       # @param options [Hash] additional options for the link
       # @return [String] rendered HTML
-      def render_bulk_action(action, **options)
+      def render_bulk_action(action, table:, **options)
         return unless action.visible?(self)
 
         action_path = action.action_path.is_a?(Proc) ? action.action_path.call(self) : action.action_path
-        modal_path = action.modal_path.is_a?(Proc) ? action.modal_path.call(self) : action.modal_path
+        modal_path = spree.new_admin_bulk_operation_path(kind: action.key, table_key: table.key)
         confirm_message = resolve_bulk_action_confirm(action.confirm)
 
         link_options = {
@@ -318,11 +319,11 @@ module Spree
             parts << bulk_operations_counter
 
             primary_actions.each do |action|
-              parts << render_bulk_action(action)
+              parts << render_bulk_action(action, table: table)
             end
 
             if secondary_actions.any?
-              parts << render_bulk_actions_dropdown(secondary_actions)
+              parts << render_bulk_actions_dropdown(secondary_actions, table: table)
             end
 
             parts << bulk_operations_close_button
@@ -333,8 +334,9 @@ module Spree
 
       # Render dropdown for secondary bulk actions
       # @param actions [Array<Spree::Admin::Table::BulkAction>] the actions
+      # @param table [Spree::Admin::Table] the table (used for auto-generating modal_path)
       # @return [String] rendered HTML
-      def render_bulk_actions_dropdown(actions)
+      def render_bulk_actions_dropdown(actions, table: nil)
         dropdown(direction: 'top', portal: false) do
           toggle = dropdown_toggle do
             icon('dots-vertical', class: 'mr-0')
@@ -342,7 +344,7 @@ module Spree
 
           menu = dropdown_menu(class: 'mb-2') do
             items = actions.map do |action|
-              render_bulk_action(action, class: 'dropdown-item')
+              render_bulk_action(action, table: table, class: 'dropdown-item')
             end
             safe_join(items)
           end

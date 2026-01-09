@@ -203,6 +203,7 @@ module Spree
           name = name.to_sym
           @registries[name] ||= Spree::Admin::Table.new(
             name,
+            key: name,
             model_class: model_class,
             search_param: search_param,
             search_placeholder: search_placeholder,
