@@ -42,36 +42,23 @@ module Spree
         # @return [Boolean]
         def visible?(context = nil)
           return true if condition.nil?
+          return condition unless condition.respond_to?(:call)
 
-          if condition.respond_to?(:call)
-            if context&.respond_to?(:instance_exec)
-              context.instance_exec(&condition)
-            else
-              condition.call(context)
-            end
-          else
-            condition
-          end
+          context&.respond_to?(:instance_exec) ? context.instance_exec(&condition) : condition.call(context)
         end
 
         # Resolve label (handles i18n keys)
         # @return [String]
         def resolve_label
-          if label.is_a?(String) && label.start_with?('admin.')
-            # Full translation key
-            Spree.t(label, **label_options.merge(default: key.to_s.humanize))
-          elsif label.is_a?(String) && label.present?
-            label
-          else
-            key_to_translate = label || key
-            Spree.t(key_to_translate, scope: 'admin.bulk_ops', default: key_to_translate.to_s.humanize, **label_options)
-          end
+          resolve_i18n_attribute(label || key, label_options, key.to_s) || key.to_s.humanize
         end
 
         # Resolve title for modal dialog (handles i18n keys)
+        # Falls back to label if title is not set
         # @return [String]
         def resolve_title
-          resolve_i18n_attribute(title, title_options, "#{key}.title")
+          resolve_i18n_attribute(title, title_options, "#{key}.title") ||
+            resolve_i18n_attribute(label, label_options, key.to_s)
         end
 
         # Resolve body for modal dialog (handles i18n keys)
@@ -95,11 +82,12 @@ module Spree
         def resolve_i18n_attribute(value, options, default_key)
           return nil if value.blank?
 
-          if value.is_a?(Symbol)
+          case value
+          when Symbol
             Spree.t(value, **options)
-          elsif value.is_a?(String) && value.start_with?('admin.')
+          when /\Aadmin\./
             Spree.t(value, **options.merge(default: default_key.to_s.humanize))
-          elsif value.is_a?(String) && value.present?
+          when String
             value
           else
             Spree.t(default_key, scope: 'admin.bulk_ops', default: default_key.to_s.humanize, **options)

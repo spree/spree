@@ -134,7 +134,6 @@ Rails.application.config.after_initialize do
                                                     icon: 'circle-check',
                                                     modal_path: '/admin/products/bulk_modal?kind=set_active',
                                                     action_path: '/admin/products/bulk_status_update?status=active',
-                                                    title: 'admin.bulk_ops.products.title.set_active',
                                                     body: 'admin.bulk_ops.products.body.set_active',
                                                     position: 10,
                                                     condition: -> { can?(:activate, Spree::Product) }
@@ -144,7 +143,6 @@ Rails.application.config.after_initialize do
                                                     icon: 'circle-dotted',
                                                     modal_path: '/admin/products/bulk_modal?kind=set_draft',
                                                     action_path: '/admin/products/bulk_status_update?status=draft',
-                                                    title: 'admin.bulk_ops.products.title.set_draft',
                                                     body: 'admin.bulk_ops.products.body.set_draft',
                                                     position: 20
 
@@ -153,7 +151,6 @@ Rails.application.config.after_initialize do
                                                     icon: 'archive',
                                                     modal_path: '/admin/products/bulk_modal?kind=set_archived',
                                                     action_path: '/admin/products/bulk_status_update?status=archived',
-                                                    title: 'admin.bulk_ops.products.title.set_archived',
                                                     body: 'admin.bulk_ops.products.body.set_archived',
                                                     position: 30
 
@@ -162,7 +159,6 @@ Rails.application.config.after_initialize do
                                                     icon: 'category-plus',
                                                     modal_path: '/admin/products/bulk_modal?kind=add_to_taxons',
                                                     action_path: '/admin/products/bulk_add_to_taxons',
-                                                    title: 'admin.bulk_ops.products.title.add_to_taxons',
                                                     body: 'admin.bulk_ops.products.body.add_to_taxons',
                                                     form_partial: 'spree/admin/bulk_operations/forms/taxon_picker',
                                                     position: 40,
@@ -173,7 +169,6 @@ Rails.application.config.after_initialize do
                                                     icon: 'category-minus',
                                                     modal_path: '/admin/products/bulk_modal?kind=remove_from_taxons',
                                                     action_path: '/admin/products/bulk_remove_from_taxons',
-                                                    title: 'admin.bulk_ops.products.title.remove_from_taxons',
                                                     body: 'admin.bulk_ops.products.body.remove_from_taxons',
                                                     form_partial: 'spree/admin/bulk_operations/forms/taxon_picker',
                                                     position: 50,
@@ -184,7 +179,6 @@ Rails.application.config.after_initialize do
                                                     icon: 'tag-plus',
                                                     modal_path: '/admin/products/bulk_modal?kind=add_tags',
                                                     action_path: '/admin/products/bulk_add_tags',
-                                                    title: 'admin.bulk_ops.products.title.add_tags',
                                                     body: 'admin.bulk_ops.products.body.add_tags',
                                                     form_partial: 'spree/admin/bulk_operations/forms/tag_picker',
                                                     form_partial_locals: { allow_create: true },
@@ -196,7 +190,6 @@ Rails.application.config.after_initialize do
                                                     icon: 'tag-minus',
                                                     modal_path: '/admin/products/bulk_modal?kind=remove_tags',
                                                     action_path: '/admin/products/bulk_remove_tags',
-                                                    title: 'admin.bulk_ops.products.title.remove_tags',
                                                     body: 'admin.bulk_ops.products.body.remove_tags',
                                                     form_partial: 'spree/admin/bulk_operations/forms/tag_picker',
                                                     form_partial_locals: { allow_create: false },
@@ -555,7 +548,6 @@ Rails.application.config.after_initialize do
                                                  icon: 'tag-plus',
                                                  modal_path: '/admin/users/bulk_modal?kind=add_tags',
                                                  action_path: '/admin/users/bulk_add_tags',
-                                                 title: 'admin.bulk_ops.users.title.add_tags',
                                                  body: 'admin.bulk_ops.users.body.add_tags',
                                                  form_partial: 'spree/admin/bulk_operations/forms/tag_picker',
                                                  form_partial_locals: { allow_create: true },
@@ -568,7 +560,6 @@ Rails.application.config.after_initialize do
                                                  icon: 'tag-minus',
                                                  modal_path: '/admin/users/bulk_modal?kind=remove_tags',
                                                  action_path: '/admin/users/bulk_remove_tags',
-                                                 title: 'admin.bulk_ops.users.title.remove_tags',
                                                  body: 'admin.bulk_ops.users.body.remove_tags',
                                                  form_partial: 'spree/admin/bulk_operations/forms/tag_picker',
                                                  form_partial_locals: { allow_create: false },
@@ -1543,7 +1534,6 @@ Rails.application.config.after_initialize do
                                                                icon: 'trash',
                                                                modal_path: ->(view_context) { view_context.spree.bulk_modal_admin_price_list_products_path(view_context.instance_variable_get(:@price_list), kind: :remove_from_price_list) },
                                                                action_path: ->(view_context) { view_context.spree.bulk_destroy_admin_price_list_products_path(view_context.instance_variable_get(:@price_list)) },
-                                                               title: 'admin.bulk_ops.price_list_products.title.remove',
                                                                body: 'admin.bulk_ops.price_list_products.body.remove',
                                                                method: :delete,
                                                                position: 10

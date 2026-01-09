@@ -104,20 +104,6 @@ module Spree
         end
       end
 
-      def bulk_add_tags
-        Spree::Tags::BulkAdd.call(tag_names: params[:tags], records: bulk_collection)
-        Spree::Product.bulk_auto_match_taxons(current_store, bulk_collection.ids)
-
-        handle_bulk_operation_response
-      end
-
-      def bulk_remove_tags
-        Spree::Tags::BulkRemove.call(tag_names: params[:tags], records: bulk_collection)
-        Spree::Product.bulk_auto_match_taxons(current_store, bulk_collection.ids)
-
-        handle_bulk_operation_response
-      end
-
       def bulk_remove_from_taxons
         taxons = current_store.taxons.accessible_by(current_ability, :manage).where(id: params[:taxon_ids])
         Spree::Taxons::RemoveProducts.call(taxons: taxons, products: bulk_collection)
@@ -281,6 +267,10 @@ module Spree
       end
 
       private
+
+      def after_bulk_tags_change
+        Spree::Product.bulk_auto_match_taxons(current_store, bulk_collection.ids)
+      end
 
       def variant_stock_includes
         [:images, { stock_items: :stock_location, option_values: :option_type }]
