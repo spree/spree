@@ -4,7 +4,7 @@
       <% next if value.blank? && key != :max_quantity %>
       <% next if key == :eligible_values %>
       <span><%= Spree.t(key) %>:</span>
-      <strong><%= value.blank? ? Spree.t(:unlimited) : value %></strong>
+      <strong><%= format_preference_value(key, value) %></strong>
     <% end %>
   </p>
 <% end %>

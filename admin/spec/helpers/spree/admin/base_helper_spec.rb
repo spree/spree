@@ -1,6 +1,74 @@
 require 'spec_helper'
 
 describe Spree::Admin::BaseHelper do
+  describe '#format_preference_value' do
+    context 'with zone_ids' do
+      let!(:zone1) { create(:zone, name: 'North America') }
+      let!(:zone2) { create(:zone, name: 'Europe') }
+
+      it 'returns zone names instead of IDs' do
+        result = helper.format_preference_value(:zone_ids, [zone1.id.to_s, zone2.id.to_s])
+        expect(result).to include('North America')
+        expect(result).to include('Europe')
+      end
+
+      it 'filters out blank values' do
+        result = helper.format_preference_value(:zone_ids, ['', zone1.id.to_s])
+        expect(result).to eq('North America')
+      end
+
+      it 'returns None for empty array after filtering' do
+        result = helper.format_preference_value(:zone_ids, ['', ''])
+        expect(result).to eq(Spree.t(:none))
+      end
+    end
+
+    context 'with user_ids' do
+      let!(:user1) { create(:user, email: 'user1@example.com') }
+      let!(:user2) { create(:user, email: 'user2@example.com') }
+
+      it 'returns user emails instead of IDs' do
+        result = helper.format_preference_value(:user_ids, [user1.id.to_s, user2.id.to_s])
+        expect(result).to include('user1@example.com')
+        expect(result).to include('user2@example.com')
+      end
+
+      it 'filters out blank values' do
+        result = helper.format_preference_value(:user_ids, ['', user1.id.to_s])
+        expect(result).to eq('user1@example.com')
+      end
+    end
+
+    context 'with country_id' do
+      let!(:country) { create(:country, name: 'United States') }
+
+      it 'returns country name instead of ID' do
+        result = helper.format_preference_value(:country_id, country.id)
+        expect(result).to eq('United States')
+      end
+
+      it 'returns the original value if country not found' do
+        result = helper.format_preference_value(:country_id, 999999)
+        expect(result).to eq(999999)
+      end
+    end
+
+    context 'with other preferences' do
+      it 'returns Unlimited for blank values' do
+        expect(helper.format_preference_value(:max_quantity, nil)).to eq(Spree.t(:unlimited))
+        expect(helper.format_preference_value(:max_quantity, '')).to eq(Spree.t(:unlimited))
+      end
+
+      it 'returns the value as-is for simple values' do
+        expect(helper.format_preference_value(:min_quantity, 10)).to eq(10)
+      end
+
+      it 'joins array values with commas' do
+        expect(helper.format_preference_value(:tags, %w[a b c])).to eq('a, b, c')
+      end
+    end
+  end
+
   describe '#spree_time_ago' do
     it 'returns the local time ago with a tooltip' do
       time = Time.zone.parse('2025-10-21 12:00')

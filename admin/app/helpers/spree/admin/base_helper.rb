@@ -346,6 +346,32 @@ module Spree
           end
         end
       end
+
+      # Formats a preference value for display
+      # Handles special cases like zone_ids, user_ids, country_id that should show names instead of IDs
+      # @param key [Symbol] the preference key
+      # @param value [Object] the preference value
+      # @return [String] the formatted value
+      def format_preference_value(key, value)
+        return Spree.t(:unlimited) if value.blank?
+
+        case key
+        when :zone_ids
+          zone_ids = Array(value).reject(&:blank?).map(&:to_i)
+          return Spree.t(:none) if zone_ids.empty?
+
+          Spree::Zone.where(id: zone_ids).pluck(:name).join(', ')
+        when :user_ids
+          user_ids = Array(value).reject(&:blank?).map(&:to_i)
+          return Spree.t(:none) if user_ids.empty?
+
+          Spree.user_class.where(id: user_ids).map { |u| u.try(:email) || u.id }.join(', ')
+        when :country_id
+          Spree::Country.find_by(id: value)&.name || value
+        else
+          value.is_a?(Array) ? value.reject(&:blank?).join(', ') : value
+        end
+      end
     end
   end
 end

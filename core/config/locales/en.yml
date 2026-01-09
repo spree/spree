@@ -2349,6 +2349,7 @@ en:
     use_shipping_address: Use Shipping Address
     used: Used
     user: User
+    user_ids: Users
     user_not_found: User not found
     user_rule:
       choose_users: 'Input the full email address of a registered customer(s) in the search field to whom this discount should apply:'
@@ -2409,6 +2410,7 @@ en:
     zipcode: Zip Code
     zipcode_required: Zip Code Required
     zone: Zone
+    zone_ids: Zones
     zones: Zones
   views:
     pagination:
