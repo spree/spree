@@ -128,7 +128,7 @@ module Spree
           tag_ids = Spree::Tag.named_any(tag_names).pluck(:id)
           return none if tag_ids.empty?
 
-          joins(:taggings)
+          joins("INNER JOIN #{Spree::Tagging.table_name} ON #{Spree::Tagging.table_name}.taggable_id = #{table_name}.#{primary_key} AND #{Spree::Tagging.table_name}.taggable_type = '#{name}'")
             .where(Spree::Tagging.table_name => { tag_id: tag_ids, context: context })
             .distinct
         end
@@ -138,7 +138,7 @@ module Spree
           tag_ids = Spree::Tag.named_any(tag_names).pluck(:id)
           return none if tag_ids.empty? || tag_ids.size < tag_names.size
 
-          joins(:taggings)
+          joins("INNER JOIN #{Spree::Tagging.table_name} ON #{Spree::Tagging.table_name}.taggable_id = #{table_name}.#{primary_key} AND #{Spree::Tagging.table_name}.taggable_type = '#{name}'")
             .where(Spree::Tagging.table_name => { tag_id: tag_ids, context: context })
             .group("#{table_name}.#{primary_key}")
             .having("COUNT(DISTINCT #{Spree::Tagging.table_name}.tag_id) = ?", tag_names.size)
