@@ -2,7 +2,7 @@ module Spree
   module PriceRules
     class VolumeRule < Spree::PriceRule
       preference :min_quantity, :integer, default: 1
-      preference :max_quantity, :integer
+      preference :max_quantity, :integer, nullable: true
 
       def applicable?(context)
         return false unless context.quantity

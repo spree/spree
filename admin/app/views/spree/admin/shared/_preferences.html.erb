@@ -1,10 +1,10 @@
 <% if object.preferences.present? %>
   <p class="mb-0">
   <% object.preferences.each do |key, value| %>
-      <% next if value.blank? %>
+      <% next if value.blank? && key != :max_quantity %>
       <% next if key == :eligible_values %>
       <span><%= Spree.t(key) %>:</span>
-      <strong><%= value %></strong>
+      <strong><%= value.blank? ? Spree.t(:unlimited) : value %></strong>
     <% end %>
   </p>
 <% end %>
