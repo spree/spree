@@ -1,13 +1,1 @@
-<%= turbo_frame_tag :drawer do %>
-  <%= form_with model: [:admin, @object], url: object_url, scope: @resource.object_name, id: "edit_#{controller_name.singularize}_#{@object.id}", data: local_assigns[:data] || {} do |f| %>
-    <%= drawer_header(Spree.t(:edit)) %>
-    <div class="drawer-body">
-      <%= render 'spree/admin/shared/error_messages', target: @object %>
-      <%= render 'form', f: f %>
-    </div>
-    <div class="drawer-footer">
-      <%= turbo_save_button_tag %>
-      <%= drawer_discard_button %>
-    </div>
-  <% end %>
-<% end %>
+<%= render 'spree/admin/shared/edit_resource_in_drawer' %>

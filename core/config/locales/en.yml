@@ -1199,6 +1199,7 @@ en:
     image: Image
     image_alt_text: Add Alt text to your image
     images: Images
+    immediately: Immediately
     implement_eligible_for_return: 'Must implement #eligible_for_return? for your EligibilityValidator.'
     implement_requires_manual_intervention: 'Must implement #requires_manual_intervention? for your EligibilityValidator.'
     import: Import
@@ -1356,6 +1357,7 @@ en:
     name_on_card: Name on card
     name_or_sku: Name or SKU (enter at least first 3 characters of product name)
     navigation: Navigation
+    never: Never
     new: New
     new_address: New address
     new_adjustment: New Adjustment

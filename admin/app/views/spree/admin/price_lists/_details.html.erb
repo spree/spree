@@ -1,0 +1,75 @@
+<div class="card mb-6" id="<%= spree_dom_id(@price_list) %>_details">
+  <div class="card-header flex justify-between">
+    <h5 class="card-title">
+      <%= Spree.t(:details) %>
+    </h5>
+    <%= link_to_with_icon 'edit', Spree.t(:edit), spree.edit_admin_price_list_path(@price_list),
+          class: 'btn btn-sm btn-light', data: { turbo_frame: :drawer, action: 'drawer#open' } %>
+  </div>
+  <div class="card-body p-0">
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item flex justify-between items-center">
+        <span class="text-gray-600">
+          <%= Spree.t(:status) %>
+        </span>
+        <%= price_list_status_badge(@price_list) %>
+      </li>
+
+      <li class="list-group-item flex justify-between items-center">
+        <span class="text-gray-600">
+          <%= Spree.t(:name) %>
+        </span>
+        <span>
+          <%= @price_list.name %>
+        </span>
+      </li>
+
+      <% if @price_list.description.present? %>
+        <li class="list-group-item flex justify-between items-top gap-10">
+          <span class="text-gray-600">
+            <%= Spree.t(:description) %>
+          </span>
+          <span class="text-right">
+            <%= @price_list.description %>
+          </span>
+        </li>
+      <% end %>
+
+      <li class="list-group-item flex justify-between items-center">
+        <span class="text-gray-600">
+          <%= Spree.t(:starts_at) %>
+        </span>
+        <span>
+          <%= @price_list.starts_at.present? ? spree_time(@price_list.starts_at, format: :long) : Spree.t(:immediately) %>
+        </span>
+      </li>
+
+      <li class="list-group-item flex justify-between items-center">
+        <span class="text-gray-600">
+          <%= Spree.t(:ends_at) %>
+        </span>
+        <span>
+          <%= @price_list.ends_at.present? ? spree_time(@price_list.ends_at, format: :long) : Spree.t(:never) %>
+        </span>
+      </li>
+
+      <li class="list-group-item flex justify-between items-center">
+        <span class="text-gray-600">
+          <%= Spree.t(:created_at) %>
+        </span>
+        <span>
+          <%= spree_time(@price_list.created_at, format: :long) %>
+        </span>
+      </li>
+
+      <li class="list-group-item flex justify-between items-center">
+        <span class="text-gray-600">
+          <%= Spree.t(:updated_at) %>
+        </span>
+        <span>
+          <%= spree_time(@price_list.updated_at, format: :long) %>
+        </span>
+      </li>
+    </ul>
+  </div>
+</div>
