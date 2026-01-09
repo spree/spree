@@ -128,7 +128,12 @@ module Spree
           tag_ids = Spree::Tag.named_any(tag_names).pluck(:id)
           return none if tag_ids.empty?
 
-          joins("INNER JOIN #{Spree::Tagging.table_name} ON #{Spree::Tagging.table_name}.taggable_id = #{table_name}.#{primary_key} AND #{Spree::Tagging.table_name}.taggable_type = '#{name}'")
+          tagging_table = connection.quote_table_name(Spree::Tagging.table_name)
+          model_table = connection.quote_table_name(table_name)
+          model_pk = connection.quote_column_name(primary_key)
+          model_name = connection.quote(name)
+
+          joins("INNER JOIN #{tagging_table} ON #{tagging_table}.taggable_id = #{model_table}.#{model_pk} AND #{tagging_table}.taggable_type = #{model_name}")
             .where(Spree::Tagging.table_name => { tag_id: tag_ids, context: context })
             .distinct
         end
@@ -138,10 +143,15 @@ module Spree
           tag_ids = Spree::Tag.named_any(tag_names).pluck(:id)
           return none if tag_ids.empty? || tag_ids.size < tag_names.size
 
-          joins("INNER JOIN #{Spree::Tagging.table_name} ON #{Spree::Tagging.table_name}.taggable_id = #{table_name}.#{primary_key} AND #{Spree::Tagging.table_name}.taggable_type = '#{name}'")
+          tagging_table = connection.quote_table_name(Spree::Tagging.table_name)
+          model_table = connection.quote_table_name(table_name)
+          model_pk = connection.quote_column_name(primary_key)
+          model_name = connection.quote(name)
+
+          joins("INNER JOIN #{tagging_table} ON #{tagging_table}.taggable_id = #{model_table}.#{model_pk} AND #{tagging_table}.taggable_type = #{model_name}")
             .where(Spree::Tagging.table_name => { tag_id: tag_ids, context: context })
-            .group("#{table_name}.#{primary_key}")
-            .having("COUNT(DISTINCT #{Spree::Tagging.table_name}.tag_id) = ?", tag_names.size)
+            .group("#{model_table}.#{model_pk}")
+            .having("COUNT(DISTINCT #{tagging_table}.tag_id) = ?", tag_names.size)
         end
 
         # Scope to exclude records tagged with given tags
