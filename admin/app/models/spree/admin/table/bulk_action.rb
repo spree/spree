@@ -4,6 +4,7 @@ module Spree
       class BulkAction
         include ActiveModel::Model
         include ActiveModel::Attributes
+        include Visibility
 
         METHODS = %i[get post put patch delete].freeze
 
@@ -35,16 +36,6 @@ module Spree
           super
           self.key = key.to_sym if key.is_a?(String)
           self.method = self.method.to_sym if self.method.is_a?(String)
-        end
-
-        # Check if action is visible for the given context
-        # @param context [Object, nil] view context with access to helper methods
-        # @return [Boolean]
-        def visible?(context = nil)
-          return true if condition.nil?
-          return condition unless condition.respond_to?(:call)
-
-          context&.respond_to?(:instance_exec) ? context.instance_exec(&condition) : condition.call(context)
         end
 
         # Resolve label (handles i18n keys)
