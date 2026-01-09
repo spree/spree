@@ -8,7 +8,7 @@ describe Spree::V2::Storefront::ProductSerializer do
   let(:product) { create(:product) }
 
   context 'with tags' do
-    before { product.update(tag_list: ['tag1', 'tag2']) }
+    before { product.tag_list.add('tag1', 'tag2') }
 
     it 'returns tags' do
       expect(subject[:data][:attributes][:tags]).to eq ['tag1', 'tag2']
@@ -16,7 +16,7 @@ describe Spree::V2::Storefront::ProductSerializer do
   end
 
   context 'with labels' do
-    before { product.update(label_list: ['label1', 'label2']) }
+    before { product.label_list.add('label1', 'label2') }
 
     it 'returns labels' do
       expect(subject[:data][:attributes][:labels]).to eq ['label1', 'label2']

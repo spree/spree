@@ -182,23 +182,32 @@ module Spree
 
     module InstanceMethods
       # Get tag list for a specific context
+      # @param context [String, Symbol] the tagging context (e.g., :tags, :labels)
+      # @return [Spree::TagList] the list of tags
       def tag_list_on(context)
         context = context.to_s
         cache_var = "@#{context.singularize}_list_cache"
 
         return instance_variable_get(cache_var) if instance_variable_defined?(cache_var)
 
-        list = taggings_for_context(context).includes(:tag).map { |t| t.tag.name }
+        tags = taggings_for_context(context).includes(:tag).map { |t| t.tag.name }
+        list = Spree::TagList.new(tags)
+        list.taggable = self
+        list.context = context
         instance_variable_set(cache_var, list)
       end
 
       # Set tag list for a specific context
+      # @param context [String, Symbol] the tagging context (e.g., :tags, :labels)
+      # @param new_tags [Array, String, Spree::TagList] the new tags
       def set_tag_list_on(context, new_tags)
         context = context.to_s
         cache_var = "@#{context.singularize}_list_cache"
         changed_var = "@#{context.singularize}_list_changed"
 
-        new_list = parse_tag_list(new_tags)
+        new_list = Spree::TagList.new(parse_tag_list(new_tags))
+        new_list.taggable = self
+        new_list.context = context
         old_list = tag_list_on(context)
 
         instance_variable_set(cache_var, new_list)
@@ -206,7 +215,7 @@ module Spree
 
         # Schedule tag list to be saved after commit
         @tag_list_changes ||= {}
-        @tag_list_changes[context] = new_list
+        @tag_list_changes[context] = new_list.to_a
       end
 
       # Get all tags for a context (class method style via instance)

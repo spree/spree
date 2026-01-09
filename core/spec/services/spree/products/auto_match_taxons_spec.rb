@@ -12,7 +12,7 @@ RSpec.describe Spree::Products::AutoMatchTaxons do
     before do
       create(:tag_taxon_rule, taxon: taxon, value: 'cruelty-free')
 
-      product.tag_list = product.tag_list + ['cruelty-free']
+      product.tag_list.add('cruelty-free')
       product.save
     end
 
@@ -22,7 +22,7 @@ RSpec.describe Spree::Products::AutoMatchTaxons do
     end
 
     it "doesn't do circular call" do
-      product.tag_list = product.tag_list + ['cruelty-free']
+      product.tag_list.add('cruelty-free')
       product.save
 
       subject
