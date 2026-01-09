@@ -138,15 +138,16 @@ module Spree
 
           # Use unique alias to support chaining multiple tagged_with calls
           tagging_alias = "tagging_#{context}_#{tag_ids.hash.abs}"
-          tagging_table = connection.quote_table_name(Spree::Tagging.table_name)
-          tagging_alias_quoted = connection.quote_table_name(tagging_alias)
-          model_table = connection.quote_table_name(table_name)
-          model_pk = connection.quote_column_name(primary_key)
-          model_name = connection.quote(name)
-          context_quoted = connection.quote(context)
+          taggings_table = Spree::Tagging.arel_table
+          taggings_aliased = taggings_table.alias(tagging_alias)
+          model_arel_table = arel_table
 
-          # Put all conditions in JOIN to avoid WHERE conflicts when chaining
-          joins("INNER JOIN #{tagging_table} #{tagging_alias_quoted} ON #{tagging_alias_quoted}.taggable_id = #{model_table}.#{model_pk} AND #{tagging_alias_quoted}.taggable_type = #{model_name} AND #{tagging_alias_quoted}.context = #{context_quoted} AND #{tagging_alias_quoted}.tag_id IN (#{tag_ids.join(',')})")
+          join_conditions = taggings_aliased[:taggable_id].eq(model_arel_table[primary_key])
+            .and(taggings_aliased[:taggable_type].eq(name))
+            .and(taggings_aliased[:context].eq(context.to_s))
+            .and(taggings_aliased[:tag_id].in(tag_ids))
+
+          joins(model_arel_table.join(taggings_aliased, Arel::Nodes::InnerJoin).on(join_conditions).join_sources)
             .distinct
         end
 
@@ -155,18 +156,19 @@ module Spree
           tag_ids = Spree::Tag.named_any(tag_names).pluck(:id)
           return none if tag_ids.empty? || tag_ids.size < tag_names.size
 
-          # Use unique alias to support chaining multiple tagged_with calls
-          tagging_alias = "tagging_#{context}_#{tag_ids.hash.abs}"
-          tagging_table = connection.quote_table_name(Spree::Tagging.table_name)
-          tagging_alias_quoted = connection.quote_table_name(tagging_alias)
-          model_table = connection.quote_table_name(table_name)
-          model_pk = connection.quote_column_name(primary_key)
-          model_name = connection.quote(name)
-          context_quoted = connection.quote(context)
-
           if tag_names.size == 1
-            # Single tag: simple join with all conditions in ON clause
-            joins("INNER JOIN #{tagging_table} #{tagging_alias_quoted} ON #{tagging_alias_quoted}.taggable_id = #{model_table}.#{model_pk} AND #{tagging_alias_quoted}.taggable_type = #{model_name} AND #{tagging_alias_quoted}.context = #{context_quoted} AND #{tagging_alias_quoted}.tag_id = #{tag_ids.first}")
+            # Single tag: use Arel join with unique alias to support chaining
+            tagging_alias = "tagging_#{context}_#{tag_ids.hash.abs}"
+            taggings_table = Spree::Tagging.arel_table
+            taggings_aliased = taggings_table.alias(tagging_alias)
+            model_arel_table = arel_table
+
+            join_conditions = taggings_aliased[:taggable_id].eq(model_arel_table[primary_key])
+              .and(taggings_aliased[:taggable_type].eq(name))
+              .and(taggings_aliased[:context].eq(context.to_s))
+              .and(taggings_aliased[:tag_id].eq(tag_ids.first))
+
+            joins(model_arel_table.join(taggings_aliased, Arel::Nodes::InnerJoin).on(join_conditions).join_sources)
               .distinct
           else
             # Multiple tags: need subquery to find records with ALL tags
