@@ -172,7 +172,7 @@ module Spree
         end
 
         @product_prices = {}
-        @product.prices.includes(:variant).each do |price|
+        @product.prices.base_prices.includes(:variant).each do |price|
           @product_prices[price.variant.human_name] ||= {}
           @product_prices[price.variant.human_name][price.currency.downcase] = {
             id: price.id.to_s,
