@@ -20,7 +20,7 @@
                 type='button'
                 class='text-sm uppercase tracking-widest flex gap-2 items-center border border-default py-2 px-4 rounded-input dropdown-button'
                 data-dropdown-target="button"
-                aria-label="<%= option_type.presentation %>">
+                aria-label="<%= selected_option ? option_type.presentation+":"+selected_option.presentation : Spree.t('storefront.variant_picker.please_choose', option_type: option_type.presentation) %>">
                 <legend class="mr-2" id="option-<%= option_type.id %>-value">
                   <% if selected_option %>
                     <%= option_type.presentation %>: <span class="option-value-text"><%= selected_option.presentation %></span>
