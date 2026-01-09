@@ -4,8 +4,8 @@ module Spree
   class TagList < Array
     attr_accessor :taggable, :context
 
-    def initialize(*args)
-      super(*args.flatten.compact.map(&:to_s).map(&:strip).reject(&:blank?))
+    def initialize(args = [])
+      super(Array(args).flatten.compact.map(&:to_s).map(&:strip).reject(&:blank?))
     end
 
     # Add tags to the list
