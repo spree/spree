@@ -1,9 +1,13 @@
-<% if record.scheduled? && record.currently_active? %>
-  <span class="badge badge-success">
-    <%= Spree.t('price_list_statuses.scheduled_active') %>
-  </span>
-<% else %>
-  <span class="badge badge-<%= record.currently_active? ? 'success' : (record.scheduled? ? 'info' : 'light') %>">
-    <%= Spree.t("price_list_statuses.#{record.status}") %>
-  </span>
-<% end %>
+<%
+  badge_class = if record.currently_active?
+                  'success'
+                elsif record.scheduled?
+                  'info'
+                else
+                  'light'
+                end
+  status_key = record.scheduled? && record.currently_active? ? 'scheduled_active' : record.status
+%>
+<span class="badge badge-<%= badge_class %>">
+  <%= Spree.t("price_list_statuses.#{status_key}") %>
+</span>

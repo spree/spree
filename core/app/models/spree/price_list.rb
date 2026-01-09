@@ -100,10 +100,7 @@ module Spree
     # Returns true if the price list is currently in effect
     # (active, or scheduled and within date range)
     def currently_active?
-      return true if active? && within_date_range?(Time.current)
-      return true if scheduled? && within_date_range?(Time.current)
-
-      false
+      active_or_scheduled? && within_date_range?(Time.current)
     end
 
     def add_products(product_ids)
