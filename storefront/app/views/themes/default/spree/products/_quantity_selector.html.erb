@@ -14,7 +14,7 @@
                           max: selected_variant&.backorderable? ? nil : selected_variant&.total_on_hand,
                           class: 'quantity-input',
                           data: { 'quantity-picker-target': 'quantity' },
-                          aria: { label: Spree.t('storefront.products.quantity') } %>
+                          aria: { label: Spree.t(:quantity) } %>
     <%= button_tag class: 'increase-quantity',
                      type: 'button',
                      data: { action: 'click->quantity-picker#increase',
