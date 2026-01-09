@@ -63,7 +63,6 @@ en:
         increase_quantity: Increase quantity
         pinch_to_zoom_html: Pinch to<br>zoom
         primary_image: primary image
-        quantity: Quantity
         secondary_image: secondary image
       refund_action_not_required_message:
         order_canceled:
