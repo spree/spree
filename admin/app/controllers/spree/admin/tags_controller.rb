@@ -17,11 +17,11 @@ module Spree
         context = params[:context].presence || 'tags'
         taggable_type = params[:taggable_type].presence
 
-        scope = ActsAsTaggableOn::Tag.for_context(context)
+        scope = Spree::Tag.for_context(context)
 
         if taggable_type.present?
           scope = scope.joins(:taggings)
-                       .where(ActsAsTaggableOn.taggings_table => { taggable_type: taggable_type })
+                       .where(Spree::Tagging.table_name => { taggable_type: taggable_type })
                        .distinct
         end
 

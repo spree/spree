@@ -10,6 +10,7 @@ module Spree
     include Spree::RansackableAttributes
     include Spree::MultiSearchable
     include Spree::Publishable
+    include Spree::Taggable
 
     included do
       # Enable lifecycle events for user models

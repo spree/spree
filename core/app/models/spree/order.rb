@@ -41,6 +41,8 @@ module Spree
       include Spree::VendorConcern
     end
 
+    include Spree::Taggable
+
     has_secure_token :token, length: 35
 
     MEMOIZED_METHODS = %w(tax_zone)

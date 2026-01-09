@@ -1,4 +1,4 @@
-<% if can?(:manage, Spree::Classification) || can?(:manage, ActsAsTaggableOn::Tag) %>
+<% if can?(:manage, Spree::Classification) || can?(:manage, Spree::Tag) %>
   <div class="card mb-6">
     <div class="card-header">
       <h5 class="card-title">
@@ -28,7 +28,7 @@
         <% end %>
       </div>
 
-      <% if can?(:manage, ActsAsTaggableOn::Tag) %>
+      <% if can?(:manage, Spree::Tag) %>
         <div class="form-group">
           <%= f.label :tag_list, Spree.t(:tags) %>
           <%= tom_select_tag 'product[tag_list]', multiple: true, class: 'w-full', options: tags_json_array, active_option: @product.tag_list, value_field: :name, create: true %>

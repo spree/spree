@@ -678,9 +678,9 @@ describe Spree::Taxon, type: :model do
 
       context 'when the taxon has rules' do
         context 'when the rule is a tag rule' do
-          let(:cruelty_free_tag) { ActsAsTaggableOn::Tag.create(name: 'cruelty-free') }
-          let(:discounted_tag) { ActsAsTaggableOn::Tag.create(name: 'discounted') }
-          let(:other_tag) { ActsAsTaggableOn::Tag.create(name: 'other') }
+          let(:cruelty_free_tag) { Spree::Tag.create(name: 'cruelty-free') }
+          let(:discounted_tag) { Spree::Tag.create(name: 'discounted') }
+          let(:other_tag) { Spree::Tag.create(name: 'other') }
           let!(:cruelty_free_product) { create(:product, tags: [cruelty_free_tag]) }
           let!(:discounted_product) { create(:product, tags: [discounted_tag]) }
           let!(:both_tags_product) { create(:product, tags: [cruelty_free_tag, discounted_tag]) }

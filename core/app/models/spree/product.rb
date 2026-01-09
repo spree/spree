@@ -20,6 +20,8 @@
 
 module Spree
   class Product < Spree.base_class
+    include Spree::Taggable
+
     acts_as_paranoid
     acts_as_taggable_on :tags, :labels
     auto_strip_attributes :name

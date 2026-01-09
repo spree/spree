@@ -61,9 +61,9 @@ module Spree
     end
 
     def post_tags_scope
-      @post_tags_scope ||= ActsAsTaggableOn::Tag.
+      @post_tags_scope ||= Spree::Tag.
                            joins(:taggings).
-                           where('taggings.taggable_type = ?', Spree::Post.to_s).
+                           where(Spree::Tagging.table_name => { taggable_type: Spree::Post.to_s }).
                            for_context(:tags).for_tenant(current_store.id)
     end
 

@@ -11,7 +11,7 @@ module Spree
       # @return [Spree::ServiceModule::Base::Result]
       def call(tag_names: [], records: [], context: 'tags')
         tags = tag_names.map do |tag_name|
-          ActsAsTaggableOn::Tag.find_or_create_by(name: tag_name.strip)
+          Spree::Tag.find_or_create_with_like_by_name(tag_name.strip)
         end
 
         record_class = records.first.class
@@ -20,7 +20,7 @@ module Spree
 
         return if taggings_to_upsert.empty?
 
-        ActsAsTaggableOn::Tagging.insert_all(taggings_to_upsert)
+        Spree::Tagging.insert_all(taggings_to_upsert)
 
         record_class.where(id: records.pluck(:id)).touch_all
       end

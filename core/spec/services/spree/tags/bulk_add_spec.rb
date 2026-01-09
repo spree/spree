@@ -10,16 +10,16 @@ module Spree
       subject { described_class.call(tag_names: tag_names, records: products, context: context) }
 
       it 'creates tags for each tag name' do
-        expect { subject }.to change { ActsAsTaggableOn::Tag.count }.by(tag_names.size)
+        expect { subject }.to change { Spree::Tag.count }.by(tag_names.size)
       end
 
       it 'creates taggings for each product-tag pair' do
-        expect { subject }.to change { ActsAsTaggableOn::Tagging.count }.by(products.size * tag_names.size)
+        expect { subject }.to change { Spree::Tagging.count }.by(products.size * tag_names.size)
       end
 
       it 'assigns correct attributes to taggings' do
         subject
-        taggings = ActsAsTaggableOn::Tagging.last(products.size * tag_names.size)
+        taggings = Spree::Tagging.last(products.size * tag_names.size)
 
         taggings.each do |tagging|
           expect(tagging.taggable_type).to eq('Spree::Product')
@@ -37,8 +37,8 @@ module Spree
         let(:tag_names) { ['tag1', ' tag2 ', 'tag1', 'tag3'] }
 
         it 'creates unique tags without extra spaces' do
-          expect { subject }.to change { ActsAsTaggableOn::Tag.count }.by(3)
-          expect(ActsAsTaggableOn::Tag.pluck(:name)).to match_array(['tag1', 'tag2', 'tag3'])
+          expect { subject }.to change { Spree::Tag.count }.by(3)
+          expect(Spree::Tag.pluck(:name)).to match_array(['tag1', 'tag2', 'tag3'])
         end
       end
 
@@ -46,7 +46,7 @@ module Spree
         let(:products) { [] }
 
         it 'does not create any taggings' do
-          expect { subject }.not_to change { ActsAsTaggableOn::Tagging.count }
+          expect { subject }.not_to change { Spree::Tagging.count }
         end
       end
 
@@ -54,8 +54,8 @@ module Spree
         let(:tag_names) { [] }
 
         it 'does not create any tags or taggings' do
-          expect { subject }.not_to change { ActsAsTaggableOn::Tag.count }
-          expect { subject }.not_to change { ActsAsTaggableOn::Tagging.count }
+          expect { subject }.not_to change { Spree::Tag.count }
+          expect { subject }.not_to change { Spree::Tagging.count }
         end
       end
     end

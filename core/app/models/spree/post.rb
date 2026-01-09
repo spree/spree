@@ -2,6 +2,7 @@ module Spree
   class Post < Spree.base_class
     include Spree::SingleStoreResource
     include Spree::Metafields
+    include Spree::Taggable
     extend FriendlyId
 
     publishes_lifecycle_events
