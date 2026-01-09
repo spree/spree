@@ -90,6 +90,7 @@ module Spree
           case timezone.to_sym
           when :local
             tz = cookies['tz']
+            tz = CGI.unescape(tz) if tz.present?
             ActiveSupport::TimeZone.all.any? { |x| x.match?(tz) } ? tz : nil
           when :store then current_store.preferred_timezone
           when :application then Time.zone_default.name

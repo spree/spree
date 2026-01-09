@@ -23,11 +23,13 @@ describe Spree::Admin::BaseController, type: :controller do
     end
 
     let(:store) { create(:store, preferred_timezone: store_timezone) }
+    # Simulate what JavaScript sets: encodeURIComponent('Europe/Warsaw') = 'Europe%2FWarsaw'
     let(:store_timezone) { 'America/New_York' }
 
     context 'with valid cookie timezone' do
       before do
-        cookies[:tz] = 'Europe/Warsaw'
+        # Simulate what JavaScript sets: encodeURIComponent('Europe/Warsaw') = 'Europe%2FWarsaw'
+        cookies[:tz] = 'Europe%2FWarsaw'
       end
 
       it 'returns the correct timezone' do
