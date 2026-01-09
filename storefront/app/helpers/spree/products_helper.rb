@@ -23,7 +23,7 @@ module Spree
     def weeks_online(product)
       Spree::Deprecation.warn('weeks_online is deprecated and will be removed in Spree 5.2')
 
-      (Time.current - product.activated_at.in_time_zone(current_store.preferred_timezone)).seconds.in_weeks.to_i.abs
+      (Time.current - product.activated_at.in_time_zone(current_timezone)).seconds.in_weeks.to_i.abs
     end
 
     def product_not_selected_options(product, selected_variant, options_param_name: :options)

@@ -14,6 +14,7 @@ module Spree
       helper 'spree/integrations'
 
       before_action :authorize_admin
+      around_action :set_timezone
       after_action :set_return_to, only: [:index]
 
       protected
@@ -85,7 +86,21 @@ module Spree
       end
 
       def current_timezone
-        @current_timezone ||= current_store.preferred_timezone
+        @current_timezone ||= Spree::Config[:timezones].map do |timezone|
+          case timezone.to_sym
+          when :local
+            tz = cookies['tz']
+            ActiveSupport::TimeZone.all.any? { |x| x.match?(tz) } ? tz : nil
+          when :store then current_store.preferred_timezone
+          when :application then Time.zone_default.name
+          end
+        end.map(&:presence).compact.first
+      end
+
+      def set_timezone
+        Time.use_zone(current_timezone) do
+          yield
+        end
       end
 
       def current_currency

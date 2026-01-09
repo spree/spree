@@ -9,8 +9,59 @@ end
 describe Spree::Admin::BaseController, type: :controller do
   controller(Spree::Admin::BaseController) do
     def index
-      authorize! :update, Spree::Order
+      @timezone_used = Time.zone.name
       render plain: 'test'
+    end
+  end
+
+  describe '#current_timezone' do
+    stub_authorization!
+
+    before do
+      allow(Spree::Config).to receive(:timezones).and_return([:local, :store])
+      allow(controller).to receive(:current_store).and_return(store)
+    end
+
+    let(:store) { create(:store, preferred_timezone: store_timezone) }
+    let(:store_timezone) { 'America/New_York' }
+
+    context 'with valid cookie timezone' do
+      before do
+        cookies[:tz] = 'Europe/Warsaw'
+      end
+
+      it 'returns the correct timezone' do
+        get :index
+        expect(assigns(:timezone_used)).to eq('Europe/Warsaw')
+      end
+    end
+
+    context 'with invalid or none cookie timezone' do
+      before do
+        cookies[:tz] = 'Invalid/Timezone'
+      end
+
+      context 'when fallback is :store' do
+        before do
+          allow(Spree::Config).to receive(:timezones).and_return([:local, :store])
+        end
+
+        it 'returns store\'s timezone' do
+          get :index
+          expect(assigns(:timezone_used)).to eq('America/New_York')
+        end
+      end
+
+      context 'when fallback is :application' do
+        before do
+          allow(Spree::Config).to receive(:timezones).and_return([:local, :application])
+        end
+
+        it 'returns application\'s timezone' do
+          get :index
+          expect(assigns(:timezone_used)).to eq(Time.zone_default.name)
+        end
+      end
     end
   end
 
