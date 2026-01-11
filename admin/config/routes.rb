@@ -73,7 +73,7 @@ Spree::Core::Engine.add_routes do
 
     # orders
     resources :checkouts, only: %i[index]
-    resources :orders, only: [:index, :edit, :new, :create, :destroy] do
+    resources :orders do
       member do
         post :resend
         put :cancel
@@ -109,6 +109,12 @@ Spree::Core::Engine.add_routes do
           post :perform
         end
       end
+      resources :adjustments, except: [:index, :show], controller: 'orders/adjustments' do
+        member do
+          put :toggle_state
+        end
+      end
+      resources :order_promotions, only: [:new, :create, :destroy], controller: 'orders/order_promotions'
     end
 
     # customers

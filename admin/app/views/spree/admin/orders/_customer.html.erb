@@ -30,7 +30,7 @@
   <div class="card-body">
     <% unless defined?(current_vendor) && current_vendor %>
       <% unless @order.user.present? %>
-        <h5><%= Spree.t(:contact_information) %></h5>
+        <h6><%= Spree.t(:contact_information) %></h6>
       <% end %>
       <div class='card-text flex flex-col'>
         <% if @order.user.present? %>

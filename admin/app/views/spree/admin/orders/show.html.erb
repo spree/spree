@@ -5,10 +5,13 @@
   <div class="col-span-12 lg:col-span-8">
     <%= render 'line_items' %>
     <%= render 'shipments' %>
+    <%= render 'promotions' %>
+    <%= render 'adjustments' %>
+    <%= render 'taxes' %>
+    <%= render 'payments' %>
+    <%= render 'refunds' %>
     <%= render 'customer_returns' %>
     <%= render 'return_authorizations' %>
-    <%= render 'payments'%>
-    <%= render 'refunds'%>
     <%= render_admin_partials(:order_page_body_partials, order: @order) %>
     <%= render 'summary' %>
   </div>
