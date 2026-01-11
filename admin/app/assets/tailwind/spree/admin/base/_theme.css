@@ -14,7 +14,7 @@
   --color-info: var(--color-blue-900);
 
   /* Typography */
-  --font-sans: Inter, sans-serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 
   /* Override Tailwind's text-* scale to match Spree design system */
   --text-2xs: 0.625rem;

@@ -3,6 +3,32 @@
     <h5 class="card-title"><%= Spree.t(:summary) %></h5>
   </div>
   <ul class="list-group list-group-flush">
+    <% if @order.created_by %>
+      <li class="list-group-item flex justify-between items-center border-0 rounded-none">
+        <span><%= Spree.t(:created_by) %></span>
+        <span class="text-rightfont-bold">
+          <%= link_to @order.created_by.name, spree.admin_admin_user_path(@order.created_by), data: { turbo_frame: '_top' } %>
+        </span>
+      </li>
+    <% end %>
+
+
+    <li class="list-group-item flex justify-between items-center border-0 rounded-none">
+      <span><%= Spree.t(:created_at) %></span>
+      <span class="text-rightfont-bold">
+        <%= spree_time(@order.created_at) %>
+      </span>
+    </li>
+
+    <% if @order.completed_at %>
+      <li class="list-group-item flex justify-between items-center border-0">
+        <span><%= Spree.t(:completed_at) %></span>
+        <span class="text-rightfont-bold">
+          <%= spree_time(@order.completed_at) %>
+        </span>
+      </li>
+    <% end %>
+
     <% if @order.canceled? && @order.canceled_at %>
       <li class="list-group-item flex justify-between items-center border-0">
         <span><%= Spree.t(:canceled_at) %></span>
@@ -20,11 +46,13 @@
       <% end %>
     <% end %>
 
+    <hr class="border-gray-100" />
+
     <li class="list-group-item flex justify-between items-center border-0">
       <span><%= Spree.t(:currency) %></span>
-      <span id='currency'>
+      <code id='currency'>
         <%= @order.currency %>
-      </span>
+      </code>
     </li>
 
     <li class="list-group-item flex justify-between items-center border-0">
@@ -37,9 +65,20 @@
     <% if @order.promo_total != 0 %>
       <li class="list-group-item flex justify-between items-center border-0">
         <span><%= Spree.t(:discount_amount) %></span>
-        <span class="text-right span" id='date_complete'>
-        <%= @order.display_promo_total.to_html %>
-      </span>
+        <span class="text-right" id='promo_total'>
+          <%= @order.display_promo_total.to_html %>
+        </span>
+      </li>
+    <% end %>
+
+    <% other_adjustments = @order.all_adjustments.eligible.where.not(source_type: ['Spree::PromotionAction', 'Spree::TaxRate']) %>
+    <% if other_adjustments.any? %>
+      <% other_adjustment_total = other_adjustments.sum(:amount) %>
+      <li class="list-group-item flex justify-between items-center border-0">
+        <span><%= Spree.t(:adjustments) %></span>
+        <span class="text-right" id='other_adjustment_total'>
+          <%= Spree::Money.new(other_adjustment_total, currency: @order.currency).to_html %>
+        </span>
       </li>
     <% end %>
 
@@ -61,24 +100,13 @@
       </span>
     </li>
 
-    <% tax_lines = order_summary_tax_lines_additional(@order) %>
-
     <li class="list-group-item border-0" data-controller="reveal">
       <span class="flex justify-between items-center">
         <span><%= Spree.t(:tax) %></span>
         <span id="additional_tax_total">
-          <% if tax_lines.any? %>
-            <button type="button" class="btn btn-light btn-sm mr-2" data-action="click->reveal#toggle">
-              <%= Spree.t(:show_details) %>
-              <%= icon('selector', height: 12, class: 'mr-0 ml-2') %>
-            </button>
-          <% end %>
-
           <%= @order.display_additional_tax_total.to_html %>
         </span>
       </span>
-
-      <%= render 'tax_lines', tax_lines: tax_lines %>
     </li>
 
     <%= render_admin_partials(:order_page_summary_partials, order: @order) %>
@@ -99,7 +127,7 @@
 
     <li class="list-group-item flex justify-between items-center bg-gray-25">
       <span data-hook='admin_order_tab_outstanding_balance_title'><%= Spree.t(:outstanding_balance) %></span>
-      <span id='outstanding_balance'>
+      <span id='outstanding_balance' class="text-danger">
         <%= @order.display_outstanding_balance.to_html %>
       </span>
     </li>

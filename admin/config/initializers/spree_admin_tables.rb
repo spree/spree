@@ -1384,7 +1384,7 @@ Rails.application.config.after_initialize do
                                                   method: ->(delivery) { delivery.response_code || '-' }
 
   Spree.admin.tables.webhook_deliveries.add :actions,
-                                                  label: :actions,
+                                                  label: :details,
                                                   type: :custom,
                                                   sortable: false,
                                                   filterable: false,

@@ -1,0 +1,15 @@
+<%= turbo_frame_tag :dialog do %>
+  <div>
+    <%= dialog_header(Spree.t(:add_coupon_code)) %>
+    <%= form_with url: spree.admin_order_order_promotions_path(@order) do |f| %>
+      <div class="dialog-body">
+        <%= f.spree_text_field :coupon_code,
+                               placeholder: Spree.t(:enter_coupon_code),
+                               autofocus: true %>
+      </div>
+      <div class="dialog-footer">
+        <%= turbo_save_button_tag Spree.t(:apply) %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

@@ -33,12 +33,11 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-bold leading-none;
-    font-family: var(--font-sans);
+    @apply font-semibold leading-none;
   }
 
   strong, b {
-    @apply font-bold;
+    @apply font-semibold;
   }
 
   h1 { @apply text-4xl; }

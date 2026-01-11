@@ -213,6 +213,15 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
 
   describe '#edit' do
     subject { get :edit, params: { id: order.number } }
+    let(:order) { create(:order_ready_to_ship, total: 100, with_payment: false, store: store) }
+    it 'redirects to the show page' do
+      subject
+      expect(response).to redirect_to(spree.admin_order_path(order))
+    end
+  end
+
+  describe '#show' do
+    subject { get :show, params: { id: order.number } }
 
     let(:order) { create(:order_ready_to_ship, total: 100, with_payment: false, store: store) }
 
@@ -241,7 +250,7 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
 
       it 'shows an order' do
         subject
-        expect(response).to render_template(:edit)
+        expect(response).to render_template(:show)
         expect(assigns[:payments]).to contain_exactly(payment)
       end
     end

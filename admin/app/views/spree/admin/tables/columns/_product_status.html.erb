@@ -1,6 +1,4 @@
 <%# locals: (record:, column:, value:) %>
 <% product = record %>
-<div class="text-center">
-  <%= product_status(product) %>
-  <%= help_bubble(Spree.t("admin.products.help_bubble")) %>
-</div>
+<%= product_status(product) %>
+<%= help_bubble(Spree.t("admin.products.help_bubble")) %>
