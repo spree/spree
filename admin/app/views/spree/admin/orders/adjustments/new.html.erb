@@ -1,0 +1,15 @@
+<%= turbo_frame_tag :dialog do %>
+  <div>
+    <%= dialog_header(Spree.t(:new_adjustment)) %>
+    <%= form_with model: @adjustment, url: spree.admin_order_adjustments_path(@order), data: { turbo_frame: '_top' } do |f| %>
+      <div class="dialog-body">
+        <%= render 'spree/admin/shared/error_messages', target: @adjustment %>
+        <%= render 'form', f: f %>
+      </div>
+      <div class="dialog-footer">
+        <%= dialog_discard_button %>
+        <%= turbo_save_button_tag Spree.t('actions.create') %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

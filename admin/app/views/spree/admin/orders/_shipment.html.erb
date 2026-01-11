@@ -1,5 +1,5 @@
 <% order ||= shipment.order %>
-<%= turbo_frame_tag dom_id(shipment), class: "card" do %>
+<%= turbo_frame_tag dom_id(shipment), class: "card rounded-lg" do %>
   <div class="card-header items-center justify-between">
     <div class="flex items-center gap-2">
       <span class="flex items-center"><%= shipment_state(shipment.state) %></span>
@@ -12,8 +12,8 @@
     </div>
 
     <span class="flex justify-between items-center gap-2">
-      <small class="text-gray-600"><%= Spree.t(:package_from).downcase %></small>
-      <strong>
+      <span class="text-gray-600"><%= Spree.t(:package_from).downcase %></span>
+      <span class="font-semibold">
         <% if can?(:edit, shipment.stock_location) %>
           <%= link_to shipment.stock_location.name, spree.edit_admin_stock_location_path(shipment.stock_location), data: { turbo_frame: '_top' } %>
         <% else %>

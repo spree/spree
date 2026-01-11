@@ -266,7 +266,7 @@
   }
 
   .ts-wrapper .ts-control > .item .remove {
-    @apply inline-block align-middle text-base font-bold ml-[3px] py-0 px-[3px] text-inherit no-underline rounded-sm opacity-50;
+    @apply inline-block align-middle text-base font-semibold ml-[3px] py-0 px-[3px] text-inherit no-underline rounded-sm opacity-50;
   }
 
   .ts-wrapper .ts-control > .item .remove:hover {

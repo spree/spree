@@ -15,7 +15,7 @@
 
       <% if @order.payment_total < @order.total && can?(:create, Spree::Payment.new(order: @order)) %>
         <div class="flex justify-center w-full gap-6 p-6">
-          <%= link_to_with_icon 'plus', Spree.t(:new_payment), spree.new_admin_order_payment_path(@order), class: 'btn btn-primary' %>
+          <%= link_to_with_icon 'plus', Spree.t(:new_payment), spree.new_admin_order_payment_path(@order), class: 'btn btn-secondary' %>
 
           <% if spree.respond_to?(:checkout_state_url) %>
             <%= link_to_with_icon 'send', Spree.t('admin.send_payment_link'), spree.admin_order_payment_links_path(@order), data: { turbo_method: :post }, class: 'btn btn-light', title: Spree.t(:send_payment_link_title) %>
@@ -23,7 +23,7 @@
             <div data-controller="clipboard" data-clipboard-success-content-value="<%= Spree.t('admin.copied') %>">
               <input type="hidden" value="<%= spree.checkout_state_url(@order.token, :payment, host: current_store.url_or_custom_domain) %>" readonly data-clipboard-target="source">
               <button class="btn btn-light" type="button" data-clipboard-target="button" data-action="click->clipboard#copy">
-                <%= icon('copy-check') %>
+                <%= icon('copy') %>
                 <%= Spree.t('admin.copy_payment_link') %>
               </button>
             </div>

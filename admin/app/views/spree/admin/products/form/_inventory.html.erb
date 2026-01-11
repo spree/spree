@@ -21,7 +21,7 @@
       class="master-variant-quantity-form <%= @product.has_variants? || !@product.track_inventory ? 'hidden' : '' %>"
       data-product-form-target="<%= @product.has_variants? ? '' : 'quantityForm' %>"
     >
-      <h6 class="font-bold"><%= Spree.t(:quantity) %></h6>
+      <h6 class="font-semibold"><%= Spree.t(:quantity) %></h6>
       <hr class="my-6">
       <div>
         <%= f.fields_for :master, @product.master do |vf| %>

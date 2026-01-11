@@ -3,6 +3,7 @@ module Spree
     module OrdersHelper
       TaxLine = Struct.new(:label, :display_amount, :item, :for_shipment, keyword_init: true) do
         def name
+          Spree::Deprecation.warn("TaxLine is deprecated and will be removed in Spree 5.5")
           item_name = item.name
           item_name += " #{Spree.t(:shipment).downcase}" if for_shipment
 
@@ -11,6 +12,7 @@ module Spree
       end
 
       def order_summary_tax_lines_additional(order)
+        Spree::Deprecation.warn("order_summary_tax_lines_additional is deprecated and will be removed in Spree 5.5")
         line_item_taxes = order.line_item_adjustments.tax.map { |tax_adjustment| map_to_tax_line(tax_adjustment) }
         shipment_taxes = order.shipment_adjustments.tax.map { |tax_adjustment| map_to_tax_line(tax_adjustment, for_shipment: true) }
 
