@@ -1,135 +1,33 @@
+<% presenter = Spree::Admin::OrderSummaryPresenter.new(@order) %>
+
 <div class="card mb-6" id="order_tab_summary">
   <div class="card-header">
     <h5 class="card-title"><%= Spree.t(:summary) %></h5>
   </div>
   <ul class="list-group list-group-flush">
-    <% if @order.created_by %>
-      <li class="list-group-item flex justify-between items-center border-0 rounded-none">
-        <span><%= Spree.t(:created_by) %></span>
-        <span class="text-rightfont-bold">
-          <%= link_to @order.created_by.name, spree.admin_admin_user_path(@order.created_by), data: { turbo_frame: '_top' } %>
-        </span>
-      </li>
-    <% end %>
-
-
-    <li class="list-group-item flex justify-between items-center border-0 rounded-none">
-      <span><%= Spree.t(:created_at) %></span>
-      <span class="text-rightfont-bold">
-        <%= spree_time(@order.created_at) %>
-      </span>
-    </li>
-
-    <% if @order.completed_at %>
-      <li class="list-group-item flex justify-between items-center border-0">
-        <span><%= I18n.t('activerecord.attributes.spree/order.completed_at') %></span>
-        <span class="text-rightfont-bold">
-          <%= spree_time(@order.completed_at) %>
-        </span>
-      </li>
-    <% end %>
-
-    <% if @order.canceled? && @order.canceled_at %>
-      <li class="list-group-item flex justify-between items-center border-0">
-        <span><%= Spree.t(:canceled_at) %></span>
-        <span class="text-rightfont-bold">
-          <%= spree_time(@order.canceled_at) %>
-        </span>
-      </li>
-      <% if @order.canceler.present? %>
-        <li class="list-group-item flex justify-between items-center border-0">
-          <span><%= Spree.t(:canceler) %></span>
-          <span class="text-rightfont-bold">
-            <%= @order.canceler.name %>
+    <% presenter.rows.each do |row| %>
+      <% if row == :separator %>
+        <hr class="border-gray-100" />
+      <% else %>
+        <li class="list-group-item flex justify-between items-center border-0 <%= 'bg-gray-25' if row[:highlight] %>">
+          <span><%= row[:label] %></span>
+          <span class="<%= 'font-bold' if row[:bold] %> <%= 'text-danger' if row[:danger] %>" <%= "id=#{row[:id]}".html_safe if row[:id] %>>
+            <% if row[:link] %>
+              <%= link_to row[:value], row[:link], data: { turbo_frame: '_top' } %>
+            <% elsif row[:type] == :datetime %>
+              <%= spree_time(row[:value]) %>
+            <% elsif row[:type] == :code %>
+              <code><%= row[:value] %></code>
+            <% elsif row[:value].respond_to?(:to_html) %>
+              <%= row[:value].to_html %>
+            <% else %>
+              <%= row[:value] %>
+            <% end %>
           </span>
         </li>
       <% end %>
     <% end %>
 
-    <hr class="border-gray-100" />
-
-    <li class="list-group-item flex justify-between items-center border-0">
-      <span><%= Spree.t(:currency) %></span>
-      <code id='currency'>
-        <%= @order.currency %>
-      </code>
-    </li>
-
-    <li class="list-group-item flex justify-between items-center border-0">
-      <span data-hook='admin_order_tab_subtotal_title'><%= Spree.t(:subtotal) %></span>
-      <span id='item_total'>
-        <%= @order.display_item_total.to_html %>
-      </span>
-    </li>
-
-    <% if @order.promo_total != 0 %>
-      <li class="list-group-item flex justify-between items-center border-0">
-        <span><%= Spree.t(:discount_amount) %></span>
-        <span class="text-right" id='promo_total'>
-          <%= @order.display_promo_total.to_html %>
-        </span>
-      </li>
-    <% end %>
-
-    <% other_adjustments = @order.all_adjustments.eligible.where.not(source_type: ['Spree::PromotionAction', 'Spree::TaxRate']) %>
-    <% if other_adjustments.any? %>
-      <% other_adjustment_total = other_adjustments.sum(:amount) %>
-      <li class="list-group-item flex justify-between items-center border-0">
-        <span><%= Spree.t(:adjustments) %></span>
-        <span class="text-right" id='other_adjustment_total'>
-          <%= Spree::Money.new(other_adjustment_total, currency: @order.currency).to_html %>
-        </span>
-      </li>
-    <% end %>
-
-    <% if @order.checkout_steps.include?("delivery") && @order.ship_total > 0 %>
-      <li class="list-group-item flex justify-between items-center border-0">
-        <span data-hook='admin_order_tab_ship_total_title'>
-          <%= Spree.t(:ship_total) %>
-        </span>
-        <span id='ship_total'>
-          <%= @order.display_ship_total.to_html %>
-        </span>
-      </li>
-    <% end %>
-
-    <li class="list-group-item flex justify-between items-center border-0">
-      <span data-hook='admin_order_tab_included_tax_title'><%= Spree.t(:tax_included) %></span>
-      <span id='included_tax_total'>
-        <%= @order.display_included_tax_total.to_html %>
-      </span>
-    </li>
-
-    <li class="list-group-item border-0" data-controller="reveal">
-      <span class="flex justify-between items-center">
-        <span><%= Spree.t(:tax) %></span>
-        <span id="additional_tax_total">
-          <%= @order.display_additional_tax_total.to_html %>
-        </span>
-      </span>
-    </li>
-
     <%= render_admin_partials(:order_page_summary_partials, order: @order) %>
-
-    <li class="list-group-item flex justify-between items-center border-0">
-      <span data-hook='admin_order_tab_total_title'><%= Spree.t(:total) %></span>
-      <span class="font-bold capitalize" id='order_total'>
-        <%= @order.display_total.to_html %>
-      </span>
-    </li>
-
-    <li class="list-group-item flex justify-between items-center border-t bg-gray-25">
-      <span data-hook='admin_order_tab_payment_total_title'><%= Spree.t(:payment_total) %></span>
-      <span id='payment_total'>
-        <%= @order.display_payment_total.to_html %>
-      </span>
-    </li>
-
-    <li class="list-group-item flex justify-between items-center bg-gray-25">
-      <span data-hook='admin_order_tab_outstanding_balance_title'><%= Spree.t(:outstanding_balance) %></span>
-      <span id='outstanding_balance' class="text-danger">
-        <%= @order.display_outstanding_balance.to_html %>
-      </span>
-    </li>
   </ul>
 </div>

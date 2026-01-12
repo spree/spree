@@ -27,23 +27,34 @@
               <% tax_rate = adjustment.source %>
               <tr>
                 <td>
-                  <div class="font-medium"><%= adjustment.label %></div>
-                  <% if tax_rate.present? %>
-                    <div class="text-sm text-gray-500">
-                      <%= link_to tax_rate.zone&.name || Spree.t(:all), spree.edit_admin_tax_rate_path(tax_rate), class: "text-blue-600 hover:underline" %>
-                    </div>
+                  <% if tax_rate.present? && can?(:manage, tax_rate) %>
+                    <%= link_to tax_rate.name, spree.edit_admin_tax_rate_path(tax_rate), data: { turbo_frame: '_top' }, class: 'font-semibold' %>
+                  <% else %>
+                    <%= adjustment.label %>
                   <% end %>
                 </td>
                 <td class="text-sm text-gray-600">
                   <% if adjustment.adjustable.is_a?(Spree::LineItem) %>
-                    <%= icon('shopping-cart') %>
-                    <%= Spree.t(:line_item) %> - <%= adjustment.adjustable.name %>
+                    <span class="badge badge-light">
+                      <%= icon('box') %>
+                      <%= Spree.t(:line_item) %>
+                    </span>
+
+                    <%= adjustment.adjustable.name %>
                   <% elsif adjustment.adjustable.is_a?(Spree::Shipment) %>
-                    <%= icon('truck') %>
-                    <%= Spree.t(:shipment) %> #<%= adjustment.adjustable.number %>
+                    <span class="badge badge-info">
+                      <%= icon('truck') %>
+                      <%= Spree.t(:shipment) %>
+                    </span>
+
+                    #<%= adjustment.adjustable.number %>
                   <% elsif adjustment.adjustable.is_a?(Spree::Order) %>
-                    <%= icon('receipt') %>
-                    <%= Spree.t(:order) %>
+                    <span class="badge badge-primary">
+                      <%= icon('shopping-cart') %>
+                      <%= Spree.t(:order) %>
+                    </span>
+
+                    #<%= adjustment.adjustable.number %>
                   <% end %>
                 </td>
                 <td>
@@ -53,7 +64,7 @@
                   <%= adjustment.adjustable.display_pre_tax_amount if adjustment.adjustable.respond_to?(:display_pre_tax_amount) %>
                 <td>
                   <% if tax_rate.present? %>
-                    <%= number_to_percentage(tax_rate.amount * 100, precision: 2) %>
+                    <%= number_to_percentage(tax_rate.amount * 100, precision: 2, strip_insignificant_zeros: true) %>
                   <% else %>
                     -
                   <% end %>

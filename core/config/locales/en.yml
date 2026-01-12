@@ -696,14 +696,14 @@ en:
     addresses: Addresses
     adjustable: Adjustable
     adjustment: Adjustment
-    adjustment_closed_description: The adjustment is closed, and will not be recalculated.
-    adjustment_open_description: The adjustment is open, and will be recalculated.
     adjustment_amount: Amount
     adjustment_amount_help: Positive values are charges, negative values are credits.
+    adjustment_closed_description: The adjustment is closed, and will not be recalculated.
     adjustment_labels:
       tax_rates:
         excluding_tax: "%{name}%{amount}"
         including_tax: "%{name}%{amount} (Included in Price)"
+    adjustment_open_description: The adjustment is open, and will be recalculated.
     adjustment_successfully_closed: Adjustment has been successfully closed!
     adjustment_successfully_opened: Adjustment has been successfully opened!
     adjustment_total: Adjustment Total
@@ -858,9 +858,9 @@ en:
     click_and_drag_on_the_products_to_sort_them: Click and drag on the products to sort them.
     clone: Clone
     close: Close
-    closed: Closed
     close_all_adjustments: Close All Adjustments
     close_sidebar: Close sidebar
+    closed: Closed
     code: Code
     colors: Colors
     company: Company
@@ -1321,6 +1321,7 @@ en:
     manage_variants: Manage Variants
     manual: Manual
     manual_adjustment: Manual Adjustment
+    manual_adjustments: Manual Adjustments
     manual_intervention_required: Manual intervention required
     mark_as_default: Mark as default
     master: Master

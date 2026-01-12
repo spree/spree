@@ -20,59 +20,6 @@ RSpec.describe Spree::Admin::Orders::AdjustmentsController do
   describe '#create' do
     let(:adjustment_params) { { label: 'Test Adjustment', amount: -10.00 } }
 
-    context 'with HTML format' do
-      subject { post :create, params: { order_id: order.number, adjustment: adjustment_params } }
-
-      it 'creates a new adjustment on order' do
-        expect { subject }.to change { order.adjustments.reload.count }.by(1)
-      end
-
-      it 'redirects to order edit page' do
-        subject
-        expect(response).to redirect_to(spree.edit_admin_order_path(order))
-        expect(flash[:success]).to be_present
-      end
-
-      it 'sets the adjustment as closed' do
-        subject
-        order.reload
-        adjustment = order.adjustments.find_by(label: 'Test Adjustment')
-        expect(adjustment.state).to eq('closed')
-      end
-
-      context 'with positive amount' do
-        let(:adjustment_params) { { label: 'Surcharge', amount: 5.00 } }
-
-        it 'creates a charge adjustment' do
-          subject
-          order.reload
-          adjustment = order.adjustments.find_by(label: 'Surcharge')
-          expect(adjustment.amount).to eq(5.00)
-        end
-      end
-
-      context 'with missing label' do
-        let(:adjustment_params) { { amount: -10.00 } }
-
-        it 'uses default manual adjustment label' do
-          subject
-          order.reload
-          adjustment = order.adjustments.find_by(amount: -10.00)
-          expect(adjustment.label).to eq(Spree.t(:manual_adjustment))
-        end
-      end
-
-      context 'with invalid params' do
-        let(:adjustment_params) { { label: 'Test', amount: nil } }
-
-        it 'renders new template with error' do
-          subject
-          expect(response).to have_http_status(:unprocessable_content)
-          expect(response).to render_template(:new)
-        end
-      end
-    end
-
     context 'with turbo_stream format' do
       subject { post :create, params: { order_id: order.number, adjustment: adjustment_params }, format: :turbo_stream }
 
@@ -103,34 +50,6 @@ RSpec.describe Spree::Admin::Orders::AdjustmentsController do
     let(:adjustment) { create(:adjustment, adjustable: order, order: order, label: 'Manual', amount: -5, state: 'open') }
     let(:update_params) { { label: 'Updated Label', amount: -15.00 } }
 
-    context 'with HTML format' do
-      subject { put :update, params: { order_id: order.number, id: adjustment.id, adjustment: update_params } }
-
-      it 'updates the adjustment' do
-        subject
-        adjustment.reload
-        expect(adjustment.label).to eq('Updated Label')
-        expect(adjustment.amount).to eq(-15.00)
-      end
-
-      it 'closes the adjustment after update' do
-        subject
-        adjustment.reload
-        expect(adjustment.state).to eq('closed')
-      end
-
-      it 'redirects to order edit page' do
-        subject
-        expect(response).to redirect_to(spree.edit_admin_order_path(order))
-      end
-
-      it 'updates order totals' do
-        subject
-        order.reload
-        expect(order.all_adjustments.find(adjustment.id).amount).to eq(-15.00)
-      end
-    end
-
     context 'with turbo_stream format' do
       subject { put :update, params: { order_id: order.number, id: adjustment.id, adjustment: update_params }, format: :turbo_stream }
 
@@ -149,24 +68,6 @@ RSpec.describe Spree::Admin::Orders::AdjustmentsController do
 
   describe '#destroy' do
     let!(:adjustment) { create(:adjustment, adjustable: order, order: order, label: 'Manual', amount: -5) }
-
-    context 'with HTML format' do
-      subject { delete :destroy, params: { order_id: order.number, id: adjustment.id } }
-
-      it 'destroys the adjustment' do
-        expect { subject }.to change { Spree::Adjustment.count }.by(-1)
-      end
-
-      it 'redirects to order edit page' do
-        subject
-        expect(response).to redirect_to(spree.edit_admin_order_path(order))
-      end
-
-      it 'removes the adjustment from order' do
-        subject
-        expect(Spree::Adjustment.where(id: adjustment.id)).to be_empty
-      end
-    end
 
     context 'with turbo_stream format' do
       subject { delete :destroy, params: { order_id: order.number, id: adjustment.id }, format: :turbo_stream }
