@@ -290,6 +290,37 @@ describe Spree::PriceList, type: :model do
         price_list.remove_products([product1.id])
       }.to have_enqueued_job(Spree::Variants::TouchJob).with([product1.master.id])
     end
+
+    context 'when re-adding a previously removed product' do
+      it 'allows re-adding a product with empty prices' do
+        # Add product, then remove it
+        price_list.add_products([product1.id])
+        price_list.remove_products([product1.id])
+
+        # Re-add the same product - this should not raise a unique constraint error
+        expect {
+          price_list.add_products([product1.id])
+        }.to change { price_list.prices.count }.by(3) # 1 product * 3 currencies
+      end
+
+      it 'allows re-adding a product that had prices with amounts set' do
+        # Add product and set some prices
+        price_list.add_products([product1.id])
+        price = price_list.prices.find_by(variant_id: product1.master.id, currency: 'USD')
+        price.update!(amount: 19.99)
+
+        # Remove product
+        price_list.remove_products([product1.id])
+
+        # Re-add the same product
+        expect {
+          price_list.add_products([product1.id])
+        }.to change { price_list.prices.count }.by(3)
+
+        # New prices should have nil amounts
+        expect(price_list.prices.where(variant_id: product1.master.id).pluck(:amount).uniq).to eq([nil])
+      end
+    end
   end
 
   describe '#bulk_update_prices' do
