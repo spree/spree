@@ -1395,10 +1395,10 @@ describe Spree::Product, type: :model do
           # Both have 2 orders, but product_2 has higher total
           expect(products.first.name).to eq('Product 2')
           expect(products.second.name).to eq('Product 1')
-          
+
           product_1_result = products.find { |p| p.id == product_1.id }
           product_2_result = products.find { |p| p.id == product_2.id }
-          
+
           expect(product_2_result.completed_orders_total).to be > product_1_result.completed_orders_total
         end
       end
@@ -1424,7 +1424,7 @@ describe Spree::Product, type: :model do
 
         it 'calculates total correctly with price * quantity for each line item' do
           products = described_class.where(id: test_product_ids).by_best_selling
-          
+
           product_1_result = products.find { |p| p.id == product_1.id }
           product_2_result = products.find { |p| p.id == product_2.id }
 
@@ -1436,7 +1436,7 @@ describe Spree::Product, type: :model do
           # Product 2 should have total of $200 (100*2)
           expect(product_1_result.completed_orders_total).to eq(250)
           expect(product_2_result.completed_orders_total).to eq(200)
-          
+
           # Product 1 should be ranked higher due to higher total
           expect(products.first.name).to eq('Product 1')
         end
@@ -1466,7 +1466,7 @@ describe Spree::Product, type: :model do
 
         it 'prioritizes order count over total when ranking' do
           products = described_class.where(id: test_product_ids).by_best_selling
-          
+
           product_1_result = products.find { |p| p.id == product_1.id }
           product_2_result = products.find { |p| p.id == product_2.id }
 
@@ -1477,7 +1477,7 @@ describe Spree::Product, type: :model do
           # Verify totals
           expect(product_1_result.completed_orders_total).to eq(250)
           expect(product_2_result.completed_orders_total).to eq(400)
-          
+
           # Product 1 should rank first because it has more orders (2 vs 1)
           # even though Product 2 has a higher total ($400 vs $250)
           expect(products.first.name).to eq('Product 1')
@@ -1552,12 +1552,10 @@ describe Spree::Product, type: :model do
       let!(:future_product) { create(:product, available_on: 1.day.from_now, status: 'active', stores: [store]) }
       let!(:active_product) { create(:product, available_on: 1.day.ago, status: 'active', stores: [store]) }
 
-      let!(:prices) do
-        [
-          create(:price, variant: active_product.default_variant, currency: 'USD', amount: 10),
-          create(:price, variant: future_product.default_variant, currency: 'USD', amount: 10),
-          create(:price, variant: discontinued_product.default_variant, currency: 'USD', amount: 10)
-        ]
+      before do
+        active_product.default_variant.set_price('USD', 10)
+        future_product.default_variant.set_price('USD', 10)
+        discontinued_product.default_variant.set_price('USD', 10)
       end
 
       context 'when available_on is specified' do
@@ -1588,12 +1586,8 @@ describe Spree::Product, type: :model do
         let!(:active_product_4) { create(:product, status: 'active', stores: [store]) }
 
         before do
-          active_product_2.prices_including_master.where(currency: 'USD').delete_all
-          active_product_3.prices_including_master.where(currency: 'USD').delete_all
-          active_product_4.prices_including_master.where(currency: 'USD').delete_all
-
-          active_product_2.default_variant.prices.create(currency: 'USD', amount: 10)
-          active_product_3.default_variant.prices.create(currency: 'PLN', amount: 10)
+          active_product_2.default_variant.set_price('USD', 10)
+          active_product_3.default_variant.set_price('PLN', 10)
         end
 
         it 'only returns products with prices in the specified currency' do
@@ -1613,8 +1607,8 @@ describe Spree::Product, type: :model do
         let(:active_product_4) { create(:product, status: 'active', stores: [store]) }
 
         before do
-          active_product_2.default_variant.prices.create(currency: 'USD', amount: 10)
-          active_product_3.default_variant.prices.create(currency: 'PLN', amount: 10)
+          active_product_2.default_variant.set_price('USD', 10)
+          active_product_3.default_variant.set_price('PLN', 10)
         end
 
         it 'returns products regardless of price' do

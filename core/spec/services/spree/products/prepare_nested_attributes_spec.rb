@@ -233,7 +233,6 @@ RSpec.describe Spree::Products::PrepareNestedAttributes do
 
     context 'when user can update prices' do
       context 'when price amount is blank' do
-        let(:price) { create(:price, variant: variant) }
         let(:raw_params) do
           {
             variants_attributes: {
@@ -241,7 +240,7 @@ RSpec.describe Spree::Products::PrepareNestedAttributes do
                 id: variant.id,
                 prices_attributes: {
                   '0' => {
-                    id: price.id,
+                    id: variant.price_in('USD').id,
                     amount: ''
                   }
                 }
