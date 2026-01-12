@@ -1606,13 +1606,17 @@ describe Spree::Product, type: :model do
           Spree::Config.show_products_without_price = true
         end
 
-        let(:active_product_2) { create(:product, status: 'active', stores: [store]) }
-        let(:active_product_3) { create(:product, status: 'active', stores: [store]) }
-        let(:active_product_4) { create(:product, status: 'active', stores: [store]) }
+        let!(:active_product_2) { create(:product, status: 'active', stores: [store]) }
+        let!(:active_product_3) { create(:product, status: 'active', stores: [store]) }
+        let!(:active_product_4) { create(:product, status: 'active', stores: [store]) }
 
         before do
           active_product_2.default_variant.set_price('USD', 10)
+          # Remove USD price and set only PLN for active_product_3
+          active_product_3.default_variant.prices.delete_all
           active_product_3.default_variant.set_price('PLN', 10)
+          # Remove USD price from active_product_4 (no price at all)
+          active_product_4.default_variant.prices.delete_all
         end
 
         it 'returns products regardless of price' do
