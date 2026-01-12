@@ -117,6 +117,7 @@ module Spree
     end
 
     # Adds products to the price list
+    # Creates placeholder prices (with nil amount) for all variants and currencies
     # @param product_ids [Array<String>] of product ids
     # @return [void]
     def add_products(product_ids)
@@ -124,16 +125,20 @@ module Spree
 
       currencies = store.supported_currencies_list.map(&:iso_code)
       variant_ids = Spree::Variant.eligible.where(product_id: product_ids).distinct.pluck(:id)
+      return if variant_ids.empty?
+
+      # Get existing variant_id/currency combinations to avoid duplicates
+      existing = prices.where(variant_id: variant_ids)
+                       .pluck(:variant_id, :currency)
+                       .to_set
+
       now = Time.current
 
-      prices_to_insert = []
+      prices_to_insert = variant_ids.flat_map do |variant_id|
+        currencies.filter_map do |currency|
+          next if existing.include?([variant_id, currency])
 
-      currencies.each do |currency|
-        existing_variant_ids = prices.where(currency: currency).pluck(:variant_id)
-        new_variant_ids = variant_ids - existing_variant_ids
-
-        new_variant_ids.each do |variant_id|
-          prices_to_insert << {
+          {
             variant_id: variant_id,
             currency: currency,
             amount: nil,
@@ -144,10 +149,11 @@ module Spree
         end
       end
 
-      if prices_to_insert.any?
-        Spree::Price.insert_all(prices_to_insert)
-        touch_variants(variant_ids)
-      end
+      return if prices_to_insert.empty?
+
+      # Use upsert_all with on_duplicate: :skip to handle race conditions
+      Spree::Price.upsert_all(prices_to_insert, on_duplicate: :skip)
+      touch_variants(variant_ids)
     end
 
     # Removes products from the price list
@@ -205,7 +211,7 @@ module Spree
 
       return true if records_to_upsert.empty?
 
-      opts = { update_only: [:amount, :compare_at_amount] }
+      opts = { update_only: [:amount, :compare_at_amount], on_duplicate: :update }
       opts[:unique_by] = :id unless ActiveRecord::Base.connection.adapter_name == 'Mysql2'
 
       Spree::Price.upsert_all(records_to_upsert, **opts)
