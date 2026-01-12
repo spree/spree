@@ -23,7 +23,7 @@
   .select-input, 
   .form-control-sm, 
   .custom-select-sm {
-    @apply block w-full py-2 px-3 text-base font-normal leading-normal;
+    @apply block w-full py-2 pl-3 pr-8 text-base font-normal leading-normal;
     @apply text-gray-950 bg-white border border-gray-200 rounded-lg shadow-xs;
     @apply focus:outline-offset-2 focus:outline-blue-500 focus:border-gray-200 focus:ring-0;
     @apply transition-all duration-100 ease-in-out;

@@ -1,0 +1,127 @@
+<% content_for :page_title do %>
+  <%= page_header_back_button(spree.admin_price_list_path(@price_list)) %>
+  <%= @price_list.name %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= turbo_save_button_tag Spree.t('actions.save'), form: "edit_price_list_#{@price_list.id}" %>
+<% end %>
+
+<%= form_with model: [:admin, @price_list],
+              method: :patch,
+              html: { class: 'relative', id: "edit_price_list_#{@price_list.id}" },
+              data: {
+                controller: 'bulk-editor',
+                action: 'keydown.ctrl+a->bulk-editor#selectAll keydown.meta+a->bulk-editor#selectAll',
+              } do |f| %>
+
+  <div class="card mb-6">
+    <div class="card-header flex justify-between items-center border-gray-200 pr-2">
+      <div class="flex items-center gap-4">
+        <h5 class="card-title"><%= Spree.t(:prices) %> (<%= @currency %>)</h5>
+        <span class="text-sm text-gray-500 hidden" data-bulk-editor-target="statusBar"></span>
+      </div>
+      <%= select_tag :currency,
+          options_for_select(current_store.supported_currencies_list, @currency),
+          class: 'form-select w-auto',
+          onchange: "window.Turbo.visit('#{spree.edit_prices_admin_price_list_path(@price_list)}?currency=' + this.value)" %>
+    </div>
+
+    <div class="card-body p-0">
+
+      <% if @prices.any? %>
+        <%
+          # Group prices by product for display
+          prices_by_product = @prices.group_by { |price| price.variant.product }
+          row_index = 0
+        %>
+
+        <table class="table" data-bulk-editor-target="table">
+          <thead>
+            <tr>
+              <th class="border-r rounded-none"><%= Spree.t(:title) %></th>
+              <th class="border-r"><%= Spree.t(:sku) %></th>
+              <th class="border-r w-36"><%= Spree.t(:price) %></th>
+              <th class="rounded-none"><%= Spree.t(:compare_at_price) %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% prices_by_product.each do |product, prices| %>
+              <%# Product header row %>
+              <tr class="bg-gray-50">
+                <td class="border-r">
+                  <div class="flex items-center gap-3">
+                    <%= render 'spree/admin/shared/product_image', object: product, variant: :mini, width: 32, height: 32 %>
+                    <span class="font-medium text-gray-900"><%= product.name %></span>
+                  </div>
+                </td>
+                <td class="border-r"></td>
+                <td class="border-r"></td>
+                <td></td>
+              </tr>
+              <%# Variant rows %>
+              <% prices.each do |price| %>
+                <%= f.fields_for :prices, price, child_index: row_index do |pf| %>
+                  <tr data-bulk-editor-target="row">
+                    <td class="pl-14 pr-4 py-2 text-sm text-gray-600 border-r w-40"><%= price.variant.options_text.presence %></td>
+                    <td class="px-4 py-2 text-sm text-gray-400 font-mono border-r w-30"><%= price.variant.sku %></td>
+                    <td class="p-0 border-r w-15 bulk-editor-cell">
+                      <%= pf.hidden_field :id %>
+                      <%= pf.hidden_field :variant_id %>
+                      <%= pf.hidden_field :currency %>
+                      <label class="flex items-center cursor-cell m-0">
+                        <span class="pl-4 text-gray-500 pointer-events-none"><%= @currency_symbol %></span>
+                        <%= pf.number_field :amount,
+                            step: 0.01,
+                            placeholder: '0.00',
+                            class: 'w-full pl-1 pr-4 py-2 border-0 shadow-none outline-none text-right tabular-nums bg-transparent',
+                            data: {
+                              bulk_editor_target: 'cell',
+                              row: row_index,
+                              col: 0,
+                              action: bulk_editor_cell_actions,
+                              original_value: price.amount
+                            } %>
+                      </label>
+                    </td>
+                    <td class="p-0 w-15 bulk-editor-cell">
+                      <label class="flex items-center cursor-cell m-0">
+                        <span class="pl-4 text-gray-500 pointer-events-none"><%= @currency_symbol %></span>
+                        <%= pf.number_field :compare_at_amount,
+                            step: 0.01,
+                            placeholder: '0.00',
+                            class: 'w-full pl-1 pr-4 py-2 border-0 shadow-none outline-none text-right tabular-nums bg-transparent',
+                            data: {
+                              bulk_editor_target: 'cell',
+                              row: row_index,
+                              col: 1,
+                              action: bulk_editor_cell_actions,
+                              original_value: price.compare_at_amount
+                            } %>
+                      </label>
+                    </td>
+                  </tr>
+                  <% row_index += 1 %>
+                <% end %>
+              <% end %>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <div class="p-8 text-center text-gray-500">
+        <p class="mb-4"><%= Spree.t(:no_products_in_price_list) %></p>
+        <%= link_to Spree.t(:add_products), spree.admin_price_list_path(@price_list), class: 'btn btn-primary' %>
+      </div>
+    <% end %>
+  </div>
+
+  <% if @prices.any? %>
+    <div class="flex gap-3 justify-end">
+      <%= link_to Spree.t('actions.discard'), spree.admin_price_list_path(@price_list), class: 'btn btn-light' %>
+      <%= f.submit Spree.t('actions.save'),
+          class: 'btn btn-primary',
+          data: { bulk_editor_target: 'saveButton' } %>
+    </div>
+  <% end %>
+<% end %>

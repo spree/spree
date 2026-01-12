@@ -59,6 +59,7 @@
 @import "./components/_media-form.css";
 @import "./components/_seo-form.css";
 @import "./components/_line-items.css";
+@import "./components/_bulk-editor.css";
 
 /* Views */
 @import "./views/_dashboard.css";

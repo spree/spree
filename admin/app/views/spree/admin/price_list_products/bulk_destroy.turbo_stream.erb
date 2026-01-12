@@ -1,0 +1,13 @@
+<%= turbo_render_alerts %>
+
+<%= turbo_stream.replace 'bulk-dialog' do %>
+  <%= render 'spree/admin/shared/bulk_modal' %>
+<% end %>
+
+<% params[:ids]&.each do |id| %>
+  <%= turbo_stream.remove("product_#{id}") %>
+<% end %>
+
+<%= turbo_stream.replace 'products_header' do %>
+  <%= render 'spree/admin/price_lists/products_header' %>
+<% end %>

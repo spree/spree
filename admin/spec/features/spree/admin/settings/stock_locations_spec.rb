@@ -43,7 +43,7 @@ RSpec.feature 'Stock Locations', js: true do
 
   it 'allows to delete a stock location' do
     visit spree.edit_admin_stock_location_path(stock_location)
-    accept_confirm do
+    accept_turbo_confirm do
       click_on 'Delete'
     end
     expect(page).to have_content("Location \"#{stock_location.name}\" has been successfully removed!")

@@ -131,7 +131,9 @@ module Spree::Preferences::Preferable
       decimal_value ||= 0 unless nullable
       decimal_value.present? ? decimal_value.to_s.to_d : decimal_value
     when :integer
-      value.to_i
+      int_value = value.presence
+      int_value ||= 0 unless nullable
+      int_value.present? ? int_value.to_i : int_value
     when :boolean
       if value.is_a?(FalseClass) ||
           value.nil? ||
@@ -161,6 +163,17 @@ module Spree::Preferences::Preferable
         end
       else
         value.class.ancestors.include?(Hash) ? value : {}
+      end
+    when :datetime
+      return nil if value.blank?
+
+      case value
+      when Time, Date, DateTime, ActiveSupport::TimeWithZone
+        value
+      when String
+        Time.zone.parse(value)
+      else
+        value.to_time
       end
     else
       value

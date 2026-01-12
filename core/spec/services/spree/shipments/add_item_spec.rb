@@ -69,9 +69,12 @@ module Spree
         end
 
         it 'updates line item totals' do
+          # Initial: 2 * 10.00 (factory default price)
           expect(old_line_item.total).to eq(20)
           execute
-          expect(old_line_item.reload.total).to eq(BigDecimal(40)) # 4 x 10 unit price
+          # After quantity change, price is recalculated from variant (19.99)
+          # 4 * 19.99 = 79.96
+          expect(old_line_item.reload.total).to eq(BigDecimal('79.96'))
         end
       end
     end

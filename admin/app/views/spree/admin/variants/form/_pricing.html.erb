@@ -23,7 +23,8 @@
         </tr>
       </thead>
       <tbody>
-        <%= f.fields_for :prices do |price_form| %>
+        <% base_prices = f.object.prices.select { |p| p.price_list_id.nil? } %>
+        <%= f.fields_for :prices, base_prices do |price_form| %>
           <%= price_form.hidden_field :id if price_form.object.persisted? %>
           <%= price_form.hidden_field :currency %>
           <tr>
@@ -31,13 +32,13 @@
             <td>
               <%= price_form.spree_text_field :amount, disabled: !can?(:manage, price_form.object),
                                                        value: price_form.object.amount.present? ? Spree::Money.new(price_form.object.amount, currency: price_form.object.currency, symbol: '').to_s : '',
-                                                       append: currency_symbol(price_form.object.currency), 
+                                                       append: currency_symbol(price_form.object.currency),
                                                        label: false %>
             </td>
             <td>
               <%= price_form.spree_text_field :compare_at_amount, disabled: !can?(:manage, price_form.object),
                                                                   value: price_form.object.compare_at_amount.present? ? Spree::Money.new(price_form.object.compare_at_amount, currency: price_form.object.currency, symbol: '').to_s : '',
-                                                                  append: currency_symbol(price_form.object.currency), 
+                                                                  append: currency_symbol(price_form.object.currency),
                                                                   label: false %>
             </td>
           </tr>

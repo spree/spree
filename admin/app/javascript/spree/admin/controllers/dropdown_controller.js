@@ -34,12 +34,27 @@ export default class extends Controller {
     this._originalParent = null
     this._originalNextSibling = null
     this._movedToBody = false
+
+    // Listen for other dropdowns opening
+    this._closeOnOtherOpen = this.closeOnOtherOpen.bind(this)
+    document.addEventListener('dropdown:open', this._closeOnOtherOpen)
   }
 
   disconnect() {
     if (!this.menu) return
     this.stopAutoUpdate()
     this.restoreMenuPosition()
+
+    if (this._closeOnOtherOpen) {
+      document.removeEventListener('dropdown:open', this._closeOnOtherOpen)
+    }
+  }
+
+  closeOnOtherOpen(event) {
+    // Close this dropdown if another one opened
+    if (event.detail.element !== this.element && this._isOpen) {
+      this.close()
+    }
   }
 
   toggle(event) {
@@ -65,6 +80,9 @@ export default class extends Controller {
       return
     }
 
+    // Notify other dropdowns to close
+    document.dispatchEvent(new CustomEvent('dropdown:open', { detail: { element: this.element } }))
+
     // Move menu to body on first open to prevent clipping by sidebar overflow
     // Skip if portal is disabled or if inside bulk panel (to preserve Stimulus controller context)
     if (!this._movedToBody && this.shouldPortalToBody()) {
@@ -73,7 +91,7 @@ export default class extends Controller {
     }
 
     this.menu.classList.remove("hidden")
-    this.menu.style.height = "auto" 
+    this.menu.style.height = "auto"
     this._isOpen = true
 
     // Start automatic positioning

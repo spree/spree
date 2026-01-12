@@ -74,7 +74,7 @@ module Spree
 
       def build_prices
         current_store.supported_currencies_list.each do |currency|
-          @variant.prices.build(currency: currency) unless @variant.prices.exists?(currency: currency.iso_code)
+          @variant.prices.build(currency: currency) unless @variant.prices.base_prices.exists?(currency: currency.iso_code)
         end
       end
 

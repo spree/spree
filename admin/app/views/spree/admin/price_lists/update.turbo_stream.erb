@@ -1,0 +1,10 @@
+<%= turbo_render_alerts :drawer_alerts %>
+
+<%= turbo_stream.replace spree_dom_id(@price_list) + '_details' do %>
+  <%= render 'spree/admin/price_lists/details', price_list: @price_list %>
+<% end %>
+
+<%= turbo_stream.update 'page_title' do %>
+  <%= page_header_back_button(spree.admin_price_lists_path) %>
+  <%= @price_list.name %>
+<% end %>

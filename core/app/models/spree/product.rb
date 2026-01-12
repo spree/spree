@@ -43,6 +43,8 @@ module Spree
                           default_image secondary_image
                           purchasable? in_stock? backorderable? has_variants? digital?]
 
+    STATUSES = %w[draft active archived].freeze
+
     STATUS_TO_WEBHOOK_EVENT = {
       'active' => 'activated',
       'draft' => 'drafted',

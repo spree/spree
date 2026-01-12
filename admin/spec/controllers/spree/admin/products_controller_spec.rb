@@ -1503,16 +1503,6 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
     end
   end
 
-  describe 'GET #bulk_modal' do
-    context 'as admin' do
-      it 'renders modal' do
-        get :bulk_modal
-
-        expect(response).to render_template('bulk_modal')
-      end
-    end
-  end
-
   describe 'in_stock/out_of_stock' do
     let!(:in_stock_product) { create(:product) }
     let!(:in_stock_variant) { create(:variant, product: in_stock_product) }

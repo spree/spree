@@ -5,7 +5,7 @@ module Spree
         scope = store.line_items.where(
           order: Spree::Order.complete.where(
             currency: currency,
-            completed_at: (date_from.to_time.beginning_of_day)..(date_to.to_time.end_of_day)
+            completed_at: date_from..date_to
           )
         ).includes(:order, shipments: :inventory_units, variant: :product)
 

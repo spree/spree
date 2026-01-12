@@ -135,6 +135,32 @@ describe Spree::Preferences::Preferable, type: :model do
       end
     end
 
+    context 'converts nullable integer preferences' do
+      before do
+        A.preference :nullable_integer, :integer, nullable: true
+      end
+
+      it 'stores nil when set to empty string' do
+        @a.set_preference(:nullable_integer, '')
+        expect(@a.preferences[:nullable_integer]).to be_nil
+      end
+
+      it 'stores nil when set to nil' do
+        @a.set_preference(:nullable_integer, nil)
+        expect(@a.preferences[:nullable_integer]).to be_nil
+      end
+
+      it 'converts string to integer when present' do
+        @a.set_preference(:nullable_integer, '42')
+        expect(@a.preferences[:nullable_integer]).to eq(42)
+      end
+
+      it 'preserves integer values' do
+        @a.set_preference(:nullable_integer, 100)
+        expect(@a.preferences[:nullable_integer]).to eq(100)
+      end
+    end
+
     context 'converts decimal preferences to BigDecimal values' do
       before do
         A.preference :if_decimal, :decimal
@@ -151,6 +177,33 @@ describe Spree::Preferences::Preferable, type: :model do
 
         @a.set_preference(:if_decimal, '')
         expect(@a.preferences[:if_decimal]).to eq(0.0)
+      end
+    end
+
+    context 'converts nullable decimal preferences' do
+      before do
+        A.preference :nullable_decimal, :decimal, nullable: true
+      end
+
+      it 'stores nil when set to empty string' do
+        @a.set_preference(:nullable_decimal, '')
+        expect(@a.preferences[:nullable_decimal]).to be_nil
+      end
+
+      it 'stores nil when set to nil' do
+        @a.set_preference(:nullable_decimal, nil)
+        expect(@a.preferences[:nullable_decimal]).to be_nil
+      end
+
+      it 'converts string to BigDecimal when present' do
+        @a.set_preference(:nullable_decimal, '3.14')
+        expect(@a.preferences[:nullable_decimal]).to eq(BigDecimal('3.14'))
+        expect(@a.preferences[:nullable_decimal].class).to eq(BigDecimal)
+      end
+
+      it 'preserves decimal values' do
+        @a.set_preference(:nullable_decimal, 9.99)
+        expect(@a.preferences[:nullable_decimal]).to eq(BigDecimal('9.99'))
       end
     end
 

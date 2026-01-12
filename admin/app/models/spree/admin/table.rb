@@ -1,12 +1,13 @@
 module Spree
   module Admin
     class Table
-      attr_reader :columns, :bulk_actions, :context, :model_class
+      attr_reader :columns, :bulk_actions, :context, :model_class, :key
       attr_accessor :search_param, :search_placeholder, :row_actions, :row_actions_edit, :row_actions_delete, :new_resource,
                     :date_range_param, :date_range_label, :link_to_action
 
-      def initialize(context, model_class: nil, search_param: :name_cont, search_placeholder: nil, row_actions: false, row_actions_edit: true, row_actions_delete: false, new_resource: true, date_range_param: nil, date_range_label: nil, link_to_action: :edit)
+      def initialize(context, key: nil, model_class: nil, search_param: :name_cont, search_placeholder: nil, row_actions: false, row_actions_edit: true, row_actions_delete: false, new_resource: true, date_range_param: nil, date_range_label: nil, link_to_action: :edit)
         @context = context
+        @key = key
         @model_class = model_class
         @columns = {}
         @bulk_actions = {}
@@ -87,10 +88,7 @@ module Spree
         column = @columns[key.to_sym]
         return nil unless column
 
-        options.each do |attr, value|
-          column.send("#{attr}=", value) if column.respond_to?("#{attr}=")
-        end
-
+        apply_attributes(column, options)
         sort_columns!
         column
       end
@@ -199,7 +197,7 @@ module Spree
 
       # Add a bulk action definition
       # @param key [Symbol] unique action identifier
-      # @param options [Hash] action options (label, icon, modal_path, action_path, position, etc.)
+      # @param options [Hash] action options (label, icon, action_path, position, etc.)
       # @return [BulkAction] the created action
       # @raise [ArgumentError] if action configuration is invalid
       def add_bulk_action(key, **options)
@@ -231,10 +229,7 @@ module Spree
         action = @bulk_actions[key.to_sym]
         return nil unless action
 
-        options.each do |attr, value|
-          action.send("#{attr}=", value) if action.respond_to?("#{attr}=")
-        end
-
+        apply_attributes(action, options)
         sort_bulk_actions!
         action
       end
@@ -299,6 +294,12 @@ module Spree
       end
 
       private
+
+      def apply_attributes(object, options)
+        options.each do |attr, value|
+          object.send("#{attr}=", value) if object.respond_to?("#{attr}=")
+        end
+      end
 
       def sort_columns!
         @columns = @columns.sort_by { |_key, col| [col.position, col.key.to_s] }.to_h

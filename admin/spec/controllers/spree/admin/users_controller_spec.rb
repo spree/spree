@@ -158,18 +158,6 @@ RSpec.describe Spree::Admin::UsersController, type: :controller do
     end
   end
 
-  describe 'GET #bulk_modal' do
-    it 'renders the bulk modal' do
-      get :bulk_modal, params: { kind: 'add_tags' }
-
-      expect(response).to have_http_status(:ok)
-      expect(response).to render_template(:bulk_modal)
-
-      expect(assigns[:title]).to eq(Spree.t('admin.bulk_ops.users.title.add_tags'))
-      expect(assigns[:body]).to eq(Spree.t('admin.bulk_ops.users.body.add_tags'))
-    end
-  end
-
   describe 'POST #bulk_add_tags' do
     let(:users) { create_list(:user, 3) }
     let(:tags) { ['tag1', 'tag2'] }

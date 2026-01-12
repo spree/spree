@@ -1,0 +1,8 @@
+<%# locals: (allow_create: false) %>
+<%= tom_select_tag 'tags',
+                   multiple: true,
+                   class: 'w-full',
+                   options: tags_json_array,
+                   required: true,
+                   value_field: :name,
+                   create: allow_create %>

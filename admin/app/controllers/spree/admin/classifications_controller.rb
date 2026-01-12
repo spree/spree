@@ -9,7 +9,7 @@ module Spree
 
       # create classifications in bulk
       def create
-        products = current_store.products.accessible_by(current_ability, :update).where(id: params[:product_ids].compact.uniq)
+        products = current_store.products.accessible_by(current_ability, :update).where(id: params[:ids].compact.uniq)
         Spree::Taxons::AddProducts.call(taxons: Spree::Taxon.where(id: parent.id), products: products)
 
         parent.reload

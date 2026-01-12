@@ -115,6 +115,17 @@ en:
       spree/policy:
         body: Body
         owner: Policy for
+      spree/price_list:
+        description: Description
+        ends_at: Ends At
+        match_policy: Match Policy
+        name: Name
+        priority: Priority
+        starts_at: Starts At
+        status: Status
+      spree/price_rule:
+        priority: Priority
+        type: Type
       spree/product:
         available_on: Available On
         cost_currency: Cost Currency
@@ -281,6 +292,10 @@ en:
           attributes:
             amount:
               greater_than_max_amount: is greater than the allowed maximum amount of %{max_amount}
+        spree/price_list:
+          attributes:
+            ends_at:
+              must_be_after_starts_at: must be after starts at
         spree/product:
           attributes:
             base:
@@ -413,6 +428,12 @@ en:
       spree/price:
         one: Price
         other: Prices
+      spree/price_list:
+        one: Price List
+        other: Price Lists
+      spree/price_rule:
+        one: Price Rule
+        other: Price Rules
       spree/product:
         one: Product
         other: Products
@@ -630,6 +651,7 @@ en:
     add_products: Add Products
     add_rule_of_type: Add rule of type
     add_section: Add section
+    add_selected: Add Selected
     add_selected_products: Add selected products
     add_selected_variant: Add selected variant
     add_state: Add State
@@ -702,6 +724,9 @@ en:
     amount: Amount
     analytics: Analytics
     and: and
+    and_n_more:
+      one: "...and %{count} more"
+      other: "...and %{count} more"
     api_keys: API keys
     apis:
       platform: Platform API
@@ -995,6 +1020,7 @@ en:
     duplicating: Duplicating
     edit: Edit
     edit_address: Edit address
+    edit_prices: Edit Prices
     edit_refund: Edit refund
     editing_resource: Editing %{resource}
     editing_rma_reason: Editing RMA Reason
@@ -1173,6 +1199,7 @@ en:
     image: Image
     image_alt_text: Add Alt text to your image
     images: Images
+    immediately: Immediately
     implement_eligible_for_return: 'Must implement #eligible_for_return? for your EligibilityValidator.'
     implement_requires_manual_intervention: 'Must implement #requires_manual_intervention? for your EligibilityValidator.'
     import: Import
@@ -1292,8 +1319,12 @@ en:
     match_choices:
       all: All
       none: None
+    match_policies:
+      all: Match ALL rules
+      any: Match ANY rule
     max: Max
     max_items: Max Items
+    max_quantity: Max Quantity
     media: Media
     memo: Memo
     meta_description: Meta Description
@@ -1303,6 +1334,7 @@ en:
     metafield_definitions: Metafield Definitions
     metafields: Metafields
     min: Min
+    min_quantity: Min Quantity
     minimal_amount: Minimal Amount
     minimum_password_length:
       one: "(%{count} character minimum)"
@@ -1325,6 +1357,7 @@ en:
     name_on_card: Name on card
     name_or_sku: Name or SKU (enter at least first 3 characters of product name)
     navigation: Navigation
+    never: Never
     new: New
     new_address: New address
     new_adjustment: New Adjustment
@@ -1352,6 +1385,7 @@ en:
     new_policy: New Policy
     new_post: New Post
     new_post_category: New Post Category
+    new_price_list: New Price List
     new_product: New Product
     new_promotion: New Promotion
     new_promotion_category: New Promotion Category
@@ -1412,6 +1446,7 @@ en:
       oops: Oops!
     no_products_added: No products added
     no_products_found: No products found
+    no_products_in_price_list: No products in this price list
     no_report_data: No report data
     no_resource_found: No %{resource} found
     no_results: No results
@@ -1658,7 +1693,28 @@ en:
     previous: Previous
     previously_used_card: Previously Used Cards
     price: Price
+    price_list_form:
+      match_policies:
+        all: Match all of these rules
+        any: Match any of these rules
+    price_list_statuses:
+      active: Active
+      draft: Draft
+      inactive: Inactive
+      scheduled: Scheduled
+      scheduled_active: Scheduled (Active)
+    price_lists: Price Lists
     price_range: Price Range
+    price_rule_types:
+      user_rule:
+        description: Apply pricing to specific customers
+        name: User
+      volume_rule:
+        description: Apply pricing based on quantity
+        name: Volume
+      zone_rule:
+        description: Apply pricing based on geographic zone
+        name: Zone
     price_sack: Price Sack
     prices: Prices
     pricing: Pricing
@@ -1682,7 +1738,9 @@ en:
         manual: Manually choose
     product_sold_out: This item is sold out
     products: Products
+    products_added: Products added
     products_cannot_be_shipped: We cannot ship %{product_names} to your current location at the moment. Please change your shipping address or remove %{product_names} from your cart.
+    products_removed: Products removed
     products_sort_options:
       best_selling: Best Selling
       manual: Manual
@@ -1889,6 +1947,7 @@ en:
     search_by: 'Search by:'
     search_engine_listing: Search engine listing
     search_order_number: Order Number
+    search_products: Search products
     search_results: Search results for '%{keywords}'
     search_results_for: Search results for %{query}
     searching: Searching
@@ -2026,6 +2085,7 @@ en:
     start_typing_to_search_for_products: Start typing to search for products
     start_typing_to_search_for_variants: Start typing to search for variants
     starting_from: Starts at
+    starts_at: Starts at
     state: State
     state_based: State Based
     state_changes: State Changes
@@ -2253,6 +2313,7 @@ en:
     twitter: Twitter
     type: Type
     type_to_search: Type to search
+    type_to_search_products: Type to search for products
     unable_to_connect_to_gateway: Unable to connect to gateway.
     unable_to_create_reimbursements: Unable to create reimbursements because there are items pending manual intervention.
     under_price: Under %{price}
@@ -2263,6 +2324,7 @@ en:
       imperial_system: Imperial system
       metric: metric
       metric_system: Metric system
+    unlimited: Unlimited
     unlock: Unlock
     unprocessable_entity: Unprocessable Entity
     unprocessable_entity_message: Your request could not be processed. Please check the form for errors and try again.
@@ -2287,6 +2349,7 @@ en:
     use_shipping_address: Use Shipping Address
     used: Used
     user: User
+    user_ids: Users
     user_not_found: User not found
     user_rule:
       choose_users: 'Input the full email address of a registered customer(s) in the search field to whom this discount should apply:'
@@ -2318,6 +2381,9 @@ en:
     visibility: Visibility
     visits: Visits
     void: Void
+    volume_rule:
+      cart_total: Cart Total Quantity
+      line_item: Line Item Quantity
     we_are_busy_updating: We're updating the %{store_name} homepage.
     we_are_busy_updating_page: We're busy updating this page.
     we_will_be_back: We will be back.
@@ -2344,6 +2410,7 @@ en:
     zipcode: Zip Code
     zipcode_required: Zip Code Required
     zone: Zone
+    zone_ids: Zones
     zones: Zones
   views:
     pagination:

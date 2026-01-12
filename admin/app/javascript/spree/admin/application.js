@@ -16,6 +16,7 @@ import "mapkick/bundle"
 // Helpers
 import 'spree/admin/helpers/tinymce'
 import 'spree/admin/helpers/trix/video_embed'
+import 'spree/admin/helpers/turbo_confirm'
 
 // Stimulus controllers
 import { Application } from "@hotwired/stimulus"
@@ -85,11 +86,12 @@ import SortableTree from 'spree/admin/controllers/sortable_tree_controller'
 import StockTransferController from 'spree/admin/controllers/stock_transfer_controller'
 import StoreFormController from 'spree/admin/controllers/store_form_controller'
 import TabsController from 'spree/admin/controllers/tabs_controller'
+import TimeZoneController from 'spree/admin/controllers/time_zone_controller'
 import TooltipController from 'spree/admin/controllers/tooltip_controller'
 import TurboSubmitButtonController from 'spree/admin/controllers/turbo_submit_button_controller'
 import UnitSystemController from 'spree/admin/controllers/unit_system_controller'
 import VariantsFormController from 'spree/admin/controllers/variants_form_controller'
-import TimeZoneController from 'spree/admin/controllers/time_zone_controller'
+import BulkEditorController from 'spree/admin/controllers/bulk_editor_controller'
 import AddressAutocompleteController from 'spree/core/controllers/address_autocomplete_controller'
 import AddressFormController from 'spree/core/controllers/address_form_controller'
 import DisableSubmitButtonController from 'spree/core/controllers/disable_submit_button_controller'
@@ -162,6 +164,7 @@ application.register('turbo-submit-button', TurboSubmitButtonController)
 application.register('textarea-autogrow', TextareaAutogrow)
 application.register('unit-system', UnitSystemController)
 application.register('variants-form', VariantsFormController)
+application.register('bulk-editor', BulkEditorController)
 
 LocalTime.start()
 

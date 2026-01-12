@@ -85,16 +85,6 @@ module Spree
         end
       end
 
-      def bulk_modal
-        if params[:kind] == 'set_status'
-          @title = Spree.t('admin.bulk_ops.products.title.set_status', status: params[:status].titleize)
-          @body = Spree.t("admin.bulk_ops.products.body.set_status.#{params[:status]}")
-        else
-          @title = Spree.t("admin.bulk_ops.products.title.#{params[:kind]}")
-          @body = Spree.t("admin.bulk_ops.products.body.#{params[:kind]}")
-        end
-      end
-
       def bulk_status_update
         if bulk_collection.update_all(status: params[:status], updated_at: Time.current)
           product_ids = bulk_collection.ids
@@ -112,20 +102,6 @@ module Spree
         else
           flash.now[:error] = Spree.t('something_went_wrong')
         end
-      end
-
-      def bulk_add_tags
-        Spree::Tags::BulkAdd.call(tag_names: params[:tags], records: bulk_collection)
-        Spree::Product.bulk_auto_match_taxons(current_store, bulk_collection.ids)
-
-        handle_bulk_operation_response
-      end
-
-      def bulk_remove_tags
-        Spree::Tags::BulkRemove.call(tag_names: params[:tags], records: bulk_collection)
-        Spree::Product.bulk_auto_match_taxons(current_store, bulk_collection.ids)
-
-        handle_bulk_operation_response
       end
 
       def bulk_remove_from_taxons
@@ -196,7 +172,7 @@ module Spree
         end
 
         @product_prices = {}
-        @product.prices.includes(:variant).each do |price|
+        @product.prices.base_prices.includes(:variant).each do |price|
           @product_prices[price.variant.human_name] ||= {}
           @product_prices[price.variant.human_name][price.currency.downcase] = {
             id: price.id.to_s,
@@ -291,6 +267,10 @@ module Spree
       end
 
       private
+
+      def after_bulk_tags_change
+        Spree::Product.bulk_auto_match_taxons(current_store, bulk_collection.ids)
+      end
 
       def variant_stock_includes
         [:images, { stock_items: :stock_location, option_values: :option_type }]
