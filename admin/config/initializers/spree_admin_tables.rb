@@ -1411,7 +1411,7 @@ Rails.application.config.after_initialize do
   # ==========================================
   # Price Lists Table
   # ==========================================
-  Spree.admin.tables.register(:price_lists, model_class: Spree::PriceList, search_param: :name_cont, row_actions: true, link_to_action: :show)
+  Spree.admin.tables.register(:price_lists, model_class: Spree::PriceList, search_param: :name_cont, link_to_action: :show)
 
   Spree.admin.tables.price_lists.add :name,
                                            label: :name,

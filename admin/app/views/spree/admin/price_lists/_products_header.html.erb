@@ -6,7 +6,7 @@
   <div class="flex gap-2">
     <%= link_to_with_icon 'plus', Spree.t(:add_products),
         spree.bulk_new_admin_price_list_products_path(@price_list),
-        class: 'btn btn-sm btn-light',
+        class: 'btn btn-sm btn-secondary',
         data: { action: 'drawer#open', turbo_frame: :drawer } %>
     <% if @price_list.prices.any? %>
       <%= link_to_with_icon 'pencil-dollar', Spree.t(:edit_prices),

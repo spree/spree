@@ -30,6 +30,14 @@
     @apply border-b-0;
   }
 
+  .card .table thead th:first-child {
+    @apply rounded-none;
+  }
+
+  .card .table thead th:last-child {
+    @apply rounded-none;
+  }
+
   .card > .table td:first-child,
   .card > .table th:first-child,
   .card .table-responsive > .table td:first-child,
