@@ -1,7 +1,7 @@
 module Spree
   class PriceList < Spree.base_class
     acts_as_paranoid
-    acts_as_list scope: :store
+    acts_as_list scope: :store_id
 
     include Spree::SingleStoreResource
 
