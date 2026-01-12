@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Price, type: :model do
-  it_behaves_like 'lifecycle events'
+  it_behaves_like 'lifecycle events', factory: :price_eur
 
   describe 'Callbacks' do
     context 'when compare_at_amount is equal to amount' do

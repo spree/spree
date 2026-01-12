@@ -12,10 +12,8 @@ describe Spree::OrderMailer, type: :mailer do
     order = create(:completed_order_with_totals, email: 'test@example.com', store: store)
     product = create(:product, name: %{The "BEST" product})
     variant = create(:variant, product: product)
-    price = create(:price, variant: variant, amount: 5.00)
     line_item = create(:line_item, variant: variant, order: order, quantity: 1, price: 4.99)
     allow(product).to receive_messages(default_variant: variant)
-    allow(variant).to receive_messages(default_price: price)
     allow(order).to receive_messages(line_items: [line_item])
     allow(order).to receive_messages(store: store)
     order
@@ -25,11 +23,9 @@ describe Spree::OrderMailer, type: :mailer do
     order = create(:completed_order_with_totals, email: 'test2@example.com', store: second_store)
     product = create(:product, name: %{The "BESTEST" product})
     variant = create(:variant, product: product)
-    price = create(:price, variant: variant, amount: 15.00)
     store = second_store
     line_item = create(:line_item, variant: variant, order: order, quantity: 1, price: 4.99)
     allow(product).to receive_messages(default_variant: variant)
-    allow(variant).to receive_messages(default_price: price)
     allow(order).to receive_messages(line_items: [line_item])
     allow(order).to receive_messages(store: store)
     order
