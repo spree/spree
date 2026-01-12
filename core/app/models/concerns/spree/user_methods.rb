@@ -45,6 +45,7 @@ module Spree
       # Attachments
       #
       has_one_attached :avatar, service: Spree.public_storage_service_name
+      has_rich_text :internal_note
 
       #
       # Attributes

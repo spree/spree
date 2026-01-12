@@ -87,6 +87,7 @@ en:
         payment_state: Payment State
         shipment_state: Shipment State
         special_instructions: Special Instructions
+        internal_note: Internal Note
         state: State
         total: Total
       spree/order/bill_address:
@@ -1232,6 +1233,7 @@ en:
     intercept_email_address: Intercept Email Address
     intercept_email_instructions: Override email recipient and replace with this address.
     internal_name: Internal Name
+    internal_note: Internal Note
     internal_server_error: Internal Server Error
     internal_server_error_message: The server encountered an internal error and was unable to complete your request.
     internationalization: Internationalization
@@ -1471,6 +1473,7 @@ en:
     no_state_changes: No state changes yet.
     no_taxes: No taxes
     no_tracking_present: No tracking details provided.
+    no_internal_note: No internal note
     none: None
     none_selected: None Selected
     normal_amount: Normal Amount

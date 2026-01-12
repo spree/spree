@@ -1,0 +1,5 @@
+<%= turbo_render_alerts %>
+
+<%= turbo_stream.replace 'internal_note' do %>
+  <%= render 'spree/admin/shared/internal_note', notable: @user, form_url: spree.admin_user_path(@user) %>
+<% end %>

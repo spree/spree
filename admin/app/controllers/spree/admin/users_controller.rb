@@ -39,10 +39,25 @@ module Spree
 
       def update
         if @user.update(user_params)
-          flash[:success] = flash_message_for(@user, :successfully_updated)
-          redirect_to spree.admin_user_path(@user)
+          respond_to do |format|
+            format.turbo_stream do
+              flash.now[:success] = flash_message_for(@user, :successfully_updated)
+            end
+            format.html do
+              flash[:success] = flash_message_for(@user, :successfully_updated)
+              redirect_to spree.admin_user_path(@user)
+            end
+          end
         else
-          render :edit, status: :unprocessable_entity
+          respond_to do |format|
+            format.turbo_stream do
+              flash.now[:error] = @user.errors.full_messages.join(', ')
+              render :update, status: :unprocessable_entity
+            end
+            format.html do
+              render :edit, status: :unprocessable_entity
+            end
+          end
         end
       end
 
