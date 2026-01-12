@@ -317,4 +317,37 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
       end
     end
   end
+
+  describe '#update' do
+    let(:order) { create(:completed_order_with_totals, store: store) }
+
+    context 'updating internal_note' do
+      subject do
+        put :update, params: { id: order.number, order: { internal_note: internal_note_content } }, format: :turbo_stream
+      end
+
+      let(:internal_note_content) { 'This is a test internal note for the order.' }
+
+      it 'updates the internal_note' do
+        subject
+        order.reload
+        expect(order.internal_note.to_plain_text).to eq(internal_note_content)
+      end
+
+      it 'responds with turbo_stream' do
+        subject
+        expect(response.media_type).to eq('text/vnd.turbo-stream.html')
+      end
+
+      it 'sets a success flash message' do
+        subject
+        expect(flash[:success]).to be_present
+      end
+
+      it 'renders the internal_note partial' do
+        subject
+        expect(response.body).to include('internal_note')
+      end
+    end
+  end
 end

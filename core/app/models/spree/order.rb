@@ -42,6 +42,7 @@ module Spree
     end
 
     has_secure_token :token, length: 35
+    has_rich_text :internal_note
 
     MEMOIZED_METHODS = %w(tax_zone)
 

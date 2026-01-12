@@ -90,7 +90,8 @@ module Spree
 
     @@checkout_attributes = [
       :coupon_code, :email, :shipping_method_id, :special_instructions, :use_billing, :use_shipping,
-      :user_id, :bill_address_id, :ship_address_id, :accept_marketing, :signup_for_an_account, :currency
+      :user_id, :bill_address_id, :ship_address_id, :accept_marketing, :signup_for_an_account, :currency,
+      :internal_note
     ]
 
     @@classification_attributes = [
@@ -294,6 +295,7 @@ module Spree
 
     @@user_attributes = [:email, :bill_address_id, :ship_address_id, :password, :first_name, :last_name,
                          :password_confirmation, :selected_locale, :avatar, :accepts_email_marketing, :phone,
+                         :internal_note,
                          { public_metadata: {}, private_metadata: {}, tag_list: [] }]
 
     @@variant_attributes = [
