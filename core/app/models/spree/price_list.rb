@@ -157,12 +157,15 @@ module Spree
     end
 
     # Removes products from the price list
+    # Hard deletes prices (not soft delete) to allow re-adding products later
     # @param product_ids [Array<String>] of product ids
     # @return [void]
     def remove_products(product_ids)
       return if product_ids.blank?
 
       variant_ids = Spree::Variant.where(product_id: product_ids).distinct.pluck(:id)
+      # Use delete_all for hard delete - this bypasses acts_as_paranoid
+      # which is required for the unique index to work when re-adding products
       prices.where(variant_id: variant_ids).delete_all
       touch_variants(variant_ids)
     end
