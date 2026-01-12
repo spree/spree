@@ -12,7 +12,7 @@
 
 <%= turbo_frame_tag frame_name, autoscroll: true, data: { autoscroll_block: :start, turbo_action: 'advance' } do %>
   <div class="<%= local_assigns[:container_class] || 'card-lg' %>" data-controller="table" data-table-url-value="<%= request.path %>">
-    <div class="p-2 border-b border-gray-200">
+    <div class="p-3 border-b border-gray-200">
       <div class="flex flex-col lg:flex-row gap-3 items-start lg:items-center justify-between">
         <div class="flex gap-2 items-center flex-wrap">
           <%= search_form_for @search, url: url_for, html: { data: { turbo_frame: frame_name, turbo_action: 'advance' } } do |f| %>

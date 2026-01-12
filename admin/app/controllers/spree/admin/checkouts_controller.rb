@@ -22,6 +22,10 @@ module Spree
       def scope
         current_store.checkouts.accessible_by(current_ability, :index)
       end
+
+      def edit_object_url(object, options = {})
+        spree.admin_order_path(object, options)
+      end
     end
   end
 end

@@ -1,0 +1,86 @@
+<div class="card mb-6" id="order_taxes">
+  <div class="card-header flex justify-between items-center border-0">
+    <h5 class="card-title flex items-center">
+      <%= icon('receipt-tax', class: 'mr-2') %>
+      <%= Spree.t(:tax_rates) %>
+      <% if @tax_adjustments.any? %>
+        <span class="badge badge-info ml-2"><%= @tax_adjustments.count %></span>
+      <% end %>
+    </h5>
+  </div>
+  <div class="card-body p-0 border-t">
+    <% if @tax_adjustments.any? %>
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th class="rounded-none"><%= Spree.t(:name) %></th>
+              <th class="rounded-none"><%= Spree.t(:applied_to) %></th>
+              <th class="rounded-none"><%= Spree.t(:included_in_price) %></th>
+              <th class="rounded-none"><%= Spree.t(:pre_tax_amount) %></th>
+              <th class="rounded-none"><%= Spree.t(:rate) %></th>
+              <th class="rounded-none"><%= Spree.t(:amount) %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @tax_adjustments.each do |adjustment| %>
+              <% tax_rate = adjustment.source %>
+              <tr>
+                <td>
+                  <% if tax_rate.present? && can?(:manage, tax_rate) %>
+                    <%= link_to tax_rate.name, spree.edit_admin_tax_rate_path(tax_rate), data: { turbo_frame: '_top' }, class: 'font-semibold' %>
+                  <% else %>
+                    <%= adjustment.label %>
+                  <% end %>
+                </td>
+                <td class="text-sm text-gray-600">
+                  <% if adjustment.adjustable.is_a?(Spree::LineItem) %>
+                    <span class="badge badge-light">
+                      <%= icon('box') %>
+                      <%= Spree.t(:line_item) %>
+                    </span>
+
+                    <%= adjustment.adjustable.name %>
+                  <% elsif adjustment.adjustable.is_a?(Spree::Shipment) %>
+                    <span class="badge badge-info">
+                      <%= icon('truck') %>
+                      <%= Spree.t(:shipment) %>
+                    </span>
+
+                    #<%= adjustment.adjustable.number %>
+                  <% elsif adjustment.adjustable.is_a?(Spree::Order) %>
+                    <span class="badge badge-primary">
+                      <%= icon('shopping-cart') %>
+                      <%= Spree.t(:order) %>
+                    </span>
+
+                    #<%= adjustment.adjustable.number %>
+                  <% end %>
+                </td>
+                <td>
+                  <%= active_badge(adjustment.included?) %>
+                </td>
+                <td>
+                  <%= adjustment.adjustable.display_pre_tax_amount if adjustment.adjustable.respond_to?(:display_pre_tax_amount) %>
+                <td>
+                  <% if tax_rate.present? %>
+                    <%= number_to_percentage(tax_rate.amount * 100, precision: 2, strip_insignificant_zeros: true) %>
+                  <% else %>
+                    -
+                  <% end %>
+                </td>
+                <td>
+                  <%= adjustment.display_amount.to_html %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <p class="text-center text-gray-600 p-8">
+        <%= Spree.t(:no_taxes) %>
+      </p>
+    <% end %>
+  </div>
+</div>

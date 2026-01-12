@@ -23,6 +23,10 @@
     @apply border-x-0 mb-0;
   }
 
+  .card .card {
+    @apply rounded-lg;
+  }
+
   .card > .table:last-child,
   .card > .table:last-of-type,
   .card .table-responsive > .table:last-child,
@@ -83,11 +87,11 @@
   }
 
   .card-header {
-    @apply flex items-center mb-0 p-5 h-14 border-b border-gray-100 rounded-t-[calc(var(--radius-2xl)-1px)];
+    @apply flex items-center mb-0 p-5 pr-3 h-14 border-b border-gray-100 rounded-t-[calc(var(--radius-2xl)-1px)];
   }
 
   .card-header .card-title {
-    @apply mb-0 font-sans;
+    @apply mb-0 font-sans text-lg font-medium flex items-center gap-2;
   }
 
   .card-header .arrow {
@@ -116,10 +120,6 @@
   .card .border-bottom,
   .card .list-group-item {
     @apply border-gray-100!;
-  }
-
-  .card-title {
-    @apply mb-2 font-bold;
   }
 
   .card-text {

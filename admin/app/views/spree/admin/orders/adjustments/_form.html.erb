@@ -1,0 +1,6 @@
+<%= f.spree_text_field :label, autofocus: true %>
+<%= f.spree_number_field :amount,
+                          required: true,
+                          step: 0.01,
+                          prepend: @order.currency,
+                          help: Spree.t(:adjustment_amount_help) %>

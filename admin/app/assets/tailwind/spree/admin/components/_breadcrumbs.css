@@ -8,32 +8,15 @@
     @apply gap-2 p-0 pl-4 h-8 border-l border-gray-100;
   }
 
-  .breadcrumb-item + .breadcrumb-item {
-    @apply pl-0;
-  }
-
-  .breadcrumb-item + .breadcrumb-item::before {
-    @apply float-left text-gray-500 pr-2;
-    content: "/";
-  }
-
-  .breadcrumb-item.active {
-    @apply text-gray-600;
-  }
-
-  .breadcrumb-item a {
-    @apply text-inherit no-underline;
-  }
-
-  .breadcrumb-item a:hover {
-    @apply text-zinc-950 underline;
-  }
-
   .breadcrumb li a {
     @apply no-underline;
   }
 
   .breadcrumb li a:hover {
     @apply text-zinc-950 underline;
+  }
+
+  .breadcrumb li:last-child:not(:first-child) {
+    @apply font-semibold;
   }
 }

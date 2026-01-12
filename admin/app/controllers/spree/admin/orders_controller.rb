@@ -7,11 +7,9 @@ module Spree
       include Spree::Admin::TableConcern
 
       before_action :initialize_order_events
-      before_action :load_order, only: %i[edit cancel resend destroy]
-      before_action :load_order_items, only: :edit
+      before_action :load_order, only: %i[show edit cancel resend destroy]
+      before_action :load_order_items, only: :show
       before_action :load_user, only: [:index]
-
-      helper_method :model_class, :object_url
 
       # GET /admin/orders/new
       def new
@@ -30,13 +28,18 @@ module Spree
         end
       end
 
-      # GET /admin/orders/:id/edit
-      def edit
+      # GET /admin/orders/:id
+      def show
         unless @order.completed?
           add_breadcrumb Spree.t(:draft_orders), :admin_checkouts_path
         end
 
-        add_breadcrumb @order.number, spree.edit_admin_order_path(@order)
+        add_breadcrumb @order.number, spree.admin_order_path(@order)
+      end
+
+      # GET /admin/orders/:id/edit
+      def edit
+        redirect_to spree.admin_order_path(@order)
       end
 
       # GET /admin/orders
@@ -98,17 +101,6 @@ module Spree
       def load_order
         @order = scope.includes(:adjustments).find_by!(number: params[:id])
         authorize! action, @order
-      end
-
-      def load_order_items
-        @line_items = @order.line_items.includes(variant: [:product, :option_values])
-        @shipments = @order.shipments.includes(:inventory_units, :selected_shipping_rate,
-                                               shipping_rates: [:shipping_method, :tax_rate]).order(:created_at)
-        @payments = @order.payments.includes(:payment_method, :source).order(:created_at)
-        @refunds = @order.refunds
-
-        @return_authorizations = @order.return_authorizations.includes(:return_items)
-        @customer_returns = @order.customer_returns.distinct
       end
 
       # Used for extensions which need to provide their own custom event links on the order details view.
