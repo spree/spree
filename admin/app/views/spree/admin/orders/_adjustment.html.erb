@@ -23,19 +23,13 @@
   </td>
   <td>
     <% if adjustment.closed? %>
-      <span class="badge badge-light" title="<%= Spree.t(:adjustment_closed_description) %>">
-        <%= icon('lock') %>
-        <%= Spree.t(:closed) %>
+      <span class="badge badge-light" data-controller="tooltip">
+        <%= tooltip(Spree.t(:adjustment_closed_description)) %>
+        <%= icon('lock') %> <%= Spree.t(:closed) %>
       </span>
     <% else %>
-      <span class="badge badge-success" title="<%= Spree.t(:adjustment_open_description) %>">
-        <%= icon('lock-open') %>
-        <%= Spree.t(:open) %>
-      </span>
-    <% end %>
-    <% unless adjustment.eligible? %>
-      <span class="badge badge-warning ml-1" title="<%= Spree.t(:ineligible_adjustment_description) %>">
-        <%= Spree.t(:ineligible) %>
+      <span class="badge badge-success" data-controller="tooltip">
+        <%= tooltip(Spree.t(:adjustment_open_description)) %> <%= icon('lock-open') %> <%= Spree.t(:open) %>
       </span>
     <% end %>
   </td>
@@ -58,7 +52,7 @@
                 class: "dropdown-item" %>
             <% end %>
             <%= link_to_with_icon adjustment.closed? ? "lock-open" : "lock",
-              adjustment.closed? ? Spree.t(:open_adjustment) : Spree.t(:close_adjustment),
+              adjustment.closed? ? Spree.t('actions.open') : Spree.t('actions.close'),
               spree.toggle_state_admin_order_adjustment_path(@order, adjustment),
               data: { turbo_method: :put, turbo_confirm: Spree.t(:are_you_sure) },
               class: "dropdown-item" %>

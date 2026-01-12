@@ -30,7 +30,7 @@
                   <div class="font-medium"><%= adjustment.label %></div>
                   <% if tax_rate.present? %>
                     <div class="text-sm text-gray-500">
-                      <%= link_to tax_rate.zone&.name || Spree.t(:all_zones), spree.edit_admin_tax_rate_path(tax_rate), class: "text-blue-600 hover:underline" %>
+                      <%= link_to tax_rate.zone&.name || Spree.t(:all), spree.edit_admin_tax_rate_path(tax_rate), class: "text-blue-600 hover:underline" %>
                     </div>
                   <% end %>
                 </td>
@@ -47,11 +47,7 @@
                   <% end %>
                 </td>
                 <td>
-                  <% if adjustment.included? %>
-                    <span class="badge badge-info"><%= Spree.t(:yes) %></span>
-                  <% else %>
-                    <span class="badge badge-light"><%= Spree.t(:no) %></span>
-                  <% end %>
+                  <%= active_badge(adjustment.included?) %>
                 </td>
                 <td>
                   <%= adjustment.adjustable.display_pre_tax_amount if adjustment.adjustable.respond_to?(:display_pre_tax_amount) %>

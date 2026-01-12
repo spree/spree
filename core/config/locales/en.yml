@@ -606,6 +606,7 @@ en:
     actions:
       approve: Approve
       cancel: Cancel
+      close: Close
       confirm: Confirm
       connect: Connect
       continue: Continue
@@ -617,6 +618,7 @@ en:
       list: List
       listing: Listing
       new: New
+      open: Open
       publish: Publish
       receive: Mark as received
       refund: Refund
@@ -694,7 +696,10 @@ en:
     addresses: Addresses
     adjustable: Adjustable
     adjustment: Adjustment
+    adjustment_closed_description: The adjustment is closed, and will not be recalculated.
+    adjustment_open_description: The adjustment is open, and will be recalculated.
     adjustment_amount: Amount
+    adjustment_amount_help: Positive values are charges, negative values are credits.
     adjustment_labels:
       tax_rates:
         excluding_tax: "%{name}%{amount}"
@@ -731,6 +736,7 @@ en:
     apis:
       platform: Platform API
       storefront: Storefront API
+    applied_to: Applied to
     apply: Apply
     apply_only_on_full_priced_items: Apply only on full priced items
     apply_store_credit: Apply Store Credit
@@ -852,6 +858,7 @@ en:
     click_and_drag_on_the_products_to_sort_them: Click and drag on the products to sort them.
     clone: Clone
     close: Close
+    closed: Closed
     close_all_adjustments: Close All Adjustments
     close_sidebar: Close sidebar
     code: Code
@@ -1273,6 +1280,7 @@ en:
     join_slack: Join Slack
     key: Key
     kind: Kind
+    label: Label
     language: Language
     last_name: Last Name
     last_name_begins_with: Last Name Begins With
@@ -1311,6 +1319,8 @@ en:
     make_sure_the_above_reimbursement_amount_is_correct: Make sure the above reimbursement amount is correct
     manage_promotion_categories: Manage Promotion Categories
     manage_variants: Manage Variants
+    manual: Manual
+    manual_adjustment: Manual Adjustment
     manual_intervention_required: Manual intervention required
     mark_as_default: Mark as default
     master: Master
@@ -1432,6 +1442,7 @@ en:
     next: Next
     no_actions_added: No actions added
     no_address_given: No address given
+    no_adjustments: No adjustments
     no_available_date_set: No available date set
     no_billing_address_available: No billing address available
     no_cc_type: N/A
@@ -1447,6 +1458,7 @@ en:
     no_products_added: No products added
     no_products_found: No products found
     no_products_in_price_list: No products in this price list
+    no_promotions_applied: No promotions applied
     no_report_data: No report data
     no_resource_found: No %{resource} found
     no_results: No results
@@ -1456,6 +1468,7 @@ en:
     no_shipping_address_available: No shipping address available
     no_shipping_method_selected: No shipping method selected.
     no_state_changes: No state changes yet.
+    no_taxes: No taxes
     no_tracking_present: No tracking details provided.
     none: None
     none_selected: None Selected

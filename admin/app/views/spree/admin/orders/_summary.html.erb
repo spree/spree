@@ -22,7 +22,7 @@
 
     <% if @order.completed_at %>
       <li class="list-group-item flex justify-between items-center border-0">
-        <span><%= Spree.t(:completed_at) %></span>
+        <span><%= I18n.t('activerecord.attributes.spree/order.completed_at') %></span>
         <span class="text-rightfont-bold">
           <%= spree_time(@order.completed_at) %>
         </span>

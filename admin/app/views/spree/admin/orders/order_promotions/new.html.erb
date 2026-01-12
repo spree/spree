@@ -4,7 +4,7 @@
     <%= form_with url: spree.admin_order_order_promotions_path(@order) do |f| %>
       <div class="dialog-body">
         <%= f.spree_text_field :coupon_code,
-                               placeholder: Spree.t(:enter_coupon_code),
+                               placeholder: Spree.t(:add_coupon_code),
                                autofocus: true %>
       </div>
       <div class="dialog-footer">
