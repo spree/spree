@@ -80,6 +80,7 @@ en:
         coupon_code: Coupon Code
         created_at: Order Date
         email: Email
+        internal_note: Internal Note
         ip_address: IP Address
         item_count: Items
         item_total: Item Total
@@ -87,7 +88,6 @@ en:
         payment_state: Payment State
         shipment_state: Shipment State
         special_instructions: Special Instructions
-        internal_note: Internal Note
         state: State
         total: Total
       spree/order/bill_address:
@@ -1451,6 +1451,7 @@ en:
     no_cc_type: N/A
     no_country: No country set
     no_email_provided: No email provided
+    no_internal_note: No internal note
     no_limits_zone: No Limits
     no_payment_found: No payment found
     no_payment_provider_settings_message: This payment provider has no custom settings available
@@ -1473,7 +1474,6 @@ en:
     no_state_changes: No state changes yet.
     no_taxes: No taxes
     no_tracking_present: No tracking details provided.
-    no_internal_note: No internal note
     none: None
     none_selected: None Selected
     normal_amount: Normal Amount
