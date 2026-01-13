@@ -471,69 +471,77 @@ module Spree
     end
 
     def ensure_default_taxonomies_are_created
-      [
-        translate_with_store_locale_fallback('spree.taxonomy_categories_name'),
-        translate_with_store_locale_fallback('spree.taxonomy_brands_name'),
-        translate_with_store_locale_fallback('spree.taxonomy_collections_name')
-      ].each do |taxonomy_name|
-        # Manual exists?/create to work around Mobility bug with find_or_create_by
-        next if taxonomies.with_matching_name(taxonomy_name).exists?
+      Spree::Events.disable do
+        [
+          translate_with_store_locale_fallback('spree.taxonomy_categories_name'),
+          translate_with_store_locale_fallback('spree.taxonomy_brands_name'),
+          translate_with_store_locale_fallback('spree.taxonomy_collections_name')
+        ].each do |taxonomy_name|
+          # Manual exists?/create to work around Mobility bug with find_or_create_by
+          next if taxonomies.with_matching_name(taxonomy_name).exists?
 
-        taxonomies.create(name: taxonomy_name)
+          taxonomies.create(name: taxonomy_name)
+        end
       end
     end
 
     def ensure_default_automatic_taxons
-      # Use Mobility-safe lookup for taxonomy
-      collections_taxonomy = taxonomies.with_matching_name(translate_with_store_locale_fallback('spree.taxonomy_collections_name')).first
-      return unless collections_taxonomy.present?
+      Spree::Events.disable do
+        # Use Mobility-safe lookup for taxonomy
+        collections_taxonomy = taxonomies.with_matching_name(translate_with_store_locale_fallback('spree.taxonomy_collections_name')).first
+        return unless collections_taxonomy.present?
 
-      automatic_taxons_config = [
-        { name: translate_with_store_locale_fallback('spree.automatic_taxon_names.on_sale'), rule_type: 'Spree::TaxonRules::Sale', rule_value: 'true' },
-        { name: translate_with_store_locale_fallback('spree.automatic_taxon_names.new_arrivals'), rule_type: 'Spree::TaxonRules::AvailableOn', rule_value: 30 }
-      ]
+        automatic_taxons_config = [
+          { name: translate_with_store_locale_fallback('spree.automatic_taxon_names.on_sale'), rule_type: 'Spree::TaxonRules::Sale', rule_value: 'true' },
+          { name: translate_with_store_locale_fallback('spree.automatic_taxon_names.new_arrivals'), rule_type: 'Spree::TaxonRules::AvailableOn', rule_value: 30 }
+        ]
 
-      automatic_taxons_config.map do |config|
-        # Manual exists?/create to work around Mobility bug with first_or_create
-        taxon_scope = collections_taxonomy.taxons.automatic.with_matching_name(config[:name])
+        automatic_taxons_config.map do |config|
+          # Manual exists?/create to work around Mobility bug with first_or_create
+          taxon_scope = collections_taxonomy.taxons.automatic.with_matching_name(config[:name])
 
-        if taxon_scope.exists?
-          taxon_scope.first
-        else
-          collections_taxonomy.taxons.create!(
-            name: config[:name],
-            automatic: true,
-            parent: collections_taxonomy.root,
-            taxon_rules: [TaxonRule.new(type: config[:rule_type], value: config[:rule_value])]
-          )
+          if taxon_scope.exists?
+            taxon_scope.first
+          else
+            collections_taxonomy.taxons.create!(
+              name: config[:name],
+              automatic: true,
+              parent: collections_taxonomy.root,
+              taxon_rules: [TaxonRule.new(type: config[:rule_type], value: config[:rule_value])]
+            )
+          end
         end
       end
     end
 
     def ensure_default_post_categories_are_created
-      [
-        translate_with_store_locale_fallback('spree.default_post_categories.resources'),
-        translate_with_store_locale_fallback('spree.default_post_categories.articles'),
-        translate_with_store_locale_fallback('spree.default_post_categories.news')
-      ].each do |category_title|
-        # Use exists?/create pattern for safety
-        next if post_categories.where(title: category_title).exists?
+      Spree::Events.disable do
+        [
+          translate_with_store_locale_fallback('spree.default_post_categories.resources'),
+          translate_with_store_locale_fallback('spree.default_post_categories.articles'),
+          translate_with_store_locale_fallback('spree.default_post_categories.news')
+        ].each do |category_title|
+          # Use exists?/create pattern for safety
+          next if post_categories.where(title: category_title).exists?
 
-        post_categories.create(title: category_title)
+          post_categories.create(title: category_title)
+        end
       end
     end
 
     def create_default_policies
-      [
-        translate_with_store_locale_fallback('spree.terms_of_service'),
-        translate_with_store_locale_fallback('spree.privacy_policy'),
-        translate_with_store_locale_fallback('spree.returns_policy'),
-        translate_with_store_locale_fallback('spree.shipping_policy')
-      ].each do |policy_name|
-        # Manual exists?/create to work around Mobility bug with find_or_create_by
-        next if policies.with_matching_name(policy_name).exists?
+      Spree::Events.disable do
+        [
+          translate_with_store_locale_fallback('spree.terms_of_service'),
+          translate_with_store_locale_fallback('spree.privacy_policy'),
+          translate_with_store_locale_fallback('spree.returns_policy'),
+          translate_with_store_locale_fallback('spree.shipping_policy')
+        ].each do |policy_name|
+          # Manual exists?/create to work around Mobility bug with find_or_create_by
+          next if policies.with_matching_name(policy_name).exists?
 
-        policies.create(name: policy_name)
+          policies.create(name: policy_name)
+        end
       end
     end
 
