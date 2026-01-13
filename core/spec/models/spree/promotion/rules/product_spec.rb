@@ -178,5 +178,17 @@ describe Spree::Promotion::Rules::Product, type: :model do
       rule.save!
       expect(rule.reload.eligible_product_ids).to match_array(products.map(&:id))
     end
+
+    it 'touches the record to invalidate cache' do
+      rule.product_ids_to_add = [products.first.id]
+      rule.save!
+      original_updated_at = rule.updated_at
+
+      rule.update_column(:updated_at, 1.day.ago)
+      rule.product_ids_to_add = [products.second.id]
+      rule.save!
+
+      expect(rule.reload.updated_at).to be > original_updated_at
+    end
   end
 end
