@@ -100,6 +100,9 @@ module Spree
             )
           end
 
+          # Invalidate cache after bulk operations
+          touch
+
           # Clear memoized values
           @eligible_product_ids = nil
         end
