@@ -358,6 +358,19 @@ module Spree
     @permissions ||= PermissionConfiguration.new
   end
 
+  # Ransack configuration accessor for managing custom ransackable attributes,
+  # associations, and scopes across Spree models.
+  #
+  # @example Adding custom searchable fields
+  #   Spree.ransack.add_attribute(Spree::Product, :vendor_id)
+  #   Spree.ransack.add_scope(Spree::Product, :by_vendor)
+  #   Spree.ransack.add_association(Spree::Product, :vendor)
+  #
+  # @return [Spree::RansackConfiguration] the ransack configuration instance
+  def self.ransack
+    @ransack ||= RansackConfiguration.new
+  end
+
   class << self
     # Dynamic methods for core dependencies
     #
@@ -436,5 +449,6 @@ require 'spree/core/preferences/scoped_store'
 require 'spree/core/preferences/runtime_configuration'
 
 require 'spree/core/permission_configuration'
+require 'spree/core/ransack_configuration'
 require 'spree/core/pricing/context'
 require 'spree/core/pricing/resolver'
