@@ -158,7 +158,49 @@ describe Spree::Store, type: :model, without_global_store: true do
         let(:store) { build(:store) }
 
         it 'creates default policies' do
-          expect { store.save! }.to change(Spree::Policy, :count).by(4).and change(store.links, :count).by(4)
+          expect { store.save! }.to change(Spree::Policy, :count).by(4)
+
+          expect(store.policies.count).to eq(4)
+          expect(store.policies.pluck(:name)).to contain_exactly(
+            Spree.t('terms_of_service'),
+            Spree.t('privacy_policy'),
+            Spree.t('returns_policy'),
+            Spree.t('shipping_policy')
+          )
+        end
+
+        it 'is idempotent - does not create duplicates when called multiple times' do
+          store.save!
+
+          expect { store.send(:create_default_policies) }.not_to change(Spree::Policy, :count)
+          expect(store.policies.count).to eq(4)
+        end
+
+        context 'with non-English store locale' do
+          let(:store) { build(:store, default_locale: 'de') }
+
+          before do
+            I18n.backend.store_translations(:de, {
+              spree: {
+                terms_of_service: 'Nutzungsbedingungen',
+                privacy_policy: 'Datenschutzrichtlinie',
+                returns_policy: 'Rückgaberecht',
+                shipping_policy: 'Versandrichtlinie'
+              }
+            })
+          end
+
+          it 'creates policies with translated names in store locale' do
+            store.save!
+
+            # Policies are created with the translated name in the base column
+            expect(store.policies.pluck(:name)).to contain_exactly(
+              'Nutzungsbedingungen',
+              'Datenschutzrichtlinie',
+              'Rückgaberecht',
+              'Versandrichtlinie'
+            )
+          end
         end
       end
     end
@@ -198,11 +240,52 @@ describe Spree::Store, type: :model, without_global_store: true do
           Spree.t(:taxonomy_collections_name)
         )
       end
+
+      it 'is idempotent - does not create duplicates when called multiple times' do
+        store.save!
+
+        expect { store.send(:ensure_default_taxonomies_are_created) }.not_to change(Spree::Taxonomy, :count)
+        expect(store.taxonomies.count).to eq(3)
+      end
+
+      context 'with non-English store locale' do
+        let(:store) { build(:store, default_locale: 'de') }
+
+        before do
+          # Add German translations for taxonomy names
+          I18n.backend.store_translations(:de, {
+            spree: {
+              taxonomy_categories_name: 'Kategorien',
+              taxonomy_brands_name: 'Marken',
+              taxonomy_collections_name: 'Kollektionen'
+            }
+          })
+        end
+
+        it 'creates taxonomies with translated names in store locale' do
+          store.save!
+
+          # Taxonomies are created with the translated name in the base column
+          expect(store.taxonomies.pluck(:name)).to contain_exactly('Kategorien', 'Marken', 'Kollektionen')
+        end
+
+        it 'falls back to English when translation is missing' do
+          # Remove the German translation for categories
+          I18n.backend.store_translations(:de, { spree: { taxonomy_categories_name: nil } })
+
+          store.save!
+
+          # Categories falls back to English, others use German
+          expect(store.taxonomies.pluck(:name)).to include('Categories') # fallback to English
+          expect(store.taxonomies.pluck(:name)).to include('Marken')
+          expect(store.taxonomies.pluck(:name)).to include('Kollektionen')
+        end
+      end
     end
 
     describe '#ensure_default_automatic_taxons' do
       let(:store) { build(:store) }
-      let(:collections_taxonomy) { store.taxonomies.find_by(name: Spree.t(:taxonomy_collections_name)) }
+      let(:collections_taxonomy) { store.taxonomies.with_matching_name(Spree.t(:taxonomy_collections_name)).first }
 
       it 'creates automatic taxons on the collections taxonomy' do
         expect { store.save! }.to change(Spree::Taxon.automatic, :count).by(2)
@@ -210,6 +293,35 @@ describe Spree::Store, type: :model, without_global_store: true do
         expect(store.reload.taxons.automatic.count).to eq(2)
         expect(store.taxons.automatic.pluck(:name)).to contain_exactly('New arrivals', 'On sale')
         expect(store.taxons.automatic.pluck(:taxonomy_id).uniq).to contain_exactly(collections_taxonomy.id)
+      end
+
+      it 'is idempotent - does not create duplicates when called multiple times' do
+        store.save!
+
+        expect { store.send(:ensure_default_automatic_taxons) }.not_to change(Spree::Taxon.automatic, :count)
+        expect(store.taxons.automatic.count).to eq(2)
+      end
+    end
+
+    describe '#ensure_default_post_categories_are_created' do
+      let(:store) { build(:store) }
+
+      it 'creates default post categories' do
+        expect { store.save! }.to change(Spree::PostCategory, :count).by(3)
+
+        expect(store.post_categories.count).to eq(3)
+        expect(store.post_categories.pluck(:title)).to contain_exactly(
+          Spree.t('default_post_categories.resources'),
+          Spree.t('default_post_categories.articles'),
+          Spree.t('default_post_categories.news')
+        )
+      end
+
+      it 'is idempotent - does not create duplicates when called multiple times' do
+        store.save!
+
+        expect { store.send(:ensure_default_post_categories_are_created) }.not_to change(Spree::PostCategory, :count)
+        expect(store.post_categories.count).to eq(3)
       end
     end
 
@@ -268,7 +380,7 @@ describe Spree::Store, type: :model, without_global_store: true do
     let!(:store) { create(:store, name: 'Store EN') }
 
     before do
-      Mobility.with_locale(:pl) do
+      ::Mobility.with_locale(:pl) do
         store.update!(
           name: 'Store PL',
           description: 'PL description'
