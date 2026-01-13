@@ -15,8 +15,8 @@ module Spree
       def initialize(variant:, currency:, store: nil, zone: nil, user: nil, quantity: nil, date: nil, order: nil)
         @variant = variant
         @currency = currency
-        @store = store || Spree::Store.default
-        @zone = zone
+        @store = store || Spree::Current.store
+        @zone = zone || Spree::Current.zone
         @user = user
         @quantity = quantity
         @date = date || Time.current
