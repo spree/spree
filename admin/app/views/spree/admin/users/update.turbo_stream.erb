@@ -1,5 +1,24 @@
-<%= turbo_render_alerts %>
+<% if @user.valid? %>
+  <%= turbo_close_drawer %>
+  <%= turbo_render_alerts %>
 
-<%= turbo_stream.replace 'internal_note' do %>
-  <%= render 'spree/admin/shared/internal_note', notable: @user, form_url: spree.admin_user_path(@user) %>
+  <%= turbo_stream.replace 'user-details' do %>
+    <%= render 'spree/admin/users/details' %>
+  <% end %>
+
+  <%= turbo_stream.replace 'user-ship-address' do %>
+    <%= render 'spree/admin/users/shipping' %>
+  <% end %>
+
+  <%= turbo_stream.replace 'user-bill-address' do %>
+    <%= render 'spree/admin/users/billing' %>
+  <% end %>
+
+  <%= turbo_stream.replace 'internal_note' do %>
+    <%= render 'spree/admin/shared/internal_note', notable: @user, form_url: spree.admin_user_path(@user) %>
+  <% end %>
+<% else %>
+  <%= turbo_stream.replace :drawer do %>
+    <%= render 'spree/admin/shared/edit_resource_in_drawer' %>
+  <% end %>
 <% end %>

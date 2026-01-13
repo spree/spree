@@ -119,13 +119,19 @@ RSpec.feature 'Customers', :js do
     it 'can update user' do
       within '#user-details' do
         click_on 'Edit'
-
-        fill_in 'Phone', with: phone
-
-        click_button 'Update'
       end
 
-      expect(page).to have_content(phone)
+      within '#drawer-dialog' do
+        fill_in 'Phone', with: phone
+
+        click_button 'Save'
+      end
+
+      wait_for_turbo
+
+      within '#user-details' do
+        expect(page).to have_content(phone)
+      end
       expect(customer_user.reload.phone).to eq phone
     end
 
@@ -168,6 +174,8 @@ RSpec.feature 'Customers', :js do
 
         find('label', text: 'Use Shipping Address').click
       end
+
+      wait_for_turbo
 
       within('#user-bill-address') do
         expect(page).to have_text('Same as shipping address')
