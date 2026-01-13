@@ -148,7 +148,7 @@ RSpec.describe Spree::Admin::PromotionsController, type: :controller do
 
   describe 'PATCH #update' do
     before do
-      allow(controller).to receive(:current_timezone).and_return('Europe/Warsaw')
+      allow_any_instance_of(Spree::Store).to receive(:preferred_timezone).and_return('Europe/Warsaw')
       Timecop.freeze('2014-05-01 00:00:00')
     end
 

@@ -9,7 +9,7 @@ end
 describe Spree::Admin::BaseController, type: :controller do
   controller(Spree::Admin::BaseController) do
     def index
-      @timezone_used = Time.zone.name
+      authorize! :update, Spree::Order
       render plain: 'test'
     end
   end
