@@ -60,7 +60,11 @@ module Spree
         private
 
         def current_tax_zone
-          @current_tax_zone ||= @current_order&.tax_zone || Spree::Zone.default_tax
+          @current_tax_zone ||= begin
+            zone = @current_order&.tax_zone || Spree::Zone.default_tax || current_store.checkout_zone
+            Spree::Current.zone = zone
+            zone
+          end
         end
 
         def current_store_finder

@@ -1,6 +1,6 @@
 module Spree
   class Current < ::ActiveSupport::CurrentAttributes
-    attribute :store, :currency
+    attribute :store, :currency, :zone
 
     def store
       super || Spree::Store.default
@@ -8,6 +8,10 @@ module Spree
 
     def currency
       super || store&.default_currency
+    end
+
+    def zone
+      super || Spree::Zone.default_tax || store&.checkout_zone
     end
   end
 end

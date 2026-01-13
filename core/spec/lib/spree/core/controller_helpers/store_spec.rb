@@ -131,6 +131,8 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
   describe '#current_price_options' do
     subject(:current_price_options) { controller.current_price_options }
 
+    after { Spree::Current.reset }
+
     context 'when there is a default tax zone' do
       let(:default_zone) { Spree::Zone.new }
 
@@ -142,6 +144,11 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
         it 'returns the default tax zone' do
           expect(subject).to include(tax_zone: default_zone)
         end
+
+        it 'sets Spree::Current.zone to the default tax zone' do
+          subject
+          expect(Spree::Current.zone).to eq(default_zone)
+        end
       end
 
       context 'when there is a current order' do
@@ -155,6 +162,11 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
         end
 
         it { is_expected.to include(tax_zone: other_zone) }
+
+        it 'sets Spree::Current.zone to the order tax zone' do
+          subject
+          expect(Spree::Current.zone).to eq(other_zone)
+        end
       end
     end
 
@@ -164,8 +176,39 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
       end
 
       context 'when there is no current order' do
-        it 'return nil when asked for the current tax zone' do
-          expect(current_price_options[:tax_zone]).to be_nil
+        context 'when store has a checkout_zone' do
+          let(:checkout_zone) { Spree::Zone.new }
+
+          before do
+            allow(controller).to receive(:current_store).and_return(
+              double('Store', checkout_zone: checkout_zone, url: 'test.com')
+            )
+          end
+
+          it 'returns the store checkout_zone' do
+            expect(current_price_options[:tax_zone]).to eq(checkout_zone)
+          end
+
+          it 'sets Spree::Current.zone to the store checkout_zone' do
+            subject
+            expect(Spree::Current.zone).to eq(checkout_zone)
+          end
+        end
+
+        context 'when store has no checkout_zone' do
+          before do
+            allow(controller.current_store).to receive(:checkout_zone).and_return(nil)
+          end
+
+          it 'returns nil when asked for the current tax zone' do
+            expect(current_price_options[:tax_zone]).to be_nil
+          end
+
+          it 'sets Spree::Current.zone to nil' do
+            subject
+            # Spree::Current.zone will call default_tax again, so we check the attributes hash
+            expect(Spree::Current.attributes[:zone]).to be_nil
+          end
         end
       end
 
@@ -180,6 +223,11 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
         end
 
         it { is_expected.to include(tax_zone: other_zone) }
+
+        it 'sets Spree::Current.zone to the order tax zone' do
+          subject
+          expect(Spree::Current.zone).to eq(other_zone)
+        end
       end
     end
   end
