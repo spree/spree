@@ -96,5 +96,28 @@ RSpec.describe Spree::Policy, type: :model do
         end
       end
     end
+
+    describe '.with_matching_name' do
+      let!(:privacy_policy) { create(:policy, name: 'Privacy Policy', owner: store) }
+      let!(:terms_policy) { create(:policy, name: 'Terms of Service', owner: store) }
+
+      it 'finds policy by exact name match (case insensitive)' do
+        expect(described_class.with_matching_name('Privacy Policy')).to include(privacy_policy)
+        expect(described_class.with_matching_name('privacy policy')).to include(privacy_policy)
+        expect(described_class.with_matching_name('PRIVACY POLICY')).to include(privacy_policy)
+      end
+
+      it 'does not find policy with partial match' do
+        expect(described_class.with_matching_name('Privacy')).not_to include(privacy_policy)
+      end
+
+      it 'strips whitespace from search term' do
+        expect(described_class.with_matching_name('  Privacy Policy  ')).to include(privacy_policy)
+      end
+
+      it 'returns empty when no match found' do
+        expect(described_class.with_matching_name('Non Existent Policy')).to be_empty
+      end
+    end
   end
 end
