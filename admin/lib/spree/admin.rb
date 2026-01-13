@@ -10,7 +10,6 @@ require 'importmap-rails'
 require 'mapkick-rb'
 require 'turbo-rails'
 require 'stimulus-rails'
-require 'local_time'
 require 'tailwindcss-rails'
 require 'inline_svg'
 

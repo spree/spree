@@ -37,7 +37,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'hightop', '~> 0.3'
   s.add_dependency 'importmap-rails'
   s.add_dependency 'inline_svg', '~> 1.10'
-  s.add_dependency 'local_time', '~> 3.0'
   s.add_dependency 'mapkick-rb', '~> 0.1'
   s.add_dependency 'turbo-rails'
   s.add_dependency 'stimulus-rails'

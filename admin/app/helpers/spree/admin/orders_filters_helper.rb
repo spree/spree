@@ -14,39 +14,10 @@ module Spree
           search_params[:number_cont] = search_params[:number_cont].split('-').first
         end
 
-        if search_params[:created_at_gt].present?
-          search_params[:created_at_gt] = begin
-            # Firstly we parse to date to avoid issues with timezones because frontend sends time in local timezone
-            search_params[:created_at_gt].to_date&.in_time_zone(current_timezone)&.beginning_of_day
-          rescue StandardError
-            ''
-          end
-        end
-
-        if search_params[:created_at_lt].present?
-          search_params[:created_at_lt] = begin
-            search_params[:created_at_lt].to_date&.in_time_zone(current_timezone)&.end_of_day
-          rescue StandardError
-            ''
-          end
-        end
-
-        if search_params[:completed_at_gt].present?
-          search_params[:completed_at_gt] = begin
-            search_params[:completed_at_gt].to_date&.in_time_zone(current_timezone)&.beginning_of_day
-          rescue StandardError
-            ''
-          end
-        end
-
-        if search_params[:completed_at_lt].present?
-          search_params[:completed_at_lt] = begin
-            search_params[:completed_at_lt].to_date&.in_time_zone(current_timezone)&.end_of_day
-          rescue StandardError
-            ''
-          end
-        end
-
+        search_params[:created_at_gt] = try_parse_date_param(search_params[:created_at_gt])&.beginning_of_day || ''
+        search_params[:created_at_lt] = try_parse_date_param(search_params[:created_at_lt])&.end_of_day || ''
+        search_params[:completed_at_gt] = try_parse_date_param(search_params[:completed_at_gt])&.beginning_of_day || ''
+        search_params[:completed_at_lt] = try_parse_date_param(search_params[:completed_at_lt])&.end_of_day || ''
         search_params[:vendor_orders_vendor_id_eq] = vendor.id if vendor.present?
         search_params[:user_id_eq] = user.id if user.present?
 

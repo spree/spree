@@ -85,21 +85,8 @@ module Spree
         I18n.default_locale
       end
 
-      def current_timezone
-        @current_timezone ||= Spree::Config[:timezones].map do |timezone|
-          case timezone.to_sym
-          when :local
-            tz = cookies['tz']
-            tz = CGI.unescape(tz) if tz.present?
-            ActiveSupport::TimeZone.all.any? { |x| x.match?(tz) } ? tz : nil
-          when :store then current_store.preferred_timezone
-          when :application then Time.zone_default.name
-          end
-        end.map(&:presence).compact.first
-      end
-
       def set_timezone
-        Time.use_zone(current_timezone) do
+        Time.use_zone(current_store&.preferred_timezone) do
           yield
         end
       end
@@ -156,10 +143,13 @@ module Spree
         'spree/admin'
       end
 
-      def parse_date_param(date_string)
+      def try_parse_date_param(date_string)
         return if date_string.blank?
 
-        date_string.to_date&.in_time_zone(current_timezone)
+        date_string.to_date
+      rescue Date::Error => error
+        Rails.error.report(error, context: { user_id: try_spree_current_user&.id, date_string: date_string }, source: 'spree.admin')
+        nil
       end
     end
   end
