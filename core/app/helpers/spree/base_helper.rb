@@ -33,6 +33,8 @@ module Spree
     end
 
     def display_price(product_or_variant)
+      Spree::Deprecation.warn('display_price is deprecated and will be removed in Spree 5.5. Use variant.price_for(context).display_amount instead.')
+
       product_or_variant.
         price_in(current_currency).
         display_price_including_vat_for(current_price_options).
@@ -40,6 +42,8 @@ module Spree
     end
 
     def display_compare_at_price(product_or_variant)
+      Spree::Deprecation.warn('display_compare_at_price is deprecated and will be removed in Spree 5.5. Use variant.price_for(context).display_compare_at_amount instead.')
+
       product_or_variant.
         price_in(current_currency).
         display_compare_at_price_including_vat_for(current_price_options).
