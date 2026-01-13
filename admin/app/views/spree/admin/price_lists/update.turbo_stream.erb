@@ -1,10 +1,17 @@
-<%= turbo_render_alerts :drawer_alerts %>
+<% if @price_list.valid? %>
+  <%= turbo_close_drawer %>
+  <%= turbo_render_alerts %>
 
-<%= turbo_stream.replace spree_dom_id(@price_list) + '_details' do %>
-  <%= render 'spree/admin/price_lists/details', price_list: @price_list %>
-<% end %>
+  <%= turbo_stream.replace spree_dom_id(@price_list) + '_details' do %>
+    <%= render 'spree/admin/price_lists/details', price_list: @price_list %>
+  <% end %>
 
-<%= turbo_stream.update 'page_title' do %>
-  <%= page_header_back_button(spree.admin_price_lists_path) %>
-  <%= @price_list.name %>
+  <%= turbo_stream.update 'page_title' do %>
+    <%= page_header_back_button(spree.admin_price_lists_path) %>
+    <%= @price_list.name %>
+  <% end %>
+<% else %>
+  <%= turbo_stream.replace :drawer do %>
+    <%= render 'spree/admin/shared/edit_resource_in_drawer' %>
+  <% end %>
 <% end %>
