@@ -16,13 +16,6 @@ Spree.config do |config|
   # Example:
   # Uncomment to stop tracking inventory levels in the application
   # config.track_inventory_levels = false
-
-  # Timezone preferences in admin panel
-  # :local - use the browser's timezone
-  # :store - use the store's timezone
-  # :application - use the application's timezone
-  # Example: use local timezone from browser, fallback to store timezone
-  # config.timezones = [:local, :store]
 end
 
 # Background job queue names
