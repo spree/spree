@@ -2,17 +2,8 @@ module Spree
   module Api
     module V3
       class ShippingMethodSerializer < BaseSerializer
-        def attributes
-          {
-            id: resource.id,
-            name: resource.name,
-            code: resource.code,
-            tracking_url: resource.tracking_url,
-            admin_name: resource.admin_name,
-            created_at: timestamp(resource.created_at),
-            updated_at: timestamp(resource.updated_at)
-          }
-        end
+        attributes :id, :name, :code, :tracking_url, :admin_name,
+                   created_at: :iso8601, updated_at: :iso8601
       end
     end
   end

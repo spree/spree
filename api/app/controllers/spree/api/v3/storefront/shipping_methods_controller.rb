@@ -24,19 +24,19 @@ module Spree
           end
 
           def serialize_collection(collection)
-            collection.map { |item| serializer_class.new(item, serializer_context).as_json }
+            collection.map { |item| serializer_class.new(item, params: serializer_params).to_h }
           end
 
           def serializer_class
-            Spree::Api::Dependencies.v3_storefront_shipping_method_serializer.constantize
+            Spree.api.v3_storefront_shipping_method_serializer
           end
 
-          def serializer_context
+          def serializer_params
             {
               currency: current_currency,
               store: current_store,
               locale: current_locale,
-              includes: requested_includes
+              includes: include_tree
             }
           end
         end

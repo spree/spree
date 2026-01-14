@@ -44,7 +44,7 @@ module Spree
           end
 
           def serializer_class
-            Spree::Api::Dependencies.v3_storefront_payment_serializer.constantize
+            Spree.api.v3_storefront_payment_serializer
           end
 
           def permitted_params

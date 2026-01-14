@@ -33,39 +33,17 @@ module Spree
           end
 
           def serialize_collection(collection)
-            collection.map { |item| serializer_class.new(item, serializer_context).as_json }
+            collection.map { |item| serialize_resource(item) }
           end
 
           def serialize_resource(resource)
-            serializer_class.new(resource, serializer_context).as_json
-          end
-
-          def serializer_class
-            # Using a simple inline serializer for credit cards to avoid exposing sensitive data
-            Class.new do
-              attr_reader :resource
-
-              def initialize(resource, context = {})
-                @resource = resource
-              end
-
-              def as_json
-                {
-                  id: resource.id,
-                  cc_type: resource.cc_type,
-                  last_digits: resource.last_digits,
-                  month: resource.month,
-                  year: resource.year,
-                  name: resource.name
-                }
-              end
-            end
-          end
-
-          def serializer_context
             {
-              store: current_store,
-              locale: current_locale
+              id: resource.id,
+              cc_type: resource.cc_type,
+              last_digits: resource.last_digits,
+              month: resource.month,
+              year: resource.year,
+              name: resource.name
             }
           end
         end

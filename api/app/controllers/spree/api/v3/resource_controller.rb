@@ -11,6 +11,9 @@ module Spree
         def index
           @collection = collection
 
+          # Apply HTTP caching for guests
+          return unless cache_collection(@collection)
+
           render json: {
             data: serialize_collection(@collection),
             meta: collection_meta(@collection)
@@ -19,6 +22,9 @@ module Spree
 
         # GET /api/v3/resource/:id
         def show
+          # Apply HTTP caching for guests
+          return unless cache_resource(@resource)
+
           render json: serialize_resource(@resource)
         end
 
@@ -63,14 +69,15 @@ module Spree
         end
 
         # Returns ransack-filtered, sorted and paginated collection
+        # ar_lazy_preload handles automatic association preloading
         # @return [ActiveRecord::Relation]
         def collection
           return @collection if @collection.present?
 
           @search = scope.ransack(ransack_params)
           result = @search.result(distinct: true)
-          @pagy, records = pagy(result, limit: limit, page: page)
-          records
+          @pagy, @collection = pagy(result, limit: limit, page: page)
+          @collection
         end
 
         # Ransack query parameters
@@ -105,7 +112,7 @@ module Spree
           }
         end
 
-        # Base scope with store, ability, and includes
+        # Base scope with store and ability
         def scope
           base_scope = model_class.for_store(current_store)
           base_scope = base_scope.accessible_by(current_ability, :show)
@@ -113,7 +120,8 @@ module Spree
           model_class.include?(Spree::TranslatableResource) ? base_scope.i18n : base_scope
         end
 
-        # Override in subclass to eager load associations
+        # Override in subclass to eager load associations that don't work well
+        # with ar_lazy_preload (e.g., prices, stock_items)
         def scope_includes
           []
         end
@@ -123,7 +131,7 @@ module Spree
           raise NotImplementedError, 'Subclass must implement model_class'
         end
 
-        # Override in subclass to define the serializer
+        # Override in subclass to define the serializer class
         def serializer_class
           raise NotImplementedError, 'Subclass must implement serializer_class'
         end
@@ -131,17 +139,6 @@ module Spree
         # Override in subclass to permit parameters
         def permitted_params
           raise NotImplementedError, 'Subclass must implement permitted_params'
-        end
-
-        # Context passed to serializers
-        def serializer_context
-          {
-            currency: current_currency,
-            store: current_store,
-            user: current_user,
-            locale: current_locale,
-            includes: requested_includes
-          }
         end
       end
     end

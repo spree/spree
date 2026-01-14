@@ -9,8 +9,8 @@ module Spree
         include Spree::Core::ControllerHelpers::Locale
         include Spree::Core::ControllerHelpers::Currency
         include Spree::Api::V3::Authentication
-        include Spree::Api::V3::ExpandableResources
         include Spree::Api::V3::ErrorHandler
+        include Spree::Api::V3::HttpCaching
 
         # Optional authentication by default
         before_action :authenticate_user

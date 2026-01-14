@@ -23,7 +23,7 @@ module Spree
           end
 
           def serializer_class
-            Spree::Api::Dependencies.v3_storefront_state_serializer.constantize
+            Spree.api.v3_storefront_state_serializer
           end
 
           # Not needed for index/show
