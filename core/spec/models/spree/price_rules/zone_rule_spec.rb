@@ -35,5 +35,20 @@ describe Spree::PriceRules::ZoneRule, type: :model do
         expect(rule.applicable?(context)).to be false
       end
     end
+
+    context 'when zone_ids preference contains strings' do
+      before { rule.preferred_zone_ids = [zone.id.to_s] }
+
+      it 'returns true when context zone matches' do
+        context = Spree::Pricing::Context.new(variant: variant, currency: 'USD', zone: zone)
+        expect(rule.applicable?(context)).to be true
+      end
+
+      it 'returns false when context zone does not match' do
+        other_zone = create(:zone)
+        context = Spree::Pricing::Context.new(variant: variant, currency: 'USD', zone: other_zone)
+        expect(rule.applicable?(context)).to be false
+      end
+    end
   end
 end

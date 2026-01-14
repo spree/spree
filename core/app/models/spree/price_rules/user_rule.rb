@@ -7,7 +7,8 @@ module Spree
         return false unless context.user
         return true if preferred_user_ids.empty?
 
-        preferred_user_ids.include?(context.user.id)
+        # Compare as strings to support both integer and UUID primary keys
+        preferred_user_ids.map(&:to_s).include?(context.user.id.to_s)
       end
 
       def self.description
