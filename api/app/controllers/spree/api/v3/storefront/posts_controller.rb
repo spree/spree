@@ -15,14 +15,12 @@ module Spree
             Spree::Post
           end
 
-          def serializer_class
             # Simple inline serializer for posts
             Class.new do
               attr_reader :resource
 
               def initialize(resource, context = {})
                 @resource = resource
-              end
 
               def as_json
                 {

@@ -59,7 +59,7 @@ module Spree
           end
 
           def serializer_class
-            Spree::Api::Dependencies.v3_storefront_wished_item_serializer.constantize
+            Spree.api.v3_storefront_wished_item_serializer
           end
 
           def permitted_params
@@ -68,14 +68,6 @@ module Spree
 
           def item_params
             params.require(:item).permit(Spree::PermittedAttributes.wished_item_attributes)
-          end
-
-          def serialize_collection(collection)
-            collection.map { |item| serializer_class.new(item, serializer_context).as_json }
-          end
-
-          def serialize_resource(resource)
-            serializer_class.new(resource, serializer_context).as_json
           end
         end
       end

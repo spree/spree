@@ -2,34 +2,21 @@ module Spree
   module Api
     module V3
       class WishlistSerializer < BaseSerializer
-        def attributes
-          {
-            id: resource.id,
-            name: resource.name,
-            is_default: resource.is_default?,
-            is_private: resource.is_private?,
-            token: resource.token,
-            created_at: timestamp(resource.created_at),
-            updated_at: timestamp(resource.updated_at)
-          }
+        attributes :id, :name, :token, created_at: :iso8601, updated_at: :iso8601
 
-          # Conditionally include items
-          base_attrs[:items] = serialize_items if include?('items')
-
-          base_attrs
+        attribute :is_default do |wishlist|
+          wishlist.is_default?
         end
 
-        private
-
-        def serialize_items
-          resource.wished_items.map do |item|
-            wished_item_serializer.new(item, nested_context('items')).as_json
-          end
+        attribute :is_private do |wishlist|
+          wishlist.is_private?
         end
 
-        # Serializer dependencies
-        def wished_item_serializer
-          Spree::Api::Dependencies.v3_storefront_wished_item_serializer.constantize
+        many :items,
+             key: :items,
+             resource: Spree.api.v3_storefront_wished_item_serializer,
+             if: proc { params[:includes]&.include?('items') } do |wishlist|
+          wishlist.wished_items
         end
       end
     end

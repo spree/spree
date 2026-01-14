@@ -2,6 +2,8 @@ require 'spree/core'
 require 'jsonapi/serializer'
 require 'doorkeeper'
 require 'pagy'
+require 'alba'
+require 'oj'
 
 module Spree
   module Api

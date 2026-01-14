@@ -2,17 +2,42 @@ module Spree
   module Api
     module V3
       class ImageSerializer < BaseSerializer
-        def attributes
-          {
-            id: resource.id,
-            position: resource.position,
-            alt: resource.alt,
-            original_url: image_url(resource),
-            large_url: image_url(resource, size: [1200, 1200]),
-            medium_url: image_url(resource, size: [600, 600]),
-            small_url: image_url(resource, size: [300, 300]),
-            thumbnail_url: image_url(resource, size: [150, 150])
-          }
+        attributes :id, :position, :alt
+
+        attribute :original_url do |image|
+          image_url(image)
+        end
+
+        attribute :large_url do |image|
+          image_url(image, size: [1200, 1200])
+        end
+
+        attribute :medium_url do |image|
+          image_url(image, size: [600, 600])
+        end
+
+        attribute :small_url do |image|
+          image_url(image, size: [300, 300])
+        end
+
+        attribute :thumbnail_url do |image|
+          image_url(image, size: [150, 150])
+        end
+
+        private
+
+        def image_url(image, size: nil)
+          unless image&.attachment&.attached?
+            return nil
+          end
+
+          if size
+            Rails.application.routes.url_helpers.cdn_image_url(
+              image.attachment.variant(resize_to_limit: size)
+            )
+          else
+            Rails.application.routes.url_helpers.cdn_image_url(image.attachment)
+          end
         end
       end
     end

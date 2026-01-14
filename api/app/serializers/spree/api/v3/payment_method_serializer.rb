@@ -2,17 +2,8 @@ module Spree
   module Api
     module V3
       class PaymentMethodSerializer < BaseSerializer
-        def attributes
-          {
-            id: resource.id,
-            name: resource.name,
-            description: resource.description,
-            type: resource.type,
-            active: resource.active,
-            created_at: timestamp(resource.created_at),
-            updated_at: timestamp(resource.updated_at)
-          }
-        end
+        attributes :id, :name, :description, :type, :active,
+                   created_at: :iso8601, updated_at: :iso8601
       end
     end
   end

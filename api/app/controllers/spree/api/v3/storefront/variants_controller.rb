@@ -18,16 +18,11 @@ module Spree
           end
 
           def scope
-            @product.variants
-              .accessible_by(current_ability, :show)
-              .includes(scope_includes)
+            @product.variants.accessible_by(current_ability, :show).includes(scope_includes)
           end
 
           def scope_includes
-            [
-              :images, :prices, :option_values, :stock_items, :stock_locations,
-              { option_values: :option_type, stock_items: :stock_location }
-            ]
+            [:prices, { stock_items: :stock_location }]
           end
 
           def model_class
@@ -35,7 +30,7 @@ module Spree
           end
 
           def serializer_class
-            Spree::Api::Dependencies.v3_storefront_variant_serializer.constantize
+            Spree.api.v3_storefront_variant_serializer
           end
 
           # Not needed for index/show

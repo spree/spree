@@ -12,17 +12,11 @@ module Spree
           end
 
           def serializer_class
-            Spree::Api::Dependencies.v3_storefront_taxon_serializer.constantize
+            Spree.api.v3_storefront_taxon_serializer
           end
 
           def scope
-            Spree::Taxon
-              .for_store(current_store)
-              .includes(scope_includes)
-          end
-
-          def scope_includes
-            [:taxonomy, :parent, :children]
+            Spree::Taxon.for_store(current_store)
           end
 
           # Not needed for index/show

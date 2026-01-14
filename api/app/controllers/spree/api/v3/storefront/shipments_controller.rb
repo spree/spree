@@ -42,7 +42,7 @@ module Spree
           end
 
           def serializer_class
-            Spree::Api::Dependencies.v3_storefront_shipment_serializer.constantize
+            Spree.api.v3_storefront_shipment_serializer
           end
 
           def permitted_params
