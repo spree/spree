@@ -212,6 +212,12 @@ describe Spree::PriceList, type: :model do
       }.to have_enqueued_job(Spree::Variants::TouchJob).with([product1.master.id])
     end
 
+    it 'touches the price list to bust cache' do
+      expect {
+        price_list.add_products([product1.id])
+      }.to change { price_list.reload.updated_at }
+    end
+
     it 'handles empty product_ids' do
       expect {
         price_list.add_products([])
@@ -340,6 +346,12 @@ describe Spree::PriceList, type: :model do
       expect {
         price_list.remove_products([product1.id])
       }.to have_enqueued_job(Spree::Variants::TouchJob).with([product1.master.id])
+    end
+
+    it 'touches the price list to bust cache' do
+      expect {
+        price_list.remove_products([product1.id])
+      }.to change { price_list.reload.updated_at }
     end
 
     context 'when re-adding a previously removed product' do
