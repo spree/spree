@@ -761,17 +761,20 @@ describe Spree::Variant, type: :model do
   describe '#options_text' do
     subject(:options_text) { variant.options_text }
 
-    let(:variant) { build :variant }
-    let(:fake_presenter) { double :fake_presenter }
+    context 'when the variant has no option values' do
+      let(:variant) { build(:variant, option_values: []) }
 
-    before do
-      allow(Spree::Variants::OptionsPresenter).to receive(:new).with(variant).and_return(fake_presenter)
+      it 'returns an empty string' do
+        expect(options_text).to eql ''
+      end
     end
 
-    it 'calls Spree::Variants::OptionsPresenter' do
-      expect(fake_presenter).to receive(:to_sentence)
+    context 'when the variant has option values' do
+      let(:variant) { build(:variant, option_values: [create(:option_value, name: 'Foo', presentation: 'Foo', option_type: create(:option_type, position: 2, name: 'Foo Type', presentation: 'Foo Type'))]) }
 
-      options_text
+      it 'returns the options text of the variant' do
+        expect(options_text).to eql 'Foo Type: Foo'
+      end
     end
   end
 
