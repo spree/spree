@@ -8,6 +8,7 @@ module Spree
       delegate :option_values, to: :variant
 
       def initialize(variant)
+        Spree::Deprecation.warn('Spree::Variants::OptionsPresenter is deprecated and will be removed in Spree 5.5. Please use Spree::Variant#options_text instead.')
         @variant = variant
       end
 

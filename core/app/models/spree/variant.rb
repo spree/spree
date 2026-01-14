@@ -245,7 +245,11 @@ module Spree
     end
 
     def options_text
-      @options_text ||= Spree::Variants::OptionsPresenter.new(self).to_sentence
+      @options_text ||= if option_values.loaded?
+                          option_values.sort_by { |ov| ov.option_type.position }.map { |ov| "#{ov.option_type.presentation}: #{ov.presentation}" }.to_sentence(words_connector: ', ', two_words_connector: ', ')
+                        else
+                          option_values.includes(:option_type).joins(:option_type).order("#{Spree::OptionType.table_name}.position").map { |ov| "#{ov.option_type.presentation}: #{ov.presentation}" }.to_sentence(words_connector: ', ', two_words_connector: ', ')
+                        end
     end
 
     # Default to master name
