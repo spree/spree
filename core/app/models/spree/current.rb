@@ -15,15 +15,20 @@ module Spree
     end
 
     def price_lists
-      @price_lists ||= super || Spree::PriceList.for_context(global_pricing_context)
+      super || begin
+        context = global_pricing_context
+        self.price_lists = Spree::PriceList.for_context(context)
+      end
     end
 
     def global_pricing_context
-      @global_pricing_context ||= Spree::Pricing::Context.new(
-        currency: currency,
-        store: store,
-        zone: zone
-      )
+      super || begin
+        self.global_pricing_context = Spree::Pricing::Context.new(
+          currency: currency,
+          store: store,
+          zone: zone
+        )
+      end
     end
   end
 end
