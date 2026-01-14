@@ -87,6 +87,9 @@ RSpec.configure do |config|
     # Request specs to paths with ?locale=xx don't reset the locale afterwards
     # Some tests assume that the current locale is :en, so we ensure it here
     I18n.locale = :en
+
+    # Reset Spree::Current to avoid stale memoized values between tests
+    Spree::Current.reset
   end
 
   config.around(:each) do |example|
