@@ -2,15 +2,10 @@ module Spree
   module Api
     module V3
       class OptionValueSerializer < BaseSerializer
-        def attributes
-          {
-            id: resource.id,
-            name: resource.name,
-            presentation: resource.presentation,
-            position: resource.position,
-            option_type_id: resource.option_type_id,
-            option_type_name: resource.option_type.name
-          }
+        attributes :id, :name, :presentation, :position, :option_type_id
+
+        attribute :option_type_name do |option_value|
+          option_value.option_type.name
         end
       end
     end

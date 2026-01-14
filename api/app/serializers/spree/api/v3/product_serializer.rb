@@ -2,113 +2,89 @@ module Spree
   module Api
     module V3
       class ProductSerializer < BaseSerializer
-        def attributes
-          base_attrs = {
-            id: resource.id,
-            name: resource.name,
-            description: resource.description,
-            slug: resource.slug,
-            sku: resource.sku,
-            barcode: resource.barcode,
-            available_on: timestamp(resource.available_on),
-            meta_description: resource.meta_description,
-            meta_keywords: resource.meta_keywords,
-            purchasable: resource.purchasable?,
-            in_stock: resource.in_stock?,
-            backorderable: resource.backorderable?,
-            available: resource.available?,
-            currency: currency,
-            price: price_value,
-            display_price: display_price_value,
-            compare_at_price: compare_at_price_value,
-            display_compare_at_price: display_compare_at_price_value,
-            tags: resource.taggings.map(&:tag),
-            created_at: timestamp(resource.created_at),
-            updated_at: timestamp(resource.updated_at)
-          }
+        attributes :id, :name, :description, :slug, :sku, :barcode,
+                   :meta_description, :meta_keywords,
+                   available_on: :iso8601, created_at: :iso8601, updated_at: :iso8601
 
-          # Conditionally include associations based on include parameter
-          base_attrs[:images] = serialize_images if include?('images')
-          base_attrs[:variants] = serialize_variants if include?('variants')
-          base_attrs[:default_variant] = serialize_default_variant if include?('default_variant')
-          base_attrs[:master_variant] = serialize_master_variant if include?('master_variant')
-          base_attrs[:option_types] = serialize_option_types if include?('option_types')
-          base_attrs[:taxons] = serialize_taxons if include?('taxons')
-
-          base_attrs
+        attribute :purchasable do |product|
+          product.purchasable?
         end
+
+        attribute :in_stock do |product|
+          product.in_stock?
+        end
+
+        attribute :backorderable do |product|
+          product.backorderable?
+        end
+
+        attribute :available do |product|
+          product.available?
+        end
+
+        attribute :price do |product|
+          price_object(product)&.amount&.to_f
+        end
+
+        attribute :price_in_cents do |product|
+          price_object(product)&.display_amount&.amount_in_cents
+        end
+
+        attribute :display_price do |product|
+          price_object(product)&.display_price&.to_s
+        end
+
+        attribute :compare_at_price do |product|
+          price_object(product)&.compare_at_amount&.to_f
+        end
+
+        attribute :compare_at_price_in_cents do |product|
+          price_object(product)&.display_compare_at_amount&.amount_in_cents if price_object(product)&.compare_at_amount&.present?
+        end
+
+        attribute :display_compare_at_price do |product|
+          price_object(product)&.display_compare_at_amount&.to_s if price_object(product)&.compare_at_amount&.present?
+        end
+
+        attribute :tags do |product|
+          product.taggings.map(&:tag)
+        end
+
+        # Conditional associations
+        many :images,
+             resource: Spree.api.v3_storefront_image_serializer,
+             if: proc { params[:includes]&.include?('images') },
+             source: :variant_images
+
+        many :variants,
+             resource: Spree.api.v3_storefront_variant_serializer,
+             if: proc { params[:includes]&.include?('variants') }
+
+        one :default_variant,
+            resource: Spree.api.v3_storefront_variant_serializer,
+            if: proc { params[:includes]&.include?('default_variant') }
+
+        one :master_variant,
+            key: :master_variant,
+            resource: Spree.api.v3_storefront_variant_serializer,
+            if: proc { params[:includes]&.include?('master_variant') },
+            source: :master
+
+        many :option_types,
+             resource: Spree.api.v3_storefront_option_type_serializer,
+             if: proc { params[:includes]&.include?('option_types') }
+
+        many :taxons,
+             proc { |taxons, params|
+               taxons.select { |t| t.taxonomy.store_id == params[:store].id}
+              },
+             resource: Spree.api.v3_storefront_taxon_serializer,
+             if: proc { params[:includes]&.include?('taxons') }
 
         private
 
-        def price_value
-          price = price_in_currency(resource)
-          price&.amount&.to_f
-        end
-
-        def display_price_value
-          price = price_in_currency(resource)
-          price&.display_price&.to_s
-        end
-
-        def compare_at_price_value
-          price = price_in_currency(resource)
-          price&.compare_at_amount&.to_f
-        end
-
-        def display_compare_at_price_value
-          price = price_in_currency(resource)
-          return nil unless price&.compare_at_amount
-
-          Spree::Money.new(price.compare_at_amount, currency: currency).to_s
-        end
-
-        def serialize_images
-          resource.variant_images.map do |image|
-            image_serializer.new(image, nested_context('images')).as_json
-          end
-        end
-
-        def serialize_variants
-          resource.variants.map do |variant|
-            variant_serializer.new(variant, nested_context('variants')).as_json
-          end
-        end
-
-        def serialize_default_variant
-          variant_serializer.new(resource.default_variant, nested_context('default_variant')).as_json if resource.default_variant
-        end
-
-        def serialize_master_variant
-          variant_serializer.new(resource.master, nested_context('master_variant')).as_json if resource.master
-        end
-
-        def serialize_option_types
-          resource.option_types.map do |option_type|
-            option_type_serializer.new(option_type, nested_context('option_types')).as_json
-          end
-        end
-
-        def serialize_taxons
-          resource.taxons_for_store(store).map do |taxon|
-            taxon_serializer.new(taxon, nested_context('taxons')).as_json
-          end
-        end
-
-        # Serializer dependencies
-        def image_serializer
-          Spree::Api::Dependencies.v3_storefront_image_serializer.constantize
-        end
-
-        def variant_serializer
-          Spree::Api::Dependencies.v3_storefront_variant_serializer.constantize
-        end
-
-        def option_type_serializer
-          Spree::Api::Dependencies.v3_storefront_option_type_serializer.constantize
-        end
-
-        def taxon_serializer
-          Spree::Api::Dependencies.v3_storefront_taxon_serializer.constantize
+        def price_object(product)
+          @price_object ||= price_for(product.default_variant)
         end
       end
     end

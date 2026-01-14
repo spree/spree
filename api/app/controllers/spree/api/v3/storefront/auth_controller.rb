@@ -24,7 +24,7 @@ module Spree
               token = generate_jwt(user)
               render json: {
                 token: token,
-                user: user_serializer.new(user, serializer_context).as_json
+                user: user_serializer.new(user, params: serializer_params).to_h
               }
             else
               render_error(
@@ -43,7 +43,7 @@ module Spree
               token = generate_jwt(user)
               render json: {
                 token: token,
-                user: user_serializer.new(user, serializer_context).as_json
+                user: user_serializer.new(user, params: serializer_params).to_h
               }, status: :created
             else
               render_errors(user.errors)
@@ -55,7 +55,7 @@ module Spree
             token = generate_jwt(current_user)
             render json: {
               token: token,
-              user: user_serializer.new(current_user, serializer_context).as_json
+              user: user_serializer.new(current_user, params: serializer_params).to_h
             }
           end
 
@@ -77,7 +77,7 @@ module Spree
               token = generate_jwt(user)
               render json: {
                 token: token,
-                user: user_serializer.new(user, serializer_context).as_json
+                user: user_serializer.new(user, params: serializer_params).to_h
               }
             else
               render_error(
@@ -90,10 +90,13 @@ module Spree
 
           protected
 
-          def serializer_context
+          def serializer_params
             {
               store: current_store,
-              locale: current_locale
+              locale: current_locale,
+              currency: current_currency,
+              user: current_user,
+              includes: []
             }
           end
 
@@ -132,7 +135,7 @@ module Spree
           end
 
           def user_serializer
-            Spree::Api::Dependencies.v3_storefront_user_serializer.constantize
+            Spree.api.v3_storefront_user_serializer
           end
         end
       end

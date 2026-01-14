@@ -33,14 +33,10 @@ module Spree
           protected
 
           def serialize_order
-            serializer_class.new(@order, serializer_context).as_json
+            serializer_class.new(@order, params: serializer_params).to_h
           end
 
-          def serializer_class
-            Spree::Api::Dependencies.v3_storefront_order_serializer.constantize
-          end
-
-          def serializer_context
+          def serializer_params
             {
               currency: current_currency,
               store: current_store,

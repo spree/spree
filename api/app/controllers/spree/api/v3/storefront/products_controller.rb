@@ -3,8 +3,6 @@ module Spree
     module V3
       module Storefront
         class ProductsController < ResourceController
-          include Spree::Api::V2::ProductListIncludes
-
           protected
 
           def model_class
@@ -12,7 +10,7 @@ module Spree
           end
 
           def serializer_class
-            Spree::Api::Dependencies.v3_storefront_product_serializer.constantize
+            Spree.api.v3_storefront_product_serializer
           end
 
           def scope
@@ -21,18 +19,8 @@ module Spree
 
           def scope_includes
             [
-              :prices_including_master,
-              :variant_images,
-              :option_types,
-              :option_values,
-              :taxons,
-              { taggings: [:tag] },
-              { master: [:images, :prices, :stock_items, :stock_locations, { stock_items: :stock_location }],
-                variants: [
-                  :images, :prices, :option_values, :stock_items, :stock_locations,
-                  { option_values: :option_type, stock_items: :stock_location }
-                ],
-              }
+              master: [:prices, { stock_items: :stock_location }],
+              variants: [:prices, {option_values: :option_type }, { stock_items: :stock_location }]
             ]
           end
 

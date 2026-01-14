@@ -2,105 +2,104 @@ module Spree
   module Api
     module V3
       class OrderSerializer < BaseSerializer
-        def attributes
-          base_attrs = {
-            id: resource.id,
-            number: resource.number,
-            state: resource.state,
-            token: resource.token,
-            email: resource.email,
-            special_instructions: resource.special_instructions,
-            currency: resource.currency,
-            item_count: resource.item_count,
+        attributes :id, :number, :state, :token, :email, :special_instructions,
+                   :currency, :item_count, :shipment_state, :payment_state
 
-            # Totals
-            item_total: resource.item_total.to_f,
-            display_item_total: resource.display_item_total.to_s,
-
-            ship_total: resource.ship_total.to_f,
-            display_ship_total: resource.display_ship_total.to_s,
-
-            adjustment_total: resource.adjustment_total.to_f,
-            display_adjustment_total: resource.display_adjustment_total.to_s,
-
-            promo_total: resource.promo_total.to_f,
-            display_promo_total: resource.display_promo_total.to_s,
-
-            tax_total: resource.tax_total.to_f,
-            display_tax_total: resource.display_tax_total.to_s,
-
-            included_tax_total: resource.included_tax_total.to_f,
-            display_included_tax_total: resource.display_included_tax_total.to_s,
-
-            additional_tax_total: resource.additional_tax_total.to_f,
-            display_additional_tax_total: resource.display_additional_tax_total.to_s,
-
-            total: resource.total.to_f,
-            display_total: resource.display_total.to_s,
-
-            # States
-            shipment_state: resource.shipment_state,
-            payment_state: resource.payment_state,
-
-            # Timestamps
-            completed_at: timestamp(resource.completed_at),
-            created_at: timestamp(resource.created_at),
-            updated_at: timestamp(resource.updated_at)
-          }
-
-          # Conditionally include associations
-          base_attrs[:line_items] = serialize_line_items if include?('line_items')
-          base_attrs[:payments] = serialize_payments if include?('payments')
-          base_attrs[:shipments] = serialize_shipments if include?('shipments')
-          base_attrs[:billing_address] = serialize_billing_address if include?('billing_address')
-          base_attrs[:shipping_address] = serialize_shipping_address if include?('shipping_address')
-
-          base_attrs
+        # Totals
+        attribute :item_total do |order|
+          order.item_total.to_f
         end
 
-        private
-
-        def serialize_line_items
-          resource.line_items.map do |line_item|
-            line_item_serializer.new(line_item, nested_context('line_items')).as_json
-          end
+        attribute :display_item_total do |order|
+          order.display_item_total.to_s
         end
 
-        def serialize_payments
-          resource.payments.valid.map do |payment|
-            payment_serializer.new(payment, nested_context('payments')).as_json
-          end
+        attribute :ship_total do |order|
+          order.ship_total.to_f
         end
 
-        def serialize_shipments
-          resource.shipments.map do |shipment|
-            shipment_serializer.new(shipment, nested_context('shipments')).as_json
-          end
+        attribute :display_ship_total do |order|
+          order.display_ship_total.to_s
         end
 
-        def serialize_billing_address
-          address_serializer.new(resource.bill_address, nested_context('billing_address')).as_json if resource.bill_address
+        attribute :adjustment_total do |order|
+          order.adjustment_total.to_f
         end
 
-        def serialize_shipping_address
-          address_serializer.new(resource.ship_address, nested_context('shipping_address')).as_json if resource.ship_address
+        attribute :display_adjustment_total do |order|
+          order.display_adjustment_total.to_s
         end
 
-        # Serializer dependencies
-        def line_item_serializer
-          Spree::Api::Dependencies.v3_storefront_line_item_serializer.constantize
+        attribute :promo_total do |order|
+          order.promo_total.to_f
         end
 
-        def payment_serializer
-          Spree::Api::Dependencies.v3_storefront_payment_serializer.constantize
+        attribute :display_promo_total do |order|
+          order.display_promo_total.to_s
         end
 
-        def shipment_serializer
-          Spree::Api::Dependencies.v3_storefront_shipment_serializer.constantize
+        attribute :tax_total do |order|
+          order.tax_total.to_f
         end
 
-        def address_serializer
-          Spree::Api::Dependencies.v3_storefront_address_serializer.constantize
+        attribute :display_tax_total do |order|
+          order.display_tax_total.to_s
+        end
+
+        attribute :included_tax_total do |order|
+          order.included_tax_total.to_f
+        end
+
+        attribute :display_included_tax_total do |order|
+          order.display_included_tax_total.to_s
+        end
+
+        attribute :additional_tax_total do |order|
+          order.additional_tax_total.to_f
+        end
+
+        attribute :display_additional_tax_total do |order|
+          order.display_additional_tax_total.to_s
+        end
+
+        attribute :total do |order|
+          order.total.to_f
+        end
+
+        attribute :display_total do |order|
+          order.display_total.to_s
+        end
+
+        # Timestamps
+        attributes completed_at: :iso8601, created_at: :iso8601, updated_at: :iso8601
+
+        # Conditional associations
+        many :line_items,
+             resource: Spree.api.v3_storefront_line_item_serializer,
+             if: proc { params[:includes]&.include?('line_items') }
+
+        many :shipments,
+             resource: Spree.api.v3_storefront_shipment_serializer,
+             if: proc { params[:includes]&.include?('shipments') }
+
+        many :payments,
+             resource: Spree.api.v3_storefront_payment_serializer,
+             if: proc { params[:includes]&.include?('payments') } do |order|
+          order.payments.valid
+        end
+
+        one :billing_address,
+            key: :billing_address,
+            resource: Spree.api.v3_storefront_address_serializer,
+            if: proc { params[:includes]&.include?('billing_address') } do |order|
+          order.bill_address
+        end
+
+        one :shipping_address,
+            key: :shipping_address,
+            resource: Spree.api.v3_storefront_address_serializer,
+            if: proc { params[:includes]&.include?('shipping_address') } do |order|
+          order.ship_address
         end
       end
     end
