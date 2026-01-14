@@ -244,7 +244,7 @@ module Spree
 
       # Only update if price or price list changed
       if new_price != price || new_price_list_id != price_list_id
-        update_columns(price: new_price, price_list_id: new_price_list_id)
+        update_columns(price: new_price, price_list_id: new_price_list_id, updated_at: Time.current)
       end
     end
 
