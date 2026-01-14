@@ -44,7 +44,8 @@ module Spree
     scope :for_store, ->(store) { where(store: store) }
     scope :current, lambda { |timezone = nil|
       timezone ||= Rails.application.config.time_zone
-      current_time = Time.current.in_time_zone(timezone)
+      # Round to beginning of minute to enable Rails query caching
+      current_time = Time.current.in_time_zone(timezone).beginning_of_minute
       where('starts_at IS NULL OR starts_at <= ?', current_time)
         .where('ends_at IS NULL OR ends_at >= ?', current_time)
     }
