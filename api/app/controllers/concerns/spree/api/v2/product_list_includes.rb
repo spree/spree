@@ -22,6 +22,7 @@ module Spree
           variant_includes = {
             prices: [],
             option_values: :option_type,
+            stock_items: :stock_location
           }
           variant_includes[:images] = [] if params[:include]&.match(/images/)
           variant_includes

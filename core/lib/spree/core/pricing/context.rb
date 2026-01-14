@@ -12,7 +12,7 @@ module Spree
       # @param quantity [Integer]
       # @param date [Time]
       # @param order [Spree::Order]
-      def initialize(variant:, currency:, store: nil, zone: nil, user: nil, quantity: nil, date: nil, order: nil)
+      def initialize(variant: nil, currency:, store: nil, zone: nil, user: nil, quantity: nil, date: nil, order: nil)
         @variant = variant
         @currency = currency
         @store = store || Spree::Current.store
