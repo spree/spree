@@ -12,7 +12,8 @@ module Spree
       @spree_storefront_base_cache_key ||= [
         spree_base_cache_key,
         current_wishlist,
-        current_order
+        current_order,
+        Spree::Current.price_lists.cache_key_with_version
       ].compact
     end
 
