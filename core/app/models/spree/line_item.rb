@@ -227,6 +227,27 @@ module Spree
       variant.with_digital_assets?
     end
 
+    # Recalculates and persists the price based on the current quantity and pricing context
+    # This is used for volume-based pricing and other price list rules
+    # @return [void]
+    def recalculate_price
+      context = Spree::Pricing::Context.from_order(variant, order, quantity: quantity)
+      currency_price = variant.price_for(context)
+
+      return unless currency_price.present?
+
+      new_price = currency_price.price_including_vat_for(tax_zone: tax_zone)
+
+      return unless new_price.present?
+
+      new_price_list_id = currency_price.price_list_id
+
+      # Only update if price or price list changed
+      if new_price != price || new_price_list_id != price_list_id
+        update_columns(price: new_price, price_list_id: new_price_list_id)
+      end
+    end
+
     private
 
     def ensure_valid_quantity
@@ -274,24 +295,6 @@ module Spree
     # @return [Boolean]
     def should_update_price?
       !order.completed?
-    end
-
-    def recalculate_price
-      context = Spree::Pricing::Context.from_order(variant, order, quantity: quantity)
-      currency_price = variant.price_for(context)
-
-      return unless currency_price.present?
-
-      new_price = currency_price.price_including_vat_for(tax_zone: tax_zone)
-
-      return unless new_price.present?
-
-      new_price_list_id = currency_price.price_list_id
-
-      # Only update if price or price list changed
-      if new_price != price || new_price_list_id != price_list_id
-        update_columns(price: new_price, price_list_id: new_price_list_id)
-      end
     end
 
     def recalculate_adjustments
