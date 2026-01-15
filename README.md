@@ -40,7 +40,13 @@
 
 ## Getting Started
 
-Visit the [Quickstart Guide](https://spreecommerce.org/docs/developer/getting-started/quickstart) to set up Spree in 5 minutes.
+Copy and paste the following command to your terminal to set up Spree in 5 minutes:
+
+```bash
+bash -c "$(curl -fsSL https://spreecommerce.org/install)"
+```
+
+If you prefer to install Spree manually, you can follow the [Quickstart Guide](https://spreecommerce.org/docs/developer/getting-started/quickstart).
 
 Make sure to check out [Spree 5 release announcement](https://github.com/spree/spree#spree-5-announcement--demo) and the latest [Spree 5.2 release](https://github.com/orgs/spree/discussions/13318), including:
 * [New Spree Installer CLI](https://spreecommerce.org/docs/developer/getting-started/quickstart) — spin up a project in seconds, with recommended defaults.
