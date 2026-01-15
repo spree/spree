@@ -43,7 +43,7 @@ brand.description.to_plain_text
 In the Admin dashboard we want to use a WYSIWYG editor to add formatted text to the brand description. To do this, edit the `app/views/spree/admin/brands/_form.html.erb` file and add the following code:
 
 ```erb app/views/spree/admin/brands/_form.html.erb {4}
-<div class="card mb-4">
+<div class="card mb-6">
   <div class="card-body">
     <%= f.spree_text_field :name %>
     <%= f.spree_rich_text_area :description %>
