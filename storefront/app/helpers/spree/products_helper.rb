@@ -176,7 +176,7 @@ module Spree
       return Spree::Taxon.none if product.main_taxon.blank?
 
       # using find_all as we already iterate over the taxons in #product_json_ld_breadcrumbs
-      product.main_taxon.self_and_ancestors.find_all { |taxon| taxon.depth != 0 }
+      product.main_taxon.self_and_ancestors.includes(:translations).find_all { |taxon| taxon.depth != 0 }
     end
 
     # Generates the JSON-LD elements for a list of products.
