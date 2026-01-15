@@ -1533,7 +1533,7 @@ Rails.application.config.after_initialize do
   # ==========================================
   # Customer Groups Table
   # ==========================================
-  Spree.admin.tables.register(:customer_groups, model_class: Spree::CustomerGroup, search_param: :name_cont, row_actions: true, link_to_action: :show)
+  Spree.admin.tables.register(:customer_groups, model_class: Spree::CustomerGroup, search_param: :name_cont, link_to_action: :show)
 
   Spree.admin.tables.customer_groups.add :name,
                                                label: :name,

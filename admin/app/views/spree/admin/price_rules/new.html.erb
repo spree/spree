@@ -5,7 +5,7 @@
     <% else %>
       <%= dialog_header(@price_rule.class.human_name) %>
     <% end %>
-    <div class="dialog-body">
+    <div class="dialog-body overflow-visible">
       <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @price_rule } %>
       <% if @price_rule.type.nil? %>
         <% allowed_rule_types.each do |rule_class| %>

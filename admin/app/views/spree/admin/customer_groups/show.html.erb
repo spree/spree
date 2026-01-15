@@ -3,12 +3,6 @@
   <%= @customer_group.name %>
 <% end %>
 
-<% content_for :page_actions do %>
-  <%= link_to_with_icon 'edit', Spree.t(:edit), spree.edit_admin_customer_group_path(@customer_group),
-        class: 'btn btn-light',
-        data: { turbo_frame: :drawer, action: 'drawer#open' } if can?(:update, @customer_group) %>
-<% end %>
-
 <div class="grid grid-cols-12 gap-6">
   <div class="col-span-12 lg:col-span-8">
     <div class="card mb-6">

@@ -53,8 +53,6 @@ module Spree
           deleted_count = @customer_group.remove_customers(user_ids)
           flash.now[:success] = Spree.t(:customers_removed_from_group, count: deleted_count)
         end
-
-        @collection = collection
       end
 
       private

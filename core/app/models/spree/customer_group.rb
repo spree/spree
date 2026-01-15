@@ -56,7 +56,7 @@ module Spree
 
       return 0 if records_to_insert.empty?
 
-      Spree::CustomerGroupUser.insert_all(records_to_insert)
+      Spree::CustomerGroupUser.insert_all(records_to_insert, on_duplicate: :skip)
       added_user_ids = records_to_insert.map { |r| r[:user_id] }
       touch_users(added_user_ids)
       touch

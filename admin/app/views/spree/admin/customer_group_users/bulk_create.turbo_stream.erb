@@ -9,3 +9,7 @@
 <%= turbo_stream.replace 'customers_header' do %>
   <%= render 'spree/admin/customer_groups/customers_header' %>
 <% end %>
+
+<%= turbo_stream.update 'customer_group_users_count' do %>
+  <%= @customer_group.users_count %>
+<% end %>
