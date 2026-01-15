@@ -116,6 +116,8 @@ module Spree
     has_many :webhook_endpoints, class_name: 'Spree::WebhookEndpoint', dependent: :destroy, inverse_of: :store
     has_many :webhook_deliveries, through: :webhook_endpoints, class_name: 'Spree::WebhookDelivery'
 
+    has_many :customer_groups, class_name: 'Spree::CustomerGroup', dependent: :destroy, inverse_of: :store
+
     #
     # ActionText
     #

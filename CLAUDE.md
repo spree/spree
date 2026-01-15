@@ -68,6 +68,7 @@ Always inherit from `Spree.base_class` when creating models.
 - Include `Spree::Metafields` concern for models that need metadata support
 - Don't use enums, use string columns instead
 - For models that require state machine, please use https://github.com/state-machines/state_machines-activerecord gem, default column should be `status`, legacy models use `state`
+- Don't ever cast IDs to integer, we need to support also UUIDs so please always treat IDs as strings
 
 ```ruby
 # ✅ Good model structure
@@ -151,6 +152,7 @@ This will create a dummy rails application and run migrations. If there's alread
 - For controller specs always add `render_views` to the test
 - For controller spec authentication use `stub_authorization!`
 - Don't create test scenarios for standard rails validation, only for custom validations
+- For time-based testing / operations use `Timecop` gem
 
 ```ruby
 # ✅ Proper spec structure

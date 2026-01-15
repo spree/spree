@@ -8,6 +8,12 @@
       <%= f.label :tag_list, Spree.t(:tags) %>
       <%= tom_select_tag 'user[tag_list]', multiple: true, class: 'w-full', options: user_tags_json_array, active_option: @user.tag_list, value_field: :name, create: true %>
     </div>
+    <% if current_store.customer_groups.any? %>
+      <%= f.spree_select :customer_group_ids,
+              options_from_collection_for_select(current_store.customer_groups, 'id', 'name', @user.customer_group_ids),
+              { prompt: false, label: Spree.t(:customer_groups), autocomplete: true },
+              { multiple: true } %>
+    <% end %>
     <% if @user.class == Spree.admin_user_class && can?(:manage, Spree::Role) %>
       <%= f.spree_select :spree_role_ids,
               options_from_collection_for_select(Spree::Role.all, 'id', 'name', @user.spree_roles.pluck(:id)),

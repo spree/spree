@@ -319,6 +319,14 @@ module Spree
     Rails.application.config.spree.subscribers = value
   end
 
+  def self.pricing
+    Rails.application.config.spree.pricing
+  end
+
+  def self.pricing=(value)
+    Rails.application.config.spree.pricing = value
+  end
+
   def self.analytics
     @analytics ||= AnalyticsConfig.new
   end

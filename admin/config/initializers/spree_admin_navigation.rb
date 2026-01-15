@@ -152,6 +152,14 @@ Rails.application.config.after_initialize do
           icon: 'users',
           position: 40,
           if: -> { can?(:manage, Spree.user_class) } do |customers|
+    # Customer Groups
+    customers.add :customer_groups,
+                  label: :customer_groups,
+                  url: :admin_customer_groups_path,
+                  position: 5,
+                  active: -> { %w[customer_groups customer_group_users].include?(controller_name) },
+                  if: -> { can?(:manage, Spree::CustomerGroup) }
+
     # Newsletter Subscribers
     customers.add :newsletter_subscribers,
                   label: :newsletter_subscribers,

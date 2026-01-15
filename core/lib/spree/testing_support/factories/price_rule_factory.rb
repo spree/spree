@@ -35,5 +35,15 @@ FactoryBot.define do
         user_ids { [] }
       end
     end
+
+    factory :customer_group_price_rule, class: Spree::PriceRules::CustomerGroupRule do
+      after(:build) do |rule, evaluator|
+        rule.preferred_customer_group_ids = evaluator.customer_group_ids if evaluator.respond_to?(:customer_group_ids)
+      end
+
+      transient do
+        customer_group_ids { [] }
+      end
+    end
   end
 end

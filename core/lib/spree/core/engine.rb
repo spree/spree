@@ -156,6 +156,7 @@ module Spree
           Spree::Promotion::Rules::ItemTotal,
           Spree::Promotion::Rules::Product,
           Spree::Promotion::Rules::User,
+          Spree::Promotion::Rules::CustomerGroup,
           Spree::Promotion::Rules::FirstOrder,
           Spree::Promotion::Rules::UserLoggedIn,
           Spree::Promotion::Rules::OneUsePerUser,
@@ -164,9 +165,10 @@ module Spree
         ]
 
         Rails.application.config.spree.pricing.rules.concat [
-          'Spree::PriceRules::ZoneRule',
-          'Spree::PriceRules::UserRule',
-          'Spree::PriceRules::VolumeRule'
+          Spree::PriceRules::ZoneRule,
+          Spree::PriceRules::UserRule,
+          Spree::PriceRules::CustomerGroupRule,
+          Spree::PriceRules::VolumeRule
         ]
 
         Rails.application.config.spree.promotions.actions = [

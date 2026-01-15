@@ -33,10 +33,10 @@
           <%= active_badge(@user.accepts_email_marketing?) %>
         </li>
         <li class="list-group-item flex justify-between items-center">
-          <%= Spree.t(:tags) %>
+          <%= Spree.t(:customer_groups) %>
           <span>
-            <% @user.tag_list.each do |tag| %>
-              <span class="badge badge-light"><%= tag %></span>
+            <% @user.customer_groups.each do |group| %>
+              <%= link_to group.name, spree.admin_customer_group_path(group), class: 'inline-flex items-center text-blue-500 no-underline hover:text-blue-600 hover:bg-blue-50 p-1 rounded' %>
             <% end %>
           </span>
         </li>
@@ -45,6 +45,14 @@
           <span>
             <% @user.spree_roles.pluck(:name).each do |role_name| %>
               <span class="badge badge-light"><%= role_name %></span>
+            <% end %>
+          </span>
+        </li>
+        <li class="list-group-item flex justify-between items-center">
+          <%= Spree.t(:tags) %>
+          <span>
+            <% @user.tag_list.each do |tag| %>
+              <span class="badge badge-light"><%= tag %></span>
             <% end %>
           </span>
         </li>

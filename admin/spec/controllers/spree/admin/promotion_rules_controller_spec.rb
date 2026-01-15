@@ -139,6 +139,23 @@ RSpec.describe Spree::Admin::PromotionRulesController, type: :controller do
         expect(promotion_rule.preferred_eligible_values).to include(option_value.id.to_s)
       end
     end
+
+    context 'with customer group rule' do
+      let!(:customer_group) { create(:customer_group, store: store) }
+      let!(:other_customer_group) { create(:customer_group, store: store) }
+      let!(:promotion_rule) { create(:promotion_rule_customer_group, promotion: promotion) }
+      let(:rule_params) do
+        {
+          preferred_customer_group_ids: [customer_group.id, other_customer_group.id]
+        }
+      end
+
+      it 'updates the promotion rule with array preference' do
+        patch :update, params: { promotion_id: promotion.id, id: promotion_rule.id, promotion_rule: rule_params }
+        promotion_rule.reload
+        expect(promotion_rule.preferred_customer_group_ids).to include(customer_group.id.to_s, other_customer_group.id.to_s)
+      end
+    end
   end
 
   describe 'DELETE #destroy' do
