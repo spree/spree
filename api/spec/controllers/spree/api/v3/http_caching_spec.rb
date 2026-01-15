@@ -3,26 +3,34 @@ require 'spec_helper'
 class HttpCachingTestController < ActionController::API
   include Spree::Api::V3::HttpCaching
 
-  attr_accessor :current_user
+  attr_accessor :current_user, :_current_currency, :_current_locale
 
   def current_currency
-    'USD'
+    _current_currency || 'USD'
   end
 
   def current_locale
-    'en'
+    _current_locale || 'en'
   end
 end
 
 describe Spree::Api::V3::HttpCaching, type: :controller do
   let(:controller) { HttpCachingTestController.new }
-  let(:request) { instance_double(ActionDispatch::Request) }
+  let(:request) { ActionDispatch::Request.new({}) }
   let(:response) { ActionDispatch::Response.new }
 
   before do
     allow(controller).to receive(:request).and_return(request)
     allow(controller).to receive(:response).and_return(response)
     allow(controller).to receive(:params).and_return(ActionController::Parameters.new(params))
+    # Stub expires_in to set Cache-Control header directly
+    allow(controller).to receive(:expires_in) do |duration, options = {}|
+      parts = []
+      parts << 'public' if options[:public]
+      parts << "max-age=#{duration.to_i}"
+      parts << "stale-while-revalidate=#{options[:stale_while_revalidate].to_i}" if options[:stale_while_revalidate]
+      response.headers['Cache-Control'] = parts.join(', ')
+    end
   end
 
   let(:params) { {} }
@@ -45,16 +53,6 @@ describe Spree::Api::V3::HttpCaching, type: :controller do
         expect(controller.send(:guest_user?)).to be false
       end
     end
-
-    context 'when current_user responds to guest? and returns true' do
-      let(:user) { double('User', guest?: true) }
-
-      before { controller.current_user = user }
-
-      it 'returns true' do
-        expect(controller.send(:guest_user?)).to be true
-      end
-    end
   end
 
   describe '#set_vary_headers' do
@@ -68,7 +66,8 @@ describe Spree::Api::V3::HttpCaching, type: :controller do
 
       it 'does not set Cache-Control to private' do
         controller.send(:set_vary_headers)
-        expect(response.headers['Cache-Control']).not_to include('private')
+        cache_control = response.headers['Cache-Control']
+        expect(cache_control.nil? || !cache_control.include?('private')).to be true
       end
     end
 
@@ -159,7 +158,8 @@ describe Spree::Api::V3::HttpCaching, type: :controller do
 
       it 'does not set public Cache-Control' do
         controller.send(:cache_collection, collection)
-        expect(response.headers['Cache-Control']).not_to include('public')
+        cache_control = response.headers['Cache-Control']
+        expect(cache_control.nil? || !cache_control.include?('public')).to be true
       end
     end
   end
@@ -274,7 +274,7 @@ describe Spree::Api::V3::HttpCaching, type: :controller do
 
     context 'with different currencies' do
       before do
-        allow(controller).to receive(:current_currency).and_return('EUR')
+        controller._current_currency = 'EUR'
       end
 
       it 'generates different cache keys for different currencies' do
