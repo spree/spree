@@ -49,7 +49,7 @@ This creates `spec/models/spree/brand_spec.rb`.
 
 Factories provide a convenient way to create test data. Create a factory for your Brand model:
 
-```ruby spec/factories/spree/brand_factory.r
+```ruby spec/factories/spree/brand_factory.rb
 FactoryBot.define do
   factory :brand, class: Spree::Brand do
     sequence(:name) { |n| "Brand #{n}" }
@@ -110,7 +110,7 @@ brand = create(:brand, :with_products, products_count: 5)
 
 Model tests verify your business logic, validations, associations, and scopes.
 
-```ruby spec/models/spree/brand_spec.r
+```ruby spec/models/spree/brand_spec.rb
 require 'rails_helper'
 
 RSpec.describe Spree::Brand, type: :model do
@@ -167,7 +167,7 @@ end
 
 When you extend core Spree models with decorators (see [Extending Core Models](/developer/tutorial/extending-models)), test the added functionality:
 
-```ruby spec/models/spree/product_decorator_spec.r
+```ruby spec/models/spree/product_decorator_spec.rb
 require 'rails_helper'
 
 RSpec.describe 'Spree::Product brand association' do
@@ -212,7 +212,7 @@ Controller tests verify that your endpoints respond correctly and perform the ex
 
 ### Admin Controller Tests
 
-```ruby spec/controllers/spree/admin/brands_controller_spec.r
+```ruby spec/controllers/spree/admin/brands_controller_spec.rb
 require 'rails_helper'
 
 RSpec.describe Spree::Admin::BrandsController, type: :controller do
@@ -322,7 +322,7 @@ end
 
 ### Storefront Controller Tests
 
-```ruby spec/controllers/spree/brands_controller_spec.r
+```ruby spec/controllers/spree/brands_controller_spec.rb
 require 'rails_helper'
 
 RSpec.describe Spree::Brand, type: :model do
@@ -381,7 +381,7 @@ Feature tests (also called system tests) simulate real user interactions using C
 
 ### Admin Feature Tests
 
-```ruby spec/features/spree/admin/brands_spec.r
+```ruby spec/features/spree/admin/brands_spec.rb
 require 'rails_helper'
 
 RSpec.feature 'Admin Brands', type: :feature do
@@ -566,5 +566,3 @@ spec/
 
 
 ---
-
-
