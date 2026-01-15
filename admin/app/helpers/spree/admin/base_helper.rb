@@ -366,6 +366,11 @@ module Spree
           return Spree.t(:none) if user_ids.empty?
 
           Spree.user_class.where(id: user_ids).map { |u| u.try(:email) || u.id }.join(', ')
+        when :customer_group_ids
+          customer_group_ids = Array(value).reject(&:blank?).map(&:to_i)
+          return Spree.t(:none) if customer_group_ids.empty?
+
+          Spree::CustomerGroup.where(id: customer_group_ids).pluck(:name).join(', ')
         when :country_id
           Spree::Country.find_by(id: value)&.name || value
         else

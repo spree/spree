@@ -1,0 +1,27 @@
+<%= turbo_frame_tag :drawer do %>
+  <div data-controller="search-picker" class="flex flex-col justify-between h-full">
+    <%= drawer_header(Spree.t(:add_customers)) %>
+
+    <div class="drawer-body border-b flex-none">
+      <%= form_with url: spree.search_admin_users_path, method: :post, data: { controller: 'auto-submit' } do |form| %>
+        <%= form.hidden_field :omit_ids, value: @customer_group.users.pluck(:id).join(',') %>
+        <%= form.search_field :q, value: params[:q], class: 'form-input w-full', placeholder: Spree.t(:search_customers), data: { search_picker_target: :search, action: 'auto-submit#submit' }, autofocus: true %>
+      <% end %>
+    </div>
+
+    <%= form_with url: spree.bulk_create_admin_customer_group_customer_group_users_path(@customer_group), method: :post, class: 'grow flex flex-col justify-between' do |form| %>
+      <div class="drawer-body grow">
+        <div id="users_search_results" class="search-results overflow-y-auto max-h-96">
+          <p class="text-gray-500 text-center py-8">
+            <%= Spree.t(:type_to_search_customers) %>
+          </p>
+        </div>
+      </div>
+
+      <div class="drawer-footer">
+        <%= turbo_save_button_tag Spree.t(:add_selected), class: 'btn btn-primary', disabled: true, data: { search_picker_target: :submit } %>
+        <%= drawer_discard_button %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

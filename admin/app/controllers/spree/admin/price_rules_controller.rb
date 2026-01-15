@@ -10,13 +10,11 @@ module Spree
       def model_class
         @model_class = if params.dig(:price_rule, :type).present?
                          rule_type = params.dig(:price_rule, :type)
-                         rule_class = allowed_rule_types.find { |type| type.to_s == rule_type }
+                         rule_class = allowed_rule_types.find { |klass| klass.name.to_s == rule_type }
 
-                         if rule_class
-                           rule_class.constantize
-                         else
-                           raise 'Unknown price rule type'
-                         end
+                         raise 'Unknown price rule type' unless rule_class
+
+                         rule_class
                        else
                          Spree::PriceRule
                        end
@@ -27,7 +25,7 @@ module Spree
       end
 
       def allowed_rule_types
-        Rails.application.config.spree.pricing.rules
+        Spree.pricing.rules
       end
 
       def location_after_save

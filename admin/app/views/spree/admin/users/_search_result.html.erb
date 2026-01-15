@@ -1,0 +1,13 @@
+<div class="search-picker__option" data-action="click->search-picker#toggle">
+  <%= check_box_tag "ids[]", user.id, false, id: "ids_#{user.id}", data: { action: 'search-picker#toggle', search_picker_target: "checkbox" } %>
+  <label for="ids_<%= user.id %>">
+    <%= render_avatar(user, width: 40, height: 40) %>
+    <div class="ml-4">
+      <% if customer_full_name(user).present? %>
+        <span class="font-medium"><%= highlight(customer_full_name(user), params[:q]) %></span>
+        <br>
+      <% end %>
+      <span class="text-gray-600 text-sm"><%= highlight(user.email, params[:q]) %></span>
+    </div>
+  </label>
+</div>

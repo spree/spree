@@ -41,6 +41,14 @@
           </span>
         </li>
         <li class="list-group-item flex justify-between items-center">
+          <%= Spree.t(:customer_groups) %>
+          <span>
+            <% @user.customer_groups.pluck(:name).each do |group_name| %>
+              <span class="badge badge-light"><%= group_name %></span>
+            <% end %>
+          </span>
+        </li>
+        <li class="list-group-item flex justify-between items-center">
           <%= Spree.t(:roles) %>
           <span>
             <% @user.spree_roles.pluck(:name).each do |role_name| %>

@@ -1,0 +1,11 @@
+<%= turbo_close_drawer %>
+
+<%= turbo_render_alerts %>
+
+<%= turbo_stream.replace :customer_group_users do %>
+  <%= render template: 'spree/admin/customer_group_users/index' %>
+<% end %>
+
+<%= turbo_stream.replace 'customers_header' do %>
+  <%= render 'spree/admin/customer_groups/customers_header' %>
+<% end %>

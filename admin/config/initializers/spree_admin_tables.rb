@@ -1529,4 +1529,94 @@ Rails.application.config.after_initialize do
                                                                button_class: 'btn-danger',
                                                                method: :delete,
                                                                position: 10
+
+  # ==========================================
+  # Customer Groups Table
+  # ==========================================
+  Spree.admin.tables.register(:customer_groups, model_class: Spree::CustomerGroup, search_param: :name_cont, row_actions: true, link_to_action: :show)
+
+  Spree.admin.tables.customer_groups.add :name,
+                                               label: :name,
+                                               type: :link,
+                                               sortable: true,
+                                               filterable: true,
+                                               default: true,
+                                               position: 10
+
+  Spree.admin.tables.customer_groups.add :description,
+                                               label: :description,
+                                               type: :string,
+                                               sortable: false,
+                                               filterable: false,
+                                               default: true,
+                                               position: 20,
+                                               method: ->(cg) { cg.description.to_s.truncate(50) }
+
+  Spree.admin.tables.customer_groups.add :users_count,
+                                               label: :customers,
+                                               type: :number,
+                                               sortable: false,
+                                               filterable: false,
+                                               default: true,
+                                               position: 30,
+                                               method: ->(cg) { cg.users_count }
+
+  Spree.admin.tables.customer_groups.add :created_at,
+                                               label: :created_at,
+                                               type: :datetime,
+                                               sortable: true,
+                                               filterable: true,
+                                               default: false,
+                                               position: 40
+
+  Spree.admin.tables.customer_groups.add :updated_at,
+                                               label: :updated_at,
+                                               type: :datetime,
+                                               sortable: true,
+                                               filterable: true,
+                                               default: true,
+                                               position: 50
+
+  # ==========================================
+  # Customer Group Users Table (users within a customer group)
+  # ==========================================
+  Spree.admin.tables.register(:customer_group_users, model_class: Spree.user_class, search_param: :multi_search, row_actions: false, new_resource: false)
+
+  Spree.admin.tables.customer_group_users.add :name,
+                                                    label: :name,
+                                                    type: :custom,
+                                                    sortable: true,
+                                                    filterable: false,
+                                                    default: true,
+                                                    position: 10,
+                                                    ransack_attribute: 'first_name',
+                                                    partial: 'spree/admin/shared/user',
+                                                    partial_locals: ->(record) { { user: record } }
+
+  Spree.admin.tables.customer_group_users.add :location,
+                                                    label: :location,
+                                                    type: :custom,
+                                                    sortable: false,
+                                                    filterable: false,
+                                                    default: false,
+                                                    position: 20,
+                                                    partial: 'spree/admin/tables/columns/user_location'
+
+  Spree.admin.tables.customer_group_users.add :created_at,
+                                                    label: :added_at,
+                                                    type: :datetime,
+                                                    sortable: true,
+                                                    filterable: false,
+                                                    default: true,
+                                                    position: 30
+
+  Spree.admin.tables.customer_group_users.add_bulk_action :remove_from_customer_group,
+                                                                label: 'admin.bulk_ops.customer_group_users.title.remove',
+                                                                icon: 'trash',
+                                                                action_path: ->(view_context) { view_context.spree.bulk_destroy_admin_customer_group_customer_group_users_path(view_context.instance_variable_get(:@customer_group)) },
+                                                                body: 'admin.bulk_ops.customer_group_users.body.remove',
+                                                                button_text: :remove,
+                                                                button_class: 'btn-danger',
+                                                                method: :delete,
+                                                                position: 10
 end

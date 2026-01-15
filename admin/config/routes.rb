@@ -125,8 +125,21 @@ Spree::Core::Engine.add_routes do
       resources :gift_cards
 
       collection do
+        post :search
         post :bulk_add_tags
         post :bulk_remove_tags
+      end
+    end
+    resources :customer_groups do
+      collection do
+        get :select_options, defaults: { format: :json }
+      end
+      resources :customer_group_users, only: [:index, :create, :destroy] do
+        collection do
+          get :bulk_new
+          post :bulk_create
+          delete :bulk_destroy
+        end
       end
     end
     resources :newsletter_subscribers, only: [:index, :destroy]

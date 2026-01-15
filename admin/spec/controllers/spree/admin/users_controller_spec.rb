@@ -234,6 +234,61 @@ RSpec.describe Spree::Admin::UsersController, type: :controller do
     end
   end
 
+  describe 'POST #search' do
+    let!(:user_1) { create(:user, first_name: 'Alice', last_name: 'Johnson', email: 'alice@example.com') }
+    let!(:user_2) { create(:user, first_name: 'Bob', last_name: 'Smith', email: 'bob@example.com') }
+    let!(:user_3) { create(:user, first_name: 'Alice', last_name: 'Williams', email: 'alice.w@example.com') }
+
+    it 'returns users matching the search query' do
+      post :search, params: { q: 'alice' }, format: :turbo_stream
+
+      expect(response).to have_http_status(:ok)
+      expect(assigns(:users)).to include(user_1, user_3)
+      expect(assigns(:users)).not_to include(user_2)
+    end
+
+    it 'returns ok with no results for short queries' do
+      post :search, params: { q: 'al' }, format: :turbo_stream
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    it 'returns ok for blank queries' do
+      post :search, params: { q: '' }, format: :turbo_stream
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    it 'omits users specified in omit_ids' do
+      post :search, params: { q: 'alice', omit_ids: user_1.id.to_s }, format: :turbo_stream
+
+      expect(assigns(:users)).to include(user_3)
+      expect(assigns(:users)).not_to include(user_1)
+    end
+
+    it 'omits multiple users specified in omit_ids' do
+      post :search, params: { q: 'alice', omit_ids: "#{user_1.id},#{user_3.id}" }, format: :turbo_stream
+
+      expect(assigns(:users)).to be_empty
+    end
+
+    it 'limits results to 10 by default' do
+      12.times { |i| create(:user, first_name: 'TestCustomer', last_name: "User#{i}") }
+
+      post :search, params: { q: 'TestCustomer' }, format: :turbo_stream
+
+      expect(assigns(:users).size).to eq(10)
+    end
+
+    it 'respects custom limit parameter' do
+      12.times { |i| create(:user, first_name: 'TestCustomer', last_name: "User#{i}") }
+
+      post :search, params: { q: 'TestCustomer', limit: 5 }, format: :turbo_stream
+
+      expect(assigns(:users).size).to eq(5)
+    end
+  end
+
   describe 'GET #select_options' do
     let!(:user_1) { create(:user, email: 'alice@example.com') }
     let!(:user_2) { create(:user, email: 'bob@example.com') }

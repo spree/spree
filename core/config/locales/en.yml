@@ -113,6 +113,9 @@ en:
         number: Number
       spree/payment_method:
         name: Name
+      spree/customer_group:
+        name: Name
+        description: Description
       spree/policy:
         body: Body
         owner: Policy for
@@ -381,6 +384,12 @@ en:
       spree/credit_card:
         one: Credit Card
         other: Credit Cards
+      spree/customer_group:
+        one: Customer Group
+        other: Customer Groups
+      spree/customer_group_user:
+        one: Customer Group User
+        other: Customer Group Users
       spree/customer_return:
         one: Customer Return
         other: Customer Returns
@@ -633,6 +642,7 @@ en:
       update: Update
     activate: Activate
     active: Active
+    added_at: Added At
     add: Add
     add_action_of_type: Add action of type
     add_address: Add address
@@ -948,6 +958,22 @@ en:
     customer_returns: Customer Returns
     customer_search: Customer Search
     customer_support_email: Customer Support Email
+    customer_group: Customer Group
+    customer_groups: Customer Groups
+    customer_removed_from_group: Customer removed from group
+    customer_could_not_be_removed_from_group: Customer could not be removed from group
+    customers_added_to_group:
+      one: "%{count} customer added to group"
+      other: "%{count} customers added to group"
+    customers_removed_from_group:
+      one: "%{count} customer removed from group"
+      other: "%{count} customers removed from group"
+    no_customers_in_group: No customers in this group yet
+    add_customers: Add Customers
+    add_selected: Add Selected
+    no_users_selected: No users selected
+    search_customers: Search customers
+    search_customers_hint: Search by email address
     customers: Customers
     cut: Cut
     cvv: CVV
@@ -1396,6 +1422,7 @@ en:
     new_payment: New Payment
     new_payment_method: New Payment Method
     new_policy: New Policy
+    new_customer_group: New Customer Group
     new_post: New Post
     new_post_category: New Post Category
     new_price_list: New Price List
@@ -1459,6 +1486,7 @@ en:
     no_product_available:
       for_this_quantity: Sorry, it looks like some products are not available in selected quantity.
       oops: Oops!
+    no_customers_found: No customers found
     no_products_added: No products added
     no_products_found: No products found
     no_products_in_price_list: No products in this price list
@@ -1723,6 +1751,9 @@ en:
     price_lists: Price Lists
     price_range: Price Range
     price_rule_types:
+      customer_group_rule:
+        description: Apply pricing to specific customer groups
+        name: Customer Group
       user_rule:
         description: Apply pricing to specific customers
         name: User
@@ -1732,6 +1763,9 @@ en:
       zone_rule:
         description: Apply pricing based on geographic zone
         name: Zone
+    price_rules:
+      customer_group_rule:
+        description: Apply pricing to specific customer groups
     price_sack: Price Sack
     prices: Prices
     pricing: Pricing
@@ -1801,6 +1835,9 @@ en:
       currency:
         description: Limit to orders in a specific currency
         name: Currency
+      customer_group:
+        description: Available only to customers in specified customer group(s)
+        name: Customer Group(s)
       first_order:
         description: Must be the customer's first order
         name: First order
@@ -2330,6 +2367,7 @@ en:
     twitter: Twitter
     type: Type
     type_to_search: Type to search
+    type_to_search_customers: Type to search for customers
     type_to_search_products: Type to search for products
     unable_to_connect_to_gateway: Unable to connect to gateway.
     unable_to_create_reimbursements: Unable to create reimbursements because there are items pending manual intervention.
@@ -2368,6 +2406,8 @@ en:
     user: User
     user_ids: Users
     user_not_found: User not found
+    customer_group_rule:
+      choose_customer_groups: 'Select the customer group(s) to which this promotion should apply:'
     user_rule:
       choose_users: 'Input the full email address of a registered customer(s) in the search field to whom this discount should apply:'
     users: Users

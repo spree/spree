@@ -20,6 +20,30 @@ module Spree
         render json: users.pluck(:id, :email).map { |id, email| { id: id, name: email } }
       end
 
+      def search
+        query = params[:q]&.strip
+
+        head :ok and return if query.blank? || query.length < 3
+
+        scope = model_class.accessible_by(current_ability, :index)
+        scope = scope.where.not(id: params[:omit_ids].split(',')) if params[:omit_ids].present?
+        @users = scope.includes(:bill_address, :ship_address, avatar_attachment: :blob)
+                      .multi_search(query)
+                      .limit(params[:limit] || 10)
+
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: [
+              turbo_stream.replace(
+                'users_search_results',
+                partial: 'spree/admin/users/search_results',
+                locals: { users: @users }
+              )
+            ]
+          end
+        end
+      end
+
       def show
         add_breadcrumb @user.name, spree.admin_user_path(@user)
       end
