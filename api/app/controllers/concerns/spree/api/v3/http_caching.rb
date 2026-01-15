@@ -19,7 +19,7 @@ module Spree
 
         # Check if the current user is a guest (no authentication)
         def guest_user?
-          current_user.nil? || current_user.try(:guest?)
+          current_user.nil?
         end
 
         # Set Vary headers to ensure proper CDN caching by currency/locale
