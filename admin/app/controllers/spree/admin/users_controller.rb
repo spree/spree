@@ -37,17 +37,22 @@ module Spree
         end
       end
 
-      def update
-        if @user.update(user_params)
-          flash[:success] = flash_message_for(@user, :successfully_updated)
-          redirect_to spree.admin_user_path(@user)
-        else
-          render :edit, status: :unprocessable_entity
-        end
-      end
-
       def model_class
         Spree.user_class
+      end
+
+      def update_turbo_stream_enabled?
+        true
+      end
+
+      # Skip setting current store for users as they don't need store assignment
+      # and the stores association goes through role_users which requires a role
+      def set_current_store
+        # no-op for users
+      end
+
+      def location_after_save
+        spree.admin_user_path(@user)
       end
 
       protected
@@ -71,6 +76,10 @@ module Spree
 
       private
 
+      def permitted_resource_params
+        user_params
+      end
+
       def user_params
         params.require(:user).permit(permitted_user_attributes | [spree_role_ids: []])
       end
@@ -85,6 +94,12 @@ module Spree
         return if params[:user].blank?
 
         params[:user][:tag_list] = params.dig(:user, :tag_list).present? ? params.dig(:user, :tag_list).reject(&:empty?) : []
+
+        # Remove spree_role_ids if it only contains empty strings to avoid clearing roles
+        role_ids = params[:user][:spree_role_ids]
+        if role_ids.present? && role_ids.reject(&:empty?).empty?
+          params[:user].delete(:spree_role_ids)
+        end
       end
 
       def load_last_order_data

@@ -1,5 +1,19 @@
 <div class="card mb-6">
   <div class="card-body">
-    <%= render 'spree/admin/users/form_fields', f: f %>
+    <%= f.spree_email_field :email, required: true, autofocus: f.object.new_record? %>
+    <%= f.spree_text_field :first_name, required: true %>
+    <%= f.spree_text_field :last_name, required: true %>
+    <%= f.spree_text_field :phone %>
+    <div class="form-group">
+      <%= f.label :tag_list, Spree.t(:tags) %>
+      <%= tom_select_tag 'user[tag_list]', multiple: true, class: 'w-full', options: user_tags_json_array, active_option: @user.tag_list, value_field: :name, create: true %>
+    </div>
+    <% if @user.class == Spree.admin_user_class && can?(:manage, Spree::Role) %>
+      <%= f.spree_select :spree_role_ids,
+              options_from_collection_for_select(Spree::Role.all, 'id', 'name', @user.spree_roles.pluck(:id)),
+              { prompt: false, label: Spree.t(:roles), autocomplete: true },
+              { multiple: true } %>
+    <% end %>
+    <%= f.spree_check_box :accepts_email_marketing %>
   </div>
 </div>

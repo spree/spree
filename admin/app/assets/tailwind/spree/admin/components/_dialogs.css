@@ -119,6 +119,13 @@
     @apply flex justify-between items-center p-4 bg-gray-25 border-t border-gray-100 rounded-b-2xl;
   }
 
+  .drawer .card, .drawer .card-header, .drawer .card-body, .drawer .card-footer {
+    @apply border-none p-0;
+  }
+  .drawer .card-header {
+    @apply h-auto pb-4 pt-2;
+  }
+
   /* ==========================================================================
      Dialog (Centered Modal - Native Dialog)
      ========================================================================== */

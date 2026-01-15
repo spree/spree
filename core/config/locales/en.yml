@@ -80,6 +80,7 @@ en:
         coupon_code: Coupon Code
         created_at: Order Date
         email: Email
+        internal_note: Internal Note
         ip_address: IP Address
         item_count: Items
         item_total: Item Total
@@ -1232,6 +1233,7 @@ en:
     intercept_email_address: Intercept Email Address
     intercept_email_instructions: Override email recipient and replace with this address.
     internal_name: Internal Name
+    internal_note: Internal Note
     internal_server_error: Internal Server Error
     internal_server_error_message: The server encountered an internal error and was unable to complete your request.
     internationalization: Internationalization
@@ -1449,6 +1451,7 @@ en:
     no_cc_type: N/A
     no_country: No country set
     no_email_provided: No email provided
+    no_internal_note: No internal note
     no_limits_zone: No Limits
     no_payment_found: No payment found
     no_payment_provider_settings_message: This payment provider has no custom settings available
