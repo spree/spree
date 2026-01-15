@@ -50,6 +50,9 @@ en:
         number: Number
         verification_value: Verification Value
         year: Year
+      spree/customer_group:
+        description: Description
+        name: Name
       spree/gift_card:
         amount_used: Amount used
         expires_at: Expires at
@@ -113,9 +116,6 @@ en:
         number: Number
       spree/payment_method:
         name: Name
-      spree/customer_group:
-        name: Name
-        description: Description
       spree/policy:
         body: Body
         owner: Policy for
@@ -642,12 +642,12 @@ en:
       update: Update
     activate: Activate
     active: Active
-    added_at: Added At
     add: Add
     add_action_of_type: Add action of type
     add_address: Add address
     add_country: Add Country
     add_coupon_code: Add Coupon Code
+    add_customers: Add Customers
     add_gift_card: Add Gift Card
     add_link: Add link
     add_new_address: Add new address
@@ -675,6 +675,7 @@ en:
     add_to_waitlist: Add to waitlist
     add_to_waitlist_description: Add to waitlist description
     add_variant: Add Variant
+    added_at: Added At
     added_to_cart: Added to cart successfully!
     additional_item: Additional Item
     address: Address
@@ -952,29 +953,25 @@ en:
     custom_domains: Custom domains
     custom_font_code: Custom font code
     customer: Customer
+    customer_could_not_be_removed_from_group: Customer could not be removed from group
     customer_details: Customer Details
     customer_details_updated: Customer Details Updated
+    customer_group: Customer Group
+    customer_group_rule:
+      choose_customer_groups: 'Select the customer group(s) to which this promotion should apply:'
+    customer_groups: Customer Groups
+    customer_removed_from_group: Customer removed from group
     customer_return: Customer Return
     customer_returns: Customer Returns
     customer_search: Customer Search
     customer_support_email: Customer Support Email
-    customer_group: Customer Group
-    customer_groups: Customer Groups
-    customer_removed_from_group: Customer removed from group
-    customer_could_not_be_removed_from_group: Customer could not be removed from group
+    customers: Customers
     customers_added_to_group:
       one: "%{count} customer added to group"
       other: "%{count} customers added to group"
     customers_removed_from_group:
       one: "%{count} customer removed from group"
       other: "%{count} customers removed from group"
-    no_customers_in_group: No customers in this group yet
-    add_customers: Add Customers
-    add_selected: Add Selected
-    no_users_selected: No users selected
-    search_customers: Search customers
-    search_customers_hint: Search by email address
-    customers: Customers
     cut: Cut
     cvv: CVV
     cvv_response: CVV Response
@@ -1405,6 +1402,7 @@ en:
     new_country: New Country
     new_custom_domain: New Custom Domain
     new_customer: New Customer
+    new_customer_group: New Customer Group
     new_customer_return: New Customer Return
     new_digital_asset: New digital asset
     new_domain: New domain
@@ -1422,7 +1420,6 @@ en:
     new_payment: New Payment
     new_payment_method: New Payment Method
     new_policy: New Policy
-    new_customer_group: New Customer Group
     new_post: New Post
     new_post_category: New Post Category
     new_price_list: New Price List
@@ -1477,6 +1474,8 @@ en:
     no_billing_address_available: No billing address available
     no_cc_type: N/A
     no_country: No country set
+    no_customers_found: No customers found
+    no_customers_in_group: No customers in this group yet
     no_email_provided: No email provided
     no_internal_note: No internal note
     no_limits_zone: No Limits
@@ -1486,7 +1485,6 @@ en:
     no_product_available:
       for_this_quantity: Sorry, it looks like some products are not available in selected quantity.
       oops: Oops!
-    no_customers_found: No customers found
     no_products_added: No products added
     no_products_found: No products found
     no_products_in_price_list: No products in this price list
@@ -1502,6 +1500,7 @@ en:
     no_state_changes: No state changes yet.
     no_taxes: No taxes
     no_tracking_present: No tracking details provided.
+    no_users_selected: No users selected
     none: None
     none_selected: None Selected
     normal_amount: Normal Amount
@@ -1999,6 +1998,8 @@ en:
     search: Search
     search_all: Search all
     search_by: 'Search by:'
+    search_customers: Search customers
+    search_customers_hint: Search by email address
     search_engine_listing: Search engine listing
     search_order_number: Order Number
     search_products: Search products
@@ -2406,8 +2407,6 @@ en:
     user: User
     user_ids: Users
     user_not_found: User not found
-    customer_group_rule:
-      choose_customer_groups: 'Select the customer group(s) to which this promotion should apply:'
     user_rule:
       choose_users: 'Input the full email address of a registered customer(s) in the search field to whom this discount should apply:'
     users: Users
