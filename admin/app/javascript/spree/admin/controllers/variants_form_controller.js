@@ -33,6 +33,7 @@ export default class extends CheckboxSelectAll {
     prices: Object,
     currentCurrency: String,
     currencies: Array,
+    currencyFormats: Object,
     variantIds: Object,
     currentStockLocationId: String,
     stockLocations: Array,
@@ -70,6 +71,19 @@ export default class extends CheckboxSelectAll {
     }
 
     this.inventoryFormTarget = document.querySelector('.inventory-form');
+
+    // Add form submit listener to normalize price inputs before submission
+    this.form = this.element.closest('form')
+    if (this.form) {
+      this.boundNormalizePricesBeforeSubmit = this.normalizePricesBeforeSubmit.bind(this)
+      this.form.addEventListener('submit', this.boundNormalizePricesBeforeSubmit)
+    }
+  }
+
+  disconnect() {
+    if (this.form && this.boundNormalizePricesBeforeSubmit) {
+      this.form.removeEventListener('submit', this.boundNormalizePricesBeforeSubmit)
+    }
   }
 
   toggleQuantityTracked() {
@@ -416,7 +430,7 @@ export default class extends CheckboxSelectAll {
     pricesVariation.delete(null)
 
     if (pricesVariation.size === 0) {
-      parentPriceEl.value = this.formatNumber(this.priceForVariant(variantName, currency).amount)
+      parentPriceEl.value = this.formatNumber(this.priceForVariant(variantName, currency).amount, currency)
       parentPriceEl.placeholder = ''
       return
     }
@@ -425,9 +439,9 @@ export default class extends CheckboxSelectAll {
 
     if (minPrice !== maxPrice) {
       parentPriceEl.value = null
-      parentPriceEl.placeholder = `${this.formatNumber(minPrice)} - ${this.formatNumber(maxPrice)}`
+      parentPriceEl.placeholder = `${this.formatNumber(minPrice, currency)} - ${this.formatNumber(maxPrice, currency)}`
     } else {
-      parentPriceEl.value = this.formatNumber(minPrice)
+      parentPriceEl.value = this.formatNumber(minPrice, currency)
       parentPriceEl.placeholder = ''
     }
   }
@@ -713,7 +727,7 @@ export default class extends CheckboxSelectAll {
       }
 
       const existingPrice = this.priceForVariant(internalName, currency)
-      priceInput.value = this.formatNumber(existingPrice.amount)
+      priceInput.value = this.formatNumber(existingPrice.amount, currency)
       currencyInput.value = currency
       if (existingPrice.id) {
         idInput.value = existingPrice.id
@@ -1134,13 +1148,94 @@ export default class extends CheckboxSelectAll {
     }
   }
 
-  formatNumber(value) {
+  formatNumber(value, currency = null) {
     if (value === null) return ''
     if (typeof value === 'string' && value.trim() === '') return ''
 
     const number = Number(value)
     if (!Number.isFinite(number)) return ''
 
-    return number.toLocaleString(this.localeValue)
+    // Use currency-specific decimal mark if available
+    const currencyCode = currency || this.currentCurrencyValue
+    const currencyFormat = this.currencyFormatsValue?.[currencyCode]
+
+    if (currencyFormat?.decimal_mark) {
+      // Format with 2 decimal places and replace . with currency's decimal mark
+      return number.toFixed(2).replace('.', currencyFormat.decimal_mark)
+    }
+
+    // Fallback to locale-based formatting
+    return number.toLocaleString(this.localeValue, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+      useGrouping: false
+    })
+  }
+
+  /**
+   * Normalizes a locale-formatted number string to standard decimal format
+   * e.g., "1.234,56" (German) -> "1234.56"
+   * e.g., "30,99" (Polish) -> "30.99"
+   * @param {string} value - The locale-formatted number string
+   * @returns {string} The normalized number string with "." as decimal separator
+   */
+  normalizeNumber(value) {
+    if (value === null || value === undefined) return ''
+
+    let stringValue = String(value).trim()
+    if (stringValue === '') return ''
+
+    // Detect the decimal separator by finding the last separator character
+    // This handles both "1,234.56" (en) and "1.234,56" (de/pl) formats
+    const lastComma = stringValue.lastIndexOf(',')
+    const lastDot = stringValue.lastIndexOf('.')
+
+    let decimalSeparator = '.'
+    let thousandsSeparator = ','
+
+    // If comma comes after dot, comma is the decimal separator (European format)
+    // Also treat comma as decimal if there's no dot and comma has 1-3 digits after it
+    if (lastComma > lastDot) {
+      decimalSeparator = ','
+      thousandsSeparator = '.'
+    } else if (lastDot === -1 && lastComma !== -1) {
+      // No dot present, check if comma looks like a decimal separator
+      // (has 1-3 digits after it, typical for currency)
+      const afterComma = stringValue.substring(lastComma + 1)
+      if (/^\d{1,3}$/.test(afterComma)) {
+        decimalSeparator = ','
+        thousandsSeparator = '.'
+      }
+    }
+
+    // Remove thousands separators
+    stringValue = stringValue.split(thousandsSeparator).join('')
+
+    // Replace decimal separator with standard "."
+    if (decimalSeparator !== '.') {
+      stringValue = stringValue.replace(decimalSeparator, '.')
+    }
+
+    // Remove any non-numeric characters except "." and "-"
+    stringValue = stringValue.replace(/[^0-9.\-]/g, '')
+
+    return stringValue
+  }
+
+  /**
+   * Normalizes all price inputs in the variants form before submission
+   * @param {Event} event - The form submit event
+   */
+  normalizePricesBeforeSubmit(event) {
+    // Find all price inputs in the variants container
+    const priceInputs = this.variantsContainerTarget.querySelectorAll(
+      'input[data-slot*="[prices_attributes]"][data-slot*="[amount]_input"]'
+    )
+
+    priceInputs.forEach((input) => {
+      if (input.value) {
+        input.value = this.normalizeNumber(input.value)
+      }
+    })
   }
 }

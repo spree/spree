@@ -4,7 +4,7 @@
       <%= f.spree_text_field :code, required: true, help_bubble: Spree.t('admin.gift_cards.code_help_text'), autofocus: true %>
     <% end %>
 
-    <%= f.spree_number_field :amount, required: true %>
+    <%= f.spree_money_field :amount, currency: f.object.currency, required: true %>
     <%= f.spree_select :currency, options_for_select(supported_currency_options, f.object.currency), { label: Spree.t(:currency), autocomplete: true }, { disabled: f.object.persisted? } %>
 
     <div class="form-group">

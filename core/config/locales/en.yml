@@ -593,6 +593,7 @@ en:
   number:
     currency:
       format:
+        delimiter: ","
         separator: "."
     percentage:
       format:
