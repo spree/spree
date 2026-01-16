@@ -74,6 +74,7 @@ import ReturnItemsController from 'spree/admin/controllers/return_items_controll
 import ReplaceController from 'spree/admin/controllers/replace_controller'
 import RowLinkController from 'spree/admin/controllers/row_link_controller'
 import RuleFormController from 'spree/admin/controllers/rule_form_controller'
+import SearchClearController from 'spree/admin/controllers/search_clear_controller'
 import SearchPickerController from 'spree/admin/controllers/search_picker_controller'
 import SectionFormController from 'spree/admin/controllers/section_form_controller'
 import SelectController from 'spree/admin/controllers/select_controller'
@@ -144,6 +145,7 @@ application.register('return-items', ReturnItemsController)
 application.register('reveal', Reveal)
 application.register('row-link', RowLinkController)
 application.register('rule-form', RuleFormController)
+application.register('search-clear', SearchClearController)
 application.register('search-picker', SearchPickerController)
 application.register('section-form', SectionFormController)
 application.register('select', SelectController)
