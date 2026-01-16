@@ -1,4 +1,3 @@
-<%# @form_partial is sourced from registered BulkAction configuration, not user input %>
 <%= turbo_frame_tag :bulk_dialog do %>
   <%= dialog_header(@title, 'bulk-dialog') %>
   <div class="dialog-body overflow-visible">
@@ -7,7 +6,6 @@
     <% end %>
 
     <% if @form_partial.present? %>
-      <%# brakeman:disable:Render - @form_partial comes from BulkAction registry, not params %>
       <%= render partial: @form_partial, locals: @form_partial_locals || {} %>
     <% end %>
   </div>

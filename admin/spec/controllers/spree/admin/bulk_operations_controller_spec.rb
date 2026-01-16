@@ -15,7 +15,7 @@ RSpec.describe Spree::Admin::BulkOperationsController, type: :controller do
       end
 
       it 'renders the bulk modal content partial' do
-        expect(subject).to render_template(partial: 'spree/admin/shared/_bulk_modal_content')
+        expect(subject).to render_template 'spree/admin/bulk_operations/new'
       end
 
       it 'assigns bulk action attributes' do
