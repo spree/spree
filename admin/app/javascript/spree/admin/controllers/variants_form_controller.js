@@ -1136,6 +1136,7 @@ export default class extends CheckboxSelectAll {
 
   formatNumber(value) {
     if (value === null) return ''
+    if (typeof value === 'string' && value.trim() === '') return ''
 
     const number = Number(value)
     if (!Number.isFinite(number)) return ''
