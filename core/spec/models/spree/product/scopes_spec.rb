@@ -256,6 +256,54 @@ describe 'Product scopes', type: :model do
     end
   end
 
+  context '#multi_search' do
+    let!(:summer_product) { create(:product, name: 'Summer Collection', stores: [store]) }
+    let!(:winter_product) { create(:product, name: 'Winter Jacket', stores: [store]) }
+    let!(:tagged_product) { create(:product, name: 'Classic Shirt', tag_list: 'summer, casual', stores: [store]) }
+    let!(:sku_product) { create(:product, name: 'Random Product', stores: [store]) }
+
+    before do
+      sku_product.master.update(sku: 'SUMMER-2024')
+    end
+
+    it 'finds products by name' do
+      result = Spree::Product.multi_search('Summer').to_a
+      expect(result).to include(summer_product)
+      expect(result).not_to include(winter_product)
+    end
+
+    it 'finds products by SKU' do
+      result = Spree::Product.multi_search('SUMMER-2024').to_a
+      expect(result).to include(sku_product)
+    end
+
+    it 'finds products by tag' do
+      result = Spree::Product.multi_search('summer').to_a
+      expect(result).to include(tagged_product)
+    end
+
+    it 'finds products matching name, SKU, or tags' do
+      result = Spree::Product.multi_search('summer').to_a
+      expect(result).to include(summer_product, sku_product, tagged_product)
+      expect(result).not_to include(winter_product)
+    end
+
+    it 'is case insensitive for tag search' do
+      result = Spree::Product.multi_search('SUMMER').to_a
+      expect(result).to include(tagged_product)
+    end
+
+    it 'returns empty result for non-matching query' do
+      result = Spree::Product.multi_search('nonexistent').to_a
+      expect(result).to be_empty
+    end
+
+    it 'returns no results when query is blank' do
+      expect(Spree::Product.multi_search('').to_a).to be_empty
+      expect(Spree::Product.multi_search(nil).to_a).to be_empty
+    end
+  end
+
   context '#ascend_by_taxons_min_position' do
     subject(:ordered_products) { Spree::Product.ascend_by_taxons_min_position(taxons) }
 
