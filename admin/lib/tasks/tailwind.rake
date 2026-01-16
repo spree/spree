@@ -1,22 +1,4 @@
-module Spree
-  module Admin
-    module TailwindHelper
-      class << self
-        def input_path
-          Rails.root.join("app/assets/tailwind/spree_admin.css")
-        end
-
-        def output_path
-          Rails.root.join("app/assets/builds/spree/admin/application.css")
-        end
-
-        def resolved_input_css
-          File.read(input_path).gsub("$SPREE_ADMIN_PATH", Spree::Admin::Engine.root.to_s)
-        end
-      end
-    end
-  end
-end
+require 'spree/admin/tailwind_helper'
 
 namespace :spree do
   namespace :admin do
@@ -28,16 +10,17 @@ namespace :spree do
         output_path = Spree::Admin::TailwindHelper.output_path
         FileUtils.mkdir_p(output_path.dirname)
 
-        command = [Tailwindcss::Ruby.executable, "-i", "-", "-o", output_path.to_s]
+        # Write resolved CSS to temp file
+        resolved_path = Spree::Admin::TailwindHelper.write_resolved_css
+
+        command = [Tailwindcss::Ruby.executable, "-i", resolved_path.to_s, "-o", output_path.to_s]
         command << "--minify" unless Rails.env.development? || Rails.env.test?
 
         puts "Building Spree Admin Tailwind CSS..."
         puts "  Input: #{Spree::Admin::TailwindHelper.input_path}"
+        puts "  Resolved: #{resolved_path}"
 
-        IO.popen(command, "w") do |io|
-          io.write(Spree::Admin::TailwindHelper.resolved_input_css)
-        end
-
+        system(*command)
         raise("Spree Admin Tailwind build failed") unless $?.success?
         puts "Done! Output: #{output_path}"
       end
@@ -46,17 +29,54 @@ namespace :spree do
       task watch: :environment do
         require "tailwindcss/ruby"
 
+        begin
+          require "listen"
+        rescue LoadError
+          puts "ERROR: The 'listen' gem is required for watch mode."
+          puts "Add it to your Gemfile in the development group:"
+          puts ""
+          puts "  group :development do"
+          puts "    gem 'listen', '>= 3.0'"
+          puts "  end"
+          puts ""
+          exit 1
+        end
+
         output_path = Spree::Admin::TailwindHelper.output_path
         FileUtils.mkdir_p(output_path.dirname)
 
-        command = [Tailwindcss::Ruby.executable, "-i", "-", "-o", output_path.to_s, "--watch"]
-
+        # Initial write of resolved CSS
+        resolved_path = Spree::Admin::TailwindHelper.write_resolved_css
         puts "Watching Spree Admin Tailwind CSS for changes..."
-        puts "  Input: #{Spree::Admin::TailwindHelper.input_path}"
+        puts "  Host input: #{Spree::Admin::TailwindHelper.input_path}"
+        puts "  Engine CSS: #{Spree::Admin::TailwindHelper.engine_css_path}"
+        puts "  Resolved: #{resolved_path}"
+        puts "  Output: #{output_path}"
 
-        IO.popen(command, "w") do |io|
-          io.write(Spree::Admin::TailwindHelper.resolved_input_css)
+        # Watch paths for CSS source changes
+        watch_paths = [
+          Spree::Admin::TailwindHelper.engine_css_path.to_s,  # Engine CSS files
+          Spree::Admin::TailwindHelper.input_path.dirname.to_s # Host app CSS files
+        ].select { |p| File.directory?(p) }
+
+        # Set up listener to regenerate resolved CSS when source files change
+        listener = Listen.to(*watch_paths, only: /\.css$/) do |modified, added, removed|
+          changed = (modified + added + removed).map { |f| File.basename(f) }.join(", ")
+          puts "\n[#{Time.now.strftime('%H:%M:%S')}] CSS changed: #{changed}"
+          puts "  Regenerating resolved CSS..."
+          Spree::Admin::TailwindHelper.write_resolved_css
         end
+        listener.start
+
+        # Run Tailwind in watch mode (this blocks)
+        command = [
+          Tailwindcss::Ruby.executable,
+          "-i", resolved_path.to_s,
+          "-o", output_path.to_s,
+          "--watch"
+        ]
+
+        system(*command)
       end
     end
   end
