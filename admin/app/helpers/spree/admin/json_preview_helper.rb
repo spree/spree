@@ -22,13 +22,11 @@ module Spree
       end
 
       def storefront_serializer_exists?(record)
-        serializer_class_name = "Spree::V2::Storefront::#{record.class.name.demodulize}Serializer"
-        serializer_class_name.safe_constantize.present?
+        storefront_serializer_for(record).present?
       end
 
       def platform_serializer_exists?(record)
-        serializer_class_name = "Spree::Api::V2::Platform::#{record.class.name.demodulize}Serializer"
-        serializer_class_name.safe_constantize.present?
+        platform_serializer_for(record).present?
       end
 
       def serialize_to_json(record, api_type: :storefront)
@@ -45,7 +43,7 @@ module Spree
 
         serializable_hash = serializer.new(
           record,
-          params: serializer_params(record)
+          params: serializer_params(record, api_type)
         ).serializable_hash
 
         JSON.pretty_generate(serializable_hash)
@@ -54,17 +52,27 @@ module Spree
       private
 
       def storefront_serializer_for(record)
-        serializer_class_name = "Spree::V2::Storefront::#{record.class.name.demodulize}Serializer"
-        serializer_class_name.safe_constantize
+        serializer_for(record, api_type: :storefront, namespace: 'Spree::V2::Storefront')
       end
 
       def platform_serializer_for(record)
-        serializer_class_name = "Spree::Api::V2::Platform::#{record.class.name.demodulize}Serializer"
-        serializer_class_name.safe_constantize
+        serializer_for(record, api_type: :platform, namespace: 'Spree::Api::V2::Platform')
       end
 
-      def serializer_params(record)
+      def serializer_for(record, api_type:, namespace:)
+        class_name = record.class.name.demodulize
+        method_name = "#{api_type}_#{class_name.underscore}_serializer"
+        if Spree.api.respond_to?(method_name)
+          Spree.api.public_send(method_name)
+        else
+          serializer_class_name = "#{namespace}::#{class_name}Serializer"
+          serializer_class_name.safe_constantize
+        end
+      end
+
+      def serializer_params(record, api_type)
         params = {}
+        params[:api_type] = api_type
         params[:store] = current_store if defined?(current_store) && current_store.present?
         params[:currency] = current_currency if defined?(current_currency) && current_currency.present?
         params[:locale] = current_locale if defined?(current_locale) && current_locale.present?
