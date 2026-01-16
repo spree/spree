@@ -294,32 +294,32 @@ describe 'Products', type: :feature do
 
         within('[data-test-id="product-variants-table"]') do
           within('[data-variant-name="Black/Small"]') do
-            within('.column-price') { expect(page).to have_field(with: 10) }
+            within('.column-price') { expect(page).to have_field(with: '10.00') }
             within('.column-quantity') { expect(page).to have_field(with: 100) }
           end
 
           within('[data-variant-name="Black/Medium"]') do
-            within('.column-price') { expect(page).to have_field(with: 11) }
+            within('.column-price') { expect(page).to have_field(with: '11.00') }
             within('.column-quantity') { expect(page).to have_field(with: 110) }
           end
 
           within('[data-variant-name="Black/Large"]') do
-            within('.column-price') { expect(page).to have_field(with: 12) }
+            within('.column-price') { expect(page).to have_field(with: '12.00') }
             within('.column-quantity') { expect(page).to have_field(with: 120) }
           end
 
           within('[data-variant-name="White/Small"]') do
-            within('.column-price') { expect(page).to have_field(with: 20) }
+            within('.column-price') { expect(page).to have_field(with: '20.00') }
             within('.column-quantity') { expect(page).to have_field(with: 200) }
           end
 
           within('[data-variant-name="White/Medium"]') do
-            within('.column-price') { expect(page).to have_field(with: 21) }
+            within('.column-price') { expect(page).to have_field(with: '21.00') }
             within('.column-quantity') { expect(page).to have_field(with: 210) }
           end
 
           within('[data-variant-name="White/Large"]') do
-            within('.column-price') { expect(page).to have_field(with: 22) }
+            within('.column-price') { expect(page).to have_field(with: '22.00') }
             within('.column-quantity') { expect(page).to have_field(with: 220) }
           end
         end
@@ -711,17 +711,17 @@ describe 'Products', type: :feature do
 
           within('[data-test-id="product-variants-table"]') do
             within('[data-variant-name="Small"]') do
-              within('.column-price') { expect(page).to have_field(with: 10) }
+              within('.column-price') { expect(page).to have_field(with: '10.00') }
               within('.column-quantity') { expect(page).to have_field(with: 100) }
             end
 
             within('[data-variant-name="Medium"]') do
-              within('.column-price') { expect(page).to have_field(with: 11) }
+              within('.column-price') { expect(page).to have_field(with: '11.00') }
               within('.column-quantity') { expect(page).to have_field(with: 110) }
             end
 
             within('[data-variant-name="Large"]') do
-              within('.column-price') { expect(page).to have_field(with: 12) }
+              within('.column-price') { expect(page).to have_field(with: '12.00') }
               within('.column-quantity') { expect(page).to have_field(with: 120) }
             end
           end
@@ -747,12 +747,12 @@ describe 'Products', type: :feature do
 
           within('[data-test-id="product-variants-table"]') do
             within('[data-variant-name="Medium"]') do
-              within('.column-price') { expect(page).to have_field(with: 11) }
+              within('.column-price') { expect(page).to have_field(with: '11.00') }
               within('.column-quantity') { expect(page).to have_field(with: 110) }
             end
 
             within('[data-variant-name="Large"]') do
-              within('.column-price') { expect(page).to have_field(with: 12) }
+              within('.column-price') { expect(page).to have_field(with: '12.00') }
               within('.column-quantity') { expect(page).to have_field(with: 120) }
             end
           end
@@ -889,12 +889,12 @@ describe 'Products', type: :feature do
 
           within('[data-test-id="product-variants-table"]') do
             within('[data-variant-name="White/Cotton"]') do
-              within('.column-price') { expect(page).to have_field(with: 20) }
+              within('.column-price') { expect(page).to have_field(with: '20.00') }
               within('.column-quantity') { expect(page).to have_field(with: 200) }
             end
 
             within('[data-variant-name="White/Polyester"]') do
-              within('.column-price') { expect(page).to have_field(with: 21) }
+              within('.column-price') { expect(page).to have_field(with: '21.00') }
               within('.column-quantity') { expect(page).to have_field(with: 210) }
             end
           end
@@ -1037,11 +1037,11 @@ describe 'Products', type: :feature do
 
           within('[data-test-id="product-variants-table"]') do
             within('[data-variant-name="Black"]') do
-              within('.column-price') { expect(page).to have_field(with: 10) }
+              within('.column-price') { expect(page).to have_field(with: '10.00') }
             end
 
             within('[data-variant-name="White"]') do
-              within('.column-price') { expect(page).to have_field(with: 11) }
+              within('.column-price') { expect(page).to have_field(with: '11.00') }
             end
           end
 
@@ -1053,11 +1053,11 @@ describe 'Products', type: :feature do
 
           within('[data-test-id="product-variants-table"]') do
             within('[data-variant-name="Black/Extra Large"]') do
-              within('.column-price') { expect(page).to have_field(with: 10) }
+              within('.column-price') { expect(page).to have_field(with: '10.00') }
             end
 
             within('[data-variant-name="White/Extra Large"]') do
-              within('.column-price') { expect(page).to have_field(with: 11) }
+              within('.column-price') { expect(page).to have_field(with: '11.00') }
             end
           end
 
@@ -1068,11 +1068,11 @@ describe 'Products', type: :feature do
 
           within('[data-test-id="product-variants-table"]') do
             within('[data-variant-name="Black/Extra Large"]') do
-              within('.column-price') { expect(page).to have_field(with: 10) }
+              within('.column-price') { expect(page).to have_field(with: '10.00') }
             end
 
             within('[data-variant-name="White/Extra Large"]') do
-              within('.column-price') { expect(page).to have_field(with: 11) }
+              within('.column-price') { expect(page).to have_field(with: '11.00') }
             end
           end
 

@@ -10,12 +10,10 @@
           <h5 class="card-title"><%= Spree.t(:new_payment) %></h5>
         </div>
         <div class="card-body">
-          <%= f.spree_number_field :amount,
+          <%= f.spree_money_field :amount,
             value: @payment.max_amount,
-            max: @payment.max_amount,
-            step: '.01',
-            required: true,
-            append: currency_symbol(@order.currency) %>
+            currency: @order.currency,
+            required: true %>
 
           <%= f.label :payment_method_id, Spree.t(:payment_method) %>
           <ul class="list-group mb-6">
