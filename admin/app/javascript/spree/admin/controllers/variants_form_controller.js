@@ -416,7 +416,7 @@ export default class extends CheckboxSelectAll {
     pricesVariation.delete(null)
 
     if (pricesVariation.size === 0) {
-      parentPriceEl.value = this.priceForVariant(variantName, currency).amount?.toLocaleString(this.localeValue) || ''
+      parentPriceEl.value = this.formatNumber(this.priceForVariant(variantName, currency).amount)
       parentPriceEl.placeholder = ''
       return
     }
@@ -425,9 +425,10 @@ export default class extends CheckboxSelectAll {
 
     if (minPrice !== maxPrice) {
       parentPriceEl.value = null
-      parentPriceEl.placeholder = `${minPrice} - ${maxPrice}`
+      parentPriceEl.placeholder = `${this.formatNumber(minPrice)} - ${this.formatNumber(maxPrice)}`
     } else {
-      parentPriceEl.value = minPrice
+      parentPriceEl.value = this.formatNumber(minPrice)
+      parentPriceEl.placeholder = ''
     }
   }
 
@@ -712,7 +713,7 @@ export default class extends CheckboxSelectAll {
       }
 
       const existingPrice = this.priceForVariant(internalName, currency)
-      priceInput.value = existingPrice.amount?.toLocaleString(this.localeValue) || ''
+      priceInput.value = this.formatNumber(existingPrice.amount)
       currencyInput.value = currency
       if (existingPrice.id) {
         idInput.value = existingPrice.id
@@ -1131,5 +1132,15 @@ export default class extends CheckboxSelectAll {
     } else {
       el.classList.add('hidden')
     }
+  }
+
+  formatNumber(value) {
+    if (value === null) return ''
+    if (typeof value === 'string' && value.trim() === '') return ''
+
+    const number = Number(value)
+    if (!Number.isFinite(number)) return ''
+
+    return number.toLocaleString(this.localeValue)
   }
 }
