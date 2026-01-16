@@ -46,6 +46,11 @@ RSpec.describe Spree::Admin::CustomerGroupsController, type: :controller do
       expect(customer_group.description).to eq('Our most valued customers')
       expect(customer_group.store).to eq(store)
     end
+
+    it 'redirects to the new customer group page' do
+      create_customer_group
+      expect(response).to redirect_to(spree.admin_customer_group_path(Spree::CustomerGroup.last))
+    end
   end
 
   describe 'GET #show' do

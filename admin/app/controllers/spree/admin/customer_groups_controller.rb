@@ -17,6 +17,10 @@ module Spree
 
       private
 
+      def location_after_create
+        spree.admin_customer_group_path(@customer_group)
+      end
+
       def update_turbo_stream_enabled?
         true
       end
