@@ -70,7 +70,7 @@ Rails.application.config.after_initialize do
                                         ransack_attribute: 'master_price',
                                         sort_scope_asc: :ascend_by_price,
                                         sort_scope_desc: :descend_by_price,
-                                        method: ->(product) { product.price }
+                                        method: ->(product) { product.price_in(Spree::Current.currency) }
 
   Spree.admin.tables.products.add :created_at,
                                         label: :created_at,
@@ -112,7 +112,7 @@ Rails.application.config.after_initialize do
                                         ransack_attribute: 'taxons_id',
                                         operators: %i[in],
                                         search_url: '/admin/taxons/select_options.json',
-                                        method: ->(product) { product.taxons.map(&:pretty_name).join(', ') }
+                                        method: ->(product) { product.taxons.pluck(:pretty_name).to_sentence }
 
   # Tags - displayed as comma-separated list, filtered via autocomplete
   Spree.admin.tables.products.add :tags,
@@ -126,7 +126,7 @@ Rails.application.config.after_initialize do
                                         ransack_attribute: 'tags_name',
                                         operators: %i[in],
                                         search_url: '/admin/tags/select_options.json?taggable_type=Spree::Product',
-                                        method: ->(product) { product.tag_list.join(', ') }
+                                        method: ->(product) { product.tag_list.to_sentence }
 
   # Products bulk actions
   Spree.admin.tables.products.add_bulk_action :set_active,
