@@ -134,17 +134,6 @@ Rails.application.config.after_initialize do
                 if: -> { can?(:manage, Spree::Property) && Spree::Config.product_properties_enabled }
   end
 
-  # Vendors (Enterprise Edition)
-  sidebar_nav.add :vendors,
-          label: :vendors,
-          url: 'https://spreecommerce.org/marketplace-ecommerce/',
-          icon: 'heart-handshake',
-          position: 35,
-          if: -> { can?(:manage, current_store) && !defined?(SpreeEnterprise) },
-          badge: 'Enterprise',
-          tooltip: 'Multi-Vendor Marketplace is available in the Enterprise Edition',
-          target: '_blank'
-
   # Customers with submenu
   sidebar_nav.add :customers,
           label: :customers,
