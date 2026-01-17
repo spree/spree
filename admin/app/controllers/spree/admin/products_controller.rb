@@ -218,48 +218,14 @@ module Spree
         params[:product] = params_service.call
       end
 
-      def collection
-        return @collection if @collection.present?
-
-        params[:q] ||= {}
-        params[:q][:deleted_at_null] ||= '1'
-
-        params[:q][:s] ||= 'name asc'
-        params[:q][:status_eq] == 'archived' ? params[:q].delete(:status_not_eq) : params[:q][:status_not_eq] = 'archived'
-
-        params[:q][:taxons_id_null] = '1' if params.dig(:q, :taxons_id_in)&.include?(' ')
-
-        assign_extra_collection_params if respond_to?(:assign_extra_collection_params)
-
-        @collection = super
-
-        # Don't delete params[:q][:deleted_at_null] here because it is used in view to check the
-        # checkbox for 'q[deleted_at_null]'. This also messed with pagination when deleted_at_null is checked.
-        @collection = @collection.with_deleted if params[:q][:deleted_at_null] == '0'
-
-        # The out_of_stock scope groups products - we also need to group it by name coming from product translations
-        # That's because we sort products by name
-        @collection = @collection.group(:name) if params.dig(:q, :out_of_stock_items) == '1'
-
-        # Check if custom sort scope is needed (e.g., for price sorting)
-        custom_sort = custom_sort_active?
-        ransack_params = params[:q].except(:deleted_at_null)
-        ransack_params = ransack_params.except(:s) if custom_sort
-
-        # @search needs to be defined as this is passed to search_form_for
-        # Temporarily remove params[:q][:deleted_at_null] from params[:q] to ransack products.
-        # This is to include all products and not just deleted products.
-        @search = @collection.ransack(ransack_params)
-        @collection = @search.result(distinct: true).
-                      for_ordering_with_translations(model_class, :name).
-                      includes(product_includes).
-                      page(params[:page]).
-                      per(params[:per_page] || Spree::Admin::RuntimeConfig.admin_products_per_page)
-
-        # Apply custom sort scope if configured (e.g., for price sorting)
-        @collection = apply_table_sort(@collection) if custom_sort
-
-        @collection
+      def collection_includes
+        {
+          stock_items: [],
+          variants_including_master: [],
+          master: [:prices, :images, :stock_items],
+          variants: [:prices, :images, :stock_items],
+          variant_images: [],
+        }
       end
 
       def clone_object_url(resource)

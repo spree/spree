@@ -43,29 +43,8 @@ module Spree
         end
       end
 
-      def collection
-        return @collection if defined?(@collection)
-
-        params[:q] ||= {}
-
-        expired = params[:q].delete(:expired) == 'true'
-        active = params[:q].delete(:active) == 'true'
-
-        @collection = super
-
-        @collection = @collection.active if active
-        @collection = @collection.expired if expired
-
-        @search = @collection.ransack(params[:q])
-        @collection = @search.result(distinct: true).
-                      includes(:promotion_actions).
-                      page(params[:page]).
-                      per(params[:per_page])
-
-        params[:q][:expired] = expired
-        params[:q][:active] = active
-
-        @collection
+      def collection_includes
+        [:promotion_actions]
       end
 
       def permitted_resource_params
