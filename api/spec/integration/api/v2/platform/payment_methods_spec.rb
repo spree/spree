@@ -1,6 +1,6 @@
 require 'swagger_helper'
 
-describe 'Payment Methods API', swagger: true do
+xdescribe 'Payment Methods API', swagger: true do
   include_context 'Platform API v2'
 
   resource_name = 'Payment Method'

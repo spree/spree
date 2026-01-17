@@ -23,7 +23,7 @@ module Spree
       attr_accessor :use_billing
 
       has_person_name
-      auto_strip_attributes :email, :first_name, :last_name
+      normalizes :email, :first_name, :last_name, with: ->(value) { value&.to_s&.squish&.presence }
       acts_as_taggable_on :tags
 
       #

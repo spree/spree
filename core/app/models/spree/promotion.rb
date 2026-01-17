@@ -17,7 +17,7 @@ module Spree
     #
     # Magic methods
     #
-    auto_strip_attributes :code, :path, :name
+    normalizes :code, :path, :name, with: ->(value) { value&.to_s&.squish&.presence }
 
     #
     # Enums

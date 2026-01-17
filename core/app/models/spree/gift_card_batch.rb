@@ -26,7 +26,7 @@ module Spree
     before_validation :set_currency
     after_create :generate_gift_cards
 
-    auto_strip_attributes :prefix
+    normalizes :prefix, with: ->(value) { value&.to_s&.squish&.presence }
 
     money_methods :amount
 

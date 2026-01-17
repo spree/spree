@@ -27,6 +27,18 @@ describe Spree::Variant, type: :model do
     end
 
     context 'SKU' do
+      describe 'normalizes' do
+        it 'strips leading and trailing whitespace' do
+          variant = build(:variant, sku: '  TEST-SKU  ')
+          expect(variant.sku).to eq('TEST-SKU')
+        end
+
+        it 'preserves empty string (does not convert to nil)' do
+          variant = build(:variant, sku: '   ')
+          expect(variant.sku).to eq('')
+        end
+      end
+
       context 'default behaviour' do
         context 'invalid' do
           let(:variant_2) { build(:variant, sku: variant.sku) }
