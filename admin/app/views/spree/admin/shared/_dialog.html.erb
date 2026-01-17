@@ -1,4 +1,4 @@
-<dialog class="dialog" data-dialog-target="dialog" id="main-dialog">
+<%= dialog(id: 'main-dialog') do %>
   <%= turbo_frame_tag :dialog_alerts %>
   <%= turbo_frame_tag :dialog %>
-</dialog>
+<% end %>

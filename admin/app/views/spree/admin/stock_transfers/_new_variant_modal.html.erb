@@ -1,4 +1,4 @@
-<dialog class="dialog" data-dialog-target="dialog" id="stock_transfer_dialog" data-controller="search-picker">
+<%= dialog(id: 'stock_transfer_dialog', data: { controller: 'search-picker' }) do %>
   <%= dialog_header(Spree.t(:add_variant)) %>
   <div class="dialog-body">
     <%= form_with url: spree.admin_variants_search_path, method: :post, data: { controller: 'auto-submit', turbo_frame: '_top' } do |form| %>
@@ -21,4 +21,4 @@
     <%= dialog_discard_button %>
     <%= button_tag Spree.t(:add_selected_variant), class: "btn btn-primary text-center", disabled: true, data: { search_picker_target: :submit, action: 'stock-transfer#add search-picker#closeAndClear dialog#close' } %>
   </div>
-</dialog>
+<% end %>

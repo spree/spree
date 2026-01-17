@@ -25,7 +25,7 @@
   </div>
 
   <% if can?(:update, notable) %>
-    <dialog class="dialog" data-dialog-target="dialog">
+    <%= dialog do %>
       <%= dialog_header(Spree.t(:internal_note)) %>
       <%= form_with url: form_url, scope: param_key, method: :put do |f| %>
         <div class="dialog-body">
@@ -36,6 +36,6 @@
           <%= turbo_save_button_tag Spree.t('actions.save') %>
         </div>
       <% end %>
-    </dialog>
+    <% end %>
   <% end %>
 </div>
