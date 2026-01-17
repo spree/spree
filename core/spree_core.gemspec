@@ -40,7 +40,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'friendly_id', '~> 5.2', '>= 5.2.1'
   s.add_dependency 'geocoder'
   s.add_dependency 'highline', '>= 2', '< 4' # Necessary for the install generator
-  s.add_dependency 'kaminari', '~> 1.2'
   s.add_dependency 'money', '~> 6.13'
   s.add_dependency 'monetize', '~> 1.9'
   s.add_dependency 'name_of_person', '~> 1.1'

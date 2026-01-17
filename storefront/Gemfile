@@ -8,6 +8,7 @@ gem 'spree_page_builder', path: '../packages/page_builder'
 
 gem 'devise'
 gem 'sprockets-rails', '>= 3.5.2'
+gem 'kaminari', '~> 1.2' # for testing backwards compatibility with Kaminari
 
 group :test, :development do
   gem 'selenium-webdriver'

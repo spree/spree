@@ -1,4 +1,7 @@
 require 'spree/core'
+require 'jsonapi/serializer'
+require 'doorkeeper'
+require 'pagy'
 
 module Spree
   module Api
