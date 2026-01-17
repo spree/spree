@@ -19,7 +19,7 @@
       <% end %>
     </div>
 
-  <dialog class="drawer" data-dialog-target="dialog" id="gift-card-filters-drawer">
+  <%= drawer(id: 'gift-card-filters-drawer', controller_name: 'dialog') do %>
     <%= drawer_header(Spree.t(:filter), 'dialog') %>
     <div class="drawer-body">
     <% if params[:user_id].blank? %>
@@ -45,7 +45,7 @@
         <% end %>
       </div>
     </div>
-  </dialog>
+  <% end %>
 
   <%= render "spree/admin/shared/filter_badge_template" %>
 
