@@ -62,10 +62,8 @@ app/
 │       └── admin/
 │           └── products_helper.rb        # View helpers
 └── assets/
-    └── stylesheets/
-        └── spree/
-            └── admin/
-                └── custom.css            # Custom styles
+    └── tailwind/
+        └── spree_admin.css               # Custom Tailwind styles
 ```
 
 ## Key Concepts
@@ -137,22 +135,22 @@ Spree Admin uses [Hotwire](https://hotwire.dev/) (Turbo + Stimulus) for interact
 
 ### Styling
 
-The Admin Dashboard uses Bootstrap 5 with custom Spree styling. You can:
+The Admin Dashboard uses [Tailwind CSS v4](https://tailwindcss.com/) for styling. You can:
 
-- Add custom CSS files
-- Override Bootstrap variables
-- Use Tailwind-style utility classes
+- Use Tailwind utility classes directly in your views
+- Override theme variables (colors, spacing, typography)
+- Add custom components using `@layer components`
 
-```css
-/* app/assets/stylesheets/spree/admin/custom.css */
-.my-custom-card {
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
+```erb
+<%# Using Tailwind utility classes in views %>
+<div class="bg-white rounded-lg shadow-sm border border-zinc-200 p-4">
+  <h3 class="text-lg font-bold text-zinc-900">My Custom Card</h3>
+  <p class="text-sm text-zinc-600 mt-2">Card content here</p>
+</div>
 ```
 
 <Info>
-  Learn how to add custom styles in [Custom CSS](/developer/admin/custom-css).
+  Learn how to customize styles in [Custom CSS](/developer/admin/custom-css).
 </Info>
 
 ## Quick Reference
