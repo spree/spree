@@ -69,7 +69,8 @@ module Spree
         # lazy loading other models here (via includes) may result in an invalid query
         # e.g. SELECT  DISTINCT DISTINCT "spree_orders".id, "spree_orders"."created_at" AS alias_0 FROM "spree_orders"
         # see https://github.com/spree/spree/pull/3919
-        @orders = @search.result(distinct: true).page(params[:page]).per(params[:per_page] || Spree::Admin::RuntimeConfig.admin_orders_per_page)
+        limit = params[:per_page] || Spree::Admin::RuntimeConfig.admin_orders_per_page
+        @pagy, @orders = pagy(:offset, @search.result(distinct: true), limit: limit)
         @collection = @orders
       end
 

@@ -9,6 +9,7 @@ module Spree
     include Spree::WishlistHelper
     include Spree::AnalyticsHelper
     include Spree::IntegrationsHelper
+    include Spree::Storefront::PaginationConcern
 
     layout :choose_layout
 
@@ -28,7 +29,7 @@ module Spree
     helper_method :current_taxon, :store_filter_names
 
     helper_method :permitted_products_params, :products_filters_params,
-                  :storefront_products_scope, :storefront_products,
+                  :storefront_products_scope, :storefront_products, :storefront_pagy,
                   :default_products_sort, :default_products_finder_params,
                   :storefront_products_includes, :storefront_products_finder
 
@@ -157,22 +158,26 @@ module Spree
     end
 
     def storefront_products
-      @storefront_products ||= begin
-        finder_params = default_products_finder_params
-        finder_params[:sort_by] ||= @taxon&.sort_order || 'manual'
+      return @storefront_products if @storefront_products
 
-        products_finder = storefront_products_finder
-        products = products_finder.
-                   new(scope: storefront_products_scope, params: finder_params).
-                   execute.
-                   includes(storefront_products_includes)
+      finder_params = default_products_finder_params
+      finder_params[:sort_by] ||= @taxon&.sort_order || 'manual'
 
-        default_per_page = Spree::Storefront::Config[:products_per_page]
-        per_page = params[:per_page].present? ? params[:per_page].to_i : default_per_page
-        page = params[:page].present? ? params[:page].to_i : 1
+      products_finder = storefront_products_finder
+      products = products_finder.
+                 new(scope: storefront_products_scope, params: finder_params).
+                 execute.
+                 includes(storefront_products_includes)
 
-        products.page(page).per(per_page)
-      end
+      default_per_page = Spree::Storefront::Config[:products_per_page]
+      per_page = params[:per_page].present? ? params[:per_page].to_i : default_per_page
+
+      @storefront_products = paginate_collection(products, limit: per_page)
+    end
+
+    def storefront_pagy
+      storefront_products unless @storefront_products
+      @pagy
     end
 
     def storefront_products_includes

@@ -1,6 +1,7 @@
 class Spree::Admin::ResourceController < Spree::Admin::BaseController
   include Spree::Admin::Callbacks
   include Spree::Admin::TableConcern
+  include Pagy::Method
 
   helper_method :new_object_url, :edit_object_url, :object_url, :collection_url, :model_class
   before_action :load_resource
@@ -260,7 +261,9 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
       # Apply custom sort scope if configured (e.g., for price sorting)
       result = apply_table_sort(result) if table_registered? && custom_sort_active?
 
-      result.page(params[:page]).per(params[:per_page])
+      limit = params[:per_page] || Spree::Admin::RuntimeConfig.admin_records_per_page
+      @pagy, paginated = pagy(:offset, result, limit: limit)
+      paginated
     end
   end
 

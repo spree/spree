@@ -10,6 +10,7 @@ require 'stimulus-rails'
 require 'tailwindcss-rails'
 require 'turbo-rails'
 require 'inline_svg'
+require 'pagy'
 
 require 'spree/storefront/engine'
 require 'spree/core/partials'
