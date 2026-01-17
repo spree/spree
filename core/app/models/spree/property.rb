@@ -43,7 +43,7 @@ module Spree
       with_uniq_values_cache_key(product_properties_scope) do
         properties = product_properties
         properties = properties.where(id: product_properties_scope) if product_properties_scope.present?
-        properties.where.not(value: [nil, '']).pluck(:filter_param, :value).uniq
+        properties.where('value IS NOT NULL AND value != ?', '').pluck(:filter_param, :value).uniq
       end
     end
 
@@ -80,7 +80,7 @@ module Spree
     def ensure_product_properties_have_filter_params
       return unless filterable?
 
-      product_properties.where(filter_param: [nil, '']).where.not(value: [nil, '']).find_each(&:save)
+      product_properties.where(filter_param: [nil, '']).where('value IS NOT NULL AND value != ?', '').find_each(&:save)
     end
   end
 end
