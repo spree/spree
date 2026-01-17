@@ -3,7 +3,7 @@ module Spree
     extend ActiveSupport::Concern
 
     included do
-      auto_strip_attributes :name, :presentation
+      normalizes :name, :presentation, with: ->(value) { value&.to_s&.squish&.presence }
 
       #
       # Callbacks

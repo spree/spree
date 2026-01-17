@@ -36,6 +36,38 @@ describe Spree::OptionType, type: :model do
       expect(option_type_pl_translation).to be_present
       expect(option_type_pl_translation.presentation).to eq('Rozmiar')
     end
+
+    context 'with always_use_translations enabled' do
+      before do
+        Spree::Config.always_use_translations = true
+      end
+
+      after do
+        Spree::Config.always_use_translations = false
+        I18n.locale = :en
+      end
+
+      it 'creates option type with normalized presentation without NotNullViolation' do
+        I18n.locale = :en
+        option_type = create(:option_type, name: 'weight', presentation: '  Weight  ')
+        expect(option_type.presentation).to eq('Weight')
+        expect(option_type.persisted?).to be true
+      end
+
+      it 'normalizes translated presentations across locales' do
+        I18n.locale = :en
+        option_type = create(:option_type, name: 'material', presentation: 'Material')
+
+        I18n.locale = :de
+        option_type.presentation = '  Material German  '
+        option_type.save!
+
+        expect(option_type.presentation).to eq('Material German')
+
+        I18n.locale = :en
+        expect(option_type.presentation).to eq('Material')
+      end
+    end
   end
 
   describe 'color methods' do

@@ -21,7 +21,7 @@ module Spree
     delegate :name, :name=, :description, :slug, :available_on, :make_active_at, :shipping_category_id,
              :meta_description, :meta_keywords, :shipping_category, to: :product
 
-    auto_strip_attributes :sku, nullify: false
+    normalizes :sku, with: ->(value) { value&.to_s&.strip }
 
     # we need to have this callback before any dependent: :destroy associations
     # https://github.com/rails/rails/issues/3458

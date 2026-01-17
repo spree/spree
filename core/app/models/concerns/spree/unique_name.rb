@@ -3,7 +3,7 @@ module Spree
     extend ActiveSupport::Concern
 
     included do
-      auto_strip_attributes :name
+      normalizes :name, with: ->(value) { value&.to_s&.squish&.presence }
 
       validates :name, presence: true,
                        uniqueness: { case_sensitive: false, allow_blank: true, scope: spree_base_uniqueness_scope }

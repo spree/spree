@@ -115,7 +115,7 @@ module Spree
     money_methods :cost, :discounted_cost, :final_price, :item_cost, :additional_tax_total, :included_tax_total, :tax_total
     alias display_amount display_cost
 
-    auto_strip_attributes :tracking
+    normalizes :tracking, with: ->(value) { value&.to_s&.squish&.presence }
 
     # Returns the shipment number and shipping method name
     #

@@ -22,7 +22,7 @@ module Spree
   class Product < Spree.base_class
     acts_as_paranoid
     acts_as_taggable_on :tags, :labels
-    auto_strip_attributes :name
+    normalizes :name, with: ->(value) { value&.to_s&.squish&.presence }
 
     include Spree::ProductScopes
     include Spree::MultiStoreResource
@@ -55,6 +55,8 @@ module Spree
     translates(*TRANSLATABLE_FIELDS, column_fallback: !Spree.always_use_translations?)
 
     self::Translation.class_eval do
+      normalizes :name, :meta_title, with: ->(value) { value&.to_s&.squish&.presence }
+
       if defined?(PgSearch)
         include PgSearch::Model
 

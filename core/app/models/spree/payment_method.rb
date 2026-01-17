@@ -18,7 +18,7 @@ module Spree
     after_initialize :set_name, if: :new_record?
 
     validates :name, presence: true
-    auto_strip_attributes :name
+    normalizes :name, with: ->(value) { value&.to_s&.squish&.presence }
 
     has_many :store_payment_methods, class_name: 'Spree::StorePaymentMethod'
     has_many :stores, class_name: 'Spree::Store', through: :store_payment_methods
