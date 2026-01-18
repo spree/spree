@@ -24,17 +24,8 @@ module Spree
         params_hash = @params.respond_to?(:to_unsafe_h) ? @params.to_unsafe_h : @params.to_h
         request_hash = { params: params_hash }
 
-        sql = @collection.to_sql
-        has_grouping = sql.include?(' HAVING ') || sql.include?(' GROUP BY ')
-
-        if has_grouping
-          # Use offset paginator with count_over for GROUP BY/HAVING queries
-          # count_over uses COUNT(*) OVER () which works with grouped collections
-          pagy, records = pagy(:offset, @collection, limit: @per_page, request: request_hash, count_over: true)
-        else
-          # Uses countish paginator which is faster as it avoids COUNT queries
-          pagy, records = pagy(:countish, @collection, limit: @per_page, request: request_hash)
-        end
+        # Uses countish paginator which is faster as it avoids COUNT queries
+        pagy, records = pagy(:countish, @collection, limit: @per_page, request: request_hash)
 
         PagyCollection.new(records, pagy)
       end

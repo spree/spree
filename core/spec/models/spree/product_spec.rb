@@ -1343,18 +1343,6 @@ describe Spree::Product, type: :model do
           products = described_class.where(id: test_product_ids).by_best_selling(:asc)
           expect(products.map(&:name)).to eq(['Product 4', 'Product 3', 'Product 1', 'Product 2'])
         end
-
-        it 'includes completed_orders_count attribute' do
-          products = described_class.where(id: test_product_ids).by_best_selling
-          product_2_result = products.find { |p| p.id == product_2.id }
-          expect(product_2_result.completed_orders_count).to eq(3)
-        end
-
-        it 'includes completed_orders_total attribute' do
-          products = described_class.where(id: test_product_ids).by_best_selling
-          product_1_result = products.find { |p| p.id == product_1.id }
-          expect(product_1_result.completed_orders_total).to be > 0
-        end
       end
 
       context 'with incomplete orders' do
@@ -1375,8 +1363,8 @@ describe Spree::Product, type: :model do
           product_1_result = products.find { |p| p.id == product_1.id }
           product_2_result = products.find { |p| p.id == product_2.id }
 
-          expect(product_1_result.completed_orders_count).to eq(2)
-          expect(product_2_result.completed_orders_count).to eq(1)
+          expect(product_1_result.completed_orders.count).to eq(2)
+          expect(product_2_result.completed_orders.count).to eq(1)
         end
       end
 
@@ -1399,7 +1387,7 @@ describe Spree::Product, type: :model do
           product_1_result = products.find { |p| p.id == product_1.id }
           product_2_result = products.find { |p| p.id == product_2.id }
 
-          expect(product_2_result.completed_orders_total).to be > product_1_result.completed_orders_total
+          expect(product_2_result.completed_orders.sum(:total)).to be > product_1_result.completed_orders.sum(:total)
         end
       end
 
@@ -1429,13 +1417,15 @@ describe Spree::Product, type: :model do
           product_2_result = products.find { |p| p.id == product_2.id }
 
           # Both have 1 completed order
-          expect(product_1_result.completed_orders_count).to eq(1)
-          expect(product_2_result.completed_orders_count).to eq(1)
+          expect(product_1_result.completed_orders.count).to eq(1)
+          expect(product_2_result.completed_orders.count).to eq(1)
 
-          # Product 1 should have total of $250 (50*2 + 50*3)
-          # Product 2 should have total of $200 (100*2)
-          expect(product_1_result.completed_orders_total).to eq(250)
-          expect(product_2_result.completed_orders_total).to eq(200)
+          # Product 1 should have line item total of $250 (50*2 + 50*3)
+          # Product 2 should have line item total of $200 (100*2)
+          product_1_line_item_total = product_1_result.line_items.joins(:order).merge(Spree::Order.complete).sum('spree_line_items.price * spree_line_items.quantity')
+          product_2_line_item_total = product_2_result.line_items.joins(:order).merge(Spree::Order.complete).sum('spree_line_items.price * spree_line_items.quantity')
+          expect(product_1_line_item_total).to eq(250)
+          expect(product_2_line_item_total).to eq(200)
 
           # Product 1 should be ranked higher due to higher total
           expect(products.first.name).to eq('Product 1')
@@ -1471,12 +1461,14 @@ describe Spree::Product, type: :model do
           product_2_result = products.find { |p| p.id == product_2.id }
 
           # Verify counts
-          expect(product_1_result.completed_orders_count).to eq(2)
-          expect(product_2_result.completed_orders_count).to eq(1)
+          expect(product_1_result.completed_orders.count).to eq(2)
+          expect(product_2_result.completed_orders.count).to eq(1)
 
-          # Verify totals
-          expect(product_1_result.completed_orders_total).to eq(250)
-          expect(product_2_result.completed_orders_total).to eq(400)
+          # Verify line item totals
+          product_1_line_item_total = product_1_result.line_items.joins(:order).merge(Spree::Order.complete).sum('spree_line_items.price * spree_line_items.quantity')
+          product_2_line_item_total = product_2_result.line_items.joins(:order).merge(Spree::Order.complete).sum('spree_line_items.price * spree_line_items.quantity')
+          expect(product_1_line_item_total).to eq(250)
+          expect(product_2_line_item_total).to eq(400)
 
           # Product 1 should rank first because it has more orders (2 vs 1)
           # even though Product 2 has a higher total ($400 vs $250)
@@ -1490,7 +1482,7 @@ describe Spree::Product, type: :model do
           products = described_class.where(id: test_product_ids).by_best_selling
           expect(products.length).to eq(4)
           # All products should be included, those without orders have count = 0
-          products.select { |p| p.completed_orders_count.zero? }.each do |product|
+          products.select { |p| p.completed_orders.none? }.each do |product|
             expect(test_product_ids).to include(product.id)
           end
         end
@@ -1523,18 +1515,18 @@ describe Spree::Product, type: :model do
           product_4_result = products.find { |p| p.id == product_4.id }
 
           # Product 2 has pending orders but no completed orders - count should be 0
-          expect(product_2_result.completed_orders_count).to eq(0)
-          expect(product_2_result.completed_orders_total).to eq(0)
+          expect(product_2_result.completed_orders.count).to eq(0)
+          expect(product_2_result.completed_orders.sum(:total)).to eq(0)
 
           # Product 1 has 2 completed orders
-          expect(product_1_result.completed_orders_count).to eq(2)
+          expect(product_1_result.completed_orders.count).to eq(2)
 
           # Product 3 has 1 completed order (pending orders not counted)
-          expect(product_3_result.completed_orders_count).to eq(1)
+          expect(product_3_result.completed_orders.count).to eq(1)
 
           # Product 4 has no orders at all - count should be 0
-          expect(product_4_result.completed_orders_count).to eq(0)
-          expect(product_4_result.completed_orders_total).to eq(0)
+          expect(product_4_result.completed_orders.count).to eq(0)
+          expect(product_4_result.completed_orders.sum(:total)).to eq(0)
         end
 
         it 'orders products correctly with pending orders included' do
