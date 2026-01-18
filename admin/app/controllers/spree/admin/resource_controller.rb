@@ -253,6 +253,9 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   # Override in child controllers to set custom search params
   # @return [Hash] Ransack search params
   def search_params
+    # Initialize params[:q] as empty hash if not present, to allow setting default sort
+    params[:q] ||= {}
+
     return params[:q] unless params[:q].is_a?(ActionController::Parameters) || params[:q].is_a?(Hash)
 
     params[:q][:s] ||= collection_default_sort if collection_default_sort.present?
