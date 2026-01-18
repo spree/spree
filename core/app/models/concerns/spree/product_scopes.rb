@@ -135,10 +135,13 @@ module Spree
       end
 
       add_search_scope :ascend_by_taxons_min_position do |taxon_ids|
+        min_position_sql = "MIN(#{Classification.table_name}.position)"
+
         joins(:classifications).
           where(Classification.table_name => { taxon_id: taxon_ids }).
-          group(:id).
-          order(Arel.sql("MIN(#{Classification.table_name}.position) ASC"))
+          select("#{Product.table_name}.*", "#{min_position_sql} AS min_taxon_position").
+          group("#{Product.table_name}.id").
+          order(Arel.sql("#{min_position_sql} ASC"))
       end
 
       # a scope that finds all products having property specified by name, object or id
