@@ -112,6 +112,7 @@ module Spree
 
     has_many :line_items, through: :variants_including_master
     has_many :orders, through: :line_items
+    has_many :completed_orders, -> { distinct.complete }, through: :line_items, source: :order
 
     has_many :variant_images, -> { order(:position) }, source: :images, through: :variants_including_master
     has_many :variant_images_without_master, -> { order(:position) }, source: :images, through: :variants
