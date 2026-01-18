@@ -53,7 +53,7 @@ Rails.application.config.after_initialize do
   Spree.admin.tables.products.add :sku,
                                         label: :sku,
                                         type: :string,
-                                        sortable: true,
+                                        sortable: false,
                                         filterable: true,
                                         default: false,
                                         position: 30,
