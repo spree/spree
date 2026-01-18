@@ -273,7 +273,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
 
   # Returns the filtered and paginated ransack results
   # Uses countish paginator which is faster as it avoids COUNT queries on most pages
-  # Falls back to offset paginator for queries with HAVING clauses (incompatible with countish on MySQL)
+  # Falls back to offset paginator for queries with HAVING or GROUP BY clauses (incompatible with countish)
   # @return [ActiveRecord::Relation]
   def collection
     @collection ||= begin
@@ -284,8 +284,9 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
 
       limit = params[:per_page] || Spree::Admin::RuntimeConfig.admin_records_per_page
 
-      # Use offset paginator for queries with HAVING clauses (countish is incompatible on MySQL)
-      paginator = result.to_sql.include?(' HAVING ') ? :offset : :countish
+      # Use offset paginator for queries with HAVING or GROUP BY (countish is incompatible)
+      sql = result.to_sql
+      paginator = (sql.include?(' HAVING ') || sql.include?(' GROUP BY ')) ? :offset : :countish
       @pagy, paginated = pagy(paginator, result, limit: limit)
       paginated
     end
