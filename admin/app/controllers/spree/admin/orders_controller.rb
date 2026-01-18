@@ -43,12 +43,7 @@ module Spree
       end
 
       # GET /admin/orders
-      def index
-        params[:q] ||= {}
-        params[:q][:s] ||= 'completed_at desc'
-
-        load_orders
-      end
+      def index; end
 
       # PUT /admin/orders/:id/cancel
       def cancel
@@ -91,6 +86,14 @@ module Spree
         else
           base_scope
         end
+      end
+
+      def collection_default_sort
+        'completed_at desc'
+      end
+
+      def collection_includes
+        { user: [], shipments: :stock_location }
       end
 
       def order_params

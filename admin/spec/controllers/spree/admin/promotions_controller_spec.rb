@@ -25,17 +25,6 @@ RSpec.describe Spree::Admin::PromotionsController, type: :controller do
       expect(assigns[:collection]).to include(promotion)
     end
 
-    context 'with active filter' do
-      let!(:active_promotion) { create(:promotion, name: 'Active Promotion', stores: [store], kind: :automatic) }
-      let!(:expired_promotion) { create(:promotion, name: 'Expired Promotion', stores: [store], starts_at: 3.day.ago, expires_at: 1.day.ago) }
-
-      it 'returns only active promotions' do
-        get :index, params: { q: { active: 'true' } }
-        expect(assigns[:collection]).to include(active_promotion)
-        expect(assigns[:collection]).not_to include(expired_promotion)
-      end
-    end
-
     describe 'GET #show' do
       let!(:promotion) { create(:promotion, name: 'Test Promotion', stores: [store]) }
       let!(:promotion_action) { create(:promotion_action_create_adjustment) }
@@ -49,17 +38,6 @@ RSpec.describe Spree::Admin::PromotionsController, type: :controller do
       it 'assigns the promotion' do
         get :show, params: { id: promotion.id }
         expect(assigns[:promotion]).to eq(promotion)
-      end
-    end
-
-    context 'with expired filter' do
-      let!(:active_promotion) { create(:promotion, name: 'Active Promotion', stores: [store]) }
-      let!(:expired_promotion) { create(:promotion, name: 'Expired Promotion', stores: [store], starts_at: 3.day.ago, expires_at: 1.day.ago) }
-
-      it 'returns only expired promotions' do
-        get :index, params: { q: { expired: 'true' } }
-        expect(assigns[:collection]).to include(expired_promotion)
-        expect(assigns[:collection]).not_to include(active_promotion)
       end
     end
   end

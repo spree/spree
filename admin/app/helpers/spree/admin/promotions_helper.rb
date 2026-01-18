@@ -2,6 +2,7 @@ module Spree
   module Admin
     module PromotionsHelper
       def promotion_filter_dropdown_value
+        Spree::Deprecation.warn("promotion_filter_dropdown_value is deprecated and will be removed in Spree 5.5")
         if params.dig(:q, :expired)
           Spree.t(:expired)
         elsif params.dig(:q, :active)

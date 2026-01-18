@@ -1,19 +1,34 @@
-<% args = params.clone %>
 <% entry_name ||= nil %>
 
-<% if defined?(per_page_action) %>
-  <% args[:action] = per_page_action %>
-<% end %>
-
-<% if collection.any? && collection.respond_to?(:current_page) %>
+<% if collection.any? && defined?(@pagy) && @pagy %>
   <div class="pagination-container">
     <div class="index-pagination-row flex items-center justify-between p-2">
       <%= per_page_dropdown %>
       <div class="hidden lg:block text-center text-gray-600 text-sm">
-        <%= page_entries_info(collection, entry_name: entry_name) %>
+        <%== @pagy.info_tag(item_name: entry_name) %>
       </div>
-      <div class="text-right">
-        <%= paginate collection, theme: 'admin-twitter-bootstrap-4' %>
+      <div class="text-right flex gap-1.5">
+        <% unless @pagy.page == 1 %>
+          <%= link_to icon('chevron-left', class: 'text-gray-900 mr-0'),
+              url_for(request.query_parameters.merge(page: @pagy.previous)),
+              class: "btn btn-light p-2",
+              'aria-label': 'Previous page' %>
+        <% else %>
+          <button class="btn btn-light p-2 cursor-not-allowed opacity-50" disabled>
+            <%= icon('chevron-left', class: 'text-gray-900 mr-0') %>
+          </button>
+        <% end %>
+
+        <% unless @pagy.page == @pagy.pages %>
+          <%= link_to icon('chevron-right', class: 'text-gray-900 mr-0'),
+              url_for(request.query_parameters.merge(page: @pagy.next)),
+              class: "btn btn-light p-2",
+              'aria-label': 'Next page' %>
+        <% else %>
+          <button class="btn btn-light p-2 cursor-not-allowed opacity-50" disabled>
+            <%= icon('chevron-right', class: 'text-gray-900 mr-0') %>
+          </button>
+        <% end %>
       </div>
     </div>
   </div>

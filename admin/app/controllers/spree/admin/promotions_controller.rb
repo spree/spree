@@ -7,9 +7,9 @@ module Spree
 
       # GET /admin/promotions/select_options
       def select_options
-        promotions = current_store.promotions.applied
-        promotions = promotions.where('name ILIKE ?', "%#{params[:q]}%") if params[:q].present?
-        promotions = promotions.order(:name).limit(25)
+        q = params[:q]
+        ransack_params = q.is_a?(String) ? { name_i_cont: q } : q
+        promotions = current_store.promotions.applied.accessible_by(current_ability).ransack(ransack_params).result.order(:name).limit(25)
 
         render json: promotions.pluck(:id, :name).map { |id, name| { id: id, name: name } }
       end
@@ -43,29 +43,8 @@ module Spree
         end
       end
 
-      def collection
-        return @collection if defined?(@collection)
-
-        params[:q] ||= {}
-
-        expired = params[:q].delete(:expired) == 'true'
-        active = params[:q].delete(:active) == 'true'
-
-        @collection = super
-
-        @collection = @collection.active if active
-        @collection = @collection.expired if expired
-
-        @search = @collection.ransack(params[:q])
-        @collection = @search.result(distinct: true).
-                      includes(:promotion_actions).
-                      page(params[:page]).
-                      per(params[:per_page])
-
-        params[:q][:expired] = expired
-        params[:q][:active] = active
-
-        @collection
+      def collection_includes
+        [:promotion_actions]
       end
 
       def permitted_resource_params

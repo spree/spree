@@ -17,6 +17,58 @@ describe Spree::ProductsController, type: :controller do
       expect(assigns(:current_page)).to be_a(Spree::Pages::ShopAll)
     end
 
+    describe 'pagination' do
+      let!(:products) { create_list(:product, 25, stores: [store]) }
+
+      context 'with Pagy (default)' do
+        before { Spree::Storefront::Config[:use_kaminari_pagination] = false }
+
+        it 'paginates products with Pagy' do
+          subject
+          expect(assigns(:pagy)).to be_a(Pagy::Offset)
+          expect(assigns(:storefront_products).size).to eq(20) # default per_page
+        end
+
+        it 'returns correct page info' do
+          subject
+          expect(assigns(:pagy).page).to eq(1)
+          expect(assigns(:pagy).pages).to eq(2)
+          expect(assigns(:pagy).count).to eq(25)
+        end
+
+        it 'returns next page' do
+          get :index, params: { page: 2 }
+          expect(assigns(:pagy).page).to eq(2)
+          expect(assigns(:storefront_products).size).to eq(5)
+        end
+      end
+
+      context 'with Kaminari' do
+        before { Spree::Storefront::Config[:use_kaminari_pagination] = true }
+        after { Spree::Storefront::Config[:use_kaminari_pagination] = false }
+
+        it 'paginates products with Kaminari' do
+          subject
+          expect(assigns(:pagy)).to be_nil
+          expect(assigns(:storefront_products)).to respond_to(:total_pages)
+          expect(assigns(:storefront_products).size).to eq(20)
+        end
+
+        it 'returns correct page info' do
+          subject
+          expect(assigns(:storefront_products).current_page).to eq(1)
+          expect(assigns(:storefront_products).total_pages).to eq(2)
+          expect(assigns(:storefront_products).total_count).to eq(25)
+        end
+
+        it 'returns next page' do
+          get :index, params: { page: 2 }
+          expect(assigns(:storefront_products).current_page).to eq(2)
+          expect(assigns(:storefront_products).size).to eq(5)
+        end
+      end
+    end
+
     context 'when filtering' do
       let(:taxon) { create(:taxon) }
 

@@ -10,7 +10,7 @@ module Spree
       before_action :add_breadcrumb_for_post, only: [:edit, :update]
 
       def select_options
-        render json: current_store.posts.published.to_tom_select_json
+        render json: current_store.posts.published.accessible_by(current_ability).to_tom_select_json
       end
 
       private

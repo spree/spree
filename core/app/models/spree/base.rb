@@ -11,7 +11,8 @@ class Spree::Base < ApplicationRecord
     end
   end
 
-  if Kaminari.config.page_method_name != :page
+  # only for backwards compatibility with Kaminari
+  if defined?(Kaminari) && Kaminari.config.page_method_name != :page
     def self.page(num)
       send Kaminari.config.page_method_name, num
     end

@@ -1,6 +1,7 @@
 class Spree::Admin::ResourceController < Spree::Admin::BaseController
   include Spree::Admin::Callbacks
   include Spree::Admin::TableConcern
+  include Pagy::Method
 
   helper_method :new_object_url, :edit_object_url, :object_url, :collection_url, :model_class
   before_action :load_resource
@@ -245,13 +246,37 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
       # Process query_state from table query builder if present
       process_table_query_state if table_registered?
 
-      params[:q] ||= {}
-      params[:q][:s] ||= collection_default_sort if collection_default_sort.present?
-      scope.ransack(params[:q])
+      scope.ransack(search_params)
     end
   end
 
+  # Override in child controllers to set custom search params
+  # @return [Hash] Ransack search params
+  def search_params
+    # Initialize params[:q] as empty hash if not present, to allow setting default sort
+    params[:q] ||= {}
+
+    return params[:q] unless params[:q].is_a?(ActionController::Parameters) || params[:q].is_a?(Hash)
+
+    params[:q][:s] ||= collection_default_sort if collection_default_sort.present?
+
+    date_range_params = %i[created_at_gt created_at_lt updated_at_gt updated_at_lt]
+    date_range_params.each do |param|
+      if params[:q][param].present?
+        params[:q][param] = begin
+          params[:q][param].to_date&.in_time_zone(current_timezone)&.beginning_of_day
+        rescue StandardError
+          ''
+        end
+      end
+    end
+
+    params[:q]
+  end
+
   # Returns the filtered and paginated ransack results
+  # Uses countish paginator which is faster as it avoids COUNT queries on most pages
+  # Falls back to offset paginator for queries with HAVING or GROUP BY clauses (incompatible with countish)
   # @return [ActiveRecord::Relation]
   def collection
     @collection ||= begin
@@ -260,7 +285,21 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
       # Apply custom sort scope if configured (e.g., for price sorting)
       result = apply_table_sort(result) if table_registered? && custom_sort_active?
 
-      result.page(params[:page]).per(params[:per_page])
+      limit = params[:per_page] || Spree::Admin::RuntimeConfig.admin_records_per_page
+
+      sql = result.to_sql
+      has_grouping = sql.include?(' HAVING ') || sql.include?(' GROUP BY ')
+
+      if has_grouping
+        # Use offset paginator with count_over for GROUP BY/HAVING queries
+        # count_over uses COUNT(*) OVER () which works with grouped collections
+        @pagy, paginated = pagy(:offset, result, limit: limit, count_over: true)
+      else
+        # Uses countish paginator which is faster as it avoids COUNT queries
+        @pagy, paginated = pagy(:countish, result, limit: limit)
+      end
+
+      paginated
     end
   end
 
@@ -386,7 +425,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   def collection_actions
     [:index, :select_options, :bulk_modal, :bulk_status_update,
      :bulk_add_to_taxons, :bulk_remove_from_taxons,
-     :bulk_add_tags, :bulk_remove_tags, :bulk_destroy]
+     :bulk_add_tags, :bulk_remove_tags, :bulk_destroy, :select_options]
   end
 
   # Returns true if the current action is a member action

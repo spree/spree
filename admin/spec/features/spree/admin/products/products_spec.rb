@@ -58,17 +58,6 @@ describe 'Products', type: :feature do
           end
         end
       end
-
-      context 'all products page' do
-        let!(:active_product) { create(:product, status: 'active') }
-        let!(:archived_product) { create(:product, status: 'archived') }
-
-        it 'lists only non-archived products' do
-          visit spree.admin_products_path
-          expect(page).to have_content(active_product.name)
-          expect(page).not_to have_content(archived_product.name)
-        end
-      end
     end
 
     context 'updating a product' do

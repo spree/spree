@@ -42,6 +42,44 @@ describe Spree::Account::GiftCardsController, type: :controller do
           expect(assigns(:gift_cards)).to eq([gift_card_2, gift_card])
         end
       end
+
+      describe 'pagination' do
+        let!(:gift_cards) { create_list(:gift_card, 30, user: user) }
+
+        context 'with Pagy (default)' do
+          before { Spree::Storefront::Config[:use_kaminari_pagination] = false }
+
+          it 'paginates gift cards with Pagy' do
+            subject
+            expect(assigns(:pagy)).to be_a(Pagy::Offset)
+            expect(assigns(:gift_cards).size).to eq(25)
+          end
+
+          it 'returns next page' do
+            get :index, params: { page: 2 }
+            expect(assigns(:pagy).page).to eq(2)
+            expect(assigns(:gift_cards).size).to eq(5)
+          end
+        end
+
+        context 'with Kaminari' do
+          before { Spree::Storefront::Config[:use_kaminari_pagination] = true }
+          after { Spree::Storefront::Config[:use_kaminari_pagination] = false }
+
+          it 'paginates gift cards with Kaminari' do
+            subject
+            expect(assigns(:pagy)).to be_nil
+            expect(assigns(:gift_cards)).to respond_to(:total_pages)
+            expect(assigns(:gift_cards).size).to eq(25)
+          end
+
+          it 'returns next page' do
+            get :index, params: { page: 2 }
+            expect(assigns(:gift_cards).current_page).to eq(2)
+            expect(assigns(:gift_cards).size).to eq(5)
+          end
+        end
+      end
     end
 
     context 'when user is not logged in' do

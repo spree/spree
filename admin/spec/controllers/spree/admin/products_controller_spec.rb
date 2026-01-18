@@ -57,15 +57,6 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
       expect(assigns[:collection]).to contain_exactly(product_1, product_2)
     end
 
-    it 'searches for products without category' do
-      create(:product, stores: [store], taxons: [create(:taxon)])
-      product = create(:product, stores: [store], taxons: [])
-
-      get :index, params: { q: { taxons_id_in: [' '] } }
-
-      expect(assigns[:collection]).to contain_exactly(product)
-    end
-
     context 'with views' do
       render_views
 

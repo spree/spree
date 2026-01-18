@@ -20,6 +20,7 @@ require 'spree/admin/engine'
 require 'spree/core/partials'
 
 require 'tinymce-rails'
+require 'pagy'
 
 module Spree
   def self.admin

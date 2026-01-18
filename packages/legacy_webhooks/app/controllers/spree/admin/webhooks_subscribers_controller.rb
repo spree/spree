@@ -10,7 +10,9 @@ module Spree
 
       def show
         @webhooks_subscriber = Webhooks::Subscriber.find(params[:id])
-        @events = @webhooks_subscriber.events.order(created_at: :desc).page(params[:page]).per(params[:per_page])
+        events = @webhooks_subscriber.events.order(created_at: :desc)
+        limit = params[:per_page] || Spree::Admin::RuntimeConfig.admin_records_per_page
+        @pagy, @events = pagy(:offset, events, limit: limit)
       end
 
       private

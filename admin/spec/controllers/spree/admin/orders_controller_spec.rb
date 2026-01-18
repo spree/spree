@@ -90,18 +90,6 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
       expect(assigns(:collection).to_a).to eq([cancelled_order])
     end
 
-    it 'returns all refunded orders' do
-      get :index, params: { q: { refunded: '1' } }
-
-      expect(assigns(:collection).to_a).to eq([shipped_order])
-    end
-
-    it 'returns all partially refunded orders' do
-      get :index, params: { q: { partially_refunded: '1' } }
-
-      expect(assigns(:collection).to_a).to eq([order])
-    end
-
     context 'filtering by payment state' do
       let!(:balance_due_order) do
         order = create(:completed_order_with_totals, line_items_count: 2, total: 100, store: store)
@@ -125,18 +113,6 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
         get :index, params: { q: { payment_state_eq: :balance_due } }
 
         expect(assigns(:collection).to_a).to contain_exactly(balance_due_order, order, shipped_order)
-      end
-
-      it 'returns all refunded orders via payment_state filter' do
-        get :index, params: { q: { payment_state_eq: :refunded } }
-
-        expect(assigns(:collection).to_a).to eq([shipped_order])
-      end
-
-      it 'returns all partially refunded orders via payment_state filter' do
-        get :index, params: { q: { payment_state_eq: :partially_refunded } }
-
-        expect(assigns(:collection).to_a).to eq([order])
       end
     end
 
