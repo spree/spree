@@ -23,7 +23,9 @@ module Spree
         # Use to_unsafe_h for ActionController::Parameters, fallback to to_h for regular hashes
         params_hash = @params.respond_to?(:to_unsafe_h) ? @params.to_unsafe_h : @params.to_h
         request_hash = { params: params_hash }
-        pagy, records = pagy(:offset, @collection, limit: @per_page, request: request_hash)
+        # Uses countish paginator which is faster as it avoids COUNT queries
+        # by fetching limit+1 records to detect if there's a next page
+        pagy, records = pagy(:countish, @collection, limit: @per_page, request: request_hash)
         PagyCollection.new(records, pagy)
       end
     end

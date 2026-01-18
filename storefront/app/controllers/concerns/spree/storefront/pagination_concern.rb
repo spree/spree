@@ -13,28 +13,10 @@ module Spree
         if Spree::Storefront::Config[:use_kaminari_pagination]
           collection.page(params[:page]).per(limit)
         else
-          # Pre-compute count to avoid issues with complex ORDER BY clauses
-          # that reference computed columns not available in the COUNT query
-          count = pagy_get_count(collection)
-
-          @pagy, records = pagy(:offset, collection, limit: limit, count: count)
+          # Uses countish paginator which is faster as it avoids COUNT queries
+          # by fetching limit+1 records to detect if there's a next page
+          @pagy, records = pagy(:countish, collection, limit: limit)
           records
-        end
-      end
-
-      # Get count for pagination, handling complex queries
-      def pagy_get_count(collection)
-        # Remove ordering and custom selects, then count distinct IDs
-        count_scope = collection.reorder(nil).except(:select).select('1')
-        count = count_scope.distinct.count
-        count.is_a?(Hash) ? count.keys.size : count
-      rescue StandardError => e
-        Rails.logger.warn "Pagy count fallback: #{e.message}"
-        # Last resort fallback - load count from the model
-        begin
-          collection.model.from(collection.except(:order).arel.as(collection.model.table_name)).count
-        rescue StandardError
-          0
         end
       end
     end
