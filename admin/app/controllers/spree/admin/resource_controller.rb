@@ -291,12 +291,9 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
       has_grouping = sql.include?(' HAVING ') || sql.include?(' GROUP BY ')
 
       if has_grouping
-        # For queries with GROUP BY/HAVING, we need to provide explicit count
-        # because Pagy's COUNT query can't handle computed ORDER BY columns
-        # Use .size on grouped count hash to get total number of groups
-        count_result = result.unscope(:order, :select).distinct.count
-        count = count_result.is_a?(Hash) ? count_result.size : count_result
-        @pagy, paginated = pagy(:offset, result, limit: limit, count: count)
+        # Use offset paginator with count_over for GROUP BY/HAVING queries
+        # count_over uses COUNT(*) OVER () which works with grouped collections
+        @pagy, paginated = pagy(:offset, result, limit: limit, count_over: true)
       else
         # Uses countish paginator which is faster as it avoids COUNT queries
         @pagy, paginated = pagy(:countish, result, limit: limit)
