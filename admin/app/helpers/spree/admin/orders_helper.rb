@@ -142,6 +142,8 @@ module Spree
       end
 
       def order_filter_dropdown_value
+        Spree::Deprecation.warn("order_filter_dropdown_value is deprecated and will be removed in Spree 5.5")
+
         if params.dig(:q, :shipment_state_not_in) == ['shipped', 'canceled']
           Spree.t('admin.orders.unfulfilled')
         elsif params.dig(:q, :shipment_state_eq) == 'shipped'
