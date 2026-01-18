@@ -24,17 +24,8 @@ module Spree
         params_hash = @params.respond_to?(:to_unsafe_h) ? @params.to_unsafe_h : @params.to_h
         request_hash = { params: params_hash }
 
-        sql = @collection.to_sql
-
-        if sql.include?(' HAVING ')
-          # Use offset paginator with count_over only for HAVING queries
-          # HAVING clauses reference computed columns that break normal COUNT queries
-          pagy, records = pagy(:offset, @collection, limit: @per_page, request: request_hash, count_over: true)
-        else
-          # Uses countish paginator which is faster as it avoids COUNT queries
-          # Works fine with GROUP BY as long as there's no HAVING clause
-          pagy, records = pagy(:countish, @collection, limit: @per_page, request: request_hash)
-        end
+        # Uses countish paginator which is faster as it avoids COUNT queries
+        pagy, records = pagy(:countish, @collection, limit: @per_page, request: request_hash)
 
         PagyCollection.new(records, pagy)
       end

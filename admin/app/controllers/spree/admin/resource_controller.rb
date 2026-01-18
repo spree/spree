@@ -287,17 +287,8 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
 
       limit = params[:per_page] || Spree::Admin::RuntimeConfig.admin_records_per_page
 
-      sql = result.to_sql
-
-      if sql.include?(' HAVING ')
-        # Use offset paginator with count_over only for HAVING queries
-        # HAVING clauses reference computed columns that break normal COUNT queries
-        @pagy, paginated = pagy(:offset, result, limit: limit, count_over: true)
-      else
-        # Uses countish paginator which is faster as it avoids COUNT queries
-        # Works fine with GROUP BY as long as there's no HAVING clause
-        @pagy, paginated = pagy(:countish, result, limit: limit)
-      end
+      # Uses countish paginator which is faster as it avoids COUNT queries
+      @pagy, paginated = pagy(:countish, result, limit: limit)
 
       paginated
     end
