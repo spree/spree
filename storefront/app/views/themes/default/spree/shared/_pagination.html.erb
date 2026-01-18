@@ -3,42 +3,5 @@
   <%= paginate @posts || @orders || @gift_cards || @store_credit_events || @storefront_products,
       theme: 'storefront', outer_window: 1, inner_window: 2 %>
 <% elsif @pagy && @pagy.pages > 1 %>
-  <nav class="pagination flex items-center justify-center gap-x-1 mt-16" role="navigation" aria-label="pager">
-    <%# Previous page link %>
-    <% prev_css = "inline-flex justify-center items-center gap-x-1.5 px-4#{' pagination-link--disabled' unless @pagy.previous}" %>
-    <% if @pagy.previous %>
-      <%= link_to url_for(page: @pagy.previous), class: prev_css do %>
-        <%= render 'spree/shared/icons/chevron', size: 20, color: theme_setting(:text_color) %>
-      <% end %>
-    <% else %>
-      <span class="<%= prev_css %>">
-        <%= render 'spree/shared/icons/chevron', size: 20, color: theme_setting(:neutral_color) %>
-      </span>
-    <% end %>
-
-    <%# Page numbers %>
-    <div class="flex items-center gap-x-1">
-      <% @pagy.series.each do |item| %>
-        <% if item == :gap %>
-          <span class="w-8 text-center"><%= t('views.pagination.truncate').html_safe %></span>
-        <% elsif item.is_a?(Integer) %>
-          <%= active_link_to item, url_for(page: item), class: 'pagination-link w-8 text-center', active: (item == @pagy.page), class_active: 'pagination-link--active' %>
-        <% elsif item.is_a?(String) %>
-          <span class="pagination-link w-8 text-center pagination-link--active"><%= item %></span>
-        <% end %>
-      <% end %>
-    </div>
-
-    <%# Next page link %>
-    <% next_css = "inline-flex justify-center items-center gap-x-1.5 px-4#{' pagination-link--disabled' unless @pagy.next}" %>
-    <% if @pagy.next %>
-      <%= link_to url_for(page: @pagy.next), class: next_css do %>
-        <%= render 'spree/shared/icons/chevron_right', size: 20, color: theme_setting(:text_color) %>
-      <% end %>
-    <% else %>
-      <span class="<%= next_css %>">
-        <%= render 'spree/shared/icons/chevron_right', size: 20, color: theme_setting(:neutral_color) %>
-      </span>
-    <% end %>
-  </nav>
+  <%== @pagy.series_nav(aria_label: 'Pages') %>
 <% end %>
