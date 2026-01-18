@@ -24,12 +24,21 @@ module Spree
         params_hash = @params.respond_to?(:to_unsafe_h) ? @params.to_unsafe_h : @params.to_h
         request_hash = { params: params_hash }
 
-        # Uses countish paginator which is faster as it avoids COUNT queries
-        # Falls back to offset for queries with HAVING or GROUP BY (incompatible with countish)
         sql = @collection.to_sql
-        paginator = (sql.include?(' HAVING ') || sql.include?(' GROUP BY ')) ? :offset : :countish
+        has_grouping = sql.include?(' HAVING ') || sql.include?(' GROUP BY ')
 
-        pagy, records = pagy(paginator, @collection, limit: @per_page, request: request_hash)
+        if has_grouping
+          # For queries with GROUP BY/HAVING, we need to provide explicit count
+          # because Pagy's COUNT query can't handle computed ORDER BY columns
+          # Use .size on grouped count hash to get total number of groups
+          count_result = @collection.unscope(:order, :select).distinct.count
+          count = count_result.is_a?(Hash) ? count_result.size : count_result
+          pagy, records = pagy(:offset, @collection, limit: @per_page, request: request_hash, count: count)
+        else
+          # Uses countish paginator which is faster as it avoids COUNT queries
+          pagy, records = pagy(:countish, @collection, limit: @per_page, request: request_hash)
+        end
+
         PagyCollection.new(records, pagy)
       end
     end

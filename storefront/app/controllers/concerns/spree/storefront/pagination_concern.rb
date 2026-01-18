@@ -13,9 +13,21 @@ module Spree
         if Spree::Storefront::Config[:use_kaminari_pagination]
           collection.page(params[:page]).per(limit)
         else
-          # Uses countish paginator which is faster as it avoids COUNT queries
-          # by fetching limit+1 records to detect if there's a next page
-          @pagy, records = pagy(:countish, collection, limit: limit)
+          sql = collection.to_sql
+          has_grouping = sql.include?(' HAVING ') || sql.include?(' GROUP BY ')
+
+          if has_grouping
+            # For queries with GROUP BY/HAVING, we need to provide explicit count
+            # because Pagy's COUNT query can't handle computed ORDER BY columns
+            # Use .size on grouped count hash to get total number of groups
+            count_result = collection.unscope(:order, :select).distinct.count
+            count = count_result.is_a?(Hash) ? count_result.size : count_result
+            @pagy, records = pagy(:offset, collection, limit: limit, count: count)
+          else
+            # Uses countish paginator which is faster as it avoids COUNT queries
+            @pagy, records = pagy(:countish, collection, limit: limit)
+          end
+
           records
         end
       end

@@ -284,10 +284,21 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
 
       limit = params[:per_page] || Spree::Admin::RuntimeConfig.admin_records_per_page
 
-      # Use offset paginator for queries with HAVING or GROUP BY (countish is incompatible)
       sql = result.to_sql
-      paginator = (sql.include?(' HAVING ') || sql.include?(' GROUP BY ')) ? :offset : :countish
-      @pagy, paginated = pagy(paginator, result, limit: limit)
+      has_grouping = sql.include?(' HAVING ') || sql.include?(' GROUP BY ')
+
+      if has_grouping
+        # For queries with GROUP BY/HAVING, we need to provide explicit count
+        # because Pagy's COUNT query can't handle computed ORDER BY columns
+        # Use .size on grouped count hash to get total number of groups
+        count_result = result.unscope(:order, :select).distinct.count
+        count = count_result.is_a?(Hash) ? count_result.size : count_result
+        @pagy, paginated = pagy(:offset, result, limit: limit, count: count)
+      else
+        # Uses countish paginator which is faster as it avoids COUNT queries
+        @pagy, paginated = pagy(:countish, result, limit: limit)
+      end
+
       paginated
     end
   end
