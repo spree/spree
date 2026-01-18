@@ -3,6 +3,7 @@ module Spree
     module OrdersFiltersHelper
       def search_params
         super
+        return params[:q] if params[:q].blank?
 
         if params[:q][:completed_at_gt].present?
           params[:q][:completed_at_gt] = begin
