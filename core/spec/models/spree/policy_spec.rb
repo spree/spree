@@ -69,6 +69,24 @@ RSpec.describe Spree::Policy, type: :model do
         expect(policy.body.to_plain_text).to eq('Política de Privacidad')
       end
     end
+
+    context 'when always_use_translations is enabled' do
+      before do
+        @original_setting = Spree::Config.always_use_translations
+        Spree::Config.always_use_translations = true
+      end
+
+      after do
+        Spree::Config.always_use_translations = @original_setting
+      end
+
+      it 'allows creating policies with translations' do
+        policy = create(:policy, owner: store, name: 'Privacy Policy')
+
+        expect(policy).to be_persisted
+        expect(policy.name).to eq('Privacy Policy')
+      end
+    end
   end
 
   describe 'Scopes' do
