@@ -25,14 +25,14 @@ module Spree
         request_hash = { params: params_hash }
 
         sql = @collection.to_sql
-        has_grouping = sql.include?(' HAVING ') || sql.include?(' GROUP BY ')
 
-        if has_grouping
-          # Use offset paginator with count_over for GROUP BY/HAVING queries
-          # count_over uses COUNT(*) OVER () which works with grouped collections
+        if sql.include?(' HAVING ')
+          # Use offset paginator with count_over only for HAVING queries
+          # HAVING clauses reference computed columns that break normal COUNT queries
           pagy, records = pagy(:offset, @collection, limit: @per_page, request: request_hash, count_over: true)
         else
           # Uses countish paginator which is faster as it avoids COUNT queries
+          # Works fine with GROUP BY as long as there's no HAVING clause
           pagy, records = pagy(:countish, @collection, limit: @per_page, request: request_hash)
         end
 

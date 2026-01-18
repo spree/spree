@@ -3,5 +3,5 @@
 <% end %>
 
 <%= turbo_stream.append "products" do %>
-  <%= render 'spree/shared/products', products: storefront_products.records %>
+  <%= render 'spree/shared/products', products: storefront_products %>
 <% end %>
