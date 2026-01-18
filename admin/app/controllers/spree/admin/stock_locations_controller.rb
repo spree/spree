@@ -5,8 +5,6 @@ module Spree
 
       before_action :set_country, only: :new
 
-      skip_before_action :load_resource, only: [:select_options]
-
       # PUT /admin/stock_locations/:id/mark_as_default
       def mark_as_default
         @stock_location.update(default: true)
@@ -17,8 +15,11 @@ module Spree
 
       # GET /admin/stock_locations/select_options
       def select_options
-        @stock_locations = Spree::StockLocation.active.ransack(name_cont: params[:q]).result.limit(50).order(:name)
-        render json: @stock_locations.map { |sl| { id: sl.id, name: sl.display_name } }
+        q = params[:q]
+        ransack_params = q.is_a?(String) ? { name_i_cont: q } : q
+        stock_locations = Spree::StockLocation.active.accessible_by(current_ability).ransack(ransack_params).result.order(:name).limit(50)
+
+        render json: stock_locations.map { |sl| { id: sl.id, name: sl.display_name } }
       end
 
       private

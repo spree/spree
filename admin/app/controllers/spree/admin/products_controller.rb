@@ -29,8 +29,6 @@ module Spree
       update.before :remove_empty_params
       helper_method :clone_object_url
 
-      skip_before_action :load_resource, only: [:select_options]
-
       # https://blog.corsego.com/hotwire-turbo-streams-autocomplete-search
       def search
         query = params[:q]&.strip

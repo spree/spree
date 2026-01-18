@@ -4,7 +4,7 @@ module Spree
       def taxons_scope(with_automatic: false)
         @memoized_taxons_scope ||= {}
         @memoized_taxons_scope[with_automatic] ||= begin
-          scope = current_store.taxons.where.not(parent_id: nil)
+          scope = current_store.taxons.accessible_by(current_ability).where.not(parent_id: nil)
           scope = scope.where(automatic: false) unless with_automatic
           scope
         end

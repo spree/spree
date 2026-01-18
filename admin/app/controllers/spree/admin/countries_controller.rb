@@ -4,7 +4,7 @@ module Spree
       def select_options
         q = params[:q]
         ransack_params = q.is_a?(String) ? { name_cont: q } : q
-        countries = Spree::Country.ransack(ransack_params).result.order(:name).limit(50)
+        countries = Spree::Country.accessible_by(current_ability).ransack(ransack_params).result.order(:name).limit(50)
 
         render json: countries.pluck(:id, :name).map { |id, name| { id: id, name: name } }
       end

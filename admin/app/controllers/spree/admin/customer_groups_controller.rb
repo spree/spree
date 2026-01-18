@@ -4,12 +4,10 @@ module Spree
       add_breadcrumb_icon 'users'
       add_breadcrumb Spree.t(:customer_groups), :admin_customer_groups_path
 
-      skip_before_action :load_resource, only: [:select_options]
-
       def select_options
         q = params[:q]
         ransack_params = q.is_a?(String) ? { name_cont: q } : q
-        customer_groups = current_store.customer_groups.ransack(ransack_params).result.order(:name).limit(50)
+        customer_groups = current_store.customer_groups.accessible_by(current_ability).ransack(ransack_params).result.order(:name).limit(50)
 
         render json: customer_groups.pluck(:id, :name).map { |id, name| { id: id, name: name } }
       end

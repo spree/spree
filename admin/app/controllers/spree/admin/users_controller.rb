@@ -13,12 +13,10 @@ module Spree
       add_breadcrumb_icon 'users'
       add_breadcrumb Spree.t(:customers), :admin_users_path
 
-      skip_before_action :load_resource, only: [:select_options]
-
       def select_options
         q = params[:q]
         ransack_params = q.is_a?(String) ? { email_cont: q } : q
-        users = model_class.ransack(ransack_params).result.order(:email).limit(50)
+        users = model_class.accessible_by(current_ability).ransack(ransack_params).result.order(:email).limit(50)
 
         render json: users.pluck(:id, :email).map { |id, email| { id: id, name: email } }
       end
