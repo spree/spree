@@ -5,6 +5,8 @@ module Spree
 
       before_action :load_form_data, except: :index
 
+      skip_before_action :load_resource, only: [:select_options]
+
       # GET /admin/promotions/select_options
       def select_options
         promotions = current_store.promotions.applied

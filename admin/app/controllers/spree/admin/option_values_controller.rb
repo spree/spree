@@ -3,8 +3,11 @@ module Spree
     class OptionValuesController < ResourceController
       belongs_to 'spree/option_type', find_by: :id
 
+      skip_before_action :load_resource, only: [:select_options]
+
       def select_options
-        render json: @option_type.option_values.to_tom_select_json
+        option_type = Spree::OptionType.find(params[:option_type_id])
+        render json: option_type.option_values.to_tom_select_json
       end
 
       private

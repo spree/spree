@@ -408,7 +408,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   def collection_actions
     [:index, :select_options, :bulk_modal, :bulk_status_update,
      :bulk_add_to_taxons, :bulk_remove_from_taxons,
-     :bulk_add_tags, :bulk_remove_tags, :bulk_destroy]
+     :bulk_add_tags, :bulk_remove_tags, :bulk_destroy, :select_options]
   end
 
   # Returns true if the current action is a member action

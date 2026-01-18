@@ -10,7 +10,9 @@ module Spree
       add_breadcrumb Spree.t(:draft_orders), :admin_checkouts_path
       add_breadcrumb_icon 'inbox'
 
-      def index; end
+      def index
+        @orders = @collection
+      end
 
       private
 

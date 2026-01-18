@@ -9,6 +9,8 @@ module Spree
 
       before_action :add_breadcrumb_for_post, only: [:edit, :update]
 
+      skip_before_action :load_resource, only: [:select_options]
+
       def select_options
         render json: current_store.posts.published.to_tom_select_json
       end

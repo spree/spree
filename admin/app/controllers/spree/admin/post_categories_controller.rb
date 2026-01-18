@@ -6,6 +6,8 @@ module Spree
       add_breadcrumb Spree.t(:posts), :admin_posts_path
       add_breadcrumb Spree.t(:categories), :admin_post_categories_path
 
+      skip_before_action :load_resource, only: [:select_options]
+
       def select_options
         post_categories = current_store.post_categories.accessible_by(current_ability)
         render json: post_categories.pluck(:id, :title).map { |id, title| { id: id, name: title } }

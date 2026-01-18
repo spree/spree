@@ -21,6 +21,8 @@ module Spree
       add_breadcrumb_icon 'package'
       before_action :add_breadcrumb_taxonomy
 
+      skip_before_action :load_resource, only: [:select_options]
+
       def show
         redirect_to location_after_save
       end

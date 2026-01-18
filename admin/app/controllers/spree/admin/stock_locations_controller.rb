@@ -5,6 +5,8 @@ module Spree
 
       before_action :set_country, only: :new
 
+      skip_before_action :load_resource, only: [:select_options]
+
       # PUT /admin/stock_locations/:id/mark_as_default
       def mark_as_default
         @stock_location.update(default: true)
