@@ -10,17 +10,20 @@ module Spree
       add_breadcrumb Spree.t(:draft_orders), :admin_checkouts_path
       add_breadcrumb_icon 'inbox'
 
-      def index
-        params[:q] ||= {}
-        params[:q][:s] ||= 'created_at desc'
-
-        load_orders
-      end
+      def index; end
 
       private
 
       def scope
         current_store.checkouts.accessible_by(current_ability, :index)
+      end
+
+      def collection_default_sort
+        'created_at desc'
+      end
+
+      def collection_includes
+        { user: [], shipments: :stock_location }
       end
 
       def edit_object_url(object, options = {})

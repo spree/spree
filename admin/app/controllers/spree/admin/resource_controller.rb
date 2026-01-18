@@ -246,13 +246,32 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
       # Process query_state from table query builder if present
       process_table_query_state if table_registered?
 
-      params[:q] ||= {}
-      params[:q][:s] ||= collection_default_sort if collection_default_sort.present?
-      scope.ransack(params[:q])
+      scope.ransack(search_params)
     end
   end
 
+  # Override in child controllers to set custom search params
+  # @return [Hash] Ransack search params
+  def search_params
+    params[:q] ||= {}
+    params[:q][:s] ||= collection_default_sort if collection_default_sort.present?
+
+    date_range_params = %i[created_at_gt created_at_lt updated_at_gt updated_at_lt]
+    date_range_params.each do |param|
+      if params[:q][param].present?
+        params[:q][param] = begin
+          params[:q][param].to_date&.in_time_zone(current_timezone)&.beginning_of_day
+        rescue StandardError
+          ''
+        end
+      end
+    end
+
+    params[:q]
+  end
+
   # Returns the filtered and paginated ransack results
+  # Uses countish paginator which is faster as it avoids COUNT queries on most pages
   # @return [ActiveRecord::Relation]
   def collection
     @collection ||= begin
@@ -262,7 +281,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
       result = apply_table_sort(result) if table_registered? && custom_sort_active?
 
       limit = params[:per_page] || Spree::Admin::RuntimeConfig.admin_records_per_page
-      @pagy, paginated = pagy(:offset, result, limit: limit)
+      @pagy, paginated = pagy(:countish, result, limit: limit)
       paginated
     end
   end
