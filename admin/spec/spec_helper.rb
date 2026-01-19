@@ -62,9 +62,6 @@ RSpec.configure do |config|
   config.mock_with :rspec
   config.raise_errors_for_deprecations!
 
-  # If you're not using ActiveRecord, or you'd prefer not to run each of your
-  # examples within a transaction, comment the following line or assign false
-  # instead of true.
   config.use_transactional_fixtures = true
 
   config.before(:suite) do
@@ -73,8 +70,6 @@ RSpec.configure do |config|
     Capybara.javascript_driver = :selenium_chrome_headless
     Capybara.default_max_wait_time = 10
     Capybara.raise_server_errors = false
-    # Clean out the database state before the tests run
-    DatabaseCleaner.strategy = :transaction
     DatabaseCleaner.clean_with(:truncation)
   end
 
@@ -83,7 +78,16 @@ RSpec.configure do |config|
     Spree::Events.enable { example.run }
   end
 
-  config.around(:each) do |example|
+  # Use truncation for JS tests (they run in a separate thread)
+  config.before(:each, js: true) do
+    DatabaseCleaner.strategy = :truncation
+  end
+
+  config.before(:each, js: false) do
+    DatabaseCleaner.strategy = :transaction
+  end
+
+  config.around(:each, js: true) do |example|
     DatabaseCleaner.cleaning do
       example.run
     end

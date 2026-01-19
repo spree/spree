@@ -49,23 +49,16 @@ RSpec.configure do |config|
 
   config.include FactoryBot::Syntax::Methods
 
-  config.use_transactional_fixtures = false
+  config.use_transactional_fixtures = true
 
   config.before(:suite) do
     Spree::Events.disable!
-    DatabaseCleaner.strategy = :transaction
     DatabaseCleaner.clean_with(:truncation)
   end
 
   # Re-enable events for specs that need them
   config.around(:each, events: true) do |example|
     Spree::Events.enable { example.run }
-  end
-
-  config.around(:each) do |example|
-    DatabaseCleaner.cleaning do
-      example.run
-    end
   end
 
   config.include Spree::TestingSupport::Preferences

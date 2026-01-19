@@ -17,9 +17,6 @@ RSpec.configure do |config|
   config.mock_with :rspec
   config.raise_errors_for_deprecations!
 
-  # If you're not using ActiveRecord, or you'd prefer not to run each of your
-  # examples within a transaction, comment the following line or assign false
-  # instead of true.
   config.use_transactional_fixtures = true
 
   config.include FactoryBot::Syntax::Methods
@@ -35,16 +32,11 @@ RSpec.configure do |config|
 
   config.before(:suite) do
     Spree::Events.disable!
-    DatabaseCleaner.strategy = :transaction
     DatabaseCleaner.clean_with(:truncation)
   end
 
   # Re-enable events for specs that need them
   config.around(:each, events: true) do |example|
     Spree::Events.enable { example.run }
-  end
-
-  config.append_after do
-    DatabaseCleaner.clean
   end
 end
