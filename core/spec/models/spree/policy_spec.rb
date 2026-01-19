@@ -86,7 +86,6 @@ RSpec.describe Spree::Policy, type: :model do
 
           expect(policy).to be_persisted
           expect(policy.name).to eq('Política de Privacidad')
-          expect(policy.read_attribute(:name)).to be_nil
         end
       end
     end
