@@ -121,7 +121,13 @@ jobs:
     parallelism: 2
     environment:
       <<: *environment
-      PROJECTS: storefront,page_builder
+      PROJECTS: storefront
+  test_page_builder_postgres:
+    <<: *test
+    parallelism: 1
+    environment:
+      <<: *environment
+      PROJECTS: page_builder
   test_other_postgres:
     <<: *test
     environment:
@@ -152,7 +158,13 @@ jobs:
     parallelism: 2
     environment:
       <<: *mysql_environment
-      PROJECTS: storefront,page_builder
+      PROJECTS: storefront
+  test_page_builder_mysql:
+    <<: *test_mysql
+    parallelism: 1
+    environment:
+      <<: *mysql_environment
+      PROJECTS: page_builder
   test_other_mysql:
     <<: *test_mysql
     environment:
@@ -192,6 +204,9 @@ workflows:
       - test_storefront_postgres:
           requires:
             - build
+      - test_page_builder_postgres:
+          requires:
+            - build
       - test_other_postgres:
           requires:
             - build
@@ -207,6 +222,9 @@ workflows:
           requires:
             - build
       - test_storefront_mysql:
+          requires:
+            - build
+      - test_page_builder_mysql:
           requires:
             - build
       - test_other_mysql:

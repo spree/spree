@@ -16,8 +16,10 @@ RSpec.configure do |config|
       # Ensure locale is set to :en before creating store to avoid translation issues
       # when previous tests left the locale in a different language
       I18n.with_locale(:en) do
-        @default_country = Spree::Country.find_by(iso: 'US') || FactoryBot.create(:country_us)
-        @default_store = Spree::Store.find_by(default: true) || FactoryBot.create(:store, default: true, default_country: @default_country, default_currency: 'USD')
+        Spree::Events.disable do
+          @default_country = Spree::Country.find_by(iso: 'US') || FactoryBot.create(:country_us)
+          @default_store = Spree::Store.find_by(default: true) || FactoryBot.create(:store, default: true, default_country: @default_country, default_currency: 'USD')
+        end
       end
     end
   end

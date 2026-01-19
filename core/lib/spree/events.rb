@@ -201,6 +201,14 @@ module Spree
       ensure
         RequestStore.store[:spree_events_disabled] = previous
       end
+
+      # Set the disabled state of the event system
+      # Useful for testing
+      # @param value [Boolean] The disabled state
+      # @return [void]
+      def disable!
+        RequestStore.store[:spree_events_disabled] = false
+      end
     end
   end
 end

@@ -61,6 +61,12 @@ module Spree
             force: options[:force]
           )
           say "Created app/assets/tailwind/spree_admin.css for Tailwind CSS customization"
+
+          # Create empty application.css to satisfy the default tailwindcss:build task
+          # This prevents errors when running assets:precompile with tailwindcss-rails gem
+          unless File.exist?('app/assets/tailwind/application.css')
+            create_file 'app/assets/tailwind/application.css', "/* Empty file to satisfy tailwindcss-rails default build task */\n"
+          end
         end
       end
     end
