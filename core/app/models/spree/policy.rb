@@ -36,7 +36,7 @@ module Spree
     #
     # Scopes
     #
-    scope :with_body,    -> { joins(:rich_text_body).distinct }
+    scope :with_body, -> { joins(:rich_text_body).distinct }
     scope :without_body, -> { where.missing(:rich_text_body) }
     scope :with_matching_name, ->(name_to_match) do
       value = name_to_match.to_s.strip.downcase
