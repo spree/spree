@@ -99,6 +99,7 @@ module Spree
       exports: :default,
       images: :default,
       imports: :default,
+      products: :default,
       reports: :default,
       variants: :default,
       taxons: :default,

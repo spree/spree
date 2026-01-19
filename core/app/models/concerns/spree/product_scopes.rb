@@ -327,6 +327,27 @@ module Spree
         group('spree_products.id').joins(:taxons).where(Taxon.arel_table[:name].eq(name))
       end
 
+      # Orders products by best selling based on units_sold_count and revenue
+      # stored in spree_products_stores table.
+      #
+      # These metrics are updated asynchronously when orders are completed
+      # via the ProductMetricsSubscriber.
+      #
+      # @param order_direction [Symbol] :desc (default) or :asc
+      # @return [ActiveRecord::Relation]
+      add_search_scope :by_best_selling do |order_direction = :desc|
+        order_dir = order_direction == :desc ? 'DESC' : 'ASC'
+        store_id = Spree::Current.store&.id
+
+        joins(:store_products)
+          .where(spree_products_stores: { store_id: store_id })
+          .select("#{Product.table_name}.*",
+                  'spree_products_stores.units_sold_count',
+                  'spree_products_stores.revenue')
+          .order(Arel.sql("spree_products_stores.units_sold_count #{order_dir}"))
+          .order(Arel.sql("spree_products_stores.revenue #{order_dir}"))
+      end
+
       # .search_by_name
       if defined?(PgSearch)
         include PgSearch::Model
