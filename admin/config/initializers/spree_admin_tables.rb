@@ -112,7 +112,7 @@ Rails.application.config.after_initialize do
                                         ransack_attribute: 'taxons_id',
                                         operators: %i[in],
                                         search_url: '/admin/taxons/select_options.json',
-                                        method: ->(product) { product.taxons.pluck(:pretty_name).to_sentence }
+                                        method: ->(product) { product.taxons.pluck(:pretty_name).to_sentence if product.classification_count.positive? }
 
   # Tags - displayed as comma-separated list, filtered via autocomplete
   Spree.admin.tables.products.add :tags,

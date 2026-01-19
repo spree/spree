@@ -34,6 +34,11 @@ module Spree
           Spree::Product.where(id: (previous_products_ids + product_ids_to_insert).uniq).touch_all
         end
 
+        # update counter caches
+        Spree::Taxon.reset_counters(taxon.id, :classifications)
+        all_product_ids = (previous_products_ids + product_ids_to_insert).uniq
+        all_product_ids.each { |id| Spree::Product.reset_counters(id, :classifications) }
+
         success(taxon)
       end
 

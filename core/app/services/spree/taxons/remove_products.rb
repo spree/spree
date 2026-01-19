@@ -11,12 +11,15 @@ module Spree
       def call(taxons:, products:)
         return if taxons.blank? || products.blank?
 
+        taxon_ids = taxons.pluck(:id)
+        product_ids = products.pluck(:id)
+
         ApplicationRecord.transaction do
-          taxons.pluck(:id).each do |taxon_id|
-            Spree::Classification.where(taxon_id: taxon_id, product_id: products.pluck(:id)).delete_all
+          taxon_ids.each do |taxon_id|
+            Spree::Classification.where(taxon_id: taxon_id, product_id: product_ids).delete_all
           end
 
-          classifications_params = taxons.pluck(:id).flat_map do |taxon_id|
+          classifications_params = taxon_ids.flat_map do |taxon_id|
             position = 0
             existing_product_ids = Spree::Classification.where(taxon_id: taxon_id).pluck(:product_id)
 
@@ -42,10 +45,12 @@ module Spree
           end
         end
 
-        # clear cache
-        Spree::Product.where(id: products.pluck(:id)).touch_all
+        # update counter caches
+        taxon_ids.each { |id| Spree::Taxon.reset_counters(id, :classifications) }
+        product_ids.each { |id| Spree::Product.reset_counters(id, :classifications) }
 
-        taxon_ids = taxons.pluck(:id)
+        # clear cache
+        Spree::Product.where(id: product_ids).touch_all
         Spree::Taxon.where(id: taxon_ids).touch_all
         Spree::Taxons::TouchFeaturedSections.call(taxon_ids: taxon_ids) if defined?(Spree::Taxons::TouchFeaturedSections)
 

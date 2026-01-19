@@ -28,10 +28,14 @@ module Spree
         # doing a quick insert_all here to avoid the overhead of instantiating
         Spree::Classification.insert_all(classifications_params)
 
-        # clearing cache
-        Spree::Product.where(id: products.pluck(:id)).touch_all
-
+        # update counter caches
         taxon_ids = taxons.pluck(:id)
+        product_ids = products.pluck(:id)
+        taxon_ids.each { |id| Spree::Taxon.reset_counters(id, :classifications) }
+        product_ids.each { |id| Spree::Product.reset_counters(id, :classifications) }
+
+        # clearing cache
+        Spree::Product.where(id: product_ids).touch_all
         Spree::Taxon.where(id: taxon_ids).touch_all
         Spree::Taxons::TouchFeaturedSections.call(taxon_ids: taxon_ids) if defined?(Spree::Taxons::TouchFeaturedSections)
 

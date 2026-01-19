@@ -24,6 +24,9 @@ module Spree
     acts_as_taggable_on :tags, :labels
     normalizes :name, with: ->(value) { value&.to_s&.squish&.presence }
 
+    attribute :variant_count, :integer, default: 0
+    attribute :classification_count, :integer, default: 0
+
     include Spree::ProductScopes
     include Spree::MultiStoreResource
     include Spree::TranslatableResource
@@ -40,7 +43,7 @@ module Spree
 
     MEMOIZED_METHODS = %w[total_on_hand taxonomy_ids taxon_and_ancestors category
                           default_variant_id tax_category default_variant
-                          default_image secondary_image
+                          default_image secondary_image category_taxon brand_taxon main_taxon
                           purchasable? in_stock? backorderable? digital?]
 
     STATUSES = %w[draft active archived].freeze
@@ -565,17 +568,19 @@ module Spree
     # Returns the brand taxon for the product
     # @return [Spree::Taxon]
     def brand_taxon
-      @brand ||= if Spree.use_translations?
-                   taxons.joins(:taxonomy).
-                     join_translation_table(Taxonomy).
-                     find_by(Taxonomy.translation_table_alias => { name: Spree.t(:taxonomy_brands_name) })
-                 else
-                   if taxons.loaded?
-                     taxons.find { |taxon| taxon.taxonomy.name == Spree.t(:taxonomy_brands_name) }
-                   else
-                     taxons.joins(:taxonomy).find_by(Taxonomy.table_name => { name: Spree.t(:taxonomy_brands_name) })
-                   end
-                 end
+      @brand_taxon ||= if classification_count.zero?
+                         nil
+                       elsif Spree.use_translations?
+                         taxons.joins(:taxonomy).
+                            join_translation_table(Taxonomy).
+                            find_by(Taxonomy.translation_table_alias => { name: Spree.t(:taxonomy_brands_name) })
+                        else
+                          if taxons.loaded?
+                            taxons.find { |taxon| taxon.taxonomy.name == Spree.t(:taxonomy_brands_name) }
+                          else
+                            taxons.joins(:taxonomy).find_by(Taxonomy.table_name => { name: Spree.t(:taxonomy_brands_name) })
+                          end
+                        end
     end
 
     # Returns the brand name for the product
@@ -600,25 +605,31 @@ module Spree
     # Returns the category taxon for the product
     # @return [Spree::Taxon]
     def category_taxon
-      @category ||= if Spree.use_translations?
-                      taxons.joins(:taxonomy).
-                        join_translation_table(Taxonomy).
-                        order(depth: :desc).
-                        find_by(Taxonomy.translation_table_alias => { name: Spree.t(:taxonomy_categories_name) })
-                    else
-                      if taxons.loaded?
-                        taxons.find { |taxon| taxon.taxonomy.name == Spree.t(:taxonomy_categories_name) }
-                      else
-                        taxons.joins(:taxonomy).order(depth: :desc).find_by(Taxonomy.table_name => { name: Spree.t(:taxonomy_categories_name) })
-                      end
-                    end
+      @category_taxon ||= if classification_count.zero?
+                            nil
+                          elsif Spree.use_translations?
+                            taxons.joins(:taxonomy).
+                              join_translation_table(Taxonomy).
+                              order(depth: :desc).
+                              find_by(Taxonomy.translation_table_alias => { name: Spree.t(:taxonomy_categories_name) })
+                          else
+                            if taxons.loaded?
+                              taxons.find { |taxon| taxon.taxonomy.name == Spree.t(:taxonomy_categories_name) }
+                            else
+                              taxons.joins(:taxonomy).order(depth: :desc).find_by(Taxonomy.table_name => { name: Spree.t(:taxonomy_categories_name) })
+                            end
+                          end
     end
 
     def main_taxon
-      category_taxon || taxons.first
+      return if classification_count.zero?
+
+      @main_taxon ||= category_taxon || taxons.first
     end
 
     def taxons_for_store(store)
+      return if classification_count.zero?
+
       Rails.cache.fetch("#{cache_key_with_version}/taxons-per-store/#{store.id}") do
         taxons.for_store(store)
       end

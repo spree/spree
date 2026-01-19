@@ -21,8 +21,8 @@
   </div>
 
   <div class="overflow-hidden text-gray-600 text-sm ml-auto">
-    <% if taxon.classifications.count > 0 %>
-      <%= pluralize(taxon.classifications.count, Spree.t(:product)) %>
+    <% if taxon.classification_count.positive? %>
+      <%= pluralize(taxon.classification_count, Spree.t(:product)) %>
     <% end %>
   </div>
 
