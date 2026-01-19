@@ -22,7 +22,7 @@ describe Spree::Shipment, type: :model do
         allow(shipment).to receive_messages(require_inventory: false, update_order: true, state: state)
       end
 
-      it 'publishes shipment.shipped event when shipping' do
+      it 'publishes shipment.shipped event when shipping', events: true do
         allow_any_instance_of(Spree::ShipmentHandler).to receive(:update_order_shipment_state)
 
         expect(shipment).to receive(:publish_event).with('shipment.shipped')

@@ -383,7 +383,7 @@ RSpec.describe Spree::Import, :job, type: :model do
     end
   end
 
-  describe 'custom events' do
+  describe 'custom events', events: true do
     describe 'import.completed' do
       before do
         import.save!

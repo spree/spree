@@ -1307,7 +1307,7 @@ describe Spree::Payment, type: :model do
     end
   end
 
-  describe 'events' do
+  describe 'events', events: true do
     describe 'completed state transition' do
       it 'publishes payment.completed event' do
         payment.started_processing!

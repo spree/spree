@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::StockMovement, type: :model do
   # Note: StockMovement is marked as readonly after creation, so we only test the created event
-  describe 'lifecycle events' do
+  describe 'lifecycle events', events: true do
     describe 'stock_movement.created' do
       it 'publishes created event when record is created' do
         record = build(:stock_movement)

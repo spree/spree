@@ -195,7 +195,7 @@ RSpec.describe Spree::GiftCard, type: :model do
   end
   end
 
-  describe 'custom events' do
+  describe 'custom events', events: true do
     let(:store) { Spree::Store.default }
 
     describe 'gift_card.redeemed' do

@@ -77,6 +77,11 @@ RSpec.configure do |config|
     DatabaseCleaner.clean_with(:truncation)
   end
 
+  # Re-enable events for specs that need them
+  config.around(:each, events: true) do |example|
+    Spree::Events.enable { example.run }
+  end
+
   config.around(:each) do |example|
     DatabaseCleaner.cleaning do
       example.run
