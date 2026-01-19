@@ -340,12 +340,12 @@ module Spree
         store_id = Spree::Current.store&.id
 
         joins(:store_products)
-          .where(spree_products_stores: { store_id: store_id })
+          .where(StoreProduct.table_name => { store_id: store_id })
           .select("#{Product.table_name}.*",
-                  'spree_products_stores.units_sold_count',
-                  'spree_products_stores.revenue')
-          .order(Arel.sql("spree_products_stores.units_sold_count #{order_dir}"))
-          .order(Arel.sql("spree_products_stores.revenue #{order_dir}"))
+                  "#{StoreProduct.table_name}.units_sold_count",
+                  "#{StoreProduct.table_name}.revenue")
+          .order(Arel.sql("#{StoreProduct.table_name}.units_sold_count #{order_dir}"))
+          .order(Arel.sql("#{StoreProduct.table_name}.revenue #{order_dir}"))
       end
 
       # .search_by_name
