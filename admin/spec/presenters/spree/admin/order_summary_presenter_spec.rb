@@ -117,7 +117,7 @@ RSpec.describe Spree::Admin::OrderSummaryPresenter do
       let(:order) { create(:order_with_line_items, store: store) }
 
       before do
-        order.shipments.destroy_all
+        order.shipments.delete_all
         allow(order).to receive(:checkout_steps).and_return([])
       end
 
