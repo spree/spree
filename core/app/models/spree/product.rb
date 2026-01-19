@@ -313,7 +313,8 @@ module Spree
       master || build_master
     end
 
-    # the master variant is not a member of the variants array
+    # Checks if product has variants (non-master variants)
+    # @return [Boolean]
     def has_variants?
       return variants.size.positive? if variants.loaded?
 
