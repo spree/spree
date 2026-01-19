@@ -546,9 +546,6 @@ module Spree
 
     def available_payment_methods(store = nil)
       Spree::Deprecation.warn('`Order#available_payment_methods` is deprecated and will be removed in Spree 5.5. Use `collect_frontend_payment_methods` instead.')
-      if store.present?
-        Spree::Deprecation.warn('The `store` parameter is deprecated and will be removed in Spree 5. Order is already associated with Store')
-      end
 
       @available_payment_methods ||= collect_payment_methods(store)
     end

@@ -35,7 +35,7 @@ RSpec.describe Spree::Checkout::Advance do
 
       context 'when no transition has been made' do
         before do
-          order.payments.destroy_all
+          order.payments.delete_all
           order.update_column(:state, 'payment')
         end
 
@@ -75,7 +75,7 @@ RSpec.describe Spree::Checkout::Advance do
 
       context 'when unable to reach the targeted state' do
         before do
-          order.payments.destroy_all
+          order.payments.delete_all
         end
 
         it 'responds with an error' do

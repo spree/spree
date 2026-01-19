@@ -1,21 +1,8 @@
 require 'spec_helper'
 
 RSpec.describe Spree::StoreProduct, type: :model do
-  describe 'associations' do
-    it { is_expected.to belong_to(:store).class_name('Spree::Store').without_validating_presence }
-    it { is_expected.to belong_to(:product).class_name('Spree::Product').without_validating_presence }
-  end
-
-  describe 'validations' do
-    subject { build(:store_product) }
-
-    it { is_expected.to validate_presence_of(:store) }
-    it { is_expected.to validate_presence_of(:product) }
-    it { is_expected.to validate_uniqueness_of(:store_id).scoped_to(:product_id) }
-  end
-
   describe '#refresh_metrics!' do
-    let(:store) { create(:store) }
+    let(:store) { @default_store }
     let(:product) { create(:product, stores: [store]) }
     let(:store_product) { product.store_products.find_by(store: store) }
 

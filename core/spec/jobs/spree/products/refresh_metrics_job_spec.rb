@@ -2,7 +2,7 @@ require 'spec_helper'
 
 RSpec.describe Spree::Products::RefreshMetricsJob, type: :job do
   describe '#perform' do
-    let(:store) { create(:store) }
+    let(:store) { @default_store }
     let(:product) { create(:product, stores: [store]) }
     let(:store_product) { product.store_products.find_by(store: store) }
 

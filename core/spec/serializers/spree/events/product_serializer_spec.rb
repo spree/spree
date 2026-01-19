@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Events::ProductSerializer do
-  let(:store) { create(:store) }
+  let(:store) { @default_store }
   let(:product) do
     create(:product,
            name: 'Test Product',

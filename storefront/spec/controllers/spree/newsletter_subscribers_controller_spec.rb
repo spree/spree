@@ -6,7 +6,7 @@ RSpec.describe Spree::NewsletterSubscribersController, type: :controller, newsle
   let(:store) { @default_store }
 
   before do
-    allow(controller).to receive(:current_store).and_return(create(:store))
+    allow(controller).to receive(:current_store).and_return(store)
   end
 
   describe 'POST #create' do

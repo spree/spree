@@ -5,7 +5,7 @@ RSpec.describe Spree::V2::Storefront::CartSerializer do
 
   include_context 'API v2 serializers params'
 
-  let!(:order) { create(:order) }
+  let!(:order) { build(:order) }
 
   describe '#promo_total_cents' do
     context 'without any promo applied' do
@@ -16,7 +16,7 @@ RSpec.describe Spree::V2::Storefront::CartSerializer do
 
     context 'with a promo applied' do
       before do
-        order.update_column(:promo_total, 10)
+        order.promo_total = 10
       end
 
       it 'returns the promo total in cents' do

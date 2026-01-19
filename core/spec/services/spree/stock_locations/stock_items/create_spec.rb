@@ -64,7 +64,7 @@ module Spree
       end
 
       context 'without prepared stock items' do
-        before { Spree::Variant.destroy_all }
+        before { Spree::Variant.delete_all }
 
         it 'does not insert stock items' do
           expect(stock_location.stock_items).not_to receive(:insert_all)

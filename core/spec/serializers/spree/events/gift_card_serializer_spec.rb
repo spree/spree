@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Events::GiftCardSerializer do
-  let(:store) { create(:store) }
+  let(:store) { @default_store }
   let(:gift_card) do
     create(:gift_card,
            store: store,

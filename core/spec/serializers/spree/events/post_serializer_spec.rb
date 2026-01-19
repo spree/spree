@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Events::PostSerializer do
-  let(:store) { create(:store) }
+  let(:store) { @default_store }
   let(:post_category) { create(:post_category, store: store) }
   let(:author) { create(:admin_user) }
   let(:post) do

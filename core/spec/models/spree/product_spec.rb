@@ -113,7 +113,7 @@ describe Spree::Product, type: :model do
 
     describe '#duplicate' do
       before do
-        allow(product).to receive_messages taxons: [create(:taxon)], stores: [store]
+        allow(product).to receive_messages taxons: [build(:taxon)], stores: [store]
       end
 
       it 'duplicates product' do
@@ -276,7 +276,7 @@ describe Spree::Product, type: :model do
       let!(:high) { create(:variant, product: product) }
       let!(:low) { create(:variant, product: product) }
 
-      before { high.option_values.destroy_all }
+      before { high.option_values.delete_all }
 
       it 'returns only variants with option values' do
         expect(product.variants_and_option_values).to eq([low])

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Exports::Products, type: :model do
-  let(:store) { create(:store) }
+  let(:store) { @default_store }
   let(:export) { described_class.new(store: store) }
 
   describe '#scope' do

@@ -210,11 +210,6 @@ module Spree
       end
     end
 
-    def redirect_back_or_default(default)
-      Spree::Deprecation.warn('redirect_back_or_default is deprecated and will be removed in Spree 5.2. Please use redirect_back(fallback_location: default) instead.')
-      redirect_back(fallback_location: default)
-    end
-
     def require_user(return_to: nil, redirect_path: nil)
       return if try_spree_current_user
 

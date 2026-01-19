@@ -500,24 +500,6 @@ describe Spree::Store, type: :model, without_global_store: true do
     before { subject.update(checkout_zone: nil) }
   end
 
-  shared_context 'with default checkout zone set' do
-    let!(:country3) { create(:country) }
-
-    let!(:state3)   { create(:state, country: country3) }
-
-    let(:default_zone) do
-      Spree::Zone.first || create(:zone, kind: 'country').tap do |zone|
-        zone.members.create(zoneable: country3)
-      end
-    end
-
-    before { allow(Spree::Zone).to receive(:default_checkout_zone) { default_zone } }
-  end
-
-  shared_context 'with default checkout zone not set' do
-    before { allow(Spree::Zone).to receive(:default_checkout_zone) { nil } }
-  end
-
   describe '#countries_available_for_checkout' do
     subject { create(:store) }
 
@@ -555,16 +537,6 @@ describe Spree::Store, type: :model, without_global_store: true do
       include_context 'with checkout zone not set'
 
       context do
-        include_context 'with default checkout zone set'
-
-        it 'returns states list for default checkout zone' do
-          expect(subject.states_available_for_checkout(country3)).to eq [state3]
-        end
-      end
-
-      context do
-        include_context 'with default checkout zone not set'
-
         let(:country_with_states) do
           create(:country).tap do |country|
             country.states << create(:state)
@@ -576,38 +548,6 @@ describe Spree::Store, type: :model, without_global_store: true do
           all_countries_ids              = country_with_states.states.pluck(:id)
 
           expect(checkout_available_states_ids3).to eq(all_countries_ids)
-        end
-      end
-    end
-  end
-
-  describe '#checkout_zone_or_default' do
-    subject { build(:store) }
-
-    context do
-      include_context 'with checkout zone set'
-
-      it 'returns checkout zone' do
-        expect(subject.checkout_zone_or_default).to eq zone
-      end
-    end
-
-    context do
-      include_context 'with checkout zone not set'
-
-      context do
-        include_context 'with default checkout zone set'
-
-        it 'returns default checkout zone' do
-          expect(subject.checkout_zone_or_default).to eq default_zone
-        end
-      end
-
-      context do
-        include_context 'with default checkout zone not set'
-
-        it 'returns nil' do
-          expect(subject.checkout_zone_or_default).to be_nil
         end
       end
     end

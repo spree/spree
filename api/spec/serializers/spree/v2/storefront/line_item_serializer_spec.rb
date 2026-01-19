@@ -5,7 +5,7 @@ RSpec.describe Spree::V2::Storefront::LineItemSerializer do
 
   include_context 'API v2 serializers params'
 
-  let!(:line_item) { create(:line_item) }
+  let!(:line_item) { build(:line_item) }
 
   it { expect(subject).to be_kind_of(Hash) }
 

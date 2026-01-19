@@ -5,7 +5,7 @@ module Spree
     RSpec.describe Context do
       let(:variant) { create(:variant) }
       let(:currency) { 'USD' }
-      let(:store) { create(:store) }
+      let(:store) { @default_store }
       let(:zone) { create(:zone) }
       let(:user) { create(:user) }
       let(:quantity) { 5 }

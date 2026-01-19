@@ -16,7 +16,7 @@ RSpec.describe Spree::ExportSubscriber do
   end
 
   describe '#generate_export_async' do
-    let(:store) { create(:store) }
+    let(:store) { @default_store }
     let(:user) { create(:admin_user) }
     let(:subscriber) { described_class.new }
     let(:export) { create(:export, store: store, user: user) }

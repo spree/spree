@@ -22,7 +22,7 @@ describe Spree::V2::Storefront::WishedItemSerializer do
           relationships: {
             variant: {
               data: {
-                id: wished_item.variant.id.to_s,
+                id: wished_item.variant_id.to_s,
                 type: :variant
               }
             }

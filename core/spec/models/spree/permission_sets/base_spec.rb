@@ -3,7 +3,7 @@ require 'cancan/matchers'
 
 RSpec.describe Spree::PermissionSets::Base do
   let(:user) { build(:user) }
-  let(:store) { create(:store) }
+  let(:store) { @default_store }
   let(:ability) { Spree::Ability.new(user, store: store) }
 
   describe '#initialize' do

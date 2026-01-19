@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Events::PostCategorySerializer do
-  let(:store) { create(:store) }
+  let(:store) { @default_store }
   let(:post_category) { create(:post_category, store: store, title: 'News') }
 
   subject { described_class.serialize(post_category) }

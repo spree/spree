@@ -13,7 +13,7 @@ describe Spree::Order, type: :model do
   let!(:store) { @default_store }
   let(:order) { create(:order, user: user, store: store) }
 
-  before { allow(Spree::LegacyUser).to receive_messages(current: create(:user)) }
+  before { allow(Spree::LegacyUser).to receive_messages(current: build(:user)) }
 
   it_behaves_like 'metadata'
 
@@ -2381,7 +2381,7 @@ describe Spree::Order, type: :model do
 
     context 'when order has shipments with no shipping rates' do
       before do
-        shipment.shipping_rates.destroy_all
+        shipment.shipping_rates.delete_all
       end
 
       it 'returns the line items without shipping rates' do
@@ -2407,7 +2407,7 @@ describe Spree::Order, type: :model do
 
     context 'when order has no shipments' do
       before do
-        order.shipments.destroy_all
+        order.shipments.delete_all
       end
 
       it 'returns false and adds an error to the order' do
@@ -2418,7 +2418,7 @@ describe Spree::Order, type: :model do
 
     context 'when order has shipments with no shipping rates' do
       before do
-        shipment.shipping_rates.destroy_all
+        shipment.shipping_rates.delete_all
       end
 
       it 'returns false and adds an error to the order' do
