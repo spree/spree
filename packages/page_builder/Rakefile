@@ -13,7 +13,6 @@ task :test_app do
   ENV['LIB_NAME'] = 'spree/page_builder'
 
   Rake::Task['common:test_app'].execute(
-    install_storefront: 'false',
-    install_admin: 'true'
+    install_admin: true,
   )
 end
