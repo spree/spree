@@ -18,10 +18,10 @@
   <% elsif selected_variant %>
     <% if selected_variant.sku.present? %>"sku": <%= selected_variant.sku.to_json.html_safe %>,<% end %>
   <% end %>
-  <% if product.brand_name %>
+  <% if product.brand_taxon %>
     "brand": {
       "@type": "Brand",
-      "name": <%= product.brand_name.to_json.html_safe %>
+      "name": <%= product.brand_taxon.name.to_json.html_safe %>
     },
   <% end %>
 "offers": [

@@ -47,9 +47,9 @@
                       </h1>
                     <% when 'Spree::PageBlocks::Products::Brand' %>
                       <% if product.brand_taxon %>
-                        <%= link_to spree.nested_taxons_path(product.brand_taxon), title: product.brand_name do %>
+                        <%= link_to spree.nested_taxons_path(product.brand_taxon), title: product.brand_taxon.name do %>
                           <h3 class="text-sm lg:mt-0 inline-block mb-1">
-                            <%= product.brand_name %>
+                            <%= product.brand_taxon.name %>
                           </h3>
                         <% end %>
                       <% end %>
