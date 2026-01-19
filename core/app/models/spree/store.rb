@@ -331,12 +331,6 @@ module Spree
       end
     end
 
-    def checkout_zone_or_default
-      Spree::Deprecation.warn('Store#checkout_zone_or_default is deprecated and will be removed in Spree 5')
-
-      @checkout_zone_or_default ||= checkout_zone || Spree::Zone.default_checkout_zone
-    end
-
     def supported_shipping_zones
       @supported_shipping_zones ||= if checkout_zone.present?
                                       [checkout_zone]

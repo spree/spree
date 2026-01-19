@@ -25,29 +25,6 @@ describe Spree::Core::ControllerHelpers::Auth, type: :controller do
     end
   end
 
-  describe '#set_token' do
-    controller(FakesController) do
-      def index
-        set_token
-        render plain: 'index'
-      end
-    end
-
-    it 'sends cookie header' do
-      get :index
-      expect(response.cookies['token']).not_to be_nil
-    end
-    it 'sets httponly flag' do
-      get :index
-      if Rails::VERSION::STRING >= '7.1.0'
-        token_header = response.headers['Set-Cookie'].find { |e| e.starts_with?('token=') }
-        expect(token_header).to include('httponly')
-      else
-        expect(response['Set-Cookie']).to include('HttpOnly')
-      end
-    end
-  end
-
   describe '#store_location' do
     it 'sets session return url' do
       allow(controller).to receive_messages(request: double(fullpath: '/redirect'))

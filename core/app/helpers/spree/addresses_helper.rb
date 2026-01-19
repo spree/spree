@@ -74,28 +74,6 @@ module Spree
       end
     end
 
-    def current_store_countries_with_states_ids
-      Spree::Deprecation.warn('current_store_countries_with_states_ids is deprecated and will be removed in Spree 5.3')
-
-      @current_store_countries_with_states_ids ||= current_store.countries_available_for_checkout.find_all { |country| country.states_required? }.each_with_object([]) do |country, memo|
-        memo << current_store.states_available_for_checkout(country)
-      end.flatten.pluck(:country_id)
-    end
-
-    def current_store_countries_without_states_ids
-      Spree::Deprecation.warn('current_store_countries_without_states_ids is deprecated and will be removed in Spree 5.3')
-
-      @current_store_countries_without_states_ids ||= current_store.countries_available_for_checkout.find_all { |country| !country.states_required? }.pluck(:id)
-    end
-
-    def current_store_supported_countries_ids
-      Spree::Deprecation.warn('current_store_supported_countries_ids is deprecated and will be removed in Spree 5.3')
-
-      @current_store_supported_countries_ids ||= Rails.cache.fetch(['current_store_supported_countries_ids', current_store]) do
-        (current_store_countries_with_states_ids + current_store_countries_without_states_ids).uniq
-      end
-    end
-
     def user_available_addresses
       return [] unless try_spree_current_user
 
