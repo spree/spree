@@ -5,7 +5,7 @@ module Spree
 
       def call(taxon:)
         return if taxon.nil?
-        return if taxon.destroyed? || !Spree::Taxon.exists?(taxon.id)
+        return if taxon.destroyed?
         return if taxon.manual?
 
         previous_products_ids = taxon.classifications.order(position: :asc).pluck(:product_id)
@@ -37,7 +37,7 @@ module Spree
 
         # update counter caches
         # Check if taxon still exists (may have been destroyed)
-        Spree::Taxon.reset_counters(taxon.id, :classifications) if Spree::Taxon.exists?(taxon.id)
+        Spree::Taxon.reset_counters(taxon.id, :classifications)
         all_product_ids = (previous_products_ids + product_ids_to_insert).uniq
         existing_product_ids = Spree::Product.where(id: all_product_ids).pluck(:id)
         existing_product_ids.each { |id| Spree::Product.reset_counters(id, :classifications) }
