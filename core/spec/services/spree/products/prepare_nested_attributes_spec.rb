@@ -4,7 +4,7 @@ RSpec.describe Spree::Products::PrepareNestedAttributes do
   subject(:prepared_params) { described_class.new(product, store, params, ability).call }
 
   let(:ability) { Spree::Ability.new(nil) }
-  let(:store) { create(:store) }
+  let(:store) { @default_store }
   let(:other_store) { create(:store) }
   let(:product) { create(:product, stores: [store, other_store]) }
   let(:params) { ActionController::Parameters.new(raw_params) }

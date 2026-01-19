@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Spree
   describe MailHelper, type: :helper do
-    let(:store) { create(:store) }
+    let(:store) { @default_store }
 
     before do
       allow(helper).to receive(:current_store) { store }

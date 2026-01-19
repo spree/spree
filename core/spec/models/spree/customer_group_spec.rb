@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe Spree::CustomerGroup, type: :model do
-  let(:store) { create(:store) }
+  let(:store) { @default_store }
   let(:customer_group) { create(:customer_group, store: store) }
 
   describe 'associations' do

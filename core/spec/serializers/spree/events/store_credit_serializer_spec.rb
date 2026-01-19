@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Events::StoreCreditSerializer do
-  let(:store) { create(:store) }
+  let(:store) { @default_store }
   let(:user) { create(:user) }
   let(:admin_user) { create(:admin_user) }
   let(:store_credit) do

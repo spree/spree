@@ -42,7 +42,7 @@ describe Spree::PriceList, type: :model do
   end
 
   describe 'scopes' do
-    let(:store) { create(:store) }
+    let(:store) { @default_store }
     let!(:active_price_list) { create(:price_list, :active, store: store) }
     let!(:inactive_price_list) { create(:price_list, :inactive, store: store) }
     let!(:scheduled_price_list) { create(:price_list, :scheduled, store: store) }
@@ -107,7 +107,7 @@ describe Spree::PriceList, type: :model do
   end
 
   describe '#applicable?' do
-    let(:store) { create(:store) }
+    let(:store) { @default_store }
     let(:price_list) { create(:price_list, :active, store: store) }
     let(:variant) { create(:variant) }
     let(:context) { Spree::Pricing::Context.new(variant: variant, currency: 'USD', store: store) }

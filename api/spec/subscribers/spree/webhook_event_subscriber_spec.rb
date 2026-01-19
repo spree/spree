@@ -4,7 +4,7 @@ require 'spec_helper'
 
 module Spree
   describe WebhookEventSubscriber do
-    let(:store) { create(:store) }
+    let(:store) { @default_store }
     let!(:webhook_endpoint) { create(:webhook_endpoint, store: store, subscriptions: ['order.created']) }
     let(:event_name) { 'order.created' }
     let(:event_payload) { { id: 1, number: 'R123456' } }

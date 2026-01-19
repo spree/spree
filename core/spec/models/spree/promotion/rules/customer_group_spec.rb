@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Promotion::Rules::CustomerGroup, type: :model do
-  let(:store) { create(:store) }
+  let(:store) { @default_store }
   let(:rule) { Spree::Promotion::Rules::CustomerGroup.new }
   let(:customer_group) { create(:customer_group, store: store) }
   let(:other_customer_group) { create(:customer_group, store: store) }

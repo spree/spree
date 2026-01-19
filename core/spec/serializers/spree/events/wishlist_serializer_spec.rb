@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Events::WishlistSerializer do
-  let(:store) { create(:store) }
+  let(:store) { @default_store }
   let(:user) { create(:user) }
   let(:wishlist) do
     create(:wishlist,

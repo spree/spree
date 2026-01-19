@@ -5,7 +5,7 @@ require 'spec_helper'
 RSpec.describe Spree::Events::ReportSerializer do
   subject { described_class.serialize(report) }
 
-  let(:store) { create(:store) }
+  let(:store) { @default_store }
   let(:user) { create(:admin_user) }
   let(:report) do
     create(:report,

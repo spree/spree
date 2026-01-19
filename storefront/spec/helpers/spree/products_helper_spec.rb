@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::ProductsHelper, type: :helper do
-  let(:store) { create(:store) }
+  let(:store) { @default_store }
   let(:zone) { create(:zone) }
   let(:user) { create(:user) }
   let(:variant) { create(:variant) }

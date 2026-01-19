@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Events::ImportSerializer do
-  let(:store) { create(:store) }
+  let(:store) { @default_store }
   let(:admin_user) { create(:admin_user) }
   let(:import) { create(:import, owner: store, user: admin_user) }
 

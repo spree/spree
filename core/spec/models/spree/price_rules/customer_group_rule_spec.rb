@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::PriceRules::CustomerGroupRule, type: :model do
-  let(:store) { create(:store) }
+  let(:store) { @default_store }
   let(:price_list) { create(:price_list, store: store) }
   let(:rule) { create(:customer_group_price_rule, price_list: price_list) }
   let(:customer_group) { create(:customer_group, store: store) }

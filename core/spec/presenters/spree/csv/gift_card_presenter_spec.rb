@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe Spree::CSV::GiftCardPresenter, type: :model do
-  let(:store) { create(:store) }
+  let(:store) { @default_store }
   let(:user) { create(:user, first_name: 'John', last_name: 'Doe', email: 'john@example.com') }
   let(:gift_card) do
     create(:gift_card,
