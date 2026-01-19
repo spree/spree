@@ -166,7 +166,7 @@ describe Spree::UserMethods do
       end
 
       it 'returns false if user is the last with a role on the store' do
-        current_store.role_users.destroy_all
+        current_store.role_users.delete_all
         test_user.add_role(role.name, current_store)
 
         expect(subject).to be(false)

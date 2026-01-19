@@ -238,12 +238,12 @@ describe Spree::Shipment, type: :model do
 
       # First shipment for line_item1
       shipment1 = create(:shipment, order: order)
-      shipment1.inventory_units.destroy_all
+      shipment1.inventory_units.delete_all
       shipment1.set_up_inventory('on_hand', variant1, order, line_item1, 2)
 
       # Second shipment for line_item2
       shipment2 = create(:shipment, order: order)
-      shipment2.inventory_units.destroy_all
+      shipment2.inventory_units.delete_all
       shipment2.set_up_inventory('on_hand', variant2, order, line_item2, 4)
 
       expect(shipment1.item_quantity).to eq(2)

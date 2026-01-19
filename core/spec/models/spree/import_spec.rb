@@ -274,7 +274,7 @@ RSpec.describe Spree::Import, :job, type: :model do
       before do
         import.type = 'Spree::Imports::Products'
         # Ensure no metafield definitions exist
-        Spree::MetafieldDefinition.where(resource_type: 'Spree::Product').destroy_all
+        Spree::MetafieldDefinition.where(resource_type: 'Spree::Product').delete_all
       end
 
       it 'returns only base fields' do

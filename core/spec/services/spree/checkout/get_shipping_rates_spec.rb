@@ -96,7 +96,7 @@ module Spree
       end
 
       context 'without shipments' do
-        before { order.shipments.destroy_all }
+        before { order.shipments.delete_all }
 
         it_behaves_like 'generates shipping rates'
         it_behaves_like 'applies standard shipping costs'

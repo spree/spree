@@ -75,7 +75,7 @@ describe Spree::Shipment::Webhooks do
           before do
             shipments[0].ship
             shipments[1].ready
-            shipments.each { |s| s.state_changes.destroy_all }
+            shipments.each { |s| s.state_changes.delete_all }
           end
 
           it { expect { shipments[1].ship }.to emit_webhook_event(event_name, order) }
@@ -93,7 +93,7 @@ describe Spree::Shipment::Webhooks do
           before do
             shipments[0].ship
             shipments[1].cancel
-            shipments.each { |s| s.state_changes.destroy_all }
+            shipments.each { |s| s.state_changes.delete_all }
           end
 
           it { expect { shipments[1].ship }.to emit_webhook_event(event_name, order) }

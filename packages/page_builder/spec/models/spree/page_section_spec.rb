@@ -6,7 +6,7 @@ RSpec.describe Spree::PageSection, type: :model do
   describe 'position' do
     it 'assigns position number in scope of non-deleted page sections' do
       expect(homepage.sections.pluck(:position)).to match_array([1, 2, 3, 4])
-      homepage.sections.destroy_all
+      homepage.sections.delete_all
       expect(homepage.sections).to be_blank
       expect(homepage.sections.with_deleted).to be_present
 
