@@ -15,8 +15,7 @@ module Spree
     DIMENSION_UNITS = %w[mm cm in ft]
     WEIGHT_UNITS = %w[g kg lb oz]
 
-    belongs_to :product, -> { with_deleted }, touch: true, class_name: 'Spree::Product', inverse_of: :variants,
-                         counter_cache: { active: ->(variant) { !variant.is_master? }, column: :variant_count }
+    belongs_to :product, -> { with_deleted }, touch: true, class_name: 'Spree::Product', inverse_of: :variants
     belongs_to :tax_category, class_name: 'Spree::TaxCategory', optional: true
 
     delegate :name, :name=, :description, :slug, :available_on, :make_active_at, :shipping_category_id,
@@ -83,6 +82,8 @@ module Spree
 
     after_commit :remove_prices_from_master_variant, on: [:create, :update], unless: :is_master?
     after_commit :remove_stock_items_from_master_variant, on: :create, unless: :is_master?
+    after_create :increment_product_variant_count, unless: :is_master?
+    after_destroy :decrement_product_variant_count, unless: :is_master?
 
     after_touch :clear_in_stock_cache
 
@@ -684,6 +685,14 @@ module Spree
 
     def remove_stock_items_from_master_variant
       product.master.stock_items.delete_all
+    end
+
+    def increment_product_variant_count
+      Spree::Product.increment_counter(:variant_count, product_id)
+    end
+
+    def decrement_product_variant_count
+      Spree::Product.decrement_counter(:variant_count, product_id)
     end
   end
 end
