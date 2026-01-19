@@ -76,6 +76,7 @@ RSpec.configure do |config|
   config.include Spree::TestingSupport::ImageHelpers
 
   config.before(:suite) do
+    Spree::Events.disable!
     # Clean out the database state before the tests run
     DatabaseCleaner.strategy = :transaction
     DatabaseCleaner.clean_with(:truncation)

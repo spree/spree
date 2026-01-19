@@ -67,6 +67,7 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = true
 
   config.before(:suite) do
+    Spree::Events.disable!
     Capybara.match = :smart
     Capybara.javascript_driver = :selenium_chrome_headless
     Capybara.default_max_wait_time = 10
