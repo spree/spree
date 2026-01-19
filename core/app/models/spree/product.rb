@@ -24,9 +24,6 @@ module Spree
     acts_as_taggable_on :tags, :labels
     normalizes :name, with: ->(value) { value&.to_s&.squish&.presence }
 
-    attribute :variant_count, :integer, default: 0
-    attribute :classification_count, :integer, default: 0
-
     include Spree::ProductScopes
     include Spree::MultiStoreResource
     include Spree::TranslatableResource
