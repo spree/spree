@@ -1548,4 +1548,43 @@ describe Spree::Product, type: :model do
     end
   end
 
+  describe '#has_variants?' do
+    let(:product) { create(:product, stores: [store]) }
+
+    context 'without variants' do
+      it 'returns false' do
+        expect(product.has_variants?).to be false
+      end
+
+      it 'has variant_count of 0' do
+        expect(product.variant_count).to eq 0
+      end
+    end
+
+    context 'with variants' do
+      before { create(:variant, product: product) }
+
+      it 'returns true' do
+        expect(product.reload.has_variants?).to be true
+      end
+
+      it 'has variant_count of 1' do
+        expect(product.reload.variant_count).to eq 1
+      end
+    end
+
+    context 'when variants are loaded in memory' do
+      let(:product) { create(:product, stores: [store]) }
+
+      before do
+        create(:variant, product: product)
+        product.reload
+        product.variants.load
+      end
+
+      it 'uses the loaded association instead of variant_count' do
+        expect(product.has_variants?).to be true
+      end
+    end
+  end
 end

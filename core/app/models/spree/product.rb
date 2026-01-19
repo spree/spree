@@ -41,7 +41,7 @@ module Spree
     MEMOIZED_METHODS = %w[total_on_hand taxonomy_ids taxon_and_ancestors category
                           default_variant_id tax_category default_variant
                           default_image secondary_image
-                          purchasable? in_stock? backorderable? has_variants? digital?]
+                          purchasable? in_stock? backorderable? digital?]
 
     STATUSES = %w[draft active archived].freeze
 
@@ -311,9 +311,13 @@ module Spree
       master || build_master
     end
 
-    # the master variant is not a member of the variants array
+    # Checks if product has variants (non-master variants)
+    # Uses variant_count counter cache for performance
+    # @return [Boolean]
     def has_variants?
-      @has_variants ||= variants.loaded? ? variants.size.positive? : variants.any?
+      return variants.size.positive? if variants.loaded?
+
+      variant_count.positive?
     end
 
     # Returns default Variant for Product

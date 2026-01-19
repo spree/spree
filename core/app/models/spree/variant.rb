@@ -82,6 +82,8 @@ module Spree
 
     after_commit :remove_prices_from_master_variant, on: [:create, :update], unless: :is_master?
     after_commit :remove_stock_items_from_master_variant, on: :create, unless: :is_master?
+    after_create :increment_product_variant_count, unless: :is_master?
+    after_destroy :decrement_product_variant_count, unless: :is_master?
 
     after_touch :clear_in_stock_cache
 
@@ -683,6 +685,14 @@ module Spree
 
     def remove_stock_items_from_master_variant
       product.master.stock_items.delete_all
+    end
+
+    def increment_product_variant_count
+      Spree::Product.increment_counter(:variant_count, product_id)
+    end
+
+    def decrement_product_variant_count
+      Spree::Product.decrement_counter(:variant_count, product_id)
     end
   end
 end
