@@ -6,7 +6,7 @@ describe Spree::V2::Storefront::TaxonSerializer do
   include_context 'API v2 serializers params'
 
   let(:taxonomy) { create(:taxonomy, store: store) }
-  let(:taxon) { create(:taxon, :with_description, taxonomy: taxonomy, products: create_list(:product, 2, stores: [store])) }
+  let(:taxon) { create(:taxon, :with_description, taxonomy: taxonomy, products: build_list(:product, 2, stores: [store])) }
   let!(:children) { create_list(:taxon, 2, taxonomy: taxonomy, parent: taxon) }
   let(:url_helpers) { Rails.application.routes.url_helpers }
 
@@ -49,13 +49,13 @@ describe Spree::V2::Storefront::TaxonSerializer do
             relationships: {
               parent: {
                 data: {
-                  id: taxon.parent.id.to_s,
+                  id: taxon.parent_id.to_s,
                   type: :taxon
                 }
               },
               taxonomy: {
                 data: {
-                  id: taxon.taxonomy.id.to_s,
+                  id: taxonomy.id.to_s,
                   type: :taxonomy
                 }
               },
@@ -125,13 +125,13 @@ describe Spree::V2::Storefront::TaxonSerializer do
             relationships: {
               parent: {
                 data: {
-                  id: taxon.parent.id.to_s,
+                  id: taxon.parent_id.to_s,
                   type: :taxon
                 }
               },
               taxonomy: {
                 data: {
-                  id: taxon.taxonomy.id.to_s,
+                  id: taxonomy.id.to_s,
                   type: :taxonomy
                 }
               },

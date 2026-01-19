@@ -3,7 +3,8 @@ require 'spec_helper'
 describe Spree::Api::V2::Platform::AddressSerializer do
   subject { described_class.new(address).serializable_hash }
 
-  let(:address) { create(:address, user: create(:user)) }
+  let(:user) { create(:user) }
+  let(:address) { create(:address, user: user) }
 
   it do
     expect(subject).to eq(
@@ -35,19 +36,19 @@ describe Spree::Api::V2::Platform::AddressSerializer do
           relationships: {
             country: {
               data: {
-                id: address.country.id.to_s,
+                id: address.country_id.to_s,
                 type: :country
               }
             },
             state: {
               data: {
-                id: address.state.id.to_s,
+                id: address.state_id.to_s,
                 type: :state
               }
             },
             user: {
               data: {
-                id: address.user.id.to_s,
+                id: user.id.to_s,
                 type: :user
               }
             },
