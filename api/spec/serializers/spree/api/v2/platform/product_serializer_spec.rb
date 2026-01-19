@@ -49,6 +49,7 @@ describe Spree::Api::V2::Platform::ProductSerializer do
           display_price: '$10.00',
           compare_at_price: BigDecimal(15),
           display_compare_at_price: '$15.00',
+          variant_count: product.variant_count,
           public_metadata: {},
           private_metadata: {}
         },
