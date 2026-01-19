@@ -8,7 +8,7 @@ RSpec.describe 'Featured taxon', type: :feature do
   let(:section) { Spree::PageSections::FeaturedTaxon.create(preferred_taxon_id: taxon&.id, pageable: Spree::Page.find_by(name: 'Homepage')) }
 
   before do
-    store.taxons.automatic.destroy_all
+    store.taxons.automatic.delete_all
     taxon.products << products if taxon.present?
     visit spree.page_section_path(section.id)
   end

@@ -9,6 +9,15 @@ namespace :spree do
       puts 'Done!'
     end
 
+    desc 'Reset classification_count counter cache on products'
+    task reset_classification_count: :environment do |_t, _args|
+      puts 'Resetting classification_count counter cache...'
+      Spree::Product.in_batches.update_all(
+        "classification_count = (SELECT COUNT(*) FROM spree_products_taxons WHERE spree_products_taxons.product_id = spree_products.id)"
+      )
+      puts 'Done!'
+    end
+
     desc 'Enqueue background jobs to populate product metrics for all store products'
     task populate: :environment do
       total_count = 0

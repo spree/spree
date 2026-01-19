@@ -14,7 +14,7 @@ module Spree
         end
 
         attribute :has_products do |taxon|
-          taxon.active_products_with_descendants.exists?
+          taxon.classification_count.positive? || taxon.active_products_with_descendants.exists?
         end
 
         attribute :header_url do |taxon|

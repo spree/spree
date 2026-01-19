@@ -40,6 +40,16 @@ module Spree
         expect(subject.success?).to be true
         expect(subject.value).to eq true
       end
+
+      it 'updates classification_count on taxons' do
+        expect { subject }.to change { taxons.first.reload.classification_count }.from(products.size).to(0)
+          .and change { taxons.second.reload.classification_count }.from(products.size).to(0)
+      end
+
+      it 'updates classification_count on products' do
+        expect { subject }.to change { products.first.reload.classification_count }.from(taxons.size).to(0)
+          .and change { products.second.reload.classification_count }.from(taxons.size).to(0)
+      end
     end
   end
 end

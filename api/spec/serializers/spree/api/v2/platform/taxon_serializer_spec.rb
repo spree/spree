@@ -40,7 +40,9 @@ describe Spree::Api::V2::Platform::TaxonSerializer do
               rules_match_policy: taxon.rules_match_policy,
               header_url: nil,
               public_metadata: {},
-              private_metadata: {}
+              private_metadata: {},
+              children_count: taxon.children_count,
+              classification_count: taxon.classification_count
             },
             relationships: {
               parent: {
@@ -114,7 +116,9 @@ describe Spree::Api::V2::Platform::TaxonSerializer do
               rules_match_policy: taxon.rules_match_policy,
               header_url: nil,
               public_metadata: {},
-              private_metadata: {}
+              private_metadata: {},
+              children_count: taxon.children_count,
+              classification_count: taxon.classification_count
             },
             relationships: {
               parent: {
