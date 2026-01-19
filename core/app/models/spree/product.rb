@@ -24,8 +24,6 @@ module Spree
     acts_as_taggable_on :tags, :labels
     normalizes :name, with: ->(value) { value&.to_s&.squish&.presence }
 
-    attribute :variant_count, :integer, default: 0
-
     include Spree::ProductScopes
     include Spree::MultiStoreResource
     include Spree::TranslatableResource
@@ -314,6 +312,8 @@ module Spree
     end
 
     # Checks if product has variants (non-master variants)
+    # If variants is already loaded in memory, use that (no DB query, handles build scenarios)
+    # Otherwise, use the counter cache (no DB query for persisted products)
     # @return [Boolean]
     def has_variants?
       return variants.size.positive? if variants.loaded?

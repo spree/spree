@@ -1422,4 +1422,33 @@ describe Spree::Variant, type: :model do
       expect(variant.additional_images).to eq([image2, image3])
     end
   end
+
+  describe 'counter cache' do
+    let(:product) { create(:product) }
+
+    describe 'variant_count on product' do
+      it 'increments when a variant is created' do
+        expect {
+          create(:variant, product: product)
+        }.to change { product.reload.variant_count }.from(0).to(1)
+      end
+
+      it 'decrements when a variant is destroyed' do
+        variant = create(:variant, product: product)
+        expect {
+          variant.destroy
+        }.to change { product.reload.variant_count }.from(1).to(0)
+      end
+
+      it 'does not count master variant' do
+        expect(product.variant_count).to eq(0)
+        expect(product.master).to be_present
+      end
+
+      it 'correctly counts multiple variants' do
+        create_list(:variant, 3, product: product)
+        expect(product.reload.variant_count).to eq(3)
+      end
+    end
+  end
 end

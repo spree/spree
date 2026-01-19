@@ -1556,7 +1556,7 @@ describe Spree::Product, type: :model do
         expect(product.has_variants?).to be false
       end
 
-      it 'uses variant_count column' do
+      it 'has variant_count of 0' do
         expect(product.variant_count).to eq 0
       end
     end
@@ -1568,33 +1568,23 @@ describe Spree::Product, type: :model do
         expect(product.reload.has_variants?).to be true
       end
 
-      it 'uses variant_count column' do
+      it 'has variant_count of 1' do
         expect(product.reload.variant_count).to eq 1
       end
     end
-  end
 
-  describe '#variant_count counter cache' do
-    let(:product) { create(:product, stores: [store]) }
+    context 'when variants are loaded in memory' do
+      let(:product) { create(:product, stores: [store]) }
 
-    it 'increments when a variant is created' do
-      expect { create(:variant, product: product) }.to change { product.reload.variant_count }.from(0).to(1)
-    end
+      before do
+        create(:variant, product: product)
+        product.reload
+        product.variants.load
+      end
 
-    it 'decrements when a variant is destroyed' do
-      variant = create(:variant, product: product)
-      expect { variant.destroy }.to change { product.reload.variant_count }.from(1).to(0)
-    end
-
-    it 'does not count master variant' do
-      expect(product.variant_count).to eq 0
-      expect(product.master).to be_present
-    end
-
-    it 'correctly counts multiple variants' do
-      create_list(:variant, 3, product: product)
-      expect(product.reload.variant_count).to eq 3
+      it 'uses the loaded association instead of variant_count' do
+        expect(product.has_variants?).to be true
+      end
     end
   end
-
 end
