@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe Spree::Subscriber do
+RSpec.describe Spree::Subscriber, events: true do
   before do
     Spree::Events.reset!
   end
