@@ -50,6 +50,7 @@ describe Spree::Api::V2::Platform::ProductSerializer do
           compare_at_price: BigDecimal(15),
           display_compare_at_price: '$15.00',
           variant_count: product.variant_count,
+          classification_count: product.classification_count,
           public_metadata: {},
           private_metadata: {}
         },
