@@ -1041,7 +1041,7 @@ describe Spree::Shipment, type: :model do
     end
   end
 
-  describe 'events' do
+  describe 'events', events: true do
     let(:order) { create(:order_ready_to_ship) }
     let(:shipment) { order.shipments.first }
 

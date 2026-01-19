@@ -224,7 +224,7 @@ describe Spree::Order, type: :model do
       end
     end
 
-    context 'events' do
+    context 'events', events: true do
       let(:order) { create(:completed_order_with_totals, store: store) }
 
       it 'publishes order.canceled event' do
@@ -240,7 +240,7 @@ describe Spree::Order, type: :model do
 
     before { order.cancel! }
 
-    it 'publishes order.resumed event' do
+    it 'publishes order.resumed event', events: true do
       expect(order).to receive(:publish_event).with('order.resumed').at_least(:once)
       allow(order).to receive(:publish_event).with(anything)
       order.resume!
@@ -290,7 +290,7 @@ describe Spree::Order, type: :model do
       end
     end
 
-    context 'events' do
+    context 'events', events: true do
       let(:order) { create(:completed_order_with_totals) }
 
       it 'publishes order.canceled event' do
@@ -401,7 +401,7 @@ describe Spree::Order, type: :model do
       end
     end
 
-    context 'events' do
+    context 'events', events: true do
       let(:order) { create(:order_with_line_items, store: store) }
 
       before { order.update_column(:state, 'complete') }
@@ -698,7 +698,7 @@ describe Spree::Order, type: :model do
       end
     end
 
-    context 'events' do
+    context 'events', events: true do
       it 'publishes order.updated event' do
         order = create(:order_with_totals, state: 'delivery')
         expect(order).to receive(:publish_event).with('order.updated').at_least(:once)
@@ -975,7 +975,7 @@ describe Spree::Order, type: :model do
       it_behaves_like '#associate_user!', true
     end
 
-    context 'events' do
+    context 'events', events: true do
       let(:order) { create(:order, order_attributes) }
 
       it 'publishes order.updated event' do
@@ -1028,7 +1028,7 @@ describe Spree::Order, type: :model do
       order.approved_by(admin_user)
     end
 
-    context 'events' do
+    context 'events', events: true do
       it 'publishes order.approved event' do
         expect(order).to receive(:publish_event).with('order.approved').at_least(:once)
         order.approved_by(admin_user)
@@ -1044,7 +1044,7 @@ describe Spree::Order, type: :model do
       expect(order.reload.considered_risky).to be true
     end
 
-    context 'events' do
+    context 'events', events: true do
       it 'publishes order.updated event' do
         expect(order).to receive(:publish_event).with('order.updated')
         order.considered_risky!
@@ -1064,7 +1064,7 @@ describe Spree::Order, type: :model do
       expect(order.reload.considered_risky).to be false
     end
 
-    context 'events' do
+    context 'events', events: true do
       it 'publishes order.approved event' do
         expect(order).to receive(:publish_event).with('order.approved')
         order.approve!
@@ -1099,7 +1099,7 @@ describe Spree::Order, type: :model do
         expect(order.reload.state).to eq('address')
       end
 
-      context 'events' do
+      context 'events', events: true do
         it 'publishes order.updated event' do
           expect(order).to receive(:publish_event).with('order.updated').at_least(:once)
           order.ensure_updated_shipments

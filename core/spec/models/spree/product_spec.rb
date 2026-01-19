@@ -1524,7 +1524,7 @@ describe Spree::Product, type: :model do
     end
   end
 
-  describe 'custom events' do
+  describe 'custom events', events: true do
     describe 'product.activated' do
       let(:product) { create(:product, status: 'draft', stores: [store]) }
 

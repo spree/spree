@@ -769,7 +769,7 @@ describe Spree::ReturnItem, type: :model do
     end
   end
 
-  describe 'custom events' do
+  describe 'custom events', events: true do
     describe 'return_item.received' do
       let(:inventory_unit) { create(:inventory_unit, state: 'shipped') }
       let(:return_item) { create(:return_item, inventory_unit: inventory_unit, reception_status: 'awaiting') }

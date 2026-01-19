@@ -13,7 +13,7 @@ describe Spree::ReturnAuthorization, type: :model do
                                    return_authorization_reason_id: rma_reason.id)
   end
 
-  describe 'lifecycle events' do
+  describe 'lifecycle events', events: true do
     describe 'return_authorization.created' do
       it 'publishes created event when record is created' do
         shipped_order = create(:shipped_order)
@@ -269,7 +269,7 @@ describe Spree::ReturnAuthorization, type: :model do
     end
   end
 
-  describe 'custom events' do
+  describe 'custom events', events: true do
     describe 'return_authorization.canceled' do
       let(:return_authorization) { create(:return_authorization) }
 

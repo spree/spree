@@ -38,7 +38,7 @@ module Spree
       end
     end
 
-    describe 'custom events' do
+    describe 'custom events', events: true do
       let(:user) { nil }
 
       it 'publishes newsletter_subscriber.verified event when verified' do

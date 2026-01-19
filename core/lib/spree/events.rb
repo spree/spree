@@ -202,11 +202,37 @@ module Spree
         RequestStore.store[:spree_events_disabled] = previous
       end
 
-      # Set the disabled state of the event system
-      # Useful for testing
-      # @param value [Boolean] The disabled state
+      # Globally disable events
+      # Useful for testing to disable events for the entire test suite
       # @return [void]
       def disable!
+        RequestStore.store[:spree_events_disabled] = true
+      end
+
+      # Temporarily enable events within a block
+      # Useful for testing when events are globally disabled
+      #
+      # @yield Block during which events are enabled
+      # @return [Object] Return value of the block
+      #
+      # @example
+      #   Spree::Events.enable do
+      #     # Events published here will trigger subscribers
+      #     order.complete!
+      #   end
+      #
+      def enable
+        previous = RequestStore.store[:spree_events_disabled]
+        RequestStore.store[:spree_events_disabled] = false
+        yield
+      ensure
+        RequestStore.store[:spree_events_disabled] = previous
+      end
+
+      # Globally enable events
+      # Useful for testing
+      # @return [void]
+      def enable!
         RequestStore.store[:spree_events_disabled] = false
       end
     end

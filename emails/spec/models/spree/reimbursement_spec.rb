@@ -28,7 +28,7 @@ describe Spree::Reimbursement, type: :model do
       return_item.accept!
     end
 
-    it 'publishes reimbursement.reimbursed event when performing' do
+    it 'publishes reimbursement.reimbursed event when performing', events: true do
       expect(reimbursement).to receive(:publish_event).with('reimbursement.reimbursed')
       allow(reimbursement).to receive(:publish_event).with(anything)
 

@@ -12,7 +12,7 @@ describe Spree::Order, type: :model do
       order.update_column :state, 'complete'
     end
 
-    it 'publishes order.completed event when finalizing' do
+    it 'publishes order.completed event when finalizing', events: true do
       expect(order).to receive(:publish_event).with('order.completed')
       allow(order).to receive(:publish_event).with(anything)
 
@@ -47,7 +47,7 @@ describe Spree::Order, type: :model do
       allow_any_instance_of(Spree::OrderUpdater).to receive(:update_adjustment_total).and_return(10)
     end
 
-    it 'publishes order.canceled event when canceling' do
+    it 'publishes order.canceled event when canceling', events: true do
       allow(shipment).to receive(:cancel!)
       allow(order).to receive :restock_items!
 

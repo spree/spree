@@ -213,7 +213,7 @@ describe Spree::Reimbursement, type: :model do
     end
   end
 
-  describe 'custom events' do
+  describe 'custom events', events: true do
     describe 'reimbursement.reimbursed' do
       let(:order) { create(:shipped_order, line_items_count: 1, line_items_price: BigDecimal(10), shipment_cost: 0, store: store) }
       let(:line_item) { order.line_items.first }
