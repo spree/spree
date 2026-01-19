@@ -301,7 +301,8 @@ module Spree
         Spree.subscribers.concat [
           Spree::ExportSubscriber,
           Spree::ReportSubscriber,
-          Spree::InvitationEmailSubscriber
+          Spree::InvitationEmailSubscriber,
+          Spree::ProductMetricsSubscriber
         ]
       end
 

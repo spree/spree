@@ -411,6 +411,17 @@ describe Spree::Order, type: :model do
         allow(order).to receive(:publish_event).with(anything)
         order.finalize!
       end
+
+      it 'enqueues RefreshMetricsJob for each product in the order' do
+        # Clear any previously enqueued jobs
+        clear_enqueued_jobs
+
+        order.finalize!
+        perform_enqueued_jobs(only: Spree::Events::SubscriberJob)
+
+        product_count = order.line_items.map { |li| li.variant.product_id }.uniq.count
+        expect(Spree::Products::RefreshMetricsJob).to have_been_enqueued.exactly(product_count).times
+      end
     end
   end
 

@@ -209,18 +209,6 @@ module Spree
                            joins(:stock_items).where("#{Spree::Variant.table_name}.track_inventory = ? OR #{Spree::StockItem.table_name}.count_on_hand <= ?", false, 0)
                          }
 
-    scope :by_best_selling, lambda { |order_direction = :desc|
-      order_dir = order_direction == :desc ? 'DESC' : 'ASC'
-      completed_orders_count_sql = "COUNT(DISTINCT CASE WHEN #{Spree::Order.table_name}.completed_at IS NOT NULL THEN #{Spree::Order.table_name}.id END)"
-      completed_orders_total_sql = "COALESCE(SUM(CASE WHEN #{Spree::Order.table_name}.completed_at IS NOT NULL THEN (#{Spree::LineItem.table_name}.price * #{Spree::LineItem.table_name}.quantity) END), 0)"
-
-      left_joins(variants_including_master: { line_items: :order }).
-        select("#{Spree::Product.table_name}.*", "#{completed_orders_count_sql} AS completed_orders_count", "#{completed_orders_total_sql} AS completed_orders_total").
-        group("#{Spree::Product.table_name}.id").
-        order(Arel.sql("#{completed_orders_count_sql} #{order_dir}")).
-        order(Arel.sql("#{completed_orders_total_sql} #{order_dir}"))
-    }
-
     attr_accessor :option_values_hash
 
     accepts_nested_attributes_for :product_properties, allow_destroy: true, reject_if: lambda { |pp|

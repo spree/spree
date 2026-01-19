@@ -327,6 +327,233 @@ describe 'Product scopes', type: :model do
     end
   end
 
+  describe '.by_best_selling' do
+    let!(:product_1) { create(:product, name: 'Product 1', stores: [store]) }
+    let!(:product_2) { create(:product, name: 'Product 2', stores: [store]) }
+    let!(:product_3) { create(:product, name: 'Product 3', stores: [store]) }
+    let!(:product_4) { create(:product, name: 'Product 4', stores: [store]) }
+    let(:test_product_ids) { [product_1.id, product_2.id, product_3.id, product_4.id] }
+
+    def refresh_all_metrics!
+      [product_1, product_2, product_3, product_4].each do |p|
+        p.store_products.find_by(store: store)&.refresh_metrics!
+      end
+    end
+
+    context 'with completed orders' do
+      before do
+        # Product 2: 3 units sold (3 orders x 1 quantity each)
+        create_list(:completed_order_with_totals, 3, line_items_price: 100, store: store, variants: [product_2.master])
+
+        # Product 1: 2 units sold (2 orders x 1 quantity each)
+        create_list(:completed_order_with_totals, 2, line_items_price: 100, store: store, variants: [product_1.master])
+
+        # Product 3: 1 unit sold (1 order x 1 quantity)
+        create(:completed_order_with_totals, line_items_price: 150, store: store, variants: [product_3.master])
+
+        # Product 4: no completed orders
+
+        refresh_all_metrics!
+      end
+
+      it 'orders products by units_sold_count in descending order by default' do
+        products = Spree::Product.where(id: test_product_ids).by_best_selling
+        expect(products.map(&:name)).to eq(['Product 2', 'Product 1', 'Product 3', 'Product 4'])
+      end
+
+      it 'orders products by units_sold_count in ascending order when specified' do
+        products = Spree::Product.where(id: test_product_ids).by_best_selling(:asc)
+        expect(products.map(&:name)).to eq(['Product 4', 'Product 3', 'Product 1', 'Product 2'])
+      end
+    end
+
+    context 'with incomplete orders' do
+      before do
+        # Product 1: 2 units sold (2 completed orders)
+        create_list(:completed_order_with_totals, 2, line_items_price: 100, store: store, variants: [product_1.master])
+
+        # Product 2: 1 unit sold (1 completed order) + 2 incomplete orders (should not be counted)
+        create(:completed_order_with_totals, line_items_price: 100, store: store, variants: [product_2.master])
+        create_list(:order_with_totals, 2, line_items_price: 100, store: store, variants: [product_2.master])
+
+        refresh_all_metrics!
+      end
+
+      it 'only counts units from completed orders' do
+        products = Spree::Product.where(id: test_product_ids).by_best_selling
+        expect(products.first.name).to eq('Product 1')
+
+        product_1_store_product = product_1.store_products.find_by(store: store)
+        product_2_store_product = product_2.store_products.find_by(store: store)
+
+        expect(product_1_store_product.units_sold_count).to eq(2)
+        expect(product_2_store_product.units_sold_count).to eq(1)
+      end
+    end
+
+    context 'when products have same units_sold_count' do
+      before do
+        # Both products have 2 units sold, but different revenue
+        # Product 1: 2 units, lower revenue
+        create_list(:completed_order_with_totals, 2, line_items_price: 100, store: store, variants: [product_1.master])
+
+        # Product 2: 2 units, higher revenue
+        create_list(:completed_order_with_totals, 2, line_items_price: 150, store: store, variants: [product_2.master])
+
+        refresh_all_metrics!
+      end
+
+      it 'uses revenue as secondary sort criteria' do
+        products = Spree::Product.where(id: test_product_ids).by_best_selling
+        # Both have 2 units sold, but product_2 has higher revenue
+        expect(products.first.name).to eq('Product 2')
+        expect(products.second.name).to eq('Product 1')
+
+        product_1_store_product = product_1.store_products.find_by(store: store)
+        product_2_store_product = product_2.store_products.find_by(store: store)
+
+        expect(product_2_store_product.revenue).to be > product_1_store_product.revenue
+      end
+    end
+
+    context 'with varying quantities' do
+      before do
+        # Product 1: 5 units sold (quantity 2 + quantity 3)
+        order1 = create(:order_with_line_items, line_items_count: 0, store: store)
+        create(:line_item, order: order1, variant: product_1.master, price: 50, quantity: 2)
+        create(:line_item, order: order1, variant: product_1.master, price: 50, quantity: 3)
+        order1.update!(completed_at: Time.current)
+
+        # Product 2: 2 units sold (quantity 2)
+        order2 = create(:order_with_line_items, line_items_count: 0, store: store)
+        create(:line_item, order: order2, variant: product_2.master, price: 100, quantity: 2)
+        order2.update!(completed_at: Time.current)
+
+        refresh_all_metrics!
+      end
+
+      it 'sums line item quantities for units_sold_count' do
+        products = Spree::Product.where(id: test_product_ids).by_best_selling
+
+        product_1_store_product = product_1.store_products.find_by(store: store)
+        product_2_store_product = product_2.store_products.find_by(store: store)
+
+        # Product 1: 2 + 3 = 5 units
+        expect(product_1_store_product.units_sold_count).to eq(5)
+        # Product 2: 2 units
+        expect(product_2_store_product.units_sold_count).to eq(2)
+
+        # Product 1 should be ranked higher due to more units sold
+        expect(products.first.name).to eq('Product 1')
+      end
+    end
+
+    context 'with multiple orders containing multiple line items' do
+      before do
+        # Product 1: 5 units sold across 2 orders (quantity 3 + quantity 2)
+        order1 = create(:order_with_line_items, line_items_count: 0, store: store)
+        create(:line_item, order: order1, variant: product_1.master, price: 50, quantity: 3)
+        order1.update!(completed_at: Time.current)
+
+        order2 = create(:order_with_line_items, line_items_count: 0, store: store)
+        create(:line_item, order: order2, variant: product_1.master, price: 50, quantity: 2)
+        order2.update!(completed_at: Time.current)
+
+        # Product 2: 4 units sold in 1 order (quantity 4)
+        order3 = create(:order_with_line_items, line_items_count: 0, store: store)
+        create(:line_item, order: order3, variant: product_2.master, price: 100, quantity: 4)
+        order3.update!(completed_at: Time.current)
+
+        refresh_all_metrics!
+      end
+
+      it 'ranks by total units sold across all orders' do
+        products = Spree::Product.where(id: test_product_ids).by_best_selling
+
+        product_1_store_product = product_1.store_products.find_by(store: store)
+        product_2_store_product = product_2.store_products.find_by(store: store)
+
+        # Product 1: 3 + 2 = 5 units sold
+        expect(product_1_store_product.units_sold_count).to eq(5)
+        # Product 2: 4 units sold
+        expect(product_2_store_product.units_sold_count).to eq(4)
+
+        # Product 1 should rank first because it has more units sold (5 vs 4)
+        expect(products.first.name).to eq('Product 1')
+        expect(products.second.name).to eq('Product 2')
+      end
+    end
+
+    context 'with products having no orders' do
+      before do
+        refresh_all_metrics!
+      end
+
+      it 'includes products with no orders at the end' do
+        products = Spree::Product.where(id: test_product_ids).by_best_selling
+        expect(products.length).to eq(4)
+        # All products should be included, those without orders have units_sold_count = 0
+        [product_1, product_2, product_3, product_4].each do |p|
+          store_product = p.store_products.find_by(store: store)
+          expect(store_product.units_sold_count).to eq(0)
+          expect(store_product.revenue).to eq(0)
+        end
+      end
+    end
+
+    context 'with products having only pending orders (no completed_at)' do
+      before do
+        # Product 1: 2 units sold (2 completed orders)
+        create_list(:completed_order_with_totals, 2, line_items_price: 100, store: store, variants: [product_1.master])
+
+        # Product 2: 1 pending order (no completed_at) - should not be counted
+        create(:order_with_line_items, line_items_count: 1, store: store, variants: [product_2.master])
+
+        # Product 3: 2 pending orders (not counted) + 1 completed order (1 unit)
+        create_list(:order_with_line_items, 2, line_items_count: 1, store: store, variants: [product_3.master])
+        create(:completed_order_with_totals, line_items_price: 100, store: store, variants: [product_3.master])
+
+        # Product 4: no orders at all
+
+        refresh_all_metrics!
+      end
+
+      it 'includes products with only pending orders with units_sold_count = 0' do
+        products = Spree::Product.where(id: test_product_ids).by_best_selling
+
+        # All products should be included
+        expect(products.length).to eq(4)
+
+        product_1_sp = product_1.store_products.find_by(store: store)
+        product_2_sp = product_2.store_products.find_by(store: store)
+        product_3_sp = product_3.store_products.find_by(store: store)
+        product_4_sp = product_4.store_products.find_by(store: store)
+
+        # Product 2 has pending orders but no completed orders - count should be 0
+        expect(product_2_sp.units_sold_count).to eq(0)
+        expect(product_2_sp.revenue).to eq(0)
+
+        # Product 1 has 2 units sold (2 completed orders with quantity 1 each)
+        expect(product_1_sp.units_sold_count).to eq(2)
+
+        # Product 3 has 1 unit sold (1 completed order, pending orders not counted)
+        expect(product_3_sp.units_sold_count).to eq(1)
+
+        # Product 4 has no orders at all - count should be 0
+        expect(product_4_sp.units_sold_count).to eq(0)
+        expect(product_4_sp.revenue).to eq(0)
+      end
+
+      it 'orders products correctly with pending orders included' do
+        products = Spree::Product.where(id: test_product_ids).by_best_selling
+        # Product 1: 2 units sold (first)
+        # Product 3: 1 unit sold (second)
+        # Product 2 & 4: 0 units sold (last, but Product 2 still included despite having pending orders)
+        expect(products.map(&:name)).to eq(['Product 1', 'Product 3', 'Product 2', 'Product 4'])
+      end
+    end
+  end
+
   context 'options scopes' do
     let(:option_type) { create(:option_type) }
     let(:option_value) { create(:option_value, option_type: option_type) }
