@@ -81,10 +81,13 @@ RSpec.describe Spree::Policy, type: :model do
       end
 
       it 'allows creating policies with translations' do
-        policy = create(:policy, owner: store, name: 'Privacy Policy')
+        I18n.with_locale(:es) do
+          policy = create(:policy, owner: store, name: 'Política de Privacidad')
 
-        expect(policy).to be_persisted
-        expect(policy.name).to eq('Privacy Policy')
+          expect(policy).to be_persisted
+          expect(policy.name).to eq('Política de Privacidad')
+          expect(policy.read_attribute(:name)).to be_nil
+        end
       end
     end
   end
