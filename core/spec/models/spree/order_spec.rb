@@ -13,7 +13,7 @@ describe Spree::Order, type: :model do
   let!(:store) { @default_store }
   let(:order) { create(:order, user: user, store: store) }
 
-  before { allow(Spree::LegacyUser).to receive_messages(current: create(:user)) }
+  before { allow(Spree::LegacyUser).to receive_messages(current: build(:user)) }
 
   it_behaves_like 'metadata'
 

@@ -113,7 +113,7 @@ describe Spree::Product, type: :model do
 
     describe '#duplicate' do
       before do
-        allow(product).to receive_messages taxons: [create(:taxon)], stores: [store]
+        allow(product).to receive_messages taxons: [build(:taxon)], stores: [store]
       end
 
       it 'duplicates product' do
