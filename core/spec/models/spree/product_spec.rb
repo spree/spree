@@ -1548,4 +1548,53 @@ describe Spree::Product, type: :model do
     end
   end
 
+  describe '#has_variants?' do
+    let(:product) { create(:product, stores: [store]) }
+
+    context 'without variants' do
+      it 'returns false' do
+        expect(product.has_variants?).to be false
+      end
+
+      it 'uses variant_count column' do
+        expect(product.variant_count).to eq 0
+      end
+    end
+
+    context 'with variants' do
+      before { create(:variant, product: product) }
+
+      it 'returns true' do
+        expect(product.reload.has_variants?).to be true
+      end
+
+      it 'uses variant_count column' do
+        expect(product.reload.variant_count).to eq 1
+      end
+    end
+  end
+
+  describe '#variant_count counter cache' do
+    let(:product) { create(:product, stores: [store]) }
+
+    it 'increments when a variant is created' do
+      expect { create(:variant, product: product) }.to change { product.reload.variant_count }.from(0).to(1)
+    end
+
+    it 'decrements when a variant is destroyed' do
+      variant = create(:variant, product: product)
+      expect { variant.destroy }.to change { product.reload.variant_count }.from(1).to(0)
+    end
+
+    it 'does not count master variant' do
+      expect(product.variant_count).to eq 0
+      expect(product.master).to be_present
+    end
+
+    it 'correctly counts multiple variants' do
+      create_list(:variant, 3, product: product)
+      expect(product.reload.variant_count).to eq 3
+    end
+  end
+
 end

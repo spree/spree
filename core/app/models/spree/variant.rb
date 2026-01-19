@@ -15,7 +15,8 @@ module Spree
     DIMENSION_UNITS = %w[mm cm in ft]
     WEIGHT_UNITS = %w[g kg lb oz]
 
-    belongs_to :product, -> { with_deleted }, touch: true, class_name: 'Spree::Product', inverse_of: :variants
+    belongs_to :product, -> { with_deleted }, touch: true, class_name: 'Spree::Product', inverse_of: :variants,
+                         counter_cache: { active: ->(variant) { !variant.is_master? }, column: :variant_count }
     belongs_to :tax_category, class_name: 'Spree::TaxCategory', optional: true
 
     delegate :name, :name=, :description, :slug, :available_on, :make_active_at, :shipping_category_id,
