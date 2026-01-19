@@ -1026,7 +1026,8 @@
                   "user/customers/issue-gift-card",
                   "user/customers/assign-store-credits",
                   "user/customers/searching-customers",
-                  "user/customers/exporting-customers"
+                  "user/customers/exporting-customers",
+                  "user/customers/customer-groups"
                 ]
               },
               {
