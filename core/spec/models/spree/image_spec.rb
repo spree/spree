@@ -61,6 +61,7 @@ describe Spree::Image, type: :model do
         let(:viewable) { product.reload.master }
 
         it 'touches product variants' do
+          image.viewable.product.reload
           expect(image).to receive(:touch_product_variants)
           image.set_list_position(2)
         end
