@@ -312,13 +312,14 @@ module Spree
     end
 
     # Checks if product has variants (non-master variants)
-    # If variants is already loaded in memory, use that (no DB query, handles build scenarios)
-    # Otherwise, use the counter cache (no DB query for persisted products)
+    # Uses variant_count counter cache for performance when positive,
+    # falls back to database query when counter is zero to handle stale data
     # @return [Boolean]
     def has_variants?
       return variants.size.positive? if variants.loaded?
+      return true if variant_count.positive?
 
-      variant_count.positive?
+      variants.exists?
     end
 
     # Returns default Variant for Product
