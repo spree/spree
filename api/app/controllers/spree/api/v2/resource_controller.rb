@@ -51,11 +51,14 @@ module Spree
         end
 
         def collection
-          @collection ||= if defined?(collection_finder)
-                            collection_finder.new(scope: scope, params: finder_params).execute
-                          else
-                            scope
-                          end
+          @collection ||= begin
+            result = if defined?(collection_finder)
+                       collection_finder.new(scope: scope, params: finder_params).execute
+                     else
+                       scope
+                     end
+            result.preload_associations_lazily
+          end
         end
 
         def finder_params

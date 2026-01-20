@@ -85,7 +85,7 @@ module Spree
           base_scope.complete
         else
           base_scope
-        end
+        end.includes(collection_includes)
       end
 
       def collection_default_sort
@@ -93,7 +93,7 @@ module Spree
       end
 
       def collection_includes
-        { user: [], shipments: :stock_location }
+        { user: [], payments: [], refunds: [], shipments: :stock_location }
       end
 
       def order_params

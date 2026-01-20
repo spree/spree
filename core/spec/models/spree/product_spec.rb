@@ -1192,8 +1192,6 @@ describe Spree::Product, type: :model do
       expect(product.taxons_for_store(store)).to eq([taxon])
       expect(product.taxons_for_store(store_2)).to eq([taxon_2])
     end
-
-    it { expect(product.taxons_for_store(store)).to be_a(ActiveRecord::Relation) }
   end
 
   describe '#any_variant_in_stock_or_backorderable?' do

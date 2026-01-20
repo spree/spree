@@ -271,15 +271,26 @@ module Spree
       completed_at.present?
     end
 
+    # Checks if the order is fully refunded
+    # @return [Boolean]
     def order_refunded?
-      (payment_state.in?(%w[void failed]) && refunds.sum(:amount).positive?) ||
-        refunds.sum(:amount) == total_minus_store_credits - additional_tax_total.abs
+      return false if item_count.zero?
+
+      (payment_state.in?(%w[void failed]) && refunds_total.positive?) ||
+        refunds_total == total_minus_store_credits - additional_tax_total.abs
     end
 
-    def partially_refunded?
-      return false if refunds.empty? || payment_state.in?(%w[void failed])
+    def refunds_total
+      refunds.loaded? ? refunds.sum(&:amount) : refunds.sum(:amount)
+    end
 
-      refunds.sum(:amount) < total_minus_store_credits - additional_tax_total.abs
+    # Checks if the order is partially refunded
+    # @return [Boolean]
+    def partially_refunded?
+      return false if item_count.zero?
+      return false if payment_state.in?(%w[void failed]) || refunds.empty?
+
+      refunds_total < total_minus_store_credits - additional_tax_total.abs
     end
 
     # Indicates whether or not the user is allowed to proceed to checkout.

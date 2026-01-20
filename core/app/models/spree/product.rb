@@ -649,7 +649,7 @@ module Spree
       return if classification_count.zero?
 
       Rails.cache.fetch("#{cache_key_with_version}/taxons-per-store/#{store.id}") do
-        taxons.for_store(store)
+        taxons.loaded? ? taxons.find_all { |taxon| taxon.taxonomy.store_id == store.id } : taxons.for_store(store)
       end
     end
 

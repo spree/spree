@@ -37,5 +37,4 @@ Gem::Specification.new do |s|
   s.add_dependency 'tailwindcss-ruby'
   s.add_dependency 'turbo-rails'
   s.add_dependency 'pagy', '~> 43.0'
-  s.add_dependency 'ar_lazy_preload', '~> 2.0'
 end

@@ -30,6 +30,7 @@ require 'wannabe_bool'
 require 'geocoder'
 require 'oembed'
 require 'safely_block'
+require 'ar_lazy_preload'
 
 # This is required because ActiveModel::Validations#invalid? conflicts with the
 # invalid state of a Payment. In the future this should be removed.

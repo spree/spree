@@ -218,12 +218,12 @@ module Spree
         params[:product] = params_service.call
       end
 
+      # These includes are not picked automatically by ar_lazy_preload gem so we need to specify them manually.
       def collection_includes
         {
           stock_items: [],
-          variants_including_master: [],
-          master: [:prices, :images, :stock_items],
-          variants: [:prices, :images, :stock_items],
+          master: [:images, :prices, :stock_items],
+          variants: [:images, :prices, :stock_items]
         }
       end
 
@@ -291,17 +291,6 @@ module Spree
 
         uploaded_assets.update_all(viewable_id: @product.master.id, viewable_type: 'Spree::Variant', updated_at: Time.current)
         clear_session_for_uploaded_assets('Spree::Variant')
-      end
-
-      def product_includes
-        {
-          tax_category: [],
-          stock_items: [:stock_location],
-          variants_including_master: [],
-          shipping_category: [],
-          master: [:prices, :images, :stock_items, :stock_locations],
-          variants: [:prices, :images, :stock_items, :stock_locations],
-        }
       end
 
       def check_slug_availability
