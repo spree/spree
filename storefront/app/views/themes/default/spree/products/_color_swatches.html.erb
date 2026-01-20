@@ -31,7 +31,7 @@
                 color_preview_container_class: "lg:w-[28px] lg:h-[28px]",
                 color_preview_class: "lg:top-[2px] lg:left-[2px]" %>
             <% end %>
-            <% if selected_variant.default_image %>
+            <% if selected_variant.has_images? %>
               <template data-featured-image-template>
                 <%= render 'spree/products/featured_image',
                   object: selected_variant %>
