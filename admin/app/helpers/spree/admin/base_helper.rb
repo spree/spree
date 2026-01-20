@@ -312,7 +312,7 @@ module Spree
       # @return [String] the localized date
       def spree_date(date, options = {})
         options.symbolize_keys![:format] ||= :long
-        l(date, options)
+        l(date, **options)
       end
 
       # returns the localized time for a given time
