@@ -35,8 +35,6 @@ RSpec.configure do |config|
 
   config.after(:all) do
     unless self.class.metadata[:without_global_store]
-      DatabaseCleaner.strategy = :transaction
-      DatabaseCleaner.clean_with(:truncation)
       clear_enqueued_jobs
     end
   end

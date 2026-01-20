@@ -33,7 +33,6 @@ rescue LoadError
 end
 
 require 'rspec/rails'
-require 'database_cleaner/active_record'
 require 'ffaker'
 require 'shoulda-matchers'
 
@@ -64,7 +63,6 @@ RSpec.configure do |config|
 
   config.before(:suite) do
     Spree::Events.disable!
-    DatabaseCleaner.clean_with(:truncation)
   end
 
   # Re-enable events for specs that need them

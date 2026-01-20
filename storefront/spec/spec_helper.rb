@@ -69,7 +69,6 @@ RSpec.configure do |config|
     Capybara.javascript_driver = :selenium_chrome_headless
     Capybara.default_max_wait_time = 10
     Capybara.raise_server_errors = false
-    DatabaseCleaner.clean_with(:truncation)
   end
 
   # Re-enable events for specs that need them
