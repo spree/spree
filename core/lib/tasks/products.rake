@@ -1,30 +1,20 @@
 namespace :spree do
   namespace :products do
-    desc 'Reset variant_count counter cache on products'
-    task reset_variant_count: :environment do |_t, _args|
-      puts 'Resetting variant_count counter cache...'
-      Spree::Product.in_batches.update_all(
-        "variant_count = (SELECT COUNT(*) FROM spree_variants WHERE spree_variants.product_id = spree_products.id AND spree_variants.is_master = false AND spree_variants.deleted_at IS NULL)"
-      )
-      puts 'Done!'
-    end
+    desc 'Reset counter caches (variant_count, classification_count, total_image_count) on products'
+    task reset_counter_caches: :environment do |_t, _args|
+      puts 'Resetting product counter caches...'
 
-    desc 'Reset classification_count counter cache on products'
-    task reset_classification_count: :environment do |_t, _args|
-      puts 'Resetting classification_count counter cache...'
-      Spree::Product.in_batches.update_all(
-        "classification_count = (SELECT COUNT(*) FROM spree_products_taxons WHERE spree_products_taxons.product_id = spree_products.id)"
-      )
-      puts 'Done!'
-    end
+      Spree::Product.find_each do |product|
+        product.update_columns(
+          variant_count: product.variants.count,
+          classification_count: product.classifications.count,
+          total_image_count: product.variant_images.count,
+          updated_at: Time.current
+        )
+        print '.'
+      end
 
-    desc 'Reset total_image_count counter cache on products'
-    task reset_total_image_count: :environment do |_t, _args|
-      puts 'Resetting total_image_count counter cache...'
-      Spree::Product.in_batches.update_all(
-        "total_image_count = (SELECT COUNT(*) FROM spree_assets INNER JOIN spree_variants ON spree_assets.viewable_id = spree_variants.id AND spree_assets.viewable_type = 'Spree::Variant' WHERE spree_variants.product_id = spree_products.id AND spree_assets.type = 'Spree::Image')"
-      )
-      puts 'Done!'
+      puts "\nDone!"
     end
 
     desc 'Enqueue background jobs to populate product metrics for all store products'
