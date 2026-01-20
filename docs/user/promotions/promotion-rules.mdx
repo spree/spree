@@ -1,0 +1,130 @@
+---
+title: "Promotion Rules"
+description: "Learn how to use promotion rules in Spree Commerce."
+---
+
+Promotion rules define the conditions that must be met for a promotion to be applied. Spree gives you full control over when a promotion should be eligible - whether it’s based on the order total, customer group, specific products, or a user’s login status.
+
+Each promotion can have multiple rules, and you can choose whether all rules must match (match all) or any rule must match (match any).
+
+## Rule Match Policies
+
+At the top of the Rules section in the promotion editor, you’ll see the Match Policy toggle:
+
+- **Match all** - All rules must be satisfied for the promotion to apply.
+- **Match any** - Only one rule needs to be satisfied.
+
+This gives you flexibility to fine-tune how strict or lenient the promotion conditions should be.
+
+## Available Promotion Rules
+
+Below is a list of all rule types currently supported in Spree, along with when and why you might use them.
+
+### Item Total
+
+Applies the promotion only if the order total meets a specific threshold.
+
+Use this when:
+
+- Offering discounts above a certain spend (e.g. \$50+ orders)
+- Creating tiered incentives for larger carts
+
+### Country
+
+Limits the promotion to customers whose shipping address is in a specific country.
+
+Useful for:
+
+- International promotions
+- Localized campaigns (e.g., “Free shipping in the US”)
+
+### Currency
+
+Applies the promotion only to orders in a specific currency.
+
+Use this if:
+
+- You're running different promotions in different markets
+- You want to avoid coupon misuse across regional stores
+
+### Product(s)
+
+Limits the promotion to orders that include one or more specific products (variants).
+
+Perfect for:
+
+- Targeted discounts on select SKUs
+- Bundling or cross-sell offers
+
+### Taxon(s)
+
+Applies when the order includes products belonging to specific taxons (categories, collections, etc.).
+
+Ideal for:
+
+- Category-wide promotions (e.g., “25% off all shoes”)
+- Seasonal or campaign-specific collections
+
+### Option Value(s)
+
+Triggers when products in the cart have a specific option value (e.g., color, size, material).
+
+Use cases:
+
+- Color-specific clearance sales
+- Size-limited inventory promos
+
+### User
+
+Applies only to specific customers.
+
+This is useful for:
+
+- VIP offers
+- Manually targeting customers (e.g. after support tickets, outreach)
+
+### First Order
+
+Applies only if the promotion is being used on a customer’s first-ever order.
+
+Great for:
+
+- Welcome offers
+- Signup conversion boosts
+
+### User Logged In
+
+Applies only when the customer is logged in.
+
+Use this to:
+
+- Encourage account creation
+- Hide promotions from guest checkout users
+
+### One Use Per User
+
+Restricts the promotion so that each user can only use it once.
+
+Helps prevent abuse and maintain exclusivity.
+
+### Customer Group
+
+Limits the promotion to customers belonging to a specific Customer Group.
+
+Perfect for:
+
+- Wholesale or B2B-only promotions
+- Segment-specific campaigns (e.g., “Early Access” or “Loyal Customers”)
+
+Customer Groups are created under [<u>Customers → Customer Groups</u>](https://spreecommerce.org/docs/user/customers/customer-groups).
+
+## Example Use Cases
+
+| **Goal**                              | **Rule(s) to Use**              |
+| :------------------------------------ | :------------------------------ |
+| \$10 off first order only             | First Order + User Logged In    |
+| 20% off selected category             | Taxon(s)                        |
+| Exclusive deal for logged-in VIPs     | User Logged In + Customer Group |
+| Free shipping to U.S. only            | Country (US)                    |
+| Discount on red-colored items         | Option Value(s) → Color: Red    |
+| Welcome promo limited to one-time use | First Order + One Use Per User  |
