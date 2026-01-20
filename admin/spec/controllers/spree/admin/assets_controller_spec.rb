@@ -45,6 +45,29 @@ describe Spree::Admin::AssetsController, type: :controller do
         expect(asset.session_id).to be_nil
       end
     end
+
+    context 'with viewable and type Spree::Image' do
+      subject { post :create, params: params, format: :turbo_stream }
+
+      let(:params) do
+        { asset: { type: 'Spree::Image', alt: "some text", attachment: attachment, viewable_id: product.master.id, viewable_type: "Spree::Variant" } }
+      end
+
+      it 'creates a new Spree::Image' do
+        expect { subject }.to change(Spree::Image, :count).by(1)
+
+        expect(response).to have_http_status(:ok)
+        expect(Spree::Image.last.viewable).to eq(product.master)
+      end
+
+      it 'increments variant image_count counter cache' do
+        expect { subject }.to change { product.master.reload.image_count }.by(1)
+      end
+
+      it 'increments product total_image_count counter cache' do
+        expect { subject }.to change { product.reload.total_image_count }.by(1)
+      end
+    end
   end
 
   describe '#update' do

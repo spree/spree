@@ -19,7 +19,7 @@ module Spree
       def collection_includes
         {
           stock_location: [],
-          variant: [option_values: :option_type, product: [variant_images: [], variants: [:images], master: [:images]], images: []]
+          variant: [option_values: :option_type, product: [variants: [:images], master: [:images]], images: []]
         }
       end
 

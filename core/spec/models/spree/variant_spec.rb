@@ -1395,31 +1395,52 @@ describe Spree::Variant, type: :model do
 
   describe '#default_image' do
     let(:variant) { create(:variant) }
+
+    context 'when variant has images' do
+      let!(:image) { create(:image, position: 1, viewable: variant) }
+
+      it 'returns the first image' do
+        expect(variant.reload.default_image).to eq(image)
+      end
+    end
+
+    context 'when variant has no images' do
+      let!(:product_image) { create(:image, viewable: variant.product.master) }
+
+      it 'falls back to product default image' do
+        # Reload to get updated counter cache
+        variant.product.reload
+        expect(variant.default_image).to eq(product_image)
+      end
+    end
+  end
+
+  describe '#primary_image' do
+    let(:variant) { create(:variant) }
     let!(:image) { create(:image, position: 1, viewable: variant) }
 
-    it 'returns the first image for the variant' do
-      variant.reload
-      expect(variant.default_image).to eq(image)
+    it 'returns the first image' do
+      expect(variant.primary_image).to eq(image)
     end
   end
 
   describe '#secondary_image' do
     let(:variant) { create(:variant) }
-    let!(:image) { create(:image, position: 1, viewable: variant) }
+    let!(:image1) { create(:image, position: 1, viewable: variant) }
     let!(:image2) { create(:image, position: 2, viewable: variant) }
 
-    it 'returns the second image for the variant' do
+    it 'returns the second image' do
       expect(variant.secondary_image).to eq(image2)
     end
   end
 
   describe '#additional_images' do
     let(:variant) { create(:variant) }
-    let!(:image) { create(:image, position: 1, viewable: variant) }
+    let!(:image1) { create(:image, position: 1, viewable: variant) }
     let!(:image2) { create(:image, position: 2, viewable: variant) }
     let!(:image3) { create(:image, position: 3, viewable: variant) }
 
-    it 'returns the additional images for the variant' do
+    it 'returns all images except the default' do
       expect(variant.additional_images).to eq([image2, image3])
     end
   end
@@ -1436,27 +1457,28 @@ describe Spree::Variant, type: :model do
     context 'when variant has images' do
       let!(:image) { create(:image, viewable: variant) }
 
-      it 'returns true using counter cache' do
-        variant.reload
-        expect(variant.has_images?).to be true
+      it 'returns true' do
+        expect(variant.reload.has_images?).to be true
       end
     end
 
     context 'when images are preloaded' do
       let!(:image) { create(:image, viewable: variant) }
 
-      it 'uses loaded images instead of counter cache' do
-        variant_with_images = Spree::Variant.includes(:images).find(variant.id)
-        expect(variant_with_images.images).to be_loaded
-        expect(variant_with_images.has_images?).to be true
+      it 'uses loaded association' do
+        loaded_variant = Spree::Variant.includes(:images).find(variant.id)
+
+        expect(loaded_variant.images).to be_loaded
+        expect(loaded_variant.has_images?).to be true
       end
     end
 
     context 'when images are preloaded but empty' do
-      it 'returns false using loaded images' do
-        variant_with_images = Spree::Variant.includes(:images).find(variant.id)
-        expect(variant_with_images.images).to be_loaded
-        expect(variant_with_images.has_images?).to be false
+      it 'returns false' do
+        loaded_variant = Spree::Variant.includes(:images).find(variant.id)
+
+        expect(loaded_variant.images).to be_loaded
+        expect(loaded_variant.has_images?).to be false
       end
     end
   end

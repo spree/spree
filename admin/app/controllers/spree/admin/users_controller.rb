@@ -131,7 +131,7 @@ module Spree
         @last_order = @user.completed_orders.last
         return unless @last_order.present?
 
-        @last_order_line_items = @last_order.line_items.includes(variant: [:images, { option_values: :option_type }, { product: [:variant_images, { master: :images }, { variants: :images }] }])
+        @last_order_line_items = @last_order.line_items.includes(variant: [:images, { option_values: :option_type }, { product: [{ master: :images }, { variants: :images }] }])
       end
     end
   end

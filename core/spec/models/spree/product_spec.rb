@@ -885,29 +885,36 @@ describe Spree::Product, type: :model do
 
   describe '#default_image' do
     let(:product) { create(:product, stores: [store]) }
-    let!(:image) { create(:image, viewable: product.master) }
 
-    it 'returns the first image for the product' do
-      product.reload
-      expect(product.default_image).to eq(image)
-    end
+    context 'when master has images' do
+      let!(:image) { create(:image, viewable: product.master) }
 
-    context 'with variants' do
-      let!(:variant) { create(:variant, product: product) }
-      let!(:image2) { create(:image, viewable: variant) }
-
-      it 'returns the first image for the product' do
-        product.reload
-        expect(product.default_image).to eq(image)
+      it 'returns the master image' do
+        expect(product.reload.default_image).to eq(image)
       end
 
-      context 'when master has no images' do
-        let!(:image) { nil }
+      context 'with variants that also have images' do
+        let!(:variant) { create(:variant, product: product) }
+        let!(:variant_image) { create(:image, viewable: variant) }
 
-        it 'returns the first image for the variant' do
-          product.reload
-          expect(product.default_image).to eq(image2)
+        it 'returns the master image (master takes priority)' do
+          expect(product.reload.default_image).to eq(image)
         end
+      end
+    end
+
+    context 'when master has no images but variant does' do
+      let!(:variant) { create(:variant, product: product) }
+      let!(:variant_image) { create(:image, viewable: variant) }
+
+      it 'returns the variant image' do
+        expect(product.reload.default_image).to eq(variant_image)
+      end
+    end
+
+    context 'when no variants have images' do
+      it 'returns nil' do
+        expect(product.default_image).to be_nil
       end
     end
   end
@@ -925,8 +932,7 @@ describe Spree::Product, type: :model do
       let!(:image) { create(:image, viewable: product.master) }
 
       it 'returns true' do
-        product.reload
-        expect(product.has_variant_images?).to be true
+        expect(product.reload.has_variant_images?).to be true
       end
     end
 
@@ -935,26 +941,27 @@ describe Spree::Product, type: :model do
       let!(:image) { create(:image, viewable: variant) }
 
       it 'returns true' do
-        product.reload
-        expect(product.has_variant_images?).to be true
+        expect(product.reload.has_variant_images?).to be true
       end
     end
 
     context 'when variant_images are preloaded' do
       let!(:image) { create(:image, viewable: product.master) }
 
-      it 'uses loaded association instead of counter cache' do
-        product_with_images = Spree::Product.includes(:variant_images).find(product.id)
-        expect(product_with_images.association(:variant_images)).to be_loaded
-        expect(product_with_images.has_variant_images?).to be true
+      it 'uses loaded association' do
+        loaded_product = Spree::Product.includes(:variant_images).find(product.id)
+
+        expect(loaded_product.association(:variant_images)).to be_loaded
+        expect(loaded_product.has_variant_images?).to be true
       end
     end
 
     context 'when variant_images are preloaded but empty' do
-      it 'returns false using loaded association' do
-        product_with_images = Spree::Product.includes(:variant_images).find(product.id)
-        expect(product_with_images.association(:variant_images)).to be_loaded
-        expect(product_with_images.has_variant_images?).to be false
+      it 'returns false' do
+        loaded_product = Spree::Product.includes(:variant_images).find(product.id)
+
+        expect(loaded_product.association(:variant_images)).to be_loaded
+        expect(loaded_product.has_variant_images?).to be false
       end
     end
   end
@@ -968,14 +975,13 @@ describe Spree::Product, type: :model do
       end
     end
 
-    context 'when master has images but default_variant (a non-master variant) does not' do
+    context 'when master has images but default_variant does not' do
       let!(:variant) { create(:variant, product: product) }
       let!(:image) { create(:image, viewable: product.master) }
 
-      it 'returns true because it checks all variants, not just default_variant' do
+      it 'returns true (checks all variants)' do
         product.reload
         expect(product.default_variant).to eq(variant)
-        expect(product.default_variant.has_images?).to be false
         expect(product.has_images?).to be true
       end
     end
@@ -985,8 +991,7 @@ describe Spree::Product, type: :model do
       let!(:image) { create(:image, viewable: variant) }
 
       it 'returns true' do
-        product.reload
-        expect(product.has_images?).to be true
+        expect(product.reload.has_images?).to be true
       end
     end
   end
@@ -994,76 +999,155 @@ describe Spree::Product, type: :model do
   describe '#image_count' do
     let(:product) { create(:product, stores: [store]) }
 
-    context 'when default_variant is master (no variants)' do
-      it 'returns master image count' do
+    context 'when no variants have images' do
+      it 'returns 0' do
         expect(product.image_count).to eq(0)
       end
+    end
 
-      context 'with images on master' do
-        let!(:images) { create_list(:image, 2, viewable: product.master) }
+    context 'when master has images' do
+      let!(:images) { create_list(:image, 2, viewable: product.master) }
 
-        it 'returns the image count' do
+      it 'returns the master image count' do
+        expect(product.reload.image_count).to eq(2)
+      end
+
+      context 'when variant also has images' do
+        let!(:variant) { create(:variant, product: product) }
+        let!(:variant_images) { create_list(:image, 3, viewable: variant) }
+
+        it 'returns master image count (master takes priority)' do
           product.reload
+          expect(product.variant_for_images).to eq(product.master)
           expect(product.image_count).to eq(2)
         end
       end
     end
 
-    context 'when default_variant is a non-master variant' do
+    context 'when only variant has images' do
       let!(:variant) { create(:variant, product: product) }
-      let!(:master_images) { create_list(:image, 2, viewable: product.master) }
       let!(:variant_images) { create_list(:image, 3, viewable: variant) }
 
-      it 'returns the default_variant image count, not master' do
+      it 'returns the variant image count' do
         product.reload
-        expect(product.default_variant).to eq(variant)
+        expect(product.variant_for_images).to eq(variant)
         expect(product.image_count).to eq(3)
       end
     end
   end
 
-  describe '#find_first_variant_image' do
+  describe '#variant_for_images' do
     let(:product) { create(:product, stores: [store]) }
 
     context 'when no variants have images' do
       it 'returns nil' do
-        expect(product.send(:find_first_variant_image)).to be_nil
+        expect(product.variant_for_images).to be_nil
       end
     end
 
-    context 'when variants are not preloaded' do
+    context 'when master has images' do
+      let!(:image) { create(:image, viewable: product.master) }
+
+      it 'returns master' do
+        expect(product.reload.variant_for_images).to eq(product.master)
+      end
+    end
+
+    context 'when only default_variant has images' do
       let!(:variant) { create(:variant, product: product) }
       let!(:image) { create(:image, viewable: variant) }
 
-      it 'returns first variant image via variant_images association' do
-        product.reload
-        expect(product.send(:find_first_variant_image)).to eq(image)
+      it 'returns default_variant' do
+        expect(product.reload.variant_for_images).to eq(variant)
       end
     end
 
-    context 'when variants are preloaded with primary_image' do
+    context 'when only a non-default variant has images' do
       let!(:variant1) { create(:variant, product: product) }
       let!(:variant2) { create(:variant, product: product) }
       let!(:image) { create(:image, viewable: variant2) }
 
-      it 'finds the variant with images and returns its primary_image' do
-        product_with_variants = Spree::Product.includes(variants: :primary_image).find(product.id)
-        product_with_variants.variants.reload # ensure loaded
+      it 'returns the variant with images' do
+        product.reload
+        expect(product.default_variant).to eq(variant1)
+        expect(product.variant_for_images).to eq(variant2)
+      end
+    end
+  end
 
-        result = product_with_variants.send(:find_first_variant_image)
-        expect(result).to eq(image)
+  describe '#secondary_image' do
+    let(:product) { create(:product, stores: [store]) }
+
+    context 'when no variants have images' do
+      it 'returns nil' do
+        expect(product.secondary_image).to be_nil
       end
     end
 
-    context 'when multiple variants have images' do
-      let!(:variant1) { create(:variant, product: product) }
-      let!(:variant2) { create(:variant, product: product) }
-      let!(:image1) { create(:image, viewable: variant1) }
-      let!(:image2) { create(:image, viewable: variant2) }
+    context 'when variant has only one image' do
+      let!(:image) { create(:image, viewable: product.master) }
 
-      it 'returns the first variant image' do
+      it 'returns nil' do
+        expect(product.reload.secondary_image).to be_nil
+      end
+    end
+
+    context 'when variant has multiple images' do
+      let!(:image1) { create(:image, viewable: product.master, position: 1) }
+      let!(:image2) { create(:image, viewable: product.master, position: 2) }
+
+      it 'returns the second image' do
+        expect(product.reload.secondary_image).to eq(image2)
+      end
+    end
+
+    context 'when images are on a non-master variant' do
+      let!(:variant) { create(:variant, product: product) }
+      let!(:image1) { create(:image, viewable: variant, position: 1) }
+      let!(:image2) { create(:image, viewable: variant, position: 2) }
+
+      it 'returns the second image from that variant' do
         product.reload
-        expect(product.send(:find_first_variant_image)).to eq(image1)
+        expect(product.secondary_image).to eq(image2)
+      end
+    end
+  end
+
+  describe 'image methods with eager loading' do
+    let(:product) { create(:product, stores: [store]) }
+    let!(:variant) { create(:variant, product: product) }
+    let!(:image) { create(:image, viewable: variant) }
+
+    let(:storefront_includes) do
+      [
+        :prices_including_master,
+        { master: [:images, :prices],
+          variants: [:images, :prices, :option_values] }
+      ]
+    end
+
+    it 'returns correct images with storefront includes' do
+      loaded_product = Spree::Product.includes(*storefront_includes).find(product.id)
+
+      expect(loaded_product.default_image).to eq(image)
+      expect(loaded_product.variant_for_images).to eq(variant)
+      expect(loaded_product.has_images?).to be true
+    end
+
+    context 'when image is on non-default variant' do
+      let!(:variant2) { create(:variant, product: product) }
+
+      before do
+        variant.stock_items.update_all(count_on_hand: 0, backorderable: false)
+        variant2.stock_items.update_all(count_on_hand: 10, backorderable: true)
+      end
+
+      it 'returns image from non-default variant' do
+        loaded_product = Spree::Product.includes(*storefront_includes).find(product.id)
+
+        expect(loaded_product.default_variant).to eq(variant2)
+        expect(loaded_product.variant_for_images).to eq(variant)
+        expect(loaded_product.default_image).to eq(image)
       end
     end
   end

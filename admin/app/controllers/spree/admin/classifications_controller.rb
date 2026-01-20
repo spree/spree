@@ -38,7 +38,6 @@ module Spree
                         includes(
                           :taxon,
                           product: {
-                            variant_images: [],
                             master: [:images, :stock_items, :stock_locations],
                             variants: [:images, :stock_items, :stock_locations]
                           }
