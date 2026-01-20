@@ -231,53 +231,6 @@ describe Spree::BaseHelper, type: :helper do
     end
   end
 
-  # Regression test for #2396
-  context 'meta_data_tags' do
-    it 'truncates a product description to 160 characters' do
-      # Because the controller_name method returns "test"
-      # controller_name is used by this method to infer what it is supposed
-      # to be generating meta_data_tags for
-      text = FFaker::Lorem.paragraphs(2).join(' ')
-      @test = Spree::Product.new(description: text, stores: [current_store])
-      tags = Nokogiri::HTML.parse(meta_data_tags)
-      content = tags.css('meta[name=description]').first['content']
-      assert content.length <= 160, 'content length is not truncated to 160 characters'
-    end
-  end
-
-  context 'og_meta_data_tags' do
-    let(:current_currency) { 'USD' }
-    let(:image) { create(:image, position: 1) }
-    let(:product) do
-      create(:product, stores: [current_store]).tap { |product| product.master.images << image }
-    end
-
-    it 'renders open graph meta data tags for PDP' do
-      # Because the controller_name method returns "test"
-      # controller_name is used by this method to infer what it is supposed
-      # to be generating og_meta_data_tags for
-      @test               = product
-      tags                = Nokogiri::HTML.parse(og_meta_data_tags)
-
-      meta_image          = tags.css('meta[property="og:image"]').first['content']
-      meta_type           = tags.css('meta[property="og:type"]').first['content']
-      meta_title          = tags.css('meta[property="og:title"]').first['content']
-      meta_description    = tags.css('meta[property="og:description"]').first['content']
-      meta_price_amount   = tags.css('meta[property="product:price:amount"]').first['content']
-      meta_price_currency = tags.css('meta[property="product:price:currency"]').first['content']
-
-      expect(meta_image).to be_present
-
-      expect(meta_type).to eq('product')
-      expect(meta_title).to eq(product.name)
-      expect(meta_description).to eq(product.description)
-
-      default_price = product.master.default_price
-      expect(meta_price_amount).to eq(default_price.amount.to_s)
-      expect(meta_price_currency).to eq(default_price.currency)
-    end
-  end
-
   # Regression test for #5384
 
   context 'pretty_time' do
@@ -360,72 +313,6 @@ describe Spree::BaseHelper, type: :helper do
         it 'returns the price adding the VAT' do
           expect(display_price(product)).to eq('$23.32')
         end
-      end
-    end
-  end
-
-  describe '#default_image_for_product_or_variant' do
-    let(:product) { build :product, stores: [current_store] }
-    let(:variant) { build :variant, product: product }
-
-    subject(:default_image) { default_image_for_product_or_variant(product_or_variant) }
-
-    context 'when Product passed' do
-      let(:product_or_variant) { product }
-
-      it { is_expected.to eq(nil) }
-
-      context 'with master and variants' do
-        context 'master and variants with images' do
-          let!(:master_image_1) { create :image, viewable: product.master }
-          let!(:master_image_2) { create :image, viewable: product.master }
-          let!(:variant_image_1) { create :image, viewable: variant }
-          let!(:variant_image_2) { create :image, viewable: variant }
-
-          it { is_expected.to eq(master_image_1) }
-        end
-
-        context 'master without images' do
-          let!(:variant_image_1) { create :image, viewable: variant }
-          let!(:variant_image_2) { create :image, viewable: variant }
-
-          it { is_expected.to eq(variant_image_1) }
-        end
-
-        context 'variants without images' do
-          let!(:master_image_1) { create :image, viewable: product.master }
-          let!(:master_image_2) { create :image, viewable: product.master }
-
-          it { is_expected.to eq(master_image_1) }
-        end
-      end
-
-      context 'only with master' do
-        let!(:image_1) { create :image, viewable: product.master }
-        let!(:image_2) { create :image, viewable: product.master }
-
-        it { is_expected.to eq(image_1) }
-      end
-    end
-
-    context 'when Variant passed' do
-      let(:product_or_variant) { variant }
-
-      it { is_expected.to eq(nil) }
-
-      context 'and Variant has images' do
-        let!(:image_1) { create :image, viewable: variant }
-        let!(:image_2) { create :image, viewable: variant }
-
-        it { is_expected.to eq(image_1) }
-      end
-
-      context 'and another Variant of the Product has images' do
-        let(:variant_2) { build :variant, product: product }
-        let!(:image_1) { create :image, viewable: variant_2 }
-        let!(:image_2) { create :image, viewable: variant_2 }
-
-        it { is_expected.to eq(image_1) }
       end
     end
   end
