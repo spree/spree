@@ -1033,7 +1033,9 @@
               {
                 "group": "Promotions",
                 "pages": [
-                  "user/promotions/create-a-promotion"
+                  "user/promotions/create-a-promotion",
+                  "user/promotions/promotion-rules",
+                  "user/promotions/promotion-actions"
                 ]
               },
               {
