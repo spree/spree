@@ -83,9 +83,8 @@ module Spree
     end
 
     def method_missing(method_name, *args, &block)
-      Spree::Deprecation.warn("#{BaseHelper.name}##{method_name} is deprecated and will be removed in Spree 5.5. Please use spree_image_tag instead - https://spreecommerce.org/docs/developer/core-concepts/images-assets#preprocessed-named-variants")
-
       if image_style = image_style_from_method_name(method_name)
+        Spree::Deprecation.warn("#{BaseHelper.name}##{method_name} is deprecated and will be removed in Spree 5.5. Please use spree_image_tag instead - https://spreecommerce.org/docs/developer/core-concepts/images-assets#preprocessed-named-variants")
         define_image_method(image_style)
         send(method_name, *args)
       else
