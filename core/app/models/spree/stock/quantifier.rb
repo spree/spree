@@ -35,7 +35,7 @@ module Spree
       private
 
       def association_loaded?
-        variant.association(:stock_items).loaded? && variant.association(:stock_locations).loaded?
+        variant.association(:stock_items).loaded?
       end
 
       def scope_to_location(collection)
