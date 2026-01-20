@@ -959,6 +959,69 @@ describe Spree::Product, type: :model do
     end
   end
 
+  describe '#has_images?' do
+    let(:product) { create(:product, stores: [store]) }
+
+    context 'when no variants have images' do
+      it 'returns false' do
+        expect(product.has_images?).to be false
+      end
+    end
+
+    context 'when master has images but default_variant (a non-master variant) does not' do
+      let!(:variant) { create(:variant, product: product) }
+      let!(:image) { create(:image, viewable: product.master) }
+
+      it 'returns true because it checks all variants, not just default_variant' do
+        product.reload
+        expect(product.default_variant).to eq(variant)
+        expect(product.default_variant.has_images?).to be false
+        expect(product.has_images?).to be true
+      end
+    end
+
+    context 'when any variant has images' do
+      let!(:variant) { create(:variant, product: product) }
+      let!(:image) { create(:image, viewable: variant) }
+
+      it 'returns true' do
+        product.reload
+        expect(product.has_images?).to be true
+      end
+    end
+  end
+
+  describe '#image_count' do
+    let(:product) { create(:product, stores: [store]) }
+
+    context 'when default_variant is master (no variants)' do
+      it 'returns master image count' do
+        expect(product.image_count).to eq(0)
+      end
+
+      context 'with images on master' do
+        let!(:images) { create_list(:image, 2, viewable: product.master) }
+
+        it 'returns the image count' do
+          product.reload
+          expect(product.image_count).to eq(2)
+        end
+      end
+    end
+
+    context 'when default_variant is a non-master variant' do
+      let!(:variant) { create(:variant, product: product) }
+      let!(:master_images) { create_list(:image, 2, viewable: product.master) }
+      let!(:variant_images) { create_list(:image, 3, viewable: variant) }
+
+      it 'returns the default_variant image count, not master' do
+        product.reload
+        expect(product.default_variant).to eq(variant)
+        expect(product.image_count).to eq(3)
+      end
+    end
+  end
+
   describe '#find_first_variant_image' do
     let(:product) { create(:product, stores: [store]) }
 

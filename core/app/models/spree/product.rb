@@ -250,7 +250,7 @@ module Spree
     end
 
     delegate :display_amount, :display_price, :has_default_price?, :track_inventory?,
-             :display_compare_at_price, :images, :has_images?, :primary_image, :secondary_image, to: :default_variant
+             :display_compare_at_price, :images, :primary_image, :secondary_image, :image_count, to: :default_variant
 
     alias master_images images
 
@@ -350,6 +350,10 @@ module Spree
 
       total_image_count.positive?
     end
+
+    # Returns true if the product has any images across all variants.
+    # This is an alias for has_variant_images? for consistency with Variant#has_images?
+    alias has_images? has_variant_images?
 
     # Returns default Image for Product
     # First it tries to get an image from the master variant
