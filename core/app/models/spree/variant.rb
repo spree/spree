@@ -47,8 +47,6 @@ module Spree
     has_many :option_values, through: :option_value_variants, dependent: :destroy, class_name: 'Spree::OptionValue'
 
     has_many :images, -> { order(:position) }, as: :viewable, dependent: :destroy, class_name: 'Spree::Image'
-    has_one :primary_image, -> { order(:position).limit(1) }, as: :viewable, class_name: 'Spree::Image'
-    has_one :secondary_image, -> { order(:position).limit(1).offset(1) }, as: :viewable, class_name: 'Spree::Image'
 
     has_many :prices,
              class_name: 'Spree::Price',
@@ -287,27 +285,36 @@ module Spree
     end
 
     # Returns true if the variant has images.
-    # @return [Boolean] true if the variant has images.
+    # Uses loaded association when available, otherwise falls back to counter cache.
+    # @return [Boolean]
     def has_images?
       return images.any? if images.loaded?
 
       image_count.positive?
     end
 
-    # Returns default Image for Variant
-    # @return [Spree::Image]
+    # Returns default Image for Variant, falling back to product's default image.
+    # @return [Spree::Image, nil]
     def default_image
-      @default_image ||= if has_images?
-                           images.loaded? ? images.first : primary_image
-                         else
-                           product.default_image
-                         end
+      @default_image ||= has_images? ? images.first : product.default_image
     end
 
-    # Returns additional Images for Variant
+    # Returns first Image for Variant.
+    # @return [Spree::Image, nil]
+    def primary_image
+      images.first
+    end
+
+    # Returns second Image for Variant (for hover effects).
+    # @return [Spree::Image, nil]
+    def secondary_image
+      images.second
+    end
+
+    # Returns all images except the default image, combining variant and product images.
     # @return [Array<Spree::Image>]
     def additional_images
-      @additional_images ||= (images + product.images).uniq.find_all { |image| image.id != default_image&.id }
+      @additional_images ||= (images + product.images).uniq.reject { |image| image.id == default_image&.id }
     end
 
     # Returns an array of hashes with the option type name, value and presentation

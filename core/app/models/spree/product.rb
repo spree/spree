@@ -39,8 +39,8 @@ module Spree
     publishes_lifecycle_events
 
     MEMOIZED_METHODS = %w[total_on_hand taxonomy_ids taxon_and_ancestors category
-                          default_variant_id tax_category default_variant
-                          default_image secondary_image category_taxon brand_taxon main_taxon
+                          default_variant_id tax_category default_variant variant_for_images
+                          category_taxon brand_taxon main_taxon
                           purchasable? in_stock? backorderable? digital?]
 
     STATUSES = %w[draft active archived].freeze
@@ -250,7 +250,7 @@ module Spree
     end
 
     delegate :display_amount, :display_price, :has_default_price?, :track_inventory?,
-             :display_compare_at_price, :images, :primary_image, :secondary_image, :image_count, to: :default_variant
+             :display_compare_at_price, :images, to: :default_variant
 
     alias master_images images
 
@@ -343,7 +343,7 @@ module Spree
     end
 
     # Returns true if any variant (including master) has images.
-    # Uses total_image_count counter cache for performance.
+    # Uses loaded association when available, otherwise falls back to counter cache.
     # @return [Boolean]
     def has_variant_images?
       return variant_images.any? if association(:variant_images).loaded?
@@ -351,34 +351,43 @@ module Spree
       total_image_count.positive?
     end
 
-    # Returns true if the product has any images across all variants.
-    # This is an alias for has_variant_images? for consistency with Variant#has_images?
+    # Alias for has_variant_images? for consistency with Variant#has_images?
     alias has_images? has_variant_images?
 
-    # Returns default Image for Product
-    # First it tries to get an image from the master variant
-    # Fallbacks to the default variant image
-    # Fallbacks to the first image attached to other variants
-    # @return [Spree::Image]
-    def default_image
-      @default_image ||= if master.has_images?
-                           master.primary_image
-                         elsif has_variants? && default_variant.has_images?
-                           default_variant.primary_image
-                         elsif has_variant_images?
-                           find_first_variant_image
-                         end
+    # Returns the variant that should be used for displaying images.
+    # Priority: master > default_variant > first variant with images
+    # @return [Spree::Variant, nil]
+    def variant_for_images
+      @variant_for_images ||= find_variant_for_images
     end
 
-    # Finds first image from variants with images using preloaded data when available
+    # Returns default Image for Product.
     # @return [Spree::Image, nil]
-    def find_first_variant_image
-      if variants.loaded?
-        variant_with_image = variants.find(&:has_images?)
-        variant_with_image&.primary_image
-      else
-        variant_images.first
-      end
+    def default_image
+      variant_for_images&.primary_image
+    end
+
+    # Returns secondary Image for Product (for hover effects).
+    # @return [Spree::Image, nil]
+    def secondary_image
+      variant_for_images&.secondary_image
+    end
+
+    # Alias for default_image for consistency.
+    alias primary_image default_image
+
+    # Returns the image count from the variant used for displaying images.
+    # @return [Integer]
+    def image_count
+      variant_for_images&.image_count || 0
+    end
+
+    # Finds first variant with images using preloaded data when available.
+    # @return [Spree::Variant, nil]
+    def find_variant_with_images
+      return variants.find(&:has_images?) if variants.loaded?
+
+      variants.joins(:images).first
     end
 
     # Returns the short description for the product
@@ -704,6 +713,16 @@ module Spree
     end
 
     private
+
+    # Determines which variant should be used for displaying images.
+    # Priority: master > default_variant > first variant with images
+    def find_variant_for_images
+      return master if master.has_images?
+      return default_variant if has_variants? && default_variant.has_images?
+      return find_variant_with_images if has_variant_images?
+
+      nil
+    end
 
     def add_associations_from_prototype
       if prototype_id && prototype = Spree::Prototype.find_by(id: prototype_id)

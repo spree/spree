@@ -185,9 +185,9 @@ module Spree
         :prices_including_master,
         :option_types,
         :option_values,
-        { master: [:primary_image, :secondary_image, :prices, :stock_items, :stock_locations, { stock_items: :stock_location }],
+        { master: [:images, :prices, :stock_items, :stock_locations, { stock_items: :stock_location }],
           variants: [
-            :primary_image, :secondary_image, :prices, :option_values, :stock_items, :stock_locations,
+            :images, :prices, :option_values, :stock_items, :stock_locations,
             { option_values: :option_type, stock_items: :stock_location }
           ],
           taxons: [:taxonomy],

@@ -65,12 +65,10 @@ module Spree
     end
 
     def should_touch_product_variants?
-      return false unless viewable.is_a?(Spree::Variant)
-      return false unless viewable.is_master?
-      return false unless viewable.product.has_variants?
-      return false unless saved_change_to_position?
-
-      true
+      viewable.is_a?(Spree::Variant) &&
+        viewable.is_master? &&
+        viewable.product.has_variants? &&
+        saved_change_to_position?
     end
 
     def increment_viewable_image_count
