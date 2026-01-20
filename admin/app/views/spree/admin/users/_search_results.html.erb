@@ -1,0 +1,9 @@
+<div id="users_search_results" class="search-results">
+  <% if users.any? %>
+    <%= render collection: users, partial: 'spree/admin/users/search_result', as: :user %>
+  <% else %>
+    <p class="text-gray-600 text-center py-12">
+      <%= Spree.t(:no_customers_found) %>
+    </p>
+  <% end %>
+</div>

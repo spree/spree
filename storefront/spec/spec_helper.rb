@@ -67,6 +67,7 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = true
 
   config.before(:suite) do
+    Spree::Events.disable!
     Capybara.match = :smart
     Capybara.javascript_driver = :selenium_chrome_headless
     Capybara.default_max_wait_time = 10
@@ -74,6 +75,11 @@ RSpec.configure do |config|
     # Clean out the database state before the tests run
     DatabaseCleaner.strategy = :transaction
     DatabaseCleaner.clean_with(:truncation)
+  end
+
+  # Re-enable events for specs that need them
+  config.around(:each, events: true) do |example|
+    Spree::Events.enable { example.run }
   end
 
   config.around(:each) do |example|

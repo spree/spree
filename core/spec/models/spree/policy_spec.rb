@@ -69,6 +69,26 @@ RSpec.describe Spree::Policy, type: :model do
         expect(policy.body.to_plain_text).to eq('Política de Privacidad')
       end
     end
+
+    context 'when always_use_translations is enabled' do
+      before do
+        @original_setting = Spree::Config.always_use_translations
+        Spree::Config.always_use_translations = true
+      end
+
+      after do
+        Spree::Config.always_use_translations = @original_setting
+      end
+
+      it 'allows creating policies with translations' do
+        I18n.with_locale(:es) do
+          policy = create(:policy, owner: store, name: 'Política de Privacidad')
+
+          expect(policy).to be_persisted
+          expect(policy.name).to eq('Política de Privacidad')
+        end
+      end
+    end
   end
 
   describe 'Scopes' do
@@ -94,6 +114,29 @@ RSpec.describe Spree::Policy, type: :model do
 
           expect(result).not_to include(store2_policy)
         end
+      end
+    end
+
+    describe '.with_matching_name' do
+      let!(:privacy_policy) { create(:policy, name: 'Privacy Policy', owner: store) }
+      let!(:terms_policy) { create(:policy, name: 'Terms of Service', owner: store) }
+
+      it 'finds policy by exact name match (case insensitive)' do
+        expect(described_class.with_matching_name('Privacy Policy')).to include(privacy_policy)
+        expect(described_class.with_matching_name('privacy policy')).to include(privacy_policy)
+        expect(described_class.with_matching_name('PRIVACY POLICY')).to include(privacy_policy)
+      end
+
+      it 'does not find policy with partial match' do
+        expect(described_class.with_matching_name('Privacy')).not_to include(privacy_policy)
+      end
+
+      it 'strips whitespace from search term' do
+        expect(described_class.with_matching_name('  Privacy Policy  ')).to include(privacy_policy)
+      end
+
+      it 'returns empty when no match found' do
+        expect(described_class.with_matching_name('Non Existent Policy')).to be_empty
       end
     end
   end

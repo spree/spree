@@ -35,5 +35,20 @@ describe Spree::PriceRules::UserRule, type: :model do
         expect(rule.applicable?(context)).to be false
       end
     end
+
+    context 'when user_ids preference contains strings' do
+      before { rule.preferred_user_ids = [user.id.to_s] }
+
+      it 'returns true when context user matches' do
+        context = Spree::Pricing::Context.new(variant: variant, currency: 'USD', user: user)
+        expect(rule.applicable?(context)).to be true
+      end
+
+      it 'returns false when context user does not match' do
+        other_user = create(:user)
+        context = Spree::Pricing::Context.new(variant: variant, currency: 'USD', user: other_user)
+        expect(rule.applicable?(context)).to be false
+      end
+    end
   end
 end

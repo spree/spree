@@ -40,7 +40,15 @@ module Spree
       end
 
       def permitted_resource_params
-        params.require(:promotion_rule).permit(*permitted_promotion_rule_attributes + @object.preferences.keys.map { |key| "preferred_#{key}" })
+        permitted_preference_keys = @object.preferences.map do |key, value|
+          if value.is_a?(Array)
+            { "preferred_#{key}" => [] }
+          else
+            "preferred_#{key}"
+          end
+        end
+
+        params.require(:promotion_rule).permit(*permitted_promotion_rule_attributes, *permitted_preference_keys)
       end
     end
   end

@@ -1,0 +1,41 @@
+<%# locals: (notable:, form_url: nil, param_key: nil) %>
+<% form_url ||= spree.polymorphic_path([:admin, notable]) %>
+<% param_key ||= notable.model_name.param_key %>
+
+<div class="card mb-6" id="internal_note" data-controller="dialog">
+  <div class="card-header flex justify-between items-center">
+    <h5 class="card-title">
+      <%= Spree.t(:internal_note) %>
+    </h5>
+    <% if can?(:update, notable) %>
+      <%= button_tag type: 'button', class: 'btn btn-light btn-sm', data: { action: 'dialog#open' } do %>
+        <%= icon('pencil', class: 'mr-1') %>
+        <%= Spree.t('actions.edit') %>
+      <% end %>
+    <% end %>
+  </div>
+  <div class="card-body">
+    <% if notable.internal_note.present? %>
+      <div class="prose prose-sm max-w-none">
+        <%= notable.internal_note %>
+      </div>
+    <% else %>
+      <p class="text-gray-500 text-sm"><%= Spree.t(:no_internal_note) %></p>
+    <% end %>
+  </div>
+
+  <% if can?(:update, notable) %>
+    <%= dialog do %>
+      <%= dialog_header(Spree.t(:internal_note)) %>
+      <%= form_with url: form_url, scope: param_key, method: :put do |f| %>
+        <div class="dialog-body">
+          <%= f.spree_rich_text_area :internal_note, label: false %>
+        </div>
+        <div class="dialog-footer">
+          <%= dialog_discard_button %>
+          <%= turbo_save_button_tag Spree.t('actions.save') %>
+        </div>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>

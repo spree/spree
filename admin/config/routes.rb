@@ -73,7 +73,7 @@ Spree::Core::Engine.add_routes do
 
     # orders
     resources :checkouts, only: %i[index]
-    resources :orders, only: [:index, :edit, :new, :create, :destroy] do
+    resources :orders do
       member do
         post :resend
         put :cancel
@@ -109,6 +109,12 @@ Spree::Core::Engine.add_routes do
           post :perform
         end
       end
+      resources :adjustments, except: [:index, :show], controller: 'orders/adjustments' do
+        member do
+          put :toggle_state
+        end
+      end
+      resources :order_promotions, only: [:new, :create, :destroy], controller: 'orders/order_promotions'
     end
 
     # customers
@@ -119,8 +125,21 @@ Spree::Core::Engine.add_routes do
       resources :gift_cards
 
       collection do
+        post :search
         post :bulk_add_tags
         post :bulk_remove_tags
+      end
+    end
+    resources :customer_groups do
+      collection do
+        get :select_options, defaults: { format: :json }
+      end
+      resources :customer_group_users, only: [:index, :create, :destroy] do
+        collection do
+          get :bulk_new
+          post :bulk_create
+          delete :bulk_destroy
+        end
       end
     end
     resources :newsletter_subscribers, only: [:index, :destroy]

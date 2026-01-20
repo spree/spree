@@ -10,7 +10,10 @@ module Spree
     context 'handling the stock items creation after create' do
       let!(:variant) { create(:variant) }
 
-      before { described_class.destroy_all }
+      before do
+        Spree::StockItem.delete_all
+        described_class.delete_all
+      end
 
       it 'creates stock_items for all variants' do
         expect do
@@ -122,7 +125,7 @@ module Spree
       context 'without stock item' do
         let!(:variant) { create(:variant) }
 
-        before { variant.stock_items.destroy_all }
+        before { variant.stock_items.delete_all }
 
         context 'variant instance passed' do
           it 'creates a stock_item if not found for a variant' do
@@ -268,7 +271,7 @@ module Spree
 
         it 'zero on_hand and one backordered' do
           subject
-          variant.stock_items.destroy_all
+          variant.stock_items.delete_all
           on_hand, backordered = subject.fill_status(variant, 1)
           expect(on_hand).to eq 0
           expect(backordered).to eq 1

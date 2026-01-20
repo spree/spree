@@ -5,7 +5,7 @@
         <%= render partial: 'spree/posts/post', collection: @posts, cached: true %>
       </div>
 
-      <%= paginate @posts, theme: 'storefront', outer_window: 1, inner_window: 2 %>
+      <%= render 'spree/shared/pagination' %>
     </div>
   <% end %>
 </div>

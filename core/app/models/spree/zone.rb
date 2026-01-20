@@ -71,12 +71,6 @@ module Spree
       matches.first
     end
 
-    def self.default_checkout_zone
-      Spree::Deprecation.warn('Spree::Zone.default_checkout_zone is deprecated and will be removed in Spree 5')
-
-      first
-    end
-
     def kind
       if self[:kind].present?
         self[:kind]

@@ -49,12 +49,6 @@ module Spree
       price.compare_at_amount.present? && (price.compare_at_amount > price.amount)
     end
 
-    def weeks_online(product)
-      Spree::Deprecation.warn('weeks_online is deprecated and will be removed in Spree 5.2')
-
-      (Time.current - product.activated_at.in_time_zone(current_store.preferred_timezone)).seconds.in_weeks.to_i.abs
-    end
-
     def product_not_selected_options(product, selected_variant, options_param_name: :options)
       product.option_types.map do |option_type|
         if product_selected_option_for_option(
@@ -176,7 +170,7 @@ module Spree
       return Spree::Taxon.none if product.main_taxon.blank?
 
       # using find_all as we already iterate over the taxons in #product_json_ld_breadcrumbs
-      product.main_taxon.self_and_ancestors.find_all { |taxon| taxon.depth != 0 }
+      product.main_taxon.self_and_ancestors.includes(:translations).find_all { |taxon| taxon.depth != 0 }
     end
 
     # Generates the JSON-LD elements for a list of products.

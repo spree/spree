@@ -16,11 +16,31 @@
 @source "../../helpers/spree/admin/**/*.rb";
 @source "../../javascript/spree/admin/**/*.js";
 
-/* Add your custom admin styles below */
-/* Example:
-@layer components {
-  .my-custom-admin-component {
-    @apply bg-zinc-950-500 text-white rounded-lg p-4;
-  }
-}
-*/
+/*
+ * CUSTOMIZATION OPTIONS
+ * =====================
+ *
+ * 1. Override Tailwind theme values (colors, spacing, etc.)
+ *    Add after the @import above:
+ *
+ *    @theme {
+ *      --color-primary-500: #your-color;
+ *      --color-gray-100: #your-gray;
+ *    }
+ *
+ * 2. Add custom components using Tailwind's @layer directive:
+ *
+ *    @layer components {
+ *      .my-custom-button {
+ *        @apply bg-primary-500 text-white px-4 py-2 rounded;
+ *      }
+ *    }
+ *
+ * 3. Override admin CSS variables
+ *    See admin/app/assets/tailwind/spree/admin/base/_theme.css for available variables
+ *
+ *    :root {
+ *      --sidebar-width: 280px;
+ *      --header-height: 70px;
+ *    }
+ */

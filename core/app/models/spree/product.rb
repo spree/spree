@@ -22,7 +22,7 @@ module Spree
   class Product < Spree.base_class
     acts_as_paranoid
     acts_as_taggable_on :tags, :labels
-    auto_strip_attributes :name
+    normalizes :name, with: ->(value) { value&.to_s&.squish&.presence }
 
     include Spree::ProductScopes
     include Spree::MultiStoreResource
@@ -40,8 +40,8 @@ module Spree
 
     MEMOIZED_METHODS = %w[total_on_hand taxonomy_ids taxon_and_ancestors category
                           default_variant_id tax_category default_variant
-                          default_image secondary_image
-                          purchasable? in_stock? backorderable? has_variants? digital?]
+                          default_image secondary_image category_taxon brand_taxon main_taxon
+                          purchasable? in_stock? backorderable? digital?]
 
     STATUSES = %w[draft active archived].freeze
 
@@ -55,6 +55,8 @@ module Spree
     translates(*TRANSLATABLE_FIELDS, column_fallback: !Spree.always_use_translations?)
 
     self::Translation.class_eval do
+      normalizes :name, :meta_title, with: ->(value) { value&.to_s&.squish&.presence }
+
       if defined?(PgSearch)
         include PgSearch::Model
 
@@ -110,6 +112,7 @@ module Spree
 
     has_many :line_items, through: :variants_including_master
     has_many :orders, through: :line_items
+    has_many :completed_orders, -> { reorder(nil).distinct.complete }, through: :line_items, source: :order
 
     has_many :variant_images, -> { order(:position) }, source: :images, through: :variants_including_master
     has_many :variant_images_without_master, -> { order(:position) }, source: :images, through: :variants
@@ -206,17 +209,6 @@ module Spree
                            joins(:stock_items).where("#{Spree::Variant.table_name}.track_inventory = ? OR #{Spree::StockItem.table_name}.count_on_hand <= ?", false, 0)
                          }
 
-    scope :by_best_selling, lambda { |order_direction = :desc|
-      left_joins(variants_including_master: { line_items: :order }).
-        select(
-          "#{Spree::Product.table_name}.*",
-          "COUNT(DISTINCT CASE WHEN #{Spree::Order.table_name}.completed_at IS NOT NULL THEN #{Spree::Order.table_name}.id END) AS completed_orders_count",
-          "COALESCE(SUM(CASE WHEN #{Spree::Order.table_name}.completed_at IS NOT NULL THEN (#{Spree::LineItem.table_name}.price * #{Spree::LineItem.table_name}.quantity) END), 0) AS completed_orders_total"
-        ).
-        group("#{Spree::Product.table_name}.id").
-        order(completed_orders_count: order_direction, completed_orders_total: order_direction)
-    }
-
     attr_accessor :option_values_hash
 
     accepts_nested_attributes_for :product_properties, allow_destroy: true, reject_if: lambda { |pp|
@@ -258,7 +250,7 @@ module Spree
     end
 
     delegate :display_amount, :display_price, :has_default_price?, :track_inventory?,
-             :display_compare_at_price, :images, to: :default_variant
+             :display_compare_at_price, :images, :primary_image, :secondary_image, :image_count, to: :default_variant
 
     alias master_images images
 
@@ -319,9 +311,13 @@ module Spree
       master || build_master
     end
 
-    # the master variant is not a member of the variants array
+    # Checks if product has variants (non-master variants)
+    # Uses variant_count counter cache for performance
+    # @return [Boolean]
     def has_variants?
-      @has_variants ||= variants.loaded? ? variants.size.positive? : variants.any?
+      return variants.size.positive? if variants.loaded?
+
+      variant_count.positive?
     end
 
     # Returns default Variant for Product
@@ -333,7 +329,7 @@ module Spree
     #
     # @return [Spree::Variant]
     def default_variant
-      @default_variant ||= if Spree::Config[:track_inventory_levels] && available_variant = variants.detect(&:purchasable?)
+      @default_variant ||= if Spree::Config[:track_inventory_levels] && has_variants? && available_variant = variants.detect(&:purchasable?)
                              available_variant
                            else
                              has_variants? ? variants.first : find_or_build_master
@@ -346,31 +342,43 @@ module Spree
       @default_variant_id ||= default_variant.id
     end
 
+    # Returns true if any variant (including master) has images.
+    # Uses total_image_count counter cache for performance.
+    # @return [Boolean]
+    def has_variant_images?
+      return variant_images.any? if association(:variant_images).loaded?
+
+      total_image_count.positive?
+    end
+
+    # Returns true if the product has any images across all variants.
+    # This is an alias for has_variant_images? for consistency with Variant#has_images?
+    alias has_images? has_variant_images?
+
     # Returns default Image for Product
+    # First it tries to get an image from the master variant
+    # Fallbacks to the default variant image
+    # Fallbacks to the first image attached to other variants
     # @return [Spree::Image]
     def default_image
-      @default_image ||= if images.any?
-                           images.first
-                         elsif default_variant.images.any?
-                           default_variant.default_image
-                         elsif variant_images.any?
-                           variant_images.first
+      @default_image ||= if master.has_images?
+                           master.primary_image
+                         elsif has_variants? && default_variant.has_images?
+                           default_variant.primary_image
+                         elsif has_variant_images?
+                           find_first_variant_image
                          end
     end
-    alias featured_image default_image
 
-    # Returns secondary Image for Product
-    # @return [Spree::Image]
-    def secondary_image
-      @secondary_image ||= if images.size > 1
-                             images.second
-                           elsif images.size == 1 && default_variant.images.size.positive?
-                             default_variant.images.first
-                           elsif default_variant.images.size > 1
-                             default_variant.secondary_image
-                           elsif variant_images.size > 1
-                             variant_images.second
-                           end
+    # Finds first image from variants with images using preloaded data when available
+    # @return [Spree::Image, nil]
+    def find_first_variant_image
+      if variants.loaded?
+        variant_with_image = variants.find(&:has_images?)
+        variant_with_image&.primary_image
+      else
+        variant_images.first
+      end
     end
 
     # Returns the short description for the product
@@ -569,17 +577,19 @@ module Spree
     # Returns the brand taxon for the product
     # @return [Spree::Taxon]
     def brand_taxon
-      @brand ||= if Spree.use_translations?
-                   taxons.joins(:taxonomy).
-                     join_translation_table(Taxonomy).
-                     find_by(Taxonomy.translation_table_alias => { name: Spree.t(:taxonomy_brands_name) })
-                 else
-                   if taxons.loaded?
-                     taxons.find { |taxon| taxon.taxonomy.name == Spree.t(:taxonomy_brands_name) }
-                   else
-                     taxons.joins(:taxonomy).find_by(Taxonomy.table_name => { name: Spree.t(:taxonomy_brands_name) })
-                   end
-                 end
+      @brand_taxon ||= if classification_count.zero?
+                         nil
+                       elsif Spree.use_translations?
+                         taxons.joins(:taxonomy).
+                            join_translation_table(Taxonomy).
+                            find_by(Taxonomy.translation_table_alias => { name: Spree.t(:taxonomy_brands_name) })
+                        else
+                          if taxons.loaded?
+                            taxons.find { |taxon| taxon.taxonomy.name == Spree.t(:taxonomy_brands_name) }
+                          else
+                            taxons.joins(:taxonomy).find_by(Taxonomy.table_name => { name: Spree.t(:taxonomy_brands_name) })
+                          end
+                        end
     end
 
     # Returns the brand name for the product
@@ -604,25 +614,31 @@ module Spree
     # Returns the category taxon for the product
     # @return [Spree::Taxon]
     def category_taxon
-      @category ||= if Spree.use_translations?
-                      taxons.joins(:taxonomy).
-                        join_translation_table(Taxonomy).
-                        order(depth: :desc).
-                        find_by(Taxonomy.translation_table_alias => { name: Spree.t(:taxonomy_categories_name) })
-                    else
-                      if taxons.loaded?
-                        taxons.find { |taxon| taxon.taxonomy.name == Spree.t(:taxonomy_categories_name) }
-                      else
-                        taxons.joins(:taxonomy).order(depth: :desc).find_by(Taxonomy.table_name => { name: Spree.t(:taxonomy_categories_name) })
-                      end
-                    end
+      @category_taxon ||= if classification_count.zero?
+                            nil
+                          elsif Spree.use_translations?
+                            taxons.joins(:taxonomy).
+                              join_translation_table(Taxonomy).
+                              order(depth: :desc).
+                              find_by(Taxonomy.translation_table_alias => { name: Spree.t(:taxonomy_categories_name) })
+                          else
+                            if taxons.loaded?
+                              taxons.find { |taxon| taxon.taxonomy.name == Spree.t(:taxonomy_categories_name) }
+                            else
+                              taxons.joins(:taxonomy).order(depth: :desc).find_by(Taxonomy.table_name => { name: Spree.t(:taxonomy_categories_name) })
+                            end
+                          end
     end
 
     def main_taxon
-      category_taxon || taxons.first
+      return if classification_count.zero?
+
+      @main_taxon ||= category_taxon || taxons.first
     end
 
     def taxons_for_store(store)
+      return if classification_count.zero?
+
       Rails.cache.fetch("#{cache_key_with_version}/taxons-per-store/#{store.id}") do
         taxons.for_store(store)
       end

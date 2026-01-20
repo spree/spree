@@ -63,5 +63,17 @@ describe Spree::Promotion::Rules::User, type: :model do
       rule.save!
       expect(rule.users).to include(random_user, user_placing_order)
     end
+
+    it 'touches the record to invalidate cache' do
+      rule.user_ids_to_add = [random_user.id]
+      rule.save!
+      original_updated_at = rule.updated_at
+
+      rule.update_column(:updated_at, 1.day.ago)
+      rule.user_ids_to_add = [user_placing_order.id]
+      rule.save!
+
+      expect(rule.reload.updated_at).to be > original_updated_at
+    end
   end
 end

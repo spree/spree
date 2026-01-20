@@ -4,7 +4,7 @@ shared_examples_for 'lifecycle events' do |factory: nil, event_prefix: nil|
   let(:lifecycle_factory) { factory || described_class.name.demodulize.underscore.to_sym }
   let(:lifecycle_event_prefix) { event_prefix || described_class.event_prefix }
 
-  describe 'lifecycle events' do
+  describe 'lifecycle events', events: true do
     describe "#{described_class.event_prefix}.created" do
       it 'publishes created event when record is created' do
         record = build(lifecycle_factory)

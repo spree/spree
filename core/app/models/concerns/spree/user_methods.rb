@@ -23,7 +23,7 @@ module Spree
       attr_accessor :use_billing
 
       has_person_name
-      auto_strip_attributes :email, :first_name, :last_name
+      normalizes :email, :first_name, :last_name, with: ->(value) { value&.to_s&.squish&.presence }
       acts_as_taggable_on :tags
 
       #
@@ -38,6 +38,8 @@ module Spree
       has_many :wished_items, through: :wishlists, source: :wished_items
       has_many :gateway_customers, class_name: 'Spree::GatewayCustomer', foreign_key: :user_id
       has_many :gift_cards, class_name: 'Spree::GiftCard', foreign_key: :user_id, dependent: :destroy
+      has_many :customer_group_users, class_name: 'Spree::CustomerGroupUser', foreign_key: :user_id, as: :user, dependent: :destroy
+      has_many :customer_groups, through: :customer_group_users, class_name: 'Spree::CustomerGroup'
       belongs_to :ship_address, class_name: 'Spree::Address', optional: true
       belongs_to :bill_address, class_name: 'Spree::Address', optional: true
 
@@ -45,6 +47,7 @@ module Spree
       # Attachments
       #
       has_one_attached :avatar, service: Spree.public_storage_service_name
+      has_rich_text :internal_note
 
       #
       # Attributes

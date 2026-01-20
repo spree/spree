@@ -7,7 +7,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
   let(:user)  { create(:user) }
   let(:order) { create(:order, user: user, store: store, currency: currency) }
   let(:product) { create(:product, stores: [store]) }
-  let(:variant) { create(:variant, product: product, prices: [create(:price, currency: store.default_currency)]) }
+  let(:variant) { create(:variant, product: product) }
 
   before do
     allow_any_instance_of(Spree::Api::V2::Storefront::CartController).to receive(:current_store).and_return(store)

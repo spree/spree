@@ -34,6 +34,26 @@ describe Spree::ImagesHelper, type: :helper do
         expect(helper.spree_image_tag(image, variant: :small, width: 100, height: 100, format: :png)).to eq('image_tag')
       end
     end
+
+    context 'when image is not attached' do
+      before do
+        allow(image).to receive(:attached?).and_return(false)
+      end
+
+      it 'returns nil' do
+        expect(helper.spree_image_tag(image)).to be_nil
+      end
+    end
+
+    context 'when image is not variable' do
+      before do
+        allow(image).to receive_messages(attached?: true, variable?: false)
+      end
+
+      it 'returns nil' do
+        expect(helper.spree_image_tag(image)).to be_nil
+      end
+    end
   end
 
   describe '#spree_image_url' do

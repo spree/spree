@@ -4,7 +4,7 @@ module Spree
     include Spree::Metafields
     include Spree::Metadata
 
-    auto_strip_attributes :url
+    normalizes :url, with: ->(value) { value&.to_s&.squish&.presence }
 
     #
     # Associations

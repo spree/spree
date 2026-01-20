@@ -60,6 +60,7 @@ import FontPickerController from 'spree/admin/controllers/font_picker_controller
 import HighlightController from 'spree/admin/controllers/highlight_controller'
 import ImportFormController from 'spree/admin/controllers/import_form_controller'
 import MediaFormController from 'spree/admin/controllers/media_form_controller'
+import MoneyFieldController from 'spree/admin/controllers/money_field_controller'
 import MultiInputController from 'spree/admin/controllers/multi_input_controller'
 import MultiTomSelectController from 'spree/admin/controllers/multi_tom_select_controller'
 import OrderBillingAddressController from 'spree/admin/controllers/order_billing_address_controller'
@@ -73,6 +74,7 @@ import ReturnItemsController from 'spree/admin/controllers/return_items_controll
 import ReplaceController from 'spree/admin/controllers/replace_controller'
 import RowLinkController from 'spree/admin/controllers/row_link_controller'
 import RuleFormController from 'spree/admin/controllers/rule_form_controller'
+import SearchClearController from 'spree/admin/controllers/search_clear_controller'
 import SearchPickerController from 'spree/admin/controllers/search_picker_controller'
 import SectionFormController from 'spree/admin/controllers/section_form_controller'
 import SelectController from 'spree/admin/controllers/select_controller'
@@ -127,6 +129,7 @@ application.register('font-picker', FontPickerController)
 application.register('highlight', HighlightController)
 application.register('import-form', ImportFormController)
 application.register('media-form', MediaFormController)
+application.register('money-field', MoneyFieldController)
 application.register('multi-input', MultiInputController)
 application.register('multi-tom-select', MultiTomSelectController)
 application.register('nested-form', RailsNestedForm)
@@ -144,6 +147,7 @@ application.register('return-items', ReturnItemsController)
 application.register('reveal', Reveal)
 application.register('row-link', RowLinkController)
 application.register('rule-form', RuleFormController)
+application.register('search-clear', SearchClearController)
 application.register('search-picker', SearchPickerController)
 application.register('section-form', SectionFormController)
 application.register('select', SelectController)

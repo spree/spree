@@ -9,32 +9,48 @@ desc 'Generates a dummy app for testing'
 namespace :common do
   task :test_app, :user_class do |_t, args|
     args.with_defaults(
+      authentication: 'dummy',
       user_class: 'Spree::LegacyUser',
-      install_storefront: 'false',
-      install_admin: 'false',
-      authentication: 'dummy'
+      install_storefront: false,
+      install_admin: false,
+      javascript: false,
+      css: false
     )
     require ENV['LIB_NAME'].to_s
+
+    # Convert to booleans (supports both string and boolean values for backwards compatibility)
+    install_admin = args[:install_admin].to_b
+    install_storefront = args[:install_storefront].to_b
+    javascript_enabled = args[:javascript].to_b
+    css_enabled = args[:css].to_b
+
+    # Admin and Storefront require JavaScript and CSS (Tailwind) to function properly
+    javascript_enabled ||= install_admin || install_storefront
+    css_enabled ||= install_admin || install_storefront
+
+    puts args
 
     ENV['RAILS_ENV'] = 'test'
     Rails.env = 'test'
 
-    api_only = ['spree/api', 'spree/core', 'spree/sample'].include?(ENV['LIB_NAME'])
-    skip_javascript = api_only || ['spree/emails', 'spree/legacy_webhooks'].include?(ENV['LIB_NAME'])
-
     dummy_app_args = [
       "--lib_name=#{ENV['LIB_NAME']}"
     ]
-    if api_only
-      dummy_app_args << '--api'
-    elsif skip_javascript
-      dummy_app_args << '--skip_javascript'
-    end
+    # Use API mode only if no frontend components are needed
+    use_api_mode = !install_storefront && !install_admin && !javascript_enabled && !css_enabled
+    dummy_app_args << '--api' if use_api_mode
+    dummy_app_args << '--javascript' if javascript_enabled
+    dummy_app_args << '--css=tailwind' if css_enabled
+
+    puts dummy_app_args
+
     Spree::DummyGenerator.start dummy_app_args
 
-    unless skip_javascript
+    # Install JavaScript dependencies (importmap, turbo, stimulus) if JavaScript is enabled
+    # Rails includes the gems but doesn't run the installers automatically
+    if javascript_enabled
+      puts 'Installing JavaScript dependencies...'
       system('yes | bundle exec rails importmap:install turbo:install stimulus:install')
-      system('yes | bundle exec rails tailwindcss:install')
     end
 
     # install devise if it's not the legacy user, useful for testing storefront
@@ -83,7 +99,7 @@ namespace :common do
 
     # Precompile assets after all generators have run
     # This ensures CSS entry points (like Spree Admin's Tailwind CSS) are created first
-    if !skip_javascript || ENV['LIB_NAME'] == 'spree/emails'
+    if javascript_enabled || css_enabled
       puts 'Precompiling assets...'
       system('bundle exec rake assets:precompile')
     end

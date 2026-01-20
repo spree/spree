@@ -50,6 +50,7 @@ module Spree
       end
 
       def gift_cards_filter_dropdown_value
+        Spree::Deprecation.warn("gift_cards_filter_dropdown_value is deprecated and will be removed in Spree 5.5")
         if params.dig(:q, :active).present?
           Spree.t('admin.gift_cards.active')
         elsif params.dig(:q, :expired).present?

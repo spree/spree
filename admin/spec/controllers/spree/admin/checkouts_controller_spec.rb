@@ -22,15 +22,6 @@ describe Spree::Admin::CheckoutsController, type: :controller do
         expect(assigns(:orders).to_a).to include(order)
         expect(assigns(:orders).to_a).not_to include(completed_order)
       end
-
-      context 'filtering by number' do
-        let(:order) { create(:order, number: 'R123456789') }
-
-        it 'returns orders with matching number' do
-          get :index, params: { q: { number_cont: 'R123456789-10' } }
-          expect(assigns(:orders).to_a).to include(order)
-        end
-      end
     end
 
     context 'without orders' do

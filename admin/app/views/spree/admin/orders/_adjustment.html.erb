@@ -1,0 +1,72 @@
+<tr id="<%= dom_id(adjustment) %>">
+  <td>
+    <div class="font-medium"><%= adjustment.label %></div>
+  </td>
+  <td>
+    <% if adjustment.source_type.blank? %>
+      <span class="badge badge-light"><%= Spree.t(:manual) %></span>
+    <% else %>
+      <span class="badge badge-info"><%= adjustment.source_type.demodulize.underscore.humanize %></span>
+    <% end %>
+  </td>
+  <td class="text-sm text-gray-600">
+    <% if adjustment.adjustable.is_a?(Spree::LineItem) %>
+      <%= icon('shopping-cart') %>
+      <%= truncate(adjustment.adjustable.name, length: 30) %>
+    <% elsif adjustment.adjustable.is_a?(Spree::Shipment) %>
+      <%= icon('truck') %>
+      <%= Spree.t(:shipment) %> #<%= adjustment.adjustable.number %>
+    <% elsif adjustment.adjustable.is_a?(Spree::Order) %>
+      <%= icon('receipt') %>
+      <%= Spree.t(:order) %>
+    <% end %>
+  </td>
+  <td>
+    <% if adjustment.closed? %>
+      <span class="badge badge-light" data-controller="tooltip">
+        <%= tooltip(Spree.t(:adjustment_closed_description)) %>
+        <%= icon('lock') %> <%= Spree.t(:closed) %>
+      </span>
+    <% else %>
+      <span class="badge badge-success" data-controller="tooltip">
+        <%= tooltip(Spree.t(:adjustment_open_description)) %> <%= icon('lock-open') %> <%= Spree.t(:open) %>
+      </span>
+    <% end %>
+  </td>
+  <td>
+    <%= adjustment.display_amount.to_html %>
+  </td>
+  <td class="text-right">
+    <% if can?(:update, adjustment) || can?(:destroy, adjustment) %>
+      <%= dropdown do %>
+        <%= dropdown_toggle class: 'btn-light btn-sm px-1' do %>
+          <%= icon "dots-vertical", class: "mr-0" %>
+        <% end %>
+        <%= dropdown_menu do %>
+          <% if can?(:update, adjustment) %>
+            <% if adjustment.source_type.blank? %>
+              <%= link_to_with_icon "edit",
+                Spree.t(:edit),
+                spree.edit_admin_order_adjustment_path(@order, adjustment),
+                data: { turbo_frame: 'dialog', action: 'dialog#open' },
+                class: "dropdown-item" %>
+            <% end %>
+            <%= link_to_with_icon adjustment.closed? ? "lock-open" : "lock",
+              adjustment.closed? ? Spree.t('actions.open') : Spree.t('actions.close'),
+              spree.toggle_state_admin_order_adjustment_path(@order, adjustment),
+              data: { turbo_method: :put, turbo_confirm: Spree.t(:are_you_sure) },
+              class: "dropdown-item" %>
+          <% end %>
+          <% if can?(:destroy, adjustment) && adjustment.source_type.blank? %>
+            <div class="dropdown-divider"></div>
+            <%= link_to_with_icon "trash",
+              Spree.t(:delete),
+              spree.admin_order_adjustment_path(@order, adjustment),
+              data: { turbo_method: :delete, turbo_confirm: Spree.t(:are_you_sure) },
+              class: 'dropdown-item text-red-600 hover:bg-red-100' %>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </td>
+</tr>

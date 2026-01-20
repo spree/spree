@@ -64,7 +64,7 @@ module Spree
     self.whitelisted_ransackable_associations = %w[users orders batch]
     self.whitelisted_ransackable_scopes = %w[active expired redeemed partially_redeemed]
 
-    auto_strip_attributes :code
+    normalizes :code, with: ->(value) { value&.to_s&.squish&.presence }
 
     #
     # Callbacks

@@ -58,7 +58,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
     shared_examples 'perform next' do
       context 'without line items' do
         before do
-          order.line_items.destroy_all
+          order.line_items.delete_all
           execute
         end
 

@@ -9,6 +9,9 @@ module Spree
       preference :products_per_page, :integer, default: 20
 
       preference :search_min_query_length, :integer, default: 2
+
+      # Pagination preference - set to true to use legacy Kaminari pagination
+      preference :use_kaminari_pagination, :boolean, default: false
     end
   end
 end

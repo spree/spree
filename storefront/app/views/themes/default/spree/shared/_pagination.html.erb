@@ -1,0 +1,7 @@
+<%# Renders pagination - supports both Pagy and Kaminari %>
+<% if Spree::Storefront::Config[:use_kaminari_pagination] %>
+  <%= paginate @posts || @orders || @gift_cards || @store_credit_events || @storefront_products,
+      theme: 'storefront', outer_window: 1, inner_window: 2 %>
+<% elsif @pagy && @pagy.pages > 1 %>
+  <%== @pagy.series_nav(aria_label: 'Pages') %>
+<% end %>

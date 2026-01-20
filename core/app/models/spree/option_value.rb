@@ -9,7 +9,7 @@ module Spree
     translates(*TRANSLATABLE_FIELDS, column_fallback: !Spree.always_use_translations?)
 
     self::Translation.class_eval do
-      auto_strip_attributes :presentation
+      normalizes :presentation, with: ->(value) { value&.to_s&.squish&.presence }
     end
 
     #

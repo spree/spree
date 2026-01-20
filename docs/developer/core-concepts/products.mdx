@@ -248,6 +248,380 @@ There are also other helpful methods available such as:
 Spree behind the scenes uses [Ruby Money gem](https://github.com/RubyMoney/money) with some [additional](https://github.com/spree/spree/blob/main/core/app/models/concerns/spree/display_money.rb) [tweaks](https://github.com/spree/spree/blob/main/core/lib/spree/money.rb).
 </Info>
 
+### Price Lists
+
+<Info>
+Price Lists are available as of Spree 5.2.
+</Info>
+
+Price Lists allow you to create different pricing strategies for your products based on various conditions such as customer zones, specific users, or order quantities. This enables advanced pricing scenarios like:
+
+- **Regional pricing** - Different prices for different geographic regions
+- **Wholesale/B2B pricing** - Special prices for business customers
+- **Volume discounts** - Tiered pricing based on quantity purchased
+- **Promotional pricing** - Time-limited special offers
+- **VIP customer pricing** - Exclusive prices for specific users
+
+#### How Price Lists Work
+
+Each Price List contains a collection of prices for specific variants and currencies. When a customer views a product or adds it to their cart, Spree's pricing resolver determines which price to use based on:
+
+1. **Price List priority** - Price Lists are ordered by position; higher priority lists are checked first
+2. **Status** - Only `active` or `scheduled` Price Lists are considered
+3. **Date range** - The current time must fall within `starts_at` and `ends_at` (if set)
+4. **Price Rules** - All configured rules must match (or any, depending on `match_policy`)
+
+If no applicable Price List is found, the base price (price without a Price List) is used.
+
+#### Price List Attributes
+
+| Attribute       | Description                                                                                     |
+|-----------------|-------------------------------------------------------------------------------------------------|
+| `name`          | Human-readable name for the Price List                                                          |
+| `status`        | Current status: `draft`, `active`, `scheduled`, or `inactive`                                   |
+| `starts_at`     | Optional start date/time when the Price List becomes applicable                                 |
+| `ends_at`       | Optional end date/time when the Price List stops being applicable                               |
+| `match_policy`  | How rules are evaluated: `all` (every rule must match) or `any` (at least one rule must match) |
+| `position`      | Priority order for evaluation (lower numbers = higher priority)                                 |
+
+#### Price Rules
+
+Price Rules define conditions that must be met for a Price List to apply. Spree includes three built-in rule types:
+
+<AccordionGroup>
+  <Accordion title="Zone Rule">
+
+  Applies the Price List based on the customer's tax/shipping zone. Useful for regional or country-specific pricing.
+
+  ```ruby
+  # Example: Create a Price List for EU customers
+  price_list = Spree::PriceList.create!(
+    name: 'EU Pricing',
+    store: current_store,
+    status: 'active',
+    match_policy: 'all'
+  )
+
+  eu_zone = Spree::Zone.find_by!(name: 'EU')
+  price_list.price_rules.create!(
+    type: 'Spree::PriceRules::ZoneRule',
+    preferences: { zone_ids: [eu_zone.id] }
+  )
+  ```
+
+  </Accordion>
+  <Accordion title="User Rule">
+
+  Applies the Price List to specific users. Useful for VIP customers, wholesale accounts, or B2B pricing.
+
+  ```ruby
+  # Example: Create a VIP Price List
+  price_list = Spree::PriceList.create!(
+    name: 'VIP Customers',
+    store: current_store,
+    status: 'active',
+    match_policy: 'all'
+  )
+
+  # Find users tagged with 'VIP'
+  vip_user_ids = Spree.user_class.tagged_with('VIP').pluck(:id)
+
+  price_list.price_rules.create!(
+    type: 'Spree::PriceRules::UserRule',
+    preferences: { user_ids: vip_user_ids }
+  )
+  ```
+
+  </Accordion>
+  <Accordion title="Volume Rule">
+
+  Applies the Price List based on quantity purchased. Useful for bulk discounts or tiered pricing.
+
+  ```ruby
+  # Example: Create volume-based pricing tiers
+  # Tier 1: 10-49 units
+  tier1 = Spree::PriceList.create!(
+    name: 'Bulk Tier 1 (10-49)',
+    store: current_store,
+    status: 'active',
+    position: 2
+  )
+  tier1.price_rules.create!(
+    type: 'Spree::PriceRules::VolumeRule',
+    preferences: { min_quantity: 10, max_quantity: 49 }
+  )
+
+  # Tier 2: 50+ units (higher priority)
+  tier2 = Spree::PriceList.create!(
+    name: 'Bulk Tier 2 (50+)',
+    store: current_store,
+    status: 'active',
+    position: 1
+  )
+  tier2.price_rules.create!(
+    type: 'Spree::PriceRules::VolumeRule',
+    preferences: { min_quantity: 50, max_quantity: nil }
+  )
+  ```
+
+  </Accordion>
+</AccordionGroup>
+
+#### Creating Custom Price Rules
+
+You can create custom Price Rules by subclassing `Spree::PriceRule`:
+
+```ruby
+# app/models/spree/price_rules/membership_rule.rb
+module Spree
+  module PriceRules
+    class MembershipRule < Spree::PriceRule
+      preference :membership_levels, :array, default: []
+
+      def applicable?(context)
+        return false unless context.user
+        return true if preferred_membership_levels.empty?
+
+        preferred_membership_levels.include?(context.user.membership_level)
+      end
+
+      def self.description
+        'Apply pricing based on membership level'
+      end
+    end
+  end
+end
+```
+
+#### Pricing Context
+
+The `Spree::Pricing::Context` object carries all the information needed to resolve the correct price. It encapsulates the current pricing scenario and is used by the `Spree::Pricing::Resolver` to find the best applicable price.
+
+##### Context Attributes
+
+| Attribute  | Type                | Required | Default             | Description                                                                                     |
+|------------|---------------------|----------|---------------------|-------------------------------------------------------------------------------------------------|
+| `variant`  | `Spree::Variant`    | Yes      | -                   | The variant for which to resolve the price                                                      |
+| `currency` | `String`            | Yes      | -                   | ISO 4217 currency code (e.g., `'USD'`, `'EUR'`)                                                |
+| `store`    | `Spree::Store`      | No       | `Spree::Current.store` | The store context; Price Lists are scoped to stores                                          |
+| `zone`     | `Spree::Zone`       | No       | `Spree::Current.zone` | The tax/shipping zone for zone-based pricing rules (see below). Falls back to `Spree::Zone.default_tax` if not set. |
+| `user`     | User class          | No       | `nil`               | The current user; used by User Rules for customer-specific pricing                             |
+| `quantity` | `Integer`           | No       | `nil`               | The quantity being purchased; used by Volume Rules for tiered pricing                          |
+| `date`     | `Time`              | No       | `Time.current`      | The date/time for price resolution; used to check Price List date ranges                       |
+| `order`    | `Spree::Order`      | No       | `nil`               | The current order; provides additional context for price resolution                            |
+
+##### Understanding the Zone Attribute
+
+The `zone` attribute represents the geographic zone used for zone-based pricing. Zones in Spree can be based on countries or states and are typically used for tax and shipping calculations.
+
+**Where zones come from:**
+- During checkout, the zone is determined by the customer's shipping or billing address
+- The `order.tax_zone` method returns the applicable tax zone based on the order's addresses
+- `Spree::Current.zone` holds the current request's zone (set automatically by controllers)
+- Falls back to `Spree::Zone.default_tax` if no zone is explicitly set
+
+**How zone is resolved:**
+```ruby
+# Spree::Current.zone is automatically set in controllers from the current order:
+Spree::Current.zone  # => order.tax_zone || Spree::Zone.default_tax
+
+# When creating a context, zone defaults to Spree::Current.zone
+context = Spree::Pricing::Context.new(variant: variant, currency: 'USD')
+context.zone  # => Spree::Current.zone
+```
+
+##### Creating a Context
+
+There are several ways to create a pricing context:
+
+<AccordionGroup>
+  <Accordion title="From an Order (recommended)">
+
+  The most common approach during checkout. Automatically extracts all relevant information from the order:
+
+  ```ruby
+  context = Spree::Pricing::Context.from_order(variant, order)
+
+  # This is equivalent to:
+  context = Spree::Pricing::Context.new(
+    variant: variant,
+    currency: order.currency,
+    store: order.store,
+    zone: order.tax_zone || order.store.checkout_zone,
+    user: order.user,
+    quantity: order.line_items.find_by(variant: variant)&.quantity,
+    order: order
+  )
+  ```
+
+  </Accordion>
+  <Accordion title="From Currency (simple)">
+
+  For basic price lookups when you only need currency-based pricing:
+
+  ```ruby
+  context = Spree::Pricing::Context.from_currency(variant, 'USD')
+
+  # This is equivalent to:
+  context = Spree::Pricing::Context.new(
+    variant: variant,
+    currency: 'USD'
+  )
+  ```
+
+  </Accordion>
+  <Accordion title="Manual Construction">
+
+  For full control over all pricing parameters:
+
+  ```ruby
+  context = Spree::Pricing::Context.new(
+    variant: variant,
+    currency: 'EUR',
+    store: Spree::Store.find_by!(code: 'eu-store'),
+    zone: Spree::Zone.find_by!(name: 'EU'),
+    user: current_user,
+    quantity: 10,
+    date: 1.week.from_now  # Preview future pricing
+  )
+  ```
+
+  </Accordion>
+</AccordionGroup>
+
+##### Resolving the Price
+
+Once you have a context, use the `Spree::Pricing::Resolver` to find the best price:
+
+```ruby
+resolver = Spree::Pricing::Resolver.new(context)
+price = resolver.resolve  # Returns a Spree::Price object
+
+# The resolver:
+# 1. Finds all applicable Price Lists (active/scheduled, within date range)
+# 2. Filters by Price Rules (zone, user, quantity, etc.)
+# 3. Returns the first matching price (by Price List position)
+# 4. Falls back to the base price if no Price List applies
+```
+
+<Note>
+Price resolution results are cached for 15 minutes using the context's cache key. The cache key includes all context attributes, so different scenarios are cached separately.
+</Note>
+
+#### Getting Prices: `price_for` vs `price_in`
+
+Spree provides two methods for fetching variant prices. Understanding when to use each is important for correct pricing behavior.
+
+##### `price_for` (Recommended)
+
+The `price_for` method resolves prices using the full Price List system. It considers all applicable Price Lists, rules, and returns the best matching price. **This is the recommended method for most use cases.**
+
+```ruby
+# Using a Pricing Context object
+context = Spree::Pricing::Context.from_order(variant, order)
+price = variant.price_for(context)
+
+# Using an options hash (context is built automatically)
+price = variant.price_for(
+  currency: 'USD',
+  store: Spree::Current.store,
+  zone: order.tax_zone,
+  user: current_user,
+  quantity: 5
+)
+
+# Display the resolved price
+price.display_amount.to_s  # => "$89.99"
+```
+
+**Use `price_for` when:**
+- Displaying prices to customers in the storefront
+- Calculating line item prices during checkout
+- You need zone-based, user-based, or volume-based pricing
+- You want prices from active Price Lists to apply
+
+##### `price_in` (Base Prices Only)
+
+The `price_in` method returns only the **base price** (prices without a Price List) for a given currency. It bypasses the Price List system entirely.
+
+```ruby
+# Get the base price in USD
+base_price = variant.price_in('USD')
+base_price.amount  # => 99.99
+```
+
+**Use `price_in` when:**
+- You specifically need the base price, ignoring all Price Lists
+- Managing prices in the admin interface
+- Importing/exporting base pricing data
+- Backward compatibility with pre-5.2 code
+
+<Warning>
+`price_in` is maintained for backward compatibility. For customer-facing pricing, always use `price_for` to ensure Price Lists are applied correctly.
+</Warning>
+
+##### Comparison
+
+| Method     | Price Lists | Rules Applied | Use Case                          |
+|------------|-------------|---------------|-----------------------------------|
+| `price_for`| Yes         | Yes           | Storefront, checkout, customer-facing |
+| `price_in` | No          | No            | Admin, base price management      |
+
+```ruby
+# Example: Same variant, different results
+variant = Spree::Variant.find(1)
+
+# Base price (no Price Lists)
+variant.price_in('USD').amount  # => 100.00
+
+# Resolved price (with VIP Price List applied)
+context = Spree::Pricing::Context.new(
+  variant: variant,
+  currency: 'USD',
+  user: vip_customer
+)
+variant.price_for(context).amount  # => 80.00 (20% VIP discount)
+```
+
+#### Managing Price List Products
+
+Products can be added to a Price List, which creates placeholder prices for all variants:
+
+```ruby
+price_list = Spree::PriceList.find(1)
+
+# Add products to the Price List
+price_list.add_products([product1.id, product2.id])
+
+# Update prices for the Price List
+price_list.prices.each do |price|
+  price.update(amount: calculate_special_price(price.variant))
+end
+
+# Remove products from the Price List
+price_list.remove_products([product1.id])
+```
+
+#### Time-Based Pricing
+
+Price Lists support scheduling through `starts_at` and `ends_at` attributes:
+
+```ruby
+# Create a Black Friday sale
+black_friday = Spree::PriceList.create!(
+  name: 'Black Friday 2025',
+  store: current_store,
+  status: 'scheduled',
+  starts_at: Time.zone.parse('2025-11-28 00:00'),
+  ends_at: Time.zone.parse('2025-11-28 23:59'),
+  position: 1  # Highest priority
+)
+```
+
+<Note>
+Scheduled Price Lists automatically become applicable when the current time falls within their date range. They don't need to be manually activated.
+</Note>
+
 ## Prototypes
 
 A prototype is a useful way to share common `OptionType` and `Property` combinations amongst many different products. They work as a product template to speed up the creation of new products.

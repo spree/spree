@@ -16,7 +16,7 @@ RSpec.describe Spree::Admin::ImportSubscriber do
   end
 
   describe '#update_loader_in_import_view' do
-    let(:store) { create(:store) }
+    let(:store) { @default_store }
     let(:user) { create(:admin_user) }
     let(:import) { create(:import, owner: store, user: user) }
 

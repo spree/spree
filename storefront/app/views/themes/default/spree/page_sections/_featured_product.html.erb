@@ -47,15 +47,15 @@
                   <div <%= block_attributes(block) %>>
                     <% case block.type %>
                     <% when 'Spree::PageBlocks::Products::Brand' %>
-                      <% if presenter.product&.brand&.page_builder_url %>
-                        <%= link_to spree_storefront_resource_url(presenter.product&.brand), title: strip_tags(presenter.product&.brand&.name).strip, data: { turbo_frame: '_top' } do %>
+                      <% if presenter.product&.brand_taxon&.page_builder_url %>
+                        <%= link_to spree_storefront_resource_url(presenter.product&.brand_taxon), title: strip_tags(presenter.product&.brand_taxon&.name).strip, data: { turbo_frame: '_top' } do %>
                           <h3 class="text-sm uppercase font-semibold">
-                            <%= presenter.product&.brand&.name %>
+                            <%= presenter.product&.brand_taxon&.name %>
                           </h3>
                         <% end %>
                       <% else %>
                         <h3 class="text-sm uppercase font-semibold">
-                          <%= presenter.product&.brand&.name %>
+                          <%= presenter.product&.brand_taxon&.name %>
                         </h3>
                       <% end %>
                     <% when 'Spree::PageBlocks::Products::Title' %>

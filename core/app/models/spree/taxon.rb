@@ -27,7 +27,7 @@ module Spree
     #
     extend FriendlyId
     friendly_id :permalink, slug_column: :permalink, use: :history
-    acts_as_nested_set dependent: :destroy
+    acts_as_nested_set dependent: :destroy, counter_cache: :children_count
 
     #
     # Associations
@@ -354,6 +354,7 @@ module Spree
     end
 
     def active_products
+      Spree::Deprecation.warn('active_products is deprecated and will be removed in Spree 5.5. Please use taxon.products.active instead.')
       products.active
     end
 

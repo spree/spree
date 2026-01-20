@@ -6,6 +6,9 @@ module Spree
 
     after_commit :touch_product_variants, if: :should_touch_product_variants?, on: :update
 
+    after_create :increment_viewable_image_count
+    after_destroy :decrement_viewable_image_count
+
     # In Rails 5.x class constants are being undefined/redefined during the code reloading process
     # in a rails development environment, after which the actual ruby objects stored in those class constants
     # are no longer equal (subclass == self) what causes error ActiveRecord::SubclassNotFound
@@ -68,6 +71,20 @@ module Spree
       return false unless saved_change_to_position?
 
       true
+    end
+
+    def increment_viewable_image_count
+      return unless viewable.is_a?(Spree::Variant)
+
+      Spree::Variant.increment_counter(:image_count, viewable_id)
+      Spree::Product.increment_counter(:total_image_count, viewable.product_id)
+    end
+
+    def decrement_viewable_image_count
+      return unless viewable.is_a?(Spree::Variant)
+
+      Spree::Variant.decrement_counter(:image_count, viewable_id)
+      Spree::Product.decrement_counter(:total_image_count, viewable.product_id)
     end
   end
 end

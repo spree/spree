@@ -65,7 +65,10 @@ module Spree
           .where("#{Variant.table_name}.product_id = #{Product.table_name}.id")
           .select('MIN(amount)')
 
-        order(Arel.sql("COALESCE((#{price_subquery.to_sql}), 999999999) ASC"))
+        price_sort_sql = "COALESCE((#{price_subquery.to_sql}), 999999999)"
+
+        select("#{Product.table_name}.*", "#{price_sort_sql} AS min_price").
+          order(Arel.sql("#{price_sort_sql} ASC"))
       end
 
       add_search_scope :descend_by_price do
@@ -75,7 +78,10 @@ module Spree
           .where("#{Variant.table_name}.product_id = #{Product.table_name}.id")
           .select('MAX(amount)')
 
-        order(Arel.sql("COALESCE((#{price_subquery.to_sql}), 0) DESC"))
+        price_sort_sql = "COALESCE((#{price_subquery.to_sql}), 0)"
+
+        select("#{Product.table_name}.*", "#{price_sort_sql} AS max_price").
+          order(Arel.sql("#{price_sort_sql} DESC"))
       end
 
       add_search_scope :price_between do |low, high|
@@ -135,16 +141,13 @@ module Spree
       end
 
       add_search_scope :ascend_by_taxons_min_position do |taxon_ids|
+        min_position_sql = "MIN(#{Classification.table_name}.position)"
+
         joins(:classifications).
           where(Classification.table_name => { taxon_id: taxon_ids }).
-          select(
-            [
-              "#{Product.table_name}.*",
-              "MIN(#{Classification.table_name}.position) AS min_position"
-            ].join(', ')
-          ).
-          group(:id).
-          order(min_position: :asc)
+          select("#{Product.table_name}.*", "#{min_position_sql} AS min_taxon_position").
+          group("#{Product.table_name}.id").
+          order(Arel.sql("#{min_position_sql} ASC"))
       end
 
       # a scope that finds all products having property specified by name, object or id
@@ -322,6 +325,27 @@ module Spree
 
       add_search_scope :taxons_name_eq do |name|
         group('spree_products.id').joins(:taxons).where(Taxon.arel_table[:name].eq(name))
+      end
+
+      # Orders products by best selling based on units_sold_count and revenue
+      # stored in spree_products_stores table.
+      #
+      # These metrics are updated asynchronously when orders are completed
+      # via the ProductMetricsSubscriber.
+      #
+      # @param order_direction [Symbol] :desc (default) or :asc
+      # @return [ActiveRecord::Relation]
+      add_search_scope :by_best_selling do |order_direction = :desc|
+        order_dir = order_direction == :desc ? 'DESC' : 'ASC'
+        store_id = Spree::Current.store&.id
+
+        joins(:store_products)
+          .where(StoreProduct.table_name => { store_id: store_id })
+          .select("#{Product.table_name}.*",
+                  "#{StoreProduct.table_name}.units_sold_count",
+                  "#{StoreProduct.table_name}.revenue")
+          .order(Arel.sql("#{StoreProduct.table_name}.units_sold_count #{order_dir}"))
+          .order(Arel.sql("#{StoreProduct.table_name}.revenue #{order_dir}"))
       end
 
       # .search_by_name

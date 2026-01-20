@@ -7,7 +7,7 @@
       <% end %>
     </div>
 
-  <dialog class="drawer" data-dialog-target="dialog" id="stock-transfers-filters-drawer">
+  <%= drawer(id: 'stock-transfers-filters-drawer', controller_name: 'dialog') do %>
     <%= drawer_header(Spree.t(:filter), 'dialog') %>
     <div class="drawer-body">
     <div class="form-group">
@@ -42,7 +42,7 @@
         <%= button Spree.t(:search), "search" %>
       </div>
     </div>
-  </dialog>
+  <% end %>
 
   <%= render "spree/admin/shared/filter_badge_template" %>
   <div data-filters-target="badgesContainer" class="filter-badges-container"></div>

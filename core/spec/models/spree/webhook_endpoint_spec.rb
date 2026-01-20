@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 describe Spree::WebhookEndpoint, type: :model do
-  let(:store) { create(:store) }
+  let(:store) { @default_store }
   let(:webhook_endpoint) { build(:webhook_endpoint, store: store) }
 
   describe 'validations' do

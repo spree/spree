@@ -4,7 +4,7 @@ require 'spec_helper'
 
 module Spree
   describe WebhookDeliveryJob, type: :job do
-    let(:store) { create(:store) }
+    let(:store) { @default_store }
     let(:webhook_endpoint) { create(:webhook_endpoint, store: store) }
     let(:delivery) { create(:webhook_delivery, :pending, webhook_endpoint: webhook_endpoint) }
     let(:secret_key) { webhook_endpoint.secret_key }

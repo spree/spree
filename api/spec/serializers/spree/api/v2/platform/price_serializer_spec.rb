@@ -5,7 +5,9 @@ describe Spree::Api::V2::Platform::PriceSerializer do
 
   subject { described_class.new(resource, params: serializer_params).serializable_hash }
 
-  let(:resource) { create(:price) }
+  let(:currency) { 'USD' }
+  let(:variant) { create(:variant) }
+  let(:resource) { variant.price_in(currency) }
   let(:type) { :price }
 
   it do

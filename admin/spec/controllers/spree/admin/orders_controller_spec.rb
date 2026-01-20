@@ -90,18 +90,6 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
       expect(assigns(:collection).to_a).to eq([cancelled_order])
     end
 
-    it 'returns all refunded orders' do
-      get :index, params: { q: { refunded: '1' } }
-
-      expect(assigns(:collection).to_a).to eq([shipped_order])
-    end
-
-    it 'returns all partially refunded orders' do
-      get :index, params: { q: { partially_refunded: '1' } }
-
-      expect(assigns(:collection).to_a).to eq([order])
-    end
-
     context 'filtering by payment state' do
       let!(:balance_due_order) do
         order = create(:completed_order_with_totals, line_items_count: 2, total: 100, store: store)
@@ -125,18 +113,6 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
         get :index, params: { q: { payment_state_eq: :balance_due } }
 
         expect(assigns(:collection).to_a).to contain_exactly(balance_due_order, order, shipped_order)
-      end
-
-      it 'returns all refunded orders via payment_state filter' do
-        get :index, params: { q: { payment_state_eq: :refunded } }
-
-        expect(assigns(:collection).to_a).to eq([shipped_order])
-      end
-
-      it 'returns all partially refunded orders via payment_state filter' do
-        get :index, params: { q: { payment_state_eq: :partially_refunded } }
-
-        expect(assigns(:collection).to_a).to eq([order])
       end
     end
 
@@ -213,6 +189,15 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
 
   describe '#edit' do
     subject { get :edit, params: { id: order.number } }
+    let(:order) { create(:order_ready_to_ship, total: 100, with_payment: false, store: store) }
+    it 'redirects to the show page' do
+      subject
+      expect(response).to redirect_to(spree.admin_order_path(order))
+    end
+  end
+
+  describe '#show' do
+    subject { get :show, params: { id: order.number } }
 
     let(:order) { create(:order_ready_to_ship, total: 100, with_payment: false, store: store) }
 
@@ -241,7 +226,7 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
 
       it 'shows an order' do
         subject
-        expect(response).to render_template(:edit)
+        expect(response).to render_template(:show)
         expect(assigns[:payments]).to contain_exactly(payment)
       end
     end
@@ -305,6 +290,39 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
 
         expect(flash[:success]).to eq 'Order has been successfully removed!'
         expect(response).to redirect_to spree.admin_checkouts_path
+      end
+    end
+  end
+
+  describe '#update' do
+    let(:order) { create(:completed_order_with_totals, store: store) }
+
+    context 'updating internal_note' do
+      subject do
+        put :update, params: { id: order.number, order: { internal_note: internal_note_content } }, format: :turbo_stream
+      end
+
+      let(:internal_note_content) { 'This is a test internal note for the order.' }
+
+      it 'updates the internal_note' do
+        subject
+        order.reload
+        expect(order.internal_note.to_plain_text).to eq(internal_note_content)
+      end
+
+      it 'responds with turbo_stream' do
+        subject
+        expect(response.media_type).to eq('text/vnd.turbo-stream.html')
+      end
+
+      it 'sets a success flash message' do
+        subject
+        expect(flash[:success]).to be_present
+      end
+
+      it 'renders the internal_note partial' do
+        subject
+        expect(response.body).to include('internal_note')
       end
     end
   end

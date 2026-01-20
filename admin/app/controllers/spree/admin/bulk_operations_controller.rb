@@ -18,8 +18,6 @@ module Spree
         @form_partial_locals = @bulk_action.form_partial_locals || {}
         @button_text = @bulk_action.resolve_button_text
         @button_class = @bulk_action.button_class
-
-        render partial: 'spree/admin/shared/bulk_modal_content'
       end
 
       private

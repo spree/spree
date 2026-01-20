@@ -11,6 +11,8 @@ module Spree
     class_option :lib_name, default: ''
     class_option :database, default: ''
     class_option :api, type: :boolean, default: false
+    class_option :javascript, type: :boolean, default: false
+    class_option :css, type: :string, default: ''
 
     def self.source_paths
       paths = superclass.source_paths
@@ -24,11 +26,21 @@ module Spree
 
     def generate_test_dummy
       puts 'Generating dummy Rails application...'
+      puts "Options: #{options.inspect}"
 
       args = [File.expand_path(dummy_path, destination_root)]
 
       # Database
       args << "--database=#{options[:database].presence || 'sqlite3'}"
+
+      # CSS framework (e.g., tailwind)
+      args << "--css=#{options[:css]}" if options[:css].present?
+
+      # JavaScript
+      args << '--skip-javascript' unless options[:javascript]
+
+      # Skip asset pipeline if no javascript or css is required
+      args << '--skip-asset-pipeline' unless options[:javascript] || options[:css].present?
 
       # Skip options
       args << '--force'
@@ -55,6 +67,7 @@ module Spree
       # API mode (implies skip-asset-pipeline, skip-javascript, skip-hotwire)
       args << '--api' if options[:api]
 
+      puts "Rails app generator args: #{args.inspect}"
       Rails::Generators.invoke('app', args)
       inject_yaml_permitted_classes
     end
@@ -68,7 +81,6 @@ module Spree
       template 'rails/application.rb', "#{dummy_path}/config/application.rb", force: true
       template 'rails/routes.rb', "#{dummy_path}/config/routes.rb", force: true
       template 'rails/test.rb', "#{dummy_path}/config/environments/test.rb", force: true
-      template 'initializers/devise.rb', "#{dummy_path}/config/initializers/devise.rb", force: true
       template "app/assets/config/manifest.js", "#{dummy_path}/app/assets/config/manifest.js", force: true unless options[:api]
     end
 

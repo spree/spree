@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Events::OrderSerializer do
-  let(:store) { create(:store) }
+  let(:store) { @default_store }
   let(:user) { create(:user) }
   let(:order) do
     create(:completed_order_with_totals,

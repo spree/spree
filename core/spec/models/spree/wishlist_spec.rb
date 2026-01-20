@@ -10,7 +10,7 @@ describe Spree::Wishlist, type: :model do
   let!(:wishlist_belonging_to_other_store) { create(:wishlist, user: user, name: 'My Wishlist', store: other_store, is_default: true) }
   let!(:wishlist_belonging_to_other_user) { create(:wishlist, user: other_user, name: 'My Wishlist', store: store, is_default: true) }
 
-  describe 'lifecycle events' do
+  describe 'lifecycle events', events: true do
     describe 'wishlist.created' do
       it 'publishes created event when record is created' do
         record = build(:wishlist, user: user, store: store)

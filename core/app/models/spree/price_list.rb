@@ -1,7 +1,7 @@
 module Spree
   class PriceList < Spree.base_class
     acts_as_paranoid
-    acts_as_list scope: :store
+    acts_as_list scope: :store_id
 
     include Spree::SingleStoreResource
 
@@ -44,7 +44,8 @@ module Spree
     scope :for_store, ->(store) { where(store: store) }
     scope :current, lambda { |timezone = nil|
       timezone ||= Rails.application.config.time_zone
-      current_time = Time.current.in_time_zone(timezone)
+      # Round to beginning of minute to enable Rails query caching
+      current_time = Time.current.in_time_zone(timezone).beginning_of_minute
       where('starts_at IS NULL OR starts_at <= ?', current_time)
         .where('ends_at IS NULL OR ends_at >= ?', current_time)
     }
@@ -117,6 +118,7 @@ module Spree
     end
 
     # Adds products to the price list
+    # Creates placeholder prices (with nil amount) for all variants and currencies
     # @param product_ids [Array<String>] of product ids
     # @return [void]
     def add_products(product_ids)
@@ -124,16 +126,20 @@ module Spree
 
       currencies = store.supported_currencies_list.map(&:iso_code)
       variant_ids = Spree::Variant.eligible.where(product_id: product_ids).distinct.pluck(:id)
+      return if variant_ids.empty?
+
+      # Get existing variant_id/currency combinations to avoid duplicates
+      existing = prices.where(variant_id: variant_ids)
+                       .pluck(:variant_id, :currency)
+                       .to_set
+
       now = Time.current
 
-      prices_to_insert = []
+      prices_to_insert = variant_ids.flat_map do |variant_id|
+        currencies.filter_map do |currency|
+          next if existing.include?([variant_id, currency])
 
-      currencies.each do |currency|
-        existing_variant_ids = prices.where(currency: currency).pluck(:variant_id)
-        new_variant_ids = variant_ids - existing_variant_ids
-
-        new_variant_ids.each do |variant_id|
-          prices_to_insert << {
+          {
             variant_id: variant_id,
             currency: currency,
             amount: nil,
@@ -144,21 +150,29 @@ module Spree
         end
       end
 
-      if prices_to_insert.any?
-        Spree::Price.insert_all(prices_to_insert)
-        touch_variants(variant_ids)
-      end
+      return if prices_to_insert.empty?
+
+      # Use upsert_all with on_duplicate: :skip to handle race conditions
+      Spree::Price.upsert_all(prices_to_insert, on_duplicate: :skip)
+      touch_variants(variant_ids)
+      touch
     end
 
     # Removes products from the price list
+    # Hard deletes prices (not soft delete) to allow re-adding products later
     # @param product_ids [Array<String>] of product ids
     # @return [void]
     def remove_products(product_ids)
       return if product_ids.blank?
 
       variant_ids = Spree::Variant.where(product_id: product_ids).distinct.pluck(:id)
+      return if variant_ids.empty?
+
+      # Use delete_all for hard delete - this bypasses acts_as_paranoid
+      # which is required for the unique index to work when re-adding products
       prices.where(variant_id: variant_ids).delete_all
       touch_variants(variant_ids)
+      touch
     end
 
     # Bulk update prices using upsert_all for performance
@@ -205,7 +219,7 @@ module Spree
 
       return true if records_to_upsert.empty?
 
-      opts = { update_only: [:amount, :compare_at_amount] }
+      opts = { update_only: [:amount, :compare_at_amount], on_duplicate: :update }
       opts[:unique_by] = :id unless ActiveRecord::Base.connection.adapter_name == 'Mysql2'
 
       Spree::Price.upsert_all(records_to_upsert, **opts)

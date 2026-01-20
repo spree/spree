@@ -162,7 +162,7 @@ RSpec.describe 'Product detail page', type: :feature do
 
     context 'when product has no price' do
       before do
-        product.master.prices.destroy_all
+        product.master.prices.delete_all
         product.stock_items.update_all(count_on_hand: 10, backorderable: false)
 
         visit spree.product_path(product)
@@ -250,7 +250,7 @@ RSpec.describe 'Product detail page', type: :feature do
 
     context 'when variant has no price' do
       before do
-        variant1.prices.destroy_all
+        variant1.prices.delete_all
         variant1.stock_items.update_all(count_on_hand: 10, backorderable: false)
 
         visit spree.product_path(product)
@@ -549,9 +549,9 @@ RSpec.describe 'Product detail page', type: :feature do
 
     context 'when all variants have no price' do
       before do
-        variant1.prices.destroy_all
-        variant2.prices.destroy_all
-        variant3.prices.destroy_all
+        variant1.prices.delete_all
+        variant2.prices.delete_all
+        variant3.prices.delete_all
 
         variant1.stock_items.update_all(count_on_hand: 10, backorderable: false)
         variant2.stock_items.update_all(count_on_hand: 10, backorderable: false)

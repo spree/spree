@@ -420,7 +420,7 @@ describe Spree::ReturnItem, type: :model do
 
   describe '#exchange_requested?' do
     context 'exchange variant exists' do
-      before { allow(subject).to receive(:exchange_variant) { create(:variant) } }
+      before { allow(subject).to receive(:exchange_variant) { build(:variant) } }
 
       it { expect(subject.exchange_requested?).to eq true }
     end
@@ -434,7 +434,7 @@ describe Spree::ReturnItem, type: :model do
 
   describe '#exchange_processed?' do
     context 'exchange inventory unit exists' do
-      before { allow(subject).to receive(:exchange_inventory_units) { create_list(:inventory_unit, 1) } }
+      before { allow(subject).to receive(:exchange_inventory_units) { build_list(:inventory_unit, 1) } }
 
       it { expect(subject.exchange_processed?).to eq true }
     end
@@ -517,11 +517,11 @@ describe Spree::ReturnItem, type: :model do
     let(:return_item) { build(:return_item) }
 
     context 'the return item is intended to be exchanged' do
-      before { allow(return_item).to receive(:exchange_variant).and_return(create(:variant)) }
+      before { allow(return_item).to receive(:exchange_variant).and_return(build(:variant)) }
 
       context 'an exchange inventory unit already exists' do
         before do
-          allow(return_item).to receive(:exchange_inventory_units).and_return(create_list(:inventory_unit, 1))
+          allow(return_item).to receive(:exchange_inventory_units).and_return(build_list(:inventory_unit, 1))
         end
 
         it { expect(subject).to be_nil }
@@ -769,7 +769,7 @@ describe Spree::ReturnItem, type: :model do
     end
   end
 
-  describe 'custom events' do
+  describe 'custom events', events: true do
     describe 'return_item.received' do
       let(:inventory_unit) { create(:inventory_unit, state: 'shipped') }
       let(:return_item) { create(:return_item, inventory_unit: inventory_unit, reception_status: 'awaiting') }

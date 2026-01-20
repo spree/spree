@@ -1,4 +1,5 @@
 require 'rails/engine'
+require 'pagy'
 
 require_relative 'dependencies'
 require_relative 'configuration'

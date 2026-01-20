@@ -9,6 +9,10 @@ module Spree
     # @option options [Integer] :height the height of the image
     # @option options [Symbol] :variant use a preprocessed named variant (e.g., :mini, :small, :medium, :large, :xlarge)
     def spree_image_tag(image, options = {})
+      return unless image
+      return unless image.variable?
+      return if image.respond_to?(:attached?) && !image.attached?
+
       url_options = if options[:variant].present?
                       { variant: options[:variant] }
                     else
@@ -25,6 +29,7 @@ module Spree
       return unless image
       return unless image.variable?
       return if image.respond_to?(:attached?) && !image.attached?
+
       url_helpers = respond_to?(:main_app) ? main_app : Rails.application.routes.url_helpers
 
       # Use preprocessed named variant if specified (e.g., :mini, :small, :medium, :large, :xlarge)

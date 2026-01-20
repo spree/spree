@@ -21,7 +21,7 @@ module Spree
     delegate :name, :name=, :description, :slug, :available_on, :make_active_at, :shipping_category_id,
              :meta_description, :meta_keywords, :shipping_category, to: :product
 
-    auto_strip_attributes :sku, nullify: false
+    normalizes :sku, with: ->(value) { value&.to_s&.strip }
 
     # we need to have this callback before any dependent: :destroy associations
     # https://github.com/rails/rails/issues/3458
@@ -47,6 +47,8 @@ module Spree
     has_many :option_values, through: :option_value_variants, dependent: :destroy, class_name: 'Spree::OptionValue'
 
     has_many :images, -> { order(:position) }, as: :viewable, dependent: :destroy, class_name: 'Spree::Image'
+    has_one :primary_image, -> { order(:position).limit(1) }, as: :viewable, class_name: 'Spree::Image'
+    has_one :secondary_image, -> { order(:position).limit(1).offset(1) }, as: :viewable, class_name: 'Spree::Image'
 
     has_many :prices,
              class_name: 'Spree::Price',
@@ -82,6 +84,8 @@ module Spree
 
     after_commit :remove_prices_from_master_variant, on: [:create, :update], unless: :is_master?
     after_commit :remove_stock_items_from_master_variant, on: :create, unless: :is_master?
+    after_create :increment_product_variant_count, unless: :is_master?
+    after_destroy :decrement_product_variant_count, unless: :is_master?
 
     after_touch :clear_in_stock_cache
 
@@ -255,7 +259,11 @@ module Spree
     # Returns the options text of the variant.
     # @return [String] the options text of the variant
     def options_text
-      @options_text ||= Spree::Variants::OptionsPresenter.new(self).to_sentence
+      @options_text ||= if option_values.loaded?
+                          option_values.sort_by { |ov| ov.option_type.position }.map { |ov| "#{ov.option_type.presentation}: #{ov.presentation}" }.to_sentence(words_connector: ', ', two_words_connector: ', ')
+                        else
+                          option_values.includes(:option_type).joins(:option_type).order("#{Spree::OptionType.table_name}.position").map { |ov| "#{ov.option_type.presentation}: #{ov.presentation}" }.to_sentence(words_connector: ', ', two_words_connector: ', ')
+                        end
     end
 
     # Returns the exchange name of the variant.
@@ -273,28 +281,27 @@ module Spree
     # use deleted? rather than checking the attribute directly. this
     # allows extensions to override deleted? if they want to provide
     # their own definition.
+    # @return [Boolean] true if the variant is deleted.
     def deleted?
       !!deleted_at
+    end
+
+    # Returns true if the variant has images.
+    # @return [Boolean] true if the variant has images.
+    def has_images?
+      return images.any? if images.loaded?
+
+      image_count.positive?
     end
 
     # Returns default Image for Variant
     # @return [Spree::Image]
     def default_image
-      @default_image ||= if images.any?
-                           images.first
+      @default_image ||= if has_images?
+                           images.loaded? ? images.first : primary_image
                          else
                            product.default_image
                          end
-    end
-
-    # Returns secondary Image for Variant
-    # @return [Spree::Image]
-    def secondary_image
-      @secondary_image ||= if images.size > 1
-                             images.second
-                           else
-                             product.secondary_image
-                           end
     end
 
     # Returns additional Images for Variant
@@ -679,6 +686,14 @@ module Spree
 
     def remove_stock_items_from_master_variant
       product.master.stock_items.delete_all
+    end
+
+    def increment_product_variant_count
+      Spree::Product.increment_counter(:variant_count, product_id)
+    end
+
+    def decrement_product_variant_count
+      Spree::Product.decrement_counter(:variant_count, product_id)
     end
   end
 end

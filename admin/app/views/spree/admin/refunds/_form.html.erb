@@ -1,5 +1,5 @@
 <% if f.object.new_record? %>
-  <%= f.spree_text_field :amount, label: Spree.t(:amount), append: currency_symbol(@order.currency), required: true %>
+  <%= f.spree_money_field :amount, label: Spree.t(:amount), currency: @order.currency, required: true %>
 <% end %>
 
 <%= f.spree_collection_select :refund_reason_id, refund_reasons, :id, :name, { include_blank: true, label: Spree.t(:reason), required: true } %>

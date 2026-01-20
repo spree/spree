@@ -50,6 +50,9 @@ en:
         number: Number
         verification_value: Verification Value
         year: Year
+      spree/customer_group:
+        description: Description
+        name: Name
       spree/gift_card:
         amount_used: Amount used
         expires_at: Expires at
@@ -80,6 +83,7 @@ en:
         coupon_code: Coupon Code
         created_at: Order Date
         email: Email
+        internal_note: Internal Note
         ip_address: IP Address
         item_count: Items
         item_total: Item Total
@@ -380,6 +384,12 @@ en:
       spree/credit_card:
         one: Credit Card
         other: Credit Cards
+      spree/customer_group:
+        one: Customer Group
+        other: Customer Groups
+      spree/customer_group_user:
+        one: Customer Group User
+        other: Customer Group Users
       spree/customer_return:
         one: Customer Return
         other: Customer Returns
@@ -583,6 +593,7 @@ en:
   number:
     currency:
       format:
+        delimiter: ","
         separator: "."
     percentage:
       format:
@@ -606,6 +617,7 @@ en:
     actions:
       approve: Approve
       cancel: Cancel
+      close: Close
       confirm: Confirm
       connect: Connect
       continue: Continue
@@ -617,6 +629,7 @@ en:
       list: List
       listing: Listing
       new: New
+      open: Open
       publish: Publish
       receive: Mark as received
       refund: Refund
@@ -635,6 +648,7 @@ en:
     add_address: Add address
     add_country: Add Country
     add_coupon_code: Add Coupon Code
+    add_customers: Add Customers
     add_gift_card: Add Gift Card
     add_link: Add link
     add_new_address: Add new address
@@ -662,6 +676,7 @@ en:
     add_to_waitlist: Add to waitlist
     add_to_waitlist_description: Add to waitlist description
     add_variant: Add Variant
+    added_at: Added At
     added_to_cart: Added to cart successfully!
     additional_item: Additional Item
     address: Address
@@ -695,10 +710,13 @@ en:
     adjustable: Adjustable
     adjustment: Adjustment
     adjustment_amount: Amount
+    adjustment_amount_help: Positive values are charges, negative values are credits.
+    adjustment_closed_description: The adjustment is closed, and will not be recalculated.
     adjustment_labels:
       tax_rates:
         excluding_tax: "%{name}%{amount}"
         including_tax: "%{name}%{amount} (Included in Price)"
+    adjustment_open_description: The adjustment is open, and will be recalculated.
     adjustment_successfully_closed: Adjustment has been successfully closed!
     adjustment_successfully_opened: Adjustment has been successfully opened!
     adjustment_total: Adjustment Total
@@ -731,6 +749,7 @@ en:
     apis:
       platform: Platform API
       storefront: Storefront API
+    applied_to: Applied to
     apply: Apply
     apply_only_on_full_priced_items: Apply only on full priced items
     apply_store_credit: Apply Store Credit
@@ -854,6 +873,7 @@ en:
     close: Close
     close_all_adjustments: Close All Adjustments
     close_sidebar: Close sidebar
+    closed: Closed
     code: Code
     colors: Colors
     company: Company
@@ -934,13 +954,25 @@ en:
     custom_domains: Custom domains
     custom_font_code: Custom font code
     customer: Customer
+    customer_could_not_be_removed_from_group: Customer could not be removed from group
     customer_details: Customer Details
     customer_details_updated: Customer Details Updated
+    customer_group: Customer Group
+    customer_group_rule:
+      choose_customer_groups: 'Select the customer group(s) to which this promotion should apply:'
+    customer_groups: Customer Groups
+    customer_removed_from_group: Customer removed from group
     customer_return: Customer Return
     customer_returns: Customer Returns
     customer_search: Customer Search
     customer_support_email: Customer Support Email
     customers: Customers
+    customers_added_to_group:
+      one: "%{count} customer added to group"
+      other: "%{count} customers added to group"
+    customers_removed_from_group:
+      one: "%{count} customer removed from group"
+      other: "%{count} customers removed from group"
     cut: Cut
     cvv: CVV
     cvv_response: CVV Response
@@ -1225,6 +1257,7 @@ en:
     intercept_email_address: Intercept Email Address
     intercept_email_instructions: Override email recipient and replace with this address.
     internal_name: Internal Name
+    internal_note: Internal Note
     internal_server_error: Internal Server Error
     internal_server_error_message: The server encountered an internal error and was unable to complete your request.
     internationalization: Internationalization
@@ -1273,6 +1306,7 @@ en:
     join_slack: Join Slack
     key: Key
     kind: Kind
+    label: Label
     language: Language
     last_name: Last Name
     last_name_begins_with: Last Name Begins With
@@ -1311,6 +1345,9 @@ en:
     make_sure_the_above_reimbursement_amount_is_correct: Make sure the above reimbursement amount is correct
     manage_promotion_categories: Manage Promotion Categories
     manage_variants: Manage Variants
+    manual: Manual
+    manual_adjustment: Manual Adjustment
+    manual_adjustments: Manual Adjustments
     manual_intervention_required: Manual intervention required
     mark_as_default: Mark as default
     master: Master
@@ -1366,6 +1403,7 @@ en:
     new_country: New Country
     new_custom_domain: New Custom Domain
     new_customer: New Customer
+    new_customer_group: New Customer Group
     new_customer_return: New Customer Return
     new_digital_asset: New digital asset
     new_domain: New domain
@@ -1432,11 +1470,15 @@ en:
     next: Next
     no_actions_added: No actions added
     no_address_given: No address given
+    no_adjustments: No adjustments
     no_available_date_set: No available date set
     no_billing_address_available: No billing address available
     no_cc_type: N/A
     no_country: No country set
+    no_customers_found: No customers found
+    no_customers_in_group: No customers in this group yet
     no_email_provided: No email provided
+    no_internal_note: No internal note
     no_limits_zone: No Limits
     no_payment_found: No payment found
     no_payment_provider_settings_message: This payment provider has no custom settings available
@@ -1447,6 +1489,7 @@ en:
     no_products_added: No products added
     no_products_found: No products found
     no_products_in_price_list: No products in this price list
+    no_promotions_applied: No promotions applied
     no_report_data: No report data
     no_resource_found: No %{resource} found
     no_results: No results
@@ -1456,7 +1499,9 @@ en:
     no_shipping_address_available: No shipping address available
     no_shipping_method_selected: No shipping method selected.
     no_state_changes: No state changes yet.
+    no_taxes: No taxes
     no_tracking_present: No tracking details provided.
+    no_users_selected: No users selected
     none: None
     none_selected: None Selected
     normal_amount: Normal Amount
@@ -1706,6 +1751,9 @@ en:
     price_lists: Price Lists
     price_range: Price Range
     price_rule_types:
+      customer_group_rule:
+        description: Apply pricing to specific customer groups
+        name: Customer Group
       user_rule:
         description: Apply pricing to specific customers
         name: User
@@ -1715,6 +1763,9 @@ en:
       zone_rule:
         description: Apply pricing based on geographic zone
         name: Zone
+    price_rules:
+      customer_group_rule:
+        description: Apply pricing to specific customer groups
     price_sack: Price Sack
     prices: Prices
     pricing: Pricing
@@ -1784,6 +1835,9 @@ en:
       currency:
         description: Limit to orders in a specific currency
         name: Currency
+      customer_group:
+        description: Available only to customers in specified customer group(s)
+        name: Customer Group(s)
       first_order:
         description: Must be the customer's first order
         name: First order
@@ -1945,6 +1999,8 @@ en:
     search: Search
     search_all: Search all
     search_by: 'Search by:'
+    search_customers: Search customers
+    search_customers_hint: Search by email address
     search_engine_listing: Search engine listing
     search_order_number: Order Number
     search_products: Search products
@@ -2313,6 +2369,7 @@ en:
     twitter: Twitter
     type: Type
     type_to_search: Type to search
+    type_to_search_customers: Type to search for customers
     type_to_search_products: Type to search for products
     unable_to_connect_to_gateway: Unable to connect to gateway.
     unable_to_create_reimbursements: Unable to create reimbursements because there are items pending manual intervention.

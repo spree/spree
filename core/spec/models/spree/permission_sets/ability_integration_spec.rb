@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'cancan/matchers'
 
 RSpec.describe 'Permission Sets Integration with Ability', type: :model do
-  let(:store) { create(:store) }
+  let(:store) { @default_store }
 
   before do
     # Reset permissions before each test

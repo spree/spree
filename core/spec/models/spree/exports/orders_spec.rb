@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Exports::Orders, type: :model do
-  let(:store) { create(:store) }
+  let(:store) { @default_store }
   let(:export) { described_class.new(store: store) }
 
   describe '#csv_headers' do

@@ -20,21 +20,6 @@ module Spree
           @current_ability ||= Spree.ability_class.new(try_spree_current_user, { store: current_store })
         end
 
-        def redirect_back_or_default(default)
-          Spree::Deprecation.warn('redirect_back_or_default is deprecated and will be removed in Spree 5.2. Please use redirect_back(fallback_location: default) instead.')
-          redirect_back(fallback_location: default)
-        end
-
-        def set_token
-          Spree::Deprecation.warn('set_token is deprecated and will be removed in Spree 5.2. Please use create_token_cookie(token) instead.')
-          cookies.permanent.signed[:token] ||= cookies.signed[:guest_token]
-          cookies.permanent.signed[:token] ||= {
-            value: generate_token,
-            httponly: true
-          }
-          cookies.permanent.signed[:guest_token] ||= cookies.permanent.signed[:token]
-        end
-
         def current_oauth_token
           get_last_access_token = ->(user) { Spree::OauthAccessToken.active_for(user).where(expires_in: nil).last }
           create_access_token = ->(user) { Spree::OauthAccessToken.create!(resource_owner: user) }

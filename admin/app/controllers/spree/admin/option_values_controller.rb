@@ -4,7 +4,7 @@ module Spree
       belongs_to 'spree/option_type', find_by: :id
 
       def select_options
-        render json: @option_type.option_values.to_tom_select_json
+        render json: @option_type.option_values.accessible_by(current_ability).to_tom_select_json
       end
 
       private

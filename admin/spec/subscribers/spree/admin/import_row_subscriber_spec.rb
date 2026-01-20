@@ -24,7 +24,7 @@ RSpec.describe Spree::Admin::ImportRowSubscriber do
   end
 
   describe '#update_import_view' do
-    let(:store) { create(:store) }
+    let(:store) { @default_store }
     let(:user) { create(:admin_user) }
     let(:import) { create(:import, owner: store, user: user) }
     let(:import_row) { create(:import_row, import: import) }

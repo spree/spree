@@ -14,12 +14,10 @@ require 'action_mailer/railtie'
 require 'active_merchant'
 require 'acts_as_list'
 require 'acts-as-taggable-on'
-require 'auto_strip_attributes'
 require 'awesome_nested_set'
 require 'cancan'
 require 'countries/global'
 require 'friendly_id'
-require 'kaminari'
 require 'monetize'
 require 'mobility'
 require 'name_of_person'
@@ -101,6 +99,7 @@ module Spree
       exports: :default,
       images: :default,
       imports: :default,
+      products: :default,
       reports: :default,
       variants: :default,
       taxons: :default,
@@ -319,6 +318,14 @@ module Spree
     Rails.application.config.spree.subscribers = value
   end
 
+  def self.pricing
+    Rails.application.config.spree.pricing
+  end
+
+  def self.pricing=(value)
+    Rails.application.config.spree.pricing = value
+  end
+
   def self.analytics
     @analytics ||= AnalyticsConfig.new
   end
@@ -356,6 +363,19 @@ module Spree
   # @return [Spree::PermissionConfiguration] the permission configuration instance
   def self.permissions
     @permissions ||= PermissionConfiguration.new
+  end
+
+  # Ransack configuration accessor for managing custom ransackable attributes,
+  # associations, and scopes across Spree models.
+  #
+  # @example Adding custom searchable fields
+  #   Spree.ransack.add_attribute(Spree::Product, :vendor_id)
+  #   Spree.ransack.add_scope(Spree::Product, :by_vendor)
+  #   Spree.ransack.add_association(Spree::Product, :vendor)
+  #
+  # @return [Spree::RansackConfiguration] the ransack configuration instance
+  def self.ransack
+    @ransack ||= RansackConfiguration.new
   end
 
   class << self
@@ -436,5 +456,6 @@ require 'spree/core/preferences/scoped_store'
 require 'spree/core/preferences/runtime_configuration'
 
 require 'spree/core/permission_configuration'
+require 'spree/core/ransack_configuration'
 require 'spree/core/pricing/context'
 require 'spree/core/pricing/resolver'

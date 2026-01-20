@@ -7,7 +7,7 @@ describe Spree::CustomerReturn, type: :model do
 
   it_behaves_like 'metadata'
 
-  describe 'lifecycle events' do
+  describe 'lifecycle events', events: true do
     describe 'customer_return.created' do
       it 'publishes created event when record is created' do
         customer_return = build(:customer_return_without_return_items, store: create(:store))

@@ -92,11 +92,8 @@ RSpec.describe Spree::Products::Duplicator do
     let(:new_product) { duplicate.value }
 
     before do
-      product.master.prices.destroy_all
-      product.master.prices = [
-        create(:price, amount: 10.99, compare_at_amount: 11.99, currency: 'USD'),
-        create(:price, amount: 8.99, compare_at_amount: 9.99, currency: 'GBP')
-      ]
+      product.master.set_price('USD', 10.99, 11.99)
+      product.master.set_price('GBP', 8.99, 9.99)
     end
 
     it 'clones prices' do
@@ -204,17 +201,11 @@ RSpec.describe Spree::Products::Duplicator do
       let(:new_product) { duplicate.value }
 
       before do
-        variant1.prices.destroy_all
-        variant1.prices = [
-          create(:price, amount: 14.99, compare_at_amount: 15.99, currency: 'USD'),
-          create(:price, amount: 12.99, compare_at_amount: 13.99, currency: 'GBP')
-        ]
+        variant1.set_price('USD', 14.99, 15.99)
+        variant1.set_price('GBP', 12.99, 13.99)
 
-        variant2.prices.destroy_all
-        variant2.prices = [
-          create(:price, amount: 15.99, compare_at_amount: 16.99, currency: 'USD'),
-          create(:price, amount: 13.99, compare_at_amount: 14.99, currency: 'GBP')
-        ]
+        variant2.set_price('USD', 15.99, 16.99)
+        variant2.set_price('GBP', 13.99, 14.99)
       end
 
       it 'clones prices' do

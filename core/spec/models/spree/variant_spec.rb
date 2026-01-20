@@ -27,6 +27,18 @@ describe Spree::Variant, type: :model do
     end
 
     context 'SKU' do
+      describe 'normalizes' do
+        it 'strips leading and trailing whitespace' do
+          variant = build(:variant, sku: '  TEST-SKU  ')
+          expect(variant.sku).to eq('TEST-SKU')
+        end
+
+        it 'preserves empty string (does not convert to nil)' do
+          variant = build(:variant, sku: '   ')
+          expect(variant.sku).to eq('')
+        end
+      end
+
       context 'default behaviour' do
         context 'invalid' do
           let(:variant_2) { build(:variant, sku: variant.sku) }
@@ -344,15 +356,6 @@ describe Spree::Variant, type: :model do
           let!(:price_1) { create(:price, currency: unavailable_currency, variant: variant, amount: nil) }
 
           it { expect(Spree::Variant.for_currency_and_available_price_amount(currency)).not_to include(variant) }
-        end
-      end
-
-      context 'when multiple prices for same currency present' do
-        let!(:price_1) { create(:price, currency: currency, variant: variant) }
-        let!(:price_2) { create(:price, currency: currency, variant: variant) }
-
-        it 'does not duplicate variant' do
-          expect(Spree::Variant.for_currency_and_available_price_amount(currency)).to eq([variant])
         end
       end
 
@@ -770,17 +773,20 @@ describe Spree::Variant, type: :model do
   describe '#options_text' do
     subject(:options_text) { variant.options_text }
 
-    let(:variant) { build :variant }
-    let(:fake_presenter) { double :fake_presenter }
+    context 'when the variant has no option values' do
+      let(:variant) { build(:variant, option_values: []) }
 
-    before do
-      allow(Spree::Variants::OptionsPresenter).to receive(:new).with(variant).and_return(fake_presenter)
+      it 'returns an empty string' do
+        expect(options_text).to eql ''
+      end
     end
 
-    it 'calls Spree::Variants::OptionsPresenter' do
-      expect(fake_presenter).to receive(:to_sentence)
+    context 'when the variant has option values' do
+      let(:variant) { build(:variant, option_values: [create(:option_value, name: 'Foo', presentation: 'Foo', option_type: create(:option_type, position: 2, name: 'Foo Type', presentation: 'Foo Type'))]) }
 
-      options_text
+      it 'returns the options text of the variant' do
+        expect(options_text).to eql 'Foo Type: Foo'
+      end
     end
   end
 
@@ -1392,6 +1398,7 @@ describe Spree::Variant, type: :model do
     let!(:image) { create(:image, position: 1, viewable: variant) }
 
     it 'returns the first image for the variant' do
+      variant.reload
       expect(variant.default_image).to eq(image)
     end
   end
@@ -1414,6 +1421,72 @@ describe Spree::Variant, type: :model do
 
     it 'returns the additional images for the variant' do
       expect(variant.additional_images).to eq([image2, image3])
+    end
+  end
+
+  describe '#has_images?' do
+    let(:variant) { create(:variant) }
+
+    context 'when variant has no images' do
+      it 'returns false' do
+        expect(variant.has_images?).to be false
+      end
+    end
+
+    context 'when variant has images' do
+      let!(:image) { create(:image, viewable: variant) }
+
+      it 'returns true using counter cache' do
+        variant.reload
+        expect(variant.has_images?).to be true
+      end
+    end
+
+    context 'when images are preloaded' do
+      let!(:image) { create(:image, viewable: variant) }
+
+      it 'uses loaded images instead of counter cache' do
+        variant_with_images = Spree::Variant.includes(:images).find(variant.id)
+        expect(variant_with_images.images).to be_loaded
+        expect(variant_with_images.has_images?).to be true
+      end
+    end
+
+    context 'when images are preloaded but empty' do
+      it 'returns false using loaded images' do
+        variant_with_images = Spree::Variant.includes(:images).find(variant.id)
+        expect(variant_with_images.images).to be_loaded
+        expect(variant_with_images.has_images?).to be false
+      end
+    end
+  end
+
+  describe 'counter cache' do
+    let(:product) { create(:product) }
+
+    describe 'variant_count on product' do
+      it 'increments when a variant is created' do
+        expect {
+          create(:variant, product: product)
+        }.to change { product.reload.variant_count }.from(0).to(1)
+      end
+
+      it 'decrements when a variant is destroyed' do
+        variant = create(:variant, product: product)
+        expect {
+          variant.destroy
+        }.to change { product.reload.variant_count }.from(1).to(0)
+      end
+
+      it 'does not count master variant' do
+        expect(product.variant_count).to eq(0)
+        expect(product.master).to be_present
+      end
+
+      it 'correctly counts multiple variants' do
+        create_list(:variant, 3, product: product)
+        expect(product.reload.variant_count).to eq(3)
+      end
     end
   end
 end

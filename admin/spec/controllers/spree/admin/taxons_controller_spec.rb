@@ -153,7 +153,7 @@ RSpec.describe Spree::Admin::TaxonsController, type: :controller do
 
   describe 'GET #select_options' do
     before do
-      Spree::Taxon.destroy_all
+      Spree::Taxon.delete_all
     end
 
     context 'with automatic taxons param' do

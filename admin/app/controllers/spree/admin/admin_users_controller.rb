@@ -21,8 +21,9 @@ module Spree
 
       # GET /admin/admin_users/select_options.json
       def select_options
-        search_params = params[:q].is_a?(String) ? { email_cont: params[:q] } : params[:q]
-        users = Spree.admin_user_class.accessible_by(current_ability).ransack(search_params).result.order(:email).limit(50)
+        q = params[:q]
+        ransack_params = q.is_a?(String) ? { email_cont: q } : q
+        users = Spree.admin_user_class.accessible_by(current_ability).ransack(ransack_params).result.order(:email).limit(50)
 
         render json: users.pluck(:id, :email).map { |id, email| { id: id, name: email } }
       end

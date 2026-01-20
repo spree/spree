@@ -101,7 +101,7 @@ module Spree
         storefront_posts_sorter: -> { Spree::Dependencies.posts_sorter },
 
         # paginators
-        storefront_collection_paginator: -> { Spree::Dependencies.collection_paginator },
+        storefront_collection_paginator: 'Spree::Api::Paginate',
 
         # finders
         storefront_address_finder: -> { Spree::Dependencies.address_finder },

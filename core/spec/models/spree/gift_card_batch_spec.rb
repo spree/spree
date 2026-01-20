@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe Spree::GiftCardBatch, type: :model do
-  describe 'lifecycle events' do
+  describe 'lifecycle events', events: true do
     let(:gift_card_batch_attrs) { { codes_count: 2, prefix: 'batch_', amount: 10 } }
 
     describe 'gift_card_batch.created' do

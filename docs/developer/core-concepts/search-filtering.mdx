@@ -315,6 +315,78 @@ GET /api/v2/platform/products?sort=status,-created_at
 Platform API sorting is handled separately from Ransack's filter parameter and follows JSON:API conventions.
 </Info>
 
+## Extending Ransackable Configuration
+
+If you need to add custom ransackable attributes, associations, or scopes to Spree's built-in models without using decorators, use the `Spree.ransack` configuration API.
+
+### Adding Custom Configuration
+
+Add the following to your initializer (e.g., `config/initializers/spree.rb`):
+
+```ruby
+Rails.application.config.after_initialize do
+  # Add a custom searchable attribute to Products
+  Spree.ransack.add_attribute(Spree::Product, :vendor_id)
+
+  # Add a custom searchable scope to Products
+  Spree.ransack.add_scope(Spree::Product, :by_vendor)
+
+  # Add a custom searchable association to Products
+  Spree.ransack.add_association(Spree::Product, :vendor)
+
+  # Add multiple configurations for Orders
+  Spree.ransack.add_attribute(Spree::Order, :custom_reference)
+  Spree.ransack.add_scope(Spree::Order, :high_value)
+  Spree.ransack.add_association(Spree::Order, :sales_rep)
+end
+```
+
+<Info>
+The `Spree.ransack` API only allows adding new searchable fields. It does not support removing default configurations to prevent accidentally breaking core functionality.
+</Info>
+
+### Available Methods
+
+| Method | Description | Example |
+|--------|-------------|---------|
+| `add_attribute` | Add a searchable attribute | `Spree.ransack.add_attribute(Spree::Product, :vendor_id)` |
+| `add_scope` | Add a searchable scope | `Spree.ransack.add_scope(Spree::Product, :featured)` |
+| `add_association` | Add a searchable association | `Spree.ransack.add_association(Spree::Product, :vendor)` |
+
+### Complete Example
+
+Here's an example of extending Products with a vendor relationship:
+
+```ruby
+# app/models/vendor.rb
+class Vendor < ApplicationRecord
+  has_many :products, class_name: 'Spree::Product'
+end
+
+# db/migrate/xxx_add_vendor_to_spree_products.rb
+class AddVendorToSpreeProducts < ActiveRecord::Migration[7.0]
+  def change
+    add_reference :spree_products, :vendor
+  end
+end
+
+# config/initializers/spree.rb
+Rails.application.config.after_initialize do
+  Spree.ransack.add_attribute(Spree::Product, :vendor_id)
+  Spree.ransack.add_association(Spree::Product, :vendor)
+end
+```
+
+Now you can search products by vendor:
+
+```bash
+# Filter by vendor_id
+GET /api/v2/platform/products?filter[vendor_id_eq]=123
+
+# Filter by vendor name (through association)
+GET /api/v2/platform/products?filter[vendor_name_cont]=acme
+```
+
 ## Custom Implementation Examples
 
 ### Example 1: Brand Resource

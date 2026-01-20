@@ -1850,3 +1850,47 @@ body:has(.currency-and-locale-modal:not(.hidden)) .page-contents {
     aspect-ratio: 1.77;
   }
 }
+
+/* Pagy pagination styles */
+.pagy.series-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  margin-top: 4rem;
+}
+
+.pagy.series-nav a {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 2rem;
+  text-align: center;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+}
+
+.pagy.series-nav a[rel="prev"],
+.pagy.series-nav a[rel="next"] {
+  width: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.pagy.series-nav a[aria-disabled="true"] {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.pagy.series-nav a[aria-current="page"] {
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.pagy.series-nav a:not([aria-disabled="true"]):hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.pagy.series-nav a[role="separator"] {
+  width: 2rem;
+}

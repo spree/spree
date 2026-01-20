@@ -57,15 +57,6 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
       expect(assigns[:collection]).to contain_exactly(product_1, product_2)
     end
 
-    it 'searches for products without category' do
-      create(:product, stores: [store], taxons: [create(:taxon)])
-      product = create(:product, stores: [store], taxons: [])
-
-      get :index, params: { q: { taxons_id_in: [' '] } }
-
-      expect(assigns[:collection]).to contain_exactly(product)
-    end
-
     context 'with views' do
       render_views
 
@@ -85,6 +76,31 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
         expect(response).to be_successful
       end
     end
+
+    describe 'sorting by price' do
+      let!(:product_cheap) { create(:product, name: 'Cheap Product', stores: [store]) }
+      let!(:product_expensive) { create(:product, name: 'Expensive Product', stores: [store]) }
+
+      before do
+        product_cheap.master.prices.update_all(amount: 10.00)
+        product_expensive.master.prices.update_all(amount: 100.00)
+      end
+
+      it 'GET /admin/products?q[s]=master_price+asc sorts products by price ascending' do
+        get :index, params: { q: { s: 'master_price asc' } }
+
+        expect(response).to be_successful
+        expect(assigns[:collection].map(&:name)).to eq(['Cheap Product', 'Expensive Product'])
+      end
+
+      it 'GET /admin/products?q[s]=master_price+desc sorts products by price descending' do
+        get :index, params: { q: { s: 'master_price desc' } }
+
+        expect(response).to be_successful
+        expect(assigns[:collection].map(&:name)).to eq(['Expensive Product', 'Cheap Product'])
+      end
+    end
+
   end
 
   describe 'POST #search' do

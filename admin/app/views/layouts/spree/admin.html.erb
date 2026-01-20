@@ -6,14 +6,14 @@
   </head>
 
   <body class="admin min-h-screen <%= controller_name %> <%= action_name %>"
-    data-controller="admin sidebar time-zone"
+    data-controller="admin sidebar drawer dialog"
     data-action="keydown.ctrl+s->admin#save keydown.meta+s->admin#save"
   >
     <%= render_admin_partials(:body_start_partials) %>
 
     <%= render "spree/admin/shared/header" %>
     <%= render "spree/admin/shared/sidebar" %>
-    <main id="content" data-controller="drawer dialog export-dialog">
+    <main id="content" data-controller=" export-dialog">
       <%= render "spree/admin/shared/content_header" %>
       <%= render "spree/admin/shared/page_tabs" %>
       <%= render "spree/admin/shared/page_alerts" %>

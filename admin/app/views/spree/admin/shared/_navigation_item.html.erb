@@ -43,9 +43,7 @@
 
     <%# Submenu for expanded sidebar (only shown when active) %>
     <ul class="nav-submenu <% unless is_active %>hidden<% end %>" id="nav-submenu-<%= item.key %>">
-      <% item.children.select { |child| child.visible?(self) }.each do |child_item| %>
-        <%= render 'spree/admin/shared/navigation_item', item: child_item, context: context %>
-      <% end %>
+      <%= render collection: item.children.select { |child| child.visible?(self) }, partial: 'spree/admin/shared/navigation_item', as: :item, locals: { context: context } %>
     </ul>
 
     <%# Submenu dropdown for collapsed sidebar (always rendered, shown on hover) %>
@@ -53,9 +51,7 @@
       <%# Add parent item as first item in dropdown %>
       <%= nav_item(item_label, item_url, icon: nil) %>
 
-      <% item.children.select { |child| child.visible?(self) }.each do |child_item| %>
-        <%= render 'spree/admin/shared/navigation_item', item: child_item, context: context %>
-      <% end %>
+      <%= render collection: item.children.select { |child| child.visible?(self) }, partial: 'spree/admin/shared/navigation_item', as: :item, locals: { context: context } %>
     </ul>
   <% else %>
     <%# Regular item without children %>

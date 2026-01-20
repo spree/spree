@@ -1,6 +1,6 @@
 <% spinner_id = defined?(id) ? id : 'turbo-spinner' %>
 
-<div class="flex flex-col w-full h-full min-h-[300px] items-center justify-center" id="<%= spinner_id %>">
+<div class="flex flex-col w-full h-full min-h-[200px] items-center justify-center" id="<%= spinner_id %>">
   <div class="inline-block w-8 h-8 border-4 border-current border-r-transparent rounded-full animate-spin text-gray-300 align-middle opacity-50 mb-3" role="status">
     <span class="sr-only"><%= Spree.t(:loading) %>...</span>
   </div>

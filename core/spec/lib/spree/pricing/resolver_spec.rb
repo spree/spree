@@ -128,7 +128,7 @@ describe Spree::Pricing::Resolver do
 
     context 'when no base price exists' do
       before do
-        variant.prices.destroy_all
+        variant.prices.delete_all
       end
 
       it 'returns a new unpersisted price object' do

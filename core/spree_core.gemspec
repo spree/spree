@@ -33,7 +33,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'activemerchant', '~> 1.67'
   s.add_dependency 'acts_as_list', '>= 0.8'
   s.add_dependency 'acts-as-taggable-on'
-  s.add_dependency 'auto_strip_attributes', '~> 2.6'
   s.add_dependency 'awesome_nested_set', '~> 3.3', '>= 3.3.1'
   s.add_dependency 'carmen', '>= 1.0'
   s.add_dependency 'cancancan', '~> 3.2'
@@ -41,7 +40,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'friendly_id', '~> 5.2', '>= 5.2.1'
   s.add_dependency 'geocoder'
   s.add_dependency 'highline', '>= 2', '< 4' # Necessary for the install generator
-  s.add_dependency 'kaminari', '~> 1.2'
   s.add_dependency 'money', '~> 6.13'
   s.add_dependency 'monetize', '~> 1.9'
   s.add_dependency 'name_of_person', '~> 1.1'

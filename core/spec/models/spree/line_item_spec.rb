@@ -646,6 +646,30 @@ describe Spree::LineItem, type: :model do
         expect(line_item.reload.price).to eq(original_price)
       end
     end
+
+    context 'when creating line item with quantity meeting volume threshold' do
+      let!(:price_list) { create(:price_list, :active, store: store) }
+      let!(:volume_rule) { create(:volume_price_rule, price_list: price_list, min_quantity: 10) }
+      let!(:volume_price) { create(:price, variant: variant, currency: 'USD', amount: 7.00, price_list: price_list) }
+
+      it 'applies volume price on initial creation' do
+        result = Spree::Cart::AddItem.call(order: order, variant: variant, quantity: 15)
+        expect(result.success?).to be true
+
+        new_line_item = order.line_items.find_by(variant: variant)
+        expect(new_line_item.price).to eq(7.00)
+        expect(new_line_item.price_list_id).to eq(price_list.id)
+      end
+
+      it 'does not apply volume price when quantity is below threshold' do
+        result = Spree::Cart::AddItem.call(order: order, variant: variant, quantity: 5)
+        expect(result.success?).to be true
+
+        new_line_item = order.line_items.find_by(variant: variant)
+        expect(new_line_item.price).to eq(10.00)
+        expect(new_line_item.price_list_id).to be_nil
+      end
+    end
   end
 
   describe '#discounted_price' do

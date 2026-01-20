@@ -42,7 +42,7 @@ describe Spree::PriceList, type: :model do
   end
 
   describe 'scopes' do
-    let(:store) { create(:store) }
+    let(:store) { @default_store }
     let!(:active_price_list) { create(:price_list, :active, store: store) }
     let!(:inactive_price_list) { create(:price_list, :inactive, store: store) }
     let!(:scheduled_price_list) { create(:price_list, :scheduled, store: store) }
@@ -107,7 +107,7 @@ describe Spree::PriceList, type: :model do
   end
 
   describe '#applicable?' do
-    let(:store) { create(:store) }
+    let(:store) { @default_store }
     let(:price_list) { create(:price_list, :active, store: store) }
     let(:variant) { create(:variant) }
     let(:context) { Spree::Pricing::Context.new(variant: variant, currency: 'USD', store: store) }
@@ -212,6 +212,12 @@ describe Spree::PriceList, type: :model do
       }.to have_enqueued_job(Spree::Variants::TouchJob).with([product1.master.id])
     end
 
+    it 'touches the price list to bust cache' do
+      expect {
+        price_list.add_products([product1.id])
+      }.to change { price_list.reload.updated_at }
+    end
+
     it 'handles empty product_ids' do
       expect {
         price_list.add_products([])
@@ -235,6 +241,57 @@ describe Spree::PriceList, type: :model do
         expect {
           price_list.add_products([product_with_variants.id])
         }.to change { price_list.prices.count }.by(eligible_count * 3) # variants * 3 currencies
+      end
+    end
+
+    context 'with non-existent product IDs' do
+      it 'handles gracefully without error' do
+        expect {
+          price_list.add_products([999_999, 999_998])
+        }.not_to change { price_list.prices.count }
+      end
+
+      it 'creates prices only for existing products' do
+        expect {
+          price_list.add_products([product1.id, 999_999])
+        }.to change { price_list.prices.count }.by(3) # only product1 * 3 currencies
+      end
+    end
+
+    context 'when price already has amount set' do
+      before do
+        price_list.prices.create!(variant: product1.master, currency: 'USD', amount: 49.99)
+      end
+
+      it 'does not overwrite existing price with amount' do
+        price_list.add_products([product1.id])
+
+        price = price_list.prices.find_by(variant_id: product1.master.id, currency: 'USD')
+        expect(price.amount).to eq(49.99)
+      end
+
+      it 'only creates prices for missing currencies' do
+        expect {
+          price_list.add_products([product1.id])
+        }.to change { price_list.prices.count }.by(2) # Only EUR and GBP
+      end
+    end
+
+    context 'with deleted variants' do
+      let(:product_with_deleted) { create(:product, stores: [store]) }
+      let!(:active_variant) { create(:variant, product: product_with_deleted) }
+      let!(:deleted_variant) { create(:variant, product: product_with_deleted) }
+
+      before { deleted_variant.destroy }
+
+      it 'only creates prices for non-deleted variants' do
+        eligible_count = Spree::Variant.eligible.where(product_id: product_with_deleted.id).count
+
+        expect {
+          price_list.add_products([product_with_deleted.id])
+        }.to change { price_list.prices.count }.by(eligible_count * 3)
+
+        expect(price_list.prices.where(variant_id: deleted_variant.id)).to be_empty
       end
     end
   end
@@ -289,6 +346,43 @@ describe Spree::PriceList, type: :model do
       expect {
         price_list.remove_products([product1.id])
       }.to have_enqueued_job(Spree::Variants::TouchJob).with([product1.master.id])
+    end
+
+    it 'touches the price list to bust cache' do
+      expect {
+        price_list.remove_products([product1.id])
+      }.to change { price_list.reload.updated_at }
+    end
+
+    context 'when re-adding a previously removed product' do
+      it 'allows re-adding a product with empty prices' do
+        # Add product, then remove it
+        price_list.add_products([product1.id])
+        price_list.remove_products([product1.id])
+
+        # Re-add the same product - this should not raise a unique constraint error
+        expect {
+          price_list.add_products([product1.id])
+        }.to change { price_list.prices.count }.by(3) # 1 product * 3 currencies
+      end
+
+      it 'allows re-adding a product that had prices with amounts set' do
+        # Add product and set some prices
+        price_list.add_products([product1.id])
+        price = price_list.prices.find_by(variant_id: product1.master.id, currency: 'USD')
+        price.update!(amount: 19.99)
+
+        # Remove product
+        price_list.remove_products([product1.id])
+
+        # Re-add the same product
+        expect {
+          price_list.add_products([product1.id])
+        }.to change { price_list.prices.count }.by(3)
+
+        # New prices should have nil amounts
+        expect(price_list.prices.where(variant_id: product1.master.id).pluck(:amount).uniq).to eq([nil])
+      end
     end
   end
 

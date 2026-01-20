@@ -5,7 +5,7 @@ module Spree
 
       # GET /account/orders
       def index
-        @orders = orders_scope.order(created_at: :desc).page(params[:page]).per(25)
+        @orders = paginate_collection(orders_scope.order(created_at: :desc), limit: 25)
       end
 
       # GET /account/orders/:id

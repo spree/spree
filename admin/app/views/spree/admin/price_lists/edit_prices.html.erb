@@ -7,12 +7,19 @@
   <%= turbo_save_button_tag Spree.t('actions.save'), form: "edit_price_list_#{@price_list.id}" %>
 <% end %>
 
+<%# Use currency's decimal mark for consistent formatting regardless of I18n locale %>
+<% currency_obj = ::Money::Currency.find(@currency) %>
+<% decimal_separator = currency_obj.decimal_mark %>
+<% thousands_separator = currency_obj.thousands_separator %>
 <%= form_with model: [:admin, @price_list],
               method: :patch,
               html: { class: 'relative', id: "edit_price_list_#{@price_list.id}" },
               data: {
                 controller: 'bulk-editor',
                 action: 'keydown.ctrl+a->bulk-editor#selectAll keydown.meta+a->bulk-editor#selectAll',
+                bulk_editor_locale_value: I18n.locale,
+                bulk_editor_decimal_separator_value: decimal_separator,
+                bulk_editor_thousands_separator_value: thousands_separator,
               } do |f| %>
 
   <div class="card mb-6">
@@ -71,32 +78,36 @@
                       <%= pf.hidden_field :currency %>
                       <label class="flex items-center cursor-cell m-0">
                         <span class="pl-4 text-gray-500 pointer-events-none"><%= @currency_symbol %></span>
-                        <%= pf.number_field :amount,
-                            step: 0.01,
-                            placeholder: '0.00',
+                        <% formatted_amount = price.amount.present? ? format('%.2f', price.amount).tr('.', decimal_separator) : '' %>
+                        <%= pf.text_field :amount,
+                            value: formatted_amount,
+                            placeholder: "",
+                            inputmode: 'decimal',
                             class: 'w-full pl-1 pr-4 py-2 border-0 shadow-none outline-none text-right tabular-nums bg-transparent',
                             data: {
                               bulk_editor_target: 'cell',
                               row: row_index,
                               col: 0,
                               action: bulk_editor_cell_actions,
-                              original_value: price.amount
+                              original_value: formatted_amount
                             } %>
                       </label>
                     </td>
                     <td class="p-0 w-15 bulk-editor-cell">
                       <label class="flex items-center cursor-cell m-0">
                         <span class="pl-4 text-gray-500 pointer-events-none"><%= @currency_symbol %></span>
-                        <%= pf.number_field :compare_at_amount,
-                            step: 0.01,
-                            placeholder: '0.00',
+                        <% formatted_compare_at = price.compare_at_amount.present? ? format('%.2f', price.compare_at_amount).tr('.', decimal_separator) : '' %>
+                        <%= pf.text_field :compare_at_amount,
+                            value: formatted_compare_at,
+                            placeholder: "",
+                            inputmode: 'decimal',
                             class: 'w-full pl-1 pr-4 py-2 border-0 shadow-none outline-none text-right tabular-nums bg-transparent',
                             data: {
                               bulk_editor_target: 'cell',
                               row: row_index,
                               col: 1,
                               action: bulk_editor_cell_actions,
-                              original_value: price.compare_at_amount
+                              original_value: formatted_compare_at
                             } %>
                       </label>
                     </td>

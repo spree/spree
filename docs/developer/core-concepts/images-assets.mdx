@@ -410,8 +410,8 @@ Returns the aspect ratio of an image for CSS layouts.
 
 ```erb
 <%# Display primary product image using named variant %>
-<% if product.images.any? %>
-  <%= spree_image_tag product.images.first,
+<% if product.has_images? %>
+  <%= spree_image_tag product.default_image,
       variant: :large,
       alt: product.name,
       class: 'product-main-image' %>
@@ -419,7 +419,7 @@ Returns the aspect ratio of an image for CSS layouts.
 
 <%# Display image gallery with thumbnails %>
 <div class="product-gallery">
-  <% product.images.each do |image| %>
+  <% product.variant_images.each do |image| %>
     <%= spree_image_tag image,
         variant: :small,
         alt: image.alt.presence || product.name,
@@ -428,7 +428,7 @@ Returns the aspect ratio of an image for CSS layouts.
 </div>
 
 <%# High-resolution image for zoom %>
-<%= spree_image_tag product.images.first,
+<%= spree_image_tag product.default_image,
     variant: :xlarge,
     alt: product.name,
     class: 'product-zoom-image' %>
@@ -466,8 +466,8 @@ Returns the aspect ratio of an image for CSS layouts.
 
 ```erb
 <%# For Spree::Asset/Image %>
-<% if product.images.any? %>
-  <%= spree_image_tag product.images.first, width: 400 %>
+<% if product.has_images? %>
+  <%= spree_image_tag product.default_image, width: 400 %>
 <% else %>
   <%= image_tag 'placeholder.png', width: 400 %>
 <% end %>

@@ -15,9 +15,7 @@
     <% end %>
   </button>
 
-  <dialog class="drawer"
-          data-dialog-target="dialog"
-          id="query-builder-drawer-<%= table_key %>">
+  <%= drawer(id: "query-builder-drawer-#{table_key}", controller_name: 'dialog') do %>
     <%= drawer_header(Spree.t('admin.tables.filter_builder'), 'dialog') %>
 
     <div data-controller="query-builder"
@@ -93,5 +91,5 @@
         <%= render 'spree/admin/tables/filter_group' %>
       </template>
     </div>
-  </dialog>
+  <% end %>
 </div>

@@ -91,6 +91,53 @@ module Spree
       end
     end
 
+    describe 'counter cache' do
+      let(:taxon) { create(:taxon) }
+      let(:product) { create(:product) }
+
+      describe 'classification_count on taxon' do
+        it 'increments when a classification is created' do
+          expect {
+            create(:classification, taxon: taxon, product: product)
+          }.to change { taxon.reload.classification_count }.from(0).to(1)
+        end
+
+        it 'decrements when a classification is destroyed' do
+          classification = create(:classification, taxon: taxon, product: product)
+          expect {
+            classification.destroy
+          }.to change { taxon.reload.classification_count }.from(1).to(0)
+        end
+
+        it 'correctly counts multiple classifications' do
+          products = create_list(:product, 3)
+          products.each { |p| create(:classification, taxon: taxon, product: p) }
+          expect(taxon.reload.classification_count).to eq(3)
+        end
+      end
+
+      describe 'classification_count on product' do
+        it 'increments when a classification is created' do
+          expect {
+            create(:classification, taxon: taxon, product: product)
+          }.to change { product.reload.classification_count }.from(0).to(1)
+        end
+
+        it 'decrements when a classification is destroyed' do
+          classification = create(:classification, taxon: taxon, product: product)
+          expect {
+            classification.destroy
+          }.to change { product.reload.classification_count }.from(1).to(0)
+        end
+
+        it 'correctly counts multiple classifications' do
+          taxons = create_list(:taxon, 3)
+          taxons.each { |t| create(:classification, taxon: t, product: product) }
+          expect(product.reload.classification_count).to eq(3)
+        end
+      end
+    end
+
     describe '.grouped_taxon_ids_for_products' do
       let(:taxon1) { create(:taxon) }
       let(:taxon2) { create(:taxon) }

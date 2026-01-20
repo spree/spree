@@ -78,7 +78,7 @@ Spree provides a reusable SEO partial that handles slug, meta title, and meta de
 ```erb app/views/spree/admin/brands/_form.html.erb {1-2,5-12,15,25-32}
 <div class="row" data-controller="slug-form seo-form">
   <div class="col-lg-8">
-    <div class="card mb-4">
+    <div class="card mb-6">
       <div class="card-body">
         <%= f.spree_text_field :name,
             required: true,
@@ -94,7 +94,7 @@ Spree provides a reusable SEO partial that handles slug, meta title, and meta de
   </div>
 
   <div class="col-lg-4">
-    <div class="card mb-4">
+    <div class="card mb-6">
       <div class="card-header">
         <h5 class="card-title"><%= Spree.t(:logo) %></h5>
       </div>

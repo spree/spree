@@ -1,5 +1,3 @@
 <ul class="nav flex-col">
-  <% items.each do |item| %>
-    <%= render 'spree/admin/shared/navigation_item', item: item, context: context %>
-  <% end %>
+  <%= render collection: items, partial: 'spree/admin/shared/navigation_item', as: :item, locals: { context: context } %>
 </ul>

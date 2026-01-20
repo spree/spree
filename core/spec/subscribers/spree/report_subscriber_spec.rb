@@ -16,7 +16,7 @@ RSpec.describe Spree::ReportSubscriber do
   end
 
   describe '#generate_report_async' do
-    let(:store) { create(:store) }
+    let(:store) { @default_store }
     let(:user) { create(:admin_user) }
     let(:subscriber) { described_class.new }
 

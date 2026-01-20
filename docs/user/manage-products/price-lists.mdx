@@ -1,0 +1,86 @@
+---
+title: "Price Lists"
+description: "Learn how to set up volume pricing, user-specific pricing, and more in Spree Commerce."
+---
+
+Price lists are a powerful tool for managing customer-specific pricing strategies - essential for industries like B2B, wholesale, and marketplaces. They let you offer different prices to different customer segments based on conditions like location, quantity, or account status, without needing to duplicate product records or use heavy customizations.
+
+With Spree’s native support for price lists, you can create and manage custom pricing logic directly in the admin dashboard - no development required.
+
+## Create a Price List
+
+To get started, navigate to **Products → Price Lists** in the admin dashboard. 
+
+![The price list tab in Spree Commerce](/docs/images/user/products/price-lists/1-price-lists-tab.png)
+
+Here, you’ll see an overview of all active and inactive price lists. Click **New Price List** in the top right corner to open the price list creation form.
+
+![Creating a new price list in Spree Commerce](/docs/images/user/products/price-lists/2-price-list-form.png)
+
+Fill in the following fields:
+
+- **Name** - Internal name for the price list (displayed in the admin).
+- **Description (optional)** - Notes or context for other admins.
+- **Start Date** and **End Date** - Defines when the price list should be active.
+  - If not set, the price list will take effect immediately and it will never expire
+
+Once you’ve completed the above, click **Create** to proceed.
+
+## Configure a Price List
+
+![The price list editor in Spree Commerce](/docs/images/user/products/price-lists/3-edit-form.png)
+
+Once created, you’ll be redirected to the price list edit form, where you can define rules for when the price list should apply, add products to be included in the price list, and set the modified prices of those products.
+
+### Add Rules
+
+![Adding rules to a price list in Spree Commerce](/docs/images/user/products/price-lists/4-price-list-rules.png)
+
+You can add multiple rules with Match Any or Match All logic.
+
+Available Rule Types:
+
+- **User** - Apply pricing only for specific users.
+- **Customer Group** - Apply pricing to a specific customer group.
+- **Volume** - Apply pricing when order quantity falls within a min–max range.
+- **Zone** - Apply pricing to customers in a specific tax/shipping zone.
+
+To add a rule, simply click **Add Rule**, select a rule type, and configure its criteria.
+
+### Add Products
+
+![Adding product to a price list in Spree Commerce](/docs/images/user/products/price-lists/5-add-products.png)
+
+Next, you’ll need to add some products to the price list. To do so, click **Add Products** in Products subsection to open the product selector side panel.
+
+![Selecting products to add to a price list in Spree Commerce](/docs/images/user/products/price-lists/6-select-products.png)
+
+Search for products by name or SKU, select one or more products and click **Add Selected** to add them to the price list.
+
+The selected products will now appear in the product list.
+
+### Setting Prices
+
+To define custom prices for the list, click **Edit Prices** in the top right of the product list to open the price edit form.
+
+![How to edit prices on price list in Spree Commerce](/docs/images/user/products/price-lists/7-edit-prices.png)
+
+Select which currency you'd like to update prices for, and update the values in the **Price** column and optionally in the **Compare At** column.
+
+<Note>You can highlight multiple fields and copy + paste like you would in a spreadsheet.</Note>
+
+![Updating price lists values in the Spree Commerce dashboard](/docs/images/user/products/price-lists/8-update-values.png)
+
+Once you’ve finished entering the custom prices, click **Save** to apply your changes. 
+
+## Activating the Price List
+
+Once everything is configured, go back to the price list editor, and click **Activate** in the top right corner.
+
+![Activating a price list in Spree Commerce](/docs/images/user/products/price-lists/9-active-price-list.png)
+
+The price list will now take effect immediately for any user or order that matches the configured rules.
+
+You can deactivate the price list at any time by clicking the **Deactivate** button.
+
+<Note>If you set a start date for the price list, the **Activate/Deactivate** button will instead say **Schedule/Unschedule**.</Note>

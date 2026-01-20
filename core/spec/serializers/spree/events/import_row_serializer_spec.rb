@@ -5,7 +5,7 @@ require 'spec_helper'
 RSpec.describe Spree::Events::ImportRowSerializer do
   subject { described_class.serialize(import_row) }
 
-  let(:store) { create(:store) }
+  let(:store) { @default_store }
   let(:user) { create(:admin_user) }
   let(:import) { create(:import, owner: store, user: user) }
   let(:product) { create(:product) }

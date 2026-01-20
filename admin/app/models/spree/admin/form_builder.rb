@@ -68,6 +68,68 @@ module Spree
         end
       end
 
+      # Create a money/currency field with Spree form styling and locale-aware formatting
+      #
+      # This field displays amounts in the user's locale format (e.g., "1.234,56" for German)
+      # and normalizes values to standard decimal format before form submission.
+      #
+      # @param method [Symbol] the field name
+      # @param options [Hash] field options including:
+      #   - :currency [String] the currency code (e.g., 'USD', 'EUR', 'PLN') - used for symbol display
+      #   - :value [BigDecimal, Float, String] the value to display (will be formatted for locale)
+      #   - other options from {#spree_text_field}
+      # @return [String] HTML string containing the complete form group with money field
+      def spree_money_field(method, options = {})
+        currency = options.delete(:currency)
+        prepend = options.delete(:prepend)
+        append = options.delete(:append)
+
+        # Get currency object for formatting
+        currency_obj = currency.present? ? ::Money::Currency.find(currency) : nil
+
+        # Use currency symbol as append if currency is provided and no append specified
+        if currency_obj.present? && append.nil?
+          append = currency_obj.symbol
+        end
+
+        # Get decimal/thousands separators from currency or fall back to I18n locale
+        locale = I18n.locale
+        if currency_obj.present?
+          decimal_separator = currency_obj.decimal_mark
+          thousands_separator = currency_obj.thousands_separator
+        else
+          decimal_separator = I18n.t(:'number.currency.format.separator', default: '.')
+          thousands_separator = I18n.t(:'number.currency.format.delimiter', default: ',')
+        end
+
+        # Format the value for display if present
+        if options[:value].present?
+          options[:value] = format_money_value(options[:value], decimal_separator)
+        elsif @object.respond_to?(method) && @object.send(method).present?
+          options[:value] = format_money_value(@object.send(method), decimal_separator)
+        end
+
+        options[:class] ||= 'form-input'
+        options[:inputmode] = 'decimal'
+        options[:data] ||= {}
+        options[:data][:controller] = 'money-field'
+        options[:data][:money_field_locale_value] = locale
+        options[:data][:money_field_decimal_separator_value] = decimal_separator
+        options[:data][:money_field_thousands_separator_value] = thousands_separator
+        options[:data][:action] = 'blur->money-field#format'
+
+        if prepend.present? || append.present?
+          options[:class] = 'border-0 focus:ring-0 focus:outline-none text-base grow'
+          options[:class] += ' pl-0' if prepend.present?
+        end
+
+        @template.content_tag(:div, class: 'form-group') do
+          spree_label(method, options) +
+            wrap_with_input_group(@template.text_field(@object_name, method, objectify_options(options)), prepend, append) +
+            @template.error_message_on(@object_name, method) + spree_field_help(method, options.merge(class: 'form-text mt-2'))
+        end
+      end
+
       # Create an email field with Spree form styling
       #
       # @param method [Symbol] the field name
@@ -299,6 +361,18 @@ module Spree
         help_bubble = options[:help_bubble] ? ' ' + @template.help_bubble(options[:help_bubble]) : ''
 
         @template.raw(translated_label + required_label + help_bubble)
+      end
+
+      # Format a money value for display using the given decimal separator
+      #
+      # @param value [BigDecimal, Float, String, nil] the value to format
+      # @param decimal_separator [String] the decimal separator to use (e.g., '.' or ',')
+      # @return [String] the formatted value
+      def format_money_value(value, decimal_separator = '.')
+        return '' if value.blank?
+
+        number = value.to_d
+        format('%<amount>.2f', amount: number).tr('.', decimal_separator)
       end
 
       # Wrap a field with an input group if prepend or append is specified

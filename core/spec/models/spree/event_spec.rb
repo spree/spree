@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Event do
-  let(:store) { create(:store) }
+  let(:store) { @default_store }
 
   before do
     allow(Spree::Current).to receive(:store).and_return(store)

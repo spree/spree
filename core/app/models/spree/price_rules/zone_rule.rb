@@ -7,7 +7,8 @@ module Spree
         return false unless context.zone
         return true if preferred_zone_ids.empty?
 
-        preferred_zone_ids.include?(context.zone.id)
+        # Compare as strings to support both integer and UUID primary keys
+        preferred_zone_ids.map(&:to_s).include?(context.zone.id.to_s)
       end
 
       def self.description

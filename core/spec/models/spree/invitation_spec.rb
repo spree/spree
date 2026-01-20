@@ -78,7 +78,7 @@ RSpec.describe Spree::Invitation, type: :model do
         expect(invitation.accepted_at).to be_present
       end
 
-      it 'publishes invitation.accept event' do
+      it 'publishes invitation.accept event', events: true do
         invitation.invitee = create(:admin_user, :without_admin_role)
 
         expect(invitation).to receive(:publish_event).with('invitation.accepted')
@@ -109,18 +109,18 @@ RSpec.describe Spree::Invitation, type: :model do
   end
 
   describe '#resend!' do
-    it 'publishes invitation.resent event if invitation is pending and not expired' do
+    it 'publishes invitation.resent event if invitation is pending and not expired', events: true do
       expect(invitation).to receive(:publish_event).with('invitation.resent')
       invitation.resend!
     end
 
-    it 'does not publish event if invitation is expired' do
+    it 'does not publish event if invitation is expired', events: true do
       allow(invitation).to receive(:expired?).and_return(true)
       expect(invitation).not_to receive(:publish_event)
       invitation.resend!
     end
 
-    it 'does not publish event if invitation is accepted' do
+    it 'does not publish event if invitation is accepted', events: true do
       invitation.invitee = create(:admin_user, :without_admin_role)
       expect(invitation).to receive(:publish_event).with('invitation.accepted')
       invitation.accept

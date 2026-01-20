@@ -58,6 +58,50 @@ Creates a number input field with Spree styling.
 - All standard Rails `number_field` options (`:min`, `:max`, `:step`)
 - All common FormBuilder options
 
+### spree_money_field
+
+Creates a locale-aware money/currency input field with automatic formatting. This field displays amounts in the currency's locale format (e.g., `1.234,56` for EUR, `1,234.56` for USD) and normalizes values to standard decimal format before form submission.
+
+```erb
+<%= f.spree_money_field :amount, currency: 'USD' %>
+<%= f.spree_money_field :price, currency: 'EUR', required: true %>
+<%= f.spree_money_field :compare_at_amount, currency: @product.currency, label: false %>
+```
+
+**Options:**
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `:currency` | String | Currency code (e.g., `'USD'`, `'EUR'`, `'PLN'`). Used to determine decimal/thousands separators and display the currency symbol |
+| `:value` | BigDecimal, Float, String | Override the displayed value (will be formatted for the currency's locale) |
+| `:prepend` | String | Text to prepend before the input field |
+| `:append` | String | Text to append after the input field (defaults to currency symbol when `:currency` is provided) |
+| `:disabled` | Boolean | Disable the input field |
+
+All common FormBuilder options (`:label`, `:required`, `:help`, `:help_bubble`) are also supported.
+
+**Features:**
+- **Locale-aware display:** Values are displayed using the currency's decimal mark (e.g., comma for EUR/PLN, dot for USD)
+- **Automatic normalization:** Values are converted to standard decimal format (with `.` as decimal separator) before form submission
+- **Currency symbol:** Automatically appends the currency symbol when `:currency` option is provided
+- **Mobile-friendly:** Uses `inputmode="decimal"` for appropriate mobile keyboard
+- **Auto-formatting:** Values are reformatted on blur to ensure consistent display
+
+**Example with nested form:**
+
+```erb
+<%= f.fields_for :prices do |price_form| %>
+  <%= price_form.spree_money_field :amount,
+                                   currency: price_form.object.currency,
+                                   disabled: !can?(:manage, price_form.object),
+                                   label: false %>
+<% end %>
+```
+
+<Note>
+  The money field uses a Stimulus controller (`money-field`) that handles formatting and normalization automatically. The decimal and thousands separators are determined by the currency's ISO standard configuration.
+</Note>
+
 ### spree_email_field
 
 Creates an email input field with Spree styling and HTML5 validation.
@@ -302,7 +346,7 @@ All common FormBuilder options (`:label`, `:required`, `:help`, `:help_bubble`) 
 Here's a complete example showing various FormBuilder methods:
 
 ```erb
-<div class="card mb-4">
+<div class="card mb-6">
   <div class="card-header">
     <h5 class="card-title">
       <%= Spree.t(:general_settings) %>

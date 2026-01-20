@@ -13,7 +13,7 @@ module Spree
       scope = scope.where(post_category_id: @category.id) if @category.present?
 
       sorted_posts = scope.order(published_at: :desc)
-      @posts = sorted_posts.page(params[:page]).per(20)
+      @posts = paginate_collection(sorted_posts, limit: 20)
     end
 
     def show

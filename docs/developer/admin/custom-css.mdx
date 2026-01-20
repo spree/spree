@@ -3,64 +3,241 @@ title: Admin Dashboard Custom CSS
 sidebarTitle: Custom CSS
 ---
 
-<Warning>
-  This guide is still work in progress!
-</Warning>
+Spree Admin Dashboard uses [Tailwind CSS v4](https://tailwindcss.com/) for styling. The stylesheet system is designed to be easily customizable while maintaining consistency with the Spree design system.
 
-Spree Admin Dashboard stylesheet system is built in top [Bootstrap](https://getbootstrap.com/) and uses [SASS](https://sass-lang.com/) preprocessor to compile custom stylesheets. To be precise we're using DART-SASS (so you don't need to install Node.js).
+## How It Works
 
-You can find the stylesheets files in [app/assets/stylesheets/spree/admin](https://github.com/spree/spree/tree/main/admin/app/assets/stylesheets/spree/admin) directory.
+When you install Spree Admin, the installer creates a file at `app/assets/tailwind/spree_admin.css` in your application. This file:
 
-The main entry point file is [application.scss](https://github.com/spree/spree/blob/main/admin/app/assets/stylesheets/spree/admin/application.scss) which uses SASS `@import` directive to include other stylesheets.
+1. Imports the base Spree Admin styles from the gem
+2. Scans your custom admin views, helpers, and JavaScript for Tailwind classes
+3. Allows you to add custom styles and override theme variables
 
-## Overriding existing SASS code
+## Using Tailwind Utility Classes
 
-<Warning>
-  This section will be added soon!
-</Warning>
+You can use any Tailwind CSS utility class in your custom admin views, helpers, or JavaScript files. The build process automatically scans these locations:
 
-## Adding custom CSS
+- `app/views/spree/admin/**/*.erb`
+- `app/helpers/spree/admin/**/*.rb`
+- `app/javascript/spree/admin/**/*.js`
 
-Besides SASS you can still include standard CSS files. To do so:
+Example usage in a view:
 
+```erb
+<div class="bg-zinc-100 p-4 rounded-lg shadow-sm">
+  <h2 class="text-lg font-bold text-zinc-900">Custom Section</h2>
+  <p class="text-sm text-zinc-600 mt-2">Your content here</p>
+</div>
+```
 
-1. Create a new file in your application `app/assets/stylesheets` directory:
+## Customizing the Theme
 
-    ```bash
-    touch app/assets/stylesheets/custom_spree_admin.css
-    ```
-2. Add some CSS rules to the file:
+### Overriding Theme Colors
 
-    ```css
-    .custom-class {
-      color: red;
-    }
-    ```
-3. Create a template file in your application `app/views/spree/admin/shared` directory:
+To override Tailwind theme values, add a `@theme` block in your `app/assets/tailwind/spree_admin.css` file after the import:
 
-    ```bash
-    touch app/views/spree/admin/shared/custom_spree_admin_stylesheets.html.erb
-    ```
+```css app/assets/tailwind/spree_admin.css
+/* Import Spree Admin base styles from the gem */
+@import "$SPREE_ADMIN_PATH/app/assets/tailwind/spree/admin/index.css";
 
-4. Use standard Ruby on Rails [stylesheet_link_tag](https://api.rubyonrails.org/v8.0/classes/ActionView/Helpers/AssetTagHelper.html#method-i-stylesheet_link_tag)
+/* Override theme colors */
+@theme {
+  --color-primary: #4F46E5;      /* Change primary color to indigo */
+  --color-success: #059669;      /* Custom success color */
+  --color-danger: #DC2626;       /* Custom danger color */
+}
+```
 
-    ```erb app/views/spree/admin/shared/custom_spree_admin_stylesheets.html.erb
-    <%= stylesheet_link_tag 'custom_spree_admin' %>
-    ```
+### Available Theme Variables
 
-5. Register this template in the Spree initializer (`config/initializers/spree.rb`):
+The Spree Admin theme defines these customizable variables:
 
-    <Tabs>
-      <Tab title="Spree 5.2+">
-        ```ruby config/initializers/spree.rb
-        Spree.admin.partials.head << 'spree/admin/shared/custom_spree_admin_stylesheets'
-        ```
-      </Tab>
-      <Tab title="Spree 5.1 and below">
-        ```ruby config/initializers/spree.rb
-        Rails.application.config.spree_admin.head_partials << 'spree/admin/shared/custom_spree_admin_stylesheets'
-        ```
-      </Tab>
-    </Tabs>
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `--color-primary` | `var(--color-zinc-950)` | Primary brand color |
+| `--color-success` | `var(--color-green-900)` | Success state color |
+| `--color-danger` | `var(--color-red-600)` | Error/danger state color |
+| `--color-warning` | `var(--color-yellow-900)` | Warning state color |
+| `--color-info` | `var(--color-blue-900)` | Info state color |
 
-That's it! Now your custom CSS code will be included after loading the standard Admin stylesheets.
+### Overriding Layout Variables
+
+You can also customize layout-related CSS variables:
+
+```css app/assets/tailwind/spree_admin.css
+:root {
+  --spacing-sidebar-width: 280px;      /* Default: 220px */
+  --spacing-sidebar-collapsed: 70px;   /* Default: 59px */
+  --spacing-header-height: 64px;       /* Default: 58px */
+}
+```
+
+## Adding Custom Components
+
+Use Tailwind's `@layer` directive to add custom component styles that work seamlessly with the existing design:
+
+```css app/assets/tailwind/spree_admin.css
+@layer components {
+  /* Custom card style */
+  .my-custom-card {
+    @apply bg-white rounded-lg shadow-sm border border-zinc-200 p-4;
+  }
+
+  /* Custom button variant */
+  .btn-custom {
+    @apply inline-flex items-center px-4 py-2 rounded-md;
+    @apply bg-indigo-600 text-white font-medium;
+    @apply hover:bg-indigo-700 transition-colors;
+  }
+
+  /* Custom status badge */
+  .status-badge {
+    @apply inline-flex items-center px-2 py-1 rounded-full text-xs font-medium;
+  }
+
+  .status-badge-active {
+    @apply status-badge bg-green-100 text-green-800;
+  }
+
+  .status-badge-inactive {
+    @apply status-badge bg-zinc-100 text-zinc-600;
+  }
+}
+```
+
+## Adding Custom Utilities
+
+For reusable utility classes, use the utilities layer:
+
+```css app/assets/tailwind/spree_admin.css
+@layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-purple-500;
+  }
+
+  .scrollbar-hidden {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hidden::-webkit-scrollbar {
+    display: none;
+  }
+}
+```
+
+## Scanning Additional Paths
+
+If you have admin-related code in non-standard locations, add additional `@source` directives:
+
+```css app/assets/tailwind/spree_admin.css
+/* Scan host app's custom admin code for Tailwind classes */
+@source "../../views/spree/admin/**/*.erb";
+@source "../../helpers/spree/admin/**/*.rb";
+@source "../../javascript/spree/admin/**/*.js";
+
+/* Add your custom paths */
+@source "../../components/admin/**/*.erb";
+@source "../../views/admin/**/*.erb";
+```
+
+## Development Workflow
+
+### Starting the CSS Watcher
+
+During development, run the Tailwind CSS watcher to automatically rebuild styles when you make changes:
+
+```bash
+bin/rails spree:admin:tailwindcss:watch
+```
+
+Or if you're using `Procfile.dev` with foreman:
+
+```bash
+bin/dev
+```
+
+The watcher monitors:
+- Your host app's CSS files in `app/assets/tailwind/`
+- The Spree Admin engine's CSS files
+- All files matching your `@source` patterns
+
+### Building for Production
+
+CSS is automatically compiled during asset precompilation:
+
+```bash
+bin/rails assets:precompile
+```
+
+## Common Customization Examples
+
+### Custom Primary Color Scheme
+
+```css app/assets/tailwind/spree_admin.css
+@theme {
+  /* Use blue as the primary color */
+  --color-primary: #2563EB;
+}
+
+@layer components {
+  /* Ensure buttons use the new primary color */
+  .btn-primary {
+    @apply bg-blue-600 hover:bg-blue-700;
+  }
+}
+```
+
+### Dark Mode Adjustments
+
+```css app/assets/tailwind/spree_admin.css
+@layer base {
+  /* Custom dark mode overrides */
+  .dark {
+    --color-primary: #60A5FA;
+  }
+}
+```
+
+### Custom Form Styling
+
+```css app/assets/tailwind/spree_admin.css
+@layer components {
+  /* Custom input style */
+  .input-custom {
+    @apply block w-full rounded-md border-zinc-300 shadow-sm;
+    @apply focus:border-indigo-500 focus:ring-indigo-500;
+  }
+
+  /* Custom select style */
+  .select-custom {
+    @apply block w-full rounded-md border-zinc-300 py-2 pl-3 pr-10;
+    @apply focus:border-indigo-500 focus:outline-none focus:ring-indigo-500;
+  }
+}
+```
+
+## Troubleshooting
+
+### Changes Not Appearing
+
+1. Ensure the watcher is running: `bin/rails spree:admin:tailwindcss:watch`
+2. Check that your files are in paths covered by `@source` directives
+3. Hard refresh the browser (Cmd+Shift+R or Ctrl+Shift+R)
+
+### Missing Utility Classes
+
+If a Tailwind class isn't working, ensure:
+1. The class is used in a file that's scanned by `@source`
+2. The class name is complete (not dynamically constructed)
+3. Run a fresh build: `bin/rails spree:admin:tailwindcss:build`
+
+### Listen Gem Required
+
+The watch task requires the `listen` gem. Add it to your Gemfile:
+
+```ruby Gemfile
+group :development do
+  gem 'listen', '>= 3.0'
+end
+```

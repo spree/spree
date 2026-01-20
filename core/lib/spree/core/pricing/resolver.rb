@@ -44,12 +44,17 @@ module Spree
       # Returns the price lists that are applicable to the context
       # @return [Array<Spree::PriceList>]
       def applicable_price_lists
-        @applicable_price_lists ||= begin
-          lists = Spree::PriceList.includes(:price_rules)
-                                   .for_context(context)
-                                   .to_a
+        @applicable_price_lists ||= price_lists_for_context.select { |list| list.applicable?(context) }
+      end
 
-          lists.select { |list| list.applicable?(context) }
+      # Returns the price lists for the context's store
+      # Uses Spree::Current.price_lists if the context matches, otherwise fetches directly
+      # @return [ActiveRecord::Relation<Spree::PriceList>]
+      def price_lists_for_context
+        if context.store == Spree::Current.store && context.currency == Spree::Current.currency
+          Spree::Current.price_lists
+        else
+          Spree::PriceList.for_context(context)
         end
       end
 

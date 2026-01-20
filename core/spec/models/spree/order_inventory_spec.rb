@@ -28,7 +28,7 @@ describe Spree::OrderInventory, type: :model do
     end
 
     context 'inventory units state' do
-      before { shipment.inventory_units.destroy_all }
+      before { shipment.inventory_units.delete_all }
 
       it 'sets inventory_units state as per stock location availability' do
         expect(shipment.stock_location).to receive(:fill_status).with(subject.variant, 5).and_return([3, 2])
@@ -47,7 +47,7 @@ describe Spree::OrderInventory, type: :model do
       before { Spree::Config.track_inventory_levels = false }
 
       it 'creates only on hand inventory units' do
-        variant.stock_items.destroy_all
+        variant.stock_items.delete_all
 
         expect_any_instance_of(Spree::StockLocation).not_to receive(:unstock)
 
@@ -66,7 +66,7 @@ describe Spree::OrderInventory, type: :model do
       before { variant.update(track_inventory: false) }
 
       it 'creates only on hand inventory units' do
-        variant.stock_items.destroy_all
+        variant.stock_items.delete_all
 
         expect_any_instance_of(Spree::StockLocation).not_to receive(:unstock)
 
@@ -114,7 +114,7 @@ describe Spree::OrderInventory, type: :model do
     context 'when no shipments already contain this varint' do
       before do
         subject.line_item.reload
-        subject.inventory_units.destroy_all
+        subject.inventory_units.delete_all
       end
 
       it 'selects first non-shipped shipment that leaves from same stock_location' do

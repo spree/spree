@@ -118,7 +118,7 @@ describe Spree::TaxRate, type: :model do
 
         context 'when the order has a different tax zone' do
           before do
-            allow(order).to receive_messages tax_zone: create(:zone, kind: 'country', name: 'Other Zone')
+            allow(order).to receive_messages tax_zone: build(:zone, kind: 'country', name: 'Other Zone')
           end
 
           context 'when the tax is a VAT' do

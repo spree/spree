@@ -12,10 +12,10 @@ module Spree
     end
 
     self::Translation.class_eval do
-      auto_strip_attributes :value
+      normalizes :value, with: ->(value) { value&.to_s&.squish&.presence }
     end
 
-    auto_strip_attributes :value
+    normalizes :value, with: ->(value) { value&.to_s&.squish&.presence }
 
     acts_as_list scope: :product
 

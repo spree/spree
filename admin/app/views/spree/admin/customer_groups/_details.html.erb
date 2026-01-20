@@ -1,0 +1,59 @@
+<div class="card mb-6" id="<%= spree_dom_id(@customer_group) %>_details">
+  <div class="card-header flex justify-between">
+    <h5 class="card-title">
+      <%= Spree.t(:details) %>
+    </h5>
+    <%= link_to_with_icon 'edit', Spree.t(:edit), spree.edit_admin_customer_group_path(@customer_group),
+          class: 'btn btn-sm btn-light', data: { turbo_frame: :drawer, action: 'drawer#open' } if can?(:update, @customer_group) %>
+  </div>
+  <div class="card-body p-0">
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item flex justify-between items-center">
+        <span class="text-gray-600">
+          <%= Spree.t(:name) %>
+        </span>
+        <span>
+          <%= @customer_group.name %>
+        </span>
+      </li>
+
+      <% if @customer_group.description.present? %>
+        <li class="list-group-item flex justify-between items-top gap-10">
+          <span class="text-gray-600">
+            <%= Spree.t(:description) %>
+          </span>
+          <span class="text-right">
+            <%= @customer_group.description %>
+          </span>
+        </li>
+      <% end %>
+
+      <li class="list-group-item flex justify-between items-center">
+        <span class="text-gray-600">
+          <%= Spree.t(:customers) %>
+        </span>
+        <span id="customer_group_users_count">
+          <%= @customer_group.users_count %>
+        </span>
+      </li>
+
+      <li class="list-group-item flex justify-between items-center">
+        <span class="text-gray-600">
+          <%= Spree.t(:created_at) %>
+        </span>
+        <span>
+          <%= spree_time(@customer_group.created_at, format: :long) %>
+        </span>
+      </li>
+
+      <li class="list-group-item flex justify-between items-center">
+        <span class="text-gray-600">
+          <%= Spree.t(:updated_at) %>
+        </span>
+        <span>
+          <%= spree_time(@customer_group.updated_at, format: :long) %>
+        </span>
+      </li>
+    </ul>
+  </div>
+</div>

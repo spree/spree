@@ -65,7 +65,7 @@ module Spree
         has_many :product_properties, serializer: Spree.api.storefront_product_property_serializer
 
         has_many :taxons, serializer: Spree.api.storefront_taxon_serializer, record_type: :taxon do |object, params|
-          object.taxons_for_store(params[:store]).order(:id)
+          object.taxons_for_store(params[:store])&.order(:id)
         end
 
         # all images from all variants

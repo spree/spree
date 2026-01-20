@@ -984,6 +984,7 @@
                     "pages": [
                       "user/manage-products/search-products",
                       "user/manage-products/bulk-product-operations",
+                      "user/manage-products/price-lists",
                       "user/manage-products/export-products",
                       "user/manage-products/import-products",
                       "user/manage-products/product-import-file-template",
@@ -1025,7 +1026,14 @@
                   "user/customers/issue-gift-card",
                   "user/customers/assign-store-credits",
                   "user/customers/searching-customers",
-                  "user/customers/exporting-customers"
+                  "user/customers/exporting-customers",
+                  "user/customers/customer-groups"
+                ]
+              },
+              {
+                "group": "Promotions",
+                "pages": [
+                  "user/promotions/create-a-promotion"
                 ]
               },
               {

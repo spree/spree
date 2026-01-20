@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-RSpec.describe Spree::Publishable do
+RSpec.describe Spree::Publishable, events: true do
   before do
     Spree::Events.reset!
   end

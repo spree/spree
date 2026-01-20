@@ -25,6 +25,15 @@ RSpec.describe Spree::Taxons::RegenerateProducts do
       expect { regenerate_products }.to change(taxon.products, :count).from(2).to(1)
       expect(taxon.reload.products).to contain_exactly(other_tagged_product)
     end
+
+    it 'updates classification_count on taxon' do
+      expect { regenerate_products }.to change { taxon.reload.classification_count }.from(2).to(1)
+    end
+
+    it 'updates classification_count on products' do
+      removed_product = tagged_products.first
+      expect { regenerate_products }.to change { removed_product.reload.classification_count }.from(1).to(0)
+    end
   end
 
   context 'when nothing changed' do

@@ -156,6 +156,55 @@ RSpec.describe Spree::Admin::UsersController, type: :controller do
         expect(response).to redirect_to(spree.admin_user_path(user))
       end
     end
+
+    context 'when spree_role_ids contains only empty strings' do
+      let!(:role) { Spree::Role.find_or_create_by!(name: 'admin') }
+      let!(:user) { create(:user) }
+
+      before do
+        user.add_role('admin', store)
+      end
+
+      it 'does not clear existing roles' do
+        expect(user.spree_roles).to include(role)
+
+        put :update, params: { id: user.id, user: { last_name: 'Test', spree_role_ids: [''] } }
+
+        expect(user.reload.last_name).to eq('Test')
+        expect(user.spree_roles).to include(role)
+        expect(response).to redirect_to(spree.admin_user_path(user))
+      end
+    end
+
+    context 'updating internal_note' do
+      subject do
+        put :update, params: { id: user.id, user: { internal_note: internal_note_content } }, format: :turbo_stream
+      end
+
+      let(:user) { create(:user) }
+      let(:internal_note_content) { 'This is a test internal note for the customer.' }
+
+      it 'updates the internal_note' do
+        subject
+        user.reload
+        expect(user.internal_note.to_plain_text).to eq(internal_note_content)
+      end
+
+      it 'responds with turbo_stream' do
+        subject
+        expect(response.media_type).to eq('text/vnd.turbo-stream.html')
+      end
+
+      it 'sets a success flash message' do
+        subject
+        expect(flash[:success]).to be_present
+      end
+
+      it 'renders the internal_note partial' do
+        subject
+        expect(response.body).to include('internal_note')
+      end
+    end
   end
 
   describe 'POST #bulk_add_tags' do
@@ -182,6 +231,61 @@ RSpec.describe Spree::Admin::UsersController, type: :controller do
       users.each do |user|
         expect(user.reload.tag_list).to eq([])
       end
+    end
+  end
+
+  describe 'POST #search' do
+    let!(:user_1) { create(:user, first_name: 'Alice', last_name: 'Johnson', email: 'alice@example.com') }
+    let!(:user_2) { create(:user, first_name: 'Bob', last_name: 'Smith', email: 'bob@example.com') }
+    let!(:user_3) { create(:user, first_name: 'Alice', last_name: 'Williams', email: 'alice.w@example.com') }
+
+    it 'returns users matching the search query' do
+      post :search, params: { q: 'alice' }, format: :turbo_stream
+
+      expect(response).to have_http_status(:ok)
+      expect(assigns(:users)).to include(user_1, user_3)
+      expect(assigns(:users)).not_to include(user_2)
+    end
+
+    it 'returns ok with no results for short queries' do
+      post :search, params: { q: 'al' }, format: :turbo_stream
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    it 'returns ok for blank queries' do
+      post :search, params: { q: '' }, format: :turbo_stream
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    it 'omits users specified in omit_ids' do
+      post :search, params: { q: 'alice', omit_ids: user_1.id.to_s }, format: :turbo_stream
+
+      expect(assigns(:users)).to include(user_3)
+      expect(assigns(:users)).not_to include(user_1)
+    end
+
+    it 'omits multiple users specified in omit_ids' do
+      post :search, params: { q: 'alice', omit_ids: "#{user_1.id},#{user_3.id}" }, format: :turbo_stream
+
+      expect(assigns(:users)).to be_empty
+    end
+
+    it 'limits results to 10 by default' do
+      12.times { |i| create(:user, first_name: 'TestCustomer', last_name: "User#{i}") }
+
+      post :search, params: { q: 'TestCustomer' }, format: :turbo_stream
+
+      expect(assigns(:users).size).to eq(10)
+    end
+
+    it 'respects custom limit parameter' do
+      12.times { |i| create(:user, first_name: 'TestCustomer', last_name: "User#{i}") }
+
+      post :search, params: { q: 'TestCustomer', limit: 5 }, format: :turbo_stream
+
+      expect(assigns(:users).size).to eq(5)
     end
   end
 

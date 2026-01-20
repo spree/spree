@@ -10,18 +10,22 @@
   <%= render 'spree/admin/shared/export_modal', export_type: export_type %>
 <% end %>
 
-<%= turbo_frame_tag frame_name, autoscroll: true, data: { autoscroll_block: :start, turbo_action: 'advance' } do %>
+<%= turbo_frame_tag frame_name, data: { turbo_action: 'advance' } do %>
   <div class="<%= local_assigns[:container_class] || 'card-lg' %>" data-controller="table" data-table-url-value="<%= request.path %>">
-    <div class="p-2 border-b border-gray-200">
+    <div class="p-3 border-b border-gray-200">
       <div class="flex flex-col lg:flex-row gap-3 items-start lg:items-center justify-between">
         <div class="flex gap-2 items-center flex-wrap">
-          <%= search_form_for @search, url: url_for, html: { data: { turbo_frame: frame_name, turbo_action: 'advance' } } do |f| %>
-            <div class="form-input flex items-center py-0 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-blue-500 lg:w-[300px] mr-auto h-[2.125rem] transition-all duration-100 ease-in-out">
-              <%= icon "search", class: "mr-4 text-gray-600" %>
+          <%= search_form_for @search, url: url_for, html: { data: { turbo_frame: frame_name, turbo_action: 'advance', controller: 'auto-submit search-clear', auto_submit_delay_value: 300 } } do |f| %>
+            <div class="form-input flex items-center py-0 pr-1 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-blue-500 lg:w-[300px] mr-auto h-[2.125rem] transition-all duration-100 ease-in-out">
+              <%= icon "search", class: "mr-4 text-gray-600 shrink-0" %>
               <%= search_field_tag "q[#{search_param}]",
                                    params.dig(:q, search_param),
                                    class: "outline-none border-0 h-full focus:border-0 focus:ring-0 p-0 text-base w-full",
-                                   placeholder: search_placeholder %>
+                                   placeholder: search_placeholder,
+                                   data: { action: 'input->auto-submit#submit input->search-clear#toggleClearButton search->auto-submit#submit', search_clear_target: 'input' } %>
+              <button type="button" class="<%= 'hidden' if params.dig(:q, search_param).blank? %> p-1 text-gray-400 hover:text-gray-600 shrink-0" data-search-clear-target="clear" data-action="search-clear#clear">
+                <%= icon 'x', class: 'w-4 h-4' %>
+              </button>
             </div>
           <% end %>
         </div>

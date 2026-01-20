@@ -13,7 +13,7 @@ describe Spree::Order, type: :model do
   let!(:store) { @default_store }
   let(:order) { create(:order, user: user, store: store) }
 
-  before { allow(Spree::LegacyUser).to receive_messages(current: create(:user)) }
+  before { allow(Spree::LegacyUser).to receive_messages(current: build(:user)) }
 
   it_behaves_like 'metadata'
 
@@ -224,7 +224,7 @@ describe Spree::Order, type: :model do
       end
     end
 
-    context 'events' do
+    context 'events', events: true do
       let(:order) { create(:completed_order_with_totals, store: store) }
 
       it 'publishes order.canceled event' do
@@ -240,7 +240,7 @@ describe Spree::Order, type: :model do
 
     before { order.cancel! }
 
-    it 'publishes order.resumed event' do
+    it 'publishes order.resumed event', events: true do
       expect(order).to receive(:publish_event).with('order.resumed').at_least(:once)
       allow(order).to receive(:publish_event).with(anything)
       order.resume!
@@ -290,7 +290,7 @@ describe Spree::Order, type: :model do
       end
     end
 
-    context 'events' do
+    context 'events', events: true do
       let(:order) { create(:completed_order_with_totals) }
 
       it 'publishes order.canceled event' do
@@ -401,7 +401,7 @@ describe Spree::Order, type: :model do
       end
     end
 
-    context 'events' do
+    context 'events', events: true do
       let(:order) { create(:order_with_line_items, store: store) }
 
       before { order.update_column(:state, 'complete') }
@@ -410,6 +410,17 @@ describe Spree::Order, type: :model do
         expect(order).to receive(:publish_event).with('order.completed').at_least(:once)
         allow(order).to receive(:publish_event).with(anything)
         order.finalize!
+      end
+
+      it 'enqueues RefreshMetricsJob for each product in the order' do
+        # Clear any previously enqueued jobs
+        clear_enqueued_jobs
+
+        order.finalize!
+        perform_enqueued_jobs(only: Spree::Events::SubscriberJob)
+
+        product_count = order.line_items.map { |li| li.variant.product_id }.uniq.count
+        expect(Spree::Products::RefreshMetricsJob).to have_been_enqueued.exactly(product_count).times
       end
     end
   end
@@ -687,7 +698,7 @@ describe Spree::Order, type: :model do
       end
     end
 
-    context 'events' do
+    context 'events', events: true do
       it 'publishes order.updated event' do
         order = create(:order_with_totals, state: 'delivery')
         expect(order).to receive(:publish_event).with('order.updated').at_least(:once)
@@ -964,7 +975,7 @@ describe Spree::Order, type: :model do
       it_behaves_like '#associate_user!', true
     end
 
-    context 'events' do
+    context 'events', events: true do
       let(:order) { create(:order, order_attributes) }
 
       it 'publishes order.updated event' do
@@ -1017,7 +1028,7 @@ describe Spree::Order, type: :model do
       order.approved_by(admin_user)
     end
 
-    context 'events' do
+    context 'events', events: true do
       it 'publishes order.approved event' do
         expect(order).to receive(:publish_event).with('order.approved').at_least(:once)
         order.approved_by(admin_user)
@@ -1033,7 +1044,7 @@ describe Spree::Order, type: :model do
       expect(order.reload.considered_risky).to be true
     end
 
-    context 'events' do
+    context 'events', events: true do
       it 'publishes order.updated event' do
         expect(order).to receive(:publish_event).with('order.updated')
         order.considered_risky!
@@ -1053,7 +1064,7 @@ describe Spree::Order, type: :model do
       expect(order.reload.considered_risky).to be false
     end
 
-    context 'events' do
+    context 'events', events: true do
       it 'publishes order.approved event' do
         expect(order).to receive(:publish_event).with('order.approved')
         order.approve!
@@ -1088,7 +1099,7 @@ describe Spree::Order, type: :model do
         expect(order.reload.state).to eq('address')
       end
 
-      context 'events' do
+      context 'events', events: true do
         it 'publishes order.updated event' do
           expect(order).to receive(:publish_event).with('order.updated').at_least(:once)
           order.ensure_updated_shipments
@@ -2370,7 +2381,7 @@ describe Spree::Order, type: :model do
 
     context 'when order has shipments with no shipping rates' do
       before do
-        shipment.shipping_rates.destroy_all
+        shipment.shipping_rates.delete_all
       end
 
       it 'returns the line items without shipping rates' do
@@ -2396,7 +2407,7 @@ describe Spree::Order, type: :model do
 
     context 'when order has no shipments' do
       before do
-        order.shipments.destroy_all
+        order.shipments.delete_all
       end
 
       it 'returns false and adds an error to the order' do
@@ -2407,7 +2418,7 @@ describe Spree::Order, type: :model do
 
     context 'when order has shipments with no shipping rates' do
       before do
-        shipment.shipping_rates.destroy_all
+        shipment.shipping_rates.delete_all
       end
 
       it 'returns false and adds an error to the order' do

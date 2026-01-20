@@ -14,10 +14,35 @@ module Spree
       add_breadcrumb Spree.t(:customers), :admin_users_path
 
       def select_options
-        search_params = params[:q].is_a?(String) ? { email_cont: params[:q] } : params[:q]
-        users = model_class.ransack(search_params).result.order(:email).limit(50)
+        q = params[:q]
+        ransack_params = q.is_a?(String) ? { email_cont: q } : q
+        users = model_class.accessible_by(current_ability).ransack(ransack_params).result.order(:email).limit(50)
 
         render json: users.pluck(:id, :email).map { |id, email| { id: id, name: email } }
+      end
+
+      def search
+        query = params[:q]&.strip
+
+        head :ok and return if query.blank? || query.length < 3
+
+        scope = model_class.accessible_by(current_ability, :index)
+        scope = scope.where.not(id: params[:omit_ids].split(',')) if params[:omit_ids].present?
+        @users = scope.includes(:bill_address, :ship_address, avatar_attachment: :blob)
+                      .multi_search(query)
+                      .limit(params[:limit] || 10)
+
+        respond_to do |format|
+          format.turbo_stream do
+            render turbo_stream: [
+              turbo_stream.replace(
+                'users_search_results',
+                partial: 'spree/admin/users/search_results',
+                locals: { users: @users }
+              )
+            ]
+          end
+        end
       end
 
       def show
@@ -37,17 +62,22 @@ module Spree
         end
       end
 
-      def update
-        if @user.update(user_params)
-          flash[:success] = flash_message_for(@user, :successfully_updated)
-          redirect_to spree.admin_user_path(@user)
-        else
-          render :edit, status: :unprocessable_entity
-        end
-      end
-
       def model_class
         Spree.user_class
+      end
+
+      def update_turbo_stream_enabled?
+        true
+      end
+
+      # Skip setting current store for users as they don't need store assignment
+      # and the stores association goes through role_users which requires a role
+      def set_current_store
+        # no-op for users
+      end
+
+      def location_after_save
+        spree.admin_user_path(@user)
       end
 
       protected
@@ -71,6 +101,10 @@ module Spree
 
       private
 
+      def permitted_resource_params
+        user_params
+      end
+
       def user_params
         params.require(:user).permit(permitted_user_attributes | [spree_role_ids: []])
       end
@@ -85,6 +119,12 @@ module Spree
         return if params[:user].blank?
 
         params[:user][:tag_list] = params.dig(:user, :tag_list).present? ? params.dig(:user, :tag_list).reject(&:empty?) : []
+
+        # Remove spree_role_ids if it only contains empty strings to avoid clearing roles
+        role_ids = params[:user][:spree_role_ids]
+        if role_ids.present? && role_ids.reject(&:empty?).empty?
+          params[:user].delete(:spree_role_ids)
+        end
       end
 
       def load_last_order_data

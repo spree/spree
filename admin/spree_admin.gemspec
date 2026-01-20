@@ -41,4 +41,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'turbo-rails'
   s.add_dependency 'stimulus-rails'
   s.add_dependency 'tinymce-rails', '~> 6.8.5'
+  s.add_dependency 'pagy', '~> 43.0'
 end

@@ -5,7 +5,7 @@ module Spree
     RSpec.describe Context do
       let(:variant) { create(:variant) }
       let(:currency) { 'USD' }
-      let(:store) { create(:store) }
+      let(:store) { @default_store }
       let(:zone) { create(:zone) }
       let(:user) { create(:user) }
       let(:quantity) { 5 }
@@ -41,17 +41,19 @@ module Spree
             described_class.new(variant: variant, currency: currency)
           end
 
+          after { Spree::Current.reset }
+
           it 'sets required attributes' do
             expect(subject.variant).to eq(variant)
             expect(subject.currency).to eq(currency)
           end
 
-          it 'defaults store to default store' do
-            expect(subject.store).to eq(Spree::Store.default)
+          it 'defaults store to Spree::Current.store' do
+            expect(subject.store).to eq(Spree::Current.store)
           end
 
-          it 'defaults zone to nil' do
-            expect(subject.zone).to be_nil
+          it 'defaults zone to Spree::Current.zone' do
+            expect(subject.zone).to eq(Spree::Current.zone)
           end
 
           it 'defaults user to nil' do
@@ -66,6 +68,36 @@ module Spree
             Timecop.freeze do
               expect(subject.date).to be_within(1.second).of(Time.current)
             end
+          end
+        end
+
+        context 'when Spree::Current.store is set' do
+          let(:current_store) { create(:store) }
+
+          before { Spree::Current.store = current_store }
+          after { Spree::Current.reset }
+
+          subject do
+            described_class.new(variant: variant, currency: currency)
+          end
+
+          it 'uses Spree::Current.store as default' do
+            expect(subject.store).to eq(current_store)
+          end
+        end
+
+        context 'when Spree::Current.zone is set' do
+          let(:current_zone) { create(:zone) }
+
+          before { Spree::Current.zone = current_zone }
+          after { Spree::Current.reset }
+
+          subject do
+            described_class.new(variant: variant, currency: currency)
+          end
+
+          it 'uses Spree::Current.zone as default' do
+            expect(subject.zone).to eq(current_zone)
           end
         end
       end
@@ -196,18 +228,21 @@ module Spree
             described_class.new(variant: variant, currency: currency)
           end
 
-          it 'generates a cache key excluding nil values' do
+          after { Spree::Current.reset }
+
+          it 'generates a cache key with default values from Spree::Current' do
             Timecop.freeze do
-              expected_key = [
+              expected_parts = [
                 'spree',
                 'pricing',
                 variant.id,
                 currency,
-                Spree::Store.default.id,
-                Time.current.to_i
-              ].join('/')
+                Spree::Current.store.id
+              ]
+              expected_parts << Spree::Current.zone.id if Spree::Current.zone
+              expected_parts << Time.current.to_i
 
-              expect(subject.cache_key).to eq(expected_key)
+              expect(subject.cache_key).to eq(expected_parts.join('/'))
             end
           end
         end
@@ -222,20 +257,23 @@ module Spree
             )
           end
 
+          after { Spree::Current.reset }
+
           it 'includes present optional attributes in correct order' do
             Timecop.freeze do
-              expected_key = [
+              expected_parts = [
                 'spree',
                 'pricing',
                 variant.id,
                 currency,
-                Spree::Store.default.id,
-                user.id,
-                quantity,
-                Time.current.to_i
-              ].join('/')
+                Spree::Current.store.id
+              ]
+              expected_parts << Spree::Current.zone.id if Spree::Current.zone
+              expected_parts << user.id
+              expected_parts << quantity
+              expected_parts << Time.current.to_i
 
-              expect(subject.cache_key).to eq(expected_key)
+              expect(subject.cache_key).to eq(expected_parts.join('/'))
             end
           end
         end

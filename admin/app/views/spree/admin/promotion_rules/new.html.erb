@@ -5,7 +5,7 @@
     <% else %>
       <%= dialog_header(@promotion_rule.human_name) %>
     <% end %>
-    <div class="dialog-body">
+    <div class="dialog-body <% if @promotion_rule.type.present? %>overflow-visible<% end %>">
       <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @promotion_rule } %>
       <% if @promotion_rule.type.nil? %>
         <% options_for_promotion_rule_types(@promotion).each do |rule_type| %>
