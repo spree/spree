@@ -301,7 +301,6 @@ module Spree
           shipping_category: [],
           master: [:prices, :images, :stock_items, :stock_locations],
           variants: [:prices, :images, :stock_items, :stock_locations],
-          variant_images: [],
         }
       end
 

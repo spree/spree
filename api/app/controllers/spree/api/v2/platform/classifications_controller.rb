@@ -12,7 +12,7 @@ module Spree
           def scope_includes
             [
               taxon: [],
-              product: [:variants_including_master, :variant_images, :master, { variants: [:prices] }]
+              product: [:variants_including_master, :master, { variants: [:prices] }]
             ]
           end
 

@@ -44,7 +44,6 @@ module Spree
           { option_values: [:option_type] },
           {
             product: [
-              :variant_images,
               { master: :images },
               { variants: :images }
             ]
