@@ -1398,6 +1398,7 @@ describe Spree::Variant, type: :model do
     let!(:image) { create(:image, position: 1, viewable: variant) }
 
     it 'returns the first image for the variant' do
+      variant.reload
       expect(variant.default_image).to eq(image)
     end
   end
@@ -1420,6 +1421,43 @@ describe Spree::Variant, type: :model do
 
     it 'returns the additional images for the variant' do
       expect(variant.additional_images).to eq([image2, image3])
+    end
+  end
+
+  describe '#has_images?' do
+    let(:variant) { create(:variant) }
+
+    context 'when variant has no images' do
+      it 'returns false' do
+        expect(variant.has_images?).to be false
+      end
+    end
+
+    context 'when variant has images' do
+      let!(:image) { create(:image, viewable: variant) }
+
+      it 'returns true using counter cache' do
+        variant.reload
+        expect(variant.has_images?).to be true
+      end
+    end
+
+    context 'when images are preloaded' do
+      let!(:image) { create(:image, viewable: variant) }
+
+      it 'uses loaded images instead of counter cache' do
+        variant_with_images = Spree::Variant.includes(:images).find(variant.id)
+        expect(variant_with_images.images).to be_loaded
+        expect(variant_with_images.has_images?).to be true
+      end
+    end
+
+    context 'when images are preloaded but empty' do
+      it 'returns false using loaded images' do
+        variant_with_images = Spree::Variant.includes(:images).find(variant.id)
+        expect(variant_with_images.images).to be_loaded
+        expect(variant_with_images.has_images?).to be false
+      end
     end
   end
 

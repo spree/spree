@@ -888,6 +888,7 @@ describe Spree::Product, type: :model do
     let!(:image) { create(:image, viewable: product.master) }
 
     it 'returns the first image for the product' do
+      product.reload
       expect(product.default_image).to eq(image)
     end
 
@@ -896,6 +897,7 @@ describe Spree::Product, type: :model do
       let!(:image2) { create(:image, viewable: variant) }
 
       it 'returns the first image for the product' do
+        product.reload
         expect(product.default_image).to eq(image)
       end
 
@@ -903,8 +905,102 @@ describe Spree::Product, type: :model do
         let!(:image) { nil }
 
         it 'returns the first image for the variant' do
+          product.reload
           expect(product.default_image).to eq(image2)
         end
+      end
+    end
+  end
+
+  describe '#has_variant_images?' do
+    let(:product) { create(:product, stores: [store]) }
+
+    context 'when no variants have images' do
+      it 'returns false' do
+        expect(product.has_variant_images?).to be false
+      end
+    end
+
+    context 'when master has images' do
+      let!(:image) { create(:image, viewable: product.master) }
+
+      it 'returns true' do
+        product.reload
+        expect(product.has_variant_images?).to be true
+      end
+    end
+
+    context 'when a variant has images' do
+      let!(:variant) { create(:variant, product: product) }
+      let!(:image) { create(:image, viewable: variant) }
+
+      it 'returns true' do
+        product.reload
+        expect(product.has_variant_images?).to be true
+      end
+    end
+
+    context 'when variant_images are preloaded' do
+      let!(:image) { create(:image, viewable: product.master) }
+
+      it 'uses loaded association instead of counter cache' do
+        product_with_images = Spree::Product.includes(:variant_images).find(product.id)
+        expect(product_with_images.association(:variant_images)).to be_loaded
+        expect(product_with_images.has_variant_images?).to be true
+      end
+    end
+
+    context 'when variant_images are preloaded but empty' do
+      it 'returns false using loaded association' do
+        product_with_images = Spree::Product.includes(:variant_images).find(product.id)
+        expect(product_with_images.association(:variant_images)).to be_loaded
+        expect(product_with_images.has_variant_images?).to be false
+      end
+    end
+  end
+
+  describe '#find_first_variant_image' do
+    let(:product) { create(:product, stores: [store]) }
+
+    context 'when no variants have images' do
+      it 'returns nil' do
+        expect(product.send(:find_first_variant_image)).to be_nil
+      end
+    end
+
+    context 'when variants are not preloaded' do
+      let!(:variant) { create(:variant, product: product) }
+      let!(:image) { create(:image, viewable: variant) }
+
+      it 'returns first variant image via variant_images association' do
+        product.reload
+        expect(product.send(:find_first_variant_image)).to eq(image)
+      end
+    end
+
+    context 'when variants are preloaded with primary_image' do
+      let!(:variant1) { create(:variant, product: product) }
+      let!(:variant2) { create(:variant, product: product) }
+      let!(:image) { create(:image, viewable: variant2) }
+
+      it 'finds the variant with images and returns its primary_image' do
+        product_with_variants = Spree::Product.includes(variants: :primary_image).find(product.id)
+        product_with_variants.variants.reload # ensure loaded
+
+        result = product_with_variants.send(:find_first_variant_image)
+        expect(result).to eq(image)
+      end
+    end
+
+    context 'when multiple variants have images' do
+      let!(:variant1) { create(:variant, product: product) }
+      let!(:variant2) { create(:variant, product: product) }
+      let!(:image1) { create(:image, viewable: variant1) }
+      let!(:image2) { create(:image, viewable: variant2) }
+
+      it 'returns the first variant image' do
+        product.reload
+        expect(product.send(:find_first_variant_image)).to eq(image1)
       end
     end
   end

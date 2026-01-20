@@ -250,7 +250,7 @@ module Spree
     end
 
     delegate :display_amount, :display_price, :has_default_price?, :track_inventory?,
-             :display_compare_at_price, :images, to: :default_variant
+             :display_compare_at_price, :images, :has_images?, :primary_image, :secondary_image, to: :default_variant
 
     alias master_images images
 
@@ -329,7 +329,7 @@ module Spree
     #
     # @return [Spree::Variant]
     def default_variant
-      @default_variant ||= if Spree::Config[:track_inventory_levels] && available_variant = variants.detect(&:purchasable?)
+      @default_variant ||= if Spree::Config[:track_inventory_levels] && has_variants? && available_variant = variants.detect(&:purchasable?)
                              available_variant
                            else
                              has_variants? ? variants.first : find_or_build_master
@@ -342,31 +342,39 @@ module Spree
       @default_variant_id ||= default_variant.id
     end
 
+    # Returns true if any variant (including master) has images.
+    # Uses total_image_count counter cache for performance.
+    # @return [Boolean]
+    def has_variant_images?
+      return variant_images.any? if association(:variant_images).loaded?
+
+      total_image_count.positive?
+    end
+
     # Returns default Image for Product
+    # First it tries to get an image from the master variant
+    # Fallbacks to the default variant image
+    # Fallbacks to the first image attached to other variants
     # @return [Spree::Image]
     def default_image
-      @default_image ||= if images.any?
-                           images.first
-                         elsif default_variant.images.any?
-                           default_variant.default_image
-                         elsif variant_images.any?
-                           variant_images.first
+      @default_image ||= if master.has_images?
+                           master.primary_image
+                         elsif has_variants? && default_variant.has_images?
+                           default_variant.primary_image
+                         elsif has_variant_images?
+                           find_first_variant_image
                          end
     end
-    alias featured_image default_image
 
-    # Returns secondary Image for Product
-    # @return [Spree::Image]
-    def secondary_image
-      @secondary_image ||= if images.size > 1
-                             images.second
-                           elsif images.size == 1 && default_variant.images.size.positive?
-                             default_variant.images.first
-                           elsif default_variant.images.size > 1
-                             default_variant.secondary_image
-                           elsif variant_images.size > 1
-                             variant_images.second
-                           end
+    # Finds first image from variants with images using preloaded data when available
+    # @return [Spree::Image, nil]
+    def find_first_variant_image
+      if variants.loaded?
+        variant_with_image = variants.find(&:has_images?)
+        variant_with_image&.primary_image
+      else
+        variant_images.first
+      end
     end
 
     # Returns the short description for the product

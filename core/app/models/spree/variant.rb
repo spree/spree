@@ -47,6 +47,8 @@ module Spree
     has_many :option_values, through: :option_value_variants, dependent: :destroy, class_name: 'Spree::OptionValue'
 
     has_many :images, -> { order(:position) }, as: :viewable, dependent: :destroy, class_name: 'Spree::Image'
+    has_one :primary_image, -> { order(:position).limit(1) }, as: :viewable, class_name: 'Spree::Image'
+    has_one :secondary_image, -> { order(:position).limit(1).offset(1) }, as: :viewable, class_name: 'Spree::Image'
 
     has_many :prices,
              class_name: 'Spree::Price',
@@ -279,28 +281,27 @@ module Spree
     # use deleted? rather than checking the attribute directly. this
     # allows extensions to override deleted? if they want to provide
     # their own definition.
+    # @return [Boolean] true if the variant is deleted.
     def deleted?
       !!deleted_at
+    end
+
+    # Returns true if the variant has images.
+    # @return [Boolean] true if the variant has images.
+    def has_images?
+      return images.any? if images.loaded?
+
+      image_count.positive?
     end
 
     # Returns default Image for Variant
     # @return [Spree::Image]
     def default_image
-      @default_image ||= if images.any?
-                           images.first
+      @default_image ||= if has_images?
+                           images.loaded? ? images.first : primary_image
                          else
                            product.default_image
                          end
-    end
-
-    # Returns secondary Image for Variant
-    # @return [Spree::Image]
-    def secondary_image
-      @secondary_image ||= if images.size > 1
-                             images.second
-                           else
-                             product.secondary_image
-                           end
     end
 
     # Returns additional Images for Variant

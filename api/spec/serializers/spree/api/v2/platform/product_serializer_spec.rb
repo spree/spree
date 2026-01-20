@@ -51,6 +51,7 @@ describe Spree::Api::V2::Platform::ProductSerializer do
           display_compare_at_price: '$15.00',
           variant_count: product.variant_count,
           classification_count: product.classification_count,
+          total_image_count: product.total_image_count,
           public_metadata: {},
           private_metadata: {}
         },
@@ -142,7 +143,8 @@ describe Spree::Api::V2::Platform::ProductSerializer do
   end
 
   before do
-    product.reload.default_variant.prices[0].update(amount: 10, compare_at_amount: 15)
+    product.reload
+    product.master.prices.first_or_create!(currency: currency, amount: 10, compare_at_amount: 15)
   end
 
   context 'without a store in the params' do

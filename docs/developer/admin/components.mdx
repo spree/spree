@@ -373,8 +373,8 @@ Displays optimized images with automatic WebP conversion and retina support.
 
 ```erb
 <%# Product thumbnail in index table %>
-<% if product.images.any? %>
-  <%= spree_image_tag product.images.first, width: 48, height: 48, class: 'rounded' %>
+<% if product.has_images? %>
+  <%= spree_image_tag product.default_image, width: 48, height: 48, class: 'rounded' %>
 <% else %>
   <div class="bg-light rounded d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
     <%= icon('photo-off', class: 'text-muted') %>

@@ -23,12 +23,16 @@ module Spree
     end
 
     def spree_resource_path(resource)
+      Spree::Deprecation.warn('BaseHelper#spree_resource_path is deprecated and will be removed in Spree 5.5')
+
       last_word = resource.class.name.split('::', 10).last
 
       spree_class_name_as_path(last_word)
     end
 
     def spree_class_name_as_path(class_name)
+      Spree::Deprecation.warn('BaseHelper#spree_class_name_as_path is deprecated and will be removed in Spree 5.5')
+
       class_name.underscore.humanize.parameterize(separator: '_')
     end
 
@@ -51,6 +55,8 @@ module Spree
     end
 
     def link_to_tracking(shipment, options = {})
+      Spree::Deprecation.warn('BaseHelper#link_to_tracking is deprecated and will be removed in Spree 5.5. Please use shipment.tracking_url instead.')
+
       return unless shipment.tracking && shipment.shipping_method
 
       options[:target] ||= :blank
@@ -63,6 +69,8 @@ module Spree
     end
 
     def spree_favicon_path
+      Spree::Deprecation.warn('BaseHelper#spree_favicon_path is deprecated and will be removed in Spree 5.5. Please use Active Storage URL helpers instead.')
+
       if current_store.favicon.present?
         main_app.cdn_image_url(current_store.favicon)
       else
@@ -74,65 +82,9 @@ module Spree
       instance_variable_get('@' + controller_name.singularize)
     end
 
-    def og_meta_data
-      og_meta = {}
-
-      if object.is_a? Spree::Product
-        image                             = default_image_for_product_or_variant(object)
-        og_meta['og:image']               = main_app.cdn_image_url(image.attachment) if image&.attachment
-
-        og_meta['og:url']                 = spree.url_for(object) if frontend_available? # url_for product needed
-        og_meta['og:type']                = object.class.name.demodulize.downcase
-        og_meta['og:title']               = object.name
-        og_meta['og:description']         = object.description
-
-        price = object.price_in(current_currency)
-        if price
-          og_meta['product:price:amount']   = price.amount
-          og_meta['product:price:currency'] = current_currency
-        end
-      end
-
-      og_meta
-    end
-
-    def meta_data
-      meta = {}
-
-      if object.is_a? ApplicationRecord
-        meta[:keywords] = object.meta_keywords if object.try(:meta_keywords).present?
-        meta[:description] = object.meta_description if object.try(:meta_description).present?
-      end
-
-      if meta[:description].blank? && object.is_a?(Spree::Product)
-        meta[:description] = truncate(strip_tags(object.description), length: 160, separator: ' ')
-      end
-
-      if meta[:keywords].blank? || meta[:description].blank?
-        if object && object[:name].present?
-          meta.reverse_merge!(keywords: [object.name, current_store.meta_keywords].reject(&:blank?).join(', '),
-                              description: [object.name, current_store.meta_description].reject(&:blank?).join(', '))
-        else
-          meta.reverse_merge!(keywords: (current_store.meta_keywords || current_store.seo_title),
-                              description: current_store.seo_meta_description)
-        end
-      end
-      meta
-    end
-
-    def og_meta_data_tags
-      og_meta_data.map do |property, content|
-        tag('meta', property: property, content: content) unless property.nil? || content.nil?
-      end.join("\n")
-    end
-
-    def meta_data_tags
-      meta_data.map do |name, content|
-        tag('meta', name: name, content: content) unless name.nil? || content.nil?
-      end.join("\n")
-    end
-
     def method_missing(method_name, *args, &block)
+      Spree::Deprecation.warn("#{BaseHelper.name}##{method_name} is deprecated and will be removed in Spree 5.5. Please use spree_image_tag instead - https://spreecommerce.org/docs/developer/core-concepts/images-assets#preprocessed-named-variants")
+
       if image_style = image_style_from_method_name(method_name)
         define_image_method(image_style)
         send(method_name, *args)
@@ -158,10 +110,12 @@ module Spree
     end
 
     def seo_url(taxon, options = {})
+      Spree::Deprecation.warn('BaseHelper#seo_url is deprecated and will be removed in Spree 5.5. Please use spree_storefront_resource_url')
       spree.nested_taxons_path(taxon.permalink, options.merge(locale: locale_param))
     end
 
     def frontend_available?
+      Spree::Deprecation.warn('BaseHelper#frontend_available? is deprecated and will be removed in Spree 5.5')
       Spree::Core::Engine.frontend_available?
     end
 
@@ -295,17 +249,6 @@ module Spree
       if method_name.to_s.match(/_image$/) && Spree::Image.styles.keys.map(&:to_s).include?(style)
         style
       end
-    end
-
-    def meta_robots
-      return unless current_store.respond_to?(:seo_robots)
-      return if current_store.seo_robots.blank?
-
-      tag('meta', name: 'robots', content: current_store.seo_robots)
-    end
-
-    def legal_policy(policy)
-      current_store.send("customer_#{policy}")&.body&.html_safe
     end
 
     I18N_PLURAL_MANY_COUNT = 2.1

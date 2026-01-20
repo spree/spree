@@ -183,12 +183,11 @@ module Spree
     def storefront_products_includes
       [
         :prices_including_master,
-        :variant_images,
         :option_types,
         :option_values,
-        { master: [:images, :prices, :stock_items, :stock_locations, { stock_items: :stock_location }],
+        { master: [:primary_image, :secondary_image, :prices, :stock_items, :stock_locations, { stock_items: :stock_location }],
           variants: [
-            :images, :prices, :option_values, :stock_items, :stock_locations,
+            :primary_image, :secondary_image, :prices, :option_values, :stock_items, :stock_locations,
             { option_values: :option_type, stock_items: :stock_location }
           ],
           taxons: [:taxonomy],
