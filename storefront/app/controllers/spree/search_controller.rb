@@ -14,7 +14,7 @@ module Spree
 
       if query.present? && query.length >= Spree::Storefront::Config.search_min_query_length
         products_scope = storefront_products_scope.multi_search(query)
-        @products = products_scope.includes(storefront_products_includes)
+        @products = products_scope.includes(storefront_products_includes).preload_associations_lazily
         @taxons = current_store.taxons.search_by_name(query)
       end
     end

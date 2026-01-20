@@ -12,7 +12,9 @@ module Spree
           sort_by: 'default'
         }
 
-        storefront_products_finder.new(scope: current_store.products.includes(storefront_products_includes), params: finder_params).execute
+        scope = current_store.products.includes(storefront_products_includes).preload_associations_lazily
+
+        storefront_products_finder.new(scope: scope, params: finder_params).execute
       end
     end
   end

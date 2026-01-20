@@ -25,6 +25,7 @@ module Spree
       # when using not default locale, our related products are different for different locales.
       @products = storefront_products_scope.where.not(id: @product.id).
                   multi_search(@product.name).includes(storefront_products_includes).
+                  preload_associations_lazily.
                   limit(@section.preferred_max_products_to_show)
     end
 
