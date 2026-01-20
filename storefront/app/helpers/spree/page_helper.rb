@@ -12,7 +12,7 @@ module Spree
       page ||= current_page
 
       sections = current_page_preview.present? ? current_page_preview.sections : page.sections
-      sections_html = sections.includes(section_includes).map do |section|
+      sections_html = sections.includes(section_includes).preload_associations_lazily.map do |section|
         render_section(section, variables)
       end.join.html_safe
 
@@ -98,9 +98,7 @@ module Spree
     # @return [Array] the includes for the section
     def section_includes
       [
-        :links, :rich_text_text,
-        :rich_text_description, { asset_attachment: :blob },
-        { blocks: [:rich_text_text, :links] }
+        { asset_attachment: :blob }
       ]
     end
 

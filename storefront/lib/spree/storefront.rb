@@ -11,6 +11,7 @@ require 'tailwindcss-rails'
 require 'turbo-rails'
 require 'inline_svg'
 require 'pagy'
+require 'ar_lazy_preload'
 
 require 'spree/storefront/engine'
 require 'spree/core/partials'

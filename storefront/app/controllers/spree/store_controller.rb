@@ -167,7 +167,8 @@ module Spree
       products = products_finder.
                  new(scope: storefront_products_scope, params: finder_params).
                  execute.
-                 includes(storefront_products_includes)
+                 includes(storefront_products_includes).
+                 preload_associations_lazily
 
       default_per_page = Spree::Storefront::Config[:products_per_page]
       per_page = params[:per_page].present? ? params[:per_page].to_i : default_per_page
@@ -180,19 +181,13 @@ module Spree
       @pagy
     end
 
+    # These includes are not picked automatically by ar_lazy_preload gem so we need to specify them manually.
     def storefront_products_includes
-      [
-        :prices_including_master,
-        :option_types,
-        :option_values,
-        { master: [:images, :prices, :stock_items, :stock_locations, { stock_items: :stock_location }],
-          variants: [
-            :images, :prices, :option_values, :stock_items, :stock_locations,
-            { option_values: :option_type, stock_items: :stock_location }
-          ],
-          taxons: [:taxonomy],
-          taggings: [:tag] }
-      ]
+      {
+        taxons: [],
+        master: [:images, :prices, { stock_items: :stock_location }],
+        variants: [:images, :prices, { stock_items: :stock_location }]
+      }
     end
 
     def redirect_unauthorized_access

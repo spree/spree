@@ -55,7 +55,7 @@
       </div>
     <% end %>
     <div class="absolute right-1 top-1 z-10" data-plp-variant-picker-target="addToWishlist">
-      <%= render 'spree/products/add_to_wishlist', variant: product.first_or_default_variant(current_currency) if product %>
+      <%= render 'spree/products/add_to_wishlist', variant: selected_variant %>
     </div>
     <%= render 'spree/products/color_swatches', product: product if product && (defined?(show_variant_picker) ? show_variant_picker : true) %>
   </div>
