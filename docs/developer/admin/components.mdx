@@ -644,7 +644,7 @@ Helpers for displaying dates and times in the user's local timezone.
 
 ### `spree_date`
 
-Renders a date in the user's local format.
+Renders a date using the store's timezone
 
 ```erb
 <%= spree_date(order.created_at) %>
@@ -653,7 +653,7 @@ Renders a date in the user's local format.
 
 ### `spree_time`
 
-Renders a date and time in the user's local format.
+Renders a date and time using the store's timezone.
 
 ```erb
 <%= spree_time(order.completed_at) %>
