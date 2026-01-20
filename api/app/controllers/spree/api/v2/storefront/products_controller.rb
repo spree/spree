@@ -21,10 +21,7 @@ module Spree
           end
 
           def variant_includes
-            [
-              :prices,
-              { option_values: [:option_type] }
-            ]
+            [:images, :prices, { stock_items: :stock_location }]
           end
 
           def collection_sorter

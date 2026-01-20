@@ -17,7 +17,7 @@ module Spree
       private
 
       def scope
-        current_store.checkouts.accessible_by(current_ability, :index)
+        current_store.checkouts.accessible_by(current_ability, :index).includes(collection_includes)
       end
 
       def collection_default_sort
@@ -25,7 +25,7 @@ module Spree
       end
 
       def collection_includes
-        { user: [], shipments: :stock_location }
+        { user: [] }
       end
 
       def edit_object_url(object, options = {})

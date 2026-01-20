@@ -10,7 +10,7 @@ module Spree
       end
 
       def display_inventory(product_or_variant)
-        if product_or_variant.total_on_hand == BigDecimal::INFINITY
+        unless product_or_variant.track_inventory?
           content_tag :span, class: 'text-gray-600' do
             Spree.t('admin.not_tracking_inventory')
           end
@@ -20,8 +20,8 @@ module Spree
                   else
                     content_tag(:span, "0 #{Spree.t(:in_stock).downcase}", class: 'text-danger')
                   end
-          if product_or_variant.respond_to?(:variants) && product_or_variant.variants.size.positive?
-            stock += " - #{product_or_variant.variants.size} #{Spree.t(:variants).downcase}"
+          if product_or_variant.respond_to?(:variants) && product_or_variant.variant_count.positive?
+            stock += " - #{product_or_variant.variant_count} #{Spree.t(:variants).downcase}"
           end
           stock
         end

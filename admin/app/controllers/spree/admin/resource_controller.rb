@@ -280,7 +280,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   # @return [ActiveRecord::Relation]
   def collection
     @collection ||= begin
-      result = search_collection.result(distinct: true)
+      result = search_collection.result(distinct: true).preload_associations_lazily
 
       # Apply custom sort scope if configured (e.g., for price sorting)
       result = apply_table_sort(result) if table_registered? && custom_sort_active?

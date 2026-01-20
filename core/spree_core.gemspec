@@ -64,4 +64,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'any_ascii', '~> 0.3.2'
   s.add_dependency 'safely_block', '~> 0.4'
   s.add_dependency 'phonelib', '~> 0.10'
+  s.add_dependency 'ar_lazy_preload', '~> 2.0'
 end

@@ -65,7 +65,11 @@ module Spree
       #
       # @return [BigDecimal] The total amount of store credits applied to the order.
       def total_applied_store_credit
-        payments.store_credits.valid.sum(:amount)
+        if payments.loaded?
+          payments.find_all(&:store_credit?).find_all(&:valid?).sum(&:amount) || BigDecimal::ZERO
+        else
+          payments.store_credits.valid.sum(:amount)
+        end
       end
 
       # Returns true if the order is using store credit.
