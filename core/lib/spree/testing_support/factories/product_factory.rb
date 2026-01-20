@@ -12,14 +12,22 @@ FactoryBot.define do
     status            { 'active' }
     stores            { [Spree::Store.default] }
 
+    transient do
+      create_stock { true }
+    end
+
     # ensure stock item will be created for this products master
     # also attach this product to the default store if no stores are passed in
-    before(:create) do |_product|
-      create(:stock_location) unless Spree::StockLocation.any?
+    before(:create) do |_product, evaluator|
+      if evaluator.create_stock
+        create(:stock_location) unless Spree::StockLocation.any?
+      end
       create(:store, default: true) unless Spree::Store.any?
     end
-    after(:create) do |product|
-      Spree::StockLocation.all.each { |stock_location| stock_location.propagate_variant(product.master) unless stock_location.stock_items.exists?(variant: product.master) }
+    after(:create) do |product, evaluator|
+      if evaluator.create_stock
+        Spree::StockLocation.all.each { |stock_location| stock_location.propagate_variant(product.master) unless stock_location.stock_items.exists?(variant: product.master) }
+      end
     end
 
     factory :custom_product do

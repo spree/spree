@@ -118,7 +118,7 @@ describe Spree::Taxon, type: :model do
 
   describe 'callbacks' do
     describe 'regenerate_taxon_products' do
-      let!(:taxon) { create(:automatic_taxon) }
+      let(:taxon) { create(:automatic_taxon) }
 
       before { taxon.reload }
 
@@ -255,7 +255,7 @@ describe Spree::Taxon, type: :model do
 
   # Regression test for #2620
   context 'creating a child node using first_or_create' do
-    let!(:taxonomy) { create(:taxonomy, store: store) }
+    let(:taxonomy) { create(:taxonomy, store: store) }
 
     it 'does not error out' do
       expect { taxonomy.root.children.unscoped.where(name: 'Some name', parent_id: taxonomy.taxons.first.id).first_or_create }.not_to raise_error
@@ -271,7 +271,7 @@ describe Spree::Taxon, type: :model do
   end
 
   describe '#copy_taxonomy_from_parent' do
-    let!(:parent) { create(:taxon, taxonomy: taxonomy) }
+    let(:parent) { create(:taxon, taxonomy: taxonomy) }
     let(:taxon) { build(:taxon, parent: parent, taxonomy: nil) }
 
     it { expect(taxon.valid?).to eq(true) }
@@ -410,7 +410,7 @@ describe Spree::Taxon, type: :model do
   end
 
   describe '#regenerate_pretty_name_and_permalink' do
-    let!(:taxon) { create(:taxon, name: 'Category#1', taxonomy: taxonomy) }
+    let(:taxon) { create(:taxon, name: 'Category#1', taxonomy: taxonomy) }
 
     it 'regenerates pretty name and permalink' do
       expect(taxon.pretty_name).to eq("#{taxon.parent.pretty_name} -> #{taxon.name}")
@@ -520,7 +520,7 @@ describe Spree::Taxon, type: :model do
   end
 
   describe '#pretty_name' do
-    let!(:taxon) { create(:taxon, name: 'Category#1', taxonomy: taxonomy) }
+    let(:taxon) { create(:taxon, name: 'Category#1', taxonomy: taxonomy) }
 
     context '1 lvl deep' do
       it 'returns taxonomy name and taxon name' do

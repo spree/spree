@@ -12,8 +12,8 @@ FactoryBot.define do
     is_master       { 0 }
     track_inventory { true }
 
-    product       { |p| p.association(:base_product, stores: [Spree::Store.default]) }
-    option_values { [create(:option_value)] }
+    product       { |p| p.association(:base_product, stores: [Spree::Store.default], create_stock: create_stock) }
+    option_values { is_master == 1 ? [] : [association(:option_value)] }
 
     transient do
       create_stock { true }
@@ -36,7 +36,7 @@ FactoryBot.define do
 
     factory :variant do
       # on_hand 5
-      product { |p| p.association(:product, stores: [Spree::Store.default]) }
+      product { |p| p.association(:product, stores: [Spree::Store.default], create_stock: create_stock) }
 
       factory :with_image_variant do
         images { create_list(:image, 1) }
@@ -51,6 +51,7 @@ FactoryBot.define do
 
     factory :master_variant do
       is_master { 1 }
+      option_values { [] }
     end
 
     factory :on_demand_variant do
@@ -58,6 +59,7 @@ FactoryBot.define do
 
       factory :on_demand_master_variant do
         is_master { 1 }
+        option_values { [] }
       end
     end
   end

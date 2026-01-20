@@ -9,6 +9,7 @@ FactoryBot.define do
     transient do
       line_items_price { BigDecimal(10) }
       attach_to_default_store { true }
+      create_stock { true }
     end
 
     before(:create) do |order|
@@ -22,7 +23,7 @@ FactoryBot.define do
 
     factory :order_with_totals do
       after(:create) do |order, evaluator|
-        create(:line_item, order: order, price: evaluator.line_items_price)
+        create(:line_item, order: order, price: evaluator.line_items_price, create_stock: evaluator.create_stock)
         order.line_items.reload # to ensure order.line_items is accessible after
 
         order.update_column(:item_count, order.line_items.count)
@@ -36,7 +37,7 @@ FactoryBot.define do
       end
 
       after(:create) do |order, evaluator|
-        create(:line_item, order: order, price: evaluator.line_items_price, quantity: evaluator.line_items_quantity)
+        create(:line_item, order: order, price: evaluator.line_items_price, quantity: evaluator.line_items_quantity, create_stock: evaluator.create_stock)
         order.line_items.reload # to ensure order.line_items is accessible after
       end
     end
@@ -55,7 +56,7 @@ FactoryBot.define do
 
       after(:create) do |order, evaluator|
         if evaluator.variants.empty? && !evaluator.without_line_items
-          create_list(:line_item, evaluator.line_items_count, order: order, price: evaluator.line_items_price)
+          create_list(:line_item, evaluator.line_items_count, order: order, price: evaluator.line_items_price, create_stock: evaluator.create_stock)
           order.line_items.reload
         end
 

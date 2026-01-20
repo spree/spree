@@ -4,12 +4,14 @@ FactoryBot.define do
     quantity { 1 }
     price    { BigDecimal('10.00') }
     currency { order.currency }
+
+    transient do
+      create_stock { true }
+    end
+
     product do
-      if order&.store&.present?
-        create(:product, stores: [order.store])
-      else
-        create(:product)
-      end
+      stores = order&.store&.present? ? [order.store] : [Spree::Store.default]
+      create(:product, stores: stores, create_stock: create_stock)
     end
     variant { product.master }
   end

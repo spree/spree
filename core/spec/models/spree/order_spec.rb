@@ -10,7 +10,7 @@ describe Spree::Order, type: :model do
   it_behaves_like 'lifecycle events'
 
   let(:user) { create(:user) }
-  let!(:store) { @default_store }
+  let(:store) { @default_store }
   let(:order) { create(:order, user: user, store: store) }
 
   before { allow(Spree::LegacyUser).to receive_messages(current: build(:user)) }
@@ -1390,7 +1390,7 @@ describe Spree::Order, type: :model do
 
   describe '#create_proposed_shipments' do
     context 'has unassociated inventory units' do
-      let!(:inventory_unit) { create(:inventory_unit, order: subject) }
+      let(:inventory_unit) { create(:inventory_unit, order: subject) }
 
       before do
         inventory_unit.update_column(:shipment_id, nil)
@@ -1567,7 +1567,7 @@ describe Spree::Order, type: :model do
   end
 
   describe 'order transit to returned state from resumed state' do
-    let!(:resumed_order) { create(:order_with_line_items, line_items_count: 3, state: :resumed) }
+    let(:resumed_order) { create(:order_with_line_items, line_items_count: 3, state: :resumed) }
 
     context 'when all inventory_units returned' do
       before do
@@ -1647,7 +1647,7 @@ describe Spree::Order, type: :model do
   end
 
   describe '#shipping_eq_billing_address' do
-    let!(:order) { create(:order) }
+    let(:order) { create(:order) }
 
     context 'with only bill address' do
       it { expect(order.shipping_eq_billing_address?).to eq(false) }
@@ -1690,7 +1690,7 @@ describe Spree::Order, type: :model do
              mandatory: false)
     end
 
-    let!(:order) { create(:order_with_line_items, line_items_count: 10) }
+    let(:order) { create(:order_with_line_items, line_items_count: 10) }
     let(:line_item) { order.line_items.first }
 
     let(:zero_promo) { create :promotion_with_order_adjustment, weighted_order_adjustment_amount: 0, starts_at: Time.now, code: 'Zero', id: 1 }
@@ -1738,7 +1738,7 @@ describe Spree::Order, type: :model do
   describe '#cart_promo_total' do
     subject { order.reload.cart_promo_total }
 
-    let!(:order) { create(:order_with_line_items, line_items_count: 10) }
+    let(:order) { create(:order_with_line_items, line_items_count: 10) }
 
     context 'without promotions' do
       it 'returns 0' do

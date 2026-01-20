@@ -8,7 +8,7 @@ module ThirdParty
 end
 
 describe Spree::Product, type: :model do
-  let!(:store) { Spree::Store.default }
+  let(:store) { Spree::Store.default }
 
   it_behaves_like 'metadata'
   it_behaves_like 'lifecycle events'
@@ -776,7 +776,7 @@ describe Spree::Product, type: :model do
   end
 
   describe '#backordered?' do
-    let!(:product) { create(:product, stores: [store]) }
+    let(:product) { create(:product, stores: [store]) }
 
     it 'returns true when out of stock and backorderable' do
       expect(product.backordered?).to eq(true)
@@ -1197,7 +1197,7 @@ describe Spree::Product, type: :model do
   describe '#any_variant_in_stock_or_backorderable?' do
     subject { product.any_variant_in_stock_or_backorderable? }
 
-    let!(:product) { create(:product, stores: [store]) }
+    let(:product) { create(:product, stores: [store]) }
     let(:stock_item) { variant.stock_items.first }
 
     context 'when only master variant is in stock or backorderable' do
@@ -1358,7 +1358,7 @@ describe Spree::Product, type: :model do
   describe '#first_or_default_variant' do
     subject { product.first_or_default_variant('USD') }
 
-    let!(:product) { create(:product, stores: [store]) }
+    let(:product) { create(:product, stores: [store]) }
 
     context 'without variants' do
       it 'returns the default variant' do
@@ -1402,7 +1402,7 @@ describe Spree::Product, type: :model do
   describe '#first_available_variant' do
     subject { product.first_available_variant('USD') }
 
-    let!(:product) { create(:product, stores: [store]) }
+    let(:product) { create(:product, stores: [store]) }
 
     let!(:variant_1) { create(:variant, product: product, create_stock: false) }
     let!(:variant_2) { create(:variant, product: product) }
@@ -1426,7 +1426,7 @@ describe Spree::Product, type: :model do
   describe '#price_varies?' do
     subject { product.price_varies?('USD') }
 
-    let!(:product) { create(:product, stores: [store]) }
+    let(:product) { create(:product, stores: [store]) }
 
     let!(:variant_1) { create(:variant, product: product) }
     let!(:variant_2) { create(:variant, product: product) }
@@ -1460,7 +1460,7 @@ describe Spree::Product, type: :model do
   describe '#any_variant_available?' do
     subject { product.any_variant_available?('USD') }
 
-    let!(:product) { create(:product, stores: [store]) }
+    let(:product) { create(:product, stores: [store]) }
 
     context 'without variants' do
       before do
@@ -1509,7 +1509,7 @@ describe Spree::Product, type: :model do
   describe '#lowest_price' do
     subject { product.lowest_price('USD') }
 
-    let!(:product) { create(:product, stores: [store]) }
+    let(:product) { create(:product, stores: [store]) }
 
     let!(:variant_1) { create(:variant, product: product) }
     let!(:variant_2) { create(:variant, product: product) }

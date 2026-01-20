@@ -112,7 +112,10 @@ describe Spree::Variant, type: :model do
   end
 
   context 'after create' do
-    let!(:product) { create(:product, stores: [store]) }
+    # Create product without stock to avoid interference with propagate_variant expectations
+    let(:product) { create(:product, stores: [store], create_stock: false) }
+
+    before { create(:stock_location) unless Spree::StockLocation.any? }
 
     it 'propagate to stock items' do
       expect_any_instance_of(Spree::StockLocation).to receive(:propagate_variant)
@@ -129,6 +132,9 @@ describe Spree::Variant, type: :model do
     end
 
     describe 'mark_master_out_of_stock' do
+      # This test needs a product with stock items
+      let(:product) { create(:product, stores: [store]) }
+
       before do
         product.master.stock_items.first.set_count_on_hand(5)
       end
@@ -208,7 +214,7 @@ describe Spree::Variant, type: :model do
   end
 
   describe 'after_update_commit :handle_track_inventory_change' do
-    let!(:product) { create(:product, stores: [store]) }
+    let(:product) { create(:product, stores: [store]) }
 
     context 'when not tracking inventory' do
       subject { variant.update!(track_inventory: false) }
@@ -474,15 +480,14 @@ describe Spree::Variant, type: :model do
   describe '#in_stock_or_backorderable?' do
     subject { variant.in_stock_or_backorderable? }
 
-    let!(:variant) { create(:variant) }
-
     context 'when variant has no stock items' do
-      before { Spree::StockItem.delete_all }
+      let(:variant) { create(:variant, create_stock: false) }
 
       it { expect(subject).to eq(false) }
     end
 
     context 'when variant has stock items' do
+      let!(:variant) { create(:variant) }
       let!(:variant2) { create(:variant) }
 
       before { Spree::StockItem.update_all(backorderable: false) }
@@ -1345,7 +1350,7 @@ describe Spree::Variant, type: :model do
   end
 
   describe '#backordered?' do
-    let!(:variant) { create(:variant) }
+    let(:variant) { create(:variant) }
 
     it 'returns true when out of stock and backorderable' do
       expect(variant.backordered?).to eq(true)
