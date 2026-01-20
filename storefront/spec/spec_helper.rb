@@ -82,12 +82,15 @@ RSpec.configure do |config|
     DatabaseCleaner.strategy = :truncation
   end
 
-  config.before(:each, js: false) do
-    DatabaseCleaner.strategy = :transaction
-  end
-
   config.around(:each, js: true) do |example|
     DatabaseCleaner.cleaning do
+      # Recreate default store after truncation (it was wiped by DatabaseCleaner)
+      I18n.with_locale(:en) do
+        Spree::Events.disable do
+          default_country = Spree::Country.find_by(iso: 'US') || FactoryBot.create(:country_us)
+          Spree::Store.find_by(default: true) || FactoryBot.create(:store, default: true, default_country: default_country, default_currency: 'USD')
+        end
+      end
       example.run
     end
   end
