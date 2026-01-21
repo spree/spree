@@ -68,17 +68,28 @@ namespace :common do
     puts 'Running Spree install generator...'
     system("bundle exec rails g spree:install --force --auto-accept --migrate=false --seed=false --sample=false --user_class=#{args[:user_class]} --admin_user_class=#{args[:admin_user_class]} --authentication=#{args[:authentication]}")
 
-    # Run admin install generator if requested
-    if install_admin
-      puts 'Running Spree Admin install generator...'
-      system('bundle exec rails g spree:admin:install --force')
+    # Determine if we need to install admin/storefront
+    # Either via explicit flag or because we're testing that gem itself
+    needs_admin = install_admin || ENV['LIB_NAME'] == 'spree/admin'
+    needs_storefront = install_storefront || ENV['LIB_NAME'] == 'spree/storefront'
+
+    # Run admin install generator if requested or testing admin gem
+    if needs_admin
+      # Only run install if explicitly requested (not when testing admin gem itself)
+      if install_admin
+        puts 'Running Spree Admin install generator...'
+        system('bundle exec rails g spree:admin:install --force')
+      end
       system('bundle exec rails g spree:admin:devise --force') if args[:authentication] == 'devise'
     end
 
-    # Run storefront install generator if requested
-    if install_storefront
-      puts 'Running Spree Storefront install generator...'
-      system('bundle exec rails g spree:storefront:install --force --migrate=false')
+    # Run storefront install generator if requested or testing storefront gem
+    if needs_storefront
+      # Only run install if explicitly requested (not when testing storefront gem itself)
+      if install_storefront
+        puts 'Running Spree Storefront install generator...'
+        system('bundle exec rails g spree:storefront:install --force --migrate=false')
+      end
       system('bundle exec rails g spree:storefront:devise --force') if args[:authentication] == 'devise'
     end
 
