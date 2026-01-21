@@ -1,6 +1,13 @@
 require 'generators/spree/dummy/dummy_generator'
 require 'generators/spree/dummy_model/dummy_model_generator'
 
+def to_boolean(value)
+  return value if value.is_a?(TrueClass) || value.is_a?(FalseClass)
+  return true if value.to_s.match?(/\A(true|yes|1)\z/i)
+
+  false
+end
+
 desc 'Generates a dummy app for testing'
 namespace :common do
   task :test_app, :user_class do |_t, args|
@@ -15,10 +22,10 @@ namespace :common do
     require ENV['LIB_NAME'].to_s
 
     # Convert to booleans (supports both string and boolean values for backwards compatibility)
-    install_admin = args[:install_admin].to_b
-    install_storefront = args[:install_storefront].to_b
-    javascript_enabled = args[:javascript].to_b
-    css_enabled = args[:css].to_b
+    install_admin = to_boolean(args[:install_admin])
+    install_storefront = to_boolean(args[:install_storefront])
+    javascript_enabled = to_boolean(args[:javascript])
+    css_enabled = to_boolean(args[:css])
 
     # Admin and Storefront require JavaScript and CSS (Tailwind) to function properly
     javascript_enabled ||= install_admin || install_storefront
