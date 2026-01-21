@@ -3,75 +3,14 @@ module Spree
     module V3
       class OrderSerializer < BaseSerializer
         attributes :id, :number, :state, :token, :email, :special_instructions,
-                   :currency, :item_count, :shipment_state, :payment_state
-
-        # Totals
-        attribute :item_total do |order|
-          order.item_total.to_f
-        end
-
-        attribute :display_item_total do |order|
-          order.display_item_total.to_s
-        end
-
-        attribute :ship_total do |order|
-          order.ship_total.to_f
-        end
-
-        attribute :display_ship_total do |order|
-          order.display_ship_total.to_s
-        end
-
-        attribute :adjustment_total do |order|
-          order.adjustment_total.to_f
-        end
-
-        attribute :display_adjustment_total do |order|
-          order.display_adjustment_total.to_s
-        end
-
-        attribute :promo_total do |order|
-          order.promo_total.to_f
-        end
-
-        attribute :display_promo_total do |order|
-          order.display_promo_total.to_s
-        end
-
-        attribute :tax_total do |order|
-          order.tax_total.to_f
-        end
-
-        attribute :display_tax_total do |order|
-          order.display_tax_total.to_s
-        end
-
-        attribute :included_tax_total do |order|
-          order.included_tax_total.to_f
-        end
-
-        attribute :display_included_tax_total do |order|
-          order.display_included_tax_total.to_s
-        end
-
-        attribute :additional_tax_total do |order|
-          order.additional_tax_total.to_f
-        end
-
-        attribute :display_additional_tax_total do |order|
-          order.display_additional_tax_total.to_s
-        end
-
-        attribute :total do |order|
-          order.total.to_f
-        end
-
-        attribute :display_total do |order|
-          order.display_total.to_s
-        end
+                   :currency, :item_count, :shipment_state, :payment_state,
+                   :item_total, :display_item_total, :ship_total, :display_ship_total,
+                   :adjustment_total, :display_adjustment_total, :promo_total, :display_promo_total,
+                   :tax_total, :display_tax_total, :included_tax_total, :display_included_tax_total,
+                   :additional_tax_total, :display_additional_tax_total, :total, :display_total
 
         # Timestamps
-        attributes completed_at: :iso8601, created_at: :iso8601, updated_at: :iso8601
+        attributes completed_at: :iso8601
 
         # Conditional associations
         many :line_items,
@@ -84,21 +23,18 @@ module Spree
 
         many :payments,
              resource: Spree.api.v3_storefront_payment_serializer,
-             if: proc { params[:includes]&.include?('payments') } do |order|
-          order.payments.valid
-        end
+             if: proc { params[:includes]&.include?('payments') }
 
-        one :billing_address,
+        one :bill_address,
             resource: Spree.api.v3_storefront_address_serializer,
-            if: proc { params[:includes]&.include?('billing_address') } do |order|
-          order.bill_address
-        end
+            if: proc { params[:includes]&.include?('bill_address') }
 
-        one :shipping_address,
+        one :ship_address,
             resource: Spree.api.v3_storefront_address_serializer,
-            if: proc { params[:includes]&.include?('shipping_address') } do |order|
-          order.ship_address
-        end
+            if: proc { params[:includes]&.include?('ship_address') }
+
+        many :payment_methods,
+             resource: Spree.api.v3_storefront_payment_method_serializer
       end
     end
   end

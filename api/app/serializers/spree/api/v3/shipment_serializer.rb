@@ -2,39 +2,15 @@ module Spree
   module Api
     module V3
       class ShipmentSerializer < BaseSerializer
-        attributes :id, :number, :state, :tracking,
-                   shipped_at: :iso8601, created_at: :iso8601, updated_at: :iso8601
+        attributes :id, :number, :state, :tracking, :tracking_url, :shipped_at,
+                   :cost, :display_cost, :adjustment_total, :display_adjustment_total,
+                   :additional_tax_total, :display_additional_tax_total, :promo_total, :display_promo_total,
+                   :included_tax_total, :display_included_tax_total, :total, :display_total
 
-        attribute :cost do |shipment|
-          shipment.cost.to_f
-        end
+        one :shipping_method, resource: Spree.api.v3_storefront_shipping_method_serializer
+        one :stock_location, resource: Spree.api.v3_storefront_stock_location_serializer
 
-        attribute :display_cost do |shipment|
-          shipment.display_cost.to_s
-        end
-
-        attribute :shipping_method do |shipment|
-          next unless shipment.shipping_method
-
-          {
-            id: shipment.shipping_method.id,
-            name: shipment.shipping_method.name,
-            code: shipment.shipping_method.code
-          }
-        end
-
-        attribute :stock_location do |shipment|
-          next unless shipment.stock_location
-
-          {
-            id: shipment.stock_location.id,
-            name: shipment.stock_location.name
-          }
-        end
-
-        many :shipping_rates,
-             resource: Spree.api.v3_storefront_shipping_rate_serializer,
-             if: proc { params[:includes]&.include?('shipping_rates') }
+        many :shipping_rates, resource: Spree.api.v3_storefront_shipping_rate_serializer
       end
     end
   end

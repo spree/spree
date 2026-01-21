@@ -4,7 +4,7 @@ module Spree
       class ProductSerializer < BaseSerializer
         attributes :id, :name, :description, :slug, :sku, :barcode,
                    :meta_description, :meta_keywords,
-                   available_on: :iso8601, created_at: :iso8601, updated_at: :iso8601
+                   available_on: :iso8601
 
         attribute :purchasable do |product|
           product.purchasable?

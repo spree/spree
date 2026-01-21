@@ -2,9 +2,6 @@ module Spree
   module Api
     module V3
       class ResourceController < ::Spree::Api::V3::BaseController
-        include Spree::Api::V3::ResourceSerializer
-        include Pagy::Method
-
         before_action :set_resource, only: [:show, :update, :destroy]
 
         # GET /api/v3/resource

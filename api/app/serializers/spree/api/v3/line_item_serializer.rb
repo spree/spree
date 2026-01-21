@@ -2,88 +2,18 @@ module Spree
   module Api
     module V3
       class LineItemSerializer < BaseSerializer
-        attributes :id, :variant_id, :quantity, :currency
+        attributes :id, :variant_id, :quantity, :name, :slug, :options_text,
+                   :price, :display_price, :total, :display_total,
+                   :adjustment_total, :display_adjustment_total,
+                   :additional_tax_total, :display_additional_tax_total,
+                   :included_tax_total, :display_included_tax_total,
+                   :promo_total, :display_promo_total,
+                   :pre_tax_amount, :display_pre_tax_amount,
+                   :discounted_amount, :display_discounted_amount,
+                   :compare_at_amount, :display_compare_at_amount
 
-        attribute :price do |line_item|
-          line_item.price.to_f
-        end
-
-        attribute :display_price do |line_item|
-          line_item.display_price.to_s
-        end
-
-        attribute :total do |line_item|
-          line_item.total.to_f
-        end
-
-        attribute :display_total do |line_item|
-          line_item.display_total.to_s
-        end
-
-        attribute :adjustment_total do |line_item|
-          line_item.adjustment_total.to_f
-        end
-
-        attribute :display_adjustment_total do |line_item|
-          line_item.display_adjustment_total.to_s
-        end
-
-        attribute :promo_total do |line_item|
-          line_item.promo_total.to_f
-        end
-
-        attribute :display_promo_total do |line_item|
-          line_item.display_promo_total.to_s
-        end
-
-        attribute :included_tax_total do |line_item|
-          line_item.included_tax_total.to_f
-        end
-
-        attribute :display_included_tax_total do |line_item|
-          line_item.display_included_tax_total.to_s
-        end
-
-        attribute :additional_tax_total do |line_item|
-          line_item.additional_tax_total.to_f
-        end
-
-        attribute :display_additional_tax_total do |line_item|
-          line_item.display_additional_tax_total.to_s
-        end
-
-        attribute :pre_tax_amount do |line_item|
-          line_item.pre_tax_amount.to_f
-        end
-
-        attribute :display_pre_tax_amount do |line_item|
-          line_item.display_pre_tax_amount.to_s
-        end
-
-        attribute :compare_at_amount do |line_item|
-          line_item.compare_at_amount.to_f
-        end
-
-        attribute :display_compare_at_amount do |line_item|
-          line_item.display_compare_at_amount.to_s
-        end
-
-        attribute :discounted_amount do |line_item|
-          line_item.discounted_amount.to_f
-        end
-
-        attribute :display_discounted_amount do |line_item|
-          line_item.display_discounted_amount.to_s
-        end
-
-        # Conditional associations
-        one :variant,
-            resource: Spree.api.v3_storefront_variant_serializer,
-            if: proc { params[:includes]&.include?('variant') }
-
-        one :product,
-            resource: Spree.api.v3_storefront_product_serializer,
-            if: proc { params[:includes]&.include?('product') }
+        many :images, resource: Spree.api.v3_storefront_image_serializer
+        many :option_values, resource: Spree.api.v3_storefront_option_value_serializer
       end
     end
   end

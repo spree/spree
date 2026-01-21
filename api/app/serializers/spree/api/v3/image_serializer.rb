@@ -8,36 +8,29 @@ module Spree
           image_url(image)
         end
 
-        attribute :large_url do |image|
-          image_url(image, size: [1200, 1200])
-        end
-
-        attribute :medium_url do |image|
-          image_url(image, size: [600, 600])
-        end
-
-        attribute :small_url do |image|
-          image_url(image, size: [300, 300])
-        end
-
-        attribute :thumbnail_url do |image|
-          image_url(image, size: [150, 150])
+        # Dynamically define attributes for each configured image variant
+        # Uses named variants from Spree::Config.product_image_variant_sizes
+        # (e.g., mini, small, medium, large, xlarge)
+        Spree::Config.product_image_variant_sizes.each_key do |variant_name|
+          attribute :"#{variant_name}_url" do |image|
+            variant_url(image, variant_name)
+          end
         end
 
         private
 
-        def image_url(image, size: nil)
-          unless image&.attachment&.attached?
-            return nil
-          end
+        def image_url(image)
+          return nil unless image&.attachment&.attached?
 
-          if size
-            Rails.application.routes.url_helpers.cdn_image_url(
-              image.attachment.variant(resize_to_limit: size)
-            )
-          else
-            Rails.application.routes.url_helpers.cdn_image_url(image.attachment)
-          end
+          Rails.application.routes.url_helpers.cdn_image_url(image.attachment)
+        end
+
+        def variant_url(image, variant_name)
+          return nil unless image&.attachment&.attached?
+
+          Rails.application.routes.url_helpers.cdn_image_url(
+            image.attachment.variant(variant_name)
+          )
         end
       end
     end

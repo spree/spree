@@ -3,8 +3,6 @@ module Spree
     module V3
       module Storefront
         class CountriesController < ResourceController
-          # Public endpoint - no authentication required
-
           protected
 
           def scope
@@ -17,11 +15,6 @@ module Spree
 
           def serializer_class
             Spree.api.v3_storefront_country_serializer
-          end
-
-          # Not needed for index/show
-          def permitted_params
-            {}
           end
         end
       end

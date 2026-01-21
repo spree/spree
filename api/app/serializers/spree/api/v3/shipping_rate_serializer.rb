@@ -2,8 +2,7 @@ module Spree
   module Api
     module V3
       class ShippingRateSerializer < BaseSerializer
-        attributes :id, :name, :selected, :shipping_method_id,
-                   created_at: :iso8601, updated_at: :iso8601
+        attributes :id, :name, :selected, :shipping_method_id
 
         attribute :cost do |shipping_rate|
           shipping_rate.cost.to_f
@@ -13,9 +12,7 @@ module Spree
           shipping_rate.display_cost.to_s
         end
 
-        attribute :shipping_method_code do |shipping_rate|
-          shipping_rate.shipping_method&.code
-        end
+        one :shipping_method, resource: Spree.api.v3_storefront_shipping_method_serializer
       end
     end
   end

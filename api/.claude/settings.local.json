@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Read(//Users/damian/github/spree/**)"
-    ],
-    "deny": [],
-    "ask": []
-  }
-}
