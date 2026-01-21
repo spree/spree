@@ -74,10 +74,16 @@ module Spree
         def collection
           return @collection if @collection.present?
 
-          @search = scope.ransack(ransack_params)
+          @search = scope.includes(collection_includes).
+                    preload_associations_lazily.
+                    ransack(ransack_params)
           result = @search.result(distinct: true)
           @pagy, @collection = pagy(result, limit: limit, page: page)
           @collection
+        end
+
+        def collection_includes
+          []
         end
 
         # Ransack query parameters
