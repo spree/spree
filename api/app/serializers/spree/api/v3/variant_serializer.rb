@@ -2,7 +2,7 @@ module Spree
   module Api
     module V3
       class VariantSerializer < BaseSerializer
-        attributes :id, :name, :sku, :barcode, :is_master, :options_text
+        attributes :id, :product_id, :sku, :barcode, :is_master, :options_text, :track_inventory, :image_count
 
         attribute :purchasable do |variant|
           variant.purchasable?
@@ -34,6 +34,10 @@ module Spree
 
         attribute :price do |variant|
           price_object(variant)&.amount&.to_f
+        end
+
+        attribute :price_in_cents do |variant|
+          price_object(variant)&.display_amount&.amount_in_cents
         end
 
         attribute :display_price do |variant|

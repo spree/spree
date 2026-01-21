@@ -5,17 +5,6 @@ module Spree
         class WishlistsController < ResourceController
           before_action :require_authentication!
 
-          # GET /api/v3/storefront/wishlists/default
-          def default
-            @wishlist = current_user.wishlists.default.first_or_create!(
-              name: 'Default',
-              is_default: true,
-              store: current_store
-            )
-
-            render json: serialize_resource(@wishlist)
-          end
-
           protected
 
           def scope

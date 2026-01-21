@@ -229,19 +229,14 @@ Spree::Core::Engine.add_routes do
 
         # ===== STORE & CONFIGURATION (Public) =====
         get 'store', to: 'stores#current'
-        resources :stores, only: [:show], param: :code
 
         # Geography
-        resources :countries, only: [:index, :show] do
-          resources :states, only: [:index, :show]
-        end
+        resources :countries, only: [:index, :show]
 
         # ===== CATALOG (Public) =====
         # Products with Ransack filtering
         # GET /products?q[name_cont]=shirt&q[s]=price+asc
-        resources :products, only: [:index, :show] do
-          resources :variants, only: [:index, :show]
-        end
+        resources :products, only: [:index, :show]
 
         # Taxons (categories)
         resources :taxons, only: [:index, :show]
@@ -267,10 +262,6 @@ Spree::Core::Engine.add_routes do
           # Available methods for order
           resources :shipping_methods, only: [:index]
           resources :payment_methods, only: [:index]
-
-          # Addresses as nested resources
-          resource :billing_address, only: [:show, :update], controller: 'order_addresses', defaults: { address_type: 'billing' }
-          resource :shipping_address, only: [:show, :update], controller: 'order_addresses', defaults: { address_type: 'shipping' }
         end
 
         # ===== CUSTOMER (JWT Required) =====
@@ -278,14 +269,13 @@ Spree::Core::Engine.add_routes do
         patch 'customers/me', to: 'customers#update'
 
         resources :addresses, only: [:index, :show, :create, :update, :destroy], path: 'customers/me/addresses'
+        resources :credit_cards, only: [:index, :show, :destroy], path: 'customers/me/credit_cards'
         resources :payment_sources, only: [:index, :show, :destroy], path: 'customers/me/payment_sources'
 
         # ===== WISHLISTS (JWT Required) =====
         resources :wishlists do
-          get :default, on: :collection  # Get or create default wishlist
-
           # Wishlist items as nested resource
-          resources :items, only: [:index, :create, :update, :destroy], controller: 'wishlist_items'
+          resources :items, only: [:create, :update, :destroy], controller: 'wishlist_items'
         end
 
         # ===== CMS & CONTENT (Public) =====
