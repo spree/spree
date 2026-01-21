@@ -17,6 +17,24 @@ By the end of this tutorial, you'll have:
 - A brand selector in the Product admin form
 - Understanding of how to safely extend Spree core models
 
+## Choosing the Right Approach
+
+Before extending Spree models, consider which approach fits your needs best:
+
+| What you need | Recommended approach |
+|---------------|---------------------|
+| Add association (belongs_to, has_many) | **Decorator** (this tutorial) |
+| Add validation or scope | **Decorator** |
+| Add new instance/class method | **Decorator** |
+| React to model changes (after save, etc.) | [Events subscriber](/developer/core-concepts/events) |
+| Sync with external service on changes | [Events](/developer/core-concepts/events) or [Webhooks](/developer/core-concepts/webhooks) |
+| Add searchable/filterable field | [Ransack configuration](/developer/core-concepts/search-filtering#extending-ransackable-configuration) |
+| Add admin UI elements | [Admin Partials](/developer/admin/extending-ui) |
+
+<Info>
+  This tutorial uses **decorators** because we're adding a structural association between models. For behavioral changes like callbacks, prefer [Events](/developer/core-concepts/events) instead - they're easier to test and maintain.
+</Info>
+
 ## Understanding Decorators
 
 When working with Spree, you'll often need to add functionality to existing models like `Spree::Product` or `Spree::Order`. However, you shouldn't modify these files directly because:
@@ -187,7 +205,9 @@ Register this partial to appear in the product form. Add to your initializer:
 <Tabs>
   <Tab title="Spree 5.2+">
     ```ruby config/initializers/spree.rb
-    Spree.admin.partials.product_form_sidebar << 'spree/admin/products/brand_field'
+    Rails.application.config.after_initialize do
+      Spree.admin.partials.product_form_sidebar << 'spree/admin/products/brand_field'
+    end
     ```
   </Tab>
   <Tab title="Spree 5.1 and below">
@@ -263,13 +283,36 @@ end
 
 #### Adding Callbacks
 
+<Warning>
+  For callbacks that trigger side effects (syncing to external services, sending notifications, etc.), use [Events subscribers](/developer/core-concepts/events) instead of decorator callbacks. Events are easier to test and won't break during Spree upgrades.
+</Warning>
+
+**Decorator approach** (use only for simple, internal logic):
+
 ```ruby
 def self.prepended(base)
-  base.before_save :do_something
+  base.before_save :normalize_name
 end
 
-def do_something
-  # Your callback logic
+def normalize_name
+  self.name = name.strip.titleize if name.present?
+end
+```
+
+**Events approach** (recommended for side effects):
+
+```ruby app/subscribers/my_app/product_sync_subscriber.rb
+module MyApp
+  class ProductSyncSubscriber < Spree::Subscriber
+    subscribes_to 'product.updated'
+
+    def handle(event)
+      product = Spree::Product.find_by(id: event.payload['id'])
+      return unless product
+
+      ExternalSyncService.sync(product)
+    end
+  end
 end
 ```
 
@@ -332,8 +375,10 @@ Spree::PermittedAttributes.product_attributes << :brand_id
 <Tabs>
   <Tab title="Spree 5.2+">
     ```ruby config/initializers/spree.rb
-    # Add brand field to product form
-    Spree.admin.partials.product_form << 'spree/admin/products/brand_field'
+    Rails.application.config.after_initialize do
+      # Add brand field to product form
+      Spree.admin.partials.product_form << 'spree/admin/products/brand_field'
+    end
     ```
   </Tab>
   <Tab title="Spree 5.1 and below">
@@ -348,5 +393,8 @@ Spree::PermittedAttributes.product_attributes << :brand_id
 
 - [Model Tutorial](/developer/tutorial/model) - Creating the Brand model
 - [Admin Tutorial](/developer/tutorial/admin) - Building the admin interface
+- [Events](/developer/core-concepts/events) - Subscribe to model changes without decorators
+- [Webhooks](/developer/core-concepts/webhooks) - HTTP callbacks for external integrations
+- [Decorators](/developer/customization/decorators) - Full decorator reference
 - [Customization Overview](/developer/customization/quickstart) - More customization patterns
 - [Products](/developer/core-concepts/products) - Product model documentation

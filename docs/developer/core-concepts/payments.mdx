@@ -12,6 +12,75 @@ The `Payment` model in Spree tracks payments against [Orders](orders). Payments 
 
 When a payment is created, it is given a unique, 8-character identifier. This is used when sending the payment details to the payment processor. Without this identifier, some payment gateways mistakenly reported duplicate payments.
 
+### Payment Model Diagram
+
+```mermaid
+erDiagram
+    Payment {
+        string number
+        decimal amount
+        string state
+        string response_code
+        string avs_response
+        string source_type
+        integer source_id
+    }
+
+    PaymentMethod {
+        string name
+        string type
+        string description
+        boolean active
+        string display_on
+        integer position
+    }
+
+    CreditCard {
+        string last_digits
+        string cc_type
+        integer month
+        integer year
+        string name
+        string gateway_customer_profile_id
+        string gateway_payment_profile_id
+    }
+
+    StoreCredit {
+        decimal amount
+        decimal amount_used
+        decimal amount_authorized
+        string currency
+    }
+
+    Refund {
+        decimal amount
+        string reason
+    }
+
+    LogEntry {
+        text details
+    }
+
+    Order ||--o{ Payment : "has many"
+    Payment }o--|| PaymentMethod : "belongs to"
+    Payment }o--o| CreditCard : "source"
+    Payment }o--o| StoreCredit : "source"
+    Payment ||--o{ LogEntry : "has many"
+    Payment ||--o{ Refund : "has many"
+    PaymentMethod }o--|| Store : "belongs to"
+    CreditCard }o--|| User : "belongs to"
+    StoreCredit }o--|| User : "belongs to"
+    Refund }o--|| Payment : "belongs to"
+    Refund }o--|| Reimbursement : "belongs to"
+```
+
+**Key relationships:**
+- **Payment** tracks each payment attempt against an [Order](/developer/core-concepts/orders)
+- **Payment Method** defines how payments are processed (Stripe, PayPal, Check, etc.)
+- **Source** is polymorphic - can be a Credit Card, Store Credit, or other payment sources
+- **Log Entries** record gateway responses for debugging
+- **Refunds** track money returned to customers
+
 ## Payment States
 
 A payment can go through many different states:
@@ -227,7 +296,9 @@ Next, add your custom gateway to the list of available payment methods in `confi
 <Tabs>
   <Tab title="Spree 5.2+">
     ```ruby config/initializers/spree.rb
-    Spree.payment_methods << FancyPaymentMethod
+    Rails.application.config.after_initialize do
+      Spree.payment_methods << FancyPaymentMethod
+    end
     ```
   </Tab>
   <Tab title="Spree 5.1 and below">
@@ -264,3 +335,9 @@ end
 ```
 
 This code will make the payment method available only for orders with a total greater than 100 and currency USD.
+
+## Related Documentation
+
+- [Orders](/developer/core-concepts/orders) - Order management and state machine
+- [Checkout Customization](/developer/customization/checkout) - Customizing the checkout flow
+- [Events](/developer/core-concepts/events) - Subscribe to payment events

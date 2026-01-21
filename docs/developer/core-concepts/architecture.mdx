@@ -1,42 +1,177 @@
 ---
 title: Architecture
-description: Learn about the Spree architecture
+description: Understand how Spree's core models and systems work together
 ---
 
-Spree is a modular full-stack platform that can be used to build a wide range of e-commerce applications. It includes:
+## Overview
 
-<CardGroup>
-  <Card title="Core" icon="code">
-    <p>Core is the foundation of Spree, such as models, services, and the backend logic necessary to run an e-commerce business.</p>
-  </Card>
-  <Card title="Admin Dashboard" icon="gauge">
-    <p>The Admin Dashboard is the control center for your Spree store. It allows you to manage products, orders, customers, and more.</p>
-  </Card>
-  <Card title="Storefront" icon="store">
-    <p>The Storefront is the public-facing part of your Spree store where customers can browse products, add them to their cart, and complete purchases.</p>
-  </Card>
-  <Card title="Emails" icon="envelope">
-    <p>Spree includes built-in support for sending transactional emails to customers, such as order confirmations and shipping notifications.</p>
-  </Card>
-  <Card title="Storefront API" icon="cart-shopping" href="/api-reference/storefront">
-    <p>The Storefront API allows developers to interact with the Spree store programmatically, enabling custom front-end experiences and integrations.</p>
-  </Card>
-  <Card title="Platform API" icon="server" href="/api-reference/platform">
-    <p>The Platform API provides a comprehensive set of endpoints for managing all aspects of the Spree store, including products, orders, and customers.</p>
-  </Card>
-  <Card title="Webhooks" icon="webhook">
-    <p>Webhooks allow your Spree store to send real-time notifications to external systems when certain events occur, such as order creation or payment completion.</p>
-  </Card>
-</CardGroup>
+Spree is built around a set of interconnected models that represent the core concepts of e-commerce: products, orders, payments, and shipments. Understanding how these pieces fit together is essential for customizing and extending Spree.
 
-### Code Conventions
+## Core Commerce Flow
 
-Spree is built on top of [Ruby on Rails framework](https://rubyonrails.org) and follows Model-View-Controller (MVC) architecture. As an example let's look at the Product model.
+The following diagram shows how the main models interact during a typical customer purchase:
 
-* the model itself is located in [app/models/spree/product.rb](https://github.com/spree/spree/blob/main/core/app/models/spree/product.rb) and is named `Spree::Product`
-* the controller is located in [app/controllers/spree/products_controller.rb](https://github.com/spree/spree/blob/main/storefront/app/controllers/spree/products_controller.rb) and is named `Spree::ProductsController`
-* views for that controller are located in [app/views/spree/products](https://github.com/spree/spree/tree/main/storefront/app/views/spree/products) directory
+```mermaid
+flowchart TB
+    subgraph Catalog["Catalog"]
+        Product --> Variant
+        Variant --> Price
+        Variant --> StockItem
+        StockItem --> StockLocation
+    end
+
+    subgraph Shopping["Shopping"]
+        User --> Order
+        Order --> LineItem
+        LineItem --> Variant
+    end
+
+    subgraph Checkout["Checkout"]
+        Order --> Address
+        Order --> Shipment
+        Order --> Payment
+        Shipment --> ShippingMethod
+        Payment --> PaymentMethod
+    end
+
+    subgraph Fulfillment["Fulfillment"]
+        Shipment --> InventoryUnit
+        InventoryUnit --> Variant
+        StockLocation --> Shipment
+    end
+
+    subgraph Pricing["Pricing & Adjustments"]
+        Order --> Adjustment
+        LineItem --> Adjustment
+        Shipment --> Adjustment
+        TaxRate --> Adjustment
+        Promotion --> Adjustment
+    end
+```
+
+**How it works:**
+
+1. **Catalog** - [Products](/developer/core-concepts/products) have [Variants](/developer/core-concepts/products#variants) (SKUs) with prices and inventory tracked at [Stock Locations](/developer/core-concepts/inventory#stock-locations)
+
+2. **Shopping** - Customers add Variants to their cart, creating an [Order](/developer/core-concepts/orders) with Line Items
+
+3. **Checkout** - The Order collects [Addresses](/developer/core-concepts/addresses), calculates [Shipping](/developer/core-concepts/shipments) options, and processes [Payments](/developer/core-concepts/payments)
+
+4. **Fulfillment** - [Shipments](/developer/core-concepts/shipments) are created from Stock Locations, tracking individual [Inventory Units](/developer/core-concepts/inventory#inventory-units)
+
+5. **Pricing & Adjustments** - [Taxes](/developer/core-concepts/taxes) and [Promotions](/developer/core-concepts/promotions) create [Adjustments](/developer/core-concepts/adjustments) that modify order totals
+
+## Core Model Relationships
+
+This diagram shows the key database relationships between Spree's main models:
+
+```mermaid
+erDiagram
+    Store ||--o{ Order : "has many"
+    Store ||--o{ Product : "has many"
+
+    Product ||--o{ Variant : "has many"
+    Product }o--|| TaxCategory : "belongs to"
+    Product }o--|| ShippingCategory : "belongs to"
+    Product }o--o{ Taxon : "categorized by"
+
+    Variant ||--o{ Price : "has many"
+    Variant ||--o{ StockItem : "has many"
+    Variant ||--o{ LineItem : "has many"
+
+    Order ||--o{ LineItem : "has many"
+    Order ||--o{ Shipment : "has many"
+    Order ||--o{ Payment : "has many"
+    Order ||--o{ Adjustment : "has many"
+    Order }o--|| User : "belongs to"
+    Order }o--|| Address : "ship address"
+    Order }o--|| Address : "bill address"
+
+    Shipment ||--o{ InventoryUnit : "has many"
+    Shipment }o--|| StockLocation : "ships from"
+    Shipment }o--|| ShippingMethod : "via"
+
+    Payment }o--|| PaymentMethod : "via"
+
+    StockLocation ||--o{ StockItem : "has many"
+
+    TaxRate }o--|| TaxCategory : "belongs to"
+    TaxRate }o--|| Zone : "applies to"
+    TaxRate ||--o{ Adjustment : "creates"
+
+    Promotion ||--o{ Adjustment : "creates"
+```
+
+## Multi-Store Architecture
+
+Spree supports multiple [Stores](/developer/core-concepts/stores) from a single installation. Each Store can have:
+
+- Its own domain and branding
+- Different currencies and locales
+- Separate product catalogs
+- Independent payment and shipping methods
+- Isolated orders and customers
+
+This makes Spree suitable for multi-brand retailers, international expansion, or B2B/B2C hybrid setups.
+
+## Extension Points
+
+Spree is designed to be customized without modifying core code. The main extension mechanisms are:
+
+| Mechanism | Use Case | Documentation |
+|-----------|----------|---------------|
+| **Events & Subscribers** | React to order completion, payment, shipment events | [Events Guide](/developer/core-concepts/events) |
+| **Webhooks** | Notify external systems of changes | [Webhooks Guide](/developer/core-concepts/webhooks) |
+| **Dependencies** | Swap out services (tax calculation, shipping estimation) | [Dependencies Guide](/developer/customization/dependencies) |
+| **Decorators** | Modify existing model/controller behavior (use sparingly) | [Decorators Guide](/developer/customization/decorators) |
 
 <Info>
-All Spree code is prefixed with `Spree` namespace. Thanks to this convention, it's easy to identify Spree code in a Rails application and we will not have any conflicts with your application code or other libraries.
+For most customizations, prefer **Events** and **Dependencies** over Decorators. They're easier to maintain and won't break during upgrades.
 </Info>
+
+## Code Conventions
+
+Spree is built on [Ruby on Rails](https://rubyonrails.org) and follows Model-View-Controller (MVC) architecture. All Spree code is namespaced under `Spree::` to avoid conflicts with your application code.
+
+**Example: Product**
+
+| Component | Location | Class Name |
+|-----------|----------|------------|
+| Model | `core/app/models/spree/product.rb` | `Spree::Product` |
+| Admin Controller | `admin/app/controllers/spree/admin/products_controller.rb` | `Spree::Admin::ProductsController` |
+| API Serializer | `api/app/serializers/spree/v2/storefront/product_serializer.rb` | `Spree::V2::Storefront::ProductSerializer` |
+
+## Packages
+
+Spree is distributed as a set of Ruby gems (packages). Most users run Spree in **headless mode** with a custom frontend built using the [Storefront API](/api-reference/storefront) or [Platform API](/api-reference/platform).
+
+**Core packages** (required):
+
+| Package | Purpose |
+|---------|---------|
+| `spree_core` | Models, services, and business logic |
+| `spree_api` | [Storefront API](/api-reference/storefront), [Platform API](/api-reference/platform), and [Webhooks](/developer/core-concepts/webhooks) |
+
+**Optional packages:**
+
+| Package | Purpose |
+|---------|---------|
+| `spree_admin` | Admin dashboard for managing your store |
+| `spree_cli` | CLI tool to interact with your Spree installation |
+| `spree_storefront` | Pre-built Rails storefront (not needed for headless setups) |
+| `spree_emails` | Transactional email templates (order confirmation, shipping, etc.) |
+| `spree_page_builder` | Visual page builder for the Rails storefront |
+| `spree_sample` | Sample data (products, categories, etc.) for development and testing |
+| `spree_dev_tools` | Development and testing utilities for Spree applications and extensions |
+
+<Info>
+For headless commerce, you only need `spree_core` and `spree_api`. Build your customer-facing frontend with any technology (Next.js, Nuxt, mobile apps) using the Storefront API.
+</Info>
+
+## Related Documentation
+
+- [Products](/developer/core-concepts/products) - Product catalog and variants
+- [Orders](/developer/core-concepts/orders) - Order lifecycle and state machine
+- [Payments](/developer/core-concepts/payments) - Payment processing
+- [Shipments](/developer/core-concepts/shipments) - Shipping and fulfillment
+- [Customization Quickstart](/developer/customization/quickstart) - How to extend Spree

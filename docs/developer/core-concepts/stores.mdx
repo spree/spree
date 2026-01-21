@@ -14,6 +14,70 @@ The `Spree::Store` model is the center of the Spree ecosystem. Each Spree instal
 ![](/images/mulit_store_978x2.png)
 </Frame>
 
+### Store Model Diagram
+
+```mermaid
+erDiagram
+    Store {
+        string name
+        string code
+        string url
+        string default_currency
+        string supported_currencies
+        string default_locale
+        string supported_locales
+        boolean default
+        string mail_from_address
+        string customer_support_email
+    }
+
+    Order {
+        string number
+        string currency
+        string state
+        decimal total
+    }
+
+    Product {
+        string name
+        string status
+        datetime available_on
+    }
+
+    PaymentMethod {
+        string name
+        string type
+        boolean active
+        string display_on
+    }
+
+    ShippingMethod {
+        string name
+        string display_on
+    }
+
+    Taxonomy {
+        string name
+        integer position
+    }
+
+    Store ||--o{ Order : "has many"
+    Store }o--o{ Product : "has many"
+    Store }o--o{ PaymentMethod : "has many"
+    Store }o--o{ ShippingMethod : "has many"
+    Store ||--o{ StockLocation : "has many"
+    Store ||--o{ Taxonomy : "has many"
+    Store ||--o{ Menu : "has many"
+    Store ||--o{ CmsPage : "has many"
+    Store ||--o{ WebhookEndpoint : "has many"
+```
+
+**Key relationships:**
+- **Store** is the central model - all commerce data is scoped to a store
+- Each store has its own [Orders](/developer/core-concepts/orders), [Products](/developer/core-concepts/products), [Payment Methods](/developer/core-concepts/payments), and [Shipping Methods](/developer/core-concepts/shipments)
+- Stores can have different currencies, locales, and configurations
+- Content (Menus, CMS Pages) and [Webhooks](/developer/core-concepts/webhooks) are also store-specific
+
 ### Store attributes
 
 | Attribute                | Description                                                                 | Example Value |

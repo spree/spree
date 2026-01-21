@@ -108,7 +108,9 @@ You will need to register the new page in the `config/initializers/spree.rb` fil
 <Tabs>
   <Tab title="Spree 5.2+">
     ```ruby config/initializers/spree.rb
-    Spree.page_builder.pages << Spree::Pages::PickupLocations
+    Rails.application.config.after_initialize do
+      Spree.page_builder.pages << Spree::Pages::PickupLocations
+    end
     ```
   </Tab>
   <Tab title="Spree 5.1 and below">

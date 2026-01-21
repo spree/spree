@@ -3,8 +3,37 @@ title: Decorators
 description: Decorators allow you to add or modify behavior of Spree classes in your application.
 ---
 
+<Warning>
+  **Decorators should be a last resort.** They tightly couple your code to Spree internals and can break during upgrades. Before using decorators, consider these modern alternatives that are safer and easier to maintain:
+
+  - **[Events & Subscribers](/developer/core-concepts/events)** - For reacting to model changes (after save, create, update, delete)
+  - **[Webhooks](/developer/core-concepts/webhooks)** - For notifying external services when events occur
+  - **[Dependencies](/developer/customization/dependencies)** - For swapping out services, serializers, and abilities
+  - **[Admin Navigation](/developer/admin/navigation)** - For adding menu items without controller decorators
+  - **[Admin Partials](/developer/admin/extending-ui)** - For extending admin UI without view decorators
+  - **[Admin Tables](/developer/admin/tables)** - For customizing admin list views
+  - **[Ransack Configuration](/developer/core-concepts/search-filtering#extending-ransackable-configuration)** - For adding searchable/sortable fields without model decorators
+</Warning>
+
+## When to Use Decorators vs Modern Alternatives
+
+Before reaching for a decorator, check if your use case is better served by a modern alternative:
+
+| Use Case | Instead of Decorator | Use This |
+|----------|---------------------|----------|
+| After-save hooks (sync to external service) | Model decorator with `after_save` | [Events subscriber](/developer/core-concepts/events) |
+| Notify external service on changes | Model decorator with callbacks | [Webhooks](/developer/core-concepts/webhooks) |
+| Custom add-to-cart logic | Service decorator | [Dependencies injection](/developer/customization/dependencies) |
+| Custom API responses | Serializer decorator | [Dependencies injection](/developer/customization/dependencies) |
+| Add admin menu item | Controller decorator | [Admin Navigation API](/developer/admin/navigation) |
+| Add section to admin form | View decorator/override | [Admin Partials injection](/developer/admin/extending-ui) |
+| Add searchable/filterable field | Model decorator with `ransackable_attributes` | [Ransack configuration](/developer/core-concepts/search-filtering#extending-ransackable-configuration) |
+| Add association to core model | - | Decorator (still appropriate) |
+| Add validation to core model | - | Decorator (still appropriate) |
+| Add new method to core model | - | Decorator (still appropriate) |
+
 <Info>
-  Decorators should be used as a last resort. They make upgrades difficult. Please use [Spree Dependencies](/developer/customization/dependencies) if possible.
+  Decorators are still appropriate for **structural changes** like adding associations, validations, scopes, and new methods to models. Use modern alternatives for **behavioral changes** like callbacks, hooks, and side effects.
 </Info>
 
 ## Overview
@@ -196,36 +225,6 @@ module Spree
 end
 ```
 
-### Adding Callbacks
-
-```ruby app/models/spree/product_decorator.rb
-module Spree
-  module ProductDecorator
-    def self.prepended(base)
-      base.before_validation :normalize_name
-      base.after_save :sync_to_external_service
-      base.after_destroy :cleanup_external_data
-    end
-
-    private
-
-    def normalize_name
-      self.name = name.strip.titleize if name.present?
-    end
-
-    def sync_to_external_service
-      ExternalSyncJob.perform_later(self) if saved_change_to_name?
-    end
-
-    def cleanup_external_data
-      ExternalCleanupJob.perform_later(id)
-    end
-  end
-
-  Product.prepend(ProductDecorator)
-end
-```
-
 ### Adding Class Methods
 
 Use `extend` within the `prepended` callback to add class methods:
@@ -256,7 +255,39 @@ Spree::Product.search_by_name('shirt')
 
 ## Decorating Controllers
 
-### Adding a New Action
+<Warning>
+  **Consider creating a new controller instead of decorating.** Creating your own controller that inherits from Spree's base controllers is more maintainable and less likely to break during upgrades. Use controller decorators only when you must modify existing Spree actions.
+</Warning>
+
+### Recommended: Create a New Controller
+
+Instead of decorating `Spree::ProductsController` to add a new action, create your own controller:
+
+```ruby app/controllers/spree/product_quick_views_controller.rb
+module Spree
+  class ProductQuickViewsController < StoreController
+    def show
+      @product = current_store.products.friendly.find(params[:product_id])
+      render partial: 'spree/products/quick_view', locals: { product: @product }
+    end
+  end
+end
+```
+
+```ruby config/routes.rb
+Spree::Core::Engine.add_routes do
+  get 'products/:product_id/quick_view', to: 'product_quick_views#show', as: :product_quick_view
+end
+```
+
+This approach:
+- Won't break when Spree updates `ProductsController`
+- Is easier to test in isolation
+- Makes your customizations clearly visible in your codebase
+
+### Adding a New Action via Decorator
+
+If you must add an action to an existing controller:
 
 ```ruby app/controllers/spree/products_controller_decorator.rb
 module Spree
@@ -293,6 +324,10 @@ end
 
 ### Modifying Existing Actions
 
+<Warning>
+  **High risk of breaking during upgrades.** When you override an existing Spree action, your code depends on Spree's internal implementation details. If Spree changes the action's behavior, instance variables, or method signatures in a future version, your decorator may silently break or cause unexpected bugs. Use [Events](/developer/core-concepts/events) for post-action side effects instead.
+</Warning>
+
 ```ruby app/controllers/spree/admin/products_controller_decorator.rb
 module Spree
   module Admin
@@ -323,6 +358,10 @@ module Spree
   end
 end
 ```
+
+<Info>
+  **Better alternative:** For post-action side effects like notifications, use [Events subscribers](/developer/core-concepts/events) instead. Subscribe to `product.created` to be notified when products are created, without coupling to controller internals.
+</Info>
 
 ### Adding Before Actions
 
@@ -434,8 +473,79 @@ def self.prepended(base)
 end
 ```
 
+## Migrating from Decorators to Modern Patterns
+
+If you have existing decorators that use callbacks for side effects, consider migrating them to Events subscribers for better maintainability.
+
+### Example: Migrating an After-Save Callback
+
+**Before (Decorator with callback):**
+
+```ruby app/models/spree/product_decorator.rb
+module Spree
+  module ProductDecorator
+    def self.prepended(base)
+      base.after_save :sync_to_external_service
+    end
+
+    private
+
+    def sync_to_external_service
+      ExternalSyncJob.perform_later(self) if saved_change_to_name?
+    end
+  end
+
+  Product.prepend(ProductDecorator)
+end
+```
+
+**After (Events subscriber):**
+
+```ruby app/subscribers/my_app/product_sync_subscriber.rb
+module MyApp
+  class ProductSyncSubscriber < Spree::Subscriber
+    subscribes_to 'product.updated'
+
+    def handle(event)
+      product = Spree::Product.find_by(id: event.payload['id'])
+      return unless product
+
+      # The payload includes changes, check if name changed
+      if event.payload['previous_changes']&.key?('name')
+        ExternalSyncJob.perform_later(product)
+      end
+    end
+  end
+end
+```
+
+### Benefits of Migration
+
+<CardGroup cols={2}>
+  <Card title="Loose coupling" icon="link-slash">
+    Your code doesn't depend on Spree internals. Events provide a stable interface.
+  </Card>
+
+  <Card title="Easier upgrades" icon="arrow-up">
+    Events-based code is less likely to break when Spree is updated.
+  </Card>
+
+  <Card title="Better testability" icon="flask-vial">
+    Subscribers can be tested in isolation without loading the full model.
+  </Card>
+
+  <Card title="Async by default" icon="bolt">
+    Subscribers run via ActiveJob, keeping your requests fast.
+  </Card>
+</CardGroup>
+
 ## Related Documentation
 
+- [Events](/developer/core-concepts/events) - Learn about Spree's event system
+- [Webhooks](/developer/core-concepts/webhooks) - HTTP callbacks for external integrations
+- [Dependencies](/developer/customization/dependencies) - Swap core services with your own
+- [Admin Navigation](/developer/admin/navigation) - Extend admin menu without decorators
+- [Admin Partials](/developer/admin/extending-ui) - Extend admin UI without view decorators
 - [Extending Core Models Tutorial](/developer/tutorial/extending-models) - Step-by-step guide to connecting custom models with Spree core
 - [Customization Overview](/developer/customization/quickstart) - General customization patterns
 - [Logic Customization](/developer/customization/logic) - Customizing business logic

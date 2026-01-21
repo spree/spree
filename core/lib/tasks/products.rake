@@ -18,7 +18,7 @@ namespace :spree do
     end
 
     desc 'Enqueue background jobs to populate product metrics for all store products'
-    task populate: :environment do
+    task populate_metrics: :environment do
       total_count = 0
 
       Spree::StoreProduct.in_batches(of: 100) do |batch|

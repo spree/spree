@@ -2,6 +2,73 @@
 title: Addresses
 ---
 
+### Address Model Diagram
+
+```mermaid
+erDiagram
+    Address {
+        string firstname
+        string lastname
+        string address1
+        string address2
+        string city
+        string zipcode
+        string phone
+        string state_name
+        string company
+        string label
+    }
+
+    Country {
+        string name
+        string iso
+        string iso3
+        string iso_name
+        integer numcode
+    }
+
+    State {
+        string name
+        string abbr
+    }
+
+    Zone {
+        string name
+        string description
+        boolean default_tax
+        string kind
+    }
+
+    ZoneMember {
+        string zoneable_type
+    }
+
+    User {
+        string email
+        integer ship_address_id
+        integer bill_address_id
+    }
+
+    Address }o--|| Country : "belongs to"
+    Address }o--o| State : "belongs to"
+    Address }o--o| User : "belongs to"
+    User ||--o{ Address : "has many"
+    User }o--o| Address : "default ship"
+    User }o--o| Address : "default bill"
+    Order }o--|| Address : "ship_address"
+    Order }o--|| Address : "bill_address"
+    Country ||--o{ State : "has many"
+    Zone ||--o{ ZoneMember : "has many"
+    ZoneMember }o--o| Country : "member"
+    ZoneMember }o--o| State : "member"
+```
+
+**Key relationships:**
+- **Address** stores shipping/billing information for [Orders](/developer/core-concepts/orders) and Users
+- **Country** and **State** provide geographic data for addresses
+- **Zone** groups countries or states for [tax](/developer/core-concepts/taxes) and [shipping](/developer/core-concepts/shipments) rules
+- **Zone Members** link zones to their geographic components
+
 The `Spree::Address` model is used to track address information, mainly for orders. Address information can also be tied to the `Spree.user_class` which by default is `Spree::User` ([More on Users](users)).
 
 Addresses have the following attributes:
@@ -46,7 +113,7 @@ When an order's address is linked to a country or a state, that can ultimately a
 
 A zone is comprised of many different "zone members", which can either be a set of countries or a set of states.
 
-Every order has a "tax zone", which indicates if a user should or shouldn't be taxed when placing an order. For more information, please see the [Taxation](taxation) guide.
+Every order has a "tax zone", which indicates if a user should or shouldn't be taxed when placing an order. For more information, please see the [Taxes](taxes) guide.
 
 In addition to tax zones, orders also have shipping methods. These are provided to the user based on their address information, and once selected lock in how an order is going to be shipped to that user. For more information, please see the [Shipments](shipments) guide.
 
@@ -68,4 +135,11 @@ Country data is provided by [Carmen gem](https://github.com/carmen-ruby/carmen) 
 ## States
 
 States, or regions, provinces, or districts are used to scope address data slightly more than country. States are useful for tax purposes, as different states in a country may impose different tax rates on different products. In addition to this, different states may cause different tax rates and shipping methods to be used for an order, similar to how countries affect it also.
+
+## Related Documentation
+
+- [Users](/developer/core-concepts/users) - User accounts and address books
+- [Taxes](/developer/core-concepts/taxes) - How addresses affect taxation
+- [Shipments](/developer/core-concepts/shipments) - How addresses affect shipping
+- [Orders](/developer/core-concepts/orders) - Order billing and shipping addresses
 

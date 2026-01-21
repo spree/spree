@@ -96,9 +96,38 @@ This step is disabled by default, but can be enabled by two ways:
 
 ## Adding Logic Before or After a Particular Step
 
-The [state_machines](https://github.com/state-machines/state_machines) gem allows you to implement callbacks before or after transitioning to a particular step. These callbacks work similarly to [Active Record Callbacks](http://guides.rubyonrails.org/active_record_callbacks.html) in that you can specify a method or block of code to be executed prior to or after a transition. If the method executed in a before_transition returns false, then the transition will not execute.
+There are two approaches for adding logic around checkout state transitions:
 
-So, for example, if you wanted to verify that the user provides a valid zip code before transitioning to the delivery step, you would first implement a `valid_zip_code?` method, and then tell the state machine to run this method before that transition, placing this code in a file called `app/models/spree/order_decorator.rb`:
+### Approach 1: Events Subscribers (Recommended for side effects)
+
+For actions that should happen **after** a checkout step completes (syncing with external services, sending notifications, logging, etc.), use [Events subscribers](/developer/core-concepts/events). This is the recommended approach because it keeps your code decoupled from Spree internals.
+
+```ruby app/subscribers/my_app/order_completed_subscriber.rb
+module MyApp
+  class OrderCompletedSubscriber < Spree::Subscriber
+    subscribes_to 'order.completed'
+
+    def handle(event)
+      order = Spree::Order.find_by(id: event.payload['id'])
+      return unless order
+
+      # Sync to fulfillment system, notify warehouse, etc.
+      FulfillmentService.notify(order)
+      AnalyticsService.track_purchase(order)
+    end
+  end
+end
+```
+
+<Info>
+  Events are fired automatically when orders change state. See [Events documentation](/developer/core-concepts/events#order-events) for all available order events.
+</Info>
+
+### Approach 2: State Machine Callbacks (For validation/blocking logic)
+
+The [state_machines](https://github.com/state-machines/state_machines) gem allows you to implement callbacks that can **block** transitions. Use this approach only when you need to prevent a transition based on validation logic.
+
+For example, if you wanted to verify that the user provides a valid zip code before transitioning to the delivery step:
 
 ```ruby app/models/spree/order_decorator.rb
 module Spree
@@ -106,9 +135,10 @@ module Spree
     def self.prepended(base)
       base.state_machine.before_transition to: :delivery, do: :valid_zip_code?
     end
-    
+
     def valid_zip_code?
-      # logic to check if the zip code is valid
+      # Return false to prevent the transition
+      ship_address&.zipcode&.match?(/^\d{5}(-\d{4})?$/)
     end
   end
 
@@ -117,6 +147,10 @@ end
 ```
 
 This callback would prevent transitioning to the `delivery` step if `valid_zip_code?` returns false.
+
+<Warning>
+  Avoid using state machine callbacks for side effects like API calls or notifications. These can slow down checkout and may fail silently. Use [Events subscribers](/developer/core-concepts/events) instead.
+</Warning>
 
 ## Modifying the checkout flow
 

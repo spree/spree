@@ -36,7 +36,9 @@ Let's say you want to add a new footer to the admin dashboard. You'll need to ge
     <Tabs>
       <Tab title="Spree 5.2+">
         ```ruby config/initializers/spree.rb
-        Spree.admin.partials.body_end << 'spree/admin/shared/additional_footer'
+        Rails.application.config.after_initialize do
+          Spree.admin.partials.body_end << 'spree/admin/shared/additional_footer'
+        end
         ```
       </Tab>
       <Tab title="Spree 5.1 and below">
@@ -1776,3 +1778,10 @@ Here's a list of all places you can inject your custom code:
     ```
   </Accordion>
 </AccordionGroup>
+
+## Related Documentation
+
+- [Admin Navigation](/developer/admin/navigation) - Add custom menu items to the admin
+- [Admin Tables](/developer/admin/tables) - Customize admin list views
+- [Form Builder](/developer/admin/form-builder) - Build admin forms with Spree's form helpers
+- [Customization Quickstart](/developer/customization/quickstart) - Overview of all customization options

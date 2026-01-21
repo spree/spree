@@ -4,11 +4,93 @@ title: Products
 
 ## Overview
 
-`Product` records track unique products within your store. These differ from [Variants](#variants), which track the unique variations of a product. For instance, a product that's a T-shirt would have variants denoting its different colors and sizes. Together, Products and Variants describe what is for sale. 
+`Product` records track unique products within your store. These differ from [Variants](#variants), which track the unique variations of a product. For instance, a product that's a T-shirt would have variants denoting its different colors and sizes. Together, Products and Variants describe what is for sale.
 
 <Info>
 Note that as of version 4.6, certain product fields are translatable (read more about this in [Internationalization](/developer/core-concepts/i18n#resource-translations)).
 </Info>
+
+### Product Model Diagram
+
+```mermaid
+erDiagram
+    Product {
+        string name
+        string slug
+        string status
+        text description
+        datetime available_on
+        datetime discontinue_on
+        string meta_title
+        string meta_description
+    }
+
+    Variant {
+        string sku
+        string barcode
+        decimal weight
+        decimal height
+        decimal width
+        decimal depth
+        boolean is_master
+        boolean track_inventory
+        decimal cost_price
+    }
+
+    Price {
+        decimal amount
+        decimal compare_at_amount
+        string currency
+    }
+
+    OptionType {
+        string name
+        string presentation
+        integer position
+    }
+
+    OptionValue {
+        string name
+        string presentation
+        integer position
+    }
+
+    Taxon {
+        string name
+        string permalink
+        text description
+        integer position
+    }
+
+    Taxonomy {
+        string name
+        integer position
+    }
+
+    Product ||--o{ Variant : "has many"
+    Product }o--o{ OptionType : "has many"
+    Product ||--o{ Classification : "has many"
+    Product ||--o{ ProductProperty : "has many"
+    Product }o--|| ShippingCategory : "belongs to"
+    Product }o--|| TaxCategory : "belongs to"
+    Variant ||--o{ Price : "has many"
+    Variant ||--o{ StockItem : "has many"
+    Variant ||--o{ Image : "has many"
+    Variant }o--o{ OptionValue : "has many"
+    OptionType ||--o{ OptionValue : "has many"
+    Taxon ||--o{ Classification : "has many"
+    Taxonomy ||--o{ Taxon : "has many"
+    Property ||--o{ ProductProperty : "has many"
+```
+
+**Key relationships:**
+- **Product** has one master Variant and many regular Variants
+- **Variants** represent purchasable items with SKU, price, and [inventory](/developer/core-concepts/inventory)
+- **Option Types** (e.g., Size, Color) define variant options
+- **Option Values** (e.g., Small, Red) are assigned to variants
+- **Taxons** (via Classifications) organize products into categories
+- **Properties** store additional product attributes (e.g., Material, Brand)
+- **[Shipping Category](/developer/core-concepts/shipments)** and **[Tax Category](/developer/core-concepts/taxes)** determine shipping and tax rules
 
 Products have the following attributes:
 

@@ -1,0 +1,81 @@
+---
+title: Upgrading to Spree 5.3
+description: This guide covers upgrading a Spree 5.2 application to Spree 5.3.
+---
+
+<Info>
+  Before proceeding to upgrade, please ensure you're at [Spree 5.2](/developer/upgrades/5.1-to-5.2)
+</Info>
+
+## Upgrade steps
+
+### Update gems
+
+  ```bash
+  bundle update
+  ```
+
+### Fetch and run missing migrations
+
+```bash
+bin/rake spree:install:migrations && bin/rails db:migrate
+```
+
+This will setup new database schema for the new features in Spree 5.3 like Price Lists and Customer Groups.
+
+### Run counter cache rake tasks
+
+Spree 5.3 introduces counter caches for products, taxons and variants. You need to run the following rake tasks to populate the counter caches:
+
+  ```bash
+  bin/rake spree:products:reset_counter_caches
+  bin/rake spree:taxons:reset_counter_caches
+  bin/rake spree:variants:reset_counter_caches
+  ```
+
+This will greatly improve the performance of your application by avoiding N+1 queries.
+
+<Warning>
+  You will need to run this rake task locally and on your production environment to ensure that the counter caches are populated correctly.
+</Warning>
+
+### Generate product metrics
+
+Spree 5.3 introduces product metrics for products. You need to run the following rake task to populate the product metrics:
+
+  ```bash
+  bin/rake spree:products:populate_metrics
+  ```
+
+This will populate the product metrics for all products in your database. Product metrics are used to sort products by best selling scope.
+
+<Warning>
+  You will need to run this rake task locally and on your production environment to ensure that the product metrics are populated correctly.
+</Warning>
+
+This rake task will enqueue background jobs to populate the product metrics for all products in your database so you need to make sure that your background jobs are configured correctly.
+
+### Re-run Admin Panel Install Generator
+
+Admin Panel was completely rewritten to use Tailwind v4 so you need to re-run the install generator to setup Tailwind and remove any Dart Sass related files.
+
+  ```bash
+  bin/rails g spree:admin:install
+  ```
+
+This will also modify your `Procfile.dev` file to include the new Tailwind CSS watch task instead of the old Dart Sass watch task.
+
+### Update Storefront to Tailwind v4
+
+Spree 5.3 requires Tailwind v4 as it's also used now for the Admin panel so you need to update your Storefront to Tailwind v4 as well.
+
+Running `bundle update` previously installed Tailwind v4. You only need to run
+
+  ```bash
+  bin/rails g spree:storefront:install
+  ```
+
+This will:
+
+1. Overwrite `config/tailwind.config.js` file with the new Tailwind v4 configuration.
+2. Add `app/assets/tailwind/application.css` file with the new Tailwind v4 styles. If you modified `app/assets/stylesheets/application.tailwind.css` file, you will need to merge your changes with the new one.

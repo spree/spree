@@ -25,112 +25,108 @@ Before upgrading, please ensure you have the following prerequisites:
 
 ## Upgrade steps
 
-<AccordionGroup>
-  <Accordion title="1. Remove old frontend/backend Spree gems">
+### 1. Remove old frontend/backend Spree gems
 
-    ```bash
-    bundle remove spree_auth_devise spree_backend spree_frontend
-    ```
-    <Warning>
-      Remove any code referencing `Spree::Backend`, `Spree::Fronted` or `Spree::Auth` from your application, especially from `config/initializers/spree.rb`.
-    </Warning>
-  </Accordion>
+```bash
+bundle remove spree_auth_devise spree_backend spree_frontend
+```
 
-  <Accordion title="2. Update main Spree gem">
+<Warning>
+  Remove any code referencing `Spree::Backend`, `Spree::Fronted` or `Spree::Auth` from your application, especially from `config/initializers/spree.rb`.
+</Warning>
 
-    ```bash
-    bundle update spree
-    ```
-  </Accordion>
+### 2. Update main Spree gem
 
-  <Accordion title="2. Install and run missing migrations">
+```bash
+bundle update spree
+```
 
-    ```bash
-    bin/rake spree:install:migrations && bin/rails db:migrate
-    ```
-  </Accordion>
+### 3. Install and run missing migrations
 
-  <Accordion title="3. Add new Spree gems">
+```bash
+bin/rake spree:install:migrations && bin/rails db:migrate
+```
 
-    ```bash
-    bundle add spree_storefront spree_admin spree_stripe
-    ```
+### 4. Add new Spree gems
 
-    And run the following generators:
+```bash
+bundle add spree_storefront spree_admin spree_stripe
+```
 
-    ```bash
-    bin/rails g spree:storefront:install
-    bin/rails g spree:admin:install
-    bin/rails g spree_stripe:install
-    ```
-  </Accordion>
+And run the following generators:
 
-  <Accordion title="4. Migrate from Spree Auth Devise gem">
-    If you previously used the `spree_auth_devise` gem, you will need to run some commands to create User and connect it to Spree. We don't use the `spree_auth_devise` gem anymore to allow you more control over the authentication and access to all Devise options directly in your application.
+```bash
+bin/rails g spree:storefront:install
+bin/rails g spree:admin:install
+bin/rails g spree_stripe:install
+```
 
-    First, install Devise and run the Devise generator:
+### 5. Migrate from Spree Auth Devise gem
 
-    ```bash
-    bundle add devise
-    bin/rails g devise:install
-    ```
+If you previously used the `spree_auth_devise` gem, you will need to run some commands to create User and connect it to Spree. We don't use the `spree_auth_devise` gem anymore to allow you more control over the authentication and access to all Devise options directly in your application.
 
-    Create `Spree::User` model:
+First, install Devise and run the Devise generator:
 
-    ```bash
-    mkdir -p app/models/spree && touch app/models/spree/user.rb
-    ```
+```bash
+bundle add devise
+bin/rails g devise:install
+```
 
-    Add the following code to your `Spree::User` model:
+Create `Spree::User` model:
 
-    ```ruby
-    module Spree
-      class User < ApplicationRecord
-        devise :database_authenticatable # if you want to use the database_authenticatable feature
-        devise :recoverable # if you want to use the recoverable feature
-        devise :registerable # if you want to use the registerable feature
-        devise :confirmable # if you want to use the confirmable feature
-        devise :validatable # if you want to use the validatable feature
+```bash
+mkdir -p app/models/spree && touch app/models/spree/user.rb
+```
 
-        devise :rememberable, :trackable, :encryptable, encryptor: 'authlogic_sha512'
+Add the following code to your `Spree::User` model:
 
-        acts_as_paranoid
-      end
-    end
-    ```
+```ruby
+module Spree
+  class User < ApplicationRecord
+    devise :database_authenticatable # if you want to use the database_authenticatable feature
+    devise :recoverable # if you want to use the recoverable feature
+    devise :registerable # if you want to use the registerable feature
+    devise :confirmable # if you want to use the confirmable feature
+    devise :validatable # if you want to use the validatable feature
 
-    In you `config/initializers/spree.rb` file, add the following code:
+    devise :rememberable, :trackable, :encryptable, encryptor: 'authlogic_sha512'
 
-    ```ruby
-    Spree.user_class = "Spree::User"
-    ```
+    acts_as_paranoid
+  end
+end
+```
 
-    Now run the new authentication generator to connect your `Spree::User` model to Spree:
+In you `config/initializers/spree.rb` file, add the following code:
 
-    ```bash
-    bin/rails g spree:authentication:devise
-    ```
+```ruby
+Spree.user_class = "Spree::User"
+```
 
-    And if you're using the default spree storefront, please run the following generator:
+Now run the new authentication generator to connect your `Spree::User` model to Spree:
 
-    ```bash
-    bin/rails g spree:storefront:devise
-    ```
+```bash
+bin/rails g spree:authentication:devise
+```
 
-    This will add devise routes and create controllers for the storefront.
+And if you're using the default spree storefront, please run the following generator:
 
-    And that's it! You can now login to the admin panel and storefront using your existing users.
-  </Accordion>
-  <Accordion title="5. Migrate data to the new format">
-    In Spree 5 we changed a bit of the data in some models so you will need to run these commands to fix it:
+```bash
+bin/rails g spree:storefront:devise
+```
 
-    #### Taxons
+This will add devise routes and create controllers for the storefront.
 
-    ```ruby
-    Spree::Taxon.all.each { |t| t.set_pretty_name; t.save }
-    ```
-  </Accordion>
-</AccordionGroup>
+And that's it! You can now login to the admin panel and storefront using your existing users.
+
+### 6. Migrate data to the new format
+
+In Spree 5 we changed a bit of the data in some models so you will need to run these commands to fix it:
+
+#### Taxons
+
+```ruby
+Spree::Taxon.all.each { |t| t.set_pretty_name; t.save }
+```
 
 ## Read the release notes
 

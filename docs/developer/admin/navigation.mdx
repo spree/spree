@@ -559,7 +559,9 @@ Add this to your `config/initializers/spree.rb`:
 <Tabs>
   <Tab title="Spree 5.2+">
     ```ruby config/initializers/spree.rb
-    Spree.admin.navigation.store << 'spree/admin/shared/inventory_nav'
+    Rails.application.config.after_initialize do
+      Spree.admin.navigation.store << 'spree/admin/shared/inventory_nav'
+    end
     ```
   </Tab>
   <Tab title="Spree 5.1 and below">
@@ -695,7 +697,9 @@ To add an item to an existing submenu (e.g., Products), use the appropriate inje
 <Tabs>
   <Tab title="Spree 5.2+">
     ```ruby config/initializers/spree.rb
-    Spree.admin.navigation.store_products << 'spree/admin/shared/custom_products_nav'
+    Rails.application.config.after_initialize do
+      Spree.admin.navigation.store_products << 'spree/admin/shared/custom_products_nav'
+    end
     ```
   </Tab>
   <Tab title="Spree 5.1 and below">
@@ -721,7 +725,9 @@ Register with:
 <Tabs>
   <Tab title="Spree 5.2+">
     ```ruby config/initializers/spree.rb
-    Spree.admin.navigation.settings << 'spree/admin/shared/custom_settings_nav'
+    Rails.application.config.after_initialize do
+      Spree.admin.navigation.settings << 'spree/admin/shared/custom_settings_nav'
+    end
     ```
   </Tab>
   <Tab title="Spree 5.1 and below">
@@ -819,5 +825,7 @@ Register with:
 ### Related Documentation
 
 - [Extending Admin UI](/developer/admin/extending-ui) - Learn about other UI injection points
+- [Admin Tables](/developer/admin/tables) - Customize admin list views
 - [Helper Methods](/developer/admin/helper-methods) - Explore other admin helper methods
 - [Permissions](/developer/customization/permissions) - Understand the authorization system
+- [Customization Quickstart](/developer/customization/quickstart) - Overview of all customization options

@@ -4,6 +4,64 @@ title: Adjustments
 
 ## Overview
 
+### Adjustment Model Diagram
+
+```mermaid
+erDiagram
+    Adjustment {
+        decimal amount
+        string label
+        boolean eligible
+        boolean mandatory
+        string state
+        boolean included
+        string source_type
+        string adjustable_type
+    }
+
+    Order {
+        string number
+        decimal adjustment_total
+        decimal total
+    }
+
+    LineItem {
+        integer quantity
+        decimal price
+        decimal adjustment_total
+    }
+
+    Shipment {
+        string number
+        decimal cost
+        decimal adjustment_total
+    }
+
+    TaxRate {
+        string name
+        decimal amount
+        boolean included_in_price
+    }
+
+    PromotionAction {
+        string type
+    }
+
+    Order ||--o{ Adjustment : "has many"
+    Order ||--o{ LineItem : "has many"
+    Order ||--o{ Shipment : "has many"
+    LineItem ||--o{ Adjustment : "has many"
+    Shipment ||--o{ Adjustment : "has many"
+    TaxRate ||--o{ Adjustment : "creates"
+    PromotionAction ||--o{ Adjustment : "creates"
+```
+
+**Key relationships:**
+- **Adjustment** modifies prices on orders, line items, or shipments
+- **Source** is where the adjustment comes from ([Tax Rate](/developer/core-concepts/taxes) or [Promotion Action](/developer/core-concepts/promotions))
+- **Adjustable** is what's being adjusted (Order, LineItem, or Shipment)
+- Positive amounts are charges, negative amounts are credits
+
 An `Adjustment` object tracks an adjustment to the price of an [Order](orders), an order's [Line Item](orders#line-items), or an order's [Shipments](shipments) within a Spree Commerce storefront.
 
 Adjustments can be either positive or negative. Adjustments with a positive value are sometimes referred to as "charges" while adjustments with a negative value are sometimes referred to as "credits." These are just terms of convenience since there is only one `Spree::Adjustment` model in a storefront which handles this by allowing either positive or negative values.
@@ -135,22 +193,33 @@ Next you need to add the class to spree `Spree.adjusters` so it is included when
 <Tabs>
   <Tab title="Spree 5.2+">
     ```ruby config/initializers/spree.rb
-    Spree.adjusters = [
-      Spree::Adjustable::Adjuster::MyAdjuster,
-      Spree::Adjustable::Adjuster::Promotion,
-      Spree::Adjustable::Adjuster::Tax
-    ]
+    Rails.application.config.after_initialize do
+      Spree.adjusters = [
+        Spree::Adjustable::Adjuster::MyAdjuster,
+        Spree::Adjustable::Adjuster::Promotion,
+        Spree::Adjustable::Adjuster::Tax
+      ]
+    end
     ```
   </Tab>
   <Tab title="Spree 5.1 and below">
     ```ruby config/initializers/spree.rb
-    Rails.application.config.spree.adjusters = [
-      Spree::Adjustable::Adjuster::MyAdjuster,
-      Spree::Adjustable::Adjuster::Promotion,
-      Spree::Adjustable::Adjuster::Tax
-    ]
+    Rails.application.config.after_initialize do
+      Rails.application.config.spree.adjusters = [
+        Spree::Adjustable::Adjuster::MyAdjuster,
+        Spree::Adjustable::Adjuster::Promotion,
+        Spree::Adjustable::Adjuster::Tax
+      ]
+    end
     ```
   </Tab>
 </Tabs>
 
 That's it! Your custom adjuster is ready to go.
+
+## Related Documentation
+
+- [Promotions](/developer/core-concepts/promotions) - Promotion-based adjustments
+- [Taxes](/developer/core-concepts/taxes) - Tax adjustments
+- [Shipments](/developer/core-concepts/shipments) - Shipping adjustments
+- [Orders](/developer/core-concepts/orders) - How adjustments affect order totals

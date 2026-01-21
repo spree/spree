@@ -3,9 +3,70 @@ title: Taxes
 description: Learn how to configure taxes in Spree
 ---
 
+## Overview
 
+Spree represents taxes for an order by using Tax Categories and Tax Rates.
 
-Spree represents taxes for an order by using Tax Categories and `tax_rates`.
+### Tax Model Diagram
+
+```mermaid
+erDiagram
+    TaxCategory {
+        string name
+        boolean is_default
+        string tax_code
+        string description
+    }
+
+    TaxRate {
+        string name
+        decimal amount
+        boolean included_in_price
+        boolean show_rate_in_label
+    }
+
+    Zone {
+        string name
+        string description
+        boolean default_tax
+        string kind
+    }
+
+    ZoneMember {
+        string zoneable_type
+        integer zoneable_id
+    }
+
+    Adjustment {
+        decimal amount
+        string label
+        boolean included
+        boolean eligible
+        string state
+    }
+
+    TaxCategory ||--o{ TaxRate : "has many"
+    TaxCategory ||--o{ Product : "has many"
+    TaxCategory ||--o{ ShippingMethod : "has many"
+    TaxRate }o--|| Zone : "belongs to"
+    TaxRate }o--|| TaxCategory : "belongs to"
+    TaxRate ||--|| Calculator : "has one"
+    TaxRate ||--o{ Adjustment : "creates"
+    Zone ||--o{ ZoneMember : "has many"
+    ZoneMember }o--o| Country : "member"
+    ZoneMember }o--o| State : "member"
+```
+
+**Key relationships:**
+- **Tax Category** groups products for tax purposes (e.g., "Clothing", "Food", "Digital")
+- **Tax Rate** defines the percentage and rules for a Tax Category within a [Zone](/developer/core-concepts/addresses#zones)
+- **Zone** defines geographic regions (countries or states) where taxes apply
+- **[Calculator](/developer/core-concepts/calculators)** computes the tax amount
+- **[Adjustments](/developer/core-concepts/adjustments)** are created on orders/line items to apply taxes
+
+## Tax Categories and Rates
+
+Spree represents taxes for an order by using Tax Categories and Tax Rates.
 
 Products within Spree can be linked to Tax Categories, which are then used to influence the taxation rate for the products when they are purchased. One Tax Category can be set to being the default for the entire system, which means that if a product doesn't have a related tax category, then this default tax category would be used.
 
@@ -96,7 +157,7 @@ If the customer purchases a single clothing item for $17.99 and they live in the
 
 The sales tax calculation is $17.99 x 5% for a total tax of $0.8995, which is rounded up to two decimal places, to $0.90. This tax amount is then applied to the order as an adjustment.
 
- See the \[Adjustments Guide\]/developer/core-concepts/adjustments.html if you need more information on adjustments.
+See the [Adjustments Guide](/developer/core-concepts/adjustments) if you need more information on adjustments.
 
 If the quantity of the item is changed to 2, then the tax amount doubles: $17.99 x 2 x 0.05 is $1.799, which is again rounded up to two decimal places, applying a tax adjustment of $1.80.
 
@@ -142,4 +203,11 @@ As of January 1st, 2015, digital products sold within the EU must have the VAT o
 
 If you change the tax zone of the current order by changing the relevant address, prices will now be shown and used including the correct VAT for the current order.
 
- All of the examples in this guide are meant to be used for illustrative purposes. They are not meant to be used as definitive interpretations of tax law. You should consult your accountant or attorney for guidance on how much tax to collect and under what circumstances.
+All of the examples in this guide are meant to be used for illustrative purposes. They are not meant to be used as definitive interpretations of tax law. You should consult your accountant or attorney for guidance on how much tax to collect and under what circumstances.
+
+## Related Documentation
+
+- [Addresses](/developer/core-concepts/addresses) - Zones and address-based taxation
+- [Adjustments](/developer/core-concepts/adjustments) - Tax adjustments
+- [Calculators](/developer/core-concepts/calculators) - Tax rate calculators
+- [Orders](/developer/core-concepts/orders) - How taxes affect order totals

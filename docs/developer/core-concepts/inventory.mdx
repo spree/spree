@@ -4,11 +4,70 @@ title: Inventory
 
 ## Overview
 
-In Spree each Variant has a `StockItem`. This is the place where the inventory for that variant is stored. Variant can have multiple `StockItems` if they are available in multiple `StockLocations`.
+In Spree each [Variant](/developer/core-concepts/products#variants) has a `StockItem`. This is the place where the inventory for that variant is stored. A Variant can have multiple `StockItems` if it is available in multiple `StockLocations`.
 
 Back-ordered, sold, or shipped products are stored as individual `InventoryUnit` objects so they can have relevant information attached to them.
 
 New products created in the system can be given a starting "on hand" inventory level. You can subsequently set new inventory levels and the correct things will happen, e.g. adding new on-hand inventory to an out-of-stock product that has some backorders will first fill the backorders then update the product with the remaining inventory count.
+
+### Inventory Model Diagram
+
+```mermaid
+erDiagram
+    StockLocation {
+        string name
+        string admin_name
+        boolean active
+        boolean default
+        boolean backorderable_default
+        boolean propagate_all_variants
+    }
+
+    StockItem {
+        integer count_on_hand
+        boolean backorderable
+        integer stock_location_id
+        integer variant_id
+    }
+
+    StockMovement {
+        integer quantity
+        string originator_type
+        integer originator_id
+        integer stock_item_id
+    }
+
+    StockTransfer {
+        string number
+        string reference
+        integer source_location_id
+        integer destination_location_id
+    }
+
+    InventoryUnit {
+        string state
+        integer variant_id
+        integer order_id
+        integer shipment_id
+    }
+
+    StockLocation ||--o{ StockItem : "has many"
+    StockLocation ||--o{ StockTransfer : "source"
+    StockLocation ||--o{ StockTransfer : "destination"
+    Variant ||--o{ StockItem : "has many"
+    Variant ||--o{ InventoryUnit : "has many"
+    StockItem ||--o{ StockMovement : "has many"
+    StockTransfer ||--o{ StockMovement : "has many"
+    Order ||--o{ InventoryUnit : "has many"
+    Shipment ||--o{ InventoryUnit : "has many"
+```
+
+**Key relationships:**
+- **Stock Location** → Contains Stock Items (inventory per variant) and is the source/destination for Stock Transfers
+- **Stock Item** → Tracks quantity (`count_on_hand`) for a specific Variant at a specific Stock Location
+- **Stock Movement** → Records changes to Stock Item quantities (purchases, returns, transfers)
+- **Stock Transfer** → Moves inventory between Stock Locations, creating Stock Movements at source and destination
+- **Inventory Unit** → Represents individual units in [Orders](/developer/core-concepts/orders) and [Shipments](/developer/core-concepts/shipments)
 
 ## Inventory Management
 
@@ -136,3 +195,9 @@ variant.update(track_inventory: false)
 ```
 
 This can also be done via the Admin Panel or Platform API.
+
+## Related Documentation
+
+- [Products](/developer/core-concepts/products) - Product and variant management
+- [Shipments](/developer/core-concepts/shipments) - How inventory relates to shipments
+- [Orders](/developer/core-concepts/orders) - How inventory is allocated to orders

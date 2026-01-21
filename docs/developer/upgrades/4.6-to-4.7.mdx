@@ -16,31 +16,27 @@ If you're on an older version than 4.6 please follow previous upgrade guides and
 3. [upgrade 4.5 to 4.6](4.5-to-4.6)
 </Note>
 
-<AccordionGroup>
-  <Accordion title="1. Update gems">
+## Upgrade steps
 
-    ```bash
-    bundle update
-    ```
-  </Accordion>
+### 1. Update gems
 
-  <Accordion title="2. Install and run missing migrations">
+```bash
+bundle update
+```
 
-    ```bash
-    bin/rake spree:install:migrations && bin/rails db:migrate
-    ```
-  </Accordion>
+### 2. Install and run missing migrations
 
-  <Accordion title="3. (Optional) Re-Run Spree Frontend install">
+```bash
+bin/rake spree:install:migrations && bin/rails db:migrate
+```
 
-    If you're using [Spree Frontend gem](https://github.com/spree/spree_rails_frontend), run the following additional commands to get everything set up correctly with the updated gems:
+### 3. (Optional) Re-Run Spree Frontend install
 
-    ```bash
-    bin/rails g spree:frontend:install
-    ```
+If you're using [Spree Frontend gem](https://github.com/spree/spree_rails_frontend), run the following additional commands to get everything set up correctly with the updated gems:
 
-  </Accordion>
-</AccordionGroup>
+```bash
+bin/rails g spree:frontend:install
+```
 
 ## Read the release notes
 

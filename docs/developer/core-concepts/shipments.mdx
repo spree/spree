@@ -4,6 +4,74 @@ title: Shipments
 
 ## Overview
 
+### Shipment Model Diagram
+
+```mermaid
+erDiagram
+    Shipment {
+        string number
+        string tracking
+        string state
+        decimal cost
+        datetime shipped_at
+    }
+
+    ShippingMethod {
+        string name
+        string display_on
+        string tracking_url
+        integer position
+    }
+
+    ShippingCategory {
+        string name
+    }
+
+    ShippingRate {
+        decimal cost
+        boolean selected
+    }
+
+    Zone {
+        string name
+        string description
+        string kind
+    }
+
+    InventoryUnit {
+        string state
+    }
+
+    StockLocation {
+        string name
+        boolean active
+        boolean default
+    }
+
+    Order ||--o{ Shipment : "has many"
+    Shipment ||--o{ ShippingRate : "has many"
+    Shipment ||--o{ InventoryUnit : "has many"
+    Shipment }o--|| StockLocation : "ships from"
+    Shipment }o--|| ShippingMethod : "selected method"
+    Shipment ||--o{ Adjustment : "has many"
+    ShippingMethod ||--o{ ShippingRate : "has many"
+    ShippingMethod }o--o{ Zone : "serves"
+    ShippingMethod }o--o{ ShippingCategory : "handles"
+    ShippingMethod ||--|| Calculator : "has one"
+    ShippingMethod }o--o{ Store : "available in"
+    Product }o--|| ShippingCategory : "belongs to"
+    Variant ||--o{ InventoryUnit : "has many"
+    StockLocation ||--o{ StockItem : "has many"
+```
+
+**Key relationships:**
+- **Shipment** tracks delivery of items from a [Stock Location](/developer/core-concepts/inventory#stock-locations)
+- **Shipping Method** defines the carrier/service (UPS, FedEx, etc.)
+- **Shipping Rate** represents the calculated cost for a method
+- **[Zone](/developer/core-concepts/addresses#zones)** defines geographic regions for shipping availability
+- **Shipping Category** groups products with similar shipping requirements
+- **Inventory Units** track individual items within each shipment
+
 This guide explains how Spree represents shipping options and how it calculates expected costs, and shows how you can configure the system with your own shipping methods. After reading it you should know:
 
 * how shipments and shipping are implemented in Spree
@@ -24,7 +92,7 @@ Shipments have the following attributes:
 | `tracking`         | The identifier given for the shipping provider i.e. FedEx, UPS, etc.                      | 1Z999AA10123456784           |
 | `shipped_at`       | The time when the shipment was shipped.                                                      | 2021-07-21T14:36:00.000Z     |
 | `state`            | The current state of the shipment.                                                            | `shipped`                      |
-| `stock_location_id`| The ID of the Stock Location where the items for this shipment will be sourced from.         | 3                            |
+| `stock_location_id`| The ID of the [Stock Location](/developer/core-concepts/inventory#stock-locations) where the items for this shipment will be sourced from.         | 3                            |
 
 A shipment can go through many different states, as illustrated below.
 
@@ -64,7 +132,7 @@ and their pricing is as follow:
 To achieve this setup you need the following configuration:
 
 * Shipping Categories: All your products are the same, so you only need to define one default shipping category. Each of your products would then need to be assigned to this shipping category.
-* 1 Stock Location: You are shipping all items from the same location, so you can use the default.
+* 1 [Stock Location](/developer/core-concepts/inventory#stock-locations): You are shipping all items from the same location, so you can use the default.
 * 2 Shipping Methods Configuration-&gt;Shipping Methods as follows:
 
 | Name | Zone | Calculator |
@@ -74,7 +142,7 @@ To achieve this setup you need the following configuration:
 
 ### Advanced Setup
 
-Consider you sell products to a single zone US and you ship from 2 locations Stock Locations:
+Consider you sell products to a single zone US and you ship from 2 [Stock Locations](/developer/core-concepts/inventory#stock-locations):
 
 * New York
 * Los Angeles
@@ -113,7 +181,7 @@ To achieve this setup you need the following configuration:
 
 * 4 Shipping Categories: Default, Light, Regular and Heavy
 * 3 Shipping Methods Configuration-&gt;Shipping Methods: FedEx, DHL, USPS
-* 2 Stock Locations Configuration-&gt;Stock Locations: New York, Los Angeles
+* 2 [Stock Locations](/developer/core-concepts/inventory#stock-locations) (Configuration -> Stock Locations): New York, Los Angeles
 
 | S. Category / S. Method | DHL | FedEx | USPS |
 | ---: | ---: | ---: | ---: |
@@ -293,13 +361,13 @@ This section describes the four main components that power split shipments: [The
 
 ### The Coordinator
 
-The `Spree::Stock::Coordinator` is the starting point for determining shipments when calling `create_proposed_shipments` on an order. Its job is to go through each `StockLocation` available and determine what can be shipped from that location.
+The `Spree::Stock::Coordinator` is the starting point for determining shipments when calling `create_proposed_shipments` on an order. Its job is to go through each [Stock Location](/developer/core-concepts/inventory#stock-locations) available and determine what can be shipped from that location.
 
 The `Spree::Stock::Coordinator` will ultimately return an array of packages which can then be easily converted into shipments for an order by calling `to_shipment` on them.
 
 ### The Packer
 
-A `Spree::Stock::Packer` object is an important part of the `create_proposed_shipments` process. Its job is to determine possible packages for a given StockLocation and order. It uses rules defined in classes known as `Splitters` to determine what packages can be shipped from a `StockLocation`.
+A `Spree::Stock::Packer` object is an important part of the `create_proposed_shipments` process. Its job is to determine possible packages for a given [Stock Location](/developer/core-concepts/inventory#stock-locations) and order. It uses rules defined in classes known as `Splitters` to determine what packages can be shipped from a [Stock Location](/developer/core-concepts/inventory#stock-locations).
 
 For example, we may have two splitters for a stock location. One splitter has a rule that any order weighing more than 50lbs should be shipped in a separate package from items weighing less. Our other splitter is a catch-all for any item weighing less than 50lbs. So, given one item in an order weighing 60lbs and two items weighing less, the Packer would use the rules defined in our splitters to come up with two separate packages: one containing the single 60lb item, the other containing our other two items.
 
@@ -309,14 +377,13 @@ Spree comes with two default splitters which are run in sequence. This means tha
 
 Let's take a look at what the default splitters do:
 
-<AccordionGroup>
-  <Accordion title="Shipping Category Splitter">
-    Splits an order into packages based on items' shipping categories. This means that each package will only have items that all belong to the same shipping category.
-  </Accordion>
-  <Accordion title="Weight Splitter">
-    Splits an order into packages based on a weight threshold. This means that each package has a mass weight. If a new item is added to the order and it causes a package to go over the weight threshold, a new package will be created so that all packages weigh less than the threshold. You can set the weight threshold by changing <code>Spree::Stock::Splitter::Weight.threshold</code> (defaults to <code>150</code>) in an initializer.
-  </Accordion>
-</AccordionGroup>
+**Shipping Category Splitter**
+
+Splits an order into packages based on items' shipping categories. This means that each package will only have items that all belong to the same shipping category.
+
+**Weight Splitter**
+
+Splits an order into packages based on a weight threshold. This means that each package has a mass weight. If a new item is added to the order and it causes a package to go over the weight threshold, a new package will be created so that all packages weigh less than the threshold. You can set the weight threshold by changing `Spree::Stock::Splitter::Weight.threshold` (defaults to `150`) in an initializer.
 
 #### Custom Splitters
 
@@ -329,7 +396,9 @@ After creating your splitter, you need to add it to the array of splitters Spree
 <Tabs>
   <Tab title="Spree 5.2+">
     ```ruby config/initializers/spree.rb
-    Spree.stock_splitters << Spree::Stock::Splitter::CustomSplitter
+    Rails.application.config.after_initialize do
+      Spree.stock_splitters << Spree::Stock::Splitter::CustomSplitter
+    end
     ```
   </Tab>
   <Tab title="Spree 5.1 and below">
@@ -346,10 +415,12 @@ You can also completely override the splitters used in Spree, rearrange them, et
 <Tabs>
   <Tab title="Spree 5.2+">
     ```ruby config/initializers/spree.rb
-    Spree.stock_splitters = [
-      Spree::Stock::Splitter::CustomSplitter,
-      Spree::Stock::Splitter::ShippingCategory
-    ]
+    Rails.application.config.after_initialize do
+      Spree.stock_splitters = [
+        Spree::Stock::Splitter::CustomSplitter,
+        Spree::Stock::Splitter::ShippingCategory
+      ]
+    end
     ```
   </Tab>
   <Tab title="Spree 5.1 and below">
@@ -369,17 +440,21 @@ Or if you don't want to split packages just set the option above to an empty arr
 <Tabs>
   <Tab title="Spree 5.2+">
     ```ruby config/initializers/spree.rb
-    Spree.stock_splitters = []
+    Rails.application.config.after_initialize do
+      Spree.stock_splitters = []
+    end
     ```
   </Tab>
   <Tab title="Spree 5.1 and below">
     ```ruby config/initializers/spree.rb
-    Rails.application.config.spree.stock_splitters = []
+    Rails.application.config.after_initialize do
+      Rails.application.config.spree.stock_splitters = []
+    end
     ```
   </Tab>
 </Tabs>
 
-If you want to add different splitters for each `StockLocation`, you need to decorate the `Spree::Stock::Coordinator` class and override the `splitters` method.
+If you want to add different splitters for each [Stock Location](/developer/core-concepts/inventory#stock-locations), you need to decorate the `Spree::Stock::Coordinator` class and override the `splitters` method.
 
 ### The Prioritizer
 
@@ -394,12 +469,18 @@ The prioritizer is also a customization point. If you want to customize which pa
 The `Adjuster` visits each package in an order and ensures the correct number of items are in each package. To customize this functionality, you need to do two things:
 
 1. Subclass the [Spree::Stock::Adjuster](https://github.com/spree/spree/blob/main/core/app/models/spree/stock/adjuster.rb) class and override the the `adjust` method to get the desired functionality.
-2. Decorate the `Spree::Stock::Coordinator` and override the `prioritize_packages` method, passing in your custom adjuster class to the `Prioritizer` initializer. For example, if our adjuster was called `Spree::Stock::CustomAdjuster`, we would do the following in `app/models/spree/stock/coordinator_decorator.rb`:
+2. Override the `prioritize_packages` method in the `Spree::Stock::Coordinator`, passing in your custom adjuster class to the `Prioritizer` initializer.
+
+<Warning>
+  Decorators should be used as a last resort as they can make upgrades difficult. See [Decorators](/developer/customization/decorators) for more information and alternatives.
+</Warning>
+
+For example, if your adjuster was called `Spree::Stock::CustomAdjuster`, you would do the following in `app/models/spree/stock/coordinator_decorator.rb`:
 
 ```ruby app/models/spree/stock/coordinator_decorator.rb
 module Spree
   module Stock
-    module CoordinatorDecorator do
+    module CoordinatorDecorator
       def prioritize_packages(packages)
         prioritizer = Prioritizer.new(order, packages, Spree::Stock::CustomAdjuster)
         prioritizer.prioritized_packages
@@ -414,4 +495,12 @@ end
 ### The Estimator
 
 The `Spree::Stock::Estimator` loops through the packages created by the packer in order to calculate and attach shipping rates to them. This information is then returned to the user so they can select shipments for their order and complete the checkout process.
+
+## Related Documentation
+
+- [Orders](/developer/core-concepts/orders) - Order management and state machine
+- [Inventory](/developer/core-concepts/inventory) - Stock locations and inventory management
+- [Calculators](/developer/core-concepts/calculators) - Shipping rate calculators
+- [Addresses](/developer/core-concepts/addresses) - Shipping address and zones
+- [Events](/developer/core-concepts/events) - Subscribe to shipment events
 

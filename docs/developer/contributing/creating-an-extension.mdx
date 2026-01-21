@@ -7,6 +7,10 @@ description: Learn how to create a Spree extension.
 
 [Spree Extensions](/developer/customization/extensions) are a way to add new functionality to your Spree store. They are a great way to extend the functionality of Spree and add new features. You can share them with Spree community on Github so anyone can use them, contribute back and share your improvements.
 
+<Info>
+  This tutorial uses decorators for extending Spree models. For extensions that need to react to events (sync with external services, send notifications, etc.), consider using [Events subscribers](/developer/core-concepts/events) instead - they're easier to test and maintain. See [Customization Quickstart](/developer/customization/quickstart) for guidance on choosing the right approach.
+</Info>
+
 ## Getting Started
 
 Let's build a simple extension. Suppose we want the ability to mark certain products as being on sale. We'd like to be able to set a sale price on a product and show products that are on sale on a separate products page. This is a great example of how an extension can be used to build on the solid Spree foundation.
@@ -217,3 +221,40 @@ These specs test that the `price_in` method we overrode in our `VariantDecorator
 ## Summary
 
 In this tutorial, you learned how to both install extensions and create your own. A lot of core Spree development concepts were covered and you gained exposure to some of the Spree internals.
+
+## Alternative Approaches
+
+While this tutorial uses decorators to extend Spree's core behavior, modern Spree provides additional patterns that may be more appropriate depending on your use case:
+
+| Use Case | Recommended Approach |
+|----------|---------------------|
+| Structural changes (associations, validations) | Decorators (as shown in this tutorial) |
+| React to model changes | [Events subscribers](/developer/core-concepts/events) |
+| External service integration | [Webhooks](/developer/core-concepts/webhooks) |
+| Replace core services | [Dependencies injection](/developer/customization/dependencies) |
+| Add admin UI elements | [Admin Partials](/developer/admin/extending-ui) |
+| Add admin menu items | [Admin Navigation](/developer/admin/navigation) |
+
+For example, if your extension needs to sync data with an external service when products are updated, use an Events subscriber instead of a decorator callback:
+
+```ruby app/subscribers/my_extension/product_sync_subscriber.rb
+module MyExtension
+  class ProductSyncSubscriber < Spree::Subscriber
+    subscribes_to 'product.updated'
+
+    def handle(event)
+      product = Spree::Product.find_by(id: event.payload['id'])
+      return unless product
+
+      ExternalService.sync(product)
+    end
+  end
+end
+```
+
+## Related Documentation
+
+- [Events](/developer/core-concepts/events) - Subscribe to Spree events
+- [Webhooks](/developer/core-concepts/webhooks) - HTTP callbacks for external integrations
+- [Dependencies](/developer/customization/dependencies) - Replace core services
+- [Customization Quickstart](/developer/customization/quickstart) - Choose the right approach

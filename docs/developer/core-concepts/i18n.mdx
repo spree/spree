@@ -75,14 +75,14 @@ Spree::Product.joins(:taxons)
 ```
 
 <Info>
-  If you are using Spree version 4.5 or order and are currently unable to upgrade, you can install [Spree Globalize extension](https://github.com/spree-contrib/spree_globalize) to enable translations. This extension uses [Globalize](https://github.com/globalize/globalize) library under the hood. We do not recommend this approach and we will not be providing support for it. We recommend upgrading to the Spree 4.6 or newer.
+  If you are using Spree version 4.5 or older and are currently unable to upgrade, you can install [Spree Globalize extension](https://github.com/spree-contrib/spree_globalize) to enable translations. This extension uses [Globalize](https://github.com/globalize/globalize) library under the hood. We do not recommend this approach and we will not be providing support for it. We recommend upgrading to Spree 4.6 or newer.
 </Info>
 
 ## The `spree_i18n` project
 
 Spree now stores all of the translation information in a separate GitHub project known as [Spree I18n](https://github.com/spree/spree_i18n). This is a stand alone project with a large number of volunteer committers who maintain the locale files. This is basically the same approach followed by the Rails project which keeps their localizations in [rails-i18n](https://github.com/svenfuchs/rails-i18n).
 
-The project is actually a Spree extension. This extension contains translations files. To translate models (provide translations for Products, Taxons, etc) you will need to install also [Spree Globalize](https://github.com/spree-contrib/spree_globalize).
+The project is actually a Spree extension. This extension contains translation files for the Spree UI in various languages.
 
 To install the Spree I18n extension, run the following command:
 
@@ -138,3 +138,9 @@ en:
 [Spree extensions](/developer/customization/extensions) can contain their own `config/locales` directory where developers can include YAML files for each language they wish to support.
 
 We strongly urge all extension developers to ensure all customer facing text is rendered via the `Spree.t()` helper method even if they only include a single default language locale file (as other users can simply include the required YAML file and translations in their site extension).
+
+## Related Documentation
+
+- [Stores](/developer/core-concepts/stores) - Multi-store and multi-language configuration
+- [Products](/developer/core-concepts/products) - Product translations
+- [Extensions](/developer/customization/extensions) - Creating extensions with translations

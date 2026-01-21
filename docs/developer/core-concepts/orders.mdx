@@ -6,6 +6,79 @@ title: Orders
 
 The `Order` model is one of the key models in Spree. It provides a central place around which to collect information about a customer order - including line items, adjustments, payments, addresses, return authorizations, and shipments.
 
+### Order Model Diagram
+
+```mermaid
+erDiagram
+    Order {
+        string number
+        string state
+        string email
+        decimal item_total
+        decimal adjustment_total
+        decimal total
+        decimal payment_total
+        decimal shipment_total
+        string payment_state
+        string shipment_state
+        datetime completed_at
+        string currency
+    }
+
+    LineItem {
+        integer quantity
+        decimal price
+        decimal adjustment_total
+    }
+
+    Shipment {
+        string number
+        string state
+        string tracking
+        datetime shipped_at
+    }
+
+    Payment {
+        string number
+        decimal amount
+        string state
+        string response_code
+    }
+
+    Adjustment {
+        decimal amount
+        string label
+        boolean eligible
+        string state
+        boolean included
+    }
+
+    Order ||--o{ LineItem : "has many"
+    Order ||--o{ Shipment : "has many"
+    Order ||--o{ Payment : "has many"
+    Order ||--o{ Adjustment : "has many"
+    Order ||--o{ ReturnAuthorization : "has many"
+    Order ||--o{ OrderPromotion : "has many"
+    Order }o--|| Address : "ship_address"
+    Order }o--|| Address : "bill_address"
+    Order }o--|| User : "belongs to"
+    Order }o--|| Store : "belongs to"
+    LineItem }o--|| Variant : "belongs to"
+    LineItem ||--o{ Adjustment : "has many"
+    Shipment ||--o{ InventoryUnit : "has many"
+    Shipment ||--o{ Adjustment : "has many"
+    Shipment }o--|| StockLocation : "ships from"
+    Payment }o--|| PaymentMethod : "belongs to"
+```
+
+**Key relationships:**
+- **Order** is the central model connecting customers to their purchases
+- **Line Items** link orders to [Variants](/developer/core-concepts/products#variants) (what was purchased)
+- **[Shipments](/developer/core-concepts/shipments)** handle fulfillment from [Stock Locations](/developer/core-concepts/inventory#stock-locations)
+- **[Payments](/developer/core-concepts/payments)** track payment attempts and their states
+- **[Adjustments](/developer/core-concepts/adjustments)** apply taxes, promotions, and shipping costs
+- **[Addresses](/developer/core-concepts/addresses)** store billing and shipping information
+
 ### Order Attributes
 
 | Attribute               | Description                                                                                      |
@@ -134,7 +207,7 @@ For more on this please go to [Payment States page](payments).
 
 ## Line Items
 
-Line items are used to keep track of items within the context of an order. These records provide a link between orders, and [Variants](products#variants).
+Line items are used to keep track of items within the context of an order. These records provide a link between orders and [Variants](/developer/core-concepts/products#variants).
 
 <Warning>
 When a variant is added to an order, the price of that item is tracked along with the line item to preserve that data. If the variant's price were to change, then the line item would still have a record of the price at the time of ordering.
@@ -150,7 +223,7 @@ For more information about addresses, please read the [Addresses](/developer/cor
 
 ## Adjustments
 
-Adjustments are used to affect an order's final cost, either by decreasing it [Promotions](promotions) or by increasing it [Shipping](shipments), [Taxes](taxation).
+Adjustments are used to affect an order's final cost, either by decreasing it ([Promotions](/developer/core-concepts/promotions)) or by increasing it ([Shipping](/developer/core-concepts/shipments), [Taxes](/developer/core-concepts/taxes)).
 
 For more information about adjustments, please see the [Adjustments](adjustments) guide.
 
@@ -171,3 +244,11 @@ If you change any aspect of an `Order` object within code and you wish to update
 For example, if you create or modify an existing payment for the order which would change the order's `payment_state` to a different value, calling `update_with_updater!` will cause the `payment_state` to be recalculated for that order.
 
 Another example is if a `LineItem` within the order had its price changed. Calling `update_with_updater!` will cause the totals for the order to be updated, the adjustments for the order to be recalculated, and then a final total to be established.
+
+## Related Documentation
+
+- [Payments](/developer/core-concepts/payments) - Payment processing for orders
+- [Shipments](/developer/core-concepts/shipments) - Order fulfillment and shipping
+- [Promotions](/developer/core-concepts/promotions) - Discounts and promotions
+- [Checkout Customization](/developer/customization/checkout) - Customizing the checkout flow
+- [Events](/developer/core-concepts/events) - Subscribe to order events

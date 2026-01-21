@@ -4,6 +4,51 @@ title: Calculators
 
 ## Overview
 
+### Calculator Model Diagram
+
+```mermaid
+erDiagram
+    Calculator {
+        string type
+        string calculable_type
+        text preferences
+    }
+
+    TaxRate {
+        string name
+        decimal amount
+        boolean included_in_price
+    }
+
+    ShippingMethod {
+        string name
+        string display_on
+    }
+
+    PromotionAction {
+        string type
+    }
+
+    Adjustment {
+        decimal amount
+        string label
+    }
+
+    TaxRate ||--|| Calculator : "has one"
+    ShippingMethod ||--|| Calculator : "has one"
+    PromotionAction ||--|| Calculator : "has one"
+    TaxRate ||--o{ Adjustment : "creates"
+    ShippingMethod ||--o{ ShippingRate : "calculates"
+    PromotionAction ||--o{ Adjustment : "creates"
+```
+
+**Key relationships:**
+- **Calculator** computes amounts for various features
+- Used by **[Tax Rates](/developer/core-concepts/taxes)** to calculate tax amounts
+- Used by **[Shipping Methods](/developer/core-concepts/shipments)** to calculate shipping costs
+- Used by **[Promotion Actions](/developer/core-concepts/promotions)** to calculate discounts
+- Calculators store preferences (rates, percentages, etc.) for their calculations
+
 Spree makes extensive use of the `Spree::Calculator` model and there are several subclasses provided to deal with various types of calculations flat rate, percentage discount, sales tax, VAT, etc. All calculators extend the `Spree::Calculator` class and must provide the following methods:
 
 ```ruby
@@ -177,9 +222,11 @@ The second thing is to register this calculator as a tax, shipping, or promotion
 <Tabs>
   <Tab title="Spree 5.2+">
     ```ruby config/initializers/spree.rb
-    Spree.calculators.tax_rates << CustomCalculator
-    Spree.calculators.shipping_methods << CustomCalculator
-    Spree.calculators.promotion_actions_create_adjustments << CustomCalculator
+    Rails.application.config.after_initialize do
+      Spree.calculators.tax_rates << CustomCalculator
+      Spree.calculators.shipping_methods << CustomCalculator
+      Spree.calculators.promotion_actions_create_adjustments << CustomCalculator
+    end
     ```
   </Tab>
   <Tab title="Spree 5.1 and below">
@@ -196,7 +243,9 @@ For example if your calculator is placed in `app/models/spree/calculator/shippin
 <Tabs>
   <Tab title="Spree 5.2+">
     ```ruby config/initializers/spree.rb
-    Spree.calculators.shipping_methods << Spree::Calculator::Shipping::MyOwnCalculator
+    Rails.application.config.after_initialize do
+      Spree.calculators.shipping_methods << Spree::Calculator::Shipping::MyOwnCalculator
+    end
     ```
   </Tab>
   <Tab title="Spree 5.1 and below">
@@ -233,7 +282,9 @@ To have calculators available for this class, you will need to register them:
 <Tabs>
   <Tab title="Spree 5.2+">
     ```ruby config/initializers/spree.rb
-    Spree.calculators.plans << CustomCalculator
+    Rails.application.config.after_initialize do
+      Spree.calculators.plans << CustomCalculator
+    end
     ```
   </Tab>
   <Tab title="Spree 5.1 and below">
