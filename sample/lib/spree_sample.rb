@@ -1,4 +1,4 @@
-require 'spree_core'
+require 'spree'
 require 'spree/sample'
 
 module SpreeSample

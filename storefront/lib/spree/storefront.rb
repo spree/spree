@@ -1,4 +1,4 @@
-require 'spree_core'
+require 'spree'
 require 'spree_page_builder'
 
 require 'active_link_to'

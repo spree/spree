@@ -1,7 +1,6 @@
 eval_gemfile('../../common_spree_dependencies.rb')
 
-gem 'spree_core', path: '../../core'
-gem 'spree_api', path: '../../api'
+gem 'spree', path: '../../'
 gem 'spree_admin', path: '../../admin'
 
 gem 'sprockets-rails', '>= 3.5.2'

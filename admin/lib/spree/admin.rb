@@ -1,5 +1,4 @@
-require 'spree_core'
-require 'spree_api'
+require 'spree'
 
 require 'active_link_to'
 require 'breadcrumbs_on_rails'

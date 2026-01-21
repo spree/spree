@@ -25,7 +25,7 @@ Gem::Specification.new do |s|
   s.files        = Dir["{app,config,db,lib,vendor}/**/*", "LICENSE.md", "Rakefile", "README.md"].reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
   s.require_path = 'lib'
 
-  s.add_dependency 'spree_core', ">= #{s.version}"
+  s.add_dependency 'spree', ">= #{s.version}"
 
   s.add_development_dependency 'email_spec', '~> 2.2'
 end
