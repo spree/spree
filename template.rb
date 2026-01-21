@@ -15,14 +15,17 @@ def add_gems
   # Core dependencies
   gem 'devise'
 
-  # Spree gems - using main branch for latest
+  # Spree gems - core (includes core, api, cli)
   gem 'spree', USE_LOCAL_SPREE ? { path: '../' } : { version: SPREE_VERSION }
+
+  # Optional Spree packages
   gem 'spree_emails', USE_LOCAL_SPREE ? { path: '../' } : { version: SPREE_VERSION }
   gem 'spree_sample', USE_LOCAL_SPREE ? { path: '../' } : { version: SPREE_VERSION }
   gem 'spree_admin', USE_LOCAL_SPREE ? { path: '../' } : { version: SPREE_VERSION }
   gem 'spree_storefront', USE_LOCAL_SPREE ? { path: '../' } : { version: SPREE_VERSION }
   gem 'spree_page_builder', path: '../packages/page_builder' if USE_LOCAL_SPREE
-  # translations
+
+  # Translations
   gem 'spree_i18n'
 
   # Development & Test gems
@@ -65,22 +68,46 @@ def setup_auth
 end
 
 def install_spree
-  say 'Running Spree installer...', :blue
+  say 'Running Spree installer (core, api, cli)...', :blue
 
-  # Run Spree installer with all options
+  # Run Spree installer with migrations but without seeds - seeds run after all generators complete
   if VERBOSE
-    rails_command "generate spree:install --auto-accept --user_class=Spree::User --admin_user_class=Spree::AdminUser --authentication=devise --install_storefront=true --install_admin=true --admin_email=#{ADMIN_EMAIL} --admin_password=#{ADMIN_PASSWORD}"
+    rails_command "generate spree:install --force --auto-accept --seed=false --user_class=Spree::User --admin_user_class=Spree::AdminUser --authentication=devise"
   else
-    run "bin/rails generate spree:install --auto-accept --user_class=Spree::User --admin_user_class=Spree::AdminUser --authentication=devise --install_storefront=true --install_admin=true --admin_email=#{ADMIN_EMAIL} --admin_password=#{ADMIN_PASSWORD} >/dev/null 2>&1"
+    run "bin/rails generate spree:install --force --auto-accept --seed=false --user_class=Spree::User --admin_user_class=Spree::AdminUser --authentication=devise >/dev/null 2>&1"
+  end
+end
+
+def install_spree_admin
+  say 'Installing Spree Admin...', :blue
+
+  if VERBOSE
+    rails_command 'generate spree:admin:install --force'
+    rails_command 'generate spree:admin:devise --force'
+  else
+    run 'bin/rails generate spree:admin:install --force >/dev/null 2>&1'
+    run 'bin/rails generate spree:admin:devise --force >/dev/null 2>&1'
+  end
+end
+
+def install_spree_storefront
+  say 'Installing Spree Storefront...', :blue
+
+  if VERBOSE
+    rails_command 'generate spree:storefront:install --force'
+    rails_command 'generate spree:storefront:devise --force'
+  else
+    run 'bin/rails generate spree:storefront:install --force >/dev/null 2>&1'
+    run 'bin/rails generate spree:storefront:devise --force >/dev/null 2>&1'
   end
 end
 
 def install_spree_dev_tools
   say 'Running Spree Dev Tools installer...', :blue
   if VERBOSE
-    rails_command "generate spree_dev_tools:install"
+    rails_command "generate spree_dev_tools:install --force"
   else
-    run "bin/rails generate spree_dev_tools:install >/dev/null 2>&1"
+    run "bin/rails generate spree_dev_tools:install --force >/dev/null 2>&1"
   end
 end
 
@@ -110,13 +137,13 @@ def setup_procfile
   end
 end
 
-def setup_database
-  say 'Setting up database...', :blue
+def seed_database
+  say 'Loading seed data...', :blue
 
   if VERBOSE
-    rails_command 'db:migrate'
+    rails_command "db:seed AUTO_ACCEPT=1 ADMIN_EMAIL=#{ADMIN_EMAIL} ADMIN_PASSWORD=#{ADMIN_PASSWORD}"
   else
-    run 'bin/rails db:migrate >/dev/null 2>&1'
+    run "bin/rails db:seed AUTO_ACCEPT=1 ADMIN_EMAIL=#{ADMIN_EMAIL} ADMIN_PASSWORD=#{ADMIN_PASSWORD} >/dev/null 2>&1"
   end
 end
 
@@ -151,6 +178,8 @@ def show_success_message
   say 'Useful commands:', :yellow
   say '  bin/rails console                # Rails console'
   say '  bin/rails spree_sample:load      # Load more sample data'
+  say '  bin/spree version                # Spree CLI version'
+  say '  bin/spree extension my_ext       # Generate a new Spree extension'
   say
 end
 
@@ -162,9 +191,11 @@ after_bundle do
   configure_development_environment
   setup_auth
   install_spree
+  install_spree_admin
+  install_spree_storefront
   install_spree_dev_tools
   setup_procfile
-  setup_database
+  seed_database
   load_sample_data
   show_success_message
 end

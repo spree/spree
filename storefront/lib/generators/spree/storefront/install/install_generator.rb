@@ -6,12 +6,20 @@ module Spree
       class InstallGenerator < Rails::Generators::Base
         desc 'Installs Spree Storefront'
 
+        class_option :migrate, type: :boolean, default: true, banner: 'Run migrations'
+
         def self.source_paths
           [
             File.expand_path('templates', __dir__),
             File.expand_path('../templates', "../#{__FILE__}"),
             File.expand_path('../templates', "../../#{__FILE__}")
           ]
+        end
+
+        def install_page_builder
+          say_status :installing, 'page builder'
+          migrate_option = options[:migrate] == false ? ' --migrate=false' : ''
+          generate "spree:page_builder:install --force#{migrate_option}"
         end
 
         def install

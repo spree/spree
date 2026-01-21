@@ -1,7 +1,3 @@
-unless defined?(Spree::InstallGenerator)
-  require 'generators/spree/install/install_generator'
-end
-
 require 'generators/spree/dummy/dummy_generator'
 require 'generators/spree/dummy_model/dummy_model_generator'
 
@@ -61,19 +57,23 @@ namespace :common do
       system('rm -rf spec') # we need to cleanup factories created by devise to avoid naming conflict
     end
 
-    Spree::InstallGenerator.start [
-      "--lib_name=#{ENV['LIB_NAME']}",
-      '--auto-accept',
-      '--force',
-      '--migrate=false',
-      '--seed=false',
-      '--sample=false',
-      "--install_storefront=#{args[:install_storefront]}",
-      "--install_admin=#{args[:install_admin]}",
-      "--user_class=#{args[:user_class]}",
-      "--admin_user_class=#{args[:admin_user_class]}",
-      "--authentication=#{args[:authentication]}"
-    ]
+    # Run core Spree install generator
+    puts 'Running Spree install generator...'
+    system("bundle exec rails g spree:install --force --auto-accept --migrate=false --seed=false --sample=false --user_class=#{args[:user_class]} --admin_user_class=#{args[:admin_user_class]} --authentication=#{args[:authentication]}")
+
+    # Run admin install generator if requested
+    if install_admin
+      puts 'Running Spree Admin install generator...'
+      system('bundle exec rails g spree:admin:install --force')
+      system('bundle exec rails g spree:admin:devise --force') if args[:authentication] == 'devise'
+    end
+
+    # Run storefront install generator if requested
+    if install_storefront
+      puts 'Running Spree Storefront install generator...'
+      system('bundle exec rails g spree:storefront:install --force --migrate=false')
+      system('bundle exec rails g spree:storefront:devise --force') if args[:authentication] == 'devise'
+    end
 
     unless ENV['NO_MIGRATE']
       puts 'Setting up dummy database...'
