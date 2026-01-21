@@ -6,7 +6,7 @@ module Spree
       preference :text_color, :string
 
       def icon_name
-        'h2'
+        'h-2'
       end
 
       def display_name
