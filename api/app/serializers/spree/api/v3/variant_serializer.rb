@@ -60,9 +60,7 @@ module Spree
              resource: Spree.api.v3_storefront_image_serializer,
              if: proc { params[:includes]&.include?('images') }
 
-        many :option_values,
-             resource: Spree.api.v3_storefront_option_value_serializer,
-             if: proc { params[:includes]&.include?('option_values') }
+        many :option_values, resource: Spree.api.v3_storefront_option_value_serializer
 
         private
 

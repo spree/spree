@@ -4,8 +4,7 @@ module Spree
       class TaxonSerializer < BaseSerializer
         attributes :id, :name, :permalink, :position, :lft, :rgt, :depth,
                    :meta_title, :meta_description, :meta_keywords,
-                   :parent_id, :taxonomy_id, :children_count,
-                   created_at: :iso8601, updated_at: :iso8601
+                   :parent_id, :taxonomy_id, :children_count
 
         attribute :description do |taxon|
           taxon.description.to_plain_text
@@ -43,10 +42,6 @@ module Spree
         many :children,
              resource: Spree.api.v3_storefront_taxon_serializer,
              if: proc { params[:includes]&.include?('children') }
-
-        one :taxonomy,
-            resource: Spree.api.v3_storefront_taxonomy_serializer,
-            if: proc { params[:includes]&.include?('taxonomy') }
       end
     end
   end

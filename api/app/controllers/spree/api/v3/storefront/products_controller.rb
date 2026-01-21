@@ -23,11 +23,6 @@ module Spree
               variants: [:prices, {option_values: :option_type }, { stock_items: :stock_location }]
             ]
           end
-
-          # Not needed for index/show, but required by ResourceController
-          def permitted_params
-            {}
-          end
         end
       end
     end

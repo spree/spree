@@ -11,6 +11,8 @@ module Spree
         include Spree::Api::V3::Authentication
         include Spree::Api::V3::ErrorHandler
         include Spree::Api::V3::HttpCaching
+        include Spree::Api::V3::ResourceSerializer
+        include Pagy::Method
 
         # Optional authentication by default
         before_action :authenticate_user

@@ -2,7 +2,7 @@ module Spree
   module Api
     module V3
       class WishlistSerializer < BaseSerializer
-        attributes :id, :name, :token, created_at: :iso8601, updated_at: :iso8601
+        attributes :id, :name, :token
 
         attribute :is_default do |wishlist|
           wishlist.is_default?
@@ -12,12 +12,10 @@ module Spree
           wishlist.is_private?
         end
 
-        many :items,
+        many :wished_items,
              key: :items,
              resource: Spree.api.v3_storefront_wished_item_serializer,
-             if: proc { params[:includes]&.include?('items') } do |wishlist|
-          wishlist.wished_items
-        end
+             if: proc { params[:includes]&.include?('items') }
       end
     end
   end

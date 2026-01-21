@@ -555,6 +555,10 @@ module Spree
       payments.valid.completed.size == payments.valid.size && payments.valid.sum(:amount) >= total
     end
 
+    def payment_methods
+      @payment_methods ||= store.payment_methods.active.available_on_front_end.select { |pm| pm.available_for_order?(self) }
+    end
+
     def available_payment_methods(store = nil)
       Spree::Deprecation.warn('`Order#available_payment_methods` is deprecated and will be removed in Spree 5.5. Use `collect_frontend_payment_methods` instead.')
 

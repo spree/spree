@@ -220,30 +220,24 @@ Spree::Core::Engine.add_routes do
 
     namespace :v3 do
       namespace :storefront do
-        # ===== AUTHENTICATION =====
-        # Public endpoints for login/register, JWT required for refresh
+        # Authentication
         post 'auth/login', to: 'auth#create'
         post 'auth/register', to: 'auth#register'
         post 'auth/refresh', to: 'auth#refresh'
         post 'auth/oauth/callback', to: 'auth#oauth_callback'
 
-        # ===== STORE & CONFIGURATION (Public) =====
+        # Store
         get 'store', to: 'stores#current'
 
         # Geography
         resources :countries, only: [:index, :show]
 
-        # ===== CATALOG (Public) =====
-        # Products with Ransack filtering
-        # GET /products?q[name_cont]=shirt&q[s]=price+asc
+        # Catalog
         resources :products, only: [:index, :show]
+        resources :taxonomies, only: [:index, :show]
+        resources :taxons, only: [:show]
 
-        # Taxons (categories)
-        resources :taxons, only: [:index, :show]
-
-        # ===== ORDERS (Public create, token or JWT for access) =====
-        # POST /orders - Create order (returns order_token for guests)
-        # Access via X-Order-Token header OR JWT
+        # Orders
         resources :orders do
           # State transitions
           member do
@@ -254,40 +248,23 @@ Spree::Core::Engine.add_routes do
           end
 
           # Nested resources - all require order access
-          resources :line_items, only: [:index, :create, :show, :update, :destroy]
-          resources :payments, only: [:index, :create, :show]
-          resources :shipments, only: [:index, :show, :update]
+          resources :line_items, only: [:create, :show, :update, :destroy]
           resources :coupon_codes, only: [:create, :destroy]
-
-          # Available methods for order
-          resources :shipping_methods, only: [:index]
-          resources :payment_methods, only: [:index]
         end
 
-        # ===== CUSTOMER (JWT Required) =====
+        # Customer
         get 'customers/me', to: 'customers#show'
         patch 'customers/me', to: 'customers#update'
-
         resources :addresses, only: [:index, :show, :create, :update, :destroy], path: 'customers/me/addresses'
         resources :credit_cards, only: [:index, :show, :destroy], path: 'customers/me/credit_cards'
         resources :payment_sources, only: [:index, :show, :destroy], path: 'customers/me/payment_sources'
 
-        # ===== WISHLISTS (JWT Required) =====
+        # Wishlists
         resources :wishlists do
-          # Wishlist items as nested resource
           resources :items, only: [:create, :update, :destroy], controller: 'wishlist_items'
         end
 
-        # ===== CMS & CONTENT (Public) =====
-        resources :posts, only: [:index, :show]
-        resources :policies, only: [:index, :show]
-
-        # Pages (new page builder)
-        resources :pages, only: [:index, :show] do
-          resources :sections, only: [:index, :show]
-        end
-
-        # ===== DIGITAL DOWNLOADS =====
+        # Digital Downloads
         # Access via token in URL
         get 'digitals/:token', to: 'digitals#download', as: :digital_download
       end
