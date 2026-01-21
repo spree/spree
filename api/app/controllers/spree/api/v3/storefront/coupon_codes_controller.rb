@@ -13,7 +13,7 @@ module Spree
             @order.coupon_code = params[:coupon_code]
 
             if @order.save
-              render json: serialize_order, status: :created
+              render json: serialize_resource(@order), status: :created
             else
               render_errors(@order.errors)
             end
@@ -28,22 +28,6 @@ module Spree
             else
               render_errors(@order.errors)
             end
-          end
-
-          protected
-
-          def serialize_order
-            serializer_class.new(@order, params: serializer_params).to_h
-          end
-
-          def serializer_params
-            {
-              currency: current_currency,
-              store: current_store,
-              user: current_user,
-              locale: current_locale,
-              includes: requested_includes
-            }
           end
         end
       end

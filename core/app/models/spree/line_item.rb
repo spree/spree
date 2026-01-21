@@ -47,8 +47,8 @@ module Spree
 
     after_create :update_tax_charge
 
-    delegate :name, :description, :sku, :should_track_inventory?, :product, :options_text, :slug, :product_id, :dimensions_unit, :weight_unit, to: :variant
-    delegate :brand, :category, to: :product
+    delegate :sku, :should_track_inventory?, :product, :options_text, :slug, :product_id, :dimensions_unit, :weight_unit, :images, :option_values, to: :variant
+    delegate :name, :description, :brand, :category, to: :product
     delegate :tax_zone, to: :order
     delegate :digital?, :can_supply?, to: :variant
 

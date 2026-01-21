@@ -2,7 +2,7 @@ module Spree
   module Api
     module V3
       class TaxonomySerializer < BaseSerializer
-        attributes :id, :name
+        attributes :id, :name, :position
 
         # Conditional associations
         one :root,
