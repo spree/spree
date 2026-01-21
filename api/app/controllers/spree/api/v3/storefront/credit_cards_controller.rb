@@ -2,21 +2,21 @@ module Spree
   module Api
     module V3
       module Storefront
-        class PaymentSourcesController < ResourceController
+        class CreditCardsController < ResourceController
           before_action :require_authentication!
 
           protected
 
           def scope
-            current_user.payment_sources
+            current_user.credit_cards
           end
 
           def model_class
-            Spree::PaymentSource
+            Spree::CreditCard
           end
 
           def serializer_class
-            Spree.api.v3_storefront_payment_source_serializer
+            Spree.api.v3_storefront_credit_card_serializer
           end
         end
       end

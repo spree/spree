@@ -2,7 +2,7 @@ module Spree
   module Api
     module V3
       class ImageSerializer < BaseSerializer
-        attributes :id, :position, :alt
+        attributes :id, :position, :alt, :viewable_type, :viewable_id
 
         attribute :original_url do |image|
           image_url(image)

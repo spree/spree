@@ -8,8 +8,6 @@ module Spree
           # Override authorization for orders
           skip_before_action :set_resource, only: [:index, :create]
           before_action :require_authentication!, only: [:index]
-          before_action :set_order, only: [:show, :update, :destroy, :next, :advance, :complete, :cancel]
-          before_action :authorize_order_access!, only: [:show, :update, :destroy, :next, :advance, :complete, :cancel]
 
           # POST /api/v3/storefront/orders (public - guest checkout)
           def create
@@ -22,11 +20,6 @@ module Spree
             render json: serialize_resource(@resource).merge(
               order_token: @resource.token # Return token for guest access
             ), status: :created
-          end
-
-          # GET /api/v3/storefront/orders/:id
-          def show
-            render json: serialize_resource(@order)
           end
 
           # PATCH /api/v3/storefront/orders/:id
@@ -86,19 +79,9 @@ module Spree
 
           protected
 
-          def load_order
-            # for show action we need to find any order by id, not only incomplete orders
-            if action_name == 'show'
-              @order = current_store.orders.friendly.find(params[:id])
-            else
-              super
-            end
-          end
-
-          def scope
-            return Spree::Order.none unless current_user
-
-            current_user.orders.for_store(current_store)
+          # override authorize_resource! to pass the order token
+          def authorize_resource!(resource = @resource, action = action_name.to_sym)
+            authorize!(action, resource, order_token)
           end
 
           def model_class

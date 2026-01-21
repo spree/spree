@@ -91,6 +91,7 @@ module Spree
         storefront_metafield_serializer: 'Spree::V2::Storefront::MetafieldSerializer',
 
         # v3 storefront serializers
+        v3_storefront_credit_card_serializer: 'Spree::Api::V3::CreditCardSerializer',
         v3_storefront_product_serializer: 'Spree::Api::V3::ProductSerializer',
         v3_storefront_variant_serializer: 'Spree::Api::V3::VariantSerializer',
         v3_storefront_image_serializer: 'Spree::Api::V3::ImageSerializer',
@@ -100,6 +101,7 @@ module Spree
         v3_storefront_order_serializer: 'Spree::Api::V3::OrderSerializer',
         v3_storefront_line_item_serializer: 'Spree::Api::V3::LineItemSerializer',
         v3_storefront_payment_serializer: 'Spree::Api::V3::PaymentSerializer',
+        v3_storefront_payment_source_serializer: 'Spree::Api::V3::PaymentSourceSerializer',
         v3_storefront_shipment_serializer: 'Spree::Api::V3::ShipmentSerializer',
         v3_storefront_address_serializer: 'Spree::Api::V3::AddressSerializer',
         v3_storefront_user_serializer: 'Spree::Api::V3::UserSerializer',
@@ -112,6 +114,7 @@ module Spree
         v3_storefront_shipping_method_serializer: 'Spree::Api::V3::ShippingMethodSerializer',
         v3_storefront_shipping_rate_serializer: 'Spree::Api::V3::ShippingRateSerializer',
         v3_storefront_taxonomy_serializer: 'Spree::Api::V3::TaxonomySerializer',
+
         # platform serializers
         platform_metafield_serializer: 'Spree::Api::V2::Platform::MetafieldSerializer',
 

@@ -59,7 +59,12 @@ module Spree
 
         # Sets the resource for show, update, destroy actions
         def set_resource
-          @resource = scope.find(params[:id])
+          @resource = if model_class.respond_to?(:friendly)
+                        model_class.friendly.find(params[:id])
+                      else
+                        scope.find(params[:id])
+                      end
+
           authorize_resource!(@resource)
         end
 

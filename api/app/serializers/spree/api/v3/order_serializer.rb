@@ -89,14 +89,12 @@ module Spree
         end
 
         one :billing_address,
-            key: :billing_address,
             resource: Spree.api.v3_storefront_address_serializer,
             if: proc { params[:includes]&.include?('billing_address') } do |order|
           order.bill_address
         end
 
         one :shipping_address,
-            key: :shipping_address,
             resource: Spree.api.v3_storefront_address_serializer,
             if: proc { params[:includes]&.include?('shipping_address') } do |order|
           order.ship_address
