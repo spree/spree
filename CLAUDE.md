@@ -6,7 +6,10 @@
 
 - Spree is built on Ruby on Rails and follows MVC architecture
 - All Spree code must be namespaced under `Spree::` module
-- Spree is distributed as Rails engines with separate gems (core, admin, api, storefront, emails, etc.)
+- Spree is distributed as Rails engines with separate packages:
+  - **Core packages (required):** `spree_core` (models, services, business logic), `spree_api` (Storefront API, Platform API, Webhooks)
+  - **Optional packages:** `spree_admin` (admin dashboard), `spree_cli` (CLI tool), `spree_storefront` (Rails storefront), `spree_emails` (transactional emails), `spree_page_builder` (visual page builder), `spree_sample` (sample data), `spree_dev_tools` (development/testing utilities)
+- Most users run Spree in headless mode with custom frontends using the Storefront API
 - Follow Rails conventions and the Rails Security Guide
 - Prefer Rails idioms and standard patterns over custom solutions
 
@@ -72,7 +75,7 @@ Always inherit from `Spree.base_class` when creating models.
 
 ```ruby
 # ✅ Good model structure
-class Spree::Product < ApplicationRecord
+class Spree::Product < Spree.base_class
   include Spree::Metafields
   
   has_many :variants, class_name: 'Spree::Variant', dependent: :destroy
@@ -106,34 +109,159 @@ def permitted_product_params
 end
 ```
 
-## Customization & Extensions
+## Admin Development
 
-### Decorators (Use Sparingly)
+When adding new resources to the admin, you need to register tables and navigation.
 
-- Decorators should be a last resort - they make upgrades difficult
-- Use `Module.prepend` pattern for decorators
-- Name decorator files with `_decorator.rb` suffix
+### Admin Tables
+
+Register new tables in `admin/config/initializers/spree_admin_tables.rb`:
 
 ```ruby
-# ✅ Proper decorator structure
-module Spree
-  module ProductDecorator
-    def custom_method
-      # Custom functionality
-      name.upcase
-    end
-    
-    def existing_method
-      # Extend existing method
-      result = super
-      # Additional logic
-      result
-    end
-  end
+Rails.application.config.after_initialize do
+  # Register the table
+  Spree.admin.tables.register(:gift_cards, model_class: Spree::GiftCard, search_param: :multi_search)
 
-  Product.prepend(ProductDecorator)
+  # Add columns
+  Spree.admin.tables.gift_cards.add :code,
+                                    label: :code,
+                                    type: :string,
+                                    sortable: true,
+                                    filterable: true,
+                                    default: true,
+                                    position: 10
+
+  Spree.admin.tables.gift_cards.add :balance,
+                                    label: :balance,
+                                    type: :currency,
+                                    sortable: true,
+                                    default: true,
+                                    position: 20
+
+  Spree.admin.tables.gift_cards.add :status,
+                                    label: :status,
+                                    type: :custom,
+                                    filter_type: :status,
+                                    sortable: true,
+                                    filterable: true,
+                                    default: true,
+                                    position: 30,
+                                    partial: 'spree/admin/tables/columns/gift_card_status'
 end
 ```
+
+Column types: `:string`, `:currency`, `:date`, `:datetime`, `:boolean`, `:custom` (requires `partial`)
+
+### Admin Navigation
+
+Register navigation items in `admin/config/initializers/spree_admin_navigation.rb`:
+
+```ruby
+Rails.application.config.after_initialize do
+  # Sidebar navigation
+  sidebar_nav = Spree.admin.navigation.sidebar
+
+  # Simple item
+  sidebar_nav.add :reports,
+          label: :reports,
+          url: :admin_reports_path,
+          icon: 'chart-bar',
+          position: 60,
+          if: -> { can?(:manage, Spree::Report) }
+
+  # Item with submenu
+  sidebar_nav.add :products,
+          label: :products,
+          url: :admin_products_path,
+          icon: 'package',
+          position: 30,
+          if: -> { can?(:manage, Spree::Product) } do |products|
+
+    products.add :price_lists,
+                label: :price_lists,
+                url: :admin_price_lists_path,
+                position: 10,
+                if: -> { can?(:manage, Spree::PriceList) }
+
+    products.add :stock,
+                label: :stock,
+                url: :admin_stock_items_path,
+                position: 20,
+                if: -> { can?(:manage, Spree::StockItem) }
+  end
+
+  # Settings navigation
+  settings_nav = Spree.admin.navigation.settings
+
+  settings_nav.add :payment_methods,
+          label: :payments,
+          url: :admin_payment_methods_path,
+          icon: 'credit-card',
+          position: 70,
+          active: -> { controller_name == 'payment_methods' },
+          if: -> { can?(:manage, Spree::PaymentMethod) }
+
+  # Tab navigation (for pages with tabs)
+  tax_tabs_nav = Spree.admin.navigation.tax_tabs
+
+  tax_tabs_nav.add :tax_rates,
+          label: :tax_rates,
+          url: :admin_tax_rates_path,
+          position: 10,
+          if: -> { can?(:manage, Spree::TaxRate) }
+end
+```
+
+Navigation options:
+- `label` - Translation key or string
+- `url` - Route helper symbol or lambda
+- `icon` - Tabler icon name (see https://tabler.io/icons)
+- `position` - Sort order (lower = higher)
+- `if` - Lambda for conditional display
+- `active` - Lambda for active state detection
+- `badge` - Lambda returning badge text
+- `badge_class` - CSS class for badge
+
+## Events System
+
+When adding new functionality that other parts of the system (or external integrations) might need to react to, fire events using Spree's event system:
+
+```ruby
+order.publish_event('order.completed')
+```
+
+Place subscriber classes in `app/subscribers/spree/` directory:
+
+```ruby
+# app/subscribers/spree/order_webhook_subscriber.rb
+module Spree
+  module OrderWebhookSubscriber
+    include Spree::Event::Subscriber
+
+    event_action :order_completed
+
+    def order_completed(event)
+      order = event.payload[:order]
+      # Handle the event
+    end
+  end
+end
+```
+
+For new models that publish events, please add `publishes_lifecycle_events` concern to the model.
+
+You also need to create an event serializer for the model, see [Events](/docs/developer/core-concepts/events.mdx) for more details.
+
+## Dependencies System
+
+When building services that users might want to swap out, register them in `Spree::Dependencies`:
+
+```ruby
+# In the dependency configuration
+Spree::Dependencies.cart_add_item_service = 'Spree::Cart::AddItem'
+```
+
+This allows users to replace services without modifying core code.
 
 ## Testing
 
@@ -186,16 +314,16 @@ let(:variant) { build(:variant, product: product) }
 ### Authentication & Authorization
 
 - Follow Rails Security Guide principles
-- Use strong parameters consistently
-- Implement proper authorization checks
+- Define permissions in Permission Sets, see [Permissions](/docs/developer/customization/permissions.mdx) for more details
+- Implement proper authorization checks with CanCanCan
 - Validate all user inputs
 - In Admin controllers inheriting from `Spree::Admin::ResourceController` will automatically secure all actions
-- We use CanCanCan for authorization
-- Authentication is handled by app developers, by default we provide Devise installer
+- Authentication is handled by app developers, by default we provide Devise installer, always use `Spree.user_class` to access the user model for Customers and `Spree.admin_user_class` to access the user model for Admins
 
 ### Parameter Security
 
 - Never permit mass assignment without validation
+- Spree uses `Spree::PermittedAttributes` to define allowed parameters for each resource globally
 - Use allowlists, not blocklists for parameters
 - Sanitize user inputs appropriately
 
@@ -210,12 +338,15 @@ let(:variant) { build(:variant, product: product) }
 - Try to limit number of migrations to 1 per feature
 - Avoid using default values in migrations
 - Always add `null: false` to required columns
+- Always try to combine multiple migrations into one if possible when developing a new feature
+- If new feature require transformation of existing data please add a rake task to do the transformation, never do it in a migration
 - Add unique indexes to columns that are used for uniqueness validation
 - By default add `deleted_at` column to all tables that have soft delete functionality (we use `paranoia` gem)
+- For migrations please use 7.2 as the target version as we still support Rails 7.2
 
 ```ruby
 # ✅ Proper migration structure
-class CreateSpreeMetafields < ActiveRecord::Migration[8.0]
+class CreateSpreeMetafields < ActiveRecord::Migration[7.2]
   def change
     create_table :spree_metafields do |t|
       t.string :key, null: false
