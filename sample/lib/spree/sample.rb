@@ -1,3 +1,5 @@
+require 'spree'
+
 module Spree
   module Sample
     def self.load_sample(file)
