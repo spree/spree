@@ -1075,17 +1075,17 @@
                       "user/storefront/delete-page"
                     ]
                   },
-                  {
-                    "group": "Storefront Posts",
-                    "pages": [
-                      "user/storefront/create-post",
-                      "user/storefront/edit-post",
-                      "user/storefront/search-posts",
-                      "user/storefront/delete-post"
-                    ]
-                  },
                   "user/storefront/storefront-settings",
                   "user/storefront/create-new-store"
+                ]
+              },
+                {
+                "group": "Posts",
+                "pages": [
+                  "user/storefront/create-post",
+                  "user/storefront/edit-post",
+                  "user/storefront/search-posts",
+                  "user/storefront/delete-post"
                 ]
               },
                {
