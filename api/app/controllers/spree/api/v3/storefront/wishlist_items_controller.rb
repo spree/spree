@@ -6,16 +6,9 @@ module Spree
           before_action :require_authentication!
           before_action :set_wishlist
 
-          # GET /api/v3/storefront/wishlists/:wishlist_id/items
-          def index
-            render json: {
-              data: serialize_collection(@wishlist.wished_items)
-            }
-          end
-
           # POST /api/v3/storefront/wishlists/:wishlist_id/items
           def create
-            @item = @wishlist.wished_items.build(item_params)
+            @item = @wishlist.wished_items.build(permitted_params)
 
             if @item.save
               render json: serialize_resource(@item), status: :created
@@ -34,7 +27,7 @@ module Spree
           def update
             @item = @wishlist.wished_items.find(params[:id])
 
-            if @item.update(item_params)
+            if @item.update(permitted_params)
               render json: serialize_resource(@item)
             else
               render_errors(@item.errors)
@@ -63,10 +56,6 @@ module Spree
           end
 
           def permitted_params
-            item_params
-          end
-
-          def item_params
             params.require(:item).permit(Spree::PermittedAttributes.wished_item_attributes)
           end
         end

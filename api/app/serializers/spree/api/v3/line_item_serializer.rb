@@ -2,7 +2,7 @@ module Spree
   module Api
     module V3
       class LineItemSerializer < BaseSerializer
-        attributes :id, :quantity, :name, :slug, :options_text, :currency
+        attributes :id, :variant_id, :quantity, :currency
 
         attribute :price do |line_item|
           line_item.price.to_f
@@ -80,6 +80,10 @@ module Spree
         one :variant,
             resource: Spree.api.v3_storefront_variant_serializer,
             if: proc { params[:includes]&.include?('variant') }
+
+        one :product,
+            resource: Spree.api.v3_storefront_product_serializer,
+            if: proc { params[:includes]&.include?('product') }
       end
     end
   end

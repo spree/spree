@@ -51,10 +51,10 @@ module Spree
         end
 
         # Conditional associations
-        many :images,
+        many :variant_images,
+             key: :images,
              resource: Spree.api.v3_storefront_image_serializer,
-             if: proc { params[:includes]&.include?('images') },
-             source: :variant_images
+             if: proc { params[:includes]&.include?('images') }
 
         many :variants,
              resource: Spree.api.v3_storefront_variant_serializer,
@@ -64,11 +64,10 @@ module Spree
             resource: Spree.api.v3_storefront_variant_serializer,
             if: proc { params[:includes]&.include?('default_variant') }
 
-        one :master_variant,
+        one :master,
             key: :master_variant,
             resource: Spree.api.v3_storefront_variant_serializer,
-            if: proc { params[:includes]&.include?('master_variant') },
-            source: :master
+            if: proc { params[:includes]&.include?('master_variant') }
 
         many :option_types,
              resource: Spree.api.v3_storefront_option_type_serializer,
