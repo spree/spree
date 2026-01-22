@@ -7,7 +7,7 @@ LOAD_SAMPLE_DATA = ENV['LOAD_SAMPLE_DATA'] == 'true'
 USE_LOCAL_SPREE = ENV['USE_LOCAL_SPREE'] == 'true'
 ADMIN_EMAIL = ENV['ADMIN_EMAIL'] || 'spree@example.com'
 ADMIN_PASSWORD = ENV['ADMIN_PASSWORD'] || 'spree123'
-SPREE_VERSION = ENV['SPREE_VERSION'] || '~> 5.2'
+SPREE_VERSION = ENV['SPREE_VERSION'] || '>= 5.3.0.rc1'
 
 def add_gems
   say 'Adding required gems to Gemfile...', :blue
