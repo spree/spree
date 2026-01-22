@@ -1,7 +1,7 @@
 module Spree
   module Api
     module V3
-      class ResourceController < ::Spree::Api::V3::BaseController
+      class ResourceController < BaseController
         before_action :set_resource, only: [:show, :update, :destroy]
 
         # GET /api/v3/resource
