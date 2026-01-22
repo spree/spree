@@ -26,11 +26,11 @@ module Spree
         def format_title(product, variant)
           # Title of a variant is created by joining title of a product and variant's option_values, as they are
           # what differentiates it from other variants.
-          title = product.name
+          parts = [product.name]
           variant.option_values.find_each do |option_value|
-            title << " - #{option_value.name}"
+            parts << option_value.name
           end
-          title
+          parts.join(' - ')
         end
 
         def get_description(product, variant)
