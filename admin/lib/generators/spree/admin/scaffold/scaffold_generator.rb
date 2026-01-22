@@ -31,10 +31,11 @@ module Spree
           template 'views/edit.html.erb', "app/views/spree/admin/#{@plural_name}/edit.html.erb"
 
           # partials
-          template 'views/_table_header.html.erb', "app/views/spree/admin/#{@plural_name}/_table_header.html.erb"
-          template 'views/_table_row.html.erb', "app/views/spree/admin/#{@plural_name}/_table_row.html.erb"
-          template 'views/_filters.html.erb', "app/views/spree/admin/#{@plural_name}/_filters.html.erb"
           template 'views/_form.html.erb', "app/views/spree/admin/#{@plural_name}/_form.html.erb"
+
+          # initializers
+          template 'table_initializer.rb', "config/initializers/spree_admin_#{@plural_name}_table.rb"
+          template 'navigation_initializer.rb', "config/initializers/spree_admin_#{@plural_name}_navigation.rb"
 
           # routes
           insert_into_file 'config/routes.rb', after: "Spree::Core::Engine.add_routes do\n" do
