@@ -10,21 +10,16 @@ module Spree
     class_option :migrate, type: :boolean, default: true, banner: 'Run Spree migrations'
     class_option :seed, type: :boolean, default: true, banner: 'load seed data (migrations must be run)'
     class_option :sample, type: :boolean, default: false, banner: 'load sample data (migrations must be run)'
-    class_option :install_storefront, type: :boolean, default: false, banner: 'installs default rails storefront'
-    class_option :install_admin, type: :boolean, default: false, banner: 'installs default rails admin'
     class_option :auto_accept, type: :boolean
     class_option :user_class, type: :string
     class_option :admin_user_class, type: :string
     class_option :admin_email, type: :string
     class_option :admin_password, type: :string
-    class_option :lib_name, type: :string, default: 'spree'
     class_option :enforce_available_locales, type: :boolean, default: nil
     class_option :authentication, type: :string, default: 'devise'
 
     def self.source_paths
       paths = superclass.source_paths
-      paths << File.expand_path('../templates', "../../#{__FILE__}")
-      paths << File.expand_path('../templates', "../#{__FILE__}")
       paths << File.expand_path('templates', __dir__)
       paths.flatten
     end
@@ -33,8 +28,6 @@ module Spree
       @run_migrations = options[:migrate]
       @load_seed_data = options[:seed]
       @load_sample_data = options[:sample]
-      @install_storefront = options[:install_storefront]
-      @install_admin = options[:install_admin]
       @authentication = options[:authentication]
 
       unless @run_migrations
@@ -47,34 +40,15 @@ module Spree
       template 'config/initializers/spree.rb', 'config/initializers/spree.rb'
     end
 
-    # Currently we only support devise, in the future we will also add support for default Rails authentication
+    def install_spree_cli
+      generate 'spree_cli:install'
+    end
+
     def install_authentication
       if @authentication == 'devise'
         generate 'spree:authentication:devise'
       elsif @authentication == 'dummy'
         # this is for dummy / test app
-      end
-    end
-
-    def install_storefront
-      if @install_storefront && Spree::Core::Engine.frontend_available?
-        generate "spree:storefront:install#{' --force' if options[:force]}"
-
-        # generate devise controllers if authentication is devise
-        if @authentication == 'devise'
-          generate "spree:storefront:devise#{' --force' if options[:force]}"
-        end
-      end
-    end
-
-    def install_admin
-      if @install_admin && Spree::Core::Engine.admin_available?
-        generate "spree:admin:install#{' --force' if options[:force]}"
-
-        # generate devise controllers if authentication is devise
-        if @authentication == 'devise'
-          generate "spree:admin:devise#{' --force' if options[:force]}"
-        end
       end
     end
 
@@ -111,7 +85,6 @@ module Spree
         silence_warnings { rake 'action_text:install:migrations' }
         silence_warnings { rake 'spree:install:migrations' }
         silence_warnings { rake 'spree_api:install:migrations' }
-        silence_warnings { rake 'spree_page_builder:install:migrations' } if @install_storefront && Spree::Core::Engine.frontend_available?
       end
     end
 
@@ -126,7 +99,7 @@ module Spree
 
     def populate_seed_data
       if @load_seed_data
-        say_status :loading,  'seed data'
+        say_status :loading, 'seed data'
         rake_options = []
         rake_options << 'AUTO_ACCEPT=1' if options[:auto_accept]
         rake_options << "ADMIN_EMAIL=#{options[:admin_email]}" if options[:admin_email]

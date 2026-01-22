@@ -6,12 +6,20 @@ module Spree
       class InstallGenerator < Rails::Generators::Base
         desc 'Installs Spree Storefront'
 
+        class_option :migrate, type: :boolean, default: true, banner: 'Run migrations'
+
         def self.source_paths
           [
             File.expand_path('templates', __dir__),
             File.expand_path('../templates', "../#{__FILE__}"),
             File.expand_path('../templates', "../../#{__FILE__}")
           ]
+        end
+
+        def install_page_builder
+          say_status :installing, 'page builder'
+          migrate_option = options[:migrate] == false ? ' --migrate=false' : ''
+          generate "spree:page_builder:install --force#{migrate_option}"
         end
 
         def install
@@ -40,8 +48,8 @@ module Spree
             append_to_file 'app/assets/config/manifest.js', "\n//= link_tree ../builds" unless File.read('app/assets/config/manifest.js').include?('//= link_tree ../builds')
           end
 
-          # remove static robots.txt as we use robots.txt.erb
-          remove_file Rails.root.join('public/robots.txt') if Rails.root && Rails.root.join('public/robots.txt').exist?
+          # remove static robots.txt as storefront serves it dynamically via seo#robots
+          remove_file 'public/robots.txt'
         end
       end
     end

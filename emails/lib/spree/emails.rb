@@ -1,4 +1,4 @@
-require 'spree/core'
+require 'spree'
 
 module Spree
   module Emails
