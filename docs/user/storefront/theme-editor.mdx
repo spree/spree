@@ -1,300 +1,194 @@
 ---
 title: "Theme Editor"
-description: "Spree Commerce drag & drop theme editor enabling your team to design, preview, and publish storefront changes without involving developers - without code deployments."
+description: "Learn how to use the Theme Editor to customize your storefront in Spree Commerce."
 ---
 
-A visually appealing and well-organized storefront is essential for any online business. It builds trust with customers and can significantly improve your conversion rates. 
+A visually appealing and well-organized storefront is essential for any online business. It builds trust with customers and can significantly improve your conversion rates.
 
-The intuitive Spree theme editor features a drag-and-drop page builder that allows you to create professional storefronts that reflect your brand identity, all without writing code or hiring developers. 
+The Spree theme editor provides a powerful, no-code, drag-and-drop page builder that allows you to visually design your storefront, reflect your brand identity, and preview changes in real time - without writing a single line of code or hiring developers.
 
-The visual interface allows you to design, preview, and publish changes in real-time.
+## How to Edit Your Theme
 
-To edit the theme of your storefront, first navigate to the Themes tab of the admin dashboard found under Storefront.
+To edit your storefront’s theme, navigate to **Storefront → Themes** in the admin dashboard.
 
-![](https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1738166777/docs/Storefront/Theme%20Editor/7.1.1.1.1_Theme_Editor_-_Navigate_to_Tab_dyt7i4.png)
+![Managing storefront themes in Spree Commerce](/docs/images/user/storefront/themes/theme-editor/1-themes-tab.png)
 
-Locate the ‘Default’ theme with status ‘Live’ and click on it.
+Find the theme with the status **Live** and click on it to open the theme editor.
 
-Doing so will open the page builder interface where you can begin modifying the layout of your storefront.
+![The Spree Commerce theme editor](/docs/images/user/storefront/themes/theme-editor/2-theme-editor.png)
 
-![](https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1738166777/docs/Storefront/Theme%20Editor/7.1.1.1.2_Theme_Editor_-_Click_On_Default_Theme_qy0urp.png)
+<Warning>It’s useful to note before we go further that you should always click **Publish** in the top-right corner to save your changes. Leaving the editor without publishing will discard all unsaved edits.</Warning>
 
-Please Note: Whenever you make changes that you’d like to keep, make sure to click the blue ‘Publish’ button in the the top right corner, otherwise you will lose all changes if you navigate away from the page builder.
+Let’s walk through the different areas of the page builder.
 
-Let’s now take a look at all the different elements of the page builder in detail.
+## Top Navigation
 
-## Top Bar
+![The top navigation bar in the Spree Commerce theme editor](/docs/images/user/storefront/themes/theme-editor/3-top-navigation.png)
 
-In top bar, you can select which page to work on, set global theme settings, and switch between editor views.
+The top navigation bar allows you to switch between pages, adjust global settings, and preview different views of the storefront. 
 
-### Views
-
-In the top right corner next to the ‘Publish’ button, there are 3 buttons.
-
-#### Mobile View
-
-Clicking on the mobile icon will change the page builder preview to a mobile layout
-
-![](https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1738166777/docs/Storefront/Theme%20Editor/7.1.1.1.3_Theme_Editor_-_Mobile_View_rrfeza.png)
-
-Note: The storefront and all prebuilt page elements are mobile friendly by default.
-
-#### Desktop View
-
-Clicking on the desktop icon will switch the page builder preview to a desktop layout.
-
-![](https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1738166777/docs/Storefront/Theme%20Editor/7.1.1.1.4_Theme_Editor_-_Desktop_View_otjdmn.png)
-
-#### Preview
-
-Clicking on the preview button will allow you to see a preview of the live site, i.e., outside of the page builder. This allows you to see an accurate representation of what the storefront will look like before publishing any changes.
+This gives you access to the following controls and settings:
 
 ### Page Selector
 
-In the top left corner of the screen, there’s a dropdwon menu that allows you to select the page you’d like to work on.
+![The page selector in the Spree Commerce theme editor](/docs/images/user/storefront/themes/theme-editor/4-page-selector.png)
 
-![](https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1738166777/docs/Storefront/Theme%20Editor/7.1.1.1.5_Theme_Editor_-_Page_Selector_ii5ry2.png)
-
-Simply select the page you’d like to work on and the page builder preview and side bar will change to reflect the selection.
+In the top-left dropdown, choose which page you want to edit. The editor will reload with the selected page's layout and elements.
 
 ### Color Scheme
 
-To change the color scheme of your storefront, click on the color palette icon next to the page selector. Doing so will cause the side bar UI to show a list of page elements and they’re default colors.
+![Modifying color schemes in the Spree Commerce theme editor](/docs/images/user/storefront/themes/theme-editor/5-color-scheme.png)
 
-![](https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1738166777/docs/Storefront/Theme%20Editor/7.1.1.1.6_Theme_Editor_-_Color_Scheme_cvogat.png)
+Click the **palette icon** to open the global color settings. You can change the default colors used across all pages.
 
-To change the global color of an element, click on the colored circle next to the element you wish to change.
-
-![](https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1738166777/docs/Storefront/Theme%20Editor/7.1.1.1.7_Theme_Editor_-_Color_Editor_iedflt.png)
-
-This opens a color editor popup that allows you to either enter the color code at the bottom, or manually shift the pointer and sliders around until you find the desired color.
-
-![](https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1738166777/docs/Storefront/Theme%20Editor/7.1.1.1.8_Theme_Editor_-_Edit_The_Color_sz7odm.png)
-
-Note: The slider on the far right of the color editor adjusts transparency.
+Click any colored circle to open the color editor, where you can:
+- Enter a hex code manually
+- Adjust the hue and saturation
+- Control transparency using the right-hand slider
 
 ### Fonts
 
-To change storefront fonts, click on the letter A next to the color palette icon. Doing so will change the side bar UI to a font selector interface.
+![Setting fonts in the Spree Commerce theme editor](/docs/images/user/storefront/themes/theme-editor/6-fonts.png)
 
-![](https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1738166777/docs/Storefront/Theme%20Editor/7.1.1.1.9_Theme_Editor_-_Fonts_uptm9z.png)
+Click the **A icon** to change fonts. You can choose from:
+- **Standard Fonts** - Select separate font families and sizes for body text and headings using dropdowns and sliders.
+- **Custom Fonts** - Add custom fonts by pasting the embed and style code.
 
-#### Standard Fonts
+### Views
 
-In the first tab, you can apply different font families to normal text and headers by selecting them from the respective dropdown menus.
+![Switch between mobile and desktop preview in the Spree Commerce theme editor](/docs/images/user/storefront/themes/theme-editor/7-views.png)
 
-![](https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1738166777/docs/Storefront/Theme%20Editor/7.1.1.1.10_Theme_Editor_-_Standard_Fonts_g44ks6.png)
+Located in the middle of the 
+- **Mobile View** - Preview how the storefront looks on mobile devices.__
+- **Desktop View** - Preview how the storefront looks on desktop desktop devices.
 
-You can also set the size of text and headers by adjusting the respective size scale sliders.
+## Side Navigation
 
-#### Custom Fonts
+![The side navigation bar in the Spree Commerce theme editor](/docs/images/user/storefront/themes/theme-editor/8-side-navigation.png)
 
-In the second tab, you can add custom fonts by inserting the code into the box, e.g.:
-
-```html
-<link rel="stylesheet" href="https://url.to.your.font.com/font.js" />
-<style>
-  /* set font for body */
-  body {
-    font-family: "your font name", sans-serif;
-  }
-  /* set font for headings */
-  h1, h2, h3, h4, h5, h6 {
-    font-family: "your font name", sans-serif;
-  }
-</style>
-```
-
-![](https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1738166777/docs/Storefront/Theme%20Editor/7.1.1.1.11_Theme_Editor_-_Custom_Fonts_hk0pju.png)
-
-## Side Bar
-
-In the side bar, you can add, edit, and rearrange the sections and elements of the page you are working on.
-
-![](https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1738166777/docs/Storefront/Theme%20Editor/7.1.1.1.12_Theme_Editor_-_Side_Bar_nbvfpf.png)
+The side navigation allows you to add, configure, and arrange page sections and individual content blocks.
 
 ### Page Section Settings
 
-Most of the page sections and page elements display two different settings tabs when clicked on. Different page sections have different settings for both content and design.
+![Configuring page section settings in the Spree Commerce theme editor](/docs/images/user/storefront/themes/theme-editor/9-page-sections.png)
 
-#### Content Settings
-
-In the content tab, you can edit the content of that particular section, such as text, images, and links.
-
-![](https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1738166777/docs/Storefront/Theme%20Editor/7.1.1.1.13_Theme_Editor_-_Content_Settings_jo7fjj.png)
-
-#### Design Settings
-
-In the design tab, you can modify color, padding, borders, alignment, and in some cases section layout.
-
-![](https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1738166777/docs/Storefront/Theme%20Editor/7.1.1.1.14_Theme_Editor_-_Design_Settings_o9ke0l.png)
+Click on any page section or element to configure its content and appearance. Most page sections have two distinct tabs:
+- **Content Settings** - Edit text, links, images, and other content 
+- **Design Settings** - Change padding, borders, alignment, color, and sometimes layouts
 
 ### Global Page Sections
 
-Global page sections are visible on all pages of your website, and any changes made to them on one page will be reflected on all other pages.
+Global sections appear across every page (besides checkout) and update everywhere when edited. Global page sections are as follows:
 
 #### Announcement Bar
 
-The announcement bar is a global page section that can display an important message across your entire website, and is situated at the very top of the page.
+![Configuring the announcement bar in the Spree Commerce theme editor](/docs/images/user/storefront/themes/theme-editor/10-announcement-bar.png)
 
-For example, you could use it to inform visitors about the latest promos or free shipping.
-
-![](https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1738166777/docs/Storefront/Theme%20Editor/7.1.1.1.15_Theme_Editor_-_Announcement_Bar_bfjdhd.png)
-
-In the above example, we changed the text, made it bold, and set the background color to #E8E811.
+Add a message that appears at the very top of every page. Ideal for welcome messages and promos like free shipping or limited-time discounts.
 
 #### Page Header
 
-The header serves as your store's navigation hub and first point of interaction, housing essential elements like your logo, menu categories, search bar, shopping cart, and user account access. 
+![Configuring the header in the Spree Commerce theme editor](/docs/images/user/storefront/themes/theme-editor/11-page-header.png)
 
-As the most visible and consistent element across all pages, it shapes your brand's first impression while ensuring customers can easily find what they need and complete their purchases, directly impacting your conversion rates.
+The header includes your:
 
-#### Logo
+- Logo
+- Navigation links
+- Search bar
+- Cart icon
+- Account menu
 
-You can add your logo by clicking on ‘Header’ and selecting the file you wish to upload.
+##### Add Logo
 
-![](https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1738166777/docs/Storefront/Theme%20Editor/7.1.1.1.16_Theme_Editor_-_Logo_dlwofg.png)
+Click **Header** and upload your logo. You can resize its presentation in the **Design** tab.
 
-You can adjust the size of the logo, as well as other header design settings, in the design tab.
+##### Add Links
 
-![](https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1738166777/docs/Storefront/Theme%20Editor/7.1.1.1.17_Theme_Editor_-_Adjust_Logo_dh3nre.png)
+Click **Add Link** to add navigation items.
 
-#### Links
+Link Types are as follows:
+- Page (e.g. About Us, Blog)
+- Product
+- Post (blog)
+- Taxon (category)
+- Policy (e.g. Terms)
+- URL (external or internal)
 
-If you’re using the default header configuration, then you can add links to the header by clicking on ‘Header’ and clicking on ‘+ Add Link’.
+You can also choose to have the link open in a new tab.
 
-![](https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1738166777/docs/Storefront/Theme%20Editor/7.1.1.1.18_Theme_Editor_-_Add_Links_vsufgw.png)
+##### Add Blocks
 
-This will open up a link configuration menu that allows you to set the type of link, where it should point to, and the name it should be presented with.
+![Adding blocks to the header in the Spree Commerce theme editor](/docs/images/user/storefront/themes/theme-editor/12-add-blocks.png)
 
-Link types are as follows:
-
-* Page - static pages, e.g., Shop All, Homepage, About Us, Blog, etc.
-
-* Product - an individual product page
-
-* Post - an individual blog post
-
-* Taxon - a product listing page for a taxon, e.g., Fashion, Garden
-
-* Policy - one of your store policies, e.g., Terms and Conditions, Privacy Policy, etc.
-
-* URL - a URL that links to an internal or external page
-
-You can also choose whether or not to have the link open in a new tab.
-
-![](https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1738166777/docs/Storefront/Theme%20Editor/7.1.1.1.19_Theme_Editor_-_Configure_Link_uvglmp.png)
-
-In the above example, we chose to add a link to the ‘Categories -> Fashion’ taxon that does not open in a new tab.
-
-#### Custom Header Configuration
-
-Under ‘Header’ in the page builder side bar, there is an option to ‘+ Add Block’.
-
-Clicking on this will allow you to configure a custom header with more advanced functionality instead of only simple links.
-
-![](https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1738166777/docs/Storefront/Theme%20Editor/7.1.1.1.20_Theme_Editor_-_Custom_Header_att0fo.png)
-
-There are 3 options to choose from. Link is the same as described above, but let’s take a closer look at the other two options.
-
-#### *Mega Nav With Subcategories*
-
-This block allows you add a dropdown menu to your header that appears when hovering over that item in the header.
-
-![](https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1738166777/docs/Storefront/Theme%20Editor/7.1.1.1.21_Theme_Editor_-_Mega_Nav_With_Subcategories_cylpgl.png)
-
-Simply select a taxon, and the mega nav will be automatically populated with all subtaxons nested below it.
-
-You can also choose to include a ‘Featured Taxon’ which will add a link to that taxon along with its images on the right hand side of the mega nav. This adds to the aesthetic appeal of your website.
-
-#### *Mega Nav*
-
-This block functions in the same way as the ‘Mega Nav With Subcategories’ block, except you decided which links to include in which columns.
-
-![](https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1738166777/docs/Storefront/Theme%20Editor/7.1.1.1.22_Theme_Editor_-_Mega_Nav_frslyv.png)
-
-Simply add links as previously shown and they’ll be added to the mega nav dropdown.
+Click **Add Block** to configure a more advanced header layout. You can select from the following block types:
+- **Mega Nav with Subcategories** - Add a dropdown menu populated from a chosen taxon and its subtaxons. Optionally feature a highlighted taxon with image.
+- **Mega Nav** - Manually add links to columns within a dropdown layout for full control over structure.
+- **Link** - A simple link to taxon, product, policy or any other page.
 
 #### Newsletter
 
-The newsletter is another global page section that allows you to capture user email addresses without them having to place an order.
+![Configuring the newsletter sections in the Spree Commerce theme editor](/docs/images/user/storefront/themes/theme-editor/13-newsletter.png)
 
-It enables you to build a direct marketing channel with your customers, allowing you to share new products, promotions, and content that drive first-time or repeat purchases and increases customer lifetime value.
-
-![](https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1738166777/docs/Storefront/Theme%20Editor/7.1.1.1.23_Theme_Editor_-_Newsletter_kbadpz.png)
-
-You can edit the content in the newsletter section by clicking on the individual elements in the side bar and modifying the text.
-
-![](https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1738166777/docs/Storefront/Theme%20Editor/7.1.1.1.24_Theme_Editor_-_Edit_Newsletter_ujigku.png)
+A global email capture section to build your subscriber list. Customize text and styling as needed.
 
 #### Footer
 
-The footer serves as a trust-building section of your store by housing essential business information, policies, and links to key pages – giving customers the confidence and resources they need to make informed purchasing decisions.
+![Configuring the footer section in the Spree Commerce theme editor](/docs/images/user/storefront/themes/theme-editor/14-footer.png)
 
-![](https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1738166777/docs/Storefront/Theme%20Editor/7.1.1.1.25_Theme_Editor_-_Footer_onoljc.png)
+Add:
+- Your logo
+- Policy links
+- Product category links
+- Social media links
 
-Similar to the header, you can add your logo (whether it be the same or different from the header logo).
-
-![](https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1738166777/docs/Storefront/Theme%20Editor/7.1.1.1.26_Theme_Editor_-_Footer_Logo_fmpbk5.png)
-
-Adding blocks to the footer will add new sections wherein you can nest links.
-
-![](https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1738166777/docs/Storefront/Theme%20Editor/7.1.1.1.27_Theme_Editor_-_Footer_Blocks_y6kvmr.png)
-
-Links are added to blocks in the same way as described in the ‘Header’ section of this support article.
+Organize content into blocks using **Add Block**, and add links as you did in the Header section.
 
 ### Page-Specific Sections
 
-As the name suggests, these sections are specific to whichever page you add them to, and allow you to create an interesting, visually appealing storefront experience that helps your customers discover new products and categories, and learn more about your business.
+These only appear on the page they’re added to - ideal for storytelling, product discovery, and homepage content.
 
 #### Add Page Sections
 
-To add a page section, click the blue ‘Add Section’ button in the side bar.
+![Adding more pages section in the Spree Commerce theme editor](/docs/images/user/storefront/themes/theme-editor/15-add-section.png)
 
-![](https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1738166777/docs/Storefront/Theme%20Editor/7.1.1.1.28_Theme_Editor_-_Add_Page_Sections_ksxhs1.png)
+Click **Add Section** in the sidebar, then choose a layout type from the following options:
 
-This will open a menu that allows you to select the type of page section you’d like to add.
+- Breadcrumbs
+- Custom Code
+- Featured Posts
+- Featured Product
+- Featured Taxon
+- Featured Taxons
+- Image Banner
+- Image With Text
+- Page Title
+- Related Products
+- Rich Text
+- Video
 
-![](https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1738166777/docs/Storefront/Theme%20Editor/7.1.1.1.29_Theme_Editor_-_Page_Section_Menu_rijc9l.png)
-
-Simply select the page you want to add and the blank section template will be added to the bottom of the page (but above the newsletter and footer sections).
-
-![](https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1738166777/docs/Storefront/Theme%20Editor/7.1.1.1.30_Theme_Editor_-_Choose_Page_Section_npa7f9.png)
-
-In this example, we chose a Image Banner page section, which display a page-width image along with optional header, text, and button elements.
+The newly added section will appear at the bottom of the page, but above the footer and newsletter.
 
 #### Edit Page Sections and Elements
 
-To edit a page section or element, either select it from the side bar, or click on it in editor preview. This will open up the settings for that particular section or element.
+Click on a section in the sidebar or directly in the preview to update content or design. All changes reflect immediately in the editor preview.
 
-![](https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1738166777/docs/Storefront/Theme%20Editor/7.1.1.1.31_Theme_Editor_-_Edit_Sections_And_Elements_chwcd8.png)
+#### Rearrange Page Sections and Elements
 
-Simply update the content field or design settings to have them reflected in the the editor preview.
+![Rearranging page sections in the Spree Commerce theme editor](/docs/images/user/storefront/themes/theme-editor/16-rearrange-sections.png)
 
-![](https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1738166777/docs/Storefront/Theme%20Editor/7.1.1.1.32_Theme_Editor_-_Update_Fields_b8ldzy.png)
+To move a page section or element, hover over it in the preview to reveal the actions menu, then use the up and down arrows to reposition it to the desired location on the page.
 
-In this example, we added an image, change the header content, and made all of the text bold.
+#### Delete Sections and Elements
 
-#### Delete Page Sections and Elements
+![Deleting page sections in the Spree Commerce theme editor](/docs/images/user/storefront/themes/theme-editor/17-delete-section.png)
 
-To delete a page section or element, simple select it from the side bar or click on it in the editor preview, and locate the ‘Delete button in the bottom left corner of the page.
+You can either:
 
-![](https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1738166777/docs/Storefront/Theme%20Editor/7.1.1.1.33_Theme_Editor_-_Edited_Section_Example_cyuuzr.png)
-
-Click ‘Delete’ and the chosen section or element will be removed from the page.
-
-![](https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1738166777/docs/Storefront/Theme%20Editor/7.1.1.1.34_Theme_Editor_-_Delete_Button_aal2ce.png)
-
-In this example, we deleted the text element from the image banner section.
-
-You can also delete sections and elements by hovering over them in the page editor, and clicking on the blue trashcan button.
-
-![](https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1738166777/docs/Storefront/Theme%20Editor/7.1.1.1.35_Theme_Editor_-_Element_Deleted_c0dy8u.png)
-
-For more information about the different pre-built page sections available in Spree and how to configure them, please refer to another support article.
+- Select a section and click **Delete** at the bottom left of the side navigation
+- Hover over an element in the preview and click the trash can icon
 
 ## Publish
 
-Once you’re happy with all of the changes you’ve made, make sure to hit the blue ‘Publish’ button in the top right hand corner to save and publish your changes, otherwise you’ll lose all of your progress if you navigate away from the page editor.
+Once you’re finished modifying your storefront theme, click **Publish** in the top right corner to save and apply your changes to the live storefront immediately.
 
-After publishing, all changes will be reflected immediately on the live storefront.
+<Warning>Any changes you make in the editor are **not saved** until you click **Publish**. If you do not wish to save your changes, simply back out of the theme editor.</Warning>

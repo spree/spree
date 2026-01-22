@@ -1,82 +1,76 @@
 ---
-title: 'Create a New Store'
-description: 'The multi-store functionality lets you manage separate brands or product lines from a single admin dashboard.'
+title: "Create a New Store"
+description: "Learn how to create and manage multiple stores in Spree Commerce."
 ---
 
-If you plan to target different customer segments, regions, or markets, you might want to add another store to offer tailored products and experiences. 
+Spree’s [<u>multi-store functionality</u>](https://spreecommerce.org/docs/use-case/multi-store/capabilities) allows you to manage completely separate storefronts - each with its own branding, products, payment methods, and more - all from a single admin dashboard.
 
-The multi-store approach also allows you to manage separate brands or product lines while keeping centralized control over operations and analytics.
+This is useful if you want to:
+- Target different customer segments or regions
+- Operate multiple brands or product lines
+- Offer localized shopping experiences
 
-To add a new store, click the site name in top left corner to reveal a dropdown menu and click “+ New Store”.
+## Add a New Store
 
-![](https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1738166756/docs/Storefront/Create%20a%20New%20Store/7.5.1_Create_a_New_Store_-_Add_New_Store_yjmzji.png)
+![How to create a new store in Spree Commerce](/docs/images/user/storefront/create-new-store/1-add-new-store.png)
 
-A window will appear that will allow you configure important settings for the creation of thew new store.
+1. Click **\+** next to your store name in the top-left corner of the admin dashboard.
+2. Select **New Store** from the dropdown.
 
-![](https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1738166756/docs/Storefront/Create%20a%20New%20Store/7.5.2_Create_a_New_Store_-_Configure_Settings_rf543s.png)
+This opens a panel where you can configure the new store.
 
-There are five to be completed before creating the new store:
+### Required Settings
 
-* Site Name - the name that’s displayed in social sharing links, search engines, and browser tabs
+![Configuring new store settings in Spree Commerce](/docs/images/user/storefront/create-new-store/2-new-store-settings.png)
 
-* Country - the country you’ll be selling to
+You’ll be asked to fill in the following:
+- **Site Name** - the public-facing name of your store (used in social sharing and SEO)
+- **Country** - the country this store will serve
+- **Default locale** - the default language to be used on the store 
+- **Currency** - the currency used at checkout
+- **Import Products** - whether to import existing products from another store
+- **Import Payment Methods** - whether to import payment methods from another store
 
-* Currency - the currency you’ll be selling in
+<Note>Your choices should align with your business strategy. For example, if you're launching in a new region, you might use a different currency or pricing strategy but reuse your product catalog and payment setup.</Note>
 
-* Import Products - whether or not you’d like to import products from another store
+Once ready, click **Create** to launch your new store. You’ll be automatically redirected to its admin panel.
 
-* Import Payment Methods - whether or not you’d like to important payment methods from another store
+## Switch Between Stores
 
-Note: The country, currency, product imports, and payment methods you choose for your new store will depend on your specific use case and overall business model.
+![How to switch between stores in Spree Commerce](/docs/images/user/storefront/create-new-store/3-switch-stores.png)
 
-After configuring these settings, click the blue ‘Create’ button in the bottom right corner to create your new store. You will then be redirected to the store's admin panel.
 
-Congratulations, you’ve just created another store!
-
-## Switching Stores
-
-To switch between stores, click on the store name in the top left corner and select the store you’d like to manage.
-
-![](https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1738166756/docs/Storefront/Create%20a%20New%20Store/7.5.3_Create_a_New_Store_-_Switching_Stores_bsuzzn.png)
+To manage a different store, click the **store name** in the top-left corner and select the store you want to access.
 
 ## Cross-Store Data Sharing
 
-Here’s a breakdown of what will and will not be shared with the new store, as shown in the new store settings window.
+When creating a new store, Spree gives you control over what data is shared and what remains separate.
 
-### What will be shared with the new store
+### Shared with New Store
+- **Products, Inventory & Locations** (can choose which apply to this store)
+- **Customers**
+- **Shipping Methods, Rates, Markets**
+- **Payment Methods** (selectable per store)
+- **Admin User Access**
 
-* Products, Locations & Inventory
+### Not Shared with New Store
+- Orders
+- Shipments
+- Payments
+- Refunds
+- Store Credits
+- Gift Cards
+- Blog Posts
+- Themes & Pages
+- Integrations (e.g., Google Analytics, Meta Pixel)
 
-  * you can select which ones will be available for this store
+## Next Steps
 
-* Customers
+Once your new store is created, you can:
 
-* Shipping methods, rates and markets
+- [<u>Customize the storefront theme</u>](https://spreecommerce.org/docs/user/storefront/theme-editor)
+- [<u>Set up store-specific promotions</u>](https://spreecommerce.org/docs/user/promotions/create-a-promotion)
+- [<u>Manage localized shipping and tax settings</u>](https://spreecommerce.org/docs/user/settings/zones)
+- [<u>Import or manage your product catalog</u>](https://spreecommerce.org/docs/user/manage-products/import-products)
 
-* Payment Methods
-
-  * you can select which ones will be available for this store
-
-* Admin user privileges
-
-### &#xA;What will not be shared with the new store
-
-* Orders
-
-* Shipments
-
-* Payments
-
-* Refunds
-
-* Store Credits
-
-* Gift cards
-
-* Blogs Posts
-
-* Themes & Pages
-
-* Integrations eg. Google Analytics, Meta Pixel, etc.
-
-For more information about multi-store management, please refer to another support article.
+Interested to learn more? Check out our [<u>Multi-Store use case article</u>](https://spreecommerce.org/docs/use-case/multi-store/model).
