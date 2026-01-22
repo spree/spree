@@ -23,9 +23,8 @@ def add_gems
   gem 'spree_sample', USE_LOCAL_SPREE ? { path: '../' } : { version: SPREE_VERSION }
   gem 'spree_admin', USE_LOCAL_SPREE ? { path: '../' } : { version: SPREE_VERSION }
   gem 'spree_storefront', USE_LOCAL_SPREE ? { path: '../' } : { version: SPREE_VERSION }
-  gem 'spree_page_builder', path: '../packages/page_builder' if USE_LOCAL_SPREE
-
-  # Translations
+  gem 'spree_page_builder', USE_LOCAL_SPREE ? { path: '../' } : { version: SPREE_VERSION }
+  # translations
   gem 'spree_i18n'
 
   # Development & Test gems

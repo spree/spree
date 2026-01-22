@@ -3,7 +3,7 @@ eval_gemfile('../common_spree_dependencies.rb')
 gem 'spree', path: '../'
 gem 'spree_admin', path: '../admin'
 gem 'spree_emails', path: '../emails'
-gem 'spree_page_builder', path: '../packages/page_builder'
+gem 'spree_page_builder', path: '../page_builder'
 
 gem 'devise'
 gem 'sprockets-rails', '>= 3.5.2'
