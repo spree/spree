@@ -11,6 +11,9 @@
 /* Import Spree Admin base styles from the gem */
 @import "$SPREE_ADMIN_PATH/app/assets/tailwind/spree/admin/index.css";
 
+/* Auto-generated sources for all Spree engines (page_builder, etc.) */
+/* $SPREE_ENGINE_SOURCES */
+
 /* Scan host app's custom admin code for Tailwind classes */
 @source "../../views/spree/admin/**/*.erb";
 @source "../../helpers/spree/admin/**/*.rb";

@@ -33,6 +33,46 @@ RSpec.describe Spree::Admin::TailwindHelper do
       expect(result).to include(Spree::Admin::Engine.root.to_s)
       expect(result).not_to include('$SPREE_ADMIN_PATH')
     end
+
+    it 'replaces $SPREE_ENGINE_SOURCES placeholder with generated sources' do
+      result = described_class.resolved_input_css
+
+      expect(result).not_to include('$SPREE_ENGINE_SOURCES')
+    end
+  end
+
+  describe '.spree_engines' do
+    it 'returns Spree engines excluding Admin engine' do
+      engines = described_class.spree_engines
+
+      expect(engines).not_to include(Spree::Admin::Engine)
+      engines.each do |engine|
+        expect(engine.name).to start_with('Spree::')
+      end
+    end
+  end
+
+  describe '.spree_engine_sources' do
+    it 'generates @source directives for spree/admin paths' do
+      sources = described_class.spree_engine_sources
+
+      sources.lines.each do |line|
+        next if line.strip.empty?
+
+        expect(line).to match(/@source.*spree\/admin/)
+      end
+    end
+
+    it 'only includes directories that exist' do
+      sources = described_class.spree_engine_sources
+
+      sources.lines.each do |line|
+        next if line.strip.empty?
+
+        path = line.match(/"([^"]+)\/\*\*/)[1]
+        expect(File.directory?(path)).to be(true), "Expected directory to exist: #{path}"
+      end
+    end
   end
 
   describe '.write_resolved_css' do

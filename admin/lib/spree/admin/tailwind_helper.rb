@@ -19,7 +19,36 @@ module Spree
         end
 
         def resolved_input_css
-          File.read(input_path).gsub("$SPREE_ADMIN_PATH", Spree::Admin::Engine.root.to_s)
+          css = File.read(input_path)
+          css = css.gsub("$SPREE_ADMIN_PATH", Spree::Admin::Engine.root.to_s)
+          css = css.gsub("/* $SPREE_ENGINE_SOURCES */", spree_engine_sources)
+          css
+        end
+
+        def spree_engine_sources
+          spree_engines.flat_map do |engine|
+            engine_sources(engine)
+          end.join("\n")
+        end
+
+        def spree_engines
+          Rails::Engine.subclasses.select do |engine|
+            engine.name&.start_with?("Spree::") && engine != Spree::Admin::Engine
+          end
+        end
+
+        def engine_sources(engine)
+          root = engine.root.to_s
+          source_paths = [
+            ["app/views/spree/admin", "**/*.erb"],
+            ["app/helpers/spree/admin", "**/*.rb"],
+            ["app/javascript/spree/admin", "**/*.js"]
+          ]
+
+          source_paths.filter_map do |dir, pattern|
+            full_dir = File.join(root, dir)
+            %(@source "#{full_dir}/#{pattern}";) if File.directory?(full_dir)
+          end
         end
 
         def write_resolved_css
