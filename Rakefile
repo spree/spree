@@ -7,37 +7,35 @@ rescue LoadError
   raise "Could not find spree/testing_support/common_rake. You need to run this command using Bundler."
 end
 
-SPREE_GEMS = %w(core api cli emails sample admin storefront page_builder).freeze
-PACKAGES = %w(page_builder).freeze
+SPREE_CORE_GEMS = %w(core api cli).freeze
+SPREE_OPTIONAL_GEMS = %w(emails sample admin page_builder storefront).freeze
 
 task default: :test
 
 desc "Runs all tests in all Spree engines"
 task test: :test_app do
-  (SPREE_GEMS + PACKAGES).each do |gem_name|
-    if PACKAGES.include?(gem_name)
-      Dir.chdir("#{File.dirname(__FILE__)}/packages/#{gem_name}") do
-        sh 'rake test'
-      end
-    else
+  SPREE_CORE_GEMS.each do |gem_name|
       Dir.chdir("#{File.dirname(__FILE__)}/#{gem_name}") do
         sh 'rspec'
       end
+  end
+  SPREE_OPTIONAL_GEMS.each do |gem_name|
+    Dir.chdir("#{File.dirname(__FILE__)}/#{gem_name}") do
+      sh 'rspec'
     end
   end
 end
 
 desc "Generates a dummy app for testing for every Spree engine"
 task :test_app do
-  (SPREE_GEMS + PACKAGES).each do |gem_name|
-    if PACKAGES.include?(gem_name)
-      Dir.chdir("#{File.dirname(__FILE__)}/packages/#{gem_name}") do
-        sh 'rake test_app'
-      end
-    else
-      Dir.chdir("#{File.dirname(__FILE__)}/#{gem_name}") do
-        sh 'rake test_app'
-      end
+  SPREE_CORE_GEMS.each do |gem_name|
+    Dir.chdir("#{File.dirname(__FILE__)}/#{gem_name}") do
+      sh 'rake test_app'
+    end
+  end
+  SPREE_OPTIONAL_GEMS.each do |gem_name|
+    Dir.chdir("#{File.dirname(__FILE__)}/#{gem_name}") do
+      sh 'rake test_app'
     end
   end
 end
@@ -48,16 +46,15 @@ task :clean do
   rm_rf "sandbox"
   rm_rf "pkg"
 
-  (SPREE_GEMS + PACKAGES).each do |gem_name|
-    if PACKAGES.include?(gem_name)
-      Dir.chdir("#{File.dirname(__FILE__)}/packages/#{gem_name}") do
-        sh 'rake clean'
-      end
-    else
-      rm_f  "#{gem_name}/Gemfile.lock"
-      rm_rf "#{gem_name}/pkg"
-      rm_rf "#{gem_name}/spec/dummy"
-    end
+  SPREE_CORE_GEMS.each do |gem_name|
+    rm_f  "#{gem_name}/Gemfile.lock"
+    rm_rf "#{gem_name}/pkg"
+    rm_rf "#{gem_name}/spec/dummy"
+  end
+  SPREE_OPTIONAL_GEMS.each do |gem_name|
+    rm_f  "#{gem_name}/Gemfile.lock"
+    rm_rf "#{gem_name}/pkg"
+    rm_rf "#{gem_name}/spec/dummy"
   end
 end
 
@@ -67,57 +64,61 @@ namespace :gem do
     Spree.version
   end
 
-  def for_each_gem
-    (SPREE_GEMS + PACKAGES).each do |gem_name|
-      if PACKAGES.include?(gem_name)
-        Dir.chdir("#{File.dirname(__FILE__)}/packages/#{gem_name}") do
-          sh 'rake gem:build'
-        end
-      else
-      yield "pkg/spree_#{gem_name}-#{version}.gem"
-      end
-    end
-    yield "pkg/spree-#{version}.gem"
-  end
-
   desc "Build all spree gems"
   task :build do
     pkgdir = File.expand_path("../pkg", __FILE__)
     FileUtils.mkdir_p pkgdir
 
-    SPREE_GEMS.each do |gem_name|
-      if PACKAGES.include?(gem_name)
-        Dir.chdir("#{File.dirname(__FILE__)}/packages/#{gem_name}") do
-          sh "gem build spree_#{gem_name}.gemspec"
-          mv "spree_#{gem_name}-#{version}.gem", pkgdir
-        end
-      else
-        Dir.chdir(gem_name) do
-          sh "gem build spree_#{gem_name}.gemspec"
-          mv "spree_#{gem_name}-#{version}.gem", pkgdir
-        end
+    SPREE_CORE_GEMS.each do |gem_name|
+      Dir.chdir(gem_name) do
+        sh "gem build spree_#{gem_name}.gemspec"
+        mv "spree_#{gem_name}-#{version}.gem", pkgdir
       end
     end
 
+    # build main spree gem
     sh "gem build spree.gemspec"
+
     mv "spree-#{version}.gem", pkgdir
+    SPREE_OPTIONAL_GEMS.each do |gem_name|
+      Dir.chdir(gem_name) do
+        sh "gem build spree_#{gem_name}.gemspec"
+        mv "spree_#{gem_name}-#{version}.gem", pkgdir
+      end
+    end
   end
 
   desc "Install all spree gems"
   task install: :build do
-    for_each_gem do |gem_path|
+    Dir.chdir("pkg") do
+      SPREE_CORE_GEMS.each do |gem_name|
+        sh "gem install spree_#{gem_name}-#{version}.gem"
+      end
+
+      # install main spree gem
       Bundler.with_unbundled_env do
-        sh "gem install #{gem_path}"
+        sh "gem install spree-#{version}.gem"
+      end
+
+      SPREE_OPTIONAL_GEMS.each do |gem_name|
+        sh "gem install spree_#{gem_name}-#{version}.gem"
       end
     end
   end
 
   desc "Release all gems to rubygems"
   task release: :build do
-    sh "git tag -a -m \"Version #{version}\" v#{version}"
+    Dir.chdir("pkg") do
+      SPREE_CORE_GEMS.each do |gem_name|
+        sh "gem push spree_#{gem_name}-#{version}.gem"
+      end
 
-    for_each_gem do |gem_path|
-      sh "gem push '#{gem_path}'"
+      # release main spree gem
+      sh "gem push spree-#{version}.gem"
+
+      SPREE_OPTIONAL_GEMS.each do |gem_name|
+        sh "gem push spree_#{gem_name}-#{version}.gem"
+      end
     end
   end
 end
@@ -131,7 +132,6 @@ end
 
 namespace :coverage do
   task :report do
-
     require 'simplecov'
 
     %w[emails api core].each { |name|
@@ -139,5 +139,5 @@ namespace :coverage do
           coverage_dir "#{ENV['COVERAGE_DIR']}/#{name}" if ENV['COVERAGE_DIR']
       end
     }
-end
+  end
 end
