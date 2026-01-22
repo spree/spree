@@ -6,4 +6,4 @@
   <%%= link_to_with_icon 'plus', Spree.t(:new_<%= @singular_name %>), new_object_url, class: "btn btn-primary" if can? :create, <%= @resource_name %> %>
 <%% end %>
 
-<%%= render 'spree/admin/shared/index_table' %>
+<%%= render_table @collection, :<%= @plural_name %> %>
