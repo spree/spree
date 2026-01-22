@@ -12,7 +12,7 @@ module Spree
           information['id'] = input[:variant].id
           information['title'] = format_title(input[:product], input[:variant])
           information['description'] = get_description(input[:product], input[:variant])
-          information['link'] = "#{input[:store].url}/#{input[:product].slug}"
+          information['link'] = "#{input[:store].url}/products/#{input[:product].slug}"
           information['image_link'] = get_image_link(input[:variant], input[:product])
           information['price'] = format_price(input[:variant])
           information['availability'] = get_availability(input[:product])
