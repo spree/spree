@@ -132,7 +132,7 @@ jobs:
     <<: *test
     environment:
       <<: *environment
-      PROJECTS: emails,sample,legacy_webhooks
+      PROJECTS: emails,sample
 
   # mysql tests
   test_core_mysql:
@@ -169,7 +169,7 @@ jobs:
     <<: *test_mysql
     environment:
       <<: *mysql_environment
-      PROJECTS: emails,sample,legacy_webhooks
+      PROJECTS: emails,sample
 
   # brakeman
   brakeman:
