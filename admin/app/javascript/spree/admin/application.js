@@ -87,7 +87,6 @@ import SortableTree from 'spree/admin/controllers/sortable_tree_controller'
 import StockTransferController from 'spree/admin/controllers/stock_transfer_controller'
 import StoreFormController from 'spree/admin/controllers/store_form_controller'
 import TabsController from 'spree/admin/controllers/tabs_controller'
-import TimeZoneController from 'spree/admin/controllers/time_zone_controller'
 import TooltipController from 'spree/admin/controllers/tooltip_controller'
 import TurboSubmitButtonController from 'spree/admin/controllers/turbo_submit_button_controller'
 import UnitSystemController from 'spree/admin/controllers/unit_system_controller'
@@ -161,7 +160,6 @@ application.register('sortable-tree', SortableTree)
 application.register('stock-transfer', StockTransferController)
 application.register('store-form', StoreFormController)
 application.register('tabs', TabsController)
-application.register('time-zone', TimeZoneController)
 application.register('tooltip', TooltipController)
 application.register('turbo-submit-button', TurboSubmitButtonController)
 application.register('textarea-autogrow', TextareaAutogrow)
