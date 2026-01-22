@@ -46,7 +46,7 @@ module Spree
       end
 
       it 'includes link' do
-        expect(result.value[:file]).to include("<g:link>#{store.url}/#{product.slug}</g:link>").once
+        expect(result.value[:file]).to include("<g:link>#{store.url}/products/#{product.slug}</g:link>").once
       end
 
       it 'includes image link' do
