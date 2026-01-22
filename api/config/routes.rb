@@ -219,7 +219,7 @@ Spree::Core::Engine.add_routes do
     end
 
     namespace :v3 do
-      namespace :storefront do
+      namespace :store do
         # Authentication
         post 'auth/login', to: 'auth#create'
         post 'auth/register', to: 'auth#register'
@@ -248,8 +248,8 @@ Spree::Core::Engine.add_routes do
           end
 
           # Nested resources - all require order access
-          resources :line_items, only: [:create, :show, :update, :destroy]
-          resources :coupon_codes, only: [:create, :destroy]
+          resources :line_items, only: [:create, :update, :destroy]
+          resources :order_promotions, only: [:create, :destroy]
         end
 
         # Customer
