@@ -7,8 +7,8 @@ rescue LoadError
   raise "Could not find spree/testing_support/common_rake. You need to run this command using Bundler."
 end
 
-SPREE_GEMS = %w(core api cli emails sample admin storefront legacy_webhooks page_builder).freeze
-PACKAGES = %w(legacy_webhooks page_builder).freeze
+SPREE_GEMS = %w(core api cli emails sample admin storefront page_builder).freeze
+PACKAGES = %w(page_builder).freeze
 
 task default: :test
 
