@@ -23,7 +23,7 @@ module Spree
 
           # DELETE  /api/v3/store/orders/:order_id/order_promotions/:id
           def destroy
-            coupon_code = @order_promotion.code.presence || @order_promotion.name
+            coupon_code = @resource.code.presence || @resource.name
 
             promotion_handler.remove(coupon_code)
 
@@ -33,6 +33,8 @@ module Spree
               render_errors(promotion_handler.error)
             end
           end
+
+          protected
 
           def promotion_handler
             @promotion_handler ||= Spree::PromotionHandler::Coupon.new(@order)

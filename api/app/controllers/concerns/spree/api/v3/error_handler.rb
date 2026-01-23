@@ -6,9 +6,12 @@ module Spree
 
         # Stripe-style error codes for consistent API error responses
         ERROR_CODES = {
-          # Authentication errors
+          # Authentication & authorization errors
           authentication_required: 'authentication_required',
           authentication_failed: 'authentication_failed',
+          access_denied: 'access_denied',
+          invalid_token: 'invalid_token',
+          invalid_provider: 'invalid_provider',
 
           # Resource errors
           record_not_found: 'record_not_found',
@@ -31,13 +34,6 @@ module Spree
           validation_error: 'validation_error',
           parameter_missing: 'parameter_missing',
           parameter_invalid: 'parameter_invalid',
-
-          # Authentication & authorization errors
-          authentication_required: 'authentication_required',
-          authentication_failed: 'authentication_failed',
-          access_denied: 'access_denied',
-          invalid_token: 'invalid_token',
-          invalid_provider: 'invalid_provider',
 
           # Payment errors
           payment_failed: 'payment_failed',
