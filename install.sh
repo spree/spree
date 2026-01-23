@@ -2,7 +2,8 @@
 
 # Spree Commerce Guided Installer
 # Usage: bash -c "$(curl -fsSL https://raw.githubusercontent.com/spree/spree/main/install.sh)"
-# Usage with options: bash install.sh --verbose --local --app-name=my_store --auto-accept --force
+# Usage with options: bash -c "$(curl -fsSL https://raw.githubusercontent.com/spree/spree/main/install.sh)" -- --verbose
+# Or: bash install.sh --verbose --local --app-name=my_store --auto-accept --force
 # Options:
 #   --verbose, -v           Show detailed output
 #   --local, -l             Use local Spree gems from parent directory
@@ -12,13 +13,67 @@
 
 set -e
 
-# Colors for output
+# Colors for output (defined early for error handler)
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 BOLD='\033[1m'
 NC='\033[0m' # No Color
+
+# GitHub issue URL for reporting problems
+GITHUB_ISSUES_URL="https://github.com/spree/spree/issues/new?labels=installer&template=installer_issue.md"
+
+# Error handler function
+handle_error() {
+    local exit_code=$?
+    local line_number=$1
+    local command="$2"
+
+    echo ""
+    echo -e "${RED}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "${RED}${BOLD}  Installation Failed${NC}"
+    echo -e "${RED}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
+    echo -e "${BOLD}Error details:${NC}"
+    echo -e "  Exit code: $exit_code"
+    echo -e "  Line: $line_number"
+    echo -e "  Command: $command"
+    echo ""
+    echo -e "${BOLD}System information:${NC}"
+    echo -e "  OS: $(uname -s) $(uname -r)"
+    echo -e "  Architecture: $(uname -m)"
+    if command -v ruby &> /dev/null; then
+        echo -e "  Ruby: $(ruby -v 2>/dev/null || echo 'not available')"
+    else
+        echo -e "  Ruby: not installed"
+    fi
+    if command -v rails &> /dev/null; then
+        echo -e "  Rails: $(rails -v 2>/dev/null || echo 'not available')"
+    else
+        echo -e "  Rails: not installed"
+    fi
+    echo ""
+    echo -e "${BOLD}Troubleshooting:${NC}"
+    echo -e "  1. Run the installer with --verbose flag for detailed output:"
+    echo -e "     ${BLUE}bash -c \"\$(curl -fsSL https://spreecommerce.org/install)\" -- --verbose${NC}"
+    echo ""
+    echo -e "  2. Ensure you have Ruby 3.2+ installed:"
+    echo -e "     ${BLUE}ruby -v${NC}"
+    echo ""
+    echo -e "${BOLD}Report this issue:${NC}"
+    echo -e "  If the problem persists, please report it at:"
+    echo -e "  ${BLUE}${GITHUB_ISSUES_URL}${NC}"
+    echo ""
+    echo -e "  Please include the error details and system information above."
+    echo -e "${RED}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
+
+    exit $exit_code
+}
+
+# Set up error trap
+trap 'handle_error ${LINENO} "$BASH_COMMAND"' ERR
 
 # Configuration
 RAILS_VERSION="${RAILS_VERSION:-8.1.2}"
@@ -636,8 +691,40 @@ export PATH=\"\$HOME/.gem/ruby/$RUBY_VERSION/bin:\$PATH\""
 
     RUBY_MINOR=$(echo "$INSTALLED_RUBY" | cut -d'.' -f2)
     if [ "$RUBY_MAJOR" -lt 3 ] || ([ "$RUBY_MAJOR" -eq 3 ] && [ "$RUBY_MINOR" -lt 2 ]); then
-        print_error "Installed Ruby version $INSTALLED_RUBY is too old (need >= 3.2)"
-        print_info "Please install Ruby 3.2+ manually from: https://www.ruby-lang.org/en/documentation/installation/"
+        echo ""
+        echo -e "${RED}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo -e "${RED}${BOLD}  Ruby Version Error${NC}"
+        echo -e "${RED}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo ""
+        echo -e "  ${BOLD}Installed Ruby version:${NC} $INSTALLED_RUBY"
+        echo -e "  ${BOLD}Required Ruby version:${NC}  3.2 or higher"
+        echo ""
+        echo -e "${BOLD}How to fix:${NC}"
+        echo -e "  Install Ruby 3.2+ using one of these methods:"
+        echo ""
+        if [ "$OS" = "macos" ]; then
+            echo -e "  ${BOLD}Option 1: Homebrew (recommended)${NC}"
+            echo -e "    ${BLUE}brew install ruby${NC}"
+            echo ""
+            echo -e "  ${BOLD}Option 2: rbenv${NC}"
+            echo -e "    ${BLUE}brew install rbenv${NC}"
+            echo -e "    ${BLUE}rbenv install 3.3.0${NC}"
+            echo -e "    ${BLUE}rbenv global 3.3.0${NC}"
+        else
+            echo -e "  ${BOLD}Option 1: rbenv (recommended)${NC}"
+            echo -e "    ${BLUE}curl -fsSL https://github.com/rbenv/rbenv-installer/raw/HEAD/bin/rbenv-installer | bash${NC}"
+            echo -e "    ${BLUE}rbenv install 3.3.0${NC}"
+            echo -e "    ${BLUE}rbenv global 3.3.0${NC}"
+            echo ""
+            echo -e "  ${BOLD}Option 2: rvm${NC}"
+            echo -e "    ${BLUE}curl -sSL https://get.rvm.io | bash -s stable${NC}"
+            echo -e "    ${BLUE}rvm install 3.3.0${NC}"
+            echo -e "    ${BLUE}rvm use 3.3.0 --default${NC}"
+        fi
+        echo ""
+        echo -e "  More info: ${BLUE}https://www.ruby-lang.org/en/documentation/installation/${NC}"
+        echo -e "${RED}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo ""
         exit 1
     fi
 
@@ -800,9 +887,31 @@ create_rails_app() {
         local exit_code=$?
 
         if [ $exit_code -ne 0 ]; then
-            print_error "Spree Commerce application creation failed!"
-            echo -e "\n${YELLOW}Error log:${NC}"
+            echo ""
+            echo -e "${RED}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+            echo -e "${RED}${BOLD}  Spree Installation Failed${NC}"
+            echo -e "${RED}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+            echo ""
+            echo -e "${BOLD}Error log (last 50 lines):${NC}"
+            echo ""
             tail -50 /tmp/spree_install.log
+            echo ""
+            echo -e "${BOLD}Full log saved at:${NC} /tmp/spree_install.log"
+            echo ""
+            echo -e "${BOLD}Troubleshooting:${NC}"
+            echo -e "  1. Run the installer with --verbose flag for detailed output:"
+            echo -e "     ${BLUE}bash -c \"\$(curl -fsSL https://spreecommerce.org/install)\" -- --verbose${NC}"
+            echo ""
+            echo -e "  2. Check your Ruby version (requires 3.2+):"
+            echo -e "     ${BLUE}ruby -v${NC}"
+            echo ""
+            echo -e "${BOLD}Report this issue:${NC}"
+            echo -e "  If the problem persists, please report it at:"
+            echo -e "  ${BLUE}${GITHUB_ISSUES_URL}${NC}"
+            echo ""
+            echo -e "  Please include the error log above in your report."
+            echo -e "${RED}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+            echo ""
             exit 1
         fi
 
