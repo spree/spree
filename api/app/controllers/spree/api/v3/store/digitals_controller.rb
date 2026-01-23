@@ -2,22 +2,38 @@ module Spree
   module Api
     module V3
       module Store
-        class DigitalsController < BaseController
-          # Public endpoint - access via token
-
-          # GET  /api/v3/store/digitals/:token
-          def download
-            digital_link = Spree::DigitalLink.find_by!(token: params[:token])
-
-            if digital_link.authorize!
-              send_file digital_link.digital.attachment.path,
-                        filename: digital_link.digital.attachment.filename.to_s,
-                        type: digital_link.digital.attachment.content_type
+        class DigitalsController < ResourceController
+          # GET  /api/v3/store/digitals/:id?token=...
+          def show
+            if @resource.authorize!
+              send_file @resource.digital.attachment.path,
+                        filename: @resource.digital.attachment.filename.to_s,
+                        type: @resource.digital.attachment.content_type
             else
-              render json: { error: 'Download link expired or invalid' }, status: :forbidden
+              render_error(
+                code: ERROR_CODES[:digital_link_expired],
+                message: 'Download link expired or invalid',
+                status: :forbidden
+              )
             end
-          rescue ActiveRecord::RecordNotFound
-            render json: { error: 'Digital download not found' }, status: :not_found
+          end
+
+          protected
+
+          def model_class
+            Spree::DigitalLink
+          end
+
+          def serializer_class
+            Spree.api.v3_store_digital_link_serializer
+          end
+
+          def authorize_resource!(resource = @resource, action = action_name.to_sym)
+            authorize!(action, resource, digital_token)
+          end
+
+          def digital_token
+            request.headers['X-Spree-Digital-Token'].presence || params[:token]
           end
         end
       end

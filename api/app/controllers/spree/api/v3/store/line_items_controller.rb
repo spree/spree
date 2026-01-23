@@ -61,7 +61,7 @@ module Spree
           protected
 
           def variant
-            current_store.variants.accessible_by(current_ability).find(line_item_params[:variant_id])
+            current_store.variants.accessible_by(current_ability).find(permitted_params[:variant_id])
           end
 
           def scope

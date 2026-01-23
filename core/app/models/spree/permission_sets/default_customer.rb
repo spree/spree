@@ -60,6 +60,11 @@ module Spree
 
         # Invitation acceptance
         can :accept, Spree::Invitation, invitee_id: [user.id, nil], invitee_type: user.class.name, status: 'pending'
+
+        # Digital downloads - token-based access
+        can :show, Spree::DigitalLink do |digital_link, token|
+          digital_link.token == token
+        end
       end
     end
   end
