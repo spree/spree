@@ -58,8 +58,17 @@ namespace :common do
     end
 
     # Run core Spree install generator
+    # The spree:install generator lives in the root spree gem. Core gems (spree_core, spree_api)
+    # don't have spree as a dependency, so we need to use the root Gemfile to access the generator.
+    # Other gems (admin, storefront, etc.) already have spree in their Gemfile.
+    core_gems = %w[spree/core spree/api]
+    root_gemfile = File.expand_path('../../../../Gemfile', __dir__)
+    use_root_gemfile = core_gems.include?(ENV['LIB_NAME']) &&
+                       File.exist?(root_gemfile) &&
+                       File.exist?(File.expand_path('../../../../spree.gemspec', __dir__))
+    bundle_exec = use_root_gemfile ? "bundle exec --gemfile=#{root_gemfile}" : 'bundle exec'
     puts 'Running Spree install generator...'
-    system("bundle exec rails g spree:install --force --auto-accept --migrate=false --seed=false --sample=false --user_class=#{args[:user_class]} --admin_user_class=#{args[:admin_user_class]} --authentication=#{args[:authentication]}")
+    system("#{bundle_exec} rails g spree:install --force --auto-accept --migrate=false --seed=false --sample=false --user_class=#{args[:user_class]} --admin_user_class=#{args[:admin_user_class]} --authentication=#{args[:authentication]}")
 
     # Determine if we need to install admin/storefront
     # Either via explicit flag or because we're testing that gem itself
