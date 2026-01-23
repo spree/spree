@@ -116,6 +116,7 @@ module Spree
         v3_store_taxonomy_serializer: 'Spree::Api::V3::Store::TaxonomySerializer',
         v3_store_taxon_serializer: 'Spree::Api::V3::Store::TaxonSerializer',
         v3_store_order_promotion_serializer: 'Spree::Api::V3::Store::OrderPromotionSerializer',
+        v3_store_digital_link_serializer: 'Spree::Api::V3::Store::DigitalLinkSerializer',
 
         # platform serializers
         platform_metafield_serializer: 'Spree::Api::V2::Platform::MetafieldSerializer',

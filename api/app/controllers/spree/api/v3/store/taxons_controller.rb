@@ -16,11 +16,6 @@ module Spree
           def scope
             Spree::Taxon.for_store(current_store)
           end
-
-          # Not needed for index/show
-          def permitted_params
-            {}
-          end
         end
       end
     end

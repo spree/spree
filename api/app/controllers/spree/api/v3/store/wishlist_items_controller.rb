@@ -2,7 +2,7 @@ module Spree
   module Api
     module V3
       module Store
-        class WishedItemsController < ResourceController
+        class WishlistItemsController < ResourceController
           before_action :require_authentication!
           before_action :set_wishlist
 

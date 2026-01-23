@@ -26,11 +26,6 @@ module Spree
           def serializer_class
             Spree.api.v3_store_store_serializer
           end
-
-          # Not needed for show
-          def permitted_params
-            {}
-          end
         end
       end
     end

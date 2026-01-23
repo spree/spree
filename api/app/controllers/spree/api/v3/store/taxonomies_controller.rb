@@ -1,7 +1,7 @@
 module Spree
   module Api
     module V3
-      module Storefront
+      module Store
         class TaxonomiesController < ResourceController
           protected
 
