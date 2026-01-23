@@ -1013,6 +1013,7 @@
                   "user/orders/processing-orders",
                   "user/orders/creating-orders",
                   "user/orders/editing-orders",
+                  "user/orders/order-adjustments",
                   "user/orders/exporting-orders",
                   "user/orders/cancelling-orders",
                   "user/orders/refunding-orders",
