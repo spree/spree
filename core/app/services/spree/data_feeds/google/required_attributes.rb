@@ -56,7 +56,7 @@ module Spree
         end
 
         def get_availability(product)
-          return 'in stock' if product.available? && product.available_on&.past?
+          return 'in stock' if product.available? && (product.available_on.nil? || product.available_on.past?)
           return 'backorder' if product.backorderable? && product.backordered? && product.available_on&.future?
 
           'out of stock'
