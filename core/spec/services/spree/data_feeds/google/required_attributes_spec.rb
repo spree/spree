@@ -22,15 +22,6 @@ module Spree
         expect(result_a.value[:information]['title']).not_to include('option-b')
         expect(result_b.value[:information]['title']).not_to include('option-a')
       end
-
-      it 'returns in stock for available products without available_on date' do
-        product = create(:product, available_on: nil, status: 'active', stores: [store])
-        variant = create(:with_image_variant, product: product)
-
-        result = subject.call(product: product, variant: variant, store: store)
-
-        expect(result.value[:information]['availability']).to eq('in stock')
-      end
     end
   end
 end

@@ -78,8 +78,8 @@ module Spree
       context 'availability date is nil' do
         let(:product) { create(:product, stores: [store], available_on: nil) }
 
-        it 'shows that product is out of stock' do
-          expect(result.value[:file]).to include('<g:availability>out of stock</g:availability>')
+        it 'shows that product is in stock' do
+          expect(result.value[:file]).to include('<g:availability>in stock</g:availability>')
         end
 
         it 'shows that product availability date is nil' do
