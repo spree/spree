@@ -65,7 +65,21 @@ Admin Panel was completely rewritten to use Tailwind v4 so you need to re-run th
 
 This will also modify your `Procfile.dev` file to include the new Tailwind CSS watch task instead of the old Dart Sass watch task.
 
-### Update Storefront to Tailwind v4
+#### Add listen gem to Gemfile
+
+You also need to add `listen` gem to your Gemfile in the development group, unless you already have it.
+
+  ```ruby
+  group :development do
+    gem 'listen', '>= 3.0'
+  end
+  ```
+
+### Update Storefront to Tailwind v4 (Optional)
+
+<Info>
+This is optional if you're not using the `spree_storefront` gem.
+</Info>
 
 Spree 5.3 requires Tailwind v4 as it's also used now for the Admin panel so you need to update your Storefront to Tailwind v4 as well.
 
