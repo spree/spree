@@ -8,6 +8,7 @@
 #   --verbose, -v           Show detailed output
 #   --local, -l             Use local Spree gems from parent directory
 #   --app-name=NAME         Set application name (skips prompt)
+#   --storefront=TYPE       Set storefront type: none, rails (skips prompt)
 #   --auto-accept, -y       Use default values for all prompts (non-interactive mode)
 #   --force, -f             Remove existing directory if it exists
 
@@ -79,6 +80,7 @@ trap 'handle_error ${LINENO} "$BASH_COMMAND"' ERR
 RAILS_VERSION="${RAILS_VERSION:-8.1.2}"
 APP_NAME=""
 LOAD_SAMPLE_DATA="false"
+STOREFRONT_TYPE=""
 TEMPLATE_URL="https://raw.githubusercontent.com/spree/spree/main/template.rb"
 VERBOSE=false
 USE_LOCAL_SPREE=false
@@ -100,6 +102,10 @@ for arg in "$@"; do
             ;;
         --app-name=*)
             APP_NAME="${arg#*=}"
+            shift
+            ;;
+        --storefront=*)
+            STOREFRONT_TYPE="${arg#*=}"
             shift
             ;;
         --auto-accept|-y)
@@ -187,6 +193,104 @@ show_spinner() {
     # Show cursor
     tput cnorm 2>/dev/null || true
     printf "\r"
+}
+
+# Interactive menu with arrow key navigation
+# Usage: interactive_menu "Option 1" "Option 2" "Option 3"
+# Returns: Selected index (0-based) in MENU_SELECTION variable
+# Options can include a suffix like "|disabled" to mark them as disabled
+interactive_menu() {
+    local options=("$@")
+    local num_options=${#options[@]}
+    local selected=0
+    local key=""
+
+    # Hide cursor
+    tput civis 2>/dev/null || true
+
+    # Function to draw the menu
+    draw_menu() {
+        for i in "${!options[@]}"; do
+            # Check if option is disabled (contains |disabled suffix)
+            local option="${options[$i]}"
+            local disabled=false
+            if [[ "$option" == *"|disabled"* ]]; then
+                disabled=true
+                option="${option%|disabled}"
+            fi
+
+            # Move cursor to beginning of line and clear it
+            printf "\r\033[K"
+
+            if [ $i -eq $selected ]; then
+                if [ "$disabled" = true ]; then
+                    echo -e "  ${BLUE}▸${NC} ${YELLOW}${option}${NC}"
+                else
+                    echo -e "  ${BLUE}▸${NC} ${BOLD}${option}${NC}"
+                fi
+            else
+                if [ "$disabled" = true ]; then
+                    echo -e "    ${YELLOW}${option}${NC}"
+                else
+                    echo -e "    ${option}"
+                fi
+            fi
+        done
+    }
+
+    # Function to move cursor up n lines
+    move_up() {
+        printf "\033[%dA" "$1"
+    }
+
+    # Initial draw
+    draw_menu
+
+    # Read input
+    while true; do
+        # Read a single character
+        IFS= read -rsn1 key
+
+        # Check for escape sequence (arrow keys)
+        if [[ $key == $'\x1b' ]]; then
+            # Read the next two characters (no timeout needed, they come immediately)
+            read -rsn1 key2
+            read -rsn1 key3
+            key="${key2}${key3}"
+            case "$key" in
+                '[A') # Up arrow
+                    if [ $selected -gt 0 ]; then
+                        ((selected--))
+                    fi
+                    ;;
+                '[B') # Down arrow
+                    if [ $selected -lt $((num_options - 1)) ]; then
+                        ((selected++))
+                    fi
+                    ;;
+            esac
+        elif [[ $key == "" ]]; then # Enter key
+            # Check if selected option is disabled
+            local option="${options[$selected]}"
+            if [[ "$option" == *"|disabled"* ]]; then
+                # Don't allow selecting disabled options, just redraw
+                move_up $num_options
+                draw_menu
+                continue
+            fi
+            break
+        fi
+
+        # Redraw menu
+        move_up $num_options
+        draw_menu
+    done
+
+    # Show cursor
+    tput cnorm 2>/dev/null || true
+
+    # Return selected index
+    MENU_SELECTION=$selected
 }
 
 # Detect OS
@@ -377,6 +481,54 @@ ask_admin_credentials() {
     print_success "Admin credentials set:"
     print_info "  Email: ${BOLD}$ADMIN_EMAIL${NC}"
     print_info "  Password: ${BOLD}$ADMIN_PASSWORD${NC}"
+}
+
+# Ask about storefront type
+ask_storefront_type() {
+    print_step "Configure storefront..."
+
+    # Skip prompt if storefront type was provided via command line
+    if [[ -n "$STOREFRONT_TYPE" ]]; then
+        if [[ "$STOREFRONT_TYPE" == "none" ]]; then
+            print_success "No storefront will be installed (headless mode)"
+        elif [[ "$STOREFRONT_TYPE" == "rails" ]]; then
+            print_success "Ruby on Rails storefront with visual page builder will be installed"
+        else
+            print_error "Invalid storefront type: $STOREFRONT_TYPE (valid options: none, rails)"
+            exit 1
+        fi
+        return 0
+    fi
+
+    # Skip prompt if auto-accept is enabled
+    if [ "$AUTO_ACCEPT" = true ]; then
+        STOREFRONT_TYPE="none"
+        print_info "No storefront will be installed (default)"
+        return 0
+    fi
+
+    echo -e "\n${BOLD}Which storefront would you like to install?${NC}"
+    echo -e "Spree can run headless (API-only) or with a built-in storefront."
+    echo -e "${BLUE}Use ↑↓ arrows to select, Enter to confirm${NC}\n"
+
+    # Show interactive menu
+    interactive_menu \
+        "No storefront (headless mode) - recommended for custom frontends" \
+        "Ruby on Rails with visual page builder" \
+        "Next.js (Coming soon)|disabled"
+
+    case $MENU_SELECTION in
+        0)
+            STOREFRONT_TYPE="none"
+            echo
+            print_success "No storefront will be installed (headless mode)"
+            ;;
+        1)
+            STOREFRONT_TYPE="rails"
+            echo
+            print_success "Ruby on Rails storefront with visual page builder will be installed"
+            ;;
+    esac
 }
 
 # Install system dependencies
@@ -839,10 +991,10 @@ create_rails_app() {
 
     # Run rails new with the template using the specific rails binary
     if [ "$VERBOSE" = true ]; then
-        VERBOSE_MODE=1 LOAD_SAMPLE_DATA="$LOAD_SAMPLE_DATA" USE_LOCAL_SPREE="$use_local_spree" ADMIN_EMAIL="$ADMIN_EMAIL" ADMIN_PASSWORD="$ADMIN_PASSWORD" "$RAILS_BIN" _${RAILS_VERSION}_ new "$APP_NAME" -m "$TEMPLATE_FILE"
+        VERBOSE_MODE=1 LOAD_SAMPLE_DATA="$LOAD_SAMPLE_DATA" STOREFRONT_TYPE="$STOREFRONT_TYPE" USE_LOCAL_SPREE="$use_local_spree" ADMIN_EMAIL="$ADMIN_EMAIL" ADMIN_PASSWORD="$ADMIN_PASSWORD" "$RAILS_BIN" _${RAILS_VERSION}_ new "$APP_NAME" -m "$TEMPLATE_FILE"
     else
         # Run in background with spinner
-        VERBOSE_MODE=0 LOAD_SAMPLE_DATA="$LOAD_SAMPLE_DATA" USE_LOCAL_SPREE="$use_local_spree" ADMIN_EMAIL="$ADMIN_EMAIL" ADMIN_PASSWORD="$ADMIN_PASSWORD" "$RAILS_BIN" _${RAILS_VERSION}_ new "$APP_NAME" -m "$TEMPLATE_FILE" >/tmp/spree_install.log 2>&1 &
+        VERBOSE_MODE=0 LOAD_SAMPLE_DATA="$LOAD_SAMPLE_DATA" STOREFRONT_TYPE="$STOREFRONT_TYPE" USE_LOCAL_SPREE="$use_local_spree" ADMIN_EMAIL="$ADMIN_EMAIL" ADMIN_PASSWORD="$ADMIN_PASSWORD" "$RAILS_BIN" _${RAILS_VERSION}_ new "$APP_NAME" -m "$TEMPLATE_FILE" >/tmp/spree_install.log 2>&1 &
         local rails_pid=$!
 
         # Show spinner with progress messages
@@ -938,7 +1090,11 @@ show_final_instructions() {
     echo -e "   ${BLUE}bin/dev${NC}"
 
     echo -e "\n${BOLD}2. Access your Spree store:${NC}"
-    echo -e "   • Storefront: ${BLUE}http://localhost:3000${NC}"
+    if [ "$STOREFRONT_TYPE" = "rails" ]; then
+        echo -e "   • Storefront: ${BLUE}http://localhost:3000${NC}"
+    else
+        echo -e "   • Storefront API: ${BLUE}http://localhost:3000/api/v2/storefront${NC}"
+    fi
     echo -e "   • Admin Panel: ${BLUE}http://localhost:3000/admin${NC}"
     echo -e "   • Admin credentials:"
     echo -e "     Email: ${BOLD}$ADMIN_EMAIL${NC}"
@@ -1022,6 +1178,7 @@ main() {
     install_ruby
     install_rails
     get_app_name
+    ask_storefront_type
     ask_sample_data
     ask_admin_credentials
     create_rails_app

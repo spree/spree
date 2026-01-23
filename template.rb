@@ -4,6 +4,7 @@
 # Check if verbose mode is enabled via environment variable
 VERBOSE = ENV['VERBOSE_MODE'] == '1'
 LOAD_SAMPLE_DATA = ENV['LOAD_SAMPLE_DATA'] == 'true'
+STOREFRONT_TYPE = ENV['STOREFRONT_TYPE'] || 'none'
 USE_LOCAL_SPREE = ENV['USE_LOCAL_SPREE'] == 'true'
 ADMIN_EMAIL = ENV['ADMIN_EMAIL'] || 'spree@example.com'
 ADMIN_PASSWORD = ENV['ADMIN_PASSWORD'] || 'spree123'
@@ -22,8 +23,13 @@ def add_gems
   gem 'spree_emails', USE_LOCAL_SPREE ? { path: '../' } : { version: SPREE_VERSION }
   gem 'spree_sample', USE_LOCAL_SPREE ? { path: '../' } : { version: SPREE_VERSION }
   gem 'spree_admin', USE_LOCAL_SPREE ? { path: '../' } : { version: SPREE_VERSION }
-  gem 'spree_storefront', USE_LOCAL_SPREE ? { path: '../' } : { version: SPREE_VERSION }
-  gem 'spree_page_builder', USE_LOCAL_SPREE ? { path: '../' } : { version: SPREE_VERSION }
+
+  # Storefront packages (only when Rails storefront is selected)
+  if STOREFRONT_TYPE == 'rails'
+    gem 'spree_storefront', USE_LOCAL_SPREE ? { path: '../' } : { version: SPREE_VERSION }
+    gem 'spree_page_builder', USE_LOCAL_SPREE ? { path: '../' } : { version: SPREE_VERSION }
+  end
+
   # translations
   gem 'spree_i18n'
 
@@ -167,7 +173,11 @@ def show_success_message
   say '  bin/dev', :bold
   say
   say 'Then visit:', :yellow
-  say '  Storefront: http://localhost:3000', :bold
+  if STOREFRONT_TYPE == 'rails'
+    say '  Storefront: http://localhost:3000', :bold
+  else
+    say '  Storefront API: http://localhost:3000/api/v2/storefront', :bold
+  end
   say '  Admin Panel: http://localhost:3000/admin', :bold
   say
   say 'Admin credentials:', :yellow
@@ -191,7 +201,7 @@ after_bundle do
   setup_auth
   install_spree
   install_spree_admin
-  install_spree_storefront
+  install_spree_storefront if STOREFRONT_TYPE == 'rails'
   install_spree_dev_tools
   setup_procfile
   seed_database
