@@ -392,12 +392,13 @@ install_ruby() {
                 CURRENT_RUBY=$(ruby -v | awk '{print $2}' | cut -d'p' -f1)
                 RUBY_MAJOR=$(echo "$CURRENT_RUBY" | cut -d'.' -f1)
 
-                if [ "$RUBY_MAJOR" -ge 3 ]; then
+                RUBY_MINOR=$(echo "$CURRENT_RUBY" | cut -d'.' -f2)
+                if [ "$RUBY_MAJOR" -gt 3 ] || ([ "$RUBY_MAJOR" -eq 3 ] && [ "$RUBY_MINOR" -ge 2 ]); then
                     print_success "Ruby $CURRENT_RUBY is already installed at $CURRENT_RUBY_PATH"
                     print_info "Using existing Ruby installation"
                     return 0
                 else
-                    print_warning "Existing Ruby $CURRENT_RUBY at $CURRENT_RUBY_PATH is too old (need >= 3.0)"
+                    print_warning "Existing Ruby $CURRENT_RUBY at $CURRENT_RUBY_PATH is too old (need >= 3.2)"
                     print_info "Will install Homebrew Ruby"
                 fi
             else
@@ -418,7 +419,8 @@ install_ruby() {
             CURRENT_RUBY=$("$BREW_PREFIX/opt/ruby/bin/ruby" -v | awk '{print $2}' | cut -d'p' -f1)
             RUBY_MAJOR=$(echo "$CURRENT_RUBY" | cut -d'.' -f1)
 
-            if [ "$RUBY_MAJOR" -ge 3 ]; then
+            RUBY_MINOR=$(echo "$CURRENT_RUBY" | cut -d'.' -f2)
+            if [ "$RUBY_MAJOR" -gt 3 ] || ([ "$RUBY_MAJOR" -eq 3 ] && [ "$RUBY_MINOR" -ge 2 ]); then
                 print_success "Homebrew Ruby $CURRENT_RUBY is already installed"
 
                 # Still need to setup PATH in shell profiles
@@ -543,7 +545,8 @@ install_ruby() {
             CURRENT_RUBY=$(ruby -v | awk '{print $2}' | cut -d'p' -f1)
             RUBY_MAJOR=$(echo "$CURRENT_RUBY" | cut -d'.' -f1)
 
-            if [ "$RUBY_MAJOR" -ge 3 ]; then
+            RUBY_MINOR=$(echo "$CURRENT_RUBY" | cut -d'.' -f2)
+            if [ "$RUBY_MAJOR" -gt 3 ] || ([ "$RUBY_MAJOR" -eq 3 ] && [ "$RUBY_MINOR" -ge 2 ]); then
                 print_success "Ruby $CURRENT_RUBY is already installed"
 
                 # Still need to configure user gem installation if using system Ruby
@@ -555,7 +558,7 @@ install_ruby() {
                     return 0
                 fi
             else
-                print_warning "Current Ruby version $CURRENT_RUBY is too old (need >= 3.0)"
+                print_warning "Current Ruby version $CURRENT_RUBY is too old (need >= 3.2)"
             fi
         fi
 
@@ -568,7 +571,7 @@ install_ruby() {
             sudo yum install -y ruby ruby-devel
         else
             print_error "Unsupported Linux distribution: $DISTRO"
-            print_info "Please install Ruby 3.0+ manually from: https://www.ruby-lang.org/en/documentation/installation/"
+            print_info "Please install Ruby 3.2+ manually from: https://www.ruby-lang.org/en/documentation/installation/"
             exit 1
         fi
 
@@ -631,9 +634,10 @@ export PATH=\"\$HOME/.gem/ruby/$RUBY_VERSION/bin:\$PATH\""
     INSTALLED_RUBY=$(ruby -v | awk '{print $2}' | cut -d'p' -f1)
     RUBY_MAJOR=$(echo "$INSTALLED_RUBY" | cut -d'.' -f1)
 
-    if [ "$RUBY_MAJOR" -lt 3 ]; then
-        print_error "Installed Ruby version $INSTALLED_RUBY is too old (need >= 3.0)"
-        print_info "Please install Ruby 3.0+ manually from: https://www.ruby-lang.org/en/documentation/installation/"
+    RUBY_MINOR=$(echo "$INSTALLED_RUBY" | cut -d'.' -f2)
+    if [ "$RUBY_MAJOR" -lt 3 ] || ([ "$RUBY_MAJOR" -eq 3 ] && [ "$RUBY_MINOR" -lt 2 ]); then
+        print_error "Installed Ruby version $INSTALLED_RUBY is too old (need >= 3.2)"
+        print_info "Please install Ruby 3.2+ manually from: https://www.ruby-lang.org/en/documentation/installation/"
         exit 1
     fi
 
@@ -892,7 +896,7 @@ main() {
     echo -e "This installer will set up Spree Commerce on your system."
     echo -e "It will install the following if needed:"
     echo -e "  • System dependencies (libvips for image processing)"
-    echo -e "  • Ruby 3.0+ (via system package manager)"
+    echo -e "  • Ruby 3.2+ (via system package manager)"
     echo -e "  • Rails $RAILS_VERSION"
     echo -e "  • Create a new Spree Commerce application"
 
