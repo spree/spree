@@ -9,12 +9,20 @@ RSpec.configure do |config|
         end
       end
     end
+
+    # Create store ONCE for entire suite (before any tests run)
+    I18n.with_locale(:en) do
+      Spree::Events.disable do
+        @global_default_country = Spree::Country.find_by(iso: 'US') || FactoryBot.create(:country_us)
+        @global_default_store = FactoryBot.create(:store, default: true, default_country: @global_default_country, default_currency: 'USD')
+      end
+    end
   end
 
   config.before(:all) do
     unless self.class.metadata[:without_global_store]
-      # Ensure locale is set to :en before creating store to avoid translation issues
-      # when previous tests left the locale in a different language
+      # Reference the global objects created in before(:suite)
+      # These are recreated by transactional fixtures rollback, so we need to find them
       I18n.with_locale(:en) do
         Spree::Events.disable do
           @default_country = Spree::Country.find_by(iso: 'US') || FactoryBot.create(:country_us)
@@ -24,14 +32,7 @@ RSpec.configure do |config|
     end
   end
 
-  config.after(:each) do
-    unless self.class.metadata[:without_global_store]
-      @default_store&.products = []
-      @default_store&.promotions = []
-      @default_store&.checkout_zone = nil
-      @default_store&.payment_methods = []
-    end
-  end
+  # No after(:each) cleanup needed - transactional fixtures handle rollback automatically
 
   config.after(:all) do
     unless self.class.metadata[:without_global_store]
