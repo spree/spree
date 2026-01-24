@@ -2,13 +2,17 @@ module Spree
   module Api
     module V3
       module Store
-        class AddressesController < ResourceController
-          before_action :require_authentication!
+        class AddressesController < Store::ResourceController
+          prepend_before_action :require_authentication!
 
           protected
 
-          def scope
-            current_user.addresses
+          def set_parent
+            @parent = current_user
+          end
+
+          def parent_association
+            :addresses
           end
 
           def model_class
@@ -16,7 +20,7 @@ module Spree
           end
 
           def serializer_class
-            Spree.api.v3_store_address_serializer
+            Spree.api.address_serializer
           end
 
           def permitted_params

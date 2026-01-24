@@ -50,6 +50,7 @@ require 'spree/api/testing_support/v2/base'
 require 'spree/api/testing_support/v2/current_order'
 require 'spree/api/testing_support/v2/platform_contexts'
 require 'spree/api/testing_support/v2/serializers_params'
+require 'spree/api/testing_support/v3/base'
 require 'spree/api/testing_support/factories'
 
 def json_response

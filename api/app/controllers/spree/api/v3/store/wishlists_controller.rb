@@ -2,8 +2,20 @@ module Spree
   module Api
     module V3
       module Store
-        class WishlistsController < ResourceController
-          before_action :require_authentication!
+        class WishlistsController < Store::ResourceController
+          prepend_before_action :require_authentication!
+
+          # POST /api/v3/store/wishlists
+          def create
+            @resource = current_user.wishlists.build(permitted_params)
+            @resource.store = current_store
+
+            if @resource.save
+              render json: serialize_resource(@resource), status: :created
+            else
+              render_errors(@resource.errors)
+            end
+          end
 
           protected
 
@@ -16,7 +28,7 @@ module Spree
           end
 
           def serializer_class
-            Spree.api.v3_store_wishlist_serializer
+            Spree.api.wishlist_serializer
           end
 
           def permitted_params

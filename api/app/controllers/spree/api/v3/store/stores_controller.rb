@@ -2,7 +2,7 @@ module Spree
   module Api
     module V3
       module Store
-        class StoresController < ResourceController
+        class StoresController < Store::ResourceController
           # Public endpoint - no authentication required
 
           # GET  /api/v3/store/store
@@ -24,7 +24,7 @@ module Spree
           end
 
           def serializer_class
-            Spree.api.v3_store_store_serializer
+            Spree.api.store_serializer
           end
         end
       end

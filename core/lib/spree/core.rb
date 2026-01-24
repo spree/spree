@@ -110,7 +110,8 @@ module Spree
       themes: :default,
       addresses: :default,
       gift_cards: :default,
-      webhooks: :default
+      webhooks: :default,
+      api_keys: :default
     )
   end
 

@@ -2,8 +2,8 @@ module Spree
   module Api
     module V3
       module Store
-        class PaymentSourcesController < ResourceController
-          before_action :require_authentication!
+        class PaymentSourcesController < Store::ResourceController
+          prepend_before_action :require_authentication!
 
           protected
 
@@ -16,7 +16,7 @@ module Spree
           end
 
           def serializer_class
-            Spree.api.v3_store_payment_source_serializer
+            Spree.api.payment_source_serializer
           end
         end
       end
