@@ -3,6 +3,7 @@ module Spree
     module V3
       class BaseSerializer
         include Alba::Resource
+        include Typelizer::DSL
 
         # Context accessors
         def current_store

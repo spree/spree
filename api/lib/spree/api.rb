@@ -4,6 +4,7 @@ require 'doorkeeper'
 require 'pagy'
 require 'alba'
 require 'oj'
+require 'typelizer'
 
 module Spree
   module Api

@@ -94,7 +94,7 @@ For uniqueness validation, always use `scope: spree_base_uniqueness_scope`
 ### Controller Inheritance
 
 - Admin controllers inherit from `Spree::Admin::ResourceController` which handles most of CRUD operations
-- API controllers inherit from `Spree::Api::V2::BaseController`
+- API v3 controllers inherit from `Spree::Api::V3::BaseController`
 - Storefront controllers inherit from `Spree::StoreController`
 
 ### Parameter Handling
@@ -221,6 +221,58 @@ Navigation options:
 - `active` - Lambda for active state detection
 - `badge` - Lambda returning badge text
 - `badge_class` - CSS class for badge
+
+## API v3 Development
+
+### Serializers
+
+API v3 uses Alba serializers located in `api/app/serializers/spree/api/v3/`. Following Medusa's pattern, we have separate serializers for Store and Admin APIs:
+
+- **Store serializers** (`app/serializers/spree/api/v3/`) - Customer-facing, limited data
+- **Admin serializers** (`app/serializers/spree/api/v3/admin/`) - Full access, extends store serializers
+
+```ruby
+# Store serializer - customer-facing
+module Spree::Api::V3
+  class ProductSerializer < BaseSerializer
+    typelize_from Spree::Product
+    typelize purchasable: :boolean, in_stock: :boolean, price: 'number | null'
+
+    attributes :id, :name, :description, :slug, :price
+  end
+end
+
+# Admin serializer - extends store with admin-only fields
+module Spree::Api::V3::Admin
+  class ProductSerializer < V3::ProductSerializer
+    typelize_from Spree::Product
+    typelize cost_price: 'number | null', private_metadata: 'Record<string, unknown> | null'
+
+    attributes :status, :cost_price, :private_metadata
+  end
+end
+```
+
+### TypeScript Type Generation
+
+We use [typelizer](https://github.com/skryukov/typelizer) to generate TypeScript types from Alba serializers:
+
+- Types are generated to `sdk/src/types/generated/`
+- Store types: `StoreProduct`, `StoreOrder`, etc.
+- Admin types: `AdminProduct`, `AdminOrder`, etc.
+- Run `bundle exec rake typelizer:generate` to regenerate types
+
+### Serializer DSL
+
+- `typelize_from Model` - Connect serializer to ActiveRecord model for type inference
+- `typelize attr: :type` - Define types for computed/delegated attributes
+- Use `Spree.api.serializer_name` for configurable serializer references
+
+### API Authentication
+
+API v3 uses API keys with scopes:
+- `store` scope - Customer-facing operations (cart, checkout, account)
+- `admin` scope - Administrative operations (full CRUD access)
 
 ## Events System
 
