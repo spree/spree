@@ -290,12 +290,12 @@ module Spree
 
     # Can't use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
     def purchasable?
-      @purchasable ||= default_variant.purchasable? || variants.in_stock_or_backorderable.any?
+      @purchasable ||= default_variant.purchasable? || variants.any?(&:purchasable?)
     end
 
     # Can't use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
     def in_stock?
-      @in_stock ||= default_variant.in_stock? || variants.in_stock.any?
+      @in_stock ||= default_variant.in_stock? || variants.any?(&:in_stock?)
     end
 
     # Can't use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
