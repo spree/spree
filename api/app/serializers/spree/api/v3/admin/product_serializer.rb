@@ -1,0 +1,53 @@
+module Spree
+  module Api
+    module V3
+      module Admin
+        # Admin API Product Serializer
+        # Full product data including admin-only fields
+        # Extends the store serializer with additional attributes
+        class ProductSerializer < V3::ProductSerializer
+          typelize_from Spree::Product
+
+          # Additional type hints for admin-only computed attributes
+          typelize cost_price: 'number | null', cost_currency: 'string | null',
+                   public_metadata: 'Record<string, unknown> | null',
+                   private_metadata: 'Record<string, unknown> | null',
+                   deleted_at: 'string | null'
+
+          # Admin-only attributes
+          attributes :status, :make_active_at, :discontinue_on, deleted_at: :iso8601
+
+          attribute :cost_price do |product|
+            product.master&.cost_price&.to_f
+          end
+
+          attribute :cost_currency do |product|
+            product.master&.cost_currency
+          end
+
+          attribute :public_metadata do |product|
+            product.public_metadata
+          end
+
+          attribute :private_metadata do |product|
+            product.private_metadata
+          end
+
+          # Admin uses admin variant serializer
+          many :variants,
+               resource: Spree::Api::V3::Admin::VariantSerializer,
+               if: proc { params[:includes]&.include?('variants') }
+
+          one :default_variant,
+              resource: Spree::Api::V3::Admin::VariantSerializer,
+              if: proc { params[:includes]&.include?('default_variant') }
+
+          one :master,
+              key: :master_variant,
+              resource: Spree::Api::V3::Admin::VariantSerializer,
+              if: proc { params[:includes]&.include?('master_variant') }
+        end
+      end
+    end
+  end
+end
