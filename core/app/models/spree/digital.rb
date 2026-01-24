@@ -1,5 +1,7 @@
 module Spree
   class Digital < Spree.base_class
+    has_prefix_id :dig
+
     publishes_lifecycle_events
 
     belongs_to :variant

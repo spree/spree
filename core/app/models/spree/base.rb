@@ -4,6 +4,7 @@ class Spree::Base < ApplicationRecord
   include Spree::TranslatableResourceScopes
   include Spree::IntegrationsConcern
   include Spree::Publishable
+  include Spree::PrefixedId
 
   after_initialize do
     if has_attribute?(:preferences) && !preferences.nil?
@@ -61,7 +62,7 @@ class Spree::Base < ApplicationRecord
   end
 
   def self.json_api_permitted_attributes
-    skipped_attributes = %w[id]
+    skipped_attributes = %w[id prefix_id]
 
     if included_modules.include?(CollectiveIdea::Acts::NestedSet::Model)
       skipped_attributes.push('lft', 'rgt', 'depth')

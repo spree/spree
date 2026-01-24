@@ -1,5 +1,7 @@
 module Spree
   class CreditCard < Spree.base_class
+    has_prefix_id :card  # Stripe: card_
+
     include ActiveMerchant::Billing::CreditCardMethods
     include Spree::Metafields
     include Spree::Metadata

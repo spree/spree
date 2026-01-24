@@ -20,6 +20,8 @@
 
 module Spree
   class Product < Spree.base_class
+    has_prefix_id :prod  # Stripe: prod_
+
     acts_as_paranoid
     acts_as_taggable_on :tags, :labels
     normalizes :name, with: ->(value) { value&.to_s&.squish&.presence }

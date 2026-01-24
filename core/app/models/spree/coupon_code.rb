@@ -1,5 +1,7 @@
 module Spree
   class CouponCode < Spree.base_class
+    has_prefix_id :coupon
+
     include Spree::Security::CouponCodes if defined?(Spree::Security::CouponCodes)
 
     enum :state, %i(unused used)

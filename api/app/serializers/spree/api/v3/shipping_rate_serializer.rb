@@ -2,10 +2,14 @@ module Spree
   module Api
     module V3
       class ShippingRateSerializer < BaseSerializer
-        typelize_from Spree::ShippingRate
-        typelize cost: :number, display_cost: :string
+        typelize name: :string, selected: :boolean, shipping_method_id: :string,
+                 cost: :number, display_cost: :string
 
-        attributes :id, :name, :selected, :shipping_method_id
+        attribute :shipping_method_id do |shipping_rate|
+          shipping_rate.shipping_method&.prefix_id
+        end
+
+        attributes :name, :selected
 
         attribute :cost do |shipping_rate|
           shipping_rate.cost.to_f

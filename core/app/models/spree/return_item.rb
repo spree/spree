@@ -1,5 +1,7 @@
 module Spree
   class ReturnItem < Spree.base_class
+    has_prefix_id :ri
+
     COMPLETED_RECEPTION_STATUSES = %w(received given_to_customer)
 
     class_attribute :return_eligibility_validator

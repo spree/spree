@@ -11,9 +11,9 @@ RSpec.describe Spree::Api::V3::VariantSerializer do
 
     it 'includes standard attributes' do
       expect(subject).to include(
-        'id' => variant.id,
+        'id' => variant.prefix_id,
         'sku' => variant.sku,
-        'product_id' => product.id
+        'product_id' => product.prefix_id
       )
     end
 
@@ -43,9 +43,9 @@ RSpec.describe Spree::Api::V3::Admin::VariantSerializer do
 
     it 'includes standard attributes' do
       expect(subject).to include(
-        'id' => variant.id,
+        'id' => variant.prefix_id,
         'sku' => variant.sku,
-        'product_id' => product.id
+        'product_id' => product.prefix_id
       )
     end
 

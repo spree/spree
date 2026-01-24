@@ -1,5 +1,7 @@
 module Spree
   class WishedItem < Spree.base_class
+    has_prefix_id :wi  # Spree-specific: wished item
+
     extend DisplayMoney
     money_methods :total, :price
 

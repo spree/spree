@@ -5,6 +5,15 @@ module Spree
         include Alba::Resource
         include Typelizer::DSL
 
+        # Common type hints for fields present in most serializers
+        typelize id: :string, created_at: :string, updated_at: :string
+
+        # Use prefixed IDs (Stripe-style) for all API v3 serializers
+        # e.g., prod_abc123, var_xyz789, or_def456
+        attribute :id do |object|
+          object.prefix_id
+        end
+
         # Context accessors
         def current_store
           params[:store]

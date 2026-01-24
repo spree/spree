@@ -1,5 +1,7 @@
 module Spree
   class InventoryUnit < Spree.base_class
+    has_prefix_id :iu
+
     extend Spree::DisplayMoney
 
     with_options inverse_of: :inventory_units do

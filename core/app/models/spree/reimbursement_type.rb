@@ -1,5 +1,7 @@
 module Spree
   class ReimbursementType < Spree.base_class
+    has_prefix_id :rtype
+
     include Spree::NamedType
 
     KINDS = %w(Spree::ReimbursementType::Credit

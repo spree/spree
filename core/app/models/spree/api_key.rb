@@ -1,5 +1,7 @@
 module Spree
   class ApiKey < Spree.base_class
+    has_prefix_id :key  # Spree-specific: api key
+
     KEY_TYPES = %w[publishable secret].freeze
     PREFIXES = { 'publishable' => 'pk_', 'secret' => 'sk_' }.freeze
     TOKEN_LENGTH = 24

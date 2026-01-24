@@ -1,5 +1,7 @@
 module Spree
   class UserIdentity < Spree::Base
+    has_prefix_id :uid
+
     belongs_to :user, polymorphic: true, optional: false
 
     validates :provider, presence: true

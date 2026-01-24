@@ -2,9 +2,14 @@ module Spree
   module Api
     module V3
       class PaymentSerializer < BaseSerializer
-        typelize_from Spree::Payment
+        typelize state: :string, payment_method_id: :string, response_code: 'string | null',
+                 number: :string, amount: :number, display_amount: :string
 
-        attributes :id, :state, :payment_method_id, :response_code, :number, :amount, :display_amount,
+        attribute :payment_method_id do |payment|
+          payment.payment_method&.prefix_id
+        end
+
+        attributes :state, :response_code, :number, :amount, :display_amount,
                    created_at: :iso8601, updated_at: :iso8601
 
         one :payment_method, resource: Spree.api.payment_method_serializer

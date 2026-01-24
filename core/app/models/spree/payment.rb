@@ -2,6 +2,8 @@ require_dependency 'spree/payment/processing'
 
 module Spree
   class Payment < Spree.base_class
+    has_prefix_id :py  # Stripe: py_
+
     include Spree::Core::NumberGenerator.new(prefix: 'P', letters: true, length: 7)
     include Spree::NumberIdentifier
     include Spree::NumberAsParam

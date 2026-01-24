@@ -1,5 +1,7 @@
 module Spree
   class Post < Spree.base_class
+    has_prefix_id :post
+
     include Spree::SingleStoreResource
     include Spree::Metafields
     extend FriendlyId

@@ -1,5 +1,7 @@
 module Spree
   class Price < Spree.base_class
+    has_prefix_id :price
+
     include Spree::VatPriceCalculation
 
     publishes_lifecycle_events

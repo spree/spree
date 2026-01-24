@@ -2,9 +2,9 @@ module Spree
   module Api
     module V3
       class PaymentMethodSerializer < BaseSerializer
-        typelize_from Spree::PaymentMethod
+        typelize name: :string, description: 'string | null', type: :string
 
-        attributes :id, :name, :description, :type
+        attributes :name, :description, :type
       end
     end
   end

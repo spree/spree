@@ -5,10 +5,10 @@ module Spree
         # Admin API Variant Serializer
         # Full variant data including admin-only fields
         class VariantSerializer < V3::VariantSerializer
-          typelize_from Spree::Variant
 
           # Additional type hints for admin-only attributes
-          typelize cost_price: 'number | null', cost_currency: 'string | null',
+          typelize position: :number, tax_category_id: 'string | null',
+                   cost_price: 'number | null', cost_currency: 'string | null',
                    total_on_hand: 'number | null',
                    public_metadata: 'Record<string, unknown> | null',
                    private_metadata: 'Record<string, unknown> | null',

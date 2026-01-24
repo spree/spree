@@ -1,5 +1,7 @@
 module Spree
   class StockLocation < Spree.base_class
+    has_prefix_id :sloc  # Spree-specific: stock location
+
     include Spree::UniqueName
     if defined?(Spree::Security::StockLocations)
       include Spree::Security::StockLocations

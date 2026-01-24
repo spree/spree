@@ -1,5 +1,7 @@
 module Spree
   class Taxonomy < Spree.base_class
+    has_prefix_id :txnmy  # Spree-specific: taxonomy
+
     include Spree::TranslatableResource
     include Spree::Metafields
     include Spree::Metadata

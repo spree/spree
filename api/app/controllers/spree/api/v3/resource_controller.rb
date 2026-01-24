@@ -77,14 +77,9 @@ module Spree
           end
         end
 
-        # Finds a single resource within scope
-        # Supports FriendlyId and standard ActiveRecord find
+        # Finds a single resource within scope using prefixed ID
         def find_resource
-          if model_class.try(:friendly)
-            scope.friendly.find(params[:id])
-          else
-            scope.find(params[:id])
-          end
+          scope.find_by_prefix_id!(params[:id])
         end
 
         # Authorize resource with CanCanCan

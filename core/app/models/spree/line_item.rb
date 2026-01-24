@@ -1,5 +1,7 @@
 module Spree
   class LineItem < Spree.base_class
+    has_prefix_id :li  # Spree-specific: line item
+
     include Spree::Metafields
     include Spree::Metadata
 

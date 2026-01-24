@@ -4,14 +4,19 @@ module Spree
       # Store API Variant Serializer
       # Customer-facing variant data with limited fields
       class VariantSerializer < BaseSerializer
-        typelize_from Spree::Variant
 
-        typelize purchasable: :boolean, in_stock: :boolean, backorderable: :boolean,
+        typelize product_id: :string, sku: 'string | null', barcode: 'string | null',
+                 is_master: :boolean, options_text: :string, track_inventory: :boolean, image_count: :number,
+                 purchasable: :boolean, in_stock: :boolean, backorderable: :boolean,
                  weight: 'number | null', height: 'number | null', width: 'number | null', depth: 'number | null',
                  price: 'number | null', price_in_cents: 'number | null', display_price: 'string | null',
                  compare_at_price: 'number | null', display_compare_at_price: 'string | null'
 
-        attributes :id, :product_id, :sku, :barcode, :is_master, :options_text, :track_inventory, :image_count,
+        attribute :product_id do |variant|
+          variant.product&.prefix_id
+        end
+
+        attributes :sku, :barcode, :is_master, :options_text, :track_inventory, :image_count,
                    created_at: :iso8601, updated_at: :iso8601
 
         attribute :purchasable do |variant|

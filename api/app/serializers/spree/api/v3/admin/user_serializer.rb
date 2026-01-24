@@ -5,7 +5,13 @@ module Spree
         # Admin API User Serializer
         # Full user data including admin-only fields
         class UserSerializer < V3::UserSerializer
-          # Note: Using Spree.user_class dynamically, typelize_from not applicable here
+          typelize phone: 'string | null', login: 'string | null',
+                   accepts_email_marketing: :boolean,
+                   last_sign_in_at: 'string | null', current_sign_in_at: 'string | null',
+                   sign_in_count: :number, failed_attempts: :number,
+                   last_sign_in_ip: 'string | null', current_sign_in_ip: 'string | null',
+                   public_metadata: 'Record<string, unknown> | null',
+                   private_metadata: 'Record<string, unknown> | null'
 
           # Admin-only attributes
           attributes :phone, :login, :accepts_email_marketing,

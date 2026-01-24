@@ -4,17 +4,19 @@ module Spree
       # Store API Product Serializer
       # Customer-facing product data with limited fields
       class ProductSerializer < BaseSerializer
-        typelize_from Spree::Product
-
-        # Type hints for computed/delegated attributes
-        typelize sku: 'string | null', barcode: 'string | null',
+        typelize name: :string, description: 'string | null', slug: :string,
+                 sku: 'string | null', barcode: 'string | null',
+                 meta_description: 'string | null', meta_keywords: 'string | null',
+                 variant_count: :number,
+                 available_on: 'string | null',
                  purchasable: :boolean, in_stock: :boolean, backorderable: :boolean, available: :boolean,
                  price: 'number | null', price_in_cents: 'number | null', display_price: 'string | null',
                  compare_at_price: 'number | null', compare_at_price_in_cents: 'number | null',
                  display_compare_at_price: 'string | null', tags: 'string[]'
 
-        attributes :id, :name, :description, :slug, :sku, :barcode,
+        attributes :name, :description, :slug, :sku, :barcode,
                    :meta_description, :meta_keywords,
+                   :variant_count,
                    available_on: :iso8601, created_at: :iso8601, updated_at: :iso8601
 
         attribute :purchasable do |product|

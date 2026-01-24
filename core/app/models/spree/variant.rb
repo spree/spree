@@ -1,5 +1,7 @@
 module Spree
   class Variant < Spree.base_class
+    has_prefix_id :var  # Spree-specific: variant
+
     acts_as_paranoid
     acts_as_list scope: :product
 

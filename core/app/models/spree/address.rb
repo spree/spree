@@ -1,5 +1,7 @@
 module Spree
   class Address < Spree.base_class
+    has_prefix_id :addr  # Spree-specific: address
+
     require 'validates_zipcode'
 
     include Spree::Metafields

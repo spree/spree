@@ -2,6 +2,8 @@ require 'csv'
 
 module Spree
   class Import < Spree.base_class
+    has_prefix_id :imp
+
     include Spree::NumberIdentifier
     include Spree::NumberAsParam
 

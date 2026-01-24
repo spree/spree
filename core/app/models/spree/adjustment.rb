@@ -22,6 +22,8 @@
 # it might be reinstated.
 module Spree
   class Adjustment < Spree.base_class
+    has_prefix_id :adj  # Spree-specific: adjustment
+
     with_options polymorphic: true do
       belongs_to :adjustable, touch: true
       belongs_to :source

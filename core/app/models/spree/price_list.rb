@@ -1,5 +1,7 @@
 module Spree
   class PriceList < Spree.base_class
+    has_prefix_id :pl
+
     acts_as_paranoid
     acts_as_list scope: :store_id
 

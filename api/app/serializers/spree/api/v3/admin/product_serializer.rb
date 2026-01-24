@@ -6,10 +6,10 @@ module Spree
         # Full product data including admin-only fields
         # Extends the store serializer with additional attributes
         class ProductSerializer < V3::ProductSerializer
-          typelize_from Spree::Product
 
           # Additional type hints for admin-only computed attributes
-          typelize cost_price: 'number | null', cost_currency: 'string | null',
+          typelize status: :string, make_active_at: 'string | null', discontinue_on: 'string | null',
+                   cost_price: 'number | null', cost_currency: 'string | null',
                    public_metadata: 'Record<string, unknown> | null',
                    private_metadata: 'Record<string, unknown> | null',
                    deleted_at: 'string | null'

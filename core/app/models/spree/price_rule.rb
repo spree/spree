@@ -1,5 +1,7 @@
 module Spree
   class PriceRule < Spree.base_class
+    has_prefix_id :prule
+
     belongs_to :price_list, class_name: 'Spree::PriceList', touch: true
 
     validates :type, :price_list,presence: true

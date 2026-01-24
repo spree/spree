@@ -5,9 +5,12 @@ module Spree
         # Admin API Order Serializer
         # Full order data including admin-only fields
         class OrderSerializer < V3::OrderSerializer
-          typelize_from Spree::Order
 
-          typelize canceler_id: 'string | null', created_by_id: 'string | null',
+          typelize channel: 'string | null', last_ip_address: 'string | null',
+                   considered_risky: :boolean, confirmation_delivered: :boolean,
+                   store_owner_notification_delivered: :boolean,
+                   internal_note: 'string | null', approver_id: 'string | null',
+                   canceler_id: 'string | null', created_by_id: 'string | null',
                    public_metadata: 'Record<string, unknown> | null',
                    private_metadata: 'Record<string, unknown> | null',
                    canceled_at: 'string | null', approved_at: 'string | null'

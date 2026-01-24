@@ -1,5 +1,7 @@
 module Spree
   class ShippingCategory < Spree.base_class
+    has_prefix_id :scat
+
     DIGITAL_NAME = 'Digital'
 
     include Spree::UniqueName

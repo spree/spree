@@ -1,5 +1,7 @@
 module Spree
   class RefundReason < Spree.base_class
+    has_prefix_id :rr
+
     include Spree::NamedType
 
     RETURN_PROCESSING_REASON = 'Return processing'

@@ -2,9 +2,9 @@ module Spree
   module Api
     module V3
       class TaxonomySerializer < BaseSerializer
-        typelize_from Spree::Taxonomy
+        typelize name: :string, position: :number
 
-        attributes :id, :name, :position,
+        attributes :name, :position,
                    created_at: :iso8601, updated_at: :iso8601
 
         # Conditional associations

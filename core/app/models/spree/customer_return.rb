@@ -1,5 +1,7 @@
 module Spree
   class CustomerReturn < Spree.base_class
+    has_prefix_id :cr
+
     include Spree::Core::NumberGenerator.new(prefix: 'CR', length: 9)
     include Spree::NumberIdentifier
     include Spree::Metafields

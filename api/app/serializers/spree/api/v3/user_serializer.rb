@@ -4,9 +4,9 @@ module Spree
       # Store API User Serializer
       # Customer-facing user data
       class UserSerializer < BaseSerializer
-        # Note: Using Spree.user_class dynamically, typelize_from not applicable here
+        typelize email: :string, first_name: 'string | null', last_name: 'string | null'
 
-        attributes :id, :email, :first_name, :last_name,
+        attributes :email, :first_name, :last_name,
                    created_at: :iso8601, updated_at: :iso8601
 
         many :addresses, resource: Spree.api.address_serializer

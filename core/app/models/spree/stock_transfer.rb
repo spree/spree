@@ -1,5 +1,7 @@
 module Spree
   class StockTransfer < Spree.base_class
+    has_prefix_id :st
+
     include Spree::Core::NumberGenerator.new(prefix: 'T')
     include Spree::NumberIdentifier
     include Spree::NumberAsParam
