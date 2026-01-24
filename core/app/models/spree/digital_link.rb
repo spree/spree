@@ -1,5 +1,7 @@
 module Spree
   class DigitalLink < Spree.base_class
+    has_prefix_id :dl  # Spree-specific: digital link
+
     publishes_lifecycle_events
 
     if Rails::VERSION::STRING >= '7.1.0'

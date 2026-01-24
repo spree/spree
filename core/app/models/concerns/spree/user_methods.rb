@@ -12,6 +12,8 @@ module Spree
     include Spree::Publishable
 
     included do
+      has_prefix_id :cus  # Stripe: cus_
+
       # Enable lifecycle events for user models
       publishes_lifecycle_events
 

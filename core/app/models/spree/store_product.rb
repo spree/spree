@@ -1,5 +1,7 @@
 module Spree
   class StoreProduct < Spree.base_class
+    has_prefix_id :sp
+
     self.table_name = 'spree_products_stores'
 
     belongs_to :store, class_name: 'Spree::Store', touch: true

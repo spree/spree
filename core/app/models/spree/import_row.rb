@@ -1,5 +1,7 @@
 module Spree
   class ImportRow < Spree.base_class
+    has_prefix_id :imrow
+
     # Set event prefix for ImportRow
     self.event_prefix = 'import_row'
 

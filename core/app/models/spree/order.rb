@@ -8,6 +8,8 @@ require_dependency 'spree/order/gift_card'
 
 module Spree
   class Order < Spree.base_class
+    has_prefix_id :or  # Stripe: or_
+
     PAYMENT_STATES = %w(balance_due credit_owed failed paid void)
     SHIPMENT_STATES = %w(backorder canceled partial pending ready shipped)
     LINE_ITEM_REMOVABLE_STATES = %w(cart address delivery payment confirm resumed)

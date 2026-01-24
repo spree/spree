@@ -2,6 +2,8 @@
 
 module Spree
   class WebhookDelivery < Spree.base_class
+    has_prefix_id :whd
+
     belongs_to :webhook_endpoint, class_name: 'Spree::WebhookEndpoint'
     delegate :url, to: :webhook_endpoint
 

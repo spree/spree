@@ -1,5 +1,7 @@
 module Spree
   class Zone < Spree.base_class
+    has_prefix_id :zone
+
     include Spree::UniqueName
 
     with_options dependent: :destroy, inverse_of: :zone do

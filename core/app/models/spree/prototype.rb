@@ -1,5 +1,7 @@
 module Spree
   class Prototype < Spree.base_class
+    has_prefix_id :proto
+
     include Spree::Metadata
 
     has_many :property_prototypes, class_name: 'Spree::PropertyPrototype'

@@ -1,5 +1,7 @@
 module Spree
   class Role < Spree.base_class
+    has_prefix_id :role
+
     include Spree::UniqueName
 
     ADMIN_ROLE = 'admin'

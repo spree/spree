@@ -2,6 +2,8 @@
 # PromotionActions perform the necessary tasks when a promotion is activated by an event and determined to be eligible.
 module Spree
   class PromotionAction < Spree.base_class
+    has_prefix_id :pact
+
     acts_as_paranoid
 
     belongs_to :promotion, class_name: 'Spree::Promotion', touch: true

@@ -4,9 +4,19 @@ module Spree
       # Store API Order Serializer
       # Customer-facing order data
       class OrderSerializer < BaseSerializer
-        typelize_from Spree::Order
+        typelize number: :string, state: :string, token: :string, email: 'string | null',
+                 special_instructions: 'string | null', currency: :string, item_count: :number,
+                 shipment_state: 'string | null', payment_state: 'string | null',
+                 item_total: :number, display_item_total: :string,
+                 ship_total: :number, display_ship_total: :string,
+                 adjustment_total: :number, display_adjustment_total: :string,
+                 promo_total: :number, display_promo_total: :string,
+                 tax_total: :number, display_tax_total: :string,
+                 included_tax_total: :number, display_included_tax_total: :string,
+                 additional_tax_total: :number, display_additional_tax_total: :string,
+                 total: :number, display_total: :string, completed_at: 'string | null'
 
-        attributes :id, :number, :state, :token, :email, :special_instructions,
+        attributes :number, :state, :token, :email, :special_instructions,
                    :currency, :item_count, :shipment_state, :payment_state,
                    :item_total, :display_item_total, :ship_total, :display_ship_total,
                    :adjustment_total, :display_adjustment_total, :promo_total, :display_promo_total,

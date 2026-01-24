@@ -2,9 +2,13 @@ module Spree
   module Api
     module V3
       class StateSerializer < BaseSerializer
-        typelize_from Spree::State
+        typelize name: :string, abbr: :string, country_id: :string
 
-        attributes :id, :name, :abbr, :country_id
+        attribute :country_id do |state|
+          state.country&.prefix_id
+        end
+
+        attributes :name, :abbr
       end
     end
   end

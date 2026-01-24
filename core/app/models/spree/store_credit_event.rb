@@ -1,5 +1,7 @@
 module Spree
   class StoreCreditEvent < Spree.base_class
+    has_prefix_id :scevt
+
     acts_as_paranoid
 
     #

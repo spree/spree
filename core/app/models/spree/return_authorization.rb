@@ -1,5 +1,7 @@
 module Spree
   class ReturnAuthorization < Spree.base_class
+    has_prefix_id :ra
+
     include Spree::Core::NumberGenerator.new(prefix: 'RA', length: 9)
     include Spree::NumberIdentifier
 
