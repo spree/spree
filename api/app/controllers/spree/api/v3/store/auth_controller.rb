@@ -2,9 +2,7 @@ module Spree
   module Api
     module V3
       module Store
-        class AuthController < BaseController
-          include Spree::Api::V3::Storefront::Authentication
-
+        class AuthController < Store::BaseController
           skip_before_action :authenticate_user, only: [:create, :register, :oauth_callback]
           before_action :require_authentication!, only: [:refresh]
 
