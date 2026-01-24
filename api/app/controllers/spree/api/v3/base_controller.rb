@@ -8,13 +8,14 @@ module Spree
         include Spree::Core::ControllerHelpers::Store
         include Spree::Core::ControllerHelpers::Locale
         include Spree::Core::ControllerHelpers::Currency
-        include Spree::Api::V3::Authentication
+        include Spree::Api::V3::JwtAuthentication
+        include Spree::Api::V3::ApiKeyAuthentication
         include Spree::Api::V3::ErrorHandler
         include Spree::Api::V3::HttpCaching
         include Spree::Api::V3::ResourceSerializer
         include Pagy::Method
 
-        # Optional authentication by default
+        # Optional JWT authentication by default
         before_action :authenticate_user
 
         protected
