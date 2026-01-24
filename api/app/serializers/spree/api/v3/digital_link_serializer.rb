@@ -2,11 +2,10 @@ module Spree
   module Api
     module V3
       class DigitalLinkSerializer < BaseSerializer
-        typelize_from Spree::DigitalLink
-        typelize authorizable: :boolean, expired: :boolean, access_limit_exceeded: :boolean,
-                 filename: :string, content_type: :string
+        typelize access_counter: :number, filename: :string, content_type: :string,
+                 authorizable: :boolean, expired: :boolean, access_limit_exceeded: :boolean
 
-        attributes :id, :access_counter, :filename, :content_type,
+        attributes :access_counter, :filename, :content_type,
                    created_at: :iso8601, updated_at: :iso8601
 
         attribute :authorizable do |digital_link|

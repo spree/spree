@@ -1,5 +1,7 @@
 module Spree
   class PostCategory < Spree.base_class
+    has_prefix_id :pcat
+
     include Spree::SingleStoreResource
     include Spree::Metafields
     extend FriendlyId

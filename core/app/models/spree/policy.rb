@@ -1,5 +1,7 @@
 module Spree
   class Policy < Spree.base_class
+    has_prefix_id :pol
+
     extend FriendlyId
     include Spree::TranslatableResource
 

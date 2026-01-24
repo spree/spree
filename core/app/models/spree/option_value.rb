@@ -1,5 +1,7 @@
 module Spree
   class OptionValue < Spree.base_class
+    has_prefix_id :optval  # Spree-specific: option value
+
     include Spree::ParameterizableName
     include Spree::Metafields
     include Spree::Metadata

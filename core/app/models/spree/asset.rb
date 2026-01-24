@@ -1,5 +1,7 @@
 module Spree
   class Asset < Spree.base_class
+    has_prefix_id :asset  # Stripe: file_
+
     include Support::ActiveStorage
     include Spree::Metafields
     include Spree::Metadata

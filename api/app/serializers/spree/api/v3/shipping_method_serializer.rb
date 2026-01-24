@@ -2,9 +2,9 @@ module Spree
   module Api
     module V3
       class ShippingMethodSerializer < BaseSerializer
-        typelize_from Spree::ShippingMethod
+        typelize name: :string, code: 'string | null'
 
-        attributes :id, :name, :code
+        attributes :name, :code
       end
     end
   end

@@ -2,10 +2,9 @@ module Spree
   module Api
     module V3
       class WishlistSerializer < BaseSerializer
-        typelize_from Spree::Wishlist
-        typelize is_default: :boolean, is_private: :boolean
+        typelize name: :string, token: :string, is_default: :boolean, is_private: :boolean
 
-        attributes :id, :name, :token,
+        attributes :name, :token,
                    created_at: :iso8601, updated_at: :iso8601
 
         attribute :is_default do |wishlist|

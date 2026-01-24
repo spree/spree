@@ -1,5 +1,7 @@
 module Spree
   class Report < Spree.base_class
+    has_prefix_id :rep
+
     include Spree::SingleStoreResource
     include Spree::VendorConcern if defined?(Spree::VendorConcern)
 

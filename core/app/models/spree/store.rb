@@ -2,6 +2,8 @@ require 'uri'
 
 module Spree
   class Store < Spree.base_class
+    has_prefix_id :store  # Spree-specific: store
+
     RESERVED_CODES = %w(
       admin default app api www cdn files assets checkout account auth login user
     )

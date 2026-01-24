@@ -28,11 +28,12 @@ module Spree
         end
 
         # Parse include parameter into list
-        # Supports: ?include=variants,images or ?include=variants.images
+        # Supports: ?include=variants,images or ?includes=variants,images
         def include_list
-          return [] unless params[:include].present?
+          include_param = params[:include].presence || params[:includes].presence
+          return [] unless include_param
 
-          params[:include].to_s.split(',').map(&:strip)
+          include_param.to_s.split(',').map(&:strip)
         end
       end
     end

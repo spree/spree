@@ -1,5 +1,7 @@
 module Spree
   class StoreCreditCategory < Spree.base_class
+    has_prefix_id :sccat
+
     validates :name, presence: true
 
     before_destroy :validate_not_used

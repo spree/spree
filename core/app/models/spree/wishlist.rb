@@ -1,5 +1,7 @@
 module Spree
   class Wishlist < Spree.base_class
+    has_prefix_id :wl  # Spree-specific: wishlist
+
     include Spree::SingleStoreResource
 
     publishes_lifecycle_events

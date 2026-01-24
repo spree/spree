@@ -2,12 +2,15 @@ module Spree
   module Api
     module V3
       class TaxonSerializer < BaseSerializer
-        typelize_from Spree::Taxon
-        typelize description: :string, description_html: :string,
+        typelize name: :string, permalink: :string, position: :number,
+                 lft: :number, rgt: :number, depth: :number,
+                 meta_title: 'string | null', meta_description: 'string | null', meta_keywords: 'string | null',
+                 parent_id: 'string | null', taxonomy_id: :string, children_count: :number,
+                 description: :string, description_html: :string,
                  image_url: 'string | null', square_image_url: 'string | null',
                  is_root: :boolean, is_child: :boolean, is_leaf: :boolean
 
-        attributes :id, :name, :permalink, :position, :lft, :rgt, :depth,
+        attributes :name, :permalink, :position, :lft, :rgt, :depth,
                    :meta_title, :meta_description, :meta_keywords,
                    :parent_id, :taxonomy_id, :children_count,
                    created_at: :iso8601, updated_at: :iso8601

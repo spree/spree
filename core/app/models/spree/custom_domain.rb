@@ -1,5 +1,7 @@
 module Spree
   class CustomDomain < Spree::Base
+    has_prefix_id :domain
+
     include Spree::SingleStoreResource
     include Spree::Metafields
     include Spree::Metadata

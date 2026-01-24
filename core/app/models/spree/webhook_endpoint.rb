@@ -2,6 +2,8 @@
 
 module Spree
   class WebhookEndpoint < Spree.base_class
+    has_prefix_id :whe  # Stripe: we_
+
     acts_as_paranoid
 
     include Spree::SingleStoreResource

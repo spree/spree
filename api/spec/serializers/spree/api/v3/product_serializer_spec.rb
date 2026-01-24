@@ -10,7 +10,7 @@ RSpec.describe Spree::Api::V3::ProductSerializer do
 
     it 'includes standard attributes' do
       expect(subject).to include(
-        'id' => product.id,
+        'id' => product.prefix_id,
         'name' => product.name,
         'slug' => product.slug
       )
@@ -40,7 +40,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductSerializer do
 
     it 'includes standard attributes' do
       expect(subject).to include(
-        'id' => product.id,
+        'id' => product.prefix_id,
         'name' => product.name,
         'slug' => product.slug
       )
