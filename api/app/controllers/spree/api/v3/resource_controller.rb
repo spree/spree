@@ -2,6 +2,7 @@ module Spree
   module Api
     module V3
       class ResourceController < BaseController
+        before_action :set_parent
         before_action :set_resource, only: [:show, :update, :destroy]
 
         # GET /api/v3/resource
@@ -27,7 +28,7 @@ module Spree
 
         # POST /api/v3/resource
         def create
-          @resource = model_class.new(permitted_params)
+          @resource = build_resource
           authorize_resource!(@resource, :create)
 
           if @resource.save
@@ -54,15 +55,36 @@ module Spree
 
         protected
 
-        # Sets the resource for show, update, destroy actions
-        def set_resource
-          @resource = if model_class.respond_to?(:friendly)
-                        model_class.friendly.find(params[:id])
-                      else
-                        scope.find(params[:id])
-                      end
+        # Override in subclass to set parent resource (e.g., @wishlist, @order)
+        # This runs before set_resource, allowing scope to use the parent
+        def set_parent
+          # No-op by default, override in nested resource controllers
+        end
 
+        # Sets the resource for show, update, destroy actions
+        # Always uses scope to respect controller's custom scoping
+        def set_resource
+          @resource = find_resource
           authorize_resource!(@resource)
+        end
+
+        # Builds a new resource, using parent association when @parent is set
+        def build_resource
+          if @parent.present?
+            @parent.send(parent_association).build(permitted_params)
+          else
+            model_class.new(permitted_params)
+          end
+        end
+
+        # Finds a single resource within scope
+        # Supports FriendlyId and standard ActiveRecord find
+        def find_resource
+          if model_class.try(:friendly)
+            scope.friendly.find(params[:id])
+          else
+            scope.find(params[:id])
+          end
         end
 
         # Authorize resource with CanCanCan
@@ -121,11 +143,22 @@ module Spree
         end
 
         # Base scope with store and ability
+        # When @parent is set (nested resources), uses parent association instead
         def scope
-          base_scope = model_class.for_store(current_store)
-          base_scope = base_scope.accessible_by(current_ability, :show)
+          base_scope = if @parent.present?
+                         @parent.send(parent_association)
+                       else
+                         model_class.for_store(current_store)
+                       end
+          base_scope = base_scope.accessible_by(current_ability, :show) unless @parent.present?
           base_scope = base_scope.includes(scope_includes) if scope_includes.any?
           model_class.include?(Spree::TranslatableResource) ? base_scope.i18n : base_scope
+        end
+
+        # Override to specify the association name on @parent
+        # Defaults to controller_name (e.g., 'wished_items' for WishlistItemsController)
+        def parent_association
+          controller_name
         end
 
         # Override in subclass to eager load associations that don't work well

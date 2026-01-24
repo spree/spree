@@ -2,8 +2,8 @@ module Spree
   module Api
     module V3
       module Store
-        class CustomersController < BaseController
-          before_action :require_authentication!
+        class CustomersController < Store::BaseController
+          prepend_before_action :require_authentication!
 
           # GET  /api/v3/store/customers/me
           def show
@@ -22,11 +22,11 @@ module Spree
           protected
 
           def serializer_class
-            Spree.api.v3_store_user_serializer
+            Spree.api.user_serializer
           end
 
           def permitted_params
-            params.require(:customer).permit(Spree::PermittedAttributes.user_attributes)
+            params.require(:user).permit(Spree::PermittedAttributes.user_attributes)
           end
         end
       end

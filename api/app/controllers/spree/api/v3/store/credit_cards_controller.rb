@@ -2,13 +2,17 @@ module Spree
   module Api
     module V3
       module Store
-        class CreditCardsController < ResourceController
-          before_action :require_authentication!
+        class CreditCardsController < Store::ResourceController
+          prepend_before_action :require_authentication!
 
           protected
 
-          def scope
-            current_user.credit_cards
+          def set_parent
+            @parent = current_user
+          end
+
+          def parent_association
+            :credit_cards
           end
 
           def model_class
@@ -16,7 +20,7 @@ module Spree
           end
 
           def serializer_class
-            Spree.api.v3_store_credit_card_serializer
+            Spree.api.credit_card_serializer
           end
         end
       end

@@ -26,13 +26,14 @@ module Spree
         end
 
         # Required authentication - fails if no valid token
+        # Returns true if authenticated, false otherwise (also renders error and halts)
         def require_authentication!
           authenticate_user
 
-          unless current_user
-            render_error(code: ErrorHandler::ERROR_CODES[:authentication_required], message: 'Authentication required', status: :unauthorized)
-            return false
-          end
+          return true if current_user
+
+          render_error(code: ErrorHandler::ERROR_CODES[:authentication_required], message: 'Authentication required', status: :unauthorized)
+          false
         end
 
         protected

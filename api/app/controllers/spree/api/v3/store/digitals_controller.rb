@@ -2,7 +2,7 @@ module Spree
   module Api
     module V3
       module Store
-        class DigitalsController < ResourceController
+        class DigitalsController < Store::ResourceController
           # GET  /api/v3/store/digitals/:id?token=...
           def show
             if @resource.authorize!
@@ -25,7 +25,7 @@ module Spree
           end
 
           def serializer_class
-            Spree.api.v3_store_digital_link_serializer
+            Spree.api.digital_link_serializer
           end
 
           def authorize_resource!(resource = @resource, action = action_name.to_sym)

@@ -2,12 +2,12 @@ module Spree
   module Api
     module V3
       module Store
-        class OrdersController < ResourceController
+        class OrdersController < Store::ResourceController
           include Spree::Api::V3::OrderConcern
 
           # Override authorization for orders
           skip_before_action :set_resource, only: [:index, :create]
-          before_action :require_authentication!, only: [:index]
+          prepend_before_action :require_authentication!, only: [:index]
 
           # POST  /api/v3/store/orders (public - guest checkout)
           def create
@@ -24,17 +24,10 @@ module Spree
 
           # PATCH  /api/v3/store/orders/:id
           def update
-            result = update_service.call(
-              order: @order,
-              params: params,
-              permitted_attributes: permitted_params,
-              request_env: request.headers.env
-            )
-
-            if result.success?
-              render json: serialize_resource(@order)
+            if @order.update(permitted_params)
+              render json: serialize_resource(@order.reload)
             else
-              render_service_error(result.error)
+              render_errors(@order.errors)
             end
           end
 
@@ -79,6 +72,18 @@ module Spree
 
           protected
 
+          # Override scope to avoid accessible_by (Order permissions use blocks)
+          def scope
+            current_store.orders.where(user: current_user)
+          end
+
+          # Override set_resource to use friendly finder and order_token authorization
+          def set_resource
+            @order = current_store.orders.friendly.find(params[:id])
+            @resource = @order
+            authorize_resource!(@order)
+          end
+
           # override authorize_resource! to pass the order token
           def authorize_resource!(resource = @resource, action = action_name.to_sym)
             authorize!(action, resource, order_token)
@@ -89,7 +94,7 @@ module Spree
           end
 
           def serializer_class
-            Spree.api.v3_store_order_serializer
+            Spree.api.order_serializer
           end
 
           def permitted_params

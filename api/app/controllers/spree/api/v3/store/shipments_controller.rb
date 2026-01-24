@@ -2,16 +2,19 @@ module Spree
   module Api
     module V3
       module Store
-        class ShipmentsController < ResourceController
+        class ShipmentsController < Store::ResourceController
           include Spree::Api::V3::OrderConcern
 
-          before_action :set_order
           before_action :authorize_order_access!
 
           protected
 
-          def scope
-            @order.shipments
+          def set_parent
+            @parent = current_store.orders.friendly.find(params[:order_id])
+          end
+
+          def parent_association
+            :shipments
           end
 
           def model_class
@@ -19,7 +22,7 @@ module Spree
           end
 
           def serializer_class
-            Spree.api.v3_store_shipment_serializer
+            Spree.api.shipment_serializer
           end
 
           def permitted_params

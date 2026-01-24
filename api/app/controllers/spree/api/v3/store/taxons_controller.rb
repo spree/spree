@@ -2,7 +2,7 @@ module Spree
   module Api
     module V3
       module Store
-        class TaxonsController < ResourceController
+        class TaxonsController < Store::ResourceController
           protected
 
           def model_class
@@ -10,11 +10,7 @@ module Spree
           end
 
           def serializer_class
-            Spree.api.v3_store_taxon_serializer
-          end
-
-          def scope
-            Spree::Taxon.for_store(current_store)
+            Spree.api.taxon_serializer
           end
         end
       end
