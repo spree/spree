@@ -5,17 +5,12 @@ module Spree
         extend ActiveSupport::Concern
 
         # Allow access to order via order token for guests or authenticated users
+        # Expects @parent to be set to the order
         def authorize_order_access!
-          authorize!(:update, @order, order_token)
+          authorize!(:update, @parent, order_token)
         end
 
         protected
-
-        # Finds order by number from params
-        # Uses params[:order_id] for nested resources (line items, payments, etc.)
-        def set_order
-          @order = current_store.orders.friendly.find(params[:order_id])
-        end
 
         def order_token
           # Check X-Spree-Order-Token header first

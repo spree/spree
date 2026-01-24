@@ -2,7 +2,7 @@ module Spree
   module Api
     module V3
       module Store
-        class CountriesController < ResourceController
+        class CountriesController < Store::ResourceController
           protected
 
           def scope
@@ -14,7 +14,7 @@ module Spree
           end
 
           def serializer_class
-            Spree.api.v3_store_country_serializer
+            Spree.api.country_serializer
           end
         end
       end

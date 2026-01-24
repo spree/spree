@@ -10,5 +10,21 @@ module Spree
     attr_accessor :password, :password_confirmation
 
     validates :email, presence: true, uniqueness: { case_sensitive: false }
+
+    before_save :encrypt_password, if: :password
+
+    # Simple password validation for testing purposes
+    # In production, Spree.user_class should be overridden with a proper auth solution (e.g., Devise)
+    def valid_password?(check_password)
+      return false if encrypted_password.blank?
+
+      BCrypt::Password.new(encrypted_password) == check_password
+    end
+
+    private
+
+    def encrypt_password
+      self.encrypted_password = BCrypt::Password.create(password)
+    end
   end
 end

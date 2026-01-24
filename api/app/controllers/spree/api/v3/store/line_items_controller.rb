@@ -2,16 +2,16 @@ module Spree
   module Api
     module V3
       module Store
-        class LineItemsController < ResourceController
+        class LineItemsController < Store::ResourceController
           include Spree::Api::V3::OrderConcern
 
-          before_action :set_order
+          skip_before_action :set_resource
           before_action :authorize_order_access!
 
           # POST  /api/v3/store/orders/:order_id/line_items
           def create
             result = Spree.cart_add_item_service.call(
-              order: @order,
+              order: @parent,
               variant: variant,
               quantity: permitted_params[:quantity] || 1,
               options: permitted_params[:options] || {}
@@ -27,11 +27,11 @@ module Spree
 
           # PATCH  /api/v3/store/orders/:order_id/line_items/:id
           def update
-            @line_item = @order.line_items.find(params[:id])
+            @line_item = scope.find(params[:id])
 
             if permitted_params[:quantity].present?
               result = Spree.cart_set_item_quantity_service.call(
-                order: @order,
+                order: @parent,
                 line_item: @line_item,
                 quantity: permitted_params[:quantity]
               )
@@ -48,10 +48,10 @@ module Spree
 
           # DELETE  /api/v3/store/orders/:order_id/line_items/:id
           def destroy
-            @line_item = @order.line_items.find(params[:id])
+            @line_item = scope.find(params[:id])
 
             Spree.cart_remove_line_item_service.call(
-              order: @order,
+              order: @parent,
               line_item: @line_item
             )
 
@@ -60,12 +60,16 @@ module Spree
 
           protected
 
-          def variant
-            current_store.variants.accessible_by(current_ability).find(permitted_params[:variant_id])
+          def set_parent
+            @parent = current_store.orders.friendly.find(params[:order_id])
           end
 
-          def scope
-            @order.line_items
+          def parent_association
+            :line_items
+          end
+
+          def variant
+            current_store.variants.accessible_by(current_ability).find(permitted_params[:variant_id])
           end
 
           def model_class
@@ -73,7 +77,7 @@ module Spree
           end
 
           def serializer_class
-            Spree.api.v3_store_line_item_serializer
+            Spree.api.line_item_serializer
           end
 
           def permitted_params

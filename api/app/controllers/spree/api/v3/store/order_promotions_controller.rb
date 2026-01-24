@@ -2,15 +2,14 @@ module Spree
   module Api
     module V3
       module Store
-        class OrderPromotionsController < ResourceController
+        class OrderPromotionsController < Store::ResourceController
           include Spree::Api::V3::OrderConcern
 
-          before_action :set_order
           before_action :authorize_order_access!
 
           # POST  /api/v3/store/orders/:order_id/order_promotions
           def create
-            @order.coupon_code = permitted_params[:coupon_code]
+            @parent.coupon_code = permitted_params[:coupon_code]
 
             promotion_handler.apply
 
@@ -36,16 +35,20 @@ module Spree
 
           protected
 
+          def set_parent
+            @parent = current_store.orders.friendly.find(params[:order_id])
+          end
+
+          def parent_association
+            :order_promotions
+          end
+
           def promotion_handler
-            @promotion_handler ||= Spree::PromotionHandler::Coupon.new(@order)
+            @promotion_handler ||= Spree::PromotionHandler::Coupon.new(@parent)
           end
 
           def permitted_params
             params.require(:order_promotion).permit(:coupon_code)
-          end
-
-          def scope
-            @order.order_promotions
           end
 
           def model_class
@@ -53,7 +56,7 @@ module Spree
           end
 
           def serializer_class
-            Spree.api.v3_store_order_promotion_serializer
+            Spree.api.order_promotion_serializer
           end
         end
       end

@@ -4,7 +4,7 @@ module Spree
       module Store
         class AuthController < Store::BaseController
           skip_before_action :authenticate_user, only: [:create, :register, :oauth_callback]
-          before_action :require_authentication!, only: [:refresh]
+          prepend_before_action :require_authentication!, only: [:refresh]
 
           # POST  /api/v3/store/auth/login
           # Supports multiple authentication providers via :provider param
@@ -133,7 +133,7 @@ module Spree
           end
 
           def user_serializer
-            Spree.api.v3_store_user_serializer
+            Spree.api.user_serializer
           end
         end
       end

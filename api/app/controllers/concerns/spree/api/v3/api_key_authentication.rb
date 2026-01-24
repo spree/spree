@@ -40,10 +40,6 @@ module Spree
           true
         end
 
-        def admin_context?
-          @current_api_key&.secret? || current_user&.try(:spree_admin?, current_store)
-        end
-
         private
 
         def extract_api_key
