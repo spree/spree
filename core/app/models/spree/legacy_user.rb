@@ -1,4 +1,6 @@
 # Default implementation of User.  This class is intended to be modified by extensions (ex. spree_auth_devise)
+require 'bcrypt'
+
 module Spree
   class LegacyUser < Spree.base_class
     include Spree::UserAddress
