@@ -86,15 +86,10 @@ module Spree
       end
 
       def bulk_status_update
-        if bulk_collection.update_all(status: params[:status], updated_at: Time.current)
-          product_ids = bulk_collection.ids
+        bulk_collection.update_all(status: params[:status], updated_at: Time.current)
+        invoke_callbacks(:bulk_status_update, :after)
 
-          invoke_callbacks(:bulk_status_update, :after)
-
-          flash.now[:success] = Spree.t('admin.bulk_ops.products.status_updated', status: params[:status].titleize)
-        else
-          flash.now[:error] = Spree.t('something_went_wrong')
-        end
+        handle_bulk_operation_response
       end
 
       def bulk_remove_from_taxons

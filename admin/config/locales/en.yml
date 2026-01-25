@@ -27,7 +27,6 @@ en:
             set_active: Setting products to active will make those products available on the storefront.
             set_archived: Setting products to archived will hide them from storefront.
             set_draft: Setting products to draft will hide them from storefront.
-          status_updated: Status updated
           title:
             add_tags: Add tags
             add_to_brand: Add to brand

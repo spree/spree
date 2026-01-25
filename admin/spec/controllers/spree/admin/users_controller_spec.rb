@@ -211,12 +211,15 @@ RSpec.describe Spree::Admin::UsersController, type: :controller do
     let(:users) { create_list(:user, 3) }
     let(:tags) { ['tag1', 'tag2'] }
 
+    before { request.env['HTTP_REFERER'] = '/admin/users' }
+
     it 'adds tags to users' do
-      post :bulk_add_tags, params: { ids: users.pluck(:id), tags: tags }, format: :turbo_stream
+      post :bulk_add_tags, params: { ids: users.pluck(:id), tags: tags }
 
       users.each do |user|
         expect(user.reload.tag_list).to contain_exactly(*tags)
       end
+      expect(response).to redirect_to('/admin/users')
     end
   end
 
@@ -224,13 +227,16 @@ RSpec.describe Spree::Admin::UsersController, type: :controller do
     let(:users) { create_list(:user, 3, tag_list: ['tag1', 'tag2']) }
     let(:tags) { ['tag1', 'tag2'] }
 
+    before { request.env['HTTP_REFERER'] = '/admin/users' }
+
     it 'removes tags from users' do
       users.each { |user| user.update(tag_list: tags) }
-      post :bulk_remove_tags, params: { ids: users.map(&:id), tags: tags }, format: :turbo_stream
+      post :bulk_remove_tags, params: { ids: users.map(&:id), tags: tags }
 
       users.each do |user|
         expect(user.reload.tag_list).to eq([])
       end
+      expect(response).to redirect_to('/admin/users')
     end
   end
 
