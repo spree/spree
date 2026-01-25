@@ -25,7 +25,7 @@ module Spree
         # Set Vary headers to ensure proper CDN caching by currency/locale
         def set_vary_headers
           if guest_user?
-            response.headers['Vary'] = 'Accept, X-Spree-Currency, X-Spree-Locale'
+            response.headers['Vary'] = 'Accept, x-spree-currency, x-spree-locale'
           else
             response.headers['Cache-Control'] = 'private, no-store'
           end

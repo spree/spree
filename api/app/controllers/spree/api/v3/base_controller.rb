@@ -8,6 +8,7 @@ module Spree
         include Spree::Core::ControllerHelpers::Store
         include Spree::Core::ControllerHelpers::Locale
         include Spree::Core::ControllerHelpers::Currency
+        include Spree::Api::V3::LocaleAndCurrency
         include Spree::Api::V3::JwtAuthentication
         include Spree::Api::V3::ApiKeyAuthentication
         include Spree::Api::V3::ErrorHandler

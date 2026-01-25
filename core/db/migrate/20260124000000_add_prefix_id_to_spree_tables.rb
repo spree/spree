@@ -9,7 +9,6 @@ class AddPrefixIdToSpreeTables < ActiveRecord::Migration[7.2]
       spree_api_keys
       spree_assets
       spree_calculators
-      spree_countries
       spree_coupon_codes
       spree_credit_cards
       spree_custom_domains
@@ -69,7 +68,6 @@ class AddPrefixIdToSpreeTables < ActiveRecord::Migration[7.2]
       spree_shipping_methods
       spree_shipping_rates
       spree_state_changes
-      spree_states
       spree_stock_items
       spree_stock_locations
       spree_stock_movements
