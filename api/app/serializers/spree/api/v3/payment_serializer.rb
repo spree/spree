@@ -3,7 +3,7 @@ module Spree
     module V3
       class PaymentSerializer < BaseSerializer
         typelize state: :string, payment_method_id: :string, response_code: 'string | null',
-                 number: :string, amount: :number, display_amount: :string
+                 number: :string, amount: :string, display_amount: :string
 
         attribute :payment_method_id do |payment|
           payment.payment_method&.prefix_id

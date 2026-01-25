@@ -5,8 +5,9 @@ module Spree
         class OrdersController < Store::ResourceController
           include Spree::Api::V3::OrderConcern
 
-          # Override authorization for orders
-          skip_before_action :set_resource, only: [:index, :create]
+          # Skip base controller's set_resource and define our own complete list
+          skip_before_action :set_resource
+          before_action :set_resource, only: [:show, :update, :destroy, :next, :advance, :complete]
           prepend_before_action :require_authentication!, only: [:index]
 
           # POST  /api/v3/store/orders (public - guest checkout)
@@ -64,12 +65,6 @@ module Spree
             end
           end
 
-          # PATCH  /api/v3/store/orders/:id/cancel
-          def cancel
-            @order.cancel!
-            render json: serialize_resource(@order)
-          end
-
           protected
 
           # Override scope to avoid accessible_by (Order permissions use blocks)
@@ -85,8 +80,15 @@ module Spree
           end
 
           # override authorize_resource! to pass the order token
+          # Maps custom checkout actions to appropriate permissions
           def authorize_resource!(resource = @resource, action = action_name.to_sym)
-            authorize!(action, resource, order_token)
+            mapped_action = case action
+                            when :next, :advance, :complete
+                              :update # Checkout actions require update (non-completed order)
+                            else
+                              action
+                            end
+            authorize!(mapped_action, resource, order_token)
           end
 
           def model_class

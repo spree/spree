@@ -12,6 +12,16 @@ module Spree
           def serializer_class
             Spree.api.taxon_serializer
           end
+
+          # Find taxon by permalink or prefix_id with i18n scope for SEO-friendly URLs
+          def find_resource
+            id = params[:id]
+            if id.to_s.start_with?('txn_')
+              scope.find_by!(prefix_id: id)
+            else
+              scope.i18n.find_by!(permalink: id)
+            end
+          end
         end
       end
     end
