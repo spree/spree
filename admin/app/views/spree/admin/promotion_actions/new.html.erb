@@ -10,9 +10,9 @@
       <% if @promotion_action.type.nil? %>
         <% options_for_promotion_action_types(@promotion).each do |action_type| %>
           <% key = action_type.to_s.demodulize.underscore %>
-            <%= link_to spree.new_admin_promotion_action_path(@promotion, promotion_action: { type: action_type }), class: 'flex align-items-top w-full py-2 px-4 hover:bg-gray-100 rounded-xl mb-2', data: { turbo_prefetch: false } do %>
-              <%= radio_button_tag :type, action_type, checked: @promotion_action.type == action_type %>
-              <div class="ml-4">
+            <%= link_to spree.new_admin_promotion_action_path(@promotion, promotion_action: { type: action_type }), class: 'flex align-items-top w-full py-2 px-4 hover:bg-gray-100 rounded-xl mb-2 no-underline', data: { turbo_prefetch: false } do %>
+              <%= radio_button_tag :type, action_type, class: 'hidden',checked: @promotion_action.type == action_type %>
+              <div>
                 <h6><%= Spree.t("promotion_action_types.#{key}.name") %></h6>
                 <p class="text-gray-600 mb-0"><%= Spree.t("promotion_action_types.#{key}.description") %></p>
               </div>

@@ -5,7 +5,7 @@
 @layer components {
   .card,
   .card-lg {
-    @apply relative flex flex-col min-w-0 break-words bg-white border border-gray-200 rounded-2xl;
+    @apply relative flex flex-col min-w-0 break-words bg-white border border-gray-200 rounded-xl;
     background-clip: border-box;
   }
 
@@ -14,7 +14,7 @@
   }
 
   .card .card {
-    @apply rounded-2xl;
+    @apply rounded-xl;
   }
 
   /* Card with table */
@@ -87,7 +87,7 @@
   }
 
   .card-header {
-    @apply flex items-center mb-0 p-5 pr-3 h-14 border-b border-gray-100 rounded-t-[calc(var(--radius-2xl)-1px)];
+    @apply flex items-center mb-0 p-5 pr-3 h-14 border-b border-gray-100 rounded-t-[calc(var(--radius-xl)-1px)];
   }
 
   .card-header .card-title {
@@ -111,7 +111,7 @@
   }
 
   .card-footer:last-child {
-    @apply rounded-b-[calc(var(--radius-2xl)-1px)];
+    @apply rounded-b-[calc(var(--radius-xl)-1px)];
   }
 
   .card-footer.border-top,
@@ -135,13 +135,13 @@
   }
 
   .card-img-top {
-    @apply w-full rounded-t-[calc(var(--radius-2xl)-1px)];
+    @apply w-full rounded-t-[calc(var(--radius-xl)-1px)];
   }
 
   /* Collapsable Card */
   .collapsable-card {
     @apply relative flex flex-col min-w-0 break-words overflow-hidden;
-    @apply bg-white border border-gray-200 rounded-2xl;
+    @apply bg-white border border-gray-200 rounded-xl;
     background-clip: border-box;
   }
 

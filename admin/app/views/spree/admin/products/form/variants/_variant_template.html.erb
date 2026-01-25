@@ -34,7 +34,7 @@
     </div>
     <% if can?(:manage, @product.default_variant) %>
       <div class="variants-table__body__cell column-actions flex items-center">
-        <a href="#" class="btn btn-light invisible ml-2" data-slot="variantEditButton">
+        <a href="#" class="btn btn-sm btn-light invisible ml-2" data-slot="variantEditButton">
           <%= icon('edit') %>
           <%= Spree.t(:edit)%>
         </a>
