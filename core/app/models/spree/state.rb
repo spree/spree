@@ -1,7 +1,5 @@
 module Spree
   class State < Spree.base_class
-    has_prefix_id :state  # Spree-specific: state/province
-
     belongs_to :country, class_name: 'Spree::Country'
     has_many :addresses, dependent: :restrict_with_error
 
