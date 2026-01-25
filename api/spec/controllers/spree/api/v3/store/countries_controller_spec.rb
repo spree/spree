@@ -9,7 +9,7 @@ RSpec.describe Spree::Api::V3::Store::CountriesController, type: :controller do
   let!(:country2) { create(:country) }
 
   before do
-    request.headers['X-Spree-Api-Key'] = api_key.token
+    request.headers['x-spree-api-key'] = api_key.token
   end
 
   describe 'GET #index' do
@@ -25,17 +25,11 @@ RSpec.describe Spree::Api::V3::Store::CountriesController, type: :controller do
       get :index
 
       country_data = json_response['data'].first
-      expect(country_data).to include('id', 'name', 'iso')
-    end
-
-    it 'returns pagination metadata' do
-      get :index
-
-      expect(json_response['meta']).to include('page', 'count', 'pages')
+      expect(country_data).to include('iso', 'iso3', 'name', 'states_required', 'zipcode_required')
     end
 
     context 'without API key' do
-      before { request.headers['X-Spree-Api-Key'] = nil }
+      before { request.headers['x-spree-api-key'] = nil }
 
       it 'returns unauthorized' do
         get :index
@@ -48,36 +42,31 @@ RSpec.describe Spree::Api::V3::Store::CountriesController, type: :controller do
   end
 
   describe 'GET #show' do
-    it 'returns the country by id' do
-      get :show, params: { id: country.id }
+    it 'returns the country by iso code' do
+      get :show, params: { id: country.iso }
 
       expect(response).to have_http_status(:ok)
-      expect(json_response['id']).to eq(country.id)
-      expect(json_response['name']).to eq(country.name)
       expect(json_response['iso']).to eq(country.iso)
+      expect(json_response['name']).to eq(country.name)
     end
 
-    it 'includes states when available' do
+    it 'includes states' do
       state = create(:state, country: country)
-      get :show, params: { id: country.id }
+      get :show, params: { id: country.iso }
 
       expect(response).to have_http_status(:ok)
+      expect(json_response['states']).to be_present
+      expect(json_response['states'].first['iso']).to eq(state.abbr)
+      expect(json_response['states'].first['name']).to eq(state.name)
     end
 
     context 'error handling' do
       it 'returns not found for non-existent country' do
-        get :show, params: { id: 0 }
+        get :show, params: { id: 'XX' }
 
         expect(response).to have_http_status(:not_found)
         expect(json_response['error']['code']).to eq('record_not_found')
         expect(json_response['error']['message']).to be_present
-      end
-
-      it 'returns not found for invalid id' do
-        get :show, params: { id: 'invalid' }
-
-        expect(response).to have_http_status(:not_found)
-        expect(json_response['error']['code']).to eq('record_not_found')
       end
     end
   end

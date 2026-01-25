@@ -1,11 +1,15 @@
 module Spree
   module Api
     module V3
-      class CountrySerializer < BaseSerializer
-        typelize iso: :string, iso3: :string, iso_name: :string, name: :string,
+      class CountrySerializer
+        include Alba::Resource
+        include Typelizer::DSL
+
+        # ISO 3166-1 codes - iso is the identifier, no redundant id field
+        typelize iso: :string, iso3: :string, name: :string,
                  states_required: :boolean, zipcode_required: :boolean
 
-        attributes :iso, :iso3, :iso_name, :name, :states_required, :zipcode_required
+        attributes :iso, :iso3, :name, :states_required, :zipcode_required
 
         many :states,
              resource: Spree.api.state_serializer,
