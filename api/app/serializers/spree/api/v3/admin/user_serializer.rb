@@ -9,9 +9,7 @@ module Spree
                    accepts_email_marketing: :boolean,
                    last_sign_in_at: 'string | null', current_sign_in_at: 'string | null',
                    sign_in_count: :number, failed_attempts: :number,
-                   last_sign_in_ip: 'string | null', current_sign_in_ip: 'string | null',
-                   public_metadata: 'Record<string, unknown> | null',
-                   private_metadata: 'Record<string, unknown> | null'
+                   last_sign_in_ip: 'string | null', current_sign_in_ip: 'string | null'
 
           # Admin-only attributes
           attributes :phone, :login, :accepts_email_marketing,
@@ -31,14 +29,6 @@ module Spree
 
           attribute :current_sign_in_ip do |user|
             user.current_sign_in_ip
-          end
-
-          attribute :public_metadata do |user|
-            user.public_metadata
-          end
-
-          attribute :private_metadata do |user|
-            user.private_metadata
           end
 
           many :orders,
