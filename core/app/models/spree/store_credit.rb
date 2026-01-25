@@ -1,6 +1,6 @@
 module Spree
   class StoreCredit < Spree.base_class
-    has_prefix_id :scred
+    has_prefix_id :credit
 
     include Spree::SingleStoreResource
     include Spree::Metafields

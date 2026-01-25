@@ -229,27 +229,30 @@ Spree::Core::Engine.add_routes do
         # Store
         get 'store', to: 'stores#current'
 
-        # Geography
+        # Geography - countries include nested states from checkout zone
         resources :countries, only: [:index, :show]
 
         # Catalog
         resources :products, only: [:index, :show]
         resources :taxonomies, only: [:index, :show]
-        resources :taxons, only: [:show]
+        resources :taxons, only: [:show], id: /.+/
 
         # Orders
         resources :orders do
-          # State transitions
           member do
+            # State transitions
             patch :next       # Move to next checkout step
             patch :advance    # Advance through all steps
             patch :complete   # Complete the order
-            patch :cancel     # Cancel the order
           end
 
           # Nested resources - all require order access
-          resources :line_items, only: [:create, :update, :destroy]
-          resources :order_promotions, only: [:create, :destroy]
+          resource :store_credits, only: [:create, :destroy], controller: 'orders/store_credits'
+          resources :line_items, only: [:create, :update, :destroy], controller: 'orders/line_items'
+          resources :promotions, only: [:create, :destroy], controller: 'orders/promotions'
+          resources :payments, only: [:index, :show, :create], controller: 'orders/payments'
+          resources :payment_methods, only: [:index], controller: 'orders/payment_methods'
+          resources :shipments, only: [:index, :show, :update], controller: 'orders/shipments'
         end
 
         # Customer

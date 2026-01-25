@@ -7,14 +7,15 @@ module Spree
         typelize number: :string, state: :string, token: :string, email: 'string | null',
                  special_instructions: 'string | null', currency: :string, item_count: :number,
                  shipment_state: 'string | null', payment_state: 'string | null',
-                 item_total: :number, display_item_total: :string,
-                 ship_total: :number, display_ship_total: :string,
-                 adjustment_total: :number, display_adjustment_total: :string,
-                 promo_total: :number, display_promo_total: :string,
-                 tax_total: :number, display_tax_total: :string,
-                 included_tax_total: :number, display_included_tax_total: :string,
-                 additional_tax_total: :number, display_additional_tax_total: :string,
-                 total: :number, display_total: :string, completed_at: 'string | null'
+                 item_total: :string, display_item_total: :string,
+                 ship_total: :string, display_ship_total: :string,
+                 adjustment_total: :string, display_adjustment_total: :string,
+                 promo_total: :string, display_promo_total: :string,
+                 tax_total: :string, display_tax_total: :string,
+                 included_tax_total: :string, display_included_tax_total: :string,
+                 additional_tax_total: :string, display_additional_tax_total: :string,
+                 total: :string, display_total: :string, completed_at: 'string | null',
+                 payment_methods: 'StorePaymentMethod[]'
 
         attributes :number, :state, :token, :email, :special_instructions,
                    :currency, :item_count, :shipment_state, :payment_state,
@@ -48,8 +49,12 @@ module Spree
             resource: Spree.api.address_serializer,
             if: proc { params[:includes]&.include?('ship_address') }
 
-        many :payment_methods,
-             resource: Spree.api.payment_method_serializer
+        attribute :payment_methods do |order|
+          pms = order.payment_methods rescue []
+          (pms || []).compact.select { |pm| pm.respond_to?(:prefix_id) }.map do |pm|
+            { id: pm.prefix_id, name: pm.name, description: pm.description, type: pm.type }
+          end
+        end
       end
     end
   end

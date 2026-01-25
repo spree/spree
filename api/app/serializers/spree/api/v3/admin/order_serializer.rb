@@ -11,8 +11,6 @@ module Spree
                    store_owner_notification_delivered: :boolean,
                    internal_note: 'string | null', approver_id: 'string | null',
                    canceler_id: 'string | null', created_by_id: 'string | null',
-                   public_metadata: 'Record<string, unknown> | null',
-                   private_metadata: 'Record<string, unknown> | null',
                    canceled_at: 'string | null', approved_at: 'string | null'
 
           # Admin-only attributes
@@ -27,14 +25,6 @@ module Spree
 
           attribute :created_by_id do |order|
             order.created_by_id
-          end
-
-          attribute :public_metadata do |order|
-            order.public_metadata
-          end
-
-          attribute :private_metadata do |order|
-            order.private_metadata
           end
 
           one :user,

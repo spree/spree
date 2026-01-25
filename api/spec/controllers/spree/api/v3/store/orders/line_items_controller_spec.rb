@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe Spree::Api::V3::Store::LineItemsController, type: :controller do
+RSpec.describe Spree::Api::V3::Store::Orders::LineItemsController, type: :controller do
   render_views
 
   include_context 'API v3 Store'
