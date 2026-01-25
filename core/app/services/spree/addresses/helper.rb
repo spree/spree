@@ -21,13 +21,28 @@ module Spree
       end
 
       def fill_state_id(params)
-        state_name = params[:state_name]
-        return params unless state_name.present?
+        # Always extract state_abbr - it's not a model attribute
+        state_abbr = params.delete(:state_abbr)
 
         country ||= Spree::Country.find(params[:country_id]) if params[:country_id].present?
         return params unless country
 
-        params[:state_id] = country.states.find_by(name: state_name)&.id
+        # Support state_abbr (state abbreviation code, e.g., "CA", "NY")
+        if state_abbr.present?
+          params[:state_id] = country.states.find_by(abbr: state_abbr)&.id
+          return params
+        end
+
+        # Support state_name for countries where states are not required
+        if params[:state_name].present? && !country.states_required?
+          # Keep state_name as-is for countries without required states
+          return params
+        elsif params[:state_name].present?
+          # Try to find state by name if states are required
+          params[:state_id] = country.states.find_by(name: params[:state_name])&.id
+          params.delete(:state_name)
+        end
+
         params
       end
 

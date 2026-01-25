@@ -69,10 +69,12 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
               city: { type: :string },
               zipcode: { type: :string },
               phone: { type: :string },
-              country_iso: { type: :string, description: 'ISO country code (e.g., "US", "DE")' },
-              state_code: { type: :string, description: 'State abbreviation/code (e.g., "CA", "NY") - required if country has states' }
+              company: { type: :string },
+              country_iso: { type: :string, description: 'ISO 3166-1 alpha-2 country code (e.g., "US", "DE")' },
+              state_abbr: { type: :string, description: 'ISO 3166-2 subdivision code without country prefix (e.g., "CA", "NY")' },
+              state_name: { type: :string, description: 'State name - for countries without predefined states' }
             },
-            required: %w[firstname lastname address1 city zipcode phone country_iso]
+            required: %w[firstname lastname address1 city zipcode country_iso]
           }
         }
       }
@@ -90,7 +92,7 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
               zipcode: '10001',
               phone: '+1 555 123 4567',
               country_iso: country.iso,
-              state_code: state.abbr
+              state_abbr: state.abbr
             }
           }
         end
@@ -102,6 +104,7 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
           expect(data['firstname']).to eq('John')
           expect(data['city']).to eq('New York')
           expect(data['country_iso']).to eq(country.iso)
+          expect(data['state_abbr']).to eq(state.abbr)
         end
       end
 

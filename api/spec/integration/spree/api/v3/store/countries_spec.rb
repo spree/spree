@@ -90,10 +90,10 @@ RSpec.describe 'Countries API', type: :request, swagger_doc: 'api-reference/stor
                    items: {
                      type: :object,
                      properties: {
-                       iso: { type: :string, description: 'ISO 3166-2 subdivision code (without country prefix)' },
+                       abbr: { type: :string, description: 'State abbreviation code' },
                        name: { type: :string }
                      },
-                     required: %w[iso name]
+                     required: %w[abbr name]
                    }
                  }
                },
@@ -104,8 +104,8 @@ RSpec.describe 'Countries API', type: :request, swagger_doc: 'api-reference/stor
           expect(data['iso']).to eq('US')
           expect(data['states']).to be_an(Array)
           # Check that states have the expected structure
-          state_isos = data['states'].map { |s| s['iso'] }
-          expect(state_isos).to include('CA', 'NY')
+          state_abbrs = data['states'].map { |s| s['abbr'] }
+          expect(state_abbrs).to include('CA', 'NY')
         end
       end
 

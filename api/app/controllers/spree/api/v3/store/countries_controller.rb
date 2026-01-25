@@ -43,7 +43,7 @@ module Spree
 
             if include_states
               data[:states] = country.states.order(:name).map do |state|
-                { iso: state.abbr, name: state.name }
+                { abbr: state.abbr, name: state.name }
               end
             end
 

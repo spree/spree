@@ -145,20 +145,25 @@ paths:
                       type: string
                     phone:
                       type: string
-                    country_id:
+                    company:
                       type: string
-                    state_id:
+                    country_iso:
                       type: string
+                      description: ISO 3166-1 alpha-2 country code (e.g., "US", "DE")
+                    state_abbr:
+                      type: string
+                      description: ISO 3166-2 subdivision code without country prefix
+                        (e.g., "CA", "NY")
                     state_name:
                       type: string
+                      description: State name - for countries without predefined states
                   required:
                   - firstname
                   - lastname
                   - address1
                   - city
                   - zipcode
-                  - phone
-                  - country_id
+                  - country_iso
   "/api/v3/store/customers/me/addresses/{id}":
     get:
       summary: Get an address
@@ -412,32 +417,17 @@ paths:
                 "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/store/countries":
     get:
-      summary: List countries
+      summary: List checkout countries
       tags:
       - Countries
       security:
       - api_key: []
-      description: Returns a list of countries available for shipping
+      description: Returns countries available for checkout from the store checkout
+        zone
       parameters:
       - name: x-spree-api-key
         in: header
         required: true
-        schema:
-          type: string
-      - name: page
-        in: query
-        required: false
-        schema:
-          type: integer
-      - name: per_page
-        in: query
-        required: false
-        schema:
-          type: integer
-      - name: q[name_cont]
-        in: query
-        required: false
-        description: Filter by name
         schema:
           type: string
       responses:
@@ -451,33 +441,52 @@ paths:
                   data:
                     type: array
                     items:
-                      "$ref": "#/components/schemas/StoreCountry"
-                  meta:
-                    "$ref": "#/components/schemas/PaginationMeta"
+                      type: object
+                      properties:
+                        iso:
+                          type: string
+                          description: ISO 3166-1 alpha-2 code
+                        iso3:
+                          type: string
+                          description: ISO 3166-1 alpha-3 code
+                        name:
+                          type: string
+                        states_required:
+                          type: boolean
+                        zipcode_required:
+                          type: boolean
+                      required:
+                      - iso
+                      - iso3
+                      - name
+                      - states_required
+                      - zipcode_required
+                required:
+                - data
         '401':
           description: unauthorized
           content:
             application/json:
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
-  "/api/v3/store/countries/{id}":
+  "/api/v3/store/countries/{iso}":
     get:
-      summary: Get a country
+      summary: Get a country with states
       tags:
       - Countries
       security:
       - api_key: []
-      description: Returns a single country by prefixed ID
+      description: Returns a single country by ISO code with its states
       parameters:
       - name: x-spree-api-key
         in: header
         required: true
         schema:
           type: string
-      - name: id
+      - name: iso
         in: path
         required: true
-        description: Country ID (prefixed, e.g., country_abc123)
+        description: Country ISO 3166-1 alpha-2 code (e.g., "US", "DE", "CA")
         schema:
           type: string
       responses:
@@ -486,7 +495,40 @@ paths:
           content:
             application/json:
               schema:
-                "$ref": "#/components/schemas/StoreCountry"
+                type: object
+                properties:
+                  iso:
+                    type: string
+                    description: ISO 3166-1 alpha-2 code
+                  iso3:
+                    type: string
+                    description: ISO 3166-1 alpha-3 code
+                  name:
+                    type: string
+                  states_required:
+                    type: boolean
+                  zipcode_required:
+                    type: boolean
+                  states:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        abbr:
+                          type: string
+                          description: State abbreviation code
+                        name:
+                          type: string
+                      required:
+                      - abbr
+                      - name
+                required:
+                - iso
+                - iso3
+                - name
+                - states_required
+                - zipcode_required
+                - states
         '404':
           description: country not found
           content:
@@ -620,12 +662,6 @@ paths:
             application/json:
               schema:
                 "$ref": "#/components/schemas/StoreLineItem"
-        '422':
-          description: validation error - invalid variant
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
         '404':
           description: order not found
           content:
@@ -689,12 +725,6 @@ paths:
             application/json:
               schema:
                 "$ref": "#/components/schemas/StoreLineItem"
-        '422':
-          description: invalid quantity
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
         content:
           application/json:
@@ -944,8 +974,8 @@ paths:
             application/json:
               schema:
                 "$ref": "#/components/schemas/StoreOrder"
-        '422':
-          description: validation error
+        '403':
+          description: cannot update completed order
           content:
             application/json:
               schema:
@@ -1091,39 +1121,7 @@ paths:
             application/json:
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
-  "/api/v3/store/orders/{id}/cancel":
-    patch:
-      summary: Cancel the order
-      tags:
-      - Orders
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: Cancels a completed order
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: false
-        schema:
-          type: string
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        '200':
-          description: order cancelled
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/StoreOrder"
-  "/api/v3/store/orders/{id}/store_credits":
+  "/api/v3/store/orders/{order_id}/store_credits":
     post:
       summary: Add store credit
       tags:
@@ -1143,7 +1141,7 @@ paths:
         required: true
         schema:
           type: string
-      - name: id
+      - name: order_id
         in: path
         required: true
         schema:
@@ -1194,7 +1192,7 @@ paths:
         required: true
         schema:
           type: string
-      - name: id
+      - name: order_id
         in: path
         required: true
         schema:
@@ -1255,7 +1253,10 @@ paths:
                     items:
                       "$ref": "#/components/schemas/StorePaymentMethod"
                   meta:
-                    "$ref": "#/components/schemas/PaginationMeta"
+                    type: object
+                    properties:
+                      count:
+                        type: integer
         '404':
           description: order not found
           content:
@@ -1310,8 +1311,8 @@ paths:
                     type: array
                     items:
                       "$ref": "#/components/schemas/StorePayment"
-                  meta:
-                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
         '404':
           description: order not found
           content:
@@ -1514,7 +1515,7 @@ paths:
       - Products
       security:
       - api_key: []
-      description: Returns a single product by prefixed ID
+      description: Returns a single product by slug or prefix ID
       parameters:
       - name: x-spree-api-key
         in: header
@@ -1525,7 +1526,7 @@ paths:
       - name: id
         in: path
         required: true
-        description: Product ID (prefixed, e.g., prod_abc123)
+        description: Product slug (e.g., ruby-on-rails-tote) or prefix ID (e.g., product_abc123)
         schema:
           type: string
       - name: includes
@@ -1536,7 +1537,7 @@ paths:
           type: string
       responses:
         '200':
-          description: product found
+          description: product found by prefix ID
           content:
             application/json:
               schema:
@@ -1572,9 +1573,10 @@ paths:
         required: true
         schema:
           type: string
-      - name: order_token
+      - name: token
         in: query
         required: false
+        description: Order token for guest access
         schema:
           type: string
       responses:
@@ -1625,12 +1627,13 @@ paths:
       - name: id
         in: path
         required: true
-        description: Shipment ID or number
+        description: Shipment ID
         schema:
           type: string
-      - name: order_token
+      - name: token
         in: query
         required: false
+        description: Order token for guest access
         schema:
           type: string
       - name: includes
@@ -1679,11 +1682,13 @@ paths:
       - name: id
         in: path
         required: true
+        description: Shipment ID
         schema:
           type: string
-      - name: order_token
+      - name: token
         in: query
         required: false
+        description: Order token for guest access
         schema:
           type: string
       responses:
@@ -1693,8 +1698,8 @@ paths:
             application/json:
               schema:
                 "$ref": "#/components/schemas/StoreShipment"
-        '422':
-          description: invalid shipping rate
+        '404':
+          description: shipping rate not found
           content:
             application/json:
               schema:
@@ -1705,94 +1710,16 @@ paths:
             schema:
               type: object
               properties:
-                shipping_rate_id:
-                  type: string
-                  description: Shipping rate ID to select
+                shipment:
+                  type: object
+                  properties:
+                    selected_shipping_rate_id:
+                      type: string
+                      description: Shipping rate ID to select
+                  required:
+                  - selected_shipping_rate_id
               required:
-              - shipping_rate_id
-  "/api/v3/store/states":
-    get:
-      summary: List states
-      tags:
-      - States
-      security:
-      - api_key: []
-      description: Returns a list of states/provinces, optionally filtered by country
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: country_id
-        in: query
-        required: false
-        description: Filter by country ID (prefixed)
-        schema:
-          type: string
-      - name: page
-        in: query
-        required: false
-        schema:
-          type: integer
-      - name: per_page
-        in: query
-        required: false
-        schema:
-          type: integer
-      responses:
-        '200':
-          description: states filtered by country
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      "$ref": "#/components/schemas/StoreState"
-                  meta:
-                    "$ref": "#/components/schemas/PaginationMeta"
-        '401':
-          description: unauthorized
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-  "/api/v3/store/states/{id}":
-    get:
-      summary: Get a state
-      tags:
-      - States
-      security:
-      - api_key: []
-      description: Returns a single state by ID
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: id
-        in: path
-        required: true
-        description: State ID (prefixed)
-        schema:
-          type: string
-      responses:
-        '200':
-          description: state found
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/StoreState"
-        '404':
-          description: state not found
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
+              - shipment
   "/api/v3/store/store":
     get:
       summary: Get current store
@@ -1917,7 +1844,7 @@ paths:
       - Taxons
       security:
       - api_key: []
-      description: Returns a single taxon by ID or permalink
+      description: Returns a single taxon by permalink or prefix ID
       parameters:
       - name: x-spree-api-key
         in: header
@@ -1927,7 +1854,8 @@ paths:
       - name: id
         in: path
         required: true
-        description: Taxon ID (prefixed) or permalink
+        description: Taxon permalink (e.g., categories/clothing/shirts) or prefix
+          ID (e.g., taxon_abc123)
         schema:
           type: string
       - name: includes
@@ -1938,7 +1866,7 @@ paths:
           type: string
       responses:
         '200':
-          description: taxon found by permalink
+          description: taxon found by prefix ID
           content:
             application/json:
               schema:
@@ -2264,8 +2192,6 @@ tags:
   description: Individual categories
 - name: Countries
   description: Available shipping countries
-- name: States
-  description: States and provinces
 - name: Orders
   description: Shopping cart and checkout
 - name: Line Items
@@ -2385,25 +2311,25 @@ components:
         company:
           type: string
           nullable: true
-        state_id:
-          type: string
-          nullable: true
-        state_text:
-          type: string
-          nullable: true
-        country_id:
+        country_name:
           type: string
         country_iso:
           type: string
-        country_name:
+        state_text:
           type: string
+          nullable: true
+        state_abbr:
+          type: string
+          nullable: true
+        state_name:
+          type: string
+          nullable: true
       x-typelizer: true
       required:
       - id
       - full_name
-      - country_id
-      - country_iso
       - country_name
+      - country_iso
     AdminOrder:
       type: object
       properties:
@@ -2846,13 +2772,9 @@ components:
     StoreCountry:
       type: object
       properties:
-        id:
-          type: string
         iso:
           type: string
         iso3:
-          type: string
-        iso_name:
           type: string
         name:
           type: string
@@ -2866,10 +2788,8 @@ components:
             "$ref": "#/components/schemas/StoreState"
       x-typelizer: true
       required:
-      - id
       - iso
       - iso3
-      - iso_name
       - name
       - states_required
       - zipcode_required
@@ -2999,9 +2919,6 @@ components:
           type: string
         display_discounted_amount:
           type: string
-        compare_at_amount:
-          type: string
-          nullable: true
         display_compare_at_amount:
           type: string
           nullable: true
@@ -3009,6 +2926,9 @@ components:
           type: string
         updated_at:
           type: string
+        compare_at_amount:
+          type: string
+          nullable: true
         images:
           type: array
           items:
@@ -3394,33 +3314,13 @@ components:
         tracking_url:
           type: string
           nullable: true
-        shipped_at:
-          type: string
-          nullable: true
         cost:
           type: string
         display_cost:
           type: string
-        adjustment_total:
+        shipped_at:
           type: string
-        display_adjustment_total:
-          type: string
-        additional_tax_total:
-          type: string
-        display_additional_tax_total:
-          type: string
-        promo_total:
-          type: string
-        display_promo_total:
-          type: string
-        included_tax_total:
-          type: string
-        display_included_tax_total:
-          type: string
-        total:
-          type: string
-        display_total:
-          type: string
+          nullable: true
         created_at:
           type: string
         updated_at:
@@ -3440,16 +3340,6 @@ components:
       - state
       - cost
       - display_cost
-      - adjustment_total
-      - display_adjustment_total
-      - additional_tax_total
-      - display_additional_tax_total
-      - promo_total
-      - display_promo_total
-      - included_tax_total
-      - display_included_tax_total
-      - total
-      - display_total
       - created_at
       - updated_at
       - shipping_method
@@ -3498,20 +3388,14 @@ components:
     StoreState:
       type: object
       properties:
-        id:
-          type: string
-        country_id:
+        abbr:
           type: string
         name:
           type: string
-        abbr:
-          type: string
       x-typelizer: true
       required:
-      - id
-      - country_id
-      - name
       - abbr
+      - name
     StoreStockLocation:
       type: object
       properties:
@@ -3650,16 +3534,16 @@ components:
         meta_keywords:
           type: string
           nullable: true
-        parent_id:
-          type: string
-          nullable: true
-        taxonomy_id:
-          type: string
         children_count:
           type: number
         created_at:
           type: string
         updated_at:
+          type: string
+        parent_id:
+          type: string
+          nullable: true
+        taxonomy_id:
           type: string
         description:
           type: string
@@ -3692,10 +3576,10 @@ components:
       - lft
       - rgt
       - depth
-      - taxonomy_id
       - children_count
       - created_at
       - updated_at
+      - taxonomy_id
       - description
       - description_html
       - is_root
