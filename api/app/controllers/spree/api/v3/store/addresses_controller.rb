@@ -54,7 +54,7 @@ module Spree
           def permitted_params
             params.require(:address).permit(
               :firstname, :lastname, :address1, :address2, :city,
-              :zipcode, :phone, :company, :country_iso, :state_code
+              :zipcode, :phone, :company, :country_iso, :state_abbr, :state_name
             )
           end
         end
