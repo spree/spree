@@ -25,16 +25,7 @@ module Spree
       end
 
       def handle_bulk_operation_response
-        respond_to do |format|
-          format.turbo_stream do
-            flash.now[:success] = flash_message_for(bulk_collection, :successfully_updated)
-            render partial: 'spree/admin/shared/close_bulk_modal'
-          end
-          format.html do
-            flash[:success] = flash_message_for(bulk_collection, :successfully_updated)
-            redirect_to request.referer
-          end
-        end
+        redirect_back fallback_location: request.referer, status: :see_other
       end
 
       def bulk_collection

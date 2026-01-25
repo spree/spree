@@ -1267,7 +1267,9 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
   describe 'POST #bulk_status_update' do
     let(:product) { create(:product, stores: [store], status: status) }
     let(:status) { :draft }
-    let(:send_request) { put :bulk_status_update, params: { ids: [product.id], status: 'active' }, format: :turbo_stream }
+    let(:send_request) { put :bulk_status_update, params: { ids: [product.id], status: 'active' } }
+
+    before { request.env['HTTP_REFERER'] = '/admin/products' }
 
     shared_examples 'updates status to active' do |status|
       let(:status) { status }
@@ -1276,6 +1278,7 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
         expect(product.status).to eq status.to_s
         send_request
         expect(product.reload.active?).to be(true)
+        expect(response).to redirect_to('/admin/products')
       end
     end
 
@@ -1290,13 +1293,16 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
     let(:product) { create(:product, stores: [store], status: :active) }
     let(:product2) { create(:product, stores: [store], status: :active) }
     let(:send_request) do
-      put :bulk_add_tags, params: { ids: [product.id, product2.id], tags: ['tag1', 'tag2', 'tag3'] }, format: :turbo_stream
+      put :bulk_add_tags, params: { ids: [product.id, product2.id], tags: ['tag1', 'tag2', 'tag3'] }
     end
+
+    before { request.env['HTTP_REFERER'] = '/admin/products' }
 
     it 'adds tags to products' do
       send_request
       expect(product.reload.tag_list).to eq(['tag1', 'tag2', 'tag3'])
       expect(product2.reload.tag_list).to eq(['tag1', 'tag2', 'tag3'])
+      expect(response).to redirect_to('/admin/products')
     end
   end
 
@@ -1304,13 +1310,16 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
     let(:product) { create(:product, stores: [store], status: :active, tag_list: ['tag1', 'tag2', 'tag3']) }
     let(:product2) { create(:product, stores: [store], status: :active, tag_list: ['tag1', 'tag2', 'tag3']) }
     let(:send_request) do
-      put :bulk_remove_tags, params: { ids: [product.id, product2.id], tags: ['tag1', 'tag2', 'tag3'] }, format: :turbo_stream
+      put :bulk_remove_tags, params: { ids: [product.id, product2.id], tags: ['tag1', 'tag2', 'tag3'] }
     end
+
+    before { request.env['HTTP_REFERER'] = '/admin/products' }
 
     it 'removes tags from products' do
       send_request
       expect(product.reload.tag_list).to eq([])
       expect(product2.reload.tag_list).to eq([])
+      expect(response).to redirect_to('/admin/products')
     end
   end
 
@@ -1328,8 +1337,10 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
     let!(:category3) { create(:taxon) }
 
     let(:send_request) do
-      put :bulk_remove_from_taxons, params: { ids: product_ids, taxon_ids: taxon_ids }, format: :turbo_stream
+      put :bulk_remove_from_taxons, params: { ids: product_ids, taxon_ids: taxon_ids }
     end
+
+    before { request.env['HTTP_REFERER'] = '/admin/products' }
 
     it { expect { send_request }.to change { product.reload.taxons } }
 
@@ -1432,8 +1443,10 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
     let(:category) { create(:taxon) }
 
     let(:send_request) do
-      put :bulk_add_to_taxons, params: { ids: product_ids, taxon_ids: taxon_ids }, format: :turbo_stream
+      put :bulk_add_to_taxons, params: { ids: product_ids, taxon_ids: taxon_ids }
     end
+
+    before { request.env['HTTP_REFERER'] = '/admin/products' }
 
     it { expect { send_request }.to change { product.reload.taxons } }
 
