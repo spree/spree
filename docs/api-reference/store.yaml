@@ -1,0 +1,3901 @@
+---
+openapi: 3.0.3
+info:
+  title: Store API
+  contact:
+    name: Vendo Connect Inc.
+    url: https://getvendo.com
+    email: sales@getvendo.com
+  description: |
+    Spree Store API v3 - Customer-facing storefront API for building headless commerce experiences.
+
+    ## Authentication
+
+    The Store API uses two authentication methods:
+
+    ### API Key (Required)
+    All requests must include a publishable API key in the `x-spree-api-key` header.
+
+    ### JWT Bearer Token (For authenticated customers)
+    After login, include the JWT token in the `Authorization: Bearer <token>` header.
+
+    ### Order Token (For guest checkout)
+    When creating an order, an `order_token` is returned. Include this as a query parameter
+    for guest access to that specific order.
+
+    ## Response Format
+
+    All responses are JSON. List endpoints return paginated responses with `data` and `meta` keys.
+
+    ## Error Handling
+
+    Errors return a consistent format:
+    ```json
+    {
+      "error": {
+        "code": "record_not_found",
+        "message": "Product not found"
+      }
+    }
+    ```
+  version: v3
+paths:
+  "/api/v3/store/customers/me/addresses":
+    get:
+      summary: List customer addresses
+      tags:
+      - Addresses
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Returns all addresses in the customer address book
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        required: false
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: addresses found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/StoreAddress"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    post:
+      summary: Create an address
+      tags:
+      - Addresses
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Adds a new address to the customer address book
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: address created
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/StoreAddress"
+        '422':
+          description: validation error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                address:
+                  type: object
+                  properties:
+                    firstname:
+                      type: string
+                    lastname:
+                      type: string
+                    address1:
+                      type: string
+                    address2:
+                      type: string
+                    city:
+                      type: string
+                    zipcode:
+                      type: string
+                    phone:
+                      type: string
+                    country_id:
+                      type: string
+                    state_id:
+                      type: string
+                    state_name:
+                      type: string
+                  required:
+                  - firstname
+                  - lastname
+                  - address1
+                  - city
+                  - zipcode
+                  - phone
+                  - country_id
+  "/api/v3/store/customers/me/addresses/{id}":
+    get:
+      summary: Get an address
+      tags:
+      - Addresses
+      security:
+      - api_key: []
+        bearer_auth: []
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: address found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/StoreAddress"
+        '404':
+          description: address not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    patch:
+      summary: Update an address
+      tags:
+      - Addresses
+      security:
+      - api_key: []
+        bearer_auth: []
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: address updated
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/StoreAddress"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                address:
+                  type: object
+                  properties:
+                    firstname:
+                      type: string
+                    lastname:
+                      type: string
+                    address1:
+                      type: string
+                    city:
+                      type: string
+    delete:
+      summary: Delete an address
+      tags:
+      - Addresses
+      security:
+      - api_key: []
+        bearer_auth: []
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: address deleted
+        '404':
+          description: address not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/store/auth/login":
+    post:
+      summary: Login
+      tags:
+      - Authentication
+      security:
+      - api_key: []
+      description: Authenticates a customer with email/password and returns a JWT
+        token
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: login successful
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/AuthResponse"
+        '401':
+          description: missing API key
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                provider:
+                  type: string
+                  example: email
+                  description: 'Authentication provider (default: email)'
+                email:
+                  type: string
+                  format: email
+                  example: customer@example.com
+                password:
+                  type: string
+                  example: password123
+              required:
+              - email
+              - password
+  "/api/v3/store/auth/register":
+    post:
+      summary: Register
+      tags:
+      - Authentication
+      security:
+      - api_key: []
+      description: Creates a new customer account and returns a JWT token
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: registration successful
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/AuthResponse"
+        '422':
+          description: email already taken
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      format: email
+                    password:
+                      type: string
+                      minLength: 6
+                    password_confirmation:
+                      type: string
+                    first_name:
+                      type: string
+                    last_name:
+                      type: string
+                  required:
+                  - email
+                  - password
+              required:
+              - user
+  "/api/v3/store/auth/refresh":
+    post:
+      summary: Refresh token
+      tags:
+      - Authentication
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Generates a new JWT token for the authenticated user
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token
+        schema:
+          type: string
+      responses:
+        '200':
+          description: token refreshed
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/AuthResponse"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/store/countries":
+    get:
+      summary: List countries
+      tags:
+      - Countries
+      security:
+      - api_key: []
+      description: Returns a list of countries available for shipping
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: q[name_cont]
+        in: query
+        required: false
+        description: Filter by name
+        schema:
+          type: string
+      responses:
+        '200':
+          description: countries found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/StoreCountry"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/store/countries/{id}":
+    get:
+      summary: Get a country
+      tags:
+      - Countries
+      security:
+      - api_key: []
+      description: Returns a single country by prefixed ID
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Country ID (prefixed, e.g., country_abc123)
+        schema:
+          type: string
+      responses:
+        '200':
+          description: country found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/StoreCountry"
+        '404':
+          description: country not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/store/customers/me":
+    get:
+      summary: Get current customer profile
+      tags:
+      - Customers
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Returns the profile of the currently authenticated customer
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer JWT token
+        schema:
+          type: string
+      responses:
+        '200':
+          description: profile found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/StoreUser"
+        '401':
+          description: unauthorized - invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    patch:
+      summary: Update current customer profile
+      tags:
+      - Customers
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Updates the profile of the currently authenticated customer
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: profile updated
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/StoreUser"
+        '422':
+          description: validation error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    first_name:
+                      type: string
+                    last_name:
+                      type: string
+                    email:
+                      type: string
+                      format: email
+                    password:
+                      type: string
+                    password_confirmation:
+                      type: string
+  "/api/v3/store/orders/{order_id}/line_items":
+    post:
+      summary: Add item to cart
+      tags:
+      - Line Items
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Adds a variant to the order. Creates a new line item or increases
+        quantity if variant already in cart.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: false
+        description: Bearer token for authenticated customers
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order ID or number
+        schema:
+          type: string
+      - name: order_token
+        in: query
+        required: false
+        description: Order token for guest access
+        schema:
+          type: string
+      responses:
+        '201':
+          description: line item created
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/StoreLineItem"
+        '422':
+          description: validation error - invalid variant
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        '404':
+          description: order not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                variant_id:
+                  type: string
+                  description: Variant ID to add
+                quantity:
+                  type: integer
+                  description: 'Quantity to add (default: 1)'
+              required:
+              - variant_id
+  "/api/v3/store/orders/{order_id}/line_items/{id}":
+    patch:
+      summary: Update line item quantity
+      tags:
+      - Line Items
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Updates the quantity of a line item in the cart
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Line item ID
+        schema:
+          type: string
+      - name: order_token
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: line item updated
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/StoreLineItem"
+        '422':
+          description: invalid quantity
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quantity:
+                  type: integer
+                  minimum: 1
+              required:
+              - quantity
+    delete:
+      summary: Remove line item from cart
+      tags:
+      - Line Items
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Removes a line item from the order
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: order_token
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '204':
+          description: line item removed
+        '404':
+          description: line item not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/store/orders":
+    get:
+      summary: List orders
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Returns a paginated list of orders for the authenticated customer
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: q[state_eq]
+        in: query
+        required: false
+        description: Filter by order state
+        schema:
+          type: string
+      - name: q[completed_at_gte]
+        in: query
+        required: false
+        description: Filter by completion date (after)
+        schema:
+          type: string
+      responses:
+        '200':
+          description: orders found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/StoreOrder"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+        '401':
+          description: unauthorized - authentication required
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    post:
+      summary: Create a cart
+      tags:
+      - Orders
+      security:
+      - api_key: []
+      description: |
+        Creates a new order (shopping cart). Can be created by guests or authenticated customers.
+        Returns an `order_token` that must be used for guest access to the order.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: false
+        description: Bearer JWT token (optional - for authenticated customers)
+        schema:
+          type: string
+      responses:
+        '201':
+          description: cart created (authenticated)
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                - "$ref": "#/components/schemas/StoreOrder"
+                - type: object
+                  properties:
+                    order_token:
+                      type: string
+        '401':
+          description: unauthorized - invalid API key
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/store/orders/{id}":
+    get:
+      summary: Get an order
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Returns a single order by ID or number. Guests must provide order_token.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Order ID (prefixed) or order number
+        schema:
+          type: string
+      - name: order_token
+        in: query
+        required: false
+        description: Order token for guest access
+        schema:
+          type: string
+      - name: includes
+        in: query
+        required: false
+        description: Include associations (line_items, shipments, payments)
+        schema:
+          type: string
+      responses:
+        '200':
+          description: order found (guest with token)
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/StoreOrder"
+        '404':
+          description: order not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        '403':
+          description: forbidden - order belongs to another user
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    patch:
+      summary: Update an order
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Updates order attributes like email, special instructions, or addresses
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: order_token
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: order updated
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/StoreOrder"
+        '422':
+          description: validation error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                order:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      format: email
+                    special_instructions:
+                      type: string
+                    bill_address_attributes:
+                      "$ref": "#/components/schemas/StoreAddress"
+                    ship_address_attributes:
+                      "$ref": "#/components/schemas/StoreAddress"
+  "/api/v3/store/orders/{id}/next":
+    patch:
+      summary: Advance to next checkout step
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Advances the order to the next state in the checkout flow
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: order_token
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: order advanced
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/StoreOrder"
+        '422':
+          description: cannot advance - validation errors
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/store/orders/{id}/advance":
+    patch:
+      summary: Advance through checkout
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Advances the order through all possible checkout states
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: order_token
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: order advanced
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/StoreOrder"
+  "/api/v3/store/orders/{id}/complete":
+    patch:
+      summary: Complete the order
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Completes the order (finalizes the purchase)
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: order_token
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: order completed
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/StoreOrder"
+        '422':
+          description: cannot complete
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/store/orders/{id}/cancel":
+    patch:
+      summary: Cancel the order
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Cancels a completed order
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: order cancelled
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/StoreOrder"
+  "/api/v3/store/orders/{id}/store_credits":
+    post:
+      summary: Add store credit
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Applies store credit to the order
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: order_token
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: store credit applied
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/StoreOrder"
+        '422':
+          description: no store credit available
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: number
+                  description: Amount to apply (optional - defaults to max available)
+    delete:
+      summary: Remove store credit
+      tags:
+      - Orders
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Removes store credit from the order
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: order_token
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: store credit removed
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/StoreOrder"
+  "/api/v3/store/orders/{order_id}/payment_methods":
+    get:
+      summary: List available payment methods
+      tags:
+      - Payment Methods
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Returns payment methods available for the order based on store
+        configuration and order state
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: order_token
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: payment methods found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/StorePaymentMethod"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+        '404':
+          description: order not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/store/orders/{order_id}/payments":
+    get:
+      summary: List payments for an order
+      tags:
+      - Payments
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Returns all payments associated with the order
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: order_token
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: payments found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/StorePayment"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+        '404':
+          description: order not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    post:
+      summary: Create a payment
+      tags:
+      - Payments
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Creates a new payment for the order using the specified payment
+        method
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: order_token
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '201':
+          description: payment created
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/StoreOrder"
+        '422':
+          description: invalid payment method
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                payment_method_id:
+                  type: string
+                  description: Payment method ID
+                amount:
+                  type: number
+                  description: Payment amount (optional, defaults to order total)
+                source_attributes:
+                  type: object
+                  description: Payment source details (card info, etc.)
+                  properties:
+                    number:
+                      type: string
+                    month:
+                      type: string
+                    year:
+                      type: string
+                    verification_value:
+                      type: string
+                    name:
+                      type: string
+              required:
+              - payment_method_id
+  "/api/v3/store/orders/{order_id}/payments/{id}":
+    get:
+      summary: Get a payment
+      tags:
+      - Payments
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Returns details of a specific payment
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Payment ID
+        schema:
+          type: string
+      - name: order_token
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: payment found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/StorePayment"
+        '404':
+          description: payment not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/store/products":
+    get:
+      summary: List products
+      tags:
+      - Products
+      security:
+      - api_key: []
+      description: Returns a paginated list of active products for the current store
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        description: Publishable API key
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: 'Page number (default: 1)'
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        required: false
+        description: 'Number of items per page (default: 25, max: 100)'
+        schema:
+          type: integer
+      - name: q[name_cont]
+        in: query
+        required: false
+        description: Filter by name containing string
+        schema:
+          type: string
+      - name: q[taxons_id_eq]
+        in: query
+        required: false
+        description: Filter by taxon ID
+        schema:
+          type: string
+      - name: includes
+        in: query
+        required: false
+        description: Comma-separated associations to include (variants, images, taxons,
+          option_types)
+        schema:
+          type: string
+      responses:
+        '200':
+          description: products found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/StoreProduct"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+                required:
+                - data
+                - meta
+        '401':
+          description: unauthorized - invalid or missing API key
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/store/products/{id}":
+    get:
+      summary: Get a product
+      tags:
+      - Products
+      security:
+      - api_key: []
+      description: Returns a single product by prefixed ID
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        description: Publishable API key
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Product ID (prefixed, e.g., prod_abc123)
+        schema:
+          type: string
+      - name: includes
+        in: query
+        required: false
+        description: Comma-separated associations to include
+        schema:
+          type: string
+      responses:
+        '200':
+          description: product found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/StoreProduct"
+        '404':
+          description: draft product not visible
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/store/orders/{order_id}/shipments":
+    get:
+      summary: List shipments for an order
+      tags:
+      - Shipments
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Returns all shipments associated with the order
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: order_token
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: shipments found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/StoreShipment"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+        '404':
+          description: order not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/store/orders/{order_id}/shipments/{id}":
+    get:
+      summary: Get a shipment
+      tags:
+      - Shipments
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Returns details of a specific shipment
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Shipment ID or number
+        schema:
+          type: string
+      - name: order_token
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: includes
+        in: query
+        required: false
+        description: Include shipping_rates
+        schema:
+          type: string
+      responses:
+        '200':
+          description: shipment found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/StoreShipment"
+        '404':
+          description: shipment not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    patch:
+      summary: Select shipping rate for shipment
+      tags:
+      - Shipments
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Selects a shipping rate for the shipment
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: false
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: order_token
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: shipping rate selected
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/StoreShipment"
+        '422':
+          description: invalid shipping rate
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                shipping_rate_id:
+                  type: string
+                  description: Shipping rate ID to select
+              required:
+              - shipping_rate_id
+  "/api/v3/store/states":
+    get:
+      summary: List states
+      tags:
+      - States
+      security:
+      - api_key: []
+      description: Returns a list of states/provinces, optionally filtered by country
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: country_id
+        in: query
+        required: false
+        description: Filter by country ID (prefixed)
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        required: false
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: states filtered by country
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/StoreState"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/store/states/{id}":
+    get:
+      summary: Get a state
+      tags:
+      - States
+      security:
+      - api_key: []
+      description: Returns a single state by ID
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: State ID (prefixed)
+        schema:
+          type: string
+      responses:
+        '200':
+          description: state found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/StoreState"
+        '404':
+          description: state not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/store/store":
+    get:
+      summary: Get current store
+      tags:
+      - Store
+      security:
+      - api_key: []
+      description: Returns information about the current store based on the API key
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: store found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/StoreStore"
+        '401':
+          description: unauthorized - missing API key
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/store/taxonomies":
+    get:
+      summary: List taxonomies
+      tags:
+      - Taxonomies
+      security:
+      - api_key: []
+      description: Returns a list of taxonomies (category hierarchies) for the current
+        store
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: includes
+        in: query
+        required: false
+        description: Include root taxon
+        schema:
+          type: string
+      responses:
+        '200':
+          description: taxonomies found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/StoreTaxonomy"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/store/taxonomies/{id}":
+    get:
+      summary: Get a taxonomy
+      tags:
+      - Taxonomies
+      security:
+      - api_key: []
+      description: Returns a single taxonomy with its taxon tree
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Taxonomy ID (prefixed)
+        schema:
+          type: string
+      - name: includes
+        in: query
+        required: false
+        description: Include taxons
+        schema:
+          type: string
+      responses:
+        '200':
+          description: taxonomy found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/StoreTaxonomy"
+        '404':
+          description: taxonomy from other store
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/store/taxons/{id}":
+    get:
+      summary: Get a taxon
+      tags:
+      - Taxons
+      security:
+      - api_key: []
+      description: Returns a single taxon by ID or permalink
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Taxon ID (prefixed) or permalink
+        schema:
+          type: string
+      - name: includes
+        in: query
+        required: false
+        description: Include associations (children, products, parent)
+        schema:
+          type: string
+      responses:
+        '200':
+          description: taxon found by permalink
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/StoreTaxon"
+        '404':
+          description: taxon from other store not accessible
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/store/wishlists":
+    get:
+      summary: List wishlists
+      tags:
+      - Wishlists
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Returns all wishlists for the authenticated customer
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+      - name: per_page
+        in: query
+        required: false
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: wishlists found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      "$ref": "#/components/schemas/StoreWishlist"
+                  meta:
+                    "$ref": "#/components/schemas/PaginationMeta"
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    post:
+      summary: Create a wishlist
+      tags:
+      - Wishlists
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Creates a new wishlist for the customer
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: wishlist created
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/StoreWishlist"
+        '422':
+          description: validation error
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                wishlist:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    is_private:
+                      type: boolean
+                    is_default:
+                      type: boolean
+                  required:
+                  - name
+  "/api/v3/store/wishlists/{id}":
+    get:
+      summary: Get a wishlist
+      tags:
+      - Wishlists
+      security:
+      - api_key: []
+        bearer_auth: []
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: includes
+        in: query
+        required: false
+        description: Include wished_items
+        schema:
+          type: string
+      responses:
+        '200':
+          description: wishlist found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/StoreWishlist"
+        '404':
+          description: wishlist not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    patch:
+      summary: Update a wishlist
+      tags:
+      - Wishlists
+      security:
+      - api_key: []
+        bearer_auth: []
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: wishlist updated
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/StoreWishlist"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                wishlist:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    is_private:
+                      type: boolean
+                    is_default:
+                      type: boolean
+    delete:
+      summary: Delete a wishlist
+      tags:
+      - Wishlists
+      security:
+      - api_key: []
+        bearer_auth: []
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: wishlist deleted
+  "/api/v3/store/wishlists/{wishlist_id}/items":
+    post:
+      summary: Add item to wishlist
+      tags:
+      - Wishlists
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Adds a variant to the wishlist
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: wishlist_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: item added
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/StoreWishedItem"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                variant_id:
+                  type: string
+                quantity:
+                  type: integer
+              required:
+              - variant_id
+  "/api/v3/store/wishlists/{wishlist_id}/items/{id}":
+    delete:
+      summary: Remove item from wishlist
+      tags:
+      - Wishlists
+      security:
+      - api_key: []
+        bearer_auth: []
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: wishlist_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: item removed
+        '404':
+          description: item not found
+servers:
+- url: http://{defaultHost}
+  variables:
+    defaultHost:
+      default: localhost:3000
+tags:
+- name: Authentication
+  description: Customer authentication and registration
+- name: Store
+  description: Store information and settings
+- name: Products
+  description: Product catalog browsing
+- name: Taxonomies
+  description: Category hierarchies
+- name: Taxons
+  description: Individual categories
+- name: Countries
+  description: Available shipping countries
+- name: States
+  description: States and provinces
+- name: Orders
+  description: Shopping cart and checkout
+- name: Line Items
+  description: Cart item management
+- name: Payments
+  description: Payment processing
+- name: Payment Methods
+  description: Available payment options
+- name: Shipments
+  description: Shipping and delivery
+- name: Customers
+  description: Customer account management
+- name: Addresses
+  description: Customer address book
+- name: Credit Cards
+  description: Saved payment methods
+- name: Wishlists
+  description: Customer wishlists
+- name: Digitals
+  description: Digital product downloads
+components:
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: x-spree-api-key
+      in: header
+      description: Publishable API key for store access
+    bearer_auth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token for authenticated customers
+  schemas:
+    PaginationMeta:
+      type: object
+      properties:
+        page:
+          type: integer
+          example: 1
+        limit:
+          type: integer
+          example: 25
+        count:
+          type: integer
+          example: 100
+        pages:
+          type: integer
+          example: 4
+      required:
+      - page
+      - limit
+      - count
+      - pages
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: record_not_found
+            message:
+              type: string
+              example: Record not found
+            details:
+              type: object
+              additionalProperties:
+                type: array
+                items:
+                  type: string
+              nullable: true
+          required:
+          - code
+          - message
+      required:
+      - error
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          description: JWT access token
+        user:
+          "$ref": "#/components/schemas/StoreUser"
+      required:
+      - token
+      - user
+    StoreAddress:
+      type: object
+      properties:
+        id:
+          type: string
+        firstname:
+          type: string
+          nullable: true
+        lastname:
+          type: string
+          nullable: true
+        full_name:
+          type: string
+        address1:
+          type: string
+          nullable: true
+        address2:
+          type: string
+          nullable: true
+        city:
+          type: string
+          nullable: true
+        zipcode:
+          type: string
+          nullable: true
+        phone:
+          type: string
+          nullable: true
+        company:
+          type: string
+          nullable: true
+        state_id:
+          type: string
+          nullable: true
+        state_text:
+          type: string
+          nullable: true
+        country_id:
+          type: string
+        country_iso:
+          type: string
+        country_name:
+          type: string
+      x-typelizer: true
+      required:
+      - id
+      - full_name
+      - country_id
+      - country_iso
+      - country_name
+    AdminOrder:
+      type: object
+      properties:
+        id:
+          type: string
+        number:
+          type: string
+        state:
+          type: string
+        token:
+          type: string
+        email:
+          type: string
+          nullable: true
+        special_instructions:
+          type: string
+          nullable: true
+        currency:
+          type: string
+        item_count:
+          type: number
+        shipment_state:
+          type: string
+          nullable: true
+        payment_state:
+          type: string
+          nullable: true
+        item_total:
+          type: string
+        display_item_total:
+          type: string
+        ship_total:
+          type: string
+        display_ship_total:
+          type: string
+        adjustment_total:
+          type: string
+        display_adjustment_total:
+          type: string
+        promo_total:
+          type: string
+        display_promo_total:
+          type: string
+        tax_total:
+          type: string
+        display_tax_total:
+          type: string
+        included_tax_total:
+          type: string
+        display_included_tax_total:
+          type: string
+        additional_tax_total:
+          type: string
+        display_additional_tax_total:
+          type: string
+        total:
+          type: string
+        display_total:
+          type: string
+        completed_at:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        order_promotions:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StoreOrderPromotion"
+        line_items:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StoreLineItem"
+        shipments:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StoreShipment"
+        payments:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StorePayment"
+        bill_address:
+          "$ref": "#/components/schemas/StoreAddress"
+        ship_address:
+          "$ref": "#/components/schemas/StoreAddress"
+        payment_methods:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StorePaymentMethod"
+        channel:
+          type: string
+          nullable: true
+        last_ip_address:
+          type: string
+          nullable: true
+        considered_risky:
+          type: boolean
+        confirmation_delivered:
+          type: boolean
+        store_owner_notification_delivered:
+          type: boolean
+        internal_note:
+          type: string
+          nullable: true
+        approver_id:
+          type: string
+          nullable: true
+        canceled_at:
+          type: string
+          nullable: true
+        approved_at:
+          type: string
+          nullable: true
+        canceler_id:
+          type: string
+          nullable: true
+        created_by_id:
+          type: string
+          nullable: true
+        user:
+          "$ref": "#/components/schemas/AdminUser"
+      x-typelizer: true
+      required:
+      - id
+      - number
+      - state
+      - token
+      - currency
+      - item_count
+      - item_total
+      - display_item_total
+      - ship_total
+      - display_ship_total
+      - adjustment_total
+      - display_adjustment_total
+      - promo_total
+      - display_promo_total
+      - tax_total
+      - display_tax_total
+      - included_tax_total
+      - display_included_tax_total
+      - additional_tax_total
+      - display_additional_tax_total
+      - total
+      - display_total
+      - created_at
+      - updated_at
+      - payment_methods
+      - considered_risky
+      - confirmation_delivered
+      - store_owner_notification_delivered
+    AdminProduct:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        slug:
+          type: string
+        sku:
+          type: string
+          nullable: true
+        barcode:
+          type: string
+          nullable: true
+        meta_description:
+          type: string
+          nullable: true
+        meta_keywords:
+          type: string
+          nullable: true
+        variant_count:
+          type: number
+        available_on:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        purchasable:
+          type: boolean
+        in_stock:
+          type: boolean
+        backorderable:
+          type: boolean
+        available:
+          type: boolean
+        price:
+          type: number
+          nullable: true
+        price_in_cents:
+          type: number
+          nullable: true
+        display_price:
+          type: string
+          nullable: true
+        compare_at_price:
+          type: number
+          nullable: true
+        compare_at_price_in_cents:
+          type: number
+          nullable: true
+        display_compare_at_price:
+          type: string
+          nullable: true
+        tags:
+          type: array
+          items:
+            type: string
+        images:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StoreImage"
+        variants:
+          type: array
+          items:
+            "$ref": "#/components/schemas/AdminVariant"
+        default_variant:
+          "$ref": "#/components/schemas/AdminVariant"
+        master_variant:
+          "$ref": "#/components/schemas/AdminVariant"
+        option_types:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StoreOptionType"
+        taxons:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StoreTaxon"
+        status:
+          type: string
+        make_active_at:
+          type: string
+          nullable: true
+        discontinue_on:
+          type: string
+          nullable: true
+        deleted_at:
+          type: string
+          nullable: true
+        cost_price:
+          type: number
+          nullable: true
+        cost_currency:
+          type: string
+          nullable: true
+      x-typelizer: true
+      required:
+      - id
+      - name
+      - slug
+      - variant_count
+      - created_at
+      - updated_at
+      - purchasable
+      - in_stock
+      - backorderable
+      - available
+      - tags
+      - status
+    AdminUser:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        first_name:
+          type: string
+          nullable: true
+        last_name:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        addresses:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StoreAddress"
+        default_billing_address:
+          allOf:
+          - "$ref": "#/components/schemas/StoreAddress"
+          nullable: true
+        default_shipping_address:
+          allOf:
+          - "$ref": "#/components/schemas/StoreAddress"
+          nullable: true
+        phone:
+          type: string
+          nullable: true
+        login:
+          type: string
+          nullable: true
+        accepts_email_marketing:
+          type: boolean
+        last_sign_in_at:
+          type: string
+          nullable: true
+        current_sign_in_at:
+          type: string
+          nullable: true
+        sign_in_count:
+          type: number
+        failed_attempts:
+          type: number
+        last_sign_in_ip:
+          type: string
+          nullable: true
+        current_sign_in_ip:
+          type: string
+          nullable: true
+        orders:
+          type: array
+          items:
+            "$ref": "#/components/schemas/AdminOrder"
+      x-typelizer: true
+      required:
+      - id
+      - email
+      - created_at
+      - updated_at
+      - addresses
+      - accepts_email_marketing
+      - sign_in_count
+      - failed_attempts
+    AdminVariant:
+      type: object
+      properties:
+        id:
+          type: string
+        product_id:
+          type: string
+        sku:
+          type: string
+          nullable: true
+        barcode:
+          type: string
+          nullable: true
+        is_master:
+          type: boolean
+        options_text:
+          type: string
+        track_inventory:
+          type: boolean
+        image_count:
+          type: number
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        purchasable:
+          type: boolean
+        in_stock:
+          type: boolean
+        backorderable:
+          type: boolean
+        weight:
+          type: number
+          nullable: true
+        height:
+          type: number
+          nullable: true
+        width:
+          type: number
+          nullable: true
+        depth:
+          type: number
+          nullable: true
+        price:
+          type: number
+          nullable: true
+        price_in_cents:
+          type: number
+          nullable: true
+        display_price:
+          type: string
+          nullable: true
+        compare_at_price:
+          type: number
+          nullable: true
+        display_compare_at_price:
+          type: string
+          nullable: true
+        images:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StoreImage"
+        option_values:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StoreOptionValue"
+        position:
+          type: number
+        tax_category_id:
+          type: string
+          nullable: true
+        deleted_at:
+          type: string
+          nullable: true
+        cost_price:
+          type: number
+          nullable: true
+        cost_currency:
+          type: string
+          nullable: true
+        total_on_hand:
+          type: number
+          nullable: true
+      x-typelizer: true
+      required:
+      - id
+      - product_id
+      - is_master
+      - options_text
+      - track_inventory
+      - image_count
+      - created_at
+      - updated_at
+      - purchasable
+      - in_stock
+      - backorderable
+      - option_values
+      - position
+    StoreBase:
+      type: object
+      properties:
+        id:
+          type: string
+      x-typelizer: true
+      required:
+      - id
+    StoreCountry:
+      type: object
+      properties:
+        id:
+          type: string
+        iso:
+          type: string
+        iso3:
+          type: string
+        iso_name:
+          type: string
+        name:
+          type: string
+        states_required:
+          type: boolean
+        zipcode_required:
+          type: boolean
+        states:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StoreState"
+      x-typelizer: true
+      required:
+      - id
+      - iso
+      - iso3
+      - iso_name
+      - name
+      - states_required
+      - zipcode_required
+    StoreDigitalLink:
+      type: object
+      properties:
+        id:
+          type: string
+        access_counter:
+          type: number
+        filename:
+          type: string
+        content_type:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        authorizable:
+          type: boolean
+        expired:
+          type: boolean
+        access_limit_exceeded:
+          type: boolean
+      x-typelizer: true
+      required:
+      - id
+      - access_counter
+      - filename
+      - content_type
+      - created_at
+      - updated_at
+      - authorizable
+      - expired
+      - access_limit_exceeded
+    StoreImage:
+      type: object
+      properties:
+        id:
+          type: string
+        viewable_id:
+          type: string
+        position:
+          type: number
+        alt:
+          type: string
+          nullable: true
+        viewable_type:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        original_url:
+          type: string
+          nullable: true
+        mini_url:
+          type: string
+          nullable: true
+        small_url:
+          type: string
+          nullable: true
+        medium_url:
+          type: string
+          nullable: true
+        large_url:
+          type: string
+          nullable: true
+        xlarge_url:
+          type: string
+          nullable: true
+        og_image_url:
+          type: string
+          nullable: true
+      x-typelizer: true
+      required:
+      - id
+      - viewable_id
+      - position
+      - viewable_type
+      - created_at
+      - updated_at
+    StoreLineItem:
+      type: object
+      properties:
+        id:
+          type: string
+        variant_id:
+          type: string
+        quantity:
+          type: number
+        name:
+          type: string
+        slug:
+          type: string
+        options_text:
+          type: string
+        price:
+          type: string
+        display_price:
+          type: string
+        total:
+          type: string
+        display_total:
+          type: string
+        adjustment_total:
+          type: string
+        display_adjustment_total:
+          type: string
+        additional_tax_total:
+          type: string
+        display_additional_tax_total:
+          type: string
+        included_tax_total:
+          type: string
+        display_included_tax_total:
+          type: string
+        promo_total:
+          type: string
+        display_promo_total:
+          type: string
+        pre_tax_amount:
+          type: string
+        display_pre_tax_amount:
+          type: string
+        discounted_amount:
+          type: string
+        display_discounted_amount:
+          type: string
+        compare_at_amount:
+          type: string
+          nullable: true
+        display_compare_at_amount:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        images:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StoreImage"
+        option_values:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StoreOptionValue"
+      x-typelizer: true
+      required:
+      - id
+      - variant_id
+      - quantity
+      - name
+      - slug
+      - options_text
+      - price
+      - display_price
+      - total
+      - display_total
+      - adjustment_total
+      - display_adjustment_total
+      - additional_tax_total
+      - display_additional_tax_total
+      - included_tax_total
+      - display_included_tax_total
+      - promo_total
+      - display_promo_total
+      - pre_tax_amount
+      - display_pre_tax_amount
+      - discounted_amount
+      - display_discounted_amount
+      - created_at
+      - updated_at
+      - images
+      - option_values
+    StoreOptionType:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        presentation:
+          type: string
+        position:
+          type: number
+      x-typelizer: true
+      required:
+      - id
+      - name
+      - presentation
+      - position
+    StoreOptionValue:
+      type: object
+      properties:
+        id:
+          type: string
+        option_type_id:
+          type: string
+        name:
+          type: string
+        presentation:
+          type: string
+        position:
+          type: number
+        option_type_name:
+          type: string
+        option_type_presentation:
+          type: string
+      x-typelizer: true
+      required:
+      - id
+      - option_type_id
+      - name
+      - presentation
+      - position
+      - option_type_name
+      - option_type_presentation
+    StoreOrderPromotion:
+      type: object
+      properties:
+        id:
+          type: string
+        promotion_id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        code:
+          type: string
+          nullable: true
+        amount:
+          type: string
+        display_amount:
+          type: string
+      x-typelizer: true
+      required:
+      - id
+      - promotion_id
+      - name
+      - amount
+      - display_amount
+    StoreOrder:
+      type: object
+      properties:
+        id:
+          type: string
+        number:
+          type: string
+        state:
+          type: string
+        token:
+          type: string
+        email:
+          type: string
+          nullable: true
+        special_instructions:
+          type: string
+          nullable: true
+        currency:
+          type: string
+        item_count:
+          type: number
+        shipment_state:
+          type: string
+          nullable: true
+        payment_state:
+          type: string
+          nullable: true
+        item_total:
+          type: string
+        display_item_total:
+          type: string
+        ship_total:
+          type: string
+        display_ship_total:
+          type: string
+        adjustment_total:
+          type: string
+        display_adjustment_total:
+          type: string
+        promo_total:
+          type: string
+        display_promo_total:
+          type: string
+        tax_total:
+          type: string
+        display_tax_total:
+          type: string
+        included_tax_total:
+          type: string
+        display_included_tax_total:
+          type: string
+        additional_tax_total:
+          type: string
+        display_additional_tax_total:
+          type: string
+        total:
+          type: string
+        display_total:
+          type: string
+        completed_at:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        order_promotions:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StoreOrderPromotion"
+        line_items:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StoreLineItem"
+        shipments:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StoreShipment"
+        payments:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StorePayment"
+        bill_address:
+          "$ref": "#/components/schemas/StoreAddress"
+        ship_address:
+          "$ref": "#/components/schemas/StoreAddress"
+        payment_methods:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StorePaymentMethod"
+      x-typelizer: true
+      required:
+      - id
+      - number
+      - state
+      - token
+      - currency
+      - item_count
+      - item_total
+      - display_item_total
+      - ship_total
+      - display_ship_total
+      - adjustment_total
+      - display_adjustment_total
+      - promo_total
+      - display_promo_total
+      - tax_total
+      - display_tax_total
+      - included_tax_total
+      - display_included_tax_total
+      - additional_tax_total
+      - display_additional_tax_total
+      - total
+      - display_total
+      - created_at
+      - updated_at
+      - payment_methods
+    StorePaymentMethod:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        type:
+          type: string
+      x-typelizer: true
+      required:
+      - id
+      - name
+      - type
+    StorePayment:
+      type: object
+      properties:
+        id:
+          type: string
+        payment_method_id:
+          type: string
+        state:
+          type: string
+        response_code:
+          type: string
+          nullable: true
+        number:
+          type: string
+        amount:
+          type: string
+        display_amount:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        payment_method:
+          "$ref": "#/components/schemas/StorePaymentMethod"
+      x-typelizer: true
+      required:
+      - id
+      - payment_method_id
+      - state
+      - number
+      - amount
+      - display_amount
+      - created_at
+      - updated_at
+      - payment_method
+    StoreProduct:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        slug:
+          type: string
+        sku:
+          type: string
+          nullable: true
+        barcode:
+          type: string
+          nullable: true
+        meta_description:
+          type: string
+          nullable: true
+        meta_keywords:
+          type: string
+          nullable: true
+        variant_count:
+          type: number
+        available_on:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        purchasable:
+          type: boolean
+        in_stock:
+          type: boolean
+        backorderable:
+          type: boolean
+        available:
+          type: boolean
+        price:
+          type: number
+          nullable: true
+        price_in_cents:
+          type: number
+          nullable: true
+        display_price:
+          type: string
+          nullable: true
+        compare_at_price:
+          type: number
+          nullable: true
+        compare_at_price_in_cents:
+          type: number
+          nullable: true
+        display_compare_at_price:
+          type: string
+          nullable: true
+        tags:
+          type: array
+          items:
+            type: string
+        images:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StoreImage"
+        variants:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StoreVariant"
+        default_variant:
+          "$ref": "#/components/schemas/StoreVariant"
+        master_variant:
+          "$ref": "#/components/schemas/StoreVariant"
+        option_types:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StoreOptionType"
+        taxons:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StoreTaxon"
+      x-typelizer: true
+      required:
+      - id
+      - name
+      - slug
+      - variant_count
+      - created_at
+      - updated_at
+      - purchasable
+      - in_stock
+      - backorderable
+      - available
+      - tags
+    StoreShipment:
+      type: object
+      properties:
+        id:
+          type: string
+        number:
+          type: string
+        state:
+          type: string
+        tracking:
+          type: string
+          nullable: true
+        tracking_url:
+          type: string
+          nullable: true
+        shipped_at:
+          type: string
+          nullable: true
+        cost:
+          type: string
+        display_cost:
+          type: string
+        adjustment_total:
+          type: string
+        display_adjustment_total:
+          type: string
+        additional_tax_total:
+          type: string
+        display_additional_tax_total:
+          type: string
+        promo_total:
+          type: string
+        display_promo_total:
+          type: string
+        included_tax_total:
+          type: string
+        display_included_tax_total:
+          type: string
+        total:
+          type: string
+        display_total:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        shipping_method:
+          "$ref": "#/components/schemas/StoreShippingMethod"
+        stock_location:
+          "$ref": "#/components/schemas/StoreStockLocation"
+        shipping_rates:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StoreShippingRate"
+      x-typelizer: true
+      required:
+      - id
+      - number
+      - state
+      - cost
+      - display_cost
+      - adjustment_total
+      - display_adjustment_total
+      - additional_tax_total
+      - display_additional_tax_total
+      - promo_total
+      - display_promo_total
+      - included_tax_total
+      - display_included_tax_total
+      - total
+      - display_total
+      - created_at
+      - updated_at
+      - shipping_method
+      - stock_location
+      - shipping_rates
+    StoreShippingMethod:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        code:
+          type: string
+          nullable: true
+      x-typelizer: true
+      required:
+      - id
+      - name
+    StoreShippingRate:
+      type: object
+      properties:
+        id:
+          type: string
+        shipping_method_id:
+          type: string
+        name:
+          type: string
+        selected:
+          type: boolean
+        cost:
+          type: number
+        display_cost:
+          type: string
+        shipping_method:
+          "$ref": "#/components/schemas/StoreShippingMethod"
+      x-typelizer: true
+      required:
+      - id
+      - shipping_method_id
+      - name
+      - selected
+      - cost
+      - display_cost
+      - shipping_method
+    StoreState:
+      type: object
+      properties:
+        id:
+          type: string
+        country_id:
+          type: string
+        name:
+          type: string
+        abbr:
+          type: string
+      x-typelizer: true
+      required:
+      - id
+      - country_id
+      - name
+      - abbr
+    StoreStockLocation:
+      type: object
+      properties:
+        id:
+          type: string
+        country_id:
+          type: string
+          nullable: true
+        state_id:
+          type: string
+          nullable: true
+        name:
+          type: string
+        address1:
+          type: string
+          nullable: true
+        city:
+          type: string
+          nullable: true
+        zipcode:
+          type: string
+          nullable: true
+        country_iso:
+          type: string
+          nullable: true
+        country_name:
+          type: string
+          nullable: true
+        state_text:
+          type: string
+          nullable: true
+      x-typelizer: true
+      required:
+      - id
+      - name
+    StoreStore:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        url:
+          type: string
+        meta_description:
+          type: string
+          nullable: true
+        meta_keywords:
+          type: string
+          nullable: true
+        seo_title:
+          type: string
+          nullable: true
+        default_currency:
+          type: string
+        code:
+          type: string
+        default:
+          type: boolean
+        facebook:
+          type: string
+          nullable: true
+        twitter:
+          type: string
+          nullable: true
+        instagram:
+          type: string
+          nullable: true
+        customer_support_email:
+          type: string
+          nullable: true
+        default_locale:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        supported_currencies:
+          type: array
+          items:
+            type: string
+        favicon_image_url:
+          type: string
+          nullable: true
+        logo_image_url:
+          type: string
+          nullable: true
+        social_image_url:
+          type: string
+          nullable: true
+        supported_locales:
+          type: array
+          items:
+            type: string
+        payment_methods:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StorePaymentMethod"
+      x-typelizer: true
+      required:
+      - id
+      - name
+      - url
+      - default_currency
+      - code
+      - default
+      - default_locale
+      - created_at
+      - updated_at
+      - supported_currencies
+      - supported_locales
+      - payment_methods
+    StoreTaxon:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        permalink:
+          type: string
+        position:
+          type: number
+        lft:
+          type: number
+        rgt:
+          type: number
+        depth:
+          type: number
+        meta_title:
+          type: string
+          nullable: true
+        meta_description:
+          type: string
+          nullable: true
+        meta_keywords:
+          type: string
+          nullable: true
+        parent_id:
+          type: string
+          nullable: true
+        taxonomy_id:
+          type: string
+        children_count:
+          type: number
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        description:
+          type: string
+        description_html:
+          type: string
+        image_url:
+          type: string
+          nullable: true
+        square_image_url:
+          type: string
+          nullable: true
+        is_root:
+          type: boolean
+        is_child:
+          type: boolean
+        is_leaf:
+          type: boolean
+        parent:
+          "$ref": "#/components/schemas/StoreTaxon"
+        children:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StoreTaxon"
+      x-typelizer: true
+      required:
+      - id
+      - name
+      - permalink
+      - position
+      - lft
+      - rgt
+      - depth
+      - taxonomy_id
+      - children_count
+      - created_at
+      - updated_at
+      - description
+      - description_html
+      - is_root
+      - is_child
+      - is_leaf
+    StoreTaxonomy:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        position:
+          type: number
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        root:
+          "$ref": "#/components/schemas/StoreTaxon"
+        taxons:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StoreTaxon"
+      x-typelizer: true
+      required:
+      - id
+      - name
+      - position
+      - created_at
+      - updated_at
+    StoreUser:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        first_name:
+          type: string
+          nullable: true
+        last_name:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        addresses:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StoreAddress"
+        default_billing_address:
+          allOf:
+          - "$ref": "#/components/schemas/StoreAddress"
+          nullable: true
+        default_shipping_address:
+          allOf:
+          - "$ref": "#/components/schemas/StoreAddress"
+          nullable: true
+      x-typelizer: true
+      required:
+      - id
+      - email
+      - created_at
+      - updated_at
+      - addresses
+    StoreVariant:
+      type: object
+      properties:
+        id:
+          type: string
+        product_id:
+          type: string
+        sku:
+          type: string
+          nullable: true
+        barcode:
+          type: string
+          nullable: true
+        is_master:
+          type: boolean
+        options_text:
+          type: string
+        track_inventory:
+          type: boolean
+        image_count:
+          type: number
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        purchasable:
+          type: boolean
+        in_stock:
+          type: boolean
+        backorderable:
+          type: boolean
+        weight:
+          type: number
+          nullable: true
+        height:
+          type: number
+          nullable: true
+        width:
+          type: number
+          nullable: true
+        depth:
+          type: number
+          nullable: true
+        price:
+          type: number
+          nullable: true
+        price_in_cents:
+          type: number
+          nullable: true
+        display_price:
+          type: string
+          nullable: true
+        compare_at_price:
+          type: number
+          nullable: true
+        display_compare_at_price:
+          type: string
+          nullable: true
+        images:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StoreImage"
+        option_values:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StoreOptionValue"
+      x-typelizer: true
+      required:
+      - id
+      - product_id
+      - is_master
+      - options_text
+      - track_inventory
+      - image_count
+      - created_at
+      - updated_at
+      - purchasable
+      - in_stock
+      - backorderable
+      - option_values
+    StoreWishedItem:
+      type: object
+      properties:
+        id:
+          type: string
+        variant_id:
+          type: string
+        wishlist_id:
+          type: string
+        quantity:
+          type: number
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        variant:
+          "$ref": "#/components/schemas/StoreVariant"
+      x-typelizer: true
+      required:
+      - id
+      - variant_id
+      - wishlist_id
+      - quantity
+      - created_at
+      - updated_at
+      - variant
+    StoreWishlist:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        token:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        is_default:
+          type: boolean
+        is_private:
+          type: boolean
+        items:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StoreWishedItem"
+      x-typelizer: true
+      required:
+      - id
+      - name
+      - token
+      - created_at
+      - updated_at
+      - is_default
+      - is_private
