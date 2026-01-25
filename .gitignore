@@ -60,3 +60,5 @@ brakeman-*.*
 */app/assets/builds
 .claude
 */.claude
+**/node_modules
+**/package-lock.json

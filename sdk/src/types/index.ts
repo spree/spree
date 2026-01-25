@@ -1,0 +1,102 @@
+// Re-export all generated types
+export * from './generated';
+
+// API Response types
+export interface PaginationMeta {
+  page: number;
+  limit: number;
+  count: number;
+  pages: number;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  meta: PaginationMeta;
+}
+
+export interface ErrorResponse {
+  error: {
+    code: string;
+    message: string;
+    details?: Record<string, string[]>;
+  };
+}
+
+// Auth types
+export interface AuthTokens {
+  access_token: string;
+  refresh_token: string;
+  token_type: 'Bearer';
+  expires_in: number;
+}
+
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}
+
+export interface RegisterParams {
+  email: string;
+  password: string;
+  password_confirmation: string;
+  first_name?: string;
+  last_name?: string;
+}
+
+// Query params
+export interface ListParams {
+  page?: number;
+  per_page?: number;
+  includes?: string;
+}
+
+export interface ProductListParams extends ListParams {
+  'q[name_cont]'?: string;
+  'q[price_gte]'?: number;
+  'q[price_lte]'?: number;
+  'q[taxons_id_eq]'?: string;
+}
+
+export interface OrderListParams extends ListParams {
+  'q[state_eq]'?: string;
+  'q[completed_at_gte]'?: string;
+  'q[completed_at_lte]'?: string;
+}
+
+// Cart operations
+export interface AddLineItemParams {
+  variant_id: string;
+  quantity: number;
+}
+
+export interface UpdateLineItemParams {
+  quantity: number;
+}
+
+// Payment params
+export interface CreatePaymentParams {
+  payment_method_id: string;
+  amount?: number;
+  source_attributes?: Record<string, unknown>;
+}
+
+// Address params
+export interface AddressParams {
+  firstname: string;
+  lastname: string;
+  address1: string;
+  address2?: string;
+  city: string;
+  zipcode: string;
+  phone: string;
+  country_id: string;
+  state_id?: string;
+  state_name?: string;
+}
+
+export interface UpdateOrderParams {
+  email?: string;
+  special_instructions?: string;
+  bill_address_attributes?: AddressParams;
+  ship_address_attributes?: AddressParams;
+}
