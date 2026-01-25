@@ -10,8 +10,6 @@ module Spree
           typelize position: :number, tax_category_id: 'string | null',
                    cost_price: 'number | null', cost_currency: 'string | null',
                    total_on_hand: 'number | null',
-                   public_metadata: 'Record<string, unknown> | null',
-                   private_metadata: 'Record<string, unknown> | null',
                    deleted_at: 'string | null'
 
           # Admin-only attributes
@@ -27,14 +25,6 @@ module Spree
 
           attribute :total_on_hand do |variant|
             variant.total_on_hand
-          end
-
-          attribute :public_metadata do |variant|
-            variant.public_metadata
-          end
-
-          attribute :private_metadata do |variant|
-            variant.private_metadata
           end
 
           # TODO: Add stock_items and prices associations when Admin API is implemented

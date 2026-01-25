@@ -10,8 +10,6 @@ module Spree
           # Additional type hints for admin-only computed attributes
           typelize status: :string, make_active_at: 'string | null', discontinue_on: 'string | null',
                    cost_price: 'number | null', cost_currency: 'string | null',
-                   public_metadata: 'Record<string, unknown> | null',
-                   private_metadata: 'Record<string, unknown> | null',
                    deleted_at: 'string | null'
 
           # Admin-only attributes
@@ -23,14 +21,6 @@ module Spree
 
           attribute :cost_currency do |product|
             product.master&.cost_currency
-          end
-
-          attribute :public_metadata do |product|
-            product.public_metadata
-          end
-
-          attribute :private_metadata do |product|
-            product.private_metadata
           end
 
           # Admin uses admin variant serializer
