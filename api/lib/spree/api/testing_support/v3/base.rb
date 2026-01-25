@@ -21,11 +21,15 @@ end
 shared_context 'API v3 Store' do
   let(:store) { @default_store || create(:store, default: true) }
   let(:api_key) { create(:api_key, :publishable, store: store) }
-  let(:api_key_headers) { { 'X-Spree-Api-Key' => api_key.token } }
+  let(:api_key_headers) { { 'x-spree-api-key' => api_key.token } }
 
   let(:user) { create(:user_with_addresses) }
   let(:jwt_token) { Spree::Api::V3::TestingSupport.generate_jwt(user) }
   let(:bearer_headers) { api_key_headers.merge('Authorization' => "Bearer #{jwt_token}") }
+
+  before do
+    allow_any_instance_of(Spree::Api::V3::BaseController).to receive(:current_store).and_return(store)
+  end
 end
 
 shared_context 'API v3 Store authenticated' do

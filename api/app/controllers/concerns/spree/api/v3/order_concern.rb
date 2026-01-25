@@ -13,12 +13,12 @@ module Spree
         protected
 
         def order_token
-          # Check X-Spree-Order-Token header first
-          header = request.headers['X-Spree-Order-Token']
+          # Check x-spree-order-token header first (lowercase for consistency)
+          header = request.headers['x-spree-order-token']
           return header if header.present?
 
-          # Fallback to query param
-          params[:token]
+          # Fallback to query params (support both token and order_token)
+          params[:order_token].presence || params[:token]
         end
       end
     end

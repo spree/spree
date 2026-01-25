@@ -8,7 +8,7 @@ module Spree
           protected
 
           def set_parent
-            @parent = current_user.wishlists.find(params[:wishlist_id])
+            @parent = current_user.wishlists.find_by!(prefix_id: params[:wishlist_id])
           end
 
           def parent_association

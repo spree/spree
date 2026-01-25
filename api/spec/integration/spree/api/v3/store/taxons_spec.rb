@@ -1,0 +1,81 @@
+# frozen_string_literal: true
+
+require 'swagger_helper'
+
+RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.yaml' do
+  include_context 'API v3 Store'
+
+  let!(:taxonomy) { create(:taxonomy, store: store) }
+  let!(:root_taxon) { taxonomy.root }
+  let!(:taxon) { create(:taxon, taxonomy: taxonomy, parent: root_taxon) }
+  let!(:child_taxon) { create(:taxon, taxonomy: taxonomy, parent: taxon) }
+  let!(:other_store) { create(:store) }
+  let!(:other_taxonomy) { create(:taxonomy, store: other_store) }
+  let!(:other_taxon) { create(:taxon, taxonomy: other_taxonomy) }
+
+  path '/api/v3/store/taxons/{id}' do
+    get 'Get a taxon' do
+      tags 'Taxons'
+      produces 'application/json'
+      security [api_key: []]
+      description 'Returns a single taxon by permalink or prefix ID'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :id, in: :path, type: :string, required: true,
+                description: 'Taxon permalink (e.g., categories/clothing/shirts) or prefix ID (e.g., taxon_abc123)'
+      parameter name: :includes, in: :query, type: :string, required: false,
+                description: 'Include associations (children, products, parent)'
+
+      response '200', 'taxon found by permalink' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:id) { taxon.permalink }
+
+        schema '$ref' => '#/components/schemas/StoreTaxon'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['name']).to eq(taxon.name)
+        end
+      end
+
+      response '200', 'taxon found by prefix ID' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:id) { taxon.prefix_id }
+
+        schema '$ref' => '#/components/schemas/StoreTaxon'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['name']).to eq(taxon.name)
+        end
+      end
+
+      response '404', 'taxon not found' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:id) { 'non-existent-permalink' }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+
+      response '404', 'taxon from other store not accessible' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:id) { other_taxon.permalink }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+
+      response '401', 'unauthorized' do
+        let(:'x-spree-api-key') { 'invalid' }
+        let(:id) { taxon.permalink }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+    end
+  end
+end

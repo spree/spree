@@ -12,8 +12,16 @@ module Spree
 
         attributes :name, :permalink, :position, :lft, :rgt, :depth,
                    :meta_title, :meta_description, :meta_keywords,
-                   :parent_id, :taxonomy_id, :children_count,
+                   :children_count,
                    created_at: :iso8601, updated_at: :iso8601
+
+        attribute :parent_id do |taxon|
+          taxon.parent&.prefix_id
+        end
+
+        attribute :taxonomy_id do |taxon|
+          taxon.taxonomy&.prefix_id
+        end
 
         attribute :description do |taxon|
           taxon.description.to_plain_text

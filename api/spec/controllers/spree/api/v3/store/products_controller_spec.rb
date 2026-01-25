@@ -15,6 +15,10 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
     request.headers['X-Spree-Api-Key'] = api_key.token
   end
 
+  after do
+    I18n.locale = store.default_locale
+  end
+
   describe 'GET #index' do
     it 'returns a list of products' do
       get :index
@@ -63,7 +67,7 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
         get :index
 
         ids = json_response['data'].map { |p| p['id'] }
-        expect(ids).not_to include(draft_product.id)
+        expect(ids).not_to include(draft_product.prefix_id)
       end
     end
 
@@ -73,7 +77,7 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
 
         expect(response).to have_http_status(:ok)
         expect(json_response['data'].size).to eq(1)
-        expect(json_response['data'].first['id']).to eq(product.id)
+        expect(json_response['data'].first['id']).to eq(product.prefix_id)
       end
     end
 
@@ -104,25 +108,81 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
   end
 
   describe 'GET #show' do
-    it 'returns a product by id' do
-      get :show, params: { id: product.id }
+    context 'finding by slug' do
+      it 'returns a product by slug' do
+        get :show, params: { id: product.slug }
 
-      expect(response).to have_http_status(:ok)
-      expect(json_response['id']).to eq(product.id)
-      expect(json_response['name']).to eq(product.name)
-      expect(json_response['slug']).to eq(product.slug)
+        expect(response).to have_http_status(:ok)
+        expect(json_response['id']).to eq(product.prefix_id)
+        expect(json_response['name']).to eq(product.name)
+        expect(json_response['slug']).to eq(product.slug)
+      end
     end
 
-    it 'returns a product by slug' do
-      get :show, params: { id: product.slug }
+    context 'finding by prefix_id' do
+      it 'returns a product by prefix_id' do
+        get :show, params: { id: product.prefix_id }
 
-      expect(response).to have_http_status(:ok)
-      expect(json_response['id']).to eq(product.id)
+        expect(response).to have_http_status(:ok)
+        expect(json_response['id']).to eq(product.prefix_id)
+        expect(json_response['name']).to eq(product.name)
+        expect(json_response['slug']).to eq(product.slug)
+      end
+    end
+
+    context 'with translations', if: Spree::Product.include?(Spree::TranslatableResource) do
+      let!(:translated_product) do
+        create(:product, stores: [store], status: 'active', name: 'English Product', slug: 'english-product').tap do |p|
+          Mobility.with_locale(:fr) do
+            p.name = 'Produit Français'
+            p.slug = 'produit-francais'
+            p.save!
+          end
+        end
+      end
+
+      before do
+        allow(store).to receive(:supported_locales_list).and_return(%w[en fr])
+        allow(store).to receive(:default_locale).and_return('en')
+      end
+
+      it 'finds product by English slug with English locale' do
+        request.headers['x-spree-locale'] = 'en'
+        get :show, params: { id: 'english-product' }
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['name']).to eq('English Product')
+        expect(json_response['slug']).to eq('english-product')
+      end
+
+      it 'finds product by French slug with French locale' do
+        request.headers['x-spree-locale'] = 'fr'
+        get :show, params: { id: 'produit-francais' }
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['name']).to eq('Produit Français')
+        expect(json_response['slug']).to eq('produit-francais')
+      end
+
+      it 'returns translated content based on locale header' do
+        request.headers['x-spree-locale'] = 'fr'
+        get :show, params: { id: translated_product.prefix_id }
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['name']).to eq('Produit Français')
+      end
+
+      it 'returns 404 when searching French slug with English locale' do
+        request.headers['x-spree-locale'] = 'en'
+        get :show, params: { id: 'produit-francais' }
+
+        expect(response).to have_http_status(:not_found)
+      end
     end
 
     context 'error handling' do
       it 'returns not found for non-existent product' do
-        get :show, params: { id: 'non-existent' }
+        get :show, params: { id: 'non-existent-slug' }
 
         expect(response).to have_http_status(:not_found)
         expect(json_response['error']['code']).to eq('record_not_found')
@@ -130,17 +190,65 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
       end
 
       it 'returns not found for product from another store' do
-        get :show, params: { id: other_store_product.id }
+        get :show, params: { id: other_store_product.slug }
 
         expect(response).to have_http_status(:not_found)
         expect(json_response['error']['code']).to eq('record_not_found')
       end
 
       it 'returns not found for draft product' do
-        get :show, params: { id: draft_product.id }
+        get :show, params: { id: draft_product.slug }
 
         expect(response).to have_http_status(:not_found)
         expect(json_response['error']['code']).to eq('record_not_found')
+      end
+    end
+  end
+
+  describe 'locale and currency headers' do
+    context 'x-spree-locale header' do
+      before do
+        allow(store).to receive(:supported_locales_list).and_return(%w[en fr])
+        allow(store).to receive(:default_locale).and_return('en')
+      end
+
+      it 'sets locale from header' do
+        request.headers['x-spree-locale'] = 'fr'
+        get :index
+
+        expect(response).to have_http_status(:ok)
+        expect(I18n.locale).to eq(:fr)
+      end
+
+      it 'falls back to default locale for unsupported locale' do
+        request.headers['x-spree-locale'] = 'de'
+        get :index
+
+        expect(response).to have_http_status(:ok)
+        expect(I18n.locale).to eq(:en)
+      end
+    end
+
+    context 'x-spree-currency header' do
+      before do
+        allow(store).to receive(:supported_currencies_list).and_return([Money::Currency.find('USD'), Money::Currency.find('EUR')])
+        allow(store).to receive(:default_currency).and_return('USD')
+      end
+
+      it 'sets currency from header' do
+        request.headers['x-spree-currency'] = 'EUR'
+        get :index
+
+        expect(response).to have_http_status(:ok)
+        expect(controller.send(:current_currency)).to eq('EUR')
+      end
+
+      it 'falls back to default currency for unsupported currency' do
+        request.headers['x-spree-currency'] = 'GBP'
+        get :index
+
+        expect(response).to have_http_status(:ok)
+        expect(controller.send(:current_currency)).to eq('USD')
       end
     end
   end
