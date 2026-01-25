@@ -5,7 +5,7 @@ RSpec.describe Spree::Api::V3::Store::AddressesController, type: :controller do
 
   include_context 'API v3 Store'
 
-  let(:country) { create(:country) }
+  let(:country) { create(:country, states_required: true) }
   let(:state) { create(:state, country: country) }
   let!(:address) { create(:address, user: user, country: country, state: state) }
 
@@ -43,10 +43,10 @@ RSpec.describe Spree::Api::V3::Store::AddressesController, type: :controller do
 
   describe 'GET #show' do
     it 'returns the address' do
-      get :show, params: { id: address.id }
+      get :show, params: { id: address.prefix_id }
 
       expect(response).to have_http_status(:ok)
-      expect(json_response['id']).to eq(address.id)
+      expect(json_response['id']).to eq(address.prefix_id)
       expect(json_response['firstname']).to eq(address.firstname)
       expect(json_response['lastname']).to eq(address.lastname)
     end
@@ -64,7 +64,7 @@ RSpec.describe Spree::Api::V3::Store::AddressesController, type: :controller do
         other_user = create(:user)
         other_address = create(:address, user: other_user)
 
-        get :show, params: { id: other_address.id }
+        get :show, params: { id: other_address.prefix_id }
 
         expect(response).to have_http_status(:not_found)
         expect(json_response['error']['code']).to eq('record_not_found')
@@ -82,8 +82,8 @@ RSpec.describe Spree::Api::V3::Store::AddressesController, type: :controller do
           city: 'New York',
           zipcode: '10001',
           phone: '555-1234',
-          country_id: country.id,
-          state_id: state.id
+          country_iso: country.iso,
+          state_abbr: state.abbr
         }
       }
     end
@@ -104,6 +104,64 @@ RSpec.describe Spree::Api::V3::Store::AddressesController, type: :controller do
       expect(Spree::Address.last.user_id).to eq(user.id)
     end
 
+    context 'with state_abbr for country with states required' do
+      let(:address_params) do
+        {
+          address: {
+            firstname: 'Jane',
+            lastname: 'Smith',
+            address1: '456 Oak Ave',
+            city: 'Los Angeles',
+            zipcode: '90001',
+            phone: '555-5678',
+            country_iso: country.iso,
+            state_abbr: state.abbr
+          }
+        }
+      end
+
+      it 'creates address using country_iso and state_abbr' do
+        expect {
+          post :create, params: address_params
+        }.to change(Spree::Address, :count).by(1)
+
+        expect(response).to have_http_status(:created)
+        expect(json_response['firstname']).to eq('Jane')
+        expect(json_response['country_iso']).to eq(country.iso)
+        expect(json_response['state_abbr']).to eq(state.abbr)
+        expect(json_response['state_name']).to eq(state.name)
+      end
+    end
+
+    context 'with state_name for country without states required' do
+      let(:country_without_states) { create(:country, states_required: false) }
+      let(:state_name_params) do
+        {
+          address: {
+            firstname: 'Hans',
+            lastname: 'Mueller',
+            address1: '789 Berlin Str',
+            city: 'Berlin',
+            zipcode: '10115',
+            phone: '555-9999',
+            country_iso: country_without_states.iso,
+            state_name: 'Berlin'
+          }
+        }
+      end
+
+      it 'creates address with state_name' do
+        expect {
+          post :create, params: state_name_params
+        }.to change(Spree::Address, :count).by(1)
+
+        expect(response).to have_http_status(:created)
+        expect(json_response['firstname']).to eq('Hans')
+        expect(json_response['state_abbr']).to be_nil
+        expect(json_response['state_name']).to eq('Berlin')
+      end
+    end
+
     context 'validation errors' do
       it 'returns errors for missing required fields' do
         post :create, params: { address: { firstname: 'John' } }
@@ -122,7 +180,7 @@ RSpec.describe Spree::Api::V3::Store::AddressesController, type: :controller do
       end
 
       it 'returns errors for invalid country' do
-        post :create, params: { address: valid_params[:address].merge(country_id: 0) }
+        post :create, params: { address: valid_params[:address].merge(country_iso: 'XX') }
 
         expect(response).to have_http_status(:unprocessable_entity)
         expect(json_response['error']['code']).to eq('validation_error')
@@ -144,7 +202,7 @@ RSpec.describe Spree::Api::V3::Store::AddressesController, type: :controller do
 
   describe 'PATCH #update' do
     it 'updates the address' do
-      patch :update, params: { id: address.id, address: { address1: 'Updated Street' } }
+      patch :update, params: { id: address.prefix_id, address: { address1: 'Updated Street' } }
 
       expect(response).to have_http_status(:ok)
       expect(address.reload.address1).to eq('Updated Street')
@@ -152,7 +210,7 @@ RSpec.describe Spree::Api::V3::Store::AddressesController, type: :controller do
 
     it 'updates multiple fields' do
       patch :update, params: {
-        id: address.id,
+        id: address.prefix_id,
         address: { firstname: 'Jane', lastname: 'Smith', city: 'Boston' }
       }
 
@@ -165,7 +223,7 @@ RSpec.describe Spree::Api::V3::Store::AddressesController, type: :controller do
 
     context 'validation errors' do
       it 'returns errors for invalid update' do
-        patch :update, params: { id: address.id, address: { firstname: '' } }
+        patch :update, params: { id: address.prefix_id, address: { firstname: '' } }
 
         expect(response).to have_http_status(:unprocessable_entity)
         expect(json_response['error']['code']).to eq('validation_error')
@@ -178,7 +236,7 @@ RSpec.describe Spree::Api::V3::Store::AddressesController, type: :controller do
         other_user = create(:user)
         other_address = create(:address, user: other_user)
 
-        patch :update, params: { id: other_address.id, address: { address1: 'Hack Street' } }
+        patch :update, params: { id: other_address.prefix_id, address: { address1: 'Hack Street' } }
 
         expect(response).to have_http_status(:not_found)
         expect(json_response['error']['code']).to eq('record_not_found')
@@ -190,7 +248,7 @@ RSpec.describe Spree::Api::V3::Store::AddressesController, type: :controller do
   describe 'DELETE #destroy' do
     it 'deletes the address' do
       expect {
-        delete :destroy, params: { id: address.id }
+        delete :destroy, params: { id: address.prefix_id }
       }.to change(Spree::Address, :count).by(-1)
 
       expect(response).to have_http_status(:no_content)
@@ -209,7 +267,7 @@ RSpec.describe Spree::Api::V3::Store::AddressesController, type: :controller do
         other_user = create(:user)
         other_address = create(:address, user: other_user)
 
-        delete :destroy, params: { id: other_address.id }
+        delete :destroy, params: { id: other_address.prefix_id }
 
         expect(response).to have_http_status(:not_found)
         expect(json_response['error']['code']).to eq('record_not_found')

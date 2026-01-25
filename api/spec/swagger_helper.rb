@@ -89,7 +89,6 @@ RSpec.configure do |config|
         { name: 'Taxonomies', description: 'Category hierarchies' },
         { name: 'Taxons', description: 'Individual categories' },
         { name: 'Countries', description: 'Available shipping countries' },
-        { name: 'States', description: 'States and provinces' },
         { name: 'Orders', description: 'Shopping cart and checkout' },
         { name: 'Line Items', description: 'Cart item management' },
         { name: 'Payments', description: 'Payment processing' },
