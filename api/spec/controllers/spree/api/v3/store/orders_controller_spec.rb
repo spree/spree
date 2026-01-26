@@ -113,7 +113,7 @@ RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
       it 'returns order with expected attributes' do
         get :show, params: { id: order.number }
 
-        expect(json_response['id']).to eq(order.id)
+        expect(json_response['id']).to eq(order.prefix_id)
         expect(json_response['number']).to eq(order.number)
       end
     end

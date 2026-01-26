@@ -58,7 +58,7 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
         get :index
 
         ids = json_response['data'].map { |p| p['id'] }
-        expect(ids).not_to include(other_store_product.id)
+        expect(ids).not_to include(other_store_product.prefix_id)
       end
     end
 

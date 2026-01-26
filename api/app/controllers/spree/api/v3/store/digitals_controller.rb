@@ -2,7 +2,7 @@ module Spree
   module Api
     module V3
       module Store
-        class DigitalsController < Store::ResourceController
+        class DigitalsController < ResourceController
           # GET  /api/v3/store/digitals/:id?token=...
           def show
             if @resource.authorize!
