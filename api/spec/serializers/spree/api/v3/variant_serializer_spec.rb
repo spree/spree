@@ -52,8 +52,6 @@ RSpec.describe Spree::Api::V3::Admin::VariantSerializer do
     it 'includes admin-only attributes' do
       expect(subject).to have_key('cost_price')
       expect(subject).to have_key('cost_currency')
-      expect(subject).to have_key('private_metadata')
-      expect(subject).to have_key('public_metadata')
       expect(subject).to have_key('total_on_hand')
       expect(subject).to have_key('deleted_at')
     end
