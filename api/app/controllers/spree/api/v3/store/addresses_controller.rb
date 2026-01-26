@@ -2,7 +2,7 @@ module Spree
   module Api
     module V3
       module Store
-        class AddressesController < Store::ResourceController
+        class AddressesController < ResourceController
           prepend_before_action :require_authentication!
 
           # POST /api/v3/store/customers/me/addresses

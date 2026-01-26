@@ -15,7 +15,7 @@ RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
       get :show, params: { id: 'me' }
 
       expect(response).to have_http_status(:ok)
-      expect(json_response['id']).to eq(user.id)
+      expect(json_response['id']).to eq(user.prefix_id)
       expect(json_response['email']).to eq(user.email)
     end
 

@@ -12,7 +12,7 @@ module Spree
 
             # POST /api/v3/store/orders/:order_id/store_credits
             def create
-              result = add_store_credit_service.call(
+              result = Spree.checkout_add_store_credit_service.call(
                 order: @order,
                 amount: params[:amount].try(:to_f)
               )
@@ -26,7 +26,7 @@ module Spree
 
             # DELETE /api/v3/store/orders/:order_id/store_credits
             def destroy
-              result = remove_store_credit_service.call(order: @order)
+              result = Spree.checkout_remove_store_credit_service.call(order: @order)
 
               if result.success?
                 render json: serialize_resource(@order.reload)
@@ -44,14 +44,6 @@ module Spree
 
             def serializer_class
               Spree.api.order_serializer
-            end
-
-            def add_store_credit_service
-              Spree::Api::Dependencies.storefront_checkout_add_store_credit_service.constantize
-            end
-
-            def remove_store_credit_service
-              Spree::Api::Dependencies.storefront_checkout_remove_store_credit_service.constantize
             end
           end
         end

@@ -2,7 +2,7 @@ module Spree
   module Api
     module V3
       module Store
-        class OrdersController < Store::ResourceController
+        class OrdersController < ResourceController
           include Spree::Api::V3::OrderConcern
 
           # Skip base controller's set_resource and define our own complete list
@@ -25,7 +25,15 @@ module Spree
 
           # PATCH  /api/v3/store/orders/:id
           def update
-            if @order.update(permitted_params)
+            result = Spree.checkout_update_service.call(
+              order: @order,
+              params: params,
+              # defined in https://github.com/spree/spree/blob/main/core/lib/spree/core/controller_helpers/strong_parameters.rb#L19
+              permitted_attributes: permitted_checkout_attributes,
+              request_env: request.headers.env
+            )
+
+            if result.success?
               render json: serialize_resource(@order.reload)
             else
               render_errors(@order.errors)
@@ -34,7 +42,7 @@ module Spree
 
           # PATCH  /api/v3/store/orders/:id/next
           def next
-            result = next_service.call(order: @order)
+            result = Spree.checkout_next_service.call(order: @order)
 
             if result.success?
               render json: serialize_resource(@order)
@@ -45,7 +53,7 @@ module Spree
 
           # PATCH  /api/v3/store/orders/:id/advance
           def advance
-            result = advance_service.call(order: @order)
+            result = Spree.checkout_advance_service.call(order: @order)
 
             if result.success?
               render json: serialize_resource(@order)
@@ -56,7 +64,7 @@ module Spree
 
           # PATCH  /api/v3/store/orders/:id/complete
           def complete
-            result = complete_service.call(order: @order)
+            result = Spree.checkout_complete_service.call(order: @order)
 
             if result.success?
               render json: serialize_resource(@order)
@@ -101,22 +109,6 @@ module Spree
 
           def permitted_params
             params.require(:order).permit(Spree::PermittedAttributes.checkout_attributes)
-          end
-
-          def update_service
-            Spree::Api::Dependencies.storefront_checkout_update_service.constantize
-          end
-
-          def next_service
-            Spree::Api::Dependencies.storefront_checkout_next_service.constantize
-          end
-
-          def advance_service
-            Spree::Api::Dependencies.storefront_checkout_advance_service.constantize
-          end
-
-          def complete_service
-            Spree::Api::Dependencies.storefront_checkout_complete_service.constantize
           end
         end
       end

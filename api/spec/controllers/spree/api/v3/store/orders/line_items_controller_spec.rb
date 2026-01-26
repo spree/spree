@@ -12,28 +12,29 @@ RSpec.describe Spree::Api::V3::Store::Orders::LineItemsController, type: :contro
   before do
     request.headers['X-Spree-Api-Key'] = api_key.token
     request.headers['Authorization'] = "Bearer #{jwt_token}"
+    request.headers['x-spree-order-token'] = order.token
   end
 
   describe 'POST #create' do
     it 'adds a line item to the order' do
       expect {
-        post :create, params: { order_id: order.number, line_item: { variant_id: variant.id, quantity: 2 } }
+        post :create, params: { order_id: order.number, line_item: { variant_id: variant.prefix_id, quantity: 2 } }
       }.to change(Spree::LineItem, :count).by(1)
 
       expect(response).to have_http_status(:created)
-      expect(json_response['variant_id']).to eq(variant.id)
+      expect(json_response['variant_id']).to eq(variant.prefix_id)
       expect(json_response['quantity']).to eq(2)
     end
 
     it 'defaults quantity to 1' do
-      post :create, params: { order_id: order.number, line_item: { variant_id: variant.id } }
+      post :create, params: { order_id: order.number, line_item: { variant_id: variant.prefix_id } }
 
       expect(response).to have_http_status(:created)
       expect(json_response['quantity']).to eq(1)
     end
 
     it 'updates order totals' do
-      post :create, params: { order_id: order.number, line_item: { variant_id: variant.id, quantity: 2 } }
+      post :create, params: { order_id: order.number, line_item: { variant_id: variant.prefix_id, quantity: 2 } }
 
       expect(order.reload.item_total).to be > 0
     end
@@ -45,13 +46,13 @@ RSpec.describe Spree::Api::V3::Store::Orders::LineItemsController, type: :contro
 
       it 'adds line item with valid order token' do
         request.headers['X-Spree-Order-Token'] = guest_order.token
-        post :create, params: { order_id: guest_order.number, line_item: { variant_id: variant.id, quantity: 1 } }
+        post :create, params: { order_id: guest_order.number, line_item: { variant_id: variant.prefix_id, quantity: 1 } }
 
         expect(response).to have_http_status(:created)
       end
 
       it 'returns forbidden without order token' do
-        post :create, params: { order_id: guest_order.number, line_item: { variant_id: variant.id, quantity: 1 } }
+        post :create, params: { order_id: guest_order.number, line_item: { variant_id: variant.prefix_id, quantity: 1 } }
 
         expect(response).to have_http_status(:forbidden)
         expect(json_response['error']['code']).to eq('access_denied')
@@ -71,7 +72,7 @@ RSpec.describe Spree::Api::V3::Store::Orders::LineItemsController, type: :contro
 
     context 'error handling' do
       it 'returns not found for non-existent order' do
-        post :create, params: { order_id: 'invalid', line_item: { variant_id: variant.id, quantity: 1 } }
+        post :create, params: { order_id: 'invalid', line_item: { variant_id: variant.prefix_id, quantity: 1 } }
 
         expect(response).to have_http_status(:not_found)
         expect(json_response['error']['code']).to eq('order_not_found')
@@ -81,7 +82,7 @@ RSpec.describe Spree::Api::V3::Store::Orders::LineItemsController, type: :contro
       it 'returns forbidden for other users order' do
         other_order = create(:order, store: store)
 
-        post :create, params: { order_id: other_order.number, line_item: { variant_id: variant.id, quantity: 1 } }
+        post :create, params: { order_id: other_order.number, line_item: { variant_id: variant.prefix_id, quantity: 1 } }
 
         expect(response).to have_http_status(:forbidden)
         expect(json_response['error']['code']).to eq('access_denied')
@@ -93,7 +94,7 @@ RSpec.describe Spree::Api::V3::Store::Orders::LineItemsController, type: :contro
     let!(:line_item) { create(:line_item, order: order, variant: variant, quantity: 1) }
 
     it 'updates line item quantity' do
-      patch :update, params: { order_id: order.number, id: line_item.id, line_item: { quantity: 5 } }
+      patch :update, params: { order_id: order.number, id: line_item.prefix_id, line_item: { quantity: 5 } }
 
       expect(response).to have_http_status(:ok)
       expect(line_item.reload.quantity).to eq(5)
@@ -101,7 +102,7 @@ RSpec.describe Spree::Api::V3::Store::Orders::LineItemsController, type: :contro
 
     it 'updates order totals' do
       original_total = order.item_total
-      patch :update, params: { order_id: order.number, id: line_item.id, line_item: { quantity: 5 } }
+      patch :update, params: { order_id: order.number, id: line_item.prefix_id, line_item: { quantity: 5 } }
 
       expect(order.reload.item_total).to be > original_total
     end
@@ -119,7 +120,7 @@ RSpec.describe Spree::Api::V3::Store::Orders::LineItemsController, type: :contro
         other_order = create(:order, store: store)
         other_line_item = create(:line_item, order: other_order, variant: variant)
 
-        patch :update, params: { order_id: other_order.number, id: other_line_item.id, line_item: { quantity: 5 } }
+        patch :update, params: { order_id: other_order.number, id: other_line_item.prefix_id, line_item: { quantity: 5 } }
 
         expect(response).to have_http_status(:forbidden)
         expect(json_response['error']['code']).to eq('access_denied')
@@ -132,7 +133,7 @@ RSpec.describe Spree::Api::V3::Store::Orders::LineItemsController, type: :contro
 
     it 'removes line item from order' do
       expect {
-        delete :destroy, params: { order_id: order.number, id: line_item.id }
+        delete :destroy, params: { order_id: order.number, id: line_item.prefix_id }
       }.to change(Spree::LineItem, :count).by(-1)
 
       expect(response).to have_http_status(:no_content)
@@ -140,7 +141,7 @@ RSpec.describe Spree::Api::V3::Store::Orders::LineItemsController, type: :contro
 
     it 'updates order totals' do
       order.update_columns(item_total: 100)
-      delete :destroy, params: { order_id: order.number, id: line_item.id }
+      delete :destroy, params: { order_id: order.number, id: line_item.prefix_id }
 
       expect(order.reload.item_total).to eq(0)
     end
@@ -158,7 +159,7 @@ RSpec.describe Spree::Api::V3::Store::Orders::LineItemsController, type: :contro
         other_order = create(:order, store: store)
         other_line_item = create(:line_item, order: other_order, variant: variant)
 
-        delete :destroy, params: { order_id: other_order.number, id: other_line_item.id }
+        delete :destroy, params: { order_id: other_order.number, id: other_line_item.prefix_id }
 
         expect(response).to have_http_status(:forbidden)
         expect(json_response['error']['code']).to eq('access_denied')

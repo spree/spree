@@ -2,7 +2,7 @@ module Spree
   module Api
     module V3
       module Store
-        class ProductsController < Store::ResourceController
+        class ProductsController < ResourceController
           protected
 
           def model_class

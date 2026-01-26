@@ -2,7 +2,7 @@ module Spree
   module Api
     module V3
       module Store
-        class WishlistsController < Store::ResourceController
+        class WishlistsController < ResourceController
           prepend_before_action :require_authentication!
 
           # POST /api/v3/store/wishlists
