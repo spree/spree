@@ -96,6 +96,51 @@ This will:
 1. Overwrite `config/tailwind.config.js` file with the new Tailwind v4 configuration.
 2. Add `app/assets/tailwind/application.css` file with the new Tailwind v4 styles. If you modified `app/assets/stylesheets/application.tailwind.css` file, you will need to merge your changes with the new one.
 
+### Update Storefront to use `pagy` instead of `kaminari` (Optional)
+
+<Info>
+This is optional if you're not using the `spree_storefront` gem.
+</Info>
+
+Spree 5.3 introduces [pagy](https://ddnexus.github.io/pagy/) as the default pagination gem. Pagy is a faster and more memory efficient pagination gem than kaminari. This works automatically for API and Admin panel.
+
+For Storefront, you need to either update your theme (if you're not using the default theme) or set `use_kaminari_pagination` preference to `true` in your `config/initializers/spree.rb` file.
+
+#### Products infinite scroll fix
+
+Please replace contents of your `show_more_button.html.erb` with the following code:
+
+```erb
+<% if storefront_pagy&.next %>
+  <%= turbo_frame_tag "next_page", src: url_for(params.to_unsafe_h.merge(page: storefront_pagy.next, format: :turbo_stream)), class: "block relative w-full", data: { controller: "infinite-scroll", infinite_scroll_offset_value: "1350px" }, loading: "lazy" do %>
+    <span class="flex justify-center gap-2 items-center py-4 left-0 w-full h-full">
+      <%= render 'spree/shared/icons/spinner' %>
+      <%= Spree.t(:loading) %>...
+    </span>
+  <% end %>
+<% end %>
+```
+
+#### Posts pagination
+
+In following files:
+
+* `page_sections/_post_grid.html.erb`
+* `posts/_pagination.html.erb`
+
+replace this line:
+
+```erb
+<%= paginate @posts, theme: 'storefront', outer_window: 1, inner_window: 2 %>
+```
+
+with this line:
+
+```erb
+<%= render 'spree/shared/pagination' %>
+```
+
+
 ### Include Page Builder factories (Optional)
 
 Page Builder was extracted to a separate gem (`spree_page_builder`) so you need to include the Page Builder factories in your test suite if you were using them in your tests
