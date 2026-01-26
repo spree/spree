@@ -23,6 +23,26 @@ bin/rake spree:install:migrations && bin/rails db:migrate
 
 This will setup new database schema for the new features in Spree 5.3 like Price Lists and Customer Groups.
 
+### Re-run Admin Panel Install Generator
+
+Admin Panel was completely rewritten to use Tailwind v4 so you need to re-run the install generator to setup Tailwind and remove any Dart Sass related files.
+
+  ```bash
+  bin/rails g spree:admin:install
+  ```
+
+This will also modify your `Procfile.dev` file to include the new Tailwind CSS watch task instead of the old Dart Sass watch task.
+
+#### Add listen gem to Gemfile
+
+You also need to add `listen` gem to your Gemfile in the development group, unless you already have it.
+
+  ```ruby
+  group :development do
+    gem 'listen', '>= 3.0'
+  end
+  ```
+
 ### Run counter cache rake tasks
 
 Spree 5.3 introduces counter caches for products, taxons and variants. You need to run the following rake tasks to populate the counter caches:
@@ -55,26 +75,6 @@ This will populate the product metrics for all products in your database. Produc
 
 This rake task will enqueue background jobs to populate the product metrics for all products in your database so you need to make sure that your background jobs are configured correctly.
 
-### Re-run Admin Panel Install Generator
-
-Admin Panel was completely rewritten to use Tailwind v4 so you need to re-run the install generator to setup Tailwind and remove any Dart Sass related files.
-
-  ```bash
-  bin/rails g spree:admin:install
-  ```
-
-This will also modify your `Procfile.dev` file to include the new Tailwind CSS watch task instead of the old Dart Sass watch task.
-
-#### Add listen gem to Gemfile
-
-You also need to add `listen` gem to your Gemfile in the development group, unless you already have it.
-
-  ```ruby
-  group :development do
-    gem 'listen', '>= 3.0'
-  end
-  ```
-
 ### Update Storefront to Tailwind v4 (Optional)
 
 <Info>
@@ -82,6 +82,8 @@ This is optional if you're not using the `spree_storefront` gem.
 </Info>
 
 Spree 5.3 requires Tailwind v4 as it's also used now for the Admin panel so you need to update your Storefront to Tailwind v4 as well.
+
+If you didn't update your Storefront to Tailwind v4 in the previous upgrade guide, you need to do it now.
 
 Running `bundle update` previously installed Tailwind v4. You only need to run
 
@@ -93,3 +95,13 @@ This will:
 
 1. Overwrite `config/tailwind.config.js` file with the new Tailwind v4 configuration.
 2. Add `app/assets/tailwind/application.css` file with the new Tailwind v4 styles. If you modified `app/assets/stylesheets/application.tailwind.css` file, you will need to merge your changes with the new one.
+
+### Include Page Builder factories (Optional)
+
+Page Builder was extracted to a separate gem (`spree_page_builder`) so you need to include the Page Builder factories in your test suite if you were using them in your tests
+
+Add this line to your `spec_helper.rb` file:
+
+  ```ruby
+  require 'spree/page_builder/testing_support/factories'
+  ```

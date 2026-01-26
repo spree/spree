@@ -8,5 +8,5 @@ cd "$(dirname "$0")/.."
 
 echo "Creating Spree sandbox application..."
 
-./install.sh --app-name=sandbox --verbose --auto-accept --local --force
+./install.sh --app-name=sandbox --verbose --auto-accept --local --force --storefront=rails
 rm -rf sandbox/.git
