@@ -367,6 +367,14 @@ module Spree
       variant_for_images&.primary_image
     end
 
+    # Backward compatibility for Spree 5.2 and earlier.
+    # @deprecated Use Spree::Product#default_image instead.
+    def featured_image
+      Spree::Deprecation.warn('Spree::Product#featured_image is deprecated and will be removed in Spree 5.5. Please use Spree::Product#default_image instead.')
+
+      default_image
+    end
+
     # Returns secondary Image for Product (for hover effects).
     # @return [Spree::Image, nil]
     def secondary_image
