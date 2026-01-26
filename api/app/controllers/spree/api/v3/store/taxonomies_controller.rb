@@ -2,7 +2,7 @@ module Spree
   module Api
     module V3
       module Store
-        class TaxonomiesController < Store::ResourceController
+        class TaxonomiesController < ResourceController
           protected
 
           def model_class

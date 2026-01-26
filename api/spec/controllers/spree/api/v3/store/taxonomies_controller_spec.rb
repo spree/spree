@@ -33,7 +33,7 @@ RSpec.describe Spree::Api::V3::Store::TaxonomiesController, type: :controller do
       get :index
 
       ids = json_response['data'].map { |t| t['id'] }
-      expect(ids).not_to include(other_store_taxonomy.id)
+      expect(ids).not_to include(other_store_taxonomy.prefix_id)
     end
 
     it 'returns pagination metadata' do
@@ -60,14 +60,14 @@ RSpec.describe Spree::Api::V3::Store::TaxonomiesController, type: :controller do
       get :show, params: { id: taxonomy.id }
 
       expect(response).to have_http_status(:ok)
-      expect(json_response['id']).to eq(taxonomy.id)
+      expect(json_response['id']).to eq(taxonomy.prefix_id)
       expect(json_response['name']).to eq(taxonomy.name)
     end
 
     it 'returns taxonomy with its attributes' do
       get :show, params: { id: taxonomy.id }
 
-      expect(json_response['id']).to eq(taxonomy.id)
+      expect(json_response['id']).to eq(taxonomy.prefix_id)
       expect(json_response['name']).to be_present
     end
 

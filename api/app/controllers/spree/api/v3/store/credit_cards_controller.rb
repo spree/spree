@@ -2,7 +2,7 @@ module Spree
   module Api
     module V3
       module Store
-        class CreditCardsController < Store::ResourceController
+        class CreditCardsController < ResourceController
           prepend_before_action :require_authentication!
 
           protected

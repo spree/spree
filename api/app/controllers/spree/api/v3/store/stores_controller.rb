@@ -2,7 +2,7 @@ module Spree
   module Api
     module V3
       module Store
-        class StoresController < Store::ResourceController
+        class StoresController < ResourceController
           # Public endpoint - no authentication required
 
           # GET  /api/v3/store/store

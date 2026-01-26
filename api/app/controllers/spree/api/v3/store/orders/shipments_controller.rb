@@ -3,7 +3,7 @@ module Spree
     module V3
       module Store
         module Orders
-          class ShipmentsController < Store::ResourceController
+          class ShipmentsController < ResourceController
             include Spree::Api::V3::OrderConcern
 
             before_action :authorize_order_access!

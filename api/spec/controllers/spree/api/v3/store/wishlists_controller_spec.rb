@@ -18,7 +18,7 @@ RSpec.describe Spree::Api::V3::Store::WishlistsController, type: :controller do
 
       expect(response).to have_http_status(:ok)
       expect(json_response['data'].size).to eq(1)
-      expect(json_response['data'].first['id']).to eq(wishlist.id)
+      expect(json_response['data'].first['id']).to eq(wishlist.prefix_id)
     end
 
     it 'does not return other users wishlists' do
@@ -28,7 +28,7 @@ RSpec.describe Spree::Api::V3::Store::WishlistsController, type: :controller do
       get :index
 
       ids = json_response['data'].map { |w| w['id'] }
-      expect(ids).not_to include(other_wishlist.id)
+      expect(ids).not_to include(other_wishlist.prefix_id)
     end
 
     it 'returns pagination metadata' do
@@ -52,10 +52,10 @@ RSpec.describe Spree::Api::V3::Store::WishlistsController, type: :controller do
 
   describe 'GET #show' do
     it 'returns the wishlist' do
-      get :show, params: { id: wishlist.id }
+      get :show, params: { id: wishlist.prefix_id }
 
       expect(response).to have_http_status(:ok)
-      expect(json_response['id']).to eq(wishlist.id)
+      expect(json_response['id']).to eq(wishlist.prefix_id)
       expect(json_response['name']).to eq(wishlist.name)
     end
 
@@ -72,7 +72,7 @@ RSpec.describe Spree::Api::V3::Store::WishlistsController, type: :controller do
         other_user = create(:user)
         other_wishlist = create(:wishlist, user: other_user, store: store)
 
-        get :show, params: { id: other_wishlist.id }
+        get :show, params: { id: other_wishlist.prefix_id }
 
         expect(response).to have_http_status(:not_found)
         expect(json_response['error']['code']).to eq('record_not_found')
@@ -127,7 +127,7 @@ RSpec.describe Spree::Api::V3::Store::WishlistsController, type: :controller do
 
   describe 'PATCH #update' do
     it 'updates the wishlist name' do
-      patch :update, params: { id: wishlist.id, wishlist: { name: 'Updated Name' } }
+      patch :update, params: { id: wishlist.prefix_id, wishlist: { name: 'Updated Name' } }
 
       expect(response).to have_http_status(:ok)
       expect(wishlist.reload.name).to eq('Updated Name')
@@ -135,7 +135,7 @@ RSpec.describe Spree::Api::V3::Store::WishlistsController, type: :controller do
 
     context 'validation errors' do
       it 'returns errors for blank name' do
-        patch :update, params: { id: wishlist.id, wishlist: { name: '' } }
+        patch :update, params: { id: wishlist.prefix_id, wishlist: { name: '' } }
 
         expect(response).to have_http_status(:unprocessable_entity)
         expect(json_response['error']['code']).to eq('validation_error')
@@ -148,7 +148,7 @@ RSpec.describe Spree::Api::V3::Store::WishlistsController, type: :controller do
         other_user = create(:user)
         other_wishlist = create(:wishlist, user: other_user, store: store)
 
-        patch :update, params: { id: other_wishlist.id, wishlist: { name: 'Hacked' } }
+        patch :update, params: { id: other_wishlist.prefix_id, wishlist: { name: 'Hacked' } }
 
         expect(response).to have_http_status(:not_found)
         expect(json_response['error']['code']).to eq('record_not_found')
@@ -159,7 +159,7 @@ RSpec.describe Spree::Api::V3::Store::WishlistsController, type: :controller do
   describe 'DELETE #destroy' do
     it 'deletes the wishlist' do
       expect {
-        delete :destroy, params: { id: wishlist.id }
+        delete :destroy, params: { id: wishlist.prefix_id }
       }.to change(Spree::Wishlist, :count).by(-1)
 
       expect(response).to have_http_status(:no_content)
@@ -178,7 +178,7 @@ RSpec.describe Spree::Api::V3::Store::WishlistsController, type: :controller do
         other_user = create(:user)
         other_wishlist = create(:wishlist, user: other_user, store: store)
 
-        delete :destroy, params: { id: other_wishlist.id }
+        delete :destroy, params: { id: other_wishlist.prefix_id }
 
         expect(response).to have_http_status(:not_found)
         expect(json_response['error']['code']).to eq('record_not_found')

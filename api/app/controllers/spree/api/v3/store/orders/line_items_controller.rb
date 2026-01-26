@@ -3,7 +3,7 @@ module Spree
     module V3
       module Store
         module Orders
-          class LineItemsController < Store::ResourceController
+          class LineItemsController < ResourceController
             include Spree::Api::V3::OrderConcern
 
             skip_before_action :set_resource
@@ -70,15 +70,7 @@ module Spree
             end
 
             def variant
-              variants = current_store.variants.accessible_by(current_ability)
-              variant_id = permitted_params[:variant_id]
-
-              # Support both prefix_id (variant_xxx) and database ID
-              if variant_id.to_s.start_with?('variant_')
-                variants.find_by!(prefix_id: variant_id)
-              else
-                variants.find(variant_id)
-              end
+              @variant ||= current_store.variants.accessible_by(current_ability).find_by!(prefix_id: permitted_params[:variant_id])
             end
 
             def model_class

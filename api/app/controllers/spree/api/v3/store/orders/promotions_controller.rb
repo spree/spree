@@ -3,7 +3,7 @@ module Spree
     module V3
       module Store
         module Orders
-          class PromotionsController < Store::ResourceController
+          class PromotionsController < ResourceController
             include Spree::Api::V3::OrderConcern
 
             before_action :authorize_order_access!
@@ -45,7 +45,7 @@ module Spree
             end
 
             def promotion_handler
-              @promotion_handler ||= Spree::PromotionHandler::Coupon.new(@parent)
+              @promotion_handler ||= Spree.coupon_handler.new(@parent)
             end
 
             def permitted_params
