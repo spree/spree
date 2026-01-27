@@ -32,6 +32,51 @@ For currencies, we use [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217) symbol
 
 As of Spree 4.6, resources with user-facing content fields now have built in support for translations. Translation functionality is handled by the [Mobility gem](https://github.com/shioyama/mobility). Spree allows you to translate the following resources:
 
+```mermaid
+erDiagram
+    spree_products ||--o{ spree_product_translations : "has many"
+    spree_taxons ||--o{ spree_taxon_translations : "has many"
+    spree_taxonomies ||--o{ spree_taxonomy_translations : "has many"
+    spree_option_types ||--o{ spree_option_type_translations : "has many"
+    spree_option_values ||--o{ spree_option_value_translations : "has many"
+    spree_properties ||--o{ spree_property_translations : "has many"
+    spree_product_properties ||--o{ spree_product_property_translations : "has many"
+    spree_stores ||--o{ spree_store_translations : "has many"
+
+    spree_products {
+        bigint id PK
+        string status
+        datetime created_at
+    }
+
+    spree_product_translations {
+        bigint id PK
+        bigint spree_product_id FK
+        string locale
+        string name
+        text description
+        string slug
+        string meta_title
+        string meta_description
+        string meta_keywords
+    }
+
+    spree_taxons {
+        bigint id PK
+        bigint taxonomy_id FK
+        bigint parent_id FK
+    }
+
+    spree_taxon_translations {
+        bigint id PK
+        bigint spree_taxon_id FK
+        string locale
+        string name
+        text description
+        string permalink
+    }
+```
+
 | Resource         | Translatable Fields                                                                                                                                                                 |
 | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Product          | `name`, `description`, `slug`, `meta_description`, `meta_keywords`, `meta_title`                                                                                                             |

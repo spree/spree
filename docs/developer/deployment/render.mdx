@@ -98,7 +98,7 @@ We recommend changing credentials after logging in! You can also do it from the 
 Now you can open the Rails console by running `bin/rails console`.
 
 ```ruby
-Spree::User.first.update!(email: "<your@email.com>", password: "<your_password>", password_confirmation: "<your_password>")
+Spree.admin_user_class.first.update!(email: "<your@email.com>", password: "<your_password>", password_confirmation: "<your_password>")
 ```
 </Warning>
 

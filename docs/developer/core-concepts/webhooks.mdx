@@ -3,10 +3,6 @@ title: Webhooks
 description: Send real-time HTTP notifications to external services when events occur in your store.
 ---
 
-<Warning>
-  Webhooks are part of the upcoming Spree 5.3 release slated for January 2026.
-</Warning>
-
 ## Overview
 
 Webhooks allow your Spree store to send real-time HTTP POST notifications to external services when events occur. When an order is completed, a product is updated, or inventory changes, Spree can automatically notify your CRM, fulfillment service, analytics platform, or any other system.
@@ -21,8 +17,28 @@ Webhooks are built on top of Spree's [event system](/developer/core-concepts/eve
 
 ## How Webhooks Work
 
-```
-Event Published → WebhookEventSubscriber → Find Matching Endpoints → Queue Delivery Jobs → HTTP POST with Signature
+```mermaid
+flowchart LR
+    subgraph Spree Store
+        A[Event Published] --> B[WebhookEventSubscriber]
+        B --> C{Find Matching<br/>Endpoints}
+        C --> D[Create WebhookDelivery]
+        D --> E[Queue DeliveryJob]
+    end
+
+    subgraph Delivery
+        E --> F[Build JSON Payload]
+        F --> G[Sign with HMAC-SHA256]
+        G --> H[HTTP POST]
+    end
+
+    subgraph External Service
+        H --> I{Response}
+        I -->|2xx| J[Success]
+        I -->|Error| K[Retry with Backoff]
+        K -->|Max Retries| L[Mark Failed]
+        K -->|Retry| H
+    end
 ```
 
 1. An event is published (e.g., `order.completed`)

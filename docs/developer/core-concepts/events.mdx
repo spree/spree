@@ -3,10 +3,6 @@ title: Events
 description: Learn how Spree's event system works and how to subscribe to events.
 ---
 
-<Warning>
-  Events are part of the upcoming Spree 5.3 release slated for January 2026.
-</Warning>
-
 ## Overview
 
 Spree includes a powerful event system that allows you to react to various actions happening in your store. When something happens (an order is completed, a product is created, etc.), Spree publishes an event that your code can subscribe to and handle.
@@ -28,6 +24,32 @@ Spree's event system is built on top of [`ActiveSupport::Notifications`](https:/
 3. **`Spree::Publishable`** - Concern that enables models to publish events
 
 When an event is published, all matching subscribers are notified. By default, subscribers run asynchronously via ActiveJob to avoid blocking the main request.
+
+```mermaid
+flowchart TB
+    subgraph Spree Application
+        A[Model Action] --> B[publish_event]
+        B --> C[Event Serializer]
+        C --> D[Spree::Events]
+    end
+
+    subgraph Event Adapter
+        D --> E[Find Matching Subscribers]
+        E --> F{Async?}
+        F -->|Yes| G[Queue ActiveJob]
+        F -->|No| H[Execute Immediately]
+    end
+
+    subgraph Subscribers
+        G --> I[SubscriberJob]
+        I --> J[Your Subscriber]
+        H --> J
+        J --> K[Send Email]
+        J --> L[Sync External Service]
+        J --> M[Update Cache]
+        J --> N[Trigger Webhook]
+    end
+```
 
 ## Creating a Subscriber
 

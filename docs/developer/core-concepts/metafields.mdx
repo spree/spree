@@ -22,6 +22,69 @@ Metafields are available from Spree 5.2 onwards.
 
 The metafields system consists of two main models:
 
+```mermaid
+erDiagram
+    spree_metafield_definitions ||--o{ spree_metafields : "defines schema for"
+    spree_products ||--o{ spree_metafields : "has many"
+    spree_variants ||--o{ spree_metafields : "has many"
+    spree_orders ||--o{ spree_metafields : "has many"
+
+    spree_metafield_definitions {
+        bigint id PK
+        string namespace
+        string key
+        string name
+        string metafield_type
+        string resource_type
+        string display_on
+        datetime created_at
+    }
+
+    spree_metafields {
+        bigint id PK
+        bigint metafield_definition_id FK
+        string type
+        text value
+        string resource_type
+        bigint resource_id
+        datetime created_at
+    }
+
+    spree_products {
+        bigint id PK
+        string name
+    }
+
+    spree_variants {
+        bigint id PK
+        string sku
+    }
+
+    spree_orders {
+        bigint id PK
+        string number
+    }
+```
+
+```mermaid
+flowchart LR
+    subgraph Definition
+        A[MetafieldDefinition] --> B[namespace: properties]
+        A --> C[key: manufacturer]
+        A --> D[type: ShortText]
+        A --> E[resource_type: Product]
+        A --> F[display_on: both]
+    end
+
+    subgraph Instance
+        G[Metafield] --> H[value: Wilson]
+        G --> I[resource: Product #1]
+        G --> J[definition_id: 1]
+    end
+
+    A -.->|"defines schema"| G
+```
+
 ### MetafieldDefinition
 
 Defines the schema and rules for a metafield type. Think of it as a blueprint that specifies:

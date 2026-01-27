@@ -99,9 +99,9 @@ An address must always link to a `Spree::Country` object. It can optionally link
 
 ## Customers
 
-`Spree::User` can have multiple addresses and can manage them on the Checkout and Account page (or via API). Each `Spree::Address` object has a `user_id` column which links to the User.
+Users can have multiple addresses and can manage them on the Checkout and Account page (or via API). Each `Spree::Address` object has a `user_id` column which links to the User.
 
-Additionally in the `Spree::User` there is `ship_address_id` and `bill_address_id` columns which indicates which addresses are the default ones for this User.
+Additionally in `Spree.user_class` there are `ship_address_id` and `bill_address_id` columns which indicate the default addresses for this User.
 
 ## Checkout
 
