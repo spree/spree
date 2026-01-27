@@ -52,7 +52,7 @@
                 </div>
               <% end %>
               <div data-controller="clipboard" data-clipboard-success-content-value='<%= icon('check') + ' ' + Spree.t(:copied) %>'>
-                <%= hidden_field_tag :record_id, record.id, data: { clipboard_target: 'source' } %>
+                <%= hidden_field_tag :record_id, record.respond_to?(:prefix_id) ? record.prefix_id : record.id, data: { clipboard_target: 'source' } %>
                 <button data-action="clipboard#copy" class="text-left dropdown-item" data-clipboard-target="button">
                   <%= icon 'copy' %>
                   <%= Spree.t(:copy_id) %>

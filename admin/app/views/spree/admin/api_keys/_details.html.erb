@@ -1,0 +1,51 @@
+<div class="card mb-6">
+  <div class="card-header">
+    <h5 class="card-title"><%= Spree.t(:details) %></h5>
+  </div>
+  <div class="card-body">
+    <dl class="space-y-4">
+      <div>
+        <dt class="text-sm text-gray-500"><%= Spree.t(:status) %></dt>
+        <dd class="mt-1"><%= api_key_status_badge(@api_key) %></dd>
+      </div>
+
+      <div>
+        <dt class="text-sm text-gray-500"><%= Spree.t(:type) %></dt>
+        <dd class="mt-1"><%= api_key_type_badge(@api_key) %></dd>
+      </div>
+
+      <div>
+        <dt class="text-sm text-gray-500"><%= Spree.t(:created_at) %></dt>
+        <dd class="mt-1"><%= l(@api_key.created_at, format: :long) %></dd>
+      </div>
+
+      <% if @api_key.created_by.present? %>
+        <div>
+          <dt class="text-sm text-gray-500"><%= Spree.t(:created_by) %></dt>
+          <dd class="mt-1"><%= @api_key.created_by.try(:email) || @api_key.created_by.to_s %></dd>
+        </div>
+      <% end %>
+
+      <% if @api_key.last_used_at.present? %>
+        <div>
+          <dt class="text-sm text-gray-500"><%= Spree.t('admin.api_keys.last_used_at') %></dt>
+          <dd class="mt-1"><%= l(@api_key.last_used_at, format: :long) %></dd>
+        </div>
+      <% end %>
+
+      <% if @api_key.revoked_at.present? %>
+        <div>
+          <dt class="text-sm text-gray-500"><%= Spree.t('admin.api_keys.revoked_at') %></dt>
+          <dd class="mt-1 text-red-600"><%= l(@api_key.revoked_at, format: :long) %></dd>
+        </div>
+
+        <% if @api_key.revoked_by.present? %>
+          <div>
+            <dt class="text-sm text-gray-500"><%= Spree.t('admin.api_keys.revoked_by') %></dt>
+            <dd class="mt-1"><%= @api_key.revoked_by.try(:email) || @api_key.revoked_by.to_s %></dd>
+          </div>
+        <% end %>
+      <% end %>
+    </dl>
+  </div>
+</div>
