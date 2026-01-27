@@ -14,8 +14,11 @@ module Spree
       end
 
       def bill_address_id=(id)
+        return super if bill_address_id == id
+
         address = Spree::Address.find_by(id: id)
-        if address && address.user_id == user_id
+
+        if address && user_id.present? && address.user_id == user_id
           self['bill_address_id'] = address.id
           bill_address.reload
         else
@@ -29,8 +32,11 @@ module Spree
       end
 
       def ship_address_id=(id)
+        return super if ship_address_id == id
+
         address = Spree::Address.find_by(id: id)
-        if address && address.user_id == user_id
+
+        if address && user_id.present? && address.user_id == user_id
           self['ship_address_id'] = address.id
           ship_address.reload
         else
