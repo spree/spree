@@ -9,7 +9,6 @@ import type {
   OrderListParams,
   AddLineItemParams,
   UpdateLineItemParams,
-  CreatePaymentParams,
   UpdateOrderParams,
   StoreProduct,
   StoreOrder,
@@ -17,8 +16,8 @@ import type {
   StoreCountry,
   StoreTaxonomy,
   StoreTaxon,
-  StorePaymentMethod,
   StorePayment,
+  StorePaymentMethod,
   StoreStore,
   StoreWishlist,
   StoreAddress,
@@ -417,8 +416,8 @@ export class SpreeClient {
     list: (
       orderId: string,
       options?: RequestOptions
-    ): Promise<PaginatedResponse<StorePayment>> =>
-      this.request<PaginatedResponse<StorePayment>>(
+    ): Promise<{ data: StorePayment[]; meta: object }> =>
+      this.request<{ data: StorePayment[]; meta: object }>(
         'GET',
         `/orders/${orderId}/payments`,
         options
@@ -437,20 +436,11 @@ export class SpreeClient {
         `/orders/${orderId}/payments/${paymentId}`,
         options
       ),
-
-    /**
-     * Create a payment
-     */
-    create: (
-      orderId: string,
-      params: CreatePaymentParams,
-      options?: RequestOptions
-    ): Promise<StoreOrder> =>
-      this.request<StoreOrder>('POST', `/orders/${orderId}/payments`, {
-        ...options,
-        body: params,
-      }),
   };
+
+  // ============================================
+  // Payment Methods
+  // ============================================
 
   readonly paymentMethods = {
     /**
