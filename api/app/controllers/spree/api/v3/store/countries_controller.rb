@@ -33,21 +33,17 @@ module Spree
           end
 
           def serialize_country(country, include_states: false)
-            data = {
-              iso: country.iso,
-              iso3: country.iso3,
-              name: country.name,
-              states_required: country.states_required,
-              zipcode_required: country.zipcode_required
-            }
+            data = Spree.api.country_serializer.new(country, params: { includes: [] }).to_h
 
             if include_states
-              data[:states] = country.states.order(:name).map do |state|
-                { abbr: state.abbr, name: state.name }
-              end
+              data[:states] = serialize_collection(country.states.order(:name), Spree.api.state_serializer)
             end
 
             data
+          end
+
+          def serialize_collection(collection, serializer_class)
+            collection.map { |item| serializer_class.new(item).to_h }
           end
         end
       end
