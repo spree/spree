@@ -191,6 +191,18 @@ describe Spree::Product, type: :model do
       end
     end
 
+    describe '#master_id' do
+      it 'returns the id of the master variant' do
+        expect(product.master_id).to eq(product.master.id)
+      end
+
+      it 'returns nil when master is not present' do
+        product_without_master = build(:product, stores: [store])
+        product_without_master.master = nil
+        expect(product_without_master.master_id).to be_nil
+      end
+    end
+
     context 'product has no variants' do
       describe '#destroy' do
         it 'sets deleted_at value' do
