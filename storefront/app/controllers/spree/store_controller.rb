@@ -231,7 +231,7 @@ module Spree
     end
 
     def clear_order_token
-      cookies.delete(:token)
+      cookies.delete(:token, domain: cookie_domain_without_port)
     end
 
     def disable_sesion_tracking

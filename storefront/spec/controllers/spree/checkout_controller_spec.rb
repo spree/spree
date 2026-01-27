@@ -31,10 +31,23 @@ describe Spree::CheckoutController, type: :controller do
       expect(response).to redirect_to(spree.cart_path)
     end
 
+    it 'clears the order token cookie if token is invalid' do
+      cookies.signed[:token] = 'INVALID'
+      get :edit, params: { state: 'delivery', token: 'INVALID' }
+      expect(cookies.signed[:token]).to be_nil
+    end
+
     it 'redirects to cart if order is completed' do
       order.update_columns(completed_at: Time.current, state: 'complete')
       get :edit, params: { state: 'address', token: order.token }
       expect(response).to redirect_to(spree.cart_path)
+    end
+
+    it 'clears the order token cookie if order is completed' do
+      cookies.signed[:token] = order.token
+      order.update_columns(completed_at: Time.current, state: 'complete')
+      get :edit, params: { state: 'address', token: order.token }
+      expect(cookies.signed[:token]).to be_nil
     end
 
     it 'redirects to cart if order has removed line items' do
@@ -196,6 +209,12 @@ describe Spree::CheckoutController, type: :controller do
               get :edit, params: { token: order.token }
               expect(flash[:error]).to eq('You cannot access this checkout')
               expect(response).to redirect_to(spree.cart_path)
+            end
+
+            it 'clears the order token cookie' do
+              cookies.signed[:token] = order.token
+              get :edit, params: { token: order.token }
+              expect(cookies.signed[:token]).to be_nil
             end
           end
         end
@@ -1097,6 +1116,10 @@ describe Spree::CheckoutController, type: :controller do
 
         it 'clears out the session' do
           expect(session[:checkout_completed]).to be_nil
+        end
+
+        it 'clears the order token cookie' do
+          expect(cookies.signed[:token]).to be_nil
         end
 
         context 'when user is signed in' do
