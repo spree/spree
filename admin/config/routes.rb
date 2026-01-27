@@ -266,7 +266,6 @@ Spree::Core::Engine.add_routes do
     end
 
     # developer tools
-    resources :oauth_applications
     resources :api_keys, except: :destroy do
       member do
         put :revoke
