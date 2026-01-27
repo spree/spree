@@ -7,6 +7,11 @@ Rails.application.routes.draw do
 end
 
 Spree::Core::Engine.add_routes do
+  # Admin UI to manage OAuth applications
+  namespace :admin do
+    resources :oauth_applications
+  end
+
   namespace :api, defaults: { format: 'json' } do
     namespace :v2 do
       namespace :storefront do
