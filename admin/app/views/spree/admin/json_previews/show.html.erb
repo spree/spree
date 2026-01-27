@@ -3,15 +3,15 @@
   <div class="drawer-body" data-controller="highlight tabs">
     <ul class="nav nav-pills mb-3">
       <li class="nav-item">
-        <a class="nav-link active" data-tabs-target="tab" data-action="click->tabs#select"><%= Spree.t('apis.storefront') %></a>
+        <a class="nav-link active" data-tabs-target="tab" data-action="click->tabs#select"><%= Spree.t('apis.store') %></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" data-tabs-target="tab" data-action="click->tabs#select"><%= Spree.t('apis.platform') %></a>
+        <a class="nav-link" data-tabs-target="tab" data-action="click->tabs#select"><%= Spree.t('apis.admin') %></a>
       </li>
     </ul>
     <div data-tabs-target="panel" class="animate-fade-in">
-      <% if storefront_serializer_exists?(@object) %>
-        <%= code_block serialize_to_json(@object, api_type: :storefront), style: 'height: calc(100dvh - 11rem);' %>
+      <% if store_serializer_exists?(@object) %>
+        <%= code_block serialize_to_json(@object, api_type: :store), style: 'height: calc(100dvh - 11rem);' %>
       <% else %>
         <div class="text-gray-600 p-12 flex items-center w-full justify-center flex-col">
           <%= icon 'map-search', class: 'mb-12 opacity-50 text-4xl' %>
@@ -22,8 +22,8 @@
       <% end %>
     </div>
     <div data-tabs-target="panel" class="animate-fade-in" hidden>
-      <% if platform_serializer_exists?(@object) %>
-        <%= code_block serialize_to_json(@object, api_type: :platform), style: 'height: calc(100dvh - 11rem);' %>
+      <% if admin_serializer_exists?(@object) %>
+        <%= code_block serialize_to_json(@object, api_type: :admin), style: 'height: calc(100dvh - 11rem);' %>
       <% else %>
         <div class="text-gray-600 p-12 flex items-center w-full justify-center flex-col">
           <%= icon 'map-search', class: 'mb-12 opacity-50 text-4xl' %>
