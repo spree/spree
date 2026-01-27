@@ -1409,6 +1409,66 @@ Rails.application.config.after_initialize do
                                                   position: 80
 
   # ==========================================
+  # API Keys Table
+  # ==========================================
+  Spree.admin.tables.register(:api_keys, model_class: Spree::ApiKey, search_param: :name_cont, row_actions: false, link_to_action: :show)
+
+  Spree.admin.tables.api_keys.add :name,
+                                        label: :name,
+                                        type: :link,
+                                        sortable: true,
+                                        filterable: true,
+                                        default: true,
+                                        position: 10
+
+  Spree.admin.tables.api_keys.add :key_type,
+                                        label: 'admin.api_keys.key_type',
+                                        type: :custom,
+                                        sortable: true,
+                                        filterable: true,
+                                        default: true,
+                                        position: 20,
+                                        partial: 'spree/admin/tables/columns/api_key_type',
+                                        filter_type: :select,
+                                        value_options: [
+                                          { value: 'publishable', label: 'Publishable' },
+                                          { value: 'secret', label: 'Secret' }
+                                        ]
+
+  Spree.admin.tables.api_keys.add :status,
+                                        label: :status,
+                                        type: :custom,
+                                        sortable: false,
+                                        filterable: false,
+                                        default: true,
+                                        position: 30,
+                                        partial: 'spree/admin/tables/columns/api_key_status'
+
+  Spree.admin.tables.api_keys.add :last_used_at,
+                                        label: 'admin.api_keys.last_used_at',
+                                        type: :datetime,
+                                        sortable: true,
+                                        filterable: false,
+                                        default: true,
+                                        position: 40
+
+  Spree.admin.tables.api_keys.add :created_at,
+                                        label: :created_at,
+                                        type: :datetime,
+                                        sortable: true,
+                                        filterable: true,
+                                        default: true,
+                                        position: 50
+
+  Spree.admin.tables.api_keys.add :updated_at,
+                                        label: :updated_at,
+                                        type: :datetime,
+                                        sortable: true,
+                                        filterable: true,
+                                        default: false,
+                                        position: 60
+
+  # ==========================================
   # Price Lists Table
   # ==========================================
   Spree.admin.tables.register(:price_lists, model_class: Spree::PriceList, search_param: :name_cont, link_to_action: :show)
