@@ -73,13 +73,6 @@ export interface UpdateLineItemParams {
   quantity: number;
 }
 
-// Payment params
-export interface CreatePaymentParams {
-  payment_method_id: string;
-  amount?: number;
-  source_attributes?: Record<string, unknown>;
-}
-
 // Address params
 export interface AddressParams {
   firstname: string;

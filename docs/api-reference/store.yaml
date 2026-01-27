@@ -1270,35 +1270,31 @@ paths:
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/store/orders/{order_id}/payments":
+    parameters:
+    - name: x-spree-api-key
+      in: header
+      required: true
+      schema:
+        type: string
+    - name: Authorization
+      in: header
+      required: true
+      schema:
+        type: string
+    - name: order_id
+      in: path
+      description: Order number or ID
+      required: true
+      schema:
+        type: string
     get:
-      summary: List payments for an order
+      summary: List payments
       tags:
       - Payments
       security:
       - api_key: []
         bearer_auth: []
-      description: Returns all payments associated with the order
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: false
-        schema:
-          type: string
-      - name: order_id
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: order_token
-        in: query
-        required: false
-        schema:
-          type: string
+      description: Returns a list of payments for the specified order
       responses:
         '200':
           description: payments found
@@ -1311,121 +1307,46 @@ paths:
                     type: array
                     items:
                       "$ref": "#/components/schemas/StorePayment"
-                required:
-                - data
+                  meta:
+                    type: object
         '404':
           description: order not found
           content:
             application/json:
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
-    post:
-      summary: Create a payment
-      tags:
-      - Payments
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: Creates a new payment for the order using the specified payment
-        method
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: false
-        schema:
-          type: string
-      - name: order_id
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: order_token
-        in: query
-        required: false
-        schema:
-          type: string
-      responses:
-        '201':
-          description: payment created
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/StoreOrder"
-        '422':
-          description: invalid payment method
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                payment_method_id:
-                  type: string
-                  description: Payment method ID
-                amount:
-                  type: number
-                  description: Payment amount (optional, defaults to order total)
-                source_attributes:
-                  type: object
-                  description: Payment source details (card info, etc.)
-                  properties:
-                    number:
-                      type: string
-                    month:
-                      type: string
-                    year:
-                      type: string
-                    verification_value:
-                      type: string
-                    name:
-                      type: string
-              required:
-              - payment_method_id
   "/api/v3/store/orders/{order_id}/payments/{id}":
+    parameters:
+    - name: x-spree-api-key
+      in: header
+      required: true
+      schema:
+        type: string
+    - name: Authorization
+      in: header
+      required: true
+      schema:
+        type: string
+    - name: order_id
+      in: path
+      description: Order number or ID
+      required: true
+      schema:
+        type: string
+    - name: id
+      in: path
+      description: Payment ID
+      required: true
+      schema:
+        type: string
     get:
-      summary: Get a payment
+      summary: Get payment
       tags:
       - Payments
       security:
       - api_key: []
         bearer_auth: []
-      description: Returns details of a specific payment
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: false
-        schema:
-          type: string
-      - name: order_id
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: id
-        in: path
-        required: true
-        description: Payment ID
-        schema:
-          type: string
-      - name: order_token
-        in: query
-        required: false
-        schema:
-          type: string
+      description: Returns a single payment by ID
       responses:
         '200':
           description: payment found
@@ -3401,10 +3322,7 @@ components:
       properties:
         id:
           type: string
-        country_id:
-          type: string
-          nullable: true
-        state_id:
+        state_abbr:
           type: string
           nullable: true
         name:

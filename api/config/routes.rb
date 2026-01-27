@@ -250,7 +250,7 @@ Spree::Core::Engine.add_routes do
           resource :store_credits, only: [:create, :destroy], controller: 'orders/store_credits'
           resources :line_items, only: [:create, :update, :destroy], controller: 'orders/line_items'
           resources :promotions, only: [:create, :destroy], controller: 'orders/promotions'
-          resources :payments, only: [:index, :show, :create], controller: 'orders/payments'
+          resources :payments, only: [:index, :show], controller: 'orders/payments'
           resources :payment_methods, only: [:index], controller: 'orders/payment_methods'
           resources :shipments, only: [:index, :show, :update], controller: 'orders/shipments'
         end
