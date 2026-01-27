@@ -18,59 +18,63 @@ module Spree
       end
 
       def json_serializers_available?(record)
-        storefront_serializer_exists?(record) || platform_serializer_exists?(record)
+        store_serializer_exists?(record) || admin_serializer_exists?(record)
       end
 
-      def storefront_serializer_exists?(record)
-        storefront_serializer_for(record).present?
+      def store_serializer_exists?(record)
+        store_serializer_for(record).present?
       end
 
-      def platform_serializer_exists?(record)
-        platform_serializer_for(record).present?
+      def admin_serializer_exists?(record)
+        admin_serializer_for(record).present?
       end
 
-      def serialize_to_json(record, api_type: :storefront)
+      def serialize_to_json(record, api_type: :store)
         return unless record
 
         serializer = case api_type.to_sym
-                     when :storefront
-                       storefront_serializer_for(record)
-                     when :platform
-                       platform_serializer_for(record)
+                     when :store
+                       store_serializer_for(record)
+                     when :admin
+                       admin_serializer_for(record)
                      end
 
         return nil unless serializer
 
-        serializable_hash = serializer.new(
+        # Alba serializers use .new(object, params: {}).to_h
+        serialized_hash = serializer.new(
           record,
           params: serializer_params(record, api_type)
-        ).serializable_hash
+        ).to_h
 
-        JSON.pretty_generate(serializable_hash)
+        JSON.pretty_generate(serialized_hash)
       end
 
       private
 
-      def storefront_serializer_for(record)
-        serializer_for(record, api_type: :storefront, namespace: 'Spree::V2::Storefront')
+      def store_serializer_for(record)
+        serializer_for(record, namespace: 'Spree::Api::V3')
       end
 
-      def platform_serializer_for(record)
-        serializer_for(record, api_type: :platform, namespace: 'Spree::Api::V2::Platform')
+      def admin_serializer_for(record)
+        serializer_for(record, namespace: 'Spree::Api::V3::Admin')
       end
 
-      def serializer_for(record, api_type:, namespace:)
+      def serializer_for(record, namespace:)
         class_name = record.class.name.demodulize
-        method_name = "#{api_type}_#{class_name.underscore}_serializer"
-        if Spree.api.respond_to?(method_name)
-          Spree.api.public_send(method_name)
-        else
-          serializer_class_name = "#{namespace}::#{class_name}Serializer"
-          serializer_class_name.safe_constantize
+
+        # First try dependency lookup (without prefix for v3)
+        method_name = "#{class_name.underscore}_serializer"
+        if namespace == 'Spree::Api::V3' && Spree.api.respond_to?(method_name)
+          return Spree.api.public_send(method_name)
         end
+
+        # Fall back to direct constant lookup
+        serializer_class_name = "#{namespace}::#{class_name}Serializer"
+        serializer_class_name.safe_constantize
       end
 
-      def serializer_params(record, api_type)
+      def serializer_params(_record, api_type)
         params = {}
         params[:api_type] = api_type
         params[:store] = current_store if defined?(current_store) && current_store.present?
