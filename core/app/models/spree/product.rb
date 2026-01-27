@@ -254,6 +254,9 @@ module Spree
     delegate :display_amount, :display_price, :has_default_price?, :track_inventory?,
              :display_compare_at_price, :images, to: :default_variant
 
+    # Rails doesn't provide _id methods for has_one associations by default
+    delegate :id, to: :master, prefix: true, allow_nil: true
+
     alias master_images images
 
     state_machine :status, initial: :draft do
