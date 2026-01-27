@@ -56,7 +56,7 @@ RSpec.describe Spree::Api::V3::Store::CountriesController, type: :controller do
 
       expect(response).to have_http_status(:ok)
       expect(json_response['states']).to be_present
-      expect(json_response['states'].first['iso']).to eq(state.abbr)
+      expect(json_response['states'].first['abbr']).to eq(state.abbr)
       expect(json_response['states'].first['name']).to eq(state.name)
     end
 
