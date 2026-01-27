@@ -471,13 +471,6 @@ Rails.application.config.after_initialize do
           active: -> { %w[webhook_endpoints webhook_deliveries].include?(controller_name) },
           if: -> { can?(:manage, Spree::WebhookEndpoint) }
 
-  developers_tabs_nav.add :oauth_applications,
-          label: :oauth_applications,
-          url: :admin_oauth_applications_path,
-          position: 30,
-          active: -> { controller_name == 'oauth_applications' },
-          if: -> { can?(:manage, Spree::OauthApplication) }
-
   # Audit Tab Navigation
   audit_tabs_nav = Spree.admin.navigation.audit_tabs
 
