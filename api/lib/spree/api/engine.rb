@@ -1,5 +1,4 @@
 require 'rails/engine'
-require 'pagy'
 
 require_relative 'dependencies'
 require_relative 'configuration'
@@ -13,10 +12,6 @@ module Spree
       initializer 'spree.api.environment', before: :load_config_initializers do |_app|
         Spree::Api::Config = Spree::Api::Configuration.new
         Spree::Api::Dependencies = Spree::Api::ApiDependencies.new
-      end
-
-      initializer 'spree.api.checking_migrations' do
-        Migrations.new(config, engine_name).check unless Rails.env.test?
       end
 
       # Add API event subscribers

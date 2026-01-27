@@ -11,7 +11,7 @@ if ENV['COVERAGE']
     add_filter '/spec/'
     add_filter '/lib/spree/api/testing_support/'
 
-    coverage_dir "#{ENV['COVERAGE_DIR']}/api_"+ ENV.fetch('CIRCLE_NODE_INDEX', 0) if ENV['COVERAGE_DIR']
+    coverage_dir "#{ENV['COVERAGE_DIR']}/legacy_api_v2_"+ ENV.fetch('CIRCLE_NODE_INDEX', 0) if ENV['COVERAGE_DIR']
     command_name "test_" + ENV.fetch('CIRCLE_NODE_INDEX', 0)
 
   end
@@ -32,6 +32,7 @@ require 'database_cleaner/active_record'
 require 'ffaker'
 require 'webmock/rspec'
 require 'i18n/tasks'
+require 'jsonapi/rspec'
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
@@ -42,9 +43,15 @@ require 'spree/testing_support/jobs'
 require 'spree/testing_support/store'
 require 'spree/testing_support/preferences'
 require 'spree/testing_support/image_helpers'
+require 'spree/testing_support/next_instance_of'
+require 'spree/testing_support/rspec_retry_config'
 
-require 'spree/api/testing_support/v3/base'
-require 'spree/api/testing_support/factories'
+require 'spree/legacy_api_v2/testing_support/v2/base'
+require 'spree/legacy_api_v2/testing_support/v2/current_order'
+require 'spree/legacy_api_v2/testing_support/v2/platform_contexts'
+require 'spree/legacy_api_v2/testing_support/v2/serializers_params'
+require 'spree/legacy_api_v2/testing_support/serializers'
+require 'spree/legacy_api_v2/testing_support/factories'
 
 def json_response
   case body = JSON.parse(response.body)
@@ -56,13 +63,15 @@ def json_response
 end
 
 RSpec.configure do |config|
+  config.backtrace_exclusion_patterns = [/gems\/activesupport/, /gems\/actionpack/, /gems\/rspec/]
   config.color = true
-  config.default_formatter = 'progress'
+  config.default_formatter = 'doc'
   config.fail_fast = ENV['FAIL_FAST'] || false
   config.infer_spec_type_from_file_location!
   config.raise_errors_for_deprecations!
   config.use_transactional_fixtures = true
 
+  config.include JSONAPI::RSpec
   config.include FactoryBot::Syntax::Methods
   config.include Spree::TestingSupport::Preferences
   config.include Spree::TestingSupport::ImageHelpers
@@ -70,6 +79,7 @@ RSpec.configure do |config|
   config.before(:suite) do
     Spree::Events.disable!
     # Clean out the database state before the tests run
+    DatabaseCleaner.strategy = :transaction
     DatabaseCleaner.clean_with(:truncation)
   end
 
@@ -87,6 +97,12 @@ RSpec.configure do |config|
 
     # Reset Spree::Current to avoid stale memoized values between tests
     Spree::Current.reset
+  end
+
+  config.around(:each) do |example|
+    DatabaseCleaner.cleaning do
+      example.run
+    end
   end
 
   config.order = :random

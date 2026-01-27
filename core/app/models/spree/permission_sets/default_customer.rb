@@ -39,6 +39,17 @@ module Spree
           !order.completed? && (order.user == user || order.token && token == order.token)
         end
 
+        # Line item management
+        can :create, Spree::LineItem do |line_item, token|
+          line_item.order.user == user || line_item.order.token && token == line_item.order.token
+        end
+        can :update, Spree::LineItem do |line_item, token|
+          !line_item.order.completed? && (line_item.order.user == user || line_item.order.token && token == line_item.order.token)
+        end
+        can :destroy, Spree::LineItem do |line_item, token|
+          !line_item.order.completed? && (line_item.order.user == user || line_item.order.token && token == line_item.order.token)
+        end
+
         # User account management - available to all users (including guests for their own record)
         can :create, Spree.user_class
         can [:show, :update, :destroy], Spree.user_class, id: user.id
