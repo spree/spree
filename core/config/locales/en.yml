@@ -748,7 +748,9 @@ en:
     api_key: API Key
     api_keys: API Keys
     apis:
+      admin: Admin API
       platform: Platform API
+      store: Store API
       storefront: Storefront API
     applied_to: Applied to
     apply: Apply
