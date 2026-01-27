@@ -1,0 +1,26 @@
+<%= content_for :page_title do %>
+  <%= page_header_back_button(collection_url) %>
+  <%= @api_key.name %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <% if @api_key.active? && can?(:update, @api_key) %>
+    <%= link_to Spree.t(:edit), edit_object_url(@api_key), class: 'btn btn-light' %>
+    <%= button_to Spree.t('admin.api_keys.revoke'),
+          spree.revoke_admin_api_key_path(@api_key),
+          method: :put,
+          class: 'btn btn-danger',
+          data: { confirm: Spree.t('admin.api_keys.revoke_confirmation') } %>
+  <% end %>
+<% end %>
+
+<div class="grid grid-cols-12 gap-6">
+  <div class="col-span-12 lg:col-span-8">
+    <%= render 'token_card' %>
+    <%= render 'usage_info' %>
+  </div>
+
+  <div class="col-span-12 lg:col-span-4">
+    <%= render 'details' %>
+  </div>
+</div>
