@@ -290,15 +290,19 @@ jobs:
       - run:
           name: Configure bundle path
           command: bundle config set --local path ~/spree/vendor/bundle
-      - run: bin/brakeman.sh
+      - run:
+          name: Run brakeman
+          command: bin/brakeman.sh
       - run:
           name: Move brakeman reports to artifacts directory
+          when: always
           command: |
             mkdir -p /tmp/test-artifacts/
-            mv brakeman-*.* /tmp/test-artifacts/
+            mv brakeman-*.* /tmp/test-artifacts/ 2>/dev/null || true
       - store_artifacts:
           path: /tmp/test-artifacts
           destination: brakeman-reports
+          when: always
 
 workflows:
   main:
