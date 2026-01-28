@@ -8,7 +8,7 @@ defaults: &defaults
     BUNDLE_RETRY: 3
     BUNDLE_PATH: ~/spree/vendor/bundle
     DB_HOST: localhost
-    DB: postgres # default value, this will speed up bundle install for all postgres builds
+    DB: postgres
     DB_USERNAME: postgres
     # Disable Rails verbose query logs in test for performance
     RAILS_LOG_LEVEL: warn
@@ -16,33 +16,22 @@ defaults: &defaults
   docker:
     - image: &ruby_image cimg/ruby:3.4-browsers
 
+# Environment for Rails 7.2 (MySQL tests)
+mysql_environment: &mysql_environment
+  <<: *environment
+  DB: mysql
+  DB_USERNAME: root
+  DB_PASSWORD: password
+  DB_HOST: 127.0.0.1
+  RAILS_VERSION: 7.2.0
+
 commands:
-  bundle_install:
-    steps:
-      - restore_cache:
-          keys:
-            - spree-bundle-v12-ruby-{{ .Branch }}
-            - spree-bundle-v12-ruby
-      - install_libvips
-      - run:
-          name: Install global dependencies
-          command: bundle update
-      - run:
-          name: Clean old gems
-          command: bundle clean
-      - run:
-          name: Install per-project gem dependencies
-          command: bin/build-ci.rb install
   install_libvips:
     steps:
       - run:
-          name: Fix APT mirrors
-          command: |
-            sudo apt-get update
-      - run:
           name: Install libvips
           command: |
-            sudo apt-get install -y libvips-dev
+            sudo apt-get update && sudo apt-get install -y libvips-dev
   store_all_artifacts:
     steps:
       - store_artifacts:
@@ -56,24 +45,68 @@ commands:
           destination: raw-test-output
       - store_test_results:
           path: /tmp/test-results
+
 jobs:
-  build:
+  # Build job for Rails 8 (default, used by PostgreSQL tests)
+  build_rails_8:
     <<: *defaults
     steps:
       - checkout
-      - bundle_install
+      - restore_cache:
+          keys:
+            - spree-bundle-v13-rails8-{{ checksum "Gemfile" }}
+            - spree-bundle-v13-rails8
+      - install_libvips
+      - run:
+          name: Install dependencies
+          command: |
+            bundle check || bundle install
+            bundle clean
+            bin/build-ci.rb install
       - save_cache:
-          key: spree-bundle-v12-ruby-{{ .Branch }}
+          key: spree-bundle-v13-rails8-{{ checksum "Gemfile" }}
           paths:
             - ~/spree/vendor/bundle
-  test: &test
+      - persist_to_workspace:
+          root: ~/spree
+          paths:
+            - vendor/bundle
+
+  # Build job for Rails 7.2 (used by MySQL tests)
+  build_rails_72:
+    <<: *defaults
+    environment:
+      <<: *mysql_environment
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - spree-bundle-v13-rails72-{{ checksum "Gemfile" }}
+            - spree-bundle-v13-rails72
+      - install_libvips
+      - run:
+          name: Install dependencies for Rails 7.2
+          command: |
+            bundle check || bundle install
+            bundle clean
+            bin/build-ci.rb install
+      - save_cache:
+          key: spree-bundle-v13-rails72-{{ checksum "Gemfile" }}
+          paths:
+            - ~/spree/vendor/bundle
+      - persist_to_workspace:
+          root: ~/spree
+          paths:
+            - vendor/bundle
+
+  # PostgreSQL test job template
+  test_postgres: &test_postgres
     <<: *defaults
     docker:
       - image: *ruby_image
       - image: cimg/postgres:16.2
         environment:
           POSTGRES_USER: postgres
-          # PostgreSQL performance optimizations for CI (unsafe for production, fast for tests)
           POSTGRES_HOST_AUTH_METHOD: trust
         command: >
           -c fsync=off
@@ -85,16 +118,22 @@ jobs:
           -c maintenance_work_mem=128MB
           -c effective_cache_size=512MB
           -c max_connections=200
-    steps: &default_steps
+    steps:
       - checkout
-      - bundle_install
+      - attach_workspace:
+          at: ~/spree
+      - install_libvips
+      - run:
+          name: Configure bundle path
+          command: bundle config set --local path ~/spree/vendor/bundle
       - run:
           name: Run tests
           command: bin/build-ci.rb test
       - store_all_artifacts
 
+  # MySQL test job template
   test_mysql: &test_mysql
-    <<: *test
+    <<: *defaults
     docker:
       - image: *ruby_image
       - image: cimg/mysql:8.0
@@ -107,52 +146,59 @@ jobs:
           --innodb-buffer-pool-size=256M
         environment:
           MYSQL_ROOT_PASSWORD: password
-    environment: &mysql_environment
-      <<: *environment
-      DB: mysql
-      DB_USERNAME: root
-      DB_PASSWORD: password
-      DB_HOST: 127.0.0.1
-      RAILS_VERSION: 7.2.0
+    environment:
+      <<: *mysql_environment
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/spree
+      - install_libvips
+      - run:
+          name: Configure bundle path
+          command: bundle config set --local path ~/spree/vendor/bundle
+      - run:
+          name: Run tests
+          command: bin/build-ci.rb test
+      - store_all_artifacts
 
-  # postgres tests
+  # PostgreSQL test jobs
   test_core_postgres:
-    <<: *test
+    <<: *test_postgres
     parallelism: 6
     environment:
       <<: *environment
       PROJECTS: core
   test_api_postgres:
-    <<: *test
+    <<: *test_postgres
     parallelism: 4
     environment:
       <<: *environment
       PROJECTS: api
   test_admin_postgres:
-    <<: *test
+    <<: *test_postgres
     parallelism: 2
     environment:
       <<: *environment
       PROJECTS: admin
   test_storefront_postgres:
-    <<: *test
+    <<: *test_postgres
     parallelism: 2
     environment:
       <<: *environment
       PROJECTS: storefront
   test_page_builder_postgres:
-    <<: *test
+    <<: *test_postgres
     parallelism: 1
     environment:
       <<: *environment
       PROJECTS: page_builder
   test_other_postgres:
-    <<: *test
+    <<: *test_postgres
     environment:
       <<: *environment
       PROJECTS: emails,sample
 
-  # mysql tests
+  # MySQL test jobs
   test_core_mysql:
     <<: *test_mysql
     parallelism: 6
@@ -189,12 +235,17 @@ jobs:
       <<: *mysql_environment
       PROJECTS: emails,sample
 
-  # brakeman
+  # Brakeman security scan
   brakeman:
     <<: *defaults
     steps:
       - checkout
-      - bundle_install
+      - attach_workspace:
+          at: ~/spree
+      - install_libvips
+      - run:
+          name: Configure bundle path
+          command: bundle config set --local path ~/spree/vendor/bundle
       - run: bin/brakeman.sh
       - run:
           name: Move brakeman reports to artifacts directory
@@ -208,48 +259,51 @@ jobs:
 workflows:
   main:
     jobs:
-      - build
-      # postgres tests
+      # Build jobs run in parallel
+      - build_rails_8
+      - build_rails_72
+
+      # PostgreSQL tests depend on Rails 8 build
       - test_core_postgres:
           requires:
-            - build
+            - build_rails_8
       - test_api_postgres:
           requires:
-            - build
+            - build_rails_8
       - test_admin_postgres:
           requires:
-            - build
+            - build_rails_8
       - test_storefront_postgres:
           requires:
-            - build
+            - build_rails_8
       - test_page_builder_postgres:
           requires:
-            - build
+            - build_rails_8
       - test_other_postgres:
           requires:
-            - build
+            - build_rails_8
 
-      # mysql tests
+      # MySQL tests depend on Rails 7.2 build
       - test_core_mysql:
           requires:
-            - build
+            - build_rails_72
       - test_api_mysql:
           requires:
-            - build
+            - build_rails_72
       - test_admin_mysql:
           requires:
-            - build
+            - build_rails_72
       - test_storefront_mysql:
           requires:
-            - build
+            - build_rails_72
       - test_page_builder_mysql:
           requires:
-            - build
+            - build_rails_72
       - test_other_mysql:
           requires:
-            - build
+            - build_rails_72
 
-      # brakeman
+      # Brakeman depends on Rails 8 build
       - brakeman:
           requires:
-            - build
+            - build_rails_8
