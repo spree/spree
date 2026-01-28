@@ -65,25 +65,6 @@ references:
         command: bin/build-ci.rb test
     - store_all_artifacts
 
-  # Test steps for projects with pre-built test apps (admin, storefront, page_builder)
-  test_steps_with_prebuilt_app: &test_steps_with_prebuilt_app
-    - checkout
-    - attach_workspace:
-        at: ~/spree
-    - install_libvips
-    - run:
-        name: Configure bundle path
-        command: bundle config set --local path ~/spree/vendor/bundle
-    - run:
-        name: Setup database
-        command: |
-          cd ${PROJECTS}/spec/dummy
-          bundle exec rails db:create db:schema:load
-    - run:
-        name: Run tests
-        command: bin/build-ci.rb test
-    - store_all_artifacts
-
 commands:
   install_libvips:
     steps:
@@ -162,108 +143,6 @@ jobs:
           paths:
             - vendor/bundle
 
-  # Build test app for admin (Rails 8/PostgreSQL)
-  build_admin_test_app:
-    working_directory: ~/spree
-    environment:
-      <<: *environment
-      PROJECTS: admin
-    docker:
-      - image: *ruby_browsers_image
-      - *postgres_image
-    steps:
-      - checkout
-      - attach_workspace:
-          at: ~/spree
-      - restore_cache:
-          keys:
-            - spree-admin-assets-v1-{{ checksum "admin/Gemfile.lock" }}
-            - spree-admin-assets-v1
-      - install_libvips
-      - run:
-          name: Configure bundle path
-          command: bundle config set --local path ~/spree/vendor/bundle
-      - run:
-          name: Build admin test app
-          command: bin/build-ci.rb build_test_app
-      - save_cache:
-          key: spree-admin-assets-v1-{{ checksum "admin/Gemfile.lock" }}
-          paths:
-            - admin/spec/dummy/public/assets
-      - persist_to_workspace:
-          root: ~/spree
-          paths:
-            - admin/spec/dummy/db/schema.rb
-            - admin/spec/dummy/public/assets
-
-  # Build test app for storefront (Rails 8/PostgreSQL)
-  build_storefront_test_app:
-    working_directory: ~/spree
-    environment:
-      <<: *environment
-      PROJECTS: storefront
-    docker:
-      - image: *ruby_browsers_image
-      - *postgres_image
-    steps:
-      - checkout
-      - attach_workspace:
-          at: ~/spree
-      - restore_cache:
-          keys:
-            - spree-storefront-assets-v1-{{ checksum "storefront/Gemfile.lock" }}
-            - spree-storefront-assets-v1
-      - install_libvips
-      - run:
-          name: Configure bundle path
-          command: bundle config set --local path ~/spree/vendor/bundle
-      - run:
-          name: Build storefront test app
-          command: bin/build-ci.rb build_test_app
-      - save_cache:
-          key: spree-storefront-assets-v1-{{ checksum "storefront/Gemfile.lock" }}
-          paths:
-            - storefront/spec/dummy/public/assets
-      - persist_to_workspace:
-          root: ~/spree
-          paths:
-            - storefront/spec/dummy/db/schema.rb
-            - storefront/spec/dummy/public/assets
-
-  # Build test app for page_builder (Rails 8/PostgreSQL)
-  build_page_builder_test_app:
-    working_directory: ~/spree
-    environment:
-      <<: *environment
-      PROJECTS: page_builder
-    docker:
-      - image: *ruby_browsers_image
-      - *postgres_image
-    steps:
-      - checkout
-      - attach_workspace:
-          at: ~/spree
-      - restore_cache:
-          keys:
-            - spree-page-builder-assets-v1-{{ checksum "page_builder/Gemfile.lock" }}
-            - spree-page-builder-assets-v1
-      - install_libvips
-      - run:
-          name: Configure bundle path
-          command: bundle config set --local path ~/spree/vendor/bundle
-      - run:
-          name: Build page_builder test app
-          command: bin/build-ci.rb build_test_app
-      - save_cache:
-          key: spree-page-builder-assets-v1-{{ checksum "page_builder/Gemfile.lock" }}
-          paths:
-            - page_builder/spec/dummy/public/assets
-      - persist_to_workspace:
-          root: ~/spree
-          paths:
-            - page_builder/spec/dummy/db/schema.rb
-            - page_builder/spec/dummy/public/assets
-
   # PostgreSQL test jobs
   test_core_postgres:
     working_directory: ~/spree
@@ -296,7 +175,7 @@ jobs:
       - image: *ruby_browsers_image
       - *postgres_image
     parallelism: 2
-    steps: *test_steps_with_prebuilt_app
+    steps: *test_steps
 
   test_storefront_postgres:
     working_directory: ~/spree
@@ -307,7 +186,7 @@ jobs:
       - image: *ruby_browsers_image
       - *postgres_image
     parallelism: 2
-    steps: *test_steps_with_prebuilt_app
+    steps: *test_steps
 
   test_page_builder_postgres:
     working_directory: ~/spree
@@ -318,7 +197,7 @@ jobs:
       - image: *ruby_browsers_image
       - *postgres_image
     parallelism: 1
-    steps: *test_steps_with_prebuilt_app
+    steps: *test_steps
 
   test_other_postgres:
     working_directory: ~/spree
@@ -432,17 +311,6 @@ workflows:
       - build_rails_8
       - build_rails_72
 
-      # Build test apps for admin/storefront/page_builder (Rails 8 only, shared by all parallel nodes)
-      - build_admin_test_app:
-          requires:
-            - build_rails_8
-      - build_storefront_test_app:
-          requires:
-            - build_rails_8
-      - build_page_builder_test_app:
-          requires:
-            - build_rails_8
-
       # PostgreSQL tests
       - test_core_postgres:
           requires:
@@ -452,13 +320,13 @@ workflows:
             - build_rails_8
       - test_admin_postgres:
           requires:
-            - build_admin_test_app
+            - build_rails_8
       - test_storefront_postgres:
           requires:
-            - build_storefront_test_app
+            - build_rails_8
       - test_page_builder_postgres:
           requires:
-            - build_page_builder_test_app
+            - build_rails_8
       - test_other_postgres:
           requires:
             - build_rails_8
