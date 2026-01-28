@@ -57,7 +57,7 @@ RSpec.describe Spree::Api::V3::Store::TaxonomiesController, type: :controller do
 
   describe 'GET #show' do
     it 'returns the taxonomy' do
-      get :show, params: { id: taxonomy.id }
+      get :show, params: { id: taxonomy.prefix_id }
 
       expect(response).to have_http_status(:ok)
       expect(json_response['id']).to eq(taxonomy.prefix_id)
@@ -65,7 +65,7 @@ RSpec.describe Spree::Api::V3::Store::TaxonomiesController, type: :controller do
     end
 
     it 'returns taxonomy with its attributes' do
-      get :show, params: { id: taxonomy.id }
+      get :show, params: { id: taxonomy.prefix_id }
 
       expect(json_response['id']).to eq(taxonomy.prefix_id)
       expect(json_response['name']).to be_present
@@ -73,7 +73,7 @@ RSpec.describe Spree::Api::V3::Store::TaxonomiesController, type: :controller do
 
     context 'error handling' do
       it 'returns not found for non-existent taxonomy' do
-        get :show, params: { id: 0 }
+        get :show, params: { id: 'txnmy_nonexistent' }
 
         expect(response).to have_http_status(:not_found)
         expect(json_response['error']['code']).to eq('record_not_found')
@@ -81,7 +81,7 @@ RSpec.describe Spree::Api::V3::Store::TaxonomiesController, type: :controller do
       end
 
       it 'returns not found for taxonomy from another store' do
-        get :show, params: { id: other_store_taxonomy.id }
+        get :show, params: { id: other_store_taxonomy.prefix_id }
 
         expect(response).to have_http_status(:not_found)
         expect(json_response['error']['code']).to eq('record_not_found')
