@@ -66,11 +66,6 @@ jobs:
           key: spree-bundle-v12-ruby-{{ .Branch }}
           paths:
             - ~/spree/vendor/bundle
-      - persist_to_workspace:
-          root: ~/spree
-          paths:
-            - vendor/bundle
-            - .bundle
   test: &test
     <<: *defaults
     docker:
@@ -92,9 +87,7 @@ jobs:
           -c max_connections=200
     steps: &default_steps
       - checkout
-      - attach_workspace:
-          at: ~/spree
-      - install_libvips
+      - bundle_install
       - run:
           name: Run tests
           command: bin/build-ci.rb test
