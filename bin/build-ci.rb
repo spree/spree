@@ -66,6 +66,9 @@ class Project
       true
     when 'test'
       test
+    when 'build_test_app'
+      build_test_app
+      true
     else
       raise "Unknown mode: #{mode.inspect}"
     end
@@ -101,13 +104,53 @@ class Project
   #
   # @return [undefined]
   def setup_test_app
+    # Skip if test app already exists with precompiled assets (from build job)
+    if test_app_ready?
+      Project.log("Test app already exists for #{name}, skipping generation")
+      return
+    end
+
     gemfile_path = if CORE_GEMS.include?(self.name)
                      ROOT_GEMFILE
                    else
                      './Gemfile'
                    end
 
-    system("bundle exec --gemfile=#{gemfile_path} rake test_app ") || raise('Failed to setup the test app')
+    system("bundle exec --gemfile=#{gemfile_path} rake test_app") || raise('Failed to setup the test app')
+  end
+
+  # Check if test app is already set up and ready
+  # For pre-built test apps, we check for assets (db setup happens separately per node)
+  #
+  # @return [Boolean]
+  def test_app_ready?
+    dummy_path = ROOT.join(name, 'spec', 'dummy')
+    assets_path = dummy_path.join('public', 'assets')
+    schema_path = dummy_path.join('db', 'schema.rb')
+
+    # For projects with assets (admin, storefront, page_builder), check for precompiled assets
+    if %w[admin storefront page_builder].include?(name)
+      assets_path.exist? && assets_path.children.any?
+    else
+      # For other projects, check for schema.rb (they still run full test_app)
+      schema_path.exist?
+    end
+  end
+
+  # Build test app without running tests (for CI build step)
+  #
+  # @return [self]
+  def build_test_app
+    chdir do
+      gemfile_path = if CORE_GEMS.include?(self.name)
+                       ROOT_GEMFILE
+                     else
+                       './Gemfile'
+                     end
+
+      system("bundle exec --gemfile=#{gemfile_path} rake test_app") || raise('Failed to setup the test app')
+    end
+    self
   end
 
   # Run tests for subproject
@@ -145,6 +188,18 @@ class Project
     self
   end
   private_class_method :install
+
+  # Build test apps for current projects (without running tests)
+  #
+  # @return [self]
+  def self.build_test_app
+    current_projects.each do |project|
+      log("Building test app for: #{project.name}")
+      project.build_test_app
+    end
+    self
+  end
+  private_class_method :build_test_app
 
   # Execute tests on subprojects
   #

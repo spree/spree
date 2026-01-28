@@ -115,9 +115,15 @@ namespace :common do
 
     # Precompile assets after all generators have run
     # This ensures CSS entry points (like Spree Admin's Tailwind CSS) are created first
+    # Skip if assets already exist (e.g., restored from CI cache)
     if javascript_enabled || css_enabled
-      puts 'Precompiling assets...'
-      system('bundle exec rake assets:precompile')
+      assets_path = File.join(Dir.pwd, 'spec', 'dummy', 'public', 'assets')
+      if Dir.exist?(assets_path) && Dir.children(assets_path).any?
+        puts 'Assets already precompiled, skipping...'
+      else
+        puts 'Precompiling assets...'
+        system('bundle exec rake assets:precompile')
+      end
     end
   end
 
