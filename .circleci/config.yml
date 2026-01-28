@@ -1,5 +1,10 @@
 version: 2.1
 
+# Reusable image references
+images:
+  ruby: &ruby_image cimg/ruby:3.4
+  ruby_browsers: &ruby_browsers_image cimg/ruby:3.4-browsers
+
 defaults: &defaults
   environment: &environment
     CIRCLE_TEST_REPORTS: /tmp/test-results
@@ -14,7 +19,7 @@ defaults: &defaults
     RAILS_LOG_LEVEL: warn
   working_directory: ~/spree
   docker:
-    - image: &ruby_image cimg/ruby:3.4-browsers
+    - image: *ruby_image
 
 # Environment for Rails 7.2 (MySQL tests)
 mysql_environment: &mysql_environment
@@ -99,67 +104,82 @@ jobs:
           paths:
             - vendor/bundle
 
-  # PostgreSQL test job template
+  # Reusable database image configs
+  postgres_image: &postgres_image
+    image: cimg/postgres:16.2
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_HOST_AUTH_METHOD: trust
+    command: >
+      -c fsync=off
+      -c synchronous_commit=off
+      -c full_page_writes=off
+      -c random_page_cost=1.0
+      -c shared_buffers=256MB
+      -c work_mem=64MB
+      -c maintenance_work_mem=128MB
+      -c effective_cache_size=512MB
+      -c max_connections=200
+
+  mysql_image: &mysql_image
+    image: cimg/mysql:8.0
+    command: >
+      --default-authentication-plugin=mysql_native_password
+      --innodb-flush-log-at-trx-commit=0
+      --innodb-flush-method=nosync
+      --innodb-doublewrite=0
+      --sync-binlog=0
+      --innodb-buffer-pool-size=256M
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+
+  # Reusable test steps
+  test_steps: &test_steps
+    - checkout
+    - attach_workspace:
+        at: ~/spree
+    - install_libvips
+    - run:
+        name: Configure bundle path
+        command: bundle config set --local path ~/spree/vendor/bundle
+    - run:
+        name: Run tests
+        command: bin/build-ci.rb test
+    - store_all_artifacts
+
+  # PostgreSQL test job templates
   test_postgres: &test_postgres
     <<: *defaults
     docker:
       - image: *ruby_image
-      - image: cimg/postgres:16.2
-        environment:
-          POSTGRES_USER: postgres
-          POSTGRES_HOST_AUTH_METHOD: trust
-        command: >
-          -c fsync=off
-          -c synchronous_commit=off
-          -c full_page_writes=off
-          -c random_page_cost=1.0
-          -c shared_buffers=256MB
-          -c work_mem=64MB
-          -c maintenance_work_mem=128MB
-          -c effective_cache_size=512MB
-          -c max_connections=200
-    steps:
-      - checkout
-      - attach_workspace:
-          at: ~/spree
-      - install_libvips
-      - run:
-          name: Configure bundle path
-          command: bundle config set --local path ~/spree/vendor/bundle
-      - run:
-          name: Run tests
-          command: bin/build-ci.rb test
-      - store_all_artifacts
+      - *postgres_image
+    steps: *test_steps
 
-  # MySQL test job template
+  test_postgres_browsers: &test_postgres_browsers
+    <<: *defaults
+    docker:
+      - image: *ruby_browsers_image
+      - *postgres_image
+    steps: *test_steps
+
+  # MySQL test job templates
   test_mysql: &test_mysql
     <<: *defaults
     docker:
       - image: *ruby_image
-      - image: cimg/mysql:8.0
-        command: >
-          --default-authentication-plugin=mysql_native_password
-          --innodb-flush-log-at-trx-commit=0
-          --innodb-flush-method=nosync
-          --innodb-doublewrite=0
-          --sync-binlog=0
-          --innodb-buffer-pool-size=256M
-        environment:
-          MYSQL_ROOT_PASSWORD: password
+      - *mysql_image
     environment:
       <<: *mysql_environment
-    steps:
-      - checkout
-      - attach_workspace:
-          at: ~/spree
-      - install_libvips
-      - run:
-          name: Configure bundle path
-          command: bundle config set --local path ~/spree/vendor/bundle
-      - run:
-          name: Run tests
-          command: bin/build-ci.rb test
-      - store_all_artifacts
+    steps: *test_steps
+
+  test_mysql_browsers: &test_mysql_browsers
+    <<: *defaults
+    docker:
+      - image: *ruby_browsers_image
+      - *mysql_image
+    environment:
+      <<: *mysql_environment
+    steps: *test_steps
 
   # PostgreSQL test jobs
   test_core_postgres:
@@ -175,19 +195,19 @@ jobs:
       <<: *environment
       PROJECTS: api
   test_admin_postgres:
-    <<: *test_postgres
+    <<: *test_postgres_browsers
     parallelism: 2
     environment:
       <<: *environment
       PROJECTS: admin
   test_storefront_postgres:
-    <<: *test_postgres
+    <<: *test_postgres_browsers
     parallelism: 2
     environment:
       <<: *environment
       PROJECTS: storefront
   test_page_builder_postgres:
-    <<: *test_postgres
+    <<: *test_postgres_browsers
     parallelism: 1
     environment:
       <<: *environment
@@ -212,19 +232,19 @@ jobs:
       <<: *mysql_environment
       PROJECTS: api
   test_admin_mysql:
-    <<: *test_mysql
+    <<: *test_mysql_browsers
     parallelism: 2
     environment:
       <<: *mysql_environment
       PROJECTS: admin
   test_storefront_mysql:
-    <<: *test_mysql
+    <<: *test_mysql_browsers
     parallelism: 2
     environment:
       <<: *mysql_environment
       PROJECTS: storefront
   test_page_builder_mysql:
-    <<: *test_mysql
+    <<: *test_mysql_browsers
     parallelism: 1
     environment:
       <<: *mysql_environment
