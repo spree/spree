@@ -1,110 +1,10 @@
 version: 2.1
 
-# Reusable image references
-images:
-  ruby: &ruby_image cimg/ruby:3.4
-  ruby_browsers: &ruby_browsers_image cimg/ruby:3.4-browsers
+# Reusable references (this section is ignored by CircleCI but allows YAML anchors)
+references:
+  ruby_image: &ruby_image cimg/ruby:3.4
+  ruby_browsers_image: &ruby_browsers_image cimg/ruby:3.4-browsers
 
-defaults: &defaults
-  environment: &environment
-    CIRCLE_TEST_REPORTS: /tmp/test-results
-    CIRCLE_ARTIFACTS: /tmp/test-artifacts
-    BUNDLE_JOBS: 4
-    BUNDLE_RETRY: 3
-    BUNDLE_PATH: ~/spree/vendor/bundle
-    DB_HOST: localhost
-    DB: postgres
-    DB_USERNAME: postgres
-    # Disable Rails verbose query logs in test for performance
-    RAILS_LOG_LEVEL: warn
-  working_directory: ~/spree
-  docker:
-    - image: *ruby_image
-
-# Environment for Rails 7.2 (MySQL tests)
-mysql_environment: &mysql_environment
-  <<: *environment
-  DB: mysql
-  DB_USERNAME: root
-  DB_PASSWORD: password
-  DB_HOST: 127.0.0.1
-  RAILS_VERSION: 7.2.0
-
-commands:
-  install_libvips:
-    steps:
-      - run:
-          name: Install libvips
-          command: |
-            sudo apt-get update && sudo apt-get install -y libvips-dev
-  store_all_artifacts:
-    steps:
-      - store_artifacts:
-          path: /tmp/test-artifacts
-          destination: test-artifacts
-      - store_artifacts:
-          path: /tmp/failed_tests
-          destination: failed_tests
-      - store_artifacts:
-          path: /tmp/test-results
-          destination: raw-test-output
-      - store_test_results:
-          path: /tmp/test-results
-
-jobs:
-  # Build job for Rails 8 (default, used by PostgreSQL tests)
-  build_rails_8:
-    <<: *defaults
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - spree-bundle-v13-rails8-{{ checksum "Gemfile" }}
-            - spree-bundle-v13-rails8
-      - install_libvips
-      - run:
-          name: Install dependencies
-          command: |
-            bundle check || bundle install
-            bundle clean
-            bin/build-ci.rb install
-      - save_cache:
-          key: spree-bundle-v13-rails8-{{ checksum "Gemfile" }}
-          paths:
-            - ~/spree/vendor/bundle
-      - persist_to_workspace:
-          root: ~/spree
-          paths:
-            - vendor/bundle
-
-  # Build job for Rails 7.2 (used by MySQL tests)
-  build_rails_72:
-    <<: *defaults
-    environment:
-      <<: *mysql_environment
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - spree-bundle-v13-rails72-{{ checksum "Gemfile" }}
-            - spree-bundle-v13-rails72
-      - install_libvips
-      - run:
-          name: Install dependencies for Rails 7.2
-          command: |
-            bundle check || bundle install
-            bundle clean
-            bin/build-ci.rb install
-      - save_cache:
-          key: spree-bundle-v13-rails72-{{ checksum "Gemfile" }}
-          paths:
-            - ~/spree/vendor/bundle
-      - persist_to_workspace:
-          root: ~/spree
-          paths:
-            - vendor/bundle
-
-  # Reusable database image configs
   postgres_image: &postgres_image
     image: cimg/postgres:16.2
     environment:
@@ -133,7 +33,25 @@ jobs:
     environment:
       MYSQL_ROOT_PASSWORD: password
 
-  # Reusable test steps
+  environment: &environment
+    CIRCLE_TEST_REPORTS: /tmp/test-results
+    CIRCLE_ARTIFACTS: /tmp/test-artifacts
+    BUNDLE_JOBS: 4
+    BUNDLE_RETRY: 3
+    BUNDLE_PATH: ~/spree/vendor/bundle
+    DB_HOST: localhost
+    DB: postgres
+    DB_USERNAME: postgres
+    RAILS_LOG_LEVEL: warn
+
+  mysql_environment: &mysql_environment
+    <<: *environment
+    DB: mysql
+    DB_USERNAME: root
+    DB_PASSWORD: password
+    DB_HOST: 127.0.0.1
+    RAILS_VERSION: 7.2.0
+
   test_steps: &test_steps
     - checkout
     - attach_workspace:
@@ -147,117 +65,225 @@ jobs:
         command: bin/build-ci.rb test
     - store_all_artifacts
 
-  # PostgreSQL test job templates
-  test_postgres: &test_postgres
-    <<: *defaults
+commands:
+  install_libvips:
+    steps:
+      - run:
+          name: Install libvips
+          command: |
+            sudo apt-get update && sudo apt-get install -y libvips-dev
+  store_all_artifacts:
+    steps:
+      - store_artifacts:
+          path: /tmp/test-artifacts
+          destination: test-artifacts
+      - store_artifacts:
+          path: /tmp/failed_tests
+          destination: failed_tests
+      - store_artifacts:
+          path: /tmp/test-results
+          destination: raw-test-output
+      - store_test_results:
+          path: /tmp/test-results
+
+jobs:
+  # Build job for Rails 8 (default, used by PostgreSQL tests)
+  build_rails_8:
+    working_directory: ~/spree
+    environment:
+      <<: *environment
     docker:
       - image: *ruby_image
-      - *postgres_image
-    steps: *test_steps
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - spree-bundle-v13-rails8-{{ checksum "Gemfile" }}
+            - spree-bundle-v13-rails8
+      - install_libvips
+      - run:
+          name: Install dependencies
+          command: |
+            bundle check || bundle install
+            bundle clean
+            bin/build-ci.rb install
+      - save_cache:
+          key: spree-bundle-v13-rails8-{{ checksum "Gemfile" }}
+          paths:
+            - ~/spree/vendor/bundle
+      - persist_to_workspace:
+          root: ~/spree
+          paths:
+            - vendor/bundle
 
-  test_postgres_browsers: &test_postgres_browsers
-    <<: *defaults
-    docker:
-      - image: *ruby_browsers_image
-      - *postgres_image
-    steps: *test_steps
-
-  # MySQL test job templates
-  test_mysql: &test_mysql
-    <<: *defaults
+  # Build job for Rails 7.2 (used by MySQL tests)
+  build_rails_72:
+    working_directory: ~/spree
+    environment:
+      <<: *mysql_environment
     docker:
       - image: *ruby_image
-      - *mysql_image
-    environment:
-      <<: *mysql_environment
-    steps: *test_steps
-
-  test_mysql_browsers: &test_mysql_browsers
-    <<: *defaults
-    docker:
-      - image: *ruby_browsers_image
-      - *mysql_image
-    environment:
-      <<: *mysql_environment
-    steps: *test_steps
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - spree-bundle-v13-rails72-{{ checksum "Gemfile" }}
+            - spree-bundle-v13-rails72
+      - install_libvips
+      - run:
+          name: Install dependencies for Rails 7.2
+          command: |
+            bundle check || bundle install
+            bundle clean
+            bin/build-ci.rb install
+      - save_cache:
+          key: spree-bundle-v13-rails72-{{ checksum "Gemfile" }}
+          paths:
+            - ~/spree/vendor/bundle
+      - persist_to_workspace:
+          root: ~/spree
+          paths:
+            - vendor/bundle
 
   # PostgreSQL test jobs
   test_core_postgres:
-    <<: *test_postgres
-    parallelism: 6
+    working_directory: ~/spree
     environment:
       <<: *environment
       PROJECTS: core
+    docker:
+      - image: *ruby_image
+      - *postgres_image
+    parallelism: 6
+    steps: *test_steps
+
   test_api_postgres:
-    <<: *test_postgres
-    parallelism: 4
+    working_directory: ~/spree
     environment:
       <<: *environment
       PROJECTS: api
+    docker:
+      - image: *ruby_image
+      - *postgres_image
+    parallelism: 4
+    steps: *test_steps
+
   test_admin_postgres:
-    <<: *test_postgres_browsers
-    parallelism: 2
+    working_directory: ~/spree
     environment:
       <<: *environment
       PROJECTS: admin
-  test_storefront_postgres:
-    <<: *test_postgres_browsers
+    docker:
+      - image: *ruby_browsers_image
+      - *postgres_image
     parallelism: 2
+    steps: *test_steps
+
+  test_storefront_postgres:
+    working_directory: ~/spree
     environment:
       <<: *environment
       PROJECTS: storefront
+    docker:
+      - image: *ruby_browsers_image
+      - *postgres_image
+    parallelism: 2
+    steps: *test_steps
+
   test_page_builder_postgres:
-    <<: *test_postgres_browsers
-    parallelism: 1
+    working_directory: ~/spree
     environment:
       <<: *environment
       PROJECTS: page_builder
+    docker:
+      - image: *ruby_browsers_image
+      - *postgres_image
+    parallelism: 1
+    steps: *test_steps
+
   test_other_postgres:
-    <<: *test_postgres
+    working_directory: ~/spree
     environment:
       <<: *environment
       PROJECTS: emails,sample
+    docker:
+      - image: *ruby_image
+      - *postgres_image
+    steps: *test_steps
 
   # MySQL test jobs
   test_core_mysql:
-    <<: *test_mysql
-    parallelism: 6
+    working_directory: ~/spree
     environment:
       <<: *mysql_environment
       PROJECTS: core
+    docker:
+      - image: *ruby_image
+      - *mysql_image
+    parallelism: 6
+    steps: *test_steps
+
   test_api_mysql:
-    <<: *test_mysql
-    parallelism: 4
+    working_directory: ~/spree
     environment:
       <<: *mysql_environment
       PROJECTS: api
+    docker:
+      - image: *ruby_image
+      - *mysql_image
+    parallelism: 4
+    steps: *test_steps
+
   test_admin_mysql:
-    <<: *test_mysql_browsers
-    parallelism: 2
+    working_directory: ~/spree
     environment:
       <<: *mysql_environment
       PROJECTS: admin
-  test_storefront_mysql:
-    <<: *test_mysql_browsers
+    docker:
+      - image: *ruby_browsers_image
+      - *mysql_image
     parallelism: 2
+    steps: *test_steps
+
+  test_storefront_mysql:
+    working_directory: ~/spree
     environment:
       <<: *mysql_environment
       PROJECTS: storefront
+    docker:
+      - image: *ruby_browsers_image
+      - *mysql_image
+    parallelism: 2
+    steps: *test_steps
+
   test_page_builder_mysql:
-    <<: *test_mysql_browsers
-    parallelism: 1
+    working_directory: ~/spree
     environment:
       <<: *mysql_environment
       PROJECTS: page_builder
+    docker:
+      - image: *ruby_browsers_image
+      - *mysql_image
+    parallelism: 1
+    steps: *test_steps
+
   test_other_mysql:
-    <<: *test_mysql
+    working_directory: ~/spree
     environment:
       <<: *mysql_environment
       PROJECTS: emails,sample
+    docker:
+      - image: *ruby_image
+      - *mysql_image
+    steps: *test_steps
 
   # Brakeman security scan
   brakeman:
-    <<: *defaults
+    working_directory: ~/spree
+    environment:
+      <<: *environment
+    docker:
+      - image: *ruby_image
     steps:
       - checkout
       - attach_workspace:
