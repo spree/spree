@@ -20,9 +20,9 @@ module Spree
       def default_package
         package = Package.new(stock_location)
 
-        # Group by variant_id as grouping by variant fires cached query.
-        inventory_units.index_by(&:variant_id).each do |variant_id, inventory_unit|
-          variant = Spree::Variant.find(variant_id)
+        inventory_units.index_by(&:line_item_id).each do |line_item_id, inventory_unit|
+          line_item = Spree::LineItem.find(line_item_id)
+          variant = line_item.variant
           unit = inventory_unit.dup # Can be used by others, do not use directly
           if variant.should_track_inventory?
             next unless stock_location.stocks? variant
