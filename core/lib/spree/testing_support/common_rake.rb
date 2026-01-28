@@ -20,8 +20,7 @@ namespace :common do
     javascript_enabled = args[:javascript].to_b
     css_enabled = args[:css].to_b
 
-    # Admin and Storefront require JavaScript and CSS (Tailwind) to function properly
-    javascript_enabled ||= install_admin || install_storefront
+    # Admin and Storefront require CSS (Tailwind) to function properly
     css_enabled ||= install_admin || install_storefront
 
     puts args
@@ -32,9 +31,6 @@ namespace :common do
     dummy_app_args = [
       "--lib_name=#{ENV['LIB_NAME']}"
     ]
-    # Use API mode only if no frontend components are needed
-    use_api_mode = !install_storefront && !install_admin && !javascript_enabled && !css_enabled
-    dummy_app_args << '--api' if use_api_mode
     dummy_app_args << '--javascript' if javascript_enabled
     dummy_app_args << '--css=tailwind' if css_enabled
 
