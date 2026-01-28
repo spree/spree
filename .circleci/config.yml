@@ -26,9 +26,6 @@ commands:
           name: Install global dependencies
           command: bundle update
       - run:
-          name: Clean old gems
-          command: bundle clean
-      - run:
           name: Install per-project gem dependencies
           command: bin/build-ci.rb install
   install_libvips:
@@ -75,7 +72,6 @@ jobs:
       - checkout
       - attach_workspace:
           at: /tmp
-      - bundle_install
       - run:
           name: Run tests
           command: bin/build-ci.rb test
