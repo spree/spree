@@ -121,7 +121,9 @@
                   "developer/core-concepts/i18n",
                   "developer/core-concepts/search-filtering",
                   "developer/core-concepts/slugs",
-                  "developer/core-concepts/images-assets"
+                  "developer/core-concepts/images-assets",
+                  "developer/core-concepts/reports",
+                  "developer/core-concepts/imports-exports"
                 ]
               },
               {
