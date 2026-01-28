@@ -10,6 +10,8 @@ defaults: &defaults
     DB_HOST: localhost
     DB: postgres # default value, this will speed up bundle install for all postgres builds
     DB_USERNAME: postgres
+    # Disable Rails verbose query logs in test for performance
+    RAILS_LOG_LEVEL: warn
   working_directory: ~/spree
   docker:
     - image: &ruby_image cimg/ruby:3.4-browsers
@@ -64,6 +66,11 @@ jobs:
           key: spree-bundle-v12-ruby-{{ .Branch }}
           paths:
             - ~/spree/vendor/bundle
+      - persist_to_workspace:
+          root: ~/spree
+          paths:
+            - vendor/bundle
+            - .bundle
   test: &test
     <<: *defaults
     docker:
@@ -71,11 +78,23 @@ jobs:
       - image: cimg/postgres:16.2
         environment:
           POSTGRES_USER: postgres
+          # PostgreSQL performance optimizations for CI (unsafe for production, fast for tests)
+          POSTGRES_HOST_AUTH_METHOD: trust
+        command: >
+          -c fsync=off
+          -c synchronous_commit=off
+          -c full_page_writes=off
+          -c random_page_cost=1.0
+          -c shared_buffers=256MB
+          -c work_mem=64MB
+          -c maintenance_work_mem=128MB
+          -c effective_cache_size=512MB
+          -c max_connections=200
     steps: &default_steps
       - checkout
       - attach_workspace:
-          at: /tmp
-      - bundle_install
+          at: ~/spree
+      - install_libvips
       - run:
           name: Run tests
           command: bin/build-ci.rb test
@@ -86,7 +105,13 @@ jobs:
     docker:
       - image: *ruby_image
       - image: cimg/mysql:8.0
-        command: [--default-authentication-plugin=mysql_native_password]
+        command: >
+          --default-authentication-plugin=mysql_native_password
+          --innodb-flush-log-at-trx-commit=0
+          --innodb-flush-method=nosync
+          --innodb-doublewrite=0
+          --sync-binlog=0
+          --innodb-buffer-pool-size=256M
         environment:
           MYSQL_ROOT_PASSWORD: password
     environment: &mysql_environment
