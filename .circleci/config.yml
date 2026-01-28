@@ -105,7 +105,6 @@ jobs:
           name: Install dependencies
           command: |
             bundle check || bundle install
-            bundle clean
             bin/build-ci.rb install
       - save_cache:
           key: spree-bundle-v13-rails8-{{ checksum "Gemfile" }}
@@ -134,7 +133,6 @@ jobs:
           name: Install dependencies for Rails 7.2
           command: |
             bundle check || bundle install
-            bundle clean
             bin/build-ci.rb install
       - save_cache:
           key: spree-bundle-v13-rails72-{{ checksum "Gemfile" }}
