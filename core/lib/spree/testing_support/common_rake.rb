@@ -281,8 +281,7 @@ namespace :common do
     # Update config/boot.rb with the correct Gemfile path
     update_boot_rb(dummy_path, lib_name)
 
-    # Regenerate database.yml from environment variables
-    regenerate_database_yml(dummy_path, lib_name)
+    # database.yml uses ERB and reads from ENV vars at runtime, no need to regenerate
 
     # Run module-specific install generator if it exists
     run_module_generator(lib_name)
@@ -349,76 +348,6 @@ def update_boot_rb(dummy_path, lib_name)
 
   File.write(boot_rb_path, content)
   puts "Updated #{boot_rb_path} with Gemfile path: #{gemfile_path}"
-end
-
-def regenerate_database_yml(dummy_path, lib_name)
-  database_yml_path = File.join(dummy_path, 'config', 'database.yml')
-  lib_name_sanitized = lib_name.gsub('/', '_')
-
-  db_type = ENV['DB'] || 'sqlite3'
-  db_username = ENV['DB_USERNAME']
-  db_password = ENV['DB_PASSWORD']
-  db_host = ENV['DB_HOST']
-  db_pool = ENV['DB_POOL'] || 50
-
-  content = case db_type
-            when 'mysql'
-              lines = []
-              lines << "mysql: &mysql"
-              lines << "  adapter: mysql2"
-              lines << "  encoding: utf8"
-              lines << "  username: #{db_username}" if db_username && !db_username.empty?
-              lines << "  password: #{db_password}" if db_password && !db_password.empty?
-              lines << "  host: #{db_host}" if db_host && !db_host.empty?
-              lines << "  reconnect: true"
-              lines << "  pool: 5"
-              lines << ""
-              lines << "development:"
-              lines << "  <<: *mysql"
-              lines << "  database: #{lib_name_sanitized}_spree_development"
-              lines << "test:"
-              lines << "  <<: *mysql"
-              lines << "  database: #{lib_name_sanitized}_spree_test"
-              lines << "production:"
-              lines << "  <<: *mysql"
-              lines << "  database: #{lib_name_sanitized}_spree_production"
-              lines.join("\n")
-            when 'postgres'
-              lines = []
-              lines << "postgres: &postgres"
-              lines << "  adapter: postgresql"
-              lines << "  username: #{db_username}" if db_username && !db_username.empty?
-              lines << "  password: #{db_password}" if db_password && !db_password.empty?
-              lines << "  host: #{db_host}" if db_host && !db_host.empty?
-              lines << "  min_messages: warning"
-              lines << "  pool: #{db_pool}"
-              lines << ""
-              lines << "development:"
-              lines << "  <<: *postgres"
-              lines << "  database: #{lib_name_sanitized}_spree_development"
-              lines << "test:"
-              lines << "  <<: *postgres"
-              lines << "  database: #{lib_name_sanitized}_spree_test"
-              lines << "production:"
-              lines << "  <<: *postgres"
-              lines << "  database: #{lib_name_sanitized}_spree_production"
-              lines.join("\n")
-            else
-              <<~YAML
-                development:
-                  adapter: sqlite3
-                  database: db/spree_development.sqlite3
-                test:
-                  adapter: sqlite3
-                  database: db/spree_test.sqlite3
-                production:
-                  adapter: sqlite3
-                  database: db/spree_production.sqlite3
-              YAML
-            end
-
-  File.write(database_yml_path, content)
-  puts "Regenerated #{database_yml_path} for #{db_type}"
 end
 
 def run_module_generator(lib_name)

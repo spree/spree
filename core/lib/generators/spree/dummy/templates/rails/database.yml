@@ -1,81 +1,33 @@
-<% if agent_number = ENV['TC_AGENT_NUMBER']
-database_prefix = agent_number + '_'
-end %>
-<% if options[:lib_name]
-  lib_name = options[:lib_name].gsub('/', '_')
-end %>
-<% db_password = ENV['DB_PASSWORD'] %>
-<% db_username = ENV['DB_USERNAME'] %>
-<% db_host = ENV['DB_HOST'] %>
-<% case ENV['DB']
-  when 'sqlite' %>
+<%# Database configuration that reads from environment variables at runtime %>
+<%# This allows the same database.yml to work across different modules %>
+
+<% lib_name = ENV.fetch('LIB_NAME', 'spree').gsub('/', '_') %>
+
 development:
   adapter: sqlite3
   database: db/spree_development.sqlite3
+
 test:
-  adapter: sqlite3
-  database: db/spree_test.sqlite3
-  timeout: 10000
-production:
-  adapter: sqlite3
-  database: db/spree_production.sqlite3
-<% when 'mysql' %>
-mysql: &mysql
-  adapter: mysql2
+  adapter: <%= ENV.fetch('DB', 'sqlite3') == 'postgres' ? 'postgresql' : (ENV.fetch('DB', 'sqlite3') == 'mysql' ? 'mysql2' : 'sqlite3') %>
+  database: <%= ENV.fetch('DB', 'sqlite3') == 'sqlite3' ? 'db/spree_test.sqlite3' : "#{lib_name}_spree_test" %>
+  <% if ENV['DB'] == 'postgres' || ENV['DB'] == 'mysql' %>
+  username: <%= ENV['DB_USERNAME'] %>
+  <% if ENV['DB_PASSWORD'] && !ENV['DB_PASSWORD'].empty? %>
+  password: <%= ENV['DB_PASSWORD'] %>
+  <% end %>
+  <% if ENV['DB_HOST'] && !ENV['DB_HOST'].empty? %>
+  host: <%= ENV['DB_HOST'] %>
+  <% end %>
+  pool: <%= ENV.fetch('DB_POOL', 50) %>
+  <% end %>
+  <% if ENV['DB'] == 'mysql' %>
   encoding: utf8
-  <% unless db_username.blank? %>
-  username: <%= db_username %>
-  <% end %>
-  <% unless db_password.blank? %>
-  password: <%= db_password %>
-  <% end %>
-  <% unless db_host.blank? %>
-  host: <%= db_host %>
-  <% end %>
   reconnect: true
-  pool: 5
-
-development:
-  <<: *mysql
-  database: <%= database_prefix %><%= lib_name %>_spree_development
-test:
-  <<: *mysql
-  database: <%= database_prefix %><%= lib_name %>_spree_test
-production:
-  <<: *mysql
-  database: <%= database_prefix %><%= lib_name %>_spree_production
-<% when 'postgres' %>
-postgres: &postgres
-  adapter: postgresql
-  <% unless db_username.blank? %>
-  username: <%= db_username || 'postgres' %>
   <% end %>
-  <% unless db_password.blank? %>
-  password: <%= db_password %>
-  <% end %>
-  <% unless db_host.blank? %>
-  host: <%= db_host %>
-  <% end %>
+  <% if ENV['DB'] == 'postgres' %>
   min_messages: warning
-  pool: <%= ENV["DB_POOL"] || 50 %>
+  <% end %>
 
-development:
-  <<: *postgres
-  database: <%= database_prefix %><%= lib_name %>_spree_development
-test:
-  <<: *postgres
-  database: <%= database_prefix %><%= lib_name %>_spree_test
-production:
-  <<: *postgres
-  database: <%= database_prefix %><%= lib_name %>_spree_production
-<% else %>
-development:
-  adapter: sqlite3
-  database: db/spree_development.sqlite3
-test:
-  adapter: sqlite3
-  database: db/spree_test.sqlite3
 production:
   adapter: sqlite3
   database: db/spree_production.sqlite3
-<% end %>
