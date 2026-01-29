@@ -48,6 +48,16 @@ class Project
     end
   end
 
+  # Setup test app (without running tests)
+  #
+  # @return [self]
+  def setup
+    chdir do
+      setup_test_app
+    end
+    self
+  end
+
   # Setup database for the test app
   #
   # @return [self]
@@ -172,7 +182,7 @@ class Project
   def self.setup
     current_projects.each do |project|
       log("Setting up test app for: #{project.name}")
-      project.chdir { project.send(:setup_test_app) }
+      project.setup
     end
     self
   end
