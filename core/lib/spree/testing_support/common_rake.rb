@@ -257,23 +257,27 @@ namespace :common do
     run_module_generator(lib_name)
 
     # Setup database - create and load schema
+    # Run commands from within the dummy app directory using bin/rails
     unless ENV['NO_MIGRATE']
       puts 'Setting up database...'
-      # Set the environment
-      system('bundle exec rails db:environment:set RAILS_ENV=test') || true
-      # Drop and create the database
-      puts 'Creating database...'
-      system('bundle exec rake db:drop db:create') || raise('Failed to create database')
-      # Generate the dummy model migration if not present
-      Spree::DummyModelGenerator.start
-      # Load schema (faster than running migrations) or run migrations if no schema exists
-      schema_file = File.join(dummy_path, 'db', 'schema.rb')
-      if File.exist?(schema_file)
-        puts 'Loading schema...'
-        system('bundle exec rake db:schema:load') || raise('Failed to load schema')
-      else
-        puts 'Running migrations...'
-        system('bundle exec rake db:migrate') || raise('Failed to run migrations')
+
+      Dir.chdir(dummy_path) do
+        # Set the environment
+        system('bin/rails db:environment:set RAILS_ENV=test') || true
+        # Drop and create the database
+        puts 'Creating database...'
+        system('bin/rails db:drop db:create') || raise('Failed to create database')
+        # Generate the dummy model migration if not present
+        Spree::DummyModelGenerator.start
+        # Load schema (faster than running migrations) or run migrations if no schema exists
+        schema_file = File.join('db', 'schema.rb')
+        if File.exist?(schema_file)
+          puts 'Loading schema...'
+          system('bin/rails db:schema:load') || raise('Failed to load schema')
+        else
+          puts 'Running migrations...'
+          system('bin/rails db:migrate') || raise('Failed to run migrations')
+        end
       end
     end
 
