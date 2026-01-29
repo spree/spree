@@ -43,7 +43,7 @@ module Spree
 
         all_parent_ids = all_section_ids + all_page_blocks.ids
         all_page_links = Spree::PageLink.
-                          includes(:linkable, parent: :pageable).
+                          preload(:linkable, parent: :pageable).
                           where(linkable_type: 'Spree::Page').
                           where(parent_id: all_parent_ids, linkable_id: theme.pages)
 

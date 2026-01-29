@@ -3,7 +3,7 @@ module Spree
     extend ActiveSupport::Concern
 
     included do
-      has_many :links, -> { order(:position).includes(:linkable) }, class_name: 'Spree::PageLink', as: :parent, dependent: :destroy, inverse_of: :parent
+      has_many :links, -> { order(:position) }, class_name: 'Spree::PageLink', as: :parent, dependent: :destroy, inverse_of: :parent
       alias page_links links
 
       after_create :create_default_links, unless: :do_not_create_links
