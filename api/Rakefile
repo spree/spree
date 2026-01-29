@@ -11,7 +11,12 @@ task default: :spec
 desc "Generates a dummy app for testing"
 task :test_app do
   ENV['LIB_NAME'] = 'spree/api'
-  Rake::Task['common:test_app'].invoke
+
+  if ENV['USE_PREBUILT_APP'] == 'true'
+    Rake::Task['common:use_prebuilt_app'].invoke('basic')
+  else
+    Rake::Task['common:test_app'].invoke
+  end
 end
 
 namespace :rswag do

@@ -12,12 +12,16 @@ desc "Generates a dummy app for testing"
 task :test_app do
   ENV['LIB_NAME'] = 'spree/storefront'
 
-  Rake::Task['common:test_app'].execute(
-    user_class: 'Spree::User',
-    admin_user_class: 'Spree::AdminUser',
-    authentication: 'devise',
-    install_admin: true,
-    css: true,
-    javascript: true
-  )
+  if ENV['USE_PREBUILT_APP'] == 'true'
+    Rake::Task['common:use_prebuilt_app'].invoke('full')
+  else
+    Rake::Task['common:test_app'].execute(
+      user_class: 'Spree::User',
+      admin_user_class: 'Spree::AdminUser',
+      authentication: 'devise',
+      install_admin: true,
+      css: true,
+      javascript: true
+    )
+  end
 end

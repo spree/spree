@@ -12,7 +12,11 @@ desc "Generates a dummy app for testing"
 task :test_app do
   ENV['LIB_NAME'] = 'spree/page_builder'
 
-  Rake::Task['common:test_app'].execute(
-    install_admin: true,
-  )
+  if ENV['USE_PREBUILT_APP'] == 'true'
+    Rake::Task['common:use_prebuilt_app'].invoke('full')
+  else
+    Rake::Task['common:test_app'].execute(
+      install_admin: true,
+    )
+  end
 end

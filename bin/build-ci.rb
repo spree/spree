@@ -107,7 +107,10 @@ class Project
                      './Gemfile'
                    end
 
-    system("bundle exec --gemfile=#{gemfile_path} rake test_app ") || raise('Failed to setup the test app')
+    env_vars = []
+    env_vars << "USE_PREBUILT_APP=#{ENV['USE_PREBUILT_APP']}" if ENV['USE_PREBUILT_APP']
+
+    system("#{env_vars.join(' ')} bundle exec --gemfile=#{gemfile_path} rake test_app ") || raise('Failed to setup the test app')
   end
 
   # Run tests for subproject

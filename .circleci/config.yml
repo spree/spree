@@ -64,6 +64,53 @@ jobs:
           key: spree-bundle-v12-ruby-{{ .Branch }}
           paths:
             - ~/spree/vendor/bundle
+
+  # Build prebuilt test apps for postgres
+  build_test_apps_postgres:
+    <<: *defaults
+    docker:
+      - image: *ruby_image
+      - image: cimg/postgres:16.2
+        environment:
+          POSTGRES_USER: postgres
+    steps:
+      - checkout
+      - bundle_install
+      - run:
+          name: Build prebuilt test apps (postgres)
+          command: bin/build-test-apps.rb postgres
+      - persist_to_workspace:
+          root: /tmp
+          paths:
+            - prebuilt-test-apps
+
+  # Build prebuilt test apps for mysql
+  build_test_apps_mysql:
+    <<: *defaults
+    docker:
+      - image: *ruby_image
+      - image: cimg/mysql:8.0
+        command: [--default-authentication-plugin=mysql_native_password]
+        environment:
+          MYSQL_ROOT_PASSWORD: password
+    environment:
+      <<: *environment
+      DB: mysql
+      DB_USERNAME: root
+      DB_PASSWORD: password
+      DB_HOST: 127.0.0.1
+      RAILS_VERSION: 7.2.0
+    steps:
+      - checkout
+      - bundle_install
+      - run:
+          name: Build prebuilt test apps (mysql)
+          command: bin/build-test-apps.rb mysql
+      - persist_to_workspace:
+          root: /tmp
+          paths:
+            - prebuilt-test-apps
+
   test: &test
     <<: *defaults
     docker:
@@ -71,6 +118,9 @@ jobs:
       - image: cimg/postgres:16.2
         environment:
           POSTGRES_USER: postgres
+    environment:
+      <<: *environment
+      USE_PREBUILT_APP: 'true'
     steps: &default_steps
       - checkout
       - attach_workspace:
@@ -96,6 +146,7 @@ jobs:
       DB_PASSWORD: password
       DB_HOST: 127.0.0.1
       RAILS_VERSION: 7.2.0
+      USE_PREBUILT_APP: 'true'
 
   # postgres tests
   test_core_postgres:
@@ -104,35 +155,41 @@ jobs:
     environment:
       <<: *environment
       PROJECTS: core
+      USE_PREBUILT_APP: 'true'
   test_api_postgres:
     <<: *test
     parallelism: 4
     environment:
       <<: *environment
       PROJECTS: api
+      USE_PREBUILT_APP: 'true'
   test_admin_postgres:
     <<: *test
     parallelism: 2
     environment:
       <<: *environment
       PROJECTS: admin
+      USE_PREBUILT_APP: 'true'
   test_storefront_postgres:
     <<: *test
     parallelism: 2
     environment:
       <<: *environment
       PROJECTS: storefront
+      USE_PREBUILT_APP: 'true'
   test_page_builder_postgres:
     <<: *test
     parallelism: 1
     environment:
       <<: *environment
       PROJECTS: page_builder
+      USE_PREBUILT_APP: 'true'
   test_other_postgres:
     <<: *test
     environment:
       <<: *environment
       PROJECTS: emails,sample
+      USE_PREBUILT_APP: 'true'
 
   # mysql tests
   test_core_mysql:
@@ -141,35 +198,41 @@ jobs:
     environment:
       <<: *mysql_environment
       PROJECTS: core
+      USE_PREBUILT_APP: 'true'
   test_api_mysql:
     <<: *test_mysql
     parallelism: 4
     environment:
       <<: *mysql_environment
       PROJECTS: api
+      USE_PREBUILT_APP: 'true'
   test_admin_mysql:
     <<: *test_mysql
     parallelism: 2
     environment:
       <<: *mysql_environment
       PROJECTS: admin
+      USE_PREBUILT_APP: 'true'
   test_storefront_mysql:
     <<: *test_mysql
     parallelism: 2
     environment:
       <<: *mysql_environment
       PROJECTS: storefront
+      USE_PREBUILT_APP: 'true'
   test_page_builder_mysql:
     <<: *test_mysql
     parallelism: 1
     environment:
       <<: *mysql_environment
       PROJECTS: page_builder
+      USE_PREBUILT_APP: 'true'
   test_other_mysql:
     <<: *test_mysql
     environment:
       <<: *mysql_environment
       PROJECTS: emails,sample
+      USE_PREBUILT_APP: 'true'
 
   # brakeman
   brakeman:
@@ -191,45 +254,54 @@ workflows:
   main:
     jobs:
       - build
-      # postgres tests
-      - test_core_postgres:
+
+      # Build prebuilt test apps
+      - build_test_apps_postgres:
           requires:
             - build
-      - test_api_postgres:
-          requires:
-            - build
-      - test_admin_postgres:
-          requires:
-            - build
-      - test_storefront_postgres:
-          requires:
-            - build
-      - test_page_builder_postgres:
-          requires:
-            - build
-      - test_other_postgres:
+      - build_test_apps_mysql:
           requires:
             - build
 
-      # mysql tests
+      # postgres tests (require prebuilt apps)
+      - test_core_postgres:
+          requires:
+            - build_test_apps_postgres
+      - test_api_postgres:
+          requires:
+            - build_test_apps_postgres
+      - test_admin_postgres:
+          requires:
+            - build_test_apps_postgres
+      - test_storefront_postgres:
+          requires:
+            - build_test_apps_postgres
+      - test_page_builder_postgres:
+          requires:
+            - build_test_apps_postgres
+      - test_other_postgres:
+          requires:
+            - build_test_apps_postgres
+
+      # mysql tests (require prebuilt apps)
       - test_core_mysql:
           requires:
-            - build
+            - build_test_apps_mysql
       - test_api_mysql:
           requires:
-            - build
+            - build_test_apps_mysql
       - test_admin_mysql:
           requires:
-            - build
+            - build_test_apps_mysql
       - test_storefront_mysql:
           requires:
-            - build
+            - build_test_apps_mysql
       - test_page_builder_mysql:
           requires:
-            - build
+            - build_test_apps_mysql
       - test_other_mysql:
           requires:
-            - build
+            - build_test_apps_mysql
 
       # brakeman
       - brakeman:

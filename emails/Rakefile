@@ -11,7 +11,10 @@ task default: :spec
 desc "Generates a dummy app for testing"
 task :test_app do
   ENV['LIB_NAME'] = 'spree/emails'
-  Rake::Task['common:test_app'].execute(
-    css: true
-  )
+
+  if ENV['USE_PREBUILT_APP'] == 'true'
+    Rake::Task['common:use_prebuilt_app'].invoke('basic')
+  else
+    Rake::Task['common:test_app'].invoke
+  end
 end

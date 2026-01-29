@@ -133,4 +133,180 @@ namespace :common do
     puts 'Seeding ...'
     system('bundle exec rake db:seed RAILS_ENV=test > /dev/null 2>&1')
   end
+
+  # Use a prebuilt test app template instead of generating from scratch
+  # This is used in CI to speed up test app creation
+  task :use_prebuilt_app, [:template_type] do |_t, args|
+    require 'fileutils'
+    require 'yaml'
+    require 'erb'
+
+    template_type = args[:template_type] || 'basic'
+    prebuilt_dir = Pathname.new('/tmp/prebuilt-test-apps').join(template_type)
+    dummy_path = ENV['DUMMY_PATH'] || 'spec/dummy'
+    lib_name = ENV['LIB_NAME']
+
+    unless prebuilt_dir.exist?
+      raise "Prebuilt template not found at #{prebuilt_dir}. Run bin/build-test-apps.rb first."
+    end
+
+    puts "Using prebuilt #{template_type} template from #{prebuilt_dir}..."
+
+    # Remove existing dummy app if present
+    FileUtils.rm_rf(dummy_path) if File.exist?(dummy_path)
+
+    # Copy the prebuilt template
+    puts 'Copying prebuilt template...'
+    FileUtils.cp_r(prebuilt_dir.to_s, dummy_path)
+
+    # Update config/application.rb with the correct lib_name require
+    update_application_rb(dummy_path, lib_name)
+
+    # Update config/boot.rb with the correct Gemfile path
+    update_boot_rb(dummy_path, lib_name)
+
+    # Regenerate database.yml from environment variables
+    regenerate_database_yml(dummy_path, lib_name)
+
+    # Run module-specific install generator if it exists
+    run_module_generator(lib_name)
+
+    # Run database migrations
+    unless ENV['NO_MIGRATE']
+      puts 'Running database migrations...'
+      system('bundle exec rails db:environment:set RAILS_ENV=test > /dev/null 2>&1')
+      system('bundle exec rake db:drop db:create > /dev/null 2>&1')
+      Spree::DummyModelGenerator.start
+      system('bundle exec rake db:migrate > /dev/null 2>&1')
+    end
+
+    puts "Prebuilt #{template_type} template ready at #{dummy_path}"
+  end
+end
+
+def update_application_rb(dummy_path, lib_name)
+  app_rb_path = File.join(dummy_path, 'config', 'application.rb')
+  return unless File.exist?(app_rb_path)
+
+  content = File.read(app_rb_path)
+
+  # Replace the require line with the correct lib_name
+  # The template may have been built with a different lib_name
+  content.gsub!(/require ['"]spree\/\w+['"]/, "require '#{lib_name}'")
+
+  File.write(app_rb_path, content)
+  puts "Updated #{app_rb_path} to require '#{lib_name}'"
+end
+
+def update_boot_rb(dummy_path, lib_name)
+  boot_rb_path = File.join(dummy_path, 'config', 'boot.rb')
+  return unless File.exist?(boot_rb_path)
+
+  # Determine the correct Gemfile path based on lib_name
+  core_gems = ['spree/core', 'spree/api']
+  gemfile_path = if core_gems.include?(lib_name)
+                   '../../../../../Gemfile'
+                 else
+                   '../../../../Gemfile'
+                 end
+
+  content = <<~RUBY
+    require 'rubygems'
+    gemfile = File.expand_path("#{gemfile_path}", __FILE__)
+
+    ENV['BUNDLE_GEMFILE'] = gemfile
+    require 'bundler'
+    Bundler.setup
+  RUBY
+
+  File.write(boot_rb_path, content)
+  puts "Updated #{boot_rb_path} with Gemfile path: #{gemfile_path}"
+end
+
+def regenerate_database_yml(dummy_path, lib_name)
+  database_yml_path = File.join(dummy_path, 'config', 'database.yml')
+  lib_name_sanitized = lib_name.gsub('/', '_')
+
+  db_type = ENV['DB'] || 'sqlite3'
+  db_username = ENV['DB_USERNAME']
+  db_password = ENV['DB_PASSWORD']
+  db_host = ENV['DB_HOST']
+  db_pool = ENV['DB_POOL'] || 50
+
+  content = case db_type
+            when 'mysql'
+              <<~YAML
+                mysql: &mysql
+                  adapter: mysql2
+                  encoding: utf8
+                  #{'username: ' + db_username if db_username && !db_username.empty?}
+                  #{'password: ' + db_password if db_password && !db_password.empty?}
+                  #{'host: ' + db_host if db_host && !db_host.empty?}
+                  reconnect: true
+                  pool: 5
+
+                development:
+                  <<: *mysql
+                  database: #{lib_name_sanitized}_spree_development
+                test:
+                  <<: *mysql
+                  database: #{lib_name_sanitized}_spree_test
+                production:
+                  <<: *mysql
+                  database: #{lib_name_sanitized}_spree_production
+              YAML
+            when 'postgres'
+              <<~YAML
+                postgres: &postgres
+                  adapter: postgresql
+                  #{'username: ' + db_username if db_username && !db_username.empty?}
+                  #{'password: ' + db_password if db_password && !db_password.empty?}
+                  #{'host: ' + db_host if db_host && !db_host.empty?}
+                  min_messages: warning
+                  pool: #{db_pool}
+
+                development:
+                  <<: *postgres
+                  database: #{lib_name_sanitized}_spree_development
+                test:
+                  <<: *postgres
+                  database: #{lib_name_sanitized}_spree_test
+                production:
+                  <<: *postgres
+                  database: #{lib_name_sanitized}_spree_production
+              YAML
+            else
+              <<~YAML
+                development:
+                  adapter: sqlite3
+                  database: db/spree_development.sqlite3
+                test:
+                  adapter: sqlite3
+                  database: db/spree_test.sqlite3
+                production:
+                  adapter: sqlite3
+                  database: db/spree_production.sqlite3
+              YAML
+            end
+
+  # Remove empty/commented lines from the YAML
+  content = content.lines.reject { |line| line.strip.empty? || line.strip == '#' }.join
+
+  File.write(database_yml_path, content)
+  puts "Regenerated #{database_yml_path} for #{db_type}"
+end
+
+def run_module_generator(lib_name)
+  begin
+    require "generators/#{lib_name}/install/install_generator"
+    puts "Running #{lib_name} installation generator..."
+
+    if ENV['NO_MIGRATE']
+      "#{lib_name.camelize}::Generators::InstallGenerator".constantize.start(['--force'])
+    else
+      "#{lib_name.camelize}::Generators::InstallGenerator".constantize.start(['--force', '--auto-run-migrations'])
+    end
+  rescue LoadError => e
+    puts "No installation generator found for #{lib_name}, skipping..."
+  end
 end
