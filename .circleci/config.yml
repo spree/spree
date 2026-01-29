@@ -127,19 +127,14 @@ jobs:
           at: /tmp
       - bundle_install
       - run:
-          name: Setup test app and database
-          command: |
-            for project in $(echo ${PROJECTS:-core} | tr ',' ' '); do
-              echo "Setting up $project..."
-              cd ~/spree/$project
-              bundle exec rake test_app
-              cd spec/dummy
-              bin/rake db:create db:schema:load
-              cd ~/spree
-            done
+          name: Setup test app
+          command: bin/build-ci.rb setup
+      - run:
+          name: Setup database
+          command: bin/build-ci.rb setup_db
       - run:
           name: Run tests
-          command: bin/build-ci.rb test --skip-setup
+          command: bin/build-ci.rb test
       - store_all_artifacts
 
   test_mysql: &test_mysql

@@ -42,11 +42,22 @@ class Project
   #
   # @return [Boolean]
   #   the success of the build
-  def pass?(skip_setup: false)
+  def pass?
     chdir do
-      setup_test_app unless skip_setup
       run_tests
     end
+  end
+
+  # Setup database for the test app
+  #
+  # @return [self]
+  def setup_db
+    chdir do
+      Dir.chdir('spec/dummy') do
+        system('bin/rake db:create db:schema:load') || raise('Failed to setup database')
+      end
+    end
+    self
   end
 
   # Process CLI arguments
@@ -56,7 +67,6 @@ class Project
   # @return [Boolean]
   #   the success of the CLI run
   def self.run_cli(arguments)
-    skip_setup = arguments.delete('--skip-setup')
     raise ArgumentError if arguments.length > 1
 
     mode = arguments.fetch(0, DEFAULT_MODE)
@@ -66,7 +76,13 @@ class Project
       install
       true
     when 'test'
-      test(skip_setup: skip_setup)
+      test
+    when 'setup'
+      setup
+      true
+    when 'setup_db'
+      setup_db
+      true
     else
       raise "Unknown mode: #{mode.inspect}"
     end
@@ -150,11 +166,35 @@ class Project
   end
   private_class_method :install
 
+  # Setup test app for subprojects (without running tests)
+  #
+  # @return [self]
+  def self.setup
+    current_projects.each do |project|
+      log("Setting up test app for: #{project.name}")
+      project.chdir { project.send(:setup_test_app) }
+    end
+    self
+  end
+  private_class_method :setup
+
+  # Setup database for subprojects
+  #
+  # @return [self]
+  def self.setup_db
+    current_projects.each do |project|
+      log("Setting up database for: #{project.name}")
+      project.setup_db
+    end
+    self
+  end
+  private_class_method :setup_db
+
   # Execute tests on subprojects
   #
   # @return [Boolean]
   #   the success of ALL subprojects
-  def self.test(skip_setup: false)
+  def self.test
     projects = current_projects
     suffix   = "#{projects.length} projects(s) on node #{NODE_INDEX.succ} / #{NODE_TOTAL}"
 
@@ -165,7 +205,7 @@ class Project
 
     builds = projects.map do |project|
       log("Building: #{project.name}")
-      project.pass?(skip_setup: skip_setup)
+      project.pass?
     end
     log("Finished running #{suffix}")
 
