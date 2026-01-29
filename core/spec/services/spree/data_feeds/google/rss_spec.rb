@@ -37,6 +37,10 @@ module Spree
         expect(result.value[:file]).to include("<g:id>#{variant.id}</g:id>").once
       end
 
+      it 'includes product id as item_group_id' do
+        expect(result.value[:file]).to include("<g:item_group_id>#{product.id}</g:item_group_id>").once
+      end
+
       it 'includes title' do
         expect(result.value[:file]).to include("<g:title>#{product.name} - #{variant.option_values.first.name}</g:title>").once
       end

@@ -10,6 +10,7 @@ module Spree
           return failure(nil, error: 'No image link') if get_image_link(input[:variant], input[:product]).nil?
 
           information['id'] = input[:variant].id
+          information['item_group_id'] = input[:product].id
           information['title'] = format_title(input[:product], input[:variant])
           information['description'] = get_description(input[:product], input[:variant])
           information['link'] = "#{input[:store].url}/products/#{input[:product].slug}"
