@@ -45,14 +45,6 @@ namespace :common do
       system('yes | bundle exec rails importmap:install turbo:install stimulus:install')
     end
 
-    # install devise if it's not the legacy user, useful for testing storefront
-    if args[:authentication] == 'devise' && args[:user_class] != 'Spree::LegacyUser'
-      system('bundle exec rails g devise:install --force --auto-accept')
-      system("bundle exec rails g devise #{args[:user_class]} --force --auto-accept")
-      system("bundle exec rails g devise #{args[:admin_user_class]} --force --auto-accept") if args[:admin_user_class].present? && args[:admin_user_class] != args[:user_class]
-      system('rm -rf spec') # we need to cleanup factories created by devise to avoid naming conflict
-    end
-
     # Run core Spree install generator
     # The spree:install generator lives in the root spree gem. Core gems (spree_core, spree_api)
     # don't have spree as a dependency, so we need to use the root Gemfile to access the generator.
@@ -72,23 +64,15 @@ namespace :common do
     needs_storefront = install_storefront || ENV['LIB_NAME'] == 'spree/storefront'
 
     # Run admin install generator if requested or testing admin gem
-    if needs_admin
-      # Only run install if explicitly requested (not when testing admin gem itself)
-      if install_admin
-        puts 'Running Spree Admin install generator...'
-        system('bundle exec rails g spree:admin:install --force')
-      end
-      system('bundle exec rails g spree:admin:devise --force') if args[:authentication] == 'devise'
+    if needs_admin && install_admin
+      puts 'Running Spree Admin install generator...'
+      system('bundle exec rails g spree:admin:install --force')
     end
 
     # Run storefront install generator if requested or testing storefront gem
-    if needs_storefront
-      # Only run install if explicitly requested (not when testing storefront gem itself)
-      if install_storefront
-        puts 'Running Spree Storefront install generator...'
-        system('bundle exec rails g spree:storefront:install --force --migrate=false')
-      end
-      system('bundle exec rails g spree:storefront:devise --force') if args[:authentication] == 'devise'
+    if needs_storefront && install_storefront
+      puts 'Running Spree Storefront install generator...'
+      system('bundle exec rails g spree:storefront:install --force --migrate=false')
     end
 
     unless ENV['NO_MIGRATE']
@@ -179,14 +163,6 @@ namespace :common do
       system('yes | bundle exec rails importmap:install turbo:install stimulus:install')
     end
 
-    # install devise if it's not the legacy user
-    if authentication == 'devise' && user_class != 'Spree::LegacyUser'
-      system('bundle exec rails g devise:install --force --auto-accept')
-      system("bundle exec rails g devise #{user_class} --force --auto-accept")
-      system("bundle exec rails g devise #{admin_user_class} --force --auto-accept") if admin_user_class.present? && admin_user_class != user_class
-      system('rm -rf spec') # cleanup factories created by devise
-    end
-
     # Run core Spree install generator
     core_gems = %w[spree/core spree/api]
     root_gemfile = File.expand_path('../../../../Gemfile', __dir__)
@@ -202,21 +178,15 @@ namespace :common do
     needs_storefront = install_storefront || ENV['LIB_NAME'] == 'spree/storefront'
 
     # Run admin install generator if requested or testing admin gem
-    if needs_admin
-      if install_admin
-        puts 'Running Spree Admin install generator...'
-        system('bundle exec rails g spree:admin:install --force')
-      end
-      system('bundle exec rails g spree:admin:devise --force') if authentication == 'devise'
+    if needs_admin && install_admin
+      puts 'Running Spree Admin install generator...'
+      system('bundle exec rails g spree:admin:install --force')
     end
 
     # Run storefront install generator if requested or testing storefront gem
-    if needs_storefront
-      if install_storefront
-        puts 'Running Spree Storefront install generator...'
-        system('bundle exec rails g spree:storefront:install --force --migrate=false')
-      end
-      system('bundle exec rails g spree:storefront:devise --force') if authentication == 'devise'
+    if needs_storefront && install_storefront
+      puts 'Running Spree Storefront install generator...'
+      system('bundle exec rails g spree:storefront:install --force --migrate=false')
     end
 
     unless ENV['NO_MIGRATE']

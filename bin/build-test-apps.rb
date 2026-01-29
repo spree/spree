@@ -4,8 +4,8 @@
 # Usage: bin/build-test-apps.rb [postgres|mysql]
 #
 # Creates two template types:
-# - basic: for core, api, emails, sample (uses root Gemfile, LegacyUser, minimal config)
-# - full: for admin, storefront, page_builder (Devise, full assets)
+# - basic: for core, api, emails, sample (LegacyUser only, minimal config)
+# - full: for admin, storefront, page_builder (LegacyUser + LegacyAdminUser, full assets)
 
 require 'pathname'
 require 'fileutils'
@@ -30,9 +30,9 @@ class TestAppBuilder
     'full' => {
       gem_dir: 'admin',
       lib_name: 'spree/admin',
-      authentication: 'devise',
-      user_class: 'Spree::User',
-      admin_user_class: 'Spree::AdminUser',
+      authentication: 'dummy',
+      user_class: 'Spree::LegacyUser',
+      admin_user_class: 'Spree::LegacyAdminUser',
       install_admin: true,
       install_storefront: true,
       javascript: true,

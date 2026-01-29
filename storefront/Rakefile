@@ -16,9 +16,9 @@ task :test_app do
     Rake::Task['common:use_prebuilt_app'].invoke('full')
   else
     Rake::Task['common:test_app'].execute(
-      user_class: 'Spree::User',
-      admin_user_class: 'Spree::AdminUser',
-      authentication: 'devise',
+      user_class: 'Spree::LegacyUser',
+      admin_user_class: 'Spree::LegacyAdminUser',
+      authentication: 'dummy',
       install_admin: true,
       css: true,
       javascript: true
