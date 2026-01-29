@@ -10,7 +10,6 @@ import "trix"
 import "chartkick"
 import "Chart.bundle"
 
-import LocalTime from "local-time"
 import "mapkick/bundle"
 
 // Helpers
@@ -167,8 +166,6 @@ application.register('textarea-autogrow', TextareaAutogrow)
 application.register('unit-system', UnitSystemController)
 application.register('variants-form', VariantsFormController)
 application.register('bulk-editor', BulkEditorController)
-
-LocalTime.start()
 
 Trix.config.blockAttributes.heading1.tagName = 'h2'
 

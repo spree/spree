@@ -38,8 +38,8 @@ module Spree
       def build_resource
         report_resource = model_class.new(
           store: current_store,
-          date_from: parse_date_param(params[:date_from]),
-          date_to: parse_date_param(params[:date_to])&.end_of_day,
+          date_from: try_parse_date_param(params[:date_from]),
+          date_to: try_parse_date_param(params[:date_to])&.end_of_day,
           currency: params[:currency]
         )
         report_resource.vendor_id = params[:vendor_id] if defined?(Spree::Vendor)
@@ -65,8 +65,8 @@ module Spree
 
       def permitted_resource_params
         attributes = params.require(:report).permit(permitted_report_attributes)
-        attributes[:date_from] = parse_date_param(attributes[:date_from]) if attributes[:date_from].present?
-        attributes[:date_to] = parse_date_param(attributes[:date_to])&.end_of_day if attributes[:date_to].present?
+        attributes[:date_from] = try_parse_date_param(attributes[:date_from]) if attributes[:date_from].present?
+        attributes[:date_to] = try_parse_date_param(attributes[:date_to])&.end_of_day if attributes[:date_to].present?
         attributes
       end
     end
