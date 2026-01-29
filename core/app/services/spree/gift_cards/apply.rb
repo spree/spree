@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # Applies a gift card to an order
 # under the hood it creates a store credit payment record and updates the gift card amount used
 # @param gift_card [Spree::GiftCard] the gift card to apply
@@ -15,6 +16,14 @@ module Spree
 
         # we shouldn't allow a gift card to be applied to an order with a different currency
         return failure(:gift_card_mismatched_currency) if gift_card.currency != order.currency
+
+        # gift card requires logged user
+        if gift_card.user.present?
+          # user must be logged in
+          return failure(:gift_card_customer_not_logged_in) if order.user.blank?
+          # user must be the same as the gift card user
+          return failure(:gift_card_mismatched_customer) if gift_card.user != order.user
+        end
 
         amount = [gift_card.amount_remaining, order.total].min
         store = order.store
