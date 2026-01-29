@@ -64,6 +64,10 @@ class Project
   def setup_db
     chdir do
       Dir.chdir('spec/dummy') do
+        # Install migrations from all Spree gems
+        system('bin/rails g spree:install:migrations') || true
+        system('bin/rails g spree_api:install:migrations') || true
+        # Create database and load schema
         system('bin/rake db:create db:schema:load') || raise('Failed to setup database')
       end
     end
