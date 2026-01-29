@@ -64,9 +64,6 @@ class Project
   def setup_db
     chdir do
       Dir.chdir('spec/dummy') do
-        # Copy migrations from engines first
-        system('bin/rake spree:install:migrations spree_api:install:migrations') || true
-        # Create database and load schema
         system('bin/rake db:create db:schema:load') || raise('Failed to setup database')
       end
     end
