@@ -42,9 +42,9 @@ class Project
   #
   # @return [Boolean]
   #   the success of the build
-  def pass?
+  def pass?(skip_setup: false)
     chdir do
-      setup_test_app
+      setup_test_app unless skip_setup
       run_tests
     end
   end
@@ -56,6 +56,7 @@ class Project
   # @return [Boolean]
   #   the success of the CLI run
   def self.run_cli(arguments)
+    skip_setup = arguments.delete('--skip-setup')
     raise ArgumentError if arguments.length > 1
 
     mode = arguments.fetch(0, DEFAULT_MODE)
@@ -65,7 +66,7 @@ class Project
       install
       true
     when 'test'
-      test
+      test(skip_setup: skip_setup)
     else
       raise "Unknown mode: #{mode.inspect}"
     end
@@ -153,7 +154,7 @@ class Project
   #
   # @return [Boolean]
   #   the success of ALL subprojects
-  def self.test
+  def self.test(skip_setup: false)
     projects = current_projects
     suffix   = "#{projects.length} projects(s) on node #{NODE_INDEX.succ} / #{NODE_TOTAL}"
 
@@ -164,7 +165,7 @@ class Project
 
     builds = projects.map do |project|
       log("Building: #{project.name}")
-      project.pass?
+      project.pass?(skip_setup: skip_setup)
     end
     log("Finished running #{suffix}")
 

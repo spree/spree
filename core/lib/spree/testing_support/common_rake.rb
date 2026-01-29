@@ -262,28 +262,8 @@ namespace :common do
     # Run module-specific install generator if it exists
     run_module_generator(lib_name)
 
-    # Setup database - create and load schema
-    unless ENV['NO_MIGRATE']
-      puts 'Setting up database...'
-
-      Dir.chdir(dummy_path) do
-        # Set the environment
-        system('bin/rails db:environment:set RAILS_ENV=test') || true
-        # Drop and create the database
-        puts 'Creating database...'
-        system('bin/rake db:drop db:create') || raise('Failed to create database')
-        # Generate the dummy model migration if not present
-        Spree::DummyModelGenerator.start
-        # Load schema (faster than running migrations) or run migrations if no schema exists
-        if File.exist?('db/schema.rb')
-          puts 'Loading schema...'
-          system('bin/rake db:schema:load') || raise('Failed to load schema')
-        else
-          puts 'Running migrations...'
-          system('bin/rake db:migrate') || raise('Failed to run migrations')
-        end
-      end
-    end
+    # Database setup (db:create, db:schema:load) is handled separately in CI
+    # to allow for parallel execution and better error handling
 
     puts "Prebuilt #{template_type} template ready at #{dummy_path}"
   end
