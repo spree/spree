@@ -1,0 +1,52 @@
+# Dummy authentication helpers for testing
+# These helpers provide stub implementations that work with LegacyUser and LegacyAdminUser
+module Spree
+  module AuthenticationHelpers
+    def self.included(receiver)
+      receiver.helper_method(
+        :spree_current_user,
+        :spree_login_path,
+        :spree_signup_path,
+        :spree_logout_path,
+        :spree_forgot_password_path,
+        :spree_edit_password_path,
+        :spree_admin_login_path,
+        :spree_admin_logout_path
+      )
+    end
+
+    def spree_current_user
+      @spree_current_user
+    end
+
+    def spree_login_path(_opts = {})
+      '/login'
+    end
+
+    def spree_signup_path(_opts = {})
+      '/signup'
+    end
+
+    def spree_logout_path(_opts = {})
+      '/logout'
+    end
+
+    def spree_forgot_password_path(_opts = {})
+      '/forgot_password'
+    end
+
+    def spree_edit_password_path(_opts = {})
+      '/edit_password'
+    end
+
+    def spree_admin_login_path(_opts = {})
+      '/admin/login'
+    end
+
+    def spree_admin_logout_path(_opts = {})
+      '/admin/logout'
+    end
+  end
+end
+
+ApplicationController.include Spree::AuthenticationHelpers if defined?(ApplicationController)

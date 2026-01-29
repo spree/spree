@@ -2,6 +2,8 @@
 
 class CreateSpreeAdminUsers < ActiveRecord::Migration[7.2]
   def change
+    return if table_exists?(:spree_admin_users)
+
     create_table :spree_admin_users do |t|
       t.string :encrypted_password, limit: 128
       t.string :password_salt, limit: 128
