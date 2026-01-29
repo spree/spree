@@ -142,18 +142,28 @@ end
 Emails are triggered via Spree's event system. Create custom subscribers:
 
 ```ruby
-# app/subscribers/spree/custom_email_subscriber.rb
-module Spree
-  module CustomEmailSubscriber
-    include Spree::Event::Subscriber
+# app/subscribers/my_app/custom_email_subscriber.rb
+module MyApp
+  class CustomEmailSubscriber < Spree::Subscriber
+    subscribes_to 'customer.created'
 
-    event_action :user_registered
+    def handle(event)
+      user_id = event.payload['id']
+      user = Spree.user_class.find_by(id: user_id)
+      return unless user
 
-    def user_registered(event)
-      user = event.payload[:user]
       Spree::CustomMailer.welcome_email(user).deliver_later
     end
   end
+end
+```
+
+Then register the subscriber in an initializer:
+
+```ruby
+# config/initializers/spree.rb
+Rails.application.config.after_initialize do
+  Spree.subscribers << MyApp::CustomEmailSubscriber
 end
 ```
 

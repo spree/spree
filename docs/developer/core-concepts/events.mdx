@@ -455,18 +455,20 @@ Spree::Publishable::MissingSerializerError:
 
 Subscribers in `app/subscribers/` are automatically registered during Rails initialization.
 
-For subscribers in other locations, register them manually in an initializer:
+For subscribers in other locations, add them to the `Spree.subscribers` array in an initializer:
 
 ```ruby config/initializers/event_subscribers.rb
 Rails.application.config.after_initialize do
-  MyApp::CustomSubscriber.register!
+  Spree.subscribers << MyApp::CustomSubscriber
 end
 ```
 
-To unregister a subscriber:
+To remove a built-in subscriber:
 
-```ruby
-MyApp::CustomSubscriber.unregister!
+```ruby config/initializers/event_subscribers.rb
+Rails.application.config.after_initialize do
+  Spree.subscribers.delete(Spree::ExportSubscriber)
+end
 ```
 
 ## Synchronous vs Asynchronous
