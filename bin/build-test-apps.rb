@@ -4,11 +4,12 @@
 # Usage: bin/build-test-apps.rb [postgres|mysql]
 #
 # Creates two template types:
-# - basic: for core, api (uses root Gemfile, LegacyUser, minimal config)
-# - full: for admin, storefront, page_builder, emails, sample (Devise, full assets)
+# - basic: for core, api, emails, sample (uses root Gemfile, LegacyUser, minimal config)
+# - full: for admin, storefront, page_builder (Devise, full assets)
 
 require 'pathname'
 require 'fileutils'
+require 'yaml'
 
 class TestAppBuilder
   ROOT = Pathname.pwd.freeze
@@ -16,6 +17,7 @@ class TestAppBuilder
 
   TEMPLATE_CONFIGS = {
     'basic' => {
+      gem_dir: 'core',
       lib_name: 'spree/core',
       authentication: 'dummy',
       user_class: 'Spree::LegacyUser',
@@ -26,6 +28,7 @@ class TestAppBuilder
       css: false
     },
     'full' => {
+      gem_dir: 'admin',
       lib_name: 'spree/admin',
       authentication: 'devise',
       user_class: 'Spree::User',
@@ -69,19 +72,24 @@ class TestAppBuilder
     config = TEMPLATE_CONFIGS[template_type]
     template_dir = OUTPUT_DIR.join(template_type)
 
-    # Build the test app in a temporary location within the appropriate gem directory
-    # We need to be in the gem directory for Bundler to work correctly
-    gem_dir = template_type == 'basic' ? ROOT.join('core') : ROOT.join('admin')
+    # Build the test app from within the appropriate gem directory
+    gem_dir = ROOT.join(config[:gem_dir])
 
     Dir.chdir(gem_dir) do
-      ENV['DB'] = @db_type
-      ENV['LIB_NAME'] = config[:lib_name]
-      ENV['DUMMY_PATH'] = template_dir.to_s
+      # Set environment variables for the build
+      env_vars = {
+        'DB' => @db_type,
+        'LIB_NAME' => config[:lib_name],
+        'DUMMY_PATH' => template_dir.to_s
+      }
 
       # Generate the Rails app and run all setup
-      build_command = build_rake_command(config)
+      build_command = build_rake_command(config, env_vars)
       log "Running: #{build_command}"
-      system(build_command) || raise("Failed to build #{template_type} template")
+
+      # Execute with environment variables
+      success = system(env_vars, build_command)
+      raise("Failed to build #{template_type} template") unless success
     end
 
     # Store metadata about the template
@@ -90,31 +98,47 @@ class TestAppBuilder
     log "#{template_type} template built successfully at #{template_dir}"
   end
 
-  def build_rake_command(config)
+  def build_rake_command(config, env_vars)
     # Use the root Gemfile for core gems, local for others
-    gemfile = config[:lib_name].start_with?('spree/core', 'spree/api') ? ROOT.join('Gemfile') : './Gemfile'
+    gemfile = %w[spree/core spree/api].include?(config[:lib_name]) ? ROOT.join('Gemfile') : './Gemfile'
 
-    args = []
-    args << "authentication:#{config[:authentication]}"
-    args << "user_class:#{config[:user_class]}"
-    args << "admin_user_class:#{config[:admin_user_class]}" if config[:admin_user_class]
-    args << "install_admin:#{config[:install_admin]}"
-    args << "install_storefront:#{config[:install_storefront]}"
-    args << "javascript:#{config[:javascript]}"
-    args << "css:#{config[:css]}"
+    # Build environment variable prefix for the command
+    # We pass these as rake task arguments which don't use colons in values
+    rake_args = []
+    rake_args << "authentication=#{config[:authentication]}"
+    rake_args << "user_class=#{config[:user_class]}"
+    rake_args << "admin_user_class=#{config[:admin_user_class]}" if config[:admin_user_class]
+    rake_args << "install_admin=#{config[:install_admin]}"
+    rake_args << "install_storefront=#{config[:install_storefront]}"
+    rake_args << "javascript=#{config[:javascript]}"
+    rake_args << "css=#{config[:css]}"
 
-    "bundle exec --gemfile=#{gemfile} rake common:test_app[#{args.join(',')}]"
+    # Use environment variables instead of rake arguments to avoid parsing issues with colons
+    "AUTHENTICATION=#{config[:authentication]} " \
+    "USER_CLASS=#{config[:user_class]} " \
+    "ADMIN_USER_CLASS=#{config[:admin_user_class] || ''} " \
+    "INSTALL_ADMIN=#{config[:install_admin]} " \
+    "INSTALL_STOREFRONT=#{config[:install_storefront]} " \
+    "JAVASCRIPT=#{config[:javascript]} " \
+    "CSS=#{config[:css]} " \
+    "bundle exec --gemfile=#{gemfile} rake common:build_prebuilt_app"
   end
 
   def write_template_metadata(template_dir, template_type, config)
     metadata = {
       'template_type' => template_type,
       'db_type' => @db_type,
-      'config' => config,
+      'config' => stringify_keys(config),
       'built_at' => Time.now.iso8601
     }
 
-    File.write(template_dir.join('.prebuilt_metadata.yml'), metadata.to_yaml)
+    File.write(template_dir.join('.prebuilt_metadata.yml'), YAML.dump(metadata))
+  end
+
+  def stringify_keys(hash)
+    hash.transform_keys(&:to_s).transform_values do |v|
+      v.is_a?(Hash) ? stringify_keys(v) : v
+    end
   end
 
   def log(message)
@@ -130,7 +154,7 @@ if __FILE__ == $0
     builder.build_all
   rescue => e
     puts "Error: #{e.message}"
-    puts e.backtrace.first(5).join("\n") if ENV['DEBUG']
+    puts e.backtrace.first(10).join("\n") if ENV['DEBUG']
     exit 1
   end
 end

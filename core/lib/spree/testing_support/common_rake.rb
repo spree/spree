@@ -134,6 +134,122 @@ namespace :common do
     system('bundle exec rake db:seed RAILS_ENV=test > /dev/null 2>&1')
   end
 
+  # Build a prebuilt test app template for CI reuse
+  # Reads configuration from environment variables to avoid rake argument parsing issues
+  task :build_prebuilt_app do |_t|
+    require ENV['LIB_NAME'].to_s
+
+    # Read configuration from environment variables
+    authentication = ENV.fetch('AUTHENTICATION', 'dummy')
+    user_class = ENV.fetch('USER_CLASS', 'Spree::LegacyUser')
+    admin_user_class = ENV['ADMIN_USER_CLASS'].to_s.empty? ? nil : ENV['ADMIN_USER_CLASS']
+    install_admin = ENV.fetch('INSTALL_ADMIN', 'false').to_b
+    install_storefront = ENV.fetch('INSTALL_STOREFRONT', 'false').to_b
+    javascript_enabled = ENV.fetch('JAVASCRIPT', 'false').to_b
+    css_enabled = ENV.fetch('CSS', 'false').to_b
+
+    # Admin and Storefront require CSS (Tailwind) to function properly
+    css_enabled ||= install_admin || install_storefront
+
+    puts "Building prebuilt app with config:"
+    puts "  LIB_NAME: #{ENV['LIB_NAME']}"
+    puts "  DUMMY_PATH: #{ENV['DUMMY_PATH']}"
+    puts "  authentication: #{authentication}"
+    puts "  user_class: #{user_class}"
+    puts "  admin_user_class: #{admin_user_class}"
+    puts "  install_admin: #{install_admin}"
+    puts "  install_storefront: #{install_storefront}"
+    puts "  javascript: #{javascript_enabled}"
+    puts "  css: #{css_enabled}"
+
+    ENV['RAILS_ENV'] = 'test'
+    Rails.env = 'test'
+
+    dummy_app_args = [
+      "--lib_name=#{ENV['LIB_NAME']}"
+    ]
+    dummy_app_args << '--javascript' if javascript_enabled
+    dummy_app_args << '--css=tailwind' if css_enabled
+
+    Spree::DummyGenerator.start dummy_app_args
+
+    # Install JavaScript dependencies (importmap, turbo, stimulus) if JavaScript is enabled
+    if javascript_enabled
+      puts 'Installing JavaScript dependencies...'
+      system('yes | bundle exec rails importmap:install turbo:install stimulus:install')
+    end
+
+    # install devise if it's not the legacy user
+    if authentication == 'devise' && user_class != 'Spree::LegacyUser'
+      system('bundle exec rails g devise:install --force --auto-accept')
+      system("bundle exec rails g devise #{user_class} --force --auto-accept")
+      system("bundle exec rails g devise #{admin_user_class} --force --auto-accept") if admin_user_class.present? && admin_user_class != user_class
+      system('rm -rf spec') # cleanup factories created by devise
+    end
+
+    # Run core Spree install generator
+    core_gems = %w[spree/core spree/api]
+    root_gemfile = File.expand_path('../../../../Gemfile', __dir__)
+    use_root_gemfile = core_gems.include?(ENV['LIB_NAME']) &&
+                       File.exist?(root_gemfile) &&
+                       File.exist?(File.expand_path('../../../../spree.gemspec', __dir__))
+    bundle_exec = use_root_gemfile ? "bundle exec --gemfile=#{root_gemfile}" : 'bundle exec'
+    puts 'Running Spree install generator...'
+    system("#{bundle_exec} rails g spree:install --force --auto-accept --migrate=false --seed=false --sample=false --user_class=#{user_class} --admin_user_class=#{admin_user_class} --authentication=#{authentication}")
+
+    # Determine if we need to install admin/storefront
+    needs_admin = install_admin || ENV['LIB_NAME'] == 'spree/admin'
+    needs_storefront = install_storefront || ENV['LIB_NAME'] == 'spree/storefront'
+
+    # Run admin install generator if requested or testing admin gem
+    if needs_admin
+      if install_admin
+        puts 'Running Spree Admin install generator...'
+        system('bundle exec rails g spree:admin:install --force')
+      end
+      system('bundle exec rails g spree:admin:devise --force') if authentication == 'devise'
+    end
+
+    # Run storefront install generator if requested or testing storefront gem
+    if needs_storefront
+      if install_storefront
+        puts 'Running Spree Storefront install generator...'
+        system('bundle exec rails g spree:storefront:install --force --migrate=false')
+      end
+      system('bundle exec rails g spree:storefront:devise --force') if authentication == 'devise'
+    end
+
+    unless ENV['NO_MIGRATE']
+      puts 'Setting up dummy database...'
+      system('bundle exec rails db:environment:set RAILS_ENV=test > /dev/null 2>&1')
+      system('bundle exec rake db:drop db:create > /dev/null 2>&1')
+      Spree::DummyModelGenerator.start
+      system('bundle exec rake db:migrate > /dev/null 2>&1')
+    end
+
+    begin
+      require "generators/#{ENV['LIB_NAME']}/install/install_generator"
+      puts 'Running extension installation generator...'
+
+      if ENV['NO_MIGRATE']
+        "#{ENV['LIB_NAME'].camelize}::Generators::InstallGenerator".constantize.start(['--force'])
+      else
+        "#{ENV['LIB_NAME'].camelize}::Generators::InstallGenerator".constantize.start(['--force', '--auto-run-migrations'])
+      end
+    rescue LoadError => e
+      puts "Error loading generator: #{e.message}"
+      puts 'Skipping installation no generator to run...'
+    end
+
+    # Precompile assets after all generators have run
+    if javascript_enabled || css_enabled
+      puts 'Precompiling assets...'
+      system('bundle exec rake assets:precompile')
+    end
+
+    puts "Prebuilt app created at #{ENV['DUMMY_PATH']}"
+  end
+
   # Use a prebuilt test app template instead of generating from scratch
   # This is used in CI to speed up test app creation
   task :use_prebuilt_app, [:template_type] do |_t, args|
