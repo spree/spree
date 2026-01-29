@@ -287,13 +287,25 @@ namespace :common do
     # Run module-specific install generator if it exists
     run_module_generator(lib_name)
 
-    # Run database migrations
+    # Setup database - create and load schema
     unless ENV['NO_MIGRATE']
-      puts 'Running database migrations...'
-      system('bundle exec rails db:environment:set RAILS_ENV=test > /dev/null 2>&1')
-      system('bundle exec rake db:drop db:create > /dev/null 2>&1')
+      puts 'Setting up database...'
+      # Set the environment
+      system('bundle exec rails db:environment:set RAILS_ENV=test') || true
+      # Drop and create the database
+      puts 'Creating database...'
+      system('bundle exec rake db:drop db:create') || raise('Failed to create database')
+      # Generate the dummy model migration if not present
       Spree::DummyModelGenerator.start
-      system('bundle exec rake db:migrate > /dev/null 2>&1')
+      # Load schema (faster than running migrations) or run migrations if no schema exists
+      schema_file = File.join(dummy_path, 'db', 'schema.rb')
+      if File.exist?(schema_file)
+        puts 'Loading schema...'
+        system('bundle exec rake db:schema:load') || raise('Failed to load schema')
+      else
+        puts 'Running migrations...'
+        system('bundle exec rake db:migrate') || raise('Failed to run migrations')
+      end
     end
 
     puts "Prebuilt #{template_type} template ready at #{dummy_path}"
@@ -351,46 +363,46 @@ def regenerate_database_yml(dummy_path, lib_name)
 
   content = case db_type
             when 'mysql'
-              <<~YAML
-                mysql: &mysql
-                  adapter: mysql2
-                  encoding: utf8
-                  #{'username: ' + db_username if db_username && !db_username.empty?}
-                  #{'password: ' + db_password if db_password && !db_password.empty?}
-                  #{'host: ' + db_host if db_host && !db_host.empty?}
-                  reconnect: true
-                  pool: 5
-
-                development:
-                  <<: *mysql
-                  database: #{lib_name_sanitized}_spree_development
-                test:
-                  <<: *mysql
-                  database: #{lib_name_sanitized}_spree_test
-                production:
-                  <<: *mysql
-                  database: #{lib_name_sanitized}_spree_production
-              YAML
+              lines = []
+              lines << "mysql: &mysql"
+              lines << "  adapter: mysql2"
+              lines << "  encoding: utf8"
+              lines << "  username: #{db_username}" if db_username && !db_username.empty?
+              lines << "  password: #{db_password}" if db_password && !db_password.empty?
+              lines << "  host: #{db_host}" if db_host && !db_host.empty?
+              lines << "  reconnect: true"
+              lines << "  pool: 5"
+              lines << ""
+              lines << "development:"
+              lines << "  <<: *mysql"
+              lines << "  database: #{lib_name_sanitized}_spree_development"
+              lines << "test:"
+              lines << "  <<: *mysql"
+              lines << "  database: #{lib_name_sanitized}_spree_test"
+              lines << "production:"
+              lines << "  <<: *mysql"
+              lines << "  database: #{lib_name_sanitized}_spree_production"
+              lines.join("\n")
             when 'postgres'
-              <<~YAML
-                postgres: &postgres
-                  adapter: postgresql
-                  #{'username: ' + db_username if db_username && !db_username.empty?}
-                  #{'password: ' + db_password if db_password && !db_password.empty?}
-                  #{'host: ' + db_host if db_host && !db_host.empty?}
-                  min_messages: warning
-                  pool: #{db_pool}
-
-                development:
-                  <<: *postgres
-                  database: #{lib_name_sanitized}_spree_development
-                test:
-                  <<: *postgres
-                  database: #{lib_name_sanitized}_spree_test
-                production:
-                  <<: *postgres
-                  database: #{lib_name_sanitized}_spree_production
-              YAML
+              lines = []
+              lines << "postgres: &postgres"
+              lines << "  adapter: postgresql"
+              lines << "  username: #{db_username}" if db_username && !db_username.empty?
+              lines << "  password: #{db_password}" if db_password && !db_password.empty?
+              lines << "  host: #{db_host}" if db_host && !db_host.empty?
+              lines << "  min_messages: warning"
+              lines << "  pool: #{db_pool}"
+              lines << ""
+              lines << "development:"
+              lines << "  <<: *postgres"
+              lines << "  database: #{lib_name_sanitized}_spree_development"
+              lines << "test:"
+              lines << "  <<: *postgres"
+              lines << "  database: #{lib_name_sanitized}_spree_test"
+              lines << "production:"
+              lines << "  <<: *postgres"
+              lines << "  database: #{lib_name_sanitized}_spree_production"
+              lines.join("\n")
             else
               <<~YAML
                 development:
@@ -404,9 +416,6 @@ def regenerate_database_yml(dummy_path, lib_name)
                   database: db/spree_production.sqlite3
               YAML
             end
-
-  # Remove empty/commented lines from the YAML
-  content = content.lines.reject { |line| line.strip.empty? || line.strip == '#' }.join
 
   File.write(database_yml_path, content)
   puts "Regenerated #{database_yml_path} for #{db_type}"
