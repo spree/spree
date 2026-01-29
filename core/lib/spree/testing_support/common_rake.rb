@@ -189,12 +189,16 @@ namespace :common do
       system('bundle exec rails g spree:storefront:install --force --migrate=false')
     end
 
+    dummy_path = ENV['DUMMY_PATH'] || 'spec/dummy'
+
     unless ENV['NO_MIGRATE']
       puts 'Setting up dummy database...'
-      system('bundle exec rails db:environment:set RAILS_ENV=test > /dev/null 2>&1')
-      system('bundle exec rake db:drop db:create > /dev/null 2>&1')
-      Spree::DummyModelGenerator.start
-      system('bundle exec rake db:migrate > /dev/null 2>&1')
+      Dir.chdir(dummy_path) do
+        system('bin/rails db:environment:set RAILS_ENV=test') || true
+        system('bin/rails db:drop db:create') || raise('Failed to create database')
+        Spree::DummyModelGenerator.start
+        system('bin/rails db:migrate') || raise('Failed to run migrations')
+      end
     end
 
     begin
@@ -214,10 +218,12 @@ namespace :common do
     # Precompile assets after all generators have run
     if javascript_enabled || css_enabled
       puts 'Precompiling assets...'
-      system('bundle exec rake assets:precompile')
+      Dir.chdir(dummy_path) do
+        system('bin/rails assets:precompile') || raise('Failed to precompile assets')
+      end
     end
 
-    puts "Prebuilt app created at #{ENV['DUMMY_PATH']}"
+    puts "Prebuilt app created at #{dummy_path}"
   end
 
   # Use a prebuilt test app template instead of generating from scratch
