@@ -57,6 +57,29 @@ module Spree
       def prefix_id_prefix
         _prefix_id_prefix
       end
+
+      # Find a record by prefix_id first, falling back to id for backwards compatibility
+      # @param param [String] the prefix_id or id to search for
+      # @return [ActiveRecord::Base, nil] the found record or nil
+      def find_by_param(param)
+        return nil if param.blank?
+
+        # Try prefix_id first (new format)
+        record = find_by(prefix_id: param)
+        return record if record
+
+        # Fall back to id (legacy format) - only if param looks like an integer
+        find_by(id: param) if param.to_s.match?(/\A\d+\z/)
+      end
+
+      # Find a record by prefix_id first, falling back to id for backwards compatibility
+      # Raises ActiveRecord::RecordNotFound if not found
+      # @param param [String] the prefix_id or id to search for
+      # @return [ActiveRecord::Base] the found record
+      # @raise [ActiveRecord::RecordNotFound] if record not found
+      def find_by_param!(param)
+        find_by_param(param) || raise(ActiveRecord::RecordNotFound.new("Couldn't find #{name} with param=#{param}"))
+      end
     end
 
     def generate_prefix_id

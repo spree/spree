@@ -105,7 +105,7 @@ module Spree
       @address ||= if [:new, :create].include?(action)
                     Spree::Address.new(country: current_store.default_country, user: try_spree_current_user)
                   else
-                    Spree::Address.find(params[:id])
+                    Spree::Address.find_by_param!(params[:id])
                   end
 
       authorize! action, @address

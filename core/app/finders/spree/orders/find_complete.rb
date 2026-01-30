@@ -3,11 +3,13 @@ module Spree
     class FindComplete
       include Spree::Orders::FinderHelper
 
-      attr_reader :user, :number, :token, :store, :email
+      attr_reader :user, :number, :prefix_id, :param, :token, :store, :email
 
-      def initialize(user: nil, number: nil, token: nil, store: nil, email: nil)
+      def initialize(user: nil, number: nil, prefix_id: nil, param: nil, token: nil, store: nil, email: nil)
         @user = user
         @number = number
+        @prefix_id = prefix_id
+        @param = param
         @token = token
         @store = store
         @email = email
@@ -16,6 +18,8 @@ module Spree
       def execute
         orders = by_user(scope)
         orders = by_number(orders)
+        orders = by_prefix_id(orders)
+        orders = by_param(orders)
         orders = by_token(orders)
         orders = by_store(orders)
         orders = by_email(orders)
@@ -35,6 +39,14 @@ module Spree
 
       def number?
         number.present?
+      end
+
+      def prefix_id?
+        prefix_id.present?
+      end
+
+      def param?
+        param.present?
       end
 
       def token?
@@ -59,6 +71,20 @@ module Spree
         return orders unless number?
 
         orders.where(number: number)
+      end
+
+      def by_prefix_id(orders)
+        return orders unless prefix_id?
+
+        orders.where(prefix_id: prefix_id)
+      end
+
+      # Find by param - tries prefix_id first, then number for backwards compatibility
+      def by_param(orders)
+        return orders unless param?
+
+        # Try prefix_id first, then number
+        orders.where(prefix_id: param).or(orders.where(number: param))
       end
 
       def by_token(orders)

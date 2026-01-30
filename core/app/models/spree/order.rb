@@ -236,6 +236,33 @@ module Spree
       left_joins(:bill_address).where(arel_table[:email].lower.eq(query.downcase)).or(where(conditions.reduce(:or)))
     end
 
+    # Find an order by prefix_id first, falling back to number, then id for backwards compatibility
+    # @param param [String] the prefix_id, number, or id to search for
+    # @return [Spree::Order, nil] the found order or nil
+    def self.find_by_param(param)
+      return nil if param.blank?
+
+      # Try prefix_id first (new format)
+      order = find_by(prefix_id: param)
+      return order if order
+
+      # Try number (legacy format)
+      order = find_by(number: param)
+      return order if order
+
+      # Fall back to id (numeric legacy format) - only if param looks like an integer
+      find_by(id: param) if param.to_s.match?(/\A\d+\z/)
+    end
+
+    # Find an order by prefix_id first, falling back to number, then id for backwards compatibility
+    # Raises ActiveRecord::RecordNotFound if not found
+    # @param param [String] the prefix_id, number, or id to search for
+    # @return [Spree::Order] the found order
+    # @raise [ActiveRecord::RecordNotFound] if order not found
+    def self.find_by_param!(param)
+      find_by_param(param) || raise(ActiveRecord::RecordNotFound.new("Couldn't find Order with param=#{param}"))
+    end
+
     # Use this method in other gems that wish to register their own custom logic
     # that should be called after Order#update
     def self.register_update_hook(hook)
