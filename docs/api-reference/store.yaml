@@ -3191,6 +3191,25 @@ components:
         display_compare_at_price:
           type: string
           nullable: true
+        original_price:
+          type: number
+          nullable: true
+          description: Base price without price list resolution
+        original_price_in_cents:
+          type: number
+          nullable: true
+          description: Base price in cents without price list resolution
+        display_original_price:
+          type: string
+          nullable: true
+          description: Formatted base price without price list resolution
+        on_sale:
+          type: boolean
+          description: Whether the product is on sale (price list applied with lower price, or compare_at_price set)
+        price_list_id:
+          type: string
+          nullable: true
+          description: ID of the price list if one was applied
         tags:
           type: array
           items:
@@ -3227,6 +3246,7 @@ components:
       - in_stock
       - backorderable
       - available
+      - on_sale
       - tags
     StoreShipment:
       type: object
@@ -3632,9 +3652,31 @@ components:
         compare_at_price:
           type: number
           nullable: true
+        compare_at_price_in_cents:
+          type: number
+          nullable: true
         display_compare_at_price:
           type: string
           nullable: true
+        original_price:
+          type: number
+          nullable: true
+          description: Base price without price list resolution
+        original_price_in_cents:
+          type: number
+          nullable: true
+          description: Base price in cents without price list resolution
+        display_original_price:
+          type: string
+          nullable: true
+          description: Formatted base price without price list resolution
+        on_sale:
+          type: boolean
+          description: Whether the variant is on sale (price list applied with lower price, or compare_at_price set)
+        price_list_id:
+          type: string
+          nullable: true
+          description: ID of the price list if one was applied
         images:
           type: array
           items:
@@ -3656,6 +3698,7 @@ components:
       - purchasable
       - in_stock
       - backorderable
+      - on_sale
       - option_values
     StoreWishedItem:
       type: object

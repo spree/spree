@@ -53,6 +53,7 @@ module Spree
         end
 
         # Returns price for a variant using full Price List resolution
+        # This may return a price from a price list if applicable
         def price_for(variant, quantity: nil)
           return nil unless variant.respond_to?(:price_for)
 
@@ -62,6 +63,14 @@ module Spree
             user: current_user,
             quantity: quantity
           )
+        end
+
+        # Returns the base price for a variant without Price List resolution
+        # This is the "original" price before any price list discounts
+        def price_in(variant)
+          return nil unless variant.respond_to?(:price_in)
+
+          variant.price_in(current_currency)
         end
 
         def image_url_for(image)
