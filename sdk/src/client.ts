@@ -68,7 +68,8 @@ export class SpreeClient {
   constructor(config: SpreeClientConfig) {
     this.baseUrl = config.baseUrl.replace(/\/$/, '');
     this.apiKey = config.apiKey;
-    this.fetchFn = config.fetch || fetch;
+    // Bind fetch to globalThis to avoid "Illegal invocation" errors in browsers
+    this.fetchFn = config.fetch || fetch.bind(globalThis);
   }
 
   private async request<T>(
