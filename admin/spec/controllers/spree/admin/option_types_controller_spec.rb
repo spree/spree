@@ -62,12 +62,12 @@ describe Spree::Admin::OptionTypesController, type: :controller do
     let!(:option_type) { create(:option_type) }
 
     it 'responds successfully' do
-      get :edit, params: { id: option_type.id }
+      get :edit, params: { id: option_type.to_param }
       expect(response).to be_successful
     end
 
     it 'builds a new option value if none exist' do
-      get :edit, params: { id: option_type.id }
+      get :edit, params: { id: option_type.to_param }
       expect(assigns(:option_type).option_values.select(&:new_record?).count).to eq(1)
     end
   end
@@ -77,7 +77,7 @@ describe Spree::Admin::OptionTypesController, type: :controller do
     let!(:option_value) { create(:option_value, option_type: option_type, position: 1) }
     let(:params) do
       {
-        id: option_type.id,
+        id: option_type.to_param,
         option_type: {
           name: 'updated-name',
           presentation: 'Updated Name',
@@ -124,12 +124,12 @@ describe Spree::Admin::OptionTypesController, type: :controller do
 
     it 'destroys the option type' do
       expect {
-        delete :destroy, params: { id: option_type.id }
+        delete :destroy, params: { id: option_type.to_param }
       }.to change(Spree::OptionType, :count).by(-1)
     end
 
     it 'redirects to index with success flash' do
-      delete :destroy, params: { id: option_type.id }
+      delete :destroy, params: { id: option_type.to_param }
       expect(response).to redirect_to(spree.admin_option_types_path)
       expect(flash[:success]).to be_present
     end

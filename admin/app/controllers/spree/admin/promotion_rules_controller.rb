@@ -1,7 +1,7 @@
 module Spree
   module Admin
     class PromotionRulesController < ResourceController
-      belongs_to 'spree/promotion', find_by: :id
+      belongs_to 'spree/promotion', find_by: :prefix_id
 
       helper_method :allowed_rule_types
 

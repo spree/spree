@@ -65,7 +65,7 @@ RSpec.describe Spree::Admin::TaxRatesController, type: :controller do
     let!(:tax_rate) { create(:tax_rate) }
 
     it 'renders the edit tax rate form' do
-      get :edit, params: { id: tax_rate.id }
+      get :edit, params: { id: tax_rate.to_param }
 
       expect(response).to be_successful
       expect(response).to render_template(:edit)
@@ -76,7 +76,7 @@ RSpec.describe Spree::Admin::TaxRatesController, type: :controller do
     let!(:tax_rate) { create(:tax_rate, name: 'General Tax') }
 
     it 'updates the tax rate' do
-      put :update, params: { id: tax_rate.id, tax_rate: { name: 'EU Tax' } }
+      put :update, params: { id: tax_rate.to_param, tax_rate: { name: 'EU Tax' } }
 
       expect(response).to redirect_to(spree.edit_admin_tax_rate_path(tax_rate))
       expect(tax_rate.reload.name).to eq('EU Tax')
@@ -87,7 +87,7 @@ RSpec.describe Spree::Admin::TaxRatesController, type: :controller do
     let!(:tax_rate) { create(:tax_rate) }
 
     it 'deletes the tax rate' do
-      delete :destroy, params: { id: tax_rate.id }
+      delete :destroy, params: { id: tax_rate.to_param }
 
       expect(response).to redirect_to(spree.admin_tax_rates_path)
       expect(tax_rate.reload).to be_deleted
@@ -127,7 +127,7 @@ RSpec.describe Spree::Admin::TaxRatesController, type: :controller do
       let!(:tax_rate) { create(:tax_rate, amount: 0.05) }
 
       it 'updates tax rate amount from percentage' do
-        put :update, params: { id: tax_rate.id, tax_rate: { amount_percentage: 10.5 } }
+        put :update, params: { id: tax_rate.to_param, tax_rate: { amount_percentage: 10.5 } }
 
         expect(response).to redirect_to(spree.edit_admin_tax_rate_path(tax_rate))
         expect(tax_rate.reload.amount).to eq(0.105)

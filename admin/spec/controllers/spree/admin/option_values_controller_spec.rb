@@ -18,8 +18,8 @@ RSpec.describe Spree::Admin::OptionValuesController do
 
       before do
         patch :update, params: {
-          option_type_id: option_type.id,
-          id: option_value.id,
+          option_type_id: option_type.to_param,
+          id: option_value.to_param,
           option_value: option_value_params,
           format: :turbo_stream
         }
@@ -40,7 +40,7 @@ RSpec.describe Spree::Admin::OptionValuesController do
     before do
       option_value
       create_list(:option_value, 3, option_type: option_type)
-      get :select_options, params: { option_type_id: option_type.id, format: :json }
+      get :select_options, params: { option_type_id: option_type.to_param, format: :json }
     end
 
     it 'returns success status' do

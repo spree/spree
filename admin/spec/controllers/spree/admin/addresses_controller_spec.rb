@@ -16,7 +16,7 @@ RSpec.describe Spree::Admin::AddressesController, type: :controller do
   describe 'POST #create' do
     subject { post :create, params: params }
 
-    let(:params) { { address: address_params, user_id: user.id } }
+    let(:params) { { address: address_params, user_id: user.to_param } }
 
     let(:address_params) do
       {
@@ -53,7 +53,7 @@ RSpec.describe Spree::Admin::AddressesController, type: :controller do
     end
 
     context 'with default shipping' do
-      let(:params) { { address: address_params, user_id: user.id, default_shipping: true } }
+      let(:params) { { address: address_params, user_id: user.to_param, default_shipping: true } }
 
       it 'creates a new default shipping address' do
         expect { subject }.to change(Spree::Address, :count).by(1)
@@ -62,7 +62,7 @@ RSpec.describe Spree::Admin::AddressesController, type: :controller do
     end
 
     context 'with default billing' do
-      let(:params) { { address: address_params, user_id: user.id, default_billing: true } }
+      let(:params) { { address: address_params, user_id: user.to_param, default_billing: true } }
 
       it 'creates a new default billing address' do
         expect { subject }.to change(Spree::Address, :count).by(1)
@@ -84,7 +84,7 @@ RSpec.describe Spree::Admin::AddressesController, type: :controller do
     let(:address) { create(:address) }
 
     it 'renders the edit address form' do
-      get :edit, params: { id: address.id }
+      get :edit, params: { id: address.to_param }
       expect(response).to render_template(:edit)
     end
   end
@@ -92,7 +92,7 @@ RSpec.describe Spree::Admin::AddressesController, type: :controller do
   describe 'PUT #update' do
     subject { put :update, params: params }
 
-    let(:params) { { id: address.id, address: address_params, user_id: user.id } }
+    let(:params) { { id: address.to_param, address: address_params, user_id: user.to_param } }
 
     let(:address) { create(:address, user: user, firstname: 'John', lastname: 'Doe') }
     let(:address_params) do

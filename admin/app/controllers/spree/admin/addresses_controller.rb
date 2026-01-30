@@ -4,7 +4,7 @@ module Spree
       before_action :set_new_address_country, only: :new
 
       def create
-        user = Spree.user_class.find(params[:user_id])
+        user = Spree.user_class.find_by_prefix_id!(params[:user_id])
 
         result = create_service.call(
           address_params: permitted_resource_params,

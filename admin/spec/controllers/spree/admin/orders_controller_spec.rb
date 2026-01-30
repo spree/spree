@@ -188,7 +188,7 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
   end
 
   describe '#edit' do
-    subject { get :edit, params: { id: order.number } }
+    subject { get :edit, params: { id: order.to_param } }
     let(:order) { create(:order_ready_to_ship, total: 100, with_payment: false, store: store) }
     it 'redirects to the show page' do
       subject
@@ -197,7 +197,7 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
   end
 
   describe '#show' do
-    subject { get :show, params: { id: order.number } }
+    subject { get :show, params: { id: order.to_param } }
 
     let(:order) { create(:order_ready_to_ship, total: 100, with_payment: false, store: store) }
 
@@ -233,7 +233,7 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
   end
 
   describe '#cancel' do
-    subject(:cancel) { put :cancel, params: { id: order.number } }
+    subject(:cancel) { put :cancel, params: { id: order.to_param } }
 
     let(:order) { create(:order_ready_to_ship, store: store) }
 
@@ -247,7 +247,7 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
   end
 
   describe '#resend' do
-    subject { put :resend, params: { id: order.number } }
+    subject { put :resend, params: { id: order.to_param } }
 
     context 'for a complete order' do
       let(:order) { create(:order_ready_to_ship, store: store) }
@@ -269,7 +269,7 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
   end
 
   describe '#destroy' do
-    subject { delete :destroy, params: { id: order.number } }
+    subject { delete :destroy, params: { id: order.to_param } }
 
     context 'for a completed order' do
       let!(:order) { create(:order_ready_to_ship, with_payment: true, store: store) }
@@ -299,7 +299,7 @@ RSpec.describe Spree::Admin::OrdersController, type: :controller do
 
     context 'updating internal_note' do
       subject do
-        put :update, params: { id: order.number, order: { internal_note: internal_note_content } }, format: :turbo_stream
+        put :update, params: { id: order.to_param, order: { internal_note: internal_note_content } }, format: :turbo_stream
       end
 
       let(:internal_note_content) { 'This is a test internal note for the order.' }

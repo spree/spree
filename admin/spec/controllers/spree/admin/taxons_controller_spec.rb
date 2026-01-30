@@ -12,12 +12,12 @@ RSpec.describe Spree::Admin::TaxonsController, type: :controller do
     let(:taxon) { create(:taxon, taxonomy: taxonomy) }
 
     it 'returns a successful response' do
-      get :new, params: { taxonomy_id: taxonomy.id, taxon: { parent_id: taxon.id } }
+      get :new, params: { taxonomy_id: taxonomy.to_param, taxon: { parent_id: taxon.id } }
       expect(response).to be_successful
     end
 
     it 'assigns the parent taxon' do
-      get :new, params: { taxonomy_id: taxonomy.id, taxon: { parent_id: taxon.id } }
+      get :new, params: { taxonomy_id: taxonomy.to_param, taxon: { parent_id: taxon.id } }
       expect(assigns(:taxon).parent).to eq(taxon)
     end
   end
@@ -29,7 +29,7 @@ RSpec.describe Spree::Admin::TaxonsController, type: :controller do
       it 'returns a successful response' do
         expect {
             post :create, params: {
-              taxonomy_id: taxonomy.id,
+              taxonomy_id: taxonomy.to_param,
               taxon: {
               parent_id: parent_taxon.id,
               name: 'Automatic Taxon',
@@ -49,7 +49,7 @@ RSpec.describe Spree::Admin::TaxonsController, type: :controller do
         expect(taxon.taxon_rules.first.match_policy).to eq('is_equal_to')
         expect(taxon.parent).to eq(parent_taxon)
 
-        expect(response).to redirect_to(spree.edit_admin_taxonomy_taxon_path(taxonomy.id, taxon.id))
+        expect(response).to redirect_to(spree.edit_admin_taxonomy_taxon_path(taxonomy, taxon))
       end
     end
   end
@@ -58,8 +58,8 @@ RSpec.describe Spree::Admin::TaxonsController, type: :controller do
     let(:taxon) { create(:taxon, taxonomy: taxonomy) }
 
     it 'redirects to the edit page' do
-      get :show, params: { taxonomy_id: taxonomy.id, id: taxon.id }
-      expect(response).to redirect_to(spree.edit_admin_taxonomy_taxon_path(taxonomy.id, taxon.id))
+      get :show, params: { taxonomy_id: taxonomy.to_param, id: taxon.to_param }
+      expect(response).to redirect_to(spree.edit_admin_taxonomy_taxon_path(taxonomy, taxon))
     end
   end
 
@@ -67,7 +67,7 @@ RSpec.describe Spree::Admin::TaxonsController, type: :controller do
     let(:taxon) { create(:taxon, taxonomy: taxonomy) }
 
     it 'returns a successful response' do
-      get :edit, params: { taxonomy_id: taxonomy.id, id: taxon.id }
+      get :edit, params: { taxonomy_id: taxonomy.to_param, id: taxon.to_param }
       expect(response).to be_successful
     end
   end
@@ -78,7 +78,7 @@ RSpec.describe Spree::Admin::TaxonsController, type: :controller do
 
     it 'returns a successful response' do
       put :update, params: {
-        taxonomy_id: taxonomy.id, id: taxon.id,
+        taxonomy_id: taxonomy.to_param, id: taxon.to_param,
         taxon: {
           name: 'New Name',
           description: 'New Description',
@@ -100,7 +100,7 @@ RSpec.describe Spree::Admin::TaxonsController, type: :controller do
           ]
         }
       }
-      expect(response).to redirect_to(spree.edit_admin_taxonomy_taxon_path(taxonomy.id, taxon.id))
+      expect(response).to redirect_to(spree.edit_admin_taxonomy_taxon_path(taxonomy, taxon))
 
       expect(taxon.reload.name).to eq('New Name')
       expect(taxon.description.to_plain_text).to eq('New Description')
@@ -114,14 +114,14 @@ RSpec.describe Spree::Admin::TaxonsController, type: :controller do
     context 'when permalink_part is present' do
       context 'and no parent taxon' do
         it 'sets the permalink from permalink_part param' do
-          put :update, params: { taxonomy_id: taxonomy.id, id: taxonomy.root.id, permalink_part: 'new-permalink' }
+          put :update, params: { taxonomy_id: taxonomy.to_param, id: taxonomy.root.to_param, permalink_part: 'new-permalink' }
           expect(taxonomy.root.reload.permalink).to eq('new-permalink')
         end
       end
 
       context 'and parent taxon is present' do
         it 'sets the permalink from root permalink and permalink_part param' do
-          put :update, params: { taxonomy_id: taxonomy.id, id: taxon.id, permalink_part: 'new-permalink' }
+          put :update, params: { taxonomy_id: taxonomy.to_param, id: taxon.to_param, permalink_part: 'new-permalink' }
           expect(taxon.reload.permalink).to eq("#{taxonomy.root.permalink}/new-permalink")
         end
       end
@@ -133,12 +133,12 @@ RSpec.describe Spree::Admin::TaxonsController, type: :controller do
     let(:new_parent) { create(:taxon, taxonomy: taxonomy) }
 
     it 'returns a successful response' do
-      put :reposition, params: { taxonomy_id: taxonomy.id, id: taxon.id, taxon: { new_parent_id: new_parent.id, new_position_idx: 0 } }
+      put :reposition, params: { taxonomy_id: taxonomy.to_param, id: taxon.to_param, taxon: { new_parent_id: new_parent.id, new_position_idx: 0 } }
       expect(response).to be_successful
     end
 
     it 'repositions the taxon' do
-      put :reposition, params: { taxonomy_id: taxonomy.id, id: taxon.id, taxon: { new_parent_id: new_parent.id, new_position_idx: 0 } }
+      put :reposition, params: { taxonomy_id: taxonomy.to_param, id: taxon.to_param, taxon: { new_parent_id: new_parent.id, new_position_idx: 0 } }
       expect(taxon.reload.parent).to eq(new_parent)
     end
   end
@@ -147,7 +147,7 @@ RSpec.describe Spree::Admin::TaxonsController, type: :controller do
     let!(:taxon) { create(:taxon, taxonomy: taxonomy) }
 
     it 'removes the taxon from the database' do
-      expect { delete :destroy, params: { taxonomy_id: taxonomy.id, id: taxon.id }, format: :turbo_stream }.to change(Spree::Taxon, :count).by(-1)
+      expect { delete :destroy, params: { taxonomy_id: taxonomy.to_param, id: taxon.to_param }, format: :turbo_stream }.to change(Spree::Taxon, :count).by(-1)
     end
   end
 

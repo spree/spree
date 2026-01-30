@@ -48,7 +48,7 @@ module Spree
 
       # GET /admin/invitations/:id?token=:token
       def show
-        @invitation = Spree::Invitation.pending.not_expired.find_by!(id: params[:id], token: params[:token])
+        @invitation = Spree::Invitation.pending.not_expired.find_by!(prefix_id: params[:id], token: params[:token])
         @parent = @invitation.resource
 
         if try_spree_current_user.present?
@@ -68,7 +68,7 @@ module Spree
 
       # PUT /admin/invitations/:id/accept
       def accept
-        @invitation = try_spree_current_user.invitations.pending.not_expired.find(params[:id])
+        @invitation = try_spree_current_user.invitations.pending.not_expired.find_by_prefix_id!(params[:id])
 
         authorize! :accept, @invitation
 
@@ -78,7 +78,7 @@ module Spree
 
       # PUT /admin/invitations/:id/resend
       def resend
-        @invitation = scope.find(params[:id])
+        @invitation = scope.find_by_prefix_id!(params[:id])
         @invitation.resend!
         redirect_back fallback_location: spree.admin_invitations_path, notice: Spree.t('invitation_resent')
       end
@@ -94,7 +94,7 @@ module Spree
       private
 
       def load_invitation
-        @invitation = scope.find(params[:id])
+        @invitation = scope.find_by_prefix_id!(params[:id])
       end
 
       def load_parent

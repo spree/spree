@@ -28,7 +28,7 @@ RSpec.describe Spree::Admin::WebhookEndpointsController, type: :controller do
   end
 
   describe 'GET #show' do
-    subject(:show) { get :show, params: { id: webhook_endpoint.id } }
+    subject(:show) { get :show, params: { id: webhook_endpoint.to_param } }
 
     let(:webhook_endpoint) { create(:webhook_endpoint, store: store) }
 
@@ -134,7 +134,7 @@ RSpec.describe Spree::Admin::WebhookEndpointsController, type: :controller do
   end
 
   describe 'GET #edit' do
-    subject(:edit) { get :edit, params: { id: webhook_endpoint.id } }
+    subject(:edit) { get :edit, params: { id: webhook_endpoint.to_param } }
 
     let(:webhook_endpoint) { create(:webhook_endpoint, store: store) }
 
@@ -152,7 +152,7 @@ RSpec.describe Spree::Admin::WebhookEndpointsController, type: :controller do
   end
 
   describe 'PUT #update' do
-    subject(:update_endpoint) { put :update, params: { id: webhook_endpoint.id, webhook_endpoint: endpoint_params } }
+    subject(:update_endpoint) { put :update, params: { id: webhook_endpoint.to_param, webhook_endpoint: endpoint_params } }
 
     let!(:webhook_endpoint) { create(:webhook_endpoint, store: store, url: 'https://old.example.com/webhook', active: true) }
 
@@ -209,7 +209,7 @@ RSpec.describe Spree::Admin::WebhookEndpointsController, type: :controller do
   end
 
   describe 'DELETE #destroy' do
-    subject(:destroy_endpoint) { delete :destroy, params: { id: webhook_endpoint.id } }
+    subject(:destroy_endpoint) { delete :destroy, params: { id: webhook_endpoint.to_param } }
 
     let!(:webhook_endpoint) { create(:webhook_endpoint, store: store) }
 

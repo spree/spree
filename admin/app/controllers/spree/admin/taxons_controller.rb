@@ -49,7 +49,7 @@ module Spree
       end
 
       def location_after_save
-        spree.edit_admin_taxonomy_taxon_path(@taxon.taxonomy_id, @taxon.id)
+        spree.edit_admin_taxonomy_taxon_path(@taxon.taxonomy, @taxon)
       end
 
       def update_turbo_stream_enabled?
@@ -113,7 +113,7 @@ module Spree
         add_breadcrumb @taxonomy.name, collection_url
 
         if @object.present? && @object.persisted?
-          add_breadcrumb @object.name, spree.edit_admin_taxonomy_taxon_path(@taxonomy, @object.id)
+          add_breadcrumb @object.name, spree.edit_admin_taxonomy_taxon_path(@taxonomy, @object)
         end
       end
 

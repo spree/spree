@@ -8,7 +8,6 @@ module Spree
 
     include Spree::SingleStoreResource
     include Spree::NumberIdentifier
-    include Spree::NumberAsParam
     include Spree::VendorConcern if defined?(Spree::VendorConcern)
 
     include Spree::Core::NumberGenerator.new(prefix: 'EF')

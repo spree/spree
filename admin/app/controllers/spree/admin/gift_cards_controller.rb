@@ -1,8 +1,8 @@
 module Spree
   module Admin
     class GiftCardsController < ResourceController
-      prepend_before_action :load_user
       prepend_before_action :set_user_id_filter, only: :index
+      prepend_before_action :load_user
       before_action :add_breadcrumbs
       before_action :load_orders, only: :show
 
@@ -27,10 +27,10 @@ module Spree
       end
 
       def set_user_id_filter
-        return if params[:user_id].blank?
+        return if @user.blank?
 
         params[:q] ||= {}
-        params[:q][:user_id_eq] = params[:user_id] if params[:user_id].present?
+        params[:q][:user_id_eq] = @user.id
       end
 
       def location_after_destroy
@@ -42,11 +42,11 @@ module Spree
       end
 
       def location_after_save
-        spree.admin_gift_card_path(@object.id)
+        spree.admin_gift_card_path(@object)
       end
 
       def load_user
-        @user = Spree.user_class.find_by(id: params[:user_id]) if params[:user_id].present?
+        @user = Spree.user_class.find_by_prefix_id(params[:user_id]) if params[:user_id].present?
       end
 
       def gift_cards_filter_dropdown_value

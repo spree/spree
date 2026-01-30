@@ -9,7 +9,7 @@ RSpec.describe Spree::Admin::PaymentsController, type: :controller do
 
   describe 'PUT #capture' do
     subject { put :capture, params: params }
-    let(:params) { { order_id: order.number, id: payment.id } }
+    let(:params) { { order_id: order.to_param, id: payment.to_param } }
     let(:payment) { create(:payment, order: order, payment_method: payment_method, amount: order.total) }
 
     it 'captures unprocessed payment' do
@@ -37,7 +37,7 @@ RSpec.describe Spree::Admin::PaymentsController, type: :controller do
 
   describe 'PUT #void' do
     subject { put :void, params: params }
-    let(:params) { { order_id: order.number, id: payment.id } }
+    let(:params) { { order_id: order.to_param, id: payment.to_param } }
     let(:payment) { create(:payment, order: order, payment_method: payment_method, amount: order.total, state: 'completed') }
 
     it 'voids completed payment' do
@@ -65,7 +65,7 @@ RSpec.describe Spree::Admin::PaymentsController, type: :controller do
 
   describe 'GET #new' do
     subject { get :new, params: params }
-    let(:params) { { order_id: order.number } }
+    let(:params) { { order_id: order.to_param } }
 
     context 'when order can transition to payment state' do
       let(:order) { create(:order_ready_to_ship, state: 'delivery') }
@@ -79,7 +79,7 @@ RSpec.describe Spree::Admin::PaymentsController, type: :controller do
 
     context 'when specific payment method is requested' do
       let(:specific_payment_method) { create(:credit_card_payment_method, display_on: 'back_end') }
-      let(:params) { { order_id: order.number, payment_method_id: specific_payment_method.id } }
+      let(:params) { { order_id: order.to_param, payment_method_id: specific_payment_method.id } }
 
       before do
         create(:credit_card_payment_method, display_on: 'back_end')
@@ -106,7 +106,7 @@ RSpec.describe Spree::Admin::PaymentsController, type: :controller do
 
     context 'when payment method requires source' do
       let(:payment_method) { create(:credit_card_payment_method, display_on: 'back_end') }
-      let(:params) { { order_id: order.number, payment_method_id: payment_method.id } }
+      let(:params) { { order_id: order.to_param, payment_method_id: payment_method.id } }
 
       it 'builds a new source' do
         subject
@@ -116,7 +116,7 @@ RSpec.describe Spree::Admin::PaymentsController, type: :controller do
 
     context 'when payment method does not require source' do
       let(:payment_method) { create(:check_payment_method, display_on: 'back_end') }
-      let(:params) { { order_id: order.number, payment_method_id: payment_method.id } }
+      let(:params) { { order_id: order.to_param, payment_method_id: payment_method.id } }
 
       it 'does not build a source' do
         subject
@@ -134,7 +134,7 @@ RSpec.describe Spree::Admin::PaymentsController, type: :controller do
     end
 
     context 'with invalid params' do
-      let(:params) { { order_id: order.number, payment: { amount: order.total, payment_method_id: payment_method.id.to_s } } }
+      let(:params) { { order_id: order.to_param, payment: { amount: order.total, payment_method_id: payment_method.id.to_s } } }
 
       it 'does not create a payment' do
         subject
@@ -149,7 +149,7 @@ RSpec.describe Spree::Admin::PaymentsController, type: :controller do
     context 'with a valid credit card' do
       let(:params) do
         {
-          order_id: order.number,
+          order_id: order.to_param,
           card: 'new',
           payment: {
             amount: order.total,
@@ -178,7 +178,7 @@ RSpec.describe Spree::Admin::PaymentsController, type: :controller do
 
       let(:params) do
         {
-          order_id: order.number,
+          order_id: order.to_param,
           payment: {
             amount: order.total,
             payment_method_id: payment_method.id.to_s,
@@ -203,7 +203,7 @@ RSpec.describe Spree::Admin::PaymentsController, type: :controller do
     context 'with an invalid credit card' do
       let(:params) do
         {
-          order_id: order.number,
+          order_id: order.to_param,
           card: 'new',
           payment: {
             amount: order.total,
@@ -236,7 +236,7 @@ RSpec.describe Spree::Admin::PaymentsController, type: :controller do
 
       let(:params) do
         {
-          order_id: order.number,
+          order_id: order.to_param,
           card: 'new',
           payment: {
             amount: order.total,
@@ -267,7 +267,7 @@ RSpec.describe Spree::Admin::PaymentsController, type: :controller do
 
       let(:params) do
         {
-          order_id: order.number,
+          order_id: order.to_param,
           payment: {
             amount: '12.34',
             payment_method_id: payment_method.id.to_s,

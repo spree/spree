@@ -57,7 +57,7 @@ RSpec.describe Spree::Admin::TaxCategoriesController, type: :controller do
     let!(:tax_category) { create(:tax_category) }
 
     it 'renders the edit tax category form' do
-      get :edit, params: { id: tax_category.id }
+      get :edit, params: { id: tax_category.to_param }
 
       expect(response).to be_successful
       expect(response).to render_template(:edit)
@@ -68,7 +68,7 @@ RSpec.describe Spree::Admin::TaxCategoriesController, type: :controller do
     let!(:tax_category) { create(:tax_category, name: 'General Category') }
 
     it 'updates the tax category' do
-      put :update, params: { id: tax_category.id, tax_category: { name: 'Updated Category' } }
+      put :update, params: { id: tax_category.to_param, tax_category: { name: 'Updated Category' } }
 
       expect(response).to redirect_to(spree.edit_admin_tax_category_path(tax_category))
       expect(tax_category.reload.name).to eq('Updated Category')
@@ -79,7 +79,7 @@ RSpec.describe Spree::Admin::TaxCategoriesController, type: :controller do
     let!(:tax_category) { create(:tax_category) }
 
     it 'deletes the tax category' do
-      delete :destroy, params: { id: tax_category.id }
+      delete :destroy, params: { id: tax_category.to_param }
 
       expect(response).to redirect_to(spree.admin_tax_categories_path)
       expect(tax_category.reload).to be_deleted

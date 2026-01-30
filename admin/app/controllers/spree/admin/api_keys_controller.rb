@@ -9,7 +9,7 @@ module Spree
       helper 'spree/admin/api_keys'
 
       def revoke
-        @object = scope.find(params[:id])
+        @object = scope.find_by_prefix_id!(params[:id])
         @object.revoke!(try_spree_current_user)
         flash[:success] = Spree.t('admin.api_keys.revoked')
         redirect_to spree.admin_api_key_path(@object)

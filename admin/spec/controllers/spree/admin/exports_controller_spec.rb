@@ -78,7 +78,7 @@ describe Spree::Admin::ExportsController, type: :controller do
   end
 
   describe '#show' do
-    subject { get :show, params: { id: export.id } }
+    subject { get :show, params: { id: export.to_param } }
 
     let(:export) { create(:product_export, store: store) }
 

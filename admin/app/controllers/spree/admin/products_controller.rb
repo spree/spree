@@ -169,9 +169,11 @@ module Spree
         end
 
         @product_variant_ids = {}
+        @product_variant_prefix_ids = {}
 
         @product.variants.includes(:option_values).each do |variant|
           @product_variant_ids[variant.human_name] = variant.id.to_s
+          @product_variant_prefix_ids[variant.human_name] = variant.to_param
         end
       end
 

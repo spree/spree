@@ -32,7 +32,7 @@ module Spree
         end
 
         def find_resource
-          current_store.customer_returns.accessible_by(current_ability, :show).find(params[:id])
+          current_store.customer_returns.accessible_by(current_ability, :show).find_by_prefix_id!(params[:id])
         end
 
         def load_form_data

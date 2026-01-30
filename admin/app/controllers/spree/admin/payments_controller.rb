@@ -3,7 +3,7 @@ module Spree
     class PaymentsController < Spree::Admin::ResourceController
       include Spree::Admin::OrderBreadcrumbConcern
 
-      belongs_to 'spree/order', find_by: :number
+      belongs_to 'spree/order', find_by: :prefix_id
 
       before_action :load_data
       before_action :proceed_order_state, only: :new

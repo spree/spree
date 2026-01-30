@@ -9,7 +9,7 @@
         data: { turbo_frame: :edit_address_shipping } if can?(:update, @user.shipping_address) %>
     <% else %>
       <%= link_to_with_icon 'plus', Spree.t(:add),
-        spree.new_admin_address_path(user_id: @user.id, default_shipping: true, type: 'shipping'),
+        spree.new_admin_address_path(user_id: @user.to_param, default_shipping: true, type: 'shipping'),
         class: 'btn btn-light btn-sm',
         data: { turbo_frame: :new_address_shipping } if can?(:create, Spree::Address) && can?(:update, @user) %>
     <% end %>

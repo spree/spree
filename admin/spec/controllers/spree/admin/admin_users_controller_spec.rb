@@ -72,15 +72,15 @@ RSpec.describe Spree::Admin::AdminUsersController, type: :controller do
   describe 'GET #show' do
     stub_authorization!
 
-    before { get :show, params: { id: admin_user.id } }
+    before { get :show, params: { id: admin_user.to_param } }
 
     it 'returns a successful response' do
-      get :show, params: { id: admin_user.id }
+      get :show, params: { id: admin_user.to_param }
       expect(response).to be_successful
     end
 
     it 'assigns @admin_user' do
-      get :show, params: { id: admin_user.id }
+      get :show, params: { id: admin_user.to_param }
       expect(assigns(:admin_user)).to eq(admin_user)
     end
 
@@ -90,7 +90,7 @@ RSpec.describe Spree::Admin::AdminUsersController, type: :controller do
 
       before do
         second_store_role
-        get :show, params: { id: admin_user.id }
+        get :show, params: { id: admin_user.to_param }
       end
 
       it 'assigns @role_users with roles from the current resource' do
@@ -212,7 +212,7 @@ RSpec.describe Spree::Admin::AdminUsersController, type: :controller do
   describe 'GET #edit' do
     stub_authorization!
 
-    before { get :edit, params: { id: admin_user.id } }
+    before { get :edit, params: { id: admin_user.to_param } }
 
     it 'returns a successful response' do
       expect(response).to be_successful
@@ -230,7 +230,7 @@ RSpec.describe Spree::Admin::AdminUsersController, type: :controller do
 
     let(:valid_params) do
       {
-        id: admin_user.id,
+        id: admin_user.to_param,
         admin_user: {
           first_name: 'Updated',
           last_name: 'Name',
@@ -265,7 +265,7 @@ RSpec.describe Spree::Admin::AdminUsersController, type: :controller do
     context 'with invalid parameters' do
       let(:invalid_params) do
         {
-          id: admin_user.id,
+          id: admin_user.to_param,
           admin_user: {
             email: ''
           }
@@ -295,14 +295,14 @@ RSpec.describe Spree::Admin::AdminUsersController, type: :controller do
       let!(:other_admin) { create(:admin_user) }
 
       it 'deletes the admin user' do
-        expect { delete :destroy, params: { id: admin_user.id } }.to change(Spree.admin_user_class, :count).by(-1)
+        expect { delete :destroy, params: { id: admin_user.to_param } }.to change(Spree.admin_user_class, :count).by(-1)
         expect(response).to redirect_to(spree.admin_admin_users_path)
       end
     end
 
     context 'cannot delete user' do
       it 'does not delete the admin user' do
-        delete :destroy, params: { id: admin_user.id }
+        delete :destroy, params: { id: admin_user.to_param }
         expect(response).to redirect_to(spree.admin_admin_users_path)
         expect(admin_user).not_to be_destroyed
       end

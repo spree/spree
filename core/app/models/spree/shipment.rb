@@ -6,7 +6,6 @@ module Spree
 
     include Spree::Core::NumberGenerator.new(prefix: 'H', length: 11)
     include Spree::NumberIdentifier
-    include Spree::NumberAsParam
     include Spree::Metafields
     include Spree::Metadata
     if defined?(Spree::Security::Shipments)

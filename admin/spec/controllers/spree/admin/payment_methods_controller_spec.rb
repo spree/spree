@@ -66,7 +66,7 @@ describe Spree::Admin::PaymentMethodsController, type: :controller do
   end
 
   describe '#update' do
-    subject { put :update, params: { id: payment_method.id, payment_method: payment_method_params } }
+    subject { put :update, params: { id: payment_method.to_param, payment_method: payment_method_params } }
 
     let(:payment_method) { create(:credit_card_payment_method) }
     let(:payment_method_params) do

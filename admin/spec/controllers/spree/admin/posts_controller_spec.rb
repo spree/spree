@@ -88,7 +88,7 @@ RSpec.describe Spree::Admin::PostsController, type: :controller do
   end
 
   describe 'GET #edit' do
-    subject(:edit) { get :edit, params: { id: post.id } }
+    subject(:edit) { get :edit, params: { id: post.to_param } }
 
     let(:post) { create(:post) }
 
@@ -99,7 +99,7 @@ RSpec.describe Spree::Admin::PostsController, type: :controller do
   end
 
   describe 'PUT #update' do
-    subject(:update_post) { put :update, params: { id: post.id, post: post_params } }
+    subject(:update_post) { put :update, params: { id: post.to_param, post: post_params } }
 
     let!(:post) { create(:post, store: store) }
     let(:post_params) do
@@ -136,7 +136,7 @@ RSpec.describe Spree::Admin::PostsController, type: :controller do
   end
 
   describe 'DELETE #destroy' do
-    subject(:destroy_post) { delete :destroy, params: { id: post.id } }
+    subject(:destroy_post) { delete :destroy, params: { id: post.to_param } }
 
     let!(:post) { create(:post, store: store) }
 

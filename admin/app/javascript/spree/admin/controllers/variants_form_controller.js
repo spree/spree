@@ -35,6 +35,7 @@ export default class extends CheckboxSelectAll {
     currencies: Array,
     currencyFormats: Object,
     variantIds: Object,
+    variantPrefixIds: Object,
     currentStockLocationId: String,
     stockLocations: Array,
     optionValuesSelectOptions: Array,
@@ -526,12 +527,12 @@ export default class extends CheckboxSelectAll {
           const variantTarget = template.querySelector('[data-variants-form-target="variant"]')
           variantTarget.dataset.variantName = internalName
 
-          const variantId = this.variantIdsValue[internalName]
-          if (variantId) {
+          const variantPrefixId = this.variantPrefixIdsValue?.[internalName] || this.variantIdsValue[internalName]
+          if (variantPrefixId) {
             const variantEditButton = variantTarget.querySelector('[data-slot="variantEditButton"]')
 
             if (variantEditButton) {
-              variantEditButton.href = `${Spree.adminPath}/products/${this.productIdValue}/variants/${variantId}/edit`
+              variantEditButton.href = `${Spree.adminPath}/products/${this.productIdValue}/variants/${variantPrefixId}/edit`
               variantEditButton.classList.remove('invisible')
             }
           }

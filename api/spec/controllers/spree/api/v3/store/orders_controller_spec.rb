@@ -11,9 +11,9 @@ RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
 
   describe 'POST #create' do
     it 'creates a new cart' do
-      expect {
+      expect do
         post :create
-      }.to change(Spree::Order, :count).by(1)
+      end.to change(Spree::Order, :count).by(1)
 
       expect(response).to have_http_status(:created)
       expect(json_response['number']).to be_present
@@ -103,7 +103,7 @@ RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
       end
 
       it 'returns the order' do
-        get :show, params: { id: order.number }
+        get :show, params: { id: order.to_param }
 
         expect(response).to have_http_status(:ok)
         expect(json_response['number']).to eq(order.number)
@@ -111,7 +111,7 @@ RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
       end
 
       it 'returns order with expected attributes' do
-        get :show, params: { id: order.number }
+        get :show, params: { id: order.to_param }
 
         expect(json_response['id']).to eq(order.prefix_id)
         expect(json_response['number']).to eq(order.number)
@@ -123,7 +123,7 @@ RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
 
       it 'returns the order for guest with valid token' do
         request.headers['X-Spree-Order-Token'] = guest_order.token
-        get :show, params: { id: guest_order.number }
+        get :show, params: { id: guest_order.to_param }
 
         expect(response).to have_http_status(:ok)
         expect(json_response['number']).to eq(guest_order.number)
@@ -131,7 +131,7 @@ RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
 
       it 'returns forbidden with invalid token' do
         request.headers['X-Spree-Order-Token'] = 'invalid'
-        get :show, params: { id: guest_order.number }
+        get :show, params: { id: guest_order.to_param }
 
         expect(response).to have_http_status(:forbidden)
         expect(json_response['error']['code']).to eq('access_denied')
@@ -139,7 +139,7 @@ RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
       end
 
       it 'returns forbidden without token' do
-        get :show, params: { id: guest_order.number }
+        get :show, params: { id: guest_order.to_param }
 
         expect(response).to have_http_status(:forbidden)
         expect(json_response['error']['code']).to eq('access_denied')
@@ -161,7 +161,7 @@ RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
 
       it 'returns forbidden for other users order' do
         other_order = create(:order_with_line_items, store: store)
-        get :show, params: { id: other_order.number }
+        get :show, params: { id: other_order.to_param }
 
         expect(response).to have_http_status(:forbidden)
         expect(json_response['error']['code']).to eq('access_denied')
@@ -178,14 +178,14 @@ RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
       end
 
       it 'updates the order email' do
-        patch :update, params: { id: order.number, order: { email: 'new@example.com' } }
+        patch :update, params: { id: order.to_param, order: { email: 'new@example.com' } }
 
         expect(response).to have_http_status(:ok)
         expect(order.reload.email).to eq('new@example.com')
       end
 
       it 'updates special instructions' do
-        patch :update, params: { id: order.number, order: { special_instructions: 'Leave at door' } }
+        patch :update, params: { id: order.to_param, order: { special_instructions: 'Leave at door' } }
 
         expect(response).to have_http_status(:ok)
         expect(order.reload.special_instructions).to eq('Leave at door')
@@ -197,7 +197,7 @@ RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
 
       it 'updates order for guest with valid token' do
         request.headers['X-Spree-Order-Token'] = guest_order.token
-        patch :update, params: { id: guest_order.number, order: { email: 'guest@example.com' } }
+        patch :update, params: { id: guest_order.to_param, order: { email: 'guest@example.com' } }
 
         expect(response).to have_http_status(:ok)
         expect(guest_order.reload.email).to eq('guest@example.com')
@@ -211,7 +211,7 @@ RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
 
       it 'returns forbidden for other users order' do
         other_order = create(:order_with_line_items, store: store)
-        patch :update, params: { id: other_order.number, order: { email: 'hack@example.com' } }
+        patch :update, params: { id: other_order.to_param, order: { email: 'hack@example.com' } }
 
         expect(response).to have_http_status(:forbidden)
         expect(json_response['error']['code']).to eq('access_denied')

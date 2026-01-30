@@ -20,7 +20,7 @@ module Spree
             @order.clone_shipping_address
 
           elsif params[:billing_address_id].present?
-            @address = Spree::Address.accessible_by(current_ability, :manage).find(params[:billing_address_id])
+            @address = Spree::Address.accessible_by(current_ability, :manage).find_by_prefix_id!(params[:billing_address_id])
             @order.bill_address_id = @address.id
           else
             @order.bill_address_attributes = address_params
@@ -60,7 +60,7 @@ module Spree
           if params[:billing_address_type] == 'same_as_shipping'
             @order.clone_shipping_address
           elsif params[:billing_address_id].present?
-            @address = Spree::Address.accessible_by(current_ability, :manage).find(params[:billing_address_id])
+            @address = Spree::Address.accessible_by(current_ability, :manage).find_by_prefix_id!(params[:billing_address_id])
             @order.bill_address_id = @address.id
           else
             @order.bill_address_attributes = address_params

@@ -29,6 +29,15 @@ module Spree
       self.prefix_id = nil if respond_to?(:prefix_id=)
     end
 
+    # Use prefix_id for URL params when available
+    # Skip if FriendlyId is used (it has its own to_param using slug)
+    # Skip if model doesn't have the prefix_id column
+    def to_param
+      return super if self.class.respond_to?(:friendly_id_config)
+      return super unless self.class.column_names.include?('prefix_id')
+      prefix_id.presence || super
+    end
+
     class_methods do
       def has_prefix_id(prefix)
         self._prefix_id_prefix = prefix.to_s

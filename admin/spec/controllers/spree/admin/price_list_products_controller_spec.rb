@@ -8,7 +8,7 @@ RSpec.describe Spree::Admin::PriceListProductsController, type: :controller do
   let(:price_list) { create(:price_list, store: store) }
 
   describe 'GET #index' do
-    subject(:index) { get :index, params: { price_list_id: price_list.id } }
+    subject(:index) { get :index, params: { price_list_id: price_list.to_param } }
 
     let(:product1) { create(:product, stores: [store]) }
     let(:product2) { create(:product, stores: [store]) }
@@ -29,7 +29,7 @@ RSpec.describe Spree::Admin::PriceListProductsController, type: :controller do
   end
 
   describe 'GET #bulk_new' do
-    subject(:bulk_new_action) { get :bulk_new, params: { price_list_id: price_list.id } }
+    subject(:bulk_new_action) { get :bulk_new, params: { price_list_id: price_list.to_param } }
 
     it 'renders the new products drawer' do
       bulk_new_action
@@ -52,7 +52,7 @@ RSpec.describe Spree::Admin::PriceListProductsController, type: :controller do
 
     let(:params) do
       {
-        price_list_id: price_list.id,
+        price_list_id: price_list.to_param,
         ids: [product1.id, product2.id]
       }
     end
@@ -109,7 +109,7 @@ RSpec.describe Spree::Admin::PriceListProductsController, type: :controller do
 
       let(:params) do
         {
-          price_list_id: price_list.id,
+          price_list_id: price_list.to_param,
           ids: [product_with_variants.id]
         }
       end
@@ -125,7 +125,7 @@ RSpec.describe Spree::Admin::PriceListProductsController, type: :controller do
 
       let(:params) do
         {
-          price_list_id: price_list.id,
+          price_list_id: price_list.to_param,
           ids: [product_master_only.id]
         }
       end
@@ -140,7 +140,7 @@ RSpec.describe Spree::Admin::PriceListProductsController, type: :controller do
     end
 
     context 'with empty ids' do
-      let(:params) { { price_list_id: price_list.id, ids: [] } }
+      let(:params) { { price_list_id: price_list.to_param, ids: [] } }
 
       it 'does not create any prices' do
         expect { bulk_create }.not_to change(Spree::Price.for_price_list(price_list), :count)
@@ -160,7 +160,7 @@ RSpec.describe Spree::Admin::PriceListProductsController, type: :controller do
 
     let(:params) do
       {
-        price_list_id: price_list.id,
+        price_list_id: price_list.to_param,
         ids: [product1.id, product2.id]
       }
     end
@@ -184,7 +184,7 @@ RSpec.describe Spree::Admin::PriceListProductsController, type: :controller do
 
       let(:params) do
         {
-          price_list_id: price_list.id,
+          price_list_id: price_list.to_param,
           ids: [product_with_variants.id]
         }
       end
@@ -195,7 +195,7 @@ RSpec.describe Spree::Admin::PriceListProductsController, type: :controller do
     end
 
     context 'with empty ids' do
-      let(:params) { { price_list_id: price_list.id, ids: [] } }
+      let(:params) { { price_list_id: price_list.to_param, ids: [] } }
 
       it 'does not remove any prices' do
         expect { bulk_destroy }.not_to change(Spree::Price.for_price_list(price_list), :count)

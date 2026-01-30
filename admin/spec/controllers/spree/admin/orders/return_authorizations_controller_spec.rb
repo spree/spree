@@ -10,7 +10,7 @@ RSpec.describe Spree::Admin::Orders::ReturnAuthorizationsController do
   let!(:reimbursement_type) { create(:reimbursement_type) }
 
   describe '#new' do
-    subject { get :new, params: { order_id: order.number } }
+    subject { get :new, params: { order_id: order.to_param } }
 
     before { subject }
 
@@ -29,7 +29,7 @@ RSpec.describe Spree::Admin::Orders::ReturnAuthorizationsController do
   describe '#create' do
     subject do
       post :create, params: {
-        order_id: order.number,
+        order_id: order.to_param,
         return_authorization: {
           memo: 'Test memo',
           return_authorization_reason_id: reason.id,
@@ -64,7 +64,7 @@ RSpec.describe Spree::Admin::Orders::ReturnAuthorizationsController do
   end
 
   describe '#edit' do
-    subject { get :edit, params: { order_id: order.number, id: return_authorization.id } }
+    subject { get :edit, params: { order_id: order.to_param, id: return_authorization.to_param } }
 
     before { subject }
 
@@ -87,8 +87,8 @@ RSpec.describe Spree::Admin::Orders::ReturnAuthorizationsController do
 
     let(:params) do
       {
-        order_id: order.number,
-        id: return_authorization.id,
+        order_id: order.to_param,
+        id: return_authorization.to_param,
         return_authorization: {
           memo: 'Updated memo',
           return_items_attributes: {
@@ -117,8 +117,8 @@ RSpec.describe Spree::Admin::Orders::ReturnAuthorizationsController do
     context 'when _destroy is set to true' do
       let(:params) do
         {
-          order_id: order.number,
-          id: return_authorization.id,
+          order_id: order.to_param,
+          id: return_authorization.to_param,
           return_authorization: { return_items_attributes: { '0' => { id: return_item.id, _destroy: true } } }
         }
       end
@@ -132,7 +132,7 @@ RSpec.describe Spree::Admin::Orders::ReturnAuthorizationsController do
   end
 
   describe '#show' do
-    subject { get :show, params: { order_id: order.number, id: return_authorization.id } }
+    subject { get :show, params: { order_id: order.to_param, id: return_authorization.to_param } }
 
     before { subject }
 
@@ -142,7 +142,7 @@ RSpec.describe Spree::Admin::Orders::ReturnAuthorizationsController do
   end
 
   describe '#load_return_authorization_reasons' do
-    subject { get :new, params: { order_id: order.number } }
+    subject { get :new, params: { order_id: order.to_param } }
 
     let!(:active_reason) { create(:return_authorization_reason) }
     let!(:inactive_reason) { create(:return_authorization_reason, active: false) }
@@ -159,7 +159,7 @@ RSpec.describe Spree::Admin::Orders::ReturnAuthorizationsController do
       end
 
       it 'includes the inactive reason when editing' do
-        get :edit, params: { order_id: order.number, id: return_authorization.id }
+        get :edit, params: { order_id: order.to_param, id: return_authorization.to_param }
         expect(assigns(:reasons)).to include(active_reason)
         expect(assigns(:reasons)).to include(inactive_reason)
       end
