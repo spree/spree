@@ -33,14 +33,18 @@ module Spree
           return params
         end
 
-        # Support state_name for countries where states are not required
-        if params[:state_name].present? && !country.states_required?
-          # Keep state_name as-is for countries without required states
-          return params
-        elsif params[:state_name].present?
-          # Try to find state by name if states are required
-          params[:state_id] = country.states.find_by(name: params[:state_name])&.id
-          params.delete(:state_name)
+        # Support state_name - try to find matching state
+        if params[:state_name].present?
+          state = country.states.find_by(name: params[:state_name])
+          if state
+            # Found a matching state, use state_id
+            params[:state_id] = state.id
+            params.delete(:state_name)
+          elsif country.states_required?
+            # States required but not found - clear state_name so validation fails
+            params.delete(:state_name)
+          end
+          # If states not required and no match found, keep state_name as-is
         end
 
         params
