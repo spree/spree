@@ -44,7 +44,7 @@ bash -c "$(curl -fsSL https://spreecommerce.org/install)"
 
 If you prefer to install Spree manually, you may follow the [Quickstart Guide](https://spreecommerce.org/docs/developer/getting-started/quickstart).
 
-Make sure to check out [Spree 5 announcement](https://github.com/spree/spree#spree-5-announcement--demo) and the latest [Spree 5.3 release](https://github.com/spree/spree/releases/tag/v5.3.0).
+Make sure to check out **Spree 5** announcement below and the latest [Spree 5.3 release](https://github.com/spree/spree/releases/tag/v5.3.0).
 
 If you like what you see, consider giving Spree a GitHub star :star:
 
