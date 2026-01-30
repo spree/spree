@@ -11,21 +11,17 @@
     Build any eCommerce solution that your business requires.
     <br />
     <br />
-    <a href="https://spreecommerce.org/announcing-spree-5-the-biggest-open-source-release-ever/">Spree 5</a>
-    ·
     <a href="https://spreecommerce.org">Website</a>
     ·
     <a href="https://spreecommerce.org/docs/">Documentation</a>
     ·
-    <a href="https://slack.spreecommerce.org">Slack</a>
-    ·
-    <a href="https://github.com/spree/spree_starter/">Starter</a>
-    ·
-    <a href="https://demo.spreecommerce.org">Demo</a>
-    ·
-    <a href="https://spreecommerce.org/enterprise/">Enterprise</a>
+    <a href="https://spreecommerce.org/docs/developer/getting-started/quickstart">Quickstart Guide</a>    
     ·
     <a href="https://github.com/spree/spree/milestones?direction=asc&sort=due_date&state=open">Roadmap</a>
+    ·
+    <a href="https://slack.spreecommerce.org">Slack</a>
+    ·
+    <a href="https://spreecommerce.org/enterprise/">Enterprise</a>
   </p>
 </p>
 
@@ -46,7 +42,7 @@ Copy and paste the following command to your terminal to set up Spree in 5 minut
 bash -c "$(curl -fsSL https://spreecommerce.org/install)"
 ```
 
-If you prefer to install Spree manually, you can follow the [Quickstart Guide](https://spreecommerce.org/docs/developer/getting-started/quickstart).
+If you prefer to install Spree manually, you may follow the [Quickstart Guide](https://spreecommerce.org/docs/developer/getting-started/quickstart).
 
 Make sure to check out [Spree 5 announcement](https://github.com/spree/spree#spree-5-announcement--demo) and the latest [Spree 5.3 release](https://github.com/spree/spree/releases/tag/v5.3.0).
 
@@ -85,21 +81,11 @@ Upcoming **Spree 5.4** expands the platform's reach to JavaScript developers wit
 
 Read the [full Spree 5.3 announcement here](https://spreecommerce.org/announcing-spree-commerce-5-3-with-price-lists-customer-groups-new-admin-tools/).
 
-Copy and paste the following command to your terminal to set up Spree in 5 minutes:
-
-```bash
-bash -c "$(curl -fsSL https://spreecommerce.org/install)"
-```
-
-If you prefer to install Spree manually, you can follow the [Quickstart Guide](https://spreecommerce.org/docs/developer/getting-started/quickstart).
+To install Spree check out this [Quickstart Guide](https://spreecommerce.org/docs/developer/getting-started/quickstart).
 
 [View the latest Releases](https://github.com/spree/spree/releases) ·
 [View the Roadmap](https://github.com/orgs/spree/projects) ·
-[Get Enterprise Support](https://spreecommerce.org/contact/)
-
-If you like what you see, consider giving Spree a GitHub star ⭐
-
-Thank you for supporting Spree open-source ❤️
+[Get Enterprise Support](https://spreecommerce.org/get-started/)
 
 ## Enterprise support
 
@@ -207,7 +193,7 @@ Follow our [Contributing Guide](https://spreecommerce.org/docs/developer/contrib
 
 ## Contact
 
-[Contact us](https://spreecommerce.org/contact/) and let's go! 
+[Contact us](https://spreecommerce.org/get-started/) and let's go! 
 
 ## Developed by
 
