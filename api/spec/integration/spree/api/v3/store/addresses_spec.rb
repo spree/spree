@@ -133,7 +133,7 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
       response '200', 'address found' do
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:id) { address.prefix_id }
+        let(:id) { address.to_param }
 
         schema '$ref' => '#/components/schemas/StoreAddress'
 
@@ -178,7 +178,7 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
       response '200', 'address updated' do
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:id) { address.prefix_id }
+        let(:id) { address.to_param }
         let(:body) { { address: { city: 'Los Angeles' } } }
 
         schema '$ref' => '#/components/schemas/StoreAddress'
@@ -202,7 +202,7 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
       response '204', 'address deleted' do
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:id) { address.prefix_id }
+        let(:id) { address.to_param }
 
         run_test!
       end

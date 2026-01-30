@@ -91,7 +91,7 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
 
       response '200', 'product found by prefix ID' do
         let(:'x-spree-api-key') { api_key.token }
-        let(:id) { product.prefix_id }
+        let(:id) { product.to_param }
 
         schema '$ref' => '#/components/schemas/StoreProduct'
 

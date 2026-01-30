@@ -127,7 +127,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
       response '200', 'order found (authenticated)' do
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:id) { order.number }
+        let(:id) { order.to_param }
 
         schema '$ref' => '#/components/schemas/StoreOrder'
 
@@ -139,7 +139,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
 
       response '200', 'order found (guest with token)' do
         let(:'x-spree-api-key') { api_key.token }
-        let(:id) { order.number }
+        let(:id) { order.to_param }
         let(:order_token) { order.token }
 
         schema '$ref' => '#/components/schemas/StoreOrder'
@@ -162,7 +162,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
         let(:other_order) { create(:order, store: store, user: other_user) }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:id) { other_order.number }
+        let(:id) { other_order.to_param }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 
@@ -199,7 +199,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
       response '200', 'order updated' do
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:id) { order.number }
+        let(:id) { order.to_param }
         let(:body) { { order: { special_instructions: 'Leave at door' } } }
 
         schema '$ref' => '#/components/schemas/StoreOrder'
@@ -214,7 +214,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
         let(:completed_order) { create(:completed_order_with_totals, store: store, user: user) }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:id) { completed_order.number }
+        let(:id) { completed_order.to_param }
         let(:body) { { order: { special_instructions: 'Test' } } }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
@@ -240,7 +240,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
         let(:advanceable_order) { create(:order_with_line_items, store: store, user: user) }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:id) { advanceable_order.number }
+        let(:id) { advanceable_order.to_param }
 
         schema '$ref' => '#/components/schemas/StoreOrder'
 
@@ -251,7 +251,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
         let(:invalid_order) { create(:order, store: store, user: user, state: 'address', bill_address: nil, ship_address: nil) }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:id) { invalid_order.number }
+        let(:id) { invalid_order.to_param }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 
@@ -276,7 +276,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
         let(:advanceable_order) { create(:order_with_line_items, store: store, user: user) }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:id) { advanceable_order.number }
+        let(:id) { advanceable_order.to_param }
 
         schema '$ref' => '#/components/schemas/StoreOrder'
 
@@ -309,7 +309,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
         end
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:id) { completable_order.number }
+        let(:id) { completable_order.to_param }
 
         schema '$ref' => '#/components/schemas/StoreOrder'
 
@@ -320,7 +320,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
         let(:incomplete_order) { create(:order_with_line_items, store: store, user: user) }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:id) { incomplete_order.number }
+        let(:id) { incomplete_order.to_param }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 
@@ -353,7 +353,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
         let(:store_credit) { create(:store_credit, user: user, store: store, amount: 50) }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:order_id) { order.number }
+        let(:order_id) { order.to_param }
         let(:body) { { amount: 10 } }
 
         before do
@@ -369,7 +369,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
       response '422', 'no store credit available' do
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:order_id) { order.number }
+        let(:order_id) { order.to_param }
         let(:body) { {} }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
@@ -392,7 +392,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
       response '200', 'store credit removed' do
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:order_id) { order.number }
+        let(:order_id) { order.to_param }
 
         schema '$ref' => '#/components/schemas/StoreOrder'
 

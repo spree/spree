@@ -8,17 +8,18 @@ module Spree
             include Spree::Api::V3::ResourceSerializer
 
             before_action :require_authentication!
-            before_action :set_order
+            before_action :set_parent
+            before_action :authorize_order_access!
 
             # POST /api/v3/store/orders/:order_id/store_credits
             def create
               result = Spree.checkout_add_store_credit_service.call(
-                order: @order,
+                order: @parent,
                 amount: params[:amount].try(:to_f)
               )
 
               if result.success?
-                render json: serialize_resource(@order.reload)
+                render json: serialize_resource(@parent.reload)
               else
                 render_service_error(result.error)
               end
@@ -26,21 +27,16 @@ module Spree
 
             # DELETE /api/v3/store/orders/:order_id/store_credits
             def destroy
-              result = Spree.checkout_remove_store_credit_service.call(order: @order)
+              result = Spree.checkout_remove_store_credit_service.call(order: @parent)
 
               if result.success?
-                render json: serialize_resource(@order.reload)
+                render json: serialize_resource(@parent.reload)
               else
                 render_service_error(result.error)
               end
             end
 
             protected
-
-            def set_order
-              @order = current_store.orders.friendly.find(params[:order_id])
-              authorize!(:update, @order, order_token)
-            end
 
             def serializer_class
               Spree.api.order_serializer

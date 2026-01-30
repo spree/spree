@@ -6,14 +6,14 @@ RSpec.describe 'Payments API', type: :request, swagger_doc: 'api-reference/store
   include_context 'API v3 Store'
 
   let(:order) { create(:order_with_line_items, store: store, user: user, state: 'payment') }
-  let(:order_id) { order.number }
+  let(:order_id) { order.to_param }
   let(:payment_method) { create(:credit_card_payment_method, stores: [store]) }
   let!(:payment) { create(:payment, order: order, payment_method: payment_method, amount: order.total) }
 
   path '/api/v3/store/orders/{order_id}/payments' do
     parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
     parameter name: 'Authorization', in: :header, type: :string, required: true
-    parameter name: :order_id, in: :path, type: :string, description: 'Order number or ID'
+    parameter name: :order_id, in: :path, type: :string, description: 'Order prefix ID'
 
     get 'List payments' do
       tags 'Payments'
@@ -55,7 +55,7 @@ RSpec.describe 'Payments API', type: :request, swagger_doc: 'api-reference/store
   path '/api/v3/store/orders/{order_id}/payments/{id}' do
     parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
     parameter name: 'Authorization', in: :header, type: :string, required: true
-    parameter name: :order_id, in: :path, type: :string, description: 'Order number or ID'
+    parameter name: :order_id, in: :path, type: :string, description: 'Order prefix ID'
     parameter name: :id, in: :path, type: :string, description: 'Payment ID'
 
     get 'Get payment' do
@@ -67,7 +67,7 @@ RSpec.describe 'Payments API', type: :request, swagger_doc: 'api-reference/store
       response '200', 'payment found' do
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:id) { payment.prefix_id }
+        let(:id) { payment.to_param }
 
         schema '$ref' => '#/components/schemas/StorePayment'
 

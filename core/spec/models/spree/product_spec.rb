@@ -1580,8 +1580,18 @@ describe Spree::Product, type: :model do
       context 'when available_on is specified' do
         subject(:available_products) { described_class.available(Time.current) }
 
+        let!(:draft_product) { create(:product, available_on: 1.day.ago, status: 'draft', stores: [store]) }
+
+        before do
+          draft_product.default_variant.set_price('USD', 10)
+        end
+
         it 'returns products available before or on the specified date' do
           expect(available_products).to contain_exactly(active_product)
+        end
+
+        it 'excludes draft products even if available_on is in the past' do
+          expect(available_products).not_to include(draft_product)
         end
       end
 

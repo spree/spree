@@ -23,10 +23,6 @@ module Spree
 
             protected
 
-            def set_parent
-              @parent = current_store.orders.friendly.find(params[:order_id])
-            end
-
             def parent_association
               :shipments
             end

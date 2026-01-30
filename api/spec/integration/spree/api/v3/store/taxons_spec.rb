@@ -40,7 +40,7 @@ RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.y
 
       response '200', 'taxon found by prefix ID' do
         let(:'x-spree-api-key') { api_key.token }
-        let(:id) { taxon.prefix_id }
+        let(:id) { taxon.to_param }
 
         schema '$ref' => '#/components/schemas/StoreTaxon'
 
