@@ -24,9 +24,10 @@ module Spree
           end
 
           def scope
-            super.available
+            super.available(Time.current, Spree::Current.currency)
           end
 
+          # these scopes are not automatically picked by ar_lazy_preload gem and we need to explicitly include them
           def scope_includes
             [
               master: [:prices, { stock_items: :stock_location }],

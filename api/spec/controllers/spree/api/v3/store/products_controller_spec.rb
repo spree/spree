@@ -71,6 +71,39 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
       end
     end
 
+    context 'currency scoping' do
+      let!(:eur_only_product) do
+        create(:product, stores: [store], status: 'active').tap do |p|
+          p.master.prices.delete_all
+          p.master.set_price('EUR', 20.0)
+        end
+      end
+
+      before do
+        allow(store).to receive(:supported_currencies_list).and_return([Money::Currency.find('USD'), Money::Currency.find('EUR')])
+        Spree::Config.show_products_without_price = false
+      end
+
+      it 'only returns products with prices in the current currency' do
+        request.headers['x-spree-currency'] = 'USD'
+        get :index
+
+        ids = json_response['data'].map { |p| p['id'] }
+        expect(ids).to include(product.prefix_id)
+        expect(ids).to include(product2.prefix_id)
+        expect(ids).not_to include(eur_only_product.prefix_id)
+      end
+
+      it 'returns EUR products when EUR currency is requested' do
+        request.headers['x-spree-currency'] = 'EUR'
+        get :index
+
+        ids = json_response['data'].map { |p| p['id'] }
+        expect(ids).to include(eur_only_product.prefix_id)
+        expect(ids).not_to include(product.prefix_id)
+      end
+    end
+
     context 'ransack filtering' do
       it 'filters products by name' do
         get :index, params: { q: { name_cont: product.name } }
