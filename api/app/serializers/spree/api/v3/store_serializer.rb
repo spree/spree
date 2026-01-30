@@ -9,12 +9,16 @@ module Spree
                  customer_support_email: 'string | null', default_locale: :string,
                  supported_currencies: 'string[]', favicon_image_url: 'string | null',
                  logo_image_url: 'string | null', social_image_url: 'string | null',
-                 supported_locales: 'string[]'
+                 supported_locales: 'string[]', default_country_iso: 'string | null'
 
         attributes :name, :url, :meta_description, :meta_keywords, :seo_title,
                    :default_currency, :code, :default, :facebook, :twitter,
                    :instagram, :customer_support_email, :default_locale,
                    created_at: :iso8601, updated_at: :iso8601
+
+        attribute :default_country_iso do |store|
+          store.default_country&.iso
+        end
 
         attribute :supported_currencies do |store|
           store.supported_currencies_list.map(&:iso_code)

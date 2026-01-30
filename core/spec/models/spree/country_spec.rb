@@ -57,4 +57,36 @@ describe Spree::Country, type: :model do
       end
     end
   end
+
+  describe '#default_currency' do
+    it 'returns the currency code from ISO3166' do
+      expect(america.default_currency).to eq('USD')
+    end
+
+    it 'returns EUR for Germany' do
+      germany = create(:country, name: 'Germany', iso_name: 'GERMANY', iso: 'DE', iso3: 'DEU', numcode: '276')
+      expect(germany.default_currency).to eq('EUR')
+    end
+
+    it 'returns nil for invalid ISO code' do
+      invalid_country = build(:country, iso: 'XX')
+      expect(invalid_country.default_currency).to be_nil
+    end
+  end
+
+  describe '#default_locale' do
+    it 'returns the primary language from ISO3166' do
+      expect(america.default_locale).to eq('en')
+    end
+
+    it 'returns de for Germany' do
+      germany = create(:country, name: 'Germany', iso_name: 'GERMANY', iso: 'DE', iso3: 'DEU', numcode: '276')
+      expect(germany.default_locale).to eq('de')
+    end
+
+    it 'returns nil for invalid ISO code' do
+      invalid_country = build(:country, iso: 'XX')
+      expect(invalid_country.default_locale).to be_nil
+    end
+  end
 end

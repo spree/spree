@@ -2703,6 +2703,14 @@ components:
           type: boolean
         zipcode_required:
           type: boolean
+        default_currency:
+          type: string
+          nullable: true
+          description: Default currency code for this country (e.g., "USD", "EUR")
+        default_locale:
+          type: string
+          nullable: true
+          description: Default locale/language for this country (e.g., "en", "de")
         states:
           type: array
           items:
@@ -3408,6 +3416,10 @@ components:
           type: array
           items:
             type: string
+        default_country_iso:
+          type: string
+          nullable: true
+          description: ISO 3166-1 alpha-2 code of the store's default country (e.g., "US", "DE")
         payment_methods:
           type: array
           items:
