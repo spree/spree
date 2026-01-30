@@ -15,7 +15,7 @@ RSpec.describe Spree::Admin::PromotionActionsController, type: :controller do
 
   describe 'GET #new' do
     it 'returns a successful response' do
-      get :new, params: { promotion_id: promotion.id }
+      get :new, params: { promotion_id: promotion.to_param }
       expect(response).to be_successful
     end
 
@@ -23,12 +23,12 @@ RSpec.describe Spree::Admin::PromotionActionsController, type: :controller do
       let(:action_type) { 'Spree::Promotion::Actions::CreateAdjustment' }
 
       it 'returns a successful response' do
-        get :new, params: { promotion_id: promotion.id, promotion_action: { type: action_type } }
+        get :new, params: { promotion_id: promotion.to_param, promotion_action: { type: action_type } }
         expect(response).to be_successful
       end
 
       it 'loads the correct action type' do
-        get :new, params: { promotion_id: promotion.id, promotion_action: { type: action_type } }
+        get :new, params: { promotion_id: promotion.to_param, promotion_action: { type: action_type } }
         expect(assigns(:promotion_action).class).to eq(action_type.constantize)
       end
     end
@@ -50,7 +50,7 @@ RSpec.describe Spree::Admin::PromotionActionsController, type: :controller do
 
     it 'creates a new promotion action' do
       expect {
-        post :create, params: { promotion_id: promotion.id, promotion_action: action_params }
+        post :create, params: { promotion_id: promotion.to_param, promotion_action: action_params }
       }.to change(Spree::PromotionAction, :count).by(1)
 
       expect(assigns(:promotion_action).calculator.preferred_amount).to eq(20.0)
@@ -58,7 +58,7 @@ RSpec.describe Spree::Admin::PromotionActionsController, type: :controller do
     end
 
     it 'redirects to the promotion page' do
-      post :create, params: { promotion_id: promotion.id, promotion_action: action_params }
+      post :create, params: { promotion_id: promotion.to_param, promotion_action: action_params }
       expect(response).to redirect_to(spree.admin_promotion_path(promotion))
     end
 
@@ -67,7 +67,7 @@ RSpec.describe Spree::Admin::PromotionActionsController, type: :controller do
 
       it 'raises an error' do
         expect {
-          post :create, params: { promotion_id: promotion.id, promotion_action: action_params }
+          post :create, params: { promotion_id: promotion.to_param, promotion_action: action_params }
         }.to raise_error('Unknown promotion action type')
       end
     end
@@ -77,12 +77,12 @@ RSpec.describe Spree::Admin::PromotionActionsController, type: :controller do
     let!(:promotion_action) { create(:promotion_action_create_adjustment, promotion: promotion) }
 
     it 'returns a successful response' do
-      get :edit, params: { promotion_id: promotion.id, id: promotion_action.id }
+      get :edit, params: { promotion_id: promotion.to_param, id: promotion_action.to_param }
       expect(response).to be_successful
     end
 
     it 'assigns the promotion action' do
-      get :edit, params: { promotion_id: promotion.id, id: promotion_action.id }
+      get :edit, params: { promotion_id: promotion.to_param, id: promotion_action.to_param }
       expect(assigns(:promotion_action)).to eq(promotion_action)
     end
   end
@@ -100,13 +100,13 @@ RSpec.describe Spree::Admin::PromotionActionsController, type: :controller do
     end
 
     it 'updates the promotion action' do
-      patch :update, params: { promotion_id: promotion.id, id: promotion_action.id, promotion_action: update_params }
+      patch :update, params: { promotion_id: promotion.to_param, id: promotion_action.to_param, promotion_action: update_params }
       calculator.reload
       expect(calculator.preferred_amount).to eq(20.0)
     end
 
     it 'redirects to the promotion page' do
-      patch :update, params: { promotion_id: promotion.id, id: promotion_action.id, promotion_action: update_params }
+      patch :update, params: { promotion_id: promotion.to_param, id: promotion_action.to_param, promotion_action: update_params }
       expect(response).to redirect_to(spree.admin_promotion_path(promotion))
     end
 
@@ -130,7 +130,7 @@ RSpec.describe Spree::Admin::PromotionActionsController, type: :controller do
       end
 
       it 'sets the promotion action line items' do
-        patch :update, params: { promotion_id: promotion.id, id: promotion_action.id, promotion_action: action_params }
+        patch :update, params: { promotion_id: promotion.to_param, id: promotion_action.to_param, promotion_action: action_params }
         expect(assigns(:promotion_action).promotion_action_line_items.first.variant_id).to eq(variant.id)
         expect(assigns(:promotion_action).promotion_action_line_items.first.quantity).to eq(2)
       end
@@ -142,19 +142,19 @@ RSpec.describe Spree::Admin::PromotionActionsController, type: :controller do
 
     it 'destroys the promotion action' do
       expect {
-        delete :destroy, params: { promotion_id: promotion.id, id: promotion_action.id }
+        delete :destroy, params: { promotion_id: promotion.to_param, id: promotion_action.to_param }
       }.to change(Spree::PromotionAction, :count).by(-1)
     end
 
     it 'redirects to the promotion page' do
-      delete :destroy, params: { promotion_id: promotion.id, id: promotion_action.id }
+      delete :destroy, params: { promotion_id: promotion.to_param, id: promotion_action.to_param }
       expect(response).to redirect_to(spree.admin_promotion_path(promotion))
     end
   end
 
   describe 'helper methods' do
     it 'provides allowed_action_types' do
-      get :new, params: { promotion_id: promotion.id }
+      get :new, params: { promotion_id: promotion.to_param }
       expect(controller.send(:allowed_action_types)).to eq(Spree.promotions.actions)
     end
   end

@@ -71,7 +71,7 @@ describe Spree::Admin::AssetsController, type: :controller do
   end
 
   describe '#update' do
-    subject { put :update, params: { id: image.id, asset: { alt: 'Alt text' } }, as: :turbo_stream }
+    subject { put :update, params: { id: image.to_param, asset: { alt: 'Alt text' } }, as: :turbo_stream }
 
     let!(:image) { create(:image, viewable: product.master) }
 
@@ -84,7 +84,7 @@ describe Spree::Admin::AssetsController, type: :controller do
   end
 
   describe '#destroy' do
-    subject { delete :destroy, params: { id: image.id }, format: :turbo_stream }
+    subject { delete :destroy, params: { id: image.to_param }, format: :turbo_stream }
 
     let!(:image) { create(:image, viewable: product.master) }
 

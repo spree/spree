@@ -9,7 +9,7 @@ RSpec.describe Spree::Admin::Orders::CustomerReturnsController do
   let!(:return_item) { create(:return_item, return_authorization: return_authorization, inventory_unit: order.inventory_units.shipped.first) }
 
   describe '#new' do
-    subject { get :new, params: { order_id: order.number } }
+    subject { get :new, params: { order_id: order.to_param } }
 
     before { subject }
 
@@ -25,7 +25,7 @@ RSpec.describe Spree::Admin::Orders::CustomerReturnsController do
   describe '#create' do
     subject do
       post :create, params: {
-        order_id: order.number,
+        order_id: order.to_param,
         customer_return: {
           stock_location_id: order.shipments.first.stock_location.id,
           return_items_attributes: {
@@ -59,7 +59,7 @@ RSpec.describe Spree::Admin::Orders::CustomerReturnsController do
   end
 
   describe '#edit' do
-    subject { get :edit, params: { order_id: order.number, id: customer_return.id } }
+    subject { get :edit, params: { order_id: order.to_param, id: customer_return.to_param } }
 
     let(:customer_return) { create(:customer_return_without_return_items, return_items: [return_item]) }
 
@@ -82,8 +82,8 @@ RSpec.describe Spree::Admin::Orders::CustomerReturnsController do
   describe '#update' do
     subject do
       put :update, params: {
-        order_id: order.number,
-        id: customer_return.id,
+        order_id: order.to_param,
+        id: customer_return.to_param,
         customer_return: {
           return_items_attributes: {
             1 => {

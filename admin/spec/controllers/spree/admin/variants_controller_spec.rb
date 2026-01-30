@@ -117,7 +117,7 @@ RSpec.describe Spree::Admin::VariantsController, type: :controller do
   end
 
   describe 'GET #edit' do
-    subject(:edit) { get :edit, params: { id: variant.id, product_id: product.slug } }
+    subject(:edit) { get :edit, params: { id: variant.to_param, product_id: product.slug } }
 
     it 'renders the variant edit page' do
       edit
@@ -128,7 +128,7 @@ RSpec.describe Spree::Admin::VariantsController, type: :controller do
   describe 'PUT #update' do
     let(:variant_params) do
       {
-        id: variant.id,
+        id: variant.to_param,
         product_id: product.slug,
         variant: {
           sku: 'SKU123456',
@@ -164,7 +164,7 @@ RSpec.describe Spree::Admin::VariantsController, type: :controller do
     context 'with multiple currencies' do
       let(:variant_params) do
         {
-          id: variant.id,
+          id: variant.to_param,
           product_id: product.slug,
           variant: {
             prices_attributes: {
@@ -204,7 +204,7 @@ RSpec.describe Spree::Admin::VariantsController, type: :controller do
 
       let(:variant_params) do
         {
-          id: variant.id,
+          id: variant.to_param,
           product_id: product.slug,
           variant: {
             stock_items_attributes: {
@@ -230,7 +230,7 @@ RSpec.describe Spree::Admin::VariantsController, type: :controller do
     context 'disabling track inventory' do
       let(:variant_params) do
         {
-          id: variant.id,
+          id: variant.to_param,
           product_id: product.slug,
           variant: { track_inventory: '0' }
         }
@@ -248,7 +248,7 @@ RSpec.describe Spree::Admin::VariantsController, type: :controller do
 
   describe 'DELETE #destroy' do
     it 'should destroy the variant' do
-      delete :destroy, params: { product_id: product.slug, id: variant.id }
+      delete :destroy, params: { product_id: product.slug, id: variant.to_param }
       expect(response).to redirect_to(spree.edit_admin_product_path(product))
     end
   end

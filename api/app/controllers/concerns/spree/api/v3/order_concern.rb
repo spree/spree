@@ -10,6 +10,10 @@ module Spree
           authorize!(:update, @parent, order_token)
         end
 
+        def set_parent
+          @parent = current_store.orders.find_by!(prefix_id: params[:order_id]) if params[:order_id].present?
+        end
+
         protected
 
         def order_token

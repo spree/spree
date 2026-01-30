@@ -4,7 +4,6 @@ module Spree
 
     include Spree::Core::NumberGenerator.new(prefix: 'T')
     include Spree::NumberIdentifier
-    include Spree::NumberAsParam
     include Spree::Metafields
     include Spree::Metadata
 

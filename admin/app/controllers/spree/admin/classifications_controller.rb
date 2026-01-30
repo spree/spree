@@ -1,7 +1,7 @@
 module Spree
   module Admin
     class ClassificationsController < ResourceController
-      belongs_to 'spree/taxon', find_by: :id
+      belongs_to 'spree/taxon', find_by: :permalink
 
       layout 'turbo_rails/frame'
 
@@ -19,7 +19,7 @@ module Spree
       private
 
       def collection_url
-        spree.admin_taxon_classifications_path(@parent.id)
+        spree.admin_taxon_classifications_path(@parent)
       end
 
       def update_turbo_stream_enabled?

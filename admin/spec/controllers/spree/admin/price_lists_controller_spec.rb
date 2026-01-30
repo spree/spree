@@ -21,7 +21,7 @@ RSpec.describe Spree::Admin::PriceListsController, type: :controller do
   end
 
   describe 'GET #show' do
-    subject(:show) { get :show, params: { id: price_list.id } }
+    subject(:show) { get :show, params: { id: price_list.to_param } }
 
     it 'renders the show page' do
       show
@@ -41,7 +41,7 @@ RSpec.describe Spree::Admin::PriceListsController, type: :controller do
   end
 
   describe 'GET #edit_prices' do
-    subject(:edit_prices) { get :edit_prices, params: { id: price_list.id, currency: currency } }
+    subject(:edit_prices) { get :edit_prices, params: { id: price_list.to_param, currency: currency } }
 
     let(:currency) { 'USD' }
     let(:product) { create(:product, stores: [store]) }
@@ -69,7 +69,7 @@ RSpec.describe Spree::Admin::PriceListsController, type: :controller do
     end
 
     context 'without currency param' do
-      subject(:edit_prices) { get :edit_prices, params: { id: price_list.id } }
+      subject(:edit_prices) { get :edit_prices, params: { id: price_list.to_param } }
 
       it 'uses the store default currency' do
         edit_prices
@@ -88,7 +88,7 @@ RSpec.describe Spree::Admin::PriceListsController, type: :controller do
 
     let(:params) do
       {
-        id: price_list.id,
+        id: price_list.to_param,
         price_list: {
           prices_attributes: {
             '0' => {
@@ -130,7 +130,7 @@ RSpec.describe Spree::Admin::PriceListsController, type: :controller do
 
       let(:params) do
         {
-          id: price_list.id,
+          id: price_list.to_param,
           price_list: {
             prices_attributes: {
               '0' => { id: price.id, variant_id: variant.id, currency: 'USD', amount: '25.99' },
@@ -153,7 +153,7 @@ RSpec.describe Spree::Admin::PriceListsController, type: :controller do
     context 'when setting amount to blank on existing price' do
       let(:params) do
         {
-          id: price_list.id,
+          id: price_list.to_param,
           price_list: {
             prices_attributes: {
               '0' => { id: price.id, variant_id: variant.id, currency: 'USD', amount: '' }
@@ -172,7 +172,7 @@ RSpec.describe Spree::Admin::PriceListsController, type: :controller do
   end
 
   describe 'PUT #activate' do
-    subject(:activate) { put :activate, params: { id: price_list.id } }
+    subject(:activate) { put :activate, params: { id: price_list.to_param } }
 
     context 'when price list has no starts_at' do
       let(:price_list) { create(:price_list, store: store, status: 'draft', starts_at: nil) }
@@ -234,7 +234,7 @@ RSpec.describe Spree::Admin::PriceListsController, type: :controller do
   end
 
   describe 'PUT #deactivate' do
-    subject(:deactivate) { put :deactivate, params: { id: price_list.id } }
+    subject(:deactivate) { put :deactivate, params: { id: price_list.to_param } }
 
     context 'when price list is active' do
       let(:price_list) { create(:price_list, store: store, status: 'active') }

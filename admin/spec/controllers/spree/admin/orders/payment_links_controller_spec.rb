@@ -7,7 +7,7 @@ RSpec.describe Spree::Admin::Orders::PaymentLinksController, type: :controller d
   let(:order) { create(:order_with_line_items, state: 'payment') }
 
   describe 'POST #create' do
-    subject { post :create, params: { order_id: order.number } }
+    subject { post :create, params: { order_id: order.to_param } }
 
     context 'when frontend is available' do
       let(:payment_url) { "http://shop.com/checkout/#{order.token}/payment" }

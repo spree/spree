@@ -28,7 +28,7 @@ RSpec.describe Spree::Admin::ApiKeysController, type: :controller do
   end
 
   describe 'GET #show' do
-    subject(:show) { get :show, params: { id: api_key.id } }
+    subject(:show) { get :show, params: { id: api_key.to_param } }
 
     let(:api_key) { create(:api_key, store: store) }
 
@@ -129,7 +129,7 @@ RSpec.describe Spree::Admin::ApiKeysController, type: :controller do
   end
 
   describe 'GET #edit' do
-    subject(:edit) { get :edit, params: { id: api_key.id } }
+    subject(:edit) { get :edit, params: { id: api_key.to_param } }
 
     let(:api_key) { create(:api_key, store: store) }
 
@@ -147,7 +147,7 @@ RSpec.describe Spree::Admin::ApiKeysController, type: :controller do
   end
 
   describe 'PUT #update' do
-    subject(:update_key) { put :update, params: { id: api_key.id, api_key: key_params } }
+    subject(:update_key) { put :update, params: { id: api_key.to_param, api_key: key_params } }
 
     let!(:api_key) { create(:api_key, store: store, name: 'Old Name') }
 
@@ -200,24 +200,11 @@ RSpec.describe Spree::Admin::ApiKeysController, type: :controller do
     end
   end
 
-  describe 'DELETE #destroy' do
-    subject(:destroy_key) { delete :destroy, params: { id: api_key.id } }
-
-    let!(:api_key) { create(:api_key, store: store) }
-
-    it 'deletes the api key' do
-      expect { destroy_key }.to change(Spree::ApiKey, :count).by(-1)
-    end
-
-    it 'redirects to index' do
-      destroy_key
-
-      expect(response).to redirect_to(spree.admin_api_keys_path)
-    end
-  end
+  # NOTE: destroy action is disabled via routes (except: :destroy)
+  # The revoke action should be used instead to deactivate API keys
 
   describe 'PUT #revoke' do
-    subject(:revoke_key) { put :revoke, params: { id: api_key.id } }
+    subject(:revoke_key) { put :revoke, params: { id: api_key.to_param } }
 
     let!(:api_key) { create(:api_key, store: store) }
 

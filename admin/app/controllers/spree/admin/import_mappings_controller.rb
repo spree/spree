@@ -1,7 +1,7 @@
 module Spree
   module Admin
     class ImportMappingsController < ResourceController
-      belongs_to 'spree/import', find_by: :number
+      belongs_to 'spree/import', find_by: :prefix_id
 
       def update_turbo_stream_enabled?
         true

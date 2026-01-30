@@ -28,7 +28,6 @@ module Spree
     include Spree::Order::GiftCard
 
     include Spree::NumberIdentifier
-    include Spree::NumberAsParam
     include Spree::SingleStoreResource
 
     publishes_lifecycle_events

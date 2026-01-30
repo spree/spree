@@ -10,7 +10,7 @@ module Spree
       protected
 
       def load_order
-        @order = current_store.orders.find_by!(number: params[:order_id])
+        @order = current_store.orders.find_by_prefix_id!(params[:order_id])
         authorize! action, @order
         @order
       end

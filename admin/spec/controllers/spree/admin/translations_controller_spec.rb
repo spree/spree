@@ -16,7 +16,7 @@ RSpec.describe Spree::Admin::TranslationsController, type: :controller do
 
   describe 'GET #edit' do
     it 'assigns @object and renders the edit template' do
-      get :edit, params: { resource_type: resource_type, id: product.id, translation_locale: translation_locale }
+      get :edit, params: { resource_type: resource_type, id: product.to_param, translation_locale: translation_locale }
       expect(response).to render_template(:edit)
       expect(assigns(:object)).to eq(product)
       expect(assigns(:locales)).to include('fr')
@@ -26,7 +26,7 @@ RSpec.describe Spree::Admin::TranslationsController, type: :controller do
     context 'when resource_type is missing' do
       it 'raises ActiveRecord::RecordNotFound' do
         expect {
-          get :edit, params: { id: product.id, resource_type: '', translation_locale: translation_locale }
+          get :edit, params: { id: product.to_param, resource_type: '', translation_locale: translation_locale }
         }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
@@ -34,7 +34,7 @@ RSpec.describe Spree::Admin::TranslationsController, type: :controller do
     context 'when resource_type is invalid' do
       it 'raises ActiveRecord::RecordNotFound' do
         expect {
-          get :edit, params: { resource_type: 'InvalidType', id: product.id, translation_locale: translation_locale }
+          get :edit, params: { resource_type: 'InvalidType', id: product.to_param, translation_locale: translation_locale }
         }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end

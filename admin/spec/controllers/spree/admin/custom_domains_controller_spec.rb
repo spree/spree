@@ -80,7 +80,7 @@ describe Spree::Admin::CustomDomainsController, type: :controller do
   end
 
   describe '#edit' do
-    subject { get :edit, params: { id: custom_domain.id } }
+    subject { get :edit, params: { id: custom_domain.to_param } }
 
     let!(:custom_domain) { create(:custom_domain, store: store) }
 
@@ -98,7 +98,7 @@ describe Spree::Admin::CustomDomainsController, type: :controller do
 
     let(:params) do
       {
-        id: custom_domain.id,
+        id: custom_domain.to_param,
         custom_domain: {
           url: 'updated-domain.com'
         }
@@ -116,7 +116,7 @@ describe Spree::Admin::CustomDomainsController, type: :controller do
     context 'with invalid params' do
       let(:params) do
         {
-          id: custom_domain.id,
+          id: custom_domain.to_param,
           custom_domain: {
             url: ''
           }

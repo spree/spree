@@ -79,7 +79,7 @@ RSpec.describe Spree::Admin::StockItemsController, type: :controller do
 
     subject(:update) { patch :update, params: params, format: :turbo_stream }
 
-    let(:params) { { id: stock_item.id, stock_item: { backorderable: true, count_on_hand: 99 } } }
+    let(:params) { { id: stock_item.to_param, stock_item: { backorderable: true, count_on_hand: 99 } } }
 
     it 'updates the stock item' do
       update

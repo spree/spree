@@ -5,8 +5,6 @@ module Spree
     has_prefix_id :imp
 
     include Spree::NumberIdentifier
-    include Spree::NumberAsParam
-
     include Spree::Core::NumberGenerator.new(prefix: 'IM')
 
     publishes_lifecycle_events

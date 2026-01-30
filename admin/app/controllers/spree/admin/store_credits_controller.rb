@@ -8,7 +8,7 @@ module Spree
       before_action :ensure_unused_store_credit, only: [:update]
 
       def show
-        @store_credit = scope.find(params[:id])
+        @store_credit = scope.find_by_prefix_id!(params[:id])
         @store_credit_events = @store_credit.store_credit_events.reverse_chronological.includes(:originator, :order)
       end
 
@@ -57,14 +57,14 @@ module Spree
       protected
 
       def parent
-        @parent ||= Spree.user_class.find_by(id: params[:user_id])
+        @parent ||= Spree.user_class.find_by_prefix_id!(params[:user_id])
       end
 
       def parent_data
         {
           model_name: 'spree/user',
           model_class: Spree.user_class,
-          find_by: :id
+          find_by: :prefix_id
         }
       end
 

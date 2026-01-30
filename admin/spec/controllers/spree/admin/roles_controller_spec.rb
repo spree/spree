@@ -49,7 +49,7 @@ RSpec.describe Spree::Admin::RolesController, type: :controller do
     let!(:role) { create(:role) }
 
     it 'renders the edit role form' do
-      get :edit, params: { id: role.id }
+      get :edit, params: { id: role.to_param }
 
       expect(response).to be_successful
       expect(response).to render_template(:edit)
@@ -60,7 +60,7 @@ RSpec.describe Spree::Admin::RolesController, type: :controller do
     let!(:role) { create(:role, name: 'Default Role') }
 
     it 'updates the role' do
-      put :update, params: { id: role.id, role: { name: 'Updated Role' } }
+      put :update, params: { id: role.to_param, role: { name: 'Updated Role' } }
 
       expect(response).to redirect_to(spree.edit_admin_role_path(role))
       expect(role.reload.name).to eq('Updated Role')
@@ -71,7 +71,7 @@ RSpec.describe Spree::Admin::RolesController, type: :controller do
     let!(:role) { create(:role) }
 
     it 'deletes the role' do
-      delete :destroy, params: { id: role.id }
+      delete :destroy, params: { id: role.to_param }
 
       expect(response).to redirect_to(spree.admin_roles_path)
       expect { role.reload }.to raise_error(ActiveRecord::RecordNotFound)

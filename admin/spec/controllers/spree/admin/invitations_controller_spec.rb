@@ -138,7 +138,7 @@ RSpec.describe Spree::Admin::InvitationsController, type: :controller do
       context 'when user is the invitee' do
         let(:invitation) { create(:invitation, inviter: admin_user, resource: store, invitee: another_user) }
 
-        before { get :show, params: { id: invitation.id, token: token } }
+        before { get :show, params: { id: invitation.to_param, token: token } }
 
         it 'returns a successful response' do
           expect(response).to be_successful
@@ -158,7 +158,7 @@ RSpec.describe Spree::Admin::InvitationsController, type: :controller do
       context 'when user is not the invitee' do
         let(:invitation) { create(:invitation, inviter: admin_user, resource: store, invitee: nil) }
 
-        before { get :show, params: { id: invitation.id, token: token } }
+        before { get :show, params: { id: invitation.to_param, token: token } }
 
         it 'redirects to root path' do
           expect(response).to redirect_to(spree.root_path)
@@ -173,7 +173,7 @@ RSpec.describe Spree::Admin::InvitationsController, type: :controller do
     context 'when user is not logged in' do
       before do
         allow(controller).to receive(:try_spree_current_user).and_return(nil)
-        get :show, params: { id: invitation.id, token: token }
+        get :show, params: { id: invitation.to_param, token: token }
       end
 
       it 'redirects to new admin user path' do
@@ -232,7 +232,7 @@ RSpec.describe Spree::Admin::InvitationsController, type: :controller do
     before do
       allow(controller).to receive(:current_ability).and_return(Spree.ability_class.new(another_user))
       allow(controller).to receive(:try_spree_current_user).and_return(another_user)
-      put :accept, params: { id: invitation.id }
+      put :accept, params: { id: invitation.to_param }
     end
 
     it 'accepts the invitation' do
@@ -255,11 +255,11 @@ RSpec.describe Spree::Admin::InvitationsController, type: :controller do
     it 'calls resend! on the invitation' do
       invitation
       expect_any_instance_of(Spree::Invitation).to receive(:resend!)
-      put :resend, params: { id: invitation.id }
+      put :resend, params: { id: invitation.to_param }
     end
 
     it 'redirects to invitations path' do
-      put :resend, params: { id: invitation.id }
+      put :resend, params: { id: invitation.to_param }
       expect(response).to redirect_to(spree.admin_invitations_path)
       expect(flash[:notice]).to eq(Spree.t('invitation_resent'))
     end
@@ -271,17 +271,17 @@ RSpec.describe Spree::Admin::InvitationsController, type: :controller do
     it 'destroys the invitation' do
       invitation # ensure invitation exists
       expect {
-        delete :destroy, params: { id: invitation.id }
+        delete :destroy, params: { id: invitation.to_param }
       }.to change(Spree::Invitation, :count).by(-1)
     end
 
     it 'redirects to invitations path' do
-      delete :destroy, params: { id: invitation.id }
+      delete :destroy, params: { id: invitation.to_param }
       expect(response).to redirect_to(spree.admin_invitations_path)
     end
 
     it 'sets a notice flash message' do
-      delete :destroy, params: { id: invitation.id }
+      delete :destroy, params: { id: invitation.to_param }
       expect(flash[:notice]).not_to be_nil
     end
   end

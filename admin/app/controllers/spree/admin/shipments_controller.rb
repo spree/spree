@@ -5,7 +5,7 @@ module Spree
 
       layout 'turbo_rails/frame'
 
-      belongs_to 'spree/order', find_by: :number
+      belongs_to 'spree/order', find_by: :prefix_id
 
       before_action :load_variant, only: [:split, :transfer]
       before_action :refresh_shipping_rates, only: :edit
@@ -82,7 +82,7 @@ module Spree
       end
 
       def find_resource
-        record = parent.shipments.find_by!(number: params[:id])
+        record = parent.shipments.find_by_prefix_id!(params[:id])
         authorize! action, record
       end
 
@@ -91,7 +91,7 @@ module Spree
       end
 
       def load_variant
-        @variant = current_store.variants.accessible_by(current_ability, :manage).find(params[:variant_id])
+        @variant = current_store.variants.accessible_by(current_ability, :manage).find_by_prefix_id!(params[:variant_id])
       end
 
       def permitted_resource_params

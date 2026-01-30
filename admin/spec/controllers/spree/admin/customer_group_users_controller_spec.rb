@@ -8,7 +8,7 @@ RSpec.describe Spree::Admin::CustomerGroupUsersController, type: :controller do
   let(:customer_group) { create(:customer_group, store: store) }
 
   describe 'GET #index' do
-    subject(:index) { get :index, params: { customer_group_id: customer_group.id } }
+    subject(:index) { get :index, params: { customer_group_id: customer_group.to_param } }
 
     let(:user1) { create(:user) }
     let(:user2) { create(:user) }
@@ -38,7 +38,7 @@ RSpec.describe Spree::Admin::CustomerGroupUsersController, type: :controller do
   end
 
   describe 'GET #bulk_new' do
-    subject(:bulk_new) { get :bulk_new, params: { customer_group_id: customer_group.id } }
+    subject(:bulk_new) { get :bulk_new, params: { customer_group_id: customer_group.to_param } }
 
     it 'returns success' do
       bulk_new
@@ -52,7 +52,7 @@ RSpec.describe Spree::Admin::CustomerGroupUsersController, type: :controller do
   end
 
   describe 'POST #create' do
-    subject(:create_membership) { post :create, params: { customer_group_id: customer_group.id, user_ids: user_ids } }
+    subject(:create_membership) { post :create, params: { customer_group_id: customer_group.to_param, user_ids: user_ids } }
 
     let(:user1) { create(:user) }
     let(:user2) { create(:user) }
@@ -96,7 +96,7 @@ RSpec.describe Spree::Admin::CustomerGroupUsersController, type: :controller do
   end
 
   describe 'DELETE #destroy' do
-    subject(:destroy_membership) { delete :destroy, params: { customer_group_id: customer_group.id, id: user.id } }
+    subject(:destroy_membership) { delete :destroy, params: { customer_group_id: customer_group.to_param, id: user.to_param } }
 
     let(:user) { create(:user) }
 
@@ -124,14 +124,14 @@ RSpec.describe Spree::Admin::CustomerGroupUsersController, type: :controller do
       let(:other_user) { create(:user) }
 
       it 'sets error flash message' do
-        delete :destroy, params: { customer_group_id: customer_group.id, id: other_user.id }
+        delete :destroy, params: { customer_group_id: customer_group.to_param, id: other_user.to_param }
         expect(flash[:error]).to eq(Spree.t(:customer_could_not_be_removed_from_group))
       end
     end
   end
 
   describe 'POST #bulk_create' do
-    subject(:bulk_create) { post :bulk_create, params: { customer_group_id: customer_group.id, ids: user_ids }, format: :turbo_stream }
+    subject(:bulk_create) { post :bulk_create, params: { customer_group_id: customer_group.to_param, ids: user_ids }, format: :turbo_stream }
 
     let(:user1) { create(:user) }
     let(:user2) { create(:user) }
@@ -165,7 +165,7 @@ RSpec.describe Spree::Admin::CustomerGroupUsersController, type: :controller do
   end
 
   describe 'DELETE #bulk_destroy' do
-    subject(:bulk_destroy) { delete :bulk_destroy, params: { customer_group_id: customer_group.id, ids: user_ids }, format: :turbo_stream }
+    subject(:bulk_destroy) { delete :bulk_destroy, params: { customer_group_id: customer_group.to_param, ids: user_ids }, format: :turbo_stream }
 
     let(:user1) { create(:user) }
     let(:user2) { create(:user) }

@@ -9,7 +9,7 @@ RSpec.describe Spree::Admin::PriceRulesController, type: :controller do
 
   describe 'GET #new' do
     context 'without type parameter' do
-      subject { get :new, params: { price_list_id: price_list.id } }
+      subject { get :new, params: { price_list_id: price_list.to_param } }
 
       it 'renders the rule type selection' do
         subject
@@ -21,7 +21,7 @@ RSpec.describe Spree::Admin::PriceRulesController, type: :controller do
     end
 
     context 'with type parameter' do
-      subject { get :new, params: { price_list_id: price_list.id, price_rule: { type: 'Spree::PriceRules::ZoneRule' } } }
+      subject { get :new, params: { price_list_id: price_list.to_param, price_rule: { type: 'Spree::PriceRules::ZoneRule' } } }
 
       it 'renders the form for the selected type' do
         subject
@@ -37,7 +37,7 @@ RSpec.describe Spree::Admin::PriceRulesController, type: :controller do
 
     let(:params) do
       {
-        price_list_id: price_list.id,
+        price_list_id: price_list.to_param,
         price_rule: {
           type: 'Spree::PriceRules::VolumeRule',
           preferred_min_quantity: 10,
@@ -69,7 +69,7 @@ RSpec.describe Spree::Admin::PriceRulesController, type: :controller do
   end
 
   describe 'GET #edit' do
-    subject { get :edit, params: { price_list_id: price_list.id, id: price_rule.id } }
+    subject { get :edit, params: { price_list_id: price_list.to_param, id: price_rule.to_param } }
 
     let!(:price_rule) { create(:volume_price_rule, price_list: price_list) }
 
@@ -88,8 +88,8 @@ RSpec.describe Spree::Admin::PriceRulesController, type: :controller do
 
     let(:params) do
       {
-        price_list_id: price_list.id,
-        id: price_rule.id,
+        price_list_id: price_list.to_param,
+        id: price_rule.to_param,
         price_rule: {
           preferred_min_quantity: 20
         }
@@ -111,7 +111,7 @@ RSpec.describe Spree::Admin::PriceRulesController, type: :controller do
   end
 
   describe 'DELETE #destroy' do
-    subject { delete :destroy, params: { price_list_id: price_list.id, id: price_rule.id } }
+    subject { delete :destroy, params: { price_list_id: price_list.to_param, id: price_rule.to_param } }
 
     let!(:price_rule) { create(:volume_price_rule, price_list: price_list) }
 

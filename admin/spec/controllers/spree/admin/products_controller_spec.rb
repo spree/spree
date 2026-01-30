@@ -1232,7 +1232,7 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
   end
 
   describe 'PUT #clone' do
-    subject(:clone_request) { put :clone, params: { id: product.id } }
+    subject(:clone_request) { put :clone, params: { id: product.to_param } }
 
     let!(:product) { create(:product, name: 'Product to clone', stores: [store], status: 'active') }
     let(:cloned_product) { Spree::Product.find_by(name: 'COPY OF Product to clone') }

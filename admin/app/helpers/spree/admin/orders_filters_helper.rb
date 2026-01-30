@@ -37,7 +37,7 @@ module Spree
       end
 
       def load_user
-        @user = Spree.user_class.find(params[:user_id]) if params[:user_id].present?
+        @user = Spree.user_class.find_by_prefix_id(params[:user_id]) if params[:user_id].present?
       end
     end
   end
