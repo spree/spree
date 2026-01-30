@@ -30,7 +30,7 @@ module Spree
       end
 
       def load_order_details
-        @order = orders_scope.find_by!(number: params[:id])
+        @order = order_finder.new(user: try_spree_current_user, store: current_store, param: params[:id]).execute.first!
         @shipments = @order.shipments.includes(:stock_location, :address, selected_shipping_rate: :shipping_method, inventory_units: :line_item)
       end
     end
