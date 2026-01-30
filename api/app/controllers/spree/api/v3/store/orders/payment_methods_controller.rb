@@ -6,12 +6,13 @@ module Spree
           class PaymentMethodsController < Store::BaseController
             include Spree::Api::V3::OrderConcern
 
-            before_action :set_order, only: [:index]
+            before_action :set_parent
+            before_action :authorize_order_read!
 
             # GET /api/v3/store/orders/:order_id/payment_methods
             # Returns available payment methods for the current order
             def index
-              payment_methods = @order.collect_frontend_payment_methods
+              payment_methods = @parent.collect_frontend_payment_methods
               render json: {
                 data: serialize_collection(payment_methods),
                 meta: { count: payment_methods.size }
@@ -20,10 +21,8 @@ module Spree
 
             protected
 
-            def set_order
-              @order = current_store.orders.friendly.find(params[:order_id])
-              # Order access is verified through order ownership or token
-              unless can?(:show, @order) || order_token == @order.token
+            def authorize_order_read!
+              unless can?(:show, @parent) || order_token == @parent.token
                 raise CanCan::AccessDenied, 'You are not authorized to access this page.'
               end
             end

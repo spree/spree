@@ -7,12 +7,13 @@ module Spree
             include Spree::Api::V3::OrderConcern
             include Spree::Api::V3::ResourceSerializer
 
-            before_action :set_order
+            before_action :set_parent
+            before_action :authorize_order_read!
             before_action :set_payment, only: [:show]
 
             # GET /api/v3/store/orders/:order_id/payments
             def index
-              payments = @order.payments.includes(:payment_method)
+              payments = @parent.payments.includes(:payment_method)
               render json: {
                 data: serialize_payments(payments),
                 meta: {}
@@ -26,13 +27,12 @@ module Spree
 
             private
 
-            def set_order
-              @order = current_store.orders.friendly.find(params[:order_id])
-              authorize!(:show, @order, order_token)
+            def authorize_order_read!
+              authorize!(:show, @parent, order_token)
             end
 
             def set_payment
-              @payment = @order.payments.find_by!(prefix_id: params[:id])
+              @payment = @parent.payments.find_by!(prefix_id: params[:id])
             end
 
             def serializer_class

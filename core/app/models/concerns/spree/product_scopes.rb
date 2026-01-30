@@ -288,11 +288,8 @@ module Spree
 
       # Can't use add_search_scope for this as it needs a default argument
       def self.available(available_on = nil, currency = nil)
-        scope = if available_on
-                  not_discontinued.where("#{Product.quoted_table_name}.available_on <= ?", available_on)
-                else
-                  not_discontinued.where(status: 'active')
-                end
+        scope = not_discontinued.where(status: 'active')
+        scope = scope.where("#{Product.quoted_table_name}.available_on <= ?", available_on) if available_on
 
         unless Spree::Config.show_products_without_price
           currency ||= Spree::Store.default.default_currency

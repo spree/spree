@@ -25,7 +25,7 @@ RSpec.describe 'Payment Methods API', type: :request, swagger_doc: 'api-referenc
       response '200', 'payment methods found' do
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:order_id) { order.number }
+        let(:order_id) { order.to_param }
 
         schema type: :object,
                properties: {
@@ -58,7 +58,7 @@ RSpec.describe 'Payment Methods API', type: :request, swagger_doc: 'api-referenc
 
       response '401', 'unauthorized' do
         let(:'x-spree-api-key') { 'invalid' }
-        let(:order_id) { order.number }
+        let(:order_id) { order.to_param }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 

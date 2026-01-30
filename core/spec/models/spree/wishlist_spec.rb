@@ -99,25 +99,6 @@ describe Spree::Wishlist, type: :model do
     end
   end
 
-  describe '.to_param' do
-    it 'returns the wishlists token' do
-      expect(wishlist.to_param).to eq wishlist.token
-    end
-  end
-
-  describe '.get_by_param' do
-    it 'returns the wishlist of the token' do
-      hash = wishlist.token
-      result = described_class.get_by_param(hash)
-      expect(result).to eq wishlist
-    end
-
-    it 'returns nil when not found' do
-      result = described_class.get_by_param('nope')
-      expect(result).to be_nil
-    end
-  end
-
   describe '#destroy' do
     let!(:wished_item) { create(:wished_item) }
 

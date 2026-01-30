@@ -63,7 +63,7 @@ RSpec.describe 'Taxonomies API', type: :request, swagger_doc: 'api-reference/sto
 
       response '200', 'taxonomy found' do
         let(:'x-spree-api-key') { api_key.token }
-        let(:id) { taxonomy.prefix_id }
+        let(:id) { taxonomy.to_param }
 
         schema '$ref' => '#/components/schemas/StoreTaxonomy'
 
@@ -84,7 +84,7 @@ RSpec.describe 'Taxonomies API', type: :request, swagger_doc: 'api-reference/sto
 
       response '404', 'taxonomy from other store' do
         let(:'x-spree-api-key') { api_key.token }
-        let(:id) { other_taxonomy.prefix_id }
+        let(:id) { other_taxonomy.to_param }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 
