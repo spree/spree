@@ -125,12 +125,27 @@ RSpec.describe Spree::Admin::PromotionsController, type: :controller do
   end
 
   describe 'PATCH #update' do
+    before do
+      allow_any_instance_of(Spree::Store).to receive(:preferred_timezone).and_return('Europe/Warsaw')
+      Timecop.freeze('2014-05-01 00:00:00')
+    end
+
+    after do
+      Timecop.return
+    end
+
     let!(:promotion) { create(:promotion, name: 'Old Name', stores: [store]) }
     let(:promotion_params) { { name: 'Updated Name' } }
 
     it 'updates the promotion' do
       patch :update, params: { id: promotion.id, promotion: promotion_params }
       expect(promotion.reload.name).to eq('Updated Name')
+    end
+
+    it 'saves datetime in the correct timezone' do
+      patch :update, params: { id: promotion.id, promotion: promotion_params.merge(starts_at: '2026-01-01 00:00:00') }
+
+      expect(promotion.reload.starts_at.utc.iso8601).to eq('2025-12-31T23:00:00Z')
     end
 
     it 'redirects to the edit page' do
