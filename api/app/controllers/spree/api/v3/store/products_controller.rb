@@ -32,7 +32,7 @@ module Spree
           def scope_includes
             [
               master: [:prices, { stock_items: :stock_location }],
-              variants: [:prices, { option_values: :option_type }, { stock_items: :stock_location }]
+              variants: [:prices, { stock_items: :stock_location }]
             ]
           end
         end

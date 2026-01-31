@@ -77,7 +77,7 @@ module Spree
 
           # Override scope to avoid accessible_by (Order permissions use blocks)
           def scope
-            current_store.orders.where(user: current_user)
+            current_store.orders.where(user: current_user).preload_associations_lazily
           end
 
           # Override set_resource to use friendly finder and order_token authorization
