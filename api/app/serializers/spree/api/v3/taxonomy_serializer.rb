@@ -15,6 +15,11 @@ module Spree
         many :taxons,
              resource: Spree.api.taxon_serializer,
              if: proc { params[:includes]&.include?('taxons') }
+
+        many :public_metafields,
+             key: :metafields,
+             resource: Spree.api.metafield_serializer,
+             if: proc { params[:includes]&.include?('metafields') }
       end
     end
   end

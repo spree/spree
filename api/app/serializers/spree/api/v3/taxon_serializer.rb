@@ -59,6 +59,11 @@ module Spree
         many :children,
              resource: Spree.api.taxon_serializer,
              if: proc { params[:includes]&.include?('children') }
+
+        many :public_metafields,
+             key: :metafields,
+             resource: Spree.api.metafield_serializer,
+             if: proc { params[:includes]&.include?('metafields') }
       end
     end
   end
