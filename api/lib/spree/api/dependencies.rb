@@ -92,6 +92,7 @@ module Spree
 
         # v3 serializers (API v3)
         credit_card_serializer: 'Spree::Api::V3::CreditCardSerializer',
+        price_serializer: 'Spree::Api::V3::PriceSerializer',
         product_serializer: 'Spree::Api::V3::ProductSerializer',
         variant_serializer: 'Spree::Api::V3::VariantSerializer',
         image_serializer: 'Spree::Api::V3::ImageSerializer',

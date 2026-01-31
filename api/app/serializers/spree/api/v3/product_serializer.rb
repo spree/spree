@@ -10,11 +10,8 @@ module Spree
                  variant_count: :number,
                  available_on: 'string | null',
                  purchasable: :boolean, in_stock: :boolean, backorderable: :boolean, available: :boolean,
-                 price: 'number | null', price_in_cents: 'number | null', display_price: 'string | null',
-                 compare_at_price: 'number | null', compare_at_price_in_cents: 'number | null',
-                 display_compare_at_price: 'string | null',
-                 original_price: 'number | null', original_price_in_cents: 'number | null', display_original_price: 'string | null',
-                 on_sale: :boolean, price_list_id: 'string | null',
+                 price: 'StorePrice',
+                 original_price: 'StorePrice',
                  tags: 'string[]'
 
         attributes :name, :description, :slug, :sku, :barcode,
@@ -38,67 +35,20 @@ module Spree
           product.available?
         end
 
-        attribute :price do |product|
-          price_object(product)&.amount&.to_f
-        end
-
-        attribute :price_in_cents do |product|
-          price_object(product)&.display_amount&.amount_in_cents
-        end
-
-        attribute :display_price do |product|
-          price_object(product)&.display_price&.to_s
-        end
-
-        attribute :compare_at_price do |product|
-          price_object(product)&.compare_at_amount&.to_f
-        end
-
-        attribute :compare_at_price_in_cents do |product|
-          price_object(product)&.display_compare_at_amount&.amount_in_cents if price_object(product)&.compare_at_amount&.present?
-        end
-
-        attribute :display_compare_at_price do |product|
-          price_object(product)&.display_compare_at_amount&.to_s if price_object(product)&.compare_at_amount&.present?
-        end
-
-        # Original price (base price without price list resolution)
-        attribute :original_price do |product|
-          original_price_object(product)&.amount&.to_f
-        end
-
-        attribute :original_price_in_cents do |product|
-          original_price_object(product)&.display_amount&.amount_in_cents
-        end
-
-        attribute :display_original_price do |product|
-          original_price_object(product)&.display_price&.to_s
-        end
-
-        # Whether the product is on sale (price list applied or compare_at_price set)
-        attribute :on_sale do |product|
-          price = price_object(product)
-          original = original_price_object(product)
-
-          next false unless price&.amount.present?
-
-          # On sale if: price list applied with lower price, OR compare_at_price is higher
-          from_price_list = price.price_list_id.present? && original&.amount.present? && price.amount < original.amount
-          has_compare_at = price.compare_at_amount.present? && price.amount < price.compare_at_amount
-
-          from_price_list || has_compare_at
-        end
-
-        # ID of the price list if one was applied
-        attribute :price_list_id do |product|
-          price = price_object(product)
-          next nil unless price&.price_list_id.present?
-
-          Spree::PriceList.find_by(id: price.price_list_id)&.prefix_id
-        end
-
         attribute :tags do |product|
           product.taggings.map(&:tag)
+        end
+
+        # Price object - calculated price with price list resolution
+        attribute :price do |product|
+          price = price_for(product.default_variant)
+          Spree.api.price_serializer.new(price, params: params).to_h if price.present?
+        end
+
+        # Original price - base price without price list resolution (for showing strikethrough)
+        attribute :original_price do |product|
+          price = price_in(product.default_variant)
+          Spree.api.price_serializer.new(price, params: params).to_h if price.present?
         end
 
         # Conditional associations
@@ -130,16 +80,6 @@ module Spree
              },
              resource: Spree.api.taxon_serializer,
              if: proc { params[:includes]&.include?('taxons') }
-
-        private
-
-        def price_object(product)
-          @price_object ||= price_for(product.default_variant)
-        end
-
-        def original_price_object(product)
-          @original_price_object ||= price_in(product.default_variant)
-        end
       end
     end
   end
