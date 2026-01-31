@@ -37,7 +37,7 @@ module Spree
 
         scope = current_store.products.not_archived.accessible_by(current_ability, :index)
         scope = scope.where.not(id: params[:omit_ids].split(',')) if params[:omit_ids].present?
-        @products = scope.includes(master: :images, variants: :images).multi_search(query).limit(params[:limit] || 10)
+        @products = scope.includes(:thumbnail).multi_search(query).limit(params[:limit] || 10)
 
         respond_to do |format|
           format.turbo_stream do
@@ -211,9 +211,10 @@ module Spree
       # These includes are not picked automatically by ar_lazy_preload gem so we need to specify them manually.
       def collection_includes
         {
+          thumbnail: [attachment_attachment: :blob],
           stock_items: [],
-          master: [:images, :prices, :stock_items],
-          variants: [:images, :prices, :stock_items]
+          master: [:prices, :stock_items],
+          variants: [:prices, :stock_items]
         }
       end
 
@@ -256,7 +257,9 @@ module Spree
         return if @product.has_variants?
 
         available_stock_locations_list(master_stock_items_locations_opts).each do |_name, id|
-          @product.master.stock_items.build(stock_location_id: id, count_on_hand: 0) unless @product.master.stock_items.find { |stock_item| stock_item.stock_location_id == id }
+          @product.master.stock_items.build(stock_location_id: id, count_on_hand: 0) unless @product.master.stock_items.find do |stock_item|
+            stock_item.stock_location_id == id
+          end
         end
       end
 
@@ -268,7 +271,9 @@ module Spree
         return unless Spree::Config[:product_properties_enabled]
 
         Spree::Property.all.each do |property|
-          @product.product_properties.build(property: property) unless @product.product_properties.find { |product_property| product_property.property_id == property.id }
+          @product.product_properties.build(property: property) unless @product.product_properties.find do |product_property|
+            product_property.property_id == property.id
+          end
         end
       end
 
@@ -289,13 +294,11 @@ module Spree
       end
 
       def permitted_resource_params
-        @permitted_resource_params ||= begin
-          if cannot?(:activate, @product) && @new_status&.to_sym == :active
-            params.require(:product).permit(permitted_product_attributes).except(:status, :make_active_at)
-          else
-            params.require(:product).permit(permitted_product_attributes)
-          end
-        end
+        @permitted_resource_params ||= if cannot?(:activate, @product) && @new_status&.to_sym == :active
+                                         params.require(:product).permit(permitted_product_attributes).except(:status, :make_active_at)
+                                       else
+                                         params.require(:product).permit(permitted_product_attributes)
+                                       end
       end
     end
   end

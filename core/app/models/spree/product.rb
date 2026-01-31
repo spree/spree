@@ -119,6 +119,8 @@ module Spree
     has_many :variant_images, -> { order(:position) }, source: :images, through: :variants_including_master
     has_many :variant_images_without_master, -> { order(:position) }, source: :images, through: :variants
 
+    belongs_to :thumbnail, class_name: 'Spree::Image', optional: true
+
     has_many :option_value_variants, class_name: 'Spree::OptionValueVariant', through: :variants
     has_many :option_values, class_name: 'Spree::OptionValue', through: :variants
 
@@ -367,9 +369,10 @@ module Spree
     end
 
     # Returns default Image for Product.
+    # Uses cached thumbnail_id which is updated when images are added/removed/reordered.
     # @return [Spree::Image, nil]
     def default_image
-      variant_for_images&.primary_image
+      thumbnail
     end
 
     # Backward compatibility for Spree 5.2 and earlier.
@@ -393,6 +396,13 @@ module Spree
     # @return [Integer]
     def image_count
       variant_for_images&.image_count || 0
+    end
+
+    # Updates the thumbnail_id to the first image from variant_images.
+    # Called when images are added, removed, or reordered on any variant.
+    def update_thumbnail!
+      first_image = variant_images.order(:position).first
+      update_column(:thumbnail_id, first_image&.id)
     end
 
     # Finds first variant with images using preloaded data when available.

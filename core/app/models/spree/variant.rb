@@ -49,6 +49,7 @@ module Spree
     has_many :option_values, through: :option_value_variants, dependent: :destroy, class_name: 'Spree::OptionValue'
 
     has_many :images, -> { order(:position) }, as: :viewable, dependent: :destroy, class_name: 'Spree::Image'
+    belongs_to :thumbnail, class_name: 'Spree::Image', optional: true
 
     has_many :prices,
              class_name: 'Spree::Price',
@@ -295,10 +296,17 @@ module Spree
       image_count.positive?
     end
 
-    # Returns default Image for Variant, falling back to product's default image.
+    # Returns default Image for Variant.
     # @return [Spree::Image, nil]
     def default_image
-      @default_image ||= has_images? ? images.first : product.default_image
+      thumbnail
+    end
+
+    # Updates the thumbnail_id to the first image by position.
+    # Called when images are added, removed, or reordered.
+    def update_thumbnail!
+      first_image = images.order(:position).first
+      update_column(:thumbnail_id, first_image&.id)
     end
 
     # Returns first Image for Variant.
