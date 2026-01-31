@@ -184,9 +184,10 @@ module Spree
     # These includes are not picked automatically by ar_lazy_preload gem so we need to specify them manually.
     def storefront_products_includes
       {
+        thumbnail: [attachment_attachment: :blob],
         taxons: [],
-        master: [:images, :prices, { stock_items: :stock_location }],
-        variants: [:images, :prices, { stock_items: :stock_location }]
+        master: [:prices, { stock_items: :stock_location }],
+        variants: [:prices, { stock_items: :stock_location }]
       }
     end
 

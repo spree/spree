@@ -38,8 +38,9 @@ module Spree
                         includes(
                           :taxon,
                           product: {
-                            master: [:images, :stock_items, :stock_locations],
-                            variants: [:images, :stock_items, :stock_locations]
+                            thumbnail: [attachment_attachment: :blob],
+                            master: [:stock_items, :stock_locations],
+                            variants: [:stock_items, :stock_locations]
                           }
                         ).
                         accessible_by(current_ability)
