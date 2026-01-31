@@ -70,6 +70,11 @@ module Spree
              if: proc { params[:includes]&.include?('images') }
 
         many :option_values, resource: Spree.api.option_value_serializer
+
+        many :public_metafields,
+             key: :metafields,
+             resource: Spree.api.metafield_serializer,
+             if: proc { params[:includes]&.include?('metafields') }
       end
     end
   end

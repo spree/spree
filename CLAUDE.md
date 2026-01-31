@@ -333,6 +333,7 @@ This will create a dummy rails application and run migrations. If there's alread
 - For controller spec authentication use `stub_authorization!`
 - Don't create test scenarios for standard rails validation, only for custom validations
 - For time-based testing / operations use `Timecop` gem
+- Be pragmatic, and don't over-engineer tests, don't repeat same tests in multiple places
 
 ```ruby
 # ✅ Proper spec structure

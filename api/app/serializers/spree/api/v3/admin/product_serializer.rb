@@ -36,6 +36,10 @@ module Spree
               key: :master_variant,
               resource: Spree::Api::V3::Admin::VariantSerializer,
               if: proc { params[:includes]&.include?('master_variant') }
+
+          many :metafields,
+               resource: Spree::Api::V3::Admin::MetafieldSerializer,
+               if: proc { params[:includes]&.include?('metafields') }
         end
       end
     end
