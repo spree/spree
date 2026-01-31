@@ -211,6 +211,31 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
 
         expect(response).to have_http_status(:not_found)
       end
+
+      context 'locale fallback' do
+        let!(:english_only_product) do
+          create(:product, stores: [store], status: 'active', name: 'English Only', slug: 'english-only')
+        end
+
+        it 'falls back to default locale when product has no translation in requested locale' do
+          request.headers['x-spree-locale'] = 'fr'
+          get :show, params: { id: 'english-only' }
+
+          expect(response).to have_http_status(:ok)
+          expect(json_response['id']).to eq(english_only_product.prefix_id)
+          # Name returns English since no French translation exists
+          expect(json_response['name']).to eq('English Only')
+        end
+
+        it 'returns translated content when translation exists' do
+          request.headers['x-spree-locale'] = 'fr'
+          get :show, params: { id: 'english-product' }
+
+          expect(response).to have_http_status(:ok)
+          expect(json_response['id']).to eq(translated_product.prefix_id)
+          expect(json_response['name']).to eq('Produit Français')
+        end
+      end
     end
 
     context 'error handling' do

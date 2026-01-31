@@ -113,6 +113,31 @@ RSpec.describe Spree::Api::V3::Store::TaxonsController, type: :controller do
 
         expect(response).to have_http_status(:not_found)
       end
+
+      context 'locale fallback' do
+        let!(:english_only_taxon) do
+          create(:taxon, taxonomy: taxonomy, name: 'Electronics')
+        end
+
+        it 'falls back to default locale when taxon has no translation in requested locale' do
+          request.headers['x-spree-locale'] = 'fr'
+          get :show, params: { id: english_only_taxon.permalink }
+
+          expect(response).to have_http_status(:ok)
+          expect(json_response['id']).to eq(english_only_taxon.prefix_id)
+          # Name returns English since no French translation exists
+          expect(json_response['name']).to eq('Electronics')
+        end
+
+        it 'returns translated content when translation exists' do
+          request.headers['x-spree-locale'] = 'fr'
+          get :show, params: { id: translated_taxon.permalink }
+
+          expect(response).to have_http_status(:ok)
+          expect(json_response['id']).to eq(translated_taxon.prefix_id)
+          expect(json_response['name']).to eq('Vêtements')
+        end
+      end
     end
 
     context 'error handling' do
