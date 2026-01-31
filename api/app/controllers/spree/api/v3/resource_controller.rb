@@ -147,6 +147,7 @@ module Spree
                        end
           base_scope = base_scope.accessible_by(current_ability, :show) unless @parent.present?
           base_scope = base_scope.includes(scope_includes) if scope_includes.any?
+          base_scope = base_scope.preload_associations_lazily
           model_class.include?(Spree::TranslatableResource) ? base_scope.i18n : base_scope
         end
 
