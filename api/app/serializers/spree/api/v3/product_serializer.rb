@@ -8,6 +8,7 @@ module Spree
                  meta_description: 'string | null', meta_keywords: 'string | null',
                  variant_count: :number,
                  default_variant_id: :string,
+                 thumbnail: 'string | null',
                  available_on: 'string | null',
                  purchasable: :boolean, in_stock: :boolean, backorderable: :boolean, available: :boolean,
                  price: 'StorePrice',
@@ -37,6 +38,11 @@ module Spree
 
         attribute :default_variant_id do |product|
           product.default_variant&.prefix_id
+        end
+
+        # Main product image URL for listings (cached thumbnail)
+        attribute :thumbnail do |product|
+          image_url_for(product.thumbnail)
         end
 
         attribute :tags do |product|

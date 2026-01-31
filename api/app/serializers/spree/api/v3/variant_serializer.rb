@@ -6,6 +6,7 @@ module Spree
       class VariantSerializer < BaseSerializer
         typelize product_id: :string, sku: 'string | null',
                  is_master: :boolean, options_text: :string, track_inventory: :boolean, image_count: :number,
+                 thumbnail: 'string | null',
                  purchasable: :boolean, in_stock: :boolean, backorderable: :boolean,
                  weight: 'number | null', height: 'number | null', width: 'number | null', depth: 'number | null',
                  price: 'StorePrice',
@@ -17,6 +18,11 @@ module Spree
 
         attributes :sku, :is_master, :options_text, :track_inventory, :image_count,
                    created_at: :iso8601, updated_at: :iso8601
+
+        # Main variant image URL for listings (cached thumbnail)
+        attribute :thumbnail do |variant|
+          image_url_for(variant.thumbnail)
+        end
 
         attribute :purchasable do |variant|
           variant.purchasable?
