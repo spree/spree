@@ -3132,6 +3132,43 @@ components:
       - created_at
       - updated_at
       - payment_method
+    StorePrice:
+      type: object
+      description: A resolved/calculated price object. Contains the price amount, formatted display string, and optional compare_at pricing for sales.
+      properties:
+        amount:
+          type: number
+          nullable: true
+          description: The price amount as a decimal number
+        amount_in_cents:
+          type: integer
+          nullable: true
+          description: The price amount in cents (integer)
+        display_amount:
+          type: string
+          nullable: true
+          description: Formatted price string with currency symbol (e.g., "$19.99")
+        compare_at_amount:
+          type: number
+          nullable: true
+          description: Original price before discount (for showing strikethrough)
+        compare_at_amount_in_cents:
+          type: integer
+          nullable: true
+          description: Original price in cents before discount
+        display_compare_at_amount:
+          type: string
+          nullable: true
+          description: Formatted original price string
+        currency:
+          type: string
+          nullable: true
+          description: ISO 4217 currency code (e.g., "USD", "EUR")
+        price_list_id:
+          type: string
+          nullable: true
+          description: ID of the price list if one was applied
+      x-typelizer: true
     StoreProduct:
       type: object
       properties:
@@ -3174,42 +3211,11 @@ components:
         available:
           type: boolean
         price:
-          type: number
-          nullable: true
-        price_in_cents:
-          type: number
-          nullable: true
-        display_price:
-          type: string
-          nullable: true
-        compare_at_price:
-          type: number
-          nullable: true
-        compare_at_price_in_cents:
-          type: number
-          nullable: true
-        display_compare_at_price:
-          type: string
-          nullable: true
+          "$ref": "#/components/schemas/StorePrice"
+          description: Current calculated price (may include price list resolution)
         original_price:
-          type: number
-          nullable: true
-          description: Base price without price list resolution
-        original_price_in_cents:
-          type: number
-          nullable: true
-          description: Base price in cents without price list resolution
-        display_original_price:
-          type: string
-          nullable: true
-          description: Formatted base price without price list resolution
-        on_sale:
-          type: boolean
-          description: Whether the product is on sale (price list applied with lower price, or compare_at_price set)
-        price_list_id:
-          type: string
-          nullable: true
-          description: ID of the price list if one was applied
+          "$ref": "#/components/schemas/StorePrice"
+          description: Base price without price list resolution (for showing strikethrough)
         tags:
           type: array
           items:
@@ -3246,7 +3252,8 @@ components:
       - in_stock
       - backorderable
       - available
-      - on_sale
+      - price
+      - original_price
       - tags
     StoreShipment:
       type: object
@@ -3641,42 +3648,11 @@ components:
           type: number
           nullable: true
         price:
-          type: number
-          nullable: true
-        price_in_cents:
-          type: number
-          nullable: true
-        display_price:
-          type: string
-          nullable: true
-        compare_at_price:
-          type: number
-          nullable: true
-        compare_at_price_in_cents:
-          type: number
-          nullable: true
-        display_compare_at_price:
-          type: string
-          nullable: true
+          "$ref": "#/components/schemas/StorePrice"
+          description: Current calculated price (may include price list resolution)
         original_price:
-          type: number
-          nullable: true
-          description: Base price without price list resolution
-        original_price_in_cents:
-          type: number
-          nullable: true
-          description: Base price in cents without price list resolution
-        display_original_price:
-          type: string
-          nullable: true
-          description: Formatted base price without price list resolution
-        on_sale:
-          type: boolean
-          description: Whether the variant is on sale (price list applied with lower price, or compare_at_price set)
-        price_list_id:
-          type: string
-          nullable: true
-          description: ID of the price list if one was applied
+          "$ref": "#/components/schemas/StorePrice"
+          description: Base price without price list resolution (for showing strikethrough)
         images:
           type: array
           items:
@@ -3698,7 +3674,8 @@ components:
       - purchasable
       - in_stock
       - backorderable
-      - on_sale
+      - price
+      - original_price
       - option_values
     StoreWishedItem:
       type: object

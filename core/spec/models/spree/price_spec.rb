@@ -319,6 +319,47 @@ describe Spree::Price, type: :model do
     end
   end
 
+  describe '#display_compare_at_amount' do
+    let(:price) { build(:price, amount: 10, compare_at_amount: compare_at_amount, currency: 'USD') }
+
+    context 'when compare_at_amount is set' do
+      let(:compare_at_amount) { 19.99 }
+
+      it 'returns a Spree::Money object' do
+        expect(price.display_compare_at_amount).to be_a(Spree::Money)
+        expect(price.display_compare_at_amount.to_s).to eq('$19.99')
+      end
+    end
+
+    context 'when compare_at_amount is nil' do
+      let(:compare_at_amount) { nil }
+
+      it 'returns nil' do
+        expect(price.display_compare_at_amount).to be_nil
+      end
+    end
+  end
+
+  describe '#compare_at_amount_in_cents' do
+    let(:price) { build(:price, amount: 10, compare_at_amount: compare_at_amount, currency: 'USD') }
+
+    context 'when compare_at_amount is set' do
+      let(:compare_at_amount) { 19.99 }
+
+      it 'returns the amount in cents' do
+        expect(price.compare_at_amount_in_cents).to eq(1999)
+      end
+    end
+
+    context 'when compare_at_amount is nil' do
+      let(:compare_at_amount) { nil }
+
+      it 'returns nil' do
+        expect(price.compare_at_amount_in_cents).to be_nil
+      end
+    end
+  end
+
   describe '#discounted?' do
     subject { price.discounted? }
 

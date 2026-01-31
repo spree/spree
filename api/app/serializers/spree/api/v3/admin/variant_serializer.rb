@@ -27,7 +27,12 @@ module Spree
             variant.total_on_hand
           end
 
-          # TODO: Add stock_items and prices associations when Admin API is implemented
+          # All prices for this variant (for admin management)
+          many :prices,
+               resource: Spree::Api::V3::Admin::PriceSerializer,
+               if: proc { params[:includes]&.include?('prices') }
+
+          # TODO: Add stock_items association when Admin API is implemented
         end
       end
     end
