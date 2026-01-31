@@ -28,6 +28,7 @@ RSpec.describe Spree::Api::V3::VariantSerializer do
       expect(subject).not_to have_key('private_metadata')
       expect(subject).not_to have_key('total_on_hand')
       expect(subject).not_to have_key('deleted_at')
+      expect(subject).not_to have_key('barcode')
     end
 
     describe 'price object' do

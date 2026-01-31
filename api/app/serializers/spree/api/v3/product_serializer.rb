@@ -5,7 +5,6 @@ module Spree
       # Customer-facing product data with limited fields
       class ProductSerializer < BaseSerializer
         typelize name: :string, description: 'string | null', slug: :string,
-                 sku: 'string | null', barcode: 'string | null',
                  meta_description: 'string | null', meta_keywords: 'string | null',
                  variant_count: :number,
                  default_variant_id: :string,
@@ -15,7 +14,7 @@ module Spree
                  original_price: 'StorePrice',
                  tags: 'string[]'
 
-        attributes :name, :description, :slug, :sku, :barcode,
+        attributes :name, :description, :slug,
                    :meta_description, :meta_keywords,
                    :variant_count,
                    available_on: :iso8601, created_at: :iso8601, updated_at: :iso8601

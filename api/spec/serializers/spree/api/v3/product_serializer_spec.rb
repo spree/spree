@@ -15,6 +15,8 @@ RSpec.describe Spree::Api::V3::ProductSerializer do
         'slug' => product.slug,
         'default_variant_id' => product.default_variant.prefix_id
       )
+      expect(subject).not_to have_key('sku')
+      expect(subject).not_to have_key('barcode')
     end
 
     it 'includes timestamps' do
