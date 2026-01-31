@@ -12,6 +12,7 @@ module Spree
         # e.g., prod_abc123, var_xyz789, or_def456
         attribute :id do |object|
           next nil unless object.respond_to?(:prefix_id)
+
           object.prefix_id
         end
 

@@ -20,7 +20,7 @@
 
 module Spree
   class Product < Spree.base_class
-    has_prefix_id :prod  # Stripe: prod_
+    has_prefix_id :prod # Stripe: prod_
 
     acts_as_paranoid
     acts_as_taggable_on :tags, :labels
@@ -613,15 +613,13 @@ module Spree
                          nil
                        elsif Spree.use_translations?
                          taxons.joins(:taxonomy).
-                            join_translation_table(Taxonomy).
-                            find_by(Taxonomy.translation_table_alias => { name: Spree.t(:taxonomy_brands_name) })
-                        else
-                          if taxons.loaded?
-                            taxons.find { |taxon| taxon.taxonomy.name == Spree.t(:taxonomy_brands_name) }
-                          else
-                            taxons.joins(:taxonomy).find_by(Taxonomy.table_name => { name: Spree.t(:taxonomy_brands_name) })
-                          end
-                        end
+                           join_translation_table(Taxonomy).
+                           find_by(Taxonomy.translation_table_alias => { name: Spree.t(:taxonomy_brands_name) })
+                       elsif taxons.loaded?
+                         taxons.find { |taxon| taxon.taxonomy.name == Spree.t(:taxonomy_brands_name) }
+                       else
+                         taxons.joins(:taxonomy).find_by(Taxonomy.table_name => { name: Spree.t(:taxonomy_brands_name) })
+                       end
     end
 
     # Returns the brand name for the product
@@ -653,12 +651,10 @@ module Spree
                               join_translation_table(Taxonomy).
                               order(depth: :desc).
                               find_by(Taxonomy.translation_table_alias => { name: Spree.t(:taxonomy_categories_name) })
+                          elsif taxons.loaded?
+                            taxons.find { |taxon| taxon.taxonomy.name == Spree.t(:taxonomy_categories_name) }
                           else
-                            if taxons.loaded?
-                              taxons.find { |taxon| taxon.taxonomy.name == Spree.t(:taxonomy_categories_name) }
-                            else
-                              taxons.joins(:taxonomy).order(depth: :desc).find_by(Taxonomy.table_name => { name: Spree.t(:taxonomy_categories_name) })
-                            end
+                            taxons.joins(:taxonomy).order(depth: :desc).find_by(Taxonomy.table_name => { name: Spree.t(:taxonomy_categories_name) })
                           end
     end
 
@@ -706,15 +702,15 @@ module Spree
     def to_csv(store = nil)
       store ||= stores.default || stores.first
       properties_for_csv = if Spree::Config[:product_properties_enabled]
-        Spree::Property.order(:position).flat_map do |property|
-          [
-            property.name,
-            product_properties.find { |pp| pp.property_id == property.id }&.value
-          ]
-        end
-      else
-        []
-      end
+                             Spree::Property.order(:position).flat_map do |property|
+                               [
+                                 property.name,
+                                 product_properties.find { |pp| pp.property_id == property.id }&.value
+                               ]
+                             end
+                           else
+                             []
+                           end
       metafields_for_csv ||= Spree::MetafieldDefinition.for_resource_type('Spree::Product').order(:namespace, :key).map do |mf_def|
         metafields.find { |mf| mf.metafield_definition_id == mf_def.id }&.csv_value
       end
