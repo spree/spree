@@ -5,10 +5,10 @@ module Spree
       # Represents a resolved/calculated price for storefront display
       # Can represent either a calculated price (with price list resolution) or a base price
       class PriceSerializer < BaseSerializer
-        typelize amount: 'number | null',
+        typelize amount: 'string | null',
                  amount_in_cents: 'number | null',
                  display_amount: 'string | null',
-                 compare_at_amount: 'number | null',
+                 compare_at_amount: 'string | null',
                  compare_at_amount_in_cents: 'number | null',
                  display_compare_at_amount: 'string | null',
                  currency: 'string | null',

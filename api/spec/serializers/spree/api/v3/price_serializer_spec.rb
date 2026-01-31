@@ -12,7 +12,7 @@ RSpec.describe Spree::Api::V3::PriceSerializer do
 
     it 'includes amount fields' do
       expect(subject).to include(
-        'amount' => 19.99,
+        'amount' => '19.99'.to_d,
         'amount_in_cents' => 1999,
         'display_amount' => '$19.99'
       )
@@ -39,7 +39,7 @@ RSpec.describe Spree::Api::V3::PriceSerializer do
 
       it 'includes compare_at_amount fields' do
         expect(subject).to include(
-          'compare_at_amount' => 29.99,
+          'compare_at_amount' => '29.99'.to_d,
           'compare_at_amount_in_cents' => 2999,
           'display_compare_at_amount' => '$29.99'
         )
