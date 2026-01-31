@@ -12,7 +12,8 @@ RSpec.describe Spree::Api::V3::ProductSerializer do
       expect(subject).to include(
         'id' => product.prefix_id,
         'name' => product.name,
-        'slug' => product.slug
+        'slug' => product.slug,
+        'default_variant_id' => product.default_variant.prefix_id
       )
     end
 
