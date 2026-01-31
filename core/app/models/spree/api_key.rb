@@ -13,6 +13,7 @@ module Spree
     validates :name, presence: true
     validates :key_type, presence: true, inclusion: { in: KEY_TYPES }
     validates :token, presence: true, uniqueness: { scope: spree_base_uniqueness_scope }
+    validates :store, presence: true
 
     before_validation :generate_token, on: :create
 
