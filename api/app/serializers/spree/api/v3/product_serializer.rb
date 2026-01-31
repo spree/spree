@@ -8,6 +8,7 @@ module Spree
                  sku: 'string | null', barcode: 'string | null',
                  meta_description: 'string | null', meta_keywords: 'string | null',
                  variant_count: :number,
+                 default_variant_id: :string,
                  available_on: 'string | null',
                  purchasable: :boolean, in_stock: :boolean, backorderable: :boolean, available: :boolean,
                  price: 'StorePrice',
@@ -33,6 +34,10 @@ module Spree
 
         attribute :available do |product|
           product.available?
+        end
+
+        attribute :default_variant_id do |product|
+          product.default_variant&.prefix_id
         end
 
         attribute :tags do |product|
