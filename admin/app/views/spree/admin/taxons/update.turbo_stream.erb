@@ -1,7 +1,7 @@
 <%= turbo_render_alerts %>
 
 <%= turbo_stream.replace :classifications do %>
-  <%= turbo_frame_tag :classifications, src: spree.admin_taxon_classifications_path(@taxon.id) do %>
+  <%= turbo_frame_tag :classifications, src: spree.admin_taxon_classifications_path(@taxon) do %>
     <%= render 'spree/admin/shared/spinner' %>
   <% end %>
 <% end %>

@@ -54,7 +54,7 @@
           </h5>
 
           <% if @taxon.manual? && can?(:create, Spree::Classification) %>
-            <%= link_to_with_icon 'plus', Spree.t(:add_products), spree.new_admin_taxon_classification_path(@taxon.id), class: 'btn btn-secondary btn-sm', data: { turbo_frame: 'dialog', action: 'dialog#open' } %>
+            <%= link_to_with_icon 'plus', Spree.t(:add_products), spree.new_admin_taxon_classification_path(@taxon), class: 'btn btn-secondary btn-sm', data: { turbo_frame: 'dialog', action: 'dialog#open' } %>
           <% end %>
         </div>
 
@@ -67,7 +67,7 @@
 
         <div class="card-body min-h-[300px] p-0">
           <div class="block overflow-y-auto overflow-x-hidden max-h-[300px]">
-            <%= turbo_frame_tag :classifications, src: spree.admin_taxon_classifications_path(@taxon.id), loading: :lazy do %>
+            <%= turbo_frame_tag :classifications, src: spree.admin_taxon_classifications_path(@taxon), loading: :lazy do %>
               <%= render 'spree/admin/shared/spinner' %>
             <% end %>
           </div>
