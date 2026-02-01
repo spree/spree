@@ -25,7 +25,10 @@ Spree::Core::Engine.add_routes do
           resources :products, only: [:index], controller: 'taxons/products'
         end
 
-        # Orders
+        # Cart - alias for current incomplete order (creates if none exists)
+        get 'cart', to: 'cart#show'
+
+        # Orders - all orders (complete and incomplete)
         resources :orders do
           member do
             # State transitions
@@ -44,11 +47,13 @@ Spree::Core::Engine.add_routes do
         end
 
         # Customer
-        get 'customers/me', to: 'customers#show'
-        patch 'customers/me', to: 'customers#update'
-        resources :addresses, only: [:index, :show, :create, :update, :destroy], path: 'customers/me/addresses'
-        resources :credit_cards, only: [:index, :show, :destroy], path: 'customers/me/credit_cards'
-        resources :payment_sources, only: [:index, :show, :destroy], path: 'customers/me/payment_sources'
+        namespace :customer, path: 'customer' do
+          get '/', to: 'account#show'
+          patch '/', to: 'account#update'
+          resources :addresses, only: [:index, :show, :create, :update, :destroy]
+          resources :credit_cards, only: [:index, :show, :destroy]
+          resources :payment_sources, only: [:index, :show, :destroy]
+        end
 
         # Wishlists
         resources :wishlists do

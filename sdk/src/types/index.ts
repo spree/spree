@@ -24,10 +24,13 @@ export interface ErrorResponse {
 
 // Auth types
 export interface AuthTokens {
-  access_token: string;
-  refresh_token: string;
-  token_type: 'Bearer';
-  expires_in: number;
+  token: string;
+  user: {
+    id: string;
+    email: string;
+    first_name: string | null;
+    last_name: string | null;
+  };
 }
 
 export interface LoginCredentials {

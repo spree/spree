@@ -157,15 +157,13 @@ export class SpreeClient {
      * Register a new customer account
      */
     register: (params: RegisterParams): Promise<AuthTokens> =>
-      this.request<AuthTokens>('POST', '/auth/register', { body: params }),
+      this.request<AuthTokens>('POST', '/auth/register', { body: { user: params } }),
 
     /**
-     * Refresh access token using refresh token
+     * Refresh access token (requires valid Bearer token)
      */
-    refresh: (refreshToken: string): Promise<AuthTokens> =>
-      this.request<AuthTokens>('POST', '/auth/refresh', {
-        body: { refresh_token: refreshToken },
-      }),
+    refresh: (options: RequestOptions): Promise<AuthTokens> =>
+      this.request<AuthTokens>('POST', '/auth/refresh', options),
   };
 
   // ============================================
@@ -326,7 +324,26 @@ export class SpreeClient {
   };
 
   // ============================================
-  // Orders (Cart & Checkout)
+  // Cart (convenience wrapper for current incomplete order)
+  // ============================================
+
+  readonly cart = {
+    /**
+     * Get current cart (returns null if none exists)
+     * Pass orderToken for guest checkout, or use JWT for authenticated users
+     */
+    get: (options?: RequestOptions): Promise<StoreOrder & { token: string }> =>
+      this.request<StoreOrder & { token: string }>('GET', '/cart', options),
+
+    /**
+     * Create a new cart (alias for orders.create)
+     */
+    create: (options?: RequestOptions): Promise<StoreOrder & { token: string }> =>
+      this.request<StoreOrder & { token: string }>('POST', '/orders', options),
+  };
+
+  // ============================================
+  // Orders (all orders - complete and incomplete)
   // ============================================
 
   readonly orders = {
@@ -521,7 +538,7 @@ export class SpreeClient {
      * Get current customer profile
      */
     get: (options?: RequestOptions): Promise<StoreUser> =>
-      this.request<StoreUser>('GET', '/customers/me', options),
+      this.request<StoreUser>('GET', '/customer', options),
 
     /**
      * Update current customer profile
@@ -530,7 +547,7 @@ export class SpreeClient {
       params: { first_name?: string; last_name?: string; email?: string },
       options?: RequestOptions
     ): Promise<StoreUser> =>
-      this.request<StoreUser>('PATCH', '/customers/me', {
+      this.request<StoreUser>('PATCH', '/customer', {
         ...options,
         body: { user: params },
       }),
@@ -548,7 +565,7 @@ export class SpreeClient {
       ): Promise<PaginatedResponse<StoreAddress>> =>
         this.request<PaginatedResponse<StoreAddress>>(
           'GET',
-          '/customers/me/addresses',
+          '/customer/addresses',
           { ...options, params: params as Record<string, string | number | undefined> }
         ),
 
@@ -556,7 +573,7 @@ export class SpreeClient {
        * Get an address by ID
        */
       get: (id: string, options?: RequestOptions): Promise<StoreAddress> =>
-        this.request<StoreAddress>('GET', `/customers/me/addresses/${id}`, options),
+        this.request<StoreAddress>('GET', `/customer/addresses/${id}`, options),
 
       /**
        * Create an address
@@ -565,7 +582,7 @@ export class SpreeClient {
         address: Omit<StoreAddress, 'id'>,
         options?: RequestOptions
       ): Promise<StoreAddress> =>
-        this.request<StoreAddress>('POST', '/customers/me/addresses', {
+        this.request<StoreAddress>('POST', '/customer/addresses', {
           ...options,
           body: { address },
         }),
@@ -578,7 +595,7 @@ export class SpreeClient {
         address: Partial<Omit<StoreAddress, 'id'>>,
         options?: RequestOptions
       ): Promise<StoreAddress> =>
-        this.request<StoreAddress>('PATCH', `/customers/me/addresses/${id}`, {
+        this.request<StoreAddress>('PATCH', `/customer/addresses/${id}`, {
           ...options,
           body: { address },
         }),
@@ -587,7 +604,7 @@ export class SpreeClient {
        * Delete an address
        */
       delete: (id: string, options?: RequestOptions): Promise<void> =>
-        this.request<void>('DELETE', `/customers/me/addresses/${id}`, options),
+        this.request<void>('DELETE', `/customer/addresses/${id}`, options),
     },
   };
 
