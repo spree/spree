@@ -114,6 +114,44 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
       end
     end
 
+    context 'sorting' do
+      let!(:cheap_product) do
+        create(:product, stores: [store], status: 'active', name: 'Cheap').tap do |p|
+          p.master.prices.first.update!(amount: 10.0)
+        end
+      end
+
+      let!(:expensive_product) do
+        create(:product, stores: [store], status: 'active', name: 'Expensive').tap do |p|
+          p.master.prices.first.update!(amount: 100.0)
+        end
+      end
+
+      it 'sorts by price low to high' do
+        get :index, params: { q: { sort_by: 'price-low-to-high' } }
+
+        expect(response).to have_http_status(:ok)
+        prices = json_response['data'].map { |p| p['price']['amount'].to_f }
+        expect(prices).to eq(prices.sort)
+      end
+
+      it 'sorts by price high to low' do
+        get :index, params: { q: { sort_by: 'price-high-to-low' } }
+
+        expect(response).to have_http_status(:ok)
+        prices = json_response['data'].map { |p| p['price']['amount'].to_f }
+        expect(prices).to eq(prices.sort.reverse)
+      end
+
+      it 'sorts by name a-z with ransack' do
+        get :index, params: { q: { s: 'name asc' } }
+
+        expect(response).to have_http_status(:ok)
+        names = json_response['data'].map { |p| p['name'] }
+        expect(names).to eq(names.sort)
+      end
+    end
+
     context 'authentication' do
       context 'without API key' do
         before { request.headers['X-Spree-Api-Key'] = nil }

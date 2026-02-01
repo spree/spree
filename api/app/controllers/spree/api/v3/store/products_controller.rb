@@ -3,6 +3,12 @@ module Spree
     module V3
       module Store
         class ProductsController < ResourceController
+          SORT_OPTIONS = {
+            'price-low-to-high' => :ascend_by_price,
+            'price-high-to-low' => :descend_by_price,
+            'best-selling' => :by_best_selling
+          }.freeze
+
           protected
 
           def model_class
@@ -32,9 +38,32 @@ module Spree
           def scope_includes
             [
               thumbnail: [attachment_attachment: :blob],
-              master: [:prices, { stock_items: :stock_location }],
-              variants: [:prices, { stock_items: :stock_location }]
+              master: [:prices],
+              variants: [:prices]
             ]
+          end
+
+          # Disable distinct when using custom sort scopes that add computed columns
+          def collection_distinct?
+            !custom_sort_requested?
+          end
+
+          # Apply custom sorting scopes for price/best-selling
+          def apply_collection_sort(collection)
+            sort_by = params.dig(:q, :sort_by) || params[:sort_by]
+            return collection unless sort_by.present?
+
+            scope_method = SORT_OPTIONS[sort_by]
+            return collection.reorder(nil).send(scope_method) if scope_method.present?
+
+            collection
+          end
+
+          private
+
+          def custom_sort_requested?
+            sort_by = params.dig(:q, :sort_by) || params[:sort_by]
+            SORT_OPTIONS.key?(sort_by)
           end
         end
       end

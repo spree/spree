@@ -234,11 +234,12 @@ module Spree
 
     alias options product_option_types
 
-    self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on status]
+    self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on status available_on created_at updated_at]
     self.whitelisted_ransackable_associations = %w[taxons stores variants_including_master master variants tags labels
                                                    shipping_category classifications option_types properties]
     self.whitelisted_ransackable_scopes = %w[not_discontinued search_by_name in_taxon price_between
-                                             multi_search in_stock_items out_of_stock_items]
+                                             multi_search in_stock_items out_of_stock_items with_option_value_ids
+                                             ascend_by_price descend_by_price]
 
     [
       :sku, :barcode, :weight, :height, :width, :depth, :is_master, :dimensions_unit, :weight_unit

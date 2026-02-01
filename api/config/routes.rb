@@ -15,7 +15,11 @@ Spree::Core::Engine.add_routes do
         resources :countries, only: [:index, :show]
 
         # Catalog
-        resources :products, only: [:index, :show]
+        resources :products, only: [:index, :show] do
+          collection do
+            get :filters, to: 'products/filters#index'
+          end
+        end
         resources :taxonomies, only: [:index, :show]
         resources :taxons, only: [:index, :show], id: /.+/ do
           resources :products, only: [:index], controller: 'taxons/products'

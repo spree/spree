@@ -209,6 +209,24 @@ module Spree
           where(Spree::OptionValue.table_name => { name: value, option_type_id: option_type_id })
       end
 
+      # Filters products by option value IDs (prefix IDs like 'optval_xxx')
+      # Accepts an array of option value IDs
+      add_search_scope :with_option_value_ids do |*ids|
+        ids = ids.flatten.compact
+        return none if ids.empty?
+
+        # Handle prefix IDs (optval_xxx) by extracting the actual IDs
+        actual_ids = ids.map do |id|
+          id.to_s.start_with?('optval_') ? OptionValue.find_by(prefix_id: id)&.id : id
+        end.compact
+
+        return none if actual_ids.empty?
+
+        group("#{Spree::Product.table_name}.id").
+          joins(variants_including_master: :option_values).
+          where(Spree::OptionValue.table_name => { id: actual_ids })
+      end
+
       # Finds all products which have either:
       # 1) have an option value with the name matching the one given
       # 2) have a product property with a value matching the one given

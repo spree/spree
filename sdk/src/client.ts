@@ -6,6 +6,8 @@ import type {
   PaginatedResponse,
   ListParams,
   ProductListParams,
+  ProductFiltersParams,
+  ProductFiltersResponse,
   TaxonListParams,
   OrderListParams,
   AddLineItemParams,
@@ -89,7 +91,12 @@ export class SpreeClient {
     if (params) {
       Object.entries(params).forEach(([key, value]) => {
         if (value !== undefined) {
-          url.searchParams.set(key, String(value));
+          // Handle arrays by appending each value with the same key (Rails-style)
+          if (Array.isArray(value)) {
+            value.forEach((v) => url.searchParams.append(key, String(v)));
+          } else {
+            url.searchParams.set(key, String(value));
+          }
         }
       });
     }
@@ -201,6 +208,19 @@ export class SpreeClient {
       this.request<StoreProduct>('GET', `/products/${idOrSlug}`, {
         ...options,
         params,
+      }),
+
+    /**
+     * Get available filters for products
+     * Returns filter options (price range, availability, option types, taxons) with counts
+     */
+    filters: (
+      params?: ProductFiltersParams,
+      options?: RequestOptions
+    ): Promise<ProductFiltersResponse> =>
+      this.request<ProductFiltersResponse>('GET', '/products/filters', {
+        ...options,
+        params: params as Record<string, string | number | undefined>,
       }),
   };
 

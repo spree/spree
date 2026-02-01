@@ -104,3 +104,69 @@ export interface UpdateOrderParams {
   bill_address_attributes?: AddressParams;
   ship_address_attributes?: AddressParams;
 }
+
+// Product Filters types
+export interface FilterOption {
+  id: string;
+  label: string;
+  count: number;
+}
+
+export interface OptionFilterOption extends FilterOption {
+  name: string;
+  position: number;
+}
+
+export interface TaxonFilterOption extends FilterOption {
+  permalink: string;
+}
+
+export interface PriceRangeFilter {
+  id: 'price';
+  type: 'price_range';
+  label: string;
+  min: number;
+  max: number;
+  currency: string;
+}
+
+export interface AvailabilityFilter {
+  id: 'availability';
+  type: 'availability';
+  label: string;
+  options: FilterOption[];
+}
+
+export interface OptionFilter {
+  id: string;
+  type: 'option';
+  label: string;
+  name: string;
+  options: OptionFilterOption[];
+}
+
+export interface TaxonFilter {
+  id: 'taxons';
+  type: 'taxon';
+  label: string;
+  options: TaxonFilterOption[];
+}
+
+export type ProductFilter = PriceRangeFilter | AvailabilityFilter | OptionFilter | TaxonFilter;
+
+export interface SortOption {
+  id: string;
+  label: string;
+}
+
+export interface ProductFiltersResponse {
+  filters: ProductFilter[];
+  sort_options: SortOption[];
+  default_sort: string;
+  total_count: number;
+}
+
+export interface ProductFiltersParams {
+  taxon_id?: string;
+  q?: Record<string, unknown>;
+}

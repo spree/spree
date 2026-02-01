@@ -96,9 +96,20 @@ module Spree
           @search = scope.includes(collection_includes).
                     preload_associations_lazily.
                     ransack(ransack_params)
-          result = @search.result(distinct: true)
+          result = @search.result(distinct: collection_distinct?)
+          result = apply_collection_sort(result)
           @pagy, @collection = pagy(result, limit: limit, page: page)
           @collection
+        end
+
+        # Override in subclass to disable distinct (e.g., for custom sorting with computed columns)
+        def collection_distinct?
+          true
+        end
+
+        # Override in subclass to apply custom sorting
+        def apply_collection_sort(collection)
+          collection
         end
 
         def collection_includes
