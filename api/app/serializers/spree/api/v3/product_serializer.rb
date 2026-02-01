@@ -8,7 +8,7 @@ module Spree
                  meta_description: 'string | null', meta_keywords: 'string | null',
                  variant_count: :number,
                  default_variant_id: :string,
-                 thumbnail: 'string | null',
+                 thumbnail_url: 'string | null',
                  available_on: 'string | null',
                  purchasable: :boolean, in_stock: :boolean, backorderable: :boolean, available: :boolean,
                  price: 'StorePrice',
@@ -41,7 +41,7 @@ module Spree
         end
 
         # Main product image URL for listings (cached thumbnail)
-        attribute :thumbnail do |product|
+        attribute :thumbnail_url do |product|
           image_url_for(product.thumbnail)
         end
 

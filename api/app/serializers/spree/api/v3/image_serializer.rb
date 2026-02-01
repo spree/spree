@@ -16,7 +16,7 @@ module Spree
                    created_at: :iso8601, updated_at: :iso8601
 
         attribute :original_url do |image|
-          image_url(image)
+          image_url_for(image)
         end
 
         # Dynamically define attributes for each configured image variant
@@ -29,12 +29,6 @@ module Spree
         end
 
         private
-
-        def image_url(image)
-          return nil unless image&.attachment&.attached?
-
-          Rails.application.routes.url_helpers.cdn_image_url(image.attachment)
-        end
 
         def variant_url(image, variant_name)
           return nil unless image&.attachment&.attached?

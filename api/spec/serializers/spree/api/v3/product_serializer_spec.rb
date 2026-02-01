@@ -15,7 +15,7 @@ RSpec.describe Spree::Api::V3::ProductSerializer do
         'slug' => product.slug,
         'default_variant_id' => product.default_variant.prefix_id
       )
-      expect(subject).to have_key('thumbnail')
+      expect(subject).to have_key('thumbnail_url')
       expect(subject).to have_key('price')
       expect(subject).to have_key('original_price')
     end
