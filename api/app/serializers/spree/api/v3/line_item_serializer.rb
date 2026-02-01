@@ -10,7 +10,8 @@ module Spree
                  promo_total: :string, display_promo_total: :string,
                  pre_tax_amount: :string, display_pre_tax_amount: :string,
                  discounted_amount: :string, display_discounted_amount: :string,
-                 compare_at_amount: 'string | null', display_compare_at_amount: 'string | null'
+                 compare_at_amount: 'string | null', display_compare_at_amount: 'string | null',
+                 thumbnail_url: 'string | null'
 
         attribute :variant_id do |line_item|
           line_item.variant&.prefix_id
@@ -33,7 +34,11 @@ module Spree
           amount.present? && amount.positive? ? amount.to_s : nil
         end
 
-        many :images, resource: Spree.api.image_serializer
+        # Thumbnail URL for line item (variant thumbnail or product thumbnail)
+        attribute :thumbnail_url do |line_item|
+          image_url_for(line_item.thumbnail)
+        end
+
         many :option_values, resource: Spree.api.option_value_serializer
       end
     end

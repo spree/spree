@@ -49,8 +49,15 @@ module Spree
 
     after_create :update_tax_charge
 
-    delegate :sku, :should_track_inventory?, :product, :options_text, :slug, :product_id, :dimensions_unit, :weight_unit, :images, :option_values, to: :variant
+    delegate :sku, :should_track_inventory?, :product, :options_text, :slug, :product_id, :dimensions_unit, :weight_unit, :option_values, to: :variant
     delegate :name, :description, :brand, :category, to: :product
+
+    # Returns the thumbnail image for this line item
+    # Prefers variant thumbnail, falls back to product thumbnail
+    # @return [Spree::Image, nil]
+    def thumbnail
+      variant.thumbnail || product.thumbnail
+    end
     delegate :tax_zone, to: :order
     delegate :digital?, :can_supply?, to: :variant
 

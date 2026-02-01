@@ -13,6 +13,8 @@ import type {
   AddLineItemParams,
   UpdateLineItemParams,
   UpdateOrderParams,
+  AddressParams,
+  StoreCreditCard,
   StoreProduct,
   StoreOrder,
   StoreLineItem,
@@ -27,6 +29,9 @@ import type {
   StoreAddress,
   StoreUser,
 } from './types';
+
+// Re-export types for convenience
+export type { AddressParams, StoreCreditCard };
 
 export interface SpreeClientConfig {
   /** Base URL of the Spree API (e.g., 'https://api.mystore.com') */
@@ -579,7 +584,7 @@ export class SpreeClient {
        * Create an address
        */
       create: (
-        address: Omit<StoreAddress, 'id'>,
+        address: AddressParams,
         options?: RequestOptions
       ): Promise<StoreAddress> =>
         this.request<StoreAddress>('POST', '/customer/addresses', {
@@ -592,7 +597,7 @@ export class SpreeClient {
        */
       update: (
         id: string,
-        address: Partial<Omit<StoreAddress, 'id'>>,
+        address: Partial<AddressParams>,
         options?: RequestOptions
       ): Promise<StoreAddress> =>
         this.request<StoreAddress>('PATCH', `/customer/addresses/${id}`, {
@@ -605,6 +610,36 @@ export class SpreeClient {
        */
       delete: (id: string, options?: RequestOptions): Promise<void> =>
         this.request<void>('DELETE', `/customer/addresses/${id}`, options),
+    },
+
+    /**
+     * Nested resource: Credit Cards
+     */
+    creditCards: {
+      /**
+       * List customer credit cards
+       */
+      list: (
+        params?: ListParams,
+        options?: RequestOptions
+      ): Promise<PaginatedResponse<StoreCreditCard>> =>
+        this.request<PaginatedResponse<StoreCreditCard>>(
+          'GET',
+          '/customer/credit_cards',
+          { ...options, params: params as Record<string, string | number | undefined> }
+        ),
+
+      /**
+       * Get a credit card by ID
+       */
+      get: (id: string, options?: RequestOptions): Promise<StoreCreditCard> =>
+        this.request<StoreCreditCard>('GET', `/customer/credit_cards/${id}`, options),
+
+      /**
+       * Delete a credit card
+       */
+      delete: (id: string, options?: RequestOptions): Promise<void> =>
+        this.request<void>('DELETE', `/customer/credit_cards/${id}`, options),
     },
   };
 
