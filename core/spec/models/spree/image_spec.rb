@@ -123,4 +123,47 @@ describe Spree::Image, type: :model do
       expect(product.reload.total_image_count).to eq(3)
     end
   end
+
+  describe 'thumbnail_id updates' do
+    let(:product) { create(:product) }
+    let(:variant) { product.master }
+
+    it 'sets variant thumbnail_id when first image is created' do
+      expect(variant.thumbnail_id).to be_nil
+      image = create(:image, viewable: variant)
+      expect(variant.reload.thumbnail_id).to eq(image.id)
+    end
+
+    it 'sets product thumbnail_id when first image is created' do
+      expect(product.thumbnail_id).to be_nil
+      image = create(:image, viewable: variant)
+      expect(product.reload.thumbnail_id).to eq(image.id)
+    end
+
+    it 'updates thumbnail_id when first image is destroyed' do
+      image1 = create(:image, viewable: variant, position: 1)
+      image2 = create(:image, viewable: variant, position: 2)
+      expect(variant.reload.thumbnail_id).to eq(image1.id)
+
+      image1.destroy
+      expect(variant.reload.thumbnail_id).to eq(image2.id)
+    end
+
+    it 'sets thumbnail_id to nil when last image is destroyed' do
+      image = create(:image, viewable: variant)
+      expect(variant.reload.thumbnail_id).to eq(image.id)
+
+      image.destroy
+      expect(variant.reload.thumbnail_id).to be_nil
+    end
+
+    it 'updates thumbnail_id when image position changes' do
+      image1 = create(:image, viewable: variant, position: 1)
+      image2 = create(:image, viewable: variant, position: 2)
+      expect(variant.reload.thumbnail_id).to eq(image1.id)
+
+      image2.update!(position: 0)
+      expect(variant.reload.thumbnail_id).to eq(image2.id)
+    end
+  end
 end

@@ -1,5 +1,7 @@
 module Spree
   class Integration < Spree.base_class
+    has_prefix_id :int
+
     include Spree::SingleStoreResource
 
     #

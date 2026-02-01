@@ -2,6 +2,8 @@ require 'uri'
 
 module Spree
   class Store < Spree.base_class
+    has_prefix_id :store  # Spree-specific: store
+
     RESERVED_CODES = %w(
       admin default app api www cdn files assets checkout account auth login user
     )
@@ -117,6 +119,8 @@ module Spree
     has_many :webhook_deliveries, through: :webhook_endpoints, class_name: 'Spree::WebhookDelivery'
 
     has_many :customer_groups, class_name: 'Spree::CustomerGroup', dependent: :destroy, inverse_of: :store
+
+    has_many :api_keys, class_name: 'Spree::ApiKey', dependent: :destroy
 
     #
     # ActionText

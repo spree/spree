@@ -1,7 +1,7 @@
 module Spree
   module Admin
     class PriceRulesController < ResourceController
-      belongs_to 'spree/price_list', find_by: :id
+      belongs_to 'spree/price_list', find_by: :prefix_id
 
       helper_method :allowed_rule_types
 

@@ -3,7 +3,7 @@ module Spree
     class PriceListProductsController < ResourceController
       include BulkOperationsConcern
 
-      belongs_to 'spree/price_list', find_by: :id
+      belongs_to 'spree/price_list', find_by: :prefix_id
 
       before_action :set_price_list
 

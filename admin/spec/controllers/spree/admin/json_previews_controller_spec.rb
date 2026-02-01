@@ -17,7 +17,7 @@ RSpec.describe Spree::Admin::JsonPreviewsController, type: :controller do
     context 'when resource_type is missing' do
       it 'raises ActiveRecord::RecordNotFound' do
         expect {
-          get :show, params: { id: product.id, resource_type: '' }
+          get :show, params: { id: product.to_param, resource_type: '' }
         }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end

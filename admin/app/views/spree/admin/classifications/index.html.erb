@@ -14,7 +14,7 @@
     </p>
     <p class="text-center">
       <% if can?(:create, Spree::Classification) && @taxon.manual? %>
-        <%= link_to_with_icon 'plus', Spree.t(:add_products), spree.new_admin_taxon_classification_path(@taxon.id), class: 'btn btn-secondary', data: { turbo_frame: 'dialog', action: 'dialog#open' } %>
+        <%= link_to_with_icon 'plus', Spree.t(:add_products), spree.new_admin_taxon_classification_path(@taxon), class: 'btn btn-secondary', data: { turbo_frame: 'dialog', action: 'dialog#open' } %>
       <% end %>
   <% end %>
 <% end %>

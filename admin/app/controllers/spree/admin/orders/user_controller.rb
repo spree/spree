@@ -53,7 +53,7 @@ module Spree
         end
 
         def update
-          user = Spree.user_class.find(params[:user_id])
+          user = Spree.user_class.find_by_prefix_id!(params[:user_id])
           @order.associate_user!(user)
 
           if !@order.completed? && @order.line_items.any?

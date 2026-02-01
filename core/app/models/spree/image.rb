@@ -5,6 +5,9 @@ module Spree
     include Spree::ImageMethods
 
     after_commit :touch_product_variants, if: :should_touch_product_variants?, on: :update
+    after_commit :update_variant_thumbnail, on: [:create, :destroy]
+    after_commit :update_variant_thumbnail_on_reorder, on: :update, if: :saved_change_to_position?
+    after_commit :update_variant_thumbnail_on_viewable_change, on: :update, if: :saved_change_to_viewable_id?
 
     after_create :increment_viewable_image_count
     after_destroy :decrement_viewable_image_count
@@ -83,6 +86,21 @@ module Spree
 
       Spree::Variant.decrement_counter(:image_count, viewable_id)
       Spree::Product.decrement_counter(:total_image_count, viewable.product_id)
+    end
+
+    def update_variant_thumbnail
+      return unless viewable.is_a?(Spree::Variant)
+
+      viewable.update_thumbnail!
+      viewable.product.update_thumbnail!
+    end
+
+    def update_variant_thumbnail_on_reorder
+      update_variant_thumbnail
+    end
+
+    def update_variant_thumbnail_on_viewable_change
+      update_variant_thumbnail
     end
   end
 end

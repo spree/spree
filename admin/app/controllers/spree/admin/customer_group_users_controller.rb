@@ -33,7 +33,8 @@ module Spree
       end
 
       def destroy
-        deleted_count = @customer_group.remove_customers([params[:id]])
+        user = Spree.user_class.find_by_prefix_id!(params[:id])
+        deleted_count = @customer_group.remove_customers([user.id])
 
         if deleted_count > 0
           flash[:success] = Spree.t(:customer_removed_from_group)
@@ -58,7 +59,7 @@ module Spree
       private
 
       def set_customer_group
-        @customer_group = current_store.customer_groups.find(params[:customer_group_id])
+        @customer_group = current_store.customer_groups.find_by_prefix_id!(params[:customer_group_id])
       end
 
       def model_class

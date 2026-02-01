@@ -81,7 +81,7 @@ module Spree
     end
 
     def load_line_item
-      @line_item = @order.line_items.find(params[:id])
+      @line_item = @order.line_items.find_by_param!(params[:id])
     end
 
     def line_item_params

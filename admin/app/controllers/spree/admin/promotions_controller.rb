@@ -16,7 +16,7 @@ module Spree
 
       # POST /admin/promotions/:id/clone
       def clone
-        promotion = current_store.promotions.find(params[:id])
+        promotion = current_store.promotions.find_by_prefix_id!(params[:id])
         duplicator = Spree::PromotionHandler::PromotionDuplicator.new(promotion)
 
         @new_promo = duplicator.duplicate

@@ -66,7 +66,7 @@ RSpec.describe Spree::Admin::PoliciesController, type: :controller do
   end
 
   describe 'GET #edit' do
-    subject(:edit) { get :edit, params: { id: policy.id } }
+    subject(:edit) { get :edit, params: { id: policy.to_param } }
 
     let(:policy) { create(:policy, owner: store) }
 
@@ -77,7 +77,7 @@ RSpec.describe Spree::Admin::PoliciesController, type: :controller do
   end
 
   describe 'PUT #update' do
-    subject(:update_policy) { put :update, params: { id: policy.id, policy: policy_params } }
+    subject(:update_policy) { put :update, params: { id: policy.to_param, policy: policy_params } }
 
     let!(:policy) { create(:policy, owner: store) }
     let(:policy_params) do
@@ -100,7 +100,7 @@ RSpec.describe Spree::Admin::PoliciesController, type: :controller do
   end
 
   describe 'DELETE #destroy' do
-    subject(:destroy_policy) { delete :destroy, params: { id: policy.id } }
+    subject(:destroy_policy) { delete :destroy, params: { id: policy.to_param } }
 
     let!(:policy) { create(:policy, owner: store) }
 

@@ -31,12 +31,12 @@ RSpec.describe Spree::Admin::PromotionsController, type: :controller do
       let!(:promotion_rule) { create(:promotion_rule_product, promotion: promotion) }
 
       it 'returns a successful response' do
-        get :show, params: { id: promotion.id }
+        get :show, params: { id: promotion.to_param }
         expect(response).to be_successful
       end
 
       it 'assigns the promotion' do
-        get :show, params: { id: promotion.id }
+        get :show, params: { id: promotion.to_param }
         expect(assigns[:promotion]).to eq(promotion)
       end
     end
@@ -113,12 +113,12 @@ RSpec.describe Spree::Admin::PromotionsController, type: :controller do
     let!(:promotion) { create(:promotion, stores: [store]) }
 
     it 'returns a successful response' do
-      get :edit, params: { id: promotion.id }
+      get :edit, params: { id: promotion.to_param }
       expect(response).to be_successful
     end
 
     it 'loads form data' do
-      get :edit, params: { id: promotion.id }
+      get :edit, params: { id: promotion.to_param }
       expect(assigns[:promotion_rules]).not_to be_empty
       expect(assigns[:rule_types]).not_to be_empty
     end
@@ -129,12 +129,12 @@ RSpec.describe Spree::Admin::PromotionsController, type: :controller do
     let(:promotion_params) { { name: 'Updated Name' } }
 
     it 'updates the promotion' do
-      patch :update, params: { id: promotion.id, promotion: promotion_params }
+      patch :update, params: { id: promotion.to_param, promotion: promotion_params }
       expect(promotion.reload.name).to eq('Updated Name')
     end
 
     it 'redirects to the edit page' do
-      patch :update, params: { id: promotion.id, promotion: promotion_params }
+      patch :update, params: { id: promotion.to_param, promotion: promotion_params }
       expect(response).to redirect_to(spree.admin_promotion_path(promotion))
     end
   end
@@ -145,17 +145,17 @@ RSpec.describe Spree::Admin::PromotionsController, type: :controller do
     context 'when cloning succeeds' do
       it 'creates a duplicate promotion' do
         expect {
-          post :clone, params: { id: promotion.id }
+          post :clone, params: { id: promotion.to_param }
         }.to change(Spree::Promotion, :count).by(1)
       end
 
       it 'redirects to the new promotion' do
-        post :clone, params: { id: promotion.id }
+        post :clone, params: { id: promotion.to_param }
         expect(response).to redirect_to(spree.admin_promotion_path(assigns[:new_promo]))
       end
 
       it 'sets a success flash message' do
-        post :clone, params: { id: promotion.id }
+        post :clone, params: { id: promotion.to_param }
         expect(flash[:success]).to eq(Spree.t('promotion_cloned'))
       end
     end
@@ -168,12 +168,12 @@ RSpec.describe Spree::Admin::PromotionsController, type: :controller do
       end
 
       it 'redirects to promotions index' do
-        post :clone, params: { id: promotion.id }
+        post :clone, params: { id: promotion.to_param }
         expect(response).to redirect_to(spree.admin_promotions_path)
       end
 
       it 'sets an error flash message' do
-        post :clone, params: { id: promotion.id }
+        post :clone, params: { id: promotion.to_param }
         expect(flash[:error]).to include('Error message')
       end
     end

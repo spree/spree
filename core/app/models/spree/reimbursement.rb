@@ -1,5 +1,7 @@
 module Spree
   class Reimbursement < Spree.base_class
+    has_prefix_id :reimb
+
     include Spree::Core::NumberGenerator.new(prefix: 'RI', length: 9)
     include Spree::NumberIdentifier
     include Spree::Reimbursement::Emails

@@ -102,12 +102,12 @@ module Spree
         end
 
         def load_order
-          @order = current_store.orders.find_by!(number: params[:order_id])
+          @order = current_store.orders.find_by_prefix_id!(params[:order_id])
           authorize! :update, @order
         end
 
         def load_adjustment
-          @adjustment = @order.all_adjustments.find(params[:id])
+          @adjustment = @order.all_adjustments.find_by_prefix_id!(params[:id])
           authorize! action, @adjustment
         end
 

@@ -91,7 +91,7 @@ describe Spree::Admin::IntegrationsController, type: :controller do
     let(:integration) { Spree::Integrations::DummyIntegration.create!(store: store, preferred_api_key: 'APIKEY') }
 
     it 'updates integration' do
-      put :update, params: { id: integration.id, integration: { preferred_api_key: 'NEWKEY' } }
+      put :update, params: { id: integration.to_param, integration: { preferred_api_key: 'NEWKEY' } }
       expect(response).to redirect_to(spree.edit_admin_integration_path(integration))
       expect(integration.reload.preferred_api_key).to eq('NEWKEY')
     end
@@ -102,12 +102,12 @@ describe Spree::Admin::IntegrationsController, type: :controller do
 
     it 'destroys the integration' do
       expect {
-        delete :destroy, params: { id: integration.id }
+        delete :destroy, params: { id: integration.to_param }
       }.to change(Spree::Integrations::DummyIntegration, :count).by(-1)
     end
 
     it 'redirects to index with success flash' do
-      delete :destroy, params: { id: integration.id }
+      delete :destroy, params: { id: integration.to_param }
       expect(response).to redirect_to(spree.admin_integrations_path)
       expect(flash[:success]).to be_present
     end

@@ -1,5 +1,7 @@
 module Spree
   class GiftCardBatch < Spree.base_class
+    has_prefix_id :gcb
+
     extend DisplayMoney
     include Spree::SingleStoreResource
 

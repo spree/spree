@@ -15,7 +15,7 @@ RSpec.describe Spree::Admin::StoreCreditsController, type: :controller do
     let!(:other_store_credits) { create_list(:store_credit, 3) }
 
     it 'renders the list of store credits' do
-      get :index, params: { user_id: user.id }
+      get :index, params: { user_id: user.to_param }
 
       expect(response).to be_successful
       expect(response).to render_template(:index)
@@ -29,7 +29,7 @@ RSpec.describe Spree::Admin::StoreCreditsController, type: :controller do
     let!(:store_credit_events) { create_list(:store_credit_auth_event, 3, store_credit: store_credit) }
 
     it 'renders the store credit show page' do
-      get :show, params: { user_id: user.id, id: store_credit.id }
+      get :show, params: { user_id: user.to_param, id: store_credit.to_param }
 
       expect(response).to be_successful
       expect(response).to render_template(:show)
@@ -38,7 +38,7 @@ RSpec.describe Spree::Admin::StoreCreditsController, type: :controller do
 
   describe 'GET #new' do
     it 'renders the new store credit form' do
-      get :new, params: { user_id: user.id }
+      get :new, params: { user_id: user.to_param }
 
       expect(response).to be_successful
       expect(response).to render_template(:new)
@@ -46,7 +46,7 @@ RSpec.describe Spree::Admin::StoreCreditsController, type: :controller do
   end
 
   describe 'POST #create' do
-    subject { post :create, params: { user_id: user.id, store_credit: store_credit_params } }
+    subject { post :create, params: { user_id: user.to_param, store_credit: store_credit_params } }
 
     let(:store_credit_params) { { amount: 100, currency: 'USD' } }
 
@@ -80,7 +80,7 @@ RSpec.describe Spree::Admin::StoreCreditsController, type: :controller do
     let(:store_credit) { create(:store_credit, user: user) }
 
     it 'renders the edit store credit form' do
-      get :edit, params: { user_id: user.id, id: store_credit.id }
+      get :edit, params: { user_id: user.to_param, id: store_credit.to_param }
 
       expect(response).to be_successful
       expect(response).to render_template(:edit)
@@ -88,7 +88,7 @@ RSpec.describe Spree::Admin::StoreCreditsController, type: :controller do
   end
 
   describe 'PUT #update' do
-    subject { put :update, params: { user_id: user.id, id: store_credit.id, store_credit: store_credit_params } }
+    subject { put :update, params: { user_id: user.to_param, id: store_credit.to_param, store_credit: store_credit_params } }
 
     let(:store_credit) { create(:store_credit, user: user) }
     let(:store_credit_params) { { amount: 200 } }
@@ -114,7 +114,7 @@ RSpec.describe Spree::Admin::StoreCreditsController, type: :controller do
   end
 
   describe 'DELETE #destroy' do
-    subject { delete :destroy, params: { user_id: user.id, id: store_credit.id } }
+    subject { delete :destroy, params: { user_id: user.to_param, id: store_credit.to_param } }
 
     let(:store_credit) { create(:store_credit, user: user) }
 

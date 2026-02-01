@@ -42,7 +42,7 @@ RSpec.describe Spree::Admin::MetafieldsController, type: :controller do
     context 'when resource_type is missing' do
       it 'raises ActiveRecord::RecordNotFound' do
         expect {
-          get :edit, params: { id: product.id, resource_type: '' }
+          get :edit, params: { id: product.to_param, resource_type: '' }
         }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
@@ -110,7 +110,7 @@ RSpec.describe Spree::Admin::MetafieldsController, type: :controller do
     context 'when resource_type is missing' do
       it 'raises ActiveRecord::RecordNotFound' do
         expect {
-          put :update, format: :turbo_stream, params: { id: product.id, resource_type: '', product: metafield_attributes }
+          put :update, format: :turbo_stream, params: { id: product.to_param, resource_type: '', product: metafield_attributes }
         }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
@@ -118,7 +118,7 @@ RSpec.describe Spree::Admin::MetafieldsController, type: :controller do
     context 'when resource_type is invalid' do
       it 'raises ActiveRecord::RecordNotFound' do
         expect {
-          put :update, format: :turbo_stream, params: { resource_type: 'InvalidType', id: product.id, product: metafield_attributes }
+          put :update, format: :turbo_stream, params: { resource_type: 'InvalidType', id: product.to_param, product: metafield_attributes }
         }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end

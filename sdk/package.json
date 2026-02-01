@@ -1,0 +1,81 @@
+{
+  "name": "@spree/sdk",
+  "version": "0.1.0",
+  "description": "Official TypeScript SDK for Spree Commerce API",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./types": {
+      "import": {
+        "types": "./dist/types/index.d.ts",
+        "default": "./dist/types/index.js"
+      },
+      "require": {
+        "types": "./dist/types/index.d.cts",
+        "default": "./dist/types/index.cjs"
+      }
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "console": "tsx console.ts",
+    "lint": "eslint src --ext .ts",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "spree",
+    "commerce",
+    "ecommerce",
+    "api",
+    "sdk",
+    "typescript",
+    "headless"
+  ],
+  "author": "Vendo Connect Inc.",
+  "license": "BSD-3-Clause",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/spree/spree.git",
+    "directory": "sdk"
+  },
+  "homepage": "https://spreecommerce.org",
+  "bugs": {
+    "url": "https://github.com/spree/spree/issues"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsup": "^8.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.3.0"
+  },
+  "peerDependencies": {
+    "typescript": ">=4.7.0"
+  },
+  "peerDependenciesMeta": {
+    "typescript": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

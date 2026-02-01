@@ -46,7 +46,7 @@ describe Spree::Admin::ShippingMethodsController, type: :controller do
     let(:shipping_method) { create(:shipping_method) }
 
     it 'renders the edit template' do
-      get :edit, params: { id: shipping_method.id }
+      get :edit, params: { id: shipping_method.to_param }
       expect(response.status).to eq(200)
     end
   end
@@ -71,7 +71,7 @@ describe Spree::Admin::ShippingMethodsController, type: :controller do
     end
 
     it 'updates the shipping method' do
-      put :update, params: { id: shipping_method.id, shipping_method: new_attributes }
+      put :update, params: { id: shipping_method.to_param, shipping_method: new_attributes }
 
       shipping_method.reload
       expect(shipping_method.name).to eq('Updated Method')
@@ -89,7 +89,7 @@ describe Spree::Admin::ShippingMethodsController, type: :controller do
 
     it 'deletes the shipping method' do
       expect {
-        delete :destroy, params: { id: shipping_method.id }
+        delete :destroy, params: { id: shipping_method.to_param }
       }.to change(Spree::ShippingMethod, :count).by(-1)
 
       expect(response).to redirect_to(spree.admin_shipping_methods_path)

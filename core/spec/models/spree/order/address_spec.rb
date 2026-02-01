@@ -102,7 +102,8 @@ describe Spree::Order, type: :model do
                      'private_metadata',
                      'latitude',
                      'longitude',
-                     'preferences'
+                     'preferences',
+                     'prefix_id'
                    )
                  }
                )

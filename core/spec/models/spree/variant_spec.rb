@@ -1405,12 +1405,8 @@ describe Spree::Variant, type: :model do
     end
 
     context 'when variant has no images' do
-      let!(:product_image) { create(:image, viewable: variant.product.master) }
-
-      it 'falls back to product default image' do
-        # Reload to get updated counter cache
-        variant.product.reload
-        expect(variant.default_image).to eq(product_image)
+      it 'returns nil' do
+        expect(variant.default_image).to be_nil
       end
     end
   end

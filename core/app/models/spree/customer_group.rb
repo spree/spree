@@ -1,5 +1,7 @@
 module Spree
   class CustomerGroup < Spree.base_class
+    has_prefix_id :cg
+
     acts_as_paranoid
 
     #

@@ -106,7 +106,7 @@ RSpec.describe Spree::Admin::UsersController, type: :controller do
     let!(:order) { create(:completed_order_with_totals, user: user) }
 
     it 'renders the user page with last order data' do
-      get :show, params: { id: user.id }
+      get :show, params: { id: user.to_param }
 
       expect(response).to have_http_status(:ok)
       expect(response).to render_template(:show)
@@ -129,7 +129,7 @@ RSpec.describe Spree::Admin::UsersController, type: :controller do
     let(:user) { create(:user) }
 
     it 'renders the edit user form' do
-      get :edit, params: { id: user.id }
+      get :edit, params: { id: user.to_param }
 
       expect(response).to have_http_status(:ok)
       expect(response).to render_template(:edit)
@@ -148,7 +148,7 @@ RSpec.describe Spree::Admin::UsersController, type: :controller do
       let!(:user) { create(:user, tag_list: ['Tag 1']) }
 
       it 'removes tags successfully' do
-        put :update, params: { id: user.id, user: { last_name: 'Test' } }
+        put :update, params: { id: user.to_param, user: { last_name: 'Test' } }
 
         expect(user.reload.tag_list).to be_empty
         expect(user.reload.last_name).to eq('Test')
@@ -168,7 +168,7 @@ RSpec.describe Spree::Admin::UsersController, type: :controller do
       it 'does not clear existing roles' do
         expect(user.spree_roles).to include(role)
 
-        put :update, params: { id: user.id, user: { last_name: 'Test', spree_role_ids: [''] } }
+        put :update, params: { id: user.to_param, user: { last_name: 'Test', spree_role_ids: [''] } }
 
         expect(user.reload.last_name).to eq('Test')
         expect(user.spree_roles).to include(role)
@@ -178,7 +178,7 @@ RSpec.describe Spree::Admin::UsersController, type: :controller do
 
     context 'updating internal_note' do
       subject do
-        put :update, params: { id: user.id, user: { internal_note: internal_note_content } }, format: :turbo_stream
+        put :update, params: { id: user.to_param, user: { internal_note: internal_note_content } }, format: :turbo_stream
       end
 
       let(:user) { create(:user) }

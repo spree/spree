@@ -12,7 +12,7 @@ RSpec.describe Spree::Admin::ShipmentsController, type: :controller do
   describe 'PUT #update' do
     context 'when update is successful' do
       before do
-        put :update, params: { order_id: order.number, id: shipment.number, shipment: shipment_params }
+        put :update, params: { order_id: order.to_param, id: shipment.to_param, shipment: shipment_params }
       end
 
       it 'updates shipment' do
@@ -37,7 +37,7 @@ RSpec.describe Spree::Admin::ShipmentsController, type: :controller do
       end
 
       it 'ships the shipment' do
-        post :ship, params: { order_id: order.number, id: shipment.number }
+        post :ship, params: { order_id: order.to_param, id: shipment.to_param }
         expect(shipment.reload.state).to eq('shipped')
       end
     end
@@ -49,7 +49,7 @@ RSpec.describe Spree::Admin::ShipmentsController, type: :controller do
       end
 
       it 'flashes error' do
-        post :ship, params: { order_id: order.number, id: shipment.number }
+        post :ship, params: { order_id: order.to_param, id: shipment.to_param }
         expect(flash[:error]).to eq(Spree.t(:cannot_ship))
       end
     end

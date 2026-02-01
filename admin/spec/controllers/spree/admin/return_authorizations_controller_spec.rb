@@ -39,7 +39,7 @@ RSpec.describe Spree::Admin::ReturnAuthorizationsController do
     let(:return_authorization) { return_authorizations.first }
     let!(:return_item) { create(:return_item, return_authorization: return_authorization, inventory_unit: order.inventory_units.shipped.first) }
 
-    subject { put :cancel, params: { id: return_authorization.id } }
+    subject { put :cancel, params: { id: return_authorization.to_param } }
 
     it 'cancels the return authorization' do
       expect { subject }.to change { return_authorization.reload.state }.from('authorized').to('canceled')
@@ -59,7 +59,7 @@ RSpec.describe Spree::Admin::ReturnAuthorizationsController do
   describe '#destroy' do
     let(:return_authorization) { return_authorizations.first }
 
-    subject { delete :destroy, params: { id: return_authorization.id } }
+    subject { delete :destroy, params: { id: return_authorization.to_param } }
 
     it 'destroys the return authorization' do
       expect { subject }.to change(Spree::ReturnAuthorization, :count).by(-1)

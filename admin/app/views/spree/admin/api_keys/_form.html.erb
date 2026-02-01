@@ -1,0 +1,26 @@
+<div class="card mb-6">
+  <div class="card-body">
+    <%= f.spree_text_field :name, required: true, autofocus: f.object.new_record?,
+          placeholder: Spree.t('admin.api_keys.name_placeholder') %>
+
+    <% if f.object.new_record? %>
+      <%= f.spree_select :key_type, api_key_type_options,
+            { prompt: Spree.t(:select_key_type), label: Spree.t(:type) },
+            { required: true } %>
+      <p class="text-sm text-gray-500 mt-2">
+        <strong><%= Spree.t('admin.api_keys.key_types.publishable') %>:</strong>
+        <%= Spree.t('admin.api_keys.key_type_descriptions.publishable') %>
+        <br>
+        <strong><%= Spree.t('admin.api_keys.key_types.secret') %>:</strong>
+        <%= Spree.t('admin.api_keys.key_type_descriptions.secret') %>
+      </p>
+    <% else %>
+      <div class="form-group">
+        <label class="form-label"><%= Spree.t(:type) %></label>
+        <div class="form-control-plaintext">
+          <%= api_key_type_badge(@api_key) %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

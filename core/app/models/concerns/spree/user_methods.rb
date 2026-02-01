@@ -12,6 +12,8 @@ module Spree
     include Spree::Publishable
 
     included do
+      has_prefix_id :cus  # Stripe: cus_
+
       # Enable lifecycle events for user models
       publishes_lifecycle_events
 
@@ -40,6 +42,7 @@ module Spree
       has_many :gift_cards, class_name: 'Spree::GiftCard', foreign_key: :user_id, dependent: :destroy
       has_many :customer_group_users, class_name: 'Spree::CustomerGroupUser', foreign_key: :user_id, as: :user, dependent: :destroy
       has_many :customer_groups, through: :customer_group_users, class_name: 'Spree::CustomerGroup'
+      has_many :identities, class_name: 'Spree::UserIdentity', as: :user, dependent: :destroy
       belongs_to :ship_address, class_name: 'Spree::Address', optional: true
       belongs_to :bill_address, class_name: 'Spree::Address', optional: true
 

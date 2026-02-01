@@ -1,5 +1,7 @@
 module Spree
   class WishedItem < Spree.base_class
+    has_prefix_id :wi  # Spree-specific: wished item
+
     extend DisplayMoney
     money_methods :total, :price
 
@@ -13,6 +15,18 @@ module Spree
     validates :variant, :wishlist, presence: true
     validates :variant, uniqueness: { scope: [:wishlist] }
     validates :quantity, numericality: { only_integer: true, greater_than: 0 }
+
+    # This is a workaround to allow the variant_id to be set with a prefixed ID
+    # in the API.
+    #
+    # @param id [String] the prefixed ID of the variant
+    def variant_id=(id)
+      if id.to_s.include?('_')
+        self.variant_id = Spree::Variant.find_by(prefix_id: id)&.id
+      else
+        super(id)
+      end
+    end
 
     def price(currency)
       variant.amount_in(currency[:currency])

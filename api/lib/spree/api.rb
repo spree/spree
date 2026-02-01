@@ -1,7 +1,8 @@
 require 'spree/core'
-require 'jsonapi/serializer'
-require 'doorkeeper'
 require 'pagy'
+require 'alba'
+require 'oj'
+require 'typelizer'
 
 module Spree
   module Api
@@ -47,8 +48,10 @@ module Spree
     private
 
     def api_dependency?(name)
-      defined?(Spree::Api::Dependencies) &&
-        Spree::Api::Dependencies.class::INJECTION_POINTS.include?(name)
+      return false unless defined?(Spree::Api::Dependencies)
+
+      # Check both V3 and dynamically added V2 dependencies
+      Spree::Api::Dependencies.class::INJECTION_POINTS.include?(name)
     end
   end
 end

@@ -1,5 +1,7 @@
 module Spree
   class GiftCard < Spree.base_class
+    has_prefix_id :gc
+
     extend DisplayMoney
     include Spree::SingleStoreResource
     include Spree::Metafields

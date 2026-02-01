@@ -65,7 +65,7 @@ describe Spree::Admin::StoresController do
   end
 
   describe 'PUT #update' do
-    subject { patch :update, params: { id: store.id, store: store_params, **other_params } }
+    subject { patch :update, params: { id: store.to_param, store: store_params, **other_params } }
 
     let(:store_params) do
       {

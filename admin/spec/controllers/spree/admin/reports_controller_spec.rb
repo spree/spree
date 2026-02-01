@@ -142,7 +142,7 @@ describe Spree::Admin::ReportsController, type: :controller do
       allow_any_instance_of(Spree::Reports::SalesTotal).to receive_message_chain(:attachment, :url).and_return('http://example.com/test.csv')
     end
 
-    subject { get :show, params: { id: report.id } }
+    subject { get :show, params: { id: report.to_param } }
 
     it 'downloads the export' do
       subject

@@ -1,5 +1,7 @@
 module Spree
   class LogEntry < Spree.base_class
+    has_prefix_id :log
+
     if defined?(Spree::Security::LogEntries)
       include Spree::Security::LogEntries
     end

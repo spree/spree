@@ -10,7 +10,7 @@ RSpec.describe Spree::Admin::WebhookDeliveriesController, type: :controller do
   let(:webhook_endpoint) { create(:webhook_endpoint, store: store) }
 
   describe 'GET #index' do
-    subject(:index) { get :index, params: { webhook_endpoint_id: webhook_endpoint.id } }
+    subject(:index) { get :index, params: { webhook_endpoint_id: webhook_endpoint.to_param } }
 
     let!(:deliveries) { create_list(:webhook_delivery, 3, webhook_endpoint: webhook_endpoint) }
     let!(:other_endpoint_deliveries) { create_list(:webhook_delivery, 2) }
@@ -52,7 +52,7 @@ RSpec.describe Spree::Admin::WebhookDeliveriesController, type: :controller do
       let!(:new_delivery) { create(:webhook_delivery, webhook_endpoint: ordering_endpoint, created_at: 1.hour.ago) }
 
       it 'orders deliveries by created_at descending' do
-        get :index, params: { webhook_endpoint_id: ordering_endpoint.id }
+        get :index, params: { webhook_endpoint_id: ordering_endpoint.to_param }
 
         collection = assigns[:collection]
         expect(collection.first).to eq(new_delivery)
@@ -62,7 +62,7 @@ RSpec.describe Spree::Admin::WebhookDeliveriesController, type: :controller do
   end
 
   describe 'GET #show' do
-    subject(:show) { get :show, params: { webhook_endpoint_id: webhook_endpoint.id, id: delivery.id } }
+    subject(:show) { get :show, params: { webhook_endpoint_id: webhook_endpoint.to_param, id: delivery.to_param } }
 
     let(:delivery) { create(:webhook_delivery, :successful, webhook_endpoint: webhook_endpoint) }
 

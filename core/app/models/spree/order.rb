@@ -8,6 +8,8 @@ require_dependency 'spree/order/gift_card'
 
 module Spree
   class Order < Spree.base_class
+    has_prefix_id :or  # Stripe: or_
+
     PAYMENT_STATES = %w(balance_due credit_owed failed paid void)
     SHIPMENT_STATES = %w(backorder canceled partial pending ready shipped)
     LINE_ITEM_REMOVABLE_STATES = %w(cart address delivery payment confirm resumed)
@@ -26,7 +28,6 @@ module Spree
     include Spree::Order::GiftCard
 
     include Spree::NumberIdentifier
-    include Spree::NumberAsParam
     include Spree::SingleStoreResource
 
     publishes_lifecycle_events
@@ -233,6 +234,33 @@ module Spree
       end
 
       left_joins(:bill_address).where(arel_table[:email].lower.eq(query.downcase)).or(where(conditions.reduce(:or)))
+    end
+
+    # Find an order by prefix_id first, falling back to number, then id for backwards compatibility
+    # @param param [String] the prefix_id, number, or id to search for
+    # @return [Spree::Order, nil] the found order or nil
+    def self.find_by_param(param)
+      return nil if param.blank?
+
+      # Try prefix_id first (new format)
+      order = find_by(prefix_id: param)
+      return order if order
+
+      # Try number (legacy format)
+      order = find_by(number: param)
+      return order if order
+
+      # Fall back to id (numeric legacy format) - only if param looks like an integer
+      find_by(id: param) if param.to_s.match?(/\A\d+\z/)
+    end
+
+    # Find an order by prefix_id first, falling back to number, then id for backwards compatibility
+    # Raises ActiveRecord::RecordNotFound if not found
+    # @param param [String] the prefix_id, number, or id to search for
+    # @return [Spree::Order] the found order
+    # @raise [ActiveRecord::RecordNotFound] if order not found
+    def self.find_by_param!(param)
+      find_by_param(param) || raise(ActiveRecord::RecordNotFound.new("Couldn't find Order with param=#{param}"))
     end
 
     # Use this method in other gems that wish to register their own custom logic
@@ -553,6 +581,10 @@ module Spree
     # Helper methods for checkout steps
     def paid?
       payments.valid.completed.size == payments.valid.size && payments.valid.sum(:amount) >= total
+    end
+
+    def payment_methods
+      @payment_methods ||= store.payment_methods.active.available_on_front_end.select { |pm| pm.available_for_order?(self) }
     end
 
     def available_payment_methods(store = nil)

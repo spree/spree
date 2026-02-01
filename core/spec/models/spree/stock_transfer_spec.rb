@@ -25,12 +25,6 @@ module Spree
       it { is_expected.to eq 'PO123' }
     end
 
-    describe '#to_param' do
-      subject { stock_transfer.to_param }
-
-      it { is_expected.to match(/T\d+/) }
-    end
-
     describe '#transfer' do
       subject { stock_transfer.transfer(source_location, destination_location, variants) }
 

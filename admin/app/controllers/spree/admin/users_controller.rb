@@ -92,7 +92,7 @@ module Spree
       end
 
       def find_resource
-        model_class.accessible_by(current_ability, :show).find(params[:id])
+        model_class.accessible_by(current_ability, :show).find_by_prefix_id!(params[:id])
       end
 
       def collection_url

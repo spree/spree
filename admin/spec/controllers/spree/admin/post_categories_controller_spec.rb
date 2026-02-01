@@ -74,7 +74,7 @@ RSpec.describe Spree::Admin::PostCategoriesController, type: :controller do
   end
 
   describe 'GET #edit' do
-    subject(:edit) { get :edit, params: { id: post_category.id } }
+    subject(:edit) { get :edit, params: { id: post_category.to_param } }
 
     let(:post_category) { create(:post_category) }
 
@@ -85,7 +85,7 @@ RSpec.describe Spree::Admin::PostCategoriesController, type: :controller do
   end
 
   describe 'PUT #update' do
-    subject(:update_category) { put :update, params: { id: post_category.id, post_category: post_category_params } }
+    subject(:update_category) { put :update, params: { id: post_category.to_param, post_category: post_category_params } }
 
     let!(:post_category) { create(:post_category, store: store) }
     let(:post_category_params) do
@@ -107,7 +107,7 @@ RSpec.describe Spree::Admin::PostCategoriesController, type: :controller do
   end
 
   describe 'DELETE #destroy' do
-    subject(:destroy_category) { delete :destroy, params: { id: post_category.id } }
+    subject(:destroy_category) { delete :destroy, params: { id: post_category.to_param } }
 
     let!(:post_category) { create(:post_category, store: store) }
 

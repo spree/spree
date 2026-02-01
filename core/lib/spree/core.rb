@@ -18,6 +18,7 @@ require 'awesome_nested_set'
 require 'cancan'
 require 'countries/global'
 require 'friendly_id'
+require 'jwt'
 require 'monetize'
 require 'mobility'
 require 'name_of_person'
@@ -109,7 +110,8 @@ module Spree
       themes: :default,
       addresses: :default,
       gift_cards: :default,
-      webhooks: :default
+      webhooks: :default,
+      api_keys: :default
     )
   end
 

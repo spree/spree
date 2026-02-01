@@ -128,7 +128,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
       @parent_data ||= {}
       @parent_data[:model_name] = model_name
       @parent_data[:model_class] = model_name.to_s.classify.constantize
-      @parent_data[:find_by] = options[:find_by] || :id
+      @parent_data[:find_by] = options[:find_by] || :prefix_id
     end
   end
 
@@ -187,13 +187,22 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   def parent
     if parent_data.present?
       base_scope = parent_data[:model_class].try(:for_store, current_store) || parent_data[:model_class]
+      param_value = params["#{resource.model_name}_id"]
+      find_by = parent_data[:find_by]
+      parent_model_class = parent_data[:model_class]
 
-      @parent ||= base_scope.
-                  # Don't use `find_by_attribute_name` to workaround globalize/globalize#423 bug
-                  send(:find_by, parent_data[:find_by].to_s => params["#{resource.model_name}_id"])
+      # Skip prefix_id lookup for FriendlyId models (they use slug for to_param)
+      uses_friendly_id = parent_model_class.respond_to?(:friendly_id_config)
+      use_prefix_id = find_by == :prefix_id &&
+                      parent_model_class.column_names.include?('prefix_id') &&
+                      !uses_friendly_id
+
+      @parent ||= if use_prefix_id
+                    base_scope.find_by_prefix_id!(param_value)
+                  else
+                    base_scope.find_by!(find_by.to_s => param_value)
+                  end
       instance_variable_set("@#{resource.model_name}", @parent)
-
-      raise ActiveRecord::RecordNotFound if @parent.nil?
 
       @parent
     end
@@ -204,9 +213,15 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
                    parent.send(controller_name)
                  else
                    model_class.try(:for_store, current_store) || model_class
-                end
+                 end
 
-    if model_class.try(:friendly)
+    # Skip prefix_id lookup for FriendlyId models (they use slug for to_param)
+    uses_friendly_id = model_class.respond_to?(:friendly_id_config)
+    use_prefix_id = model_class.column_names.include?('prefix_id') && !uses_friendly_id
+
+    if use_prefix_id
+      base_scope.find_by_prefix_id!(params[:id])
+    elsif uses_friendly_id
       base_scope.friendly.find(params[:id])
     else
       base_scope.find(params[:id])

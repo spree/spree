@@ -2,9 +2,10 @@ require 'ostruct'
 
 module Spree
   class Shipment < Spree.base_class
+    has_prefix_id :ship  # Spree-specific: shipment
+
     include Spree::Core::NumberGenerator.new(prefix: 'H', length: 11)
     include Spree::NumberIdentifier
-    include Spree::NumberAsParam
     include Spree::Metafields
     include Spree::Metadata
     if defined?(Spree::Security::Shipments)
