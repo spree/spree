@@ -23,6 +23,7 @@ import type {
   StoreTaxon,
   StorePayment,
   StorePaymentMethod,
+  StoreShipment,
   StoreStore,
   StoreWishlist,
   StoreWishedItem,
@@ -530,6 +531,72 @@ export class SpreeClient {
           'GET',
           `/orders/${orderId}/payment_methods`,
           options
+        ),
+    },
+
+    /**
+     * Nested resource: Coupon codes
+     */
+    couponCodes: {
+      /**
+       * Apply a coupon code to an order
+       */
+      apply: (
+        orderId: string,
+        couponCode: string,
+        options?: RequestOptions
+      ): Promise<StoreOrder> =>
+        this.request<StoreOrder>('POST', `/orders/${orderId}/coupon_codes`, {
+          ...options,
+          body: { coupon_code: { coupon_code: couponCode } },
+        }),
+
+      /**
+       * Remove a coupon code from an order
+       * @param promotionId - The promotion prefix_id (e.g., 'promo_xxx')
+       */
+      remove: (
+        orderId: string,
+        promotionId: string,
+        options?: RequestOptions
+      ): Promise<StoreOrder> =>
+        this.request<StoreOrder>(
+          'DELETE',
+          `/orders/${orderId}/coupon_codes/${promotionId}`,
+          options
+        ),
+    },
+
+    /**
+     * Nested resource: Shipments
+     */
+    shipments: {
+      /**
+       * List shipments for an order
+       */
+      list: (
+        orderId: string,
+        options?: RequestOptions
+      ): Promise<{ data: StoreShipment[] }> =>
+        this.request<{ data: StoreShipment[] }>(
+          'GET',
+          `/orders/${orderId}/shipments`,
+          options
+        ),
+
+      /**
+       * Update a shipment (e.g., select shipping rate)
+       */
+      update: (
+        orderId: string,
+        shipmentId: string,
+        params: { selected_shipping_rate_id: string },
+        options?: RequestOptions
+      ): Promise<StoreShipment> =>
+        this.request<StoreShipment>(
+          'PATCH',
+          `/orders/${orderId}/shipments/${shipmentId}`,
+          { ...options, body: { shipment: params } }
         ),
     },
   };
