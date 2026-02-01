@@ -15,10 +15,14 @@ describe 'Products', type: :feature do
     end
 
     def select_option_value(option_value_name, index: 0, create: false)
-      select_element = all('[data-multi-tom-select-target="select"]')[index]
+      select_element = all('[data-multi-tom-select-target="select"]', wait: 5)[index]
+      select_element.find('.ts-wrapper').click
+      select_element.find('input[type="text"]', visible: true).native.send_keys(option_value_name)
 
-      within(select_element) do
-        tom_select(option_value_name, from: 'new_option_values_-ts-control', create: create)
+      if create
+        find('.ts-dropdown .ts-dropdown-content .create.active', match: :first, wait: 5).click
+      else
+        find('.ts-dropdown .ts-dropdown-content .option', text: /#{Regexp.quote(option_value_name)}/i, match: :first, wait: 10).click
       end
     end
 
@@ -270,12 +274,12 @@ describe 'Products', type: :feature do
         color_option = Spree::OptionType.find_by(name: 'color')
         size_option = Spree::OptionType.find_by(name: 'size')
 
-        within("#option-#{color_option.id}") do
+        within("#option-#{color_option.prefix_id}") do
           expect(page).to have_content('Black')
           expect(page).to have_content('White')
         end
 
-        within("#option-#{size_option.id}") do
+        within("#option-#{size_option.prefix_id}") do
           expect(page).to have_content('Small')
           expect(page).to have_content('Medium')
           expect(page).to have_content('Large')
@@ -351,13 +355,13 @@ describe 'Products', type: :feature do
 
         color_option = Spree::OptionType.find_by(name: 'color')
 
-        within("#option-#{color_option.id}") do
+        within("#option-#{color_option.prefix_id}") do
           click_on 'Edit'
           select_option_value('Red', index: 2, create: true)
           click_on 'Done'
         end
 
-        within("#option-#{color_option.id}") do
+        within("#option-#{color_option.prefix_id}") do
           expect(page).to have_content('Black')
           expect(page).to have_content('White')
           expect(page).to have_content('Red')
@@ -575,7 +579,7 @@ describe 'Products', type: :feature do
 
           material_option = Spree::OptionType.find_by(name: 'material')
 
-          within("#option-#{material_option.id}") do
+          within("#option-#{material_option.prefix_id}") do
             expect(page).to have_content('Cotton')
             expect(page).to have_content('Polyester')
           end
@@ -661,13 +665,13 @@ describe 'Products', type: :feature do
         it 'allows removing the first option' do
           visit spree.edit_admin_product_path(product.reload)
 
-          within("#option-#{color_option.id}") do
+          within("#option-#{color_option.prefix_id}") do
             click_on 'Edit'
             click_on 'Delete'
           end
 
-          expect(page).not_to have_css("#option-#{color_option.id}")
-          expect(page).to have_css("#option-#{size_option.id}")
+          expect(page).not_to have_css("#option-#{color_option.prefix_id}")
+          expect(page).to have_css("#option-#{size_option.prefix_id}")
 
           within('[data-test-id="product-variants-table"]') do
             expect(page).not_to have_content('Black')
@@ -755,13 +759,13 @@ describe 'Products', type: :feature do
         it 'allows removing the last option' do
           visit spree.edit_admin_product_path(product.reload)
 
-          within("#option-#{size_option.id}") do
+          within("#option-#{size_option.prefix_id}") do
             click_on 'Edit'
             click_on 'Delete'
           end
 
-          expect(page).to have_css("#option-#{color_option.id}")
-          expect(page).not_to have_css("#option-#{size_option.id}")
+          expect(page).to have_css("#option-#{color_option.prefix_id}")
+          expect(page).not_to have_css("#option-#{size_option.prefix_id}")
 
           within('[data-test-id="product-variants-table"]') do
             expect(page).to have_content('Black')
@@ -794,18 +798,18 @@ describe 'Products', type: :feature do
         it 'allows removing all options' do
           visit spree.edit_admin_product_path(product.reload)
 
-          within("#option-#{color_option.id}") do
+          within("#option-#{color_option.prefix_id}") do
             click_on 'Edit'
             click_on 'Delete'
           end
 
-          within("#option-#{size_option.id}") do
+          within("#option-#{size_option.prefix_id}") do
             click_on 'Edit'
             click_on 'Delete'
           end
 
-          expect(page).not_to have_css("#option-#{color_option.id}")
-          expect(page).not_to have_css("#option-#{size_option.id}")
+          expect(page).not_to have_css("#option-#{color_option.prefix_id}")
+          expect(page).not_to have_css("#option-#{size_option.prefix_id}")
           expect(page).not_to have_css('[data-test-id="product-variants-table"]')
 
           # Update product variants
@@ -819,12 +823,12 @@ describe 'Products', type: :feature do
         it 'allows removing all options and adding one back and a new one' do
           visit spree.edit_admin_product_path(product.reload)
 
-          within("#option-#{color_option.id}") do
+          within("#option-#{color_option.prefix_id}") do
             click_on 'Edit'
             click_on 'Delete'
           end
 
-          within("#option-#{size_option.id}") do
+          within("#option-#{size_option.prefix_id}") do
             click_on 'Edit'
             click_on 'Delete'
           end
@@ -835,7 +839,7 @@ describe 'Products', type: :feature do
           select_option_value('White', index: 0)
           click_on 'Done'
 
-          within("#option-#{color_option.id}") do
+          within("#option-#{color_option.prefix_id}") do
             expect(page).to have_content('White')
           end
 
@@ -911,7 +915,7 @@ describe 'Products', type: :feature do
 
           click_on 'Delete selected'
 
-          within("#option-#{color_option.id}") do
+          within("#option-#{color_option.prefix_id}") do
             expect(page).not_to have_content('Red')
             expect(page).to have_content('Black')
             expect(page).to have_content('White')
@@ -983,7 +987,7 @@ describe 'Products', type: :feature do
 
           click_on 'Delete selected'
 
-          within("#option-#{color_option.id}") do
+          within("#option-#{color_option.prefix_id}") do
             expect(page).not_to have_content('White')
             expect(page).to have_content('Black')
           end
@@ -1005,12 +1009,12 @@ describe 'Products', type: :feature do
           expect(page).to have_content('successfully updated')
           within('.alerts-container') { find('button').click }
 
-          within("#option-#{color_option.id}") do
+          within("#option-#{color_option.prefix_id}") do
             expect(page).to have_content('Black')
             expect(page).not_to have_content('White')
           end
 
-          within("#option-#{size_option.id}") do
+          within("#option-#{size_option.prefix_id}") do
             expect(page).to have_content('Small')
             expect(page).not_to have_content('Medium')
             expect(page).not_to have_content('Large')
@@ -1034,7 +1038,7 @@ describe 'Products', type: :feature do
             end
           end
 
-          within("#option-#{size_option.id}") do
+          within("#option-#{size_option.prefix_id}") do
             click_on 'Edit'
             select_option_value('Extra Large', index: 3, create: true)
             click_on 'Done'
