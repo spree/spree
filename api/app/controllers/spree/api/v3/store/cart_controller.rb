@@ -12,7 +12,7 @@ module Spree
 
             if @cart.nil?
               render_error(
-                code: ERROR_CODES[:not_found],
+                code: ERROR_CODES[:record_not_found],
                 message: 'No cart found. Create one with POST /orders',
                 status: :not_found
               )
@@ -55,6 +55,12 @@ module Spree
             # Always include order token for cart (needed for guest checkout)
             result[:token] = resource.token if resource.token.present?
             result
+          end
+
+          # Cart always includes line_items by default
+          def include_list
+            base = super
+            base.include?('line_items') ? base : base + ['line_items']
           end
         end
       end
