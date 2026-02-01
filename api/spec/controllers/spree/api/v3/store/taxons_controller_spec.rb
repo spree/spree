@@ -8,6 +8,7 @@ RSpec.describe Spree::Api::V3::Store::TaxonsController, type: :controller do
   let(:taxonomy) { create(:taxonomy, store: store) }
   let!(:taxon) { create(:taxon, taxonomy: taxonomy) }
   let!(:child_taxon) { create(:taxon, taxonomy: taxonomy, parent: taxon) }
+  let!(:grandchild_taxon) { create(:taxon, taxonomy: taxonomy, parent: child_taxon) }
   let!(:other_store) { create(:store) }
   let!(:other_taxonomy) { create(:taxonomy, store: other_store) }
   let!(:other_store_taxon) { create(:taxon, taxonomy: other_taxonomy) }
@@ -18,6 +19,79 @@ RSpec.describe Spree::Api::V3::Store::TaxonsController, type: :controller do
 
   after do
     I18n.locale = store.default_locale
+  end
+
+  describe 'GET #index' do
+    it 'returns taxons for the current store' do
+      get :index
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['data'].pluck('id')).to include(taxon.prefix_id, child_taxon.prefix_id)
+      expect(json_response['data'].pluck('id')).not_to include(other_store_taxon.prefix_id)
+    end
+
+    it 'returns pagination metadata' do
+      get :index
+
+      expect(json_response['meta']).to include('page', 'limit', 'count', 'pages')
+    end
+
+    it 'returns taxon attributes' do
+      get :index
+
+      taxon_data = json_response['data'].find { |t| t['id'] == taxon.prefix_id }
+      expect(taxon_data).to include('name', 'permalink', 'position', 'depth')
+      expect(taxon_data).to include('taxonomy_id', 'parent_id', 'children_count')
+      expect(taxon_data).not_to include('lft', 'rgt')
+    end
+
+    context 'with images' do
+      let!(:taxon_with_image) { create(:taxon, :with_header_image, taxonomy: taxonomy) }
+
+      it 'returns image URLs' do
+        get :index
+
+        taxon_data = json_response['data'].find { |t| t['id'] == taxon_with_image.prefix_id }
+        expect(taxon_data['image_url']).to be_present
+      end
+    end
+
+    context 'filtering' do
+      it 'filters by taxonomy_id' do
+        other_taxonomy_in_store = create(:taxonomy, store: store)
+        other_taxon = create(:taxon, taxonomy: other_taxonomy_in_store)
+
+        get :index, params: { q: { taxonomy_id_eq: taxonomy.id } }
+
+        ids = json_response['data'].pluck('id')
+        expect(ids).to include(taxon.prefix_id)
+        expect(ids).not_to include(other_taxon.prefix_id)
+      end
+
+      it 'filters by depth' do
+        get :index, params: { q: { depth_eq: grandchild_taxon.depth } }
+
+        ids = json_response['data'].pluck('id')
+        expect(ids).to include(grandchild_taxon.prefix_id)
+      end
+
+      it 'filters by parent_id' do
+        get :index, params: { q: { parent_id_eq: child_taxon.id } }
+
+        ids = json_response['data'].pluck('id')
+        expect(ids).to include(grandchild_taxon.prefix_id)
+      end
+    end
+
+    context 'without API key' do
+      before { request.headers['X-Spree-Api-Key'] = nil }
+
+      it 'returns unauthorized' do
+        get :index
+
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
   end
 
   describe 'GET #show' do
@@ -62,6 +136,42 @@ RSpec.describe Spree::Api::V3::Store::TaxonsController, type: :controller do
 
       expect(response).to have_http_status(:ok)
       expect(json_response['parent_id']).to eq(taxon.prefix_id)
+    end
+
+    it 'does not include lft and rgt in store API' do
+      get :show, params: { id: taxon.prefix_id }
+
+      expect(json_response).not_to include('lft', 'rgt')
+    end
+
+    context 'with includes=ancestors' do
+      it 'returns ancestors for breadcrumbs' do
+        get :show, params: { id: grandchild_taxon.prefix_id, includes: 'ancestors' }
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['ancestors']).to be_an(Array)
+        ancestor_ids = json_response['ancestors'].pluck('id')
+        expect(ancestor_ids).to include(taxon.prefix_id, child_taxon.prefix_id)
+      end
+
+      it 'returns empty ancestors for root taxon' do
+        root_taxon = taxonomy.root
+
+        get :show, params: { id: root_taxon.prefix_id, includes: 'ancestors' }
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['ancestors']).to eq([])
+      end
+    end
+
+    context 'with includes=children' do
+      it 'returns children' do
+        get :show, params: { id: taxon.prefix_id, includes: 'children' }
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['children']).to be_an(Array)
+        expect(json_response['children'].pluck('id')).to include(child_taxon.prefix_id)
+      end
     end
 
     context 'with translations', if: Spree::Taxon.include?(Spree::TranslatableResource) do

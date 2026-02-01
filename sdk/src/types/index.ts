@@ -57,6 +57,13 @@ export interface ProductListParams extends ListParams {
   'q[taxons_id_eq]'?: string;
 }
 
+export interface TaxonListParams extends ListParams {
+  'q[taxonomy_id_eq]'?: string | number;
+  'q[parent_id_eq]'?: string | number;
+  'q[depth_eq]'?: number;
+  'q[name_cont]'?: string;
+}
+
 export interface OrderListParams extends ListParams {
   'q[state_eq]'?: string;
   'q[completed_at_gte]'?: string;

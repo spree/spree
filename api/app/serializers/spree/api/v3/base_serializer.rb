@@ -75,9 +75,11 @@ module Spree
         end
 
         def image_url_for(image)
-          return nil unless image&.attachment&.attached?
+          return nil if image.nil?
+          return nil unless image.respond_to?(:attached?) && image.attached?
 
-          Rails.application.routes.url_helpers.cdn_image_url(image.attachment)
+          # cdn_image_url expects an attachment (with .blob method), not a raw blob
+          Rails.application.routes.url_helpers.cdn_image_url(image)
         end
       end
     end

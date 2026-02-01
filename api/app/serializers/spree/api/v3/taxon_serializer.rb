@@ -2,15 +2,14 @@ module Spree
   module Api
     module V3
       class TaxonSerializer < BaseSerializer
-        typelize name: :string, permalink: :string, position: :number,
-                 lft: :number, rgt: :number, depth: :number,
+        typelize name: :string, permalink: :string, position: :number, depth: :number,
                  meta_title: 'string | null', meta_description: 'string | null', meta_keywords: 'string | null',
                  parent_id: 'string | null', taxonomy_id: :string, children_count: :number,
                  description: :string, description_html: :string,
                  image_url: 'string | null', square_image_url: 'string | null',
                  is_root: :boolean, is_child: :boolean, is_leaf: :boolean
 
-        attributes :name, :permalink, :position, :lft, :rgt, :depth,
+        attributes :name, :permalink, :position, :depth,
                    :meta_title, :meta_description, :meta_keywords,
                    :children_count,
                    created_at: :iso8601, updated_at: :iso8601
@@ -24,11 +23,11 @@ module Spree
         end
 
         attribute :description do |taxon|
-          taxon.description.to_plain_text
+          taxon.description&.to_plain_text.to_s
         end
 
         attribute :description_html do |taxon|
-          taxon.description.to_s
+          taxon.description&.body&.to_s.to_s
         end
 
         attribute :image_url do |taxon|
@@ -52,13 +51,22 @@ module Spree
         end
 
         # Conditional associations
+        # Note: We pass empty includes to nested taxons to prevent infinite recursion
+        # (e.g., ancestors trying to load their own ancestors)
         one :parent,
             resource: Spree.api.taxon_serializer,
-            if: proc { params[:includes]&.include?('parent') }
+            if: proc { params[:includes]&.include?('parent') },
+            params: { includes: [] }
 
         many :children,
              resource: Spree.api.taxon_serializer,
-             if: proc { params[:includes]&.include?('children') }
+             if: proc { params[:includes]&.include?('children') },
+             params: { includes: [] }
+
+        many :ancestors,
+             resource: Spree.api.taxon_serializer,
+             if: proc { params[:includes]&.include?('ancestors') },
+             params: { includes: [] }
 
         many :public_metafields,
              key: :metafields,

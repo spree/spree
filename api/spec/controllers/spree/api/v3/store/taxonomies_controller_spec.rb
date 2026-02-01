@@ -71,6 +71,12 @@ RSpec.describe Spree::Api::V3::Store::TaxonomiesController, type: :controller do
       expect(json_response['name']).to be_present
     end
 
+    it 'returns root_id for quick access to root taxon' do
+      get :show, params: { id: taxonomy.prefix_id }
+
+      expect(json_response['root_id']).to eq(taxonomy.root.prefix_id)
+    end
+
     context 'error handling' do
       it 'returns not found for non-existent taxonomy' do
         get :show, params: { id: 'txnmy_nonexistent' }

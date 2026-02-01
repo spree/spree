@@ -23,6 +23,10 @@ module Spree
               find_with_fallback_default_locale { scope.i18n.find_by!(permalink: id) }
             end
           end
+
+          def collection_includes
+            [:taxonomy]
+          end
         end
       end
     end

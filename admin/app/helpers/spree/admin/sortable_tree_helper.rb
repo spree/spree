@@ -23,7 +23,7 @@ module Spree
                     class: 'sortable-tree-item draggable',
                     data: {
                       sortable_tree_resource_name_value: :taxon,
-                      sortable_tree_update_url_value: spree.reposition_admin_taxonomy_taxon_path(child_resource.taxonomy_id, child_resource.id)
+                      sortable_tree_update_url_value: spree.reposition_admin_taxonomy_taxon_path(child_resource.taxonomy, child_resource)
                     })
       end
     end

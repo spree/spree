@@ -17,7 +17,9 @@ Spree::Core::Engine.add_routes do
         # Catalog
         resources :products, only: [:index, :show]
         resources :taxonomies, only: [:index, :show]
-        resources :taxons, only: [:show], id: /.+/
+        resources :taxons, only: [:index, :show], id: /.+/ do
+          resources :products, only: [:index], controller: 'taxons/products'
+        end
 
         # Orders
         resources :orders do

@@ -89,7 +89,8 @@ module Spree
                taxons.select { |t| t.taxonomy.store_id == params[:store].id }
              },
              resource: Spree.api.taxon_serializer,
-             if: proc { params[:includes]&.include?('taxons') }
+             if: proc { params[:includes]&.include?('taxons') },
+             params: { includes: [] }
 
         many :public_metafields,
              key: :metafields,

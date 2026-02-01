@@ -8,7 +8,7 @@
 <% end if can?(:create, Spree::Taxon) %>
 
 <% content_for :page_actions_dropdown do %>
-  <%= link_to_edit(@taxonomy.root, url: spree.edit_admin_taxonomy_taxon_path(@taxonomy, @taxonomy.root.id), class: 'text-left dropdown-item') %>
+  <%= link_to_edit(@taxonomy.root, url: spree.edit_admin_taxonomy_taxon_path(@taxonomy, @taxonomy.root), class: 'text-left dropdown-item') %>
 <% end if can?(:edit, @taxonomy) %>
 
 <div id="sortableTreeArea">
