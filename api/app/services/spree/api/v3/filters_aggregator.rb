@@ -43,7 +43,8 @@ module Spree
         end
 
         def price_filter
-          prices = Spree::Price.for_products(@scope, @currency)
+          # Remove ordering to avoid PostgreSQL DISTINCT + ORDER BY conflicts
+          prices = Spree::Price.for_products(@scope.reorder(''), @currency)
           min = prices.minimum(:amount)
           max = prices.maximum(:amount)
           return nil if min.nil? || max.nil?

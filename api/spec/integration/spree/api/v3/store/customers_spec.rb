@@ -5,7 +5,7 @@ require 'swagger_helper'
 RSpec.describe 'Customers API', type: :request, swagger_doc: 'api-reference/store.yaml' do
   include_context 'API v3 Store'
 
-  path '/api/v3/store/customers/me' do
+  path '/api/v3/store/customer' do
     get 'Get current customer profile' do
       tags 'Customers'
       produces 'application/json'
