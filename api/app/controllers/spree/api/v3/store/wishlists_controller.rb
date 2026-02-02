@@ -32,7 +32,7 @@ module Spree
           end
 
           def permitted_params
-            params.require(:wishlist).permit(Spree::PermittedAttributes.wishlist_attributes)
+            params.permit(Spree::PermittedAttributes.wishlist_attributes)
           end
         end
       end

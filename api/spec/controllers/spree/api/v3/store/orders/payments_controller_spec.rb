@@ -30,7 +30,7 @@ RSpec.describe Spree::Api::V3::Store::Orders::PaymentsController, type: :control
     end
 
     context 'with order token (guest)' do
-      let(:guest_order) { create(:order_with_line_items, store: store, state: 'payment') }
+      let(:guest_order) { create(:order_with_line_items, user: nil, store: store, state: 'payment') }
       let!(:guest_payment) { create(:payment, order: guest_order, payment_method: payment_method) }
 
       before { request.headers['Authorization'] = nil }

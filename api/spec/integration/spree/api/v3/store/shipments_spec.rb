@@ -108,15 +108,9 @@ RSpec.describe 'Shipments API', type: :request, swagger_doc: 'api-reference/stor
       parameter name: :body, in: :body, schema: {
         type: :object,
         properties: {
-          shipment: {
-            type: :object,
-            properties: {
-              selected_shipping_rate_id: { type: :string, description: 'Shipping rate ID to select' }
-            },
-            required: %w[selected_shipping_rate_id]
-          }
+          selected_shipping_rate_id: { type: :string, description: 'Shipping rate ID to select' }
         },
-        required: %w[shipment]
+        required: %w[selected_shipping_rate_id]
       }
 
       response '200', 'shipping rate selected' do
@@ -126,7 +120,7 @@ RSpec.describe 'Shipments API', type: :request, swagger_doc: 'api-reference/stor
         let(:order_id) { order.to_param }
         let(:id) { shipment.to_param }
         let(:token) { order.token }
-        let(:body) { { shipment: { selected_shipping_rate_id: shipping_rate.to_param } } }
+        let(:body) { { selected_shipping_rate_id: shipping_rate.to_param } }
 
         schema '$ref' => '#/components/schemas/StoreShipment'
 
@@ -139,7 +133,7 @@ RSpec.describe 'Shipments API', type: :request, swagger_doc: 'api-reference/stor
         let(:order_id) { order.to_param }
         let(:id) { shipment.to_param }
         let(:token) { order.token }
-        let(:body) { { shipment: { selected_shipping_rate_id: 'shprt_invalid' } } }
+        let(:body) { { selected_shipping_rate_id: 'shprt_invalid' } }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 

@@ -60,22 +60,17 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
       parameter name: :body, in: :body, schema: {
         type: :object,
         properties: {
-          wishlist: {
-            type: :object,
-            properties: {
-              name: { type: :string },
-              is_private: { type: :boolean },
-              is_default: { type: :boolean }
-            },
-            required: %w[name]
-          }
-        }
+          name: { type: :string },
+          is_private: { type: :boolean },
+          is_default: { type: :boolean }
+        },
+        required: %w[name]
       }
 
       response '201', 'wishlist created' do
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:body) { { wishlist: { name: 'Birthday Ideas', is_private: true } } }
+        let(:body) { { name: 'Birthday Ideas', is_private: true } }
 
         schema '$ref' => '#/components/schemas/StoreWishlist'
 
@@ -89,7 +84,7 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
       response '422', 'validation error' do
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:body) { { wishlist: { name: '' } } }
+        let(:body) { { name: '' } }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 
@@ -143,14 +138,9 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
       parameter name: :body, in: :body, schema: {
         type: :object,
         properties: {
-          wishlist: {
-            type: :object,
-            properties: {
-              name: { type: :string },
-              is_private: { type: :boolean },
-              is_default: { type: :boolean }
-            }
-          }
+          name: { type: :string },
+          is_private: { type: :boolean },
+          is_default: { type: :boolean }
         }
       }
 
@@ -158,7 +148,7 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:id) { wishlist.to_param }
-        let(:body) { { wishlist: { name: 'Updated Name' } } }
+        let(:body) { { name: 'Updated Name' } }
 
         schema '$ref' => '#/components/schemas/StoreWishlist'
 
@@ -213,7 +203,7 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:wishlist_id) { wishlist.to_param }
-        let(:body) { { wished_item: { variant_id: new_variant.id.to_s, quantity: 1 } } }
+        let(:body) { { variant_id: new_variant.prefix_id, quantity: 1 } }
 
         schema '$ref' => '#/components/schemas/StoreWishedItem'
 

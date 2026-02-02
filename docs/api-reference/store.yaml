@@ -40,7 +40,7 @@ info:
     ```
   version: v3
 paths:
-  "/api/v3/store/customers/me/addresses":
+  "/api/v3/store/customer/addresses":
     get:
       summary: List customer addresses
       tags:
@@ -128,43 +128,40 @@ paths:
             schema:
               type: object
               properties:
-                address:
-                  type: object
-                  properties:
-                    firstname:
-                      type: string
-                    lastname:
-                      type: string
-                    address1:
-                      type: string
-                    address2:
-                      type: string
-                    city:
-                      type: string
-                    zipcode:
-                      type: string
-                    phone:
-                      type: string
-                    company:
-                      type: string
-                    country_iso:
-                      type: string
-                      description: ISO 3166-1 alpha-2 country code (e.g., "US", "DE")
-                    state_abbr:
-                      type: string
-                      description: ISO 3166-2 subdivision code without country prefix
-                        (e.g., "CA", "NY")
-                    state_name:
-                      type: string
-                      description: State name - for countries without predefined states
-                  required:
-                  - firstname
-                  - lastname
-                  - address1
-                  - city
-                  - zipcode
-                  - country_iso
-  "/api/v3/store/customers/me/addresses/{id}":
+                firstname:
+                  type: string
+                lastname:
+                  type: string
+                address1:
+                  type: string
+                address2:
+                  type: string
+                city:
+                  type: string
+                zipcode:
+                  type: string
+                phone:
+                  type: string
+                company:
+                  type: string
+                country_iso:
+                  type: string
+                  description: ISO 3166-1 alpha-2 country code (e.g., "US", "DE")
+                state_abbr:
+                  type: string
+                  description: ISO 3166-2 subdivision code without country prefix
+                    (e.g., "CA", "NY")
+                state_name:
+                  type: string
+                  description: State name - for countries without predefined states
+              required:
+              - firstname
+              - lastname
+              - address1
+              - city
+              - zipcode
+              - country_iso
+  "/api/v3/store/customer/addresses/{id}":
     get:
       summary: Get an address
       tags:
@@ -237,17 +234,14 @@ paths:
             schema:
               type: object
               properties:
-                address:
-                  type: object
-                  properties:
-                    firstname:
-                      type: string
-                    lastname:
-                      type: string
-                    address1:
-                      type: string
-                    city:
-                      type: string
+                firstname:
+                  type: string
+                lastname:
+                  type: string
+                address1:
+                  type: string
+                city:
+                  type: string
     delete:
       summary: Delete an address
       tags:
@@ -361,26 +355,21 @@ paths:
             schema:
               type: object
               properties:
-                user:
-                  type: object
-                  properties:
-                    email:
-                      type: string
-                      format: email
-                    password:
-                      type: string
-                      minLength: 6
-                    password_confirmation:
-                      type: string
-                    first_name:
-                      type: string
-                    last_name:
-                      type: string
-                  required:
-                  - email
-                  - password
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  minLength: 6
+                password_confirmation:
+                  type: string
+                first_name:
+                  type: string
+                last_name:
+                  type: string
               required:
-              - user
+              - email
+              - password
   "/api/v3/store/auth/refresh":
     post:
       summary: Refresh token
@@ -411,6 +400,127 @@ paths:
                 "$ref": "#/components/schemas/AuthResponse"
         '401':
           description: missing or invalid token
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/store/cart":
+    get:
+      summary: Get current cart
+      tags:
+      - Cart
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |
+        Returns the current shopping cart (incomplete order).
+        Authenticate via JWT token for logged-in users or via order_token parameter for guests.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: false
+        description: Bearer JWT token for authenticated customers
+        schema:
+          type: string
+      - name: order_token
+        in: query
+        required: false
+        description: Order token for guest checkout
+        schema:
+          type: string
+      responses:
+        '200':
+          description: cart found (authenticated)
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                - "$ref": "#/components/schemas/StoreOrder"
+                - type: object
+                  properties:
+                    token:
+                      type: string
+        '404':
+          description: no cart found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/store/cart/associate":
+    patch:
+      summary: Associate guest cart with authenticated user
+      tags:
+      - Cart
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |
+        Associates a guest cart with the currently authenticated user.
+        Requires both JWT authentication and an order token.
+        The order must not be completed and must not belong to another user.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer JWT token (required)
+        schema:
+          type: string
+      - name: x-spree-order-token
+        in: header
+        required: false
+        description: Order token (can also be passed as query param)
+        schema:
+          type: string
+      - name: order_token
+        in: query
+        required: false
+        description: Order token (alternative to header)
+        schema:
+          type: string
+      responses:
+        '200':
+          description: cart associated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                allOf:
+                - "$ref": "#/components/schemas/StoreOrder"
+                - type: object
+                  properties:
+                    token:
+                      type: string
+        '401':
+          description: unauthorized - JWT required
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        '403':
+          description: cart belongs to another user
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        '404':
+          description: cart not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        '422':
+          description: cart already completed
           content:
             application/json:
               schema:
@@ -535,7 +645,7 @@ paths:
             application/json:
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
-  "/api/v3/store/customers/me":
+  "/api/v3/store/customer":
     get:
       summary: Get current customer profile
       tags:
@@ -607,140 +717,17 @@ paths:
             schema:
               type: object
               properties:
-                user:
-                  type: object
-                  properties:
-                    first_name:
-                      type: string
-                    last_name:
-                      type: string
-                    email:
-                      type: string
-                      format: email
-                    password:
-                      type: string
-                    password_confirmation:
-                      type: string
-  "/api/v3/store/cart":
-    get:
-      summary: Get current cart
-      tags:
-      - Cart
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: |
-        Returns the current shopping cart (incomplete order).
-        Authenticate via JWT token for logged-in users or via order_token parameter for guests.
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: false
-        description: Bearer JWT token for authenticated customers
-        schema:
-          type: string
-      - name: order_token
-        in: query
-        required: false
-        description: Order token for guest checkout
-        schema:
-          type: string
-      responses:
-        '200':
-          description: cart found
-          content:
-            application/json:
-              schema:
-                allOf:
-                - "$ref": "#/components/schemas/StoreOrder"
-                - type: object
-                  properties:
-                    token:
-                      type: string
-                      description: Order token for guest access
-        '404':
-          description: no cart found
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-  "/api/v3/store/cart/associate":
-    patch:
-      summary: Associate guest cart with authenticated user
-      tags:
-      - Cart
-      security:
-      - api_key: []
-        bearer_auth: []
-      description: |
-        Associates a guest cart with the currently authenticated user.
-        Requires both JWT authentication and an order token.
-        The order must not be completed and must not belong to another user.
-      parameters:
-      - name: x-spree-api-key
-        in: header
-        required: true
-        schema:
-          type: string
-      - name: Authorization
-        in: header
-        required: true
-        description: Bearer JWT token (required)
-        schema:
-          type: string
-      - name: x-spree-order-token
-        in: header
-        required: false
-        description: Order token (can also be passed as query param)
-        schema:
-          type: string
-      - name: order_token
-        in: query
-        required: false
-        description: Order token (alternative to header)
-        schema:
-          type: string
-      responses:
-        '200':
-          description: cart associated successfully
-          content:
-            application/json:
-              schema:
-                allOf:
-                - "$ref": "#/components/schemas/StoreOrder"
-                - type: object
-                  properties:
-                    token:
-                      type: string
-        '401':
-          description: unauthorized - JWT required
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-        '403':
-          description: cart belongs to another user
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-        '404':
-          description: cart not found
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-        '422':
-          description: cart already completed
-          content:
-            application/json:
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
+                first_name:
+                  type: string
+                last_name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                password_confirmation:
+                  type: string
   "/api/v3/store/orders/{order_id}/line_items":
     post:
       summary: Add item to cart
@@ -1106,18 +1093,15 @@ paths:
             schema:
               type: object
               properties:
-                order:
-                  type: object
-                  properties:
-                    email:
-                      type: string
-                      format: email
-                    special_instructions:
-                      type: string
-                    bill_address_attributes:
-                      "$ref": "#/components/schemas/StoreAddress"
-                    ship_address_attributes:
-                      "$ref": "#/components/schemas/StoreAddress"
+                email:
+                  type: string
+                  format: email
+                special_instructions:
+                  type: string
+                bill_address:
+                  "$ref": "#/components/schemas/StoreAddress"
+                ship_address:
+                  "$ref": "#/components/schemas/StoreAddress"
   "/api/v3/store/orders/{id}/next":
     patch:
       summary: Advance to next checkout step
@@ -1403,7 +1387,7 @@ paths:
         type: string
     - name: order_id
       in: path
-      description: Order number or ID
+      description: Order prefix ID
       required: true
       schema:
         type: string
@@ -1449,7 +1433,7 @@ paths:
         type: string
     - name: order_id
       in: path
-      description: Order number or ID
+      description: Order prefix ID
       required: true
       schema:
         type: string
@@ -1751,16 +1735,11 @@ paths:
             schema:
               type: object
               properties:
-                shipment:
-                  type: object
-                  properties:
-                    selected_shipping_rate_id:
-                      type: string
-                      description: Shipping rate ID to select
-                  required:
-                  - selected_shipping_rate_id
+                selected_shipping_rate_id:
+                  type: string
+                  description: Shipping rate ID to select
               required:
-              - shipment
+              - selected_shipping_rate_id
   "/api/v3/store/store":
     get:
       summary: Get current store
@@ -2012,17 +1991,14 @@ paths:
             schema:
               type: object
               properties:
-                wishlist:
-                  type: object
-                  properties:
-                    name:
-                      type: string
-                    is_private:
-                      type: boolean
-                    is_default:
-                      type: boolean
-                  required:
-                  - name
+                name:
+                  type: string
+                is_private:
+                  type: boolean
+                is_default:
+                  type: boolean
+              required:
+              - name
   "/api/v3/store/wishlists/{id}":
     get:
       summary: Get a wishlist
@@ -2102,15 +2078,12 @@ paths:
             schema:
               type: object
               properties:
-                wishlist:
-                  type: object
-                  properties:
-                    name:
-                      type: string
-                    is_private:
-                      type: boolean
-                    is_default:
-                      type: boolean
+                name:
+                  type: string
+                is_private:
+                  type: boolean
+                is_default:
+                  type: boolean
     delete:
       summary: Delete a wishlist
       tags:
@@ -2233,8 +2206,6 @@ tags:
   description: Individual categories
 - name: Countries
   description: Available shipping countries
-- name: Cart
-  description: Current shopping cart management
 - name: Orders
   description: Shopping cart and checkout
 - name: Line Items
@@ -2373,6 +2344,29 @@ components:
       - full_name
       - country_name
       - country_iso
+    AdminMetafield:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+        key:
+          type: string
+        value:
+          type: object
+        display_on:
+          type: string
+      x-typelizer: true
+      required:
+      - id
+      - name
+      - type
+      - key
+      - value
+      - display_on
     AdminOrder:
       type: object
       properties:
@@ -2525,6 +2519,47 @@ components:
       - considered_risky
       - confirmation_delivered
       - store_owner_notification_delivered
+    AdminPrice:
+      type: object
+      properties:
+        id:
+          type: string
+        amount:
+          type: string
+          nullable: true
+        amount_in_cents:
+          type: number
+          nullable: true
+        compare_at_amount:
+          type: string
+          nullable: true
+        compare_at_amount_in_cents:
+          type: number
+          nullable: true
+        currency:
+          type: string
+          nullable: true
+        display_amount:
+          type: string
+          nullable: true
+        display_compare_at_amount:
+          type: string
+          nullable: true
+        price_list_id:
+          type: string
+          nullable: true
+        variant_id:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+      x-typelizer: true
+      required:
+      - id
+      - created_at
+      - updated_at
     AdminProduct:
       type: object
       properties:
@@ -2537,12 +2572,6 @@ components:
           nullable: true
         slug:
           type: string
-        sku:
-          type: string
-          nullable: true
-        barcode:
-          type: string
-          nullable: true
         meta_description:
           type: string
           nullable: true
@@ -2566,28 +2595,19 @@ components:
           type: boolean
         available:
           type: boolean
-        price:
-          type: number
-          nullable: true
-        price_in_cents:
-          type: number
-          nullable: true
-        display_price:
+        default_variant_id:
           type: string
-          nullable: true
-        compare_at_price:
-          type: number
-          nullable: true
-        compare_at_price_in_cents:
-          type: number
-          nullable: true
-        display_compare_at_price:
+        thumbnail_url:
           type: string
           nullable: true
         tags:
           type: array
           items:
             type: string
+        price:
+          "$ref": "#/components/schemas/StorePrice"
+        original_price:
+          "$ref": "#/components/schemas/StorePrice"
         images:
           type: array
           items:
@@ -2608,6 +2628,10 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/StoreTaxon"
+        metafields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/AdminMetafield"
         status:
           type: string
         make_active_at:
@@ -2637,8 +2661,129 @@ components:
       - in_stock
       - backorderable
       - available
+      - default_variant_id
       - tags
+      - price
+      - original_price
       - status
+    AdminTaxon:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        permalink:
+          type: string
+        position:
+          type: number
+        depth:
+          type: number
+        meta_title:
+          type: string
+          nullable: true
+        meta_description:
+          type: string
+          nullable: true
+        meta_keywords:
+          type: string
+          nullable: true
+        children_count:
+          type: number
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        parent_id:
+          type: string
+          nullable: true
+        taxonomy_id:
+          type: string
+        description:
+          type: string
+        description_html:
+          type: string
+        image_url:
+          type: string
+          nullable: true
+        square_image_url:
+          type: string
+          nullable: true
+        is_root:
+          type: boolean
+        is_child:
+          type: boolean
+        is_leaf:
+          type: boolean
+        parent:
+          "$ref": "#/components/schemas/StoreTaxon"
+        children:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StoreTaxon"
+        ancestors:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StoreTaxon"
+        metafields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/AdminMetafield"
+        lft:
+          type: number
+        rgt:
+          type: number
+      x-typelizer: true
+      required:
+      - id
+      - name
+      - permalink
+      - position
+      - depth
+      - children_count
+      - created_at
+      - updated_at
+      - taxonomy_id
+      - description
+      - description_html
+      - is_root
+      - is_child
+      - is_leaf
+      - lft
+      - rgt
+    AdminTaxonomy:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        position:
+          type: number
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        root_id:
+          type: string
+          nullable: true
+        root:
+          "$ref": "#/components/schemas/StoreTaxon"
+        taxons:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StoreTaxon"
+        metafields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/AdminMetafield"
+      x-typelizer: true
+      required:
+      - id
+      - name
+      - position
+      - created_at
+      - updated_at
     AdminUser:
       type: object
       properties:
@@ -2716,9 +2861,6 @@ components:
         sku:
           type: string
           nullable: true
-        barcode:
-          type: string
-          nullable: true
         is_master:
           type: boolean
         options_text:
@@ -2731,6 +2873,9 @@ components:
           type: string
         updated_at:
           type: string
+        thumbnail:
+          type: string
+          nullable: true
         purchasable:
           type: boolean
         in_stock:
@@ -2750,20 +2895,9 @@ components:
           type: number
           nullable: true
         price:
-          type: number
-          nullable: true
-        price_in_cents:
-          type: number
-          nullable: true
-        display_price:
-          type: string
-          nullable: true
-        compare_at_price:
-          type: number
-          nullable: true
-        display_compare_at_price:
-          type: string
-          nullable: true
+          "$ref": "#/components/schemas/StorePrice"
+        original_price:
+          "$ref": "#/components/schemas/StorePrice"
         images:
           type: array
           items:
@@ -2772,6 +2906,10 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/StoreOptionValue"
+        metafields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/AdminMetafield"
         position:
           type: number
         tax_category_id:
@@ -2789,6 +2927,10 @@ components:
         total_on_hand:
           type: number
           nullable: true
+        prices:
+          type: array
+          items:
+            "$ref": "#/components/schemas/AdminPrice"
       x-typelizer: true
       required:
       - id
@@ -2802,6 +2944,8 @@ components:
       - purchasable
       - in_stock
       - backorderable
+      - price
+      - original_price
       - option_values
       - position
     StoreBase:
@@ -2828,11 +2972,9 @@ components:
         default_currency:
           type: string
           nullable: true
-          description: Default currency code for this country (e.g., "USD", "EUR")
         default_locale:
           type: string
           nullable: true
-          description: Default locale/language for this country (e.g., "en", "de")
         states:
           type: array
           items:
@@ -2844,6 +2986,32 @@ components:
       - name
       - states_required
       - zipcode_required
+    StoreCreditCard:
+      type: object
+      properties:
+        id:
+          type: string
+        cc_type:
+          type: string
+        last_digits:
+          type: string
+        month:
+          type: number
+        year:
+          type: number
+        name:
+          type: string
+          nullable: true
+        default:
+          type: boolean
+      x-typelizer: true
+      required:
+      - id
+      - cc_type
+      - last_digits
+      - month
+      - year
+      - default
     StoreDigitalLink:
       type: object
       properties:
@@ -2980,10 +3148,9 @@ components:
         compare_at_amount:
           type: string
           nullable: true
-        images:
-          type: array
-          items:
-            "$ref": "#/components/schemas/StoreImage"
+        thumbnail_url:
+          type: string
+          nullable: true
         option_values:
           type: array
           items:
@@ -3014,8 +3181,27 @@ components:
       - display_discounted_amount
       - created_at
       - updated_at
-      - images
       - option_values
+    StoreMetafield:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+        key:
+          type: string
+        value:
+          type: object
+      x-typelizer: true
+      required:
+      - id
+      - name
+      - type
+      - key
+      - value
     StoreOptionType:
       type: object
       properties:
@@ -3256,41 +3442,36 @@ components:
       - payment_method
     StorePrice:
       type: object
-      description: A resolved/calculated price object. Contains the price amount, formatted display string, and optional compare_at pricing for sales.
       properties:
+        id:
+          type: string
         amount:
-          type: number
+          type: string
           nullable: true
-          description: The price amount as a decimal number
         amount_in_cents:
-          type: integer
-          nullable: true
-          description: The price amount in cents (integer)
-        display_amount:
-          type: string
-          nullable: true
-          description: Formatted price string with currency symbol (e.g., "$19.99")
-        compare_at_amount:
           type: number
           nullable: true
-          description: Original price before discount (for showing strikethrough)
-        compare_at_amount_in_cents:
-          type: integer
-          nullable: true
-          description: Original price in cents before discount
-        display_compare_at_amount:
+        compare_at_amount:
           type: string
           nullable: true
-          description: Formatted original price string
+        compare_at_amount_in_cents:
+          type: number
+          nullable: true
         currency:
           type: string
           nullable: true
-          description: ISO 4217 currency code (e.g., "USD", "EUR")
+        display_amount:
+          type: string
+          nullable: true
+        display_compare_at_amount:
+          type: string
+          nullable: true
         price_list_id:
           type: string
           nullable: true
-          description: ID of the price list if one was applied
       x-typelizer: true
+      required:
+      - id
     StoreProduct:
       type: object
       properties:
@@ -3303,12 +3484,6 @@ components:
           nullable: true
         slug:
           type: string
-        sku:
-          type: string
-          nullable: true
-        barcode:
-          type: string
-          nullable: true
         meta_description:
           type: string
           nullable: true
@@ -3332,16 +3507,19 @@ components:
           type: boolean
         available:
           type: boolean
-        price:
-          "$ref": "#/components/schemas/StorePrice"
-          description: Current calculated price (may include price list resolution)
-        original_price:
-          "$ref": "#/components/schemas/StorePrice"
-          description: Base price without price list resolution (for showing strikethrough)
+        default_variant_id:
+          type: string
+        thumbnail_url:
+          type: string
+          nullable: true
         tags:
           type: array
           items:
             type: string
+        price:
+          "$ref": "#/components/schemas/StorePrice"
+        original_price:
+          "$ref": "#/components/schemas/StorePrice"
         images:
           type: array
           items:
@@ -3362,6 +3540,10 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/StoreTaxon"
+        metafields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StoreMetafield"
       x-typelizer: true
       required:
       - id
@@ -3374,9 +3556,10 @@ components:
       - in_stock
       - backorderable
       - available
+      - default_variant_id
+      - tags
       - price
       - original_price
-      - tags
     StoreShipment:
       type: object
       properties:
@@ -3548,6 +3731,9 @@ components:
           type: string
         updated_at:
           type: string
+        default_country_iso:
+          type: string
+          nullable: true
         supported_currencies:
           type: array
           items:
@@ -3565,10 +3751,6 @@ components:
           type: array
           items:
             type: string
-        default_country_iso:
-          type: string
-          nullable: true
-          description: ISO 3166-1 alpha-2 code of the store's default country (e.g., "US", "DE")
         payment_methods:
           type: array
           items:
@@ -3597,10 +3779,6 @@ components:
         permalink:
           type: string
         position:
-          type: number
-        lft:
-          type: number
-        rgt:
           type: number
         depth:
           type: number
@@ -3646,14 +3824,20 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/StoreTaxon"
+        ancestors:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StoreTaxon"
+        metafields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StoreMetafield"
       x-typelizer: true
       required:
       - id
       - name
       - permalink
       - position
-      - lft
-      - rgt
       - depth
       - children_count
       - created_at
@@ -3677,12 +3861,19 @@ components:
           type: string
         updated_at:
           type: string
+        root_id:
+          type: string
+          nullable: true
         root:
           "$ref": "#/components/schemas/StoreTaxon"
         taxons:
           type: array
           items:
             "$ref": "#/components/schemas/StoreTaxon"
+        metafields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StoreMetafield"
       x-typelizer: true
       required:
       - id
@@ -3736,9 +3927,6 @@ components:
         sku:
           type: string
           nullable: true
-        barcode:
-          type: string
-          nullable: true
         is_master:
           type: boolean
         options_text:
@@ -3751,6 +3939,9 @@ components:
           type: string
         updated_at:
           type: string
+        thumbnail:
+          type: string
+          nullable: true
         purchasable:
           type: boolean
         in_stock:
@@ -3771,10 +3962,8 @@ components:
           nullable: true
         price:
           "$ref": "#/components/schemas/StorePrice"
-          description: Current calculated price (may include price list resolution)
         original_price:
           "$ref": "#/components/schemas/StorePrice"
-          description: Base price without price list resolution (for showing strikethrough)
         images:
           type: array
           items:
@@ -3783,6 +3972,10 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/StoreOptionValue"
+        metafields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StoreMetafield"
       x-typelizer: true
       required:
       - id

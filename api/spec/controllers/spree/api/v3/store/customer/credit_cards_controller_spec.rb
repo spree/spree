@@ -89,8 +89,8 @@ RSpec.describe Spree::Api::V3::Store::Customer::CreditCardsController, type: :co
     end
 
     context 'when credit card belongs to another user' do
-      let(:other_user) { create(:user) }
-      let(:other_card) { create(:credit_card, user: other_user) }
+      let!(:other_user) { create(:user) }
+      let!(:other_card) { create(:credit_card, user: other_user) }
 
       it 'returns not found' do
         expect {

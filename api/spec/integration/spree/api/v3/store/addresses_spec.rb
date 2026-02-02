@@ -9,7 +9,7 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
   let!(:state) { create(:state, country: country) }
   let!(:address) { create(:address, user: user, country: country, state: state) }
 
-  path '/api/v3/store/customers/me/addresses' do
+  path '/api/v3/store/customer/addresses' do
     get 'List customer addresses' do
       tags 'Addresses'
       produces 'application/json'
@@ -59,24 +59,19 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
       parameter name: :body, in: :body, schema: {
         type: :object,
         properties: {
-          address: {
-            type: :object,
-            properties: {
-              firstname: { type: :string },
-              lastname: { type: :string },
-              address1: { type: :string },
-              address2: { type: :string },
-              city: { type: :string },
-              zipcode: { type: :string },
-              phone: { type: :string },
-              company: { type: :string },
-              country_iso: { type: :string, description: 'ISO 3166-1 alpha-2 country code (e.g., "US", "DE")' },
-              state_abbr: { type: :string, description: 'ISO 3166-2 subdivision code without country prefix (e.g., "CA", "NY")' },
-              state_name: { type: :string, description: 'State name - for countries without predefined states' }
-            },
-            required: %w[firstname lastname address1 city zipcode country_iso]
-          }
-        }
+          firstname: { type: :string },
+          lastname: { type: :string },
+          address1: { type: :string },
+          address2: { type: :string },
+          city: { type: :string },
+          zipcode: { type: :string },
+          phone: { type: :string },
+          company: { type: :string },
+          country_iso: { type: :string, description: 'ISO 3166-1 alpha-2 country code (e.g., "US", "DE")' },
+          state_abbr: { type: :string, description: 'ISO 3166-2 subdivision code without country prefix (e.g., "CA", "NY")' },
+          state_name: { type: :string, description: 'State name - for countries without predefined states' }
+        },
+        required: %w[firstname lastname address1 city zipcode country_iso]
       }
 
       response '201', 'address created' do
@@ -84,16 +79,14 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:body) do
           {
-            address: {
-              firstname: 'John',
-              lastname: 'Doe',
-              address1: '123 Main St',
-              city: 'New York',
-              zipcode: '10001',
-              phone: '+1 555 123 4567',
-              country_iso: country.iso,
-              state_abbr: state.abbr
-            }
+            firstname: 'John',
+            lastname: 'Doe',
+            address1: '123 Main St',
+            city: 'New York',
+            zipcode: '10001',
+            phone: '+1 555 123 4567',
+            country_iso: country.iso,
+            state_abbr: state.abbr
           }
         end
 
@@ -111,7 +104,7 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
       response '422', 'validation error' do
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:body) { { address: { firstname: '' } } }
+        let(:body) { { firstname: '' } }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 
@@ -120,7 +113,7 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
     end
   end
 
-  path '/api/v3/store/customers/me/addresses/{id}' do
+  path '/api/v3/store/customer/addresses/{id}' do
     get 'Get an address' do
       tags 'Addresses'
       produces 'application/json'
@@ -163,15 +156,10 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
       parameter name: :body, in: :body, schema: {
         type: :object,
         properties: {
-          address: {
-            type: :object,
-            properties: {
-              firstname: { type: :string },
-              lastname: { type: :string },
-              address1: { type: :string },
-              city: { type: :string }
-            }
-          }
+          firstname: { type: :string },
+          lastname: { type: :string },
+          address1: { type: :string },
+          city: { type: :string }
         }
       }
 
@@ -179,7 +167,7 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:id) { address.to_param }
-        let(:body) { { address: { city: 'Los Angeles' } } }
+        let(:body) { { city: 'Los Angeles' } }
 
         schema '$ref' => '#/components/schemas/StoreAddress'
 

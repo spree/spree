@@ -12,7 +12,7 @@ module Spree
             # POST  /api/v3/store/orders/:order_id/coupon_codes
             # Apply a coupon code to the order
             def create
-              @parent.coupon_code = permitted_params[:coupon_code]
+              @parent.coupon_code = permitted_params[:code]
 
               coupon_handler.apply
 
@@ -49,7 +49,7 @@ module Spree
             end
 
             def permitted_params
-              params.require(:coupon_code).permit(:coupon_code)
+              params.permit(:code)
             end
 
             def model_class

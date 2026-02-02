@@ -184,9 +184,25 @@ module Spree
           raise NotImplementedError, 'Subclass must implement serializer_class'
         end
 
-        # Override in subclass to permit parameters
+        # Permit flat parameters based on model class
+        # Automatically infers attribute list from Spree::PermittedAttributes
+        # e.g., ProductsController -> Spree::PermittedAttributes.product_attributes
+        #
+        # Override in subclass for custom parameter handling
         def permitted_params
-          raise NotImplementedError, 'Subclass must implement permitted_params'
+          params.permit(permitted_attributes)
+        end
+
+        # Returns the permitted attributes list for the model
+        # Override in subclass for custom attributes
+        def permitted_attributes
+          Spree::PermittedAttributes.public_send(permitted_attributes_key)
+        end
+
+        # Infers the PermittedAttributes key from model class
+        # e.g., Spree::Product -> :product_attributes
+        def permitted_attributes_key
+          :"#{model_class.model_name.element}_attributes"
         end
       end
     end

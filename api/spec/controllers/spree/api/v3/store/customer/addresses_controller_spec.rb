@@ -103,14 +103,14 @@ RSpec.describe Spree::Api::V3::Store::Customer::AddressesController, type: :cont
 
     it 'creates a new address' do
       expect {
-        post :create, params: { address: address_params }
+        post :create, params: address_params
       }.to change { user.addresses.count }.by(1)
 
       expect(response).to have_http_status(:created)
     end
 
     it 'returns the created address' do
-      post :create, params: { address: address_params }
+      post :create, params: address_params
 
       expect(json_response['firstname']).to eq('John')
       expect(json_response['lastname']).to eq('Doe')
@@ -119,7 +119,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::AddressesController, type: :cont
 
     context 'with invalid params' do
       it 'returns validation errors for missing firstname' do
-        post :create, params: { address: address_params.except(:firstname) }
+        post :create, params: address_params.except(:firstname)
 
         expect(response).to have_http_status(:unprocessable_entity)
         expect(json_response['error']['code']).to eq('validation_error')
@@ -130,7 +130,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::AddressesController, type: :cont
       before { request.headers['Authorization'] = nil }
 
       it 'returns unauthorized' do
-        post :create, params: { address: address_params }
+        post :create, params: address_params
 
         expect(response).to have_http_status(:unauthorized)
       end
@@ -139,14 +139,14 @@ RSpec.describe Spree::Api::V3::Store::Customer::AddressesController, type: :cont
 
   describe 'PATCH #update' do
     it 'updates the address' do
-      patch :update, params: { id: address.prefix_id, address: { firstname: 'Updated' } }
+      patch :update, params: { id: address.prefix_id, firstname: 'Updated' }
 
       expect(response).to have_http_status(:ok)
       expect(address.reload.firstname).to eq('Updated')
     end
 
     it 'returns the updated address' do
-      patch :update, params: { id: address.prefix_id, address: { firstname: 'Updated' } }
+      patch :update, params: { id: address.prefix_id, firstname: 'Updated' }
 
       expect(json_response['firstname']).to eq('Updated')
     end
@@ -156,7 +156,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::AddressesController, type: :cont
       let(:other_address) { create(:address, user: other_user) }
 
       it 'returns not found' do
-        patch :update, params: { id: other_address.prefix_id, address: { firstname: 'Hacker' } }
+        patch :update, params: { id: other_address.prefix_id, firstname: 'Hacker' }
 
         expect(response).to have_http_status(:not_found)
         expect(other_address.reload.firstname).not_to eq('Hacker')
@@ -167,7 +167,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::AddressesController, type: :cont
       before { request.headers['Authorization'] = nil }
 
       it 'returns unauthorized' do
-        patch :update, params: { id: address.prefix_id, address: { firstname: 'Updated' } }
+        patch :update, params: { id: address.prefix_id, firstname: 'Updated' }
 
         expect(response).to have_http_status(:unauthorized)
       end
@@ -184,8 +184,8 @@ RSpec.describe Spree::Api::V3::Store::Customer::AddressesController, type: :cont
     end
 
     context 'when address belongs to another user' do
-      let(:other_user) { create(:user) }
-      let(:other_address) { create(:address, user: other_user) }
+      let!(:other_user) { create(:user) }
+      let!(:other_address) { create(:address, user: other_user) }
 
       it 'returns not found' do
         expect {

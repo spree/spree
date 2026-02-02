@@ -24,19 +24,25 @@ module Spree
           end
 
           # PATCH  /api/v3/store/orders/:id
+          #
+          # Accepts flat parameters:
+          #   {
+          #     "email": "customer@example.com",
+          #     "currency": "EUR",
+          #     "ship_address": { "firstname": "John", "country_iso": "US", ... },
+          #     "bill_address": { "firstname": "John", "country_iso": "US", ... }
+          #   }
+          #
           def update
-            result = Spree.checkout_update_service.call(
+            result = Spree::Api::V3::Orders::Update.call(
               order: @order,
-              params: params,
-              # defined in https://github.com/spree/spree/blob/main/core/lib/spree/core/controller_helpers/strong_parameters.rb#L19
-              permitted_attributes: permitted_checkout_attributes,
-              request_env: request.headers.env
+              params: order_params
             )
 
             if result.success?
               render json: serialize_resource(@order.reload)
             else
-              render_errors(@order.errors)
+              render_service_error(result.error, code: ERROR_CODES[:validation_error])
             end
           end
 
@@ -107,8 +113,24 @@ module Spree
             Spree.api.order_serializer
           end
 
-          def permitted_params
-            params.require(:order).permit(Spree::PermittedAttributes.checkout_attributes)
+          def order_params
+            params.permit(
+              :email,
+              :currency,
+              :special_instructions,
+              :ship_address_id,
+              :bill_address_id,
+              ship_address: address_params,
+              bill_address: address_params
+            )
+          end
+
+          def address_params
+            [
+              :id, :firstname, :lastname, :address1, :address2,
+              :city, :zipcode, :phone, :company,
+              :country_iso, :state_abbr, :state_name
+            ]
           end
         end
       end

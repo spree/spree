@@ -40,7 +40,7 @@ RSpec.describe 'Line Items API', type: :request, swagger_doc: 'api-reference/sto
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:order_id) { order.to_param }
-        let(:body) { { line_item: { variant_id: new_variant.prefix_id, quantity: 2 } } }
+        let(:body) { { variant_id: new_variant.prefix_id, quantity: 2 } }
 
         schema '$ref' => '#/components/schemas/StoreLineItem'
 
@@ -54,7 +54,7 @@ RSpec.describe 'Line Items API', type: :request, swagger_doc: 'api-reference/sto
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:order_id) { order.to_param }
-        let(:body) { { line_item: { variant_id: 'invalid', quantity: 1 } } }
+        let(:body) { { variant_id: 'invalid', quantity: 1 } }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 
@@ -65,7 +65,7 @@ RSpec.describe 'Line Items API', type: :request, swagger_doc: 'api-reference/sto
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:order_id) { 'non-existent' }
-        let(:body) { { line_item: { variant_id: variant.prefix_id, quantity: 1 } } }
+        let(:body) { { variant_id: variant.prefix_id, quantity: 1 } }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 
@@ -100,7 +100,7 @@ RSpec.describe 'Line Items API', type: :request, swagger_doc: 'api-reference/sto
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:order_id) { order.to_param }
         let(:id) { line_item.to_param }
-        let(:body) { { line_item: { quantity: 5 } } }
+        let(:body) { { quantity: 5 } }
 
         schema '$ref' => '#/components/schemas/StoreLineItem'
 

@@ -59,23 +59,18 @@ RSpec.describe 'Customers API', type: :request, swagger_doc: 'api-reference/stor
       parameter name: :body, in: :body, schema: {
         type: :object,
         properties: {
-          user: {
-            type: :object,
-            properties: {
-              first_name: { type: :string },
-              last_name: { type: :string },
-              email: { type: :string, format: 'email' },
-              password: { type: :string },
-              password_confirmation: { type: :string }
-            }
-          }
+          first_name: { type: :string },
+          last_name: { type: :string },
+          email: { type: :string, format: 'email' },
+          password: { type: :string },
+          password_confirmation: { type: :string }
         }
       }
 
       response '200', 'profile updated' do
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:body) { { user: { first_name: 'Updated', last_name: 'Name' } } }
+        let(:body) { { first_name: 'Updated', last_name: 'Name' } }
 
         schema '$ref' => '#/components/schemas/StoreUser'
 
@@ -89,7 +84,7 @@ RSpec.describe 'Customers API', type: :request, swagger_doc: 'api-reference/stor
       response '422', 'validation error' do
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:body) { { user: { email: '' } } }
+        let(:body) { { email: '' } }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 

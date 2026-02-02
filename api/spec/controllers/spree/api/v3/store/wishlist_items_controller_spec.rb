@@ -21,7 +21,7 @@ RSpec.describe Spree::Api::V3::Store::WishlistItemsController, type: :controller
 
     it 'adds item to wishlist' do
       expect {
-        post :create, params: { wishlist_id: wishlist.prefix_id, wished_item: { variant_id: new_variant.prefix_id, quantity: 3 } }
+        post :create, params: { wishlist_id: wishlist.prefix_id, variant_id: new_variant.prefix_id, quantity: 3 }
       }.to change(Spree::WishedItem, :count).by(1)
 
       expect(response).to have_http_status(:created)
@@ -31,7 +31,7 @@ RSpec.describe Spree::Api::V3::Store::WishlistItemsController, type: :controller
 
     context 'validation errors' do
       it 'returns errors for missing variant_id' do
-        post :create, params: { wishlist_id: wishlist.prefix_id, wished_item: { quantity: 1 } }
+        post :create, params: { wishlist_id: wishlist.prefix_id, quantity: 1 }
 
         expect(response).to have_http_status(:unprocessable_entity)
         expect(json_response['error']['code']).to eq('validation_error')
@@ -39,7 +39,7 @@ RSpec.describe Spree::Api::V3::Store::WishlistItemsController, type: :controller
       end
 
       it 'returns errors for invalid variant_id' do
-        post :create, params: { wishlist_id: wishlist.prefix_id, wished_item: { variant_id: 0, quantity: 1 } }
+        post :create, params: { wishlist_id: wishlist.prefix_id, variant_id: 0, quantity: 1 }
 
         expect(response).to have_http_status(:unprocessable_entity)
         expect(json_response['error']['code']).to eq('validation_error')
@@ -52,7 +52,7 @@ RSpec.describe Spree::Api::V3::Store::WishlistItemsController, type: :controller
         other_user = create(:user)
         other_wishlist = create(:wishlist, user: other_user, store: store)
 
-        post :create, params: { wishlist_id: other_wishlist.prefix_id, wished_item: { variant_id: new_variant.prefix_id, quantity: 1 } }
+        post :create, params: { wishlist_id: other_wishlist.prefix_id, variant_id: new_variant.prefix_id, quantity: 1 }
 
         expect(response).to have_http_status(:not_found)
         expect(json_response['error']['code']).to eq('record_not_found')
@@ -60,7 +60,7 @@ RSpec.describe Spree::Api::V3::Store::WishlistItemsController, type: :controller
       end
 
       it 'returns not found for non-existent wishlist' do
-        post :create, params: { wishlist_id: 0, wished_item: { variant_id: new_variant.prefix_id, quantity: 1 } }
+        post :create, params: { wishlist_id: 0, variant_id: new_variant.prefix_id, quantity: 1 }
 
         expect(response).to have_http_status(:not_found)
         expect(json_response['error']['code']).to eq('record_not_found')
@@ -71,7 +71,7 @@ RSpec.describe Spree::Api::V3::Store::WishlistItemsController, type: :controller
       before { request.headers['Authorization'] = nil }
 
       it 'returns unauthorized' do
-        post :create, params: { wishlist_id: wishlist.prefix_id, wished_item: { variant_id: new_variant.prefix_id, quantity: 1 } }
+        post :create, params: { wishlist_id: wishlist.prefix_id, variant_id: new_variant.prefix_id, quantity: 1 }
 
         expect(response).to have_http_status(:unauthorized)
         expect(json_response['error']['code']).to eq('authentication_required')
@@ -82,7 +82,7 @@ RSpec.describe Spree::Api::V3::Store::WishlistItemsController, type: :controller
 
   describe 'PATCH #update' do
     it 'updates wished item quantity' do
-      patch :update, params: { wishlist_id: wishlist.prefix_id, id: wished_item.prefix_id, wished_item: { quantity: 5 } }
+      patch :update, params: { wishlist_id: wishlist.prefix_id, id: wished_item.prefix_id, quantity: 5 }
 
       expect(response).to have_http_status(:ok)
       expect(wished_item.reload.quantity).to eq(5)
@@ -90,7 +90,7 @@ RSpec.describe Spree::Api::V3::Store::WishlistItemsController, type: :controller
 
     context 'validation errors' do
       it 'returns errors for invalid quantity' do
-        patch :update, params: { wishlist_id: wishlist.prefix_id, id: wished_item.prefix_id, wished_item: { quantity: 0 } }
+        patch :update, params: { wishlist_id: wishlist.prefix_id, id: wished_item.prefix_id, quantity: 0 }
 
         expect(response).to have_http_status(:unprocessable_entity)
         expect(json_response['error']['code']).to eq('validation_error')
@@ -100,7 +100,7 @@ RSpec.describe Spree::Api::V3::Store::WishlistItemsController, type: :controller
 
     context 'error handling' do
       it 'returns not found for non-existent item' do
-        patch :update, params: { wishlist_id: wishlist.prefix_id, id: 0, wished_item: { quantity: 5 } }
+        patch :update, params: { wishlist_id: wishlist.prefix_id, id: 0, quantity: 5 }
 
         expect(response).to have_http_status(:not_found)
         expect(json_response['error']['code']).to eq('record_not_found')
@@ -112,7 +112,7 @@ RSpec.describe Spree::Api::V3::Store::WishlistItemsController, type: :controller
         other_wishlist = create(:wishlist, user: other_user, store: store)
         other_item = create(:wished_item, wishlist: other_wishlist, variant: variant)
 
-        patch :update, params: { wishlist_id: other_wishlist.prefix_id, id: other_item.prefix_id, wished_item: { quantity: 5 } }
+        patch :update, params: { wishlist_id: other_wishlist.prefix_id, id: other_item.prefix_id, quantity: 5 }
 
         expect(response).to have_http_status(:not_found)
         expect(json_response['error']['code']).to eq('record_not_found')

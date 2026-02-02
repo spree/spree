@@ -31,7 +31,7 @@ RSpec.describe Spree::Api::V3::Store::Orders::ShipmentsController, type: :contro
 
     context 'with order token (guest)' do
       let(:guest_order) do
-        create(:order_with_line_items, store: store, state: 'delivery').tap do |o|
+        create(:order_with_line_items, user: nil, store: store, state: 'delivery').tap do |o|
           o.create_proposed_shipments
           o.reload
         end
@@ -117,7 +117,7 @@ RSpec.describe Spree::Api::V3::Store::Orders::ShipmentsController, type: :contro
       patch :update, params: {
         order_id: order.to_param,
         id: shipment.to_param,
-        shipment: { selected_shipping_rate_id: shipping_rate.to_param }
+        selected_shipping_rate_id: shipping_rate.to_param
       }
 
       expect(response).to have_http_status(:ok)
@@ -129,7 +129,7 @@ RSpec.describe Spree::Api::V3::Store::Orders::ShipmentsController, type: :contro
         patch :update, params: {
           order_id: order.to_param,
           id: shipment.to_param,
-          shipment: { selected_shipping_rate_id: 'invalid' }
+          selected_shipping_rate_id: 'invalid'
         }
 
         expect(response).to have_http_status(:not_found)

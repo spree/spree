@@ -83,7 +83,7 @@ RSpec.describe Spree::Api::V3::Store::WishlistsController, type: :controller do
   describe 'POST #create' do
     it 'creates a new wishlist' do
       expect {
-        post :create, params: { wishlist: { name: 'My New Wishlist' } }
+        post :create, params: { name: 'My New Wishlist' }
       }.to change(Spree::Wishlist, :count).by(1)
 
       expect(response).to have_http_status(:created)
@@ -91,20 +91,20 @@ RSpec.describe Spree::Api::V3::Store::WishlistsController, type: :controller do
     end
 
     it 'associates wishlist with current user' do
-      post :create, params: { wishlist: { name: 'Test Wishlist' } }
+      post :create, params: { name: 'Test Wishlist' }
 
       expect(Spree::Wishlist.last.user_id).to eq(user.id)
     end
 
     it 'associates wishlist with current store' do
-      post :create, params: { wishlist: { name: 'Test Wishlist' } }
+      post :create, params: { name: 'Test Wishlist' }
 
       expect(Spree::Wishlist.last.store_id).to eq(store.id)
     end
 
     context 'validation errors' do
       it 'returns errors for blank name' do
-        post :create, params: { wishlist: { name: '' } }
+        post :create, params: { name: '' }
 
         expect(response).to have_http_status(:unprocessable_entity)
         expect(json_response['error']['code']).to eq('validation_error')
@@ -117,7 +117,7 @@ RSpec.describe Spree::Api::V3::Store::WishlistsController, type: :controller do
       before { request.headers['Authorization'] = nil }
 
       it 'returns unauthorized' do
-        post :create, params: { wishlist: { name: 'Test' } }
+        post :create, params: { name: 'Test' }
 
         expect(response).to have_http_status(:unauthorized)
         expect(json_response['error']['code']).to eq('authentication_required')
@@ -127,7 +127,7 @@ RSpec.describe Spree::Api::V3::Store::WishlistsController, type: :controller do
 
   describe 'PATCH #update' do
     it 'updates the wishlist name' do
-      patch :update, params: { id: wishlist.prefix_id, wishlist: { name: 'Updated Name' } }
+      patch :update, params: { id: wishlist.prefix_id, name: 'Updated Name' }
 
       expect(response).to have_http_status(:ok)
       expect(wishlist.reload.name).to eq('Updated Name')
@@ -135,7 +135,7 @@ RSpec.describe Spree::Api::V3::Store::WishlistsController, type: :controller do
 
     context 'validation errors' do
       it 'returns errors for blank name' do
-        patch :update, params: { id: wishlist.prefix_id, wishlist: { name: '' } }
+        patch :update, params: { id: wishlist.prefix_id, name: '' }
 
         expect(response).to have_http_status(:unprocessable_entity)
         expect(json_response['error']['code']).to eq('validation_error')
@@ -148,7 +148,7 @@ RSpec.describe Spree::Api::V3::Store::WishlistsController, type: :controller do
         other_user = create(:user)
         other_wishlist = create(:wishlist, user: other_user, store: store)
 
-        patch :update, params: { id: other_wishlist.prefix_id, wishlist: { name: 'Hacked' } }
+        patch :update, params: { id: other_wishlist.prefix_id, name: 'Hacked' }
 
         expect(response).to have_http_status(:not_found)
         expect(json_response['error']['code']).to eq('record_not_found')

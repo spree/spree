@@ -81,31 +81,23 @@ RSpec.describe 'Authentication API', type: :request, swagger_doc: 'api-reference
       parameter name: :body, in: :body, schema: {
         type: :object,
         properties: {
-          user: {
-            type: :object,
-            properties: {
-              email: { type: :string, format: 'email' },
-              password: { type: :string, minLength: 6 },
-              password_confirmation: { type: :string },
-              first_name: { type: :string },
-              last_name: { type: :string }
-            },
-            required: %w[email password]
-          }
+          email: { type: :string, format: 'email' },
+          password: { type: :string, minLength: 6 },
+          password_confirmation: { type: :string },
+          first_name: { type: :string },
+          last_name: { type: :string }
         },
-        required: %w[user]
+        required: %w[email password]
       }
 
       response '201', 'registration successful' do
         let(:'x-spree-api-key') { api_key.token }
         let(:body) do
           {
-            user: {
-              email: 'newuser@example.com',
-              password: 'password123',
-              first_name: 'John',
-              last_name: 'Doe'
-            }
+            email: 'newuser@example.com',
+            password: 'password123',
+            first_name: 'John',
+            last_name: 'Doe'
           }
         end
 
@@ -127,10 +119,8 @@ RSpec.describe 'Authentication API', type: :request, swagger_doc: 'api-reference
         let(:'x-spree-api-key') { api_key.token }
         let(:body) do
           {
-            user: {
-              email: existing_user.email,
-              password: 'password123'
-            }
+            email: existing_user.email,
+            password: 'password123'
           }
         end
 

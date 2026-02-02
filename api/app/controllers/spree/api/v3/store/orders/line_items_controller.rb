@@ -78,7 +78,7 @@ module Spree
             end
 
             def permitted_params
-              params.require(:line_item).permit(Spree::PermittedAttributes.line_item_attributes + [{ options: {} }])
+              params.permit(Spree::PermittedAttributes.line_item_attributes + [{ options: {} }])
             end
           end
         end

@@ -103,9 +103,16 @@ export interface AddressParams {
 
 export interface UpdateOrderParams {
   email?: string;
+  currency?: string;
   special_instructions?: string;
-  bill_address_attributes?: AddressParams;
-  ship_address_attributes?: AddressParams;
+  /** Existing address ID to use */
+  bill_address_id?: string;
+  /** Existing address ID to use */
+  ship_address_id?: string;
+  /** New billing address */
+  bill_address?: AddressParams;
+  /** New shipping address */
+  ship_address?: AddressParams;
 }
 
 // Product Filters types

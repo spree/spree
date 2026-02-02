@@ -63,14 +63,14 @@ RSpec.describe Spree::Api::V3::Store::Customer::AccountController, type: :contro
 
   describe 'PATCH #update' do
     it 'updates the current user first name' do
-      patch :update, params: { user: { first_name: 'Updated' } }
+      patch :update, params: { first_name: 'Updated' }
 
       expect(response).to have_http_status(:ok)
       expect(user.reload.first_name).to eq('Updated')
     end
 
     it 'updates multiple fields' do
-      patch :update, params: { user: { first_name: 'John', last_name: 'Doe' } }
+      patch :update, params: { first_name: 'John', last_name: 'Doe' }
 
       expect(response).to have_http_status(:ok)
       user.reload
@@ -79,14 +79,14 @@ RSpec.describe Spree::Api::V3::Store::Customer::AccountController, type: :contro
     end
 
     it 'returns updated user data' do
-      patch :update, params: { user: { first_name: 'Updated' } }
+      patch :update, params: { first_name: 'Updated' }
 
       expect(json_response['first_name']).to eq('Updated')
     end
 
     context 'validation errors' do
       it 'returns errors for blank email' do
-        patch :update, params: { user: { email: '' } }
+        patch :update, params: { email: '' }
 
         expect(response).to have_http_status(:unprocessable_entity)
         expect(json_response['error']['code']).to eq('validation_error')
@@ -95,7 +95,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::AccountController, type: :contro
 
       it 'returns errors for duplicate email' do
         other_user = create(:user)
-        patch :update, params: { user: { email: other_user.email } }
+        patch :update, params: { email: other_user.email }
 
         expect(response).to have_http_status(:unprocessable_entity)
         expect(json_response['error']['code']).to eq('validation_error')
@@ -107,7 +107,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::AccountController, type: :contro
       before { request.headers['Authorization'] = nil }
 
       it 'returns unauthorized' do
-        patch :update, params: { user: { first_name: 'Updated' } }
+        patch :update, params: { first_name: 'Updated' }
 
         expect(response).to have_http_status(:unauthorized)
         expect(json_response['error']['code']).to eq('authentication_required')

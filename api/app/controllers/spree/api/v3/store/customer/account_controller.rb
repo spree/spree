@@ -27,7 +27,7 @@ module Spree
             end
 
             def permitted_params
-              params.require(:user).permit(Spree::PermittedAttributes.user_attributes)
+              params.permit(Spree::PermittedAttributes.user_attributes)
             end
           end
         end

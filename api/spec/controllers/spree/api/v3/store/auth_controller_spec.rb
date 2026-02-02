@@ -68,11 +68,9 @@ RSpec.describe Spree::Api::V3::Store::AuthController, type: :controller do
   describe 'POST #register' do
     let(:valid_params) do
       {
-        user: {
-          email: 'newuser@example.com',
-          password: 'password123',
-          password_confirmation: 'password123'
-        }
+        email: 'newuser@example.com',
+        password: 'password123',
+        password_confirmation: 'password123'
       }
     end
 
@@ -99,7 +97,7 @@ RSpec.describe Spree::Api::V3::Store::AuthController, type: :controller do
 
     context 'validation errors' do
       it 'returns validation error for blank email' do
-        post :register, params: { user: { email: '', password: 'password123', password_confirmation: 'password123' } }
+        post :register, params: { email: '', password: 'password123', password_confirmation: 'password123' }
 
         expect(response).to have_http_status(:unprocessable_entity)
         expect(json_response['error']['code']).to eq('validation_error')
@@ -108,7 +106,7 @@ RSpec.describe Spree::Api::V3::Store::AuthController, type: :controller do
 
       it 'returns validation error for duplicate email' do
         existing_user = create(:user)
-        post :register, params: { user: { email: existing_user.email, password: 'password123', password_confirmation: 'password123' } }
+        post :register, params: { email: existing_user.email, password: 'password123', password_confirmation: 'password123' }
 
         expect(response).to have_http_status(:unprocessable_entity)
         expect(json_response['error']['code']).to eq('validation_error')

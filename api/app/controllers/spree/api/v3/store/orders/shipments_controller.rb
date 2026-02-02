@@ -36,7 +36,7 @@ module Spree
             end
 
             def permitted_params
-              params.require(:shipment).permit(:selected_shipping_rate_id)
+              params.permit(:selected_shipping_rate_id)
             end
 
             private

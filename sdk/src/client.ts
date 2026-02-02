@@ -167,7 +167,7 @@ export class SpreeClient {
      * Register a new customer account
      */
     register: (params: RegisterParams): Promise<AuthTokens> =>
-      this.request<AuthTokens>('POST', '/auth/register', { body: { user: params } }),
+      this.request<AuthTokens>('POST', '/auth/register', { body: params }),
 
     /**
      * Refresh access token (requires valid Bearer token)
@@ -401,12 +401,12 @@ export class SpreeClient {
      */
     update: (
       idOrNumber: string,
-      order: UpdateOrderParams,
+      params: UpdateOrderParams,
       options?: RequestOptions
     ): Promise<StoreOrder> =>
       this.request<StoreOrder>('PATCH', `/orders/${idOrNumber}`, {
         ...options,
-        body: { order },
+        body: params,
       }),
 
     /**
@@ -555,12 +555,12 @@ export class SpreeClient {
        */
       apply: (
         orderId: string,
-        couponCode: string,
+        code: string,
         options?: RequestOptions
       ): Promise<StoreOrder> =>
         this.request<StoreOrder>('POST', `/orders/${orderId}/coupon_codes`, {
           ...options,
-          body: { coupon_code: { coupon_code: couponCode } },
+          body: { code },
         }),
 
       /**
@@ -608,7 +608,7 @@ export class SpreeClient {
         this.request<StoreShipment>(
           'PATCH',
           `/orders/${orderId}/shipments/${shipmentId}`,
-          { ...options, body: { shipment: params } }
+          { ...options, body: params }
         ),
     },
   };
@@ -633,7 +633,7 @@ export class SpreeClient {
     ): Promise<StoreUser> =>
       this.request<StoreUser>('PATCH', '/customer', {
         ...options,
-        body: { user: params },
+        body: params,
       }),
 
     /**
@@ -663,12 +663,12 @@ export class SpreeClient {
        * Create an address
        */
       create: (
-        address: AddressParams,
+        params: AddressParams,
         options?: RequestOptions
       ): Promise<StoreAddress> =>
         this.request<StoreAddress>('POST', '/customer/addresses', {
           ...options,
-          body: { address },
+          body: params,
         }),
 
       /**
@@ -676,12 +676,12 @@ export class SpreeClient {
        */
       update: (
         id: string,
-        address: Partial<AddressParams>,
+        params: Partial<AddressParams>,
         options?: RequestOptions
       ): Promise<StoreAddress> =>
         this.request<StoreAddress>('PATCH', `/customer/addresses/${id}`, {
           ...options,
-          body: { address },
+          body: params,
         }),
 
       /**
@@ -756,12 +756,12 @@ export class SpreeClient {
      * Create a wishlist
      */
     create: (
-      wishlist: { name: string; is_private?: boolean; is_default?: boolean },
+      params: { name: string; is_private?: boolean; is_default?: boolean },
       options?: RequestOptions
     ): Promise<StoreWishlist> =>
       this.request<StoreWishlist>('POST', '/wishlists', {
         ...options,
-        body: { wishlist },
+        body: params,
       }),
 
     /**
@@ -769,12 +769,12 @@ export class SpreeClient {
      */
     update: (
       id: string,
-      wishlist: { name?: string; is_private?: boolean; is_default?: boolean },
+      params: { name?: string; is_private?: boolean; is_default?: boolean },
       options?: RequestOptions
     ): Promise<StoreWishlist> =>
       this.request<StoreWishlist>('PATCH', `/wishlists/${id}`, {
         ...options,
-        body: { wishlist },
+        body: params,
       }),
 
     /**

@@ -24,7 +24,7 @@ module Spree
           end
 
           def permitted_params
-            params.require(:wished_item).permit(Spree::PermittedAttributes.wished_item_attributes)
+            params.permit(Spree::PermittedAttributes.wished_item_attributes)
           end
         end
       end

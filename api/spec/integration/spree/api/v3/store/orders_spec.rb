@@ -138,9 +138,10 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
       end
 
       response '200', 'order found (guest with token)' do
+        let(:guest_order) { create(:order_with_line_items, store: store, user: nil) }
         let(:'x-spree-api-key') { api_key.token }
-        let(:id) { order.to_param }
-        let(:order_token) { order.token }
+        let(:id) { guest_order.to_param }
+        let(:order_token) { guest_order.token }
 
         schema '$ref' => '#/components/schemas/StoreOrder'
 
@@ -184,15 +185,10 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
       parameter name: :body, in: :body, schema: {
         type: :object,
         properties: {
-          order: {
-            type: :object,
-            properties: {
-              email: { type: :string, format: 'email' },
-              special_instructions: { type: :string },
-              bill_address_attributes: { '$ref' => '#/components/schemas/StoreAddress' },
-              ship_address_attributes: { '$ref' => '#/components/schemas/StoreAddress' }
-            }
-          }
+          email: { type: :string, format: 'email' },
+          special_instructions: { type: :string },
+          bill_address: { '$ref' => '#/components/schemas/StoreAddress' },
+          ship_address: { '$ref' => '#/components/schemas/StoreAddress' }
         }
       }
 
@@ -200,7 +196,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:id) { order.to_param }
-        let(:body) { { order: { special_instructions: 'Leave at door' } } }
+        let(:body) { { special_instructions: 'Leave at door' } }
 
         schema '$ref' => '#/components/schemas/StoreOrder'
 
@@ -215,7 +211,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:id) { completed_order.to_param }
-        let(:body) { { order: { special_instructions: 'Test' } } }
+        let(:body) { { special_instructions: 'Test' } }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 
