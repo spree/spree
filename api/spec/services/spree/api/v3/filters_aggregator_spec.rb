@@ -14,14 +14,14 @@ RSpec.describe Spree::Api::V3::FiltersAggregator do
   let!(:product1) do
     create(:product, stores: [store], status: 'active', taxons: [child_taxon]).tap do |p|
       p.option_types << option_type
-      p.master.option_values << option_value_s
+      create(:variant, product: p, option_values: [option_value_s])
     end
   end
 
   let!(:product2) do
     create(:product, stores: [store], status: 'active', taxons: [child_taxon]).tap do |p|
       p.option_types << option_type
-      p.master.option_values << option_value_m
+      create(:variant, product: p, option_values: [option_value_m])
     end
   end
 
