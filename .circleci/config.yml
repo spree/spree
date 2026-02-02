@@ -12,7 +12,7 @@ defaults: &defaults
     DB_USERNAME: postgres
   working_directory: ~/spree
   docker:
-    - image: &ruby_image cimg/ruby:3.4-browsers
+    - image: &ruby_image cimg/ruby:4.0-browsers
 
 commands:
   bundle_install:
