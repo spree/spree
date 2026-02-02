@@ -68,7 +68,7 @@ module Spree
         if payments.loaded?
           payments.
             find_all(&:store_credit?).
-            select { |payment| payment.state.in?(Spree::Payment::INVALID_STATES) }.
+            reject { |payment| payment.state.in?(Spree::Payment::INVALID_STATES) }.
             sum(&:amount) || BigDecimal::ZERO
         else
           payments.store_credits.valid.sum(:amount)
