@@ -121,6 +121,10 @@ export class SpreeClient {
       requestHeaders['Authorization'] = `Bearer ${token}`;
     }
 
+    if (orderToken) {
+      requestHeaders['x-spree-order-token'] = orderToken;
+    }
+
     if (locale) {
       requestHeaders['x-spree-locale'] = locale;
     }
@@ -346,6 +350,14 @@ export class SpreeClient {
      */
     create: (options?: RequestOptions): Promise<StoreOrder & { token: string }> =>
       this.request<StoreOrder & { token: string }>('POST', '/orders', options),
+
+    /**
+     * Associate a guest cart with the currently authenticated user
+     * Requires both JWT token (for authentication) and orderToken (to identify the cart)
+     * @param options - Must include both `token` (JWT) and `orderToken` (guest cart token)
+     */
+    associate: (options: RequestOptions): Promise<StoreOrder & { token: string }> =>
+      this.request<StoreOrder & { token: string }>('PATCH', '/cart/associate', options),
   };
 
   // ============================================

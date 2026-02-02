@@ -3,6 +3,10 @@ module Spree
     module V3
       module Store
         class CartController < Store::BaseController
+          include Spree::Api::V3::OrderConcern
+
+          before_action :require_authentication!, only: [:associate]
+
           # GET /api/v3/store/cart
           # Returns current incomplete order (cart)
           # Returns 404 if no cart exists - use POST /orders to create one
@@ -22,6 +26,46 @@ module Spree
             render json: serialize_resource(@cart)
           end
 
+          # PATCH /api/v3/store/cart/associate
+          # Associates a guest cart with the currently authenticated user
+          # Requires: JWT authentication + order token (header or param)
+          def associate
+            @cart = find_cart_by_token
+
+            if @cart.nil?
+              render_error(
+                code: ERROR_CODES[:record_not_found],
+                message: 'Cart not found. Provide a valid order token.',
+                status: :not_found
+              )
+              return
+            end
+
+            if @cart.completed?
+              render_error(
+                code: ERROR_CODES[:order_already_completed],
+                message: 'Cannot associate a completed order',
+                status: :unprocessable_entity
+              )
+              return
+            end
+
+            # Check if cart already belongs to a different user
+            if @cart.user.present? && @cart.user != current_user
+              render_error(
+                code: ERROR_CODES[:access_denied],
+                message: 'This cart belongs to another user',
+                status: :forbidden
+              )
+              return
+            end
+
+            # Associate the cart with the current user
+            @cart.associate_user!(current_user)
+
+            render json: serialize_resource(@cart)
+          end
+
           protected
 
           def serializer_class
@@ -29,6 +73,14 @@ module Spree
           end
 
           private
+
+          # Find cart by order token only (for associate action)
+          def find_cart_by_token
+            token = order_token
+            return nil unless token.present?
+
+            current_store.orders.find_by(token: token)
+          end
 
           def find_cart
             # Try order_token first (guest checkout)

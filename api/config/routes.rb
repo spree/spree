@@ -27,6 +27,7 @@ Spree::Core::Engine.add_routes do
 
         # Cart - alias for current incomplete order (creates if none exists)
         get 'cart', to: 'cart#show'
+        patch 'cart/associate', to: 'cart#associate'
 
         # Orders - all orders (complete and incomplete)
         resources :orders do

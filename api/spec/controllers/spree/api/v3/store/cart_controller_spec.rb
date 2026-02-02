@@ -165,4 +165,124 @@ RSpec.describe Spree::Api::V3::Store::CartController, type: :controller do
       end
     end
   end
+
+  describe 'PATCH #associate' do
+    let(:guest_cart) { create(:order_with_line_items, store: store, user: nil, email: 'guest@example.com') }
+
+    context 'with JWT authentication' do
+      before do
+        request.headers['Authorization'] = "Bearer #{jwt_token}"
+      end
+
+      it 'associates guest cart with current user via order_token param' do
+        patch :associate, params: { order_token: guest_cart.token }
+
+        expect(response).to have_http_status(:ok)
+        expect(guest_cart.reload.user).to eq(user)
+        expect(json_response['number']).to eq(guest_cart.number)
+      end
+
+      it 'associates guest cart with current user via x-spree-order-token header' do
+        request.headers['x-spree-order-token'] = guest_cart.token
+
+        patch :associate
+
+        expect(response).to have_http_status(:ok)
+        expect(guest_cart.reload.user).to eq(user)
+      end
+
+      it 'updates cart email to users email' do
+        patch :associate, params: { order_token: guest_cart.token }
+
+        expect(response).to have_http_status(:ok)
+        expect(guest_cart.reload.email).to eq(user.email)
+      end
+
+      it 'sets user addresses on cart when user has addresses' do
+        bill = create(:address, firstname: 'Bill')
+        ship = create(:address, firstname: 'Ship')
+        user.update!(bill_address: bill, ship_address: ship)
+
+        patch :associate, params: { order_token: guest_cart.token }
+
+        expect(response).to have_http_status(:ok)
+        guest_cart.reload
+        expect(guest_cart.bill_address).to be_present
+        expect(guest_cart.ship_address).to be_present
+      end
+
+      it 'allows re-associating cart already owned by current user' do
+        guest_cart.update!(user: user)
+
+        patch :associate, params: { order_token: guest_cart.token }
+
+        expect(response).to have_http_status(:ok)
+        expect(guest_cart.reload.user).to eq(user)
+      end
+
+      it 'returns not found for invalid token' do
+        patch :associate, params: { order_token: 'invalid_token' }
+
+        expect(response).to have_http_status(:not_found)
+        expect(json_response['error']['code']).to eq('record_not_found')
+      end
+
+      it 'returns not found without order token' do
+        patch :associate
+
+        expect(response).to have_http_status(:not_found)
+        expect(json_response['error']['code']).to eq('record_not_found')
+        expect(json_response['error']['message']).to include('order token')
+      end
+
+      it 'returns error for completed order' do
+        completed_order = create(:completed_order_with_totals, store: store, user: nil)
+
+        patch :associate, params: { order_token: completed_order.token }
+
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(json_response['error']['code']).to eq('order_already_completed')
+      end
+
+      it 'returns forbidden when cart belongs to another user' do
+        other_user = create(:user)
+        other_user_cart = create(:order_with_line_items, store: store, user: other_user)
+
+        patch :associate, params: { order_token: other_user_cart.token }
+
+        expect(response).to have_http_status(:forbidden)
+        expect(json_response['error']['code']).to eq('access_denied')
+        expect(other_user_cart.reload.user).to eq(other_user) # unchanged
+      end
+
+      it 'returns not found for cart from other store' do
+        other_store = create(:store)
+        other_store_cart = create(:order_with_line_items, store: other_store)
+
+        patch :associate, params: { order_token: other_store_cart.token }
+
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+
+    context 'without JWT authentication' do
+      it 'returns unauthorized' do
+        patch :associate, params: { order_token: guest_cart.token }
+
+        expect(response).to have_http_status(:unauthorized)
+        expect(json_response['error']['code']).to eq('authentication_required')
+      end
+    end
+
+    context 'without API key' do
+      before { request.headers['X-Spree-Api-Key'] = nil }
+
+      it 'returns unauthorized' do
+        patch :associate, params: { order_token: guest_cart.token }
+
+        expect(response).to have_http_status(:unauthorized)
+        expect(json_response['error']['code']).to eq('invalid_token')
+      end
+    end
+  end
 end
