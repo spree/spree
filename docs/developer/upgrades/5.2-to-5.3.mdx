@@ -75,6 +75,24 @@ This will populate the product metrics for all products in your database. Produc
 
 This rake task will enqueue background jobs to populate the product metrics for all products in your database so you need to make sure that your background jobs are configured correctly.
 
+### Replace `auto_strip_attributes` gem usage
+
+`auto_strip_attributes` gem [was removed from Spree](https://github.com/spree/spree/pull/13462) due to bugs and conflicts with translations feature. Also it's not required anymore as built-in Rails `normalizes` provides the same feature without an additional depepdency. 
+
+If you used `auto_stripe_attributes` in your application, you will need to change it to `normalizez`, eg.
+
+Replace
+
+```ruby
+auto_strip_attributes :name
+```
+
+With:
+
+```ruby
+normalizes :name, with: ->(value) { value&.to_s&.squish&.presence }
+```
+
 ### Update Storefront to Tailwind v4 (Optional)
 
 <Info>
@@ -102,13 +120,13 @@ This will:
 This is optional if you're not using the `spree_storefront` gem.
 </Info>
 
-Spree 5.3 introduces [pagy](https://ddnexus.github.io/pagy/) as the default pagination gem. Pagy is a faster and more memory efficient pagination gem than kaminari. This works automatically for API and Admin panel.
+Spree 5.3 introduces [pagy](https://ddnexus.github.io/pagy/) as the default pagination gem. Pagy is a faster and more memory-efficient pagination gem than Kaminari. This works automatically for the API and Admin panel.
 
 For Storefront, you need to either update your theme (if you're not using the default theme) or set `use_kaminari_pagination` preference to `true` in your `config/initializers/spree.rb` file.
 
 #### Products infinite scroll fix
 
-Please replace contents of your `show_more_button.html.erb` with the following code:
+Please replace the contents of your `show_more_button.html.erb` with the following code:
 
 ```erb
 <% if storefront_pagy&.next %>
@@ -123,12 +141,12 @@ Please replace contents of your `show_more_button.html.erb` with the following c
 
 #### Posts pagination
 
-In following files:
+In the following files:
 
 * `page_sections/_post_grid.html.erb`
 * `posts/_pagination.html.erb`
 
-replace this line:
+Replace this line:
 
 ```erb
 <%= paginate @posts, theme: 'storefront', outer_window: 1, inner_window: 2 %>
