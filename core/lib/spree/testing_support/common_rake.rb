@@ -3,7 +3,7 @@ require 'generators/spree/dummy_model/dummy_model_generator'
 
 desc 'Generates a dummy app for testing'
 namespace :common do
-  task :test_app, :user_class do |_t, args|
+  task :test_app, [:authentication, :user_class, :admin_user_class, :css, :javascript, :install_admin, :install_storefront] do |_t, args|
     args.with_defaults(
       authentication: 'dummy',
       user_class: 'Spree::LegacyUser',
