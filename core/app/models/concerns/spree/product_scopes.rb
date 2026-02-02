@@ -205,7 +205,7 @@ module Spree
         return Product.group("#{Spree::Product.table_name}.id").none if option_type_id.blank?
 
         group("#{Spree::Product.table_name}.id").
-          joins(variants_including_master: :option_values).
+          joins(variants: :option_values).
           where(Spree::OptionValue.table_name => { name: value, option_type_id: option_type_id })
       end
 
@@ -223,7 +223,7 @@ module Spree
         return none if actual_ids.empty?
 
         group("#{Spree::Product.table_name}.id").
-          joins(variants_including_master: :option_values).
+          joins(variants: :option_values).
           where(Spree::OptionValue.table_name => { id: actual_ids })
       end
 
@@ -231,7 +231,7 @@ module Spree
       # 1) have an option value with the name matching the one given
       # 2) have a product property with a value matching the one given
       add_search_scope :with do |value|
-        includes(variants_including_master: :option_values).
+        includes(variants: :option_values).
           includes(:product_properties).
           where("#{OptionValue.table_name}.name = ? OR #{ProductProperty.table_name}.value = ?", value, value)
       end

@@ -92,8 +92,15 @@ module Spree
         end
 
         def option_value_data(option_type, option_value)
-          # with_option_value uses group, so we need to count the keys or use a different approach
-          count = @scope.with_option_value(option_type.name, option_value.name).length
+          # Count products in scope that have this option value
+          # We use a subquery approach to avoid GROUP BY conflicts when scope includes joins (like in_taxon)
+          # Join directly to option_value_variants for efficiency (skips joining through option_values table)
+          count = Spree::Product
+            .where(id: base_scope_product_ids)
+            .joins(:option_value_variants)
+            .where(Spree::OptionValueVariant.table_name => { option_value_id: option_value.id })
+            .distinct
+            .count
 
           {
             id: option_value.prefix_id,
@@ -102,6 +109,10 @@ module Spree
             position: option_value.position,
             count: count
           }
+        end
+
+        def base_scope_product_ids
+          @base_scope_product_ids ||= @scope.reorder('').distinct.pluck(:id)
         end
 
         def taxon_filter

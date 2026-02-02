@@ -21,25 +21,21 @@ RSpec.describe Spree::Api::V3::Store::Products::FiltersController, type: :contro
     create(:product, stores: [store], status: 'active', taxons: [child_taxon1]).tap do |p|
       p.option_types << option_type_size
       p.option_types << option_type_color
-      variant = p.master
-      variant.option_values << option_value_small
-      variant.option_values << option_value_red
+      create(:variant, product: p, option_values: [option_value_small, option_value_red])
     end
   end
 
   let!(:product2) do
     create(:product, stores: [store], status: 'active', taxons: [child_taxon1]).tap do |p|
       p.option_types << option_type_size
-      variant = p.master
-      variant.option_values << option_value_medium
+      create(:variant, product: p, option_values: [option_value_medium])
     end
   end
 
   let!(:product3) do
     create(:product, stores: [store], status: 'active', taxons: [child_taxon2]).tap do |p|
       p.option_types << option_type_color
-      variant = p.master
-      variant.option_values << option_value_blue
+      create(:variant, product: p, option_values: [option_value_blue])
     end
   end
 
