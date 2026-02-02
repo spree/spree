@@ -23,23 +23,6 @@ module Spree
       end
     end
 
-    context 'create an order with store in params' do
-      let(:store_2) { create :store }
-      let(:order_params) { { store: store_2, currency: 'XVII' } }
-      let(:execute) { subject.call user: user, store: store_2, currency: currency, order_params: order_params }
-      let(:value) { execute.value }
-
-      it do
-        expect { execute }.to change(Order, :count)
-        expect(execute).to be_success
-        expect(value).to eq expected
-        expect(expected.user).to eq user
-        expect(expected.store).to eq store_2
-        expect(expected.currency).to eq 'XVII'
-        expect(expected.number).to be_present
-      end
-    end
-
     context 'create an order with store currency' do
       let(:order_params) { { store: store, currency: nil } }
       let(:execute) { subject.call user: user, store: store, currency: currency, order_params: order_params }

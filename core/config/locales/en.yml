@@ -950,6 +950,7 @@ en:
     credits: Credits
     currencies: Currencies
     currency: Currency
+    currency_not_supported_by_store: is not supported by this store
     currency_settings: Currency Settings
     current: Current
     current_password: Current password

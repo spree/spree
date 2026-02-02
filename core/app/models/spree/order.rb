@@ -184,6 +184,7 @@ module Spree
     validates :shipment_total,       MONEY_VALIDATION
     validates :promo_total,          NEGATIVE_MONEY_VALIDATION
     validates :total,                MONEY_VALIDATION
+    validate :currency_must_be_supported_by_store
 
     delegate :update_totals, :persist_totals, to: :updater
     delegate :merge!, to: :merger
@@ -1008,6 +1009,15 @@ module Spree
 
     def ensure_currency_presence
       self.currency ||= store&.default_currency
+    end
+
+    def currency_must_be_supported_by_store
+      return if currency.blank? || store.blank?
+
+      supported_codes = store.supported_currencies_list.map(&:iso_code)
+      unless supported_codes.include?(currency)
+        errors.add(:currency, Spree.t(:currency_not_supported_by_store))
+      end
     end
 
     def collect_payment_methods
