@@ -621,6 +621,126 @@ paths:
                       type: string
                     password_confirmation:
                       type: string
+  "/api/v3/store/cart":
+    get:
+      summary: Get current cart
+      tags:
+      - Cart
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |
+        Returns the current shopping cart (incomplete order).
+        Authenticate via JWT token for logged-in users or via order_token parameter for guests.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: false
+        description: Bearer JWT token for authenticated customers
+        schema:
+          type: string
+      - name: order_token
+        in: query
+        required: false
+        description: Order token for guest checkout
+        schema:
+          type: string
+      responses:
+        '200':
+          description: cart found
+          content:
+            application/json:
+              schema:
+                allOf:
+                - "$ref": "#/components/schemas/StoreOrder"
+                - type: object
+                  properties:
+                    token:
+                      type: string
+                      description: Order token for guest access
+        '404':
+          description: no cart found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api/v3/store/cart/associate":
+    patch:
+      summary: Associate guest cart with authenticated user
+      tags:
+      - Cart
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: |
+        Associates a guest cart with the currently authenticated user.
+        Requires both JWT authentication and an order token.
+        The order must not be completed and must not belong to another user.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer JWT token (required)
+        schema:
+          type: string
+      - name: x-spree-order-token
+        in: header
+        required: false
+        description: Order token (can also be passed as query param)
+        schema:
+          type: string
+      - name: order_token
+        in: query
+        required: false
+        description: Order token (alternative to header)
+        schema:
+          type: string
+      responses:
+        '200':
+          description: cart associated successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                - "$ref": "#/components/schemas/StoreOrder"
+                - type: object
+                  properties:
+                    token:
+                      type: string
+        '401':
+          description: unauthorized - JWT required
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        '403':
+          description: cart belongs to another user
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        '404':
+          description: cart not found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        '422':
+          description: cart already completed
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/store/orders/{order_id}/line_items":
     post:
       summary: Add item to cart
@@ -2113,6 +2233,8 @@ tags:
   description: Individual categories
 - name: Countries
   description: Available shipping countries
+- name: Cart
+  description: Current shopping cart management
 - name: Orders
   description: Shopping cart and checkout
 - name: Line Items
