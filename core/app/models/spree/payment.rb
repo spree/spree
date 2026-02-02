@@ -278,6 +278,10 @@ module Spree
       end
     end
 
+    def has_invalid_state?
+      INVALID_STATES.include?(state)
+    end
+
     private
 
     def set_amount
@@ -300,10 +304,6 @@ module Spree
 
     def publish_payment_voided_event
       publish_event('payment.voided')
-    end
-
-    def has_invalid_state?
-      INVALID_STATES.include?(state)
     end
 
     def validate_source
