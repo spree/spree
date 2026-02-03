@@ -248,22 +248,34 @@ interactive_menu() {
 
     # Read input
     while true; do
-        # Read a single character
-        IFS= read -rsn1 key
+        # Read a single character with timeout to handle WSL/Windows Terminal edge cases
+        IFS= read -rsn1 -t 0.5 key || true
+
+        # Handle timeout (no input) - just continue the loop
+        if [[ -z "$key" ]] && [[ "$key" != "" ]]; then
+            continue
+        fi
 
         # Check for escape sequence (arrow keys)
         if [[ $key == $'\x1b' ]]; then
-            # Read the next two characters (no timeout needed, they come immediately)
-            read -rsn1 key2
-            read -rsn1 key3
+            # Read the next two characters with a short timeout
+            # This is critical for WSL where escape sequences may arrive with slight delays
+            IFS= read -rsn1 -t 0.1 key2 || true
+            IFS= read -rsn1 -t 0.1 key3 || true
+
+            # If we only got escape without follow-up, skip (user pressed Esc alone)
+            if [[ -z "$key2" ]]; then
+                continue
+            fi
+
             key="${key2}${key3}"
             case "$key" in
-                '[A') # Up arrow
+                '[A'|'OA') # Up arrow (CSI and SS3 variants)
                     if [ $selected -gt 0 ]; then
                         ((selected--))
                     fi
                     ;;
-                '[B') # Down arrow
+                '[B'|'OB') # Down arrow (CSI and SS3 variants)
                     if [ $selected -lt $((num_options - 1)) ]; then
                         ((selected++))
                     fi
@@ -279,6 +291,24 @@ interactive_menu() {
                 continue
             fi
             break
+        # Also support j/k keys as alternative navigation (vim-style)
+        elif [[ $key == "j" ]]; then
+            if [ $selected -lt $((num_options - 1)) ]; then
+                ((selected++))
+            fi
+        elif [[ $key == "k" ]]; then
+            if [ $selected -gt 0 ]; then
+                ((selected--))
+            fi
+        # Support number keys for direct selection
+        elif [[ $key =~ ^[1-9]$ ]]; then
+            local num_index=$((key - 1))
+            if [ $num_index -lt $num_options ]; then
+                local option="${options[$num_index]}"
+                if [[ "$option" != *"|disabled"* ]]; then
+                    selected=$num_index
+                fi
+            fi
         fi
 
         # Redraw menu
