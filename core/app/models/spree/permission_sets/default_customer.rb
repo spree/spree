@@ -60,6 +60,9 @@ module Spree
         # Credit card management
         can [:read, :destroy], Spree::CreditCard, user_id: user.id
 
+        # Gift card management - users can view their own gift cards
+        can :read, Spree::GiftCard, user_id: user.id
+
         # Wishlist management
         can :manage, Spree::Wishlist, user_id: user.id
         can :show, Spree::Wishlist do |wishlist|

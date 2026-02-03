@@ -118,6 +118,7 @@ module Spree
         taxon_serializer: 'Spree::Api::V3::TaxonSerializer',
         order_promotion_serializer: 'Spree::Api::V3::OrderPromotionSerializer',
         digital_link_serializer: 'Spree::Api::V3::DigitalLinkSerializer',
+        gift_card_serializer: 'Spree::Api::V3::GiftCardSerializer',
         metafield_serializer: 'Spree::Api::V3::MetafieldSerializer',
 
         # platform serializers

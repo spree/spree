@@ -53,6 +53,7 @@ Spree::Core::Engine.add_routes do
           patch '/', to: 'account#update'
           resources :addresses, only: [:index, :show, :create, :update, :destroy]
           resources :credit_cards, only: [:index, :show, :destroy]
+          resources :gift_cards, only: [:index, :show]
         end
 
         # Wishlists
