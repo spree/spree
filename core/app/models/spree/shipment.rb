@@ -347,6 +347,14 @@ module Spree
       shipping_rates.update_all(selected: false, updated_at: Time.current)
       shipping_rates.update(id, selected: true)
       save!
+      # Reload associations to pick up the new selected shipping rate
+      shipping_rates.reset
+      association(:selected_shipping_rate).reset
+      # Update shipment cost and order totals
+      update_amounts
+      order.updater.update_shipment_total
+      order.updater.update_adjustment_total
+      order.persist_totals
     end
 
     def set_up_inventory(state, variant, order, line_item, quantity = 1)

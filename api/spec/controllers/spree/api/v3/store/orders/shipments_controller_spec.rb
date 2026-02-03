@@ -124,6 +124,37 @@ RSpec.describe Spree::Api::V3::Store::Orders::ShipmentsController, type: :contro
       expect(shipment.reload.selected_shipping_rate_id).to eq(shipping_rate.id)
     end
 
+    context 'when selecting a different shipping rate' do
+      let(:cheaper_shipping_method) { create(:shipping_method, name: 'Cheap Shipping') }
+      let(:expensive_shipping_method) { create(:shipping_method, name: 'Express Shipping') }
+
+      before do
+        shipment.shipping_rates.delete_all
+        create(:shipping_rate, shipment: shipment, shipping_method: cheaper_shipping_method, cost: 5, selected: true)
+        create(:shipping_rate, shipment: shipment, shipping_method: expensive_shipping_method, cost: 25, selected: false)
+        shipment.reload
+        order.set_shipments_cost
+      end
+
+      it 'updates order totals when a different shipping rate is selected' do
+        expensive_rate = shipment.shipping_rates.find_by(shipping_method: expensive_shipping_method)
+        original_shipment_total = order.shipment_total
+
+        expect(original_shipment_total).to eq(5)
+
+        patch :update, params: {
+          order_id: order.to_param,
+          id: shipment.to_param,
+          selected_shipping_rate_id: expensive_rate.to_param
+        }
+
+        expect(response).to have_http_status(:ok)
+        order.reload
+        expect(order.shipment_total).to eq(25)
+        expect(order.total).to eq(order.item_total + 25 + order.adjustment_total)
+      end
+    end
+
     context 'error handling' do
       it 'returns not found for non-existent shipping rate' do
         patch :update, params: {
