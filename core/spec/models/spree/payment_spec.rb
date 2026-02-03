@@ -1296,6 +1296,23 @@ describe Spree::Payment, type: :model do
     end
   end
 
+  describe '#has_invalid_state?' do
+    let(:payment) { create(:payment, state: state) }
+    subject(:has_invalid_state?) { payment.has_invalid_state? }
+
+    context 'when the state is invalid' do
+      let(:state) { Spree::Payment::INVALID_STATES.first }
+
+      it { is_expected.to be_truthy }
+    end
+
+    context 'when the state is valid' do
+      let(:state) { 'completed' }
+
+      it { is_expected.to be_falsey }
+    end
+  end
+
   describe '#gateway_processing_error_messages' do
     before do
       payment.add_gateway_processing_error('Gateway processing error')

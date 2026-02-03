@@ -25,6 +25,8 @@ shared_examples 'check total store credit from payments' do
 end
 
 describe 'Order' do
+  subject(:order) { create(:order, total: 100.00) }
+
   describe '#add_store_credit_payments' do
     subject { order.add_store_credit_payments }
 
@@ -407,25 +409,41 @@ describe 'Order' do
   end
 
   describe '#total_applied_store_credit' do
-    context 'with valid payments' do
-      subject { order }
+    subject(:total_applied_store_credit) { order.total_applied_store_credit }
 
-      let(:order) { payment.order }
-      let!(:payment) { create(:store_credit_payment) }
-      let!(:second_payment) { create(:store_credit_payment, order: order) }
+    context 'with valid payments' do
+      let(:order_1_valid_payment) { 10.0 }
+      let(:order_1_valid_payment_2) { 20.0 }
+      let(:order_1_invalid_payment) { 21.0 }
+      let(:order_2_valid_payment) { 22.0 }
+
+      before do
+        create(:store_credit_payment, order: order, state: 'completed', amount: order_1_valid_payment)
+        create(:store_credit_payment, order: order, state: 'completed', amount: order_1_valid_payment_2)
+        create(:store_credit_payment, order: order, state: 'invalid', amount: order_1_invalid_payment)
+        create(:store_credit_payment, order: create(:order, total: 100.00), state: 'completed', amount: order_2_valid_payment)
+      end
 
       it 'returns the sum of the payment amounts' do
-        expect(subject.total_applied_store_credit).to eq (payment.amount + second_payment.amount)
+        expect(total_applied_store_credit).to eq (order_1_valid_payment + order_1_valid_payment_2)
+      end
+
+      context 'when payments are loaded' do
+        before do
+          order.payments.load
+        end
+
+        it 'returns the sum of the payment amounts' do
+          expect(total_applied_store_credit).to eq (order_1_valid_payment + order_1_valid_payment_2)
+        end
       end
     end
 
     context 'without valid payments' do
-      subject { order }
-
       let(:order) { create(:order) }
 
       it 'returns 0' do
-        expect(subject.total_applied_store_credit).to be_zero
+        expect(total_applied_store_credit).to be_zero
       end
     end
   end
