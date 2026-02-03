@@ -168,3 +168,181 @@ Add this line to your `spec_helper.rb` file:
   ```ruby
   require 'spree/page_builder/testing_support/factories'
   ```
+
+## Updating Spree Extensions
+
+If you maintain a Spree extension, the following changes may be required to ensure compatibility with Spree 5.3.
+
+### Admin Controller Changes
+
+#### Use `prepend_before_action` for filters that modify `params[:q]`
+
+In Spree 5.3, the `ResourceController#load_resource` before_action calls `collection` which builds the search query using `search_params`. If your extension uses before_actions to load data needed for filtering (e.g., loading a vendor to filter products), you must use `prepend_before_action` to ensure your filter runs before `load_resource`.
+
+**Before (Spree 5.2):**
+
+```ruby
+module MyExtension
+  module Admin
+    module ProductsControllerDecorator
+      def self.prepended(base)
+        base.before_action :load_vendor, only: :index
+      end
+    end
+  end
+end
+```
+
+**After (Spree 5.3):**
+
+```ruby
+module MyExtension
+  module Admin
+    module ProductsControllerDecorator
+      def self.prepended(base)
+        base.prepend_before_action :load_vendor, only: :index
+      end
+    end
+  end
+end
+```
+
+#### Replace `assign_extra_collection_params` with `search_params` override
+
+The `assign_extra_collection_params` method is no longer used in Spree 5.3. Instead, override the `search_params` method to add custom Ransack filters.
+
+**Before (Spree 5.2):**
+
+```ruby
+def assign_extra_collection_params
+  params[:q][:vendor_id_eq] = @vendor.id if @vendor.present?
+end
+```
+
+**After (Spree 5.3):**
+
+```ruby
+def search_params
+  result = super
+  result[:vendor_id_eq] = @vendor.id if @vendor.present?
+  result
+end
+```
+
+#### Date range filtering changes
+
+The base `ResourceController#search_params` now processes date range params (`created_at_gt`, `created_at_lt`, etc.) and converts them to `beginning_of_day`. If you need `end_of_day` for `_lt` params, override `search_params` with custom handling:
+
+```ruby
+def search_params
+  params[:q] ||= {}
+  params[:q][:s] ||= collection_default_sort if collection_default_sort.present?
+
+  if params[:q][:created_at_gt].present?
+    params[:q][:created_at_gt] = parse_date_param(params[:q][:created_at_gt])
+  end
+
+  if params[:q][:created_at_lt].present?
+    params[:q][:created_at_lt] = parse_date_param(params[:q][:created_at_lt])&.end_of_day
+  end
+
+  params[:q]
+end
+```
+
+### Admin Tables API
+
+The old filter partial system (`Spree.admin.partials.*_filters`) has been replaced with built-in filtering in the Tables API. Remove any filter partials and configure filtering directly in table column definitions.
+
+**Before (Spree 5.2):**
+
+```ruby
+Spree.admin.partials.orders_filters << 'spree/admin/orders/vendor_filter'
+```
+
+**After (Spree 5.3):**
+
+```ruby
+Spree.admin.tables.orders.add :vendor,
+  label: :vendor,
+  type: :custom,
+  filterable: true,
+  filter_type: :select,
+  ransack_attribute: :vendor_id_eq,
+  value_options: -> { Spree::Vendor.pluck(:name, :id) },
+  partial: 'spree/admin/orders/table/vendor_column'
+```
+
+See the [Admin Tables documentation](/developer/admin/tables) for more details.
+
+### Tailwind CSS v4 Migration
+
+If your extension includes admin views with CSS classes, update Bootstrap utility classes to Tailwind v4:
+
+| Bootstrap | Tailwind v4 |
+|-----------|-------------|
+| `d-flex` | `flex` |
+| `d-none` | `hidden` |
+| `text-muted` | `text-gray-500` |
+| `ml-2`, `mr-2` | `ms-2`, `me-2` |
+| `pl-2`, `pr-2` | `ps-2`, `pe-2` |
+| `font-weight-bold` | `font-bold` |
+
+### Stimulus Tabs Controller
+
+If your extension uses Bootstrap tabs, migrate to the Stimulus tabs controller:
+
+**Before (Bootstrap):**
+
+```erb
+<ul class="nav nav-tabs">
+  <li class="nav-item">
+    <a class="nav-link active" data-toggle="tab" href="#tab1">Tab 1</a>
+  </li>
+</ul>
+<div class="tab-content">
+  <div class="tab-pane active" id="tab1">Content</div>
+</div>
+```
+
+**After (Stimulus):**
+
+```erb
+<div data-controller="tabs">
+  <ul class="nav nav-pills mb-4" role="tablist">
+    <li class="nav-item" role="presentation">
+      <a class="nav-link active" data-tabs-target="tab" data-action="click->tabs#select" role="tab">Tab 1</a>
+    </li>
+  </ul>
+  <div data-tabs-target="panel" role="tabpanel" class="animate-fade-in">Content</div>
+</div>
+```
+
+### Progress Bar Component
+
+The `progress_bar_component` signature has changed:
+
+**Before (Spree 5.2):**
+
+```erb
+<%= progress_bar_component(value, 0, 100) %>
+```
+
+**After (Spree 5.3):**
+
+```erb
+<%= progress_bar_component(value, min: 0, max: 100) %>
+```
+
+### Table Column Visibility
+
+All table columns now require `default: true` to be visible by default:
+
+```ruby
+Spree.admin.tables.vendors.add :name,
+  label: :name,
+  type: :string,
+  sortable: true,
+  default: true,  # Required for column to be visible
+  position: 10
+```
