@@ -15,6 +15,7 @@ import type {
   UpdateOrderParams,
   AddressParams,
   StoreCreditCard,
+  StoreGiftCard,
   StoreProduct,
   StoreOrder,
   StoreLineItem,
@@ -719,6 +720,31 @@ export class SpreeClient {
        */
       delete: (id: string, options?: RequestOptions): Promise<void> =>
         this.request<void>('DELETE', `/customer/credit_cards/${id}`, options),
+    },
+
+    /**
+     * Nested resource: Gift Cards
+     */
+    giftCards: {
+      /**
+       * List customer gift cards
+       * Returns gift cards associated with the current user, ordered by newest first
+       */
+      list: (
+        params?: ListParams,
+        options?: RequestOptions
+      ): Promise<PaginatedResponse<StoreGiftCard>> =>
+        this.request<PaginatedResponse<StoreGiftCard>>(
+          'GET',
+          '/customer/gift_cards',
+          { ...options, params: params as Record<string, string | number | undefined> }
+        ),
+
+      /**
+       * Get a gift card by ID
+       */
+      get: (id: string, options?: RequestOptions): Promise<StoreGiftCard> =>
+        this.request<StoreGiftCard>('GET', `/customer/gift_cards/${id}`, options),
     },
   };
 
