@@ -350,11 +350,12 @@ module Spree
       # Reload associations to pick up the new selected shipping rate
       shipping_rates.reset
       association(:selected_shipping_rate).reset
-      # Update shipment cost and order totals
+      # Update shipment cost and order totals only for incomplete orders (during checkout)
+      # For completed orders, totals are managed separately (e.g., in tests or admin adjustments)
+      return if order.completed?
+
       update_amounts
-      order.updater.update_shipment_total
-      order.updater.update_adjustment_total
-      order.persist_totals
+      order.set_shipments_cost
     end
 
     def set_up_inventory(state, variant, order, line_item, quantity = 1)
