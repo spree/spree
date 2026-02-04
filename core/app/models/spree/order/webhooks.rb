@@ -1,3 +1,5 @@
+# Thus module is only needed for Legacy Webhooks
+# new webhook system doens't use this module
 module Spree
   class Order < Spree.base_class
     module Webhooks

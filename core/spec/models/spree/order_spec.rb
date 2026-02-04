@@ -373,10 +373,9 @@ describe Spree::Order, type: :model do
     end
 
     it 'freezes all adjustments' do
-      adjustments = [double]
-      expect(order).to receive(:all_adjustments).and_return(adjustments)
-      expect(adjustments).to all(receive(:close))
+      adjustment = create(:adjustment, order: order, adjustable: order, state: 'open')
       order.finalize!
+      expect(adjustment.reload.state).to eq('closed')
     end
 
     context 'order is considered risky' do
@@ -424,16 +423,16 @@ describe Spree::Order, type: :model do
   end
 
   context 'insufficient_stock_lines' do
-    let(:line_item) { create(:line_item) }
+    let!(:line_item) { create(:line_item, order: order, quantity: 100) }
 
     before do
-      allow(line_item).to receive_messages(insufficient_stock?: true)
-      allow(order).to receive_messages(line_items: [line_item])
+      # Set stock to less than the line item quantity
+      line_item.variant.stock_items.update_all(count_on_hand: 1, backorderable: false)
     end
 
     it 'returns line_item that has insufficient stock on hand' do
       expect(order.insufficient_stock_lines.size).to eq(1)
-      expect(order.insufficient_stock_lines.include?(line_item)).to be true
+      expect(order.insufficient_stock_lines).to include(line_item)
     end
   end
 
@@ -799,18 +798,11 @@ describe Spree::Order, type: :model do
     let(:variant2) { create(:variant) }
     let!(:variant3) { create(:variant) }
     let(:other_variant) { create(:variant) }
-    let!(:line_items) do
-      [
-        create(:line_item, product: variant1.product, variant: variant1, quantity: 1),
-        create(:line_item, product: variant2.product, variant: variant2, quantity: 2)
-      ]
-    end
-
-    before { allow(order).to receive_messages(line_items: line_items) }
+    let!(:line_item1) { create(:line_item, order: order, product: variant1.product, variant: variant1, quantity: 1) }
+    let!(:line_item2) { create(:line_item, order: order, product: variant2.product, variant: variant2, quantity: 2) }
 
     it 'gets the quantity of a given variant' do
       expect(order.quantity_of(variant1)).to eq(1)
-
       expect(order.quantity_of(variant3)).to eq(0)
     end
 
@@ -831,12 +823,12 @@ describe Spree::Order, type: :model do
 
       it 'matches line item when options match' do
         allow(order).to receive(:foos_match).and_return(true)
-        expect(Spree.cart_compare_line_items_service.new.call(order: order, line_item: line_items.first, options: { foos: { bar: :zoo } }).value).to be true
+        expect(Spree.cart_compare_line_items_service.new.call(order: order, line_item: line_item1, options: { foos: { bar: :zoo } }).value).to be true
       end
 
       it 'does not match line item without options' do
         allow(order).to receive(:foos_match).and_return(false)
-        expect(Spree.cart_compare_line_items_service.new.call(order: order, line_item: line_items.first).value).to be false
+        expect(Spree.cart_compare_line_items_service.new.call(order: order, line_item: line_item1).value).to be false
       end
     end
   end
@@ -1232,16 +1224,16 @@ describe Spree::Order, type: :model do
   end
 
   describe '#backordered?' do
-    let(:shipments) { create_list(:shipment, 2) }
+    let(:order) { create(:order_with_line_items, store: store) }
 
-    before do
-      allow(shipments.first).to receive_messages(backordered?: true)
-      allow(shipments.second).to receive_messages(backordered?: false)
-      allow(order).to receive_messages(shipments: shipments)
+    it 'is backordered if one of the inventory units is backordered' do
+      create(:inventory_unit, order: order, state: 'backordered')
+      expect(order).to be_backordered
     end
 
-    it 'is backordered if one of the shipments is backordered' do
-      expect(order).to be_backordered
+    it 'is not backordered if no inventory units are backordered' do
+      create(:inventory_unit, order: order, state: 'on_hand')
+      expect(order).not_to be_backordered
     end
   end
 
@@ -1478,38 +1470,25 @@ describe Spree::Order, type: :model do
   end
 
   describe '#fully_discounted?' do
-    let(:line_item) { Spree::LineItem.new(price: 10, quantity: 1) }
-    let(:shipment) { Spree::Shipment.new(cost: 10) }
-    let(:payment) { Spree::Payment.new(amount: 10) }
-
-    before do
-      allow(order).to receive(:line_items) { [line_item] }
-      allow(order).to receive(:shipments) { [shipment] }
-      allow(order).to receive(:payments) { [payment] }
-    end
-
     context 'the order had no inventory-related cost' do
       before do
-        # discount the cost of the line items
-        allow(order).to receive(:adjustment_total).and_return(-5)
-        allow(line_item).to receive(:adjustment_total).and_return(-5)
-
-        # but leave some shipment payment amount
-        allow(shipment).to receive(:adjustment_total).and_return(0)
+        line_item = create(:line_item, order: order, price: 10, quantity: 1)
+        line_item.update_column(:adjustment_total, -10)
+        order.update_column(:adjustment_total, 0)
+        order.reload
       end
 
-      it { expect(order.fully_discounted?).to eq true }
+      it 'returns true when line items total equals zero' do
+        expect(order.fully_discounted?).to eq true
+      end
     end
 
     context 'the order had inventory-related cost' do
       before do
-        # partially discount the cost of the line item
-        allow(order).to receive(:adjustment_total).and_return(0)
-        allow(line_item).to receive(:adjustment_total).and_return(-5)
-
-        # and partially discount the cost of the shipment so the total
-        # discount matches the item total for test completeness
-        allow(shipment).to receive(:adjustment_total).and_return(-5)
+        line_item = create(:line_item, order: order, price: 10, quantity: 1)
+        line_item.update_column(:adjustment_total, -5)
+        order.update_column(:adjustment_total, 0)
+        order.reload
       end
 
       it { expect(order.fully_discounted?).to eq false }

@@ -110,6 +110,10 @@ module Spree
       )
     end
 
+    scope :discontinued, -> do
+      where(arel_table[:discontinue_on].lt(Time.current))
+    end
+
     scope :not_deleted, -> { where("#{Spree::Variant.quoted_table_name}.deleted_at IS NULL") }
 
     scope :for_currency_and_available_price_amount, ->(currency = nil) do

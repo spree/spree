@@ -243,7 +243,7 @@ module Spree
 
     # For compatibility with Calculator::PriceSack
     def amount
-      line_items.inject(0.0) { |sum, li| sum + li.amount }
+      line_items.sum('price * quantity')
     end
 
     # Sum of all line item amounts pre-tax
@@ -314,7 +314,7 @@ module Spree
     # If true, causes the confirmation step to happen during the checkout process
     def confirmation_required?
       Spree::Config[:always_include_confirm_step] ||
-        payments.valid.map(&:payment_method).compact.any?(&:confirmation_required?) ||
+        payments.valid.includes(:payment_method).any? { |p| p.payment_method&.confirmation_required? } ||
         # Little hacky fix for #4117
         # If this wasn't here, order would transition to address state on confirm failure
         # because there would be no valid payments any more.
@@ -326,7 +326,7 @@ module Spree
     end
 
     def backordered?
-      shipments.any?(&:backordered?)
+      inventory_units.backordered.exists?
     end
 
     # Check if the shipping address is a quick checkout address
@@ -385,7 +385,7 @@ module Spree
     end
 
     def all_inventory_units_returned?
-      inventory_units.all?(&:returned?)
+      inventory_units.exists? && inventory_units.where.not(state: 'returned').none?
     end
 
     # Associates the specified user with the order.
@@ -422,9 +422,8 @@ module Spree
     end
 
     def find_line_item_by_variant(variant, options = {})
-      line_items.detect do |line_item|
-        line_item.variant_id == variant.id &&
-          Spree.cart_compare_line_items_service.new.call(order: self, line_item: line_item, options: options).value
+      line_items.where(variant_id: variant.id).detect do |line_item|
+        Spree.cart_compare_line_items_service.new.call(order: self, line_item: line_item, options: options).value
       end
     end
 
@@ -455,7 +454,7 @@ module Spree
     end
 
     def reimbursement_paid_total
-      reimbursements.sum(&:paid_amount)
+      reimbursements.loaded? ? reimbursements.sum(&:paid_amount) : reimbursements.to_a.sum(&:paid_amount)
     end
 
     def outstanding_balance?
@@ -496,7 +495,7 @@ module Spree
     def backordered_variants
       variants.
         where(track_inventory: true).
-        joins(:stock_items, :product).
+        joins(:stock_items).
         where(Spree::StockItem.table_name => { count_on_hand: ..0, backorderable: true })
     end
 
@@ -522,7 +521,7 @@ module Spree
     # Called after transition to complete state when payments will have been processed
     def finalize!
       # lock all adjustments (coupon promotions, etc.)
-      all_adjustments.each(&:close)
+      all_adjustments.where.not(state: 'closed').update_all(state: 'closed', updated_at: Time.current)
 
       # update payment and shipment(s) states, and save
       updater.update_payment_state
@@ -569,7 +568,9 @@ module Spree
     # Check to see if any line item variants are discontinued.
     # If so add error and restart checkout.
     def ensure_line_item_variants_are_not_discontinued
-      if line_items.any? { |li| !li.variant || li.variant.discontinued? }
+      has_discontinued = line_items.where(variant_id: nil).exists? ||
+        line_items.joins(:variant).merge(Spree::Variant.discontinued).exists?
+      if has_discontinued
         restart_checkout_flow
         errors.add(:base, Spree.t(:discontinued_variants_present))
         false
@@ -640,13 +641,13 @@ module Spree
     end
 
     def fully_shipped?
-      shipments.shipped.size == shipments.size
+      shipments.exists? && shipments.where.not(state: 'shipped').none?
     end
 
     def create_proposed_shipments
       all_adjustments.shipping.delete_all
 
-      shipment_ids = shipments.map(&:id)
+      shipment_ids = shipments.pluck(:id)
       StateChange.where(stateful_type: 'Spree::Shipment', stateful_id: shipment_ids).delete_all
       ShippingRate.where(shipment_id: shipment_ids).delete_all
 
@@ -664,16 +665,24 @@ module Spree
     #
     # @return [BigDecimal] the total weight of the inventory units in the order
     def total_weight
-      @total_weight ||= line_items.joins(:variant).includes(:variant).map(&:item_weight).sum
+      @total_weight ||= line_items.joins(:variant).sum('spree_variants.weight * spree_line_items.quantity')
     end
 
     # Returns line items that have no shipping rates
     #
     # @return [Array<Spree::LineItem>]
     def line_items_without_shipping_rates
-      @line_items_without_shipping_rates ||= shipments.map do |shipment|
-        shipment.manifest.map(&:line_item) if shipment.shipping_rates.blank?
-      end.flatten.compact
+      @line_items_without_shipping_rates ||= begin
+        shipment_ids_without_rates = shipments.left_joins(:shipping_rates).
+                                     where(spree_shipping_rates: { id: nil }).
+                                     pluck(:id)
+        return [] if shipment_ids_without_rates.empty?
+
+        line_items.joins(:inventory_units).
+          where(spree_inventory_units: { shipment_id: shipment_ids_without_rates }).
+          distinct.
+          to_a
+      end
     end
 
     # Checks if all line items cannot be shipped
@@ -840,7 +849,7 @@ module Spree
     # - true if inventory amount is the exact negative of inventory related adjustments
     # - false otherwise
     def fully_discounted?
-      adjustment_total + line_items.map(&:final_amount).sum == 0.0
+      adjustment_total + line_items.sum('price * quantity + adjustment_total') == 0.0
     end
     alias fully_discounted fully_discounted?
 
@@ -887,8 +896,10 @@ module Spree
     end
 
     def to_csv(_store = nil)
-      metafields_for_csv ||= Spree::MetafieldDefinition.for_resource_type('Spree::Order').order(:namespace, :key).map do |mf_def|
-        metafields.find { |mf| mf.metafield_definition_id == mf_def.id }&.csv_value
+      metafield_definitions = Spree::MetafieldDefinition.for_resource_type('Spree::Order').order(:namespace, :key).to_a
+      metafields_by_definition_id = metafields.index_by(&:metafield_definition_id)
+      metafields_for_csv = metafield_definitions.map do |mf_def|
+        metafields_by_definition_id[mf_def.id]&.csv_value
       end
 
       csv_lines = []
@@ -941,7 +952,7 @@ module Spree
     end
 
     def after_cancel
-      shipments.each(&:cancel!)
+      shipments.not_canceled.each(&:cancel!)
 
       # payments fully covered by gift card won't be refunded
       # we want to only void the payment
