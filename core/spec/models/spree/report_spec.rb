@@ -12,13 +12,19 @@ RSpec.describe Spree::Report, type: :model do
 
     it 'returns formatted name with store, dates and report type' do
       expected_name = [
-        "Sales total",
+        'Sales total',
         store.name,
         report.date_from.strftime('%Y-%m-%d'),
         report.date_to.strftime('%Y-%m-%d')
       ].join(' - ')
 
       expect(report.human_name).to eq(expected_name)
+    end
+  end
+
+  describe '#event_serializer_class' do
+    it 'returns the correct serializer class' do
+      expect(report.event_serializer_class).to eq(Spree::Events::ReportSerializer)
     end
   end
 

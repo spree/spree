@@ -225,6 +225,10 @@ module Spree
       @current_ability ||= Spree.ability_class.new(user, { store: store })
     end
 
+    def event_serializer_class
+      Spree::Events::ImportSerializer
+    end
+
     class << self
       # Returns the available types for the import
       # @return [Array<Class>]

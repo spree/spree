@@ -139,52 +139,52 @@ RSpec.describe Spree::Import, :job, type: :model do
   describe '#csv_headers' do
     it 'returns the CSV headers' do
       expect(import.csv_headers).to eq([
-        'slug',
-        'sku',
-        'name',
-        'status',
-        'vendor_name',
-        'brand_name',
-        'description',
-        'meta_title',
-        'meta_description',
-        'meta_keywords',
-        'tags',
-        'labels',
-        'price',
-        'compare_at_price',
-        'currency',
-        'width',
-        'height',
-        'depth',
-        'dimensions_unit',
-        'weight',
-        'weight_unit',
-        'available_on',
-        'discontinue_on',
-        'track_inventory',
-        'inventory_count',
-        'inventory_backorderable',
-        'tax_category',
-        'digital',
-        'image1_src',
-        'image2_src',
-        'image3_src',
-        'option1_name',
-        'option1_value',
-        'option2_name',
-        'option2_value',
-        'option3_name',
-        'option3_value',
-        'category1',
-        'category2',
-        'category3',
-        'metafield.properties.fit',
-        'metafield.properties.manufacturer',
-        'metafield.properties.material',
-        'metafield.custom.brand',
-        'metafield.custom.material'
-      ])
+                                         'slug',
+                                         'sku',
+                                         'name',
+                                         'status',
+                                         'vendor_name',
+                                         'brand_name',
+                                         'description',
+                                         'meta_title',
+                                         'meta_description',
+                                         'meta_keywords',
+                                         'tags',
+                                         'labels',
+                                         'price',
+                                         'compare_at_price',
+                                         'currency',
+                                         'width',
+                                         'height',
+                                         'depth',
+                                         'dimensions_unit',
+                                         'weight',
+                                         'weight_unit',
+                                         'available_on',
+                                         'discontinue_on',
+                                         'track_inventory',
+                                         'inventory_count',
+                                         'inventory_backorderable',
+                                         'tax_category',
+                                         'digital',
+                                         'image1_src',
+                                         'image2_src',
+                                         'image3_src',
+                                         'option1_name',
+                                         'option1_value',
+                                         'option2_name',
+                                         'option2_value',
+                                         'option3_name',
+                                         'option3_value',
+                                         'category1',
+                                         'category2',
+                                         'category3',
+                                         'metafield.properties.fit',
+                                         'metafield.properties.manufacturer',
+                                         'metafield.properties.material',
+                                         'metafield.custom.brand',
+                                         'metafield.custom.material'
+                                       ])
     end
 
     context 'with custom delimiter' do
@@ -307,7 +307,7 @@ RSpec.describe Spree::Import, :job, type: :model do
     end
 
     it 'returns columns that are not mapped' do
-      expect(import.unmapped_file_columns).to include("vendor_name", "brand_name", "labels", "metafield.properties.fit", "metafield.properties.manufacturer", "metafield.properties.material")
+      expect(import.unmapped_file_columns).to include('vendor_name', 'brand_name', 'labels', 'metafield.properties.fit', 'metafield.properties.manufacturer', 'metafield.properties.material')
       expect(import.unmapped_file_columns).not_to include('slug')
     end
   end
@@ -383,7 +383,13 @@ RSpec.describe Spree::Import, :job, type: :model do
     end
   end
 
-  describe 'custom events', events: true do
+  describe '#event_serializer_class' do
+    it 'returns the correct event serializer class' do
+      expect(import.event_serializer_class).to eq(Spree::Events::ImportSerializer)
+    end
+  end
+
+  describe 'custom events', :events do
     describe 'import.completed' do
       before do
         import.save!
