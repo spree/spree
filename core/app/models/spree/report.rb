@@ -31,6 +31,10 @@ module Spree
     #
     has_one_attached :attachment, service: Spree.private_storage_service_name
 
+    def event_serializer_class
+      Spree::Events::ReportSerializer
+    end
+
     def self.report_type
       name.demodulize.underscore
     end

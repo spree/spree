@@ -57,6 +57,10 @@ module Spree
     #
     attribute :record_selection, :string, default: 'filtered'
 
+    def event_serializer_class
+      Spree::Events::ExportSerializer
+    end
+
     def done?
       attachment.present? && attachment.attached?
     end
@@ -196,7 +200,7 @@ module Spree
       def model_class
         klass = "Spree::#{to_s.demodulize.singularize}".safe_constantize
 
-        raise NameError, "Missing model class for #{to_s}" unless klass
+        raise NameError, "Missing model class for #{self}" unless klass
 
         klass
       end
