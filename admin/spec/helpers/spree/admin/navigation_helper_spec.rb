@@ -138,14 +138,14 @@ describe Spree::Admin::NavigationHelper, type: :helper do
       expect(helper.render_navigation(:sidebar)).to eq('')
     end
 
-    it 'renders navigation partial when items are visible' do
+    it 'renders navigation HTML when items are visible' do
       nav.add :dashboard, label: 'Dashboard', url: '/admin'
-
-      allow(helper).to receive(:render).and_return('navigation html')
+      allow(helper).to receive(:request).and_return(double(path: '/admin', original_fullpath: '/admin'))
 
       result = helper.render_navigation(:sidebar)
 
-      expect(result).to eq('navigation html')
+      expect(result).to include('nav flex-col')
+      expect(result).to include('Dashboard')
     end
   end
 
@@ -175,6 +175,185 @@ describe Spree::Admin::NavigationHelper, type: :helper do
       items = helper.navigation_items(:sidebar)
 
       expect(items.map(&:key)).to eq([:dashboard])
+    end
+  end
+
+  describe '#render_navigation_items' do
+    let(:nav) { Spree.admin.navigation.sidebar }
+
+    before do
+      nav.clear
+      allow(helper).to receive(:request).and_return(double(path: '/admin', original_fullpath: '/admin'))
+    end
+
+    it 'returns empty string for empty items' do
+      expect(helper.render_navigation_items([], :sidebar)).to eq('')
+    end
+
+    it 'renders ul with nav flex-col class' do
+      nav.add :dashboard, label: 'Dashboard', url: '/admin'
+      items = helper.navigation_items(:sidebar)
+
+      result = helper.render_navigation_items(items, :sidebar)
+
+      expect(result).to have_selector('ul.nav.flex-col')
+    end
+
+    it 'renders all visible items' do
+      nav.add :dashboard, label: 'Dashboard', url: '/admin'
+      nav.add :products, label: 'Products', url: '/admin/products'
+      items = helper.navigation_items(:sidebar)
+
+      result = helper.render_navigation_items(items, :sidebar)
+
+      expect(result).to include('Dashboard')
+      expect(result).to include('Products')
+    end
+  end
+
+  describe '#render_navigation_item' do
+    let(:nav) { Spree.admin.navigation.sidebar }
+
+    before do
+      nav.clear
+      allow(helper).to receive(:request).and_return(double(path: '/admin', original_fullpath: '/admin'))
+    end
+
+    context 'with a regular item' do
+      it 'renders a nav item with label and url' do
+        nav.add :dashboard, label: 'Dashboard', url: '/admin'
+        item = nav.visible_items(helper).first
+
+        result = helper.render_navigation_item(item, :sidebar)
+
+        expect(result).to include('Dashboard')
+        expect(result).to include('/admin')
+        expect(result).to have_selector('li.nav-item')
+      end
+
+      it 'renders icon when present' do
+        nav.add :dashboard, label: 'Dashboard', url: '/admin', icon: 'home'
+        item = nav.visible_items(helper).first
+
+        result = helper.render_navigation_item(item, :sidebar)
+
+        expect(result).to include('ti-home')
+      end
+
+      it 'renders id attribute when key is present' do
+        nav.add :dashboard, label: 'Dashboard', url: '/admin'
+        item = nav.visible_items(helper).first
+
+        result = helper.render_navigation_item(item, :sidebar)
+
+        expect(result).to include('id="nav-link-dashboard"')
+      end
+
+      it 'renders target attribute when present' do
+        nav.add :external, label: 'External', url: 'https://example.com', target: '_blank'
+        item = nav.visible_items(helper).first
+
+        result = helper.render_navigation_item(item, :sidebar)
+
+        expect(result).to include('target="_blank"')
+      end
+    end
+
+    context 'with a section header' do
+      it 'renders section header' do
+        nav.add :section, section_label: 'Settings Section'
+        item = nav.visible_items(helper).first
+
+        result = helper.render_navigation_item(item, :sidebar)
+
+        expect(result).to have_selector('li.nav-section-header')
+        expect(result).to include('Settings Section')
+      end
+    end
+
+    context 'with children' do
+      before do
+        nav.add :products, label: 'Products', url: '/admin/products', icon: 'package' do |products|
+          products.add :all_products, label: 'All Products', url: '/admin/products'
+          products.add :categories, label: 'Categories', url: '/admin/taxons'
+        end
+      end
+
+      it 'renders main item' do
+        item = nav.visible_items(helper).first
+
+        result = helper.render_navigation_item(item, :sidebar)
+
+        expect(result).to include('Products')
+      end
+
+      it 'renders submenu with children' do
+        item = nav.visible_items(helper).first
+
+        result = helper.render_navigation_item(item, :sidebar)
+
+        expect(result).to have_selector('ul.nav-submenu')
+        expect(result).to include('Categories')
+      end
+
+      it 'renders dropdown submenu for collapsed sidebar' do
+        item = nav.visible_items(helper).first
+
+        result = helper.render_navigation_item(item, :sidebar)
+
+        expect(result).to have_selector('ul.nav-submenu-dropdown')
+      end
+
+      it 'hides submenu when item is not active' do
+        allow(helper).to receive(:request).and_return(double(path: '/admin/orders', original_fullpath: '/admin/orders'))
+        item = nav.visible_items(helper).first
+
+        result = helper.render_navigation_item(item, :sidebar)
+
+        expect(result).to have_selector('ul.nav-submenu.hidden')
+      end
+
+      it 'shows submenu when item is active' do
+        allow(helper).to receive(:request).and_return(double(path: '/admin/products', original_fullpath: '/admin/products'))
+        item = nav.visible_items(helper).first
+
+        result = helper.render_navigation_item(item, :sidebar)
+
+        expect(result).to have_selector('ul.nav-submenu')
+        expect(result).not_to have_selector('ul.nav-submenu.hidden')
+      end
+    end
+
+    context 'with badge' do
+      it 'renders badge when present' do
+        nav.add :orders, label: 'Orders', url: '/admin/orders', badge: -> { 5 }
+        item = nav.visible_items(helper).first
+
+        result = helper.render_navigation_item(item, :sidebar)
+
+        expect(result).to have_selector('span.badge')
+        expect(result).to include('5')
+      end
+
+      it 'renders badge with custom class' do
+        nav.add :orders, label: 'Orders', url: '/admin/orders', badge: -> { 5 }, badge_class: 'badge-danger'
+        item = nav.visible_items(helper).first
+
+        result = helper.render_navigation_item(item, :sidebar)
+
+        expect(result).to have_selector('span.badge.badge-danger')
+      end
+    end
+
+    context 'with tooltip' do
+      it 'adds tooltip controller data attribute when tooltip is present' do
+        nav.add :dashboard, label: 'Dashboard', url: '/admin', tooltip: 'Tooltip text'
+        item = nav.visible_items(helper).first
+
+        result = helper.render_navigation_item(item, :sidebar)
+
+        expect(result).to include('data-controller="tooltip"')
+      end
     end
   end
 end

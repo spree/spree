@@ -323,10 +323,7 @@ module Spree
         items = navigation_items(context)
         return '' if items.empty?
 
-        render 'spree/admin/shared/navigation',
-               items: items,
-               context: context,
-               **options
+        render_navigation_items(items, context)
       end
 
       # Get navigation items for the given context
@@ -335,6 +332,51 @@ module Spree
       def navigation_items(context = :sidebar)
         # Pass the view context (self) so that can? and other helpers are available
         Spree.admin.navigation.send(context)&.visible_items(self) || []
+      end
+
+      # Renders navigation items as an unordered list
+      # @param items [Array<Spree::Admin::Navigation::Item>] navigation items to render
+      # @param context [Symbol] the navigation context
+      # @return [SafeBuffer] the rendered HTML
+      def render_navigation_items(items, context)
+        return ''.html_safe if items.empty?
+
+        content_tag :ul, class: 'nav flex-col' do
+          safe_join(items.map { |item| render_navigation_item(item, context) })
+        end
+      end
+
+      # Renders a single navigation item
+      # @param item [Spree::Admin::Navigation::Item] the navigation item
+      # @param context [Symbol] the navigation context
+      # @return [SafeBuffer] the rendered HTML
+      def render_navigation_item(item, context)
+        return render_nav_section_header(item) if item.section?
+
+        item_url = item.resolve_url(self)
+        item_label = item.resolve_label
+        badge_value = item.badge_value(self)
+        is_active = item.active?(request.path, self)
+        has_children = item.children.present?
+        tooltip_text = item.tooltip
+
+        # Build data attributes
+        data_attrs = item.data_attributes.dup
+        data_attrs[:controller] = 'tooltip' if tooltip_text.present?
+
+        # Build HTML options
+        html_options = {}
+        html_options[:target] = item.target if item.target.present?
+        html_options[:id] = "nav-link-#{item.key}" if item.key.present?
+
+        # Build complete label with badge and tooltip
+        complete_label = build_nav_label(item_label, badge_value, item.badge_class, tooltip_text)
+
+        if has_children
+          render_nav_item_with_children(item, complete_label, item_url, item_label, is_active, data_attrs, html_options, context)
+        else
+          nav_item(complete_label, item_url, icon: item.icon, active: is_active, data: data_attrs, **html_options)
+        end
       end
 
       # Renders page tab navigation for the given context
@@ -354,6 +396,54 @@ module Spree
             nav_item(item_label, item_url, active: is_active)
           end.join.html_safe
         end
+      end
+
+      private
+
+      # Builds navigation label with optional badge and tooltip
+      # @return [SafeBuffer] the label HTML
+      def build_nav_label(label, badge_value, badge_class, tooltip_text)
+        result = label.to_s
+        if badge_value.present?
+          css_class = badge_class.presence || 'badge-light'
+          result += content_tag(:span, badge_value, class: "badge ml-auto #{css_class}")
+        end
+        if tooltip_text.present?
+          result += tooltip(tooltip_text)
+        end
+        result.html_safe
+      end
+
+      # Renders a section header
+      # @return [SafeBuffer] the section header HTML
+      def render_nav_section_header(item)
+        content_tag :li, class: 'nav-item nav-section-header mt-4 border-t pt-4 pl-2' do
+          content_tag :span, item.section_label, class: 'text-gray-600 uppercase font-light text-sm'
+        end
+      end
+
+      # Renders a nav item that has children (with submenu)
+      # @return [SafeBuffer] the nav item with submenu HTML
+      def render_nav_item_with_children(item, complete_label, item_url, item_label, is_active, data_attrs, html_options, context)
+        visible_children = item.children.select { |child| child.visible?(self) }
+
+        # Main nav item
+        main_item = nav_item(complete_label, item_url, icon: item.icon, active: is_active, data: data_attrs, **html_options)
+
+        # Submenu for expanded sidebar (only shown when active)
+        submenu = content_tag :ul, class: "nav-submenu#{' hidden' unless is_active}", id: "nav-submenu-#{item.key}" do
+          safe_join(visible_children.map { |child| render_navigation_item(child, context) })
+        end
+
+        # Dropdown submenu for collapsed sidebar (shown on hover)
+        dropdown = content_tag :ul, class: 'nav-submenu-dropdown hidden dropdown-container', id: "nav-submenu-dropdown-#{item.key}" do
+          # Parent item as first dropdown item
+          parent_link = nav_item(item_label, item_url, icon: nil)
+          children_items = safe_join(visible_children.map { |child| render_navigation_item(child, context) })
+          parent_link + children_items
+        end
+
+        main_item + submenu + dropdown
       end
     end
   end
