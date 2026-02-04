@@ -568,8 +568,7 @@ module Spree
     # Check to see if any line item variants are discontinued.
     # If so add error and restart checkout.
     def ensure_line_item_variants_are_not_discontinued
-      has_discontinued = line_items.where(variant_id: nil).exists? ||
-        line_items.joins(:variant).merge(Spree::Variant.discontinued).exists?
+      has_discontinued = line_items.joins(:variant).merge(Spree::Variant.discontinued).exists?
       if has_discontinued
         restart_checkout_flow
         errors.add(:base, Spree.t(:discontinued_variants_present))
