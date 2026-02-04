@@ -3,7 +3,7 @@
     <img alt="Spree Commerce - an open source eCommerce platform" src="https://raw.githubusercontent.com/spree/spree/e4ee6636d9a31c73761b0c76662d15b0f9899ecb/docs/images/Spree%20Commerce%20open-source%20eCommerce%20platform%20API%20headless%20Next.js.webp">
   </a>
 
-  <h1 align="center">Spree Commerce</h2>
+  <h1 align="center">Spree Commerce - Open Source eCommerce Platform</h1>
 
   <p align="center">
     An <a href="https://spreecommerce.org/" alt="open-source eCommerce platform">open-source eCommerce platform</a> giving you full control and customizability.
