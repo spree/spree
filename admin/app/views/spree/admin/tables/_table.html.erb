@@ -22,7 +22,8 @@
                                    params.dig(:q, search_param),
                                    class: "outline-none border-0 h-full focus:border-0 focus:ring-0 p-0 text-base w-full",
                                    placeholder: search_placeholder,
-                                   data: { action: 'input->auto-submit#submit input->search-clear#toggleClearButton search->auto-submit#submit', search_clear_target: 'input' } %>
+                                   id: "#{frame_name}-table-search-input",
+                                   data: { "turbo-permanent": true, action: 'input->auto-submit#submit input->search-clear#toggleClearButton search->auto-submit#submit', search_clear_target: 'input' } %>
               <button type="button" class="<%= 'hidden' if params.dig(:q, search_param).blank? %> p-1 text-gray-400 hover:text-gray-600 shrink-0" data-search-clear-target="clear" data-action="search-clear#clear">
                 <%= icon 'x', class: 'w-4 h-4' %>
               </button>
