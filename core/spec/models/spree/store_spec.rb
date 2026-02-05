@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::Store, type: :model, without_global_store: true do
   before(:all) do
-    create(:country_us)
+    Spree::Country.find_by(iso: 'US') || create(:country_us)
   end
 
   before do
@@ -762,6 +762,7 @@ describe Spree::Store, type: :model, without_global_store: true do
     let(:default_store) { create(:store, default: true) }
 
     it 'cannot delete the only store' do
+      Spree::Store.where.not(id: default_store.id).delete_all
       expect(default_store.can_be_deleted?).to eq(false)
     end
 
@@ -777,7 +778,10 @@ describe Spree::Store, type: :model, without_global_store: true do
 
     context 'default store' do
       context 'with multiple stores' do
-        before { another_store }
+        before do
+          Spree::Store.where.not(id: default_store.id).delete_all
+          another_store
+        end
 
         it 'can be deleted' do
           expect(default_store.deleted?).to eq(false)
@@ -795,6 +799,8 @@ describe Spree::Store, type: :model, without_global_store: true do
       end
 
       context 'single store' do
+        before { Spree::Store.where.not(id: default_store.id).delete_all }
+
         it 'cannot be deleted' do
           expect { default_store.destroy! }.to raise_error(ActiveRecord::RecordNotDestroyed)
           expect(default_store.errors.full_messages.to_sentence).to eq('Cannot destroy the only Store.')
