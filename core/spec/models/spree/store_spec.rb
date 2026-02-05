@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::Store, type: :model, without_global_store: true do
   before(:all) do
-    create(:country_us)
+    Spree::Country.find_by(iso: 'US') || create(:country_us)
   end
 
   before do
