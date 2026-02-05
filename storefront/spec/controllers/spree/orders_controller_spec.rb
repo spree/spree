@@ -105,7 +105,8 @@ describe Spree::OrdersController, type: :controller do
   end
 
   describe '#show' do
-    let(:order) { create(:completed_order_with_totals, store: store, user: user) }
+    let(:order) { create(:completed_order_with_totals, store: store) }
+    let(:user) { nil }
 
     it 'renders the show template' do
       get :show, params: { id: order.number, token: order.token }
@@ -144,13 +145,15 @@ describe Spree::OrdersController, type: :controller do
       end
     end
 
-    context 'when order belongs to another user' do
-      let(:order) { create(:completed_order_with_totals, store: store, user: create(:user)) }
-
+    context 'when token is invalid' do
       it 'raises ActiveRecord::RecordNotFound' do
-        expect do
-          get :show, params: { id: order.number, token: order.token }
-        end.to raise_error(ActiveRecord::RecordNotFound)
+        expect { get :show, params: { id: order.number, token: 'invalid' } }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+
+    context 'when token is missing' do
+      it 'raises ActiveRecord::RecordNotFound' do
+        expect { get :show, params: { id: order.number, token: '' } }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
   end

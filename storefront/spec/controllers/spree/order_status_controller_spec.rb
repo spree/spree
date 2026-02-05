@@ -64,5 +64,13 @@ RSpec.describe Spree::OrderStatusController, type: :controller do
         }.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
+
+    context 'with blank email' do
+      it 'raises ActiveRecord::RecordNotFound' do
+        expect {
+          post :create, params: { number: order.number, email: '' }
+        }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
   end
 end

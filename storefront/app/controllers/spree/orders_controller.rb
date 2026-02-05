@@ -10,11 +10,17 @@ module Spree
 
     before_action :assign_order_with_lock, only: :update
 
+    rescue_from CanCan::AccessDenied do |exception|
+      raise ActiveRecord::RecordNotFound
+    end
+
     # GET /orders/:id
     def show
       @order = complete_order_finder.new(number: params[:id], token: params[:token], store: current_store).execute.first
 
-      raise ActiveRecord::RecordNotFound if @order.blank? || !authorize_access
+      raise ActiveRecord::RecordNotFound if @order.blank?
+
+      authorize! :show, @order, params[:token]
 
       @shipments = @order.shipments.includes(:stock_location, :address, selected_shipping_rate: :shipping_method, inventory_units: :line_item)
     end
@@ -49,9 +55,7 @@ module Spree
     private
 
     def authorize_access
-      return true if @order.user_id.nil?
-
-      @order.user == try_spree_current_user
+      authorize! :show, @order, params[:token]
     end
 
     def find_order_by_cookie
@@ -65,7 +69,7 @@ module Spree
     end
 
     def accurate_title
-      if action_name == 'edit' || action_name == 'update'
+      if ['edit', 'update'].include?(action_name)
         Spree.t(:shopping_cart)
       else
         Spree.t(:order_number, number: @order&.number)
