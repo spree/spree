@@ -55,17 +55,22 @@ module Spree
                     message: { type: :string, example: 'Record not found' },
                     details: {
                       type: :object,
-                      additionalProperties: {
-                        type: :array,
-                        items: { type: :string }
-                      },
-                      nullable: true
+                      description: 'Field-specific validation errors',
+                      nullable: true,
+                      example: { name: ['is too short', 'is required'], email: ['is invalid'] }
                     }
                   },
                   required: %w[code message]
                 }
               },
-              required: %w[error]
+              required: %w[error],
+              example: {
+                error: {
+                  code: 'validation_error',
+                  message: 'Validation failed',
+                  details: { name: ['is too short'], email: ['is invalid'] }
+                }
+              }
             },
             AuthResponse: {
               type: :object,

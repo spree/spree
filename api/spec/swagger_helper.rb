@@ -32,9 +32,9 @@ RSpec.configure do |config|
       info: {
         title: 'Store API',
         contact: {
-          name: 'Vendo Connect Inc.',
-          url: 'https://getvendo.com',
-          email: 'sales@getvendo.com',
+          name: 'Spree Commerce',
+          url: 'https://spreecommerce.org',
+          email: 'hello@spreecommerce.org',
         },
         description: <<~DESC,
           Spree Store API v3 - Customer-facing storefront API for building headless commerce experiences.
@@ -122,24 +122,23 @@ RSpec.configure do |config|
 
   config.openapi_format = :yaml
 
-  # Auto-generate examples from responses
-  config.after do |example|
-    next if example.metadata[:swagger].nil?
-    next if response.nil? || response.body.blank?
+  # Auto-generate examples from actual test responses
+  # This captures real response data and embeds it in the OpenAPI spec
+  # Note: We need to modify the example_group's metadata, not the example's,
+  # because rswag reads from example_group.metadata in example_group_finished
+  config.after(:each, type: :request) do |example|
+    # Only process request specs with response metadata (rswag integration tests)
+    response_metadata = example.metadata[:response]
+    next unless response_metadata
+    next unless respond_to?(:response) && response.present? && response.body.present?
 
-    schema_ref = example.metadata.dig(:response, :schema, '$ref')
-    next unless schema_ref
-
-    example.metadata[:response][:content] = {
-      'application/json' => {
-        examples: {
-          'Example': {
-            value: JSON.parse(response.body, symbolize_names: true)
-          }
-        },
-        schema: { '$ref': schema_ref }
-      }
-    }
+    begin
+      content = response_metadata[:content] ||= {}
+      content['application/json'] ||= {}
+      content['application/json'][:example] = JSON.parse(response.body, symbolize_names: true)
+    rescue JSON::ParserError
+      # Skip if response body is not valid JSON
+    end
   end
 end
 

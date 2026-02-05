@@ -3,9 +3,9 @@ openapi: 3.0.3
 info:
   title: Store API
   contact:
-    name: Vendo Connect Inc.
-    url: https://getvendo.com
-    email: sales@getvendo.com
+    name: Spree Commerce
+    url: https://spreecommerce.org
+    email: hello@spreecommerce.org
   description: |
     Spree Store API v3 - Customer-facing storefront API for building headless commerce experiences.
 
@@ -75,6 +75,63 @@ paths:
           description: addresses found
           content:
             application/json:
+              example:
+                data:
+                - id: addr_irWUGprvxHH0ngrfMurRVmAI
+                  firstname: John
+                  lastname: Doe
+                  full_name: John Doe
+                  address1: 3 Lovely Street
+                  address2: Northwest
+                  city: Herndon
+                  zipcode: '35005'
+                  phone: 555-555-0199
+                  company: Company
+                  country_name: NAME_1
+                  country_iso: I1
+                  state_text: STATE_ABBR_1
+                  state_abbr: STATE_ABBR_1
+                  state_name: STATE_NAME_1
+                - id: addr_mZX6YTcBkWezyXnMNL7D73G6
+                  firstname: John
+                  lastname: Doe
+                  full_name: John Doe
+                  address1: 2 Lovely Street
+                  address2: Northwest
+                  city: Herndon
+                  zipcode: '35005'
+                  phone: 555-555-0199
+                  company: Company
+                  country_name: United States of America
+                  country_iso: US
+                  state_text: STATE_ABBR_3
+                  state_abbr: STATE_ABBR_3
+                  state_name: STATE_NAME_3
+                - id: addr_K9rS8orDFa5bXYcua5lSJ8NP
+                  firstname: John
+                  lastname: Doe
+                  full_name: John Doe
+                  address1: 1 Lovely Street
+                  address2: Northwest
+                  city: Herndon
+                  zipcode: '35005'
+                  phone: 555-555-0199
+                  company: Company
+                  country_name: United States of America
+                  country_iso: US
+                  state_text: STATE_ABBR_2
+                  state_abbr: STATE_ABBR_2
+                  state_name: STATE_NAME_2
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 3
+                  pages: 1
+                  from: 1
+                  to: 3
+                  in: 3
+                  previous:
+                  next:
               schema:
                 type: object
                 properties:
@@ -88,6 +145,10 @@ paths:
           description: unauthorized
           content:
             application/json:
+              example:
+                error:
+                  code: authentication_required
+                  message: Authentication required
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
     post:
@@ -114,12 +175,47 @@ paths:
           description: address created
           content:
             application/json:
+              example:
+                id: addr_PqECbpisYvxvwBPLf5RkGB0N
+                firstname: John
+                lastname: Doe
+                full_name: John Doe
+                address1: 123 Main St
+                address2:
+                city: New York
+                zipcode: '10001'
+                phone: "+1 555 123 4567"
+                company:
+                country_name: NAME_3
+                country_iso: I3
+                state_text: STATE_ABBR_7
+                state_abbr: STATE_ABBR_7
+                state_name: STATE_NAME_7
               schema:
                 "$ref": "#/components/schemas/StoreAddress"
         '422':
           description: validation error
           content:
             application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: First Name can't be blank, Last Name can't be blank, Address
+                    can't be blank, City can't be blank, Country can't be blank, and
+                    Zip Code can't be blank
+                  details:
+                    firstname:
+                    - can't be blank
+                    lastname:
+                    - can't be blank
+                    address1:
+                    - can't be blank
+                    city:
+                    - can't be blank
+                    country:
+                    - can't be blank
+                    zipcode:
+                    - can't be blank
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -190,12 +286,32 @@ paths:
           description: address found
           content:
             application/json:
+              example:
+                id: addr_6MjbhQ3OBeTLESvNt3BVGSOL
+                firstname: John
+                lastname: Doe
+                full_name: John Doe
+                address1: 15 Lovely Street
+                address2: Northwest
+                city: Herndon
+                zipcode: '35005'
+                phone: 555-555-0199
+                company: Company
+                country_name: NAME_5
+                country_iso: I5
+                state_text: STATE_ABBR_13
+                state_abbr: STATE_ABBR_13
+                state_name: STATE_NAME_13
               schema:
                 "$ref": "#/components/schemas/StoreAddress"
         '404':
           description: address not found
           content:
             application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Address not found
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
     patch:
@@ -226,6 +342,22 @@ paths:
           description: address updated
           content:
             application/json:
+              example:
+                id: addr_kEgrFfJ6KYBS5IgxaqDjy105
+                firstname: John
+                lastname: Doe
+                full_name: John Doe
+                address1: 21 Lovely Street
+                address2: Northwest
+                city: Los Angeles
+                zipcode: '35005'
+                phone: 555-555-0199
+                company: Company
+                country_name: NAME_7
+                country_iso: I7
+                state_text: STATE_ABBR_19
+                state_abbr: STATE_ABBR_19
+                state_name: STATE_NAME_19
               schema:
                 "$ref": "#/components/schemas/StoreAddress"
       requestBody:
@@ -272,6 +404,10 @@ paths:
           description: address not found
           content:
             application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Address not found
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/store/auth/login":
@@ -294,12 +430,28 @@ paths:
           description: login successful
           content:
             application/json:
+              example:
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImV4cCI6MTc3MDQxMzk0NH0.oWbD87izgXRG0fbqdYpYHTY5QqAsphrChwbMUdcCs5M
+                user:
+                  id: cus_UWiIRNLBycB7GpM7f58AbTcG
+                  email: test@example.com
+                  first_name: Roberto
+                  last_name: Zulauf
+                  created_at: '2026-02-05T21:39:03.930Z'
+                  updated_at: '2026-02-05T21:39:03.930Z'
+                  addresses: []
+                  default_billing_address:
+                  default_shipping_address:
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
         '401':
           description: missing API key
           content:
             application/json:
+              example:
+                error:
+                  code: invalid_token
+                  message: Valid API key required
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -341,12 +493,31 @@ paths:
           description: registration successful
           content:
             application/json:
+              example:
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImV4cCI6MTc3MDQxMzk0NX0.mof7lH-7fiME18_ZBzS5EudIzAe7eDruDWAxVCo2UVM
+                user:
+                  id: cus_o4m4nISTi5ZRh0Ru3rx2DazP
+                  email: newuser@example.com
+                  first_name: John
+                  last_name: Doe
+                  created_at: '2026-02-05T21:39:05.273Z'
+                  updated_at: '2026-02-05T21:39:05.273Z'
+                  addresses: []
+                  default_billing_address:
+                  default_shipping_address:
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
         '422':
           description: email already taken
           content:
             application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: Email has already been taken
+                  details:
+                    email:
+                    - has already been taken
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -396,12 +567,28 @@ paths:
           description: token refreshed
           content:
             application/json:
+              example:
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImV4cCI6MTc3MDQxMzk0NX0.mof7lH-7fiME18_ZBzS5EudIzAe7eDruDWAxVCo2UVM
+                user:
+                  id: cus_0xZxRTz4qGZcB9bvMj1Yaisu
+                  email: test@example.com
+                  first_name: Harvey
+                  last_name: Rodriguez
+                  created_at: '2026-02-05T21:39:05.834Z'
+                  updated_at: '2026-02-05T21:39:05.834Z'
+                  addresses: []
+                  default_billing_address:
+                  default_shipping_address:
               schema:
                 "$ref": "#/components/schemas/AuthResponse"
         '401':
           description: missing or invalid token
           content:
             application/json:
+              example:
+                error:
+                  code: authentication_required
+                  message: Authentication required
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/store/cart":
@@ -438,6 +625,66 @@ paths:
           description: cart found (authenticated)
           content:
             application/json:
+              example:
+                id: or_vKXSVFYcSJs7EujQ3AqqucCM
+                number: R728558194
+                state: cart
+                token: qmTdbPS8mDBZSoJ6PmuNeNcbcr8hN81TbJH
+                email: delta@howe.co.uk
+                special_instructions:
+                currency: USD
+                item_count: 1
+                shipment_state:
+                payment_state:
+                item_total: '10.0'
+                display_item_total: "$10.00"
+                ship_total: '100.0'
+                display_ship_total: "$100.00"
+                adjustment_total: '0.0'
+                display_adjustment_total: "$0.00"
+                promo_total: '0.0'
+                display_promo_total: "$0.00"
+                tax_total: '0.0'
+                display_tax_total: "$0.00"
+                included_tax_total: '0.0'
+                display_included_tax_total: "$0.00"
+                additional_tax_total: '0.0'
+                display_additional_tax_total: "$0.00"
+                total: '110.0'
+                display_total: "$110.00"
+                completed_at:
+                created_at: '2026-02-05T21:39:07.608Z'
+                updated_at: '2026-02-05T21:39:07.704Z'
+                line_items:
+                - id: li_nbwzLLUt3Unz3o666IrHC7ug
+                  variant_id: variant_hWKyf6UOaoOmE2cGLcUoAfPj
+                  quantity: 1
+                  name: Product 21123
+                  slug: product-21123
+                  options_text: ''
+                  price: '10.0'
+                  display_price: "$10.00"
+                  total: '10.0'
+                  display_total: "$10.00"
+                  adjustment_total: '0.0'
+                  display_adjustment_total: "$0.00"
+                  additional_tax_total: '0.0'
+                  display_additional_tax_total: "$0.00"
+                  included_tax_total: '0.0'
+                  display_included_tax_total: "$0.00"
+                  promo_total: '0.0'
+                  display_promo_total: "$0.00"
+                  pre_tax_amount: '10.0'
+                  display_pre_tax_amount: "$10.00"
+                  discounted_amount: '10.0'
+                  display_discounted_amount: "$10.00"
+                  display_compare_at_amount: "$0.00"
+                  created_at: '2026-02-05T21:39:07.664Z'
+                  updated_at: '2026-02-05T21:39:07.664Z'
+                  compare_at_amount:
+                  thumbnail_url:
+                  option_values: []
+                payment_methods: []
               schema:
                 type: object
                 allOf:
@@ -450,6 +697,10 @@ paths:
           description: no cart found
           content:
             application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: No cart found. Create one with POST /orders
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/store/cart/associate":
@@ -493,6 +744,66 @@ paths:
           description: cart associated successfully
           content:
             application/json:
+              example:
+                id: or_kxU4hsP42TRLEdEC0u512pDV
+                number: R427984794
+                state: cart
+                token: ogLnnWaoTFaJaJXPiGW3eP1QDcjefTzEqKW
+                email: alejandro.herzog@jacobidickens.ca
+                special_instructions:
+                currency: USD
+                item_count: 1
+                shipment_state:
+                payment_state:
+                item_total: '10.0'
+                display_item_total: "$10.00"
+                ship_total: '100.0'
+                display_ship_total: "$100.00"
+                adjustment_total: '0.0'
+                display_adjustment_total: "$0.00"
+                promo_total: '0.0'
+                display_promo_total: "$0.00"
+                tax_total: '0.0'
+                display_tax_total: "$0.00"
+                included_tax_total: '0.0'
+                display_included_tax_total: "$0.00"
+                additional_tax_total: '0.0'
+                display_additional_tax_total: "$0.00"
+                total: '110.0'
+                display_total: "$110.00"
+                completed_at:
+                created_at: '2026-02-05T21:39:07.725Z'
+                updated_at: '2026-02-05T21:39:07.815Z'
+                line_items:
+                - id: li_vA09vWKiqZHaXE89JNbg0aDF
+                  variant_id: variant_nnmBYyp4rjdCGHfGtaUUnu5K
+                  quantity: 1
+                  name: Product 31139
+                  slug: product-31139
+                  options_text: ''
+                  price: '10.0'
+                  display_price: "$10.00"
+                  total: '10.0'
+                  display_total: "$10.00"
+                  adjustment_total: '0.0'
+                  display_adjustment_total: "$0.00"
+                  additional_tax_total: '0.0'
+                  display_additional_tax_total: "$0.00"
+                  included_tax_total: '0.0'
+                  display_included_tax_total: "$0.00"
+                  promo_total: '0.0'
+                  display_promo_total: "$0.00"
+                  pre_tax_amount: '10.0'
+                  display_pre_tax_amount: "$10.00"
+                  discounted_amount: '10.0'
+                  display_discounted_amount: "$10.00"
+                  display_compare_at_amount: "$0.00"
+                  created_at: '2026-02-05T21:39:07.777Z'
+                  updated_at: '2026-02-05T21:39:07.777Z'
+                  compare_at_amount:
+                  thumbnail_url:
+                  option_values: []
+                payment_methods: []
               schema:
                 type: object
                 allOf:
@@ -505,24 +816,40 @@ paths:
           description: unauthorized - JWT required
           content:
             application/json:
+              example:
+                error:
+                  code: authentication_required
+                  message: Authentication required
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
         '403':
           description: cart belongs to another user
           content:
             application/json:
+              example:
+                error:
+                  code: access_denied
+                  message: This cart belongs to another user
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
         '404':
           description: cart not found
           content:
             application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Cart not found. Provide a valid order token.
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
         '422':
           description: cart already completed
           content:
             application/json:
+              example:
+                error:
+                  code: order_already_completed
+                  message: Cannot associate a completed order
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/store/countries":
@@ -545,6 +872,22 @@ paths:
           description: countries found
           content:
             application/json:
+              example:
+                data:
+                - iso: DE
+                  iso3: IS10
+                  name: Germany
+                  states_required: false
+                  zipcode_required: true
+                  default_currency: EUR
+                  default_locale: de
+                - iso: US
+                  iso3: USA
+                  name: United States of America
+                  states_required: true
+                  zipcode_required: true
+                  default_currency: USD
+                  default_locale: en
               schema:
                 type: object
                 properties:
@@ -577,6 +920,10 @@ paths:
           description: unauthorized
           content:
             application/json:
+              example:
+                error:
+                  code: invalid_token
+                  message: Valid API key required
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/store/countries/{iso}":
@@ -604,6 +951,19 @@ paths:
           description: country found
           content:
             application/json:
+              example:
+                iso: US
+                iso3: USA
+                name: United States of America
+                states_required: true
+                zipcode_required: true
+                default_currency: USD
+                default_locale: en
+                states:
+                - abbr: CA
+                  name: California
+                - abbr: NY
+                  name: New York
               schema:
                 type: object
                 properties:
@@ -643,6 +1003,10 @@ paths:
           description: country not found
           content:
             application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Country not found
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/store/customer":
@@ -671,12 +1035,86 @@ paths:
           description: profile found
           content:
             application/json:
+              example:
+                id: cus_y5I2z14lEfya9KeNJhrnr7QO
+                email: chara@cassin.biz
+                first_name: Wendolyn
+                last_name: Crist
+                created_at: '2026-02-05T21:39:13.340Z'
+                updated_at: '2026-02-05T21:39:14.166Z'
+                addresses:
+                - id: addr_Vw0TdtwtjKXdOef96Dmf4F5R
+                  firstname: John
+                  lastname: Doe
+                  full_name: John Doe
+                  address1: 51 Lovely Street
+                  address2: Northwest
+                  city: Herndon
+                  zipcode: '35005'
+                  phone: 555-555-0199
+                  company: Company
+                  country_name: United States of America
+                  country_iso: US
+                  state_text: STATE_ABBR_51
+                  state_abbr: STATE_ABBR_51
+                  state_name: STATE_NAME_51
+                - id: addr_SwlkEd3TnidMuqsVifoRqcnQ
+                  firstname: John
+                  lastname: Doe
+                  full_name: John Doe
+                  address1: 50 Lovely Street
+                  address2: Northwest
+                  city: Herndon
+                  zipcode: '35005'
+                  phone: 555-555-0199
+                  company: Company
+                  country_name: United States of America
+                  country_iso: US
+                  state_text: STATE_ABBR_50
+                  state_abbr: STATE_ABBR_50
+                  state_name: STATE_NAME_50
+                default_billing_address:
+                  id: addr_Vw0TdtwtjKXdOef96Dmf4F5R
+                  firstname: John
+                  lastname: Doe
+                  full_name: John Doe
+                  address1: 51 Lovely Street
+                  address2: Northwest
+                  city: Herndon
+                  zipcode: '35005'
+                  phone: 555-555-0199
+                  company: Company
+                  country_name: United States of America
+                  country_iso: US
+                  state_text: STATE_ABBR_51
+                  state_abbr: STATE_ABBR_51
+                  state_name: STATE_NAME_51
+                default_shipping_address:
+                  id: addr_SwlkEd3TnidMuqsVifoRqcnQ
+                  firstname: John
+                  lastname: Doe
+                  full_name: John Doe
+                  address1: 50 Lovely Street
+                  address2: Northwest
+                  city: Herndon
+                  zipcode: '35005'
+                  phone: 555-555-0199
+                  company: Company
+                  country_name: United States of America
+                  country_iso: US
+                  state_text: STATE_ABBR_50
+                  state_abbr: STATE_ABBR_50
+                  state_name: STATE_NAME_50
               schema:
                 "$ref": "#/components/schemas/StoreUser"
         '401':
           description: unauthorized - invalid token
           content:
             application/json:
+              example:
+                error:
+                  code: authentication_required
+                  message: Authentication required
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
     patch:
@@ -703,12 +1141,89 @@ paths:
           description: profile updated
           content:
             application/json:
+              example:
+                id: cus_IDHQvNQKbKZQwc4RAtNsSsZU
+                email: cleotilde_oconnell@christiansen.info
+                first_name: Updated
+                last_name: Name
+                created_at: '2026-02-05T21:39:14.472Z'
+                updated_at: '2026-02-05T21:39:15.369Z'
+                addresses:
+                - id: addr_f0qapxOMO3D7Z7agELgAzHjV
+                  firstname: John
+                  lastname: Doe
+                  full_name: John Doe
+                  address1: 53 Lovely Street
+                  address2: Northwest
+                  city: Herndon
+                  zipcode: '35005'
+                  phone: 555-555-0199
+                  company: Company
+                  country_name: United States of America
+                  country_iso: US
+                  state_text: STATE_ABBR_53
+                  state_abbr: STATE_ABBR_53
+                  state_name: STATE_NAME_53
+                - id: addr_UBieKdHTsqJgS8vtUs3ImjJE
+                  firstname: John
+                  lastname: Doe
+                  full_name: John Doe
+                  address1: 52 Lovely Street
+                  address2: Northwest
+                  city: Herndon
+                  zipcode: '35005'
+                  phone: 555-555-0199
+                  company: Company
+                  country_name: United States of America
+                  country_iso: US
+                  state_text: STATE_ABBR_52
+                  state_abbr: STATE_ABBR_52
+                  state_name: STATE_NAME_52
+                default_billing_address:
+                  id: addr_f0qapxOMO3D7Z7agELgAzHjV
+                  firstname: John
+                  lastname: Doe
+                  full_name: John Doe
+                  address1: 53 Lovely Street
+                  address2: Northwest
+                  city: Herndon
+                  zipcode: '35005'
+                  phone: 555-555-0199
+                  company: Company
+                  country_name: United States of America
+                  country_iso: US
+                  state_text: STATE_ABBR_53
+                  state_abbr: STATE_ABBR_53
+                  state_name: STATE_NAME_53
+                default_shipping_address:
+                  id: addr_UBieKdHTsqJgS8vtUs3ImjJE
+                  firstname: John
+                  lastname: Doe
+                  full_name: John Doe
+                  address1: 52 Lovely Street
+                  address2: Northwest
+                  city: Herndon
+                  zipcode: '35005'
+                  phone: 555-555-0199
+                  company: Company
+                  country_name: United States of America
+                  country_iso: US
+                  state_text: STATE_ABBR_52
+                  state_abbr: STATE_ABBR_52
+                  state_name: STATE_NAME_52
               schema:
                 "$ref": "#/components/schemas/StoreUser"
         '422':
           description: validation error
           content:
             application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: Email can't be blank
+                  details:
+                    email:
+                    - can't be blank
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -767,12 +1282,45 @@ paths:
           description: line item created
           content:
             application/json:
+              example:
+                id: li_paUhTbiT5I0DCSBaRgzHmFAw
+                variant_id: variant_s96eJI4VcnD6kCajARPxJqWX
+                quantity: 2
+                name: Product 91389
+                slug: product-91389
+                options_text: ''
+                price: '19.99'
+                display_price: "$19.99"
+                total: '39.98'
+                display_total: "$39.98"
+                adjustment_total: '0.0'
+                display_adjustment_total: "$0.00"
+                additional_tax_total: '0.0'
+                display_additional_tax_total: "$0.00"
+                included_tax_total: '0.0'
+                display_included_tax_total: "$0.00"
+                promo_total: '0.0'
+                display_promo_total: "$0.00"
+                pre_tax_amount: '39.98'
+                display_pre_tax_amount: "$39.98"
+                discounted_amount: '39.98'
+                display_discounted_amount: "$39.98"
+                display_compare_at_amount: "$0.00"
+                created_at: '2026-02-05T21:39:18.044Z'
+                updated_at: '2026-02-05T21:39:18.044Z'
+                compare_at_amount:
+                thumbnail_url:
+                option_values: []
               schema:
                 "$ref": "#/components/schemas/StoreLineItem"
         '404':
           description: order not found
           content:
             application/json:
+              example:
+                error:
+                  code: order_not_found
+                  message: Order not found
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -830,6 +1378,35 @@ paths:
           description: line item updated
           content:
             application/json:
+              example:
+                id: li_jgnakdHyVmLsOvoLaAAdm6fk
+                variant_id: variant_Z0KZPgKxUdBh9AXX8BWFx9Eh
+                quantity: 5
+                name: Product 149764
+                slug: product-149764
+                options_text: ''
+                price: '19.99'
+                display_price: "$19.99"
+                total: '99.95'
+                display_total: "$99.95"
+                adjustment_total: '0.0'
+                display_adjustment_total: "$0.00"
+                additional_tax_total: '0.0'
+                display_additional_tax_total: "$0.00"
+                included_tax_total: '0.0'
+                display_included_tax_total: "$0.00"
+                promo_total: '0.0'
+                display_promo_total: "$0.00"
+                pre_tax_amount: '99.95'
+                display_pre_tax_amount: "$99.95"
+                discounted_amount: '99.95'
+                display_discounted_amount: "$99.95"
+                display_compare_at_amount: "$0.00"
+                created_at: '2026-02-05T21:39:21.758Z'
+                updated_at: '2026-02-05T21:39:21.782Z'
+                compare_at_amount:
+                thumbnail_url:
+                option_values: []
               schema:
                 "$ref": "#/components/schemas/StoreLineItem"
       requestBody:
@@ -884,6 +1461,10 @@ paths:
           description: line item not found
           content:
             application/json:
+              example:
+                error:
+                  code: line_item_not_found
+                  message: Line item not found
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/store/orders":
@@ -933,6 +1514,48 @@ paths:
           description: orders found
           content:
             application/json:
+              example:
+                data:
+                - id: or_JjLPP8OL7sIdVcnbIaQAUhNW
+                  number: R168592461
+                  state: cart
+                  token: sdxGVgT8zy51xR3ToZaPs5yHEMAkiodLnRb
+                  email: sunday.powlowski@ankunding.us
+                  special_instructions:
+                  currency: USD
+                  item_count: 1
+                  shipment_state:
+                  payment_state:
+                  item_total: '10.0'
+                  display_item_total: "$10.00"
+                  ship_total: '100.0'
+                  display_ship_total: "$100.00"
+                  adjustment_total: '0.0'
+                  display_adjustment_total: "$0.00"
+                  promo_total: '0.0'
+                  display_promo_total: "$0.00"
+                  tax_total: '0.0'
+                  display_tax_total: "$0.00"
+                  included_tax_total: '0.0'
+                  display_included_tax_total: "$0.00"
+                  additional_tax_total: '0.0'
+                  display_additional_tax_total: "$0.00"
+                  total: '110.0'
+                  display_total: "$110.00"
+                  completed_at:
+                  created_at: '2026-02-05T21:39:25.369Z'
+                  updated_at: '2026-02-05T21:39:25.468Z'
+                  payment_methods: []
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
               schema:
                 type: object
                 properties:
@@ -946,6 +1569,10 @@ paths:
           description: unauthorized - authentication required
           content:
             application/json:
+              example:
+                error:
+                  code: authentication_required
+                  message: Authentication required
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
     post:
@@ -974,6 +1601,38 @@ paths:
           description: cart created (authenticated)
           content:
             application/json:
+              example:
+                id: or_EkyWYzIRHvf4DZX10gbjBc9Q
+                number: R981206315
+                state: cart
+                token: hzq1xDijsfr1gh3ab8wnN5R7SfnLt3bpQ25
+                email: hana@dibbertstoltenberg.name
+                special_instructions:
+                currency: USD
+                item_count: 0
+                shipment_state:
+                payment_state:
+                item_total: '0.0'
+                display_item_total: "$0.00"
+                ship_total: '0.0'
+                display_ship_total: "$0.00"
+                adjustment_total: '0.0'
+                display_adjustment_total: "$0.00"
+                promo_total: '0.0'
+                display_promo_total: "$0.00"
+                tax_total: '0.0'
+                display_tax_total: "$0.00"
+                included_tax_total: '0.0'
+                display_included_tax_total: "$0.00"
+                additional_tax_total: '0.0'
+                display_additional_tax_total: "$0.00"
+                total: '0.0'
+                display_total: "$0.00"
+                completed_at:
+                created_at: '2026-02-05T21:39:28.982Z'
+                updated_at: '2026-02-05T21:39:28.982Z'
+                payment_methods: []
+                order_token: hzq1xDijsfr1gh3ab8wnN5R7SfnLt3bpQ25
               schema:
                 type: object
                 allOf:
@@ -986,6 +1645,10 @@ paths:
           description: unauthorized - invalid API key
           content:
             application/json:
+              example:
+                error:
+                  code: invalid_token
+                  message: Valid API key required
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/store/orders/{id}":
@@ -1031,18 +1694,57 @@ paths:
           description: order found (guest with token)
           content:
             application/json:
+              example:
+                id: or_PU8qs9vLDsmpIEGU54o099nj
+                number: R432819146
+                state: cart
+                token: VTciRrvPjBXNDWsZ4A59yxrqvBHNZH96PHY
+                email:
+                special_instructions:
+                currency: USD
+                item_count: 1
+                shipment_state:
+                payment_state:
+                item_total: '10.0'
+                display_item_total: "$10.00"
+                ship_total: '100.0'
+                display_ship_total: "$100.00"
+                adjustment_total: '0.0'
+                display_adjustment_total: "$0.00"
+                promo_total: '0.0'
+                display_promo_total: "$0.00"
+                tax_total: '0.0'
+                display_tax_total: "$0.00"
+                included_tax_total: '0.0'
+                display_included_tax_total: "$0.00"
+                additional_tax_total: '0.0'
+                display_additional_tax_total: "$0.00"
+                total: '110.0'
+                display_total: "$110.00"
+                completed_at:
+                created_at: '2026-02-05T21:39:32.518Z'
+                updated_at: '2026-02-05T21:39:32.611Z'
+                payment_methods: []
               schema:
                 "$ref": "#/components/schemas/StoreOrder"
         '404':
           description: order not found
           content:
             application/json:
+              example:
+                error:
+                  code: order_not_found
+                  message: Order not found
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
         '403':
           description: forbidden - order belongs to another user
           content:
             application/json:
+              example:
+                error:
+                  code: access_denied
+                  message: You are not authorized to access this page.
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
     patch:
@@ -1079,12 +1781,47 @@ paths:
           description: order updated
           content:
             application/json:
+              example:
+                id: or_kkAa9nXCT7sBTwV1PCQVwrv7
+                number: R085276800
+                state: cart
+                token: fGoThxfgUagFDpCPnUQdnoiWpAZmHdhCAie
+                email: alene_harvey@boehm.info
+                special_instructions: Leave at door
+                currency: USD
+                item_count: 1
+                shipment_state:
+                payment_state:
+                item_total: '10.0'
+                display_item_total: "$10.00"
+                ship_total: '100.0'
+                display_ship_total: "$100.00"
+                adjustment_total: '0.0'
+                display_adjustment_total: "$0.00"
+                promo_total: '0.0'
+                display_promo_total: "$0.00"
+                tax_total: '0.0'
+                display_tax_total: "$0.00"
+                included_tax_total: '0.0'
+                display_included_tax_total: "$0.00"
+                additional_tax_total: '0.0'
+                display_additional_tax_total: "$0.00"
+                total: '110.0'
+                display_total: "$110.00"
+                completed_at:
+                created_at: '2026-02-05T21:39:36.305Z'
+                updated_at: '2026-02-05T21:39:36.408Z'
+                payment_methods: []
               schema:
                 "$ref": "#/components/schemas/StoreOrder"
         '403':
           description: cannot update completed order
           content:
             application/json:
+              example:
+                error:
+                  code: access_denied
+                  message: You are not authorized to access this page.
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -1137,12 +1874,48 @@ paths:
           description: order advanced
           content:
             application/json:
+              example:
+                id: or_2wsTZEAkPSEShk2vEoMkKo26
+                number: R289557041
+                state: address
+                token: YgmSojjFLHFFvCxqdMZoxxS3yxcm9AEEoUJ
+                email: tam@roob.com
+                special_instructions:
+                currency: USD
+                item_count: 1
+                shipment_state:
+                payment_state:
+                item_total: '10.0'
+                display_item_total: "$10.00"
+                ship_total: '100.0'
+                display_ship_total: "$100.00"
+                adjustment_total: '0.0'
+                display_adjustment_total: "$0.00"
+                promo_total: '0.0'
+                display_promo_total: "$0.00"
+                tax_total: '0.0'
+                display_tax_total: "$0.00"
+                included_tax_total: '0.0'
+                display_included_tax_total: "$0.00"
+                additional_tax_total: '0.0'
+                display_additional_tax_total: "$0.00"
+                total: '110.0'
+                display_total: "$110.00"
+                completed_at:
+                created_at: '2026-02-05T21:39:38.957Z'
+                updated_at: '2026-02-05T21:39:39.048Z'
+                payment_methods: []
               schema:
                 "$ref": "#/components/schemas/StoreOrder"
         '422':
           description: cannot advance - validation errors
           content:
             application/json:
+              example:
+                error:
+                  code: order_cannot_transition
+                  message: We are unable to calculate shipping rates for the selected
+                    items.
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/store/orders/{id}/advance":
@@ -1180,6 +1953,37 @@ paths:
           description: order advanced
           content:
             application/json:
+              example:
+                id: or_wifTjuFr0sGipnxyirkFZyPQ
+                number: R873121670
+                state: payment
+                token: pgemNrNh6BjciG69gsfwJaZ3X9pGYUzZ6Gj
+                email: lavonda_flatley@becker.info
+                special_instructions:
+                currency: USD
+                item_count: 1
+                shipment_state: backorder
+                payment_state: balance_due
+                item_total: '19.99'
+                display_item_total: "$19.99"
+                ship_total: '10.0'
+                display_ship_total: "$10.00"
+                adjustment_total: '0.0'
+                display_adjustment_total: "$0.00"
+                promo_total: '0.0'
+                display_promo_total: "$0.00"
+                tax_total: '0.0'
+                display_tax_total: "$0.00"
+                included_tax_total: '0.0'
+                display_included_tax_total: "$0.00"
+                additional_tax_total: '0.0'
+                display_additional_tax_total: "$0.00"
+                total: '29.99'
+                display_total: "$29.99"
+                completed_at:
+                created_at: '2026-02-05T21:39:41.410Z'
+                updated_at: '2026-02-05T21:39:41.596Z'
+                payment_methods: []
               schema:
                 "$ref": "#/components/schemas/StoreOrder"
   "/api/v3/store/orders/{id}/complete":
@@ -1217,12 +2021,55 @@ paths:
           description: order completed
           content:
             application/json:
+              example:
+                id: or_14YC1FQu7150X2PzTfVeFEHe
+                number: R257469826
+                state: complete
+                token: vLEeo3u6R3sKqvXwaj3WYbHdVoy66xjbmP4
+                email: evita@collier.name
+                special_instructions:
+                currency: USD
+                item_count: 1
+                shipment_state: backorder
+                payment_state: balance_due
+                item_total: '19.99'
+                display_item_total: "$19.99"
+                ship_total: '10.0'
+                display_ship_total: "$10.00"
+                adjustment_total: '0.0'
+                display_adjustment_total: "$0.00"
+                promo_total: '0.0'
+                display_promo_total: "$0.00"
+                tax_total: '0.0'
+                display_tax_total: "$0.00"
+                included_tax_total: '0.0'
+                display_included_tax_total: "$0.00"
+                additional_tax_total: '0.0'
+                display_additional_tax_total: "$0.00"
+                total: '29.99'
+                display_total: "$29.99"
+                completed_at: '2026-02-05T21:39:43.098Z'
+                created_at: '2026-02-05T21:39:42.781Z'
+                updated_at: '2026-02-05T21:39:43.098Z'
+                payment_methods:
+                - id: pm_319RELc4qmAXkQsT3GokSLYo
+                  name: Check
+                  description:
+                  type: Spree::PaymentMethod::Check
+                - id: pm_uXoofzTe7mhNO5obgsitfnHu
+                  name: Credit Card
+                  description:
+                  type: Spree::Gateway::Bogus
               schema:
                 "$ref": "#/components/schemas/StoreOrder"
         '422':
           description: cannot complete
           content:
             application/json:
+              example:
+                error:
+                  code: order_already_completed
+                  message: No payment found
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/store/orders/{order_id}/store_credits":
@@ -1260,12 +2107,51 @@ paths:
           description: store credit applied
           content:
             application/json:
+              example:
+                id: or_iX4tzcDkaOD7D65rgSKk1xeE
+                number: R842229179
+                state: cart
+                token: koyMLfNZaPt9hhxHA3fbDrhniMes8yCUB6i
+                email: tamika@reicheldurgan.biz
+                special_instructions:
+                currency: USD
+                item_count: 1
+                shipment_state:
+                payment_state:
+                item_total: '10.0'
+                display_item_total: "$10.00"
+                ship_total: '100.0'
+                display_ship_total: "$100.00"
+                adjustment_total: '0.0'
+                display_adjustment_total: "$0.00"
+                promo_total: '0.0'
+                display_promo_total: "$0.00"
+                tax_total: '0.0'
+                display_tax_total: "$0.00"
+                included_tax_total: '0.0'
+                display_included_tax_total: "$0.00"
+                additional_tax_total: '0.0'
+                display_additional_tax_total: "$0.00"
+                total: '110.0'
+                display_total: "$110.00"
+                completed_at:
+                created_at: '2026-02-05T21:39:45.624Z'
+                updated_at: '2026-02-05T21:39:46.081Z'
+                payment_methods:
+                - id: pm_7EKCirI3a8ZjY4q4vA1WpMH3
+                  name: Store Credit
+                  description: Store Credit
+                  type: Spree::PaymentMethod::StoreCredit
               schema:
                 "$ref": "#/components/schemas/StoreOrder"
         '422':
           description: no store credit available
           content:
             application/json:
+              example:
+                error:
+                  code: processing_error
+                  message: User does not have any Store Credits available
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -1311,6 +2197,37 @@ paths:
           description: store credit removed
           content:
             application/json:
+              example:
+                id: or_DDTUVeC4PQEqxAUq96TTZxhR
+                number: R704674437
+                state: cart
+                token: n9Nh4X51WBmBq18L4qD1KTCkGEpjNKXX8QV
+                email: brianna@hilpertfranecki.co.uk
+                special_instructions:
+                currency: USD
+                item_count: 1
+                shipment_state:
+                payment_state:
+                item_total: '10.0'
+                display_item_total: "$10.00"
+                ship_total: '100.0'
+                display_ship_total: "$100.00"
+                adjustment_total: '0.0'
+                display_adjustment_total: "$0.00"
+                promo_total: '0.0'
+                display_promo_total: "$0.00"
+                tax_total: '0.0'
+                display_tax_total: "$0.00"
+                included_tax_total: '0.0'
+                display_included_tax_total: "$0.00"
+                additional_tax_total: '0.0'
+                display_additional_tax_total: "$0.00"
+                total: '110.0'
+                display_total: "$110.00"
+                completed_at:
+                created_at: '2026-02-05T21:39:48.440Z'
+                updated_at: '2026-02-05T21:39:48.557Z'
+                payment_methods: []
               schema:
                 "$ref": "#/components/schemas/StoreOrder"
   "/api/v3/store/orders/{order_id}/payment_methods":
@@ -1349,6 +2266,14 @@ paths:
           description: payment methods found
           content:
             application/json:
+              example:
+                data:
+                - id: pm_oGzpoJWcsY0OlEW7AdhO5QMS
+                  name: Credit Card
+                  description:
+                  type: Spree::Gateway::Bogus
+                meta:
+                  count: 1
               schema:
                 type: object
                 properties:
@@ -1365,12 +2290,20 @@ paths:
           description: order not found
           content:
             application/json:
+              example:
+                error:
+                  code: order_not_found
+                  message: Order not found
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
         '401':
           description: unauthorized
           content:
             application/json:
+              example:
+                error:
+                  code: invalid_token
+                  message: Valid API key required
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/store/orders/{order_id}/payments":
@@ -1404,6 +2337,23 @@ paths:
           description: payments found
           content:
             application/json:
+              example:
+                data:
+                - id: py_z3S4D6woNnOBIozAN9gE4QZ9
+                  payment_method_id: pm_jG7yvUSkTlMYLgYtPravk5ca
+                  state: checkout
+                  response_code: '12345'
+                  number: PB1FBY2D
+                  amount: '110.0'
+                  display_amount: "$110.00"
+                  created_at: '2026-02-05T21:39:51.275Z'
+                  updated_at: '2026-02-05T21:39:51.275Z'
+                  payment_method:
+                    id: pm_jG7yvUSkTlMYLgYtPravk5ca
+                    name: Credit Card
+                    description:
+                    type: Spree::Gateway::Bogus
+                meta: {}
               schema:
                 type: object
                 properties:
@@ -1417,6 +2367,10 @@ paths:
           description: order not found
           content:
             application/json:
+              example:
+                error:
+                  code: order_not_found
+                  message: Order not found
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/store/orders/{order_id}/payments/{id}":
@@ -1456,12 +2410,31 @@ paths:
           description: payment found
           content:
             application/json:
+              example:
+                id: py_iDgOzCsxd9OZwRI2TOzqhSQh
+                payment_method_id: pm_O0nNGhhF2qozkdwdCpXsVFpe
+                state: checkout
+                response_code: '12345'
+                number: PFJAZVVN
+                amount: '110.0'
+                display_amount: "$110.00"
+                created_at: '2026-02-05T21:39:53.659Z'
+                updated_at: '2026-02-05T21:39:53.659Z'
+                payment_method:
+                  id: pm_O0nNGhhF2qozkdwdCpXsVFpe
+                  name: Credit Card
+                  description:
+                  type: Spree::Gateway::Bogus
               schema:
                 "$ref": "#/components/schemas/StorePayment"
         '404':
           description: payment not found
           content:
             application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Payment not found
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/store/products":
@@ -1515,6 +2488,80 @@ paths:
           description: products found
           content:
             application/json:
+              example:
+                data:
+                - id: prod_OUqcFci8kNAljUiHyFlwjQeo
+                  name: Product 526647
+                  description: |-
+                    Delectus totam ducimus autem quaerat quo ab. Deserunt debitis quibusdam totam dicta quidem dolorem. Est ratione unde iure atque possimus earum alias.
+                    Voluptas nam in minima praesentium quod atque magni omnis. Optio quae officiis excepturi ullam omnis. Eos sunt similique possimus at. Voluptatibus culpa modi architecto ipsam voluptas quaerat. Illum libero velit ullam sint dolorem magni.
+                    Adipisci veritatis provident reiciendis nobis occaecati voluptatem. Perspiciatis sapiente temporibus fuga delectus. Accusamus quasi excepturi similique id minus ea blanditiis.
+                  slug: product-526647
+                  meta_description:
+                  meta_keywords:
+                  variant_count: 0
+                  available_on: '2025-02-05T21:39:55.007Z'
+                  created_at: '2026-02-05T21:39:55.021Z'
+                  updated_at: '2026-02-05T21:39:55.044Z'
+                  purchasable: true
+                  in_stock: false
+                  backorderable: true
+                  available: true
+                  default_variant_id: variant_AUhdaBAGGNgTAVFwrwzI1vWW
+                  thumbnail_url:
+                  tags: []
+                  price:
+                    id: price_C2wLKZKczokb36UvwzQ5vJVP
+                    amount: '19.99'
+                    amount_in_cents: 1999
+                    compare_at_amount:
+                    compare_at_amount_in_cents:
+                    currency: USD
+                    display_amount: "$19.99"
+                    display_compare_at_amount:
+                    price_list_id:
+                  original_price:
+                - id: prod_afgmxX97XrsA3qegVOpnSVq4
+                  name: Product 531740
+                  description: |-
+                    Amet aut sequi quibusdam consectetur. Minus delectus possimus officia repellendus laboriosam nulla harum. Saepe aliquam aspernatur aperiam corrupti ex eveniet.
+                    Enim nemo expedita provident illum fugit. Dolore quisquam fugit expedita eaque alias voluptas debitis quod. Impedit debitis omnis deleniti cupiditate provident maxime occaecati soluta.
+                    Quam esse cumque eos cum quidem distinctio modi libero. Aspernatur magni id cum voluptatem doloremque totam porro. Illo necessitatibus adipisci repellendus illum nobis.
+                  slug: product-531740
+                  meta_description:
+                  meta_keywords:
+                  variant_count: 0
+                  available_on: '2025-02-05T21:39:55.059Z'
+                  created_at: '2026-02-05T21:39:55.067Z'
+                  updated_at: '2026-02-05T21:39:55.086Z'
+                  purchasable: true
+                  in_stock: false
+                  backorderable: true
+                  available: true
+                  default_variant_id: variant_nXYwbzyuvAFUfULzf3feK7XN
+                  thumbnail_url:
+                  tags: []
+                  price:
+                    id: price_monibfOi0zqYt1CCweNPcsBa
+                    amount: '19.99'
+                    amount_in_cents: 1999
+                    compare_at_amount:
+                    compare_at_amount_in_cents:
+                    currency: USD
+                    display_amount: "$19.99"
+                    display_compare_at_amount:
+                    price_list_id:
+                  original_price:
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 2
+                  pages: 1
+                  from: 1
+                  to: 2
+                  in: 2
+                  previous:
+                  next:
               schema:
                 type: object
                 properties:
@@ -1531,6 +2578,10 @@ paths:
           description: unauthorized - invalid or missing API key
           content:
             application/json:
+              example:
+                error:
+                  code: invalid_token
+                  message: Valid API key required
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/store/products/{id}":
@@ -1565,12 +2616,47 @@ paths:
           description: product found by prefix ID
           content:
             application/json:
+              example:
+                id: prod_TZlHZ0MveE1IEzZaDMFhhwPt
+                name: Product 647649
+                description: |-
+                  Necessitatibus deserunt animi saepe commodi laborum sequi earum. A atque neque voluptatum quas reprehenderit veritatis. Maiores nostrum possimus accusamus exercitationem ducimus officiis suscipit distinctio. Beatae expedita itaque nihil iusto. Officiis aut aliquam voluptate nam rem ea consectetur eius.
+                  Dolore consectetur labore facere saepe mollitia dicta maxime. Nam dignissimos assumenda nesciunt quidem. Iure repellendus molestiae non magnam culpa id odit officiis.
+                slug: product-647649
+                meta_description:
+                meta_keywords:
+                variant_count: 0
+                available_on: '2025-02-05T21:39:55.995Z'
+                created_at: '2026-02-05T21:39:56.009Z'
+                updated_at: '2026-02-05T21:39:56.033Z'
+                purchasable: true
+                in_stock: false
+                backorderable: true
+                available: true
+                default_variant_id: variant_DSyDVCV86UU5GjpgL4CRfW5p
+                thumbnail_url:
+                tags: []
+                price:
+                  id: price_GsWbnfWsWmJcpvBgZXnyGQj1
+                  amount: '19.99'
+                  amount_in_cents: 1999
+                  compare_at_amount:
+                  compare_at_amount_in_cents:
+                  currency: USD
+                  display_amount: "$19.99"
+                  display_compare_at_amount:
+                  price_list_id:
+                original_price:
               schema:
                 "$ref": "#/components/schemas/StoreProduct"
         '404':
           description: draft product not visible
           content:
             application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Product not found
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/store/orders/{order_id}/shipments":
@@ -1609,6 +2695,53 @@ paths:
           description: shipments found
           content:
             application/json:
+              example:
+                data:
+                - id: ship_apq88hjGNdgDPYlc9c5czoHW
+                  number: H47265037167
+                  state: pending
+                  tracking: U10000
+                  tracking_url:
+                  cost: '100.0'
+                  display_cost: "$100.00"
+                  shipped_at:
+                  created_at: '2026-02-05T21:39:58.573Z'
+                  updated_at: '2026-02-05T21:39:58.591Z'
+                  shipping_method:
+                    id: shpm_YDzIRhhzEuexTyWWzAHRBPiZ
+                    name: UPS Ground
+                    code: UPS_GROUND
+                  stock_location:
+                    id: sloc_LJH6dNfV68JB1MaoChuYaZQ9
+                    state_abbr: STATE_ABBR_192
+                    name: Kyle Jast
+                    address1: 1600 Pennsylvania Ave NW
+                    city: Washington
+                    zipcode: '20500'
+                    country_iso: US
+                    country_name: United States of America
+                    state_text: STATE_ABBR_192
+                  shipping_rates:
+                  - id: shpr_staLcvBA3XNOZf55SgG6oRdt
+                    shipping_method_id: shpm_YDzIRhhzEuexTyWWzAHRBPiZ
+                    name: UPS Ground
+                    selected: true
+                    cost: 100.0
+                    display_cost: "$100.00"
+                    shipping_method:
+                      id: shpm_YDzIRhhzEuexTyWWzAHRBPiZ
+                      name: UPS Ground
+                      code: UPS_GROUND
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
               schema:
                 type: object
                 properties:
@@ -1622,6 +2755,10 @@ paths:
           description: order not found
           content:
             application/json:
+              example:
+                error:
+                  code: order_not_found
+                  message: Order not found
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/store/orders/{order_id}/shipments/{id}":
@@ -1672,12 +2809,52 @@ paths:
           description: shipment found
           content:
             application/json:
+              example:
+                id: ship_A3ehqpdhWqzD3BFxHmnn2txo
+                number: H66525634131
+                state: pending
+                tracking: U10000
+                tracking_url:
+                cost: '100.0'
+                display_cost: "$100.00"
+                shipped_at:
+                created_at: '2026-02-05T21:40:00.927Z'
+                updated_at: '2026-02-05T21:40:00.947Z'
+                shipping_method:
+                  id: shpm_snafxAFCyPgNwLfNF4jWXeWx
+                  name: UPS Ground
+                  code: UPS_GROUND
+                stock_location:
+                  id: sloc_TDK4rkPGr4H7KEiEHrybppFr
+                  state_abbr: STATE_ABBR_200
+                  name: Ellamae Rempel
+                  address1: 1600 Pennsylvania Ave NW
+                  city: Washington
+                  zipcode: '20500'
+                  country_iso: US
+                  country_name: United States of America
+                  state_text: STATE_ABBR_200
+                shipping_rates:
+                - id: shpr_0pgPCNQfSWPERVgeQRmb4DMO
+                  shipping_method_id: shpm_snafxAFCyPgNwLfNF4jWXeWx
+                  name: UPS Ground
+                  selected: true
+                  cost: 100.0
+                  display_cost: "$100.00"
+                  shipping_method:
+                    id: shpm_snafxAFCyPgNwLfNF4jWXeWx
+                    name: UPS Ground
+                    code: UPS_GROUND
               schema:
                 "$ref": "#/components/schemas/StoreShipment"
         '404':
           description: shipment not found
           content:
             application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Shipment not found
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
     patch:
@@ -1721,12 +2898,52 @@ paths:
           description: shipping rate selected
           content:
             application/json:
+              example:
+                id: ship_aShjHhPRgC7JjdeKILQHHXgm
+                number: H22720944642
+                state: pending
+                tracking: U10000
+                tracking_url:
+                cost: '100.0'
+                display_cost: "$100.00"
+                shipped_at:
+                created_at: '2026-02-05T21:40:03.316Z'
+                updated_at: '2026-02-05T21:40:03.354Z'
+                shipping_method:
+                  id: shpm_uOvrIhxjRpLrFbg5Mzdmi3VZ
+                  name: UPS Ground
+                  code: UPS_GROUND
+                stock_location:
+                  id: sloc_Kh7Gmk4eJ6BabUfGVRwWntSi
+                  state_abbr: STATE_ABBR_208
+                  name: Yolanda Schulist
+                  address1: 1600 Pennsylvania Ave NW
+                  city: Washington
+                  zipcode: '20500'
+                  country_iso: US
+                  country_name: United States of America
+                  state_text: STATE_ABBR_208
+                shipping_rates:
+                - id: shpr_yEpYQjPFime2U1MmmHKLTjsn
+                  shipping_method_id: shpm_uOvrIhxjRpLrFbg5Mzdmi3VZ
+                  name: UPS Ground
+                  selected: true
+                  cost: 100.0
+                  display_cost: "$100.00"
+                  shipping_method:
+                    id: shpm_uOvrIhxjRpLrFbg5Mzdmi3VZ
+                    name: UPS Ground
+                    code: UPS_GROUND
               schema:
                 "$ref": "#/components/schemas/StoreShipment"
         '404':
           description: shipping rate not found
           content:
             application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Shipping rate not found
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -1759,12 +2976,44 @@ paths:
           description: store found
           content:
             application/json:
+              example:
+                id: store_ld9pB2X7kDT4da4O84QvcDOg
+                name: Spree Test Store
+                url: www.example.com
+                meta_description: Sample store description.
+                meta_keywords:
+                seo_title:
+                default_currency: USD
+                code: spree_19
+                default: true
+                facebook: spreecommerce
+                twitter: spreecommerce
+                instagram: spreecommerce
+                customer_support_email: support@example.com
+                default_locale: en
+                created_at: '2026-02-05T21:40:04.641Z'
+                updated_at: '2026-02-05T21:40:04.710Z'
+                default_country_iso: US
+                supported_currencies:
+                - USD
+                - EUR
+                - GBP
+                favicon_image_url:
+                logo_image_url:
+                social_image_url:
+                supported_locales:
+                - en
+                payment_methods: []
               schema:
                 "$ref": "#/components/schemas/StoreStore"
         '401':
           description: unauthorized - missing API key
           content:
             application/json:
+              example:
+                error:
+                  code: invalid_token
+                  message: Valid API key required
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/store/taxonomies":
@@ -1803,6 +3052,48 @@ paths:
           description: taxonomies found
           content:
             application/json:
+              example:
+                data:
+                - id: txnmy_OezbkZO6RTKTq4dxMOwOBy7H
+                  name: Categories
+                  position: 1
+                  created_at: '2026-02-05T21:40:04.791Z'
+                  updated_at: '2026-02-05T21:40:04.801Z'
+                  root_id: txn_4zNoEPdYX34GbKqdy9rrQkXG
+                - id: txnmy_CExRYAy8WUSP7Zgd8J5Sc7yA
+                  name: Brands
+                  position: 2
+                  created_at: '2026-02-05T21:40:04.802Z'
+                  updated_at: '2026-02-05T21:40:04.810Z'
+                  root_id: txn_K7RFxOO4XyGn3DRSg8QpFCqb
+                - id: txnmy_k1WAeYhWMrc3fKvkXLueXpqT
+                  name: Collections
+                  position: 3
+                  created_at: '2026-02-05T21:40:04.810Z'
+                  updated_at: '2026-02-05T21:40:04.871Z'
+                  root_id: txn_mZWCGX9m2Q9bPcZUuZuW029T
+                - id: txnmy_J3kmCaaDOyuhNmcdIGM95lMq
+                  name: taxonomy_1
+                  position: 4
+                  created_at: '2026-02-05T21:40:04.883Z'
+                  updated_at: '2026-02-05T21:40:04.892Z'
+                  root_id: txn_YA4o7ypt0Ezmv73rNRYaQiTf
+                - id: txnmy_Zun0EAfuoJkFn3owNGQrh2Uq
+                  name: taxonomy_2
+                  position: 5
+                  created_at: '2026-02-05T21:40:04.892Z'
+                  updated_at: '2026-02-05T21:40:04.900Z'
+                  root_id: txn_6MDBFM0PHXJCryEFtA0F8h1S
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 5
+                  pages: 1
+                  from: 1
+                  to: 5
+                  in: 5
+                  previous:
+                  next:
               schema:
                 type: object
                 properties:
@@ -1816,6 +3107,10 @@ paths:
           description: unauthorized
           content:
             application/json:
+              example:
+                error:
+                  code: invalid_token
+                  message: Valid API key required
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/store/taxonomies/{id}":
@@ -1849,12 +3144,23 @@ paths:
           description: taxonomy found
           content:
             application/json:
+              example:
+                id: txnmy_vWMQy17bA7RAdG4lPVCFm4GI
+                name: taxonomy_7
+                position: 4
+                created_at: '2026-02-05T21:40:05.179Z'
+                updated_at: '2026-02-05T21:40:05.189Z'
+                root_id: txn_3e16Srdgkk6DXRUcoypmRxrm
               schema:
                 "$ref": "#/components/schemas/StoreTaxonomy"
         '404':
           description: taxonomy from other store
           content:
             application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Taxonomy not found
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/store/taxons/{id}":
@@ -1889,18 +3195,47 @@ paths:
           description: taxon found by prefix ID
           content:
             application/json:
+              example:
+                id: txn_SYOADXdOqNHNgDHlpCdgeFP3
+                name: taxon_4
+                permalink: taxonomy-18/taxon-4
+                position: 0
+                depth: 1
+                meta_title:
+                meta_description:
+                meta_keywords:
+                children_count: 1
+                created_at: '2026-02-05T21:40:06.041Z'
+                updated_at: '2026-02-05T21:40:06.058Z'
+                parent_id: txn_0m2tqWaOJEXk3LhaFUrZmCER
+                taxonomy_id: txnmy_MBO5CJHtVU9nKxos17duOq9d
+                description: ''
+                description_html: ''
+                image_url:
+                square_image_url:
+                is_root: false
+                is_child: true
+                is_leaf: false
               schema:
                 "$ref": "#/components/schemas/StoreTaxon"
         '404':
           description: taxon from other store not accessible
           content:
             application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Taxon not found
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
         '401':
           description: unauthorized
           content:
             application/json:
+              example:
+                error:
+                  code: invalid_token
+                  message: Valid API key required
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/store/wishlists":
@@ -1938,6 +3273,25 @@ paths:
           description: wishlists found
           content:
             application/json:
+              example:
+                data:
+                - id: wl_pYV0NVBbc6xhgAC7VdzuzTBW
+                  name: My Wishlist
+                  token: GPyFDutc6NcqStpVF6hre79S
+                  created_at: '2026-02-05T21:40:08.009Z'
+                  updated_at: '2026-02-05T21:40:08.009Z'
+                  is_default: false
+                  is_private: true
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
               schema:
                 type: object
                 properties:
@@ -1951,6 +3305,10 @@ paths:
           description: unauthorized
           content:
             application/json:
+              example:
+                error:
+                  code: authentication_required
+                  message: Authentication required
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
     post:
@@ -1977,12 +3335,27 @@ paths:
           description: wishlist created
           content:
             application/json:
+              example:
+                id: wl_T9h98avaDv31GGQrayULh1jI
+                name: Birthday Ideas
+                token: n8SKGhTMEodrwXWi1WxDkCG5
+                created_at: '2026-02-05T21:40:10.336Z'
+                updated_at: '2026-02-05T21:40:10.336Z'
+                is_default: false
+                is_private: true
               schema:
                 "$ref": "#/components/schemas/StoreWishlist"
         '422':
           description: validation error
           content:
             application/json:
+              example:
+                error:
+                  code: validation_error
+                  message: Name can't be blank
+                  details:
+                    name:
+                    - can't be blank
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
       requestBody:
@@ -2034,12 +3407,24 @@ paths:
           description: wishlist found
           content:
             application/json:
+              example:
+                id: wl_EhhOwCUKNJrDv3f2qh2Srsws
+                name: My Wishlist
+                token: 3pqHxD33eos3R1uh63MdRYmV
+                created_at: '2026-02-05T21:40:12.559Z'
+                updated_at: '2026-02-05T21:40:12.559Z'
+                is_default: false
+                is_private: true
               schema:
                 "$ref": "#/components/schemas/StoreWishlist"
         '404':
           description: wishlist not found
           content:
             application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Wishlist not found
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
     patch:
@@ -2070,6 +3455,14 @@ paths:
           description: wishlist updated
           content:
             application/json:
+              example:
+                id: wl_RkLpYXKqp8ymmwzhiGjOUoY6
+                name: Updated Name
+                token: e5eV3c2rwP5fwNR275AZidkg
+                created_at: '2026-02-05T21:40:14.862Z'
+                updated_at: '2026-02-05T21:40:14.944Z'
+                is_default: false
+                is_private: true
               schema:
                 "$ref": "#/components/schemas/StoreWishlist"
       requestBody:
@@ -2140,6 +3533,43 @@ paths:
           description: item added
           content:
             application/json:
+              example:
+                id: wi_ztlpj15oMpq6AJCowEN5skWu
+                variant_id: variant_EZv1kHPnjyCs7qFpRMisjWM2
+                wishlist_id: wl_imIWoPbnJYRCShxnt1JU97Hl
+                quantity: 1
+                created_at: '2026-02-05T21:40:17.306Z'
+                updated_at: '2026-02-05T21:40:17.306Z'
+                variant:
+                  id: variant_EZv1kHPnjyCs7qFpRMisjWM2
+                  product_id: prod_O0Fx7FN4MzS5BQwlUpOpviiU
+                  sku: SKU-95
+                  is_master: true
+                  options_text: ''
+                  track_inventory: true
+                  image_count: 0
+                  created_at: '2026-02-05T21:40:17.266Z'
+                  updated_at: '2026-02-05T21:40:17.286Z'
+                  thumbnail:
+                  purchasable: true
+                  in_stock: false
+                  backorderable: true
+                  weight: 0.0
+                  height:
+                  width:
+                  depth:
+                  price:
+                    id: price_QCiuYGacH1DwmfbWN5aeP3Pp
+                    amount: '19.99'
+                    amount_in_cents: 1999
+                    compare_at_amount:
+                    compare_at_amount_in_cents:
+                    currency: USD
+                    display_amount: "$19.99"
+                    display_compare_at_amount:
+                    price_list_id:
+                  original_price:
+                  option_values: []
               schema:
                 "$ref": "#/components/schemas/StoreWishedItem"
       requestBody:
@@ -2188,6 +3618,12 @@ paths:
           description: item removed
         '404':
           description: item not found
+          content:
+            application/json:
+              example:
+                error:
+                  code: record_not_found
+                  message: Wished item not found
 servers:
 - url: http://{defaultHost}
   variables:
@@ -2273,16 +3709,28 @@ components:
               example: Record not found
             details:
               type: object
-              additionalProperties:
-                type: array
-                items:
-                  type: string
+              description: Field-specific validation errors
               nullable: true
+              example:
+                name:
+                - is too short
+                - is required
+                email:
+                - is invalid
           required:
           - code
           - message
       required:
       - error
+      example:
+        error:
+          code: validation_error
+          message: Validation failed
+          details:
+            name:
+            - is too short
+            email:
+            - is invalid
     AuthResponse:
       type: object
       properties:
@@ -2607,7 +4055,9 @@ components:
         price:
           "$ref": "#/components/schemas/StorePrice"
         original_price:
-          "$ref": "#/components/schemas/StorePrice"
+          allOf:
+          - "$ref": "#/components/schemas/StorePrice"
+          nullable: true
         images:
           type: array
           items:
@@ -2664,7 +4114,6 @@ components:
       - default_variant_id
       - tags
       - price
-      - original_price
       - status
     AdminTaxon:
       type: object
@@ -2897,7 +4346,9 @@ components:
         price:
           "$ref": "#/components/schemas/StorePrice"
         original_price:
-          "$ref": "#/components/schemas/StorePrice"
+          allOf:
+          - "$ref": "#/components/schemas/StorePrice"
+          nullable: true
         images:
           type: array
           items:
@@ -2945,7 +4396,6 @@ components:
       - in_stock
       - backorderable
       - price
-      - original_price
       - option_values
       - position
     StoreBase:
@@ -3044,6 +4494,62 @@ components:
       - authorizable
       - expired
       - access_limit_exceeded
+    StoreGiftCard:
+      type: object
+      properties:
+        id:
+          type: string
+        code:
+          type: string
+        state:
+          type: string
+        currency:
+          type: string
+        amount:
+          type: number
+        amount_used:
+          type: number
+        amount_authorized:
+          type: number
+        amount_remaining:
+          type: number
+        display_amount:
+          type: string
+        display_amount_used:
+          type: string
+        display_amount_remaining:
+          type: string
+        expires_at:
+          type: string
+          nullable: true
+        redeemed_at:
+          type: string
+          nullable: true
+        expired:
+          type: boolean
+        active:
+          type: boolean
+        created_at:
+          type: string
+        updated_at:
+          type: string
+      x-typelizer: true
+      required:
+      - id
+      - code
+      - state
+      - currency
+      - amount
+      - amount_used
+      - amount_authorized
+      - amount_remaining
+      - display_amount
+      - display_amount_used
+      - display_amount_remaining
+      - expired
+      - active
+      - created_at
+      - updated_at
     StoreImage:
       type: object
       properties:
@@ -3519,7 +5025,9 @@ components:
         price:
           "$ref": "#/components/schemas/StorePrice"
         original_price:
-          "$ref": "#/components/schemas/StorePrice"
+          allOf:
+          - "$ref": "#/components/schemas/StorePrice"
+          nullable: true
         images:
           type: array
           items:
@@ -3559,7 +5067,6 @@ components:
       - default_variant_id
       - tags
       - price
-      - original_price
     StoreShipment:
       type: object
       properties:
@@ -3963,7 +5470,9 @@ components:
         price:
           "$ref": "#/components/schemas/StorePrice"
         original_price:
-          "$ref": "#/components/schemas/StorePrice"
+          allOf:
+          - "$ref": "#/components/schemas/StorePrice"
+          nullable: true
         images:
           type: array
           items:
@@ -3990,7 +5499,6 @@ components:
       - in_stock
       - backorderable
       - price
-      - original_price
       - option_values
     StoreWishedItem:
       type: object
