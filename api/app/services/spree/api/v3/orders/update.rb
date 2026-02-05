@@ -41,21 +41,6 @@ module Spree
             ship_address_id
           ].freeze
 
-          PERMITTED_ADDRESS_PARAMS = %i[
-            id
-            firstname
-            lastname
-            address1
-            address2
-            city
-            zipcode
-            phone
-            company
-            country_iso
-            state_abbr
-            state_name
-          ].freeze
-
           def call(order:, params:)
             @order = order
             @params = params.to_h.deep_symbolize_keys
@@ -64,11 +49,9 @@ module Spree
 
             ApplicationRecord.transaction do
               update_currency if @params[:currency].present?
-              update_email if @params[:email].present?
-              update_special_instructions if @params[:special_instructions].present?
-              update_ship_address if @params[:ship_address].present?
-              update_bill_address if @params[:bill_address].present?
-              update_address_ids
+              update_order_attributes
+              update_address(:ship_address)
+              update_address(:bill_address)
 
               order.save!
             end
@@ -86,30 +69,29 @@ module Spree
 
           def validation_error
             @validation_error ||= begin
-              error = validate_currency
-              error ||= validate_address_ownership(:ship_address)
+              error = validate_address_ownership(:ship_address)
               error ||= validate_address_ownership(:bill_address)
               error
             end
           end
 
-          def validate_currency
-            new_currency = params[:currency]
-            return nil unless new_currency.present?
+          def validate_address_ownership(address_type)
+            # Check nested address params (ship_address: { id: ... })
+            address_params = params[address_type]
+            if address_params.is_a?(Hash) && address_params[:id].present?
+              return ownership_error_for(address_params[:id])
+            end
 
-            supported_currencies = order.store.supported_currencies_list.map(&:iso_code)
-            return nil if supported_currencies.include?(new_currency.upcase)
+            # Check top-level address ID (ship_address_id: ...)
+            address_id = params[:"#{address_type}_id"]
+            if address_id.present?
+              return ownership_error_for(address_id)
+            end
 
-            Spree.t(:currency_not_supported, currency: new_currency)
+            nil
           end
 
-          def validate_address_ownership(address_type)
-            address_params = params[address_type]
-            return nil unless address_params.is_a?(Hash)
-
-            address_id = address_params[:id]
-            return nil unless address_id.present?
-
+          def ownership_error_for(address_id)
             address = Spree::Address.find_by_prefix_id(address_id)
             return nil unless address
 
@@ -128,60 +110,55 @@ module Spree
             order.homogenize_line_item_currencies
           end
 
-          def update_email
-            order.email = params[:email]
+          def update_order_attributes
+            order.email = params[:email] if params[:email].present?
+            order.special_instructions = params[:special_instructions] if params[:special_instructions].present?
           end
 
-          def update_special_instructions
-            order.special_instructions = params[:special_instructions]
-          end
+          def update_address(address_type)
+            address_id_param = params[:"#{address_type}_id"]
+            address_params = params[address_type]
 
-          def update_ship_address
-            address_params = normalize_address_params(params[:ship_address])
+            # Priority 1: Direct address ID reference (ship_address_id / bill_address_id)
+            if address_id_param.present?
+              assign_existing_address(address_type, address_id_param)
+              return
+            end
+
+            # Priority 2: Nested address params (ship_address / bill_address)
+            return unless address_params.is_a?(Hash)
 
             if address_params[:id].present?
-              # Using existing address - find by prefix_id
-              existing = Spree::Address.find_by_prefix_id!(address_params[:id])
-              order.ship_address_id = existing.id
+              # Using existing address by ID within nested params
+              assign_existing_address(address_type, address_params[:id])
             else
-              # Creating/updating address
-              revert_to_address_state if order.has_checkout_step?('address')
-              order.ship_address = build_or_update_address(order.ship_address, address_params)
+              # Creating/updating address with provided attributes
+              build_address(address_type, address_params)
             end
           end
 
-          def update_bill_address
-            address_params = normalize_address_params(params[:bill_address])
-
-            if address_params[:id].present?
-              # Using existing address - find by prefix_id
-              existing = Spree::Address.find_by_prefix_id!(address_params[:id])
-              order.bill_address_id = existing.id
-            else
-              # Creating/updating address
-              revert_to_address_state if order.has_checkout_step?('address')
-              order.bill_address = build_or_update_address(order.bill_address, address_params)
-            end
+          def assign_existing_address(address_type, prefix_id)
+            existing = Spree::Address.find_by_prefix_id!(prefix_id)
+            # Use bracket notation to bypass Order::AddressBook custom setter
+            # which requires address.user_id == order.user_id
+            order[:"#{address_type}_id"] = existing.id
           end
 
-          def update_address_ids
-            if params[:ship_address_id].present?
-              existing = Spree::Address.find_by_prefix_id!(params[:ship_address_id])
-              # Use bracket notation to bypass Order::AddressBook custom setter
-              # which requires address.user_id == order.user_id
-              order[:ship_address_id] = existing.id
-            end
-            if params[:bill_address_id].present?
-              existing = Spree::Address.find_by_prefix_id!(params[:bill_address_id])
-              # Use bracket notation to bypass Order::AddressBook custom setter
-              order[:bill_address_id] = existing.id
-            end
+          def build_address(address_type, address_params)
+            normalized = normalize_address_params(address_params)
+            revert_to_address_state if order.has_checkout_step?('address')
+
+            existing_address = order.public_send(address_type)
+            new_address = build_or_update_address(existing_address, normalized)
+            order.public_send(:"#{address_type}=", new_address)
           end
 
           def normalize_address_params(address_params)
-            return {} unless address_params.is_a?(Hash)
+            permitted_keys = Spree::PermittedAttributes.address_attributes.select { |attr| attr.is_a?(Symbol) }
+            # Also permit state_abbr which is handled by the helper but not in permitted attributes
+            permitted_keys += [:state_abbr]
 
-            normalized = address_params.slice(*PERMITTED_ADDRESS_PARAMS)
+            normalized = address_params.slice(*permitted_keys)
             fill_country_and_state_ids(normalized)
             normalized
           end

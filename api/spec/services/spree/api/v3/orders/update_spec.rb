@@ -56,126 +56,88 @@ RSpec.describe Spree::Api::V3::Orders::Update do
       end
     end
 
-    describe 'updating ship_address' do
+    describe 'updating addresses' do
       let(:country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
       let!(:state) { country.states.find_by(abbr: 'NY') || create(:state, country: country, abbr: 'NY', name: 'New York') }
 
-      context 'with new address attributes' do
-        let(:params) do
-          {
-            ship_address: {
-              firstname: 'John',
-              lastname: 'Doe',
-              address1: '123 Main St',
-              city: 'New York',
-              zipcode: '10001',
-              country_iso: 'US',
-              state_abbr: 'NY',
-              phone: '555-1234'
+      shared_examples 'address update' do |address_type|
+        let(:address_key) { address_type } # :ship_address or :bill_address
+        let(:address_id_key) { :"#{address_type}_id" } # :ship_address_id or :bill_address_id
+
+        context 'with new address attributes' do
+          let(:params) do
+            {
+              address_key => {
+                firstname: 'John',
+                lastname: 'Doe',
+                address1: '123 Main St',
+                city: 'New York',
+                zipcode: '10001',
+                country_iso: 'US',
+                state_abbr: 'NY',
+                phone: '555-1234'
+              }
             }
-          }
-        end
+          end
 
-        it 'creates a new shipping address' do
-          expect(subject).to be_success
-          address = order.reload.ship_address
-          expect(address.firstname).to eq('John')
-          expect(address.lastname).to eq('Doe')
-          expect(address.address1).to eq('123 Main St')
-          expect(address.city).to eq('New York')
-          expect(address.zipcode).to eq('10001')
-          expect(address.country.iso).to eq('US')
-          expect(address.state.abbr).to eq('NY')
-        end
-
-        context 'when order has address checkout step' do
-          let(:order) { create(:order_with_line_items, user: user, store: store, state: 'delivery') }
-
-          it 'reverts order to address state' do
+          it 'creates a new address' do
             expect(subject).to be_success
-            expect(order.reload.state).to eq('address')
+            address = order.reload.public_send(address_key)
+            expect(address.firstname).to eq('John')
+            expect(address.lastname).to eq('Doe')
+            expect(address.address1).to eq('123 Main St')
+            expect(address.city).to eq('New York')
+            expect(address.zipcode).to eq('10001')
+            expect(address.country.iso).to eq('US')
+            expect(address.state.abbr).to eq('NY')
+          end
+
+          context 'when order has address checkout step and is past address state' do
+            let(:order) { create(:order_with_line_items, user: user, store: store, state: 'delivery') }
+
+            it 'reverts order to address state' do
+              expect(subject).to be_success
+              expect(order.reload.state).to eq('address')
+            end
+          end
+
+          context 'when order is in cart state' do
+            let(:order) { create(:order_with_line_items, user: user, store: store, state: 'cart') }
+
+            it 'does not change order state' do
+              expect(subject).to be_success
+              expect(order.reload.state).to eq('cart')
+            end
           end
         end
 
-        context 'when order is in cart state' do
-          let(:order) { create(:order_with_line_items, user: user, store: store, state: 'cart') }
+        context 'with existing address by nested id' do
+          let(:existing_address) { create(:address, user: user) }
+          let(:params) { { address_key => { id: existing_address.prefix_id } } }
 
-          it 'does not change order state' do
+          it 'uses the existing address' do
             expect(subject).to be_success
-            expect(order.reload.state).to eq('cart')
+            expect(order.reload.public_send(address_id_key)).to eq(existing_address.id)
+          end
+        end
+
+        context 'with top-level address_id parameter' do
+          let(:existing_address) { create(:address, user: user) }
+          let(:params) { { address_id_key => existing_address.prefix_id } }
+
+          it 'uses the existing address' do
+            expect(subject).to be_success
+            expect(order.reload.public_send(address_id_key)).to eq(existing_address.id)
           end
         end
       end
 
-      context 'with existing address by prefix_id' do
-        let(:existing_address) { create(:address, user: user) }
-        let(:params) { { ship_address: { id: existing_address.prefix_id } } }
-
-        it 'uses the existing address' do
-          expect(subject).to be_success
-          expect(order.reload.ship_address_id).to eq(existing_address.id)
-        end
+      describe 'ship_address' do
+        include_examples 'address update', :ship_address
       end
 
-      context 'with ship_address_id parameter' do
-        let(:existing_address) { create(:address, user: user) }
-        let(:params) { { ship_address_id: existing_address.prefix_id } }
-
-        it 'uses the existing address' do
-          expect(subject).to be_success
-          expect(order.reload.ship_address_id).to eq(existing_address.id)
-        end
-      end
-    end
-
-    describe 'updating bill_address' do
-      let(:country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
-      let!(:state) { country.states.find_by(abbr: 'CA') || create(:state, country: country, abbr: 'CA', name: 'California') }
-
-      context 'with new address attributes' do
-        let(:params) do
-          {
-            bill_address: {
-              firstname: 'Jane',
-              lastname: 'Smith',
-              address1: '456 Oak Ave',
-              city: 'Los Angeles',
-              zipcode: '90001',
-              country_iso: 'US',
-              state_abbr: 'CA',
-              phone: '555-5678'
-            }
-          }
-        end
-
-        it 'creates a new billing address' do
-          expect(subject).to be_success
-          address = order.reload.bill_address
-          expect(address.firstname).to eq('Jane')
-          expect(address.lastname).to eq('Smith')
-          expect(address.address1).to eq('456 Oak Ave')
-          expect(address.city).to eq('Los Angeles')
-        end
-      end
-
-      context 'with existing address by prefix_id' do
-        let(:existing_address) { create(:address, user: user) }
-        let(:params) { { bill_address: { id: existing_address.prefix_id } } }
-
-        it 'uses the existing address' do
-          expect(subject).to be_success
-          expect(order.reload.bill_address_id).to eq(existing_address.id)
-        end
-      end
-
-      context 'with bill_address_id parameter' do
-        let(:existing_address) { create(:address, user: user) }
-        let(:params) { { bill_address_id: existing_address.prefix_id } }
-
-        it 'uses the existing address' do
-          expect(subject).to be_success
-          expect(order.reload.bill_address_id).to eq(existing_address.id)
-        end
+      describe 'bill_address' do
+        include_examples 'address update', :bill_address
       end
     end
 
@@ -183,23 +145,28 @@ RSpec.describe Spree::Api::V3::Orders::Update do
       let(:other_user) { create(:user) }
       let(:other_users_address) { create(:address, user: other_user) }
 
-      context 'when using another users address for ship_address' do
-        let(:params) { { ship_address: { id: other_users_address.prefix_id } } }
+      shared_examples 'rejects other users address' do |address_type|
+        context "when using another user's address for #{address_type}" do
+          let(:params) { { address_type => { id: other_users_address.prefix_id } } }
 
-        it 'returns failure' do
-          expect(subject).to be_failure
-          expect(subject.error).to be_present
+          it 'returns failure' do
+            expect(subject).to be_failure
+            expect(subject.error).to be_present
+          end
+        end
+
+        context "when using another user's address via #{address_type}_id" do
+          let(:params) { { :"#{address_type}_id" => other_users_address.prefix_id } }
+
+          it 'returns failure' do
+            expect(subject).to be_failure
+            expect(subject.error).to be_present
+          end
         end
       end
 
-      context 'when using another users address for bill_address' do
-        let(:params) { { bill_address: { id: other_users_address.prefix_id } } }
-
-        it 'returns failure' do
-          expect(subject).to be_failure
-          expect(subject.error).to be_present
-        end
-      end
+      include_examples 'rejects other users address', :ship_address
+      include_examples 'rejects other users address', :bill_address
 
       context 'when using guest address (no user)' do
         let(:guest_address) { create(:address, user: nil) }
