@@ -54,7 +54,7 @@ require 'spree/testing_support/next_instance_of'
 
 RSpec.configure do |config|
   config.color = true
-  config.default_formatter = 'doc'
+  config.default_formatter = ENV['CI'] ? 'progress' : 'doc'
   config.fail_fast = ENV['FAIL_FAST'] || false
   config.infer_spec_type_from_file_location!
   config.mock_with :rspec
@@ -68,19 +68,12 @@ RSpec.configure do |config|
   config.before(:suite) do
     Spree::Events.disable!
     # Clean out the database state before the tests run
-    DatabaseCleaner.strategy = :transaction
     DatabaseCleaner.clean_with(:truncation)
   end
 
   # Re-enable events for specs that need them
   config.around(:each, events: true) do |example|
     Spree::Events.enable { example.run }
-  end
-
-  config.around(:each) do |example|
-    DatabaseCleaner.cleaning do
-      example.run
-    end
   end
 
   config.before(:each) do

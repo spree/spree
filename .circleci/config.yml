@@ -16,18 +16,37 @@ defaults: &defaults
 
 commands:
   bundle_install:
+    parameters:
+      update:
+        type: boolean
+        default: false
+      clean:
+        type: boolean
+        default: false
     steps:
       - restore_cache:
           keys:
-            - spree-bundle-v12-ruby-{{ .Branch }}
-            - spree-bundle-v12-ruby
+            - spree-bundle-v13-ruby-{{ .Branch }}
+            - spree-bundle-v13-ruby
       - install_libvips
-      - run:
-          name: Install global dependencies
-          command: bundle update
-      - run:
-          name: Clean old gems
-          command: bundle clean
+      - when:
+          condition: << parameters.update >>
+          steps:
+            - run:
+                name: Update global dependencies
+                command: bundle update
+      - unless:
+          condition: << parameters.update >>
+          steps:
+            - run:
+                name: Install global dependencies
+                command: bundle install
+      - when:
+          condition: << parameters.clean >>
+          steps:
+            - run:
+                name: Clean old gems
+                command: bundle clean
       - run:
           name: Install per-project gem dependencies
           command: bin/build-ci.rb install
@@ -59,9 +78,11 @@ jobs:
     <<: *defaults
     steps:
       - checkout
-      - bundle_install
+      - bundle_install:
+          update: true
+          clean: true
       - save_cache:
-          key: spree-bundle-v12-ruby-{{ .Branch }}
+          key: spree-bundle-v13-ruby-{{ .Branch }}
           paths:
             - ~/spree/vendor/bundle
   test: &test
