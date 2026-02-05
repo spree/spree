@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'pathname'
+require 'fileutils'
 
 class Project
   attr_reader :name
@@ -120,9 +121,11 @@ class Project
 
   def rspec_arguments(custom_name = name)
     args = []
-    args += %w[--order random --format documentation --profile 10]
+    args += %w[--order random --format progress --profile 10]
     if report_dir = ENV['CIRCLE_TEST_REPORTS']
-      args += %W[-r rspec_junit_formatter --format RspecJunitFormatter -o #{report_dir}/rspec/#{custom_name}.xml]
+      rspec_dir = "#{report_dir}/rspec"
+      FileUtils.mkdir_p(rspec_dir)
+      args += %W[-r rspec_junit_formatter --format RspecJunitFormatter -o #{rspec_dir}/#{custom_name}.xml]
     end
     args
   end
