@@ -1866,7 +1866,9 @@ describe Spree::Order, type: :model do
     subject { order.bill_address_id = address.id }
 
     let(:user) { create(:user) }
-    let(:order) { create(:order, user: user) }
+    let(:order) { create(:order, user: user, bill_address: bill_address, ship_address: ship_address) }
+    let(:bill_address) { create(:address, user: user) }
+    let(:ship_address) { create(:address, user: user) }
     let(:address) { create(:address, user: user) }
 
     context 'when assigned address exist' do
@@ -1880,6 +1882,33 @@ describe Spree::Order, type: :model do
         it 'does not set address as user default bill address' do
           subject
           expect(user.bill_address_id).not_to eq address.id
+        end
+      end
+    end
+
+    context 'when assigned address does not belong to user' do
+      let(:address) { create(:address, user: create(:user)) }
+
+      it 'sets order bill address to nil' do
+        expect { subject }.to change { order.bill_address_id }.to(nil)
+      end
+    end
+
+    context 'with guest user' do
+      let(:user) { nil }
+      let(:address) { create(:address, user: nil) }
+
+      context 'when assigning the same existing address' do
+        let(:address) { bill_address }
+
+        it 'does nothing' do
+          expect { subject }.not_to(change { order.bill_address_id })
+        end
+      end
+
+      context 'when assigning a different existing address' do
+        it 'sets order bill address to nil' do
+          expect { subject }.to change { order.bill_address_id }.to(nil)
         end
       end
     end
@@ -1942,7 +1971,9 @@ describe Spree::Order, type: :model do
     subject { order.ship_address_id = address.id }
 
     let(:user) { create(:user) }
-    let(:order) { create(:order, user: user) }
+    let(:order) { create(:order, user: user, bill_address: bill_address, ship_address: ship_address) }
+    let(:bill_address) { create(:address, user: user) }
+    let(:ship_address) { create(:address, user: user) }
     let(:address) { create(:address, user: user) }
 
     context 'when assigned address exist' do
@@ -1956,6 +1987,33 @@ describe Spree::Order, type: :model do
         it 'does not set address as user default ship address' do
           subject
           expect(user.ship_address_id).not_to eq address.id
+        end
+      end
+    end
+
+    context 'when assigned address does not belong to user' do
+      let(:address) { create(:address, user: create(:user)) }
+
+      it 'sets order ship address to nil' do
+        expect { subject }.to change { order.ship_address_id }.to(nil)
+      end
+    end
+
+    context 'with guest user' do
+      let(:user) { nil }
+      let(:address) { create(:address, user: nil) }
+
+      context 'when assigning the same existing address' do
+        let(:address) { ship_address }
+
+        it 'does nothing' do
+          expect { subject }.not_to(change { order.ship_address_id })
+        end
+      end
+
+      context 'when assigning a different existing address' do
+        it 'sets order ship address to nil' do
+          expect { subject }.to change { order.ship_address_id }.to(nil)
         end
       end
     end
