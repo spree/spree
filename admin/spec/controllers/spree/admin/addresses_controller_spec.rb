@@ -5,18 +5,20 @@ RSpec.describe Spree::Admin::AddressesController, type: :controller do
   render_views
 
   let(:user) { create(:user) }
+  let(:country) { Spree::Country.by_iso('US') || create(:country, iso: 'US', name: 'United States') }
+  let(:state) { create(:state, name: 'California', abbr: 'CA', country: country) }
 
   describe 'GET #new' do
     it 'renders the new address form' do
-      get :new
+      get :new, params: { type: 'shipping' }
       expect(response).to render_template(:new)
     end
   end
 
   describe 'POST #create' do
-    subject { post :create, params: params }
+    subject { post :create, params: params, format: :turbo_stream }
 
-    let(:params) { { address: address_params, user_id: user.id } }
+    let(:params) { { address: address_params, user_id: user.id, type: 'shipping', default_shipping: true } }
 
     let(:address_params) do
       {
@@ -30,17 +32,13 @@ RSpec.describe Spree::Admin::AddressesController, type: :controller do
       }
     end
 
-    let(:country) { Spree::Country.by_iso('US') || create(:country, iso: 'US', name: 'United States') }
-    let(:state) { create(:state, name: 'California', abbr: 'CA', country: country) }
-
-    let(:user) { create(:user) }
-
     let(:address) { Spree::Address.last }
 
-    it 'creates a new address' do
+    it 'creates a new address and renders turbo_stream' do
       expect { subject }.to change(Spree::Address, :count).by(1)
 
-      expect(response).to redirect_to(spree.admin_user_path(user))
+      expect(response).to have_http_status(:ok)
+      expect(response.media_type).to eq('text/vnd.turbo-stream.html')
 
       expect(address.user).to eq(user)
       expect(address.firstname).to eq('John')
@@ -53,7 +51,7 @@ RSpec.describe Spree::Admin::AddressesController, type: :controller do
     end
 
     context 'with default shipping' do
-      let(:params) { { address: address_params, user_id: user.id, default_shipping: true } }
+      let(:params) { { address: address_params, user_id: user.id, type: 'shipping', default_shipping: true } }
 
       it 'creates a new default shipping address' do
         expect { subject }.to change(Spree::Address, :count).by(1)
@@ -62,7 +60,7 @@ RSpec.describe Spree::Admin::AddressesController, type: :controller do
     end
 
     context 'with default billing' do
-      let(:params) { { address: address_params, user_id: user.id, default_billing: true } }
+      let(:params) { { address: address_params, user_id: user.id, type: 'billing', default_billing: true } }
 
       it 'creates a new default billing address' do
         expect { subject }.to change(Spree::Address, :count).by(1)
@@ -70,12 +68,14 @@ RSpec.describe Spree::Admin::AddressesController, type: :controller do
       end
     end
 
-    context 'without user' do
-      let(:params) { { address: address_params } }
+    context 'with invalid params' do
+      let(:address_params) { { firstname: '' } }
 
-      it 'creates no address' do
+      it 'renders turbo_stream with form errors' do
         expect { subject }.not_to change(Spree::Address, :count)
-        expect(response).to redirect_to(spree.admin_users_path)
+
+        expect(response).to have_http_status(:ok)
+        expect(response.media_type).to eq('text/vnd.turbo-stream.html')
       end
     end
   end
@@ -84,17 +84,17 @@ RSpec.describe Spree::Admin::AddressesController, type: :controller do
     let(:address) { create(:address) }
 
     it 'renders the edit address form' do
-      get :edit, params: { id: address.id }
+      get :edit, params: { id: address.id, type: 'shipping' }
       expect(response).to render_template(:edit)
     end
   end
 
   describe 'PUT #update' do
-    subject { put :update, params: params }
-
-    let(:params) { { id: address.id, address: address_params, user_id: user.id } }
+    subject { put :update, params: params, format: :turbo_stream }
 
     let(:address) { create(:address, user: user, firstname: 'John', lastname: 'Doe') }
+    let(:params) { { id: address.id, address: address_params, type: 'shipping' } }
+
     let(:address_params) do
       {
         firstname: 'Jane',
@@ -102,12 +102,13 @@ RSpec.describe Spree::Admin::AddressesController, type: :controller do
       }
     end
 
-    it 'updates the address' do
+    it 'updates the address and renders turbo_stream' do
       expect { subject }.to change { address.reload.first_name }.to('Jane').and(
         change { address.reload.lastname }.to('Moe')
       )
 
-      expect(response).to redirect_to(spree.admin_user_path(user))
+      expect(response).to have_http_status(:ok)
+      expect(response.media_type).to eq('text/vnd.turbo-stream.html')
     end
 
     context 'for a user with an incomplete order' do
@@ -115,7 +116,17 @@ RSpec.describe Spree::Admin::AddressesController, type: :controller do
 
       it 'pushes the order to the address state' do
         expect { subject }.to change { order.reload.state }.to('address')
-        expect(response).to redirect_to(spree.admin_user_path(user))
+      end
+    end
+
+    context 'with invalid params' do
+      let(:address_params) { { firstname: '' } }
+
+      it 'renders turbo_stream with form errors' do
+        subject
+
+        expect(response).to have_http_status(:ok)
+        expect(response.media_type).to eq('text/vnd.turbo-stream.html')
       end
     end
   end

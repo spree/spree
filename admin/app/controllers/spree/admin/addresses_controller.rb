@@ -15,14 +15,8 @@ module Spree
 
         @address = @object = result.value
 
-        if result.success?
-          set_current_store
-
-          flash[:success] = flash_message_for(@address, :successfully_created)
-          redirect_to location_after_save, status: :see_other
-        else
-          render action: :edit, status: :unprocessable_entity
-        end
+        set_current_store if result.success?
+        flash.now[:success] = flash_message_for(@address, :successfully_created) if result.success?
       end
 
       def update
@@ -37,14 +31,8 @@ module Spree
 
         @address = @object = result.value
 
-        if result.success?
-          set_current_store
-
-          flash[:success] = flash_message_for(@address, :successfully_updated)
-          redirect_to location_after_save, status: :see_other
-        else
-          render action: :edit, status: :unprocessable_entity
-        end
+        set_current_store if result.success?
+        flash.now[:success] = flash_message_for(@address, :successfully_updated) if result.success?
       end
 
       private
