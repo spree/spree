@@ -78,7 +78,6 @@ RSpec.configure do |config|
   config.before(:suite) do
     Spree::Events.disable!
     # Clean out the database state before the tests run
-    DatabaseCleaner.strategy = :transaction
     DatabaseCleaner.clean_with(:truncation)
   end
 
@@ -96,12 +95,6 @@ RSpec.configure do |config|
 
     # Reset Spree::Current to avoid stale memoized values between tests
     Spree::Current.reset
-  end
-
-  config.around(:each) do |example|
-    DatabaseCleaner.cleaning do
-      example.run
-    end
   end
 
   config.order = :random
