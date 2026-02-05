@@ -1,4 +1,4 @@
-<% frame_id ||= "new_address_#{params[:type]}" %>
+<% frame_id = local_assigns.fetch(:frame_id, "new_address_#{params[:type]}") %>
 <%= turbo_frame_tag frame_id do %>
   <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @address } %>
 
