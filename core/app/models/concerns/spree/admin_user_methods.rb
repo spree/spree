@@ -2,8 +2,18 @@ module Spree
   module AdminUserMethods
     extend ActiveSupport::Concern
 
+    include Spree::UserRoles
+    include Spree::RansackableAttributes
+
     included do
+      has_prefix_id :admin
+
+      has_person_name
+
+      normalizes :email, :first_name, :last_name, with: ->(value) { value&.to_s&.squish&.presence }
+
       # Associations
+      has_many :identities, class_name: 'Spree::UserIdentity', as: :user, dependent: :destroy
       has_many :canceled_orders, class_name: 'Spree::Order', foreign_key: :canceler_id
       has_many :created_orders, class_name: 'Spree::Order', foreign_key: :created_by_id
       has_many :approved_orders, class_name: 'Spree::Order', foreign_key: :approver_id
@@ -19,6 +29,27 @@ module Spree
       # Callbacks
       after_destroy :nullify_approver_id_in_approved_orders
       after_destroy :cleanup_admin_user_resources
+
+      # Attachments
+      has_one_attached :avatar, service: Spree.public_storage_service_name
+
+      #
+      # Attributes
+      #
+      attr_accessor :confirm_email
+
+      self.whitelisted_ransackable_associations = %w[spree_roles]
+      self.whitelisted_ransackable_attributes = %w[id email first_name last_name]
+    end
+
+    def can_be_deleted?
+      Spree::Store.current.users.where.not(id: id).exists?
+    end
+
+    # Returns the full name of the user
+    # @return [String]
+    def full_name
+      name&.full
     end
 
     private

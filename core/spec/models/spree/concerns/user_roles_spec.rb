@@ -97,16 +97,4 @@ describe Spree::UserRoles do
       end
     end
   end
-
-  describe '.spree_admin_created?' do
-    it 'returns true when admin exists' do
-      create(:admin_user)
-
-      expect(Spree.user_class).to be_spree_admin_created
-    end
-
-    it 'returns false when admin does not exist' do
-      expect(Spree.user_class).to_not be_spree_admin_created
-    end
-  end
 end

@@ -55,7 +55,7 @@ module Spree
             inject_into_file admin_user_class_file, after: "class #{Spree.admin_user_class.name} < ApplicationRecord\n" do
               <<-RUBY
     # Spree modules
-    include Spree::UserMethods
+    include Spree::AdminUserMethods
               RUBY
             end
             gsub_file admin_user_class_file, "< ApplicationRecord", "< Spree.base_class"
@@ -65,7 +65,7 @@ module Spree
             say "Could not locate admin user model file at #{admin_user_class_file}. Please add these lines manually:", :red
             say <<~RUBY
               # Spree modules
-              include Spree::UserMethods
+              include Spree::AdminUserMethods
             RUBY
 
             say "Please replace < ApplicationRecord with < Spree.base_class in #{admin_user_class_file}"

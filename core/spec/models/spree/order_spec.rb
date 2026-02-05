@@ -871,7 +871,6 @@ describe Spree::Order, type: :model do
   describe '#associate_user!' do
     let(:user) { create(:user_with_addreses) }
     let(:email) { user.email }
-    let(:created_by) { user }
     let(:bill_address) { user.bill_address }
     let(:ship_address) { user.ship_address }
     let(:override_email) { true }
@@ -882,7 +881,6 @@ describe Spree::Order, type: :model do
       {
         user: nil,
         email: nil,
-        created_by: nil,
         bill_address: nil,
         ship_address: nil
       }
@@ -893,9 +891,6 @@ describe Spree::Order, type: :model do
       expect(order.user_id).to eql(user.id)
 
       expect(order.email).to eql(email)
-
-      expect(order.created_by).to eql(created_by)
-      expect(order.created_by_id).to eql(created_by.id)
 
       expect(order.bill_address).to eql(bill_address)
       expect(order.bill_address_id).to eql(bill_address&.id)
@@ -932,13 +927,6 @@ describe Spree::Order, type: :model do
 
         it_behaves_like '#associate_user!'
       end
-    end
-
-    context 'when created_by is set' do
-      let(:order_attributes) { super().merge(created_by: created_by) }
-      let(:created_by) { create(:user_with_addreses) }
-
-      it_behaves_like '#associate_user!'
     end
 
     context 'when bill_address is set' do

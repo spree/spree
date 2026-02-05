@@ -5,7 +5,7 @@ RSpec.describe Spree::Admin::PromotionRulesController, type: :controller do
 
   render_views
 
-  let(:user) { create(:admin_user) }
+  let(:user) { create(:user) }
   let(:store) { @default_store }
   let(:promotion) { create(:promotion, stores: [store]) }
 

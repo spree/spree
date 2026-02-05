@@ -6,7 +6,6 @@ module Spree
     include Spree::UserPaymentSource
     include Spree::UserReporting
     include Spree::UserRoles
-    include Spree::AdminUserMethods
     include Spree::RansackableAttributes
     include Spree::MultiSearchable
     include Spree::Publishable
@@ -146,13 +145,10 @@ module Spree
     end
 
     # Returns true if the user can be deleted
+    # Customers can be deleted if they have no completed orders
     # @return [Boolean]
     def can_be_deleted?
-      if role_users.where(resource: Spree::Store.current).exists?
-        Spree::Store.current.users.where.not(id: id).exists?
-      else
-        orders.complete.none?
-      end
+      orders.complete.none?
     end
 
     # Returns the CSV row representation of the user

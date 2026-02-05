@@ -48,6 +48,7 @@ module Spree
       end
 
       def self.spree_admin_created?
+        Spree::Deprecation.warn('Spree.admin_user_class.spree_admin_created? is deprecated and will be removed in Spree 5.5')
         spree_admin.exists?
       end
 

@@ -45,29 +45,9 @@ describe Spree::Admin::BaseController, type: :controller do
         allow(controller).to receive_messages(try_spree_current_user: nil)
       end
 
-      it 'redirects admin login path' do
-        allow(controller).to receive_messages(spree_admin_login_path: '/admin/login')
+      it 'redirects to admin login path' do
         get :index
         expect(response).to redirect_to('/admin/login')
-      end
-
-      it 'redirects login path' do
-        allow(controller).to receive_messages(spree_login_path: '/login')
-        get :index
-        expect(response).to redirect_to('/login')
-      end
-
-      context 'redirects to root' do
-        it 'of spree' do
-          allow(controller).to receive_message_chain(:spree, :root_path).and_return('/root')
-          get :index
-          expect(response).to redirect_to '/root'
-        end
-
-        it 'of main app' do
-          get :index
-          expect(response).to redirect_to '/'
-        end
       end
     end
   end

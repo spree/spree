@@ -96,9 +96,12 @@ describe Spree::Ability, type: :model do
       context 'admin user class' do
         let(:user) { Spree::DummyModel.create(name: 'admin') }
 
-        before { Spree.admin_user_class = 'Spree::DummyModel' }
+        before do
+          @original_admin_user_class = Spree.admin_user_class(constantize: false)
+          Spree.admin_user_class = 'Spree::DummyModel'
+        end
 
-        after { Spree.admin_user_class = nil }
+        after { Spree.admin_user_class = @original_admin_user_class }
 
         it 'is able to admin' do
           allow(user).to receive(:persisted?).and_return(true)

@@ -99,7 +99,7 @@ module Spree
     acts_as_taggable_on :tags
     acts_as_taggable_tenant :store_id
 
-    ASSOCIATED_USER_ATTRIBUTES = [:user_id, :email, :created_by_id, :bill_address_id, :ship_address_id]
+    ASSOCIATED_USER_ATTRIBUTES = [:user_id, :email, :bill_address_id, :ship_address_id]
 
     belongs_to :user, class_name: "::#{Spree.user_class}", optional: true, autosave: true
     belongs_to :created_by, class_name: "::#{Spree.admin_user_class}", optional: true
@@ -421,9 +421,6 @@ module Spree
     def associate_user!(user, override_email = true)
       self.user           = user
       self.email          = user.email if override_email
-      # we need to check if user is of admin user class to avoid mismatch type error
-      # in a scenario where we have separate classes for admin and regular users
-      self.created_by   ||= user if user.is_a?(Spree.admin_user_class)
       self.bill_address ||= user.bill_address
       self.ship_address ||= user.ship_address
 

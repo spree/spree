@@ -61,8 +61,6 @@ module Spree
   end
 
   def self.admin_user_class(constantize: true)
-    @@admin_user_class ||= @@user_class
-
     if @@admin_user_class.is_a?(Class)
       raise 'Spree.admin_user_class MUST be a String or Symbol object, not a Class object.'
     elsif @@admin_user_class.is_a?(String) || @@admin_user_class.is_a?(Symbol)
