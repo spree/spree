@@ -63,7 +63,7 @@ end
 
 ### Typelizer DSL
 
-- `typelize_from Model` - Connect serializer to ActiveRecord model for automatic type inference
+- Don't use `typelize_from` for serializers, please use `typelize` instead for each attribute
 - `typelize attr: :type` - Define types for computed/delegated attributes not on the model
 - Type formats: `:string`, `:boolean`, `:number`, `'string | null'`, `'string[]'`, `'Record<string, unknown>'`
 
