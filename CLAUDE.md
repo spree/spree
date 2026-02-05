@@ -94,7 +94,7 @@ For uniqueness validation, always use `scope: spree_base_uniqueness_scope`
 ### Controller Inheritance
 
 - Admin controllers inherit from `Spree::Admin::ResourceController` which handles most of CRUD operations
-- API v3 controllers inherit from `Spree::Api::V3::BaseController`
+- Store API controllers inherit from `Spree::Api::V3::Store::ResourceController`
 - Storefront controllers inherit from `Spree::StoreController`
 
 ### Parameter Handling
@@ -108,6 +108,98 @@ def permitted_product_params
   params.require(:product).permit(Spree::PermittedAttributes.product_attributes)
 end
 ```
+
+## API Development
+
+### Serializers
+
+API v3 uses Alba serializers located in `api/app/serializers/spree/api/v3/`. We have separate serializers for Store and Admin APIs:
+
+- **Store serializers** (`app/serializers/spree/api/v3/`) - Customer-facing, limited data
+- **Admin serializers** (`app/serializers/spree/api/v3/admin/`) - Full access, extends store serializers
+
+Admin serializers inherit from store serializers and add additional fields.
+
+```ruby
+# Store serializer - customer-facing
+module Spree::Api::V3
+  class ProductSerializer < BaseSerializer
+    typelize purchasable: :boolean, in_stock: :boolean, price: 'number | null'
+
+    attributes :id, :name, :description, :slug, :price
+  end
+end
+
+# Admin serializer - extends store with admin-only fields
+module Spree::Api::V3::Admin
+  class ProductSerializer < V3::ProductSerializer
+    typelize cost_price: 'number | null', private_metadata: 'Record<string, unknown> | null'
+
+    attributes :status, :cost_price, :private_metadata
+  end
+end
+```
+
+Never use `typelize_from` in serializers this causes serializers to connnect to the database.
+
+### TypeScript Type Generation
+
+We use [typelizer](https://github.com/skryukov/typelizer) to generate TypeScript types from Alba serializers:
+
+- Types are generated to `sdk/src/types/generated/`
+- Store types: `StoreProduct`, `StoreOrder`, etc.
+- Admin types: `AdminProduct`, `AdminOrder`, etc.
+- Run `bundle exec rake typelizer:generate` to regenerate types
+
+### Serializer DSL
+
+- `typelize attr: :type` - Define types for computed/delegated attributes
+- Use `Spree.api.serializer_name` for configurable serializer references
+
+### API Authentication
+
+API uses Publishable and Secret API Keys for authentication. Publishable works for Store API and Secret for Admin API.
+
+## Events System
+
+When adding new functionality that other parts of the system (or external integrations) might need to react to, fire events using Spree's event system:
+
+```ruby
+order.publish_event('order.completed')
+```
+
+Place subscriber classes in `app/subscribers/spree/` directory:
+
+```ruby
+# app/subscribers/spree/order_webhook_subscriber.rb
+module Spree
+  module OrderWebhookSubscriber
+    include Spree::Event::Subscriber
+
+    event_action :order_completed
+
+    def order_completed(event)
+      order = event.payload[:order]
+      # Handle the event
+    end
+  end
+end
+```
+
+For new models that publish events, please add `publishes_lifecycle_events` concern to the model.
+
+You also need to create an event serializer for the model, see [Events](/docs/developer/core-concepts/events.mdx) for more details.
+
+## Dependencies System
+
+When building services that users might want to swap out, register them in `Spree::Dependencies`:
+
+```ruby
+# In the dependency configuration
+Spree::Dependencies.cart_add_item_service = 'Spree::Cart::AddItem'
+```
+
+This allows users to replace services without modifying core code.
 
 ## Admin Development
 
@@ -222,99 +314,6 @@ Navigation options:
 - `badge` - Lambda returning badge text
 - `badge_class` - CSS class for badge
 
-## API v3 Development
-
-### Serializers
-
-API v3 uses Alba serializers located in `api/app/serializers/spree/api/v3/`. Following Medusa's pattern, we have separate serializers for Store and Admin APIs:
-
-- **Store serializers** (`app/serializers/spree/api/v3/`) - Customer-facing, limited data
-- **Admin serializers** (`app/serializers/spree/api/v3/admin/`) - Full access, extends store serializers
-
-```ruby
-# Store serializer - customer-facing
-module Spree::Api::V3
-  class ProductSerializer < BaseSerializer
-    typelize_from Spree::Product
-    typelize purchasable: :boolean, in_stock: :boolean, price: 'number | null'
-
-    attributes :id, :name, :description, :slug, :price
-  end
-end
-
-# Admin serializer - extends store with admin-only fields
-module Spree::Api::V3::Admin
-  class ProductSerializer < V3::ProductSerializer
-    typelize_from Spree::Product
-    typelize cost_price: 'number | null', private_metadata: 'Record<string, unknown> | null'
-
-    attributes :status, :cost_price, :private_metadata
-  end
-end
-```
-
-### TypeScript Type Generation
-
-We use [typelizer](https://github.com/skryukov/typelizer) to generate TypeScript types from Alba serializers:
-
-- Types are generated to `sdk/src/types/generated/`
-- Store types: `StoreProduct`, `StoreOrder`, etc.
-- Admin types: `AdminProduct`, `AdminOrder`, etc.
-- Run `bundle exec rake typelizer:generate` to regenerate types
-
-### Serializer DSL
-
-- `typelize_from Model` - Connect serializer to ActiveRecord model for type inference
-- `typelize attr: :type` - Define types for computed/delegated attributes
-- Use `Spree.api.serializer_name` for configurable serializer references
-
-### API Authentication
-
-API v3 uses API keys with scopes:
-- `store` scope - Customer-facing operations (cart, checkout, account)
-- `admin` scope - Administrative operations (full CRUD access)
-
-## Events System
-
-When adding new functionality that other parts of the system (or external integrations) might need to react to, fire events using Spree's event system:
-
-```ruby
-order.publish_event('order.completed')
-```
-
-Place subscriber classes in `app/subscribers/spree/` directory:
-
-```ruby
-# app/subscribers/spree/order_webhook_subscriber.rb
-module Spree
-  module OrderWebhookSubscriber
-    include Spree::Event::Subscriber
-
-    event_action :order_completed
-
-    def order_completed(event)
-      order = event.payload[:order]
-      # Handle the event
-    end
-  end
-end
-```
-
-For new models that publish events, please add `publishes_lifecycle_events` concern to the model.
-
-You also need to create an event serializer for the model, see [Events](/docs/developer/core-concepts/events.mdx) for more details.
-
-## Dependencies System
-
-When building services that users might want to swap out, register them in `Spree::Dependencies`:
-
-```ruby
-# In the dependency configuration
-Spree::Dependencies.cart_add_item_service = 'Spree::Cart::AddItem'
-```
-
-This allows users to replace services without modifying core code.
-
 ## Testing
 
 ### Test Application
@@ -325,10 +324,11 @@ This will create a dummy rails application and run migrations. If there's alread
 
 ### Test Structure
 
-- Use RSpec for testing
+- Use RSpec for testing and Factory Bot for creating test data
+- As much as you can use build vs create for Factories to speed up tests
+- Be very pragmatic, and don't over-engineer tests, don't repeat same tests in multiple places, tests must be fast
 - Create test app with `bundle exec rake test_app` in every gem directory (eg. admin, api, core, etc.)
 - Place specs in appropriate directories matching app structure
-- Use Spree's factory bot definitions
 - For controller specs always add `render_views` to the test
 - For controller spec authentication use `stub_authorization!`
 - Don't create test scenarios for standard rails validation, only for custom validations
@@ -425,21 +425,14 @@ end
 
 ## Frontend Development
 
-### Storefront Development
-
-- Use Tailwind CSS for styling
-- Follow responsive design principles
-- Implement proper SEO meta tags
-- Ensure accessibility compliance
-
 ### Admin Interface
 
 - Use Spree's admin styling conventions
 - Use as much as possible Turbo Rails features (Hotwire)
-- Re-usable components should be helpers
-- Please use `Spree::Admin::FormBuilder` methods for form fields
-- Follow UX patterns established in core admin
 - Use Stimulus controllers for JavaScript interactions
+- Please use [Admin Components](docs/developer/admin/components.mdx) for elements such as dialogs, drawers, dropdowns, and more.
+- Please use [Spree::Admin::FormBuilder](docs/developer/admin/form-builder.mdx) methods for form fields
+- For rendering record lists please use [Admin Tables](docs/developer/admin/tables.mdx)
 
 For create new resource form:
 
@@ -476,23 +469,23 @@ And the re-usable form partial should be in `app/views/spree/admin/products/_for
 
 ### Query Optimization
 
-- Use includes/preload to avoid N+1 queries
+- We're using ar_lazy_preload gem to avoid N+1 queries, however please use includes/preload to avoid N+1 queries as much as possible
 - Implement proper database indexing
 - Use scopes for reusable query logic
 - Consider caching for expensive operations
 
 ```ruby
 # ✅ Optimized queries
-products = Spree::Product.includes(:variants, :images)
+products = Spree::Product.includes(:variants, :thumbnail)
                          .where(available_on: ..Time.current)
                          .order(:name)
 ```
 
 ### Caching
 
-- Use Rails caching mechanisms appropriately
-- Cache expensive calculations and queries
-- Implement cache invalidation strategies
+- Use Rails caching mechanisms appropriately (via `Rails.cache`)
+- Cache expensive calculations and queries, however caching one query is not recommended
+- Implement cache invalidation strategies, use Rails `cache_key_with_version` when constructing custom cache keys
 - Consider fragment caching for views
 
 ### Code Quality
@@ -502,6 +495,9 @@ products = Spree::Product.includes(:variants, :images)
 - Use meaningful variable and method names
 - Write self-documenting code with appropriate comments
 - Avoid deep nesting and complex conditionals
+- Avoid business logic in controllers, move that to models and use concerns
+- Use services only when necessary, we should as much as we possible use standard Rails models and Concerns
+- Use concerns for reusable code
 
 ## Documentation & Comments
 
