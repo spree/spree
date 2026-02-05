@@ -1,4 +1,8 @@
 <% frame_id = local_assigns.fetch(:frame_id, "new_address_#{params[:type]}") %>
+<% user_id_value = local_assigns.fetch(:user_id, params[:user_id]) %>
+<% default_shipping_value = local_assigns.fetch(:default_shipping, params[:default_shipping]) %>
+<% default_billing_value = local_assigns.fetch(:default_billing, params[:default_billing]) %>
+
 <%= turbo_frame_tag frame_id do %>
   <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @address } %>
 
@@ -8,9 +12,9 @@
       address_form: f,
       address_type: 'shipping',
       address: @address %>
-    <%= hidden_field_tag :user_id, params[:user_id] %>
-    <%= hidden_field_tag :default_shipping, params[:default_shipping] %>
-    <%= hidden_field_tag :default_billing, params[:default_billing] %>
+    <%= hidden_field_tag :user_id, user_id_value %>
+    <%= hidden_field_tag :default_shipping, default_shipping_value %>
+    <%= hidden_field_tag :default_billing, default_billing_value %>
     <%= hidden_field_tag :type, params[:type] %>
 
     <%= render 'spree/admin/shared/new_resource_links', f: f %>

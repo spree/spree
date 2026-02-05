@@ -16,7 +16,11 @@
     <% if @address.persisted? %>
       <%= render 'spree/admin/addresses/edit_form' %>
     <% else %>
-      <%= render 'spree/admin/addresses/new_form', frame_id: "edit_address_#{params[:type]}" %>
+      <%= render 'spree/admin/addresses/new_form',
+            frame_id: "edit_address_#{params[:type]}",
+            user_id: @user.id,
+            default_shipping: params[:type] == 'shipping',
+            default_billing: params[:type] == 'billing' %>
     <% end %>
   <% end %>
 <% end %>
