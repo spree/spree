@@ -82,8 +82,6 @@ namespace :gem do
 
   desc "Release all gems to rubygems"
   task release: :build do
-    sh "git tag -a -m \"Version #{version}\" v#{version}"
-
     for_each_gem do |gem_path|
       sh "gem push '#{gem_path}'"
     end
