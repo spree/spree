@@ -7,7 +7,7 @@ module Spree
     # validate email/order number and redirect to order page
     # POST /order_status
     def create
-      raise ActiveRecord::RecordNotFound if params[:number].blank?
+      raise ActiveRecord::RecordNotFound if params[:number].blank? || params[:email].blank?
 
       @order = order_finder.new(number: params[:number], email: params[:email], store: current_store).execute.first
 
