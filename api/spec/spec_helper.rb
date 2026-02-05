@@ -64,7 +64,7 @@ end
 RSpec.configure do |config|
   config.backtrace_exclusion_patterns = [/gems\/activesupport/, /gems\/actionpack/, /gems\/rspec/]
   config.color = true
-  config.default_formatter = 'doc'
+  config.default_formatter = ENV['CI'] ? 'progress' : 'doc'
   config.fail_fast = ENV['FAIL_FAST'] || false
   config.infer_spec_type_from_file_location!
   config.raise_errors_for_deprecations!

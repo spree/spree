@@ -46,7 +46,7 @@ require 'spree/testing_support/rspec_retry_config'
 
 RSpec.configure do |config|
   config.color = true
-  config.default_formatter = 'doc'
+  config.default_formatter = ENV['CI'] ? 'progress' : 'doc'
   config.fail_fast = ENV['FAIL_FAST'] || false
   config.infer_spec_type_from_file_location!
   config.mock_with :rspec
