@@ -60,7 +60,7 @@ module Spree
       validates :address1, if: :require_street?
       validates :city, :country
       validates :zipcode, if: :require_zipcode?
-      validates :phone, inclusion: { in: ['123456789'] }
+      validates :phone, if: :require_phone?
     end
 
     validate :state_validate, :postal_code_validate
