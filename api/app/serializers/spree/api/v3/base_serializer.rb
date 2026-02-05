@@ -55,10 +55,15 @@ module Spree
 
         # Returns price for a variant using full Price List resolution
         # This may return a price from a price list if applicable
+        # Memoized per variant to avoid duplicate queries
         def price_for(variant, quantity: nil)
           return nil unless variant.respond_to?(:price_for)
 
-          variant.price_for(
+          @price_for_cache ||= {}
+          cache_key = [variant.id, quantity]
+          return @price_for_cache[cache_key] if @price_for_cache.key?(cache_key)
+
+          @price_for_cache[cache_key] = variant.price_for(
             currency: current_currency,
             store: current_store,
             user: current_user,
@@ -68,10 +73,14 @@ module Spree
 
         # Returns the base price for a variant without Price List resolution
         # This is the "original" price before any price list discounts
+        # Memoized per variant to avoid duplicate queries
         def price_in(variant)
           return nil unless variant.respond_to?(:price_in)
 
-          variant.price_in(current_currency)
+          @price_in_cache ||= {}
+          return @price_in_cache[variant.id] if @price_in_cache.key?(variant.id)
+
+          @price_in_cache[variant.id] = variant.price_in(current_currency)
         end
 
         def image_url_for(image)

@@ -10,7 +10,7 @@ module Spree
                  purchasable: :boolean, in_stock: :boolean, backorderable: :boolean,
                  weight: 'number | null', height: 'number | null', width: 'number | null', depth: 'number | null',
                  price: 'StorePrice',
-                 original_price: 'StorePrice'
+                 original_price: 'StorePrice | null'
 
         attribute :product_id do |variant|
           variant.product&.prefix_id
@@ -59,9 +59,14 @@ module Spree
         end
 
         # Original price - base price without price list resolution (for showing strikethrough)
+        # Returns null when same as calculated price, only populated when a price list discount is applied
         attribute :original_price do |variant|
-          price = price_in(variant)
-          Spree.api.price_serializer.new(price, params: params).to_h if price.present?
+          calculated = price_for(variant)
+          base = price_in(variant)
+
+          if calculated.present? && base.present? && calculated.id != base.id
+            Spree.api.price_serializer.new(base, params: params).to_h
+          end
         end
 
         # Conditional associations

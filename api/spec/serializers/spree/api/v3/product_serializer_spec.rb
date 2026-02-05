@@ -17,11 +17,36 @@ RSpec.describe Spree::Api::V3::ProductSerializer do
       )
       expect(subject).to have_key('thumbnail_url')
       expect(subject).to have_key('price')
-      expect(subject).to have_key('original_price')
     end
 
     it 'does not include admin-only attributes' do
       expect(subject.keys).not_to include('cost_price', 'cost_currency', 'deleted_at', 'sku', 'barcode')
+    end
+
+    describe 'original_price' do
+      context 'without price list (base price only)' do
+        it 'returns null when original_price equals calculated price' do
+          expect(subject).to have_key('original_price')
+          expect(subject['original_price']).to be_nil
+        end
+      end
+
+      context 'with price list discount applied' do
+        let(:price_list) { create(:price_list, :active, store: store) }
+        let!(:price_list_price) { create(:price, variant: product.default_variant, currency: 'USD', amount: 50.00, price_list: price_list) }
+
+        before do
+          # Set base price higher than price list price
+          product.default_variant.prices.base_prices.find_by(currency: 'USD').update!(amount: 100.00)
+        end
+
+        it 'includes original_price when different from calculated price' do
+          result = described_class.new(product, params: base_params.merge(price_list: price_list)).to_h
+          expect(result['original_price']).not_to be_nil
+          expect(result['original_price']['amount'].to_f).to eq(100.0)
+          expect(result['price']['amount'].to_f).to eq(50.0)
+        end
+      end
     end
 
     describe 'metafields' do

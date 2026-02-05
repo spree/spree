@@ -113,7 +113,7 @@ end
 
 ### Serializers
 
-API v3 uses Alba serializers located in `api/app/serializers/spree/api/v3/`. We have separate serializers for Store and Admin APIs:
+API v3 uses [Alba serializers](https://github.com/okuramasafumi/alba) located in `api/app/serializers/spree/api/v3/`. We have separate serializers for Store and Admin APIs:
 
 - **Store serializers** (`app/serializers/spree/api/v3/`) - Customer-facing, limited data
 - **Admin serializers** (`app/serializers/spree/api/v3/admin/`) - Full access, extends store serializers
@@ -158,7 +158,9 @@ We use [typelizer](https://github.com/skryukov/typelizer) to generate TypeScript
 
 ### API Authentication
 
-API uses Publishable and Secret API Keys for authentication. Publishable works for Store API and Secret for Admin API.
+API uses Publishable and Secret API Keys for authentication. Publishable works for Store API and Secret for Admin API, both are passed via headers `x-spree-api-key`.
+
+User authentication uses JWT tokens, passed via headers `Authorization: Bearer <token>`.
 
 ## Events System
 
@@ -170,17 +172,18 @@ order.publish_event('order.completed')
 
 Place subscriber classes in `app/subscribers/spree/` directory:
 
-```ruby
-# app/subscribers/spree/order_webhook_subscriber.rb
+```ruby app/subscribers/spree/order_completed_subscriber.rb
 module Spree
-  module OrderWebhookSubscriber
-    include Spree::Event::Subscriber
+  class OrderCompletedSubscriber < Spree::Subscriber
+    subscribes_to 'order.complete'
 
-    event_action :order_completed
+    def handle(event)
+      order_id = event.payload['id']
+      order = Spree::Order.find_by(id: order_id)
+      return unless order
 
-    def order_completed(event)
-      order = event.payload[:order]
-      # Handle the event
+      # Your custom logic here
+      ExternalService.notify_order_placed(order)
     end
   end
 end
@@ -188,7 +191,7 @@ end
 
 For new models that publish events, please add `publishes_lifecycle_events` concern to the model.
 
-You also need to create an event serializer for the model, see [Events](/docs/developer/core-concepts/events.mdx) for more details.
+You also need to create an event serializer for the model, see [Events](docs/developer/core-concepts/events.mdx) for more details.
 
 ## Dependencies System
 
@@ -207,6 +210,7 @@ When adding new resources to the admin, you need to register tables and navigati
 
 ### Admin Tables
 
+For rendering records lists in Admin always use [Admin Tables](docs/developer/admin/tables.mdx)
 Register new tables in `admin/config/initializers/spree_admin_tables.rb`:
 
 ```ruby
@@ -315,6 +319,8 @@ Navigation options:
 - `badge_class` - CSS class for badge
 
 ## Testing
+
+Always run tests before committing changes. Always run tests after making changes.
 
 ### Test Application
 
