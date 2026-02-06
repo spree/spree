@@ -50,10 +50,9 @@ describe Spree::Order, type: :model do
     end
 
     it 'freezes all adjustments' do
-      adjustments = [double]
-      expect(order).to receive(:all_adjustments).and_return(adjustments)
-      expect(adjustments).to all(receive(:close))
+      adjustment = create(:adjustment, order: order, adjustable: order, state: 'open')
       order.finalize!
+      expect(adjustment.reload.state).to eq('closed')
     end
 
     context 'order is considered risky' do
