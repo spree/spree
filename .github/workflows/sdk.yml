@@ -9,6 +9,9 @@ on:
     paths:
       - 'sdk/**'
 
+permissions:
+  contents: read
+
 defaults:
   run:
     working-directory: sdk
