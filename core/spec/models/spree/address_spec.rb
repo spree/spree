@@ -729,13 +729,134 @@ describe Spree::Address, type: :model do
           expect(address.require_phone?).to be(true)
         end
       end
-      
+
       context 'and Spree::Config[:address_requires_phone] is false' do
         before { Spree::Config[:address_requires_phone] = false }
 
         it 'returns false' do
           expect(address.require_phone?).to be(false)
         end
+      end
+    end
+  end
+
+  describe 'country_iso= and state_abbr= writer methods' do
+    let(:country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
+    let!(:state) { country.states.find_by(abbr: 'NY') || create(:state, country: country, abbr: 'NY', name: 'New York') }
+
+    describe '#country_iso=' do
+      it 'sets country from ISO code on validation' do
+        address = build(:address, country: nil)
+        address.country_iso = 'US'
+        address.valid?
+        expect(address.country).to eq(country)
+      end
+
+      it 'is case-insensitive' do
+        address = build(:address, country: nil)
+        address.country_iso = 'us'
+        address.valid?
+        expect(address.country).to eq(country)
+      end
+
+      it 'does nothing when ISO is blank' do
+        original_country = create(:country)
+        address = build(:address, country: original_country)
+        address.country_iso = ''
+        address.valid?
+        expect(address.country).to eq(original_country)
+      end
+
+      it 'sets country to nil when ISO is not found' do
+        address = build(:address, country: nil)
+        address.country_iso = 'XX'
+        address.valid?
+        expect(address.country).to be_nil
+      end
+
+      it 'clears the input after normalization' do
+        address = build(:address, country: nil)
+        address.country_iso = 'US'
+        address.valid?
+        # The input should be cleared so it doesn't re-run on next validation
+        address.valid?
+        expect(address.country).to eq(country)
+      end
+    end
+
+    describe '#state_abbr=' do
+      it 'sets state from abbreviation on validation' do
+        address = build(:address, country: country, state: nil)
+        address.state_abbr = 'NY'
+        address.valid?
+        expect(address.state).to eq(state)
+      end
+
+      it 'requires country to be set first' do
+        address = build(:address, country: nil, state: nil)
+        address.state_abbr = 'NY'
+        address.valid?
+        expect(address.state).to be_nil
+      end
+
+      it 'does nothing when abbreviation is blank' do
+        address = build(:address, country: country, state: nil)
+        address.state_abbr = ''
+        address.valid?
+        expect(address.state).to be_nil
+      end
+
+      it 'sets state to nil when abbreviation is not found for country' do
+        address = build(:address, country: country, state: nil)
+        address.state_abbr = 'XX'
+        address.valid?
+        expect(address.state).to be_nil
+      end
+
+      it 'only finds states belonging to the address country' do
+        other_country = create(:country, iso: 'CA')
+        other_state = create(:state, country: other_country, abbr: 'NY', name: 'Not York')
+
+        address = build(:address, country: country, state: nil)
+        address.state_abbr = 'NY'
+        address.valid?
+        expect(address.state).to eq(state)
+        expect(address.state).not_to eq(other_state)
+      end
+    end
+
+    describe 'combined country_iso and state_abbr' do
+      it 'sets both country and state when both are provided' do
+        address = build(:address, country: nil, state: nil)
+        address.country_iso = 'US'
+        address.state_abbr = 'NY'
+        address.valid?
+        expect(address.country).to eq(country)
+        expect(address.state).to eq(state)
+      end
+
+      it 'works with new address creation' do
+        address = Spree::Address.new(
+          firstname: 'John',
+          lastname: 'Doe',
+          address1: '123 Main St',
+          city: 'New York',
+          zipcode: '10001',
+          phone: '555-1234',
+          country_iso: 'US',
+          state_abbr: 'NY'
+        )
+        expect(address).to be_valid
+        expect(address.country).to eq(country)
+        expect(address.state).to eq(state)
+      end
+
+      it 'works with address update via assign_attributes' do
+        address = create(:address)
+        address.assign_attributes(country_iso: 'US', state_abbr: 'NY')
+        address.valid?
+        expect(address.country).to eq(country)
+        expect(address.state).to eq(state)
       end
     end
   end

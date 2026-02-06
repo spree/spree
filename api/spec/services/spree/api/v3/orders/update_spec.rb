@@ -24,6 +24,22 @@ RSpec.describe Spree::Api::V3::Orders::Update do
         expect(subject).to be_success
         expect(order.reload.special_instructions).to eq('Leave at the door')
       end
+
+      context 'when clearing special_instructions' do
+        let(:order) { create(:order_with_line_items, user: user, store: store, special_instructions: 'Existing instructions') }
+
+        it 'clears with empty string' do
+          result = described_class.call(order: order, params: { special_instructions: '' })
+          expect(result).to be_success
+          expect(order.reload.special_instructions).to eq('')
+        end
+
+        it 'clears with nil' do
+          result = described_class.call(order: order, params: { special_instructions: nil })
+          expect(result).to be_success
+          expect(order.reload.special_instructions).to be_nil
+        end
+      end
     end
 
     describe 'updating currency' do
@@ -141,40 +157,45 @@ RSpec.describe Spree::Api::V3::Orders::Update do
       end
     end
 
-    describe 'address ownership validation' do
+    describe 'address ownership' do
       let(:other_user) { create(:user) }
       let(:other_users_address) { create(:address, user: other_user) }
 
-      shared_examples 'rejects other users address' do |address_type|
+      shared_examples 'ignores other users address' do |address_type|
         context "when using another user's address for #{address_type}" do
           let(:params) { { address_type => { id: other_users_address.prefix_id } } }
 
-          it 'returns failure' do
-            expect(subject).to be_failure
-            expect(subject.error).to be_present
+          it 'ignores the address and keeps original' do
+            original_address_id = order.public_send(:"#{address_type}_id")
+            expect(subject).to be_success
+            expect(order.reload.public_send(:"#{address_type}_id")).to eq(original_address_id)
+            expect(order.public_send(:"#{address_type}_id")).not_to eq(other_users_address.id)
           end
         end
 
         context "when using another user's address via #{address_type}_id" do
           let(:params) { { :"#{address_type}_id" => other_users_address.prefix_id } }
 
-          it 'returns failure' do
-            expect(subject).to be_failure
-            expect(subject.error).to be_present
+          it 'ignores the address and keeps original' do
+            original_address_id = order.public_send(:"#{address_type}_id")
+            expect(subject).to be_success
+            expect(order.reload.public_send(:"#{address_type}_id")).to eq(original_address_id)
+            expect(order.public_send(:"#{address_type}_id")).not_to eq(other_users_address.id)
           end
         end
       end
 
-      include_examples 'rejects other users address', :ship_address
-      include_examples 'rejects other users address', :bill_address
+      include_examples 'ignores other users address', :ship_address
+      include_examples 'ignores other users address', :bill_address
 
-      context 'when using guest address (no user)' do
-        let(:guest_address) { create(:address, user: nil) }
-        let(:params) { { ship_address_id: guest_address.prefix_id } }
+      context 'when order has no user (guest order)' do
+        let(:order) { create(:order_with_line_items, user: nil, store: store) }
+        let(:params) { { ship_address_id: other_users_address.prefix_id } }
 
-        it 'allows using the address' do
+        it 'ignores address_id params and keeps existing address' do
+          original_address_id = order.ship_address_id
           expect(subject).to be_success
-          expect(order.reload.ship_address_id).to eq(guest_address.id)
+          expect(order.reload.ship_address_id).to eq(original_address_id)
         end
       end
     end
@@ -212,8 +233,10 @@ RSpec.describe Spree::Api::V3::Orders::Update do
       context 'with invalid address prefix_id' do
         let(:params) { { ship_address_id: 'addr_invalid123' } }
 
-        it 'returns failure' do
-          expect(subject).to be_failure
+        it 'succeeds but does not change the address' do
+          original_address_id = order.ship_address_id
+          expect(subject).to be_success
+          expect(order.reload.ship_address_id).to eq(original_address_id)
         end
       end
 
