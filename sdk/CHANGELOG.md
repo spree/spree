@@ -1,5 +1,11 @@
 # @spree/sdk
 
+## 0.1.4
+
+### Patch Changes
+
+- Fix automated release with npm Trusted Publishing
+
 ## 0.1.3
 
 ### Patch Changes

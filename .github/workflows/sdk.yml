@@ -5,9 +5,11 @@ on:
     branches: [main]
     paths:
       - 'sdk/**'
+      - '.github/workflows/sdk.yml'
   pull_request:
     paths:
       - 'sdk/**'
+      - '.github/workflows/sdk.yml'
 
 permissions:
   contents: read
@@ -58,6 +60,10 @@ jobs:
           cache-dependency-path: sdk/package-lock.json
 
       - run: npm ci
+
+      - name: Upgrade npm for Trusted Publishing support
+        run: npm install -g npm@latest
+        working-directory: .
 
       - name: Check if version is published
         id: check
