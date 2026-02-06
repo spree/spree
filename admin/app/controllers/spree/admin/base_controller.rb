@@ -14,6 +14,7 @@ module Spree
       helper 'spree/integrations'
 
       before_action :authorize_admin
+      around_action :set_timezone
       after_action :set_return_to, only: [:index]
 
       protected
@@ -84,8 +85,10 @@ module Spree
         I18n.default_locale
       end
 
-      def current_timezone
-        @current_timezone ||= current_store.preferred_timezone
+      def set_timezone
+        Time.use_zone(current_store&.preferred_timezone) do
+          yield
+        end
       end
 
       def current_currency
@@ -140,10 +143,13 @@ module Spree
         'spree/admin'
       end
 
-      def parse_date_param(date_string)
+      def try_parse_date_param(date_string)
         return if date_string.blank?
 
-        date_string.to_date&.in_time_zone(current_timezone)
+        date_string.to_date
+      rescue Date::Error => error
+        Rails.error.report(error, context: { user_id: try_spree_current_user&.id, date_string: date_string }, source: 'spree.admin')
+        nil
       end
     end
   end

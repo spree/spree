@@ -9,18 +9,8 @@ module Spree
 
       def set_analytics_defaults
         params[:analytics_currency] ||= current_currency
-
-        params[:date_from] = if params[:date_from].present?
-                              params[:date_from].to_date&.in_time_zone(current_timezone)
-                            else
-                              1.month.ago.end_of_day.to_date.in_time_zone(current_timezone)
-                            end
-
-        params[:date_to] = if params[:date_to].present?
-                            params[:date_to].to_date&.in_time_zone(current_timezone)
-                          else
-                            Time.zone.now.beginning_of_day.to_date.in_time_zone(current_timezone)
-                          end
+        params[:date_from] = try_parse_date_param(params[:date_from]) || 1.month.ago.end_of_day.to_date
+        params[:date_to] = try_parse_date_param(params[:date_to]) || Time.zone.now.beginning_of_day.to_date
       end
 
       def analytics_time_range

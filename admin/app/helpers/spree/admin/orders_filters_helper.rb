@@ -5,21 +5,8 @@ module Spree
         super
         return params[:q] if params[:q].blank?
 
-        if params[:q][:completed_at_gt].present?
-          params[:q][:completed_at_gt] = begin
-            params[:q][:completed_at_gt].to_date&.in_time_zone(current_timezone)&.beginning_of_day
-          rescue StandardError
-            ''
-          end
-        end
-
-        if params[:q][:completed_at_lt].present?
-          params[:q][:completed_at_lt] = begin
-            params[:q][:completed_at_lt].to_date&.in_time_zone(current_timezone)&.end_of_day
-          rescue StandardError
-            ''
-          end
-        end
+        search_params[:completed_at_gt] = try_parse_date_param(search_params[:completed_at_gt])&.beginning_of_day || ''
+        search_params[:completed_at_lt] = try_parse_date_param(search_params[:completed_at_lt])&.end_of_day || ''
 
         load_user
         params[:q][:user_id_eq] = @user.id if @user.present?

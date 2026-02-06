@@ -307,23 +307,25 @@ module Spree
         Rails.application.config.active_storage.web_image_content_types
       end
 
-      # returns the local date for a given date
+      # returns the localized date for a given date
       # @param date [Date] the date to format
-      # @return [String] the local date
+      # @return [String] the localized date
       def spree_date(date, options = {})
-        local_date(date, options)
+        options.symbolize_keys![:format] ||= :long
+        l(date, **options)
       end
 
-      # returns the local time for a given time
+      # returns the localized time for a given time
       # @param time [Time] the time to format
-      # @return [String] the local time
+      # @return [String] the localized time
       def spree_time(time, options = {})
-        local_time(time, options)
+        options.symbolize_keys![:format] ||= :long
+        l(time, **options)
       end
 
-      # returns the local time ago for a given time
+      # returns the localized time ago for a given time
       # @param time [Time] the time to format
-      # @return [String] the local time ago
+      # @return [String] the localized time ago
       def spree_time_ago(time, options = {})
         return '' if time.blank?
 
@@ -333,7 +335,8 @@ module Spree
         # Generate the time ago element with tooltip
         content_tag(:span, options) do
           tooltip_text = spree_time(time)
-          local_time_ago(time, class: '', title: nil) + tooltip(tooltip_text)
+
+          I18n.t('datetime.distance_in_words.ago', time: time_ago_in_words(time)) + tooltip(tooltip_text)
         end
       end
 
