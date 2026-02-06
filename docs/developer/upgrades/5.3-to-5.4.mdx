@@ -1,0 +1,54 @@
+---
+title: Upgrading to Spree 5.4
+description: This guide covers upgrading a Spree 5.3 application to Spree 5.4.
+---
+
+<Info>
+  Before proceeding to upgrade, please ensure you're at [Spree 5.3](/developer/upgrades/5.2-to-5.3)
+</Info>
+
+## Upgrade steps
+
+### Update gems
+
+  ```bash
+  bundle update
+  ```
+
+### Fetch and run missing migrations
+
+  ```bash
+  bin/rake spree:install:migrations && bin/rails db:migrate
+  ```
+
+### Backfill Prefix IDs
+
+Spree 5.4 improves security by masking real IDs, enhancing data privacy and security. Prefixed IDs are also easier to read and understand, eg. Product ID is `prod_ZFuwEco4OJjJXEykYbzYOf00` and order ID is `or_zivmaWd2vkxehVqLOyYeLEa1`.
+
+However this requires a one-time backfill of IDs for existing records. This can be done by running the following command:
+
+  ```bash
+  bin/rails spree:prefix_ids:backfill
+  ```
+
+Length of this process can vary depending on the size of your database. Both new API and Admin Dashboard will use these IDs. `spree_storefront` still uses the old IDs so this update won't disrupt your existing storefront.
+
+### Backfill Image Thumbnail IDs
+
+Spree 5.4 adds a `thumbnail` association to both `Product` and `Variant` models. This greatly speeds up rendering Product lists everywhere (API, Admin Dashboard and `spree_storefront`), as previously we've had to load all images for each product.
+
+This can be done by running the following command:
+
+  ```bash
+  bin/rails spree:images:backfill_thumbnails
+  ```
+
+As above, this process can take a while depending on the size of your product catalog.
+
+### (Optional) Install API v2
+
+Spree 5.4 ships with API v3, which marks deprecation of API v2. API v2 is still available but you need to install it separately. If you currently use API v2, you can do this by running the following command:
+
+  ```bash
+  bundle add spree_legacy_api_v2
+  ```
