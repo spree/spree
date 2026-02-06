@@ -573,6 +573,77 @@ const client = createSpreeClient({
 });
 ```
 
+## Development
+
+### Setup
+
+```bash
+cd sdk
+npm install
+```
+
+### Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm test` | Run tests once |
+| `npm run test:watch` | Run tests in watch mode |
+| `npm run test:coverage` | Run tests with coverage report |
+| `npm run typecheck` | Type-check with `tsc --noEmit` |
+| `npm run build` | Build CJS + ESM bundles with `tsup` |
+| `npm run dev` | Build in watch mode |
+| `npm run console` | Interactive REPL for testing the SDK |
+
+### Testing
+
+Tests use [Vitest](https://vitest.dev/) with [MSW](https://mswjs.io/) (Mock Service Worker) for API mocking at the network level.
+
+```bash
+# Run all tests
+npm test
+
+# Run in watch mode during development
+npm run test:watch
+
+# Run with coverage
+npm run test:coverage
+```
+
+Test files live in `tests/` and follow the structure:
+
+- `tests/mocks/handlers.ts` - MSW request handlers with fixture data
+- `tests/mocks/server.ts` - MSW server instance
+- `tests/setup.ts` - Server lifecycle (listen/reset/close)
+- `tests/helpers.ts` - `createTestClient()` and constants
+- `tests/*.test.ts` - Test suites per resource (auth, products, orders, etc.)
+
+To add tests for a new endpoint, add an MSW handler in `handlers.ts` and create a corresponding test file.
+
+### Releasing
+
+This package uses [Changesets](https://github.com/changesets/changesets) for version management and publishing.
+
+**After making changes:**
+
+```bash
+npx changeset
+```
+
+This prompts you to select a semver bump type (patch/minor/major) and write a summary. A changeset file is created in `.changeset/`.
+
+**How releases work:**
+
+1. Changeset files are committed with your PR
+2. When merged to `main`, a GitHub Action creates a "Version Packages" PR that bumps the version and updates the CHANGELOG
+3. When that PR is merged, the package is automatically published to npm
+
+**Manual release (if needed):**
+
+```bash
+npm run version   # Apply changesets and bump version
+npm run release   # Build and publish to npm
+```
+
 ## License
 
 BSD-3-Clause

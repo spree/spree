@@ -1,5 +1,5 @@
 import * as repl from 'node:repl';
-import { createSpreeClient, SpreeClient, SpreeError } from './src';
+import { createSpreeClient, SpreeError } from './src';
 
 const baseUrl = process.env.SPREE_URL || 'http://localhost:3000';
 const apiKey = process.env.SPREE_API_KEY || '';
