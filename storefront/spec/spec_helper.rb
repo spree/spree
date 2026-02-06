@@ -55,7 +55,7 @@ require 'spree/core/controller_helpers/strong_parameters'
 
 RSpec.configure do |config|
   config.color = true
-  config.default_formatter = ENV['CI'] ? 'progress' : 'doc'
+  config.default_formatter = 'progress'
   config.fail_fast = ENV['FAIL_FAST'] || false
   config.infer_spec_type_from_file_location!
   config.mock_with :rspec
@@ -110,7 +110,7 @@ RSpec.configure do |config|
   config.order = :random
   Kernel.srand config.seed
 
-  Capybara.server_port = 3000
+  Capybara.server_port = 3000 + ENV.fetch('TEST_ENV_NUMBER', 0).to_i
   Capybara.test_id = 'data-test-id'
 
   config.filter_run_including focus: true unless ENV['CI']

@@ -18,6 +18,7 @@ platforms :ruby do
 end
 
 group :test do
+  gem 'parallel_tests'
   gem 'capybara'
   gem 'capybara-screenshot'
   gem 'capybara-select-2'
