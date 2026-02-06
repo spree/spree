@@ -121,5 +121,49 @@ RSpec.describe Spree::StoreProduct, type: :model do
         expect(store_product.revenue).to eq(expected_revenue)
       end
     end
+
+    context 'when product association is nil' do
+      let(:store_product) { build(:store_product, store: store, product: nil) }
+
+      it 'returns nil without errors' do
+        result = nil
+        expect { result = store_product.refresh_metrics! }.not_to raise_error
+        expect(result).to be_nil
+      end
+
+      it 'does not update metrics' do
+        original_units_sold_count = store_product.units_sold_count
+        original_revenue = store_product.revenue
+
+        store_product.refresh_metrics!
+
+        expect(store_product.units_sold_count).to eq(original_units_sold_count)
+        expect(store_product.revenue).to eq(original_revenue)
+      end
+
+      context 'when product_id points to non-existent product' do
+        let(:store_product) { described_class.new(store: store, product_id: 999999) }
+
+        it 'handles missing product gracefully' do
+          expect(store_product.product).to be_nil
+          expect { store_product.refresh_metrics! }.not_to raise_error
+        end
+      end
+
+      context 'when product is destroyed after store_product creation' do
+        let(:product) { create(:product, stores: [store]) }
+        let(:store_product) { product.store_products.find_by(store: store) }
+
+        it 'handles destroyed product gracefully' do
+          original_product_id = store_product.product_id
+          product.destroy
+          store_product.reload
+
+          expect(store_product.product_id).to eq(original_product_id)
+          expect(store_product.product).to be_nil
+          expect { store_product.refresh_metrics! }.not_to raise_error
+        end
+      end
+    end
   end
 end
