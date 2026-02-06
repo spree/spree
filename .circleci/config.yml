@@ -15,6 +15,41 @@ defaults: &defaults
     - image: &ruby_image cimg/ruby:4.0-browsers
 
 commands:
+  check_code_changes:
+    steps:
+      - run:
+          name: Check for code changes beyond docs/config
+          command: |
+            if [ "$CIRCLE_BRANCH" = "main" ]; then
+              CHANGED_FILES=$(git diff --name-only HEAD~1 2>/dev/null || echo "")
+            else
+              git fetch origin main --depth=1 2>/dev/null || true
+              CHANGED_FILES=$(git diff --name-only origin/main...HEAD 2>/dev/null || echo "")
+            fi
+
+            if [ -z "$CHANGED_FILES" ]; then
+              echo "No changed files detected, proceeding with CI."
+              exit 0
+            fi
+
+            ONLY_EXCLUDED=true
+            for file in $CHANGED_FILES; do
+              case "$file" in
+                .github/*|docs/*|sdk/*|bin/*)
+                  ;;
+                *)
+                  ONLY_EXCLUDED=false
+                  break
+                  ;;
+              esac
+            done
+
+            if [ "$ONLY_EXCLUDED" = true ]; then
+              echo "Only changes in excluded directories (.github, docs, sdk, bin). Skipping CI."
+              circleci-agent step halt
+            else
+              echo "Code changes detected, proceeding with CI."
+            fi
   bundle_install:
     parameters:
       update:
@@ -78,6 +113,7 @@ jobs:
     <<: *defaults
     steps:
       - checkout
+      - check_code_changes
       - bundle_install:
           update: true
           clean: true
@@ -94,6 +130,7 @@ jobs:
           POSTGRES_USER: postgres
     steps: &default_steps
       - checkout
+      - check_code_changes
       - attach_workspace:
           at: /tmp
       - bundle_install
@@ -197,6 +234,7 @@ jobs:
     <<: *defaults
     steps:
       - checkout
+      - check_code_changes
       - bundle_install
       - run: bin/brakeman.sh
       - run:
