@@ -59,7 +59,8 @@ describe Spree::Ability, type: :model do
     context 'with admin user' do
       before do
         allow(user).to receive(:persisted?).and_return(true)
-        allow(user).to receive(:has_spree_role?).and_return(true)
+        allow(user).to receive(:spree_roles).and_return(Spree::Role.where(name: 'admin'))
+        allow(user).to receive(:spree_admin?).and_return(true)
       end
 
       it_behaves_like 'access granted'
@@ -85,6 +86,7 @@ describe Spree::Ability, type: :model do
       context 'admin user role' do
         it 'is able to admin' do
           allow(user).to receive(:persisted?).and_return(true)
+          allow(user).to receive(:spree_roles).and_return(Spree::Role.where(name: 'admin'))
           allow(user).to receive(:spree_admin?).and_return(true)
           expect(ability).to be_able_to :admin, resource
           expect(ability).to be_able_to :index, resource_order
@@ -105,6 +107,7 @@ describe Spree::Ability, type: :model do
 
         it 'is able to admin' do
           allow(user).to receive(:persisted?).and_return(true)
+          allow(user).to receive(:spree_roles).and_return(Spree::Role.where(name: 'admin'))
           allow(user).to receive(:spree_admin?).and_return(true)
           expect(ability).to be_able_to :admin, resource
           expect(ability).to be_able_to :index, resource_order
