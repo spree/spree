@@ -23,8 +23,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: npm
+          cache-dependency-path: sdk/package-lock.json
 
-      - run: npm install
+      - run: npm ci
 
       - run: npm run typecheck
 
@@ -46,9 +48,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: npm
+          cache-dependency-path: sdk/package-lock.json
           registry-url: 'https://registry.npmjs.org'
 
-      - run: npm install
+      - run: npm ci
 
       - name: Create Release PR or Publish
         uses: changesets/action@v1
