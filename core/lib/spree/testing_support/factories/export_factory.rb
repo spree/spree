@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :export, class: 'Spree::Export' do
-    store { create(:store) }
-    user { create(:admin_user) }
+    association :store, factory: :store
+    association :user, factory: :admin_user
     type { 'Spree::Exports::Products' }
     format { 'csv' }
 

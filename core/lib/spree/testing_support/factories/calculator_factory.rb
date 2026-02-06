@@ -1,10 +1,10 @@
 FactoryBot.define do
   factory :calculator, class: Spree::Calculator::FlatRate do
-    after(:create) { |c| c.set_preference(:amount, 10.0) }
+    preferred_amount { 10.0 }
   end
 
   factory :no_amount_calculator, class: Spree::Calculator::FlatRate do
-    after(:create) { |c| c.set_preference(:amount, 0) }
+    preferred_amount { 0 }
   end
 
   factory :default_tax_calculator, class: Spree::Calculator::DefaultTax do
@@ -27,10 +27,10 @@ FactoryBot.define do
   end
 
   factory :non_free_shipping_calculator, class: Spree::Calculator::Shipping::FlatRate do
-    after(:create) { |c| c.set_preference(:amount, 20.0) }
+    preferred_amount { 20.0 }
   end
 
   factory :digital_shipping_calculator, class: Spree::Calculator::Shipping::DigitalDelivery do
-    after(:create) { |c| c.set_preference(:amount, 0) }
+    preferred_amount { 0 }
   end
 end

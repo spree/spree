@@ -4,13 +4,18 @@ FactoryBot.define do
     quantity { 1 }
     price    { BigDecimal('10.00') }
     currency { order.currency }
-    product do
-      if order&.store&.present?
-        create(:product, stores: [order.store])
-      else
-        create(:product)
-      end
+    transient do
+      product { nil }
     end
-    variant { product.master }
+    variant do
+      resolved_product = product || begin
+        if order&.store&.present?
+          create(:product, stores: [order.store])
+        else
+          create(:product)
+        end
+      end
+      resolved_product.master
+    end
   end
 end

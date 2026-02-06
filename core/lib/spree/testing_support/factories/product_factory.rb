@@ -19,7 +19,10 @@ FactoryBot.define do
       create(:store, default: true) unless Spree::Store.any?
     end
     after(:create) do |product|
-      Spree::StockLocation.all.each { |stock_location| stock_location.propagate_variant(product.master) unless stock_location.stock_items.exists?(variant: product.master) }
+      existing_location_ids = product.master.stock_items.pluck(:stock_location_id)
+      Spree::StockLocation.where.not(id: existing_location_ids).find_each do |stock_location|
+        stock_location.propagate_variant(product.master)
+      end
     end
 
     factory :custom_product do
@@ -49,8 +52,8 @@ FactoryBot.define do
       end
       factory :product_with_properties do
         after(:create) do |product|
-          create(:property, :brand, id: 10)
-          create(:product_property, product: product, property_id: 10, value: 'Epsilon')
+          property = create(:property, :brand)
+          create(:product_property, product: product, property: property, value: 'Epsilon')
         end
       end
 
