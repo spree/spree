@@ -14,8 +14,8 @@
 #
 FactoryBot.define do
   factory :report, class: 'Spree::Reports::SalesTotal' do
-    store { create(:store) }
-    user { create(:admin_user) }
+    association :store, factory: :store
+    association :user, factory: :admin_user
     type { 'Spree::Reports::SalesTotal' }
     currency { 'USD' }
     date_from { 1.month.ago }
@@ -23,8 +23,8 @@ FactoryBot.define do
   end
 
   factory :products_performance_report, class: 'Spree::Reports::ProductsPerformance' do
-    store { create(:store) }
-    user { create(:admin_user) }
+    association :store, factory: :store
+    association :user, factory: :admin_user
     type { 'Spree::Reports::ProductsPerformance' }
     currency { 'USD' }
     date_from { 1.month.ago }

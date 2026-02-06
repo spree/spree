@@ -2,7 +2,7 @@ require 'factory_bot'
 
 Spree::Zone.class_eval do
   def self.global
-    find_by(name: 'GlobalZone') || FactoryBot.create(:global_zone)
+    find_by(name: 'GlobalZone') || FactoryBot.create(:global_zone, name: 'GlobalZone')
   end
 end
 

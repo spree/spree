@@ -13,10 +13,11 @@ FactoryBot.define do
 
     before(:create) do |order|
       unless order.store.present?
-        default_store = Spree::Store.default.persisted? ? Spree::Store.default : nil
-        store = default_store || create(:store)
-
-        order.store = store
+        store = begin
+          default = Spree::Store.default
+          default&.persisted? ? default : nil
+        end
+        order.store = store || create(:store)
       end
     end
 
@@ -42,7 +43,6 @@ FactoryBot.define do
     end
 
     factory :order_with_line_items do
-      bill_address
       ship_address
 
       transient do

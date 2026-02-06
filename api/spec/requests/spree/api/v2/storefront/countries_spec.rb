@@ -38,28 +38,29 @@ describe 'Storefront API v2 Countries spec', type: :request do
 
     context 'with shipping country filtering' do
       let!(:new_country) { create(:country) }
-      let!(:zone) { create(:zone) }
+      let!(:zone) { create(:zone_with_country) }
       let!(:shipping_method) { create(:shipping_method) }
-      let!(:shippable_url) { '/api/v2/storefront/countries?filter[shippable]=true' }
-      let!(:to_return) { shipping_method.zones.reduce([]) { |collection, zone| collection + zone.country_list } }
+      let(:shippable_url) { '/api/v2/storefront/countries?filter[shippable]=true' }
+
+      def shippable_country_count
+        Spree::Country.joins(zones: :shipping_methods).distinct.count
+      end
 
       it 'returns countries that the current store ships to' do
         get shippable_url
-        expect(json_response['data'].size).to eq(to_return.size)
+        expect(json_response['data'].size).to eq(shippable_country_count)
       end
 
       it 'does not return country second time if it appears in multiple zones' do
         zone.countries << country
         shipping_method.zones << zone
         get shippable_url
-        expect(json_response['data'].size).to eq(to_return.size)
+        expect(json_response['data'].size).to eq(shippable_country_count)
       end
 
       it 'returns countries from multiple shipping methods' do
-        new_country = create(:country)
         new_shipping_method = create(:shipping_method)
         new_shipping_method.zones.first.countries << new_country
-        to_return << new_country
         get shippable_url
         expect(json_response['data'].pluck(:id)).to include(new_country.id.to_s)
       end

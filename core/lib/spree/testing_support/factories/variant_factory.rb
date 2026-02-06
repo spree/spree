@@ -13,7 +13,7 @@ FactoryBot.define do
     track_inventory { true }
 
     product       { |p| p.association(:base_product, stores: [Spree::Store.default]) }
-    option_values { [create(:option_value)] }
+    option_values { [build(:option_value)] }
 
     transient do
       create_stock { true }
@@ -26,9 +26,8 @@ FactoryBot.define do
 
     after(:create) do |variant, evaluator|
       if evaluator.create_stock
-        Spree::StockLocation.all.each do |stock_location|
-          next if stock_location.stock_item(variant).present?
-
+        existing_location_ids = variant.stock_items.pluck(:stock_location_id)
+        Spree::StockLocation.where.not(id: existing_location_ids).find_each do |stock_location|
           stock_location.propagate_variant(variant)
         end
       end

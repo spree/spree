@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :product_property, class: Spree::ProductProperty do
-    product { create(:product, stores: [Spree::Store.default]) }
+    product
     value { "val-#{rand(50)}" }
     property
   end

@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :import, class: 'Spree::Import' do
     owner { Spree::Store.default || create(:store) }
-    user { create(:admin_user) }
+    association :user, factory: :admin_user
     type { 'Spree::Imports::Products' }
 
     factory :product_import, class: 'Spree::Imports::Products', parent: :import do

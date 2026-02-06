@@ -3,11 +3,11 @@ FactoryBot.define do
 
   factory :store_credit, class: Spree::StoreCredit do
     user
-    created_by { create(:admin_user) }
-    category { create(:store_credit_category) }
+    association :created_by, factory: :admin_user
+    association :category, factory: :store_credit_category
     amount { 150.00 }
     currency { 'USD' }
-    credit_type { create(:primary_credit_type) }
+    association :credit_type, factory: :primary_credit_type
     store { Spree::Store.default || create(:store) }
   end
 

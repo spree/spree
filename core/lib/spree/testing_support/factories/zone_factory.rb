@@ -13,13 +13,16 @@ FactoryBot.define do
       end
 
       factory :global_zone, class: Spree::Zone do
-        sequence(:name) { |n| "GlobalZone_#{n}" }
+        name { 'GlobalZone' }
 
-        zone_members do |proxy|
-          zone = proxy.instance_eval { @instance }
+        after(:create) do |zone|
+          country_ids = Spree::Country.pluck(:id)
+          existing_ids = zone.zone_members.where(zoneable_type: 'Spree::Country').pluck(:zoneable_id)
+          new_ids = country_ids - existing_ids
 
-          Spree::Country.all.map do |country|
-            Spree::ZoneMember.where(zoneable: country, zone: zone).first_or_create
+          if new_ids.any?
+            records = new_ids.map { |id| { zoneable_type: 'Spree::Country', zoneable_id: id, zone_id: zone.id, created_at: Time.current, updated_at: Time.current } }
+            Spree::ZoneMember.insert_all(records)
           end
         end
       end

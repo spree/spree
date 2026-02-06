@@ -23,7 +23,7 @@ FactoryBot.define do
 
   factory :check_payment, class: Spree::Payment do
     amount { 45.75 }
-    order  { create(:order, total: 45.75) }
+    order  { create(:order, total: amount) }
 
     association(:payment_method, factory: :check_payment_method)
   end

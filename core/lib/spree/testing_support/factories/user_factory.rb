@@ -13,11 +13,9 @@ FactoryBot.define do
 
     factory :user_with_addresses, aliases: [:user_with_addreses] do
       after(:create) do |user|
-        user.ship_address = create(:address, user: user)
-        user.bill_address = create(:address, user: user)
-        user.addresses << user.ship_address
-        user.addresses << user.bill_address
-        user.save
+        ship_address = create(:address, user: user)
+        bill_address = create(:address, user: user)
+        user.update_columns(ship_address_id: ship_address.id, bill_address_id: bill_address.id)
       end
     end
   end
