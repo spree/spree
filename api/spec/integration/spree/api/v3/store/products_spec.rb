@@ -5,8 +5,20 @@ require 'swagger_helper'
 RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store.yaml' do
   include_context 'API v3 Store'
 
-  let!(:product) { create(:product, stores: [store], status: 'active') }
-  let!(:product2) { create(:product, stores: [store], status: 'active') }
+  let(:taxonomy) { create(:taxonomy, store: store) }
+  let(:taxon) { create(:taxon, taxonomy: taxonomy) }
+  let(:child_taxon) { create(:taxon, taxonomy: taxonomy, parent: taxon, name: 'Shirts') }
+
+  let(:option_type) { create(:option_type, name: 'size', presentation: 'Size', filterable: true) }
+  let(:option_value_small) { create(:option_value, option_type: option_type, name: 'small', presentation: 'S') }
+
+  let!(:product) do
+    create(:product, stores: [store], status: 'active', taxons: [child_taxon]).tap do |p|
+      p.option_types << option_type
+      create(:variant, product: p, option_values: [option_value_small])
+    end
+  end
+  let!(:product2) { create(:product, stores: [store], status: 'active', taxons: [child_taxon]) }
   let!(:draft_product) { create(:product, stores: [store], status: 'draft') }
   let!(:other_store) { create(:store) }
   let!(:other_store_product) { create(:product, stores: [other_store]) }
@@ -130,7 +142,123 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
 
         run_test!
       end
+    end
+  end
 
+  path '/api/v3/store/products/filters' do
+    get 'Get product filters' do
+      tags 'Products'
+      produces 'application/json'
+      security [api_key: []]
+      description <<~DESC
+        Returns available filters for products with their options and counts.
+        Use this endpoint to build filter UIs for product listing pages.
+
+        The filters are context-aware - when a taxon_id is provided, only filters
+        relevant to products in that taxon are returned.
+      DESC
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true,
+                description: 'Publishable API key'
+      parameter name: :taxon_id, in: :query, type: :string, required: false,
+                description: 'Scope filters to products in this taxon (prefix ID)'
+      parameter name: 'q[name_cont]', in: :query, type: :string, required: false,
+                description: 'Filter by name containing string'
+
+      response '200', 'filters retrieved successfully' do
+        let(:'x-spree-api-key') { api_key.token }
+
+        schema type: :object,
+               properties: {
+                 filters: {
+                   type: :array,
+                   description: 'Available filters (price_range, availability, option, taxon)',
+                   items: { type: :object }
+                 },
+                 sort_options: {
+                   type: :array,
+                   description: 'Available sort options',
+                   items: {
+                     type: :object,
+                     properties: {
+                       id: { type: :string },
+                       label: { type: :string }
+                     },
+                     required: %w[id label]
+                   }
+                 },
+                 default_sort: {
+                   type: :string,
+                   description: 'Default sort option ID'
+                 },
+                 total_count: {
+                   type: :integer,
+                   description: 'Total products matching current filters'
+                 }
+               },
+               required: %w[filters sort_options default_sort total_count]
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data).to have_key('filters')
+          expect(data).to have_key('sort_options')
+          expect(data).to have_key('default_sort')
+          expect(data).to have_key('total_count')
+          expect(data['total_count']).to eq(2)
+
+          # Check price filter
+          price_filter = data['filters'].find { |f| f['type'] == 'price_range' }
+          expect(price_filter).to be_present
+          expect(price_filter).to include('min', 'max', 'currency')
+
+          # Check availability filter
+          availability_filter = data['filters'].find { |f| f['type'] == 'availability' }
+          expect(availability_filter).to be_present
+
+          # Check option filter
+          size_filter = data['filters'].find { |f| f['name'] == 'size' }
+          expect(size_filter).to be_present
+          expect(size_filter['type']).to eq('option')
+
+          # Check sort options
+          sort_ids = data['sort_options'].map { |s| s['id'] }
+          expect(sort_ids).to include('manual', 'price-low-to-high', 'newest-first')
+        end
+      end
+
+      response '200', 'filters scoped to taxon' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:taxon_id) { taxon.prefix_id }
+
+        schema type: :object,
+               properties: {
+                 filters: { type: :array, items: { type: :object } },
+                 sort_options: { type: :array, items: { type: :object } },
+                 default_sort: { type: :string },
+                 total_count: { type: :integer }
+               },
+               required: %w[filters sort_options default_sort total_count]
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+
+          # Should include taxon filter with child taxons
+          taxon_filter = data['filters'].find { |f| f['type'] == 'taxon' }
+          expect(taxon_filter).to be_present
+          expect(taxon_filter['options'].map { |t| t['label'] }).to include('Shirts')
+        end
+      end
+
+      response '401', 'unauthorized - invalid or missing API key' do
+        let(:'x-spree-api-key') { 'invalid' }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['error']['code']).to eq('invalid_token')
+        end
+      end
     end
   end
 end

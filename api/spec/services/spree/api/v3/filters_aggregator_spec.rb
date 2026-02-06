@@ -38,7 +38,7 @@ RSpec.describe Spree::Api::V3::FiltersAggregator do
 
     it 'returns sort_options array' do
       expect(result[:sort_options]).to be_an(Array)
-      expect(result[:sort_options].first).to include(id: 'manual', label: 'Default')
+      expect(result[:sort_options].first).to include(id: 'manual', label: Spree.t('products_sort_options.manual'))
     end
 
     it 'returns default_sort from taxon' do

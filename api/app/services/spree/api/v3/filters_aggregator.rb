@@ -2,15 +2,15 @@ module Spree
   module Api
     module V3
       class FiltersAggregator
-        SORT_OPTIONS = [
-          { id: 'manual', label: 'Default' },
-          { id: 'best-selling', label: 'Best Selling' },
-          { id: 'price-low-to-high', label: 'Price: Low to High' },
-          { id: 'price-high-to-low', label: 'Price: High to Low' },
-          { id: 'newest-first', label: 'Newest First' },
-          { id: 'oldest-first', label: 'Oldest First' },
-          { id: 'name-a-z', label: 'Name: A-Z' },
-          { id: 'name-z-a', label: 'Name: Z-A' }
+        SORT_OPTION_IDS = %w[
+          manual
+          best-selling
+          price-low-to-high
+          price-high-to-low
+          newest-first
+          oldest-first
+          name-a-z
+          name-z-a
         ].freeze
 
         # @param scope [ActiveRecord::Relation] Base product scope (already filtered by store, availability, taxon, etc.)
@@ -25,7 +25,7 @@ module Spree
         def call
           {
             filters: build_filters,
-            sort_options: SORT_OPTIONS,
+            sort_options: sort_options,
             default_sort: @taxon&.sort_order || 'manual',
             total_count: @scope.distinct.count
           }
@@ -42,6 +42,12 @@ module Spree
           ].compact
         end
 
+        def sort_options
+          SORT_OPTION_IDS.map do |id|
+            { id: id, label: Spree.t("products_sort_options.#{id.underscore}") }
+          end
+        end
+
         def price_filter
           # Remove ordering to avoid PostgreSQL DISTINCT + ORDER BY conflicts
           prices = Spree::Price.for_products(@scope.reorder(''), @currency)
@@ -52,7 +58,7 @@ module Spree
           {
             id: 'price',
             type: 'price_range',
-            label: 'Price',
+            label: Spree.t(:price),
             min: min.to_f,
             max: max.to_f,
             currency: @currency
@@ -68,10 +74,10 @@ module Spree
           {
             id: 'availability',
             type: 'availability',
-            label: 'Availability',
+            label: Spree.t(:availability),
             options: [
-              { id: 'in_stock', label: 'In Stock', count: in_stock_count },
-              { id: 'out_of_stock', label: 'Out of Stock', count: out_of_stock_count }
+              { id: 'in_stock', label: Spree.t(:in_stock), count: in_stock_count },
+              { id: 'out_of_stock', label: Spree.t(:out_of_stock), count: out_of_stock_count }
             ]
           }
         end
@@ -129,7 +135,7 @@ module Spree
           {
             id: 'taxons',
             type: 'taxon',
-            label: 'Category',
+            label: Spree.t(:category),
             options: child_taxons.map { |t| taxon_option_data(t) }
           }
         end
