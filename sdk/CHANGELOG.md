@@ -1,5 +1,11 @@
 # @spree/sdk
 
+## 0.1.3
+
+### Patch Changes
+
+- Fix release workflow for npm Trusted Publishing (OIDC)
+
 ## 0.1.2
 
 ### Patch Changes
