@@ -121,5 +121,70 @@ RSpec.describe Spree::StoreProduct, type: :model do
         expect(store_product.revenue).to eq(expected_revenue)
       end
     end
+
+    context 'when product association is nil' do
+      describe 'nil product handling' do
+        let(:store_product) { build(:store_product, store: store, product: nil) }
+
+        it 'returns early without errors when product is nil' do
+          expect { store_product.refresh_metrics! }.not_to raise_error
+          
+          result = store_product.refresh_metrics!
+          expect(result).to be_nil
+        end
+
+        it 'does not attempt to call methods on nil product' do
+          expect(store_product.product).to be_nil
+          expect { store_product.refresh_metrics! }.not_to raise_error
+        end
+
+        it 'does not update metrics when product is nil' do
+          original_units_sold_count = store_product.units_sold_count
+          original_revenue = store_product.revenue
+          
+          store_product.refresh_metrics!
+          
+          expect(store_product.units_sold_count).to eq(original_units_sold_count)
+          expect(store_product.revenue).to eq(original_revenue)
+        end
+      end
+
+      describe 'invalid product_id handling' do
+        let(:store_product) { build(:store_product, store: store, product_id: 999999) }
+
+        it 'handles case where product_id points to non-existent product' do
+          expect(store_product.product).to be_nil
+          expect { store_product.refresh_metrics! }.not_to raise_error
+        end
+      end
+
+      describe 'error prevention verification' do
+        let(:store_product_with_nil_product) { build(:store_product, store: store, product: nil) }
+
+        it 'specifically prevents NoMethodError on completed_orders for nil product' do
+          expect { store_product_with_nil_product.refresh_metrics! }.not_to raise_error
+        end
+
+        it 'specifically prevents NoMethodError on variants_including_master for nil product' do
+          expect { store_product_with_nil_product.refresh_metrics! }.not_to raise_error
+        end
+      end
+
+      describe 'product becomes nil after initialization' do
+        let(:product) { create(:product, stores: [store]) }
+        let(:store_product) { product.store_products.find_by(store: store) }
+
+        it 'handles case where product is destroyed after store_product creation' do
+          original_product_id = store_product.product_id
+          product.destroy
+          store_product.reload
+          
+          expect(store_product.product_id).to eq(original_product_id)
+          expect(store_product.product).to be_nil
+          
+          expect { store_product.refresh_metrics! }.not_to raise_error
+        end
+      end
+    end    
   end
 end
