@@ -9,6 +9,8 @@ module Spree
     validates :store_id, uniqueness: { scope: :product_id }
 
     def refresh_metrics!
+      return if product.nil?
+
       completed_order_ids = product.completed_orders.where(store_id: store_id).select(:id)
       variant_ids = product.variants_including_master.ids
 
