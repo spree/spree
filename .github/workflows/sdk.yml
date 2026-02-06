@@ -56,7 +56,6 @@ jobs:
           node-version: 20
           cache: npm
           cache-dependency-path: sdk/package-lock.json
-          registry-url: 'https://registry.npmjs.org'
 
       - run: npm ci
 
