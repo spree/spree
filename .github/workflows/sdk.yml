@@ -47,6 +47,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      id-token: write
     steps:
       - uses: actions/checkout@v4
 
@@ -59,12 +60,16 @@ jobs:
 
       - run: npm ci
 
-      - name: Create Release PR or Publish
-        uses: changesets/action@v1
-        with:
-          publish: npm run release
-          version: npm run version
-          cwd: sdk
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Check if version is published
+        id: check
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          if npm view @spree/sdk@$PACKAGE_VERSION version 2>/dev/null; then
+            echo "published=true" >> $GITHUB_OUTPUT
+          else
+            echo "published=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build and Publish
+        if: steps.check.outputs.published == 'false'
+        run: npm run build && npm publish --provenance --access public
