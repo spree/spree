@@ -2,11 +2,12 @@ require 'csv'
 
 module Spree
   class Export < Spree.base_class
+    has_prefix_id :exp
+
     SUPPORTED_FILE_FORMATS = %i[csv].freeze
 
     include Spree::SingleStoreResource
     include Spree::NumberIdentifier
-    include Spree::NumberAsParam
     include Spree::VendorConcern if defined?(Spree::VendorConcern)
 
     include Spree::Core::NumberGenerator.new(prefix: 'EF')

@@ -92,6 +92,33 @@ describe Spree::Order, type: :model do
     end
   end
 
+  describe 'Validations' do
+    describe '#currency_must_be_supported_by_store' do
+      let(:order) { build(:order, store: store, currency: currency) }
+
+      before do
+        allow(store).to receive(:supported_currencies).and_return(['EUR', 'USD'])
+      end
+
+      context 'when currency is supported by the store' do
+        let(:currency) { 'EUR' }
+
+        it 'is valid' do
+          expect(order).to be_valid
+        end
+      end
+
+      context 'when currency is not supported by the store' do
+        let(:currency) { 'JPY' }
+
+        it 'is invalid' do
+          expect(order).not_to be_valid
+          expect(order.errors[:currency]).to include(Spree.t(:currency_not_supported_by_store))
+        end
+      end
+    end
+  end
+
   describe '#full_name' do
     subject { order.full_name }
 
@@ -224,7 +251,7 @@ describe Spree::Order, type: :model do
       end
     end
 
-    context 'events', events: true do
+    context 'events', :events do
       let(:order) { create(:completed_order_with_totals, store: store) }
 
       it 'publishes order.canceled event' do
@@ -240,7 +267,7 @@ describe Spree::Order, type: :model do
 
     before { order.cancel! }
 
-    it 'publishes order.resumed event', events: true do
+    it 'publishes order.resumed event', :events do
       expect(order).to receive(:publish_event).with('order.resumed').at_least(:once)
       allow(order).to receive(:publish_event).with(anything)
       order.resume!
@@ -290,7 +317,7 @@ describe Spree::Order, type: :model do
       end
     end
 
-    context 'events', events: true do
+    context 'events', :events do
       let(:order) { create(:completed_order_with_totals) }
 
       it 'publishes order.canceled event' do
@@ -401,7 +428,7 @@ describe Spree::Order, type: :model do
       end
     end
 
-    context 'events', events: true do
+    context 'events', :events do
       let(:order) { create(:order_with_line_items, store: store) }
 
       before { order.update_column(:state, 'complete') }
@@ -415,10 +442,10 @@ describe Spree::Order, type: :model do
       it 'enqueues RefreshMetricsJob for each product in the order' do
         product_count = order.line_items.map { |li| li.variant.product_id }.uniq.count
 
-        expect {
+        expect do
           order.finalize!
           perform_enqueued_jobs(only: Spree::Events::SubscriberJob)
-        }.to have_enqueued_job(Spree::Products::RefreshMetricsJob).exactly(product_count).times
+        end.to have_enqueued_job(Spree::Products::RefreshMetricsJob).exactly(product_count).times
       end
     end
   end
@@ -571,11 +598,11 @@ describe Spree::Order, type: :model do
   end
 
   describe '#currency' do
-    context 'when object currency is ABC' do
-      before { order.currency = 'ABC' }
+    context 'when object currency is EUR' do
+      before { order.currency = 'EUR' }
 
       it 'returns the currency from the object' do
-        expect(order.currency).to eq('ABC')
+        expect(order.currency).to eq('EUR')
       end
     end
   end
@@ -696,7 +723,7 @@ describe Spree::Order, type: :model do
       end
     end
 
-    context 'events', events: true do
+    context 'events', :events do
       it 'publishes order.updated event' do
         order = create(:order_with_totals, state: 'delivery')
         expect(order).to receive(:publish_event).with('order.updated').at_least(:once)
@@ -844,7 +871,6 @@ describe Spree::Order, type: :model do
   describe '#associate_user!' do
     let(:user) { create(:user_with_addreses) }
     let(:email) { user.email }
-    let(:created_by) { user }
     let(:bill_address) { user.bill_address }
     let(:ship_address) { user.ship_address }
     let(:override_email) { true }
@@ -855,7 +881,6 @@ describe Spree::Order, type: :model do
       {
         user: nil,
         email: nil,
-        created_by: nil,
         bill_address: nil,
         ship_address: nil
       }
@@ -866,9 +891,6 @@ describe Spree::Order, type: :model do
       expect(order.user_id).to eql(user.id)
 
       expect(order.email).to eql(email)
-
-      expect(order.created_by).to eql(created_by)
-      expect(order.created_by_id).to eql(created_by.id)
 
       expect(order.bill_address).to eql(bill_address)
       expect(order.bill_address_id).to eql(bill_address&.id)
@@ -905,13 +927,6 @@ describe Spree::Order, type: :model do
 
         it_behaves_like '#associate_user!'
       end
-    end
-
-    context 'when created_by is set' do
-      let(:order_attributes) { super().merge(created_by: created_by) }
-      let(:created_by) { create(:user_with_addreses) }
-
-      it_behaves_like '#associate_user!'
     end
 
     context 'when bill_address is set' do
@@ -973,7 +988,7 @@ describe Spree::Order, type: :model do
       it_behaves_like '#associate_user!', true
     end
 
-    context 'events', events: true do
+    context 'events', :events do
       let(:order) { create(:order, order_attributes) }
 
       it 'publishes order.updated event' do
@@ -1026,7 +1041,7 @@ describe Spree::Order, type: :model do
       order.approved_by(admin_user)
     end
 
-    context 'events', events: true do
+    context 'events', :events do
       it 'publishes order.approved event' do
         expect(order).to receive(:publish_event).with('order.approved').at_least(:once)
         order.approved_by(admin_user)
@@ -1042,7 +1057,7 @@ describe Spree::Order, type: :model do
       expect(order.reload.considered_risky).to be true
     end
 
-    context 'events', events: true do
+    context 'events', :events do
       it 'publishes order.updated event' do
         expect(order).to receive(:publish_event).with('order.updated')
         order.considered_risky!
@@ -1062,7 +1077,7 @@ describe Spree::Order, type: :model do
       expect(order.reload.considered_risky).to be false
     end
 
-    context 'events', events: true do
+    context 'events', :events do
       it 'publishes order.approved event' do
         expect(order).to receive(:publish_event).with('order.approved')
         order.approve!
@@ -1097,7 +1112,7 @@ describe Spree::Order, type: :model do
         expect(order.reload.state).to eq('address')
       end
 
-      context 'events', events: true do
+      context 'events', :events do
         it 'publishes order.updated event' do
           expect(order).to receive(:publish_event).with('order.updated').at_least(:once)
           order.ensure_updated_shipments

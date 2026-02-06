@@ -80,7 +80,7 @@ describe Spree::Admin::DigitalAssetsController, type: :controller do
     let(:params) do
       {
         product_id: product.slug,
-        id: digital.id
+        id: digital.to_param
       }
     end
 

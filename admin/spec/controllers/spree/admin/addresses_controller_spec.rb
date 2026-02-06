@@ -18,7 +18,7 @@ RSpec.describe Spree::Admin::AddressesController, type: :controller do
   describe 'POST #create' do
     subject { post :create, params: params, format: :turbo_stream }
 
-    let(:params) { { address: address_params, user_id: user.id, type: 'shipping', default_shipping: true } }
+    let(:params) { { address: address_params, user_id: user.to_param, type: 'shipping', default_shipping: true } }
 
     let(:address_params) do
       {
@@ -51,7 +51,7 @@ RSpec.describe Spree::Admin::AddressesController, type: :controller do
     end
 
     context 'with default shipping' do
-      let(:params) { { address: address_params, user_id: user.id, type: 'shipping', default_shipping: true } }
+      let(:params) { { address: address_params, user_id: user.to_param, type: 'shipping', default_shipping: true } }
 
       it 'creates a new default shipping address' do
         expect { subject }.to change(Spree::Address, :count).by(1)
@@ -60,7 +60,7 @@ RSpec.describe Spree::Admin::AddressesController, type: :controller do
     end
 
     context 'with default billing' do
-      let(:params) { { address: address_params, user_id: user.id, type: 'billing', default_billing: true } }
+      let(:params) { { address: address_params, user_id: user.to_param, type: 'billing', default_billing: true } }
 
       it 'creates a new default billing address' do
         expect { subject }.to change(Spree::Address, :count).by(1)
@@ -84,7 +84,7 @@ RSpec.describe Spree::Admin::AddressesController, type: :controller do
     let(:address) { create(:address) }
 
     it 'renders the edit address form' do
-      get :edit, params: { id: address.id, type: 'shipping' }
+      get :edit, params: { id: address.to_param, type: 'shipping' }
       expect(response).to render_template(:edit)
     end
   end
@@ -93,7 +93,7 @@ RSpec.describe Spree::Admin::AddressesController, type: :controller do
     subject { put :update, params: params, format: :turbo_stream }
 
     let(:address) { create(:address, user: user, firstname: 'John', lastname: 'Doe') }
-    let(:params) { { id: address.id, address: address_params, type: 'shipping' } }
+    let(:params) { { id: address.to_param, address: address_params, type: 'shipping' } }
 
     let(:address_params) do
       {

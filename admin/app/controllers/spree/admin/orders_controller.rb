@@ -102,7 +102,7 @@ module Spree
       end
 
       def load_order
-        @order = scope.includes(:adjustments).find_by!(number: params[:id])
+        @order = scope.includes(:adjustments).find_by_prefix_id!(params[:id])
         authorize! action, @order
       end
 

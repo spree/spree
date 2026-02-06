@@ -1,5 +1,7 @@
 module Spree
   class TaxonRule < Spree.base_class
+    has_prefix_id :txrule
+
     MATCH_POLICIES = %w[
       is_equal_to
       is_not_equal_to

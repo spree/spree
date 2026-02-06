@@ -1,5 +1,7 @@
 module Spree
   class StockItem < Spree.base_class
+    has_prefix_id :si
+
     acts_as_paranoid
 
     include Spree::Metafields

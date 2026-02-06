@@ -7,8 +7,7 @@
   <%= external_page_preview_link(@taxon, name: Spree.t(:taxonomy)) %>
 <% end %>
 
-<%# Because otherwise the form would attempt to use to_param of @taxon %>
-<% form_url = admin_taxonomy_taxon_path(@taxonomy.id, @taxon.id) %>
+<% form_url = admin_taxonomy_taxon_path(@taxonomy, @taxon) %>
 
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @taxon } %>
 

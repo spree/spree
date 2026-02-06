@@ -18,6 +18,7 @@ require 'awesome_nested_set'
 require 'cancan'
 require 'countries/global'
 require 'friendly_id'
+require 'jwt'
 require 'monetize'
 require 'mobility'
 require 'name_of_person'
@@ -60,8 +61,6 @@ module Spree
   end
 
   def self.admin_user_class(constantize: true)
-    @@admin_user_class ||= @@user_class
-
     if @@admin_user_class.is_a?(Class)
       raise 'Spree.admin_user_class MUST be a String or Symbol object, not a Class object.'
     elsif @@admin_user_class.is_a?(String) || @@admin_user_class.is_a?(Symbol)
@@ -109,7 +108,8 @@ module Spree
       themes: :default,
       addresses: :default,
       gift_cards: :default,
-      webhooks: :default
+      webhooks: :default,
+      api_keys: :default
     )
   end
 

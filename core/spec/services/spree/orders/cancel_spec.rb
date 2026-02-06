@@ -5,7 +5,7 @@ module Spree
     subject { described_class }
 
     let(:order) { create(:completed_order_with_totals) }
-    let!(:user) { create(:user) }
+    let!(:user) { create(:admin_user) }
 
     let(:result) { subject.call(order: order, canceler: user) }
 

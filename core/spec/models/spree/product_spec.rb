@@ -191,6 +191,18 @@ describe Spree::Product, type: :model do
       end
     end
 
+    describe '#master_id' do
+      it 'returns the id of the master variant' do
+        expect(product.master_id).to eq(product.master.id)
+      end
+
+      it 'returns nil when master is not present' do
+        product_without_master = build(:product, stores: [store])
+        product_without_master.master = nil
+        expect(product_without_master.master_id).to be_nil
+      end
+    end
+
     context 'product has no variants' do
       describe '#destroy' do
         it 'sets deleted_at value' do
@@ -1568,8 +1580,18 @@ describe Spree::Product, type: :model do
       context 'when available_on is specified' do
         subject(:available_products) { described_class.available(Time.current) }
 
+        let!(:draft_product) { create(:product, available_on: 1.day.ago, status: 'draft', stores: [store]) }
+
+        before do
+          draft_product.default_variant.set_price('USD', 10)
+        end
+
         it 'returns products available before or on the specified date' do
           expect(available_products).to contain_exactly(active_product)
+        end
+
+        it 'excludes draft products even if available_on is in the past' do
+          expect(available_products).not_to include(draft_product)
         end
       end
 

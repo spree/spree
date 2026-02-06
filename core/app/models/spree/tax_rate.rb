@@ -1,5 +1,7 @@
 module Spree
   class TaxRate < Spree.base_class
+    has_prefix_id :tax
+
     acts_as_paranoid
 
     include Spree::CalculatedAdjustments

@@ -39,7 +39,7 @@ describe Spree::Admin::TaxonomiesController do
     let(:taxonomy) { create(:taxonomy) }
 
     before do
-      get :edit, params: { id: taxonomy.id }
+      get :edit, params: { id: taxonomy.to_param }
     end
 
     it 'renders edit taxonomy view' do
@@ -49,7 +49,7 @@ describe Spree::Admin::TaxonomiesController do
   end
 
   describe '#update' do
-    subject { put :update, params: { id: taxonomy.id, taxonomy: { name: 'New Name' } } }
+    subject { put :update, params: { id: taxonomy.to_param, taxonomy: { name: 'New Name' } } }
 
     let(:taxonomy) { create(:taxonomy) }
 
@@ -60,7 +60,7 @@ describe Spree::Admin::TaxonomiesController do
     end
 
     context 'update position' do
-      subject { put :update, params: { id: taxonomy.id, taxonomy: { position: 2 } }, format: :turbo_stream }
+      subject { put :update, params: { id: taxonomy.to_param, taxonomy: { position: 2 } }, format: :turbo_stream }
 
       it 'updates the taxonomy position' do
         subject
@@ -70,7 +70,7 @@ describe Spree::Admin::TaxonomiesController do
   end
 
   describe '#destroy' do
-    subject { delete :destroy, params: { id: taxonomy.id } }
+    subject { delete :destroy, params: { id: taxonomy.to_param } }
 
     let!(:taxonomy) { create(:taxonomy) }
 

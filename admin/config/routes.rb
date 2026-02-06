@@ -266,7 +266,11 @@ Spree::Core::Engine.add_routes do
     end
 
     # developer tools
-    resources :oauth_applications
+    resources :api_keys, except: :destroy do
+      member do
+        put :revoke
+      end
+    end
     resources :webhook_endpoints do
       resources :webhook_deliveries, only: [:index, :show]
     end

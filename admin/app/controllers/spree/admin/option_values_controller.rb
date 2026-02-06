@@ -1,7 +1,7 @@
 module Spree
   module Admin
     class OptionValuesController < ResourceController
-      belongs_to 'spree/option_type', find_by: :id
+      belongs_to 'spree/option_type', find_by: :prefix_id
 
       def select_options
         render json: @option_type.option_values.accessible_by(current_ability).to_tom_select_json

@@ -2,9 +2,9 @@ require 'csv'
 
 module Spree
   class Import < Spree.base_class
-    include Spree::NumberIdentifier
-    include Spree::NumberAsParam
+    has_prefix_id :imp
 
+    include Spree::NumberIdentifier
     include Spree::Core::NumberGenerator.new(prefix: 'IM')
 
     publishes_lifecycle_events

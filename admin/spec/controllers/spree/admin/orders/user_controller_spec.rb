@@ -19,7 +19,7 @@ RSpec.describe Spree::Admin::Orders::UserController, type: :controller do
       let!(:existing_user) { create(:user, email: user_params[:email]) }
 
       it 'updates user with new details' do
-        post :create, params: { user: user_params, order_id: order.number }, as: :turbo_stream
+        post :create, params: { user: user_params, order_id: order.to_param }, as: :turbo_stream
 
         expect(order.reload.user).to eq(existing_user)
         expect(order.email).to eq(existing_user.email)
@@ -33,7 +33,7 @@ RSpec.describe Spree::Admin::Orders::UserController, type: :controller do
 
     context 'when user does not exist' do
       it 'saves user' do
-        post :create, params: { user: user_params, order_id: order.number }, as: :turbo_stream
+        post :create, params: { user: user_params, order_id: order.to_param }, as: :turbo_stream
 
         new_user = Spree.user_class.find_by(email: user_params[:email])
 
@@ -52,7 +52,7 @@ RSpec.describe Spree::Admin::Orders::UserController, type: :controller do
     let!(:existing_user) { create(:user, email: user_params[:email]) }
 
     it 'associates new user with order' do
-      put :update, params: { user_id: existing_user.id, order_id: order.number }, as: :turbo_stream
+      put :update, params: { user_id: existing_user.to_param, order_id: order.to_param }, as: :turbo_stream
 
       expect(order.reload.user).to eq(existing_user)
       expect(order.email).to eq(existing_user.email)
@@ -60,7 +60,7 @@ RSpec.describe Spree::Admin::Orders::UserController, type: :controller do
   end
 
   describe '#destroy' do
-    subject { delete :destroy, params: { order_id: order.number }, as: :turbo_stream }
+    subject { delete :destroy, params: { order_id: order.to_param }, as: :turbo_stream }
 
     let!(:existing_user) { create(:user, email: user_params[:email]) }
 

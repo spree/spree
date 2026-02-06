@@ -50,9 +50,10 @@ describe Spree::LegacyUser, type: :model do # rubocop:disable RSpec/MultipleDesc
     let!(:order) { create(:order, store: store, bill_address: create(:address), ship_address: create(:address)) }
     let(:store) { @default_store }
 
-    let(:order_1) { create(:order, created_at: 1.day.ago, user: user, created_by: user, store: store) }
-    let(:order_2) { create(:order, user: user, created_by: user, store: store) }
-    let(:order_3) { create(:order, user: user, created_by: create(:user), store: store) }
+    let(:admin_user) { create(:admin_user) }
+    let(:order_1) { create(:order, created_at: 1.day.ago, user: user, created_by: admin_user, store: store) }
+    let(:order_2) { create(:order, user: user, created_by: admin_user, store: store) }
+    let(:order_3) { create(:order, user: user, created_by: create(:admin_user), store: store) }
 
     it 'returns correct order' do
       Timecop.scale(3600) do

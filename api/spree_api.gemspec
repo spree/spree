@@ -3,12 +3,12 @@ require_relative '../core/lib/spree/core/version'
 Gem::Specification.new do |s|
   s.name          = 'spree_api'
   s.version       = Spree.version
-  s.authors       = ['Ryan Bigg', 'Spark Solutions Sp. z o.o.', 'Vendo Connect Inc.']
+  s.authors       = ['Vendo Connect Inc.']
   s.email         = ['hello@spreecommerce.org']
   s.summary       = %q{Spree's API}
   s.description   = %q{Spree's API}
   s.homepage      = 'https://spreecommerce.org'
-  s.licenses       = ['AGPL-3.0-or-later', 'BSD-3-Clause']
+  s.licenses       = ['AGPL-3.0-or-later']
 
   s.metadata = {
     'bug_tracker_uri' => 'https://github.com/spree/spree/issues',
@@ -22,13 +22,12 @@ Gem::Specification.new do |s|
   s.files         = Dir["{app,config,db,lib,vendor}/**/*", "LICENSE.md", "Rakefile", "README.md"].reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
   s.require_paths = ['lib']
 
-  s.add_development_dependency 'jsonapi-rspec'
-  s.add_development_dependency 'multi_json'
   s.add_development_dependency 'rswag-specs'
 
-  s.add_dependency 'bcrypt', '~> 3.1'
-  s.add_dependency 'doorkeeper', '~> 5.3'
-  s.add_dependency 'jsonapi-serializer', '~> 2.1'
+  s.add_dependency 'alba', '~> 3.0'
+  s.add_dependency 'oj', '~> 3.16'
   s.add_dependency 'pagy', '~> 43.0'
+  s.add_dependency 'typelizer', '~> 0.7'
+
   s.add_dependency 'spree_core', s.version
 end

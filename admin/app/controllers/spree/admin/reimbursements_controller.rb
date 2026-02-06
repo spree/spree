@@ -1,7 +1,7 @@
 module Spree
   module Admin
     class ReimbursementsController < ResourceController
-      belongs_to 'spree/order', find_by: :number
+      belongs_to 'spree/order', find_by: :prefix_id
 
       before_action :load_simulated_refunds, only: :edit
 
@@ -16,7 +16,7 @@ module Spree
 
       def build_resource
         if params[:build_from_customer_return_id].present?
-          customer_return = current_store.customer_returns.find(params[:build_from_customer_return_id])
+          customer_return = current_store.customer_returns.find_by_prefix_id!(params[:build_from_customer_return_id])
 
           Reimbursement.build_from_customer_return(customer_return)
         else

@@ -42,14 +42,8 @@ require 'spree/testing_support/jobs'
 require 'spree/testing_support/store'
 require 'spree/testing_support/preferences'
 require 'spree/testing_support/image_helpers'
-require 'spree/testing_support/next_instance_of'
-require 'spree/testing_support/rspec_retry_config'
 
-require 'spree/api/testing_support/serializers'
-require 'spree/api/testing_support/v2/base'
-require 'spree/api/testing_support/v2/current_order'
-require 'spree/api/testing_support/v2/platform_contexts'
-require 'spree/api/testing_support/v2/serializers_params'
+require 'spree/api/testing_support/v3/base'
 require 'spree/api/testing_support/factories'
 
 def json_response
@@ -62,7 +56,6 @@ def json_response
 end
 
 RSpec.configure do |config|
-  config.backtrace_exclusion_patterns = [/gems\/activesupport/, /gems\/actionpack/, /gems\/rspec/]
   config.color = true
   config.default_formatter = 'progress'
   config.fail_fast = ENV['FAIL_FAST'] || false
@@ -70,7 +63,6 @@ RSpec.configure do |config|
   config.raise_errors_for_deprecations!
   config.use_transactional_fixtures = true
 
-  config.include JSONAPI::RSpec
   config.include FactoryBot::Syntax::Methods
   config.include Spree::TestingSupport::Preferences
   config.include Spree::TestingSupport::ImageHelpers

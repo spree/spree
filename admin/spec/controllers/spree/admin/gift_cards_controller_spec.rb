@@ -19,7 +19,7 @@ describe Spree::Admin::GiftCardsController, type: :controller do
     end
 
     context 'when user_id parameter is present' do
-      subject { get :index, params: { user_id: user.id } }
+      subject { get :index, params: { user_id: user.to_param } }
 
       it 'filters gift cards by user' do
         gift_card
@@ -57,7 +57,7 @@ describe Spree::Admin::GiftCardsController, type: :controller do
 
       context 'with user_id parameter' do
         it 'filters by user' do
-          get :index, params: { user_id: user.id }
+          get :index, params: { user_id: user.to_param }
 
           expect(assigns(:collection)).to include(active_gift_card, redeemed_gift_card)
           expect(assigns(:collection)).not_to include(expired_gift_card)
@@ -67,7 +67,7 @@ describe Spree::Admin::GiftCardsController, type: :controller do
   end
 
   describe '#show' do
-    subject { get :show, params: { id: gift_card.id } }
+    subject { get :show, params: { id: gift_card.to_param } }
 
     it 'renders the show template' do
       subject
@@ -137,7 +137,7 @@ describe Spree::Admin::GiftCardsController, type: :controller do
     end
 
     context 'when user_id parameter is present' do
-      subject { get :new, params: { user_id: user.id } }
+      subject { get :new, params: { user_id: user.to_param } }
 
       it 'loads the user' do
         subject
@@ -211,7 +211,7 @@ describe Spree::Admin::GiftCardsController, type: :controller do
   end
 
   describe '#edit' do
-    subject { get :edit, params: { id: gift_card.id } }
+    subject { get :edit, params: { id: gift_card.to_param } }
 
     it 'renders the edit template' do
       subject
@@ -228,7 +228,7 @@ describe Spree::Admin::GiftCardsController, type: :controller do
   describe '#update' do
     let(:update_params) do
       {
-        id: gift_card.id,
+        id: gift_card.to_param,
         gift_card: {
           amount: 200,
           user_id: user.id,
@@ -261,7 +261,7 @@ describe Spree::Admin::GiftCardsController, type: :controller do
     context 'with invalid parameters' do
       let(:invalid_update_params) do
         {
-          id: gift_card.id,
+          id: gift_card.to_param,
           gift_card: {
             amount: -200
           }
@@ -288,7 +288,7 @@ describe Spree::Admin::GiftCardsController, type: :controller do
   describe '#destroy' do
     let!(:gift_card_to_destroy) { create(:gift_card) }
 
-    subject { delete :destroy, params: { id: gift_card_to_destroy.id } }
+    subject { delete :destroy, params: { id: gift_card_to_destroy.to_param } }
 
     it 'destroys the gift card' do
       expect { subject }.to change(Spree::GiftCard, :count).by(-1)
@@ -307,7 +307,7 @@ describe Spree::Admin::GiftCardsController, type: :controller do
     context 'when user_id parameter is present' do
       let!(:user_gift_card) { create(:gift_card, user: user) }
 
-      subject { delete :destroy, params: { id: user_gift_card.id, user_id: user.id } }
+      subject { delete :destroy, params: { id: user_gift_card.to_param, user_id: user.to_param } }
 
       it 'redirects to the user page' do
         subject

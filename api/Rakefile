@@ -27,3 +27,26 @@ namespace :rswag do
     end
   end
 end
+
+namespace :typelizer do
+  desc 'Generate TypeScript types from Alba serializers'
+  task :generate do
+    ENV['RAILS_ENV'] ||= 'test'
+    ENV['DISABLE_TYPELIZER'] = 'false'
+
+    require File.expand_path('spec/dummy/config/environment', __dir__)
+
+    # Eager load serializers so typelizer can find them
+    serializers_path = File.expand_path('app/serializers/spree/api/v3', __dir__)
+    Rails.autoloaders.main.eager_load_dir(serializers_path)
+
+    require 'typelizer/generator'
+    serializers = Typelizer::Generator.call(force: true)
+
+    puts "Generated TypeScript types for #{serializers.size} serializers"
+    puts "Output: #{Typelizer.configuration.writer_config.output_dir}"
+  end
+
+  desc 'Clean and regenerate TypeScript types'
+  task refresh: :generate
+end

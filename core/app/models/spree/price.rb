@@ -1,5 +1,7 @@
 module Spree
   class Price < Spree.base_class
+    has_prefix_id :price
+
     include Spree::VatPriceCalculation
 
     publishes_lifecycle_events
@@ -38,13 +40,13 @@ module Spree
     scope :discounted, -> { where('compare_at_amount > amount') }
     scope :base_prices, -> { where(price_list_id: nil) }
     scope :for_price_list, ->(price_list) { where(price_list_id: price_list) }
-    scope :for_products, ->(products, currency = nil) do
+    scope :for_products, lambda { |products, currency = nil|
       currency ||= Spree::Store.default.default_currency
 
       with_currency(currency).joins(:variant).where(
         Spree::Variant.table_name => { product_id: products }
       )
-    end
+    }
 
     extend DisplayMoney
     money_methods :amount, :price, :compare_at_amount
@@ -64,6 +66,12 @@ module Spree
       self[:amount] = amount.blank? ? nil : Spree::LocalizedNumber.parse(amount)
     end
 
+    # Returns the amount in cents
+    # @return [Integer]
+    def amount_in_cents
+      display_amount&.amount_in_cents
+    end
+
     def compare_at_money
       Spree::Money.new(compare_at_amount || 0, currency: currency)
     end
@@ -72,6 +80,22 @@ module Spree
       calculated_value = Spree::LocalizedNumber.parse(value) if value.present?
 
       self[:compare_at_amount] = calculated_value
+    end
+
+    # Returns the compare at amount for display
+    # @return [Spree::Money, nil]
+    def display_compare_at_amount
+      return nil if compare_at_amount.nil?
+
+      Spree::Money.new(compare_at_amount, currency: currency)
+    end
+
+    # Returns the compare at amount in cents
+    # @return [Integer, nil]
+    def compare_at_amount_in_cents
+      return nil if compare_at_amount.nil?
+
+      display_compare_at_amount.amount_in_cents
     end
 
     alias_attribute :price, :amount

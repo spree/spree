@@ -10,7 +10,7 @@ RSpec.describe Spree::Admin::ImportRowsController, type: :controller do
 
   describe 'GET #show' do
     it 'renders the show template' do
-      get :show, params: { import_id: import.number, id: import_row.id }
+      get :show, params: { import_id: import.to_param, id: import_row.to_param }
       expect(response).to render_template(:show)
       expect(assigns(:import)).to eq(import)
       expect(assigns(:import_row)).to eq(import_row)

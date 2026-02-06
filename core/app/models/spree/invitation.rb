@@ -1,5 +1,7 @@
 module Spree
   class Invitation < Spree.base_class
+    has_prefix_id :inv
+
     has_secure_token
     acts_as_paranoid
 
@@ -121,13 +123,11 @@ module Spree
     def invitee_already_exists
       return if resource.blank?
 
-      exists = if invitee.present?
-                resource.users.include?(invitee)
-              else
-                resource.users.exists?(email: email)
-              end
+      # Check role_users directly for better performance and to avoid potential source_type issues
+      user_to_check = invitee || Spree.admin_user_class.find_by(email: email)
+      return if user_to_check.blank?
 
-      if exists
+      if resource.role_users.exists?(user: user_to_check)
         errors.add(:email, 'already exists')
       end
     end

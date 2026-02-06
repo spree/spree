@@ -8,7 +8,7 @@ module Spree
           if create
             first('.ts-dropdown .ts-dropdown-content .create.active').click
           else
-            first('.ts-dropdown .ts-dropdown-content .option', text: /#{Regexp.quote(value)}/i).click
+            find('.ts-dropdown .ts-dropdown-content .option', text: /#{Regexp.quote(value)}/i, match: :first).click
           end
         end
       end

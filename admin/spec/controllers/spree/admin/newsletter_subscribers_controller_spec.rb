@@ -20,7 +20,7 @@ RSpec.describe Spree::Admin::NewsletterSubscribersController, type: :controller 
 
     it 'destroys the newsletter subscriber and redirects' do
       expect {
-        delete :destroy, params: { id: newsletter_subscriber.id }
+        delete :destroy, params: { id: newsletter_subscriber.to_param }
       }.to change(Spree::NewsletterSubscriber, :count).by(-1)
       expect(response).to redirect_to(admin_newsletter_subscribers_path)
     end

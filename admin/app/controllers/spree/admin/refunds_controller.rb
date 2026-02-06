@@ -3,7 +3,7 @@ module Spree
     class RefundsController < ResourceController
       include Spree::Admin::OrderBreadcrumbConcern
 
-      belongs_to 'spree/payment', find_by: :number
+      belongs_to 'spree/payment', find_by: :prefix_id
 
       before_action :load_order
       before_action :assign_refunder, only: :create

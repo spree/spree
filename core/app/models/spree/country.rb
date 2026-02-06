@@ -30,5 +30,23 @@ module Spree
     def to_s
       name
     end
+
+    # Returns the default currency code for this country (e.g., 'USD', 'EUR')
+    # Uses the countries gem (ISO3166) for accurate currency data
+    def default_currency
+      iso3166_country&.currency_code
+    end
+
+    # Returns the default locale/language for this country (e.g., 'en', 'de')
+    # Uses the countries gem (ISO3166) for accurate language data
+    def default_locale
+      iso3166_country&.languages&.first
+    end
+
+    private
+
+    def iso3166_country
+      @iso3166_country ||= ISO3166::Country.new(iso)
+    end
   end
 end

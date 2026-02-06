@@ -1,5 +1,7 @@
 module Spree
   class OptionType < Spree.base_class
+    has_prefix_id :opt  # Spree-specific: option type
+
     COLOR_NAMES = %w[color colour].freeze
 
     include Spree::ParameterizableName

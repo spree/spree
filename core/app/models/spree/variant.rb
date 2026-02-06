@@ -1,5 +1,7 @@
 module Spree
   class Variant < Spree.base_class
+    has_prefix_id :variant
+
     acts_as_paranoid
     acts_as_list scope: :product
 
@@ -47,6 +49,7 @@ module Spree
     has_many :option_values, through: :option_value_variants, dependent: :destroy, class_name: 'Spree::OptionValue'
 
     has_many :images, -> { order(:position) }, as: :viewable, dependent: :destroy, class_name: 'Spree::Image'
+    belongs_to :thumbnail, class_name: 'Spree::Image', optional: true
 
     has_many :prices,
              class_name: 'Spree::Price',
@@ -91,7 +94,7 @@ module Spree
     scope :backorderable, -> { left_joins(:stock_items).where(spree_stock_items: { backorderable: true }) }
     scope :in_stock_or_backorderable, -> { in_stock.or(backorderable) }
 
-    scope :eligible, -> {
+    scope :eligible, lambda {
       where(is_master: false).or(
         where(
           product_id: Spree::Variant.
@@ -102,25 +105,25 @@ module Spree
       )
     }
 
-    scope :not_discontinued, -> do
+    scope :not_discontinued, lambda {
       where(
         arel_table[:discontinue_on].eq(nil).or(
           arel_table[:discontinue_on].gteq(Time.current)
         )
       )
-    end
+    }
 
     scope :not_deleted, -> { where("#{Spree::Variant.quoted_table_name}.deleted_at IS NULL") }
 
-    scope :for_currency_and_available_price_amount, ->(currency = nil) do
+    scope :for_currency_and_available_price_amount, lambda { |currency = nil|
       currency ||= Spree::Store.default.default_currency
       joins(:prices).where("#{Spree::Price.table_name}.currency = ?", currency).where("#{Spree::Price.table_name}.amount IS NOT NULL").distinct
-    end
+    }
 
-    scope :active, ->(currency = nil) do
+    scope :active, lambda { |currency = nil|
       not_discontinued.not_deleted.
         for_currency_and_available_price_amount(currency)
-    end
+    }
 
     scope :with_option_value, lambda { |option_name, option_value|
       option_type_ids = OptionType.where(name: option_name).ids
@@ -187,7 +190,8 @@ module Spree
     )
 
     self.whitelisted_ransackable_associations = %w[option_values product tax_category prices default_price]
-    self.whitelisted_ransackable_attributes = %w[weight depth width height sku discontinue_on is_master cost_price cost_currency track_inventory deleted_at]
+    self.whitelisted_ransackable_attributes = %w[weight depth width height sku discontinue_on is_master cost_price cost_currency track_inventory
+                                                 deleted_at]
     self.whitelisted_ransackable_scopes = %i(product_name_or_sku_cont search_by_product_name_or_sku)
 
     def self.product_name_or_sku_cont(query)
@@ -258,9 +262,13 @@ module Spree
     # @return [String] the options text of the variant
     def options_text
       @options_text ||= if option_values.loaded?
-                          option_values.sort_by { |ov| ov.option_type.position }.map { |ov| "#{ov.option_type.presentation}: #{ov.presentation}" }.to_sentence(words_connector: ', ', two_words_connector: ', ')
+                          option_values.sort_by do |ov|
+                            ov.option_type.position
+                          end.map { |ov| "#{ov.option_type.presentation}: #{ov.presentation}" }.to_sentence(words_connector: ', ', two_words_connector: ', ')
                         else
-                          option_values.includes(:option_type).joins(:option_type).order("#{Spree::OptionType.table_name}.position").map { |ov| "#{ov.option_type.presentation}: #{ov.presentation}" }.to_sentence(words_connector: ', ', two_words_connector: ', ')
+                          option_values.includes(:option_type).joins(:option_type).order("#{Spree::OptionType.table_name}.position").map do |ov|
+                            "#{ov.option_type.presentation}: #{ov.presentation}"
+                          end.to_sentence(words_connector: ', ', two_words_connector: ', ')
                         end
     end
 
@@ -293,10 +301,17 @@ module Spree
       image_count.positive?
     end
 
-    # Returns default Image for Variant, falling back to product's default image.
+    # Returns default Image for Variant.
     # @return [Spree::Image, nil]
     def default_image
-      @default_image ||= has_images? ? images.first : product.default_image
+      thumbnail
+    end
+
+    # Updates the thumbnail_id to the first image by position.
+    # Called when images are added, removed, or reordered.
+    def update_thumbnail!
+      first_image = images.order(:position).first
+      update_column(:thumbnail_id, first_image&.id)
     end
 
     # Returns first Image for Variant.

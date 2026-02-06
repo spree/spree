@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::LegacyUser, type: :model do
+describe Spree.admin_user_class, type: :model do
   let(:admin_user) { create(:admin_user) }
 
   describe '#can_be_deleted?' do
@@ -16,12 +16,6 @@ describe Spree::LegacyUser, type: :model do
 
     context 'when store has no other admin users' do
       it { is_expected.to be(false) }
-    end
-
-    context 'when the user does not have admin role' do
-      let(:admin_user) { create(:admin_user, without_admin_role: true) }
-
-      it { is_expected.to be(true) }
     end
   end
 

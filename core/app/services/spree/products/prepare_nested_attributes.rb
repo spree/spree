@@ -184,7 +184,7 @@ module Spree
         option_value_variant_params = {}
 
         option_value_params.each_with_index do |opt, index|
-          option_type = Spree::OptionType.find_by(id: opt[:id]) if opt.fetch(:id)
+          option_type = Spree::OptionType.find_by_param(opt[:id]) if opt.fetch(:id)
           option_type ||= Spree::OptionType.where(name: opt[:name].parameterize).first_or_initialize do |o|
             o.name = o.presentation = opt[:name]
             o.position = opt[:position]

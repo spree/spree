@@ -20,6 +20,8 @@
 
 module Spree
   class Product < Spree.base_class
+    has_prefix_id :prod # Stripe: prod_
+
     acts_as_paranoid
     acts_as_taggable_on :tags, :labels
     normalizes :name, with: ->(value) { value&.to_s&.squish&.presence }
@@ -116,6 +118,8 @@ module Spree
 
     has_many :variant_images, -> { order(:position) }, source: :images, through: :variants_including_master
     has_many :variant_images_without_master, -> { order(:position) }, source: :images, through: :variants
+
+    belongs_to :thumbnail, class_name: 'Spree::Image', optional: true
 
     has_many :option_value_variants, class_name: 'Spree::OptionValueVariant', through: :variants
     has_many :option_values, class_name: 'Spree::OptionValue', through: :variants
@@ -230,11 +234,12 @@ module Spree
 
     alias options product_option_types
 
-    self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on status]
+    self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on status available_on created_at updated_at]
     self.whitelisted_ransackable_associations = %w[taxons stores variants_including_master master variants tags labels
                                                    shipping_category classifications option_types properties]
     self.whitelisted_ransackable_scopes = %w[not_discontinued search_by_name in_taxon price_between
-                                             multi_search in_stock_items out_of_stock_items]
+                                             multi_search in_stock_items out_of_stock_items with_option_value_ids
+                                             ascend_by_price descend_by_price]
 
     [
       :sku, :barcode, :weight, :height, :width, :depth, :is_master, :dimensions_unit, :weight_unit
@@ -251,6 +256,9 @@ module Spree
 
     delegate :display_amount, :display_price, :has_default_price?, :track_inventory?,
              :display_compare_at_price, :images, to: :default_variant
+
+    # Rails doesn't provide _id methods for has_one associations by default
+    delegate :id, to: :master, prefix: true, allow_nil: true
 
     alias master_images images
 
@@ -290,12 +298,12 @@ module Spree
 
     # Can't use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
     def purchasable?
-      @purchasable ||= default_variant.purchasable? || variants.in_stock_or_backorderable.any?
+      @purchasable ||= default_variant.purchasable? || variants.any?(&:purchasable?)
     end
 
     # Can't use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
     def in_stock?
-      @in_stock ||= default_variant.in_stock? || variants.in_stock.any?
+      @in_stock ||= default_variant.in_stock? || variants.any?(&:in_stock?)
     end
 
     # Can't use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
@@ -362,9 +370,10 @@ module Spree
     end
 
     # Returns default Image for Product.
+    # Uses cached thumbnail_id which is updated when images are added/removed/reordered.
     # @return [Spree::Image, nil]
     def default_image
-      variant_for_images&.primary_image
+      thumbnail
     end
 
     # Backward compatibility for Spree 5.2 and earlier.
@@ -388,6 +397,13 @@ module Spree
     # @return [Integer]
     def image_count
       variant_for_images&.image_count || 0
+    end
+
+    # Updates the thumbnail_id to the first image from variant_images.
+    # Called when images are added, removed, or reordered on any variant.
+    def update_thumbnail!
+      first_image = variant_images.order(:position).first
+      update_column(:thumbnail_id, first_image&.id)
     end
 
     # Finds first variant with images using preloaded data when available.
@@ -598,15 +614,13 @@ module Spree
                          nil
                        elsif Spree.use_translations?
                          taxons.joins(:taxonomy).
-                            join_translation_table(Taxonomy).
-                            find_by(Taxonomy.translation_table_alias => { name: Spree.t(:taxonomy_brands_name) })
-                        else
-                          if taxons.loaded?
-                            taxons.find { |taxon| taxon.taxonomy.name == Spree.t(:taxonomy_brands_name) }
-                          else
-                            taxons.joins(:taxonomy).find_by(Taxonomy.table_name => { name: Spree.t(:taxonomy_brands_name) })
-                          end
-                        end
+                           join_translation_table(Taxonomy).
+                           find_by(Taxonomy.translation_table_alias => { name: Spree.t(:taxonomy_brands_name) })
+                       elsif taxons.loaded?
+                         taxons.find { |taxon| taxon.taxonomy.name == Spree.t(:taxonomy_brands_name) }
+                       else
+                         taxons.joins(:taxonomy).find_by(Taxonomy.table_name => { name: Spree.t(:taxonomy_brands_name) })
+                       end
     end
 
     # Returns the brand name for the product
@@ -638,12 +652,10 @@ module Spree
                               join_translation_table(Taxonomy).
                               order(depth: :desc).
                               find_by(Taxonomy.translation_table_alias => { name: Spree.t(:taxonomy_categories_name) })
+                          elsif taxons.loaded?
+                            taxons.find { |taxon| taxon.taxonomy.name == Spree.t(:taxonomy_categories_name) }
                           else
-                            if taxons.loaded?
-                              taxons.find { |taxon| taxon.taxonomy.name == Spree.t(:taxonomy_categories_name) }
-                            else
-                              taxons.joins(:taxonomy).order(depth: :desc).find_by(Taxonomy.table_name => { name: Spree.t(:taxonomy_categories_name) })
-                            end
+                            taxons.joins(:taxonomy).order(depth: :desc).find_by(Taxonomy.table_name => { name: Spree.t(:taxonomy_categories_name) })
                           end
     end
 
@@ -691,15 +703,15 @@ module Spree
     def to_csv(store = nil)
       store ||= stores.default || stores.first
       properties_for_csv = if Spree::Config[:product_properties_enabled]
-        Spree::Property.order(:position).flat_map do |property|
-          [
-            property.name,
-            product_properties.find { |pp| pp.property_id == property.id }&.value
-          ]
-        end
-      else
-        []
-      end
+                             Spree::Property.order(:position).flat_map do |property|
+                               [
+                                 property.name,
+                                 product_properties.find { |pp| pp.property_id == property.id }&.value
+                               ]
+                             end
+                           else
+                             []
+                           end
       metafields_for_csv ||= Spree::MetafieldDefinition.for_resource_type('Spree::Product').order(:namespace, :key).map do |mf_def|
         metafields.find { |mf| mf.metafield_definition_id == mf_def.id }&.csv_value
       end

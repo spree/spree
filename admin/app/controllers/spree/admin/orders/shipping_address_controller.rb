@@ -46,7 +46,7 @@ module Spree
 
         def update
           if params[:shipping_address_id].present?
-            @address = Spree::Address.accessible_by(current_ability, :manage).find(params[:shipping_address_id])
+            @address = Spree::Address.accessible_by(current_ability, :manage).find_by_prefix_id!(params[:shipping_address_id])
             @order.ship_address_id = @address.id
           else
             @order.ship_address_attributes = address_params

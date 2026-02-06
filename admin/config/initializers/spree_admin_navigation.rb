@@ -346,11 +346,11 @@ Rails.application.config.after_initialize do
   # Developers
   settings_nav.add :developers,
           label: :developers,
-          url: :admin_oauth_applications_path,
+          url: :admin_api_keys_path,
           icon: 'terminal',
           position: 150,
-          active: -> { %w[oauth_applications webhooks_subscribers webhook_endpoints webhook_deliveries].include?(controller_name) },
-          if: -> { can?(:manage, Spree::OauthApplication) }
+          active: -> { %w[oauth_applications api_keys webhooks_subscribers webhook_endpoints webhook_deliveries].include?(controller_name) },
+          if: -> { can?(:manage, Spree::ApiKey) }
 
   # Edit Profile
   settings_nav.add :edit_profile,
@@ -459,10 +459,10 @@ Rails.application.config.after_initialize do
 
   developers_tabs_nav.add :api_keys,
           label: :api_keys,
-          url: :admin_oauth_applications_path,
+          url: :admin_api_keys_path,
           position: 10,
-          active: -> { controller_name == 'oauth_applications' },
-          if: -> { can?(:manage, Spree::OauthApplication) }
+          active: -> { controller_name == 'api_keys' },
+          if: -> { can?(:manage, Spree::ApiKey) }
 
   developers_tabs_nav.add :webhook_endpoints,
           label: :webhook_endpoints,

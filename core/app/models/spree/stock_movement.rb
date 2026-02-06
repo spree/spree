@@ -1,5 +1,7 @@
 module Spree
   class StockMovement < Spree.base_class
+    has_prefix_id :sm
+
     QUANTITY_LIMITS = {
       max: 2**31 - 1,
       min: -2**31

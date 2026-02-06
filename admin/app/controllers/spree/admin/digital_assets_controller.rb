@@ -26,7 +26,7 @@ module Spree
       end
 
       def find_resource
-        parent.digitals.find(params[:id])
+        parent.digitals.find_by_prefix_id!(params[:id])
       end
 
       def create_turbo_stream_enabled?

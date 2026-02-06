@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 class MyNewSerializer
-  include JSONAPI::Serializer
+  include Alba::Resource
 
   attributes :total
 end
@@ -17,12 +17,12 @@ describe Spree::Api::ApiDependencies, type: :model do
 
   describe 'backwards compatibility' do
     it 'returns the default value as string' do
-      expect(deps.storefront_cart_serializer).to eq('Spree::V2::Storefront::CartSerializer')
+      expect(deps.order_serializer).to eq('Spree::Api::V3::OrderSerializer')
     end
 
     it 'allows to overwrite the value' do
-      deps.storefront_cart_serializer = MyNewSerializer
-      expect(deps.storefront_cart_serializer).to eq MyNewSerializer
+      deps.order_serializer = MyNewSerializer
+      expect(deps.order_serializer).to eq MyNewSerializer
     end
 
     it 'respects global dependencies' do
@@ -40,12 +40,12 @@ describe Spree::Api::ApiDependencies, type: :model do
 
   describe '#<dependency>_class' do
     it 'returns the constantized class for string values' do
-      expect(deps.storefront_cart_serializer_class).to eq Spree::V2::Storefront::CartSerializer
+      expect(deps.order_serializer_class).to eq Spree::Api::V3::OrderSerializer
     end
 
     it 'returns the class directly when set as class' do
-      deps.storefront_cart_serializer = MyNewSerializer
-      expect(deps.storefront_cart_serializer_class).to eq MyNewSerializer
+      deps.order_serializer = MyNewSerializer
+      expect(deps.order_serializer_class).to eq MyNewSerializer
     end
 
     it 'resolves proc-based dependencies from core' do
@@ -79,12 +79,12 @@ end
 describe 'Spree.api accessor' do
   describe 'Spree.api.<dependency>' do
     it 'returns the resolved class' do
-      expect(Spree.api.storefront_cart_serializer).to eq Spree::V2::Storefront::CartSerializer
+      expect(Spree.api.order_serializer).to eq Spree::Api::V3::OrderSerializer
     end
 
     it 'responds to dependency methods' do
-      expect(Spree.api.respond_to?(:storefront_cart_serializer)).to be true
-      expect(Spree.api.respond_to?(:storefront_cart_serializer=)).to be true
+      expect(Spree.api.respond_to?(:order_serializer)).to be true
+      expect(Spree.api.respond_to?(:order_serializer=)).to be true
     end
 
     it 'does not respond to non-dependency methods' do

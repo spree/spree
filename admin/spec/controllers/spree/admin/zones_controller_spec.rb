@@ -84,7 +84,7 @@ RSpec.describe Spree::Admin::ZonesController do
     let!(:zone) { create(:zone) }
 
     it 'renders the edit template' do
-      get :edit, params: { id: zone.id }
+      get :edit, params: { id: zone.to_param }
       expect(response).to be_successful
       expect(response).to render_template(:edit)
       expect(assigns(:zone)).to eq(zone)
@@ -95,7 +95,7 @@ RSpec.describe Spree::Admin::ZonesController do
     let!(:zone) { create(:zone, name: 'Old Name') }
 
     it 'updates the zone' do
-      put :update, params: { id: zone.id, zone: { name: 'New Name' } }
+      put :update, params: { id: zone.to_param, zone: { name: 'New Name' } }
 
       expect(zone.reload.name).to eq('New Name')
     end
@@ -105,7 +105,7 @@ RSpec.describe Spree::Admin::ZonesController do
     let!(:zone) { create(:zone) }
 
     it 'deletes the zone' do
-      expect { delete :destroy, params: { id: zone.id } }.to change(Spree::Zone, :count).by(-1)
+      expect { delete :destroy, params: { id: zone.to_param } }.to change(Spree::Zone, :count).by(-1)
 
       expect(response).to redirect_to(spree.admin_zones_path)
       expect(Spree::Zone.find_by(id: zone.id)).to be_nil

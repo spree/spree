@@ -745,9 +745,12 @@ en:
     and_n_more:
       one: "...and %{count} more"
       other: "...and %{count} more"
-    api_keys: API keys
+    api_key: API Key
+    api_keys: API Keys
     apis:
+      admin: Admin API
       platform: Platform API
+      store: Store API
       storefront: Storefront API
     applied_to: Applied to
     apply: Apply
@@ -947,6 +950,7 @@ en:
     credits: Credits
     currencies: Currencies
     currency: Currency
+    currency_not_supported_by_store: is not supported by this store
     currency_settings: Currency Settings
     current: Current
     current_password: Current password
@@ -1401,6 +1405,7 @@ en:
     new: New
     new_address: New address
     new_adjustment: New Adjustment
+    new_api_key: New API Key
     new_balance: New balance
     new_billing_address: New Billing Address
     new_country: New Country
@@ -1528,6 +1533,7 @@ en:
     notify_me_when_available: Notify me when available
     num_orders: "# Orders"
     number: Number
+    oauth_applications: OAuth Applications
     ok: OK
     on_hand: On Hand
     only_active_products_can_be_added_to_cart: Draft and archived products cannot be added to cart, please mark the product as active before.
@@ -2027,6 +2033,7 @@ en:
     select_an_option: Select an option
     select_existing_address: Select existing address
     select_from_prototype: Select From Prototype
+    select_key_type: Select key type
     select_stock: Select stock
     select_stores: Select Store(s)
     select_user: Select customer

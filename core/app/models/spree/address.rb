@@ -1,5 +1,7 @@
 module Spree
   class Address < Spree.base_class
+    has_prefix_id :addr  # Spree-specific: address
+
     require 'validates_zipcode'
 
     include Spree::Metafields
@@ -24,7 +26,7 @@ module Spree
     # we're not freezing this on purpose so developers can extend and manage
     # those attributes depending of the logic of their applications
     ADDRESS_FIELDS = %w(firstname lastname company address1 address2 city state zipcode country phone)
-    EXCLUDED_KEYS_FOR_COMPARISON = %w(id updated_at created_at deleted_at label user_id public_metadata private_metadata)
+    EXCLUDED_KEYS_FOR_COMPARISON = %w(id prefix_id updated_at created_at deleted_at label user_id public_metadata private_metadata)
     FIELDS_TO_NORMALIZE = %w(firstname lastname phone alternative_phone company address1 address2 city zipcode)
 
     if defined?(Spree::Security::Addresses)
@@ -48,6 +50,8 @@ module Spree
 
     after_initialize :set_default_values, if: -> { new_record? && user.present? }
 
+    before_validation :normalize_country
+    before_validation :normalize_state
     before_validation :clear_invalid_state_entities, if: -> { country.present? }, on: :update
     before_validation :remove_emoji_and_normalize
 
@@ -82,6 +86,16 @@ module Spree
     delegate :abbr, to: :state, prefix: true, allow_nil: true
 
     alias_attribute :postal_code, :zipcode
+
+    # Writer methods for API convenience - these set country/state from ISO/abbr codes
+    # The reader methods (country_iso, state_abbr) are delegates to country.iso and state.abbr
+    def country_iso=(value)
+      @country_iso_input = value
+    end
+
+    def state_abbr=(value)
+      @state_abbr_input = value
+    end
 
     self.whitelisted_ransackable_attributes = ADDRESS_FIELDS
     self.whitelisted_ransackable_associations = %w[country state user]
@@ -245,6 +259,22 @@ module Spree
       self.firstname ||= user.first_name
       self.lastname ||= user.last_name
       self.phone ||= user.phone
+    end
+
+    def normalize_country
+      iso = @country_iso_input
+      return if iso.blank?
+
+      self.country = Spree::Country.by_iso(iso)
+      @country_iso_input = nil
+    end
+
+    def normalize_state
+      abbr = @state_abbr_input
+      return if abbr.blank? || country.blank?
+
+      self.state = country.states.find_by(abbr: abbr)
+      @state_abbr_input = nil
     end
 
     def clear_state

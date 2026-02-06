@@ -205,15 +205,33 @@ module Spree
         return Product.group("#{Spree::Product.table_name}.id").none if option_type_id.blank?
 
         group("#{Spree::Product.table_name}.id").
-          joins(variants_including_master: :option_values).
+          joins(variants: :option_values).
           where(Spree::OptionValue.table_name => { name: value, option_type_id: option_type_id })
+      end
+
+      # Filters products by option value IDs (prefix IDs like 'optval_xxx')
+      # Accepts an array of option value IDs
+      add_search_scope :with_option_value_ids do |*ids|
+        ids = ids.flatten.compact
+        return none if ids.empty?
+
+        # Handle prefix IDs (optval_xxx) by extracting the actual IDs
+        actual_ids = ids.map do |id|
+          id.to_s.start_with?('optval_') ? OptionValue.find_by(prefix_id: id)&.id : id
+        end.compact
+
+        return none if actual_ids.empty?
+
+        group("#{Spree::Product.table_name}.id").
+          joins(variants: :option_values).
+          where(Spree::OptionValue.table_name => { id: actual_ids })
       end
 
       # Finds all products which have either:
       # 1) have an option value with the name matching the one given
       # 2) have a product property with a value matching the one given
       add_search_scope :with do |value|
-        includes(variants_including_master: :option_values).
+        includes(variants: :option_values).
           includes(:product_properties).
           where("#{OptionValue.table_name}.name = ? OR #{ProductProperty.table_name}.value = ?", value, value)
       end
@@ -288,11 +306,8 @@ module Spree
 
       # Can't use add_search_scope for this as it needs a default argument
       def self.available(available_on = nil, currency = nil)
-        scope = if available_on
-                  not_discontinued.where("#{Product.quoted_table_name}.available_on <= ?", available_on)
-                else
-                  not_discontinued.where(status: 'active')
-                end
+        scope = not_discontinued.where(status: 'active')
+        scope = scope.where("#{Product.quoted_table_name}.available_on <= ?", available_on) if available_on
 
         unless Spree::Config.show_products_without_price
           currency ||= Spree::Store.default.default_currency

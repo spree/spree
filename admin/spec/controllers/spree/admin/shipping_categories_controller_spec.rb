@@ -49,7 +49,7 @@ RSpec.describe Spree::Admin::ShippingCategoriesController, type: :controller do
     let!(:shipping_category) { create(:shipping_category) }
 
     it 'renders the edit shipping category form' do
-      get :edit, params: { id: shipping_category.id }
+      get :edit, params: { id: shipping_category.to_param }
 
       expect(response).to be_successful
       expect(response).to render_template(:edit)
@@ -60,7 +60,7 @@ RSpec.describe Spree::Admin::ShippingCategoriesController, type: :controller do
     let!(:shipping_category) { create(:shipping_category, name: 'Default Category') }
 
     it 'updates the shipping category' do
-      put :update, params: { id: shipping_category.id, shipping_category: { name: 'Updated Category' } }
+      put :update, params: { id: shipping_category.to_param, shipping_category: { name: 'Updated Category' } }
 
       expect(response).to redirect_to(spree.edit_admin_shipping_category_path(shipping_category))
       expect(shipping_category.reload.name).to eq('Updated Category')
@@ -71,7 +71,7 @@ RSpec.describe Spree::Admin::ShippingCategoriesController, type: :controller do
     let!(:shipping_category) { create(:shipping_category) }
 
     it 'deletes the shipping category' do
-      delete :destroy, params: { id: shipping_category.id }
+      delete :destroy, params: { id: shipping_category.to_param }
 
       expect(response).to redirect_to(spree.admin_shipping_categories_path)
       expect { shipping_category.reload }.to raise_error(ActiveRecord::RecordNotFound)

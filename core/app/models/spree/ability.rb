@@ -165,6 +165,9 @@ module Spree
         wished_item.wishlist.user == user
       end
       can :accept, Spree::Invitation, invitee_id: [user.id, nil], invitee_type: user.class.name, status: 'pending'
+      can :show, ::Spree::DigitalLink do |digital_link, token|
+        digital_link.token == token
+      end
       can :read, ::Spree::Policy
       can :read, ::Spree::Page if defined?(Spree::Page)
       can :read, ::Spree::Post if defined?(Spree::Post)

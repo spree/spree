@@ -27,7 +27,7 @@
   </div>
 
   <div class="flex items-center px-3 ml-3 gap-2">
-    <%= link_to_edit(taxon, url: spree.edit_admin_taxonomy_taxon_path(taxonomy, taxon.id), data: { row_link_target: :link, turbo_frame: '_top' }) if can?(:edit, taxon) %>
+    <%= link_to_edit(taxon, url: spree.edit_admin_taxonomy_taxon_path(taxonomy, taxon), data: { row_link_target: :link, turbo_frame: '_top' }) if can?(:edit, taxon) %>
 
     <%= dropdown class: 'h-full' do %>
       <%= dropdown_toggle class: 'btn-sm btn-light px-1 h-full' do %>
@@ -38,7 +38,7 @@
           <%= link_to_with_icon 'plus', Spree.t(:new_nested_taxon), spree.new_admin_taxonomy_taxon_path(taxonomy, taxon: { parent_id: taxon.id }), class: 'dropdown-item' %>
           <div class="dropdown-divider"></div>
         <% end %>
-        <%= link_to_delete(taxon, icon: 'trash', url: spree.admin_taxonomy_taxon_path(taxonomy, taxon.id), class: 'dropdown-item text-red-600 hover:bg-red-100') if can?(:destroy, taxon) %>
+        <%= link_to_delete(taxon, icon: 'trash', url: spree.admin_taxonomy_taxon_path(taxonomy, taxon), class: 'dropdown-item text-red-600 hover:bg-red-100') if can?(:destroy, taxon) %>
       <% end %>
     <% end %>
   </div>

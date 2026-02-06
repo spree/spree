@@ -1,5 +1,7 @@
 module Spree
   class PaymentMethod < Spree.base_class
+    has_prefix_id :pm  # Stripe: pm_
+
     acts_as_paranoid
     acts_as_list
 

@@ -82,7 +82,7 @@ RSpec.describe Spree::Admin::ImportsController, type: :controller do
     let!(:mapping) { create(:import_mapping, import: import) }
 
     it 'renders the show template' do
-      get :show, params: { id: import.id }
+      get :show, params: { id: import.to_param }
       expect(response).to render_template(:show)
       expect(assigns(:import)).to eq(import)
       expect(assigns(:mappings)).to eq([mapping])
@@ -94,7 +94,7 @@ RSpec.describe Spree::Admin::ImportsController, type: :controller do
       let!(:incomplete_row) { create(:import_row, import: import, status: :pending) }
 
       it 'renders the show template' do
-        get :show, params: { id: import.id }
+        get :show, params: { id: import.to_param }
         expect(response).to render_template(:show)
         expect(assigns(:import)).to eq(import)
         expect(assigns(:rows)).to eq([row])
@@ -113,7 +113,7 @@ RSpec.describe Spree::Admin::ImportsController, type: :controller do
 
       it 'marks import as completed and redirects to show' do
         expect_any_instance_of(Spree::Import).to receive(:complete_mapping!)
-        put :complete_mapping, params: { id: import.id }
+        put :complete_mapping, params: { id: import.to_param }
         expect(response).to redirect_to(spree.admin_import_path(import))
       end
     end
@@ -125,7 +125,7 @@ RSpec.describe Spree::Admin::ImportsController, type: :controller do
 
       it 'does not mark import as completed but still redirects to show' do
         expect_any_instance_of(Spree::Import).not_to receive(:complete_mapping!)
-        put :complete_mapping, params: { id: import.id }
+        put :complete_mapping, params: { id: import.to_param }
         expect(response).to redirect_to(spree.admin_import_path(import))
       end
     end

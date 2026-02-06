@@ -13,7 +13,7 @@ describe Spree::Admin::ReimbursementsController, type: :controller do
   describe '#create' do
     context 'when build_from_customer_return_id is present' do
       subject do
-        post :create, params: { order_id: order.to_param, build_from_customer_return_id: customer_return.id }
+        post :create, params: { order_id: order.to_param, build_from_customer_return_id: customer_return.to_param }
       end
 
       let(:order) { create(:order) }

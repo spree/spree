@@ -8,7 +8,7 @@ RSpec.describe Spree::Admin::Orders::OrderPromotionsController do
   let(:order) { create(:order_with_line_items, store: store) }
 
   describe '#new' do
-    subject { get :new, params: { order_id: order.number } }
+    subject { get :new, params: { order_id: order.to_param } }
 
     it 'returns a success response' do
       subject
@@ -18,7 +18,7 @@ RSpec.describe Spree::Admin::Orders::OrderPromotionsController do
   end
 
   describe '#create' do
-    subject { post :create, params: { order_id: order.number, coupon_code: coupon_code }, format: :turbo_stream }
+    subject { post :create, params: { order_id: order.to_param, coupon_code: coupon_code }, format: :turbo_stream }
 
     context 'with valid coupon code' do
       let(:promotion) { create(:promotion, :with_order_adjustment, code: 'TESTCODE', stores: [store]) }
@@ -75,7 +75,7 @@ RSpec.describe Spree::Admin::Orders::OrderPromotionsController do
   end
 
   describe '#destroy' do
-    subject { delete :destroy, params: { order_id: order.number, id: order_promotion.id }, format: :turbo_stream }
+    subject { delete :destroy, params: { order_id: order.to_param, id: order_promotion.id }, format: :turbo_stream }
 
     context 'with valid applied promotion' do
       let(:promotion) { create(:promotion, :with_order_adjustment, code: 'REMOVE', stores: [store]) }

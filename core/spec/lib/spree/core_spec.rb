@@ -41,15 +41,7 @@ describe Spree do
 
   describe '.admin_user_class' do
     after do
-      described_class.admin_user_class = nil
-    end
-
-    context 'when admin_user_class is nil' do
-      it 'fallbacks to user_class' do
-        described_class.user_class = 'Spree::LegacyUser'
-
-        expect(described_class.admin_user_class).to eq(Spree::LegacyUser)
-      end
+      described_class.admin_user_class = 'Spree::LegacyAdminUser'
     end
 
     context 'when admin_user_class is a Class instance' do

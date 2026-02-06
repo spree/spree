@@ -164,7 +164,7 @@ jobs:
       PROJECTS: core
   test_api_postgres:
     <<: *test
-    parallelism: 4
+    parallelism: 2
     environment:
       <<: *environment
       PROJECTS: api
@@ -201,7 +201,7 @@ jobs:
       PROJECTS: core
   test_api_mysql:
     <<: *test_mysql
-    parallelism: 4
+    parallelism: 2
     environment:
       <<: *mysql_environment
       PROJECTS: api

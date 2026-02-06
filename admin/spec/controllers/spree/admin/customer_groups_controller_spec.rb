@@ -54,7 +54,7 @@ RSpec.describe Spree::Admin::CustomerGroupsController, type: :controller do
   end
 
   describe 'GET #show' do
-    subject(:show) { get :show, params: { id: customer_group.id } }
+    subject(:show) { get :show, params: { id: customer_group.to_param } }
 
     let(:customer_group) { create(:customer_group, store: store) }
 
@@ -66,7 +66,7 @@ RSpec.describe Spree::Admin::CustomerGroupsController, type: :controller do
   end
 
   describe 'GET #edit' do
-    subject(:edit) { get :edit, params: { id: customer_group.id } }
+    subject(:edit) { get :edit, params: { id: customer_group.to_param } }
 
     let(:customer_group) { create(:customer_group, store: store) }
 
@@ -86,7 +86,7 @@ RSpec.describe Spree::Admin::CustomerGroupsController, type: :controller do
     end
 
     it 'updates the customer group' do
-      put :update, params: { id: customer_group.id, customer_group: customer_group_params }
+      put :update, params: { id: customer_group.to_param, customer_group: customer_group_params }
       customer_group.reload
 
       expect(customer_group.name).to eq('Premium Customers')
@@ -94,7 +94,7 @@ RSpec.describe Spree::Admin::CustomerGroupsController, type: :controller do
     end
 
     context 'with turbo_stream format' do
-      subject(:update_turbo) { put :update, params: { id: customer_group.id, customer_group: customer_group_params }, format: :turbo_stream }
+      subject(:update_turbo) { put :update, params: { id: customer_group.to_param, customer_group: customer_group_params }, format: :turbo_stream }
 
       it 'returns turbo_stream response' do
         update_turbo
@@ -120,7 +120,7 @@ RSpec.describe Spree::Admin::CustomerGroupsController, type: :controller do
   end
 
   describe 'DELETE #destroy' do
-    subject(:destroy_customer_group) { delete :destroy, params: { id: customer_group.id } }
+    subject(:destroy_customer_group) { delete :destroy, params: { id: customer_group.to_param } }
 
     let!(:customer_group) { create(:customer_group, store: store) }
 

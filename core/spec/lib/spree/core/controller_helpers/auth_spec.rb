@@ -34,16 +34,31 @@ describe Spree::Core::ControllerHelpers::Auth, type: :controller do
   end
 
   describe '#try_spree_current_user' do
-    it 'calls spree_current_user when define spree_current_user method' do
+    it 'calls spree_current_user when defined' do
       expect(controller).to receive(:spree_current_user)
       controller.try_spree_current_user
     end
-    it 'calls current_spree_user when define current_spree_user method' do
-      expect(controller).to receive(:current_spree_user)
-      controller.try_spree_current_user
-    end
-    it 'returns nil' do
+
+    it 'returns nil when no user is set' do
       expect(controller.try_spree_current_user).to eq nil
+    end
+
+    context 'when spree_current_user is not defined' do
+      before do
+        allow(controller).to receive(:respond_to?).and_call_original
+        allow(controller).to receive(:respond_to?).with(:spree_current_user).and_return(false)
+      end
+
+      it 'calls current_spree_user as fallback' do
+        allow(controller).to receive(:respond_to?).with(:current_spree_user).and_return(true)
+        expect(controller).to receive(:current_spree_user)
+        controller.try_spree_current_user
+      end
+
+      it 'returns nil when neither method is defined' do
+        allow(controller).to receive(:respond_to?).with(:current_spree_user).and_return(false)
+        expect(controller.try_spree_current_user).to eq nil
+      end
     end
   end
 end

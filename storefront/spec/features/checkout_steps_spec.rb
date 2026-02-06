@@ -228,12 +228,13 @@ describe 'Checkout steps (address and delivery)' do
         click_on 'Save'
         click_on 'Save and Continue'
         expect(page).to have_content(user.email)
-        expect(page).to have_content(user.shipping_address.firstname)
-        expect(page).to have_content(user.shipping_address.lastname)
-        expect(page).to have_content(user.shipping_address.address1)
-        expect(page).to have_content(user.shipping_address.address2)
-        expect(page).to have_content(user.shipping_address.city)
-        expect(page).to have_content(user.shipping_address.zipcode)
+        # After adding a new address, verify the NEW address is shown on delivery step
+        expect(page).to have_content('Guest')
+        expect(page).to have_content('Guestovski')
+        expect(page).to have_content('Bul ASNOM')
+        expect(page).to have_content('77')
+        expect(page).to have_content('Skopje')
+        expect(page).to have_content('77777')
         expect(page).to have_content(Spree::ShippingMethod.first.name)
       end
     end

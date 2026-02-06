@@ -890,6 +890,39 @@ describe Spree::Shipment, type: :model do
     end
   end
 
+  describe '#selected_shipping_rate_id=' do
+    let(:order) { create(:order_with_line_items, line_items_count: 1) }
+    let(:shipment) { order.shipments.first }
+    let(:shipping_method_1) { create(:shipping_method) }
+    let(:shipping_method_2) { create(:shipping_method) }
+
+    before do
+      shipment.shipping_rates.delete_all
+      create(:shipping_rate, shipment: shipment, shipping_method: shipping_method_1, cost: 10, selected: true)
+      create(:shipping_rate, shipment: shipment, shipping_method: shipping_method_2, cost: 20, selected: false)
+      shipment.reload
+      order.set_shipments_cost
+    end
+
+    it 'updates order totals when a different shipping rate is selected' do
+      expect(order.shipment_total).to eq(10)
+
+      # Select the more expensive shipping rate
+      shipping_rate_2 = shipment.shipping_rates.find_by(shipping_method: shipping_method_2)
+      shipment.selected_shipping_rate_id = shipping_rate_2.id
+
+      order.reload
+      expect(order.shipment_total).to eq(20)
+    end
+
+    it 'updates the shipment cost to match the selected shipping rate' do
+      shipping_rate_2 = shipment.shipping_rates.find_by(shipping_method: shipping_method_2)
+      shipment.selected_shipping_rate_id = shipping_rate_2.id
+
+      expect(shipment.reload.cost).to eq(20)
+    end
+  end
+
   context 'after_save' do
     context 'line item changes' do
       before do

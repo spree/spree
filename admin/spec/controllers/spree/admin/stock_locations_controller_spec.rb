@@ -57,7 +57,7 @@ RSpec.describe Spree::Admin::StockLocationsController, type: :controller do
     let!(:stock_location) { create(:stock_location) }
 
     it 'renders the edit stock location form' do
-      get :edit, params: { id: stock_location.id }
+      get :edit, params: { id: stock_location.to_param }
 
       expect(response).to be_successful
       expect(response).to render_template(:edit)
@@ -68,7 +68,7 @@ RSpec.describe Spree::Admin::StockLocationsController, type: :controller do
     let!(:stock_location) { create(:stock_location, name: 'Main Warehouse') }
 
     it 'updates the stock location' do
-      put :update, params: { id: stock_location.id, stock_location: { name: 'New Warehouse' } }
+      put :update, params: { id: stock_location.to_param, stock_location: { name: 'New Warehouse' } }
 
       expect(response).to redirect_to(spree.edit_admin_stock_location_path(stock_location))
       expect(stock_location.reload.name).to eq('New Warehouse')
@@ -80,7 +80,7 @@ RSpec.describe Spree::Admin::StockLocationsController, type: :controller do
 
     it 'marks the stock location as default' do
       expect {
-        put :mark_as_default, params: { id: stock_location.id }
+        put :mark_as_default, params: { id: stock_location.to_param }
       }.to change { stock_location.reload.default }.from(false).to(true)
 
       expect(response).to redirect_to(spree.admin_stock_locations_path)
@@ -92,7 +92,7 @@ RSpec.describe Spree::Admin::StockLocationsController, type: :controller do
 
     it 'deletes the stock location' do
       expect {
-        delete :destroy, params: { id: stock_location.id }
+        delete :destroy, params: { id: stock_location.to_param }
       }.to change(Spree::StockLocation, :count).by(-1)
 
       expect(response).to redirect_to(spree.admin_stock_locations_path)

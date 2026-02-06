@@ -1,5 +1,7 @@
 module Spree
   class MetafieldDefinition < Spree.base_class
+    has_prefix_id :mfdef
+
     include Spree::DisplayOn
 
     DISPLAY = [:both, :back_end]

@@ -44,7 +44,7 @@ describe Spree::Admin::RefundsController, type: :controller do
   end
 
   describe '#update' do
-    subject { put :update, params: { id: refund.id, order_id: order.to_param, payment_id: payment.to_param, refund: { refund_reason_id: refund_reason.id.to_s } } }
+    subject { put :update, params: { id: refund.to_param, order_id: order.to_param, payment_id: payment.to_param, refund: { refund_reason_id: refund_reason.id.to_s } } }
 
     let(:refund) { create(:refund, amount: 10, payment: payment) }
     let(:refund_reason) { create(:refund_reason) }

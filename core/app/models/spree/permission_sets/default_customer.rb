@@ -39,6 +39,17 @@ module Spree
           !order.completed? && (order.user == user || order.token && token == order.token)
         end
 
+        # Line item management
+        can :create, Spree::LineItem do |line_item, token|
+          line_item.order.user == user || line_item.order.token && token == line_item.order.token
+        end
+        can :update, Spree::LineItem do |line_item, token|
+          !line_item.order.completed? && (line_item.order.user == user || line_item.order.token && token == line_item.order.token)
+        end
+        can :destroy, Spree::LineItem do |line_item, token|
+          !line_item.order.completed? && (line_item.order.user == user || line_item.order.token && token == line_item.order.token)
+        end
+
         # User account management - available to all users (including guests for their own record)
         can :create, Spree.user_class
         can [:show, :update, :destroy], Spree.user_class, id: user.id
@@ -48,6 +59,9 @@ module Spree
 
         # Credit card management
         can [:read, :destroy], Spree::CreditCard, user_id: user.id
+
+        # Gift card management - users can view their own gift cards
+        can :read, Spree::GiftCard, user_id: user.id
 
         # Wishlist management
         can :manage, Spree::Wishlist, user_id: user.id
@@ -60,6 +74,11 @@ module Spree
 
         # Invitation acceptance
         can :accept, Spree::Invitation, invitee_id: [user.id, nil], invitee_type: user.class.name, status: 'pending'
+
+        # Digital downloads - token-based access
+        can :show, Spree::DigitalLink do |digital_link, token|
+          digital_link.token == token
+        end
       end
     end
   end

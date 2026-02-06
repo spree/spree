@@ -4,14 +4,25 @@ require 'generators/spree/dummy_model/dummy_model_generator'
 desc 'Generates a dummy app for testing'
 namespace :common do
   task :test_app, [:authentication, :user_class, :admin_user_class, :css, :javascript, :install_admin, :install_storefront] do |_t, args|
-    args.with_defaults(
+    # Support both Rake::TaskArguments (via invoke) and Hash (via execute)
+    # When using execute with a Hash, args IS the hash directly
+    defaults = {
       authentication: 'dummy',
       user_class: 'Spree::LegacyUser',
+      admin_user_class: 'Spree::LegacyAdminUser',
       install_storefront: false,
       install_admin: false,
       javascript: false,
       css: false
-    )
+    }
+    # Rake::TaskArguments#with_defaults modifies in-place
+    # ActiveSupport adds Hash#with_defaults which returns a new hash, so check for Rake::TaskArguments specifically
+    if args.is_a?(Rake::TaskArguments)
+      args.with_defaults(defaults)
+    else
+      # Hash passed via execute - use reverse_merge! to merge defaults in place
+      args.reverse_merge!(defaults)
+    end
     require ENV['LIB_NAME'].to_s
 
     # Convert to booleans (supports both string and boolean values for backwards compatibility)
@@ -60,8 +71,8 @@ namespace :common do
     core_gems = %w[spree/core spree/api]
     root_gemfile = File.expand_path('../../../../Gemfile', __dir__)
     use_root_gemfile = core_gems.include?(ENV['LIB_NAME']) &&
-                       File.exist?(root_gemfile) &&
-                       File.exist?(File.expand_path('../../../../spree.gemspec', __dir__))
+      File.exist?(root_gemfile) &&
+      File.exist?(File.expand_path('../../../../spree.gemspec', __dir__))
     bundle_exec = use_root_gemfile ? "bundle exec --gemfile=#{root_gemfile}" : 'bundle exec'
     puts 'Running Spree install generator...'
     system("#{bundle_exec} rails g spree:install --force --auto-accept --migrate=false --seed=false --sample=false --user_class=#{args[:user_class]} --admin_user_class=#{args[:admin_user_class]} --authentication=#{args[:authentication]}")

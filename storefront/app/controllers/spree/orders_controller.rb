@@ -16,7 +16,7 @@ module Spree
 
     # GET /orders/:id
     def show
-      @order = complete_order_finder.new(number: params[:id], token: params[:token], store: current_store).execute.first
+      @order = complete_order_finder.new(param: params[:id], token: params[:token], store: current_store).execute.first
 
       raise ActiveRecord::RecordNotFound if @order.blank?
 

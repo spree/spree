@@ -26,7 +26,7 @@ module Spree
     def product_filters_aggregations
       @product_filters_aggregations ||= Rails.cache.fetch(["product-filters-aggregations", storefront_products_for_filters.cache_key_with_version], expires_in: 1.day) do
         storefront_products_for_filters.
-        joins(variants_including_master: :option_values).
+        joins(variants: :option_values).
         group("#{Spree::OptionValue.table_name}.id").
         distinct.
         count
@@ -36,7 +36,7 @@ module Spree
     def product_single_filter_aggregations
       @product_single_filter_aggregations ||= Rails.cache.fetch(["product-single-filter-aggregations", default_storefront_products_for_filters.cache_key_with_version], expires_in: 1.day) do
         default_storefront_products_for_filters.
-        joins(variants_including_master: :option_values).
+        joins(variants: :option_values).
         group("#{Spree::OptionValue.table_name}.id").
         distinct.
         count

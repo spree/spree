@@ -1,7 +1,7 @@
 module Spree
   module Admin
     class LineItemsController < Spree::Admin::ResourceController
-      belongs_to 'spree/order', find_by: :number
+      belongs_to 'spree/order', find_by: :prefix_id
 
       layout 'turbo_rails/frame'
 

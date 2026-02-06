@@ -13,7 +13,7 @@
       </button>
     <% else %>
       <%= link_to_with_icon 'plus', Spree.t(:add),
-        spree.new_admin_address_path(user_id: @user.id, default_billing: true, type: 'billing'),
+        spree.new_admin_address_path(user_id: @user.to_param, default_billing: true, type: 'billing'),
         class: 'btn btn-light btn-sm',
         data: { turbo_frame: :new_address_billing } if can?(:create, Spree::Address) && can?(:update, @user) %>
     <% end %>
@@ -42,7 +42,7 @@
             </div>
 
             <div class="custom-control custom-radio">
-              <%= link_to spree.new_admin_address_path(user_id: @user.id, default_billing: true, type: 'billing'), data: { turbo_frame: :new_address_billing } do %>
+              <%= link_to spree.new_admin_address_path(user_id: @user.to_param, default_billing: true, type: 'billing'), data: { turbo_frame: :new_address_billing } do %>
                 <%= radio_button_tag :user_bill_address_id, nil, false,
                   id: 'user_bill_address_id_new_address',
                   class: 'custom-control-input' %>

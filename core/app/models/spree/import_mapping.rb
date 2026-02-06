@@ -1,5 +1,7 @@
 module Spree
   class ImportMapping < Spree.base_class
+    has_prefix_id :immap
+
     #
     # Associations
     #

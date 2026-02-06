@@ -1,0 +1,9 @@
+<%= render 'spree/admin/shared/developers_nav' %>
+
+<%= content_for(:title, Spree.t(:api_keys)) %>
+
+<% content_for :page_actions do %>
+  <%= link_to_with_icon 'plus', Spree.t(:new_api_key), new_object_url, class: "btn btn-primary" if can? :create, Spree::ApiKey %>
+<% end %>
+
+<%= render_table @collection, :api_keys %>

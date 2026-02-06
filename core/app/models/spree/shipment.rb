@@ -2,9 +2,10 @@ require 'ostruct'
 
 module Spree
   class Shipment < Spree.base_class
+    has_prefix_id :ship  # Spree-specific: shipment
+
     include Spree::Core::NumberGenerator.new(prefix: 'H', length: 11)
     include Spree::NumberIdentifier
-    include Spree::NumberAsParam
     include Spree::Metafields
     include Spree::Metadata
     if defined?(Spree::Security::Shipments)
@@ -346,6 +347,15 @@ module Spree
       shipping_rates.update_all(selected: false, updated_at: Time.current)
       shipping_rates.update(id, selected: true)
       save!
+      # Reload associations to pick up the new selected shipping rate
+      shipping_rates.reset
+      association(:selected_shipping_rate).reset
+      # Update shipment cost and order totals only for incomplete orders (during checkout)
+      # For completed orders, totals are managed separately (e.g., in tests or admin adjustments)
+      return if order.completed?
+
+      update_amounts
+      order.set_shipments_cost
     end
 
     def set_up_inventory(state, variant, order, line_item, quantity = 1)

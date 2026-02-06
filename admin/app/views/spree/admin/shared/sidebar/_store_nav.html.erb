@@ -65,7 +65,7 @@
       <% end %>
     <% end %>
 
-    <% if can?(:manage, Spree::OauthApplication) %>
+    <% if defined?(Spree::OauthApplication) && can?(:manage, Spree::OauthApplication) %>
       <%= nav_item(Spree.t(:developers), spree.admin_oauth_applications_path, icon: 'terminal', active: %w[oauth_applications webhooks_subscribers].include?(controller_name)) %>
     <% end %>
 
