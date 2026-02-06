@@ -1,6 +1,6 @@
 {
   "name": "@spree/sdk",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Official TypeScript SDK for Spree Commerce API",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -56,7 +56,7 @@
     "headless"
   ],
   "author": "Vendo Connect Inc.",
-  "license": "BSD-3-Clause",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/spree/spree.git",
