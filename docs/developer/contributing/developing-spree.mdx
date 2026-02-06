@@ -129,6 +129,34 @@ If you want to run a particular line of spec
     bundle exec rspec spec/models/spree/state_spec.rb:7
     ```
 
+### Running tests in parallel
+
+You can run specs in parallel locally using the `parallel_tests` gem. This distributes spec files across multiple CPU cores for faster execution.
+
+After setting up the test app, create databases for parallel workers:
+
+    ```bash
+    cd core
+    bundle exec rake parallel_setup
+    ```
+
+Then run specs in parallel:
+
+    ```bash
+    bundle exec parallel_rspec spec
+    ```
+
+You can also specify the number of workers:
+
+    ```bash
+    bundle exec rake "parallel_setup[4]"
+    bundle exec parallel_rspec -n 4 spec
+    ```
+
+After schema changes, re-run `bundle exec rake parallel_setup` to update the worker databases.
+
+This works with both SQLite (default) and PostgreSQL. For PostgreSQL, set the `DB` environment variable when generating the test app as described above.
+
 ### Running integration tests on MacOS (only applicable for Admin Panel/Storefront)
 
 We use chromedriver to run integration tests. To install it please use this command:

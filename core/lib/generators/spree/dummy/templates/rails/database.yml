@@ -14,7 +14,7 @@ development:
   database: db/spree_development.sqlite3
 test:
   adapter: sqlite3
-  database: db/spree_test.sqlite3
+  database: db/spree_test<%%= ENV['TEST_ENV_NUMBER'] %>.sqlite3
   timeout: 10000
 production:
   adapter: sqlite3
@@ -40,7 +40,7 @@ development:
   database: <%= database_prefix %><%= lib_name %>_spree_development
 test:
   <<: *mysql
-  database: <%= database_prefix %><%= lib_name %>_spree_test
+  database: <%= database_prefix %><%= lib_name %>_spree_test<%%= ENV['TEST_ENV_NUMBER'] %>
 production:
   <<: *mysql
   database: <%= database_prefix %><%= lib_name %>_spree_production
@@ -57,14 +57,14 @@ postgres: &postgres
   host: <%= db_host %>
   <% end %>
   min_messages: warning
-  pool: <%= ENV["DB_POOL"] || 50 %>
+  pool: <%%= ENV.fetch("DB_POOL", 50) %>
 
 development:
   <<: *postgres
   database: <%= database_prefix %><%= lib_name %>_spree_development
 test:
   <<: *postgres
-  database: <%= database_prefix %><%= lib_name %>_spree_test
+  database: <%= database_prefix %><%= lib_name %>_spree_test<%%= ENV['TEST_ENV_NUMBER'] %>
 production:
   <<: *postgres
   database: <%= database_prefix %><%= lib_name %>_spree_production
@@ -74,7 +74,7 @@ development:
   database: db/spree_development.sqlite3
 test:
   adapter: sqlite3
-  database: db/spree_test.sqlite3
+  database: db/spree_test<%%= ENV['TEST_ENV_NUMBER'] %>.sqlite3
 production:
   adapter: sqlite3
   database: db/spree_production.sqlite3

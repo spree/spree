@@ -134,3 +134,56 @@ namespace :common do
     system('bundle exec rake db:seed RAILS_ENV=test > /dev/null 2>&1')
   end
 end
+
+# Custom parallel setup task instead of parallel_tests' native parallel:create/parallel:prepare
+# because Spree gems are not Rails apps — the Rails app lives in spec/dummy/ and db: rake tasks
+# are not available from the gem directory. For SQLite, we copy the primary .sqlite3 file which
+# is faster than creating + migrating N databases through Rails.
+desc 'Create and prepare databases for parallel test workers'
+task :parallel_setup, [:count] do |_t, args|
+  require 'parallel'
+
+  count = (args[:count] || ENV.fetch('PARALLEL_TEST_PROCESSORS', Parallel.processor_count)).to_i
+  dummy_path = ENV['DUMMY_PATH'] || 'spec/dummy'
+  db_config_path = File.join(dummy_path, 'config', 'database.yml')
+
+  raise "Database config not found at #{db_config_path}. Run 'rake test_app' first." unless File.exist?(db_config_path)
+
+  require 'erb'
+  require 'yaml'
+
+  db_config = YAML.safe_load(ERB.new(File.read(db_config_path)).result, permitted_classes: [Symbol])
+  adapter = db_config.dig('test', 'adapter')
+
+  if adapter == 'sqlite3'
+    # For SQLite, copy the primary test database for each worker
+    primary_db = File.join(dummy_path, db_config.dig('test', 'database'))
+
+    raise "Primary test database not found at #{primary_db}. Run 'rake test_app' first." unless File.exist?(primary_db)
+
+    2.upto(count) do |i|
+      worker_db = primary_db.sub(/\.sqlite3$/, "#{i}.sqlite3")
+      FileUtils.cp(primary_db, worker_db)
+      puts "Created parallel database: #{worker_db}"
+    end
+  else
+    # For PostgreSQL/MySQL, create and migrate each worker's database
+    2.upto(count) do |i|
+      env_vars = "TEST_ENV_NUMBER=#{i} RAILS_ENV=test"
+      puts "Setting up database for worker #{i}..."
+      Dir.chdir(dummy_path) do
+        system("#{env_vars} bundle exec rake db:create db:migrate") || raise("Failed to setup database for worker #{i}")
+      end
+    end
+  end
+
+  puts "Parallel databases setup complete (#{count} workers)"
+end
+
+desc 'Run specs in parallel'
+task :parallel_spec, [:count] do |_t, args|
+  count = args[:count] || ENV.fetch('PARALLEL_TEST_PROCESSORS', nil)
+  count_arg = count ? "-n #{count}" : ''
+  success = system("bundle exec parallel_rspec #{count_arg} spec")
+  exit(success ? 0 : 1)
+end
