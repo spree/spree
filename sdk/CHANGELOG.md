@@ -1,5 +1,11 @@
 # @spree/sdk
 
+## 0.1.2
+
+### Patch Changes
+
+- Fix release workflow for npm Trusted Publishing
+
 ## 0.1.1
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@spree/sdk",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Official TypeScript SDK for Spree Commerce API",
   "type": "module",
   "main": "./dist/index.cjs",
