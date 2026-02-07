@@ -646,4 +646,4 @@ npm run release   # Build and publish to npm
 
 ## License
 
-BSD-3-Clause
+MIT
