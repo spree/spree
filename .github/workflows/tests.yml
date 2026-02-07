@@ -21,8 +21,85 @@ permissions:
   contents: read
 
 jobs:
+  build-postgres:
+    name: "Build (PostgreSQL)"
+    runs-on: ubuntu-latest
+    env:
+      DB: postgres
+      RAILS_VERSION: "~> 8.1.0"
+      BUNDLE_JOBS: 4
+      BUNDLE_RETRY: 3
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '4.0'
+
+      - name: Cache Ruby gems
+        uses: actions/cache@v4
+        with:
+          path: vendor/bundle
+          key: gems-${{ runner.os }}-ruby4.0-postgres-${{ hashFiles('Gemfile', '*.gemspec', 'common_spree_dependencies.rb', '*/*.gemspec') }}
+          restore-keys: |
+            gems-${{ runner.os }}-ruby4.0-postgres-
+
+      - name: Install root dependencies
+        run: |
+          bundle config set --local path vendor/bundle
+          bundle install
+
+      - name: Install all project dependencies
+        run: |
+          for project in core api admin emails sample; do
+            echo "--- Installing gems for $project ---"
+            cd $project
+            bundle config set --local path ${{ github.workspace }}/vendor/bundle
+            bundle install
+            cd ${{ github.workspace }}
+          done
+
+  build-mysql:
+    name: "Build (MySQL)"
+    runs-on: ubuntu-latest
+    env:
+      DB: mysql
+      RAILS_VERSION: "7.2.0"
+      BUNDLE_JOBS: 4
+      BUNDLE_RETRY: 3
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '4.0'
+
+      - name: Cache Ruby gems
+        uses: actions/cache@v4
+        with:
+          path: vendor/bundle
+          key: gems-${{ runner.os }}-ruby4.0-mysql-${{ hashFiles('Gemfile', '*.gemspec', 'common_spree_dependencies.rb', '*/*.gemspec') }}
+          restore-keys: |
+            gems-${{ runner.os }}-ruby4.0-mysql-
+
+      - name: Install root dependencies
+        run: |
+          bundle config set --local path vendor/bundle
+          bundle install
+
+      - name: Install all project dependencies
+        run: |
+          for project in core api admin emails sample; do
+            echo "--- Installing gems for $project ---"
+            cd $project
+            bundle config set --local path ${{ github.workspace }}/vendor/bundle
+            bundle install
+            cd ${{ github.workspace }}
+          done
+
   test-postgres:
     name: "PostgreSQL - ${{ matrix.project }}"
+    needs: build-postgres
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -57,7 +134,7 @@ jobs:
         with:
           ruby-version: '4.0'
 
-      - name: Cache Ruby gems
+      - name: Restore gem cache
         uses: actions/cache@v4
         with:
           path: vendor/bundle
@@ -68,16 +145,11 @@ jobs:
       - name: Install libvips
         run: sudo apt-get update && sudo apt-get install -y libvips-dev
 
-      - name: Install root dependencies
+      - name: Configure bundler
         run: |
           bundle config set --local path vendor/bundle
-          bundle install
-
-      - name: Install project dependencies
-        working-directory: ${{ matrix.project }}
-        run: |
+          cd ${{ matrix.project }}
           bundle config set --local path ${{ github.workspace }}/vendor/bundle
-          bundle install
 
       - name: Setup test app
         working-directory: ${{ matrix.project }}
@@ -118,6 +190,7 @@ jobs:
 
   test-mysql:
     name: "MySQL - ${{ matrix.project }}"
+    needs: build-mysql
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -151,7 +224,7 @@ jobs:
         with:
           ruby-version: '4.0'
 
-      - name: Cache Ruby gems
+      - name: Restore gem cache
         uses: actions/cache@v4
         with:
           path: vendor/bundle
@@ -162,16 +235,11 @@ jobs:
       - name: Install libvips
         run: sudo apt-get update && sudo apt-get install -y libvips-dev
 
-      - name: Install root dependencies
+      - name: Configure bundler
         run: |
           bundle config set --local path vendor/bundle
-          bundle install
-
-      - name: Install project dependencies
-        working-directory: ${{ matrix.project }}
-        run: |
+          cd ${{ matrix.project }}
           bundle config set --local path ${{ github.workspace }}/vendor/bundle
-          bundle install
 
       - name: Setup test app
         working-directory: ${{ matrix.project }}
@@ -212,6 +280,7 @@ jobs:
 
   brakeman:
     name: Brakeman
+    needs: build-postgres
     runs-on: ubuntu-latest
     env:
       DB: postgres
@@ -224,18 +293,16 @@ jobs:
         with:
           ruby-version: '4.0'
 
-      - name: Cache Ruby gems
+      - name: Restore gem cache
         uses: actions/cache@v4
         with:
           path: vendor/bundle
-          key: gems-${{ runner.os }}-ruby4.0-brakeman-${{ hashFiles('Gemfile', '*.gemspec', 'common_spree_dependencies.rb', '*/*.gemspec') }}
+          key: gems-${{ runner.os }}-ruby4.0-postgres-${{ hashFiles('Gemfile', '*.gemspec', 'common_spree_dependencies.rb', '*/*.gemspec') }}
           restore-keys: |
-            gems-${{ runner.os }}-ruby4.0-brakeman-
+            gems-${{ runner.os }}-ruby4.0-postgres-
 
-      - name: Install dependencies
-        run: |
-          bundle config set --local path vendor/bundle
-          bundle install
+      - name: Configure bundler
+        run: bundle config set --local path vendor/bundle
 
       - name: Run Brakeman
         run: bin/brakeman.sh
