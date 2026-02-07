@@ -45,7 +45,7 @@ module SpreeCli
       template 'config/importmap.rb', "#{file_name}/config/importmap.rb"
 
       template 'rspec', "#{file_name}/.rspec"
-      template '.circleci/config.yml', "#{file_name}/.circleci/config.yml"
+      template '.github/workflows/tests.yml', "#{file_name}/.github/workflows/tests.yml"
       template '.github/.dependabot.yml', "#{file_name}/.github/.dependabot.yml"
       template '.rubocop.yml', "#{file_name}/.rubocop.yml"
       template '.gem_release.yml', "#{file_name}/.gem_release.yml"
