@@ -4,7 +4,7 @@ require 'spree/core/version'
 
 module Spree
   class DummyGenerator < Rails::Generators::Base
-    SPREE_GEMS = %w(spree_admin spree_storefront spree_api spree_emails).freeze
+    SPREE_GEMS = %w(spree_admin spree_api spree_emails).freeze
 
     desc 'Creates blank Rails application, installs Spree and all sample data'
 

@@ -1,8 +1,0 @@
-<% if storefront_pagy&.next %>
-  <%= turbo_frame_tag "next_page", src: url_for(params.to_unsafe_h.merge(page: storefront_pagy.next, format: :turbo_stream)), class: "block relative w-full", data: { controller: "infinite-scroll", infinite_scroll_offset_value: "1350px" }, loading: "lazy" do %>
-    <span class="flex justify-center gap-2 items-center py-4 left-0 w-full h-full">
-      <%= render 'spree/shared/icons/spinner' %>
-      <%= Spree.t(:loading) %>...
-    </span>
-  <% end %>
-<% end %>
