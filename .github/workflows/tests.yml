@@ -98,13 +98,29 @@ jobs:
           done
 
   test-postgres:
-    name: "PostgreSQL - ${{ matrix.project }}"
+    name: "PostgreSQL - ${{ matrix.project }} (${{ matrix.shard }}/${{ matrix.total_shards }})"
     needs: build-postgres
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        project: [core, api, admin, emails, sample]
+        include:
+          # core: 6 shards
+          - { project: core, shard: 1, total_shards: 6 }
+          - { project: core, shard: 2, total_shards: 6 }
+          - { project: core, shard: 3, total_shards: 6 }
+          - { project: core, shard: 4, total_shards: 6 }
+          - { project: core, shard: 5, total_shards: 6 }
+          - { project: core, shard: 6, total_shards: 6 }
+          # api: 2 shards
+          - { project: api, shard: 1, total_shards: 2 }
+          - { project: api, shard: 2, total_shards: 2 }
+          # admin: 2 shards
+          - { project: admin, shard: 1, total_shards: 2 }
+          - { project: admin, shard: 2, total_shards: 2 }
+          # emails & sample: 1 shard each
+          - { project: emails, shard: 1, total_shards: 1 }
+          - { project: sample, shard: 1, total_shards: 1 }
     services:
       postgres:
         image: postgres:16
@@ -160,6 +176,22 @@ jobs:
             bundle exec rake test_app
           fi
 
+      - name: Select shard specs
+        id: specs
+        working-directory: ${{ matrix.project }}
+        run: |
+          all_specs=($(find spec -name '*_spec.rb' | sort))
+          total=${#all_specs[@]}
+          shard_specs=()
+          shard_index=$(( ${{ matrix.shard }} - 1 ))
+          for ((i=0; i<total; i++)); do
+            if (( i % ${{ matrix.total_shards }} == shard_index )); then
+              shard_specs+=("${all_specs[$i]}")
+            fi
+          done
+          echo "Found ${#shard_specs[@]} specs for shard ${{ matrix.shard }}/${{ matrix.total_shards }} (out of $total total)"
+          echo "files=${shard_specs[*]}" >> "$GITHUB_OUTPUT"
+
       - name: Run tests
         working-directory: ${{ matrix.project }}
         run: |
@@ -170,13 +202,14 @@ jobs:
             --profile 10 \
             -r rspec_junit_formatter \
             --format RspecJunitFormatter \
-            -o ${{ github.workspace }}/tmp/test-results/rspec/${{ matrix.project }}.xml
+            -o ${{ github.workspace }}/tmp/test-results/rspec/${{ matrix.project }}-${{ matrix.shard }}.xml \
+            ${{ steps.specs.outputs.files }}
 
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results-postgres-${{ matrix.project }}
+          name: test-results-postgres-${{ matrix.project }}-${{ matrix.shard }}
           path: tmp/test-results/
           if-no-files-found: ignore
 
@@ -184,18 +217,34 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: failed-screenshots-postgres-${{ matrix.project }}
+          name: failed-screenshots-postgres-${{ matrix.project }}-${{ matrix.shard }}
           path: /tmp/test-artifacts/
           if-no-files-found: ignore
 
   test-mysql:
-    name: "MySQL - ${{ matrix.project }}"
+    name: "MySQL - ${{ matrix.project }} (${{ matrix.shard }}/${{ matrix.total_shards }})"
     needs: build-mysql
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        project: [core, api, admin, emails, sample]
+        include:
+          # core: 6 shards
+          - { project: core, shard: 1, total_shards: 6 }
+          - { project: core, shard: 2, total_shards: 6 }
+          - { project: core, shard: 3, total_shards: 6 }
+          - { project: core, shard: 4, total_shards: 6 }
+          - { project: core, shard: 5, total_shards: 6 }
+          - { project: core, shard: 6, total_shards: 6 }
+          # api: 2 shards
+          - { project: api, shard: 1, total_shards: 2 }
+          - { project: api, shard: 2, total_shards: 2 }
+          # admin: 2 shards
+          - { project: admin, shard: 1, total_shards: 2 }
+          - { project: admin, shard: 2, total_shards: 2 }
+          # emails & sample: 1 shard each
+          - { project: emails, shard: 1, total_shards: 1 }
+          - { project: sample, shard: 1, total_shards: 1 }
     services:
       mysql:
         image: mysql:8.0
@@ -250,6 +299,22 @@ jobs:
             bundle exec rake test_app
           fi
 
+      - name: Select shard specs
+        id: specs
+        working-directory: ${{ matrix.project }}
+        run: |
+          all_specs=($(find spec -name '*_spec.rb' | sort))
+          total=${#all_specs[@]}
+          shard_specs=()
+          shard_index=$(( ${{ matrix.shard }} - 1 ))
+          for ((i=0; i<total; i++)); do
+            if (( i % ${{ matrix.total_shards }} == shard_index )); then
+              shard_specs+=("${all_specs[$i]}")
+            fi
+          done
+          echo "Found ${#shard_specs[@]} specs for shard ${{ matrix.shard }}/${{ matrix.total_shards }} (out of $total total)"
+          echo "files=${shard_specs[*]}" >> "$GITHUB_OUTPUT"
+
       - name: Run tests
         working-directory: ${{ matrix.project }}
         run: |
@@ -260,13 +325,14 @@ jobs:
             --profile 10 \
             -r rspec_junit_formatter \
             --format RspecJunitFormatter \
-            -o ${{ github.workspace }}/tmp/test-results/rspec/${{ matrix.project }}.xml
+            -o ${{ github.workspace }}/tmp/test-results/rspec/${{ matrix.project }}-${{ matrix.shard }}.xml \
+            ${{ steps.specs.outputs.files }}
 
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results-mysql-${{ matrix.project }}
+          name: test-results-mysql-${{ matrix.project }}-${{ matrix.shard }}
           path: tmp/test-results/
           if-no-files-found: ignore
 
@@ -274,7 +340,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: failed-screenshots-mysql-${{ matrix.project }}
+          name: failed-screenshots-mysql-${{ matrix.project }}-${{ matrix.shard }}
           path: /tmp/test-artifacts/
           if-no-files-found: ignore
 
