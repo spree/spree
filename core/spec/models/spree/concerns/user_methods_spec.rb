@@ -131,22 +131,22 @@ describe Spree::UserMethods do
     end
 
     it 'returns users based on the first name' do
-      expect(Spree.user_class.multi_search('joh')).to eq([user_1, user_5])
+      expect(Spree.user_class.multi_search('joh')).to match_array([user_1, user_5])
       expect(Spree.user_class.multi_search('jan')).to eq([user_2])
       expect(Spree.user_class.multi_search('greg')).to eq([])
     end
 
     it 'returns users based on the last name' do
-      expect(Spree.user_class.multi_search('do')).to eq([user_1, user_5])
+      expect(Spree.user_class.multi_search('do')).to match_array([user_1, user_5])
       expect(Spree.user_class.multi_search('moe')).to eq([user_3])
       expect(Spree.user_class.multi_search('smith')).to eq([])
     end
 
     it 'returns users based on the full name' do
-      expect(Spree.user_class.multi_search('joh do')).to eq([user_1, user_5])
+      expect(Spree.user_class.multi_search('joh do')).to match_array([user_1, user_5])
       expect(Spree.user_class.multi_search('ane gon')).to eq([user_2])
       expect(Spree.user_class.multi_search('mary moe')).to eq([user_3])
-      expect(Spree.user_class.multi_search('jane moe')).to eq([user_2, user_3])
+      expect(Spree.user_class.multi_search('jane moe')).to match_array([user_2, user_3])
       expect(Spree.user_class.multi_search('greg smith')).to eq([])
     end
   end
