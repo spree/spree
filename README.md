@@ -66,22 +66,22 @@ Thank you for supporting Spree open-source :heart:
 
 **Spree 5 packs a punch with:**
 
-- **Admin Dashboard** — Completely new Admin Dashboard built with Tailwind CSS, Admin SDK with Tables DSL, staff management with role-based permissions
-- **Pricing & Promotions** — Flexible Pricing Engine with regional/B2B/wholesale pricing out of the box, Customer Groups, Gift Cards, and enhanced Promotions UI
-- **Products & Catalog** — Metafields for custom data without migrations, CSV importer/exporter, Digital products, Product Tags, Bulk operations UI
-- **Checkout & Payments** — Stripe, Adyen, Payment Links, Wallet payments (Apple Pay/Google Pay), Buy Now Pay Later, Bank & SEPA payments
-- **Integrations & Extensibility** — Event Bus with Subscribers, Webhooks 2.0 with admin UI, native integrations (Google Analytics 4, GTM, Klaviyo)
+- **Admin Dashboard** — Completely new Admin Dashboard built with [Tailwind CSS](https://spreecommerce.org/docs/developer/admin/custom-css), Admin SDK with [Tables DSL](https://spreecommerce.org/docs/developer/admin/tables), staff management with [role-based permissions](https://spreecommerce.org/docs/developer/customization/permissions)
+- **Pricing & Promotions** — [Flexible Pricing Engine](https://spreecommerce.org/docs/developer/core-concepts/products#price-lists) with regional/B2B/wholesale pricing out of the box, [Customer Groups](https://spreecommerce.org/docs/user/customers/customer-groups), [Gift Cards](https://spreecommerce.org/docs/developer/core-concepts/store-credits-gift-cards), and enhanced [Promotions UI](https://spreecommerce.org/docs/user/promotions/create-a-promotion)
+- **Products & Catalog** — [Metafields](https://spreecommerce.org/docs/developer/core-concepts/metafields) for custom data without migrations, [CSV importer/exporter](https://spreecommerce.org/docs/user/manage-products/import-products), Digital products, Product Tags, [Bulk operations UI](https://spreecommerce.org/docs/user/manage-products/bulk-product-operations)
+- **Checkout & Payments** — [Stripe](https://spreecommerce.org/docs/integrations/payments/stripe), [Adyen](https://spreecommerce.org/docs/integrations/payments/adyen), Payment Links, Wallet payments (Apple Pay/Google Pay), Buy Now Pay Later, Bank & SEPA payments
+- **Integrations & Extensibility** — [Event Bus with Subscribers](https://spreecommerce.org/docs/developer/core-concepts/events), [Webhooks 2.0 with admin UI](https://spreecommerce.org/docs/developer/core-concepts/webhooks), native integrations ([Google Analytics 4](https://spreecommerce.org/docs/integrations/analytics/google-analytics), [Google Tag Manager](https://spreecommerce.org/docs/integrations/analytics/google-tag-manager), [Klaviyo](https://spreecommerce.org/docs/integrations/marketing/klaviyo))
 - **Developer Experience** — New CLI Installer, code generators, LSP editor integrations, Claude Code/Cursor AI integrations
 
 Upcoming **Spree 5.4** expands the platform's reach to JavaScript developers with:
 
-- **New REST API** — ~10x faster than API v2, built for simplicity and performance
-- **TypeScript SDK** — First-class developer experience with full type safety
-- **Next.js Starter Kit** — Production-ready headless storefront powered by the new API
+- **[New REST API](api)** — ~10x faster than API v2, built for simplicity and performance
+- **[TypeScript SDK](sdk)** — First-class developer experience with full type safety
+- **[Next.js Starter Kit](https://github.com/spree/nextjs-starter-spree)** — Production-ready headless storefront powered by the new API
 
 Read the [full Spree 5.3 announcement here](https://spreecommerce.org/announcing-spree-commerce-5-3-with-price-lists-customer-groups-new-admin-tools/).
 
-To install Spree check out this [Quickstart Guide](https://spreecommerce.org/docs/developer/getting-started/quickstart).
+To install Spree, check out this [Quickstart Guide](https://spreecommerce.org/docs/developer/getting-started/quickstart).
 
 [View the latest Releases](https://github.com/spree/spree/releases) ·
 [View the Roadmap](https://github.com/orgs/spree/projects) ·
@@ -96,7 +96,7 @@ To install Spree check out this [Quickstart Guide](https://spreecommerce.org/doc
 
 ## Enterprise Edition 
 
-Besides enterprise support we also offer the Spree Commerce [Enterprise Edition](https://spreecommerce.org/spree-commerce-version-comparison-community-edition-vs-enterprise-edition/) that gives you all the tools you need to launch your store or marketplace and provides you with ready-to-use integrations that will reduce your project's development time and cost.
+Besides enterprise support, we also offer the Spree Commerce [Enterprise Edition](https://spreecommerce.org/spree-commerce-version-comparison-community-edition-vs-enterprise-edition/) that gives you all the tools you need to launch your store or marketplace and provides you with ready-to-use integrations that will reduce your project's development time and cost.
 
 To get access to the Enterprise Edition, contact our [Sales team](https://spreecommerce.org/get-started/)
 
