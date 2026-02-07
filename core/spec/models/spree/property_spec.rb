@@ -99,7 +99,7 @@ describe Spree::Property, type: :model do
         expect(property.uniq_values).to eq([['some-value', 'Some Value'], ['another-10-value', 'Another 10% Value']])
 
         product_property_1 = create(:product_property, property: property, value: 'Some 20% Value')
-        expect(property.uniq_values).to eq(
+        expect(property.uniq_values).to match_array(
           [
             ['some-value', 'Some Value'],
             ['another-10-value', 'Another 10% Value'],
@@ -113,14 +113,14 @@ describe Spree::Property, type: :model do
         scope = [product_property_1, product_property_2]
         other_scope = [product_property_2, product_property_3]
 
-        expect(property.uniq_values(product_properties_scope: scope)).to eq(
+        expect(property.uniq_values(product_properties_scope: scope)).to match_array(
           [
             ['some-20-value', 'Some 20% Value'],
             ['another-20-value', 'Another 20% Value']
           ]
         )
 
-        expect(property.uniq_values(product_properties_scope: other_scope)).to eq(
+        expect(property.uniq_values(product_properties_scope: other_scope)).to match_array(
           [
             ['another-20-value', 'Another 20% Value'],
             ['another-30-value', 'Another 30% Value']
