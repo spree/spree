@@ -22,7 +22,7 @@ class Project
     @name = name
   end
 
-  ALL = %w[emails api core sample admin storefront page_builder].freeze
+  ALL = %w[emails api core sample admin].freeze
   CORE_GEMS = %w[api core].freeze
 
   # Install subproject
@@ -86,7 +86,7 @@ class Project
   # @return [Boolean]
   def bundle_check
     bundle_config
-    system("bundle check")
+    system('bundle check')
   end
 
   # Install the current bundle
@@ -102,7 +102,7 @@ class Project
   #
   # @return [undefined]
   def setup_test_app
-    gemfile_path = if CORE_GEMS.include?(self.name)
+    gemfile_path = if CORE_GEMS.include?(name)
                      ROOT_GEMFILE
                    else
                      './Gemfile'
