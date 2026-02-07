@@ -1,5 +1,0 @@
-<%= turbo_frame_tag :checkout_line_items, id: 'line_items', target: '_top' do %>
-  <div class="overflow-y-auto line-items flex flex-col gap-5 pt-5 md:pt-0" data-checkout-summary-target="line_items">
-    <%= render collection: order.line_items, partial: 'spree/checkout/line_item', cached: spree_storefront_base_cache_scope %>
-  </div>
-<% end %>

@@ -1,9 +1,0 @@
-<% cache [spree_base_cache_key, products,'json-ld-list'], expires_in: 1.day do %>
-  <script type="application/ld+json" data-test-id="product-list-json-ld">
-    {
-      "@context": "https://schema.org",
-      "@type": "ItemList",
-      "itemListElement": <%= product_list_json_ld_elements(products.to_a.pluck(:slug)).to_json.html_safe %>
-    }
-  </script>
-<% end %>

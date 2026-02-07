@@ -26,8 +26,7 @@ def add_gems
 
   # Storefront packages (only when Rails storefront is selected)
   if STOREFRONT_TYPE == 'rails'
-    gem 'spree_storefront', USE_LOCAL_SPREE ? { path: '../' } : { version: SPREE_VERSION }
-    gem 'spree_page_builder', USE_LOCAL_SPREE ? { path: '../' } : { version: SPREE_VERSION }
+    gem 'spree_storefront'
   end
 
   # translations
@@ -48,13 +47,13 @@ def setup_importmap
   # Just ensure they're properly set up by running the install tasks
   # Using system with 'yes' to auto-accept prompts
   if VERBOSE
-    system("yes | bin/rails importmap:install")
-    system("yes | bin/rails turbo:install")
-    system("yes | bin/rails stimulus:install")
+    system('yes | bin/rails importmap:install')
+    system('yes | bin/rails turbo:install')
+    system('yes | bin/rails stimulus:install')
   else
-    system("yes | bin/rails importmap:install >/dev/null 2>&1")
-    system("yes | bin/rails turbo:install >/dev/null 2>&1")
-    system("yes | bin/rails stimulus:install >/dev/null 2>&1")
+    system('yes | bin/rails importmap:install >/dev/null 2>&1')
+    system('yes | bin/rails turbo:install >/dev/null 2>&1')
+    system('yes | bin/rails stimulus:install >/dev/null 2>&1')
   end
 end
 
@@ -77,9 +76,9 @@ def install_spree
 
   # Run Spree installer with migrations but without seeds - seeds run after all generators complete
   if VERBOSE
-    rails_command "generate spree:install --force --auto-accept --seed=false --user_class=Spree::User --admin_user_class=Spree::AdminUser --authentication=devise"
+    rails_command 'generate spree:install --force --auto-accept --seed=false --user_class=Spree::User --admin_user_class=Spree::AdminUser --authentication=devise'
   else
-    run "bin/rails generate spree:install --force --auto-accept --seed=false --user_class=Spree::User --admin_user_class=Spree::AdminUser --authentication=devise >/dev/null 2>&1"
+    run 'bin/rails generate spree:install --force --auto-accept --seed=false --user_class=Spree::User --admin_user_class=Spree::AdminUser --authentication=devise >/dev/null 2>&1'
   end
 end
 
@@ -110,9 +109,9 @@ end
 def install_spree_dev_tools
   say 'Running Spree Dev Tools installer...', :blue
   if VERBOSE
-    rails_command "generate spree_dev_tools:install --force"
+    rails_command 'generate spree_dev_tools:install --force'
   else
-    run "bin/rails generate spree_dev_tools:install --force >/dev/null 2>&1"
+    run 'bin/rails generate spree_dev_tools:install --force >/dev/null 2>&1'
   end
 end
 
