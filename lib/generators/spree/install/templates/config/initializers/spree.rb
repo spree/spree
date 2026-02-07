@@ -84,16 +84,6 @@ Rails.application.config.after_initialize do
   # Spree.export_types << Spree::Exports::Payments
   # Spree.reports << Spree::Reports::MassivelyOvercomplexReportForCfo
 
-  # Page builder (themes, pages, sections, blocks)
-  # Spree.page_builder.themes << Spree::Themes::NewShinyTheme
-  # Spree.page_builder.theme_layout_sections << Spree::PageSections::SuperImportantCeoBio
-  # Spree.page_builder.pages << Spree::Pages::CustomLandingPage
-  # Spree.page_builder.page_sections << Spree::PageSections::ContactFormToGetInTouch
-  # Spree.page_builder.page_blocks << Spree::PageBlocks::BigRedButtonToCallSales
-
-  # Storefront partials
-  # Spree.storefront.partials.head << 'spree/shared/that_js_snippet_that_marketing_forced_me_to_include'
-
   # Admin partials
   # Spree.admin.partials.product_form << 'spree/admin/products/custom_section'
 
