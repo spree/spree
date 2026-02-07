@@ -1,0 +1,249 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'docs/**'
+      - 'sdk/**'
+      - '**/*.md'
+  pull_request:
+    paths-ignore:
+      - 'docs/**'
+      - 'sdk/**'
+      - '**/*.md'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test-postgres:
+    name: "PostgreSQL - ${{ matrix.project }}"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [core, api, admin, emails, sample]
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DB: postgres
+      DB_HOST: localhost
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      RAILS_VERSION: "~> 8.1.0"
+      CI_ARTIFACTS: /tmp/test-artifacts
+      BUNDLE_JOBS: 4
+      BUNDLE_RETRY: 3
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '4.0'
+
+      - name: Cache Ruby gems
+        uses: actions/cache@v4
+        with:
+          path: vendor/bundle
+          key: gems-${{ runner.os }}-ruby4.0-postgres-${{ hashFiles('Gemfile', '*.gemspec', 'common_spree_dependencies.rb', '*/*.gemspec') }}
+          restore-keys: |
+            gems-${{ runner.os }}-ruby4.0-postgres-
+
+      - name: Install libvips
+        run: sudo apt-get update && sudo apt-get install -y libvips-dev
+
+      - name: Install root dependencies
+        run: |
+          bundle config set --local path vendor/bundle
+          bundle install
+
+      - name: Install project dependencies
+        working-directory: ${{ matrix.project }}
+        run: |
+          bundle config set --local path ${{ github.workspace }}/vendor/bundle
+          bundle install
+
+      - name: Setup test app
+        working-directory: ${{ matrix.project }}
+        run: |
+          if [[ "${{ matrix.project }}" == "core" || "${{ matrix.project }}" == "api" ]]; then
+            bundle exec --gemfile=${{ github.workspace }}/Gemfile rake test_app
+          else
+            bundle exec rake test_app
+          fi
+
+      - name: Run tests
+        working-directory: ${{ matrix.project }}
+        run: |
+          mkdir -p ${{ github.workspace }}/tmp/test-results/rspec
+          bundle exec rspec \
+            --order random \
+            --format progress \
+            --profile 10 \
+            -r rspec_junit_formatter \
+            --format RspecJunitFormatter \
+            -o ${{ github.workspace }}/tmp/test-results/rspec/${{ matrix.project }}.xml
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-postgres-${{ matrix.project }}
+          path: tmp/test-results/
+          if-no-files-found: ignore
+
+      - name: Upload failed test screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: failed-screenshots-postgres-${{ matrix.project }}
+          path: /tmp/test-artifacts/
+          if-no-files-found: ignore
+
+  test-mysql:
+    name: "MySQL - ${{ matrix.project }}"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [core, api, admin, emails, sample]
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DB: mysql
+      DB_HOST: 127.0.0.1
+      DB_USERNAME: root
+      DB_PASSWORD: password
+      RAILS_VERSION: "7.2.0"
+      CI_ARTIFACTS: /tmp/test-artifacts
+      BUNDLE_JOBS: 4
+      BUNDLE_RETRY: 3
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '4.0'
+
+      - name: Cache Ruby gems
+        uses: actions/cache@v4
+        with:
+          path: vendor/bundle
+          key: gems-${{ runner.os }}-ruby4.0-mysql-${{ hashFiles('Gemfile', '*.gemspec', 'common_spree_dependencies.rb', '*/*.gemspec') }}
+          restore-keys: |
+            gems-${{ runner.os }}-ruby4.0-mysql-
+
+      - name: Install libvips
+        run: sudo apt-get update && sudo apt-get install -y libvips-dev
+
+      - name: Install root dependencies
+        run: |
+          bundle config set --local path vendor/bundle
+          bundle install
+
+      - name: Install project dependencies
+        working-directory: ${{ matrix.project }}
+        run: |
+          bundle config set --local path ${{ github.workspace }}/vendor/bundle
+          bundle install
+
+      - name: Setup test app
+        working-directory: ${{ matrix.project }}
+        run: |
+          if [[ "${{ matrix.project }}" == "core" || "${{ matrix.project }}" == "api" ]]; then
+            bundle exec --gemfile=${{ github.workspace }}/Gemfile rake test_app
+          else
+            bundle exec rake test_app
+          fi
+
+      - name: Run tests
+        working-directory: ${{ matrix.project }}
+        run: |
+          mkdir -p ${{ github.workspace }}/tmp/test-results/rspec
+          bundle exec rspec \
+            --order random \
+            --format progress \
+            --profile 10 \
+            -r rspec_junit_formatter \
+            --format RspecJunitFormatter \
+            -o ${{ github.workspace }}/tmp/test-results/rspec/${{ matrix.project }}.xml
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-mysql-${{ matrix.project }}
+          path: tmp/test-results/
+          if-no-files-found: ignore
+
+      - name: Upload failed test screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: failed-screenshots-mysql-${{ matrix.project }}
+          path: /tmp/test-artifacts/
+          if-no-files-found: ignore
+
+  brakeman:
+    name: Brakeman
+    runs-on: ubuntu-latest
+    env:
+      DB: postgres
+      BUNDLE_JOBS: 4
+      BUNDLE_RETRY: 3
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '4.0'
+
+      - name: Cache Ruby gems
+        uses: actions/cache@v4
+        with:
+          path: vendor/bundle
+          key: gems-${{ runner.os }}-ruby4.0-brakeman-${{ hashFiles('Gemfile', '*.gemspec', 'common_spree_dependencies.rb', '*/*.gemspec') }}
+          restore-keys: |
+            gems-${{ runner.os }}-ruby4.0-brakeman-
+
+      - name: Install dependencies
+        run: |
+          bundle config set --local path vendor/bundle
+          bundle install
+
+      - name: Run Brakeman
+        run: bin/brakeman.sh
+
+      - name: Upload Brakeman reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: brakeman-reports
+          path: brakeman-*.*
+          if-no-files-found: ignore

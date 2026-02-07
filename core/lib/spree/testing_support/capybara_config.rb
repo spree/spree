@@ -1,7 +1,7 @@
 require 'capybara-screenshot/rspec'
 
 Capybara.configure do |config|
-  config.save_path = ENV['CIRCLE_ARTIFACTS'] if ENV['CIRCLE_ARTIFACTS']
+  config.save_path = ENV['CI_ARTIFACTS'] if ENV['CI_ARTIFACTS']
   config.server = :puma
   config.default_driver = :rack_test
   config.javascript_driver = :selenium_chrome_headless
@@ -27,7 +27,7 @@ Capybara.register_driver :selenium_chrome_headless do |app|
   options.add_argument '--window-size=1920,1080'
   options.add_argument '--disable-search-engine-choice-screen'
 
-  # Required for running in Docker containers (CircleCI)
+  # Required for running in CI containers
   options.add_argument '--no-sandbox'
   options.add_argument '--disable-dev-shm-usage'
 
