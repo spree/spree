@@ -53,7 +53,7 @@ Thank you for supporting Spree open-source :heart:
 ## Documentation
 
 - [Developer Docs](https://spreecommerce.org/docs/developer/getting-started/quickstart)
-- [Ecommerce API](https://spreecommerce.org/docs/api-reference/introduction)
+- [API Reference](https://spreecommerce.org/docs/api-reference/introduction)
 - [Integrations](https://spreecommerce.org/docs/integrations/integrations)
 - [User Docs](https://spreecommerce.org/docs/user/what-is-spree-commerce)
 - [Use Cases](https://spreecommerce.org/docs/use-case/overview)
@@ -82,10 +82,6 @@ Upcoming **Spree 5.4** expands the platform's reach to JavaScript developers wit
 Read the [full Spree 5.3 announcement here](https://spreecommerce.org/announcing-spree-commerce-5-3-with-price-lists-customer-groups-new-admin-tools/).
 
 To install Spree, check out this [Quickstart Guide](https://spreecommerce.org/docs/developer/getting-started/quickstart).
-
-[View the latest Releases](https://github.com/spree/spree/releases) ·
-[View the Roadmap](https://github.com/orgs/spree/projects) ·
-[Get Enterprise Support](https://spreecommerce.org/get-started/)
 
 ## Enterprise support
 
@@ -185,7 +181,7 @@ Launch a multi-tenant eCommerce platform for your customers, resellers, affiliat
 
 ## Community & Contributing
 
-Spree is an open source project and we love contributions in any form - pull requests, issues, feature ideas!
+Spree is an open source project, and we love contributions in any form - pull requests, issues, feature ideas!
 
 Follow our [Contributing Guide](https://spreecommerce.org/docs/developer/contributing/quickstart)
 
@@ -193,17 +189,7 @@ Follow our [Contributing Guide](https://spreecommerce.org/docs/developer/contrib
 
 ## Contact
 
-[Contact us](https://spreecommerce.org/get-started/) and let's go! 
-
-## Developed by
-
-Spree is developed and maintained by
-
-<a href="https://getvendo.com">
-<img alt="Vendo" src="https://avatars.githubusercontent.com/u/89416582?s=96&v=4" />
-</a>
-
-> Vendo is the commercial entity behind Spree Commerce and in particular the latest, unprecedented investment into Spree 5 and following versions as well as its integrations. We've been the Spree core team since 2016 and led numerous Spree projects while supporting the community. Learn more at: https://www.getvendo.com/
+[Contact us](https://spreecommerce.org/get-started/) and let's go!
 
 ## License
 
