@@ -30,7 +30,7 @@ module Spree
             stock_location.stock_items.unscope(:where).delete_all
           end
 
-          let(:created_stock_item) { stock_location.stock_items.order(:id).last }
+          let(:created_stock_item) { stock_location.stock_items.find_by(variant_id: unrelated_variant.id) }
           let(:created_stock_item_attrs) do
             created_stock_item.attributes.values_at(
               'stock_location_id', 'variant_id', 'backorderable', 'created_at', 'updated_at'
