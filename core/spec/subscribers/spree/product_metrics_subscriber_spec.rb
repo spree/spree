@@ -65,11 +65,17 @@ RSpec.describe Spree::ProductMetricsSubscriber do
       end
     end
 
-    context 'when store_id is missing' do
+    context 'when order has no store' do
+      let(:order_without_store) do
+        create(:completed_order_with_totals, store: store).tap do |o|
+          o.update_column(:store_id, nil)
+        end
+      end
+
       let(:event) do
         Spree::Event.new(
           name: 'order.completed',
-          payload: { 'id' => order.id }
+          payload: { 'id' => order_without_store.id }
         )
       end
 
