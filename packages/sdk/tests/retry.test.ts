@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { createSpreeClient, SpreeError } from '../src/client';
 
 function jsonResponse(body: object, status = 200, headers: Record<string, string> = {}): Response {

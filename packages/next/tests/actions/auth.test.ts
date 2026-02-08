@@ -30,7 +30,7 @@ vi.mock('@spree/sdk', () => ({
   },
 }));
 
-import { login, register, logout, getCustomer, updateCustomer } from '../../src/actions/auth';
+import { login, logout, getCustomer } from '../../src/actions/auth';
 import { revalidateTag } from 'next/cache';
 
 describe('auth actions', () => {

@@ -22,7 +22,7 @@ vi.mock('@spree/sdk', () => ({
   createSpreeClient: vi.fn(() => mockClient),
 }));
 
-import { getCart, getOrCreateCart, addItem, updateItem, removeItem, clearCart, associateCart } from '../../src/actions/cart';
+import { getCart, getOrCreateCart, addItem, removeItem, clearCart, associateCart } from '../../src/actions/cart';
 import { revalidateTag } from 'next/cache';
 
 describe('cart actions', () => {
