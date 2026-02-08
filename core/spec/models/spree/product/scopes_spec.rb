@@ -548,8 +548,9 @@ describe 'Product scopes', type: :model do
         products = Spree::Product.where(id: test_product_ids).by_best_selling
         # Product 1: 2 units sold (first)
         # Product 3: 1 unit sold (second)
-        # Product 2 & 4: 0 units sold (last, but Product 2 still included despite having pending orders)
-        expect(products.map(&:name)).to eq(['Product 1', 'Product 3', 'Product 2', 'Product 4'])
+        # Product 2 & 4: 0 units sold (last, order between them is non-deterministic)
+        expect(products.first(2).map(&:name)).to eq(['Product 1', 'Product 3'])
+        expect(products.last(2).map(&:name)).to contain_exactly('Product 2', 'Product 4')
       end
     end
   end
