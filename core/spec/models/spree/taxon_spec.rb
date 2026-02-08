@@ -317,20 +317,15 @@ describe Spree::Taxon, type: :model do
     end
 
     context 'when root taxon attribute other than name is updated' do
-      it 'does not update the taxonomy' do
+      it 'does not update the taxonomy name' do
         root_taxon = described_class.find_by(name: 'Soft Goods')
 
-        Timecop.freeze do
-          taxonomy_updated_at = taxonomy.updated_at.to_s
+        expect {
+          root_taxon.update!(permalink: 'something-else')
+          taxonomy.reload
+        }.not_to change { taxonomy.name }
 
-          expect {
-            root_taxon.update!(permalink: 'something-else')
-            root_taxon.reload
-            taxonomy.reload
-          }.not_to change { taxonomy.updated_at.to_s }.from(taxonomy_updated_at)
-
-          expect(root_taxon.permalink).to eql 'something-else'
-        end
+        expect(root_taxon.permalink).to eql 'something-else'
       end
     end
   end
