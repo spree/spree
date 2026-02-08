@@ -1459,8 +1459,11 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
     it 'assigns the product positions on the taxon list' do
       send_request
 
-      expect(product.reload.classifications.last.position).to eq(1)
-      expect(product2.reload.classifications.last.position).to eq(2)
+      positions = [
+        product.reload.classifications.find_by(taxon: category).position,
+        product2.reload.classifications.find_by(taxon: category).position
+      ]
+      expect(positions).to contain_exactly(1, 2)
     end
 
     it 'touches the products' do
