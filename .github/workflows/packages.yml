@@ -1,0 +1,158 @@
+name: Packages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/**'
+      - '.github/workflows/packages.yml'
+  pull_request:
+    paths:
+      - 'packages/**'
+      - '.github/workflows/packages.yml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  sdk:
+    name: "SDK - Test & Build"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: packages/sdk/package-lock.json
+
+      - run: npm ci
+        working-directory: packages/sdk
+
+      - run: npm run typecheck
+        working-directory: packages/sdk
+
+      - run: npm test
+        working-directory: packages/sdk
+
+      - run: npm run build
+        working-directory: packages/sdk
+
+  next:
+    name: "Next - Test & Build"
+    needs: sdk
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: packages/next/package-lock.json
+
+      # Build SDK first (next depends on it via file:../sdk)
+      - run: npm ci && npm run build
+        working-directory: packages/sdk
+
+      - run: npm ci
+        working-directory: packages/next
+
+      - run: npm run typecheck
+        working-directory: packages/next
+
+      - run: npm test
+        working-directory: packages/next
+
+      - run: npm run build
+        working-directory: packages/next
+
+  release-sdk:
+    name: "SDK - Release"
+    needs: [sdk, next]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write
+    defaults:
+      run:
+        working-directory: packages/sdk
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: packages/sdk/package-lock.json
+
+      - run: npm ci
+
+      - name: Upgrade npm for Trusted Publishing support
+        run: npm install -g npm@latest
+        working-directory: .
+
+      - name: Check if version is published
+        id: check
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          if npm view @spree/sdk@$PACKAGE_VERSION version 2>/dev/null; then
+            echo "published=true" >> $GITHUB_OUTPUT
+          else
+            echo "published=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build and Publish
+        if: steps.check.outputs.published == 'false'
+        run: npm run build && npm publish --provenance --access public
+
+  release-next:
+    name: "Next - Release"
+    needs: [sdk, next, release-sdk]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write
+    defaults:
+      run:
+        working-directory: packages/next
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: packages/next/package-lock.json
+
+      - run: npm ci && npm run build
+        working-directory: packages/sdk
+
+      - run: npm ci
+
+      - name: Upgrade npm for Trusted Publishing support
+        run: npm install -g npm@latest
+        working-directory: .
+
+      - name: Check if version is published
+        id: check
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          if npm view @spree/next@$PACKAGE_VERSION version 2>/dev/null; then
+            echo "published=true" >> $GITHUB_OUTPUT
+          else
+            echo "published=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build and Publish
+        if: steps.check.outputs.published == 'false'
+        run: npm run build && npm publish --provenance --access public

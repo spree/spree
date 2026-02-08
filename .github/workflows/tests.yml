@@ -5,12 +5,12 @@ on:
     branches: [main]
     paths-ignore:
       - 'docs/**'
-      - 'sdk/**'
+      - 'packages/**'
       - '**/*.md'
   pull_request:
     paths-ignore:
       - 'docs/**'
-      - 'sdk/**'
+      - 'packages/**'
       - '**/*.md'
 
 concurrency:
