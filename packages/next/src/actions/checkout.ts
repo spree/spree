@@ -13,12 +13,17 @@ async function getCheckoutOptions() {
 
 /**
  * Get the current checkout order state.
+ * Includes line_items, shipments, and addresses by default.
  */
 export async function getCheckout(
   orderId: string
 ): Promise<StoreOrder> {
   const options = await getCheckoutOptions();
-  return getClient().orders.get(orderId, undefined, options);
+  return getClient().orders.get(
+    orderId,
+    { includes: 'line_items,shipments,ship_address,bill_address' },
+    options
+  );
 }
 
 /**
