@@ -35,7 +35,7 @@ commands:
             ONLY_EXCLUDED=true
             for file in $CHANGED_FILES; do
               case "$file" in
-                .github/*|docs/*|sdk/*|bin/*)
+                .github/*|docs/*|packages/sdk/*|bin/*)
                   ;;
                 *)
                   ONLY_EXCLUDED=false
@@ -45,7 +45,7 @@ commands:
             done
 
             if [ "$ONLY_EXCLUDED" = true ]; then
-              echo "Only changes in excluded directories (.github, docs, sdk, bin). Skipping CI."
+              echo "Only changes in excluded directories (.github, docs, packages/sdk, bin). Skipping CI."
               circleci-agent step halt
             else
               echo "Code changes detected, proceeding with CI."

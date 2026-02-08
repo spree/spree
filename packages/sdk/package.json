@@ -60,7 +60,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/spree/spree.git",
-    "directory": "sdk"
+    "directory": "packages/sdk"
   },
   "homepage": "https://spreecommerce.org",
   "bugs": {

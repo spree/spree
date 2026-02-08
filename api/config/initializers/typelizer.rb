@@ -5,7 +5,7 @@ Typelizer.configure do |config|
     api_root.join('app/serializers/spree/api/v3'),
     api_root.join('app/serializers/spree/api/v3/admin')
   ]
-  config.output_dir = api_root.join('../sdk/src/types/generated')
+  config.output_dir = api_root.join('../packages/sdk/src/types/generated')
   config.comments = true
 
   # Type names: StoreProduct, AdminProduct, etc.
