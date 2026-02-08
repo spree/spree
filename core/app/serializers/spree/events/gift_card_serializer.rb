@@ -7,7 +7,7 @@ module Spree
 
       def attributes
         {
-          id: resource.id,
+          id: resource.prefix_id,
           code: resource.code,
           state: resource.state.to_s,
           amount: money(resource.amount),
@@ -17,9 +17,9 @@ module Spree
           currency: resource.currency,
           expires_at: resource.expires_at&.iso8601,
           redeemed_at: timestamp(resource.redeemed_at),
-          user_id: resource.user_id,
-          store_id: resource.store_id,
-          gift_card_batch_id: resource.gift_card_batch_id,
+          user_id: association_prefix_id(:user),
+          store_id: association_prefix_id(:store),
+          gift_card_batch_id: association_prefix_id(:batch),
           created_at: timestamp(resource.created_at),
           updated_at: timestamp(resource.updated_at)
         }

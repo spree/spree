@@ -7,16 +7,16 @@ module Spree
 
       def attributes
         {
-          id: resource.id,
+          id: resource.prefix_id,
           title: resource.title,
           slug: resource.slug,
           meta_title: resource.meta_title,
           meta_description: resource.meta_description,
           published_at: timestamp(resource.published_at),
           deleted_at: timestamp(resource.deleted_at),
-          author_id: resource.author_id,
-          post_category_id: resource.post_category_id,
-          store_id: resource.store_id,
+          author_id: association_prefix_id(:author),
+          post_category_id: association_prefix_id(:post_category),
+          store_id: association_prefix_id(:store),
           created_at: timestamp(resource.created_at),
           updated_at: timestamp(resource.updated_at)
         }

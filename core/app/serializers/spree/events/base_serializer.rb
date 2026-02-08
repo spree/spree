@@ -25,7 +25,7 @@ module Spree
       # Override in subclasses to define attributes
       def attributes
         {
-          id: resource.id
+          id: resource.prefix_id
         }
       end
 
@@ -36,6 +36,13 @@ module Spree
 
       def triggered_at
         context[:triggered_at] || Time.current
+      end
+
+      # Resolve a belongs_to association's prefix_id
+      # @param association_name [Symbol] the association name (e.g., :product, :order)
+      # @return [String, nil] the prefix_id of the associated record
+      def association_prefix_id(association_name)
+        resource.public_send(association_name)&.prefix_id
       end
 
       # Attribute helpers

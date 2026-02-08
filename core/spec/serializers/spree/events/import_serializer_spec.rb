@@ -11,7 +11,7 @@ RSpec.describe Spree::Events::ImportSerializer do
 
   describe '#as_json' do
     it 'includes identity attributes' do
-      expect(subject[:id]).to eq(import.id)
+      expect(subject[:id]).to eq(import.prefix_id)
       expect(subject[:number]).to eq(import.number)
     end
 
@@ -25,11 +25,11 @@ RSpec.describe Spree::Events::ImportSerializer do
 
     it 'includes owner polymorphic reference' do
       expect(subject[:owner_type]).to eq('Spree::Store')
-      expect(subject[:owner_id]).to eq(store.id)
+      expect(subject[:owner_id]).to eq(store.prefix_id)
     end
 
     it 'includes user_id' do
-      expect(subject[:user_id]).to eq(admin_user.id)
+      expect(subject[:user_id]).to eq(admin_user.prefix_id)
     end
 
     it 'includes rows_count' do

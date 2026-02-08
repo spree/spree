@@ -17,7 +17,7 @@ RSpec.describe Spree::Events::GiftCardSerializer do
 
   describe '#as_json' do
     it 'includes identity attributes' do
-      expect(subject[:id]).to eq(gift_card.id)
+      expect(subject[:id]).to eq(gift_card.prefix_id)
       expect(subject[:code]).to eq(gift_card.code)
     end
 
@@ -37,7 +37,7 @@ RSpec.describe Spree::Events::GiftCardSerializer do
     end
 
     it 'includes foreign keys' do
-      expect(subject[:store_id]).to eq(store.id)
+      expect(subject[:store_id]).to eq(store.prefix_id)
       expect(subject).to have_key(:user_id)
       expect(subject).to have_key(:gift_card_batch_id)
     end

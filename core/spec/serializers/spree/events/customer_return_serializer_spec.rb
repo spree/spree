@@ -9,12 +9,12 @@ RSpec.describe Spree::Events::CustomerReturnSerializer do
 
   describe '#as_json' do
     it 'includes identity attributes' do
-      expect(subject[:id]).to eq(customer_return.id)
+      expect(subject[:id]).to eq(customer_return.prefix_id)
       expect(subject[:number]).to eq(customer_return.number)
     end
 
     it 'includes foreign keys' do
-      expect(subject[:stock_location_id]).to eq(customer_return.stock_location_id)
+      expect(subject[:stock_location_id]).to eq(customer_return.stock_location&.prefix_id)
       expect(subject).to have_key(:store_id)
     end
 

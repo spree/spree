@@ -15,7 +15,7 @@ RSpec.describe Spree::Events::PromotionSerializer do
 
   describe '#as_json' do
     it 'includes identity attributes' do
-      expect(subject[:id]).to eq(promotion.id)
+      expect(subject[:id]).to eq(promotion.prefix_id)
       expect(subject[:name]).to eq('Test Promotion')
     end
 

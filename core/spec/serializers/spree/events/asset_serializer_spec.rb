@@ -11,13 +11,13 @@ RSpec.describe Spree::Events::AssetSerializer do
 
   describe '#as_json' do
     it 'includes identity attributes' do
-      expect(subject[:id]).to eq(asset.id)
+      expect(subject[:id]).to eq(asset.prefix_id)
       expect(subject[:type]).to eq(asset.type)
     end
 
     it 'includes viewable polymorphic reference' do
       expect(subject[:viewable_type]).to eq('Spree::Variant')
-      expect(subject[:viewable_id]).to eq(variant.id)
+      expect(subject[:viewable_id]).to eq(variant.prefix_id)
     end
 
     it 'includes position' do

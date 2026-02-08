@@ -15,7 +15,7 @@ RSpec.describe Spree::Events::OrderSerializer do
 
   describe '#as_json' do
     it 'includes identity attributes' do
-      expect(subject[:id]).to eq(order.id)
+      expect(subject[:id]).to eq(order.prefix_id)
       expect(subject[:number]).to eq(order.number)
     end
 
@@ -48,8 +48,8 @@ RSpec.describe Spree::Events::OrderSerializer do
     end
 
     it 'includes foreign keys' do
-      expect(subject[:user_id]).to eq(user.id)
-      expect(subject[:store_id]).to eq(store.id)
+      expect(subject[:user_id]).to eq(user.prefix_id)
+      expect(subject[:store_id]).to eq(store.prefix_id)
     end
 
     it 'includes timestamps' do

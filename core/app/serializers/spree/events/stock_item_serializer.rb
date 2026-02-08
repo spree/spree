@@ -7,11 +7,11 @@ module Spree
 
       def attributes
         {
-          id: resource.id,
+          id: resource.prefix_id,
           count_on_hand: resource.count_on_hand,
           backorderable: resource.backorderable,
-          stock_location_id: resource.stock_location_id,
-          variant_id: resource.variant_id,
+          stock_location_id: association_prefix_id(:stock_location),
+          variant_id: association_prefix_id(:variant),
           deleted_at: timestamp(resource.deleted_at),
           created_at: timestamp(resource.created_at),
           updated_at: timestamp(resource.updated_at)

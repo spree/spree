@@ -17,7 +17,7 @@ RSpec.describe Spree::Events::PaymentSerializer do
 
   describe '#as_json' do
     it 'includes identity attributes' do
-      expect(subject[:id]).to eq(payment.id)
+      expect(subject[:id]).to eq(payment.prefix_id)
       expect(subject[:number]).to eq(payment.number)
     end
 
@@ -30,8 +30,8 @@ RSpec.describe Spree::Events::PaymentSerializer do
     end
 
     it 'includes foreign keys' do
-      expect(subject[:order_id]).to eq(order.id)
-      expect(subject[:payment_method_id]).to eq(payment_method.id)
+      expect(subject[:order_id]).to eq(order.prefix_id)
+      expect(subject[:payment_method_id]).to eq(payment_method.prefix_id)
     end
 
     it 'includes source polymorphic reference' do
