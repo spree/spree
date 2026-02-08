@@ -25,7 +25,7 @@ module Spree
       # Override in subclasses to define attributes
       def attributes
         {
-          id: resource.prefix_id
+          id: public_id(resource)
         }
       end
 
@@ -38,11 +38,13 @@ module Spree
         context[:triggered_at] || Time.current
       end
 
-      # Resolve a belongs_to association's prefix_id
-      # @param association_name [Symbol] the association name (e.g., :product, :order)
-      # @return [String, nil] the prefix_id of the associated record
-      def association_prefix_id(association_name)
-        resource.public_send(association_name)&.prefix_id
+      # Returns the public-facing ID for a record.
+      # Prefers prefix_id when available (handles FriendlyId models that
+      # return slugs from to_param), falls back to to_param.
+      def public_id(record)
+        return nil if record.nil?
+
+        record.try(:prefix_id).presence || record.to_param
       end
 
       # Attribute helpers

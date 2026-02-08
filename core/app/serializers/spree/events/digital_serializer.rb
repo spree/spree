@@ -7,8 +7,8 @@ module Spree
 
       def attributes
         {
-          id: resource.prefix_id,
-          variant_id: association_prefix_id(:variant),
+          id: public_id(resource),
+          variant_id: public_id(resource.variant),
           created_at: timestamp(resource.created_at),
           updated_at: timestamp(resource.updated_at)
         }

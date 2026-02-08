@@ -7,10 +7,10 @@ module Spree
 
       def attributes
         {
-          id: resource.prefix_id,
+          id: public_id(resource),
           quantity: resource.quantity,
-          variant_id: association_prefix_id(:variant),
-          wishlist_id: association_prefix_id(:wishlist),
+          variant_id: public_id(resource.variant),
+          wishlist_id: public_id(resource.wishlist),
           created_at: timestamp(resource.created_at),
           updated_at: timestamp(resource.updated_at)
         }

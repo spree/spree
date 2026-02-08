@@ -7,7 +7,7 @@ module Spree
 
       def attributes
         {
-          id: resource.prefix_id,
+          id: public_id(resource),
           email: resource.email,
           created_at: timestamp(resource.created_at),
           updated_at: timestamp(resource.updated_at)

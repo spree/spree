@@ -7,7 +7,7 @@ module Spree
 
       def attributes
         {
-          id: resource.prefix_id,
+          id: public_id(resource),
           number: resource.number,
           state: resource.state.to_s,
           payment_state: resource.payment_state.to_s,
@@ -22,10 +22,10 @@ module Spree
           item_count: resource.item_count,
           currency: resource.currency,
           email: resource.email,
-          user_id: association_prefix_id(:user),
-          store_id: association_prefix_id(:store),
-          canceler_id: association_prefix_id(:canceler),
-          approver_id: association_prefix_id(:approver),
+          user_id: public_id(resource.user),
+          store_id: public_id(resource.store),
+          canceler_id: public_id(resource.canceler),
+          approver_id: public_id(resource.approver),
           considered_risky: resource.considered_risky,
           completed_at: timestamp(resource.completed_at),
           canceled_at: timestamp(resource.canceled_at),

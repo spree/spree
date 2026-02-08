@@ -7,12 +7,12 @@ module Spree
 
       def attributes
         {
-          id: resource.prefix_id,
+          id: public_id(resource),
           number: resource.number,
           state: resource.state.to_s,
-          order_id: association_prefix_id(:order),
-          stock_location_id: association_prefix_id(:stock_location),
-          return_authorization_reason_id: association_prefix_id(:reason),
+          order_id: public_id(resource.order),
+          stock_location_id: public_id(resource.stock_location),
+          return_authorization_reason_id: public_id(resource.reason),
           created_at: timestamp(resource.created_at),
           updated_at: timestamp(resource.updated_at)
         }

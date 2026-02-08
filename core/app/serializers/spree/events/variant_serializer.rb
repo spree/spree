@@ -7,7 +7,7 @@ module Spree
 
       def attributes
         {
-          id: resource.prefix_id,
+          id: public_id(resource),
           sku: resource.sku,
           barcode: resource.barcode,
           is_master: resource.is_master,
@@ -21,8 +21,8 @@ module Spree
           cost_price: money(resource.cost_price),
           cost_currency: resource.cost_currency,
           track_inventory: resource.track_inventory,
-          product_id: association_prefix_id(:product),
-          tax_category_id: association_prefix_id(:tax_category),
+          product_id: public_id(resource.product),
+          tax_category_id: public_id(resource.tax_category),
           discontinue_on: timestamp(resource.discontinue_on),
           deleted_at: timestamp(resource.deleted_at),
           created_at: timestamp(resource.created_at),

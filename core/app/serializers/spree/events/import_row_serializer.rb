@@ -7,13 +7,13 @@ module Spree
 
       def attributes
         {
-          id: resource.prefix_id,
-          import_id: association_prefix_id(:import),
+          id: public_id(resource),
+          import_id: public_id(resource.import),
           row_number: resource.row_number,
           status: resource.status,
           validation_errors: resource.validation_errors,
           item_type: resource.item_type,
-          item_id: association_prefix_id(:item),
+          item_id: public_id(resource.item),
           created_at: timestamp(resource.created_at),
           updated_at: timestamp(resource.updated_at)
         }

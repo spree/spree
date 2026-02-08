@@ -7,11 +7,11 @@ module Spree
 
       def attributes
         {
-          id: resource.prefix_id,
+          id: public_id(resource),
           email: resource.email,
           verified: resource.verified?,
           verified_at: timestamp(resource.verified_at),
-          user_id: association_prefix_id(:user),
+          user_id: public_id(resource.user),
           created_at: timestamp(resource.created_at),
           updated_at: timestamp(resource.updated_at)
         }

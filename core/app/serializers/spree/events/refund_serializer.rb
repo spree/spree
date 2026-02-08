@@ -7,13 +7,13 @@ module Spree
 
       def attributes
         {
-          id: resource.prefix_id,
+          id: public_id(resource),
           amount: money(resource.amount),
           transaction_id: resource.transaction_id,
-          payment_id: association_prefix_id(:payment),
-          refund_reason_id: association_prefix_id(:reason),
-          reimbursement_id: association_prefix_id(:reimbursement),
-          refunder_id: association_prefix_id(:refunder),
+          payment_id: public_id(resource.payment),
+          refund_reason_id: public_id(resource.reason),
+          reimbursement_id: public_id(resource.reimbursement),
+          refunder_id: public_id(resource.refunder),
           created_at: timestamp(resource.created_at),
           updated_at: timestamp(resource.updated_at)
         }

@@ -7,16 +7,16 @@ module Spree
 
       def attributes
         {
-          id: resource.prefix_id,
+          id: public_id(resource),
           email: resource.email,
           status: resource.status.to_s,
           resource_type: resource.resource_type,
-          resource_id: association_prefix_id(:resource),
+          resource_id: public_id(resource.resource),
           inviter_type: resource.inviter_type,
-          inviter_id: association_prefix_id(:inviter),
+          inviter_id: public_id(resource.inviter),
           invitee_type: resource.invitee_type,
-          invitee_id: association_prefix_id(:invitee),
-          role_id: association_prefix_id(:role),
+          invitee_id: public_id(resource.invitee),
+          role_id: public_id(resource.role),
           expires_at: timestamp(resource.expires_at),
           accepted_at: timestamp(resource.accepted_at),
           created_at: timestamp(resource.created_at),
