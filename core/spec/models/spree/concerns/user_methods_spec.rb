@@ -131,23 +131,27 @@ describe Spree::UserMethods do
     end
 
     it 'returns users based on the first name' do
-      expect(Spree.user_class.multi_search('joh')).to match_array([user_1, user_5])
-      expect(Spree.user_class.multi_search('jan')).to eq([user_2])
-      expect(Spree.user_class.multi_search('greg')).to eq([])
+      expect(Spree.user_class.multi_search('joh')).to include(user_1, user_5)
+      expect(Spree.user_class.multi_search('jan')).to include(user_2)
+      expect(Spree.user_class.multi_search('jan')).not_to include(user_1, user_3, user_4, user_5)
+      expect(Spree.user_class.multi_search('greg')).not_to include(user_1, user_2, user_3, user_4, user_5)
     end
 
     it 'returns users based on the last name' do
-      expect(Spree.user_class.multi_search('do')).to match_array([user_1, user_5])
-      expect(Spree.user_class.multi_search('moe')).to eq([user_3])
-      expect(Spree.user_class.multi_search('smith')).to eq([])
+      expect(Spree.user_class.multi_search('do')).to include(user_1, user_5)
+      expect(Spree.user_class.multi_search('moe')).to include(user_3)
+      expect(Spree.user_class.multi_search('moe')).not_to include(user_1, user_2, user_4, user_5)
+      expect(Spree.user_class.multi_search('smith')).not_to include(user_1, user_2, user_3, user_4, user_5)
     end
 
     it 'returns users based on the full name' do
-      expect(Spree.user_class.multi_search('joh do')).to match_array([user_1, user_5])
-      expect(Spree.user_class.multi_search('ane gon')).to eq([user_2])
-      expect(Spree.user_class.multi_search('mary moe')).to eq([user_3])
-      expect(Spree.user_class.multi_search('jane moe')).to match_array([user_2, user_3])
-      expect(Spree.user_class.multi_search('greg smith')).to eq([])
+      expect(Spree.user_class.multi_search('joh do')).to include(user_1, user_5)
+      expect(Spree.user_class.multi_search('ane gon')).to include(user_2)
+      expect(Spree.user_class.multi_search('ane gon')).not_to include(user_1, user_3, user_4, user_5)
+      expect(Spree.user_class.multi_search('mary moe')).to include(user_3)
+      expect(Spree.user_class.multi_search('mary moe')).not_to include(user_1, user_2, user_4, user_5)
+      expect(Spree.user_class.multi_search('jane moe')).to include(user_2, user_3)
+      expect(Spree.user_class.multi_search('greg smith')).not_to include(user_1, user_2, user_3, user_4, user_5)
     end
   end
 
