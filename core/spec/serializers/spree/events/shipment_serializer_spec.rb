@@ -9,7 +9,7 @@ RSpec.describe Spree::Events::ShipmentSerializer do
 
   describe '#as_json' do
     it 'includes identity attributes' do
-      expect(subject[:id]).to eq(shipment.id)
+      expect(subject[:id]).to eq(shipment.prefix_id)
       expect(subject[:number]).to eq(shipment.number)
     end
 
@@ -26,8 +26,8 @@ RSpec.describe Spree::Events::ShipmentSerializer do
     end
 
     it 'includes foreign keys' do
-      expect(subject[:order_id]).to eq(shipment.order_id)
-      expect(subject[:stock_location_id]).to eq(shipment.stock_location_id)
+      expect(subject[:order_id]).to eq(shipment.order&.prefix_id)
+      expect(subject[:stock_location_id]).to eq(shipment.stock_location&.prefix_id)
     end
 
     it 'includes timestamps' do

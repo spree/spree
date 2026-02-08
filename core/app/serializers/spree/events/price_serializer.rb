@@ -7,11 +7,11 @@ module Spree
 
       def attributes
         {
-          id: resource.id,
+          id: public_id(resource),
           amount: money(resource.amount),
           compare_at_amount: money(resource.compare_at_amount),
           currency: resource.currency,
-          variant_id: resource.variant_id,
+          variant_id: public_id(resource.variant),
           deleted_at: timestamp(resource.deleted_at),
           created_at: timestamp(resource.created_at),
           updated_at: timestamp(resource.updated_at)

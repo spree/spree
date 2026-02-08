@@ -11,7 +11,7 @@ RSpec.describe Spree::Events::ExportSerializer do
 
   describe '#as_json' do
     it 'includes identity attributes' do
-      expect(subject[:id]).to eq(export.id)
+      expect(subject[:id]).to eq(export.prefix_id)
       expect(subject[:number]).to eq(export.number)
     end
 
@@ -24,8 +24,8 @@ RSpec.describe Spree::Events::ExportSerializer do
     end
 
     it 'includes foreign keys' do
-      expect(subject[:user_id]).to eq(admin_user.id)
-      expect(subject[:store_id]).to eq(store.id)
+      expect(subject[:user_id]).to eq(admin_user.prefix_id)
+      expect(subject[:store_id]).to eq(store.prefix_id)
     end
 
     it 'includes timestamps' do

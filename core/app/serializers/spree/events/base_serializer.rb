@@ -25,7 +25,7 @@ module Spree
       # Override in subclasses to define attributes
       def attributes
         {
-          id: resource.id
+          id: public_id(resource)
         }
       end
 
@@ -36,6 +36,15 @@ module Spree
 
       def triggered_at
         context[:triggered_at] || Time.current
+      end
+
+      # Returns the public-facing ID for a record.
+      # Prefers prefix_id when available (handles FriendlyId models that
+      # return slugs from to_param), falls back to to_param.
+      def public_id(record)
+        return nil if record.nil?
+
+        record.try(:prefix_id).presence || record.to_param
       end
 
       # Attribute helpers

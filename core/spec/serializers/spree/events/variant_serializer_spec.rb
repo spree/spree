@@ -10,7 +10,7 @@ RSpec.describe Spree::Events::VariantSerializer do
 
   describe '#as_json' do
     it 'includes identity attributes' do
-      expect(subject[:id]).to eq(variant.id)
+      expect(subject[:id]).to eq(variant.prefix_id)
       expect(subject[:sku]).to eq('TEST-SKU-001')
     end
 
@@ -45,7 +45,7 @@ RSpec.describe Spree::Events::VariantSerializer do
     end
 
     it 'includes foreign keys' do
-      expect(subject[:product_id]).to eq(product.id)
+      expect(subject[:product_id]).to eq(product.prefix_id)
       expect(subject).to have_key(:tax_category_id)
     end
 

@@ -13,7 +13,7 @@ RSpec.describe Spree::Events::NewsletterSubscriberSerializer do
 
   describe '#as_json' do
     it 'includes identity attributes' do
-      expect(subject[:id]).to eq(subscriber.id)
+      expect(subject[:id]).to eq(subscriber.prefix_id)
       expect(subject[:email]).to eq('test@example.com')
     end
 

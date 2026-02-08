@@ -7,9 +7,9 @@ module Spree
 
       def attributes
         {
-          id: resource.id,
-          digital_id: resource.digital_id,
-          line_item_id: resource.line_item_id,
+          id: public_id(resource),
+          digital_id: public_id(resource.digital),
+          line_item_id: public_id(resource.line_item),
           access_counter: resource.access_counter,
           created_at: timestamp(resource.created_at),
           updated_at: timestamp(resource.updated_at)

@@ -7,7 +7,7 @@ module Spree
 
       def attributes
         {
-          id: resource.id,
+          id: public_id(resource),
           quantity: resource.quantity,
           price: money(resource.price),
           currency: resource.currency,
@@ -19,9 +19,9 @@ module Spree
           pre_tax_amount: money(resource.pre_tax_amount),
           taxable_adjustment_total: money(resource.taxable_adjustment_total),
           non_taxable_adjustment_total: money(resource.non_taxable_adjustment_total),
-          variant_id: resource.variant_id,
-          order_id: resource.order_id,
-          tax_category_id: resource.tax_category_id,
+          variant_id: public_id(resource.variant),
+          order_id: public_id(resource.order),
+          tax_category_id: public_id(resource.tax_category),
           created_at: timestamp(resource.created_at),
           updated_at: timestamp(resource.updated_at)
         }

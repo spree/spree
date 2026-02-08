@@ -7,10 +7,10 @@ module Spree
 
       def attributes
         {
-          id: resource.id,
+          id: public_id(resource),
           type: resource.type,
           viewable_type: resource.viewable_type,
-          viewable_id: resource.viewable_id,
+          viewable_id: public_id(resource.viewable),
           position: resource.position,
           alt: resource.alt,
           created_at: timestamp(resource.created_at),

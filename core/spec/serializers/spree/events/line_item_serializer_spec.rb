@@ -10,7 +10,7 @@ RSpec.describe Spree::Events::LineItemSerializer do
 
   describe '#as_json' do
     it 'includes identity attributes' do
-      expect(subject[:id]).to eq(line_item.id)
+      expect(subject[:id]).to eq(line_item.prefix_id)
     end
 
     it 'includes quantity' do
@@ -34,8 +34,8 @@ RSpec.describe Spree::Events::LineItemSerializer do
     end
 
     it 'includes foreign keys' do
-      expect(subject[:variant_id]).to eq(line_item.variant_id)
-      expect(subject[:order_id]).to eq(order.id)
+      expect(subject[:variant_id]).to eq(line_item.variant&.prefix_id)
+      expect(subject[:order_id]).to eq(order.prefix_id)
       expect(subject).to have_key(:tax_category_id)
     end
 

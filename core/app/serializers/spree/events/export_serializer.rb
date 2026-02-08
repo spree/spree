@@ -7,12 +7,12 @@ module Spree
 
       def attributes
         {
-          id: resource.id,
+          id: public_id(resource),
           number: resource.number,
           type: resource.type,
           format: resource.format,
-          user_id: resource.user_id,
-          store_id: resource.store_id,
+          user_id: public_id(resource.user),
+          store_id: public_id(resource.store),
           created_at: timestamp(resource.created_at),
           updated_at: timestamp(resource.updated_at)
         }

@@ -7,7 +7,7 @@ module Spree
 
       def attributes
         {
-          id: resource.id,
+          id: public_id(resource),
           name: resource.name,
           description: resource.description,
           code: resource.code,
@@ -22,7 +22,7 @@ module Spree
           number_of_codes: resource.number_of_codes,
           starts_at: timestamp(resource.starts_at),
           expires_at: timestamp(resource.expires_at),
-          promotion_category_id: resource.promotion_category_id,
+          promotion_category_id: public_id(resource.promotion_category),
           created_at: timestamp(resource.created_at),
           updated_at: timestamp(resource.updated_at)
         }

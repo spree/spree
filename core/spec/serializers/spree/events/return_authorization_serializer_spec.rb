@@ -9,7 +9,7 @@ RSpec.describe Spree::Events::ReturnAuthorizationSerializer do
 
   describe '#as_json' do
     it 'includes identity attributes' do
-      expect(subject[:id]).to eq(return_authorization.id)
+      expect(subject[:id]).to eq(return_authorization.prefix_id)
       expect(subject[:number]).to eq(return_authorization.number)
     end
 
@@ -18,8 +18,8 @@ RSpec.describe Spree::Events::ReturnAuthorizationSerializer do
     end
 
     it 'includes foreign keys' do
-      expect(subject[:order_id]).to eq(return_authorization.order_id)
-      expect(subject[:stock_location_id]).to eq(return_authorization.stock_location_id)
+      expect(subject[:order_id]).to eq(return_authorization.order&.prefix_id)
+      expect(subject[:stock_location_id]).to eq(return_authorization.stock_location&.prefix_id)
       expect(subject).to have_key(:return_authorization_reason_id)
     end
 

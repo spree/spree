@@ -10,11 +10,11 @@ RSpec.describe Spree::Events::DigitalSerializer do
 
   describe '#as_json' do
     it 'includes identity attributes' do
-      expect(subject[:id]).to eq(digital.id)
+      expect(subject[:id]).to eq(digital.prefix_id)
     end
 
     it 'includes variant_id' do
-      expect(subject[:variant_id]).to eq(variant.id)
+      expect(subject[:variant_id]).to eq(variant.prefix_id)
     end
 
     it 'includes timestamps' do

@@ -16,7 +16,7 @@ RSpec.describe Spree::Events::StockTransferSerializer do
 
   describe '#as_json' do
     it 'includes identity attributes' do
-      expect(subject[:id]).to eq(stock_transfer.id)
+      expect(subject[:id]).to eq(stock_transfer.prefix_id)
       expect(subject[:number]).to eq(stock_transfer.number)
     end
 
@@ -29,8 +29,8 @@ RSpec.describe Spree::Events::StockTransferSerializer do
     end
 
     it 'includes location foreign keys' do
-      expect(subject[:source_location_id]).to eq(source_location.id)
-      expect(subject[:destination_location_id]).to eq(destination_location.id)
+      expect(subject[:source_location_id]).to eq(source_location.prefix_id)
+      expect(subject[:destination_location_id]).to eq(destination_location.prefix_id)
     end
 
     it 'includes timestamps' do
