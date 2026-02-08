@@ -1,0 +1,131 @@
+'use server';
+
+import { revalidateTag } from 'next/cache';
+import type { StoreOrder, StoreLineItem } from '@spree/sdk';
+import { getClient } from '../config';
+import { getCartToken, setCartToken, clearCartToken, getAccessToken } from '../cookies';
+
+/**
+ * Get the current cart. Returns null if no cart exists.
+ */
+export async function getCart(): Promise<(StoreOrder & { token: string }) | null> {
+  const orderToken = await getCartToken();
+  const token = await getAccessToken();
+  if (!orderToken && !token) return null;
+
+  try {
+    return await getClient().cart.get({ orderToken, token });
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Get existing cart or create a new one.
+ */
+export async function getOrCreateCart(): Promise<StoreOrder & { token: string }> {
+  const existing = await getCart();
+  if (existing) return existing;
+
+  const token = await getAccessToken();
+  const cart = await getClient().cart.create(token ? { token } : undefined);
+
+  if (cart.token) {
+    await setCartToken(cart.token);
+  }
+
+  revalidateTag('cart');
+  return cart;
+}
+
+/**
+ * Add an item to the cart. Creates a cart if none exists.
+ */
+export async function addItem(
+  variantId: string,
+  quantity: number = 1
+): Promise<StoreLineItem> {
+  const cart = await getOrCreateCart();
+  const orderToken = cart.token;
+  const token = await getAccessToken();
+
+  const lineItem = await getClient().orders.lineItems.create(
+    cart.id,
+    { variant_id: variantId, quantity },
+    { orderToken, token }
+  );
+
+  revalidateTag('cart');
+  return lineItem;
+}
+
+/**
+ * Update a line item quantity in the cart.
+ */
+export async function updateItem(
+  lineItemId: string,
+  quantity: number
+): Promise<StoreLineItem> {
+  const orderToken = await getCartToken();
+  const token = await getAccessToken();
+  if (!orderToken && !token) throw new Error('No cart found');
+
+  const cart = await getClient().cart.get({ orderToken, token });
+
+  const lineItem = await getClient().orders.lineItems.update(
+    cart.id,
+    lineItemId,
+    { quantity },
+    { orderToken, token }
+  );
+
+  revalidateTag('cart');
+  return lineItem;
+}
+
+/**
+ * Remove a line item from the cart.
+ */
+export async function removeItem(lineItemId: string): Promise<void> {
+  const orderToken = await getCartToken();
+  const token = await getAccessToken();
+  if (!orderToken && !token) throw new Error('No cart found');
+
+  const cart = await getClient().cart.get({ orderToken, token });
+
+  await getClient().orders.lineItems.delete(cart.id, lineItemId, {
+    orderToken,
+    token,
+  });
+
+  revalidateTag('cart');
+}
+
+/**
+ * Clear the cart (abandons the current cart).
+ */
+export async function clearCart(): Promise<void> {
+  await clearCartToken();
+  revalidateTag('cart');
+}
+
+/**
+ * Associate a guest cart with the currently authenticated user.
+ * Call this after login/register when the user has an existing guest cart.
+ */
+export async function associateCart(): Promise<(StoreOrder & { token: string }) | null> {
+  const orderToken = await getCartToken();
+  const token = await getAccessToken();
+  if (!orderToken || !token) return null;
+
+  try {
+    const result = await getClient().cart.associate({ orderToken, token });
+    revalidateTag('cart');
+    return result;
+  } catch {
+    // Cart might already belong to another user — clear it
+    await clearCartToken();
+    revalidateTag('cart');
+    return null;
+  }
+}
