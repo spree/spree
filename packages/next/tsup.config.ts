@@ -1,0 +1,41 @@
+import { defineConfig } from 'tsup';
+
+export default defineConfig([
+  // Plain modules (no directive) — config, types, data reads
+  {
+    entry: {
+      index: 'src/index.ts',
+      config: 'src/config.ts',
+      types: 'src/types.ts',
+      'data/products': 'src/data/products.ts',
+      'data/taxons': 'src/data/taxons.ts',
+      'data/taxonomies': 'src/data/taxonomies.ts',
+      'data/store': 'src/data/store.ts',
+      'data/countries': 'src/data/countries.ts',
+    },
+    format: ['esm'],
+    dts: true,
+    splitting: false,
+    sourcemap: true,
+    clean: true,
+    treeshake: true,
+    external: ['next', 'next/cache', 'next/headers', '@spree/sdk', 'react'],
+  },
+  // Server action files — need "use server" banner preserved
+  {
+    entry: {
+      'actions/cart': 'src/actions/cart.ts',
+      'actions/checkout': 'src/actions/checkout.ts',
+      'actions/auth': 'src/actions/auth.ts',
+      'actions/addresses': 'src/actions/addresses.ts',
+      'actions/orders': 'src/actions/orders.ts',
+      'actions/credit-cards': 'src/actions/credit-cards.ts',
+      'actions/gift-cards': 'src/actions/gift-cards.ts',
+    },
+    format: ['esm'],
+    dts: true,
+    splitting: false,
+    sourcemap: true,
+    external: ['next', 'next/cache', 'next/headers', '@spree/sdk', 'react'],
+  },
+]);

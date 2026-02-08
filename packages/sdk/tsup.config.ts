@@ -4,6 +4,7 @@ export default defineConfig({
   entry: {
     index: 'src/index.ts',
     'types/index': 'src/types/index.ts',
+    'zod/index': 'src/zod/index.ts',
   },
   format: ['cjs', 'esm'],
   dts: true,

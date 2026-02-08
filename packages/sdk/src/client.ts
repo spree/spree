@@ -35,6 +35,19 @@ import type {
 // Re-export types for convenience
 export type { AddressParams, StoreCreditCard };
 
+export interface RetryConfig {
+  /** Maximum number of retries (default: 2) */
+  maxRetries?: number;
+  /** HTTP status codes to retry on (default: [429, 500, 502, 503, 504]) */
+  retryOnStatus?: number[];
+  /** Base delay in ms for exponential backoff (default: 300) */
+  baseDelay?: number;
+  /** Maximum delay in ms (default: 10000) */
+  maxDelay?: number;
+  /** Whether to retry on network errors (default: true) */
+  retryOnNetworkError?: boolean;
+}
+
 export interface SpreeClientConfig {
   /** Base URL of the Spree API (e.g., 'https://api.mystore.com') */
   baseUrl: string;
@@ -42,6 +55,8 @@ export interface SpreeClientConfig {
   apiKey: string;
   /** Custom fetch implementation (optional, defaults to global fetch) */
   fetch?: typeof fetch;
+  /** Retry configuration. Enabled by default. Pass false to disable. */
+  retry?: RetryConfig | false;
 }
 
 export interface RequestOptions {
@@ -75,12 +90,50 @@ export class SpreeClient {
   private readonly baseUrl: string;
   private readonly apiKey: string;
   private readonly fetchFn: typeof fetch;
+  private readonly retryConfig: Required<RetryConfig> | false;
 
   constructor(config: SpreeClientConfig) {
     this.baseUrl = config.baseUrl.replace(/\/$/, '');
     this.apiKey = config.apiKey;
     // Bind fetch to globalThis to avoid "Illegal invocation" errors in browsers
     this.fetchFn = config.fetch || fetch.bind(globalThis);
+
+    if (config.retry === false) {
+      this.retryConfig = false;
+    } else {
+      this.retryConfig = {
+        maxRetries: config.retry?.maxRetries ?? 2,
+        retryOnStatus: config.retry?.retryOnStatus ?? [429, 500, 502, 503, 504],
+        baseDelay: config.retry?.baseDelay ?? 300,
+        maxDelay: config.retry?.maxDelay ?? 10000,
+        retryOnNetworkError: config.retry?.retryOnNetworkError ?? true,
+      };
+    }
+  }
+
+  private calculateDelay(attempt: number, config: Required<RetryConfig>): number {
+    const exponentialDelay = config.baseDelay * Math.pow(2, attempt);
+    const jitter = Math.random() * config.baseDelay;
+    return Math.min(exponentialDelay + jitter, config.maxDelay);
+  }
+
+  private sleep(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  private shouldRetryOnStatus(method: string, status: number, config: Required<RetryConfig>): boolean {
+    const isIdempotent = method === 'GET' || method === 'HEAD';
+    // Idempotent methods: retry on all configured statuses
+    // Non-idempotent: only retry on 429 (rate limit)
+    if (isIdempotent) {
+      return config.retryOnStatus.includes(status);
+    }
+    return status === 429;
+  }
+
+  private shouldRetryOnNetworkError(method: string, config: Required<RetryConfig>): boolean {
+    if (!config.retryOnNetworkError) return false;
+    return method === 'GET' || method === 'HEAD';
   }
 
   private async request<T>(
@@ -134,23 +187,57 @@ export class SpreeClient {
       requestHeaders['x-spree-currency'] = currency;
     }
 
-    const response = await this.fetchFn(url.toString(), {
-      method,
-      headers: requestHeaders,
-      body: body ? JSON.stringify(body) : undefined,
-    });
+    const maxAttempts = this.retryConfig ? this.retryConfig.maxRetries + 1 : 1;
 
-    if (!response.ok) {
-      const errorBody = await response.json() as ErrorResponse;
-      throw new SpreeError(errorBody, response.status);
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      try {
+        const response = await this.fetchFn(url.toString(), {
+          method,
+          headers: requestHeaders,
+          body: body ? JSON.stringify(body) : undefined,
+        });
+
+        if (!response.ok) {
+          const isLastAttempt = attempt >= maxAttempts - 1;
+
+          if (!isLastAttempt && this.retryConfig && this.shouldRetryOnStatus(method, response.status, this.retryConfig)) {
+            const retryAfter = response.headers.get('Retry-After');
+            const delay = retryAfter
+              ? Math.min(parseInt(retryAfter, 10) * 1000, this.retryConfig.maxDelay)
+              : this.calculateDelay(attempt, this.retryConfig);
+            await this.sleep(delay);
+            continue;
+          }
+
+          const errorBody = await response.json() as ErrorResponse;
+          throw new SpreeError(errorBody, response.status);
+        }
+
+        // Handle 204 No Content
+        if (response.status === 204) {
+          return undefined as T;
+        }
+
+        return response.json() as Promise<T>;
+      } catch (error) {
+        if (error instanceof SpreeError) {
+          throw error;
+        }
+
+        const isLastAttempt = attempt >= maxAttempts - 1;
+
+        if (!isLastAttempt && this.retryConfig && this.shouldRetryOnNetworkError(method, this.retryConfig)) {
+          const delay = this.calculateDelay(attempt, this.retryConfig);
+          await this.sleep(delay);
+          continue;
+        }
+
+        throw error;
+      }
     }
 
-    // Handle 204 No Content
-    if (response.status === 204) {
-      return undefined as T;
-    }
-
-    return response.json() as Promise<T>;
+    // This should never be reached, but TypeScript needs it
+    throw new Error('Unexpected end of retry loop');
   }
 
   // ============================================
