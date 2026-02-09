@@ -6,9 +6,9 @@
   <h1 align="center">Spree Commerce - Open Source eCommerce Platform</h1>
 
   <p align="center">
-    An <a href="https://spreecommerce.org/" alt="open-source eCommerce platform">open-source eCommerce platform</a> giving you full control and customizability.
+    Spree Commerce is an API-first, <a href="https://spreecommerce.org/" alt="open-source eCommerce platform">open-source eCommerce platform</a> for fast growing businesses and enterprises.
     <br />
-    Build any eCommerce solution that your business requires.
+    Spree supports complex commerce scenarios natively — from B2B wholesale to multi-vendor marketplace to global multi-region or multi-tenant distributor platforms. Use each model independently or combine them as your business evolves.
     <br />
     <br />
     <a href="https://spreecommerce.org">Website</a>
@@ -51,6 +51,8 @@ If you like what you see, consider giving Spree a GitHub star :star:
 Thank you for supporting Spree open-source :heart:
 
 ## Documentation
+
+Spree allows you to build [B2B eCommerce](https://spreecommerce.org/docs/use-case/b2b/b2b-capabilities), [multi-store](https://spreecommerce.org/docs/use-case/multi-store/capabilities), [multi-region](https://spreecommerce.org/multi-region-ecommerce/), [multi-vendor marketplace](https://spreecommerce.org/docs/use-case/marketplace/capabilities), [digital products](https://spreecommerce.org/docs/use-case/digital-products/capabilities) or [multi-tenant commerce](https://spreecommerce.org/docs/use-case/multi-tenant/multi-tenant-capabilities) - and you can combine them to match your exact business model.  
 
 - [Developer Docs](https://spreecommerce.org/docs/developer/getting-started/quickstart)
 - [API Reference](https://spreecommerce.org/docs/api-reference/introduction)
