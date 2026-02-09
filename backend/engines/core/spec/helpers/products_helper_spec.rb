@@ -61,13 +61,13 @@ module Spree
         context 'when variant is more than master' do
           let(:variant_price) { 150 }
 
-          it { is_expected.to eq('(Add: &#x00A5;50)') }
+          it { is_expected.to eq("(Add: \u00A550)") }
         end
 
         context 'when variant is less than master' do
           let(:product_price) { 150 }
 
-          it { is_expected.to eq('(Subtract: &#x00A5;50)') }
+          it { is_expected.to eq("(Subtract: \u00A550)") }
         end
       end
     end
@@ -104,7 +104,7 @@ module Spree
         it 'returns the variant price if the price is different than master' do
           product.price = 100
           @variant1.price = 150
-          expect(helper.variant_price(@variant1)).to eq('&#x00A5;150')
+          expect(helper.variant_price(@variant1)).to eq("\u00A5150")
         end
       end
 
