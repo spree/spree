@@ -382,13 +382,17 @@ jobs:
           bundle install
 
       - name: Run Brakeman
-        working-directory: backend
-        run: bin/brakeman
+        working-directory: backend/engines
+        run: |
+          for project in core api admin; do
+            echo "--- Running Brakeman on $project ---"
+            bundle exec brakeman --ensure-latest -p $project
+          done
 
       - name: Upload Brakeman reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: brakeman-reports
-          path: backend/brakeman-*.*
+          path: backend/engines/brakeman-*.*
           if-no-files-found: ignore
