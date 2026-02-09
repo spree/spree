@@ -1,8 +1,6 @@
 # Spree Commerce Rails Application Template
 # This template sets up a new Rails application with Spree Commerce
 
-# Check if verbose mode is enabled via environment variable
-VERBOSE = ENV['VERBOSE_MODE'] == '1'
 LOAD_SAMPLE_DATA = ENV['LOAD_SAMPLE_DATA'] == 'true'
 STOREFRONT_TYPE = ENV['STOREFRONT_TYPE'] || 'none'
 USE_LOCAL_SPREE = ENV['USE_LOCAL_SPREE'] == 'true'
@@ -40,88 +38,43 @@ def add_gems
   end
 end
 
-def setup_importmap
-  say 'Setting up JavaScript with Importmap...', :blue
-
-  # Rails 8 already has importmap, turbo, and stimulus by default
-  # Just ensure they're properly set up by running the install tasks
-  # Using system with 'yes' to auto-accept prompts
-  if VERBOSE
-    system('yes | bin/rails importmap:install')
-    system('yes | bin/rails turbo:install')
-    system('yes | bin/rails stimulus:install')
-  else
-    system('yes | bin/rails importmap:install >/dev/null 2>&1')
-    system('yes | bin/rails turbo:install >/dev/null 2>&1')
-    system('yes | bin/rails stimulus:install >/dev/null 2>&1')
-  end
-end
-
 def setup_auth
   say 'Setting up authentication...', :blue
 
-  if VERBOSE
-    rails_command 'generate devise:install'
-    rails_command 'generate devise Spree::User'
-    rails_command 'generate devise Spree::AdminUser'
-  else
-    run 'bin/rails generate devise:install >/dev/null 2>&1'
-    run 'bin/rails generate devise Spree::User >/dev/null 2>&1'
-    run 'bin/rails generate devise Spree::AdminUser >/dev/null 2>&1'
-  end
+  generate 'devise:install'
+  generate 'devise', 'Spree::User'
+  generate 'devise', 'Spree::AdminUser'
 end
 
 def install_spree
   say 'Running Spree installer (core, api, cli)...', :blue
 
   # Run Spree installer with migrations but without seeds - seeds run after all generators complete
-  if VERBOSE
-    rails_command 'generate spree:install --force --auto-accept --seed=false --user_class=Spree::User --admin_user_class=Spree::AdminUser --authentication=devise'
-  else
-    run 'bin/rails generate spree:install --force --auto-accept --seed=false --user_class=Spree::User --admin_user_class=Spree::AdminUser --authentication=devise >/dev/null 2>&1'
-  end
+  generate 'spree:install', '--force', '--auto-accept', '--seed=false',
+           '--user_class=Spree::User', '--admin_user_class=Spree::AdminUser',
+           '--authentication=devise'
 end
 
 def install_spree_admin
   say 'Installing Spree Admin...', :blue
 
-  if VERBOSE
-    rails_command 'generate spree:admin:install --force'
-    rails_command 'generate spree:admin:devise --force'
-  else
-    run 'bin/rails generate spree:admin:install --force >/dev/null 2>&1'
-    run 'bin/rails generate spree:admin:devise --force >/dev/null 2>&1'
-  end
+  generate 'spree:admin:install', '--force'
+  generate 'spree:admin:devise', '--force'
 end
 
 def install_spree_storefront
   say 'Installing Spree Storefront...', :blue
 
-  if VERBOSE
-    rails_command 'generate spree:storefront:install --force'
-    rails_command 'generate spree:storefront:devise --force'
-  else
-    run 'bin/rails generate spree:storefront:install --force >/dev/null 2>&1'
-    run 'bin/rails generate spree:storefront:devise --force >/dev/null 2>&1'
-  end
-end
-
-def install_spree_dev_tools
-  say 'Running Spree Dev Tools installer...', :blue
-  if VERBOSE
-    rails_command 'generate spree_dev_tools:install --force'
-  else
-    run 'bin/rails generate spree_dev_tools:install --force >/dev/null 2>&1'
-  end
+  generate 'spree:storefront:install', '--force'
+  generate 'spree:storefront:devise', '--force'
 end
 
 def configure_development_environment
   say 'Configuring development environment...', :blue
 
   # Letter opener and file watcher configuration
-  inject_into_file 'config/environments/development.rb', before: /^end/ do
+  environment nil, env: 'development' do
     <<-RUBY
-
   # Letter Opener for email previews
   config.action_mailer.delivery_method = :letter_opener
   config.action_mailer.perform_deliveries = true
@@ -144,21 +97,13 @@ end
 def seed_database
   say 'Loading seed data...', :blue
 
-  if VERBOSE
-    rails_command "db:seed AUTO_ACCEPT=1 ADMIN_EMAIL=#{ADMIN_EMAIL} ADMIN_PASSWORD=#{ADMIN_PASSWORD}"
-  else
-    run "bin/rails db:seed AUTO_ACCEPT=1 ADMIN_EMAIL=#{ADMIN_EMAIL} ADMIN_PASSWORD=#{ADMIN_PASSWORD} >/dev/null 2>&1"
-  end
+  rails_command "db:seed AUTO_ACCEPT=1 ADMIN_EMAIL=#{ADMIN_EMAIL} ADMIN_PASSWORD=#{ADMIN_PASSWORD}"
 end
 
 def load_sample_data
   if LOAD_SAMPLE_DATA
     say 'Loading sample data...', :blue
-    if VERBOSE
-      rails_command 'spree_sample:load'
-    else
-      run 'bin/rails spree_sample:load >/dev/null 2>&1'
-    end
+    rails_command 'spree_sample:load'
   end
 end
 
@@ -195,13 +140,11 @@ end
 add_gems
 
 after_bundle do
-  setup_importmap
   configure_development_environment
   setup_auth
   install_spree
   install_spree_admin
   install_spree_storefront if STOREFRONT_TYPE == 'rails'
-  install_spree_dev_tools
   setup_procfile
   seed_database
   load_sample_data
