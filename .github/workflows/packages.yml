@@ -5,10 +5,14 @@ on:
     branches: [main]
     paths:
       - 'packages/**'
+      - 'pnpm-lock.yaml'
+      - 'turbo.json'
       - '.github/workflows/packages.yml'
   pull_request:
     paths:
       - 'packages/**'
+      - 'pnpm-lock.yaml'
+      - 'turbo.json'
       - '.github/workflows/packages.yml'
 
 concurrency:
@@ -19,62 +23,26 @@ permissions:
   contents: read
 
 jobs:
-  sdk:
-    name: "SDK - Test & Build"
+  check:
+    name: "Typecheck, Test & Build"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-          cache-dependency-path: packages/sdk/package-lock.json
-
-      - run: npm ci
-        working-directory: packages/sdk
-
-      - run: npm run typecheck
-        working-directory: packages/sdk
-
-      - run: npm test
-        working-directory: packages/sdk
-
-      - run: npm run build
-        working-directory: packages/sdk
-
-  next:
-    name: "Next - Test & Build"
-    needs: sdk
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
 
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
-          cache-dependency-path: packages/next/package-lock.json
+          cache: pnpm
 
-      # Build SDK first (next depends on it via file:../sdk)
-      - run: npm ci && npm run build
-        working-directory: packages/sdk
+      - run: pnpm install --frozen-lockfile
 
-      - run: npm ci
-        working-directory: packages/next
-
-      - run: npm run typecheck
-        working-directory: packages/next
-
-      - run: npm test
-        working-directory: packages/next
-
-      - run: npm run build
-        working-directory: packages/next
+      - run: pnpm turbo typecheck test build
 
   release-sdk:
     name: "SDK - Release"
-    needs: [sdk, next]
+    needs: check
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
@@ -87,16 +55,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
-          cache-dependency-path: packages/sdk/package-lock.json
+          cache: pnpm
 
-      - run: npm ci
-
-      - name: Upgrade npm for Trusted Publishing support
-        run: npm install -g npm@latest
+      - run: pnpm install --frozen-lockfile
         working-directory: .
 
       - name: Check if version is published
@@ -111,11 +77,11 @@ jobs:
 
       - name: Build and Publish
         if: steps.check.outputs.published == 'false'
-        run: npm run build && npm publish --provenance --access public
+        run: pnpm build && pnpm publish --provenance --access public --no-git-checks
 
   release-next:
     name: "Next - Release"
-    needs: [sdk, next, release-sdk]
+    needs: [check, release-sdk]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     permissions:
@@ -128,19 +94,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
-          cache-dependency-path: packages/next/package-lock.json
+          cache: pnpm
 
-      - run: npm ci && npm run build
-        working-directory: packages/sdk
-
-      - run: npm ci
-
-      - name: Upgrade npm for Trusted Publishing support
-        run: npm install -g npm@latest
+      - run: pnpm install --frozen-lockfile
         working-directory: .
 
       - name: Check if version is published
@@ -155,4 +116,4 @@ jobs:
 
       - name: Build and Publish
         if: steps.check.outputs.published == 'false'
-        run: npm run build && npm publish --provenance --access public
+        run: pnpm build && pnpm publish --provenance --access public --no-git-checks

@@ -144,6 +144,13 @@ docker compose up -d
 
 This boots PostgreSQL and the Spree backend automatically. The API is available at `http://localhost:3000`.
 
+Then install dependencies and start all packages in watch mode:
+
+```bash
+pnpm install
+pnpm dev
+```
+
 ### Packages
 
 | Package | Path | Description |
@@ -151,38 +158,29 @@ This boots PostgreSQL and the Spree backend automatically. The API is available 
 | `@spree/sdk` | `packages/sdk` | TypeScript SDK for the Spree Storefront API |
 | `@spree/next` | `packages/next` | Next.js integration (server actions, caching, cookie-based auth) |
 
-### SDK development
+### Common commands
 
-```bash
-cd packages/sdk
-npm install
-npm run dev          # build in watch mode
-npm run test:watch   # run tests in watch mode
-```
+Run from the repository root — [Turborepo](https://turbo.build/) orchestrates tasks across all packages:
 
 | Command | Description |
 |---|---|
-| `npm test` | Run tests once |
-| `npm run test:watch` | Run tests in watch mode |
-| `npm run test:coverage` | Run tests with coverage report |
-| `npm run typecheck` | Type-check with `tsc --noEmit` |
-| `npm run build` | Build CJS + ESM bundles |
-| `npm run dev` | Build in watch mode |
-| `npm run console` | Interactive REPL for testing the SDK |
-| `npm run generate:zod` | Generate Zod schemas from TypeScript types |
+| `pnpm dev` | Start Docker backend + watch mode for all packages |
+| `pnpm build` | Build all packages (SDK first, then Next.js) |
+| `pnpm test` | Run tests in all packages |
+| `pnpm typecheck` | Type-check all packages |
+| `pnpm clean` | Remove build artifacts |
 
-Tests use [Vitest](https://vitest.dev/) with [MSW](https://mswjs.io/) for API mocking at the network level.
+### Package-specific commands
 
-### Next.js package development
+You can also run commands in a single package:
 
 ```bash
-cd packages/next
-npm install
-npm run dev          # build in watch mode
-npm run test:watch   # run tests in watch mode
+pnpm --filter @spree/sdk test:watch
+pnpm --filter @spree/sdk console
+pnpm --filter @spree/sdk generate:zod
 ```
 
-The `@spree/next` package depends on `@spree/sdk` locally via `file:../sdk`. Changes to the SDK are picked up automatically.
+Tests use [Vitest](https://vitest.dev/) with [MSW](https://mswjs.io/) for API mocking at the network level.
 
 ### Type generation
 
@@ -196,8 +194,7 @@ bundle exec rake typelizer:generate
 After regenerating types, update the Zod schemas:
 
 ```bash
-cd packages/sdk
-npm run generate:zod
+pnpm --filter @spree/sdk generate:zod
 ```
 
 ### Releasing packages
@@ -205,8 +202,7 @@ npm run generate:zod
 Packages use [Changesets](https://github.com/changesets/changesets) for version management:
 
 ```bash
-cd packages/sdk
-npx changeset
+pnpm changeset
 ```
 
 This creates a changeset file describing your changes. Commit it with your PR. When merged to `main`, a GitHub Action creates a "Version Packages" PR that bumps the version and publishes to npm.

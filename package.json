@@ -1,0 +1,23 @@
+{
+  "name": "spree",
+  "private": true,
+  "scripts": {
+    "dev": "docker compose up -d && turbo dev",
+    "build": "turbo build",
+    "test": "turbo test",
+    "lint": "turbo lint",
+    "typecheck": "turbo typecheck",
+    "clean": "turbo clean",
+    "backend:up": "docker compose up -d",
+    "backend:down": "docker compose down",
+    "backend:logs": "docker compose logs -f backend",
+    "backend:seed": "docker compose exec backend rails db:seed"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.0"
+  },
+  "packageManager": "pnpm@10.6.0",
+  "engines": {
+    "node": ">=20"
+  }
+}

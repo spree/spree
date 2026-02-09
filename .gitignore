@@ -57,3 +57,5 @@ brakeman-*.*
 .claude
 */.claude
 **/node_modules
+packages/*/package-lock.json
+.turbo
