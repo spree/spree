@@ -25,25 +25,25 @@ All Spree models, controllers and other Ruby classes are namespaced by the `Spre
 
 ### Setup
 
-    ```bash
-    cd backend
-    bin/setup
-    bin/rails server
-    ```
+```bash
+cd backend
+bin/setup
+bin/rails server
+```
 
 `bin/setup` handles everything: installs Ruby (via [mise](https://mise.jdx.dev) if available, otherwise uses your system Ruby), system packages (libpq, vips), gems, and prepares the database.
 
 PostgreSQL must be running before you run `bin/setup`. If you don't have it installed locally, start it with Docker:
 
-    ```bash
-    docker run -d --name spree-postgres -p 5432:5432 -e POSTGRES_HOST_AUTH_METHOD=trust postgres:17-alpine
-    ```
+```bash
+docker run -d --name spree-postgres -p 5432:5432 -e POSTGRES_HOST_AUTH_METHOD=trust postgres:17-alpine
+```
 
 By default the app connects to PostgreSQL at `localhost:5432` as user `postgres` with no password. Override with environment variables if needed:
 
-    ```bash
-    DATABASE_HOST=127.0.0.1 DATABASE_PORT=5433 DATABASE_USERNAME=myuser bin/setup
-    ```
+```bash
+DATABASE_HOST=127.0.0.1 DATABASE_PORT=5433 DATABASE_USERNAME=myuser bin/setup
+```
 
 Use `bin/setup --reset` to drop and recreate the database.
 
@@ -53,37 +53,37 @@ The app runs at [http://localhost:3000](http://localhost:3000). Admin Panel is a
 
 Each engine has its own test suite. You first need to install the shared dependencies, then set up a test app for the engine you want to test:
 
-    ```bash
-    cd backend/engines
-    bundle install
+```bash
+cd backend/engines
+bundle install
 
-    cd core
-    bundle install
-    bundle exec rake test_app
-    bundle exec rspec
-    ```
+cd core
+bundle install
+bundle exec rake test_app
+bundle exec rspec
+```
 
 Replace `core` with `api`, `admin`, `emails`, or `sample` to test other engines.
 
 By default engine tests run against SQLite3. To run against PostgreSQL, set the `DB` environment variable:
 
-    ```bash
-    DB=postgres DB_USERNAME=postgres DB_PASSWORD=password DB_HOST=localhost bundle exec rake test_app
-    ```
+```bash
+DB=postgres DB_USERNAME=postgres DB_PASSWORD=password DB_HOST=localhost bundle exec rake test_app
+```
 
 Run a single spec file:
 
-    ```bash
-    cd backend/engines/core
-    bundle exec rspec spec/models/spree/state_spec.rb
-    ```
+```bash
+cd backend/engines/core
+bundle exec rspec spec/models/spree/state_spec.rb
+```
 
 Run a particular line of spec:
 
-    ```bash
-    cd backend/engines/core
-    bundle exec rspec spec/models/spree/state_spec.rb:7
-    ```
+```bash
+cd backend/engines/core
+bundle exec rspec spec/models/spree/state_spec.rb:7
+```
 
 ### Running tests in parallel
 
@@ -91,23 +91,23 @@ You can run specs in parallel locally using the `parallel_tests` gem. This distr
 
 After setting up the test app, create databases for parallel workers:
 
-    ```bash
-    cd backend/engines/core
-    bundle exec rake parallel_setup
-    ```
+```bash
+cd backend/engines/core
+bundle exec rake parallel_setup
+```
 
 Then run specs in parallel:
 
-    ```bash
-    bundle exec parallel_rspec spec
-    ```
+```bash
+bundle exec parallel_rspec spec
+```
 
 You can also specify the number of workers:
 
-    ```bash
-    bundle exec rake "parallel_setup[4]"
-    bundle exec parallel_rspec -n 4 spec
-    ```
+```bash
+bundle exec rake "parallel_setup[4]"
+bundle exec parallel_rspec -n 4 spec
+```
 
 After schema changes, re-run `bundle exec rake parallel_setup` to update the worker databases.
 
@@ -115,9 +115,9 @@ After schema changes, re-run `bundle exec rake parallel_setup` to update the wor
 
 We use chromedriver to run integration tests. To install it please use this command:
 
-    ```bash
-    brew install chromedriver
-    ```
+```bash
+brew install chromedriver
+```
 
 ### Performance in development mode
 
@@ -125,10 +125,10 @@ You may notice that your Spree store runs slower in development environment. Thi
 
 Caching is disabled by default. To turn on caching please run:
 
-    ```bash
-    cd backend
-    bin/rails dev:cache
-    ```
+```bash
+cd backend
+bin/rails dev:cache
+```
 
 You will need to restart rails server after this change.
 
@@ -138,9 +138,9 @@ You will need to restart rails server after this change.
 
 TypeScript developers don't need Ruby installed. Use Docker Compose from the repository root to start the backend:
 
-    ```bash
-    docker compose up -d
-    ```
+```bash
+docker compose up -d
+```
 
 This boots PostgreSQL and the Spree backend automatically. The API is available at `http://localhost:3000`.
 
@@ -153,12 +153,12 @@ This boots PostgreSQL and the Spree backend automatically. The API is available 
 
 ### SDK development
 
-    ```bash
-    cd packages/sdk
-    npm install
-    npm run dev          # build in watch mode
-    npm run test:watch   # run tests in watch mode
-    ```
+```bash
+cd packages/sdk
+npm install
+npm run dev          # build in watch mode
+npm run test:watch   # run tests in watch mode
+```
 
 | Command | Description |
 |---|---|
@@ -175,12 +175,12 @@ Tests use [Vitest](https://vitest.dev/) with [MSW](https://mswjs.io/) for API mo
 
 ### Next.js package development
 
-    ```bash
-    cd packages/next
-    npm install
-    npm run dev          # build in watch mode
-    npm run test:watch   # run tests in watch mode
-    ```
+```bash
+cd packages/next
+npm install
+npm run dev          # build in watch mode
+npm run test:watch   # run tests in watch mode
+```
 
 The `@spree/next` package depends on `@spree/sdk` locally via `file:../sdk`. Changes to the SDK are picked up automatically.
 
@@ -188,26 +188,26 @@ The `@spree/next` package depends on `@spree/sdk` locally via `file:../sdk`. Cha
 
 TypeScript types in `packages/sdk/src/types/generated/` are auto-generated from the Rails API serializers using [typelizer](https://github.com/skryukov/typelizer). To regenerate after changing serializers:
 
-    ```bash
-    cd backend/engines
-    bundle exec rake typelizer:generate
-    ```
+```bash
+cd backend/engines
+bundle exec rake typelizer:generate
+```
 
 After regenerating types, update the Zod schemas:
 
-    ```bash
-    cd packages/sdk
-    npm run generate:zod
-    ```
+```bash
+cd packages/sdk
+npm run generate:zod
+```
 
 ### Releasing packages
 
 Packages use [Changesets](https://github.com/changesets/changesets) for version management:
 
-    ```bash
-    cd packages/sdk
-    npx changeset
-    ```
+```bash
+cd packages/sdk
+npx changeset
+```
 
 This creates a changeset file describing your changes. Commit it with your PR. When merged to `main`, a GitHub Action creates a "Version Packages" PR that bumps the version and publishes to npm.
 
@@ -225,6 +225,7 @@ Spree comes with an [AGENTS.md](../../../AGENTS.md) file that instructs coding a
 We also have an MCP server built on top of our Documentation website to help you with your development.
 
 Add this URL to your AI tools:
+
 ```
 https://spreecommerce.org/docs/mcp
 ```
@@ -240,7 +241,7 @@ We use [GitHub Actions](https://github.com/spree/spree/actions) to run CI.
 1. Push your changes to a topic branch in your fork of the repository.
 
     ```bash
-    git push -u origin fix/order-recalculation-total-bug
+    git push fix/order-recalculation-total-bug
     ```
 
 2. Create a Pull request - [please follow this guide](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork)
