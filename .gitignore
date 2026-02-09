@@ -47,8 +47,8 @@ test_app
 */.sass-cache
 .localeapp
 .ruby-gemset
-vendor/bundle
-*/vendor/bundle
+**/.bundle
+**/vendor/bundle
 .ignore
 TODO
 brakeman-*.*
