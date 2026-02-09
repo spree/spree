@@ -9,7 +9,7 @@ require 'spree/api/openapi/schema_helper'
 
 RSpec.configure do |config|
   # Output to the main spree docs directory at /docs/api-reference/
-  config.openapi_root = Rails.root.join('../../../docs').to_s
+  config.openapi_root = Rails.root.join('../../../../../docs').to_s
 
   # Helper to generate schemas from Typelizer at spec run time
   def self.store_api_schemas
