@@ -552,7 +552,7 @@
   }
 
   .sidebar-mobile.sidebar-mobile-open .sidebar-panel {
-    @apply translate-x-0;
+    @apply translate-x-full;
   }
 
   /* Enterprise Edition Notice */
