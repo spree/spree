@@ -1,6 +1,6 @@
 {
   "name": "@spree/next",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Next.js integration for Spree Commerce — server actions, caching, and cookie-based auth",
   "type": "module",
   "main": "./dist/index.js",
@@ -29,7 +29,10 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "clean": "rm -rf dist",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "changeset": "changeset",
+    "version": "changeset version",
+    "release": "npm run build && changeset publish"
   },
   "keywords": [
     "spree",
@@ -57,6 +60,8 @@
     "react": ">=19.0.0"
   },
   "devDependencies": {
+    "@changesets/changelog-github": "^0.5.2",
+    "@changesets/cli": "^2.29.8",
     "@spree/sdk": "workspace:*",
     "@types/node": "^20.0.0",
     "@types/react": "^19.0.0",
