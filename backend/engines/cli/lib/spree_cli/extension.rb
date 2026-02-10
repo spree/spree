@@ -21,12 +21,11 @@ module SpreeCli
 
       empty_directory "#{file_name}/app/models/#{file_name}"
       empty_directory "#{file_name}/app/views/spree"
-      empty_directory "#{file_name}/app/views/#{file_name}"
       empty_directory "#{file_name}/app/controllers/spree/admin"
       empty_directory "#{file_name}/app/controllers/#{file_name}"
       empty_directory "#{file_name}/app/services/#{file_name}"
-      empty_directory "#{file_name}/app/serializers/spree/v2/storefront"
-      empty_directory "#{file_name}/app/serializers/spree/api/v2/platform"
+      empty_directory "#{file_name}/app/serializers/spree/api/v3"
+      empty_directory "#{file_name}/app/serializers/spree/api/v3/admin"
       empty_directory "#{file_name}/vendor/javascript"
       empty_directory "#{file_name}/vendor/stylesheets"
 
