@@ -200,7 +200,9 @@ Tests use [Vitest](https://vitest.dev/) with [MSW](https://mswjs.io/) for API mo
 TypeScript types in `packages/sdk/src/types/generated/` are auto-generated from the Rails API serializers using [typelizer](https://github.com/skryukov/typelizer). To regenerate after changing serializers:
 
     ```bash
-    cd backend/engines
+    cd backend/engines/api
+    mise install --yes # to install Ruby if you don't have it already
+    bundle install # to install dependencies
     bundle exec rake typelizer:generate
     ```
 
