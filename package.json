@@ -2,6 +2,7 @@
   "name": "spree",
   "private": true,
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "dev": "docker compose up -d && turbo dev",
     "build": "turbo build",
     "test": "turbo test",
