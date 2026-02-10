@@ -42,10 +42,10 @@ RSpec.describe Spree::Admin::TailwindHelper do
   end
 
   describe '.spree_engines' do
-    it 'returns Spree engines excluding Admin engine' do
+    it 'returns all Spree engines including Admin engine' do
       engines = described_class.spree_engines
 
-      expect(engines).not_to include(Spree::Admin::Engine)
+      expect(engines).to include(Spree::Admin::Engine)
       engines.each do |engine|
         expect(engine.name).to start_with('Spree::')
       end
