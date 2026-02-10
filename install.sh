@@ -81,7 +81,7 @@ RAILS_VERSION="${RAILS_VERSION:-8.1.2}"
 APP_NAME=""
 LOAD_SAMPLE_DATA="false"
 STOREFRONT_TYPE=""
-TEMPLATE_URL="https://raw.githubusercontent.com/spree/spree/main/template.rb"
+TEMPLATE_URL="https://raw.githubusercontent.com/spree/spree/main/backend/template.rb"
 VERBOSE=false
 USE_LOCAL_SPREE=false
 AUTO_ACCEPT=false
@@ -971,7 +971,7 @@ create_rails_app() {
     fi
 
     # Download template if running from URL, or use local if exists
-    TEMPLATE_FILE="template.rb"
+    TEMPLATE_FILE="backend/template.rb"
     if [ ! -f "$TEMPLATE_FILE" ]; then
         print_info "Downloading Spree Rails template..."
         curl -fsSL "$TEMPLATE_URL" -o "$TEMPLATE_FILE"
@@ -1071,7 +1071,7 @@ create_rails_app() {
     fi
 
     # Clean up downloaded template if it was downloaded
-    if [ -f "$TEMPLATE_FILE" ] && [ "$TEMPLATE_FILE" != "template.rb" ]; then
+    if [ -f "$TEMPLATE_FILE" ] && [ "$TEMPLATE_FILE" != "backend/template.rb" ]; then
         rm "$TEMPLATE_FILE"
     fi
 

@@ -15,12 +15,12 @@ def add_gems
   gem 'devise'
 
   # Spree gems - core (includes core, api, cli)
-  gem 'spree', USE_LOCAL_SPREE ? { path: '../' } : { version: SPREE_VERSION }
+  gem 'spree', USE_LOCAL_SPREE ? { path: '../backend/engines' } : { version: SPREE_VERSION }
 
   # Optional Spree packages
-  gem 'spree_emails', USE_LOCAL_SPREE ? { path: '../' } : { version: SPREE_VERSION }
-  gem 'spree_sample', USE_LOCAL_SPREE ? { path: '../' } : { version: SPREE_VERSION }
-  gem 'spree_admin', USE_LOCAL_SPREE ? { path: '../' } : { version: SPREE_VERSION }
+  gem 'spree_emails', USE_LOCAL_SPREE ? { path: '../backend/engines/emails' } : { version: SPREE_VERSION }
+  gem 'spree_sample', USE_LOCAL_SPREE ? { path: '../backend/engines/sample' } : { version: SPREE_VERSION }
+  gem 'spree_admin', USE_LOCAL_SPREE ? { path: '../backend/engines/admin' } : { version: SPREE_VERSION }
 
   # Storefront packages (only when Rails storefront is selected)
   if STOREFRONT_TYPE == 'rails'
