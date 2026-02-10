@@ -22,6 +22,16 @@ module Spree
           css = File.read(input_path)
           css = css.gsub("$SPREE_ADMIN_PATH", Spree::Admin::Engine.root.to_s)
           css = css.gsub("/* $SPREE_ENGINE_SOURCES */", spree_engine_sources)
+
+          # Resolve relative @source paths to absolute paths since the resolved
+          # CSS is written to tmp/ which changes the relative path base
+          source_base = input_path.dirname
+          css = css.gsub(%r{@source\s+"(\.\./[^"]+)"}) do |_match|
+            relative = Regexp.last_match(1)
+            absolute = File.expand_path(relative, source_base)
+            %(@source "#{absolute}")
+          end
+
           css
         end
 
@@ -33,7 +43,7 @@ module Spree
 
         def spree_engines
           Rails::Engine.subclasses.select do |engine|
-            engine.name&.start_with?("Spree::") && engine != Spree::Admin::Engine
+            engine.name&.start_with?("Spree::")
           end
         end
 
