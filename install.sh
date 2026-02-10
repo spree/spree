@@ -970,11 +970,11 @@ create_rails_app() {
         mkdir -p "$USER_GEM_HOME"
     fi
 
-    # Download template if running from URL, or use local if exists
-    TEMPLATE_FILE="backend/template.rb"
-    if [ ! -f "$TEMPLATE_FILE" ]; then
-        print_info "Downloading Spree Rails template..."
-        curl -fsSL "$TEMPLATE_URL" -o "$TEMPLATE_FILE"
+    # Use local template if available, otherwise use remote URL
+    if [ -f "backend/template.rb" ]; then
+        TEMPLATE_FILE="backend/template.rb"
+    else
+        TEMPLATE_FILE="$TEMPLATE_URL"
     fi
 
     print_info "Creating Spree Commerce application '$APP_NAME'..."
@@ -1068,11 +1068,6 @@ create_rails_app() {
         fi
 
         rm -f /tmp/spree_install.log
-    fi
-
-    # Clean up downloaded template if it was downloaded
-    if [ -f "$TEMPLATE_FILE" ] && [ "$TEMPLATE_FILE" != "backend/template.rb" ]; then
-        rm "$TEMPLATE_FILE"
     fi
 
     print_success "Spree Commerce application created successfully"
