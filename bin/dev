@@ -1,8 +1,0 @@
-#!/bin/sh
-
-if [ ! -d "./sandbox" ]; then
-  echo "Sandbox not found. Creating sandbox..."
-  ./bin/sandbox.sh
-fi
-
-cd ./sandbox && exec bin/dev

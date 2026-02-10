@@ -1,3 +1,253 @@
 # Contributing
 
-Please visit [Contributing section](https://docs.spreecommerce.org/developer/contributing) of Spree Guides. Thank you!
+## Spree codebase
+
+Spree is a monorepo with two main areas:
+
+- **`backend/`** — A Rails application that mounts the Spree engines and serves the API and admin interface
+- **`packages/`** — TypeScript packages (SDK, Next.js helpers, CLI)
+
+## Backend Development (Ruby)
+
+The Spree [Rails engines](https://guides.rubyonrails.org/engines.html) live inside `backend/engines/` and are distributed as separate gems (ruby packages installed via Bundler):
+
+| Engine | Gem | Description |
+|---|---|---|
+| `core` | `spree_core` | Models, services, business logic |
+| `api` | `spree_api` | REST APIs |
+| `admin` | `spree_admin` | Admin dashboard |
+| `emails` | `spree_emails` | Transactional emails |
+| `sample` | `spree_sample` | Sample seed data |
+
+### Spree namespace
+
+All Spree models, controllers and other Ruby classes are namespaced by the `Spree` keyword, eg. `Spree::Product`. This means that those files are also located in `spree` sub-directories eg. [app/models/spree/product.rb](https://github.com/spree/spree/blob/main/backend/engines/core/app/models/spree/product.rb).
+
+### Setup
+
+```bash
+cd backend
+bin/setup
+bin/rails server
+```
+
+`bin/setup` handles everything: installs Ruby (via [mise](https://mise.jdx.dev) if available, otherwise uses your system Ruby), system packages (libpq, vips), gems, and prepares the database.
+
+PostgreSQL must be running before you run `bin/setup`. If you don't have it installed locally, start it with Docker:
+
+```bash
+docker run -d --name spree-postgres -p 5432:5432 -e POSTGRES_HOST_AUTH_METHOD=trust postgres:17-alpine
+```
+
+By default the app connects to PostgreSQL at `localhost:5432` as user `postgres` with no password. Override with environment variables if needed:
+
+```bash
+DATABASE_HOST=127.0.0.1 DATABASE_PORT=5433 DATABASE_USERNAME=myuser bin/setup
+```
+
+Use `bin/setup --reset` to drop and recreate the database.
+
+The app runs at [http://localhost:3000](http://localhost:3000). Admin Panel is at [http://localhost:3000/admin](http://localhost:3000/admin).
+
+### Running engine tests
+
+Each engine has its own test suite. You first need to install the shared dependencies, then set up a test app for the engine you want to test:
+
+```bash
+cd backend/engines
+bundle install
+
+cd core
+bundle install
+bundle exec rake test_app
+bundle exec rspec
+```
+
+Replace `core` with `api`, `admin`, `emails`, or `sample` to test other engines.
+
+By default engine tests run against SQLite3. To run against PostgreSQL, set the `DB` environment variable:
+
+```bash
+DB=postgres DB_USERNAME=postgres DB_PASSWORD=password DB_HOST=localhost bundle exec rake test_app
+```
+
+Run a single spec file:
+
+```bash
+cd backend/engines/core
+bundle exec rspec spec/models/spree/state_spec.rb
+```
+
+Run a particular line of spec:
+
+```bash
+cd backend/engines/core
+bundle exec rspec spec/models/spree/state_spec.rb:7
+```
+
+### Running tests in parallel
+
+You can run specs in parallel locally using the `parallel_tests` gem. This distributes spec files across multiple CPU cores for faster execution.
+
+After setting up the test app, create databases for parallel workers:
+
+```bash
+cd backend/engines/core
+bundle exec rake parallel_setup
+```
+
+Then run specs in parallel:
+
+```bash
+bundle exec parallel_rspec spec
+```
+
+You can also specify the number of workers:
+
+```bash
+bundle exec rake "parallel_setup[4]"
+bundle exec parallel_rspec -n 4 spec
+```
+
+After schema changes, re-run `bundle exec rake parallel_setup` to update the worker databases.
+
+### Running integration tests on MacOS (only applicable for Admin Panel)
+
+We use chromedriver to run integration tests. To install it please use this command:
+
+```bash
+brew install chromedriver
+```
+
+### Performance in development mode
+
+You may notice that your Spree store runs slower in development environment. This is caused by disabled caching and automatic reloading of code after each change.
+
+Caching is disabled by default. To turn on caching please run:
+
+```bash
+cd backend
+bin/rails dev:cache
+```
+
+You will need to restart rails server after this change.
+
+## TypeScript Development
+
+### Setup
+
+TypeScript developers don't need Ruby installed. Use Docker Compose from the repository root to start the backend:
+
+```bash
+docker compose up -d
+```
+
+This boots PostgreSQL and the Spree backend automatically. The API is available at `http://localhost:3000`.
+
+Then install dependencies and start all packages in watch mode:
+
+```bash
+pnpm install
+pnpm dev
+```
+
+### Packages
+
+| Package | Path | Description |
+|---|---|---|
+| `@spree/sdk` | `packages/sdk` | TypeScript SDK for the Spree Storefront API |
+| `@spree/next` | `packages/next` | Next.js integration (server actions, caching, cookie-based auth) |
+
+### Common commands
+
+Run from the repository root — [Turborepo](https://turbo.build/) orchestrates tasks across all packages:
+
+| Command | Description |
+|---|---|
+| `pnpm dev` | Start Docker backend + watch mode for all packages |
+| `pnpm build` | Build all packages (SDK first, then Next.js) |
+| `pnpm test` | Run tests in all packages |
+| `pnpm typecheck` | Type-check all packages |
+| `pnpm clean` | Remove build artifacts |
+
+### Package-specific commands
+
+You can also run commands in a single package:
+
+```bash
+pnpm --filter @spree/sdk test:watch
+pnpm --filter @spree/sdk console
+pnpm --filter @spree/sdk generate:zod
+```
+
+Tests use [Vitest](https://vitest.dev/) with [MSW](https://mswjs.io/) for API mocking at the network level.
+
+### Type generation
+
+TypeScript types in `packages/sdk/src/types/generated/` are auto-generated from the Rails API serializers using [typelizer](https://github.com/skryukov/typelizer). To regenerate after changing serializers:
+
+```bash
+cd backend/engines
+bundle exec rake typelizer:generate
+```
+
+After regenerating types, update the Zod schemas:
+
+```bash
+pnpm --filter @spree/sdk generate:zod
+```
+
+### Releasing packages
+
+Packages use [Changesets](https://github.com/changesets/changesets) for version management:
+
+```bash
+pnpm changeset
+```
+
+This creates a changeset file describing your changes. Commit it with your PR. When merged to `main`, a GitHub Action creates a "Version Packages" PR that bumps the version and publishes to npm.
+
+## Making changes
+
+Create a new branch for your changes. Do not push changes to the main branch. Branch name should be human-readable and informative, eg.
+
+* bug fixes: `fix/order-recalculation-total-bug`
+* features: `feature/my-new-amazing-feature`
+
+## Using AI tools for development
+
+Spree comes with an [AGENTS.md](../../../AGENTS.md) file that instructs coding agents like Claude Code or Codex to help you with your development.
+
+We also have an MCP server built on top of our Documentation website to help you with your development.
+
+Add this URL to your AI tools:
+
+```
+https://spreecommerce.org/docs/mcp
+```
+
+In Claude Code you need to go to [Connectors](https://claude.ai/settings/connectors) settings and add the URL.
+
+## Submitting Changes
+
+Please keep your commit history meaningful and clear. [This guide](https://about.gitlab.com/blog/2018/06/07/keeping-git-commit-history-clean/) covers it quite well and we recommend reading it, not only for Spree project but for any IT project overall.
+
+We use [GitHub Actions](https://github.com/spree/spree/actions) to run CI.
+
+1. Push your changes to a topic branch in your fork of the repository.
+
+    ```bash
+    git push fix/order-recalculation-total-bug
+    ```
+
+2. Create a Pull request - [please follow this guide](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork)
+
+    If your changes references Github issues, please mark which issue you're fixing by adding `Fixes #<number or url of the issue>` in the commit name or PR title/description. This will automatically mark that issue as closed when your PR will be merged.
+3. Wait for CI to pass
+4. If CI passed wait for Spree Core team code review
+
+    We're aiming to review and leave feedback as soon as possible. We'll leave you a meaningful feedback if needed.
+
+## That's a wrap!
+
+Thank you for participating in Open Source and improving Spree - you're awesome!

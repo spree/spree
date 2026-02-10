@@ -15,16 +15,11 @@ public/dispatch.fcgi
 public/dispatch.rb
 httpd
 pgsql
-config/*-public.asc
-config/database.yml
-config/mongrel_cluster.yml
 db/*.sql
 db/*.sqlite3*
-db/schema.rb
 doc/**/*
 Gemfile.lock
 */Gemfile.lock
-lib/products_index_profiler.rb
 log/*.log
 pkg
 public/assets
@@ -52,8 +47,9 @@ test_app
 */.sass-cache
 .localeapp
 .ruby-gemset
-vendor/bundle
-*/vendor/bundle
+**/.bundle
+**/vendor/bundle
+backend/db/migrate
 .ignore
 TODO
 brakeman-*.*
@@ -61,3 +57,6 @@ brakeman-*.*
 .claude
 */.claude
 **/node_modules
+packages/*/package-lock.json
+.turbo
+spree/

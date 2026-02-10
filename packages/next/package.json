@@ -57,7 +57,7 @@
     "react": ">=19.0.0"
   },
   "devDependencies": {
-    "@spree/sdk": "file:../sdk",
+    "@spree/sdk": "workspace:*",
     "@types/node": "^20.0.0",
     "@types/react": "^19.0.0",
     "next": "^15.3.3",

@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+app_root="$(cd "$(dirname "$0")/.." && pwd)"
+export PATH="$app_root/bin:$PATH"
+
+step() {
+  local step_name="$1"
+  shift
+  echo
+  echo "▸ $step_name"
+  "$@"
+}
+
+# Use mise to install Ruby if available, skip if Ruby is already present
+if command -v mise &>/dev/null; then
+  step "Installing Ruby" mise install --yes
+  eval "$(mise hook-env -s bash)"
+elif ! command -v ruby &>/dev/null; then
+  echo "Ruby not found. Install it manually or install mise (https://mise.jdx.dev) to auto-install."
+  exit 1
+fi
+
+# Install system packages
+if command -v brew &>/dev/null; then
+  packages=(libpq vips)
+  missing_packages=()
+  for pkg in "${packages[@]}"; do
+    if ! brew list "$pkg" &>/dev/null; then
+      missing_packages+=("$pkg")
+    fi
+  done
+  if [ ${#missing_packages[@]} -gt 0 ]; then
+    step "Installing packages" brew install "${missing_packages[@]}"
+  fi
+elif command -v apt-get &>/dev/null; then
+  step "Installing packages" sudo apt-get update -qq && sudo apt-get install -y libpq-dev libvips-dev
+fi
+
+step "Installing gems" bundle install
+
+if [[ $* == *--reset* ]]; then
+  step "Resetting the database" bin/rails db:reset
+else
+  step "Preparing the database" bin/rails db:prepare
+fi
+
+step "Cleaning up" bin/rails log:clear tmp:clear
+
+echo
+echo "✓ Done (${SECONDS}s)"
+echo
+echo "Run 'bin/rails server' to start the app."

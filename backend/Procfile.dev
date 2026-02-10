@@ -1,0 +1,3 @@
+web: bin/rails server
+css: bin/rails tailwindcss:watch
+admin_css: bin/rails spree:admin:tailwindcss:watch
