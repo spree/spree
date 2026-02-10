@@ -1,3 +1,7 @@
+# Disable automatic type generation on boot — types are generated manually
+# via `bundle exec rake typelizer:generate`. Set ENABLE_TYPELIZER=1 to enable.
+ENV["DISABLE_TYPELIZER"] ||= "true" unless ENV["ENABLE_TYPELIZER"]
+
 Typelizer.configure do |config|
   api_root = Spree::Api::Engine.root
 
@@ -16,4 +20,6 @@ Typelizer.configure do |config|
       .sub(/Serializer\z/, '')
     name
   }
+
+  config.listen = false # https://github.com/skryukov/typelizer?tab=readme-ov-file#automatic-generation-in-development
 end
