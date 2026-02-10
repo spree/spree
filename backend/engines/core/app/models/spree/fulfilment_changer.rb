@@ -85,8 +85,14 @@ module Spree
 
     def reduce_units_quantities(reduced_quantity, units)
       units.each do |unit|
-        unit.quantity > reduced_quantity ? unit.update(quantity: unit.quantity - reduced_quantity) : unit.destroy!
-        reduced_quantity -= unit.quantity
+        if unit.quantity > reduced_quantity
+          unit.update(quantity: unit.quantity - reduced_quantity)
+          reduced_quantity = 0
+        else
+          reduced_quantity -= unit.quantity
+          unit.destroy!
+        end
+        break if reduced_quantity.zero?
       end
       reduced_quantity
     end
