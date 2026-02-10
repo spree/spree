@@ -8,8 +8,8 @@ RSpec.describe Spree::Admin::UsersController, type: :controller do
 
   describe 'GET #index' do
     let!(:user_1) { create(:user, first_name: 'John', last_name: 'Doe', email: 'john.doe@example.com') }
-    let!(:user_2) { create(:user, tag_list: ['some tag']) }
-    let!(:user_3) { create(:user, accepts_email_marketing: true) }
+    let!(:user_2) { create(:user, first_name: 'Mark', last_name: 'Smith', email: 'mark.smith@example.com', tag_list: ['some tag']) }
+    let!(:user_3) { create(:user, first_name: 'Lisa', last_name: 'Brown', email: 'lisa.brown@example.com', accepts_email_marketing: true) }
 
     let!(:user_1_orders) { create_list(:completed_order_with_totals, 3, user: user_1, completed_at: 1.day.ago) }
     let!(:user_2_orders) { create_list(:completed_order_with_totals, 1, user: user_2, completed_at: 1.day.ago) }

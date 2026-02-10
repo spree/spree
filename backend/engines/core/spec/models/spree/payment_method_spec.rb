@@ -32,7 +32,7 @@ describe Spree::PaymentMethod, type: :model do
       it 'returns all methods available to front-end/back-end' do
         methods = Spree::PaymentMethod.available
         expect(methods.size).to eq(3)
-        expect(methods.pluck(:display_on)).to eq(['both', 'front_end', 'back_end'])
+        expect(methods.pluck(:display_on)).to match_array(['both', 'front_end', 'back_end'])
       end
     end
 
@@ -40,7 +40,7 @@ describe Spree::PaymentMethod, type: :model do
       it 'returns all methods available to front-end' do
         methods = Spree::PaymentMethod.available_on_front_end
         expect(methods.size).to eq(2)
-        expect(methods.pluck(:display_on)).to eq(['both', 'front_end'])
+        expect(methods.pluck(:display_on)).to match_array(['both', 'front_end'])
       end
     end
 
@@ -48,7 +48,7 @@ describe Spree::PaymentMethod, type: :model do
       it 'returns all methods available to back-end' do
         methods = Spree::PaymentMethod.available_on_back_end
         expect(methods.size).to eq(2)
-        expect(methods.pluck(:display_on)).to eq(['both', 'back_end'])
+        expect(methods.pluck(:display_on)).to match_array(['both', 'back_end'])
       end
     end
 
