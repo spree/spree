@@ -40,6 +40,7 @@ module Spree
       preference :company, :boolean, default: false, deprecated: 'Use the company_field_enabled preference in the Spree::Store model' # Request company field for billing and shipping addr
       preference :currency, :string, default: 'USD', deprecated: true
       preference :credit_to_new_allocation, :boolean, default: false
+      preference :disable_migration_check, :boolean, default: false # when turned on disables the startup warning about missing engine migrations
       preference :disable_sku_validation, :boolean, default: false # when turned off disables the built-in SKU uniqueness validation
       preference :disable_store_presence_validation, :boolean, default: false # when turned off disables Store presence validation for Products and Payment Methods
       preference :events_log_enabled, :boolean, default: true # Log all Spree events to Rails logger

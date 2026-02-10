@@ -329,8 +329,10 @@ module Spree
         ]
       end
 
-      initializer 'spree.core.checking_migrations' do
-        Migrations.new(config, engine_name).check unless Rails.env.test?
+      initializer 'spree.core.checking_migrations' do |app|
+        app.config.after_initialize do
+          Migrations.new(config, engine_name).check unless Rails.env.test? || Spree::Config.disable_migration_check
+        end
       end
 
       initializer 'spree.core.assets' do |app|

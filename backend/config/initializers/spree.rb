@@ -16,6 +16,10 @@ Spree.config do |config|
   # Example:
   # Uncomment to stop tracking inventory levels in the application
   # config.track_inventory_levels = false
+
+  # Silence engine migration warnings - migrations live in engines and are
+  # copied to db/migrate on demand, not checked into the backend app
+  config.disable_migration_check = true
 end
 
 # Background job queue names
