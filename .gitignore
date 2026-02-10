@@ -18,8 +18,8 @@ pgsql
 db/*.sql
 db/*.sqlite3*
 doc/**/*
-Gemfile.lock
-*/Gemfile.lock
+backend/engines/Gemfile.lock
+backend/engines/*/Gemfile.lock
 log/*.log
 pkg
 public/assets
