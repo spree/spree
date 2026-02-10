@@ -1,5 +1,13 @@
 # Contributing
 
+## Cloning the repository
+
+Spree is a big monorepo. For a faster clone, use a **partial clone** which downloads file contents on demand while keeping full commit history for `git log` and `git blame`:
+
+```bash
+git clone --filter=blob:none https://github.com/spree/spree.git
+```
+
 ## Spree codebase
 
 Spree is a monorepo with two main areas:
