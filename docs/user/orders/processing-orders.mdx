@@ -1,84 +1,96 @@
 ---
 title: "Processing Orders"
-description: "Process orders in the Spree Commerce admin dashboard"
+description: "Learn how to process orders in the Spree Commerce admin dashboard,"
 ---
 
-If you have any hope of running a successful online business, you won’t get very far without learning how to process orders. 
+Efficient order processing is essential for running a successful ecommerce business. In Spree, processing an order typically involves two key steps: capturing payment and fulfilling the order.
 
-Processing an order usually involves payment capture and fulfillment, although this depends on your use case and payment method settings.
+To process an order, navigate to the Orders tab of the Spree dashboard.
 
-To process an order, navigate to the Orders tab of the admin dashboard.
+![The Spree Commerce orders management dashboard](/docs/images/user/orders/processing-orders/1-orders-tab.png)
 
-<img height="360" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXcDV1oKeAWMj6VMO_Q5UGfxD9zlJj6dcqXr2nYGb2dI7k4FNSEsfl7Ha1kwBdrNAnUZ3I0nZrlFjolj2gNucbsNo0S3pAp9LnQ8TF-0Ezq69lUIDEezUY3nZD_DGdS3ZAc8ec8B?key=vGjZnY3R8l4PgoW5pIA_V6Gw" />
+From here, simply click on the order you want to process to open the order page.
 
-Simply click on the order from the list you’d like to process.
+![An order overview page in Spree Commerce](/docs/images/user/orders/processing-orders/2-order-overview.png)
 
-<img height="360" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXfpFTSw_TWzZSFsAf2TN2HBzBC5niItuIy1DrWFPUIiBlL66P84UUCoYlCpY6LmKDXePxSOkdUnTeewAtOtxNq3VyyPtSJ6_1lAm3zjKPigUDhcKJLTswaQBDOvoeXQLZqmI3xrVg?key=vGjZnY3R8l4PgoW5pIA_V6Gw" />
+Here you’ll see a full overview of the order, including payment and shipment details.
 
-For this example, we’ll look at an order for which the payment has not been captured (i.e., payment status = Balance Due). If you plan to auto-capture all payments on your store, then you can skip directly to Fulfilling Orders.
+## Payment Capture
 
-## Capturing Payments <img height="297" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXcWkRR4vU4WAj_Veuqt6l5VozrJCevbthFUonSxJxfUMgGKch_1xE-ViXLJE0C-OaE6s1jXPiMpZiy5ASCgd-5ZoNJhiYXNp_IEx_JiyI2qGS39WDERHrygxWxCVkZZjcMfNpgfrg?key=vGjZnY3R8l4PgoW5pIA_V6Gw" />
+![Capturing payments in Spree Commerce](/docs/images/user/orders/processing-orders/3-order-payment.png)
 
-In many cases, ecommerce businesses (B2C especially) choose to auto-capture payments. However, you might choose not to auto-capture payments to allow for order verification, prevent fraud, or ensure stock availability before charging the customer, to name a few.
+Some businesses (especially B2C) choose to auto-capture payments when an order is placed. Others prefer to manually capture payments later - for example, after stock is verified or fraud checks are completed.
 
-Whatever the reason, you will eventually need to capture payment for the order and have this recorded in the system.
+<Note>If you are auto-capturing payments, proceed to Order Fulfillment.</Note>
 
-To capture payment, there are a few options:
+If the order has a Balance Due payment status, follow one of the options below:
 
-### Manually Capture a Payment
+### Option 1: Manually Capture an Existing Payment
 
-If the customer has chosen to pay, e.g., by bank transfer, check, or any other method that requires manual verification, you can manually capture the payment after verification by clicking on the three dots next to the payment and clicking ‘Capture’
+![Manually capturing payments in Spree Commerce](/docs/images/user/orders/processing-orders/4-capture-payment.png)
 
-<img height="159" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXe78yW8IS7MGXfH9YMqzBId7u89VakN4493OLbvJErTYXMSxZpuSyqFv77u_sT1N0RBkYIGtlbwBCxQokVqbJUDFzwZOJQ6EVttbrFWU640ZsIKQT4w57V2Hy8800_uTs32gvuc?key=vGjZnY3R8l4PgoW5pIA_V6Gw" />
+If the payment is already authorized (e.g., via credit card or bank transfer), you can capture it manually:
 
-After clicking ‘Capture’, the payment status will be updated to ‘Paid’ and you can proceed with fulfilling the order.
+1. Click the **three-dot menu** next to the existing payment.
+2. Select **Capture**.
 
-<img height="165" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXcIOyAfffJMwlJ8aGScaAu3OMCUSsE7aVIF_K_QZQozugZCXNHa2rZAYUDzRvU1rmzZ3_9ikkg2IlPLwMyCkjS5vNEAOGiSEt3mKhT8cnWH5fMx17XVy2DAEu6h03reDo4mDj_hVg?key=vGjZnY3R8l4PgoW5pIA_V6Gw" />
+The payment status will update to Paid, and you will now be able to fulfill the order via the shipment section.
 
-### &#xA;Create a New Payment
+### Option 2: Add a New Payment
 
-If a customer’s payment failed, if they want to change the payment method, or if the order was created by the admin on behalf of the customer, then you can add a new payment to the order.
+![Add new payment to an order in Spree Commerce](/docs/images/user/orders/processing-orders/5-new-payment.png)
 
-To do so, click on the blue ‘+ New Payment Method’ button. This will redirect you to a page where you can create a new payment for the order.
+If the original payment failed, or if the customer wants to pay via a different method, you can create a new payment.
 
-<img height="359" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXeZy5e69ke2Er2L8QgzC2Dv0VCuhFKJXtbtPlwj1lNVfF51ug6GIdb94VEHrg7Mn_wh3L14revzXVwrC5GWG01CB4Rwjff18XIGrmcuxutMsMSJHuQa8L1q5RbS2qTr7uxYfKNFfg?key=vGjZnY3R8l4PgoW5pIA_V6Gw" />
+Simply click the **New Payment** to open the payment creation form, and fill out the fields
 
-Here, you can set:
+- Amount (defaults to order total)
+- Payment Method
+- Payment Source (e.g. saved credit card)
 
-* Amount - equals total order value by default
+Click **Create** to finalize the new payment.
 
-* Payment Method - a list of payment methods available on your store
+You can now either:
 
-* Payment Source - a list of the customer’s saved cards associated with the payment method
+- Capture the payment immediately if the details are saved
+- Send a payment link for the customer to complete the payment manually
 
-Once you’ve verified the information is correct, click the blue ‘Create’ button to add the payment to the order.
+<Note>Depending on the payment method used for the order, the refund or capture process may happen automatically or may require manual action.</Note>
 
-<img height="303" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXftLdWJLWBHMh42_XI89OQrTcGkCiFvzx0J8y4_F97ry6M3fJ8zqLECBYY5Maz05L3Q7G3hZxpv8XQ2gfVjaJwDHas5klSVvPbL0raevKSmQjdo3wiVINjq9ixulR-3LhCMPBsAIw?key=vGjZnY3R8l4PgoW5pIA_V6Gw" />
+## Order Fulfillment
 
-In the above example, we added a Stripe payment method using the customer’s saved card as the payment source.
+![How to ship an orders in Spree Commerce](/docs/images/user/orders/processing-orders/6-shipments.png)
 
-You can now capture the payment manually as shown before (since the customer’s details are already on record), or send them a payment link to complete the purchase themselves.
+Once payment has been captured, you're ready to fulfill the order via the **Shipments** section.
 
-## Fulfilling Orders
+Before shipping, make sure you have:
 
-Before proceeding with order fulfillment in the Spree dashboard, ensure you have the correct tracking number for the shipment and shipping carrier as selected by the customer.
+- The correct tracking number
+- The correct carrier, based on the customer’s shipping selection
 
-To fulfill an order, first click on the pencil icon on the right of the ‘Add tracking details’ row.
+### Add Tracking Details
 
-<img height="352" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXfrnN3ZPnCQ4D3nOQvneSL7utCaI0sLSKlfX2d0CJFIbwRlDXShrw28CZAjSPSWDVwORghUrBqi1jLZXL46xYQeeaaeLWWFl0GNFI11VtdC7xuGL7DP5b9K1ZWuxx6FYQOCv9xH?key=vGjZnY3R8l4PgoW5pIA_V6Gw" />
+![Adding a tracking number to an order in Spree Commerce](/docs/images/user/orders/processing-orders/7-tracking-number.png)
 
-This will reveal a field where you can insert the tracking number for the shipment.
+To add tracking details to the shipment:
 
-<img height="352" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXfcd88WmiWID1znxdkWgIRFlaQVbebItdpzoljOJhw98AHX7ZvVexj9E99zfNh-lcCN0ERT3fqCIguyJWmpUPLMG0jJrn4eVh4uLObH2n7Wy5nZw1S_QLKSa-H6FxW0fOGJxwhlZw?key=vGjZnY3R8l4PgoW5pIA_V6Gw" />
+1. Click the **\+** icon in the Tracking subsection.
+2. Enter the tracking number.
+3. Click **Save**.
 
-Insert the number and click ‘Save’. This will reveal a new button labelled ‘Ship’.
+### Ship the Order
 
-<img height="401" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXfABF_d9HlUvNZxk_w8mhXSJhPy8BQDoH2I85UwuycYOqh97bLbzMVkPVmqiKxu0HemvMAMm8za_E88uWaxB5B6S5nNpmVS-DsgqvEhOofuMNQwhWvN7NOUhYhJiOFVhpn_q-qIug?key=vGjZnY3R8l4PgoW5pIA_V6Gw" />
+Double-check that everything is correct and click **Ship** to complete the order.
 
-This is your last chance to double check the order to make sure everything is in order.
+The order’s shipment status will update to **Shipped**, and the customer will receive a confirmation email with tracking details.
 
-Once you click ‘Ship’, the order will be marked as ‘Fulfilled’, and the customer will receive an email with the tracking link for their order.
+## Order Completed
 
-<img height="328" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXftGP6IUqq9nYzu9e0H7PjmW_ZW-Yh1vDoavTvOaF7eGB2CZPPGGkaxEeCSdoCWHLU767dmG7p49Z8FJrj_p729y01BTyszyzjIEj0LDYw1Lo-ARyYriU4f0xtGm9VKnNl_ZAZx?key=vGjZnY3R8l4PgoW5pIA_V6Gw" />
+![A completed orders in the Spree Commerce dashboard](/docs/images/user/orders/processing-orders/8-order-complete.png)
 
-Congratulations, you’ve just fulfilled your first order!
+At this point, the order will have:
+
+- **Payment State**: Paid
+- **Shipment State**: Shipped
+
+This means the order has been successfully processed and is now complete from your business’ point of view. All that’s left is for the customer to receive their shipment.
