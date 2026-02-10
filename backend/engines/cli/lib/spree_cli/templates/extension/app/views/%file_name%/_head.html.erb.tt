@@ -1,1 +1,0 @@
-<%%= javascript_import_module_tag 'application-<%= file_name.gsub('_', '-') %>' %>

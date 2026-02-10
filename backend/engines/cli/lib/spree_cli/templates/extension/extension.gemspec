@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.author    = 'You'
   s.email     = 'you@example.com'
   s.homepage  = 'https://github.com/your-github-handle/<%= file_name %>'
-  s.license = 'AGPL-3.0-or-later'
+  s.license = 'MIT'
 
   s.files        = Dir["{app,config,db,lib,vendor}/**/*", "LICENSE.md", "Rakefile", "README.md"].reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
   s.require_path = 'lib'
@@ -22,7 +22,5 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'spree', '>= <%= Gem.loaded_specs['spree_cli'].version %>'
   s.add_dependency 'spree_admin', '>= <%= Gem.loaded_specs['spree_cli'].version %>'
-  s.add_dependency 'spree_extension'
-
   s.add_development_dependency 'spree_dev_tools'
 end

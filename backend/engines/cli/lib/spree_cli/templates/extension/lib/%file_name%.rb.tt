@@ -1,5 +1,4 @@
 require 'spree'
-require 'spree_extension'
 require '<%=file_name%>/engine'
 require '<%=file_name%>/version'
 require '<%=file_name%>/configuration'
