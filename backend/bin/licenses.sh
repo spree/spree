@@ -10,6 +10,5 @@ license_finder ignored_dependencies add spree_api
 license_finder ignored_dependencies add spree_core
 license_finder ignored_dependencies add spree_emails
 license_finder ignored_dependencies add spree_sample
-license_finder ignored_dependencies add spree_cli
 
 license_finder report --use-spdx-id --format json --aggregate-paths='admin' 'api' 'core' 'emails' --save=licenses.json

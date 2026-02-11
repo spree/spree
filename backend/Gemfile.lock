@@ -37,7 +37,6 @@ PATH
   specs:
     spree (5.4.0.alpha)
       spree_api (= 5.4.0.alpha)
-      spree_cli (= 5.4.0.alpha)
       spree_core (= 5.4.0.alpha)
     spree_api (5.4.0.alpha)
       alba (~> 3.0)
@@ -45,8 +44,6 @@ PATH
       pagy (~> 43.0)
       spree_core (= 5.4.0.alpha)
       typelizer (~> 0.7)
-    spree_cli (5.4.0.alpha)
-      thor (~> 1.0)
     spree_core (5.4.0.alpha)
       active_storage_validations (= 1.3.0)
       activemerchant (~> 1.67)
@@ -583,7 +580,7 @@ GEM
     rbs (3.10.3)
       logger
       tsort
-    rdoc (7.1.0)
+    rdoc (7.2.0)
       erb
       psych (>= 4.0.0)
       tsort
@@ -1043,7 +1040,7 @@ CHECKSUMS
   rb-fsevent (0.11.2) sha256=43900b972e7301d6570f64b850a5aa67833ee7d87b458ee92805d56b7318aefe
   rb-inotify (0.11.1) sha256=a0a700441239b0ff18eb65e3866236cd78613d6b9f78fea1f9ac47a85e47be6e
   rbs (3.10.3) sha256=70627f3919016134d554e6c99195552ae3ef6020fe034c8e983facc9c192daa6
-  rdoc (7.1.0) sha256=494899df0706c178596ca6e1d50f1b7eb285a9b2aae715be5abd742734f17363
+  rdoc (7.2.0) sha256=8650f76cd4009c3b54955eb5d7e3a075c60a57276766ebf36f9085e8c9f23192
   regexp_parser (2.11.3) sha256=ca13f381a173b7a93450e53459075c9b76a10433caadcb2f1180f2c741fc55a4
   reline (0.6.3) sha256=1198b04973565b36ec0f11542ab3f5cfeeec34823f4e54cebde90968092b1835
   request_store (1.7.0) sha256=e1b75d5346a315f452242a68c937ef8e48b215b9453a77a6c0acdca2934c88cb
@@ -1081,7 +1078,6 @@ CHECKSUMS
   spree (5.4.0.alpha)
   spree_admin (5.4.0.alpha)
   spree_api (5.4.0.alpha)
-  spree_cli (5.4.0.alpha)
   spree_core (5.4.0.alpha)
   spree_dev_tools (0.5.3) sha256=64ae7b215ac5d5c5f5890f6fc0dbcb12882b9af305a860f36f95f564ec240a75
   spree_emails (5.4.0.alpha)
