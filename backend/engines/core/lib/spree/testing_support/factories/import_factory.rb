@@ -16,5 +16,17 @@ FactoryBot.define do
         )
       end
     end
+
+    factory :customer_import, class: 'Spree::Imports::Customers', parent: :import do
+      type { 'Spree::Imports::Customers' }
+
+      after(:create) do |import|
+        import.attachment.attach(
+          io: File.open(Spree::Core::Engine.root.join('spec', 'fixtures', 'files', 'customers_import.csv')),
+          filename: 'customers_import.csv',
+          content_type: 'text/csv'
+        )
+      end
+    end
   end
 end
