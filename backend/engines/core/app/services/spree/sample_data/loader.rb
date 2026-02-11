@@ -5,27 +5,29 @@ module Spree
 
       def call
         Spree::Events.disable do
-          ensure_seeds_loaded
+          without_geocoding do
+            ensure_seeds_loaded
 
-          puts 'Loading sample configuration data...'
-          load_configuration_data
+            puts 'Loading sample configuration data...'
+            load_configuration_data
 
-          puts 'Loading sample metafield definitions...'
-          load_ruby_file('metafield_definitions')
+            puts 'Loading sample metafield definitions...'
+            load_ruby_file('metafield_definitions')
 
-          puts 'Loading sample products...'
-          load_products
+            puts 'Loading sample products...'
+            load_products
 
-          puts 'Loading sample customers...'
-          load_customers
+            puts 'Loading sample customers...'
+            load_customers
 
-          puts 'Loading sample orders...'
-          load_ruby_file('orders')
+            puts 'Loading sample orders...'
+            load_ruby_file('orders')
 
-          puts 'Loading sample posts...'
-          load_ruby_file('posts')
+            puts 'Loading sample posts...'
+            load_ruby_file('posts')
 
-          puts 'Sample data loaded successfully!'
+            puts 'Sample data loaded successfully!'
+          end
         end
       end
 
@@ -62,6 +64,14 @@ module Spree
       def load_ruby_file(name)
         file = sample_data_path.join("#{name}.rb")
         load file.to_s if file.exist?
+      end
+
+      def without_geocoding
+        previous = Spree::Config[:geocode_addresses]
+        Spree::Config[:geocode_addresses] = false
+        yield
+      ensure
+        Spree::Config[:geocode_addresses] = previous
       end
     end
   end
