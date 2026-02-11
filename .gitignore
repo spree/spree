@@ -59,4 +59,3 @@ brakeman-*.*
 **/node_modules
 packages/*/package-lock.json
 .turbo
-spree/
