@@ -58,7 +58,6 @@ end
 gem "devise"
 gem "spree", path: "engines"
 gem "spree_emails", path: "engines/emails"
-gem "spree_sample", path: "engines/sample"
 gem "spree_admin", path: "engines/admin"
 gem "spree_i18n"
 

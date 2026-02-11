@@ -193,6 +193,7 @@ module Spree
 
         Rails.application.config.spree.import_types = [
           Spree::Imports::Products,
+          Spree::Imports::Customers,
         ]
 
         Rails.application.config.spree.taxon_rules = [

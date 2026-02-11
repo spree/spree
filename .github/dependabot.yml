@@ -16,11 +16,6 @@ updates:
     interval: daily
   open-pull-requests-limit: 10
 - package-ecosystem: bundler
-  directory: "/sample"
-  schedule:
-    interval: daily
-  open-pull-requests-limit: 10
-- package-ecosystem: bundler
   directory: "/storefront"
   schedule:
     interval: daily

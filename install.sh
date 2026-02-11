@@ -1098,7 +1098,11 @@ show_final_instructions() {
     echo -e "\n${BOLD}3. Useful commands:${NC}"
     echo -e "   ${BLUE}bin/rails console${NC}              # Rails console"
     if [ "$LOAD_SAMPLE_DATA" = "false" ]; then
-        echo -e "   ${BLUE}bin/rails spree_sample:load${NC}    # Load sample data"
+        if [ "$USE_LOCAL_SPREE" = true ]; then
+            echo -e "   ${BLUE}bin/rails spree:load_sample_data${NC} # Load sample data"
+        else
+            echo -e "   ${BLUE}bin/rails spree_sample:load${NC}    # Load sample data"
+        fi
     fi
 
     echo -e "\n${BOLD}4. Documentation:${NC}"

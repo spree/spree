@@ -250,6 +250,8 @@ module Spree
 
       # eg. Spree::Imports::Orders => Spree::Order
       def model_class
+        return Spree.user_class if to_s == 'Spree::Imports::Customers'
+
         klass = "Spree::#{to_s.demodulize.singularize}".safe_constantize
 
         raise NameError, "Missing model class for #{self}" unless klass
