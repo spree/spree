@@ -16,9 +16,6 @@ module Spree
           puts 'Loading sample customers...'
           load_customers
 
-          puts 'Loading sample stock...'
-          load_ruby_file('stock')
-
           puts 'Loading sample orders...'
           load_ruby_file('orders')
 
