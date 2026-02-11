@@ -8,7 +8,7 @@
 - All Spree code must be namespaced under `Spree::` module
 - Spree is distributed as Rails engines with separate packages:
   - **Core packages (required):** `spree_core` (models, services, business logic), `spree_api` (Storefront API, Platform API, Webhooks)
-  - **Optional packages:** `spree_admin` (admin dashboard), `spree_cli` (CLI tool), `spree_storefront` (Rails storefront), `spree_emails` (transactional emails), `spree_page_builder` (visual page builder), `spree_sample` (sample data), `spree_dev_tools` (development/testing utilities)
+  - **Optional packages:** `spree_admin` (admin dashboard), `spree_storefront` (Rails storefront), `spree_emails` (transactional emails), `spree_page_builder` (visual page builder), `spree_sample` (sample data), `spree_dev_tools` (development/testing utilities)
 - Most users run Spree in headless mode with custom frontends using the Storefront API
 - Follow Rails conventions and the Rails Security Guide
 - Prefer Rails idioms and standard patterns over custom solutions
