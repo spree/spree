@@ -4,16 +4,16 @@ on:
   push:
     branches: [main]
     paths:
-      - 'packages/**'
-      - 'pnpm-lock.yaml'
-      - 'turbo.json'
-      - '.github/workflows/packages.yml'
+      - "packages/**"
+      - "pnpm-lock.yaml"
+      - "turbo.json"
+      - ".github/workflows/packages.yml"
   pull_request:
     paths:
-      - 'packages/**'
-      - 'pnpm-lock.yaml'
-      - 'turbo.json'
-      - '.github/workflows/packages.yml'
+      - "packages/**"
+      - "pnpm-lock.yaml"
+      - "turbo.json"
+      - ".github/workflows/packages.yml"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -61,8 +61,13 @@ jobs:
         with:
           node-version: 20
           cache: pnpm
+          registry-url: https://registry.npmjs.org
 
       - run: pnpm install --frozen-lockfile
+        working-directory: .
+
+      - name: Upgrade npm for Trusted Publishing support
+        run: npm install -g npm@latest
         working-directory: .
 
       - name: Check if version is published
@@ -77,7 +82,7 @@ jobs:
 
       - name: Build and Publish
         if: steps.check.outputs.published == 'false'
-        run: pnpm build && pnpm publish --provenance --access public --no-git-checks
+        run: pnpm build && npm publish --provenance --access public
 
   release-next:
     name: "Next - Release"
@@ -100,8 +105,13 @@ jobs:
         with:
           node-version: 20
           cache: pnpm
+          registry-url: https://registry.npmjs.org
 
       - run: pnpm install --frozen-lockfile
+        working-directory: .
+
+      - name: Upgrade npm for Trusted Publishing support
+        run: npm install -g npm@latest
         working-directory: .
 
       - name: Check if version is published
@@ -116,4 +126,4 @@ jobs:
 
       - name: Build and Publish
         if: steps.check.outputs.published == 'false'
-        run: pnpm build && pnpm publish --provenance --access public --no-git-checks
+        run: pnpm turbo build --filter=@spree/next && npm publish --provenance --access public
