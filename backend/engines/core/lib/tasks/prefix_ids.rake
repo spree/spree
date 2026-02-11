@@ -2,120 +2,104 @@
 
 namespace :spree do
   namespace :prefix_ids do
-    desc 'Backfill prefix_id for all existing records'
+    desc 'Backfill prefix_id for all existing records. Use MODEL=Spree::Order to backfill a single model. BATCH_SIZE=1000 to control batch size.'
     task backfill: :environment do
-      models = [
-        Spree::Address,
-        Spree::Adjustment,
-        Spree::ApiKey,
-        Spree::Asset,
-        Spree::Calculator,
-        Spree::Country,
-        Spree::CouponCode,
-        Spree::CreditCard,
-        Spree::CustomDomain,
-        Spree::CustomerGroup,
-        Spree::CustomerReturn,
-        Spree::DataFeed,
-        Spree::Digital,
-        Spree::DigitalLink,
-        Spree::Export,
-        Spree::GatewayCustomer,
-        Spree::GiftCard,
-        Spree::GiftCardBatch,
-        Spree::Import,
-        Spree::ImportMapping,
-        Spree::ImportRow,
-        Spree::Integration,
-        Spree::InventoryUnit,
-        Spree::Invitation,
-        Spree::LineItem,
-        Spree::LogEntry,
-        Spree::Metafield,
-        Spree::MetafieldDefinition,
-        Spree::NewsletterSubscriber,
-        Spree::OptionType,
-        Spree::OptionValue,
-        Spree::Order,
-        Spree::Payment,
-        Spree::PaymentCaptureEvent,
-        Spree::PaymentMethod,
-        Spree::PaymentSource,
-        Spree::Policy,
-        Spree::Post,
-        Spree::PostCategory,
-        Spree::Price,
-        Spree::PriceList,
-        Spree::PriceRule,
-        Spree::Product,
-        Spree::Promotion,
-        Spree::PromotionAction,
-        Spree::PromotionCategory,
-        Spree::PromotionRule,
-        Spree::Prototype,
-        Spree::Refund,
-        Spree::RefundReason,
-        Spree::Reimbursement,
-        Spree::Reimbursement::Credit,
-        Spree::ReimbursementType,
-        Spree::Report,
-        Spree::ReturnAuthorization,
-        Spree::ReturnAuthorizationReason,
-        Spree::ReturnItem,
-        Spree::Role,
-        Spree::Shipment,
-        Spree::ShippingCategory,
-        Spree::ShippingMethod,
-        Spree::ShippingMethodCategory,
-        Spree::ShippingRate,
-        Spree::State,
-        Spree::StateChange,
-        Spree::StockItem,
-        Spree::StockLocation,
-        Spree::StockMovement,
-        Spree::StockTransfer,
-        Spree::Store,
-        Spree::StoreCredit,
-        Spree::StoreCreditCategory,
-        Spree::StoreCreditEvent,
-        Spree::StoreCreditType,
-        Spree::StoreProduct,
-        Spree::TaxCategory,
-        Spree::TaxRate,
-        Spree::Taxon,
-        Spree::TaxonRule,
-        Spree::Taxonomy,
-        Spree::UserIdentity,
-        Spree::Variant,
-        Spree::WebhookDelivery,
-        Spree::WebhookEndpoint,
-        Spree::WishedItem,
-        Spree::Wishlist,
-        Spree::Zone
-      ]
+      batch_size = (ENV['BATCH_SIZE'] || 1000).to_i
+      models = prefixed_id_models
 
-      # Add user classes if they exist
-      models << Spree.user_class if Spree.user_class.present?
-      models << Spree.admin_user_class if Spree.admin_user_class.present? && Spree.admin_user_class != Spree.user_class
+      if ENV['MODEL'].present?
+        model = ENV['MODEL'].constantize
+        unless models.include?(model)
+          puts "Error: #{ENV['MODEL']} does not have prefix_id support"
+          exit 1
+        end
+        models = [model]
+      end
 
       models.each do |model|
-        next unless model.table_exists?
-        next unless model.column_names.include?('prefix_id')
-        next unless model.respond_to?(:_prefix_id_prefix) && model._prefix_id_prefix.present?
-
-        puts "Backfilling #{model.name}..."
-        count = 0
-
-        model.unscoped.where(prefix_id: nil).find_each do |record|
-          record.generate_prefix_id
-          record.update_column(:prefix_id, record.prefix_id)
-          count += 1
-        end
-
-        puts "  Updated #{count} records"
+        backfill_model(model, batch_size)
       end
 
       puts 'Done!'
+    end
+
+    desc 'Show backfill status for all models with prefix_id'
+    task status: :environment do
+      models = prefixed_id_models
+      total_remaining = 0
+      max_name_length = models.map { |m| m.name.length }.max
+
+      models.each do |model|
+        remaining = model.unscoped.where(prefix_id: nil).count
+        total_remaining += remaining
+        status = remaining.zero? ? 'done' : "#{remaining} remaining"
+        puts "  #{model.name.ljust(max_name_length)}  #{status}"
+      end
+
+      puts "\n  Total: #{total_remaining} remaining"
+    end
+
+    def prefixed_id_models
+      Rails.application.eager_load!
+
+      models = Spree::Base.descendants.select do |model|
+        model.respond_to?(:_prefix_id_prefix) &&
+          model._prefix_id_prefix.present? &&
+          model.table_exists? &&
+          model.column_names.include?('prefix_id')
+      end
+
+      [Spree.user_class, Spree.admin_user_class].compact.uniq.each do |user_class|
+        next if models.include?(user_class)
+        next unless user_class.respond_to?(:_prefix_id_prefix) && user_class._prefix_id_prefix.present?
+        next unless user_class.table_exists? && user_class.column_names.include?('prefix_id')
+
+        models << user_class
+      end
+
+      models.sort_by(&:name)
+    end
+
+    def backfill_model(model, batch_size)
+      total = model.unscoped.where(prefix_id: nil).count
+      if total.zero?
+        puts "#{model.name}: all records already backfilled"
+        return
+      end
+
+      prefix = model._prefix_id_prefix
+      puts "#{model.name}: backfilling #{total} records..."
+      start_time = Time.current
+      processed = 0
+
+      model.unscoped.where(prefix_id: nil).in_batches(of: batch_size) do |batch|
+        ids = batch.pluck(:id)
+        values = ids.map do |id|
+          prefix_id = "#{prefix}_#{random_id}"
+          quoted_id = model.connection.quote(id)
+          quoted_prefix_id = model.connection.quote(prefix_id)
+          "WHEN #{quoted_id} THEN #{quoted_prefix_id}"
+        end
+
+        sql = <<~SQL.squish
+          UPDATE #{model.table_name}
+          SET prefix_id = CASE id #{values.join(' ')} END
+          WHERE id IN (#{ids.map { |id| model.connection.quote(id) }.join(',')})
+        SQL
+
+        model.connection.execute(sql)
+        processed += ids.size
+        printf "  %d / %d (%.0f%%)\r", processed, total, (processed.to_f / total * 100)
+      end
+
+      elapsed = (Time.current - start_time).round(1)
+      puts "  #{model.name}: #{processed} records backfilled in #{elapsed}s"
+    end
+
+    def random_id
+      alphabet = Spree::PrefixedId::ALPHABET
+      length = Spree::PrefixedId::ID_LENGTH
+      Array.new(length) { alphabet[SecureRandom.random_number(alphabet.length)] }.join
     end
   end
 end
