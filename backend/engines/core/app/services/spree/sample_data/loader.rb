@@ -44,9 +44,6 @@ module Spree
       end
 
       def load_configuration_data
-        load_ruby_file('zones')
-        load_ruby_file('tax_categories')
-        load_ruby_file('tax_rates')
         load_ruby_file('shipping_methods')
         load_ruby_file('payment_methods')
         load_ruby_file('promotions')
