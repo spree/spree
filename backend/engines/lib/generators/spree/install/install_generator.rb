@@ -40,10 +40,6 @@ module Spree
       template 'config/initializers/spree.rb', 'config/initializers/spree.rb'
     end
 
-    def install_spree_cli
-      generate 'spree_cli:install'
-    end
-
     def install_authentication
       if @authentication == 'devise'
         generate 'spree:authentication:devise'
