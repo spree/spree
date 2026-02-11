@@ -1,5 +1,11 @@
 # @spree/next
 
+## 0.1.2
+
+### Patch Changes
+
+- Update type references from StoreUser to StoreCustomer following @spree/sdk rename
+
 ## 0.1.1
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @spree/sdk
 
+## 0.1.5
+
+### Patch Changes
+
+- Rename StoreUser/AdminUser types to StoreCustomer/AdminCustomer to align with industry naming conventions and avoid future AdminUser model conflict
+
 ## 0.1.4
 
 ### Patch Changes
