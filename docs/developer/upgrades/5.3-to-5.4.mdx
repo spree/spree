@@ -31,7 +31,20 @@ However this requires a one-time backfill of IDs for existing records. This can 
   bin/rails spree:prefix_ids:backfill
   ```
 
-Length of this process can vary depending on the size of your database. Both new API and Admin Dashboard will use these IDs. `spree_storefront` still uses the old IDs so this update won't disrupt your existing storefront.
+For large databases, you can backfill a single model at a time, which allows you to run multiple backfills in parallel across separate terminals:
+
+  ```bash
+  bin/rails spree:prefix_ids:backfill MODEL=Spree::Order
+  bin/rails spree:prefix_ids:backfill MODEL=Spree::LineItem
+  ```
+
+To check progress at any time:
+
+  ```bash
+  bin/rails spree:prefix_ids:status
+  ```
+
+Both new API and Admin Dashboard will use these IDs. `spree_storefront` still uses the old IDs so this update won't disrupt your existing storefront.
 
 ### Backfill Image Thumbnail IDs
 
