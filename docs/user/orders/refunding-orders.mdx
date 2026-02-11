@@ -1,26 +1,40 @@
 ---
-title: 'Refunding Orders'
-description: 'Refund orders to resolve customer complaints, process returns, or correct billing errors'
+title: "Refunding Orders"
+description: "Learn how to refund orders in Spree Commerce."
 ---
 
-It’s extremely important to be able to refund orders to resolve customer complaints, process returns, or correct billing errors. This helps maintain customer satisfaction, comply with refund policies, and ensure accurate financial records.
+Refunding orders is a key part of running a smooth ecommerce operation. Whether you're handling customer complaints, returns, or correcting billing errors, issuing refunds helps maintain trust, ensure financial accuracy, and stay compliant with store policies.
 
-To refund an order, navigate to the Orders tab of the admin dashboard.
+## How to Refund an Order
 
-<img height="359" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXcxw6ZxxPACrVfWa8kavmvyMWaRiM_Cdz_OlMeJr-qwiC7awzwVx8gc9gZp1at96zTFnuOeIMpcqvQ6eHm8OPAH08R0fCfsAzhpgx7sAe1i2SdlwYJ7Oo3g3DH016mEi72gJmSnvg?key=WLhE_opDT9mvC1wd1qRSb8vr" />
+To refund an order, navigate to the **Orders** tab in the admin dashboard.
 
-Find the order to be refunded and click on it to open the order editor.
+![Order management dashboard in Spree Commerce](/docs/images/user/orders/refunding-orders/1-refunding-orders.png)
 
-<img height="359" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXe_uY4hvMn8v35Cl0v41i0WviezUv3nP25P-EJKP4hM6lR-iHDmMR60aG1lPOMbVjTSh8azMtFHkicCtyvSH57wLUcizgLXFCSlkx5iOwWAQUD56MaNXw1mkiLyjeTocufrOE1aZg?key=WLhE_opDT9mvC1wd1qRSb8vr" />
+Click on the order you'd like to refund to open its detail page.
 
-The option to refund the order is found in the payment section of the order editor. Click on the three dots to the right of the payment details and select ‘Refund’.
+![An order details overview in Spree Commerce admin dashboard](/docs/images/user/orders/refunding-orders/2-order-details.png)
 
-<img height="152" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXdZNCj3maXx9m_kvUFkqRWCB60yW7WypNlI_Mp2Lt-GBzExyERdjryLrKLOi4l4c4fPFa__7bz892wauLOChlH0zB5agMg8FsoMMgnic24R30GAIO3FG3EukSOCX17g_sGx9P2x?key=WLhE_opDT9mvC1wd1qRSb8vr" />
+Scroll to the **Payments** section, and click the **three-dot menu** to the right of the payment you want to refund and select **Refund**.
 
-This will redirect you to a simple page where you can set the amount to be refunded (i.e., full or partial), and the refund reason.
+![Refunding an order payment in Spree Commerce](/docs/images/user/orders/refunding-orders/3-payment-section.png)
 
-<img height="360" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXdmZl1TJSXqwObctYpj13VjVWfvpTakkRfhW1Z-t5cIXfC5TFD4Uqc-RpJyG4DOu_Xd6FvmrTHC02LKFDWfaeI-v96aIRwDhEazv7ijoPzK14ar4uE6A8dVjGdFfU_LMm03b3nM5A?key=WLhE_opDT9mvC1wd1qRSb8vr" />
+This will open a simple refund form.
 
-Once you’ve set the correct amount and the reason, click ‘Create ‘ and the payment status of the order will be updated to ‘Refunded’.
+## Completing the Refund
 
-Important: The refund process depends on the payment method - some refunds are issued automatically (e.g., via Stripe), while others may require manual processing (e.g., for offline payments). Always double check the payment method and make sure the refund is issued accordingly.
+![The refund creation form in the Spree Commerce dashboard](/docs/images/user/orders/refunding-orders/4-refund-form.png)
+
+On the refund page, you’ll be able to:
+
+- **Set the refund amount** (full or partial)
+- **Choose a refund reason** from the dropdown
+
+Once complete, click **Create** to process the refund.
+
+The order’s payment state will be updated to reflect the refund:
+
+- **Refunded** for full refunds
+- **Partially Refunded** if only a portion was refunded
+
+<Warning>Refund behavior depends on the payment method. Some providers (like Stripe) automatically process refunds. Others (like offline/manual payments) may require you to issue the refund manually outside of Spree. Always double-check which payment method was used and whether the refund was successfully processed through your payment provider</Warning>
