@@ -25,6 +25,12 @@ describe Spree::Ability, type: :model do
   let(:ability) { Spree::Ability.new(user) }
   let(:token) { nil }
 
+  before do
+    # Ensure permission sets are configured (may have been reset by other specs)
+    Spree.permissions.assign(:default, [Spree::PermissionSets::DefaultCustomer])
+    Spree.permissions.assign(:admin, [Spree::PermissionSets::SuperUser])
+  end
+
   after do
     Spree::Ability.abilities = Set.new
   end

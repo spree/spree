@@ -72,8 +72,12 @@ RSpec.configure do |config|
   end
 
   # Re-enable events for specs that need them
+  # Also re-activate subscribers in case another spec called Events.reset!
   config.around(:each, events: true) do |example|
-    Spree::Events.enable { example.run }
+    Spree::Events.enable do
+      Spree::Events.activate!
+      example.run
+    end
   end
 
   config.before(:each) do
