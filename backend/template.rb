@@ -19,7 +19,7 @@ def add_gems
 
   # Optional Spree packages
   gem 'spree_emails', USE_LOCAL_SPREE ? { path: '../backend/engines/emails' } : { version: SPREE_VERSION }
-  gem 'spree_sample', USE_LOCAL_SPREE ? { path: '../backend/engines/sample' } : { version: SPREE_VERSION }
+  gem 'spree_sample', version: SPREE_VERSION unless USE_LOCAL_SPREE
   gem 'spree_admin', USE_LOCAL_SPREE ? { path: '../backend/engines/admin' } : { version: SPREE_VERSION }
 
   # Storefront packages (only when Rails storefront is selected)
@@ -103,7 +103,7 @@ end
 def load_sample_data
   if LOAD_SAMPLE_DATA
     say 'Loading sample data...', :blue
-    rails_command 'spree_sample:load'
+    rails_command USE_LOCAL_SPREE ? 'spree:load_sample_data' : 'spree_sample:load'
   end
 end
 
@@ -130,7 +130,7 @@ def show_success_message
   say
   say 'Useful commands:', :yellow
   say '  bin/rails console                # Rails console'
-  say '  bin/rails spree_sample:load      # Load more sample data'
+  say "  bin/rails #{USE_LOCAL_SPREE ? 'spree:load_sample_data' : 'spree_sample:load'}  # Load more sample data"
   say '  bin/spree version                # Spree CLI version'
   say '  bin/spree extension my_ext       # Generate a new Spree extension'
   say
