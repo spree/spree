@@ -1,124 +1,128 @@
 ---
 title: "Creating Orders"
-description: "Create orders as a Spree Commerce admin to handle special requests, phone orders, or any other non-standard transactions."
+description: "Learn how to manually create orders as an admin in Spree Commerce."
 ---
 
-Depending on your business and use case, creating orders as an admin may be a common occurrence or an occasional necessity for handling special requests, phone orders, or any other non-standard transactions.
+Depending on your business model, creating orders manually may be a common workflow - whether it’s to handle customer service scenarios, B2B orders, or backend sales operations. Follow this step by step guided flow that lets you build the order step by step.
 
-With Spree, you can create orders on behalf of customers should the need arise, and even capture payments in some cases (with the customers approval, of course!)
+## 1. Start a New Order
 
-To create an order, navigate to the Orders tab of the admin dashboard.
+Navigate to the **Orders** tab in the admin dashboard and click **New Order** in the top-right corner.
 
-<img height="359" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXeEjW-IfSTEb9YkrEUPTX43rBDJHK-p9ECnTWlTMEJaygZv323zMmmOVpbR2aJt9-_HeIGCYSbeazaDMODEAJaqE8x5cKTpuWOPg3HpLGLe_vruq1j6WVtrvWk98UO6_FkPdH1pbw?key=NIaQMGdNJV325Kjy-YZjbCwz" />
+![How to create orders in Spree Commerce](/docs/images/user/orders/creating-orders/1-creating-orders.png)
 
-Click on the blue ‘+ New Order’ button to get started. This will redirect you to the order creation page.
+You’ll be redirected to a short order setup form where you must:
 
-<img height="364" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXdCwCuX_3uFcevlKyMWjj-3iM_1ch0VU85qV5tyDxGRkxLKG2bdjJo9MH7BFq53-IqoC4PXKjcrq62IhDdz055otwRbmUeV4PwMIDwFLq3B3AIVDIVJs7VCfL0dd7nyBizWAOLklw?key=NIaQMGdNJV325Kjy-YZjbCwz" />
+- **Select Currency** - choose the appropriate currency for the order
+- **Choose a Customer**
+  - Select an existing customer
+  - _OR_ enter a new customer’s email to create a customer record on the fly
 
-At first, the editor will seem quite bare, but as we add details to the order, new sections will be revealed.
+![Adding a customer to an order in Spree](/docs/images/user/orders/creating-orders/2-customer-form.png)
 
-Let’s walk through each step of the process from start to finish.
+Once these details are filled in, click **Create** to continue.
 
-## Add a Customer <img height="415" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXfaQxG9q6KywR7MuoQp8X3fXYfXPMTV-FipGuow4XwKSq9wB3QHUsqU1Zl4Eu6Bx6aFUU658DV9FsdkD3ebPx_YRzH8mnJwKggKgjNuo435Q_CVsoipEGOZ6_mTgmUhYd1rW-GnvA?key=NIaQMGdNJV325Kjy-YZjbCwz" />
+## 2. Add Line Items
 
-Before doing anything else, you’ll first want to add the customer to the order - if you don’t know who the customer is then there is no order. You can add a new or existing customer to an order.
+![Adding line items to an order in Spree Commerce](/docs/images/user/orders/creating-orders/3-add-line-items.png)
 
-### Add a New Customer
+You’ll now land on the order editor, with the order in draft status. 
 
-To add a new customer, click on ‘+ Add customer to this order’ and then click on ‘Create New’. 
+Begin by clicking **Add Line Item** at the top of the page to add items to the order.
 
-<img height="351" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXcCAvCQDImV4j0EwmLNX05j1_vZ8NmxJy8j0LeMdif_lDt909vZHbQpbaQiD4tcZqk2dflRzsfMyHdMo4dwQftLHifLl_A8pXXOysJzQfF-4FiqGk0oHkrVhg_YrAJ4GmWY-LvPIA?key=NIaQMGdNJV325Kjy-YZjbCwz" />
+![Selecting variants for an order in Spree Commerce](/docs/images/user/orders/creating-orders/4-select-line-items.png)
 
-This will open a form where you can enter the customer email, phone number, first name, and last name, and a tag if desired, and select whether or not they want to opt in for email marketing.
+Search and select the desired product variant and click **Add Selected Variant** to add it to the order
 
-<img height="429" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXd-4KWQEEFbt6IsArxcFwxb0la09ACOkDJJxh_j35o5n45HZ2QCuFJkrJpKyp5Sqe5MJ2orfMcb2oEnwq4UlQSAlu6kK8OEs2VIXBE0dCeGQ6lb4oafIkGpJ5G-BZ6Mpk43eOqZlQ?key=NIaQMGdNJV325Kjy-YZjbCwz" />
+<Note>You can only add one product variant at a time. Repeat the step for multiple items.</Note>
 
-Once you’re finished, click ‘Save’ and the customer will be added to the order, as well as your customer database.
+## 3. Shipping & Billing Address Logic
 
-<img height="371" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXfBO5BpEqZXS72NiGHq5uX_PhawFechmKGLcSnU-dvlx_nP_aBa8WQNiSI49sDel1pZ4_dCFqS70iBrexulr3fcg9xgGeqlWleZisCBDq_flUL_L7hycnZNczkT70oy1rZrUTus?key=NIaQMGdNJV325Kjy-YZjbCwz" />
+After you add the first line item, Spree handles customer addresses based on whether it’s a new or existing customer:
 
-Now you’ll need to add a shipping and billing address for the customer. Click on ‘+ New Shipping Address’ and enter the correct information into the form the appears.
+### Existing Customer
 
-<img height="369" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXdiE0IVAL-pxwSrXPUPg8zszaxGP0I_XXCdEpowyt0KrYb1lz_oxDww9NMHIv_AKnTrWdExdaOrBrbwDS1Ixufo0smUJ0jm9-NN4V15-vj_jdh0sYkEH6hhWyW9Jok2tELm-Z9sQA?key=NIaQMGdNJV325Kjy-YZjbCwz" />
+![Adding an existing customer to a Spree Commerce order](/docs/images/user/orders/creating-orders/5-existing-customer.png)
 
-Click ‘Save’, and then click ‘+ New Billing Address’, and a window appears that allows you to either enter a new address, or use the shipping address.
+The customers default shipping and billing addresses are automatically used, but you can edit them via the **three-dot menu** in the Customer section.
 
-<img height="336" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXc9Y5f5tLeIXQIolxAWsx_Pcx8ALuFpbn4gr-6gsDW_aVC4yrsEFu-H4jKDol6AsvsW34F4yhJVuuVuR_2eSyRK2bsribooCW4CgMEqS8L6f_2AxZ3QWMOSrutzCQuW6OsdPFo_2A?key=NIaQMGdNJV325Kjy-YZjbCwz" />
+### New Customer 
 
-Once you’ve clicked ‘Save’, you can move on to adding line items to the order.
+![Adding a new customer to an order on the fly in Spree Commerce](/docs/images/user/orders/creating-orders/6-new-customer.png)
 
-### Add an Existing Customer
+You must manually add a shipping and billing address:
 
-To add an existing customer, click on ‘+ Add customer to this order’ and then select the customer from the dropdown.
+1. Locate the **Customer** section
+2. Click **\+ New Shipping Address** and fill in the form
+3. Click **\+ New Billing Address** (or select "Same as Shipping")
 
-The customer, along with their default shipping and billing details, will be added to the order. <img height="415" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXejtbcPiO9Lhb5wsvliEP1i3d7qmScOXRTqNaKSorohf7-qMDU_vbnExMRXynGJQW30riCbrmLH2-BBpFEpM2YB5SY8kCgg6YcoBvRew4nriO6p6wiZROzG787SD0w28GTzIlKZcA?key=NIaQMGdNJV325Kjy-YZjbCwz" />
+## 4. Add a Shipping Method
 
-If the customer would like to place the order using a different shipping and/or billing address, then you can click the three dots in the upper right corner to update them accordingly.&#x20;
+![Adding a shipping method to an order in Spree Commerce](/docs/images/user/orders/creating-orders/7-shipment-section.png)
 
-<img height="349" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXcDS6bL2W7jg7OFKZJ_4t0f9D7wZav0vk2Qnq4IEPtrS1fh6pSWNyUW9BF0T45xV0fQ14Wu2_qr3mc6Joqlxqbac3qnTiPm4oBs1gcbtKHf-1dTP2HW1bDP075XnrKSr7cyFGsi6Q?key=NIaQMGdNJV325Kjy-YZjbCwz" />
+Once a line item is added, a shipment will appear in the Shipment section, with a default shipping method selected.
 
-## Add Line Items
+To change it:
 
-Once you’ve added the customer, you’ll need to add line items (products) to the order.
+1. Click the **pencil (edit)** icon next to the shipping method
+2. Select the desired method from the dropdown
+3. Click **Save**
 
-To do so, click ‘+ Add line item’ at the top of the page.
+## 5. Apply Promotions
 
-<img height="269" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXdEo2tVwWBM_Qhud8SnrFpa2objM7Y39BqDw1--pqCsvlzxWIKuYztRMFZx93FpL_yk5mmd0pZZ910rWw6mB6u8ae3BLaArot1tiDFDKotpHjwQaJ890KQtcIM87UmgByCqaKbb?key=NIaQMGdNJV325Kjy-YZjbCwz" />
+![Manually adding a promotion to an order as an admin in Spree Commerce](/docs/images/user/orders/creating-orders/8-promo-code.png)
 
-This will open a small window where you can select the product variants you’d like to add to the order.
+Admins can manually apply valid **Promotion Codes** to the order. To do so:
 
-<img height="395" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXfbXQlKpA3uoEOskZC2R_wDATXPEIAC9fTHKLeFWDVO9JCK6ut5ZOlr7jH6EeyTU3CAYVL7-hkUMapZi6hdDdQilON0sc0LYoQzyunaNykzmy8mNbK4mHmE0k-g1I2jrNA-g0FbTA?key=NIaQMGdNJV325Kjy-YZjbCwz" />
+1. Scroll to the **Promotions** section
+2. Click **\+ Add Promotion Code**
+3. Enter the coupon code and apply it
 
-Click ‘Add selected variant’ and the line item will be added to the order. Notice that the UI of the page changes to include a shipment section, payment section, and a cost summary.
+If valid, any applicable discounts will be reflected in the order total.
 
-<img height="359" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXd7bpuflIyOPStd17LkQwOcDgqp9yPmeTaUSlbB8gD-RAAZnuwi6AM4ta-pnoEpZ1826_innjXKXYoCAe5Z8mCXS5go_Dcp6nFxwjTmLFU4QNe5Hns44d4ejopX31CAN3qzmo3Y?key=NIaQMGdNJV325Kjy-YZjbCwz" />
+## 6. Add Order Adjustments
 
-Note: Line items can only be selected one at a time, so if the customer requests multiple different products simply repeat this step.
+![Making order adjustments in Spree Commerce](/docs/images/user/orders/creating-orders/9-order-adjustment.png)
 
-## Add a Shipping Method
+To manually adjust the order total (e.g., for discounts, fees, or custom credits):
 
-After adding a line item, the shipment section will be revealed, and a shipping method will be added automatically. To change the shipping method, click the pencil icon (edit button) next to the shipping method.
+1. Scroll to the **Adjustments** section
+2. Click **\+ New Adjustment**
+3. Enter a **Label** and set an **Amount**:
+   1. Positive amount = charge
+   2. Negative amount  = credit
+4. Click **Create**
 
-<img height="240" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXcQAiCa6F4HO3MRV8NKWcrgN2Xj_F2q2Jq9O13_wGteBNxrlCTmPUjgAiVn5s3UtwiTRm5lWk_hzF5LQDfglpUKlWCCChRC2UISqwtxAVdVy9uhnvnAKx7MN1xi8llLCdTkh6qrsg?key=NIaQMGdNJV325Kjy-YZjbCwz" />
+Adjustments will be reflected in the cost summary.
 
-Select the correct shipping method from the dropdown and then hit ‘Save’ to update the method for the order.
+## 7. Add a Payment
 
-<img height="240" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXckIT8Tn3WCU6sVD8IIv157fHFlyOJ9XHEPpLBoc-n1bxjUrpxA1DVkU_SG0cZ4AK3EKh0BnQxxZg19_p-7QdcUACcPivyOdSraBcB4U6-hPnkA6g18Ia0VTHZ_VG9z9kkDk_q9?key=NIaQMGdNJV325Kjy-YZjbCwz" />
+![Adding a payment to an order in the Spree Commerce dashboard](/docs/images/user/orders/creating-orders/10-add-payment.png)
 
-## Add a Payment
+There are three options for applying payment to the order:
 
-Last but certainly not least, you’ll need to add a payment method to the order. To do so, there are three options to choose from.
+### Create a Manual Payment
 
-### Create a New Payment
+![Manually creating a payment for an order in the Spree dashboard](/docs/images/user/orders/creating-orders/11-new-payment.png)
 
-To manually add a payment , click on the ‘+ New Payment Method’ button. This will redirect you to a page where you can create a new payment for the order.
+Click **\+ New Payment Method** and fill in:
 
-<img height="360" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXfKrZJgfYyo-VNiwt1LY84I3marLAgU7upobgeLm-voQivsE6pGGb9iX38ReoOFDqAXIK9if3hJheaQtMRknIUL5Vxz4sUJ1e3MqMdnjL3ulD3nmBkCCsVlJNTmmImIkRUcKzcHng?key=NIaQMGdNJV325Kjy-YZjbCwz" />
+- **Amount** - defaults to order total
+- **Payment Method** - e.g., Stripe, bank transfer, etc.
+- **Payment Source** - saved card (if available)
 
-Here, you can set:
+Click **Create** to add the payment.
 
-* Amount - equals total order value by default
-
-* Payment Method - a list of payment methods available on your store
-
-* Payment Source - a list of the customer’s saved cards associated with the payment method
-
-Once you’ve verified the information is correct, click ‘Create’ to add the payment to the order. 
-
-<img height="173" width="624" src="https://lh7-rt.googleusercontent.com/docsz/AD_4nXd_MHEFEQYv9NOhuUi7e2uxjT6SbTf2TQTIZE5HvCjlplRD4cruvON0ZyEzZUGOJ3dsCcIemPK8_8PSUKulDSy6spIYvDsYp3P4upPkd4FMLgtUYaAsG7OX0kQRk6sk_LD9gwBdEQ?key=NIaQMGdNJV325Kjy-YZjbCwz" />
-
-Note: Depending on the chosen payment method and its settings, the payment may or may not be automatically captured.
-
-In the above example, we added a Stripe payment method using the customer’s saved card as the payment source.
-
-Note: If the customer has no payment sources (i.e., credit/debit cards) associated with a particular payment method, you will not be able to create a payment using that method.
+<Note>If the customer has no saved card, you won’t be able to use some methods.</Note>
 
 ### Send a Payment Link
 
-Alternatively, you can send the customer a payment link by email. The customer will receive a link that redirects them to a pre-populated checkout where they can choose to pay for the order using any of the payment methods available on your store.
-
-Note: The customer must be logged in to complete the purchase.
+Email the customer a secure checkout link. They must be logged in to complete it.
 
 ### Copy Payment Link
 
-Similar to above, but instead you copy the link and can send it to the customer via the preferred communication channel.
+Copy the link and send it via your preferred communication method.
+
+## 8. Fulfill the Order
+
+Once all items, payments, promos, and adjustments are in place, you can proceed to ship the order once you have received payment from the customer. For details on fulfillment, see [<u>Processing Orders</u>](https://spreecommerce.org/docs/user/orders/processing-orders).
