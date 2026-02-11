@@ -10,6 +10,9 @@ module Spree
           puts 'Loading sample configuration data...'
           load_configuration_data
 
+          puts 'Loading sample metafield definitions...'
+          load_ruby_file('metafield_definitions')
+
           puts 'Loading sample products...'
           load_products
 
@@ -18,9 +21,6 @@ module Spree
 
           puts 'Loading sample orders...'
           load_ruby_file('orders')
-
-          puts 'Loading sample metafields...'
-          load_ruby_file('metafields')
 
           puts 'Loading sample posts...'
           load_ruby_file('posts')
