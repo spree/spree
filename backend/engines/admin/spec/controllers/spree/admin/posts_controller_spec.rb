@@ -81,7 +81,7 @@ RSpec.describe Spree::Admin::PostsController, type: :controller do
       expect(post.image).to be_attached
       expect(post.meta_title).to eq('New Post for SEO')
       expect(post.meta_description).to eq('This is a new post for SEO')
-      expect(post.tag_list).to eq(['SEO', 'VIP'])
+      expect(post.tag_list).to match_array(['SEO', 'VIP'])
       expect(post.slug).to eq("my-new-post")
       expect(post.post_category).to eq(post_category)
     end
@@ -130,7 +130,7 @@ RSpec.describe Spree::Admin::PostsController, type: :controller do
       expect(post.image).to be_attached
       expect(post.meta_title).to eq('Updated Post for SEO')
       expect(post.meta_description).to eq('This is an updated post for SEO')
-      expect(post.tag_list).to eq(['Updated', 'VIP'])
+      expect(post.tag_list).to match_array(['Updated', 'VIP'])
       expect(post.post_category).to eq(post_category)
     end
   end

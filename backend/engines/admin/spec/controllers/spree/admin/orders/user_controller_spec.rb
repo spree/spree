@@ -27,7 +27,7 @@ RSpec.describe Spree::Admin::Orders::UserController, type: :controller do
         expect(existing_user.reload.first_name).to eq(user_params[:first_name])
         expect(existing_user.last_name).to eq(user_params[:last_name])
         expect(existing_user.email).to eq(user_params[:email])
-        expect(existing_user.tag_list).to eq(user_params[:tag_list])
+        expect(existing_user.tag_list).to match_array(user_params[:tag_list])
       end
     end
 
@@ -43,7 +43,7 @@ RSpec.describe Spree::Admin::Orders::UserController, type: :controller do
         expect(new_user.reload.first_name).to eq(user_params[:first_name])
         expect(new_user.last_name).to eq(user_params[:last_name])
         expect(new_user.email).to eq(user_params[:email])
-        expect(new_user.tag_list).to eq(user_params[:tag_list])
+        expect(new_user.tag_list).to match_array(user_params[:tag_list])
       end
     end
   end

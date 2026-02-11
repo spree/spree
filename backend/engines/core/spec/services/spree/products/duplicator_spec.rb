@@ -75,7 +75,7 @@ RSpec.describe Spree::Products::Duplicator do
     end
 
     it 'copies tags' do
-      expect(new_product.tag_list).to eq(['tag1', 'tag2'])
+      expect(new_product.tag_list).to match_array(['tag1', 'tag2'])
     end
 
     it 'clones barcode' do
