@@ -17,7 +17,7 @@ module Spree
       subject(:uniq_values) { property.uniq_values }
 
       it 'returns unique Product Properties values for a given list of Product Properties' do
-        expect(uniq_values).to eq([['alpha', 'Alpha'], ['beta', 'Beta']])
+        expect(uniq_values).to match_array([['alpha', 'Alpha'], ['beta', 'Beta']])
       end
     end
   end

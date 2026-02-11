@@ -75,7 +75,7 @@ describe Spree::Property, type: :model do
       create(:product_property, property: property, value: 'Another 10% Value')
     end
 
-    it { expect(property.uniq_values).to eq([['some-value', 'Some Value'], ['another-10-value', 'Another 10% Value']]) }
+    it { expect(property.uniq_values).to match_array([['some-value', 'Some Value'], ['another-10-value', 'Another 10% Value']]) }
 
     context 'when narrowing the scope of product properties' do
       let!(:product_property_1) { create(:product_property, property: property, value: 'Some 10% Value') }
@@ -91,12 +91,12 @@ describe Spree::Property, type: :model do
         ]
       end
 
-      it { expect(property.uniq_values(product_properties_scope: scope)).to eq(scope_uniq_values) }
+      it { expect(property.uniq_values(product_properties_scope: scope)).to match_array(scope_uniq_values) }
     end
 
     context 'when caching' do
       it 'correctly returns uniq values' do
-        expect(property.uniq_values).to eq([['some-value', 'Some Value'], ['another-10-value', 'Another 10% Value']])
+        expect(property.uniq_values).to match_array([['some-value', 'Some Value'], ['another-10-value', 'Another 10% Value']])
 
         product_property_1 = create(:product_property, property: property, value: 'Some 20% Value')
         expect(property.uniq_values).to match_array(

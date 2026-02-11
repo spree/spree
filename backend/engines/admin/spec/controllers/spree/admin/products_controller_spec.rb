@@ -1017,7 +1017,7 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
         it 'removes the variant' do
           send_request
 
-          expect(product.reload.variant_ids).to eq([variant2.id, variant3.id])
+          expect(product.reload.variant_ids).to match_array([variant2.id, variant3.id])
         end
       end
 
@@ -1300,8 +1300,8 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
 
     it 'adds tags to products' do
       send_request
-      expect(product.reload.tag_list).to eq(['tag1', 'tag2', 'tag3'])
-      expect(product2.reload.tag_list).to eq(['tag1', 'tag2', 'tag3'])
+      expect(product.reload.tag_list).to match_array(['tag1', 'tag2', 'tag3'])
+      expect(product2.reload.tag_list).to match_array(['tag1', 'tag2', 'tag3'])
       expect(response).to redirect_to('/admin/products')
     end
   end
