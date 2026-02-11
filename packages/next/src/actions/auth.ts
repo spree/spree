@@ -1,7 +1,7 @@
 'use server';
 
 import { revalidateTag } from 'next/cache';
-import type { StoreUser } from '@spree/sdk';
+import type { StoreCustomer } from '@spree/sdk';
 import { getClient } from '../config';
 import { setAccessToken, clearAccessToken, getAccessToken, getCartToken } from '../cookies';
 import { withAuthRefresh } from '../auth-helpers';
@@ -97,7 +97,7 @@ export async function logout(): Promise<void> {
 /**
  * Get the currently authenticated customer. Returns null if not logged in.
  */
-export async function getCustomer(): Promise<StoreUser | null> {
+export async function getCustomer(): Promise<StoreCustomer | null> {
   const token = await getAccessToken();
   if (!token) return null;
 
@@ -116,7 +116,7 @@ export async function getCustomer(): Promise<StoreUser | null> {
  */
 export async function updateCustomer(
   data: { first_name?: string; last_name?: string; email?: string }
-): Promise<StoreUser> {
+): Promise<StoreCustomer> {
   const result = await withAuthRefresh(async (options) => {
     return getClient().customer.update(data, options);
   });

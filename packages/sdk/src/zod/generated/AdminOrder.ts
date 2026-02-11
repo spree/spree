@@ -1,6 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
-import { AdminUserSchema } from './AdminUser';
+import { AdminCustomerSchema } from './AdminCustomer';
 import { StoreAddressSchema } from './StoreAddress';
 import { StoreLineItemSchema } from './StoreLineItem';
 import { StoreOrderPromotionSchema } from './StoreOrderPromotion';
@@ -56,7 +56,7 @@ export const AdminOrderSchema: z.ZodObject<any> = z.object({
   approved_at: z.string().nullable(),
   canceler_id: z.string().nullable(),
   created_by_id: z.string().nullable(),
-  user: z.lazy(() => AdminUserSchema).optional(),
+  user: z.lazy(() => AdminCustomerSchema).optional(),
 });
 
 export type AdminOrder = z.infer<typeof AdminOrderSchema>;

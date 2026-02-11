@@ -20,7 +20,7 @@ RSpec.describe 'Customers API', type: :request, swagger_doc: 'api-reference/stor
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
 
-        schema '$ref' => '#/components/schemas/StoreUser'
+        schema '$ref' => '#/components/schemas/StoreCustomer'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -72,7 +72,7 @@ RSpec.describe 'Customers API', type: :request, swagger_doc: 'api-reference/stor
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:body) { { first_name: 'Updated', last_name: 'Name' } }
 
-        schema '$ref' => '#/components/schemas/StoreUser'
+        schema '$ref' => '#/components/schemas/StoreCustomer'
 
         run_test! do |response|
           data = JSON.parse(response.body)

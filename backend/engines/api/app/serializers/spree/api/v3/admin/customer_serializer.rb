@@ -2,9 +2,9 @@ module Spree
   module Api
     module V3
       module Admin
-        # Admin API User Serializer
-        # Full user data including admin-only fields
-        class UserSerializer < V3::UserSerializer
+        # Admin API Customer Serializer
+        # Full customer data including admin-only fields
+        class CustomerSerializer < V3::CustomerSerializer
           typelize phone: 'string | null', login: 'string | null',
                    accepts_email_marketing: :boolean,
                    last_sign_in_at: 'string | null', current_sign_in_at: 'string | null',
@@ -32,7 +32,7 @@ module Spree
           end
 
           many :orders,
-               resource: Spree::Api::V3::Admin::OrderSerializer,
+               resource: Spree.api.admin_order_serializer,
                if: proc { params[:includes]&.include?('orders') }
 
           # TODO: Add store_credits association when Admin API is implemented

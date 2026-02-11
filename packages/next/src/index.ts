@@ -63,7 +63,7 @@ export type {
   StoreCountry,
   StoreStore,
   StoreAddress,
-  StoreUser,
+  StoreCustomer,
   StoreCreditCard,
   StoreGiftCard,
   StoreShipment,

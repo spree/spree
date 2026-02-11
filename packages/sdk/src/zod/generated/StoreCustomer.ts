@@ -2,7 +2,7 @@
 import { z } from 'zod';
 import { StoreAddressSchema } from './StoreAddress';
 
-export const StoreUserSchema = z.object({
+export const StoreCustomerSchema = z.object({
   id: z.string(),
   email: z.string(),
   first_name: z.string().nullable(),
@@ -14,4 +14,4 @@ export const StoreUserSchema = z.object({
   default_shipping_address: StoreAddressSchema,
 });
 
-export type StoreUser = z.infer<typeof StoreUserSchema>;
+export type StoreCustomer = z.infer<typeof StoreCustomerSchema>;

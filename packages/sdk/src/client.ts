@@ -29,7 +29,7 @@ import type {
   StoreWishlist,
   StoreWishedItem,
   StoreAddress,
-  StoreUser,
+  StoreCustomer,
 } from './types';
 
 // Re-export types for convenience
@@ -709,8 +709,8 @@ export class SpreeClient {
     /**
      * Get current customer profile
      */
-    get: (options?: RequestOptions): Promise<StoreUser> =>
-      this.request<StoreUser>('GET', '/customer', options),
+    get: (options?: RequestOptions): Promise<StoreCustomer> =>
+      this.request<StoreCustomer>('GET', '/customer', options),
 
     /**
      * Update current customer profile
@@ -718,8 +718,8 @@ export class SpreeClient {
     update: (
       params: { first_name?: string; last_name?: string; email?: string },
       options?: RequestOptions
-    ): Promise<StoreUser> =>
-      this.request<StoreUser>('PATCH', '/customer', {
+    ): Promise<StoreCustomer> =>
+      this.request<StoreCustomer>('PATCH', '/customer', {
         ...options,
         body: params,
       }),

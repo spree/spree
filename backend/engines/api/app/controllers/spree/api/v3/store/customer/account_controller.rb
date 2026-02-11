@@ -23,7 +23,7 @@ module Spree
             protected
 
             def serializer_class
-              Spree.api.user_serializer
+              Spree.api.customer_serializer
             end
 
             def permitted_params

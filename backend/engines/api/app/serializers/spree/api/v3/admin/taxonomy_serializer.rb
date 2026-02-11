@@ -6,7 +6,7 @@ module Spree
         # Full taxonomy data including admin-only fields
         class TaxonomySerializer < V3::TaxonomySerializer
           many :metafields,
-               resource: Spree::Api::V3::Admin::MetafieldSerializer,
+               resource: Spree.api.admin_metafield_serializer,
                if: proc { params[:includes]&.include?('metafields') }
         end
       end

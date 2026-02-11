@@ -76,7 +76,7 @@ module Spree
               type: :object,
               properties: {
                 token: { type: :string, description: 'JWT access token' },
-                user: { '$ref' => '#/components/schemas/StoreUser' }
+                user: { '$ref' => '#/components/schemas/StoreCustomer' }
               },
               required: %w[token user]
             }
