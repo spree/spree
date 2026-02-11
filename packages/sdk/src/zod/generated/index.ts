@@ -1,16 +1,17 @@
 // This file is auto-generated. Do not edit directly.
+export { AdminCustomerSchema, type AdminCustomer } from './AdminCustomer';
 export { AdminMetafieldSchema, type AdminMetafield } from './AdminMetafield';
 export { AdminOrderSchema, type AdminOrder } from './AdminOrder';
 export { AdminPriceSchema, type AdminPrice } from './AdminPrice';
 export { AdminProductSchema, type AdminProduct } from './AdminProduct';
 export { AdminTaxonSchema, type AdminTaxon } from './AdminTaxon';
 export { AdminTaxonomySchema, type AdminTaxonomy } from './AdminTaxonomy';
-export { AdminUserSchema, type AdminUser } from './AdminUser';
 export { AdminVariantSchema, type AdminVariant } from './AdminVariant';
 export { StoreAddressSchema, type StoreAddress } from './StoreAddress';
 export { StoreBaseSchema, type StoreBase } from './StoreBase';
 export { StoreCountrySchema, type StoreCountry } from './StoreCountry';
 export { StoreCreditCardSchema, type StoreCreditCard } from './StoreCreditCard';
+export { StoreCustomerSchema, type StoreCustomer } from './StoreCustomer';
 export { StoreDigitalLinkSchema, type StoreDigitalLink } from './StoreDigitalLink';
 export { StoreGiftCardSchema, type StoreGiftCard } from './StoreGiftCard';
 export { StoreImageSchema, type StoreImage } from './StoreImage';
@@ -32,7 +33,6 @@ export { StoreStockLocationSchema, type StoreStockLocation } from './StoreStockL
 export { StoreStoreSchema, type StoreStore } from './StoreStore';
 export { StoreTaxonSchema, type StoreTaxon } from './StoreTaxon';
 export { StoreTaxonomySchema, type StoreTaxonomy } from './StoreTaxonomy';
-export { StoreUserSchema, type StoreUser } from './StoreUser';
 export { StoreVariantSchema, type StoreVariant } from './StoreVariant';
 export { StoreWishedItemSchema, type StoreWishedItem } from './StoreWishedItem';
 export { StoreWishlistSchema, type StoreWishlist } from './StoreWishlist';

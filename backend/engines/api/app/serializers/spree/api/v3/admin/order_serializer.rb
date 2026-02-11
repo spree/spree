@@ -28,7 +28,7 @@ module Spree
           end
 
           one :user,
-              resource: Spree::Api::V3::Admin::UserSerializer,
+              resource: Spree.api.admin_customer_serializer,
               if: proc { params[:includes]&.include?('user') }
 
           # TODO: Add adjustments associations when Admin API is implemented

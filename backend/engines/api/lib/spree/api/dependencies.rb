@@ -104,7 +104,7 @@ module Spree
         payment_source_serializer: 'Spree::Api::V3::PaymentSourceSerializer',
         shipment_serializer: 'Spree::Api::V3::ShipmentSerializer',
         address_serializer: 'Spree::Api::V3::AddressSerializer',
-        user_serializer: 'Spree::Api::V3::UserSerializer',
+        customer_serializer: 'Spree::Api::V3::CustomerSerializer',
         country_serializer: 'Spree::Api::V3::CountrySerializer',
         state_serializer: 'Spree::Api::V3::StateSerializer',
         store_serializer: 'Spree::Api::V3::StoreSerializer',
@@ -120,6 +120,16 @@ module Spree
         digital_link_serializer: 'Spree::Api::V3::DigitalLinkSerializer',
         gift_card_serializer: 'Spree::Api::V3::GiftCardSerializer',
         metafield_serializer: 'Spree::Api::V3::MetafieldSerializer',
+
+        # v3 admin serializers (API v3 Admin)
+        admin_customer_serializer: 'Spree::Api::V3::Admin::CustomerSerializer',
+        admin_order_serializer: 'Spree::Api::V3::Admin::OrderSerializer',
+        admin_product_serializer: 'Spree::Api::V3::Admin::ProductSerializer',
+        admin_variant_serializer: 'Spree::Api::V3::Admin::VariantSerializer',
+        admin_price_serializer: 'Spree::Api::V3::Admin::PriceSerializer',
+        admin_metafield_serializer: 'Spree::Api::V3::Admin::MetafieldSerializer',
+        admin_taxon_serializer: 'Spree::Api::V3::Admin::TaxonSerializer',
+        admin_taxonomy_serializer: 'Spree::Api::V3::Admin::TaxonomySerializer',
 
         # platform serializers
         platform_metafield_serializer: 'Spree::Api::V2::Platform::MetafieldSerializer',

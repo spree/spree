@@ -508,7 +508,7 @@ import type {
   StoreTaxonomy,
   StoreLineItem,
   StoreAddress,
-  StoreUser,
+  StoreCustomer,
   PaginatedResponse,
 } from '@spree/sdk';
 
@@ -531,7 +531,7 @@ The SDK exports all Store API types:
 - `StoreCountry` - Country with states
 - `StoreState` - State/province
 - `StoreAddress` - Customer address
-- `StoreUser` - Customer profile
+- `StoreCustomer` - Customer profile
 - `StoreStore` - Store configuration
 
 ### Commerce Types

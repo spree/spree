@@ -1,9 +1,9 @@
 module Spree
   module Api
     module V3
-      # Store API User Serializer
+      # Store API Customer Serializer
       # Customer-facing user data
-      class UserSerializer < BaseSerializer
+      class CustomerSerializer < BaseSerializer
         typelize email: :string, first_name: 'string | null', last_name: 'string | null',
                  default_billing_address: 'StoreAddress | null', default_shipping_address: 'StoreAddress | null'
 

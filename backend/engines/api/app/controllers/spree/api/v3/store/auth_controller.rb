@@ -133,7 +133,7 @@ module Spree
           end
 
           def user_serializer
-            Spree.api.user_serializer
+            Spree.api.customer_serializer
           end
         end
       end

@@ -11,7 +11,7 @@ module Spree
           attributes :lft, :rgt
 
           many :metafields,
-               resource: Spree::Api::V3::Admin::MetafieldSerializer,
+               resource: Spree.api.admin_metafield_serializer,
                if: proc { params[:includes]&.include?('metafields') }
         end
       end

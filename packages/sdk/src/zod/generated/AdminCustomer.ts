@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { AdminOrderSchema } from './AdminOrder';
 import { StoreAddressSchema } from './StoreAddress';
 
-export const AdminUserSchema: z.ZodObject<any> = z.object({
+export const AdminCustomerSchema: z.ZodObject<any> = z.object({
   id: z.string(),
   email: z.string(),
   first_name: z.string().nullable(),
@@ -25,4 +25,4 @@ export const AdminUserSchema: z.ZodObject<any> = z.object({
   orders: z.array(z.lazy(() => AdminOrderSchema)).optional(),
 });
 
-export type AdminUser = z.infer<typeof AdminUserSchema>;
+export type AdminCustomer = z.infer<typeof AdminCustomerSchema>;
