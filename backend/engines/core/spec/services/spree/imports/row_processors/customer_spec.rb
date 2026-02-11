@@ -103,15 +103,7 @@ RSpec.describe Spree::Imports::RowProcessors::Customer, type: :service do
 
   context 'when updating an existing customer' do
     let!(:existing_user) do
-      user = Spree.user_class.new(
-        email: 'jane.smith@example.com',
-        first_name: 'Old',
-        last_name: 'Name',
-        password: 'existing_password',
-        password_confirmation: 'existing_password'
-      )
-      user.save!
-      user
+      create(:user, email: 'jane.smith@example.com', first_name: 'Old', last_name: 'Name')
     end
 
     let(:row_data) do
