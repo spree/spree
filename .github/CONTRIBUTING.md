@@ -62,7 +62,6 @@ The Spree [Rails engines](https://guides.rubyonrails.org/engines.html) live insi
 | `api` | `spree_api` | REST APIs |
 | `admin` | `spree_admin` | Admin dashboard |
 | `emails` | `spree_emails` | Transactional emails |
-| `sample` | `spree_sample` | Sample seed data |
 
 ### Spree namespace
 
@@ -110,7 +109,7 @@ bundle exec rake test_app
 bundle exec rspec
 ```
 
-Replace `core` with `api`, `admin`, `emails`, or `sample` to test other engines.
+Replace `core` with `api`, `admin`, or `emails` to test other engines.
 
 By default engine tests run against SQLite3. To run against PostgreSQL, set the `DB` environment variable:
 
