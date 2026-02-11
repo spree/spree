@@ -42,10 +42,12 @@ module Spree
             failed += 1
             puts "\n  Warning: Row #{row_number} failed: #{e.message}"
           end
+
+          print '.' if (row_number % 10).zero?
         end
 
         import.update!(status: 'completed')
-        puts "  Processed #{row_number} rows (#{failed} failed)"
+        puts "\n  Processed #{row_number} rows (#{failed} failed)"
       end
     end
   end
