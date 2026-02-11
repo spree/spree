@@ -100,6 +100,18 @@ RSpec.describe Spree::Admin::ImportsController, type: :controller do
         expect(assigns(:rows)).to eq([row])
       end
     end
+
+    context 'when rows have variant items' do
+      let(:import) { create(:product_import, status: :completed_mapping) }
+      let(:variant) { create(:variant) }
+      let!(:row) { create(:import_row, import: import, status: :completed, item: variant) }
+
+      it 'renders the variant partial' do
+        get :show, params: { id: import.to_param }
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include(variant.name)
+      end
+    end
   end
 
   describe 'PUT #complete_mapping' do
