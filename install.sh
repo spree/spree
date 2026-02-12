@@ -14,7 +14,7 @@
 
 set -e
 
-# Colors for output (defined early for error handler)
+# Colors for output (used before gum is available and in error handler)
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -119,40 +119,44 @@ for arg in "$@"; do
     esac
 done
 
-# Helper functions
+# Helper functions (require gum - only called after install_gum)
 print_header() {
-    echo -e "\n${BOLD}${BLUE}===================================================${NC}"
-    echo -e "${BOLD}${BLUE}  Spree Commerce Guided Installer${NC}"
-    echo -e "${BOLD}${BLUE}===================================================${NC}\n"
+    echo ""
+    gum style \
+        --border double \
+        --align center \
+        --width 55 \
+        --margin "1 0" \
+        --padding "1 2" \
+        --border-foreground 4 \
+        --bold \
+        "Spree Commerce Guided Installer"
+    echo ""
 }
 
 print_step() {
-    echo -e "\n${BOLD}${GREEN}➜${NC} ${BOLD}$1${NC}"
+    echo ""
+    gum style --foreground 2 --bold "➜ $1"
 }
 
 print_info() {
-    echo -e "${BLUE}ℹ${NC} $1"
+    gum style --foreground 4 "ℹ $1"
 }
 
 print_success() {
-    echo -e "${GREEN}✓${NC} $1"
+    gum style --foreground 2 "✓ $1"
 }
 
 print_warning() {
-    echo -e "${YELLOW}⚠${NC} $1"
+    gum style --foreground 3 "⚠ $1"
 }
 
 print_error() {
-    echo -e "${RED}✗${NC} $1"
+    gum style --foreground 1 "✗ $1"
 }
 
 command_exists() {
     command -v "$1" >/dev/null 2>&1
-}
-
-press_any_key() {
-    echo -e "\n${BOLD}Press any key to continue...${NC}"
-    read -n 1 -s
 }
 
 run_quiet() {
@@ -168,153 +172,35 @@ run_with_status() {
     shift
 
     if [ "$VERBOSE" = true ]; then
-        print_info "$description"
+        gum log --level info "$description"
         "$@"
     else
-        "$@" >/dev/null 2>&1
+        gum spin --spinner dot --title "$description" -- "$@"
     fi
-}
-
-show_spinner() {
-    local pid=$1
-    local message=$2
-    local spin='⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏'
-    local i=0
-
-    # Hide cursor
-    tput civis 2>/dev/null || true
-
-    while kill -0 $pid 2>/dev/null; do
-        i=$(( (i+1) %10 ))
-        printf "\r${BLUE}${spin:$i:1}${NC} ${message}..."
-        sleep 0.1
-    done
-
-    # Show cursor
-    tput cnorm 2>/dev/null || true
-    printf "\r"
-}
-
-# Interactive menu with arrow key navigation
-# Usage: interactive_menu "Option 1" "Option 2" "Option 3"
-# Returns: Selected index (0-based) in MENU_SELECTION variable
-# Options can include a suffix like "|disabled" to mark them as disabled
-interactive_menu() {
-    local options=("$@")
-    local num_options=${#options[@]}
-    local selected=0
-    local key=""
-
-    # Hide cursor
-    tput civis 2>/dev/null || true
-
-    # Function to draw the menu
-    draw_menu() {
-        for i in "${!options[@]}"; do
-            # Check if option is disabled (contains |disabled suffix)
-            local option="${options[$i]}"
-            local disabled=false
-            if [[ "$option" == *"|disabled"* ]]; then
-                disabled=true
-                option="${option%|disabled}"
-            fi
-
-            # Move cursor to beginning of line and clear it
-            printf "\r\033[K"
-
-            if [ $i -eq $selected ]; then
-                if [ "$disabled" = true ]; then
-                    echo -e "  ${BLUE}▸${NC} ${YELLOW}${option}${NC}"
-                else
-                    echo -e "  ${BLUE}▸${NC} ${BOLD}${option}${NC}"
-                fi
-            else
-                if [ "$disabled" = true ]; then
-                    echo -e "    ${YELLOW}${option}${NC}"
-                else
-                    echo -e "    ${option}"
-                fi
-            fi
-        done
-    }
-
-    # Function to move cursor up n lines
-    move_up() {
-        printf "\033[%dA" "$1"
-    }
-
-    # Initial draw
-    draw_menu
-
-    # Read input
-    while true; do
-        # Read a single character
-        IFS= read -rsn1 key
-
-        # Check for escape sequence (arrow keys)
-        if [[ $key == $'\x1b' ]]; then
-            # Read the next two characters (no timeout needed, they come immediately)
-            read -rsn1 key2
-            read -rsn1 key3
-            key="${key2}${key3}"
-            case "$key" in
-                '[A') # Up arrow
-                    if [ $selected -gt 0 ]; then
-                        ((selected--))
-                    fi
-                    ;;
-                '[B') # Down arrow
-                    if [ $selected -lt $((num_options - 1)) ]; then
-                        ((selected++))
-                    fi
-                    ;;
-            esac
-        elif [[ $key == "" ]]; then # Enter key
-            # Check if selected option is disabled
-            local option="${options[$selected]}"
-            if [[ "$option" == *"|disabled"* ]]; then
-                # Don't allow selecting disabled options, just redraw
-                move_up $num_options
-                draw_menu
-                continue
-            fi
-            break
-        fi
-
-        # Redraw menu
-        move_up $num_options
-        draw_menu
-    done
-
-    # Show cursor
-    tput cnorm 2>/dev/null || true
-
-    # Return selected index
-    MENU_SELECTION=$selected
 }
 
 # Detect OS
 detect_os() {
-    print_step "Detecting operating system..."
+    echo -e "\n${BOLD}${GREEN}➜${NC} ${BOLD}Detecting operating system...${NC}"
 
     if [[ "$OSTYPE" == "linux-gnu"* ]]; then
         OS="linux"
         if [ -f /etc/os-release ]; then
             . /etc/os-release
             DISTRO=$ID
-            print_success "Detected: Linux ($NAME)"
+            echo -e "${GREEN}✓${NC} Detected: Linux ($NAME)"
         else
             DISTRO="unknown"
-            print_success "Detected: Linux (Unknown distribution)"
+            echo -e "${GREEN}✓${NC} Detected: Linux (Unknown distribution)"
         fi
     elif [[ "$OSTYPE" == "darwin"* ]]; then
         OS="macos"
         DISTRO="macos"
-        print_success "Detected: macOS"
+        echo -e "${GREEN}✓${NC} Detected: macOS"
     elif [[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" ]]; then
         OS="windows"
         DISTRO="windows"
-        print_warning "Windows detected. WSL is required for Spree."
+        echo -e "${YELLOW}⚠${NC} Windows detected. WSL is required for Spree."
         echo -e "\nPlease install WSL (Windows Subsystem for Linux) first:"
         echo -e "  ${BOLD}wsl --install${NC}"
         echo -e "\nThen run this installer from within WSL."
@@ -322,227 +208,25 @@ detect_os() {
     else
         OS="unknown"
         DISTRO="unknown"
-        print_error "Unsupported operating system: $OSTYPE"
+        echo -e "${RED}✗${NC} Unsupported operating system: $OSTYPE"
         exit 1
     fi
 }
 
-
-# Get app name from user
-get_app_name() {
-    print_step "Setting up your Spree application..."
-
-    # Check if we're in WSL and in a Windows mount point
-    if [ "$OS" = "linux" ] && [[ $(pwd) == /mnt/* ]]; then
-        print_warning "You are currently in a Windows directory ($(pwd))"
-        print_warning "Rails requires Unix file permissions which Windows filesystems don't support."
-        echo
-        print_info "Changing to your Linux home directory: $HOME"
-        cd "$HOME" || {
-            print_error "Failed to change to home directory"
-            exit 1
-        }
-        print_success "Now in: $(pwd)"
-        echo
-    fi
-
-    # Use default app name if auto-accept is enabled and no app name provided
-    if [ "$AUTO_ACCEPT" = true ] && [[ -z "$APP_NAME" ]]; then
-        APP_NAME="spree"
-        print_info "Using default app name: $APP_NAME"
-    fi
-
-    # Check if app name was provided via command line argument or auto-accept
-    if [[ -n "$APP_NAME" ]]; then
-        # Validate app name provided via argument
-        if [[ ! "$APP_NAME" =~ ^[a-z0-9_]+$ ]]; then
-            print_error "App name must contain only lowercase letters, numbers, and underscores"
-            print_error "Provided: $APP_NAME"
-            exit 1
-        fi
-
-        # Handle existing directory
-        if [ -d "$APP_NAME" ]; then
-            if [ "$FORCE_REMOVE" = true ]; then
-                print_warning "Directory '$APP_NAME' already exists, removing..."
-                rm -rf "$APP_NAME"
-            else
-                print_error "Directory '$APP_NAME' already exists"
-                print_error "Use --force to remove it automatically"
-                exit 1
-            fi
-        fi
-
-        print_success "App name set to: $APP_NAME"
+# Install gum for interactive UI
+install_gum() {
+    if command_exists gum; then
         return 0
     fi
 
-    # Interactive prompt if app name not provided
-    echo -e "\n${BOLD}What would you like to name your application?${NC}"
-    echo -e "This will be used for the directory name and Spree Commerce application name."
-    echo -e "Use lowercase letters, numbers, and underscores (e.g., my_store, awesome_shop)"
-    echo -e "${BLUE}Press Enter to use default: 'spree'${NC}"
-    echo
-
-    while true; do
-        read -p "App name [spree]: " APP_NAME
-
-        # Use default if empty
-        if [[ -z "$APP_NAME" ]]; then
-            APP_NAME="spree"
-        fi
-
-        # Validate app name
-        if [[ ! "$APP_NAME" =~ ^[a-z0-9_]+$ ]]; then
-            print_error "App name must contain only lowercase letters, numbers, and underscores"
-            continue
-        fi
-
-        if [ -d "$APP_NAME" ]; then
-            print_warning "Directory '$APP_NAME' already exists"
-            read -p "Remove and continue? (y/n): " -n 1 -r REMOVE_DIR
-            echo
-            if [[ $REMOVE_DIR =~ ^[Yy]$ ]]; then
-                rm -rf "$APP_NAME"
-                break
-            else
-                print_info "Please choose a different name"
-                continue
-            fi
-        fi
-
-        break
-    done
-
-    print_success "App name set to: $APP_NAME"
-}
-
-# Ask about loading sample data
-ask_sample_data() {
-    print_step "Configure sample data..."
-
-    # Skip prompt if auto-accept is enabled
-    if [ "$AUTO_ACCEPT" = true ]; then
-        LOAD_SAMPLE_DATA="true"
-        print_info "Sample data will be loaded (default)"
-        return 0
-    fi
-
-    echo -e "\n${BOLD}Would you like to load sample data?${NC}"
-    echo -e "Sample data includes demo products, categories, and content to help you get started."
-    echo -e "${BLUE}Press Enter to load sample data (recommended for testing)${NC}"
-    echo
-
-    read -p "Load sample data? (Y/n): " -r LOAD_SAMPLE_INPUT
-    echo
-
-    # Default to yes if empty response
-    if [[ -z "$LOAD_SAMPLE_INPUT" ]] || [[ $LOAD_SAMPLE_INPUT =~ ^[Yy]$ ]]; then
-        LOAD_SAMPLE_DATA="true"
-        print_success "Sample data will be loaded"
-    else
-        LOAD_SAMPLE_DATA="false"
-        print_success "Sample data will not be loaded"
-    fi
-}
-
-# Ask about admin credentials
-ask_admin_credentials() {
-    print_step "Configure admin user..."
-
-    # Skip prompt if auto-accept is enabled
-    if [ "$AUTO_ACCEPT" = true ]; then
-        ADMIN_EMAIL="spree@example.com"
-        ADMIN_PASSWORD="spree123"
-        print_info "Using default admin credentials:"
-        print_info "  Email: ${BOLD}$ADMIN_EMAIL${NC}"
-        print_info "  Password: ${BOLD}$ADMIN_PASSWORD${NC}"
-        return 0
-    fi
-
-    echo -e "\n${BOLD}Set up your admin user credentials${NC}"
-    echo -e "These credentials will be used to access the admin panel."
-    echo -e "${BLUE}Press Enter to use defaults${NC}"
-    echo
-
-    # Ask for admin email
-    read -p "Admin email [spree@example.com]: " ADMIN_EMAIL
-    if [[ -z "$ADMIN_EMAIL" ]]; then
-        ADMIN_EMAIL="spree@example.com"
-    fi
-
-    # Ask for admin password
-    read -p "Admin password [spree123]: " ADMIN_PASSWORD
-    if [[ -z "$ADMIN_PASSWORD" ]]; then
-        ADMIN_PASSWORD="spree123"
-    fi
-
-    echo
-    print_success "Admin credentials set:"
-    print_info "  Email: ${BOLD}$ADMIN_EMAIL${NC}"
-    print_info "  Password: ${BOLD}$ADMIN_PASSWORD${NC}"
-}
-
-# Ask about storefront type
-ask_storefront_type() {
-    print_step "Configure storefront..."
-
-    # Skip prompt if storefront type was provided via command line
-    if [[ -n "$STOREFRONT_TYPE" ]]; then
-        if [[ "$STOREFRONT_TYPE" == "none" ]]; then
-            print_success "No storefront will be installed (headless mode)"
-        elif [[ "$STOREFRONT_TYPE" == "rails" ]]; then
-            print_success "Ruby on Rails storefront with visual page builder will be installed"
-        else
-            print_error "Invalid storefront type: $STOREFRONT_TYPE (valid options: none, rails)"
-            exit 1
-        fi
-        return 0
-    fi
-
-    # Skip prompt if auto-accept is enabled
-    if [ "$AUTO_ACCEPT" = true ]; then
-        STOREFRONT_TYPE="none"
-        print_info "No storefront will be installed (default)"
-        return 0
-    fi
-
-    echo -e "\n${BOLD}Which storefront would you like to install?${NC}"
-    echo -e "Spree can run headless (API-only) or with a built-in storefront."
-    echo -e "${BLUE}Use ↑↓ arrows to select, Enter to confirm${NC}\n"
-
-    # Show interactive menu
-    interactive_menu \
-        "No storefront (headless mode) - recommended for custom frontends" \
-        "Ruby on Rails with visual page builder" \
-        "Next.js (Coming soon)|disabled"
-
-    case $MENU_SELECTION in
-        0)
-            STOREFRONT_TYPE="none"
-            echo
-            print_success "No storefront will be installed (headless mode)"
-            ;;
-        1)
-            STOREFRONT_TYPE="rails"
-            echo
-            print_success "Ruby on Rails storefront with visual page builder will be installed"
-            ;;
-    esac
-}
-
-# Install system dependencies
-install_system_deps() {
-    print_step "Installing system dependencies..."
+    echo -e "\n${BOLD}${GREEN}➜${NC} ${BOLD}Installing gum (interactive UI)...${NC}"
 
     if [ "$OS" = "macos" ]; then
+        # Ensure Homebrew is available (needed to install gum)
         if ! command_exists brew; then
-            print_warning "Homebrew is not installed"
-            echo -e "\n${BOLD}Installing Homebrew...${NC}"
+            echo -e "${BLUE}ℹ${NC} Installing Homebrew..."
             /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-            # Add Homebrew to PATH
-            # Detect brew installation path dynamically
             BREW_PATH=$(command -v brew 2>/dev/null)
             if [[ -n "$BREW_PATH" ]]; then
                 echo "eval \"\$($BREW_PATH shellenv)\"" >> ~/.zprofile
@@ -555,11 +239,43 @@ install_system_deps() {
                 eval "$(/usr/local/bin/brew shellenv)"
             fi
 
-            print_success "Homebrew installed successfully"
+            echo -e "${GREEN}✓${NC} Homebrew installed successfully"
         fi
 
-        print_info "Installing libvips..."
-        run_with_status "Running: brew install vips" brew install vips || {
+        brew install gum >/dev/null 2>&1 || true
+    elif [ "$OS" = "linux" ]; then
+        if [ "$DISTRO" = "ubuntu" ] || [ "$DISTRO" = "debian" ]; then
+            sudo mkdir -p /etc/apt/keyrings
+            curl -fsSL https://repo.charm.sh/apt/gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/charm.gpg 2>/dev/null
+            echo "deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ * *" | sudo tee /etc/apt/sources.list.d/charm.list >/dev/null
+            sudo apt-get update >/dev/null 2>&1
+            sudo apt-get install -y gum >/dev/null 2>&1
+        elif [ "$DISTRO" = "fedora" ] || [ "$DISTRO" = "rhel" ] || [ "$DISTRO" = "centos" ]; then
+            echo '[charm]
+name=Charm
+baseurl=https://repo.charm.sh/yum/
+enabled=1
+gpgcheck=1
+gpgkey=https://repo.charm.sh/yum/gpg.key' | sudo tee /etc/yum.repos.d/charm.repo >/dev/null
+            sudo dnf install -y gum >/dev/null 2>&1 || sudo yum install -y gum >/dev/null 2>&1
+        fi
+    fi
+
+    if ! command_exists gum; then
+        echo -e "${RED}✗${NC} Failed to install gum."
+        echo -e "  Please install it manually: ${BLUE}https://github.com/charmbracelet/gum#installation${NC}"
+        exit 1
+    fi
+
+    echo -e "${GREEN}✓${NC} gum installed successfully"
+}
+
+# Install system dependencies
+install_system_deps() {
+    print_step "Installing system dependencies..."
+
+    if [ "$OS" = "macos" ]; then
+        run_with_status "Installing libvips..." brew install vips || {
             print_warning "Package may already be installed"
         }
 
@@ -567,20 +283,17 @@ install_system_deps() {
 
     elif [ "$OS" = "linux" ]; then
         if [ "$DISTRO" = "ubuntu" ] || [ "$DISTRO" = "debian" ]; then
-            print_info "Installing development dependencies..."
-            run_with_status "Running: apt-get update" sudo apt-get update
-            run_with_status "Running: apt-get install runtime deps" sudo apt-get install -y build-essential git libvips-dev libssl-dev libreadline-dev zlib1g-dev libsqlite3-dev libyaml-dev
+            run_with_status "Updating package lists..." sudo apt-get update
+            run_with_status "Installing development dependencies..." sudo apt-get install -y build-essential git curl libvips-dev libssl-dev libreadline-dev zlib1g-dev libsqlite3-dev libyaml-dev
 
             print_success "System dependencies installed"
         elif [ "$DISTRO" = "fedora" ] || [ "$DISTRO" = "rhel" ] || [ "$DISTRO" = "centos" ]; then
-            print_info "Installing development packages..."
-            run_with_status "Running: dnf/yum install runtime deps" sudo dnf install -y vips vips-devel gcc gcc-c++ make openssl-devel readline-devel zlib-devel sqlite-devel libyaml-devel git || \
+            run_with_status "Installing development packages..." sudo dnf install -y vips vips-devel gcc gcc-c++ make openssl-devel readline-devel zlib-devel sqlite-devel libyaml-devel git || \
             sudo yum install -y vips vips-devel gcc gcc-c++ make openssl-devel readline-devel zlib-devel sqlite-devel libyaml-devel git
 
             print_success "System dependencies installed"
         else
             print_warning "Please install libvips development packages manually for your distribution"
-            press_any_key
         fi
     fi
 }
@@ -687,8 +400,7 @@ install_ruby() {
         fi
 
         # Homebrew Ruby not found or too old, install it
-        print_info "Installing Ruby..."
-        run_with_status "Running: brew install ruby" brew install ruby || {
+        run_with_status "Installing Ruby..." brew install ruby || {
             print_warning "Ruby may already be installed"
         }
 
@@ -769,12 +481,10 @@ install_ruby() {
             fi
         fi
 
-        print_info "Installing Ruby..."
-
         if [ "$DISTRO" = "ubuntu" ] || [ "$DISTRO" = "debian" ]; then
-            run_with_status "Running: apt install ruby-full" sudo apt-get install -y ruby-full
+            run_with_status "Installing Ruby..." sudo apt-get install -y ruby-full
         elif [ "$DISTRO" = "fedora" ] || [ "$DISTRO" = "rhel" ] || [ "$DISTRO" = "centos" ]; then
-            run_with_status "Running: dnf install ruby" sudo dnf install -y ruby ruby-devel || \
+            run_with_status "Installing Ruby..." sudo dnf install -y ruby ruby-devel || \
             sudo yum install -y ruby ruby-devel
         else
             print_error "Unsupported Linux distribution: $DISTRO"
@@ -923,8 +633,7 @@ install_rails() {
     fi
 
     # Install specific Rails version
-    print_info "Installing Rails gem (this may take a few minutes)..."
-    run_with_status "Running: gem install rails -v $RAILS_VERSION" gem install rails -v "$RAILS_VERSION" --no-document
+    run_with_status "Installing Rails $RAILS_VERSION..." gem install rails -v "$RAILS_VERSION" --no-document
 
     # Determine the exact rails binary path for this Ruby/gem environment
     RAILS_BIN=$(gem environment gemdir)/bin/rails
@@ -941,10 +650,210 @@ install_rails() {
     print_info "Rails binary at: $RAILS_BIN"
 }
 
+# Get app name from user
+get_app_name() {
+    print_step "Setting up your Spree application..."
+
+    # Check if we're in WSL and in a Windows mount point
+    if [ "$OS" = "linux" ] && [[ $(pwd) == /mnt/* ]]; then
+        print_warning "You are currently in a Windows directory ($(pwd))"
+        print_warning "Rails requires Unix file permissions which Windows filesystems don't support."
+        echo
+        print_info "Changing to your Linux home directory: $HOME"
+        cd "$HOME" || {
+            print_error "Failed to change to home directory"
+            exit 1
+        }
+        print_success "Now in: $(pwd)"
+        echo
+    fi
+
+    # Use default app name if auto-accept is enabled and no app name provided
+    if [ "$AUTO_ACCEPT" = true ] && [[ -z "$APP_NAME" ]]; then
+        APP_NAME="spree"
+        print_info "Using default app name: $APP_NAME"
+    fi
+
+    # Check if app name was provided via command line argument or auto-accept
+    if [[ -n "$APP_NAME" ]]; then
+        # Validate app name provided via argument
+        if [[ ! "$APP_NAME" =~ ^[a-z0-9_]+$ ]]; then
+            print_error "App name must contain only lowercase letters, numbers, and underscores"
+            print_error "Provided: $APP_NAME"
+            exit 1
+        fi
+
+        # Handle existing directory
+        if [ -d "$APP_NAME" ]; then
+            if [ "$FORCE_REMOVE" = true ]; then
+                print_warning "Directory '$APP_NAME' already exists, removing..."
+                rm -rf "$APP_NAME"
+            else
+                print_error "Directory '$APP_NAME' already exists"
+                print_error "Use --force to remove it automatically"
+                exit 1
+            fi
+        fi
+
+        print_success "App name set to: $APP_NAME"
+        return 0
+    fi
+
+    # Interactive prompt using gum
+    echo
+    while true; do
+        APP_NAME=$(gum input \
+            --header "What would you like to name your application?" \
+            --header.foreground 4 \
+            --placeholder "my_store" \
+            --value "spree" \
+            --width 40)
+
+        # Use default if empty
+        if [[ -z "$APP_NAME" ]]; then
+            APP_NAME="spree"
+        fi
+
+        # Validate app name
+        if [[ ! "$APP_NAME" =~ ^[a-z0-9_]+$ ]]; then
+            print_error "App name must contain only lowercase letters, numbers, and underscores"
+            continue
+        fi
+
+        if [ -d "$APP_NAME" ]; then
+            print_warning "Directory '$APP_NAME' already exists"
+            if gum confirm "Remove and continue?"; then
+                rm -rf "$APP_NAME"
+                break
+            else
+                print_info "Please choose a different name"
+                continue
+            fi
+        fi
+
+        break
+    done
+
+    print_success "App name set to: $APP_NAME"
+}
+
+# Ask about storefront type
+ask_storefront_type() {
+    print_step "Configure storefront..."
+
+    # Skip prompt if storefront type was provided via command line
+    if [[ -n "$STOREFRONT_TYPE" ]]; then
+        if [[ "$STOREFRONT_TYPE" == "none" ]]; then
+            print_success "No storefront will be installed (headless mode)"
+        elif [[ "$STOREFRONT_TYPE" == "rails" ]]; then
+            print_success "Ruby on Rails storefront with visual page builder will be installed"
+        else
+            print_error "Invalid storefront type: $STOREFRONT_TYPE (valid options: none, rails)"
+            exit 1
+        fi
+        return 0
+    fi
+
+    # Skip prompt if auto-accept is enabled
+    if [ "$AUTO_ACCEPT" = true ]; then
+        STOREFRONT_TYPE="none"
+        print_info "No storefront will be installed (default)"
+        return 0
+    fi
+
+    echo
+    print_info "Next.js storefront coming soon!"
+    echo
+
+    STOREFRONT_CHOICE=$(gum choose \
+        --header "Which storefront would you like to install?" \
+        --header.foreground 4 \
+        --cursor.foreground 2 \
+        "No storefront (headless mode) - recommended for custom frontends" \
+        "Ruby on Rails with visual page builder")
+
+    case "$STOREFRONT_CHOICE" in
+        "No storefront"*)
+            STOREFRONT_TYPE="none"
+            echo
+            print_success "No storefront will be installed (headless mode)"
+            ;;
+        "Ruby on Rails"*)
+            STOREFRONT_TYPE="rails"
+            echo
+            print_success "Ruby on Rails storefront with visual page builder will be installed"
+            ;;
+    esac
+}
+
+# Ask about loading sample data
+ask_sample_data() {
+    print_step "Configure sample data..."
+
+    # Skip prompt if auto-accept is enabled
+    if [ "$AUTO_ACCEPT" = true ]; then
+        LOAD_SAMPLE_DATA="true"
+        print_info "Sample data will be loaded (default)"
+        return 0
+    fi
+
+    echo
+    print_info "Sample data includes demo products, categories, and content to help you get started."
+    echo
+
+    if gum confirm "Load sample data?" --default=true; then
+        LOAD_SAMPLE_DATA="true"
+        print_success "Sample data will be loaded"
+    else
+        LOAD_SAMPLE_DATA="false"
+        print_success "Sample data will not be loaded"
+    fi
+}
+
+# Ask about admin credentials
+ask_admin_credentials() {
+    print_step "Configure admin user..."
+
+    # Skip prompt if auto-accept is enabled
+    if [ "$AUTO_ACCEPT" = true ]; then
+        ADMIN_EMAIL="spree@example.com"
+        ADMIN_PASSWORD="spree123"
+        print_info "Using default admin credentials:"
+        print_info "  Email: $ADMIN_EMAIL"
+        print_info "  Password: $ADMIN_PASSWORD"
+        return 0
+    fi
+
+    echo
+    ADMIN_EMAIL=$(gum input \
+        --header "Admin email" \
+        --header.foreground 4 \
+        --placeholder "admin@example.com" \
+        --value "spree@example.com" \
+        --width 40)
+
+    if [[ -z "$ADMIN_EMAIL" ]]; then
+        ADMIN_EMAIL="spree@example.com"
+    fi
+
+    ADMIN_PASSWORD=$(gum input \
+        --header "Admin password" \
+        --header.foreground 4 \
+        --value "spree123" \
+        --width 40)
+
+    if [[ -z "$ADMIN_PASSWORD" ]]; then
+        ADMIN_PASSWORD="spree123"
+    fi
+
+    echo
+    print_success "Admin credentials set:"
+    print_info "  Email: $ADMIN_EMAIL"
+    print_info "  Password: $ADMIN_PASSWORD"
+}
+
 # Create Rails app with Spree template
 create_rails_app() {
-    print_step "Creating new Spree Commerce application..."
-
     # Ensure Homebrew Ruby is in PATH for macOS (only if using Homebrew Ruby)
     if [ "$OS" = "macos" ] && [ "$USING_HOMEBREW_RUBY" = true ]; then
         BREW_PREFIX=$(brew --prefix 2>/dev/null || echo "/opt/homebrew")
@@ -977,12 +886,6 @@ create_rails_app() {
         TEMPLATE_FILE="$TEMPLATE_URL"
     fi
 
-    print_info "Creating Spree Commerce application '$APP_NAME'..."
-
-    if [ "$VERBOSE" = false ]; then
-        echo -e "${YELLOW}This will take several minutes. Please be patient...${NC}\n"
-    fi
-
     # Prepare environment variables
     local use_local_spree="false"
     if [ "$USE_LOCAL_SPREE" = true ]; then
@@ -991,51 +894,13 @@ create_rails_app() {
 
     # Run rails new with the template using the specific rails binary
     if [ "$VERBOSE" = true ]; then
+        print_step "Creating Spree Commerce application '$APP_NAME'..."
         VERBOSE_MODE=1 LOAD_SAMPLE_DATA="$LOAD_SAMPLE_DATA" STOREFRONT_TYPE="$STOREFRONT_TYPE" USE_LOCAL_SPREE="$use_local_spree" ADMIN_EMAIL="$ADMIN_EMAIL" ADMIN_PASSWORD="$ADMIN_PASSWORD" "$RAILS_BIN" _${RAILS_VERSION}_ new "$APP_NAME" -m "$TEMPLATE_FILE"
     else
-        # Run in background with spinner
-        VERBOSE_MODE=0 LOAD_SAMPLE_DATA="$LOAD_SAMPLE_DATA" STOREFRONT_TYPE="$STOREFRONT_TYPE" USE_LOCAL_SPREE="$use_local_spree" ADMIN_EMAIL="$ADMIN_EMAIL" ADMIN_PASSWORD="$ADMIN_PASSWORD" "$RAILS_BIN" _${RAILS_VERSION}_ new "$APP_NAME" -m "$TEMPLATE_FILE" >/tmp/spree_install.log 2>&1 &
-        local rails_pid=$!
-
-        # Show spinner with progress messages
-        local elapsed=0
-        local spin='⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏'
-        local i=0
-
-        # Hide cursor
-        tput civis 2>/dev/null || true
-
-        while kill -0 $rails_pid 2>/dev/null; do
-            i=$(( (i+1) %10 ))
-
-            # Change message based on elapsed time
-            if [ $elapsed -lt 30 ]; then
-                msg="Installing Spree dependencies"
-            elif [ $elapsed -lt 60 ]; then
-                msg="Installing Spree gems"
-            elif [ $elapsed -lt 90 ]; then
-                msg="Setting up authentication"
-            elif [ $elapsed -lt 120 ]; then
-                msg="Running Spree generators"
-            elif [ $elapsed -lt 150 ]; then
-                msg="Configuring payment integrations"
-            elif [ $elapsed -lt 180 ]; then
-                msg="Setting up database"
-            else
-                msg="Almost done, finalizing installation"
-            fi
-
-            printf "\r${BLUE}${spin:$i:1}${NC} ${msg}...                  "
-            sleep 1
-            elapsed=$((elapsed + 1))
-        done
-
-        # Show cursor
-        tput cnorm 2>/dev/null || true
-        printf "\r\033[K"  # Clear line
-
-        # Check if rails command succeeded
-        wait $rails_pid
+        # Run with gum spinner
+        echo ""
+        gum spin --spinner dot --title "Creating Spree Commerce application '$APP_NAME' (this will take several minutes)..." -- \
+            bash -c "VERBOSE_MODE=0 LOAD_SAMPLE_DATA=\"$LOAD_SAMPLE_DATA\" STOREFRONT_TYPE=\"$STOREFRONT_TYPE\" USE_LOCAL_SPREE=\"$use_local_spree\" ADMIN_EMAIL=\"$ADMIN_EMAIL\" ADMIN_PASSWORD=\"$ADMIN_PASSWORD\" \"$RAILS_BIN\" _${RAILS_VERSION}_ new \"$APP_NAME\" -m \"$TEMPLATE_FILE\" >/tmp/spree_install.log 2>&1"
         local exit_code=$?
 
         if [ $exit_code -ne 0 ]; then
@@ -1078,7 +943,9 @@ show_final_instructions() {
     print_header
     print_success "Spree Commerce installation completed successfully!"
 
-    echo -e "\n${BOLD}${GREEN}What's next?${NC}\n"
+    echo ""
+    gum style --foreground 2 --bold "What's next?"
+    echo ""
 
     echo -e "${BOLD}1. Start the development server:${NC}"
     echo -e "   ${BLUE}cd $APP_NAME${NC}"
@@ -1086,12 +953,12 @@ show_final_instructions() {
 
     echo -e "\n${BOLD}2. Access your Spree store:${NC}"
     if [ "$STOREFRONT_TYPE" = "rails" ]; then
-        echo -e "   • Storefront: ${BLUE}http://localhost:3000${NC}"
+        echo -e "   Storefront: ${BLUE}http://localhost:3000${NC}"
     else
-        echo -e "   • Storefront API: ${BLUE}http://localhost:3000/api/v2/storefront${NC}"
+        echo -e "   Storefront API: ${BLUE}http://localhost:3000/api/v2/storefront${NC}"
     fi
-    echo -e "   • Admin Panel: ${BLUE}http://localhost:3000/admin${NC}"
-    echo -e "   • Admin credentials:"
+    echo -e "   Admin Panel: ${BLUE}http://localhost:3000/admin${NC}"
+    echo -e "   Admin credentials:"
     echo -e "     Email: ${BOLD}$ADMIN_EMAIL${NC}"
     echo -e "     Password: ${BOLD}$ADMIN_PASSWORD${NC}"
 
@@ -1106,22 +973,20 @@ show_final_instructions() {
     fi
 
     echo -e "\n${BOLD}4. Documentation:${NC}"
-    echo -e "   • Developer Guide: ${BLUE}https://spreecommerce.org/docs/developer${NC}"
-    echo -e "   • API Documentation: ${BLUE}https://spreecommerce.org/docs/api${NC}"
+    echo -e "   Developer Guide: ${BLUE}https://spreecommerce.org/docs/developer${NC}"
+    echo -e "   API Documentation: ${BLUE}https://spreecommerce.org/docs/api${NC}"
 
-    echo -e "\n${BOLD}${GREEN}Happy coding with Spree Commerce!${NC}\n"
+    echo ""
+    gum style --foreground 2 --bold "Happy coding with Spree Commerce!"
+    echo ""
 
     # Skip server start prompt if auto-accept is enabled
     if [ "$AUTO_ACCEPT" = true ]; then
         return 0
     fi
 
-    # Ask if user wants to start server now (Y is default)
-    read -p "Would you like to start the server now? (Y/n): " -r START_SERVER
-    echo
-
-    # Default to yes if empty response
-    if [[ -z "$START_SERVER" ]] || [[ $START_SERVER =~ ^[Yy]$ ]]; then
+    # Ask if user wants to start server now
+    if gum confirm "Would you like to start the server now?" --default=true; then
         print_info "Starting server... (Press Ctrl+C to stop)"
         cd "$APP_NAME"
 
@@ -1155,24 +1020,27 @@ show_final_instructions() {
 
 # Main installation flow
 main() {
+    detect_os
+    install_gum
+
     print_header
 
-    echo -e "This installer will set up Spree Commerce on your system."
-    echo -e "It will install the following if needed:"
-    echo -e "  • System dependencies (libvips for image processing)"
-    echo -e "  • Ruby 3.2+ (via system package manager)"
-    echo -e "  • Rails $RAILS_VERSION"
-    echo -e "  • Create a new Spree Commerce application"
+    echo "This installer will set up Spree Commerce on your system."
+    echo ""
+    echo "It will install the following if needed:"
+    echo "  - System dependencies (libvips for image processing)"
+    echo "  - Ruby language"
+    echo "  - Create a new Spree application"
 
     if [ "$USE_LOCAL_SPREE" = true ]; then
-        echo -e "\n${YELLOW}Using local Spree gems from parent directory${NC}"
+        print_warning "Using local Spree gems from parent directory"
     fi
 
     if [ "$AUTO_ACCEPT" = false ]; then
-        press_any_key
+        echo
+        gum confirm "Continue with installation?" --default=true || exit 0
     fi
 
-    detect_os
     install_system_deps
     install_ruby
     install_rails
