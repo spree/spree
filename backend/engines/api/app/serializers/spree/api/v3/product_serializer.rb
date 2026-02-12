@@ -37,7 +37,7 @@ module Spree
         end
 
         attribute :default_variant_id do |product|
-          product.default_variant&.prefix_id
+          product.default_variant&.prefixed_id
         end
 
         # Main product image URL for listings (cached thumbnail)

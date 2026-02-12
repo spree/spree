@@ -37,7 +37,7 @@ RSpec.describe 'Payments API', type: :request, swagger_doc: 'api-reference/store
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['data'].length).to eq(1)
-          expect(data['data'].first['id']).to eq(payment.prefix_id)
+          expect(data['data'].first['id']).to eq(payment.prefixed_id)
         end
       end
 
@@ -73,7 +73,7 @@ RSpec.describe 'Payments API', type: :request, swagger_doc: 'api-reference/store
 
         run_test! do |response|
           data = JSON.parse(response.body)
-          expect(data['id']).to eq(payment.prefix_id)
+          expect(data['id']).to eq(payment.prefixed_id)
           expect(data['state']).to eq(payment.state)
         end
       end

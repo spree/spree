@@ -9,11 +9,11 @@ module Spree
         typelize id: :string, created_at: :string, updated_at: :string
 
         # Use prefixed IDs (Stripe-style) for all API v3 serializers
-        # e.g., prod_abc123, var_xyz789, or_def456
+        # e.g., prod_86Rf07xd4z, variant_k5nR8xLq, or_m3Rp9wXz
         attribute :id do |object|
-          next nil unless object.respond_to?(:prefix_id)
+          next nil unless object.respond_to?(:prefixed_id)
 
-          object.prefix_id
+          object.prefixed_id
         end
 
         # Context accessors

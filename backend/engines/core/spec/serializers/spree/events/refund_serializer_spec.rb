@@ -10,7 +10,7 @@ RSpec.describe Spree::Events::RefundSerializer do
 
   describe '#as_json' do
     it 'includes identity attributes' do
-      expect(subject[:id]).to eq(refund.prefix_id)
+      expect(subject[:id]).to eq(refund.prefixed_id)
     end
 
     it 'includes amount' do
@@ -22,7 +22,7 @@ RSpec.describe Spree::Events::RefundSerializer do
     end
 
     it 'includes foreign keys' do
-      expect(subject[:payment_id]).to eq(refund.payment&.prefix_id)
+      expect(subject[:payment_id]).to eq(refund.payment&.prefixed_id)
       expect(subject).to have_key(:refund_reason_id)
       expect(subject).to have_key(:reimbursement_id)
       expect(subject).to have_key(:refunder_id)

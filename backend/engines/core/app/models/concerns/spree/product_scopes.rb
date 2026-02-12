@@ -215,9 +215,9 @@ module Spree
         ids = ids.flatten.compact
         return none if ids.empty?
 
-        # Handle prefix IDs (optval_xxx) by extracting the actual IDs
+        # Handle prefixed IDs (optval_xxx) by decoding to actual IDs
         actual_ids = ids.map do |id|
-          id.to_s.start_with?('optval_') ? OptionValue.find_by(prefix_id: id)&.id : id
+          id.to_s.include?('_') ? OptionValue.decode_prefixed_id(id) : id
         end.compact
 
         return none if actual_ids.empty?

@@ -62,7 +62,7 @@ class Spree::Base < ApplicationRecord
   end
 
   def self.json_api_permitted_attributes
-    skipped_attributes = %w[id prefix_id]
+    skipped_attributes = %w[id]
 
     if included_modules.include?(CollectiveIdea::Acts::NestedSet::Model)
       skipped_attributes.push('lft', 'rgt', 'depth')

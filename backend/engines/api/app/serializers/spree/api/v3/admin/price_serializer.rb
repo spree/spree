@@ -10,7 +10,7 @@ module Spree
                    updated_at: :string
 
           attribute :variant_id do |price|
-            price&.variant&.prefix_id
+            price&.variant&.prefixed_id
           end
 
           attributes created_at: :iso8601, updated_at: :iso8601

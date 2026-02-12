@@ -10,7 +10,7 @@ RSpec.describe Spree::Events::PriceSerializer do
 
   describe '#as_json' do
     it 'includes identity attributes' do
-      expect(subject[:id]).to eq(price.prefix_id)
+      expect(subject[:id]).to eq(price.prefixed_id)
     end
 
     it 'includes amount fields' do
@@ -20,7 +20,7 @@ RSpec.describe Spree::Events::PriceSerializer do
     end
 
     it 'includes variant_id' do
-      expect(subject[:variant_id]).to eq(variant.prefix_id)
+      expect(subject[:variant_id]).to eq(variant.prefixed_id)
     end
 
     it 'includes deleted_at' do

@@ -21,11 +21,11 @@ RSpec.describe Spree::Events::ImportRowSerializer do
 
   describe '#as_json' do
     it 'includes identity attributes' do
-      expect(subject[:id]).to eq(import_row.prefix_id)
+      expect(subject[:id]).to eq(import_row.prefixed_id)
     end
 
     it 'includes import reference' do
-      expect(subject[:import_id]).to eq(import.prefix_id)
+      expect(subject[:import_id]).to eq(import.prefixed_id)
     end
 
     it 'includes row_number' do
@@ -42,7 +42,7 @@ RSpec.describe Spree::Events::ImportRowSerializer do
 
     it 'includes item polymorphic reference' do
       expect(subject[:item_type]).to eq('Spree::Product')
-      expect(subject[:item_id]).to eq(product.prefix_id)
+      expect(subject[:item_id]).to eq(product.prefixed_id)
     end
 
     it 'includes timestamps' do

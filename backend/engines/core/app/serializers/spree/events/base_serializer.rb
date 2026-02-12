@@ -39,12 +39,12 @@ module Spree
       end
 
       # Returns the public-facing ID for a record.
-      # Prefers prefix_id when available (handles FriendlyId models that
+      # Prefers prefixed_id when available (handles FriendlyId models that
       # return slugs from to_param), falls back to to_param.
       def public_id(record)
         return nil if record.nil?
 
-        record.try(:prefix_id).presence || record.to_param
+        record.try(:prefixed_id).presence || record.to_param
       end
 
       # Attribute helpers

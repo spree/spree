@@ -19,13 +19,13 @@ RSpec.describe Spree::Api::V3::Store::Orders::PaymentMethodsController, type: :c
       get :index, params: { order_id: order.to_param }
 
       expect(response).to have_http_status(:ok)
-      expect(json_response['data'].map { |pm| pm['id'] }).to include(payment_method.prefix_id)
+      expect(json_response['data'].map { |pm| pm['id'] }).to include(payment_method.prefixed_id)
     end
 
     it 'excludes backend-only payment methods' do
       get :index, params: { order_id: order.to_param }
 
-      expect(json_response['data'].map { |pm| pm['id'] }).not_to include(backend_only_pm.prefix_id)
+      expect(json_response['data'].map { |pm| pm['id'] }).not_to include(backend_only_pm.prefixed_id)
     end
 
     it 'includes payment method count in meta' do

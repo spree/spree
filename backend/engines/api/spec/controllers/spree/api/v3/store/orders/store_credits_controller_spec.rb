@@ -25,7 +25,7 @@ RSpec.describe Spree::Api::V3::Store::Orders::StoreCreditsController, type: :con
     it 'returns the updated order' do
       post :create, params: { order_id: order.to_param, amount: 10 }
 
-      expect(json_response['id']).to eq(order.prefix_id)
+      expect(json_response['id']).to eq(order.prefixed_id)
     end
 
     context 'without available store credit' do
@@ -79,7 +79,7 @@ RSpec.describe Spree::Api::V3::Store::Orders::StoreCreditsController, type: :con
       delete :destroy, params: { order_id: order.to_param }
 
       expect(response).to have_http_status(:ok)
-      expect(json_response['id']).to eq(order.prefix_id)
+      expect(json_response['id']).to eq(order.prefixed_id)
     end
 
     context 'authentication' do

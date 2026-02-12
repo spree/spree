@@ -11,7 +11,7 @@ RSpec.describe Spree::Events::StockItemSerializer do
 
   describe '#as_json' do
     it 'includes identity attributes' do
-      expect(subject[:id]).to eq(stock_item.prefix_id)
+      expect(subject[:id]).to eq(stock_item.prefixed_id)
     end
 
     it 'includes count_on_hand' do
@@ -23,8 +23,8 @@ RSpec.describe Spree::Events::StockItemSerializer do
     end
 
     it 'includes foreign keys' do
-      expect(subject[:stock_location_id]).to eq(stock_item.stock_location&.prefix_id)
-      expect(subject[:variant_id]).to eq(stock_item.variant&.prefix_id)
+      expect(subject[:stock_location_id]).to eq(stock_item.stock_location&.prefixed_id)
+      expect(subject[:variant_id]).to eq(stock_item.variant&.prefixed_id)
     end
 
     it 'includes deleted_at' do

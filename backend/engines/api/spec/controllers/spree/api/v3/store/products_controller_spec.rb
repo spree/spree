@@ -58,7 +58,7 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
         get :index
 
         ids = json_response['data'].map { |p| p['id'] }
-        expect(ids).not_to include(other_store_product.prefix_id)
+        expect(ids).not_to include(other_store_product.prefixed_id)
       end
     end
 
@@ -67,7 +67,7 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
         get :index
 
         ids = json_response['data'].map { |p| p['id'] }
-        expect(ids).not_to include(draft_product.prefix_id)
+        expect(ids).not_to include(draft_product.prefixed_id)
       end
     end
 
@@ -89,9 +89,9 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
         get :index
 
         ids = json_response['data'].map { |p| p['id'] }
-        expect(ids).to include(product.prefix_id)
-        expect(ids).to include(product2.prefix_id)
-        expect(ids).not_to include(eur_only_product.prefix_id)
+        expect(ids).to include(product.prefixed_id)
+        expect(ids).to include(product2.prefixed_id)
+        expect(ids).not_to include(eur_only_product.prefixed_id)
       end
 
       it 'returns EUR products when EUR currency is requested' do
@@ -99,8 +99,8 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
         get :index
 
         ids = json_response['data'].map { |p| p['id'] }
-        expect(ids).to include(eur_only_product.prefix_id)
-        expect(ids).not_to include(product.prefix_id)
+        expect(ids).to include(eur_only_product.prefixed_id)
+        expect(ids).not_to include(product.prefixed_id)
       end
     end
 
@@ -110,7 +110,7 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
 
         expect(response).to have_http_status(:ok)
         expect(json_response['data'].size).to eq(1)
-        expect(json_response['data'].first['id']).to eq(product.prefix_id)
+        expect(json_response['data'].first['id']).to eq(product.prefixed_id)
       end
     end
 
@@ -184,7 +184,7 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
         get :show, params: { id: product.slug }
 
         expect(response).to have_http_status(:ok)
-        expect(json_response['id']).to eq(product.prefix_id)
+        expect(json_response['id']).to eq(product.prefixed_id)
         expect(json_response['name']).to eq(product.name)
         expect(json_response['slug']).to eq(product.slug)
       end
@@ -192,10 +192,10 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
 
     context 'finding by prefix_id' do
       it 'returns a product by prefix_id' do
-        get :show, params: { id: product.prefix_id }
+        get :show, params: { id: product.prefixed_id }
 
         expect(response).to have_http_status(:ok)
-        expect(json_response['id']).to eq(product.prefix_id)
+        expect(json_response['id']).to eq(product.prefixed_id)
         expect(json_response['name']).to eq(product.name)
         expect(json_response['slug']).to eq(product.slug)
       end
@@ -237,7 +237,7 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
 
       it 'returns translated content based on locale header' do
         request.headers['x-spree-locale'] = 'fr'
-        get :show, params: { id: translated_product.prefix_id }
+        get :show, params: { id: translated_product.prefixed_id }
 
         expect(response).to have_http_status(:ok)
         expect(json_response['name']).to eq('Produit Français')
@@ -260,7 +260,7 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
           get :show, params: { id: 'english-only' }
 
           expect(response).to have_http_status(:ok)
-          expect(json_response['id']).to eq(english_only_product.prefix_id)
+          expect(json_response['id']).to eq(english_only_product.prefixed_id)
           # Name returns English since no French translation exists
           expect(json_response['name']).to eq('English Only')
         end
@@ -270,7 +270,7 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
           get :show, params: { id: 'english-product' }
 
           expect(response).to have_http_status(:ok)
-          expect(json_response['id']).to eq(translated_product.prefix_id)
+          expect(json_response['id']).to eq(translated_product.prefixed_id)
           expect(json_response['name']).to eq('Produit Français')
         end
       end

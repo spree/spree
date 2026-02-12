@@ -30,7 +30,7 @@ describe Spree::PromotionHandler::PromotionDuplicator do
     let!(:new_promotion) { subject.duplicate }
 
     context 'model fields' do
-      let(:excluded_fields) { ['code', 'name', 'path', 'id', 'prefix_id', 'created_at', 'updated_at', 'deleted_at'] }
+      let(:excluded_fields) { ['code', 'name', 'path', 'id', 'created_at', 'updated_at', 'deleted_at'] }
 
       it 'returns a duplicate of a promotion with the path, name and code fields changed' do
         expect("New #{promotion.name}").to eq new_promotion.name
@@ -46,7 +46,7 @@ describe Spree::PromotionHandler::PromotionDuplicator do
     end
 
     context 'model associations - rules' do
-      let(:excluded_fields) { ['promotion_id', 'id', 'prefix_id', 'created_at', 'updated_at', 'deleted_at'] }
+      let(:excluded_fields) { ['promotion_id', 'id', 'created_at', 'updated_at', 'deleted_at'] }
 
       it 'copies all promotion rules' do
         expect(promotion.promotion_rules.size).to eq new_promotion.promotion_rules.size
@@ -67,7 +67,7 @@ describe Spree::PromotionHandler::PromotionDuplicator do
     end
 
     context 'model associations - actions' do
-      let(:excluded_fields) { ['promotion_id', 'id', 'prefix_id', 'created_at', 'updated_at', 'deleted_at'] }
+      let(:excluded_fields) { ['promotion_id', 'id', 'created_at', 'updated_at', 'deleted_at'] }
 
       it 'copies all promotion actions' do
         expect(promotion.promotion_actions.size).to eq new_promotion.promotion_actions.size
@@ -92,7 +92,7 @@ describe Spree::PromotionHandler::PromotionDuplicator do
     end
 
     context "model associations - action's calculator" do
-      let(:excluded_fields) { ['calculable_id', 'id', 'prefix_id', 'created_at', 'updated_at', 'deleted_at'] }
+      let(:excluded_fields) { ['calculable_id', 'id', 'created_at', 'updated_at', 'deleted_at'] }
 
       it "copies promotion action's calculator" do
         new_calc = new_promotion.promotion_actions.first.calculator

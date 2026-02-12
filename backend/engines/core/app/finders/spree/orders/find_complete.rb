@@ -76,15 +76,20 @@ module Spree
       def by_prefix_id(orders)
         return orders unless prefix_id?
 
-        orders.where(prefix_id: prefix_id)
+        decoded = Spree::Order.decode_prefixed_id(prefix_id)
+        orders.where(id: decoded)
       end
 
-      # Find by param - tries prefix_id first, then number for backwards compatibility
+      # Find by param - tries prefixed ID first, then number for backwards compatibility
       def by_param(orders)
         return orders unless param?
 
-        # Try prefix_id first, then number
-        orders.where(prefix_id: param).or(orders.where(number: param))
+        decoded = Spree::Order.decode_prefixed_id(param)
+        if decoded
+          orders.where(id: decoded)
+        else
+          orders.where(number: param)
+        end
       end
 
       def by_token(orders)

@@ -27,8 +27,8 @@ RSpec.describe Spree::Api::V3::Store::Taxons::ProductsController, type: :control
         get :index, params: { taxon_id: taxon.permalink }
 
         expect(response).to have_http_status(:ok)
-        expect(json_response['data'].pluck('id')).to include(product_in_taxon.prefix_id)
-        expect(json_response['data'].pluck('id')).not_to include(product_not_in_taxon.prefix_id)
+        expect(json_response['data'].pluck('id')).to include(product_in_taxon.prefixed_id)
+        expect(json_response['data'].pluck('id')).not_to include(product_not_in_taxon.prefixed_id)
       end
 
       it 'returns products from descendant taxons' do
@@ -36,25 +36,25 @@ RSpec.describe Spree::Api::V3::Store::Taxons::ProductsController, type: :control
 
         expect(response).to have_http_status(:ok)
         # Parent taxon should include products from child taxons
-        expect(json_response['data'].pluck('id')).to include(product_in_taxon.prefix_id)
-        expect(json_response['data'].pluck('id')).to include(product_in_child_taxon.prefix_id)
+        expect(json_response['data'].pluck('id')).to include(product_in_taxon.prefixed_id)
+        expect(json_response['data'].pluck('id')).to include(product_in_child_taxon.prefixed_id)
       end
 
       it 'returns only products from the specific child taxon when queried directly' do
         get :index, params: { taxon_id: child_taxon.permalink }
 
         expect(response).to have_http_status(:ok)
-        expect(json_response['data'].pluck('id')).to include(product_in_child_taxon.prefix_id)
-        expect(json_response['data'].pluck('id')).not_to include(product_in_taxon.prefix_id)
+        expect(json_response['data'].pluck('id')).to include(product_in_child_taxon.prefixed_id)
+        expect(json_response['data'].pluck('id')).not_to include(product_in_taxon.prefixed_id)
       end
     end
 
     context 'finding taxon by prefix_id' do
       it 'returns products belonging to the taxon' do
-        get :index, params: { taxon_id: taxon.prefix_id }
+        get :index, params: { taxon_id: taxon.prefixed_id }
 
         expect(response).to have_http_status(:ok)
-        expect(json_response['data'].pluck('id')).to include(product_in_taxon.prefix_id)
+        expect(json_response['data'].pluck('id')).to include(product_in_taxon.prefixed_id)
       end
     end
 

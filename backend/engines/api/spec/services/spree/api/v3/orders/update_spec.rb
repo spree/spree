@@ -129,7 +129,7 @@ RSpec.describe Spree::Api::V3::Orders::Update do
 
         context 'with existing address by nested id' do
           let(:existing_address) { create(:address, user: user) }
-          let(:params) { { address_key => { id: existing_address.prefix_id } } }
+          let(:params) { { address_key => { id: existing_address.prefixed_id } } }
 
           it 'uses the existing address' do
             expect(subject).to be_success
@@ -139,7 +139,7 @@ RSpec.describe Spree::Api::V3::Orders::Update do
 
         context 'with top-level address_id parameter' do
           let(:existing_address) { create(:address, user: user) }
-          let(:params) { { address_id_key => existing_address.prefix_id } }
+          let(:params) { { address_id_key => existing_address.prefixed_id } }
 
           it 'uses the existing address' do
             expect(subject).to be_success
@@ -163,7 +163,7 @@ RSpec.describe Spree::Api::V3::Orders::Update do
 
       shared_examples 'ignores other users address' do |address_type|
         context "when using another user's address for #{address_type}" do
-          let(:params) { { address_type => { id: other_users_address.prefix_id } } }
+          let(:params) { { address_type => { id: other_users_address.prefixed_id } } }
 
           it 'ignores the address and keeps original' do
             original_address_id = order.public_send(:"#{address_type}_id")
@@ -174,7 +174,7 @@ RSpec.describe Spree::Api::V3::Orders::Update do
         end
 
         context "when using another user's address via #{address_type}_id" do
-          let(:params) { { :"#{address_type}_id" => other_users_address.prefix_id } }
+          let(:params) { { :"#{address_type}_id" => other_users_address.prefixed_id } }
 
           it 'ignores the address and keeps original' do
             original_address_id = order.public_send(:"#{address_type}_id")
@@ -190,7 +190,7 @@ RSpec.describe Spree::Api::V3::Orders::Update do
 
       context 'when order has no user (guest order)' do
         let(:order) { create(:order_with_line_items, user: nil, store: store) }
-        let(:params) { { ship_address_id: other_users_address.prefix_id } }
+        let(:params) { { ship_address_id: other_users_address.prefixed_id } }
 
         it 'ignores address_id params and keeps existing address' do
           original_address_id = order.ship_address_id

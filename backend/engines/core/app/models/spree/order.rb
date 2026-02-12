@@ -237,15 +237,18 @@ module Spree
       left_joins(:bill_address).where(arel_table[:email].lower.eq(query.downcase)).or(where(conditions.reduce(:or)))
     end
 
-    # Find an order by prefix_id first, falling back to number, then id for backwards compatibility
-    # @param param [String] the prefix_id, number, or id to search for
+    # Find an order by prefixed ID first, falling back to number, then integer id for backwards compatibility
+    # @param param [String] the prefixed ID, number, or integer id to search for
     # @return [Spree::Order, nil] the found order or nil
     def self.find_by_param(param)
       return nil if param.blank?
 
-      # Try prefix_id first (new format)
-      order = find_by(prefix_id: param)
-      return order if order
+      # Try prefixed ID first (new format)
+      if param.to_s.include?('_')
+        decoded = decode_prefixed_id(param)
+        order = find_by(id: decoded) if decoded
+        return order if order
+      end
 
       # Try number (legacy format)
       order = find_by(number: param)
@@ -255,9 +258,9 @@ module Spree
       find_by(id: param) if param.to_s.match?(/\A\d+\z/)
     end
 
-    # Find an order by prefix_id first, falling back to number, then id for backwards compatibility
+    # Find an order by prefixed ID first, falling back to number, then integer id for backwards compatibility
     # Raises ActiveRecord::RecordNotFound if not found
-    # @param param [String] the prefix_id, number, or id to search for
+    # @param param [String] the prefixed ID, number, or integer id to search for
     # @return [Spree::Order] the found order
     # @raise [ActiveRecord::RecordNotFound] if order not found
     def self.find_by_param!(param)

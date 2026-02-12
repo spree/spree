@@ -10,13 +10,13 @@ RSpec.describe Spree::Events::PostCategorySerializer do
 
   describe '#as_json' do
     it 'includes identity attributes' do
-      expect(subject[:id]).to eq(post_category.prefix_id)
+      expect(subject[:id]).to eq(post_category.prefixed_id)
       expect(subject[:title]).to eq('News')
       expect(subject[:slug]).to eq(post_category.slug)
     end
 
     it 'includes store_id' do
-      expect(subject[:store_id]).to eq(store.prefix_id)
+      expect(subject[:store_id]).to eq(store.prefixed_id)
     end
 
     it 'includes timestamps' do

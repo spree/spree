@@ -2,6 +2,7 @@ module Spree
   module AdminUserMethods
     extend ActiveSupport::Concern
 
+    include Spree::PrefixedId
     include Spree::UserRoles
     include Spree::RansackableAttributes
 

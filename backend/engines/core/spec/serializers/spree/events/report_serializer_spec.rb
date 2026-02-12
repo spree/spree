@@ -19,16 +19,16 @@ RSpec.describe Spree::Events::ReportSerializer do
 
   describe '#as_json' do
     it 'includes identity attributes' do
-      expect(subject[:id]).to eq(report.prefix_id)
+      expect(subject[:id]).to eq(report.prefixed_id)
       expect(subject[:type]).to eq(report.type)
     end
 
     it 'includes store reference' do
-      expect(subject[:store_id]).to eq(store.prefix_id)
+      expect(subject[:store_id]).to eq(store.prefixed_id)
     end
 
     it 'includes user reference' do
-      expect(subject[:user_id]).to eq(user.prefix_id)
+      expect(subject[:user_id]).to eq(user.prefixed_id)
     end
 
     it 'includes currency' do

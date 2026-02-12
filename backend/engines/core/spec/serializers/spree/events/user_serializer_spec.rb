@@ -9,7 +9,7 @@ RSpec.describe Spree::Events::UserSerializer do
 
   describe '#as_json' do
     it 'includes identity attributes' do
-      expect(subject[:id]).to eq(user.prefix_id)
+      expect(subject[:id]).to eq(user.prefixed_id)
       expect(subject[:email]).to eq('user@example.com')
     end
 

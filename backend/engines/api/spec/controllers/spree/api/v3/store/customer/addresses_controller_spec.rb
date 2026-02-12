@@ -36,8 +36,8 @@ RSpec.describe Spree::Api::V3::Store::Customer::AddressesController, type: :cont
       get :index
 
       ids = json_response['data'].map { |a| a['id'] }
-      expect(ids).to include(address.prefix_id)
-      expect(ids).not_to include(other_address.prefix_id)
+      expect(ids).to include(address.prefixed_id)
+      expect(ids).not_to include(other_address.prefixed_id)
     end
 
     context 'without authentication' do
@@ -53,14 +53,14 @@ RSpec.describe Spree::Api::V3::Store::Customer::AddressesController, type: :cont
 
   describe 'GET #show' do
     it 'returns the address' do
-      get :show, params: { id: address.prefix_id }
+      get :show, params: { id: address.prefixed_id }
 
       expect(response).to have_http_status(:ok)
-      expect(json_response['id']).to eq(address.prefix_id)
+      expect(json_response['id']).to eq(address.prefixed_id)
     end
 
     it 'returns address attributes' do
-      get :show, params: { id: address.prefix_id }
+      get :show, params: { id: address.prefixed_id }
 
       expect(json_response).to include('id', 'firstname', 'lastname', 'address1', 'city', 'zipcode')
     end
@@ -70,7 +70,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::AddressesController, type: :cont
       let(:other_address) { create(:address, user: other_user) }
 
       it 'returns not found' do
-        get :show, params: { id: other_address.prefix_id }
+        get :show, params: { id: other_address.prefixed_id }
 
         expect(response).to have_http_status(:not_found)
       end
@@ -80,7 +80,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::AddressesController, type: :cont
       before { request.headers['Authorization'] = nil }
 
       it 'returns unauthorized' do
-        get :show, params: { id: address.prefix_id }
+        get :show, params: { id: address.prefixed_id }
 
         expect(response).to have_http_status(:unauthorized)
       end
@@ -139,14 +139,14 @@ RSpec.describe Spree::Api::V3::Store::Customer::AddressesController, type: :cont
 
   describe 'PATCH #update' do
     it 'updates the address' do
-      patch :update, params: { id: address.prefix_id, firstname: 'Updated' }
+      patch :update, params: { id: address.prefixed_id, firstname: 'Updated' }
 
       expect(response).to have_http_status(:ok)
       expect(address.reload.firstname).to eq('Updated')
     end
 
     it 'returns the updated address' do
-      patch :update, params: { id: address.prefix_id, firstname: 'Updated' }
+      patch :update, params: { id: address.prefixed_id, firstname: 'Updated' }
 
       expect(json_response['firstname']).to eq('Updated')
     end
@@ -156,7 +156,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::AddressesController, type: :cont
       let(:other_address) { create(:address, user: other_user) }
 
       it 'returns not found' do
-        patch :update, params: { id: other_address.prefix_id, firstname: 'Hacker' }
+        patch :update, params: { id: other_address.prefixed_id, firstname: 'Hacker' }
 
         expect(response).to have_http_status(:not_found)
         expect(other_address.reload.firstname).not_to eq('Hacker')
@@ -167,7 +167,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::AddressesController, type: :cont
       before { request.headers['Authorization'] = nil }
 
       it 'returns unauthorized' do
-        patch :update, params: { id: address.prefix_id, firstname: 'Updated' }
+        patch :update, params: { id: address.prefixed_id, firstname: 'Updated' }
 
         expect(response).to have_http_status(:unauthorized)
       end
@@ -177,7 +177,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::AddressesController, type: :cont
   describe 'DELETE #destroy' do
     it 'deletes the address' do
       expect {
-        delete :destroy, params: { id: address.prefix_id }
+        delete :destroy, params: { id: address.prefixed_id }
       }.to change { user.addresses.count }.by(-1)
 
       expect(response).to have_http_status(:no_content)
@@ -189,7 +189,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::AddressesController, type: :cont
 
       it 'returns not found' do
         expect {
-          delete :destroy, params: { id: other_address.prefix_id }
+          delete :destroy, params: { id: other_address.prefixed_id }
         }.not_to change { Spree::Address.count }
 
         expect(response).to have_http_status(:not_found)
@@ -200,7 +200,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::AddressesController, type: :cont
       before { request.headers['Authorization'] = nil }
 
       it 'returns unauthorized' do
-        delete :destroy, params: { id: address.prefix_id }
+        delete :destroy, params: { id: address.prefixed_id }
 
         expect(response).to have_http_status(:unauthorized)
       end

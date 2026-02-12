@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
-class AddPrefixIdToSpreeTables < ActiveRecord::Migration[7.2]
+class RemovePrefixIdFromSpreeTables < ActiveRecord::Migration[7.2]
   def change
-    # Tables that need prefix_id for API v3
     tables = %i[
       spree_addresses
       spree_adjustments
@@ -92,13 +91,17 @@ class AddPrefixIdToSpreeTables < ActiveRecord::Migration[7.2]
     ]
 
     tables.each do |table|
-      add_column table, :prefix_id, :string unless column_exists?(table, :prefix_id)
-      add_index table, :prefix_id, unique: true unless index_exists?(table, :prefix_id)
+      next unless table_exists?(table)
+
+      remove_index table, :prefix_id, if_exists: true
+      remove_column table, :prefix_id, :string, if_exists: true
     end
 
     [Spree.user_class, Spree.admin_user_class].compact.each do |user_class|
-      add_column user_class.table_name, :prefix_id, :string unless column_exists?(user_class.table_name, :prefix_id)
-      add_index user_class.table_name, :prefix_id, unique: true unless index_exists?(user_class.table_name, :prefix_id)
+      next unless table_exists?(user_class.table_name)
+
+      remove_index user_class.table_name, :prefix_id, if_exists: true
+      remove_column user_class.table_name, :prefix_id, :string, if_exists: true
     end
   end
 end

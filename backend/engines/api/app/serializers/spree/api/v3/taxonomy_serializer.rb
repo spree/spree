@@ -8,7 +8,7 @@ module Spree
                    created_at: :iso8601, updated_at: :iso8601
 
         attribute :root_id do |taxonomy|
-          taxonomy.root&.prefix_id
+          taxonomy.root&.prefixed_id
         end
 
         # Conditional associations

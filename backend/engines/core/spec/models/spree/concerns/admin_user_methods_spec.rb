@@ -19,13 +19,13 @@ describe Spree::AdminUserMethods do
     it { expect(admin_user).to have_many(:exports) }
   end
 
-  describe 'prefix_id' do
-    it 'generates a prefix_id starting with admin_' do
-      expect(admin_user.prefix_id).to start_with('admin_')
+  describe 'prefixed_id' do
+    it 'generates a prefixed_id starting with admin_' do
+      expect(admin_user.prefixed_id).to start_with('admin_')
     end
 
-    it 'uses prefix_id as to_param' do
-      expect(admin_user.to_param).to eq(admin_user.prefix_id)
+    it 'uses prefixed_id as to_param' do
+      expect(admin_user.to_param).to eq(admin_user.prefixed_id)
     end
   end
 

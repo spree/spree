@@ -11,9 +11,9 @@ RSpec.describe Spree::Api::V3::VariantSerializer do
 
     it 'includes standard attributes' do
       expect(subject).to include(
-        'id' => variant.prefix_id,
+        'id' => variant.prefixed_id,
         'sku' => variant.sku,
-        'product_id' => product.prefix_id
+        'product_id' => product.prefixed_id
       )
       expect(subject).to have_key('price')
     end

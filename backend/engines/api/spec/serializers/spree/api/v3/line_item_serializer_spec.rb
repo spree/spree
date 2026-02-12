@@ -13,8 +13,8 @@ RSpec.describe Spree::Api::V3::LineItemSerializer do
   describe 'serialized attributes' do
     it 'includes standard attributes' do
       expect(subject).to include(
-        'id' => line_item.prefix_id,
-        'variant_id' => variant.prefix_id,
+        'id' => line_item.prefixed_id,
+        'variant_id' => variant.prefixed_id,
         'quantity' => 2,
         'name' => product.name,
         'slug' => product.slug

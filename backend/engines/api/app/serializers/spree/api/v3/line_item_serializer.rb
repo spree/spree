@@ -14,7 +14,7 @@ module Spree
                  thumbnail_url: 'string | null'
 
         attribute :variant_id do |line_item|
-          line_item.variant&.prefix_id
+          line_item.variant&.prefixed_id
         end
 
         attributes :quantity, :name, :slug, :options_text,

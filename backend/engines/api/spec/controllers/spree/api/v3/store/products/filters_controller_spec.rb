@@ -109,13 +109,13 @@ RSpec.describe Spree::Api::V3::Store::Products::FiltersController, type: :contro
 
     context 'with taxon_id parameter' do
       it 'scopes filters to taxon' do
-        get :index, params: { taxon_id: child_taxon1.prefix_id }
+        get :index, params: { taxon_id: child_taxon1.prefixed_id }
 
         expect(json_response['total_count']).to eq(2) # Only products in child_taxon1
       end
 
       it 'returns child taxons as filter options' do
-        get :index, params: { taxon_id: taxon.prefix_id }
+        get :index, params: { taxon_id: taxon.prefixed_id }
 
         taxon_filter = json_response['filters'].find { |f| f['type'] == 'taxon' }
         expect(taxon_filter).to be_present
@@ -127,7 +127,7 @@ RSpec.describe Spree::Api::V3::Store::Products::FiltersController, type: :contro
       it 'returns default_sort from taxon' do
         taxon.update!(sort_order: 'price-low-to-high')
 
-        get :index, params: { taxon_id: taxon.prefix_id }
+        get :index, params: { taxon_id: taxon.prefixed_id }
 
         expect(json_response['default_sort']).to eq('price-low-to-high')
       end

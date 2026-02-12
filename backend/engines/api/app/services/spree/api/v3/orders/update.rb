@@ -81,11 +81,12 @@ module Spree
             end
           end
 
-          # Translate prefix_id to internal id
-          def resolve_address_id(prefix_id)
+          # Translate prefixed ID to internal id
+          def resolve_address_id(prefixed_id)
             return unless order.user
 
-            order.user.addresses.find_by(prefix_id: prefix_id)&.id
+            decoded = Spree::Address.decode_prefixed_id(prefixed_id)
+            decoded ? order.user.addresses.find_by(id: decoded)&.id : nil
           end
 
           # Revert order state to 'address' when address changes

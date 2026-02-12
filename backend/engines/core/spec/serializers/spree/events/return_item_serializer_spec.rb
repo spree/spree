@@ -9,7 +9,7 @@ RSpec.describe Spree::Events::ReturnItemSerializer do
 
   describe '#as_json' do
     it 'includes identity attributes' do
-      expect(subject[:id]).to eq(return_item.prefix_id)
+      expect(subject[:id]).to eq(return_item.prefixed_id)
     end
 
     it 'includes status fields' do
@@ -24,8 +24,8 @@ RSpec.describe Spree::Events::ReturnItemSerializer do
     end
 
     it 'includes foreign keys' do
-      expect(subject[:inventory_unit_id]).to eq(return_item.inventory_unit&.prefix_id)
-      expect(subject[:return_authorization_id]).to eq(return_item.return_authorization&.prefix_id)
+      expect(subject[:inventory_unit_id]).to eq(return_item.inventory_unit&.prefixed_id)
+      expect(subject[:return_authorization_id]).to eq(return_item.return_authorization&.prefixed_id)
       expect(subject).to have_key(:customer_return_id)
       expect(subject).to have_key(:reimbursement_id)
       expect(subject).to have_key(:exchange_variant_id)
