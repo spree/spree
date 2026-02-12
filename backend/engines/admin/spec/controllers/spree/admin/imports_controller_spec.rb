@@ -112,6 +112,18 @@ RSpec.describe Spree::Admin::ImportsController, type: :controller do
         expect(response.body).to include(variant.name)
       end
     end
+
+    context 'when rows have customer items' do
+      let(:import) { create(:customer_import, status: :completed_mapping) }
+      let(:customer) { create(:user, email: 'imported@example.com', first_name: 'John', last_name: 'Doe') }
+      let!(:row) { create(:import_row, import: import, status: :completed, item: customer) }
+
+      it 'renders the customer partial' do
+        get :show, params: { id: import.to_param }
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include(customer.email)
+      end
+    end
   end
 
   describe 'PUT #complete_mapping' do

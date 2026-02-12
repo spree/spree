@@ -110,6 +110,13 @@ module Spree
       "Spree::ImportSchemas::#{type.demodulize}".safe_constantize.new
     end
 
+    # Returns the partial name used to render an import row item in admin views
+    # Override in subclasses for custom item types (e.g. configurable user class)
+    # @return [String]
+    def item_partial_name
+      model_class.to_s.demodulize.underscore
+    end
+
     # Returns the row processor class for the import
     # @return [Class]
     def row_processor_class
