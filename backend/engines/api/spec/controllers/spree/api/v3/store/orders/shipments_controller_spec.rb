@@ -26,7 +26,7 @@ RSpec.describe Spree::Api::V3::Store::Orders::ShipmentsController, type: :contro
 
       expect(response).to have_http_status(:ok)
       expect(json_response['data'].size).to eq(order.shipments.count)
-      expect(json_response['data'].first['id']).to eq(shipment.prefix_id)
+      expect(json_response['data'].first['id']).to eq(shipment.prefixed_id)
     end
 
     context 'with order token (guest)' do
@@ -81,7 +81,7 @@ RSpec.describe Spree::Api::V3::Store::Orders::ShipmentsController, type: :contro
       get :show, params: { order_id: order.to_param, id: shipment.to_param }
 
       expect(response).to have_http_status(:ok)
-      expect(json_response['id']).to eq(shipment.prefix_id)
+      expect(json_response['id']).to eq(shipment.prefixed_id)
       expect(json_response['state']).to eq(shipment.state)
     end
 

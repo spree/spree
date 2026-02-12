@@ -5,11 +5,11 @@ module Spree
         typelize variant_id: :string, wishlist_id: :string, quantity: :number
 
         attribute :variant_id do |wished_item|
-          wished_item.variant&.prefix_id
+          wished_item.variant&.prefixed_id
         end
 
         attribute :wishlist_id do |wished_item|
-          wished_item.wishlist&.prefix_id
+          wished_item.wishlist&.prefixed_id
         end
 
         attributes :quantity,

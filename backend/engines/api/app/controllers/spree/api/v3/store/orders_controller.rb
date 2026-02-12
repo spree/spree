@@ -88,7 +88,7 @@ module Spree
 
           # Override set_resource to use friendly finder and order_token authorization
           def set_resource
-            @order = current_store.orders.find_by!(prefix_id: params[:id])
+            @order = current_store.orders.find_by_prefix_id!(params[:id])
             @resource = @order
             authorize_resource!(@order)
           end

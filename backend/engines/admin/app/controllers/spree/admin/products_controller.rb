@@ -140,13 +140,13 @@ module Spree
           uniq.group_by(&:option_type).each_with_index do |option, index|
             option_type, option_values = option
 
-            @product_options[option_type.prefix_id] = {
+            @product_options[option_type.prefixed_id] = {
               name: option_type.presentation,
               position: index + 1,
               values: option_values.map { |ov| { value: ov.name, text: ov.presentation } }.uniq
             }
 
-            @product_available_options[option_type.prefix_id] = option_type.option_values.map { |ov| { id: ov.name, name: ov.presentation } }.uniq
+            @product_available_options[option_type.prefixed_id] = option_type.option_values.map { |ov| { id: ov.name, name: ov.presentation } }.uniq
           end
 
         @product_stock = {}

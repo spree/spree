@@ -6,7 +6,7 @@ module Spree
                  number: :string, amount: :string, display_amount: :string
 
         attribute :payment_method_id do |payment|
-          payment.payment_method&.prefix_id
+          payment.payment_method&.prefixed_id
         end
 
         attributes :state, :response_code, :number, :amount, :display_amount,

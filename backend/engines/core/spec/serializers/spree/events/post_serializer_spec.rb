@@ -19,7 +19,7 @@ RSpec.describe Spree::Events::PostSerializer do
 
   describe '#as_json' do
     it 'includes identity attributes' do
-      expect(subject[:id]).to eq(post.prefix_id)
+      expect(subject[:id]).to eq(post.prefixed_id)
       expect(subject[:title]).to eq('Test Post')
       expect(subject[:slug]).to eq(post.slug)
     end
@@ -38,9 +38,9 @@ RSpec.describe Spree::Events::PostSerializer do
     end
 
     it 'includes foreign keys' do
-      expect(subject[:author_id]).to eq(author.prefix_id)
-      expect(subject[:post_category_id]).to eq(post_category.prefix_id)
-      expect(subject[:store_id]).to eq(store.prefix_id)
+      expect(subject[:author_id]).to eq(author.prefixed_id)
+      expect(subject[:post_category_id]).to eq(post_category.prefixed_id)
+      expect(subject[:store_id]).to eq(store.prefixed_id)
     end
 
     it 'includes timestamps' do

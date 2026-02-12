@@ -195,7 +195,8 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
       # Skip prefix_id lookup for FriendlyId models (they use slug for to_param)
       uses_friendly_id = parent_model_class.respond_to?(:friendly_id_config)
       use_prefix_id = find_by == :prefix_id &&
-                      parent_model_class.column_names.include?('prefix_id') &&
+                      parent_model_class.respond_to?(:_prefix_id_prefix) &&
+                      parent_model_class._prefix_id_prefix.present? &&
                       !uses_friendly_id
 
       @parent ||= if use_prefix_id
@@ -218,7 +219,9 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
 
     # Skip prefix_id lookup for FriendlyId models (they use slug for to_param)
     uses_friendly_id = model_class.respond_to?(:friendly_id_config)
-    use_prefix_id = model_class.column_names.include?('prefix_id') && !uses_friendly_id
+    use_prefix_id = model_class.respond_to?(:_prefix_id_prefix) &&
+                    model_class._prefix_id_prefix.present? &&
+                    !uses_friendly_id
 
     if use_prefix_id
       base_scope.find_by_prefix_id!(params[:id])

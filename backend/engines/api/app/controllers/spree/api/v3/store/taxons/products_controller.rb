@@ -31,7 +31,7 @@ module Spree
               taxon_scope = taxon_scope.i18n if Spree::Taxon.include?(Spree::TranslatableResource)
 
               if id.to_s.start_with?('txn_')
-                taxon_scope.find_by!(prefix_id: id)
+                taxon_scope.find_by_prefix_id!(id)
               else
                 find_with_fallback_default_locale { taxon_scope.i18n.find_by!(permalink: id) }
               end

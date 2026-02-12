@@ -12,7 +12,7 @@ RSpec.describe Spree::Events::WishedItemSerializer do
 
   describe '#as_json' do
     it 'includes identity attributes' do
-      expect(subject[:id]).to eq(wished_item.prefix_id)
+      expect(subject[:id]).to eq(wished_item.prefixed_id)
     end
 
     it 'includes quantity' do
@@ -20,8 +20,8 @@ RSpec.describe Spree::Events::WishedItemSerializer do
     end
 
     it 'includes foreign keys' do
-      expect(subject[:variant_id]).to eq(variant.prefix_id)
-      expect(subject[:wishlist_id]).to eq(wishlist.prefix_id)
+      expect(subject[:variant_id]).to eq(variant.prefixed_id)
+      expect(subject[:wishlist_id]).to eq(wishlist.prefixed_id)
     end
 
     it 'includes timestamps' do

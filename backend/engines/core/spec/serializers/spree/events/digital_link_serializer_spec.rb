@@ -9,12 +9,12 @@ RSpec.describe Spree::Events::DigitalLinkSerializer do
 
   describe '#as_json' do
     it 'includes identity attributes' do
-      expect(subject[:id]).to eq(digital_link.prefix_id)
+      expect(subject[:id]).to eq(digital_link.prefixed_id)
     end
 
     it 'includes foreign keys' do
-      expect(subject[:digital_id]).to eq(digital_link.digital&.prefix_id)
-      expect(subject[:line_item_id]).to eq(digital_link.line_item&.prefix_id)
+      expect(subject[:digital_id]).to eq(digital_link.digital&.prefixed_id)
+      expect(subject[:line_item_id]).to eq(digital_link.line_item&.prefixed_id)
     end
 
     it 'includes access_counter' do

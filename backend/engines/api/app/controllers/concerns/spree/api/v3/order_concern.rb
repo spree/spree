@@ -11,7 +11,7 @@ module Spree
         end
 
         def set_parent
-          @parent = current_store.orders.find_by!(prefix_id: params[:order_id]) if params[:order_id].present?
+          @parent = current_store.orders.find_by_prefix_id!(params[:order_id]) if params[:order_id].present?
         end
 
         protected

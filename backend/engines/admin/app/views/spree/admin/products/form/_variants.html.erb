@@ -3,7 +3,7 @@
     <div class="card-header">
       <h5 class="card-title"><%= Spree.t(:variants) %></h5>
     </div>
-    <% option_types_for_select = @option_types.pluck(:presentation, :prefix_id) %>
+    <% option_types_for_select = @option_types.map { |ot| [ot.presentation, ot.prefixed_id] } %>
     <div class="card-body p-0">
       <%# Build currency format info for JavaScript %>
       <% currency_formats = supported_currencies.each_with_object({}) do |currency, hash|
@@ -38,7 +38,7 @@
           <div data-variants-form-target="optionsContainer" class="options-creator__options_container">
             <% @product.product_option_types.includes(:option_type).reorder('spree_product_option_types.position').each do |product_option_type| %>
               <% option_type = product_option_type.option_type %>
-              <div class="options-creator__option" data-variants-form-target="option" id="option-<%= option_type.prefix_id %>">
+              <div class="options-creator__option" data-variants-form-target="option" id="option-<%= option_type.prefixed_id %>">
                 <% if can?(:manage_option_types, @product) %>
                   <button class="draggable" type="button">
                     <i class="ti ti-grip-vertical"></i>
@@ -48,7 +48,7 @@
                   <div class="flex justify-between items-center">
                     <h6 data-slot="optionName"><%= option_type.presentation %></h6>
                     <% if can?(:manage_option_types, @product) %>
-                      <button class="btn btn-light btn-sm" type="button" data-action="variants-form#editOption" data-variants-form-option-id-param="<%= option_type.prefix_id %>"><%= Spree.t(:edit) %></button>
+                      <button class="btn btn-light btn-sm" type="button" data-action="variants-form#editOption" data-variants-form-option-id-param="<%= option_type.prefixed_id %>"><%= Spree.t(:edit) %></button>
                     <% end %>
                   </div>
                   <div data-slot="optionValuesContainer">

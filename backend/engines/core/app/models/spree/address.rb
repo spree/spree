@@ -26,7 +26,7 @@ module Spree
     # we're not freezing this on purpose so developers can extend and manage
     # those attributes depending of the logic of their applications
     ADDRESS_FIELDS = %w(firstname lastname company address1 address2 city state zipcode country phone)
-    EXCLUDED_KEYS_FOR_COMPARISON = %w(id prefix_id updated_at created_at deleted_at label user_id public_metadata private_metadata)
+    EXCLUDED_KEYS_FOR_COMPARISON = %w(id updated_at created_at deleted_at label user_id public_metadata private_metadata)
     FIELDS_TO_NORMALIZE = %w(firstname lastname phone alternative_phone company address1 address2 city zipcode)
 
     if defined?(Spree::Security::Addresses)

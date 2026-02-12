@@ -48,7 +48,8 @@ module Spree
 
       # GET /admin/invitations/:id?token=:token
       def show
-        @invitation = Spree::Invitation.pending.not_expired.find_by!(prefix_id: params[:id], token: params[:token])
+        decoded_id = Spree::Invitation.decode_prefixed_id(params[:id])
+        @invitation = Spree::Invitation.pending.not_expired.find_by!(id: decoded_id, token: params[:token])
         @parent = @invitation.resource
 
         if try_spree_current_user.present?

@@ -9,7 +9,7 @@ RSpec.describe Spree::Events::ReimbursementSerializer do
 
   describe '#as_json' do
     it 'includes identity attributes' do
-      expect(subject[:id]).to eq(reimbursement.prefix_id)
+      expect(subject[:id]).to eq(reimbursement.prefixed_id)
       expect(subject[:number]).to eq(reimbursement.number)
     end
 
@@ -22,8 +22,8 @@ RSpec.describe Spree::Events::ReimbursementSerializer do
     end
 
     it 'includes foreign keys' do
-      expect(subject[:order_id]).to eq(reimbursement.order&.prefix_id)
-      expect(subject[:customer_return_id]).to eq(reimbursement.customer_return&.prefix_id)
+      expect(subject[:order_id]).to eq(reimbursement.order&.prefixed_id)
+      expect(subject[:customer_return_id]).to eq(reimbursement.customer_return&.prefixed_id)
     end
 
     it 'includes timestamps' do

@@ -203,7 +203,7 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:wishlist_id) { wishlist.to_param }
-        let(:body) { { variant_id: new_variant.prefix_id, quantity: 1 } }
+        let(:body) { { variant_id: new_variant.prefixed_id, quantity: 1 } }
 
         schema '$ref' => '#/components/schemas/StoreWishedItem'
 

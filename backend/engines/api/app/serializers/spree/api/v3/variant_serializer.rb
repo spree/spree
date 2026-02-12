@@ -13,7 +13,7 @@ module Spree
                  original_price: 'StorePrice | null'
 
         attribute :product_id do |variant|
-          variant.product&.prefix_id
+          variant.product&.prefixed_id
         end
 
         attributes :sku, :is_master, :options_text, :track_inventory, :image_count,

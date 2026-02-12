@@ -6,7 +6,7 @@ module Spree
                  amount: :string, display_amount: :string, promotion_id: :string
 
         attribute :promotion_id do |order_promotion|
-          order_promotion.promotion&.prefix_id
+          order_promotion.promotion&.prefixed_id
         end
 
         attributes :name, :description, :code, :amount, :display_amount

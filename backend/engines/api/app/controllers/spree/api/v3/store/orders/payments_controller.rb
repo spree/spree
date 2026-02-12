@@ -32,7 +32,7 @@ module Spree
             end
 
             def set_payment
-              @payment = @parent.payments.find_by!(prefix_id: params[:id])
+              @payment = @parent.payments.find_by_prefix_id!(params[:id])
             end
 
             def serializer_class

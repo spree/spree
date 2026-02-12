@@ -10,10 +10,10 @@ RSpec.describe Spree::Api::V3::ProductSerializer do
 
     it 'includes standard attributes' do
       expect(subject).to include(
-        'id' => product.prefix_id,
+        'id' => product.prefixed_id,
         'name' => product.name,
         'slug' => product.slug,
-        'default_variant_id' => product.default_variant.prefix_id
+        'default_variant_id' => product.default_variant.prefixed_id
       )
       expect(subject).to have_key('thumbnail_url')
       expect(subject).to have_key('price')

@@ -57,8 +57,8 @@ RSpec.describe Spree::Api::V3::Store::Customer::GiftCardsController, type: :cont
       get :index
 
       ids = json_response['data'].map { |c| c['id'] }
-      expect(ids).to include(gift_card.prefix_id)
-      expect(ids).not_to include(other_card.prefix_id)
+      expect(ids).to include(gift_card.prefixed_id)
+      expect(ids).not_to include(other_card.prefixed_id)
     end
 
     it 'only returns gift cards from the current store' do
@@ -68,8 +68,8 @@ RSpec.describe Spree::Api::V3::Store::Customer::GiftCardsController, type: :cont
       get :index
 
       ids = json_response['data'].map { |c| c['id'] }
-      expect(ids).to include(gift_card.prefix_id)
-      expect(ids).not_to include(other_store_card.prefix_id)
+      expect(ids).to include(gift_card.prefixed_id)
+      expect(ids).not_to include(other_store_card.prefixed_id)
     end
 
     it 'returns gift cards ordered by created_at desc' do
@@ -79,8 +79,8 @@ RSpec.describe Spree::Api::V3::Store::Customer::GiftCardsController, type: :cont
       get :index
 
       ids = json_response['data'].map { |c| c['id'] }
-      expect(ids.first).to eq(newer_card.prefix_id)
-      expect(ids.last).to eq(older_card.prefix_id)
+      expect(ids.first).to eq(newer_card.prefixed_id)
+      expect(ids.last).to eq(older_card.prefixed_id)
     end
 
     context 'with expired gift card' do
@@ -90,13 +90,13 @@ RSpec.describe Spree::Api::V3::Store::Customer::GiftCardsController, type: :cont
         get :index
 
         ids = json_response['data'].map { |c| c['id'] }
-        expect(ids).to include(expired_card.prefix_id)
+        expect(ids).to include(expired_card.prefixed_id)
       end
 
       it 'shows correct expired state' do
         get :index
 
-        expired_data = json_response['data'].find { |c| c['id'] == expired_card.prefix_id }
+        expired_data = json_response['data'].find { |c| c['id'] == expired_card.prefixed_id }
         expect(expired_data['expired']).to be true
         expect(expired_data['active']).to be false
         expect(expired_data['state']).to eq('expired')
@@ -109,7 +109,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::GiftCardsController, type: :cont
       it 'shows correct state and amounts' do
         get :index
 
-        partial_data = json_response['data'].find { |c| c['id'] == partial_card.prefix_id }
+        partial_data = json_response['data'].find { |c| c['id'] == partial_card.prefixed_id }
         expect(partial_data['state']).to eq('partially_redeemed')
         expect(partial_data['amount_remaining']).to eq(30.0)
       end
@@ -128,14 +128,14 @@ RSpec.describe Spree::Api::V3::Store::Customer::GiftCardsController, type: :cont
 
   describe 'GET #show' do
     it 'returns the gift card' do
-      get :show, params: { id: gift_card.prefix_id }
+      get :show, params: { id: gift_card.prefixed_id }
 
       expect(response).to have_http_status(:ok)
-      expect(json_response['id']).to eq(gift_card.prefix_id)
+      expect(json_response['id']).to eq(gift_card.prefixed_id)
     end
 
     it 'returns gift card with all attributes' do
-      get :show, params: { id: gift_card.prefix_id }
+      get :show, params: { id: gift_card.prefixed_id }
 
       expect(json_response['code']).to eq(gift_card.display_code)
       expect(json_response['amount']).to eq(100.0)
@@ -149,7 +149,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::GiftCardsController, type: :cont
       let(:other_card) { create(:gift_card, user: other_user, store: store) }
 
       it 'returns not found' do
-        get :show, params: { id: other_card.prefix_id }
+        get :show, params: { id: other_card.prefixed_id }
 
         expect(response).to have_http_status(:not_found)
       end
@@ -160,7 +160,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::GiftCardsController, type: :cont
       let(:other_store_card) { create(:gift_card, user: user, store: other_store) }
 
       it 'returns not found' do
-        get :show, params: { id: other_store_card.prefix_id }
+        get :show, params: { id: other_store_card.prefixed_id }
 
         expect(response).to have_http_status(:not_found)
       end
@@ -170,7 +170,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::GiftCardsController, type: :cont
       before { request.headers['Authorization'] = nil }
 
       it 'returns unauthorized' do
-        get :show, params: { id: gift_card.prefix_id }
+        get :show, params: { id: gift_card.prefixed_id }
 
         expect(response).to have_http_status(:unauthorized)
       end

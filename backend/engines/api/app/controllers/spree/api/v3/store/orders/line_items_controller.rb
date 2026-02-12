@@ -28,7 +28,7 @@ module Spree
 
             # PATCH  /api/v3/store/orders/:order_id/line_items/:id
             def update
-              @line_item = scope.find_by!(prefix_id: params[:id])
+              @line_item = scope.find_by_prefix_id!(params[:id])
 
               if permitted_params[:quantity].present?
                 result = Spree.cart_set_item_quantity_service.call(
@@ -49,7 +49,7 @@ module Spree
 
             # DELETE  /api/v3/store/orders/:order_id/line_items/:id
             def destroy
-              @line_item = scope.find_by!(prefix_id: params[:id])
+              @line_item = scope.find_by_prefix_id!(params[:id])
 
               Spree.cart_remove_line_item_service.call(
                 order: @parent,
@@ -66,7 +66,7 @@ module Spree
             end
 
             def variant
-              @variant ||= current_store.variants.accessible_by(current_ability).find_by!(prefix_id: permitted_params[:variant_id])
+              @variant ||= current_store.variants.accessible_by(current_ability).find_by_prefix_id!(permitted_params[:variant_id])
             end
 
             def model_class

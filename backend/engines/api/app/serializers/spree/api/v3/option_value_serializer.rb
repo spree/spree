@@ -6,7 +6,7 @@ module Spree
                  option_type_name: :string, option_type_presentation: :string
 
         attribute :option_type_id do |option_value|
-          option_value.option_type&.prefix_id
+          option_value.option_type&.prefixed_id
         end
 
         attributes :name, :presentation, :position

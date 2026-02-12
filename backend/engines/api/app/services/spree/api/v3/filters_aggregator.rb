@@ -88,7 +88,7 @@ module Spree
             next if values.empty?
 
             {
-              id: option_type.prefix_id,
+              id: option_type.prefixed_id,
               type: 'option',
               label: option_type.presentation,
               name: option_type.name,
@@ -109,7 +109,7 @@ module Spree
             .count
 
           {
-            id: option_value.prefix_id,
+            id: option_value.prefixed_id,
             label: option_value.presentation,
             name: option_value.name,
             position: option_value.position,
@@ -144,7 +144,7 @@ module Spree
           count = @scope.in_taxon(taxon).distinct.count
 
           {
-            id: taxon.prefix_id,
+            id: taxon.prefixed_id,
             label: taxon.name,
             permalink: taxon.permalink,
             count: count

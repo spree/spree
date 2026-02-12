@@ -41,8 +41,8 @@ RSpec.describe 'Payment Methods API', type: :request, swagger_doc: 'api-referenc
         run_test! do |response|
           data = JSON.parse(response.body)
           # Only frontend-visible payment methods should be returned
-          expect(data['data'].map { |pm| pm['id'] }).to include(payment_method.prefix_id)
-          expect(data['data'].map { |pm| pm['id'] }).not_to include(backend_only_pm.prefix_id)
+          expect(data['data'].map { |pm| pm['id'] }).to include(payment_method.prefixed_id)
+          expect(data['data'].map { |pm| pm['id'] }).not_to include(backend_only_pm.prefixed_id)
         end
       end
 

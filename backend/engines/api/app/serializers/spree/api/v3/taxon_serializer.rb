@@ -15,11 +15,11 @@ module Spree
                    created_at: :iso8601, updated_at: :iso8601
 
         attribute :parent_id do |taxon|
-          taxon.parent&.prefix_id
+          taxon.parent&.prefixed_id
         end
 
         attribute :taxonomy_id do |taxon|
-          taxon.taxonomy&.prefix_id
+          taxon.taxonomy&.prefixed_id
         end
 
         attribute :description do |taxon|

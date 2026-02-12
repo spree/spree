@@ -9,7 +9,7 @@ RSpec.describe Spree::Events::InvitationSerializer do
 
   describe '#as_json' do
     it 'includes identity attributes' do
-      expect(subject[:id]).to eq(invitation.prefix_id)
+      expect(subject[:id]).to eq(invitation.prefixed_id)
       expect(subject[:email]).to eq(invitation.email)
     end
 
@@ -19,12 +19,12 @@ RSpec.describe Spree::Events::InvitationSerializer do
 
     it 'includes resource polymorphic reference' do
       expect(subject[:resource_type]).to eq(invitation.resource_type)
-      expect(subject[:resource_id]).to eq(invitation.resource&.prefix_id)
+      expect(subject[:resource_id]).to eq(invitation.resource&.prefixed_id)
     end
 
     it 'includes inviter polymorphic reference' do
       expect(subject[:inviter_type]).to eq(invitation.inviter_type)
-      expect(subject[:inviter_id]).to eq(invitation.inviter&.prefix_id)
+      expect(subject[:inviter_id]).to eq(invitation.inviter&.prefixed_id)
     end
 
     it 'includes invitee polymorphic reference' do
@@ -33,7 +33,7 @@ RSpec.describe Spree::Events::InvitationSerializer do
     end
 
     it 'includes role_id' do
-      expect(subject[:role_id]).to eq(invitation.role&.prefix_id)
+      expect(subject[:role_id]).to eq(invitation.role&.prefixed_id)
     end
 
     it 'includes dates' do

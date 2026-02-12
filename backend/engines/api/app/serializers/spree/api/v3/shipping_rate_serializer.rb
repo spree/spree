@@ -6,7 +6,7 @@ module Spree
                  cost: :number, display_cost: :string
 
         attribute :shipping_method_id do |shipping_rate|
-          shipping_rate.shipping_method&.prefix_id
+          shipping_rate.shipping_method&.prefixed_id
         end
 
         attributes :name, :selected

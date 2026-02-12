@@ -1,95 +1,82 @@
 # frozen_string_literal: true
 
+require 'sqids'
+
 module Spree
-  # Adds Stripe-style prefixed IDs to Spree models
-  # e.g., prod_abc123, order_xyz789, var_def456
+  # Adds Stripe-style prefixed IDs to Spree models using Sqids encoding.
+  # IDs are computed on the fly from integer primary keys -- no database column needed.
   #
-  # Usage in models:
+  # e.g., Product with id=12345 -> "prod_86Rf07xd4z"
+  #
   #   class Product < Spree.base_class
   #     has_prefix_id :prod
   #   end
-  #
-  # This stores a prefix_id column in the database (e.g., "prod_abc123")
-  # that can be used as the primary identifier in API v3.
-  #
-  # The prefix_id is auto-generated on record creation and is immutable.
   module PrefixedId
     extend ActiveSupport::Concern
 
-    ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'.freeze
-    ID_LENGTH = 24
+    SQIDS = Sqids.new(min_length: 10)
 
     included do
       class_attribute :_prefix_id_prefix, instance_writer: false
     end
 
-    # Clear prefix_id when duplicating records so a new one is generated
-    def initialize_dup(other)
-      super
-      self.prefix_id = nil if respond_to?(:prefix_id=)
+    # Returns the Stripe-style prefixed ID, or nil for unsaved records.
+    def prefixed_id
+      return nil unless id.present?
+
+      "#{self.class._prefix_id_prefix}_#{Spree::PrefixedId::SQIDS.encode([id])}"
     end
 
-    # Use prefix_id for URL params when available
-    # Skip if FriendlyId is used (it has its own to_param using slug)
-    # Skip if model doesn't have the prefix_id column
+    # Use prefixed_id for URL params when available.
+    # Skip if FriendlyId is used (it has its own to_param using slug).
     def to_param
       return super if self.class.respond_to?(:friendly_id_config)
-      return super unless self.class.column_names.include?('prefix_id')
-      prefix_id.presence || super
+      return super unless self.class._prefix_id_prefix.present?
+
+      prefixed_id.presence || super
     end
 
     class_methods do
       def has_prefix_id(prefix)
         self._prefix_id_prefix = prefix.to_s
-
-        before_create :generate_prefix_id, if: -> { prefix_id.blank? }
-
-        validates :prefix_id, uniqueness: true, allow_nil: true
-
-        # Class method to find by prefix_id
-        scope :find_by_prefix_id, ->(id) { find_by(prefix_id: id) }
       end
 
-      def find_by_prefix_id!(id)
-        find_by!(prefix_id: id)
+      def find_by_prefix_id!(prefixed_id)
+        decoded = decode_prefixed_id(prefixed_id)
+        raise ActiveRecord::RecordNotFound.new("Couldn't find #{name} with prefixed id=#{prefixed_id}", name) unless decoded
+
+        find(decoded)
       end
 
-      def prefix_id_prefix
-        _prefix_id_prefix
+      def find_by_prefix_id(prefixed_id)
+        decoded = decode_prefixed_id(prefixed_id)
+        return nil unless decoded
+
+        find_by(id: decoded)
       end
 
-      # Find a record by prefix_id first, falling back to id for backwards compatibility
-      # @param param [String] the prefix_id or id to search for
-      # @return [ActiveRecord::Base, nil] the found record or nil
+      # Decode a prefixed ID string (e.g., "prod_86Rf07xd4z") to the integer primary key.
+      def decode_prefixed_id(prefixed_id_string)
+        return nil if prefixed_id_string.blank?
+
+        parts = prefixed_id_string.to_s.split('_', 2)
+        return nil if parts.length != 2
+
+        _prefix, encoded = parts
+        ids = Spree::PrefixedId::SQIDS.decode(encoded)
+        ids.first
+      end
+
+      # Find by prefixed ID first, falling back to integer id for backwards compatibility.
       def find_by_param(param)
         return nil if param.blank?
 
-        # Try prefix_id first (new format)
-        record = find_by(prefix_id: param)
-        return record if record
-
-        # Fall back to id (legacy format) - only if param looks like an integer
-        find_by(id: param) if param.to_s.match?(/\A\d+\z/)
+        find_by_prefix_id(param) || (find_by(id: param) if param.to_s.match?(/\A\d+\z/))
       end
 
-      # Find a record by prefix_id first, falling back to id for backwards compatibility
-      # Raises ActiveRecord::RecordNotFound if not found
-      # @param param [String] the prefix_id or id to search for
-      # @return [ActiveRecord::Base] the found record
-      # @raise [ActiveRecord::RecordNotFound] if record not found
       def find_by_param!(param)
-        find_by_param(param) || raise(ActiveRecord::RecordNotFound.new("Couldn't find #{name} with param=#{param}"))
+        find_by_param(param) || raise(ActiveRecord::RecordNotFound.new("Couldn't find #{name} with param=#{param}", name))
       end
-    end
-
-    def generate_prefix_id
-      self.prefix_id = "#{self.class._prefix_id_prefix}_#{random_id}"
-    end
-
-    private
-
-    def random_id
-      Array.new(ID_LENGTH) { ALPHABET[SecureRandom.random_number(ALPHABET.length)] }.join
     end
   end
 end

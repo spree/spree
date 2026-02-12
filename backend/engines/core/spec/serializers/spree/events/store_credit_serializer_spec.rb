@@ -19,7 +19,7 @@ RSpec.describe Spree::Events::StoreCreditSerializer do
 
   describe '#as_json' do
     it 'includes identity attributes' do
-      expect(subject[:id]).to eq(store_credit.prefix_id)
+      expect(subject[:id]).to eq(store_credit.prefixed_id)
     end
 
     it 'includes amount fields' do
@@ -34,8 +34,8 @@ RSpec.describe Spree::Events::StoreCreditSerializer do
     end
 
     it 'includes user foreign keys' do
-      expect(subject[:user_id]).to eq(user.prefix_id)
-      expect(subject[:created_by_id]).to eq(admin_user.prefix_id)
+      expect(subject[:user_id]).to eq(user.prefixed_id)
+      expect(subject[:created_by_id]).to eq(admin_user.prefixed_id)
     end
 
     it 'includes category and type ids' do
@@ -44,7 +44,7 @@ RSpec.describe Spree::Events::StoreCreditSerializer do
     end
 
     it 'includes store_id' do
-      expect(subject[:store_id]).to eq(store.prefix_id)
+      expect(subject[:store_id]).to eq(store.prefixed_id)
     end
 
     it 'includes originator polymorphic reference' do

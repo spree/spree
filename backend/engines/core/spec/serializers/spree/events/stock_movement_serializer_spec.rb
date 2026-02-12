@@ -12,7 +12,7 @@ RSpec.describe Spree::Events::StockMovementSerializer do
 
   describe '#as_json' do
     it 'includes identity attributes' do
-      expect(subject[:id]).to eq(stock_movement.prefix_id)
+      expect(subject[:id]).to eq(stock_movement.prefixed_id)
     end
 
     it 'includes quantity' do
@@ -29,7 +29,7 @@ RSpec.describe Spree::Events::StockMovementSerializer do
     end
 
     it 'includes stock_item_id' do
-      expect(subject[:stock_item_id]).to eq(stock_item.prefix_id)
+      expect(subject[:stock_item_id]).to eq(stock_item.prefixed_id)
     end
 
     it 'includes timestamps' do

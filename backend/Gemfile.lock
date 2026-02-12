@@ -71,6 +71,7 @@ PATH
       rexml
       ruby-oembed (~> 0.18)
       safely_block (~> 0.4)
+      sqids (~> 0.2)
       state_machines-activemodel (~> 0.100)
       state_machines-activerecord (~> 0.100)
       stringex
@@ -717,6 +718,7 @@ GEM
       rails-i18n
       spree_core (>= 4.2.0.rc3)
       spree_extension
+    sqids (0.2.2)
     state_machines (0.100.4)
     state_machines-activemodel (0.101.0)
       activemodel (>= 7.2)
@@ -1075,6 +1077,7 @@ CHECKSUMS
   spree_emails (5.4.0.alpha)
   spree_extension (0.1.0) sha256=b648327f4787295e051be4ea0c0a47baec47c2e245bca9c93ecf73605fc3a051
   spree_i18n (5.3.2) sha256=03b805235ca156644951f6bc3d07cbe43d0aa01134c4a27e3f3304011956f79b
+  sqids (0.2.2) sha256=c2d31e0dfb6c32d17c10b59df059a299af93bef716d700ff70d77156df702d36
   state_machines (0.100.4) sha256=dd4e555ebb061569dd8fe18a5f39b51d10be6306b89a0c315a9697671d752565
   state_machines-activemodel (0.101.0) sha256=6798c6bf5aa4be2b1a00ca633949c999ebee7a148bd4ea8f6858b189e2cdf72d
   state_machines-activerecord (0.100.0) sha256=b2213f74f3f32c6d92de5139e8898bc64a0ffb3f048df7d950ce27e28384beb5

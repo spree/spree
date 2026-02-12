@@ -95,7 +95,7 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
 
         run_test! do |response|
           data = JSON.parse(response.body)
-          expect(data['id']).to eq(product.prefix_id)
+          expect(data['id']).to eq(product.prefixed_id)
           expect(data['name']).to eq(product.name)
           expect(data['slug']).to eq(product.slug)
         end
@@ -109,7 +109,7 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
 
         run_test! do |response|
           data = JSON.parse(response.body)
-          expect(data['id']).to eq(product.prefix_id)
+          expect(data['id']).to eq(product.prefixed_id)
         end
       end
 
@@ -228,7 +228,7 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
 
       response '200', 'filters scoped to taxon' do
         let(:'x-spree-api-key') { api_key.token }
-        let(:taxon_id) { taxon.prefix_id }
+        let(:taxon_id) { taxon.prefixed_id }
 
         schema type: :object,
                properties: {

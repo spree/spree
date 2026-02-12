@@ -16,7 +16,7 @@ RSpec.describe Spree::Events::ProductSerializer do
 
   describe '#as_json' do
     it 'includes identity attributes' do
-      expect(subject[:id]).to eq(product.prefix_id)
+      expect(subject[:id]).to eq(product.prefixed_id)
       expect(subject[:name]).to eq('Test Product')
       expect(subject[:slug]).to eq(product.slug)
     end

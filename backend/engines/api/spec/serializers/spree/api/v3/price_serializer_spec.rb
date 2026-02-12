@@ -36,7 +36,7 @@ RSpec.describe Spree::Api::V3::PriceSerializer do
       price_list = create(:price_list, :active, store: store)
       price_with_list = create(:price, variant: variant, amount: 14.99, currency: 'USD', price_list: price_list)
       result = described_class.new(price_with_list, params: base_params).to_h
-      expect(result['price_list_id']).to eq(price_list.prefix_id)
+      expect(result['price_list_id']).to eq(price_list.prefixed_id)
     end
   end
 end
@@ -52,7 +52,7 @@ RSpec.describe Spree::Api::V3::Admin::PriceSerializer do
     subject { described_class.new(price, params: base_params).to_h }
 
     it 'includes admin-only variant_id and timestamps' do
-      expect(subject['variant_id']).to eq(variant.prefix_id)
+      expect(subject['variant_id']).to eq(variant.prefixed_id)
       expect(subject.keys).to include('created_at', 'updated_at')
     end
   end

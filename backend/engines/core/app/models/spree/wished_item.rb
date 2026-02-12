@@ -22,7 +22,8 @@ module Spree
     # @param id [String] the prefixed ID of the variant
     def variant_id=(id)
       if id.to_s.include?('_')
-        self.variant_id = Spree::Variant.find_by(prefix_id: id)&.id
+        decoded = Spree::Variant.decode_prefixed_id(id)
+        super(decoded)
       else
         super(id)
       end

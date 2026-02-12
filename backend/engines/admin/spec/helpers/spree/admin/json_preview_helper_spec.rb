@@ -33,7 +33,7 @@ RSpec.describe Spree::Admin::JsonPreviewHelper, type: :helper do
         expect(json).to be_present
         parsed = JSON.parse(json)
         expect(parsed['name']).to eq(product.name)
-        expect(parsed['id']).to eq(product.prefix_id)
+        expect(parsed['id']).to eq(product.prefixed_id)
       end
 
       it 'serializes Order to JSON' do
@@ -41,7 +41,7 @@ RSpec.describe Spree::Admin::JsonPreviewHelper, type: :helper do
         expect(json).to be_present
         parsed = JSON.parse(json)
         expect(parsed['number']).to eq(order.number)
-        expect(parsed['id']).to eq(order.prefix_id)
+        expect(parsed['id']).to eq(order.prefixed_id)
       end
     end
 

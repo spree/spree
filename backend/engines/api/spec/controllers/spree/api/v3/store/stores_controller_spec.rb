@@ -14,7 +14,7 @@ RSpec.describe Spree::Api::V3::Store::StoresController, type: :controller do
       get :current
 
       expect(response).to have_http_status(:ok)
-      expect(json_response['id']).to eq(store.prefix_id)
+      expect(json_response['id']).to eq(store.prefixed_id)
     end
 
     it 'returns store attributes' do
