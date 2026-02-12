@@ -21,14 +21,6 @@ description: This guide covers upgrading a Spree 5.3 application to Spree 5.4.
   bin/rake spree:install:migrations && bin/rails db:migrate
   ```
 
-### Prefixed IDs
-
-Spree 5.4 improves security by masking real database IDs with Stripe-style prefixed IDs, enhancing data privacy and preventing enumeration attacks. Prefixed IDs are also easier to read and understand, eg. Product ID is `prod_86Rf07xd4z` and order ID is `or_k5nR8xLq02`.
-
-Prefixed IDs are computed on the fly using [Sqids](https://sqids.org/) encoding of integer primary keys. No database migration or backfill is required — they work automatically for all existing records.
-
-Both new API and Admin Dashboard will use these IDs. `spree_storefront` still uses the old IDs so this update won't disrupt your existing storefront.
-
 ### Backfill Image Thumbnail IDs
 
 Spree 5.4 adds a `thumbnail` association to both `Product` and `Variant` models. This greatly speeds up rendering Product lists everywhere (API, Admin Dashboard and `spree_storefront`), as previously we've had to load all images for each product.
@@ -48,3 +40,26 @@ Spree 5.4 ships with API v3, which marks deprecation of API v2. API v2 is still 
   ```bash
   bundle add spree_legacy_api_v2
   ```
+  
+If you have tests for API v2 endpoints in your application, you will need to include some files in your `rails_helper.rb`:
+
+  ```ruby
+  require 'jsonapi/rspec'
+  require 'spree_legacy_api_v2/testing_support/v2/base'
+  require 'spree_legacy_api_v2/testing_support/factories'
+  require 'spree_legacy_api_v2/testing_support/v2/current_order'
+  require 'spree_legacy_api_v2/testing_support/v2/platform_contexts'
+  require 'spree_legacy_api_v2/testing_support/v2/serializers_params'
+  
+  RSpec.configure do |config|
+    config.include JSONAPI::RSpec, type: :request # required for API v2 request specs
+  end
+  ```
+
+Also, add `jsonapi-rspec` gem to your `Gemfile`:
+
+  ```ruby
+  gem 'jsonapi-rspec', group: :test
+  ```
+  
+And run `bundle install`
