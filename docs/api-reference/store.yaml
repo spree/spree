@@ -77,7 +77,7 @@ paths:
             application/json:
               example:
                 data:
-                - id: addr_ZNhLV0xUvP36zAH1LakLXq4M
+                - id: addr_EfhxLZ9ck8
                   firstname: John
                   lastname: Doe
                   full_name: John Doe
@@ -92,7 +92,7 @@ paths:
                   state_text: STATE_ABBR_1
                   state_abbr: STATE_ABBR_1
                   state_name: STATE_NAME_1
-                - id: addr_vKS4u0ZCREWvdwHmM2wcvhqg
+                - id: addr_gbHJdmfrXB
                   firstname: John
                   lastname: Doe
                   full_name: John Doe
@@ -107,7 +107,7 @@ paths:
                   state_text: STATE_ABBR_3
                   state_abbr: STATE_ABBR_3
                   state_name: STATE_NAME_3
-                - id: addr_Az6zD9DTWhqFr8WwHhZqgFJ1
+                - id: addr_UkLWZg9DAJ
                   firstname: John
                   lastname: Doe
                   full_name: John Doe
@@ -176,7 +176,7 @@ paths:
           content:
             application/json:
               example:
-                id: addr_vy6itI6sKzdMAMJCyiflSgJU
+                id: addr_VqXmZF31wY
                 firstname: John
                 lastname: Doe
                 full_name: John Doe
@@ -287,7 +287,7 @@ paths:
           content:
             application/json:
               example:
-                id: addr_4VMxh84UBkTe1S2oFwXtXFhN
+                id: addr_EfhxLZ9ck8
                 firstname: John
                 lastname: Doe
                 full_name: John Doe
@@ -343,7 +343,7 @@ paths:
           content:
             application/json:
               example:
-                id: addr_GGg1FfpKDjtxayLtKxPJuMCY
+                id: addr_EfhxLZ9ck8
                 firstname: John
                 lastname: Doe
                 full_name: John Doe
@@ -431,14 +431,14 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImV4cCI6MTc3MDQ3NTE1NX0.58iUJLBlh1kluINIjYX74HUkXaZvE2odbrL20BD4E6E
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImV4cCI6MTc3MDk4NDA3N30.UTgp8XrwFuQZ_7KTg0AYecB9LvHplvyzrHaqgDBaAlA
                 user:
-                  id: cus_rnB7cR7rC2ru1M8jkujsyADD
+                  id: cus_UkLWZg9DAJ
                   email: test@example.com
-                  first_name: Joanie
-                  last_name: Predovic
-                  created_at: '2026-02-06T14:39:15.423Z'
-                  updated_at: '2026-02-06T14:39:15.423Z'
+                  first_name: Zachariah
+                  last_name: Feil
+                  created_at: '2026-02-12T12:01:17.708Z'
+                  updated_at: '2026-02-12T12:01:17.708Z'
                   addresses: []
                   default_billing_address:
                   default_shipping_address:
@@ -494,14 +494,14 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImV4cCI6MTc3MDQ3NTE1Nn0.gTyJ9-__DGw0vxz7tQ7DtIys2jyPaMrVJcvRqHFdZqU
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImV4cCI6MTc3MDk4NDA3OX0.7oxQrkVi2iavVcX7RxAIGhseyEuR9ioeiBJ8YGFcgzU
                 user:
-                  id: cus_eGy4KhMMZeH7oPo9dfaDS09K
+                  id: cus_UkLWZg9DAJ
                   email: newuser@example.com
                   first_name: John
                   last_name: Doe
-                  created_at: '2026-02-06T14:39:16.851Z'
-                  updated_at: '2026-02-06T14:39:16.851Z'
+                  created_at: '2026-02-12T12:01:19.141Z'
+                  updated_at: '2026-02-12T12:01:19.141Z'
                   addresses: []
                   default_billing_address:
                   default_shipping_address:
@@ -568,14 +568,14 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImV4cCI6MTc3MDQ3NTE1N30.--gMF4H_YUty_RqvPkRCZX7g9bK0qmA8BNbl-HUmh0s
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImV4cCI6MTc3MDk4NDA3OX0.7oxQrkVi2iavVcX7RxAIGhseyEuR9ioeiBJ8YGFcgzU
                 user:
-                  id: cus_JBRRgUTP1UV3nr11QC1hY2aC
+                  id: cus_UkLWZg9DAJ
                   email: test@example.com
-                  first_name: Michaela
-                  last_name: Murray
-                  created_at: '2026-02-06T14:39:17.410Z'
-                  updated_at: '2026-02-06T14:39:17.410Z'
+                  first_name: Elli
+                  last_name: Turner
+                  created_at: '2026-02-12T12:01:19.701Z'
+                  updated_at: '2026-02-12T12:01:19.701Z'
                   addresses: []
                   default_billing_address:
                   default_shipping_address:
@@ -626,11 +626,11 @@ paths:
           content:
             application/json:
               example:
-                id: or_ayD9n2RZmO1QIzzLS4yAvjRu
-                number: R110073427
+                id: or_UkLWZg9DAJ
+                number: R621744257
                 state: cart
-                token: soV6RAT79Yuf5t5oy9qPdw7E5XUnqfwvXE7
-                email: olga_hamill@mcglynnjakubowski.co.uk
+                token: 2oRCupfh9SwBjaQ8z2JFBQQkQHT8eXcTP82
+                email: belen@smithamgulgowski.name
                 special_instructions:
                 currency: USD
                 item_count: 1
@@ -653,14 +653,14 @@ paths:
                 total: '110.0'
                 display_total: "$110.00"
                 completed_at:
-                created_at: '2026-02-06T14:39:19.244Z'
-                updated_at: '2026-02-06T14:39:19.346Z'
+                created_at: '2026-02-12T12:01:20.760Z'
+                updated_at: '2026-02-12T12:01:20.905Z'
                 line_items:
-                - id: li_ItjslIkIPj61F9YiVQzRXTeD
-                  variant_id: variant_dhHcPFuiQW24m5MxvbQVxWpW
+                - id: li_UkLWZg9DAJ
+                  variant_id: variant_UkLWZg9DAJ
                   quantity: 1
-                  name: Product 25705
-                  slug: product-25705
+                  name: Product 23408
+                  slug: product-23408
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -679,8 +679,8 @@ paths:
                   discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
-                  created_at: '2026-02-06T14:39:19.305Z'
-                  updated_at: '2026-02-06T14:39:19.305Z'
+                  created_at: '2026-02-12T12:01:20.851Z'
+                  updated_at: '2026-02-12T12:01:20.851Z'
                   compare_at_amount:
                   thumbnail_url:
                   option_values: []
@@ -745,11 +745,11 @@ paths:
           content:
             application/json:
               example:
-                id: or_3v09HOdRMy9IyXtEsXpTRY4h
-                number: R290614948
+                id: or_UkLWZg9DAJ
+                number: R613235347
                 state: cart
-                token: Xk3xRPLFyZPYWZWQGakd5DXJnoJHW6c5Brv
-                email: gita.wehner@monahan.name
+                token: tGJ4WakKZLc9LF5cYSG5LsyGJfZPuFKHYUC
+                email: xochitl.paucek@trantow.ca
                 special_instructions:
                 currency: USD
                 item_count: 1
@@ -772,14 +772,14 @@ paths:
                 total: '110.0'
                 display_total: "$110.00"
                 completed_at:
-                created_at: '2026-02-06T14:39:19.369Z'
-                updated_at: '2026-02-06T14:39:19.475Z'
+                created_at: '2026-02-12T12:01:20.929Z'
+                updated_at: '2026-02-12T12:01:21.040Z'
                 line_items:
-                - id: li_2tYo1J7fFubgnEuKgWSYL003
-                  variant_id: variant_iYvpP0xYgp8smOByN9sRPINE
+                - id: li_UkLWZg9DAJ
+                  variant_id: variant_UkLWZg9DAJ
                   quantity: 1
-                  name: Product 39634
-                  slug: product-39634
+                  name: Product 39116
+                  slug: product-39116
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -798,8 +798,8 @@ paths:
                   discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
-                  created_at: '2026-02-06T14:39:19.431Z'
-                  updated_at: '2026-02-06T14:39:19.431Z'
+                  created_at: '2026-02-12T12:01:20.993Z'
+                  updated_at: '2026-02-12T12:01:20.993Z'
                   compare_at_amount:
                   thumbnail_url:
                   option_values: []
@@ -875,7 +875,7 @@ paths:
               example:
                 data:
                 - iso: DE
-                  iso3: IS10
+                  iso3: IS16
                   name: Germany
                   states_required: false
                   zipcode_required: true
@@ -1036,14 +1036,14 @@ paths:
           content:
             application/json:
               example:
-                id: cus_oV2QWMbqTuPkHO6gNqACm9eQ
-                email: marcia@volkman.ca
-                first_name: Kris
-                last_name: Leannon
-                created_at: '2026-02-06T14:39:25.082Z'
-                updated_at: '2026-02-06T14:39:25.893Z'
+                id: cus_UkLWZg9DAJ
+                email: glynis@abernathy.co.uk
+                first_name: Una
+                last_name: Bruen
+                created_at: '2026-02-12T12:01:24.464Z'
+                updated_at: '2026-02-12T12:01:24.748Z'
                 addresses:
-                - id: addr_XYyceeOXqZSvtTCXJYadhGhd
+                - id: addr_gbHJdmfrXB
                   firstname: John
                   lastname: Doe
                   full_name: John Doe
@@ -1058,7 +1058,7 @@ paths:
                   state_text: STATE_ABBR_51
                   state_abbr: STATE_ABBR_51
                   state_name: STATE_NAME_51
-                - id: addr_XXZGzSO26PXPWAPjS2jZ2dlf
+                - id: addr_UkLWZg9DAJ
                   firstname: John
                   lastname: Doe
                   full_name: John Doe
@@ -1074,7 +1074,7 @@ paths:
                   state_abbr: STATE_ABBR_50
                   state_name: STATE_NAME_50
                 default_billing_address:
-                  id: addr_XYyceeOXqZSvtTCXJYadhGhd
+                  id: addr_gbHJdmfrXB
                   firstname: John
                   lastname: Doe
                   full_name: John Doe
@@ -1090,7 +1090,7 @@ paths:
                   state_abbr: STATE_ABBR_51
                   state_name: STATE_NAME_51
                 default_shipping_address:
-                  id: addr_XXZGzSO26PXPWAPjS2jZ2dlf
+                  id: addr_UkLWZg9DAJ
                   firstname: John
                   lastname: Doe
                   full_name: John Doe
@@ -1106,7 +1106,7 @@ paths:
                   state_abbr: STATE_ABBR_50
                   state_name: STATE_NAME_50
               schema:
-                "$ref": "#/components/schemas/StoreUser"
+                "$ref": "#/components/schemas/StoreCustomer"
         '401':
           description: unauthorized - invalid token
           content:
@@ -1142,14 +1142,14 @@ paths:
           content:
             application/json:
               example:
-                id: cus_ixalQUXazLV3YEhOFj42NHX4
-                email: julieann.littel@ledner.com
+                id: cus_UkLWZg9DAJ
+                email: kristopher_bailey@jones.com
                 first_name: Updated
                 last_name: Name
-                created_at: '2026-02-06T14:39:26.181Z'
-                updated_at: '2026-02-06T14:39:27.013Z'
+                created_at: '2026-02-12T12:01:25.043Z'
+                updated_at: '2026-02-12T12:01:25.338Z'
                 addresses:
-                - id: addr_x1dblf2GS6UQtnLjE9RedfuY
+                - id: addr_gbHJdmfrXB
                   firstname: John
                   lastname: Doe
                   full_name: John Doe
@@ -1164,7 +1164,7 @@ paths:
                   state_text: STATE_ABBR_53
                   state_abbr: STATE_ABBR_53
                   state_name: STATE_NAME_53
-                - id: addr_N9e54LeWWAPJsnBgUC568UBs
+                - id: addr_UkLWZg9DAJ
                   firstname: John
                   lastname: Doe
                   full_name: John Doe
@@ -1180,7 +1180,7 @@ paths:
                   state_abbr: STATE_ABBR_52
                   state_name: STATE_NAME_52
                 default_billing_address:
-                  id: addr_x1dblf2GS6UQtnLjE9RedfuY
+                  id: addr_gbHJdmfrXB
                   firstname: John
                   lastname: Doe
                   full_name: John Doe
@@ -1196,7 +1196,7 @@ paths:
                   state_abbr: STATE_ABBR_53
                   state_name: STATE_NAME_53
                 default_shipping_address:
-                  id: addr_N9e54LeWWAPJsnBgUC568UBs
+                  id: addr_UkLWZg9DAJ
                   firstname: John
                   lastname: Doe
                   full_name: John Doe
@@ -1212,7 +1212,7 @@ paths:
                   state_abbr: STATE_ABBR_52
                   state_name: STATE_NAME_52
               schema:
-                "$ref": "#/components/schemas/StoreUser"
+                "$ref": "#/components/schemas/StoreCustomer"
         '422':
           description: validation error
           content:
@@ -1283,11 +1283,11 @@ paths:
           content:
             application/json:
               example:
-                id: li_nsU2dEDLNuQSJRt8jgrEqtpj
-                variant_id: variant_vb4JDpFsTmPlUxOmohHDDZau
+                id: li_gbHJdmfrXB
+                variant_id: variant_gbHJdmfrXB
                 quantity: 2
-                name: Product 98285
-                slug: product-98285
+                name: Product 82573
+                slug: product-82573
                 options_text: ''
                 price: '19.99'
                 display_price: "$19.99"
@@ -1306,8 +1306,8 @@ paths:
                 discounted_amount: '39.98'
                 display_discounted_amount: "$39.98"
                 display_compare_at_amount: "$0.00"
-                created_at: '2026-02-06T14:39:29.621Z'
-                updated_at: '2026-02-06T14:39:29.621Z'
+                created_at: '2026-02-12T12:01:26.888Z'
+                updated_at: '2026-02-12T12:01:26.888Z'
                 compare_at_amount:
                 thumbnail_url:
                 option_values: []
@@ -1379,11 +1379,11 @@ paths:
           content:
             application/json:
               example:
-                id: li_us39T4wsohWyhZKWrTrfgPOV
-                variant_id: variant_HbNOF1aLaujZxPwviGyIbwAS
+                id: li_UkLWZg9DAJ
+                variant_id: variant_UkLWZg9DAJ
                 quantity: 5
-                name: Product 145400
-                slug: product-145400
+                name: Product 111098
+                slug: product-111098
                 options_text: ''
                 price: '19.99'
                 display_price: "$19.99"
@@ -1402,8 +1402,8 @@ paths:
                 discounted_amount: '99.95'
                 display_discounted_amount: "$99.95"
                 display_compare_at_amount: "$0.00"
-                created_at: '2026-02-06T14:39:33.302Z'
-                updated_at: '2026-02-06T14:39:33.329Z'
+                created_at: '2026-02-12T12:01:29.277Z'
+                updated_at: '2026-02-12T12:01:29.315Z'
                 compare_at_amount:
                 thumbnail_url:
                 option_values: []
@@ -1516,11 +1516,11 @@ paths:
             application/json:
               example:
                 data:
-                - id: or_zivmaWd2vkxehVqLOyYeLEa1
-                  number: R651948911
+                - id: or_UkLWZg9DAJ
+                  number: R308915205
                   state: cart
-                  token: bkyZErT2Nvh6ANRbjiBqXj1mcsNV2yhgoDh
-                  email: ka.collier@pfannerstill.co.uk
+                  token: G2KeojDZ9bTU9AX2tSMgV32W3EdwsFL9E4T
+                  email: doria@kovacek.info
                   special_instructions:
                   currency: USD
                   item_count: 1
@@ -1543,8 +1543,8 @@ paths:
                   total: '110.0'
                   display_total: "$110.00"
                   completed_at:
-                  created_at: '2026-02-06T14:39:37.094Z'
-                  updated_at: '2026-02-06T14:39:37.203Z'
+                  created_at: '2026-02-12T12:01:31.560Z'
+                  updated_at: '2026-02-12T12:01:31.723Z'
                   payment_methods: []
                 meta:
                   page: 1
@@ -1602,11 +1602,11 @@ paths:
           content:
             application/json:
               example:
-                id: or_GshAScU6hJrHhXNLHXM0wkWT
-                number: R390620060
+                id: or_gbHJdmfrXB
+                number: R415666692
                 state: cart
-                token: 2atUXcu7jSXgm9oL3W1Ak57ej8STQWpt1Me
-                email: rosemarie_boyle@raynorwitting.com
+                token: 25fbjtyUstrxVcTgpPLwUbiwKMX5UxWr7dB
+                email: sterling@walker.us
                 special_instructions:
                 currency: USD
                 item_count: 0
@@ -1629,10 +1629,10 @@ paths:
                 total: '0.0'
                 display_total: "$0.00"
                 completed_at:
-                created_at: '2026-02-06T14:39:41.091Z'
-                updated_at: '2026-02-06T14:39:41.091Z'
+                created_at: '2026-02-12T12:01:33.924Z'
+                updated_at: '2026-02-12T12:01:33.924Z'
                 payment_methods: []
-                order_token: 2atUXcu7jSXgm9oL3W1Ak57ej8STQWpt1Me
+                order_token: 25fbjtyUstrxVcTgpPLwUbiwKMX5UxWr7dB
               schema:
                 type: object
                 allOf:
@@ -1695,10 +1695,10 @@ paths:
           content:
             application/json:
               example:
-                id: or_3VTbyt5op00YZiUYjczX58KR
-                number: R956168772
+                id: or_gbHJdmfrXB
+                number: R788423057
                 state: cart
-                token: jAmRfszxCKdwLG1g8ieeCbxs6ELQ2qy2zRh
+                token: 3Z5Hf1DzMqVspYYBCcDfxVmsYS2ybmVwgwB
                 email:
                 special_instructions:
                 currency: USD
@@ -1722,8 +1722,8 @@ paths:
                 total: '110.0'
                 display_total: "$110.00"
                 completed_at:
-                created_at: '2026-02-06T14:39:44.861Z'
-                updated_at: '2026-02-06T14:39:44.960Z'
+                created_at: '2026-02-12T12:01:36.101Z'
+                updated_at: '2026-02-12T12:01:36.217Z'
                 payment_methods: []
               schema:
                 "$ref": "#/components/schemas/StoreOrder"
@@ -1782,11 +1782,11 @@ paths:
           content:
             application/json:
               example:
-                id: or_tofCw7CEn4XXadLcfxFMS5ST
-                number: R656300099
+                id: or_UkLWZg9DAJ
+                number: R568714910
                 state: cart
-                token: zx6BXUrNj1jzYzPZA1Y554PFKcB1m7y4a4C
-                email: marine@baileyebert.biz
+                token: zXQczwpByWbNZTja5GJi9e8tiMjhXGH7ttm
+                email: tyesha.smitham@hoppe.co.uk
                 special_instructions: Leave at door
                 currency: USD
                 item_count: 1
@@ -1809,8 +1809,8 @@ paths:
                 total: '110.0'
                 display_total: "$110.00"
                 completed_at:
-                created_at: '2026-02-06T14:39:48.929Z'
-                updated_at: '2026-02-06T14:39:49.043Z'
+                created_at: '2026-02-12T12:01:38.471Z'
+                updated_at: '2026-02-12T12:01:38.584Z'
                 payment_methods: []
               schema:
                 "$ref": "#/components/schemas/StoreOrder"
@@ -1875,11 +1875,11 @@ paths:
           content:
             application/json:
               example:
-                id: or_P244PTzh7DyhntWUnRIyoKde
-                number: R942935541
+                id: or_gbHJdmfrXB
+                number: R611142150
                 state: address
-                token: Ju3SkcCDJh1R6DgT5nw1P7Qf247jaZvzNNV
-                email: antione@huels.biz
+                token: uDS48wbVBZJWogktodRzJgX5mZjg2cFy8Fd
+                email: mackenzie@hauck.ca
                 special_instructions:
                 currency: USD
                 item_count: 1
@@ -1902,8 +1902,8 @@ paths:
                 total: '110.0'
                 display_total: "$110.00"
                 completed_at:
-                created_at: '2026-02-06T14:39:51.678Z'
-                updated_at: '2026-02-06T14:39:51.796Z'
+                created_at: '2026-02-12T12:01:40.077Z'
+                updated_at: '2026-02-12T12:01:40.186Z'
                 payment_methods: []
               schema:
                 "$ref": "#/components/schemas/StoreOrder"
@@ -1954,11 +1954,11 @@ paths:
           content:
             application/json:
               example:
-                id: or_gdvE0hz3kd3NYOnWuHHdv4OV
-                number: R584890334
+                id: or_gbHJdmfrXB
+                number: R484016559
                 state: payment
-                token: igQyaZgRmaG65KYkgU7eoLVz16fPb2kRukF
-                email: bertram@marvin.ca
+                token: Z8fdbw9k9ER7QmCkLrRRtiPknXG8vV4AMbR
+                email: ernestine.wilkinson@ferry.info
                 special_instructions:
                 currency: USD
                 item_count: 1
@@ -1981,8 +1981,8 @@ paths:
                 total: '29.99'
                 display_total: "$29.99"
                 completed_at:
-                created_at: '2026-02-06T14:39:54.299Z'
-                updated_at: '2026-02-06T14:39:54.517Z'
+                created_at: '2026-02-12T12:01:41.656Z'
+                updated_at: '2026-02-12T12:01:41.862Z'
                 payment_methods: []
               schema:
                 "$ref": "#/components/schemas/StoreOrder"
@@ -2022,11 +2022,11 @@ paths:
           content:
             application/json:
               example:
-                id: or_VTXtZIfGydypMyJUEnA8rKbB
-                number: R288539193
+                id: or_gbHJdmfrXB
+                number: R977818618
                 state: complete
-                token: DZPCTu9cXWUet19XvkUbSXXLESfPi3Mo9fP
-                email: meridith@skiles.ca
+                token: P2Npkby9hC5BjzE6kopRZPFjLpbwDggNy1x
+                email: librada_halvorson@pfefferblanda.co.uk
                 special_instructions:
                 currency: USD
                 item_count: 1
@@ -2048,15 +2048,15 @@ paths:
                 display_additional_tax_total: "$0.00"
                 total: '29.99'
                 display_total: "$29.99"
-                completed_at: '2026-02-06T14:39:56.302Z'
-                created_at: '2026-02-06T14:39:55.889Z'
-                updated_at: '2026-02-06T14:39:56.302Z'
+                completed_at: '2026-02-12T12:01:42.881Z'
+                created_at: '2026-02-12T12:01:42.540Z'
+                updated_at: '2026-02-12T12:01:42.881Z'
                 payment_methods:
-                - id: pm_pX4evwnh8ZAStY2Td5n9dDa4
+                - id: pm_UkLWZg9DAJ
                   name: Check
                   description:
                   type: Spree::PaymentMethod::Check
-                - id: pm_O4KhDNP4oU4gIO6YkRD2nUwZ
+                - id: pm_gbHJdmfrXB
                   name: Credit Card
                   description:
                   type: Spree::Gateway::Bogus
@@ -2108,11 +2108,11 @@ paths:
           content:
             application/json:
               example:
-                id: or_aYugr8rjbUE3MadD0VZAZ7fx
-                number: R720149238
+                id: or_UkLWZg9DAJ
+                number: R797287437
                 state: cart
-                token: nifnTryb4LWiiVMzLPptHgHdfZoVJAD7Gu2
-                email: barb.champlin@raynor.com
+                token: ybdfTsbTA7dwrNseXNnG19hKbCJZMBQwmSd
+                email: jada@metz.ca
                 special_instructions:
                 currency: USD
                 item_count: 1
@@ -2135,10 +2135,10 @@ paths:
                 total: '110.0'
                 display_total: "$110.00"
                 completed_at:
-                created_at: '2026-02-06T14:39:58.869Z'
-                updated_at: '2026-02-06T14:39:59.324Z'
+                created_at: '2026-02-12T12:01:44.440Z'
+                updated_at: '2026-02-12T12:01:44.919Z'
                 payment_methods:
-                - id: pm_xnsmLWCFdx9S7kzCt1E5bttY
+                - id: pm_UkLWZg9DAJ
                   name: Store Credit
                   description: Store Credit
                   type: Spree::PaymentMethod::StoreCredit
@@ -2198,11 +2198,11 @@ paths:
           content:
             application/json:
               example:
-                id: or_HM81zTOT2ogNCrUL0Y05LKaV
-                number: R430357526
+                id: or_UkLWZg9DAJ
+                number: R899215587
                 state: cart
-                token: vFsiXaGm9BSLFXNZ9Bu445vqUyiAn2uvpDF
-                email: lessie@cormier.co.uk
+                token: znikM7MHtXLZpqjnWzk1X3eBKXny7mfgaNW
+                email: christy.auer@orn.ca
                 special_instructions:
                 currency: USD
                 item_count: 1
@@ -2225,8 +2225,8 @@ paths:
                 total: '110.0'
                 display_total: "$110.00"
                 completed_at:
-                created_at: '2026-02-06T14:40:01.788Z'
-                updated_at: '2026-02-06T14:40:01.905Z'
+                created_at: '2026-02-12T12:01:46.184Z'
+                updated_at: '2026-02-12T12:01:46.290Z'
                 payment_methods: []
               schema:
                 "$ref": "#/components/schemas/StoreOrder"
@@ -2268,7 +2268,7 @@ paths:
             application/json:
               example:
                 data:
-                - id: pm_f4f4uamTqq9a2AJZeO3Lf1yK
+                - id: pm_UkLWZg9DAJ
                   name: Credit Card
                   description:
                   type: Spree::Gateway::Bogus
@@ -2339,17 +2339,17 @@ paths:
             application/json:
               example:
                 data:
-                - id: py_WTYcnANbKaARS29hOABZUKXU
-                  payment_method_id: pm_MBsj14IV663HNUBenHZ555yp
+                - id: py_UkLWZg9DAJ
+                  payment_method_id: pm_UkLWZg9DAJ
                   state: checkout
                   response_code: '12345'
-                  number: P1IOJWPN
+                  number: POIHPG01
                   amount: '110.0'
                   display_amount: "$110.00"
-                  created_at: '2026-02-06T14:40:04.756Z'
-                  updated_at: '2026-02-06T14:40:04.756Z'
+                  created_at: '2026-02-12T12:01:48.250Z'
+                  updated_at: '2026-02-12T12:01:48.250Z'
                   payment_method:
-                    id: pm_MBsj14IV663HNUBenHZ555yp
+                    id: pm_UkLWZg9DAJ
                     name: Credit Card
                     description:
                     type: Spree::Gateway::Bogus
@@ -2411,17 +2411,17 @@ paths:
           content:
             application/json:
               example:
-                id: py_iwVxL96ppAg6c28JYdKVeIVm
-                payment_method_id: pm_Qj4pLtVavzJYixFGUi18P8OW
+                id: py_UkLWZg9DAJ
+                payment_method_id: pm_UkLWZg9DAJ
                 state: checkout
                 response_code: '12345'
-                number: PMBKTRX2
+                number: PTVUMDFN
                 amount: '110.0'
                 display_amount: "$110.00"
-                created_at: '2026-02-06T14:40:07.267Z'
-                updated_at: '2026-02-06T14:40:07.267Z'
+                created_at: '2026-02-12T12:01:49.699Z'
+                updated_at: '2026-02-12T12:01:49.699Z'
                 payment_method:
-                  id: pm_Qj4pLtVavzJYixFGUi18P8OW
+                  id: pm_UkLWZg9DAJ
                   name: Credit Card
                   description:
                   type: Spree::Gateway::Bogus
@@ -2490,30 +2490,28 @@ paths:
             application/json:
               example:
                 data:
-                - id: prod_ZFuwEco4OJjJXEykYbzYOf00
-                  name: Product 521171
+                - id: prod_UkLWZg9DAJ
+                  name: Product 462639
                   description: |-
-                    Consequatur quae ad numquam error aliquam iure incidunt. Ea dicta distinctio facere eaque ipsam eum fugiat deleniti. Magni totam omnis aliquid maiores. Asperiores rerum sunt in tempora nihil eveniet dolores. Error quos labore provident velit libero ut ducimus voluptatum.
-                    Eos esse quia nam iure. Possimus nihil facilis modi aliquid fugit. Similique accusamus autem maiores dicta aut commodi ut nam. Earum a corrupti consectetur reprehenderit esse expedita consequatur cumque. Iusto debitis nemo velit eius accusamus.
-                    Perspiciatis porro nostrum assumenda aut dignissimos temporibus consectetur. Rerum sequi ea non at id nobis. Odio odit quibusdam ab ea inventore laborum illum. Consectetur quam dolorem eligendi iste asperiores ut quo sunt. Excepturi unde omnis mollitia numquam voluptas odit.
-                    Aliquam perspiciatis illum necessitatibus consequuntur. Ullam harum tempore explicabo quae excepturi voluptatibus. Consequuntur suscipit exercitationem eveniet aut quibusdam. Delectus quis dicta harum doloremque dolorum debitis atque eos.
-                    Esse voluptatibus suscipit odio quas quae aut. Ullam consequuntur impedit at alias corrupti nostrum facere eius. Unde ducimus quo repellat voluptatum et nihil. Atque ad accusamus quia iure natus consequuntur.
-                  slug: product-521171
+                    Inventore excepturi error doloremque provident cumque. Dignissimos aut rerum maiores odio libero non occaecati. Cumque doloremque hic autem magni tempora. Blanditiis eligendi voluptatibus illum qui modi alias voluptas.
+                    Commodi saepe rem numquam aspernatur tempore. Accusantium esse quaerat officia eos. Maxime quae earum animi dolorem totam. Ipsa nam maxime exercitationem rem facere quasi earum possimus.
+                    Impedit incidunt aliquid inventore iste sit laboriosam. Qui natus ducimus iusto sed quam. Ut quia dicta hic veniam magnam nam molestias asperiores.
+                  slug: product-462639
                   meta_description:
                   meta_keywords:
                   variant_count: 1
-                  available_on: '2025-02-06T14:40:08.735Z'
-                  created_at: '2026-02-06T14:40:08.754Z'
-                  updated_at: '2026-02-06T14:40:08.841Z'
+                  available_on: '2025-02-12T12:01:50.449Z'
+                  created_at: '2026-02-12T12:01:50.473Z'
+                  updated_at: '2026-02-12T12:01:50.564Z'
                   purchasable: true
                   in_stock: false
                   backorderable: true
                   available: true
-                  default_variant_id: variant_smhHpMENT5U5l46NqnS7cENU
+                  default_variant_id: variant_gbHJdmfrXB
                   thumbnail_url:
                   tags: []
                   price:
-                    id: price_P2mal7DhqVRQQCoB8jPQnhGd
+                    id: price_gbHJdmfrXB
                     amount: '19.99'
                     amount_in_cents: 1999
                     compare_at_amount:
@@ -2523,27 +2521,30 @@ paths:
                     display_compare_at_amount:
                     price_list_id:
                   original_price:
-                - id: prod_3GnP4KK0lNiaufg7Lbv7iy6H
-                  name: Product 534138
+                - id: prod_gbHJdmfrXB
+                  name: Product 477231
                   description: |-
-                    Repellat quos quas asperiores laborum rerum excepturi maxime rem. Dolor numquam quo non vel tempore iste. Corporis praesentium voluptates neque iusto. Eum quas eaque voluptates magni voluptas nobis.
-                    Animi nobis nostrum laborum magni voluptas. Facilis rem cumque libero eligendi ratione. Dolorum culpa possimus vitae optio.
-                  slug: product-534138
+                    Consequuntur maxime culpa tempore eius expedita dolorum cupiditate. Eligendi inventore odio consequatur soluta est nulla. Earum delectus occaecati sit aliquam commodi. Explicabo cupiditate doloremque itaque nostrum nam veritatis et iusto.
+                    Ipsum impedit saepe explicabo quo repellendus. Cumque necessitatibus veniam quisquam corrupti repudiandae qui. Tempore autem alias corrupti dolores quos eius repudiandae repellat.
+                    Dignissimos facere ratione animi et. Consequuntur quod perferendis itaque odio voluptatibus. Inventore rem quisquam aut repellat magnam. Dolores voluptatem eum fugit quis.
+                    Minus provident ex distinctio laudantium ab soluta eum. A commodi natus exercitationem nobis sunt nam. Nulla quaerat consequuntur omnis illum consequatur.
+                    Temporibus quo in minus fugit saepe hic pariatur. Asperiores officia vel explicabo voluptates eius voluptatibus repudiandae. Unde tenetur rem tempore voluptatibus earum velit sint. Officiis repellendus iste deleniti iure ipsum aspernatur error.
+                  slug: product-477231
                   meta_description:
                   meta_keywords:
                   variant_count: 0
-                  available_on: '2025-02-06T14:40:08.860Z'
-                  created_at: '2026-02-06T14:40:08.871Z'
-                  updated_at: '2026-02-06T14:40:08.897Z'
+                  available_on: '2025-02-12T12:01:50.583Z'
+                  created_at: '2026-02-12T12:01:50.594Z'
+                  updated_at: '2026-02-12T12:01:50.623Z'
                   purchasable: true
                   in_stock: false
                   backorderable: true
                   available: true
-                  default_variant_id: variant_OfFahP6ojxOxGfqSU5qwbwXG
+                  default_variant_id: variant_EfhxLZ9ck8
                   thumbnail_url:
                   tags: []
                   price:
-                    id: price_0tgapseC6knzp3YtUxrp3k9Q
+                    id: price_EfhxLZ9ck8
                     amount: '19.99'
                     amount_in_cents: 1999
                     compare_at_amount:
@@ -2618,27 +2619,28 @@ paths:
           content:
             application/json:
               example:
-                id: prod_ANWSdNCpMJ6W3wLtBa1V8S5y
-                name: Product 641415
+                id: prod_UkLWZg9DAJ
+                name: Product 581164
                 description: |-
-                  Et distinctio ipsum suscipit quos ratione nobis modi optio. Sapiente sed voluptate explicabo ipsa aliquid. Modi unde a ipsa perferendis velit fuga. In qui explicabo temporibus distinctio fuga atque harum rerum. Incidunt vero repellendus illo accusantium eius.
-                  Ducimus necessitatibus ab nesciunt eveniet dolorum doloremque. Placeat corrupti repellat quas minus. Voluptate numquam eaque aliquam nulla inventore dignissimos iste itaque.
-                slug: product-641415
+                  Quos perferendis veritatis beatae sint. Natus laboriosam blanditiis minima nemo quae accusamus. Error quos aut sit magni illo. Mollitia voluptate ex aperiam culpa nostrum consequuntur cupiditate a.
+                  Provident aut nemo tempore amet. Aspernatur possimus explicabo adipisci iure rem dolorum molestiae itaque. Illum provident consequatur amet ea. Temporibus magnam atque totam ut. Blanditiis esse culpa distinctio numquam porro quam unde.
+                  Quod modi perferendis id magnam. Odio laborum ex reiciendis amet. Voluptatem consectetur dolores id incidunt.
+                slug: product-581164
                 meta_description:
                 meta_keywords:
                 variant_count: 1
-                available_on: '2025-02-06T14:40:10.262Z'
-                created_at: '2026-02-06T14:40:10.287Z'
-                updated_at: '2026-02-06T14:40:10.375Z'
+                available_on: '2025-02-12T12:01:51.957Z'
+                created_at: '2026-02-12T12:01:51.974Z'
+                updated_at: '2026-02-12T12:01:52.056Z'
                 purchasable: true
                 in_stock: false
                 backorderable: true
                 available: true
-                default_variant_id: variant_VAXq5GbqbIR4bAMchWaUdCiz
+                default_variant_id: variant_gbHJdmfrXB
                 thumbnail_url:
                 tags: []
                 price:
-                  id: price_QMMhpVxPbqqRi4u1OoTj0EMT
+                  id: price_gbHJdmfrXB
                   amount: '19.99'
                   amount_in_cents: 1999
                   compare_at_amount:
@@ -2715,12 +2717,12 @@ paths:
                   - id: out_of_stock
                     label: Out of Stock
                     count: 2
-                - id: opt_xxSOhQloZqEBuONniwwmcnnV
+                - id: opt_UkLWZg9DAJ
                   type: option
                   label: Size
                   name: size
                   options:
-                  - id: optval_Y3CRmRoQGkz9N0g56RJOTe6W
+                  - id: optval_UkLWZg9DAJ
                     label: S
                     name: small
                     position: 1
@@ -2729,7 +2731,7 @@ paths:
                   type: taxon
                   label: Category
                   options:
-                  - id: txn_GaxjI1AUCGu12KWdZskGTWdt
+                  - id: txn_p6klVeMgbn
                     label: Shirts
                     permalink: taxonomy-9/taxon-9/shirts
                     count: 2
@@ -2833,24 +2835,24 @@ paths:
             application/json:
               example:
                 data:
-                - id: ship_vPe4SWF89FFYxRWEKoyPYe6N
-                  number: H98009449688
+                - id: ship_UkLWZg9DAJ
+                  number: H05918360238
                   state: pending
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
                   display_cost: "$100.00"
                   shipped_at:
-                  created_at: '2026-02-06T14:40:14.826Z'
-                  updated_at: '2026-02-06T14:40:14.850Z'
+                  created_at: '2026-02-12T12:01:55.994Z'
+                  updated_at: '2026-02-12T12:01:56.044Z'
                   shipping_method:
-                    id: shpm_Pv5BcdnraG5ITlj4p3RZiMmS
+                    id: shpm_UkLWZg9DAJ
                     name: UPS Ground
                     code: UPS_GROUND
                   stock_location:
-                    id: sloc_M2ASP4YyLd8vJKuo5LrkDohH
+                    id: sloc_UkLWZg9DAJ
                     state_abbr: STATE_ABBR_195
-                    name: Nigel Beahan
+                    name: Whitney Boyle
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -2858,14 +2860,14 @@ paths:
                     country_name: United States of America
                     state_text: STATE_ABBR_195
                   shipping_rates:
-                  - id: shpr_1mOgHm4J4vy4zOFTxcZSrwM5
-                    shipping_method_id: shpm_Pv5BcdnraG5ITlj4p3RZiMmS
+                  - id: shpr_UkLWZg9DAJ
+                    shipping_method_id: shpm_UkLWZg9DAJ
                     name: UPS Ground
                     selected: true
                     cost: 100.0
                     display_cost: "$100.00"
                     shipping_method:
-                      id: shpm_Pv5BcdnraG5ITlj4p3RZiMmS
+                      id: shpm_UkLWZg9DAJ
                       name: UPS Ground
                       code: UPS_GROUND
                 meta:
@@ -2946,24 +2948,24 @@ paths:
           content:
             application/json:
               example:
-                id: ship_do7Doe7PhwEYP10ZTpuC22za
-                number: H25706191715
+                id: ship_UkLWZg9DAJ
+                number: H85986231539
                 state: pending
                 tracking: U10000
                 tracking_url:
                 cost: '100.0'
                 display_cost: "$100.00"
                 shipped_at:
-                created_at: '2026-02-06T14:40:17.251Z'
-                updated_at: '2026-02-06T14:40:17.270Z'
+                created_at: '2026-02-12T12:01:57.508Z'
+                updated_at: '2026-02-12T12:01:57.537Z'
                 shipping_method:
-                  id: shpm_1IoSYUNYqvbjmCWCi5kxYfPA
+                  id: shpm_UkLWZg9DAJ
                   name: UPS Ground
                   code: UPS_GROUND
                 stock_location:
-                  id: sloc_59A8wug2JpRHFsuxMibAarxB
+                  id: sloc_UkLWZg9DAJ
                   state_abbr: STATE_ABBR_203
-                  name: Verda Fay
+                  name: Janette Towne
                   address1: 1600 Pennsylvania Ave NW
                   city: Washington
                   zipcode: '20500'
@@ -2971,14 +2973,14 @@ paths:
                   country_name: United States of America
                   state_text: STATE_ABBR_203
                 shipping_rates:
-                - id: shpr_nB313PNootpccMQGqmEe62AK
-                  shipping_method_id: shpm_1IoSYUNYqvbjmCWCi5kxYfPA
+                - id: shpr_UkLWZg9DAJ
+                  shipping_method_id: shpm_UkLWZg9DAJ
                   name: UPS Ground
                   selected: true
                   cost: 100.0
                   display_cost: "$100.00"
                   shipping_method:
-                    id: shpm_1IoSYUNYqvbjmCWCi5kxYfPA
+                    id: shpm_UkLWZg9DAJ
                     name: UPS Ground
                     code: UPS_GROUND
               schema:
@@ -3035,24 +3037,24 @@ paths:
           content:
             application/json:
               example:
-                id: ship_AKBrQDGUIwQhN6v2ICGdQSI3
-                number: H89729538697
+                id: ship_UkLWZg9DAJ
+                number: H40007257236
                 state: pending
                 tracking: U10000
                 tracking_url:
                 cost: '100.0'
                 display_cost: "$100.00"
                 shipped_at:
-                created_at: '2026-02-06T14:40:19.742Z'
-                updated_at: '2026-02-06T14:40:19.809Z'
+                created_at: '2026-02-12T12:01:58.892Z'
+                updated_at: '2026-02-12T12:01:58.944Z'
                 shipping_method:
-                  id: shpm_1iM08v42LavmUi7FMxtUya9W
+                  id: shpm_UkLWZg9DAJ
                   name: UPS Ground
                   code: UPS_GROUND
                 stock_location:
-                  id: sloc_zAO1RgJl3gZdKqHTj6OCVUdt
+                  id: sloc_UkLWZg9DAJ
                   state_abbr: STATE_ABBR_211
-                  name: Wendy Padberg
+                  name: Felice Kulas
                   address1: 1600 Pennsylvania Ave NW
                   city: Washington
                   zipcode: '20500'
@@ -3060,14 +3062,14 @@ paths:
                   country_name: United States of America
                   state_text: STATE_ABBR_211
                 shipping_rates:
-                - id: shpr_F3YEik5Q8tXphsiCljcHyfxi
-                  shipping_method_id: shpm_1iM08v42LavmUi7FMxtUya9W
+                - id: shpr_UkLWZg9DAJ
+                  shipping_method_id: shpm_UkLWZg9DAJ
                   name: UPS Ground
                   selected: true
                   cost: 100.0
                   display_cost: "$100.00"
                   shipping_method:
-                    id: shpm_1iM08v42LavmUi7FMxtUya9W
+                    id: shpm_UkLWZg9DAJ
                     name: UPS Ground
                     code: UPS_GROUND
               schema:
@@ -3113,22 +3115,22 @@ paths:
           content:
             application/json:
               example:
-                id: store_Z2FhNADEv8Zs1xlhw3qlDs1o
+                id: store_UkLWZg9DAJ
                 name: Spree Test Store
                 url: www.example.com
                 meta_description: Sample store description.
                 meta_keywords:
                 seo_title:
                 default_currency: USD
-                code: spree_22
+                code: spree_1
                 default: true
                 facebook: spreecommerce
                 twitter: spreecommerce
                 instagram: spreecommerce
                 customer_support_email: support@example.com
                 default_locale: en
-                created_at: '2026-02-06T14:40:21.080Z'
-                updated_at: '2026-02-06T14:40:21.160Z'
+                created_at: '2026-02-12T12:01:11.353Z'
+                updated_at: '2026-02-12T12:01:11.454Z'
                 default_country_iso: US
                 supported_currencies:
                 - USD
@@ -3190,36 +3192,36 @@ paths:
             application/json:
               example:
                 data:
-                - id: txnmy_hWtD79RfBAY4ZoZ7vUaIPUSy
+                - id: txnmy_UkLWZg9DAJ
                   name: Categories
                   position: 1
-                  created_at: '2026-02-06T14:40:21.239Z'
-                  updated_at: '2026-02-06T14:40:21.247Z'
-                  root_id: txn_4BWQYKBMZZG4Ser9RSPscf0F
-                - id: txnmy_fduZHUpl336hiC961gYxd11h
+                  created_at: '2026-02-12T12:01:11.361Z'
+                  updated_at: '2026-02-12T12:01:11.380Z'
+                  root_id: txn_UkLWZg9DAJ
+                - id: txnmy_gbHJdmfrXB
                   name: Brands
                   position: 2
-                  created_at: '2026-02-06T14:40:21.247Z'
-                  updated_at: '2026-02-06T14:40:21.255Z'
-                  root_id: txn_Cp4h3ZKu0GVoGDaMYNE5dcU3
-                - id: txnmy_S5FLY6bunlIhNTCwmLiIJo6L
+                  created_at: '2026-02-12T12:01:11.381Z'
+                  updated_at: '2026-02-12T12:01:11.390Z'
+                  root_id: txn_gbHJdmfrXB
+                - id: txnmy_EfhxLZ9ck8
                   name: Collections
                   position: 3
-                  created_at: '2026-02-06T14:40:21.256Z'
-                  updated_at: '2026-02-06T14:40:21.312Z'
-                  root_id: txn_ZI3XmqntBvAkjsyi3nn4newy
-                - id: txnmy_goQaz0338Hg8TODIKotIhBcm
+                  created_at: '2026-02-12T12:01:11.391Z'
+                  updated_at: '2026-02-12T12:01:11.460Z'
+                  root_id: txn_EfhxLZ9ck8
+                - id: txnmy_VqXmZF31wY
                   name: taxonomy_11
                   position: 4
-                  created_at: '2026-02-06T14:40:21.326Z'
-                  updated_at: '2026-02-06T14:40:21.336Z'
-                  root_id: txn_kLaonWhXaayXw6vhd3Enh8FK
-                - id: txnmy_13gC4u12PVSR4HQ2uE0HdoqO
+                  created_at: '2026-02-12T12:01:59.654Z'
+                  updated_at: '2026-02-12T12:01:59.667Z'
+                  root_id: txn_OIJLhNcSbf
+                - id: txnmy_uw2YK1rnl0
                   name: taxonomy_12
                   position: 5
-                  created_at: '2026-02-06T14:40:21.337Z'
-                  updated_at: '2026-02-06T14:40:21.346Z'
-                  root_id: txn_7yKUdv2B7NyWOFgWrvCE0QRV
+                  created_at: '2026-02-12T12:01:59.668Z'
+                  updated_at: '2026-02-12T12:01:59.677Z'
+                  root_id: txn_AXs1igzRC6
                 meta:
                   page: 1
                   limit: 25
@@ -3281,12 +3283,12 @@ paths:
           content:
             application/json:
               example:
-                id: txnmy_JUfSWASNJHGbpMzPhIxkvwz4
+                id: txnmy_VqXmZF31wY
                 name: taxonomy_17
                 position: 4
-                created_at: '2026-02-06T14:40:21.611Z'
-                updated_at: '2026-02-06T14:40:21.619Z'
-                root_id: txn_EM67DRCfcllt6yPfzWAvVW6U
+                created_at: '2026-02-12T12:01:59.951Z'
+                updated_at: '2026-02-12T12:01:59.963Z'
+                root_id: txn_OIJLhNcSbf
               schema:
                 "$ref": "#/components/schemas/StoreTaxonomy"
         '404':
@@ -3332,7 +3334,7 @@ paths:
           content:
             application/json:
               example:
-                id: txn_3fhrDGLdjw1Gp8W44z6Oc0cC
+                id: txn_AXs1igzRC6
                 name: taxon_14
                 permalink: taxonomy-28/taxon-14
                 position: 0
@@ -3341,10 +3343,10 @@ paths:
                 meta_description:
                 meta_keywords:
                 children_count: 1
-                created_at: '2026-02-06T14:40:22.482Z'
-                updated_at: '2026-02-06T14:40:22.498Z'
-                parent_id: txn_SsSkddzjmZ7jeYP7iIuusqu8
-                taxonomy_id: txnmy_VPIGSARWH8rv27gPn4XPmSYt
+                created_at: '2026-02-12T12:02:00.680Z'
+                updated_at: '2026-02-12T12:02:00.696Z'
+                parent_id: txn_OIJLhNcSbf
+                taxonomy_id: txnmy_VqXmZF31wY
                 description: ''
                 description_html: ''
                 image_url:
@@ -3411,11 +3413,11 @@ paths:
             application/json:
               example:
                 data:
-                - id: wl_3brok9utIgSHVtVqTjlfNiFZ
+                - id: wl_UkLWZg9DAJ
                   name: My Wishlist
-                  token: h96L9CnJgB7jCEgBnPh4ficE
-                  created_at: '2026-02-06T14:40:24.437Z'
-                  updated_at: '2026-02-06T14:40:24.437Z'
+                  token: UvaZYH7qd34iTRLAW4CMFhN6
+                  created_at: '2026-02-12T12:02:01.850Z'
+                  updated_at: '2026-02-12T12:02:01.850Z'
                   is_default: false
                   is_private: true
                 meta:
@@ -3472,11 +3474,11 @@ paths:
           content:
             application/json:
               example:
-                id: wl_iaJZLNNLwC4MFMks6S8vGx64
+                id: wl_gbHJdmfrXB
                 name: Birthday Ideas
-                token: cDMkXtCwRorG9hDgY6fGES5w
-                created_at: '2026-02-06T14:40:26.854Z'
-                updated_at: '2026-02-06T14:40:26.854Z'
+                token: n6itndWq5FQYHLWpRLbv2dmu
+                created_at: '2026-02-12T12:02:03.277Z'
+                updated_at: '2026-02-12T12:02:03.277Z'
                 is_default: false
                 is_private: true
               schema:
@@ -3544,11 +3546,11 @@ paths:
           content:
             application/json:
               example:
-                id: wl_RPnMJAp4xbcF8M1Jh4VcEBgH
+                id: wl_UkLWZg9DAJ
                 name: My Wishlist
-                token: E9BBjjDnxcsfbBsdZPfQEsmb
-                created_at: '2026-02-06T14:40:29.181Z'
-                updated_at: '2026-02-06T14:40:29.181Z'
+                token: m9PJ39Zvmxupu4cSYNxcUrCm
+                created_at: '2026-02-12T12:02:04.472Z'
+                updated_at: '2026-02-12T12:02:04.472Z'
                 is_default: false
                 is_private: true
               schema:
@@ -3592,11 +3594,11 @@ paths:
           content:
             application/json:
               example:
-                id: wl_iDXgQGAjVTvFEDsRx3Unqfpk
+                id: wl_UkLWZg9DAJ
                 name: Updated Name
-                token: 4AJMCvgYsikQgkTE8GtDHSKW
-                created_at: '2026-02-06T14:40:31.638Z'
-                updated_at: '2026-02-06T14:40:31.712Z'
+                token: XVxn838i1XSfvgstzRL4JcoC
+                created_at: '2026-02-12T12:02:05.720Z'
+                updated_at: '2026-02-12T12:02:05.805Z'
                 is_default: false
                 is_private: true
               schema:
@@ -3670,22 +3672,22 @@ paths:
           content:
             application/json:
               example:
-                id: wi_dDnOZT7txSNeNKBM8ZbOyJUI
-                variant_id: variant_ym5Y7cpcImVCSZhU93Q1zWfq
-                wishlist_id: wl_5tHQCEPuHlaGfEf75A6bXOJR
+                id: wi_gbHJdmfrXB
+                variant_id: variant_gbHJdmfrXB
+                wishlist_id: wl_UkLWZg9DAJ
                 quantity: 1
-                created_at: '2026-02-06T14:40:34.112Z'
-                updated_at: '2026-02-06T14:40:34.112Z'
+                created_at: '2026-02-12T12:02:07.117Z'
+                updated_at: '2026-02-12T12:02:07.117Z'
                 variant:
-                  id: variant_ym5Y7cpcImVCSZhU93Q1zWfq
-                  product_id: prod_ZIkSWXwuNPjicfnulsuQEsIm
-                  sku: SKU-117
+                  id: variant_gbHJdmfrXB
+                  product_id: prod_gbHJdmfrXB
+                  sku: SKU-111
                   is_master: true
                   options_text: ''
                   track_inventory: true
                   image_count: 0
-                  created_at: '2026-02-06T14:40:34.066Z'
-                  updated_at: '2026-02-06T14:40:34.089Z'
+                  created_at: '2026-02-12T12:02:07.072Z'
+                  updated_at: '2026-02-12T12:02:07.095Z'
                   thumbnail:
                   purchasable: true
                   in_stock: false
@@ -3695,7 +3697,7 @@ paths:
                   width:
                   depth:
                   price:
-                    id: price_iagNhXtzcVXih6ETsNczEb0W
+                    id: price_gbHJdmfrXB
                     amount: '19.99'
                     amount_in_cents: 1999
                     compare_at_amount:
@@ -3874,7 +3876,7 @@ components:
           type: string
           description: JWT access token
         user:
-          "$ref": "#/components/schemas/StoreUser"
+          "$ref": "#/components/schemas/StoreCustomer"
       required:
       - token
       - user
@@ -3928,6 +3930,73 @@ components:
       - full_name
       - country_name
       - country_iso
+    AdminCustomer:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        first_name:
+          type: string
+          nullable: true
+        last_name:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        addresses:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StoreAddress"
+        default_billing_address:
+          allOf:
+          - "$ref": "#/components/schemas/StoreAddress"
+          nullable: true
+        default_shipping_address:
+          allOf:
+          - "$ref": "#/components/schemas/StoreAddress"
+          nullable: true
+        phone:
+          type: string
+          nullable: true
+        login:
+          type: string
+          nullable: true
+        accepts_email_marketing:
+          type: boolean
+        last_sign_in_at:
+          type: string
+          nullable: true
+        current_sign_in_at:
+          type: string
+          nullable: true
+        sign_in_count:
+          type: number
+        failed_attempts:
+          type: number
+        last_sign_in_ip:
+          type: string
+          nullable: true
+        current_sign_in_ip:
+          type: string
+          nullable: true
+        orders:
+          type: array
+          items:
+            "$ref": "#/components/schemas/AdminOrder"
+      x-typelizer: true
+      required:
+      - id
+      - email
+      - created_at
+      - updated_at
+      - addresses
+      - accepts_email_marketing
+      - sign_in_count
+      - failed_attempts
     AdminMetafield:
       type: object
       properties:
@@ -4072,7 +4141,7 @@ components:
           type: string
           nullable: true
         user:
-          "$ref": "#/components/schemas/AdminUser"
+          "$ref": "#/components/schemas/AdminCustomer"
       x-typelizer: true
       required:
       - id
@@ -4369,73 +4438,6 @@ components:
       - position
       - created_at
       - updated_at
-    AdminUser:
-      type: object
-      properties:
-        id:
-          type: string
-        email:
-          type: string
-        first_name:
-          type: string
-          nullable: true
-        last_name:
-          type: string
-          nullable: true
-        created_at:
-          type: string
-        updated_at:
-          type: string
-        addresses:
-          type: array
-          items:
-            "$ref": "#/components/schemas/StoreAddress"
-        default_billing_address:
-          allOf:
-          - "$ref": "#/components/schemas/StoreAddress"
-          nullable: true
-        default_shipping_address:
-          allOf:
-          - "$ref": "#/components/schemas/StoreAddress"
-          nullable: true
-        phone:
-          type: string
-          nullable: true
-        login:
-          type: string
-          nullable: true
-        accepts_email_marketing:
-          type: boolean
-        last_sign_in_at:
-          type: string
-          nullable: true
-        current_sign_in_at:
-          type: string
-          nullable: true
-        sign_in_count:
-          type: number
-        failed_attempts:
-          type: number
-        last_sign_in_ip:
-          type: string
-          nullable: true
-        current_sign_in_ip:
-          type: string
-          nullable: true
-        orders:
-          type: array
-          items:
-            "$ref": "#/components/schemas/AdminOrder"
-      x-typelizer: true
-      required:
-      - id
-      - email
-      - created_at
-      - updated_at
-      - addresses
-      - accepts_email_marketing
-      - sign_in_count
-      - failed_attempts
     AdminVariant:
       type: object
       properties:
@@ -4598,6 +4600,42 @@ components:
       - month
       - year
       - default
+    StoreCustomer:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        first_name:
+          type: string
+          nullable: true
+        last_name:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        addresses:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StoreAddress"
+        default_billing_address:
+          allOf:
+          - "$ref": "#/components/schemas/StoreAddress"
+          nullable: true
+        default_shipping_address:
+          allOf:
+          - "$ref": "#/components/schemas/StoreAddress"
+          nullable: true
+      x-typelizer: true
+      required:
+      - id
+      - email
+      - created_at
+      - updated_at
+      - addresses
     StoreDigitalLink:
       type: object
       properties:
@@ -5524,42 +5562,6 @@ components:
       - position
       - created_at
       - updated_at
-    StoreUser:
-      type: object
-      properties:
-        id:
-          type: string
-        email:
-          type: string
-        first_name:
-          type: string
-          nullable: true
-        last_name:
-          type: string
-          nullable: true
-        created_at:
-          type: string
-        updated_at:
-          type: string
-        addresses:
-          type: array
-          items:
-            "$ref": "#/components/schemas/StoreAddress"
-        default_billing_address:
-          allOf:
-          - "$ref": "#/components/schemas/StoreAddress"
-          nullable: true
-        default_shipping_address:
-          allOf:
-          - "$ref": "#/components/schemas/StoreAddress"
-          nullable: true
-      x-typelizer: true
-      required:
-      - id
-      - email
-      - created_at
-      - updated_at
-      - addresses
     StoreVariant:
       type: object
       properties:
