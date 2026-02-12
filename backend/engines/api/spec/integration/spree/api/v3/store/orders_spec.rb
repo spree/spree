@@ -185,10 +185,38 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
       parameter name: :body, in: :body, schema: {
         type: :object,
         properties: {
-          email: { type: :string, format: 'email' },
-          special_instructions: { type: :string },
-          bill_address: { '$ref' => '#/components/schemas/StoreAddress' },
-          ship_address: { '$ref' => '#/components/schemas/StoreAddress' }
+          email: { type: :string, format: 'email', example: 'customer@example.com' },
+          special_instructions: { type: :string, example: 'Leave at door' },
+          bill_address: {
+            type: :object,
+            properties: {
+              firstname: { type: :string, example: 'John' },
+              lastname: { type: :string, example: 'Doe' },
+              address1: { type: :string, example: '123 Main St' },
+              address2: { type: :string, example: 'Apt 4B' },
+              city: { type: :string, example: 'New York' },
+              zipcode: { type: :string, example: '10001' },
+              phone: { type: :string, example: '+1 555 123 4567' },
+              company: { type: :string, example: 'Acme Inc' },
+              country_iso: { type: :string, example: 'US' },
+              state_abbr: { type: :string, example: 'NY' }
+            }
+          },
+          ship_address: {
+            type: :object,
+            properties: {
+              firstname: { type: :string, example: 'Jane' },
+              lastname: { type: :string, example: 'Smith' },
+              address1: { type: :string, example: '456 Oak Ave' },
+              address2: { type: :string, example: 'Suite 200' },
+              city: { type: :string, example: 'Los Angeles' },
+              zipcode: { type: :string, example: '90001' },
+              phone: { type: :string, example: '+1 555 987 6543' },
+              company: { type: :string },
+              country_iso: { type: :string, example: 'US' },
+              state_abbr: { type: :string, example: 'CA' }
+            }
+          }
         }
       }
 
@@ -340,7 +368,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
       parameter name: :body, in: :body, schema: {
         type: :object,
         properties: {
-          amount: { type: :number, description: 'Amount to apply (optional - defaults to max available)' }
+          amount: { type: :number, example: 10.0, description: 'Amount to apply (optional - defaults to max available)' }
         }
       }
 

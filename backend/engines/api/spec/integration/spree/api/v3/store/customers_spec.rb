@@ -59,11 +59,11 @@ RSpec.describe 'Customers API', type: :request, swagger_doc: 'api-reference/stor
       parameter name: :body, in: :body, schema: {
         type: :object,
         properties: {
-          first_name: { type: :string },
-          last_name: { type: :string },
-          email: { type: :string, format: 'email' },
-          password: { type: :string },
-          password_confirmation: { type: :string }
+          first_name: { type: :string, example: 'John' },
+          last_name: { type: :string, example: 'Doe' },
+          email: { type: :string, format: 'email', example: 'customer@example.com' },
+          password: { type: :string, example: 'newpassword123' },
+          password_confirmation: { type: :string, example: 'newpassword123' }
         }
       }
 

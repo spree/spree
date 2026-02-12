@@ -108,7 +108,7 @@ RSpec.describe 'Shipments API', type: :request, swagger_doc: 'api-reference/stor
       parameter name: :body, in: :body, schema: {
         type: :object,
         properties: {
-          selected_shipping_rate_id: { type: :string, description: 'Shipping rate ID to select' }
+          selected_shipping_rate_id: { type: :string, example: 'shprt_abc123', description: 'Shipping rate ID to select' }
         },
         required: %w[selected_shipping_rate_id]
       }

@@ -81,11 +81,11 @@ RSpec.describe 'Authentication API', type: :request, swagger_doc: 'api-reference
       parameter name: :body, in: :body, schema: {
         type: :object,
         properties: {
-          email: { type: :string, format: 'email' },
-          password: { type: :string, minLength: 6 },
-          password_confirmation: { type: :string },
-          first_name: { type: :string },
-          last_name: { type: :string }
+          email: { type: :string, format: 'email', example: 'newuser@example.com' },
+          password: { type: :string, minLength: 6, example: 'password123' },
+          password_confirmation: { type: :string, example: 'password123' },
+          first_name: { type: :string, example: 'John' },
+          last_name: { type: :string, example: 'Doe' }
         },
         required: %w[email password]
       }
