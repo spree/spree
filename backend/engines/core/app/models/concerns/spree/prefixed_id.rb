@@ -55,7 +55,7 @@ module Spree
       # @raise [ActiveRecord::RecordNotFound]
       def find_by_prefix_id!(prefixed_id)
         decoded = decode_prefixed_id(prefixed_id)
-        raise ActiveRecord::RecordNotFound.new("Couldn't find #{name} with prefixed id=#{prefixed_id}") unless decoded
+        raise ActiveRecord::RecordNotFound.new("Couldn't find #{name} with prefixed id=#{prefixed_id}", name) unless decoded
 
         find(decoded)
       end
@@ -111,7 +111,7 @@ module Spree
       # @return [ActiveRecord::Base]
       # @raise [ActiveRecord::RecordNotFound]
       def find_by_param!(param)
-        find_by_param(param) || raise(ActiveRecord::RecordNotFound.new("Couldn't find #{name} with param=#{param}"))
+        find_by_param(param) || raise(ActiveRecord::RecordNotFound.new("Couldn't find #{name} with param=#{param}", name))
       end
 
       # Look up the model class for a given prefix string.
