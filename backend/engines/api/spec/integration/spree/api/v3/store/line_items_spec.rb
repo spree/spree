@@ -28,8 +28,8 @@ RSpec.describe 'Line Items API', type: :request, swagger_doc: 'api-reference/sto
       parameter name: :body, in: :body, schema: {
         type: :object,
         properties: {
-          variant_id: { type: :string, description: 'Variant ID to add' },
-          quantity: { type: :integer, description: 'Quantity to add (default: 1)' }
+          variant_id: { type: :string, example: 'variant_abc123', description: 'Variant ID to add' },
+          quantity: { type: :integer, example: 2, description: 'Quantity to add (default: 1)' }
         },
         required: %w[variant_id]
       }
@@ -90,7 +90,7 @@ RSpec.describe 'Line Items API', type: :request, swagger_doc: 'api-reference/sto
       parameter name: :body, in: :body, schema: {
         type: :object,
         properties: {
-          quantity: { type: :integer, minimum: 1 }
+          quantity: { type: :integer, minimum: 1, example: 5 }
         },
         required: %w[quantity]
       }

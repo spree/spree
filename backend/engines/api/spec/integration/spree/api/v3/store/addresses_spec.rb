@@ -59,17 +59,17 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
       parameter name: :body, in: :body, schema: {
         type: :object,
         properties: {
-          firstname: { type: :string },
-          lastname: { type: :string },
-          address1: { type: :string },
-          address2: { type: :string },
-          city: { type: :string },
-          zipcode: { type: :string },
-          phone: { type: :string },
-          company: { type: :string },
-          country_iso: { type: :string, description: 'ISO 3166-1 alpha-2 country code (e.g., "US", "DE")' },
-          state_abbr: { type: :string, description: 'ISO 3166-2 subdivision code without country prefix (e.g., "CA", "NY")' },
-          state_name: { type: :string, description: 'State name - for countries without predefined states' }
+          firstname: { type: :string, example: 'John' },
+          lastname: { type: :string, example: 'Doe' },
+          address1: { type: :string, example: '123 Main St' },
+          address2: { type: :string, example: 'Apt 4B' },
+          city: { type: :string, example: 'New York' },
+          zipcode: { type: :string, example: '10001' },
+          phone: { type: :string, example: '+1 555 123 4567' },
+          company: { type: :string, example: 'Acme Inc' },
+          country_iso: { type: :string, example: 'US', description: 'ISO 3166-1 alpha-2 country code (e.g., "US", "DE")' },
+          state_abbr: { type: :string, example: 'NY', description: 'ISO 3166-2 subdivision code without country prefix (e.g., "CA", "NY")' },
+          state_name: { type: :string, example: 'New York', description: 'State name - for countries without predefined states' }
         },
         required: %w[firstname lastname address1 city zipcode country_iso]
       }
@@ -156,10 +156,10 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
       parameter name: :body, in: :body, schema: {
         type: :object,
         properties: {
-          firstname: { type: :string },
-          lastname: { type: :string },
-          address1: { type: :string },
-          city: { type: :string }
+          firstname: { type: :string, example: 'John' },
+          lastname: { type: :string, example: 'Doe' },
+          address1: { type: :string, example: '456 Oak Ave' },
+          city: { type: :string, example: 'Los Angeles' }
         }
       }
 

@@ -60,9 +60,9 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
       parameter name: :body, in: :body, schema: {
         type: :object,
         properties: {
-          name: { type: :string },
-          is_private: { type: :boolean },
-          is_default: { type: :boolean }
+          name: { type: :string, example: 'Birthday Ideas' },
+          is_private: { type: :boolean, example: true },
+          is_default: { type: :boolean, example: false }
         },
         required: %w[name]
       }
@@ -138,9 +138,9 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
       parameter name: :body, in: :body, schema: {
         type: :object,
         properties: {
-          name: { type: :string },
-          is_private: { type: :boolean },
-          is_default: { type: :boolean }
+          name: { type: :string, example: 'Updated Name' },
+          is_private: { type: :boolean, example: true },
+          is_default: { type: :boolean, example: false }
         }
       }
 
@@ -191,8 +191,8 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
       parameter name: :body, in: :body, schema: {
         type: :object,
         properties: {
-          variant_id: { type: :string },
-          quantity: { type: :integer }
+          variant_id: { type: :string, example: 'variant_abc123' },
+          quantity: { type: :integer, example: 1 }
         },
         required: %w[variant_id]
       }
