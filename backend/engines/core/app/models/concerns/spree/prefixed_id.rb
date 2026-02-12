@@ -6,7 +6,7 @@ module Spree
   # Adds Stripe-style prefixed IDs to Spree models using Sqids encoding.
   # IDs are computed on the fly from integer primary keys -- no database column needed.
   #
-  # e.g., Product with id=12345 -> "prod_rT8xHkWmNzLpQjYvBcDfGsAe"
+  # e.g., Product with id=12345 -> "prod_86Rf07xd4z"
   #
   #   class Product < Spree.base_class
   #     has_prefix_id :prod
@@ -14,7 +14,7 @@ module Spree
   module PrefixedId
     extend ActiveSupport::Concern
 
-    SQIDS = Sqids.new(min_length: 24)
+    SQIDS = Sqids.new(min_length: 10)
 
     included do
       class_attribute :_prefix_id_prefix, instance_writer: false
