@@ -33,7 +33,7 @@ RSpec.describe Spree::Api::V3::Store::Orders::CouponCodesController, type: :cont
       it 'returns error for invalid coupon code' do
         post :create, params: { order_id: order.to_param, code: 'INVALID' }
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(json_response['error']).to be_present
       end
 
@@ -43,7 +43,7 @@ RSpec.describe Spree::Api::V3::Store::Orders::CouponCodesController, type: :cont
 
         post :create, params: { order_id: order.to_param, code: 'SAVE10' }
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
 
@@ -82,7 +82,7 @@ RSpec.describe Spree::Api::V3::Store::Orders::CouponCodesController, type: :cont
 
         post :create, params: { order_id: order.to_param, code: 'giftcard123' }
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
 
       it 'returns error for redeemed gift card' do
@@ -90,7 +90,7 @@ RSpec.describe Spree::Api::V3::Store::Orders::CouponCodesController, type: :cont
 
         post :create, params: { order_id: order.to_param, code: 'giftcard123' }
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
 
@@ -103,7 +103,7 @@ RSpec.describe Spree::Api::V3::Store::Orders::CouponCodesController, type: :cont
       it 'returns error' do
         post :create, params: { order_id: order.to_param, code: 'EXPIRED' }
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
 

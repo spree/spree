@@ -45,7 +45,7 @@ module Spree
               render_error(
                 code: ERROR_CODES[:order_already_completed],
                 message: 'Cannot associate a completed order',
-                status: :unprocessable_entity
+                status: :unprocessable_content
               )
               return
             end

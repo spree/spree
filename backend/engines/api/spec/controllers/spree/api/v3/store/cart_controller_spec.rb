@@ -240,7 +240,7 @@ RSpec.describe Spree::Api::V3::Store::CartController, type: :controller do
 
         patch :associate, params: { order_token: completed_order.token }
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(json_response['error']['code']).to eq('order_already_completed')
       end
 

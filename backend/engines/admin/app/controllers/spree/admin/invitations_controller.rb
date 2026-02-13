@@ -42,7 +42,7 @@ module Spree
             format.turbo_stream
           end
         else
-          render :new, status: :unprocessable_entity
+          render :new, status: :unprocessable_content
         end
       end
 

@@ -33,7 +33,7 @@ RSpec.describe Spree::Api::V3::Store::WishlistItemsController, type: :controller
       it 'returns errors for missing variant_id' do
         post :create, params: { wishlist_id: wishlist.prefixed_id, quantity: 1 }
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(json_response['error']['code']).to eq('validation_error')
         expect(json_response['error']['message']).to be_present
       end
@@ -41,7 +41,7 @@ RSpec.describe Spree::Api::V3::Store::WishlistItemsController, type: :controller
       it 'returns errors for invalid variant_id' do
         post :create, params: { wishlist_id: wishlist.prefixed_id, variant_id: 0, quantity: 1 }
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(json_response['error']['code']).to eq('validation_error')
         expect(json_response['error']['details']['variant']).to be_present
       end
@@ -92,7 +92,7 @@ RSpec.describe Spree::Api::V3::Store::WishlistItemsController, type: :controller
       it 'returns errors for invalid quantity' do
         patch :update, params: { wishlist_id: wishlist.prefixed_id, id: wished_item.prefixed_id, quantity: 0 }
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(json_response['error']['code']).to eq('validation_error')
         expect(json_response['error']['details']['quantity']).to be_present
       end

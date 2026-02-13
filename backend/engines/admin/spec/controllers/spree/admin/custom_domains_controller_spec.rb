@@ -73,7 +73,7 @@ describe Spree::Admin::CustomDomainsController, type: :controller do
       it 'does not create a custom domain' do
         expect { subject }.not_to change(Spree::CustomDomain, :count)
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(response).to render_template(:new)
       end
     end
@@ -126,7 +126,7 @@ describe Spree::Admin::CustomDomainsController, type: :controller do
       it 'does not update the custom domain' do
         expect { subject }.not_to change { custom_domain.reload.url }
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(response).to render_template(:edit)
       end
     end

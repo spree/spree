@@ -121,7 +121,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::AddressesController, type: :cont
       it 'returns validation errors for missing firstname' do
         post :create, params: address_params.except(:firstname)
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(json_response['error']['code']).to eq('validation_error')
       end
     end

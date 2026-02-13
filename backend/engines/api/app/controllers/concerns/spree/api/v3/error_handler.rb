@@ -87,13 +87,13 @@ module Spree
           render_error(
             code: code,
             message: message,
-            status: :unprocessable_entity,
+            status: :unprocessable_content,
             details: details
           )
         end
 
         # Convenience method for service result errors
-        def render_service_error(error, code: ERROR_CODES[:processing_error], status: :unprocessable_entity)
+        def render_service_error(error, code: ERROR_CODES[:processing_error], status: :unprocessable_content)
           if error.is_a?(ActiveModel::Errors)
             render_validation_error(error, code: code)
           elsif error.is_a?(String)
@@ -104,7 +104,7 @@ module Spree
         end
 
         # Legacy support - redirect to new error handling
-        def render_errors(errors, status = :unprocessable_entity)
+        def render_errors(errors, status = :unprocessable_content)
           code = infer_error_code(errors, status)
 
           if errors.is_a?(ActiveModel::Errors)
@@ -140,7 +140,7 @@ module Spree
           render_error(
             code: ERROR_CODES[:gateway_error],
             message: exception.message,
-            status: :unprocessable_entity
+            status: :unprocessable_content
           )
         end
 
@@ -182,7 +182,7 @@ module Spree
           render_error(
             code: ERROR_CODES[:order_cannot_transition],
             message: exception.message,
-            status: :unprocessable_entity
+            status: :unprocessable_content
           )
         end
 
@@ -204,7 +204,7 @@ module Spree
             ERROR_CODES[:access_denied]
           when :bad_request
             ERROR_CODES[:invalid_request]
-          when :unprocessable_entity
+          when :unprocessable_content
             errors.is_a?(ActiveModel::Errors) ? ERROR_CODES[:validation_error] : ERROR_CODES[:processing_error]
           else
             ERROR_CODES[:processing_error]

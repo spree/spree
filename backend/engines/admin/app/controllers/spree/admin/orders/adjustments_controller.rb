@@ -35,7 +35,7 @@ module Spree
             flash.now[:error] = @adjustment.errors.full_messages.to_sentence
             respond_to do |format|
               format.turbo_stream
-              format.html { render :new, status: :unprocessable_entity }
+              format.html { render :new, status: :unprocessable_content }
             end
           end
         end
@@ -58,7 +58,7 @@ module Spree
             end
           else
             flash.now[:error] = @adjustment.errors.full_messages.to_sentence
-            render :edit, status: :unprocessable_entity
+            render :edit, status: :unprocessable_content
           end
         end
 

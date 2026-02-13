@@ -24,7 +24,7 @@ module Spree
           flash[:success] = flash_message_for(@order, :successfully_created)
           redirect_to spree.edit_admin_order_path(@order)
         else
-          render :new, status: :unprocessable_entity
+          render :new, status: :unprocessable_content
         end
       end
 
