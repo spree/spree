@@ -89,8 +89,10 @@ RSpec.configure do |config|
         { name: 'Taxonomies', description: 'Category hierarchies' },
         { name: 'Taxons', description: 'Individual categories' },
         { name: 'Countries', description: 'Available shipping countries' },
-        { name: 'Orders', description: 'Shopping cart and checkout' },
+        { name: 'Cart', description: 'Shopping cart management' },
+        { name: 'Orders', description: 'Order management and checkout' },
         { name: 'Line Items', description: 'Cart item management' },
+        { name: 'Coupon Codes', description: 'Coupon code and gift card management' },
         { name: 'Payments', description: 'Payment processing' },
         { name: 'Payment Methods', description: 'Available payment options' },
         { name: 'Shipments', description: 'Shipping and delivery' },
@@ -99,6 +101,12 @@ RSpec.configure do |config|
         { name: 'Credit Cards', description: 'Saved payment methods' },
         { name: 'Wishlists', description: 'Customer wishlists' },
         { name: 'Digitals', description: 'Digital product downloads' }
+      ],
+      'x-tagGroups': [
+        { name: 'Store', tags: %w[Store Countries] },
+        { name: 'Catalog', tags: %w[Products Taxonomies Taxons] },
+        { name: 'Checkout', tags: ['Cart', 'Orders', 'Line Items', 'Coupon Codes', 'Payments', 'Payment Methods', 'Shipments'] },
+        { name: 'Customer', tags: ['Authentication', 'Customers', 'Addresses', 'Credit Cards', 'Wishlists', 'Digitals'] }
       ],
       components: {
         securitySchemes: {
