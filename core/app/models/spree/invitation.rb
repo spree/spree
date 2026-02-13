@@ -54,7 +54,7 @@ module Spree
     #
     after_initialize :set_defaults, if: :new_record?
     before_validation :set_invitee_from_email, on: :create
-    after_create :publish_invitation_created_event, unless: :skip_email
+    after_commit :publish_invitation_created_event, on: :create, unless: :skip_email
 
     # returns the store for the invitation
     # if the resource is a store, return the resource
