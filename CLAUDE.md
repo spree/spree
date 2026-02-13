@@ -102,14 +102,102 @@ For uniqueness validation, always use `scope: spree_base_uniqueness_scope`
 - Always use strong parameters
 - Always use `Spree::PermittedAttributes` to define allowed parameters for each resource
 
+## API Development
+
+Spree API v3 provides RESTful endpoints organized into two scopes:
+
+- **Store API** (`/api/v3/`) - Customer-facing endpoints for cart, checkout, products, and accounts
+- **Admin API** (`/api/v3/admin/`) - Administrative endpoints for managing orders, products, and store settings
+
+### Prefixed IDs
+
+All API v3 responses use Stripe-style prefixed IDs (e.g., `prod_86Rf07xd4z`, `variant_k5nR8xLq`, `or_m3Rp9wXz`). This is a critical convention:
+
+- **Always return prefixed IDs** in API responses — never expose raw integer/UUID IDs
+- **Always accept prefixed IDs** in API request parameters (e.g., `variant_id`, `product_id`)
+- The `BaseSerializer` automatically converts the primary `id` attribute to a prefixed ID
+- For association IDs in serializers, explicitly use `object.association&.prefixed_id`
+- In controllers, use `find_by_prefix_id!` for lookups — the base `ResourceController` does this automatically for `params[:id]`
+
 ```ruby
-# ✅ Proper parameter handling
-def permitted_product_params
-  params.require(:product).permit(Spree::PermittedAttributes.product_attributes)
+# ✅ Correct - serializer returning prefixed IDs for associations
+attribute :variant_id do |line_item|
+  line_item.variant&.prefixed_id
+end
+
+# ✅ Correct - controller looking up by prefixed ID
+@variant = current_store.variants.find_by_prefix_id!(params[:variant_id])
+
+# ❌ Incorrect - exposing raw IDs in API
+attribute :variant_id  # This would return the raw integer ID
+```
+
+### Flat Request/Response Structure
+
+API v3 uses a **flat parameter structure** — no nested Rails-style params wrapping:
+
+```ruby
+# ✅ Correct - flat params (API v3 style)
+def permitted_params
+  params.permit(Spree::PermittedAttributes.product_attributes)
+end
+
+# ❌ Incorrect - nested Rails params (not used in API v3)
+def permitted_params
+  params.require(:product).permit(:name, :description, :slug)
 end
 ```
 
-## API Development
+The base `ResourceController` automatically infers permitted attributes from `Spree::PermittedAttributes`:
+
+```ruby
+# Automatically maps ProductsController -> Spree::PermittedAttributes.product_attributes
+def permitted_params
+  params.permit(permitted_attributes)
+end
+```
+
+Responses are also flat JSON objects, not wrapped in a root key.
+
+### API Controllers
+
+#### Controller Hierarchy
+
+- **Base:** `Spree::Api::V3::ResourceController` — provides standard CRUD, pagination (pagy), Ransack filtering, authorization (CanCanCan), prefixed ID lookups, and HTTP caching
+- **Store API:** `Spree::Api::V3::Store::ResourceController` — adds publishable API key authentication
+- **Admin API:** `Spree::Api::V3::Admin::ResourceController` — adds secret API key authentication
+
+```ruby
+# ✅ Store API controller
+module Spree::Api::V3::Store
+  class ProductsController < ResourceController
+    protected
+
+    def model_class
+      Spree::Product
+    end
+
+    def serializer_class
+      Spree.api.product_serializer
+    end
+
+    def scope
+      super.active(Spree::Current.currency)
+    end
+  end
+end
+```
+
+#### Key ResourceController Methods
+
+Override these in subclasses to customize behavior:
+
+- `model_class` — the ActiveRecord model class
+- `serializer_class` — the Alba serializer (use `Spree.api.serializer_name` for configurable references)
+- `scope` — base scope for queries (call `super` and chain)
+- `find_resource` — resource lookup (defaults to `scope.find_by_prefix_id!(params[:id])`)
+- `permitted_params` — allowed request parameters
+- `collection_includes` — eager loading associations for index action
 
 ### Serializers
 
@@ -140,7 +228,25 @@ module Spree::Api::V3::Admin
 end
 ```
 
-Never use `typelize_from` in serializers this causes serializers to connnect to the database.
+Never use `typelize_from` in serializers — this causes serializers to connect to the database.
+
+### Serializer DSL
+
+- `typelize attr: :type` — define types for computed/delegated attributes
+- Use `Spree.api.serializer_name` for configurable serializer references
+- Customize serializers by inheriting from the default and configuring via `Spree.api`:
+
+```ruby
+# Custom serializer
+module MyApp
+  class ProductSerializer < Spree::Api::V3::ProductSerializer
+    attribute :custom_field
+  end
+end
+
+# Configure in initializer
+Spree.api.product_serializer = 'MyApp::ProductSerializer'
+```
 
 ### TypeScript Type Generation
 
@@ -151,16 +257,26 @@ We use [typelizer](https://github.com/skryukov/typelizer) to generate TypeScript
 - Admin types: `AdminProduct`, `AdminOrder`, etc.
 - Run `bundle exec rake typelizer:generate` to regenerate types
 
-### Serializer DSL
-
-- `typelize attr: :type` - Define types for computed/delegated attributes
-- Use `Spree.api.serializer_name` for configurable serializer references
-
 ### API Authentication
 
-API uses Publishable and Secret API Keys for authentication. Publishable works for Store API and Secret for Admin API, both are passed via headers `x-spree-api-key`.
+- **Publishable API keys** (`spree_pk_xxx`) — used for Store API, passed via `Authorization: Bearer` header
+- **Secret API keys** (`spree_sk_xxx`) — used for Admin API, passed via `Authorization: Bearer` header
+- **User authentication** — JWT tokens, passed via `Authorization: Bearer <token>` header
+- **Guest cart tokens** — passed via `X-Spree-Order-Token` header for guest checkout
 
-User authentication uses JWT tokens, passed via headers `Authorization: Bearer <token>`.
+```ruby
+# Creating API keys
+store_api_key = Spree::ApiKey.create!(name: 'My Storefront', key_type: :publishable, store: Spree::Current.store)
+admin_api_key = Spree::ApiKey.create!(name: 'Admin Integration', key_type: :secret, store: Spree::Current.store)
+```
+
+## Spree::Current class
+
+Spree::Current is a class that provides access to the current store, currency, and locale. It is available in models, controllers, jobs and services. Each value is set per request.
+
+`Spree::Current.store` — current store
+`Spree::Current.currency` — current currency
+`Spree::Current.locale` — current locale
 
 ## Events System
 
