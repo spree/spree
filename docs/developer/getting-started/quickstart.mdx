@@ -49,7 +49,7 @@ Follow the instructions below to learn how to build and deploy your Spree Commer
         ```
     4. Run the following command to create a new Spree Commerce application:
         ```bash
-        rails new my_store -m https://raw.githubusercontent.com/spree/spree/main/template.rb
+        rails new my_store -m https://raw.githubusercontent.com/spree/spree/main/backend/template.rb
         ```
     5. Navigate to the application directory
         ```bash
@@ -70,41 +70,27 @@ Follow the instructions below to learn how to build and deploy your Spree Commer
 
 Feel free to explore your store. You can do so because Spree comes with a default pre-built Storefront and Admin Panel.
 
-<AccordionGroup>
-  <Accordion icon="palette" title="Browsing Storefront">
-    Spree comes with a default pre-built Storefront. You can access it by navigating to [http://localhost:3000](http://localhost:3000).
+Use your browser window to navigate to [http://localhost:3000/admin](http://localhost:3000/admin). You can log in with the credentials you've chosen during installation, the defaults are:
 
-    <Frame caption="Spree Storefront">
-      <img src="/images/spree_storefront.png" />
-    </Frame>
+login: 
 
-    You can learn more about Storefront configuration in the [Storefront](/user/storefront/theme-editor) section.
-  </Accordion>
+```
+spree@example.com
+```
 
-  <Accordion icon="key" title="Logging into the Admin Dashboard">
-    Use your browser window to navigate to [http://localhost:3000/admin](http://localhost:3000/admin). You can log in with the default credentials:
+password: 
 
-    login: 
+```
+spree123
+```
 
-    ```
-    spree@example.com
-    ```
+Upon successful authentication, you should see the admin screen:
 
-    password: 
+<Frame caption="Spree Admin Dashboard">
+  <img src="/images/spree_admin_dashboard.png" />
+</Frame>
 
-    ```
-    spree123
-    ```
-
-    Upon successful authentication, you should see the admin screen:
-
-    <Frame caption="Spree Admin Dashboard">
-      <img src="/images/spree_admin_dashboard.png" />
-    </Frame>
-
-    Feel free to explore some of the Admin Panel features that Spree has to offer and to verify that your installation is working properly.
-  </Accordion>
-</AccordionGroup>
+Feel free to explore some of the Admin Panel features that Spree has to offer and to verify that your installation is working properly.
 
 ### All Done!
 
