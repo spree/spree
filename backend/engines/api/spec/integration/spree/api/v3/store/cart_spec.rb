@@ -64,7 +64,7 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
 
         run_test! do |response|
           data = JSON.parse(response.body)
-          expect(data['error']['code']).to eq('record_not_found')
+          expect(data['error']['code']).to eq('order_not_found')
         end
       end
     end
@@ -122,7 +122,7 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
         end
       end
 
-      response '403', 'cart belongs to another user' do
+      response '404', 'cart belongs to another user' do
         let(:other_user) { create(:user) }
         let(:other_cart) { create(:order_with_line_items, store: store, user: other_user) }
         let(:'x-spree-api-key') { api_key.token }
@@ -133,7 +133,7 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
 
         run_test! do |response|
           data = JSON.parse(response.body)
-          expect(data['error']['code']).to eq('access_denied')
+          expect(data['error']['code']).to eq('order_not_found')
         end
       end
 
@@ -146,11 +146,11 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
 
         run_test! do |response|
           data = JSON.parse(response.body)
-          expect(data['error']['code']).to eq('record_not_found')
+          expect(data['error']['code']).to eq('order_not_found')
         end
       end
 
-      response '422', 'cart already completed' do
+      response '404', 'cart already completed' do
         let(:completed_order) { create(:completed_order_with_totals, store: store, user: nil) }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
@@ -160,7 +160,7 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
 
         run_test! do |response|
           data = JSON.parse(response.body)
-          expect(data['error']['code']).to eq('order_already_completed')
+          expect(data['error']['code']).to eq('order_not_found')
         end
       end
     end

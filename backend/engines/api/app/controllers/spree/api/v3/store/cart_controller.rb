@@ -14,15 +14,6 @@ module Spree
           def show
             @cart = find_cart
 
-            if @cart.nil?
-              render_error(
-                code: ERROR_CODES[:record_not_found],
-                message: 'No cart found. Create one with POST /orders',
-                status: :not_found
-              )
-              return
-            end
-
             render json: serialize_resource(@cart)
           end
 
@@ -31,34 +22,6 @@ module Spree
           # Requires: JWT authentication + order token (header or param)
           def associate
             @cart = find_cart_by_token
-
-            if @cart.nil?
-              render_error(
-                code: ERROR_CODES[:record_not_found],
-                message: 'Cart not found. Provide a valid order token.',
-                status: :not_found
-              )
-              return
-            end
-
-            if @cart.completed?
-              render_error(
-                code: ERROR_CODES[:order_already_completed],
-                message: 'Cannot associate a completed order',
-                status: :unprocessable_entity
-              )
-              return
-            end
-
-            # Check if cart already belongs to a different user
-            if @cart.user.present? && @cart.user != current_user
-              render_error(
-                code: ERROR_CODES[:access_denied],
-                message: 'This cart belongs to another user',
-                status: :forbidden
-              )
-              return
-            end
 
             # Associate the cart with the current user
             @cart.associate_user!(current_user)
@@ -74,32 +37,27 @@ module Spree
 
           private
 
-          # Find cart by order token only (for associate action)
+          # Find incomplete cart by order token for associate action
+          # Only finds guest carts (no user) or carts already owned by current user (idempotent)
           def find_cart_by_token
-            token = order_token
-            return nil unless token.present?
-
-            current_store.orders.find_by(token: token)
+            current_store.orders.incomplete.where(user: [nil, current_user]).find_by!(token: order_token)
           end
 
           def find_cart
+            scope = current_store.orders.incomplete
+
             # Try order_token first (guest checkout)
-            if params[:order_token].present?
-              return current_store.orders
-                .incomplete
-                .find_by(token: params[:order_token])
+            if order_token.present?
+              return scope.find_by!(token: order_token)
             end
 
             # Then try JWT authenticated user
             if current_user.present?
-              return current_store.orders
-                .incomplete
-                .where(user: current_user)
-                .order(created_at: :desc)
-                .first
+              cart = scope.where(user: current_user).order(created_at: :desc).first
+              return cart if cart
             end
 
-            nil
+            raise ActiveRecord::RecordNotFound.new(nil, 'Spree::Order')
           end
 
           def serialize_resource(resource)

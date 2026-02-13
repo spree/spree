@@ -38,7 +38,7 @@ RSpec.describe Spree::Api::V3::Store::CartController, type: :controller do
         get :show, params: { order_token: 'invalid_token' }
 
         expect(response).to have_http_status(:not_found)
-        expect(json_response['error']['code']).to eq('record_not_found')
+        expect(json_response['error']['code']).to eq('order_not_found')
       end
 
       it 'returns not found for completed order token' do
@@ -46,7 +46,7 @@ RSpec.describe Spree::Api::V3::Store::CartController, type: :controller do
         get :show, params: { order_token: completed_order.token }
 
         expect(response).to have_http_status(:not_found)
-        expect(json_response['error']['code']).to eq('record_not_found')
+        expect(json_response['error']['code']).to eq('order_not_found')
       end
 
       it 'returns not found for other store cart' do
@@ -94,7 +94,7 @@ RSpec.describe Spree::Api::V3::Store::CartController, type: :controller do
         get :show
 
         expect(response).to have_http_status(:not_found)
-        expect(json_response['error']['code']).to eq('record_not_found')
+        expect(json_response['error']['code']).to eq('order_not_found')
       end
 
       it 'does not return other users cart' do
@@ -112,8 +112,7 @@ RSpec.describe Spree::Api::V3::Store::CartController, type: :controller do
         get :show
 
         expect(response).to have_http_status(:not_found)
-        expect(json_response['error']['code']).to eq('record_not_found')
-        expect(json_response['error']['message']).to include('No cart found')
+        expect(json_response['error']['code']).to eq('order_not_found')
       end
     end
 
@@ -224,34 +223,33 @@ RSpec.describe Spree::Api::V3::Store::CartController, type: :controller do
         patch :associate, params: { order_token: 'invalid_token' }
 
         expect(response).to have_http_status(:not_found)
-        expect(json_response['error']['code']).to eq('record_not_found')
+        expect(json_response['error']['code']).to eq('order_not_found')
       end
 
       it 'returns not found without order token' do
         patch :associate
 
         expect(response).to have_http_status(:not_found)
-        expect(json_response['error']['code']).to eq('record_not_found')
-        expect(json_response['error']['message']).to include('order token')
+        expect(json_response['error']['code']).to eq('order_not_found')
       end
 
-      it 'returns error for completed order' do
+      it 'returns not found for completed order' do
         completed_order = create(:completed_order_with_totals, store: store, user: nil)
 
         patch :associate, params: { order_token: completed_order.token }
 
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(json_response['error']['code']).to eq('order_already_completed')
+        expect(response).to have_http_status(:not_found)
+        expect(json_response['error']['code']).to eq('order_not_found')
       end
 
-      it 'returns forbidden when cart belongs to another user' do
+      it 'returns not found when cart belongs to another user' do
         other_user = create(:user)
         other_user_cart = create(:order_with_line_items, store: store, user: other_user)
 
         patch :associate, params: { order_token: other_user_cart.token }
 
-        expect(response).to have_http_status(:forbidden)
-        expect(json_response['error']['code']).to eq('access_denied')
+        expect(response).to have_http_status(:not_found)
+        expect(json_response['error']['code']).to eq('order_not_found')
         expect(other_user_cart.reload.user).to eq(other_user) # unchanged
       end
 

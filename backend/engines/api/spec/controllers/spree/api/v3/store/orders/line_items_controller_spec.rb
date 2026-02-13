@@ -51,12 +51,11 @@ RSpec.describe Spree::Api::V3::Store::Orders::LineItemsController, type: :contro
         expect(response).to have_http_status(:created)
       end
 
-      it 'returns forbidden without order token' do
+      it 'returns not found without order token' do
         post :create, params: { order_id: guest_order.to_param, variant_id: variant.prefixed_id, quantity: 1 }
 
-        expect(response).to have_http_status(:forbidden)
-        expect(json_response['error']['code']).to eq('access_denied')
-        expect(json_response['error']['message']).to be_present
+        expect(response).to have_http_status(:not_found)
+        expect(json_response['error']['code']).to eq('order_not_found')
       end
     end
 
@@ -79,13 +78,13 @@ RSpec.describe Spree::Api::V3::Store::Orders::LineItemsController, type: :contro
         expect(json_response['error']['message']).to be_present
       end
 
-      it 'returns forbidden for other users order' do
+      it 'returns not found for other users order' do
         other_order = create(:order, store: store)
 
         post :create, params: { order_id: other_order.to_param, variant_id: variant.prefixed_id, quantity: 1 }
 
-        expect(response).to have_http_status(:forbidden)
-        expect(json_response['error']['code']).to eq('access_denied')
+        expect(response).to have_http_status(:not_found)
+        expect(json_response['error']['code']).to eq('order_not_found')
       end
     end
   end
@@ -116,14 +115,14 @@ RSpec.describe Spree::Api::V3::Store::Orders::LineItemsController, type: :contro
         expect(json_response['error']['message']).to be_present
       end
 
-      it 'returns forbidden for line item in other users order' do
+      it 'returns not found for line item in other users order' do
         other_order = create(:order, store: store)
         other_line_item = create(:line_item, order: other_order, variant: variant)
 
         patch :update, params: { order_id: other_order.to_param, id: other_line_item.prefixed_id, quantity: 5 }
 
-        expect(response).to have_http_status(:forbidden)
-        expect(json_response['error']['code']).to eq('access_denied')
+        expect(response).to have_http_status(:not_found)
+        expect(json_response['error']['code']).to eq('order_not_found')
       end
     end
   end
@@ -155,14 +154,14 @@ RSpec.describe Spree::Api::V3::Store::Orders::LineItemsController, type: :contro
         expect(json_response['error']['message']).to be_present
       end
 
-      it 'returns forbidden for line item in other users order' do
+      it 'returns not found for line item in other users order' do
         other_order = create(:order, store: store)
         other_line_item = create(:line_item, order: other_order, variant: variant)
 
         delete :destroy, params: { order_id: other_order.to_param, id: other_line_item.prefixed_id }
 
-        expect(response).to have_http_status(:forbidden)
-        expect(json_response['error']['code']).to eq('access_denied')
+        expect(response).to have_http_status(:not_found)
+        expect(json_response['error']['code']).to eq('order_not_found')
       end
     end
   end

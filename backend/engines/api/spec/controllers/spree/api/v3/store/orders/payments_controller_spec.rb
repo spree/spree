@@ -43,11 +43,11 @@ RSpec.describe Spree::Api::V3::Store::Orders::PaymentsController, type: :control
         expect(json_response['data'].size).to eq(1)
       end
 
-      it 'returns forbidden without order token' do
+      it 'returns not found without order token' do
         get :index, params: { order_id: guest_order.to_param }
 
-        expect(response).to have_http_status(:forbidden)
-        expect(json_response['error']['code']).to eq('access_denied')
+        expect(response).to have_http_status(:not_found)
+        expect(json_response['error']['code']).to eq('order_not_found')
       end
     end
 
@@ -59,13 +59,13 @@ RSpec.describe Spree::Api::V3::Store::Orders::PaymentsController, type: :control
         expect(json_response['error']['code']).to eq('order_not_found')
       end
 
-      it 'returns forbidden for other users order' do
+      it 'returns not found for other users order' do
         other_order = create(:order, store: store)
 
         get :index, params: { order_id: other_order.to_param }
 
-        expect(response).to have_http_status(:forbidden)
-        expect(json_response['error']['code']).to eq('access_denied')
+        expect(response).to have_http_status(:not_found)
+        expect(json_response['error']['code']).to eq('order_not_found')
       end
     end
   end

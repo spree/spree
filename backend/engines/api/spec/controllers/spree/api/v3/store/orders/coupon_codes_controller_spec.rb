@@ -110,11 +110,11 @@ RSpec.describe Spree::Api::V3::Store::Orders::CouponCodesController, type: :cont
     context 'without order access' do
       let(:other_order) { create(:order, store: store) }
 
-      it 'returns forbidden' do
+      it 'returns not found' do
         request.headers['x-spree-order-token'] = nil
         post :create, params: { order_id: other_order.to_param, code: 'SAVE10' }
 
-        expect(response).to have_http_status(:forbidden)
+        expect(response).to have_http_status(:not_found)
       end
     end
 

@@ -129,20 +129,19 @@ RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
         expect(json_response['number']).to eq(guest_order.number)
       end
 
-      it 'returns forbidden with invalid token' do
+      it 'returns not found with invalid token' do
         request.headers['X-Spree-Order-Token'] = 'invalid'
         get :show, params: { id: guest_order.to_param }
 
-        expect(response).to have_http_status(:forbidden)
-        expect(json_response['error']['code']).to eq('access_denied')
-        expect(json_response['error']['message']).to be_present
+        expect(response).to have_http_status(:not_found)
+        expect(json_response['error']['code']).to eq('order_not_found')
       end
 
-      it 'returns forbidden without token' do
+      it 'returns not found without token' do
         get :show, params: { id: guest_order.to_param }
 
-        expect(response).to have_http_status(:forbidden)
-        expect(json_response['error']['code']).to eq('access_denied')
+        expect(response).to have_http_status(:not_found)
+        expect(json_response['error']['code']).to eq('order_not_found')
       end
     end
 
@@ -159,12 +158,12 @@ RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
         expect(json_response['error']['message']).to be_present
       end
 
-      it 'returns forbidden for other users order' do
+      it 'returns not found for other users order' do
         other_order = create(:order_with_line_items, store: store)
         get :show, params: { id: other_order.to_param }
 
-        expect(response).to have_http_status(:forbidden)
-        expect(json_response['error']['code']).to eq('access_denied')
+        expect(response).to have_http_status(:not_found)
+        expect(json_response['error']['code']).to eq('order_not_found')
       end
     end
   end
@@ -209,13 +208,12 @@ RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
         request.headers['Authorization'] = "Bearer #{jwt_token}"
       end
 
-      it 'returns forbidden for other users order' do
+      it 'returns not found for other users order' do
         other_order = create(:order_with_line_items, store: store)
         patch :update, params: { id: other_order.to_param, email: 'hack@example.com' }
 
-        expect(response).to have_http_status(:forbidden)
-        expect(json_response['error']['code']).to eq('access_denied')
-        expect(json_response['error']['message']).to be_present
+        expect(response).to have_http_status(:not_found)
+        expect(json_response['error']['code']).to eq('order_not_found')
       end
     end
   end
