@@ -29,11 +29,11 @@ module Spree
                 redirect_to spree.edit_admin_order_path(@order)
               else
                 flash[:error] = result.error.value.full_messages.to_sentence
-                redirect_to spree.new_admin_order_user_path(@order), status: :unprocessable_entity
+                redirect_to spree.new_admin_order_user_path(@order), status: :unprocessable_content
               end
             else
               flash[:error] = @user.errors.full_messages.to_sentence
-              redirect_to spree.new_admin_order_user_path(@order), status: :unprocessable_entity
+              redirect_to spree.new_admin_order_user_path(@order), status: :unprocessable_content
             end
           else
             @user = @order.build_user(user_params)
@@ -47,7 +47,7 @@ module Spree
               redirect_to spree.edit_admin_order_path(@order)
             else
               flash[:error] = @user.errors.full_messages.to_sentence
-              redirect_to spree.new_admin_order_user_path(@order), status: :unprocessable_entity
+              redirect_to spree.new_admin_order_user_path(@order), status: :unprocessable_content
             end
           end
         end

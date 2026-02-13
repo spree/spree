@@ -99,7 +99,7 @@ RSpec.describe Spree::Api::V3::Store::AuthController, type: :controller do
       it 'returns validation error for blank email' do
         post :register, params: { email: '', password: 'password123', password_confirmation: 'password123' }
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(json_response['error']['code']).to eq('validation_error')
         expect(json_response['error']['details']['email']).to be_present
       end
@@ -108,7 +108,7 @@ RSpec.describe Spree::Api::V3::Store::AuthController, type: :controller do
         existing_user = create(:user)
         post :register, params: { email: existing_user.email, password: 'password123', password_confirmation: 'password123' }
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(json_response['error']['code']).to eq('validation_error')
         expect(json_response['error']['details']['email']).to be_present
       end

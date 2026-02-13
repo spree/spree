@@ -56,7 +56,7 @@ module Spree
           end
           redirect_to spree.admin_path
         else
-          render :new, status: :unprocessable_entity
+          render :new, status: :unprocessable_content
         end
       end
 
@@ -74,7 +74,7 @@ module Spree
         if @admin_user.update(permitted_params)
           redirect_to spree.admin_admin_user_path(@admin_user), status: :see_other, notice: flash_message_for(@admin_user, :successfully_updated)
         else
-          render :edit, status: :unprocessable_entity
+          render :edit, status: :unprocessable_content
         end
       end
 

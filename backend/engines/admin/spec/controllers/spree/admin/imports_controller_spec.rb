@@ -72,7 +72,7 @@ RSpec.describe Spree::Admin::ImportsController, type: :controller do
           post :create, params: { import: import_params }
         }.not_to change(Spree::Import, :count)
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
   end

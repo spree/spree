@@ -88,7 +88,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::AccountController, type: :contro
       it 'returns errors for blank email' do
         patch :update, params: { email: '' }
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(json_response['error']['code']).to eq('validation_error')
         expect(json_response['error']['details']['email']).to be_present
       end
@@ -97,7 +97,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::AccountController, type: :contro
         other_user = create(:user)
         patch :update, params: { email: other_user.email }
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(json_response['error']['code']).to eq('validation_error')
         expect(json_response['error']['details']['email']).to be_present
       end

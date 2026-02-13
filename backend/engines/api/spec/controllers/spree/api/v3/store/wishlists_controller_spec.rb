@@ -106,7 +106,7 @@ RSpec.describe Spree::Api::V3::Store::WishlistsController, type: :controller do
       it 'returns errors for blank name' do
         post :create, params: { name: '' }
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(json_response['error']['code']).to eq('validation_error')
         expect(json_response['error']['message']).to be_present
         expect(json_response['error']['details']['name']).to be_present
@@ -137,7 +137,7 @@ RSpec.describe Spree::Api::V3::Store::WishlistsController, type: :controller do
       it 'returns errors for blank name' do
         patch :update, params: { id: wishlist.prefixed_id, name: '' }
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(json_response['error']['code']).to eq('validation_error')
         expect(json_response['error']['details']['name']).to be_present
       end

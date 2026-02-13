@@ -37,7 +37,7 @@ RSpec.describe Spree::Api::V3::Store::Orders::StoreCreditsController, type: :con
         request.headers['Authorization'] = "Bearer #{jwt}"
         post :create, params: { order_id: order_without_credit.to_param, amount: 10 }
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(json_response['error']).to be_present
       end
     end
