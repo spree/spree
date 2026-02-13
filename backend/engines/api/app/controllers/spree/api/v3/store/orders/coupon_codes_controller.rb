@@ -7,7 +7,7 @@ module Spree
             include Spree::Api::V3::OrderConcern
 
             before_action :authorize_order_access!
-            skip_before_action :set_resource, only: [:create]
+            skip_before_action :set_resource
 
             # POST  /api/v3/store/orders/:order_id/coupon_codes
             # Apply a coupon code to the order
@@ -27,6 +27,7 @@ module Spree
             # Remove a coupon code from the order
             # :id is the promotion prefix_id (e.g., promo_xxx)
             def destroy
+              @resource = scope.find_by_prefix_id!(params[:id])
               coupon_code = @resource.code.presence || @resource.name
 
               coupon_handler.remove(coupon_code)
@@ -61,7 +62,7 @@ module Spree
             end
 
             def order_serializer
-              Spree.api.order_serializer.constantize
+              Spree.api.order_serializer
             end
           end
         end
