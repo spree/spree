@@ -14,7 +14,7 @@ module Spree
           store_uploaded_asset_in_session(@asset, @asset.viewable_type) if @asset.viewable.nil? || @asset.viewable.new_record?
         else
           flash.now[:error] = @asset.errors.full_messages.to_sentence
-          render :create, status: :unprocessable_entity
+          render :create, status: :unprocessable_content
         end
       end
 
@@ -27,7 +27,7 @@ module Spree
             format.json { render json: @asset }
           end
         else
-          head :unprocessable_entity
+          head :unprocessable_content
         end
       end
 

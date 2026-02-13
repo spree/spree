@@ -120,7 +120,7 @@ RSpec.describe Spree::Admin::InvitationsController, type: :controller do
 
       it 'returns unprocessable entity status' do
         post :create, params: invalid_params
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
   end

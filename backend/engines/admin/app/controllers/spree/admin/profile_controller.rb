@@ -19,7 +19,7 @@ module Spree
           flash[:success] = flash_message_for(@user, :successfully_updated)
           redirect_to spree.edit_admin_profile_path
         else
-          render :edit, status: :unprocessable_entity
+          render :edit, status: :unprocessable_content
         end
       end
 

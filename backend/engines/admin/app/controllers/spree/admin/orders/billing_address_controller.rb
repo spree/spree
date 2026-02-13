@@ -48,7 +48,7 @@ module Spree
             flash[:success] = Spree.t(:successfully_created, resource: Spree.t(:billing_address))
             redirect_to spree.edit_admin_order_path(@order)
           else
-            render :create, status: :unprocessable_entity
+            render :create, status: :unprocessable_content
           end
         end
 
@@ -88,7 +88,7 @@ module Spree
             flash[:success] = Spree.t(:successfully_updated, resource: Spree.t(:billing_address))
             redirect_to spree.edit_admin_order_path(@order)
           else
-            render :update, status: :unprocessable_entity
+            render :update, status: :unprocessable_content
           end
         end
 

@@ -48,13 +48,13 @@ module Spree
         invoke_callbacks(:create, :fails)
 
         flash[:error] = e.message.to_s
-        render :new, status: :unprocessable_entity
+        render :new, status: :unprocessable_content
       rescue ActiveRecord::RecordInvalid => _e
         @object.failure if defined?(@object) && @object.persisted?
         invoke_callbacks(:create, :fails)
 
         flash[:error] = @object.errors.full_messages.to_sentence
-        render :new, status: :unprocessable_entity
+        render :new, status: :unprocessable_content
       end
 
       def capture

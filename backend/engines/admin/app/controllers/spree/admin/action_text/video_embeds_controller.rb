@@ -20,7 +20,7 @@ module Spree
 
             render json: { sgid: video_embed.attachable_sgid, content: content }, status: :created
           else
-            render json: { error: video_embed.errors.full_messages.to_sentence }, status: :unprocessable_entity
+            render json: { error: video_embed.errors.full_messages.to_sentence }, status: :unprocessable_content
           end
         end
 

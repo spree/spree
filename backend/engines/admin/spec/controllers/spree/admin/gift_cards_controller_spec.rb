@@ -205,7 +205,7 @@ describe Spree::Admin::GiftCardsController, type: :controller do
       it 'renders the new template' do
         subject
         expect(response).to render_template(:new)
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
   end
@@ -280,7 +280,7 @@ describe Spree::Admin::GiftCardsController, type: :controller do
       it 'renders the edit template' do
         subject
         expect(response).to render_template(:edit)
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
   end

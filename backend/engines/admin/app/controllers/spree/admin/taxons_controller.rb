@@ -38,7 +38,7 @@ module Spree
         if @taxon.move_to_child_with_index(new_parent, new_index)
           head :ok
         else
-          head :unprocessable_entity
+          head :unprocessable_content
         end
       end
 

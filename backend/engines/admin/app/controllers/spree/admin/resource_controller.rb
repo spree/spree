@@ -51,7 +51,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
             flash.now[:error] = @object.errors.full_messages.join(', ')
           end
         end
-        format.html { render action: :edit, status: :unprocessable_entity }
+        format.html { render action: :edit, status: :unprocessable_content }
       end
     end
   end
@@ -82,7 +82,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
             flash.now[:error] = @object.errors.full_messages.join(', ')
           end
         end
-        format.html { render action: :new, status: :unprocessable_entity }
+        format.html { render action: :new, status: :unprocessable_content }
       end
     end
   end

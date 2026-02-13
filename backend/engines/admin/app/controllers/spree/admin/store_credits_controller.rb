@@ -26,7 +26,7 @@ module Spree
           redirect_to spree.admin_user_path(parent)
         else
           flash[:error] = Spree.t('store_credit.errors.unable_to_create')
-          render :new, status: :unprocessable_entity
+          render :new, status: :unprocessable_content
         end
       end
 
@@ -38,7 +38,7 @@ module Spree
           redirect_to spree.admin_user_store_credit_path(parent, @store_credit)
         else
           flash[:error] = Spree.t('store_credit.errors.unable_to_update')
-          render :edit, status: :unprocessable_entity
+          render :edit, status: :unprocessable_content
         end
       end
 

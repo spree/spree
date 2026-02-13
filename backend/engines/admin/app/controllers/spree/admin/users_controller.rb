@@ -58,7 +58,7 @@ module Spree
           flash[:success] = flash_message_for(@user, :successfully_created)
           redirect_to spree.admin_user_path(@user)
         else
-          render :new, status: :unprocessable_entity
+          render :new, status: :unprocessable_content
         end
       end
 
