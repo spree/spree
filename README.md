@@ -8,7 +8,8 @@
   <p align="center">
     Spree Commerce is an API-first, <a href="https://spreecommerce.org/" alt="open-source eCommerce platform">open-source eCommerce platform</a> for fast growing businesses and enterprises.
     <br />
-    Spree supports complex commerce scenarios natively — from B2B wholesale to multi-vendor marketplace to global multi-region or multi-tenant distributor platforms. Use each model independently or combine them as your business evolves.
+    <br />
+Spree supports complex commerce scenarios natively and lets you combine them: <a href="B2B eCommerce" alt="https://spreecommerce.org/docs/use-case/b2b/b2b-capabilities">B2B eCommerce</a>, <a href="https://spreecommerce.org/docs/use-case/multi-store/capabilities" alt="multi-store">multi-store</a>, <a href="https://spreecommerce.org/multi-region-ecommerce/" alt="multi-region">multi-region</a>, <a href="https://spreecommerce.org/docs/use-case/marketplace/capabilities" alt="multi-vendor marketplace">multi-vendor marketplace</a>, <a href="https://spreecommerce.org/docs/use-case/digital-products/capabilities" alt="digital products">digital products</a>, <a href="https://spreecommerce.org/docs/use-case/multi-tenant/multi-tenant-capabilities" alt="multi-tenant commerce">multi-tenant commerce</a>. 
     <br />
     <br />
     <a href="https://spreecommerce.org">Website</a>
@@ -52,7 +53,7 @@ Thank you for supporting Spree open-source :heart:
 
 ## Documentation
 
-Spree allows you to build [B2B eCommerce](https://spreecommerce.org/docs/use-case/b2b/b2b-capabilities), [multi-store](https://spreecommerce.org/docs/use-case/multi-store/capabilities), [multi-region](https://spreecommerce.org/multi-region-ecommerce/), [multi-vendor marketplace](https://spreecommerce.org/docs/use-case/marketplace/capabilities), [digital products](https://spreecommerce.org/docs/use-case/digital-products/capabilities) or [multi-tenant commerce](https://spreecommerce.org/docs/use-case/multi-tenant/multi-tenant-capabilities) - and you can combine them to match your exact business model.  
+Spree supports complex commerce scenarios natively ane lets you combine them as your business evolves: <a href="B2B eCommerce" alt="https://spreecommerce.org/docs/use-case/b2b/b2b-capabilities">B2B eCommerce</a>, <a href="https://spreecommerce.org/docs/use-case/multi-store/capabilities" alt="multi-store">multi-store</a>, <a href="https://spreecommerce.org/multi-region-ecommerce/" alt="multi-region">multi-region</a>, <a href="https://spreecommerce.org/docs/use-case/marketplace/capabilities" alt="multi-vendor marketplace">multi-vendor marketplace</a>, <a href="https://spreecommerce.org/docs/use-case/digital-products/capabilities" alt="digital products">digital products</a>, <a href="https://spreecommerce.org/docs/use-case/multi-tenant/multi-tenant-capabilities" alt="multi-tenant commerce">multi-tenant commerce</a>. 
 
 - [Developer Docs](https://spreecommerce.org/docs/developer/getting-started/quickstart)
 - [API Reference](https://spreecommerce.org/docs/api-reference/introduction)
@@ -85,74 +86,38 @@ Read the [full Spree 5.3 announcement here](https://spreecommerce.org/announcing
 
 To install Spree, check out this [Quickstart Guide](https://spreecommerce.org/docs/developer/getting-started/quickstart).
 
-## Enterprise support
+## Enterprise Support
 
-[Contact us](https://spreecommerce.org/get-started/) for enterprise support and custom development services. We offer:
-  * expert delivery of your Spree project,
-  * migrations and upgrades,
-  * optimizing your Spree stack.
+Your success is backed by the team that builds Spree. [Contact us](https://spreecommerce.org/get-started/) to get access to:
 
-## Enterprise Edition 
+  * **Dedicated Success Manager** — your single point of contact who understands your business and coordinates resources
+  * **SLA-Backed Response Times** — guaranteed response windows for issue resolution depending on severity
+  * **Group Chat & Email Support** — direct access to our team through Slack, Teams, or email
+  * **Long-Term Support (LTS)** — extended maintenance and security patches with predictable upgrade cycles
+  * **Priority Fixes & Change Requests** — priority access to new features and version upgrades
+  * **24/7 Monitoring & Response** — round-the-clock infrastructure monitoring with proactive alerting
+  * **Professional Services On-Demand** — development consulting, custom integrations, and implementation services
 
-Besides enterprise support, we also offer the Spree Commerce [Enterprise Edition](https://spreecommerce.org/spree-commerce-version-comparison-community-edition-vs-enterprise-edition/) that gives you all the tools you need to launch your store or marketplace and provides you with ready-to-use integrations that will reduce your project's development time and cost.
+## Enterprise Edition
 
-To get access to the Enterprise Edition, contact our [Sales team](https://spreecommerce.org/get-started/)
+Spree Commerce [Enterprise Edition](https://spreecommerce.org/enterprise/) adds enterprise-grade security and purpose-built modules for complex commerce scenarios — B2B wholesale, multi-vendor marketplace, and multi-tenant eCommerce. Use each module independently or combine them as your business evolves.
 
-## Features
-### Customizable and modular
-  * pick and choose parts you want to use
-  * customize everything else (storefront, order processing, API, etc)
-<img alt="Spree Commerce - Storefront customization" src="https://github.com/spree/spree/assets/12614496/1a000452-6716-4fab-90ca-a4c28fc138a7">
+**Enterprise-grade security by default:**
+  * Encryption at-rest (AES-256) and in-transit (TLS 1.3)
+  * Single Sign-On (SSO) — Okta, Azure AD, Google Workspace, or any SAML/OIDC provider
+  * PCI DSS compliant architecture with tokenized payments
+  * Role-Based Access Control with granular permissions
+  * Comprehensive audit logging for compliance reviews
+  * Continuous security patches delivered through the LTS program
 
-### Composable and API-first
-  * connect with your existing ecosystem, build custom workflows with ease
-  * [Storefront and Admin API](https://spreecommerce.org/docs/api-reference/introduction)
-  * Webhooks
-<img alt="Spree Commerce - API   Integrations" src="https://github.com/spree/spree/assets/12614496/18e98e8e-15cd-4b74-8e58-80e5b3f281d8">
+**Enterprise Edition modules:**
+  * **Multi-vendor Marketplace** — automated vendor onboarding (Shopify, WooCommerce, CSV), product and order sync, split payments, and vendor payouts via Stripe Connect
+  * **B2B eCommerce** — customer-specific price lists, buyer organizations with roles and approval workflows, gated storefronts, and ERP/procurement integrations
+  * **Multi-tenant eCommerce** — host hundreds of independent stores as a white-label SaaS, franchise network, or multi-brand platform with central control over billing, fulfillment, and operations
 
-### Cart and Checkout for any use case
-  * advanced cart functionality
-  * over 30 payment provider integrations out of the box
-  * API to integrate any other payment gateway
-  * robust discounts system
-  * store credits, gift cards
-<img alt="Spree Commerce - Cart   Checkout" src="https://github.com/spree/spree/assets/12614496/05399a8f-a57a-4907-a8ea-a4e58285a55d">
-<img alt="Spree Commerce - Payments   Refunds" src="https://github.com/spree/spree/assets/12614496/0911073c-a681-409e-810c-f7e8daa4daac">
-
-### [Global Commerce](https://spreecommerce.org/multi-region-ecommerce/) ready
-  * multi-currency
-  * multi-language
-  * full translation support for products, categories, and more
-  * different shipping methods / costs for different regions
-  * advanced tax calculation
-<img alt="Spree Commerce - Multi-region   Multi-store" src="https://github.com/spree/spree/assets/12614496/e9c2edce-b80c-47ad-817b-a00a4ba54495">
-<img alt="Spree Commerce - Multi-region" src="https://github.com/spree/spree/assets/12614496/f8678baf-4efa-4de7-b092-b01ef3a4d8ea">
-
-### [Multi-Store eCommerce](https://spreecommerce.org/multi-store-ecommerce/) ready
-  * host multiple brands / stores on a single Spree instance
-  * each with different branding, configuration, payment methods, shipping options, product catalogs etc
-<img alt="Spree Commerce - Multi-store" src="https://github.com/spree/spree/assets/12614496/cf651354-6180-4927-973f-c650b80ccdb0">
-
-### Responsive Admin Panel
-Manage and curate products, users, orders, returns, shipments & more
-<img alt="Spree Commerce - Inventory management" src="https://github.com/spree/spree/assets/12614496/cdc7af4d-41ba-44f2-9595-efc948865107">
-
-### Orders & Post-purchase management
-Manage orders, shipments, returns and refunds
-<img alt="Spree Commerce - Order   Return management" src="https://github.com/spree/spree/assets/12614496/b1dffa8c-24d4-4629-a026-02951b5a80d7">
-<img alt="Spree Commerce - Order Fulfillment" src="https://github.com/spree/spree/assets/12614496/2212ec6d-bfd0-4940-9aae-f0ceea0b4e4d">
-
-### Why developers love it
-* **Runs anywhere** - cloud, VPS, Docker, Kubernetes
-* **Battle Tested** - used by thousands of merchants around the globe in all categories since 2007!
-* **Extensions available** adding new features to Spree
+[Contact our Sales team](https://spreecommerce.org/get-started/) to get access to the Enterprise Edition.
 
 ## What you can build with Spree
-Use Spree for any use case. Innovate beyond what's out there.
-
-### [Headless eCommerce](https://spreecommerce.org/headless-ecommerce/) micro-service
-Capture orders and payments for whatever you're selling - physical or digital, products or services
-<img alt="Spree Commerce - headless open-source eCommerce" src="https://github.com/spree/spree/assets/12614496/2bca9fdf-5ae2-4433-83aa-431105906fc8">
 
 ### [Multi-vendor marketplace](https://spreecommerce.org/marketplace-ecommerce/)
 Run your own marketplace with multiple suppliers, each with a dedicated supplier dashboard
