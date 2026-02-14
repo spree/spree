@@ -174,6 +174,67 @@ RSpec.describe Spree::Api::V3::Store::Customer::AddressesController, type: :cont
     end
   end
 
+  describe 'PATCH #mark_as_default' do
+    it 'sets address as default billing address' do
+      patch :mark_as_default, params: { id: address.prefixed_id, kind: 'billing' }
+
+      expect(response).to have_http_status(:ok)
+      expect(user.reload.bill_address_id).to eq(address.id)
+    end
+
+    it 'sets address as default shipping address' do
+      patch :mark_as_default, params: { id: address.prefixed_id, kind: 'shipping' }
+
+      expect(response).to have_http_status(:ok)
+      expect(user.reload.ship_address_id).to eq(address.id)
+    end
+
+    it 'returns the address' do
+      patch :mark_as_default, params: { id: address.prefixed_id, kind: 'billing' }
+
+      expect(json_response['id']).to eq(address.prefixed_id)
+    end
+
+    context 'with invalid kind' do
+      it 'returns error' do
+        patch :mark_as_default, params: { id: address.prefixed_id, kind: 'invalid' }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('invalid_request')
+      end
+    end
+
+    context 'with missing kind' do
+      it 'returns error' do
+        patch :mark_as_default, params: { id: address.prefixed_id }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('invalid_request')
+      end
+    end
+
+    context 'when address belongs to another user' do
+      let(:other_user) { create(:user) }
+      let(:other_address) { create(:address, user: other_user) }
+
+      it 'returns not found' do
+        patch :mark_as_default, params: { id: other_address.prefixed_id, kind: 'billing' }
+
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+
+    context 'without authentication' do
+      before { request.headers['Authorization'] = nil }
+
+      it 'returns unauthorized' do
+        patch :mark_as_default, params: { id: address.prefixed_id, kind: 'billing' }
+
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
+  end
+
   describe 'DELETE #destroy' do
     it 'deletes the address' do
       expect {

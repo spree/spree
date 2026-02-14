@@ -206,4 +206,63 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
       end
     end
   end
+
+  path '/api/v3/store/customer/addresses/{id}/mark_as_default' do
+    patch 'Mark address as default' do
+      tags 'Addresses'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Sets the address as the default billing or shipping address for the customer'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: 'Authorization', in: :header, type: :string, required: true
+      parameter name: :id, in: :path, type: :string, required: true
+      parameter name: :body, in: :body, schema: {
+        type: :object,
+        properties: {
+          kind: { type: :string, enum: %w[billing shipping], example: 'billing',
+                  description: 'Address kind: billing or shipping' }
+        },
+        required: ['kind']
+      }
+
+      response '200', 'address marked as default' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { "Bearer #{jwt_token}" }
+        let(:id) { address.to_param }
+        let(:body) { { kind: 'billing' } }
+
+        schema '$ref' => '#/components/schemas/StoreAddress'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['id']).to eq(address.prefixed_id)
+          expect(user.reload.bill_address_id).to eq(address.id)
+        end
+      end
+
+      response '422', 'invalid kind parameter' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { "Bearer #{jwt_token}" }
+        let(:id) { address.to_param }
+        let(:body) { { kind: 'invalid' } }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+
+      response '404', 'address not found' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { "Bearer #{jwt_token}" }
+        let(:id) { 'non-existent' }
+        let(:body) { { kind: 'billing' } }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+    end
+  end
 end

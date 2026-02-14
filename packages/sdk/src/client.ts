@@ -785,6 +785,19 @@ export class SpreeClient {
        */
       delete: (id: string, options?: RequestOptions): Promise<void> =>
         this.request<void>('DELETE', `/customer/addresses/${id}`, options),
+
+      /**
+       * Mark an address as default billing or shipping
+       */
+      markAsDefault: (
+        id: string,
+        kind: 'billing' | 'shipping',
+        options?: RequestOptions
+      ): Promise<StoreAddress> =>
+        this.request<StoreAddress>('PATCH', `/customer/addresses/${id}/mark_as_default`, {
+          ...options,
+          body: { kind },
+        }),
     },
 
     /**

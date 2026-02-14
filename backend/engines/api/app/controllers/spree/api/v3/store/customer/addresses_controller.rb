@@ -5,6 +5,7 @@ module Spree
         module Customer
           class AddressesController < ResourceController
             prepend_before_action :require_authentication!
+            before_action :set_resource, only: [:show, :update, :destroy, :mark_as_default]
 
             # POST /api/v3/store/customer/addresses
             def create
@@ -18,6 +19,24 @@ module Spree
               else
                 render_errors(result.value.errors)
               end
+            end
+
+            # PATCH /api/v3/store/customer/addresses/:id/mark_as_default
+            def mark_as_default
+              kind = params[:kind].to_s
+
+              unless %w[billing shipping].include?(kind)
+                return render_error(
+                  code: ERROR_CODES[:invalid_request],
+                  message: 'kind must be billing or shipping',
+                  status: :unprocessable_content
+                )
+              end
+
+              attribute = kind == 'billing' ? :bill_address_id : :ship_address_id
+              current_user.update!(attribute => @resource.id)
+
+              render json: serialize_resource(@resource.reload)
             end
 
             # PATCH /api/v3/store/customer/addresses/:id
