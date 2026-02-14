@@ -716,7 +716,15 @@ export class SpreeClient {
      * Update current customer profile
      */
     update: (
-      params: { first_name?: string; last_name?: string; email?: string },
+      params: {
+        first_name?: string
+        last_name?: string
+        email?: string
+        password?: string
+        password_confirmation?: string
+        accepts_email_marketing?: boolean
+        phone?: string
+      },
       options?: RequestOptions
     ): Promise<StoreCustomer> =>
       this.request<StoreCustomer>('PATCH', '/customer', {

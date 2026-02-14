@@ -63,7 +63,9 @@ RSpec.describe 'Customers API', type: :request, swagger_doc: 'api-reference/stor
           last_name: { type: :string, example: 'Doe' },
           email: { type: :string, format: 'email', example: 'customer@example.com' },
           password: { type: :string, example: 'newpassword123' },
-          password_confirmation: { type: :string, example: 'newpassword123' }
+          password_confirmation: { type: :string, example: 'newpassword123' },
+          accepts_email_marketing: { type: :boolean, example: true },
+          phone: { type: :string, example: '+1 555 123 4567' }
         }
       }
 

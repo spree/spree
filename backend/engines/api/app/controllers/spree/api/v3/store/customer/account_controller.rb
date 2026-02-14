@@ -27,7 +27,8 @@ module Spree
             end
 
             def permitted_params
-              params.permit(Spree::PermittedAttributes.user_attributes)
+              params.permit(:email, :password, :password_confirmation, :first_name, :last_name,
+                            :accepts_email_marketing, :phone)
             end
           end
         end
