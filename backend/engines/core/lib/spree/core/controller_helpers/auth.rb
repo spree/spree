@@ -21,6 +21,8 @@ module Spree
         end
 
         def current_oauth_token
+          Spree::Deprecation.warn('Spree::Current.oauth_token is deprecated and will be removed in Spree 5.5')
+
           get_last_access_token = ->(user) { Spree::OauthAccessToken.active_for(user).where(expires_in: nil).last }
           create_access_token = ->(user) { Spree::OauthAccessToken.create!(resource_owner: user) }
           user = try_spree_current_user
