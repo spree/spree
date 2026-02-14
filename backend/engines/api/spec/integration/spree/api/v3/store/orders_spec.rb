@@ -158,7 +158,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
         run_test!
       end
 
-      response '403', 'forbidden - order belongs to another user' do
+      response '404', 'not found - order belongs to another user' do
         let(:other_user) { create(:user) }
         let(:other_order) { create(:order, store: store, user: other_user) }
         let(:'x-spree-api-key') { api_key.token }

@@ -446,14 +446,14 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImV4cCI6MTc3MTA3MTIyNH0.HmD2UOvxWIighCsiq3Xah1A_LnAThQu4bCpfDWe9GJ8
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImV4cCI6MTc3MTEwOTY3M30._gUPT1vMgJdV-pAmrnglS1KX_RvrJo4-Xx-mNeg5KX8
                 user:
                   id: cus_UkLWZg9DAJ
                   email: test@example.com
-                  first_name: Lauran
-                  last_name: Runolfsdottir
-                  created_at: '2026-02-13T12:13:44.002Z'
-                  updated_at: '2026-02-13T12:13:44.002Z'
+                  first_name: Jessie
+                  last_name: Hayes
+                  created_at: '2026-02-13T22:54:33.444Z'
+                  updated_at: '2026-02-13T22:54:33.444Z'
                   addresses: []
                   default_billing_address:
                   default_shipping_address:
@@ -509,14 +509,14 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImV4cCI6MTc3MTA3MTIyNX0.D_DjQzm7dQl0RCwSuuySCQRkhBxsbY3BMqS0U5_bIKo
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImV4cCI6MTc3MTEwOTY3NH0.o4jL60_0a75DtOuFf8CMKhbgaO5kdkcQtjOGfnKSaP0
                 user:
                   id: cus_UkLWZg9DAJ
                   email: newuser@example.com
                   first_name: John
                   last_name: Doe
-                  created_at: '2026-02-13T12:13:45.532Z'
-                  updated_at: '2026-02-13T12:13:45.532Z'
+                  created_at: '2026-02-13T22:54:34.898Z'
+                  updated_at: '2026-02-13T22:54:34.898Z'
                   addresses: []
                   default_billing_address:
                   default_shipping_address:
@@ -588,14 +588,14 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImV4cCI6MTc3MTA3MTIyN30.toq3J9eKObvvAhSudYrDoWcZSnHKe57hgrbMkoSVSzA
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImV4cCI6MTc3MTEwOTY3NX0.R5mfkzvFlLjX0laCI4GSMYfBjCd4FE_BHZ-ys9jYhx4
                 user:
                   id: cus_UkLWZg9DAJ
                   email: test@example.com
-                  first_name: Charolette
-                  last_name: Harris
-                  created_at: '2026-02-13T12:13:47.171Z'
-                  updated_at: '2026-02-13T12:13:47.171Z'
+                  first_name: Jacqueline
+                  last_name: Kreiger
+                  created_at: '2026-02-13T22:54:35.461Z'
+                  updated_at: '2026-02-13T22:54:35.461Z'
                   addresses: []
                   default_billing_address:
                   default_shipping_address:
@@ -647,10 +647,10 @@ paths:
             application/json:
               example:
                 id: or_UkLWZg9DAJ
-                number: R407115412
+                number: R700220801
                 state: cart
-                token: j9ETZ7Ezto3fnRCfJyPvQPzsYAuFCUXajAm
-                email: efren@stokespollich.ca
+                token: dbaLTqHmY9Vka6KbwmFuMyxYUgTHwkCQ6Hc
+                email: pierre@lind.name
                 special_instructions:
                 currency: USD
                 item_count: 1
@@ -673,14 +673,14 @@ paths:
                 total: '110.0'
                 display_total: "$110.00"
                 completed_at:
-                created_at: '2026-02-13T12:13:48.389Z'
-                updated_at: '2026-02-13T12:13:48.581Z'
+                created_at: '2026-02-13T22:54:36.606Z'
+                updated_at: '2026-02-13T22:54:36.746Z'
                 line_items:
                 - id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
-                  name: Product 22564
-                  slug: product-22564
+                  name: Product 23562
+                  slug: product-23562
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -699,8 +699,8 @@ paths:
                   discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
-                  created_at: '2026-02-13T12:13:48.494Z'
-                  updated_at: '2026-02-13T12:13:48.494Z'
+                  created_at: '2026-02-13T22:54:36.684Z'
+                  updated_at: '2026-02-13T22:54:36.684Z'
                   compare_at_amount:
                   thumbnail_url:
                   option_values: []
@@ -719,8 +719,8 @@ paths:
             application/json:
               example:
                 error:
-                  code: record_not_found
-                  message: No cart found. Create one with POST /orders
+                  code: order_not_found
+                  message: Order not found
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/store/cart/associate":
@@ -766,10 +766,10 @@ paths:
             application/json:
               example:
                 id: or_UkLWZg9DAJ
-                number: R580854169
+                number: R898477747
                 state: cart
-                token: ipHzSLCLbedVwkMCkqpmWTc2Y9qe2QBmHqa
-                email: britt_harvey@tillmanmills.info
+                token: u2KoozWeYS7MwdQ3yhHtfZfXfUAyDgTpkEy
+                email: dara.hauck@ziemann.com
                 special_instructions:
                 currency: USD
                 item_count: 1
@@ -792,14 +792,14 @@ paths:
                 total: '110.0'
                 display_total: "$110.00"
                 completed_at:
-                created_at: '2026-02-13T12:13:48.623Z'
-                updated_at: '2026-02-13T12:13:48.847Z'
+                created_at: '2026-02-13T22:54:36.834Z'
+                updated_at: '2026-02-13T22:54:36.977Z'
                 line_items:
                 - id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
-                  name: Product 35893
-                  slug: product-35893
+                  name: Product 31075
+                  slug: product-31075
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -818,8 +818,8 @@ paths:
                   discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
-                  created_at: '2026-02-13T12:13:48.779Z'
-                  updated_at: '2026-02-13T12:13:48.779Z'
+                  created_at: '2026-02-13T22:54:36.920Z'
+                  updated_at: '2026-02-13T22:54:36.920Z'
                   compare_at_amount:
                   thumbnail_url:
                   option_values: []
@@ -842,34 +842,14 @@ paths:
                   message: Authentication required
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
-        '403':
-          description: cart belongs to another user
-          content:
-            application/json:
-              example:
-                error:
-                  code: access_denied
-                  message: This cart belongs to another user
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
         '404':
-          description: cart not found
-          content:
-            application/json:
-              example:
-                error:
-                  code: record_not_found
-                  message: Cart not found. Provide a valid order token.
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-        '422':
           description: cart already completed
           content:
             application/json:
               example:
                 error:
-                  code: order_already_completed
-                  message: Cannot associate a completed order
+                  code: order_not_found
+                  message: Order not found
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/store/countries":
@@ -1071,10 +1051,10 @@ paths:
             application/json:
               example:
                 id: or_UkLWZg9DAJ
-                number: R965146507
+                number: R396504267
                 state: cart
-                token: sUnjmNM8rgSLfJ2wSQBTy8Yet8Qv11qfyca
-                email: carrol@walter.com
+                token: HwebgrqHZPMiPasFUNUd5RuRkriQ9TRSYFb
+                email: almeda@weissnat.name
                 special_instructions:
                 currency: USD
                 item_count: 1
@@ -1097,8 +1077,8 @@ paths:
                 total: '110.0'
                 display_total: "$110.00"
                 completed_at:
-                created_at: '2026-02-13T12:13:53.913Z'
-                updated_at: '2026-02-13T12:13:54.130Z'
+                created_at: '2026-02-13T22:54:41.468Z'
+                updated_at: '2026-02-13T22:54:41.663Z'
                 payment_methods:
                 - id: pm_UkLWZg9DAJ
                   name: Store Credit
@@ -1184,10 +1164,10 @@ paths:
             application/json:
               example:
                 id: or_UkLWZg9DAJ
-                number: R140173570
+                number: R040524368
                 state: cart
-                token: GGo8Fqfeig9xMWAhTSP2WLJDYwUSje6MuLj
-                email: wendolyn.donnelly@erdman.com
+                token: 6fri4d6ggcTzTuFw1EeH5y5DEbAQiXmExTs
+                email: emanuel_quitzon@labadiewalker.info
                 special_instructions:
                 currency: USD
                 item_count: 1
@@ -1210,8 +1190,8 @@ paths:
                 total: '110.0'
                 display_total: "$110.00"
                 completed_at:
-                created_at: '2026-02-13T12:13:56.350Z'
-                updated_at: '2026-02-13T12:13:56.652Z'
+                created_at: '2026-02-13T22:54:43.722Z'
+                updated_at: '2026-02-13T22:54:43.937Z'
                 payment_methods: []
               schema:
                 "$ref": "#/components/schemas/StoreOrder"
@@ -1253,11 +1233,11 @@ paths:
             application/json:
               example:
                 id: cus_UkLWZg9DAJ
-                email: marlo@runolfsson.co.uk
-                first_name: Senaida
-                last_name: Swift
-                created_at: '2026-02-13T12:13:57.698Z'
-                updated_at: '2026-02-13T12:13:58.003Z'
+                email: vivienne.strosin@brakus.ca
+                first_name: Jeremiah
+                last_name: Huel
+                created_at: '2026-02-13T22:54:44.954Z'
+                updated_at: '2026-02-13T22:54:45.235Z'
                 addresses:
                 - id: addr_gbHJdmfrXB
                   firstname: John
@@ -1359,11 +1339,11 @@ paths:
             application/json:
               example:
                 id: cus_UkLWZg9DAJ
-                email: marguerita_gaylord@sawayn.ca
+                email: marge.hauck@runterodriguez.ca
                 first_name: Updated
                 last_name: Name
-                created_at: '2026-02-13T12:13:58.329Z'
-                updated_at: '2026-02-13T12:13:58.642Z'
+                created_at: '2026-02-13T22:54:45.524Z'
+                updated_at: '2026-02-13T22:54:45.817Z'
                 addresses:
                 - id: addr_gbHJdmfrXB
                   firstname: John
@@ -1507,8 +1487,8 @@ paths:
                 id: li_gbHJdmfrXB
                 variant_id: variant_gbHJdmfrXB
                 quantity: 2
-                name: Product 147026
-                slug: product-147026
+                name: Product 143907
+                slug: product-143907
                 options_text: ''
                 price: '19.99'
                 display_price: "$19.99"
@@ -1527,8 +1507,8 @@ paths:
                 discounted_amount: '39.98'
                 display_discounted_amount: "$39.98"
                 display_compare_at_amount: "$0.00"
-                created_at: '2026-02-13T12:14:00.017Z'
-                updated_at: '2026-02-13T12:14:00.017Z'
+                created_at: '2026-02-13T22:54:47.235Z'
+                updated_at: '2026-02-13T22:54:47.235Z'
                 compare_at_amount:
                 thumbnail_url:
                 option_values: []
@@ -1605,8 +1585,8 @@ paths:
                 id: li_UkLWZg9DAJ
                 variant_id: variant_UkLWZg9DAJ
                 quantity: 5
-                name: Product 172937
-                slug: product-172937
+                name: Product 171235
+                slug: product-171235
                 options_text: ''
                 price: '19.99'
                 display_price: "$19.99"
@@ -1625,8 +1605,8 @@ paths:
                 discounted_amount: '99.95'
                 display_discounted_amount: "$99.95"
                 display_compare_at_amount: "$0.00"
-                created_at: '2026-02-13T12:14:02.407Z'
-                updated_at: '2026-02-13T12:14:02.441Z'
+                created_at: '2026-02-13T22:54:49.287Z'
+                updated_at: '2026-02-13T22:54:49.316Z'
                 compare_at_amount:
                 thumbnail_url:
                 option_values: []
@@ -1741,10 +1721,10 @@ paths:
               example:
                 data:
                 - id: or_UkLWZg9DAJ
-                  number: R440830342
+                  number: R181050718
                   state: cart
-                  token: vXwPgKg5LLUDpQ4nNnk1wKgmCLypqomrbvN
-                  email: myrta@mante.co.uk
+                  token: NFeNLXSHJy1ccpQzpezi8Z83GHbVmLZH3o6
+                  email: del_predovic@waters.com
                   special_instructions:
                   currency: USD
                   item_count: 1
@@ -1767,8 +1747,8 @@ paths:
                   total: '110.0'
                   display_total: "$110.00"
                   completed_at:
-                  created_at: '2026-02-13T12:14:04.506Z'
-                  updated_at: '2026-02-13T12:14:04.653Z'
+                  created_at: '2026-02-13T22:54:51.281Z'
+                  updated_at: '2026-02-13T22:54:51.404Z'
                   payment_methods: []
                 meta:
                   page: 1
@@ -1827,10 +1807,10 @@ paths:
             application/json:
               example:
                 id: or_gbHJdmfrXB
-                number: R297415616
+                number: R445676982
                 state: cart
-                token: 5T2ZgKcn7P8SvzUJvjW8wgQCmcMqDnFMKiv
-                email: hui@armstrong.co.uk
+                token: AGXwy1eZoY5ZCxxZ4XKbrgf4a6xBFtwWosk
+                email: shirely@veum.biz
                 special_instructions:
                 currency: USD
                 item_count: 0
@@ -1853,10 +1833,10 @@ paths:
                 total: '0.0'
                 display_total: "$0.00"
                 completed_at:
-                created_at: '2026-02-13T12:14:07.028Z'
-                updated_at: '2026-02-13T12:14:07.028Z'
+                created_at: '2026-02-13T22:54:53.502Z'
+                updated_at: '2026-02-13T22:54:53.502Z'
                 payment_methods: []
-                order_token: 5T2ZgKcn7P8SvzUJvjW8wgQCmcMqDnFMKiv
+                order_token: AGXwy1eZoY5ZCxxZ4XKbrgf4a6xBFtwWosk
               schema:
                 type: object
                 allOf:
@@ -1920,9 +1900,9 @@ paths:
             application/json:
               example:
                 id: or_gbHJdmfrXB
-                number: R068741011
+                number: R606775356
                 state: cart
-                token: E9XBDSnY9VrHAAedLi4GrmJDeAbPZM5kjFR
+                token: Ci8u7oTgSnsDkQGM6VYBHRTdjHvsmc9ssWj
                 email:
                 special_instructions:
                 currency: USD
@@ -1946,29 +1926,19 @@ paths:
                 total: '110.0'
                 display_total: "$110.00"
                 completed_at:
-                created_at: '2026-02-13T12:14:09.332Z'
-                updated_at: '2026-02-13T12:14:09.464Z'
+                created_at: '2026-02-13T22:54:55.579Z'
+                updated_at: '2026-02-13T22:54:55.708Z'
                 payment_methods: []
               schema:
                 "$ref": "#/components/schemas/StoreOrder"
         '404':
-          description: order not found
+          description: not found - order belongs to another user
           content:
             application/json:
               example:
                 error:
                   code: order_not_found
                   message: Order not found
-              schema:
-                "$ref": "#/components/schemas/ErrorResponse"
-        '403':
-          description: forbidden - order belongs to another user
-          content:
-            application/json:
-              example:
-                error:
-                  code: access_denied
-                  message: You are not authorized to access this page.
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
     patch:
@@ -2007,10 +1977,10 @@ paths:
             application/json:
               example:
                 id: or_UkLWZg9DAJ
-                number: R770265799
+                number: R194378431
                 state: cart
-                token: rZUknpqyVXEMSkNEuMtoHTGRRhxS1F7d22U
-                email: lou.schaden@bechtelar.name
+                token: ECHb6eFJQK9nPiaCda4SjiuEs6u9xL48PrG
+                email: jerome@bahringer.com
                 special_instructions: Leave at door
                 currency: USD
                 item_count: 1
@@ -2033,8 +2003,8 @@ paths:
                 total: '110.0'
                 display_total: "$110.00"
                 completed_at:
-                created_at: '2026-02-13T12:14:11.895Z'
-                updated_at: '2026-02-13T12:14:12.164Z'
+                created_at: '2026-02-13T22:54:57.905Z'
+                updated_at: '2026-02-13T22:54:58.043Z'
                 payment_methods: []
               schema:
                 "$ref": "#/components/schemas/StoreOrder"
@@ -2163,10 +2133,10 @@ paths:
             application/json:
               example:
                 id: or_gbHJdmfrXB
-                number: R784700205
+                number: R291667319
                 state: address
-                token: 6kbyrNLPnpPUpenvCLcAynHNaJRKcpHHyZ4
-                email: herta_hegmann@feest.com
+                token: b5NrYe1JdE1P7rJMA2iF9Z318p5mJT1EXgE
+                email: evonne.aufderhar@kerluke.us
                 special_instructions:
                 currency: USD
                 item_count: 1
@@ -2189,8 +2159,8 @@ paths:
                 total: '110.0'
                 display_total: "$110.00"
                 completed_at:
-                created_at: '2026-02-13T12:14:13.916Z'
-                updated_at: '2026-02-13T12:14:14.072Z'
+                created_at: '2026-02-13T22:54:59.665Z'
+                updated_at: '2026-02-13T22:54:59.789Z'
                 payment_methods: []
               schema:
                 "$ref": "#/components/schemas/StoreOrder"
@@ -2242,10 +2212,10 @@ paths:
             application/json:
               example:
                 id: or_gbHJdmfrXB
-                number: R564954909
+                number: R399744985
                 state: payment
-                token: m6Dzw8njjBh8erhcKWHVcLsvmrf2wNerpGG
-                email: joetta_schoen@gibson.name
+                token: 7n9FpQZKUh8WCK5xvUbd1hSr6YgLgkiaMNo
+                email: anibal_ferry@koelpin.name
                 special_instructions:
                 currency: USD
                 item_count: 1
@@ -2268,8 +2238,8 @@ paths:
                 total: '29.99'
                 display_total: "$29.99"
                 completed_at:
-                created_at: '2026-02-13T12:14:15.703Z'
-                updated_at: '2026-02-13T12:14:16.069Z'
+                created_at: '2026-02-13T22:55:01.237Z'
+                updated_at: '2026-02-13T22:55:01.464Z'
                 payment_methods: []
               schema:
                 "$ref": "#/components/schemas/StoreOrder"
@@ -2310,10 +2280,10 @@ paths:
             application/json:
               example:
                 id: or_gbHJdmfrXB
-                number: R921265210
+                number: R249142990
                 state: complete
-                token: YwyzQEYLGE6zpDstnzPrW8PVdtKzPDfnRu7
-                email: ellena_heathcote@kuphalwisozk.co.uk
+                token: dThXyC6LfC3MVkbH6uXDi3TGsqELrVGr6Qb
+                email: karin@ritchienader.biz
                 special_instructions:
                 currency: USD
                 item_count: 1
@@ -2335,9 +2305,9 @@ paths:
                 display_additional_tax_total: "$0.00"
                 total: '29.99'
                 display_total: "$29.99"
-                completed_at: '2026-02-13T12:14:17.361Z'
-                created_at: '2026-02-13T12:14:16.920Z'
-                updated_at: '2026-02-13T12:14:17.361Z'
+                completed_at: '2026-02-13T22:55:02.474Z'
+                created_at: '2026-02-13T22:55:02.154Z'
+                updated_at: '2026-02-13T22:55:02.474Z'
                 payment_methods:
                 - id: pm_UkLWZg9DAJ
                   name: Check
@@ -2396,10 +2366,10 @@ paths:
             application/json:
               example:
                 id: or_UkLWZg9DAJ
-                number: R263630307
+                number: R081685430
                 state: cart
-                token: Ei61iq99d71LXuBNNNSX4KXxkYHWGSHLgek
-                email: versie_blick@colliercole.us
+                token: cAB8wi9pviTeBSPRW42uvkFRmoNWHtgDysL
+                email: ben_lueilwitz@mcglynn.us
                 special_instructions:
                 currency: USD
                 item_count: 1
@@ -2422,8 +2392,8 @@ paths:
                 total: '110.0'
                 display_total: "$110.00"
                 completed_at:
-                created_at: '2026-02-13T12:14:19.224Z'
-                updated_at: '2026-02-13T12:14:19.797Z'
+                created_at: '2026-02-13T22:55:03.953Z'
+                updated_at: '2026-02-13T22:55:04.413Z'
                 payment_methods:
                 - id: pm_UkLWZg9DAJ
                   name: Store Credit
@@ -2487,10 +2457,10 @@ paths:
             application/json:
               example:
                 id: or_UkLWZg9DAJ
-                number: R862858174
+                number: R900356464
                 state: cart
-                token: VmE9nYzXBXJfTo1SWbMgWBiTaMHNnBp7kPt
-                email: isreal_leannon@stokes.ca
+                token: pkV4emiDoau2VerwvYoDkyBw8nhKNU37QWz
+                email: azalee@weberschmidt.co.uk
                 special_instructions:
                 currency: USD
                 item_count: 1
@@ -2513,8 +2483,8 @@ paths:
                 total: '110.0'
                 display_total: "$110.00"
                 completed_at:
-                created_at: '2026-02-13T12:14:21.163Z'
-                updated_at: '2026-02-13T12:14:21.333Z'
+                created_at: '2026-02-13T22:55:05.752Z'
+                updated_at: '2026-02-13T22:55:05.898Z'
                 payment_methods: []
               schema:
                 "$ref": "#/components/schemas/StoreOrder"
@@ -2631,11 +2601,11 @@ paths:
                   payment_method_id: pm_UkLWZg9DAJ
                   state: checkout
                   response_code: '12345'
-                  number: PIEJ1MWB
+                  number: P3WHZ9DO
                   amount: '110.0'
                   display_amount: "$110.00"
-                  created_at: '2026-02-13T12:14:23.602Z'
-                  updated_at: '2026-02-13T12:14:23.602Z'
+                  created_at: '2026-02-13T22:55:07.896Z'
+                  updated_at: '2026-02-13T22:55:07.896Z'
                   payment_method:
                     id: pm_UkLWZg9DAJ
                     name: Credit Card
@@ -2703,11 +2673,11 @@ paths:
                 payment_method_id: pm_UkLWZg9DAJ
                 state: checkout
                 response_code: '12345'
-                number: PVBW11AC
+                number: PQ3F37XF
                 amount: '110.0'
                 display_amount: "$110.00"
-                created_at: '2026-02-13T12:14:25.265Z'
-                updated_at: '2026-02-13T12:14:25.265Z'
+                created_at: '2026-02-13T22:55:09.395Z'
+                updated_at: '2026-02-13T22:55:09.395Z'
                 payment_method:
                   id: pm_UkLWZg9DAJ
                   name: Credit Card
@@ -2779,20 +2749,20 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 5275
+                  name: Product 529798
                   description: |-
-                    Incidunt labore aspernatur voluptatem qui quis itaque tenetur quaerat. Quibusdam exercitationem saepe asperiores sint ipsum repellendus vitae. Aspernatur non perspiciatis at nostrum fugit voluptas aperiam unde. Impedit soluta mollitia alias doloribus possimus esse. Suscipit distinctio possimus tempore ea voluptas quasi maxime.
-                    Consequuntur eligendi quos dignissimos cum maxime soluta. Dolore itaque recusandae adipisci ipsum ratione. Illum accusamus praesentium atque ea sunt. Velit earum reiciendis molestiae eos.
-                    Eum numquam excepturi iste neque dolor nostrum. Praesentium necessitatibus consequuntur nemo error. Officiis praesentium at recusandae laboriosam sapiente. Sequi animi veritatis alias quam laborum.
-                    Necessitatibus reiciendis doloremque dolor ex consequuntur. Quam quaerat perspiciatis ad nihil ex maiores quo. Tempore esse dolorum nihil maiores.
-                    Pariatur minima a natus culpa quasi asperiores itaque. Laudantium provident quaerat consectetur alias consequuntur amet. Praesentium id eius voluptatum quasi neque velit hic commodi. Pariatur quaerat sit eveniet possimus autem facilis laborum animi. Hic doloribus laboriosam voluptatibus excepturi quaerat totam.
-                  slug: product-5275
+                    Harum eveniet nisi quaerat magnam autem quas praesentium necessitatibus. Minima soluta nesciunt porro quis quo sunt. Debitis dolorum eligendi dignissimos nisi voluptates autem quaerat cupiditate. Fugiat culpa impedit temporibus repellendus.
+                    Alias inventore nulla ab architecto id. Earum nisi dolore minus hic. Numquam nemo accusamus eaque laborum quaerat provident praesentium repellendus.
+                    At laudantium illo reprehenderit magni enim libero porro suscipit. Optio quia dolores fugiat maiores commodi laboriosam dicta. Dolorum molestiae dolor saepe consequuntur repudiandae cupiditate magnam facilis. Necessitatibus odio at doloribus soluta quidem. Libero illo nam porro error ab.
+                    Sunt ipsum culpa repudiandae laboriosam quis modi sed quaerat. In odio excepturi quod saepe laboriosam. Dolores dolorum molestiae totam sunt nobis libero sint. Quas ad id delectus nemo nostrum voluptatum aliquam. At laborum dolore adipisci consectetur quis.
+                    Nesciunt totam incidunt consectetur itaque maiores iure esse. Iusto eveniet numquam modi incidunt doloremque. Harum explicabo illum beatae repellendus labore unde.
+                  slug: product-529798
                   meta_description:
                   meta_keywords:
                   variant_count: 1
-                  available_on: '2025-02-13T12:14:26.117Z'
-                  created_at: '2026-02-13T12:14:26.141Z'
-                  updated_at: '2026-02-13T12:14:26.264Z'
+                  available_on: '2025-02-13T22:55:10.156Z'
+                  created_at: '2026-02-13T22:55:10.175Z'
+                  updated_at: '2026-02-13T22:55:10.263Z'
                   purchasable: true
                   in_stock: false
                   backorderable: true
@@ -2812,18 +2782,17 @@ paths:
                     price_list_id:
                   original_price:
                 - id: prod_gbHJdmfrXB
-                  name: Product 537141
-                  description: Soluta nulla consequuntur distinctio eveniet laboriosam
-                    maiores voluptas. Architecto tenetur aut minus vel. Deserunt reiciendis
-                    cum repudiandae doloremque facilis incidunt aut. Distinctio labore
-                    dolore saepe officiis vero magni nam nobis.
-                  slug: product-537141
+                  name: Product 531785
+                  description: |-
+                    Laborum nostrum aperiam hic repellat enim sit. Ipsum provident numquam ducimus laudantium doloribus nostrum saepe omnis. Quis dolor porro quaerat adipisci cum. Officiis necessitatibus quisquam placeat repellendus quae dicta ex. Commodi porro a molestiae ipsam molestias.
+                    Recusandae nesciunt nam sunt ipsam iure nihil facere autem. Doloremque aspernatur enim sint fuga. Totam inventore minima delectus quod tempora. Est id laudantium provident accusantium modi. Nesciunt non veritatis totam optio ducimus nam est quidem.
+                  slug: product-531785
                   meta_description:
                   meta_keywords:
                   variant_count: 0
-                  available_on: '2025-02-13T12:14:26.291Z'
-                  created_at: '2026-02-13T12:14:26.305Z'
-                  updated_at: '2026-02-13T12:14:26.340Z'
+                  available_on: '2025-02-13T22:55:10.282Z'
+                  created_at: '2026-02-13T22:55:10.293Z'
+                  updated_at: '2026-02-13T22:55:10.319Z'
                   purchasable: true
                   in_stock: false
                   backorderable: true
@@ -2908,19 +2877,18 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 644760
-                description: |-
-                  Itaque ullam tenetur quia inventore architecto vero. Hic sit earum iste totam nulla explicabo minima quisquam. Commodi velit autem harum provident. Nesciunt impedit molestias ipsam provident. Delectus ut cumque eveniet praesentium in harum inventore.
-                  Consequatur maxime perferendis exercitationem facilis beatae quas aliquid. Qui vero dolorem vel accusantium delectus odio. Animi tempore enim accusamus exercitationem aliquid. Facilis sapiente nesciunt sequi ipsa. Incidunt nesciunt animi distinctio temporibus iusto itaque.
-                  Laudantium sit facere voluptates quia. Nam velit magnam eveniet soluta necessitatibus ducimus debitis. Sunt voluptatibus atque architecto quod magni facilis.
-                  Corporis distinctio quasi eaque suscipit. Quis hic culpa velit deserunt nihil nostrum mollitia debitis. Quos ex quis eveniet consectetur consequuntur sapiente commodi pariatur. Minima quis cum repellat incidunt.
-                slug: product-644760
+                name: Product 646792
+                description: Aliquid voluptatem eos in tenetur itaque adipisci. Minima
+                  dicta vitae nihil facilis id vel eius laborum. Sapiente necessitatibus
+                  optio doloribus error natus. Repellendus nostrum assumenda recusandae
+                  omnis. Atque omnis magnam numquam eaque asperiores.
+                slug: product-646792
                 meta_description:
                 meta_keywords:
                 variant_count: 1
-                available_on: '2025-02-13T12:14:28.153Z'
-                created_at: '2026-02-13T12:14:28.200Z'
-                updated_at: '2026-02-13T12:14:28.337Z'
+                available_on: '2025-02-13T22:55:11.495Z'
+                created_at: '2026-02-13T22:55:11.525Z'
+                updated_at: '2026-02-13T22:55:11.626Z'
                 purchasable: true
                 in_stock: false
                 backorderable: true
@@ -3125,15 +3093,15 @@ paths:
               example:
                 data:
                 - id: ship_UkLWZg9DAJ
-                  number: H68953003585
+                  number: H76038004023
                   state: pending
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
                   display_cost: "$100.00"
                   shipped_at:
-                  created_at: '2026-02-13T12:14:33.514Z'
-                  updated_at: '2026-02-13T12:14:33.546Z'
+                  created_at: '2026-02-13T22:55:15.436Z'
+                  updated_at: '2026-02-13T22:55:15.472Z'
                   shipping_method:
                     id: shpm_UkLWZg9DAJ
                     name: UPS Ground
@@ -3141,7 +3109,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: STATE_ABBR_219
-                    name: Natashia Schamberger
+                    name: Alton Hyatt
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -3238,15 +3206,15 @@ paths:
             application/json:
               example:
                 id: ship_UkLWZg9DAJ
-                number: H06987127089
+                number: H54546353798
                 state: pending
                 tracking: U10000
                 tracking_url:
                 cost: '100.0'
                 display_cost: "$100.00"
                 shipped_at:
-                created_at: '2026-02-13T12:14:35.113Z'
-                updated_at: '2026-02-13T12:14:35.147Z'
+                created_at: '2026-02-13T22:55:16.872Z'
+                updated_at: '2026-02-13T22:55:16.917Z'
                 shipping_method:
                   id: shpm_UkLWZg9DAJ
                   name: UPS Ground
@@ -3254,7 +3222,7 @@ paths:
                 stock_location:
                   id: sloc_UkLWZg9DAJ
                   state_abbr: STATE_ABBR_227
-                  name: Selene Kulas
+                  name: Manuela Schimmel
                   address1: 1600 Pennsylvania Ave NW
                   city: Washington
                   zipcode: '20500'
@@ -3327,15 +3295,15 @@ paths:
             application/json:
               example:
                 id: ship_UkLWZg9DAJ
-                number: H20140934010
+                number: H86011346559
                 state: pending
                 tracking: U10000
                 tracking_url:
                 cost: '100.0'
                 display_cost: "$100.00"
                 shipped_at:
-                created_at: '2026-02-13T12:14:36.865Z'
-                updated_at: '2026-02-13T12:14:36.947Z'
+                created_at: '2026-02-13T22:55:18.377Z'
+                updated_at: '2026-02-13T22:55:18.432Z'
                 shipping_method:
                   id: shpm_UkLWZg9DAJ
                   name: UPS Ground
@@ -3343,7 +3311,7 @@ paths:
                 stock_location:
                   id: sloc_UkLWZg9DAJ
                   state_abbr: STATE_ABBR_235
-                  name: Gladys Schroeder
+                  name: Love Labadie
                   address1: 1600 Pennsylvania Ave NW
                   city: Washington
                   zipcode: '20500'
@@ -3419,8 +3387,8 @@ paths:
                 instagram: spreecommerce
                 customer_support_email: support@example.com
                 default_locale: en
-                created_at: '2026-02-13T12:13:37.926Z'
-                updated_at: '2026-02-13T12:13:38.050Z'
+                created_at: '2026-02-13T22:54:27.463Z'
+                updated_at: '2026-02-13T22:54:27.660Z'
                 default_country_iso: US
                 supported_currencies:
                 - USD
@@ -3485,32 +3453,32 @@ paths:
                 - id: txnmy_UkLWZg9DAJ
                   name: Categories
                   position: 1
-                  created_at: '2026-02-13T12:13:37.936Z'
-                  updated_at: '2026-02-13T12:13:37.959Z'
+                  created_at: '2026-02-13T22:54:27.472Z'
+                  updated_at: '2026-02-13T22:54:27.537Z'
                   root_id: txn_UkLWZg9DAJ
                 - id: txnmy_gbHJdmfrXB
                   name: Brands
                   position: 2
-                  created_at: '2026-02-13T12:13:37.960Z'
-                  updated_at: '2026-02-13T12:13:37.971Z'
+                  created_at: '2026-02-13T22:54:27.540Z'
+                  updated_at: '2026-02-13T22:54:27.570Z'
                   root_id: txn_gbHJdmfrXB
                 - id: txnmy_EfhxLZ9ck8
                   name: Collections
                   position: 3
-                  created_at: '2026-02-13T12:13:37.972Z'
-                  updated_at: '2026-02-13T12:13:38.054Z'
+                  created_at: '2026-02-13T22:54:27.573Z'
+                  updated_at: '2026-02-13T22:54:27.664Z'
                   root_id: txn_EfhxLZ9ck8
                 - id: txnmy_VqXmZF31wY
                   name: taxonomy_11
                   position: 4
-                  created_at: '2026-02-13T12:14:37.821Z'
-                  updated_at: '2026-02-13T12:14:37.835Z'
+                  created_at: '2026-02-13T22:55:19.272Z'
+                  updated_at: '2026-02-13T22:55:19.283Z'
                   root_id: txn_OIJLhNcSbf
                 - id: txnmy_uw2YK1rnl0
                   name: taxonomy_12
                   position: 5
-                  created_at: '2026-02-13T12:14:37.837Z'
-                  updated_at: '2026-02-13T12:14:37.847Z'
+                  created_at: '2026-02-13T22:55:19.284Z'
+                  updated_at: '2026-02-13T22:55:19.294Z'
                   root_id: txn_AXs1igzRC6
                 meta:
                   page: 1
@@ -3576,8 +3544,8 @@ paths:
                 id: txnmy_VqXmZF31wY
                 name: taxonomy_17
                 position: 4
-                created_at: '2026-02-13T12:14:38.190Z'
-                updated_at: '2026-02-13T12:14:38.201Z'
+                created_at: '2026-02-13T22:55:19.591Z'
+                updated_at: '2026-02-13T22:55:19.600Z'
                 root_id: txn_OIJLhNcSbf
               schema:
                 "$ref": "#/components/schemas/StoreTaxonomy"
@@ -3633,8 +3601,8 @@ paths:
                 meta_description:
                 meta_keywords:
                 children_count: 1
-                created_at: '2026-02-13T12:14:38.960Z'
-                updated_at: '2026-02-13T12:14:38.977Z'
+                created_at: '2026-02-13T22:55:20.297Z'
+                updated_at: '2026-02-13T22:55:20.315Z'
                 parent_id: txn_OIJLhNcSbf
                 taxonomy_id: txnmy_VqXmZF31wY
                 description: ''
@@ -3705,9 +3673,9 @@ paths:
                 data:
                 - id: wl_UkLWZg9DAJ
                   name: My Wishlist
-                  token: yqyFPXrRy8x8HKkPfg16pnAd
-                  created_at: '2026-02-13T12:14:40.423Z'
-                  updated_at: '2026-02-13T12:14:40.423Z'
+                  token: 7tqWRM2szBf5uBtcsxaxcz6C
+                  created_at: '2026-02-13T22:55:21.537Z'
+                  updated_at: '2026-02-13T22:55:21.537Z'
                   is_default: false
                   is_private: true
                 meta:
@@ -3766,9 +3734,9 @@ paths:
               example:
                 id: wl_gbHJdmfrXB
                 name: Birthday Ideas
-                token: t76h36antxrTL696XUYcSvvH
-                created_at: '2026-02-13T12:14:41.966Z'
-                updated_at: '2026-02-13T12:14:41.966Z'
+                token: b711CQXSbp9Hii3dvuQxDhMw
+                created_at: '2026-02-13T22:55:22.990Z'
+                updated_at: '2026-02-13T22:55:22.990Z'
                 is_default: false
                 is_private: true
               schema:
@@ -3841,9 +3809,9 @@ paths:
               example:
                 id: wl_UkLWZg9DAJ
                 name: My Wishlist
-                token: NBxGB6bhfxC6AtQpoLDSwWyJ
-                created_at: '2026-02-13T12:14:43.371Z'
-                updated_at: '2026-02-13T12:14:43.371Z'
+                token: dsjXKDqCNGLkBQRMfxMrFFvd
+                created_at: '2026-02-13T22:55:24.217Z'
+                updated_at: '2026-02-13T22:55:24.217Z'
                 is_default: false
                 is_private: true
               schema:
@@ -3889,9 +3857,9 @@ paths:
               example:
                 id: wl_UkLWZg9DAJ
                 name: Updated Name
-                token: oTPtRRsTUdSq1dEDqs9i9mAj
-                created_at: '2026-02-13T12:14:44.952Z'
-                updated_at: '2026-02-13T12:14:45.061Z'
+                token: Re8VP71zCaEKTHzEpFMoqaNt
+                created_at: '2026-02-13T22:55:25.516Z'
+                updated_at: '2026-02-13T22:55:25.596Z'
                 is_default: false
                 is_private: true
               schema:
@@ -3972,8 +3940,8 @@ paths:
                 variant_id: variant_gbHJdmfrXB
                 wishlist_id: wl_UkLWZg9DAJ
                 quantity: 1
-                created_at: '2026-02-13T12:14:46.733Z'
-                updated_at: '2026-02-13T12:14:46.733Z'
+                created_at: '2026-02-13T22:55:26.957Z'
+                updated_at: '2026-02-13T22:55:26.957Z'
                 variant:
                   id: variant_gbHJdmfrXB
                   product_id: prod_gbHJdmfrXB
@@ -3982,8 +3950,8 @@ paths:
                   options_text: ''
                   track_inventory: true
                   image_count: 0
-                  created_at: '2026-02-13T12:14:46.655Z'
-                  updated_at: '2026-02-13T12:14:46.694Z'
+                  created_at: '2026-02-13T22:55:26.900Z'
+                  updated_at: '2026-02-13T22:55:26.924Z'
                   thumbnail:
                   purchasable: true
                   in_stock: false

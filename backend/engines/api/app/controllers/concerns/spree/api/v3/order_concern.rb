@@ -11,7 +11,21 @@ module Spree
         end
 
         def set_parent
-          @parent = current_store.orders.find_by_prefix_id!(params[:order_id]) if params[:order_id].present?
+          return if params[:order_id].blank?
+
+          @parent = order_scope.find_by_prefix_id!(params[:order_id])
+        end
+
+        def order_scope
+          base = current_store.orders
+          base = if current_user
+                   base.where(user: current_user)
+                 elsif order_token.present?
+                   base.where(token: order_token)
+                 else
+                   base.none
+                 end
+          base.preload_associations_lazily
         end
 
         protected

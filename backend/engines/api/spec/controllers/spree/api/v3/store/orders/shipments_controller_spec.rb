@@ -47,12 +47,12 @@ RSpec.describe Spree::Api::V3::Store::Orders::ShipmentsController, type: :contro
         expect(json_response['data']).to be_present
       end
 
-      it 'returns forbidden without order token' do
+      it 'returns not found without order token' do
         request.headers['X-Spree-Order-Token'] = nil
         get :index, params: { order_id: guest_order.to_param }
 
-        expect(response).to have_http_status(:forbidden)
-        expect(json_response['error']['code']).to eq('access_denied')
+        expect(response).to have_http_status(:not_found)
+        expect(json_response['error']['code']).to eq('order_not_found')
       end
     end
 
@@ -64,14 +64,14 @@ RSpec.describe Spree::Api::V3::Store::Orders::ShipmentsController, type: :contro
         expect(json_response['error']['code']).to eq('order_not_found')
       end
 
-      it 'returns forbidden for other users order' do
+      it 'returns not found for other users order' do
         other_order = create(:order_with_line_items, store: store)
         request.headers['X-Spree-Order-Token'] = nil
 
         get :index, params: { order_id: other_order.to_param }
 
-        expect(response).to have_http_status(:forbidden)
-        expect(json_response['error']['code']).to eq('access_denied')
+        expect(response).to have_http_status(:not_found)
+        expect(json_response['error']['code']).to eq('order_not_found')
       end
     end
   end
