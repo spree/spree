@@ -40,7 +40,7 @@ module Spree
           # Find incomplete cart by order token for associate action
           # Only finds guest carts (no user) or carts already owned by current user (idempotent)
           def find_cart_by_token
-            current_store.orders.incomplete.where(user: [nil, current_user]).find_by!(token: order_token)
+            current_store.orders.incomplete.where(user: [ nil, current_user ]).find_by!(token: order_token)
           end
 
           def find_cart
