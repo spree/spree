@@ -1,5 +1,11 @@
 # @spree/sdk
 
+## 0.1.8
+
+### Patch Changes
+
+- Add addresses.markAsDefault() method to set a customer address as default billing or shipping
+
 ## 0.1.7
 
 ### Patch Changes

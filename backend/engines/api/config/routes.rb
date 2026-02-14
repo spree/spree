@@ -51,7 +51,11 @@ Spree::Core::Engine.add_routes do
         namespace :customer, path: 'customer' do
           get '/', to: 'account#show'
           patch '/', to: 'account#update'
-          resources :addresses, only: [:index, :show, :create, :update, :destroy]
+          resources :addresses, only: [:index, :show, :create, :update, :destroy] do
+            member do
+              patch :mark_as_default
+            end
+          end
           resources :credit_cards, only: [:index, :show, :destroy]
           resources :gift_cards, only: [:index, :show]
         end
