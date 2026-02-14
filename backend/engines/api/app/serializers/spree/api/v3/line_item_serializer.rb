@@ -40,6 +40,7 @@ module Spree
         end
 
         many :option_values, resource: Spree.api.option_value_serializer
+        many :digital_links, resource: Spree.api.digital_link_serializer
       end
     end
   end

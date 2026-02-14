@@ -1,5 +1,13 @@
 # @spree/sdk
 
+## 0.1.6
+
+### Patch Changes
+
+- Add digital_links to StoreLineItem type and zod schema, exposing digital download metadata (filename, content_type, access status) on line items
+
+- Rename StoreUser/AdminUser types to StoreCustomer/AdminCustomer to align with industry naming conventions and avoid future AdminUser model conflict
+
 ## 0.1.5
 
 ### Patch Changes

@@ -2,11 +2,13 @@ module Spree
   module Api
     module V3
       module Store
-        class DigitalsController < ResourceController
-          # GET  /api/v3/store/digitals/:id?token=...
+        class DigitalsController < Store::BaseController
+          before_action :set_resource
+
+          # GET /api/v3/store/digitals/:token
           def show
             if @resource.authorize!
-              send_file @resource.digital.attachment.path,
+              send_data @resource.digital.attachment.download,
                         filename: @resource.digital.attachment.filename.to_s,
                         type: @resource.digital.attachment.content_type
             else
@@ -18,22 +20,14 @@ module Spree
             end
           end
 
-          protected
+          private
 
-          def model_class
-            Spree::DigitalLink
+          def set_resource
+            @resource = digital_link_scope.find_by!(token: params[:token])
           end
 
-          def serializer_class
-            Spree.api.digital_link_serializer
-          end
-
-          def authorize_resource!(resource = @resource, action = action_name.to_sym)
-            authorize!(action, resource, digital_token)
-          end
-
-          def digital_token
-            request.headers['X-Spree-Digital-Token'].presence || params[:token]
+          def digital_link_scope
+            current_store.digital_links
           end
         end
       end

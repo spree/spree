@@ -7,7 +7,6 @@ module Spree
             include Spree::Api::V3::OrderConcern
 
             before_action :set_parent
-            before_action :authorize_order_read!
 
             # GET /api/v3/store/orders/:order_id/payment_methods
             # Returns available payment methods for the current order
@@ -20,12 +19,6 @@ module Spree
             end
 
             protected
-
-            def authorize_order_read!
-              unless can?(:show, @parent) || order_token == @parent.token
-                raise CanCan::AccessDenied, 'You are not authorized to access this page.'
-              end
-            end
 
             def serializer_class
               Spree.api.payment_method_serializer

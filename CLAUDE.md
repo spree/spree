@@ -12,12 +12,12 @@
 - Most users run Spree in headless mode with custom frontends using the Storefront API
 - Follow Rails conventions and the Rails Security Guide
 - Prefer Rails idioms and standard patterns over custom solutions
+- Use RESTful action names
 
 ### Code Organization
 
 - Place all models in `app/models/spree/` directory
 - Place all controllers in `app/controllers/spree/` directory  
-- Place all views in `app/views/spree/` directory
 - Place all services in `app/services/spree/` directory
 - Place all mailers in `app/mailers/spree/` directory
 - Place all API serializers in `app/serializers/spree/` directory
@@ -28,6 +28,14 @@
 - Group related functionality into concerns when appropriate
 - Do not call `Spree::User` directly, use `Spree.user_class` instead
 - Do not call `Spree::AdminUser` directly, use `Spree.admin_user_class` instead
+
+### Spree::Current class
+
+`Spree::Current` is a class that provides access to the current store, currency, and locale. It is available in models, controllers, jobs and services. Each value is set per request.
+
+`Spree::Current.store` — current store
+`Spree::Current.currency` — current currency
+`Spree::Current.locale` — current locale
 
 ## Naming Conventions & Structure
 
@@ -58,8 +66,6 @@ Always inherit from `Spree.base_class` when creating models.
 
 - Models: `app/models/spree/product.rb`
 - Controllers: `app/controllers/spree/admin/products_controller.rb`
-- Views: `app/views/spree/admin/products/`
-- Decorators: `app/models/spree/product_decorator.rb`
 
 ## Model Development
 
@@ -270,13 +276,16 @@ store_api_key = Spree::ApiKey.create!(name: 'My Storefront', key_type: :publisha
 admin_api_key = Spree::ApiKey.create!(name: 'Admin Integration', key_type: :secret, store: Spree::Current.store)
 ```
 
-## Spree::Current class
+### OpenAPI generation
 
-Spree::Current is a class that provides access to the current store, currency, and locale. It is available in models, controllers, jobs and services. Each value is set per request.
+Store API Open API specitication is generated using rswag gem, and stored in `docs/api-reference/store.yaml` file.
+To generate the OpenAPI specification, run the following command:
 
-`Spree::Current.store` — current store
-`Spree::Current.currency` — current currency
-`Spree::Current.locale` — current locale
+```bash
+bundle exec rake rswag:specs:swaggerize
+```
+
+It will use Rspec integration tests from `backend/engines/api/spec/integration`.
 
 ## Events System
 
