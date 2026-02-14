@@ -11,7 +11,7 @@ export async function listOrders(
   params?: Record<string, unknown>
 ): Promise<PaginatedResponse<StoreOrder>> {
   return withAuthRefresh(async (options) => {
-    return getClient().orders.list(params, options);
+    return getClient().store.orders.list(params, options);
   });
 }
 
@@ -23,6 +23,6 @@ export async function getOrder(
   params?: Record<string, unknown>
 ): Promise<StoreOrder> {
   return withAuthRefresh(async (options) => {
-    return getClient().orders.get(idOrNumber, params, options);
+    return getClient().store.orders.get(idOrNumber, params, options);
   });
 }

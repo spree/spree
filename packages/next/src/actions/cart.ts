@@ -14,7 +14,7 @@ export async function getCart(): Promise<(StoreOrder & { token: string }) | null
   if (!orderToken && !token) return null;
 
   try {
-    return await getClient().cart.get({ orderToken, token });
+    return await getClient().store.cart.get({ orderToken, token });
   } catch {
     return null;
   }
@@ -28,7 +28,7 @@ export async function getOrCreateCart(): Promise<StoreOrder & { token: string }>
   if (existing) return existing;
 
   const token = await getAccessToken();
-  const cart = await getClient().cart.create(token ? { token } : undefined);
+  const cart = await getClient().store.cart.create(token ? { token } : undefined);
 
   if (cart.token) {
     await setCartToken(cart.token);
@@ -49,7 +49,7 @@ export async function addItem(
   const orderToken = cart.token;
   const token = await getAccessToken();
 
-  const lineItem = await getClient().orders.lineItems.create(
+  const lineItem = await getClient().store.orders.lineItems.create(
     cart.id,
     { variant_id: variantId, quantity },
     { orderToken, token }
@@ -70,9 +70,9 @@ export async function updateItem(
   const token = await getAccessToken();
   if (!orderToken && !token) throw new Error('No cart found');
 
-  const cart = await getClient().cart.get({ orderToken, token });
+  const cart = await getClient().store.cart.get({ orderToken, token });
 
-  const lineItem = await getClient().orders.lineItems.update(
+  const lineItem = await getClient().store.orders.lineItems.update(
     cart.id,
     lineItemId,
     { quantity },
@@ -91,9 +91,9 @@ export async function removeItem(lineItemId: string): Promise<void> {
   const token = await getAccessToken();
   if (!orderToken && !token) throw new Error('No cart found');
 
-  const cart = await getClient().cart.get({ orderToken, token });
+  const cart = await getClient().store.cart.get({ orderToken, token });
 
-  await getClient().orders.lineItems.delete(cart.id, lineItemId, {
+  await getClient().store.orders.lineItems.delete(cart.id, lineItemId, {
     orderToken,
     token,
   });
@@ -119,7 +119,7 @@ export async function associateCart(): Promise<(StoreOrder & { token: string }) 
   if (!orderToken || !token) return null;
 
   try {
-    const result = await getClient().cart.associate({ orderToken, token });
+    const result = await getClient().store.cart.associate({ orderToken, token });
     revalidateTag('cart');
     return result;
   } catch {

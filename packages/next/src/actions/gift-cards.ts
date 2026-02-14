@@ -9,7 +9,7 @@ import { getClient } from '../config';
  */
 export async function listGiftCards(): Promise<{ data: StoreGiftCard[] }> {
   return withAuthRefresh(async (options) => {
-    return getClient().customer.giftCards.list(undefined, options);
+    return getClient().store.customer.giftCards.list(undefined, options);
   });
 }
 
@@ -18,6 +18,6 @@ export async function listGiftCards(): Promise<{ data: StoreGiftCard[] }> {
  */
 export async function getGiftCard(id: string): Promise<StoreGiftCard> {
   return withAuthRefresh(async (options) => {
-    return getClient().customer.giftCards.get(id, options);
+    return getClient().store.customer.giftCards.get(id, options);
   });
 }

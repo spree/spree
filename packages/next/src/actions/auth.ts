@@ -15,14 +15,14 @@ export async function login(
   password: string
 ): Promise<{ success: boolean; user?: { id: string; email: string; first_name?: string | null; last_name?: string | null }; error?: string }> {
   try {
-    const result = await getClient().auth.login({ email, password });
+    const result = await getClient().store.auth.login({ email, password });
     await setAccessToken(result.token);
 
     // Associate guest cart if one exists
     const cartToken = await getCartToken();
     if (cartToken) {
       try {
-        await getClient().cart.associate({
+        await getClient().store.cart.associate({
           token: result.token,
           orderToken: cartToken,
         });
@@ -52,7 +52,7 @@ export async function register(
   passwordConfirmation: string
 ): Promise<{ success: boolean; user?: { id: string; email: string; first_name?: string | null; last_name?: string | null }; error?: string }> {
   try {
-    const result = await getClient().auth.register({
+    const result = await getClient().store.auth.register({
       email,
       password,
       password_confirmation: passwordConfirmation,
@@ -63,7 +63,7 @@ export async function register(
     const cartToken = await getCartToken();
     if (cartToken) {
       try {
-        await getClient().cart.associate({
+        await getClient().store.cart.associate({
           token: result.token,
           orderToken: cartToken,
         });
@@ -103,7 +103,7 @@ export async function getCustomer(): Promise<StoreCustomer | null> {
 
   try {
     return await withAuthRefresh(async (options) => {
-      return getClient().customer.get(options);
+      return getClient().store.customer.get(options);
     });
   } catch {
     await clearAccessToken();
@@ -118,7 +118,7 @@ export async function updateCustomer(
   data: { first_name?: string; last_name?: string; email?: string }
 ): Promise<StoreCustomer> {
   const result = await withAuthRefresh(async (options) => {
-    return getClient().customer.update(data, options);
+    return getClient().store.customer.update(data, options);
   });
   revalidateTag('customer');
   return result;

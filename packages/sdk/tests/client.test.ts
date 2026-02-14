@@ -6,7 +6,7 @@ describe('SpreeClient', () => {
   it('creates a client via constructor', () => {
     const client = new SpreeClient({
       baseUrl: TEST_BASE_URL,
-      apiKey: TEST_API_KEY,
+      publishableKey: TEST_API_KEY,
     });
     expect(client).toBeInstanceOf(SpreeClient);
   });
@@ -14,7 +14,7 @@ describe('SpreeClient', () => {
   it('creates a client via factory function', () => {
     const client = createSpreeClient({
       baseUrl: TEST_BASE_URL,
-      apiKey: TEST_API_KEY,
+      publishableKey: TEST_API_KEY,
     });
     expect(client).toBeInstanceOf(SpreeClient);
   });
@@ -22,10 +22,10 @@ describe('SpreeClient', () => {
   it('strips trailing slash from baseUrl', async () => {
     const client = createSpreeClient({
       baseUrl: `${TEST_BASE_URL}/`,
-      apiKey: TEST_API_KEY,
+      publishableKey: TEST_API_KEY,
     });
     // Should not throw - the trailing slash is handled
-    const store = await client.store.get();
+    const store = await client.store.store.get();
     expect(store).toBeDefined();
   });
 
@@ -41,15 +41,15 @@ describe('SpreeClient', () => {
 
     const client = createSpreeClient({
       baseUrl: TEST_BASE_URL,
-      apiKey: TEST_API_KEY,
+      publishableKey: TEST_API_KEY,
       fetch: customFetch,
     });
 
-    await client.store.get();
+    await client.store.store.get();
     expect(capturedUrl).toContain('/api/v3/store/store');
   });
 
-  it('sends x-spree-api-key header on every request', async () => {
+  it('sends x-spree-api-key header on every store request', async () => {
     let capturedHeaders: Record<string, string> = {};
     const customFetch = async (input: string | URL | Request, init?: RequestInit) => {
       capturedHeaders = Object.fromEntries(
@@ -63,11 +63,11 @@ describe('SpreeClient', () => {
 
     const client = createSpreeClient({
       baseUrl: TEST_BASE_URL,
-      apiKey: 'my-secret-key',
+      publishableKey: 'my-secret-key',
       fetch: customFetch,
     });
 
-    await client.store.get();
+    await client.store.store.get();
     expect(capturedHeaders['x-spree-api-key']).toBe('my-secret-key');
   });
 
@@ -85,11 +85,11 @@ describe('SpreeClient', () => {
 
     const client = createSpreeClient({
       baseUrl: TEST_BASE_URL,
-      apiKey: TEST_API_KEY,
+      publishableKey: TEST_API_KEY,
       fetch: customFetch,
     });
 
-    await client.store.get({ token: 'my-jwt-token' });
+    await client.store.store.get({ token: 'my-jwt-token' });
     expect(capturedHeaders['Authorization']).toBe('Bearer my-jwt-token');
   });
 
@@ -107,30 +107,40 @@ describe('SpreeClient', () => {
 
     const client = createSpreeClient({
       baseUrl: TEST_BASE_URL,
-      apiKey: TEST_API_KEY,
+      publishableKey: TEST_API_KEY,
       fetch: customFetch,
     });
 
-    await client.store.get({ locale: 'fr', currency: 'EUR' });
+    await client.store.store.get({ locale: 'fr', currency: 'EUR' });
     expect(capturedHeaders['x-spree-locale']).toBe('fr');
     expect(capturedHeaders['x-spree-currency']).toBe('EUR');
   });
 
-  it('exposes all resource namespaces', () => {
+  it('exposes store and admin namespaces', () => {
     const client = createSpreeClient({
       baseUrl: TEST_BASE_URL,
-      apiKey: TEST_API_KEY,
+      publishableKey: TEST_API_KEY,
     });
 
-    expect(client.auth).toBeDefined();
     expect(client.store).toBeDefined();
-    expect(client.products).toBeDefined();
-    expect(client.taxonomies).toBeDefined();
-    expect(client.taxons).toBeDefined();
-    expect(client.countries).toBeDefined();
-    expect(client.cart).toBeDefined();
-    expect(client.orders).toBeDefined();
-    expect(client.customer).toBeDefined();
-    expect(client.wishlists).toBeDefined();
+    expect(client.admin).toBeDefined();
+  });
+
+  it('exposes all resource namespaces under store', () => {
+    const client = createSpreeClient({
+      baseUrl: TEST_BASE_URL,
+      publishableKey: TEST_API_KEY,
+    });
+
+    expect(client.store.auth).toBeDefined();
+    expect(client.store.store).toBeDefined();
+    expect(client.store.products).toBeDefined();
+    expect(client.store.taxonomies).toBeDefined();
+    expect(client.store.taxons).toBeDefined();
+    expect(client.store.countries).toBeDefined();
+    expect(client.store.cart).toBeDefined();
+    expect(client.store.orders).toBeDefined();
+    expect(client.store.customer).toBeDefined();
+    expect(client.store.wishlists).toBeDefined();
   });
 });

@@ -22,7 +22,7 @@ export async function getAuthOptions(): Promise<RequestOptions> {
     // Refresh if token expires in less than 1 hour
     if (exp && exp - now < 3600) {
       try {
-        const refreshed = await getClient().auth.refresh({ token });
+        const refreshed = await getClient().store.auth.refresh({ token });
         await setAccessToken(refreshed.token);
         return { token: refreshed.token };
       } catch {
@@ -57,7 +57,7 @@ export async function withAuthRefresh<T>(
     // If 401, try refreshing the token once
     if (error instanceof SpreeError && error.status === 401) {
       try {
-        const refreshed = await getClient().auth.refresh({ token: options.token });
+        const refreshed = await getClient().store.auth.refresh({ token: options.token });
         await setAccessToken(refreshed.token);
         return await fn({ token: refreshed.token });
       } catch {

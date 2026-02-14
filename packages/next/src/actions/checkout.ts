@@ -19,7 +19,7 @@ export async function getCheckout(
   orderId: string
 ): Promise<StoreOrder> {
   const options = await getCheckoutOptions();
-  return getClient().orders.get(
+  return getClient().store.orders.get(
     orderId,
     { includes: 'line_items,shipments,ship_address,bill_address' },
     options
@@ -40,7 +40,7 @@ export async function updateAddresses(
   }
 ): Promise<StoreOrder> {
   const options = await getCheckoutOptions();
-  const result = await getClient().orders.update(orderId, params, options);
+  const result = await getClient().store.orders.update(orderId, params, options);
   revalidateTag('checkout');
   return result;
 }
@@ -50,7 +50,7 @@ export async function updateAddresses(
  */
 export async function advance(orderId: string): Promise<StoreOrder> {
   const options = await getCheckoutOptions();
-  const result = await getClient().orders.advance(orderId, options);
+  const result = await getClient().store.orders.advance(orderId, options);
   revalidateTag('checkout');
   return result;
 }
@@ -60,7 +60,7 @@ export async function advance(orderId: string): Promise<StoreOrder> {
  */
 export async function next(orderId: string): Promise<StoreOrder> {
   const options = await getCheckoutOptions();
-  const result = await getClient().orders.next(orderId, options);
+  const result = await getClient().store.orders.next(orderId, options);
   revalidateTag('checkout');
   return result;
 }
@@ -72,7 +72,7 @@ export async function getShipments(
   orderId: string
 ): Promise<{ data: StoreShipment[] }> {
   const options = await getCheckoutOptions();
-  return getClient().orders.shipments.list(orderId, options);
+  return getClient().store.orders.shipments.list(orderId, options);
 }
 
 /**
@@ -84,7 +84,7 @@ export async function selectShippingRate(
   shippingRateId: string
 ): Promise<StoreShipment> {
   const options = await getCheckoutOptions();
-  const result = await getClient().orders.shipments.update(
+  const result = await getClient().store.orders.shipments.update(
     orderId,
     shipmentId,
     { selected_shipping_rate_id: shippingRateId },
@@ -102,7 +102,7 @@ export async function applyCoupon(
   code: string
 ): Promise<StoreOrder> {
   const options = await getCheckoutOptions();
-  const result = await getClient().orders.couponCodes.apply(orderId, code, options);
+  const result = await getClient().store.orders.couponCodes.apply(orderId, code, options);
   revalidateTag('checkout');
   revalidateTag('cart');
   return result;
@@ -116,7 +116,7 @@ export async function removeCoupon(
   promotionId: string
 ): Promise<StoreOrder> {
   const options = await getCheckoutOptions();
-  const result = await getClient().orders.couponCodes.remove(orderId, promotionId, options);
+  const result = await getClient().store.orders.couponCodes.remove(orderId, promotionId, options);
   revalidateTag('checkout');
   revalidateTag('cart');
   return result;
@@ -127,7 +127,7 @@ export async function removeCoupon(
  */
 export async function complete(orderId: string): Promise<StoreOrder> {
   const options = await getCheckoutOptions();
-  const result = await getClient().orders.complete(orderId, options);
+  const result = await getClient().store.orders.complete(orderId, options);
   revalidateTag('checkout');
   revalidateTag('cart');
   return result;

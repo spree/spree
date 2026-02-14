@@ -1,8 +1,8 @@
 export interface SpreeNextConfig {
   /** Base URL of the Spree API (e.g., 'https://api.mystore.com') */
   baseUrl: string;
-  /** Publishable API key for store access */
-  apiKey: string;
+  /** Publishable API key for Store API access */
+  publishableKey: string;
   /** Cookie name for the cart order token (default: '_spree_cart_token') */
   cartCookieName?: string;
   /** Cookie name for the JWT access token (default: '_spree_jwt') */

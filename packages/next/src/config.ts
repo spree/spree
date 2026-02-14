@@ -7,13 +7,13 @@ let _config: SpreeNextConfig | null = null;
 /**
  * Initialize the Spree Next.js integration.
  * Call this once in your app (e.g., in `lib/storefront.ts`).
- * If not called, the client will auto-initialize from SPREE_API_URL and SPREE_API_KEY env vars.
+ * If not called, the client will auto-initialize from SPREE_API_URL and SPREE_PUBLISHABLE_KEY env vars.
  */
 export function initSpreeNext(config: SpreeNextConfig): void {
   _config = config;
   _client = createSpreeClient({
     baseUrl: config.baseUrl,
-    apiKey: config.apiKey,
+    publishableKey: config.publishableKey,
   });
 }
 
@@ -24,12 +24,12 @@ export function initSpreeNext(config: SpreeNextConfig): void {
 export function getClient(): SpreeClient {
   if (!_client) {
     const baseUrl = process.env.SPREE_API_URL;
-    const apiKey = process.env.SPREE_API_KEY;
-    if (baseUrl && apiKey) {
-      initSpreeNext({ baseUrl, apiKey });
+    const publishableKey = process.env.SPREE_PUBLISHABLE_KEY;
+    if (baseUrl && publishableKey) {
+      initSpreeNext({ baseUrl, publishableKey });
     } else {
       throw new Error(
-        '@spree/next is not configured. Either call initSpreeNext() or set SPREE_API_URL and SPREE_API_KEY environment variables.'
+        '@spree/next is not configured. Either call initSpreeNext() or set SPREE_API_URL and SPREE_PUBLISHABLE_KEY environment variables.'
       );
     }
   }

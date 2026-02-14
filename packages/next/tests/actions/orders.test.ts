@@ -3,12 +3,14 @@ import { mockCookieStore } from '../setup';
 import { initSpreeNext, resetClient } from '../../src/config';
 
 const mockClient = {
-  orders: {
-    list: vi.fn(),
-    get: vi.fn(),
-  },
-  auth: {
-    refresh: vi.fn(),
+  store: {
+    orders: {
+      list: vi.fn(),
+      get: vi.fn(),
+    },
+    auth: {
+      refresh: vi.fn(),
+    },
   },
 };
 
@@ -35,7 +37,7 @@ describe('order actions', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     resetClient();
-    initSpreeNext({ baseUrl: 'https://api.test.com', apiKey: 'pk_test' });
+    initSpreeNext({ baseUrl: 'https://api.test.com', publishableKey: 'pk_test' });
     mockCookieStore.get.mockReturnValue({ value: makeFutureJwt() });
   });
 
@@ -45,11 +47,11 @@ describe('order actions', () => {
         data: [{ id: '1', number: 'R001' }],
         meta: { total_count: 1, total_pages: 1 },
       };
-      mockClient.orders.list.mockResolvedValue(mockResponse);
+      mockClient.store.orders.list.mockResolvedValue(mockResponse);
 
       const result = await listOrders({ page: 1 });
       expect(result).toEqual(mockResponse);
-      expect(mockClient.orders.list).toHaveBeenCalledWith(
+      expect(mockClient.store.orders.list).toHaveBeenCalledWith(
         { page: 1 },
         expect.objectContaining({ token: expect.any(String) })
       );
@@ -57,11 +59,11 @@ describe('order actions', () => {
 
     it('works without params', async () => {
       const mockResponse = { data: [], meta: { total_count: 0, total_pages: 0 } };
-      mockClient.orders.list.mockResolvedValue(mockResponse);
+      mockClient.store.orders.list.mockResolvedValue(mockResponse);
 
       const result = await listOrders();
       expect(result).toEqual(mockResponse);
-      expect(mockClient.orders.list).toHaveBeenCalledWith(
+      expect(mockClient.store.orders.list).toHaveBeenCalledWith(
         undefined,
         expect.objectContaining({ token: expect.any(String) })
       );
@@ -71,11 +73,11 @@ describe('order actions', () => {
   describe('getOrder', () => {
     it('returns a single order by id', async () => {
       const mockOrder = { id: '1', number: 'R001', state: 'complete' };
-      mockClient.orders.get.mockResolvedValue(mockOrder);
+      mockClient.store.orders.get.mockResolvedValue(mockOrder);
 
       const result = await getOrder('1');
       expect(result).toEqual(mockOrder);
-      expect(mockClient.orders.get).toHaveBeenCalledWith(
+      expect(mockClient.store.orders.get).toHaveBeenCalledWith(
         '1',
         undefined,
         expect.objectContaining({ token: expect.any(String) })
@@ -84,11 +86,11 @@ describe('order actions', () => {
 
     it('passes params through', async () => {
       const mockOrder = { id: '1', number: 'R001' };
-      mockClient.orders.get.mockResolvedValue(mockOrder);
+      mockClient.store.orders.get.mockResolvedValue(mockOrder);
 
       const result = await getOrder('R001', { includes: 'line_items' });
       expect(result).toEqual(mockOrder);
-      expect(mockClient.orders.get).toHaveBeenCalledWith(
+      expect(mockClient.store.orders.get).toHaveBeenCalledWith(
         'R001',
         { includes: 'line_items' },
         expect.objectContaining({ token: expect.any(String) })

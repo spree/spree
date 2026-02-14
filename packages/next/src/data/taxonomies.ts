@@ -9,7 +9,7 @@ export async function listTaxonomies(
   params?: Record<string, unknown>,
   options?: SpreeNextOptions
 ): Promise<PaginatedResponse<StoreTaxonomy>> {
-  return getClient().taxonomies.list(params, {
+  return getClient().store.taxonomies.list(params, {
     locale: options?.locale,
     currency: options?.currency,
   });
@@ -23,7 +23,7 @@ export async function getTaxonomy(
   params?: Record<string, unknown>,
   options?: SpreeNextOptions
 ): Promise<StoreTaxonomy> {
-  return getClient().taxonomies.get(id, params, {
+  return getClient().store.taxonomies.get(id, params, {
     locale: options?.locale,
     currency: options?.currency,
   });

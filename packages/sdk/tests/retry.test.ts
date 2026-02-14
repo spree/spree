@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
-import { createSpreeClient, SpreeError } from '../src/client';
+import { createSpreeClient } from '../src/client';
+import { SpreeError } from '../src/request';
 
 function jsonResponse(body: object, status = 200, headers: Record<string, string> = {}): Response {
   return new Response(JSON.stringify(body), {
@@ -16,7 +17,7 @@ function errorResponse(status: number, code = 'error', message = 'Error', header
 }
 
 describe('Retry logic', () => {
-  const baseConfig = { baseUrl: 'https://api.test.com', apiKey: 'pk_test' };
+  const baseConfig = { baseUrl: 'https://api.test.com', publishableKey: 'pk_test' };
 
   describe('GET requests', () => {
     it('retries on 500 and succeeds', async () => {
@@ -25,7 +26,7 @@ describe('Retry logic', () => {
         .mockResolvedValueOnce(jsonResponse({ name: 'Test Store' }));
 
       const client = createSpreeClient({ ...baseConfig, fetch: mockFetch });
-      const result = await client.store.get();
+      const result = await client.store.store.get();
 
       expect(result).toEqual({ name: 'Test Store' });
       expect(mockFetch).toHaveBeenCalledTimes(2);
@@ -37,7 +38,7 @@ describe('Retry logic', () => {
         .mockResolvedValueOnce(jsonResponse({ name: 'Test Store' }));
 
       const client = createSpreeClient({ ...baseConfig, fetch: mockFetch });
-      const result = await client.store.get();
+      const result = await client.store.store.get();
 
       expect(result).toEqual({ name: 'Test Store' });
       expect(mockFetch).toHaveBeenCalledTimes(2);
@@ -50,7 +51,7 @@ describe('Retry logic', () => {
         .mockResolvedValueOnce(jsonResponse({ name: 'Test Store' }));
 
       const client = createSpreeClient({ ...baseConfig, fetch: mockFetch });
-      const result = await client.store.get();
+      const result = await client.store.store.get();
 
       expect(result).toEqual({ name: 'Test Store' });
       expect(mockFetch).toHaveBeenCalledTimes(3);
@@ -62,7 +63,7 @@ describe('Retry logic', () => {
 
       const client = createSpreeClient({ ...baseConfig, fetch: mockFetch });
 
-      await expect(client.store.get()).rejects.toThrow(SpreeError);
+      await expect(client.store.store.get()).rejects.toThrow(SpreeError);
       // 1 initial + 2 retries = 3 attempts
       expect(mockFetch).toHaveBeenCalledTimes(3);
     });
@@ -73,7 +74,7 @@ describe('Retry logic', () => {
         .mockResolvedValueOnce(jsonResponse({ name: 'Test Store' }));
 
       const client = createSpreeClient({ ...baseConfig, fetch: mockFetch });
-      const result = await client.store.get();
+      const result = await client.store.store.get();
 
       expect(result).toEqual({ name: 'Test Store' });
       expect(mockFetch).toHaveBeenCalledTimes(2);
@@ -85,7 +86,7 @@ describe('Retry logic', () => {
 
       const client = createSpreeClient({ ...baseConfig, fetch: mockFetch });
 
-      await expect(client.store.get()).rejects.toThrow(SpreeError);
+      await expect(client.store.store.get()).rejects.toThrow(SpreeError);
       expect(mockFetch).toHaveBeenCalledTimes(1);
     });
 
@@ -95,7 +96,7 @@ describe('Retry logic', () => {
 
       const client = createSpreeClient({ ...baseConfig, fetch: mockFetch });
 
-      await expect(client.store.get()).rejects.toThrow(SpreeError);
+      await expect(client.store.store.get()).rejects.toThrow(SpreeError);
       expect(mockFetch).toHaveBeenCalledTimes(1);
     });
   });
@@ -107,7 +108,7 @@ describe('Retry logic', () => {
         .mockResolvedValueOnce(jsonResponse({ token: 'abc', user: { id: '1', email: 'a@b.com' } }));
 
       const client = createSpreeClient({ ...baseConfig, fetch: mockFetch });
-      const result = await client.auth.login({ email: 'a@b.com', password: 'pass' });
+      const result = await client.store.auth.login({ email: 'a@b.com', password: 'pass' });
 
       expect(result.token).toBe('abc');
       expect(mockFetch).toHaveBeenCalledTimes(2);
@@ -120,7 +121,7 @@ describe('Retry logic', () => {
       const client = createSpreeClient({ ...baseConfig, fetch: mockFetch });
 
       await expect(
-        client.auth.login({ email: 'a@b.com', password: 'pass' })
+        client.store.auth.login({ email: 'a@b.com', password: 'pass' })
       ).rejects.toThrow(SpreeError);
       expect(mockFetch).toHaveBeenCalledTimes(1);
     });
@@ -132,7 +133,7 @@ describe('Retry logic', () => {
       const client = createSpreeClient({ ...baseConfig, fetch: mockFetch });
 
       await expect(
-        client.auth.login({ email: 'a@b.com', password: 'pass' })
+        client.store.auth.login({ email: 'a@b.com', password: 'pass' })
       ).rejects.toThrow(TypeError);
       expect(mockFetch).toHaveBeenCalledTimes(1);
     });
@@ -145,7 +146,7 @@ describe('Retry logic', () => {
 
       const client = createSpreeClient({ ...baseConfig, fetch: mockFetch, retry: false });
 
-      await expect(client.store.get()).rejects.toThrow(SpreeError);
+      await expect(client.store.store.get()).rejects.toThrow(SpreeError);
       expect(mockFetch).toHaveBeenCalledTimes(1);
     });
   });
@@ -161,7 +162,7 @@ describe('Retry logic', () => {
         retry: { maxRetries: 4, baseDelay: 10 },
       });
 
-      await expect(client.store.get()).rejects.toThrow(SpreeError);
+      await expect(client.store.store.get()).rejects.toThrow(SpreeError);
       // 1 initial + 4 retries = 5 attempts
       expect(mockFetch).toHaveBeenCalledTimes(5);
     });
@@ -178,7 +179,7 @@ describe('Retry logic', () => {
         retry: { baseDelay: 10 },
       });
 
-      const result = await client.store.get();
+      const result = await client.store.store.get();
       const elapsed = Date.now() - start;
 
       expect(result).toEqual({ name: 'Test Store' });
