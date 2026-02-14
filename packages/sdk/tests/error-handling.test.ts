@@ -24,7 +24,7 @@ describe('error handling', () => {
 
     const client = createTestClient();
     try {
-      await client.products.get('nonexistent');
+      await client.store.products.get('nonexistent');
       expect.unreachable('Should have thrown');
     } catch (error) {
       expect(error).toBeInstanceOf(SpreeError);
@@ -57,7 +57,7 @@ describe('error handling', () => {
 
     const client = createTestClient();
     try {
-      await client.customer.addresses.create(
+      await client.store.customer.addresses.create(
         { firstname: 'A', lastname: 'B', address1: '', city: '', zipcode: '00000', country_iso: 'US' },
         { token: 'jwt' }
       );
@@ -87,7 +87,7 @@ describe('error handling', () => {
 
     const client = createTestClient();
     try {
-      await client.store.get();
+      await client.store.store.get();
       expect.unreachable('Should have thrown');
     } catch (error) {
       const spreeError = error as SpreeError;
@@ -113,7 +113,7 @@ describe('error handling', () => {
 
     const client = createTestClient();
     try {
-      await client.customer.get();
+      await client.store.customer.get();
       expect.unreachable('Should have thrown');
     } catch (error) {
       const spreeError = error as SpreeError;
@@ -124,7 +124,7 @@ describe('error handling', () => {
 
   it('handles 204 No Content responses', async () => {
     const client = createTestClient();
-    const result = await client.orders.lineItems.delete('order_1', 'li_1', { token: 'jwt' });
+    const result = await client.store.orders.lineItems.delete('order_1', 'li_1', { token: 'jwt' });
     expect(result).toBeUndefined();
   });
 });

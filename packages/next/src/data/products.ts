@@ -9,7 +9,7 @@ export async function listProducts(
   params?: Record<string, unknown>,
   options?: SpreeNextOptions
 ): Promise<PaginatedResponse<StoreProduct>> {
-  return getClient().products.list(params, {
+  return getClient().store.products.list(params, {
     locale: options?.locale,
     currency: options?.currency,
   });
@@ -23,7 +23,7 @@ export async function getProduct(
   params?: { includes?: string },
   options?: SpreeNextOptions
 ): Promise<StoreProduct> {
-  return getClient().products.get(slugOrId, params, {
+  return getClient().store.products.get(slugOrId, params, {
     locale: options?.locale,
     currency: options?.currency,
   });
@@ -36,7 +36,7 @@ export async function getProductFilters(
   params?: Record<string, unknown>,
   options?: SpreeNextOptions
 ): Promise<ProductFiltersResponse> {
-  return getClient().products.filters(params, {
+  return getClient().store.products.filters(params, {
     locale: options?.locale,
     currency: options?.currency,
   });

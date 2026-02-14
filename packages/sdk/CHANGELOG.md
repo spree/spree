@@ -1,5 +1,17 @@
 # @spree/sdk
 
+## 0.2.0
+
+### Minor Changes
+
+- Restructure SDK to support dual API namespaces: `client.store.*` (Store API) and `client.admin.*` (Admin API)
+
+### Internal
+
+- Extract request infrastructure into `request.ts` with `createRequestFn()` factory
+- Split monolithic `client.ts` into `store-client.ts`, `admin-client.ts`, and composed `client.ts`
+- Add `StoreClient` and `AdminClient` exports
+
 ## 0.1.8
 
 ### Patch Changes

@@ -9,7 +9,7 @@ export async function listTaxons(
   params?: Record<string, unknown>,
   options?: SpreeNextOptions
 ): Promise<PaginatedResponse<StoreTaxon>> {
-  return getClient().taxons.list(params, {
+  return getClient().store.taxons.list(params, {
     locale: options?.locale,
     currency: options?.currency,
   });
@@ -23,7 +23,7 @@ export async function getTaxon(
   params?: Record<string, unknown>,
   options?: SpreeNextOptions
 ): Promise<StoreTaxon> {
-  return getClient().taxons.get(idOrPermalink, params, {
+  return getClient().store.taxons.get(idOrPermalink, params, {
     locale: options?.locale,
     currency: options?.currency,
   });
@@ -37,7 +37,7 @@ export async function listTaxonProducts(
   params?: Record<string, unknown>,
   options?: SpreeNextOptions
 ): Promise<PaginatedResponse<StoreProduct>> {
-  return getClient().taxons.products.list(taxonId, params, {
+  return getClient().store.taxons.products.list(taxonId, params, {
     locale: options?.locale,
     currency: options?.currency,
   });

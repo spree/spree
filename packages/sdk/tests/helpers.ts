@@ -6,6 +6,6 @@ export const TEST_API_KEY = 'test-publishable-key';
 export function createTestClient() {
   return createSpreeClient({
     baseUrl: TEST_BASE_URL,
-    apiKey: TEST_API_KEY,
+    publishableKey: TEST_API_KEY,
   });
 }

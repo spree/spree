@@ -8,17 +8,17 @@ describe('wishlists', () => {
   const opts = { token: 'user-jwt' };
 
   it('lists wishlists', async () => {
-    const result = await client.wishlists.list(undefined, opts);
+    const result = await client.store.wishlists.list(undefined, opts);
     expect(result.data).toHaveLength(1);
   });
 
   it('gets a wishlist', async () => {
-    const result = await client.wishlists.get('wl_1', undefined, opts);
+    const result = await client.store.wishlists.get('wl_1', undefined, opts);
     expect(result.name).toBe('My Wishlist');
   });
 
   it('creates a wishlist', async () => {
-    const result = await client.wishlists.create(
+    const result = await client.store.wishlists.create(
       { name: 'My Wishlist' },
       opts
     );
@@ -26,7 +26,7 @@ describe('wishlists', () => {
   });
 
   it('updates a wishlist', async () => {
-    const result = await client.wishlists.update(
+    const result = await client.store.wishlists.update(
       'wl_1',
       { name: 'Updated Wishlist' },
       opts
@@ -36,13 +36,13 @@ describe('wishlists', () => {
 
   it('deletes a wishlist', async () => {
     await expect(
-      client.wishlists.delete('wl_1', opts)
+      client.store.wishlists.delete('wl_1', opts)
     ).resolves.toBeUndefined();
   });
 
   describe('items', () => {
     it('adds an item', async () => {
-      const result = await client.wishlists.items.create(
+      const result = await client.store.wishlists.items.create(
         'wl_1',
         { variant_id: 'var_1', quantity: 1 },
         opts
@@ -51,7 +51,7 @@ describe('wishlists', () => {
     });
 
     it('updates an item', async () => {
-      const result = await client.wishlists.items.update(
+      const result = await client.store.wishlists.items.update(
         'wl_1',
         'wi_1',
         { quantity: 3 },
@@ -62,7 +62,7 @@ describe('wishlists', () => {
 
     it('removes an item', async () => {
       await expect(
-        client.wishlists.items.delete('wl_1', 'wi_1', opts)
+        client.store.wishlists.items.delete('wl_1', 'wi_1', opts)
       ).resolves.toBeUndefined();
     });
   });

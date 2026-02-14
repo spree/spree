@@ -8,7 +8,7 @@ import type { SpreeNextOptions } from '../types';
 export async function listCountries(
   options?: SpreeNextOptions
 ): Promise<{ data: StoreCountry[] }> {
-  return getClient().countries.list({
+  return getClient().store.countries.list({
     locale: options?.locale,
     currency: options?.currency,
   });
@@ -21,7 +21,7 @@ export async function getCountry(
   iso: string,
   options?: SpreeNextOptions
 ): Promise<StoreCountry> {
-  return getClient().countries.get(iso, {
+  return getClient().store.countries.get(iso, {
     locale: options?.locale,
     currency: options?.currency,
   });

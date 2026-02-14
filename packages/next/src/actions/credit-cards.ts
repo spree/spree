@@ -10,7 +10,7 @@ import { getClient } from '../config';
  */
 export async function listCreditCards(): Promise<{ data: StoreCreditCard[] }> {
   return withAuthRefresh(async (options) => {
-    return getClient().customer.creditCards.list(undefined, options);
+    return getClient().store.customer.creditCards.list(undefined, options);
   });
 }
 
@@ -19,7 +19,7 @@ export async function listCreditCards(): Promise<{ data: StoreCreditCard[] }> {
  */
 export async function deleteCreditCard(id: string): Promise<void> {
   await withAuthRefresh(async (options) => {
-    return getClient().customer.creditCards.delete(id, options);
+    return getClient().store.customer.creditCards.delete(id, options);
   });
   revalidateTag('credit-cards');
 }

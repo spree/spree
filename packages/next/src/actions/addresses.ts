@@ -10,7 +10,7 @@ import { getClient } from '../config';
  */
 export async function listAddresses(): Promise<{ data: StoreAddress[] }> {
   return withAuthRefresh(async (options) => {
-    return getClient().customer.addresses.list(undefined, options);
+    return getClient().store.customer.addresses.list(undefined, options);
   });
 }
 
@@ -19,7 +19,7 @@ export async function listAddresses(): Promise<{ data: StoreAddress[] }> {
  */
 export async function getAddress(id: string): Promise<StoreAddress> {
   return withAuthRefresh(async (options) => {
-    return getClient().customer.addresses.get(id, options);
+    return getClient().store.customer.addresses.get(id, options);
   });
 }
 
@@ -28,7 +28,7 @@ export async function getAddress(id: string): Promise<StoreAddress> {
  */
 export async function createAddress(params: AddressParams): Promise<StoreAddress> {
   const result = await withAuthRefresh(async (options) => {
-    return getClient().customer.addresses.create(params, options);
+    return getClient().store.customer.addresses.create(params, options);
   });
   revalidateTag('addresses');
   return result;
@@ -42,7 +42,7 @@ export async function updateAddress(
   params: Partial<AddressParams>
 ): Promise<StoreAddress> {
   const result = await withAuthRefresh(async (options) => {
-    return getClient().customer.addresses.update(id, params, options);
+    return getClient().store.customer.addresses.update(id, params, options);
   });
   revalidateTag('addresses');
   return result;
@@ -53,7 +53,7 @@ export async function updateAddress(
  */
 export async function deleteAddress(id: string): Promise<void> {
   await withAuthRefresh(async (options) => {
-    return getClient().customer.addresses.delete(id, options);
+    return getClient().store.customer.addresses.delete(id, options);
   });
   revalidateTag('addresses');
 }
