@@ -63,7 +63,7 @@ Spree::Core::Engine.add_routes do
 
         # Digital Downloads
         # Access via token in URL
-        get 'digitals/:token', to: 'digitals#download', as: :digital_download
+        get 'digitals/:token', to: 'digitals#show', as: :digital_download
       end
     end
   end

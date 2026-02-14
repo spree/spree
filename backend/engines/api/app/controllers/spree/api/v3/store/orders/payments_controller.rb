@@ -8,7 +8,6 @@ module Spree
             include Spree::Api::V3::ResourceSerializer
 
             before_action :set_parent
-            before_action :authorize_order_read!
             before_action :set_payment, only: [:show]
 
             # GET /api/v3/store/orders/:order_id/payments
@@ -26,10 +25,6 @@ module Spree
             end
 
             private
-
-            def authorize_order_read!
-              authorize!(:show, @parent, order_token)
-            end
 
             def set_payment
               @payment = @parent.payments.find_by_prefix_id!(params[:id])

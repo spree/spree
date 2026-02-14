@@ -1,6 +1,7 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
 import { StoreOptionValueSchema } from './StoreOptionValue';
+import { StoreDigitalLinkSchema } from './StoreDigitalLink';
 
 export const StoreLineItemSchema = z.object({
   id: z.string(),
@@ -31,6 +32,7 @@ export const StoreLineItemSchema = z.object({
   compare_at_amount: z.string().nullable(),
   thumbnail_url: z.string().nullable(),
   option_values: z.array(StoreOptionValueSchema),
+  digital_links: z.array(StoreDigitalLinkSchema),
 });
 
 export type StoreLineItem = z.infer<typeof StoreLineItemSchema>;
