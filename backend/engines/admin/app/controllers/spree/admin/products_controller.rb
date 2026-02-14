@@ -209,6 +209,10 @@ module Spree
       end
 
       # These includes are not picked automatically by ar_lazy_preload gem so we need to specify them manually.
+      def collection_default_sort
+        'name asc'
+      end
+
       def collection_includes
         {
           thumbnail: [attachment_attachment: :blob],
