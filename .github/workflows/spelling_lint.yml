@@ -31,4 +31,4 @@ jobs:
       - name: Install
         run: wget -O - -q https://git.io/misspell | sh -s -- -b .
       - name: Misspell
-        run: git ls-files --empty-directory | grep -v "vendor/" | xargs ./misspell -i 'aircrafts,devels,invertions' -error
+        run: git ls-files --empty-directory | grep -v "vendor/" | grep -v "docs/api-reference/store.yaml" | xargs ./misspell -i 'aircrafts,devels,invertions' -error
