@@ -84,6 +84,16 @@ RSpec.describe Spree::Api::V3::Store::Customer::AccountController, type: :contro
       expect(json_response['first_name']).to eq('Updated')
     end
 
+    it 'ignores restricted attributes' do
+      patch :update, params: { first_name: 'John', private_metadata: { secret: 'value' }, internal_note: 'admin only' }
+
+      expect(response).to have_http_status(:ok)
+      user.reload
+      expect(user.first_name).to eq('John')
+      expect(user.private_metadata).not_to include('secret')
+      expect(user.internal_note).to be_nil
+    end
+
     context 'validation errors' do
       it 'returns errors for blank email' do
         patch :update, params: { email: '' }
