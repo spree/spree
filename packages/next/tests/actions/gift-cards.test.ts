@@ -3,14 +3,16 @@ import { mockCookieStore } from '../setup';
 import { initSpreeNext, resetClient } from '../../src/config';
 
 const mockClient = {
-  customer: {
-    giftCards: {
-      list: vi.fn(),
-      get: vi.fn(),
+  store: {
+    customer: {
+      giftCards: {
+        list: vi.fn(),
+        get: vi.fn(),
+      },
     },
-  },
-  auth: {
-    refresh: vi.fn(),
+    auth: {
+      refresh: vi.fn(),
+    },
   },
 };
 
@@ -37,18 +39,18 @@ describe('gift card actions', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     resetClient();
-    initSpreeNext({ baseUrl: 'https://api.test.com', apiKey: 'pk_test' });
+    initSpreeNext({ baseUrl: 'https://api.test.com', publishableKey: 'pk_test' });
     mockCookieStore.get.mockReturnValue({ value: makeFutureJwt() });
   });
 
   describe('listGiftCards', () => {
     it('returns gift cards list', async () => {
       const mockCards = { data: [{ id: '1', code: 'GIFT100', balance: 100 }] };
-      mockClient.customer.giftCards.list.mockResolvedValue(mockCards);
+      mockClient.store.customer.giftCards.list.mockResolvedValue(mockCards);
 
       const result = await listGiftCards();
       expect(result).toEqual(mockCards);
-      expect(mockClient.customer.giftCards.list).toHaveBeenCalledWith(
+      expect(mockClient.store.customer.giftCards.list).toHaveBeenCalledWith(
         undefined,
         expect.objectContaining({ token: expect.any(String) })
       );
@@ -58,11 +60,11 @@ describe('gift card actions', () => {
   describe('getGiftCard', () => {
     it('returns a single gift card', async () => {
       const mockCard = { id: '1', code: 'GIFT100', balance: 100 };
-      mockClient.customer.giftCards.get.mockResolvedValue(mockCard);
+      mockClient.store.customer.giftCards.get.mockResolvedValue(mockCard);
 
       const result = await getGiftCard('1');
       expect(result).toEqual(mockCard);
-      expect(mockClient.customer.giftCards.get).toHaveBeenCalledWith(
+      expect(mockClient.store.customer.giftCards.get).toHaveBeenCalledWith(
         '1',
         expect.objectContaining({ token: expect.any(String) })
       );

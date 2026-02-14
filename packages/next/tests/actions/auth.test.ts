@@ -3,17 +3,19 @@ import { mockCookieStore } from '../setup';
 import { initSpreeNext, resetClient } from '../../src/config';
 
 const mockClient = {
-  auth: {
-    login: vi.fn(),
-    register: vi.fn(),
-    refresh: vi.fn(),
-  },
-  customer: {
-    get: vi.fn(),
-    update: vi.fn(),
-  },
-  cart: {
-    associate: vi.fn(),
+  store: {
+    auth: {
+      login: vi.fn(),
+      register: vi.fn(),
+      refresh: vi.fn(),
+    },
+    customer: {
+      get: vi.fn(),
+      update: vi.fn(),
+    },
+    cart: {
+      associate: vi.fn(),
+    },
   },
 };
 
@@ -37,7 +39,7 @@ describe('auth actions', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     resetClient();
-    initSpreeNext({ baseUrl: 'https://api.test.com', apiKey: 'pk_test' });
+    initSpreeNext({ baseUrl: 'https://api.test.com', publishableKey: 'pk_test' });
   });
 
   describe('login', () => {
@@ -47,7 +49,7 @@ describe('auth actions', () => {
         user: { id: '1', email: 'test@example.com', first_name: 'Test', last_name: 'User' },
       };
       mockCookieStore.get.mockReturnValue(undefined); // no cart token
-      mockClient.auth.login.mockResolvedValue(authResult);
+      mockClient.store.auth.login.mockResolvedValue(authResult);
 
       const result = await login('test@example.com', 'password123');
       expect(result.success).toBe(true);
@@ -64,18 +66,18 @@ describe('auth actions', () => {
       const authResult = { token: 'jwt_new', user: { id: '1', email: 'a@b.com' } };
       mockCookieStore.get
         .mockReturnValueOnce({ value: 'guest_cart_token' }); // getCartToken
-      mockClient.auth.login.mockResolvedValue(authResult);
-      mockClient.cart.associate.mockResolvedValue({});
+      mockClient.store.auth.login.mockResolvedValue(authResult);
+      mockClient.store.cart.associate.mockResolvedValue({});
 
       await login('a@b.com', 'pass');
-      expect(mockClient.cart.associate).toHaveBeenCalledWith({
+      expect(mockClient.store.cart.associate).toHaveBeenCalledWith({
         token: 'jwt_new',
         orderToken: 'guest_cart_token',
       });
     });
 
     it('returns error on failure', async () => {
-      mockClient.auth.login.mockRejectedValue(new Error('Invalid credentials'));
+      mockClient.store.auth.login.mockRejectedValue(new Error('Invalid credentials'));
 
       const result = await login('bad@email.com', 'wrong');
       expect(result.success).toBe(false);
@@ -108,7 +110,7 @@ describe('auth actions', () => {
     it('returns customer when authenticated', async () => {
       const mockUser = { id: '1', email: 'test@test.com' };
       mockCookieStore.get.mockReturnValue({ value: 'valid_jwt' });
-      mockClient.customer.get.mockResolvedValue(mockUser);
+      mockClient.store.customer.get.mockResolvedValue(mockUser);
 
       const customer = await getCustomer();
       expect(customer).toEqual(mockUser);
