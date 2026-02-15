@@ -49,12 +49,7 @@ module Spree
             resource: Spree.api.address_serializer,
             if: proc { params[:includes]&.include?('ship_address') }
 
-        attribute :payment_methods do |order|
-          pms = order.payment_methods rescue []
-          (pms || []).compact.select { |pm| pm.respond_to?(:prefixed_id) }.map do |pm|
-            { id: pm.prefixed_id, name: pm.name, description: pm.description, type: pm.type }
-          end
-        end
+        many :payment_methods, resource: Spree.api.payment_method_serializer
       end
     end
   end
