@@ -121,6 +121,14 @@ module Spree
               return parse_array_type(type_string, prop)
             end
 
+            # Handle Record<K, V> types (TypeScript generic for key-value objects)
+            if type_string.match?(/^Record</)
+              schema = { type: :object }
+              schema = { type: :array, items: schema } if prop.multi
+              schema[:nullable] = true if prop.nullable
+              return schema
+            end
+
             # Handle basic types
             if TYPESCRIPT_TO_OPENAPI_TYPES.key?(type_string)
               schema = TYPESCRIPT_TO_OPENAPI_TYPES[type_string].dup

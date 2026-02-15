@@ -101,6 +101,7 @@ module Spree
         order_serializer: 'Spree::Api::V3::OrderSerializer',
         line_item_serializer: 'Spree::Api::V3::LineItemSerializer',
         payment_serializer: 'Spree::Api::V3::PaymentSerializer',
+        payment_session_serializer: 'Spree::Api::V3::PaymentSessionSerializer',
         payment_source_serializer: 'Spree::Api::V3::PaymentSourceSerializer',
         shipment_serializer: 'Spree::Api::V3::ShipmentSerializer',
         address_serializer: 'Spree::Api::V3::AddressSerializer',

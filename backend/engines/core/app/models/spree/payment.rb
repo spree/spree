@@ -36,6 +36,10 @@ module Spree
     has_many :capture_events, class_name: 'Spree::PaymentCaptureEvent'
     has_many :refunds, inverse_of: :payment
 
+    has_one :payment_session, class_name: 'Spree::PaymentSession',
+            foreign_key: :external_id,
+            primary_key: :response_code
+
     validates :payment_method, presence: true
     validates :source, presence: true, if: :source_required?
     validate :payment_method_available_for_order, on: :create

@@ -44,6 +44,11 @@ Spree::Core::Engine.add_routes do
           resources :coupon_codes, only: [:create, :destroy], controller: 'orders/coupon_codes'
           resources :payments, only: [:index, :show], controller: 'orders/payments'
           resources :payment_methods, only: [:index], controller: 'orders/payment_methods'
+          resources :payment_sessions, only: [:create, :show, :update], controller: 'orders/payment_sessions' do
+            member do
+              patch :complete
+            end
+          end
           resources :shipments, only: [:index, :show, :update], controller: 'orders/shipments'
         end
 

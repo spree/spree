@@ -122,6 +122,7 @@ module Spree
       has_many :state_changes, as: :stateful, class_name: 'Spree::StateChange'
       has_many :line_items, -> { order(:created_at) }, inverse_of: :order, class_name: 'Spree::LineItem'
       has_many :payments, class_name: 'Spree::Payment'
+      has_many :payment_sessions, inverse_of: :order, class_name: 'Spree::PaymentSession'
       has_many :return_authorizations, inverse_of: :order, class_name: 'Spree::ReturnAuthorization'
       has_many :adjustments, -> { order(:created_at) }, as: :adjustable, class_name: 'Spree::Adjustment'
     end
