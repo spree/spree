@@ -10,9 +10,9 @@ class CreateSpreePaymentSessions < ActiveRecord::Migration[7.2]
       t.string :status, null: false, index: true
       t.string :external_id, null: false
       if t.respond_to? :jsonb
-        t.jsonb :external_data, default: {}
+        t.jsonb :external_data
       else
-        t.json :external_data, default: {}
+        t.json :external_data
       end
       t.datetime :expires_at, index: true
       t.string :customer_external_id
