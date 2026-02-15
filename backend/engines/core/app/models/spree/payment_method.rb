@@ -28,6 +28,7 @@ module Spree
     has_many :payments, class_name: 'Spree::Payment', inverse_of: :payment_method, dependent: :nullify
     has_many :credit_cards, class_name: 'Spree::CreditCard', dependent: :destroy # CCs are soft deleted
 
+    has_many :payment_sessions, class_name: 'Spree::PaymentSession', dependent: :destroy
     has_many :gateway_customers, class_name: 'Spree::GatewayCustomer', dependent: :destroy
 
     def self.providers
@@ -99,6 +100,10 @@ module Spree
 
     def source_required?
       true
+    end
+
+    def session_required?
+      false
     end
 
     def show_in_admin?

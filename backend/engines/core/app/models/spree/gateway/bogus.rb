@@ -84,6 +84,10 @@ module Spree
       CreditCard
     end
 
+    def session_required?
+      true
+    end
+
     def payment_session_class
       PaymentSession::Bogus
     end

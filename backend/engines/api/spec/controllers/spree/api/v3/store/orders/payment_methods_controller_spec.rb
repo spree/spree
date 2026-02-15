@@ -28,6 +28,14 @@ RSpec.describe Spree::Api::V3::Store::Orders::PaymentMethodsController, type: :c
       expect(json_response['data'].map { |pm| pm['id'] }).not_to include(backend_only_pm.prefixed_id)
     end
 
+    it 'includes session_required in the response' do
+      get :index, params: { order_id: order.to_param }
+
+      pm = json_response['data'].find { |p| p['id'] == payment_method.prefixed_id }
+      expect(pm).to have_key('session_required')
+      expect(pm['session_required']).to eq(payment_method.session_required?)
+    end
+
     it 'includes payment method count in meta' do
       get :index, params: { order_id: order.to_param }
 

@@ -175,6 +175,12 @@ describe Spree::PaymentMethod, type: :model do
     it { expect(payment_method.source_required?).to be true }
   end
 
+  describe '#session_required?' do
+    it 'returns false by default' do
+      expect(build(:payment_method).session_required?).to be false
+    end
+  end
+
   describe '#payment_source_class' do
     let(:payment_method) { build(:credit_card_payment_method) }
 
