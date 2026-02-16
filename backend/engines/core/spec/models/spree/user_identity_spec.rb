@@ -10,36 +10,44 @@ describe Spree::UserIdentity, type: :model do
 
     it { is_expected.to validate_presence_of(:provider) }
     it { is_expected.to validate_presence_of(:uid) }
-    it { is_expected.to validate_inclusion_of(:provider).in_array(Spree::UserIdentity::PROVIDERS) }
+
+    it 'validates provider is a registered authentication strategy' do
+      identity = build(:user_identity, provider: 'unsupported')
+      expect(identity).not_to be_valid
+      expect(identity.errors[:provider]).to include('is not included in the list')
+    end
 
     describe 'uniqueness validation' do
       let(:user) { create(:user) }
       let!(:existing_identity) do
-        create(:user_identity, user: user, provider: 'google', uid: '12345')
+        create(:user_identity, user: user, provider: 'email', uid: '12345')
       end
 
       it 'validates uniqueness of uid scoped to provider and user_type' do
-        duplicate = build(:user_identity, user: user, provider: 'google', uid: '12345')
+        duplicate = build(:user_identity, user: user, provider: 'email', uid: '12345')
         expect(duplicate).not_to be_valid
         expect(duplicate.errors[:uid]).to include('has already been taken')
       end
 
       it 'allows same uid for different providers' do
-        different_provider = build(:user_identity, user: user, provider: 'facebook', uid: '12345')
+        Rails.application.config.spree.store_authentication_strategies[:other] = Class.new
+        different_provider = build(:user_identity, user: user, provider: 'other', uid: '12345')
         expect(different_provider).to be_valid
+      ensure
+        Rails.application.config.spree.store_authentication_strategies.delete(:other)
       end
 
       it 'allows same uid for different user types' do
         stub_const('Spree::AdminUser', Class.new(Spree.user_class))
 
-        different_user_type = build(:user_identity, user_type: 'Spree::AdminUser', user_id: user.id, provider: 'google', uid: '12345')
+        different_user_type = build(:user_identity, user_type: 'Spree::AdminUser', user_id: user.id, provider: 'email', uid: '12345')
         expect(different_user_type).to be_valid
       end
     end
   end
 
   describe '.find_or_create_from_oauth' do
-    let(:provider) { 'google' }
+    let(:provider) { 'email' }
     let(:uid) { '123456789' }
     let(:info) do
       {
@@ -91,7 +99,7 @@ describe Spree::UserIdentity, type: :model do
         )
 
         identity = user.identities.first
-        expect(identity.provider).to eq('google')
+        expect(identity.provider).to eq('email')
         expect(identity.uid).to eq('123456789')
         expect(identity.access_token).to eq('access_token_123')
         expect(identity.refresh_token).to eq('refresh_token_456')
@@ -106,7 +114,7 @@ describe Spree::UserIdentity, type: :model do
           tokens: tokens
         )
 
-        expect(user.email).to eq('google-123456789@temporary.example.com')
+        expect(user.email).to eq('email-123456789@temporary.example.com')
       end
 
       it 'uses custom user class when provided' do
@@ -188,7 +196,7 @@ describe Spree::UserIdentity, type: :model do
   describe '.create_user_from_oauth' do
     it 'creates user with random password' do
       user = described_class.create_user_from_oauth(
-        provider: 'google',
+        provider: 'email',
         uid: '123',
         info: { email: 'test@example.com', first_name: 'Test', last_name: 'User' },
         tokens: {}
@@ -202,8 +210,8 @@ describe Spree::UserIdentity, type: :model do
 
   describe '.generate_temp_email' do
     it 'generates email with provider and uid' do
-      email = described_class.generate_temp_email('google', '123456')
-      expect(email).to eq('google-123456@temporary.example.com')
+      email = described_class.generate_temp_email('email', '123456')
+      expect(email).to eq('email-123456@temporary.example.com')
     end
   end
 

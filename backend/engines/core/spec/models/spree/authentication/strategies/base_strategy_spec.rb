@@ -84,7 +84,7 @@ describe Spree::Authentication::Strategies::BaseStrategy do
   end
 
   describe '#find_or_create_user_from_oauth' do
-    let(:provider) { 'google' }
+    let(:provider) { 'email' }
     let(:uid) { '123456' }
     let(:info) { { email: 'oauth@example.com', first_name: 'OAuth', last_name: 'User' } }
     let(:tokens) { { access_token: 'token123' } }

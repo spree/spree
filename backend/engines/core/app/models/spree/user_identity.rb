@@ -7,10 +7,12 @@ module Spree
     validates :provider, presence: true
     validates :uid, presence: true, uniqueness: { scope: [:provider, :user_type] }
 
-    # Providers
-    PROVIDERS = %w[email google facebook github apple].freeze
-
-    validates :provider, inclusion: { in: PROVIDERS }
+    validates :provider, inclusion: {
+      in: ->(_record) {
+        config = Rails.application.config.spree
+        (config.store_authentication_strategies.keys + config.admin_authentication_strategies.keys).uniq.map(&:to_s)
+      }
+    }
 
     # Store provider-specific data
     # info: JSON field with provider-specific data (name, avatar, etc)
