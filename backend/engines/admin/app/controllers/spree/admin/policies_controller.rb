@@ -27,6 +27,11 @@ module Spree
         target = object || @object
         spree.admin_policy_url(target&.id, options)
       end
+
+      def edit_object_url(object = nil, options = {})
+        target = object || @object
+        spree.edit_admin_policy_url(target&.id, options)
+      end
     end
   end
 end
