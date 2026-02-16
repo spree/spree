@@ -32,9 +32,20 @@ module Spree
       it 'touches all products' do
         expect { subject }.to change { Spree::Product.where(id: products.pluck(:id)).pluck(:updated_at) }
       end
+<<<<<<< Updated upstream:backend/engines/core/spec/services/spree/tags/bulk_remove_spec.rb
 
       it 'publishes tagging.bulk_removed event' do
         expect(Spree::Events).to receive(:publish).with('tagging.bulk_removed', hash_including(:taggings))
+=======
+<<<<<<< Updated upstream:core/spec/services/spree/tags/bulk_remove_spec.rb
+=======
+
+      it 'publishes tagging.bulk_removed event' do
+        expect(Spree::Events).to receive(:publish).with(
+          'tagging.bulk_removed',
+          hash_including(:taggings, :taggable_type, :context)
+        )
+>>>>>>> Stashed changes:core/spec/services/spree/tags/bulk_remove_spec.rb
         subject
       end
 
@@ -50,6 +61,10 @@ module Spree
           subject
         end
       end
+<<<<<<< Updated upstream:backend/engines/core/spec/services/spree/tags/bulk_remove_spec.rb
+=======
+>>>>>>> Stashed changes:backend/engines/core/spec/services/spree/tags/bulk_remove_spec.rb
+>>>>>>> Stashed changes:core/spec/services/spree/tags/bulk_remove_spec.rb
     end
   end
 end
