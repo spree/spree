@@ -18,15 +18,21 @@ module Spree
           tag_id: tag_ids
         )
 
-        taggings_data = taggings_scope.select(:id, :tag_id, :taggable_id, :taggable_type, :context).map do |t|
-          { id: t.id, tag_id: t.tag_id, taggable_id: t.taggable_id, taggable_type: t.taggable_type, context: t.context }
+        taggings_data = taggings_scope.pluck(:id, :tag_id, :taggable_id).map do |id, tag_id, taggable_id|
+          { 'id' => id, 'tag_id' => tag_id, 'taggable_id' => taggable_id }
         end
 
         taggings_scope.delete_all
 
         record_class.where(id: record_ids).touch_all
 
-        Spree::Events.publish('tagging.bulk_removed', { taggings: taggings_data }) if taggings_data.any?
+        if taggings_data.any?
+          Spree::Events.publish('tagging.bulk_removed', {
+            taggings: taggings_data,
+            taggable_type: record_class.to_s,
+            context: context
+          })
+        end
       end
     end
   end
