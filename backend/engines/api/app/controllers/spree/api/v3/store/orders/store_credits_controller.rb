@@ -5,7 +5,6 @@ module Spree
         module Orders
           class StoreCreditsController < Store::BaseController
             include Spree::Api::V3::OrderConcern
-            include Spree::Api::V3::ResourceSerializer
 
             before_action :require_authentication!
             before_action :set_parent
@@ -19,7 +18,7 @@ module Spree
               )
 
               if result.success?
-                render json: serialize_resource(@parent.reload)
+                render_order
               else
                 render_service_error(result.error)
               end
@@ -30,16 +29,10 @@ module Spree
               result = Spree.checkout_remove_store_credit_service.call(order: @parent)
 
               if result.success?
-                render json: serialize_resource(@parent.reload)
+                render_order
               else
                 render_service_error(result.error)
               end
-            end
-
-            protected
-
-            def serializer_class
-              Spree.api.order_serializer
             end
           end
         end

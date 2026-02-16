@@ -1,7 +1,7 @@
 'use server';
 
 import { revalidateTag } from 'next/cache';
-import type { StoreOrder, StoreLineItem } from '@spree/sdk';
+import type { StoreOrder } from '@spree/sdk';
 import { getClient } from '../config';
 import { getCartToken, setCartToken, clearCartToken, getAccessToken } from '../cookies';
 
@@ -40,39 +40,41 @@ export async function getOrCreateCart(): Promise<StoreOrder & { token: string }>
 
 /**
  * Add an item to the cart. Creates a cart if none exists.
+ * Returns the updated order with recalculated totals.
  */
 export async function addItem(
   variantId: string,
   quantity: number = 1
-): Promise<StoreLineItem> {
+): Promise<StoreOrder> {
   const cart = await getOrCreateCart();
   const orderToken = cart.token;
   const token = await getAccessToken();
 
-  const lineItem = await getClient().store.orders.lineItems.create(
+  const order = await getClient().store.orders.lineItems.create(
     cart.id,
     { variant_id: variantId, quantity },
     { orderToken, token }
   );
 
   revalidateTag('cart');
-  return lineItem;
+  return order;
 }
 
 /**
  * Update a line item quantity in the cart.
+ * Returns the updated order with recalculated totals.
  */
 export async function updateItem(
   lineItemId: string,
   quantity: number
-): Promise<StoreLineItem> {
+): Promise<StoreOrder> {
   const orderToken = await getCartToken();
   const token = await getAccessToken();
   if (!orderToken && !token) throw new Error('No cart found');
 
   const cart = await getClient().store.cart.get({ orderToken, token });
 
-  const lineItem = await getClient().store.orders.lineItems.update(
+  const order = await getClient().store.orders.lineItems.update(
     cart.id,
     lineItemId,
     { quantity },
@@ -80,25 +82,27 @@ export async function updateItem(
   );
 
   revalidateTag('cart');
-  return lineItem;
+  return order;
 }
 
 /**
  * Remove a line item from the cart.
+ * Returns the updated order with recalculated totals.
  */
-export async function removeItem(lineItemId: string): Promise<void> {
+export async function removeItem(lineItemId: string): Promise<StoreOrder> {
   const orderToken = await getCartToken();
   const token = await getAccessToken();
   if (!orderToken && !token) throw new Error('No cart found');
 
   const cart = await getClient().store.cart.get({ orderToken, token });
 
-  await getClient().store.orders.lineItems.delete(cart.id, lineItemId, {
+  const order = await getClient().store.orders.lineItems.delete(cart.id, lineItemId, {
     orderToken,
     token,
   });
 
   revalidateTag('cart');
+  return order;
 }
 
 /**

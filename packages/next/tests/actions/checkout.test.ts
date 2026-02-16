@@ -131,11 +131,11 @@ describe('checkout actions', () => {
 
   describe('selectShippingRate', () => {
     it('selects shipping rate and revalidates checkout', async () => {
-      const mockShipment = { id: 's1', selected_shipping_rate_id: 'sr1' };
-      mockClient.store.orders.shipments.update.mockResolvedValue(mockShipment);
+      const mockOrder = { id: '1', number: 'R123', ship_total: '10.0' };
+      mockClient.store.orders.shipments.update.mockResolvedValue(mockOrder);
 
       const result = await selectShippingRate('1', 's1', 'sr1');
-      expect(result).toEqual(mockShipment);
+      expect(result).toEqual(mockOrder);
       expect(mockClient.store.orders.shipments.update).toHaveBeenCalledWith(
         '1',
         's1',

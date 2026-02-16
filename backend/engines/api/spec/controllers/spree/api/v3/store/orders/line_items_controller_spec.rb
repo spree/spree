@@ -16,27 +16,28 @@ RSpec.describe Spree::Api::V3::Store::Orders::LineItemsController, type: :contro
   end
 
   describe 'POST #create' do
-    it 'adds a line item to the order' do
+    it 'adds a line item and returns updated order' do
       expect do
         post :create, params: { order_id: order.to_param, variant_id: variant.prefixed_id, quantity: 2 }
       end.to change(Spree::LineItem, :count).by(1)
 
       expect(response).to have_http_status(:created)
-      expect(json_response['variant_id']).to eq(variant.prefixed_id)
-      expect(json_response['quantity']).to eq(2)
+      expect(json_response['id']).to eq(order.prefixed_id)
+      expect(json_response['number']).to eq(order.number)
+      expect(json_response['item_count']).to eq(2)
     end
 
     it 'defaults quantity to 1' do
       post :create, params: { order_id: order.to_param, variant_id: variant.prefixed_id }
 
       expect(response).to have_http_status(:created)
-      expect(json_response['quantity']).to eq(1)
+      expect(json_response['item_count']).to eq(1)
     end
 
-    it 'updates order totals' do
+    it 'returns updated totals' do
       post :create, params: { order_id: order.to_param, variant_id: variant.prefixed_id, quantity: 2 }
 
-      expect(order.reload.item_total).to be > 0
+      expect(json_response['item_total'].to_f).to be > 0
     end
 
     context 'with order token (guest)' do
@@ -92,18 +93,20 @@ RSpec.describe Spree::Api::V3::Store::Orders::LineItemsController, type: :contro
   describe 'PATCH #update' do
     let!(:line_item) { create(:line_item, order: order, variant: variant, quantity: 1) }
 
-    it 'updates line item quantity' do
+    it 'updates line item quantity and returns updated order' do
       patch :update, params: { order_id: order.to_param, id: line_item.prefixed_id, quantity: 5 }
 
       expect(response).to have_http_status(:ok)
+      expect(json_response['id']).to eq(order.prefixed_id)
+      expect(json_response['number']).to eq(order.number)
       expect(line_item.reload.quantity).to eq(5)
     end
 
-    it 'updates order totals' do
+    it 'returns updated totals' do
       original_total = order.item_total
       patch :update, params: { order_id: order.to_param, id: line_item.prefixed_id, quantity: 5 }
 
-      expect(order.reload.item_total).to be > original_total
+      expect(json_response['item_total'].to_f).to be > original_total
     end
 
     context 'error handling' do
@@ -130,12 +133,14 @@ RSpec.describe Spree::Api::V3::Store::Orders::LineItemsController, type: :contro
   describe 'DELETE #destroy' do
     let!(:line_item) { create(:line_item, order: order, variant: variant) }
 
-    it 'removes line item from order' do
+    it 'removes line item and returns updated order' do
       expect do
         delete :destroy, params: { order_id: order.to_param, id: line_item.prefixed_id }
       end.to change(Spree::LineItem, :count).by(-1)
 
-      expect(response).to have_http_status(:no_content)
+      expect(response).to have_http_status(:ok)
+      expect(json_response['id']).to eq(order.prefixed_id)
+      expect(json_response['number']).to eq(order.number)
     end
 
     it 'updates order totals' do

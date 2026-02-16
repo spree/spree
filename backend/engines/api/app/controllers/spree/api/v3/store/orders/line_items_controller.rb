@@ -19,8 +19,7 @@ module Spree
               )
 
               if result.success?
-                @line_item = result.value
-                render json: serialize_resource(@line_item), status: :created
+                render_order(status: :created)
               else
                 render_service_error(result.error, code: ERROR_CODES[:insufficient_stock])
               end
@@ -38,12 +37,12 @@ module Spree
                 )
 
                 if result.success?
-                  render json: serialize_resource(@line_item)
+                  render_order
                 else
                   render_service_error(result.error, code: ERROR_CODES[:invalid_quantity])
                 end
               else
-                render json: serialize_resource(@line_item)
+                render_order
               end
             end
 
@@ -56,7 +55,7 @@ module Spree
                 line_item: @line_item
               )
 
-              head :no_content
+              render_order
             end
 
             protected

@@ -17,7 +17,7 @@ module Spree
               coupon_handler.apply
 
               if coupon_handler.successful?
-                render json: order_serializer.new(@parent.reload, params: serializer_params).to_h, status: :created
+                render_order(status: :created)
               else
                 render_errors(coupon_handler.error)
               end
@@ -33,7 +33,7 @@ module Spree
               coupon_handler.remove(coupon_code)
 
               if coupon_handler.successful?
-                render json: order_serializer.new(@parent.reload, params: serializer_params).to_h
+                render_order
               else
                 render_errors(coupon_handler.error)
               end
@@ -59,10 +59,6 @@ module Spree
 
             def serializer_class
               Spree.api.order_promotion_serializer
-            end
-
-            def order_serializer
-              Spree.api.order_serializer
             end
           end
         end

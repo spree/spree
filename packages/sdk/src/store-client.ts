@@ -21,7 +21,6 @@ import type {
   StoreGiftCard,
   StoreProduct,
   StoreOrder,
-  StoreLineItem,
   StoreCountry,
   StoreTaxonomy,
   StoreTaxon,
@@ -345,42 +344,45 @@ export class StoreClient {
      */
     lineItems: {
       /**
-       * Add a line item to an order
+       * Add a line item to an order.
+       * Returns the updated order with recalculated totals.
        */
       create: (
         orderId: string,
         params: AddLineItemParams,
         options?: RequestOptions
-      ): Promise<StoreLineItem> =>
-        this.request<StoreLineItem>('POST', `/orders/${orderId}/line_items`, {
+      ): Promise<StoreOrder> =>
+        this.request<StoreOrder>('POST', `/orders/${orderId}/line_items`, {
           ...options,
           body: params,
         }),
 
       /**
-       * Update a line item
+       * Update a line item quantity.
+       * Returns the updated order with recalculated totals.
        */
       update: (
         orderId: string,
         lineItemId: string,
         params: UpdateLineItemParams,
         options?: RequestOptions
-      ): Promise<StoreLineItem> =>
-        this.request<StoreLineItem>(
+      ): Promise<StoreOrder> =>
+        this.request<StoreOrder>(
           'PATCH',
           `/orders/${orderId}/line_items/${lineItemId}`,
           { ...options, body: params }
         ),
 
       /**
-       * Remove a line item from an order
+       * Remove a line item from an order.
+       * Returns the updated order with recalculated totals.
        */
       delete: (
         orderId: string,
         lineItemId: string,
         options?: RequestOptions
-      ): Promise<void> =>
-        this.request<void>(
+      ): Promise<StoreOrder> =>
+        this.request<StoreOrder>(
           'DELETE',
           `/orders/${orderId}/line_items/${lineItemId}`,
           options
@@ -554,15 +556,16 @@ export class StoreClient {
         ),
 
       /**
-       * Update a shipment (e.g., select shipping rate)
+       * Select a shipping rate for a shipment.
+       * Returns the updated order with recalculated totals.
        */
       update: (
         orderId: string,
         shipmentId: string,
         params: { selected_shipping_rate_id: string },
         options?: RequestOptions
-      ): Promise<StoreShipment> =>
-        this.request<StoreShipment>(
+      ): Promise<StoreOrder> =>
+        this.request<StoreOrder>(
           'PATCH',
           `/orders/${orderId}/shipments/${shipmentId}`,
           { ...options, body: params }
