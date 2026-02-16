@@ -89,5 +89,5 @@ RSpec.configure do |config|
     Spree::Current.reset
   end
 
-  config.order = :random
+  config.order = :random unless ENV['OPENAPI'] == 'true'
 end

@@ -23,6 +23,8 @@ namespace :rswag do
         'spec/integration/**/*_spec.rb'
       )
 
+      # OPENAPI env var prevents spec_helper from overriding --order defined with :random
+      ENV['OPENAPI'] = 'true'
       t.rspec_opts = ['--format Rswag::Specs::SwaggerFormatter', '--order defined']
     end
   end
