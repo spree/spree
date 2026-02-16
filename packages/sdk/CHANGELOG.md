@@ -1,5 +1,12 @@
 # @spree/sdk
 
+## 0.2.3
+
+### Patch Changes
+
+- Add `gateway_payment_profile_id` to `StoreCreditCard` type — exposes the Stripe PaymentMethod ID (`pm_xxx`) needed for saved card checkout flows
+- `getCart()` now clears stale cart token when the backend returns 404 (e.g., after order completion)
+
 ## 0.2.2
 
 ### Patch Changes

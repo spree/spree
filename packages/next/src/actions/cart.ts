@@ -16,6 +16,10 @@ export async function getCart(): Promise<(StoreOrder & { token: string }) | null
   try {
     return await getClient().store.cart.get({ orderToken, token });
   } catch {
+    // Cart not found (e.g., order was completed) — clear stale token
+    if (orderToken) {
+      await clearCartToken();
+    }
     return null;
   }
 }
