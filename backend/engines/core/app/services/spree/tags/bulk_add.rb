@@ -42,7 +42,7 @@ module Spree
 
         record_class.where(id: records.pluck(:id)).touch_all
 
-        Spree::Events.publish('tagging.bulk_created', { tagging_ids: tagging_ids })
+        Spree::Events.publish('tagging.bulk_created', { tagging_ids: tagging_ids }) if tagging_ids.any?
 
         tagging_ids
       end
