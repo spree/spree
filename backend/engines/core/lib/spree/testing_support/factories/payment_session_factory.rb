@@ -37,8 +37,8 @@ FactoryBot.define do
       customer { order.user || create(:user) }
     end
 
-    factory :bogus_payment_session, class: 'Spree::PaymentSession::Bogus' do
-      type { 'Spree::PaymentSession::Bogus' }
+    factory :bogus_payment_session, class: 'Spree::PaymentSessions::Bogus' do
+      type { 'Spree::PaymentSessions::Bogus' }
       payment_method { create(:bogus_payment_method, stores: [order.store]) }
       external_id { "bogus_#{SecureRandom.hex(12)}" }
       external_data { { 'client_secret' => "bogus_secret_#{SecureRandom.hex(8)}" } }

@@ -89,7 +89,7 @@ module Spree
     end
 
     def payment_session_class
-      PaymentSession::Bogus
+      PaymentSessions::Bogus
     end
 
     def create_payment_session(order:, amount: nil, external_data: {})
