@@ -33,6 +33,11 @@ module Spree
         expect { subject }.to change { Spree::Product.where(id: products.pluck(:id)).pluck(:updated_at) }
       end
 
+      it 'publishes tagging.bulk_created event' do
+        expect(Spree::Events).to receive(:publish).with('tagging.bulk_created', hash_including(:tagging_ids))
+        subject
+      end
+
       context 'when tag names are duplicated or have extra spaces' do
         let(:tag_names) { ['tag1', ' tag2 ', 'tag1', 'tag3'] }
 
