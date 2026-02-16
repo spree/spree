@@ -94,6 +94,7 @@ RSpec.configure do |config|
         { name: 'Line Items', description: 'Cart item management' },
         { name: 'Coupon Codes', description: 'Coupon code and gift card management' },
         { name: 'Payments', description: 'Payment processing' },
+        { name: 'Payment Sessions', description: 'Provider-agnostic payment session management' },
         { name: 'Payment Methods', description: 'Available payment options' },
         { name: 'Shipments', description: 'Shipping and delivery' },
         { name: 'Customers', description: 'Customer account management' },
@@ -105,7 +106,7 @@ RSpec.configure do |config|
       'x-tagGroups': [
         { name: 'Store', tags: %w[Store Countries] },
         { name: 'Catalog', tags: %w[Products Taxonomies Taxons] },
-        { name: 'Checkout', tags: ['Cart', 'Orders', 'Line Items', 'Coupon Codes', 'Payments', 'Payment Methods', 'Shipments'] },
+        { name: 'Checkout', tags: ['Cart', 'Orders', 'Line Items', 'Coupon Codes', 'Payments', 'Payment Sessions', 'Payment Methods', 'Shipments'] },
         { name: 'Customer', tags: ['Authentication', 'Customers', 'Addresses', 'Credit Cards', 'Wishlists', 'Digitals'] }
       ],
       components: {

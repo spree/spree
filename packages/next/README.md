@@ -198,6 +198,32 @@ const orders = await listOrders();
 const order = await getOrder(orderId);
 ```
 
+### Payment Sessions
+
+```typescript
+import {
+  createPaymentSession,
+  getPaymentSession,
+  updatePaymentSession,
+  completePaymentSession,
+} from '@spree/next';
+
+// Create a payment session (initializes provider-specific session)
+const session = await createPaymentSession(orderId, { payment_method_id: 'pm_123' });
+
+// Access provider data (e.g., Stripe client secret)
+const clientSecret = session.external_data.client_secret;
+
+// Get a payment session
+const session = await getPaymentSession(orderId, sessionId);
+
+// Update a payment session
+await updatePaymentSession(orderId, sessionId, { amount: '50.00' });
+
+// Complete a payment session (confirms payment with provider)
+await completePaymentSession(orderId, sessionId, { session_result: 'success' });
+```
+
 ### Credit Cards & Gift Cards
 
 ```typescript
@@ -229,6 +255,7 @@ import type {
   StoreProduct,
   StoreOrder,
   StoreLineItem,
+  StorePaymentSession,
   StoreTaxon,
   PaginatedResponse,
   SpreeError,

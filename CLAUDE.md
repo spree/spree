@@ -261,7 +261,7 @@ We use [typelizer](https://github.com/skryukov/typelizer) to generate TypeScript
 - Types are generated to `sdk/src/types/generated/`
 - Store types: `StoreProduct`, `StoreOrder`, etc.
 - Admin types: `AdminProduct`, `AdminOrder`, etc.
-- Run `bundle exec rake typelizer:generate` to regenerate types
+- Run `bundle exec rake typelizer:generate` to regenerate types every time you make changes to serializers
 
 ### API Authentication
 
@@ -304,7 +304,7 @@ module Spree
 
     def handle(event)
       order_id = event.payload['id']
-      order = Spree::Order.find_by(id: order_id)
+      order = Spree::Order.find_by_prefix_id(order_id)
       return unless order
 
       # Your custom logic here

@@ -84,6 +84,38 @@ module Spree
       CreditCard
     end
 
+    def session_required?
+      true
+    end
+
+    def payment_session_class
+      PaymentSessions::Bogus
+    end
+
+    def create_payment_session(order:, amount: nil, external_data: {})
+      payment_session_class.create(
+        order: order,
+        payment_method: self,
+        amount: amount.presence || order.total_minus_store_credits,
+        currency: order.currency,
+        status: 'pending',
+        external_id: "bogus_#{SecureRandom.hex(12)}",
+        external_data: external_data.merge('client_secret' => "bogus_secret_#{SecureRandom.hex(8)}"),
+        customer: order.user
+      )
+    end
+
+    def update_payment_session(payment_session:, amount: nil, external_data: {})
+      attrs = {}
+      attrs[:amount] = amount if amount.present?
+      attrs[:external_data] = payment_session.external_data.merge(external_data) if external_data.present?
+      payment_session.update(attrs)
+    end
+
+    def complete_payment_session(payment_session:, params: {})
+      payment_session.complete
+    end
+
     def actions
       %w(capture void credit)
     end

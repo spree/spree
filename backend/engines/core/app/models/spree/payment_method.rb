@@ -28,6 +28,7 @@ module Spree
     has_many :payments, class_name: 'Spree::Payment', inverse_of: :payment_method, dependent: :nullify
     has_many :credit_cards, class_name: 'Spree::CreditCard', dependent: :destroy # CCs are soft deleted
 
+    has_many :payment_sessions, class_name: 'Spree::PaymentSession', dependent: :destroy
     has_many :gateway_customers, class_name: 'Spree::GatewayCustomer', dependent: :destroy
 
     def self.providers
@@ -45,6 +46,32 @@ module Spree
       return unless source_required?
 
       raise ::NotImplementedError, 'You must implement payment_source_class method for this gateway.'
+    end
+
+    # The class used for payment sessions with this payment method.
+    # Override in gateway subclasses to provide a provider-specific session class
+    # that inherits from Spree::PaymentSession (STI).
+    # nil means the payment method doesn't support payment sessions.
+    def payment_session_class
+      nil
+    end
+
+    # Creates a payment session via the provider.
+    # Override in gateway subclasses to implement provider-specific session creation.
+    def create_payment_session(order:, amount: nil, external_data: {})
+      raise ::NotImplementedError, 'You must implement create_payment_session method for this gateway.'
+    end
+
+    # Updates an existing payment session via the provider.
+    # Override in gateway subclasses to implement provider-specific session updates.
+    def update_payment_session(payment_session:, amount: nil, external_data: {})
+      raise ::NotImplementedError, 'You must implement update_payment_session method for this gateway.'
+    end
+
+    # Completes a payment session via the provider.
+    # Override in gateway subclasses to implement provider-specific session completion.
+    def complete_payment_session(payment_session:, params: {})
+      raise ::NotImplementedError, 'You must implement complete_payment_session method for this gateway.'
     end
 
     def method_type
@@ -73,6 +100,10 @@ module Spree
 
     def source_required?
       true
+    end
+
+    def session_required?
+      false
     end
 
     def show_in_admin?

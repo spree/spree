@@ -9,5 +9,9 @@ module Spree
       bogus.disable_customer_profile(cc)
       expect(cc.gateway_customer_profile_id).to be_nil
     end
+
+    describe '#session_required?' do
+      it { expect(bogus.session_required?).to be true }
+    end
   end
 end

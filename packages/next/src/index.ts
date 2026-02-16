@@ -52,6 +52,13 @@ export { listOrders, getOrder } from './actions/orders';
 export { listCreditCards, deleteCreditCard } from './actions/credit-cards';
 export { listGiftCards, getGiftCard } from './actions/gift-cards';
 
+export {
+  createPaymentSession,
+  getPaymentSession,
+  updatePaymentSession,
+  completePaymentSession,
+} from './actions/payment-sessions';
+
 // Re-export commonly used SDK types for convenience
 export type {
   StoreProduct,
@@ -70,6 +77,7 @@ export type {
   StoreShippingRate,
   StorePayment,
   StorePaymentMethod,
+  StorePaymentSession,
   StoreImage,
   StoreOptionType,
   StoreOptionValue,
@@ -78,5 +86,8 @@ export type {
   PaginatedResponse,
   AddressParams,
   ProductFiltersResponse,
+  CreatePaymentSessionParams,
+  UpdatePaymentSessionParams,
+  CompletePaymentSessionParams,
   SpreeError,
 } from '@spree/sdk';

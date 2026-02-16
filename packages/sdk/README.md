@@ -325,6 +325,44 @@ const payments = await client.store.orders.payments.list(cart.id, options);
 const payment = await client.store.orders.payments.get(cart.id, paymentId, options);
 ```
 
+### Payment Sessions
+
+Payment sessions provide a unified, provider-agnostic interface for payment processing. They work with any payment gateway (Stripe, Adyen, PayPal, etc.) through a single API.
+
+```typescript
+const options = { orderToken: cart.token };
+
+// Create a payment session (initializes a session with the payment gateway)
+const session = await client.store.orders.paymentSessions.create(cart.id, {
+  payment_method_id: 'pm_xxx',
+  amount: '99.99',             // Optional, defaults to order total
+  external_data: {              // Optional, provider-specific data
+    return_url: 'https://mystore.com/checkout/complete',
+  },
+}, options);
+
+// The session contains provider-specific data (e.g., Stripe client_secret)
+console.log(session.external_data.client_secret);
+
+// Get a payment session
+const existing = await client.store.orders.paymentSessions.get(
+  cart.id, session.id, options
+);
+
+// Update a payment session (e.g., after order total changes)
+await client.store.orders.paymentSessions.update(cart.id, session.id, {
+  amount: '149.99',
+}, options);
+
+// Complete the payment session (after customer confirms payment on the frontend)
+const completed = await client.store.orders.paymentSessions.complete(
+  cart.id, session.id,
+  { session_result: 'success' },
+  options
+);
+console.log(completed.status); // 'completed'
+```
+
 ### Geography
 
 ```typescript
@@ -456,6 +494,7 @@ The SDK uses a resource builder pattern for nested resources:
 | `store.orders` | `lineItems` | `create`, `update`, `delete` |
 | `store.orders` | `payments` | `list`, `get` |
 | `store.orders` | `paymentMethods` | `list` |
+| `store.orders` | `paymentSessions` | `create`, `get`, `update`, `complete` |
 | `store.orders` | `shipments` | `list`, `update` |
 | `store.orders` | `couponCodes` | `apply`, `remove` |
 | `store.customer` | `addresses` | `list`, `get`, `create`, `update`, `delete`, `markAsDefault` |
@@ -554,6 +593,7 @@ The SDK exports all Store API types:
 ### Commerce Types
 - `StorePayment` - Payment record
 - `StorePaymentMethod` - Payment method
+- `StorePaymentSession` - Provider-agnostic payment session
 - `StoreShipment` - Shipment record
 - `StoreShippingRate` - Shipping rate option
 - `StoreShippingMethod` - Shipping method
@@ -583,6 +623,9 @@ The SDK exports all Store API types:
 - `PaginatedResponse<T>` - Paginated API response
 - `AuthTokens` - JWT tokens from login
 - `AddressParams` - Address input parameters
+- `CreatePaymentSessionParams` - Payment session creation parameters
+- `UpdatePaymentSessionParams` - Payment session update parameters
+- `CompletePaymentSessionParams` - Payment session completion parameters
 - `ProductFiltersResponse` - Product filters response
 
 ## Custom Fetch

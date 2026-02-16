@@ -14,6 +14,9 @@ import type {
   UpdateLineItemParams,
   UpdateOrderParams,
   AddressParams,
+  CreatePaymentSessionParams,
+  UpdatePaymentSessionParams,
+  CompletePaymentSessionParams,
   StoreCreditCard,
   StoreGiftCard,
   StoreProduct,
@@ -24,6 +27,7 @@ import type {
   StoreTaxon,
   StorePayment,
   StorePaymentMethod,
+  StorePaymentSession,
   StoreShipment,
   StoreStore,
   StoreWishlist,
@@ -430,6 +434,72 @@ export class StoreClient {
           'GET',
           `/orders/${orderId}/payment_methods`,
           options
+        ),
+    },
+
+    /**
+     * Nested resource: Payment sessions
+     */
+    paymentSessions: {
+      /**
+       * Create a payment session for an order
+       * Delegates to the payment gateway to initialize a provider-specific session
+       */
+      create: (
+        orderId: string,
+        params: CreatePaymentSessionParams,
+        options?: RequestOptions
+      ): Promise<StorePaymentSession> =>
+        this.request<StorePaymentSession>(
+          'POST',
+          `/orders/${orderId}/payment_sessions`,
+          { ...options, body: params }
+        ),
+
+      /**
+       * Get a payment session by ID
+       */
+      get: (
+        orderId: string,
+        sessionId: string,
+        options?: RequestOptions
+      ): Promise<StorePaymentSession> =>
+        this.request<StorePaymentSession>(
+          'GET',
+          `/orders/${orderId}/payment_sessions/${sessionId}`,
+          options
+        ),
+
+      /**
+       * Update a payment session
+       * Delegates to the payment gateway to sync changes with the provider
+       */
+      update: (
+        orderId: string,
+        sessionId: string,
+        params: UpdatePaymentSessionParams,
+        options?: RequestOptions
+      ): Promise<StorePaymentSession> =>
+        this.request<StorePaymentSession>(
+          'PATCH',
+          `/orders/${orderId}/payment_sessions/${sessionId}`,
+          { ...options, body: params }
+        ),
+
+      /**
+       * Complete a payment session
+       * Confirms the payment with the provider, triggering capture/authorization
+       */
+      complete: (
+        orderId: string,
+        sessionId: string,
+        params?: CompletePaymentSessionParams,
+        options?: RequestOptions
+      ): Promise<StorePaymentSession> =>
+        this.request<StorePaymentSession>(
+          'PATCH',
+          `/orders/${orderId}/payment_sessions/${sessionId}/complete`,
+          { ...options, body: params }
         ),
     },
 

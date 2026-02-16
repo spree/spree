@@ -42,4 +42,6 @@ FactoryBot.define do
     type { 'Spree::Gateway::CustomPaymentSourceMethod' }
     name { 'Custom' }
   end
+
+  factory :bogus_payment_method, parent: :credit_card_payment_method
 end
