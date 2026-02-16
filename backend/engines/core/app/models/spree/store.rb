@@ -204,14 +204,17 @@ module Spree
       end
     end
 
-    # FIXME: we need to drop `or_initialize` in v5
-    # this behaviour is very buggy and unpredictable
+    # @deprecated The or_initialize behavior will be removed in Spree 5.5.
     def self.default
       Rails.cache.fetch('default_store') do
         # workaround for Mobility bug with first_or_initialize
         if where(default: true).any?
           where(default: true).first
         else
+          Spree::Deprecation.warn(
+            'Spree::Store.default returning a new unpersisted store when no default store exists is deprecated ' \
+            'and will be removed in Spree 5.5. Please ensure a default store is created before calling Store.default.'
+          )
           new(default: true)
         end
       end
