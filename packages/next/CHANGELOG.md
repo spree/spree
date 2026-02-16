@@ -1,5 +1,12 @@
 # @spree/next
 
+## 0.2.3
+
+### Patch Changes
+
+- Update `StoreCreditCard` type with `gateway_payment_profile_id` field (from @spree/sdk 0.2.3)
+- `getCart()` now clears stale cart token when the backend returns 404 (e.g., after order completion), preventing the storefront from showing a completed order in the cart
+
 ## 0.2.2
 
 ### Patch Changes
