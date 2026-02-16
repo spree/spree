@@ -8,9 +8,8 @@ module Spree
 
           # POST  /api/v3/store/auth/login
           # Supports multiple authentication providers via :provider param
-          # Examples:
+          # Example:
           #   { "provider": "email", "email": "...", "password": "..." }
-          #   { "provider": "google", "id_token": "..." }
           def create
             strategy = authentication_strategy
             return unless strategy # Error already rendered by determine_strategy
@@ -59,7 +58,6 @@ module Spree
 
           # POST  /api/v3/store/auth/oauth/callback
           # OAuth callback endpoint for server-side OAuth flows
-          # Example: { "provider": "google", "code": "authorization_code" }
           def oauth_callback
             # This endpoint is designed for OAuth flows where the server
             # exchanges the authorization code for an access token
@@ -114,7 +112,7 @@ module Spree
             provider_key = provider.to_sym
 
             # Retrieve pre-loaded strategy class from configuration
-            strategy_class = Rails.application.config.spree.authentication_strategies[provider_key]
+            strategy_class = Rails.application.config.spree.store_authentication_strategies[provider_key]
 
             unless strategy_class
               render_error(

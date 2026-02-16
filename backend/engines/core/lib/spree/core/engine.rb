@@ -30,7 +30,8 @@ module Spree
                                :analytics_event_handlers,
                                :integrations,
                                :subscribers,
-                               :authentication_strategies)
+                               :store_authentication_strategies,
+                               :admin_authentication_strategies)
       SpreeCalculators = Struct.new(:shipping_methods, :tax_rates, :promotion_actions_create_adjustments, :promotion_actions_create_item_adjustments)
       PromoEnvironment = Struct.new(:rules, :actions)
       PricingEnvironment = Struct.new(:rules)
@@ -308,9 +309,11 @@ module Spree
         ]
 
         # Pre-load authentication strategy classes to avoid reflection at request time
-        Rails.application.config.spree.authentication_strategies = {
-          email: Spree::Authentication::Strategies::EmailPasswordStrategy,
-          google: Spree::Authentication::Strategies::GoogleStrategy
+        Rails.application.config.spree.store_authentication_strategies = {
+          email: Spree::Authentication::Strategies::EmailPasswordStrategy
+        }
+        Rails.application.config.spree.admin_authentication_strategies = {
+          email: Spree::Authentication::Strategies::EmailPasswordStrategy
         }
       end
 
