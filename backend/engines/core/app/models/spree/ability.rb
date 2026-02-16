@@ -30,11 +30,21 @@ module Spree
     # modify the default +Ability+ of an application.  The +ability+ argument must be a class that includes
     # the +CanCan::Ability+ module.  The registered ability should behave properly as a stand-alone class
     # and therefore should be easy to test in isolation.
+    # @deprecated Use Spree::PermissionSets instead. Will be removed in Spree 5.5.
     def self.register_ability(ability)
+      Spree::Deprecation.warn(
+        'Spree::Ability.register_ability is deprecated and will be removed in Spree 5.5. ' \
+        'Please use Spree::PermissionSets instead. See Spree::PermissionSets::Base for details.'
+      )
       abilities.add(ability)
     end
 
+    # @deprecated Use Spree::PermissionSets instead. Will be removed in Spree 5.5.
     def self.remove_ability(ability)
+      Spree::Deprecation.warn(
+        'Spree::Ability.remove_ability is deprecated and will be removed in Spree 5.5. ' \
+        'Please use Spree::PermissionSets instead. See Spree::PermissionSets::Base for details.'
+      )
       abilities.delete(ability)
     end
 
