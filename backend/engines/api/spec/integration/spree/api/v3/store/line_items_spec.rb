@@ -34,7 +34,7 @@ RSpec.describe 'Line Items API', type: :request, swagger_doc: 'api-reference/sto
         required: %w[variant_id]
       }
 
-      response '201', 'line item created' do
+      response '201', 'item added, returns updated order' do
         let(:new_product) { create(:product, stores: [store]) }
         let(:new_variant) { new_product.master }
         let(:'x-spree-api-key') { api_key.token }
@@ -42,11 +42,11 @@ RSpec.describe 'Line Items API', type: :request, swagger_doc: 'api-reference/sto
         let(:order_id) { order.to_param }
         let(:body) { { variant_id: new_variant.prefixed_id, quantity: 2 } }
 
-        schema '$ref' => '#/components/schemas/StoreLineItem'
+        schema '$ref' => '#/components/schemas/StoreOrder'
 
         run_test! do |response|
           data = JSON.parse(response.body)
-          expect(data['quantity']).to eq(2)
+          expect(data['number']).to eq(order.number)
         end
       end
 
@@ -95,18 +95,19 @@ RSpec.describe 'Line Items API', type: :request, swagger_doc: 'api-reference/sto
         required: %w[quantity]
       }
 
-      response '200', 'line item updated' do
+      response '200', 'quantity updated, returns updated order' do
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:order_id) { order.to_param }
         let(:id) { line_item.to_param }
         let(:body) { { quantity: 5 } }
 
-        schema '$ref' => '#/components/schemas/StoreLineItem'
+        schema '$ref' => '#/components/schemas/StoreOrder'
 
         run_test! do |response|
           data = JSON.parse(response.body)
-          expect(data['quantity']).to eq(5)
+          expect(data['number']).to eq(order.number)
+          expect(line_item.reload.quantity).to eq(5)
         end
       end
 
@@ -124,14 +125,18 @@ RSpec.describe 'Line Items API', type: :request, swagger_doc: 'api-reference/sto
       parameter name: :id, in: :path, type: :string, required: true
       parameter name: :order_token, in: :query, type: :string, required: false
 
-      response '204', 'line item removed' do
+      response '200', 'line item removed, returns updated order' do
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:order_id) { order.to_param }
         let(:id) { line_item.to_param }
 
-        run_test! do
+        schema '$ref' => '#/components/schemas/StoreOrder'
+
+        run_test! do |response|
           expect(order.reload.line_items).to be_empty
+          data = JSON.parse(response.body)
+          expect(data['number']).to eq(order.number)
         end
       end
 

@@ -77,12 +77,13 @@ export async function getShipments(
 
 /**
  * Select a shipping rate for a shipment.
+ * Returns the updated order with recalculated totals.
  */
 export async function selectShippingRate(
   orderId: string,
   shipmentId: string,
   shippingRateId: string
-): Promise<StoreShipment> {
+): Promise<StoreOrder> {
   const options = await getCheckoutOptions();
   const result = await getClient().store.orders.shipments.update(
     orderId,

@@ -1,5 +1,12 @@
 # @spree/next
 
+## 0.2.2
+
+### Patch Changes
+
+- All cart/checkout mutations (`addItem`, `updateItem`, `removeItem`, `selectShippingRate`) now return the updated `StoreOrder` with recalculated totals, eliminating the need for follow-up fetches
+- `StoreOrder` now always includes all associations (line items, shipments, payments, addresses) — no need to pass `includes` param
+
 ## 0.2.1
 
 ### Patch Changes
@@ -11,6 +18,8 @@
 ### Minor Changes
 
 - Restructure to match @spree/sdk dual API namespace changes
+- Add payment sessions support (`createPaymentSession`, `completePaymentSession`)
+- Add checkout `complete()` action
 
 ## 0.1.2
 

@@ -18,7 +18,7 @@ module Spree
                 @resource.save!
               end
 
-              render json: serialize_resource(@resource)
+              render_order
             end
 
             protected

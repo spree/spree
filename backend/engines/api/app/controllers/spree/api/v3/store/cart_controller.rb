@@ -66,12 +66,6 @@ module Spree
             result[:token] = resource.token if resource.token.present?
             result
           end
-
-          # Cart always includes line_items by default
-          def include_list
-            base = super
-            base.include?('line_items') ? base : base + ['line_items']
-          end
         end
       end
     end

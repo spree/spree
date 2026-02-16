@@ -111,7 +111,7 @@ RSpec.describe Spree::Api::V3::Store::Orders::ShipmentsController, type: :contro
   describe 'PATCH #update' do
     let(:shipping_rate) { shipment.shipping_rates.first }
 
-    it 'selects a shipping rate' do
+    it 'selects a shipping rate and returns updated order' do
       skip 'Shipping rate setup requires more complex factory' unless shipping_rate.present?
 
       patch :update, params: {
@@ -121,6 +121,8 @@ RSpec.describe Spree::Api::V3::Store::Orders::ShipmentsController, type: :contro
       }
 
       expect(response).to have_http_status(:ok)
+      expect(json_response['id']).to eq(order.prefixed_id)
+      expect(json_response['number']).to eq(order.number)
       expect(shipment.reload.selected_shipping_rate_id).to eq(shipping_rate.id)
     end
 

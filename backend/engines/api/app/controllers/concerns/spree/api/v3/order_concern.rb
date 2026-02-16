@@ -30,6 +30,13 @@ module Spree
 
         protected
 
+        # Render the parent order as JSON using the order serializer.
+        # Use this when sub-resource mutations should return the updated order
+        # (e.g., line items, coupon codes, store credits).
+        def render_order(status: :ok)
+          render json: Spree.api.order_serializer.new(@parent.reload, params: serializer_params).to_h, status: status
+        end
+
         def order_token
           # Check x-spree-order-token header first (lowercase for consistency)
           header = request.headers['x-spree-order-token']

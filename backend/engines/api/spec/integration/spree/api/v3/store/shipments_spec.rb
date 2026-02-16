@@ -113,7 +113,7 @@ RSpec.describe 'Shipments API', type: :request, swagger_doc: 'api-reference/stor
         required: %w[selected_shipping_rate_id]
       }
 
-      response '200', 'shipping rate selected' do
+      response '200', 'shipping rate selected, returns updated order' do
         let(:shipping_rate) { shipment.shipping_rates.first }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
@@ -122,9 +122,12 @@ RSpec.describe 'Shipments API', type: :request, swagger_doc: 'api-reference/stor
         let(:token) { order.token }
         let(:body) { { selected_shipping_rate_id: shipping_rate.to_param } }
 
-        schema '$ref' => '#/components/schemas/StoreShipment'
+        schema '$ref' => '#/components/schemas/StoreOrder'
 
-        run_test!
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['number']).to eq(order.number)
+        end
       end
 
       response '404', 'shipping rate not found' do
