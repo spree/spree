@@ -115,6 +115,23 @@ export interface UpdateOrderParams {
   ship_address?: AddressParams;
 }
 
+// Payment Sessions
+export interface CreatePaymentSessionParams {
+  payment_method_id: string;
+  amount?: string;
+  external_data?: Record<string, unknown>;
+}
+
+export interface UpdatePaymentSessionParams {
+  amount?: string;
+  external_data?: Record<string, unknown>;
+}
+
+export interface CompletePaymentSessionParams {
+  session_result?: string;
+  external_data?: Record<string, unknown>;
+}
+
 // Product Filters types
 export interface FilterOption {
   id: string;

@@ -217,6 +217,79 @@ export const handlers = [
     HttpResponse.json({ data: [], meta: paginationMeta })
   ),
 
+  // Payment Sessions
+  http.post(`${API_PREFIX}/orders/:orderId/payment_sessions`, () =>
+    HttpResponse.json({
+      id: 'ps_1',
+      status: 'pending',
+      amount: '99.99',
+      currency: 'USD',
+      external_id: 'bogus_abc123',
+      external_data: { client_secret: 'bogus_secret_xyz' },
+      expires_at: null,
+      customer_external_id: null,
+      payment_method_id: 'pm_1',
+      order_id: 'order_1',
+      created_at: '2026-02-13T00:00:00.000Z',
+      updated_at: '2026-02-13T00:00:00.000Z',
+      payment_method: { id: 'pm_1', name: 'Credit Card', description: null, type: 'Spree::Gateway::Bogus' },
+    }, { status: 201 })
+  ),
+
+  http.get(`${API_PREFIX}/orders/:orderId/payment_sessions/:id`, () =>
+    HttpResponse.json({
+      id: 'ps_1',
+      status: 'pending',
+      amount: '99.99',
+      currency: 'USD',
+      external_id: 'bogus_abc123',
+      external_data: { client_secret: 'bogus_secret_xyz' },
+      expires_at: null,
+      customer_external_id: null,
+      payment_method_id: 'pm_1',
+      order_id: 'order_1',
+      created_at: '2026-02-13T00:00:00.000Z',
+      updated_at: '2026-02-13T00:00:00.000Z',
+      payment_method: { id: 'pm_1', name: 'Credit Card', description: null, type: 'Spree::Gateway::Bogus' },
+    })
+  ),
+
+  http.patch(`${API_PREFIX}/orders/:orderId/payment_sessions/:id/complete`, () =>
+    HttpResponse.json({
+      id: 'ps_1',
+      status: 'completed',
+      amount: '99.99',
+      currency: 'USD',
+      external_id: 'bogus_abc123',
+      external_data: { client_secret: 'bogus_secret_xyz' },
+      expires_at: null,
+      customer_external_id: null,
+      payment_method_id: 'pm_1',
+      order_id: 'order_1',
+      created_at: '2026-02-13T00:00:00.000Z',
+      updated_at: '2026-02-13T00:00:00.000Z',
+      payment_method: { id: 'pm_1', name: 'Credit Card', description: null, type: 'Spree::Gateway::Bogus' },
+    })
+  ),
+
+  http.patch(`${API_PREFIX}/orders/:orderId/payment_sessions/:id`, () =>
+    HttpResponse.json({
+      id: 'ps_1',
+      status: 'pending',
+      amount: '50.00',
+      currency: 'USD',
+      external_id: 'bogus_abc123',
+      external_data: { client_secret: 'bogus_secret_xyz' },
+      expires_at: null,
+      customer_external_id: null,
+      payment_method_id: 'pm_1',
+      order_id: 'order_1',
+      created_at: '2026-02-13T00:00:00.000Z',
+      updated_at: '2026-02-13T00:00:00.000Z',
+      payment_method: { id: 'pm_1', name: 'Credit Card', description: null, type: 'Spree::Gateway::Bogus' },
+    })
+  ),
+
   // Coupon Codes
   http.post(`${API_PREFIX}/orders/:orderId/coupon_codes`, () =>
     HttpResponse.json(fixtures.order)
