@@ -1,5 +1,11 @@
 # @spree/sdk
 
+## 0.2.1
+
+### Patch Changes
+
+- Add Payment Sessions support: `client.store.orders.paymentSessions` with `create`, `get`, `update`, and `complete` methods. Add `session_required` field to `StorePaymentMethod` type. Add `StorePaymentSession`, `CreatePaymentSessionParams`, `UpdatePaymentSessionParams`, and `CompletePaymentSessionParams` types.
+
 ## 0.2.0
 
 ### Minor Changes

@@ -1,5 +1,17 @@
 # @spree/next
 
+## 0.2.1
+
+### Patch Changes
+
+- Add Payment Sessions server actions: `createPaymentSession`, `getPaymentSession`, `updatePaymentSession`, and `completePaymentSession`. Re-export `StorePaymentSession` and related param types from `@spree/sdk`.
+
+## 0.2.0
+
+### Minor Changes
+
+- Restructure to match @spree/sdk dual API namespace changes
+
 ## 0.1.2
 
 ### Patch Changes
