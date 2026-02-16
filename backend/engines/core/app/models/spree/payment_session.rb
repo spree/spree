@@ -6,6 +6,10 @@ module Spree
 
     include Spree::Metafields
 
+    self.event_prefix = 'payment_session'
+
+    publishes_lifecycle_events
+
     belongs_to :order, class_name: 'Spree::Order'
     belongs_to :payment_method, class_name: 'Spree::PaymentMethod'
     belongs_to :customer, class_name: Spree.user_class.to_s, optional: true
@@ -45,6 +49,12 @@ module Spree
       event :expire do
         transition [:pending, :processing] => :expired
       end
+
+      after_transition to: :processing, do: :publish_processing_event
+      after_transition to: :completed, do: :publish_completed_event
+      after_transition to: :failed, do: :publish_failed_event
+      after_transition to: :canceled, do: :publish_canceled_event
+      after_transition to: :expired, do: :publish_expired_event
     end
 
     scope :not_expired, -> { where('expires_at IS NULL OR expires_at > ?', Time.current) }
@@ -67,6 +77,26 @@ module Spree
     end
 
     private
+
+    def publish_processing_event
+      publish_event('payment_session.processing')
+    end
+
+    def publish_completed_event
+      publish_event('payment_session.completed')
+    end
+
+    def publish_failed_event
+      publish_event('payment_session.failed')
+    end
+
+    def publish_canceled_event
+      publish_event('payment_session.canceled')
+    end
+
+    def publish_expired_event
+      publish_event('payment_session.expired')
+    end
 
     def set_defaults_from_order
       return unless order
