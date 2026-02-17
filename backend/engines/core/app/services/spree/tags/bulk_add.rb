@@ -15,29 +15,38 @@ module Spree
         end
 
         record_class = records.first.class
-
-        taggings_to_upsert = taggings_attributes(tags, records, context: context, record_class: record_class)
-
-        return if taggings_to_upsert.empty?
-
-        ActsAsTaggableOn::Tagging.insert_all(taggings_to_upsert)
-
         record_ids = records.pluck(:id)
-        tagging_ids = ActsAsTaggableOn::Tagging.where(
-          taggable_id: record_ids,
-          taggable_type: record_class.to_s,
-          context: context,
-          tag_id: tags.map(&:id)
-        ).pluck(:id)
+        tag_ids = tags.map(&:id)
 
+        taggings_scope = taggings_scope_for(record_ids, record_class, context, tag_ids)
+
+        existing = taggings_scope.pluck(:id, :taggable_id, :tag_id)
+        existing_pairs = existing.map { |_, taggable_id, tag_id| [taggable_id, tag_id] }.to_set
+
+        new_taggings = taggings_attributes(tags, records, context: context, record_class: record_class).reject do |attrs|
+          existing_pairs.include?([attrs[:taggable_id], attrs[:tag_id]])
+        end
+
+        return if new_taggings.empty?
+
+        ActsAsTaggableOn::Tagging.insert_all(new_taggings)
         record_class.where(id: record_ids).touch_all
 
-        Spree::Events.publish('tagging.bulk_created', { tagging_ids: tagging_ids }) if tagging_ids.any?
+        new_tagging_ids = taggings_scope.where.not(id: existing.map(&:first)).pluck(:id)
 
-        tagging_ids
+        Spree::Events.publish('tagging.bulk_created', { tagging_ids: new_tagging_ids }) if new_tagging_ids.any?
       end
 
       private
+
+      def taggings_scope_for(record_ids, record_class, context, tag_ids)
+        ActsAsTaggableOn::Tagging.where(
+          taggable_id: record_ids,
+          taggable_type: record_class.to_s,
+          context: context,
+          tag_id: tag_ids
+        )
+      end
 
       def taggings_attributes(tags, records, context:, record_class:)
         records.pluck(:id).map do |record_id|
