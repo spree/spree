@@ -1,72 +1,142 @@
 ---
-title: "Customer Profile Overview"
-description: "In this user doc, you'll learn how to access and interpret the Customer Profile Overview in the Spree admin panel."
+title: "Customer Profiles"
+description: "Learn how to access and interpret the Customer Profile in the Spree admin dashboard."
 ---
 
-The customer profile provides an overview view of each customer’s activity, helping you better understand their behavior and purchasing habits. 
+The Customer Profile gives you a complete view of a customer’s activity, order history, and account details - all in one place. It helps you better understand purchasing behavior, identify high-value customers, and provide faster, more personalized support.
 
-It is essential for tracking engagement through various means, allowing you to improve customer service and follow up on potential sales opportunities.
+## Accessing a Customer Profile
 
-To review a customer profile, navigate to the Customer tab of the admin dashboard.
+To access a customer’s profile, navigate to **Customers** in the admin dashboard.
 
-<img alt="Customer Profile" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1747649227/docs/Customers/Customer%20Profile%20Overview/5.2.1_Customer_Profile_-_Navigate_To_Tab_qzxziv.png" />
+![Understanding the customer profile page in Spree commerce](/docs/images/user/customers/customer-profiles/1-customers-tab.png)
 
-Find and click on the customer whose profile you’d like to review. This will open up the customer profile page.
+Find the customer you’d like to review (use search and filters if needed), and click on the customer’s name to open their profile.
 
-<img alt="Customer Profile" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1747649231/docs/Customers/Customer%20Profile%20Overview/5.2.2_Customer_Profile_-_Open_Profile_Page_ijlotk.png" />
+![A customer's profile in the Spree Commerce dashboard](/docs/images/user/customers/customer-profiles/2-customer-profile.png)
 
-Here you’ll see various sections containing data related to this customer. Let’s take a look at each of them.
+The profile page is divided into several sections, each providing important information about the customer.
 
 ## User Analytics
 
-<img alt="Customer Profile" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1747649227/docs/Customers/Customer%20Profile%20Overview/5.2.3_Customer_Profile_-_User_Analytics_udlgfw.png" />
+![Customer profile analytics in Spree Commerce](/docs/images/user/customers/customer-profiles/3-user-analytics.png)
 
-At the top of the page, you’ll notice an analytics section that provides some important metrics, specifically:
+At the top of the page, you’ll see a summary of key customer metrics:
 
 - Total Amount Spent
 - Number of Orders
 - Average Order Value
-- Joined Date
-- Number of Visits
+- Store Credits
+  - Shows the value of store credits the customer has available
+  - You can assign store credits here by clicking **Add Store Credit**
+- Created At date, i.e., when they became a customer
+
+These metrics give you a quick snapshot of the customer’s engagement and lifetime value.
+
+## Details
+
+![A customer's personal details in the Spree Commerce dashboard](/docs/images/user/customers/customer-profiles/4-user-details.png)
+
+This section contains core account information, including:
+
+- Email address
+- Phone number
+- First and last name
+- Email marketing opt-in status
+- Assigned [<u>Customer Groups</u>](https://spreecommerce.org/docs/user/customers/customer-groups) 
+- Customer tags
+
+<Note>You can use **tags** and **customer groups** to segment customers for promotions, pricing rules, or internal organization.</Note>
+
+## Addresses
+
+### **Shipping Address**
+
+![A customer's shipping address in the Spree dashboard](/docs/images/user/customers/customer-profiles/5-shipping-address.png)
+
+This section displays the customer’s default shipping address.
+
+<Note>If a Google Maps API key is connected, a map preview with a pinned location will also be shown.</Note>
+
+### **Billing Address**
+
+![A customer's billing address in the Spree dashboard](/docs/images/user/customers/customer-profiles/6-billing-address.png)
+
+Displays the billing address or indicates **“Same as shipping address”** if that option is selected.
+
+## Internal Note
+
+![An internal customer note in the Spree Commerce](/docs/images/user/customers/customer-profiles/7-internal-note.png)
+
+The Internal Note section displays any notes added by admins related to the customer.
+
+These notes are not visible to the customer and can be used to:
+
+- Document special agreements or pricing arrangements
+- Flag account concern
+- Record support interactions
+- Add context for other team members
+
+Internal notes help ensure your team has the full picture when assisting the customer.
 
 ## Last Order Placed
 
-<img alt="Customer Profile" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1747649228/docs/Customers/Customer%20Profile%20Overview/5.2.4_Customer_Profile_-_Last_Order_Placed_z7awul.png" />
+![The last order placed by a customer in Spree Commerce](/docs/images/user/customers/customer-profiles/8-last-order-placed.png)
 
-As the name suggests, this section displays the details of the last order placed by the customer.
+This section shows a summary of the most recent order placed by the customer.
 
-Note: You can also view a list of all orders placed by the customer by clicking on ‘View all orders’ in the bottom right corner of the section. 
-
-## Timeline
-
-<img alt="Customer Profile" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1747649228/docs/Customers/Customer%20Profile%20Overview/5.2.5_Customer_Profile_-_Timeline_hb6qdz.png" />
-
-The Timeline subsection displays all product and transaction related actions taken by the customer, such as viewing products, adds to cart, and checkout steps.
+You can click the order number (e.g., R394161122) to see the full order details page.
 
 ## Orders
 
-<img alt="Customer Profile" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1747649228/docs/Customers/Customer%20Profile%20Overview/5.2.6_Customer_Profile_-_Orders_x1ja2o.png" />
+![Orders subsection of the customer proflile in the Spree dashboard](/docs/images/user/customers/customer-profiles/9-customer-orders.png)
 
-The Orders subsection displays a list of all orders placed by the customer, with the ability to search and filter the orders within the Customer Profile.
+The Orders subsection displays a full list of all completed orders associated with the customer.
+
+You can:
+
+- Search within the customer’s orders
+- Apply filters
+- Sort and select which columns to display
+
+This makes it easy to quickly find specific transactions.
 
 ## Draft Orders
 
-<img alt="Customer Profile" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1747649228/docs/Customers/Customer%20Profile%20Overview/5.2.7_Customer_Profile_-_Draft_Orders_l8enoa.png" />
+![Draft orders associated with a customer in Spree Commerce](/docs/images/user/customers/customer-profiles/10-draft-orders.png)
 
-Draft Orders are orders that are yet to be completed by the customer, including abandoned carts, and admin-created orders that do not have payments attached to them yet.
+Draft Orders include:
+
+- Abandoned carts
+- Admin-created orders that are not yet completed
+- Orders without attached payments
+
+This section is useful for following up on incomplete purchases or manually created orders.
 
 ## Gift Cards
 
-<img alt="Customer Profile" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1747649229/docs/Customers/Customer%20Profile%20Overview/5.2.8_Customer_Profile_-_Gift_Cards_afgs9g.png" />
+![Gift cards issued to a customer in Spree Commerce](/docs/images/user/customers/customer-profiles/11-gift-cards.png)
 
-Here you can see a list of gift cards assigned to the customer, as well as the amount of credit used.
+Displays all gift cards assigned to the customer, including:
 
-To learn more about assigned gift cards, please refer to another support article.
+- Current balance
+- Amount used
+- Currency
+- Status
+
+For more information on issuing gift cards, please refer to our [<u>Issuing Gift Cards</u>](https://spreecommerce.org/docs/user/customers/issue-gift-card) article.
 
 ## Store Credits
 
-<img alt="Customer Profile" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1747649230/docs/Customers/Customer%20Profile%20Overview/5.2.9_Customer_Profile_-_Store_Credit_bkkx3p.png" />
+![Store credits assigned to a customer in Spree Commerce](/docs/images/user/customers/customer-profiles/12-store-credits.png)
 
-Here you can see a list of any store credit that’s been assigned the customer, as well as store credit usage.
+Displays any store credit assigned to the customer, along with usage history.
 
-To learn more about assigning store credits, please refer to another support article.
+Store credits are commonly used for refunds, loyalty rewards, or manual adjustments. 
+
+In more advanced use cases, store credits may function as the primary payment method - especially in B2B environments where companies maintain a prepaid balance or approved credit limit and settle invoices periodically.
+
+To learn more about store credits, please refer to our [<u>Assigning Store Credits</u>](https://spreecommerce.org/docs/user/customers/assign-store-credits) article.
+
+
+In summary, the Customer Profile gives you a centralized view of everything related to a customer - making it easier to support them, reward loyalty, and resolve issues quickly.
