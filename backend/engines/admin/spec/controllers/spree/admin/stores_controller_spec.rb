@@ -6,7 +6,6 @@ describe Spree::Admin::StoresController do
 
   let(:store) { create(:store) }
   let(:user) { create(:admin_user) }
-  let(:user2) { create(:admin_user) }
   let!(:uk_country) { create(:country, iso: 'GB', iso3: 'GBR', name: 'United Kingdom') }
 
   before do
@@ -14,36 +13,8 @@ describe Spree::Admin::StoresController do
     allow(controller).to receive(:try_spree_current_user).and_return(user)
 
     store.add_user(user)
-    store.add_user(user2)
 
     allow(Spree).to receive(:root_domain).and_return('lvh.me')
-  end
-
-  describe 'POST #create' do
-    subject { post :create, params: { store: store_params }, format: :turbo_stream }
-
-    let(:store_params) do
-      {
-        name: 'New UK Store',
-        default_currency: 'GBR',
-        default_country_iso: 'GB',
-        default_locale: 'en'
-      }
-    end
-
-    it 'creates a new store' do
-      expect(store.users).to contain_exactly(user, user2)
-      expect { subject }.to change(Spree::Store, :count).by(1).and change(Spree::RoleUser, :count).by(2)
-
-      expect(flash[:success]).to match('has been successfully created')
-
-      new_store = Spree::Store.last
-      expect(new_store.name).to eq('New UK Store')
-      expect(new_store.default_currency).to eq('GBR')
-      expect(new_store.default_country).to eq(uk_country)
-      expect(new_store.default_locale).to eq('en')
-      expect(new_store.users).to contain_exactly(user, user2)
-    end
   end
 
   describe 'GET #edit' do

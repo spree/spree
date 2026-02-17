@@ -15,7 +15,7 @@
     <%= nav_item(Spree.t(:checkout), spree.edit_admin_store_path(section: 'checkout'), icon: 'shopping-cart', active: params[:section] == 'checkout') if can?(:manage, current_store) %>
     <%= render_admin_partials(:store_settings_nav_partials) %>
 
-    <% if can?(:manage, Spree::CustomDomain) %>
+    <% if defined?(Spree::CustomDomain) && can?(:manage, Spree::CustomDomain) %>
       <%= nav_item(Spree.t(:domains), spree.admin_custom_domains_path, icon: 'world-www') %>
     <% end %>
 

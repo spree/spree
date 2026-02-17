@@ -109,17 +109,6 @@ RSpec.describe Spree::CSV::ProductVariantPresenter do
           expect(subject[31]).to start_with("http://#{store.url}")
         end
 
-        context 'when custom domain is set' do
-          let!(:custom_domain) { create(:custom_domain, store: store, url: 'custom.domain') }
-
-          before { store.reload }
-
-          it 'returns images with the custom domain' do
-            expect(subject[29]).to start_with('http://custom.domain')
-            expect(subject[30]).to start_with('http://custom.domain')
-            expect(subject[31]).to start_with('http://custom.domain')
-          end
-        end
       end
     end
   end

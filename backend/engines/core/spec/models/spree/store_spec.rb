@@ -325,29 +325,6 @@ describe Spree::Store, type: :model, without_global_store: true do
       end
     end
 
-    describe '#import_products_from_store' do
-      let(:store) { build(:store, import_products_from_store_id: other_store.id) }
-      let(:other_store) { create(:store) }
-      let!(:products) { create_list(:product, 2, stores: [other_store]) }
-
-      it 'imports products from other store' do
-        expect { store.save! }.to change(Spree::StoreProduct, :count).by(2)
-        expect(store.products.count).to eq(2)
-
-        expect(store.products.pluck(:id)).to match_array(products.pluck(:id))
-      end
-    end
-
-    describe '#import_payment_methods_from_store' do
-      let(:store) { build(:store, import_payment_methods_from_store_id: other_store.id) }
-      let(:other_store) { create(:store) }
-      let!(:payment_methods) { create_list(:payment_method, 2, stores: [other_store]) }
-
-      it 'imports payment methods from other store' do
-        expect { store.save! }.to change(Spree::StorePaymentMethod, :count).by(2)
-        expect(store.payment_methods.count).to eq(2)
-      end
-    end
   end
 
   context 'Validations' do
@@ -389,31 +366,17 @@ describe Spree::Store, type: :model, without_global_store: true do
     end
   end
 
-  describe '.by_url' do
-    let!(:store)    { create(:store, url: "website1.com\nwww.subdomain.com") }
-    let!(:store_2)  { create(:store, url: 'freethewhales.com') }
-
-    it 'finds stores by url' do
-      by_domain = Spree::Store.by_url('www.subdomain.com')
-
-      expect(by_domain).to include(store)
-      expect(by_domain).not_to include(store_2)
-    end
-  end
-
   describe '.current' do
-    # there is a default store created with the test_app rake task.
     let!(:store_1) { Spree::Store.first || create(:store) }
 
-    let!(:store_2) { create(:store, default: false, url: 'www.subdomain.com') }
-
-    it 'returns default when no domain' do
+    it 'returns Spree::Current.store' do
+      Spree::Current.store = store_1
       expect(subject.class.current).to eql(store_1)
     end
 
-    it 'returns store for domain' do
-      expect(Spree::Stores::FindCurrent.new(url: 'spreecommerce.com').execute).to eql(store_1)
-      expect(Spree::Stores::FindCurrent.new(url: 'www.subdomain.com').execute).to eql(store_2)
+    it 'ignores url argument' do
+      Spree::Current.store = store_1
+      expect(subject.class.current('other-url.com')).to eql(store_1)
     end
   end
 
@@ -874,14 +837,16 @@ describe Spree::Store, type: :model, without_global_store: true do
   describe '#formatted_url_or_custom_domain' do
     let(:store) { build(:store, code: 'mystore', url: 'mystore.mydomain.dev:3000') }
 
-    context 'without custom domain' do
-      it { expect(store.formatted_url_or_custom_domain).to eq('http://mystore.mydomain.dev:3000') }
+    it 'returns formatted_url as fallback' do
+      expect(store.formatted_url_or_custom_domain).to eq('http://mystore.mydomain.dev:3000')
     end
+  end
 
-    context 'with custom domain' do
-      let!(:custom_domain) { create(:custom_domain, store: store, url: 'mystore.com') }
+  describe '#url_or_custom_domain' do
+    let(:store) { build(:store, code: 'mystore', url: 'mystore.mydomain.dev') }
 
-      it { expect(store.formatted_url_or_custom_domain).to eq('http://mystore.com:3000') }
+    it 'returns url as fallback' do
+      expect(store.url_or_custom_domain).to eq('mystore.mydomain.dev')
     end
   end
 end

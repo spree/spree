@@ -103,9 +103,6 @@ module Spree
     has_many :reports, class_name: 'Spree::Report'
     has_many :exports, class_name: 'Spree::Export'
 
-    has_many :custom_domains, class_name: 'Spree::CustomDomain', dependent: :destroy
-    has_one :default_custom_domain, -> { where(default: true) }, class_name: 'Spree::CustomDomain'
-
     has_many :posts, class_name: 'Spree::Post', dependent: :destroy, inverse_of: :store
     has_many :post_categories, class_name: 'Spree::PostCategory', dependent: :destroy, inverse_of: :store
 
@@ -134,8 +131,6 @@ module Spree
     #
     # Virtual attributes
     #
-    attribute :import_products_from_store_id, :string, default: nil
-    attribute :import_payment_methods_from_store_id, :string, default: nil
     attr_accessor :skip_validate_not_last
     store_accessor :private_metadata, :storefront_password
 
@@ -176,8 +171,6 @@ module Spree
     after_create :ensure_default_taxonomies_are_created
     after_create :ensure_default_automatic_taxons
     after_create :ensure_default_post_categories_are_created
-    after_create :import_products_from_store, if: -> { import_products_from_store_id.present? }
-    after_create :import_payment_methods_from_store, if: -> { import_payment_methods_from_store_id.present? }
     after_create :create_default_policies
     before_destroy :validate_not_last, unless: :skip_validate_not_last
     before_destroy :pass_default_flag_to_other_store
@@ -188,20 +181,14 @@ module Spree
     # Scopes
     #
     default_scope { order(created_at: :asc) }
-    scope :by_custom_domain, ->(url) { left_joins(:custom_domains).where("#{Spree::CustomDomain.table_name}.url" => url) }
-    scope :by_url, ->(url) { where(url: url).or(where("#{table_name}.url like ?", "%#{url}%")) }
 
     #
     # Delegations
     #
     delegate :iso, to: :default_country, prefix: true, allow_nil: true
 
-    def self.current(url = nil)
-      if url.present?
-        Spree.current_store_finder.new(url: url).execute
-      else
-        Spree::Current.store
-      end
+    def self.current(_url = nil)
+      Spree::Current.store
     end
 
     # @deprecated The or_initialize behavior will be removed in Spree 5.5.
@@ -299,26 +286,12 @@ module Spree
       end
     end
 
-    def formatted_custom_domain
-      return unless default_custom_domain
-
-      @formatted_custom_domain ||= if Rails.env.development? || Rails.env.test?
-        URI::Generic.build(
-          scheme: Rails.application.routes.default_url_options[:protocol] || 'http',
-          host: default_custom_domain.url,
-          port: Rails.application.routes.default_url_options[:port]
-        ).to_s
-      else
-        URI::HTTPS.build(host: default_custom_domain.url).to_s
-      end
-    end
-
     def url_or_custom_domain
-      default_custom_domain&.url || url
+      url
     end
 
     def formatted_url_or_custom_domain
-      formatted_custom_domain || formatted_url
+      formatted_url
     end
 
     # Returns the countries available for checkout for the store or creates a new one if it doesn't exist
@@ -383,24 +356,6 @@ module Spree
 
     def digital_shipping_category
       @digital_shipping_category ||= ShippingCategory.find_or_create_by(name: 'Digital')
-    end
-
-    def import_products_from_store
-      store = Store.find(import_products_from_store_id)
-      product_ids = store.products.pluck(:id)
-
-      return if product_ids.empty?
-
-      StoreProduct.insert_all(product_ids.map { |product_id| { store_id: id, product_id: product_id } })
-    end
-
-    def import_payment_methods_from_store
-      store = Store.find(import_payment_methods_from_store_id)
-      payment_method_ids = store.payment_method_ids
-
-      return if payment_method_ids.empty?
-
-      StorePaymentMethod.insert_all(payment_method_ids.map { |payment_method_id| { store_id: id, payment_method_id: payment_method_id } })
     end
 
     %w[customer_terms_of_service customer_privacy_policy customer_returns_policy customer_shipping_policy].each do |policy_method|

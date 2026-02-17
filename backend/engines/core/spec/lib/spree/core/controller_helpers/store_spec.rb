@@ -21,28 +21,6 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
         expect(controller.current_store).to eq store
       end
     end
-
-    context 'by domain' do
-      before do
-        controller.request.env['SERVER_NAME'] = 'another.com'
-      end
-
-      it 'returns current store' do
-        expect(controller.current_store).to eq store_2
-      end
-    end
-
-    context 'by subdomain' do
-      let!(:store_3) { create :store, url: 'some.another.com' }
-
-      before do
-        controller.request.env['SERVER_NAME'] = 'some.another.com'
-      end
-
-      it 'returns current store' do
-        expect(controller.current_store).to eq store_3
-      end
-    end
   end
 
   describe '#ensure_current_store' do

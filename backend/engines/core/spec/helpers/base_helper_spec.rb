@@ -83,14 +83,6 @@ describe Spree::BaseHelper, type: :helper do
         end
       end
 
-      context 'for product with custom domain' do
-        let!(:custom_domain) { create :custom_domain, store: current_store }
-
-        it 'returns the product url' do
-          expect(spree_storefront_resource_url(product)).to eq("http://#{custom_domain.url}/products/#{product.slug}")
-        end
-      end
-
       context 'for product with relative option' do
         it 'returns the product url' do
           expect(spree_storefront_resource_url(product, relative: true)).to eq("/products/#{product.slug}")

@@ -209,11 +209,6 @@ Spree::Core::Engine.add_routes do
         get :edit_emails
       end
     end
-    # setting up a new store
-    resources :stores, only: [:new, :create] do
-      resources :role_users, only: [:destroy]
-      resources :links, controller: 'page_links', only: [:create]
-    end
     resources :policies, except: :show
     resources :payment_methods, except: :show
     resources :shipping_methods, except: :show
@@ -230,8 +225,6 @@ Spree::Core::Engine.add_routes do
         put :mark_as_default
       end
     end
-    resources :custom_domains, except: :show
-
     # integrations
     resources :integrations
 

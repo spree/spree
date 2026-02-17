@@ -277,7 +277,6 @@ module Spree
                           :preferred_limit_digital_download_count, :preferred_limit_digital_download_days,
                           :preferred_digital_asset_link_expire_time,
                           :logo, :mailer_logo, :social_logo, :favicon_image,
-                          :import_products_from_store_id, :import_payment_methods_from_store_id,
                           :checkout_message, :preferred_guest_checkout,
                           :customer_terms_of_service, :customer_privacy_policy,
                           :customer_returns_policy, :customer_shipping_policy, :default_country_iso]
