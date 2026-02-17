@@ -1,42 +1,61 @@
 ---
 title: "Issue a Gift Card"
-description: "In this Spree user doc, you'll learn how to issue a gift to an existing customer."
+description: "Learn how to issue gift cards to customers in the Spree admin dashboard."
 ---
-Gift cards are prepaid balances that can be purchased or issued and redeemed like cash on future purchases, often with no expiration date.
 
-In Spree, you can create and issue gift cards directly to specific customers or generate them in bulk for distribution at a later time.
+Gift cards are prepaid balances that can be redeemed like cash on future purchases. They’re commonly used for promotions, customer service gestures, loyalty rewards, or as products sold directly to customers.
 
-This guide covers issuing a gift card to a specific customer.
+In Spree, you can issue gift cards to individual customers or generate them in bulk for later distribution. This guide covers how to issue a gift card to a specific customer.
 
-To issue a gift card to a customer, navigate to the Customers tab of the admin dashboard.
+## Issue a Gift Card
 
-<img alt="Issue a Gift Card" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1747652499/docs/Customers/Issue%20a%20Gift%20Card/5.3.2.1_Issue_a_Gift_Card_-_Navigate_To_Tab_ts8s7a.png" />
+To issue a gift card, navigate to **Customers** in the admin dashboard.
 
-Find and click on the customer who is supposed to receive the gift card to open their customer profile page.
+![How to issue a gift card to a customer in Spree Commerce](/docs/images/user/customers/gift-cards/1-customers-tab.png)
 
-<img alt="Issue a Gift Card" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1747652498/docs/Customers/Issue%20a%20Gift%20Card/5.3.2.2_Issue_a_Gift_Card_-_Customer_Profile_hgnkd0.png" />
+Find and click the customer who should receive the gift card to open their customer profile.
 
-Click on ‘More Actions’ in the top right corner and select ‘Issue a Gift Card’ from the dropdown.
+![Customer profile page in the Spree admin backend](/docs/images/user/customers/gift-cards/2-customer-profile.png)
 
-<img alt="Issue a Gift Card" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1747652352/docs/Customers/Issue%20a%20Gift%20Card/5.3.2.3_Issue_a_Gift_Card_-_Dropdown_Menu_fgzvdy.png" />
+Click the **three-dot menu** in the top right corner, and select **Add a Gift Card**.
 
-You’ll be redirected to the gift card creation page where you can define the details and conditions of the gift cards.
+![Issuing a gift card to a customer in Spree Commerce](/docs/images/user/customers/gift-cards/3-add-gift-card.png)
 
-<img alt="Issue a Gift Card" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1747652497/docs/Customers/Issue%20a%20Gift%20Card/5.3.2.4_Issue_a_Gift_Card_-_Gift_Card_Creation_swstod.png" />
+You’ll be redirected to the gift card creation form.
 
-The customer field will automatically be filled and uneditable, but you can enter values for the following fields:
+## Configure the Gift Card
 
-- Code - you can leave this blank and Spree will automatically generate a code
-- Amount - the amount to be placed on the gift card (required)
-- Minimum Order Amount - a minimum order value to use the gift card, can be set to 0 (required)
-- Expires At - the gift card’s expiration date, leave it blank for a non-expiring card
+![Configuring a gift card in Spree Commerce](/docs/images/user/customers/gift-cards/4-gift-card-form.png)
 
-Click ‘Create’ once you’re finished and the gift card will be added to the customer’s account.
+Complete the following fields:
 
-<img alt="Issue a Gift Card" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1747652351/docs/Customers/Issue%20a%20Gift%20Card/5.3.2.5_Issue_a_Gift_Card_-_Gift_Card_Issued_pswuil.png" />
+- **Code** - Leave blank to have Spree automatically generate a unique code, or enter one manually.
+- **Amount** - The value of the gift card.
+- **Currency** - Select the currency the gift card should be issued in.
+- **Expires At** - Optional expiration date. Leave blank for a non-expiring gift card.
 
-To learn more about creating gift cards in bulk, please refer to the Promotions section of our user documentation.
+Click **Create** to issue the gift card. It will immediately appear in the customer’s **Gift Cards** section.
 
-## Edit or Delete Gift Cards
+## Edit a Gift Card
 
-If you’d like to edit or delete a gift card, click on ‘Edit’ next to the gift card (found under the ‘Gift Cards’ subsection of the customer profile page) and take the appropriate action.
+![Editing a gift card in the Spree Commerce admin dashboard](/docs/images/user/customers/gift-cards/5-edit-gift-card.png)
+
+To modify a gift card:
+
+1. Go to the customer’s profile
+2. Scroll to the **Gift Cards** subsection
+3. Click on the gift card to be redirected that gift card's form
+4. Click **Edit** in the Settings section 
+5. Make your changes and click **Update**
+
+## Delete a Gift Card
+
+![Deleting a gift card in Spree Commerce](/docs/images/user/customers/gift-cards/6-delete-gift-card.png)
+
+To delete a gift card:
+
+1. Go to the customer’s profile
+2. Scroll to the **Gift Cards** subsection
+3. Click on the gift card to be redirected to that gift card's form
+4. Click **three-dot menu** in the top-right corner
+5. Click **Delete**
