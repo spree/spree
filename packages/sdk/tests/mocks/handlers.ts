@@ -205,11 +205,60 @@ export const handlers = [
 
   // Payments
   http.get(`${API_PREFIX}/orders/:orderId/payments`, () =>
-    HttpResponse.json({ data: [], meta: {} })
+    HttpResponse.json({
+      data: [
+        {
+          id: 'py_1',
+          payment_method_id: 'pm_1',
+          state: 'checkout',
+          response_code: '12345',
+          number: 'P1234',
+          amount: '19.99',
+          display_amount: '$19.99',
+          source_type: 'credit_card',
+          source: {
+            id: 'card_1',
+            cc_type: 'visa',
+            last_digits: '4242',
+            month: 12,
+            year: 2028,
+            name: 'John Doe',
+            default: true,
+            gateway_payment_profile_id: 'pm_stripe_123',
+          },
+          created_at: '2026-02-17T00:00:00.000Z',
+          updated_at: '2026-02-17T00:00:00.000Z',
+          payment_method: { id: 'pm_1', name: 'Credit Card', description: null, type: 'Spree::Gateway::Bogus', session_required: false },
+        },
+      ],
+      meta: paginationMeta,
+    })
   ),
 
   http.get(`${API_PREFIX}/orders/:orderId/payments/:id`, () =>
-    HttpResponse.json({ id: 'pay_1', state: 'checkout', amount: '19.99' })
+    HttpResponse.json({
+      id: 'py_1',
+      payment_method_id: 'pm_1',
+      state: 'checkout',
+      response_code: '12345',
+      number: 'P1234',
+      amount: '19.99',
+      display_amount: '$19.99',
+      source_type: 'credit_card',
+      source: {
+        id: 'card_1',
+        cc_type: 'visa',
+        last_digits: '4242',
+        month: 12,
+        year: 2028,
+        name: 'John Doe',
+        default: true,
+        gateway_payment_profile_id: 'pm_stripe_123',
+      },
+      created_at: '2026-02-17T00:00:00.000Z',
+      updated_at: '2026-02-17T00:00:00.000Z',
+      payment_method: { id: 'pm_1', name: 'Credit Card', description: null, type: 'Spree::Gateway::Bogus', session_required: false },
+    })
   ),
 
   // Payment Methods

@@ -23,6 +23,8 @@ export { StoreOrderSchema, type StoreOrder } from './StoreOrder';
 export { StoreOrderPromotionSchema, type StoreOrderPromotion } from './StoreOrderPromotion';
 export { StorePaymentSchema, type StorePayment } from './StorePayment';
 export { StorePaymentMethodSchema, type StorePaymentMethod } from './StorePaymentMethod';
+export { StorePaymentSessionSchema, type StorePaymentSession } from './StorePaymentSession';
+export { StorePaymentSourceSchema, type StorePaymentSource } from './StorePaymentSource';
 export { StorePriceSchema, type StorePrice } from './StorePrice';
 export { StoreProductSchema, type StoreProduct } from './StoreProduct';
 export { StoreShipmentSchema, type StoreShipment } from './StoreShipment';
@@ -31,6 +33,7 @@ export { StoreShippingRateSchema, type StoreShippingRate } from './StoreShipping
 export { StoreStateSchema, type StoreState } from './StoreState';
 export { StoreStockLocationSchema, type StoreStockLocation } from './StoreStockLocation';
 export { StoreStoreSchema, type StoreStore } from './StoreStore';
+export { StoreStoreCreditSchema, type StoreStoreCredit } from './StoreStoreCredit';
 export { StoreTaxonSchema, type StoreTaxon } from './StoreTaxon';
 export { StoreTaxonomySchema, type StoreTaxonomy } from './StoreTaxonomy';
 export { StoreVariantSchema, type StoreVariant } from './StoreVariant';

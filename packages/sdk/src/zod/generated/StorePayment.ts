@@ -12,6 +12,8 @@ export const StorePaymentSchema = z.object({
   display_amount: z.string(),
   created_at: z.string(),
   updated_at: z.string(),
+  source_type: z.string().nullable(),
+  source: z.any(),
   payment_method: StorePaymentMethodSchema,
 });
 
