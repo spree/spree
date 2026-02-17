@@ -1,8 +1,12 @@
 module Spree
   module Core
     module QueryFilters
+      # @deprecated This class is deprecated and will be removed in Spree 5.5.
       class Text
         def initialize(attribute:)
+          Spree::Deprecation.warn(
+            'Spree::Core::QueryFilters::Text is deprecated and will be removed in Spree 5.5.'
+          )
           @attribute = attribute
         end
 
