@@ -15,8 +15,12 @@ module Spree
           @order_token ||= cookies.signed[:token] || params[:order_token]
         end
 
-        # Used in the link_to_cart helper.
+        # @deprecated Use `current_order` instead. This method will be removed in Spree 5.5.
         def simple_current_order
+          Spree::Deprecation.warn(
+            'simple_current_order is deprecated and will be removed in Spree 5.5. Use current_order instead.'
+          )
+
           return @simple_current_order if @simple_current_order
 
           @simple_current_order = find_order_by_token_or_user
