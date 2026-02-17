@@ -1,3 +1,13 @@
+GIT
+  remote: https://github.com/spree/spree_stripe.git
+  revision: 78b85ac550249b21d6688b6c2ec82312d240ee87
+  specs:
+    spree_stripe (1.5.1)
+      spree (>= 5.3.0)
+      spree_admin (>= 5.3.0)
+      stripe (>= 10.1, < 19)
+      stripe_event (~> 2.14)
+
 PATH
   remote: engines/admin
   specs:
@@ -212,7 +222,7 @@ GEM
     benchmark (0.5.0)
     bigdecimal (4.0.1)
     bindex (0.8.1)
-    bootsnap (1.22.0)
+    bootsnap (1.23.0)
       msgpack (~> 1.2)
     brakeman (8.0.2)
       racc
@@ -243,7 +253,7 @@ GEM
     coderay (1.1.3)
     concurrent-ruby (1.3.6)
     connection_pool (3.0.2)
-    console (1.34.2)
+    console (1.34.3)
       fiber-annotation
       fiber-local (~> 1.1)
       json
@@ -261,7 +271,7 @@ GEM
     debug (1.11.1)
       irb (~> 1.10)
       reline (>= 0.3.8)
-    devise (5.0.0)
+    devise (5.0.1)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
       railties (>= 7.0)
@@ -438,7 +448,7 @@ GEM
       activesupport (>= 5.2.0)
     net-http (0.9.1)
       uri (>= 0.11.1)
-    net-imap (0.6.2)
+    net-imap (0.6.3)
       date
       net-protocol
     net-pop (0.1.2)
@@ -517,7 +527,7 @@ GEM
       nio4r (~> 2.0)
     raabro (1.4.0)
     racc (1.8.1)
-    rack (3.2.4)
+    rack (3.2.5)
     rack-session (2.1.1)
       base64 (>= 0.1.0)
       rack (>= 3.0.0)
@@ -612,7 +622,7 @@ GEM
     rspec-support (3.13.7)
     rspec_junit_formatter (0.6.0)
       rspec-core (>= 2, < 4, != 2.12.0)
-    rubocop (1.84.1)
+    rubocop (1.84.2)
       json (~> 2.3)
       language_server-protocol (~> 3.17.0.2)
       lint_roller (~> 1.1.0)
@@ -640,7 +650,7 @@ GEM
       rubocop (>= 1.72)
       rubocop-performance (>= 1.24)
       rubocop-rails (>= 2.30)
-    ruby-lsp (0.26.5)
+    ruby-lsp (0.26.6)
       language_server-protocol (~> 3.17.0)
       prism (>= 1.2, < 2.0)
       rbs (>= 3, < 5)
@@ -730,6 +740,10 @@ GEM
       railties (>= 6.0.0)
     stringex (2.8.6)
     stringio (3.2.0)
+    stripe (18.3.1)
+    stripe_event (2.14.0)
+      activesupport (>= 3.1)
+      stripe (>= 2.8, < 19)
     tailwindcss-rails (4.4.0)
       railties (>= 7.0.0)
       tailwindcss-ruby (~> 4.0)
@@ -830,6 +844,7 @@ DEPENDENCIES
   spree_dev_tools
   spree_emails!
   spree_i18n
+  spree_stripe!
   stimulus-rails
   tailwindcss-rails
   thruster
@@ -871,7 +886,7 @@ CHECKSUMS
   benchmark (0.5.0) sha256=465df122341aedcb81a2a24b4d3bd19b6c67c1530713fd533f3ff034e419236c
   bigdecimal (4.0.1) sha256=8b07d3d065a9f921c80ceaea7c9d4ae596697295b584c296fe599dd0ad01c4a7
   bindex (0.8.1) sha256=7b1ecc9dc539ed8bccfc8cb4d2732046227b09d6f37582ff12e50a5047ceb17e
-  bootsnap (1.22.0) sha256=5820c9d42c2efef095bee6565484bdc511f1223bf950140449c9385ae775793e
+  bootsnap (1.23.0) sha256=c1254f458d58558b58be0f8eb8f6eec2821456785b7cdd1e16248e2020d3f214
   brakeman (8.0.2) sha256=7b02065ce8b1de93949cefd3f2ad78e8eb370e644b95c8556a32a912a782426a
   breadcrumbs_on_rails (4.1.0) sha256=6146ecf669f6251507231028719d51d92b8f42f1f982b83a2481fa1465cb6cee
   builder (3.3.0) sha256=497918d2f9dca528fdca4b88d84e4ef4387256d984b8154e9d5d3fe5a9c8835f
@@ -885,7 +900,7 @@ CHECKSUMS
   coderay (1.1.3) sha256=dc530018a4684512f8f38143cd2a096c9f02a1fc2459edcfe534787a7fc77d4b
   concurrent-ruby (1.3.6) sha256=6b56837e1e7e5292f9864f34b69c5a2cbc75c0cf5338f1ce9903d10fa762d5ab
   connection_pool (3.0.2) sha256=33fff5ba71a12d2aa26cb72b1db8bba2a1a01823559fb01d29eb74c286e62e0a
-  console (1.34.2) sha256=1c036abf606ccec83f9dc28f0c31710fe5936ffe7ba5d235ae2865590a482d58
+  console (1.34.3) sha256=869fbd74697efc4c606f102d2812b0b008e4e7fd738a91c591e8577140ec0dcc
   countries (8.1.0) sha256=4d6b318b8e906f1f769d5c021c13a418d33e917dc96ceb625a91d8e7ab2d192e
   crass (1.0.6) sha256=dc516022a56e7b3b156099abc81b6d2b08ea1ed12676ac7a5657617f012bd45d
   csv (3.3.5) sha256=6e5134ac3383ef728b7f02725d9872934f523cb40b961479f69cf3afa6c8e73f
@@ -894,7 +909,7 @@ CHECKSUMS
   database_cleaner-core (2.0.1) sha256=8646574c32162e59ed7b5258a97a208d3c44551b854e510994f24683865d846c
   date (3.5.1) sha256=750d06384d7b9c15d562c76291407d89e368dda4d4fff957eb94962d325a0dc0
   debug (1.11.1) sha256=2e0b0ac6119f2207a6f8ac7d4a73ca8eb4e440f64da0a3136c30343146e952b6
-  devise (5.0.0) sha256=3ff37d39ccedf5d7dbe5971214d81fdf7a89b32d7071857f6585a0f7863f056b
+  devise (5.0.1) sha256=2cd2c9fc2fac746693702c60a2bc22d60270f87c3c2bdcad255ba0c4bf4d5d87
   diff-lcs (1.6.2) sha256=9ae0d2cba7d4df3075fe8cd8602a8604993efc0dfa934cff568969efb1909962
   docile (1.4.1) sha256=96159be799bfa73cdb721b840e9802126e4e03dfc26863db73647204c727f21e
   dotenv (3.2.0) sha256=e375b83121ea7ca4ce20f214740076129ab8514cd81378161f11c03853fe619d
@@ -974,7 +989,7 @@ CHECKSUMS
   multi_json (1.19.1) sha256=7aefeff8f2c854bf739931a238e4aea64592845e0c0395c8a7d2eea7fdd631b7
   name_of_person (1.1.3) sha256=e12291250987ef79c413314f698f15d53e7a602c42231de99c276ef9585bc18c
   net-http (0.9.1) sha256=25ba0b67c63e89df626ed8fac771d0ad24ad151a858af2cc8e6a716ca4336996
-  net-imap (0.6.2) sha256=08caacad486853c61676cca0c0c47df93db02abc4a8239a8b67eb0981428acc6
+  net-imap (0.6.3) sha256=9bab75f876596d09ee7bf911a291da478e0cd6badc54dfb82874855ccc82f2ad
   net-pop (0.1.2) sha256=848b4e982013c15b2f0382792268763b748cce91c9e91e36b0f27ed26420dff3
   net-protocol (0.2.2) sha256=aa73e0cba6a125369de9837b8d8ef82a61849360eba0521900e2c3713aa162a8
   net-smtp (0.5.1) sha256=ed96a0af63c524fceb4b29b0d352195c30d82dd916a42f03c62a3a70e5b70736
@@ -1018,7 +1033,7 @@ CHECKSUMS
   puma (7.2.0) sha256=bf8ef4ab514a4e6d4554cb4326b2004eba5036ae05cf765cfe51aba9706a72a8
   raabro (1.4.0) sha256=d4fa9ff5172391edb92b242eed8be802d1934b1464061ae5e70d80962c5da882
   racc (1.8.1) sha256=4a7f6929691dbec8b5209a0b373bc2614882b55fc5d2e447a21aaa691303d62f
-  rack (3.2.4) sha256=5d74b6f75082a643f43c1e76b419c40f0e5527fcfee1e669ac1e6b73c0ccb6f6
+  rack (3.2.5) sha256=4cbd0974c0b79f7a139b4812004a62e4c60b145cba76422e288ee670601ed6d3
   rack-session (2.1.1) sha256=0b6dc07dea7e4b583f58a48e8b806d4c9f1c6c9214ebc202ec94562cbea2e4e9
   rack-test (2.2.0) sha256=005a36692c306ac0b4a9350355ee080fd09ddef1148a5f8b2ac636c720f5c463
   rackup (2.3.1) sha256=6c79c26753778e90983761d677a48937ee3192b3ffef6bc963c0950f94688868
@@ -1048,12 +1063,12 @@ CHECKSUMS
   rspec-retry (0.6.2) sha256=6101ba23a38809811ae3484acde4ab481c54d846ac66d5037ccb40131a60d858
   rspec-support (3.13.7) sha256=0640e5570872aafefd79867901deeeeb40b0c9875a36b983d85f54fb7381c47c
   rspec_junit_formatter (0.6.0) sha256=40dde674e6ae4e6cc0ff560da25497677e34fefd2338cc467a8972f602b62b15
-  rubocop (1.84.1) sha256=14cc626f355141f5a2ef53c10a68d66b13bb30639b26370a76559096cc6bcc1a
+  rubocop (1.84.2) sha256=5692cea54168f3dc8cb79a6fe95c5424b7ea893c707ad7a4307b0585e88dbf5f
   rubocop-ast (1.49.0) sha256=49c3676d3123a0923d333e20c6c2dbaaae2d2287b475273fddee0c61da9f71fd
   rubocop-performance (1.26.1) sha256=cd19b936ff196df85829d264b522fd4f98b6c89ad271fa52744a8c11b8f71834
   rubocop-rails (2.34.3) sha256=10d37989024865ecda8199f311f3faca990143fbac967de943f88aca11eb9ad2
   rubocop-rails-omakase (1.1.0) sha256=2af73ac8ee5852de2919abbd2618af9c15c19b512c4cfc1f9a5d3b6ef009109d
-  ruby-lsp (0.26.5) sha256=19272659139b292a81a700d78e1b4d8988c4812e96b54fd6c30a21ce5e82b189
+  ruby-lsp (0.26.6) sha256=1f50b21cb300586d7742190fc8446c18387f488aa0e9d276cf2bc7f3684ccda2
   ruby-oembed (0.18.1) sha256=877b87b3d98e8137599044277fdb82a5536973bd9df68a93129163b781ae3a5f
   ruby-progressbar (1.13.0) sha256=80fc9c47a9b640d6834e0dc7b3c94c9df37f08cb072b7761e4a71e22cff29b33
   ruby-vips (2.3.0) sha256=e685ec02c13969912debbd98019e50492e12989282da5f37d05f5471442f5374
@@ -1077,6 +1092,7 @@ CHECKSUMS
   spree_emails (5.4.0.alpha)
   spree_extension (0.1.0) sha256=b648327f4787295e051be4ea0c0a47baec47c2e245bca9c93ecf73605fc3a051
   spree_i18n (5.3.2) sha256=03b805235ca156644951f6bc3d07cbe43d0aa01134c4a27e3f3304011956f79b
+  spree_stripe (1.5.1)
   sqids (0.2.2) sha256=c2d31e0dfb6c32d17c10b59df059a299af93bef716d700ff70d77156df702d36
   state_machines (0.100.4) sha256=dd4e555ebb061569dd8fe18a5f39b51d10be6306b89a0c315a9697671d752565
   state_machines-activemodel (0.101.0) sha256=6798c6bf5aa4be2b1a00ca633949c999ebee7a148bd4ea8f6858b189e2cdf72d
@@ -1084,6 +1100,8 @@ CHECKSUMS
   stimulus-rails (1.3.4) sha256=765676ffa1f33af64ce026d26b48e8ffb2e0b94e0f50e9119e11d6107d67cb06
   stringex (2.8.6) sha256=c7b382d2b2a47a1e1646f256df201c48d487d6296fbb289d76802f67f5e929c4
   stringio (3.2.0) sha256=c37cb2e58b4ffbd33fe5cd948c05934af997b36e0b6ca6fdf43afa234cf222e1
+  stripe (18.3.1) sha256=0ff81b277c87640fc5107815dd489f4cccc973a34940cf5adfefb880f456c1ad
+  stripe_event (2.14.0) sha256=aa9e5103030745bbef2177938395fefbf2c3f961622c3dfa9a6c3fa4548da075
   tailwindcss-rails (4.4.0) sha256=efa2961351a52acebe616e645a81a30bb4f27fde46cc06ce7688d1cd1131e916
   tailwindcss-ruby (4.1.18) sha256=b62fad5b00494e92987ee319dfb5c5ad272f0ed93649963d62f08d2ba0f03fa7
   tailwindcss-ruby (4.1.18-aarch64-linux-gnu) sha256=e10f9560bccddbb4955fd535b3bcc8c7071a7df07404dd473a23fa791ec4e46b

@@ -59,6 +59,7 @@ gem "devise"
 gem "spree", path: "engines"
 gem "spree_emails", path: "engines/emails"
 gem "spree_admin", path: "engines/admin"
+gem "spree_stripe", github: "spree/spree_stripe"
 gem "spree_i18n"
 
 group :development, :test do

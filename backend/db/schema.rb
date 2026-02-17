@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_09_133654) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_16_150246) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -777,6 +777,32 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_09_133654) do
     t.index ["payment_method_id", "store_id"], name: "payment_mentod_id_store_id_unique_index", unique: true
     t.index ["payment_method_id"], name: "index_spree_payment_methods_stores_on_payment_method_id"
     t.index ["store_id"], name: "index_spree_payment_methods_stores_on_store_id"
+  end
+
+  create_table "spree_payment_sessions", force: :cascade do |t|
+    t.decimal "amount", precision: 10, scale: 2, null: false
+    t.datetime "created_at", null: false
+    t.string "currency", null: false
+    t.string "customer_external_id"
+    t.bigint "customer_id"
+    t.datetime "deleted_at"
+    t.datetime "expires_at"
+    t.jsonb "external_data"
+    t.string "external_id", null: false
+    t.bigint "order_id", null: false
+    t.bigint "payment_method_id", null: false
+    t.string "status", null: false
+    t.string "type", null: false
+    t.datetime "updated_at", null: false
+    t.index ["customer_id"], name: "index_spree_payment_sessions_on_customer_id"
+    t.index ["deleted_at"], name: "index_spree_payment_sessions_on_deleted_at"
+    t.index ["expires_at"], name: "index_spree_payment_sessions_on_expires_at"
+    t.index ["external_id"], name: "index_spree_payment_sessions_on_external_id"
+    t.index ["order_id", "payment_method_id", "external_id"], name: "idx_payment_sessions_order_method_external", unique: true
+    t.index ["order_id"], name: "index_spree_payment_sessions_on_order_id"
+    t.index ["payment_method_id"], name: "index_spree_payment_sessions_on_payment_method_id"
+    t.index ["status"], name: "index_spree_payment_sessions_on_status"
+    t.index ["type"], name: "index_spree_payment_sessions_on_type"
   end
 
   create_table "spree_payment_sources", force: :cascade do |t|
@@ -1656,6 +1682,41 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_09_133654) do
     t.index ["default"], name: "index_spree_stores_on_default"
     t.index ["deleted_at"], name: "index_spree_stores_on_deleted_at"
     t.index ["url"], name: "index_spree_stores_on_url"
+  end
+
+  create_table "spree_stripe_payment_intents", force: :cascade do |t|
+    t.decimal "amount", precision: 10, scale: 2, default: "0.0", null: false
+    t.string "client_secret", null: false
+    t.datetime "created_at", null: false
+    t.string "customer_id"
+    t.string "ephemeral_key_secret"
+    t.bigint "order_id", null: false
+    t.bigint "payment_method_id", null: false
+    t.string "stripe_id", null: false
+    t.string "stripe_payment_method_id"
+    t.datetime "updated_at", null: false
+    t.index ["order_id", "stripe_id"], name: "index_spree_stripe_payment_intents_on_order_id_and_stripe_id", unique: true
+    t.index ["order_id"], name: "index_spree_stripe_payment_intents_on_order_id"
+    t.index ["payment_method_id"], name: "index_spree_stripe_payment_intents_on_payment_method_id"
+  end
+
+  create_table "spree_stripe_payment_methods_webhook_keys", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "payment_method_id", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "webhook_key_id", null: false
+    t.index ["payment_method_id", "webhook_key_id"], name: "index_payment_method_id_webhook_key_id_uniqueness", unique: true
+    t.index ["payment_method_id"], name: "index_payment_methods_webhook_keys_on_payment_method_id"
+    t.index ["webhook_key_id"], name: "index_payment_methods_webhook_keys_on_webhook_key_id"
+  end
+
+  create_table "spree_stripe_webhook_keys", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "signing_secret", null: false
+    t.string "stripe_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["signing_secret"], name: "index_spree_stripe_webhook_keys_on_signing_secret", unique: true
+    t.index ["stripe_id"], name: "index_spree_stripe_webhook_keys_on_stripe_id", unique: true
   end
 
   create_table "spree_taggings", force: :cascade do |t|
