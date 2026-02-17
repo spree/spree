@@ -7,9 +7,9 @@
 - Spree is built on Ruby on Rails and follows MVC architecture
 - All Spree code must be namespaced under `Spree::` module
 - Spree is distributed as Rails engines with separate packages:
-  - **Core packages (required):** `spree_core` (models, services, business logic), `spree_api` (Storefront API, Platform API, Webhooks)
-  - **Optional packages:** `spree_admin` (admin dashboard), `spree_storefront` (Rails storefront), `spree_emails` (transactional emails), `spree_page_builder` (visual page builder), `spree_sample` (sample data), `spree_dev_tools` (development/testing utilities)
-- Most users run Spree in headless mode with custom frontends using the Storefront API
+  - **Core packages (required):** `spree_core` (models, services, business logic, events engine), `spree_api` (Store API, Admin API (soon!), HTTP Webhooks)
+  - **Optional packages:** `spree_admin` (admin dashboard), `spree_emails` (transactional emails)
+- Most users run Spree in headless mode with custom frontends using the Store API
 - Follow Rails conventions and the Rails Security Guide
 - Prefer Rails idioms and standard patterns over custom solutions
 - Use RESTful action names
@@ -100,8 +100,7 @@ For uniqueness validation, always use `scope: spree_base_uniqueness_scope`
 ### Controller Inheritance
 
 - Admin controllers inherit from `Spree::Admin::ResourceController` which handles most of CRUD operations
-- Store API controllers inherit from `Spree::Api::V3::Store::ResourceController`
-- Storefront controllers inherit from `Spree::StoreController`
+- Store API controllers inherit from `Spree::Api::V3::Store::ResourceController` which handles all CRUD operations for store resources
 
 ### Parameter Handling
 
@@ -112,7 +111,7 @@ For uniqueness validation, always use `scope: spree_base_uniqueness_scope`
 
 Spree API v3 provides RESTful endpoints organized into two scopes:
 
-- **Store API** (`/api/v3/`) - Customer-facing endpoints for cart, checkout, products, and accounts
+- **Store API** (`/api/v3/store/`) - Customer-facing endpoints for cart, checkout, products, and accounts
 - **Admin API** (`/api/v3/admin/`) - Administrative endpoints for managing orders, products, and store settings
 
 ### Prefixed IDs
@@ -670,7 +669,6 @@ This document should be updated as Spree evolves and new patterns emerge. Always
 - Use Rails 18n for internationalization
 - Use `Spree.t` for translations
 - Please keep admin translations in `admin/config/locales/en.yml`
-- Please keep storefront translations in `storefront/config/locales/en.yml`
 - Please keep all other translations in `config/locales/en.yml`
 - Please do not repeat translations in multiple files, use `Spree.t` instead
 - Please try to use existing translations as much as possible
