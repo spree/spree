@@ -12,6 +12,7 @@ RSpec.describe Spree::Api::V3::Store::Taxons::ProductsController, type: :control
   let!(:product_in_taxon) { create(:product, stores: [store], taxons: [taxon]) }
   let!(:product_in_child_taxon) { create(:product, stores: [store], taxons: [child_taxon]) }
   let!(:product_not_in_taxon) { create(:product, stores: [store]) }
+  let!(:inactive_product_in_taxon) { create(:product, stores: [store], taxons: [taxon], status: 'draft') }
 
   let!(:other_store) { create(:store) }
   let!(:other_taxonomy) { create(:taxonomy, store: other_store) }
@@ -23,12 +24,13 @@ RSpec.describe Spree::Api::V3::Store::Taxons::ProductsController, type: :control
 
   describe 'GET #index' do
     context 'finding taxon by permalink' do
-      it 'returns products belonging to the taxon' do
+      it 'returns active products belonging to the taxon' do
         get :index, params: { taxon_id: taxon.permalink }
 
         expect(response).to have_http_status(:ok)
         expect(json_response['data'].pluck('id')).to include(product_in_taxon.prefixed_id)
         expect(json_response['data'].pluck('id')).not_to include(product_not_in_taxon.prefixed_id)
+        expect(json_response['data'].pluck('id')).not_to include(inactive_product_in_taxon.prefixed_id)
       end
 
       it 'returns products from descendant taxons' do

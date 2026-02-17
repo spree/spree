@@ -13,14 +13,7 @@ module Spree
             end
 
             def scope
-              Spree::Product.
-                in_taxon(@taxon).
-                for_store(current_store).
-                accessible_by(current_ability, :show).
-                available(Time.current, Spree::Current.currency).
-                includes(scope_includes).
-                preload_associations_lazily.
-                i18n
+              super.in_taxon(@taxon)
             end
 
             private
