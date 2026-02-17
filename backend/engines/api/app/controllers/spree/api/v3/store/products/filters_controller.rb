@@ -16,13 +16,17 @@ module Spree
             private
 
             # Build scope from taxon and/or ransack params
+            # @return [ActiveRecord::Relation]
             def filters_scope
-              scope = current_store.products.available(Time.current, current_currency)
+              scope = current_store.products.active(current_currency)
               scope = scope.in_taxon(taxon) if taxon.present?
               scope = scope.ransack(params[:q]).result if params[:q].present?
               scope.accessible_by(current_ability, :show)
             end
 
+            # Fetches taxon from params
+            # @param [String] taxon_id
+            # @return [Spree::Taxon]
             def taxon
               @taxon ||= params[:taxon_id].present? ? current_store.taxons.find_by_param(params[:taxon_id]) : nil
             end

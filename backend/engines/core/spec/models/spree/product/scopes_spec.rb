@@ -84,20 +84,13 @@ describe 'Product scopes', type: :model do
       expect(Spree::Product.in_taxon(@parent_taxon).to_a.size).to eq(1)
     end
 
-    context 'orders products based on their ordering within the classifications' do
+    context 'returns correct products for taxon' do
       let(:other_taxon) { create(:taxon, products: [product]) }
       let!(:product_2) { create(:product, taxons: [@child_taxon, other_taxon], stores: [store]) }
 
-      it 'by initial ordering' do
-        expect(Spree::Product.in_taxon(@child_taxon)).to eq([product, product_2])
-        expect(Spree::Product.in_taxon(other_taxon)).to eq([product, product_2])
-      end
-
-      it 'after ordering changed' do
-        [@child_taxon, other_taxon].each do |taxon|
-          Spree::Classification.find_by(taxon: taxon, product: product).insert_at(2)
-          expect(Spree::Product.in_taxon(taxon)).to eq([product_2, product])
-        end
+      it 'includes all products in the taxon' do
+        expect(Spree::Product.in_taxon(@child_taxon)).to include(product, product_2)
+        expect(Spree::Product.in_taxon(other_taxon)).to include(product, product_2)
       end
     end
   end
