@@ -20,27 +20,17 @@ module Spree
 
         return if taggings_to_upsert.empty?
 
-        record_ids = records.pluck(:id)
-        tag_ids = tags.map(&:id)
-
-        existing_tagging_ids = ActsAsTaggableOn::Tagging.where(
-          taggable_id: record_ids,
-          taggable_type: record_class.to_s,
-          context: context,
-          tag_id: tag_ids
-        ).pluck(:id)
-
         ActsAsTaggableOn::Tagging.insert_all(taggings_to_upsert)
 
-        # Avoid duplicates which are skipped by insert_all
+        record_ids = records.pluck(:id)
         tagging_ids = ActsAsTaggableOn::Tagging.where(
           taggable_id: record_ids,
           taggable_type: record_class.to_s,
           context: context,
-          tag_id: tag_ids
-        ).pluck(:id) - existing_tagging_ids
+          tag_id: tags.map(&:id)
+        ).pluck(:id)
 
-        record_class.where(id: records.pluck(:id)).touch_all
+        record_class.where(id: record_ids).touch_all
 
         Spree::Events.publish('tagging.bulk_created', { tagging_ids: tagging_ids }) if tagging_ids.any?
 

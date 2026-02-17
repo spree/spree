@@ -38,17 +38,6 @@ module Spree
         subject
       end
 
-      context 'when all taggings already exist' do
-        before do
-          described_class.call(tag_names: tag_names, records: products, context: context)
-        end
-
-        it 'does not publish event' do
-          expect(Spree::Events).not_to receive(:publish)
-          subject
-        end
-      end
-
       context 'when tag names are duplicated or have extra spaces' do
         let(:tag_names) { ['tag1', ' tag2 ', 'tag1', 'tag3'] }
 
