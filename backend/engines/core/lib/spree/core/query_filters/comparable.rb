@@ -1,8 +1,12 @@
 module Spree
   module Core
     module QueryFilters
+      # @deprecated This class is deprecated and will be removed in Spree 5.5.
       class Comparable
         def initialize(attribute:)
+          Spree::Deprecation.warn(
+            "#{self.class.name} is deprecated and will be removed in Spree 5.5."
+          )
           @attribute = attribute
         end
 

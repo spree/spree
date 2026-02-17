@@ -42,7 +42,16 @@ module Spree
     # or taxons), eg see the taxon model/controller.
 
     # See specific filters below for concrete examples.
+    # @deprecated This module is deprecated and will be removed in Spree 5.5.
+    #   Use Spree::Api::V3::FiltersAggregator instead.
     module ProductFilters
+      def self.deprecated_warning
+        Spree::Deprecation.warn(
+          'Spree::Core::ProductFilters is deprecated and will be removed in Spree 5.5. ' \
+          'Please use Spree::Api::V3::FiltersAggregator instead.'
+        )
+      end
+
       # Example: filtering by price
       #   The named scope just maps incoming labels onto their conditions, and builds the conjunction
       #   'price' is in the base scope's context (ie, "select foo from products where ...") so
@@ -66,6 +75,7 @@ module Spree
       end
 
       def self.price_filter
+        deprecated_warning
         v = Spree::Price.arel_table
         conds = [[Spree.t(:under_price, price: format_price(10)), v[:amount].lteq(10)],
                  ["#{format_price(10)} - #{format_price(15)}", v[:amount].between(10..15)],
@@ -107,6 +117,7 @@ module Spree
       end
 
       def self.brand_filter
+        deprecated_warning
         brand_property = Spree::Property.find_by(name: 'brand')
         brands = brand_property ? Spree::ProductProperty.where(property_id: brand_property.id).pluck(:value).uniq.map(&:to_s) : []
 
@@ -148,6 +159,7 @@ module Spree
       end
 
       def self.selective_brand_filter(taxon = nil)
+        deprecated_warning
         taxon ||= Spree::Taxonomy.first.root
         brand_property = Spree::Property.find_by(name: 'brand')
         scope = Spree::ProductProperty.where(property: brand_property).
@@ -174,6 +186,7 @@ module Spree
       # This scope selects products in any of the active taxons or their children.
       #
       def self.taxons_below(taxon)
+        deprecated_warning
         return Spree::Core::ProductFilters.all_taxons if taxon.nil?
 
         {
@@ -191,6 +204,7 @@ module Spree
       #
       # idea: expand the format to allow nesting of labels?
       def self.all_taxons
+        deprecated_warning
         taxons = Spree::Taxonomy.all.map { |t| [t.root] + t.root.descendants }.flatten
         {
           name: 'All taxons',
