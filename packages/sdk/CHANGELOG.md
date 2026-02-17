@@ -1,5 +1,11 @@
 # @spree/sdk
 
+## 0.2.4
+
+### Patch Changes
+
+- Add payment source to `StorePayment` type — payments now include `source_type` (`'credit_card' | 'store_credit' | 'payment_source' | null`) and `source` (polymorphic union of `StoreCreditCard | StoreStoreCredit | StorePaymentSource | null`) for frontend payment source display. Add new `StorePaymentSource` and `StoreStoreCredit` types.
+
 ## 0.2.3
 
 ### Patch Changes

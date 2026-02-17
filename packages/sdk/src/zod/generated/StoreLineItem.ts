@@ -1,7 +1,7 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
-import { StoreOptionValueSchema } from './StoreOptionValue';
 import { StoreDigitalLinkSchema } from './StoreDigitalLink';
+import { StoreOptionValueSchema } from './StoreOptionValue';
 
 export const StoreLineItemSchema = z.object({
   id: z.string(),

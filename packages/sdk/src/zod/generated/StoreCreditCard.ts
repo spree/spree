@@ -9,6 +9,7 @@ export const StoreCreditCardSchema = z.object({
   year: z.number(),
   name: z.string().nullable(),
   default: z.boolean(),
+  gateway_payment_profile_id: z.string().nullable(),
 });
 
 export type StoreCreditCard = z.infer<typeof StoreCreditCardSchema>;

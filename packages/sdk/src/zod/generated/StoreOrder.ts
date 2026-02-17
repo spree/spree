@@ -37,12 +37,12 @@ export const StoreOrderSchema = z.object({
   completed_at: z.string().nullable(),
   created_at: z.string(),
   updated_at: z.string(),
-  order_promotions: z.array(StoreOrderPromotionSchema).optional(),
-  line_items: z.array(StoreLineItemSchema).optional(),
-  shipments: z.array(StoreShipmentSchema).optional(),
-  payments: z.array(StorePaymentSchema).optional(),
-  bill_address: StoreAddressSchema.optional(),
-  ship_address: StoreAddressSchema.optional(),
+  order_promotions: z.array(StoreOrderPromotionSchema),
+  line_items: z.array(StoreLineItemSchema),
+  shipments: z.array(StoreShipmentSchema),
+  payments: z.array(StorePaymentSchema),
+  bill_address: StoreAddressSchema.nullable(),
+  ship_address: StoreAddressSchema.nullable(),
   payment_methods: z.array(StorePaymentMethodSchema),
 });
 

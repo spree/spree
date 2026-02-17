@@ -6,6 +6,7 @@ export const StorePaymentMethodSchema = z.object({
   name: z.string(),
   description: z.string().nullable(),
   type: z.string(),
+  session_required: z.boolean(),
 });
 
 export type StorePaymentMethod = z.infer<typeof StorePaymentMethodSchema>;
