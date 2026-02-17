@@ -4,15 +4,19 @@
 
 ### Framework & Architecture
 
-- Spree is built on Ruby on Rails and follows MVC architecture
-- All Spree code must be namespaced under `Spree::` module
+- Spree backend is built on Ruby on Rails and follows MVC architecture
+- All Spree backend code must be namespaced under `Spree::` module
 - Spree is distributed as Rails engines with separate packages:
-  - **Core packages (required):** `spree_core` (models, services, business logic, events engine), `spree_api` (Store API, Admin API (soon!), HTTP Webhooks)
+  - **Core packages (required):** `spree_core` (models, services, business logic, events engine, pricing engine), `spree_api` (Store API, Admin API (soon!), HTTP Webhooks)
   - **Optional packages:** `spree_admin` (admin dashboard), `spree_emails` (transactional emails)
 - Most users run Spree in headless mode with custom frontends using the Store API
 - Follow Rails conventions and the Rails Security Guide
 - Prefer Rails idioms and standard patterns over custom solutions
 - Use RESTful action names
+- Enforce CanCanCan permission checks, for listings always use `accessible_by(current_ability, :show)` scope, for other actions always perform `authorize!` check
+- For better security always use scope fetching, eg. `current_user.orders` instead of `Spree::Order`
+- Use Ransack for filtering and searching https://activerecord-hackery.github.io/ransack/getting-started/search-matches/
+- Use Pagy for pagination https://github.com/ddnexus/pagy
 
 ### Code Organization
 
@@ -28,6 +32,7 @@
 - Group related functionality into concerns when appropriate
 - Do not call `Spree::User` directly, use `Spree.user_class` instead
 - Do not call `Spree::AdminUser` directly, use `Spree.admin_user_class` instead
+- Split big models in modules/concerns, keep them organized by topic
 
 ### Spree::Current class
 

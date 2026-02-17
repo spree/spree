@@ -100,6 +100,49 @@ RSpec.describe Spree::Api::V3::Store::Taxons::ProductsController, type: :control
       end
     end
 
+    context 'filtering by option values' do
+      let(:option_type) { create(:option_type, :color) }
+      let(:option_value_red) { create(:option_value, option_type: option_type, name: 'red', presentation: 'Red') }
+      let(:option_value_blue) { create(:option_value, option_type: option_type, name: 'blue', presentation: 'Blue') }
+      let!(:product_with_red) do
+        create(:product, stores: [store], taxons: [taxon], status: 'active', option_types: [option_type]).tap do |p|
+          create(:variant, product: p, option_values: [option_value_red], price: 25.0)
+        end
+      end
+      let!(:product_with_blue) do
+        create(:product, stores: [store], taxons: [taxon], status: 'active', option_types: [option_type]).tap do |p|
+          create(:variant, product: p, option_values: [option_value_blue], price: 75.0)
+        end
+      end
+
+      it 'filters products by option value prefixed IDs within taxon' do
+        get :index, params: { taxon_id: taxon.permalink, q: { with_option_value_ids: [option_value_red.prefixed_id] } }
+
+        expect(response).to have_http_status(:ok)
+        ids = json_response['data'].map { |p| p['id'] }
+        expect(ids).to include(product_with_red.prefixed_id)
+        expect(ids).not_to include(product_with_blue.prefixed_id)
+      end
+
+      it 'filters products by price range within taxon' do
+        get :index, params: { taxon_id: taxon.permalink, q: { price_between: [50, 100] } }
+
+        expect(response).to have_http_status(:ok)
+        ids = json_response['data'].map { |p| p['id'] }
+        expect(ids).to include(product_with_blue.prefixed_id)
+        expect(ids).not_to include(product_with_red.prefixed_id)
+      end
+
+      it 'filters products by option values and price range combined within taxon' do
+        get :index, params: { taxon_id: taxon.permalink, q: { with_option_value_ids: [option_value_red.prefixed_id, option_value_blue.prefixed_id], price_between: [50, 100] } }
+
+        expect(response).to have_http_status(:ok)
+        ids = json_response['data'].map { |p| p['id'] }
+        expect(ids).to include(product_with_blue.prefixed_id)
+        expect(ids).not_to include(product_with_red.prefixed_id)
+      end
+    end
+
     context 'sorting' do
       let!(:cheap_product) do
         create(:product, stores: [store], taxons: [taxon], status: 'active', name: 'Cheap').tap do |p|

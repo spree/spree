@@ -21,6 +21,7 @@ module Spree
 
           # Find product by slug or prefixed ID with i18n scope for SEO-friendly URLs
           # Falls back to default locale if product is not found in the current locale
+          # @return [Spree::Product]
           def find_resource
             id = params[:id]
             if id.to_s.start_with?('prod_')
