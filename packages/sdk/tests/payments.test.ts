@@ -16,10 +16,11 @@ describe('payments', () => {
       expect(result.data[0].amount).toBe('19.99');
     });
 
-    it('includes source_type and source for credit card payments', async () => {
+    it('includes source_type, source_id, and source for credit card payments', async () => {
       const result = await client.store.orders.payments.list('order_1', opts);
       const payment = result.data[0];
       expect(payment.source_type).toBe('credit_card');
+      expect(payment.source_id).toBe('card_1');
       expect(payment.source).toBeDefined();
       expect(payment.source!.id).toBe('card_1');
       if (payment.source_type === 'credit_card') {
@@ -48,6 +49,7 @@ describe('payments', () => {
     it('includes source details', async () => {
       const result = await client.store.orders.payments.get('order_1', 'py_1', opts);
       expect(result.source_type).toBe('credit_card');
+      expect(result.source_id).toBe('card_1');
       expect(result.source).toBeDefined();
       expect(result.source!.id).toBe('card_1');
     });

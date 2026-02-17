@@ -5,6 +5,7 @@ module Spree
         typelize state: :string, payment_method_id: :string, response_code: 'string | null',
                  number: :string, amount: :string, display_amount: :string,
                  source_type: "'credit_card' | 'store_credit' | 'payment_source' | null",
+                 source_id: 'string | null',
                  source: 'StoreCreditCard | StoreStoreCredit | StorePaymentSource | null'
 
         attribute :payment_method_id do |payment|
@@ -25,6 +26,10 @@ module Spree
           else
             'payment_source'
           end
+        end
+
+        attribute :source_id do |payment|
+          payment.source&.prefixed_id
         end
 
         attribute :source do |payment|

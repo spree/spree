@@ -46,6 +46,10 @@ RSpec.describe Spree::Api::V3::PaymentSerializer do
         expect(subject['source_type']).to eq('credit_card')
       end
 
+      it 'returns prefixed source_id' do
+        expect(subject['source_id']).to eq(payment.source.prefixed_id)
+      end
+
       it 'serializes the credit card source' do
         expect(subject['source']).to be_a(Hash)
         expect(subject['source']['id']).to eq(payment.source.prefixed_id)
@@ -64,6 +68,10 @@ RSpec.describe Spree::Api::V3::PaymentSerializer do
         expect(subject['source_type']).to eq('payment_source')
       end
 
+      it 'returns prefixed source_id' do
+        expect(subject['source_id']).to eq(payment.source.prefixed_id)
+      end
+
       it 'serializes the payment source' do
         expect(subject['source']).to be_a(Hash)
         expect(subject['source']['id']).to eq(payment.source.prefixed_id)
@@ -77,6 +85,10 @@ RSpec.describe Spree::Api::V3::PaymentSerializer do
 
       it 'returns store_credit as source_type' do
         expect(subject['source_type']).to eq('store_credit')
+      end
+
+      it 'returns prefixed source_id' do
+        expect(subject['source_id']).to eq(payment.source.prefixed_id)
       end
 
       it 'serializes the store credit source' do
@@ -93,6 +105,10 @@ RSpec.describe Spree::Api::V3::PaymentSerializer do
 
       it 'returns nil for source_type' do
         expect(subject['source_type']).to be_nil
+      end
+
+      it 'returns nil for source_id' do
+        expect(subject['source_id']).to be_nil
       end
 
       it 'returns nil for source' do

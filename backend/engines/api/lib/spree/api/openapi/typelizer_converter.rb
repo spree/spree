@@ -173,9 +173,17 @@ module Spree
               return schema
             end
 
-            # Multiple non-null types - use oneOf
+            # String literal unions (e.g., 'credit_card' | 'store_credit' | 'payment_source')
+            if types.all? { |t| t.match?(/\A'[^']*'\z/) }
+              schema = { type: :string, enum: types.map { |t| t.delete("'") } }
+              schema[:nullable] = true if nullable
+              return schema
+            end
+
+            # Multiple non-null types - use anyOf (allows overlapping schemas
+            # which is common with polymorphic associations)
             {
-              oneOf: types.map { |t| property_type_to_schema(t) },
+              anyOf: types.map { |t| property_type_to_schema(t) },
               nullable: nullable || nil
             }.compact
           end

@@ -14,6 +14,7 @@ type StorePayment = {
   created_at: string;
   updated_at: string;
   source_type: 'credit_card' | 'store_credit' | 'payment_source' | null;
+  source_id: string | null;
   source: StoreCreditCard | StoreStoreCredit | StorePaymentSource | null;
   payment_method: StorePaymentMethod;
 }

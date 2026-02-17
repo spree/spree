@@ -216,6 +216,7 @@ export const handlers = [
           amount: '19.99',
           display_amount: '$19.99',
           source_type: 'credit_card',
+          source_id: 'card_1',
           source: {
             id: 'card_1',
             cc_type: 'visa',
@@ -245,6 +246,7 @@ export const handlers = [
       amount: '19.99',
       display_amount: '$19.99',
       source_type: 'credit_card',
+      source_id: 'card_1',
       source: {
         id: 'card_1',
         cc_type: 'visa',
