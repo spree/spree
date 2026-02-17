@@ -204,7 +204,8 @@ module Spree
     end
 
     def maximum_quantity
-      Spree::DatabaseTypeUtilities.maximum_value_for(:integer)
+      Spree::Deprecation.warn('BaseHelper#maximum_quantity is deprecated and will be removed in Spree 5.5')
+      Spree::DatabaseTypeUtilities::INTEGER_MAX
     end
 
     def payment_method_icon_tag(payment_method, opts = {})

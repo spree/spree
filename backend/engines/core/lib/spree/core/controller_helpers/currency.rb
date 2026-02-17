@@ -39,8 +39,13 @@ module Spree
         end
 
         # Returns the list of supported currencies for all stores.
+        # @deprecated This method will be removed in Spree 5.5.
         # @return [Array<String>] the list of supported currencies, eg. `["USD", "EUR"]`
         def supported_currencies_for_all_stores
+          Spree::Deprecation.warn(
+            'supported_currencies_for_all_stores is deprecated and will be removed in Spree 5.5.'
+          )
+
           @supported_currencies_for_all_stores ||= begin
             (
               Spree::Store.pluck(:supported_currencies).map { |c| c&.split(',') }.flatten + Spree::Store.pluck(:default_currency)

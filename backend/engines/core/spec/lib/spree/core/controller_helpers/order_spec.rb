@@ -28,14 +28,23 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
   let!(:store) { @default_store }
 
   describe '#simple_current_order' do
-    before { allow(controller).to receive_messages(try_spree_current_user: user) }
+    before do
+      allow(controller).to receive_messages(try_spree_current_user: user)
+      allow(Spree::Deprecation).to receive(:warn)
+    end
 
     it 'returns an empty order' do
       expect(controller.simple_current_order.item_count).to eq 0
     end
+
     it 'returns Spree::Order instance' do
       allow(controller).to receive_messages(cookies: double(signed: { token: order.token }))
       expect(controller.simple_current_order).to eq order
+    end
+
+    it 'emits a deprecation warning' do
+      controller.simple_current_order
+      expect(Spree::Deprecation).to have_received(:warn).with(/simple_current_order is deprecated/)
     end
   end
 

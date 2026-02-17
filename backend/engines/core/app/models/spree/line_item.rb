@@ -30,10 +30,12 @@ module Spree
 
     validates :variant, :order, presence: true
 
+    DB_INTEGER_MAX = (2**31) - 1
+
     # numericality: :less_than_or_equal_to validation is due to the restriction at the database level
     #   https://github.com/spree/spree/issues/2695#issuecomment-143314161
     validates :quantity, numericality: {
-      in: 0..DatabaseTypeUtilities.maximum_value_for(:integer),
+      in: 0..DB_INTEGER_MAX,
       only_integer: true, message: Spree.t('validation.must_be_int')
     }
 
@@ -226,7 +228,7 @@ module Spree
     #
     # @return [Integer]
     def maximum_quantity
-      @maximum_quantity ||= variant.backorderable? ? Spree::DatabaseTypeUtilities.maximum_value_for(:integer) : variant.total_on_hand
+      @maximum_quantity ||= variant.backorderable? ? DB_INTEGER_MAX : variant.total_on_hand
     end
 
     # Returns true if the line item variant has digital assets
