@@ -10,8 +10,7 @@ module Spree
       subject { described_class.call(tag_names: tag_names, records: products, context: context) }
 
       before do
-        # Add tags to products initially
-        Spree::Tags::BulkAdd.call(tag_names: tag_names, records: products, context: context)
+        Spree::Tags::BulkAdd.call(tag_names: ['tag1', 'tag2', 'tag3'], records: products, context: context)
       end
 
       it 'removes taggings for each product-tag pair' do
