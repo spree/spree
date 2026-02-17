@@ -3,6 +3,19 @@ title: Architecture
 description: Understand how Spree's core models and systems work together
 ---
 
+## System Requirements
+
+| Component | Requirement |
+|-----------|-------------|
+| **Ruby** | 3.2 or later |
+| **Rails** | 7.2 or later |
+| **Database** | PostgreSQL, MySQL, or SQLite |
+| **Image Processing** | libvips |
+
+<Info>
+  Spree works with any database supported by Rails. PostgreSQL and MySQL are recommended for production. SQLite is great for development and small-scale deployments. [Learn more about database configuration](/developer/deployment/database).
+</Info>
+
 ## Overview
 
 Spree is built around a set of interconnected models that represent the core concepts of e-commerce: products, orders, payments, and shipments. Understanding how these pieces fit together is essential for customizing and extending Spree.

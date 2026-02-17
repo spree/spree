@@ -7,7 +7,7 @@ Spree (when using Spree Starter template) comes with a Dockerfile that can be us
 
 You can find the Dockerfile in the [Dockerfile](https://github.com/spree/spree_starter/blob/main/Dockerfile) file in the root of the project or in the Spree Starter repository.
 
-This Dockerfile is pre-configured to run Spree with PostgreSQL database and Redis 7.0+ (or Valkey). That's the only external dependency you need to have installed on your machine to be able to run Spree.
+This Dockerfile is pre-configured to run Spree with a PostgreSQL database by default. You can also use MySQL or SQLite by changing the `DATABASE_URL` environment variable. [Learn more about database configuration](/developer/deployment/database).
 
 You can later use that image to run your application in a containerized environment eg. AWS ECS, AWS Fargate, Azure Container Instances, etc.
 
@@ -27,7 +27,7 @@ You will need to supply the following environment variables to run the container
 
 | Variable | Description | Example |
 | --- | --- | --- |
-| `DATABASE_URL` | Database URL, this could be your AWS RDS instance or any other PostgreSQL instance | `postgres://user:pass@localhost:5432/spree` |
+| `DATABASE_URL` | Database connection URL. Spree supports PostgreSQL, MySQL, and SQLite | `postgres://user:pass@localhost:5432/spree` |
 | `REDIS_URL` | Redis/Valkey URL, used for background jobs processing,this could be your AWS ElastiCache instance or any other Redis/Valkey instance | `redis://localhost:6379/0` |
 | `SECRET_KEY_BASE` | You can generate this by running `bin/rails secret` | `2fad5c0b79d25e4765d3018d8c740f8c3a665f0e5c...` |
 
