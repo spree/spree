@@ -47,6 +47,54 @@ module Spree
         end
       end
 
+      context 'when tags already exist on records' do
+        before do
+          described_class.call(tag_names: ['tag1', 'tag2'], records: products, context: context)
+        end
+
+        it 'does not create duplicate taggings' do
+          expect { subject }.not_to change {
+            ActsAsTaggableOn::Tagging.where(
+              taggable_id: products.pluck(:id),
+              taggable_type: 'Spree::Product',
+              context: context,
+              tag_id: ActsAsTaggableOn::Tag.where(name: ['tag1', 'tag2']).select(:id)
+            ).count
+          }
+        end
+
+        it 'only creates taggings for new tags' do
+          expect { subject }.to change { ActsAsTaggableOn::Tagging.count }.by(products.size) # only tag3
+        end
+
+        it 'only publishes event with new tagging ids' do
+          existing_tagging_ids = ActsAsTaggableOn::Tagging.pluck(:id)
+          allow(Spree::Events).to receive(:publish)
+
+          subject
+
+          new_tagging_ids = ActsAsTaggableOn::Tagging.pluck(:id) - existing_tagging_ids
+          expect(Spree::Events).to have_received(:publish).with('tagging.bulk_created', { tagging_ids: new_tagging_ids })
+        end
+      end
+
+      context 'when all tags already exist on records' do
+        let(:tag_names) { ['tag1', 'tag2'] }
+
+        before do
+          described_class.call(tag_names: tag_names, records: products, context: context)
+        end
+
+        it 'does not create any new taggings' do
+          expect { subject }.not_to change { ActsAsTaggableOn::Tagging.count }
+        end
+
+        it 'does not publish event' do
+          expect(Spree::Events).not_to receive(:publish)
+          subject
+        end
+      end
+
       context 'when no records are provided' do
         let(:products) { [] }
 
