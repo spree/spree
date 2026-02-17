@@ -208,6 +208,7 @@
                 "group": "Deployment",
                 "icon": "server",
                 "pages": [
+                  "developer/deployment/database",
                   "developer/deployment/render",
                   "developer/deployment/aws",
                   "developer/deployment/docker",

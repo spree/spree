@@ -1,0 +1,156 @@
+---
+title: Database Configuration
+description: Learn how to configure Spree to work with PostgreSQL, MySQL, or SQLite.
+---
+
+Spree works with all major relational databases supported by Ruby on Rails. You can choose the database that best fits your needs.
+
+## Supported Databases
+
+| Database | Development | Production | Notes |
+|----------|:-----------:|:----------:|-------|
+| **PostgreSQL** | Yes | Yes | Recommended for production. Best performance for large catalogs and high traffic |
+| **MySQL** | Yes | Yes | Fully supported. A great choice if your team already uses MySQL |
+| **SQLite** | Yes | Yes | Zero-configuration setup. Ideal for development, small stores, and getting started quickly |
+
+## Configuring Your Database
+
+### Using DATABASE_URL
+
+The simplest way to configure your database is via the `DATABASE_URL` environment variable:
+
+```bash
+# PostgreSQL
+DATABASE_URL=postgres://user:pass@localhost:5432/spree
+
+# MySQL
+DATABASE_URL=mysql2://user:pass@localhost:3306/spree
+
+# SQLite
+DATABASE_URL=sqlite3:db/production.sqlite3
+```
+
+### Using database.yml
+
+You can also configure the database in `config/database.yml`:
+
+<Tabs>
+  <Tab title="PostgreSQL">
+    ```yaml
+    default: &default
+      adapter: postgresql
+      encoding: unicode
+      pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+
+    development:
+      <<: *default
+      database: spree_development
+
+    production:
+      <<: *default
+      database: spree_production
+      url: <%= ENV["DATABASE_URL"] %>
+    ```
+  </Tab>
+  <Tab title="MySQL">
+    ```yaml
+    default: &default
+      adapter: mysql2
+      encoding: utf8mb4
+      pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+
+    development:
+      <<: *default
+      database: spree_development
+
+    production:
+      <<: *default
+      database: spree_production
+      url: <%= ENV["DATABASE_URL"] %>
+    ```
+  </Tab>
+  <Tab title="SQLite">
+    ```yaml
+    default: &default
+      adapter: sqlite3
+      pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+      timeout: 5000
+
+    development:
+      <<: *default
+      database: db/development.sqlite3
+
+    production:
+      <<: *default
+      database: db/production.sqlite3
+    ```
+  </Tab>
+</Tabs>
+
+## Switching Databases
+
+The easiest way to switch your existing Spree application to a different database is using the built-in Rails command:
+
+```bash
+# Switch to PostgreSQL
+bin/rails db:system:change --to=postgresql
+
+# Switch to MySQL
+bin/rails db:system:change --to=mysql
+
+# Switch to SQLite
+bin/rails db:system:change --to=sqlite3
+```
+
+This command will:
+- Update your `Gemfile` with the correct database gem
+- Generate a new `config/database.yml` configured for the selected database
+
+After running the command, complete the switch:
+
+1. Install the new gem:
+
+    ```bash
+    bundle install
+    ```
+
+2. Create the new database and run migrations:
+
+    ```bash
+    bin/rails db:create db:migrate
+    ```
+
+3. Optionally load sample data:
+
+    ```bash
+    bin/rails spree_sample:load
+    ```
+
+## Creating a New App with a Specific Database
+
+When creating a new Spree application with the manual installation method, pass the `-d` flag to `rails new`:
+
+```bash
+# PostgreSQL
+rails new my_store -d postgresql -m https://raw.githubusercontent.com/spree/spree/main/backend/template.rb
+
+# MySQL
+rails new my_store -d mysql -m https://raw.githubusercontent.com/spree/spree/main/backend/template.rb
+
+# SQLite (default, no flag needed)
+rails new my_store -m https://raw.githubusercontent.com/spree/spree/main/backend/template.rb
+```
+
+## Cloud Database Services
+
+For production deployments, you can use managed database services:
+
+| Provider | PostgreSQL | MySQL |
+|----------|-----------|-------|
+| **AWS** | RDS PostgreSQL, Aurora PostgreSQL | RDS MySQL, Aurora MySQL, RDS MariaDB |
+| **Google Cloud** | Cloud SQL for PostgreSQL | Cloud SQL for MySQL |
+| **Azure** | Azure Database for PostgreSQL | Azure Database for MySQL |
+| **Heroku** | Heroku Postgres | JawsDB, ClearDB |
+| **Render** | Render PostgreSQL | — |
+
+Set the `DATABASE_URL` environment variable to the connection string provided by your cloud provider.

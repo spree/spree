@@ -10,9 +10,21 @@ This variables are required to run Spree Starter.
 
 | Variable | Description | Example |
 | --- | --- | --- |
-| `DATABASE_URL` | Database URL, this could be your AWS RDS instance or any other PostgreSQL instance | `postgres://user:pass@localhost:5432/spree` |
+| `DATABASE_URL` | Database connection URL. Spree supports PostgreSQL, MySQL, and SQLite | `postgres://user:pass@localhost:5432/spree` |
 | `REDIS_URL` | Redis/Valkey URL, used for background jobs processing,this could be your AWS ElastiCache instance or any other Redis/Valkey instance | `redis://localhost:6379/0` |
 | `SECRET_KEY_BASE` | You can generate this by running `bin/rails secret` | `2fad5c0b79d25e4765d3018d8c740f8c3a665f0e5c...` | 
+
+### Database URL examples
+
+Spree supports PostgreSQL, MySQL, and SQLite. Set the `DATABASE_URL` according to your database:
+
+| Database | Example |
+|----------|---------|
+| PostgreSQL | `postgres://user:pass@localhost:5432/spree` |
+| MySQL | `mysql2://user:pass@localhost:3306/spree` |
+| SQLite | `sqlite3:db/production.sqlite3` |
+
+[Learn more about database configuration](/developer/deployment/database).
 
 ## Optional environment variables
 
