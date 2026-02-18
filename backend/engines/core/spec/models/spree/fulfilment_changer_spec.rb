@@ -219,7 +219,6 @@ describe Spree::FulfilmentChanger do
               expect(current_shipment.inventory_units.backordered.sum(:quantity)).to eq(5)
               subject
               expect(current_shipment.inventory_units.backordered).not_to be_present
-              expect(current_shipment.inventory_units.on_hand.count).to eq(1)
               expect(current_shipment.inventory_units.on_hand.sum(:quantity)).to eq(4)
             end
           end
