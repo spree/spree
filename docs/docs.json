@@ -1004,7 +1004,7 @@
                       "user/manage-products/stock-transfers",
                       "user/manage-products/product-taxonomies",
                       "user/manage-products/product-options",
-                      "user/manage-products/product-properties"
+                      "user/manage-products/product-metafields"
                     ]
                   }
                 ]
