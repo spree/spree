@@ -1,6 +1,6 @@
 {
   "name": "@spree/next",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Next.js integration for Spree Commerce — server actions, caching, and cookie-based auth",
   "type": "module",
   "main": "./dist/index.js",
@@ -55,7 +55,7 @@
     "url": "https://github.com/spree/spree/issues"
   },
   "peerDependencies": {
-    "@spree/sdk": ">=0.2.0",
+    "@spree/sdk": ">=0.2.5",
     "next": ">=15.0.0",
     "react": ">=19.0.0"
   },

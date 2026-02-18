@@ -1,5 +1,13 @@
 # @spree/next
 
+## 0.2.4
+
+### Patch Changes
+
+- Bump @spree/sdk dependency for StoreLineItem currency field
+
+- Update type references from StoreUser to StoreCustomer following @spree/sdk rename
+
 ## 0.2.3
 
 ### Patch Changes
