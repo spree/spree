@@ -47,6 +47,7 @@ RSpec.describe 'Line Items API', type: :request, swagger_doc: 'api-reference/sto
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['number']).to eq(order.number)
+          expect(data['line_items'].first).to have_key('currency')
         end
       end
 

@@ -1,5 +1,11 @@
 # @spree/sdk
 
+## 0.2.5
+
+### Patch Changes
+
+- Add currency attribute to StoreLineItem type and Zod schema
+
 ## 0.2.4
 
 ### Patch Changes

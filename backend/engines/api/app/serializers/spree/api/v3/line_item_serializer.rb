@@ -2,7 +2,8 @@ module Spree
   module Api
     module V3
       class LineItemSerializer < BaseSerializer
-        typelize variant_id: :string, quantity: :number, name: :string, slug: :string, options_text: :string,
+        typelize variant_id: :string, quantity: :number, currency: :string,
+                 name: :string, slug: :string, options_text: :string,
                  price: :string, display_price: :string, total: :string, display_total: :string,
                  adjustment_total: :string, display_adjustment_total: :string,
                  additional_tax_total: :string, display_additional_tax_total: :string,
@@ -17,7 +18,7 @@ module Spree
           line_item.variant&.prefixed_id
         end
 
-        attributes :quantity, :name, :slug, :options_text,
+        attributes :quantity, :currency, :name, :slug, :options_text,
                    :price, :display_price, :total, :display_total,
                    :adjustment_total, :display_adjustment_total,
                    :additional_tax_total, :display_additional_tax_total,

@@ -7,6 +7,7 @@ export const StoreLineItemSchema = z.object({
   id: z.string(),
   variant_id: z.string(),
   quantity: z.number(),
+  currency: z.string(),
   name: z.string(),
   slug: z.string(),
   options_text: z.string(),

@@ -16,6 +16,7 @@ RSpec.describe Spree::Api::V3::LineItemSerializer do
         'id' => line_item.prefixed_id,
         'variant_id' => variant.prefixed_id,
         'quantity' => 2,
+        'currency' => 'USD',
         'name' => product.name,
         'slug' => product.slug
       )
