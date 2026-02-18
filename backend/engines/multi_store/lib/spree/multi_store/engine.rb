@@ -9,6 +9,14 @@ module Spree
       initializer 'spree.multi_store.disable_raise_on_missing_callback_actions' do |app|
         app.config.action_controller.raise_on_missing_callback_actions = false
       end
+
+      initializer 'spree.multi_store.helpers' do
+        Rails.application.config.after_initialize do
+          if defined?(Spree::Admin::BaseController)
+            Spree::Admin::BaseController.helper Spree::Admin::MultiStoreHelper
+          end
+        end
+      end
     end
   end
 end

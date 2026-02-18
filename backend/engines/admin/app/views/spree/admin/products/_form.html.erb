@@ -16,7 +16,6 @@
     <%= render 'spree/admin/products/form/categorization', f: f %>
     <%= render 'spree/admin/products/form/shipping', f: f %>
     <%= render 'spree/admin/products/form/tax', f: f %>
-    <%= render 'spree/admin/products/form/stores', f: f if available_stores.count > 1 %>
     <%= render_admin_partials(:product_form_sidebar_partials, f: f, product: @product) %>
 
     <%= render 'spree/admin/shared/seo',

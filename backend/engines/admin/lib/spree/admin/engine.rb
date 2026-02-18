@@ -47,6 +47,7 @@ module Spree
         :pages_actions_partials,
         :pages_header_partials,
         :payment_methods_actions_partials,
+        :payment_method_form_partials,
         :payment_methods_header_partials,
         :post_categories_actions_partials,
         :post_categories_header_partials,

@@ -1,6 +1,6 @@
-# Spree Server
+# Spree Backend
 
-A Rails application that serves as the Spree Commerce backend. It mounts the Spree engines (core, api, admin, emails, sample) from the `engines/` directory and provides the API and admin interface.
+A Rails application that serves as the Spree Commerce backend. It mounts the Spree engines (core, api, admin, emails) from the `engines/` directory and provides the API and admin interface.
 
 ## Structure
 
@@ -12,10 +12,10 @@ backend/
 ├── db/
 └── engines/
     ├── core/            # spree_core - models, services, business logic
-    ├── api/             # spree_api - Storefront & Platform REST APIs
+    ├── api/             # spree_api - REST APIs and Webhooks
     ├── admin/           # spree_admin - admin dashboard
     ├── emails/          # spree_emails - transactional emails
-    └── sample/          # spree_sample - sample seed data
+    └── multi_store/     # spree_multi_store - multi-store setup, the only one licensed under AGPLv3, obtain a commercial license for production use at https://spreecommerce.org/enterprise/, not included by default
 ```
 
 ## Setup
@@ -108,4 +108,4 @@ bundle exec rake test_app   # generates a dummy Rails app for testing
 bundle exec rspec spec
 ```
 
-Replace `core` with `api`, `admin`, `emails`, or `sample` to test other engines.
+Replace `core` with `api`, `admin`, `emails`, or `multi_store` to test other engines.

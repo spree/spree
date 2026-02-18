@@ -3,12 +3,6 @@ module Spree
     module StoresHelper
       include Spree::ImagesHelper
 
-      def available_stores
-        scope = Spree::Store.accessible_by(current_ability, :manage).includes(:logo_attachment, :favicon_image_attachment)
-        scope = scope.includes(:default_custom_domain) if Spree::Store.reflect_on_association(:default_custom_domain)
-        @available_stores ||= scope
-      end
-
       DEFAULT_ICON_SIZE = 40
 
       def store_admin_icon(store, opts = {})

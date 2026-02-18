@@ -40,14 +40,6 @@ module Spree
       end
     end
 
-    def url_or_custom_domain
-      default_custom_domain&.url || url
-    end
-
-    def formatted_url_or_custom_domain
-      formatted_custom_domain || formatted_url
-    end
-
     def import_products_from_store
       store = Spree::Store.find(import_products_from_store_id)
       product_ids = store.products.pluck(:id)

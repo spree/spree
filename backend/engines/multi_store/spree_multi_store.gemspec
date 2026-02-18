@@ -6,10 +6,10 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'spree_multi_store'
   s.version     = Spree.version
-  s.authors     = ['Spark Solutions Sp. z o.o.', 'Vendo Connect Inc.']
+  s.authors     = ['Vendo Connect Inc.', 'Vendo Sp. z o.o.']
   s.email       = 'hello@spreecommerce.org'
   s.summary     = 'Multi-store switching and resolution for Spree Commerce'
-  s.description = 'Adds multi-store switching, custom domains, and store resolution by URL to Spree Commerce'
+  s.description = 'Adds multi-store switching, custom domains, and store resolution to Spree Commerce'
   s.homepage    = 'https://spreecommerce.org'
   s.licenses    = ['AGPL-3.0-or-later']
 
@@ -25,5 +25,5 @@ Gem::Specification.new do |s|
   s.files        = Dir["{app,config,lib}/**/*", "LICENSE.md", "Rakefile", "README.md"]
   s.require_path = 'lib'
 
-  s.add_dependency 'spree_core', s.version
+  s.add_dependency 'spree', s.version
 end

@@ -1,4 +1,4 @@
-Copyright (c) 2025 Vendo Connect Inc., Spark Solutions Sp. z o.o.
+Copyright (c) 2026 Vendo Connect Inc. Vendo Sp. z o.o.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
