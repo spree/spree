@@ -9,7 +9,7 @@ Spree::Core::Engine.add_routes do
         post 'auth/oauth/callback', to: 'auth#oauth_callback'
 
         # Store
-        get 'store', to: 'stores#current'
+        resource :store, only: [:show]
 
         # Geography - countries include nested states from checkout zone
         resources :countries, only: [:index, :show]
