@@ -75,6 +75,17 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
 
         expect(response).to be_successful
       end
+
+      it 'renders the export dialog inside the table turbo frame with search params' do
+        get :index, params: { q: { multi_search: 'test-filter' } }
+
+        doc = Nokogiri::HTML(response.body)
+        table_frame = doc.at_css('turbo-frame#products')
+        export_frame = table_frame&.at_css('turbo-frame#export_dialog')
+
+        expect(export_frame).to be_present
+        expect(CGI.unescape(export_frame['src'])).to include('test-filter')
+      end
     end
 
     describe 'sorting by price' do
