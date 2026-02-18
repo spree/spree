@@ -283,4 +283,13 @@ RSpec.describe Spree::Store::MultiStoreMethods, type: :model do
       end
     end
   end
+
+  describe '.available_locales' do
+    let!(:store_en) { create(:store, default_locale: 'en', supported_locales: 'en,fr') }
+    let!(:store_de) { create(:store, default_locale: 'de', supported_locales: 'de') }
+
+    it 'aggregates locales from all stores' do
+      expect(Spree::Store.available_locales).to contain_exactly('en', 'fr', 'de')
+    end
+  end
 end

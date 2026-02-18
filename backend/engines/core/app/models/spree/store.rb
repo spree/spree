@@ -159,6 +159,7 @@ module Spree
     # Callbacks
     before_validation :ensure_default_country
     before_validation :set_default_code, on: :create
+    before_save :ensure_default_exists_and_is_unique
     before_save :ensure_supported_currencies, :ensure_supported_locales
     after_create :ensure_default_taxonomies_are_created
     after_create :ensure_default_automatic_taxons
@@ -197,7 +198,7 @@ module Spree
     end
 
     def self.available_locales
-      Spree::Store.all.map(&:supported_locales_list).flatten.uniq
+      Spree::Store.default&.supported_locales_list || []
     end
 
     def default_country_iso=(iso)
@@ -470,6 +471,14 @@ module Spree
     def translate_with_store_locale_fallback(key)
       locale = default_locale.presence&.to_sym || :en
       I18n.t(key, locale: locale, default: I18n.t(key, locale: :en))
+    end
+
+    def ensure_default_exists_and_is_unique
+      if default
+        Spree::Store.where.not(id: id).update_all(default: false)
+      elsif Spree::Store.where(default: true).count.zero?
+        self.default = true
+      end
     end
 
     def should_generate_new_friendly_id?

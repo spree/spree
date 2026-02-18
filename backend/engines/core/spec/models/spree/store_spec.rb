@@ -330,8 +330,12 @@ describe Spree::Store, type: :model, without_global_store: true do
   end
 
   describe '.default' do
+    before { Rails.cache.clear }
+
     context 'when a default store is already present' do
       let!(:store_2) { create(:store, default: true) }
+
+      before { Spree::Store.where.not(id: store_2.id).update_all(default: false) }
 
       it 'returns the already existing default store' do
         expect(described_class.default).to eq(store_2)
@@ -357,11 +361,16 @@ describe Spree::Store, type: :model, without_global_store: true do
   end
 
   describe '.available_locales' do
-    let!(:store) { create(:store, default_locale: 'en') }
-    let!(:store_2) { create(:store, default_locale: 'de') }
-    let!(:store_3) { create(:store, default_locale: 'en') }
+    let!(:store) { create(:store, default: true, default_locale: 'en', supported_locales: 'en,fr') }
 
-    it { expect(described_class.available_locales).to contain_exactly('en', 'de') }
+    before do
+      Spree::Store.where.not(id: store.id).update_all(default: false)
+      Rails.cache.clear
+    end
+
+    it 'returns the default store supported locales' do
+      expect(described_class.available_locales).to contain_exactly('en', 'fr')
+    end
   end
 
   shared_context 'with checkout zone set' do

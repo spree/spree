@@ -27,8 +27,9 @@ describe Spree::LocaleHelper, type: :helper do
 
   describe '#available_locales_options' do
     before do
-      create(:store, supported_locales: 'en,de')
-      create(:store, supported_locales: 'en')
+      store = create(:store, default: true, supported_locales: 'en,de', default_locale: 'en')
+      Spree::Store.where.not(id: store.id).update_all(default: false)
+      Rails.cache.clear
     end
 
     it { expect(available_locales_options).to contain_exactly(['English (US)', 'en'], ['Deutsch (DE)', 'de']) }

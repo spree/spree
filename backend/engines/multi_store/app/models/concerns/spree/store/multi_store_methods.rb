@@ -21,7 +21,6 @@ module Spree
       before_validation :set_url
       after_create :import_products_from_store, if: -> { import_products_from_store_id.present? }
       after_create :import_payment_methods_from_store, if: -> { import_payment_methods_from_store_id.present? }
-      before_save :ensure_default_exists_and_is_unique
       after_commit :handle_code_changes, on: :update, if: -> { code_previously_changed? }
       before_destroy :validate_not_last, unless: :skip_validate_not_last
       before_destroy :pass_default_flag_to_other_store
@@ -40,6 +39,10 @@ module Spree
         else
           Spree::Current.store
         end
+      end
+
+      def available_locales
+        Spree::Store.all.map(&:supported_locales_list).flatten.uniq
       end
     end
 
@@ -80,14 +83,6 @@ module Spree
     end
 
     private
-
-    def ensure_default_exists_and_is_unique
-      if default
-        Spree::Store.where.not(id: id).update_all(default: false)
-      elsif Spree::Store.where(default: true).count.zero?
-        self.default = true
-      end
-    end
 
     def validate_not_last
       unless can_be_deleted?

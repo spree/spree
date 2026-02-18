@@ -10,7 +10,7 @@ Rails.application.config.after_initialize do
   # (included module methods don't override methods defined directly on the class)
   Spree::Store.prepend Spree::Store::MultiStoreOverrides
 
-  # Override the singleton .current method defined in core's Store model
+  # Override singleton methods defined in core's Store model
   # (singleton methods take precedence over methods from included/prepended modules)
   Spree::Store.define_singleton_method(:current) do |url = nil|
     if url.present?
@@ -18,6 +18,11 @@ Rails.application.config.after_initialize do
     else
       Spree::Current.store
     end
+  end
+
+  # Aggregate locales across all stores instead of just the default store
+  Spree::Store.define_singleton_method(:available_locales) do
+    Spree::Store.all.map(&:supported_locales_list).flatten.uniq
   end
 
   # Replace StoreScopedResource with MultiStoreResource on shared models
