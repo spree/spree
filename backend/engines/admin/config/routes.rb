@@ -208,6 +208,8 @@ Spree::Core::Engine.add_routes do
       member do
         get :edit_emails
       end
+      resources :role_users, only: [:destroy]
+      resources :links, controller: 'page_links', only: [:create]
     end
     resources :policies, except: :show
     resources :payment_methods, except: :show
