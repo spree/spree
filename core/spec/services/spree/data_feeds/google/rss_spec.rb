@@ -92,6 +92,24 @@ module Spree
       end
     end
 
+    context 'product with only master variant' do
+      let(:product) { create(:product, stores: [store]) }
+      let!(:variant) { nil }
+
+      before do
+        product.master.images << create(:image)
+        allow(subject).to receive(:store).and_return(store)
+      end
+
+      it 'includes master variant in feed' do
+        expect(result.value[:file]).to include("<g:id>#{product.master.id}</g:id>")
+      end
+
+      it 'includes product name as title' do
+        expect(result.value[:file]).to include("<g:title>#{product.name}</g:title>")
+      end
+    end
+
     context 'optional item attributes are generated correctly' do
       let(:product) { create(:product_with_properties, stores: [store]) }
 

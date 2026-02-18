@@ -91,36 +91,33 @@ module Spree
     scope :backorderable, -> { left_joins(:stock_items).where(spree_stock_items: { backorderable: true }) }
     scope :in_stock_or_backorderable, -> { in_stock.or(backorderable) }
 
-    scope :eligible, -> {
-      where(is_master: false).or(
-        where(
-          product_id: Spree::Variant.
-                      select(:product_id).
-                      group(:product_id).
-                      having("COUNT(#{Spree::Variant.table_name}.id) = 1")
+    scope :eligible, lambda {
+      joins(:product).where(
+        arel_table[:is_master].eq(false).or(
+          Spree::Product.arel_table[:variant_count].eq(0)
         )
       )
     }
 
-    scope :not_discontinued, -> do
+    scope :not_discontinued, lambda {
       where(
         arel_table[:discontinue_on].eq(nil).or(
           arel_table[:discontinue_on].gteq(Time.current)
         )
       )
-    end
+    }
 
     scope :not_deleted, -> { where("#{Spree::Variant.quoted_table_name}.deleted_at IS NULL") }
 
-    scope :for_currency_and_available_price_amount, ->(currency = nil) do
+    scope :for_currency_and_available_price_amount, lambda { |currency = nil|
       currency ||= Spree::Store.default.default_currency
       joins(:prices).where("#{Spree::Price.table_name}.currency = ?", currency).where("#{Spree::Price.table_name}.amount IS NOT NULL").distinct
-    end
+    }
 
-    scope :active, ->(currency = nil) do
+    scope :active, lambda { |currency = nil|
       not_discontinued.not_deleted.
         for_currency_and_available_price_amount(currency)
-    end
+    }
 
     scope :with_option_value, lambda { |option_name, option_value|
       option_type_ids = OptionType.where(name: option_name).ids
@@ -187,7 +184,8 @@ module Spree
     )
 
     self.whitelisted_ransackable_associations = %w[option_values product tax_category prices default_price]
-    self.whitelisted_ransackable_attributes = %w[weight depth width height sku discontinue_on is_master cost_price cost_currency track_inventory deleted_at]
+    self.whitelisted_ransackable_attributes = %w[weight depth width height sku discontinue_on is_master cost_price cost_currency track_inventory
+                                                 deleted_at]
     self.whitelisted_ransackable_scopes = %i(product_name_or_sku_cont search_by_product_name_or_sku)
 
     def self.product_name_or_sku_cont(query)
@@ -258,9 +256,13 @@ module Spree
     # @return [String] the options text of the variant
     def options_text
       @options_text ||= if option_values.loaded?
-                          option_values.sort_by { |ov| ov.option_type.position }.map { |ov| "#{ov.option_type.presentation}: #{ov.presentation}" }.to_sentence(words_connector: ', ', two_words_connector: ', ')
+                          option_values.sort_by do |ov|
+                            ov.option_type.position
+                          end.map { |ov| "#{ov.option_type.presentation}: #{ov.presentation}" }.to_sentence(words_connector: ', ', two_words_connector: ', ')
                         else
-                          option_values.includes(:option_type).joins(:option_type).order("#{Spree::OptionType.table_name}.position").map { |ov| "#{ov.option_type.presentation}: #{ov.presentation}" }.to_sentence(words_connector: ', ', two_words_connector: ', ')
+                          option_values.includes(:option_type).joins(:option_type).order("#{Spree::OptionType.table_name}.position").map do |ov|
+                            "#{ov.option_type.presentation}: #{ov.presentation}"
+                          end.to_sentence(words_connector: ', ', two_words_connector: ', ')
                         end
     end
 
@@ -273,7 +275,7 @@ module Spree
     # Returns the descriptive name of the variant.
     # @return [String] the descriptive name of the variant
     def descriptive_name
-      is_master? ? name + ' - Master' : name + ' - ' + options_text
+      is_master? ? "#{name} - Master" : "#{name} - #{options_text}"
     end
 
     # use deleted? rather than checking the attribute directly. this

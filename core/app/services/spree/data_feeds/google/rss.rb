@@ -18,7 +18,9 @@ module Spree
                 result = products_list.call(store)
                 if result.success?
                   result.value[:products].find_each do |product|
-                    product.variants.active.find_each do |variant|
+                    product.variants_including_master.active.find_each do |variant|
+                      next if variant.is_master? && product.has_variants?
+
                       add_variant_information_to_xml(xml, product, variant)
                     end
                   end
