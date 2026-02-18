@@ -95,12 +95,9 @@ module Spree
     scope :in_stock_or_backorderable, -> { in_stock.or(backorderable) }
 
     scope :eligible, lambda {
-      where(is_master: false).or(
-        where(
-          product_id: Spree::Variant.
-                      select(:product_id).
-                      group(:product_id).
-                      having("COUNT(#{Spree::Variant.table_name}.id) = 1")
+      joins(:product).where(
+        arel_table[:is_master].eq(false).or(
+          Spree::Product.arel_table[:variant_count].eq(0)
         )
       )
     }
