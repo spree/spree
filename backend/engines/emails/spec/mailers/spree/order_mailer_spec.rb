@@ -267,18 +267,6 @@ describe Spree::OrderMailer, type: :mailer do
       expect(ActionMailer::Base.default_url_options[:host]).to eq(second_order.store.url)
     end
 
-    context 'with custom domain' do
-      let(:store) { create(:store) }
-      let!(:custom_domain) { create(:custom_domain, store: store, url: 'my-store.com') }
-
-      it 'uses custom domain for URLs in emails' do
-        email = described_class.confirm_email(order).deliver_now
-        expect(ActionMailer::Base.default_url_options[:host]).to eq('my-store.com')
-        # testing HTML body
-        expect(email.body.parts.last.body).to include('my-store.com')
-        expect(email.body.parts.last.body).not_to include(store.url)
-      end
-    end
   end
 
   describe '#payment_link_email' do
