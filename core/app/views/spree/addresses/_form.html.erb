@@ -45,8 +45,7 @@
       </div>
       <%= render "spree/addresses/suggestions_box" %>
     </div>
-    <span class="text-sm space-x-2 items-center hidden alert alert-info mt-2 align-items-center" data-address-autocomplete-target="addressWarning">
-      <%= heroicon "exclamation-circle", variant: :outline if defined?(heroicon) %>
+    <span class="text-sm space-x-2 hidden alert alert-info mt-2" data-address-autocomplete-target="addressWarning">
       <%= Spree.t('address_book.add_house_number') %>
     </span>
   </div>
