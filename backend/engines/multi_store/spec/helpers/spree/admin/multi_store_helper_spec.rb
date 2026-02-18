@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe Spree::Admin::StoresHelper, type: :helper do
+RSpec.describe Spree::Admin::MultiStoreHelper, type: :helper do
   describe '#available_stores' do
     let(:user) { create(:admin_user) }
     let!(:store1) { create(:store, name: 'Store 1') }

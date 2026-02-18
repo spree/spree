@@ -27,7 +27,7 @@ module Spree
     normalizes :name, with: ->(value) { value&.to_s&.squish&.presence }
 
     include Spree::ProductScopes
-    include Spree::MultiStoreResource
+    include Spree::StoreScopedResource
     include Spree::TranslatableResource
     include Spree::MemoizedData
     include Spree::Metafields

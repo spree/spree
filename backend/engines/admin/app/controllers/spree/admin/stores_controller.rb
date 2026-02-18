@@ -9,31 +9,6 @@ module Spree
       before_action :load_all_countries, only: [:edit, :update]
       before_action :load_all_zones, only: [:edit, :update]
 
-      def new
-        @store = Spree::Store.new(
-          default_country_iso: current_store.default_country_iso,
-          default_currency: current_store.default_currency
-        )
-        render :new, layout: 'spree/admin_wizard'
-      end
-
-      def create
-        @store = Spree::Store.new(permitted_store_params)
-        @store.mail_from_address = current_store.mail_from_address
-
-        if @store.save
-          # Move/copy all existing users (staff) to the new store
-          current_store.role_users.each do |role_user|
-            @store.add_user(role_user.user, role_user.role)
-          end
-
-          flash[:success] = flash_message_for(@store, :successfully_created)
-          redirect_to spree.admin_getting_started_url(host: @store.url), allow_other_host: true
-        else
-          render :new, status: :unprocessable_content
-        end
-      end
-
       def edit
         if params[:section] == 'emails'
           add_breadcrumb Spree.t(:emails), spree.edit_admin_store_path(section: params[:section])
@@ -61,7 +36,7 @@ module Spree
           flash[:error] = "#{Spree.t('store_errors.unable_to_update')}: #{@store.errors.full_messages.join(', ')}"
         end
 
-        if @store.saved_changes? && permitted_store_params[:code].present?
+        if @store.saved_changes? && permitted_store_params[:code].present? && spree.respond_to?(:admin_custom_domains_url)
           redirect_to spree.admin_custom_domains_url(host: @store.url), allow_other_host: true
         else
           respond_to do |format|

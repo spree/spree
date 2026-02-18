@@ -5,10 +5,6 @@ describe Spree::Store, type: :model, without_global_store: true do
     Spree::Country.find_by(iso: 'US') || create(:country_us)
   end
 
-  before do
-    allow(Spree).to receive(:root_domain).and_return('mydomain.dev')
-  end
-
   context 'Associations' do
     subject { create(:store) }
 
@@ -120,37 +116,18 @@ describe Spree::Store, type: :model, without_global_store: true do
   end
 
   context 'Callbacks' do
-    describe '#set_code' do
+    describe '#set_default_code' do
       let(:store) { build(:store, name: 'Store', code: nil) }
 
-      it 'sets the code' do
-        expect { store.valid? }.to change(store, :code).from(nil).to('store')
+      it 'sets the code to default when blank' do
+        expect { store.valid? }.to change(store, :code).from(nil).to('default')
       end
 
       context 'when code is already set' do
-        let(:store) { build(:store, name: 'Store', code: 'store') }
+        let(:store) { build(:store, name: 'Store', code: 'mycode') }
 
         it 'does not change the code' do
           expect { store.valid? }.not_to change(store, :code)
-        end
-      end
-
-      context 'when name is not set' do
-        let(:store) { build(:store, name: nil, code: nil) }
-
-        it 'does not set the code' do
-          expect { store.valid? }.not_to change(store, :code)
-        end
-      end
-
-      context 'when code is already taken' do
-        let(:default_store) { create(:store, default: true, code: 'store') }
-        let(:store) { build(:store, name: 'Store', code: default_store.code) }
-
-        it 'generates a new code' do
-          expect { store.valid? }.to change(store, :code)
-          expect(store.code).not_to eq(default_store.code)
-          expect(store.code).to match(/store-\d+/)
         end
       end
 
@@ -201,28 +178,6 @@ describe Spree::Store, type: :model, without_global_store: true do
               'Versandrichtlinie'
             )
           end
-        end
-      end
-    end
-
-    describe '#set_url' do
-      let(:store) { build(:store, code: 'my_store', url: nil) }
-
-      context 'on create' do
-        it 'sets url' do
-          store.save!
-          expect(store.url).to eq('my_store.mydomain.dev')
-        end
-      end
-
-      context 'on update code change update url' do
-        let!(:store) { create(:store, code: 'my_store', url: 'my_store.mydomain.dev') }
-
-        it 'updates url but keep old one' do
-          expect(store.url).to eq('my_store.mydomain.dev')
-          store.update!(code: 'my_store_2')
-          expect(store.reload.url).to eq('my_store_2.mydomain.dev')
-          expect(Spree::Store.friendly.find('my_store').id).to eq(store.id)
         end
       end
     end
@@ -325,44 +280,15 @@ describe Spree::Store, type: :model, without_global_store: true do
       end
     end
 
-    describe '#import_products_from_store' do
-      let(:store) { build(:store, import_products_from_store_id: other_store.id) }
-      let(:other_store) { create(:store) }
-      let!(:products) { create_list(:product, 2, stores: [other_store]) }
-
-      it 'imports products from other store' do
-        expect { store.save! }.to change(Spree::StoreProduct, :count).by(2)
-        expect(store.products.count).to eq(2)
-
-        expect(store.products.pluck(:id)).to match_array(products.pluck(:id))
-      end
-    end
-
-    describe '#import_payment_methods_from_store' do
-      let(:store) { build(:store, import_payment_methods_from_store_id: other_store.id) }
-      let(:other_store) { create(:store) }
-      let!(:payment_methods) { create_list(:payment_method, 2, stores: [other_store]) }
-
-      it 'imports payment methods from other store' do
-        expect { store.save! }.to change(Spree::StorePaymentMethod, :count).by(2)
-        expect(store.payment_methods.count).to eq(2)
-      end
-    end
   end
 
   context 'Validations' do
     describe '#code' do
-      let(:default_store) { create(:store, default: true, code: 'store') }
-
-      it 'cannot create 2 stores with the same code' do
-        new_store = create(:store, name: default_store.code)
-        expect(new_store.persisted?).to be(true)
-        expect(new_store.code).not_to eq(default_store.code) # code is generated
-      end
-
-      it 'cannot create a store with reserved code' do
-        new_store = build(:store, code: 'admin')
-        expect(new_store.valid?).to be(false)
+      it 'requires code to be present' do
+        store = build(:store, code: nil, name: nil)
+        store.valid?
+        # set_default_code sets it to 'default' if blank, so it should be valid
+        expect(store.code).to eq('default')
       end
     end
   end
@@ -389,67 +315,30 @@ describe Spree::Store, type: :model, without_global_store: true do
     end
   end
 
-  describe '.by_url' do
-    let!(:store)    { create(:store, url: "website1.com\nwww.subdomain.com") }
-    let!(:store_2)  { create(:store, url: 'freethewhales.com') }
-
-    it 'finds stores by url' do
-      by_domain = Spree::Store.by_url('www.subdomain.com')
-
-      expect(by_domain).to include(store)
-      expect(by_domain).not_to include(store_2)
-    end
-  end
-
   describe '.current' do
-    # there is a default store created with the test_app rake task.
     let!(:store_1) { Spree::Store.first || create(:store) }
 
-    let!(:store_2) { create(:store, default: false, url: 'www.subdomain.com') }
-
-    it 'returns default when no domain' do
+    it 'returns Spree::Current.store' do
+      Spree::Current.store = store_1
       expect(subject.class.current).to eql(store_1)
     end
 
-    it 'returns store for domain' do
-      expect(Spree::Stores::FindCurrent.new(url: 'spreecommerce.com').execute).to eql(store_1)
-      expect(Spree::Stores::FindCurrent.new(url: 'www.subdomain.com').execute).to eql(store_2)
+    it 'ignores url argument' do
+      Spree::Current.store = store_1
+      expect(subject.class.current('other-url.com')).to eql(store_1)
     end
   end
 
   describe '.default' do
+    before { Rails.cache.clear }
+
     context 'when a default store is already present' do
-      let!(:store)    { create(:store) }
-      let!(:store_2)  { create(:store, default: true) }
+      let!(:store_2) { create(:store, default: true) }
+
+      before { Spree::Store.where.not(id: store_2.id).update_all(default: false) }
 
       it 'returns the already existing default store' do
         expect(described_class.default).to eq(store_2)
-      end
-
-      it "ensures there is a default if one doesn't exist yet" do
-        expect(store_2.default).to be true
-      end
-
-      it 'ensures there is only one default' do
-        [store, store_2].each(&:reload)
-
-        expect(Spree::Store.where(default: true).count).to eq(1)
-        expect(store_2.default).to be true
-        expect(store.default).not_to be true
-      end
-
-      context 'when store is not saved' do
-        before do
-          store.default = true
-          store.name = nil
-          store.save
-        end
-
-        it 'ensure old default location still default' do
-          [store, store_2].each(&:reload)
-          expect(store.default).to be false
-          expect(store_2.default).to be true
-        end
       end
     end
 
@@ -472,11 +361,16 @@ describe Spree::Store, type: :model, without_global_store: true do
   end
 
   describe '.available_locales' do
-    let!(:store) { create(:store, default_locale: 'en') }
-    let!(:store_2) { create(:store, default_locale: 'de') }
-    let!(:store_3) { create(:store, default_locale: 'en') }
+    let!(:store) { create(:store, default: true, default_locale: 'en', supported_locales: 'en,fr') }
 
-    it { expect(described_class.available_locales).to contain_exactly('en', 'de') }
+    before do
+      Spree::Store.where.not(id: store.id).update_all(default: false)
+      Rails.cache.clear
+    end
+
+    it 'returns the default store supported locales' do
+      expect(described_class.available_locales).to contain_exactly('en', 'fr')
+    end
   end
 
   shared_context 'with checkout zone set' do
@@ -758,61 +652,12 @@ describe Spree::Store, type: :model, without_global_store: true do
     end
   end
 
-  describe '#can_be_deleted?' do
-    let(:default_store) { create(:store, default: true) }
-
-    it 'cannot delete the only store' do
-      Spree::Store.where.not(id: default_store.id).delete_all
-      expect(default_store.can_be_deleted?).to eq(false)
-    end
-
-    it 'can delete when there are more than 1 stores' do
-      create(:store)
-      expect(default_store.can_be_deleted?).to eq(true)
-    end
-  end
-
   describe 'soft deletion' do
-    let!(:default_store) { create(:store, default: true) }
-    let(:another_store) { create(:store) }
+    let!(:store) { create(:store) }
 
-    context 'default store' do
-      context 'with multiple stores' do
-        before do
-          Spree::Store.where.not(id: default_store.id).delete_all
-          another_store
-        end
-
-        it 'can be deleted' do
-          expect(default_store.deleted?).to eq(false)
-          expect { default_store.destroy }.to change(default_store, :deleted_at)
-          expect(default_store.deleted?).to eq(true)
-        end
-
-        it 'passes default flag to other store' do
-          expect(another_store.default?).to eq(false)
-          default_store.destroy
-          expect(default_store.default?).to eq(false)
-          expect(another_store.reload.default?).to eq(true)
-          expect(described_class.default).to eq(another_store)
-        end
-      end
-
-      context 'single store' do
-        before { Spree::Store.where.not(id: default_store.id).delete_all }
-
-        it 'cannot be deleted' do
-          expect { default_store.destroy! }.to raise_error(ActiveRecord::RecordNotDestroyed)
-          expect(default_store.errors.full_messages.to_sentence).to eq('Cannot destroy the only Store.')
-        end
-      end
-    end
-
-    context 'another store' do
-      it 'soft-deletes when destroy is called' do
-        another_store.destroy!
-        expect(another_store.deleted_at).not_to be_nil
-      end
+    it 'soft-deletes when destroy is called' do
+      store.destroy!
+      expect(store.deleted_at).not_to be_nil
     end
   end
 
@@ -874,14 +719,16 @@ describe Spree::Store, type: :model, without_global_store: true do
   describe '#formatted_url_or_custom_domain' do
     let(:store) { build(:store, code: 'mystore', url: 'mystore.mydomain.dev:3000') }
 
-    context 'without custom domain' do
-      it { expect(store.formatted_url_or_custom_domain).to eq('http://mystore.mydomain.dev:3000') }
+    it 'returns formatted_url as fallback' do
+      expect(store.formatted_url_or_custom_domain).to eq('http://mystore.mydomain.dev:3000')
     end
+  end
 
-    context 'with custom domain' do
-      let!(:custom_domain) { create(:custom_domain, store: store, url: 'mystore.com') }
+  describe '#url_or_custom_domain' do
+    let(:store) { build(:store, code: 'mystore', url: 'mystore.mydomain.dev') }
 
-      it { expect(store.formatted_url_or_custom_domain).to eq('http://mystore.com:3000') }
+    it 'returns url as fallback' do
+      expect(store.url_or_custom_domain).to eq('mystore.mydomain.dev')
     end
   end
 end

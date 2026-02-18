@@ -2,7 +2,7 @@ module Spree
   class Promotion < Spree.base_class
     has_prefix_id :promo  # Spree-specific: promotion
 
-    include Spree::MultiStoreResource
+    include Spree::StoreScopedResource
     include Spree::Metafields
     include Spree::Metadata
     if defined?(Spree::Security::Promotions)

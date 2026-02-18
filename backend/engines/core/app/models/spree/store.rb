@@ -4,10 +4,6 @@ module Spree
   class Store < Spree.base_class
     has_prefix_id :store  # Spree-specific: store
 
-    RESERVED_CODES = %w(
-      admin default app api www cdn files assets checkout account auth login user
-    )
-
     include FriendlyId
     include Spree::TranslatableResource
     include Spree::Metafields
@@ -21,7 +17,7 @@ module Spree
     # Magic methods
     #
     acts_as_paranoid
-    friendly_id :slug_candidates, use: [:slugged, :history], slug_column: :code, routes: :normal
+    friendly_id :code, use: [:slugged], slug_column: :code, routes: :normal
 
     #
     # Translations
@@ -103,9 +99,6 @@ module Spree
     has_many :reports, class_name: 'Spree::Report'
     has_many :exports, class_name: 'Spree::Export'
 
-    has_many :custom_domains, class_name: 'Spree::CustomDomain', dependent: :destroy
-    has_one :default_custom_domain, -> { where(default: true) }, class_name: 'Spree::CustomDomain'
-
     has_many :posts, class_name: 'Spree::Post', dependent: :destroy, inverse_of: :store
     has_many :post_categories, class_name: 'Spree::PostCategory', dependent: :destroy, inverse_of: :store
 
@@ -134,9 +127,6 @@ module Spree
     #
     # Virtual attributes
     #
-    attribute :import_products_from_store_id, :string, default: nil
-    attribute :import_payment_methods_from_store_id, :string, default: nil
-    attr_accessor :skip_validate_not_last
     store_accessor :private_metadata, :storefront_password
 
     #
@@ -147,7 +137,6 @@ module Spree
     end
     validates :preferred_digital_asset_authorized_clicks, numericality: { only_integer: true, greater_than: 0 }
     validates :preferred_digital_asset_authorized_days, numericality: { only_integer: true, greater_than: 0 }
-    validates :code, uniqueness: { case_sensitive: false, conditions: -> { with_deleted } }, exclusion: RESERVED_CODES
     validates :mail_from_address, email: { allow_blank: false }
     # FIXME: we should remove this condition in v5
     if !ENV['SPREE_DISABLE_DB_CONNECTION'] &&
@@ -169,39 +158,27 @@ module Spree
     #
     # Callbacks
     before_validation :ensure_default_country
-    before_validation :set_code, on: :create
-    before_validation :set_url
+    before_validation :set_default_code, on: :create
     before_save :ensure_default_exists_and_is_unique
     before_save :ensure_supported_currencies, :ensure_supported_locales
     after_create :ensure_default_taxonomies_are_created
     after_create :ensure_default_automatic_taxons
     after_create :ensure_default_post_categories_are_created
-    after_create :import_products_from_store, if: -> { import_products_from_store_id.present? }
-    after_create :import_payment_methods_from_store, if: -> { import_payment_methods_from_store_id.present? }
     after_create :create_default_policies
-    before_destroy :validate_not_last, unless: :skip_validate_not_last
-    before_destroy :pass_default_flag_to_other_store
     after_commit :clear_cache
-    after_commit :handle_code_changes, on: :update, if: -> { code_previously_changed? }
 
     #
     # Scopes
     #
     default_scope { order(created_at: :asc) }
-    scope :by_custom_domain, ->(url) { left_joins(:custom_domains).where("#{Spree::CustomDomain.table_name}.url" => url) }
-    scope :by_url, ->(url) { where(url: url).or(where("#{table_name}.url like ?", "%#{url}%")) }
 
     #
     # Delegations
     #
     delegate :iso, to: :default_country, prefix: true, allow_nil: true
 
-    def self.current(url = nil)
-      if url.present?
-        Spree.current_store_finder.new(url: url).execute
-      else
-        Spree::Current.store
-      end
+    def self.current(_url = nil)
+      Spree::Current.store
     end
 
     # @deprecated The or_initialize behavior will be removed in Spree 5.5.
@@ -221,7 +198,7 @@ module Spree
     end
 
     def self.available_locales
-      Spree::Store.all.map(&:supported_locales_list).flatten.uniq
+      Spree::Store.default&.supported_locales_list || []
     end
 
     def default_country_iso=(iso)
@@ -299,26 +276,12 @@ module Spree
       end
     end
 
-    def formatted_custom_domain
-      return unless default_custom_domain
-
-      @formatted_custom_domain ||= if Rails.env.development? || Rails.env.test?
-        URI::Generic.build(
-          scheme: Rails.application.routes.default_url_options[:protocol] || 'http',
-          host: default_custom_domain.url,
-          port: Rails.application.routes.default_url_options[:port]
-        ).to_s
-      else
-        URI::HTTPS.build(host: default_custom_domain.url).to_s
-      end
-    end
-
     def url_or_custom_domain
-      default_custom_domain&.url || url
+      url
     end
 
     def formatted_url_or_custom_domain
-      formatted_custom_domain || formatted_url
+      formatted_url
     end
 
     # Returns the countries available for checkout for the store or creates a new one if it doesn't exist
@@ -369,10 +332,6 @@ module Spree
       favicon_image.variant(resize_to_limit: [32, 32])
     end
 
-    def can_be_deleted?
-      self.class.where.not(id: id).any?
-    end
-
     def metric_unit_system?
       preferred_unit_system == 'metric'
     end
@@ -383,24 +342,6 @@ module Spree
 
     def digital_shipping_category
       @digital_shipping_category ||= ShippingCategory.find_or_create_by(name: 'Digital')
-    end
-
-    def import_products_from_store
-      store = Store.find(import_products_from_store_id)
-      product_ids = store.products.pluck(:id)
-
-      return if product_ids.empty?
-
-      StoreProduct.insert_all(product_ids.map { |product_id| { store_id: id, product_id: product_id } })
-    end
-
-    def import_payment_methods_from_store
-      store = Store.find(import_payment_methods_from_store_id)
-      payment_method_ids = store.payment_method_ids
-
-      return if payment_method_ids.empty?
-
-      StorePaymentMethod.insert_all(payment_method_ids.map { |payment_method_id| { store_id: id, payment_method_id: payment_method_id } })
     end
 
     %w[customer_terms_of_service customer_privacy_policy customer_returns_policy customer_shipping_policy].each do |policy_method|
@@ -421,14 +362,6 @@ module Spree
       "#{cache_key_with_version}/#{checkout_zone&.cache_key_with_version}/states_available_for_checkout/#{country&.cache_key_with_version}"
     end
 
-    def ensure_default_exists_and_is_unique
-      if default
-        Store.where.not(id: id).update_all(default: false)
-      elsif Store.where(default: true).count.zero?
-        self.default = true
-      end
-    end
-
     def ensure_supported_locales
       return unless attributes.keys.include?('supported_locales')
       return if supported_locales.present?
@@ -443,20 +376,6 @@ module Spree
       return if default_currency.blank?
 
       self.supported_currencies = default_currency
-    end
-
-    def validate_not_last
-      unless can_be_deleted?
-        errors.add(:base, :cannot_destroy_only_store)
-        throw(:abort)
-      end
-    end
-
-    def pass_default_flag_to_other_store
-      if default? && can_be_deleted?
-        self.class.where.not(id: id).first.update!(default: true)
-        self.default = false
-      end
     end
 
     def clear_cache
@@ -554,42 +473,20 @@ module Spree
       I18n.t(key, locale: locale, default: I18n.t(key, locale: :en))
     end
 
-    # code is slug, so we don't want to generate new slug when code changes
-    # we use friendlyId only for history feature
+    def ensure_default_exists_and_is_unique
+      if default
+        Spree::Store.where.not(id: id).update_all(default: false)
+      elsif Spree::Store.where(default: true).count.zero?
+        self.default = true
+      end
+    end
+
     def should_generate_new_friendly_id?
       false
     end
 
-    def slug_candidates
-      []
-    end
-
-    def handle_code_changes
-      # implement your custom logic here
-    end
-
-    # This FriendlyId method is overwitten to keep our logic for generating code
-    # there is no option for own format
-    def set_code
-      self.code = if code.present?
-                    code.parameterize.strip
-                  elsif name.present?
-                    name.parameterize.strip
-                  end
-
-      return if self.code.blank?
-
-      # ensure code is unique
-      self.code = [name.parameterize, rand(9999)].join('-') while Spree::Store.with_deleted.where(code: self.code).exists?
-    end
-
-    # auto-assign internal URL for stores
-    def set_url
-      return if url_changed?
-      return unless code_changed?
-      return unless Spree.root_domain.present?
-
-      self.url = [code, Spree.root_domain].join('.')
+    def set_default_code
+      self.code = 'default' if code.blank?
     end
   end
 end

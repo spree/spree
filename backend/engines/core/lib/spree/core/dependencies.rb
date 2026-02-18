@@ -100,7 +100,7 @@ module Spree
         cms_page_finder: nil, # LEGACY
         menu_finder: nil, # LEGACY
         current_order_finder: 'Spree::Orders::FindCurrent',
-        current_store_finder: 'Spree::Stores::FindCurrent',
+        current_store_finder: 'Spree::Stores::FindDefault',
         completed_order_finder: 'Spree::Orders::FindComplete',
         credit_card_finder: 'Spree::CreditCards::Find',
         products_finder: 'Spree::Products::Find',

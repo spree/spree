@@ -5,7 +5,7 @@ module Spree
     acts_as_paranoid
     acts_as_list
 
-    include Spree::MultiStoreResource
+    include Spree::StoreScopedResource
     include Spree::Metafields
     include Spree::Metadata
     include Spree::DisplayOn

@@ -231,7 +231,6 @@ module Spree
           Spree::Address,
           Spree::Asset,
           Spree::CreditCard,
-          Spree::CustomDomain,
           Spree::CustomerReturn,
           Spree::GiftCard,
           Spree::Image,

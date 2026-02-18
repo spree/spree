@@ -3,18 +3,11 @@ module Spree
     module V3
       module Store
         class StoresController < ResourceController
-          # Public endpoint - no authentication required
+          skip_before_action :set_resource
 
-          # GET  /api/v3/store/store
-          def current
-            @store = current_store
-            render json: serialize_resource(@store)
-          end
-
-          # GET  /api/v3/store/stores/:code
+          # GET /api/v3/store/store
           def show
-            @resource = Spree::Store.find_by!(code: params[:id])
-            render json: serialize_resource(@resource)
+            render json: serialize_resource(current_store)
           end
 
           protected

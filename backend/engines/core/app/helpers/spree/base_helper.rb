@@ -134,10 +134,10 @@ module Spree
 
       base_url = if options[:relative]
                    ''
-                 elsif store.formatted_custom_domain.blank?
-                   store.formatted_url
-                 else
+                 elsif store.respond_to?(:formatted_custom_domain) && store.formatted_custom_domain.present?
                    store.formatted_custom_domain
+                 else
+                   store.formatted_url
                  end
 
       localize = if options[:locale].present?

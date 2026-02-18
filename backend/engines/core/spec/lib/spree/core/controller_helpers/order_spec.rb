@@ -92,16 +92,6 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
           expect(token_cookie_domain).to eq(store.url)
         end
 
-        context 'on a custom domain' do
-          let!(:custom_domain) { create(:custom_domain, store: store, url: 'test-cookie-store.com') }
-
-          it 'creates a new token cookie on a custom domain' do
-            controller.current_order
-
-            expect(token_cookie).to be_present
-            expect(token_cookie_domain).to eq('test-cookie-store.com')
-          end
-        end
       end
 
       context 'for a cart without token' do
@@ -131,16 +121,6 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
           expect(token_cookie_domain).to eq(store.url)
         end
 
-        context 'on a custom domain' do
-          let!(:custom_domain) { create(:custom_domain, store: store, url: 'test-cookie-store.com') }
-
-          it 'creates a new token cookie on a custom domain' do
-            controller.current_order
-
-            expect(token_cookie).to be_present
-            expect(token_cookie_domain).to eq('test-cookie-store.com')
-          end
-        end
       end
 
       context 'for a checkout without token' do

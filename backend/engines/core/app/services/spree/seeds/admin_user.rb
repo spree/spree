@@ -14,9 +14,8 @@ module Spree
           )
           user.save!
 
-          Spree::Store.all.each do |store|
-            store.add_user(user)
-          end
+          store = Spree::Store.default
+          store&.add_user(user) if store&.persisted?
         end
       end
     end

@@ -16,24 +16,6 @@ describe 'Store admin', type: :feature, js: true do
     Rails.application.config.hosts << /.*\.lvh\.me/
   end
 
-  describe 'creating another store' do
-    it 'creates another store' do
-      visit spree.admin_root_path
-      find('#store-menu .dropdown:last-child button').click
-      click_on 'New Store'
-
-      expect(page).to have_content('New Store')
-      fill_in 'store_name', with: 'New Store Name'
-      click_button 'Create'
-
-      expect(page).to have_content('Getting started')
-
-      new_store = Spree::Store.last
-
-      expect(page).to have_current_path(spree.admin_getting_started_url(host: new_store.url, port: Capybara.current_session.server.port))
-    end
-  end
-
   describe 'updating store' do
     it 'updates store' do
       visit spree.edit_admin_store_path(section: 'general-settings')
