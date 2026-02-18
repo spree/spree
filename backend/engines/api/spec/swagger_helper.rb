@@ -100,6 +100,7 @@ RSpec.configure do |config|
         { name: 'Customers', description: 'Customer account management' },
         { name: 'Addresses', description: 'Customer address book' },
         { name: 'Credit Cards', description: 'Saved payment methods' },
+        { name: 'Payment Setup Sessions', description: 'Save payment methods for future use via gateway-agnostic setup sessions' },
         { name: 'Wishlists', description: 'Customer wishlists' },
         { name: 'Digitals', description: 'Digital product downloads' }
       ],
@@ -107,7 +108,7 @@ RSpec.configure do |config|
         { name: 'Store', tags: %w[Store Countries] },
         { name: 'Catalog', tags: %w[Products Taxonomies Taxons] },
         { name: 'Checkout', tags: ['Cart', 'Orders', 'Line Items', 'Coupon Codes', 'Payments', 'Payment Sessions', 'Payment Methods', 'Shipments'] },
-        { name: 'Customer', tags: ['Authentication', 'Customers', 'Addresses', 'Credit Cards', 'Wishlists', 'Digitals'] }
+        { name: 'Customer', tags: ['Authentication', 'Customers', 'Addresses', 'Credit Cards', 'Payment Setup Sessions', 'Wishlists', 'Digitals'] }
       ],
       components: {
         securitySchemes: {

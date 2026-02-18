@@ -59,6 +59,12 @@ export {
   completePaymentSession,
 } from './actions/payment-sessions';
 
+export {
+  createPaymentSetupSession,
+  getPaymentSetupSession,
+  completePaymentSetupSession,
+} from './actions/payment-setup-sessions';
+
 // Re-export commonly used SDK types for convenience
 export type {
   StoreProduct,
@@ -78,6 +84,7 @@ export type {
   StorePayment,
   StorePaymentMethod,
   StorePaymentSession,
+  StorePaymentSetupSession,
   StoreImage,
   StoreOptionType,
   StoreOptionValue,
@@ -89,5 +96,7 @@ export type {
   CreatePaymentSessionParams,
   UpdatePaymentSessionParams,
   CompletePaymentSessionParams,
+  CreatePaymentSetupSessionParams,
+  CompletePaymentSetupSessionParams,
   SpreeError,
 } from '@spree/sdk';

@@ -17,6 +17,8 @@ import type {
   CreatePaymentSessionParams,
   UpdatePaymentSessionParams,
   CompletePaymentSessionParams,
+  CreatePaymentSetupSessionParams,
+  CompletePaymentSetupSessionParams,
   StoreCreditCard,
   StoreGiftCard,
   StoreProduct,
@@ -27,6 +29,7 @@ import type {
   StorePayment,
   StorePaymentMethod,
   StorePaymentSession,
+  StorePaymentSetupSession,
   StoreShipment,
   StoreStore,
   StoreWishlist,
@@ -725,6 +728,46 @@ export class StoreClient {
        */
       get: (id: string, options?: RequestOptions): Promise<StoreGiftCard> =>
         this.request<StoreGiftCard>('GET', `/customer/gift_cards/${id}`, options),
+    },
+
+    /**
+     * Nested resource: Payment Setup Sessions (save payment methods for future use)
+     */
+    paymentSetupSessions: {
+      /**
+       * Create a payment setup session
+       * Delegates to the payment gateway to initialize a setup flow for saving a payment method
+       */
+      create: (
+        params: CreatePaymentSetupSessionParams,
+        options?: RequestOptions
+      ): Promise<StorePaymentSetupSession> =>
+        this.request<StorePaymentSetupSession>(
+          'POST',
+          '/customer/payment_setup_sessions',
+          { ...options, body: params }
+        ),
+
+      /**
+       * Get a payment setup session by ID
+       */
+      get: (id: string, options?: RequestOptions): Promise<StorePaymentSetupSession> =>
+        this.request<StorePaymentSetupSession>('GET', `/customer/payment_setup_sessions/${id}`, options),
+
+      /**
+       * Complete a payment setup session
+       * Confirms the setup with the provider, resulting in a saved payment method
+       */
+      complete: (
+        id: string,
+        params?: CompletePaymentSetupSessionParams,
+        options?: RequestOptions
+      ): Promise<StorePaymentSetupSession> =>
+        this.request<StorePaymentSetupSession>(
+          'PATCH',
+          `/customer/payment_setup_sessions/${id}/complete`,
+          { ...options, body: params }
+        ),
     },
   };
 

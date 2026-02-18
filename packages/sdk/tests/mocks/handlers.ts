@@ -420,6 +420,58 @@ export const handlers = [
     HttpResponse.json({ id: 'gc_1', code: 'GIFT123', balance: '50.00' })
   ),
 
+  // Customer Payment Setup Sessions
+  http.post(`${API_PREFIX}/customer/payment_setup_sessions`, () =>
+    HttpResponse.json({
+      id: 'pss_1',
+      status: 'pending',
+      external_id: 'seti_abc123',
+      external_client_secret: 'seti_secret_xyz',
+      external_data: { client_secret: 'seti_secret_xyz' },
+      payment_method_id: 'pm_1',
+      payment_source_id: null,
+      payment_source_type: null,
+      customer_id: 'user_1',
+      created_at: '2026-02-18T00:00:00.000Z',
+      updated_at: '2026-02-18T00:00:00.000Z',
+      payment_method: { id: 'pm_1', name: 'Credit Card', description: null, type: 'Spree::Gateway::Bogus' },
+    }, { status: 201 })
+  ),
+
+  http.get(`${API_PREFIX}/customer/payment_setup_sessions/:id`, () =>
+    HttpResponse.json({
+      id: 'pss_1',
+      status: 'pending',
+      external_id: 'seti_abc123',
+      external_client_secret: 'seti_secret_xyz',
+      external_data: { client_secret: 'seti_secret_xyz' },
+      payment_method_id: 'pm_1',
+      payment_source_id: null,
+      payment_source_type: null,
+      customer_id: 'user_1',
+      created_at: '2026-02-18T00:00:00.000Z',
+      updated_at: '2026-02-18T00:00:00.000Z',
+      payment_method: { id: 'pm_1', name: 'Credit Card', description: null, type: 'Spree::Gateway::Bogus' },
+    })
+  ),
+
+  http.patch(`${API_PREFIX}/customer/payment_setup_sessions/:id/complete`, () =>
+    HttpResponse.json({
+      id: 'pss_1',
+      status: 'completed',
+      external_id: 'seti_abc123',
+      external_client_secret: 'seti_secret_xyz',
+      external_data: { client_secret: 'seti_secret_xyz' },
+      payment_method_id: 'pm_1',
+      payment_source_id: 'cc_1',
+      payment_source_type: 'Spree::CreditCard',
+      customer_id: 'user_1',
+      created_at: '2026-02-18T00:00:00.000Z',
+      updated_at: '2026-02-18T00:00:00.000Z',
+      payment_method: { id: 'pm_1', name: 'Credit Card', description: null, type: 'Spree::Gateway::Bogus' },
+    })
+  ),
+
   // Wishlists
   http.get(`${API_PREFIX}/wishlists`, () =>
     HttpResponse.json({ data: [fixtures.wishlist], meta: paginationMeta })

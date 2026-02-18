@@ -31,6 +31,8 @@ export default defineConfig([
       'actions/orders': 'src/actions/orders.ts',
       'actions/credit-cards': 'src/actions/credit-cards.ts',
       'actions/gift-cards': 'src/actions/gift-cards.ts',
+      'actions/payment-sessions': 'src/actions/payment-sessions.ts',
+      'actions/payment-setup-sessions': 'src/actions/payment-setup-sessions.ts',
     },
     format: ['esm'],
     dts: true,
