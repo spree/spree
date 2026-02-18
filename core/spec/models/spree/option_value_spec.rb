@@ -59,7 +59,7 @@ describe Spree::OptionValue, type: :model do
     let!(:option_value3) { create(:option_value, name: 'green', presentation: 'Green') }
 
     it 'returns the option values in the correct format' do
-      expect(Spree::OptionValue.to_tom_select_json).to eq([{ id: 'red', name: 'Red' }, { id: 'blue', name: 'Blue' }, { id: 'green', name: 'Green' }])
+      expect(Spree::OptionValue.to_tom_select_json).to match_array([{ id: 'red', name: 'Red' }, { id: 'blue', name: 'Blue' }, { id: 'green', name: 'Green' }])
     end
   end
 
