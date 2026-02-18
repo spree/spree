@@ -1,26 +1,48 @@
 ---
-title: "Exporting Customers"
-description: "In this Spree user doc, you'll learn how to export your customer database."
+title: "Export Customers"
+description: "Learn how to export customers records to CSV in Spree Commerce."
 ---
 
-Exporting customer data is useful for generating reports, segmenting customer data, or integrating with external tools like email marketing platforms. This makes it easier to analyze customer trends, track engagement, and manage business operations efficiently.
+Export your customer database for reporting, segmentation, or integration with external tools such as email marketing platforms or CRM systems.
 
-To export customer data, navigate to the Customers tab of the admin dashboard.
+Exporting customer data makes it easier to analyze trends, review engagement, and manage customer relationships outside of Spree when needed.
 
-<img alt="Exporting Customers" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1747661500/docs/Customers/Exporting%20Customers/5.5.1_Exporting_Customers_-_Navigate_To_Tab_g3nyig.png" />
+## How to Export Customers
 
-## Apply Filters
+To export customers, navigate to **Customers** in the admin dashboard.
 
-If you intend to export a segment of the customer base rather than the entire list, you should first apply filters such as location, tags, etc.
+![How to export customers in Spree Commerce](/docs/images/user/customers/exporting-customers/1-customers-tab.png)
 
-<img alt="Exporting Customers" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1747661498/docs/Customers/Exporting%20Customers/5.5.2_Exporting_Customers_-_Apply_Filters_ont7vk.png" />
+From here you may optionally apply filters and export the records you require.
 
-Note: If you don’t apply any filters,
+### Apply Filters
 
-## Export
+If you want to export a specific segment rather than your entire customer list, apply filters before exporting.
 
-When you’re ready to export the data, simply click ‘Export’ in the top right corner and the results will be emailed to the email address associated with your admin account.
+You can use the **Filters** button to narrow results by fields such as:
 
-<img alt="Exporting Customers" classname="block dark:hidden" src="https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1747661440/docs/Customers/Exporting%20Customers/5.5.3_Exporting_Customers_-_Click_Export_dcwjuy.png" />
+- Email marketing (opt-in status)
+- Location
+- Created at / Updated at
+- First Name
+- Last Name
+- Tags
 
-Note: You can also access all historical exports in the Audit Log tab of the Settings menu.
+To learn more about filters, refer to our [<u>Searching Customers</u>](https://spreecommerce.org/docs/user/customers/searching-customers) article.
+
+<Note>If no filters are applied, the export will include all customers, regardless of your choice in the next step.</Note>
+
+### Export
+
+![Exporting vustomers in the Spree Commerce dashboard](/docs/images/user/customers/exporting-customers/2-export-customers.png)
+
+Once your desired view is set, click **Export** in the top-right corner.
+
+You’ll be prompted to confirm whether you want to export:
+
+- **Filtered records** (only the customers currently shown), or
+- **All records**
+
+After confirming, a CSV file will be generated and sent to the email address associated with your admin account.
+
+<Note>Using filters before exporting allows you to create targeted customer lists for campaigns, reporting, or operational needs.</Note>
