@@ -105,6 +105,35 @@ describe Spree::Product::Slugs, type: :model do
       end
     end
 
+    context 'when using translations' do
+      let(:product) do
+        I18n.with_locale(:en) { create(:product, stores: [store], slug: product_slug) }
+      end
+
+      before { I18n.locale = :fr }
+      after  { I18n.locale = :en }
+
+      context 'when product translation exists with a translated slug' do
+        before do
+          I18n.with_locale(:fr) { product.update!(name: 'French product') }
+        end
+
+        it 'renames slug for the translation' do
+          product.destroy!
+          expect(product.translations.with_deleted.where(locale: :fr).first.slug).to match(/deleted-french-product-.+/)
+        end
+      end
+
+      context 'when product translation does not exist' do
+        it 'does nothing' do
+          product.destroy!
+
+          expect(product.deleted_at).to be_present
+          expect(product.translations.with_deleted).to be_empty
+        end
+      end
+    end
+
     context 'when slug is already at or near max length' do
       before do
         product.slug = nil
