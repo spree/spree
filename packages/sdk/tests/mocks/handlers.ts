@@ -26,6 +26,7 @@ export const fixtures = {
   lineItem: {
     id: 'li_1',
     quantity: 2,
+    currency: 'USD',
     price: '19.99',
     variant_id: 'var_1',
   },
