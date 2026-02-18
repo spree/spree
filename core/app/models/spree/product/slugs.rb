@@ -103,7 +103,7 @@ module Spree
         translations.with_deleted.each { |rec| rec.update_columns(slug: new_slug.call(rec)) }
         slugs.with_deleted.each { |rec| rec.update_column(:slug, new_slug.call(rec)) }
 
-        translations.find_by!(locale: I18n.locale).update_column(:slug, slug) if Spree.use_translations?
+        translations.find_by(locale: I18n.locale)&.update_column(:slug, slug) if Spree.use_translations?
       end
     end
   end
