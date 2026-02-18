@@ -116,6 +116,34 @@ module Spree
       payment_session.complete
     end
 
+    def setup_session_supported?
+      true
+    end
+
+    def create_payment_setup_session(customer:, external_data: {})
+      payment_setup_sessions.create(
+        customer: customer,
+        status: 'pending',
+        external_id: "bogus_seti_#{SecureRandom.hex(12)}",
+        external_client_secret: "bogus_seti_secret_#{SecureRandom.hex(8)}",
+        external_data: external_data
+      )
+    end
+
+    def complete_payment_setup_session(setup_session:, params: {})
+      credit_card = CreditCard.create!(
+        user: setup_session.customer,
+        payment_method: self,
+        name: 'Bogus Card',
+        last_digits: '4242',
+        month: '12',
+        year: 1.year.from_now.year.to_s,
+        gateway_customer_profile_id: "BGS-#{Array.new(6) { rand(6) }.join}"
+      )
+      setup_session.update!(payment_source: credit_card)
+      setup_session.complete
+    end
+
     def actions
       %w(capture void credit)
     end

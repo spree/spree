@@ -132,6 +132,16 @@ export interface CompletePaymentSessionParams {
   external_data?: Record<string, unknown>;
 }
 
+// Payment Setup Sessions
+export interface CreatePaymentSetupSessionParams {
+  payment_method_id: string;
+  external_data?: Record<string, unknown>;
+}
+
+export interface CompletePaymentSetupSessionParams {
+  external_data?: Record<string, unknown>;
+}
+
 // Product Filters types
 export interface FilterOption {
   id: string;

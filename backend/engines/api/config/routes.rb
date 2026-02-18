@@ -63,6 +63,11 @@ Spree::Core::Engine.add_routes do
           end
           resources :credit_cards, only: [:index, :show, :destroy]
           resources :gift_cards, only: [:index, :show]
+          resources :payment_setup_sessions, only: [:create, :show] do
+            member do
+              patch :complete
+            end
+          end
         end
 
         # Wishlists

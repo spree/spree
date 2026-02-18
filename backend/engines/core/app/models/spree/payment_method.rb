@@ -29,6 +29,7 @@ module Spree
     has_many :credit_cards, class_name: 'Spree::CreditCard', dependent: :destroy # CCs are soft deleted
 
     has_many :payment_sessions, class_name: 'Spree::PaymentSession', dependent: :destroy
+    has_many :payment_setup_sessions, class_name: 'Spree::PaymentSetupSession', dependent: :destroy
     has_many :gateway_customers, class_name: 'Spree::GatewayCustomer', dependent: :destroy
 
     def self.providers
@@ -72,6 +73,30 @@ module Spree
     # Override in gateway subclasses to implement provider-specific session completion.
     def complete_payment_session(payment_session:, params: {})
       raise ::NotImplementedError, 'You must implement complete_payment_session method for this gateway.'
+    end
+
+    # Whether this payment method supports setup sessions (saving payment methods for future use).
+    # Override in gateway subclasses that support tokenization without a payment.
+    def setup_session_supported?
+      false
+    end
+
+    # The class used for payment setup sessions with this payment method.
+    # Override in gateway subclasses to provide a provider-specific session class.
+    def payment_setup_session_class
+      nil
+    end
+
+    # Creates a payment setup session via the provider for saving a payment method.
+    # Override in gateway subclasses to implement provider-specific setup session creation.
+    def create_payment_setup_session(customer:, external_data: {})
+      raise ::NotImplementedError, "#{self.class.name} does not implement #create_payment_setup_session"
+    end
+
+    # Completes a payment setup session via the provider.
+    # Override in gateway subclasses to implement provider-specific setup session completion.
+    def complete_payment_setup_session(setup_session:, params: {})
+      raise ::NotImplementedError, "#{self.class.name} does not implement #complete_payment_setup_session"
     end
 
     def method_type
