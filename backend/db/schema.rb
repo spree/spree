@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_16_150246) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_18_156042) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -803,6 +803,26 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_16_150246) do
     t.index ["payment_method_id"], name: "index_spree_payment_sessions_on_payment_method_id"
     t.index ["status"], name: "index_spree_payment_sessions_on_status"
     t.index ["type"], name: "index_spree_payment_sessions_on_type"
+  end
+
+  create_table "spree_payment_setup_sessions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "customer_id"
+    t.datetime "deleted_at"
+    t.string "external_client_secret"
+    t.jsonb "external_data"
+    t.string "external_id"
+    t.bigint "payment_method_id", null: false
+    t.bigint "payment_source_id"
+    t.string "payment_source_type"
+    t.string "status", null: false
+    t.datetime "updated_at", null: false
+    t.index ["customer_id"], name: "index_spree_payment_setup_sessions_on_customer_id"
+    t.index ["deleted_at"], name: "index_spree_payment_setup_sessions_on_deleted_at"
+    t.index ["external_id", "payment_method_id"], name: "idx_spree_pss_unique_external_id_per_pm", unique: true
+    t.index ["payment_method_id"], name: "index_spree_payment_setup_sessions_on_payment_method_id"
+    t.index ["payment_source_type", "payment_source_id"], name: "idx_spree_pss_on_payment_source"
+    t.index ["status"], name: "index_spree_payment_setup_sessions_on_status"
   end
 
   create_table "spree_payment_sources", force: :cascade do |t|
