@@ -33,6 +33,58 @@ This can be done by running the following command:
 
 As above, this process can take a while depending on the size of your product catalog.
 
+### Prefixed IDs
+
+Spree 5.4 by default uses prefixed IDs for resources (eg. `prod_6VsgxZbenF`) instead of just IDs from the database. These IDs are now used in Admin Dashboard, API v3, Events system and Webhooks.
+
+#### Event Subscribers
+
+If you previously added Subscribers for Events, eg. `order.completed` with code such as:
+
+```ruby
+module MyApp
+  class OrderAuditSubscriber < Spree::Subscriber
+    subscribes_to 'order.complete'
+
+    on 'order.complete', :log_order_completed
+
+    private
+
+    def find_order(event)
+      Spree::Order.find(event.payload[:id])
+    end
+  end
+end
+```
+
+You will need to update your code to use the new prefixed IDs, from:
+
+```ruby
+Spree::Order.find(event.payload[:id])
+```
+
+to:
+
+```ruby
+Spree::Order.find_by_prefix_id!(event.payload[:id])
+```
+
+You can also use `find_by_prefix_id` without the bang (`!`) to gracefully handle cases where the record might not exist.
+
+#### Adding Prefixed IDs support to your custom models
+
+All models inheriting from `Spree::Base` (or `Spree.base_class`) can support Prefixed IDs by adding the following code to your model:
+
+```ruby
+class MyModel < Spree::Base
+  has_prefix_id :mm
+  
+  # ...
+end
+```
+
+Prefix length isn't limited by default, but we recommend to keep it short.
+
 ### (Optional) Install API v2
 
 Spree 5.4 ships with API v3, which marks deprecation of API v2. API v2 is still available but you need to install it separately. If you currently use API v2, you can do this by running the following command:
