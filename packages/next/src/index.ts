@@ -78,6 +78,7 @@ export type {
   StoreAddress,
   StoreCustomer,
   StoreCreditCard,
+  StoreDigitalLink,
   StoreGiftCard,
   StoreShipment,
   StoreShippingRate,

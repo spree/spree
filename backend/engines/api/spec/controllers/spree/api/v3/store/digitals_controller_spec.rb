@@ -10,10 +10,6 @@ RSpec.describe Spree::Api::V3::Store::DigitalsController, type: :controller do
   let(:digital) { create(:digital, variant: line_item.variant) }
   let!(:digital_link) { create(:digital_link, digital: digital, line_item: line_item) }
 
-  before do
-    request.headers['X-Spree-Api-Key'] = api_key.token
-  end
-
   describe 'GET #show' do
     it 'sends the file for a valid token' do
       get :show, params: { token: digital_link.token }
@@ -88,10 +84,10 @@ RSpec.describe Spree::Api::V3::Store::DigitalsController, type: :controller do
     context 'without API key' do
       before { request.headers['X-Spree-Api-Key'] = nil }
 
-      it 'returns unauthorized' do
+      it 'still allows access (token is the authentication)' do
         get :show, params: { token: digital_link.token }
 
-        expect(response).to have_http_status(:unauthorized)
+        expect(response).to have_http_status(:ok)
       end
     end
   end

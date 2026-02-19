@@ -1,6 +1,6 @@
 {
   "name": "@spree/next",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Next.js integration for Spree Commerce — server actions, caching, and cookie-based auth",
   "type": "module",
   "main": "./dist/index.js",

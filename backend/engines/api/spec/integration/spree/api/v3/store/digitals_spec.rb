@@ -15,20 +15,19 @@ RSpec.describe 'Digitals API', type: :request, swagger_doc: 'api-reference/store
     get 'Download a digital product' do
       tags 'Digitals'
       produces 'application/octet-stream', 'application/json'
-      security [api_key: []]
       description <<~DESC
         Downloads a digital product file using the digital link token.
-        The token is provided in the order confirmation or digital links list.
+        The token is provided via the `download_url` field on digital links
+        returned with order line items. No API key or authentication required —
+        the token itself grants access.
         Each download increments the access counter. Downloads may be limited by
         store settings (number of downloads and/or time-based expiration).
       DESC
 
-      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :token, in: :path, type: :string, required: true,
                 description: 'Digital link token'
 
       response '200', 'file downloaded' do
-        let(:'x-spree-api-key') { api_key.token }
         let(:token) { digital_link.token }
 
         run_test! do |response|
@@ -38,7 +37,6 @@ RSpec.describe 'Digitals API', type: :request, swagger_doc: 'api-reference/store
       end
 
       response '403', 'download link expired or limit exceeded' do
-        let(:'x-spree-api-key') { api_key.token }
         let(:token) { digital_link.token }
 
         before do
@@ -58,17 +56,7 @@ RSpec.describe 'Digitals API', type: :request, swagger_doc: 'api-reference/store
       end
 
       response '404', 'digital link not found' do
-        let(:'x-spree-api-key') { api_key.token }
         let(:token) { 'invalid_token' }
-
-        schema '$ref' => '#/components/schemas/ErrorResponse'
-
-        run_test!
-      end
-
-      response '401', 'unauthorized - invalid API key' do
-        let(:'x-spree-api-key') { 'invalid' }
-        let(:token) { digital_link.token }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 
