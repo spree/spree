@@ -1,5 +1,11 @@
 # @spree/sdk
 
+## 0.3.1
+
+### Patch Changes
+
+- Add `download_url` field to `StoreDigitalLink` type — digital links on line items now include a ready-to-use download URL. The endpoint no longer requires API key authentication; the token in the URL is the sole authentication mechanism.
+
 ## 0.3.0
 
 ### Minor Changes

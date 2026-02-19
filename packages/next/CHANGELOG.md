@@ -1,5 +1,12 @@
 # @spree/next
 
+## 0.3.1
+
+### Patch Changes
+
+- Re-export `StoreDigitalLink` type from `@spree/sdk` — digital links now include a `download_url` field for direct file downloads without API key authentication
+- Bump `@spree/sdk` dependency for `StoreDigitalLink.download_url` field
+
 ## 0.3.0
 
 ### Minor Changes

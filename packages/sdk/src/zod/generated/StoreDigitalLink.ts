@@ -8,6 +8,7 @@ export const StoreDigitalLinkSchema = z.object({
   content_type: z.string(),
   created_at: z.string(),
   updated_at: z.string(),
+  download_url: z.string(),
   authorizable: z.boolean(),
   expired: z.boolean(),
   access_limit_exceeded: z.boolean(),

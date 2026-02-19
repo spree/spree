@@ -24,6 +24,7 @@ export { StoreOrderPromotionSchema, type StoreOrderPromotion } from './StoreOrde
 export { StorePaymentSchema, type StorePayment } from './StorePayment';
 export { StorePaymentMethodSchema, type StorePaymentMethod } from './StorePaymentMethod';
 export { StorePaymentSessionSchema, type StorePaymentSession } from './StorePaymentSession';
+export { StorePaymentSetupSessionSchema, type StorePaymentSetupSession } from './StorePaymentSetupSession';
 export { StorePaymentSourceSchema, type StorePaymentSource } from './StorePaymentSource';
 export { StorePriceSchema, type StorePrice } from './StorePrice';
 export { StoreProductSchema, type StoreProduct } from './StoreProduct';

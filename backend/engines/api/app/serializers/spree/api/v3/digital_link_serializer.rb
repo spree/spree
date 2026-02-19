@@ -3,10 +3,15 @@ module Spree
     module V3
       class DigitalLinkSerializer < BaseSerializer
         typelize access_counter: :number, filename: :string, content_type: :string,
+                 download_url: :string,
                  authorizable: :boolean, expired: :boolean, access_limit_exceeded: :boolean
 
         attributes :access_counter, :filename, :content_type,
                    created_at: :iso8601, updated_at: :iso8601
+
+        attribute :download_url do |digital_link|
+          Spree::Core::Engine.routes.url_helpers.api_v3_store_digital_download_path(token: digital_link.token)
+        end
 
         attribute :authorizable do |digital_link|
           digital_link.authorizable?
