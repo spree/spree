@@ -1106,8 +1106,7 @@
                   "user/settings/payments",
                   "user/settings/zones",
                   "user/settings/shipping-methods",
-                  "user/settings/tax",
-                  "user/settings/returns-configuration"
+                  "user/settings/tax"
                 ]
               },
               {
