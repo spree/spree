@@ -51,5 +51,16 @@ describe Spree::LocalizedNumber do
         expect(subject.class.parse('')).to be 0
       end
     end
+
+    context 'when input uses the locale decimal separator (as sent by money_field_controller.js)' do
+      it 'correctly parses comma-decimal values with German locale' do
+        allow(I18n).to receive(:locale).and_return(:de)
+        allow(I18n.config).to receive(:locale).and_return(:de)
+
+        # money_field_controller.js strips thousands separators but keeps the locale's decimal separator
+        expect(subject.class.parse('123,00')).to eq(123.0)
+        expect(subject.class.parse('1599,99')).to eq(1599.99)
+      end
+    end
   end
 end
