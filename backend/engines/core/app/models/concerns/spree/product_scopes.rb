@@ -298,8 +298,7 @@ module Spree
       def self.with_currency(currency)
         joins(variants_including_master: :prices).
           where(Price.table_name => { currency: currency.upcase }).
-          where.not(Price.table_name => { amount: nil }).
-          distinct
+          where.not(Price.table_name => { amount: nil })
       end
       search_scopes << :with_currency
 
@@ -350,16 +349,17 @@ module Spree
       # @param order_direction [Symbol] :desc (default) or :asc
       # @return [ActiveRecord::Relation]
       add_search_scope :by_best_selling do |order_direction = :desc|
-        order_dir = order_direction == :desc ? 'DESC' : 'ASC'
         store_id = Spree::Current.store&.id
+        sp_table = StoreProduct.arel_table
+        products_table = Product.arel_table
 
-        joins(:store_products)
-          .where(StoreProduct.table_name => { store_id: store_id })
-          .select("#{Product.table_name}.*",
-                  "#{StoreProduct.table_name}.units_sold_count",
-                  "#{StoreProduct.table_name}.revenue")
-          .order(Arel.sql("#{StoreProduct.table_name}.units_sold_count #{order_dir}"))
-          .order(Arel.sql("#{StoreProduct.table_name}.revenue #{order_dir}"))
+        conditions = sp_table[:product_id].eq(products_table[:id]).and(sp_table[:store_id].eq(store_id))
+
+        units_sold = Arel::Nodes::NamedFunction.new('COALESCE', [sp_table.project(sp_table[:units_sold_count]).where(conditions), 0])
+        revenue = Arel::Nodes::NamedFunction.new('COALESCE', [sp_table.project(sp_table[:revenue]).where(conditions), 0])
+
+        order_dir = order_direction == :desc ? :desc : :asc
+        order(units_sold.send(order_dir)).order(revenue.send(order_dir))
       end
 
       # .search_by_name
