@@ -5,8 +5,7 @@ module Spree
         class ProductsController < ResourceController
           SORT_OPTIONS = {
             'price-low-to-high' => :ascend_by_price,
-            'price-high-to-low' => :descend_by_price,
-            'best-selling' => :by_best_selling
+            'price-high-to-low' => :descend_by_price
           }.freeze
 
           protected
@@ -53,6 +52,8 @@ module Spree
           def apply_collection_sort(collection)
             sort_by = params.dig(:q, :sort_by) || params[:sort_by]
             return collection unless sort_by.present?
+
+            return collection.distinct(false).reorder(nil).by_best_selling if sort_by == 'best-selling'
 
             scope_method = SORT_OPTIONS[sort_by]
             return collection.reorder(nil).send(scope_method) if scope_method.present?

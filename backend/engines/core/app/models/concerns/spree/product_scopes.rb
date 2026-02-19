@@ -298,7 +298,8 @@ module Spree
       def self.with_currency(currency)
         joins(variants_including_master: :prices).
           where(Price.table_name => { currency: currency.upcase }).
-          where.not(Price.table_name => { amount: nil })
+          where.not(Price.table_name => { amount: nil }).
+          distinct
       end
       search_scopes << :with_currency
 
