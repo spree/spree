@@ -23,7 +23,7 @@ describe('cart', () => {
   describe('create', () => {
     it('creates a new cart', async () => {
       const result = await client.store.cart.create();
-      expect(result.token).toBeDefined();
+      expect(result.token).toBe('new-cart-token');
     });
   });
 

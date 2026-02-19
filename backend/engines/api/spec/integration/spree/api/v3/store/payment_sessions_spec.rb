@@ -18,7 +18,7 @@ RSpec.describe 'Payment Sessions API', type: :request, swagger_doc: 'api-referen
 
   path '/api/v3/store/orders/{order_id}/payment_sessions' do
     post 'Create payment session' do
-      tags 'Payment Sessions'
+      tags 'Checkout'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -79,7 +79,7 @@ RSpec.describe 'Payment Sessions API', type: :request, swagger_doc: 'api-referen
               description: 'Order token for guest access'
 
     get 'Get payment session' do
-      tags 'Payment Sessions'
+      tags 'Checkout'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns a single payment session with its current status and provider data.'
@@ -109,7 +109,7 @@ RSpec.describe 'Payment Sessions API', type: :request, swagger_doc: 'api-referen
     end
 
     patch 'Update payment session' do
-      tags 'Payment Sessions'
+      tags 'Checkout'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -151,7 +151,7 @@ RSpec.describe 'Payment Sessions API', type: :request, swagger_doc: 'api-referen
               description: 'Order token for guest access'
 
     patch 'Complete payment session' do
-      tags 'Payment Sessions'
+      tags 'Checkout'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]

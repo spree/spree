@@ -7,9 +7,22 @@ module Spree
 
           before_action :require_authentication!, only: [:associate]
 
+          # POST /api/v3/store/cart
+          # Creates a new shopping cart (order)
+          # Can be created by guests or authenticated customers
+          def create
+            @cart = Spree::Order.create!(
+              store: current_store,
+              currency: current_currency,
+              user: current_user # nil for guests
+            )
+
+            render json: serialize_resource(@cart), status: :created
+          end
+
           # GET /api/v3/store/cart
           # Returns current incomplete order (cart)
-          # Returns 404 if no cart exists - use POST /orders to create one
+          # Returns 404 if no cart exists - use POST /cart to create one
           # Authorize via order_token param or JWT Bearer token
           def show
             @cart = find_cart
@@ -58,13 +71,6 @@ module Spree
             end
 
             raise ActiveRecord::RecordNotFound.new(nil, 'Spree::Order')
-          end
-
-          def serialize_resource(resource)
-            result = serializer_class.new(resource, params: serializer_params).to_h
-            # Always include order token for cart (needed for guest checkout)
-            result[:token] = resource.token if resource.token.present?
-            result
           end
         end
       end

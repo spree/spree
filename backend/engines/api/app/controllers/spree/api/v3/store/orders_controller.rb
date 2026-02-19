@@ -7,21 +7,7 @@ module Spree
 
           # Skip base controller's set_resource and define our own complete list
           skip_before_action :set_resource
-          before_action :set_resource, only: [:show, :update, :destroy, :next, :advance, :complete]
-          prepend_before_action :require_authentication!, only: [:index]
-
-          # POST  /api/v3/store/orders (public - guest checkout)
-          def create
-            @resource = Spree::Order.create!(
-              store: current_store,
-              currency: current_currency,
-              user: current_user # nil for guests
-            )
-
-            render json: serialize_resource(@resource).merge(
-              order_token: @resource.token # Return token for guest access
-            ), status: :created
-          end
+          before_action :set_resource, only: [:show, :update, :next, :advance, :complete]
 
           # PATCH  /api/v3/store/orders/:id
           #

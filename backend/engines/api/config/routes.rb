@@ -25,12 +25,13 @@ Spree::Core::Engine.add_routes do
           resources :products, only: [:index], controller: 'taxons/products'
         end
 
-        # Cart - alias for current incomplete order (creates if none exists)
-        get 'cart', to: 'cart#show'
-        patch 'cart/associate', to: 'cart#associate'
+        # Cart
+        resource :cart, only: [:show, :create], controller: 'cart' do
+          patch :associate
+        end
 
-        # Orders - all orders (complete and incomplete)
-        resources :orders do
+        # Orders - individual order management and checkout
+        resources :orders, only: [:show, :update] do
           member do
             # State transitions
             patch :next       # Move to next checkout step
@@ -61,6 +62,7 @@ Spree::Core::Engine.add_routes do
               patch :mark_as_default
             end
           end
+          resources :orders, only: [:index]
           resources :credit_cards, only: [:index, :show, :destroy]
           resources :gift_cards, only: [:index, :show]
           resources :payment_setup_sessions, only: [:create, :show] do

@@ -1,5 +1,18 @@
 # @spree/sdk
 
+## 0.3.0
+
+### Minor Changes
+
+- **Breaking:** Restructure Store API endpoints for Cart, Checkout & Orders
+  - Cart creation moved from `POST /orders` to `POST /cart` — use `client.store.cart.create()` instead of `client.store.orders.create()`
+  - Customer order history moved from `GET /orders` to `GET /customer/orders` — use `client.store.customer.orders.list()` instead of `client.store.orders.list()`
+  - `orders.create()` removed — use `cart.create()` instead
+  - `orders.list()` removed — use `customer.orders.list()` instead
+  - Orders namespace now focuses on individual order management and checkout: `get`, `update`, `next`, `advance`, `complete`, plus nested resources (lineItems, payments, shipments, etc.)
+- Add `customer.orders.list()` method for fetching authenticated customer's order history
+- Add Payment Setup Sessions support: `client.store.customer.paymentSetupSessions` with `create`, `get`, and `complete` methods for saving payment methods for future use
+
 ## 0.2.5
 
 ### Patch Changes

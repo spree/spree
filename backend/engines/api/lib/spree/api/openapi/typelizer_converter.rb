@@ -211,6 +211,13 @@ module Spree
               return schema
             end
 
+            # Record<K, V> types -> plain object
+            if type_string.match?(/^Record</)
+              schema = { type: :object }
+              schema[:nullable] = true if nullable
+              return schema
+            end
+
             # Reference type - in OpenAPI 3.0, nullable $ref needs allOf wrapper
             if type_string.match?(/^[A-Z]/)
               ref = { '$ref' => "#/components/schemas/#{type_string}" }

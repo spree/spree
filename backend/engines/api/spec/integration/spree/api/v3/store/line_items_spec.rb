@@ -12,7 +12,7 @@ RSpec.describe 'Line Items API', type: :request, swagger_doc: 'api-reference/sto
 
   path '/api/v3/store/orders/{order_id}/line_items' do
     post 'Add item to cart' do
-      tags 'Line Items'
+      tags 'Cart'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -77,7 +77,7 @@ RSpec.describe 'Line Items API', type: :request, swagger_doc: 'api-reference/sto
 
   path '/api/v3/store/orders/{order_id}/line_items/{id}' do
     patch 'Update line item quantity' do
-      tags 'Line Items'
+      tags 'Cart'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -115,7 +115,7 @@ RSpec.describe 'Line Items API', type: :request, swagger_doc: 'api-reference/sto
     end
 
     delete 'Remove line item from cart' do
-      tags 'Line Items'
+      tags 'Cart'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Removes a line item from the order'

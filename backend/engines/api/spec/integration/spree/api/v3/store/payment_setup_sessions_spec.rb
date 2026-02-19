@@ -15,7 +15,7 @@ RSpec.describe 'Payment Setup Sessions API', type: :request, swagger_doc: 'api-r
 
   path '/api/v3/store/customer/payment_setup_sessions' do
     post 'Create payment setup session' do
-      tags 'Payment Setup Sessions'
+      tags 'Customers'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -74,7 +74,7 @@ RSpec.describe 'Payment Setup Sessions API', type: :request, swagger_doc: 'api-r
               description: 'Payment setup session ID'
 
     get 'Get payment setup session' do
-      tags 'Payment Setup Sessions'
+      tags 'Customers'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns a payment setup session with its current status and provider data.'
@@ -111,7 +111,7 @@ RSpec.describe 'Payment Setup Sessions API', type: :request, swagger_doc: 'api-r
               description: 'Payment setup session ID'
 
     patch 'Complete payment setup session' do
-      tags 'Payment Setup Sessions'
+      tags 'Customers'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]

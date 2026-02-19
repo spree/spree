@@ -239,10 +239,10 @@ export class StoreClient {
       this.request<StoreOrder & { token: string }>('GET', '/cart', options),
 
     /**
-     * Create a new cart (alias for orders.create)
+     * Create a new cart
      */
     create: (options?: RequestOptions): Promise<StoreOrder & { token: string }> =>
-      this.request<StoreOrder & { token: string }>('POST', '/orders', options),
+      this.request<StoreOrder & { token: string }>('POST', '/cart', options),
 
     /**
      * Associate a guest cart with the currently authenticated user
@@ -254,28 +254,10 @@ export class StoreClient {
   };
 
   // ============================================
-  // Orders (all orders - complete and incomplete)
+  // Orders (individual order management & checkout)
   // ============================================
 
   readonly orders = {
-    /**
-     * List orders for the authenticated customer
-     */
-    list: (
-      params?: OrderListParams,
-      options?: RequestOptions
-    ): Promise<PaginatedResponse<StoreOrder>> =>
-      this.request<PaginatedResponse<StoreOrder>>('GET', '/orders', {
-        ...options,
-        params: params as Record<string, string | number | undefined>,
-      }),
-
-    /**
-     * Create a new order (cart)
-     */
-    create: (options?: RequestOptions): Promise<StoreOrder & { order_token: string }> =>
-      this.request<StoreOrder & { order_token: string }>('POST', '/orders', options),
-
     /**
      * Get an order by ID or number
      */
@@ -728,6 +710,23 @@ export class StoreClient {
        */
       get: (id: string, options?: RequestOptions): Promise<StoreGiftCard> =>
         this.request<StoreGiftCard>('GET', `/customer/gift_cards/${id}`, options),
+    },
+
+    /**
+     * Nested resource: Orders (customer order history)
+     */
+    orders: {
+      /**
+       * List orders for the authenticated customer
+       */
+      list: (
+        params?: OrderListParams,
+        options?: RequestOptions
+      ): Promise<PaginatedResponse<StoreOrder>> =>
+        this.request<PaginatedResponse<StoreOrder>>('GET', '/customer/orders', {
+          ...options,
+          params: params as Record<string, string | number | undefined>,
+        }),
     },
 
     /**

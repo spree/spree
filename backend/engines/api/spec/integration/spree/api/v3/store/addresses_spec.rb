@@ -11,7 +11,7 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
 
   path '/api/v3/store/customer/addresses' do
     get 'List customer addresses' do
-      tags 'Addresses'
+      tags 'Customers'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns all addresses in the customer address book'
@@ -48,7 +48,7 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
     end
 
     post 'Create an address' do
-      tags 'Addresses'
+      tags 'Customers'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -115,7 +115,7 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
 
   path '/api/v3/store/customer/addresses/{id}' do
     get 'Get an address' do
-      tags 'Addresses'
+      tags 'Customers'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
 
@@ -145,7 +145,7 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
     end
 
     patch 'Update an address' do
-      tags 'Addresses'
+      tags 'Customers'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -179,7 +179,7 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
     end
 
     delete 'Delete an address' do
-      tags 'Addresses'
+      tags 'Customers'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
 
@@ -209,7 +209,7 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
 
   path '/api/v3/store/customer/addresses/{id}/mark_as_default' do
     patch 'Mark address as default' do
-      tags 'Addresses'
+      tags 'Customers'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]

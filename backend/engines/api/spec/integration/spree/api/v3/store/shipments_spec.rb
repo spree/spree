@@ -10,7 +10,7 @@ RSpec.describe 'Shipments API', type: :request, swagger_doc: 'api-reference/stor
 
   path '/api/v3/store/orders/{order_id}/shipments' do
     get 'List shipments for an order' do
-      tags 'Shipments'
+      tags 'Checkout'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns all shipments associated with the order'
@@ -52,7 +52,7 @@ RSpec.describe 'Shipments API', type: :request, swagger_doc: 'api-reference/stor
 
   path '/api/v3/store/orders/{order_id}/shipments/{id}' do
     get 'Get a shipment' do
-      tags 'Shipments'
+      tags 'Checkout'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns details of a specific shipment'
@@ -94,7 +94,7 @@ RSpec.describe 'Shipments API', type: :request, swagger_doc: 'api-reference/stor
     end
 
     patch 'Select shipping rate for shipment' do
-      tags 'Shipments'
+      tags 'Checkout'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]

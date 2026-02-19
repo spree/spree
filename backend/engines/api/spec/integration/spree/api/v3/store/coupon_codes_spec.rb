@@ -9,7 +9,7 @@ RSpec.describe 'Coupon Codes API', type: :request, swagger_doc: 'api-reference/s
 
   path '/api/v3/store/orders/{order_id}/coupon_codes' do
     post 'Apply coupon code' do
-      tags 'Coupon Codes'
+      tags 'Cart'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
@@ -92,7 +92,7 @@ RSpec.describe 'Coupon Codes API', type: :request, swagger_doc: 'api-reference/s
 
   path '/api/v3/store/orders/{order_id}/coupon_codes/{id}' do
     delete 'Remove coupon code' do
-      tags 'Coupon Codes'
+      tags 'Cart'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Removes a previously applied coupon code from the order.'

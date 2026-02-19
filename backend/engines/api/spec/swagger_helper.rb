@@ -86,29 +86,22 @@ RSpec.configure do |config|
         { name: 'Authentication', description: 'Customer authentication and registration' },
         { name: 'Store', description: 'Store information and settings' },
         { name: 'Products', description: 'Product catalog browsing' },
-        { name: 'Taxonomies', description: 'Category hierarchies' },
-        { name: 'Taxons', description: 'Individual categories' },
+        { name: 'Taxons', description: 'Taxonomies and categories' },
         { name: 'Countries', description: 'Available shipping countries' },
         { name: 'Cart', description: 'Shopping cart management' },
-        { name: 'Orders', description: 'Order management and checkout' },
-        { name: 'Line Items', description: 'Cart item management' },
-        { name: 'Coupon Codes', description: 'Coupon code and gift card management' },
-        { name: 'Payments', description: 'Payment processing' },
-        { name: 'Payment Sessions', description: 'Provider-agnostic payment session management' },
-        { name: 'Payment Methods', description: 'Available payment options' },
-        { name: 'Shipments', description: 'Shipping and delivery' },
-        { name: 'Customers', description: 'Customer account management' },
-        { name: 'Addresses', description: 'Customer address book' },
-        { name: 'Credit Cards', description: 'Saved payment methods' },
-        { name: 'Payment Setup Sessions', description: 'Save payment methods for future use via gateway-agnostic setup sessions' },
+        { name: 'Checkout', description: 'Checkout flow and order updates' },
+        { name: 'Orders', description: 'Order lookup' },
+        { name: 'Customers', description: 'Customer account, addresses, saved payment methods, and order history' },
         { name: 'Wishlists', description: 'Customer wishlists' },
         { name: 'Digitals', description: 'Digital product downloads' }
       ],
       'x-tagGroups': [
         { name: 'Store', tags: %w[Store Countries] },
-        { name: 'Catalog', tags: %w[Products Taxonomies Taxons] },
-        { name: 'Checkout', tags: ['Cart', 'Orders', 'Line Items', 'Coupon Codes', 'Payments', 'Payment Sessions', 'Payment Methods', 'Shipments'] },
-        { name: 'Customer', tags: ['Authentication', 'Customers', 'Addresses', 'Credit Cards', 'Payment Setup Sessions', 'Wishlists', 'Digitals'] }
+        { name: 'Catalog', tags: %w[Products Taxons] },
+        { name: 'Cart', tags: ['Cart'] },
+        { name: 'Checkout', tags: ['Checkout'] },
+        { name: 'Orders', tags: ['Orders'] },
+        { name: 'Customer', tags: %w[Authentication Customers Wishlists Digitals] }
       ],
       components: {
         securitySchemes: {

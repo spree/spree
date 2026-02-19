@@ -12,7 +12,7 @@ RSpec.describe 'Payment Methods API', type: :request, swagger_doc: 'api-referenc
 
   path '/api/v3/store/orders/{order_id}/payment_methods' do
     get 'List available payment methods' do
-      tags 'Payment Methods'
+      tags 'Checkout'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns payment methods available for the order based on store configuration and order state'
