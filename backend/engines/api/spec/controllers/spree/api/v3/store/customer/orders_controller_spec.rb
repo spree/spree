@@ -29,6 +29,16 @@ RSpec.describe Spree::Api::V3::Store::Customer::OrdersController, type: :control
       expect(numbers).not_to include(other_user_order.number)
     end
 
+    it 'does not return orders from other stores' do
+      other_store = create(:store)
+      create(:order_with_line_items, user: user, store: other_store)
+
+      get :index
+
+      numbers = json_response['data'].map { |o| o['number'] }
+      expect(numbers).to eq([order.number])
+    end
+
     it 'returns pagination metadata' do
       get :index
 

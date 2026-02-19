@@ -24,11 +24,8 @@ module Spree
               :orders
             end
 
-            # Override scope to return only current user's orders for current store
             def scope
-              current_user.orders
-                          .for_store(current_store)
-                          .preload_associations_lazily
+              super.for_store(current_store)
             end
           end
         end
