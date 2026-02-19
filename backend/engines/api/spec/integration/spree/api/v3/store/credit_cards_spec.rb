@@ -9,7 +9,7 @@ RSpec.describe 'Credit Cards API', type: :request, swagger_doc: 'api-reference/s
 
   path '/api/v3/store/customer/credit_cards' do
     get 'List saved credit cards' do
-      tags 'Credit Cards'
+      tags 'Customers'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns all saved credit cards for the authenticated customer'
@@ -49,7 +49,7 @@ RSpec.describe 'Credit Cards API', type: :request, swagger_doc: 'api-reference/s
 
   path '/api/v3/store/customer/credit_cards/{id}' do
     get 'Get a credit card' do
-      tags 'Credit Cards'
+      tags 'Customers'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns a saved credit card by its ID'
@@ -80,7 +80,7 @@ RSpec.describe 'Credit Cards API', type: :request, swagger_doc: 'api-reference/s
     end
 
     delete 'Delete a credit card' do
-      tags 'Credit Cards'
+      tags 'Customers'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Removes a saved credit card from the customer account'

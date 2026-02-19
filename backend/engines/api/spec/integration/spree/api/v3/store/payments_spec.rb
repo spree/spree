@@ -16,7 +16,7 @@ RSpec.describe 'Payments API', type: :request, swagger_doc: 'api-reference/store
     parameter name: :order_id, in: :path, type: :string, description: 'Order prefix ID'
 
     get 'List payments' do
-      tags 'Payments'
+      tags 'Checkout'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns a list of payments for the specified order'
@@ -59,7 +59,7 @@ RSpec.describe 'Payments API', type: :request, swagger_doc: 'api-reference/store
     parameter name: :id, in: :path, type: :string, description: 'Payment ID'
 
     get 'Get payment' do
-      tags 'Payments'
+      tags 'Checkout'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns a single payment by ID'

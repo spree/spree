@@ -13,6 +13,48 @@ RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.y
   let!(:other_taxonomy) { create(:taxonomy, store: other_store) }
   let!(:other_taxon) { create(:taxon, taxonomy: other_taxonomy) }
 
+  path '/api/v3/store/taxons' do
+    get 'List taxons' do
+      tags 'Taxons'
+      produces 'application/json'
+      security [api_key: []]
+      description 'Returns a paginated list of taxons (categories) for the current store'
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :page, in: :query, type: :integer, required: false
+      parameter name: :per_page, in: :query, type: :integer, required: false
+      parameter name: 'q[name_cont]', in: :query, type: :string, required: false,
+                description: 'Filter by name'
+
+      response '200', 'taxons found' do
+        let(:'x-spree-api-key') { api_key.token }
+
+        schema type: :object,
+               properties: {
+                 data: { type: :array, items: { '$ref' => '#/components/schemas/StoreTaxon' } },
+                 meta: { '$ref' => '#/components/schemas/PaginationMeta' }
+               }
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['data']).to be_an(Array)
+          expect(data['data'].size).to be >= 1
+          # Should not include taxons from other stores
+          ids = data['data'].map { |t| t['id'] }
+          expect(ids).not_to include(other_taxon.prefixed_id)
+        end
+      end
+
+      response '401', 'unauthorized' do
+        let(:'x-spree-api-key') { 'invalid' }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+    end
+  end
+
   path '/api/v3/store/taxons/{id}' do
     get 'Get a taxon' do
       tags 'Taxons'

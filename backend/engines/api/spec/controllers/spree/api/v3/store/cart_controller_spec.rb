@@ -9,6 +9,55 @@ RSpec.describe Spree::Api::V3::Store::CartController, type: :controller do
     request.headers['X-Spree-Api-Key'] = api_key.token
   end
 
+  describe 'POST #create' do
+    it 'creates a new cart' do
+      expect do
+        post :create
+      end.to change(Spree::Order, :count).by(1)
+
+      expect(response).to have_http_status(:created)
+      expect(json_response['number']).to be_present
+      expect(json_response['state']).to eq('cart')
+    end
+
+    it 'returns token for guest access' do
+      post :create
+
+      expect(json_response['token']).to be_present
+    end
+
+    it 'creates cart associated with current store' do
+      post :create
+
+      expect(Spree::Order.last.store_id).to eq(store.id)
+    end
+
+    context 'for authenticated user' do
+      before do
+        request.headers['Authorization'] = "Bearer #{jwt_token}"
+      end
+
+      it 'creates a cart associated with user' do
+        post :create
+
+        expect(response).to have_http_status(:created)
+        expect(Spree::Order.last.user_id).to eq(user.id)
+      end
+    end
+
+    context 'without API key' do
+      before { request.headers['X-Spree-Api-Key'] = nil }
+
+      it 'returns unauthorized' do
+        post :create
+
+        expect(response).to have_http_status(:unauthorized)
+        expect(json_response['error']['code']).to eq('invalid_token')
+        expect(json_response['error']['message']).to be_present
+      end
+    end
+  end
+
   describe 'GET #show' do
     context 'with order_token parameter' do
       let(:cart) { create(:order_with_line_items, store: store) }

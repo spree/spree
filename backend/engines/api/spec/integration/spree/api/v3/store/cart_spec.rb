@@ -6,6 +6,50 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
   include_context 'API v3 Store'
 
   path '/api/v3/store/cart' do
+    post 'Create a new cart' do
+      tags 'Cart'
+      produces 'application/json'
+      security [api_key: []]
+      description <<~DESC
+        Creates a new shopping cart (order). Can be created by guests or authenticated customers.
+        Returns a `token` that must be used for guest access to the order.
+      DESC
+
+      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: 'Authorization', in: :header, type: :string, required: false,
+                description: 'Bearer JWT token (optional - for authenticated customers)'
+
+      response '201', 'cart created (guest)' do
+        let(:'x-spree-api-key') { api_key.token }
+
+        schema '$ref' => '#/components/schemas/StoreOrder'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['number']).to be_present
+          expect(data['state']).to eq('cart')
+          expect(data['token']).to be_present
+        end
+      end
+
+      response '201', 'cart created (authenticated)' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { "Bearer #{jwt_token}" }
+
+        schema '$ref' => '#/components/schemas/StoreOrder'
+
+        run_test!
+      end
+
+      response '401', 'unauthorized - invalid API key' do
+        let(:'x-spree-api-key') { 'invalid' }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test!
+      end
+    end
+
     get 'Get current cart' do
       tags 'Cart'
       produces 'application/json'
@@ -26,11 +70,7 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
         let(:'x-spree-api-key') { api_key.token }
         let(:order_token) { cart.token }
 
-        schema type: :object,
-               allOf: [
-                 { '$ref' => '#/components/schemas/StoreOrder' },
-                 { type: :object, properties: { token: { type: :string } } }
-               ]
+        schema '$ref' => '#/components/schemas/StoreOrder'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -45,11 +85,7 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
 
-        schema type: :object,
-               allOf: [
-                 { '$ref' => '#/components/schemas/StoreOrder' },
-                 { type: :object, properties: { token: { type: :string } } }
-               ]
+        schema '$ref' => '#/components/schemas/StoreOrder'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -95,11 +131,7 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:order_token) { guest_cart.token }
 
-        schema type: :object,
-               allOf: [
-                 { '$ref' => '#/components/schemas/StoreOrder' },
-                 { type: :object, properties: { token: { type: :string } } }
-               ]
+        schema '$ref' => '#/components/schemas/StoreOrder'
 
         run_test! do |response|
           data = JSON.parse(response.body)

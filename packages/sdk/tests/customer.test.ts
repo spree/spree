@@ -84,6 +84,14 @@ describe('customer', () => {
     });
   });
 
+  describe('orders', () => {
+    it('lists customer orders', async () => {
+      const result = await client.store.customer.orders.list(undefined, opts);
+      expect(result.data).toHaveLength(1);
+      expect(result.meta.page).toBe(1);
+    });
+  });
+
   describe('giftCards', () => {
     it('lists gift cards', async () => {
       const result = await client.store.customer.giftCards.list(undefined, opts);

@@ -11,7 +11,7 @@ export async function listOrders(
   params?: Record<string, unknown>
 ): Promise<PaginatedResponse<StoreOrder>> {
   return withAuthRefresh(async (options) => {
-    return getClient().store.orders.list(params, options);
+    return getClient().store.customer.orders.list(params, options);
   });
 }
 

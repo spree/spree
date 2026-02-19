@@ -5,8 +5,12 @@ import { initSpreeNext, resetClient } from '../../src/config';
 const mockClient = {
   store: {
     orders: {
-      list: vi.fn(),
       get: vi.fn(),
+    },
+    customer: {
+      orders: {
+        list: vi.fn(),
+      },
     },
     auth: {
       refresh: vi.fn(),
@@ -47,11 +51,11 @@ describe('order actions', () => {
         data: [{ id: '1', number: 'R001' }],
         meta: { total_count: 1, total_pages: 1 },
       };
-      mockClient.store.orders.list.mockResolvedValue(mockResponse);
+      mockClient.store.customer.orders.list.mockResolvedValue(mockResponse);
 
       const result = await listOrders({ page: 1 });
       expect(result).toEqual(mockResponse);
-      expect(mockClient.store.orders.list).toHaveBeenCalledWith(
+      expect(mockClient.store.customer.orders.list).toHaveBeenCalledWith(
         { page: 1 },
         expect.objectContaining({ token: expect.any(String) })
       );
@@ -59,11 +63,11 @@ describe('order actions', () => {
 
     it('works without params', async () => {
       const mockResponse = { data: [], meta: { total_count: 0, total_pages: 0 } };
-      mockClient.store.orders.list.mockResolvedValue(mockResponse);
+      mockClient.store.customer.orders.list.mockResolvedValue(mockResponse);
 
       const result = await listOrders();
       expect(result).toEqual(mockResponse);
-      expect(mockClient.store.orders.list).toHaveBeenCalledWith(
+      expect(mockClient.store.customer.orders.list).toHaveBeenCalledWith(
         undefined,
         expect.objectContaining({ token: expect.any(String) })
       );

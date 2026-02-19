@@ -1,5 +1,14 @@
 # @spree/next
 
+## 0.3.0
+
+### Minor Changes
+
+- **Breaking:** Update to match @spree/sdk 0.3.0 Store API restructure
+  - `listOrders()` now calls `GET /customer/orders` (was `GET /orders`) — requires authenticated customer
+  - `getOrCreateCart()` now creates carts via `POST /cart` (was `POST /orders`)
+- Bump `@spree/sdk` peer dependency to `>=0.3.0`
+
 ## 0.2.4
 
 ### Patch Changes

@@ -158,18 +158,20 @@ export const handlers = [
     HttpResponse.json({ ...fixtures.order, token: 'guest-order-token' })
   ),
 
+  http.post(`${API_PREFIX}/cart`, () =>
+    HttpResponse.json({ ...fixtures.order, token: 'new-cart-token' })
+  ),
+
   http.patch(`${API_PREFIX}/cart/associate`, () =>
     HttpResponse.json({ ...fixtures.order, token: 'guest-order-token' })
   ),
 
-  // Orders
-  http.get(`${API_PREFIX}/orders`, () =>
+  // Customer Orders
+  http.get(`${API_PREFIX}/customer/orders`, () =>
     HttpResponse.json({ data: [fixtures.order], meta: paginationMeta })
   ),
 
-  http.post(`${API_PREFIX}/orders`, () =>
-    HttpResponse.json({ ...fixtures.order, order_token: 'new-order-token' })
-  ),
+  // Orders
 
   http.get(`${API_PREFIX}/orders/:id`, () =>
     HttpResponse.json(fixtures.order)
