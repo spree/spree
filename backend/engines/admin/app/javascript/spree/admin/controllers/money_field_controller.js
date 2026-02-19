@@ -4,11 +4,10 @@ import { Controller } from '@hotwired/stimulus'
  * MoneyFieldController
  *
  * A Stimulus controller for locale-aware money/price input fields.
- * Handles formatting for display and normalizing values before form submission.
+ * Handles formatting values for display in the user's locale format.
  *
  * Features:
  * - Displays amounts in the user's locale format (e.g., "1.234,56" for German, "1,234.56" for English)
- * - Normalizes values to standard decimal format (with "." as decimal separator) before form submission
  * - Supports optional currency symbol display
  *
  * Usage:
@@ -32,21 +31,8 @@ export default class extends Controller {
   }
 
   connect() {
-    this.form = this.element.closest('form')
-
-    if (this.form) {
-      this.boundNormalizeBeforeSubmit = this.normalizeBeforeSubmit.bind(this)
-      this.form.addEventListener('submit', this.boundNormalizeBeforeSubmit)
-    }
-
     // Format the initial value for display
     this.formatForDisplay()
-  }
-
-  disconnect() {
-    if (this.form && this.boundNormalizeBeforeSubmit) {
-      this.form.removeEventListener('submit', this.boundNormalizeBeforeSubmit)
-    }
   }
 
   /**
@@ -139,12 +125,4 @@ export default class extends Controller {
     return stringValue
   }
 
-  /**
-   * Normalizes the value before form submission
-   * @param {Event} event - The form submit event
-   */
-  normalizeBeforeSubmit(event) {
-    const normalizedValue = this.normalizeValue(this.element.value)
-    this.element.value = normalizedValue
-  }
 }

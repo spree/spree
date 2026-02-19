@@ -208,6 +208,23 @@ describe 'Products', type: :feature do
         expect(product.master.stock_items.first.count_on_hand).to eq(10)
       end
 
+      context 'with non-English locale using comma as decimal separator', js: true do
+        before do
+          I18n.backend.store_translations(:de, number: { currency: { format: { separator: ',', delimiter: '.' } } })
+          allow(store).to receive(:default_locale).and_return('de')
+        end
+
+        it 'correctly saves price without multiplying by 100' do
+          visit spree.edit_admin_product_path(product)
+
+          fill_in 'product_master_attributes_prices_attributes_0_amount', with: '123,00'
+          within('#page-header') { click_button 'Update' }
+
+          expect(page).to have_content('successfully updated')
+          expect(product.reload.price_in('USD').amount).to eq(123.0)
+        end
+      end
+
       it 'allows adding new options', js: true do
         # Add the first option - Color
         find('span', text: Spree.t('admin.variants_form.add_option.empty')).click
