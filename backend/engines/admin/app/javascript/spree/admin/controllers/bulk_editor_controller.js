@@ -79,21 +79,16 @@ export default class extends Controller {
     this.boundHandleBeforeUnload = this.handleBeforeUnload.bind(this)
     this.boundHandleMouseUp = this.handleMouseUp.bind(this)
     this.boundHandleMouseMove = this.handleMouseMove.bind(this)
-    this.boundNormalizeBeforeSubmit = this.normalizeBeforeSubmit.bind(this)
 
     window.addEventListener('beforeunload', this.boundHandleBeforeUnload)
     document.addEventListener('mouseup', this.boundHandleMouseUp)
     document.addEventListener('mousemove', this.boundHandleMouseMove)
-
-    // Listen for form submission to normalize values
-    this.element.addEventListener('submit', this.boundNormalizeBeforeSubmit)
   }
 
   disconnect() {
     window.removeEventListener('beforeunload', this.boundHandleBeforeUnload)
     document.removeEventListener('mouseup', this.boundHandleMouseUp)
     document.removeEventListener('mousemove', this.boundHandleMouseMove)
-    this.element.removeEventListener('submit', this.boundNormalizeBeforeSubmit)
   }
 
   // ==================== Fill Handle ====================
@@ -783,85 +778,4 @@ export default class extends Controller {
     return this.dirtyInputs.size > 0
   }
 
-  // ==================== Locale-aware Number Handling ====================
-
-  /**
-   * Normalizes a locale-formatted number string to standard decimal format
-   * e.g., "1.234,56" (German) -> "1234.56"
-   * e.g., "1,234.56" (English) -> "1234.56"
-   * @param {string} value - The locale-formatted number string
-   * @returns {string} The normalized number string with "." as decimal separator
-   */
-  normalizeNumber(value) {
-    if (value === null || value === undefined) return ''
-
-    let stringValue = String(value).trim()
-    if (stringValue === '') return ''
-
-    // Detect the decimal separator by finding the last separator character
-    // This handles both "1,234.56" (en) and "1.234,56" (de/pl) formats
-    const lastComma = stringValue.lastIndexOf(',')
-    const lastDot = stringValue.lastIndexOf('.')
-
-    let decimalSeparator = '.'
-    let thousandsSeparator = ','
-
-    // If comma comes after dot, comma is the decimal separator (European format)
-    // Also treat comma as decimal if there's no dot and comma has 1-2 digits after it
-    if (lastComma > lastDot) {
-      decimalSeparator = ','
-      thousandsSeparator = '.'
-    } else if (lastDot === -1 && lastComma !== -1) {
-      // No dot present, check if comma looks like a decimal separator
-      // (has 1-3 digits after it, typical for currency)
-      const afterComma = stringValue.substring(lastComma + 1)
-      if (/^\d{1,3}$/.test(afterComma)) {
-        decimalSeparator = ','
-        thousandsSeparator = '.'
-      }
-    }
-
-    // Remove thousands separators
-    stringValue = stringValue.split(thousandsSeparator).join('')
-
-    // Replace decimal separator with standard "."
-    if (decimalSeparator !== '.') {
-      stringValue = stringValue.replace(decimalSeparator, '.')
-    }
-
-    // Remove any non-numeric characters except "." and "-"
-    stringValue = stringValue.replace(/[^0-9.\-]/g, '')
-
-    return stringValue
-  }
-
-  /**
-   * Formats a number for display using the configured locale
-   * @param {number|string} value - The number to format
-   * @returns {string} The formatted number string
-   */
-  formatNumber(value) {
-    if (value === null || value === undefined || value === '') return ''
-
-    const number = parseFloat(value)
-    if (!Number.isFinite(number)) return ''
-
-    return number.toLocaleString(this.localeValue, {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-      useGrouping: false
-    })
-  }
-
-  /**
-   * Normalizes all cell values before form submission
-   * @param {Event} event - The form submit event
-   */
-  normalizeBeforeSubmit(event) {
-    this.cellTargets.forEach((cell) => {
-      if (cell.value) {
-        cell.value = this.normalizeNumber(cell.value)
-      }
-    })
-  }
 }
