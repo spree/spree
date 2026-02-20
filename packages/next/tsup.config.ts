@@ -11,7 +11,7 @@ export default defineConfig([
       'data/taxons': 'src/data/taxons.ts',
       'data/taxonomies': 'src/data/taxonomies.ts',
       'data/store': 'src/data/store.ts',
-      'data/countries': 'src/data/countries.ts',
+      'data/markets': 'src/data/markets.ts',
     },
     format: ['esm'],
     dts: true,
