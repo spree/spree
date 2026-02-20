@@ -62,6 +62,21 @@ RSpec.describe Spree::Admin::MarketsController, type: :controller do
       expect(response).to have_http_status(:redirect)
     end
 
+    it 'normalizes supported_locales from array to comma-separated string' do
+      post :create, params: {
+        market: {
+          name: 'Multilingual',
+          country_ids: [country.id],
+          currency: 'USD',
+          default_locale: 'en',
+          supported_locales: ['en', 'fr', 'de']
+        }
+      }
+      market = Spree::Market.last
+      expect(market.supported_locales).to eq('en,fr,de')
+      expect(market.supported_locales_list).to contain_exactly('de', 'en', 'fr')
+    end
+
     context 'with invalid params' do
       it 'renders new' do
         post :create, params: { market: { name: '' } }
