@@ -1360,6 +1360,7 @@ en:
     master: Master
     master_price: Master Price
     market: Market
+    market_ids: Markets
     markets: Markets
     master_sku: Master SKU
     match_choices:
@@ -1774,6 +1775,9 @@ en:
       zone_rule:
         description: Apply pricing based on geographic zone
         name: Zone
+      market_rule:
+        description: Apply pricing based on the market
+        name: Market
     price_rules:
       customer_group_rule:
         description: Apply pricing to specific customer groups

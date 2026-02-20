@@ -30,7 +30,8 @@ module Spree
         self.global_pricing_context = Spree::Pricing::Context.new(
           currency: currency,
           store: store,
-          zone: zone
+          zone: zone,
+          market: market
         )
       end
     end

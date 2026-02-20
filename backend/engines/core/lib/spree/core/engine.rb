@@ -168,6 +168,7 @@ module Spree
 
         Rails.application.config.spree.pricing.rules.concat [
           Spree::PriceRules::ZoneRule,
+          Spree::PriceRules::MarketRule,
           Spree::PriceRules::UserRule,
           Spree::PriceRules::CustomerGroupRule,
           Spree::PriceRules::VolumeRule

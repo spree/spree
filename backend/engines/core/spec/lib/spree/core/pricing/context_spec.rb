@@ -7,6 +7,7 @@ module Spree
       let(:currency) { 'USD' }
       let(:store) { @default_store }
       let(:zone) { create(:zone) }
+      let(:market) { create(:market, store: store) }
       let(:user) { create(:user) }
       let(:quantity) { 5 }
       let(:date) { Time.zone.parse('2024-01-15 12:00:00') }
@@ -19,6 +20,7 @@ module Spree
               currency: currency,
               store: store,
               zone: zone,
+              market: market,
               user: user,
               quantity: quantity,
               date: date
@@ -30,6 +32,7 @@ module Spree
             expect(subject.currency).to eq(currency)
             expect(subject.store).to eq(store)
             expect(subject.zone).to eq(zone)
+            expect(subject.market).to eq(market)
             expect(subject.user).to eq(user)
             expect(subject.quantity).to eq(quantity)
             expect(subject.date).to eq(date)
@@ -54,6 +57,10 @@ module Spree
 
           it 'defaults zone to Spree::Current.zone' do
             expect(subject.zone).to eq(Spree::Current.zone)
+          end
+
+          it 'defaults market to Spree::Current.market' do
+            expect(subject.market).to eq(Spree::Current.market)
           end
 
           it 'defaults user to nil' do
@@ -98,6 +105,34 @@ module Spree
 
           it 'uses Spree::Current.zone as default' do
             expect(subject.zone).to eq(current_zone)
+          end
+        end
+
+        context 'when Spree::Current.market is set' do
+          let(:current_market) { create(:market) }
+
+          before { Spree::Current.market = current_market }
+          after { Spree::Current.reset }
+
+          subject do
+            described_class.new(variant: variant, currency: currency)
+          end
+
+          it 'uses Spree::Current.market as default' do
+            expect(subject.market).to eq(current_market)
+          end
+        end
+
+        context 'when market is explicitly nil' do
+          before { Spree::Current.market = nil }
+          after { Spree::Current.reset }
+
+          subject do
+            described_class.new(variant: variant, currency: currency, market: nil)
+          end
+
+          it 'falls back to Spree::Current.market' do
+            expect(subject.market).to eq(Spree::Current.market)
           end
         end
       end
@@ -200,6 +235,7 @@ module Spree
               currency: currency,
               store: store,
               zone: zone,
+              market: market,
               user: user,
               quantity: quantity,
               date: specific_date
@@ -214,6 +250,7 @@ module Spree
               currency,
               store.id,
               zone.id,
+              market.id,
               user.id,
               quantity,
               specific_date.to_i
@@ -240,6 +277,7 @@ module Spree
                 Spree::Current.store.id
               ]
               expected_parts << Spree::Current.zone.id if Spree::Current.zone
+              expected_parts << Spree::Current.market.id if Spree::Current.market
               expected_parts << Time.current.to_i
 
               expect(subject.cache_key).to eq(expected_parts.join('/'))
@@ -269,6 +307,7 @@ module Spree
                 Spree::Current.store.id
               ]
               expected_parts << Spree::Current.zone.id if Spree::Current.zone
+              expected_parts << Spree::Current.market.id if Spree::Current.market
               expected_parts << user.id
               expected_parts << quantity
               expected_parts << Time.current.to_i

@@ -45,5 +45,15 @@ FactoryBot.define do
         customer_group_ids { [] }
       end
     end
+
+    factory :market_price_rule, class: Spree::PriceRules::MarketRule do
+      after(:build) do |rule, evaluator|
+        rule.preferred_market_ids = evaluator.market_ids if evaluator.respond_to?(:market_ids)
+      end
+
+      transient do
+        market_ids { [] }
+      end
+    end
   end
 end
