@@ -19,7 +19,11 @@ export default class extends Controller {
       maxOptions: this.element.children.length,
       selectOnTab: true,
       allowEmptyOption: false,
-      plugins: plugins
+      plugins: plugins,
+      onItemAdd: function() {
+        this.setTextboxValue('')
+        this.refreshOptions(false)
+      }
     })
     if (!this.element.multiple) {
       this.select.on('type', () => {
