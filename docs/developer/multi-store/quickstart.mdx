@@ -3,7 +3,17 @@ title: Multi-Store Spree Commerce
 sidebarTitle: Quickstart
 ---
 
-Spree out of the box supports multiple stores on the same instance. This is useful for running multiple brands or multiple language versions of the same brand on the same instance.
+To enable multiple stores, you will need to add the `spree_multi_store` gem to your project via:
+
+```bash
+bundle add spree_multi_store
+```
+
+<Info>
+Spree Multi-Store is licensed under the [AGPL v3 License](https://opensource.org/licenses/AGPL-3.0). 
+
+If you would like to use it in a commercial application, please [contact us](https://spreecommerce.org/get-started/) to obtain a commercial license.
+</Info>
 
 <Frame type="glass" caption="Spree multi-store setup">
 ![](/images/mulit_store_978x2.png)
@@ -21,6 +31,46 @@ Each Store can have its own resources. For example, a Store can have its own Pro
 | [**Taxonomy**](/core-concepts/products#taxons-and-taxonomies) | One Taxonomy belongs to one Store                                                                                                          |
 | [**Promotion**](/core-concepts/promotions)                    | One Promotion can be associated with multiple Stores                                                                                       |
 | **Store Credit**                                  | One Store Credit belongs to and can be used in one Store
+
+## Current Store
+
+Spree will try to determine the current store based on the current URL. If the URL does not match any of the stores in the database, Spree will fall back to the default store.
+
+All Spree controllers or any other controllers that include [Spree::Core::ControllerHelpers::Store](https://github.com/spree/spree/blob/main/core/lib/spree/core/controller_helpers/store.rb) have access to the `current_store` method which returns the `Store` matching the current URL.
+
+All parts of Spree (API v1, API v2, Storefront, Admin Panel) have this implemented. This method is also available in views and JSON serializers.
+
+<Info>
+Under the hood `current_store` calls [Spree::Stores::FindCurrent.new(url: url).execute](https://github.com/spree/spree/blob/main/core/app/finders/spree/stores/find_current.rb).
+
+This logic can be easily overwritten by setting 
+
+```ruby
+Spree::Dependencies.current_store_finder = 'MyStoreFinderClass'
+```
+
+in `config/initializers/spree.rb` file
+</Info>
+
+## Default Store
+
+If the system cannot find any Store that matches the current URL it will fall back to the Default Store.
+
+You can set the default Store via Rails console:
+
+```ruby
+Spree::Store.find(2).update(default: true)
+```
+
+To get the default store in your code or rails console type:
+
+```ruby
+Spree::Store.default
+```
+
+## Custom Domains
+
+Spree supports managing custom domains for Stores. In the Admin Panel, you can manage custom domains for each Store in the **Settings -> Domains** page.
 
 ## Setup multi-store application
 

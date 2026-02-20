@@ -4,15 +4,7 @@ title: Stores
 
 ## Overview
 
-The `Spree::Store` model is the center of the Spree ecosystem. Each Spree installation can have multiple Stores. Each Store operates on a different domain or subdomain, eg.
-
-* Store A, `us.example.com`
-* Store B, `eu.example.com`
-* Store C, `another-brand.com`
-
-<Frame type="glass" caption="Spree multi-store setup">
-![](/images/mulit_store_978x2.png)
-</Frame>
+The `Spree::Store` model is the center of the Spree ecosystem.
 
 ### Store Model Diagram
 
@@ -22,10 +14,6 @@ erDiagram
         string name
         string code
         string url
-        string default_currency
-        string supported_currencies
-        string default_locale
-        string supported_locales
         boolean default
         string mail_from_address
         string customer_support_email
@@ -61,6 +49,14 @@ erDiagram
         integer position
     }
 
+    Market {
+        string name
+        string currency
+        string default_locale
+        boolean default
+    }
+
+    Store ||--o{ Market : "has many"
     Store ||--o{ Order : "has many"
     Store }o--o{ Product : "has many"
     Store }o--o{ PaymentMethod : "has many"
@@ -74,6 +70,7 @@ erDiagram
 
 **Key relationships:**
 - **Store** is the central model - all commerce data is scoped to a store
+- Each store has one or more [Markets](/developer/core-concepts/markets) that define geographic selling regions with their own currency and locale
 - Each store has its own [Orders](/developer/core-concepts/orders), [Products](/developer/core-concepts/products), [Payment Methods](/developer/core-concepts/payments), and [Shipping Methods](/developer/core-concepts/shipments)
 - Stores can have different currencies, locales, and configurations
 - Content (Menus, CMS Pages) and [Webhooks](/developer/core-concepts/webhooks) are also store-specific
@@ -88,93 +85,29 @@ erDiagram
 | `meta_keywords`          | Relevant keywords associated with the store for SEO.                       | fashion, electronics, books |
 | `seo_title`              | A custom SEO title for the store.                                          | Shop the Best Deals Online - Spree Store |
 | `mail_from_address`      | The email address used for sending emails from the store.                  | noreply@example.com |
-| `default_currency`       | The default currency for prices within the store.                          | `USD` |
 | `default`                | Indicates if the store is the default store.                               | `true` |
-| `supported_currencies`   | A list of currencies supported by the store, separated by commas.          | `USD, EUR, GBP` |
-| `supported_locales`      | A list of locales supported by the store, separated by commas.             | `en, fr, de` |
 | `customer_support_email` | The email address for customer support inquiries.                          | support@example.com |
 | `facebook`               | The store's Facebook page URL.                                             | spree |
 | `twitter`                | The store's Twitter handle.                                                | @spreecommerce |
 | `instagram`              | The store's Instagram profile URL.                                         | https://www.instagram.com/spree |
-| `default_locale`         | The default locale/language for the store.                                 | `en` |
 | `description`            | A detailed description of the store.                                       | Your one-stop shop for everything you need. |
 | `address`                | The physical address of the store.                                         | 123 Example St, San Francisco, CA |
 | `contact_phone`          | The contact phone number for the store.                                    | `+1 234-567-8900` |
 | `new_order_notifications_email` | The email address to send notifications of new orders.                  | orders@example.com |
 
-## Current Store
+### Accessing Store in code
 
-Spree will try to determine the current store based on the current URL. If the URL does not match any of the stores in the database, Spree will fall back to the default store.
+To access the current store you can use `current_store` in controllers or `Spree::Store.current` in models/services/jobs.
 
-All Spree controllers or any other controllers that include [Spree::Core::ControllerHelpers::Store](https://github.com/spree/spree/blob/main/core/lib/spree/core/controller_helpers/store.rb) have access to the `current_store` method which returns the `Store` matching the current URL.
+## Markets
 
-All parts of Spree (API v1, API v2, Storefront, Admin Panel) have this implemented. This method is also available in views and JSON serializers.
+[Markets](/developer/core-concepts/markets) let you segment your store into geographic regions, each with its own currency, locale, and set of countries. For example, a single store can have:
 
-<Info>
-Under the hood `current_store` calls [Spree::Stores::FindCurrent.new(url: url).execute](https://github.com/spree/spree/blob/main/core/app/finders/spree/stores/find_current.rb).
+- **North America** — USD, English, ships to US and Canada
+- **Europe** — EUR, German, ships to DE, FR, AT, NL
+- **United Kingdom** — GBP, English, ships to GB
 
-This logic can be easily overwritten by setting 
-
-```ruby
-Spree::Dependencies.current_store_finder = 'MyStoreFinderClass'
-```
-
-in `config/initializers/spree.rb` file
-</Info>
-
-## Default Store
-
-If the system cannot find any Store that matches the current URL it will fall back to the Default Store.
-
-You can set the default Store in `Admin Panel -> Configurations -> Store` or via Rails console:
-
-```ruby
-Spree::Store.find(2).update(default: true)
-```
-
-To get the default store in your code or rails console type:
-
-```ruby
-Spree::Store.default
-```
-
-## Localization and Currency
-
-Each Store can have multiple locales and currencies. This configuration is stored in Store model attributes:
-
-| Attribute             | Description                                                                                                   | Example(s)                  |
-|-----------------------|---------------------------------------------------------------------------------------------------------------|-----------------------------|
-| `default_currency`    | This is the default currency that will be pre-selected when visiting the store the first time.                | `USD`                       |
-| `supported_currencies`| If there is more than one supported currency, visitors will be able to choose which currency they browse in.  | `USD`, `CAD`, `EUR`          |
-| `default_locale`      | This is the default locale/language which will be pre-selected when visiting the store the first time.        | `en`                        |
-| `supported_locales`   | If there is more than one supported locale, visitors can choose which locale they browse in. Locales are available upon installing [Spree I18n](https://github.com/spree-contrib/spree_i18n). | `en`, `fr`, `de` |
-
-### Translations
-
-As of version 4.6, the `Store` resource allows for translating many of its fields. Translations are enabled when selecting more than one locale in `supported_locales`. The following fields are translatable:
-
-* `name`
-* `meta_description`
-* `meta_keywords`
-* `seo_title`
-* `facebook`
-* `twitter`
-* `instagram`
-* `customer_support_email`
-* `description`
-* `address`
-* `contact_phone`
-* `new_order_notifications_email`
-
-Read more about how resource translations work in [Internationalization](i18n#resource-translations).
-
-## Checkout configuration
-
-Each Store can be configured to ship to only selected countries. This is achieved via the `checkout_zone_id` attribute which holds the ID of the selected [Zone record](shipments#zones).
-
-Available Shipping Methods on the Checkout are determined based on the [Zone and Shipping Methods configuration](shipments).
-
-This will also have an effect on what [Shipping / Billing Addresses](/developer/core-concepts/addresses) user can add/ select during Checkout. Only Addresses from Countries or States available in the selected Zone can be used and will be visible in the User's Address Book.
+For full details on creating and managing markets, see the [Markets](/developer/core-concepts/markets) guide.
 
 ## Store resources
 
@@ -182,6 +115,7 @@ Each Store can have its own resources. For example, a Store can have its own Pro
 
 | Resource                                          | Relationship                                                                                                                               |
 | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| [**Market**](markets)                          | One Store has many Markets, each defining a geographic region with its own currency and locale                                              |
 | [**Order**](orders)                            | One Order belongs to one Store                                                                                                             |
 | [**Product**](products)                        | One Product can be associated with many Store(s), you can pick and choose in which Store(s) each Product will be available                 |
 | [**Payment Method**](payments)                 | One Payment Method can be associated with many Store(s), you can select in which Stores given Payment Method will be available on Checkout |
@@ -189,8 +123,6 @@ Each Store can have its own resources. For example, a Store can have its own Pro
 | [**Promotion**](promotions)                    | One Promotion can be associated with multiple Stores                                                                                       |
 | **Store Credit**                                  | One Store Credit belongs to and can be used in one Store                                                                                   |
 
-## Custom Domains
+## Multi-store setup
 
-Spree supports managing custom domains for Stores. This is useful for multi-store setups where each store has its own domain.
-
-In the Admin Panel, you can manage custom domains for each Store in the **Settings -> Domains** page.
+To enable multiple stores please follow our [Multi Store guide](/developer/multi-store/quickstart)
