@@ -70,6 +70,18 @@ export const fixtures = {
     name: 'United States',
     states: [],
   },
+  market: {
+    id: 'mkt_1',
+    name: 'North America',
+    currency: 'USD',
+    default_locale: 'en',
+    supported_locales: ['en'],
+    tax_inclusive: false,
+    default: true,
+    countries: [
+      { id: 'country_1', iso: 'US', name: 'United States', states_required: true, zipcode_required: true },
+    ],
+  },
   wishlist: {
     id: 'wl_1',
     name: 'My Wishlist',
@@ -144,12 +156,24 @@ export const handlers = [
     HttpResponse.json(fixtures.taxon)
   ),
 
-  // Countries
-  http.get(`${API_PREFIX}/countries`, () =>
+  // Markets
+  http.get(`${API_PREFIX}/markets`, () =>
+    HttpResponse.json({ data: [fixtures.market] })
+  ),
+
+  http.get(`${API_PREFIX}/markets/resolve`, () =>
+    HttpResponse.json(fixtures.market)
+  ),
+
+  http.get(`${API_PREFIX}/markets/:id`, () =>
+    HttpResponse.json(fixtures.market)
+  ),
+
+  http.get(`${API_PREFIX}/markets/:marketId/countries`, () =>
     HttpResponse.json({ data: [fixtures.country] })
   ),
 
-  http.get(`${API_PREFIX}/countries/:iso`, () =>
+  http.get(`${API_PREFIX}/markets/:marketId/countries/:iso`, () =>
     HttpResponse.json(fixtures.country)
   ),
 
