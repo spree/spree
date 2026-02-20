@@ -72,7 +72,8 @@ RSpec.configure do |config|
         { name: 'Store', description: 'Store information and settings' },
         { name: 'Products', description: 'Product catalog browsing' },
         { name: 'Taxons', description: 'Taxonomies and categories' },
-        { name: 'Countries', description: 'Available shipping countries' },
+        { name: 'Markets', description: 'Markets (region + currency + locale bundles) and market resolution' },
+        { name: 'Countries', description: 'Countries within a market zone' },
         { name: 'Cart', description: 'Shopping cart management' },
         { name: 'Checkout', description: 'Checkout flow and order updates' },
         { name: 'Orders', description: 'Order lookup' },
@@ -81,7 +82,7 @@ RSpec.configure do |config|
         { name: 'Digitals', description: 'Digital product downloads' }
       ],
       'x-tagGroups': [
-        { name: 'Store', tags: %w[Store Countries] },
+        { name: 'Store', tags: %w[Store Markets Countries] },
         { name: 'Catalog', tags: %w[Products Taxons] },
         { name: 'Cart', tags: ['Cart'] },
         { name: 'Checkout', tags: ['Checkout'] },

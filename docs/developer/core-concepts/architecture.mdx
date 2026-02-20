@@ -117,7 +117,7 @@ erDiagram
 
 ## Multi-Store Architecture
 
-Spree supports multiple [Stores](/developer/core-concepts/stores) from a single installation. Each Store can have:
+Spree can work in [Multi-Store model](/developer/multi-store/quickstart) from a single installation. Each Store can have:
 
 - Its own domain and branding
 - Different currencies and locales
@@ -162,22 +162,17 @@ Spree is distributed as a set of Ruby gems (packages). Most users run Spree in *
 
 | Package | Purpose |
 |---------|---------|
-| `spree_core` | Models, services, and business logic |
-| `spree_api` | [Storefront API](/api-reference/storefront), [Platform API](/api-reference/platform), and [Webhooks](/developer/core-concepts/webhooks) |
+| `spree` | Models, services, business logic, API and Webhooks |
 
 **Optional packages:**
 
 | Package | Purpose |
 |---------|---------|
 | `spree_admin` | Admin dashboard for managing your store |
-| `spree_storefront` | Pre-built Rails storefront (not needed for headless setups) |
 | `spree_emails` | Transactional email templates (order confirmation, shipping, etc.) |
-| `spree_page_builder` | Visual page builder for the Rails storefront |
-| `spree_sample` | Sample data (products, categories, etc.) for development and testing |
-| `spree_dev_tools` | Development and testing utilities for Spree applications and extensions |
 
 <Info>
-For headless commerce, you only need `spree_core` and `spree_api`. Build your customer-facing frontend with any technology (Next.js, Nuxt, mobile apps) using the Storefront API.
+For headless commerce, you only need `spree` package. Build your customer-facing frontend with any technology (Next.js, Nuxt, mobile apps) using the Store API and SDK.
 </Info>
 
 ## Related Documentation

@@ -5,6 +5,7 @@ module Spree
         extend ActiveSupport::Concern
 
         included do
+          before_action :set_market_from_country
           before_action :set_locale_from_header
           before_action :set_currency_from_header
         end
@@ -52,6 +53,19 @@ module Spree
 
         def currency_from_params
           params[:currency].presence
+        end
+
+        def set_market_from_country
+          country_iso = request.headers['x-spree-country'].presence || params[:country].presence
+          return unless country_iso
+
+          country = Spree::Country.find_by(iso: country_iso.upcase)
+          return unless country
+
+          market = current_store&.market_for_country(country)
+          return unless market
+
+          Spree::Current.market = market
         end
       end
     end

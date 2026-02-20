@@ -1,0 +1,28 @@
+<div class="card mb-6">
+  <div class="card-header">
+    <h5 class="card-title">
+      <%= Spree.t(:general_settings) %>
+    </h5>
+  </div>
+
+  <div class="card-body">
+    <%= f.spree_text_field :name, required: true %>
+
+    <%= f.spree_select :country_ids, @countries.map { |country| ["#{Spree::Country.iso_to_emoji_flag(country.iso)} #{country.name}", country.id] }, { include_blank: false, label: Spree.t(:default_country), autocomplete: true, multiple: true } %>
+
+    <%= f.spree_select :currency, currency_options(f.object.currency), { label: Spree.t(:currency), required: true, autocomplete: true } %>
+
+    <%= f.spree_select :default_locale,
+          options_from_collection_for_select(all_locales_options, :last, :first, f.object.default_locale || I18n.locale),
+          { required: true, autocomplete: true } %>
+
+    <%= f.spree_select :supported_locales,
+          options_from_collection_for_select(all_locales_options, :last, :first, f.object.supported_locales&.split(',')),
+          { multiple: true, autocomplete: true, hint: Spree.t('admin.markets.supported_locales_hint') } %>
+
+    <hr class="my-6">
+
+    <%= f.spree_check_box :tax_inclusive %>
+    <%= f.spree_check_box :default %>
+  </div>
+</div>

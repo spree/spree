@@ -221,6 +221,7 @@ Spree::Core::Engine.add_routes do
     resources :reimbursement_types
     resources :refund_reasons, except: :show
     resources :return_authorization_reasons, except: :show
+    resources :markets
     resources :zones
     resources :stock_locations, except: :show do
       member do

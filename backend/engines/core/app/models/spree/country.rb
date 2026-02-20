@@ -23,6 +23,19 @@ module Spree
       self == store.default_country
     end
 
+    def self.to_tom_select_json
+      pluck(:name, :id, :iso).map do |name, id, iso|
+        {
+          id: id,
+          name: "#{iso_to_emoji_flag(iso)} #{name}"
+        }
+      end.as_json
+    end
+
+    def self.iso_to_emoji_flag(iso)
+      iso.upcase.chars.map { |c| (c.ord + 127397).chr(Encoding::UTF_8) }.join
+    end
+
     def <=>(other)
       name <=> other.name
     end

@@ -14,7 +14,7 @@
       <%= link_to Spree.t('admin.manage_zones'), spree.admin_zones_path, class: 'text-blue' %>
     </span>
 
-    <%= f.spree_select :default_country_iso, Spree::Country.pluck(:name, :iso), { include_blank: false, label: Spree.t(:default_country), autocomplete: true, help: Spree.t(:default_country_help) } %>
+    <%= f.spree_select :default_country_iso, Spree::Country.pluck(:name, :iso).map { |name, iso| ["#{Spree::Country.iso_to_emoji_flag(iso)} #{name}", iso] }, { include_blank: false, label: Spree.t(:default_country), autocomplete: true, help: Spree.t(:default_country_help) } %>
 
     <hr class="my-6" />
 

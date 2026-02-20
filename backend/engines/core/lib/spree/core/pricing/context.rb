@@ -1,22 +1,24 @@
 module Spree
   module Pricing
     class Context
-      attr_reader :variant, :currency, :store, :zone, :user, :quantity, :date, :order
+      attr_reader :variant, :currency, :store, :zone, :market, :user, :quantity, :date, :order
 
       # Initializes the context
       # @param variant [Spree::Variant]
       # @param currency [String]
       # @param store [Spree::Store]
       # @param zone [Spree::Zone]
+      # @param market [Spree::Market]
       # @param user [Spree::User]
       # @param quantity [Integer]
       # @param date [Time]
       # @param order [Spree::Order]
-      def initialize(variant: nil, currency:, store: nil, zone: nil, user: nil, quantity: nil, date: nil, order: nil)
+      def initialize(variant: nil, currency:, store: nil, zone: nil, market: nil, user: nil, quantity: nil, date: nil, order: nil)
         @variant = variant
         @currency = currency
         @store = store || Spree::Current.store
         @zone = zone || Spree::Current.zone
+        @market = market || Spree::Current.market
         @user = user
         @quantity = quantity
         @date = date || Time.current
@@ -53,6 +55,7 @@ module Spree
           currency,
           store&.id,
           zone&.id,
+          market&.id,
           user&.id,
           quantity,
           date&.to_i

@@ -722,6 +722,8 @@ en:
     adjustment_total: Adjustment Total
     adjustments: Adjustments
     adjustments_deleted: Adjustments Deleted
+    admin_locale: Admin locale
+    admin_locale_help: The language used for the admin dashboard. If not set, defaults to the application locale.
     administration: Administration
     advertise: Advertise
     agree_to_privacy_policy: Agree to Privacy Policy
@@ -1357,6 +1359,9 @@ en:
     manual_adjustments: Manual Adjustments
     manual_intervention_required: Manual intervention required
     mark_as_default: Mark as default
+    market: Market
+    market_ids: Markets
+    markets: Markets
     master: Master
     master_price: Master Price
     master_sku: Master SKU
@@ -1763,6 +1768,9 @@ en:
       customer_group_rule:
         description: Apply pricing to specific customer groups
         name: Customer Group
+      market_rule:
+        description: Apply pricing based on the market
+        name: Market
       user_rule:
         description: Apply pricing to specific customers
         name: User

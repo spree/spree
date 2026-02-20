@@ -103,9 +103,11 @@
                 "pages": [
                   "developer/core-concepts/architecture",
                   "developer/core-concepts/stores",
+                  "developer/core-concepts/markets",
                   "developer/core-concepts/orders",
                   "developer/core-concepts/users",
                   "developer/core-concepts/products",
+                  "developer/core-concepts/pricing",
                   "developer/core-concepts/inventory",
                   "developer/core-concepts/payments",
                   "developer/core-concepts/store-credits-gift-cards",
@@ -1203,6 +1205,7 @@
                 "pages": [
                   "developer/core-concepts/architecture",
                   "developer/core-concepts/stores",
+                  "developer/core-concepts/markets",
                   "developer/core-concepts/orders",
                   "developer/core-concepts/users",
                   "developer/core-concepts/products",

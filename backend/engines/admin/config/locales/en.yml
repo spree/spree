@@ -143,6 +143,11 @@ en:
       manage_stock_locations: Manage Stock Locations
       manage_taxons: Manage Taxons
       manage_zones: Manage Zones
+      markets:
+        edit: Edit Market
+        list: Markets
+        new: New Market
+        supported_locales_hint: Comma-separated list of additional locale codes (e.g. fr,de,es)
       metafield_definitions:
         edit_warning: You can't change the resource type or metafield type after the definition has been used.
         used_in: Used in

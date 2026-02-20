@@ -1,13 +1,17 @@
 module Spree
   class Current < ::ActiveSupport::CurrentAttributes
-    attribute :store, :currency, :zone, :price_lists, :global_pricing_context
+    attribute :store, :market, :currency, :zone, :price_lists, :global_pricing_context
 
     def store
       super || Spree::Store.default
     end
 
+    def market
+      super || store&.default_market
+    end
+
     def currency
-      super || store&.default_currency
+      super || market&.currency || store&.default_currency
     end
 
     def zone
@@ -26,7 +30,8 @@ module Spree
         self.global_pricing_context = Spree::Pricing::Context.new(
           currency: currency,
           store: store,
-          zone: zone
+          zone: zone,
+          market: market
         )
       end
     end

@@ -397,7 +397,22 @@ describe Spree::Store, type: :model, without_global_store: true do
   describe '#countries_available_for_checkout' do
     subject { create(:store) }
 
-    context do
+    context 'with markets' do
+      let!(:germany) { create(:country, name: 'Germany', iso: 'DE') }
+      let!(:france) { create(:country, name: 'France', iso: 'FR') }
+
+      before do
+        create(:market, store: subject, countries: [germany], currency: 'EUR', default: true)
+        create(:market, store: subject, countries: [france], currency: 'EUR')
+      end
+
+      it 'returns countries from all markets' do
+        countries = subject.countries_available_for_checkout
+        expect(countries.map(&:iso)).to contain_exactly('DE', 'FR')
+      end
+    end
+
+    context 'without markets (legacy)' do
       include_context 'with checkout zone set'
 
       it 'returns country list for checkout zone' do
@@ -405,7 +420,7 @@ describe Spree::Store, type: :model, without_global_store: true do
       end
     end
 
-    context do
+    context 'without markets and without checkout zone (legacy)' do
       include_context 'with checkout zone not set'
 
       it 'returns list of all countries' do
@@ -554,79 +569,209 @@ describe Spree::Store, type: :model, without_global_store: true do
   end
 
   describe '#supported_currencies_list' do
-    context 'with supported currencies set' do
-      let(:currencies) { 'USD, EUR, dummy' }
-      let!(:store) { build(:store, default_currency: 'USD', supported_currencies: currencies) }
+    context 'with markets' do
+      let!(:store) { create(:store, default_currency: 'USD') }
 
-      it 'returns supported currencies list' do
+      before do
+        create(:market, store: store, currency: 'USD', default: true)
+        create(:market, store: store, currency: 'EUR')
+      end
+
+      it 'derives currencies from markets' do
         expect(store.supported_currencies_list).to contain_exactly(
-          ::Money::Currency.find('EUR'), ::Money::Currency.find('USD')
+          ::Money::Currency.find('USD'), ::Money::Currency.find('EUR')
         )
+      end
+
+      it 'puts default currency first' do
+        expect(store.supported_currencies_list.first.iso_code).to eq('USD')
       end
     end
 
-    context 'without supported currencies set' do
-      let!(:store) { build(:store, default_currency: 'EUR', supported_currencies: nil) }
+    context 'without markets (legacy)' do
+      context 'with supported currencies set' do
+        let(:currencies) { 'USD, EUR, dummy' }
+        let!(:store) { build(:store, default_currency: 'USD', supported_currencies: currencies) }
 
-      it 'returns supported currencies list' do
-        expect(store.supported_currencies_list).to contain_exactly(
-          ::Money::Currency.find('EUR')
-        )
+        it 'returns supported currencies list' do
+          expect(store.supported_currencies_list).to contain_exactly(
+            ::Money::Currency.find('EUR'), ::Money::Currency.find('USD')
+          )
+        end
+      end
+
+      context 'without supported currencies set' do
+        let!(:store) { build(:store, default_currency: 'EUR', supported_currencies: nil) }
+
+        it 'returns default currency only' do
+          expect(store.supported_currencies_list).to contain_exactly(
+            ::Money::Currency.find('EUR')
+          )
+        end
+      end
+    end
+  end
+
+  describe '#default_currency' do
+    context 'with markets' do
+      let!(:store) { create(:store, default_currency: 'USD') }
+
+      before do
+        create(:market, store: store, currency: 'EUR', default: true)
+        create(:market, store: store, currency: 'GBP')
+      end
+
+      it 'delegates to default market' do
+        expect(store.default_currency).to eq('EUR')
+      end
+    end
+
+    context 'with markets but no default_currency on store column' do
+      let!(:store) { create(:store, default_currency: 'USD') }
+
+      before do
+        create(:market, store: store, currency: 'GBP', default: true)
+        store.update_column(:default_currency, nil)
+      end
+
+      it 'returns default market currency' do
+        expect(store.default_currency).to eq('GBP')
+      end
+    end
+
+    context 'without markets' do
+      let(:store) { build(:store, default_currency: 'USD') }
+
+      it 'returns the store column value' do
+        expect(store.default_currency).to eq('USD')
+      end
+    end
+
+    context 'without markets and no default_currency on store column' do
+      let(:store) { build(:store, default_currency: nil) }
+
+      it 'returns nil' do
+        expect(store.default_currency).to be_nil
+      end
+    end
+  end
+
+  describe '#default_locale' do
+    context 'with markets' do
+      let!(:store) { create(:store, default_locale: 'en') }
+
+      before do
+        create(:market, store: store, default_locale: 'de', default: true)
+        create(:market, store: store, default_locale: 'fr')
+      end
+
+      it 'delegates to default market' do
+        expect(store.default_locale).to eq('de')
+      end
+    end
+
+    context 'with markets but no default_locale on store column' do
+      let!(:store) { create(:store, default_locale: nil) }
+
+      before do
+        create(:market, store: store, default_locale: 'fr', default: true)
+      end
+
+      it 'returns default market locale' do
+        expect(store.default_locale).to eq('fr')
+      end
+    end
+
+    context 'without markets' do
+      let(:store) { build(:store, default_locale: 'en') }
+
+      it 'returns the store column value' do
+        expect(store.default_locale).to eq('en')
+      end
+    end
+
+    context 'without markets and no default_locale on store column' do
+      let(:store) { build(:store, default_locale: nil) }
+
+      it 'returns nil' do
+        expect(store.default_locale).to be_nil
       end
     end
   end
 
   describe '#supported_locales_list' do
-    context 'with supported locale set' do
-      let(:store) { build(:store, default_locale: 'fr', supported_locales: 'fr,de') }
+    context 'with markets' do
+      let!(:store) { create(:store, default_locale: 'en') }
 
-      it 'returns supported currencies list' do
-        expect(store.supported_locales_list).to be_an_instance_of(Array)
-        expect(store.supported_locales_list).to contain_exactly('de', 'fr')
+      before do
+        create(:market, store: store, default_locale: 'en', supported_locales: 'fr', default: true)
+        create(:market, store: store, default_locale: 'de', supported_locales: nil)
+      end
+
+      it 'includes default_locale from each market even when not in supported_locales' do
+        expect(store.supported_locales_list).to contain_exactly('de', 'en', 'fr')
       end
     end
 
-    context 'without supported currencies set' do
-      let(:store) { build(:store, default_locale: nil, supported_locales: nil) }
+    context 'without markets (legacy)' do
+      context 'with supported locales set' do
+        let(:store) { build(:store, default_locale: 'fr', supported_locales: 'fr,de') }
 
-      it 'returns supported currencies list' do
-        expect(store.supported_locales_list).to be_an_instance_of(Array)
-        expect(store.supported_locales_list).to be_empty
+        it 'returns supported locales list' do
+          expect(store.supported_locales_list).to contain_exactly('de', 'fr')
+        end
+      end
+
+      context 'without supported locales set' do
+        let(:store) { build(:store, default_locale: nil, supported_locales: nil) }
+
+        it 'returns empty array' do
+          expect(store.supported_locales_list).to be_empty
+        end
       end
     end
   end
 
-  describe '#ensure_supported_locales' do
-    context 'store with default_locale' do
-      let(:store) { build(:store, default_locale: 'fr', supported_locales: nil) }
+  describe '#default_market' do
+    let!(:store) { create(:store) }
 
-      it { expect { store.save! }.to change(store, :supported_locales).from(nil).to('fr') }
+    context 'with a default market' do
+      let!(:market) { create(:market, :default, store: store) }
+      let!(:other_market) { create(:market, store: store) }
+
+      it 'returns the default market' do
+        expect(store.default_market).to eq(market)
+      end
     end
 
-    context 'store without default locale' do
-      let(:store) { build(:store, default_locale: nil, supported_locales: nil) }
+    context 'without a default market' do
+      let!(:market1) { create(:market, store: store, position: 2) }
+      let!(:market2) { create(:market, store: store, position: 1) }
 
-      it { expect { store.save! }.not_to change(store, :supported_locales).from(nil) }
+      it 'falls back to the first market by position' do
+        expect(store.default_market).to eq(market2)
+      end
     end
 
-    context 'store with supported locales' do
-      let(:store) { build(:store, default_locale: 'fr', supported_locales: 'fr,de') }
-
-      it { expect { store.save! }.not_to change(store, :supported_locales) }
+    context 'without any markets' do
+      it 'returns nil' do
+        expect(store.default_market).to be_nil
+      end
     end
   end
 
-  describe '#ensure_supported_currencies' do
-    context 'store with default_currency' do
-      let(:store) { build(:store, default_currency: 'EUR', supported_currencies: nil) }
+  describe '#market_for_country' do
+    let!(:store) { create(:store) }
+    let!(:country) { create(:country) }
+    let!(:market) { create(:market, store: store, countries: [country]) }
 
-      it { expect { store.save! }.to change(store, :supported_currencies).from(nil).to('EUR') }
+    it 'returns the market containing the country' do
+      expect(store.market_for_country(country)).to eq(market)
     end
 
-    context 'store with supported currencies' do
-      let(:store) { build(:store, default_currency: 'EUR', supported_currencies: 'EUR,GBP') }
-
-      it { expect { store.save! }.not_to change(store, :supported_currencies) }
+    it 'returns nil for a country not in any market' do
+      other_country = create(:country)
+      expect(store.market_for_country(other_country)).to be_nil
     end
   end
 

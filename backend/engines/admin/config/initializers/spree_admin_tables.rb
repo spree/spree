@@ -1679,4 +1679,38 @@ Rails.application.config.after_initialize do
                                                                 button_class: 'btn-danger',
                                                                 method: :delete,
                                                                 position: 10
+
+  # ==========================================
+  # Register Markets table
+  # ==========================================
+  Spree.admin.tables.register(:markets, model_class: Spree::Market, search_param: :name_cont)
+
+  Spree.admin.tables.markets.add :name,
+                                       label: :name,
+                                       type: :string,
+                                       sortable: true,
+                                       filterable: true,
+                                       default: true,
+                                       position: 10
+
+  Spree.admin.tables.markets.add :currency,
+                                       label: :currency,
+                                       type: :string,
+                                       sortable: true,
+                                       default: true,
+                                       position: 20
+
+  Spree.admin.tables.markets.add :default_locale,
+                                       label: :default_locale,
+                                       type: :string,
+                                       sortable: true,
+                                       default: true,
+                                       position: 30
+
+  Spree.admin.tables.markets.add :default,
+                                       label: :default,
+                                       type: :boolean,
+                                       sortable: true,
+                                       default: true,
+                                       position: 40
 end

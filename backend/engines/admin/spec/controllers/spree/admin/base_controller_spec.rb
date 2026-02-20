@@ -14,6 +14,46 @@ describe Spree::Admin::BaseController, type: :controller do
     end
   end
 
+  describe '#default_locale' do
+    stub_authorization!
+
+    let(:store) { Spree::Store.default }
+
+    before do
+      allow(controller).to receive(:current_store).and_return(store)
+    end
+
+    context 'when preferred_admin_locale is set' do
+      before { allow(store).to receive(:preferred_admin_locale).and_return('de') }
+
+      it 'uses the admin locale' do
+        get :index
+        expect(I18n.default_locale).to eq(:de)
+      end
+    end
+
+    context 'when preferred_admin_locale is not set' do
+      before { allow(store).to receive(:preferred_admin_locale).and_return(nil) }
+
+      it 'falls back to store default_locale' do
+        get :index
+        expect(I18n.default_locale.to_s).to eq(store.default_locale)
+      end
+    end
+
+    context 'when preferred_admin_locale is set and store has markets' do
+      before do
+        allow(store).to receive(:preferred_admin_locale).and_return('en')
+        allow(store).to receive(:default_locale).and_return('fr')
+      end
+
+      it 'uses admin locale instead of market locale' do
+        get :index
+        expect(I18n.default_locale).to eq(:en)
+      end
+    end
+  end
+
   describe '#redirect_unauthorized_access' do
     controller(AdminFakesController) do
       def index

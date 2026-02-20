@@ -82,14 +82,45 @@ RSpec.describe Spree::Current do
     end
   end
 
+  describe '#market' do
+    context 'when market is set' do
+      let(:market) { create(:market) }
+
+      before { described_class.market = market }
+
+      it 'returns the set market' do
+        expect(described_class.market).to eq(market)
+      end
+    end
+
+    context 'when market is not set' do
+      let!(:store) { create(:store, default: true) }
+      let!(:market) { create(:market, store: store, default: true) }
+
+      it 'returns the default market from the store' do
+        expect(described_class.market).to eq(market)
+      end
+    end
+
+    context 'when market is not set and store has no markets' do
+      let!(:store) { create(:store, default: true) }
+
+      it 'returns nil' do
+        expect(described_class.market).to be_nil
+      end
+    end
+  end
+
   describe '#global_pricing_context' do
     let!(:store) { create(:store, default: true, default_currency: 'USD') }
     let(:zone) { create(:zone, default_tax: true) }
+    let(:market) { create(:market, store: store) }
 
     before do
       described_class.store = store
       described_class.currency = 'USD'
       described_class.zone = zone
+      described_class.market = market
     end
 
     it 'returns a Spree::Pricing::Context' do
@@ -106,6 +137,10 @@ RSpec.describe Spree::Current do
 
     it 'uses the current zone' do
       expect(described_class.global_pricing_context.zone).to eq(zone)
+    end
+
+    it 'uses the current market' do
+      expect(described_class.global_pricing_context.market).to eq(market)
     end
 
     it 'memoizes the context' do

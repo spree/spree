@@ -24,6 +24,7 @@ import type {
   StoreProduct,
   StoreOrder,
   StoreCountry,
+  StoreMarket,
   StoreTaxonomy,
   StoreTaxon,
   StorePayment,
@@ -207,23 +208,71 @@ export class StoreClient {
   };
 
   // ============================================
-  // Geography
+  // Markets & Geography
   // ============================================
 
-  readonly countries = {
+  readonly markets = {
     /**
-     * List countries available for checkout
-     * Returns countries from the store's checkout zone without states
+     * List all markets with their countries
+     * Used to build a country/currency switcher on the frontend
      */
-    list: (options?: RequestOptions): Promise<{ data: StoreCountry[] }> =>
-      this.request<{ data: StoreCountry[] }>('GET', '/countries', options),
+    list: (options?: RequestOptions): Promise<{ data: StoreMarket[] }> =>
+      this.request<{ data: StoreMarket[] }>('GET', '/markets', options),
 
     /**
-     * Get a country by ISO code with states
-     * @param iso - ISO 3166-1 alpha-2 code (e.g., "US", "DE")
+     * Get a single market by prefixed ID
+     * @param id - Market prefixed ID (e.g., "mkt_abc123")
      */
-    get: (iso: string, options?: RequestOptions): Promise<StoreCountry> =>
-      this.request<StoreCountry>('GET', `/countries/${iso}`, options),
+    get: (id: string, options?: RequestOptions): Promise<StoreMarket> =>
+      this.request<StoreMarket>('GET', `/markets/${id}`, options),
+
+    /**
+     * Resolve which market a country belongs to
+     * @param countryIso - ISO 3166-1 alpha-2 code (e.g., "US", "DE")
+     */
+    resolve: (
+      countryIso: string,
+      options?: RequestOptions
+    ): Promise<StoreMarket> =>
+      this.request<StoreMarket>('GET', '/markets/resolve', {
+        ...options,
+        params: { country: countryIso },
+      }),
+
+    /**
+     * Nested resource: Countries within a market (for checkout address forms)
+     */
+    countries: {
+      /**
+       * List countries in a market's zone
+       * @param marketId - Market prefixed ID (e.g., "mkt_abc123")
+       */
+      list: (
+        marketId: string,
+        options?: RequestOptions
+      ): Promise<{ data: StoreCountry[] }> =>
+        this.request<{ data: StoreCountry[] }>(
+          'GET',
+          `/markets/${marketId}/countries`,
+          options
+        ),
+
+      /**
+       * Get a country by ISO code with states (for address form validation)
+       * @param marketId - Market prefixed ID (e.g., "mkt_abc123")
+       * @param iso - ISO 3166-1 alpha-2 code (e.g., "US", "DE")
+       */
+      get: (
+        marketId: string,
+        iso: string,
+        options?: RequestOptions
+      ): Promise<StoreCountry> =>
+        this.request<StoreCountry>(
+          'GET',
+          `/markets/${marketId}/countries/${iso}`,
+          options
+        ),
+    },
   };
 
   // ============================================
