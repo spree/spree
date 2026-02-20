@@ -106,6 +106,10 @@ export default class extends Controller {
     if (this.multipleValue) {
       settings.maxItems = null
       settings.plugins = ['remove_button']
+      settings.onItemAdd = function() {
+        this.setTextboxValue('')
+        this.refreshOptions(false)
+      }
       if (this.activeOptionValue) settings.items = JSON.parse(this.activeOptionValue)
     } else {
       if (this.activeOptionValue) settings.items = [this.activeOptionValue]

@@ -11,15 +11,17 @@ module Spree
     # Associations
     #
     belongs_to :store, class_name: 'Spree::Store'
-    belongs_to :zone, class_name: 'Spree::Zone'
+    has_many :market_countries, class_name: 'Spree::MarketCountry', dependent: :destroy
+    has_many :countries, through: :market_countries, class_name: 'Spree::Country'
 
     #
     # Validations
     #
-    validates :store, :zone, presence: true
+    validates :store, presence: true
     validates :name, presence: true, uniqueness: { scope: spree_base_uniqueness_scope + [:store_id] }
     validates :currency, presence: true
     validates :default_locale, presence: true
+    validates :countries, presence: true
 
     #
     # Callbacks
@@ -32,7 +34,6 @@ module Spree
     scope :default, -> { where(default: true) }
 
     # Find the market that contains the given country for a store
-    # Joins through zone → zone_members to match country-based or state-based zones
     #
     # @param country [Spree::Country] the country to look up
     # @param store [Spree::Store] the store to scope to
@@ -40,18 +41,9 @@ module Spree
     def self.for_country(country, store:)
       return nil unless country && store
 
-      joins(zone: :zone_members)
+      joins(:market_countries)
         .where(store_id: store.id)
-        .where(
-          spree_zone_members: { zoneable_type: 'Spree::Country', zoneable_id: country.id }
-        )
-        .or(
-          joins(zone: :zone_members)
-            .where(store_id: store.id)
-            .where(
-              spree_zone_members: { zoneable_type: 'Spree::State', zoneable_id: country.states.select(:id) }
-            )
-        )
+        .where(spree_market_countries: { country_id: country.id })
         .order(:position)
         .first
     end
@@ -64,13 +56,6 @@ module Spree
       return nil unless store
 
       store.markets.default.first || store.markets.order(:position).first
-    end
-
-    # Returns the countries available in this market's zone
-    #
-    # @return [ActiveRecord::Relation<Spree::Country>]
-    def countries
-      zone.country_list
     end
 
     # Returns supported locales as an array, always including default_locale

@@ -7,10 +7,15 @@ RSpec.describe Spree::Market, type: :model do
     subject { build(:market, store: store) }
 
     it { is_expected.to validate_presence_of(:store) }
-    it { is_expected.to validate_presence_of(:zone) }
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_presence_of(:currency) }
     it { is_expected.to validate_presence_of(:default_locale) }
+
+    it 'validates presence of countries' do
+      market = build(:market, store: store, countries: [])
+      expect(market).not_to be_valid
+      expect(market.errors[:countries]).to be_present
+    end
 
     it 'validates uniqueness of name scoped to store' do
       create(:market, name: 'North America', store: store)
@@ -20,23 +25,33 @@ RSpec.describe Spree::Market, type: :model do
     end
   end
 
-  describe '.for_country' do
-    let(:country) { create(:country) }
-    let(:zone) { create(:zone, kind: :country) }
+  describe 'associations' do
+    it 'has many countries through market_countries' do
+      country1 = create(:country)
+      country2 = create(:country)
+      market = create(:market, store: store, countries: [country1, country2])
 
-    before do
-      zone.zone_members.create!(zoneable: country)
+      expect(market.countries).to contain_exactly(country1, country2)
     end
 
-    it 'finds market by country through zone' do
-      market = create(:market, store: store, zone: zone)
+    it 'destroys market_countries on destroy' do
+      market = create(:market, store: store)
+      expect { market.destroy }.to change(Spree::MarketCountry, :count).by(-1)
+    end
+  end
+
+  describe '.for_country' do
+    let(:country) { create(:country) }
+
+    it 'finds market by country' do
+      market = create(:market, store: store, countries: [country])
       result = described_class.for_country(country, store: store)
       expect(result).to eq(market)
     end
 
     it 'returns nil when no market matches' do
       other_country = create(:country)
-      create(:market, store: store, zone: zone)
+      create(:market, store: store, countries: [country])
       result = described_class.for_country(other_country, store: store)
       expect(result).to be_nil
     end
@@ -61,14 +76,6 @@ RSpec.describe Spree::Market, type: :model do
 
     it 'returns nil for store without markets' do
       expect(described_class.default_for_store(store)).to be_nil
-    end
-  end
-
-  describe '#countries' do
-    it 'delegates to zone.country_list' do
-      zone = create(:zone_with_country)
-      market = build(:market, zone: zone)
-      expect(market.countries).to eq(zone.country_list)
     end
   end
 

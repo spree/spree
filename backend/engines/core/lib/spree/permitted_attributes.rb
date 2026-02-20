@@ -142,8 +142,8 @@ module Spree
 
     @@line_item_attributes = [:id, :variant_id, :quantity]
 
-    @@market_attributes = [:name, :currency, :zone_id, :default_locale, :supported_locales,
-                           :tax_inclusive, :default, :position]
+    @@market_attributes = [:name, :currency, :default_locale, :supported_locales,
+                           :tax_inclusive, :default, :position, country_ids: []]
 
     @@menu_attributes = [:name, :locale, :location]
 

@@ -4,7 +4,6 @@ class CreateSpreeMarkets < ActiveRecord::Migration[7.2]
       t.references :store, null: false, foreign_key: false, index: true
       t.string :name, null: false
       t.string :currency, null: false
-      t.references :zone, null: false, foreign_key: false
       t.string :default_locale, null: false
       t.string :supported_locales
       t.boolean :tax_inclusive, null: false, default: false
@@ -18,5 +17,13 @@ class CreateSpreeMarkets < ActiveRecord::Migration[7.2]
     add_index :spree_markets, [:store_id, :default], where: 'deleted_at IS NULL'
     add_index :spree_markets, [:store_id, :position]
     add_index :spree_markets, :deleted_at
+
+    create_table :spree_market_countries do |t|
+      t.references :market, null: false, foreign_key: false
+      t.references :country, null: false, foreign_key: false
+      t.timestamps
+    end
+
+    add_index :spree_market_countries, [:market_id, :country_id], unique: true
   end
 end

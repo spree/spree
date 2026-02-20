@@ -5,7 +5,7 @@ module Spree
         module Markets
           class CountriesController < Store::BaseController
             # GET /api/v3/store/markets/:market_id/countries
-            # Returns countries from the market's zone (for checkout address dropdown)
+            # Returns countries in the market (for checkout address dropdown)
             def index
               countries = market.countries.order(:name)
 

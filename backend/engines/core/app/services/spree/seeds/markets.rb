@@ -7,15 +7,19 @@ module Spree
         Spree::Store.all.each do |store|
           next if store.markets.any?
 
-          zone = store.checkout_zone || Spree::Zone.find_by(name: 'North America') || Spree::Zone.first
-          next unless zone
+          countries = if store.checkout_zone.present?
+                        store.checkout_zone.country_list
+                      else
+                        Spree::Country.all
+                      end
+          next unless countries.any?
 
           store.markets.create!(
             name: 'Default',
             currency: store.default_currency,
             default_locale: store.default_locale || I18n.locale.to_s,
-            zone: zone,
-            default: true
+            default: true,
+            countries: countries
           )
         end
       end

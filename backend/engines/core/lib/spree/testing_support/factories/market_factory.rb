@@ -4,7 +4,7 @@ FactoryBot.define do
     currency { 'USD' }
     default_locale { 'en' }
     store
-    zone { association :zone_with_country }
+    countries { [association(:country)] }
 
     trait :default do
       default { true }

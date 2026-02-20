@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_20_151370) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_20_160786) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -563,6 +563,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_20_151370) do
     t.index ["source_id", "source_type"], name: "index_spree_log_entries_on_source_id_and_source_type"
   end
 
+  create_table "spree_market_countries", force: :cascade do |t|
+    t.bigint "country_id", null: false
+    t.datetime "created_at", null: false
+    t.bigint "market_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["country_id"], name: "index_spree_market_countries_on_country_id"
+    t.index ["market_id", "country_id"], name: "index_spree_market_countries_on_market_id_and_country_id", unique: true
+    t.index ["market_id"], name: "index_spree_market_countries_on_market_id"
+  end
+
   create_table "spree_markets", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "currency", null: false
@@ -575,13 +585,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_20_151370) do
     t.string "supported_locales"
     t.boolean "tax_inclusive", default: false, null: false
     t.datetime "updated_at", null: false
-    t.bigint "zone_id", null: false
     t.index ["deleted_at"], name: "index_spree_markets_on_deleted_at"
     t.index ["store_id", "default"], name: "index_spree_markets_on_store_id_and_default", where: "(deleted_at IS NULL)"
     t.index ["store_id", "name"], name: "index_spree_markets_on_store_id_and_name", unique: true, where: "(deleted_at IS NULL)"
     t.index ["store_id", "position"], name: "index_spree_markets_on_store_id_and_position"
     t.index ["store_id"], name: "index_spree_markets_on_store_id"
-    t.index ["zone_id"], name: "index_spree_markets_on_zone_id"
   end
 
   create_table "spree_metafield_definitions", force: :cascade do |t|

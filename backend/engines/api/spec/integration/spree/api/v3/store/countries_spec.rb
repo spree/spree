@@ -10,13 +10,7 @@ RSpec.describe 'Markets Countries API', type: :request, swagger_doc: 'api-refere
   let!(:new_york) { Spree::State.find_by(abbr: 'NY', country: usa) || create(:state, country: usa, name: 'New York', abbr: 'NY') }
   let!(:germany) { Spree::Country.find_by(iso: 'DE') || create(:country, iso: 'DE', name: 'Germany', states_required: false) }
 
-  let(:zone) do
-    zone = create(:zone, kind: :country)
-    zone.zone_members.create!(zoneable: usa)
-    zone.zone_members.create!(zoneable: germany)
-    zone
-  end
-  let!(:market) { create(:market, :default, store: store, zone: zone) }
+  let!(:market) { create(:market, :default, store: store, countries: [usa, germany]) }
   let(:market_id) { market.prefixed_id }
 
   path '/api/v3/store/markets/{market_id}/countries' do
@@ -24,7 +18,7 @@ RSpec.describe 'Markets Countries API', type: :request, swagger_doc: 'api-refere
       tags 'Countries'
       produces 'application/json'
       security [api_key: []]
-      description 'Returns countries available in the market zone (for checkout address dropdown)'
+      description 'Returns countries available in the market (for checkout address dropdown)'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :market_id, in: :path, type: :string, required: true,

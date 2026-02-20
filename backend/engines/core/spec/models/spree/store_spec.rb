@@ -398,20 +398,12 @@ describe Spree::Store, type: :model, without_global_store: true do
     subject { create(:store) }
 
     context 'with markets' do
-      let(:zone1) do
-        create(:zone, kind: 'country').tap do |z|
-          z.members.create(zoneable: create(:country, name: 'Germany', iso: 'DE'))
-        end
-      end
-      let(:zone2) do
-        create(:zone, kind: 'country').tap do |z|
-          z.members.create(zoneable: create(:country, name: 'France', iso: 'FR'))
-        end
-      end
+      let!(:germany) { create(:country, name: 'Germany', iso: 'DE') }
+      let!(:france) { create(:country, name: 'France', iso: 'FR') }
 
       before do
-        create(:market, store: subject, zone: zone1, currency: 'EUR', default: true)
-        create(:market, store: subject, zone: zone2, currency: 'EUR')
+        create(:market, store: subject, countries: [germany], currency: 'EUR', default: true)
+        create(:market, store: subject, countries: [france], currency: 'EUR')
       end
 
       it 'returns countries from all markets' do
@@ -684,12 +676,7 @@ describe Spree::Store, type: :model, without_global_store: true do
   describe '#market_for_country' do
     let!(:store) { create(:store) }
     let!(:country) { create(:country) }
-    let!(:zone) do
-      create(:zone, kind: 'country').tap do |z|
-        z.members.create(zoneable: country)
-      end
-    end
-    let!(:market) { create(:market, store: store, zone: zone) }
+    let!(:market) { create(:market, store: store, countries: [country]) }
 
     it 'returns the market containing the country' do
       expect(store.market_for_country(country)).to eq(market)

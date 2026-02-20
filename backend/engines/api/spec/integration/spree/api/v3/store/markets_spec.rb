@@ -8,19 +8,8 @@ RSpec.describe 'Markets API', type: :request, swagger_doc: 'api-reference/store.
   let!(:usa) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US', name: 'United States') }
   let!(:germany) { Spree::Country.find_by(iso: 'DE') || create(:country, iso: 'DE', name: 'Germany') }
 
-  let(:na_zone) do
-    zone = create(:zone, name: 'North America', kind: :country)
-    zone.zone_members.create!(zoneable: usa)
-    zone
-  end
-  let(:eu_zone) do
-    zone = create(:zone, name: 'Europe', kind: :country)
-    zone.zone_members.create!(zoneable: germany)
-    zone
-  end
-
-  let!(:na_market) { create(:market, :default, name: 'North America', store: store, zone: na_zone, currency: 'USD', default_locale: 'en') }
-  let!(:eu_market) { create(:market, name: 'Europe', store: store, zone: eu_zone, currency: 'EUR', default_locale: 'de') }
+  let!(:na_market) { create(:market, :default, name: 'North America', store: store, countries: [usa], currency: 'USD', default_locale: 'en') }
+  let!(:eu_market) { create(:market, name: 'Europe', store: store, countries: [germany], currency: 'EUR', default_locale: 'de') }
 
   path '/api/v3/store/markets' do
     get 'List all markets' do

@@ -6,7 +6,7 @@ module Spree
           # GET /api/v3/store/markets
           # Returns all markets with nested countries (for country/currency switcher)
           def index
-            markets = current_store.markets.order(:position).includes(zone: { zone_members: :zoneable })
+            markets = current_store.markets.order(:position).includes(:countries)
 
             render json: {
               data: markets.map { |market| serialize_market(market) }

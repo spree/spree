@@ -5,10 +5,10 @@ RSpec.describe Spree::Admin::MarketsController, type: :controller do
   stub_authorization!
 
   let(:store) { @default_store }
-  let(:zone) { create(:zone, kind: :country) }
+  let(:country) { create(:country) }
 
   describe 'GET #index' do
-    let!(:market) { create(:market, store: store, zone: zone) }
+    let!(:market) { create(:market, store: store, countries: [country]) }
 
     it 'returns a successful response' do
       get :index
@@ -32,10 +32,10 @@ RSpec.describe Spree::Admin::MarketsController, type: :controller do
       expect(assigns(:market)).to be_a_new(Spree::Market)
     end
 
-    it 'loads zones' do
-      zone
+    it 'loads countries' do
+      country
       get :new
-      expect(assigns(:zones)).to include(zone)
+      expect(assigns(:countries)).to include(country)
     end
   end
 
@@ -44,7 +44,7 @@ RSpec.describe Spree::Admin::MarketsController, type: :controller do
       {
         market: {
           name: 'North America',
-          zone_id: zone.id,
+          country_ids: [country.id],
           currency: 'USD',
           default_locale: 'en'
         }
@@ -71,21 +71,21 @@ RSpec.describe Spree::Admin::MarketsController, type: :controller do
   end
 
   describe 'GET #edit' do
-    let(:market) { create(:market, store: store, zone: zone) }
+    let(:market) { create(:market, store: store, countries: [country]) }
 
     it 'returns a successful response' do
       get :edit, params: { id: market.to_param }
       expect(response).to be_successful
     end
 
-    it 'loads zones' do
+    it 'loads countries' do
       get :edit, params: { id: market.to_param }
-      expect(assigns(:zones)).to include(zone)
+      expect(assigns(:countries)).to include(country)
     end
   end
 
   describe 'PUT #update' do
-    let(:market) { create(:market, store: store, zone: zone) }
+    let(:market) { create(:market, store: store, countries: [country]) }
 
     it 'updates the market' do
       put :update, params: { id: market.to_param, market: { name: 'Updated Name' } }
@@ -106,7 +106,7 @@ RSpec.describe Spree::Admin::MarketsController, type: :controller do
   end
 
   describe 'DELETE #destroy' do
-    let!(:market) { create(:market, store: store, zone: zone) }
+    let!(:market) { create(:market, store: store, countries: [country]) }
 
     it 'soft deletes the market' do
       delete :destroy, params: { id: market.to_param }

@@ -8,7 +8,7 @@ module Spree
       protected
 
       def load_data
-        @zones = Spree::Zone.order(:name)
+        @countries = Spree::Country.order(:name)
       end
 
       def permitted_resource_params

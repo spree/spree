@@ -8,7 +8,9 @@
   <div class="card-body">
     <%= f.spree_text_field :name, required: true %>
 
-    <%= f.spree_collection_select :zone_id, @zones, :id, :name, label: Spree.t(:zone), required: true %>
+    <%= f.spree_collection_select :country_ids, @countries, :id, :name,
+          { label: Spree.t(:countries), required: true, autocomplete: true },
+          { multiple: true } %>
 
     <%= f.spree_select :currency, currency_options(f.object.currency), { label: Spree.t(:currency), required: true, autocomplete: true } %>
 
