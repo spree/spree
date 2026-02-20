@@ -17,14 +17,22 @@ module Spree
       # Falls back to the store's own default_locale column
       # @return [String, nil]
       def default_locale
-        default_market&.default_locale || read_attribute(:default_locale)
+        if has_markets?
+          default_market&.default_locale || read_attribute(:default_locale)
+        else
+          read_attribute(:default_locale)
+        end
       end
 
       # Returns the default currency, delegating to the default market when markets exist
       # Falls back to the store's own default_currency column
       # @return [String, nil]
       def default_currency
-        default_market&.currency || read_attribute(:default_currency)
+        if has_markets?
+          default_market&.currency || read_attribute(:default_currency)
+        else
+          read_attribute(:default_currency)
+        end
       end
 
       # Returns the market that contains the given country
@@ -69,6 +77,10 @@ module Spree
       end
 
       private
+
+      def has_markets?
+        persisted? && (markets.loaded? ? markets.any? : markets.exists?)
+      end
 
       def legacy_supported_currencies_list
         ([default_currency] + read_attribute(:supported_currencies).to_s.split(',')).uniq.map(&:to_s).map do |code|
