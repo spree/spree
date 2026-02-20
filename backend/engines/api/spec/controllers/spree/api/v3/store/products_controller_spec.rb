@@ -177,6 +177,17 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
         expect(prices).to eq(prices.sort.reverse)
       end
 
+      it 'sorts by best selling' do
+        Spree::StoreProduct.find_by(product: product, store: store).update!(units_sold_count: 10, revenue: 100)
+        Spree::StoreProduct.find_by(product: product2, store: store).update!(units_sold_count: 50, revenue: 500)
+
+        get :index, params: { sort_by: 'best-selling' }
+
+        expect(response).to have_http_status(:ok)
+        ids = json_response['data'].map { |p| p['id'] }
+        expect(ids.first).to eq(product2.prefixed_id)
+      end
+
       it 'sorts by name a-z with ransack' do
         get :index, params: { q: { s: 'name asc' } }
 
