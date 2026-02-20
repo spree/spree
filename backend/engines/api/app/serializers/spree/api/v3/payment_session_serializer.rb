@@ -4,7 +4,7 @@ module Spree
       class PaymentSessionSerializer < BaseSerializer
         typelize status: :string, amount: :string, currency: :string,
                  external_id: :string, external_data: 'Record<string, unknown>',
-                 expires_at: 'string | null', customer_external_id: 'string | null',
+                 expires_at: [:string, nullable: true], customer_external_id: [:string, nullable: true],
                  payment_method_id: :string, order_id: :string
 
         attributes :status, :currency, :external_id, :external_data,

@@ -3,10 +3,10 @@ module Spree
     module V3
       class TaxonSerializer < BaseSerializer
         typelize name: :string, permalink: :string, position: :number, depth: :number,
-                 meta_title: 'string | null', meta_description: 'string | null', meta_keywords: 'string | null',
-                 parent_id: 'string | null', taxonomy_id: :string, children_count: :number,
+                 meta_title: [:string, nullable: true], meta_description: [:string, nullable: true], meta_keywords: [:string, nullable: true],
+                 parent_id: [:string, nullable: true], taxonomy_id: :string, children_count: :number,
                  description: :string, description_html: :string,
-                 image_url: 'string | null', square_image_url: 'string | null',
+                 image_url: [:string, nullable: true], square_image_url: [:string, nullable: true],
                  is_root: :boolean, is_child: :boolean, is_leaf: :boolean
 
         attributes :name, :permalink, :position, :depth,

@@ -4,16 +4,16 @@ module Spree
       # Store API Product Serializer
       # Customer-facing product data with limited fields
       class ProductSerializer < BaseSerializer
-        typelize name: :string, description: 'string | null', slug: :string,
-                 meta_description: 'string | null', meta_keywords: 'string | null',
+        typelize name: :string, description: [:string, nullable: true], slug: :string,
+                 meta_description: [:string, nullable: true], meta_keywords: [:string, nullable: true],
                  variant_count: :number,
                  default_variant_id: :string,
-                 thumbnail_url: 'string | null',
-                 available_on: 'string | null',
+                 thumbnail_url: [:string, nullable: true],
+                 available_on: [:string, nullable: true],
                  purchasable: :boolean, in_stock: :boolean, backorderable: :boolean, available: :boolean,
                  price: 'StorePrice',
-                 original_price: 'StorePrice | null',
-                 tags: 'string[]'
+                 original_price: ['StorePrice', nullable: true],
+                 tags: [:string, multi: true]
 
         attributes :name, :description, :slug,
                    :meta_description, :meta_keywords,

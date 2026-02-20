@@ -4,13 +4,13 @@ module Spree
       # Store API Variant Serializer
       # Customer-facing variant data with limited fields
       class VariantSerializer < BaseSerializer
-        typelize product_id: :string, sku: 'string | null',
+        typelize product_id: :string, sku: [:string, nullable: true],
                  is_master: :boolean, options_text: :string, track_inventory: :boolean, image_count: :number,
-                 thumbnail: 'string | null',
+                 thumbnail: [:string, nullable: true],
                  purchasable: :boolean, in_stock: :boolean, backorderable: :boolean,
-                 weight: 'number | null', height: 'number | null', width: 'number | null', depth: 'number | null',
+                 weight: [:number, nullable: true], height: [:number, nullable: true], width: [:number, nullable: true], depth: [:number, nullable: true],
                  price: 'StorePrice',
-                 original_price: 'StorePrice | null'
+                 original_price: ['StorePrice', nullable: true]
 
         attribute :product_id do |variant|
           variant.product&.prefixed_id

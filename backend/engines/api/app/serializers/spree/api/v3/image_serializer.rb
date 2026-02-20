@@ -2,11 +2,11 @@ module Spree
   module Api
     module V3
       class ImageSerializer < BaseSerializer
-        typelize position: :number, alt: 'string | null', viewable_type: :string, viewable_id: :string,
-                 original_url: 'string | null', mini_url: 'string | null',
-                 small_url: 'string | null', medium_url: 'string | null',
-                 large_url: 'string | null', xlarge_url: 'string | null',
-                 og_image_url: 'string | null'
+        typelize position: :number, alt: [:string, nullable: true], viewable_type: :string, viewable_id: :string,
+                 original_url: [:string, nullable: true], mini_url: [:string, nullable: true],
+                 small_url: [:string, nullable: true], medium_url: [:string, nullable: true],
+                 large_url: [:string, nullable: true], xlarge_url: [:string, nullable: true],
+                 og_image_url: [:string, nullable: true]
 
         attribute :viewable_id do |image|
           image.viewable&.prefixed_id

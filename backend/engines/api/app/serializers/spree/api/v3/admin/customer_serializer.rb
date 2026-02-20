@@ -5,11 +5,11 @@ module Spree
         # Admin API Customer Serializer
         # Full customer data including admin-only fields
         class CustomerSerializer < V3::CustomerSerializer
-          typelize phone: 'string | null', login: 'string | null',
+          typelize phone: [:string, nullable: true], login: [:string, nullable: true],
                    accepts_email_marketing: :boolean,
-                   last_sign_in_at: 'string | null', current_sign_in_at: 'string | null',
+                   last_sign_in_at: [:string, nullable: true], current_sign_in_at: [:string, nullable: true],
                    sign_in_count: :number, failed_attempts: :number,
-                   last_sign_in_ip: 'string | null', current_sign_in_ip: 'string | null'
+                   last_sign_in_ip: [:string, nullable: true], current_sign_in_ip: [:string, nullable: true]
 
           # Admin-only attributes
           attributes :phone, :login, :accepts_email_marketing,

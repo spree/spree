@@ -5,7 +5,7 @@ module Spree
         # Admin API Price Serializer
         # Extends Store Price Serializer with admin-only fields
         class PriceSerializer < V3::PriceSerializer
-          typelize variant_id: 'string | null',
+          typelize variant_id: [:string, nullable: true],
                    created_at: :string,
                    updated_at: :string
 

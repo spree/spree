@@ -2,11 +2,11 @@ module Spree
   module Api
     module V3
       class AddressSerializer < BaseSerializer
-        typelize firstname: 'string | null', lastname: 'string | null', full_name: :string,
-                 address1: 'string | null', address2: 'string | null',
-                 city: 'string | null', zipcode: 'string | null', phone: 'string | null',
-                 company: 'string | null', state_abbr: 'string | null', state_name: 'string | null',
-                 state_text: 'string | null', country_iso: :string, country_name: :string
+        typelize firstname: [:string, nullable: true], lastname: [:string, nullable: true], full_name: :string,
+                 address1: [:string, nullable: true], address2: [:string, nullable: true],
+                 city: [:string, nullable: true], zipcode: [:string, nullable: true], phone: [:string, nullable: true],
+                 company: [:string, nullable: true], state_abbr: [:string, nullable: true], state_name: [:string, nullable: true],
+                 state_text: [:string, nullable: true], country_iso: :string, country_name: :string
 
         attributes :firstname, :lastname, :full_name, :address1, :address2,
                    :city, :zipcode, :phone, :company, :country_name, :country_iso, :state_text,

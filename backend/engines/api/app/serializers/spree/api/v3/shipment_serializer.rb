@@ -2,8 +2,8 @@ module Spree
   module Api
     module V3
       class ShipmentSerializer < BaseSerializer
-        typelize number: :string, state: :string, tracking: 'string | null',
-                 tracking_url: 'string | null', shipped_at: 'string | null',
+        typelize number: :string, state: :string, tracking: [:string, nullable: true],
+                 tracking_url: [:string, nullable: true], shipped_at: [:string, nullable: true],
                  cost: :string, display_cost: :string
 
         attributes :number, :state, :tracking, :tracking_url,

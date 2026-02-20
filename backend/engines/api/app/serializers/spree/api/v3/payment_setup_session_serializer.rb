@@ -2,10 +2,10 @@ module Spree
   module Api
     module V3
       class PaymentSetupSessionSerializer < BaseSerializer
-        typelize status: :string, external_id: 'string | null', external_client_secret: 'string | null',
+        typelize status: :string, external_id: [:string, nullable: true], external_client_secret: [:string, nullable: true],
                  external_data: 'Record<string, unknown>',
-                 payment_method_id: 'string | null', payment_source_id: 'string | null',
-                 payment_source_type: 'string | null', customer_id: 'string | null'
+                 payment_method_id: [:string, nullable: true], payment_source_id: [:string, nullable: true],
+                 payment_source_type: [:string, nullable: true], customer_id: [:string, nullable: true]
 
         attributes :status, :external_id, :external_client_secret, :external_data,
                    created_at: :iso8601, updated_at: :iso8601

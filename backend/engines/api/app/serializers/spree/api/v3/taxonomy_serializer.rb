@@ -2,7 +2,7 @@ module Spree
   module Api
     module V3
       class TaxonomySerializer < BaseSerializer
-        typelize name: :string, position: :number, root_id: 'string | null'
+        typelize name: :string, position: :number, root_id: [:string, nullable: true]
 
         attributes :name, :position,
                    created_at: :iso8601, updated_at: :iso8601

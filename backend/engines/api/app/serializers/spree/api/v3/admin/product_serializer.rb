@@ -8,9 +8,9 @@ module Spree
         class ProductSerializer < V3::ProductSerializer
 
           # Additional type hints for admin-only computed attributes
-          typelize status: :string, make_active_at: 'string | null', discontinue_on: 'string | null',
-                   cost_price: 'number | null', cost_currency: 'string | null',
-                   deleted_at: 'string | null'
+          typelize status: :string, make_active_at: [:string, nullable: true], discontinue_on: [:string, nullable: true],
+                   cost_price: [:number, nullable: true], cost_currency: [:string, nullable: true],
+                   deleted_at: [:string, nullable: true]
 
           # Admin-only attributes
           attributes :status, :make_active_at, :discontinue_on, deleted_at: :iso8601

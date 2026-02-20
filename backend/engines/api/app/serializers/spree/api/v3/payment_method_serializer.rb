@@ -2,7 +2,7 @@ module Spree
   module Api
     module V3
       class PaymentMethodSerializer < BaseSerializer
-        typelize name: :string, description: 'string | null', type: :string, session_required: :boolean
+        typelize name: :string, description: [:string, nullable: true], type: :string, session_required: :boolean
 
         attributes :name, :description, :type
 
