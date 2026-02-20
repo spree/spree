@@ -1,5 +1,19 @@
 # @spree/sdk
 
+## 0.4.0
+
+### Minor Changes
+
+- **Breaking:** Replace `store.countries` with `store.markets` — Markets bundle geography (zone), currency, and locale into a single entity for multi-region commerce
+  - `store.countries.list()` → `store.markets.countries.list(marketId)` (countries are now scoped to a market)
+  - `store.countries.get(iso)` → `store.markets.countries.get(marketId, iso)`
+  - New `store.markets.list()` — list all markets with nested countries (for country/currency switcher)
+  - New `store.markets.get(id)` — get a single market by prefixed ID
+  - New `store.markets.resolve(countryIso)` — resolve which market a country belongs to
+- Add `country` option to `RequestOptions` — sends `X-Spree-Country` header for automatic market resolution (currency, locale, tax zone)
+- Add `StoreMarket` type and `StoreMarketSchema` Zod schema
+- **Breaking:** Remove `default_currency` and `default_locale` from `StoreCountry` type and Zod schema (these were misleading ISO3166 values, not store config)
+
 ## 0.3.1
 
 ### Patch Changes

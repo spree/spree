@@ -23,6 +23,7 @@ module Spree
       :inventory_unit_attributes,
       :invitation_attributes,
       :line_item_attributes,
+      :market_attributes,
       :menu_attributes,
       :menu_item_attributes,
       :metafield_attributes,
@@ -140,6 +141,9 @@ module Spree
     @@invitation_attributes = [:email, :expires_at, :role_id]
 
     @@line_item_attributes = [:id, :variant_id, :quantity]
+
+    @@market_attributes = [:name, :currency, :zone_id, :default_locale, :supported_locales,
+                           :tax_inclusive, :default, :position]
 
     @@menu_attributes = [:name, :locale, :location]
 

@@ -2,7 +2,7 @@
 
 require 'swagger_helper'
 
-RSpec.describe 'Countries API', type: :request, swagger_doc: 'api-reference/store.yaml' do
+RSpec.describe 'Markets Countries API', type: :request, swagger_doc: 'api-reference/store.yaml' do
   include_context 'API v3 Store'
 
   let!(:usa) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US', name: 'United States', states_required: true) }
@@ -10,14 +10,25 @@ RSpec.describe 'Countries API', type: :request, swagger_doc: 'api-reference/stor
   let!(:new_york) { Spree::State.find_by(abbr: 'NY', country: usa) || create(:state, country: usa, name: 'New York', abbr: 'NY') }
   let!(:germany) { Spree::Country.find_by(iso: 'DE') || create(:country, iso: 'DE', name: 'Germany', states_required: false) }
 
-  path '/api/v3/store/countries' do
-    get 'List checkout countries' do
+  let(:zone) do
+    zone = create(:zone, kind: :country)
+    zone.zone_members.create!(zoneable: usa)
+    zone.zone_members.create!(zoneable: germany)
+    zone
+  end
+  let!(:market) { create(:market, :default, store: store, zone: zone) }
+  let(:market_id) { market.prefixed_id }
+
+  path '/api/v3/store/markets/{market_id}/countries' do
+    get 'List countries in a market' do
       tags 'Countries'
       produces 'application/json'
       security [api_key: []]
-      description 'Returns countries available for checkout from the store checkout zone'
+      description 'Returns countries available in the market zone (for checkout address dropdown)'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :market_id, in: :path, type: :string, required: true,
+                description: 'Market prefixed ID (e.g., "mkt_abc123")'
 
       response '200', 'countries found' do
         let(:'x-spree-api-key') { api_key.token }
@@ -44,11 +55,9 @@ RSpec.describe 'Countries API', type: :request, swagger_doc: 'api-reference/stor
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['data']).to be_an(Array)
-          # Find USA in response
           us_country = data['data'].find { |c| c['iso'] == 'US' }
           expect(us_country).to be_present
           expect(us_country['name']).to be_present
-          # States should NOT be included in index
           expect(us_country).not_to have_key('states')
         end
       end
@@ -63,14 +72,16 @@ RSpec.describe 'Countries API', type: :request, swagger_doc: 'api-reference/stor
     end
   end
 
-  path '/api/v3/store/countries/{iso}' do
+  path '/api/v3/store/markets/{market_id}/countries/{iso}' do
     get 'Get a country with states' do
       tags 'Countries'
       produces 'application/json'
       security [api_key: []]
-      description 'Returns a single country by ISO code with its states'
+      description 'Returns a single country by ISO code with its states (for address form validation)'
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :market_id, in: :path, type: :string, required: true,
+                description: 'Market prefixed ID (e.g., "mkt_abc123")'
       parameter name: :iso, in: :path, type: :string, required: true,
                 description: 'Country ISO 3166-1 alpha-2 code (e.g., "US", "DE", "CA")'
 
@@ -103,7 +114,6 @@ RSpec.describe 'Countries API', type: :request, swagger_doc: 'api-reference/stor
           data = JSON.parse(response.body)
           expect(data['iso']).to eq('US')
           expect(data['states']).to be_an(Array)
-          # Check that states have the expected structure
           state_abbrs = data['states'].map { |s| s['abbr'] }
           expect(state_abbrs).to include('CA', 'NY')
         end

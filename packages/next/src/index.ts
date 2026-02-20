@@ -7,7 +7,7 @@ export { listProducts, getProduct, getProductFilters } from './data/products';
 export { listTaxons, getTaxon, listTaxonProducts } from './data/taxons';
 export { listTaxonomies, getTaxonomy } from './data/taxonomies';
 export { getStore } from './data/store';
-export { listCountries, getCountry } from './data/countries';
+export { listMarkets, getMarket, resolveMarket, listMarketCountries, getMarketCountry } from './data/markets';
 
 // Server actions (mutations + auth-dependent reads)
 export {
@@ -74,6 +74,7 @@ export type {
   StoreTaxon,
   StoreTaxonomy,
   StoreCountry,
+  StoreMarket,
   StoreStore,
   StoreAddress,
   StoreCustomer,

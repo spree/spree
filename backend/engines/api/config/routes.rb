@@ -11,8 +11,13 @@ Spree::Core::Engine.add_routes do
         # Store
         resource :store, only: [:show]
 
-        # Geography - countries include nested states from checkout zone
-        resources :countries, only: [:index, :show]
+        # Markets - geography + currency + locale bundles
+        resources :markets, only: [:index, :show] do
+          collection do
+            get :resolve
+          end
+          resources :countries, only: [:index, :show], controller: 'markets/countries'
+        end
 
         # Catalog
         resources :products, only: [:index, :show] do

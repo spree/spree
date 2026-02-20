@@ -22,6 +22,8 @@ export interface RequestOptions {
   locale?: string;
   /** Currency for prices (e.g., 'USD', 'EUR') */
   currency?: string;
+  /** Country ISO code for market resolution (e.g., 'US', 'DE') */
+  country?: string;
   /** Custom headers */
   headers?: Record<string, string>;
 }
@@ -98,7 +100,7 @@ export function createRequestFn(
     path: string,
     options: InternalRequestOptions = {}
   ): Promise<T> {
-    const { token, orderToken, locale, currency, headers = {}, body, params } = options;
+    const { token, orderToken, locale, currency, country, headers = {}, body, params } = options;
 
     // Build URL with query params
     const url = new URL(`${config.baseUrl}${basePath}${path}`);
@@ -138,6 +140,10 @@ export function createRequestFn(
 
     if (currency) {
       requestHeaders['x-spree-currency'] = currency;
+    }
+
+    if (country) {
+      requestHeaders['x-spree-country'] = country;
     }
 
     const maxAttempts = config.retryConfig ? config.retryConfig.maxRetries + 1 : 1;

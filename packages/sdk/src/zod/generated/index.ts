@@ -16,6 +16,7 @@ export { StoreDigitalLinkSchema, type StoreDigitalLink } from './StoreDigitalLin
 export { StoreGiftCardSchema, type StoreGiftCard } from './StoreGiftCard';
 export { StoreImageSchema, type StoreImage } from './StoreImage';
 export { StoreLineItemSchema, type StoreLineItem } from './StoreLineItem';
+export { StoreMarketSchema, type StoreMarket } from './StoreMarket';
 export { StoreMetafieldSchema, type StoreMetafield } from './StoreMetafield';
 export { StoreOptionTypeSchema, type StoreOptionType } from './StoreOptionType';
 export { StoreOptionValueSchema, type StoreOptionValue } from './StoreOptionValue';

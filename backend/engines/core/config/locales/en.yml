@@ -1359,6 +1359,8 @@ en:
     mark_as_default: Mark as default
     master: Master
     master_price: Master Price
+    market: Market
+    markets: Markets
     master_sku: Master SKU
     match_choices:
       all: All

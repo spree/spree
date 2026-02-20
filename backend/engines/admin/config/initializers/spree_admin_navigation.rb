@@ -267,11 +267,20 @@ Rails.application.config.after_initialize do
           active: -> { controller_name == 'payment_methods' },
           if: -> { can?(:manage, Spree::PaymentMethod) }
 
+  # Markets
+  settings_nav.add :markets,
+          label: :markets,
+          url: :admin_markets_path,
+          icon: 'world',
+          position: 78,
+          active: -> { controller_name == 'markets' },
+          if: -> { can?(:manage, Spree::Market) }
+
   # Zones
   settings_nav.add :zones,
           label: :zones,
           url: :admin_zones_path,
-          icon: 'world',
+          icon: 'map-2',
           position: 80,
           active: -> { %w[zones countries states].include?(controller_name) },
           if: -> { can?(:manage, Spree::Zone) }

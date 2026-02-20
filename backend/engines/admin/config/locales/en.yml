@@ -126,6 +126,11 @@ en:
         code_help_text: If you leave it blank, we will generate code for you
         redeemed: Redeemed
         usage: Usage
+      markets:
+        list: Markets
+        new: New Market
+        edit: Edit Market
+        supported_locales_hint: Comma-separated list of additional locale codes (e.g. fr,de,es)
       imports:
         all_required_columns_mapped: Good job, all required columns are mapped!
         field_required: Field required

@@ -22,11 +22,11 @@
     <h5 class="card-title"><%= Spree.t(:currencies) %> & <%= Spree.t(:translations) %></h5>
   </div>
   <div class="card-body">
-    <%= f.spree_select :default_currency, currency_options(@store.default_currency), { label: Spree.t(:default_currency), autocomplete: true } %>
-    <%= f.spree_select :supported_currencies, currency_options(@store.supported_currencies&.split(',')), { prompt: false, multiple: true, autocomplete: true } %>
-    <hr class="my-6" />
-    <%= f.spree_select :default_locale, options_from_collection_for_select(all_locales_options, :last, :first, @store.default_locale || I18n.locale), { autocomplete: true } %>
-    <%= f.spree_select :supported_locales, options_from_collection_for_select(all_locales_options, :last, :first, @store.supported_locales&.split(',')), { multiple: true, autocomplete: true } %>
+    <div class="alert alert-info w-full mb-0">
+      <span>
+        Currencies and locales are now managed by <%= link_to 'Markets', spree.admin_markets_path %>.
+      </span>
+    </div>
   </div>
 </div>
 
@@ -35,7 +35,7 @@
     <h5 class="card-title"><%= Spree.t(:standards_and_formats) %></h5>
   </div>
   <div class="card-body">
-    <p class="text-gray-600">
+    <p class="text-gray-600 mb-3">
       <%= Spree.t(:standards_and_formats_help) %>
     </p>
     <div class="form-group mb-6">
@@ -73,7 +73,7 @@
         <%= f.spree_number_field :preferred_digital_asset_authorized_days, min: 1 %>
       </div>
     </div>
-    <hr class="my-6" />
+    <hr class="my-6">
     <div data-controller="reveal">
       <%= f.spree_check_box :preferred_limit_digital_download_count, data: { action: 'reveal#toggle' } %>
       <div data-reveal-target="item" <% unless f.object.preferred_limit_digital_download_count %>class="hidden"<% end %>>

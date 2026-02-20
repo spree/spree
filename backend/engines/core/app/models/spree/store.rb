@@ -10,6 +10,7 @@ module Spree
     include Spree::Metadata
     include Spree::Stores::Setup
     include Spree::Stores::Socials
+    include Spree::Stores::Markets
     include Spree::Security::Stores if defined?(Spree::Security::Stores)
     include Spree::UserManagement
 
@@ -115,6 +116,7 @@ module Spree
 
     has_many :api_keys, class_name: 'Spree::ApiKey', dependent: :destroy
 
+
     #
     # ActionText
     #
@@ -160,7 +162,6 @@ module Spree
     before_validation :ensure_default_country
     before_validation :set_default_code, on: :create
     before_save :ensure_default_exists_and_is_unique
-    before_save :ensure_supported_currencies, :ensure_supported_locales
     after_create :ensure_default_taxonomies_are_created
     after_create :ensure_default_automatic_taxons
     after_create :ensure_default_post_categories_are_created
@@ -225,12 +226,6 @@ module Spree
       end
     end
 
-    def supported_currencies_list
-      @supported_currencies_list ||= ([default_currency] + read_attribute(:supported_currencies).to_s.split(',')).uniq.map(&:to_s).map do |code|
-        ::Money::Currency.find(code.strip)
-      end.compact.sort_by { |currency| currency.iso_code == default_currency ? 0 : 1 }
-    end
-
     def seo_meta_description
       if meta_description.present?
         meta_description
@@ -239,10 +234,6 @@ module Spree
       else
         name
       end
-    end
-
-    def supported_locales_list
-      @supported_locales_list ||= (read_attribute(:supported_locales).to_s.split(',') << default_locale).compact.uniq.sort
     end
 
     def unique_name
@@ -282,14 +273,6 @@ module Spree
 
     def formatted_url_or_custom_domain
       formatted_url
-    end
-
-    # Returns the countries available for checkout for the store or creates a new one if it doesn't exist
-    # @return [Array<Spree::Country>]
-    def countries_available_for_checkout
-      @countries_available_for_checkout ||= Rails.cache.fetch(countries_available_for_checkout_cache_key) do
-        (checkout_zone.try(:country_list) || Spree::Country.all).to_a
-      end
     end
 
     # Returns the states available for checkout for the store or creates a new one if it doesn't exist
@@ -360,22 +343,6 @@ module Spree
 
     def states_available_for_checkout_cache_key(country)
       "#{cache_key_with_version}/#{checkout_zone&.cache_key_with_version}/states_available_for_checkout/#{country&.cache_key_with_version}"
-    end
-
-    def ensure_supported_locales
-      return unless attributes.keys.include?('supported_locales')
-      return if supported_locales.present?
-      return if default_locale.blank?
-
-      self.supported_locales = default_locale
-    end
-
-    def ensure_supported_currencies
-      return unless attributes.keys.include?('supported_currencies')
-      return if supported_currencies.present?
-      return if default_currency.blank?
-
-      self.supported_currencies = default_currency
     end
 
     def clear_cache

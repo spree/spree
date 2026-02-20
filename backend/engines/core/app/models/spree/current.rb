@@ -1,17 +1,21 @@
 module Spree
   class Current < ::ActiveSupport::CurrentAttributes
-    attribute :store, :currency, :zone, :price_lists, :global_pricing_context
+    attribute :store, :market, :currency, :zone, :price_lists, :global_pricing_context
 
     def store
       super || Spree::Store.default
     end
 
+    def market
+      super || store&.default_market
+    end
+
     def currency
-      super || store&.default_currency
+      super || market&.currency || store&.default_currency
     end
 
     def zone
-      super || Spree::Zone.default_tax || store&.checkout_zone
+      super || Spree::Zone.default_tax || market&.zone || store&.checkout_zone
     end
 
     def price_lists

@@ -1,5 +1,19 @@
 # @spree/next
 
+## 0.4.0
+
+### Minor Changes
+
+- **Breaking:** Replace country functions with market functions to match @spree/sdk 0.4.0 Markets API
+  - `listCountries()` / `getCountry()` removed
+  - New `listMarkets()` — list all markets with nested countries (for country/currency switcher)
+  - New `getMarket(id)` — get a single market
+  - New `resolveMarket(countryIso)` — resolve country to market
+  - New `listMarketCountries(marketId)` — list countries in a market (for checkout address forms)
+  - New `getMarketCountry(marketId, iso)` — get a country with states (for address validation)
+- Re-export `StoreMarket` type from `@spree/sdk`
+- Bump `@spree/sdk` peer dependency to `>=0.4.0`
+
 ## 0.3.1
 
 ### Patch Changes

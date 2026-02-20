@@ -26,6 +26,7 @@ module Spree
           AdminUser.call
 
           # add store resources
+          Markets.call
           PaymentMethods.call
         end
       end
