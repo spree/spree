@@ -2,8 +2,8 @@ module Spree
   module Api
     module V3
       class PaymentSourceSerializer < BaseSerializer
-        typelize gateway_payment_profile_id: 'string | null',
-                 public_metadata: 'Record<string, unknown> | null'
+        typelize gateway_payment_profile_id: [:string, nullable: true],
+                 public_metadata: ['Record<string, unknown>', nullable: true]
 
         attribute :gateway_payment_profile_id do |source|
           source.try(:gateway_payment_profile_id)

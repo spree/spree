@@ -12,8 +12,8 @@ module Spree
                  display_amount_used: :string,
                  display_amount_remaining: :string,
                  currency: :string,
-                 expires_at: 'string | null',
-                 redeemed_at: 'string | null',
+                 expires_at: [:string, nullable: true],
+                 redeemed_at: [:string, nullable: true],
                  expired: :boolean,
                  active: :boolean
 

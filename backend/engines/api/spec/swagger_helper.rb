@@ -4,26 +4,11 @@ require 'spec_helper'
 require 'rswag/specs'
 
 # Load OpenAPI helpers
-require 'spree/api/openapi/typelizer_converter'
 require 'spree/api/openapi/schema_helper'
 
 RSpec.configure do |config|
   # Output to the main spree docs directory at /docs/api-reference/
   config.openapi_root = Rails.root.join('../../../../../docs').to_s
-
-  # Helper to generate schemas from Typelizer at spec run time
-  def self.store_api_schemas
-    schemas = Spree::Api::OpenAPI::SchemaHelper.common_schemas
-
-    # Try to load Typelizer-generated schemas
-    begin
-      schemas.merge!(Spree::Api::OpenAPI::TypelizerConverter.generate_schemas)
-    rescue StandardError => e
-      warn "Warning: Could not load Typelizer schemas: #{e.message}"
-    end
-
-    schemas
-  end
 
   config.openapi_specs = {
     # Store API v3 - Customer-facing storefront API
@@ -118,7 +103,7 @@ RSpec.configure do |config|
             description: 'JWT token for authenticated customers'
           }
         },
-        schemas: store_api_schemas
+        schemas: Spree::Api::OpenAPI::SchemaHelper.all_schemas
       }
     }
   }

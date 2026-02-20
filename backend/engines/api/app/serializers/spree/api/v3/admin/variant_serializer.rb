@@ -7,10 +7,10 @@ module Spree
         class VariantSerializer < V3::VariantSerializer
 
           # Additional type hints for admin-only attributes
-          typelize position: :number, tax_category_id: 'string | null',
-                   cost_price: 'number | null', cost_currency: 'string | null',
-                   total_on_hand: 'number | null',
-                   deleted_at: 'string | null'
+          typelize position: :number, tax_category_id: [:string, nullable: true],
+                   cost_price: [:number, nullable: true], cost_currency: [:string, nullable: true],
+                   total_on_hand: [:number, nullable: true],
+                   deleted_at: [:string, nullable: true]
 
           # Admin-only attributes
           attributes :position, :tax_category_id, deleted_at: :iso8601

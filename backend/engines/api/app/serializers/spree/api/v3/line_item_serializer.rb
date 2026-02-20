@@ -11,8 +11,8 @@ module Spree
                  promo_total: :string, display_promo_total: :string,
                  pre_tax_amount: :string, display_pre_tax_amount: :string,
                  discounted_amount: :string, display_discounted_amount: :string,
-                 compare_at_amount: 'string | null', display_compare_at_amount: 'string | null',
-                 thumbnail_url: 'string | null'
+                 compare_at_amount: [:string, nullable: true], display_compare_at_amount: [:string, nullable: true],
+                 thumbnail_url: [:string, nullable: true]
 
         attribute :variant_id do |line_item|
           line_item.variant&.prefixed_id

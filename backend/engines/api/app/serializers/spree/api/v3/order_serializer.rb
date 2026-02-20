@@ -4,9 +4,9 @@ module Spree
       # Store API Order Serializer
       # Customer-facing order data
       class OrderSerializer < BaseSerializer
-        typelize number: :string, state: :string, token: :string, email: 'string | null',
-                 special_instructions: 'string | null', currency: :string, item_count: :number,
-                 shipment_state: 'string | null', payment_state: 'string | null',
+        typelize number: :string, state: :string, token: :string, email: [:string, nullable: true],
+                 special_instructions: [:string, nullable: true], currency: :string, item_count: :number,
+                 shipment_state: [:string, nullable: true], payment_state: [:string, nullable: true],
                  item_total: :string, display_item_total: :string,
                  ship_total: :string, display_ship_total: :string,
                  adjustment_total: :string, display_adjustment_total: :string,
@@ -14,9 +14,8 @@ module Spree
                  tax_total: :string, display_tax_total: :string,
                  included_tax_total: :string, display_included_tax_total: :string,
                  additional_tax_total: :string, display_additional_tax_total: :string,
-                 total: :string, display_total: :string, completed_at: 'string | null',
-                 bill_address: 'StoreAddress | null', ship_address: 'StoreAddress | null',
-                 payment_methods: 'StorePaymentMethod[]'
+                 total: :string, display_total: :string, completed_at: [:string, nullable: true],
+                 bill_address: { nullable: true }, ship_address: { nullable: true }
 
         attributes :number, :state, :token, :email, :special_instructions,
                    :currency, :item_count, :shipment_state, :payment_state,

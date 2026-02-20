@@ -10,8 +10,8 @@ export const StoreCustomerSchema = z.object({
   created_at: z.string(),
   updated_at: z.string(),
   addresses: z.array(StoreAddressSchema),
-  default_billing_address: StoreAddressSchema,
-  default_shipping_address: StoreAddressSchema,
+  default_billing_address: StoreAddressSchema.nullable(),
+  default_shipping_address: StoreAddressSchema.nullable(),
 });
 
 export type StoreCustomer = z.infer<typeof StoreCustomerSchema>;

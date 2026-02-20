@@ -2,14 +2,14 @@ module Spree
   module Api
     module V3
       class StoreSerializer < BaseSerializer
-        typelize name: :string, url: :string, meta_description: 'string | null',
-                 meta_keywords: 'string | null', seo_title: 'string | null',
+        typelize name: :string, url: :string, meta_description: [:string, nullable: true],
+                 meta_keywords: [:string, nullable: true], seo_title: [:string, nullable: true],
                  default_currency: :string, code: :string, default: :boolean,
-                 facebook: 'string | null', twitter: 'string | null', instagram: 'string | null',
-                 customer_support_email: 'string | null', default_locale: :string,
-                 supported_currencies: 'string[]', favicon_image_url: 'string | null',
-                 logo_image_url: 'string | null', social_image_url: 'string | null',
-                 supported_locales: 'string[]', default_country_iso: 'string | null'
+                 facebook: [:string, nullable: true], twitter: [:string, nullable: true], instagram: [:string, nullable: true],
+                 customer_support_email: [:string, nullable: true], default_locale: :string,
+                 supported_currencies: [:string, multi: true], favicon_image_url: [:string, nullable: true],
+                 logo_image_url: [:string, nullable: true], social_image_url: [:string, nullable: true],
+                 supported_locales: [:string, multi: true], default_country_iso: [:string, nullable: true]
 
         attributes :name, :url, :meta_description, :meta_keywords, :seo_title,
                    :default_currency, :code, :default, :facebook, :twitter,
