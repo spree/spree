@@ -57,6 +57,7 @@ module Spree
 
       # Load available locales for this resource, excluding default
       def load_data
+        @default_locale = current_store.default_locale
         @locales = (current_store.supported_locales_list - [@default_locale]).sort
       end
 

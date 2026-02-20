@@ -612,16 +612,103 @@ describe Spree::Store, type: :model, without_global_store: true do
     end
   end
 
+  describe '#default_currency' do
+    context 'with markets' do
+      let!(:store) { create(:store, default_currency: 'USD') }
+
+      before do
+        create(:market, store: store, currency: 'EUR', default: true)
+        create(:market, store: store, currency: 'GBP')
+      end
+
+      it 'delegates to default market' do
+        expect(store.default_currency).to eq('EUR')
+      end
+    end
+
+    context 'with markets but no default_currency on store column' do
+      let!(:store) { create(:store, default_currency: 'USD') }
+
+      before do
+        create(:market, store: store, currency: 'GBP', default: true)
+        store.update_column(:default_currency, nil)
+      end
+
+      it 'returns default market currency' do
+        expect(store.default_currency).to eq('GBP')
+      end
+    end
+
+    context 'without markets' do
+      let(:store) { build(:store, default_currency: 'USD') }
+
+      it 'returns the store column value' do
+        expect(store.default_currency).to eq('USD')
+      end
+    end
+
+    context 'without markets and no default_currency on store column' do
+      let(:store) { build(:store, default_currency: nil) }
+
+      it 'returns nil' do
+        expect(store.default_currency).to be_nil
+      end
+    end
+  end
+
+  describe '#default_locale' do
+    context 'with markets' do
+      let!(:store) { create(:store, default_locale: 'en') }
+
+      before do
+        create(:market, store: store, default_locale: 'de', default: true)
+        create(:market, store: store, default_locale: 'fr')
+      end
+
+      it 'delegates to default market' do
+        expect(store.default_locale).to eq('de')
+      end
+    end
+
+    context 'with markets but no default_locale on store column' do
+      let!(:store) { create(:store, default_locale: nil) }
+
+      before do
+        create(:market, store: store, default_locale: 'fr', default: true)
+      end
+
+      it 'returns default market locale' do
+        expect(store.default_locale).to eq('fr')
+      end
+    end
+
+    context 'without markets' do
+      let(:store) { build(:store, default_locale: 'en') }
+
+      it 'returns the store column value' do
+        expect(store.default_locale).to eq('en')
+      end
+    end
+
+    context 'without markets and no default_locale on store column' do
+      let(:store) { build(:store, default_locale: nil) }
+
+      it 'returns nil' do
+        expect(store.default_locale).to be_nil
+      end
+    end
+  end
+
   describe '#supported_locales_list' do
     context 'with markets' do
       let!(:store) { create(:store, default_locale: 'en') }
 
       before do
-        create(:market, store: store, default_locale: 'en', supported_locales: 'en,fr', default: true)
-        create(:market, store: store, default_locale: 'de', supported_locales: 'de')
+        create(:market, store: store, default_locale: 'en', supported_locales: 'fr', default: true)
+        create(:market, store: store, default_locale: 'de', supported_locales: nil)
       end
 
-      it 'derives locales from markets' do
+      it 'includes default_locale from each market even when not in supported_locales' do
         expect(store.supported_locales_list).to contain_exactly('de', 'en', 'fr')
       end
     end

@@ -13,6 +13,20 @@ module Spree
         @default_market ||= Spree::Market.default_for_store(self)
       end
 
+      # Returns the default locale, delegating to the default market when markets exist
+      # Falls back to the store's own default_locale column
+      # @return [String, nil]
+      def default_locale
+        default_market&.default_locale || read_attribute(:default_locale)
+      end
+
+      # Returns the default currency, delegating to the default market when markets exist
+      # Falls back to the store's own default_currency column
+      # @return [String, nil]
+      def default_currency
+        default_market&.currency || read_attribute(:default_currency)
+      end
+
       # Returns the market that contains the given country
       # @param country [Spree::Country]
       # @return [Spree::Market, nil]
@@ -48,7 +62,7 @@ module Spree
       # @return [Array<String>]
       def supported_locales_list
         @supported_locales_list ||= if markets.any?
-                                      markets.flat_map(&:supported_locales_list).uniq.sort
+                                      (markets.flat_map(&:supported_locales_list) << default_locale).compact.uniq.sort
                                     else
                                       legacy_supported_locales_list
                                     end

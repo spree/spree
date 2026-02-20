@@ -135,7 +135,7 @@ module Spree
     # Validations
     #
     with_options presence: true do
-      validates :name, :url, :mail_from_address, :default_currency, :default_country, :code
+      validates :name, :url, :mail_from_address, :default_country, :code
     end
     validates :preferred_digital_asset_authorized_clicks, numericality: { only_integer: true, greater_than: 0 }
     validates :preferred_digital_asset_authorized_days, numericality: { only_integer: true, greater_than: 0 }
