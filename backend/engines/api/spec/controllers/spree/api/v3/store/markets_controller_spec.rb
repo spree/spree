@@ -5,8 +5,8 @@ RSpec.describe Spree::Api::V3::Store::MarketsController, type: :controller do
 
   include_context 'API v3 Store'
 
-  let(:zone) { create(:zone_with_country) }
-  let!(:market) { create(:market, :default, store: store, zone: zone, name: 'North America', currency: 'USD') }
+  let(:country) { create(:country) }
+  let!(:market) { create(:market, :default, store: store, countries: [country], name: 'North America', currency: 'USD') }
 
   before do
     request.headers['x-spree-api-key'] = api_key.token
@@ -62,8 +62,6 @@ RSpec.describe Spree::Api::V3::Store::MarketsController, type: :controller do
   end
 
   describe 'GET #resolve' do
-    let(:country) { zone.country_list.first }
-
     it 'resolves country to market' do
       get :resolve, params: { country: country.iso }
 

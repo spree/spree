@@ -1357,11 +1357,11 @@ en:
     manual_adjustments: Manual Adjustments
     manual_intervention_required: Manual intervention required
     mark_as_default: Mark as default
-    master: Master
-    master_price: Master Price
     market: Market
     market_ids: Markets
     markets: Markets
+    master: Master
+    master_price: Master Price
     master_sku: Master SKU
     match_choices:
       all: All
@@ -1766,6 +1766,9 @@ en:
       customer_group_rule:
         description: Apply pricing to specific customer groups
         name: Customer Group
+      market_rule:
+        description: Apply pricing based on the market
+        name: Market
       user_rule:
         description: Apply pricing to specific customers
         name: User
@@ -1775,9 +1778,6 @@ en:
       zone_rule:
         description: Apply pricing based on geographic zone
         name: Zone
-      market_rule:
-        description: Apply pricing based on the market
-        name: Market
     price_rules:
       customer_group_rule:
         description: Apply pricing to specific customer groups

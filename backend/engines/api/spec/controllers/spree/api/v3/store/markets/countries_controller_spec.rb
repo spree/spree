@@ -6,11 +6,9 @@ RSpec.describe Spree::Api::V3::Store::Markets::CountriesController, type: :contr
   include_context 'API v3 Store'
 
   let(:country) { create(:country) }
-  let(:zone) { create(:zone, kind: :country) }
-  let!(:market) { create(:market, store: store, zone: zone) }
+  let!(:market) { create(:market, store: store, countries: [country]) }
 
   before do
-    zone.zone_members.create!(zoneable: country)
     request.headers['x-spree-api-key'] = api_key.token
   end
 
