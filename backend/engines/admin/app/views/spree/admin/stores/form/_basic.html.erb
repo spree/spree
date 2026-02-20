@@ -38,6 +38,9 @@
     <p class="text-gray-600 mb-3">
       <%= Spree.t(:standards_and_formats_help) %>
     </p>
+    <%= f.spree_select :preferred_admin_locale,
+        options_from_collection_for_select(all_locales_options, :last, :first, @store.preferred_admin_locale || I18n.default_locale),
+        { label: Spree.t(:admin_locale), help_bubble: Spree.t(:admin_locale_help), autocomplete: true } %>
     <div class="form-group mb-6">
       <%= label_tag :preferred_timezone, raw(Spree.t(:timezone) + required_span_tag) %>
       <%= time_zone_select :store, :preferred_timezone, nil, {}, { data: { controller: 'autocomplete-select' } } %>

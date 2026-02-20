@@ -80,8 +80,8 @@ module Spree
         Spree.t(event_sym, resource: resource_desc)
       end
 
-      def config_locale
-        I18n.default_locale
+      def default_locale
+        @default_locale ||= current_store&.preferred_admin_locale.presence || super
       end
 
       def current_timezone

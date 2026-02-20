@@ -279,7 +279,7 @@ module Spree
                           :customer_support_email, :description, :address, :contact_phone,
                           :supported_locales, :default_locale, :default_country_id, :supported_currencies,
                           :new_order_notifications_email, :checkout_zone_id, :seo_robots,
-                          :preferred_timezone, :preferred_weight_unit, :preferred_unit_system,
+                          :preferred_admin_locale, :preferred_timezone, :preferred_weight_unit, :preferred_unit_system,
                           :preferred_digital_asset_authorized_clicks, :preferred_digital_asset_authorized_days,
                           :preferred_limit_digital_download_count, :preferred_limit_digital_download_days,
                           :preferred_digital_asset_link_expire_time,

@@ -722,6 +722,8 @@ en:
     adjustment_total: Adjustment Total
     adjustments: Adjustments
     adjustments_deleted: Adjustments Deleted
+    admin_locale: Admin locale
+    admin_locale_help: The language used for the admin dashboard. If not set, defaults to the application locale.
     administration: Administration
     advertise: Advertise
     agree_to_privacy_policy: Agree to Privacy Policy

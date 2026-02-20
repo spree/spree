@@ -37,6 +37,7 @@ module Spree
     # Preferences
     #
     # general preferences
+    preference :admin_locale, :string
     preference :timezone, :string, default: Time.zone.name
     preference :weight_unit, :string, default: 'lb'
     preference :unit_system, :string, default: 'imperial'
