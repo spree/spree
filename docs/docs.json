@@ -1048,7 +1048,8 @@
                 "pages": [
                   "user/promotions/create-a-promotion",
                   "user/promotions/promotion-rules",
-                  "user/promotions/promotion-actions"
+                  "user/promotions/promotion-actions",
+                  "user/promotions/gift-cards"
                 ]
               },
               {
