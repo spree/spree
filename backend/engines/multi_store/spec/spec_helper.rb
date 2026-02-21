@@ -6,11 +6,13 @@ if ENV['COVERAGE']
   SimpleCov.start 'rails' do
     add_group 'Libraries', 'lib/spree'
 
+    add_filter '/app/views/'
     add_filter '/bin/'
+    add_filter '/config/'
     add_filter '/db/'
+    add_filter '/lib/generators/'
     add_filter '/script/'
     add_filter '/spec/'
-    add_filter '/lib/generators/'
 
     if ENV['COVERAGE_DIR']
       shard = ENV.fetch('CI_SHARD', '1')

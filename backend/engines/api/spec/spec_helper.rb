@@ -8,10 +8,11 @@ if ENV['COVERAGE']
     add_group 'Libraries', 'lib/spree'
 
     add_filter '/bin/'
+    add_filter '/config/'
     add_filter '/db/'
+    add_filter '/lib/spree/api/testing_support/'
     add_filter '/script/'
     add_filter '/spec/'
-    add_filter '/lib/spree/api/testing_support/'
 
     if ENV['COVERAGE_DIR']
       shard = ENV.fetch('CI_SHARD', '1')

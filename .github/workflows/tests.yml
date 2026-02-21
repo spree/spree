@@ -214,23 +214,12 @@ jobs:
             -o ${{ github.workspace }}/tmp/test-results/rspec/${{ matrix.project }}-${{ matrix.shard }}.xml \
             ${{ steps.specs.outputs.files }}
 
-      - name: Debug coverage paths
-        if: always()
-        run: |
-          FILE="${{ github.workspace }}/coverage/${{ matrix.project }}_${{ matrix.shard }}/.resultset.json"
-          if [ -f "$FILE" ]; then
-            echo "--- First 5 file paths in .resultset.json ---"
-            ruby -rjson -e 'data = JSON.parse(File.read(ARGV[0])); data.each { |k,v| v["coverage"].keys.first(5).each { |f| puts f } }' "$FILE"
-          else
-            echo "No .resultset.json found at $FILE"
-          fi
-
       - name: Upload coverage to Codecov
         if: always() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: ${{ github.workspace }}/coverage/${{ matrix.project }}_${{ matrix.shard }}/.resultset.json
+          files: ${{ github.workspace }}/coverage/${{ matrix.project }}_${{ matrix.shard }}/coverage.xml
           flags: ${{ matrix.project }}
           name: ${{ matrix.project }}-shard-${{ matrix.shard }}
           fail_ci_if_error: false

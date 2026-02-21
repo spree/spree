@@ -8,12 +8,16 @@ if ENV['COVERAGE']
     add_group 'Mailers', 'app/mailers'
     add_group 'Helpers', 'app/helpers'
 
+    add_filter '/app/assets/'
+    add_filter '/app/views/'
     add_filter '/bin/'
+    add_filter '/config/'
     add_filter '/db/'
+    add_filter '/lib/generators/'
+    add_filter '/lib/spree/testing_support/'
+    add_filter '/lib/tasks/'
     add_filter '/script/'
     add_filter '/spec/'
-    add_filter '/lib/spree/testing_support/'
-    add_filter '/lib/generators/'
 
     if ENV['COVERAGE_DIR']
       shard = ENV.fetch('CI_SHARD', '1')
