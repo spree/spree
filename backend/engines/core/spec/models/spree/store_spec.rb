@@ -775,6 +775,50 @@ describe Spree::Store, type: :model, without_global_store: true do
     end
   end
 
+  describe '#countries_from_markets' do
+    let!(:store) { create(:store) }
+    let!(:country_a) { create(:country) }
+    let!(:country_b) { create(:country) }
+    let!(:country_c) { create(:country) }
+
+    context 'with markets' do
+      before do
+        create(:market, :default, store: store, countries: [country_a, country_b], currency: 'USD')
+        create(:market, store: store, countries: [country_c], currency: 'EUR')
+      end
+
+      it 'returns countries from all markets' do
+        countries = store.countries_from_markets
+        expect(countries.pluck(:iso)).to contain_exactly(country_a.iso, country_b.iso, country_c.iso)
+      end
+
+      it 'returns an ActiveRecord relation' do
+        expect(store.countries_from_markets).to be_a(ActiveRecord::Relation)
+      end
+
+      it 'orders by name' do
+        names = store.countries_from_markets.pluck(:name)
+        expect(names).to eq(names.sort)
+      end
+
+      it 'does not include countries not in any market' do
+        other_country = create(:country)
+        expect(store.countries_from_markets.pluck(:iso)).not_to include(other_country.iso)
+      end
+
+      it 'does not duplicate countries shared across markets' do
+        store.markets.last.countries << country_a rescue nil
+        expect(store.countries_from_markets.where(iso: country_a.iso).count).to eq(1)
+      end
+    end
+
+    context 'without markets' do
+      it 'returns empty relation' do
+        expect(store.countries_from_markets).to be_empty
+      end
+    end
+  end
+
   describe '#favicon' do
     subject(:favicon) { store.favicon }
 

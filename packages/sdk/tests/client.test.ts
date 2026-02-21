@@ -137,7 +137,9 @@ describe('SpreeClient', () => {
     expect(client.store.products).toBeDefined();
     expect(client.store.taxonomies).toBeDefined();
     expect(client.store.taxons).toBeDefined();
-    expect(client.store.markets).toBeDefined();
+    expect(client.store.countries).toBeDefined();
+    expect(client.store.currencies).toBeDefined();
+    expect(client.store.locales).toBeDefined();
     expect(client.store.cart).toBeDefined();
     expect(client.store.orders).toBeDefined();
     expect(client.store.customer).toBeDefined();

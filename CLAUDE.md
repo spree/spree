@@ -642,6 +642,8 @@ products = Spree::Product.includes(:variants, :thumbnail)
 - Explain non-obvious code patterns
 - Use YARD documentation format for public APIs
 - Keep comments up-to-date with code changes
+- Please check and update documentation in docs/developer
+- Always re-generate OpenAPI documentation using rswag when changing API
 
 ## Error Handling
 

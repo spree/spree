@@ -24,7 +24,8 @@ import type {
   StoreProduct,
   StoreOrder,
   StoreCountry,
-  StoreMarket,
+  StoreCurrency,
+  StoreLocale,
   StoreTaxonomy,
   StoreTaxon,
   StorePayment,
@@ -208,71 +209,47 @@ export class StoreClient {
   };
 
   // ============================================
-  // Markets & Geography
+  // Countries, Currencies & Locales
   // ============================================
 
-  readonly markets = {
+  readonly countries = {
     /**
-     * List all markets with their countries
-     * Used to build a country/currency switcher on the frontend
+     * List countries available in the store
+     * Each country includes currency and default_locale derived from its market
      */
-    list: (options?: RequestOptions): Promise<{ data: StoreMarket[] }> =>
-      this.request<{ data: StoreMarket[] }>('GET', '/markets', options),
+    list: (options?: RequestOptions): Promise<{ data: StoreCountry[] }> =>
+      this.request<{ data: StoreCountry[] }>('GET', '/countries', options),
 
     /**
-     * Get a single market by prefixed ID
-     * @param id - Market prefixed ID (e.g., "mkt_abc123")
+     * Get a country by ISO code
+     * Use `?include=states` to include states for address forms
+     * @param iso - ISO 3166-1 alpha-2 code (e.g., "US", "DE")
      */
-    get: (id: string, options?: RequestOptions): Promise<StoreMarket> =>
-      this.request<StoreMarket>('GET', `/markets/${id}`, options),
-
-    /**
-     * Resolve which market a country belongs to
-     * @param countryIso - ISO 3166-1 alpha-2 code (e.g., "US", "DE")
-     */
-    resolve: (
-      countryIso: string,
+    get: (
+      iso: string,
+      params?: { include?: string },
       options?: RequestOptions
-    ): Promise<StoreMarket> =>
-      this.request<StoreMarket>('GET', '/markets/resolve', {
+    ): Promise<StoreCountry> =>
+      this.request<StoreCountry>('GET', `/countries/${iso}`, {
         ...options,
-        params: { country: countryIso },
+        params,
       }),
+  };
 
+  readonly currencies = {
     /**
-     * Nested resource: Countries within a market (for checkout address forms)
+     * List currencies supported by the store (derived from markets)
      */
-    countries: {
-      /**
-       * List countries in a market's zone
-       * @param marketId - Market prefixed ID (e.g., "mkt_abc123")
-       */
-      list: (
-        marketId: string,
-        options?: RequestOptions
-      ): Promise<{ data: StoreCountry[] }> =>
-        this.request<{ data: StoreCountry[] }>(
-          'GET',
-          `/markets/${marketId}/countries`,
-          options
-        ),
+    list: (options?: RequestOptions): Promise<{ data: StoreCurrency[] }> =>
+      this.request<{ data: StoreCurrency[] }>('GET', '/currencies', options),
+  };
 
-      /**
-       * Get a country by ISO code with states (for address form validation)
-       * @param marketId - Market prefixed ID (e.g., "mkt_abc123")
-       * @param iso - ISO 3166-1 alpha-2 code (e.g., "US", "DE")
-       */
-      get: (
-        marketId: string,
-        iso: string,
-        options?: RequestOptions
-      ): Promise<StoreCountry> =>
-        this.request<StoreCountry>(
-          'GET',
-          `/markets/${marketId}/countries/${iso}`,
-          options
-        ),
-    },
+  readonly locales = {
+    /**
+     * List locales supported by the store (derived from markets)
+     */
+    list: (options?: RequestOptions): Promise<{ data: StoreLocale[] }> =>
+      this.request<{ data: StoreLocale[] }>('GET', '/locales', options),
   };
 
   // ============================================

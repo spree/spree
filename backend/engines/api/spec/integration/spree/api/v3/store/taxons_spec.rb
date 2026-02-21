@@ -16,7 +16,7 @@ RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.y
 
   path '/api/v3/store/taxons' do
     get 'List taxons' do
-      tags 'Taxons'
+      tags 'Product Catalog'
       produces 'application/json'
       security [api_key: []]
       description 'Returns a paginated list of taxons (categories) for the current store'
@@ -58,7 +58,7 @@ RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.y
 
   path '/api/v3/store/taxons/{id}' do
     get 'Get a taxon' do
-      tags 'Taxons'
+      tags 'Product Catalog'
       produces 'application/json'
       security [api_key: []]
       description 'Returns a single taxon by permalink or prefix ID'
@@ -124,7 +124,7 @@ RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.y
 
   path '/api/v3/store/taxons/{taxon_id}/products' do
     get 'List products in a taxon' do
-      tags 'Taxons'
+      tags 'Product Catalog'
       produces 'application/json'
       security [api_key: []]
       description 'Returns a paginated list of products belonging to the specified taxon'
