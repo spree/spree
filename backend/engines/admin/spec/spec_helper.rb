@@ -1,5 +1,4 @@
 if ENV['COVERAGE']
-  # Run Coverage report
   require 'simplecov'
   SimpleCov.start 'rails' do
     add_group 'Libraries', 'lib/spree'
@@ -10,7 +9,11 @@ if ENV['COVERAGE']
     add_filter '/spec/'
     add_filter '/lib/generators/'
 
-    coverage_dir "#{ENV['COVERAGE_DIR']}/admin" if ENV['COVERAGE_DIR']
+    if ENV['COVERAGE_DIR']
+      shard = ENV.fetch('CI_SHARD', '1')
+      coverage_dir "#{ENV['COVERAGE_DIR']}/admin_#{shard}"
+    end
+    command_name "admin_shard_#{ENV.fetch('CI_SHARD', '1')}"
   end
 end
 

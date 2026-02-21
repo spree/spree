@@ -1,5 +1,4 @@
 if ENV['COVERAGE']
-  # Run Coverage report
   require 'simplecov'
   SimpleCov.start 'rails' do
     add_group 'Finders', 'app/finders'
@@ -17,8 +16,11 @@ if ENV['COVERAGE']
     add_filter '/lib/spree/testing_support/'
     add_filter '/lib/generators/'
 
-    coverage_dir "#{ENV['COVERAGE_DIR']}/core_"+ ENV.fetch('CIRCLE_NODE_INDEX', 0) if ENV['COVERAGE_DIR']
-    command_name "test_" + ENV.fetch('CIRCLE_NODE_INDEX', 0)
+    if ENV['COVERAGE_DIR']
+      shard = ENV.fetch('CI_SHARD', '1')
+      coverage_dir "#{ENV['COVERAGE_DIR']}/core_#{shard}"
+    end
+    command_name "core_shard_#{ENV.fetch('CI_SHARD', '1')}"
   end
 end
 

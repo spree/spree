@@ -1,5 +1,4 @@
 if ENV['COVERAGE']
-  # Run Coverage report
   require 'simplecov'
   SimpleCov.start 'rails' do
     add_group 'Serializers', 'app/serializers'
@@ -11,9 +10,11 @@ if ENV['COVERAGE']
     add_filter '/spec/'
     add_filter '/lib/spree/api/testing_support/'
 
-    coverage_dir "#{ENV['COVERAGE_DIR']}/api_"+ ENV.fetch('CIRCLE_NODE_INDEX', 0) if ENV['COVERAGE_DIR']
-    command_name "test_" + ENV.fetch('CIRCLE_NODE_INDEX', 0)
-
+    if ENV['COVERAGE_DIR']
+      shard = ENV.fetch('CI_SHARD', '1')
+      coverage_dir "#{ENV['COVERAGE_DIR']}/api_#{shard}"
+    end
+    command_name "api_shard_#{ENV.fetch('CI_SHARD', '1')}"
   end
 end
 

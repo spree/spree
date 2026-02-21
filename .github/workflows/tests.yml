@@ -146,6 +146,9 @@ jobs:
       CI_ARTIFACTS: /tmp/test-artifacts
       BUNDLE_JOBS: 4
       BUNDLE_RETRY: 3
+      COVERAGE: true
+      COVERAGE_DIR: ${{ github.workspace }}/coverage
+      CI_SHARD: ${{ matrix.shard }}
     steps:
       - uses: actions/checkout@v4
 
@@ -210,6 +213,16 @@ jobs:
             --format RspecJunitFormatter \
             -o ${{ github.workspace }}/tmp/test-results/rspec/${{ matrix.project }}-${{ matrix.shard }}.xml \
             ${{ steps.specs.outputs.files }}
+
+      - name: Upload coverage to Codecov
+        if: always()
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: ${{ github.workspace }}/coverage
+          flags: ${{ matrix.project }}
+          name: ${{ matrix.project }}-shard-${{ matrix.shard }}
+          fail_ci_if_error: false
 
       - name: Upload test results
         if: always()
