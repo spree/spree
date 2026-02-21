@@ -66,4 +66,5 @@ group :development, :test do
   gem "spree_dev_tools"
   gem "letter_opener"
   gem "listen"
+  gem "simplecov-cobertura"
 end

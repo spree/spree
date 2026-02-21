@@ -1,6 +1,8 @@
 if ENV['COVERAGE']
   require 'simplecov'
+  require 'simplecov-cobertura'
   SimpleCov.root(ENV.fetch('GITHUB_WORKSPACE', File.expand_path('../../..', __dir__)))
+  SimpleCov.formatter = SimpleCov::Formatter::CoberturaFormatter
   SimpleCov.start 'rails' do
     add_group 'Serializers', 'app/serializers'
     add_group 'Libraries', 'lib/spree'
