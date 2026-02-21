@@ -10,8 +10,8 @@ RSpec.describe 'Countries API', type: :request, swagger_doc: 'api-reference/stor
   let!(:new_york) { Spree::State.find_by(abbr: 'NY', country: usa) || create(:state, country: usa, name: 'New York', abbr: 'NY') }
   let!(:germany) { Spree::Country.find_by(iso: 'DE') || create(:country, iso: 'DE', name: 'Germany', states_required: false) }
 
-  let!(:na_market) { create(:market, :default, name: 'North America', store: store, countries: [usa], currency: 'USD', default_locale: 'en') }
-  let!(:eu_market) { create(:market, name: 'Europe', store: store, countries: [germany], currency: 'EUR', default_locale: 'de') }
+  let!(:na_market) { create(:market, :default, name: 'North America', store: store, countries: [usa], currency: 'USD', default_locale: 'en', supported_locales: 'en,es') }
+  let!(:eu_market) { create(:market, name: 'Europe', store: store, countries: [germany], currency: 'EUR', default_locale: 'de', supported_locales: 'de,en') }
 
   path '/api/v3/store/countries' do
     get 'List countries' do
@@ -43,11 +43,13 @@ RSpec.describe 'Countries API', type: :request, swagger_doc: 'api-reference/stor
           expect(us_country['name']).to be_present
           expect(us_country['currency']).to eq('USD')
           expect(us_country['default_locale']).to eq('en')
+          expect(us_country['supported_locales']).to match_array(['en', 'es'])
 
           de_country = data['data'].find { |c| c['iso'] == 'DE' }
           expect(de_country).to be_present
           expect(de_country['currency']).to eq('EUR')
           expect(de_country['default_locale']).to eq('de')
+          expect(de_country['supported_locales']).to match_array(['de', 'en'])
         end
       end
 
@@ -85,6 +87,7 @@ RSpec.describe 'Countries API', type: :request, swagger_doc: 'api-reference/stor
                  zipcode_required: { type: :boolean },
                  currency: { type: :string, nullable: true },
                  default_locale: { type: :string, nullable: true },
+                 supported_locales: { type: :array, items: { type: :string } },
                  states: {
                    type: :array,
                    items: {
@@ -104,6 +107,7 @@ RSpec.describe 'Countries API', type: :request, swagger_doc: 'api-reference/stor
           expect(data['iso']).to eq('US')
           expect(data['currency']).to eq('USD')
           expect(data['default_locale']).to eq('en')
+          expect(data['supported_locales']).to match_array(['en', 'es'])
         end
       end
 

@@ -9,7 +9,8 @@ module Spree
         typelize iso: :string, iso3: :string, name: :string,
                  states_required: :boolean, zipcode_required: :boolean,
                  currency: [:string, nullable: true],
-                 default_locale: [:string, nullable: true]
+                 default_locale: [:string, nullable: true],
+                 supported_locales: [:string, multi: true]
 
         attributes :iso, :iso3, :name, :states_required, :zipcode_required
 
@@ -19,6 +20,10 @@ module Spree
 
         attribute :default_locale do |country|
           country.market_locale
+        end
+
+        attribute :supported_locales do |country|
+          country.market_supported_locales
         end
 
         many :states,

@@ -72,6 +72,7 @@ export const fixtures = {
     zipcode_required: true,
     currency: 'USD',
     default_locale: 'en',
+    supported_locales: ['en', 'es'],
   },
   currency: {
     iso_code: 'USD',

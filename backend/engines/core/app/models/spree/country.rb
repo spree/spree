@@ -54,6 +54,13 @@ module Spree
       Spree::Current.store&.market_for_country(self)&.default_locale
     end
 
+    # Returns the supported locales for this country from its market in the current store.
+    #
+    # @return [Array<String>] locale codes (e.g., ['en', 'fr']) or empty array if no market found
+    def market_supported_locales
+      Spree::Current.store&.market_for_country(self)&.supported_locales_list || []
+    end
+
     def <=>(other)
       name <=> other.name
     end

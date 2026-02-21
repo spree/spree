@@ -143,4 +143,31 @@ describe Spree::Country, type: :model do
       end
     end
   end
+
+  describe '#market_supported_locales' do
+    before { Spree::Current.store = store }
+    after { Spree::Current.reset }
+
+    context 'when country belongs to a market' do
+      let!(:market) { create(:market, :default, store: store, countries: [america], default_locale: 'en', supported_locales: 'en,fr') }
+
+      it 'returns the market supported locales' do
+        expect(america.market_supported_locales).to match_array(['en', 'fr'])
+      end
+    end
+
+    context 'when country does not belong to any market' do
+      it 'returns an empty array' do
+        expect(canada.market_supported_locales).to eq([])
+      end
+    end
+
+    context 'when no current store is set' do
+      before { Spree::Current.store = nil }
+
+      it 'returns an empty array' do
+        expect(america.market_supported_locales).to eq([])
+      end
+    end
+  end
 end

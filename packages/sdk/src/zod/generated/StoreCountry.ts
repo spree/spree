@@ -10,6 +10,7 @@ export const StoreCountrySchema = z.object({
   zipcode_required: z.boolean(),
   currency: z.string().nullable(),
   default_locale: z.string().nullable(),
+  supported_locales: z.array(z.string()),
   states: z.array(StoreStateSchema).optional(),
 });
 
