@@ -8,6 +8,8 @@ export const StoreCountrySchema = z.object({
   name: z.string(),
   states_required: z.boolean(),
   zipcode_required: z.boolean(),
+  currency: z.string().nullable(),
+  default_locale: z.string().nullable(),
   states: z.array(StoreStateSchema).optional(),
 });
 

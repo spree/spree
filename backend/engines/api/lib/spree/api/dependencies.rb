@@ -122,7 +122,8 @@ module Spree
         order_promotion_serializer: 'Spree::Api::V3::OrderPromotionSerializer',
         digital_link_serializer: 'Spree::Api::V3::DigitalLinkSerializer',
         gift_card_serializer: 'Spree::Api::V3::GiftCardSerializer',
-        market_serializer: 'Spree::Api::V3::MarketSerializer',
+        currency_serializer: 'Spree::Api::V3::CurrencySerializer',
+        locale_serializer: 'Spree::Api::V3::LocaleSerializer',
         metafield_serializer: 'Spree::Api::V3::MetafieldSerializer',
 
         # v3 admin serializers (API v3 Admin)

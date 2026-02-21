@@ -36,6 +36,22 @@ module Spree
       iso.upcase.chars.map { |c| (c.ord + 127397).chr(Encoding::UTF_8) }.join
     end
 
+    # Returns the currency for this country from its market in the current store.
+    # Looks up which market contains this country and returns that market's currency.
+    #
+    # @return [String, nil] currency code (e.g., 'USD', 'EUR') or nil if no market found
+    def market_currency
+      Spree::Current.store&.market_for_country(self)&.currency
+    end
+
+    # Returns the default locale for this country from its market in the current store.
+    # Looks up which market contains this country and returns that market's default locale.
+    #
+    # @return [String, nil] locale code (e.g., 'en', 'de') or nil if no market found
+    def market_locale
+      Spree::Current.store&.market_for_country(self)&.default_locale
+    end
+
     def <=>(other)
       name <=> other.name
     end

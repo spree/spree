@@ -7,9 +7,19 @@ module Spree
 
         # ISO 3166-1 codes - iso is the identifier, no redundant id field
         typelize iso: :string, iso3: :string, name: :string,
-                 states_required: :boolean, zipcode_required: :boolean
+                 states_required: :boolean, zipcode_required: :boolean,
+                 currency: [:string, nullable: true],
+                 default_locale: [:string, nullable: true]
 
         attributes :iso, :iso3, :name, :states_required, :zipcode_required
+
+        attribute :currency do |country|
+          country.market_currency
+        end
+
+        attribute :default_locale do |country|
+          country.market_locale
+        end
 
         many :states,
              resource: Spree.api.state_serializer,

@@ -42,6 +42,17 @@ module Spree
         Spree::Market.for_country(country, store: self)
       end
 
+      # Returns countries from all markets as an ActiveRecord relation
+      # @return [ActiveRecord::Relation<Spree::Country>]
+      def countries_from_markets
+        Spree::Country
+          .joins('INNER JOIN spree_market_countries ON spree_market_countries.country_id = spree_countries.id')
+          .joins('INNER JOIN spree_markets ON spree_markets.id = spree_market_countries.market_id')
+          .where(spree_markets: { store_id: id, deleted_at: nil })
+          .distinct
+          .order(:name)
+      end
+
       # Returns the countries available for checkout, derived from markets or checkout_zone
       # @return [Array<Spree::Country>]
       def countries_available_for_checkout

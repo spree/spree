@@ -65,22 +65,22 @@ export const fixtures = {
     position: 1,
   },
   country: {
-    id: 'country_1',
     iso: 'US',
+    iso3: 'USA',
     name: 'United States',
-    states: [],
-  },
-  market: {
-    id: 'mkt_1',
-    name: 'North America',
+    states_required: true,
+    zipcode_required: true,
     currency: 'USD',
     default_locale: 'en',
-    supported_locales: ['en'],
-    tax_inclusive: false,
-    default: true,
-    countries: [
-      { id: 'country_1', iso: 'US', name: 'United States', states_required: true, zipcode_required: true },
-    ],
+  },
+  currency: {
+    iso_code: 'USD',
+    name: 'United States Dollar',
+    symbol: '$',
+  },
+  locale: {
+    code: 'en',
+    name: 'English',
   },
   wishlist: {
     id: 'wl_1',
@@ -156,25 +156,23 @@ export const handlers = [
     HttpResponse.json(fixtures.taxon)
   ),
 
-  // Markets
-  http.get(`${API_PREFIX}/markets`, () =>
-    HttpResponse.json({ data: [fixtures.market] })
-  ),
-
-  http.get(`${API_PREFIX}/markets/resolve`, () =>
-    HttpResponse.json(fixtures.market)
-  ),
-
-  http.get(`${API_PREFIX}/markets/:id`, () =>
-    HttpResponse.json(fixtures.market)
-  ),
-
-  http.get(`${API_PREFIX}/markets/:marketId/countries`, () =>
+  // Countries
+  http.get(`${API_PREFIX}/countries`, () =>
     HttpResponse.json({ data: [fixtures.country] })
   ),
 
-  http.get(`${API_PREFIX}/markets/:marketId/countries/:iso`, () =>
+  http.get(`${API_PREFIX}/countries/:iso`, () =>
     HttpResponse.json(fixtures.country)
+  ),
+
+  // Currencies
+  http.get(`${API_PREFIX}/currencies`, () =>
+    HttpResponse.json({ data: [fixtures.currency] })
+  ),
+
+  // Locales
+  http.get(`${API_PREFIX}/locales`, () =>
+    HttpResponse.json({ data: [fixtures.locale] })
   ),
 
   // Cart
