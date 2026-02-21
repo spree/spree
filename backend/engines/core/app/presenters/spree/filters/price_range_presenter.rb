@@ -11,6 +11,7 @@ module Spree
       end
 
       def initialize(min_price:, max_price:)
+        Spree::Deprecation.warn('Spree::Filters::PriceRangePresenter is deprecated and will be removed in Spree 5.5.')
         @min_price = min_price
         @max_price = max_price
       end

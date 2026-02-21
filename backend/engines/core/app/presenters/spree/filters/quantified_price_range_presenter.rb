@@ -7,6 +7,7 @@ module Spree
       ].freeze
 
       def initialize(price:, quantifier:)
+        Spree::Deprecation.warn('Spree::Filters::QuantifiedPriceRangePresenter is deprecated and will be removed in Spree 5.5.')
         if ALLOWED_QUANTIFIERS.exclude?(quantifier.to_sym)
           raise ArgumentError, "quantifier must be one of: #{ALLOWED_QUANTIFIERS.join(', ')}"
         end
