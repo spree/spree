@@ -2,6 +2,7 @@ module Spree
   module Variants
     class VisibleFinder
       def initialize(scope:, current_currency:)
+        Spree::Deprecation.warn('Spree::Variants::VisibleFinder is deprecated and will be removed in Spree 5.5.')
         @scope = scope
         @current_currency = current_currency
       end

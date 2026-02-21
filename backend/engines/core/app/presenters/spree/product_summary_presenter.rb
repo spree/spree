@@ -3,6 +3,7 @@ module Spree
     include Rails.application.routes.url_helpers
 
     def initialize(product)
+      Spree::Deprecation.warn('Spree::ProductSummaryPresenter is deprecated and will be removed in Spree 5.5.')
       @product = product
     end
 
