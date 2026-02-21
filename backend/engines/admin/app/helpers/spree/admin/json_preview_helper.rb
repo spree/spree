@@ -12,7 +12,7 @@ module Spree
         link_to_with_icon(
           'code',
           Spree.t('admin.show_json'),
-          spree.admin_json_preview_resource_path(record.id, resource_type: record.class.to_s),
+          spree.admin_json_preview_resource_path(record.prefixed_id, resource_type: record.class.to_s),
           options
         )
       end
