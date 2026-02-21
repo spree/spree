@@ -225,7 +225,7 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          directory: ${{ github.workspace }}/coverage
+          files: ${{ github.workspace }}/coverage/${{ matrix.project }}_${{ matrix.shard }}/.resultset.json
           flags: ${{ matrix.project }}
           name: ${{ matrix.project }}-shard-${{ matrix.shard }}
           fail_ci_if_error: false
