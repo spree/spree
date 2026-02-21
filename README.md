@@ -27,12 +27,9 @@ Spree supports complex commerce scenarios natively and lets you combine them: <a
 </p>
 
 <p align="center">
-  <a href="https://rubygems.org/gems/spree">
-    <img alt="Gem Total Downloads" src="https://img.shields.io/gem/dt/spree" />
-  </a>
-  <a href="https://slack.spreecommerce.org">
-    <img alt="Slack members" src="https://img.shields.io/badge/slack%20members-7K-blue" />
-  </a>
+  <a href="https://rubygems.org/gems/spree"><img alt="Gem Total Downloads" src="https://img.shields.io/gem/dt/spree" /></a>
+  <a href="https://slack.spreecommerce.org"><img alt="Slack members" src="https://img.shields.io/badge/slack%20members-7K-blue" /></a>
+  <a href="https://codecov.io/gh/spree/spree"><img src="https://codecov.io/gh/spree/spree/graph/badge.svg?token=DPFc7HbJvU"/></a>
 </p>
 
 ## Getting Started
