@@ -982,6 +982,12 @@
                 ]
               },
               {
+                "group": "Migration",
+                "pages": [
+                  "user/migration/migrate-from-shopify"
+                ]
+              },
+              {
                 "group": "Products",
                 "pages": [
                   {
