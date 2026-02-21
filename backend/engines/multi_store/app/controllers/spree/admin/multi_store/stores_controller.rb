@@ -3,7 +3,7 @@ module Spree
     module MultiStore
       class StoresController < Spree::Admin::BaseController
         def new
-          @store = Spree::Store.new
+          @store = Spree::Store.new(default_country_iso: 'US')
           render :new, layout: 'spree/admin_wizard'
         end
 
@@ -20,7 +20,7 @@ module Spree
             flash[:success] = flash_message_for(@store, :successfully_created)
             redirect_to spree.admin_getting_started_url(host: @store.url), allow_other_host: true
           else
-            render :new, status: :unprocessable_content
+            render :new, status: :unprocessable_content, layout: 'spree/admin_wizard'
           end
         end
 
