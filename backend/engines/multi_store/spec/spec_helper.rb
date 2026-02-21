@@ -1,3 +1,27 @@
+if ENV['COVERAGE']
+  require 'simplecov'
+  require 'simplecov-cobertura'
+  SimpleCov.root(ENV.fetch('GITHUB_WORKSPACE', File.expand_path('../../..', __dir__)))
+  SimpleCov.formatter = SimpleCov::Formatter::CoberturaFormatter
+  SimpleCov.start 'rails' do
+    add_group 'Libraries', 'lib/spree'
+
+    add_filter '/app/views/'
+    add_filter '/bin/'
+    add_filter '/config/'
+    add_filter '/db/'
+    add_filter '/lib/generators/'
+    add_filter '/script/'
+    add_filter '/spec/'
+
+    if ENV['COVERAGE_DIR']
+      shard = ENV.fetch('CI_SHARD', '1')
+      coverage_dir "#{ENV['COVERAGE_DIR']}/multi_store_#{shard}"
+    end
+    command_name "multi_store_shard_#{ENV.fetch('CI_SHARD', '1')}"
+  end
+end
+
 # This file is copied to ~/spec when you run 'ruby script/generate rspec'
 # from the project root directory.
 ENV['RAILS_ENV'] ||= 'test'

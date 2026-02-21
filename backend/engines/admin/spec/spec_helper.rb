@@ -1,16 +1,28 @@
 if ENV['COVERAGE']
-  # Run Coverage report
   require 'simplecov'
+  require 'simplecov-cobertura'
+  SimpleCov.root(ENV.fetch('GITHUB_WORKSPACE', File.expand_path('../../..', __dir__)))
+  SimpleCov.formatter = SimpleCov::Formatter::CoberturaFormatter
   SimpleCov.start 'rails' do
     add_group 'Libraries', 'lib/spree'
 
+    add_filter '/app/assets/'
+    add_filter '/app/javascript/'
+    add_filter '/app/views/'
     add_filter '/bin/'
+    add_filter '/config/'
     add_filter '/db/'
+    add_filter '/lib/generators/'
+    add_filter '/lib/tasks/'
     add_filter '/script/'
     add_filter '/spec/'
-    add_filter '/lib/generators/'
+    add_filter '/vendor/'
 
-    coverage_dir "#{ENV['COVERAGE_DIR']}/admin" if ENV['COVERAGE_DIR']
+    if ENV['COVERAGE_DIR']
+      shard = ENV.fetch('CI_SHARD', '1')
+      coverage_dir "#{ENV['COVERAGE_DIR']}/admin_#{shard}"
+    end
+    command_name "admin_shard_#{ENV.fetch('CI_SHARD', '1')}"
   end
 end
 
