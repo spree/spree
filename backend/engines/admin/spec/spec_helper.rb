@@ -1,5 +1,6 @@
 if ENV['COVERAGE']
   require 'simplecov'
+  SimpleCov.root(ENV.fetch('GITHUB_WORKSPACE', File.expand_path('../../..', __dir__)))
   SimpleCov.start 'rails' do
     add_group 'Libraries', 'lib/spree'
 
