@@ -13,7 +13,7 @@ RSpec.describe 'Currencies API', type: :request, swagger_doc: 'api-reference/sto
 
   path '/api/v3/store/currencies' do
     get 'List supported currencies' do
-      tags 'Currencies'
+      tags 'Internationalization'
       produces 'application/json'
       security [api_key: []]
       description 'Returns currencies supported by the store (derived from markets)'

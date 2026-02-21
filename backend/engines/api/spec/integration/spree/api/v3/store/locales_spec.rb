@@ -13,7 +13,7 @@ RSpec.describe 'Locales API', type: :request, swagger_doc: 'api-reference/store.
 
   path '/api/v3/store/locales' do
     get 'List supported locales' do
-      tags 'Locales'
+      tags 'Internationalization'
       produces 'application/json'
       security [api_key: []]
       description 'Returns locales supported by the store (derived from markets)'

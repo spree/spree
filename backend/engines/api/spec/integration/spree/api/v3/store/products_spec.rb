@@ -25,7 +25,7 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
 
   path '/api/v3/store/products' do
     get 'List products' do
-      tags 'Products'
+      tags 'Product Catalog'
       produces 'application/json'
       security [api_key: []]
       description 'Returns a paginated list of active products for the current store'
@@ -75,7 +75,7 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
 
   path '/api/v3/store/products/{id}' do
     get 'Get a product' do
-      tags 'Products'
+      tags 'Product Catalog'
       produces 'application/json'
       security [api_key: []]
       description 'Returns a single product by slug or prefix ID'
@@ -147,7 +147,7 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
 
   path '/api/v3/store/products/filters' do
     get 'Get product filters' do
-      tags 'Products'
+      tags 'Product Catalog'
       produces 'application/json'
       security [api_key: []]
       description <<~DESC

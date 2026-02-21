@@ -12,7 +12,7 @@ RSpec.describe 'Taxonomies API', type: :request, swagger_doc: 'api-reference/sto
 
   path '/api/v3/store/taxonomies' do
     get 'List taxonomies' do
-      tags 'Taxons'
+      tags 'Product Catalog'
       produces 'application/json'
       security [api_key: []]
       description 'Returns a list of taxonomies (category hierarchies) for the current store'
@@ -50,7 +50,7 @@ RSpec.describe 'Taxonomies API', type: :request, swagger_doc: 'api-reference/sto
 
   path '/api/v3/store/taxonomies/{id}' do
     get 'Get a taxonomy' do
-      tags 'Taxons'
+      tags 'Product Catalog'
       produces 'application/json'
       security [api_key: []]
       description 'Returns a single taxonomy with its taxon tree'

@@ -11,6 +11,8 @@ module Spree
              dependent: :destroy,
              foreign_key: :zoneable_id
     has_many :zones, through: :zone_members, class_name: 'Spree::Zone'
+    has_many :market_countries, class_name: 'Spree::MarketCountry', dependent: :destroy
+    has_many :markets, through: :market_countries, class_name: 'Spree::Market'
 
     validates :name, :iso_name, :iso, :iso3, presence: true, uniqueness: { case_sensitive: false, scope: spree_base_uniqueness_scope }
 

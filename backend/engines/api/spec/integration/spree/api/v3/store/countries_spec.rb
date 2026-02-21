@@ -15,7 +15,7 @@ RSpec.describe 'Countries API', type: :request, swagger_doc: 'api-reference/stor
 
   path '/api/v3/store/countries' do
     get 'List countries' do
-      tags 'Countries'
+      tags 'Internationalization'
       produces 'application/json'
       security [api_key: []]
       description 'Returns countries available in the store with their currency and locale (derived from markets)'
@@ -63,7 +63,7 @@ RSpec.describe 'Countries API', type: :request, swagger_doc: 'api-reference/stor
 
   path '/api/v3/store/countries/{iso}' do
     get 'Get a country' do
-      tags 'Countries'
+      tags 'Internationalization'
       produces 'application/json'
       security [api_key: []]
       description 'Returns a single country by ISO code with currency and locale. Supports ?include=states for address forms.'

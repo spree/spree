@@ -46,10 +46,7 @@ module Spree
       # @return [ActiveRecord::Relation<Spree::Country>]
       def countries_from_markets
         Spree::Country
-          .joins('INNER JOIN spree_market_countries ON spree_market_countries.country_id = spree_countries.id')
-          .joins('INNER JOIN spree_markets ON spree_markets.id = spree_market_countries.market_id')
-          .where(spree_markets: { store_id: id, deleted_at: nil })
-          .distinct
+          .where(id: Spree::Country.joins(market_countries: :market).where(Spree::Market.table_name => { store_id: id, deleted_at: nil }).select(:id))
           .order(:name)
       end
 
