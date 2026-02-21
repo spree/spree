@@ -11,31 +11,24 @@ describe Spree::BaseHelper, type: :helper do
   end
 
   context 'available_countries' do
-    let(:country) { create(:country) }
-
     before do
       create_list(:country, 3)
     end
 
-    context 'with checkout zone assigned to the store' do
+    context 'with markets' do
+      let!(:country) { create(:country) }
+
       before do
-        @zone = create(:zone, name: 'No Limits', kind: 'country')
-        @zone.members.create(zoneable: country)
-        current_store.update(checkout_zone_id: @zone.id)
+        create(:market, store: current_store, countries: [country], currency: 'USD', default: true)
       end
 
-      it 'return only the countries defined by the checkout_zone_id' do
+      it 'returns only the countries from markets' do
         expect(available_countries).to eq([country])
-        expect(current_store.checkout_zone_id).to eq @zone.id
       end
     end
 
-    context 'with no checkout zone defined' do
-      before do
-        current_store.update(checkout_zone_id: nil)
-      end
-
-      it 'return complete list of countries' do
+    context 'without markets' do
+      it 'returns complete list of countries' do
         expect(available_countries).to contain_exactly(*Spree::Country.all)
       end
     end

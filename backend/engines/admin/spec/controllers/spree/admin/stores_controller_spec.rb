@@ -42,7 +42,6 @@ describe Spree::Admin::StoresController do
       {
         name: 'New Store Name',
         default_currency: 'GBR',
-        default_country_iso: 'GB',
         default_locale: 'pl',
         preferred_timezone: 'Europe/Warsaw',
         preferred_weight_unit: 'kg',
@@ -52,16 +51,11 @@ describe Spree::Admin::StoresController do
 
     let(:other_params) { {} }
 
-    before do
-      store.update!(checkout_zone: nil)
-    end
-
     it 'updates the store data' do
       subject
 
       expect(store.reload.name).to eq('New Store Name')
       expect(store.default_currency).to eq('GBR')
-      expect(store.default_country).to eq(uk_country)
       expect(store.default_locale).to eq('pl')
 
       expect(store.preferred_timezone).to eq('Europe/Warsaw')

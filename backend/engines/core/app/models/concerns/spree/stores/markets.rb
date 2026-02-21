@@ -13,6 +13,26 @@ module Spree
         @default_market ||= Spree::Market.default_for_store(self)
       end
 
+      # Returns the default country, derived from the default market
+      # @return [Spree::Country, nil]
+      def default_country
+        if has_markets?
+          default_market&.default_country
+        else
+          super
+        end
+      end
+
+      # Returns the default country ID, derived from the default market
+      # @return [Integer, nil]
+      def default_country_id
+        if has_markets?
+          default_country&.id
+        else
+          read_attribute(:default_country_id)
+        end
+      end
+
       # Returns the default locale, delegating to the default market when markets exist
       # Falls back to the store's own default_locale column
       # @return [String, nil]
@@ -50,14 +70,14 @@ module Spree
           .order(:name)
       end
 
-      # Returns the countries available for checkout, derived from markets or checkout_zone
+      # Returns the countries available for checkout, derived from markets
       # @return [Array<Spree::Country>]
       def countries_available_for_checkout
         @countries_available_for_checkout ||= Rails.cache.fetch(countries_available_for_checkout_cache_key) do
           if markets.any?
             markets.flat_map(&:countries).uniq.sort_by(&:name)
           else
-            (checkout_zone.try(:country_list) || Spree::Country.all).to_a
+            Spree::Country.all.to_a
           end
         end
       end

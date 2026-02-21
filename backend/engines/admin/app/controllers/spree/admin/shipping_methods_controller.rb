@@ -20,7 +20,7 @@ module Spree
       end
 
       def load_data
-        @available_zones = current_store.supported_shipping_zones
+        @available_zones = Spree::Zone.all
         @tax_categories = Spree::TaxCategory.order(:name)
         @calculators = Spree::ShippingMethod.calculators
         @shipping_categories = Spree::ShippingCategory.all

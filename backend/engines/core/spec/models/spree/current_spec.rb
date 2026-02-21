@@ -63,21 +63,11 @@ RSpec.describe Spree::Current do
     context 'when zone is not set and no default tax zone exists' do
       before do
         Spree::Zone.update_all(default_tax: false)
+        Rails.cache.delete('default_tax')
       end
 
-      context 'when store has a checkout_zone' do
-        let(:checkout_zone) { create(:zone) }
-        let!(:store) { create(:store, default: true, checkout_zone: checkout_zone) }
-
-        it 'returns the store checkout_zone' do
-          expect(described_class.zone).to eq(checkout_zone)
-        end
-      end
-
-      context 'when store has no checkout_zone' do
-        it 'returns nil' do
-          expect(described_class.zone).to be_nil
-        end
+      it 'returns nil' do
+        expect(described_class.zone).to be_nil
       end
     end
   end

@@ -9,7 +9,7 @@ module Spree
       protected
 
       def load_data
-        @countries = Spree::Country.order(:name)
+        @countries = current_store.countries_with_shipping_coverage
       end
 
       def permitted_resource_params

@@ -30,7 +30,7 @@ module Spree
 
         def validate_eligibility_by_country_iso(order)
           country_iso = order.ship_address&.country_iso
-          return true if country_iso == (preferred_country_iso || order.store.default_country_iso)
+          return true if country_iso == (preferred_country_iso || order.store.default_market&.default_country&.iso)
 
           eligibility_errors.add(:base, eligibility_error_message(:wrong_country))
           false

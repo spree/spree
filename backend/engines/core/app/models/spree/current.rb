@@ -15,7 +15,7 @@ module Spree
     end
 
     def zone
-      super || Spree::Zone.default_tax || store&.checkout_zone
+      super || Spree::Zone.default_tax
     end
 
     def price_lists

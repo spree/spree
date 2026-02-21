@@ -20,7 +20,7 @@ describe Spree::Admin::ShippingMethodsController, type: :controller do
       get :new
       expect(assigns(:shipping_method).display_on).to eq('both')
       expect(assigns(:shipping_method).shipping_categories).to eq([shipping_category])
-      expect(assigns(:shipping_method).zone_ids).to match_array(store.supported_shipping_zones.map(&:id))
+      expect(assigns(:shipping_method).zone_ids).to match_array(Spree::Zone.pluck(:id))
       expect(assigns(:shipping_method).calculator_type).to eq(Spree::ShippingMethod.calculators.first.name)
     end
   end
