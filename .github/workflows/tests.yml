@@ -214,8 +214,14 @@ jobs:
             -o ${{ github.workspace }}/tmp/test-results/rspec/${{ matrix.project }}-${{ matrix.shard }}.xml \
             ${{ steps.specs.outputs.files }}
 
-      - name: Upload coverage to Codecov
+      - name: List coverage files
         if: always()
+        run: |
+          echo "--- Coverage directory contents ---"
+          find ${{ github.workspace }}/coverage -type f 2>/dev/null || echo "No coverage directory found"
+
+      - name: Upload coverage to Codecov
+        if: always() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
