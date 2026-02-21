@@ -61,7 +61,7 @@ module Spree
 
         def current_tax_zone
           @current_tax_zone ||= begin
-            zone = @current_order&.tax_zone || Spree::Zone.default_tax || current_store.checkout_zone
+            zone = @current_order&.tax_zone || Spree::Zone.default_tax
             Spree::Current.zone = zone
             zone
           end

@@ -154,39 +154,14 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
       end
 
       context 'when there is no current order' do
-        context 'when store has a checkout_zone' do
-          let(:checkout_zone) { Spree::Zone.new }
-
-          before do
-            allow(controller).to receive(:current_store).and_return(
-              double('Store', checkout_zone: checkout_zone, url: 'test.com')
-            )
-          end
-
-          it 'returns the store checkout_zone' do
-            expect(current_price_options[:tax_zone]).to eq(checkout_zone)
-          end
-
-          it 'sets Spree::Current.zone to the store checkout_zone' do
-            subject
-            expect(Spree::Current.zone).to eq(checkout_zone)
-          end
+        it 'returns nil when asked for the current tax zone' do
+          expect(current_price_options[:tax_zone]).to be_nil
         end
 
-        context 'when store has no checkout_zone' do
-          before do
-            allow(controller.current_store).to receive(:checkout_zone).and_return(nil)
-          end
-
-          it 'returns nil when asked for the current tax zone' do
-            expect(current_price_options[:tax_zone]).to be_nil
-          end
-
-          it 'sets Spree::Current.zone to nil' do
-            subject
-            # Spree::Current.zone will call default_tax again, so we check the attributes hash
-            expect(Spree::Current.attributes[:zone]).to be_nil
-          end
+        it 'sets Spree::Current.zone to nil' do
+          subject
+          # Spree::Current.zone will call default_tax again, so we check the attributes hash
+          expect(Spree::Current.attributes[:zone]).to be_nil
         end
       end
 

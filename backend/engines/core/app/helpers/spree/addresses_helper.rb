@@ -4,8 +4,7 @@ module Spree
     def address_form_countries_states_cache_key
       @address_form_countries_states_cache_key ||= [
         I18n.locale,
-        current_store.cache_key_with_version,
-        current_store.checkout_zone&.cache_key_with_version
+        current_store.cache_key_with_version
       ].compact
     end
 

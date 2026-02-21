@@ -292,6 +292,10 @@ en:
           attributes:
             currency:
               must_match_order_currency: Must match order currency
+        spree/market_country:
+          attributes:
+            country:
+              not_in_shipping_zone: is not covered by any shipping zone. Please set up a shipping zone first.
         spree/payment:
           attributes:
             amount:

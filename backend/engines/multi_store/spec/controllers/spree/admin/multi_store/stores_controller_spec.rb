@@ -19,27 +19,43 @@ describe Spree::Admin::MultiStore::StoresController, type: :controller do
       expect(response).to have_http_status(:ok)
     end
 
-    it 'initializes store with current store defaults' do
+    it 'initializes a new store' do
       subject
-      new_store = assigns(:store)
-      expect(new_store.default_currency).to eq(store.default_currency)
+      expect(assigns(:store)).to be_a_new(Spree::Store)
     end
   end
 
   describe 'POST #create' do
     subject { post :create, params: { store: store_params } }
 
+    let!(:country) { Spree::Country.find_by(iso: 'US') || create(:country_us) }
+    let!(:zone) do
+      zone = create(:zone, name: 'US Zone', kind: 'country')
+      zone.zone_members.create!(zoneable: country)
+      create(:shipping_method, zones: [zone])
+      zone
+    end
     let(:store_params) do
       {
         name: 'New Store',
-        default_currency: 'USD',
-        default_locale: 'en'
+        default_country_iso: country.iso
       }
     end
 
     context 'with valid params' do
       it 'creates a new store' do
         expect { subject }.to change(Spree::Store, :count).by(1)
+      end
+
+      it 'creates a default market with the selected country' do
+        subject
+        new_store = Spree::Store.last
+        expect(new_store.markets.count).to eq(1)
+
+        market = new_store.markets.first
+        expect(market.name).to eq(country.name)
+        expect(market).to be_default
+        expect(market.countries).to include(country)
       end
 
       it 'sets the mail_from_address from the current store' do
@@ -70,6 +86,15 @@ describe Spree::Admin::MultiStore::StoresController, type: :controller do
       end
     end
 
+    context 'without country' do
+      let(:store_params) { { name: 'Store Without Country' } }
+
+      it 'creates the store without a market' do
+        expect { subject }.to change(Spree::Store, :count).by(1)
+        expect(Spree::Store.last.markets.count).to eq(0)
+      end
+    end
+
     context 'with invalid params' do
       let(:store_params) { { name: '' } }
 
@@ -89,8 +114,7 @@ describe Spree::Admin::MultiStore::StoresController, type: :controller do
       let(:store_params) do
         {
           name: 'Store With Products',
-          default_currency: 'USD',
-          default_locale: 'en',
+          default_country_iso: country.iso,
           import_products_from_store_id: store.id
         }
       end

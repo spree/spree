@@ -24,7 +24,6 @@ RSpec.describe 'Store API', type: :request, swagger_doc: 'api-reference/store.ya
           expect(data['id']).to be_present
           expect(data['name']).to eq(store.name)
           expect(data['url']).to eq(store.url)
-          expect(data['default_currency']).to eq(store.default_currency)
         end
       end
 

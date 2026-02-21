@@ -18,17 +18,7 @@
 
           <div class="form-group">
             <%= f.label :default_country_iso, Spree.t(:country) %>
-            <%= f.collection_select :default_country_iso, Spree::Country.order(:name), :iso, :name, { }, { data: { controller: 'autocomplete-select', enable_button_target: 'input', action: 'store-form#updateCurrency' } } %>
-          </div>
-
-          <div class="form-group">
-            <%= f.label :default_locale %>
-            <%= f.select :default_locale, options_from_collection_for_select(all_locales_options, :last, :first, current_store.default_locale || I18n.locale), { }, { data: { controller: 'autocomplete-select', enable_button_target: 'input', action: 'store-form#updateCurrency' } } %>
-          </div>
-
-          <div class="form-group">
-            <%= f.label :default_currency, Spree.t(:currency) %>
-            <%= f.select :default_currency, currency_options, {}, { data: { controller: 'autocomplete-select', enable_button_target: 'input', store_form_target: 'currency' } } %>
+            <%= f.collection_select :default_country_iso, Spree::Country.order(:name), :iso, :name, { }, { data: { controller: 'autocomplete-select', enable_button_target: 'input' } } %>
           </div>
 
           <% if available_stores.any? %>

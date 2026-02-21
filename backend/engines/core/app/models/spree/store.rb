@@ -136,7 +136,7 @@ module Spree
     # Validations
     #
     with_options presence: true do
-      validates :name, :url, :mail_from_address, :default_country, :code
+      validates :name, :url, :mail_from_address, :code
     end
     validates :preferred_digital_asset_authorized_clicks, numericality: { only_integer: true, greater_than: 0 }
     validates :preferred_digital_asset_authorized_days, numericality: { only_integer: true, greater_than: 0 }
@@ -160,9 +160,9 @@ module Spree
 
     #
     # Callbacks
-    before_validation :ensure_default_country
     before_validation :set_default_code, on: :create
     before_save :ensure_default_exists_and_is_unique
+    after_create :ensure_default_market
     after_create :ensure_default_taxonomies_are_created
     after_create :ensure_default_automatic_taxons
     after_create :ensure_default_post_categories_are_created
@@ -177,7 +177,6 @@ module Spree
     #
     # Delegations
     #
-    delegate :iso, to: :default_country, prefix: true, allow_nil: true
 
     def self.current(_url = nil)
       Spree::Current.store
@@ -203,6 +202,22 @@ module Spree
       Spree::Store.default&.supported_locales_list || []
     end
 
+    # @deprecated Use Markets instead. Will be removed in Spree 5.5.
+    def checkout_zone
+      Spree::Deprecation.warn('Store#checkout_zone is deprecated and will be removed in Spree 5.5. Use Markets instead.')
+      super
+    end
+
+    # @deprecated Use Markets instead. Will be removed in Spree 5.5.
+    def checkout_zone=(zone)
+      Spree::Deprecation.warn('Store#checkout_zone= is deprecated and will be removed in Spree 5.5. Use Markets instead.')
+      super
+    end
+
+    # Virtual attribute — sets the country for the default market created on store creation.
+    # Not persisted on the store itself; only used by the after_create callback.
+    attr_reader :default_country_iso
+
     def default_country_iso=(iso)
       return if iso.blank?
 
@@ -210,10 +225,11 @@ module Spree
 
       country = Spree::Country.by_iso(iso)
 
-      if country.present?
-        self.default_country = country
-      elsif iso_country = ::Country[iso]
-        new_country = Spree::Country.create!(
+      unless country
+        iso_country = ::Country[iso]
+        return unless iso_country
+
+        country = Spree::Country.create!(
           iso_name: iso_country.local_name&.upcase,
           iso: iso_country.alpha2,
           iso3: iso_country.alpha3,
@@ -222,9 +238,9 @@ module Spree
           states_required: Spree::Address::STATES_REQUIRED.include?(iso),
           zipcode_required: !Spree::Address::NO_ZIPCODE_ISO_CODES.include?(iso)
         )
-
-        self.default_country = new_country
       end
+
+      @default_country_for_market = country
     end
 
     def seo_meta_description
@@ -276,21 +292,55 @@ module Spree
       formatted_url
     end
 
-    # Returns the states available for checkout for the store or creates a new one if it doesn't exist
+    # Returns the states available for checkout for the store
     # @param country [Spree::Country] the country to get the states for
     # @return [Array<Spree::State>]
     def states_available_for_checkout(country)
       Rails.cache.fetch(states_available_for_checkout_cache_key(country)) do
-        (checkout_zone.try(:state_list_for, country) || country.states).to_a
+        country.states.to_a
       end
     end
 
+    # @deprecated Use {Spree::Zone.all} or {#countries_with_shipping_coverage} instead.
+    #   Will be removed in Spree 5.5.
     def supported_shipping_zones
-      @supported_shipping_zones ||= if checkout_zone.present?
-                                      [checkout_zone]
-                                    else
-                                      Spree::Zone.includes(zone_members: :zoneable).all
-                                    end
+      Spree::Deprecation.warn(
+        'Store#supported_shipping_zones is deprecated and will be removed in Spree 5.5. ' \
+        'Use Spree::Zone.all or Store#countries_with_shipping_coverage instead.'
+      )
+      zone = Spree::Zone.find_by(id: read_attribute(:checkout_zone_id))
+      if zone.present?
+        [zone]
+      else
+        Spree::Zone.includes(zone_members: :zoneable).all
+      end
+    end
+
+    # Returns countries covered by at least one shipping zone
+    # that has an active shipping method attached.
+    # Handles both country-type zones (direct membership) and
+    # state-type zones (country inferred from state).
+    #
+    # @return [ActiveRecord::Relation<Spree::Country>]
+    def countries_with_shipping_coverage
+      zone_ids = Spree::Zone
+        .joins(:shipping_methods)
+        .select(:id)
+
+      country_zone_country_ids = Spree::ZoneMember
+        .where(zone_id: zone_ids, zoneable_type: 'Spree::Country')
+        .select(:zoneable_id)
+
+      state_zone_country_ids = Spree::State
+        .where(id: Spree::ZoneMember
+          .where(zone_id: zone_ids, zoneable_type: 'Spree::State')
+          .select(:zoneable_id))
+        .select(:country_id)
+
+      Spree::Country
+        .where(id: country_zone_country_ids)
+        .or(Spree::Country.where(id: state_zone_country_ids))
+        .order(:name)
     end
 
     # Returns the default stock location for the store or creates a new one if it doesn't exist
@@ -339,25 +389,34 @@ module Spree
     private
 
     def countries_available_for_checkout_cache_key
-      "#{cache_key_with_version}/#{checkout_zone&.cache_key_with_version}/countries_available_for_checkout"
+      "#{cache_key_with_version}/countries_available_for_checkout"
     end
 
     def states_available_for_checkout_cache_key(country)
-      "#{cache_key_with_version}/#{checkout_zone&.cache_key_with_version}/states_available_for_checkout/#{country&.cache_key_with_version}"
+      "#{cache_key_with_version}/states_available_for_checkout/#{country&.cache_key_with_version}"
     end
 
     def clear_cache
       Rails.cache.delete('default_store')
     end
 
-    def ensure_default_country
-      return if default_country.present? && (checkout_zone.blank? || checkout_zone.country_list.blank? || checkout_zone.country_list.include?(default_country))
+    def ensure_default_market
+      return if markets.exists?
 
-      self.default_country = if checkout_zone.present? && checkout_zone.country_list.any?
-                               checkout_zone.country_list.first
-                             else
-                               Country.find_by(iso: 'US') || Country.first
-                             end
+      country = @default_country_for_market
+      return if country.blank?
+
+      iso_country = ISO3166::Country[country.iso]
+
+      Spree::Events.disable do
+        markets.create!(
+          name: country.name,
+          currency: iso_country&.currency_code || read_attribute(:default_currency) || 'USD',
+          default_locale: iso_country&.languages_official&.first || read_attribute(:default_locale) || 'en',
+          default: true,
+          countries: [country]
+        )
+      end
     end
 
     def ensure_default_taxonomies_are_created

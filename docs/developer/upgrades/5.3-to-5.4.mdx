@@ -85,6 +85,48 @@ end
 
 Prefix length isn't limited by default, but we recommend to keep it short.
 
+### Migrate Checkout Zones to Markets
+
+Spree 5.4 introduces [Markets](/developer/core-concepts/markets) as the primary way to manage which countries are available for checkout, along with their currencies and locales. The legacy `checkout_zone` field on the Store model is now deprecated and will be removed in Spree 5.5.
+
+New stores automatically get a default market created from their `default_country` — no manual setup needed. For existing stores that used `checkout_zone`, run the migration rake task:
+
+  ```bash
+  bin/rake spree:markets:migrate_checkout_zones
+  ```
+
+This will:
+1. Read the `checkout_zone` countries from each store
+2. Create a default Market with those countries, currency, and locale
+3. Clear the `checkout_zone_id` column
+
+<Warning>
+  You will need to run this rake task locally and on your production environment. After running, verify your markets are set up correctly in the Admin Dashboard under **Settings → Markets**.
+</Warning>
+
+#### Deprecated Store methods
+
+The following Store methods now emit deprecation warnings and will be removed in Spree 5.5:
+
+| Deprecated method | Replacement |
+|---|---|
+| `store.checkout_zone` | Use [Markets](/developer/core-concepts/markets) to manage countries |
+| `store.checkout_zone=` | Use [Markets](/developer/core-concepts/markets) to manage countries |
+
+The `store.default_country` reader now returns the first country (by name) from the store's default market. The `store.default_country_iso=` setter still works and is used to set the country when creating a store — a default market is automatically created from it.
+
+#### Code that references `checkout_zone` for tax
+
+If your application used `store.checkout_zone` as a tax zone fallback, update it to use `Spree::Zone.default_tax` instead:
+
+```ruby
+# Before
+zone = current_store.checkout_zone
+
+# After
+zone = Spree::Zone.default_tax
+```
+
 ### (Optional) Install API v2
 
 Spree 5.4 ships with API v3, which marks deprecation of API v2. API v2 is still available but you need to install it separately. If you currently use API v2, you can do this by running the following command:

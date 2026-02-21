@@ -18,7 +18,8 @@ RSpec.configure do |config|
       I18n.with_locale(:en) do
         Spree::Events.disable do
           @default_country = Spree::Country.find_by(iso: 'US') || FactoryBot.create(:country_us)
-          @default_store = Spree::Store.find_by(default: true) || FactoryBot.create(:store, default: true, default_country: @default_country, default_currency: 'USD')
+          @default_store = Spree::Store.find_by(default: true) || FactoryBot.create(:store, default: true, default_currency: 'USD')
+          @default_store.update_column(:default_country_id, @default_country.id) unless @default_store.read_attribute(:default_country_id) == @default_country.id
         end
       end
     end
@@ -28,7 +29,7 @@ RSpec.configure do |config|
     unless self.class.metadata[:without_global_store]
       @default_store&.products = []
       @default_store&.promotions = []
-      @default_store&.checkout_zone = nil
+      @default_store&.update_column(:checkout_zone_id, nil) if @default_store&.read_attribute(:checkout_zone_id).present?
       @default_store&.payment_methods = []
     end
   end

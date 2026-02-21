@@ -229,6 +229,7 @@
                   {
                     "group": "Upgrade Guides",
                     "pages": [
+                      "developer/upgrades/5.3-to-5.4",
                       "developer/upgrades/5.2-to-5.3",
                       "developer/upgrades/5.1-to-5.2",
                       "developer/upgrades/5.0-to-5.1",

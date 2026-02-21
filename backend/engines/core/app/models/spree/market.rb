@@ -10,7 +10,7 @@ module Spree
     #
     # Associations
     #
-    belongs_to :store, class_name: 'Spree::Store'
+    belongs_to :store, class_name: 'Spree::Store', touch: true
     has_many :market_countries, class_name: 'Spree::MarketCountry', dependent: :destroy
     has_many :countries, through: :market_countries, class_name: 'Spree::Country'
 
@@ -56,6 +56,13 @@ module Spree
       return nil unless store
 
       store.markets.default.first || store.markets.order(:position).first
+    end
+
+    # Returns the first country by name from this market's countries
+    #
+    # @return [Spree::Country, nil]
+    def default_country
+      countries.order(:name).first
     end
 
     # Returns supported locales as an array, always including default_locale

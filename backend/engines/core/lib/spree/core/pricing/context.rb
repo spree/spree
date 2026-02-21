@@ -38,7 +38,7 @@ module Spree
           variant: variant,
           currency: order.currency,
           store: order.store,
-          zone: order.tax_zone || order.store.checkout_zone,
+          zone: order.tax_zone || Spree::Zone.default_tax,
           user: order.user,
           quantity: quantity || order.line_items.find_by(variant: variant)&.quantity,
           order: order

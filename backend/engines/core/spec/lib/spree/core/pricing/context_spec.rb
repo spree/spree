@@ -193,16 +193,16 @@ module Spree
           end
         end
 
-        context 'with zone from store checkout_zone' do
-          let(:checkout_zone) { create(:zone) }
+        context 'when order has no tax zone' do
+          let!(:default_tax_zone) { create(:zone, default_tax: true) }
 
           before do
             allow(order).to receive(:tax_zone).and_return(nil)
-            order.store.update!(checkout_zone: checkout_zone)
+            Rails.cache.delete('default_tax')
           end
 
-          it 'sets zone from store checkout_zone' do
-            expect(subject.zone).to eq(checkout_zone)
+          it 'falls back to default tax zone' do
+            expect(subject.zone).to eq(default_tax_zone)
           end
         end
 

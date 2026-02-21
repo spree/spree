@@ -20,13 +20,7 @@ RSpec.describe Spree::Api::V3::Store::StoresController, type: :controller do
     it 'returns store attributes' do
       get :show
 
-      expect(json_response).to include('id', 'name', 'url', 'default_currency')
-    end
-
-    it 'returns store settings' do
-      get :show
-
-      expect(json_response['default_currency']).to eq(store.default_currency)
+      expect(json_response).to include('id', 'name', 'url', 'code')
     end
 
     context 'without API key' do

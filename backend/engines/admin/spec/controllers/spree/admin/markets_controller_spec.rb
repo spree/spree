@@ -5,7 +5,15 @@ RSpec.describe Spree::Admin::MarketsController, type: :controller do
   stub_authorization!
 
   let(:store) { @default_store }
+  let(:shipping_zone) do
+    zone = create(:zone, name: 'Test Shipping Zone', kind: 'country')
+    zone.zone_members.create!(zoneable: country)
+    create(:shipping_method, zones: [zone])
+    zone
+  end
   let(:country) { create(:country) }
+
+  before { shipping_zone }
 
   describe 'GET #index' do
     let!(:market) { create(:market, store: store, countries: [country]) }

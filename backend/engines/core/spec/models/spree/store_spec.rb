@@ -182,6 +182,42 @@ describe Spree::Store, type: :model, without_global_store: true do
       end
     end
 
+    describe '#ensure_default_market' do
+      context 'when default_country_iso is set with shipping coverage' do
+        let(:country) { Spree::Country.first || create(:country) }
+        let(:store) { build(:store) }
+
+        before do
+          zone = create(:zone, name: 'Test Zone', kind: 'country')
+          zone.zone_members.create!(zoneable: country)
+          create(:shipping_method, zones: [zone])
+          store.default_country_iso = country.iso
+        end
+
+        it 'creates a default market named after the country' do
+          expect { store.save! }.to change(Spree::Market, :count).by(1)
+
+          market = store.markets.first
+          expect(market.name).to eq(country.name)
+          expect(market).to be_default
+          expect(market.countries).to include(country)
+        end
+
+        it 'does not create a second market on re-run' do
+          store.save!
+          expect { store.send(:ensure_default_market) }.not_to change(Spree::Market, :count)
+        end
+      end
+
+      context 'when default_country_iso is not set' do
+        let(:store) { build(:store) }
+
+        it 'does not create a market' do
+          expect { store.save! }.not_to change(Spree::Market, :count)
+        end
+      end
+    end
+
     describe '#ensure_default_taxonomies_are_created' do
       let(:store) { build(:store) }
 
@@ -373,27 +409,6 @@ describe Spree::Store, type: :model, without_global_store: true do
     end
   end
 
-  shared_context 'with checkout zone set' do
-    let!(:country1) { create(:country) }
-    let!(:country2) { create(:country) }
-
-    let!(:state1)   { create(:state, country: country1) }
-    let!(:state2)   { create(:state, country: country2) }
-
-    let(:zone) do
-      create(:zone, kind: 'country').tap do |zone|
-        zone.members.create(zoneable: country1)
-        zone.members.create(zoneable: country2)
-      end
-    end
-
-    before { subject.update(checkout_zone: zone) }
-  end
-
-  shared_context 'with checkout zone not set' do
-    before { subject.update(checkout_zone: nil) }
-  end
-
   describe '#countries_available_for_checkout' do
     subject { create(:store) }
 
@@ -412,17 +427,7 @@ describe Spree::Store, type: :model, without_global_store: true do
       end
     end
 
-    context 'without markets (legacy)' do
-      include_context 'with checkout zone set'
-
-      it 'returns country list for checkout zone' do
-        expect(subject.countries_available_for_checkout).to eq [country1, country2]
-      end
-    end
-
-    context 'without markets and without checkout zone (legacy)' do
-      include_context 'with checkout zone not set'
-
+    context 'without markets' do
       it 'returns list of all countries' do
         checkout_available_countries_ids = subject.countries_available_for_checkout.pluck(:id)
         all_countries_ids                = Spree::Country.all.ids
@@ -433,105 +438,45 @@ describe Spree::Store, type: :model, without_global_store: true do
   end
 
   describe '#states_available_for_checkout' do
-    context do
-      include_context 'with checkout zone set'
+    subject { create(:store) }
 
-      it 'returns states list for checkout zone' do
-        expect(subject.states_available_for_checkout(country1)).to eq [state1]
-        expect(subject.states_available_for_checkout(country2)).to eq [state2]
+    let(:country_with_states) do
+      create(:country).tap do |country|
+        country.states << create(:state)
       end
     end
 
-    context do
-      include_context 'with checkout zone not set'
+    it 'returns list of states associated to country' do
+      checkout_available_states_ids = subject.states_available_for_checkout(country_with_states).pluck(:id)
+      all_state_ids                 = country_with_states.states.pluck(:id)
 
-      context do
-        let(:country_with_states) do
-          create(:country).tap do |country|
-            country.states << create(:state)
-          end
-        end
-
-        it 'returns list of states associated to country' do
-          checkout_available_states_ids3 = subject.states_available_for_checkout(country_with_states).pluck(:id)
-          all_countries_ids              = country_with_states.states.pluck(:id)
-
-          expect(checkout_available_states_ids3).to eq(all_countries_ids)
-        end
-      end
+      expect(checkout_available_states_ids).to eq(all_state_ids)
     end
   end
 
-  describe '#ensure_default_country' do
-    subject { build(:store) }
-
-    let!(:default_country) { Spree::Country.first || create(:country) }
-    let!(:other_country) { create(:country) }
-    let!(:other_country_2) { create(:country) }
-
-    context 'checkout zone not set' do
-      before { subject.save! }
-
-      context 'with default country' do
-        before { subject.default_country = other_country }
-
-        it { expect(subject.default_country).to eq(other_country) }
-      end
-
-      it { expect(subject.default_country).to eq(default_country) }
-    end
-
-    context 'checkout zone set' do
-      let!(:zone) { create(:zone, kind: 'country') }
+  describe '#default_country' do
+    context 'with markets' do
+      let!(:store) { create(:store) }
+      let!(:germany) { create(:country, name: 'Germany', iso: 'DE') }
+      let!(:france) { create(:country, name: 'France', iso: 'FR') }
 
       before do
-        zone.members.create(zoneable: other_country_2)
-        subject.checkout_zone = zone
+        create(:market, store: store, countries: [germany, france], currency: 'EUR', default: true)
       end
 
-      context 'with default country set' do
-        before { subject.default_country = other_country }
-
-        context 'no zone members' do
-          before do
-            zone.members.delete_all
-            subject.save!
-          end
-
-          it { expect(subject.default_country).to eq(other_country) }
-        end
-
-        context 'default country is a zone member' do
-          before do
-            zone.members.create(zoneable: other_country)
-            subject.save!
-          end
-
-          it { expect(subject.default_country).to eq(other_country) }
-        end
-
-        context 'default country is not a zone member' do
-          before { subject.save! }
-
-          it { expect(subject.default_country).to eq(other_country_2) }
-        end
+      it 'derives from the default market' do
+        expect(store.default_country).to eq(france) # France comes before Germany alphabetically
       end
+    end
 
-      context 'without default country set' do
-        context 'no zone members' do
-          before do
-            zone.members.delete_all
-            subject.save!
-          end
+    context 'without markets' do
+      let!(:country) { Spree::Country.first || create(:country) }
+      let(:store) { build(:store) }
 
-          it { expect(subject.default_country).to eq(default_country) }
-        end
+      before { store.write_attribute(:default_country_id, country.id) }
 
-        context 'with zone members' do
-          before { subject.save! }
-
-          it { expect(subject.default_country).to eq(other_country_2) }
-        end
+      it 'returns the store column value' do
+        expect(store.default_country).to eq(country)
       end
     end
   end
@@ -539,23 +484,31 @@ describe Spree::Store, type: :model, without_global_store: true do
   describe '#default_country_iso=' do
     let(:store) { build(:store) }
 
-    context 'when country is not found' do
-      it 'sets the default country' do
+    context 'when country is not found in the database' do
+      it 'creates the country from ISO3166 data' do
         expect(Spree::Country.find_by(iso: 'GB')).to be_nil
         expect { store.default_country_iso = 'GB' }.to change(Spree::Country, :count).by(1)
-        expect(store.default_country).to be_an_instance_of(Spree::Country)
-        expect(store.default_country.iso).to eq('GB')
-        expect(store.default_country.numcode.to_s).to eq(::Country['GB'].number)
+
+        gb_country = Spree::Country.find_by(iso: 'GB')
+        expect(gb_country).to be_present
+        expect(gb_country.numcode.to_s).to eq(::Country['GB'].number)
         expect(store.default_country_iso).to eq('GB')
       end
     end
 
-    context 'when country is found' do
+    context 'when country exists in the database' do
       let!(:country) { create(:country, iso: 'GB') }
 
-      it 'sets the default country' do
+      it 'uses the existing country' do
         expect { store.default_country_iso = 'GB' }.not_to change(Spree::Country, :count)
-        expect(store.default_country.iso).to eq('GB')
+        expect(store.default_country_iso).to eq('GB')
+      end
+    end
+
+    context 'when iso is blank' do
+      it 'does nothing' do
+        store.default_country_iso = ''
+        expect(store.instance_variable_get(:@default_country_for_market)).to be_nil
       end
     end
   end
@@ -869,19 +822,98 @@ describe Spree::Store, type: :model, without_global_store: true do
     end
   end
 
+  describe '#countries_with_shipping_coverage' do
+    let(:store) { create(:store) }
+
+    context 'with country-type zones with shipping methods' do
+      let(:country1) { create(:country) }
+      let(:country2) { create(:country) }
+      let!(:zone) { create(:zone, kind: 'country') }
+
+      before do
+        zone.zone_members.create!(zoneable: country1)
+        zone.zone_members.create!(zoneable: country2)
+        create(:shipping_method, zones: [zone])
+      end
+
+      it 'returns countries from those zones' do
+        result = store.countries_with_shipping_coverage
+        expect(result).to include(country1, country2)
+      end
+    end
+
+    context 'with state-type zones with shipping methods' do
+      let(:country) { create(:country) }
+      let(:state) { create(:state, country: country) }
+      let!(:zone) { create(:zone, kind: 'state') }
+
+      before do
+        zone.zone_members.create!(zoneable: state)
+        create(:shipping_method, zones: [zone])
+      end
+
+      it 'returns countries inferred from state-type zones' do
+        result = store.countries_with_shipping_coverage
+        expect(result).to include(country)
+      end
+    end
+
+    context 'when zone has no shipping method' do
+      let(:country) { create(:country) }
+      let!(:zone) { create(:zone, kind: 'country') }
+
+      before do
+        zone.zone_members.create!(zoneable: country)
+      end
+
+      it 'does not include countries from that zone' do
+        expect(store.countries_with_shipping_coverage).not_to include(country)
+      end
+    end
+
+    context 'when no shipping zones exist' do
+      before { Spree::Zone.delete_all }
+
+      it 'returns empty relation' do
+        expect(store.countries_with_shipping_coverage).to be_empty
+      end
+    end
+
+    context 'when country appears in multiple zones' do
+      let(:country) { create(:country) }
+      let!(:zone1) { create(:zone, kind: 'country') }
+      let!(:zone2) { create(:zone, kind: 'country') }
+
+      before do
+        zone1.zone_members.create!(zoneable: country)
+        zone2.zone_members.create!(zoneable: country)
+        create(:shipping_method, zones: [zone1])
+        create(:shipping_method, zones: [zone2])
+      end
+
+      it 'deduplicates countries' do
+        result = store.countries_with_shipping_coverage
+        expect(result.where(id: country.id).count).to eq(1)
+      end
+    end
+  end
+
   describe '#supported_shipping_zones' do
     context 'with checkout zone set' do
       let!(:checkout_zone) { create(:zone) }
+      let(:store) { create(:store) }
 
-      subject { build(:store, checkout_zone: checkout_zone) }
+      before { store.update_column(:checkout_zone_id, checkout_zone.id) }
 
-      it 'returns the checkout zone' do
-        expect(subject.supported_shipping_zones).to eq([checkout_zone])
+      it 'returns the checkout zone and emits deprecation warning' do
+        expect(Spree::Deprecation).to receive(:warn).with(/supported_shipping_zones is deprecated/)
+        expect(store.supported_shipping_zones).to eq([checkout_zone])
       end
     end
 
     context 'when checkout zone not set' do
-      it 'returns all shipping zones' do
+      it 'returns all shipping zones and emits deprecation warning' do
+        expect(Spree::Deprecation).to receive(:warn).with(/supported_shipping_zones is deprecated/)
         expect(subject.supported_shipping_zones).to eq(Spree::Zone.includes(zone_members: :zoneable).all)
       end
     end

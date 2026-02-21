@@ -7,7 +7,6 @@ module Spree
       before_action :normalize_supported_currencies, only: [:update]
       before_action :normalize_supported_locales, only: [:update]
       before_action :load_all_countries, only: [:edit, :update]
-      before_action :load_all_zones, only: [:edit, :update]
 
       def edit
         if params[:section] == 'emails'
@@ -60,11 +59,6 @@ module Spree
 
       def load_all_countries
         @countries = Spree::Country.pluck(:name, :id)
-      end
-
-      def load_all_zones
-        @zones = Spree::Zone.pluck(:name, :id)
-        @zones.prepend([Spree.t(:no_limits_zone), ' '])
       end
 
       def normalize_supported_currencies

@@ -6,9 +6,7 @@ module Spree
       def call
         default_store = Spree::Store.default
 
-        if default_store.persisted?
-          default_store.update!(default_country: Spree::Country.find_by(iso: 'US') || Spree::Country.first)
-        else
+        unless default_store.persisted?
           Spree::Store.new do |s|
             s.name                         = 'Shop'
             s.code                         = 'shop'
@@ -16,7 +14,7 @@ module Spree
             s.mail_from_address            = 'no-reply@example.com'
             s.customer_support_email       = 'support@example.com'
             s.default_currency             = 'USD'
-            s.default_country              = Spree::Country.find_by(iso: 'US') || Spree::Country.first
+            s.default_country_iso          = 'US'
             s.default_locale               = I18n.locale
           end.save!
         end

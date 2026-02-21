@@ -275,10 +275,10 @@ module Spree
                                    stock_movements_attributes: [:variant_id, :quantity, :originator_id, :stock_item_id]]
 
     @@store_attributes = [:name, :url, :seo_title, :code, :meta_keywords,
-                          :meta_description, :default_currency, :mail_from_address,
+                          :meta_description, :default_currency, :default_country_iso, :mail_from_address,
                           :customer_support_email, :description, :address, :contact_phone,
-                          :supported_locales, :default_locale, :default_country_id, :supported_currencies,
-                          :new_order_notifications_email, :checkout_zone_id, :seo_robots,
+                          :supported_locales, :default_locale, :supported_currencies,
+                          :new_order_notifications_email, :seo_robots,
                           :preferred_admin_locale, :preferred_timezone, :preferred_weight_unit, :preferred_unit_system,
                           :preferred_digital_asset_authorized_clicks, :preferred_digital_asset_authorized_days,
                           :preferred_limit_digital_download_count, :preferred_limit_digital_download_days,
@@ -286,7 +286,7 @@ module Spree
                           :logo, :mailer_logo, :social_logo, :favicon_image,
                           :checkout_message, :preferred_guest_checkout,
                           :customer_terms_of_service, :customer_privacy_policy,
-                          :customer_returns_policy, :customer_shipping_policy, :default_country_iso]
+                          :customer_returns_policy, :customer_shipping_policy]
 
     @@store_credit_attributes = %i[amount currency category_id memo]
 

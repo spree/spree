@@ -3,10 +3,7 @@ module Spree
     module MultiStore
       class StoresController < Spree::Admin::BaseController
         def new
-          @store = Spree::Store.new(
-            default_country_iso: current_store.default_country_iso,
-            default_currency: current_store.default_currency
-          )
+          @store = Spree::Store.new
           render :new, layout: 'spree/admin_wizard'
         end
 
