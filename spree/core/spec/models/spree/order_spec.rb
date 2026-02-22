@@ -1036,9 +1036,10 @@ describe Spree::Order, type: :model do
       end
     end
 
-    it 'calls approve!' do
-      expect(order).to receive(:approve!)
+    it 'sets considered_risky to false' do
+      order.update_column(:considered_risky, true)
       order.approved_by(admin_user)
+      expect(order.reload.considered_risky).to be false
     end
 
     context 'events', :events do

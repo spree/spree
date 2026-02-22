@@ -47,8 +47,12 @@ module Spree
 
       # PUT /admin/orders/:id/cancel
       def cancel
-        @order.canceled_by(try_spree_current_user)
-        flash[:success] = Spree.t(:order_canceled)
+        result = @order.canceled_by(try_spree_current_user)
+        if result.success?
+          flash[:success] = Spree.t(:order_canceled)
+        else
+          flash[:error] = result.error.to_s
+        end
         redirect_back fallback_location: spree.edit_admin_order_url(@order)
       end
 

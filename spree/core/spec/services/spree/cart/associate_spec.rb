@@ -18,9 +18,18 @@ module Spree
       let(:assigned_user) { create(:user) }
       let(:order) { create(:order, user: assigned_user) }
 
-      it 'returns failure' do
-        expect(subject).to be_failure
-        expect(order.user).to eq(assigned_user)
+      it 'reassigns order to new user' do
+        expect(subject).to be_success
+        expect(order.user).to eq(user)
+      end
+
+      context 'with guest_only: true' do
+        subject { described_class.call(guest_order: order, user: user, guest_only: true) }
+
+        it 'returns failure' do
+          expect(subject).to be_failure
+          expect(order.user).to eq(assigned_user)
+        end
       end
     end
   end

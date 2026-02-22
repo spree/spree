@@ -422,22 +422,13 @@ module Spree
     end
 
     # Associates the specified user with the order.
+    # Delegates to {Spree::Cart::Associate} service.
+    #
+    # @param user [Spree.user_class] the user to associate with the order
+    # @param override_email [Boolean] whether to override the order email with the user's email
+    # @return [Spree::ServiceModule::Result]
     def associate_user!(user, override_email = true)
-      self.user           = user
-      self.email          = user.email if override_email
-      self.bill_address ||= user.bill_address
-      self.ship_address ||= user.ship_address
-
-      changes = slice(*ASSOCIATED_USER_ATTRIBUTES)
-
-      # immediately persist the changes we just made, but don't use save
-      # since we might have an invalid address associated
-      ActiveRecord::Base.connected_to(role: :writing) do
-        self.class.unscoped.where(id: self).update_all(changes)
-      end
-
-      # Manually publish update event since update_all bypasses callbacks
-      publish_event('order.updated') if changes.present?
+      Spree.cart_associate_service.call(guest_order: self, user: user, override_email: override_email)
     end
 
     def disassociate_user!
@@ -786,30 +777,23 @@ module Spree
       !payments.risky.empty?
     end
 
+    # Cancels the order and records the canceler.
+    # Delegates to {Spree::Orders::Cancel} service.
+    #
+    # @param user [Spree.user_class, nil] the user who canceled the order
+    # @param canceled_at [Time, nil] the time of cancellation (defaults to current time)
+    # @return [Spree::ServiceModule::Result]
     def canceled_by(user, canceled_at = nil)
-      canceled_at ||= Time.current
-      changes = { canceler_id: user.id, canceled_at: canceled_at }
-
-      transaction do
-        update_columns(changes)
-        cancel!
-      end
-
-      # Manually publish update event since update_columns bypasses callbacks
-      publish_event('order.canceled')
+      Spree.order_cancel_service.call(order: self, canceler: user, canceled_at: canceled_at)
     end
 
-    def approved_by(user)
-      approved_at = Time.current
-      changes = { approver_id: user.id, approved_at: approved_at }
-
-      transaction do
-        approve!
-        update_columns(changes)
-      end
-
-      # Manually publish update event since update_columns bypasses callbacks
-      publish_event('order.approved')
+    # Approves the order and records the approver.
+    # Delegates to {Spree::Orders::Approve} service.
+    #
+    # @param user [Spree.user_class, nil] the user who approved the order
+    # @return [Spree::ServiceModule::Result]
+    def approved_by(user = nil)
+      Spree.order_approve_service.call(order: self, approver: user)
     end
 
     def approved?
@@ -840,11 +824,12 @@ module Spree
       publish_event('order.updated')
     end
 
+    # Approves the order without recording an approver.
+    # Delegates to {Spree::Orders::Approve} service.
+    #
+    # @return [Spree::ServiceModule::Result]
     def approve!
-      update_column(:considered_risky, false)
-
-      # Manually publish update event since update_column bypasses callbacks
-      publish_event('order.approved')
+      Spree.order_approve_service.call(order: self)
     end
 
     def tax_total

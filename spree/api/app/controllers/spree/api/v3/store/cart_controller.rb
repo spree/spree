@@ -36,10 +36,13 @@ module Spree
           def associate
             @cart = find_cart_by_token
 
-            # Associate the cart with the current user
-            @cart.associate_user!(current_user)
+            result = Spree.cart_associate_service.call(guest_order: @cart, user: current_user, guest_only: true)
 
-            render json: serialize_resource(@cart)
+            if result.success?
+              render json: serialize_resource(@cart)
+            else
+              render_service_error(result.error.to_s)
+            end
           end
 
           protected
