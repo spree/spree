@@ -55,7 +55,7 @@ This boots PostgreSQL and the backend. The API is available at `http://localhost
 To rebuild after changes:
 
 ```bash
-docker compose build backend
+docker compose build spree
 docker compose up -d
 ```
 
@@ -86,20 +86,3 @@ docker compose up -d
 | `CABLE_DATABASE_URL` | No | Action Cable database (falls back to `DATABASE_URL`) |
 | `SECRET_KEY_BASE` | Yes | Secret key for session encryption |
 
-## Running Engine Tests
-
-Each engine has its own test suite. Navigate to the `spree/` directory and install dependencies:
-
-```bash
-# Install shared dependencies (required once)
-cd spree
-bundle install
-
-# Run tests for a specific engine
-cd core
-bundle install
-bundle exec rake test_app   # generates a dummy Rails app for testing
-bundle exec rspec spec
-```
-
-Replace `core` with `api`, `admin`, or `emails` to test other engines.

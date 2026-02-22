@@ -11,7 +11,7 @@ services:
       timeout: 5s
       retries: 5
 
-  backend:
+  spree:
     build:
       context: .
       dockerfile: server/Dockerfile
