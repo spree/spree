@@ -52,7 +52,7 @@ jobs:
 
       - name: Install all project dependencies
         run: |
-          for project in core api admin emails multi_store; do
+          for project in core api admin emails; do
             echo "--- Installing gems for $project ---"
             cd backend/engines/$project
             bundle config set --local path ${{ github.workspace }}/vendor/bundle
@@ -91,7 +91,7 @@ jobs:
 
       - name: Install all project dependencies
         run: |
-          for project in core api admin emails multi_store; do
+          for project in core api admin emails; do
             echo "--- Installing gems for $project ---"
             cd backend/engines/$project
             bundle config set --local path ${{ github.workspace }}/vendor/bundle
@@ -122,8 +122,6 @@ jobs:
           - { project: admin, shard: 2, total_shards: 2 }
           # emails: 1 shard
           - { project: emails, shard: 1, total_shards: 1 }
-          # multi_store: 1 shard
-          - { project: multi_store, shard: 1, total_shards: 1 }
     services:
       postgres:
         image: postgres:16
@@ -263,8 +261,6 @@ jobs:
           - { project: admin, shard: 2, total_shards: 2 }
           # emails: 1 shard
           - { project: emails, shard: 1, total_shards: 1 }
-          # multi_store: 1 shard
-          - { project: multi_store, shard: 1, total_shards: 1 }
     services:
       mysql:
         image: mysql:8.0
