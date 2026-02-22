@@ -32,20 +32,6 @@ module Spree
       friendly_id :slug_candidates, use: [:slugged, :history], slug_column: :code, routes: :normal
     end
 
-    class_methods do
-      def current(url = nil)
-        if url.present?
-          Spree.current_store_finder.new(url: url).execute
-        else
-          Spree::Current.store
-        end
-      end
-
-      def available_locales
-        Spree::Store.all.map(&:supported_locales_list).flatten.uniq
-      end
-    end
-
     def formatted_custom_domain
       return unless default_custom_domain
 

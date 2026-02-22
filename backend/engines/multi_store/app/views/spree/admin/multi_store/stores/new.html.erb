@@ -1,4 +1,4 @@
-<%= form_for @store, url: spree.admin_stores_path, data: { turbo: false, controller: 'store-form enable-button' } do |f| %>
+<%= form_for @store, url: spree.admin_stores_path, data: { turbo: false, controller: 'enable-button' } do |f| %>
   <div class="container mx-auto px-4 pt-8">
     <h1 class="mb-6"><%= Spree.t(:new_store) %></h1>
 
@@ -48,7 +48,7 @@
           <ul class="list-none p-0">
             <li>
               <%= icon('check', class: 'text-green-700') %>
-              <%= Spree.t(:products) %>, <%= Spree.t(:stock_locations) %> & <%= Spree.t(:inventory) %><br />
+              <%= Spree.t(:products) %>, <%= Spree.t(:stock_locations) %> & <%= Spree.t(:inventory) %><br>
               <em class="ml-5 text-gray-600 text-sm">you can select which ones will be available for this store</em>
             </li>
             <li>
@@ -57,11 +57,11 @@
             </li>
             <li>
               <%= icon('check', class: 'text-green-700') %>
-              Shipping methods, rates and markets
+              <%= Spree.t(:shipping_methods) %>
             </li>
             <li>
               <%= icon('check', class: 'text-green-700') %>
-              <%= Spree.t(:payment_methods) %><br />
+              <%= Spree.t(:payment_methods) %><br>
               <em class="ml-5 text-gray-600 text-sm">you can select which ones will be available for this store</em>
             </li>
             <li>
@@ -99,6 +99,10 @@
             <li>
               <%= icon('x', class: 'text-danger') %>
               <%= Spree.t(:blogs_posts) %>
+            </li>
+            <li>
+              <%= icon('x', class: 'text-danger') %>
+              <%= Spree.t(:markets) %>
             </li>
             <li>
               <%= icon('x', class: 'text-danger') %>
