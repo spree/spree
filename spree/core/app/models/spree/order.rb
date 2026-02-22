@@ -422,22 +422,13 @@ module Spree
     end
 
     # Associates the specified user with the order.
+    # Delegates to {Spree::Cart::Associate} service.
+    #
+    # @param user [Spree.user_class] the user to associate with the order
+    # @param override_email [Boolean] whether to override the order email with the user's email
+    # @return [Spree::ServiceModule::Result]
     def associate_user!(user, override_email = true)
-      self.user           = user
-      self.email          = user.email if override_email
-      self.bill_address ||= user.bill_address
-      self.ship_address ||= user.ship_address
-
-      changes = slice(*ASSOCIATED_USER_ATTRIBUTES)
-
-      # immediately persist the changes we just made, but don't use save
-      # since we might have an invalid address associated
-      ActiveRecord::Base.connected_to(role: :writing) do
-        self.class.unscoped.where(id: self).update_all(changes)
-      end
-
-      # Manually publish update event since update_all bypasses callbacks
-      publish_event('order.updated') if changes.present?
+      Spree.cart_associate_service.call(guest_order: self, user: user, override_email: override_email)
     end
 
     def disassociate_user!
