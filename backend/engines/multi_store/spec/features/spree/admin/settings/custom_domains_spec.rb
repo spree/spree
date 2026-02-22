@@ -5,6 +5,7 @@ describe 'Custom Domains', type: :feature do
   let(:store) { Spree::Store.default }
 
   it 'can change store URL' do
+    allow(Spree).to receive(:root_domain).and_return(nil)
     visit spree.admin_custom_domains_path
 
     fill_in 'store[url]', with: 'new-url.com'
