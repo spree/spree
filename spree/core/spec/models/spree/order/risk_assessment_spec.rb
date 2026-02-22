@@ -84,11 +84,12 @@ describe Spree::Order, type: :model do
     end
 
     it 'can be approved by a user' do
-      expect(order).to receive(:approve!)
       order.approved_by(user)
+      order.reload
       expect(order.approver_id).to eq user.id
       expect(order.approved_at).to be_present
       expect(order.approved?).to be true
+      expect(order.considered_risky).to be false
     end
   end
 end

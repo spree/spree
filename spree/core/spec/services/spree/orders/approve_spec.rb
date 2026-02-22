@@ -13,6 +13,7 @@ module Spree
       it { expect(result).to be_success }
       it { expect(result.value).to eq(order) }
       it { expect { result }.to change(order, :considered_risky).to(false) }
+      it { expect { result }.to change { order.reload.approved_at }.from(nil) }
     end
 
     context 'with approver passed' do
