@@ -1,0 +1,10 @@
+<%= link_to spree.admin_user_path(item), class: 'flex items-center gap-2 no-underline', data: { turbo_frame: :_top } do %>
+  <%= render_avatar(item, width: 32, height: 32) %>
+  <div>
+    <strong><%= customer_full_name(item) || item.email %></strong>
+    <% if customer_full_name(item) %>
+      <br />
+      <span class="text-gray-600 text-sm"><%= item.email %></span>
+    <% end %>
+  </div>
+<% end %>
