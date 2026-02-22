@@ -54,24 +54,14 @@
     }
   ],
   "contextual": {
-    "options": [
-      "copy",
-      "view",
-      "chatgpt",
-      "claude",
-      "mcp",
-      "cursor",
-      "vscode"
-    ]
+    "options": ["copy", "view", "chatgpt", "claude", "mcp", "cursor", "vscode"]
   },
   "navigation": {
     "versions": [
       {
         "version": "v5",
         "default": true,
-        "pages": [
-          "index"
-        ],
+        "pages": ["index"],
         "tabs": [
           {
             "tab": "Developer Docs",
@@ -79,9 +69,7 @@
               {
                 "group": "Getting started",
                 "icon": "rocket",
-                "pages": [
-                  "developer/getting-started/quickstart"
-                ]
+                "pages": ["developer/getting-started/quickstart"]
               },
               {
                 "group": "Tutorial",
@@ -229,7 +217,6 @@
                   {
                     "group": "Upgrade Guides",
                     "pages": [
-                      "developer/upgrades/5.3-to-5.4",
                       "developer/upgrades/5.2-to-5.3",
                       "developer/upgrades/5.1-to-5.2",
                       "developer/upgrades/5.0-to-5.1",
@@ -935,9 +922,7 @@
             "groups": [
               {
                 "group": "Integrations",
-                "pages": [
-                  "integrations/integrations"
-                ]
+                "pages": ["integrations/integrations"]
               },
               {
                 "group": "Payments",
@@ -957,9 +942,7 @@
               },
               {
                 "group": "Marketing",
-                "pages": [
-                  "integrations/marketing/klaviyo"
-                ]
+                "pages": ["integrations/marketing/klaviyo"]
               },
               {
                 "group": "SSO, MFA & Social Login",
@@ -983,9 +966,7 @@
               },
               {
                 "group": "Migration",
-                "pages": [
-                  "user/migration/migrate-from-shopify"
-                ]
+                "pages": ["user/migration/migrate-from-shopify"]
               },
               {
                 "group": "Products",
@@ -1093,7 +1074,7 @@
                   "user/storefront/create-new-store"
                 ]
               },
-                {
+              {
                 "group": "Posts",
                 "pages": [
                   "user/storefront/create-post",
@@ -1102,7 +1083,7 @@
                   "user/storefront/delete-post"
                 ]
               },
-               {
+              {
                 "group": "Settings",
                 "pages": [
                   "user/settings/store-details",
@@ -1121,20 +1102,16 @@
               },
               {
                 "group": "Security",
-                "pages": [
-                  "user/security"
-                ]
+                "pages": ["user/security"]
               }
             ]
           },
           {
             "tab": "Use Cases",
             "groups": [
-               {
+              {
                 "group": "Overview",
-                "pages": [
-                  "use-case/overview"
-                ]
+                "pages": ["use-case/overview"]
               },
               {
                 "group": "B2B Commerce",
@@ -1181,7 +1158,7 @@
                   "use-case/multi-tenant/white-label-saas"
                 ]
               },
-               {
+              {
                 "group": "Multi-Vendor Marketplace",
                 "pages": [
                   "use-case/marketplace/model",
@@ -1203,9 +1180,7 @@
             "groups": [
               {
                 "group": "Getting started",
-                "pages": [
-                  "developer/getting-started/quickstart"
-                ]
+                "pages": ["developer/getting-started/quickstart"]
               },
               {
                 "group": "Core Concepts",
@@ -1301,9 +1276,7 @@
               },
               {
                 "group": "Advanced",
-                "pages": [
-                  "developer/advanced/adding_spree_to_rails_app"
-                ]
+                "pages": ["developer/advanced/adding_spree_to_rails_app"]
               }
             ]
           },
@@ -2034,25 +2007,11 @@
   },
   "api": {
     "examples": {
-      "languages": [
-        "curl",
-        "javascript",
-        "ruby",
-        "python",
-        "php",
-        "java",
-        "c#"
-      ]
+      "languages": ["curl", "javascript", "ruby", "python", "php", "java", "c#"]
     },
-    "openapi": [
-      "api-reference/storefront.yaml",
-      "api-reference/platform.yaml"
-    ],
+    "openapi": ["api-reference/storefront.yaml", "api-reference/platform.yaml"],
     "mdx": {
-      "server": [
-        "http://localhost:3000",
-        "https://demo.spreecommerce.org"
-      ]
+      "server": ["http://localhost:3000", "https://demo.spreecommerce.org"]
     }
   },
   "navbar": {

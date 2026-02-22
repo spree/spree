@@ -9,6 +9,14 @@ description: This guide covers upgrading a Spree 5.3 application to Spree 5.4.
 
 ## Upgrade steps
 
+### Remove `spree_sample` gem from your Gemfile
+
+Samples are now included in the `spree` gem. If you've added previously `spree_sample` to your Gemfile, remove it by running:
+
+  ```bash
+  bundle remove spree_sample
+  ```
+
 ### Update gems
 
   ```bash
@@ -157,3 +165,13 @@ Also, add `jsonapi-rspec` gem to your `Gemfile`:
   ```
   
 And run `bundle install`
+
+### (Optional) Install Spree Multi Store
+
+Multi-store features like multiple store management & custom domains were moved to a seperate gem `spree_multi_store`.
+
+If you rely on these features please run:
+
+  ```bash
+  bundle add spree_multi_store
+  ```
