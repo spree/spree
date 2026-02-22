@@ -18,8 +18,8 @@ pgsql
 db/*.sql
 db/*.sqlite3*
 doc/**/*
-backend/engines/Gemfile.lock
-backend/engines/*/Gemfile.lock
+spree/Gemfile.lock
+spree/*/Gemfile.lock
 log/*.log
 pkg
 public/assets
@@ -27,7 +27,6 @@ public/attachments
 public/blank_iframe.html
 public/ckeditora
 sandbox/*
-spree/*
 spree_dev
 spree_test
 testapp
@@ -49,7 +48,7 @@ test_app
 .ruby-gemset
 **/.bundle
 **/vendor/bundle
-backend/db/migrate
+server/db/migrate
 .ignore
 TODO
 brakeman-*.*

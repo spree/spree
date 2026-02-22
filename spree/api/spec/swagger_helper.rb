@@ -8,7 +8,7 @@ require 'spree/api/openapi/schema_helper'
 
 RSpec.configure do |config|
   # Output to the main spree docs directory at /docs/api-reference/
-  config.openapi_root = Rails.root.join('../../../../../docs').to_s
+  config.openapi_root = Rails.root.join('../../../../docs').to_s
 
   config.openapi_specs = {
     # Store API v3 - Customer-facing storefront API

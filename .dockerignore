@@ -1,0 +1,36 @@
+# See https://docs.docker.com/engine/reference/builder/#dockerignore-file
+
+# Ignore git directory
+.git/
+.gitignore
+
+# Ignore node/TS packages (not needed for server build)
+node_modules/
+packages/
+pnpm-lock.yaml
+pnpm-workspace.yaml
+turbo.json
+package.json
+
+# Ignore docs
+docs/
+
+# Ignore server-specific dev files
+server/.bundle
+server/.env*
+server/config/master.key
+server/config/credentials/*.key
+server/log/*
+server/tmp/*
+server/storage/*
+server/tmp/storage/*
+server/node_modules/
+server/app/assets/builds/*
+server/public/assets
+server/.devcontainer
+server/.dockerignore
+server/Dockerfile*
+
+# Ignore spec/test artifacts in gems
+spree/*/spec/dummy
+spree/**/coverage

@@ -56,9 +56,9 @@ group :development do
   gem "web-console"
 end
 gem "devise"
-gem "spree", path: "engines"
-gem "spree_emails", path: "engines/emails"
-gem "spree_admin", path: "engines/admin"
+gem "spree", path: "../spree"
+gem "spree_emails", path: "../spree/emails"
+gem "spree_admin", path: "../spree/admin"
 gem "spree_stripe", github: "spree/spree_stripe"
 gem "spree_i18n"
 
