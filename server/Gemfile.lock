@@ -9,7 +9,7 @@ GIT
       stripe_event (~> 2.14)
 
 PATH
-  remote: engines/admin
+  remote: ../spree/admin
   specs:
     spree_admin (5.4.0.alpha)
       active_link_to
@@ -30,13 +30,13 @@ PATH
       turbo-rails
 
 PATH
-  remote: engines/emails
+  remote: ../spree/emails
   specs:
     spree_emails (5.4.0.alpha)
       spree (>= 5.4.0.alpha)
 
 PATH
-  remote: engines
+  remote: ../spree
   specs:
     spree (5.4.0.alpha)
       spree_api (= 5.4.0.alpha)

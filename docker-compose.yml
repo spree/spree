@@ -11,9 +11,10 @@ services:
       timeout: 5s
       retries: 5
 
-  backend:
+  spree:
     build:
-      context: ./backend
+      context: .
+      dockerfile: server/Dockerfile
     depends_on:
       postgres:
         condition: service_healthy

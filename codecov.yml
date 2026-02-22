@@ -25,23 +25,19 @@ comment:
 flags:
   core:
     paths:
-      - backend/engines/core/
+      - spree/core/
     carryforward: true
   api:
     paths:
-      - backend/engines/api/
+      - spree/api/
     carryforward: true
   admin:
     paths:
-      - backend/engines/admin/
+      - spree/admin/
     carryforward: true
   emails:
     paths:
-      - backend/engines/emails/
-    carryforward: true
-  multi_store:
-    paths:
-      - backend/engines/multi_store/
+      - spree/emails/
     carryforward: true
 
 component_management:
@@ -49,28 +45,23 @@ component_management:
     - component_id: core
       name: Core
       paths:
-        - backend/engines/core/app/**
-        - backend/engines/core/lib/**
+        - spree/core/app/**
+        - spree/core/lib/**
     - component_id: api
       name: API
       paths:
-        - backend/engines/api/app/**
-        - backend/engines/api/lib/**
+        - spree/api/app/**
+        - spree/api/lib/**
     - component_id: admin
       name: Admin
       paths:
-        - backend/engines/admin/app/**
-        - backend/engines/admin/lib/**
+        - spree/admin/app/**
+        - spree/admin/lib/**
     - component_id: emails
       name: Emails
       paths:
-        - backend/engines/emails/app/**
-        - backend/engines/emails/lib/**
-    - component_id: multi_store
-      name: Multi Store
-      paths:
-        - backend/engines/multi_store/app/**
-        - backend/engines/multi_store/lib/**
+        - spree/emails/app/**
+        - spree/emails/lib/**
 
 ignore:
   - "docs/**"

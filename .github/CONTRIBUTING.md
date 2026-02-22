@@ -45,16 +45,17 @@ git clone --filter=blob:none https://github.com/spree/spree.git
 
 ### Spree codebase
 
-Spree is a monorepo with two main areas:
+Spree is a monorepo with three main areas:
 
-- **`backend/`** — A Rails application that mounts the Spree engines and serves the API and admin interface
-- **`packages/`** — TypeScript packages (SDK, Next.js helpers, CLI)
+- **`spree/`** — Ruby gems (core, api, admin, emails) distributed as separate packages via RubyGems
+- **`packages/`** — TypeScript packages (SDK, Next.js helpers)
+- **`server/`** — A Rails application that mounts the Spree gems and serves the API and admin interface
 
 ## Backend Development (Ruby)
 
 ### Engines overview
 
-The Spree [Rails engines](https://guides.rubyonrails.org/engines.html) live inside `backend/engines/` and are distributed as separate gems (Ruby packages installed via Bundler):
+The Spree [Rails engines](https://guides.rubyonrails.org/engines.html) live inside `spree/` and are distributed as separate gems (Ruby packages installed via Bundler):
 
 | Engine | Gem | Description |
 |---|---|---|
@@ -65,12 +66,12 @@ The Spree [Rails engines](https://guides.rubyonrails.org/engines.html) live insi
 
 ### Spree namespace
 
-All Spree models, controllers and other Ruby classes are namespaced by the `Spree` keyword, eg. `Spree::Product`. This means that those files are also located in `spree` sub-directories eg. [app/models/spree/product.rb](https://github.com/spree/spree/blob/main/backend/engines/core/app/models/spree/product.rb).
+All Spree models, controllers and other Ruby classes are namespaced by the `Spree` keyword, eg. `Spree::Product`. This means that those files are also located in `spree` sub-directories eg. [app/models/spree/product.rb](https://github.com/spree/spree/blob/main/spree/core/app/models/spree/product.rb).
 
 ### Setup
 
 ```bash
-cd backend
+cd server
 bin/setup
 bin/rails server
 ```
@@ -95,11 +96,11 @@ The app runs at [http://localhost:3000](http://localhost:3000). Admin Panel is a
 
 ### Running engine tests
 
-Each engine has its own test suite. First install the shared dependencies at the `backend/engines/` level, then navigate into the specific engine to set up and run its tests:
+Each engine has its own test suite. First install the shared dependencies at the `spree/` level, then navigate into the specific engine to set up and run its tests:
 
 ```bash
 # 1. Install shared dependencies
-cd backend/engines
+cd spree
 bundle install
 
 # 2. Set up and run tests for a specific engine (e.g. core)
@@ -120,14 +121,14 @@ DB=postgres DB_USERNAME=postgres DB_PASSWORD=password DB_HOST=localhost bundle e
 Run a single spec file:
 
 ```bash
-cd backend/engines/core
+cd spree/core
 bundle exec rspec spec/models/spree/state_spec.rb
 ```
 
 Run a specific test by line number:
 
 ```bash
-cd backend/engines/core
+cd spree/core
 bundle exec rspec spec/models/spree/state_spec.rb:7
 ```
 
@@ -138,7 +139,7 @@ For faster test runs on multi-core machines, you can use the `parallel_tests` ge
 After setting up the test app, create databases for parallel workers:
 
 ```bash
-cd backend/engines/core
+cd spree/core
 bundle exec rake parallel_setup
 ```
 
@@ -174,7 +175,7 @@ You may notice that your Spree store runs slower in development environment. Thi
 Caching is disabled by default. To turn on caching please run:
 
 ```bash
-cd backend
+cd server
 bin/rails dev:cache
 ```
 
@@ -236,7 +237,7 @@ Tests use [Vitest](https://vitest.dev/) with [MSW](https://mswjs.io/) for API mo
 TypeScript types in `packages/sdk/src/types/generated/` are auto-generated from the Rails API serializers using [typelizer](https://github.com/skryukov/typelizer). To regenerate after changing serializers:
 
 ```bash
-cd backend/engines/api
+cd spree/api
 mise install --yes # to install Ruby if you don't have it already
 bundle install # to install dependencies
 bundle exec rake typelizer:generate
@@ -262,10 +263,10 @@ This creates a changeset file describing your changes. Commit it with your PR. W
 
 Consistent code style is enforced via automated linters. Please make sure your changes pass linting before submitting a PR.
 
-**Ruby:** We use [RuboCop](https://rubocop.org/) for Ruby code. Configuration lives in `backend/.rubocop.yml`. Run it from the `backend/` directory:
+**Ruby:** We use [RuboCop](https://rubocop.org/) for Ruby code. Configuration lives in `server/.rubocop.yml`. Run it from the `server/` directory:
 
 ```bash
-cd backend
+cd server
 bundle exec rubocop
 ```
 

@@ -81,7 +81,7 @@ RAILS_VERSION="${RAILS_VERSION:-8.1.2}"
 APP_NAME=""
 LOAD_SAMPLE_DATA="false"
 STOREFRONT_TYPE=""
-TEMPLATE_URL="https://raw.githubusercontent.com/spree/spree/main/backend/template.rb"
+TEMPLATE_URL="https://raw.githubusercontent.com/spree/spree/main/spree/template.rb"
 VERBOSE=false
 USE_LOCAL_SPREE=false
 AUTO_ACCEPT=false
@@ -880,8 +880,8 @@ create_rails_app() {
     fi
 
     # Use local template if available, otherwise use remote URL
-    if [ -f "backend/template.rb" ]; then
-        TEMPLATE_FILE="backend/template.rb"
+    if [ -f "spree/template.rb" ]; then
+        TEMPLATE_FILE="spree/template.rb"
     else
         TEMPLATE_FILE="$TEMPLATE_URL"
     fi

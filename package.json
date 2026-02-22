@@ -9,13 +9,13 @@
     "lint": "turbo lint",
     "typecheck": "turbo typecheck",
     "clean": "turbo clean",
-    "backend:build": "docker compose build backend",
-    "backend:up": "docker compose up -d",
-    "backend:down": "docker compose down",
-    "backend:logs": "docker compose logs -f backend",
-    "backend:seed": "docker compose exec backend bin/rails db:seed",
-    "backend:load_sample_data": "docker compose exec backend bin/rails spree:load_sample_data",
-    "backend:console": "docker compose exec backend bin/rails c"
+    "server:build": "docker compose build spree",
+    "server:up": "docker compose up -d",
+    "server:down": "docker compose down",
+    "server:logs": "docker compose logs -f spree",
+    "server:seed": "docker compose exec spree bin/rails db:seed",
+    "server:load_sample_data": "docker compose exec spree bin/rails spree:load_sample_data",
+    "server:console": "docker compose exec spree bin/rails c"
   },
   "devDependencies": {
     "turbo": "^2.5.0"

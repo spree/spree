@@ -1,21 +1,15 @@
-# Spree Backend
+# Spree Server
 
-A Rails application that serves as the Spree Commerce backend. It mounts the Spree engines (core, api, admin, emails) from the `engines/` directory and provides the API and admin interface.
+A Rails application that mounts the Spree gems (core, api, admin, emails) from the `spree/` directory and serves the API and admin interface.
 
 ## Structure
 
 ```
-backend/
-├── Gemfile              # References engines via path
+server/
+├── Gemfile              # References gems via path: ../spree
 ├── Dockerfile           # Multi-stage build for Docker
 ├── config/
-├── db/
-└── engines/
-    ├── core/            # spree_core - models, services, business logic
-    ├── api/             # spree_api - REST APIs and Webhooks
-    ├── admin/           # spree_admin - admin dashboard
-    ├── emails/          # spree_emails - transactional emails
-    └── multi_store/     # spree_multi_store - multi-store setup, the only one licensed under AGPLv3, obtain a commercial license for production use at https://spreecommerce.org/enterprise/, not included by default
+└── db/
 ```
 
 ## Setup
@@ -31,7 +25,7 @@ docker run -d --name spree-postgres -p 5432:5432 -e POSTGRES_HOST_AUTH_METHOD=tr
 Then run the setup script:
 
 ```bash
-cd backend
+cd server
 bin/setup
 bin/rails server
 ```
@@ -61,7 +55,7 @@ This boots PostgreSQL and the backend. The API is available at `http://localhost
 To rebuild after changes:
 
 ```bash
-docker compose build backend
+docker compose build spree
 docker compose up -d
 ```
 
@@ -92,20 +86,3 @@ docker compose up -d
 | `CABLE_DATABASE_URL` | No | Action Cable database (falls back to `DATABASE_URL`) |
 | `SECRET_KEY_BASE` | Yes | Secret key for session encryption |
 
-## Running Engine Tests
-
-Each engine has its own test suite. You must first install the engines root bundle, then the engine-specific one:
-
-```bash
-# Install shared dependencies (required once)
-cd backend/engines
-bundle install
-
-# Run tests for a specific engine
-cd core
-bundle install
-bundle exec rake test_app   # generates a dummy Rails app for testing
-bundle exec rspec spec
-```
-
-Replace `core` with `api`, `admin`, `emails`, or `multi_store` to test other engines.

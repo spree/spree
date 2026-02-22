@@ -289,7 +289,7 @@ To generate the OpenAPI specification, run the following command:
 bundle exec rake rswag:specs:swaggerize
 ```
 
-It will use Rspec integration tests from `backend/engines/api/spec/integration`.
+It will use Rspec integration tests from `spree/api/spec/integration`.
 
 ## Events System
 
