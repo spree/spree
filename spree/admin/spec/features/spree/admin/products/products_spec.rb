@@ -211,7 +211,12 @@ describe 'Products', type: :feature do
       context 'with non-English locale using comma as decimal separator', js: true do
         before do
           I18n.backend.store_translations(:de, number: { currency: { format: { separator: ',', delimiter: '.' } } })
-          allow(store).to receive(:default_locale).and_return('de')
+          @original_locale = I18n.locale
+          I18n.locale = :de
+        end
+
+        after do
+          I18n.locale = @original_locale
         end
 
         it 'correctly saves price without multiplying by 100' do
@@ -222,6 +227,28 @@ describe 'Products', type: :feature do
 
           expect(page).to have_content('successfully updated')
           expect(product.reload.price_in('USD').amount).to eq(123.0)
+        end
+
+        it 'correctly saves variant prices without multiplying by 100' do
+          visit spree.edit_admin_product_path(product)
+
+          # Add option - Color
+          find('[data-variants-form-target="newOptionButtonLabel"]').click
+          tom_select('Color', from: 'Option name', create: true)
+          select_option_value('Black', index: 0, create: true)
+          find('button', text: 'Done').click
+
+          within('[data-test-id="product-variants-table"]') do
+            within('[data-variant-name="Black"]') do
+              within('.column-price') { find('input').set('29,99') }
+            end
+          end
+
+          within('#page-header') { click_button 'Update' }
+          expect(page).to have_content('successfully updated')
+
+          variant = product.reload.variants.first
+          expect(variant.price_in('USD').amount).to eq(29.99)
         end
       end
 
