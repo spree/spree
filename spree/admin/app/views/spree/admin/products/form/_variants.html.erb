@@ -5,21 +5,11 @@
     </div>
     <% option_types_for_select = @option_types.map { |ot| [ot.presentation, ot.prefixed_id] } %>
     <div class="card-body p-0">
-      <%# Build currency format info for JavaScript %>
-      <% currency_formats = supported_currencies.each_with_object({}) do |currency, hash|
-           currency_obj = ::Money::Currency.find(currency)
-           hash[currency.to_s] = {
-             decimal_mark: currency_obj.decimal_mark,
-             thousands_separator: currency_obj.thousands_separator,
-             symbol: currency_obj.symbol
-           }
-         end %>
       <div
         data-controller="variants-form"
         class="variants-form"
         data-action="product-form:toggle-quantity-tracked@window->variants-form#toggleQuantityTracked"
         data-variants-form-locale-value="<%= I18n.locale %>"
-        data-variants-form-currency-formats-value="<%= currency_formats.to_json %>"
         <% if @product.persisted? %> data-variants-form-product-id-value="<%= @product.slug %>" <% end %>
         data-variants-form-current-currency-value="<%= current_currency %>"
         data-variants-form-currencies-value="<%= supported_currencies.map(&:to_s).to_json %>"

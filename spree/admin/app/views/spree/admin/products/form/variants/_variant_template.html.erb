@@ -18,7 +18,7 @@
     <div class="variants-table__body__cell column-price mr-2">
       <% supported_currencies.each_with_index do |currency, i| %>
         <div class="input-group price-input-container <%= current_currency != currency ? 'hidden' : 'flex' %>" <%= !can_manage_prices ? 'readonly' : '' %>>
-          <%= text_field_tag "product[variants_attributes][prices_attributes][#{i}][amount]", '',  class: 'border-0 focus:ring-0 focus:outline-none', data: { slot: "[prices_attributes][#{currency}][amount]_input", action: 'variants-form#updatePrice', currency: currency.to_s }, readonly: !can_manage_prices %>
+          <%= text_field_tag "product[variants_attributes][prices_attributes][#{i}][amount]", '',  class: 'border-0 focus:ring-0 focus:outline-none', data: { slot: "[prices_attributes][#{currency}][amount]_input", action: 'variants-form#updatePrice blur->variants-form#formatPrice', currency: currency.to_s }, readonly: !can_manage_prices %>
           <span class="px-3"><%= currency_symbol(currency) %></span>
         </div>
         <%= hidden_field_tag "product[variants_attributes][prices_attributes][#{i}][currency]", currency, data: {slot: "[prices_attributes][#{currency}][currency]_input"} %>
