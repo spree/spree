@@ -180,8 +180,8 @@ All columns support the following options:
   Options for select/status filters. Array of hashes with `value` and `label` keys.
 </ParamField>
 
-<ParamField path="search_url" type="String">
-  URL for autocomplete filter type.
+<ParamField path="search_url" type="String | Lambda">
+  URL for autocomplete filter type. Use a Lambda for dynamic paths: `search_url: ->(view_context) { view_context.spree.admin_taxons_select_options_path(format: :json) }`.
 </ParamField>
 
 ### Custom Sort Options
@@ -301,7 +301,7 @@ Spree.admin.tables.products.add :taxons,
   default: false,
   ransack_attribute: 'taxons_id',
   operators: [:in],
-  search_url: '/admin/taxons/select_options.json',
+  search_url: ->(view_context) { view_context.spree.admin_taxons_select_options_path(format: :json) },
   method: ->(product) { product.taxons.map(&:pretty_name).join(', ') }
 ```
 
@@ -412,7 +412,7 @@ Rails.application.config.after_initialize do
   Spree.admin.tables.products.add_bulk_action :set_active,
     label: 'admin.bulk_ops.products.title.set_active',
     icon: 'circle-check',
-    action_path: '/admin/products/bulk_status_update?status=active',
+    action_path: ->(view_context) { view_context.spree.bulk_status_update_admin_products_path(status: 'active') },
     body: 'admin.bulk_ops.products.body.set_active',
     position: 10,
     if: -> { can?(:activate, Spree::Product) }

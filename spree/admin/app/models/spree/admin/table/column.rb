@@ -42,7 +42,7 @@ module Spree
         attribute :ransack_attribute, :string
         attribute :operators, default: -> { [] }
         attribute :value_options
-        attribute :search_url, :string
+        attribute :search_url
         attribute :sort_scope_asc
         attribute :sort_scope_desc
 

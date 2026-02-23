@@ -43,6 +43,14 @@ RSpec.describe Spree::Admin::Table::BulkAction do
       action = described_class.new(key: :delete, if: condition)
       expect(action.condition).to eq(condition)
     end
+
+    it 'accepts a lambda for action_path' do
+      path_lambda = ->(view_context) { '/resolved/path' }
+      action = described_class.new(key: :activate, action_path: path_lambda)
+
+      expect(action.action_path).to eq(path_lambda)
+      expect(action.action_path.call(nil)).to eq('/resolved/path')
+    end
   end
 
   describe 'validations' do
