@@ -21,6 +21,12 @@ RSpec.describe 'Payments API', type: :request, swagger_doc: 'api-reference/store
       security [api_key: [], bearer_auth: []]
       description 'Returns a list of payments for the specified order'
 
+      sdk_example <<~JS
+        const payments = await client.store.orders.payments.list('or_abc123', {
+          bearerToken: '<token>',
+        })
+      JS
+
       response '200', 'payments found' do
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
@@ -63,6 +69,12 @@ RSpec.describe 'Payments API', type: :request, swagger_doc: 'api-reference/store
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns a single payment by ID'
+
+      sdk_example <<~JS
+        const payment = await client.store.orders.payments.get('or_abc123', 'pay_abc123', {
+          bearerToken: '<token>',
+        })
+      JS
 
       response '200', 'payment found' do
         let(:'x-spree-api-key') { api_key.token }

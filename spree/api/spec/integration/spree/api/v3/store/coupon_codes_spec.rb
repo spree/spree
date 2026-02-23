@@ -18,6 +18,12 @@ RSpec.describe 'Coupon Codes API', type: :request, swagger_doc: 'api-reference/s
         The code is matched case-insensitively.
       DESC
 
+      sdk_example <<~JS
+        const order = await client.store.orders.couponCodes.apply('or_abc123', 'SAVE10', {
+          bearerToken: '<token>',
+        })
+      JS
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false,
                 description: 'Bearer token for authenticated customers'
@@ -96,6 +102,12 @@ RSpec.describe 'Coupon Codes API', type: :request, swagger_doc: 'api-reference/s
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Removes a previously applied coupon code from the order.'
+
+      sdk_example <<~JS
+        const order = await client.store.orders.couponCodes.remove('or_abc123', 'op_abc123', {
+          bearerToken: '<token>',
+        })
+      JS
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false,

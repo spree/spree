@@ -14,6 +14,12 @@ RSpec.describe 'Credit Cards API', type: :request, swagger_doc: 'api-reference/s
       security [api_key: [], bearer_auth: []]
       description 'Returns all saved credit cards for the authenticated customer'
 
+      sdk_example <<~JS
+        const cards = await client.store.customer.creditCards.list({}, {
+          bearerToken: '<token>',
+        })
+      JS
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false
@@ -54,6 +60,12 @@ RSpec.describe 'Credit Cards API', type: :request, swagger_doc: 'api-reference/s
       security [api_key: [], bearer_auth: []]
       description 'Returns a saved credit card by its ID'
 
+      sdk_example <<~JS
+        const card = await client.store.customer.creditCards.get('cc_abc123', {
+          bearerToken: '<token>',
+        })
+      JS
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true
@@ -84,6 +96,12 @@ RSpec.describe 'Credit Cards API', type: :request, swagger_doc: 'api-reference/s
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Removes a saved credit card from the customer account'
+
+      sdk_example <<~JS
+        await client.store.customer.creditCards.delete('cc_abc123', {
+          bearerToken: '<token>',
+        })
+      JS
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true

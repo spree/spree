@@ -20,6 +20,10 @@ RSpec.describe 'Countries API', type: :request, swagger_doc: 'api-reference/stor
       security [api_key: []]
       description 'Returns countries available in the store with their currency and locale (derived from markets)'
 
+      sdk_example <<~JS
+        const countries = await client.store.countries.list()
+      JS
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
 
       response '200', 'countries found' do
@@ -69,6 +73,10 @@ RSpec.describe 'Countries API', type: :request, swagger_doc: 'api-reference/stor
       produces 'application/json'
       security [api_key: []]
       description 'Returns a single country by ISO code with currency and locale. Supports ?include=states for address forms.'
+
+      sdk_example <<~JS
+        const country = await client.store.countries.get('US')
+      JS
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :iso, in: :path, type: :string, required: true,

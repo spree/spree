@@ -12,6 +12,10 @@ RSpec.describe 'Store API', type: :request, swagger_doc: 'api-reference/store.ya
       security [api_key: []]
       description 'Returns information about the current store based on the API key'
 
+      sdk_example <<~JS
+        const store = await client.store.store.get()
+      JS
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
 
       response '200', 'store found' do

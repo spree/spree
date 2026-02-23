@@ -15,6 +15,12 @@ RSpec.describe 'Shipments API', type: :request, swagger_doc: 'api-reference/stor
       security [api_key: [], bearer_auth: []]
       description 'Returns all shipments associated with the order'
 
+      sdk_example <<~JS
+        const shipments = await client.store.orders.shipments.list('or_abc123', {
+          bearerToken: '<token>',
+        })
+      JS
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false
       parameter name: :order_id, in: :path, type: :string, required: true
@@ -99,6 +105,14 @@ RSpec.describe 'Shipments API', type: :request, swagger_doc: 'api-reference/stor
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Selects a shipping rate for the shipment'
+
+      sdk_example <<~JS
+        const order = await client.store.orders.shipments.update('or_abc123', 'shp_abc123', {
+          selected_shipping_rate_id: 'shprt_abc123',
+        }, {
+          bearerToken: '<token>',
+        })
+      JS
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false
