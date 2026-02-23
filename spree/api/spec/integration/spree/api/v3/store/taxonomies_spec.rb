@@ -17,6 +17,13 @@ RSpec.describe 'Taxonomies API', type: :request, swagger_doc: 'api-reference/sto
       security [api_key: []]
       description 'Returns a list of taxonomies (category hierarchies) for the current store'
 
+      sdk_example <<~JS
+        const taxonomies = await client.store.taxonomies.list({
+          page: 1,
+          per_page: 25,
+        })
+      JS
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false
       parameter name: :per_page, in: :query, type: :integer, required: false
@@ -54,6 +61,12 @@ RSpec.describe 'Taxonomies API', type: :request, swagger_doc: 'api-reference/sto
       produces 'application/json'
       security [api_key: []]
       description 'Returns a single taxonomy with its taxon tree'
+
+      sdk_example <<~JS
+        const taxonomy = await client.store.taxonomies.get('taxonomy_abc123', {
+          includes: 'taxons',
+        })
+      JS
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true,

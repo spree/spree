@@ -15,6 +15,15 @@ RSpec.describe 'Customer Orders API', type: :request, swagger_doc: 'api-referenc
       security [api_key: [], bearer_auth: []]
       description 'Returns a paginated list of orders for the authenticated customer'
 
+      sdk_example <<~JS
+        const orders = await client.store.customer.orders.list({
+          page: 1,
+          per_page: 25,
+        }, {
+          bearerToken: '<token>',
+        })
+      JS
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false

@@ -12,6 +12,12 @@ RSpec.describe 'Customers API', type: :request, swagger_doc: 'api-reference/stor
       security [api_key: [], bearer_auth: []]
       description 'Returns the profile of the currently authenticated customer'
 
+      sdk_example <<~JS
+        const customer = await client.store.customer.get({
+          bearerToken: '<token>',
+        })
+      JS
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true,
                 description: 'Bearer JWT token'
@@ -53,6 +59,15 @@ RSpec.describe 'Customers API', type: :request, swagger_doc: 'api-reference/stor
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Updates the profile of the currently authenticated customer'
+
+      sdk_example <<~JS
+        const customer = await client.store.customer.update({
+          first_name: 'John',
+          last_name: 'Doe',
+        }, {
+          bearerToken: '<token>',
+        })
+      JS
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true

@@ -24,6 +24,14 @@ RSpec.describe 'Payment Sessions API', type: :request, swagger_doc: 'api-referen
       security [api_key: [], bearer_auth: []]
       description 'Creates a new payment session for the specified order. Delegates to the payment gateway to initialize a provider-specific session (e.g. Stripe PaymentIntent, Adyen session, PayPal order).'
 
+      sdk_example <<~JS
+        const session = await client.store.orders.paymentSessions.create('or_abc123', {
+          payment_method_id: 'pm_abc123',
+        }, {
+          bearerToken: '<token>',
+        })
+      JS
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false,
                 description: 'Bearer token for authenticated customers'
@@ -84,6 +92,12 @@ RSpec.describe 'Payment Sessions API', type: :request, swagger_doc: 'api-referen
       security [api_key: [], bearer_auth: []]
       description 'Returns a single payment session with its current status and provider data.'
 
+      sdk_example <<~JS
+        const session = await client.store.orders.paymentSessions.get('or_abc123', 'ps_abc123', {
+          bearerToken: '<token>',
+        })
+      JS
+
       response '200', 'payment session found' do
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
@@ -114,6 +128,14 @@ RSpec.describe 'Payment Sessions API', type: :request, swagger_doc: 'api-referen
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Updates a payment session. Delegates to the payment gateway to sync changes with the provider.'
+
+      sdk_example <<~JS
+        const session = await client.store.orders.paymentSessions.update('or_abc123', 'ps_abc123', {
+          amount: '50.00',
+        }, {
+          bearerToken: '<token>',
+        })
+      JS
 
       parameter name: :body, in: :body, schema: {
         type: :object,
@@ -156,6 +178,14 @@ RSpec.describe 'Payment Sessions API', type: :request, swagger_doc: 'api-referen
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Completes a payment session by confirming the payment with the provider. This triggers payment capture/authorization and order completion.'
+
+      sdk_example <<~JS
+        const session = await client.store.orders.paymentSessions.complete('or_abc123', 'ps_abc123', {
+          session_result: 'success',
+        }, {
+          bearerToken: '<token>',
+        })
+      JS
 
       parameter name: :body, in: :body, schema: {
         type: :object,

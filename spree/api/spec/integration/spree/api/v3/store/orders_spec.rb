@@ -15,6 +15,14 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
       security [api_key: [], bearer_auth: []]
       description 'Returns a single order by ID or number. Guests must provide order_token.'
 
+      sdk_example <<~JS
+        const order = await client.store.orders.get('or_abc123', {
+          includes: 'line_items,shipments',
+        }, {
+          bearerToken: '<token>',
+        })
+      JS
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false
       parameter name: :id, in: :path, type: :string, required: true,
@@ -77,6 +85,24 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Updates order attributes like email, special instructions, or addresses'
+
+      sdk_example <<~JS
+        const order = await client.store.orders.update('or_abc123', {
+          email: 'customer@example.com',
+          special_instructions: 'Leave at door',
+          bill_address: {
+            firstname: 'John',
+            lastname: 'Doe',
+            address1: '123 Main St',
+            city: 'New York',
+            zipcode: '10001',
+            country_iso: 'US',
+            state_abbr: 'NY',
+          },
+        }, {
+          bearerToken: '<token>',
+        })
+      JS
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false
@@ -155,6 +181,12 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
       security [api_key: [], bearer_auth: []]
       description 'Advances the order to the next state in the checkout flow'
 
+      sdk_example <<~JS
+        const order = await client.store.orders.next('or_abc123', {
+          bearerToken: '<token>',
+        })
+      JS
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false
       parameter name: :id, in: :path, type: :string, required: true
@@ -191,6 +223,12 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
       security [api_key: [], bearer_auth: []]
       description 'Advances the order through all possible checkout states'
 
+      sdk_example <<~JS
+        const order = await client.store.orders.advance('or_abc123', {
+          bearerToken: '<token>',
+        })
+      JS
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false
       parameter name: :id, in: :path, type: :string, required: true
@@ -215,6 +253,12 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Completes the order (finalizes the purchase)'
+
+      sdk_example <<~JS
+        const order = await client.store.orders.complete('or_abc123', {
+          bearerToken: '<token>',
+        })
+      JS
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false

@@ -17,6 +17,12 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
       security [api_key: [], bearer_auth: []]
       description 'Returns all wishlists for the authenticated customer'
 
+      sdk_example <<~JS
+        const wishlists = await client.store.wishlists.list({}, {
+          bearerToken: '<token>',
+        })
+      JS
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false
@@ -54,6 +60,15 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Creates a new wishlist for the customer'
+
+      sdk_example <<~JS
+        const wishlist = await client.store.wishlists.create({
+          name: 'Birthday Ideas',
+          is_private: true,
+        }, {
+          bearerToken: '<token>',
+        })
+      JS
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
@@ -99,6 +114,14 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
 
+      sdk_example <<~JS
+        const wishlist = await client.store.wishlists.get('wl_abc123', {
+          includes: 'wished_items',
+        }, {
+          bearerToken: '<token>',
+        })
+      JS
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true
@@ -132,6 +155,14 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
 
+      sdk_example <<~JS
+        const wishlist = await client.store.wishlists.update('wl_abc123', {
+          name: 'Updated Name',
+        }, {
+          bearerToken: '<token>',
+        })
+      JS
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true
@@ -163,6 +194,12 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
       tags 'Wishlists'
       security [api_key: [], bearer_auth: []]
 
+      sdk_example <<~JS
+        await client.store.wishlists.delete('wl_abc123', {
+          bearerToken: '<token>',
+        })
+      JS
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true
@@ -184,6 +221,15 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Adds a variant to the wishlist'
+
+      sdk_example <<~JS
+        const item = await client.store.wishlists.items.create('wl_abc123', {
+          variant_id: 'variant_abc123',
+          quantity: 1,
+        }, {
+          bearerToken: '<token>',
+        })
+      JS
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
@@ -216,6 +262,12 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
     delete 'Remove item from wishlist' do
       tags 'Wishlists'
       security [api_key: [], bearer_auth: []]
+
+      sdk_example <<~JS
+        await client.store.wishlists.items.delete('wl_abc123', 'wi_abc123', {
+          bearerToken: '<token>',
+        })
+      JS
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true

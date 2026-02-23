@@ -17,6 +17,12 @@ RSpec.describe 'Payment Methods API', type: :request, swagger_doc: 'api-referenc
       security [api_key: [], bearer_auth: []]
       description 'Returns payment methods available for the order based on store configuration and order state'
 
+      sdk_example <<~JS
+        const methods = await client.store.orders.paymentMethods.list('or_abc123', {
+          bearerToken: '<token>',
+        })
+      JS
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false
       parameter name: :order_id, in: :path, type: :string, required: true

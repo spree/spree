@@ -14,6 +14,12 @@ RSpec.describe 'Gift Cards API', type: :request, swagger_doc: 'api-reference/sto
       security [api_key: [], bearer_auth: []]
       description 'Returns all gift cards for the authenticated customer'
 
+      sdk_example <<~JS
+        const giftCards = await client.store.customer.giftCards.list({}, {
+          bearerToken: '<token>',
+        })
+      JS
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false
@@ -53,6 +59,12 @@ RSpec.describe 'Gift Cards API', type: :request, swagger_doc: 'api-reference/sto
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Returns a gift card by its ID'
+
+      sdk_example <<~JS
+        const giftCard = await client.store.customer.giftCards.get('gc_abc123', {
+          bearerToken: '<token>',
+        })
+      JS
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true

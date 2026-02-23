@@ -15,6 +15,13 @@ RSpec.describe 'Authentication API', type: :request, swagger_doc: 'api-reference
       security [api_key: []]
       description 'Authenticates a customer with email/password and returns a JWT token'
 
+      sdk_example <<~JS
+        const auth = await client.store.auth.login({
+          email: 'customer@example.com',
+          password: 'password123',
+        })
+      JS
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :body, in: :body, schema: {
         type: :object,
@@ -76,6 +83,15 @@ RSpec.describe 'Authentication API', type: :request, swagger_doc: 'api-reference
       produces 'application/json'
       security [api_key: []]
       description 'Creates a new customer account and returns a JWT token'
+
+      sdk_example <<~JS
+        const auth = await client.store.auth.register({
+          email: 'newuser@example.com',
+          password: 'password123',
+          first_name: 'John',
+          last_name: 'Doe',
+        })
+      JS
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :body, in: :body, schema: {
@@ -140,6 +156,12 @@ RSpec.describe 'Authentication API', type: :request, swagger_doc: 'api-reference
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Generates a new JWT token for the authenticated user'
+
+      sdk_example <<~JS
+        const auth = await client.store.auth.refresh({
+          bearerToken: '<token>',
+        })
+      JS
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true,

@@ -15,6 +15,10 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
         Returns a `token` that must be used for guest access to the order.
       DESC
 
+      sdk_example <<~JS
+        const cart = await client.store.cart.create()
+      JS
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false,
                 description: 'Bearer JWT token (optional - for authenticated customers)'
@@ -58,6 +62,18 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
         Returns the current shopping cart (incomplete order).
         Authenticate via JWT token for logged-in users or via order_token parameter for guests.
       DESC
+
+      sdk_example <<~JS
+        // Authenticated customer
+        const cart = await client.store.cart.get({
+          bearerToken: '<token>',
+        })
+
+        // Guest with order token
+        const guestCart = await client.store.cart.get({
+          orderToken: 'ORDER_TOKEN',
+        })
+      JS
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false,
@@ -116,6 +132,13 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
         Requires both JWT authentication and an order token.
         The order must not be completed and must not belong to another user.
       DESC
+
+      sdk_example <<~JS
+        const cart = await client.store.cart.associate({
+          bearerToken: '<token>',
+          orderToken: 'GUEST_ORDER_TOKEN',
+        })
+      JS
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true,

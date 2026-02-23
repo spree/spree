@@ -16,6 +16,12 @@ RSpec.describe 'Store Credits API', type: :request, swagger_doc: 'api-reference/
       security [api_key: [], bearer_auth: []]
       description 'Applies store credit to the order'
 
+      sdk_example <<~JS
+        const order = await client.store.orders.addStoreCredit('or_abc123', 10.0, {
+          bearerToken: '<token>',
+        })
+      JS
+
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
       parameter name: :order_id, in: :path, type: :string, required: true
@@ -62,6 +68,12 @@ RSpec.describe 'Store Credits API', type: :request, swagger_doc: 'api-reference/
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
       description 'Removes store credit from the order'
+
+      sdk_example <<~JS
+        const order = await client.store.orders.removeStoreCredit('or_abc123', {
+          bearerToken: '<token>',
+        })
+      JS
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
