@@ -33,7 +33,6 @@ export default class extends CheckboxSelectAll {
     prices: Object,
     currentCurrency: String,
     currencies: Array,
-    currencyFormats: Object,
     variantIds: Object,
     currentStockLocationId: String,
     stockLocations: Array,
@@ -71,19 +70,6 @@ export default class extends CheckboxSelectAll {
     }
 
     this.inventoryFormTarget = document.querySelector('.inventory-form');
-
-    // Add form submit listener to normalize price inputs before submission
-    this.form = this.element.closest('form')
-    if (this.form) {
-      this.boundNormalizePricesBeforeSubmit = this.normalizePricesBeforeSubmit.bind(this)
-      this.form.addEventListener('submit', this.boundNormalizePricesBeforeSubmit)
-    }
-  }
-
-  disconnect() {
-    if (this.form && this.boundNormalizePricesBeforeSubmit) {
-      this.form.removeEventListener('submit', this.boundNormalizePricesBeforeSubmit)
-    }
   }
 
   toggleQuantityTracked() {
@@ -385,6 +371,16 @@ export default class extends CheckboxSelectAll {
       const parentName = variantName.split('/')[0]
       this.updateParentPriceRange(parentName, currency)
     }
+  }
+
+  formatPrice(event) {
+    const value = event.target.value
+    if (value === '' || value === null) return
+
+    const number = this.parseLocaleNumber(value)
+    if (!Number.isFinite(number)) return
+
+    event.target.value = this.formatNumber(number)
   }
 
   replaceBlankWithZero(event) {
@@ -1100,13 +1096,13 @@ export default class extends CheckboxSelectAll {
     if (existingPrice) {
       return {
         ...existingPrice,
-        amount: existingPrice.amount ? parseFloat(existingPrice.amount) : existingPrice.amount
+        amount: existingPrice.amount ? this.parseLocaleNumber(existingPrice.amount) : existingPrice.amount
       }
     } else {
       const parentName = variantName.split('/')[0]
       const parentPrices = Object.entries(this.pricesValue)
         .filter(([internalName, prices]) => internalName.startsWith(parentName) && prices[currency.toLowerCase()] !== undefined)
-        .map(([_key, prices]) => parseFloat(prices[currency.toLowerCase()].amount))
+        .map(([_key, prices]) => this.parseLocaleNumber(prices[currency.toLowerCase()].amount))
         .sort((priceAmountA, priceAmountB) => priceAmountA - priceAmountB)
 
       return {
@@ -1124,7 +1120,7 @@ export default class extends CheckboxSelectAll {
         ...this.pricesValue[variantName],
         [currency.toLowerCase()]: {
           ...existingPrice,
-          amount: parseFloat(newPrice)
+          amount: this.parseLocaleNumber(newPrice)
         }
       }
     }
@@ -1148,23 +1144,13 @@ export default class extends CheckboxSelectAll {
     }
   }
 
-  formatNumber(value, currency = null) {
+  formatNumber(value) {
     if (value === null) return ''
     if (typeof value === 'string' && value.trim() === '') return ''
 
     const number = Number(value)
     if (!Number.isFinite(number)) return ''
 
-    // Use currency-specific decimal mark if available
-    const currencyCode = currency || this.currentCurrencyValue
-    const currencyFormat = this.currencyFormatsValue?.[currencyCode]
-
-    if (currencyFormat?.decimal_mark) {
-      // Format with 2 decimal places and replace . with currency's decimal mark
-      return number.toFixed(2).replace('.', currencyFormat.decimal_mark)
-    }
-
-    // Fallback to locale-based formatting
     return number.toLocaleString(this.localeValue, {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
@@ -1172,70 +1158,22 @@ export default class extends CheckboxSelectAll {
     })
   }
 
-  /**
-   * Normalizes a locale-formatted number string to standard decimal format
-   * e.g., "1.234,56" (German) -> "1234.56"
-   * e.g., "30,99" (Polish) -> "30.99"
-   * @param {string} value - The locale-formatted number string
-   * @returns {string} The normalized number string with "." as decimal separator
-   */
-  normalizeNumber(value) {
-    if (value === null || value === undefined) return ''
+  parseLocaleNumber(value) {
+    if (value === null || value === undefined) return NaN
 
-    let stringValue = String(value).trim()
-    if (stringValue === '') return ''
+    let str = String(value).trim()
+    if (str === '') return NaN
 
-    // Detect the decimal separator by finding the last separator character
-    // This handles both "1,234.56" (en) and "1.234,56" (de/pl) formats
-    const lastComma = stringValue.lastIndexOf(',')
-    const lastDot = stringValue.lastIndexOf('.')
+    const lastComma = str.lastIndexOf(',')
+    const lastDot = str.lastIndexOf('.')
 
-    let decimalSeparator = '.'
-    let thousandsSeparator = ','
-
-    // If comma comes after dot, comma is the decimal separator (European format)
-    // Also treat comma as decimal if there's no dot and comma has 1-3 digits after it
     if (lastComma > lastDot) {
-      decimalSeparator = ','
-      thousandsSeparator = '.'
-    } else if (lastDot === -1 && lastComma !== -1) {
-      // No dot present, check if comma looks like a decimal separator
-      // (has 1-3 digits after it, typical for currency)
-      const afterComma = stringValue.substring(lastComma + 1)
-      if (/^\d{1,3}$/.test(afterComma)) {
-        decimalSeparator = ','
-        thousandsSeparator = '.'
-      }
+      str = str.replace(/\./g, '').replace(',', '.')
+    } else if (lastDot === -1 && lastComma !== -1 && /^\d{1,3}$/.test(str.substring(lastComma + 1))) {
+      str = str.replace(',', '.')
     }
 
-    // Remove thousands separators
-    stringValue = stringValue.split(thousandsSeparator).join('')
-
-    // Replace decimal separator with standard "."
-    if (decimalSeparator !== '.') {
-      stringValue = stringValue.replace(decimalSeparator, '.')
-    }
-
-    // Remove any non-numeric characters except "." and "-"
-    stringValue = stringValue.replace(/[^0-9.\-]/g, '')
-
-    return stringValue
+    return parseFloat(str)
   }
 
-  /**
-   * Normalizes all price inputs in the variants form before submission
-   * @param {Event} event - The form submit event
-   */
-  normalizePricesBeforeSubmit(event) {
-    // Find all price inputs in the variants container
-    const priceInputs = this.variantsContainerTarget.querySelectorAll(
-      'input[data-slot*="[prices_attributes]"][data-slot*="[amount]_input"]'
-    )
-
-    priceInputs.forEach((input) => {
-      if (input.value) {
-        input.value = this.normalizeNumber(input.value)
-      }
-    })
-  }
 }
