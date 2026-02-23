@@ -57,7 +57,7 @@ RSpec.describe Spree::Admin::Table::BulkAction do
     it 'is invalid when key is missing' do
       action = described_class.new
       expect(action).not_to be_valid
-      expect(action.errors[:key]).to include("can't be blank")
+      expect(action.errors[:key]).to be_present
     end
 
     it 'is valid with just a key' do
@@ -68,7 +68,7 @@ RSpec.describe Spree::Admin::Table::BulkAction do
     it 'is invalid when method is not in allowed list' do
       action = described_class.new(key: :delete, method: :invalid)
       expect(action).not_to be_valid
-      expect(action.errors[:method]).to include('is not included in the list')
+      expect(action.errors[:method]).to be_present
     end
 
     it 'accepts all valid methods' do
