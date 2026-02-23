@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.summary     = 'Transactional emails for Spree eCommerce platform'
   s.description = 'Optional transactional emails for Spree such as Order placed or Shipment notification emails'
   s.homepage    = 'https://spreecommerce.org'
-  s.licenses    = ['AGPL-3.0-or-later', 'BSD-3-Clause']
+  s.license     = 'BSD-3-Clause'
 
   s.metadata = {
     "bug_tracker_uri"   => "https://github.com/spree/spree/issues",
@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version     = '>= 3.2'
 
-  s.files        = Dir["{app,config,db,lib,vendor}/**/*", "LICENSE.md", "Rakefile", "README.md"].reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
+  s.files        = Dir["{app,config,db,lib,vendor}/**/*", "Rakefile", "README.md"].reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
   s.require_path = 'lib'
 
   s.add_dependency 'spree', ">= #{s.version}"

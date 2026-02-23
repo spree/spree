@@ -30,6 +30,7 @@ Spree supports complex commerce scenarios natively and lets you combine them: <a
   <a href="https://rubygems.org/gems/spree"><img alt="Gem Total Downloads" src="https://img.shields.io/gem/dt/spree" /></a>
   <a href="https://slack.spreecommerce.org"><img alt="Slack members" src="https://img.shields.io/badge/slack%20members-7K-blue" /></a>
   <a href="https://codecov.io/gh/spree/spree"><img src="https://codecov.io/gh/spree/spree/graph/badge.svg?token=DPFc7HbJvU"/></a>
+  <a href="https://opensource.org/licenses/BSD-3-Clause"><img src="https://img.shields.io/badge/License-BSD%203--Clause-blue.svg" /></a>
 </p>
 
 ## Getting Started
@@ -156,8 +157,6 @@ Follow our [Contributing Guide](https://spreecommerce.org/docs/developer/contrib
 [Contact us](https://spreecommerce.org/get-started/) and let's go!
 
 ## License
-
-[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
 Spree Commerce core code in the **[spree/spree](https://github.com/spree/spree)** repository is released under the free, open-source [BSD-3-Clause](https://opensource.org/license/bsd-3-clause) license ([LICENSE](https://github.com/spree/spree/blob/main/LICENSE)).
 

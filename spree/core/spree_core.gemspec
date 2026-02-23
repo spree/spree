@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.summary     = 'The bare bones necessary for Spree'
   s.description = 'Spree Models, Helpers, Services and core libraries'
   s.homepage    = 'https://spreecommerce.org'
-  s.licenses    = ['AGPL-3.0-or-later', 'BSD-3-Clause']
+  s.license     = 'BSD-3-Clause'
 
   s.metadata = {
     "bug_tracker_uri"   => "https://github.com/spree/spree/issues",
@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
   s.required_ruby_version     = '>= 3.2'
   s.required_rubygems_version = '>= 1.8.23'
 
-  s.files        = Dir["{app,config,db,lib,vendor}/**/*", "spec/fixtures/**/*", "LICENSE.md", "Rakefile", "README.md"].reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
+  s.files        = Dir["{app,config,db,lib,vendor}/**/*", "spec/fixtures/**/*", "Rakefile", "README.md"].reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
   s.require_path = 'lib'
 
   s.add_development_dependency 'i18n-tasks'

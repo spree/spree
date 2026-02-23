@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.summary       = %q{Spree's API}
   s.description   = %q{Spree's API}
   s.homepage      = 'https://spreecommerce.org'
-  s.licenses       = ['AGPL-3.0-or-later']
+  s.license       = 'BSD-3-Clause'
 
   s.metadata = {
     'bug_tracker_uri' => 'https://github.com/spree/spree/issues',
@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = '>= 3.2'
 
-  s.files         = Dir["{app,config,db,lib,vendor}/**/*", "LICENSE.md", "Rakefile", "README.md"].reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
+  s.files         = Dir["{app,config,db,lib,vendor}/**/*", "Rakefile", "README.md"].reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
   s.require_paths = ['lib']
 
   s.add_development_dependency 'rswag-specs'
