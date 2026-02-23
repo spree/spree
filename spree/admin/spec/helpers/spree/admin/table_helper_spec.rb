@@ -543,6 +543,28 @@ RSpec.describe Spree::Admin::TableHelper, type: :helper do
       parsed = JSON.parse(result)
       expect(parsed).to be_an(Array)
     end
+
+    it 'resolves lambda search_url using view context' do
+      table.add(:taxons, label: 'Taxons', type: :association, filter_type: :autocomplete,
+                search_url: ->(view_context) { '/resolved/taxons/select_options.json' })
+
+      result = helper.query_builder_fields_json(table)
+      parsed = JSON.parse(result)
+      taxon_field = parsed.find { |f| f['key'] == 'taxons' }
+
+      expect(taxon_field['search_url']).to eq('/resolved/taxons/select_options.json')
+    end
+
+    it 'passes string search_url through unchanged' do
+      table.add(:taxons, label: 'Taxons', type: :association, filter_type: :autocomplete,
+                search_url: '/admin/taxons/select_options.json')
+
+      result = helper.query_builder_fields_json(table)
+      parsed = JSON.parse(result)
+      taxon_field = parsed.find { |f| f['key'] == 'taxons' }
+
+      expect(taxon_field['search_url']).to eq('/admin/taxons/select_options.json')
+    end
   end
 
   describe '#query_builder_operators_json' do
@@ -608,6 +630,19 @@ RSpec.describe Spree::Admin::TableHelper, type: :helper do
       result = helper.render_bulk_action(action, table: table)
 
       expect(result).to include('data-confirm="Are you sure?"')
+    end
+
+    it 'resolves lambda action_path with view context' do
+      action = Spree::Admin::Table::BulkAction.new(
+        key: :activate,
+        label: 'Activate',
+        icon: 'check',
+        action_path: ->(view_context) { '/resolved/products/bulk_status_update?status=active' }
+      )
+
+      result = helper.render_bulk_action(action, table: table)
+
+      expect(result).to include('data-url="/resolved/products/bulk_status_update?status=active"')
     end
   end
 

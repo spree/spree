@@ -230,7 +230,7 @@ module Spree
       # @return [String] JSON string
       def query_builder_fields_json(table)
         query_builder = Spree::Admin::Table::QueryBuilder.new(table)
-        query_builder.available_fields.to_json
+        query_builder.available_fields(self).to_json
       end
 
       # Build available operators JSON for Stimulus controller

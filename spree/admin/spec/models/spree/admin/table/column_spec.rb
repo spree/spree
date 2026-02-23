@@ -267,6 +267,25 @@ RSpec.describe Spree::Admin::Table::Column do
     end
   end
 
+  describe '#search_url' do
+    it 'accepts a string value' do
+      column = described_class.new(key: 'taxon', label: :taxon, search_url: '/admin/taxons/select_options.json')
+      expect(column.search_url).to eq('/admin/taxons/select_options.json')
+    end
+
+    it 'accepts a lambda value' do
+      url_lambda = ->(view_context) { '/resolved/path' }
+      column = described_class.new(key: 'taxon', label: :taxon, search_url: url_lambda)
+      expect(column.search_url).to eq(url_lambda)
+      expect(column.search_url.call(nil)).to eq('/resolved/path')
+    end
+
+    it 'defaults to nil' do
+      column = described_class.new(key: 'name', label: :name)
+      expect(column.search_url).to be_nil
+    end
+  end
+
   describe '#deep_clone' do
     it 'creates a deep copy' do
       original = described_class.new(key: 'name', label: 'Original', default: true, position: 10)
