@@ -179,6 +179,33 @@ RSpec.describe Spree::Admin::Table::QueryBuilder do
 
       expect(status_field[:value_options].map { |o| o[:value] }).to include('one', 'two', 'three')
     end
+
+    it 'returns string search_url as-is' do
+      table.add(:taxons, label: 'Taxons', type: :association, filter_type: :autocomplete, search_url: '/admin/taxons/select_options.json')
+
+      fields = query_builder.available_fields
+      taxon_field = fields.find { |f| f[:key] == 'taxons' }
+
+      expect(taxon_field[:search_url]).to eq('/admin/taxons/select_options.json')
+    end
+
+    it 'resolves lambda search_url with view_context' do
+      table.add(:taxons, label: 'Taxons', type: :association, filter_type: :autocomplete,
+                search_url: ->(view_context) { "#{view_context.prefix}/taxons/select_options.json" })
+
+      view_context = double('view_context', prefix: '/custom')
+      fields = query_builder.available_fields(view_context)
+      taxon_field = fields.find { |f| f[:key] == 'taxons' }
+
+      expect(taxon_field[:search_url]).to eq('/custom/taxons/select_options.json')
+    end
+
+    it 'returns nil search_url when column has no search_url' do
+      fields = query_builder.available_fields
+      name_field = fields.find { |f| f[:key] == 'name' }
+
+      expect(name_field[:search_url]).to be_nil
+    end
   end
 
   describe '#available_operators' do

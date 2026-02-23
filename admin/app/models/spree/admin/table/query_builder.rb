@@ -70,8 +70,9 @@ module Spree
         end
 
         # Get available fields for filtering based on table configuration
+        # @param view_context [ActionView::Base] optional view context for resolving dynamic URLs
         # @return [Array<Hash>]
-        def available_fields
+        def available_fields(view_context = nil)
           @table.filterable_columns.map do |column|
             {
               key: column.ransack_attribute,
@@ -79,7 +80,7 @@ module Spree
               type: column.filter_type.to_s,
               operators: column.operators.map(&:to_s),
               value_options: format_value_options(column.value_options),
-              search_url: column.search_url
+              search_url: resolve_search_url(column.search_url, view_context)
             }
           end
         end
@@ -91,6 +92,10 @@ module Spree
         end
 
         private
+
+        def resolve_search_url(search_url, view_context)
+          search_url.is_a?(Proc) ? search_url.call(view_context) : search_url
+        end
 
         def format_value_options(options)
           return nil if options.blank?

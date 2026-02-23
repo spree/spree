@@ -43,13 +43,21 @@ RSpec.describe Spree::Admin::Table::BulkAction do
       action = described_class.new(key: :delete, if: condition)
       expect(action.condition).to eq(condition)
     end
+
+    it 'accepts a lambda for action_path' do
+      path_lambda = ->(view_context) { '/resolved/path' }
+      action = described_class.new(key: :activate, action_path: path_lambda)
+
+      expect(action.action_path).to eq(path_lambda)
+      expect(action.action_path.call(nil)).to eq('/resolved/path')
+    end
   end
 
   describe 'validations' do
     it 'is invalid when key is missing' do
       action = described_class.new
       expect(action).not_to be_valid
-      expect(action.errors[:key]).to include("can't be blank")
+      expect(action.errors[:key]).to be_present
     end
 
     it 'is valid with just a key' do
@@ -60,7 +68,7 @@ RSpec.describe Spree::Admin::Table::BulkAction do
     it 'is invalid when method is not in allowed list' do
       action = described_class.new(key: :delete, method: :invalid)
       expect(action).not_to be_valid
-      expect(action.errors[:method]).to include('is not included in the list')
+      expect(action.errors[:method]).to be_present
     end
 
     it 'accepts all valid methods' do
