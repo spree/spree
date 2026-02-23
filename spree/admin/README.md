@@ -2,7 +2,7 @@
 
 [![Gem Version](https://badge.fury.io/rb/spree_admin.svg)](https://badge.fury.io/rb/spree_admin)
 
-Spree Admin provides a modern, fully-featured admin dashboard for managing your Spree Commerce store.
+Spree Admin provides a modern, fully-featured admin dashboard for managing your Spree application.
 
 ## Overview
 

@@ -31,7 +31,7 @@ const products = await client.store.products.list({
 });
 
 // Get a single product
-const product = await client.store.products.get('ruby-on-rails-tote');
+const product = await client.store.products.get('spree-tote');
 
 // Authentication
 const { token, user } = await client.store.auth.login({
@@ -153,7 +153,7 @@ const products = await client.store.products.list({
 });
 
 // Get single product by ID or slug
-const product = await client.store.products.get('ruby-on-rails-tote', {
+const product = await client.store.products.get('spree-tote', {
   includes: 'variants,images',
 });
 

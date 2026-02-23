@@ -94,7 +94,7 @@ Plain async functions for reading data in Server Components. Wrap with `"use cac
 import { listProducts, getProduct, getProductFilters } from '@spree/next';
 
 const products = await listProducts({ per_page: 25, includes: 'variants,images' });
-const product = await getProduct('ruby-on-rails-tote');
+const product = await getProduct('spree-tote');
 const filters = await getProductFilters({ taxon_id: 'txn_123' });
 ```
 

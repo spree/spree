@@ -894,12 +894,12 @@ create_rails_app() {
 
     # Run rails new with the template using the specific rails binary
     if [ "$VERBOSE" = true ]; then
-        print_step "Creating Spree Commerce application '$APP_NAME'..."
+        print_step "Creating Spree application '$APP_NAME'..."
         VERBOSE_MODE=1 LOAD_SAMPLE_DATA="$LOAD_SAMPLE_DATA" STOREFRONT_TYPE="$STOREFRONT_TYPE" USE_LOCAL_SPREE="$use_local_spree" ADMIN_EMAIL="$ADMIN_EMAIL" ADMIN_PASSWORD="$ADMIN_PASSWORD" "$RAILS_BIN" _${RAILS_VERSION}_ new "$APP_NAME" -m "$TEMPLATE_FILE"
     else
         # Run with gum spinner
         echo ""
-        gum spin --spinner dot --title "Creating Spree Commerce application '$APP_NAME' (this will take several minutes)..." -- \
+        gum spin --spinner dot --title "Creating Spree application '$APP_NAME' (this will take several minutes)..." -- \
             bash -c "VERBOSE_MODE=0 LOAD_SAMPLE_DATA=\"$LOAD_SAMPLE_DATA\" STOREFRONT_TYPE=\"$STOREFRONT_TYPE\" USE_LOCAL_SPREE=\"$use_local_spree\" ADMIN_EMAIL=\"$ADMIN_EMAIL\" ADMIN_PASSWORD=\"$ADMIN_PASSWORD\" \"$RAILS_BIN\" _${RAILS_VERSION}_ new \"$APP_NAME\" -m \"$TEMPLATE_FILE\" >/tmp/spree_install.log 2>&1"
         local exit_code=$?
 
@@ -935,7 +935,7 @@ create_rails_app() {
         rm -f /tmp/spree_install.log
     fi
 
-    print_success "Spree Commerce application created successfully"
+    print_success "Spree application created successfully"
 }
 
 # Final instructions

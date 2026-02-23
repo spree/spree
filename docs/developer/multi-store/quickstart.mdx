@@ -38,7 +38,7 @@ Spree will try to determine the current store based on the current URL. If the U
 
 All Spree controllers or any other controllers that include [Spree::Core::ControllerHelpers::Store](https://github.com/spree/spree/blob/main/core/lib/spree/core/controller_helpers/store.rb) have access to the `current_store` method which returns the `Store` matching the current URL.
 
-All parts of Spree (API v1, API v2, Storefront, Admin Panel) have this implemented. This method is also available in views and JSON serializers.
+All parts of Spree (API, Admin Panel) have this implemented.
 
 <Info>
 Under the hood `current_store` calls [Spree::Stores::FindCurrent.new(url: url).execute](https://github.com/spree/spree/blob/main/core/app/finders/spree/stores/find_current.rb).

@@ -4,7 +4,7 @@ title: Slugs
 
 ## Overview
 
-Spree uses the [FriendlyId](https://github.com/norman/friendly_id) library to generate SEO-friendly URLs for resources like products, taxons, stores, and more. Instead of accessing resources via database IDs (e.g., `/products/123`), FriendlyId enables clean, readable URLs based on resource names (e.g., `/products/ruby-on-rails-tshirt`).
+Spree uses the [FriendlyId](https://github.com/norman/friendly_id) library to generate SEO-friendly URLs for resources like products, taxons, stores, and more. Instead of accessing resources via database IDs (e.g., `/products/123`), FriendlyId enables clean, readable URLs based on resource names (e.g., `/products/spree-tshirt`).
 
 Slugs are URL-safe strings derived from resource attributes (typically the `name` field) that:
 
@@ -35,7 +35,7 @@ Slugs are automatically generated from resource attributes using the `to_url` me
 
 ```ruby
 # Example slug generation
-"Ruby on Rails T-Shirt".to_url  # => "ruby-on-rails-t-shirt"
+"Spree T-Shirt".to_url  # => "spree-t-shirt"
 "Café & Restaurant".to_url      # => "cafe-and-restaurant"
 ```
 
@@ -72,9 +72,9 @@ For products, the slug candidates are customized to include SKU:
 ]
 
 # Example progression:
-# 1st attempt: "ruby-on-rails-tshirt"
-# 2nd attempt: "ruby-on-rails-tshirt-TSHIRT-001" (includes SKU)
-# 3rd attempt: "ruby-on-rails-tshirt-a1b2c3d4-e5f6-..." (includes UUID)
+# 1st attempt: "spree-tshirt"
+# 2nd attempt: "spree-tshirt-TSHIRT-001" (includes SKU)
+# 3rd attempt: "spree-tshirt-a1b2c3d4-e5f6-..." (includes UUID)
 ```
 
 ### Reserved Words
@@ -115,19 +115,19 @@ include Spree::Product::Slugs
 ```ruby
 # Creating a product with a slug
 product = Spree::Product.create!(
-  name: 'Ruby on Rails T-Shirt',
+  name: 'Spree T-Shirt',
   stores: [store]
 )
-product.slug # => "ruby-on-rails-t-shirt"
+product.slug # => "spree-t-shirt"
 
 # Accessing by slug
-Spree::Product.friendly.find('ruby-on-rails-t-shirt')
+Spree::Product.friendly.find('spree-t-shirt')
 
 # Setting a custom slug
 product.update!(slug: 'custom-rails-shirt')
 
 # Translated slugs
-product.set_friendly_id('t-shirt-ruby-on-rails', :fr)
+product.set_friendly_id('t-shirt-spree', :fr)
 product.save!
 ```
 
@@ -386,7 +386,7 @@ Use the `friendly` scope to find records by slug:
 
 ```ruby
 # Find by slug
-product = Spree::Product.friendly.find('ruby-on-rails-tshirt')
+product = Spree::Product.friendly.find('spree-tshirt')
 
 # Find by ID still works
 product = Spree::Product.friendly.find(123)
@@ -402,10 +402,10 @@ You can override auto-generated slugs:
 ```ruby
 # Auto-generated slug
 product = Spree::Product.create!(
-  name: 'Ruby on Rails T-Shirt',
+  name: 'Spree T-Shirt',
   stores: [store]
 )
-product.slug # => "ruby-on-rails-t-shirt"
+product.slug # => "spree-t-shirt"
 
 # Custom slug
 product.update!(slug: 'rails-tshirt')
@@ -413,7 +413,7 @@ product.slug # => "rails-tshirt"
 
 # Reset to auto-generate (set to nil)
 product.update!(slug: nil)
-product.slug # => "ruby-on-rails-t-shirt" (regenerated from name)
+product.slug # => "spree-t-shirt" (regenerated from name)
 ```
 
 ### Slug Normalization
@@ -633,7 +633,7 @@ end
 
 # API Examples:
 # GET /api/v2/storefront/products/123
-# GET /api/v2/storefront/products/ruby-on-rails-tshirt
+# GET /api/v2/storefront/products/spree-tshirt
 ```
 
 ## Best Practices
@@ -848,4 +848,3 @@ end
 | `Model.slug_available?(slug, id)` | Check slug availability |
 | `resource.friendly_id` | Current friendly ID |
 | `resource.set_friendly_id(slug, locale)` | Set slug for locale |
-
