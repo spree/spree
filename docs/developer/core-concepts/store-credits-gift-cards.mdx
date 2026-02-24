@@ -348,13 +348,29 @@ When a gift card is applied to an order:
 - The gift card is marked as redeemed (or partially redeemed)
 - No Store Credit is created for guest checkouts
 
-#### Via Storefront API
+#### Via Store API
+
+Gift cards are applied using the same coupon codes endpoint as promotion codes. The endpoint automatically detects whether the code is a promotion coupon or a gift card.
+
+```javascript
+import { createSpreeClient } from '@spree/sdk'
+
+const client = createSpreeClient({
+  baseUrl: 'https://your-store.com',
+  publishableKey: '<api-key>',
+})
+
+// Apply gift card code to order (works for guests and registered customers)
+const order = await client.store.orders.couponCodes.apply('or_abc123', 'abc1234def', {
+  bearerToken: '<token>',
+})
+```
 
 ```bash
-# Apply gift card to current order (works for guests and registered customers)
-POST /api/v2/storefront/cart/apply_gift_card
+# Apply gift card to order (works for guests and registered customers)
+POST /api/v3/store/orders/{order_id}/coupon_codes
 {
-  "gift_card_code": "abc1234def"
+  "coupon_code": "abc1234def"
 }
 ```
 
