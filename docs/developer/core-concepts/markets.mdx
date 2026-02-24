@@ -181,73 +181,104 @@ When you run `rails db:seed`, Spree automatically creates a default market for e
 
 ## Store API
 
-The Store API provides endpoints for fetching markets and resolving which market applies to a given country. All endpoints require a publishable API key.
+Markets are not directly exposed as API endpoints. Instead, the Store API provides market-aware endpoints for countries, currencies, and locales. Each country includes the currency and locale derived from the market it belongs to.
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| `GET` | `/api/v3/store/markets` | List all markets for the current store |
-| `GET` | `/api/v3/store/markets/:id` | Get a single market by prefixed ID |
-| `GET` | `/api/v3/store/markets/resolve?country=:iso` | Resolve which market a country belongs to |
-| `GET` | `/api/v3/store/markets/:market_id/countries` | List countries in a market |
-| `GET` | `/api/v3/store/markets/:market_id/countries/:iso` | Get a country with its states |
+| `GET` | `/api/v3/store/countries` | List countries with their market-derived currency and locale |
+| `GET` | `/api/v3/store/countries/:iso` | Get a country with its states |
+| `GET` | `/api/v3/store/currencies` | List supported currencies (derived from markets) |
+| `GET` | `/api/v3/store/locales` | List supported locales (derived from markets) |
 
 <AccordionGroup>
-  <Accordion title="List Markets">
+  <Accordion title="List Countries">
 
-  Returns all markets for the current store with their countries.
+  Returns countries available in the store. Each country includes the currency and locale derived from the market it belongs to — useful for auto-selecting the correct currency and locale based on a customer's location.
 
-  ```bash
-  curl -H "Authorization: Bearer spree_pk_xxx" \
-    https://example.com/api/v3/store/markets
+  ```javascript
+  import { createSpreeClient } from '@spree/sdk'
+
+  const client = createSpreeClient({
+    baseUrl: 'https://your-store.com',
+    publishableKey: '<api-key>',
+  })
+
+  const countries = await client.store.countries.list()
   ```
 
   ```json
   {
     "data": [
       {
-        "id": "mkt_k5nR8xLq",
-        "name": "North America",
+        "iso": "DE",
+        "iso3": "DEU",
+        "name": "Germany",
+        "states_required": false,
+        "zipcode_required": true,
+        "currency": "EUR",
+        "default_locale": "de",
+        "supported_locales": ["de", "en"]
+      },
+      {
+        "iso": "US",
+        "iso3": "USA",
+        "name": "United States of America",
+        "states_required": true,
+        "zipcode_required": true,
         "currency": "USD",
         "default_locale": "en",
-        "supported_locales": ["en"],
-        "tax_inclusive": false,
-        "default": true,
-        "countries": [
-          { "iso": "US", "name": "United States" },
-          { "iso": "CA", "name": "Canada" }
-        ]
+        "supported_locales": ["en", "es"]
       }
     ]
   }
   ```
 
   </Accordion>
-  <Accordion title="Resolve Market by Country">
+  <Accordion title="List Currencies">
 
-  Determine which market applies for a given country ISO code. Useful for auto-selecting the correct currency and locale when a customer's location is known.
+  Returns currencies supported by the store (derived from markets).
 
-  ```bash
-  curl -H "Authorization: Bearer spree_pk_xxx" \
-    https://example.com/api/v3/store/markets/resolve?country=DE
-  ```
+  ```javascript
+  import { createSpreeClient } from '@spree/sdk'
 
-  Returns the market object on success, or `404` if no market contains that country.
+  const client = createSpreeClient({
+    baseUrl: 'https://your-store.com',
+    publishableKey: '<api-key>',
+  })
 
-  </Accordion>
-  <Accordion title="List Countries in a Market">
-
-  Returns countries belonging to a specific market. Useful for populating address dropdowns during checkout.
-
-  ```bash
-  curl -H "Authorization: Bearer spree_pk_xxx" \
-    https://example.com/api/v3/store/markets/mkt_k5nR8xLq/countries
+  const currencies = await client.store.currencies.list()
   ```
 
   ```json
   {
     "data": [
-      { "iso": "CA", "iso3": "CAN", "name": "Canada", "states_required": true, "zipcode_required": true },
-      { "iso": "US", "iso3": "USA", "name": "United States", "states_required": true, "zipcode_required": true }
+      { "iso_code": "USD", "name": "United States Dollar", "symbol": "$" },
+      { "iso_code": "EUR", "name": "Euro", "symbol": "€" }
+    ]
+  }
+  ```
+
+  </Accordion>
+  <Accordion title="List Locales">
+
+  Returns locales supported by the store (derived from markets).
+
+  ```javascript
+  import { createSpreeClient } from '@spree/sdk'
+
+  const client = createSpreeClient({
+    baseUrl: 'https://your-store.com',
+    publishableKey: '<api-key>',
+  })
+
+  const locales = await client.store.locales.list()
+  ```
+
+  ```json
+  {
+    "data": [
+      { "code": "de", "name": "de" },
+      { "code": "en", "name": "English (US)" }
     ]
   }
   ```
