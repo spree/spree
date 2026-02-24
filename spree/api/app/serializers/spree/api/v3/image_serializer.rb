@@ -9,7 +9,7 @@ module Spree
                  og_image_url: [:string, nullable: true]
 
         attribute :viewable_id do |image|
-          image.viewable.prefixed_id
+          image.viewable&.prefixed_id
         end
 
         attributes :position, :alt, :viewable_type,

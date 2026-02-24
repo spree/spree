@@ -9,7 +9,7 @@ module Spree
                  alt: [:string, nullable: true]
 
         attribute :viewable_id do |asset|
-          asset.viewable.prefixed_id
+          asset.viewable&.prefixed_id
         end
 
         attributes :type, :viewable_type, :position, :alt,
