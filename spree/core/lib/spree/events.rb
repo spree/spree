@@ -177,10 +177,11 @@ module Spree
       # Check if events are enabled
       #
       # Events can be temporarily disabled using Spree::Events.disable { ... }
+      # or globally with Spree::Events.disable!
       #
       # @return [Boolean]
       def enabled?
-        !RequestStore.store[:spree_events_disabled]
+        !@globally_disabled && !Thread.current[:spree_events_disabled]
       end
 
       # Temporarily disable events within a block
@@ -195,18 +196,21 @@ module Spree
       #   end
       #
       def disable
-        previous = RequestStore.store[:spree_events_disabled]
-        RequestStore.store[:spree_events_disabled] = true
+        previous = Thread.current[:spree_events_disabled]
+        Thread.current[:spree_events_disabled] = true
         yield
       ensure
-        RequestStore.store[:spree_events_disabled] = previous
+        Thread.current[:spree_events_disabled] = previous
       end
 
       # Globally disable events
-      # Useful for testing to disable events for the entire test suite
+      #
+      # Uses a class-level flag that is not affected by per-request cleanup.
+      # Useful for disabling events for the entire test suite.
+      #
       # @return [void]
       def disable!
-        RequestStore.store[:spree_events_disabled] = true
+        @globally_disabled = true
       end
 
       # Temporarily enable events within a block
@@ -222,18 +226,21 @@ module Spree
       #   end
       #
       def enable
-        previous = RequestStore.store[:spree_events_disabled]
-        RequestStore.store[:spree_events_disabled] = false
+        previous_global = @globally_disabled
+        previous_thread = Thread.current[:spree_events_disabled]
+        @globally_disabled = false
+        Thread.current[:spree_events_disabled] = false
         yield
       ensure
-        RequestStore.store[:spree_events_disabled] = previous
+        @globally_disabled = previous_global
+        Thread.current[:spree_events_disabled] = previous_thread
       end
 
       # Globally enable events
       # Useful for testing
       # @return [void]
       def enable!
-        RequestStore.store[:spree_events_disabled] = false
+        @globally_disabled = false
       end
     end
   end

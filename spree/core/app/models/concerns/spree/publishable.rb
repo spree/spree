@@ -162,17 +162,7 @@ module Spree
       # Use as_json to ensure all values are JSON-safe primitives.
       # Alba's to_h can return raw Ruby objects (e.g., Spree::Money) which
       # ActiveJob cannot serialize for async event subscribers.
-      #
-      # Reset Spree::Current pricing caches afterward to prevent
-      # lifecycle event serialization from contaminating request state
-      # (e.g., memoizing Spree::Current.price_lists before all
-      # price lists exist in the current transaction).
       serializer.new(self, params: event_serializer_params).to_h.as_json
-    ensure
-      if defined?(Spree::Current)
-        Spree::Current.price_lists = nil
-        Spree::Current.global_pricing_context = nil
-      end
     end
 
     # Find the event serializer class for this model
