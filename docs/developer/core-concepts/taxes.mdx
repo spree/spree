@@ -163,7 +163,7 @@ If the quantity of the item is changed to 2, then the tax amount doubles: $17.99
 
 Let's now assume that we have another product that's a coffee mug, which doesn't have the "Clothing" tax category applied to it. Let's also assume this product costs $13.99, and there's no default tax category set up for the system. Under these circumstances, the coffee mug will not be taxed when it's added to the order.
 
-Finally, if the taxable address either the shipping or billing, depending on the `Spree::Config[:tax_using_ship_address]` setting is changed for the order to outside this taxable zone, then the tax adjustment on the order will be removed. If the address is changed back, the tax rate will be applied once more.
+Finally, if the taxable address either the shipping or billing, depending on the tax address setting is changed for the order to outside this taxable zone, then the tax adjustment on the order will be removed. If the address is changed back, the tax rate will be applied once more.
 
 ### Tax Included
 
@@ -193,7 +193,7 @@ Finally, if the order's address is changed to being outside this tax zone, then 
 
 #### Differing VATs for different product categories depending on the customer's zone
 
-As of January 1st, 2015, digital products sold within the EU must have the VAT of the receiving country applied. Physical products must have the seller's VAT applied. In order to set this up, please proceed as follows:
+Digital products sold within the EU must have the VAT of the receiving country applied. Physical products must have the seller's VAT applied. In order to set this up, please proceed as follows:
 
 1. Create zones for all EU countries and a zone for all EU countries except your home zone.
 2. Mark your home zone as the default zone so you can conveniently enter gross prices.
