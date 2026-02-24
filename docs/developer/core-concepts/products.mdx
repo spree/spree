@@ -70,7 +70,6 @@ erDiagram
     Product ||--o{ Variant : "has many"
     Product }o--o{ OptionType : "has many"
     Product ||--o{ Classification : "has many"
-    Product ||--o{ ProductProperty : "has many"
     Product }o--|| ShippingCategory : "belongs to"
     Product }o--|| TaxCategory : "belongs to"
     Variant ||--o{ Price : "has many"
@@ -89,7 +88,6 @@ erDiagram
 - **Option Types** (e.g., Size, Color) define variant options
 - **Option Values** (e.g., Small, Red) are assigned to variants
 - **Taxons** (via Classifications) organize products into categories
-- **Properties** store additional product attributes (e.g., Material, Brand)
 - **[Shipping Category](/developer/core-concepts/shipments)** and **[Tax Category](/developer/core-concepts/taxes)** determine shipping and tax rules
 
 Products have the following attributes:
@@ -102,7 +100,7 @@ Products have the following attributes:
 | `status`          | The status of the product. Can be `draft`, `active`, `archived`. Defaults to `draft`. | No           |
 | `available_on`    | The first date the product becomes available for sale online in your shop                            | No           |
 | `discontinue_on`  | Date when the product will become unavailable for sale online in your shop                            | No           |
-| `deleted_at`      | The date the product is marked as deleted. We don't remove products entirely, only soft deleting them using a library called `paranoia` | No           |
+| `deleted_at`      | The date the product is marked as deleted. We don't remove products entirely, only soft deleting them                                                              | No           |
 | `meta_title`      | Optional title used for search engines instead of `name`                                              | Yes          |
 | `meta_description`| A description targeted at search engines for search engine optimization (SEO)                         | Yes          |
 | `meta_keywords`   | Several words and short phrases separated by commas, also targeted at search engines                  | Yes          |
@@ -177,7 +175,7 @@ product.default_variant
 
 How this works?
 
-* If a product has multiple Variants it will return the first non-master Variant based on their sort position set in the Admin Panel or Platform API.
+* If a product has multiple Variants it will return the first non-master Variant based on their sort position set in the admin panel or Admin API.
 * If there are no non-master Variants it will return the Master Variant
 
 So you can easily rely on this method to get the default Variant for a product.
