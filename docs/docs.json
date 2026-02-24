@@ -53,6 +53,10 @@
       "destination": "/developer/core-concepts/webhooks"
     },
     {
+      "source": "/developer/core-concepts/i18n",
+      "destination": "/developer/core-concepts/translations"
+    },
+    {
       "source": "/developer/customization/promotions",
       "destination": "/developer/how-to/custom-promotion"
     },
@@ -103,7 +107,7 @@
                   "developer/core-concepts/metafields",
                   "developer/core-concepts/events",
                   "developer/core-concepts/webhooks",
-                  "developer/core-concepts/i18n",
+                  "developer/core-concepts/translations",
                   "developer/core-concepts/search-filtering",
                   "developer/core-concepts/slugs",
                   "developer/core-concepts/images-assets",
