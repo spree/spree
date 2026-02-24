@@ -54,11 +54,11 @@
     },
     {
       "source": "/developer/customization/promotions",
-      "destination": "/developer/core-concepts/promotions"
+      "destination": "/developer/how-to/custom-promotion"
     },
     {
       "source": "/developer/extending-spree/promotions",
-      "destination": "/developer/core-concepts/promotions"
+      "destination": "/developer/how-to/custom-promotion"
     }
   ],
   "contextual": {
@@ -247,6 +247,13 @@
                 "icon": "credit-card",
                 "pages": [
                   "developer/how-to/custom-payment-method"
+                ]
+              },
+              {
+                "group": "Promotions",
+                "icon": "tag",
+                "pages": [
+                  "developer/how-to/custom-promotion"
                 ]
               }
             ]
