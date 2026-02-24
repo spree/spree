@@ -1,11 +1,19 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "name": "Spree Commerce documentation",
-  "theme": "almond",
+  "theme": "sequoia",
   "colors": {
     "primary": "#0A2242",
     "light": "#D7DFE9",
     "dark": "#0A2242"
+  },
+  "fonts": {
+    "body": {
+      "family": "Geist"
+    },
+    "heading": {
+      "family": "Geist"
+    }
   },
   "styling": {
     "eyebrows": "breadcrumbs",
@@ -57,33 +65,20 @@
     "options": ["copy", "view", "chatgpt", "claude", "mcp", "cursor", "vscode"]
   },
   "navigation": {
-    "versions": [
+    "pages": ["index"],
+    "tabs": [
       {
-        "version": "v5",
-        "default": true,
-        "pages": ["index"],
-        "tabs": [
+        "tab": "Guides",
+        "menu": [
           {
-            "tab": "Developer Docs",
+            "item": "Getting Started",
+            "icon": "rocket",
+            "description": "Quickstart guide and core concepts",
             "groups": [
               {
                 "group": "Getting started",
                 "icon": "rocket",
                 "pages": ["developer/getting-started/quickstart"]
-              },
-              {
-                "group": "Tutorial",
-                "icon": "graduation-cap",
-                "pages": [
-                  "developer/tutorial/introduction",
-                  "developer/tutorial/model",
-                  "developer/tutorial/admin",
-                  "developer/tutorial/rich-text",
-                  "developer/tutorial/file-uploads",
-                  "developer/tutorial/extending-models",
-                  "developer/tutorial/storefront",
-                  "developer/tutorial/testing"
-                ]
               },
               {
                 "group": "Core Concepts",
@@ -115,6 +110,96 @@
                   "developer/core-concepts/reports",
                   "developer/core-concepts/imports-exports"
                 ]
+              }
+            ]
+          },
+          {
+            "item": "Building a Storefront",
+            "icon": "store",
+            "description": "Next.js, custom frontend, or Rails engine",
+            "groups": [
+              {
+                "group": "Next.js Starter",
+                "pages": [
+                  "developer/storefront/nextjs/quickstart",
+                  "developer/storefront/nextjs/architecture",
+                  "developer/storefront/nextjs/spree-next-package",
+                  "developer/storefront/nextjs/customization",
+                  "developer/storefront/nextjs/deployment"
+                ]
+              },
+              {
+                "group": "Custom Frontend",
+                "pages": ["developer/storefront/custom/quickstart"]
+              },
+              {
+                "group": "Rails Storefront Engine",
+                "pages": [
+                  "developer/storefront/storefront",
+                  "developer/storefront/themes",
+                  "developer/storefront/pages",
+                  "developer/storefront/sections",
+                  "developer/storefront/blocks",
+                  "developer/storefront/links",
+                  "developer/storefront/helper-methods",
+                  "developer/storefront/custom-javascript",
+                  "developer/storefront/custom-css"
+                ]
+              }
+            ]
+          },
+          {
+            "item": "Use Cases",
+            "icon": "book-open",
+            "description": "Multi-store, multi-tenant, and marketplace setups",
+            "groups": [
+              {
+                "group": "Multi-Store",
+                "pages": [
+                  "developer/multi-store/quickstart",
+                  "developer/multi-store/setup"
+                ]
+              },
+              {
+                "group": "Multi-Tenant",
+                "pages": [
+                  "developer/multi-tenant/quickstart",
+                  "developer/multi-tenant/installation",
+                  "developer/multi-tenant/core-concepts",
+                  "developer/multi-tenant/configuration"
+                ]
+              },
+              {
+                "group": "Multi-Vendor",
+                "pages": [
+                  "developer/multi-vendor/quickstart",
+                  "developer/multi-vendor/installation"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Framework",
+        "menu": [
+          {
+            "item": "Extending",
+            "icon": "puzzle",
+            "description": "Customize admin, models, and business logic",
+            "groups": [
+              {
+                "group": "Tutorial",
+                "icon": "graduation-cap",
+                "pages": [
+                  "developer/tutorial/introduction",
+                  "developer/tutorial/model",
+                  "developer/tutorial/admin",
+                  "developer/tutorial/rich-text",
+                  "developer/tutorial/file-uploads",
+                  "developer/tutorial/extending-models",
+                  "developer/tutorial/testing"
+                ]
               },
               {
                 "group": "Admin Dashboard",
@@ -130,21 +215,6 @@
                   "developer/admin/authentication",
                   "developer/admin/custom-javascript",
                   "developer/admin/custom-css"
-                ]
-              },
-              {
-                "group": "Storefront",
-                "icon": "store",
-                "pages": [
-                  "developer/storefront/storefront",
-                  "developer/storefront/themes",
-                  "developer/storefront/pages",
-                  "developer/storefront/sections",
-                  "developer/storefront/blocks",
-                  "developer/storefront/links",
-                  "developer/storefront/helper-methods",
-                  "developer/storefront/custom-javascript",
-                  "developer/storefront/custom-css"
                 ]
               },
               {
@@ -164,36 +234,14 @@
                   "developer/customization/api",
                   "developer/customization/extensions"
                 ]
-              },
-              {
-                "group": "Use Cases",
-                "icon": "book-open",
-                "pages": [
-                  {
-                    "group": "Multi-Store",
-                    "pages": [
-                      "developer/multi-store/quickstart",
-                      "developer/multi-store/setup"
-                    ]
-                  },
-                  {
-                    "group": "Multi-Tenant",
-                    "pages": [
-                      "developer/multi-tenant/quickstart",
-                      "developer/multi-tenant/installation",
-                      "developer/multi-tenant/core-concepts",
-                      "developer/multi-tenant/configuration"
-                    ]
-                  },
-                  {
-                    "group": "Multi-Vendor",
-                    "pages": [
-                      "developer/multi-vendor/quickstart",
-                      "developer/multi-vendor/installation"
-                    ]
-                  }
-                ]
-              },
+              }
+            ]
+          },
+          {
+            "item": "Operations",
+            "icon": "server",
+            "description": "Deploy, upgrade, and maintain your store",
+            "groups": [
               {
                 "group": "Deployment",
                 "icon": "server",
@@ -265,9 +313,74 @@
                 ]
               }
             ]
+          }
+        ]
+      },
+      {
+        "tab": "SDK & Tools",
+        "menu": [
+          {
+            "item": "SDK",
+            "icon": "code",
+            "description": "JavaScript/TypeScript SDK for Spree API",
+            "groups": [
+              {
+                "group": "Getting Started",
+                "pages": [
+                  "developer/sdk/quickstart",
+                  "developer/sdk/authentication",
+                  "developer/sdk/configuration"
+                ]
+              },
+              {
+                "group": "Store API",
+                "pages": [
+                  "developer/sdk/store/products",
+                  "developer/sdk/store/cart-checkout",
+                  "developer/sdk/store/payments",
+                  "developer/sdk/store/account",
+                  "developer/sdk/store/wishlists"
+                ]
+              },
+              {
+                "group": "Admin API",
+                "pages": [
+                  "developer/sdk/admin/quickstart"
+                ]
+              }
+            ]
           },
           {
-            "tab": "Ecommerce API",
+            "item": "CLI",
+            "icon": "square-terminal",
+            "description": "Command-line interface for Spree",
+            "groups": [
+              {
+                "group": "CLI",
+                "pages": ["developer/cli/quickstart"]
+              }
+            ]
+          },
+          {
+            "item": "create-spree-app",
+            "icon": "rocket",
+            "description": "Scaffold a new Spree project",
+            "groups": [
+              {
+                "group": "create-spree-app",
+                "pages": ["developer/create-spree-app/quickstart"]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "menu": [
+          {
+            "item": "Store API",
+            "icon": "store",
+            "description": "REST API for storefronts and custom integrations",
             "groups": [
               {
                 "group": "API basics",
@@ -276,6 +389,42 @@
                   "api-reference/pagination",
                   "api-reference/filtering-and-sorting",
                   "api-reference/fetching-multiple-resources"
+                ]
+              },
+              {
+                "group": "Store API",
+                "openapi": {
+                  "source": "api-reference/store.yaml",
+                  "directory": "api-reference/store-api"
+                }
+              }
+            ]
+          },
+          {
+            "item": "Webhooks",
+            "icon": "webhook",
+            "description": "Event payloads and delivery reference",
+            "groups": [
+              {
+                "group": "Webhooks",
+                "pages": [
+                  "api-reference/webhooks-events"
+                ]
+              }
+            ]
+          },
+          {
+            "item": "Legacy API v2",
+            "icon": "clock",
+            "description": "Previous-generation Storefront and Platform APIs",
+            "groups": [
+              {
+                "group": "API basics",
+                "pages": [
+                  "api-reference/v2/introduction",
+                  "api-reference/v2/pagination",
+                  "api-reference/v2/filtering-and-sorting",
+                  "api-reference/v2/fetching-multiple-resources"
                 ]
               },
               {
@@ -288,1713 +437,273 @@
               },
               {
                 "group": "Storefront API",
-                "pages": [
-                  "api-reference/storefront/authentication",
-                  {
-                    "group": "Account",
-                    "pages": [
-                      "api-reference/storefront/account/retrieve-an-account",
-                      "api-reference/storefront/account/create-an-account",
-                      "api-reference/storefront/account/update-an-account"
-                    ]
-                  },
-                  {
-                    "group": "Account / Address",
-                    "pages": [
-                      "api-reference/storefront/account-address/list-all-addresses",
-                      "api-reference/storefront/account-address/create-an-address",
-                      "api-reference/storefront/account-address/remove-an-address",
-                      "api-reference/storefront/account-address/update-an-address"
-                    ]
-                  },
-                  {
-                    "group": "Account / Credit Cards",
-                    "pages": [
-                      "api-reference/storefront/account-credit-cards/list-all-credit-cards",
-                      "api-reference/storefront/account-credit-cards/remove-a-credit-card",
-                      "api-reference/storefront/account-credit-cards/retrieve-the-default-credit-card"
-                    ]
-                  },
-                  {
-                    "group": "Account / Orders",
-                    "pages": [
-                      "api-reference/storefront/account-orders/list-all-orders",
-                      "api-reference/storefront/account-orders/retrieve-an-order"
-                    ]
-                  },
-                  {
-                    "group": "Order Status",
-                    "pages": [
-                      "api-reference/storefront/order-status/retrieve-an-order-status"
-                    ]
-                  },
-                  {
-                    "group": "Cart",
-                    "pages": [
-                      "api-reference/storefront/cart/retrieve-a-cart",
-                      "api-reference/storefront/cart/create-a-cart",
-                      "api-reference/storefront/cart/delete-a-cart"
-                    ]
-                  },
-                  {
-                    "group": "Cart / Line Items",
-                    "pages": [
-                      "api-reference/storefront/cart-line-items/add-an-item-to-cart",
-                      "api-reference/storefront/cart-line-items/set-line-item-quantity",
-                      "api-reference/storefront/cart-line-items/remove-a-line-item"
-                    ]
-                  },
-                  {
-                    "group": "Cart / Coupons & Gift Cards",
-                    "pages": [
-                      "api-reference/storefront/cart-coupons/apply-a-coupon-code",
-                      "api-reference/storefront/cart-coupons/remove-a-coupon",
-                      "api-reference/storefront/cart-coupons/remove-all-coupons"
-                    ]
-                  },
-                  {
-                    "group": "Cart / Other",
-                    "pages": [
-                      "api-reference/storefront/cart-other/empty-the-cart",
-                      "api-reference/storefront/cart-other/list-estimated-shipping-rates",
-                      "api-reference/storefront/cart-other/associate-a-cart-with-a-user",
-                      "api-reference/storefront/cart-other/change-cart-currency"
-                    ]
-                  },
-                  {
-                    "group": "Checkout",
-                    "pages": [
-                      "api-reference/storefront/checkout/update-checkout",
-                      "api-reference/storefront/checkout/validate-order-payment"
-                    ]
-                  },
-                  {
-                    "group": "Checkout / State",
-                    "pages": [
-                      "api-reference/storefront/checkout-state/next-checkout-step",
-                      "api-reference/storefront/checkout-state/advance-checkout",
-                      "api-reference/storefront/checkout-state/complete-checkout"
-                    ]
-                  },
-                  {
-                    "group": "Checkout / Shipments",
-                    "pages": [
-                      "api-reference/storefront/checkout-shipments/selects-shipping-method-for-shipments",
-                      "api-reference/storefront/checkout-shipments/list-shipping-rates"
-                    ]
-                  },
-                  {
-                    "group": "Checkout / Payments",
-                    "pages": [
-                      "api-reference/storefront/checkout-payments/create-new-payment",
-                      "api-reference/storefront/checkout-payments/list-payment-methods"
-                    ]
-                  },
-                  {
-                    "group": "Checkout / Store Credit",
-                    "pages": [
-                      "api-reference/storefront/checkout-store-credit/add-store-credit",
-                      "api-reference/storefront/checkout-store-credit/remove-store-credit"
-                    ]
-                  },
-                  {
-                    "group": "Stripe",
-                    "pages": [
-                      "api-reference/storefront/stripe/return-a-stripe-payment-intent",
-                      "api-reference/storefront/stripe/create-a-stripe-payment-intent",
-                      "api-reference/storefront/stripe/updates-stripe-payment-intent",
-                      "api-reference/storefront/stripe/mark-the-payment-intent-as-confirmed-and-move-the-order-to-the-complete-state",
-                      "api-reference/storefront/stripe/create-a-stripe-setup-intent"
-                    ]
-                  },
-                  {
-                    "group": "Adyen",
-                    "pages": [
-                      "api-reference/storefront/adyen/create-an-adyen-payment-session",
-                      "api-reference/storefront/adyen/complete-an-adyen-payment-session",
-                      "api-reference/storefront/adyen/get-adyen-payment-session"
-                    ]
-                  },
-                  {
-                    "group": "Products",
-                    "pages": [
-                      "api-reference/storefront/products/list-all-products",
-                      "api-reference/storefront/products/retrieve-a-product"
-                    ]
-                  },
-                  {
-                    "group": "Vendors",
-                    "pages": [
-                      "api-reference/storefront/vendors/list-all-vendors",
-                      "api-reference/storefront/vendors/retrieve-a-vendor"
-                    ]
-                  },
-                  {
-                    "group": "Stores",
-                    "pages": [
-                      "api-reference/storefront/stores/return-the-current-store"
-                    ]
-                  },
-                  {
-                    "group": "Policies",
-                    "pages": [
-                      "api-reference/storefront/policies/list-all-store-policies",
-                      "api-reference/storefront/policies/retrieve-a-policy"
-                    ]
-                  },
-                  {
-                    "group": "Posts",
-                    "pages": [
-                      "api-reference/storefront/posts/list-all-posts",
-                      "api-reference/storefront/posts/retrieve-a-post"
-                    ]
-                  },
-                  {
-                    "group": "Post Categories",
-                    "pages": [
-                      "api-reference/storefront/post-categories/list-all-post-categories",
-                      "api-reference/storefront/post-categories/retrieve-a-post-category"
-                    ]
-                  },
-                  {
-                    "group": "Taxons",
-                    "pages": [
-                      "api-reference/storefront/taxons/list-all-taxons",
-                      "api-reference/storefront/taxons/retrieve-a-taxon"
-                    ]
-                  },
-                  {
-                    "group": "Countries",
-                    "pages": [
-                      "api-reference/storefront/countries/list-all-countries",
-                      "api-reference/storefront/countries/retrieve-a-country",
-                      "api-reference/storefront/countries/get-default-country"
-                    ]
-                  },
-                  {
-                    "group": "Wishlists",
-                    "pages": [
-                      "api-reference/storefront/wishlists/list-all-wishlists",
-                      "api-reference/storefront/wishlists/create-a-wishlist",
-                      "api-reference/storefront/wishlists/retrieve-a-wishlist",
-                      "api-reference/storefront/wishlists/delete-a-wishlist",
-                      "api-reference/storefront/wishlists/update-a-wishlist",
-                      "api-reference/storefront/wishlists/retrieve-the-default-wishlist"
-                    ]
-                  },
-                  {
-                    "group": "Wishlists / Wished Items",
-                    "pages": [
-                      "api-reference/storefront/wishlists-wished-items/add-item-to-wishlist",
-                      "api-reference/storefront/wishlists-wished-items/add-items-to-wishlist",
-                      "api-reference/storefront/wishlists-wished-items/set-wished-item-quantity",
-                      "api-reference/storefront/wishlists-wished-items/delete-item-from-wishlist",
-                      "api-reference/storefront/wishlists-wished-items/delete-items-from-wishlist"
-                    ]
-                  },
-                  {
-                    "group": "Digital Downloads",
-                    "pages": [
-                      "api-reference/storefront/digital-downloads/download-a-digital-asset"
-                    ]
-                  }
-                ]
+                "pages": ["api-reference/storefront/authentication"],
+                "openapi": {
+                  "source": "api-reference/storefront.yaml",
+                  "directory": "api-reference/storefront"
+                }
               },
               {
                 "group": "Platform API",
-                "pages": [
-                  "api-reference/platform/authentication",
-                  {
-                    "group": "Addresses",
-                    "pages": [
-                      "api-reference/platform/addresses/return-a-list-of-addresses",
-                      "api-reference/platform/addresses/create-an-address",
-                      "api-reference/platform/addresses/return-an-address",
-                      "api-reference/platform/addresses/delete-an-address",
-                      "api-reference/platform/addresses/update-an-address"
-                    ]
-                  },
-                  {
-                    "group": "Adjustments",
-                    "pages": [
-                      "api-reference/platform/adjustments/return-a-list-of-adjustments",
-                      "api-reference/platform/adjustments/create-an-adjustment",
-                      "api-reference/platform/adjustments/return-an-adjustment",
-                      "api-reference/platform/adjustments/delete-an-adjustment",
-                      "api-reference/platform/adjustments/update-an-adjustment"
-                    ]
-                  },
-                  {
-                    "group": "Classifications",
-                    "pages": [
-                      "api-reference/platform/classifications/return-a-list-of-classifications",
-                      "api-reference/platform/classifications/create-a-classification",
-                      "api-reference/platform/classifications/return-a-classification",
-                      "api-reference/platform/classifications/delete-a-classification",
-                      "api-reference/platform/classifications/update-a-classification"
-                    ]
-                  },
-                  {
-                    "group": "Countries",
-                    "pages": [
-                      "api-reference/platform/countries/returns-a-list-of-countries",
-                      "api-reference/platform/countries/returns-a-country"
-                    ]
-                  },
-                  {
-                    "group": "Data Feeds",
-                    "pages": [
-                      "api-reference/platform/data-feeds/return-a-list-of-data-feeds",
-                      "api-reference/platform/data-feeds/create-a-data-feed",
-                      "api-reference/platform/data-feeds/return-a-data-feed",
-                      "api-reference/platform/data-feeds/delete-a-data-feed",
-                      "api-reference/platform/data-feeds/update-a-data-feed"
-                    ]
-                  },
-                  {
-                    "group": "Digital Links",
-                    "pages": [
-                      "api-reference/platform/digital-links/return-a-list-of-digital-links",
-                      "api-reference/platform/digital-links/create-a-digital-link",
-                      "api-reference/platform/digital-links/return-a-digital-link",
-                      "api-reference/platform/digital-links/delete-a-digital-link",
-                      "api-reference/platform/digital-links/update-a-digital-link",
-                      "api-reference/platform/digital-links/reset-a-digital-link"
-                    ]
-                  },
-                  {
-                    "group": "Digital Assets",
-                    "pages": [
-                      "api-reference/platform/digital-assets/return-a-list-of-digital-assets",
-                      "api-reference/platform/digital-assets/create-a-digital-asset",
-                      "api-reference/platform/digital-assets/return-a-digital-asset",
-                      "api-reference/platform/digital-assets/delete-a-digital-asset",
-                      "api-reference/platform/digital-assets/update-a-digital-asset"
-                    ]
-                  },
-                  {
-                    "group": "Line Items",
-                    "pages": [
-                      "api-reference/platform/line-items/return-a-list-of-line-items",
-                      "api-reference/platform/line-items/create-a-line-item",
-                      "api-reference/platform/line-items/return-a-line-item",
-                      "api-reference/platform/line-items/delete-a-line-item",
-                      "api-reference/platform/line-items/update-a-line-item"
-                    ]
-                  },
-                  {
-                    "group": "Option Types",
-                    "pages": [
-                      "api-reference/platform/option-types/return-a-list-of-option-types",
-                      "api-reference/platform/option-types/create-an-option-type",
-                      "api-reference/platform/option-types/return-an-option-type",
-                      "api-reference/platform/option-types/delete-an-option-type",
-                      "api-reference/platform/option-types/update-an-option-type"
-                    ]
-                  },
-                  {
-                    "group": "Option Values",
-                    "pages": [
-                      "api-reference/platform/option-values/return-a-list-of-option-values",
-                      "api-reference/platform/option-values/create-an-option-value",
-                      "api-reference/platform/option-values/return-an-option-value",
-                      "api-reference/platform/option-values/delete-an-option-value",
-                      "api-reference/platform/option-values/update-an-option-value"
-                    ]
-                  },
-                  {
-                    "group": "Orders",
-                    "pages": [
-                      "api-reference/platform/orders/return-a-list-of-orders",
-                      "api-reference/platform/orders/creates-an-order",
-                      "api-reference/platform/orders/return-an-order",
-                      "api-reference/platform/orders/delete-an-order",
-                      "api-reference/platform/orders/update-an-order",
-                      "api-reference/platform/orders/advances-an-order",
-                      "api-reference/platform/orders/next-an-order",
-                      "api-reference/platform/orders/completes-an-order",
-                      "api-reference/platform/orders/empties-an-order",
-                      "api-reference/platform/orders/approves-an-order",
-                      "api-reference/platform/orders/cancels-an-order",
-                      "api-reference/platform/orders/use-store-credit-for-an-order",
-                      "api-reference/platform/orders/apply-coupon-code-for-an-order"
-                    ]
-                  },
-                  {
-                    "group": "Payment Methods",
-                    "pages": [
-                      "api-reference/platform/payment-methods/return-a-list-of-payment-methods",
-                      "api-reference/platform/payment-methods/create-a-payment-method",
-                      "api-reference/platform/payment-methods/return-a-payment-method",
-                      "api-reference/platform/payment-methods/delete-a-payment-method",
-                      "api-reference/platform/payment-methods/update-a-payment-method"
-                    ]
-                  },
-                  {
-                    "group": "Payments",
-                    "pages": [
-                      "api-reference/platform/payments/return-a-list-of-payments",
-                      "api-reference/platform/payments/return-a-payment",
-                      "api-reference/platform/payments/delete-a-payment"
-                    ]
-                  },
-                  {
-                    "group": "Products",
-                    "pages": [
-                      "api-reference/platform/products/return-a-list-of-products",
-                      "api-reference/platform/products/create-a-product",
-                      "api-reference/platform/products/return-a-product",
-                      "api-reference/platform/products/delete-a-product",
-                      "api-reference/platform/products/update-a-product"
-                    ]
-                  },
-                  {
-                    "group": "Promotion Actions",
-                    "pages": [
-                      "api-reference/platform/promotion-actions/return-a-list-of-promotion-actions",
-                      "api-reference/platform/promotion-actions/create-a-promotion-action",
-                      "api-reference/platform/promotion-actions/return-a-promotion-action",
-                      "api-reference/platform/promotion-actions/delete-a-promotion-action",
-                      "api-reference/platform/promotion-actions/update-a-promotion-action"
-                    ]
-                  },
-                  {
-                    "group": "Promotion Categories",
-                    "pages": [
-                      "api-reference/platform/promotion-categories/return-a-list-of-promotion-categories",
-                      "api-reference/platform/promotion-categories/create-a-promotion-category",
-                      "api-reference/platform/promotion-categories/return-a-promotion-category",
-                      "api-reference/platform/promotion-categories/delete-a-promotion-category",
-                      "api-reference/platform/promotion-categories/update-a-promotion-category"
-                    ]
-                  },
-                  {
-                    "group": "Promotion Rules",
-                    "pages": [
-                      "api-reference/platform/promotion-rules/return-a-list-of-promotion-rules",
-                      "api-reference/platform/promotion-rules/create-a-promotion-rule",
-                      "api-reference/platform/promotion-rules/return-a-promotion-rule",
-                      "api-reference/platform/promotion-rules/delete-a-promotion-rule",
-                      "api-reference/platform/promotion-rules/update-a-promotion-rule"
-                    ]
-                  },
-                  {
-                    "group": "Promotions",
-                    "pages": [
-                      "api-reference/platform/promotions/return-a-list-of-promotions",
-                      "api-reference/platform/promotions/create-a-promotion",
-                      "api-reference/platform/promotions/return-a-promotion",
-                      "api-reference/platform/promotions/delete-a-promotion",
-                      "api-reference/platform/promotions/update-a-promotion"
-                    ]
-                  },
-                  {
-                    "group": "Roles",
-                    "pages": [
-                      "api-reference/platform/roles/return-a-list-of-roles",
-                      "api-reference/platform/roles/create-a-role",
-                      "api-reference/platform/roles/return-a-role",
-                      "api-reference/platform/roles/delete-a-role",
-                      "api-reference/platform/roles/update-a-role"
-                    ]
-                  },
-                  {
-                    "group": "Shipments",
-                    "pages": [
-                      "api-reference/platform/shipments/return-a-list-of-shipments",
-                      "api-reference/platform/shipments/create-a-shipment",
-                      "api-reference/platform/shipments/return-a-shipment",
-                      "api-reference/platform/shipments/delete-a-shipment",
-                      "api-reference/platform/shipments/update-a-shipment",
-                      "api-reference/platform/shipments/adds-item-variant-to-an-existing-shipment",
-                      "api-reference/platform/shipments/removes-item-variant-from-shipment",
-                      "api-reference/platform/shipments/mark-shipment-as-ready-to-be-shipped",
-                      "api-reference/platform/shipments/mark-shipment-as-shipped",
-                      "api-reference/platform/shipments/cancels-the-shipment",
-                      "api-reference/platform/shipments/resumes-the-shipment",
-                      "api-reference/platform/shipments/moves-shipment-back-to-pending-state"
-                    ]
-                  },
-                  {
-                    "group": "Shipping Categories",
-                    "pages": [
-                      "api-reference/platform/shipping-categories/return-a-list-of-shipping-categories",
-                      "api-reference/platform/shipping-categories/create-a-shipping-category",
-                      "api-reference/platform/shipping-categories/return-a-shipping-category",
-                      "api-reference/platform/shipping-categories/delete-a-shipping-category",
-                      "api-reference/platform/shipping-categories/update-a-shipping-category"
-                    ]
-                  },
-                  {
-                    "group": "Shipping Methods",
-                    "pages": [
-                      "api-reference/platform/shipping-methods/return-a-list-of-shipping-methods",
-                      "api-reference/platform/shipping-methods/create-a-shipping-method",
-                      "api-reference/platform/shipping-methods/return-a-shipping-method",
-                      "api-reference/platform/shipping-methods/delete-a-shipping-method",
-                      "api-reference/platform/shipping-methods/update-a-shipping-method"
-                    ]
-                  },
-                  {
-                    "group": "States",
-                    "pages": [
-                      "api-reference/platform/states/returns-a-list-of-states",
-                      "api-reference/platform/states/returns-a-state"
-                    ]
-                  },
-                  {
-                    "group": "Stock Items",
-                    "pages": [
-                      "api-reference/platform/stock-items/return-a-list-of-stock-items",
-                      "api-reference/platform/stock-items/create-a-stock-item",
-                      "api-reference/platform/stock-items/return-a-stock-item",
-                      "api-reference/platform/stock-items/delete-a-stock-item",
-                      "api-reference/platform/stock-items/update-a-stock-item"
-                    ]
-                  },
-                  {
-                    "group": "Stock Locations",
-                    "pages": [
-                      "api-reference/platform/stock-locations/return-a-list-of-stock-locations",
-                      "api-reference/platform/stock-locations/create-a-stock-location",
-                      "api-reference/platform/stock-locations/return-a-stock-location",
-                      "api-reference/platform/stock-locations/delete-a-stock-location",
-                      "api-reference/platform/stock-locations/update-a-stock-location"
-                    ]
-                  },
-                  {
-                    "group": "Store Credit Categories",
-                    "pages": [
-                      "api-reference/platform/store-credit-categories/return-a-list-of-store-credit-categories",
-                      "api-reference/platform/store-credit-categories/create-a-store-credit-category",
-                      "api-reference/platform/store-credit-categories/return-a-store-credit-category",
-                      "api-reference/platform/store-credit-categories/delete-a-store-credit-category",
-                      "api-reference/platform/store-credit-categories/update-a-store-credit-category"
-                    ]
-                  },
-                  {
-                    "group": "Store Credit Types",
-                    "pages": [
-                      "api-reference/platform/store-credit-types/return-a-list-of-store-credit-types",
-                      "api-reference/platform/store-credit-types/create-a-store-credit-type",
-                      "api-reference/platform/store-credit-types/return-a-store-credit-type",
-                      "api-reference/platform/store-credit-types/delete-a-store-credit-type",
-                      "api-reference/platform/store-credit-types/update-a-store-credit-type"
-                    ]
-                  },
-                  {
-                    "group": "Store Credits",
-                    "pages": [
-                      "api-reference/platform/store-credits/return-a-list-of-store-credits",
-                      "api-reference/platform/store-credits/create-a-store-credit",
-                      "api-reference/platform/store-credits/return-a-store-credit",
-                      "api-reference/platform/store-credits/delete-a-store-credit",
-                      "api-reference/platform/store-credits/update-a-store-credit"
-                    ]
-                  },
-                  {
-                    "group": "Tax Categories",
-                    "pages": [
-                      "api-reference/platform/tax-categories/return-a-list-of-tax-categories",
-                      "api-reference/platform/tax-categories/create-a-tax-category",
-                      "api-reference/platform/tax-categories/return-a-tax-category",
-                      "api-reference/platform/tax-categories/delete-a-tax-category",
-                      "api-reference/platform/tax-categories/update-a-tax-category"
-                    ]
-                  },
-                  {
-                    "group": "Tax Rates",
-                    "pages": [
-                      "api-reference/platform/tax-rates/return-a-list-of-tax-rates",
-                      "api-reference/platform/tax-rates/create-a-tax-rate",
-                      "api-reference/platform/tax-rates/return-a-tax-rate",
-                      "api-reference/platform/tax-rates/delete-a-tax-rate",
-                      "api-reference/platform/tax-rates/update-a-tax-rate"
-                    ]
-                  },
-                  {
-                    "group": "Taxonomies",
-                    "pages": [
-                      "api-reference/platform/taxonomies/return-a-list-of-taxonomies",
-                      "api-reference/platform/taxonomies/create-a-taxonomy",
-                      "api-reference/platform/taxonomies/return-a-taxonomy",
-                      "api-reference/platform/taxonomies/delete-a-taxonomy",
-                      "api-reference/platform/taxonomies/update-a-taxonomy"
-                    ]
-                  },
-                  {
-                    "group": "Taxons",
-                    "pages": [
-                      "api-reference/platform/taxons/return-a-list-of-taxons",
-                      "api-reference/platform/taxons/create-a-taxon",
-                      "api-reference/platform/taxons/return-a-taxon",
-                      "api-reference/platform/taxons/delete-a-taxon",
-                      "api-reference/platform/taxons/update-a-taxon",
-                      "api-reference/platform/taxons/reposition-a-taxon"
-                    ]
-                  },
-                  {
-                    "group": "Users",
-                    "pages": [
-                      "api-reference/platform/users/return-a-list-of-users",
-                      "api-reference/platform/users/create-a-user",
-                      "api-reference/platform/users/return-a-user",
-                      "api-reference/platform/users/delete-a-user",
-                      "api-reference/platform/users/update-a-user"
-                    ]
-                  },
-                  {
-                    "group": "Variants",
-                    "pages": [
-                      "api-reference/platform/variants/return-a-list-of-variants",
-                      "api-reference/platform/variants/return-a-variant",
-                      "api-reference/platform/variants/delete-a-variant"
-                    ]
-                  },
-                  {
-                    "group": "Vendors",
-                    "pages": [
-                      "api-reference/platform/vendors/return-a-list-of-vendors",
-                      "api-reference/platform/vendors/create-a-vendor",
-                      "api-reference/platform/vendors/return-a-vendor",
-                      "api-reference/platform/vendors/delete-a-vendor",
-                      "api-reference/platform/vendors/update-a-vendor",
-                      "api-reference/platform/vendors/invites-vendor-to-the-platform",
-                      "api-reference/platform/vendors/start-onboarding-process",
-                      "api-reference/platform/vendors/completes-onboarding-process",
-                      "api-reference/platform/vendors/approves-vendor",
-                      "api-reference/platform/vendors/rejects-vendor",
-                      "api-reference/platform/vendors/suspends-vendor"
-                    ]
-                  },
-                  {
-                    "group": "Webhook Events",
-                    "pages": [
-                      "api-reference/platform/webhook-events/return-a-list-of-webhook-events"
-                    ]
-                  },
-                  {
-                    "group": "Webhook Subscribers",
-                    "pages": [
-                      "api-reference/platform/webhook-subscribers/return-a-list-of-webhook-subscribers",
-                      "api-reference/platform/webhook-subscribers/create-a-webhook-subscriber",
-                      "api-reference/platform/webhook-subscribers/return-a-webhook-subscriber",
-                      "api-reference/platform/webhook-subscribers/delete-a-webhook-subscriber",
-                      "api-reference/platform/webhook-subscribers/update-a-webhook-subscriber"
-                    ]
-                  },
-                  {
-                    "group": "Wished Items",
-                    "pages": [
-                      "api-reference/platform/wished-items/return-a-list-of-wished-items",
-                      "api-reference/platform/wished-items/create-a-wished-item",
-                      "api-reference/platform/wished-items/return-a-wished-item",
-                      "api-reference/platform/wished-items/delete-a-wished-item",
-                      "api-reference/platform/wished-items/update-a-wished-item"
-                    ]
-                  },
-                  {
-                    "group": "Wishlists",
-                    "pages": [
-                      "api-reference/platform/wishlists/return-a-list-of-wishlists",
-                      "api-reference/platform/wishlists/create-a-wishlist",
-                      "api-reference/platform/wishlists/return-a-wishlist",
-                      "api-reference/platform/wishlists/delete-a-wishlist",
-                      "api-reference/platform/wishlists/update-a-wishlist"
-                    ]
-                  },
-                  {
-                    "group": "Zones",
-                    "pages": [
-                      "api-reference/platform/zones/return-a-list-of-zones",
-                      "api-reference/platform/zones/create-a-zone",
-                      "api-reference/platform/zones/return-a-zone",
-                      "api-reference/platform/zones/delete-a-zone",
-                      "api-reference/platform/zones/update-a-zone"
-                    ]
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "tab": "Integrations",
-            "groups": [
-              {
-                "group": "Integrations",
-                "pages": ["integrations/integrations"]
-              },
-              {
-                "group": "Payments",
-                "pages": [
-                  "integrations/payments/stripe",
-                  "integrations/payments/adyen",
-                  "integrations/payments/paypal",
-                  "integrations/payments/razorpay"
-                ]
-              },
-              {
-                "group": "Analytics",
-                "pages": [
-                  "integrations/analytics/google-analytics",
-                  "integrations/analytics/google-tag-manager"
-                ]
-              },
-              {
-                "group": "Marketing",
-                "pages": ["integrations/marketing/klaviyo"]
-              },
-              {
-                "group": "SSO, MFA & Social Login",
-                "pages": [
-                  "integrations/sso-mfa-social-login/admin-dashboard",
-                  "integrations/sso-mfa-social-login/storefront"
-                ]
-              }
-            ]
-          },
-          {
-            "tab": "User Docs",
-            "groups": [
-              {
-                "group": "Introduction",
-                "pages": [
-                  "user/what-is-spree-commerce",
-                  "user/using-spree",
-                  "user/user-quickstart-guide"
-                ]
-              },
-              {
-                "group": "Migration",
-                "pages": ["user/migration/migrate-from-shopify"]
-              },
-              {
-                "group": "Products",
-                "pages": [
-                  {
-                    "group": "Create & Edit Products",
-                    "pages": [
-                      "user/products/creating-products",
-                      "user/products/deleting-products",
-                      "user/products/editing-products",
-                      "user/products/editing-multi-variant-products",
-                      "user/products/cloning-products"
-                    ]
-                  },
-                  {
-                    "group": "Manage Products",
-                    "pages": [
-                      "user/manage-products/search-products",
-                      "user/manage-products/bulk-product-operations",
-                      "user/manage-products/price-lists",
-                      "user/manage-products/export-products",
-                      "user/manage-products/import-products",
-                      "user/manage-products/product-import-file-template",
-                      "user/manage-products/stock-levels",
-                      "user/manage-products/stock-transfers",
-                      "user/manage-products/product-taxonomies",
-                      "user/manage-products/product-options",
-                      "user/manage-products/product-metafields"
-                    ]
-                  }
-                ]
-              },
-              {
-                "group": "Orders",
-                "pages": [
-                  "user/orders/order-states",
-                  "user/orders/processing-orders",
-                  "user/orders/creating-orders",
-                  "user/orders/editing-orders",
-                  "user/orders/order-adjustments",
-                  "user/orders/exporting-orders",
-                  "user/orders/cancelling-orders",
-                  "user/orders/refunding-orders",
-                  "user/orders/searching-orders"
-                ]
-              },
-              {
-                "group": "Returns",
-                "pages": [
-                  "user/settings/returns-configuration",
-                  "user/returns/returns-processing"
-                ]
-              },
-              {
-                "group": "Customers",
-                "pages": [
-                  "user/customers/create-customer",
-                  "user/customers/customer-profile",
-                  "user/customers/edit-customer",
-                  "user/customers/issue-gift-card",
-                  "user/customers/assign-store-credits",
-                  "user/customers/searching-customers",
-                  "user/customers/exporting-customers",
-                  "user/customers/customer-groups"
-                ]
-              },
-              {
-                "group": "Promotions",
-                "pages": [
-                  "user/promotions/create-a-promotion",
-                  "user/promotions/promotion-rules",
-                  "user/promotions/promotion-actions",
-                  "user/promotions/gift-cards"
-                ]
-              },
-              {
-                "group": "Vendors",
-                "pages": [
-                  "user/vendors/invite-vendor",
-                  "user/vendors/vendor-onboarding"
-                ]
-              },
-              {
-                "group": "Storefront",
-                "pages": [
-                  {
-                    "group": "Storefront Themes",
-                    "pages": [
-                      "user/storefront/theme-editor",
-                      "user/storefront/create-new-theme",
-                      "user/storefront/delete-theme",
-                      "user/storefront/product-details-page",
-                      "user/storefront/product-listing-page"
-                    ]
-                  },
-                  {
-                    "group": "Storefront Pages",
-                    "pages": [
-                      "user/storefront/create-page",
-                      "user/storefront/edit-page",
-                      "user/storefront/delete-page"
-                    ]
-                  },
-                  "user/storefront/storefront-settings",
-                  "user/storefront/create-new-store"
-                ]
-              },
-              {
-                "group": "Posts",
-                "pages": [
-                  "user/storefront/create-post",
-                  "user/storefront/edit-post",
-                  "user/storefront/search-posts",
-                  "user/storefront/delete-post"
-                ]
-              },
-              {
-                "group": "Settings",
-                "pages": [
-                  "user/settings/store-details",
-                  "user/settings/users",
-                  "user/settings/emails",
-                  "user/settings/policies",
-                  "user/settings/checkout",
-                  "user/settings/domains",
-                  "user/settings/locations",
-                  "user/settings/metafields",
-                  "user/settings/payments",
-                  "user/settings/zones",
-                  "user/settings/shipping-methods",
-                  "user/settings/tax"
-                ]
-              },
-              {
-                "group": "Security",
-                "pages": ["user/security"]
-              }
-            ]
-          },
-          {
-            "tab": "Use Cases",
-            "groups": [
-              {
-                "group": "Overview",
-                "pages": ["use-case/overview"]
-              },
-              {
-                "group": "B2B Commerce",
-                "pages": [
-                  "use-case/b2b/b2b-commerce-model",
-                  "use-case/b2b/b2b-capabilities",
-                  "use-case/b2b/b2b-admin-capabilities",
-                  "use-case/b2b/b2b-buyer-capabilities"
-                ]
-              },
-              {
-                "group": "Digital Products",
-                "pages": [
-                  "use-case/digital-products/model",
-                  "use-case/digital-products/capabilities",
-                  "use-case/digital-products/admin-capabilities"
-                ]
-              },
-              {
-                "group": "ChatGPT Integration",
-                "pages": [
-                  "use-case/chatgpt-integration/chatgpt-shopping",
-                  "use-case/chatgpt-integration/chatgpt-instant-checkout",
-                  "use-case/chatgpt-integration/chatgpt-buyer-experience"
-                ]
-              },
-              {
-                "group": "Multi-Store Platform",
-                "pages": [
-                  "use-case/multi-store/model",
-                  "use-case/multi-store/capabilities",
-                  "use-case/multi-store/admin-capabilities"
-                ]
-              },
-              {
-                "group": "Multi-Tenant Platform",
-                "pages": [
-                  "use-case/multi-tenant/multi-tenant-model",
-                  "use-case/multi-tenant/multi-tenant-capabilities",
-                  "use-case/multi-tenant/super-admin-capabilities",
-                  "use-case/multi-tenant/tenant-capabilities",
-                  "use-case/multi-tenant/franchises-and-reseller-networks",
-                  "use-case/multi-tenant/multi-brand-enterprise-model",
-                  "use-case/multi-tenant/white-label-saas"
-                ]
-              },
-              {
-                "group": "Multi-Vendor Marketplace",
-                "pages": [
-                  "use-case/marketplace/model",
-                  "use-case/marketplace/capabilities",
-                  "use-case/marketplace/admin-dashboard",
-                  "use-case/marketplace/vendor-dashboard",
-                  "use-case/marketplace/customer-ux"
-                ]
+                "pages": ["api-reference/platform/authentication"],
+                "openapi": {
+                  "source": "api-reference/platform.yaml",
+                  "directory": "api-reference/platform"
+                }
               }
             ]
           }
         ]
       },
       {
-        "version": "v4",
-        "tabs": [
+        "tab": "Integrations",
+        "groups": [
           {
-            "tab": "Developer Docs",
-            "groups": [
-              {
-                "group": "Getting started",
-                "pages": ["developer/getting-started/quickstart"]
-              },
-              {
-                "group": "Core Concepts",
-                "pages": [
-                  "developer/core-concepts/architecture",
-                  "developer/core-concepts/stores",
-                  "developer/core-concepts/markets",
-                  "developer/core-concepts/orders",
-                  "developer/core-concepts/users",
-                  "developer/core-concepts/products",
-                  "developer/core-concepts/inventory",
-                  "developer/core-concepts/payments",
-                  "developer/core-concepts/store-credits-gift-cards",
-                  "developer/core-concepts/taxes",
-                  "developer/core-concepts/promotions",
-                  "developer/core-concepts/shipments",
-                  "developer/core-concepts/addresses",
-                  "developer/core-concepts/i18n"
-                ]
-              },
-              {
-                "group": "Customization Reference",
-                "pages": [
-                  "developer/customization/quickstart",
-                  "developer/customization/v4/authentication",
-                  "developer/customization/v4/images",
-                  "developer/customization/v4/checkout",
-                  "developer/customization/v4/admin-panel",
-                  "developer/customization/v4/storefront",
-                  "developer/customization/v4/deface",
-                  "developer/customization/permissions",
-                  "developer/customization/dependencies",
-                  "developer/customization/decorators",
-                  "developer/customization/routes"
-                ]
-              },
-              {
-                "group": "Deployment",
-                "pages": [
-                  "developer/deployment/render",
-                  "developer/deployment/docker",
-                  "developer/deployment/assets",
-                  "developer/deployment/cdn",
-                  "developer/deployment/caching"
-                ]
-              },
-              {
-                "group": "Upgrading",
-                "pages": [
-                  "developer/upgrades/quickstart",
-                  {
-                    "group": "Upgrade Guides",
-                    "pages": [
-                      "developer/upgrades/4.8-to-4.9",
-                      "developer/upgrades/4.x-to-4.8",
-                      "developer/upgrades/4.6-to-4.7",
-                      "developer/upgrades/4.5-to-4.6",
-                      "developer/upgrades/4.4-to-4.5",
-                      "developer/upgrades/4.3-to-4.4",
-                      "developer/upgrades/4.2-to-4.3",
-                      "developer/upgrades/4.1-to-4.2",
-                      "developer/upgrades/4.0-to-4.1",
-                      "developer/upgrades/3.7-to-4.0",
-                      "developer/upgrades/3.6-to-3.7",
-                      "developer/upgrades/3.5-to-3.6",
-                      "developer/upgrades/3.4-to-3.5",
-                      "developer/upgrades/3.3-to-3.4",
-                      "developer/upgrades/3.2-to-3.3",
-                      "developer/upgrades/3.1-to-3.2",
-                      "developer/upgrades/3.0-to-3.1",
-                      "developer/upgrades/2.3-to-2.4",
-                      "developer/upgrades/2.2-to-2.3",
-                      "developer/upgrades/2.1-to-2.2",
-                      "developer/upgrades/2.0-to-2.1"
-                    ]
-                  }
-                ]
-              },
-              {
-                "group": "Contributing",
-                "pages": [
-                  "developer/contributing/quickstart",
-                  "developer/contributing/developing-spree",
-                  "developer/contributing/creating-an-extension"
-                ]
-              },
-              {
-                "group": "Security",
-                "pages": [
-                  "developer/security/security_policy",
-                  "developer/security/pci_compliance"
-                ]
-              },
-              {
-                "group": "Advanced",
-                "pages": ["developer/advanced/adding_spree_to_rails_app"]
-              }
+            "group": "Integrations",
+            "pages": ["integrations/integrations"]
+          },
+          {
+            "group": "Payments",
+            "pages": [
+              "integrations/payments/stripe",
+              "integrations/payments/adyen",
+              "integrations/payments/paypal",
+              "integrations/payments/razorpay"
             ]
           },
           {
-            "tab": "Ecommerce API",
-            "groups": [
+            "group": "Analytics",
+            "pages": [
+              "integrations/analytics/google-analytics",
+              "integrations/analytics/google-tag-manager"
+            ]
+          },
+          {
+            "group": "Marketing",
+            "pages": ["integrations/marketing/klaviyo"]
+          },
+          {
+            "group": "SSO, MFA & Social Login",
+            "pages": [
+              "integrations/sso-mfa-social-login/admin-dashboard",
+              "integrations/sso-mfa-social-login/storefront"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "User Guide",
+        "groups": [
+          {
+            "group": "Introduction",
+            "pages": [
+              "user/what-is-spree-commerce",
+              "user/using-spree",
+              "user/user-quickstart-guide"
+            ]
+          },
+          {
+            "group": "Migration",
+            "pages": ["user/migration/migrate-from-shopify"]
+          },
+          {
+            "group": "Products",
+            "pages": [
               {
-                "group": "API basics",
+                "group": "Create & Edit Products",
                 "pages": [
-                  "api-reference/introduction",
-                  "api-reference/pagination",
-                  "api-reference/filtering-and-sorting",
-                  "api-reference/fetching-multiple-resources"
+                  "user/products/creating-products",
+                  "user/products/deleting-products",
+                  "user/products/editing-products",
+                  "user/products/editing-multi-variant-products",
+                  "user/products/cloning-products"
                 ]
               },
               {
-                "group": "Storefront API",
+                "group": "Manage Products",
                 "pages": [
-                  "api-reference/storefront/authentication",
-                  {
-                    "group": "Account",
-                    "pages": [
-                      "api-reference/storefront/account/retrieve-an-account",
-                      "api-reference/storefront/account/create-an-account",
-                      "api-reference/storefront/account/update-an-account"
-                    ]
-                  },
-                  {
-                    "group": "Account / Address",
-                    "pages": [
-                      "api-reference/storefront/account-address/list-all-addresses",
-                      "api-reference/storefront/account-address/create-an-address",
-                      "api-reference/storefront/account-address/remove-an-address",
-                      "api-reference/storefront/account-address/update-an-address"
-                    ]
-                  },
-                  {
-                    "group": "Account / Credit Cards",
-                    "pages": [
-                      "api-reference/storefront/account-credit-cards/list-all-credit-cards",
-                      "api-reference/storefront/account-credit-cards/remove-a-credit-card",
-                      "api-reference/storefront/account-credit-cards/retrieve-the-default-credit-card"
-                    ]
-                  },
-                  {
-                    "group": "Account / Orders",
-                    "pages": [
-                      "api-reference/storefront/account-orders/list-all-orders",
-                      "api-reference/storefront/account-orders/retrieve-an-order"
-                    ]
-                  },
-                  {
-                    "group": "Order Status",
-                    "pages": [
-                      "api-reference/storefront/order-status/retrieve-an-order-status"
-                    ]
-                  },
-                  {
-                    "group": "Cart",
-                    "pages": [
-                      "api-reference/storefront/cart/retrieve-a-cart",
-                      "api-reference/storefront/cart/create-a-cart",
-                      "api-reference/storefront/cart/delete-a-cart"
-                    ]
-                  },
-                  {
-                    "group": "Cart / Line Items",
-                    "pages": [
-                      "api-reference/storefront/cart-line-items/add-an-item-to-cart",
-                      "api-reference/storefront/cart-line-items/set-line-item-quantity",
-                      "api-reference/storefront/cart-line-items/remove-a-line-item"
-                    ]
-                  },
-                  {
-                    "group": "Cart / Other",
-                    "pages": [
-                      "api-reference/storefront/cart-other/empty-the-cart",
-                      "api-reference/storefront/cart-other/list-estimated-shipping-rates",
-                      "api-reference/storefront/cart-other/associate-a-cart-with-a-user",
-                      "api-reference/storefront/cart-other/change-cart-currency"
-                    ]
-                  },
-                  {
-                    "group": "Cart / Coupons",
-                    "pages": [
-                      "api-reference/storefront/cart-coupons/apply-a-coupon-code",
-                      "api-reference/storefront/cart-coupons/remove-a-coupon",
-                      "api-reference/storefront/cart-coupons/remove-all-coupons"
-                    ]
-                  },
-                  {
-                    "group": "Checkout",
-                    "pages": [
-                      "api-reference/storefront/checkout/update-checkout",
-                      "api-reference/storefront/checkout/validate-order-payment"
-                    ]
-                  },
-                  {
-                    "group": "Checkout / State",
-                    "pages": [
-                      "api-reference/storefront/checkout-state/next-checkout-step",
-                      "api-reference/storefront/checkout-state/advance-checkout",
-                      "api-reference/storefront/checkout-state/complete-checkout"
-                    ]
-                  },
-                  {
-                    "group": "Checkout / Shipments",
-                    "pages": [
-                      "api-reference/storefront/checkout-shipments/selects-shipping-method-for-shipments",
-                      "api-reference/storefront/checkout-shipments/list-shipping-rates"
-                    ]
-                  },
-                  {
-                    "group": "Checkout / Payments",
-                    "pages": [
-                      "api-reference/storefront/checkout-payments/create-new-payment",
-                      "api-reference/storefront/checkout-payments/list-payment-methods"
-                    ]
-                  },
-                  {
-                    "group": "Checkout / Store Credit",
-                    "pages": [
-                      "api-reference/storefront/checkout-store-credit/add-store-credit",
-                      "api-reference/storefront/checkout-store-credit/remove-store-credit"
-                    ]
-                  },
-                  {
-                    "group": "Products",
-                    "pages": [
-                      "api-reference/storefront/products/list-all-products",
-                      "api-reference/storefront/products/retrieve-a-product"
-                    ]
-                  },
-                  {
-                    "group": "Vendors",
-                    "pages": [
-                      "api-reference/storefront/vendors/list-all-vendors",
-                      "api-reference/storefront/vendors/retrieve-a-vendor"
-                    ]
-                  },
-                  {
-                    "group": "Stores",
-                    "pages": [
-                      "api-reference/storefront/stores/return-the-current-store"
-                    ]
-                  },
-                  {
-                    "group": "Taxons",
-                    "pages": [
-                      "api-reference/storefront/taxons/list-all-taxons",
-                      "api-reference/storefront/taxons/retrieve-a-taxon"
-                    ]
-                  },
-                  {
-                    "group": "Countries",
-                    "pages": [
-                      "api-reference/storefront/countries/list-all-countries",
-                      "api-reference/storefront/countries/retrieve-a-country",
-                      "api-reference/storefront/countries/get-default-country"
-                    ]
-                  },
-                  {
-                    "group": "Wishlists",
-                    "pages": [
-                      "api-reference/storefront/wishlists/list-all-wishlists",
-                      "api-reference/storefront/wishlists/create-a-wishlist",
-                      "api-reference/storefront/wishlists/retrieve-a-wishlist",
-                      "api-reference/storefront/wishlists/delete-a-wishlist",
-                      "api-reference/storefront/wishlists/update-a-wishlist",
-                      "api-reference/storefront/wishlists/retrieve-the-default-wishlist"
-                    ]
-                  },
-                  {
-                    "group": "Wishlists / Wished Items",
-                    "pages": [
-                      "api-reference/storefront/wishlists-wished-items/add-item-to-wishlist",
-                      "api-reference/storefront/wishlists-wished-items/add-items-to-wishlist",
-                      "api-reference/storefront/wishlists-wished-items/set-wished-item-quantity",
-                      "api-reference/storefront/wishlists-wished-items/delete-item-from-wishlist",
-                      "api-reference/storefront/wishlists-wished-items/delete-items-from-wishlist"
-                    ]
-                  },
-                  {
-                    "group": "Digital Downloads",
-                    "pages": [
-                      "api-reference/storefront/digital-downloads/download-a-digital-asset"
-                    ]
-                  }
-                ]
-              },
-              {
-                "group": "Platform API",
-                "pages": [
-                  "api-reference/platform/authentication",
-                  {
-                    "group": "Addresses",
-                    "pages": [
-                      "api-reference/platform/addresses/return-a-list-of-addresses",
-                      "api-reference/platform/addresses/create-an-address",
-                      "api-reference/platform/addresses/return-an-address",
-                      "api-reference/platform/addresses/delete-an-address",
-                      "api-reference/platform/addresses/update-an-address"
-                    ]
-                  },
-                  {
-                    "group": "Adjustments",
-                    "pages": [
-                      "api-reference/platform/adjustments/return-a-list-of-adjustments",
-                      "api-reference/platform/adjustments/create-an-adjustment",
-                      "api-reference/platform/adjustments/return-an-adjustment",
-                      "api-reference/platform/adjustments/delete-an-adjustment",
-                      "api-reference/platform/adjustments/update-an-adjustment"
-                    ]
-                  },
-                  {
-                    "group": "Classifications",
-                    "pages": [
-                      "api-reference/platform/classifications/return-a-list-of-classifications",
-                      "api-reference/platform/classifications/create-a-classification",
-                      "api-reference/platform/classifications/return-a-classification",
-                      "api-reference/platform/classifications/delete-a-classification",
-                      "api-reference/platform/classifications/update-a-classification"
-                    ]
-                  },
-                  {
-                    "group": "Countries",
-                    "pages": [
-                      "api-reference/platform/countries/returns-a-list-of-countries",
-                      "api-reference/platform/countries/returns-a-country"
-                    ]
-                  },
-                  {
-                    "group": "Data Feeds",
-                    "pages": [
-                      "api-reference/platform/data-feeds/return-a-list-of-data-feeds",
-                      "api-reference/platform/data-feeds/create-a-data-feed",
-                      "api-reference/platform/data-feeds/return-a-data-feed",
-                      "api-reference/platform/data-feeds/delete-a-data-feed",
-                      "api-reference/platform/data-feeds/update-a-data-feed"
-                    ]
-                  },
-                  {
-                    "group": "Digital Links",
-                    "pages": [
-                      "api-reference/platform/digital-links/return-a-list-of-digital-links",
-                      "api-reference/platform/digital-links/create-a-digital-link",
-                      "api-reference/platform/digital-links/return-a-digital-link",
-                      "api-reference/platform/digital-links/delete-a-digital-link",
-                      "api-reference/platform/digital-links/update-a-digital-link",
-                      "api-reference/platform/digital-links/reset-a-digital-link"
-                    ]
-                  },
-                  {
-                    "group": "Digital Assets",
-                    "pages": [
-                      "api-reference/platform/digital-assets/return-a-list-of-digital-assets",
-                      "api-reference/platform/digital-assets/create-a-digital-asset",
-                      "api-reference/platform/digital-assets/return-a-digital-asset",
-                      "api-reference/platform/digital-assets/delete-a-digital-asset",
-                      "api-reference/platform/digital-assets/update-a-digital-asset"
-                    ]
-                  },
-                  {
-                    "group": "Line Items",
-                    "pages": [
-                      "api-reference/platform/line-items/return-a-list-of-line-items",
-                      "api-reference/platform/line-items/create-a-line-item",
-                      "api-reference/platform/line-items/return-a-line-item",
-                      "api-reference/platform/line-items/delete-a-line-item",
-                      "api-reference/platform/line-items/update-a-line-item"
-                    ]
-                  },
-                  {
-                    "group": "Option Types",
-                    "pages": [
-                      "api-reference/platform/option-types/return-a-list-of-option-types",
-                      "api-reference/platform/option-types/create-an-option-type",
-                      "api-reference/platform/option-types/return-an-option-type",
-                      "api-reference/platform/option-types/delete-an-option-type",
-                      "api-reference/platform/option-types/update-an-option-type"
-                    ]
-                  },
-                  {
-                    "group": "Option Values",
-                    "pages": [
-                      "api-reference/platform/option-values/return-a-list-of-option-values",
-                      "api-reference/platform/option-values/create-an-option-value",
-                      "api-reference/platform/option-values/return-an-option-value",
-                      "api-reference/platform/option-values/delete-an-option-value",
-                      "api-reference/platform/option-values/update-an-option-value"
-                    ]
-                  },
-                  {
-                    "group": "Orders",
-                    "pages": [
-                      "api-reference/platform/orders/return-a-list-of-orders",
-                      "api-reference/platform/orders/creates-an-order",
-                      "api-reference/platform/orders/return-an-order",
-                      "api-reference/platform/orders/delete-an-order",
-                      "api-reference/platform/orders/update-an-order",
-                      "api-reference/platform/orders/advances-an-order",
-                      "api-reference/platform/orders/next-an-order",
-                      "api-reference/platform/orders/completes-an-order",
-                      "api-reference/platform/orders/empties-an-order",
-                      "api-reference/platform/orders/approves-an-order",
-                      "api-reference/platform/orders/cancels-an-order",
-                      "api-reference/platform/orders/use-store-credit-for-an-order",
-                      "api-reference/platform/orders/apply-coupon-code-for-an-order"
-                    ]
-                  },
-                  {
-                    "group": "Payment Methods",
-                    "pages": [
-                      "api-reference/platform/payment-methods/return-a-list-of-payment-methods",
-                      "api-reference/platform/payment-methods/create-a-payment-method",
-                      "api-reference/platform/payment-methods/return-a-payment-method",
-                      "api-reference/platform/payment-methods/delete-a-payment-method",
-                      "api-reference/platform/payment-methods/update-a-payment-method"
-                    ]
-                  },
-                  {
-                    "group": "Payments",
-                    "pages": [
-                      "api-reference/platform/payments/return-a-list-of-payments",
-                      "api-reference/platform/payments/return-a-payment",
-                      "api-reference/platform/payments/delete-a-payment"
-                    ]
-                  },
-                  {
-                    "group": "Products",
-                    "pages": [
-                      "api-reference/platform/products/return-a-list-of-products",
-                      "api-reference/platform/products/create-a-product",
-                      "api-reference/platform/products/return-a-product",
-                      "api-reference/platform/products/delete-a-product",
-                      "api-reference/platform/products/update-a-product"
-                    ]
-                  },
-                  {
-                    "group": "Promotion Actions",
-                    "pages": [
-                      "api-reference/platform/promotion-actions/return-a-list-of-promotion-actions",
-                      "api-reference/platform/promotion-actions/create-a-promotion-action",
-                      "api-reference/platform/promotion-actions/return-a-promotion-action",
-                      "api-reference/platform/promotion-actions/delete-a-promotion-action",
-                      "api-reference/platform/promotion-actions/update-a-promotion-action"
-                    ]
-                  },
-                  {
-                    "group": "Promotion Categories",
-                    "pages": [
-                      "api-reference/platform/promotion-categories/return-a-list-of-promotion-categories",
-                      "api-reference/platform/promotion-categories/create-a-promotion-category",
-                      "api-reference/platform/promotion-categories/return-a-promotion-category",
-                      "api-reference/platform/promotion-categories/delete-a-promotion-category",
-                      "api-reference/platform/promotion-categories/update-a-promotion-category"
-                    ]
-                  },
-                  {
-                    "group": "Promotion Rules",
-                    "pages": [
-                      "api-reference/platform/promotion-rules/return-a-list-of-promotion-rules",
-                      "api-reference/platform/promotion-rules/create-a-promotion-rule",
-                      "api-reference/platform/promotion-rules/return-a-promotion-rule",
-                      "api-reference/platform/promotion-rules/delete-a-promotion-rule",
-                      "api-reference/platform/promotion-rules/update-a-promotion-rule"
-                    ]
-                  },
-                  {
-                    "group": "Promotions",
-                    "pages": [
-                      "api-reference/platform/promotions/return-a-list-of-promotions",
-                      "api-reference/platform/promotions/create-a-promotion",
-                      "api-reference/platform/promotions/return-a-promotion",
-                      "api-reference/platform/promotions/delete-a-promotion",
-                      "api-reference/platform/promotions/update-a-promotion"
-                    ]
-                  },
-                  {
-                    "group": "Roles",
-                    "pages": [
-                      "api-reference/platform/roles/return-a-list-of-roles",
-                      "api-reference/platform/roles/create-a-role",
-                      "api-reference/platform/roles/return-a-role",
-                      "api-reference/platform/roles/delete-a-role",
-                      "api-reference/platform/roles/update-a-role"
-                    ]
-                  },
-                  {
-                    "group": "Shipments",
-                    "pages": [
-                      "api-reference/platform/shipments/return-a-list-of-shipments",
-                      "api-reference/platform/shipments/create-a-shipment",
-                      "api-reference/platform/shipments/return-a-shipment",
-                      "api-reference/platform/shipments/delete-a-shipment",
-                      "api-reference/platform/shipments/update-a-shipment",
-                      "api-reference/platform/shipments/adds-item-variant-to-an-existing-shipment",
-                      "api-reference/platform/shipments/removes-item-variant-from-shipment",
-                      "api-reference/platform/shipments/mark-shipment-as-ready-to-be-shipped",
-                      "api-reference/platform/shipments/mark-shipment-as-shipped",
-                      "api-reference/platform/shipments/cancels-the-shipment",
-                      "api-reference/platform/shipments/resumes-the-shipment",
-                      "api-reference/platform/shipments/moves-shipment-back-to-pending-state"
-                    ]
-                  },
-                  {
-                    "group": "Shipping Categories",
-                    "pages": [
-                      "api-reference/platform/shipping-categories/return-a-list-of-shipping-categories",
-                      "api-reference/platform/shipping-categories/create-a-shipping-category",
-                      "api-reference/platform/shipping-categories/return-a-shipping-category",
-                      "api-reference/platform/shipping-categories/delete-a-shipping-category",
-                      "api-reference/platform/shipping-categories/update-a-shipping-category"
-                    ]
-                  },
-                  {
-                    "group": "Shipping Methods",
-                    "pages": [
-                      "api-reference/platform/shipping-methods/return-a-list-of-shipping-methods",
-                      "api-reference/platform/shipping-methods/create-a-shipping-method",
-                      "api-reference/platform/shipping-methods/return-a-shipping-method",
-                      "api-reference/platform/shipping-methods/delete-a-shipping-method",
-                      "api-reference/platform/shipping-methods/update-a-shipping-method"
-                    ]
-                  },
-                  {
-                    "group": "States",
-                    "pages": [
-                      "api-reference/platform/states/returns-a-list-of-states",
-                      "api-reference/platform/states/returns-a-state"
-                    ]
-                  },
-                  {
-                    "group": "Stock Items",
-                    "pages": [
-                      "api-reference/platform/stock-items/return-a-list-of-stock-items",
-                      "api-reference/platform/stock-items/create-a-stock-item",
-                      "api-reference/platform/stock-items/return-a-stock-item",
-                      "api-reference/platform/stock-items/delete-a-stock-item",
-                      "api-reference/platform/stock-items/update-a-stock-item"
-                    ]
-                  },
-                  {
-                    "group": "Stock Locations",
-                    "pages": [
-                      "api-reference/platform/stock-locations/return-a-list-of-stock-locations",
-                      "api-reference/platform/stock-locations/create-a-stock-location",
-                      "api-reference/platform/stock-locations/return-a-stock-location",
-                      "api-reference/platform/stock-locations/delete-a-stock-location",
-                      "api-reference/platform/stock-locations/update-a-stock-location"
-                    ]
-                  },
-                  {
-                    "group": "Store Credit Categories",
-                    "pages": [
-                      "api-reference/platform/store-credit-categories/return-a-list-of-store-credit-categories",
-                      "api-reference/platform/store-credit-categories/create-a-store-credit-category",
-                      "api-reference/platform/store-credit-categories/return-a-store-credit-category",
-                      "api-reference/platform/store-credit-categories/delete-a-store-credit-category",
-                      "api-reference/platform/store-credit-categories/update-a-store-credit-category"
-                    ]
-                  },
-                  {
-                    "group": "Store Credit Types",
-                    "pages": [
-                      "api-reference/platform/store-credit-types/return-a-list-of-store-credit-types",
-                      "api-reference/platform/store-credit-types/create-a-store-credit-type",
-                      "api-reference/platform/store-credit-types/return-a-store-credit-type",
-                      "api-reference/platform/store-credit-types/delete-a-store-credit-type",
-                      "api-reference/platform/store-credit-types/update-a-store-credit-type"
-                    ]
-                  },
-                  {
-                    "group": "Store Credits",
-                    "pages": [
-                      "api-reference/platform/store-credits/return-a-list-of-store-credits",
-                      "api-reference/platform/store-credits/create-a-store-credit",
-                      "api-reference/platform/store-credits/return-a-store-credit",
-                      "api-reference/platform/store-credits/delete-a-store-credit",
-                      "api-reference/platform/store-credits/update-a-store-credit"
-                    ]
-                  },
-                  {
-                    "group": "Tax Categories",
-                    "pages": [
-                      "api-reference/platform/tax-categories/return-a-list-of-tax-categories",
-                      "api-reference/platform/tax-categories/create-a-tax-category",
-                      "api-reference/platform/tax-categories/return-a-tax-category",
-                      "api-reference/platform/tax-categories/delete-a-tax-category",
-                      "api-reference/platform/tax-categories/update-a-tax-category"
-                    ]
-                  },
-                  {
-                    "group": "Tax Rates",
-                    "pages": [
-                      "api-reference/platform/tax-rates/return-a-list-of-tax-rates",
-                      "api-reference/platform/tax-rates/create-a-tax-rate",
-                      "api-reference/platform/tax-rates/return-a-tax-rate",
-                      "api-reference/platform/tax-rates/delete-a-tax-rate",
-                      "api-reference/platform/tax-rates/update-a-tax-rate"
-                    ]
-                  },
-                  {
-                    "group": "Taxonomies",
-                    "pages": [
-                      "api-reference/platform/taxonomies/return-a-list-of-taxonomies",
-                      "api-reference/platform/taxonomies/create-a-taxonomy",
-                      "api-reference/platform/taxonomies/return-a-taxonomy",
-                      "api-reference/platform/taxonomies/delete-a-taxonomy",
-                      "api-reference/platform/taxonomies/update-a-taxonomy"
-                    ]
-                  },
-                  {
-                    "group": "Taxons",
-                    "pages": [
-                      "api-reference/platform/taxons/return-a-list-of-taxons",
-                      "api-reference/platform/taxons/create-a-taxon",
-                      "api-reference/platform/taxons/return-a-taxon",
-                      "api-reference/platform/taxons/delete-a-taxon",
-                      "api-reference/platform/taxons/update-a-taxon",
-                      "api-reference/platform/taxons/reposition-a-taxon"
-                    ]
-                  },
-                  {
-                    "group": "Users",
-                    "pages": [
-                      "api-reference/platform/users/return-a-list-of-users",
-                      "api-reference/platform/users/create-a-user",
-                      "api-reference/platform/users/return-a-user",
-                      "api-reference/platform/users/delete-a-user",
-                      "api-reference/platform/users/update-a-user"
-                    ]
-                  },
-                  {
-                    "group": "Variants",
-                    "pages": [
-                      "api-reference/platform/variants/return-a-list-of-variants",
-                      "api-reference/platform/variants/return-a-variant",
-                      "api-reference/platform/variants/delete-a-variant"
-                    ]
-                  },
-                  {
-                    "group": "Vendors",
-                    "pages": [
-                      "api-reference/platform/vendors/return-a-list-of-vendors",
-                      "api-reference/platform/vendors/create-a-vendor",
-                      "api-reference/platform/vendors/return-a-vendor",
-                      "api-reference/platform/vendors/delete-a-vendor",
-                      "api-reference/platform/vendors/update-a-vendor",
-                      "api-reference/platform/vendors/invites-vendor-to-the-platform",
-                      "api-reference/platform/vendors/start-onboarding-process",
-                      "api-reference/platform/vendors/completes-onboarding-process",
-                      "api-reference/platform/vendors/approves-vendor",
-                      "api-reference/platform/vendors/rejects-vendor",
-                      "api-reference/platform/vendors/suspends-vendor"
-                    ]
-                  },
-                  {
-                    "group": "Webhook Events",
-                    "pages": [
-                      "api-reference/platform/webhook-events/return-a-list-of-webhook-events"
-                    ]
-                  },
-                  {
-                    "group": "Webhook Subscribers",
-                    "pages": [
-                      "api-reference/platform/webhook-subscribers/return-a-list-of-webhook-subscribers",
-                      "api-reference/platform/webhook-subscribers/create-a-webhook-subscriber",
-                      "api-reference/platform/webhook-subscribers/return-a-webhook-subscriber",
-                      "api-reference/platform/webhook-subscribers/delete-a-webhook-subscriber",
-                      "api-reference/platform/webhook-subscribers/update-a-webhook-subscriber"
-                    ]
-                  },
-                  {
-                    "group": "Wished Items",
-                    "pages": [
-                      "api-reference/platform/wished-items/return-a-list-of-wished-items",
-                      "api-reference/platform/wished-items/create-a-wished-item",
-                      "api-reference/platform/wished-items/return-a-wished-item",
-                      "api-reference/platform/wished-items/delete-a-wished-item",
-                      "api-reference/platform/wished-items/update-a-wished-item"
-                    ]
-                  },
-                  {
-                    "group": "Wishlists",
-                    "pages": [
-                      "api-reference/platform/wishlists/return-a-list-of-wishlists",
-                      "api-reference/platform/wishlists/create-a-wishlist",
-                      "api-reference/platform/wishlists/return-a-wishlist",
-                      "api-reference/platform/wishlists/delete-a-wishlist",
-                      "api-reference/platform/wishlists/update-a-wishlist"
-                    ]
-                  },
-                  {
-                    "group": "Zones",
-                    "pages": [
-                      "api-reference/platform/zones/return-a-list-of-zones",
-                      "api-reference/platform/zones/create-a-zone",
-                      "api-reference/platform/zones/return-a-zone",
-                      "api-reference/platform/zones/delete-a-zone",
-                      "api-reference/platform/zones/update-a-zone"
-                    ]
-                  }
+                  "user/manage-products/search-products",
+                  "user/manage-products/bulk-product-operations",
+                  "user/manage-products/price-lists",
+                  "user/manage-products/export-products",
+                  "user/manage-products/import-products",
+                  "user/manage-products/product-import-file-template",
+                  "user/manage-products/stock-levels",
+                  "user/manage-products/stock-transfers",
+                  "user/manage-products/product-taxonomies",
+                  "user/manage-products/product-options",
+                  "user/manage-products/product-metafields"
                 ]
               }
             ]
           },
           {
-            "tab": "User Docs",
-            "groups": [
+            "group": "Orders",
+            "pages": [
+              "user/orders/order-states",
+              "user/orders/processing-orders",
+              "user/orders/creating-orders",
+              "user/orders/editing-orders",
+              "user/orders/order-adjustments",
+              "user/orders/exporting-orders",
+              "user/orders/cancelling-orders",
+              "user/orders/refunding-orders",
+              "user/orders/searching-orders"
+            ]
+          },
+          {
+            "group": "Returns",
+            "pages": [
+              "user/settings/returns-configuration",
+              "user/returns/returns-processing"
+            ]
+          },
+          {
+            "group": "Customers",
+            "pages": [
+              "user/customers/create-customer",
+              "user/customers/customer-profile",
+              "user/customers/edit-customer",
+              "user/customers/issue-gift-card",
+              "user/customers/assign-store-credits",
+              "user/customers/searching-customers",
+              "user/customers/exporting-customers",
+              "user/customers/customer-groups"
+            ]
+          },
+          {
+            "group": "Promotions",
+            "pages": [
+              "user/promotions/create-a-promotion",
+              "user/promotions/promotion-rules",
+              "user/promotions/promotion-actions",
+              "user/promotions/gift-cards"
+            ]
+          },
+          {
+            "group": "Vendors",
+            "pages": [
+              "user/vendors/invite-vendor",
+              "user/vendors/vendor-onboarding"
+            ]
+          },
+          {
+            "group": "Storefront",
+            "pages": [
               {
-                "group": "Introduction",
+                "group": "Storefront Themes",
                 "pages": [
-                  "user/what-is-spree-commerce",
-                  "user/using-spree",
-                  "user/user-quickstart-guide"
+                  "user/storefront/theme-editor",
+                  "user/storefront/create-new-theme",
+                  "user/storefront/delete-theme",
+                  "user/storefront/product-details-page",
+                  "user/storefront/product-listing-page"
                 ]
               },
               {
-                "group": "Products",
+                "group": "Storefront Pages",
                 "pages": [
-                  {
-                    "group": "Create & Edit Products",
-                    "pages": [
-                      "user/products/creating-products",
-                      "user/products/deleting-products",
-                      "user/products/editing-products",
-                      "user/products/editing-multi-variant-products",
-                      "user/products/cloning-products"
-                    ]
-                  },
-                  {
-                    "group": "Manage Products",
-                    "pages": [
-                      "user/manage-products/search-products",
-                      "user/manage-products/bulk-product-operations",
-                      "user/manage-products/export-products",
-                      "user/manage-products/stock-levels",
-                      "user/manage-products/stock-transfers",
-                      "user/manage-products/product-taxonomies",
-                      "user/manage-products/product-options",
-                      "user/manage-products/product-properties"
-                    ]
-                  }
+                  "user/storefront/create-page",
+                  "user/storefront/edit-page",
+                  "user/storefront/delete-page"
                 ]
               },
-              {
-                "group": "Orders",
-                "pages": [
-                  "user/orders/order-states",
-                  "user/orders/processing-orders",
-                  "user/orders/creating-orders",
-                  "user/orders/editing-orders",
-                  "user/orders/exporting-orders",
-                  "user/orders/cancelling-orders",
-                  "user/orders/refunding-orders",
-                  "user/orders/searching-orders"
-                ]
-              },
-              {
-                "group": "Customers",
-                "pages": [
-                  "user/customers/create-customer",
-                  "user/customers/customer-profile",
-                  "user/customers/edit-customer",
-                  "user/customers/issue-gift-card",
-                  "user/customers/assign-store-credits",
-                  "user/customers/searching-customers",
-                  "user/customers/exporting-customers"
-                ]
-              },
-              {
-                "group": "Vendors",
-                "pages": [
-                  "user/vendors/invite-vendor",
-                  "user/vendors/vendor-onboarding"
-                ]
-              },
-              {
-                "group": "Storefront",
-                "pages": [
-                  {
-                    "group": "Storefront Themes",
-                    "pages": [
-                      "user/storefront/theme-editor",
-                      "user/storefront/create-new-theme",
-                      "user/storefront/delete-theme"
-                    ]
-                  },
-                  {
-                    "group": "Storefront Pages",
-                    "pages": [
-                      "user/storefront/create-page",
-                      "user/storefront/edit-page",
-                      "user/storefront/delete-page"
-                    ]
-                  },
-                  {
-                    "group": "Storefront Posts",
-                    "pages": [
-                      "user/storefront/create-post",
-                      "user/storefront/edit-post",
-                      "user/storefront/search-posts",
-                      "user/storefront/delete-post",
-                      "user/storefront/import-posts"
-                    ]
-                  },
-                  "user/storefront/storefront-settings",
-                  "user/storefront/create-new-store"
-                ]
-              },
-              {
-                "group": "Settings",
-                "pages": [
-                  "user/settings/locations",
-                  "user/settings/shipping-methods"
-                ]
-              }
+              "user/storefront/storefront-settings",
+              "user/storefront/create-new-store"
+            ]
+          },
+          {
+            "group": "Posts",
+            "pages": [
+              "user/storefront/create-post",
+              "user/storefront/edit-post",
+              "user/storefront/search-posts",
+              "user/storefront/delete-post"
+            ]
+          },
+          {
+            "group": "Settings",
+            "pages": [
+              "user/settings/store-details",
+              "user/settings/users",
+              "user/settings/emails",
+              "user/settings/policies",
+              "user/settings/checkout",
+              "user/settings/domains",
+              "user/settings/locations",
+              "user/settings/metafields",
+              "user/settings/payments",
+              "user/settings/zones",
+              "user/settings/shipping-methods",
+              "user/settings/tax"
+            ]
+          },
+          {
+            "group": "Security",
+            "pages": ["user/security"]
+          }
+        ]
+      },
+      {
+        "tab": "Solutions",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": ["use-case/overview"]
+          },
+          {
+            "group": "B2B Commerce",
+            "pages": [
+              "use-case/b2b/b2b-commerce-model",
+              "use-case/b2b/b2b-capabilities",
+              "use-case/b2b/b2b-admin-capabilities",
+              "use-case/b2b/b2b-buyer-capabilities"
+            ]
+          },
+          {
+            "group": "Digital Products",
+            "pages": [
+              "use-case/digital-products/model",
+              "use-case/digital-products/capabilities",
+              "use-case/digital-products/admin-capabilities"
+            ]
+          },
+          {
+            "group": "ChatGPT Integration",
+            "pages": [
+              "use-case/chatgpt-integration/chatgpt-shopping",
+              "use-case/chatgpt-integration/chatgpt-instant-checkout",
+              "use-case/chatgpt-integration/chatgpt-buyer-experience"
+            ]
+          },
+          {
+            "group": "Multi-Store Platform",
+            "pages": [
+              "use-case/multi-store/model",
+              "use-case/multi-store/capabilities",
+              "use-case/multi-store/admin-capabilities"
+            ]
+          },
+          {
+            "group": "Multi-Tenant Platform",
+            "pages": [
+              "use-case/multi-tenant/multi-tenant-model",
+              "use-case/multi-tenant/multi-tenant-capabilities",
+              "use-case/multi-tenant/super-admin-capabilities",
+              "use-case/multi-tenant/tenant-capabilities",
+              "use-case/multi-tenant/franchises-and-reseller-networks",
+              "use-case/multi-tenant/multi-brand-enterprise-model",
+              "use-case/multi-tenant/white-label-saas"
+            ]
+          },
+          {
+            "group": "Multi-Vendor Marketplace",
+            "pages": [
+              "use-case/marketplace/model",
+              "use-case/marketplace/capabilities",
+              "use-case/marketplace/admin-dashboard",
+              "use-case/marketplace/vendor-dashboard",
+              "use-case/marketplace/customer-ux"
             ]
           }
         ]
@@ -2007,14 +716,40 @@
   },
   "api": {
     "examples": {
-      "languages": ["curl", "javascript", "ruby", "python", "php", "java", "c#"]
+      "languages": ["javascript", "curl"]
     },
-    "openapi": ["api-reference/storefront.yaml", "api-reference/platform.yaml"],
+    "openapi": [
+      "api-reference/store.yaml",
+      "api-reference/storefront.yaml",
+      "api-reference/platform.yaml"
+    ],
     "mdx": {
-      "server": ["http://localhost:3000", "https://demo.spreecommerce.org"]
+      "server": ["http://localhost:3000"]
     }
   },
   "navbar": {
+    "links": [
+      {
+        "label": "15.2k",
+        "href": "https://github.com/spree/spree",
+        "icon": {
+          "library": "lucide",
+          "name": "github"
+        }
+      },
+      {
+        "label": "v5.3.4",
+        "href": "https://github.com/spree/spree/releases/tag/v5.3.4"
+      },
+      {
+        "label": "Join Slack",
+        "href": "https://slack.spreecommerce.org",
+        "icon": {
+          "library": "lucide",
+          "name": "slack"
+        }
+      }
+    ],
     "primary": {
       "type": "button",
       "label": "Support",

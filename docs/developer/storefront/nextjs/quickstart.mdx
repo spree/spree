@@ -1,0 +1,94 @@
+---
+title: Quickstart
+description: Get started with the Spree Next.js Storefront
+---
+
+The [Spree Next.js Storefront](https://github.com/spree/nextjs-starter-spree) is a production-ready, headless e-commerce storefront built with Next.js 16, React 19, and the Spree Commerce API v3.
+
+## Tech Stack
+
+- **Next.js 16** - App Router, Server Actions, Turbopack
+- **React 19** - Server Components
+- **Tailwind CSS 4** - Utility-first styling
+- **TypeScript 5** - Full type safety
+- **[@spree/sdk](https://github.com/spree/spree/tree/main/packages/sdk)** - Official Spree Commerce SDK
+- **[@spree/next](https://github.com/spree/spree/tree/main/packages/next)** - Server actions, caching, and cookie-based auth
+- **Sentry** - Error tracking and performance monitoring
+
+## Features
+
+- **Server-First Architecture** - All API calls happen server-side, API keys never exposed to the browser
+- **Secure Authentication** - JWT tokens stored in httpOnly cookies
+- **Product Catalog** - Browse, search, and filter with faceted navigation
+- **Shopping Cart** - Server-side state management
+- **Multi-Step Checkout** - Guest and signed-in users, multi-shipments, coupon codes, gift cards, store credit
+- **Stripe Payments** - Credit Cards, Apple Pay, Google Pay, Klarna, Affirm, SEPA and more via [Spree Stripe](https://github.com/spree/spree_stripe)
+- **Google Tag Manager** and **GA4 Ecommerce** event tracking
+- **Customer Account** - Profile, order history, address book, gift cards, saved payment methods
+- **Multi-Region** - Country and currency switching via URL segments
+- **Responsive Design** - Mobile-first Tailwind CSS
+
+## Prerequisites
+
+- Node.js 20+
+- A running Spree Commerce 5.4+ instance
+
+## Installation
+
+### Option 1: Fork the Starter (Recommended)
+
+Fork the repository on GitHub, then clone your fork:
+
+```bash
+git clone https://github.com/YOUR_USERNAME/nextjs-starter-spree.git
+cd nextjs-starter-spree
+npm install
+```
+
+This gives you a full copy you can customize freely while still being able to pull upstream updates.
+
+### Option 2: Clone Directly
+
+```bash
+git clone https://github.com/spree/nextjs-starter-spree.git
+cd nextjs-starter-spree
+npm install
+```
+
+## Configuration
+
+Copy the environment file:
+
+```bash
+cp .env.local.example .env.local
+```
+
+Update `.env.local` with your Spree API credentials:
+
+```env
+SPREE_API_URL=http://localhost:3000
+SPREE_PUBLISHABLE_KEY=your_publishable_api_key_here
+```
+
+<Note>
+  These are server-side only variables — no `NEXT_PUBLIC_` prefix needed since all API calls happen in Server Actions.
+</Note>
+
+See [Deployment](/developer/storefront/nextjs/deployment) for all optional environment variables (Sentry, GTM, etc.).
+
+## Development
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:3001](http://localhost:3001) in your browser.
+
+## Production Build
+
+```bash
+npm run build
+npm start
+```
+
+See the [Deployment](/developer/storefront/nextjs/deployment) guide for Vercel, Docker, and other hosting options.

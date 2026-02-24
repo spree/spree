@@ -1,0 +1,102 @@
+---
+title: Products & Categories
+description: Browse products, categories, and taxonomies with the Spree SDK
+---
+
+## Products
+
+### List Products
+
+```typescript
+const products = await client.store.products.list({
+  page: 1,
+  per_page: 25,
+  'q[name_cont]': 'shirt',
+  includes: 'variants,images,taxons',
+});
+```
+
+### Get a Product
+
+Fetch a single product by ID or slug:
+
+```typescript
+const product = await client.store.products.get('spree-tote', {
+  includes: 'variants,images',
+});
+```
+
+### Product Filters
+
+Get available filters (price range, availability, options, taxons) for a product listing:
+
+```typescript
+const filters = await client.store.products.filters({
+  taxon_id: 'txn_abc123', // Optional: scope filters to a taxon
+});
+```
+
+## Categories (Taxonomies & Taxons)
+
+### List Taxonomies
+
+```typescript
+const taxonomies = await client.store.taxonomies.list({
+  includes: 'taxons',
+});
+```
+
+### Get a Taxonomy
+
+```typescript
+const categories = await client.store.taxonomies.get('tax_123', {
+  includes: 'root,taxons',
+});
+```
+
+### List Taxons
+
+```typescript
+const taxons = await client.store.taxons.list({
+  'q[depth_eq]': 1,           // Top-level categories only
+  'q[taxonomy_id_eq]': '123', // Filter by taxonomy
+});
+```
+
+### Get a Taxon
+
+Fetch by ID or permalink:
+
+```typescript
+const taxon = await client.store.taxons.get('categories/clothing', {
+  includes: 'ancestors,children', // For breadcrumbs and subcategories
+});
+```
+
+### List Products in a Category
+
+```typescript
+const categoryProducts = await client.store.taxons.products.list('categories/clothing', {
+  page: 1,
+  per_page: 12,
+  includes: 'images,default_variant',
+});
+```
+
+## Store
+
+```typescript
+// Get current store information
+const store = await client.store.store.get();
+```
+
+## Geography
+
+```typescript
+// List countries available for checkout
+const { data: countries } = await client.store.countries.list();
+
+// Get country by ISO code (includes states)
+const usa = await client.store.countries.get('US');
+console.log(usa.states); // Array of states
+```

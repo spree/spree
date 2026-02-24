@@ -1,0 +1,67 @@
+---
+title: Customer Account
+description: Manage customer profiles, addresses, and credit cards with the Spree SDK
+---
+
+## Customer Profile
+
+```typescript
+const options = { token: jwtToken };
+
+// Get profile
+const profile = await client.store.customer.get(options);
+
+// Update profile
+await client.store.customer.update({
+  first_name: 'John',
+  last_name: 'Doe',
+}, options);
+```
+
+## Addresses
+
+```typescript
+const options = { token: jwtToken };
+
+// List addresses
+const { data: addresses } = await client.store.customer.addresses.list({}, options);
+
+// Get address by ID
+const address = await client.store.customer.addresses.get('addr_xxx', options);
+
+// Create address
+await client.store.customer.addresses.create({
+  firstname: 'John',
+  lastname: 'Doe',
+  address1: '123 Main St',
+  city: 'New York',
+  zipcode: '10001',
+  country_iso: 'US',
+  state_abbr: 'NY',
+}, options);
+
+// Update address
+await client.store.customer.addresses.update('addr_xxx', { city: 'Brooklyn' }, options);
+
+// Delete address
+await client.store.customer.addresses.delete('addr_xxx', options);
+
+// Mark as default billing or shipping address
+await client.store.customer.addresses.markAsDefault('addr_xxx', 'billing', options);
+await client.store.customer.addresses.markAsDefault('addr_xxx', 'shipping', options);
+```
+
+## Credit Cards
+
+```typescript
+const options = { token: jwtToken };
+
+// List saved credit cards
+const { data: cards } = await client.store.customer.creditCards.list({}, options);
+
+// Get credit card by ID
+const card = await client.store.customer.creditCards.get('cc_xxx', options);
+
+// Delete credit card
+await client.store.customer.creditCards.delete('cc_xxx', options);
+```

@@ -1,0 +1,134 @@
+---
+title: Customization
+description: Fork, customize, and extend the Spree Next.js Storefront
+---
+
+## Forking the Starter
+
+The recommended approach is to fork the repository so you can customize freely while pulling upstream updates.
+
+### 1. Fork on GitHub
+
+Go to [github.com/spree/nextjs-starter-spree](https://github.com/spree/nextjs-starter-spree) and click **Fork**.
+
+### 2. Clone Your Fork
+
+```bash
+git clone https://github.com/YOUR_USERNAME/nextjs-starter-spree.git
+cd nextjs-starter-spree
+npm install
+```
+
+### 3. Add Upstream Remote
+
+```bash
+git remote add upstream https://github.com/spree/nextjs-starter-spree.git
+```
+
+### 4. Pull Upstream Updates
+
+When the official starter gets updates, pull them into your fork:
+
+```bash
+git fetch upstream
+git merge upstream/main
+```
+
+Resolve any conflicts in your customized files, then commit.
+
+## Styling
+
+The storefront uses Tailwind CSS 4, which replaces the traditional `tailwind.config.ts` with CSS-native configuration via the `@theme` directive in `src/app/globals.css`.
+
+### Theme Customization
+
+Edit the `@theme inline` block in `src/app/globals.css` to change colors, fonts, and other design tokens:
+
+```css
+@import "tailwindcss";
+
+:root {
+  --background: #fcfaf7;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist);
+
+  /* Replace with your brand colors */
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-200: #bfdbfe;
+  --color-primary-300: #93c5fd;
+  --color-primary-400: #60a5fa;
+  --color-primary-500: #0077ff;
+  --color-primary-600: #0066dd;
+  --color-primary-700: #0055bb;
+  --color-primary-800: #004499;
+  --color-primary-900: #003377;
+  --color-primary-950: #001d4d;
+}
+```
+
+Variables defined in `@theme inline` become Tailwind utilities automatically — for example, `--color-primary-500` maps to `bg-primary-500`, `text-primary-500`, etc.
+
+## Components
+
+All components live in `src/components/` and can be customized or replaced:
+
+```
+src/components/
+├── layout/          # Header, Footer, CountrySwitcher
+├── products/        # ProductCard, ProductGrid, Filters
+└── search/          # SearchBar
+```
+
+Components use standard React patterns — modify them directly or replace them entirely with your own implementations.
+
+## Data Layer
+
+To customize API behavior, modify the server actions in `src/lib/data/`. Each file handles a specific domain:
+
+| File | Purpose |
+|------|---------|
+| `products.ts` | Product listing and detail queries |
+| `cart.ts` | Cart operations (add, update, remove) |
+| `customer.ts` | Authentication and profile management |
+| `addresses.ts` | Address CRUD |
+| `orders.ts` | Order history |
+| `taxonomies.ts` | Categories and taxons |
+| `countries.ts` | Country and region data |
+| `cookies.ts` | Token and session management |
+| `store.ts` | Store configuration |
+| `credit-cards.ts` | Saved payment methods |
+
+These server actions wrap the `@spree/next` package functions. You can add custom logic, caching strategies, or additional transformations as needed.
+
+## Adding New Pages
+
+Follow the existing App Router pattern with localized routes:
+
+```
+src/app/[country]/[locale]/your-new-page/page.tsx
+```
+
+```typescript
+import { listProducts } from '@spree/next';
+
+export default async function YourNewPage() {
+  const products = await listProducts({ per_page: 6 });
+
+  return (
+    <div>
+      <h1>Your New Page</h1>
+      {/* Your content */}
+    </div>
+  );
+}
+```
+
+## Building a Custom Storefront
+
+If you prefer to build from scratch instead of forking the starter, you can use the `@spree/next` and `@spree/sdk` packages directly in any Next.js application. See the [@spree/next Package](/developer/storefront/nextjs/spree-next-package) documentation for the complete API reference.

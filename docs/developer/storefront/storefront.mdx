@@ -1,13 +1,43 @@
 ---
-title: "Storefront Overview"
+title: "Rails Storefront Overview"
 sidebarTitle: "Overview"
 ---
 
-Spree 5 ships with a new mobile-first storefront that is fully customizable & themeable.
+Rails Storefront is a mobile-first storefront that is fully customizable & themeable.
 
-## Architecture
+### Tech Stack
 
-Spree Storefront consists of:
+- [Ruby on Rails](https://rubyonrails.org/)
+- [Tailwind CSS v4](https://tailwindcss.com/) — Responsive, mobile-first design
+- [Turbo / Hotwire](https://turbo.hotwired.dev/) — Fast, SPA-like navigation
+- [StimulusJS](https://stimulus.hotwired.dev/) — JavaScript controllers for interactivity
+- [Importmaps](https://github.com/rails/importmap-rails) - NodeJS not required
+
+### Installation
+
+You can install it by running
+
+  ```bash
+  bundle add spree_storefront
+  ```
+
+Then run the install generator:
+
+  ```bash
+  bin/rails g spree:storefront:install
+  ```
+
+This will set up the storefront views, Tailwind CSS configuration, and page builder migrations.
+
+You will also need to create your first theme:
+
+  ```bash
+  Spree::Store.default.send(:create_default_theme)
+  ```
+
+### Architecture
+
+Rails Storefront consists of:
 
 <CardGroup>
   <Card title="Themes" href="/developer/storefront/themes">
@@ -27,11 +57,10 @@ Spree Storefront consists of:
   </Card>
 </CardGroup>
 
-## Page Builder
+### Page Builder
 
-The new storefront comes with a visual Page Builder that allows non-developers to build pages using a drag-and-drop interface, as a part of Spree Admin Dashboard (provided via `spree_admin` gem). This allows your team to create new pages and sections, modify existing ones, and add new blocks to the pages in a no-code way.
+The storefront comes with a visual Page Builder that allows non-developers to build pages using a drag-and-drop interface. This allows your team to create new pages and sections, modify existing ones, and add new blocks to the pages in a no-code way.
 
 ![](https://vendo-production-res.cloudinary.com/image/upload/w_1920/q_auto/v1738166777/docs/Storefront/Theme%20Editor/7.1.1.1.2_Theme_Editor_-_Click_On_Default_Theme_qy0urp.png)
 
 You can learn more about the Page Builder in the [User Documentation](/user/storefront/theme-editor).
-

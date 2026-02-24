@@ -1,0 +1,122 @@
+---
+title: Architecture
+description: Server-first architecture, project structure, and auth flow
+---
+
+## Server-First Pattern
+
+The storefront follows a **server-first architecture** where all API calls are made server-side. The Spree API key is never exposed to the browser.
+
+```
+Browser → Server Action → Spree API
+         (with httpOnly cookies)
+```
+
+- **Server Actions** (`src/lib/data/`) - All API calls are made server-side
+- **httpOnly Cookies** - Auth tokens and cart tokens are stored securely
+- **No Client-Side API Calls** - The Spree API key stays on the server
+- **Cache Revalidation** - Uses Next.js cache tags for efficient updates
+
+## Project Structure
+
+```
+src/
+├── app/
+│   └── [country]/[locale]/     # Localized routes
+│       ├── account/            # Customer account pages
+│       │   ├── addresses/      # Address management
+│       │   ├── credit-cards/   # Saved payment methods
+│       │   ├── orders/         # Order history
+│       │   │   └── [id]/       # Order details
+│       │   └── profile/        # Profile settings
+│       ├── cart/               # Shopping cart
+│       ├── products/           # Product listing
+│       │   └── [slug]/         # Product details
+│       ├── t/[...permalink]/   # Taxon/category pages
+│       └── taxonomies/         # Category overview
+├── components/
+│   ├── layout/                 # Header, Footer, CountrySwitcher
+│   ├── products/               # ProductCard, ProductGrid, Filters
+│   └── search/                 # SearchBar
+├── contexts/
+│   └── CartContext.tsx         # Client-side cart state sync
+└── lib/
+    ├── spree.ts                # SDK client configuration
+    └── data/                   # Server Actions
+        ├── addresses.ts        # Address CRUD operations
+        ├── cart.ts             # Cart operations
+        ├── cookies.ts          # Auth token management
+        ├── countries.ts        # Countries/regions list
+        ├── credit-cards.ts     # Payment methods
+        ├── customer.ts         # Auth & profile
+        ├── orders.ts           # Order history
+        ├── products.ts         # Product queries
+        ├── store.ts            # Store configuration
+        └── taxonomies.ts       # Categories/taxons
+```
+
+## Authentication Flow
+
+1. User submits login form
+2. Server action calls Spree API with credentials
+3. JWT token is stored in an httpOnly cookie
+4. Subsequent requests include the token automatically
+5. Token is never accessible to client-side JavaScript
+
+```typescript
+// src/lib/data/cookies.ts
+export async function setAuthToken(token: string) {
+  const cookieStore = await cookies()
+  cookieStore.set('_spree_jwt', token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+  })
+}
+```
+
+## Multi-Region Support
+
+The storefront supports multiple countries and currencies via URL segments:
+
+```
+/us/en/products          # US store, English
+/de/de/products          # German store, German
+/uk/en/products          # UK store, English
+```
+
+Use the `CountrySwitcher` component to change regions.
+
+## Server Actions
+
+All data fetching is done through server actions in `src/lib/data/`:
+
+```typescript
+// Products
+import { getProducts, getProduct, getProductFilters } from '@/lib/data/products'
+
+const products = await getProducts({ per_page: 12 })
+const product = await getProduct('product-slug', { includes: 'variants,images' })
+const filters = await getProductFilters({ taxon_id: 'txn_xxx' })
+
+// Cart
+import { getCart, addToCart, updateCartItem, removeCartItem } from '@/lib/data/cart'
+
+const cart = await getCart()
+await addToCart('var_xxx', 1)
+await updateCartItem('li_xxx', 2)
+await removeCartItem('li_xxx')
+
+// Authentication
+import { login, register, logout, getCustomer } from '@/lib/data/customer'
+
+const result = await login('user@example.com', 'password')
+const customer = await getCustomer()
+await logout()
+
+// Addresses
+import { getAddresses, createAddress, updateAddress, deleteAddress } from '@/lib/data/addresses'
+
+const addresses = await getAddresses()
+await createAddress({ firstname: 'John', ... })
+```
