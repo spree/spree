@@ -1,7 +1,7 @@
 module Spree
   module Api
     module V3
-      class ImageSerializer < BaseSerializer
+      class ImageSerializer < AssetSerializer
         typelize position: :number, alt: [:string, nullable: true], viewable_type: :string, viewable_id: :string,
                  original_url: [:string, nullable: true], mini_url: [:string, nullable: true],
                  small_url: [:string, nullable: true], medium_url: [:string, nullable: true],
@@ -9,7 +9,7 @@ module Spree
                  og_image_url: [:string, nullable: true]
 
         attribute :viewable_id do |image|
-          image.viewable&.prefixed_id
+          image.viewable.prefixed_id
         end
 
         attributes :position, :alt, :viewable_type,

@@ -22,12 +22,6 @@ RSpec.describe Spree::Report, type: :model do
     end
   end
 
-  describe '#event_serializer_class' do
-    it 'returns the correct serializer class' do
-      expect(report.event_serializer_class).to eq(Spree::Events::ReportSerializer)
-    end
-  end
-
   describe '#generate' do
     before { report.save! }
 

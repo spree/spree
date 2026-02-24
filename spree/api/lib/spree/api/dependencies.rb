@@ -126,6 +126,28 @@ module Spree
         locale_serializer: 'Spree::Api::V3::LocaleSerializer',
         metafield_serializer: 'Spree::Api::V3::MetafieldSerializer',
 
+        # v3 event serializers (for models without Store API endpoints yet)
+        asset_serializer: 'Spree::Api::V3::AssetSerializer',
+        customer_return_serializer: 'Spree::Api::V3::CustomerReturnSerializer',
+        digital_serializer: 'Spree::Api::V3::DigitalSerializer',
+        export_serializer: 'Spree::Api::V3::ExportSerializer',
+        gift_card_batch_serializer: 'Spree::Api::V3::GiftCardBatchSerializer',
+        import_serializer: 'Spree::Api::V3::ImportSerializer',
+        import_row_serializer: 'Spree::Api::V3::ImportRowSerializer',
+        invitation_serializer: 'Spree::Api::V3::InvitationSerializer',
+        newsletter_subscriber_serializer: 'Spree::Api::V3::NewsletterSubscriberSerializer',
+        post_serializer: 'Spree::Api::V3::PostSerializer',
+        post_category_serializer: 'Spree::Api::V3::PostCategorySerializer',
+        promotion_serializer: 'Spree::Api::V3::PromotionSerializer',
+        refund_serializer: 'Spree::Api::V3::RefundSerializer',
+        reimbursement_serializer: 'Spree::Api::V3::ReimbursementSerializer',
+        report_serializer: 'Spree::Api::V3::ReportSerializer',
+        return_authorization_serializer: 'Spree::Api::V3::ReturnAuthorizationSerializer',
+        return_item_serializer: 'Spree::Api::V3::ReturnItemSerializer',
+        stock_item_serializer: 'Spree::Api::V3::StockItemSerializer',
+        stock_movement_serializer: 'Spree::Api::V3::StockMovementSerializer',
+        stock_transfer_serializer: 'Spree::Api::V3::StockTransferSerializer',
+
         # v3 admin serializers (API v3 Admin)
         admin_customer_serializer: 'Spree::Api::V3::Admin::CustomerSerializer',
         admin_order_serializer: 'Spree::Api::V3::Admin::OrderSerializer',

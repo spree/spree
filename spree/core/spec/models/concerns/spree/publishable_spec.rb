@@ -11,17 +11,15 @@ RSpec.describe Spree::Publishable, events: true do
     Spree::Events.reset!
   end
 
-  # Define a test serializer for the spec
-  let(:test_serializer_class) do
-    Class.new(Spree::Events::BaseSerializer) do
-      protected
+  let(:v3_serializer_class) do
+    Class.new do
+      def initialize(resource, params: {})
+        @resource = resource
+        @params = params
+      end
 
-      def attributes
-        {
-          id: resource.id,
-          name: resource.name,
-          updated_at: timestamp(resource.updated_at)
-        }
+      def to_h
+        { 'id' => 'test_prefix_1', 'name' => @resource.name }
       end
     end
   end
@@ -39,7 +37,7 @@ RSpec.describe Spree::Publishable, events: true do
   describe '#publish_event' do
     before do
       stub_const('Spree::TestProduct', publishable_class)
-      stub_const('Spree::Events::TestProductSerializer', test_serializer_class)
+      stub_const('Spree::Api::V3::TestProductSerializer', v3_serializer_class)
     end
 
     it 'publishes an event with the model payload' do
@@ -51,7 +49,7 @@ RSpec.describe Spree::Publishable, events: true do
 
       expect(received_event).to be_present
       expect(received_event.name).to eq('test_product.custom')
-      expect(received_event.payload['id']).to eq(1)
+      expect(received_event.payload['id']).to eq('test_prefix_1')
       expect(received_event.payload['name']).to eq('Test Product')
     end
 
@@ -79,54 +77,106 @@ RSpec.describe Spree::Publishable, events: true do
   end
 
   describe '#event_payload' do
-    context 'with a serializer defined' do
+    context 'when a V3 serializer exists' do
       before do
         stub_const('Spree::TestProduct', publishable_class)
-        stub_const('Spree::Events::TestProductSerializer', test_serializer_class)
+        stub_const('Spree::Api::V3::TestProductSerializer', v3_serializer_class)
       end
 
-      it 'returns the serialized payload' do
+      it 'uses the V3 serializer' do
         payload = instance.event_payload
 
-        expect(payload[:id]).to eq(1)
-        expect(payload[:name]).to eq('Test Product')
-        expect(payload[:updated_at]).to be_present
+        expect(payload).to eq({ 'id' => 'test_prefix_1', 'name' => 'Test Product' })
       end
     end
 
-    context 'without a serializer defined' do
-      let(:no_serializer_class) do
+    context 'when no serializer exists' do
+      before do
+        stub_const('Spree::NoSerializer', publishable_class)
+      end
+
+      it 'returns minimal fallback payload with id, created_at, updated_at' do
+        now = Time.current
+        instance = publishable_class.new(id: 1, name: 'Test', created_at: now, updated_at: now)
+
+        payload = instance.event_payload
+
+        expect(payload[:id]).to be_a(String)
+        expect(payload[:id]).to be_present
+        expect(payload[:created_at]).to eq(now.iso8601)
+        expect(payload[:updated_at]).to eq(now.iso8601)
+        expect(payload).not_to have_key(:name)
+      end
+    end
+  end
+
+  describe '#event_serializer_class' do
+    context 'when V3 serializer exists by convention' do
+      before do
+        stub_const('Spree::TestProduct', publishable_class)
+        stub_const('Spree::Api::V3::TestProductSerializer', v3_serializer_class)
+      end
+
+      it 'returns the serializer class' do
+        expect(instance.event_serializer_class).to eq(v3_serializer_class)
+      end
+    end
+
+    context 'when no V3 serializer exists' do
+      before do
+        stub_const('Spree::NoSerializer', publishable_class)
+      end
+
+      it 'returns nil' do
+        expect(instance.event_serializer_class).to be_nil
+      end
+    end
+
+    context 'with STI hierarchy walking' do
+      let(:parent_class) do
         Class.new(Spree::Base) do
           self.table_name = 'spree_products'
           include Spree::Publishable
         end
       end
 
-      before do
-        stub_const('Spree::NoSerializer', no_serializer_class)
+      let(:child_class) do
+        Class.new(parent_class) do
+          self.table_name = 'spree_products'
+        end
       end
 
-      it 'raises MissingSerializerError with helpful message' do
-        instance = no_serializer_class.new(id: 1, name: 'Test')
+      it 'resolves via parent class when child has no serializer' do
+        stub_const('Spree::ParentModel', parent_class)
+        stub_const('Spree::ChildModel', child_class)
+        stub_const('Spree::Api::V3::ParentModelSerializer', v3_serializer_class)
 
-        expect { instance.event_payload }.to raise_error(
-          Spree::Publishable::MissingSerializerError,
-          /Missing event serializer for Spree::NoSerializer/
-        )
+        instance = child_class.new(id: 1)
+        expect(instance.event_serializer_class).to eq(v3_serializer_class)
+      end
+    end
+
+    context 'with model override' do
+      let(:override_class) do
+        serializer = v3_serializer_class
+        Class.new(Spree::Base) do
+          self.table_name = 'spree_products'
+          include Spree::Publishable
+
+          define_method(:event_serializer_class) { serializer }
+        end
       end
 
-      it 'includes example code in the error message' do
-        instance = no_serializer_class.new(id: 1, name: 'Test')
+      it 'uses the overridden serializer' do
+        stub_const('Spree::CustomModel', override_class)
+        instance = override_class.new(id: 1)
 
-        expect { instance.event_payload }.to raise_error(
-          Spree::Publishable::MissingSerializerError,
-          /class Spree::Events::NoSerializerSerializer < Spree::Events::BaseSerializer/
-        )
+        expect(instance.event_serializer_class).to eq(v3_serializer_class)
       end
     end
 
     context 'with anonymous class' do
-      it 'returns nil for event_serializer_class' do
+      it 'returns nil' do
         anon_class = Class.new(Spree::Base) do
           self.table_name = 'spree_products'
           include Spree::Publishable
@@ -138,10 +188,45 @@ RSpec.describe Spree::Publishable, events: true do
     end
   end
 
+  describe '#event_serializer_params' do
+    before do
+      stub_const('Spree::TestProduct', publishable_class)
+    end
+
+    it 'returns a hash with required keys' do
+      params = instance.send(:event_serializer_params)
+
+      expect(params).to include(:store, :currency, :user, :locale, :includes)
+      expect(params[:user]).to be_nil
+      expect(params[:locale]).to be_nil
+      expect(params[:includes]).to eq([])
+    end
+
+    context 'when resource has a store method' do
+      let(:store) { build(:store) }
+
+      it 'uses the resource store' do
+        allow(instance).to receive(:store).and_return(store)
+        params = instance.send(:event_serializer_params)
+
+        expect(params[:store]).to eq(store)
+      end
+    end
+
+    context 'when resource does not have a store method' do
+      it 'falls back to Spree::Current.store' do
+        current_store = build(:store)
+        allow(Spree::Current).to receive(:store).and_return(current_store)
+        params = instance.send(:event_serializer_params)
+
+        expect(params[:store]).to eq(current_store)
+      end
+    end
+  end
+
   describe '#event_prefix' do
     before do
       stub_const('Spree::Product', publishable_class)
-      stub_const('Spree::Events::ProductSerializer', test_serializer_class)
     end
 
     it 'returns the model name element' do
@@ -163,22 +248,10 @@ RSpec.describe Spree::Publishable, events: true do
 
     before do
       stub_const('Spree::TestProduct', lifecycle_class)
-      stub_const('Spree::Events::TestProductSerializer', test_serializer_class)
     end
 
     it 'enables lifecycle events' do
       expect(lifecycle_class.lifecycle_events_enabled).to be true
-    end
-
-    it 'publishes create event after commit', skip: 'Requires database transaction' do
-      received_event = nil
-      Spree::Events.subscribe('test_product.create', async: false) { |e| received_event = e }
-      Spree::Events.activate!
-
-      product = lifecycle_class.create!(name: 'New Product')
-
-      expect(received_event).to be_present
-      expect(received_event.name).to eq('test_product.create')
     end
 
     # Note: These specs use ApplicationRecord directly to test Publishable in isolation
@@ -234,7 +307,6 @@ RSpec.describe Spree::Publishable, events: true do
   describe '.event_prefix' do
     before do
       stub_const('Spree::OrderLineItem', publishable_class)
-      stub_const('Spree::Events::OrderLineItemSerializer', test_serializer_class)
     end
 
     it 'derives from model name' do
@@ -243,7 +315,6 @@ RSpec.describe Spree::Publishable, events: true do
 
     it 'can be customized' do
       stub_const('Spree::CustomModel', publishable_class)
-      stub_const('Spree::Events::CustomModelSerializer', test_serializer_class)
       Spree::CustomModel.event_prefix = 'custom'
       expect(Spree::CustomModel.event_prefix).to eq('custom')
     end

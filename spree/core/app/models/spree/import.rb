@@ -226,7 +226,7 @@ module Spree
     end
 
     def event_serializer_class
-      Spree::Events::ImportSerializer
+      'Spree::Api::V3::ImportSerializer'.safe_constantize
     end
 
     class << self
