@@ -238,6 +238,20 @@
             ]
           },
           {
+            "item": "How-to Guides",
+            "icon": "book-open",
+            "description": "Step-by-step guides for common tasks",
+            "groups": [
+              {
+                "group": "Payments",
+                "icon": "credit-card",
+                "pages": [
+                  "developer/how-to/custom-payment-method"
+                ]
+              }
+            ]
+          },
+          {
             "item": "Operations",
             "icon": "server",
             "description": "Deploy, upgrade, and maintain your store",
