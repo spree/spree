@@ -1,26 +1,9 @@
 ---
-description: "Spree open-source comes with a fully-featured Ecommerce API for headless eCommerce apps."
-title: "Ecommerce API"
+title: "Spree API Reference"
+description: "Spree API Reference"
+sidebarTitle: "Introduction"
 ---
 
-Spree Commerce open-source comes with a fully-featured Ecommerce API enabling a fully headless mode. This means that you can use Spree as a backend to build your custom [Next.js storefront](https://spreecommerce.org/category/next-js-ecommerce/), eCommerce mobile app functionality, or any other customer-facing application that needs to interact with an e-commerce platform.
+This API reference includes Spree Store APIs, which are REST APIs exposed by the Spree application. They are used to create a storefront for your commerce store, such as a webshop or a commerce mobile app.
 
-## API v2
-
-Currently Spree includes 2 modern REST APIs:
-
-<CardGroup cols={2}>
-  <Card title="Storefront API" href="storefront">
-    Designed to allow customers to interact with the store via external applications (e.g. Next.js storefront or a dedicated mobile app)
-  </Card>
-
-  <Card title="Platform API" href="platform">
-    Provides management capabilities, allowing third party apps to perform actions otherwise available via the admin panel.
-  </Card>
-</CardGroup>
-
-## Thank you!
-
-Give Spree a [GitHub Star](https://github.com/spree/spree)<Icon icon="star" iconType="solid" color="#FFD43B" />, why dont't ya? Thank you for supporting Spree open-source! <Icon icon="heart" iconType="solid" color="#FF0000" />
-
-Need support or want to give some feedback? Join our [community](https://slack.spreecommerce.org/) with 6000+ members or drop us an email at [hello@spreecommerce.org](mailto:hello@spreecommerce.org).
+All API Routes are prefixed with `/api/v3/store`. So, during development, the API Routes will be available under the path `http://localhost:3000/api/v3/store`. For production, replace `http://localhost:3000` with your Spree application URL.

@@ -1,0 +1,24 @@
+---
+title: Admin API
+description: Manage your store programmatically with the Spree Admin SDK
+---
+
+<Info>
+  The Admin API SDK is coming soon. The `client.admin` namespace is ready and will provide full access to administrative endpoints for managing products, orders, customers, and store settings.
+</Info>
+
+## Preview
+
+```typescript
+import { createSpreeClient } from '@spree/sdk';
+
+const client = createSpreeClient({
+  baseUrl: 'https://api.mystore.com',
+  secretKey: 'spree_sk_xxx', // Admin API requires a secret key
+});
+
+// Admin endpoints will be available under client.admin.*
+// client.admin.products.list()
+// client.admin.orders.list()
+// client.admin.customers.list()
+```

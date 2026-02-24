@@ -113,19 +113,24 @@ endpoint.subscriptions = ['*'] # All events (explicit)
 
 ## Webhook Payload
 
-Each webhook delivery sends a JSON payload with the following structure:
+Each webhook delivery sends a JSON payload with the following structure. The `data` object uses the same [Store API V3 serializers](/api-reference/introduction) as the REST API, so webhook payloads and API responses share the same schema:
 
 ```json
 {
   "id": "550e8400-e29b-41d4-a716-446655440000",
   "name": "order.completed",
-  "created_at": "2024-01-15T10:30:00Z",
+  "created_at": "2025-01-15T10:30:00Z",
   "data": {
-    "id": 123,
+    "id": "or_m3Rp9wXz",
     "number": "R123456789",
     "state": "complete",
     "total": "99.99",
-    "item_count": 3
+    "display_total": "$99.99",
+    "item_count": 3,
+    "currency": "USD",
+    "line_items": [ ... ],
+    "shipments": [ ... ],
+    "payments": [ ... ]
   },
   "metadata": {
     "spree_version": "5.1.0"
@@ -138,8 +143,10 @@ Each webhook delivery sends a JSON payload with the following structure:
 | `id` | Unique UUID for this event |
 | `name` | Event name (e.g., `order.completed`) |
 | `created_at` | ISO8601 timestamp when event occurred |
-| `data` | Serialized resource data |
+| `data` | Serialized resource data (V3 API format with [prefixed IDs](/api-reference/introduction)) |
 | `metadata` | Additional context including Spree version |
+
+For complete payload schemas for each event type, see [Webhook Events & Payloads](/api-reference/webhooks-events).
 
 ## HTTP Request Details
 

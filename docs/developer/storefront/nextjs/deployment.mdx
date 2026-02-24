@@ -1,0 +1,184 @@
+---
+title: Deployment
+description: Deploy the Spree Next.js Storefront to Vercel, Docker, or any Node.js host
+---
+
+## Environment Variables
+
+Set these variables in your hosting platform's dashboard or `.env` file.
+
+### Required
+
+| Variable | Description |
+|----------|-------------|
+| `SPREE_API_URL` | Your Spree API endpoint (e.g., `https://api.mystore.com`) |
+| `SPREE_PUBLISHABLE_KEY` | Publishable API key from your Spree admin |
+
+<Note>
+  These are server-side only variables — no `NEXT_PUBLIC_` prefix needed since all API calls happen in Server Actions.
+</Note>
+
+### Optional
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `GTM_ID` | Google Tag Manager container ID | _(disabled)_ |
+| `SENTRY_DSN` | Sentry DSN for error tracking | _(disabled)_ |
+| `SENTRY_ORG` | Sentry organization slug | _(none)_ |
+| `SENTRY_PROJECT` | Sentry project slug | _(none)_ |
+| `SENTRY_AUTH_TOKEN` | Sentry auth token (for source maps in CI) | _(none)_ |
+
+## Production Build
+
+```bash
+npm run build
+npm start
+```
+
+The build output is a standalone Next.js application. The `npm start` command starts the production server.
+
+## Vercel
+
+Vercel is the recommended deployment platform for Next.js applications.
+
+### One-Click Deploy
+
+1. Push your code to GitHub
+2. Go to [vercel.com/new](https://vercel.com/new) and import your repository
+3. Add environment variables (`SPREE_API_URL`, `SPREE_PUBLISHABLE_KEY`)
+4. Click **Deploy**
+
+Vercel automatically detects the Next.js framework and configures the build settings.
+
+### Vercel CLI
+
+```bash
+npm i -g vercel
+vercel
+```
+
+### Preview Deployments
+
+Every pull request gets a unique preview URL, making it easy to test storefront changes before merging. Add your Spree API environment variables to the Vercel project settings so previews connect to your staging API.
+
+## Docker
+
+Create a `Dockerfile` in your project root:
+
+```dockerfile
+FROM node:20-alpine AS base
+
+FROM base AS deps
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci --production=false
+
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+RUN npm run build
+
+FROM base AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+USER nextjs
+EXPOSE 3000
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+CMD ["node", "server.js"]
+```
+
+<Note>
+  Enable standalone output in your `next.config.ts` for Docker deployments:
+
+  ```typescript
+  const nextConfig = {
+    output: 'standalone',
+  }
+  ```
+</Note>
+
+Build and run:
+
+```bash
+docker build -t spree-storefront .
+docker run -p 3000:3000 \
+  -e SPREE_API_URL=https://api.mystore.com \
+  -e SPREE_PUBLISHABLE_KEY=your_key \
+  spree-storefront
+```
+
+## Self-Hosted Node.js
+
+For any platform that supports Node.js (Render, Railway, Fly.io, AWS, etc.):
+
+1. Install dependencies and build:
+
+```bash
+npm ci
+npm run build
+```
+
+2. Start the production server:
+
+```bash
+npm start
+```
+
+The server listens on port `3000` by default. Set the `PORT` environment variable to change it.
+
+## CI/CD
+
+### GitHub Actions
+
+```yaml
+name: Deploy Storefront
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+
+      # Add your deployment step here
+      # Example for Vercel:
+      # - uses: amondnet/vercel-action@v25
+      #   with:
+      #     vercel-token: ${{ secrets.VERCEL_TOKEN }}
+      #     vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+      #     vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+      #     vercel-args: --prod
+```
+
+## Performance Checklist
+
+Before going to production, verify:
+
+- **API URL** points to your production Spree instance (not `localhost`)
+- **HTTPS** is enabled on both the storefront and the Spree API
+- **CORS** is configured on your Spree API to allow requests from your storefront domain
+- **Sentry** is configured for error monitoring (`SENTRY_DSN`)
+- **GTM/GA4** is set up for analytics (`GTM_ID`)
+- **Cookie security** — the storefront uses `secure: true` for cookies in production (`NODE_ENV=production`)
+- **Caching** — Next.js cache tags are used for efficient revalidation; review your caching strategy for high-traffic stores

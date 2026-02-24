@@ -1,0 +1,114 @@
+---
+title: Cart & Checkout
+description: Manage carts, line items, coupons, and checkout flow with the Spree SDK
+---
+
+## Cart
+
+```typescript
+// Create a new cart
+const cart = await client.store.cart.create();
+
+// Get current cart
+const cart = await client.store.cart.get({ orderToken: 'xxx' });
+
+// Associate guest cart with authenticated user
+// (after user logs in, merge their guest cart with their account)
+await client.store.cart.associate({
+  token: jwtToken,        // User's JWT token
+  orderToken: cart.token, // Guest cart token
+});
+```
+
+## Orders & Checkout
+
+### List Orders
+
+```typescript
+// List orders for authenticated customer
+const orders = await client.store.orders.list({}, { token });
+```
+
+### Get an Order
+
+```typescript
+const order = await client.store.orders.get('R123456789', {
+  includes: 'line_items,shipments',
+}, { orderToken: cart.token });
+```
+
+### Update an Order
+
+```typescript
+await client.store.orders.update(cart.id, {
+  email: 'customer@example.com',
+  ship_address: {
+    firstname: 'John',
+    lastname: 'Doe',
+    address1: '123 Main St',
+    city: 'New York',
+    zipcode: '10001',
+    phone: '+1 555 123 4567',
+    country_iso: 'US',
+    state_abbr: 'NY',
+  },
+  bill_address_id: 'addr_xxx', // Or use existing address by ID
+}, { orderToken: cart.token });
+```
+
+### Checkout Flow
+
+```typescript
+const options = { orderToken: cart.token };
+
+await client.store.orders.next(cart.id, options);     // Move to next step
+await client.store.orders.advance(cart.id, options);  // Advance through all steps
+await client.store.orders.complete(cart.id, options); // Complete the order
+```
+
+## Line Items
+
+```typescript
+const options = { orderToken: cart.token };
+
+// Add item
+await client.store.orders.lineItems.create(cart.id, {
+  variant_id: 'var_123',
+  quantity: 2,
+}, options);
+
+// Update item quantity
+await client.store.orders.lineItems.update(cart.id, lineItemId, {
+  quantity: 3,
+}, options);
+
+// Remove item
+await client.store.orders.lineItems.delete(cart.id, lineItemId, options);
+```
+
+## Coupon Codes
+
+```typescript
+const options = { orderToken: cart.token };
+
+// Apply a coupon code
+await client.store.orders.couponCodes.apply(cart.id, 'SAVE20', options);
+
+// Remove a coupon code
+await client.store.orders.couponCodes.remove(cart.id, 'promo_xxx', options);
+```
+
+## Store Credits
+
+```typescript
+const options = { orderToken: cart.token };
+
+// Apply store credit to order (applies maximum available by default)
+await client.store.orders.addStoreCredit(cart.id, undefined, options);
+
+// Apply specific amount of store credit
+await client.store.orders.addStoreCredit(cart.id, 25.00, options);
+
+// Remove store credit from order
+await client.store.orders.removeStoreCredit(cart.id, options);
+```

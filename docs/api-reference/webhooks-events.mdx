@@ -1,0 +1,887 @@
+---
+title: Webhook Events & Payloads
+description: Complete reference of all webhook event types and their payload schemas
+---
+
+Every webhook delivery sends a JSON envelope with the event metadata and a `data` object containing the serialized resource:
+
+```json
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "name": "order.completed",
+  "created_at": "2025-01-15T10:30:00Z",
+  "data": { ... },
+  "metadata": {
+    "spree_version": "5.4.0"
+  }
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | string | Unique UUID for this event |
+| `name` | string | Event name (e.g., `order.completed`) |
+| `created_at` | string | ISO 8601 timestamp |
+| `data` | object | Serialized resource (see payloads below) |
+| `metadata` | object | Additional context including Spree version |
+
+Event payloads use the same [Store API V3 serializers](/api-reference/introduction) as the REST API. All `id` fields use [prefixed IDs](/api-reference/introduction) (e.g., `or_m3Rp9wXz`, `prod_86Rf07xd4z`). All monetary values are strings. All timestamps are ISO 8601.
+
+For details on creating webhook endpoints and verifying signatures, see [Webhooks](/developer/core-concepts/webhooks). For the event system internals and subscriber pattern, see [Events](/developer/core-concepts/events).
+
+<Info>
+Event payloads include the same top-level attributes and unconditional associations as API responses. Conditional associations (like product variants, images, or metafields) are not included in event payloads.
+</Info>
+
+---
+
+## Order Events
+
+Events: `order.created`, `order.updated`, `order.completed`, `order.canceled`, `order.resumed`, `order.paid`, `order.shipped`
+
+Order payloads include nested `line_items`, `shipments`, `payments`, `bill_address`, `ship_address`, `payment_methods`, and `order_promotions`.
+
+```json
+{
+  "id": "or_m3Rp9wXz",
+  "number": "R123456789",
+  "state": "complete",
+  "token": "abc123def456",
+  "email": "customer@example.com",
+  "special_instructions": null,
+  "currency": "USD",
+  "item_count": 3,
+  "shipment_state": "shipped",
+  "payment_state": "paid",
+  "item_total": "89.99",
+  "display_item_total": "$89.99",
+  "ship_total": "10.00",
+  "display_ship_total": "$10.00",
+  "adjustment_total": "0.00",
+  "display_adjustment_total": "$0.00",
+  "promo_total": "0.00",
+  "display_promo_total": "$0.00",
+  "tax_total": "0.00",
+  "display_tax_total": "$0.00",
+  "included_tax_total": "0.00",
+  "display_included_tax_total": "$0.00",
+  "additional_tax_total": "0.00",
+  "display_additional_tax_total": "$0.00",
+  "total": "99.99",
+  "display_total": "$99.99",
+  "completed_at": "2025-01-15T10:30:00Z",
+  "created_at": "2025-01-15T10:00:00Z",
+  "updated_at": "2025-01-15T10:30:00Z",
+  "order_promotions": [],
+  "line_items": [
+    {
+      "id": "li_7xRt4wPq",
+      "variant_id": "var_k5nR8xLq",
+      "quantity": 2,
+      "currency": "USD",
+      "name": "Spree Tote Bag",
+      "slug": "spree-tote-bag",
+      "options_text": "Size: M, Color: Black",
+      "price": "29.99",
+      "display_price": "$29.99",
+      "total": "59.98",
+      "display_total": "$59.98",
+      "thumbnail_url": "https://cdn.example.com/images/tote-bag.jpg",
+      "option_values": [],
+      "digital_links": [],
+      "..."
+    }
+  ],
+  "shipments": [
+    {
+      "id": "shp_9xPq4wMn",
+      "number": "H123456789",
+      "state": "shipped",
+      "tracking": "1Z999AA10123456784",
+      "tracking_url": "https://tools.usps.com/go/TrackConfirmAction?tLabels=1Z999AA10123456784",
+      "cost": "10.00",
+      "display_cost": "$10.00",
+      "shipped_at": "2025-01-16T14:00:00Z",
+      "shipping_method": { "id": "sm_2wMn7xRt", "..." },
+      "stock_location": { "id": "sl_2wMn7xRt", "..." },
+      "shipping_rates": [],
+      "..."
+    }
+  ],
+  "payments": [
+    {
+      "id": "pay_3wXz7mRp",
+      "state": "completed",
+      "number": "P123456",
+      "amount": "99.99",
+      "display_amount": "$99.99",
+      "response_code": "ch_abc123",
+      "payment_method_id": "pm_4xLq8nRt",
+      "source_type": "credit_card",
+      "source_id": "cc_5wPq9mXz",
+      "source": { "..." },
+      "payment_method": { "id": "pm_4xLq8nRt", "..." },
+      "..."
+    }
+  ],
+  "bill_address": {
+    "id": "addr_1xPq2wMn",
+    "..."
+  },
+  "ship_address": {
+    "id": "addr_2wMn3xPq",
+    "..."
+  },
+  "payment_methods": [
+    { "id": "pm_4xLq8nRt", "..." }
+  ]
+}
+```
+
+## Line Item Events
+
+Events: `line_item.created`, `line_item.updated`, `line_item.deleted`
+
+Line item payloads include nested `option_values` and `digital_links`.
+
+```json
+{
+  "id": "li_7xRt4wPq",
+  "variant_id": "var_k5nR8xLq",
+  "quantity": 2,
+  "currency": "USD",
+  "name": "Spree Tote Bag",
+  "slug": "spree-tote-bag",
+  "options_text": "Size: M, Color: Black",
+  "price": "29.99",
+  "display_price": "$29.99",
+  "total": "59.98",
+  "display_total": "$59.98",
+  "adjustment_total": "0.00",
+  "display_adjustment_total": "$0.00",
+  "additional_tax_total": "2.40",
+  "display_additional_tax_total": "$2.40",
+  "included_tax_total": "0.00",
+  "display_included_tax_total": "$0.00",
+  "promo_total": "-5.00",
+  "display_promo_total": "-$5.00",
+  "pre_tax_amount": "54.98",
+  "display_pre_tax_amount": "$54.98",
+  "discounted_amount": "54.98",
+  "display_discounted_amount": "$54.98",
+  "compare_at_amount": null,
+  "display_compare_at_amount": null,
+  "thumbnail_url": "https://cdn.example.com/images/tote-bag.jpg",
+  "created_at": "2025-01-15T10:00:00Z",
+  "updated_at": "2025-01-15T10:00:00Z",
+  "option_values": [
+    { "id": "ov_2wMn9xPq", "name": "M", "presentation": "Medium" }
+  ],
+  "digital_links": []
+}
+```
+
+## Payment Events
+
+Events: `payment.created`, `payment.updated`, `payment.paid`
+
+Payment payloads include a nested `payment_method` and polymorphic `source` (credit card, store credit, or payment source).
+
+```json
+{
+  "id": "pay_3wXz7mRp",
+  "state": "completed",
+  "number": "P123456",
+  "amount": "99.99",
+  "display_amount": "$99.99",
+  "response_code": "ch_abc123",
+  "payment_method_id": "pm_4xLq8nRt",
+  "source_type": "credit_card",
+  "source_id": "cc_5wPq9mXz",
+  "source": {
+    "id": "cc_5wPq9mXz",
+    "..."
+  },
+  "payment_method": {
+    "id": "pm_4xLq8nRt",
+    "..."
+  },
+  "created_at": "2025-01-15T10:25:00Z",
+  "updated_at": "2025-01-15T10:25:00Z"
+}
+```
+
+The `source_type` field is normalized to one of: `"credit_card"`, `"store_credit"`, `"payment_source"`, or `null`.
+
+## Payment Session Events
+
+Events: `payment_session.created`, `payment_session.updated`, `payment_session.deleted`
+
+Payment session payloads include a nested `payment_method` and optionally a nested `payment`.
+
+```json
+{
+  "id": "ps_6nRt2xLq",
+  "status": "pending",
+  "amount": "99.99",
+  "currency": "USD",
+  "external_id": "pi_3abc123",
+  "external_data": {},
+  "customer_external_id": null,
+  "order_id": "or_m3Rp9wXz",
+  "payment_method_id": "pm_4xLq8nRt",
+  "payment_method": {
+    "id": "pm_4xLq8nRt",
+    "..."
+  },
+  "expires_at": "2025-01-15T11:00:00Z",
+  "created_at": "2025-01-15T10:25:00Z",
+  "updated_at": "2025-01-15T10:25:00Z"
+}
+```
+
+## Payment Setup Session Events
+
+Events: `payment_setup_session.created`, `payment_setup_session.updated`, `payment_setup_session.deleted`
+
+Payment setup session payloads include a nested `payment_method`.
+
+```json
+{
+  "id": "pss_8mXz3wPq",
+  "status": "pending",
+  "external_id": "seti_abc123",
+  "external_client_secret": "seti_abc123_secret_xyz",
+  "external_data": {},
+  "payment_method_id": "pm_4xLq8nRt",
+  "payment_source_id": "cc_5wPq9mXz",
+  "payment_source_type": "Spree::CreditCard",
+  "customer_id": "usr_k5nR8xLq",
+  "payment_method": {
+    "id": "pm_4xLq8nRt",
+    "..."
+  },
+  "created_at": "2025-01-15T10:25:00Z",
+  "updated_at": "2025-01-15T10:25:00Z"
+}
+```
+
+## Shipment Events
+
+Events: `shipment.created`, `shipment.updated`, `shipment.shipped`, `shipment.canceled`, `shipment.resumed`
+
+Shipment payloads include nested `shipping_method`, `stock_location`, and `shipping_rates`.
+
+```json
+{
+  "id": "shp_9xPq4wMn",
+  "number": "H123456789",
+  "state": "shipped",
+  "tracking": "1Z999AA10123456784",
+  "tracking_url": "https://tools.usps.com/go/TrackConfirmAction?tLabels=1Z999AA10123456784",
+  "cost": "10.00",
+  "display_cost": "$10.00",
+  "shipped_at": "2025-01-16T14:00:00Z",
+  "created_at": "2025-01-15T10:30:00Z",
+  "updated_at": "2025-01-16T14:00:00Z",
+  "shipping_method": {
+    "id": "sm_2wMn7xRt",
+    "..."
+  },
+  "stock_location": {
+    "id": "sl_2wMn7xRt",
+    "..."
+  },
+  "shipping_rates": []
+}
+```
+
+## Product Events
+
+Events: `product.created`, `product.updated`, `product.deleted`, `product.activate`, `product.archive`, `product.out_of_stock`, `product.back_in_stock`
+
+Product event payloads include pricing, stock status, and availability flags. Conditional associations (variants, images, option types, taxons, metafields) are not included in event payloads.
+
+```json
+{
+  "id": "prod_86Rf07xd4z",
+  "name": "Spree Tote Bag",
+  "slug": "spree-tote-bag",
+  "description": "A beautiful tote bag",
+  "meta_description": null,
+  "meta_keywords": null,
+  "variant_count": 3,
+  "default_variant_id": "var_k5nR8xLq",
+  "thumbnail_url": "https://cdn.example.com/images/tote-bag.jpg",
+  "purchasable": true,
+  "in_stock": true,
+  "backorderable": false,
+  "available": true,
+  "tags": ["summer", "accessories"],
+  "price": {
+    "id": "pri_4wPq9mXz",
+    "amount": "29.99",
+    "amount_in_cents": 2999,
+    "display_amount": "$29.99",
+    "compare_at_amount": null,
+    "compare_at_amount_in_cents": null,
+    "display_compare_at_amount": null,
+    "currency": "USD",
+    "price_list_id": null
+  },
+  "original_price": null,
+  "available_on": "2025-01-01T00:00:00Z",
+  "created_at": "2025-01-01T00:00:00Z",
+  "updated_at": "2025-01-15T10:00:00Z"
+}
+```
+
+## Variant Events
+
+Events: `variant.created`, `variant.updated`, `variant.deleted`
+
+Variant event payloads include pricing, stock status, and always-included `option_values`. Conditional associations (images, metafields) are not included in event payloads.
+
+```json
+{
+  "id": "var_k5nR8xLq",
+  "product_id": "prod_86Rf07xd4z",
+  "sku": "SPR-TOTE-BLK",
+  "is_master": false,
+  "options_text": "Size: M, Color: Black",
+  "track_inventory": true,
+  "image_count": 2,
+  "thumbnail": "https://cdn.example.com/images/tote-bag-black.jpg",
+  "purchasable": true,
+  "in_stock": true,
+  "backorderable": false,
+  "weight": 0.5,
+  "height": 40.0,
+  "width": 35.0,
+  "depth": 10.0,
+  "price": {
+    "id": "pri_4wPq9mXz",
+    "amount": "29.99",
+    "amount_in_cents": 2999,
+    "display_amount": "$29.99",
+    "compare_at_amount": null,
+    "compare_at_amount_in_cents": null,
+    "display_compare_at_amount": null,
+    "currency": "USD",
+    "price_list_id": null
+  },
+  "original_price": null,
+  "created_at": "2025-01-01T00:00:00Z",
+  "updated_at": "2025-01-15T10:00:00Z",
+  "option_values": [
+    { "id": "ov_2wMn9xPq", "name": "M", "presentation": "Medium" },
+    { "id": "ov_3xLq8nRt", "name": "Black", "presentation": "Black" }
+  ]
+}
+```
+
+## Price Events
+
+Events: `price.created`, `price.updated`, `price.deleted`
+
+```json
+{
+  "id": "pri_4wPq9mXz",
+  "amount": "29.99",
+  "amount_in_cents": 2999,
+  "display_amount": "$29.99",
+  "compare_at_amount": "39.99",
+  "compare_at_amount_in_cents": 3999,
+  "display_compare_at_amount": "$39.99",
+  "currency": "USD",
+  "price_list_id": null
+}
+```
+
+## Image Events
+
+Events: `image.created`, `image.updated`, `image.deleted`
+
+Image payloads include URLs for all configured image variants (mini, small, medium, large, xlarge).
+
+```json
+{
+  "id": "img_5mXz3wPq",
+  "type": "Spree::Image",
+  "viewable_type": "Spree::Variant",
+  "viewable_id": "var_k5nR8xLq",
+  "position": 1,
+  "alt": "Black tote bag front view",
+  "original_url": "https://cdn.example.com/images/original.jpg",
+  "mini_url": "https://cdn.example.com/images/mini.jpg",
+  "small_url": "https://cdn.example.com/images/small.jpg",
+  "medium_url": "https://cdn.example.com/images/medium.jpg",
+  "large_url": "https://cdn.example.com/images/large.jpg",
+  "xlarge_url": "https://cdn.example.com/images/xlarge.jpg",
+  "og_image_url": "https://cdn.example.com/images/og.jpg",
+  "created_at": "2025-01-01T00:00:00Z",
+  "updated_at": "2025-01-01T00:00:00Z"
+}
+```
+
+## Stock Item Events
+
+Events: `stock_item.created`, `stock_item.updated`, `stock_item.deleted`
+
+```json
+{
+  "id": "si_6nRt2xLq",
+  "count_on_hand": 25,
+  "backorderable": false,
+  "stock_location_id": "sl_2wMn7xRt",
+  "variant_id": "var_k5nR8xLq",
+  "created_at": "2025-01-01T00:00:00Z",
+  "updated_at": "2025-01-15T10:00:00Z"
+}
+```
+
+## Stock Movement Events
+
+Events: `stock_movement.created`, `stock_movement.updated`, `stock_movement.deleted`
+
+```json
+{
+  "id": "sm_7xRt4wPq",
+  "quantity": -1,
+  "action": "sold",
+  "originator_type": "Spree::Shipment",
+  "originator_id": "shp_9xPq4wMn",
+  "stock_item_id": "si_6nRt2xLq",
+  "created_at": "2025-01-15T10:30:00Z",
+  "updated_at": "2025-01-15T10:30:00Z"
+}
+```
+
+## Stock Transfer Events
+
+Events: `stock_transfer.created`, `stock_transfer.updated`, `stock_transfer.deleted`
+
+```json
+{
+  "id": "st_8mXz3wPq",
+  "number": "T123456789",
+  "type": "Spree::StockTransfer",
+  "reference": "Warehouse rebalance",
+  "source_location_id": "sl_2wMn7xRt",
+  "destination_location_id": "sl_9xPq4wMn",
+  "created_at": "2025-01-15T10:00:00Z",
+  "updated_at": "2025-01-15T10:00:00Z"
+}
+```
+
+## Customer Events
+
+Events: `customer.created`, `customer.updated`, `customer.deleted`
+
+Customer payloads include nested `addresses`, `default_billing_address`, and `default_shipping_address`.
+
+```json
+{
+  "id": "usr_k5nR8xLq",
+  "email": "customer@example.com",
+  "first_name": "John",
+  "last_name": "Doe",
+  "created_at": "2025-01-01T00:00:00Z",
+  "updated_at": "2025-01-15T10:00:00Z",
+  "addresses": [],
+  "default_billing_address": null,
+  "default_shipping_address": null
+}
+```
+
+## Promotion Events
+
+Events: `promotion.created`, `promotion.updated`, `promotion.deleted`
+
+```json
+{
+  "id": "promo_2wMn9xPq",
+  "name": "Summer Sale 20% Off",
+  "description": "20% off all summer items",
+  "code": "SUMMER20",
+  "type": "Spree::Promotion",
+  "kind": "coupon",
+  "path": null,
+  "match_policy": "all",
+  "usage_limit": 1000,
+  "advertise": true,
+  "multi_codes": false,
+  "code_prefix": null,
+  "number_of_codes": null,
+  "starts_at": "2025-06-01T00:00:00Z",
+  "expires_at": "2025-08-31T23:59:59Z",
+  "promotion_category_id": "pcat_3xLq8nRt",
+  "created_at": "2025-05-15T10:00:00Z",
+  "updated_at": "2025-05-15T10:00:00Z"
+}
+```
+
+## Gift Card Events
+
+Events: `gift_card.created`, `gift_card.updated`, `gift_card.deleted`
+
+```json
+{
+  "id": "gc_4xLq8nRt",
+  "code": "****-1234",
+  "state": "active",
+  "amount": 50.0,
+  "amount_used": 15.0,
+  "amount_authorized": 0.0,
+  "amount_remaining": 35.0,
+  "display_amount": "$50.00",
+  "display_amount_used": "$15.00",
+  "display_amount_remaining": "$35.00",
+  "currency": "USD",
+  "expired": false,
+  "active": true,
+  "expires_at": "2026-01-01T00:00:00Z",
+  "redeemed_at": "2025-02-01T10:00:00Z",
+  "created_at": "2025-01-01T00:00:00Z",
+  "updated_at": "2025-02-01T10:00:00Z"
+}
+```
+
+<Info>
+The gift card `code` is displayed as a masked value (e.g., `****-1234`) for security.
+</Info>
+
+## Gift Card Batch Events
+
+Events: `gift_card_batch.created`, `gift_card_batch.updated`, `gift_card_batch.deleted`
+
+```json
+{
+  "id": "gcb_5wPq9mXz",
+  "codes_count": 100,
+  "amount": "25.00",
+  "currency": "USD",
+  "prefix": "HOLIDAY",
+  "expires_at": "2026-12-31T00:00:00Z",
+  "created_by_id": "adm_8mXz3wPq",
+  "created_at": "2025-01-01T00:00:00Z",
+  "updated_at": "2025-01-01T00:00:00Z"
+}
+```
+
+## Store Credit Events
+
+Events: `store_credit.created`, `store_credit.updated`, `store_credit.deleted`
+
+```json
+{
+  "id": "sc_6nRt2xLq",
+  "amount": "100.00",
+  "amount_used": "25.00",
+  "amount_remaining": "75.00",
+  "display_amount": "$100.00",
+  "display_amount_used": "$25.00",
+  "display_amount_remaining": "$75.00",
+  "currency": "USD"
+}
+```
+
+## Refund Events
+
+Events: `refund.created`, `refund.updated`, `refund.deleted`
+
+```json
+{
+  "id": "ref_7xRt4wPq",
+  "amount": "29.99",
+  "transaction_id": "txn_abc123",
+  "payment_id": "pay_3wXz7mRp",
+  "refund_reason_id": "rr_2wMn9xPq",
+  "reimbursement_id": "rei_3xLq8nRt",
+  "created_at": "2025-01-20T10:00:00Z",
+  "updated_at": "2025-01-20T10:00:00Z"
+}
+```
+
+## Reimbursement Events
+
+Events: `reimbursement.created`, `reimbursement.updated`, `reimbursement.deleted`
+
+```json
+{
+  "id": "rei_3xLq8nRt",
+  "number": "RI123456789",
+  "reimbursement_status": "reimbursed",
+  "total": "29.99",
+  "order_id": "or_m3Rp9wXz",
+  "customer_return_id": "cr_4xLq8nRt",
+  "created_at": "2025-01-20T10:00:00Z",
+  "updated_at": "2025-01-20T10:00:00Z"
+}
+```
+
+## Return Authorization Events
+
+Events: `return_authorization.created`, `return_authorization.updated`, `return_authorization.deleted`
+
+```json
+{
+  "id": "ra_8mXz3wPq",
+  "number": "RA123456789",
+  "state": "authorized",
+  "order_id": "or_m3Rp9wXz",
+  "stock_location_id": "sl_2wMn7xRt",
+  "return_authorization_reason_id": "rar_9xPq4wMn",
+  "created_at": "2025-01-18T10:00:00Z",
+  "updated_at": "2025-01-18T10:00:00Z"
+}
+```
+
+## Return Item Events
+
+Events: `return_item.created`, `return_item.updated`, `return_item.deleted`
+
+```json
+{
+  "id": "ri_9xPq4wMn",
+  "reception_status": "received",
+  "acceptance_status": "accepted",
+  "pre_tax_amount": "29.99",
+  "included_tax_total": "0.00",
+  "additional_tax_total": "2.40",
+  "inventory_unit_id": "iu_2wMn7xRt",
+  "return_authorization_id": "ra_8mXz3wPq",
+  "customer_return_id": "cr_4xLq8nRt",
+  "reimbursement_id": "rei_3xLq8nRt",
+  "exchange_variant_id": null,
+  "created_at": "2025-01-19T10:00:00Z",
+  "updated_at": "2025-01-19T10:00:00Z"
+}
+```
+
+## Customer Return Events
+
+Events: `customer_return.created`, `customer_return.updated`, `customer_return.deleted`
+
+```json
+{
+  "id": "cr_4xLq8nRt",
+  "number": "CR123456789",
+  "stock_location_id": "sl_2wMn7xRt",
+  "created_at": "2025-01-19T10:00:00Z",
+  "updated_at": "2025-01-19T10:00:00Z"
+}
+```
+
+## Wishlist Events
+
+Events: `wishlist.created`, `wishlist.updated`, `wishlist.deleted`
+
+Wishlist items are a conditional association and are not included in event payloads.
+
+```json
+{
+  "id": "wl_5wPq9mXz",
+  "name": "My Wishlist",
+  "token": "abc123def456",
+  "is_default": true,
+  "is_private": true,
+  "created_at": "2025-01-01T00:00:00Z",
+  "updated_at": "2025-01-15T10:00:00Z"
+}
+```
+
+## Wished Item Events
+
+Events: `wished_item.created`, `wished_item.updated`, `wished_item.deleted`
+
+Wished item payloads include a nested `variant`.
+
+```json
+{
+  "id": "wi_6nRt2xLq",
+  "variant_id": "var_k5nR8xLq",
+  "wishlist_id": "wl_5wPq9mXz",
+  "quantity": 1,
+  "created_at": "2025-01-15T10:00:00Z",
+  "updated_at": "2025-01-15T10:00:00Z",
+  "variant": {
+    "id": "var_k5nR8xLq",
+    "..."
+  }
+}
+```
+
+## Post Events
+
+Events: `post.created`, `post.updated`, `post.deleted`
+
+```json
+{
+  "id": "post_7xRt4wPq",
+  "title": "Summer Collection 2025",
+  "slug": "summer-collection-2025",
+  "meta_title": "Summer Collection | My Store",
+  "meta_description": "Discover our new summer collection",
+  "published_at": "2025-06-01T00:00:00Z",
+  "author_id": "adm_8mXz3wPq",
+  "post_category_id": "pcat_9xPq4wMn",
+  "created_at": "2025-05-15T10:00:00Z",
+  "updated_at": "2025-05-15T10:00:00Z"
+}
+```
+
+## Post Category Events
+
+Events: `post_category.created`, `post_category.updated`, `post_category.deleted`
+
+```json
+{
+  "id": "pcat_9xPq4wMn",
+  "title": "News",
+  "slug": "news",
+  "created_at": "2025-01-01T00:00:00Z",
+  "updated_at": "2025-01-01T00:00:00Z"
+}
+```
+
+## Newsletter Subscriber Events
+
+Events: `newsletter_subscriber.created`, `newsletter_subscriber.updated`, `newsletter_subscriber.deleted`
+
+```json
+{
+  "id": "ns_2wMn9xPq",
+  "email": "subscriber@example.com",
+  "verified": true,
+  "verified_at": "2025-01-02T10:00:00Z",
+  "user_id": "usr_k5nR8xLq",
+  "created_at": "2025-01-01T00:00:00Z",
+  "updated_at": "2025-01-02T10:00:00Z"
+}
+```
+
+## Digital Product Events
+
+Events: `digital.created`, `digital.updated`, `digital.deleted`
+
+```json
+{
+  "id": "dig_3xLq8nRt",
+  "variant_id": "var_k5nR8xLq",
+  "created_at": "2025-01-01T00:00:00Z",
+  "updated_at": "2025-01-01T00:00:00Z"
+}
+```
+
+## Digital Link Events
+
+Events: `digital_link.created`, `digital_link.updated`, `digital_link.deleted`
+
+```json
+{
+  "id": "dl_4xLq8nRt",
+  "access_counter": 3,
+  "filename": "ebook.pdf",
+  "content_type": "application/pdf",
+  "download_url": "/api/v3/store/digital_downloads/abc123",
+  "authorizable": true,
+  "expired": false,
+  "access_limit_exceeded": false,
+  "created_at": "2025-01-15T10:30:00Z",
+  "updated_at": "2025-01-15T12:00:00Z"
+}
+```
+
+## Import Events
+
+Events: `import.created`, `import.updated`, `import.deleted`
+
+```json
+{
+  "id": "imp_5wPq9mXz",
+  "number": "I123456789",
+  "type": "Spree::Imports::Products",
+  "status": "completed",
+  "owner_type": "Spree::Store",
+  "owner_id": "str_9xPq2wMn",
+  "user_id": "adm_8mXz3wPq",
+  "rows_count": 150,
+  "created_at": "2025-01-15T10:00:00Z",
+  "updated_at": "2025-01-15T10:05:00Z"
+}
+```
+
+## Import Row Events
+
+Events: `import_row.created`, `import_row.updated`, `import_row.deleted`
+
+```json
+{
+  "id": "ir_6nRt2xLq",
+  "import_id": "imp_5wPq9mXz",
+  "row_number": 42,
+  "status": "success",
+  "validation_errors": [],
+  "item_type": "Spree::Product",
+  "item_id": "prod_86Rf07xd4z",
+  "created_at": "2025-01-15T10:01:00Z",
+  "updated_at": "2025-01-15T10:01:00Z"
+}
+```
+
+## Export Events
+
+Events: `export.created`, `export.updated`, `export.deleted`
+
+```json
+{
+  "id": "exp_7xRt4wPq",
+  "number": "E123456789",
+  "type": "Spree::Exports::Products",
+  "format": "csv",
+  "user_id": "adm_8mXz3wPq",
+  "created_at": "2025-01-15T10:00:00Z",
+  "updated_at": "2025-01-15T10:02:00Z"
+}
+```
+
+## Report Events
+
+Events: `report.created`, `report.updated`, `report.deleted`
+
+```json
+{
+  "id": "rep_8mXz3wPq",
+  "type": "Spree::Reports::SalesByProduct",
+  "user_id": "adm_8mXz3wPq",
+  "currency": "USD",
+  "date_from": "2025-01-01T00:00:00Z",
+  "date_to": "2025-01-31T23:59:59Z",
+  "created_at": "2025-02-01T10:00:00Z",
+  "updated_at": "2025-02-01T10:00:00Z"
+}
+```
+
+## Invitation Events
+
+Events: `invitation.created`, `invitation.updated`, `invitation.deleted`
+
+```json
+{
+  "id": "inv_9xPq4wMn",
+  "email": "newadmin@example.com",
+  "status": "pending",
+  "resource_type": "Spree::Store",
+  "resource_id": "str_9xPq2wMn",
+  "inviter_type": "Spree::AdminUser",
+  "inviter_id": "adm_8mXz3wPq",
+  "invitee_type": null,
+  "invitee_id": null,
+  "role_id": "role_2wMn9xPq",
+  "expires_at": "2025-02-15T10:00:00Z",
+  "accepted_at": null,
+  "created_at": "2025-01-15T10:00:00Z",
+  "updated_at": "2025-01-15T10:00:00Z"
+}
+```

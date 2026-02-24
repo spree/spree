@@ -1,0 +1,52 @@
+---
+title: Wishlists
+description: Manage wishlists and wished items with the Spree SDK
+---
+
+## Wishlists
+
+```typescript
+const options = { token: jwtToken };
+
+// List wishlists
+const { data: wishlists } = await client.store.wishlists.list({}, options);
+
+// Get wishlist by ID
+const wishlist = await client.store.wishlists.get('wl_xxx', {
+  includes: 'wished_items',
+}, options);
+
+// Create wishlist
+const newWishlist = await client.store.wishlists.create({
+  name: 'Birthday Ideas',
+  is_private: true,
+}, options);
+
+// Update wishlist
+await client.store.wishlists.update('wl_xxx', {
+  name: 'Updated Name',
+}, options);
+
+// Delete wishlist
+await client.store.wishlists.delete('wl_xxx', options);
+```
+
+## Wishlist Items
+
+```typescript
+const options = { token: jwtToken };
+
+// Add item to wishlist
+await client.store.wishlists.items.create('wl_xxx', {
+  variant_id: 'var_123',
+  quantity: 1,
+}, options);
+
+// Update item quantity
+await client.store.wishlists.items.update('wl_xxx', 'wi_xxx', {
+  quantity: 2,
+}, options);
+
+// Remove item from wishlist
+await client.store.wishlists.items.delete('wl_xxx', 'wi_xxx', options);
+```
