@@ -23,7 +23,7 @@ Spree supports internationalized slugs and handles slug cleanup on soft-deletion
 
 ### Slug Generation
 
-Slugs are automatically generated from resource attributes using the `to_url` method (provided by the [Stringex](https://github.com/rsl/stringex) gem). This method:
+Slugs are automatically generated from resource attributes using automatic URL conversion. This:
 
 - Converts strings to lowercase
 - Replaces spaces and special characters with hyphens
@@ -203,14 +203,13 @@ store.code # => "my-awesome-store" (unchanged)
 
 Other Spree models that support slugs:
 
-- **Pages** (`Spree::Page`): Uses `slug` column with history
 - **Posts** (`Spree::Post`): Uses `slug` column with history and translations
 - **Post Categories** (`Spree::PostCategory`): Uses `slug` column with history
 - **Policies** (`Spree::Policy`): Uses `slug` column with history
 
 ## Internationalization
 
-Spree integrates FriendlyId with Mobility for multi-language slug support using the `friendly_id-mobility` gem.
+Spree supports multi-language slugs, generating locale-specific URLs for each translation.
 
 ### Translatable Models
 
@@ -284,7 +283,7 @@ product2.translations.create!(locale: :fr, slug: 'tshirt')  # ❌ "tshirt-<uuid>
 
 ## Slug History
 
-FriendlyId's history feature preserves old slugs when they change, ensuring existing URLs continue to work. This is critical for:
+The slug history feature preserves old slugs when they change, ensuring existing URLs continue to work. This is critical for:
 
 - SEO (avoiding broken links)
 - Bookmarks and external references
@@ -308,7 +307,7 @@ product.slugs.pluck(:slug)
 
 ### Slug History Table
 
-FriendlyId maintains a separate `friendly_id_slugs` table:
+Spree maintains a separate `friendly_id_slugs` table for slug history:
 
 ```ruby
 # Schema
@@ -325,7 +324,7 @@ end
 
 ## Soft Deletes and Slugs
 
-Spree extends FriendlyId to work with soft-deleted records (using Paranoia gem). When a resource is deleted:
+Spree's slug system handles soft-deleted records gracefully. When a resource is deleted:
 
 1. The record is marked as deleted (`deleted_at` timestamp)
 2. The slug is prefixed with `deleted-` and a UUID
