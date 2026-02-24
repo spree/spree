@@ -17,13 +17,13 @@ This pattern enables loose coupling between components and makes it easy to:
 
 ## How Events Work
 
-Spree's event system is built on top of [`ActiveSupport::Notifications`](https://api.rubyonrails.org/classes/ActiveSupport/Notifications.html) but provides a cleaner, more Rails-like API through:
+Spree's event system provides a clean API through:
 
 1. **`Spree::Events`** - The main module for publishing and subscribing to events
 2. **`Spree::Subscriber`** - Base class for creating event subscribers
 3. **`Spree::Publishable`** - Concern that enables models to publish events
 
-When an event is published, all matching subscribers are notified. By default, subscribers run asynchronously via ActiveJob to avoid blocking the main request.
+When an event is published, all matching subscribers are notified. By default, subscribers run asynchronously via background jobs to avoid blocking the main request.
 
 ```mermaid
 flowchart TB
@@ -36,7 +36,7 @@ flowchart TB
     subgraph Event Adapter
         D --> E[Find Matching Subscribers]
         E --> F{Async?}
-        F -->|Yes| G[Queue ActiveJob]
+        F -->|Yes| G[Queue Background Job]
         F -->|No| H[Execute Immediately]
     end
 
@@ -88,7 +88,7 @@ class MySubscriber < Spree::Subscriber
   subscribes_to 'order.*'  # All order events
   subscribes_to '*.*'      # All events (use sparingly!)
 
-  # Run synchronously instead of via ActiveJob
+  # Run synchronously instead of via background job
   subscribes_to 'order.complete', async: false
 end
 ```
@@ -396,7 +396,7 @@ Models without a matching serializer will use a minimal fallback payload contain
 
 ## Registering Subscribers
 
-Subscribers in `app/subscribers/` are automatically registered during Rails initialization.
+Subscribers in `app/subscribers/` are automatically registered during application initialization.
 
 For subscribers in other locations, add them to the `Spree.subscribers` array in an initializer:
 
@@ -620,7 +620,7 @@ The `Spree::Events::Adapters::Base` class defines the required interface:
 | `publish(event_name, payload, metadata)` | Publish an event, return `Spree::Event` |
 | `subscribe(pattern, subscriber, options)` | Register a subscriber for a pattern |
 | `unsubscribe(pattern, subscriber)` | Remove a subscriber |
-| `activate!` | Called during Rails initialization |
+| `activate!` | Called during application initialization |
 | `deactivate!` | Called during shutdown |
 
 The base class also provides helper methods:
