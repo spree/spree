@@ -1,36 +1,20 @@
 ---
-title: Internationalization
-description: >-
-  Spree is ready out of the box to make your brand a global one.
+title: Translations
+description: Translate product content, UI strings, and other resources into multiple languages.
 ---
 
 ## Overview
 
-With Spree you can use different currencies, languages, payment methods per region. You can translate the UI and have different translations for product descriptions, taxons, etc to improve conversions and customer satisfaction.
+Spree supports two types of translations:
 
-## Store Default Locale
+1. **Resource Translations** — translatable content fields on models like Products, Taxons, and Stores (e.g., product name, description, slug)
+2. **UI Translations** — interface strings used in views and the admin panel (e.g., button labels, flash messages)
 
-Each [Store](stores) has their own `default_locale` attribute. Alongside that, you can also set `supported_locales` which will enable multi-language capabilities for that Store.
-
-You can change both in the Admin Panel in `Configurations -> Store` or via rails console / API.
-
-<Info>
-For locales, we use symbols such as `en`,`es-MX` etc - full list of supported locales is available in the [Spree I18n GitHub repository](https://github.com/spree-contrib/spree_i18n/tree/master/config/locales)..
-</Info>
-
-## Store Default Currency
-
-As with locale each [Store](stores) has their own `default_currency` attribute. Alongside that, you can also set  `supported_currencies` which will enable multi-currency capabilities for that Store.
-
-You can change both in the Admin Panel in `Configurations -> Store` or via rails console / API.
-
-<Info>
-For currencies, we use [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217) symbols, eg. `USD` , `CAD`, `EUR`
-</Info>
+For configuring which locales and currencies are available in your store, see [Markets](/developer/core-concepts/markets). Markets control locale and currency assignment per geographic region.
 
 ## Resource Translations
 
-As of Spree 4.6, resources with user-facing content fields now have built in support for translations. Translation functionality is handled by the [Mobility gem](https://github.com/shioyama/mobility). Spree allows you to translate the following resources:
+Resources with user-facing content fields have built-in support for translations. Translation functionality is handled by the [Mobility gem](https://github.com/shioyama/mobility). Spree allows you to translate the following resources:
 
 ```mermaid
 erDiagram
@@ -88,7 +72,7 @@ erDiagram
 | Product Property | `value`                                                                                                                                                                 |
 | Store            | `name`, `meta_description`, `meta_keywords`, `seo_title`, `facebook`, `twitter`, `instagram`, `customer_support_email`, `description`, `address`, `contact_phone` |
 
-Our translatable resources are configured with Mobility’s [Table Backend](https://github.com/shioyama/mobility#table-backend-like-globalize) storage strategy. The way this works is that each translatable resource has a corresponding translations table in the database, in which translation values are stored - for example, product translations are stored in `spree_product_translations`.
+Translatable resources are configured with Mobility's [Table Backend](https://github.com/shioyama/mobility#table-backend-like-globalize) storage strategy. Each translatable resource has a corresponding translations table in the database — for example, product translations are stored in `spree_product_translations`.
 
 <Info>
 You can read more about how to work with translations by reading [Mobility's usage docs](https://github.com/shioyama/mobility#usage).
@@ -101,7 +85,7 @@ Each translatable resource includes the `TranslatableResource` module, which set
 Due to some shortcomings of the Mobility gem, not all Active Record Query Interface methods work with translations. This includes:
 
 * selecting `distinct` when ordering by a translated field raises an error. To work around this, explicitly select the translated field that you are ordering by. For example, instead of `Spree::Product.order(:name).distinct` do `Spree::Product.select(:name).order(:name).distinct`
-* calling `first_or_create` or `first_or_initialize` on a clause that checks for a translated field does not work correctly with Mobility. For example, the following line of code will not perform as expected: `Spree::Product.where(name: ‘Denim Shirt').first_or_create!` Instead, you’ll need to rewrite it as an if statement that calls either `first` or `create` like so:
+* calling `first_or_create` or `first_or_initialize` on a clause that checks for a translated field does not work correctly with Mobility. For example, the following line of code will not perform as expected: `Spree::Product.where(name: 'Denim Shirt').first_or_create!` Instead, you'll need to rewrite it as an if statement that calls either `first` or `create` like so:
 
 ```ruby
 if Spree::Product.where(name: 'Denim Shirt').any?
@@ -119,15 +103,11 @@ Spree::Product.joins(:taxons)
               .where(Spree::Taxon.translation_table_alias => {name: "30% Off"})
 ```
 
-<Info>
-  If you are using Spree version 4.5 or older and are currently unable to upgrade, you can install [Spree Globalize extension](https://github.com/spree-contrib/spree_globalize) to enable translations. This extension uses [Globalize](https://github.com/globalize/globalize) library under the hood. We do not recommend this approach and we will not be providing support for it. We recommend upgrading to Spree 4.6 or newer.
-</Info>
-
 ## The `spree_i18n` project
 
-Spree now stores all of the translation information in a separate GitHub project known as [Spree I18n](https://github.com/spree/spree_i18n). This is a stand alone project with a large number of volunteer committers who maintain the locale files. This is basically the same approach followed by the Rails project which keeps their localizations in [rails-i18n](https://github.com/svenfuchs/rails-i18n).
+Spree stores UI translation strings in a separate GitHub project known as [Spree I18n](https://github.com/spree/spree_i18n). This is a standalone project with volunteer committers who maintain the locale files — the same approach followed by the Rails project with [rails-i18n](https://github.com/svenfuchs/rails-i18n).
 
-The project is actually a Spree extension. This extension contains translation files for the Spree UI in various languages.
+The project is a Spree extension that contains translation files for the Spree UI in various languages.
 
 To install the Spree I18n extension, run the following command:
 
@@ -148,11 +128,15 @@ pt-BR:
 
 All translations for Spree are "namespaced" within the `spree` key so that they don't conflict with translations from other parts of the parent application.
 
+<Info>
+For locales, we use symbols such as `en`, `es-MX` etc — full list of supported locales is available in the [Spree I18n GitHub repository](https://github.com/spree-contrib/spree_i18n/tree/main/config/locales).
+</Info>
+
 Please submit Pull Requests or issues directly to [Spree I18n](https://github.com/spree/spree_i18n) for missing translations.
 
 ### Localization Files
 
-Spree maintains its localization information in a YAML file using a naming convention similar to that of the Rails project. Each of the localization filenames contains a prefix representing the language code of the locale. For example, the Russian translation is contained in `config/locales/ru.yml`.
+Spree maintains its localization information in YAML files using a naming convention similar to that of the Rails project. Each localization filename contains a prefix representing the language code of the locale. For example, the Russian translation is contained in `config/locales/ru.yml`.
 
 Spree has over 43 locale files and counting. See the [GitHub Repository](https://github.com/spree-contrib/spree_i18n/tree/main/config/locales) for a complete list.
 
@@ -186,6 +170,7 @@ We strongly urge all extension developers to ensure all customer facing text is 
 
 ## Related Documentation
 
-- [Stores](/developer/core-concepts/stores) - Multi-store and multi-language configuration
-- [Products](/developer/core-concepts/products) - Product translations
-- [Extensions](/developer/customization/extensions) - Creating extensions with translations
+- [Markets](/developer/core-concepts/markets) — Locale and currency configuration per geographic region
+- [Stores](/developer/core-concepts/stores) — Multi-store setup
+- [Products](/developer/core-concepts/products) — Product translations
+- [Extensions](/developer/customization/extensions) — Creating extensions with translations
