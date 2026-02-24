@@ -4,8 +4,14 @@ module Spree
   # Concern for models that publish events.
   #
   # This concern is included in Spree::Base, so all Spree models
-  # can emit events. Event payloads are generated using dedicated
-  # serializers from the Spree::Events namespace.
+  # can emit events. Event payloads are generated using V3 API serializers
+  # resolved by convention: Spree::Order → Spree::Api::V3::OrderSerializer.
+  #
+  # Models without a V3 serializer get a minimal fallback payload:
+  #   { id: prefixed_id, created_at: ..., updated_at: ... }
+  #
+  # STI models (e.g., Spree::Exports::Products) can override
+  # event_serializer_class to point to the parent serializer.
   #
   # @example Disabling events for a specific model
   #   class Spree::LogEntry < Spree.base_class
@@ -20,45 +26,15 @@ module Spree
   #     end
   #   end
   #
-  # @example Creating an event serializer (required for each model that publishes events)
-  #   # app/serializers/spree/events/order_serializer.rb
-  #   class Spree::Events::OrderSerializer < Spree::Events::BaseSerializer
-  #     protected
-  #
-  #     def attributes
-  #       {
-  #         id: resource.id,
-  #         number: resource.number,
-  #         state: resource.state.to_s,
-  #         # ... other attributes
-  #       }
+  # @example Overriding the serializer for STI models
+  #   class Spree::Export < Spree.base_class
+  #     def event_serializer_class
+  #       Spree::Api::V3::ExportSerializer
   #     end
   #   end
   #
   module Publishable
     extend ActiveSupport::Concern
-
-    # Error raised when a model tries to publish an event but has no serializer defined
-    class MissingSerializerError < StandardError
-      def initialize(model_class)
-        serializer_name = "Spree::Events::#{model_class.name.demodulize}Serializer"
-        super(
-          "Missing event serializer for #{model_class.name}. " \
-          "Please create #{serializer_name} that inherits from Spree::Events::BaseSerializer. " \
-          "Example:\n\n" \
-          "  class #{serializer_name} < Spree::Events::BaseSerializer\n" \
-          "    protected\n\n" \
-          "    def attributes\n" \
-          "      {\n" \
-          "        id: resource.id,\n" \
-          "        # add other attributes here\n" \
-          "        updated_at: timestamp(resource.updated_at)\n" \
-          "      }\n" \
-          "    end\n" \
-          "  end"
-        )
-      end
-    end
 
     included do
       class_attribute :publish_events, default: true
@@ -168,36 +144,44 @@ module Spree
 
     # Get the payload for events
     #
-    # Uses dedicated event serializer (Spree::Events::ModelSerializer).
-    # Raises MissingSerializerError if no serializer is defined.
+    # Uses the V3 serializer resolved by convention.
+    # Falls back to a minimal payload if no serializer is found.
     #
     # @return [Hash]
-    # @raise [MissingSerializerError] if no serializer is defined for this model
     def event_payload
       serializer = event_serializer_class
 
-      raise MissingSerializerError, self.class unless serializer
+      unless serializer
+        return {
+          id: respond_to?(:prefixed_id) ? prefixed_id : id,
+          created_at: created_at&.iso8601,
+          updated_at: updated_at&.iso8601
+        }
+      end
 
-      serializer.serialize(self, event_context)
+      # Use as_json to ensure all values are JSON-safe primitives.
+      # Alba's to_h can return raw Ruby objects (e.g., Spree::Money) which
+      # ActiveJob cannot serialize for async event subscribers.
+      serializer.new(self, params: event_serializer_params).to_h.as_json
     end
 
     # Find the event serializer class for this model
     #
-    # Looks for Spree::Events::ModelNameSerializer (e.g., Spree::Events::OrderSerializer)
-    # Also walks up the class hierarchy to find a serializer for parent classes.
-    # This allows subclasses like Spree::Exports::Products to use ExportSerializer.
+    # Looks for Spree::Api::V3::ModelNameSerializer by convention.
+    # Walks up the class hierarchy to support STI models.
+    #
+    # Models can override this method to specify a custom serializer,
+    # which is useful for STI models like Export, Import, Report.
     #
     # @return [Class, nil] The serializer class or nil if not found
     def event_serializer_class
       return nil unless self.class.name
 
-      # Try this class and walk up the hierarchy
       klass = self.class
       while klass && klass != Object && klass != BasicObject
         class_name = klass.name&.demodulize
-        # Skip looking for BaseSerializer - that's the parent class for all serializers
         if class_name.present? && class_name != 'Base'
-          serializer = "Spree::Events::#{class_name}Serializer".safe_constantize
+          serializer = "Spree::Api::V3::#{class_name}Serializer".safe_constantize
           return serializer if serializer
         end
 
@@ -226,6 +210,22 @@ module Spree
     end
 
     private
+
+    # Build params for V3 serializers
+    #
+    # @return [Hash]
+    def event_serializer_params
+      store = respond_to?(:store) ? self.store : nil
+      store ||= Spree::Current.store
+
+      {
+        store: store,
+        currency: Spree::Current.currency,
+        user: nil,
+        locale: nil,
+        includes: []
+      }
+    end
 
     def should_publish_events?
       self.class.publish_events && Spree::Events.enabled?

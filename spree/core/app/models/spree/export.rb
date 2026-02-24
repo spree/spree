@@ -59,7 +59,7 @@ module Spree
     attribute :record_selection, :string, default: 'filtered'
 
     def event_serializer_class
-      Spree::Events::ExportSerializer
+      'Spree::Api::V3::ExportSerializer'.safe_constantize
     end
 
     def done?

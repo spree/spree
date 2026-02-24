@@ -26,9 +26,7 @@ module Spree
         end
 
         attribute :price_list_id do |price|
-          next nil unless price&.price_list_id.present?
-
-          price.price_list.prefixed_id
+          price.price_list&.prefixed_id
         end
       end
     end

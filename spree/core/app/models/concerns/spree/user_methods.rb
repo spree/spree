@@ -166,7 +166,7 @@ module Spree
     end
 
     def event_serializer_class
-      Spree::Events::UserSerializer
+      'Spree::Api::V3::CustomerSerializer'.safe_constantize
     end
 
     def event_prefix

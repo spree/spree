@@ -3,12 +3,6 @@ require 'spec_helper'
 describe Spree::LegacyUser, type: :model do # rubocop:disable RSpec/MultipleDescribes
   it_behaves_like 'lifecycle events', factory: :user, event_prefix: 'user'
 
-  describe '#event_serializer_class' do
-    subject { build(:user).event_serializer_class }
-
-    it { is_expected.to eq(Spree::Events::UserSerializer) }
-  end
-
   describe '#can_be_deleted?' do
     subject { user.can_be_deleted? }
 

@@ -383,12 +383,6 @@ RSpec.describe Spree::Import, :job, type: :model do
     end
   end
 
-  describe '#event_serializer_class' do
-    it 'returns the correct event serializer class' do
-      expect(import.event_serializer_class).to eq(Spree::Events::ImportSerializer)
-    end
-  end
-
   describe 'custom events', :events do
     describe 'import.completed' do
       before do

@@ -9,12 +9,6 @@ RSpec.describe Spree::Export, :job, type: :model do
   let(:search_params) { nil }
   let(:export) { build(:product_export, store: store, user: user, format: 'csv', search_params: search_params) }
 
-  describe '#event_serializer_class' do
-    it 'returns the correct event serializer class' do
-      expect(export.event_serializer_class).to eq(Spree::Events::ExportSerializer)
-    end
-  end
-
   describe '#model_class' do
     it 'returns the correct record class' do
       expect(export.model_class).to eq(Spree::Product)
