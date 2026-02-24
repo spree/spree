@@ -159,7 +159,10 @@ module Spree
         }
       end
 
-      serializer.new(self, params: event_serializer_params).to_h
+      # Use as_json to ensure all values are JSON-safe primitives.
+      # Alba's to_h can return raw Ruby objects (e.g., Spree::Money) which
+      # ActiveJob cannot serialize for async event subscribers.
+      serializer.new(self, params: event_serializer_params).to_h.as_json
     end
 
     # Find the event serializer class for this model
