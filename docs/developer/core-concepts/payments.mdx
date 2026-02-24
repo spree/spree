@@ -132,8 +132,8 @@ A `PaymentMethod` can have the following attributes:
 | `type`       | The subclass of `Spree::PaymentMethod` this payment method represents. Uses rails single table inheritance feature. | `Spree::PaymentMethod::Check` | 
 | `name`       | The visible name for this payment method                                                      | `Check`                |
 | `description`| The description for this payment method                                                       | `Pay by check.`        |
-| `active`     | Whether or not this payment method is active. Set it `false` to hide it in frontend.         | `true`                 |
-| `display_on` | Determines where the payment method can be visible. Values can be `front` for Storefront, `back` for Admin Panel only or `both` for both. | `both`                 |
+| `active`     | Whether or not this payment method is active. Set it `false` to hide it in storefront.         | `true`                 |
+| `display_on` | Determines where the payment method can be visible. Values can be `front` for storefront, `back` for admin panel only or `both` for both. | `both`                 |
 | `position`   | The position of the payment method in lists. Lower numbers appear first.                      | `1`                    |
 
 <Info>
