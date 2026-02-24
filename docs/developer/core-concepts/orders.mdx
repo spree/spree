@@ -102,7 +102,7 @@ erDiagram
 | `created_by_id`         | The ID of object that created this order.                                                       |
 | `shipment_state`        | The current shipment state of the order. It takes into account all shipments. Described below in [Order Shipment states section](orders#order-shipment-states). |
 | `payment_state`         | The current payment state of the order. It takes into account all payments. Described below in [Order Payment states section](orders#order-payment-states). |
-| `special_instructions`  | Any special instructions for the store to do with this order. Will only appear if `Spree::Config[:shipping_instructions]` is set to `true`. |
+| `special_instructions`  | Any special instructions for the store to do with this order. Will only appear if shipping instructions are enabled in the store configuration. |
 | `currency`              | The currency for this order, eg. `USD` |
 | `last_ip_address`       | The last IP address used to update this order in the frontend.                                  |
 | `channel`               | The channel specified when importing orders from other stores. e.g. amazon.                     |
@@ -170,12 +170,23 @@ The default states are as follows:
 
 Assuming that an order meets the criteria for the next state, you will be able to transition it to the next state by calling `next` on that object, eg. 
 
-```ruby
-order = Spree::Order.find_by(number: 'R123456')
-order.next
-```
+<Tabs>
+  <Tab title="SDK">
+    ```javascript
+    const order = await client.store.orders.next('or_abc123', {
+      bearerToken: '<token>',
+    })
+    ```
+  </Tab>
+  <Tab title="console">
+    ```ruby
+    order = Spree::Order.find_by_prefix_id!('or_HOVtlDrOmL')
+    order.next
+    ```
+  </Tab>
+</Tabs>
 
-If this returns `false`, then the order does _not_ meet the criteria. To work out why it cannot transition, check the result of an `errors` method call.
+If order cannot proceed to the next steps this will return an error. 
 
 ### Order Shipment states
 
