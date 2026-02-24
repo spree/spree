@@ -19,7 +19,7 @@ module Spree
         )
 
         taggings_data = taggings_scope.pluck(:id, :tag_id, :taggable_id).map do |id, tag_id, taggable_id|
-          { 'id' => id, 'tag_id' => tag_id, 'taggable_id' => taggable_id }
+          { id: id, tag_id: tag_id, taggable_id: taggable_id }
         end
 
         taggings_scope.delete_all

@@ -27,10 +27,11 @@ module Spree
           existing_pairs.include?([attrs[:taggable_id], attrs[:tag_id]])
         end
 
+        record_class.where(id: record_ids).touch_all
+
         return if new_taggings.empty?
 
         ActsAsTaggableOn::Tagging.insert_all(new_taggings)
-        record_class.where(id: record_ids).touch_all
 
         new_tagging_ids = taggings_scope.where.not(id: existing.map(&:first)).pluck(:id)
 
