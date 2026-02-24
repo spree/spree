@@ -416,7 +416,7 @@ end
 
 ## Synchronous vs Asynchronous
 
-By default, subscribers run asynchronously via `Spree::Events::SubscriberJob`. This prevents slow subscriber code from blocking HTTP requests.
+By default, subscribers run asynchronously via a background job. This prevents slow subscriber code from blocking HTTP requests.
 
 For critical operations that must complete before the request finishes, use synchronous mode:
 
