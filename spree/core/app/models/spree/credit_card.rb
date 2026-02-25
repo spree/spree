@@ -2,7 +2,6 @@ module Spree
   class CreditCard < Spree.base_class
     has_prefix_id :card  # Stripe: card_
 
-    include ActiveMerchant::Billing::CreditCardMethods
     include Spree::Metafields
     include Spree::Metadata
     include Spree::PaymentSourceConcern
@@ -48,7 +47,6 @@ module Spree
     }
     scope :not_removed, -> { where(deleted_at: nil) }
 
-    # needed for some of the ActiveMerchant gateways (eg. SagePay)
     alias_attribute :brand, :cc_type
 
     store_accessor :private_metadata, :wallet
@@ -58,14 +56,6 @@ module Spree
     def wallet_type
       wallet&.[]('type')
     end
-
-    # ActiveMerchant::Billing::CreditCard added this accessor used by some gateways.
-    # More info: https://github.com/spree/spree/issues/6209
-    #
-    # Returns or sets the track data for the card
-    #
-    # @return [String]
-    attr_accessor :track_data
 
     CARD_TYPES = {
       visa: /^4\d{12}(\d{3})?(\d{3})?$/,
@@ -151,10 +141,6 @@ module Spree
       brand.present? ? brand.upcase : Spree.t(:no_cc_type)
     end
 
-    # ActiveMerchant needs first_name/last_name because we pass it a Spree::CreditCard and it calls those methods on it.
-    # Looking at the ActiveMerchant source code we should probably be calling #to_active_merchant before passing
-    # the object to ActiveMerchant but this should do for now.
-    #
     # Returns the first name of the cardholder.
     # @return [String]
     def first_name
@@ -165,19 +151,6 @@ module Spree
     # @return [String]
     def last_name
       name.to_s.split(/[[:space:]]/, 2)[1]
-    end
-
-    # Returns an ActiveMerchant::Billing::CreditCard object.
-    # @return [ActiveMerchant::Billing::CreditCard]
-    def to_active_merchant
-      ActiveMerchant::Billing::CreditCard.new(
-        number: number,
-        month: month,
-        year: year,
-        verification_value: verification_value,
-        first_name: first_name,
-        last_name: last_name
-      )
     end
 
     def self.json_api_permitted_attributes

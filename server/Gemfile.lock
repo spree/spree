@@ -49,7 +49,6 @@ PATH
       typelizer (~> 0.8)
     spree_core (5.4.0.beta)
       active_storage_validations (= 1.3.0)
-      activemerchant (~> 1.67)
       acts-as-taggable-on
       acts_as_list (>= 0.8)
       any_ascii (~> 0.3.2)
@@ -148,12 +147,6 @@ GEM
     activejob (8.1.2)
       activesupport (= 8.1.2)
       globalid (>= 0.3.6)
-    activemerchant (1.137.0)
-      activesupport (>= 4.2)
-      builder (>= 2.1.2, < 4.0.0)
-      i18n (>= 0.6.9)
-      nokogiri (~> 1.4)
-      rexml (~> 3.3, >= 3.3.4)
     activemodel (8.1.2)
       activesupport (= 8.1.2)
     activerecord (8.1.2)
@@ -867,7 +860,6 @@ CHECKSUMS
   active_link_to (1.0.5) sha256=4830847b3d14589df1e9fc62038ceec015257fce975ec1c2a77836c461b139ba
   active_storage_validations (1.3.0) sha256=788e4189d51c7b55049bf2825ede964baa2fe531e22a31c59f67a962ebf8d71e
   activejob (8.1.2) sha256=908dab3713b101859536375819f4156b07bdf4c232cc645e7538adb9e302f825
-  activemerchant (1.137.0) sha256=fdf5e33f5c94d1981bd632d72e282c0a5afaf06bac6df3f933c08a95e98bd5ce
   activemodel (8.1.2) sha256=e21358c11ce68aed3f9838b7e464977bc007b4446c6e4059781e1d5c03bcf33e
   activerecord (8.1.2) sha256=acfbe0cadfcc50fa208011fe6f4eb01cae682ebae0ef57145ba45380c74bcc44
   activestorage (8.1.2) sha256=8a63a48c3999caeee26a59441f813f94681fc35cc41aba7ce1f836add04fba76

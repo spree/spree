@@ -11,7 +11,7 @@ require 'action_cable/engine'
 require 'mail'
 require 'action_mailer/railtie'
 
-require 'active_merchant'
+
 require 'acts_as_list'
 require 'acts-as-taggable-on'
 require 'awesome_nested_set'

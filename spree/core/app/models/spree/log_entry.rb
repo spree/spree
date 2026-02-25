@@ -17,11 +17,14 @@ module Spree
     end
 
     def parsed_details
-      @details ||= if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('3.1.0')
-                     YAML.safe_load(details, permitted_classes: [ActiveMerchant::Billing::Response])
-                   else
-                     YAML.safe_load(details, [ActiveMerchant::Billing::Response])
-                   end
+      @details ||= YAML.safe_load(
+        details,
+        permitted_classes: [
+          Spree::PaymentResponse,
+          ActiveSupport::HashWithIndifferentAccess,
+          (ActiveMerchant::Billing::Response if defined?(ActiveMerchant::Billing::Response))
+        ].compact
+      )
     end
   end
 end

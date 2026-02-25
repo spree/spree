@@ -175,8 +175,8 @@ module Spree
       attributes.except('id', 'created_at', 'updated_at', 'country_id').all? { |_, v| v.nil? }
     end
 
-    # Generates an ActiveMerchant compatible address hash
-    def active_merchant_hash
+    # Generates an address hash for payment gateway options
+    def gateway_hash
       {
         name: full_name,
         address1: address1,
@@ -188,6 +188,7 @@ module Spree
         phone: phone
       }
     end
+    alias_method :active_merchant_hash, :gateway_hash
 
     def require_phone?
       # We want to collect phone number for quick checkout but not to validate it

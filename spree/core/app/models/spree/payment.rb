@@ -348,7 +348,7 @@ module Spree
       return if source.respond_to?(:imported) && source.imported
 
       payment_method.create_profile(self)
-    rescue ActiveMerchant::ConnectionError => e
+    rescue Spree::PaymentConnectionError => e
       gateway_error e
     end
 

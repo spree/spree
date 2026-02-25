@@ -51,11 +51,11 @@ module Spree
       end
 
       def billing_address
-        order.bill_address.try(:active_merchant_hash)
+        order.bill_address.try(:gateway_hash)
       end
 
       def shipping_address
-        order.ship_address.try(:active_merchant_hash)
+        order.ship_address.try(:gateway_hash)
       end
 
       def hash_methods

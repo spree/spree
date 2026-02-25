@@ -135,6 +135,67 @@ zone = current_store.checkout_zone
 zone = Spree::Zone.default_tax
 ```
 
+### ActiveMerchant removed from Spree Core
+
+Spree 5.4 no longer depends on the `activemerchant` gem. All internal usages have been replaced with lightweight Spree-native classes:
+
+| ActiveMerchant class | Spree replacement |
+|---|---|
+| `ActiveMerchant::Billing::Response` | `Spree::PaymentResponse` |
+| `ActiveMerchant::ConnectionError` | `Spree::PaymentConnectionError` |
+
+`Spree::PaymentResponse` is a drop-in replacement with the same constructor signature:
+
+```ruby
+Spree::PaymentResponse.new(success, message, params = {}, options = {})
+```
+
+It supports the same methods: `success?`, `message`, `params`, `authorization`, `avs_result`, `cvv_result`, `test?`, and YAML serialization (for log entries).
+
+#### Updating custom payment methods
+
+If you have a custom payment method (gateway) that returns `ActiveMerchant::Billing::Response`, update it to return `Spree::PaymentResponse` instead:
+
+```ruby
+# Before
+def authorize(money, source, options = {})
+  # ...
+  ActiveMerchant::Billing::Response.new(true, 'Success', {},
+    authorization: transaction_id, test: test?)
+end
+
+# After
+def authorize(money, source, options = {})
+  # ...
+  Spree::PaymentResponse.new(true, 'Success', {},
+    authorization: transaction_id, test: test?)
+end
+```
+
+If your gateway rescues `ActiveMerchant::ConnectionError`, update it to rescue `Spree::PaymentConnectionError`:
+
+```ruby
+# Before
+rescue ActiveMerchant::ConnectionError => e
+
+# After
+rescue Spree::PaymentConnectionError => e
+```
+
+#### Using `spree_gateway` or other ActiveMerchant-based extensions
+
+If you use the [`spree_gateway`](https://github.com/spree/spree_gateway) gem or another extension that depends on ActiveMerchant, add `activemerchant` directly to your application's `Gemfile`:
+
+```ruby
+gem 'activemerchant'
+```
+
+These extensions will continue to work — Spree's `LogEntry#parsed_details` still deserializes `ActiveMerchant::Billing::Response` objects when the gem is present.
+
+#### Address hash method renamed
+
+`Spree::Address#active_merchant_hash` has been renamed to `#gateway_hash`. A backwards-compatible alias is provided, so existing code continues to work without changes.
+
 ### (Optional) Install API v2
 
 Spree 5.4 ships with API v3, which marks deprecation of API v2. API v2 is still available but you need to install it separately. If you currently use API v2, you can do this by running the following command:
