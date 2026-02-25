@@ -27,6 +27,7 @@ module Spree
 
           # add store resources
           PaymentMethods.call
+          ApiKeys.call
         end
       end
     end
