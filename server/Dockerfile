@@ -30,7 +30,7 @@ COPY spree/ /spree/
 
 # Install application gems
 COPY server/vendor/ ./vendor/
-COPY server/Gemfile server/Gemfile.lock ./
+COPY server/Gemfile.common server/Gemfile server/Gemfile.lock ./
 
 RUN bundle install && \
   rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git

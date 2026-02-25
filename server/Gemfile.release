@@ -1,0 +1,16 @@
+eval_gemfile("Gemfile.common")
+
+# Spree gems built from source (served from local gem repository during Docker build)
+# The SPREE_VERSION environment variable is set during the Docker build
+spree_version = ENV.fetch("SPREE_VERSION", "0")
+
+source "file:///local-gems" do
+  gem "spree", spree_version
+  gem "spree_core", spree_version
+  gem "spree_api", spree_version
+  gem "spree_emails", spree_version
+  gem "spree_admin", spree_version
+end
+
+gem "spree_stripe", github: "spree/spree_stripe"
+gem "spree_i18n"
