@@ -1,0 +1,58 @@
+{
+  "name": "create-spree-app",
+  "version": "0.1.0",
+  "description": "Create a new Spree Commerce project with a single command",
+  "type": "module",
+  "bin": "./dist/index.js",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "spree",
+    "commerce",
+    "ecommerce",
+    "scaffold",
+    "create",
+    "cli",
+    "docker",
+    "nextjs",
+    "typescript",
+    "headless"
+  ],
+  "author": "Vendo Connect Inc.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/spree/spree.git",
+    "directory": "packages/create-spree-app"
+  },
+  "homepage": "https://spreecommerce.org",
+  "bugs": {
+    "url": "https://github.com/spree/spree/issues"
+  },
+  "dependencies": {
+    "@clack/prompts": "^0.10.0",
+    "commander": "^13.1.0",
+    "execa": "^9.5.2",
+    "giget": "^2.0.0",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.3.0",
+    "vitest": "^4.0.18"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

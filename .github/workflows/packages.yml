@@ -127,3 +127,47 @@ jobs:
       - name: Build and Publish
         if: steps.check.outputs.published == 'false'
         run: pnpm turbo build --filter=@spree/next && npm publish --provenance --access public
+
+  release-create-spree-app:
+    name: "create-spree-app - Release"
+    needs: check
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write
+    defaults:
+      run:
+        working-directory: packages/create-spree-app
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+
+      - run: pnpm install --frozen-lockfile
+        working-directory: .
+
+      - name: Upgrade npm for Trusted Publishing support
+        run: npm install -g npm@latest
+        working-directory: .
+
+      - name: Check if version is published
+        id: check
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          if npm view create-spree-app@$PACKAGE_VERSION version 2>/dev/null; then
+            echo "published=true" >> $GITHUB_OUTPUT
+          else
+            echo "published=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build and Publish
+        if: steps.check.outputs.published == 'false'
+        run: pnpm build && npm publish --provenance --access public
