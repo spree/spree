@@ -103,6 +103,32 @@ export const SmallIcon = ({ children, className = "" }) => (
   </svg>
 );
 
+{/* ── Copy-to-clipboard install command ── */}
+
+export const CopyCommand = ({ command }) => {
+  const [copied, setCopied] = useState(false);
+  const handleCopy = () => {
+    navigator.clipboard.writeText(command);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+  return (
+    <button onClick={handleCopy}
+      className="group/copy inline-flex items-center gap-3 rounded-lg bg-gray-950 dark:bg-zinc-800 pl-5 pr-3 py-3 font-mono text-sm text-gray-100 border-0 cursor-pointer hover:bg-gray-900 dark:hover:bg-zinc-700 transition-colors">
+      <span className="text-gray-500 select-none">$</span>
+      <span>{command}</span>
+      <span className="ml-2 flex items-center justify-center w-8 h-8 rounded-md text-gray-400 hover:text-gray-200 transition-colors"
+        title="Copy to clipboard">
+        {copied ? (
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
+        ) : (
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2" /><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" /></svg>
+        )}
+      </span>
+    </button>
+  );
+};
+
 {/* ════════════════════════════════════════════════════════════════════════
     PAGE CONTENT
     ════════════════════════════════════════════════════════════════════════ */}
@@ -118,10 +144,7 @@ export const SmallIcon = ({ children, className = "" }) => (
       The open-source commerce engine that adapts to your stack, your business model, and your scale.
     </p>
     <div className="mt-6 flex flex-col items-center gap-2">
-      <div className="inline-flex items-center gap-3 rounded-lg bg-gray-950 dark:bg-zinc-800 px-5 py-3 font-mono text-sm text-gray-100">
-        <span className="text-gray-500 select-none">$</span>
-        <span>npx create-spree-app@latest my-store</span>
-      </div>
+      <CopyCommand command="npx create-spree-app@latest my-store" />
       <a href="/developer/getting-started/quickstart" className="text-xs text-gray-400 dark:text-zinc-500 hover:text-gray-600 dark:hover:text-zinc-300 no-underline transition-colors">
         More installation options →
       </a>
