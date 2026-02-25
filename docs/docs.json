@@ -9,10 +9,10 @@
   },
   "fonts": {
     "body": {
-      "family": "Geist"
+      "family": "Inter"
     },
     "heading": {
-      "family": "Geist"
+      "family": "Inter"
     }
   },
   "styling": {
@@ -249,16 +249,17 @@
               {
                 "group": "Payments",
                 "icon": "credit-card",
-                "pages": [
-                  "developer/how-to/custom-payment-method"
-                ]
+                "pages": ["developer/how-to/custom-payment-method"]
               },
               {
                 "group": "Promotions",
                 "icon": "tag",
-                "pages": [
-                  "developer/how-to/custom-promotion"
-                ]
+                "pages": ["developer/how-to/custom-promotion"]
+              },
+              {
+                "group": "Reports",
+                "icon": "chart-bar",
+                "pages": ["developer/how-to/custom-report"]
               }
             ]
           },
@@ -369,9 +370,7 @@
               },
               {
                 "group": "Admin API",
-                "pages": [
-                  "developer/sdk/admin/quickstart"
-                ]
+                "pages": ["developer/sdk/admin/quickstart"]
               }
             ]
           },
@@ -432,9 +431,7 @@
             "groups": [
               {
                 "group": "Webhooks",
-                "pages": [
-                  "api-reference/webhooks-events"
-                ]
+                "pages": ["api-reference/webhooks-events"]
               }
             ]
           },
