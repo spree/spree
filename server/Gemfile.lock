@@ -77,7 +77,6 @@ PATH
       phonelib (~> 0.10)
       rails (>= 7.2, < 8.2)
       ransack (>= 4.1)
-      request_store (~> 1.7)
       rexml
       ruby-oembed (~> 0.18)
       safely_block (~> 0.4)
