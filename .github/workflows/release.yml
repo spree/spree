@@ -61,6 +61,8 @@ jobs:
           tags: |
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
+            type=match,pattern=v(.*),group=1
+            type=raw,value=latest
 
       - uses: docker/build-push-action@v6
         with:
