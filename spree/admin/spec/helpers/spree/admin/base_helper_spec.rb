@@ -82,6 +82,91 @@ describe Spree::Admin::BaseHelper do
     end
   end
 
+  describe '#preference_field' do
+    let(:store) { @default_store }
+    let(:calculator) { build(:flat_rate_calculator) }
+    let(:form) do
+      ActionView::Helpers::FormBuilder.new('calculator', calculator, helper, {})
+    end
+
+    before do
+      allow(helper).to receive(:current_store).and_return(store)
+    end
+
+    it 'returns nil when object does not have the preference' do
+      expect(helper.preference_field(calculator, form, :nonexistent_key)).to be_nil
+    end
+
+    context 'with a currency preference' do
+      let!(:usd_market) { create(:market, store: store, currency: 'USD') }
+      let!(:eur_market) { create(:market, store: store, currency: 'EUR') }
+
+      it 'renders a select field with supported currencies as options' do
+        html = helper.preference_field(calculator, form, :currency)
+
+        expect(html).to have_css('div.form-group')
+        expect(html).to have_css('select[name="calculator[preferred_currency]"]')
+        expect(html).to have_css('label[for="calculator_preferred_currency"]')
+        expect(html).to have_css('option', text: 'USD')
+        expect(html).to have_css('option', text: 'EUR')
+      end
+
+      it 'sets the correct id on the wrapper div' do
+        html = helper.preference_field(calculator, form, :currency)
+
+        expect(html).to have_css('div#spree-calculator-flatrate-preference-currency')
+      end
+
+      it 'includes the autocomplete-select data controller' do
+        html = helper.preference_field(calculator, form, :currency)
+
+        expect(html).to have_css('select[data-controller="autocomplete-select"]')
+      end
+    end
+
+    context 'with a boolean preference' do
+      it 'renders a checkbox field' do
+        html = helper.preference_field(calculator, form, :apply_only_on_full_priced_items)
+
+        expect(html).to have_css('div.form-group.custom-control.form-checkbox')
+        expect(html).to have_css('input[type="checkbox"][name="calculator[preferred_apply_only_on_full_priced_items]"]')
+      end
+
+      it 'renders the label with custom-control-label class' do
+        html = helper.preference_field(calculator, form, :apply_only_on_full_priced_items)
+
+        expect(html).to have_css('label.custom-control-label')
+      end
+
+      it 'sets the correct id on the label' do
+        html = helper.preference_field(calculator, form, :apply_only_on_full_priced_items)
+
+        expect(html).to have_css('label#spree-calculator-flatrate-preference-apply_only_on_full_priced_items')
+      end
+    end
+
+    context 'with a decimal preference' do
+      it 'renders a number field' do
+        html = helper.preference_field(calculator, form, :amount)
+
+        expect(html).to have_css('div.form-group')
+        expect(html).to have_css('input[type="number"][name="calculator[preferred_amount]"]')
+      end
+
+      it 'sets the correct id on the wrapper div' do
+        html = helper.preference_field(calculator, form, :amount)
+
+        expect(html).to have_css('div#spree-calculator-flatrate-preference-amount')
+      end
+
+      it 'renders a label for the field' do
+        html = helper.preference_field(calculator, form, :amount)
+
+        expect(html).to have_css('label[for="calculator_preferred_amount"]')
+      end
+    end
+  end
+
   describe '#render_admin_partials' do
     before do
       # Set up test partials
