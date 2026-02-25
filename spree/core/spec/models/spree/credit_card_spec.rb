@@ -22,10 +22,6 @@ describe Spree::CreditCard, type: :model do
     Spree::Payment.state_machine.states.keys
   end
 
-  it 'responds to track_data' do
-    expect(credit_card.respond_to?(:track_data)).to be true
-  end
-
   describe '#can_capture?' do
     shared_examples 'can be captured' do
       it 'can be captured' do
@@ -322,26 +318,6 @@ describe Spree::CreditCard, type: :model do
 
     it 'extracts the last name' do
       expect(credit_card.last_name).to eq 'van Beethoven'
-    end
-  end
-
-  describe '#to_active_merchant' do
-    before do
-      credit_card.number = '4111111111111111'
-      credit_card.year = Time.current.year
-      credit_card.month = Time.current.month
-      credit_card.name = 'Ludwig van Beethoven'
-      credit_card.verification_value = 123
-    end
-
-    it 'converts to an ActiveMerchant::Billing::CreditCard object' do
-      am_card = credit_card.to_active_merchant
-      expect(am_card.number).to eq('4111111111111111')
-      expect(am_card.year).to eq(Time.current.year)
-      expect(am_card.month).to eq(Time.current.month)
-      expect(am_card.first_name).to eq('Ludwig')
-      expect(am_card.last_name).to eq('van Beethoven')
-      expect(am_card.verification_value).to eq('123')
     end
   end
 

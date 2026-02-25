@@ -83,7 +83,7 @@ module Spree
       update_order
     end
 
-    # return an activemerchant response object if successful or else raise an error
+    # return a payment response object if successful or else raise an error
     def process!(credit_cents)
       refund_total_in_cents = calculate_refund_amount(credit_cents)
 
@@ -102,7 +102,7 @@ module Spree
       end
 
       response
-    rescue ActiveMerchant::ConnectionError => e
+    rescue Spree::PaymentConnectionError => e
       Rails.logger.error(Spree.t(:gateway_error) + "  #{e.inspect}")
       raise Core::GatewayError, Spree.t(:unable_to_connect_to_gateway)
     end

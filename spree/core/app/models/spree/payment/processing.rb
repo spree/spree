@@ -48,7 +48,7 @@ module Spree
         amount ||= money.amount_in_cents
         started_processing!
         protect_from_connection_error do
-          # Standard ActiveMerchant capture usage
+          # Capture the payment amount
           response = payment_method.capture(
             amount,
             response_code,
@@ -71,7 +71,7 @@ module Spree
             # so supply the authorization itself as well as the credit card, rather than just the authorization code
             response = payment_method.void(response_code, source, gateway_options)
           else
-            # Standard ActiveMerchant void usage
+            # Standard void usage
             response = payment_method.void(response_code, gateway_options)
           end
           record_response(response)
@@ -165,15 +165,15 @@ module Spree
 
       def protect_from_connection_error
         yield
-      rescue ActiveMerchant::ConnectionError => e
+      rescue Spree::PaymentConnectionError => e
         failure!
         gateway_error(e)
       end
 
       def gateway_error(error)
-        text = if error.is_a? ActiveMerchant::Billing::Response
+        text = if error.is_a? Spree::PaymentResponse
                  error.params['message'] || error.params['response_reason_text'] || error.message
-               elsif error.is_a? ActiveMerchant::ConnectionError
+               elsif error.is_a? Spree::PaymentConnectionError
                  Spree.t(:unable_to_connect_to_gateway)
                else
                  error.to_s

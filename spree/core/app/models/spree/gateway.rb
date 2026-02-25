@@ -20,9 +20,6 @@ module Spree
     def provider
       gateway_options = options
       gateway_options.delete :login if gateway_options.key?(:login) && gateway_options[:login].nil?
-      if gateway_options[:server]
-        ActiveMerchant::Billing::Base.mode = gateway_options[:server].to_sym
-      end
       @provider ||= provider_class.new(gateway_options)
     end
 

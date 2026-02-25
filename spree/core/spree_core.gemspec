@@ -30,7 +30,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'rails', '>= 7.2', '< 8.2'
 
-  s.add_dependency 'activemerchant', '~> 1.67'
+
   s.add_dependency 'acts_as_list', '>= 0.8'
   s.add_dependency 'acts-as-taggable-on'
   s.add_dependency 'awesome_nested_set', '~> 3.3', '>= 3.3.1'

@@ -37,11 +37,11 @@ RSpec.describe Spree::Payment::GatewayOptions, type: :model do
   end
 
   let(:bill_address) do
-    double Spree::Address, active_merchant_hash: { bill: :address }
+    double Spree::Address, gateway_hash: { bill: :address }
   end
 
   let(:ship_address) do
-    double Spree::Address, active_merchant_hash: { ship: :address }
+    double Spree::Address, gateway_hash: { ship: :address }
   end
 
   describe '#order' do

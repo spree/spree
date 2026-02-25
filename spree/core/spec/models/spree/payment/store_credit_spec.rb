@@ -22,7 +22,7 @@ describe 'Payment' do
       end
 
       let(:successful_response) do
-        ActiveMerchant::Billing::Response.new(
+        Spree::PaymentResponse.new(
           true,
           Spree.t('store_credit_payment_method.successful_action', action: :cancel),
           {},
@@ -31,7 +31,7 @@ describe 'Payment' do
       end
 
       let(:failed_response) do
-        ActiveMerchant::Billing::Response.new(
+        Spree::PaymentResponse.new(
           false,
           Spree.t('store_credit_payment_method.unable_to_find_for_action', action: :cancel,
                                                                            auth_code: payment.response_code),
