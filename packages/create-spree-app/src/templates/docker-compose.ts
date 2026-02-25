@@ -19,10 +19,15 @@ export function dockerComposeContent(): string {
     depends_on:
       postgres:
         condition: service_healthy
+    env_file: .env
     environment:
-      DATABASE_HOST: postgres
-      SECRET_KEY_BASE: \${SECRET_KEY_BASE}
+      DATABASE_URL: postgres://postgres@postgres:5432/spree_production
+      CACHE_DATABASE_URL: postgres://postgres@postgres:5432/spree_production_cache
+      QUEUE_DATABASE_URL: postgres://postgres@postgres:5432/spree_production_queue
+      CABLE_DATABASE_URL: postgres://postgres@postgres:5432/spree_production_cable
       RAILS_ENV: production
+      RAILS_FORCE_SSL: "false"
+      RAILS_ASSUME_SSL: "false"
       RAILS_LOG_TO_STDOUT: "true"
     ports:
       - "3000:3000"

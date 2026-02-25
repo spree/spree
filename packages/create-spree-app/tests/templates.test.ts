@@ -24,8 +24,24 @@ describe('dockerComposeContent', () => {
     expect(content).toContain('postgres_data:')
   })
 
-  it('uses env var for SECRET_KEY_BASE', () => {
-    expect(content).toContain('${SECRET_KEY_BASE}')
+  it('uses DATABASE_URL pointing to postgres service', () => {
+    expect(content).toContain('DATABASE_URL: postgres://postgres@postgres:5432/spree_production')
+  })
+
+  it('sets separate URLs for cache, queue, and cable databases', () => {
+    expect(content).toContain('CACHE_DATABASE_URL: postgres://postgres@postgres:5432/spree_production_cache')
+    expect(content).toContain('QUEUE_DATABASE_URL: postgres://postgres@postgres:5432/spree_production_queue')
+    expect(content).toContain('CABLE_DATABASE_URL: postgres://postgres@postgres:5432/spree_production_cable')
+  })
+
+  it('uses production environment with SSL disabled', () => {
+    expect(content).toContain('RAILS_ENV: production')
+    expect(content).toContain('RAILS_FORCE_SSL: "false"')
+    expect(content).toContain('RAILS_ASSUME_SSL: "false"')
+  })
+
+  it('loads env_file', () => {
+    expect(content).toContain('env_file: .env')
   })
 })
 
