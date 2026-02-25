@@ -32,6 +32,7 @@ jobs:
   release-docker:
     name: Release Docker image
     needs: release-gems
+    if: always() && needs.release-gems.result != 'cancelled'
     runs-on: ubuntu-latest
     permissions:
       contents: read
