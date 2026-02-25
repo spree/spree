@@ -31,17 +31,22 @@ export async function fetchApiKey(projectDir: string): Promise<string> {
 
   const { stdout } = await execa(
     'docker',
-    ['compose', 'exec', '-T', 'spree', 'bin/rails', 'runner', script],
+    ['compose', 'exec', '-T', 'web', 'bin/rails', 'runner', script],
     { cwd: projectDir },
   )
 
-  return stdout.trim()
+  // Rails boot may print noise (e.g. "[Spree Events] ...") to stdout — extract just the token
+  const match = stdout.match(/pk_[A-Za-z0-9]+/)
+  if (!match) {
+    throw new Error(`Could not extract API key from Rails output: ${stdout}`)
+  }
+  return match[0]
 }
 
 export async function loadSampleData(projectDir: string): Promise<void> {
   await execa(
     'docker',
-    ['compose', 'exec', '-T', 'spree', 'bin/rails', 'spree:load_sample_data'],
+    ['compose', 'exec', '-T', 'web', 'bin/rails', 'spree:load_sample_data'],
     { cwd: projectDir, stdio: 'ignore' },
   )
 }

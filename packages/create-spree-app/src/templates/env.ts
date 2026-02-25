@@ -7,7 +7,7 @@ SPREE_VERSION_TAG=${SPREE_VERSION_TAG}
 }
 
 export function storefrontEnvContent(apiKey?: string): string {
-  return `NEXT_PUBLIC_SPREE_API_URL=http://localhost:${SPREE_PORT}
-NEXT_PUBLIC_SPREE_PUBLISHABLE_KEY=${apiKey ?? 'pk_REPLACE_ME_AFTER_DOCKER_START'}
+  return `SPREE_API_URL=http://localhost:${SPREE_PORT}
+SPREE_PUBLISHABLE_KEY=${apiKey ?? 'pk_REPLACE_ME_AFTER_DOCKER_START'}
 `
 }

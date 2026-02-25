@@ -1,6 +1,6 @@
 {
   "name": "create-spree-app",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Create a new Spree Commerce project with a single command",
   "type": "module",
   "bin": "./dist/index.js",

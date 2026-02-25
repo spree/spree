@@ -46,9 +46,10 @@ Open http://localhost:${STOREFRONT_PORT}
 |---------|-------------|
 | \`docker compose up -d\` | Start backend services |
 | \`docker compose down\` | Stop backend services |
-| \`docker compose logs -f spree\` | View backend logs |
-| \`docker compose exec spree bin/rails c\` | Rails console |
-| \`docker compose exec spree bin/rails spree:load_sample_data\` | Load sample products |
+| \`docker compose logs -f web\` | View web server logs |
+| \`docker compose logs -f worker\` | View background jobs logs |
+| \`docker compose exec web bin/rails c\` | Rails console |
+| \`docker compose exec web bin/rails spree:load_sample_data\` | Load sample products |
 
 ## Learn More
 

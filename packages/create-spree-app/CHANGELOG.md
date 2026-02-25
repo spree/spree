@@ -1,5 +1,11 @@
 # create-spree-app
 
+## 0.1.2
+
+### Patch Changes
+
+- Add background worker service to Docker Compose for Solid Queue job processing, rename service from `spree` to `web`/`worker`
+
 ## 0.1.1
 
 ### Patch Changes

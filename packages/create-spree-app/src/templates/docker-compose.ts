@@ -14,7 +14,7 @@ export function dockerComposeContent(): string {
       timeout: 5s
       retries: 5
 
-  spree:
+  web:
     image: ${SPREE_IMAGE}:${SPREE_VERSION_TAG}
     depends_on:
       postgres:
@@ -37,6 +37,21 @@ export function dockerComposeContent(): string {
       timeout: 5s
       retries: 10
       start_period: 30s
+
+  worker:
+    image: ${SPREE_IMAGE}:${SPREE_VERSION_TAG}
+    depends_on:
+      web:
+        condition: service_healthy
+    env_file: .env
+    environment:
+      DATABASE_URL: postgres://postgres@postgres:5432/spree_production
+      CACHE_DATABASE_URL: postgres://postgres@postgres:5432/spree_production_cache
+      QUEUE_DATABASE_URL: postgres://postgres@postgres:5432/spree_production_queue
+      CABLE_DATABASE_URL: postgres://postgres@postgres:5432/spree_production_cable
+      RAILS_ENV: production
+      RAILS_LOG_TO_STDOUT: "true"
+    command: bin/jobs
 
 volumes:
   postgres_data:

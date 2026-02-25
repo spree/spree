@@ -5,10 +5,11 @@ export function rootPackageJsonContent(name: string): string {
     scripts: {
       dev: 'docker compose up -d',
       down: 'docker compose down',
-      logs: 'docker compose logs -f spree',
-      'seed': 'docker compose exec spree bin/rails db:seed',
-      'load-sample-data': 'docker compose exec spree bin/rails spree:load_sample_data',
-      console: 'docker compose exec spree bin/rails c',
+      logs: 'docker compose logs -f web',
+      'logs:worker': 'docker compose logs -f worker',
+      'seed': 'docker compose exec web bin/rails db:seed',
+      'load-sample-data': 'docker compose exec web bin/rails spree:load_sample_data',
+      console: 'docker compose exec web bin/rails c',
     },
   }
 

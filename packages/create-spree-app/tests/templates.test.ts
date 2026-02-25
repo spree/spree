@@ -16,8 +16,12 @@ describe('dockerComposeContent', () => {
     expect(content).toContain('postgres:17-alpine')
   })
 
-  it('includes healthcheck for spree', () => {
+  it('includes healthcheck for web service', () => {
     expect(content).toContain('curl -f http://localhost:3000/up')
+  })
+
+  it('includes worker service with bin/jobs command', () => {
+    expect(content).toContain('command: bin/jobs')
   })
 
   it('includes volume definition', () => {
@@ -65,12 +69,12 @@ describe('storefrontEnvContent', () => {
 
   it('includes real key when provided', () => {
     const content = storefrontEnvContent('pk_test123')
-    expect(content).toContain('NEXT_PUBLIC_SPREE_PUBLISHABLE_KEY=pk_test123')
+    expect(content).toContain('SPREE_PUBLISHABLE_KEY=pk_test123')
   })
 
   it('includes API URL', () => {
     const content = storefrontEnvContent()
-    expect(content).toContain('NEXT_PUBLIC_SPREE_API_URL=http://localhost:3000')
+    expect(content).toContain('SPREE_API_URL=http://localhost:3000')
   })
 })
 
