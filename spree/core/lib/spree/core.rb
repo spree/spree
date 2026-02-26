@@ -414,7 +414,6 @@ module Spree
   end
 
   module Core
-    autoload :ProductFilters, 'spree/core/product_filters'
     autoload :TokenGenerator, 'spree/core/token_generator'
 
     class GatewayError < RuntimeError; end

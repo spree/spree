@@ -312,19 +312,6 @@ module Spree
       end
     end
 
-    # indicate which filters should be used for a taxon
-    # this method should be customized to your own site
-    def applicable_filters
-      Spree::Deprecation.warn('applicable_filters is deprecated and will be removed in Spree 5.5')
-      fs = []
-      # fs << ProductFilters.taxons_below(self)
-      ## unless it's a root taxon? left open for demo purposes
-
-      fs << Spree::Core::ProductFilters.price_filter if Spree::Core::ProductFilters.respond_to?(:price_filter)
-      fs << Spree::Core::ProductFilters.brand_filter if Spree::Core::ProductFilters.respond_to?(:brand_filter)
-      fs
-    end
-
     # Return meta_title if set otherwise generates from taxon name
     def seo_title
       meta_title.blank? ? name : meta_title
