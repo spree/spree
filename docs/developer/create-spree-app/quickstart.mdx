@@ -1,0 +1,190 @@
+---
+title: "create-spree-app"
+sidebarTitle: Overview
+description: "Scaffold a new Spree Commerce project with a single command. Backend runs via Docker using pre-built images."
+---
+
+## Quick Start
+
+```bash
+npx create-spree-app@latest my-store
+```
+
+The CLI walks you through an interactive setup:
+
+1. Choose **Full-stack** (Backend + Next.js Storefront) or **Backend only**
+2. Optionally load **sample data** (products, categories, images)
+3. Optionally **start Docker services** immediately
+
+Once complete, your store is running at [http://localhost:3000](http://localhost:3000).
+
+## Prerequisites
+
+- [Node.js](https://nodejs.org/) 20 or later
+- [Docker](https://docs.docker.com/get-docker/) (for running the Spree backend and PostgreSQL)
+
+<Info>
+  Node.js is only needed for the scaffolding tool and the Next.js storefront. The Spree backend itself runs inside Docker — you don't need Ruby installed locally.
+</Info>
+
+## Setup Modes
+
+### Full-stack (default)
+
+Sets up both the Spree backend (Docker) and a [Next.js storefront](/developer/storefront/nextjs/quickstart) with the [Spree SDK](/developer/sdk/quickstart) pre-configured.
+
+```bash
+npx create-spree-app@latest my-store
+```
+
+The storefront is downloaded from the [Next.js Starter](https://github.com/spree/nextjs-starter-spree) template and placed in `apps/storefront/`. The CLI automatically:
+
+- Installs storefront dependencies
+- Fetches a Store API key from the running backend
+- Writes the API key to the storefront's `.env.local`
+
+### Backend only
+
+Skips the storefront — just the Spree backend and PostgreSQL via Docker. Ideal when you're building a custom frontend or only need the API.
+
+```bash
+npx create-spree-app@latest my-store --backend-only
+```
+
+## CLI Flags
+
+All prompts can be skipped with flags for non-interactive (CI/CD) usage:
+
+```bash
+npx create-spree-app@latest my-store --backend-only --no-sample-data --no-start
+```
+
+| Flag | Description |
+|------|-------------|
+| `--backend-only` | Skip storefront setup |
+| `--no-sample-data` | Skip loading sample products and categories |
+| `--no-start` | Don't start Docker services after scaffolding |
+| `--use-npm` | Use npm as package manager |
+| `--use-yarn` | Use yarn as package manager |
+| `--use-pnpm` | Use pnpm as package manager |
+
+<Tip>
+  The package manager is auto-detected from how you run the command. If you use `pnpm dlx create-spree-app`, pnpm will be used automatically.
+</Tip>
+
+## Generated Project Structure
+
+<CodeGroup>
+```text Full-stack
+my-store/
+├── docker-compose.yml    # Spree backend + PostgreSQL
+├── .env                  # Backend environment variables
+├── .gitignore
+├── package.json          # Convenience scripts
+├── README.md
+└── apps/
+    └── storefront/       # Next.js storefront
+        ├── .env.local    # API URL + API key
+        └── ...
+```
+
+```text Backend only
+my-store/
+├── docker-compose.yml    # Spree backend + PostgreSQL
+├── .env                  # Backend environment variables
+├── .gitignore
+├── package.json          # Convenience scripts
+└── README.md
+```
+</CodeGroup>
+
+### What's in docker-compose.yml
+
+- **Spree** — runs the `ghcr.io/spree/spree:latest` image on port `3000`
+- **PostgreSQL 17** — database with persistent volume
+- Health checks on both services
+
+### What's in package.json
+
+Convenience scripts so you don't have to remember Docker commands:
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start backend services (`docker compose up -d`) |
+| `npm run down` | Stop backend services (`docker compose down`) |
+| `npm run logs` | Tail backend logs (`docker compose logs -f spree`) |
+| `npm run console` | Open Rails console (`docker compose exec spree bin/rails c`) |
+| `npm run seed` | Re-seed the database |
+| `npm run load-sample-data` | Load sample products, categories, and images |
+
+## After Setup
+
+### Admin Dashboard
+
+Open [http://localhost:3000/admin](http://localhost:3000/admin) and log in with:
+
+| | |
+|---|---|
+| **Email** | `spree@example.com` |
+| **Password** | `spree123` |
+
+### Store API
+
+The REST API is available at [http://localhost:3000/api/v3/store](http://localhost:3000/api/v3/store). See the [API Reference](/api-reference) for details.
+
+### Storefront (full-stack mode)
+
+If you chose full-stack mode, start the storefront in a separate terminal:
+
+```bash
+cd my-store/apps/storefront
+npm run dev
+```
+
+Open [http://localhost:3001](http://localhost:3001) to see your store.
+
+## Manual Start
+
+If you used `--no-start`, you can start services manually:
+
+```bash
+cd my-store
+docker compose up -d
+```
+
+Wait for Spree to be healthy, then optionally load sample data:
+
+```bash
+docker compose exec spree bin/rails spree:load_sample_data
+```
+
+For the storefront, you'll need to fetch an API key manually:
+
+```bash
+# Get the publishable API key
+docker compose exec spree bin/rails runner "puts Spree::ApiKey.find_by(key_type: :publishable)&.key"
+```
+
+Then add it to `apps/storefront/.env.local`:
+
+```bash
+NEXT_PUBLIC_SPREE_API_URL=http://localhost:3000
+NEXT_PUBLIC_SPREE_PUBLISHABLE_KEY=spree_pk_your_key_here
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Next.js Storefront" icon="react" href="/developer/storefront/nextjs/quickstart">
+    Customize and extend the Next.js starter
+  </Card>
+  <Card title="Spree SDK" icon="code" href="/developer/sdk/quickstart">
+    TypeScript SDK for the Store and Admin APIs
+  </Card>
+  <Card title="API Reference" icon="book" href="/api-reference">
+    Explore the REST API endpoints
+  </Card>
+  <Card title="Core Concepts" icon="brain" href="/developer/core-concepts/architecture">
+    Learn about Spree's architecture
+  </Card>
+</CardGroup>
