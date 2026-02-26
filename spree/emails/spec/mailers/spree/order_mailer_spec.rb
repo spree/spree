@@ -207,6 +207,7 @@ describe Spree::OrderMailer, type: :mailer do
 
           I18n.locale = :'pt-BR'
           store.update(default_locale: 'pt-BR')
+          order.update_column(:locale, 'pt-BR')
         end
 
         after do
@@ -221,6 +222,7 @@ describe Spree::OrderMailer, type: :mailer do
         before do
           order
           order.store.update!(default_locale: 'pt-BR')
+          order.update_column(:locale, 'pt-BR')
         end
 
         after do
@@ -230,6 +232,45 @@ describe Spree::OrderMailer, type: :mailer do
 
         it_behaves_like 'translates emails'
       end
+    end
+  end
+
+  context 'uses order locale for emails' do
+    before do
+      I18n.enforce_available_locales = false
+      pt_br_confirm_mail = { spree: { order_mailer: { confirm_email: { dear_customer: 'Caro Cliente,' } } } }
+      pt_br_cancel_mail = { spree: { order_mailer: { cancel_email: { order_summary_canceled: 'Resumo da Pedido [CANCELADA]' } } } }
+      I18n.backend.store_translations :'pt-BR', pt_br_confirm_mail
+      I18n.backend.store_translations :'pt-BR', pt_br_cancel_mail
+
+      I18n.backend.store_translations :'pt-BR', {
+        spree: {
+          default_post_categories: {
+            articles: 'Artigos',
+            news: 'Notícias',
+            resources: 'Recursos'
+          }
+        }
+      }
+
+      # Store stays with default_locale 'en', but order has locale 'pt-BR'
+      order
+      order.update_column(:locale, 'pt-BR')
+    end
+
+    after do
+      I18n.enforce_available_locales = true
+      I18n.locale = :en
+    end
+
+    it 'sends confirm_email in order locale' do
+      confirmation_email = described_class.confirm_email(order)
+      expect(confirmation_email).to have_body_text('Caro Cliente,')
+    end
+
+    it 'sends cancel_email in order locale' do
+      cancel_email = described_class.cancel_email(order)
+      expect(cancel_email).to have_body_text('Resumo da Pedido [CANCELADA]')
     end
   end
 

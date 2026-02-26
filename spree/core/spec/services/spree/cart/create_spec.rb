@@ -39,6 +39,36 @@ module Spree
       end
     end
 
+    context 'create an order with locale' do
+      let(:execute) { subject.call user: user, store: store, currency: currency, locale: 'fr' }
+      let(:value) { execute.value }
+
+      before do
+        allow(store).to receive(:supported_locales_list).and_return(['en', 'fr'])
+      end
+
+      it do
+        expect { execute }.to change(Order, :count)
+        expect(execute).to be_success
+        expect(value.locale).to eq('fr')
+      end
+    end
+
+    context 'create an order with default locale from Spree::Current' do
+      let(:execute) { subject.call user: user, store: store, currency: currency }
+      let(:value) { execute.value }
+
+      before do
+        allow(Spree::Current).to receive(:locale).and_return('en')
+      end
+
+      it do
+        expect { execute }.to change(Order, :count)
+        expect(execute).to be_success
+        expect(value.locale).to eq('en')
+      end
+    end
+
     context 'returns failure when no store is passed' do
       let!(:default_store) { create :store, default: true }
       let(:execute) { subject.call user: user, store: nil, currency: nil }

@@ -79,6 +79,29 @@ RSpec.describe Spree::Admin::OrderSummaryPresenter do
     end
   end
 
+  describe '#locale_row' do
+    subject { presenter.locale_row }
+
+    context 'when order has locale' do
+      before { order.update_column(:locale, 'fr') }
+
+      it 'returns locale info' do
+        expect(subject[:label]).to eq(Spree.t(:locale))
+        expect(subject[:value]).to eq('fr')
+        expect(subject[:type]).to eq(:code)
+        expect(subject[:id]).to eq('locale')
+      end
+    end
+
+    context 'when order has no locale' do
+      before { order.update_column(:locale, nil) }
+
+      it 'returns nil' do
+        expect(subject).to be_nil
+      end
+    end
+  end
+
   describe '#currency_row' do
     subject { presenter.currency_row }
 

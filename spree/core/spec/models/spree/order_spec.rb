@@ -117,6 +117,48 @@ describe Spree::Order, type: :model do
         end
       end
     end
+
+    describe '#locale_must_be_supported_by_store' do
+      let(:order) { build(:order, store: store, locale: locale) }
+
+      before do
+        allow(store).to receive(:supported_locales_list).and_return(['en', 'fr'])
+      end
+
+      context 'when locale is supported by the store' do
+        let(:locale) { 'fr' }
+
+        it 'is valid' do
+          expect(order).to be_valid
+        end
+      end
+
+      context 'when locale is not supported by the store' do
+        let(:locale) { 'de' }
+
+        it 'is invalid' do
+          expect(order).not_to be_valid
+          expect(order.errors[:locale]).to include(Spree.t(:locale_not_supported_by_store))
+        end
+      end
+    end
+
+    describe '#ensure_locale_presence' do
+      it 'sets locale from Spree::Current.locale when blank' do
+        allow(Spree::Current).to receive(:locale).and_return('fr')
+        order = build(:order, store: store, locale: nil)
+        allow(store).to receive(:supported_locales_list).and_return(['en', 'fr'])
+        order.valid?
+        expect(order.locale).to eq('fr')
+      end
+
+      it 'does not override locale when already set' do
+        allow(Spree::Current).to receive(:locale).and_return('fr')
+        order = build(:order, store: store, locale: 'en')
+        order.valid?
+        expect(order.locale).to eq('en')
+      end
+    end
   end
 
   describe '#full_name' do

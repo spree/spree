@@ -1334,7 +1334,9 @@ en:
     list: List
     live: Live
     loading: Loading
+    locale: Locale
     locale_changed: Locale Changed
+    locale_not_supported_by_store: is not supported by this store
     location: Location
     lock: Lock
     log_entries: Log Entries

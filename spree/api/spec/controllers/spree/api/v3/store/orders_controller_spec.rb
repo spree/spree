@@ -104,6 +104,24 @@ RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
         expect(response).to have_http_status(:ok)
         expect(order.reload.special_instructions).to eq('Leave at door')
       end
+
+      it 'updates the order locale' do
+        allow(store).to receive(:supported_locales_list).and_return(['en', 'fr'])
+
+        patch :update, params: { id: order.to_param, locale: 'fr' }
+
+        expect(response).to have_http_status(:ok)
+        expect(order.reload.locale).to eq('fr')
+        expect(json_response['locale']).to eq('fr')
+      end
+
+      it 'returns error when locale is not supported by store' do
+        allow(store).to receive(:supported_locales_list).and_return(['en'])
+
+        patch :update, params: { id: order.to_param, locale: 'de' }
+
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
     end
 
     context 'with order token' do

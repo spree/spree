@@ -97,7 +97,7 @@ module Spree
 
     @@checkout_attributes = [
       :coupon_code, :email, :shipping_method_id, :special_instructions, :use_billing, :use_shipping,
-      :user_id, :bill_address_id, :ship_address_id, :accept_marketing, :signup_for_an_account, :currency,
+      :user_id, :bill_address_id, :ship_address_id, :accept_marketing, :signup_for_an_account, :currency, :locale,
       :internal_note
     ]
 

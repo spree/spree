@@ -112,6 +112,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
         type: :object,
         properties: {
           email: { type: :string, format: 'email', example: 'customer@example.com' },
+          locale: { type: :string, example: 'en' },
           special_instructions: { type: :string, example: 'Leave at door' },
           bill_address: {
             type: :object,
