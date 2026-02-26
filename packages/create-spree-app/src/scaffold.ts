@@ -3,7 +3,7 @@ import pc from 'picocolors'
 import fs from 'node:fs'
 import path from 'node:path'
 import type { ScaffoldOptions } from './types.js'
-import { SPREE_PORT, STOREFRONT_PORT, DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD } from './constants.js'
+import { STOREFRONT_PORT, DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD } from './constants.js'
 import { generateSecretKeyBase, isDockerRunning } from './utils.js'
 import { dockerComposeContent } from './templates/docker-compose.js'
 import { envContent } from './templates/env.js'
@@ -17,6 +17,7 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
   const projectDir = path.resolve(options.directory)
   const projectName = path.basename(projectDir)
   const isFullStack = options.mode === 'full-stack'
+  const { port } = options
 
   // Pre-flight checks
   if (options.start) {
@@ -41,10 +42,10 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
   s.start('Creating project structure...')
 
   fs.mkdirSync(projectDir, { recursive: true })
-  fs.writeFileSync(path.join(projectDir, 'docker-compose.yml'), dockerComposeContent())
-  fs.writeFileSync(path.join(projectDir, '.env'), envContent(generateSecretKeyBase()))
+  fs.writeFileSync(path.join(projectDir, 'docker-compose.yml'), dockerComposeContent(port))
+  fs.writeFileSync(path.join(projectDir, '.env'), envContent(generateSecretKeyBase(), port))
   fs.writeFileSync(path.join(projectDir, 'package.json'), rootPackageJsonContent(projectName))
-  fs.writeFileSync(path.join(projectDir, 'README.md'), readmeContent(projectName, isFullStack))
+  fs.writeFileSync(path.join(projectDir, 'README.md'), readmeContent(projectName, isFullStack, port))
   fs.writeFileSync(path.join(projectDir, '.gitignore'), gitignoreContent())
 
   s.stop('Project structure created.')
@@ -55,7 +56,7 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
     await downloadStorefront(projectDir)
     s.stop('Storefront template downloaded.')
 
-    writeStorefrontEnv(projectDir)
+    writeStorefrontEnv(projectDir, port)
 
     s.start('Installing storefront dependencies...')
     await installStorefrontDeps(projectDir, options.packageManager)
@@ -69,7 +70,7 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
     s.stop('Docker services started.')
 
     s.start('Waiting for Spree to be ready...')
-    await waitForHealthy()
+    await waitForHealthy(port)
     s.stop('Spree is ready.')
 
     let apiKey: string | undefined
@@ -79,7 +80,7 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
     s.stop(`API key: ${pc.cyan(apiKey)}`)
 
     if (isFullStack && apiKey) {
-      writeStorefrontEnv(projectDir, apiKey)
+      writeStorefrontEnv(projectDir, port, apiKey)
     }
 
     if (options.sampleData) {
@@ -88,22 +89,22 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
       s.stop('Sample data loaded.')
     }
 
-    printSuccessWithDocker(projectDir, projectName, isFullStack, apiKey)
+    printSuccessWithDocker(projectName, isFullStack, port, apiKey)
   } else {
-    printSuccessWithoutDocker(projectDir, projectName, isFullStack)
+    printSuccessWithoutDocker(projectName, isFullStack, port)
   }
 }
 
 function printSuccessWithDocker(
-  _projectDir: string,
   projectName: string,
   isFullStack: boolean,
+  port: number,
   apiKey?: string,
 ): void {
   const lines: string[] = [
     '',
     `${pc.bold('Admin Dashboard')}`,
-    `  ${pc.cyan(`http://localhost:${SPREE_PORT}/admin`)}`,
+    `  ${pc.cyan(`http://localhost:${port}/admin`)}`,
     `  Email:    ${DEFAULT_ADMIN_EMAIL}`,
     `  Password: ${DEFAULT_ADMIN_PASSWORD}`,
   ]
@@ -120,7 +121,7 @@ function printSuccessWithDocker(
   lines.push(
     '',
     `${pc.bold('Store API')}`,
-    `  ${pc.cyan(`http://localhost:${SPREE_PORT}/api/v3/store`)}`,
+    `  ${pc.cyan(`http://localhost:${port}/api/v3/store`)}`,
   )
 
   if (apiKey) {
@@ -131,15 +132,15 @@ function printSuccessWithDocker(
 }
 
 function printSuccessWithoutDocker(
-  _projectDir: string,
   projectName: string,
   isFullStack: boolean,
+  port: number,
 ): void {
   const lines: string[] = [
     '',
     `${pc.bold('Next steps:')}`,
     `  cd ${projectName}`,
-    `  docker compose up -d`,
+    `  npm run dev`,
   ]
 
   if (isFullStack) {
@@ -155,7 +156,7 @@ function printSuccessWithoutDocker(
   lines.push(
     '',
     `${pc.bold('Admin Dashboard')}`,
-    `  http://localhost:${SPREE_PORT}/admin`,
+    `  http://localhost:${port}/admin`,
     `  Email:    ${DEFAULT_ADMIN_EMAIL}`,
     `  Password: ${DEFAULT_ADMIN_PASSWORD}`,
   )

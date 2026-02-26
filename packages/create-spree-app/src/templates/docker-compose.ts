@@ -1,6 +1,6 @@
 import { SPREE_IMAGE, SPREE_VERSION_TAG } from '../constants.js'
 
-export function dockerComposeContent(): string {
+export function dockerComposeContent(port: number): string {
   return `services:
   postgres:
     image: postgres:17-alpine
@@ -30,7 +30,7 @@ export function dockerComposeContent(): string {
       RAILS_ASSUME_SSL: "false"
       RAILS_LOG_TO_STDOUT: "true"
     ports:
-      - "3000:3000"
+      - "${port}:3000"
     healthcheck:
       test: curl -f http://localhost:3000/up || exit 1
       interval: 10s

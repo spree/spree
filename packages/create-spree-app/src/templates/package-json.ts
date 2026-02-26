@@ -4,6 +4,7 @@ export function rootPackageJsonContent(name: string): string {
     private: true,
     scripts: {
       dev: 'docker compose up -d',
+      stop: 'docker compose stop',
       down: 'docker compose down',
       logs: 'docker compose logs -f web',
       'logs:worker': 'docker compose logs -f worker',

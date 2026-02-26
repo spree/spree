@@ -1,16 +1,17 @@
 import { execa } from 'execa'
-import { HEALTH_CHECK_URL, HEALTH_CHECK_INTERVAL_MS, HEALTH_CHECK_TIMEOUT_MS } from './constants.js'
+import { HEALTH_CHECK_INTERVAL_MS, HEALTH_CHECK_TIMEOUT_MS } from './constants.js'
 
 export async function startServices(projectDir: string): Promise<void> {
   await execa('docker', ['compose', 'up', '-d'], { cwd: projectDir, stdio: 'ignore' })
 }
 
-export async function waitForHealthy(): Promise<void> {
+export async function waitForHealthy(port: number): Promise<void> {
+  const url = `http://localhost:${port}/up`
   const start = Date.now()
 
   while (Date.now() - start < HEALTH_CHECK_TIMEOUT_MS) {
     try {
-      const res = await fetch(HEALTH_CHECK_URL)
+      const res = await fetch(url)
       if (res.ok) return
     } catch {
       // not ready yet

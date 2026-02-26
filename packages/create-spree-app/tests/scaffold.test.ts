@@ -34,6 +34,7 @@ describe('scaffold (backend-only, no-start)', () => {
       sampleData: false,
       start: false,
       packageManager: 'npm',
+      port: 3000,
     })
 
     expect(fs.existsSync(path.join(projectDir, 'docker-compose.yml'))).toBe(true)
@@ -52,13 +53,14 @@ describe('scaffold (backend-only, no-start)', () => {
       sampleData: false,
       start: false,
       packageManager: 'npm',
+      port: 3000,
     })
 
     const compose = fs.readFileSync(path.join(projectDir, 'docker-compose.yml'), 'utf-8')
     expect(compose).toContain('ghcr.io/spree/spree')
   })
 
-  it('generates .env with SECRET_KEY_BASE', async () => {
+  it('generates .env with SECRET_KEY_BASE and SPREE_PORT', async () => {
     const projectDir = getTempProjectDir()
 
     await scaffold({
@@ -67,10 +69,12 @@ describe('scaffold (backend-only, no-start)', () => {
       sampleData: false,
       start: false,
       packageManager: 'npm',
+      port: 4567,
     })
 
     const env = fs.readFileSync(path.join(projectDir, '.env'), 'utf-8')
     expect(env).toMatch(/SECRET_KEY_BASE=.{128}/)
+    expect(env).toContain('SPREE_PORT=4567')
   })
 
   it('generates valid package.json with project name', async () => {
@@ -82,6 +86,7 @@ describe('scaffold (backend-only, no-start)', () => {
       sampleData: false,
       start: false,
       packageManager: 'npm',
+      port: 3000,
     })
 
     const content = fs.readFileSync(path.join(projectDir, 'package.json'), 'utf-8')
@@ -98,6 +103,7 @@ describe('scaffold (backend-only, no-start)', () => {
       sampleData: false,
       start: false,
       packageManager: 'npm',
+      port: 3000,
     })
 
     expect(fs.existsSync(path.join(projectDir, 'apps'))).toBe(false)
@@ -120,6 +126,7 @@ describe('scaffold (backend-only, no-start)', () => {
         sampleData: false,
         start: false,
         packageManager: 'npm',
+        port: 3000,
       })
     ).rejects.toThrow('process.exit called')
 

@@ -8,4 +8,5 @@ export interface ScaffoldOptions {
   sampleData: boolean
   start: boolean
   packageManager: PackageManager
+  port: number
 }

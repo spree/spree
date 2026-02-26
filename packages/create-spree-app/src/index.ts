@@ -1,9 +1,11 @@
 import { Command } from 'commander'
 import * as p from '@clack/prompts'
 import pc from 'picocolors'
+import getPort from 'get-port'
 import { runPrompts } from './prompts.js'
 import { scaffold } from './scaffold.js'
 import { detectPackageManager } from './utils.js'
+import { DEFAULT_SPREE_PORT } from './constants.js'
 import type { PackageManager } from './types.js'
 
 const program = new Command()
@@ -13,6 +15,7 @@ const program = new Command()
   .option('--backend-only', 'skip storefront setup')
   .option('--no-sample-data', 'skip loading sample data')
   .option('--no-start', 'do not start Docker services')
+  .option('--port <number>', 'port for the Spree backend', String(DEFAULT_SPREE_PORT))
   .option('--use-npm', 'use npm as package manager')
   .option('--use-yarn', 'use yarn as package manager')
   .option('--use-pnpm', 'use pnpm as package manager')
@@ -33,7 +36,13 @@ const program = new Command()
         packageManager,
       })
 
-      await scaffold(options)
+      const preferred = Number(flags.port)
+      const port = await getPort({ port: preferred })
+      if (port !== preferred) {
+        p.log.warn(`Port ${preferred} is in use, using port ${pc.bold(String(port))} instead.`)
+      }
+
+      await scaffold({ ...options, port })
 
       p.outro('Happy selling!')
     } catch (err) {
