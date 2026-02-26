@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_20_160786) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_26_165442) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -738,6 +738,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_20_160786) do
     t.integer "item_count", default: 0
     t.decimal "item_total", precision: 10, scale: 2, default: "0.0", null: false
     t.string "last_ip_address"
+    t.string "locale"
     t.decimal "non_taxable_adjustment_total", precision: 10, scale: 2, default: "0.0", null: false
     t.string "number", limit: 32
     t.string "payment_state"
