@@ -10,6 +10,7 @@ module Spree
 
           # Global rate limit per publishable API key
           rate_limit to: Spree::Api::Config[:rate_limit_per_key], within: 1.minute,
+                     store: Rails.cache,
                      by: -> { request.headers['X-Spree-Api-Key'] || request.remote_ip },
                      with: RATE_LIMIT_RESPONSE
 
