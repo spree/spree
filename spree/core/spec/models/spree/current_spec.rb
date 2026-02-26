@@ -72,6 +72,33 @@ RSpec.describe Spree::Current do
     end
   end
 
+  describe '#locale' do
+    context 'when locale is set' do
+      before { described_class.locale = 'fr' }
+
+      it 'returns the set locale' do
+        expect(described_class.locale).to eq('fr')
+      end
+    end
+
+    context 'when locale is not set but market has a default locale' do
+      let!(:store) { create(:store, default: true, default_locale: 'en') }
+      let!(:market) { create(:market, store: store, default: true, default_locale: 'de') }
+
+      it 'returns the market default locale' do
+        expect(described_class.locale).to eq('de')
+      end
+    end
+
+    context 'when locale is not set and no market exists' do
+      let!(:store) { create(:store, default: true, default_locale: 'en') }
+
+      it 'returns the store default locale' do
+        expect(described_class.locale).to eq('en')
+      end
+    end
+  end
+
   describe '#market' do
     context 'when market is set' do
       let(:market) { create(:market) }

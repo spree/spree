@@ -6,8 +6,6 @@ module Spree
         include CanCan::ControllerAdditions
         include Spree::Core::ControllerHelpers::StrongParameters
         include Spree::Core::ControllerHelpers::Store
-        include Spree::Core::ControllerHelpers::Locale
-        include Spree::Core::ControllerHelpers::Currency
         include Spree::Api::V3::LocaleAndCurrency
         include Spree::Api::V3::JwtAuthentication
         include Spree::Api::V3::ApiKeyAuthentication
@@ -22,6 +20,7 @@ module Spree
         protected
 
         # Override to use current_user from JWT authentication
+        # @return [Spree.user_class]
         def spree_current_user
           current_user
         end
@@ -29,10 +28,13 @@ module Spree
         alias try_spree_current_user spree_current_user
 
         # CanCanCan ability
+        # @return [Spree::Ability]
         def current_ability
           @current_ability ||= Spree::Ability.new(current_user, ability_options)
         end
 
+        # Options passed to the CanCanCan ability
+        # @return [Hash]
         def ability_options
           { store: current_store }
         end
