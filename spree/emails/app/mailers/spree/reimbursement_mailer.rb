@@ -1,5 +1,7 @@
 module Spree
   class ReimbursementMailer < BaseMailer
+    helper Spree::MailHelper
+
     def reimbursement_email(reimbursement, resend = false)
       @reimbursement = reimbursement.respond_to?(:id) ? reimbursement : Spree::Reimbursement.find(reimbursement)
       @order = @reimbursement.order
