@@ -27,7 +27,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'alba', '~> 3.0'
   s.add_dependency 'oj', '~> 3.16'
   s.add_dependency 'pagy', '~> 43.0'
-  s.add_dependency 'typelizer', '~> 0.8'
+  s.add_dependency 'typelizer', '~> 0.9'
 
   s.add_dependency 'spree_core', s.version
 end
