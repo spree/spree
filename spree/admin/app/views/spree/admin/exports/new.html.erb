@@ -1,5 +1,5 @@
 <%= turbo_frame_tag :export_dialog do %>
-  <%= form_for @object, url: spree.admin_exports_path do |f| %>
+  <%= form_for @object, url: spree.admin_exports_path, as: :export do |f| %>
     <%= f.hidden_field :type %>
     <%= f.hidden_field :search_params %>
     <div class="dialog-header">
