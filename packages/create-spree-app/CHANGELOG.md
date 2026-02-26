@@ -1,5 +1,17 @@
 # create-spree-app
 
+## 0.2.2
+
+### Patch Changes
+
+- Replace giget with `git clone --depth 1` for downloading storefront template — fixes EACCES cache permission errors and reduces bundle size by 75%
+
+## 0.2.1
+
+### Patch Changes
+
+- Fix EACCES permission error when downloading storefront template by pre-creating the giget cache directory
+
 ## 0.2.0
 
 ### Minor Changes
