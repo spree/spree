@@ -9,7 +9,7 @@ interface PromptFlags {
   packageManager?: PackageManager
 }
 
-export async function runPrompts(flags: PromptFlags): Promise<ScaffoldOptions> {
+export async function runPrompts(flags: PromptFlags): Promise<Omit<ScaffoldOptions, 'port'>> {
   const directory =
     flags.directory ??
     ((await p.text({

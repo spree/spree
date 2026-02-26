@@ -1,6 +1,6 @@
-import { SPREE_PORT, STOREFRONT_PORT, DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD } from '../constants.js'
+import { STOREFRONT_PORT, DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD } from '../constants.js'
 
-export function readmeContent(name: string, hasStorefront: boolean): string {
+export function readmeContent(name: string, hasStorefront: boolean, port: number): string {
   let content = `# ${name}
 
 A [Spree Commerce](https://spreecommerce.org) project.
@@ -14,15 +14,15 @@ A [Spree Commerce](https://spreecommerce.org) project.
 ### Start the backend
 
 \`\`\`bash
-docker compose up -d
+npm run dev
 \`\`\`
 
 Wait for the services to be healthy, then open:
 
-- **Admin Dashboard:** http://localhost:${SPREE_PORT}/admin
+- **Admin Dashboard:** http://localhost:${port}/admin
   - Email: \`${DEFAULT_ADMIN_EMAIL}\`
   - Password: \`${DEFAULT_ADMIN_PASSWORD}\`
-- **Store API:** http://localhost:${SPREE_PORT}/api/v3/store
+- **Store API:** http://localhost:${port}/api/v3/store
 `
 
   if (hasStorefront) {
@@ -44,12 +44,14 @@ Open http://localhost:${STOREFRONT_PORT}
 
 | Command | Description |
 |---------|-------------|
-| \`docker compose up -d\` | Start backend services |
-| \`docker compose down\` | Stop backend services |
-| \`docker compose logs -f web\` | View web server logs |
-| \`docker compose logs -f worker\` | View background jobs logs |
-| \`docker compose exec web bin/rails c\` | Rails console |
-| \`docker compose exec web bin/rails spree:load_sample_data\` | Load sample products |
+| \`npm run dev\` | Start backend services |
+| \`npm run stop\` | Stop backend services |
+| \`npm run down\` | Stop and remove backend services |
+| \`npm run logs\` | View web server logs |
+| \`npm run logs:worker\` | View background jobs logs |
+| \`npm run console\` | Rails console |
+| \`npm run seed\` | Seed the database |
+| \`npm run load-sample-data\` | Load sample products |
 
 ## Learn More
 
