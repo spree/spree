@@ -10,6 +10,20 @@ describe Spree::Refund, type: :model do
     it_behaves_like 'lifecycle events'
   end
 
+  describe '#amount=' do
+    let(:refund) { build(:refund) }
+    let(:amount) { '1,599,99' }
+
+    before do
+      allow_any_instance_of(Spree::Refund).to receive(:amount_is_less_than_or_equal_to_allowed_amount)
+      refund.amount = amount
+    end
+
+    it 'is expected to equal to localized number' do
+      expect(refund.amount).to eq(Spree::LocalizedNumber.parse(amount))
+    end
+  end
+
   describe 'create' do
     subject { create(:refund, payment: payment, amount: amount, reason: refund_reason, transaction_id: nil) }
 
