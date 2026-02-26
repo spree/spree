@@ -9,6 +9,10 @@ module Spree
         USER_TYPE_CUSTOMER = 'customer'.freeze
         USER_TYPE_ADMIN = 'admin'.freeze
 
+        JWT_AUDIENCE_STORE = 'store_api'.freeze
+        JWT_AUDIENCE_ADMIN = 'admin_api'.freeze
+        JWT_ISSUER = 'spree'.freeze
+
         included do
           attr_reader :current_user
         end
@@ -20,7 +24,8 @@ module Spree
 
           payload = decode_jwt(token)
           @current_user = find_user_from_payload(payload)
-        rescue JWT::DecodeError, JWT::ExpiredSignature, ActiveRecord::RecordNotFound => e
+        rescue JWT::DecodeError, JWT::ExpiredSignature, JWT::InvalidIssuerError,
+               JWT::InvalidAudError, ActiveRecord::RecordNotFound => e
           Rails.logger.debug { "JWT authentication failed: #{e.message}" }
           @current_user = nil
         end
@@ -40,12 +45,16 @@ module Spree
 
         # Generate a JWT token for a user
         # @param user [Object] The user to generate a token for
-        # @param expiration [Integer] Time in seconds until expiration (default 24 hours)
+        # @param expiration [Integer] Time in seconds until expiration (default from config, 1 hour)
+        # @param audience [String] The audience claim (default: store_api)
         # @return [String] The JWT token
-        def generate_jwt(user, expiration: 24.hours.to_i)
+        def generate_jwt(user, expiration: jwt_expiration, audience: JWT_AUDIENCE_STORE)
           payload = {
             user_id: user.id,
             user_type: determine_user_type(user),
+            jti: SecureRandom.uuid,
+            iss: JWT_ISSUER,
+            aud: audience,
             exp: Time.current.to_i + expiration
           }
           JWT.encode(payload, jwt_secret, 'HS256')
@@ -58,16 +67,30 @@ module Spree
           header = request.headers['Authorization']
           return header.split(' ').last if header.present? && header.start_with?('Bearer ')
 
-          # Fallback to query param for special cases (e.g., digital downloads)
-          params[:token]
+          # Restricted fallback: only for digital download endpoints
+          params[:token] if controller_name == 'digitals'
         end
 
         def decode_jwt(token)
-          JWT.decode(token, jwt_secret, true, algorithm: 'HS256').first
+          JWT.decode(token, jwt_secret, true,
+            algorithm: 'HS256',
+            iss: JWT_ISSUER,
+            aud: expected_audience,
+            verify_iss: true,
+            verify_aud: true
+          ).first
         end
 
         def jwt_secret
           Rails.application.credentials.jwt_secret_key || ENV['JWT_SECRET_KEY'] || Rails.application.secret_key_base
+        end
+
+        def jwt_expiration
+          Spree::Api::Config[:jwt_expiration]
+        end
+
+        def expected_audience
+          JWT_AUDIENCE_STORE
         end
 
         def find_user_from_payload(payload)

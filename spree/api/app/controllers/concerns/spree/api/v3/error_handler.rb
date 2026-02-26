@@ -46,6 +46,12 @@ module Spree
           digital_link_expired: 'digital_link_expired',
           download_limit_exceeded: 'download_limit_exceeded',
 
+          # Rate limiting errors
+          rate_limit_exceeded: 'rate_limit_exceeded',
+
+          # Request errors
+          request_too_large: 'request_too_large',
+
           # General errors
           processing_error: 'processing_error',
           invalid_request: 'invalid_request'

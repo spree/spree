@@ -14,6 +14,11 @@ module Spree
         Spree::Api::Dependencies = Spree::Api::ApiDependencies.new
       end
 
+      initializer 'spree.api.request_size_limit' do |app|
+        require_relative 'middleware/request_size_limit'
+        app.middleware.insert_before Rack::Runtime, Spree::Api::Middleware::RequestSizeLimit
+      end
+
       # Add API event subscribers
       config.after_initialize do
         Spree.subscribers << Spree::WebhookEventSubscriber

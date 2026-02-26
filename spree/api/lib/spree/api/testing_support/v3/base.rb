@@ -3,11 +3,14 @@ module Spree
   module Api
     module V3
       module TestingSupport
-        def self.generate_jwt(user, expiration: 24.hours.to_i)
+        def self.generate_jwt(user, expiration: 1.hour.to_i, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_STORE)
           user_type = user.is_a?(Spree.admin_user_class) ? 'admin' : 'customer'
           payload = {
             user_id: user.id,
             user_type: user_type,
+            jti: SecureRandom.uuid,
+            iss: Spree::Api::V3::JwtAuthentication::JWT_ISSUER,
+            aud: audience,
             exp: Time.current.to_i + expiration
           }
           secret = Rails.application.credentials.jwt_secret_key || ENV['JWT_SECRET_KEY'] || Rails.application.secret_key_base
