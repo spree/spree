@@ -32,6 +32,10 @@ module Spree
 
     money_methods :amount
 
+    def amount=(amount)
+      self[:amount] = Spree::LocalizedNumber.parse(amount)
+    end
+
     self.whitelisted_ransackable_attributes = %w[prefix]
 
     def generate_gift_cards

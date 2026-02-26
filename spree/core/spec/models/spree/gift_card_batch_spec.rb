@@ -35,6 +35,16 @@ RSpec.describe Spree::GiftCardBatch, type: :model do
     end
   end
 
+  describe '#amount=' do
+    let(:amount) { '1,599,99' }
+
+    it 'is expected to equal to localized number' do
+      gift_card_batch = build(:gift_card_batch, codes_count: 2, prefix: 'batch_')
+      gift_card_batch.amount = amount
+      expect(gift_card_batch.amount).to eq(Spree::LocalizedNumber.parse(amount))
+    end
+  end
+
   describe '#create_gift_cards' do
     subject(:gift_card_batch) { build(:gift_card_batch, codes_count: 2, prefix: 'batch_', amount: 10) }
 
