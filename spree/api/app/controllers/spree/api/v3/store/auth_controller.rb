@@ -3,6 +3,12 @@ module Spree
     module V3
       module Store
         class AuthController < Store::BaseController
+          # Tighter rate limits for auth endpoints (per IP to prevent brute force)
+          rate_limit to: Spree::Api::Config[:rate_limit_login], within: 1.minute, only: :create, with: RATE_LIMIT_RESPONSE
+          rate_limit to: Spree::Api::Config[:rate_limit_register], within: 1.minute, only: :register, with: RATE_LIMIT_RESPONSE
+          rate_limit to: Spree::Api::Config[:rate_limit_refresh], within: 1.minute, only: :refresh, with: RATE_LIMIT_RESPONSE
+          rate_limit to: Spree::Api::Config[:rate_limit_oauth], within: 1.minute, only: :oauth_callback, with: RATE_LIMIT_RESPONSE
+
           skip_before_action :authenticate_user, only: [:create, :register, :oauth_callback]
           prepend_before_action :require_authentication!, only: [:refresh]
 

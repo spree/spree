@@ -11,6 +11,7 @@ module Spree
         include Spree::Api::V3::ApiKeyAuthentication
         include Spree::Api::V3::ErrorHandler
         include Spree::Api::V3::HttpCaching
+        include Spree::Api::V3::SecurityHeaders
         include Spree::Api::V3::ResourceSerializer
         include Pagy::Method
 
