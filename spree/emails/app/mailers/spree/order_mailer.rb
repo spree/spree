@@ -1,5 +1,7 @@
 module Spree
   class OrderMailer < BaseMailer
+    helper Spree::MailHelper
+
     def confirm_email(order, resend = false)
       @order = order.respond_to?(:id) ? order : Spree::Order.find(order)
       current_store = @order.store
