@@ -1,0 +1,74 @@
+{
+  "ignored_warnings": [
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "0e3bd8868fcc07adb95a529b67bc5729a239a89bda61e44fb8a117930ac22281",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/finders/spree/products/find.rb",
+      "line": 349,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "scope.joins(:variants_including_master => :prices).select(\"#{Spree::Product.table_name}.* , min(#{Spree::Price.table_name}.amount)\").where(Spree::Price.table_name => ({ :currency => currency })).where.not(Spree::Price.table_name => ({ :amount => nil })).order(\"min(#{Spree::Price.table_name}.amount) #{sort_order}\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Spree::Products::Find",
+        "method": "order_by_price"
+      },
+      "user_input": "sort_order",
+      "confidence": "Weak",
+      "cwe_id": [
+        89
+      ],
+      "note": "Safe: sort_order is hardcoded as :desc or :asc at the call site, never from user input"
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "1365b154e2a8020d32c58a32394892212c8c575676ab0e6c51a379b1485ca38c",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/sorters/spree/products/sort.rb",
+      "line": 44,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "scope.joins(:master).select(\"#{(\"\" or \"#{Spree::Product.table_name}.*, \")}#{Spree::Variant.table_name}.sku\").order(\"#{Spree::Variant.table_name}.sku #{sort_by?(\"sku\")[1]}\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Spree::Products::Sort",
+        "method": "by_sku"
+      },
+      "user_input": "sort_by?(\"sku\")[1]",
+      "confidence": "Weak",
+      "cwe_id": [
+        89
+      ],
+      "note": "Safe: sort direction comes from BaseSorter#order_direction which only returns :desc or :asc"
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "9d14b5b042473e45257286b5342318871ebe0c907ddbb3808151b5efb3281b36",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/sorters/spree/products/sort.rb",
+      "line": 30,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "scope.joins(:variants_including_master => :prices).select(\"#{Spree::Product.table_name}.*, #{Spree::Price.table_name}.amount\").distinct.where(:\"#{Spree::Price.table_name}.currency\" => currency).order(\"#{Spree::Price.table_name}.amount #{sort_by?(\"price\")[1]}\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Spree::Products::Sort",
+        "method": "by_price"
+      },
+      "user_input": "sort_by?(\"price\")[1]",
+      "confidence": "Weak",
+      "cwe_id": [
+        89
+      ],
+      "note": "Safe: sort direction comes from BaseSorter#order_direction which only returns :desc or :asc"
+    }
+  ],
+  "brakeman_version": "8.0.2"
+}
