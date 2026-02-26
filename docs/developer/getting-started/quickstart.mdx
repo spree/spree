@@ -4,30 +4,26 @@ sidebarTitle: Installation
 description: "Follow the instructions below to learn how to build and deploy your Spree application."
 ---
 
-<Info>
-  Spree works with **PostgreSQL**, **MySQL**, and **SQLite** databases. The default setup uses SQLite for quick start. You can switch to PostgreSQL or MySQL at any time. [Learn more about database configuration](/developer/deployment/database).
-</Info>
-
 ## Installation options
 
 <Tabs>
   <Tab title="create-spree-app">
-    The quickest way to get started. Scaffolds a full Spree application with a single command.
+    The quickest way to get started. Scaffolds a full Spree project with Next.js Storefront (optional).
 
-    **Requirements:** [Node.js](https://nodejs.org/) 18+ (for the scaffolding tool only — the generated app runs on Ruby/Rails)
+    **Requirements:** [Node.js](https://nodejs.org/) 20+ and [Docker](https://docs.docker.com/get-docker/) running.
 
     ```bash
     npx create-spree-app@latest my-store
     ```
 
-    The CLI will walk you through a few options (database, sample data, etc.) and set up everything for you — including Ruby, Rails, and all dependencies.
+    The CLI walks you through an interactive setup:
 
-    Once complete, start the development server:
+    1. Choose **Full-stack** (Backend + Next.js Storefront) or **Backend only**
+    2. Optionally load **sample data** (products, categories, images)
 
-    ```bash
-    cd my-store
-    bin/dev
-    ```
+    Once complete, your store should be running at [http://localhost:3000/admin](http://localhost:3000/admin). The port can be different if `3000` is already used on your system.
+
+    See the full [create-spree-app documentation](/developer/create-spree-app/quickstart) for all CLI flags and options.
   </Tab>
   <Tab title="Manual Installation">
     For developers who prefer full control over the setup, or want to add Spree to an existing Rails application.
@@ -59,24 +55,21 @@ description: "Follow the instructions below to learn how to build and deploy you
         ```bash
         bin/rails spree_sample:load
         ```
+
+    <Info>
+      Spree works with **PostgreSQL**, **MySQL**, and **SQLite** databases. The Rails template defaults to SQLite for quick setup. You can switch to PostgreSQL or MySQL at any time. [Learn more about database configuration](/developer/deployment/database).
+    </Info>
   </Tab>
 </Tabs>
 
 ## Accessing Admin Panel
 
-Use your browser window to navigate to [http://localhost:3000/admin](http://localhost:3000/admin). You can log in with the credentials you've chosen during installation, the defaults are:
+Navigate to [http://localhost:3000/admin](http://localhost:3000/admin) and log in with the default credentials:
 
-login:
-
-```
-spree@example.com
-```
-
-password:
-
-```
-spree123
-```
+| | |
+|---|---|
+| **Email** | `spree@example.com` |
+| **Password** | `spree123` |
 
 Upon successful authentication, you should see the admin screen:
 
