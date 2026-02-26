@@ -159,6 +159,7 @@ module Spree
     # Needs to happen before save_permalink is called
     before_validation :ensure_store_presence
     before_validation :ensure_currency_presence
+    before_validation :ensure_locale_presence
 
     before_validation :clone_billing_address, if: :use_billing?
     before_validation :clone_shipping_address, if: :use_shipping?
@@ -174,6 +175,7 @@ module Spree
       validates :item_count, numericality: { greater_than_or_equal_to: 0, less_than: 2**31, only_integer: true, allow_blank: true }
       validates :store
       validates :currency
+      validates :locale
     end
     validates :payment_state,        inclusion:    { in: PAYMENT_STATES, allow_blank: true }
     validates :shipment_state,       inclusion:    { in: SHIPMENT_STATES, allow_blank: true }
@@ -186,6 +188,7 @@ module Spree
     validates :promo_total,          NEGATIVE_MONEY_VALIDATION
     validates :total,                MONEY_VALIDATION
     validate :currency_must_be_supported_by_store
+    validate :locale_must_be_supported_by_store
 
     delegate :update_totals, :persist_totals, to: :updater
     delegate :merge!, to: :merger
@@ -997,12 +1000,28 @@ module Spree
       self.currency ||= store&.default_currency
     end
 
+    # Sets the locale from Spree::Current.locale when not already set.
+    # Called as a before_validation callback, mirroring ensure_currency_presence.
+    def ensure_locale_presence
+      self.locale ||= Spree::Current.locale
+    end
+
     def currency_must_be_supported_by_store
       return if currency.blank? || store.blank?
 
       supported_codes = store.supported_currencies_list.map(&:iso_code)
       unless supported_codes.include?(currency)
         errors.add(:currency, Spree.t(:currency_not_supported_by_store))
+      end
+    end
+
+    # Validates that the order's locale is within the store's supported locales.
+    # Mirrors currency_must_be_supported_by_store.
+    def locale_must_be_supported_by_store
+      return if locale.blank? || store.blank?
+
+      unless store.supported_locales_list.include?(locale)
+        errors.add(:locale, Spree.t(:locale_not_supported_by_store))
       end
     end
 

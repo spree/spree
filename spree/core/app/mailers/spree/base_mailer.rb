@@ -47,8 +47,11 @@ module Spree
       ActionMailer::Base.default_url_options[:host] = host_url
     end
 
+    # Sets the I18n locale for the email.
+    # Prefers the order's locale (the language the customer used),
+    # falls back to the store's default locale.
     def set_email_locale
-      locale = @order&.store&.default_locale || current_store&.default_locale
+      locale = @order&.locale.presence || @order&.store&.default_locale || current_store&.default_locale
       I18n.locale = locale if locale.present?
     end
   end

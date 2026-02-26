@@ -32,6 +32,13 @@ RSpec.describe Spree::Api::V3::Store::CartController, type: :controller do
       expect(Spree::Order.last.store_id).to eq(store.id)
     end
 
+    it 'sets locale on the cart' do
+      post :create
+
+      expect(json_response['locale']).to be_present
+      expect(Spree::Order.last.locale).to be_present
+    end
+
     context 'for authenticated user' do
       before do
         request.headers['Authorization'] = "Bearer #{jwt_token}"

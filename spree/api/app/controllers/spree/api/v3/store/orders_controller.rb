@@ -103,6 +103,7 @@ module Spree
             params.permit(
               :email,
               :currency,
+              :locale,
               :special_instructions,
               :ship_address_id,
               :bill_address_id,

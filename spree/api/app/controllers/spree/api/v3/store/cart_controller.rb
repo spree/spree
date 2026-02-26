@@ -11,13 +11,19 @@ module Spree
           # Creates a new shopping cart (order)
           # Can be created by guests or authenticated customers
           def create
-            @cart = Spree::Order.create!(
+            result = Spree.cart_create_service.call(
+              user: current_user,
               store: current_store,
               currency: current_currency,
-              user: current_user # nil for guests
+              locale: current_locale
             )
 
-            render json: serialize_resource(@cart), status: :created
+            if result.success?
+              @cart = result.value
+              render json: serialize_resource(@cart), status: :created
+            else
+              render_service_error(result.error.to_s)
+            end
           end
 
           # GET /api/v3/store/cart

@@ -16,6 +16,7 @@ export const AdminOrderSchema: z.ZodObject<any> = z.object({
   email: z.string().nullable(),
   special_instructions: z.string().nullable(),
   currency: z.string(),
+  locale: z.string().nullable(),
   item_count: z.number(),
   shipment_state: z.string().nullable(),
   payment_state: z.string().nullable(),

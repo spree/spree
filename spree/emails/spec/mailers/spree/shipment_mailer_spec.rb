@@ -48,6 +48,7 @@ describe Spree::ShipmentMailer, type: :mailer do
           pt_br_shipped_email = { spree: { shipment_mailer: { shipped_email: { dear_customer: 'Caro Cliente,' } } } }
           I18n.backend.store_translations :'pt-BR', pt_br_shipped_email
           store.update(default_locale: 'pt-BR')
+          order.update_column(:locale, 'pt-BR')
         end
 
         after do
@@ -61,6 +62,27 @@ describe Spree::ShipmentMailer, type: :mailer do
           expect(shipped_email).to have_body_text('Caro Cliente,')
         end
       end
+    end
+  end
+
+  context 'uses order locale for emails' do
+    before do
+      I18n.enforce_available_locales = false
+      pt_br_shipped_email = { spree: { shipment_mailer: { shipped_email: { dear_customer: 'Caro Cliente,' } } } }
+      I18n.backend.store_translations :'pt-BR', pt_br_shipped_email
+
+      # Store stays with default_locale 'en', but order has locale 'pt-BR'
+      order.update_column(:locale, 'pt-BR')
+    end
+
+    after do
+      I18n.enforce_available_locales = true
+      I18n.locale = :en
+    end
+
+    it 'sends shipped_email in order locale' do
+      shipped_email = described_class.shipped_email(shipment)
+      expect(shipped_email).to have_body_text('Caro Cliente,')
     end
   end
 

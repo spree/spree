@@ -104,6 +104,7 @@ export interface AddressParams {
 export interface UpdateOrderParams {
   email?: string;
   currency?: string;
+  locale?: string;
   special_instructions?: string;
   /** Existing address ID to use */
   bill_address_id?: string;
