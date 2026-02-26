@@ -102,64 +102,8 @@ module Spree
           with_typelizer_enabled do
             schemas = Typelizer.openapi_schemas
             schemas.each_value { |s| s[:'x-typelizer'] = true }
-            fix_refs(schemas)
             schemas
           end
-        end
-
-        # Typelizer's native OpenAPI generator treats unrecognized type strings
-        # as $ref to other schemas. This fixes three cases:
-        # 1. any → {type: :object}
-        # 2. Record<string, unknown> → {type: :object}
-        # 3. Union types (e.g., 'TypeA | TypeB | null') → proper anyOf schemas
-        def fix_refs(schemas)
-          schemas.each_value do |schema|
-            next unless schema[:properties]
-
-            schema[:properties].each do |key, prop|
-              schema[:properties][key] = fix_ref(prop)
-            end
-          end
-        end
-
-        def fix_ref(prop)
-          # Direct $ref
-          if (ref_value = prop['$ref'])
-            return resolve_ref(ref_value, prop)
-          end
-
-          # allOf wrapper (used for nullable refs)
-          if prop[:allOf]&.length == 1 && (ref_value = prop[:allOf][0]['$ref'])
-            resolved = resolve_ref(ref_value, {})
-            resolved[:nullable] = true if prop[:nullable]
-            return resolved
-          end
-
-          prop
-        end
-
-        def resolve_ref(ref_value, base)
-          ref_name = ref_value.sub('#/components/schemas/', '')
-
-          # any → {type: :object} (closest OpenAPI equivalent)
-          return base.except('$ref').merge(type: :object) if ref_name == 'any'
-
-          # Record<string, unknown> → {type: :object}
-          if ref_name.start_with?('Record<')
-            return base.except('$ref').merge(type: :object)
-          end
-
-          # Union types (e.g., 'TypeA | TypeB | null') → anyOf
-          if ref_name.include?(' | ')
-            types = ref_name.split(' | ').map(&:strip)
-            nullable = types.delete('null')
-            refs = types.map { |t| { '$ref' => "#/components/schemas/#{t}" } }
-            result = { anyOf: refs }
-            result[:nullable] = true if nullable
-            return result
-          end
-
-          base
         end
 
         # Typelizer is normally disabled in test/production, but we need it
