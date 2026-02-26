@@ -23,10 +23,6 @@ Once complete, your store is running at [http://localhost:3000](http://localhost
 - [Node.js](https://nodejs.org/) 20 or later
 - [Docker](https://docs.docker.com/get-docker/) (for running the Spree backend and PostgreSQL)
 
-<Info>
-  Node.js is only needed for the scaffolding tool and the Next.js storefront. The Spree backend itself runs inside Docker — you don't need Ruby installed locally.
-</Info>
-
 ## Setup Modes
 
 ### Full-stack (default)
@@ -64,12 +60,17 @@ npx create-spree-app@latest my-store --backend-only --no-sample-data --no-start
 | `--backend-only` | Skip storefront setup |
 | `--no-sample-data` | Skip loading sample products and categories |
 | `--no-start` | Don't start Docker services after scaffolding |
+| `--port <number>` | Port for the Spree backend (default: `3000`) |
 | `--use-npm` | Use npm as package manager |
 | `--use-yarn` | Use yarn as package manager |
 | `--use-pnpm` | Use pnpm as package manager |
 
 <Tip>
   The package manager is auto-detected from how you run the command. If you use `pnpm dlx create-spree-app`, pnpm will be used automatically.
+</Tip>
+
+<Tip>
+  If the default port is already in use, the CLI will automatically find a free port and let you know.
 </Tip>
 
 ## Generated Project Structure
@@ -100,7 +101,7 @@ my-store/
 
 ### What's in docker-compose.yml
 
-- **Spree** — runs the `ghcr.io/spree/spree:latest` image on port `3000`
+- **Spree** — runs the `ghcr.io/spree/spree:latest` image on the configured port (default `3000`)
 - **PostgreSQL 17** — database with persistent volume
 - Health checks on both services
 
@@ -145,17 +146,17 @@ Open [http://localhost:3001](http://localhost:3001) to see your store.
 
 ## Manual Start
 
-If you used `--no-start`, you can start services manually:
+If you used `--no-start`, start services manually:
 
 ```bash
 cd my-store
-docker compose up -d
+npm run dev
 ```
 
 Wait for Spree to be healthy, then optionally load sample data:
 
 ```bash
-docker compose exec spree bin/rails spree:load_sample_data
+npm run load-sample-data
 ```
 
 For the storefront, you'll need to fetch an API key manually:
