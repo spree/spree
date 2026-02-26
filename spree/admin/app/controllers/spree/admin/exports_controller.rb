@@ -35,7 +35,9 @@ module Spree
       end
 
       def assign_params
-        @object.type = permitted_resource_params[:type] if available_types.map(&:to_s).include?(permitted_resource_params[:type])
+        if available_types.map(&:to_s).include?(permitted_resource_params[:type])
+          @object = @object.becomes!(permitted_resource_params[:type].constantize)
+        end
         @object.search_params = permitted_resource_params[:search_params]
       end
 
