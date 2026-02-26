@@ -54,6 +54,10 @@ module Spree
     extend Spree::DisplayMoney
     money_methods :amount, :amount_used, :amount_remaining, :amount_authorized
 
+    def amount=(amount)
+      self[:amount] = Spree::LocalizedNumber.parse(amount)
+    end
+
     self.whitelisted_ransackable_attributes = %w[user_id created_by_id amount currency type_id]
     self.whitelisted_ransackable_associations = %w[type user created_by]
 
