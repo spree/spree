@@ -114,7 +114,9 @@ module Spree
   end
 
   def self.searcher_class(constantize: true)
-    @@searcher_class ||= 'Spree::Core::Search::Base'
+    @@searcher_class ||= nil # moved to spree_rails_support
+
+    return nil if @@searcher_class.nil?
 
     if @@searcher_class.is_a?(Class)
       raise 'Spree.searcher_class MUST be a String or Symbol object, not a Class object.'
@@ -444,7 +446,6 @@ require 'spree/core/importer'
 require 'spree/core/query_filters'
 require 'spree/core/controller_helpers/auth'
 require 'spree/core/controller_helpers/common'
-require 'spree/core/controller_helpers/search'
 require 'spree/core/controller_helpers/store'
 require 'spree/core/controller_helpers/strong_parameters'
 require 'spree/core/controller_helpers/locale'

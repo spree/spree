@@ -56,8 +56,8 @@ module Spree
         # sorter
         collection_sorter: 'Spree::BaseSorter',
         order_sorter: 'Spree::BaseSorter',
-        products_sorter: 'Spree::Products::Sort',
-        posts_sorter: 'Spree::Posts::Sort',
+        products_sorter: nil, # moved to spree_rails_support
+        posts_sorter: nil, # moved to spree_rails_support
 
         # paginator
         collection_paginator: 'Spree::Shared::Paginate',
@@ -95,19 +95,19 @@ module Spree
         data_feeds_google_products_list: 'Spree::DataFeeds::Google::ProductsList',
 
         # finders
-        address_finder: 'Spree::Addresses::Find',
-        country_finder: 'Spree::Countries::Find',
+        address_finder: nil, # moved to spree_rails_support
+        country_finder: nil, # moved to spree_rails_support
         cms_page_finder: nil, # LEGACY
         menu_finder: nil, # LEGACY
-        current_order_finder: 'Spree::Orders::FindCurrent',
+        current_order_finder: nil, # moved to spree_rails_support
         current_store_finder: 'Spree::Stores::FindDefault',
-        completed_order_finder: 'Spree::Orders::FindComplete',
-        credit_card_finder: 'Spree::CreditCards::Find',
-        products_finder: 'Spree::Products::Find',
-        posts_finder: 'Spree::Posts::Find',
-        taxon_finder: 'Spree::Taxons::Find',
+        completed_order_finder: nil, # moved to spree_rails_support
+        credit_card_finder: nil, # moved to spree_rails_support
+        products_finder: nil, # moved to spree_rails_support
+        posts_finder: nil, # moved to spree_rails_support
+        taxon_finder: nil, # moved to spree_rails_support
         line_item_by_variant_finder: 'Spree::LineItems::FindByVariant',
-        variant_finder: 'Spree::Variants::Find'
+        variant_finder: nil # moved to spree_rails_support
       }.freeze
 
       include Spree::DependenciesHelper

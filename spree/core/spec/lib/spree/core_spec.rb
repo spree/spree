@@ -108,40 +108,8 @@ describe Spree do
   end
 
   describe '.searcher_class' do
-    after do
-      described_class.searcher_class = 'Spree::Core::Search::Base'
-    end
-
-    context 'when searcher_class is a Class instance' do
-      it 'raises an error' do
-        described_class.searcher_class = Spree::Core::Search::Base
-
-        expect { described_class.searcher_class }.to raise_error(RuntimeError)
-      end
-    end
-
-    context 'when searcher_class is a Symbol instance' do
-      it 'returns the searcher_class constant' do
-        described_class.searcher_class = :'Spree::Core::Search::Base'
-
-        expect(described_class.searcher_class).to eq(Spree::Core::Search::Base)
-      end
-    end
-
-    context 'when searcher_class is a String instance' do
-      it 'returns the searcher_class constant' do
-        described_class.searcher_class = 'Spree::Core::Search::Base'
-
-        expect(described_class.searcher_class).to eq(Spree::Core::Search::Base)
-      end
-    end
-
-    context 'when constantize is false' do
-      it 'returns the searcher_class as a String' do
-        described_class.searcher_class = 'Spree::Core::Search::Base'
-
-        expect(described_class.searcher_class(constantize: false)).to eq('Spree::Core::Search::Base')
-      end
+    it 'returns nil by default' do
+      expect(described_class.searcher_class).to be_nil
     end
   end
 end
