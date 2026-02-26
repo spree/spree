@@ -39,6 +39,10 @@ flags:
     paths:
       - spree/emails/
     carryforward: true
+  rails_support:
+    paths:
+      - spree/rails_support/
+    carryforward: true
 
 component_management:
   individual_components:
@@ -62,6 +66,11 @@ component_management:
       paths:
         - spree/emails/app/**
         - spree/emails/lib/**
+    - component_id: rails_support
+      name: Rails Support
+      paths:
+        - spree/rails_support/app/**
+        - spree/rails_support/lib/**
 
 ignore:
   - "docs/**"

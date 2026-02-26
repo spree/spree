@@ -4,6 +4,8 @@ module Spree
 
     # returns the formatted price for the specified variant as a full price or a difference depending on configuration
     def variant_price(variant)
+      Spree::Deprecation.warn('ProductsHelper#variant_price is deprecated and will be removed in Spree 5.5.')
+
       if Spree::Config[:show_variant_full_price]
         variant_full_price(variant)
       else
@@ -13,6 +15,8 @@ module Spree
 
     # returns the formatted price for the specified variant as a difference from product price
     def variant_price_diff(variant)
+      Spree::Deprecation.warn('ProductsHelper#variant_price_diff is deprecated and will be removed in Spree 5.5.')
+
       variant_amount = variant.amount_in(current_currency)
       product_amount = variant.product.amount_in(current_currency)
       return if variant_amount == product_amount || product_amount.nil?
@@ -25,6 +29,8 @@ module Spree
 
     # returns the formatted full price for the variant, if at least one variant price differs from product price
     def variant_full_price(variant)
+      Spree::Deprecation.warn('ProductsHelper#variant_full_price is deprecated and will be removed in Spree 5.5.')
+
       product = variant.product
       unless product.variants.active(current_currency).all? { |v| v.price == product.price }
         Spree::Money.new(variant.price, currency: current_currency).to_html
@@ -32,19 +38,27 @@ module Spree
     end
 
     def default_variant(variants, product)
+      Spree::Deprecation.warn('ProductsHelper#default_variant is deprecated and will be removed in Spree 5.5.')
+
       variants_option_types_presenter(variants, product).default_variant || product.default_variant
     end
 
     def should_display_compare_at_price?(default_variant)
+      Spree::Deprecation.warn('ProductsHelper#should_display_compare_at_price? is deprecated and will be removed in Spree 5.5.')
+
       default_variant_price = default_variant.price_in(current_currency)
       default_variant_price.compare_at_amount.present? && (default_variant_price.compare_at_amount > default_variant_price.amount)
     end
 
     def used_variants_options(variants, product)
+      Spree::Deprecation.warn('ProductsHelper#used_variants_options is deprecated and will be removed in Spree 5.5.')
+
       variants_option_types_presenter(variants, product).options
     end
 
     def line_item_description_text(description_text)
+      Spree::Deprecation.warn('ProductsHelper#line_item_description_text is deprecated and will be removed in Spree 5.5.')
+
       if description_text.present?
         truncate(strip_tags(description_text.gsub('&nbsp;', ' ').squish), length: 100)
       else
@@ -53,12 +67,16 @@ module Spree
     end
 
     def cache_key_for_products(products = @products, additional_cache_key = nil)
+      Spree::Deprecation.warn('ProductsHelper#cache_key_for_products is deprecated and will be removed in Spree 5.5.')
+
       max_updated_at = (products.except(:group, :order).maximum(:updated_at) || Date.today).to_formatted_s(:number)
       products_cache_keys = "spree/products/#{products.map(&:id).join('-')}-#{params[:page]}-#{params[:sort_by]}-#{max_updated_at}-#{@taxon&.id}"
       (common_product_cache_keys + [products_cache_keys] + [additional_cache_key]).compact.join('/')
     end
 
     def cache_key_for_product(product = @product)
+      Spree::Deprecation.warn('ProductsHelper#cache_key_for_product is deprecated and will be removed in Spree 5.5.')
+
       cache_key_elements = common_product_cache_keys
       cache_key_elements += [
         product.cache_key_with_version,
@@ -69,12 +87,16 @@ module Spree
     end
 
     def limit_description(string)
+      Spree::Deprecation.warn('ProductsHelper#limit_description is deprecated and will be removed in Spree 5.5.')
+
       return string if string.length <= 450
 
       string.slice(0..449) + '...'
     end
 
     def product_images(product, variants)
+      Spree::Deprecation.warn('ProductsHelper#product_images is deprecated and will be removed in Spree 5.5.')
+
       if product.variants_and_option_values(current_currency).any?
         variants_without_master_images = variants.reject(&:is_master).map(&:images).flatten
 
@@ -87,6 +109,8 @@ module Spree
     end
 
     def product_variants_matrix(is_product_available_in_currency)
+      Spree::Deprecation.warn('ProductsHelper#product_variants_matrix is deprecated and will be removed in Spree 5.5.')
+
       Spree::VariantPresenter.new(
         variants: @variants,
         is_product_available_in_currency: is_product_available_in_currency,
@@ -97,10 +121,14 @@ module Spree
     end
 
     def product_relation_types
+      Spree::Deprecation.warn('ProductsHelper#product_relation_types is deprecated and will be removed in Spree 5.5.')
+
       @product_relation_types ||= @product.respond_to?(:relation_types) ? @product.relation_types : []
     end
 
     def product_relations_by_type(relation_type)
+      Spree::Deprecation.warn('ProductsHelper#product_relations_by_type is deprecated and will be removed in Spree 5.5.')
+
       return [] if product_relation_types.none? || !@product.respond_to?(:relations)
 
       product_ids = @product.relations.where(relation_type: relation_type).pluck(:related_to_id).uniq
@@ -129,10 +157,14 @@ module Spree
     end
 
     def product_available_in_currency?
+      Spree::Deprecation.warn('ProductsHelper#product_available_in_currency? is deprecated and will be removed in Spree 5.5.')
+
       !(@product_price.nil? || @product_price.zero?)
     end
 
     def common_product_cache_keys
+      Spree::Deprecation.warn('ProductsHelper#common_product_cache_keys is deprecated and will be removed in Spree 5.5.')
+
       spree_base_cache_key + price_options_cache_key
     end
 

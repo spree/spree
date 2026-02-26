@@ -52,7 +52,7 @@ jobs:
 
       - name: Install all project dependencies
         run: |
-          for project in core api admin emails; do
+          for project in core api admin emails rails_support; do
             echo "--- Installing gems for $project ---"
             cd spree/$project
             bundle config set --local path ${{ github.workspace }}/vendor/bundle
@@ -91,7 +91,7 @@ jobs:
 
       - name: Install all project dependencies
         run: |
-          for project in core api admin emails; do
+          for project in core api admin emails rails_support; do
             echo "--- Installing gems for $project ---"
             cd spree/$project
             bundle config set --local path ${{ github.workspace }}/vendor/bundle
@@ -122,6 +122,8 @@ jobs:
           - { project: admin, shard: 2, total_shards: 2 }
           # emails: 1 shard
           - { project: emails, shard: 1, total_shards: 1 }
+          # rails_support: 1 shard
+          - { project: rails_support, shard: 1, total_shards: 1 }
     services:
       postgres:
         image: postgres:16
@@ -261,6 +263,8 @@ jobs:
           - { project: admin, shard: 2, total_shards: 2 }
           # emails: 1 shard
           - { project: emails, shard: 1, total_shards: 1 }
+          # rails_support: 1 shard
+          - { project: rails_support, shard: 1, total_shards: 1 }
     services:
       mysql:
         image: mysql:8.0
@@ -395,7 +399,7 @@ jobs:
       - name: Run Brakeman
         working-directory: spree
         run: |
-          for project in core api admin; do
+          for project in core api admin rails_support; do
             echo "--- Running Brakeman on $project ---"
             bundle exec brakeman --ensure-latest -p $project
           done

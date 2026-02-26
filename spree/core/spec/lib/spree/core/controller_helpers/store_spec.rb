@@ -2,11 +2,8 @@ require 'spec_helper'
 
 class FakesController < ApplicationController
   include Spree::Core::ControllerHelpers::Auth
-  include Spree::Core::ControllerHelpers::Order
   include Spree::Core::ControllerHelpers::Store
   include Spree::Core::ControllerHelpers::Currency
-
-  before_action :set_current_order
 end
 
 describe Spree::Core::ControllerHelpers::Store, type: :controller do
