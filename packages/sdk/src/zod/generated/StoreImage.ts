@@ -4,9 +4,10 @@ import { z } from 'zod';
 export const StoreImageSchema = z.object({
   id: z.string(),
   viewable_id: z.string(),
-  position: z.number(),
-  alt: z.string().nullable(),
+  type: z.string().nullable(),
   viewable_type: z.string(),
+  position: z.number().nullable(),
+  alt: z.string().nullable(),
   created_at: z.string(),
   updated_at: z.string(),
   original_url: z.string().nullable(),
