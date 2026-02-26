@@ -135,6 +135,16 @@ describe Spree::StoreCredit, type: :model do
     end
   end
 
+  describe '#amount=' do
+    let(:amount) { '1,599,99' }
+
+    before { store_credit.amount = amount }
+
+    it 'is expected to equal to localized number' do
+      expect(store_credit.amount).to eq(Spree::LocalizedNumber.parse(amount))
+    end
+  end
+
   describe '#authorize' do
     context 'amount is valid' do
       let(:authorization_amount)       { 1.0 }

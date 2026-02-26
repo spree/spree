@@ -36,6 +36,10 @@ module Spree
 
     delegate :order, :currency, to: :payment
 
+    def amount=(amount)
+      self[:amount] = Spree::LocalizedNumber.parse(amount)
+    end
+
     def money
       Spree::Money.new(amount, currency: currency)
     end
