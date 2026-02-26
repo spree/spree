@@ -312,8 +312,8 @@ module Spree
       end
     end
 
-    # indicate which filters should be used for a taxon
-    # this method should be customized to your own site
+    # @deprecated This method is deprecated and will be removed in Spree 5.5.
+    #   Use Spree::Api::V3::FiltersAggregator instead.
     def applicable_filters
       Spree::Deprecation.warn('applicable_filters is deprecated and will be removed in Spree 5.5')
       fs = []

@@ -61,7 +61,9 @@ module Spree
       # If user checks off three different price ranges then the argument passed to
       # below scope would be something like ["$10 - $15", "$15 - $18", "$18 - $20"]
       #
+      # @deprecated This scope is deprecated and will be removed in Spree 5.5.
       Spree::Product.add_search_scope :price_range_any do |*opts|
+        deprecated_warning
         conds = opts.map { |o| Spree::Core::ProductFilters.price_filter[:conds][o] }.reject(&:nil?)
         scope = conds.shift
         conds.each do |new_scope|
@@ -70,10 +72,13 @@ module Spree
         Spree::Product.joins(master: :default_price).where(scope)
       end
 
+      # @deprecated This method is deprecated and will be removed in Spree 5.5.
       def self.format_price(amount)
         Spree::Money.new(amount)
       end
 
+      # @deprecated This method is deprecated and will be removed in Spree 5.5.
+      #   Use Spree::Api::V3::FiltersAggregator instead.
       def self.price_filter
         deprecated_warning
         v = Spree::Price.arel_table
@@ -102,7 +107,9 @@ module Spree
       #   the (uniquely named) field "p_brand.value". There's also a test for brand info
       #   being blank: note that this relies on with_property doing a left outer join
       #   rather than an inner join.
+      # @deprecated This scope is deprecated and will be removed in Spree 5.5.
       Spree::Product.add_search_scope :brand_any do |*opts|
+        deprecated_warning
         conds = opts.map { |o| ProductFilters.brand_filter[:conds][o] }.reject(&:nil?)
         scope = conds.shift
         conds.each do |new_scope|
@@ -116,6 +123,8 @@ module Spree
         end
       end
 
+      # @deprecated This method is deprecated and will be removed in Spree 5.5.
+      #   Use Spree::Api::V3::FiltersAggregator instead.
       def self.brand_filter
         deprecated_warning
         brand_property = Spree::Property.find_by(name: 'brand')
@@ -154,10 +163,14 @@ module Spree
       #
       #   The brand-finding code can be simplified if a few more named scopes were added to
       #   the product properties model.
+      # @deprecated This scope is deprecated and will be removed in Spree 5.5.
       Spree::Product.add_search_scope :selective_brand_any do |*opts|
+        deprecated_warning
         Spree::Product.brand_any(*opts)
       end
 
+      # @deprecated This method is deprecated and will be removed in Spree 5.5.
+      #   Use Spree::Api::V3::FiltersAggregator instead.
       def self.selective_brand_filter(taxon = nil)
         deprecated_warning
         taxon ||= Spree::Taxonomy.first.root
@@ -185,6 +198,8 @@ module Spree
       #
       # This scope selects products in any of the active taxons or their children.
       #
+      # @deprecated This method is deprecated and will be removed in Spree 5.5.
+      #   Use Spree::Api::V3::FiltersAggregator instead.
       def self.taxons_below(taxon)
         deprecated_warning
         return Spree::Core::ProductFilters.all_taxons if taxon.nil?
@@ -203,6 +218,8 @@ module Spree
       # it uses one of the auto-generated scopes from Ransack.
       #
       # idea: expand the format to allow nesting of labels?
+      # @deprecated This method is deprecated and will be removed in Spree 5.5.
+      #   Use Spree::Api::V3::FiltersAggregator instead.
       def self.all_taxons
         deprecated_warning
         taxons = Spree::Taxonomy.all.map { |t| [t.root] + t.root.descendants }.flatten
