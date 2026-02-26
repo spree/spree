@@ -1,15 +1,15 @@
 <%= turbo_frame_tag :export_dialog do %>
-  <%= form_for @export, url: spree.admin_exports_path do |f| %>
+  <%= form_for @object, url: spree.admin_exports_path, as: :export do |f| %>
     <%= f.hidden_field :type %>
     <%= f.hidden_field :search_params %>
     <div class="dialog-header">
       <h5 class="dialog-title">
-        <%= Spree.t(:export) + ' ' + plural_resource_name(@export.model_class) %>
+        <%= Spree.t(:export) + ' ' + plural_resource_name(@object.model_class) %>
       </h5>
       <button type="button" class="btn-close" data-action="click->export-dialog#close" aria-label="Close"></button>
     </div>
     <div class="dialog-body">
-      <%= render 'spree/admin/shared/error_messages', target: @export %>
+      <%= render 'spree/admin/shared/error_messages', target: @object %>
       <div class="custom-control custom-radio hover:bg-gray-50 rounded-lg p-3">
         <%= f.radio_button :record_selection, 'filtered', class: 'custom-control-input' %>
         <%= f.label :record_selection, for: :export_record_selection_filtered, class: 'custom-control-label flex-col items-start' do %>

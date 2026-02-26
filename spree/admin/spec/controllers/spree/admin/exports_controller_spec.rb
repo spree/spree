@@ -32,8 +32,9 @@ describe Spree::Admin::ExportsController, type: :controller do
 
     it 'assigns permitted params' do
       subject
-      expect(assigns(:export).type).to eq('Spree::Exports::Products')
-      expect(assigns(:export).search_params).to eq({ 'name_cont' => 'Product' }.to_json)
+      expect(assigns(:object)).to be_an_instance_of(Spree::Exports::Products)
+      expect(assigns(:object).type).to eq('Spree::Exports::Products')
+      expect(assigns(:object).search_params).to eq({ 'name_cont' => 'Product' }.to_json)
     end
   end
 
@@ -72,7 +73,7 @@ describe Spree::Admin::ExportsController, type: :controller do
 
       it 'does not assign search_params' do
         subject
-        expect(assigns(:export).search_params).to be_nil
+        expect(assigns(:object).search_params).to be_nil
       end
     end
   end
