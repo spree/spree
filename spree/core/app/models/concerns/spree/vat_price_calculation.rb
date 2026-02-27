@@ -38,7 +38,7 @@ module Spree
     end
 
     def default_zone
-      @_default_zone ||= Spree::Zone.default_tax
+      @default_zone ||= Spree::Zone.default_tax
     end
 
     def round_to_two_places(amount)

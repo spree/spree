@@ -4,7 +4,9 @@ module Spree
   # All attributes are automatically reset between requests by Rails.
   # Fallback chains ensure sensible defaults when attributes are not explicitly set.
   class Current < ::ActiveSupport::CurrentAttributes
-    attribute :store, :market, :currency, :locale, :zone, :price_lists, :global_pricing_context
+    attribute :store, :market, :currency, :locale, :zone, :default_tax_zone, :price_lists, :global_pricing_context
+
+    resets { @default_tax_zone_loaded = false }
 
     # Returns the current store, falling back to the default store.
     # @return [Spree::Store]
@@ -35,7 +37,17 @@ module Spree
     # Returns the current tax zone, falling back to the default tax zone.
     # @return [Spree::Zone, nil]
     def zone
-      super || Spree::Zone.default_tax
+      super || default_tax_zone
+    end
+
+    # Returns the default tax zone (memoized per request).
+    # @return [Spree::Zone, nil]
+    def default_tax_zone
+      result = super
+      return result if result || @default_tax_zone_loaded
+
+      @default_tax_zone_loaded = true
+      self.default_tax_zone = Spree::Zone.find_by(default_tax: true)
     end
 
     # Returns the current price lists for the global pricing context.

@@ -27,7 +27,7 @@ module Spree
     self.whitelisted_ransackable_attributes = ['description']
 
     def self.default_tax
-      find_by(default_tax: true)
+      Spree::Current.default_tax_zone
     end
 
     def self.potential_matching_zones(zone)
