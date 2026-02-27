@@ -11,7 +11,7 @@ description: This guide covers upgrading a Spree 5.3 application to Spree 5.4.
 
 ### Remove `Spree.searcher_class` from your initializer
 
-If your Spree initializer (`config/initializers/spree.rb`) sets `Spree.searcher_class`, remove that line. The `Spree::Core::Search::Base` class and the `searcher_class` configuration option have been removed.
+If your Spree initializer (`config/initializers/spree.rb`) sets `Spree.searcher_class`, remove that line. The `Spree::Core::Search::Base` class has been removed and the `searcher_class` configuration option is deprecated and will be removed in Spree 5.5.
 
 ### Remove `spree_sample` gem from your Gemfile
 
