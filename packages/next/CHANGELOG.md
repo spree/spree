@@ -1,5 +1,22 @@
 # @spree/next
 
+## 0.6.0
+
+### Minor Changes
+
+- Add `metadata` support to cart actions
+
+  - `addItem()` now accepts optional `metadata` parameter: `addItem(variantId, quantity, metadata)`
+  - **Breaking:** `updateItem()` signature changed from `(lineItemId, quantity)` to `(lineItemId, { quantity?, metadata? })` — pass an object with `quantity` and/or `metadata` keys
+  - Updated `@spree/sdk` peer dependency
+
+### Patch Changes
+
+- Update `StoreStore` type — fields removed upstream in `@spree/sdk` (`default_currency`, `default_locale`, `default`, `supported_currencies`, `supported_locales`, `default_country_iso`) are no longer part of the store response. Use dedicated `listCurrencies`, `listLocales`, and `listCountries` functions instead.
+
+- Updated dependencies:
+  - @spree/sdk@0.6.0
+
 ## 0.5.0
 
 ### Minor Changes

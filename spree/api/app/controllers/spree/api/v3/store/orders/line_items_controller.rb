@@ -15,6 +15,7 @@ module Spree
                 order: @parent,
                 variant: variant,
                 quantity: permitted_params[:quantity] || 1,
+                metadata: permitted_params[:metadata] || {},
                 options: permitted_params[:options] || {}
               )
 
@@ -29,6 +30,8 @@ module Spree
             def update
               @line_item = scope.find_by_prefix_id!(params[:id])
 
+              @line_item.metadata = @line_item.metadata.merge(permitted_params[:metadata].to_h) if permitted_params[:metadata].present?
+
               if permitted_params[:quantity].present?
                 result = Spree.cart_set_item_quantity_service.call(
                   order: @parent,
@@ -41,6 +44,9 @@ module Spree
                 else
                   render_service_error(result.error, code: ERROR_CODES[:invalid_quantity])
                 end
+              elsif @line_item.changed?
+                @line_item.save!
+                render_order
               else
                 render_order
               end

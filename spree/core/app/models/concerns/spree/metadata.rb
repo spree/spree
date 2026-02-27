@@ -12,6 +12,16 @@ module Spree
       serialize :private_metadata, coder: HashSerializer
     end
 
+    # `metadata` is the primary API-facing accessor.
+    # It maps to `private_metadata` under the hood (Stripe-style: write-only, never returned in Store API).
+    def metadata
+      private_metadata
+    end
+
+    def metadata=(value)
+      self.private_metadata = value
+    end
+
     # https://nandovieira.com/using-postgresql-and-jsonb-with-ruby-on-rails
     class HashSerializer
       def self.dump(hash)

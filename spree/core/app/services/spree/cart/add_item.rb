@@ -3,7 +3,7 @@ module Spree
     class AddItem
       prepend Spree::ServiceModule::Base
 
-      def call(order:, variant:, quantity: nil, public_metadata: {}, private_metadata: {}, options: {})
+      def call(order:, variant:, quantity: nil, metadata: {}, public_metadata: {}, private_metadata: {}, options: {})
         ApplicationRecord.transaction do
           run :add_to_line_item
           run Spree.cart_recalculate_service
@@ -12,7 +12,7 @@ module Spree
 
       private
 
-      def add_to_line_item(order:, variant:, quantity: nil, public_metadata: {}, private_metadata: {}, options: {})
+      def add_to_line_item(order:, variant:, quantity: nil, metadata: {}, public_metadata: {}, private_metadata: {}, options: {})
         options ||= {}
         quantity ||= 1
 
@@ -34,8 +34,12 @@ module Spree
         end
 
         line_item.target_shipment = options[:shipment] if options.key? :shipment
-        line_item.public_metadata = public_metadata.to_h if public_metadata
-        line_item.private_metadata = private_metadata.to_h if private_metadata
+
+        # `metadata` is the primary API param (maps to private_metadata).
+        # Legacy `public_metadata`/`private_metadata` params kept for backward compatibility.
+        resolved_metadata = metadata.presence || private_metadata
+        line_item.metadata = resolved_metadata.to_h if resolved_metadata.present?
+        line_item.public_metadata = public_metadata.to_h if public_metadata.present?
 
         return failure(line_item) unless line_item.save
 

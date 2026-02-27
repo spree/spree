@@ -77,10 +77,14 @@ export interface OrderListParams extends ListParams {
 export interface AddLineItemParams {
   variant_id: string;
   quantity: number;
+  /** Arbitrary key-value metadata (stored, not returned in responses) */
+  metadata?: Record<string, unknown>;
 }
 
 export interface UpdateLineItemParams {
-  quantity: number;
+  quantity?: number;
+  /** Arbitrary key-value metadata (merged with existing) */
+  metadata?: Record<string, unknown>;
 }
 
 // Address params
@@ -106,6 +110,8 @@ export interface UpdateOrderParams {
   currency?: string;
   locale?: string;
   special_instructions?: string;
+  /** Arbitrary key-value metadata (merged with existing) */
+  metadata?: Record<string, unknown>;
   /** Existing address ID to use */
   bill_address_id?: string;
   /** Existing address ID to use */

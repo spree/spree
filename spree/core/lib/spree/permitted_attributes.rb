@@ -140,7 +140,7 @@ module Spree
 
     @@invitation_attributes = [:email, :expires_at, :role_id]
 
-    @@line_item_attributes = [:id, :variant_id, :quantity]
+    @@line_item_attributes = [:id, :variant_id, :quantity, { metadata: {} }]
 
     @@market_attributes = [:name, :currency, :default_locale, :supported_locales,
                            :tax_inclusive, :default, :position, country_ids: []]

@@ -48,7 +48,8 @@ export async function getOrCreateCart(): Promise<StoreOrder & { token: string }>
  */
 export async function addItem(
   variantId: string,
-  quantity: number = 1
+  quantity: number = 1,
+  metadata?: Record<string, unknown>
 ): Promise<StoreOrder> {
   const cart = await getOrCreateCart();
   const orderToken = cart.token;
@@ -56,7 +57,7 @@ export async function addItem(
 
   const order = await getClient().store.orders.lineItems.create(
     cart.id,
-    { variant_id: variantId, quantity },
+    { variant_id: variantId, quantity, metadata },
     { orderToken, token }
   );
 
@@ -65,12 +66,22 @@ export async function addItem(
 }
 
 /**
- * Update a line item quantity in the cart.
+ * Update a line item in the cart (quantity and/or metadata).
  * Returns the updated order with recalculated totals.
+ *
+ * @example
+ *   // Update quantity only
+ *   await updateItem(lineItemId, { quantity: 3 })
+ *
+ *   // Update metadata only
+ *   await updateItem(lineItemId, { metadata: { gift_message: 'Happy Birthday!' } })
+ *
+ *   // Update both
+ *   await updateItem(lineItemId, { quantity: 2, metadata: { engraving: 'J.D.' } })
  */
 export async function updateItem(
   lineItemId: string,
-  quantity: number
+  params: { quantity?: number; metadata?: Record<string, unknown> }
 ): Promise<StoreOrder> {
   const orderToken = await getCartToken();
   const token = await getAccessToken();
@@ -81,7 +92,7 @@ export async function updateItem(
   const order = await getClient().store.orders.lineItems.update(
     cart.id,
     lineItemId,
-    { quantity },
+    params,
     { orderToken, token }
   );
 
