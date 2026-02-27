@@ -20,6 +20,7 @@ RSpec.configure do |config|
           @default_country = Spree::Country.find_by(iso: 'US') || FactoryBot.create(:country_us)
           @default_store = Spree::Store.find_by(default: true) || FactoryBot.create(:store, default: true, default_currency: 'USD')
           @default_store.update_column(:default_country_id, @default_country.id) unless @default_store.read_attribute(:default_country_id) == @default_country.id
+          @default_market = @default_store.markets.default.first || FactoryBot.create(:market, :default, store: @default_store, countries: [@default_country])
         end
       end
     end
@@ -31,15 +32,6 @@ RSpec.configure do |config|
       @default_store&.promotions = []
       @default_store&.update_column(:checkout_zone_id, nil) if @default_store&.read_attribute(:checkout_zone_id).present?
       @default_store&.payment_methods = []
-      # Clear memoized market state that becomes stale after transaction rollback
-      if @default_store
-        @default_store.instance_variable_set(:@countries_from_markets, nil)
-        @default_store.instance_variable_set(:@has_markets, nil)
-        @default_store.instance_variable_set(:@default_market, nil)
-        @default_store.instance_variable_set(:@countries_available_for_checkout, nil)
-        @default_store.instance_variable_set(:@supported_currencies_list, nil)
-        @default_store.instance_variable_set(:@supported_locales_list, nil)
-      end
     end
   end
 
