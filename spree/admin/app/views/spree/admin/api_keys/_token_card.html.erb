@@ -35,7 +35,7 @@
           <%= icon 'lock', class: 'text-gray-500 mr-2' %>
           <span class="text-gray-700 text-sm font-medium"><%= Spree.t('admin.api_keys.secret_key_hidden') %></span>
         </div>
-        <code class="text-sm text-gray-500"><%= @api_key.token_prefix %><%= '*' * 15 %></code>
+        <code class="text-sm text-gray-500"><%= @api_key.token_prefix %><%= '***************' %></code>
       </div>
     <% else %>
       <div data-controller="password-visibility" class="input-group gap-0 pr-1">

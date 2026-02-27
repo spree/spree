@@ -42,21 +42,21 @@ RSpec.describe Spree::ApiKey, type: :model do
       key = described_class.new(name: 'test', key_type: 'secret', store: store)
       # Skip the generate_token callback to test the validation directly
       key.instance_variable_set(:@_generate_token_called, true)
-      key.class.skip_callback(:validation, :before, :generate_token, raise: false)
+      described_class.skip_callback(:validation, :before, :generate_token, raise: false)
       expect(key).not_to be_valid
       expect(key.errors[:token_digest]).to be_present
     ensure
-      key.class.set_callback(:validation, :before, :generate_token, on: :create)
+      described_class.set_callback(:validation, :before, :generate_token, on: :create)
     end
 
     it 'validates token_prefix presence for secret keys' do
       key = described_class.new(name: 'test', key_type: 'secret', store: store)
       key.token_digest = 'some_digest'
-      key.class.skip_callback(:validation, :before, :generate_token, raise: false)
+      described_class.skip_callback(:validation, :before, :generate_token, raise: false)
       expect(key).not_to be_valid
       expect(key.errors[:token_prefix]).to be_present
     ensure
-      key.class.set_callback(:validation, :before, :generate_token, on: :create)
+      described_class.set_callback(:validation, :before, :generate_token, on: :create)
     end
   end
 
