@@ -43,10 +43,6 @@ module Spree
       # Add app/subscribers to autoload paths
       config.paths.add 'app/subscribers', eager_load: true
 
-      rake_tasks do
-        load File.join(root, 'lib', 'tasks', 'exchanges.rake')
-      end
-
       initializer 'spree.environment', before: :load_config_initializers do |app|
         app.config.spree = Environment.new(SpreeCalculators.new, SpreeValidators.new, Spree::Core::Configuration.new, Spree::Core::Dependencies.new)
 

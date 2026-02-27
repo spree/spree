@@ -492,12 +492,6 @@ describe Spree::Order, type: :model do
         end
       end
 
-      it "makes the current credit card a user's default credit card" do
-        order.next!
-        expect(order.state).to eq 'complete'
-        expect(order.user.reload.default_credit_card.try(:id)).to eq(order.credit_cards.first.id)
-      end
-
       it 'creates a digital_link for the digital line_item' do
         order.next!
         expect(order.state).to eq 'complete'
@@ -508,12 +502,6 @@ describe Spree::Order, type: :model do
         order.next!
         expect(order.state).to eq 'complete'
         expect(order.line_items.find_by(variant: variant_physical_with_digital_asset).digital_links).not_to be_empty
-      end
-
-      it 'does not assign a default credit card if temporary_credit_card is set' do
-        order.temporary_credit_card = true
-        order.next!
-        expect(order.user.reload.default_credit_card).to be_nil
       end
 
       context 'when gift card is present' do

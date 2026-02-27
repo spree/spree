@@ -92,7 +92,7 @@ module Spree
     self.whitelisted_ransackable_scopes = %w[refunded partially_refunded multi_search]
 
     attr_reader :coupon_code
-    attr_accessor :temporary_address, :temporary_credit_card
+    attr_accessor :temporary_address
 
     attribute :state_machine_resumed, :boolean
 
@@ -530,16 +530,6 @@ module Spree
 
     def uneditable?
       complete? || canceled? || returned?
-    end
-
-    def credit_cards
-      credit_card_ids = payments.from_credit_card.pluck(:source_id).uniq
-      CreditCard.where(id: credit_card_ids)
-    end
-
-    def valid_credit_cards
-      credit_card_ids = payments.from_credit_card.valid.pluck(:source_id).uniq
-      CreditCard.where(id: credit_card_ids)
     end
 
     # Finalizes an in progress order after checkout is complete.
