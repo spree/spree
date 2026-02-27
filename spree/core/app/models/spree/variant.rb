@@ -660,10 +660,6 @@ module Spree
       end
     end
 
-    def in_stock_cache_key
-      "variant-#{id}-in_stock"
-    end
-
     def disable_sku_validation?
       Spree::Config[:disable_sku_validation]
     end
