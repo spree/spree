@@ -479,13 +479,6 @@ module Spree
       Products::Duplicator.call(product: self)
     end
 
-    # use deleted? rather than checking the attribute directly. this
-    # allows extensions to override deleted? if they want to provide
-    # their own definition.
-    def deleted?
-      !!deleted_at
-    end
-
     # determine if product is available.
     # deleted products and products with status different than active
     # are not available
@@ -513,14 +506,6 @@ module Spree
       variants_including_master.any?(&:backordered?)
     end
 
-    # split variants list into hash which shows mapping of opt value onto matching variants
-    # eg categorise_variants_from_option(color) => {"red" -> [...], "blue" -> [...]}
-    def categorise_variants_from_option(opt_type)
-      return {} unless option_types.include?(opt_type)
-
-      variants.active.group_by { |v| v.option_values.detect { |o| o.option_type == opt_type } }
-    end
-
     def self.like_any(fields, values)
       conditions = fields.product(values).map do |(field, value)|
         arel_table[field].matches("%#{value}%")
@@ -537,13 +522,8 @@ module Spree
       variants.active(current_currency).joins(:option_value_variants)
     end
 
-    def empty_option_values?
-      options.empty? || options.any? do |opt|
-        opt.option_type.option_values.empty?
-      end
-    end
-
     def property(property_name)
+      Spree::Deprecation.warn("Product properties are deprecated and will be removed in Spree 6.0. Please use Metafields instead")
       if product_properties.loaded?
         product_properties.detect { |property| property.property.name == property_name }.try(:value)
       else
@@ -552,6 +532,7 @@ module Spree
     end
 
     def set_property(property_name, property_value, property_presentation = property_name)
+      Spree::Deprecation.warn("Product properties are deprecated and will be removed in Spree 6.0. Please use Metafields instead")
       property_name = property_name.to_s.parameterize
       ApplicationRecord.transaction do
         # Manual first_or_create to work around Mobility bug
@@ -576,6 +557,7 @@ module Spree
     end
 
     def remove_property(property_name)
+      Spree::Deprecation.warn("Product properties are deprecated and will be removed in Spree 6.0. Please use Metafields instead")
       product_properties.joins(:property).find_by(spree_properties: { name: property_name.parameterize })&.destroy
     end
 
