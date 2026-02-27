@@ -89,7 +89,6 @@ module Spree
                 end
 
                 after_transition to: :complete, do: :create_user_record
-                after_transition to: :complete, do: :persist_user_credit_card
                 before_transition to: :payment, do: :set_shipments_cost
                 before_transition to: :payment, do: :create_tax_charge!
                 before_transition to: :payment, do: :recalculate_store_credit_payment
@@ -291,23 +290,6 @@ module Spree
             return unless signup_for_an_account?
 
             Spree::Orders::CreateUserAccount.call(order: self, accepts_email_marketing: accept_marketing?)
-          end
-
-          def persist_user_credit_card
-            return unless !temporary_credit_card && user_id && valid_credit_cards.present?
-
-            valid_credit_cards.first.update(user_id: user_id, default: true)
-          end
-
-          def assign_default_credit_card
-            return unless payments.from_credit_card.size.empty? && user_has_valid_default_card? && payment_required?
-
-            cc = user.default_credit_card
-            payments.create!(payment_method_id: cc.payment_method_id, source: cc, amount: total)
-          end
-
-          def user_has_valid_default_card?
-            user && user.default_credit_card.try(:valid?)
           end
 
           def move_to_next_step_if_address_not_required
