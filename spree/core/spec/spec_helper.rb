@@ -93,6 +93,7 @@ RSpec.configure do |config|
 
   config.before(:each) do
     reset_spree_preferences
+    Spree::Current.reset
   end
 
   config.include FactoryBot::Syntax::Methods
