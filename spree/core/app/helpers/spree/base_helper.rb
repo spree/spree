@@ -68,16 +68,6 @@ module Spree
       end
     end
 
-    def spree_favicon_path
-      Spree::Deprecation.warn('BaseHelper#spree_favicon_path is deprecated and will be removed in Spree 5.5. Please use Active Storage URL helpers instead.')
-
-      if current_store.favicon.present?
-        main_app.cdn_image_url(current_store.favicon)
-      else
-        url_for('favicon.ico')
-      end
-    end
-
     def object
       instance_variable_get('@' + controller_name.singularize)
     end

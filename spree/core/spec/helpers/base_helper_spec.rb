@@ -100,46 +100,6 @@ describe Spree::BaseHelper, type: :helper do
     end
   end
 
-  # Regression test for #1436
-  context 'defining custom image helpers' do
-    let(:product) { build(:product) }
-
-    before do
-      module ImageDecorator
-        module ClassMethods
-          def styles
-            super.merge(
-              very_strange: '1x1',
-              foobar: '2x2'
-            )
-          end
-        end
-
-        def self.prepended(base)
-          base.singleton_class.prepend ClassMethods
-        end
-      end
-
-      Spree::Image.prepend(ImageDecorator)
-    end
-
-    it 'does not raise errors when style exists' do
-      expect { very_strange_image(product) }.not_to raise_error
-    end
-
-    it 'raises NoMethodError when style is not exists' do
-      expect { another_strange_image(product) }.to raise_error(NoMethodError)
-    end
-
-    it 'does not raise errors when helper method called' do
-      expect { foobar_image(product) }.not_to raise_error
-    end
-
-    it 'raises NoMethodError when statement with name equal to style name called' do
-      expect { foobar(product) }.to raise_error(NoMethodError)
-    end
-  end
-
   context 'link_to_tracking' do
     it 'returns tracking link if available' do
       a = link_to_tracking_html(shipping_method: true, tracking: '123', tracking_url: 'http://g.c/?t=123').css('a')
@@ -298,23 +258,6 @@ describe Spree::BaseHelper, type: :helper do
         it 'returns the price adding the VAT' do
           expect(display_price(product)).to eq('$23.32')
         end
-      end
-    end
-  end
-
-  describe '#spree_favicon_path' do
-    context 'when a store has its own favicon' do
-      let(:current_store) { create(:store, :with_favicon) }
-
-      it do
-        expect(spree_favicon_path).to end_with('thinking-cat.jpg')
-        expect(URI.parse(spree_favicon_path).host).to be_present
-      end
-    end
-
-    context 'when a store has no favicon' do
-      it do
-        expect(spree_favicon_path).to eq('favicon.ico')
       end
     end
   end
