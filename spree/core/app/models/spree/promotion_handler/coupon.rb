@@ -177,8 +177,8 @@ module Spree
 
         # Check for applied adjustments.
         discount = order.all_adjustments.promotion.eligible.detect do |p|
-          p.cached_source.promotion.code.try(:downcase) == coupon_code ||
-            Spree::CouponCode.unused.where(promotion_id: p.cached_source.promotion_id, code: coupon_code).exists?
+          p.source.promotion.code.try(:downcase) == coupon_code ||
+            Spree::CouponCode.unused.where(promotion_id: p.source.promotion_id, code: coupon_code).exists?
         end
 
         # Check for applied line items.
@@ -209,7 +209,7 @@ module Spree
       end
 
       def handle_coupon_code(discount, coupon_code)
-        Spree::CouponCode.unused.find_by(promotion_id: discount.cached_source.promotion_id, code: coupon_code)&.apply_order!(order)
+        Spree::CouponCode.unused.find_by(promotion_id: discount.source.promotion_id, code: coupon_code)&.apply_order!(order)
       end
 
       def load_gift_card_code
