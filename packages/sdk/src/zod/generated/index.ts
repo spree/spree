@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 export { AdminCustomerSchema, type AdminCustomer } from './AdminCustomer';
+export { AdminLineItemSchema, type AdminLineItem } from './AdminLineItem';
 export { AdminMetafieldSchema, type AdminMetafield } from './AdminMetafield';
 export { AdminOrderSchema, type AdminOrder } from './AdminOrder';
 export { AdminPriceSchema, type AdminPrice } from './AdminPrice';

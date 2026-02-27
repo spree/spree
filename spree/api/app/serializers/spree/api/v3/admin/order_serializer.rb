@@ -11,13 +11,18 @@ module Spree
                    store_owner_notification_delivered: :boolean,
                    internal_note: [:string, nullable: true], approver_id: [:string, nullable: true],
                    canceler_id: [:string, nullable: true], created_by_id: [:string, nullable: true],
-                   canceled_at: [:string, nullable: true], approved_at: [:string, nullable: true]
+                   canceled_at: [:string, nullable: true], approved_at: [:string, nullable: true],
+                   metadata: 'Record<string, unknown> | null'
 
           # Admin-only attributes
           attributes :channel, :last_ip_address, :considered_risky,
                      :confirmation_delivered, :store_owner_notification_delivered,
                      :internal_note, :approver_id,
                      canceled_at: :iso8601, approved_at: :iso8601
+
+          attribute :metadata do |order|
+            order.metadata.presence
+          end
 
           attribute :canceler_id do |order|
             order.canceler_id
@@ -26,6 +31,8 @@ module Spree
           attribute :created_by_id do |order|
             order.created_by_id
           end
+
+          many :line_items, resource: Spree.api.admin_line_item_serializer
 
           one :user,
               resource: Spree.api.admin_customer_serializer,

@@ -156,6 +156,7 @@ module Spree
         admin_price_serializer: 'Spree::Api::V3::Admin::PriceSerializer',
         admin_metafield_serializer: 'Spree::Api::V3::Admin::MetafieldSerializer',
         admin_taxon_serializer: 'Spree::Api::V3::Admin::TaxonSerializer',
+        admin_line_item_serializer: 'Spree::Api::V3::Admin::LineItemSerializer',
         admin_taxonomy_serializer: 'Spree::Api::V3::Admin::TaxonomySerializer',
 
         # platform serializers

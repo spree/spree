@@ -1,8 +1,8 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
 import { AdminCustomerSchema } from './AdminCustomer';
+import { AdminLineItemSchema } from './AdminLineItem';
 import { StoreAddressSchema } from './StoreAddress';
-import { StoreLineItemSchema } from './StoreLineItem';
 import { StoreOrderPromotionSchema } from './StoreOrderPromotion';
 import { StorePaymentSchema } from './StorePayment';
 import { StorePaymentMethodSchema } from './StorePaymentMethod';
@@ -40,7 +40,7 @@ export const AdminOrderSchema: z.ZodObject<any> = z.object({
   created_at: z.string(),
   updated_at: z.string(),
   order_promotions: z.array(StoreOrderPromotionSchema),
-  line_items: z.array(StoreLineItemSchema),
+  line_items: z.array(AdminLineItemSchema),
   shipments: z.array(StoreShipmentSchema),
   payments: z.array(StorePaymentSchema),
   bill_address: StoreAddressSchema.nullable(),
@@ -55,6 +55,7 @@ export const AdminOrderSchema: z.ZodObject<any> = z.object({
   approver_id: z.string().nullable(),
   canceled_at: z.string().nullable(),
   approved_at: z.string().nullable(),
+  metadata: z.record(z.string(), z.unknown()).nullable(),
   canceler_id: z.string().nullable(),
   created_by_id: z.string().nullable(),
   user: z.lazy(() => AdminCustomerSchema).optional(),
