@@ -24,8 +24,12 @@ module Spree
       end
 
       def masked_api_key(api_key)
-        token = api_key.token
-        "#{token[0..6]}#{'*' * 16}#{token[-4..]}"
+        if api_key.secret?
+          "#{api_key.token_prefix}#{'*' * 15}"
+        else
+          token = api_key.token
+          "#{token[0..6]}#{'*' * 16}#{token[-4..]}"
+        end
       end
     end
   end

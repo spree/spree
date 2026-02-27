@@ -3,7 +3,41 @@
     <h5 class="card-title"><%= Spree.t(:api_key) %></h5>
   </div>
   <div class="card-body">
-    <% if @api_key.active? %>
+    <% if !@api_key.active? %>
+      <div class="bg-red-50 border border-red-200 rounded-md p-4">
+        <div class="flex items-center">
+          <%= icon 'alert-triangle', class: 'text-red-500 mr-2' %>
+          <span class="text-red-700"><%= Spree.t('admin.api_keys.key_revoked_message') %></span>
+        </div>
+      </div>
+    <% elsif @api_key.secret? && flash[:plaintext_token].present? %>
+      <div class="bg-yellow-50 border border-yellow-200 rounded-md p-4 mb-4">
+        <div class="flex items-center">
+          <%= icon 'alert-triangle', class: 'text-yellow-600 mr-2' %>
+          <span class="text-yellow-800 text-sm font-medium"><%= Spree.t('admin.api_keys.token_warning') %></span>
+        </div>
+      </div>
+      <div data-controller="password-visibility" class="input-group gap-0 pr-1">
+        <input type="password" class="grow text-truncate" data-password-visibility-target="input" spellcheck="false" value="<%= flash[:plaintext_token] %>" readonly>
+
+        <button type="button" class="btn hover:bg-gray-100 p-1 mr-1 rounded" data-action="password-visibility#toggle">
+          <span data-password-visibility-target="icon"><%= icon 'eye', class: 'mr-0' %></span>
+          <span data-password-visibility-target="icon" class="hidden"><%= icon 'eye-off', class: 'mr-0' %></span>
+        </button>
+
+        <%= clipboard_component(flash[:plaintext_token],
+              button_class: 'btn hover:bg-gray-100 p-1 rounded',
+              icon_class: 'mr-0') %>
+      </div>
+    <% elsif @api_key.secret? %>
+      <div class="bg-gray-50 border border-gray-200 rounded-md p-4">
+        <div class="flex items-center mb-2">
+          <%= icon 'lock', class: 'text-gray-500 mr-2' %>
+          <span class="text-gray-700 text-sm font-medium"><%= Spree.t('admin.api_keys.secret_key_hidden') %></span>
+        </div>
+        <code class="text-sm text-gray-500"><%= @api_key.token_prefix %><%= '***************' %></code>
+      </div>
+    <% else %>
       <div data-controller="password-visibility" class="input-group gap-0 pr-1">
         <input type="password" class="grow text-truncate" data-password-visibility-target="input" spellcheck="false" value="<%= @api_key.token %>" readonly>
 
@@ -12,16 +46,9 @@
           <span data-password-visibility-target="icon" class="hidden"><%= icon 'eye-off', class: 'mr-0' %></span>
         </button>
 
-        <%= clipboard_component(@api_key.token, 
-              button_class: 'btn hover:bg-gray-100 p-1 rounded', 
+        <%= clipboard_component(@api_key.token,
+              button_class: 'btn hover:bg-gray-100 p-1 rounded',
               icon_class: 'mr-0') %>
-      </div>
-    <% else %>
-      <div class="bg-red-50 border border-red-200 rounded-md p-4">
-        <div class="flex items-center">
-          <%= icon 'alert-triangle', class: 'text-red-500 mr-2' %>
-          <span class="text-red-700"><%= Spree.t('admin.api_keys.key_revoked_message') %></span>
-        </div>
       </div>
     <% end %>
   </div>
