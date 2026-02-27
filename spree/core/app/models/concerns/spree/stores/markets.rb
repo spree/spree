@@ -72,10 +72,10 @@ module Spree
       # @return [Array<Spree::Country>]
       def countries_available_for_checkout
         @countries_available_for_checkout = begin
-          if market_ids.any?
-            countries_from_markets
+          if has_markets?
+            markets.flat_map(&:countries).uniq.sort_by(&:name)
           else
-            Spree::Country.all
+            Spree::Country.all.to_a
           end
         end
       end
