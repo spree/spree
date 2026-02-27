@@ -680,12 +680,12 @@ Understanding when to use each:
 | Feature | Metafields | Metadata | Product Properties (Legacy) |
 |---------|-----------|----------|----------------------------|
 | **Available Since** | Spree 5.2+ | All versions | Pre-5.2 (deprecated) |
-| **Recommended For** | New projects | Simple key-value | Legacy projects only |
-| **Structure** | Strongly typed, schema-defined | Simple JSON key-value | Product-specific properties |
+| **Recommended For** | New projects | Integration data, tracking | Legacy projects only |
+| **Structure** | Strongly typed, schema-defined | Stripe-style flat key-value | Product-specific properties |
 | **Validation** | Type-specific validation | None | Name/value pairs |
-| **Visibility** | Configurable (front/back/both) | Fixed (public/private) | Always public |
-| **API Access** | Auto-included in API | Requires manual serialization | Auto-included in API |
-| **Admin UI** | Dedicated management UI | Direct JSON editing | Dedicated UI |
+| **Visibility** | Configurable (front/back/both) | Write-only in Store API, readable in Admin API | Always public |
+| **API Access** | Auto-included in API | Writable on cart, line items, orders | Auto-included in API |
+| **Admin UI** | Dedicated management UI | Viewable in JSON preview | Dedicated UI |
 | **Organization** | Namespaced (namespace.key) | Flat structure | Property-based |
 | **Data Types** | 6 specific types with serialization | Any JSON-serializable data | Text only |
 | **Querying** | Built-in query scopes | Manual JSON queries | Built-in queries |
@@ -703,10 +703,10 @@ Understanding when to use each:
 
 ### When to Use Metadata
 
-- Simple key-value storage without validation
-- Truly dynamic data with unknown structure
-- Integration payloads that change frequently
-- Quick prototyping without schema definition
+- Storing external system IDs (Stripe, ERP, CRM)
+- Tracking attribution data (UTM parameters, referral source)
+- Write-and-forget data for backend systems
+- Integration payloads that don't need validation or admin UI
 
 ### When to Use Product Properties (Legacy)
 

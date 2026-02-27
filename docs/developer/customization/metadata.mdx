@@ -2,42 +2,238 @@
 title: Metadata
 ---
 
-<Warning>
-  It's recommended to use [Metafields](/developer/core-concepts/metafields) instead of Metadata. Metafields provide type-safe, validated custom attributes with better admin UI support.
-</Warning>
-
 ## Overview
 
-Metadata is a way to add additional information to Spree objects. There are two types of metadata:
+Metadata provides simple, unstructured key-value storage on Spree resources — similar to [Stripe's metadata](https://docs.stripe.com/api/metadata). It's ideal for storing integration IDs, tracking data, or any arbitrary information that doesn't need validation or admin UI.
 
-<CardGroup>
-  <Card title="Public Metadata">
-    Public metadata is available via <a href="/api-reference/storefront">Storefront API</a> without any authentication. It is stored in the <code>public_metadata</code> JSONB column of the table. This kind of metadata should be only used for public information that is visible to all users, eg. additional information about the object.
-  </Card>
-  <Card title="Private Metadata">
-    Private metadata is only available via <a href="/api-reference/platform">Platform API</a> and requires authentication. It is stored in the <code>private_metadata</code> JSONB column of the table. This kind of metadata should be only used for private information that is not visible to the public, eg. IDs in external systems, private notes, etc.
-  </Card>
-</CardGroup>
+Metadata is **write-only** in the Store API — you can set it when creating or updating resources, but it is never returned in Store API responses. It is visible in Admin API responses for administrative use.
 
-## Usage
+<Info>
+For structured, type-safe custom attributes with admin UI support, use [Metafields](/developer/core-concepts/metafields) instead.
+</Info>
 
-### Adding metadata to an object
+## Store API
 
-```ruby
-taxon = Spree::Taxon.find(1)
-taxon.public_metadata = { "google_category_id": "123" }
-taxon.save!
+### Cart creation
+
+Set metadata when creating a new cart:
+
+```bash
+POST /api/v3/store/cart
+Content-Type: application/json
+
+{
+  "metadata": {
+    "source": "mobile_app",
+    "campaign": "summer_sale"
+  }
+}
 ```
 
-### Fetching metadata from an object
+```typescript
+// @spree/sdk
+const cart = await client.store.cart.create({
+  metadata: { source: 'mobile_app', campaign: 'summer_sale' }
+})
 
-```ruby
-taxon = Spree::Taxon.find(1)
-puts taxon.public_metadata["google_category_id"]
+// @spree/next
+const cart = await getOrCreateCart({ source: 'mobile_app' })
 ```
 
-### Querying objects by metadata
+### Adding line items
+
+Set metadata when adding items to the cart:
+
+```bash
+POST /api/v3/store/orders/:order_id/line_items
+Content-Type: application/json
+
+{
+  "variant_id": "variant_k5nR8xLq",
+  "quantity": 1,
+  "metadata": {
+    "gift_note": "Happy Birthday!",
+    "engraving": "J.D."
+  }
+}
+```
+
+```typescript
+const order = await client.store.orders.lineItems.create(orderId, {
+  variant_id: 'variant_k5nR8xLq',
+  quantity: 1,
+  metadata: { gift_note: 'Happy Birthday!' },
+})
+```
+
+### Updating line items
+
+Metadata is **merged** with existing values on update. Set a key to `null` to remove it.
+
+```bash
+PATCH /api/v3/store/orders/:order_id/line_items/:id
+Content-Type: application/json
+
+{
+  "metadata": {
+    "engraving": "A.B.",
+    "gift_note": null
+  }
+}
+```
+
+You can update metadata without changing quantity, or update both at once:
+
+```typescript
+// Metadata only
+await client.store.orders.lineItems.update(orderId, lineItemId, {
+  metadata: { engraving: 'A.B.' },
+})
+
+// Both quantity and metadata
+await client.store.orders.lineItems.update(orderId, lineItemId, {
+  quantity: 3,
+  metadata: { gift_note: 'Happy Birthday!' },
+})
+```
+
+### Updating orders
+
+```bash
+PATCH /api/v3/store/orders/:id
+Content-Type: application/json
+
+{
+  "metadata": {
+    "utm_source": "google",
+    "utm_campaign": "summer_sale"
+  }
+}
+```
+
+```typescript
+await client.store.orders.update(orderId, {
+  metadata: { utm_source: 'google' },
+}, { orderToken })
+```
+
+## Admin API
+
+Metadata is **readable** in Admin API responses on orders and line items:
+
+```json
+{
+  "id": "or_m3Rp9wXz",
+  "number": "R123456",
+  "metadata": {
+    "source": "mobile_app",
+    "utm_campaign": "summer_sale"
+  },
+  "line_items": [
+    {
+      "id": "li_x8Kp2qWz",
+      "metadata": {
+        "gift_note": "Happy Birthday!"
+      }
+    }
+  ]
+}
+```
+
+When there is no metadata, the field is `null`.
+
+## Ruby / Backend
+
+### Reading and writing
+
+Every model that includes `Spree::Metadata` has a `metadata` accessor (alias for `private_metadata`):
 
 ```ruby
-Spree::Taxon.where("public_metadata->>'google_category_id' = ?", "123")
+order = Spree::Order.find_by!(number: 'R123456')
+
+# Write
+order.metadata = { 'source' => 'mobile_app' }
+order.save!
+
+# Read
+order.metadata['source'] # => "mobile_app"
+
+# Merge
+order.metadata = order.metadata.merge('campaign' => 'summer')
+order.save!
+```
+
+### Querying
+
+```ruby
+# Find orders with specific metadata value (PostgreSQL)
+Spree::Order.where("private_metadata->>'source' = ?", "mobile_app")
+
+# Check for key existence
+Spree::Order.where("private_metadata ? 'source'")
+```
+
+## Merge semantics
+
+Metadata updates use **merge semantics** — existing keys are preserved, new keys are added, and keys set to `null` are removed. This matches [Stripe's behavior](https://docs.stripe.com/api/metadata).
+
+```
+# Initial metadata
+{ "source": "mobile_app", "campaign": "summer" }
+
+# Update with
+{ "campaign": "winter", "new_key": "value" }
+
+# Result
+{ "source": "mobile_app", "campaign": "winter", "new_key": "value" }
+```
+
+## Metadata vs Metafields
+
+| | Metadata | [Metafields](/developer/core-concepts/metafields) |
+|---|---|---|
+| **Use case** | Integration data, tracking, simple key-value | Structured custom attributes with admin UI |
+| **Validation** | None | Type-specific (text, number, boolean, JSON) |
+| **Visibility** | Write-only in Store API, readable in Admin API | Configurable (front-end, back-end, both) |
+| **Admin UI** | Viewable in JSON preview | Full admin management |
+| **Schema** | Schemaless JSON | Defined via MetafieldDefinitions |
+| **API pattern** | Stripe-style flat key-value | Shopify-style typed resources |
+
+### When to use metadata
+
+- Storing external system IDs (e.g., Stripe payment intent ID, ERP order ID)
+- Tracking attribution data (UTM parameters, referral source)
+- Passing context from the storefront that doesn't need validation
+- Any write-and-forget data that only needs to be read by backend systems
+
+### When to use metafields
+
+- Custom product specifications shown to customers
+- Admin-managed fields with validation
+- Data that needs to appear in the admin UI
+- Querying/filtering by custom attributes
+
+## Supported resources
+
+All models that include the `Spree::Metadata` concern support metadata. This includes all core models: Orders, Line Items, Products, Variants, Taxons, Payments, Shipments, and more.
+
+The Store API currently supports writing metadata on:
+
+- **Cart** — on creation (`POST /api/v3/store/cart`)
+- **Line Items** — on create and update (`POST/PATCH /api/v3/store/orders/:id/line_items`)
+- **Orders** — on update (`PATCH /api/v3/store/orders/:id`)
+
+## Migration from public_metadata
+
+The `public_metadata` column is deprecated. Metadata is no longer returned in Store API responses. If you were using `public_metadata` for data that needs to be visible to customers, migrate to [Metafields](/developer/core-concepts/metafields) with `display_on: 'both'`.
+
+```ruby
+# Before (deprecated)
+order.public_metadata = { 'gift_message' => 'Happy Birthday!' }
+
+# After — use metadata for write-only storage
+order.metadata = { 'gift_message' => 'Happy Birthday!' }
+
+# After — use metafields for customer-visible structured data
+order.set_metafield('custom.gift_message', 'Happy Birthday!')
 ```
