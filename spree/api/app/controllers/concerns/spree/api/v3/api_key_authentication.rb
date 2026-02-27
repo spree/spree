@@ -27,7 +27,7 @@ module Spree
             return false
           end
 
-          Spree::ApiKeyTouchJob.perform_later(@current_api_key.id)
+          touch_api_key_if_needed(@current_api_key)
           true
         end
 
@@ -49,11 +49,20 @@ module Spree
             return false
           end
 
-          Spree::ApiKeyTouchJob.perform_later(@current_api_key.id)
+          touch_api_key_if_needed(@current_api_key)
           true
         end
 
         private
+
+        # Marks the API key as used at most once per hour
+        # to avoid unnecessary DB writes and job queue pressure on every request.
+        # This follows the same approach as GitHub's personal access tokens.
+        def touch_api_key_if_needed(api_key)
+          return if api_key.last_used_at.present? && api_key.last_used_at > 1.hour.ago
+
+          Spree::ApiKeys::MarkAsUsed.perform_later(api_key.id, Time.current)
+        end
 
         # Extracts the API key from the request headers or params.
         #
