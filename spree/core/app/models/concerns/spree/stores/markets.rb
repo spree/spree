@@ -65,7 +65,9 @@ module Spree
       # Returns countries from all markets as an ActiveRecord relation
       # @return [ActiveRecord::Relation<Spree::Country>]
       def countries_from_markets
-        Spree::Country.where(id: Spree::MarketCountry.where(market_id: markets.ids).select(:country_id)).order(:name)
+        Spree::Country
+                  .where(id: Spree::Country.joins(market_countries: :market).where(Spree::Market.table_name => { store_id: id, deleted_at: nil }).select(:id))
+                  .order(:name)
       end
 
       # Returns the countries available for checkout, derived from markets
