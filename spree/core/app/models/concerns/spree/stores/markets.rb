@@ -65,7 +65,7 @@ module Spree
       # Returns countries from all markets as an ActiveRecord relation
       # @return [ActiveRecord::Relation<Spree::Country>]
       def countries_from_markets
-        @countries_from_markets ||= Spree::Country.joins(:market_countries).where(spree_market_countries: { market_id: market_ids }).distinct.order(:name)
+        @countries_from_markets ||= Spree::Country.joins(:market_countries).where(spree_market_countries: { market_id: markets.ids }).distinct.order(:name)
       end
 
       # Returns the countries available for checkout, derived from markets
@@ -83,7 +83,7 @@ module Spree
       # Returns supported currencies derived from markets, falling back to store attributes
       # @return [Array<Money::Currency>]
       def supported_currencies_list
-        @supported_currencies_list ||= if market_ids.any?
+        @supported_currencies_list ||= if has_markets?
                                          markets.pluck(:currency).uniq.map do |code|
                                            ::Money::Currency.find(code)
                                          end.compact.sort_by { |c| c.iso_code == default_currency ? 0 : 1 }
@@ -95,7 +95,7 @@ module Spree
       # Returns supported locales derived from markets, falling back to store attributes
       # @return [Array<String>]
       def supported_locales_list
-        @supported_locales_list ||= if market_ids.any?
+        @supported_locales_list ||= if has_markets?
                                       (markets.flat_map(&:supported_locales_list) << default_locale).compact.uniq.sort
                                     else
                                       legacy_supported_locales_list
@@ -105,7 +105,7 @@ module Spree
       private
 
       def has_markets?
-        persisted? && (markets.loaded? ? markets.any? : markets.exists?)
+        @has_markets ||= persisted? && (markets.loaded? ? markets.any? : markets.exists?)
       end
 
       def legacy_supported_currencies_list
