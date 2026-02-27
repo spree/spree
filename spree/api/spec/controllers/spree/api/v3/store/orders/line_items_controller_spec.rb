@@ -40,6 +40,36 @@ RSpec.describe Spree::Api::V3::Store::Orders::LineItemsController, type: :contro
       expect(json_response['item_total'].to_f).to be > 0
     end
 
+    context 'with metadata' do
+      it 'adds a line item with metadata' do
+        post :create, params: {
+          order_id: order.to_param,
+          variant_id: variant.prefixed_id,
+          quantity: 1,
+          metadata: { 'gift_note' => 'Happy Birthday!' }
+        }
+
+        expect(response).to have_http_status(:created)
+        line_item = order.line_items.last
+        expect(line_item.metadata).to eq({ 'gift_note' => 'Happy Birthday!' })
+      end
+
+      it 'does not return metadata in response' do
+        post :create, params: {
+          order_id: order.to_param,
+          variant_id: variant.prefixed_id,
+          quantity: 1,
+          metadata: { 'gift_note' => 'Happy Birthday!' }
+        }
+
+        expect(response).to have_http_status(:created)
+        json_response['line_items'].each do |li|
+          expect(li).not_to have_key('metadata')
+          expect(li).not_to have_key('private_metadata')
+        end
+      end
+    end
+
     context 'with order token (guest)' do
       let(:guest_order) { create(:order, user: nil, store: store) }
 
@@ -107,6 +137,46 @@ RSpec.describe Spree::Api::V3::Store::Orders::LineItemsController, type: :contro
       patch :update, params: { order_id: order.to_param, id: line_item.prefixed_id, quantity: 5 }
 
       expect(json_response['item_total'].to_f).to be > original_total
+    end
+
+    context 'with metadata' do
+      it 'updates line item metadata' do
+        patch :update, params: {
+          order_id: order.to_param,
+          id: line_item.prefixed_id,
+          metadata: { 'gift_note' => 'Happy Birthday!' }
+        }
+
+        expect(response).to have_http_status(:ok)
+        expect(line_item.reload.metadata).to eq({ 'gift_note' => 'Happy Birthday!' })
+      end
+
+      it 'merges metadata with existing values' do
+        line_item.update!(private_metadata: { 'existing_key' => 'value' })
+
+        patch :update, params: {
+          order_id: order.to_param,
+          id: line_item.prefixed_id,
+          metadata: { 'new_key' => 'new_value' }
+        }
+
+        expect(response).to have_http_status(:ok)
+        expect(line_item.reload.metadata).to eq({ 'existing_key' => 'value', 'new_key' => 'new_value' })
+      end
+
+      it 'updates metadata and quantity together' do
+        patch :update, params: {
+          order_id: order.to_param,
+          id: line_item.prefixed_id,
+          quantity: 3,
+          metadata: { 'gift_note' => 'Happy Birthday!' }
+        }
+
+        expect(response).to have_http_status(:ok)
+        line_item.reload
+        expect(line_item.quantity).to eq(3)
+        expect(line_item.metadata).to eq({ 'gift_note' => 'Happy Birthday!' })
+      end
     end
 
     context 'error handling' do

@@ -6,10 +6,12 @@
 
 - Add `metadata` support to Store API — Stripe-style write-only key-value storage
 
+  - Add `CreateCartParams` with optional `metadata` for setting metadata on cart creation
   - Add `metadata` parameter to `AddLineItemParams` for setting metadata when adding items to cart
   - Add `metadata` parameter to `UpdateLineItemParams` for updating line item metadata (merge semantics)
   - Add `metadata` parameter to `UpdateOrderParams` for updating order metadata (merge semantics)
   - Make `quantity` optional in `UpdateLineItemParams` (can now update metadata without changing quantity)
+  - **Breaking:** `cart.create()` signature changed from `(options?)` to `(params?, options?)` — first argument is now optional `CreateCartParams`
   - Remove `public_metadata` from `StorePaymentSource` type and Zod schema
 
 - Remove deprecated fields from `StoreStore` type — these are now managed through Markets and dedicated API endpoints

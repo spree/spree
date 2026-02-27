@@ -8,6 +8,7 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
   path '/api/v3/store/cart' do
     post 'Create a new cart' do
       tags 'Cart'
+      consumes 'application/json'
       produces 'application/json'
       security [api_key: []]
       description <<~DESC
@@ -22,6 +23,12 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false,
                 description: 'Bearer JWT token (optional - for authenticated customers)'
+      parameter name: :body, in: :body, required: false, schema: {
+        type: :object,
+        properties: {
+          metadata: { type: :object, description: 'Write-only key-value metadata (Stripe-style). Not returned in responses.' }
+        }
+      }
 
       response '201', 'cart created (guest)' do
         let(:'x-spree-api-key') { api_key.token }
@@ -43,6 +50,20 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
         schema '$ref' => '#/components/schemas/StoreOrder'
 
         run_test!
+      end
+
+      response '201', 'cart created with metadata' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:body) { { metadata: { 'source' => 'mobile_app', 'campaign' => 'summer_sale' } } }
+
+        schema '$ref' => '#/components/schemas/StoreOrder'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['number']).to be_present
+          order = Spree::Order.find_by!(number: data['number'])
+          expect(order.metadata).to eq({ 'source' => 'mobile_app', 'campaign' => 'summer_sale' })
+        end
       end
 
       response '401', 'unauthorized - invalid API key' do

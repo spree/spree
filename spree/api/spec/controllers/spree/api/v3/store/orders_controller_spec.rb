@@ -122,6 +122,39 @@ RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
 
         expect(response).to have_http_status(:unprocessable_entity)
       end
+
+      it 'updates order metadata' do
+        patch :update, params: {
+          id: order.to_param,
+          metadata: { 'source' => 'mobile_app', 'utm_campaign' => 'summer' }
+        }
+
+        expect(response).to have_http_status(:ok)
+        expect(order.reload.metadata).to eq({ 'source' => 'mobile_app', 'utm_campaign' => 'summer' })
+      end
+
+      it 'merges metadata with existing values' do
+        order.update!(private_metadata: { 'existing' => 'value' })
+
+        patch :update, params: {
+          id: order.to_param,
+          metadata: { 'new_key' => 'new_value' }
+        }
+
+        expect(response).to have_http_status(:ok)
+        expect(order.reload.metadata).to eq({ 'existing' => 'value', 'new_key' => 'new_value' })
+      end
+
+      it 'does not return metadata in response' do
+        patch :update, params: {
+          id: order.to_param,
+          metadata: { 'source' => 'mobile_app' }
+        }
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response).not_to have_key('metadata')
+        expect(json_response).not_to have_key('private_metadata')
+      end
     end
 
     context 'with order token' do

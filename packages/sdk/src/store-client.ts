@@ -10,6 +10,7 @@ import type {
   ProductFiltersResponse,
   TaxonListParams,
   OrderListParams,
+  CreateCartParams,
   AddLineItemParams,
   UpdateLineItemParams,
   UpdateOrderParams,
@@ -266,9 +267,13 @@ export class StoreClient {
 
     /**
      * Create a new cart
+     * @param params - Optional cart parameters (e.g., metadata)
      */
-    create: (options?: RequestOptions): Promise<StoreOrder & { token: string }> =>
-      this.request<StoreOrder & { token: string }>('POST', '/cart', options),
+    create: (params?: CreateCartParams, options?: RequestOptions): Promise<StoreOrder & { token: string }> =>
+      this.request<StoreOrder & { token: string }>('POST', '/cart', {
+        ...options,
+        body: params,
+      }),
 
     /**
      * Associate a guest cart with the currently authenticated user

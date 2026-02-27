@@ -39,6 +39,24 @@ RSpec.describe Spree::Api::V3::Store::CartController, type: :controller do
       expect(Spree::Order.last.locale).to be_present
     end
 
+    context 'with metadata' do
+      it 'creates a cart with metadata' do
+        post :create, params: { metadata: { 'source' => 'mobile_app', 'campaign' => 'summer_sale' } }
+
+        expect(response).to have_http_status(:created)
+        order = Spree::Order.last
+        expect(order.metadata).to eq({ 'source' => 'mobile_app', 'campaign' => 'summer_sale' })
+      end
+
+      it 'does not return metadata in response' do
+        post :create, params: { metadata: { 'source' => 'mobile_app' } }
+
+        expect(response).to have_http_status(:created)
+        expect(json_response).not_to have_key('metadata')
+        expect(json_response).not_to have_key('private_metadata')
+      end
+    end
+
     context 'for authenticated user' do
       before do
         request.headers['Authorization'] = "Bearer #{jwt_token}"

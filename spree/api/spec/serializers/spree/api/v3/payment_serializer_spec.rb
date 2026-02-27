@@ -76,7 +76,7 @@ RSpec.describe Spree::Api::V3::PaymentSerializer do
         expect(subject['source']).to be_a(Hash)
         expect(subject['source']['id']).to eq(payment.source.prefixed_id)
         expect(subject['source']).to have_key('gateway_payment_profile_id')
-        expect(subject['source']).to have_key('public_metadata')
+        expect(subject['source']).not_to have_key('public_metadata')
       end
     end
 

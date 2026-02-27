@@ -6,6 +6,7 @@
 
 - Add `metadata` support to cart actions
 
+  - `getOrCreateCart()` now accepts optional `metadata` parameter for setting metadata on new carts
   - `addItem()` now accepts optional `metadata` parameter: `addItem(variantId, quantity, metadata)`
   - **Breaking:** `updateItem()` signature changed from `(lineItemId, quantity)` to `(lineItemId, { quantity?, metadata? })` — pass an object with `quantity` and/or `metadata` keys
   - Updated `@spree/sdk` peer dependency

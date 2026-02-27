@@ -74,6 +74,11 @@ export interface OrderListParams extends ListParams {
 }
 
 // Cart operations
+export interface CreateCartParams {
+  /** Arbitrary key-value metadata (stored, not returned in responses) */
+  metadata?: Record<string, unknown>;
+}
+
 export interface AddLineItemParams {
   variant_id: string;
   quantity: number;

@@ -26,13 +26,17 @@ export async function getCart(): Promise<(StoreOrder & { token: string }) | null
 
 /**
  * Get existing cart or create a new one.
+ * @param metadata - Optional metadata to set on the cart when creating a new one
  */
-export async function getOrCreateCart(): Promise<StoreOrder & { token: string }> {
+export async function getOrCreateCart(
+  metadata?: Record<string, unknown>
+): Promise<StoreOrder & { token: string }> {
   const existing = await getCart();
   if (existing) return existing;
 
   const token = await getAccessToken();
-  const cart = await getClient().store.cart.create(token ? { token } : undefined);
+  const cartParams = metadata ? { metadata } : undefined;
+  const cart = await getClient().store.cart.create(cartParams, token ? { token } : undefined);
 
   if (cart.token) {
     await setCartToken(cart.token);
