@@ -8,7 +8,7 @@ RSpec.describe 'Locales API', type: :request, swagger_doc: 'api-reference/store.
   let!(:usa) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US', name: 'United States') }
   let!(:germany) { Spree::Country.find_by(iso: 'DE') || create(:country, iso: 'DE', name: 'Germany') }
 
-  let!(:na_market) { @default_market }
+  let!(:na_market) { create(:market, :default, name: 'North America', store: store, countries: [usa], currency: 'USD', default_locale: 'en') }
   let!(:eu_market) { create(:market, name: 'Europe', store: store, countries: [germany], currency: 'EUR', default_locale: 'de') }
 
   path '/api/v3/store/locales' do
