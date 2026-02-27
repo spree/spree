@@ -15,7 +15,8 @@ module Spree
               user: current_user,
               store: current_store,
               currency: current_currency,
-              locale: current_locale
+              locale: current_locale,
+              metadata: cart_params[:metadata] || {}
             )
 
             if result.success?
@@ -58,6 +59,10 @@ module Spree
           end
 
           private
+
+          def cart_params
+            params.permit(metadata: {})
+          end
 
           # Find incomplete cart by order token for associate action
           # Only finds guest carts (no user) or carts already owned by current user (idempotent)

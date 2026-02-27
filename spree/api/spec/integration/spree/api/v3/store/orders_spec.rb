@@ -114,6 +114,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
           email: { type: :string, format: 'email', example: 'customer@example.com' },
           locale: { type: :string, example: 'en' },
           special_instructions: { type: :string, example: 'Leave at door' },
+          metadata: { type: :object, additionalProperties: true, description: 'Arbitrary key-value metadata (merged with existing)', example: { source: 'mobile_app' } },
           bill_address: {
             type: :object,
             properties: {
@@ -158,6 +159,17 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['special_instructions']).to eq('Leave at door')
+        end
+      end
+
+      response '200', 'order updated with metadata' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { "Bearer #{jwt_token}" }
+        let(:id) { order.to_param }
+        let(:body) { { metadata: { source: 'mobile_app', campaign: 'summer_sale' } } }
+
+        run_test! do |_response|
+          expect(order.reload.metadata).to include('source' => 'mobile_app', 'campaign' => 'summer_sale')
         end
       end
 

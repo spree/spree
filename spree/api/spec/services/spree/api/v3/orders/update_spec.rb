@@ -200,6 +200,26 @@ RSpec.describe Spree::Api::V3::Orders::Update do
       end
     end
 
+    describe 'updating metadata' do
+      let(:params) { { metadata: { 'erp_id' => '12345', 'source' => 'mobile' } } }
+
+      it 'merges metadata into the order' do
+        expect(subject).to be_success
+        expect(order.reload.metadata).to include('erp_id' => '12345', 'source' => 'mobile')
+      end
+
+      context 'with existing metadata' do
+        before { order.update!(metadata: { 'existing_key' => 'existing_value' }) }
+
+        let(:params) { { metadata: { 'new_key' => 'new_value' } } }
+
+        it 'merges without removing existing keys' do
+          expect(subject).to be_success
+          expect(order.reload.metadata).to include('existing_key' => 'existing_value', 'new_key' => 'new_value')
+        end
+      end
+    end
+
     describe 'updating multiple fields' do
       let(:country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
       let!(:state) { country.states.find_by(abbr: 'NY') || create(:state, country: country, abbr: 'NY', name: 'New York') }

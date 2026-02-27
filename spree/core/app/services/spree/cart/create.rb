@@ -11,11 +11,13 @@ module Spree
       # @param private_metadata [Hash] private metadata for the order
       # @param order_params [Hash] additional order attributes
       # @return [Spree::ServiceModule::Result]
-      def call(user:, store:, currency:, locale: nil, public_metadata: {}, private_metadata: {}, order_params: {})
+      def call(user:, store:, currency:, locale: nil, metadata: {}, public_metadata: {}, private_metadata: {}, order_params: {})
         order_params ||= {}
 
         # we cannot create an order without store
         return failure(:store_is_required) if store.nil?
+
+        resolved_metadata = metadata.presence || private_metadata
 
         default_params = {
           user: user,
@@ -23,7 +25,7 @@ module Spree
           locale: locale || Spree::Current.locale,
           token: Spree::GenerateToken.new.call(Spree::Order),
           public_metadata: public_metadata.to_h,
-          private_metadata: private_metadata.to_h
+          private_metadata: resolved_metadata.to_h
         }
 
         order = store.orders.create!(default_params.merge(order_params))

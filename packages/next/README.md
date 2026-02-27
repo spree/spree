@@ -133,8 +133,9 @@ import { getCart, getOrCreateCart, addItem, updateItem, removeItem, clearCart } 
 
 const cart = await getCart();
 const cart = await getOrCreateCart();
-await addItem(variantId, quantity);
-await updateItem(lineItemId, quantity);
+await addItem(variantId, quantity, { gift_message: 'Happy Birthday!' });
+await updateItem(lineItemId, { quantity: 3 });
+await updateItem(lineItemId, { metadata: { engraving: 'J.D.' } });
 await removeItem(lineItemId);
 await clearCart();
 ```

@@ -55,6 +55,7 @@ module Spree
             order.special_instructions = params[:special_instructions] if params.key?(:special_instructions)
             order.currency = params[:currency].upcase if params[:currency].present?
             order.locale = params[:locale] if params[:locale].present?
+            order.metadata = order.metadata.merge(params[:metadata].to_h) if params[:metadata].present?
           end
 
           def assign_address(address_type)

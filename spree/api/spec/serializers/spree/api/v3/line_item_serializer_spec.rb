@@ -90,6 +90,12 @@ RSpec.describe Spree::Api::V3::LineItemSerializer do
     end
   end
 
+  it 'does not expose metadata in Store API responses' do
+    line_item.update!(private_metadata: { 'gift_note' => 'Happy Birthday!' })
+    expect(subject).not_to have_key('metadata')
+    expect(subject).not_to have_key('private_metadata')
+  end
+
   describe 'compare_at_amount' do
     context 'when variant has no compare_at_price' do
       it 'returns nil' do

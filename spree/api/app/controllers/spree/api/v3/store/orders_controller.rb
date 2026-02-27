@@ -108,7 +108,8 @@ module Spree
               :ship_address_id,
               :bill_address_id,
               ship_address: address_params,
-              bill_address: address_params
+              bill_address: address_params,
+              metadata: {}
             )
           end
 

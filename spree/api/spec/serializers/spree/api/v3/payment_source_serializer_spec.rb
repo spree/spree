@@ -14,7 +14,7 @@ RSpec.describe Spree::Api::V3::PaymentSourceSerializer do
 
   it 'includes all expected attributes' do
     expect(subject.keys).to match_array(%w[
-      id gateway_payment_profile_id public_metadata
+      id gateway_payment_profile_id
     ])
   end
 
@@ -34,17 +34,9 @@ RSpec.describe Spree::Api::V3::PaymentSourceSerializer do
     end
   end
 
-  context 'with public_metadata' do
-    before { payment_source.update!(public_metadata: { 'email' => 'user@example.com' }) }
-
-    it 'returns the public_metadata' do
-      expect(subject['public_metadata']).to eq({ 'email' => 'user@example.com' })
-    end
-  end
-
-  context 'without public_metadata' do
-    it 'returns nil or empty for public_metadata' do
-      expect(subject['public_metadata']).to be_blank
-    end
+  it 'does not expose metadata in Store API responses' do
+    payment_source.update!(public_metadata: { 'email' => 'user@example.com' })
+    expect(subject).not_to have_key('public_metadata')
+    expect(subject).not_to have_key('metadata')
   end
 end
