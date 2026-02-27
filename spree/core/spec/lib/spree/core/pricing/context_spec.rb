@@ -12,6 +12,8 @@ module Spree
       let(:quantity) { 5 }
       let(:date) { Time.zone.parse('2024-01-15 12:00:00') }
 
+      after { Spree::Current.reset }
+
       describe '#initialize' do
         context 'with all parameters' do
           subject do
@@ -43,8 +45,6 @@ module Spree
           subject do
             described_class.new(variant: variant, currency: currency)
           end
-
-          after { Spree::Current.reset }
 
           it 'sets required attributes' do
             expect(subject.variant).to eq(variant)
@@ -82,7 +82,6 @@ module Spree
           let(:current_store) { create(:store) }
 
           before { Spree::Current.store = current_store }
-          after { Spree::Current.reset }
 
           subject do
             described_class.new(variant: variant, currency: currency)
@@ -97,7 +96,6 @@ module Spree
           let(:current_zone) { create(:zone) }
 
           before { Spree::Current.zone = current_zone }
-          after { Spree::Current.reset }
 
           subject do
             described_class.new(variant: variant, currency: currency)
@@ -112,7 +110,6 @@ module Spree
           let(:current_market) { create(:market) }
 
           before { Spree::Current.market = current_market }
-          after { Spree::Current.reset }
 
           subject do
             described_class.new(variant: variant, currency: currency)
@@ -125,7 +122,6 @@ module Spree
 
         context 'when market is explicitly nil' do
           before { Spree::Current.market = nil }
-          after { Spree::Current.reset }
 
           subject do
             described_class.new(variant: variant, currency: currency, market: nil)
@@ -198,7 +194,6 @@ module Spree
 
           before do
             allow(order).to receive(:tax_zone).and_return(nil)
-            Rails.cache.delete('default_tax')
           end
 
           it 'falls back to default tax zone' do
@@ -265,8 +260,6 @@ module Spree
             described_class.new(variant: variant, currency: currency)
           end
 
-          after { Spree::Current.reset }
-
           it 'generates a cache key with default values from Spree::Current' do
             Timecop.freeze do
               expected_parts = [
@@ -294,8 +287,6 @@ module Spree
               quantity: quantity
             )
           end
-
-          after { Spree::Current.reset }
 
           it 'includes present optional attributes in correct order' do
             Timecop.freeze do
