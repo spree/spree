@@ -23,6 +23,7 @@ en:
         statuses:
           active: Active
           revoked: Revoked
+        secret_key_hidden: This secret key cannot be revealed. If you've lost it, revoke this key and create a new one.
         token_warning: Store this key securely. It will be shown only this once.
         usage: Usage
         usage_instructions:

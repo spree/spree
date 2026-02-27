@@ -8,6 +8,27 @@ module Spree
 
       helper 'spree/admin/api_keys'
 
+      def create
+        invoke_callbacks(:create, :before)
+        set_created_by
+        @object.attributes = permitted_resource_params
+        if @object.save
+          invoke_callbacks(:create, :after)
+          if @object.secret?
+            # Pass plaintext token via flash so the show page can display it once.
+            # Flash is stored in the encrypted session cookie and auto-cleared after one request.
+            # Skip the success flash — the token warning banner is sufficient feedback.
+            flash[:plaintext_token] = @object.plaintext_token
+          else
+            flash[:success] = message_after_create
+          end
+          redirect_to location_after_create, status: :see_other
+        else
+          invoke_callbacks(:create, :fails)
+          render action: :new, status: :unprocessable_content
+        end
+      end
+
       def revoke
         @object = scope.find_by_prefix_id!(params[:id])
         @object.revoke!(try_spree_current_user)

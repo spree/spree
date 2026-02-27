@@ -105,11 +105,20 @@ RSpec.describe Spree::Admin::ApiKeysController, type: :controller do
         }
       end
 
-      it 'generates a token with sk_ prefix' do
+      it 'stores token_digest and token_prefix instead of plaintext token' do
         create_key
 
         api_key = Spree::ApiKey.last
-        expect(api_key.token).to start_with('sk_')
+        expect(api_key.token).to be_nil
+        expect(api_key.token_digest).to be_present
+        expect(api_key.token_prefix).to start_with('sk_')
+      end
+
+      it 'passes plaintext_token via flash for one-time display' do
+        create_key
+
+        expect(flash[:plaintext_token]).to start_with('sk_')
+        expect(response).to redirect_to(spree.admin_api_key_path(Spree::ApiKey.last))
       end
     end
 
