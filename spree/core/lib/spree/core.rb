@@ -40,7 +40,7 @@ StateMachines::Machine.ignore_method_conflicts = true
 module Spree
   mattr_accessor :base_class, :user_class, :admin_user_class,
                  :private_storage_service_name, :public_storage_service_name,
-                 :cdn_host, :root_domain, :searcher_class, :events_adapter_class, :queues,
+                 :cdn_host, :root_domain, :events_adapter_class, :queues,
                  :google_places_api_key, :screenshot_api_token
 
   def self.base_class(constantize: true)
@@ -111,16 +111,6 @@ module Spree
       webhooks: :default,
       api_keys: :default
     )
-  end
-
-  def self.searcher_class(constantize: true)
-    @@searcher_class ||= 'Spree::Core::Search::Base'
-
-    if @@searcher_class.is_a?(Class)
-      raise 'Spree.searcher_class MUST be a String or Symbol object, not a Class object.'
-    elsif @@searcher_class.is_a?(String) || @@searcher_class.is_a?(Symbol)
-      constantize ? @@searcher_class.to_s.constantize : @@searcher_class.to_s
-    end
   end
 
   # Returns the events adapter class used for publishing and subscribing to events.
@@ -440,11 +430,9 @@ require 'spree/webhooks'
 
 require 'spree/core/partials'
 require 'spree/core/importer'
-require 'spree/core/query_filters'
 require 'spree/core/controller_helpers/auth'
 require 'spree/core/controller_helpers/common'
 require 'spree/core/controller_helpers/order'
-require 'spree/core/controller_helpers/search'
 require 'spree/core/controller_helpers/store'
 require 'spree/core/controller_helpers/strong_parameters'
 require 'spree/core/controller_helpers/locale'

@@ -15,7 +15,6 @@
 # a.get :color
 # a.preferred_color
 #
-require 'spree/core/search/base'
 require 'spree/core/preferences/configuration' # for compatibility reasons
 require 'spree/core/preferences/runtime_configuration'
 require 'spree/core/preferences/preferable'
@@ -112,7 +111,6 @@ module Spree
       preference :gift_card_batch_web_limit, :integer, default: 500 # number of gift card codes to be generated in the web process, more than this will be generated in a background job
       preference :gift_card_batch_limit, :integer, default: 50_000
 
-      attr_writer :searcher_class
     end
   end
 end
