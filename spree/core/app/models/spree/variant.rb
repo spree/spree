@@ -279,14 +279,6 @@ module Spree
       is_master? ? name + ' - Master' : name + ' - ' + options_text
     end
 
-    # use deleted? rather than checking the attribute directly. this
-    # allows extensions to override deleted? if they want to provide
-    # their own definition.
-    # @return [Boolean] true if the variant is deleted.
-    def deleted?
-      !!deleted_at
-    end
-
     # Returns true if the variant has images.
     # Uses loaded association when available, otherwise falls back to counter cache.
     # @return [Boolean]
@@ -528,18 +520,6 @@ module Spree
     # @return [BigDecimal] the compare at price of the variant
     def compare_at_price
       @compare_at_price ||= price_in(cost_currency).try(:compare_at_amount)
-    end
-
-    # Returns the name and sku of the variant.
-    # @return [String] the name and sku of the variant
-    def name_and_sku
-      "#{name} - #{sku}"
-    end
-
-    # Returns the sku and options text of the variant.
-    # @return [String] the sku and options text of the variant
-    def sku_and_options_text
-      "#{sku} #{options_text}".strip
     end
 
     # Returns true if the variant is in stock.
