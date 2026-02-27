@@ -16,10 +16,10 @@ module Spree
       find_by(name: DIGITAL_NAME)
     end
 
+    # Returns true if this shipping category includes a digital shipping method
+    # @return [Boolean]
     def includes_digital_shipping_method?
-      Rails.cache.fetch("#{cache_key_with_version}/includes-digital-shipping-method") do
-        shipping_methods.digital.exists?
-      end
+      @includes_digital_shipping_method ||= shipping_methods.digital.exists?
     end
   end
 end

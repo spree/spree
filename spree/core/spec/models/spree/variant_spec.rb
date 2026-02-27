@@ -1082,11 +1082,6 @@ describe Spree::Variant, type: :model do
       expect(variant.product.reload.updated_at).to be_within(3.seconds).of(Time.current)
     end
 
-    it 'clears the in_stock cache key' do
-      expect(Rails.cache).to receive(:delete).with(variant.send(:in_stock_cache_key))
-      variant.touch
-    end
-
     context 'when unlinking an option value' do
       let(:option_value) { create(:option_value) }
 

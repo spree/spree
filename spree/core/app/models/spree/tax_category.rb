@@ -10,15 +10,11 @@ module Spree
     has_many :variants, dependent: :nullify
 
     before_save :set_default_category
-    after_update :delete_cache
-    after_create :delete_cache
 
     self.whitelisted_ransackable_attributes = %w[name is_default tax_code]
 
     def self.default
-      Rails.cache.fetch('default_tax_category') do
-        find_by(is_default: true)
-      end
+      find_by(is_default: true)
     end
 
     def set_default_category
@@ -27,12 +23,6 @@ module Spree
       if is_default && tax_category = self.class.where(is_default: true).where.not(id: id).first
         tax_category.update_columns(is_default: false, updated_at: Time.current)
       end
-    end
-
-    private
-
-    def delete_cache
-      Rails.cache.delete('default_tax_category')
     end
   end
 end

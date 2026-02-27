@@ -7,11 +7,6 @@ describe Spree::Pricing::Resolver do
   let(:context) { Spree::Pricing::Context.new(variant: variant, currency: currency, store: store) }
   let(:resolver) { described_class.new(context) }
 
-  # Clear cache before each test to avoid stale cached prices
-  before do
-    Rails.cache.clear
-  end
-
   describe '#resolve' do
     context 'when no price lists exist' do
       it 'returns the base price' do
@@ -79,7 +74,6 @@ describe Spree::Pricing::Resolver do
       it 'returns base price when outside date range' do
         base_price = variant.prices.base_prices.with_currency(currency).first
         Timecop.travel(2.days.from_now) do
-          Rails.cache.clear # Clear cache for the new time context
           price = resolver.resolve
           expect(price).to eq(base_price)
         end

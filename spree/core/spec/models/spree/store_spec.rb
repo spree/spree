@@ -366,8 +366,6 @@ describe Spree::Store, type: :model, without_global_store: true do
   end
 
   describe '.default' do
-    before { Rails.cache.clear }
-
     context 'when a default store is already present' do
       let!(:store_2) { create(:store, default: true) }
 
@@ -382,7 +380,6 @@ describe Spree::Store, type: :model, without_global_store: true do
       before do
         described_class::Translation.delete_all
         described_class.delete_all
-        Rails.cache.clear
       end
 
       it 'builds a new default store' do
@@ -401,7 +398,6 @@ describe Spree::Store, type: :model, without_global_store: true do
 
     before do
       Spree::Store.where.not(id: store.id).update_all(default: false)
-      Rails.cache.clear
     end
 
     it 'returns the default store supported locales' do

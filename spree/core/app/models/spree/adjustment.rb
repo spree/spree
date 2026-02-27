@@ -98,30 +98,11 @@ module Spree
       !included?
     end
 
-    # Returns the source using Rails.cache to avoid repeated database lookups.
-    # Sources are cached by their type and ID combination.
-    # Cache is automatically invalidated when the source is saved (see AdjustmentSource concern).
-    #
-    # @return [Object, nil] The source object (TaxRate, PromotionAction, etc.)
-    def cached_source
-      return nil if source_type.blank? || source_id.blank?
-
-      Rails.cache.fetch(source_cache_key) { source }
-    rescue TypeError
-      # Handle objects that can't be serialized (e.g., mock objects in tests)
-      source
-    end
-
-    # Cache key for the source object
-    def source_cache_key
-      "spree/adjustment_source/#{source_type}/#{source_id}"
-    end
-
     # Passing a target here would always be recommended as it would avoid
     # hitting the database again and would ensure you're compute values over
     # the specific object amount passed here.
     def update!(target = adjustable)
-      src = cached_source
+      src = source
       return amount if closed? || src.blank?
 
       new_amount = src.compute_amount(target)

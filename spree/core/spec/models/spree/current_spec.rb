@@ -63,11 +63,52 @@ RSpec.describe Spree::Current do
     context 'when zone is not set and no default tax zone exists' do
       before do
         Spree::Zone.update_all(default_tax: false)
-        Rails.cache.delete('default_tax')
       end
 
       it 'returns nil' do
         expect(described_class.zone).to be_nil
+      end
+    end
+  end
+
+  describe '#default_tax_zone' do
+    context 'when default_tax_zone is explicitly set' do
+      let(:zone) { create(:zone) }
+
+      before { described_class.default_tax_zone = zone }
+
+      it 'returns the set zone' do
+        expect(described_class.default_tax_zone).to eq(zone)
+      end
+    end
+
+    context 'when default_tax_zone is not set' do
+      let!(:default_zone) { create(:zone, default_tax: true) }
+
+      it 'returns the default tax zone from the database' do
+        expect(described_class.default_tax_zone).to eq(default_zone)
+      end
+
+      it 'memoizes the result' do
+        described_class.default_tax_zone
+
+        expect(Spree::Zone).not_to receive(:find_by)
+        described_class.default_tax_zone
+      end
+    end
+
+    context 'when no default tax zone exists' do
+      before { Spree::Zone.update_all(default_tax: false) }
+
+      it 'returns nil' do
+        expect(described_class.default_tax_zone).to be_nil
+      end
+
+      it 'does not re-query on subsequent calls' do
+        described_class.default_tax_zone
+
+        expect(Spree::Zone).not_to receive(:find_by)
+        described_class.default_tax_zone
       end
     end
   end
@@ -249,6 +290,15 @@ RSpec.describe Spree::Current do
 
       # After reset, global_pricing_context should be fetched fresh
       expect(described_class.instance_variable_get(:@global_pricing_context)).to be_nil
+    end
+
+    it 'clears memoized default_tax_zone' do
+      create(:zone, default_tax: true)
+      described_class.default_tax_zone
+
+      described_class.reset
+
+      expect(described_class.instance.instance_variable_get(:@default_tax_zone_loaded)).to be false
     end
   end
 end

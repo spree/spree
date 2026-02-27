@@ -167,7 +167,6 @@ module Spree
     after_create :ensure_default_automatic_taxons
     after_create :ensure_default_post_categories_are_created
     after_create :create_default_policies
-    after_commit :clear_cache
 
     #
     # Scopes
@@ -184,17 +183,15 @@ module Spree
 
     # @deprecated The or_initialize behavior will be removed in Spree 5.5.
     def self.default
-      Rails.cache.fetch('default_store') do
-        # workaround for Mobility bug with first_or_initialize
-        if where(default: true).any?
-          where(default: true).first
-        else
-          Spree::Deprecation.warn(
-            'Spree::Store.default returning a new unpersisted store when no default store exists is deprecated ' \
-            'and will be removed in Spree 5.5. Please ensure a default store is created before calling Store.default.'
-          )
-          new(default: true)
-        end
+      # workaround for Mobility bug with first_or_initialize
+      if where(default: true).any?
+        where(default: true).first
+      else
+        Spree::Deprecation.warn(
+          'Spree::Store.default returning a new unpersisted store when no default store exists is deprecated ' \
+          'and will be removed in Spree 5.5. Please ensure a default store is created before calling Store.default.'
+        )
+        new(default: true)
       end
     end
 
@@ -296,9 +293,7 @@ module Spree
     # @param country [Spree::Country] the country to get the states for
     # @return [Array<Spree::State>]
     def states_available_for_checkout(country)
-      Rails.cache.fetch(states_available_for_checkout_cache_key(country)) do
-        country.states.to_a
-      end
+      country.states.to_a
     end
 
     # @deprecated Use {Spree::Zone.all} or {#countries_with_shipping_coverage} instead.
@@ -387,18 +382,6 @@ module Spree
     end
 
     private
-
-    def countries_available_for_checkout_cache_key
-      "#{cache_key_with_version}/countries_available_for_checkout"
-    end
-
-    def states_available_for_checkout_cache_key(country)
-      "#{cache_key_with_version}/states_available_for_checkout/#{country&.cache_key_with_version}"
-    end
-
-    def clear_cache
-      Rails.cache.delete('default_store')
-    end
 
     def ensure_default_market
       return if markets.exists?

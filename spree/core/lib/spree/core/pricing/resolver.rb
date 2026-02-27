@@ -12,9 +12,7 @@ module Spree
       # Returns the best price for the variant
       # @return [Spree::Price]
       def resolve
-        Rails.cache.fetch(cache_key, expires_in: 15.minutes) do
-          find_best_price
-        end
+        find_best_price
       end
 
       private
@@ -117,12 +115,6 @@ module Spree
           amount: nil,
           price_list_id: nil
         )
-      end
-
-      # Returns the cache key for the resolver
-      # @return [String]
-      def cache_key
-        "#{context.cache_key}/resolved_price"
       end
     end
   end

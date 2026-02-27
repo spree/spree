@@ -27,9 +27,7 @@ module Spree
     self.whitelisted_ransackable_attributes = ['description']
 
     def self.default_tax
-      Rails.cache.fetch('default_tax') do
-        find_by(default_tax: true)
-      end
+      Spree::Current.default_tax_zone
     end
 
     def self.potential_matching_zones(zone)
@@ -186,7 +184,6 @@ module Spree
 
     def remove_previous_default
       Spree::Zone.with_default_tax.where.not(id: id).update_all(default_tax: false)
-      Rails.cache.delete('default_zone')
     end
 
     def set_zone_members(ids, type)

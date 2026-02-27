@@ -88,8 +88,6 @@ module Spree
     after_create :increment_product_variant_count, unless: :is_master?
     after_destroy :decrement_product_variant_count, unless: :is_master?
 
-    after_touch :clear_in_stock_cache
-
     scope :in_stock, -> { left_joins(:stock_items).where("#{Spree::Variant.table_name}.track_inventory = ? OR #{Spree::StockItem.table_name}.count_on_hand > ?", false, 0) }
     scope :backorderable, -> { left_joins(:stock_items).where(spree_stock_items: { backorderable: true }) }
     scope :in_stock_or_backorderable, -> { in_stock.or(backorderable) }
@@ -547,21 +545,13 @@ module Spree
     # Returns true if the variant is in stock.
     # @return [Boolean] true if the variant is in stock
     def in_stock?
-      @in_stock ||= if association(:stock_items).loaded? && association(:stock_locations).loaded?
-                      total_on_hand.positive?
-                    else
-                      Rails.cache.fetch(in_stock_cache_key, version: cache_version) do
-                        total_on_hand.positive?
-                      end
-                    end
+      @in_stock ||= total_on_hand.positive?
     end
 
     # Returns true if the variant is backorderable.
     # @return [Boolean] true if the variant is backorderable
     def backorderable?
-      @backorderable ||= Rails.cache.fetch(['variant-backorderable', cache_key_with_version]) do
-        quantifier.backorderable?
-      end
+      @backorderable ||= quantifier.backorderable?
     end
 
     def on_sale?(currency)
@@ -619,10 +609,6 @@ module Spree
       digitals.any?
     end
 
-    def clear_in_stock_cache
-      Rails.cache.delete(in_stock_cache_key)
-    end
-
     private
 
     def ensure_not_in_complete_orders
@@ -672,10 +658,6 @@ module Spree
       StockLocation.where(propagate_all_variants: true).each do |stock_location|
         stock_location.propagate_variant(self)
       end
-    end
-
-    def in_stock_cache_key
-      "variant-#{id}-in_stock"
     end
 
     def disable_sku_validation?

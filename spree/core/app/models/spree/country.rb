@@ -43,7 +43,7 @@ module Spree
     #
     # @return [String, nil] currency code (e.g., 'USD', 'EUR') or nil if no market found
     def market_currency
-      Spree::Current.store&.market_for_country(self)&.currency
+      current_market&.currency
     end
 
     # Returns the default locale for this country from its market in the current store.
@@ -51,14 +51,18 @@ module Spree
     #
     # @return [String, nil] locale code (e.g., 'en', 'de') or nil if no market found
     def market_locale
-      Spree::Current.store&.market_for_country(self)&.default_locale
+      current_market&.default_locale
     end
 
     # Returns the supported locales for this country from its market in the current store.
     #
     # @return [Array<String>] locale codes (e.g., ['en', 'fr']) or empty array if no market found
     def market_supported_locales
-      Spree::Current.store&.market_for_country(self)&.supported_locales_list || []
+      current_market&.supported_locales_list || []
+    end
+
+    def current_market
+      @current_market ||= Spree::Current.store&.market_for_country(self)
     end
 
     def <=>(other)

@@ -91,7 +91,10 @@ describe Spree::Country, type: :model do
   end
 
   describe '#market_currency' do
-    before { Spree::Current.store = store }
+    before do
+      america.remove_instance_variable(:@current_market) if america.instance_variable_defined?(:@current_market)
+      Spree::Current.store = store
+    end
     after { Spree::Current.reset }
 
     context 'when country belongs to a market' do
@@ -118,7 +121,10 @@ describe Spree::Country, type: :model do
   end
 
   describe '#market_locale' do
-    before { Spree::Current.store = store }
+    before do
+      america.remove_instance_variable(:@current_market) if america.instance_variable_defined?(:@current_market)
+      Spree::Current.store = store
+    end
     after { Spree::Current.reset }
 
     context 'when country belongs to a market' do
@@ -145,7 +151,10 @@ describe Spree::Country, type: :model do
   end
 
   describe '#market_supported_locales' do
-    before { Spree::Current.store = store }
+    before do
+      america.remove_instance_variable(:@current_market) if america.instance_variable_defined?(:@current_market)
+      Spree::Current.store = store
+    end
     after { Spree::Current.reset }
 
     context 'when country belongs to a market' do

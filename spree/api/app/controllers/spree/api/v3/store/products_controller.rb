@@ -38,8 +38,8 @@ module Spree
           def scope_includes
             [
               thumbnail: [attachment_attachment: :blob],
-              master: [:prices],
-              variants: [:prices]
+              master: [:prices, stock_items: :stock_location],
+              variants: [:prices, stock_items: :stock_location]
             ]
           end
 
