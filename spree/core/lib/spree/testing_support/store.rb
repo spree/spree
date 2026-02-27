@@ -20,17 +20,8 @@ RSpec.configure do |config|
           @default_country = Spree::Country.find_by(iso: 'US') || FactoryBot.create(:country_us)
           @default_store = Spree::Store.find_by(default: true) || FactoryBot.create(:store, default: true, default_currency: 'USD')
           @default_store.update_column(:default_country_id, @default_country.id) unless @default_store.read_attribute(:default_country_id) == @default_country.id
-          @default_market = @default_store.markets.default.first ||
-            FactoryBot.create(:market, :default, store: @default_store, countries: [@default_country])
         end
       end
-    end
-  end
-
-  config.before(:each) do
-    unless self.class.metadata[:without_global_store]
-      # Reload to clear stale association caches and memoized state from previous tests
-      @default_store&.reload
     end
   end
 
