@@ -221,36 +221,6 @@ module Spree
 
     private
 
-    def create_product_image_tag(image, product, options, style)
-      options[:alt] = image.alt.blank? ? product.name : image.alt
-      image_tag main_app.cdn_image_url(image.url(style)), options
-    end
-
-    def define_image_method(style)
-      self.class.send :define_method, "#{style}_image" do |product, *options|
-        options = options.first || {}
-        options[:alt] ||= product.name
-        image_path = default_image_for_product_or_variant(product)
-        img = if image_path.present?
-                create_product_image_tag image_path, product, options, style
-              else
-                width = style.to_s.split('x').first.to_i
-                height = style.to_s.split('x').last.to_i
-                content_tag(:div, width: width, height: height, style: "background-color: #f0f0f0;")
-              end
-
-        content_tag(:div, img, class: "admin-product-image-container #{style}-img")
-      end
-    end
-
-    # Returns style of image or nil
-    def image_style_from_method_name(method_name)
-      style = method_name.to_s.sub(/_image$/, '')
-      if method_name.to_s.match(/_image$/) && Spree::Image.styles.keys.map(&:to_s).include?(style)
-        style
-      end
-    end
-
     I18N_PLURAL_MANY_COUNT = 2.1
     def plural_resource_name(resource_class)
       resource_class.model_name.human(count: I18N_PLURAL_MANY_COUNT)
