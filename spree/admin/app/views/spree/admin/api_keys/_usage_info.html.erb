@@ -10,8 +10,8 @@
     <h6 class="font-medium text-sm mb-2"><%= Spree.t('admin.api_keys.example_request') %></h6>
     <% example_token = flash[:plaintext_token] || @api_key.token || "#{@api_key.token_prefix}..." %>
     <div class="bg-gray-900 rounded-md p-4 overflow-x-auto">
-      <pre class="text-green-400 text-sm font-mono whitespace-pre-wrap"><code>curl -X GET "https://your-store.com/api/v3/store/products" \
-  -H "X-Spree-Api-Key: <%= example_token %>"</code></pre>
+      <pre class="text-green-400 text-sm font-mono"><code class="bg-transparent text-green-500">curl -X GET "<%= spree.api_v3_store_products_url(host: current_store.url_or_custom_domain) %>" \
+  -H "x-spree-api-key: <strong class="text-white"><%= example_token %></strong>"</code></pre>
     </div>
   </div>
 </div>
