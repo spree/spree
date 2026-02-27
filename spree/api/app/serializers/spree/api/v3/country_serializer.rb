@@ -15,19 +15,15 @@ module Spree
         attributes :iso, :iso3, :name, :states_required, :zipcode_required
 
         attribute :currency do |country|
-          market_for(country)&.currency
+          country.market_currency
         end
 
         attribute :default_locale do |country|
-          market_for(country)&.default_locale
+          country.market_locale
         end
 
         attribute :supported_locales do |country|
-          market_for(country)&.supported_locales_list || []
-        end
-
-        def market_for(country)
-          params[:market_by_country_id]&.[](country.id)
+          country.market_supported_locales
         end
 
         many :states,

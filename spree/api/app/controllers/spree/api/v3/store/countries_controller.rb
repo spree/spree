@@ -22,17 +22,7 @@ module Spree
           private
 
           def serialize_country(country)
-            Spree.api.country_serializer.new(country, params: serializer_params.merge(market_by_country_id: market_by_country_id)).to_h
-          end
-
-          def market_by_country_id
-            @market_by_country_id ||= begin
-              hash = {}
-              current_store.markets.includes(:market_countries).order(:position).each do |market|
-                market.market_countries.each { |mc| hash[mc.country_id] ||= market }
-              end
-              hash
-            end
+            Spree.api.country_serializer.new(country, params: serializer_params).to_h
           end
         end
       end
