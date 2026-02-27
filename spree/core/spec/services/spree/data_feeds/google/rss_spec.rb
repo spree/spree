@@ -54,7 +54,9 @@ module Spree
       end
 
       it 'includes image link' do
-        expect(result.value[:file]).to include("<g:image_link>#{variant.images.first.plp_url}</g:image_link>").once
+        image = variant.images.first
+        expected_url = Rails.application.routes.url_helpers.cdn_image_url(image.attachment.variant(:xlarge))
+        expect(result.value[:file]).to include("<g:image_link>#{expected_url}</g:image_link>").once
       end
 
       it 'includes price' do

@@ -41,15 +41,10 @@ module Spree
         end
 
         def get_image_link(variant, product)
-          # try getting image from variant
-          img = variant.images.first&.plp_url
+          image = variant.thumbnail || product.thumbnail
+          return if image.nil?
 
-          # if no image specified for variant try getting product image
-          if img.nil?
-            img = product.images.first&.plp_url
-          end
-
-          img
+          Rails.application.routes.url_helpers.cdn_image_url(image.attachment.variant(:xlarge))
         end
 
         def format_price(variant)
