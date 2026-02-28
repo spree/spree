@@ -38,8 +38,6 @@ module Spree
     has_one :store, through: :taxonomy
     has_many :classifications, -> { order(:position) }, dependent: :destroy_async, inverse_of: :taxon
     has_many :products, through: :classifications
-    # @deprecated Use Spree::Taxon#image (Active Storage) instead. Will be removed in Spree 5.5.
-    has_one :icon, as: :viewable, dependent: :destroy, class_name: 'Spree::TaxonImage'
 
     has_many :prototype_taxons, class_name: 'Spree::PrototypeTaxon', dependent: :destroy
     has_many :prototypes, through: :prototype_taxons, class_name: 'Spree::Prototype'
@@ -60,7 +58,6 @@ module Spree
     validates :taxonomy, presence: true
     validates :permalink, uniqueness: { case_sensitive: false, scope: [:parent_id, :taxonomy_id] }
     validates :hide_from_nav, inclusion: { in: [true, false] }
-    validates_associated :icon
     validate :check_for_root, on: :create
     validate :parent_belongs_to_same_taxonomy
     with_options length: { maximum: 255 }, allow_blank: true do

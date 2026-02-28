@@ -68,28 +68,8 @@ module Spree
       end
     end
 
-    def spree_favicon_path
-      Spree::Deprecation.warn('BaseHelper#spree_favicon_path is deprecated and will be removed in Spree 5.5. Please use Active Storage URL helpers instead.')
-
-      if current_store.favicon.present?
-        main_app.cdn_image_url(current_store.favicon)
-      else
-        url_for('favicon.ico')
-      end
-    end
-
     def object
       instance_variable_get('@' + controller_name.singularize)
-    end
-
-    def method_missing(method_name, *args, &block)
-      if image_style = image_style_from_method_name(method_name)
-        Spree::Deprecation.warn("#{BaseHelper.name}##{method_name} is deprecated and will be removed in Spree 5.5. Please use spree_image_tag instead - https://spreecommerce.org/docs/developer/core-concepts/images-assets#preprocessed-named-variants")
-        define_image_method(image_style)
-        send(method_name, *args)
-      else
-        super
-      end
     end
 
     def pretty_time(time)
@@ -220,36 +200,6 @@ module Spree
     end
 
     private
-
-    def create_product_image_tag(image, product, options, style)
-      options[:alt] = image.alt.blank? ? product.name : image.alt
-      image_tag main_app.cdn_image_url(image.url(style)), options
-    end
-
-    def define_image_method(style)
-      self.class.send :define_method, "#{style}_image" do |product, *options|
-        options = options.first || {}
-        options[:alt] ||= product.name
-        image_path = default_image_for_product_or_variant(product)
-        img = if image_path.present?
-                create_product_image_tag image_path, product, options, style
-              else
-                width = style.to_s.split('x').first.to_i
-                height = style.to_s.split('x').last.to_i
-                content_tag(:div, width: width, height: height, style: "background-color: #f0f0f0;")
-              end
-
-        content_tag(:div, img, class: "admin-product-image-container #{style}-img")
-      end
-    end
-
-    # Returns style of image or nil
-    def image_style_from_method_name(method_name)
-      style = method_name.to_s.sub(/_image$/, '')
-      if method_name.to_s.match(/_image$/) && Spree::Image.styles.keys.map(&:to_s).include?(style)
-        style
-      end
-    end
 
     I18N_PLURAL_MANY_COUNT = 2.1
     def plural_resource_name(resource_class)

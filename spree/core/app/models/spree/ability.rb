@@ -59,6 +59,8 @@ module Spree
       # Include any abilities registered by extensions, etc.
       # this is legacy behaviour and should be removed in Spree 5.0
       Ability.abilities.merge(abilities_to_register).each do |clazz|
+        Spree::Deprecation.warn("Ability merging is deprecated and will be removed in Spree 5.5. Please use Permission Sets")
+
         merge clazz.new(@user)
       end
     end
@@ -133,6 +135,7 @@ module Spree
     end
 
     def apply_admin_permissions(_user, _options)
+      Spree::Deprecation.warn("Ability#apply_admin_permissions is deprecated and will be removed in Spree 5.5. Please use Permission Sets")
       can :manage, :all
       cannot :cancel, Spree::Order
       can :cancel, Spree::Order, &:allow_cancel?
@@ -143,6 +146,8 @@ module Spree
     end
 
     def apply_user_permissions(user, _options)
+      Spree::Deprecation.warn("Ability#apply_user_permissions is deprecated and will be removed in Spree 5.5. Please use Permission Sets")
+
       can :read, ::Spree::Country
       can :read, ::Spree::OptionType
       can :read, ::Spree::OptionValue
