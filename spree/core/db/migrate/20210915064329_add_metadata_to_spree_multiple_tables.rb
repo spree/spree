@@ -4,7 +4,6 @@ class AddMetadataToSpreeMultipleTables < ActiveRecord::Migration[5.2]
       spree_assets
       spree_option_types
       spree_option_values
-      spree_properties
       spree_promotions
       spree_payment_methods
       spree_shipping_methods
