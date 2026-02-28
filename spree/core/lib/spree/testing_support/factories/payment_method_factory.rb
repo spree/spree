@@ -23,12 +23,7 @@ FactoryBot.define do
     name { 'Credit Card' }
   end
 
-  # authorize.net was moved to spree_gateway.
-  # Leaving this factory in place with bogus in case anyone is using it.
-  factory :simple_credit_card_payment_method, parent: :payment_method, class: Spree::Gateway::BogusSimple do
-    type { 'Spree::Gateway::BogusSimple' }
-    name { 'Credit Card' }
-  end
+  factory :simple_credit_card_payment_method, parent: :credit_card_payment_method
 
   factory :store_credit_payment_method, parent: :payment_method, class: Spree::PaymentMethod::StoreCredit do
     type          { 'Spree::PaymentMethod::StoreCredit' }
