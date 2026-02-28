@@ -8,7 +8,7 @@ RSpec.describe Spree::NewsletterSubscriberEmailSubscriber do
   let(:subscriber) { described_class.new }
 
   def mock_event(newsletter_subscriber)
-    double('Event', payload: { 'id' => newsletter_subscriber.id })
+    double('Event', payload: { 'id' => newsletter_subscriber.prefixed_id })
   end
 
   before do

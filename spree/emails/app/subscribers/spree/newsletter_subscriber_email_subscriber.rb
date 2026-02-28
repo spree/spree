@@ -19,7 +19,7 @@ module Spree
 
     def find_subscriber(event)
       subscriber_id = event.payload['id']
-      Spree::NewsletterSubscriber.find_by(id: subscriber_id)
+      Spree::NewsletterSubscriber.find_by_prefix_id(subscriber_id)
     end
   end
 end
