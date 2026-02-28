@@ -18,6 +18,7 @@ require 'spree/admin/callbacks'
 require 'spree/admin/engine'
 require 'spree/core/partials'
 
+require 'oembed'
 require 'tinymce-rails'
 require 'pagy'
 
