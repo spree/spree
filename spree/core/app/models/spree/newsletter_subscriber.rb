@@ -1,10 +1,7 @@
-require_dependency 'spree/newsletter_subscriber/emails'
-
 module Spree
   class NewsletterSubscriber < Spree.base_class
     has_prefix_id :sub
 
-    include Spree::NewsletterSubscriber::Emails
     include Spree::Metafields
 
     publishes_lifecycle_events

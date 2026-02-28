@@ -19,8 +19,8 @@ module Spree
           end
         end
 
-        # deliver confirmation email after the transaction is completed
-        subscriber.deliver_newsletter_email_verification unless subscriber.verified?
+        # publish event to trigger email delivery via subscriber
+        subscriber.publish_event('newsletter_subscriber.subscribed') unless subscriber.verified?
         subscriber
       end
 
