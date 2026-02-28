@@ -436,42 +436,6 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
       end
     end
 
-    context 'with product properties' do
-      let!(:property_1) { create(:property, name: 'material', presentation: 'Material') }
-      let!(:property_2) { create(:property, name: 'short_description', presentation: 'Short description') }
-      let!(:property_3) { create(:property, name: 'care', presentation: 'Care') }
-
-      let(:product_params) do
-        {
-          name: 'Product',
-          product_properties_attributes: {
-            '0' => {
-              property_id: property_1.id,
-              value: 'Wool'
-            },
-            '1' => {
-              property_id: property_2.id,
-              value: 'Short description'
-            },
-            '2' => {
-              property_id: property_3.id,
-              value: ''
-            }
-          },
-          shipping_category_id: shipping_category.id
-        }
-      end
-
-      it 'creates product properties correctly' do
-        subject
-
-        product = Spree::Product.last
-        expect(product.properties.count).to eq 2
-        expect(product.property('material')).to eq 'Wool'
-        expect(product.property('short_description')).to eq 'Short description'
-      end
-    end
-
     context 'with multiple stores' do
       let(:store_2) { create(:store) }
 
@@ -1075,46 +1039,6 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
 
         expect(product.reload.track_inventory).to be(false)
         expect(product.master.stock_items.reload.first.count_on_hand).to eq(0)
-      end
-    end
-
-    context 'with product properties' do
-      let!(:property_1) { create(:property, name: 'material', presentation: 'Material') }
-      let!(:property_2) { create(:property, name: 'short_description', presentation: 'Short description') }
-      let!(:property_3) { create(:property, name: 'care', presentation: 'Care') }
-
-      let(:product_property_1) { create(:product_property, product: product, property: property_1, value: 'Wool') }
-      let(:product_property_2) { create(:product_property, product: product, property: property_2, value: 'Short description') }
-
-      let(:product_params) do
-        {
-          product_properties_attributes: {
-            '0' => {
-              id: product_property_1.id,
-              property_id: property_1.id,
-              value: 'Better Wool'
-            },
-            '1' => {
-              id: product_property_2.id,
-              property_id: property_2.id,
-              value: ''
-            },
-            '2' => {
-              property_id: property_3.id,
-              value: 'new value'
-            }
-          }
-        }
-      end
-
-      it 'updates 1 product property, creates 1 product property and destroys 1 product property' do
-        send_request
-
-        product = Spree::Product.last
-        expect(product.properties.count).to eq 2
-        expect(product.property('material')).to eq 'Better Wool'
-        expect(product.property('short_description')).to be_nil
-        expect(product.property('care')).to eq 'new value'
       end
     end
 

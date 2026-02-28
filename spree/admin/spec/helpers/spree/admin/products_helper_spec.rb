@@ -49,22 +49,4 @@ describe Spree::Admin::ProductsHelper do
     end
   end
 
-  describe '#sorted_product_properties' do
-    let(:product) { create(:product) }
-
-    context 'when the product has product properties' do
-      let!(:product_property1) { create(:product_property, product: product, property: create(:property, position: 2)) }
-      let!(:product_property2) { create(:product_property, product: product, property: create(:property, position: 1)) }
-
-      it 'returns the product properties sorted by position' do
-        expect(sorted_product_properties(product)).to eq([product_property2, product_property1])
-      end
-    end
-
-    context 'when the product has no product properties' do
-      it 'returns an empty array' do
-        expect(sorted_product_properties(product)).to eq([])
-      end
-    end
-  end
 end

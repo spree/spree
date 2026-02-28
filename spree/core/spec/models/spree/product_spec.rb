@@ -418,71 +418,8 @@ describe Spree::Product, type: :model do
     end
   end
 
-  context 'properties' do
+  context 'promotions' do
     let(:product) { create(:product, stores: [store]) }
-
-    it 'properly assigns properties' do
-      product.set_property('the_prop', 'value1')
-      expect(product.property('the_prop')).to eq('value1')
-
-      product.set_property('the_prop', 'value2')
-      expect(product.property('the_prop')).to eq('value2')
-
-      I18n.with_locale(:pl) do
-        product.set_property('the_prop', 'translated-value1', 'the_translated_prop')
-        expect(product.property('the_prop')).to eq('translated-value1')
-
-        product.set_property('the_prop', 'translated-value2')
-        expect(product.property('the_prop')).to eq('translated-value2')
-
-        expect(product.properties[0].presentation).to eq('the_translated_prop')
-      end
-
-      expect(product.properties[0].presentation).to eq('the_prop')
-    end
-
-    it 'does not create duplicate properties when set_property is called' do
-      expect do
-        product.set_property('the_prop', 'value2')
-        product.save
-        product.reload
-      end.not_to change(product.properties, :length)
-
-      expect do
-        product.set_property('the_prop_new', 'value')
-        product.save
-        product.reload
-        expect(product.property('the_prop_new')).to eq('value')
-      end.to change { product.properties.length }.by(1)
-    end
-
-    context 'optional property_presentation' do
-      subject { Spree::Property.where(name: 'foo').first.presentation }
-
-      let(:name) { 'foo' }
-      let(:presentation) { 'baz' }
-
-      describe 'is not used' do
-        before { product.set_property(name, 'bar') }
-
-        it { is_expected.to eq name }
-      end
-
-      describe 'is used' do
-        before { product.set_property(name, 'bar', presentation) }
-
-        it { is_expected.to eq presentation }
-      end
-    end
-
-    # Regression test for #2455
-    it "does not overwrite properties' presentation names" do
-      Spree::Property.create!(name: 'foo', presentation: "Foo's Presentation Name")
-      product.set_property('foo', 'value1')
-      product.set_property('bar', 'value2')
-      expect(Spree::Property.where(name: 'foo').first.presentation).to eq("Foo's Presentation Name")
-      expect(Spree::Property.where(name: 'bar').first.presentation).to eq('bar')
-    end
 
     # Regression test for #4416
     describe '#possible_promotions' do
@@ -509,13 +446,6 @@ describe Spree::Product, type: :model do
     let!(:product) { build(:product, name: 'Foo', price: 1.99, shipping_category: create(:shipping_category), stores: [store]) }
 
     before { product.prototype_id = prototype.id }
-
-    context 'when prototype is supplied' do
-      it 'creates properties based on the prototype' do
-        product.save
-        expect(product.properties.count).to eq(1)
-      end
-    end
 
     context 'when prototype with option types is supplied' do
       def build_option_type_with_values(name, values)
@@ -1278,24 +1208,13 @@ describe Spree::Product, type: :model do
   describe '#to_csv' do
     let(:store) { Spree::Store.default }
     let(:product) { create(:product, stores: [store]) }
-    let(:property) { create(:property, name: 'my-property', position: 1) }
-    let(:product_property) { create(:product_property, property: property, product: product, value: 'MyValue') }
     let(:taxon) { create(:taxon, name: 'My Taxon') }
 
     before do
-      product_property
       product.taxons << taxon
     end
 
     context 'when product has no variants' do
-      before do
-        Spree::Config[:product_properties_enabled] = true
-      end
-
-      after do
-        Spree::Config[:product_properties_enabled] = false
-      end
-
       it 'returns an array with one line of CSV data' do
         csv_lines = product.to_csv(store)
         expect(csv_lines.size).to eq(1)
@@ -1303,7 +1222,6 @@ describe Spree::Product, type: :model do
         csv_line = csv_lines.first
         expect(csv_line).to include(product.name)
         expect(csv_line).to include(product.master.sku)
-        expect(csv_line.last(5)).to eq([taxon.pretty_name, nil, nil, "my-property", "MyValue"])
       end
     end
 

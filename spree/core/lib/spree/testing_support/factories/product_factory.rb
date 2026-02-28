@@ -50,13 +50,6 @@ FactoryBot.define do
       factory :product_with_option_types do
         after(:create) { |product| create(:product_option_type, product: product) }
       end
-      factory :product_with_properties do
-        after(:create) do |product|
-          property = create(:property, :brand)
-          create(:product_property, product: product, property: property, value: 'Epsilon')
-        end
-      end
-
       factory :digital_product do
         track_inventory { false }
         shipping_category { |r| Spree::ShippingCategory.digital || r.association(:digital_shipping_category) }

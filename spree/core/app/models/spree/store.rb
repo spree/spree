@@ -75,7 +75,6 @@ module Spree
 
     has_many :store_products, class_name: 'Spree::StoreProduct'
     has_many :products, through: :store_products, class_name: 'Spree::Product'
-    has_many :product_properties, through: :products, class_name: 'Spree::ProductProperty'
     has_many :variants, through: :products, class_name: 'Spree::Variant', source: :variants_including_master
     has_many :stock_items, through: :variants, class_name: 'Spree::StockItem'
     has_many :inventory_units, through: :variants, class_name: 'Spree::InventoryUnit'

@@ -31,21 +31,6 @@ module Spree
         end
       end
 
-      def self.property_conditions(property)
-        properties_table = Property.table_name
-
-        case property
-        when Property then { "#{properties_table}.id" => property.id }
-        when Integer  then { "#{properties_table}.id" => property }
-        else
-          if Property.column_for_attribute('id').type == :uuid
-            ["#{properties_table}.name = ? OR #{properties_table}.id = ?", property, property]
-          else
-            { "#{properties_table}.name" => property }
-          end
-        end
-      end
-
       add_simple_scopes simple_scopes
 
       add_search_scope :ascend_by_master_price do
@@ -149,33 +134,6 @@ module Spree
           order(Arel.sql("#{min_position_sql} ASC"))
       end
 
-      # a scope that finds all products having property specified by name, object or id
-      add_search_scope :with_property do |property|
-        joins(:properties).where(property_conditions(property))
-      end
-
-      # a simple test for product with a certain property-value pairing
-      # note that it can test for properties with NULL values, but not for absent values
-      add_search_scope :with_property_value do |property, value|
-        if Spree.use_translations?
-          joins(:properties).
-            join_translation_table(Property).
-            join_translation_table(ProductProperty).
-            where(ProductProperty.translation_table_alias => { value: value }).
-            where(property_conditions(property))
-        else
-          joins(:properties).
-            where(ProductProperty.table_name => { value: value }).
-            where(property_conditions(property))
-        end
-      end
-
-      add_search_scope :with_property_values do |property_filter_param, property_values|
-        joins(product_properties: :property).
-          where(Property.table_name => { filter_param: property_filter_param }).
-          where(ProductProperty.table_name => { filter_param: property_values.map(&:parameterize) })
-      end
-
       add_search_scope :with_option do |option|
         if option.is_a?(OptionType)
           joins(:option_types).where(spree_option_types: { id: option.id })
@@ -226,13 +184,10 @@ module Spree
           where(Spree::OptionValue.table_name => { id: actual_ids })
       end
 
-      # Finds all products which have either:
-      # 1) have an option value with the name matching the one given
-      # 2) have a product property with a value matching the one given
+      # Finds all products which have an option value with the name matching the one given
       add_search_scope :with do |value|
         includes(variants: :option_values).
-          includes(:product_properties).
-          where("#{OptionValue.table_name}.name = ? OR #{ProductProperty.table_name}.value = ?", value, value)
+          where("#{OptionValue.table_name}.name = ?", value)
       end
 
       # Finds all products that have a name containing the given words.

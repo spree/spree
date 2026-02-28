@@ -15,8 +15,6 @@ module Spree
         can :read, Spree::OptionType
         can :read, Spree::OptionValue
         can :read, Spree::Product
-        can :read, Spree::ProductProperty
-        can :read, Spree::Property
         can :read, Spree::State
         can :read, Spree::Store
         can :read, Spree::Taxon

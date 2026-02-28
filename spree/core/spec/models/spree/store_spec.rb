@@ -14,13 +14,6 @@ describe Spree::Store, type: :model, without_global_store: true do
 
       it { expect(subject.products).to eq([product]) }
 
-      describe '#product_properties' do
-        let!(:product_property) { create(:product_property, product: product) }
-        let!(:product_property_2) { create(:product_property, product: product_2) }
-
-        it { expect(subject.product_properties).to eq([product_property]) }
-      end
-
       describe '#variants' do
         let!(:variant) { create(:variant, product: product) }
         let!(:variant_2) { create(:variant, product: product_2) }

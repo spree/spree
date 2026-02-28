@@ -19,7 +19,6 @@ module Spree
         @sort_by          = params.dig(:sort_by)
         @deleted          = params.dig(:filter, :show_deleted)
         @discontinued     = params.dig(:filter, :show_discontinued)
-        @properties       = params.dig(:filter, :properties)
         @in_stock         = params.dig(:filter, :in_stock)
         @backorderable    = params.dig(:filter, :backorderable)
         @purchasable      = params.dig(:filter, :purchasable)
@@ -46,7 +45,6 @@ module Spree
         products = by_slug(products)
         products = by_options(products)
         products = by_option_value_ids(products)
-        products = by_properties(products)
         products = by_tags(products)
         products = include_deleted(products)
         products = show_only_stock(products)
@@ -63,7 +61,7 @@ module Spree
       private
 
       attr_reader :ids, :skus, :price, :currency, :taxons, :concat_taxons, :name, :options, :option_value_ids, :scope,
-                  :sort_by, :deleted, :discontinued, :properties, :store, :in_stock, :backorderable, :purchasable, :tags,
+                  :sort_by, :deleted, :discontinued, :store, :in_stock, :backorderable, :purchasable, :tags,
                   :query, :vendor_ids, :out_of_stock, :slug, :taxonomies
 
       def query?
@@ -112,10 +110,6 @@ module Spree
 
       def sort_by?
         sort_by.present?
-      end
-
-      def properties?
-        properties.present? && properties.values.reject(&:empty?).present?
       end
 
       def vendor_ids?
@@ -220,27 +214,6 @@ module Spree
                       having('COUNT(spree_option_values.option_type_id) = ?', option_types_count(option_value_ids)).
                       distinct.
                       ids
-
-        products.where(id: product_ids)
-      end
-
-      def by_properties(products)
-        return products unless properties?
-
-        product_ids = []
-        index = 0
-
-        properties.to_unsafe_hash.each do |property_filter_param, product_properties_values|
-          next if property_filter_param.blank? || product_properties_values.empty?
-
-          values = product_properties_values.split(',').reject(&:empty?).uniq.map(&:parameterize)
-
-          next if values.empty?
-
-          ids = scope.unscope(:order, :includes).with_property_values(property_filter_param, values).ids
-          product_ids = index == 0 ? ids : product_ids & ids
-          index += 1
-        end
 
         products.where(id: product_ids)
       end

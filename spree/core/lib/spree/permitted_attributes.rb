@@ -44,8 +44,6 @@ module Spree
       :promotion_attributes,
       :promotion_rule_attributes,
       :promotion_action_attributes,
-      :product_properties_attributes,
-      :property_attributes,
       :refund_attributes,
       :refund_reason_attributes,
       :reimbursement_attributes,
@@ -177,8 +175,6 @@ module Spree
 
     @@price_list_attributes = [:name, :description, :match_policy, :starts_at, :ends_at, :status, :position]
 
-    @@product_properties_attributes = [:property_name, :property_id, :value, :position, :_destroy]
-
     @@product_attributes = [
       :name, :description, :available_on, :make_active_at, :discontinue_on, :permalink, :meta_description,
       :meta_keywords, :meta_title, :price, :sku, :deleted_at, :prototype_id,
@@ -203,8 +199,6 @@ module Spree
     @@promotion_rule_attributes = [:type, :preferred_match_policy, preferred_eligible_values: [], user_ids_to_add: [], product_ids_to_add: [], taxon_ids_to_add: []]
 
     @@promotion_action_attributes = [:type, :calculator_type, calculator_attributes: {}, promotion_action_line_items_attributes: [:id, :promotion_action_id, :variant_id, :quantity, :_destroy]]
-
-    @@property_attributes = [:name, :presentation, :position, :kind, :display_on]
 
     @@refund_attributes = [:amount, :refund_reason_id]
 
