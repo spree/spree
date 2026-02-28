@@ -49,7 +49,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'paranoia', '>= 2.4'
   s.add_dependency 'ransack', '>= 4.1'
   s.add_dependency 'rexml'
-  s.add_dependency 'ruby-oembed', '~> 0.18'
+
   s.add_dependency 'state_machines-activerecord', '~> 0.100'
   s.add_dependency 'state_machines-activemodel', '~> 0.100'
   s.add_dependency 'stringex'

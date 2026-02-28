@@ -1,8 +1,5 @@
 ---
 en:
-  action_text:
-    video_embed:
-      not_found: Can't embed a video using the provided URL
   activemodel:
     errors:
       messages:

@@ -1,5 +1,8 @@
 ---
 en:
+  action_text:
+    video_embed:
+      not_found: Can't embed a video using the provided URL
   spree:
     admin:
       amount_spent: Amount spent

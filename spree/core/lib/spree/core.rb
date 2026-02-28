@@ -28,7 +28,7 @@ require 'state_machines-activerecord'
 require 'active_storage_validations'
 require 'wannabe_bool'
 require 'geocoder'
-require 'oembed'
+
 require 'safely_block'
 require 'ar_lazy_preload'
 require 'sqids'
