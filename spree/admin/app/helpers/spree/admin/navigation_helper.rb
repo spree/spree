@@ -318,8 +318,6 @@ module Spree
       # @param options [Hash] additional options for rendering
       # @return [String] the rendered navigation HTML
       def render_navigation(context = :sidebar, **options)
-        return '' if Spree::Admin::RuntimeConfig.legacy_sidebar_navigation
-
         items = navigation_items(context)
         return '' if items.empty?
 

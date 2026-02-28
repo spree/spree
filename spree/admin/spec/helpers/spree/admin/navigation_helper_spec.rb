@@ -123,13 +123,6 @@ describe Spree::Admin::NavigationHelper, type: :helper do
 
     before do
       nav.clear
-      allow(Spree::Admin::RuntimeConfig).to receive(:legacy_sidebar_navigation).and_return(false)
-    end
-
-    it 'returns empty string when legacy navigation is enabled' do
-      allow(Spree::Admin::RuntimeConfig).to receive(:legacy_sidebar_navigation).and_return(true)
-
-      expect(helper.render_navigation(:sidebar)).to eq('')
     end
 
     it 'returns empty string when no items are visible' do
