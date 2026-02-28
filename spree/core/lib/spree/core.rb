@@ -427,7 +427,6 @@ require 'spree/events'
 require 'spree/webhooks'
 
 require 'spree/core/partials'
-require 'spree/core/importer'
 require 'spree/core/controller_helpers/auth'
 require 'spree/core/controller_helpers/common'
 require 'spree/core/controller_helpers/order'
