@@ -238,8 +238,6 @@ module Spree
           Spree::Payment,
           Spree::PaymentMethod,
           Spree::PaymentSource,
-          Spree::Post,
-          Spree::PostCategory,
           Spree::Product,
           Spree::Promotion,
           Spree::Refund,

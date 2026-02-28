@@ -231,17 +231,6 @@ Spree::Core::Engine.add_routes do
     # integrations
     resources :integrations
 
-    resources :posts do
-      collection do
-        get :select_options, defaults: { format: :json }
-      end
-    end
-    resources :post_categories do
-      collection do
-        get :select_options, defaults: { format: :json }
-      end
-    end
-
     # account management
     resources :roles, except: :show
     resources :invitations, except: [:edit, :update] do

@@ -184,8 +184,6 @@ module Spree
         digital_link.token == token
       end
       can :read, ::Spree::Policy
-      can :read, ::Spree::Post
-      can :read, ::Spree::PostCategory
     end
 
     def protect_admin_role

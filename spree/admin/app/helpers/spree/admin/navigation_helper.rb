@@ -273,13 +273,13 @@ module Spree
       end
 
       # renders a link to preview a resource on the storefront using the spree_storefront_resource_url helper
-      # @param resource [Spree::Product, Spree::Post] the resource to preview
+      # @param resource [Spree::Product] the resource to preview
       # @param options [Hash] the options for the link
       # @return [String] the link to preview the resource
       def external_page_preview_link(resource, options = {})
         resource_name = options[:name] || resource.class.name.demodulize
 
-        url = if [Spree::Product, Spree::Post].include?(resource.class)
+        url = if resource.instance_of?(Spree::Product)
                 spree_storefront_resource_url(resource, preview_id: resource.id)
               else
                 spree_storefront_resource_url(resource)

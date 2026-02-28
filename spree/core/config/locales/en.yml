@@ -737,8 +737,6 @@ en:
     all_adjustments_opened: All adjustments successfully opened!
     all_departments: All departments
     all_items_have_been_returned: All items have been returned
-    all_posts: All posts
-    all_posts_with_tag: All posts with tag
     all_products: All products
     all_rights_reserved: All rights reserved
     all_time: All time
@@ -805,8 +803,6 @@ en:
     bill_address: Bill Address
     billing: Billing
     billing_address: Billing Address
-    blog: Blog
-    blogs_posts: Blogs posts
     body_tag_end: Body tag end
     body_tag_start: Body tag start
     both: Both
@@ -1000,10 +996,6 @@ en:
     default_country_help: Country that will be used for the default shipping and billing addresses on Checkout
     default_currency: Default currency
     default_locale: Default locale
-    default_post_categories:
-      articles: Articles
-      news: News
-      resources: Resources
     default_refund_amount: Default Refund Amount
     default_shipping_address: Default shipping address
     default_stock_location_name: Shop location
@@ -1440,8 +1432,6 @@ en:
     new_payment: New Payment
     new_payment_method: New Payment Method
     new_policy: New Policy
-    new_post: New Post
-    new_post_category: New Post Category
     new_price_list: New Price List
     new_product: New Product
     new_promotion: New Promotion
@@ -1744,8 +1734,6 @@ en:
     please_enter_reasonable_quantity: Please enter a reasonable quantity.
     policies: Policies
     populate_get_error: Something went wrong. Please try adding the item again.
-    post_categories: Post categories
-    posts: Posts
     powered_by: Powered by
     pre_tax_amount: Pre-Tax Amount
     pre_tax_refund_amount: Pre-Tax Refund Amount

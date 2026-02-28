@@ -38,8 +38,6 @@ export { StorePaymentMethodSchema, type StorePaymentMethod } from './StorePaymen
 export { StorePaymentSessionSchema, type StorePaymentSession } from './StorePaymentSession';
 export { StorePaymentSetupSessionSchema, type StorePaymentSetupSession } from './StorePaymentSetupSession';
 export { StorePaymentSourceSchema, type StorePaymentSource } from './StorePaymentSource';
-export { StorePostSchema, type StorePost } from './StorePost';
-export { StorePostCategorySchema, type StorePostCategory } from './StorePostCategory';
 export { StorePriceSchema, type StorePrice } from './StorePrice';
 export { StoreProductSchema, type StoreProduct } from './StoreProduct';
 export { StorePromotionSchema, type StorePromotion } from './StorePromotion';

@@ -294,28 +294,6 @@ describe Spree::Store, type: :model, without_global_store: true do
       end
     end
 
-    describe '#ensure_default_post_categories_are_created' do
-      let(:store) { build(:store) }
-
-      it 'creates default post categories' do
-        expect { store.save! }.to change(Spree::PostCategory, :count).by(3)
-
-        expect(store.post_categories.count).to eq(3)
-        expect(store.post_categories.pluck(:title)).to contain_exactly(
-          Spree.t('default_post_categories.resources'),
-          Spree.t('default_post_categories.articles'),
-          Spree.t('default_post_categories.news')
-        )
-      end
-
-      it 'is idempotent - does not create duplicates when called multiple times' do
-        store.save!
-
-        expect { store.send(:ensure_default_post_categories_are_created) }.not_to change(Spree::PostCategory, :count)
-        expect(store.post_categories.count).to eq(3)
-      end
-    end
-
   end
 
   context 'Validations' do

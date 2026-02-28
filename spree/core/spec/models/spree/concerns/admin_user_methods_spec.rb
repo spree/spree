@@ -13,7 +13,6 @@ describe Spree::AdminUserMethods do
     it { expect(admin_user).to have_many(:created_gift_card_batches) }
     it { expect(admin_user).to have_many(:refunded_refunds) }
     it { expect(admin_user).to have_many(:performed_reimbursements) }
-    it { expect(admin_user).to have_many(:authored_posts) }
     it { expect(admin_user).to have_many(:created_store_credits) }
     it { expect(admin_user).to have_many(:reports) }
     it { expect(admin_user).to have_many(:exports) }
@@ -126,7 +125,6 @@ describe Spree::AdminUserMethods do
         let!(:gift_card_batch) { create(:gift_card_batch, created_by: admin_user, amount: 100, prefix: 'TEST') }
         let!(:refund) { create(:refund, refunder: admin_user, amount: 1) }
         let!(:reimbursement) { create(:reimbursement, performed_by: admin_user) }
-        let!(:post) { create(:post, author: admin_user) }
         let!(:store_credit) { create(:store_credit, created_by: admin_user) }
         let!(:report) { create(:report, user: admin_user) }
         let!(:export) { create(:export, user: admin_user) }
@@ -159,11 +157,6 @@ describe Spree::AdminUserMethods do
         it 'nullifies performed_by_id on reimbursements' do
           admin_user.destroy
           expect(reimbursement.reload.performed_by_id).to be_nil
-        end
-
-        it 'nullifies author_id on posts' do
-          admin_user.destroy
-          expect(post.reload.author_id).to be_nil
         end
 
         it 'nullifies created_by_id on store credits' do

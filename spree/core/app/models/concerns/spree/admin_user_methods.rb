@@ -22,7 +22,6 @@ module Spree
       has_many :created_gift_card_batches, class_name: 'Spree::GiftCardBatch', foreign_key: :created_by_id
       has_many :refunded_refunds, class_name: 'Spree::Refund', foreign_key: :refunder_id
       has_many :performed_reimbursements, class_name: 'Spree::Reimbursement', foreign_key: :performed_by_id
-      has_many :authored_posts, class_name: 'Spree::Post', foreign_key: :author_id
       has_many :created_store_credits, class_name: 'Spree::StoreCredit', foreign_key: :created_by_id
       has_many :reports, class_name: 'Spree::Report', foreign_key: :user_id
       has_many :exports, class_name: 'Spree::Export', foreign_key: :user_id
@@ -73,7 +72,6 @@ module Spree
       created_gift_card_batches.update_all(created_by_id: nil, updated_at: Time.current)
       refunded_refunds.update_all(refunder_id: nil, updated_at: Time.current)
       performed_reimbursements.update_all(performed_by_id: nil, updated_at: Time.current)
-      authored_posts.update_all(author_id: nil, updated_at: Time.current)
       created_store_credits.update_all(created_by_id: nil, updated_at: Time.current)
 
       # resources to destroy
