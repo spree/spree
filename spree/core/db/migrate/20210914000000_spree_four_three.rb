@@ -407,22 +407,6 @@ class SpreeFourThree < ActiveRecord::Migration[5.2]
       t.index ["promotion_rule_id", "product_id"], name: "index_products_promotion_rules_on_promotion_rule_and_product"
     end
 
-    create_table "spree_product_properties", force: :cascade do |t|
-      t.string "value"
-      t.bigint "product_id"
-      t.bigint "property_id"
-      t.datetime "created_at", precision: 6, null: false
-      t.datetime "updated_at", precision: 6, null: false
-      t.integer "position", default: 0
-      t.boolean "show_property", default: true
-      t.string "filter_param"
-      t.index ["filter_param"], name: "index_spree_product_properties_on_filter_param"
-      t.index ["position"], name: "index_spree_product_properties_on_position"
-      t.index ["product_id"], name: "index_product_properties_on_product_id"
-      t.index ["property_id", "product_id"], name: "index_spree_product_properties_on_property_id_and_product_id", unique: true
-      t.index ["property_id"], name: "index_spree_product_properties_on_property_id"
-    end
-
     create_table "spree_products", force: :cascade do |t|
       t.string "name", default: "", null: false
       t.text "description"
@@ -561,28 +545,6 @@ class SpreeFourThree < ActiveRecord::Migration[5.2]
       t.index ["promotion_id", "store_id"], name: "index_spree_promotions_stores_on_promotion_id_and_store_id", unique: true
       t.index ["promotion_id"], name: "index_spree_promotions_stores_on_promotion_id"
       t.index ["store_id"], name: "index_spree_promotions_stores_on_store_id"
-    end
-
-    create_table "spree_properties", force: :cascade do |t|
-      t.string "name"
-      t.string "presentation", null: false
-      t.datetime "created_at", precision: 6, null: false
-      t.datetime "updated_at", precision: 6, null: false
-      t.boolean "filterable", default: false, null: false
-      t.string "filter_param"
-      t.index ["filter_param"], name: "index_spree_properties_on_filter_param"
-      t.index ["filterable"], name: "index_spree_properties_on_filterable"
-      t.index ["name"], name: "index_spree_properties_on_name"
-    end
-
-    create_table "spree_property_prototypes", force: :cascade do |t|
-      t.bigint "prototype_id"
-      t.bigint "property_id"
-      t.datetime "created_at"
-      t.datetime "updated_at"
-      t.index ["property_id"], name: "index_spree_property_prototypes_on_property_id"
-      t.index ["prototype_id", "property_id"], name: "index_property_prototypes_on_prototype_id_and_property_id", unique: true
-      t.index ["prototype_id"], name: "index_spree_property_prototypes_on_prototype_id"
     end
 
     create_table "spree_prototype_taxons", force: :cascade do |t|

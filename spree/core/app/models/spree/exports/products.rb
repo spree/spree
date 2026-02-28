@@ -4,7 +4,6 @@ module Spree
       # to avoid N+1 queries
       def scope_includes
         includes = [:tax_category, :master, :option_types, { taxons: :taxonomy }, { variants_including_master: variant_includes }]
-        includes << { product_properties: [:property] } if Spree::Config[:product_properties_enabled]
         includes << { metafields: :metafield_definition }
         includes
       end
@@ -28,13 +27,8 @@ module Spree
 
       def csv_headers
         headers = Spree::CSV::ProductVariantPresenter::CSV_HEADERS.dup
-        headers += properties_headers if Spree::Config[:product_properties_enabled]
         headers += metafields_headers
         @csv_headers ||= headers
-      end
-
-      def properties_headers
-        @properties_headers ||= Spree::Property.order(:position).count.times.flat_map { |n| ["property#{n + 1}_name", "property#{n + 1}_value"] }
       end
     end
   end

@@ -72,9 +72,6 @@ module Spree
 
     has_many :product_option_types, -> { order(:position) }, dependent: :destroy, inverse_of: :product
     has_many :option_types, through: :product_option_types
-    has_many :product_properties, dependent: :destroy, inverse_of: :product
-    has_many :properties, through: :product_properties
-
     has_many :classifications, -> { order(created_at: :asc) }, dependent: :delete_all, inverse_of: :product
     has_many :taxons, through: :classifications, before_remove: :remove_taxon
     has_many :taxonomies, through: :taxons
@@ -215,9 +212,6 @@ module Spree
 
     attr_accessor :option_values_hash
 
-    accepts_nested_attributes_for :product_properties, allow_destroy: true, reject_if: lambda { |pp|
-                                                                                         pp[:property_id].blank? || (pp[:id].blank? && pp[:value].blank?)
-                                                                                       }
     accepts_nested_attributes_for(
       :variants,
       allow_destroy: true,
@@ -236,7 +230,7 @@ module Spree
 
     self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on status available_on created_at updated_at]
     self.whitelisted_ransackable_associations = %w[taxons stores variants_including_master master variants tags labels
-                                                   shipping_category classifications option_types properties]
+                                                   shipping_category classifications option_types]
     self.whitelisted_ransackable_scopes = %w[not_discontinued search_by_name in_taxon price_between
                                              multi_search in_stock_items out_of_stock_items with_option_value_ids
                                              ascend_by_price descend_by_price]
@@ -417,7 +411,7 @@ module Spree
     # Returns the short description for the product
     # @return [String]
     def storefront_description
-      property('short_description') || description
+      description
     end
 
     # Returns tax category for Product
@@ -520,45 +514,6 @@ module Spree
     # idea of having variants
     def variants_and_option_values(current_currency = nil)
       variants.active(current_currency).joins(:option_value_variants)
-    end
-
-    def property(property_name)
-      Spree::Deprecation.warn("Product properties are deprecated and will be removed in Spree 6.0. Please use Metafields instead")
-      if product_properties.loaded?
-        product_properties.detect { |property| property.property.name == property_name }.try(:value)
-      else
-        product_properties.joins(:property).find_by(spree_properties: { name: property_name }).try(:value)
-      end
-    end
-
-    def set_property(property_name, property_value, property_presentation = property_name)
-      Spree::Deprecation.warn("Product properties are deprecated and will be removed in Spree 6.0. Please use Metafields instead")
-      property_name = property_name.to_s.parameterize
-      ApplicationRecord.transaction do
-        # Manual first_or_create to work around Mobility bug
-        property = if Property.where(name: property_name).exists?
-                     existing_property = Property.where(name: property_name).first
-                     existing_property.presentation ||= property_presentation
-                     existing_property.save
-                     existing_property
-                   else
-                     Property.create(name: property_name, presentation: property_presentation)
-                   end
-
-        product_property = if ProductProperty.where(product: self, property: property).exists?
-                             ProductProperty.where(product: self, property: property).first
-                           else
-                             ProductProperty.new(product: self, property: property)
-                           end
-
-        product_property.value = property_value
-        product_property.save!
-      end
-    end
-
-    def remove_property(property_name)
-      Spree::Deprecation.warn("Product properties are deprecated and will be removed in Spree 6.0. Please use Metafields instead")
-      product_properties.joins(:property).find_by(spree_properties: { name: property_name.parameterize })&.destroy
     end
 
     def total_on_hand
@@ -682,7 +637,7 @@ module Spree
 
     def to_csv(store = nil)
       store ||= stores.default || stores.first
-      properties_for_csv = if Spree::Config[:product_properties_enabled]
+      properties_for_csv = if respond_to?(:product_properties) && Spree::Config.respond_to?(:product_properties_enabled) && Spree::Config[:product_properties_enabled]
                              Spree::Property.order(:position).flat_map do |property|
                                [
                                  property.name,
@@ -726,9 +681,6 @@ module Spree
 
     def add_associations_from_prototype
       if prototype_id && prototype = Spree::Prototype.find_by(id: prototype_id)
-        prototype.properties.each do |property|
-          product_properties.create(property: property, value: 'Placeholder')
-        end
         self.option_types = prototype.option_types
         self.taxons = prototype.taxons
       end

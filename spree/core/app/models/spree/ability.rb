@@ -162,8 +162,6 @@ module Spree
       can :manage, ::Spree::Address, user_id: user.id if user.persisted?
       can [:read, :destroy], ::Spree::CreditCard, user_id: user.id
       can :read, ::Spree::Product
-      can :read, ::Spree::ProductProperty
-      can :read, ::Spree::Property
       can :create, ::Spree.user_class
       can [:show, :update, :destroy], ::Spree.user_class, id: user.id
       can :read, ::Spree::State

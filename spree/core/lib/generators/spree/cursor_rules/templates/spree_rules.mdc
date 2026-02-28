@@ -77,9 +77,7 @@ class Spree::Product < Spree.base_class
   include Spree::Metafields
   
   has_many :variants, class_name: 'Spree::Variant', dependent: :destroy
-  has_many :product_properties, class_name: 'Spree::ProductProperty', dependent: :destroy
-  has_many :properties, through: :product_properties, source: :property
-  
+
   scope :available, -> { where(available_on: ..Time.current) }
   
   validates :name, presence: true

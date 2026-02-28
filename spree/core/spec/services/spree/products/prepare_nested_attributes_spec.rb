@@ -149,44 +149,6 @@ RSpec.describe Spree::Products::PrepareNestedAttributes do
     end
   end
 
-  describe 'product_properties_attributes handling' do
-    context 'when product property value is blank' do
-      let(:product_property) { create(:product_property, product: product) }
-      let(:raw_params) do
-        {
-          product_properties_attributes: {
-            '0' => {
-              id: product_property.id,
-              value: ''
-            }
-          }
-        }
-      end
-
-      it 'marks the product property for destruction' do
-        expect(prepared_params[:product_properties_attributes]['0']['_destroy']).to eq('1')
-      end
-    end
-
-    context 'when product property value is present' do
-      let(:product_property) { create(:product_property, product: product) }
-      let(:raw_params) do
-        {
-          product_properties_attributes: {
-            '0' => {
-              id: product_property.id,
-              value: 'New Value'
-            }
-          }
-        }
-      end
-
-      it 'does not mark the product property for destruction' do
-        expect(prepared_params[:product_properties_attributes]['0']['_destroy']).to be_nil
-      end
-    end
-  end
-
   describe 'prices_attributes handling' do
     let(:variant) { product.master }
 

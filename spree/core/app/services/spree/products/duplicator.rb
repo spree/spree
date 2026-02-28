@@ -13,8 +13,6 @@ module Spree
         new_product.send(:duplicate_extra, product) if new_product.respond_to?(:duplicate_extra)
         new_product.save
 
-        new_product.product_properties = duplicate_properties(product.product_properties) if new_product.persisted?
-
         new_product.persisted? ? success(new_product) : failure(new_product, duplicate_error_message(new_product))
       end
 
@@ -87,16 +85,6 @@ module Spree
         new_image.attachment.attach(image.attachment.blob)
         new_image.save
         new_image
-      end
-
-      def duplicate_properties(product_properties)
-        product_properties.map do |prop|
-          new_prop = prop.dup
-          new_prop.product = nil
-          new_prop.created_at = nil
-          new_prop.updated_at = nil
-          new_prop
-        end
       end
 
       def sku_generator(sku)

@@ -1,7 +1,6 @@
 Spree::Core::Engine.add_routes do
   namespace :admin, path: Spree.admin_path do
     # product catalog
-    resources :properties, except: :show
     resources :option_types, except: :show do
       resources :option_values, only: [:update] do
         collection do

@@ -5,7 +5,6 @@ RSpec.describe Spree::Products::Duplicator do
 
   let(:store) { @default_store }
 
-  let!(:product_property) { create(:product_property, product: product) }
   let!(:product) { create(:product, stores: [store], tag_list: ['tag1', 'tag2'], status: :active) }
 
   let(:filepath) { File.expand_path('../../../fixtures/thinking-cat.jpg', __dir__) }
@@ -67,11 +66,6 @@ RSpec.describe Spree::Products::Duplicator do
 
     it 'sets an unique sku' do
       expect(new_product.sku).to include 'COPY OF SKU'
-    end
-
-    it 'copies the properties' do
-      expect(new_product.product_properties.count).to eq 1
-      expect(new_product.product_properties.first.property.name).to eql product_property.property.name
     end
 
     it 'copies tags' do

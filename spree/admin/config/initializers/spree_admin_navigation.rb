@@ -126,12 +126,6 @@ Rails.application.config.after_initialize do
                 active: -> { %w[option_types option_values].include?(controller_name) },
                 if: -> { can?(:manage, Spree::OptionType) }
 
-    # Properties
-    products.add :properties,
-                label: :properties,
-                url: :admin_properties_path,
-                position: 50,
-                if: -> { can?(:manage, Spree::Property) && Spree::Config.product_properties_enabled }
   end
 
   # Customers with submenu

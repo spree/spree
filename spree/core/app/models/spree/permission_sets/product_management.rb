@@ -14,8 +14,6 @@ module Spree
         can :manage, Spree::Variant
         can :manage, Spree::OptionType
         can :manage, Spree::OptionValue
-        can :manage, Spree::Property
-        can :manage, Spree::ProductProperty
         can :manage, Spree::Taxon
         can :manage, Spree::Taxonomy
         can :manage, Spree::Classification

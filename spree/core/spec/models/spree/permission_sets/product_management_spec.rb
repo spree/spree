@@ -26,14 +26,6 @@ RSpec.describe Spree::PermissionSets::ProductManagement do
       expect(ability.can?(:manage, Spree::OptionValue)).to be true
     end
 
-    it 'grants manage access to Property' do
-      expect(ability.can?(:manage, Spree::Property)).to be true
-    end
-
-    it 'grants manage access to ProductProperty' do
-      expect(ability.can?(:manage, Spree::ProductProperty)).to be true
-    end
-
     it 'grants manage access to Taxon' do
       expect(ability.can?(:manage, Spree::Taxon)).to be true
     end

@@ -236,3 +236,19 @@ If you rely on these features please run:
   ```bash
   bundle add spree_multi_store
   ```
+
+### (Optional) Install Legacy Product Properties
+
+Product Properties have been extracted from Spree core to a separate gem `spree_legacy_product_properties`. Product Properties were already deprecated in favor of [Metafields](/developer/core-concepts/metafields) and disabled by default since Spree 5.1.
+
+If you have `product_properties_enabled: true` in your Spree configuration or rely on Product Properties in any way, install the extension:
+
+  ```bash
+  bundle add spree_legacy_product_properties
+  ```
+
+No data migration is needed — the gem uses the same database tables. All existing product properties, property definitions, and associations will continue to work as before.
+
+<Warning>
+  If you skip this step and had Product Properties enabled, any code referencing `product.product_properties`, `product.property()`, `product.set_property()`, or the admin Properties page will stop working.
+</Warning>

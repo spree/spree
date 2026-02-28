@@ -19,10 +19,8 @@ module Spree
 
       new_action.before :build_master_prices
       new_action.before :build_master_stock_items
-      new_action.before :build_product_properties
       edit_action.before :build_master_prices
       edit_action.before :build_master_stock_items
-      edit_action.before :build_product_properties
       create.after :assign_master_images
       update.before :skip_updating_status
       update.before :update_status
@@ -269,16 +267,6 @@ module Spree
 
       def master_stock_items_locations_opts
         {}
-      end
-
-      def build_product_properties
-        return unless Spree::Config[:product_properties_enabled]
-
-        Spree::Property.all.each do |property|
-          @product.product_properties.build(property: property) unless @product.product_properties.find do |product_property|
-            product_property.property_id == property.id
-          end
-        end
       end
 
       def assign_master_images
