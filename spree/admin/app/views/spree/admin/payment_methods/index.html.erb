@@ -31,16 +31,17 @@
     <div class="table-responsive">
       <table class="table">
         <thead>
-        <tr>
-          <th scope="col"><%= Spree.t(:name) %></th>
-          <th scope="col"><%= Spree.t(:description) %></th>
-          <th scope="col"></th>
-        </tr>
-      </thead>
-      <tbody>
-        <%= render partial: 'spree/admin/payment_methods/available_payment_method', collection: available_payment_methods, as: :payment_method %>
-      </tbody>
-    </table>
+          <tr>
+            <th scope="col"><%= Spree.t(:name) %></th>
+            <th scope="col"><%= Spree.t(:description) %></th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= render partial: 'spree/admin/payment_methods/available_payment_method', collection: available_payment_methods, as: :payment_method %>
+        </tbody>
+      </table>
+    </div>
   </div>
 <% end %>
 
