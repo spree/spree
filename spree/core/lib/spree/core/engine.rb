@@ -14,7 +14,6 @@ module Spree
                                :promotions,
                                :pricing,
                                :line_item_comparison_hooks,
-                               :data_feed_types,
                                :export_types,
                                :import_types,
                                :taxon_rules,
@@ -174,10 +173,6 @@ module Spree
           Promotion::Actions::CreateItemAdjustments,
           Promotion::Actions::CreateLineItems,
           Promotion::Actions::FreeShipping
-        ]
-
-        Rails.application.config.spree.data_feed_types = [
-          Spree::DataFeed::Google
         ]
 
         Rails.application.config.spree.export_types = [
