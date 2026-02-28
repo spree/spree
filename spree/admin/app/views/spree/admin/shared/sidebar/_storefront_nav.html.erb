@@ -12,10 +12,6 @@
       <%= nav_item(Spree.t(:pages), spree.admin_pages_path) %>
     <% end %>
 
-    <% if can?(:manage, Spree::Post) %>
-      <%= nav_item(Spree.t(:posts), spree.admin_posts_path, active: %w[posts post_categories].include?(controller_name)) %>
-    <% end %>
-
     <% if can?(:manage, current_store) %>
       <%= nav_item(Spree.t(:settings), spree.edit_admin_storefront_path) %>
     <% end %>
@@ -31,10 +27,6 @@
 
     <% if can?(:manage, Spree::Page) %>
       <%= nav_item(Spree.t(:pages), spree.admin_pages_path) %>
-    <% end %>
-
-    <% if can?(:manage, Spree::Post) %>
-      <%= nav_item(Spree.t(:posts), spree.admin_posts_path) %>
     <% end %>
 
     <% if can?(:manage, current_store) %>

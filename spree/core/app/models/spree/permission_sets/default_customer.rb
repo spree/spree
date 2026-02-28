@@ -26,8 +26,6 @@ module Spree
 
         # Content pages
         can :read, Spree::Policy
-        can :read, Spree::Post
-        can :read, Spree::PostCategory
 
         # Order management for the user's own orders
         can :create, Spree::Order

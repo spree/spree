@@ -39,8 +39,6 @@ module Spree
       :payment_session_attributes,
       :payment_setup_session_attributes,
       :policy_attributes,
-      :post_attributes,
-      :post_category_attributes,
       :price_list_attributes,
       :product_attributes,
       :promotion_attributes,
@@ -176,10 +174,6 @@ module Spree
     @@payment_setup_session_attributes = [:payment_method_id, { external_data: {} }]
 
     @@policy_attributes = [:name, :slug, :body]
-
-    @@post_attributes = [:title, :meta_title, :meta_description, :slug, :author_id, :post_category_id, :published_at, :content, :excerpt, :image, tag_list: []]
-
-    @@post_category_attributes = [:title, :slug, :description]
 
     @@price_list_attributes = [:name, :description, :match_policy, :starts_at, :ends_at, :status, :position]
 

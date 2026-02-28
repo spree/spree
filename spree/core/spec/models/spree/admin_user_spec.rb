@@ -28,7 +28,6 @@ describe Spree.admin_user_class, type: :model do
       let!(:gift_cards) { create_list(:gift_card, 2, created_by: admin_user) }
       let!(:refunds) { create_list(:refund, 2, refunder: admin_user, amount: 1) }
       let!(:reimbursements) { create_list(:reimbursement, 2, performed_by: admin_user) }
-      let!(:posts) { create_list(:post, 2, author: admin_user) }
       let!(:reports) { create_list(:report, 2, user: admin_user) }
       let!(:store_credits) { create_list(:store_credit, 2, created_by: admin_user) }
       let!(:exports) { create_list(:export, 2, user: admin_user) }
@@ -42,7 +41,6 @@ describe Spree.admin_user_class, type: :model do
         expect(gift_cards.all? { |gift_card| gift_card.reload.created_by_id.nil? }).to be_truthy
         expect(refunds.all? { |refund| refund.reload.refunder_id.nil? }).to be_truthy
         expect(reimbursements.all? { |reimbursement| reimbursement.reload.performed_by_id.nil? }).to be_truthy
-        expect(posts.all? { |post| post.reload.author_id.nil? }).to be_truthy
         expect(store_credits.all? { |store_credit| store_credit.reload.created_by_id.nil? }).to be_truthy
       end
     end

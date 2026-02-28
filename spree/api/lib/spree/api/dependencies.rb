@@ -72,8 +72,6 @@ module Spree
         storefront_line_item_serializer: 'Spree::V2::Storefront::LineItemSerializer',
         storefront_option_type_serializer: 'Spree::V2::Storefront::OptionTypeSerializer',
         storefront_option_value_serializer: 'Spree::V2::Storefront::OptionValueSerializer',
-        storefront_post_category_serializer: 'Spree::V2::Storefront::PostCategorySerializer',
-        storefront_post_serializer: 'Spree::V2::Storefront::PostSerializer',
         storefront_product_property_serializer: 'Spree::V2::Storefront::ProductPropertySerializer',
         storefront_order_promotion_serializer: 'Spree::V2::Storefront::OrderPromotionSerializer',
         storefront_shipping_method_serializer: 'Spree::V2::Storefront::ShippingMethodSerializer',
@@ -136,8 +134,6 @@ module Spree
         import_row_serializer: 'Spree::Api::V3::ImportRowSerializer',
         invitation_serializer: 'Spree::Api::V3::InvitationSerializer',
         newsletter_subscriber_serializer: 'Spree::Api::V3::NewsletterSubscriberSerializer',
-        post_serializer: 'Spree::Api::V3::PostSerializer',
-        post_category_serializer: 'Spree::Api::V3::PostCategorySerializer',
         promotion_serializer: 'Spree::Api::V3::PromotionSerializer',
         refund_serializer: 'Spree::Api::V3::RefundSerializer',
         reimbursement_serializer: 'Spree::Api::V3::ReimbursementSerializer',
@@ -165,10 +161,9 @@ module Spree
         # sorters
         storefront_collection_sorter: -> { Spree::Dependencies.collection_sorter },
         storefront_order_sorter: -> { Spree::Dependencies.collection_sorter },
+        storefront_posts_sorter: nil,
         storefront_products_sorter: -> { Spree::Dependencies.products_sorter },
         platform_products_sorter: -> { Spree::Dependencies.products_sorter },
-        storefront_posts_sorter: -> { Spree::Dependencies.posts_sorter },
-
         # paginators
         storefront_collection_paginator: 'Spree::Api::Paginate',
 
@@ -181,8 +176,8 @@ module Spree
         storefront_completed_order_finder: -> { Spree::Dependencies.completed_order_finder },
         storefront_credit_card_finder: -> { Spree::Dependencies.credit_card_finder },
         storefront_find_by_variant_finder: -> { Spree::Dependencies.line_item_by_variant_finder },
+        storefront_posts_finder: nil,
         storefront_products_finder: -> { Spree::Dependencies.products_finder },
-        storefront_posts_finder: -> { Spree::Dependencies.posts_finder },
         storefront_taxon_finder: -> { Spree::Dependencies.taxon_finder },
         storefront_variant_finder: -> { Spree::Dependencies.variant_finder },
 

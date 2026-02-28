@@ -179,15 +179,6 @@ Rails.application.config.after_initialize do
           position: 60,
           if: -> { can?(:manage, Spree::Report) }
 
-  # Posts (Blog)
-  sidebar_nav.add :posts,
-          label: :posts,
-          url: :admin_posts_path,
-          icon: 'article',
-          position: 70,
-          active: -> { %w[posts post_categories].include?(controller_name) },
-          if: -> { can?(:manage, Spree::Post) }
-
   # Integrations
   sidebar_nav.add :integrations,
           label: :integrations,

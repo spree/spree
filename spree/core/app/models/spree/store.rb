@@ -101,9 +101,6 @@ module Spree
     has_many :reports, class_name: 'Spree::Report'
     has_many :exports, class_name: 'Spree::Export'
 
-    has_many :posts, class_name: 'Spree::Post', dependent: :destroy, inverse_of: :store
-    has_many :post_categories, class_name: 'Spree::PostCategory', dependent: :destroy, inverse_of: :store
-
     has_many :integrations, class_name: 'Spree::Integration'
 
     has_many :gift_cards, class_name: 'Spree::GiftCard', dependent: :destroy
@@ -165,7 +162,6 @@ module Spree
     after_create :ensure_default_market
     after_create :ensure_default_taxonomies_are_created
     after_create :ensure_default_automatic_taxons
-    after_create :ensure_default_post_categories_are_created
     after_create :create_default_policies
 
     #
@@ -442,21 +438,6 @@ module Spree
               taxon_rules: [TaxonRule.new(type: config[:rule_type], value: config[:rule_value])]
             )
           end
-        end
-      end
-    end
-
-    def ensure_default_post_categories_are_created
-      Spree::Events.disable do
-        [
-          translate_with_store_locale_fallback('spree.default_post_categories.resources'),
-          translate_with_store_locale_fallback('spree.default_post_categories.articles'),
-          translate_with_store_locale_fallback('spree.default_post_categories.news')
-        ].each do |category_title|
-          # Use exists?/create pattern for safety
-          next if post_categories.where(title: category_title).exists?
-
-          post_categories.create(title: category_title)
         end
       end
     end
