@@ -2312,11 +2312,6 @@ en:
     taxons: Taxons
     terms_of_service: Terms of Service
     test: Test
-    test_mailer:
-      test_email:
-        greeting: Congratulations!
-        message: If you have received this email, then your email settings are correct.
-        subject: Test Mail
     test_mode: Test Mode
     text_alignment: Text alignment
     thank_you_for_your_order: Thank you for your business.  Please print out a copy of this confirmation page for your records.
