@@ -22,6 +22,7 @@ PATH
       local_time (~> 3.0)
       mapkick-rb (~> 0.1)
       pagy (~> 43.0)
+      ruby-oembed (~> 0.18)
       spree (>= 5.4.0.beta)
       stimulus-rails
       tailwindcss-rails (>= 4.0)
@@ -77,7 +78,6 @@ PATH
       rails (>= 7.2, < 8.2)
       ransack (>= 4.1)
       rexml
-      ruby-oembed (~> 0.18)
       safely_block (~> 0.4)
       sqids (~> 0.2)
       state_machines-activemodel (~> 0.100)
