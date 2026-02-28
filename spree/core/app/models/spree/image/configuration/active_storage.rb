@@ -5,8 +5,6 @@ module Spree
         extend ActiveSupport::Concern
 
         included do
-          validates :attachment, attached: true, content_type: Rails.application.config.active_storage.web_image_content_types
-
           # Returns image styles derived from Spree::Config.product_image_variant_sizes
           # Format: { variant_name: 'WxH>' } for API compatibility
           def self.styles

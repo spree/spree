@@ -1,8 +1,10 @@
 module Spree
   class Image < Asset
-    include Spree::Image::Configuration::ActiveStorage
+    include Spree::Image::Configuration::ActiveStorage # legacy to be removed in Spree 6
     include Rails.application.routes.url_helpers
-    include Spree::ImageMethods
+    include Spree::ImageMethods # legacy, will be removed in Spree 6
+
+    validates :attachment, attached: true, content_type: Rails.application.config.active_storage.web_image_content_types
 
     after_commit :touch_product_variants, if: :should_touch_product_variants?, on: :update
     after_commit :update_variant_thumbnail, on: [:create, :destroy]
@@ -19,7 +21,10 @@ module Spree
     # The line below prevents the error.
     self.inheritance_column = nil
 
+    # @deprecated
     def styles
+      Spree::Deprecation.warn("Image#styles is deprecated and will be removed in Spree 6.0. Please use active storage variants with cdn_image_url")
+
       self.class.styles.map do |_, size|
         width, height = size.chop.split('x').map(&:to_i)
 
@@ -30,35 +35,6 @@ module Spree
           height: height
         }
       end
-    end
-
-    def style(name)
-      size = self.class.styles[name]
-      return unless size
-
-      width, height = size.chop.split('x').map(&:to_i)
-
-      {
-        url: generate_url(size: size),
-        size: size,
-        width: width,
-        height: height
-      }
-    end
-
-    def style_dimensions(name)
-      size = self.class.styles[name]
-      width, height = size.chop.split('x').map(&:to_i)
-
-      {
-        width: width,
-        height: height
-      }
-    end
-
-    def plp_url
-      Spree::Deprecation.warn "Image#plp_url is deprecated. Use variant(:large) instead."
-      generate_url(size: self.class.styles[:large])
     end
 
     private

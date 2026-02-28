@@ -60,7 +60,6 @@ module Spree
     validates :taxonomy, presence: true
     validates :permalink, uniqueness: { case_sensitive: false, scope: [:parent_id, :taxonomy_id] }
     validates :hide_from_nav, inclusion: { in: [true, false] }
-    validates_associated :icon
     validate :check_for_root, on: :create
     validate :parent_belongs_to_same_taxonomy
     with_options length: { maximum: 255 }, allow_blank: true do
