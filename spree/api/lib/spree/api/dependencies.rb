@@ -196,7 +196,6 @@ module Spree
         platform_country_serializer: 'Spree::Api::V2::Platform::CountrySerializer',
         platform_credit_card_serializer: 'Spree::Api::V2::Platform::CreditCardSerializer',
         platform_customer_return_serializer: 'Spree::Api::V2::Platform::CustomerReturnSerializer',
-        platform_data_feed_serializer: 'Spree::Api::V2::Platform::DataFeedSerializer',
         platform_digital_link_serializer: 'Spree::Api::V2::Platform::DigitalLinkSerializer',
         platform_digital_serializer: 'Spree::Api::V2::Platform::DigitalSerializer',
         platform_gift_card_serializer: 'Spree::Api::V2::Platform::GiftCardSerializer',

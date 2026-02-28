@@ -82,6 +82,9 @@ Spree::Core::Engine.add_routes do
         # Digital Downloads
         # Access via token in URL
         get 'digitals/:token', to: 'digitals#show', as: :digital_download
+
+        # Data Feeds (public, no auth required)
+        resources :feeds, only: [:show], controller: 'data_feeds', param: :slug
       end
     end
   end

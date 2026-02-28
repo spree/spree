@@ -5,6 +5,7 @@ module Spree
     belongs_to :store, class_name: 'Spree::Store', foreign_key: 'store_id'
 
     scope :for_store, ->(store) { where(store: store) }
+    scope :active, -> { where(active: true) }
 
     before_validation :generate_slug
 
@@ -15,7 +16,7 @@ module Spree
     end
 
     def formatted_url
-      "#{store.formatted_url}/api/v2/data_feeds/#{self.class.provider_name}/#{slug}.rss"
+      "#{store.formatted_url}/api/v3/store/feeds/#{slug}.xml"
     end
 
     private
@@ -31,6 +32,10 @@ module Spree
       end
 
       def provider_name
+        raise NotImplementedError
+      end
+
+      def presenter_class
         raise NotImplementedError
       end
 

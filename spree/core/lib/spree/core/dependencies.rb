@@ -87,13 +87,6 @@ module Spree
 
         payment_create_service: 'Spree::Payments::Create',
 
-        # data feeds
-        data_feeds_google_rss_service: 'Spree::DataFeeds::Google::Rss',
-        data_feeds_google_optional_attributes_service: 'Spree::DataFeeds::Google::OptionalAttributes',
-        data_feeds_google_required_attributes_service: 'Spree::DataFeeds::Google::RequiredAttributes',
-        data_feeds_google_optional_sub_attributes_service: 'Spree::DataFeeds::Google::OptionalSubAttributes',
-        data_feeds_google_products_list: 'Spree::DataFeeds::Google::ProductsList',
-
         # finders
         address_finder: 'Spree::Addresses::Find',
         country_finder: 'Spree::Countries::Find',
