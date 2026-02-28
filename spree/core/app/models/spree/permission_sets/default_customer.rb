@@ -26,9 +26,8 @@ module Spree
 
         # Content pages
         can :read, Spree::Policy
-        can :read, Spree::Page if defined?(Spree::Page)
-        can :read, Spree::Post if defined?(Spree::Post)
-        can :read, Spree::PostCategory if defined?(Spree::PostCategory)
+        can :read, Spree::Post
+        can :read, Spree::PostCategory
 
         # Order management for the user's own orders
         can :create, Spree::Order

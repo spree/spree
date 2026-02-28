@@ -40,9 +40,6 @@ end
 #   Spree.public_storage_service_name = :amazon_private # private assets, such as invoices, etc
 # end
 
-# Enable theme preview screenshots in admin dashboard
-# Spree.screenshot_api_token = <Your Screenshot API token obtained from https://screenshotapi.net/>
-
 # Configure Spree Dependencies
 #
 # Note: If a dependency is set here it will NOT be stored within the cache & database upon initialization.
