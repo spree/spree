@@ -257,6 +257,14 @@ module Spree
       # Add app/subscribers to autoload paths
       config.paths.add 'app/subscribers', eager_load: true
 
+      # Include admin engine migrations in the host app's migration paths
+      initializer 'spree.admin.migrations' do |app|
+        config.paths['db/migrate'].expanded.each do |expanded_path|
+          app.config.paths['db/migrate'] << expanded_path
+          ActiveRecord::Migrator.migrations_paths << expanded_path
+        end
+      end
+
       # accessible via Rails.application.config.spree_admin
       initializer 'spree.admin.environment', before: :load_config_initializers do |app|
         app.config.spree_admin = Environment.new
