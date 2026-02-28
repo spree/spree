@@ -161,6 +161,7 @@ module Spree
         # sorters
         storefront_collection_sorter: -> { Spree::Dependencies.collection_sorter },
         storefront_order_sorter: -> { Spree::Dependencies.collection_sorter },
+        storefront_posts_sorter: nil,
         storefront_products_sorter: -> { Spree::Dependencies.products_sorter },
         platform_products_sorter: -> { Spree::Dependencies.products_sorter },
         # paginators
@@ -175,6 +176,7 @@ module Spree
         storefront_completed_order_finder: -> { Spree::Dependencies.completed_order_finder },
         storefront_credit_card_finder: -> { Spree::Dependencies.credit_card_finder },
         storefront_find_by_variant_finder: -> { Spree::Dependencies.line_item_by_variant_finder },
+        storefront_posts_finder: nil,
         storefront_products_finder: -> { Spree::Dependencies.products_finder },
         storefront_taxon_finder: -> { Spree::Dependencies.taxon_finder },
         storefront_variant_finder: -> { Spree::Dependencies.variant_finder },
