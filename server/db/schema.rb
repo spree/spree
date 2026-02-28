@@ -981,32 +981,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_27_081642) do
     t.index ["promotion_rule_id", "product_id"], name: "index_products_promotion_rules_on_promotion_rule_and_product"
   end
 
-  create_table "spree_product_properties", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.string "filter_param"
-    t.integer "position", default: 0
-    t.bigint "product_id"
-    t.bigint "property_id"
-    t.boolean "show_property", default: true
-    t.datetime "updated_at", null: false
-    t.string "value"
-    t.index ["filter_param"], name: "index_spree_product_properties_on_filter_param"
-    t.index ["position"], name: "index_spree_product_properties_on_position"
-    t.index ["product_id"], name: "index_product_properties_on_product_id"
-    t.index ["property_id", "product_id"], name: "index_spree_product_properties_on_property_id_and_product_id", unique: true
-    t.index ["property_id"], name: "index_spree_product_properties_on_property_id"
-  end
-
-  create_table "spree_product_property_translations", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.string "locale", null: false
-    t.bigint "spree_product_property_id", null: false
-    t.datetime "updated_at", null: false
-    t.string "value"
-    t.index ["locale"], name: "index_spree_product_property_translations_on_locale"
-    t.index ["spree_product_property_id", "locale"], name: "unique_product_property_id_per_locale", unique: true
-  end
-
   create_table "spree_product_translations", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "deleted_at", precision: nil
@@ -1193,44 +1167,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_27_081642) do
     t.index ["promotion_id", "store_id"], name: "index_spree_promotions_stores_on_promotion_id_and_store_id", unique: true
     t.index ["promotion_id"], name: "index_spree_promotions_stores_on_promotion_id"
     t.index ["store_id"], name: "index_spree_promotions_stores_on_store_id"
-  end
-
-  create_table "spree_properties", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.string "display_on", default: "both"
-    t.string "filter_param"
-    t.boolean "filterable", default: false, null: false
-    t.integer "kind", default: 0
-    t.string "name"
-    t.integer "position", default: 0
-    t.string "presentation", null: false
-    t.jsonb "private_metadata"
-    t.jsonb "public_metadata"
-    t.datetime "updated_at", null: false
-    t.index ["filter_param"], name: "index_spree_properties_on_filter_param"
-    t.index ["filterable"], name: "index_spree_properties_on_filterable"
-    t.index ["name"], name: "index_spree_properties_on_name", unique: true
-    t.index ["position"], name: "index_spree_properties_on_position"
-  end
-
-  create_table "spree_property_prototypes", force: :cascade do |t|
-    t.datetime "created_at", precision: nil
-    t.bigint "property_id"
-    t.bigint "prototype_id"
-    t.datetime "updated_at", precision: nil
-    t.index ["property_id"], name: "index_spree_property_prototypes_on_property_id"
-    t.index ["prototype_id", "property_id"], name: "index_property_prototypes_on_prototype_id_and_property_id", unique: true
-    t.index ["prototype_id"], name: "index_spree_property_prototypes_on_prototype_id"
-  end
-
-  create_table "spree_property_translations", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.string "locale", null: false
-    t.string "presentation"
-    t.bigint "spree_property_id", null: false
-    t.datetime "updated_at", null: false
-    t.index ["locale"], name: "index_spree_property_translations_on_locale"
-    t.index ["spree_property_id", "locale"], name: "unique_property_id_per_locale", unique: true
   end
 
   create_table "spree_prototype_taxons", force: :cascade do |t|
