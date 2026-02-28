@@ -242,14 +242,6 @@ module Spree
     Rails.application.config.spree.line_item_comparison_hooks = value
   end
 
-  def self.data_feed_types
-    Rails.application.config.spree.data_feed_types
-  end
-
-  def self.data_feed_types=(value)
-    Rails.application.config.spree.data_feed_types = value
-  end
-
   def self.export_types
     Rails.application.config.spree.export_types
   end

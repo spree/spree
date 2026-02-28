@@ -93,8 +93,6 @@ module Spree
 
     has_many :wishlists, class_name: 'Spree::Wishlist'
 
-    has_many :data_feeds, class_name: 'Spree::DataFeed'
-
     belongs_to :default_country, class_name: 'Spree::Country'
     belongs_to :checkout_zone, class_name: 'Spree::Zone'
 

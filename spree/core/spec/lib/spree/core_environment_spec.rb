@@ -38,11 +38,6 @@ RSpec.describe 'Spree environment accessors' do
       expect(Spree.line_item_comparison_hooks).to eq(Rails.application.config.spree.line_item_comparison_hooks)
     end
 
-    it 'provides access to data_feed_types' do
-      expect(Spree.data_feed_types).to eq(Rails.application.config.spree.data_feed_types)
-      expect(Spree.data_feed_types).to be_an(Array)
-    end
-
     it 'provides access to export_types' do
       expect(Spree.export_types).to eq(Rails.application.config.spree.export_types)
       expect(Spree.export_types).to be_an(Array)
