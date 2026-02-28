@@ -10,6 +10,10 @@ module Spree
       def provider_name
         'google'
       end
+
+      def presenter_class
+        Spree::DataFeeds::GooglePresenter
+      end
     end
   end
 end
