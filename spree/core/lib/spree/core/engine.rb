@@ -123,7 +123,6 @@ module Spree
 
         Rails.application.config.spree.payment_methods = [
           Spree::Gateway::Bogus,
-          Spree::Gateway::BogusSimple,
           Spree::Gateway::CustomPaymentSourceMethod,
           Spree::PaymentMethod::Check,
           Spree::PaymentMethod::StoreCredit
