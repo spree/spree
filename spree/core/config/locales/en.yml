@@ -292,8 +292,8 @@ en:
         spree/market_country:
           attributes:
             country:
-              not_in_shipping_zone: is not covered by any shipping zone. Please set up a shipping zone first.
               already_in_market: is already assigned to another market in this store
+              not_in_shipping_zone: is not covered by any shipping zone. Please set up a shipping zone first.
         spree/payment:
           attributes:
             amount:
