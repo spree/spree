@@ -18,7 +18,7 @@ module Spree
 
     def find_shipment(event)
       shipment_id = event.payload['id']
-      Spree::Shipment.find_by(id: shipment_id)
+      Spree::Shipment.find_by_prefix_id(shipment_id)
     end
   end
 end

@@ -14,7 +14,8 @@ module Spree
         Spree.subscribers.concat [
           Spree::OrderEmailSubscriber,
           Spree::ShipmentEmailSubscriber,
-          Spree::ReimbursementEmailSubscriber
+          Spree::ReimbursementEmailSubscriber,
+          Spree::NewsletterSubscriberEmailSubscriber
         ]
       end
     end

@@ -22,7 +22,7 @@ module Spree
       end
 
       it 'does not send a confirmation email' do
-        expect_any_instance_of(Spree::NewsletterSubscriber).not_to receive(:deliver_newsletter_email_verification)
+        expect_any_instance_of(Spree::NewsletterSubscriber).not_to receive(:publish_event).with('newsletter_subscriber.subscribed')
 
         service
       end
@@ -41,7 +41,7 @@ module Spree
       end
 
       it 'does not send a confirmation email' do
-        expect_any_instance_of(Spree::NewsletterSubscriber).not_to receive(:deliver_newsletter_email_verification)
+        expect_any_instance_of(Spree::NewsletterSubscriber).not_to receive(:publish_event).with('newsletter_subscriber.subscribed')
 
         service
       end
@@ -56,7 +56,7 @@ module Spree
       let(:email) { 'test@example.com' }
 
       it 'sends a confirmation email' do
-        expect_any_instance_of(Spree::NewsletterSubscriber).to receive(:deliver_newsletter_email_verification).once
+        expect_any_instance_of(Spree::NewsletterSubscriber).to receive(:publish_event).with('newsletter_subscriber.subscribed').once
 
         service
       end
@@ -82,7 +82,7 @@ module Spree
       end
 
       it 'does not send a confirmation email' do
-        expect_any_instance_of(Spree::NewsletterSubscriber).not_to receive(:deliver_newsletter_email_verification)
+        expect_any_instance_of(Spree::NewsletterSubscriber).not_to receive(:publish_event).with('newsletter_subscriber.subscribed')
 
         service
       end
@@ -100,7 +100,7 @@ module Spree
       end
 
       it 'sends a confirmation email' do
-        expect_any_instance_of(Spree::NewsletterSubscriber).to receive(:deliver_newsletter_email_verification).once
+        expect_any_instance_of(Spree::NewsletterSubscriber).to receive(:publish_event).with('newsletter_subscriber.subscribed').once
 
         service
       end

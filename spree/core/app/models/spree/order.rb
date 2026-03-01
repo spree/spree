@@ -3,7 +3,6 @@ require_dependency 'spree/order/currency_updater'
 require_dependency 'spree/order/digital'
 require_dependency 'spree/order/payments'
 require_dependency 'spree/order/store_credit'
-require_dependency 'spree/order/emails'
 require_dependency 'spree/order/gift_card'
 
 module Spree
@@ -22,7 +21,6 @@ module Spree
     include Spree::Order::Payments
     include Spree::Order::StoreCredit
     include Spree::Order::AddressBook
-    include Spree::Order::Emails
     include Spree::Order::Webhooks
     include Spree::Core::NumberGenerator.new(prefix: 'R')
     include Spree::Order::GiftCard
@@ -965,7 +963,6 @@ module Spree
         payments.store_credits.pending.each(&:void!)
       end
 
-      send_cancel_email
       update_with_updater!
       send_order_canceled_webhook
       publish_order_canceled_event
