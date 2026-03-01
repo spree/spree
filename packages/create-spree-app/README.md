@@ -36,9 +36,9 @@ npx create-spree-app my-store --backend-only --no-sample-data --no-start
 ```
 my-store/
 ├── docker-compose.yml    # Spree backend + Postgres
-├── .env                  # SECRET_KEY_BASE for Rails
+├── .env                  # SECRET_KEY_BASE, port, version tag
 ├── .gitignore
-├── package.json          # Convenience scripts (dev, down, logs, etc.)
+├── package.json          # @spree/cli + convenience scripts
 ├── README.md             # Getting started guide
 └── apps/
     └── storefront/       # Next.js app (full-stack mode only)
@@ -73,15 +73,43 @@ Open http://localhost:3001
 
 ## Useful Commands
 
-Run these from your project directory:
+Run these from your project directory (powered by [`@spree/cli`](https://www.npmjs.com/package/@spree/cli)):
 
 | Command | Description |
 |---------|-------------|
-| `npm run dev` | Start backend services |
-| `npm run down` | Stop backend services |
+| `npm run dev` | Start backend services and stream logs |
+| `npm run stop` | Stop backend services |
+| `npm run down` | Stop and remove backend services |
+| `npm run update` | Pull latest Spree image and restart (runs migrations automatically) |
 | `npm run logs` | View backend logs |
+| `npm run logs:worker` | View background jobs logs |
 | `npm run console` | Rails console |
+| `npm run seed` | Seed the database |
 | `npm run load-sample-data` | Load sample products, categories |
+
+You can also use the CLI directly for additional commands:
+
+```bash
+npx spree user create          # Create an admin user
+npx spree api-key create       # Create an API key
+npx spree api-key list          # List API keys
+```
+
+## Updating Spree
+
+To update to the latest Spree version:
+
+```bash
+npm run update
+```
+
+This pulls the latest Docker image and recreates the containers. The entrypoint automatically runs `db:prepare`, which handles any pending database migrations.
+
+To pin a specific version, edit `SPREE_VERSION_TAG` in `.env`:
+
+```
+SPREE_VERSION_TAG=5.4
+```
 
 ## Learn More
 

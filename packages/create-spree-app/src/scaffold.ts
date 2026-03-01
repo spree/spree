@@ -4,14 +4,14 @@ import fs from 'node:fs'
 import path from 'node:path'
 import type { ScaffoldOptions } from './types.js'
 import { STOREFRONT_PORT, DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD } from './constants.js'
-import { generateSecretKeyBase, isDockerRunning } from './utils.js'
+import { generateSecretKeyBase, isDockerRunning, openBrowser } from './utils.js'
 import { dockerComposeContent } from './templates/docker-compose.js'
 import { envContent } from './templates/env.js'
 import { rootPackageJsonContent } from './templates/package-json.js'
 import { readmeContent } from './templates/readme.js'
 import { gitignoreContent } from './templates/gitignore.js'
-import { startServices, waitForHealthy, fetchApiKey, loadSampleData } from './docker.js'
-import { downloadStorefront, installStorefrontDeps, writeStorefrontEnv } from './storefront.js'
+import { startServices, waitForHealthy, fetchApiKey, loadSampleData, streamLogs } from './docker.js'
+import { downloadStorefront, installStorefrontDeps, installRootDeps, writeStorefrontEnv } from './storefront.js'
 
 export async function scaffold(options: ScaffoldOptions): Promise<void> {
   const projectDir = path.resolve(options.directory)
@@ -49,6 +49,11 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
   fs.writeFileSync(path.join(projectDir, '.gitignore'), gitignoreContent())
 
   s.stop('Project structure created.')
+
+  // Install root dependencies (@spree/cli)
+  s.start('Installing dependencies...')
+  await installRootDeps(projectDir, options.packageManager)
+  s.stop('Dependencies installed.')
 
   // Phase 2: Storefront
   if (isFullStack) {
@@ -90,6 +95,10 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
     }
 
     printSuccessWithDocker(projectName, isFullStack, port, apiKey)
+    await openBrowser(`http://localhost:${port}/admin`)
+
+    p.log.info('Streaming logs (Ctrl+C to stop)...\n')
+    await streamLogs(projectDir)
   } else {
     printSuccessWithoutDocker(projectName, isFullStack, port)
   }
@@ -140,7 +149,7 @@ function printSuccessWithoutDocker(
     '',
     `${pc.bold('Next steps:')}`,
     `  cd ${projectName}`,
-    `  npm run dev`,
+    `  npx spree dev`,
   ]
 
   if (isFullStack) {

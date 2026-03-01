@@ -12,6 +12,40 @@ importers:
         specifier: ^2.5.0
         version: 2.8.3
 
+  packages/cli:
+    dependencies:
+      '@clack/prompts':
+        specifier: ^0.10.0
+        version: 0.10.1
+      commander:
+        specifier: ^13.1.0
+        version: 13.1.0
+      execa:
+        specifier: ^9.5.2
+        version: 9.6.1
+      picocolors:
+        specifier: ^1.1.1
+        version: 1.1.1
+    devDependencies:
+      '@changesets/changelog-github':
+        specifier: ^0.5.2
+        version: 0.5.2
+      '@changesets/cli':
+        specifier: ^2.29.8
+        version: 2.29.8(@types/node@20.19.33)
+      '@types/node':
+        specifier: ^20.0.0
+        version: 20.19.33
+      tsup:
+        specifier: ^8.0.0
+        version: 8.5.1(postcss@8.5.6)(tsx@4.21.0)(typescript@5.9.3)
+      typescript:
+        specifier: ^5.3.0
+        version: 5.9.3
+      vitest:
+        specifier: ^4.0.18
+        version: 4.0.18(@types/node@20.19.33)(msw@2.12.9(@types/node@20.19.33)(typescript@5.9.3))(tsx@4.21.0)
+
   packages/create-spree-app:
     dependencies:
       '@clack/prompts':

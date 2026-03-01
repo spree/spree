@@ -14,7 +14,8 @@ A [Spree Commerce](https://spreecommerce.org) project.
 ### Start the backend
 
 \`\`\`bash
-npm run dev
+cd ${name}
+npx spree dev
 \`\`\`
 
 Wait for the services to be healthy, then open:
@@ -40,18 +41,54 @@ Open http://localhost:${STOREFRONT_PORT}
   }
 
   content += `
-## Useful Commands
+## Spree CLI
+
+This project uses [\`@spree/cli\`](https://www.npmjs.com/package/@spree/cli) to manage the backend.
+
+### Services
 
 | Command | Description |
 |---------|-------------|
-| \`npm run dev\` | Start backend services |
-| \`npm run stop\` | Stop backend services |
-| \`npm run down\` | Stop and remove backend services |
-| \`npm run logs\` | View web server logs |
-| \`npm run logs:worker\` | View background jobs logs |
-| \`npm run console\` | Rails console |
-| \`npm run seed\` | Seed the database |
-| \`npm run load-sample-data\` | Load sample products |
+| \`spree dev\` | Start backend services and stream logs |
+| \`spree stop\` | Stop backend services |
+| \`spree update\` | Pull latest Spree image and restart (runs migrations automatically) |
+| \`spree logs\` | View web server logs |
+| \`spree logs worker\` | View background jobs logs |
+| \`spree console\` | Open Rails console |
+
+### Data
+
+| Command | Description |
+|---------|-------------|
+| \`spree seed\` | Seed the database |
+| \`spree sample-data\` | Load sample products, categories, images |
+
+### Users & API Keys
+
+| Command | Description |
+|---------|-------------|
+| \`spree user create\` | Create an admin user |
+| \`spree api-key create\` | Create a publishable or secret API key |
+| \`spree api-key list\` | List all API keys |
+| \`spree api-key revoke <token>\` | Revoke an API key |
+
+### Other
+
+| Command | Description |
+|---------|-------------|
+| \`docker compose down\` | Stop and remove all containers and volumes |
+
+## Updating Spree
+
+\`\`\`bash
+spree update
+\`\`\`
+
+To pin a specific version, edit \`SPREE_VERSION_TAG\` in \`.env\`:
+
+\`\`\`
+SPREE_VERSION_TAG=5.4
+\`\`\`
 
 ## Learn More
 

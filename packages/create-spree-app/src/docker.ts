@@ -52,6 +52,13 @@ export async function loadSampleData(projectDir: string): Promise<void> {
   )
 }
 
+export async function streamLogs(projectDir: string): Promise<void> {
+  await execa('docker', ['compose', 'logs', '-f', 'web'], {
+    cwd: projectDir,
+    stdio: 'inherit',
+  })
+}
+
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }

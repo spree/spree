@@ -48,9 +48,9 @@ describe('dockerComposeContent', () => {
     expect(content).toContain('env_file: .env')
   })
 
-  it('maps the given port to container port 3000', () => {
+  it('uses SPREE_PORT variable for port mapping', () => {
     const custom = dockerComposeContent(4000)
-    expect(custom).toContain('"4000:3000"')
+    expect(custom).toContain('${SPREE_PORT:-3000}:3000')
   })
 
   it('keeps container-internal healthcheck on port 3000 regardless of host port', () => {
@@ -115,11 +115,18 @@ describe('rootPackageJsonContent', () => {
     expect(pkg.name).toBe('my-store')
   })
 
-  it('includes convenience scripts', () => {
+  it('includes convenience scripts using spree cli', () => {
     const pkg = JSON.parse(rootPackageJsonContent('my-store'))
-    expect(pkg.scripts.dev).toContain('docker compose')
+    expect(pkg.scripts.dev).toBe('spree dev')
+    expect(pkg.scripts.update).toBe('spree update')
+    expect(pkg.scripts.logs).toBe('spree logs')
+    expect(pkg.scripts.console).toBe('spree console')
     expect(pkg.scripts.down).toContain('docker compose')
-    expect(pkg.scripts.logs).toContain('docker compose')
+  })
+
+  it('includes @spree/cli as a dependency', () => {
+    const pkg = JSON.parse(rootPackageJsonContent('my-store'))
+    expect(pkg.dependencies['@spree/cli']).toBeDefined()
   })
 
   it('is marked private', () => {
@@ -151,12 +158,15 @@ describe('readmeContent', () => {
     expect(content).not.toContain('Start the storefront')
   })
 
-  it('uses npm run commands instead of docker compose', () => {
+  it('uses spree cli commands', () => {
     const content = readmeContent('my-store', false, 3000)
-    expect(content).toContain('`npm run dev`')
-    expect(content).toContain('`npm run down`')
-    expect(content).toContain('`npm run logs`')
-    expect(content).toContain('`npm run console`')
+    expect(content).toContain('`spree dev`')
+    expect(content).toContain('`spree stop`')
+    expect(content).toContain('`spree logs`')
+    expect(content).toContain('`spree console`')
+    expect(content).toContain('`spree update`')
+    expect(content).toContain('`spree user create`')
+    expect(content).toContain('`spree api-key create`')
   })
 
   it('uses custom port in URLs', () => {
