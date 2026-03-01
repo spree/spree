@@ -14,9 +14,9 @@ Pass filter conditions using the `q` parameter with Ransack predicates:
 
 ```typescript SDK
 const products = await client.store.products.list({
-  'q[name_cont]': 'shirt',
-  'q[price_gte]': 20,
-  'q[price_lte]': 100,
+  name_cont: 'shirt',
+  price_gte: 20,
+  price_lte: 100,
 })
 ```
 
@@ -60,9 +60,9 @@ Multiple filters are combined with AND logic:
 ```typescript SDK
 // Products that contain "shirt" AND cost between $20-$100
 const products = await client.store.products.list({
-  'q[name_cont]': 'shirt',
-  'q[price_gteq]': 20,
-  'q[price_lteq]': 100,
+  name_cont: 'shirt',
+  price_gteq: 20,
+  price_lteq: 100,
 })
 ```
 
@@ -85,12 +85,12 @@ You can filter by associated model attributes using underscore notation:
 ```typescript SDK
 // Products in a specific taxon (category)
 const products = await client.store.products.list({
-  'q[taxons_id_eq]': 'txn_abc123',
+  taxons_id_eq: 'txn_abc123',
 })
 
 // Taxons at a specific depth
 const taxons = await client.store.taxons.list({
-  'q[depth_eq]': 1,
+  depth_eq: 1,
 })
 ```
 
@@ -117,17 +117,17 @@ Use the `q[s]` parameter to sort results. The value format is `attribute directi
 ```typescript SDK
 // Sort by name ascending
 const products = await client.store.products.list({
-  'q[s]': 'name asc',
+  sort: 'name asc',
 })
 
 // Sort by newest first
 const products = await client.store.products.list({
-  'q[s]': 'created_at desc',
+  sort: 'created_at desc',
 })
 
 // Multiple sort criteria
 const products = await client.store.products.list({
-  'q[s]': 'price asc name asc',
+  sort: 'price asc, name asc',
 })
 ```
 
