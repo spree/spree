@@ -1,4 +1,4 @@
-import type { StoreTaxon, StoreProduct, PaginatedResponse } from '@spree/sdk';
+import type { StoreTaxon, StoreProduct, PaginatedResponse, TaxonListParams, ProductListParams } from '@spree/sdk';
 import { getClient } from '../config';
 import type { SpreeNextOptions } from '../types';
 
@@ -6,7 +6,7 @@ import type { SpreeNextOptions } from '../types';
  * List taxons (categories) with optional filtering and pagination.
  */
 export async function listTaxons(
-  params?: Record<string, unknown>,
+  params?: TaxonListParams,
   options?: SpreeNextOptions
 ): Promise<PaginatedResponse<StoreTaxon>> {
   return getClient().store.taxons.list(params, {
@@ -34,7 +34,7 @@ export async function getTaxon(
  */
 export async function listTaxonProducts(
   taxonId: string,
-  params?: Record<string, unknown>,
+  params?: ProductListParams,
   options?: SpreeNextOptions
 ): Promise<PaginatedResponse<StoreProduct>> {
   return getClient().store.taxons.products.list(taxonId, params, {

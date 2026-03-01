@@ -1,4 +1,5 @@
 import type { RequestFn, RequestOptions } from './request';
+import { transformListParams } from './params';
 import type {
   AuthTokens,
   LoginCredentials,
@@ -98,7 +99,7 @@ export class StoreClient {
     ): Promise<PaginatedResponse<StoreProduct>> =>
       this.request<PaginatedResponse<StoreProduct>>('GET', '/products', {
         ...options,
-        params: params as Record<string, string | number | undefined>,
+        params: params ? transformListParams(params) : undefined,
       }),
 
     /**
@@ -169,7 +170,7 @@ export class StoreClient {
     ): Promise<PaginatedResponse<StoreTaxon>> =>
       this.request<PaginatedResponse<StoreTaxon>>('GET', '/taxons', {
         ...options,
-        params: params as Record<string, string | number | undefined>,
+        params: params ? transformListParams(params) : undefined,
       }),
 
     /**
@@ -203,7 +204,7 @@ export class StoreClient {
           `/taxons/${taxonId}/products`,
           {
             ...options,
-            params: params as Record<string, string | number | undefined>,
+            params: params ? transformListParams(params) : undefined,
           }
         ),
     },
@@ -756,7 +757,7 @@ export class StoreClient {
       ): Promise<PaginatedResponse<StoreOrder>> =>
         this.request<PaginatedResponse<StoreOrder>>('GET', '/customer/orders', {
           ...options,
-          params: params as Record<string, string | number | undefined>,
+          params: params ? transformListParams(params) : undefined,
         }),
     },
 

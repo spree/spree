@@ -148,7 +148,8 @@ const store = await client.store.store.get();
 const products = await client.store.products.list({
   page: 1,
   per_page: 25,
-  'q[name_cont]': 'shirt',
+  name_cont: 'shirt',
+  sort: 'price asc',
   includes: 'variants,images,taxons',
 });
 
@@ -178,8 +179,8 @@ const categories = await client.store.taxonomies.get('tax_123', {
 
 // List taxons with filtering
 const taxons = await client.store.taxons.list({
-  'q[depth_eq]': 1,           // Top-level categories only
-  'q[taxonomy_id_eq]': '123', // Filter by taxonomy
+  depth_eq: 1,              // Top-level categories only
+  taxonomy_id_eq: '123',    // Filter by taxonomy
 });
 
 // Get single taxon by ID or permalink

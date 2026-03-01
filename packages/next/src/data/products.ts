@@ -1,4 +1,4 @@
-import type { StoreProduct, PaginatedResponse, ProductFiltersResponse } from '@spree/sdk';
+import type { StoreProduct, PaginatedResponse, ProductFiltersResponse, ProductListParams } from '@spree/sdk';
 import { getClient } from '../config';
 import type { SpreeNextOptions } from '../types';
 
@@ -6,7 +6,7 @@ import type { SpreeNextOptions } from '../types';
  * List products with optional filtering, sorting, and pagination.
  */
 export async function listProducts(
-  params?: Record<string, unknown>,
+  params?: ProductListParams,
   options?: SpreeNextOptions
 ): Promise<PaginatedResponse<StoreProduct>> {
   return getClient().store.products.list(params, {

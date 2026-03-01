@@ -54,23 +54,44 @@ export interface ListParams {
 }
 
 export interface ProductListParams extends ListParams {
-  'q[name_cont]'?: string;
-  'q[price_gte]'?: number;
-  'q[price_lte]'?: number;
-  'q[taxons_id_eq]'?: string;
+  /** Sort order, e.g. 'price asc', 'created_at desc' */
+  sort?: string;
+  /** Full-text search across name and SKU */
+  multi_search?: string;
+  /** Filter: name contains */
+  name_cont?: string;
+  /** Filter: price >= value */
+  price_gte?: number;
+  /** Filter: price <= value */
+  price_lte?: number;
+  /** Filter: products in taxon */
+  taxons_id_eq?: string;
+  /** Any additional Ransack predicate */
+  [key: string]: string | number | boolean | undefined;
 }
 
 export interface TaxonListParams extends ListParams {
-  'q[taxonomy_id_eq]'?: string | number;
-  'q[parent_id_eq]'?: string | number;
-  'q[depth_eq]'?: number;
-  'q[name_cont]'?: string;
+  /** Sort order, e.g. 'name asc', 'created_at desc' */
+  sort?: string;
+  /** Filter: name contains */
+  name_cont?: string;
+  taxonomy_id_eq?: string | number;
+  parent_id_eq?: string | number;
+  depth_eq?: number;
+  /** Any additional Ransack predicate */
+  [key: string]: string | number | boolean | undefined;
 }
 
 export interface OrderListParams extends ListParams {
-  'q[state_eq]'?: string;
-  'q[completed_at_gte]'?: string;
-  'q[completed_at_lte]'?: string;
+  /** Sort order, e.g. 'completed_at desc' */
+  sort?: string;
+  /** Full-text search across number, email, customer name */
+  multi_search?: string;
+  state_eq?: string;
+  completed_at_gte?: string;
+  completed_at_lte?: string;
+  /** Any additional Ransack predicate */
+  [key: string]: string | number | boolean | undefined;
 }
 
 // Cart operations
