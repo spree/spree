@@ -545,7 +545,6 @@ describe Spree::Shipment, type: :model do
 
     context 'when shipment state changes to shipped' do
       before do
-        allow_any_instance_of(Spree::ShipmentHandler).to receive(:send_shipped_email)
         allow_any_instance_of(Spree::ShipmentHandler).to receive(:update_order_shipment_state)
       end
 
@@ -734,7 +733,6 @@ describe Spree::Shipment, type: :model do
 
       it 'unstocks them items' do
         allow_any_instance_of(Spree::ShipmentHandler).to receive(:update_order_shipment_state)
-        allow_any_instance_of(Spree::ShipmentHandler).to receive(:send_shipped_email)
 
         expect(shipment_with_inventory_units.stock_location).to receive(:unstock)
         subject
@@ -750,7 +748,6 @@ describe Spree::Shipment, type: :model do
 
         it 'updates shipped_at timestamp' do
           allow_any_instance_of(Spree::ShipmentHandler).to receive(:update_order_shipment_state)
-          allow_any_instance_of(Spree::ShipmentHandler).to receive(:send_shipped_email)
 
           shipment.ship!
           expect(shipment.shipped_at).not_to be_nil
@@ -761,7 +758,6 @@ describe Spree::Shipment, type: :model do
 
         it 'finalizes adjustments' do
           allow_any_instance_of(Spree::ShipmentHandler).to receive(:update_order_shipment_state)
-          allow_any_instance_of(Spree::ShipmentHandler).to receive(:send_shipped_email)
 
           expect(shipment.adjustments).to all(receive(:finalize!))
           shipment.ship!

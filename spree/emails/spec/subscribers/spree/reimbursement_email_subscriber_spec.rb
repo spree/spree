@@ -7,8 +7,8 @@ RSpec.describe Spree::ReimbursementEmailSubscriber do
   let(:store) { reimbursement.store }
   let(:subscriber) { described_class.new }
 
-  def mock_event(reimbursement_id)
-    double('Event', payload: { 'id' => reimbursement_id })
+  def mock_event(reimbursement)
+    double('Event', payload: { 'id' => reimbursement.prefixed_id })
   end
 
   before do
@@ -19,7 +19,7 @@ RSpec.describe Spree::ReimbursementEmailSubscriber do
     it 'sends reimbursement email' do
       expect(Spree::ReimbursementMailer).to receive(:reimbursement_email).with(reimbursement.id).and_return(double(deliver_later: true))
 
-      subscriber.handle(mock_event(reimbursement.id))
+      subscriber.handle(mock_event(reimbursement))
     end
 
     context 'when store does not prefer transactional emails' do
@@ -30,13 +30,15 @@ RSpec.describe Spree::ReimbursementEmailSubscriber do
       it 'does not send reimbursement email' do
         expect(Spree::ReimbursementMailer).not_to receive(:reimbursement_email)
 
-        subscriber.handle(mock_event(reimbursement.id))
+        subscriber.handle(mock_event(reimbursement))
       end
     end
 
     context 'when reimbursement not found' do
       it 'does not raise an error' do
-        expect { subscriber.handle(mock_event(-1)) }.not_to raise_error
+        reimbursement.destroy
+
+        expect { subscriber.handle(mock_event(reimbursement)) }.not_to raise_error
       end
     end
   end

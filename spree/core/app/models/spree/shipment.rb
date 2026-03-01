@@ -14,7 +14,6 @@ module Spree
     if defined?(Spree::VendorConcern)
       include Spree::VendorConcern
     end
-    include Spree::Shipment::Emails
     include Spree::Shipment::Webhooks
     include Spree::Shipment::CustomEvents
 

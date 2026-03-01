@@ -8,7 +8,7 @@ RSpec.describe Spree::OrderEmailSubscriber do
   let(:subscriber) { described_class.new }
 
   def mock_event(order)
-    double('Event', payload: { 'id' => order.id })
+    double('Event', payload: { 'id' => order.prefixed_id })
   end
 
   before do

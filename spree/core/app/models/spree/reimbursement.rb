@@ -4,7 +4,6 @@ module Spree
 
     include Spree::Core::NumberGenerator.new(prefix: 'RI', length: 9)
     include Spree::NumberIdentifier
-    include Spree::Reimbursement::Emails
 
     class IncompleteReimbursementError < StandardError; end
 
@@ -116,7 +115,6 @@ module Spree
       if unpaid_amount_within_tolerance?
         reimbursed!
         reimbursement_success_hooks.each { |h| h.call self }
-        send_reimbursement_email
       else
         errored!
         reimbursement_failure_hooks.each { |h| h.call self }

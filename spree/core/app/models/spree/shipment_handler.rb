@@ -1,6 +1,5 @@
 module Spree
   class ShipmentHandler
-    include Spree::Shipment::Emails
     include Spree::IntegrationsConcern
 
     class << self
@@ -25,7 +24,6 @@ module Spree
       @shipment.process_order_payments if Spree::Config[:auto_capture_on_dispatch]
       @shipment.touch :shipped_at
       update_order_shipment_state
-      send_shipped_email
     end
 
     protected
