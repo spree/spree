@@ -16,6 +16,13 @@
         "default": "./dist/index.js"
       },
       "default": "./dist/index.js"
+    },
+    "./middleware": {
+      "import": {
+        "types": "./dist/middleware.d.ts",
+        "default": "./dist/middleware.js"
+      },
+      "default": "./dist/middleware.js"
     }
   },
   "files": [
@@ -23,7 +30,7 @@
     "README.md"
   ],
   "scripts": {
-    "build": "tsup",
+    "build": "rm -rf dist && tsup",
     "dev": "tsup --watch",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",

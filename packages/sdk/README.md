@@ -517,21 +517,40 @@ await client.store.wishlists.items.create(wishlistId, params, options);
 
 ## Localization & Currency
 
-Pass locale and currency headers with any request:
+### Client-level defaults
+
+Set locale, currency, and country when creating the client:
 
 ```typescript
-// Set locale and currency per request
+const client = createSpreeClient({
+  baseUrl: 'https://api.mystore.com',
+  publishableKey: 'spree_pk_xxx',
+  locale: 'fr',
+  currency: 'EUR',
+  country: 'FR',
+});
+
+// All requests use fr/EUR/FR automatically
+const products = await client.store.products.list();
+```
+
+Update defaults at any time:
+
+```typescript
+client.setLocale('de');
+client.setCurrency('EUR');
+client.setCountry('DE');
+```
+
+### Per-request overrides
+
+Pass locale and currency headers with any request to override defaults:
+
+```typescript
 const products = await client.store.products.list({}, {
   locale: 'fr',
   currency: 'EUR',
-});
-
-// Works with all endpoints
-const taxon = await client.store.taxons.get('categories/clothing', {
-  includes: 'ancestors',
-}, {
-  locale: 'de',
-  currency: 'EUR',
+  country: 'FR',
 });
 ```
 
