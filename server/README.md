@@ -27,7 +27,7 @@ Then run the setup script:
 ```bash
 cd server
 bin/setup
-bin/rails server
+bin/dev
 ```
 
 `bin/setup` handles everything: installs Ruby (via [mise](https://mise.jdx.dev) if available, otherwise uses your system Ruby), system packages (libpq, vips), gems, and prepares the database.
