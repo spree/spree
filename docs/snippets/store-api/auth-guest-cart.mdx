@@ -1,0 +1,13 @@
+```typescript
+// Create a cart (guest)
+const cart = await client.store.cart.create()
+
+// Use orderToken for all cart operations
+const options = { orderToken: cart.token }
+
+// Add items
+await client.store.orders.lineItems.create(cart.id, {
+  variant_id: 'variant_abc123',
+  quantity: 1,
+}, options)
+```

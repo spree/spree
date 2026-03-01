@@ -21,9 +21,6 @@
       "theme": "night-owl"
     }
   },
-  "interaction": {
-    "drilldown": true
-  },
   "favicon": "/favicon.png",
   "seo": {
     "metatags": {
@@ -409,14 +406,17 @@
               {
                 "group": "API basics",
                 "pages": [
-                  "api-reference/introduction",
-                  "api-reference/pagination",
-                  "api-reference/filtering-and-sorting",
-                  "api-reference/fetching-multiple-resources"
+                  "api-reference/store-api/introduction",
+                  "api-reference/store-api/authentication",
+                  "api-reference/store-api/rate-limitting",
+                  "api-reference/store-api/querying",
+                  "api-reference/store-api/relations",
+                  "api-reference/store-api/metadata",
+                  "api-reference/store-api/localization"
                 ]
               },
               {
-                "group": "Store API",
+                "group": "Endpoints",
                 "openapi": {
                   "source": "api-reference/store.yaml",
                   "directory": "api-reference/store-api"

@@ -3,24 +3,22 @@ title: Configuration
 description: Localization, error handling, TypeScript types, and custom fetch
 ---
 
+import LocalizationExample from '/snippets/store-api/localization-example.mdx'
+
 ## Localization & Currency
 
-Pass locale and currency headers with any request:
+Pass locale and currency headers with any request. For full details, see the [Localization](/api-reference/store-api/localization) reference.
+
+<LocalizationExample />
 
 ```typescript
-// Set locale and currency per request
-const products = await client.store.products.list({}, {
-  locale: 'fr',
-  currency: 'EUR',
-});
-
 // Works with all endpoints
 const taxon = await client.store.taxons.get('categories/clothing', {
   includes: 'ancestors',
 }, {
   locale: 'de',
   currency: 'EUR',
-});
+})
 ```
 
 ## Error Handling
