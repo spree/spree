@@ -46,6 +46,7 @@
     "@clack/prompts": "^0.10.0",
     "commander": "^13.1.0",
     "execa": "^9.5.2",
+    "get-port": "^7.1.0",
     "picocolors": "^1.1.1"
   },
   "devDependencies": {
