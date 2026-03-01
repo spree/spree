@@ -51,6 +51,7 @@ export {
 } from './actions/addresses';
 
 export { listOrders, getOrder } from './actions/orders';
+export { setLocale } from './actions/locale';
 export { listCreditCards, deleteCreditCard } from './actions/credit-cards';
 export { listGiftCards, getGiftCard } from './actions/gift-cards';
 

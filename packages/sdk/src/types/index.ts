@@ -1,6 +1,13 @@
 // Re-export all generated types
 export * from './generated';
 
+// Locale defaults for client-level configuration
+export interface LocaleDefaults {
+  locale?: string;
+  currency?: string;
+  country?: string;
+}
+
 // API Response types
 export interface PaginationMeta {
   page: number;
