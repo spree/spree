@@ -1,0 +1,206 @@
+---
+title: "Authentication"
+sidebarTitle: "Authentication"
+description: "How to authenticate requests to the Store API"
+---
+
+The Store API uses three authentication mechanisms depending on the use case: **API keys** for all requests, **JWT tokens** for authenticated customers, and **order tokens** for guest checkout.
+
+## API Key (Required)
+
+Every request to the Store API requires a **publishable API key**. This key identifies your storefront and is safe to use in client-side code.
+
+Pass the key via the `X-Spree-Api-Key` header:
+
+<CodeGroup>
+
+```typescript SDK
+import { createSpreeClient } from '@spree/sdk'
+
+const client = createSpreeClient({
+  baseUrl: 'http://localhost:3000',
+  publishableKey: 'spree_pk_xxx',
+})
+
+// The SDK automatically sends the publishable key with every request
+const products = await client.store.products.list()
+```
+
+```bash cURL
+curl -X GET 'http://localhost:3000/api/v3/store/products' \
+  -H 'X-Spree-Api-Key: spree_pk_xxx'
+```
+
+</CodeGroup>
+
+Publishable API keys are prefixed with `spree_pk_`. You can create them in the Spree Admin under **Settings > API Keys** or via the Rails console:
+
+```ruby
+api_key = Spree::ApiKey.create!(
+  name: 'My Storefront',
+  key_type: :publishable,
+  store: Spree::Store.default
+)
+api_key.token # => "spree_pk_..."
+```
+
+<Warning>
+If you omit the API key, the API returns a `401 Unauthorized` error:
+
+```json
+{
+  "error": {
+    "code": "invalid_token",
+    "message": "Valid API key required"
+  }
+}
+```
+</Warning>
+
+## JWT Token (Authenticated Customer)
+
+For actions that require a logged-in customer (viewing orders, managing addresses, saved payment methods), use a **JWT bearer token** in addition to the API key.
+
+### Login
+
+<CodeGroup>
+
+```typescript SDK
+// Login to get a JWT token
+const { token, user } = await client.store.auth.login({
+  email: 'customer@example.com',
+  password: 'password123',
+})
+
+// Use the token for authenticated requests
+const orders = await client.store.orders.list({}, { token })
+```
+
+```bash cURL
+# Login
+curl -X POST 'http://localhost:3000/api/v3/store/auth/login' \
+  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{"email": "customer@example.com", "password": "password123"}'
+
+# Use the returned token for authenticated requests
+curl -X GET 'http://localhost:3000/api/v3/store/orders' \
+  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'Authorization: Bearer <jwt_token>'
+```
+
+</CodeGroup>
+
+### Register
+
+<CodeGroup>
+
+```typescript SDK
+const { token, user } = await client.store.auth.register({
+  email: 'new@example.com',
+  password: 'password123',
+  password_confirmation: 'password123',
+  first_name: 'John',
+  last_name: 'Doe',
+})
+```
+
+```bash cURL
+curl -X POST 'http://localhost:3000/api/v3/store/auth/register' \
+  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "email": "new@example.com",
+    "password": "password123",
+    "password_confirmation": "password123",
+    "first_name": "John",
+    "last_name": "Doe"
+  }'
+```
+
+</CodeGroup>
+
+### Token Refresh
+
+JWT tokens expire after 1 hour by default. Use the refresh endpoint to get a new token:
+
+<CodeGroup>
+
+```typescript SDK
+const { token } = await client.store.auth.refresh({ token: currentToken })
+```
+
+```bash cURL
+curl -X POST 'http://localhost:3000/api/v3/store/auth/refresh' \
+  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'Authorization: Bearer <current_jwt_token>'
+```
+
+</CodeGroup>
+
+## Order Token (Guest Checkout)
+
+For guest checkout flows, use the **order token** returned when creating a cart. This allows unauthenticated users to manage their cart and complete checkout.
+
+Pass the token via the `X-Spree-Order-Token` header or `order_token` query parameter:
+
+<CodeGroup>
+
+```typescript SDK
+// Create a cart (guest)
+const cart = await client.store.cart.create()
+
+// Use orderToken for all cart operations
+const options = { orderToken: cart.token }
+
+// Add items
+await client.store.orders.lineItems.create(cart.id, {
+  variant_id: 'variant_abc123',
+  quantity: 1,
+}, options)
+```
+
+```bash cURL
+# Create a cart
+curl -X POST 'http://localhost:3000/api/v3/store/cart' \
+  -H 'X-Spree-Api-Key: spree_pk_xxx'
+
+# Use the returned token for cart operations
+curl -X POST 'http://localhost:3000/api/v3/store/orders/or_xxx/line_items' \
+  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'X-Spree-Order-Token: <order_token>' \
+  -H 'Content-Type: application/json' \
+  -d '{"variant_id": "variant_abc123", "quantity": 1}'
+```
+
+</CodeGroup>
+
+### Associating a Guest Cart
+
+After a guest user logs in, you can associate their guest cart with their account:
+
+<CodeGroup>
+
+```typescript SDK
+await client.store.cart.associate({
+  token: jwtToken,
+  orderToken: cart.token,
+})
+```
+
+```bash cURL
+curl -X PATCH 'http://localhost:3000/api/v3/store/cart/associate' \
+  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'Authorization: Bearer <jwt_token>' \
+  -H 'X-Spree-Order-Token: <order_token>'
+```
+
+</CodeGroup>
+
+## Authentication Summary
+
+| Method | Header | Use Case |
+|--------|--------|----------|
+| API Key | `X-Spree-Api-Key: spree_pk_xxx` | All requests (required) |
+| JWT Token | `Authorization: Bearer <token>` | Authenticated customer actions |
+| Order Token | `X-Spree-Order-Token: <token>` | Guest cart and checkout |

@@ -3,38 +3,32 @@ title: Authentication
 description: Authentication modes and guest checkout with the Spree SDK
 ---
 
-The SDK supports multiple authentication modes depending on your use case.
+import SdkClientSetup from '/snippets/store-api/sdk-client-setup.mdx'
+import AuthJwtExample from '/snippets/store-api/auth-jwt-example.mdx'
+import AuthGuestCart from '/snippets/store-api/auth-guest-cart.mdx'
+
+The SDK supports multiple authentication modes depending on your use case. For a full overview of the API authentication methods, see the [Store API Authentication](/api-reference/store-api/authentication) reference.
 
 ## Publishable Key Only (Guest/Public Access)
 
 Use a publishable API key for public endpoints like browsing products:
 
-```typescript
-const client = createSpreeClient({
-  baseUrl: 'https://api.mystore.com',
-  publishableKey: 'spree_pk_xxx',
-});
+<SdkClientSetup />
 
+```typescript
 // Public endpoints work without user authentication
-const products = await client.store.products.list();
+const products = await client.store.products.list()
 ```
 
 ## Publishable Key + JWT (Authenticated Customer)
 
 For authenticated customer actions like viewing orders or managing addresses:
 
+<AuthJwtExample />
+
 ```typescript
-// Login to get tokens
-const { token, user } = await client.store.auth.login({
-  email: 'customer@example.com',
-  password: 'password123',
-});
-
-// Use token for authenticated requests
-const orders = await client.store.orders.list({}, { token });
-
 // Refresh token when needed
-const newTokens = await client.store.auth.refresh({ token });
+const newTokens = await client.store.auth.refresh({ token })
 ```
 
 ## Register New Customer
@@ -46,31 +40,23 @@ const { token, user } = await client.store.auth.register({
   password_confirmation: 'password123',
   first_name: 'John',
   last_name: 'Doe',
-});
+})
 ```
 
 ## Guest Checkout
 
 For guest checkout, use the `token` (or `order_token`) returned when creating a cart:
 
+<AuthGuestCart />
+
 ```typescript
-// Create a cart (guest)
-const cart = await client.store.cart.create();
-
-// Use orderToken for all cart operations
-const options = { orderToken: cart.token };
-
-// Add items
-await client.store.orders.lineItems.create(cart.id, {
-  variant_id: 'var_abc123',
-  quantity: 1,
-}, options);
+const options = { orderToken: cart.token }
 
 // Update order with email
 await client.store.orders.update(cart.id, {
   email: 'guest@example.com',
-}, options);
+}, options)
 
 // Complete checkout
-await client.store.orders.complete(cart.id, options);
+await client.store.orders.complete(cart.id, options)
 ```

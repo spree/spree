@@ -1,0 +1,82 @@
+---
+title: "Rate Limiting"
+sidebarTitle: "Rate Limiting"
+description: "Rate limits and throttling for the Store API"
+---
+
+The Store API enforces rate limits to protect against abuse and ensure fair usage. Rate limits are applied per API key or per IP address depending on the endpoint.
+
+## Default Limits
+
+| Endpoint | Limit | Scope | Window |
+|----------|-------|-------|--------|
+| All endpoints | 300 requests | Per API key | 1 minute |
+| `POST /auth/login` | 5 requests | Per IP | 1 minute |
+| `POST /auth/register` | 3 requests | Per IP | 1 minute |
+| `POST /auth/refresh` | 10 requests | Per IP | 1 minute |
+| `POST /auth/oauth/callback` | 5 requests | Per IP | 1 minute |
+
+The global rate limit is tracked by your publishable API key (`X-Spree-Api-Key`). If the key is not provided, the limit falls back to the client's IP address.
+
+Authentication endpoints have stricter per-IP limits to prevent brute-force attacks.
+
+## Rate Limit Response
+
+When you exceed the rate limit, the API returns a `429 Too Many Requests` response:
+
+```json
+{
+  "error": {
+    "code": "rate_limit_exceeded",
+    "message": "Too many requests. Please retry later."
+  }
+}
+```
+
+The response includes a `Retry-After` header indicating how many seconds to wait before retrying:
+
+```
+HTTP/1.1 429 Too Many Requests
+Content-Type: application/json
+Retry-After: 60
+```
+
+## SDK Retry Handling
+
+The Spree SDK automatically handles rate-limited responses with built-in retry logic and exponential backoff:
+
+```typescript
+import { createSpreeClient } from '@spree/sdk'
+
+const client = createSpreeClient({
+  baseUrl: 'http://localhost:3000',
+  publishableKey: 'spree_pk_xxx',
+  retry: {
+    maxRetries: 2,         // Number of retry attempts (default: 2)
+    baseDelay: 300,        // Initial delay in ms (default: 300)
+    maxDelay: 10000,       // Maximum delay in ms (default: 10000)
+  },
+})
+```
+
+The SDK respects the `Retry-After` header and only retries on `429` status codes for non-GET requests. For GET/HEAD requests, it also retries on `500`, `502`, `503`, and `504` errors.
+
+## Configuring Rate Limits
+
+If you're self-hosting Spree, you can adjust rate limits in your initializer:
+
+```ruby
+# config/initializers/spree.rb
+Spree::Api::Config[:rate_limit_per_key] = 300  # Global limit per API key
+Spree::Api::Config[:rate_limit_login] = 5      # Login attempts per IP
+Spree::Api::Config[:rate_limit_register] = 3   # Registration attempts per IP
+Spree::Api::Config[:rate_limit_refresh] = 10   # Token refresh per IP
+Spree::Api::Config[:rate_limit_oauth] = 5      # OAuth callbacks per IP
+```
+
+Rate limiting uses `Rails.cache` as the backing store. For production environments with multiple application servers, ensure you're using a shared cache store like Redis:
+
+```ruby
+# config/environments/production.rb
+config.cache_store = :redis_cache_store, { url: ENV['REDIS_URL'] }
+```

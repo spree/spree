@@ -1,0 +1,222 @@
+---
+title: "Querying"
+sidebarTitle: "Querying"
+description: "How to filter, sort, and paginate Store API results using Ransack"
+---
+
+The Store API uses [Ransack](https://activerecord-hackery.github.io/ransack/) for filtering and sorting collection endpoints. All query parameters are passed via the `q` parameter.
+
+## Filtering
+
+Pass filter conditions using the `q` parameter with Ransack predicates:
+
+<CodeGroup>
+
+```typescript SDK
+const products = await client.store.products.list({
+  'q[name_cont]': 'shirt',
+  'q[price_gte]': 20,
+  'q[price_lte]': 100,
+})
+```
+
+```bash cURL
+curl -G 'http://localhost:3000/api/v3/store/products' \
+  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  --data-urlencode 'q[name_cont]=shirt' \
+  --data-urlencode 'q[price_gte]=20' \
+  --data-urlencode 'q[price_lte]=100'
+```
+
+</CodeGroup>
+
+### Common Predicates
+
+| Predicate | Description | Example |
+|-----------|-------------|---------|
+| `eq` | Equals | `q[status_eq]=active` |
+| `not_eq` | Not equals | `q[status_not_eq]=draft` |
+| `cont` | Contains (case-insensitive) | `q[name_cont]=shirt` |
+| `start` | Starts with | `q[name_start]=Spree` |
+| `end` | Ends with | `q[slug_end]=tote` |
+| `lt` | Less than | `q[price_lt]=50` |
+| `lteq` | Less than or equal | `q[price_lteq]=50` |
+| `gt` | Greater than | `q[price_gt]=10` |
+| `gteq` | Greater than or equal | `q[price_gteq]=10` |
+| `in` | In a list | `q[status_in][]=active&q[status_in][]=draft` |
+| `null` | Is null | `q[deleted_at_null]=true` |
+| `not_null` | Is not null | `q[completed_at_not_null]=true` |
+| `present` | Is present (not null and not empty) | `q[description_present]=true` |
+| `blank` | Is blank (null or empty) | `q[description_blank]=true` |
+| `true` | Is true (boolean) | `q[purchasable_true]=1` |
+| `false` | Is false (boolean) | `q[purchasable_false]=1` |
+
+### Combining Filters
+
+Multiple filters are combined with AND logic:
+
+<CodeGroup>
+
+```typescript SDK
+// Products that contain "shirt" AND cost between $20-$100
+const products = await client.store.products.list({
+  'q[name_cont]': 'shirt',
+  'q[price_gteq]': 20,
+  'q[price_lteq]': 100,
+})
+```
+
+```bash cURL
+curl -G 'http://localhost:3000/api/v3/store/products' \
+  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  --data-urlencode 'q[name_cont]=shirt' \
+  --data-urlencode 'q[price_gteq]=20' \
+  --data-urlencode 'q[price_lteq]=100'
+```
+
+</CodeGroup>
+
+### Filtering by Association
+
+You can filter by associated model attributes using underscore notation:
+
+<CodeGroup>
+
+```typescript SDK
+// Products in a specific taxon (category)
+const products = await client.store.products.list({
+  'q[taxons_id_eq]': 'txn_abc123',
+})
+
+// Taxons at a specific depth
+const taxons = await client.store.taxons.list({
+  'q[depth_eq]': 1,
+})
+```
+
+```bash cURL
+# Products in a specific taxon
+curl -G 'http://localhost:3000/api/v3/store/products' \
+  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  --data-urlencode 'q[taxons_id_eq]=txn_abc123'
+
+# Top-level taxons only
+curl -G 'http://localhost:3000/api/v3/store/taxons' \
+  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  --data-urlencode 'q[depth_eq]=1'
+```
+
+</CodeGroup>
+
+## Sorting
+
+Use the `q[s]` parameter to sort results. The value format is `attribute direction`:
+
+<CodeGroup>
+
+```typescript SDK
+// Sort by name ascending
+const products = await client.store.products.list({
+  'q[s]': 'name asc',
+})
+
+// Sort by newest first
+const products = await client.store.products.list({
+  'q[s]': 'created_at desc',
+})
+
+// Multiple sort criteria
+const products = await client.store.products.list({
+  'q[s]': 'price asc name asc',
+})
+```
+
+```bash cURL
+# Sort by name ascending
+curl -G 'http://localhost:3000/api/v3/store/products' \
+  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  --data-urlencode 'q[s]=name asc'
+
+# Sort by newest first
+curl -G 'http://localhost:3000/api/v3/store/products' \
+  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  --data-urlencode 'q[s]=created_at desc'
+```
+
+</CodeGroup>
+
+## Pagination
+
+All collection endpoints return paginated results. Control pagination with `page` and `per_page` parameters:
+
+<CodeGroup>
+
+```typescript SDK
+const { data: products, meta } = await client.store.products.list({
+  page: 2,
+  per_page: 10,
+})
+
+// meta contains pagination info
+console.log(meta)
+// {
+//   page: 2,
+//   limit: 10,
+//   count: 85,
+//   pages: 9,
+//   from: 11,
+//   to: 20,
+//   in: 10,
+//   previous: 1,
+//   next: 3
+// }
+```
+
+```bash cURL
+curl -G 'http://localhost:3000/api/v3/store/products' \
+  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -d 'page=2' \
+  -d 'per_page=10'
+```
+
+</CodeGroup>
+
+### Pagination Parameters
+
+| Parameter | Default | Max | Description |
+|-----------|---------|-----|-------------|
+| `page` | `1` | - | Page number |
+| `per_page` | `25` | `100` | Number of records per page |
+
+### Pagination Metadata
+
+Collection responses include a `meta` object with pagination info:
+
+```json
+{
+  "data": [...],
+  "meta": {
+    "page": 1,
+    "limit": 25,
+    "count": 85,
+    "pages": 4,
+    "from": 1,
+    "to": 25,
+    "in": 25,
+    "previous": null,
+    "next": 2
+  }
+}
+```
+
+| Field | Description |
+|-------|-------------|
+| `page` | Current page number |
+| `limit` | Records per page |
+| `count` | Total number of records |
+| `pages` | Total number of pages |
+| `from` | Starting record number on this page |
+| `to` | Ending record number on this page |
+| `in` | Number of records returned on this page |
+| `previous` | Previous page number (null if first page) |
+| `next` | Next page number (null if last page) |

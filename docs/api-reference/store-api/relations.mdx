@@ -1,0 +1,206 @@
+---
+title: "Relations"
+sidebarTitle: "Relations"
+description: "How to include related resources in API responses"
+---
+
+By default, the Store API returns only the primary resource attributes to keep responses fast and lightweight. Use the `include` parameter to expand related resources inline.
+
+## Including Relations
+
+Pass a comma-separated list of relation names via the `include` (or `includes`) query parameter:
+
+<CodeGroup>
+
+```typescript SDK
+// Product with variants and images
+const product = await client.store.products.get('spree-tote', {
+  includes: 'variants,images',
+})
+
+// Access included relations directly
+console.log(product.variants)  // Array of variant objects
+console.log(product.images)    // Array of image objects
+```
+
+```bash cURL
+curl -G 'http://localhost:3000/api/v3/store/products/spree-tote' \
+  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -d 'include=variants,images'
+```
+
+</CodeGroup>
+
+## Response Format
+
+Without includes, relation fields are omitted from the response:
+
+```json
+{
+  "id": "prod_86Rf07xd4z",
+  "name": "Spree Tote",
+  "slug": "spree-tote",
+  "price": { "amount": "15.99", "currency": "USD" },
+  "created_at": "2025-01-15T10:30:00Z"
+}
+```
+
+With `?include=variants,images`, the related resources are embedded:
+
+```json
+{
+  "id": "prod_86Rf07xd4z",
+  "name": "Spree Tote",
+  "slug": "spree-tote",
+  "price": { "amount": "15.99", "currency": "USD" },
+  "created_at": "2025-01-15T10:30:00Z",
+  "variants": [
+    {
+      "id": "variant_k5nR8xLq",
+      "sku": "SPR-TOTE-RED",
+      "price": { "amount": "15.99", "currency": "USD" },
+      "in_stock": true,
+      "option_values": [{ "name": "Red", "option_type_name": "Color" }]
+    }
+  ],
+  "images": [
+    {
+      "id": "img_9xPq2wLm",
+      "url": "https://cdn.example.com/spree-tote.jpg",
+      "alt": "Spree Tote"
+    }
+  ]
+}
+```
+
+## Available Relations by Resource
+
+### Products
+
+| Relation | Description |
+|----------|-------------|
+| `variants` | All purchasable variants |
+| `default_variant` | The default variant |
+| `master_variant` | The master variant |
+| `images` | All product images (across all variants) |
+| `option_types` | Option types (e.g., Size, Color) |
+| `taxons` | Categories this product belongs to |
+| `metafields` | Public metafields (custom structured data) |
+
+<CodeGroup>
+
+```typescript SDK
+const product = await client.store.products.get('spree-tote', {
+  includes: 'variants,images,option_types,metafields',
+})
+```
+
+```bash cURL
+curl -G 'http://localhost:3000/api/v3/store/products/spree-tote' \
+  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -d 'include=variants,images,option_types,metafields'
+```
+
+</CodeGroup>
+
+### Taxons (Categories)
+
+| Relation | Description |
+|----------|-------------|
+| `ancestors` | Parent taxons (for breadcrumbs) |
+| `children` | Direct child taxons |
+| `products` | Products in this taxon |
+
+<CodeGroup>
+
+```typescript SDK
+const taxon = await client.store.taxons.get('categories/clothing', {
+  includes: 'ancestors,children',
+})
+```
+
+```bash cURL
+curl -G 'http://localhost:3000/api/v3/store/taxons/categories/clothing' \
+  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -d 'include=ancestors,children'
+```
+
+</CodeGroup>
+
+### Taxonomies
+
+| Relation | Description |
+|----------|-------------|
+| `root` | Root taxon |
+| `taxons` | All taxons in this taxonomy |
+
+### Countries
+
+| Relation | Description |
+|----------|-------------|
+| `states` | States/provinces within the country |
+
+<CodeGroup>
+
+```typescript SDK
+const usa = await client.store.countries.get('US', {
+  includes: 'states',
+})
+console.log(usa.states) // Array of state objects
+```
+
+```bash cURL
+curl -G 'http://localhost:3000/api/v3/store/countries/US' \
+  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -d 'include=states'
+```
+
+</CodeGroup>
+
+## Collections with Includes
+
+The `include` parameter also works on collection endpoints:
+
+<CodeGroup>
+
+```typescript SDK
+// List products with their images and default variant
+const { data: products } = await client.store.products.list({
+  includes: 'images,default_variant',
+  per_page: 12,
+})
+```
+
+```bash cURL
+curl -G 'http://localhost:3000/api/v3/store/products' \
+  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -d 'include=images,default_variant' \
+  -d 'per_page=12'
+```
+
+</CodeGroup>
+
+## Nested Includes
+
+Use dot notation to include nested relations:
+
+<CodeGroup>
+
+```typescript SDK
+// Include variants and their nested option values
+const product = await client.store.products.get('spree-tote', {
+  includes: 'variants.option_values',
+})
+```
+
+```bash cURL
+curl -G 'http://localhost:3000/api/v3/store/products/spree-tote' \
+  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -d 'include=variants.option_values'
+```
+
+</CodeGroup>
+
+<Note>
+Only include relations you actually need. Each included relation requires additional database queries, so requesting unnecessary relations will slow down the response.
+</Note>
