@@ -40,7 +40,7 @@ import { listProducts, getProduct, listTaxons } from '@spree/next';
 
 export default async function ProductsPage() {
   const products = await listProducts({ per_page: 12 });
-  const categories = await listTaxons({ 'q[depth_eq]': 1 });
+  const categories = await listTaxons({ depth_eq: 1 });
 
   return (
     <div>
@@ -104,7 +104,7 @@ const filters = await getProductFilters({ taxon_id: 'txn_123' });
 import { listTaxons, getTaxon, listTaxonProducts } from '@spree/next';
 import { listTaxonomies, getTaxonomy } from '@spree/next';
 
-const taxons = await listTaxons({ 'q[depth_eq]': 1 });
+const taxons = await listTaxons({ depth_eq: 1 });
 const taxon = await getTaxon('categories/clothing');
 const products = await listTaxonProducts('categories/clothing', { per_page: 12 });
 
