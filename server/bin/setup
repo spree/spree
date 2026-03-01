@@ -50,4 +50,4 @@ step "Cleaning up" bin/rails log:clear tmp:clear
 echo
 echo "✓ Done (${SECONDS}s)"
 echo
-echo "Run 'bin/dev server' to start the app."
+echo "Run 'bin/dev' to start the app."
