@@ -1,6 +1,5 @@
 import { execaCommand } from 'execa'
 import crypto from 'node:crypto'
-import { platform } from 'node:os'
 import type { PackageManager } from './types.js'
 
 export function detectPackageManager(): PackageManager {
@@ -33,13 +32,3 @@ export function runCommand(pm: PackageManager): string {
   return 'pnpm'
 }
 
-export async function openBrowser(url: string): Promise<void> {
-  const os = platform()
-  const cmd = os === 'darwin' ? 'open' : os === 'win32' ? 'start' : 'xdg-open'
-
-  try {
-    await execaCommand(`${cmd} ${url}`, { stdio: 'ignore' })
-  } catch {
-    // Silently fail — browser open is best-effort
-  }
-}

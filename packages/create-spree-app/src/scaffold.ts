@@ -2,15 +2,15 @@ import * as p from '@clack/prompts'
 import pc from 'picocolors'
 import fs from 'node:fs'
 import path from 'node:path'
+import { execa } from 'execa'
 import type { ScaffoldOptions } from './types.js'
-import { STOREFRONT_PORT, DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD } from './constants.js'
-import { generateSecretKeyBase, isDockerRunning, openBrowser } from './utils.js'
+import { DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD } from './constants.js'
+import { generateSecretKeyBase, isDockerRunning } from './utils.js'
 import { dockerComposeContent } from './templates/docker-compose.js'
 import { envContent } from './templates/env.js'
 import { rootPackageJsonContent } from './templates/package-json.js'
 import { readmeContent } from './templates/readme.js'
 import { gitignoreContent } from './templates/gitignore.js'
-import { startServices, waitForHealthy, fetchApiKey, loadSampleData, streamLogs } from './docker.js'
 import { downloadStorefront, installStorefrontDeps, installRootDeps, writeStorefrontEnv } from './storefront.js'
 
 export async function scaffold(options: ScaffoldOptions): Promise<void> {
@@ -68,76 +68,24 @@ export async function scaffold(options: ScaffoldOptions): Promise<void> {
     s.stop('Storefront dependencies installed.')
   }
 
-  // Phase 3: Docker
+  // Phase 3: Initialize and start services
   if (options.start) {
-    s.start('Starting Docker services...')
-    await startServices(projectDir)
-    s.stop('Docker services started.')
+    const initArgs = ['spree', 'init']
+    if (!options.sampleData) initArgs.push('--no-sample-data')
 
-    s.start('Waiting for Spree to be ready...')
-    await waitForHealthy(port)
-    s.stop('Spree is ready.')
+    await execa('npx', initArgs, {
+      cwd: projectDir,
+      stdio: 'inherit',
+    })
 
-    let apiKey: string | undefined
-
-    s.start('Configuring API key...')
-    apiKey = await fetchApiKey(projectDir)
-    s.stop(`API key: ${pc.cyan(apiKey)}`)
-
-    if (isFullStack && apiKey) {
-      writeStorefrontEnv(projectDir, port, apiKey)
+    if (isFullStack) {
+      p.log.info(
+        `${pc.bold('Storefront')}: ${pc.cyan(`cd ${projectName}/apps/storefront && npm run dev`)}`,
+      )
     }
-
-    if (options.sampleData) {
-      s.start('Loading sample data...')
-      await loadSampleData(projectDir)
-      s.stop('Sample data loaded.')
-    }
-
-    printSuccessWithDocker(projectName, isFullStack, port, apiKey)
-    await openBrowser(`http://localhost:${port}/admin`)
-
-    p.log.info('Streaming logs (Ctrl+C to stop)...\n')
-    await streamLogs(projectDir)
   } else {
     printSuccessWithoutDocker(projectName, isFullStack, port)
   }
-}
-
-function printSuccessWithDocker(
-  projectName: string,
-  isFullStack: boolean,
-  port: number,
-  apiKey?: string,
-): void {
-  const lines: string[] = [
-    '',
-    `${pc.bold('Admin Dashboard')}`,
-    `  ${pc.cyan(`http://localhost:${port}/admin`)}`,
-    `  Email:    ${DEFAULT_ADMIN_EMAIL}`,
-    `  Password: ${DEFAULT_ADMIN_PASSWORD}`,
-  ]
-
-  if (isFullStack) {
-    lines.push(
-      '',
-      `${pc.bold('Storefront')}`,
-      `  Run:  ${pc.cyan(`cd ${projectName}/apps/storefront && npm run dev`)}`,
-      `  Open: ${pc.cyan(`http://localhost:${STOREFRONT_PORT}`)}`,
-    )
-  }
-
-  lines.push(
-    '',
-    `${pc.bold('Store API')}`,
-    `  ${pc.cyan(`http://localhost:${port}/api/v3/store`)}`,
-  )
-
-  if (apiKey) {
-    lines.push(`  API Key: ${pc.cyan(apiKey)}`)
-  }
-
-  p.note(lines.join('\n'), 'Your Spree store is ready!')
 }
 
 function printSuccessWithoutDocker(

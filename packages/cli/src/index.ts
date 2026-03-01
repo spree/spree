@@ -4,6 +4,7 @@ import { registerDevCommand } from './commands/dev.js'
 import { registerStopCommand } from './commands/stop.js'
 import { registerUpdateCommand } from './commands/update.js'
 import { registerLogsCommand } from './commands/logs.js'
+import { registerInitCommand } from './commands/init.js'
 import { registerConsoleCommand } from './commands/console.js'
 import { registerUserCommand } from './commands/user.js'
 import { registerApiKeyCommand } from './commands/api-key.js'
@@ -16,6 +17,7 @@ const program = new Command()
   .description('CLI for managing Spree Commerce projects')
   .version('2.0.0')
 
+registerInitCommand(program)
 registerDevCommand(program)
 registerStopCommand(program)
 registerUpdateCommand(program)
