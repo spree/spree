@@ -14,7 +14,7 @@ export function rootPackageJsonContent(name: string): string {
       console: 'spree console',
     },
     dependencies: {
-      '@spree/cli': '^0.1.0',
+      '@spree/cli': '^2.0.0',
     },
   }
 

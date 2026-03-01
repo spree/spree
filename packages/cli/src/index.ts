@@ -14,7 +14,7 @@ import { registerSampleDataCommand } from './commands/sample-data.js'
 const program = new Command()
   .name('spree')
   .description('CLI for managing Spree Commerce projects')
-  .version('0.1.0')
+  .version('2.0.0')
 
 registerDevCommand(program)
 registerStopCommand(program)
