@@ -30,7 +30,7 @@ export interface RequestOptions {
 
 export interface InternalRequestOptions extends RequestOptions {
   body?: unknown;
-  params?: Record<string, string | number | undefined>;
+  params?: Record<string, string | number | boolean | (string | number)[] | undefined>;
 }
 
 export class SpreeError extends Error {

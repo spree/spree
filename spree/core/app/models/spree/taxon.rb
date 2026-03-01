@@ -5,16 +5,16 @@ module Spree
     has_prefix_id :txn  # Spree-specific: taxon
 
     RULES_MATCH_POLICIES = %w[all any].freeze
-    SORT_ORDERS = %w[
-      manual
-      best-selling
-      name-a-z
-      name-z-a
-      price-high-to-low
-      price-low-to-high
-      newest-first
-      oldest-first
-    ]
+    SORT_ORDERS = [
+      'manual',
+      'best_selling',
+      'price asc',
+      'price desc',
+      'available_on desc',
+      'available_on asc',
+      'name asc',
+      'name desc'
+    ].freeze
 
     include Spree::TranslatableResource
     include Spree::TranslatableResourceSlug

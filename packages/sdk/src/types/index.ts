@@ -61,7 +61,7 @@ export interface ListParams {
 }
 
 export interface ProductListParams extends ListParams {
-  /** Sort order, e.g. 'price asc', 'created_at desc' */
+  /** Sort: 'price-low-to-high', 'price-high-to-low', 'best-selling', or Ransack e.g. 'name asc' */
   sort?: string;
   /** Full-text search across name and SKU */
   multi_search?: string;
@@ -71,10 +71,14 @@ export interface ProductListParams extends ListParams {
   price_gte?: number;
   /** Filter: price <= value */
   price_lte?: number;
+  /** Filter: only in-stock products */
+  in_stock_items?: boolean;
+  /** Filter: only out-of-stock products */
+  out_of_stock_items?: boolean;
   /** Filter: products in taxon */
   taxons_id_eq?: string;
   /** Any additional Ransack predicate */
-  [key: string]: string | number | boolean | undefined;
+  [key: string]: string | number | boolean | (string | number)[] | undefined;
 }
 
 export interface TaxonListParams extends ListParams {
@@ -86,7 +90,7 @@ export interface TaxonListParams extends ListParams {
   parent_id_eq?: string | number;
   depth_eq?: number;
   /** Any additional Ransack predicate */
-  [key: string]: string | number | boolean | undefined;
+  [key: string]: string | number | boolean | (string | number)[] | undefined;
 }
 
 export interface OrderListParams extends ListParams {
@@ -98,7 +102,7 @@ export interface OrderListParams extends ListParams {
   completed_at_gte?: string;
   completed_at_lte?: string;
   /** Any additional Ransack predicate */
-  [key: string]: string | number | boolean | undefined;
+  [key: string]: string | number | boolean | (string | number)[] | undefined;
 }
 
 // Cart operations
@@ -185,23 +189,25 @@ export interface CompletePaymentSetupSessionParams {
 // Product Filters types
 export interface FilterOption {
   id: string;
-  label: string;
   count: number;
 }
 
 export interface OptionFilterOption extends FilterOption {
   name: string;
+  presentation: string;
   position: number;
 }
 
-export interface TaxonFilterOption extends FilterOption {
+export interface TaxonFilterOption {
+  id: string;
+  name: string;
   permalink: string;
+  count: number;
 }
 
 export interface PriceRangeFilter {
   id: 'price';
   type: 'price_range';
-  label: string;
   min: number;
   max: number;
   currency: string;
@@ -210,22 +216,20 @@ export interface PriceRangeFilter {
 export interface AvailabilityFilter {
   id: 'availability';
   type: 'availability';
-  label: string;
   options: FilterOption[];
 }
 
 export interface OptionFilter {
   id: string;
   type: 'option';
-  label: string;
   name: string;
+  presentation: string;
   options: OptionFilterOption[];
 }
 
 export interface TaxonFilter {
   id: 'taxons';
   type: 'taxon';
-  label: string;
   options: TaxonFilterOption[];
 }
 
@@ -233,7 +237,6 @@ export type ProductFilter = PriceRangeFilter | AvailabilityFilter | OptionFilter
 
 export interface SortOption {
   id: string;
-  label: string;
 }
 
 export interface ProductFiltersResponse {

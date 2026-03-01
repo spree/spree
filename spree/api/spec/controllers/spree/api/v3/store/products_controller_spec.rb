@@ -162,7 +162,7 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
       end
 
       it 'sorts by price low to high' do
-        get :index, params: { q: { sort_by: 'price-low-to-high' } }
+        get :index, params: { sort: 'price asc' }
 
         expect(response).to have_http_status(:ok)
         prices = json_response['data'].map { |p| p['price']['amount'].to_f }
@@ -170,7 +170,7 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
       end
 
       it 'sorts by price high to low' do
-        get :index, params: { q: { sort_by: 'price-high-to-low' } }
+        get :index, params: { sort: 'price desc' }
 
         expect(response).to have_http_status(:ok)
         prices = json_response['data'].map { |p| p['price']['amount'].to_f }
@@ -181,7 +181,7 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
         Spree::StoreProduct.find_by(product: product, store: store).update!(units_sold_count: 10, revenue: 100)
         Spree::StoreProduct.find_by(product: product2, store: store).update!(units_sold_count: 50, revenue: 500)
 
-        get :index, params: { sort_by: 'best-selling' }
+        get :index, params: { sort: 'best_selling' }
 
         expect(response).to have_http_status(:ok)
         ids = json_response['data'].map { |p| p['id'] }

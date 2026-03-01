@@ -2,16 +2,7 @@ module Spree
   module Api
     module V3
       class FiltersAggregator
-        SORT_OPTION_IDS = %w[
-          manual
-          best-selling
-          price-low-to-high
-          price-high-to-low
-          newest-first
-          oldest-first
-          name-a-z
-          name-z-a
-        ].freeze
+        SORT_OPTION_IDS = Spree::Taxon::SORT_ORDERS
 
         # @param scope [ActiveRecord::Relation] Base product scope (already filtered by store, availability, taxon, etc.)
         # @param currency [String] Currency for price range
@@ -43,10 +34,9 @@ module Spree
         end
 
         def sort_options
-          SORT_OPTION_IDS.map do |id|
-            { id: id, label: Spree.t("products_sort_options.#{id.underscore}") }
-          end
+          SORT_OPTION_IDS.map { |id| { id: id } }
         end
+
 
         def price_filter
           # Remove ordering to avoid PostgreSQL DISTINCT + ORDER BY conflicts
@@ -58,7 +48,6 @@ module Spree
           {
             id: 'price',
             type: 'price_range',
-            label: Spree.t(:price),
             min: min.to_f,
             max: max.to_f,
             currency: @currency
@@ -74,10 +63,9 @@ module Spree
           {
             id: 'availability',
             type: 'availability',
-            label: Spree.t(:availability),
             options: [
-              { id: 'in_stock', label: Spree.t(:in_stock), count: in_stock_count },
-              { id: 'out_of_stock', label: Spree.t(:out_of_stock), count: out_of_stock_count }
+              { id: 'in_stock', count: in_stock_count },
+              { id: 'out_of_stock', count: out_of_stock_count }
             ]
           }
         end
@@ -90,8 +78,8 @@ module Spree
             {
               id: option_type.prefixed_id,
               type: 'option',
-              label: option_type.presentation,
               name: option_type.name,
+              presentation: option_type.presentation,
               options: values.map { |ov| option_value_data(option_type, ov) }
             }
           end
@@ -110,8 +98,8 @@ module Spree
 
           {
             id: option_value.prefixed_id,
-            label: option_value.presentation,
             name: option_value.name,
+            presentation: option_value.presentation,
             position: option_value.position,
             count: count
           }
@@ -135,7 +123,6 @@ module Spree
           {
             id: 'taxons',
             type: 'taxon',
-            label: Spree.t(:category),
             options: child_taxons.map { |t| taxon_option_data(t) }
           }
         end
@@ -145,7 +132,7 @@ module Spree
 
           {
             id: taxon.prefixed_id,
-            label: taxon.name,
+            name: taxon.name,
             permalink: taxon.permalink,
             count: count
           }
