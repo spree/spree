@@ -1,0 +1,174 @@
+---
+title: "Shipping Calculators"
+description: "Learn how to use shipping calculators in Spree Commerce."
+---
+
+Shipping calculators determine how the cost of a shipping method is calculated at checkout.
+
+When creating or editing a shipping method, you’ll choose a **Calculator** type and configure its rules. Each calculator applies different pricing logic depending on weight, order value, or number of items.
+
+Below is a breakdown of each available shipping calculator and how it works.
+
+## Flat Percent
+
+Charges a percentage of the order total as the shipping cost.
+
+**Configuration:**
+
+- **Percentage** - The percent of the order total to charge
+
+**Example:**\
+If you set the percentage to **10%** and the order total is **\$200**, the shipping cost will be:
+
+\$200 × 10% = \$20 shipping
+
+**Best for:**
+
+- Simple, scalable shipping rules
+- Stores where shipping cost should increase proportionally with order value
+
+## Flat Rate
+
+Charges a fixed shipping cost based on weight and/or order total ranges.
+
+**Configuration:**
+
+- **Min Weight**
+- **Max Weight**
+- **Amount (cost)**
+- **Currency**
+- **Min Item Total**
+- **Max Item Total**
+
+The shipping cost applies only if the order falls within the defined weight and/or item total range.
+
+**Example 1 (Weight-based):**
+
+- Min weight: 0 kg
+- Max weight: 5 kg
+- Amount: \$15
+
+Orders weighing between 0-5 kg will be charged \$15 shipping.
+
+**Example 2 (Order total-based):**
+
+- Min item total: \$0
+- Max item total: \$100
+- Amount: \$10
+
+Orders between \$0-\$100 will be charged \$10 shipping.
+
+**Best for:**
+
+- Tiered shipping rules
+- Heavy item pricing
+- Conditional flat pricing
+
+## Flexible Rate per Package Item
+
+Charges one rate for the first item and a different rate for additional items in the shipment.
+
+**Configuration:**
+
+- **Max Items**
+- **Currency**
+- **First Item (cost)**
+- **Additional Items (cost)**
+
+**Example:**
+
+- First item: \$10
+- Additional items: \$3
+
+If a customer orders 3 items:
+
+\$10 (first item) + \$3 + \$3 = \$16 shipping
+
+**Best for:**
+
+- Small product stores
+- Per-item handling costs
+
+## Flat Rate per Package Item
+
+Charges the same fixed amount for each item in the shipment.
+
+**Configuration:**
+
+- **Amount**
+- **Currency**
+
+**Example:**\
+If the amount is **\$5 per item** and the order contains 4 items:
+
+4 × \$5 = \$20 shipping
+
+**Best for:**
+
+- Uniform product sizes
+- Standardized packaging costs
+
+## Price Sack
+
+Applies one shipping amount below a minimum order value, and a discounted rate above it.
+
+**Configuration:**
+
+- **Minimal Amount** - Order total threshold
+- **Normal Amount** - Shipping cost below threshold
+- **Discount Amount** - Shipping cost above threshold
+- **Currency**
+
+**How it works:**
+
+- If the order total is **below** the minimal amount → Normal Amount is charged
+- If the order total is **above** the minimal amount → Discount Amount is charged
+
+**Example:**
+
+- Minimal amount: \$100
+- Normal amount: \$15
+- Discount amount: \$5
+
+If the order is:
+
+- \$75 → Shipping = \$15
+- \$150 → Shipping = \$5
+
+**Best for:**
+
+- Incentivizing higher order values
+- “Spend \$100, get discounted shipping” promotions
+
+## Digital Delivery
+
+Used for digital products where shipping represents a processing or delivery fee.
+
+**Configuration:**
+
+- **Amount**
+- **Currency**
+
+In most cases, businesses selling digital products (such as e-books, software, or downloadable media) set this amount to 0, since no physical shipping is required. However, you may choose to apply a small processing fee if needed.
+
+**Example:**\
+If set to \$2, every order using this method will be charged \$2 for digital delivery.
+
+**Best for:**
+
+- E-books
+- Software licenses
+- Downloadable media
+- Digital subscriptions
+
+# Choosing the Right Calculator
+
+Your choice depends on:
+
+- Product weight variability
+- Average order value
+- Packaging costs
+- Geographic complexity
+- Whether you sell physical or digital goods
+
+For more advanced shipping logic, calculators can also be combined with [Shipping Categories](https://spreecommerce.org/docs/user/settings/shipping-methods#shipping-categories) and [Zones](https://spreecommerce.org/docs/user/settings/zones) to apply different pricing rules to different products or regions.

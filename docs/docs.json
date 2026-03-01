@@ -1097,6 +1097,7 @@
                   "user/settings/payments",
                   "user/settings/zones",
                   "user/settings/shipping-methods",
+                  "user/settings/shipping-calculators",
                   "user/settings/tax"
                 ]
               },
