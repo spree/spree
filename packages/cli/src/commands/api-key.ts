@@ -3,7 +3,7 @@ import * as p from '@clack/prompts'
 import pc from 'picocolors'
 import { printTable } from 'console-table-printer'
 import { detectProject } from '../context.js'
-import { railsRunner } from '../docker.js'
+import { railsRunner, escapeRubyString } from '../docker.js'
 
 export function registerApiKeyCommand(program: Command): void {
   const apiKey = program
@@ -59,7 +59,7 @@ export function registerApiKeyCommand(program: Command): void {
       const s = p.spinner()
       s.start('Creating API key...')
 
-      const safeName = name.replace(/'/g, "\\'")
+      const safeName = escapeRubyString(name)
       const script = [
         `key = Spree::Store.default.api_keys.create!(`,
         `name: '${safeName}',`,
@@ -142,7 +142,7 @@ export function registerApiKeyCommand(program: Command): void {
       const s = p.spinner()
       s.start('Revoking API key...')
 
-      const safeId = id.replace(/'/g, "\\'")
+      const safeId = escapeRubyString(id)
 
       const script = [
         `key = Spree::Store.default.api_keys.find_by_prefix_id!('${safeId}');`,

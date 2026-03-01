@@ -2,7 +2,7 @@ import type { Command } from 'commander'
 import * as p from '@clack/prompts'
 import pc from 'picocolors'
 import { detectProject } from '../context.js'
-import { railsRunner } from '../docker.js'
+import { railsRunner, escapeRubyString } from '../docker.js'
 
 export function registerUserCommand(program: Command): void {
   const user = program
@@ -55,8 +55,8 @@ export function registerUserCommand(program: Command): void {
       const s = p.spinner()
       s.start('Creating admin user...')
 
-      const safeEmail = email.replace(/'/g, "\\'")
-      const safePassword = password.replace(/'/g, "\\'")
+      const safeEmail = escapeRubyString(email)
+      const safePassword = escapeRubyString(password)
 
       const script = [
         `admin = Spree.admin_user_class.create!(`,

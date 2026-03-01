@@ -1,5 +1,10 @@
 import { execa, type Options as ExecaOptions } from 'execa'
 
+/** Escape a string for safe interpolation into a Ruby single-quoted string. */
+export function escapeRubyString(value: string): string {
+  return value.replace(/\\/g, '\\\\').replace(/'/g, "\\'")
+}
+
 export async function dockerCompose(
   args: string[],
   projectDir: string,
