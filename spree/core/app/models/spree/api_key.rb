@@ -6,11 +6,14 @@ module Spree
     PREFIXES = { 'publishable' => 'pk_', 'secret' => 'sk_' }.freeze
     TOKEN_LENGTH = 24
 
-    # @!attribute [r] plaintext_token
-    #   The raw token value, only available in memory immediately after creation
-    #   of a secret key. Not persisted to the database.
-    #   @return [String, nil]
-    attr_reader :plaintext_token
+    # Returns the raw token value. For publishable keys this is the persisted
+    # +token+ column. For secret keys it is only available in memory immediately
+    # after creation (not persisted).
+    #
+    # @return [String, nil]
+    def plaintext_token
+      publishable? ? token : @plaintext_token
+    end
 
     belongs_to :store, class_name: 'Spree::Store'
     belongs_to :created_by, polymorphic: true, optional: true

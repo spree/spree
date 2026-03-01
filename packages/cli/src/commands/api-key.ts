@@ -1,6 +1,7 @@
 import type { Command } from 'commander'
 import * as p from '@clack/prompts'
 import pc from 'picocolors'
+import { printTable } from 'console-table-printer'
 import { detectProject } from '../context.js'
 import { railsRunner } from '../docker.js'
 
@@ -101,8 +102,8 @@ export function registerApiKeyCommand(program: Command): void {
       const script = [
         `Spree::Store.default.api_keys.order(created_at: :desc).each { |k|`,
         `status = k.revoked_at ? 'revoked' : 'active';`,
-        `prefix = k.secret? ? k.token_prefix : k.token;`,
-        `puts [k.name, k.key_type, prefix, k.created_at.strftime('%Y-%m-%d %H:%M'), status].join('|')`,
+        `token = k.secret? ? k.token_prefix : k.token;`,
+        `puts [k.prefixed_id, k.name, k.key_type, token, k.created_at.strftime('%Y-%m-%d %H:%M'), status].join('|')`,
         `}`,
       ].join(' ')
 
@@ -116,38 +117,35 @@ export function registerApiKeyCommand(program: Command): void {
         return
       }
 
-      console.log('')
-      console.log(
-        `  ${pc.bold('Name'.padEnd(25))} ${pc.bold('Type'.padEnd(14))} ${pc.bold('Token'.padEnd(30))} ${pc.bold('Created'.padEnd(18))} ${pc.bold('Status')}`,
-      )
-      console.log(`  ${'─'.repeat(95)}`)
+      const rows = lines.map((line) => {
+        const [id, name, type, token, created, status] = line.split('|')
+        return {
+          ID: id ?? '',
+          Name: name ?? '',
+          Type: type ?? '',
+          Token: token ?? '',
+          Created: created ?? '',
+          Status: status === 'active' ? pc.green(status) : pc.red(status ?? ''),
+        }
+      })
 
-      for (const line of lines) {
-        const [name, type, prefix, created, status] = line.split('|')
-        const statusText = status === 'active' ? pc.green(status!) : pc.red(status!)
-        console.log(
-          `  ${(name ?? '').padEnd(25)} ${(type ?? '').padEnd(14)} ${(prefix ?? '').padEnd(30)} ${(created ?? '').padEnd(18)} ${statusText}`,
-        )
-      }
-      console.log('')
+      printTable(rows)
     })
 
   apiKey
     .command('revoke')
     .description('Revoke an API key')
-    .argument('<token>', 'token or token prefix of the key to revoke')
-    .action(async (token: string) => {
+    .argument('<id>', 'ID of the key to revoke (from api-key list)')
+    .action(async (id: string) => {
       const ctx = detectProject()
 
       const s = p.spinner()
       s.start('Revoking API key...')
 
-      const safeToken = token.replace(/'/g, "\\'")
+      const safeId = id.replace(/'/g, "\\'")
 
-      // Try finding by token (publishable) or token_prefix (secret)
       const script = [
-        `key = Spree::Store.default.api_keys.find_by(token: '${safeToken}') ||`,
-        `Spree::Store.default.api_keys.find_by!(token_prefix: '${safeToken}');`,
+        `key = Spree::Store.default.api_keys.find_by_prefix_id!('${safeId}');`,
         `key.revoke!;`,
         `print key.name`,
       ].join(' ')

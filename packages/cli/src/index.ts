@@ -8,6 +8,7 @@ import { registerConsoleCommand } from './commands/console.js'
 import { registerUserCommand } from './commands/user.js'
 import { registerApiKeyCommand } from './commands/api-key.js'
 import { registerSeedCommand } from './commands/seed.js'
+import { registerOpenCommand } from './commands/open.js'
 import { registerSampleDataCommand } from './commands/sample-data.js'
 
 const program = new Command()
@@ -22,6 +23,7 @@ registerLogsCommand(program)
 registerConsoleCommand(program)
 registerUserCommand(program)
 registerApiKeyCommand(program)
+registerOpenCommand(program)
 registerSeedCommand(program)
 registerSampleDataCommand(program)
 

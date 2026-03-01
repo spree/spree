@@ -20,7 +20,13 @@ export async function railsRunner(
     ['compose', 'exec', '-T', 'web', 'bin/rails', 'runner', script],
     { cwd: projectDir },
   )
+
+  // Rails boot prints noise to stdout (e.g. "[Spree Events] ...") — strip it
   return stdout
+    .split('\n')
+    .filter((line) => !line.startsWith('['))
+    .join('\n')
+    .trim()
 }
 
 export async function railsConsole(projectDir: string): Promise<void> {
