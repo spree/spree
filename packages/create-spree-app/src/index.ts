@@ -1,10 +1,9 @@
 import { Command } from 'commander'
 import * as p from '@clack/prompts'
 import pc from 'picocolors'
-import getPort from 'get-port'
 import { runPrompts } from './prompts.js'
 import { scaffold } from './scaffold.js'
-import { detectPackageManager } from './utils.js'
+import { detectPackageManager, getAvailablePort } from './utils.js'
 import { DEFAULT_SPREE_PORT } from './constants.js'
 import type { PackageManager } from './types.js'
 
@@ -37,7 +36,7 @@ const program = new Command()
       })
 
       const preferred = Number(flags.port)
-      const port = await getPort({ port: preferred })
+      const port = await getAvailablePort(preferred)
       if (port !== preferred) {
         p.log.warn(`Port ${preferred} is in use, using port ${pc.bold(String(port))} instead.`)
       }
