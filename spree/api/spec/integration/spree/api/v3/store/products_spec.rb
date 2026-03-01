@@ -201,10 +201,9 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
                    items: {
                      type: :object,
                      properties: {
-                       id: { type: :string },
-                       label: { type: :string }
+                       id: { type: :string }
                      },
-                     required: %w[id label]
+                     required: %w[id]
                    }
                  },
                  default_sort: {
@@ -242,7 +241,7 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
 
           # Check sort options
           sort_ids = data['sort_options'].map { |s| s['id'] }
-          expect(sort_ids).to include('manual', 'price-low-to-high', 'newest-first')
+          expect(sort_ids).to include('manual', 'price asc', 'available_on desc')
         end
       end
 
@@ -265,7 +264,7 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
           # Should include taxon filter with child taxons
           taxon_filter = data['filters'].find { |f| f['type'] == 'taxon' }
           expect(taxon_filter).to be_present
-          expect(taxon_filter['options'].map { |t| t['label'] }).to include('Shirts')
+          expect(taxon_filter['options'].map { |t| t['name'] }).to include('Shirts')
         end
       end
 

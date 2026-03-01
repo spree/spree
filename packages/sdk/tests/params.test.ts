@@ -17,9 +17,14 @@ describe('transformListParams', () => {
     expect(result).toEqual({ include: 'variants' });
   });
 
-  it('transforms sort to q[s]', () => {
+  it('passes through sort param unchanged', () => {
     const result = transformListParams({ sort: 'price asc' });
-    expect(result).toEqual({ 'q[s]': 'price asc' });
+    expect(result).toEqual({ sort: 'price asc' });
+  });
+
+  it('passes through custom sort values like price-low-to-high', () => {
+    const result = transformListParams({ sort: 'price-low-to-high' });
+    expect(result).toEqual({ sort: 'price-low-to-high' });
   });
 
   it('wraps filter keys in q[...]', () => {
@@ -50,6 +55,15 @@ describe('transformListParams', () => {
     expect(result).toEqual({ page: 1 });
   });
 
+  it('wraps array bracket keys correctly: foo[] → q[foo][]', () => {
+    const result = transformListParams({
+      'with_option_value_ids[]': ['optval_abc', 'optval_def'],
+    });
+    expect(result).toEqual({
+      'q[with_option_value_ids][]': ['optval_abc', 'optval_def'],
+    });
+  });
+
   it('handles a full combined query', () => {
     const result = transformListParams({
       page: 1,
@@ -64,7 +78,7 @@ describe('transformListParams', () => {
       page: 1,
       per_page: 12,
       includes: 'images,default_variant',
-      'q[s]': 'created_at desc',
+      sort: 'created_at desc',
       'q[name_cont]': 'shirt',
       'q[price_gte]': 20,
       'q[taxons_id_eq]': 'txn_abc123',

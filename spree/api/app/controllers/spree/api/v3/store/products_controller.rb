@@ -3,9 +3,11 @@ module Spree
     module V3
       module Store
         class ProductsController < ResourceController
-          SORT_OPTIONS = {
-            'price-low-to-high' => :ascend_by_price,
-            'price-high-to-low' => :descend_by_price
+          # Sort values that require special scopes (not plain Ransack column sorts).
+          CUSTOM_SORT_SCOPES = {
+            'price asc' => :ascend_by_price,
+            'price desc' => :descend_by_price,
+            'best_selling' => :by_best_selling
           }.freeze
 
           protected
@@ -48,24 +50,41 @@ module Spree
             !custom_sort_requested?
           end
 
-          # Apply custom sorting scopes for price/best-selling
+          # Applies sorting from the unified `sort` param.
+          # Custom values ('price asc', 'best_selling') use product-specific scopes.
+          # Standard Ransack values ('name asc', 'created_at desc') are passed to q[s].
           def apply_collection_sort(collection)
-            sort_by = params.dig(:q, :sort_by) || params[:sort_by]
-            return collection unless sort_by.present?
+            sort_value = sort_param
+            return collection unless sort_value.present?
 
-            return collection.distinct(false).reorder(nil).by_best_selling if sort_by == 'best-selling'
+            scope_method = CUSTOM_SORT_SCOPES[sort_value]
+            return collection unless scope_method
 
-            scope_method = SORT_OPTIONS[sort_by]
-            return collection.reorder(nil).send(scope_method) if scope_method.present?
+            sorted = collection.reorder(nil)
+            sort_value == 'best_selling' ? sorted.distinct(false).send(scope_method) : sorted.send(scope_method)
+          end
 
-            collection
+          # Inject sort into ransack params when it's a standard Ransack sort
+          def ransack_params
+            rp = super
+            sort_value = sort_param
+
+            if sort_value.present? && !CUSTOM_SORT_SCOPES.key?(sort_value)
+              rp = rp.respond_to?(:to_unsafe_h) ? rp.to_unsafe_h : rp.dup
+              rp['s'] = sort_value
+            end
+
+            rp
           end
 
           private
 
+          def sort_param
+            params[:sort] || params.dig(:q, :s)
+          end
+
           def custom_sort_requested?
-            sort_by = params.dig(:q, :sort_by) || params[:sort_by]
-            SORT_OPTIONS.key?(sort_by)
+            CUSTOM_SORT_SCOPES.key?(sort_param)
           end
         end
       end

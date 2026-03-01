@@ -91,6 +91,14 @@ module Spree
           joins(:variants_including_master).merge(Spree::Variant.in_stock_or_backorderable)
         end
       end
+
+      add_search_scope :price_lte do |price|
+        where(Price.table_name => { amount: ..price })
+      end
+
+      add_search_scope :price_gte do |price|
+        where(Price.table_name => { amount: price.. })
+      end
       search_scopes << :in_stock
 
       def self.out_of_stock(out_of_stock = true)
