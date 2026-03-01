@@ -44,8 +44,7 @@ module Spree
       joins(:market_countries)
         .where(store_id: store.id)
         .where(spree_market_countries: { country_id: country.id })
-        .order(:position)
-        .first
+        .take
     end
 
     # Returns the default market for a store, or falls back to the first by position
