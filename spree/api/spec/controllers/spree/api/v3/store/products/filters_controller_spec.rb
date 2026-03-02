@@ -82,12 +82,12 @@ RSpec.describe Spree::Api::V3::Store::Products::FiltersController, type: :contro
       size_filter = json_response['filters'].find { |f| f['name'] == 'size' }
       expect(size_filter).to be_present
       expect(size_filter['type']).to eq('option')
-      expect(size_filter['label']).to eq('Size')
+      expect(size_filter['presentation']).to eq('Size')
 
       size_options = size_filter['options']
-      expect(size_options.map { |o| o['label'] }).to include('S', 'M')
+      expect(size_options.map { |o| o['presentation'] }).to include('S', 'M')
 
-      small_option = size_options.find { |o| o['label'] == 'S' }
+      small_option = size_options.find { |o| o['presentation'] == 'S' }
       expect(small_option['count']).to eq(1)
     end
 
@@ -96,8 +96,8 @@ RSpec.describe Spree::Api::V3::Store::Products::FiltersController, type: :contro
 
       sort_ids = json_response['sort_options'].map { |s| s['id'] }
       expect(sort_ids).to include(
-        'manual', 'best-selling', 'price-low-to-high', 'price-high-to-low',
-        'newest-first', 'oldest-first', 'name-a-z', 'name-z-a'
+        'manual', 'best_selling', 'price asc', 'price desc',
+        'available_on desc', 'available_on asc', 'name asc', 'name desc'
       )
     end
 
@@ -121,15 +121,15 @@ RSpec.describe Spree::Api::V3::Store::Products::FiltersController, type: :contro
         expect(taxon_filter).to be_present
 
         taxon_options = taxon_filter['options']
-        expect(taxon_options.map { |t| t['label'] }).to include('Shirts', 'Pants')
+        expect(taxon_options.map { |t| t['name'] }).to include('Shirts', 'Pants')
       end
 
       it 'returns default_sort from taxon' do
-        taxon.update!(sort_order: 'price-low-to-high')
+        taxon.update!(sort_order: 'price asc')
 
         get :index, params: { taxon_id: taxon.prefixed_id }
 
-        expect(json_response['default_sort']).to eq('price-low-to-high')
+        expect(json_response['default_sort']).to eq('price asc')
       end
     end
 

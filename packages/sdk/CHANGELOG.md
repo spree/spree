@@ -1,5 +1,15 @@
 # @spree/sdk
 
+## 0.6.1
+
+### Patch Changes
+
+- Added client-level locale, currency, and country defaults. Set them at initialization (`createSpreeClient({ locale: 'fr', currency: 'EUR', country: 'FR' })`) or update later with `client.setLocale()`, `client.setCurrency()`, `client.setCountry()`. Per-request options still override defaults.
+
+- Added flat query params for filtering and sorting. Instead of `{ 'q[name_cont]': 'shirt' }`, you can now write `{ name_cont: 'shirt', sort: 'price asc' }`. The SDK transforms these to Ransack format automatically. Old `q[...]` syntax still works for backward compatibility.
+
+- Removed `StorePost` and `StorePostCategory` types and Zod schemas. Posts feature has been extracted to the `spree_posts` extension.
+
 ## 0.6.0
 
 ### Minor Changes

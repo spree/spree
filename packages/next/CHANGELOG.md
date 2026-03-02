@@ -1,5 +1,15 @@
 # @spree/next
 
+## 0.6.1
+
+### Patch Changes
+
+- Added automatic localization. Data functions now auto-read locale and country from cookies when no explicit options are provided. New exports: `setLocale` server action for country/language switchers, `createSpreeMiddleware` (from `@spree/next/middleware`) for URL-based routing with geo-detection. Added `country` to `SpreeNextOptions` and `countryCookieName`, `localeCookieName`, `defaultCountry` to `SpreeNextConfig`.
+
+- Updated data function params to use typed flat query params (`ProductListParams`, `TaxonListParams`, `OrderListParams`) instead of `Record<string, unknown>`.
+
+- Removed Posts and PostCategory references. Posts feature has been extracted to the `spree_posts` extension.
+
 ## 0.6.0
 
 ### Minor Changes

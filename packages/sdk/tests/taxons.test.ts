@@ -18,7 +18,7 @@ describe('taxons', () => {
 
     it('passes query parameters', async () => {
       const result = await client.store.taxons.list({
-        'q[taxonomy_id_eq]': 'tax_1',
+        taxonomy_id_eq: 'tax_1',
       });
       expect(result.data).toBeDefined();
     });
