@@ -20,8 +20,8 @@ describe('dockerComposeContent', () => {
     expect(content).toContain('curl -f http://localhost:3000/up')
   })
 
-  it('includes worker service with bin/jobs command', () => {
-    expect(content).toContain('command: bin/jobs')
+  it('includes worker service with sidekiq command', () => {
+    expect(content).toContain('command: bundle exec sidekiq')
   })
 
   it('includes volume definition', () => {
@@ -29,13 +29,17 @@ describe('dockerComposeContent', () => {
   })
 
   it('uses DATABASE_URL pointing to postgres service', () => {
-    expect(content).toContain('DATABASE_URL: postgres://postgres@postgres:5432/spree_production')
+    expect(content).toContain('DATABASE_URL: postgres://postgres@postgres:5432/spree')
   })
 
-  it('sets separate URLs for cache, queue, and cable databases', () => {
-    expect(content).toContain('CACHE_DATABASE_URL: postgres://postgres@postgres:5432/spree_production_cache')
-    expect(content).toContain('QUEUE_DATABASE_URL: postgres://postgres@postgres:5432/spree_production_queue')
-    expect(content).toContain('CABLE_DATABASE_URL: postgres://postgres@postgres:5432/spree_production_cable')
+  it('includes redis service and REDIS_URL', () => {
+    expect(content).toContain('redis:7-alpine')
+    expect(content).toContain('REDIS_URL: redis://redis:6379/0')
+  })
+
+  it('includes mailpit service for local email', () => {
+    expect(content).toContain('axllent/mailpit')
+    expect(content).toContain('SMTP_HOST: mailpit')
   })
 
   it('uses production environment with SSL disabled', () => {
@@ -48,9 +52,9 @@ describe('dockerComposeContent', () => {
     expect(content).toContain('env_file: .env')
   })
 
-  it('maps the given port to container port 3000', () => {
+  it('uses SPREE_PORT variable for port mapping', () => {
     const custom = dockerComposeContent(4000)
-    expect(custom).toContain('"4000:3000"')
+    expect(custom).toContain('${SPREE_PORT:-3000}:3000')
   })
 
   it('keeps container-internal healthcheck on port 3000 regardless of host port', () => {
@@ -115,11 +119,18 @@ describe('rootPackageJsonContent', () => {
     expect(pkg.name).toBe('my-store')
   })
 
-  it('includes convenience scripts', () => {
+  it('includes convenience scripts using spree cli', () => {
     const pkg = JSON.parse(rootPackageJsonContent('my-store'))
-    expect(pkg.scripts.dev).toContain('docker compose')
+    expect(pkg.scripts.dev).toBe('spree dev')
+    expect(pkg.scripts.update).toBe('spree update')
+    expect(pkg.scripts.logs).toBe('spree logs')
+    expect(pkg.scripts.console).toBe('spree console')
     expect(pkg.scripts.down).toContain('docker compose')
-    expect(pkg.scripts.logs).toContain('docker compose')
+  })
+
+  it('includes @spree/cli as a dependency', () => {
+    const pkg = JSON.parse(rootPackageJsonContent('my-store'))
+    expect(pkg.dependencies['@spree/cli']).toBeDefined()
   })
 
   it('is marked private', () => {
@@ -151,12 +162,15 @@ describe('readmeContent', () => {
     expect(content).not.toContain('Start the storefront')
   })
 
-  it('uses npm run commands instead of docker compose', () => {
+  it('uses spree cli commands', () => {
     const content = readmeContent('my-store', false, 3000)
-    expect(content).toContain('`npm run dev`')
-    expect(content).toContain('`npm run down`')
-    expect(content).toContain('`npm run logs`')
-    expect(content).toContain('`npm run console`')
+    expect(content).toContain('`spree dev`')
+    expect(content).toContain('`spree stop`')
+    expect(content).toContain('`spree logs`')
+    expect(content).toContain('`spree console`')
+    expect(content).toContain('`spree update`')
+    expect(content).toContain('`spree user create`')
+    expect(content).toContain('`spree api-key create`')
   })
 
   it('uses custom port in URLs', () => {

@@ -12,6 +12,11 @@ export async function downloadStorefront(projectDir: string): Promise<void> {
   fs.rmSync(path.join(storefrontDir, '.git'), { recursive: true, force: true })
 }
 
+export async function installRootDeps(projectDir: string, pm: PackageManager): Promise<void> {
+  const [cmd, ...args] = installCommand(pm).split(' ')
+  await execa(cmd, args, { cwd: projectDir, stdio: 'ignore' })
+}
+
 export async function installStorefrontDeps(projectDir: string, pm: PackageManager): Promise<void> {
   const storefrontDir = path.join(projectDir, 'apps', 'storefront')
   const [cmd, ...args] = installCommand(pm).split(' ')

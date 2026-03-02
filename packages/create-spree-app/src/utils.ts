@@ -31,3 +31,4 @@ export function runCommand(pm: PackageManager): string {
   if (pm === 'yarn') return 'yarn'
   return 'pnpm'
 }
+

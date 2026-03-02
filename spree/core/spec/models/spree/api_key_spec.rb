@@ -77,9 +77,9 @@ RSpec.describe Spree::ApiKey, type: :model do
         expect(api_key.token.length).to eq(3 + Spree::ApiKey::TOKEN_LENGTH)
       end
 
-      it 'does not set plaintext_token' do
+      it 'returns token as plaintext_token' do
         key = create(:api_key, :publishable, store: store)
-        expect(key.plaintext_token).to be_nil
+        expect(key.plaintext_token).to eq(key.token)
       end
 
       it 'does not set token_digest' do
