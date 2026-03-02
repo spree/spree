@@ -43,15 +43,16 @@ All Spree models, controllers and other Ruby classes are namespaced by the `Spre
 ```bash
 cd server
 bin/setup
-bin/rails server
+bin/dev
 ```
 
 `bin/setup` handles everything: installs Ruby (via [mise](https://mise.jdx.dev) if available, otherwise uses your system Ruby), system packages (libpq, vips), gems, and prepares the database.
 
-PostgreSQL must be running before you run `bin/setup`. If you don't have it installed locally, start it with Docker:
+PostgreSQL and Redis must be running before you run `bin/setup`. If you don't have them installed locally, start them with Docker:
 
 ```bash
 docker run -d --name spree-postgres -p 5432:5432 -e POSTGRES_HOST_AUTH_METHOD=trust postgres:17-alpine
+docker run -d --name spree-redis -p 6379:6379 redis:7-alpine
 ```
 
 By default the app connects to PostgreSQL at `localhost:5432` as user `postgres` with no password. Override with environment variables if needed:
@@ -63,6 +64,15 @@ DATABASE_HOST=127.0.0.1 DATABASE_PORT=5433 DATABASE_USERNAME=myuser bin/setup
 Use `bin/setup --reset` to drop and recreate the database.
 
 The app runs at [http://localhost:3000](http://localhost:3000). Admin Panel is at [http://localhost:3000/admin](http://localhost:3000/admin).
+
+**Emails in local dev:** By default emails are printed to the Rails log. To catch and preview emails with a web UI, run [Mailpit](https://mailpit.axllent.org) and set `SMTP_HOST`:
+
+```bash
+docker run -d --name mailpit -p 8025:8025 -p 1025:1025 axllent/mailpit
+SMTP_HOST=localhost bin/dev
+```
+
+Then open `http://localhost:8025` to see all outgoing emails.
 
 ### Running engine tests
 
@@ -161,7 +171,7 @@ TypeScript developers don't need Ruby installed. Use Docker Compose from the rep
 docker compose up -d
 ```
 
-This boots PostgreSQL and the Spree backend automatically. The API is available at `http://localhost:3000`.
+This boots PostgreSQL, Redis, Mailpit, and the Spree backend automatically. The API is available at `http://localhost:3000`. All outgoing emails are caught by Mailpit and viewable at `http://localhost:8025`.
 
 Then install dependencies and start all packages in watch mode:
 

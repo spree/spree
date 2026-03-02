@@ -269,15 +269,14 @@
                 "group": "Deployment",
                 "icon": "server",
                 "pages": [
-                  "developer/deployment/database",
-                  "developer/deployment/render",
-                  "developer/deployment/aws",
                   "developer/deployment/docker",
                   "developer/deployment/environment_variables",
-                  "developer/deployment/emails",
+                  "developer/deployment/caching",
                   "developer/deployment/assets",
                   "developer/deployment/cdn",
-                  "developer/deployment/caching"
+                  "developer/deployment/emails",
+                  "developer/deployment/database",
+                  "developer/deployment/aws"
                 ]
               },
               {

@@ -4,35 +4,76 @@ sidebarTitle: Emails
 description: Learn how to send transactional emails from your Spree application.
 ---
 
-Spree uses [ActionMailer](https://guides.rubyonrails.org/action_mailer_basics.html) to send transactional emails (eg. order confirmation, password reset, etc.) under the hood. You can use any SMTP server to send emails from your application. For production use we recommend using a service like [SendGrid](https://sendgrid.com/).
+Spree sends transactional emails such as order confirmation, password reset, shipping notifications, etc. You can use any SMTP provider — Resend, Postmark, Mailgun, SendGrid, Amazon SES, or your own SMTP server.
 
-## Configuring SendGrid
+## Configuration
 
-Spree Starter comes with SendGrid pre-configured out of the box and you will need to set the following environment variables:
+Set the following environment variables to enable email delivery:
 
-* `SENDGRID_API_KEY` - Your SendGrid API key. Can be found in the [SendGrid dashboard](https://app.sendgrid.com/settings/api_keys).
-* `SENDGRID_DOMAIN` - The domain you want to use for sending emails that was verified in SendGrid, eg. `mystore.com`.
+| Variable | Default | Description |
+| --- | --- | --- |
+| `SMTP_HOST` | — | SMTP server address (e.g., `smtp.sendgrid.net`, `smtp.resend.com`) |
+| `SMTP_PORT` | `587` | SMTP server port |
+| `SMTP_USERNAME` | — | SMTP auth username |
+| `SMTP_PASSWORD` | — | SMTP auth password |
+| `SMTP_FROM_ADDRESS` | — | Default "from" email address (e.g., `orders@mystore.com`) |
+| `RAILS_HOST` | `example.com` | Host used in email URLs |
 
-If you're not using Spree Starter you will need to add these code in your `config/environments/production.rb` file:
+When `SMTP_HOST` is not set, emails are printed to the Rails log instead of being sent.
 
-```ruby
-  if ENV['SENDGRID_API_KEY'].present?
-    ActionMailer::Base.smtp_settings = {
-      user_name: 'apikey', # This is the string literal 'apikey', NOT the ID of your API key
-      password: ENV['SENDGRID_API_KEY'], # This is the secret sendgrid API key which was issued during API key creation
-      domain: ENV.fetch('SENDGRID_DOMAIN', Rails.application.routes.default_url_options[:host]),
-      address: 'smtp.sendgrid.net',
-      port: 587,
-      authentication: :plain,
-      enable_starttls_auto: true
-    }
-  end
+### Provider Examples
+
+<Tabs>
+  <Tab title="SendGrid">
+    ```bash
+    SMTP_HOST=smtp.sendgrid.net
+    SMTP_USERNAME=apikey
+    SMTP_PASSWORD=SG.your-sendgrid-api-key
+    SMTP_FROM_ADDRESS=orders@mystore.com
+    ```
+
+    <Warning>
+    Remember to verify the email address in SendGrid you intend to use for sending, otherwise emails will be rejected.
+    [Read more about sender verification](https://www.twilio.com/docs/sendgrid/ui/sending-email/sender-verification).
+    </Warning>
+  </Tab>
+  <Tab title="Resend">
+    ```bash
+    SMTP_HOST=smtp.resend.com
+    SMTP_USERNAME=resend
+    SMTP_PASSWORD=re_your-resend-api-key
+    SMTP_FROM_ADDRESS=orders@mystore.com
+    ```
+  </Tab>
+  <Tab title="Postmark">
+    ```bash
+    SMTP_HOST=smtp.postmarkapp.com
+    SMTP_USERNAME=your-postmark-server-token
+    SMTP_PASSWORD=your-postmark-server-token
+    SMTP_FROM_ADDRESS=orders@mystore.com
+    ```
+  </Tab>
+  <Tab title="Amazon SES">
+    ```bash
+    SMTP_HOST=email-smtp.us-east-1.amazonaws.com
+    SMTP_USERNAME=your-ses-access-key-id
+    SMTP_PASSWORD=your-ses-secret-access-key
+    SMTP_FROM_ADDRESS=orders@mystore.com
+    ```
+  </Tab>
+</Tabs>
+
+## Local Development
+
+In local development, emails are printed to the Rails log by default. To preview emails with a web UI, run [Mailpit](https://mailpit.axllent.org):
+
+```bash
+docker run -d --name mailpit -p 8025:8025 -p 1025:1025 axllent/mailpit
+SMTP_HOST=localhost bin/dev
 ```
 
-<Warning>
-Remember to verify the email address in SendGrid, you intend to use for sending emails, otherwise emails will be rejected.
+Open [http://localhost:8025](http://localhost:8025) to see all outgoing emails.
 
-[Read more about SendGrid sender verification](https://www.twilio.com/docs/sendgrid/ui/sending-email/sender-verification)
-</Warning>
-
-That's it! You can now send emails from your application.
+<Tip>
+If you're using `docker compose up` for development, Mailpit is included automatically and all emails are caught at [http://localhost:8025](http://localhost:8025).
+</Tip>
