@@ -1,5 +1,15 @@
 # create-spree-app
 
+## 0.3.0
+
+### Minor Changes
+
+- Integrate `@spree/cli` for day-to-day project management — scaffolded projects now include `@spree/cli` as a dependency with convenience scripts (`spree dev`, `spree stop`, `spree update`, `spree logs`, `spree console`, etc.)
+- Delegate first-run setup to `spree init` — database seeding, API key creation, sample data loading, and browser open are now handled by the CLI instead of the scaffolder
+- Rewrite Docker Compose template: switch from Solid Queue to Sidekiq + Redis, add Mailpit for local email, use YAML anchors for DRY config
+- Use sequential port selection via `get-port` with `portNumbers()` range instead of random ports
+- Add Mailpit URL to generated README
+
 ## 0.2.2
 
 ### Patch Changes
