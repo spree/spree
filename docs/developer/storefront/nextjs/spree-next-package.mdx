@@ -19,7 +19,7 @@ Set environment variables and the client initializes automatically:
 
 ```env
 SPREE_API_URL=https://api.mystore.com
-SPREE_API_KEY=your-publishable-api-key
+SPREE_PUBLISHABLE_KEY=spree_pk_xxx
 ```
 
 ### Explicit initialization
@@ -30,11 +30,12 @@ import { initSpreeNext } from '@spree/next';
 
 initSpreeNext({
   baseUrl: process.env.SPREE_API_URL!,
-  apiKey: process.env.SPREE_API_KEY!,
+  publishableKey: process.env.SPREE_PUBLISHABLE_KEY!,
   cartCookieName: '_spree_cart_token',     // default
   accessTokenCookieName: '_spree_jwt',     // default
   defaultLocale: 'en',
   defaultCurrency: 'USD',
+  defaultCountry: 'US',
 });
 ```
 
@@ -47,9 +48,9 @@ Plain async functions for reading data in Server Components. Wrap with `"use cac
 ```typescript
 import { listProducts, getProduct, getProductFilters } from '@spree/next';
 
-const products = await listProducts({ per_page: 25, includes: ['variants', 'images'] });
-const product = await getProduct('spree-tote');
-const filters = await getProductFilters({ taxon_id: 'txn_123' });
+const products = await listProducts({ per_page: 25 });
+const product = await getProduct('spree-tote', { includes: 'variants,images' });
+const filters = await getProductFilters({ taxon_id_eq: 'txn_123' });
 ```
 
 ### Categories
@@ -69,11 +70,13 @@ const taxonomy = await getTaxonomy('tax_123');
 ### Store & Geography
 
 ```typescript
-import { getStore, listCountries, getCountry } from '@spree/next';
+import { getStore, listCountries, getCountry, listCurrencies, listLocales } from '@spree/next';
 
 const store = await getStore();
 const countries = await listCountries();
 const usa = await getCountry('US');
+const currencies = await listCurrencies();
+const locales = await listLocales();
 ```
 
 ### Using in Server Components
@@ -102,17 +105,20 @@ Server actions handle mutations and auth-dependent reads. They automatically man
 ### Cart
 
 ```typescript
-import { getCart, getOrCreateCart, addItem, updateItem, removeItem, clearCart } from '@spree/next';
+import { getCart, getOrCreateCart, addItem, updateItem, removeItem, clearCart, associateCart } from '@spree/next';
 
-const cart = await getCart();
-const cart = await getOrCreateCart();
+const cart = await getCart();              // null if no cart
+const cart = await getOrCreateCart();       // creates if needed
 await addItem(variantId, quantity);
-await updateItem(lineItemId, quantity);
+await updateItem(lineItemId, { quantity: 2 });
 await removeItem(lineItemId);
 await clearCart();
+await associateCart();                     // link guest cart to logged-in user
 ```
 
 ### Checkout
+
+All checkout functions take `orderId` as the first argument:
 
 ```typescript
 import {
@@ -127,15 +133,15 @@ import {
   complete,
 } from '@spree/next';
 
-const checkout = await getCheckout();
-await updateAddresses({ ship_address: { ... }, bill_address: { ... } });
-await advance();
-await next();
-const shipments = await getShipments();
-await selectShippingRate(shipmentId, rateId);
-await applyCoupon('SAVE20');
-await removeCoupon(promoId);
-await complete();
+const checkout = await getCheckout(orderId);
+await updateAddresses(orderId, { ship_address: { ... }, bill_address: { ... } });
+await advance(orderId);
+await next(orderId);
+const shipments = await getShipments(orderId);
+await selectShippingRate(orderId, shipmentId, shippingRateId);
+await applyCoupon(orderId, 'SAVE20');
+await removeCoupon(orderId, promotionId);
+await complete(orderId);
 ```
 
 ### Authentication
@@ -144,9 +150,9 @@ await complete();
 import { login, register, logout, getCustomer, updateCustomer } from '@spree/next';
 
 await login(email, password);
-await register({ email, password, password_confirmation, first_name, last_name });
+await register(email, password, passwordConfirmation);
 await logout();
-const customer = await getCustomer();
+const customer = await getCustomer();   // null if not logged in
 await updateCustomer({ first_name: 'John' });
 ```
 
@@ -186,8 +192,25 @@ const session = await createPaymentSession(orderId, { payment_method_id: 'pm_123
 // Access provider data (e.g., Stripe client secret)
 const clientSecret = session.external_data.client_secret;
 
+const current = await getPaymentSession(orderId, sessionId);
 await updatePaymentSession(orderId, sessionId, { amount: '50.00' });
 await completePaymentSession(orderId, sessionId, { session_result: 'success' });
+```
+
+### Payment Setup Sessions
+
+For saving payment methods outside of checkout (e.g., "Add a credit card" in account settings):
+
+```typescript
+import {
+  createPaymentSetupSession,
+  getPaymentSetupSession,
+  completePaymentSetupSession,
+} from '@spree/next';
+
+const session = await createPaymentSetupSession({ payment_method_id: 'pm_123' });
+const current = await getPaymentSetupSession(sessionId);
+await completePaymentSetupSession(sessionId, { session_result: 'success' });
 ```
 
 ### Credit Cards & Gift Cards
@@ -274,9 +297,26 @@ import type {
   StoreProduct,
   StoreOrder,
   StoreLineItem,
-  StorePaymentSession,
+  StoreVariant,
   StoreTaxon,
+  StoreTaxonomy,
+  StoreCountry,
+  StoreCurrency,
+  StoreLocale,
+  StoreStore,
+  StoreAddress,
+  StoreCustomer,
+  StoreCreditCard,
+  StoreGiftCard,
+  StoreShipment,
+  StoreShippingRate,
+  StorePayment,
+  StorePaymentMethod,
+  StorePaymentSession,
+  StorePaymentSetupSession,
   PaginatedResponse,
+  ProductFiltersResponse,
+  AddressParams,
   SpreeError,
 } from '@spree/next';
 ```

@@ -8,70 +8,98 @@ description: Server-first architecture, project structure, and auth flow
 The storefront follows a **server-first architecture** where all API calls are made server-side. The Spree API key is never exposed to the browser.
 
 ```
-Browser → Server Action → Spree API
+Browser → Server Action → @spree/next → Spree API
          (with httpOnly cookies)
 ```
 
-- **Server Actions** (`src/lib/data/`) - All API calls are made server-side
-- **httpOnly Cookies** - Auth tokens and cart tokens are stored securely
-- **No Client-Side API Calls** - The Spree API key stays on the server
-- **Cache Revalidation** - Uses Next.js cache tags for efficient updates
+- **Server Actions** (`src/lib/data/`) — thin wrappers around `@spree/next` data functions
+- **httpOnly Cookies** — auth tokens, cart tokens, and locale are stored securely
+- **No Client-Side API Calls** — the Spree API key stays on the server
+- **Auto-Localization** — locale and country are read from cookies automatically by `@spree/next`
 
 ## Project Structure
 
 ```
 src/
 ├── app/
-│   └── [country]/[locale]/     # Localized routes
-│       ├── account/            # Customer account pages
-│       │   ├── addresses/      # Address management
-│       │   ├── credit-cards/   # Saved payment methods
-│       │   ├── orders/         # Order history
-│       │   │   └── [id]/       # Order details
-│       │   └── profile/        # Profile settings
-│       ├── cart/               # Shopping cart
-│       ├── products/           # Product listing
-│       │   └── [slug]/         # Product details
-│       ├── t/[...permalink]/   # Taxon/category pages
-│       └── taxonomies/         # Category overview
+│   └── [country]/[locale]/          # Localized routes
+│       ├── (storefront)/            # Main storefront layout
+│       │   ├── page.tsx             # Homepage
+│       │   ├── account/             # Customer account
+│       │   │   ├── addresses/       # Address management
+│       │   │   ├── credit-cards/    # Saved payment methods
+│       │   │   ├── gift-cards/      # Gift cards
+│       │   │   ├── orders/          # Order history
+│       │   │   │   └── [id]/        # Order details
+│       │   │   ├── profile/         # Profile settings
+│       │   │   └── register/        # Registration
+│       │   ├── cart/                # Shopping cart
+│       │   ├── products/            # Product listing
+│       │   │   └── [slug]/          # Product details
+│       │   ├── t/[...permalink]/    # Taxon/category pages
+│       │   └── taxonomies/          # Category overview
+│       └── (checkout)/              # Checkout layout (no header/footer)
+│           ├── checkout/[id]/       # Checkout flow
+│           └── order-placed/[id]/   # Order confirmation
 ├── components/
-│   ├── layout/                 # Header, Footer, CountrySwitcher
-│   ├── products/               # ProductCard, ProductGrid, Filters
-│   └── search/                 # SearchBar
+│   ├── cart/                        # CartDrawer
+│   ├── checkout/                    # AddressStep, DeliveryStep, PaymentStep, etc.
+│   ├── layout/                      # Header, Footer, CountrySwitcher
+│   ├── navigation/                  # Breadcrumbs
+│   ├── products/                    # ProductCard, ProductGrid, Filters, MediaGallery, VariantPicker
+│   └── search/                      # SearchBar
 ├── contexts/
-│   └── CartContext.tsx         # Client-side cart state sync
+│   ├── AuthContext.tsx              # Auth state
+│   ├── CartContext.tsx              # Client-side cart state sync
+│   ├── CheckoutContext.tsx          # Checkout flow state
+│   └── StoreContext.tsx             # Store/locale/currency state
+├── hooks/
+│   ├── useCarouselProducts.ts      # Product carousel data
+│   └── useProductListing.ts        # Product listing with filters
 └── lib/
-    ├── spree.ts                # SDK client configuration
-    └── data/                   # Server Actions
-        ├── addresses.ts        # Address CRUD operations
-        ├── cart.ts             # Cart operations
-        ├── cookies.ts          # Auth token management
-        ├── countries.ts        # Countries/regions list
-        ├── credit-cards.ts     # Payment methods
-        ├── customer.ts         # Auth & profile
-        ├── orders.ts           # Order history
-        ├── products.ts         # Product queries
-        ├── store.ts            # Store configuration
-        └── taxonomies.ts       # Categories/taxons
+    ├── analytics/                   # GTM integration
+    ├── constants.ts                 # App constants
+    ├── data/                        # Server Actions
+    │   ├── addresses.ts             # Address CRUD
+    │   ├── cart.ts                  # Cart operations
+    │   ├── checkout.ts              # Checkout flow
+    │   ├── cookies.ts               # Auth check helper
+    │   ├── countries.ts             # Countries/regions
+    │   ├── credit-cards.ts          # Payment methods
+    │   ├── customer.ts              # Auth & profile
+    │   ├── gift-cards.ts            # Gift cards
+    │   ├── orders.ts                # Order history
+    │   ├── payment.ts               # Payment processing
+    │   ├── products.ts              # Product queries
+    │   ├── store.ts                 # Store configuration
+    │   ├── taxonomies.ts            # Categories/taxons
+    │   └── utils.ts                 # Shared helpers (actionResult, withFallback)
+    └── utils/                       # Client utilities
+        ├── address.ts               # Address formatting
+        ├── cookies.ts               # Cookie helpers
+        ├── credit-card.ts           # Card formatting
+        ├── path.ts                  # URL path helpers
+        └── product-query.ts         # Product filter query builder
 ```
 
 ## Authentication Flow
 
 1. User submits login form
-2. Server action calls Spree API with credentials
-3. JWT token is stored in an httpOnly cookie
+2. Server action calls `@spree/next` which authenticates with the Spree API
+3. JWT token is stored in an httpOnly cookie by `@spree/next`
 4. Subsequent requests include the token automatically
 5. Token is never accessible to client-side JavaScript
 
 ```typescript
-// src/lib/data/cookies.ts
-export async function setAuthToken(token: string) {
-  const cookieStore = await cookies()
-  cookieStore.set('_spree_jwt', token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
-  })
+// src/lib/data/customer.ts
+import { login as _login, getCustomer as _getCustomer } from '@spree/next'
+
+export async function login(email: string, password: string) {
+  return _login(email, password) // token stored in httpOnly cookie automatically
+}
+
+export async function getCustomer() {
+  return _getCustomer() // reads token from cookie automatically
 }
 ```
 
@@ -85,19 +113,19 @@ The storefront supports multiple countries and currencies via URL segments:
 /uk/en/products          # UK store, English
 ```
 
-Use the `CountrySwitcher` component to change regions.
+A middleware (`src/proxy.ts`) uses `createSpreeMiddleware` from `@spree/next` to detect the visitor's country and locale, then redirects to the correct URL prefix. The `CountrySwitcher` component lets users change regions manually.
 
 ## Server Actions
 
-All data fetching is done through server actions in `src/lib/data/`:
+All data fetching is done through server actions in `src/lib/data/`. These are thin wrappers around `@spree/next` functions — locale and currency are resolved automatically from cookies:
 
 ```typescript
 // Products
 import { getProducts, getProduct, getProductFilters } from '@/lib/data/products'
 
 const products = await getProducts({ per_page: 12 })
-const product = await getProduct('product-slug', { includes: ['variants', 'images'] })
-const filters = await getProductFilters({ taxon_id: 'txn_xxx' })
+const product = await getProduct('product-slug')
+const filters = await getProductFilters()
 
 // Cart
 import { getCart, addToCart, updateCartItem, removeCartItem } from '@/lib/data/cart'
@@ -110,7 +138,7 @@ await removeCartItem('li_xxx')
 // Authentication
 import { login, register, logout, getCustomer } from '@/lib/data/customer'
 
-const result = await login('user@example.com', 'password')
+await login('user@example.com', 'password')
 const customer = await getCustomer()
 await logout()
 

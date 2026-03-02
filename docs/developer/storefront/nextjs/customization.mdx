@@ -80,8 +80,11 @@ All components live in `src/components/` and can be customized or replaced:
 
 ```
 src/components/
+├── cart/            # CartDrawer
+├── checkout/        # AddressStep, DeliveryStep, PaymentStep, StripePaymentForm, etc.
 ├── layout/          # Header, Footer, CountrySwitcher
-├── products/        # ProductCard, ProductGrid, Filters
+├── navigation/      # Breadcrumbs
+├── products/        # ProductCard, ProductGrid, ProductCarousel, Filters, MediaGallery, VariantPicker
 └── search/          # SearchBar
 ```
 
@@ -95,23 +98,27 @@ To customize API behavior, modify the server actions in `src/lib/data/`. Each fi
 |------|---------|
 | `products.ts` | Product listing and detail queries |
 | `cart.ts` | Cart operations (add, update, remove) |
+| `checkout.ts` | Checkout flow (addresses, shipping, completion) |
 | `customer.ts` | Authentication and profile management |
 | `addresses.ts` | Address CRUD |
 | `orders.ts` | Order history |
+| `payment.ts` | Payment sessions and processing |
 | `taxonomies.ts` | Categories and taxons |
 | `countries.ts` | Country and region data |
-| `cookies.ts` | Token and session management |
+| `cookies.ts` | Auth check helper |
 | `store.ts` | Store configuration |
 | `credit-cards.ts` | Saved payment methods |
+| `gift-cards.ts` | Gift card management |
+| `utils.ts` | Shared helpers (error handling, fallbacks) |
 
 These server actions wrap the `@spree/next` package functions. You can add custom logic, caching strategies, or additional transformations as needed.
 
 ## Adding New Pages
 
-Follow the existing App Router pattern with localized routes:
+Follow the existing App Router pattern with localized routes. Place pages under the `(storefront)` route group to inherit the shared header/footer layout:
 
 ```
-src/app/[country]/[locale]/your-new-page/page.tsx
+src/app/[country]/[locale]/(storefront)/your-new-page/page.tsx
 ```
 
 ```typescript
