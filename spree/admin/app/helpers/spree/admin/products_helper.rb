@@ -84,11 +84,6 @@ module Spree
       def variant_form_stock_location_options
         options_for_select(available_stock_locations_list)
       end
-
-      def product_list_filters_search_form_path
-        [:admin, @search]
-      end
-
     end
   end
 end
