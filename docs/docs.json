@@ -1043,6 +1043,13 @@
                 ]
               },
               {
+                "group": "Reports",
+                "pages": [
+                  "user/reports/built-in-reports",
+                  "user/reports/custom-reports"
+                ]
+              },
+              {
                 "group": "Vendors",
                 "pages": [
                   "user/vendors/invite-vendor",
