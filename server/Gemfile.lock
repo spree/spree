@@ -52,7 +52,6 @@ PATH
       active_storage_validations (= 1.3.0)
       acts-as-taggable-on
       acts_as_list (>= 0.8)
-      any_ascii (~> 0.3.2)
       ar_lazy_preload (~> 2.0)
       awesome_nested_set (~> 3.3, >= 3.3.1)
       bcrypt (~> 3.1)
@@ -181,7 +180,6 @@ GEM
     addressable (2.8.8)
       public_suffix (>= 2.0.2, < 8.0)
     alba (3.10.0)
-    any_ascii (0.3.3)
     ar_lazy_preload (2.1.1)
     ast (2.4.3)
     async (2.36.0)
@@ -901,7 +899,6 @@ CHECKSUMS
   acts_as_list (1.2.6) sha256=8345380900b7bee620c07ad00991ccee59af3d8c9e8574f426e321da2865fdc8
   addressable (2.8.8) sha256=7c13b8f9536cf6364c03b9d417c19986019e28f7c00ac8132da4eb0fe393b057
   alba (3.10.0) sha256=52769d2328da35c4f1bbcfe96b3931b9c8595667307a902573868b1cf6d65d79
-  any_ascii (0.3.3) sha256=9bba37e4aadc7c57bc29e4bae520418416d1b69ea167d04f2aeaf9c07166f724
   ar_lazy_preload (2.1.1) sha256=47b8240fd1bdceb9a6b66f756cfdda6292bc213edf5a8be5f37299077ae7a734
   ast (2.4.3) sha256=954615157c1d6a382bc27d690d973195e79db7f55e9765ac7c481c60bdb4d383
   async (2.36.0) sha256=090623f4c65706664355c9efa6c7bfb86771a513e65cd681c51cb27747530550

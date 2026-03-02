@@ -27,8 +27,6 @@ module Spree
     # those attributes depending of the logic of their applications
     ADDRESS_FIELDS = %w(firstname lastname company address1 address2 city state zipcode country phone)
     EXCLUDED_KEYS_FOR_COMPARISON = %w(id updated_at created_at deleted_at label user_id public_metadata private_metadata)
-    FIELDS_TO_NORMALIZE = %w(firstname lastname phone alternative_phone company address1 address2 city zipcode)
-
     if defined?(Spree::Security::Addresses)
       include Spree::Security::Addresses
     end
@@ -53,7 +51,6 @@ module Spree
     before_validation :normalize_country
     before_validation :normalize_state
     before_validation :clear_invalid_state_entities, if: -> { country.present? }, on: :update
-    before_validation :remove_emoji_and_normalize
 
     after_create :set_user_attributes, if: -> { user.present? }
 
@@ -292,17 +289,6 @@ module Spree
       elsif state_name.present? && !country.states_required? && country.states.empty?
         clear_state_name
       end
-    end
-
-    def remove_emoji_and_normalize
-      attributes_to_normalize = attributes.slice(*FIELDS_TO_NORMALIZE)
-      normalized_attributes = attributes_to_normalize.compact_blank.deep_transform_values do |value|
-        NormalizeString.remove_emoji_and_normalize(value.to_s).strip
-      end
-
-      normalized_attributes.transform_keys! { |key| key.gsub('original_', '') } if defined?(Spree::Security::Addresses)
-
-      assign_attributes(normalized_attributes)
     end
 
     def set_user_attributes

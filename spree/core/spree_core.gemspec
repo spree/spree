@@ -62,7 +62,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'mobility-actiontext', '~> 1.1'
   s.add_dependency 'friendly_id-mobility', '~> 1.0'
   s.add_dependency 'wannabe_bool'
-  s.add_dependency 'any_ascii', '~> 0.3.2'
   s.add_dependency 'safely_block', '~> 0.4'
   s.add_dependency 'phonelib', '~> 0.10'
   s.add_dependency 'ar_lazy_preload', '~> 2.0'
