@@ -22,7 +22,13 @@ Rails.application.configure do
   # config.asset_host = "http://assets.example.com"
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
-  config.active_storage.service = :local
+  if ENV["AWS_ACCESS_KEY_ID"].present? && ENV["AWS_SECRET_ACCESS_KEY"].present?
+    config.active_storage.service = :amazon
+  elsif ENV["CLOUDFLARE_ACCESS_KEY_ID"].present? && ENV["CLOUDFLARE_ACCESS_SECRET"].present? && ENV["CLOUDFLARE_ENDPOINT"].present?
+    config.active_storage.service = :cloudflare
+  else
+    config.active_storage.service = :local
+  end
 
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
   config.assume_ssl = ENV["RAILS_ASSUME_SSL"] != "false"

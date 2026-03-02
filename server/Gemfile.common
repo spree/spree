@@ -36,4 +36,13 @@ gem "thruster", require: false
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 gem "image_processing", "~> 1.2"
 
+# Authentication
 gem "devise"
+
+# AWS S3 / Cloudflare R2 storage
+gem "aws-sdk-s3", require: false
+
+# Sentry for error/performance monitoring
+gem 'sentry-ruby'
+gem 'sentry-rails'
+gem 'sentry-sidekiq'
