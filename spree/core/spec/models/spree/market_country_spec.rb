@@ -62,5 +62,26 @@ RSpec.describe Spree::MarketCountry, type: :model do
         end
       end
     end
+
+    describe '#country_unique_per_store' do
+      let(:store) { create(:store) }
+      let(:country) { create(:country) }
+      let(:market1) { create(:market, store: store, countries: [country]) }
+
+      it 'prevents assigning same country to another market in the same store' do
+        market1 # ensure it exists
+        market2 = create(:market, store: store)
+        market_country = Spree::MarketCountry.new(market: market2, country: country)
+        expect(market_country).not_to be_valid
+        expect(market_country.errors[:country]).to include(/already assigned to another market/)
+      end
+
+      it 'allows same country in markets of different stores' do
+        market1 # ensure it exists
+        other_store = create(:store)
+        market2 = create(:market, store: other_store, countries: [country])
+        expect(market2).to be_valid
+      end
+    end
   end
 end
