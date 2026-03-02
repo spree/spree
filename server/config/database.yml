@@ -77,31 +77,9 @@ test:
 #   production:
 #     url: <%= ENV["MY_APP_DATABASE_URL"] %>
 #
-# Connection URLs for non-primary databases can also be configured using
-# environment variables. The variable name is formed by concatenating the
-# connection name with `_DATABASE_URL`. For example:
-#
-#   CACHE_DATABASE_URL="postgres://cacheuser:cachepass@localhost/cachedatabase"
-#
 # Read https://guides.rubyonrails.org/configuring.html#configuring-a-database
 # for a full overview on how database connection configuration can be specified.
 #
 production:
-  primary: &primary_production
-    <<: *default
-    url: <%= ENV['DATABASE_URL'] %>
-  cache:
-    <<: *primary_production
-    url: <%= ENV['CACHE_DATABASE_URL'] || ENV['DATABASE_URL'] %>
-    database: spree_production_cache
-    migrations_paths: db/cache_migrate
-  queue:
-    <<: *primary_production
-    url: <%= ENV['QUEUE_DATABASE_URL'] || ENV['DATABASE_URL'] %>
-    database: spree_production_queue
-    migrations_paths: db/queue_migrate
-  cable:
-    <<: *primary_production
-    url: <%= ENV['CABLE_DATABASE_URL'] || ENV['DATABASE_URL'] %>
-    database: spree_production_cable
-    migrations_paths: db/cable_migrate
+  <<: *default
+  url: <%= ENV['DATABASE_URL'] %>

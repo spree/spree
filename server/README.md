@@ -16,10 +16,11 @@ server/
 
 ### Local Development (Ruby developers)
 
-PostgreSQL must be running before you start. If you have it installed locally, make sure it's running. Otherwise you can start it with Docker:
+PostgreSQL and Redis must be running before you start. If you have them installed locally, make sure they're running. Otherwise you can start them with Docker:
 
 ```bash
 docker run -d --name spree-postgres -p 5432:5432 -e POSTGRES_HOST_AUTH_METHOD=trust postgres:17-alpine
+docker run -d --name spree-redis -p 6379:6379 redis:7-alpine
 ```
 
 Then run the setup script:
@@ -42,6 +43,15 @@ Use `bin/setup --reset` to drop and recreate the database.
 
 The app starts at `http://localhost:3000`.
 
+**Emails in local dev:** By default emails are printed to the Rails log. To catch and preview emails with a web UI, run [Mailpit](https://mailpit.axllent.org) and set `SMTP_HOST`:
+
+```bash
+docker run -d --name mailpit -p 8025:8025 -p 1025:1025 axllent/mailpit
+SMTP_HOST=localhost bin/dev
+```
+
+Then open `http://localhost:8025` to see all outgoing emails.
+
 ### Docker (TypeScript / frontend developers)
 
 From the **repository root**:
@@ -50,7 +60,9 @@ From the **repository root**:
 docker compose up -d
 ```
 
-This boots PostgreSQL and the backend. The API is available at `http://localhost:3000`. The database is automatically created and migrated on first boot.
+This boots PostgreSQL, Redis, Mailpit, and the backend. The API is available at `http://localhost:3000`. The database is automatically created and migrated on first boot.
+
+All outgoing emails are caught by Mailpit and viewable at `http://localhost:8025`.
 
 To rebuild after changes:
 
@@ -80,9 +92,19 @@ docker compose up -d
 
 | Variable | Required | Description |
 |---|---|---|
-| `DATABASE_URL` | Yes | Primary database connection URL |
-| `CACHE_DATABASE_URL` | No | Solid Cache database (falls back to `DATABASE_URL`) |
-| `QUEUE_DATABASE_URL` | No | Solid Queue database (falls back to `DATABASE_URL`) |
-| `CABLE_DATABASE_URL` | No | Action Cable database (falls back to `DATABASE_URL`) |
+| `DATABASE_URL` | Yes | PostgreSQL connection URL |
+| `REDIS_URL` | Yes | Redis connection URL (caching, background jobs, Action Cable) |
 | `SECRET_KEY_BASE` | Yes | Secret key for session encryption |
 
+### Email (SMTP)
+
+Spree works with any SMTP provider (Resend, Postmark, Mailgun, SendGrid, Amazon SES, etc.).
+
+| Variable | Default | Description |
+|---|---|---|
+| `SMTP_HOST` | — | SMTP server address |
+| `SMTP_PORT` | `587` | SMTP server port |
+| `SMTP_USERNAME` | — | SMTP auth username |
+| `SMTP_PASSWORD` | — | SMTP auth password |
+| `SMTP_FROM_ADDRESS` | — | Default "from" email address |
+| `RAILS_HOST` | `example.com` | Host used in mailer URLs |

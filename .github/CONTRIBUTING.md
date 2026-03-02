@@ -78,10 +78,11 @@ bin/rails server
 
 `bin/setup` handles everything: installs Ruby (via [mise](https://mise.jdx.dev) if available, otherwise uses your system Ruby), system packages (libpq, vips), gems, and prepares the database.
 
-PostgreSQL must be running before you run `bin/setup`. If you don't have it installed locally, start it with Docker:
+PostgreSQL and Redis must be running before you run `bin/setup`. If you don't have them installed locally, start them with Docker:
 
 ```bash
 docker run -d --name spree-postgres -p 5432:5432 -e POSTGRES_HOST_AUTH_METHOD=trust postgres:17-alpine
+docker run -d --name spree-redis -p 6379:6379 redis:7-alpine
 ```
 
 By default the app connects to PostgreSQL at `localhost:5432` as user `postgres` with no password. Override with environment variables if needed:
@@ -191,7 +192,7 @@ TypeScript developers don't need Ruby installed. Use Docker Compose from the rep
 docker compose up -d
 ```
 
-This boots PostgreSQL and the Spree backend automatically. The API is available at `http://localhost:3000`.
+This boots PostgreSQL, Redis, Mailpit, and the Spree backend automatically. The API is available at `http://localhost:3000`. All outgoing emails are caught by Mailpit and viewable at `http://localhost:8025`.
 
 Then install dependencies and start all packages in watch mode:
 

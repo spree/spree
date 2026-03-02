@@ -1,3 +1,18 @@
+x-app: &app
+  build:
+    context: .
+    dockerfile: server/Dockerfile
+  depends_on:
+    postgres:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+  environment: &app-env
+    DATABASE_HOST: postgres
+    REDIS_URL: redis://redis:6379/0
+    SMTP_HOST: mailpit
+    SMTP_PORT: 1025
+
 services:
   postgres:
     image: postgres:17-alpine
@@ -11,17 +26,31 @@ services:
       timeout: 5s
       retries: 5
 
-  spree:
-    build:
-      context: .
-      dockerfile: server/Dockerfile
-    depends_on:
-      postgres:
-        condition: service_healthy
-    environment:
-      DATABASE_HOST: postgres
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: redis-cli ping
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  mailpit:
+    image: axllent/mailpit
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+
+  web:
+    <<: *app
     ports:
       - "3000:3000"
 
+  worker:
+    <<: *app
+    command: bundle exec sidekiq
+
 volumes:
   postgres_data:
+  redis_data:
