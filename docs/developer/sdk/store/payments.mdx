@@ -1,0 +1,71 @@
+---
+title: Payments & Shipping
+description: Handle payments, payment sessions, and shipping with the Spree SDK
+---
+
+## Payments
+
+```typescript
+const options = { orderToken: cart.token };
+
+// Get available payment methods for an order
+const methods = await client.store.orders.paymentMethods.list(cart.id, options);
+
+// List payments on an order
+const payments = await client.store.orders.payments.list(cart.id, options);
+
+// Get a specific payment
+const payment = await client.store.orders.payments.get(cart.id, paymentId, options);
+```
+
+## Payment Sessions
+
+Payment sessions provide a unified, provider-agnostic interface for payment processing. They work with any payment gateway (Stripe, Adyen, PayPal, etc.) through a single API.
+
+```typescript
+const options = { orderToken: cart.token };
+
+// Create a payment session (initializes a session with the payment gateway)
+const session = await client.store.orders.paymentSessions.create(cart.id, {
+  payment_method_id: 'pm_xxx',
+  amount: '99.99',             // Optional, defaults to order total
+  external_data: {              // Optional, provider-specific data
+    return_url: 'https://mystore.com/checkout/complete',
+  },
+}, options);
+
+// The session contains provider-specific data (e.g., Stripe client_secret)
+console.log(session.external_data.client_secret);
+
+// Get a payment session
+const existing = await client.store.orders.paymentSessions.get(
+  cart.id, session.id, options
+);
+
+// Update a payment session (e.g., after order total changes)
+await client.store.orders.paymentSessions.update(cart.id, session.id, {
+  amount: '149.99',
+}, options);
+
+// Complete the payment session (after customer confirms payment on the frontend)
+const completed = await client.store.orders.paymentSessions.complete(
+  cart.id, session.id,
+  { session_result: 'success' },
+  options
+);
+console.log(completed.status); // 'completed'
+```
+
+## Shipments
+
+```typescript
+const options = { orderToken: cart.token };
+
+// List shipments for an order
+const shipments = await client.store.orders.shipments.list(cart.id, options);
+
+// Select a shipping rate
+await client.store.orders.shipments.update(cart.id, shipmentId, {
+  selected_shipping_rate_id: 'rate_xxx',
+}, options);
+```

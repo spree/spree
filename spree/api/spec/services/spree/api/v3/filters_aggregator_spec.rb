@@ -38,12 +38,12 @@ RSpec.describe Spree::Api::V3::FiltersAggregator do
 
     it 'returns sort_options array' do
       expect(result[:sort_options]).to be_an(Array)
-      expect(result[:sort_options].first).to include(id: 'manual', label: Spree.t('products_sort_options.manual'))
+      expect(result[:sort_options].first).to include(id: 'manual')
     end
 
     it 'returns default_sort from taxon' do
-      taxon.update!(sort_order: 'newest-first')
-      expect(result[:default_sort]).to eq('newest-first')
+      taxon.update!(sort_order: 'available_on desc')
+      expect(result[:default_sort]).to eq('available_on desc')
     end
 
     it 'returns manual as default_sort when no taxon' do
@@ -81,16 +81,16 @@ RSpec.describe Spree::Api::V3::FiltersAggregator do
 
         expect(size_filter).to be_present
         expect(size_filter[:type]).to eq('option')
-        expect(size_filter[:label]).to eq('Size')
+        expect(size_filter[:presentation]).to eq('Size')
       end
 
       it 'includes option values with counts' do
         size_filter = result[:filters].find { |f| f[:name] == 'size' }
         options = size_filter[:options]
 
-        expect(options.map { |o| o[:label] }).to contain_exactly('S', 'M')
+        expect(options.map { |o| o[:presentation] }).to contain_exactly('S', 'M')
 
-        s_option = options.find { |o| o[:label] == 'S' }
+        s_option = options.find { |o| o[:presentation] == 'S' }
         expect(s_option[:count]).to eq(1)
       end
 
@@ -108,7 +108,7 @@ RSpec.describe Spree::Api::V3::FiltersAggregator do
         taxon_filter = result[:filters].find { |f| f[:type] == 'taxon' }
 
         expect(taxon_filter).to be_present
-        expect(taxon_filter[:options].map { |t| t[:label] }).to include('Child')
+        expect(taxon_filter[:options].map { |t| t[:name] }).to include('Child')
       end
 
       it 'does not include taxon filter when no taxon provided' do
@@ -120,7 +120,7 @@ RSpec.describe Spree::Api::V3::FiltersAggregator do
 
       it 'includes product count per taxon' do
         taxon_filter = result[:filters].find { |f| f[:type] == 'taxon' }
-        child_option = taxon_filter[:options].find { |t| t[:label] == 'Child' }
+        child_option = taxon_filter[:options].find { |t| t[:name] == 'Child' }
 
         expect(child_option[:count]).to eq(2)
       end

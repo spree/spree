@@ -1,6 +1,6 @@
 'use server';
 
-import type { StoreOrder, PaginatedResponse } from '@spree/sdk';
+import type { StoreOrder, PaginatedResponse, OrderListParams } from '@spree/sdk';
 import { withAuthRefresh } from '../auth-helpers';
 import { getClient } from '../config';
 
@@ -8,7 +8,7 @@ import { getClient } from '../config';
  * List the authenticated customer's orders.
  */
 export async function listOrders(
-  params?: Record<string, unknown>
+  params?: OrderListParams
 ): Promise<PaginatedResponse<StoreOrder>> {
   return withAuthRefresh(async (options) => {
     return getClient().store.customer.orders.list(params, options);

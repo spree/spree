@@ -58,8 +58,6 @@ Most Spree models use Active Storage directly:
 | `Spree::Taxon` | `image`, `square_image` | Public |
 | `Spree::Post` | `image` | Public |
 | `Spree::User` | `avatar` | Public |
-| `Spree::PageSection` | `asset` | Public |
-| `Spree::PageBlock` | `asset` | Public |
 | `Spree::Digital` | `attachment` | Private |
 | `Spree::Export` | `attachment` | Private |
 | `Spree::Import` | `attachment` | Private |
@@ -496,43 +494,38 @@ In the admin dashboard, use the `spree_file_field` form helper for image uploads
 
 See the [Form Builder](/developer/admin/form-builder) and [Components](/developer/admin/components) documentation for more details.
 
-## API Serialization
+## Store API
 
-Product images are automatically serialized in API responses:
+Product images are included in Store API responses when you pass `includes=images`:
+
+```typescript
+const product = await client.store.products.get('red-t-shirt', {
+  includes: ['images'],
+})
+```
+
+Each image in the response contains the original URL and pre-generated URLs for each named variant size:
 
 ```json
 {
-  "data": {
-    "id": "1",
-    "type": "product",
-    "attributes": {
-      "name": "Red T-Shirt"
-    },
-    "relationships": {
-      "images": {
-        "data": [
-          { "id": "1", "type": "image" }
-        ]
-      }
-    }
-  },
-  "included": [
+  "id": "prod_86Rf07xd4z",
+  "name": "Red T-Shirt",
+  "slug": "red-t-shirt",
+  "images": [
     {
-      "id": "1",
-      "type": "image",
-      "attributes": {
-        "position": 1,
-        "alt": "Front view",
-        "original_url": "https://...",
-        "styles": [
-          {
-            "url": "https://...",
-            "width": 650,
-            "height": 870,
-            "size": "650x870>"
-          }
-        ]
-      }
+      "id": "img_k5nR8xLq",
+      "position": 1,
+      "alt": "Front view",
+      "viewable_type": "Spree::Variant",
+      "viewable_id": "variant_m3Rp9wXz",
+      "original_url": "https://cdn.example.com/images/original.jpg",
+      "mini_url": "https://cdn.example.com/images/mini.webp",
+      "small_url": "https://cdn.example.com/images/small.webp",
+      "medium_url": "https://cdn.example.com/images/medium.webp",
+      "large_url": "https://cdn.example.com/images/large.webp",
+      "xlarge_url": "https://cdn.example.com/images/xlarge.webp",
+      "created_at": "2025-01-15T10:30:00Z",
+      "updated_at": "2025-01-15T10:30:00Z"
     }
   ]
 }

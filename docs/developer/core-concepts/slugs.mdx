@@ -4,7 +4,7 @@ title: Slugs
 
 ## Overview
 
-Spree uses the [FriendlyId](https://github.com/norman/friendly_id) library to generate SEO-friendly URLs for resources like products, taxons, stores, and more. Instead of accessing resources via database IDs (e.g., `/products/123`), FriendlyId enables clean, readable URLs based on resource names (e.g., `/products/spree-tshirt`).
+Spree generates SEO-friendly URLs for resources like products, taxons, stores, and more. Instead of accessing resources via database IDs (e.g., `/products/123`), clean, readable URLs based on resource names are used (e.g., `/products/spree-tshirt`).
 
 Slugs are URL-safe strings derived from resource attributes (typically the `name` field) that:
 
@@ -13,20 +13,17 @@ Slugs are URL-safe strings derived from resource attributes (typically the `name
 - Maintain URL consistency across translations
 - Preserve historical URLs through slug history
 
-Slugs are primarily used in:
-
-- **Storefront**: Product pages, category pages (taxons), blog posts, and other customer-facing pages
-- **API**: Both Platform API and Storefront API accept slugs or IDs interchangeably for resource lookups
+Slugs are primarily used in both the Store API and Admin APIs which accept both slugs or IDs interchangeably for resource lookups
 
 <Info>
-Spree integrates FriendlyId with [Mobility](https://github.com/shioyama/mobility) for internationalization and [Paranoia](https://github.com/rubysherpas/paranoia) for soft-delete support, making slugs translation-aware and deletion-safe.
+Spree supports internationalized slugs and handles slug cleanup on soft-deletion automatically.
 </Info>
 
 ## Core Concepts
 
 ### Slug Generation
 
-Slugs are automatically generated from resource attributes using the `to_url` method (provided by the [Stringex](https://github.com/rsl/stringex) gem). This method:
+Slugs are automatically generated from resource attributes using automatic URL conversion. This:
 
 - Converts strings to lowercase
 - Replaces spaces and special characters with hyphens
@@ -41,7 +38,7 @@ Slugs are automatically generated from resource attributes using the `to_url` me
 
 ### Slug Candidates
 
-When FriendlyId generates a slug, it tries multiple "candidate" patterns to ensure uniqueness. If the first candidate is taken, it tries the next pattern, and so on.
+When generating a slug, Spree tries multiple "candidate" patterns to ensure uniqueness. If the first candidate is taken, it tries the next pattern, and so on.
 
 [Spree::Base](https://github.com/spree/spree/blob/main/core/app/models/spree/base.rb) provides a default `slug_candidates` method that all models inherit:
 
@@ -79,7 +76,7 @@ For products, the slug candidates are customized to include SKU:
 
 ### Reserved Words
 
-FriendlyId prevents using certain reserved words that would conflict with application routes:
+Spree prevents using certain reserved words as slugs that would conflict with application routes:
 
 ```ruby
 # From core/config/initializers/friendly_id.rb
@@ -204,16 +201,15 @@ store.code # => "my-awesome-store" (unchanged)
 
 ### Other Models
 
-Other Spree models that use FriendlyId:
+Other Spree models that support slugs:
 
-- **Pages** (`Spree::Page`): Uses `slug` column with history
 - **Posts** (`Spree::Post`): Uses `slug` column with history and translations
 - **Post Categories** (`Spree::PostCategory`): Uses `slug` column with history
 - **Policies** (`Spree::Policy`): Uses `slug` column with history
 
 ## Internationalization
 
-Spree integrates FriendlyId with Mobility for multi-language slug support using the `friendly_id-mobility` gem.
+Spree supports multi-language slugs, generating locale-specific URLs for each translation.
 
 ### Translatable Models
 
@@ -287,7 +283,7 @@ product2.translations.create!(locale: :fr, slug: 'tshirt')  # ❌ "tshirt-<uuid>
 
 ## Slug History
 
-FriendlyId's history feature preserves old slugs when they change, ensuring existing URLs continue to work. This is critical for:
+The slug history feature preserves old slugs when they change, ensuring existing URLs continue to work. This is critical for:
 
 - SEO (avoiding broken links)
 - Bookmarks and external references
@@ -311,7 +307,7 @@ product.slugs.pluck(:slug)
 
 ### Slug History Table
 
-FriendlyId maintains a separate `friendly_id_slugs` table:
+Spree maintains a separate `friendly_id_slugs` table for slug history:
 
 ```ruby
 # Schema
@@ -328,7 +324,7 @@ end
 
 ## Soft Deletes and Slugs
 
-Spree extends FriendlyId to work with soft-deleted records (using Paranoia gem). When a resource is deleted:
+Spree's slug system handles soft-deleted records gracefully. When a resource is deleted:
 
 1. The record is marked as deleted (`deleted_at` timestamp)
 2. The slug is prefixed with `deleted-` and a UUID
@@ -460,7 +456,7 @@ product.localized_slugs_for_store(store)
 
 ## Adding Slugs to Custom Models
 
-To add FriendlyId slugs to your custom models, inherit from `Spree::Base` which provides the base slug functionality.
+To add slugs to your custom models, inherit from `Spree::Base` which provides the base slug functionality.
 
 ### Basic Implementation
 
@@ -570,7 +566,7 @@ end
 ```
 
 <Warning>
-Always use `:id` as the route parameter, not `:slug`. This allows FriendlyId's `.friendly` finder to accept both numeric IDs and slugs, maintaining backward compatibility.
+Always use `:id` as the route parameter, not `:slug`. This allows the `.friendly` finder to accept both numeric IDs and slugs, maintaining backward compatibility.
 </Warning>
 
 ### Controller Implementation
@@ -603,14 +599,14 @@ end
 ### Storefront Examples
 
 ```ruby
-# From storefront/app/controllers/spree/products_controller.rb:43-45
+# Loading a product by slug or ID
 def load_product
   @product ||= find_with_fallback_default_locale do
     current_store.products.friendly.find(params[:id])
   end
 end
 
-# From storefront/app/controllers/spree/taxons_controller.rb:22-24
+# Loading a taxon by slug or ID
 def load_taxon
   @taxon ||= find_with_fallback_default_locale do
     current_store.taxons.friendly.find(params[:id])
@@ -622,18 +618,18 @@ end
 
 ### API Routes
 
-Both Storefront API and Platform API accept slugs or IDs:
+Both the Store API and Admin API accept slugs or IDs:
 
 ```ruby
-# From api/app/controllers/spree/api/v2/storefront/products_controller.rb:20
+# Finding a product by slug or ID in an API controller
 @resource ||= find_with_fallback_default_locale do
   scope.includes(variants: variant_includes, master: variant_includes)
        .friendly.find(params[:id])
 end
 
 # API Examples:
-# GET /api/v2/storefront/products/123
-# GET /api/v2/storefront/products/spree-tshirt
+# GET /api/v3/store/products/123
+# GET /api/v3/store/products/spree-tshirt
 ```
 
 ## Best Practices
@@ -833,8 +829,8 @@ end
 - `core/app/models/spree/taxon.rb` - Taxon permalink implementation (lines 33, 230-365)
 - `core/app/models/spree/store.rb` - Store code implementation (lines 24, 543-568)
 - `core/app/models/concerns/spree/translatable_resource_slug.rb` - Translation helper
-- `core/config/initializers/friendly_id.rb` - Global FriendlyId config
-- `core/lib/friendly_id/paranoia.rb` - Paranoia integration
+- `core/config/initializers/friendly_id.rb` - Global slug configuration
+- `core/lib/friendly_id/paranoia.rb` - Soft-delete integration
 
 ### Useful Methods
 

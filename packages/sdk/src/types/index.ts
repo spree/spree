@@ -1,6 +1,13 @@
 // Re-export all generated types
 export * from './generated';
 
+// Locale defaults for client-level configuration
+export interface LocaleDefaults {
+  locale?: string;
+  currency?: string;
+  country?: string;
+}
+
 // API Response types
 export interface PaginationMeta {
   page: number;
@@ -50,27 +57,55 @@ export interface RegisterParams {
 export interface ListParams {
   page?: number;
   per_page?: number;
-  includes?: string;
+  /** Associations to include. Accepts array or comma-separated string. */
+  includes?: string[] | string;
 }
 
 export interface ProductListParams extends ListParams {
-  'q[name_cont]'?: string;
-  'q[price_gte]'?: number;
-  'q[price_lte]'?: number;
-  'q[taxons_id_eq]'?: string;
+  /** Sort: 'price asc', 'price desc', 'best_selling', 'name asc', 'name desc', 'available_on desc', 'available_on asc' */
+  sort?: string;
+  /** Full-text search across name and SKU */
+  multi_search?: string;
+  /** Filter: name contains */
+  name_cont?: string;
+  /** Filter: price >= value */
+  price_gte?: number;
+  /** Filter: price <= value */
+  price_lte?: number;
+  /** Filter by option value prefix IDs */
+  with_option_value_ids?: string[];
+  /** Filter: only in-stock products */
+  in_stock?: boolean;
+  /** Filter: only out-of-stock products */
+  out_of_stock?: boolean;
+  /** Filter: products in taxon */
+  taxons_id_eq?: string;
+  /** Any additional Ransack predicate */
+  [key: string]: string | number | boolean | (string | number)[] | undefined;
 }
 
 export interface TaxonListParams extends ListParams {
-  'q[taxonomy_id_eq]'?: string | number;
-  'q[parent_id_eq]'?: string | number;
-  'q[depth_eq]'?: number;
-  'q[name_cont]'?: string;
+  /** Sort order, e.g. 'name asc', 'created_at desc' */
+  sort?: string;
+  /** Filter: name contains */
+  name_cont?: string;
+  taxonomy_id_eq?: string | number;
+  parent_id_eq?: string | number;
+  depth_eq?: number;
+  /** Any additional Ransack predicate */
+  [key: string]: string | number | boolean | (string | number)[] | undefined;
 }
 
 export interface OrderListParams extends ListParams {
-  'q[state_eq]'?: string;
-  'q[completed_at_gte]'?: string;
-  'q[completed_at_lte]'?: string;
+  /** Sort order, e.g. 'completed_at desc' */
+  sort?: string;
+  /** Full-text search across number, email, customer name */
+  multi_search?: string;
+  state_eq?: string;
+  completed_at_gte?: string;
+  completed_at_lte?: string;
+  /** Any additional Ransack predicate */
+  [key: string]: string | number | boolean | (string | number)[] | undefined;
 }
 
 // Cart operations
@@ -157,23 +192,25 @@ export interface CompletePaymentSetupSessionParams {
 // Product Filters types
 export interface FilterOption {
   id: string;
-  label: string;
   count: number;
 }
 
 export interface OptionFilterOption extends FilterOption {
   name: string;
+  presentation: string;
   position: number;
 }
 
-export interface TaxonFilterOption extends FilterOption {
+export interface TaxonFilterOption {
+  id: string;
+  name: string;
   permalink: string;
+  count: number;
 }
 
 export interface PriceRangeFilter {
   id: 'price';
   type: 'price_range';
-  label: string;
   min: number;
   max: number;
   currency: string;
@@ -182,22 +219,20 @@ export interface PriceRangeFilter {
 export interface AvailabilityFilter {
   id: 'availability';
   type: 'availability';
-  label: string;
   options: FilterOption[];
 }
 
 export interface OptionFilter {
   id: string;
   type: 'option';
-  label: string;
   name: string;
+  presentation: string;
   options: OptionFilterOption[];
 }
 
 export interface TaxonFilter {
   id: 'taxons';
   type: 'taxon';
-  label: string;
   options: TaxonFilterOption[];
 }
 
@@ -205,7 +240,6 @@ export type ProductFilter = PriceRangeFilter | AvailabilityFilter | OptionFilter
 
 export interface SortOption {
   id: string;
-  label: string;
 }
 
 export interface ProductFiltersResponse {

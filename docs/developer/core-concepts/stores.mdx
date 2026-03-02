@@ -99,6 +99,19 @@ erDiagram
 
 To access the current store you can use `current_store` in controllers or `Spree::Store.current` in models/services/jobs.
 
+#### Via Store API
+
+```javascript
+import { createSpreeClient } from '@spree/sdk'
+
+const client = createSpreeClient({
+  baseUrl: 'https://your-store.com',
+  publishableKey: '<api-key>',
+})
+
+const store = await client.store.store.get()
+```
+
 ## Markets
 
 [Markets](/developer/core-concepts/markets) let you segment your store into geographic regions, each with its own currency, locale, and set of countries. For example, a single store can have:

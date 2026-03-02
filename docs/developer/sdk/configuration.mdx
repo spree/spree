@@ -1,0 +1,128 @@
+---
+title: Configuration
+description: Localization, error handling, TypeScript types, and custom fetch
+---
+
+import LocalizationExample from '/snippets/store-api/localization-example.mdx'
+
+## Localization & Currency
+
+Pass locale and currency headers with any request. For full details, see the [Localization](/api-reference/store-api/localization) reference.
+
+<LocalizationExample />
+
+```typescript
+// Works with all endpoints
+const taxon = await client.store.taxons.get('categories/clothing', {
+  includes: ['ancestors'],
+}, {
+  locale: 'de',
+  currency: 'EUR',
+})
+```
+
+## Error Handling
+
+```typescript
+import { SpreeError } from '@spree/sdk';
+
+try {
+  await client.store.products.get('non-existent');
+} catch (error) {
+  if (error instanceof SpreeError) {
+    console.log(error.code);    // 'record_not_found'
+    console.log(error.message); // 'Product not found'
+    console.log(error.status);  // 404
+    console.log(error.details); // Validation errors (if any)
+  }
+}
+```
+
+## Custom Fetch
+
+You can provide a custom fetch implementation:
+
+```typescript
+import { createSpreeClient } from '@spree/sdk';
+
+const client = createSpreeClient({
+  baseUrl: 'https://api.mystore.com',
+  publishableKey: 'spree_pk_xxx',
+  fetch: customFetchImplementation,
+});
+```
+
+## TypeScript Support
+
+The SDK includes full TypeScript support with generated types from the API serializers:
+
+```typescript
+import type {
+  StoreProduct,
+  StoreOrder,
+  StoreVariant,
+  StoreTaxon,
+  StoreTaxonomy,
+  StoreLineItem,
+  StoreAddress,
+  StoreCustomer,
+  PaginatedResponse,
+} from '@spree/sdk';
+
+// All responses are fully typed
+const products: PaginatedResponse<StoreProduct> = await client.store.products.list();
+const taxon: StoreTaxon = await client.store.taxons.get('clothing');
+```
+
+## Available Types
+
+### Core Types
+- `StoreProduct` - Product data
+- `StoreVariant` - Variant data
+- `StoreOrder` - Order/cart data
+- `StoreLineItem` - Line item in cart
+- `StoreTaxonomy` - Category group
+- `StoreTaxon` - Individual category
+- `StoreCountry` - Country with states
+- `StoreState` - State/province
+- `StoreAddress` - Customer address
+- `StoreCustomer` - Customer profile
+- `StoreStore` - Store configuration
+
+### Commerce Types
+- `StorePayment` - Payment record
+- `StorePaymentMethod` - Payment method
+- `StorePaymentSession` - Provider-agnostic payment session
+- `StoreShipment` - Shipment record
+- `StoreShippingRate` - Shipping rate option
+- `StoreShippingMethod` - Shipping method
+- `StoreCreditCard` - Saved credit card
+- `StoreGiftCard` - Gift card
+
+### Product Types
+- `StoreImage` - Product image
+- `StorePrice` - Price data
+- `StoreOptionType` - Option type (e.g., Size, Color)
+- `StoreOptionValue` - Option value (e.g., Small, Red)
+- `StoreDigitalLink` - Digital download link
+
+### Wishlist Types
+- `StoreWishlist` - Wishlist
+- `StoreWishedItem` - Wishlist item
+
+### Client Types
+- `SpreeClient` - Main client class
+- `StoreClient` - Store API client
+- `AdminClient` - Admin API client
+- `SpreeClientConfig` - Client configuration
+- `RequestOptions` - Per-request options
+- `RetryConfig` - Retry behavior configuration
+
+### Utility Types
+- `PaginatedResponse<T>` - Paginated API response
+- `AuthTokens` - JWT tokens from login
+- `AddressParams` - Address input parameters
+- `CreatePaymentSessionParams` - Payment session creation parameters
+- `UpdatePaymentSessionParams` - Payment session update parameters
+- `CompletePaymentSessionParams` - Payment session completion parameters
+- `ProductFiltersResponse` - Product filters response

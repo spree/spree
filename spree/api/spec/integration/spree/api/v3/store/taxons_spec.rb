@@ -143,17 +143,31 @@ RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.y
       description 'Returns a paginated list of products belonging to the specified taxon'
 
       sdk_example <<~JS
-        const products = await client.store.taxons.products.list('taxon_abc123', {
+        const products = await client.store.taxons.products.list('categories/clothing', {
           page: 1,
           per_page: 25,
+          sort: 'price asc',
+          with_option_value_ids: ['optval_abc'],
         })
       JS
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :taxon_id, in: :path, type: :string, required: true,
                 description: 'Taxon permalink or prefix ID'
-      parameter name: :page, in: :query, type: :integer, required: false
-      parameter name: :per_page, in: :query, type: :integer, required: false
+      parameter name: :page, in: :query, type: :integer, required: false,
+                description: 'Page number (default: 1)'
+      parameter name: :per_page, in: :query, type: :integer, required: false,
+                description: 'Number of items per page (default: 25, max: 100)'
+      parameter name: :sort, in: :query, type: :string, required: false,
+                description: 'Sort order. Values: price asc, price desc, best_selling, name asc, name desc, available_on desc, available_on asc'
+      parameter name: 'q[price_gte]', in: :query, type: :number, required: false,
+                description: 'Filter by minimum price'
+      parameter name: 'q[price_lte]', in: :query, type: :number, required: false,
+                description: 'Filter by maximum price'
+      parameter name: 'q[with_option_value_ids][]', in: :query, type: :string, required: false,
+                description: 'Filter by option value prefix IDs'
+      parameter name: 'q[in_stock]', in: :query, type: :boolean, required: false,
+                description: 'Filter to only in-stock products'
 
       response '200', 'products found' do
         let(:'x-spree-api-key') { api_key.token }

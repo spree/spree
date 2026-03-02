@@ -75,14 +75,14 @@ erDiagram
 
 Stock Locations are the locations where your inventory is shipped from. Each `StockLocation` has many `stock_items` and `stock_movements`.
 
-Stock Locations can be created in the admin panel Configuration → Stock Locations or via Platform API.
+Stock Locations can be created in the admin panel Configuration → Stock Locations or via Admin API.
 
 Stock Locations have several attributes that define their properties and behavior within the Spree system. Below is a table outlining these attributes:
 
 | Attribute         | Description                                                                 | Example Value       |
 |-------------------|-----------------------------------------------------------------------------|---------------------|
-| `name`            | The public name of the stock location. This is used on Storefront and Storefront API | Warehouse 1       |
-| `admin_name`       | The name used internally for the stock location. This is not shown on the Storefront. | WH1 Domestic     |
+| `name`            | The public name of the stock location. This is returned in Store API | Warehouse 1       |
+| `admin_name`       | The name used internally for the stock location. This is only returned in Admin API. | WH1 Domestic     |
 | `address1`        | The primary address line for the stock location.                           | 5th avenue     |
 | `address2`        | The secondary address line for the stock location.                         | Suite 100         |
 | `city`            | The city where the stock location is based.                                | New York        |
@@ -115,7 +115,7 @@ Stock Items represent the inventory at a stock location for a specific variant. 
 Stock transfers allow you to move inventory in bulk from one stock location to another stock location. This is handy when you want to integrate with a POS system or other inventory management system. Or you can just rely on Spree being the source of truth for your inventory.
 
 <Info>
-Stock Transfers can be created in the Admin dashboard or via the Platform API.
+Stock Transfers can be created in the Admin dashboard or via the Admin API.
 </Info>
 
 Here's the list of attributes for the Stock Transfer model:
@@ -177,7 +177,7 @@ Inventory Units states are:
 * `shipped` - the inventory unit is shipped
 
 <Note>
-As we noted before, when you add new Stock Items to a Variant (eg. via Admin Panel or Platform API), the first Inventory Units to fulfill are the backordered ones.
+As we noted before, when you add new Stock Items to a Variant (eg. via Admin Panel or Admin API), the first Inventory Units to fulfill are the backordered ones.
 </Note>
 
 ## Disabling inventory tracking
@@ -194,7 +194,7 @@ You can also disable tracking inventory on a Variant level, by simply updating V
 variant.update(track_inventory: false)
 ```
 
-This can also be done via the Admin Panel or Platform API.
+This can also be done via the Admin Panel or Admin API.
 
 ## Related Documentation
 

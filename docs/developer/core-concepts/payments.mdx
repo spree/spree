@@ -12,7 +12,7 @@ The `Payment` model in Spree tracks payments against [Orders](orders). Payments 
 
 When a payment is created, it is given a unique, 8-character identifier. This is used when sending the payment details to the payment processor. Without this identifier, some payment gateways mistakenly reported duplicate payments.
 
-### Payment Model Diagram
+### Payment Architecture Diagram
 
 ```mermaid
 erDiagram
@@ -23,7 +23,7 @@ erDiagram
         string response_code
         string avs_response
         string source_type
-        integer source_id
+        string source_id
     }
 
     PaymentMethod {
@@ -35,14 +35,37 @@ erDiagram
         integer position
     }
 
+    PaymentSession {
+        string status
+        decimal amount
+        string currency
+        string external_id
+        json external_data
+        datetime expires_at
+    }
+
+    PaymentSetupSession {
+        string status
+        string external_id
+        string external_client_secret
+        json external_data
+    }
+
+    PaymentSource {
+        string type
+        string gateway_payment_profile_id
+    }
+
     CreditCard {
         string last_digits
         string cc_type
         integer month
         integer year
         string name
-        string gateway_customer_profile_id
-        string gateway_payment_profile_id
+    }
+
+    GatewayCustomer {
+        string profile_id
     }
 
     StoreCredit {
@@ -62,12 +85,21 @@ erDiagram
     }
 
     Order ||--o{ Payment : "has many"
+    Order ||--o{ PaymentSession : "has many"
     Payment }o--|| PaymentMethod : "belongs to"
     Payment }o--o| CreditCard : "source"
+    Payment }o--o| PaymentSource : "source"
     Payment }o--o| StoreCredit : "source"
+    Payment ||--o| PaymentSession : "linked via response_code"
     Payment ||--o{ LogEntry : "has many"
     Payment ||--o{ Refund : "has many"
+    PaymentMethod ||--o{ PaymentSession : "has many"
+    PaymentMethod ||--o{ PaymentSetupSession : "has many"
+    PaymentMethod ||--o{ GatewayCustomer : "has many"
     PaymentMethod }o--|| Store : "belongs to"
+    PaymentSetupSession }o--o| PaymentSource : "creates"
+    PaymentSetupSession }o--|| Customer : "belongs to"
+    GatewayCustomer }o--|| Customer : "belongs to"
     CreditCard }o--|| Customer : "belongs to"
     StoreCredit }o--|| Customer : "belongs to"
     Refund }o--|| Payment : "belongs to"
@@ -76,39 +108,194 @@ erDiagram
 
 **Key relationships:**
 - **Payment** tracks each payment attempt against an [Order](/developer/core-concepts/orders)
-- **Payment Method** defines how payments are processed (Stripe, PayPal, Check, etc.)
-- **Source** is polymorphic - can be a Credit Card, Store Credit, or other payment sources
+- **Payment Method** defines how payments are processed (Stripe, Adyen, PayPal, Check, etc.)
+- **Payment Session** manages the gateway-side payment lifecycle (e.g., Stripe PaymentIntent, Adyen Session)
+- **Payment Setup Session** manages saving payment methods for future use without an immediate charge (e.g., Stripe SetupIntent)
+- **Source** is polymorphic - can be a Credit Card, Payment Source (for alternative methods like Klarna, iDEAL), or Store Credit
+- **Gateway Customer** stores the provider-specific customer profile (e.g., Stripe Customer ID)
 - **Log Entries** record gateway responses for debugging
 - **Refunds** track money returned to customers
 
-## Payment States
+## Payment Methods
 
-A payment can go through many different states:
+Payment methods represent the different options a customer has for making a payment. Most sites will accept credit card payments through a payment gateway, but there are other options. Spree also comes with built-in support for a Check payment, which can be used to represent any offline payment. Gateway providers such as Stripe, Adyen, and PayPal provide a wide range of payment methods, including credit cards, bank transfers, buy-now-pay-later, and digital wallets (Apple Pay, Google Pay, etc.).
+
+A `PaymentMethod` can have the following attributes:
+
+| Attribute    | Description                                                                                   | Example                |
+|--------------|-----------------------------------------------------------------------------------------------|------------------------|
+| `type`       | The subclass of `Spree::PaymentMethod` this payment method represents. Uses rails single table inheritance feature. | `Spree::PaymentMethod::Check` |
+| `name`       | The visible name for this payment method                                                      | `Check`                |
+| `description`| The description for this payment method                                                       | `Pay by check.`        |
+| `active`     | Whether or not this payment method is active. Set it `false` to hide it in storefront.         | `true`                 |
+| `display_on` | Determines where the payment method can be visible. Values can be `front` for storefront, `back` for admin panel only or `both` for both. | `both`                 |
+| `position`   | The position of the payment method in lists. Lower numbers appear first.                      | `1`                    |
+
+<Info>
+Each payment method is associated to a Store, so you can decide which Payment Method will appear on which Store. This allows you to create different experiences for your customers in different countries.
+</Info>
+
+### Session-based vs Legacy Payment Methods
+
+Payment methods indicate whether they use the modern session-based flow via the `session_required?` method:
+
+| Method | Description | Default |
+|--------|-------------|---------|
+| `session_required?` | Returns `true` if this payment method requires a Payment Session for processing. | `false` |
+| `setup_session_supported?` | Returns `true` if this payment method supports saving payment methods for future use (Payment Setup Sessions). | `false` |
+| `payment_session_class` | Returns the STI subclass of `Spree::PaymentSession` for this gateway (e.g., `Spree::PaymentSessions::Stripe`). | `nil` |
+| `payment_setup_session_class` | Returns the STI subclass of `Spree::PaymentSetupSession` for this gateway. | `nil` |
+
+Modern gateways like Stripe and Adyen set `session_required?` to `true`. The Store API serializer includes this as the `session_required` field so your frontend knows which flow to use.
+
+## Payment Flow
+
+Modern payment gateways (Stripe, Adyen, PayPal) use a two-phase approach: first a **Payment Session** is created with the gateway, then after the customer completes payment on the frontend, Spree creates a **Payment** record to track the result. This ensures full PCI compliance, 3D Secure support, and compatibility with all payment method types.
+
+```mermaid
+sequenceDiagram
+    participant Frontend
+    participant Spree API
+    participant Payment Provider
+
+    rect rgb(240, 245, 255)
+    note right of Frontend: Phase 1: Payment Session
+    Frontend->>Spree API: Create Payment Session
+    Spree API->>Payment Provider: Create session (PaymentIntent/Session)
+    Payment Provider-->>Spree API: Session ID + client_secret
+    Spree API-->>Frontend: PaymentSession (pending)
+    end
+
+    rect rgb(240, 255, 240)
+    note right of Frontend: Phase 2: Customer Pays
+    Frontend->>Payment Provider: Collect payment (using client_secret)
+    Note over Frontend,Payment Provider: 3DS challenge handled here if needed
+    Payment Provider-->>Frontend: Payment result
+    end
+
+    rect rgb(255, 245, 240)
+    note right of Frontend: Phase 3: Payment Created
+    alt Webhook-driven completion
+        Payment Provider->>Spree API: Webhook (payment succeeded)
+        Spree API->>Spree API: Create Payment (completed)
+    else Client-driven completion
+        Frontend->>Spree API: Complete Payment Session
+        Spree API->>Payment Provider: Verify result
+        Spree API->>Spree API: Create Payment (completed)
+    end
+    Spree API-->>Frontend: Order completed
+    end
+```
 
 <Steps>
-  <Step title="checkout">
-    Checkout has not been completed
+  <Step title="Create Payment Session">
+    The frontend calls the API to create a Payment Session for a specific payment method and order. Spree calls the gateway to create a provider-side session (e.g., Stripe PaymentIntent, Adyen Session) and returns the session data including a `client_secret` for the frontend SDK.
   </Step>
-  <Step title="processing">
-    The payment is being processed (temporary – intended to prevent double submission)
+  <Step title="Customer pays on the frontend">
+    The frontend uses the gateway's JavaScript SDK (e.g., Stripe.js, Adyen Drop-in) with the `client_secret` to securely collect payment details. Card data never touches your server - it goes directly to the payment provider, ensuring **PCI compliance**. If the payment requires **3D Secure** authentication, the gateway SDK automatically presents the challenge.
   </Step>
-  <Step title="pending">
-    The payment has been processed but is not yet complete (ex. authorized but not captured)
-  </Step>
-  <Step title="failed">
-    The payment was rejected (ex. credit card was declined)
-  </Step>
-  <Step title="void">
-    The payment should not be counted against the order
-  </Step>
-  <Step title="completed">
-    The payment is completed. Only payments in this state count against the order total
+  <Step title="Payment is created and order is completed">
+    After the customer completes payment, the session is completed either via a webhook from the provider or by the frontend calling the complete endpoint. Spree creates a `Payment` record (in `completed` or `pending` state depending on auto-capture settings), creates the appropriate payment source (Credit Card, Klarna, etc.), and completes the order.
   </Step>
 </Steps>
 
-## Payment Attributes
+### Payment Session
 
-Here's the list of attributes for the `Spree::Payment` model:
+A `PaymentSession` (`Spree::PaymentSession`) represents a server-side session with the payment gateway. It is the entry point for every payment attempt and holds the provider-specific data needed by the frontend SDK.
+
+#### Attributes
+
+| Attribute | Description | Example Value |
+|-----------|-------------|---------------|
+| `status` | Current session state: `pending`, `processing`, `completed`, `failed`, `canceled`, `expired` | `completed` |
+| `amount` | The payment amount | `99.99` |
+| `currency` | ISO currency code | `USD` |
+| `external_id` | The provider-side session ID (e.g., Stripe PaymentIntent ID) | `pi_3ABC123` |
+| `external_data` | Provider-specific data including `client_secret` for frontend SDK | `{"client_secret": "pi_3ABC_secret_xyz"}` |
+| `customer_external_id` | The provider's customer ID | `cus_ABC123` |
+| `expires_at` | When the session expires | `2025-01-01T12:00:00Z` |
+
+#### States
+
+```mermaid
+stateDiagram-v2
+    [*] --> pending
+    pending --> processing
+    pending --> completed
+    pending --> failed
+    pending --> canceled
+    pending --> expired
+    processing --> completed
+    processing --> failed
+    processing --> canceled
+    processing --> expired
+```
+
+#### API
+
+**Create a Payment Session:**
+
+```typescript
+const options = { orderToken: cart.token }
+
+// Create a payment session for the selected payment method
+const session = await client.store.orders.paymentSessions.create(cart.id, {
+  payment_method_id: 'pm_xyz789',
+  amount: '99.99',             // Optional, defaults to order total
+  external_data: {},           // Optional, provider-specific data
+}, options)
+
+// The session contains provider-specific data for the frontend SDK
+console.log(session.external_id)              // e.g. 'pi_3ABC123' (Stripe PaymentIntent ID)
+console.log(session.external_data.client_secret) // Use with Stripe.js or Adyen Drop-in
+```
+
+**Response shape (`StorePaymentSession`):**
+
+```json
+{
+  "id": "ps_abc123",
+  "status": "pending",
+  "amount": "99.99",
+  "currency": "USD",
+  "external_id": "pi_3ABC123",
+  "external_data": {
+    "client_secret": "pi_3ABC123_secret_xyz"
+  },
+  "customer_external_id": "cus_ABC123",
+  "expires_at": "2025-01-01T12:00:00Z",
+  "payment_method_id": "pm_xyz789",
+  "order_id": "or_ABC123",
+  "payment": null
+}
+```
+
+**Update a Payment Session** (e.g., after order total changes):
+
+```typescript
+const updated = await client.store.orders.paymentSessions.update(
+  cart.id, session.id,
+  { amount: '149.99' },
+  options
+)
+```
+
+**Complete a Payment Session** (after customer confirms payment on the frontend):
+
+```typescript
+const completed = await client.store.orders.paymentSessions.complete(
+  cart.id, session.id,
+  { session_result: '...', external_data: {} },
+  options
+)
+console.log(completed.status) // 'completed'
+```
+
+### Payment
+
+Once a Payment Session is completed, Spree creates a `Payment` record (`Spree::Payment`) to track the result. The Payment is linked to the session via `response_code` matching the session's `external_id`.
+
+#### Attributes
 
 | Attribute         | Description                                                                 | Example Value       |
 |-------------------|-----------------------------------------------------------------------------|---------------------|
@@ -118,106 +305,40 @@ Here's the list of attributes for the `Spree::Payment` model:
 | `amount`          | The amount of the payment.                                                  | `99.99`             |
 | `payment_method_id`| The ID of the payment method used.                                          | `2`                 |
 | `state`           | The current state of the payment (e.g., processing, completed, failed).     | `completed`         |
-| `response_code`   | The response code returned by the payment processor.                        | `AUTH_123456`       |
+| `response_code`   | The gateway transaction ID. Links to the Payment Session's `external_id`.   | `pi_3ABC123`        |
 | `avs_response`    | The address verification system response code.                              | `D`                 |
 
-## Payment Methods
+#### Payment States
 
-Payment methods represent the different options a customer has for making a payment. Most sites will accept credit card payments through a payment gateway, but there are other options. Spree also comes with built-in support for a Check payment, which can be used to represent any offline payment. Gateway providers such as Stripe, Braintree, and PayPal provide a wide range of payment methods, including credit cards, bank transfers, buy-now-pay-later, and digital wallets (Apple Pay, Google Pay, etc.).
+After a Payment Session completes, the resulting Payment transitions through these states:
 
-A `PaymentMethod` can have the following attributes:
-
-| Attribute    | Description                                                                                   | Example                |
-|--------------|-----------------------------------------------------------------------------------------------|------------------------|
-| `type`       | The subclass of `Spree::PaymentMethod` this payment method represents. Uses rails single table inheritance feature. | `Spree::PaymentMethod::Check` | 
-| `name`       | The visible name for this payment method                                                      | `Check`                |
-| `description`| The description for this payment method                                                       | `Pay by check.`        |
-| `active`     | Whether or not this payment method is active. Set it `false` to hide it in frontend.         | `true`                 |
-| `display_on` | Determines where the payment method can be visible. Values can be `front` for Storefront, `back` for Admin Panel only or `both` for both. | `both`                 |
-| `position`   | The position of the payment method in lists. Lower numbers appear first.                      | `1`                    |
-
-<Info>
-Each payment method is associated to a Store, so you can decide which Payment Method will appear on which Store. This allows you to create different experiences for your customers in different countries.
-</Info>
-
-## Payment Processing
-
-Payment processing in Spree supports many different gateways, but also attempts to comply with the API provided by the [active_merchant](https://github.com/shopify/active_merchant) gem where possible.
-
-### Gateway Options
-
-For every gateway action, a list of gateway options are passed through.
-
-| Gateway Option     | Description                                                                                   |
-|--------------------|-----------------------------------------------------------------------------------------------|
-| `email` and `customer` | The email address related to the order                                                       |
-| `ip`               | The last IP address for the order                                                            |
-| `order_id`         | The Order's `number` attribute, plus the `identifier` for each payment, generated when the payment is first created |
-| `shipping`         | The total shipping cost for the order, in cents                                              |
-| `tax`              | The total tax cost for the order, in cents                                                   |
-| `subtotal`         | The item total for the order, in cents                                                       |
-| `currency`         | The 3-character currency code for the order                                                  |
-| `discount`         | The promotional discount applied to the order                                                |
-| `billing_address`  | A hash containing billing address information                                                |
-| `shipping_address` | A hash containing shipping address information                                                |
-
-The billing address and shipping address data is as follows:
-
-| Attribute   | Description                                                                                   |
-|-------------|-----------------------------------------------------------------------------------------------|
-| `name`      | The combined `first_name` and `last_name` from the address                                   |
-| `address1`  | The first line of the address information                                                     |
-| `address2`  | The second line of address information                                                        |
-| `city`      | The city of the address                                                                       |
-| `state`     | An abbreviated version of the state name or, failing that, the state name itself, from the related `State` object. If that fails, the `state_name` attribute from the address. |
-| `country`   | The ISO name for the country. For example, United States of America is "US", Australia is "AU". |
-| `phone`     | The phone number associated with the address                                                  |
-
-### Credit card data
-
-Spree stores only necessary non-sensitive credit card information as a `Spree::CreditCard` record with the following attributes:
-
-| Attribute           | Description                                                                                   | Example Value          |
-|---------------------|-----------------------------------------------------------------------------------------------|------------------------|
-| `month`             | The month the credit card expires. Stored as an integer (1-12).                              | `6`                    |
-| `year`              | The year the credit card expires. Stored as a four-digit integer (e.g., 2024).               | `2024`                 |
-| `cc_type`           | The type of credit card (e.g., visa, mastercard).                                            | `visa`                 |
-| `last_digits`       | The last four digits of the credit card number.                                              | `1234`                 |
-| `name`              | The name of the credit card holder as it appears on the card.                                | `John Doe`           |
-| `gateway_customer_profile_id` | The customer profile identifier from the payment gateway. Useful for recurring transactions.| `cust_123456789`       |
-| `gateway_payment_profile_id`  | The payment profile identifier from the payment gateway.                                     | `paym_987654321`       |
-
-<Note>
-We don't store the full credit card number, only the last 4 digits and the card type. This is a security precaution to protect the cardholder's privacy. For any post-purchase operations we authenticate the card using the `gateway_customer_profile_id` and `gateway_payment_profile_id`.
-</Note>
-
-### Processing Walkthrough
-
-When an order is completed in Spree, each `Payment` object associated with the order has the `process!` method called on it unless `payment_required?` for the order returns `false`, in order to attempt to automatically fulfill the payment required for the order. If the payment method requires a source (e.g., `Spree::CreditCard`), and the payment has a source associated with it, then Spree will attempt to process the payment. Otherwise, the payment will need to be processed manually.
-
-If the `PaymentMethod` object is configured to auto-capture payments, then the `Payment#purchase!` method will be called, which will call `PaymentMethod#purchase` like this:
-
-```ruby
-payment_method.purchase(<amount>, <source>, <gateway options>)
+```mermaid
+stateDiagram-v2
+    [*] --> checkout
+    checkout --> processing : process!
+    processing --> completed : purchase! succeeds
+    processing --> pending : authorize! succeeds
+    processing --> failed : payment declined
+    pending --> completed : capture!
+    pending --> void : void!
+    completed --> void : void!
+    checkout --> void : void!
 ```
 
-If the payment is _not_ configured to auto-capture payments, the `Payment#authorize!` method will be called, with the same arguments as the `purchase` method above:
+| State | Description |
+|-------|-------------|
+| `checkout` | Initial state. The payment has been created but not yet processed. |
+| `processing` | The payment is being processed (temporary - prevents double submission). |
+| `pending` | The payment has been authorized but not yet captured. Awaiting manual or scheduled capture. |
+| `failed` | The payment was rejected (e.g., card declined, insufficient funds). |
+| `void` | The payment has been voided and should not be counted against the order. |
+| `completed` | The payment has been captured. Only payments in this state count against the order total. |
 
-```ruby
-payment_method.authorize(<amount>, <source>, <gateway options>)
-```
+With **auto-capture** enabled (default for most gateways), the Payment goes directly from `checkout` → `processing` → `completed`. With **manual capture**, it stops at `pending` until an admin captures it.
 
-How the payment is actually put through depends on the `PaymentMethod` sub-class' implementation of the `purchase` and `authorize` methods.
+#### Order Payment States
 
-The returned object from both the `purchase` and `authorize` methods on the payment method objects must be an [ActiveMerchant::Billing::Response](https://github.com/activemerchant/active_merchant/blob/master/lib/active_merchant/billing/response.rb) object. This response object is then stored in YAML in the `spree_log_entries` table. Log entries can be retrieved with a call to the `log_entries` association on any `Payment` object, eg.
-
-```ruby
-payment.log_entries
-```
-
-If the `purchase!` route is taken and is successful, the payment is marked as `completed`. If it fails, it is marked as `failed`. If the `authorize!` method is successful, the payment is transitioned to the `pending` state so that it can be manually captured later by calling the `capture!` method. If it is unsuccessful, it is also transitioned to the `failed` state.
-
-Once a payment has been saved, it also updates the order. This may trigger the `payment_state` to change, which would reflect the current payment state of the order. The possible states are:
+Each payment update also recalculates the order's `payment_state`:
 
 | Payment State | Description |
 |---------------|-------------|
@@ -227,24 +348,188 @@ Once a payment has been saved, it also updates the order. This may trigger the `
 | `paid` | This order has been paid for in full |
 
 <Warning>
-You may want to keep tabs on the number of orders with a `payment_state` of `failed`. A sudden increase in the number of such orders could indicate a problem with your credit card gateway and most likely indicates a serious problem affecting customer satisfaction. You should check the latest `log_entries` for the most recent payments in the store if this is happening.
+You may want to keep tabs on the number of orders with a `payment_state` of `failed`. A sudden increase could indicate a problem with your payment gateway and most likely a serious problem affecting customer satisfaction. Check the latest `log_entries` for the most recent payments if this is happening.
 </Warning>
+
+### Legacy Processing
+
+For payment methods that don't use sessions (e.g., `Spree::PaymentMethod::Check`), Spree uses a direct authorize/capture flow without a Payment Session:
+
+When an order is completed, each `Payment` object has the `process!` method called on it unless `payment_required?` for the order returns `false`.
+
+If the `PaymentMethod` is configured to auto-capture, `Payment#purchase!` is called:
+
+```ruby
+payment_method.purchase(<amount>, <source>, <gateway options>)
+```
+
+If not, `Payment#authorize!` is called instead:
+
+```ruby
+payment_method.authorize(<amount>, <source>, <gateway options>)
+```
+
+If `purchase!` succeeds, the payment is marked `completed`. If `authorize!` succeeds, the payment transitions to `pending` for manual capture later via `capture!`. Either method marks the payment as `failed` if unsuccessful.
 
 ### Log Entries
 
-Responses from payment gateways within Spree are typically [ActiveMerchant::Billing::Response](https://github.com/activemerchant/active_merchant/blob/master/lib/active_merchant/billing/response.rb) objects. When Spree handles a response from a payment gateway, it will serialize the object as YAML and store it in the database as a log entry for a payment. These responses can be useful for debugging why a payment has failed.
-
-You can get a list of these log entries by calling the `log_entries` on any `Spree::Payment` object. To get the `ActiveMerchant::Billing::Response` out of these `Spree::LogEntry` objects, call the `details` method:
+Responses from payment gateways are stored as log entries for debugging purposes:
 
 ```ruby
+payment.log_entries
 payment.log_entries.first.details
 ```
 
+## Payment Sources
+
+Payment sources represent the actual instrument used for a payment. They are created automatically when a Payment Session completes.
+
+### Credit Cards (`Spree::CreditCard`)
+
+Stores non-sensitive credit card information. With modern gateways, the actual card data is tokenized by the provider - Spree only stores reference IDs and display information.
+
+| Attribute           | Description                                                                                   | Example Value          |
+|---------------------|-----------------------------------------------------------------------------------------------|------------------------|
+| `month`             | The month the credit card expires.                                                           | `6`                    |
+| `year`              | The year the credit card expires.                                                            | `2026`                 |
+| `cc_type`           | The type of credit card (e.g., visa, mastercard).                                            | `visa`                 |
+| `last_digits`       | The last four digits of the credit card number.                                              | `1234`                 |
+| `name`              | The name of the credit card holder.                                                          | `John Doe`           |
+| `gateway_payment_profile_id`  | The payment token from the gateway (e.g., Stripe `pm_xxx`, Adyen `storedPaymentMethodId`).  | `pm_1ABC123`           |
+
+<Note>
+Spree never stores full credit card numbers. With modern gateways, card data is collected entirely by the gateway's frontend SDK (e.g., Stripe.js, Adyen Drop-in) and never touches your server. Spree only stores the tokenized reference (`gateway_payment_profile_id`) returned by the provider.
+</Note>
+
+### Payment Sources (`Spree::PaymentSource`)
+
+A generic payment source model for non-card payment methods such as digital wallets, bank transfers, and buy-now-pay-later services. Gateway extensions create STI subclasses for each payment method type:
+
+```ruby
+# Examples of payment source subclasses created by gateway gems:
+SpreeStripe::PaymentSources::Klarna    # Klarna BNPL
+SpreeStripe::PaymentSources::AfterPay  # Afterpay/Clearpay
+SpreeStripe::PaymentSources::Ideal     # iDEAL bank transfer
+SpreeStripe::PaymentSources::Link      # Stripe Link wallet
+SpreeAdyen::PaymentSources::ApplePay   # Apple Pay
+SpreeAdyen::PaymentSources::Paypal     # PayPal via Adyen
+```
+
+### Gateway Customers (`Spree::GatewayCustomer`)
+
+Maps a Spree customer to their provider-specific customer profile. This enables features like saved payment methods, recurring billing, and customer-level fraud detection.
+
+| Attribute | Description | Example Value |
+|-----------|-------------|---------------|
+| `profile_id` | The provider's customer ID (encrypted at rest) | `cus_ABC123` |
+| `payment_method_id` | The gateway this customer belongs to | `1` |
+| `user_id` | The Spree user | `42` |
+
+Each customer has at most one `GatewayCustomer` record per payment method. The `profile_id` is encrypted using Active Record Encryption when available.
+
+## Payment Setup Sessions
+
+Payment Setup Sessions (`Spree::PaymentSetupSession`) allow customers to save payment methods for future use **without making an immediate payment**. This maps to concepts like Stripe's SetupIntent - a secure way to collect and tokenize payment details for later charges.
+
+### Use Cases
+
+- Saving a credit card to the customer's account for faster future checkouts
+- Authorizing a payment method for subscription billing
+- Adding a payment method during account onboarding (before any purchase)
+
+### How Payment Setup Sessions Work
+
+```mermaid
+sequenceDiagram
+    participant Frontend
+    participant Spree API
+    participant Payment Provider
+
+    Frontend->>Spree API: Create Payment Setup Session
+    Spree API->>Payment Provider: Create setup session (SetupIntent)
+    Payment Provider-->>Spree API: Session ID + client_secret
+    Spree API-->>Frontend: PaymentSetupSession (pending)
+
+    Frontend->>Payment Provider: Collect card details (using client_secret)
+    Note over Frontend,Payment Provider: 3DS verification if needed
+
+    Frontend->>Spree API: Complete Payment Setup Session
+    Spree API->>Payment Provider: Verify setup result
+    Spree API->>Spree API: Create PaymentSource (saved card)
+    Spree API-->>Frontend: Completed PaymentSetupSession
+```
+
+### Payment Setup Session Attributes
+
+| Attribute | Description | Example Value |
+|-----------|-------------|---------------|
+| `status` | Current session state: `pending`, `processing`, `completed`, `failed`, `canceled`, `expired` | `completed` |
+| `external_id` | The provider-side session ID (e.g., Stripe SetupIntent ID) | `seti_ABC123` |
+| `external_client_secret` | Client secret for the frontend SDK | `seti_ABC123_secret_xyz` |
+| `external_data` | Provider-specific data | `{}` |
+| `payment_source_id` | The saved payment source created after completion | `ps_xyz789` |
+| `payment_source_type` | The type of saved payment source | `Spree::CreditCard` |
+
+### Payment Setup Session API
+
+<Note>
+Payment Setup Sessions require customer authentication. The customer must be logged in.
+</Note>
+
+**Create a Payment Setup Session:**
+
+```typescript
+const options = { token: jwtToken }
+
+// Create a setup session for saving a payment method
+const setupSession = await client.store.customer.paymentSetupSessions.create({
+  payment_method_id: 'pm_xyz789',
+  external_data: {},
+}, options)
+
+// Use the client secret with the gateway's frontend SDK
+console.log(setupSession.external_client_secret) // e.g. 'seti_ABC123_secret_xyz'
+```
+
+**Response shape (`StorePaymentSetupSession`):**
+
+```json
+{
+  "id": "pss_abc123",
+  "status": "pending",
+  "external_id": "seti_ABC123",
+  "external_client_secret": "seti_ABC123_secret_xyz",
+  "external_data": {},
+  "payment_method_id": "pm_xyz789",
+  "payment_source_id": null,
+  "payment_source_type": null,
+  "customer_id": "usr_def456"
+}
+```
+
+**Get a Payment Setup Session:**
+
+```typescript
+const session = await client.store.customer.paymentSetupSessions.get('pss_abc123', options)
+```
+
+**Complete a Payment Setup Session** (after the customer completes setup on the frontend using the gateway SDK and `external_client_secret`):
+
+```typescript
+const completed = await client.store.customer.paymentSetupSessions.complete(
+  'pss_abc123',
+  { external_data: {} },
+  options
+)
+console.log(completed.status)             // 'completed'
+console.log(completed.payment_source_id)  // e.g. 'ps_xyz789' - the saved payment method
+```
+
+Spree will verify the result with the provider and create a saved payment source (e.g., `Spree::CreditCard`) that can be used for future payments.
+
 ## Supported Gateways
 
-### Spree Team maintained gateways
-
-Spree team maintains several payment gateways integrations. All of these gateways are **fully PCI compliant**, using native gateway SDKs/UIs, meaning no sensitive data is stored or processed through Spree.
+Spree team maintains several payment gateway integrations. All of these gateways are **fully PCI compliant**, using native gateway SDKs, meaning no sensitive payment data is stored or processed through Spree.
 
 <Card title="Stripe" href="/integrations/payments/stripe" icon="link">
   Stripe integration, supports all Stripe payment methods, including credit cards, bank transfers, Apple Pay, Google Pay, Klarna, Afterpay, and more. Also supports quick checkout.
@@ -258,95 +543,37 @@ Spree team maintains several payment gateways integrations. All of these gateway
   Native PayPal integration, supports PayPal, PayPal Credit, and PayPal Pay Later.
 </Card>
 
-### Community maintained gateways
+## Payment Events
 
-There are also community-maintained extensions for other payment gateways combined in the [Spree Gateway](https://github.com/spree/spree_gateway) gem. This gem currently supports the following gateways:
+Spree publishes events throughout the payment lifecycle that you can subscribe to:
 
-* Authorize.net
-* BanWire
-* Bambora previously Beanstream
-* Braintree
-* CyberSource
-* ePay
-* eWay
-* maxipago
-* MasterCard Payment Gateway Service formerly MiGS
-* Moneris
-* PayJunction
-* Payflow
-* Paymill
-* Pin Payments
-* QuickPay
-* sage Pay
-* SecurePay
-* Spreedly
-* USAePay
-* Worldpay previously Cardsave
+### Payment Events
+| Event | Description |
+|-------|-------------|
+| `payment.paid` | Payment was completed |
+| `order.paid` | Order is fully paid |
 
-With the `spree_gateway` gem included in your application's `Gemfile`, these gateways will be selectable in the admin backend for payment methods.
+### Payment Session Events
+| Event | Description |
+|-------|-------------|
+| `payment_session.processing` | Session is being processed |
+| `payment_session.completed` | Session completed successfully |
+| `payment_session.failed` | Session processing failed |
+| `payment_session.canceled` | Session was canceled |
+| `payment_session.expired` | Session expired |
 
-<Info>
- These are just some of the gateways which are supported by the Active Merchant gem. You can see a [list of all the Active Merchant gateways on that project's GitHub page](https://github.com/activemerchant/active_merchant\#supported-payment-gateways).
-</Info>
+### Payment Setup Session Events
+| Event | Description |
+|-------|-------------|
+| `payment_setup_session.completed` | Setup completed, payment source saved |
+| `payment_setup_session.failed` | Setup failed |
+| `payment_setup_session.canceled` | Setup was canceled |
 
-## Adding your custom Payment Method
-
-In order to make your own custom Payment Method show up on the backend list of available payment methods, you need to add it to the spree config list of payment methods first.
-
-First, create a new model inheriting from `Spree::PaymentMethod` in your `app/models` directory:
-
-```ruby
-class FancyPaymentMethod < Spree::PaymentMethod
-end
-```
-
-Next, add your custom gateway to the list of available payment methods in `config/initializers/spree.rb`:
-
-<Tabs>
-  <Tab title="Spree 5.2+">
-    ```ruby config/initializers/spree.rb
-    Rails.application.config.after_initialize do
-      Spree.payment_methods << FancyPaymentMethod
-    end
-    ```
-  </Tab>
-  <Tab title="Spree 5.1 and below">
-    ```ruby config/initializers/spree.rb
-    Rails.application.config.after_initialize do
-      Rails.application.config.spree.payment_methods << FancyPaymentMethod
-    end
-    ```
-  </Tab>
-</Tabs>
-
-## Payment Method visibility
-
-We've mentioned before that a `PaymentMethod` can have a `display_on` attribute. This attribute can have the following values: `front`, `back`, or `both`. For more granular control which Payment Methods should be available in which Store, you can override the `available_for_store?` method in your `PaymentMethod` subclass.
-
-```ruby
-class FancyPaymentMethod < Spree::PaymentMethod
-  def available_for_store?(store)
-    store.supported_currencies.include?('EUR')
-  end
-end
-```
-
-Above code will make the payment method available only for stores that support the EUR currency.
-
-If you want more control you can specify `available_for_order?` method to control Payment Method visibility for specific Order, eg.
-
-```ruby
-class FancyPaymentMethod < Spree::PaymentMethod
-  def available_for_order?(order)
-    order.total > 100 && order.currency == 'USD'
-  end
-end
-```
-
-This code will make the payment method available only for orders with a total greater than 100 and currency USD.
+See [Events](/developer/core-concepts/events) for more details on subscribing to events.
 
 ## Related Documentation
 
+- [Build a Custom Payment Method](/developer/how-to/custom-payment-method) - Step-by-step guide to creating your own payment gateway integration
 - [Orders](/developer/core-concepts/orders) - Order management and state machine
 - [Checkout Customization](/developer/customization/checkout) - Customizing the checkout flow
 - [Events](/developer/core-concepts/events) - Subscribe to payment events

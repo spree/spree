@@ -34,7 +34,12 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
         const products = await client.store.products.list({
           page: 1,
           per_page: 25,
-          includes: 'variants,images',
+          sort: 'price asc',
+          name_cont: 'shirt',
+          price_gte: 20,
+          price_lte: 100,
+          with_option_value_ids: ['optval_abc', 'optval_def'],
+          includes: ['variants', 'images'],
         })
       JS
 
@@ -44,10 +49,20 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
                 description: 'Page number (default: 1)'
       parameter name: :per_page, in: :query, type: :integer, required: false,
                 description: 'Number of items per page (default: 25, max: 100)'
+      parameter name: :sort, in: :query, type: :string, required: false,
+                description: 'Sort order. Values: price asc, price desc, best_selling, name asc, name desc, available_on desc, available_on asc'
       parameter name: 'q[name_cont]', in: :query, type: :string, required: false,
                 description: 'Filter by name containing string'
       parameter name: 'q[taxons_id_eq]', in: :query, type: :string, required: false,
                 description: 'Filter by taxon ID'
+      parameter name: 'q[price_gte]', in: :query, type: :number, required: false,
+                description: 'Filter by minimum price'
+      parameter name: 'q[price_lte]', in: :query, type: :number, required: false,
+                description: 'Filter by maximum price'
+      parameter name: 'q[with_option_value_ids][]', in: :query, type: :string, required: false,
+                description: 'Filter by option value prefix IDs (e.g., optval_abc). Pass multiple values for OR logic.'
+      parameter name: 'q[in_stock]', in: :query, type: :boolean, required: false,
+                description: 'Filter to only in-stock products'
       parameter name: :includes, in: :query, type: :string, required: false,
                 description: 'Comma-separated associations to include (variants, images, taxons, option_types)'
 
@@ -90,7 +105,7 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
 
       sdk_example <<~JS
         const product = await client.store.products.get('spree-tote', {
-          includes: 'variants,images',
+          includes: ['variants', 'images'],
         })
       JS
 
@@ -201,10 +216,9 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
                    items: {
                      type: :object,
                      properties: {
-                       id: { type: :string },
-                       label: { type: :string }
+                       id: { type: :string }
                      },
-                     required: %w[id label]
+                     required: %w[id]
                    }
                  },
                  default_sort: {
@@ -242,7 +256,7 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
 
           # Check sort options
           sort_ids = data['sort_options'].map { |s| s['id'] }
-          expect(sort_ids).to include('manual', 'price-low-to-high', 'newest-first')
+          expect(sort_ids).to include('manual', 'price asc', 'available_on desc')
         end
       end
 
@@ -265,7 +279,7 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
           # Should include taxon filter with child taxons
           taxon_filter = data['filters'].find { |f| f['type'] == 'taxon' }
           expect(taxon_filter).to be_present
-          expect(taxon_filter['options'].map { |t| t['label'] }).to include('Shirts')
+          expect(taxon_filter['options'].map { |t| t['name'] }).to include('Shirts')
         end
       end
 

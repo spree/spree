@@ -21,7 +21,7 @@ describe('products', () => {
       const result = await client.store.products.list({
         page: 2,
         per_page: 10,
-        'q[name_cont]': 'shirt',
+        name_cont: 'shirt',
       });
 
       // MSW handler returns the same fixture regardless of params,

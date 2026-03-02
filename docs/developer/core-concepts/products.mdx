@@ -7,7 +7,7 @@ title: Products
 `Product` records track unique products within your store. These differ from [Variants](#variants), which track the unique variations of a product. For instance, a product that's a T-shirt would have variants denoting its different colors and sizes. Together, Products and Variants describe what is for sale.
 
 <Info>
-Note that as of version 4.6, certain product fields are translatable (read more about this in [Internationalization](/developer/core-concepts/i18n#resource-translations)).
+Certain product fields are translatable (read more about this in [Translations](/developer/core-concepts/translations#resource-translations)).
 </Info>
 
 ### Product Model Diagram
@@ -70,7 +70,6 @@ erDiagram
     Product ||--o{ Variant : "has many"
     Product }o--o{ OptionType : "has many"
     Product ||--o{ Classification : "has many"
-    Product ||--o{ ProductProperty : "has many"
     Product }o--|| ShippingCategory : "belongs to"
     Product }o--|| TaxCategory : "belongs to"
     Variant ||--o{ Price : "has many"
@@ -89,7 +88,6 @@ erDiagram
 - **Option Types** (e.g., Size, Color) define variant options
 - **Option Values** (e.g., Small, Red) are assigned to variants
 - **Taxons** (via Classifications) organize products into categories
-- **Properties** store additional product attributes (e.g., Material, Brand)
 - **[Shipping Category](/developer/core-concepts/shipments)** and **[Tax Category](/developer/core-concepts/taxes)** determine shipping and tax rules
 
 Products have the following attributes:
@@ -98,11 +96,11 @@ Products have the following attributes:
 |-------------------|-------------------------------------------------------------------------------------------------------|--------------|
 | `name`            | Short name for the product                                                                            | Yes          |
 | `description`     | The most elegant, poetic turn of phrase for describing your product's benefits and features          | Yes          |
-| `slug`            | SEO slug based on the product name that is placed into the URL for the product. We use a library called [friendly_id](https://github.com/norman/friendly_id) to generate them                     | Yes          |
+| `slug`            | SEO slug based on the product name that is placed into the URL for the product                     | Yes          |
 | `status`          | The status of the product. Can be `draft`, `active`, `archived`. Defaults to `draft`. | No           |
 | `available_on`    | The first date the product becomes available for sale online in your shop                            | No           |
 | `discontinue_on`  | Date when the product will become unavailable for sale online in your shop                            | No           |
-| `deleted_at`      | The date the product is marked as deleted. We don't remove products entirely, only soft deleting them using a library called `paranoia` | No           |
+| `deleted_at`      | The date the product is marked as deleted. We don't remove products entirely, only soft deleting them                                                              | No           |
 | `meta_title`      | Optional title used for search engines instead of `name`                                              | Yes          |
 | `meta_description`| A description targeted at search engines for search engine optimization (SEO)                         | Yes          |
 | `meta_keywords`   | Several words and short phrases separated by commas, also targeted at search engines                  | Yes          |
@@ -120,14 +118,12 @@ Another typical option type could be a `color`, such as `Red`, `Green`, or `Blue
 A product can be assigned many option types, but must be assigned at least one if you wish to create variants for that product
 
 <Info>
-The `name` and `presentation` fields for option types are translatable as of version 4.6.
+The `name` and `presentation` fields for option types are translatable.
 </Info>
 
 ## Variants
 
 `Variant` records track the individual variants of a `Product`. Variants are of two types: master variants and normal variants.
-
-Variant records can track some individual properties regarding a variant, such as height, width, depth, and cost price. These properties are unique to each variant, and so are different from [Product Properties](#product-properties), which apply to all variants of that product.
 
 | Attribute          | Description                                                                                   | Example Value          |
 |--------------------|-----------------------------------------------------------------------------------------------|------------------------|
@@ -149,10 +145,6 @@ Variant records can track some individual properties regarding a variant, such a
 Every single product has a master variant, which tracks basic information such as a count on hand, a price and a <Tooltip tip="Stock Keeping Unit - In inventory management, a stock keeping unit (abbreviated as SKU) is the unit of measure in which the stocks of a material are managed.">SKU</Tooltip>.
 
 Whenever a product is created, a master variant for that product will be created too.
-
-<Info>
-Logic behind is implemented in the `after_initialize` callback of the `Spree::Product` model in a [ensure_master](https://github.com/spree/spree/blob/d3927a3f646f0b4e72b137bf72606c885ec59829/core/app/models/spree/product.rb#L132) method.
-</Info>
 
 Master variants are automatically created along with a product and exist for the sole purpose of having a consistent API when associating variants and [line items](orders#line-items). If there were no master variant, then line items would need to track a polymorphic association which would either be a product or a variant.
 
@@ -183,7 +175,7 @@ product.default_variant
 
 How this works?
 
-* If a product has multiple Variants it will return the first non-master Variant based on their sort position set in the Admin Panel or Platform API.
+* If a product has multiple Variants it will return the first non-master Variant based on their sort position set in the admin panel or Admin API.
 * If there are no non-master Variants it will return the Master Variant
 
 So you can easily rely on this method to get the default Variant for a product.
@@ -211,43 +203,6 @@ product.default_variant.images
 ```
 
 Image order is determined by the `position` attribute, which is an integer. By default, images are ordered from left to right.
-
-<Info>
-Under the hood we use [Rails Active Storage](https://guides.rubyonrails.org/active_storage_overview.html) to handle image storage and manipulation. See the [Images & Assets](/developer/core-concepts/images-assets) guide for more details on image processing, helpers, and best practices.
-</Info>
-
-## Product Properties
-
-<Warning>
-**Product Properties are deprecated as of Spree 5.2.** This feature was the default way to add custom attributes to products prior to Spree 5.2, but has been replaced by [Metafields](/developer/core-concepts/metafields).
-
-For **new projects**, use [Metafields](/developer/core-concepts/metafields) instead. Product Properties will be removed in Spree 6.0.
-
-For **existing projects**, Properties are still supported for backward compatibility but require enabling via `config.product_properties_enabled = true`. See the [upgrade guide](/developer/upgrades/5.1-to-5.2#3-migrate-to-metafields-or-keep-using-properties) for migration instructions.
-</Warning>
-
-Product properties track individual attributes for a product that don't apply to all products. These are typically additional information about the item. For instance, a T-Shirt may have properties representing information about the kind of material used, as well as the type of fit the shirt is.
-
-A `Property` should not be confused with an [`OptionType`](#option-types-and-option-values), which is used when defining [Variants](#variants) for a product.
-
-You can retrieve the value for a property on a `Product` object by calling the `property` method on it and passing through that property's name:
-
-```ruby
-product.property("material")
-=> "100% Cotton"
-```
-
-You can set a property on a product by calling the `set_property` method:
-
-```ruby
-product.set_property("material", "100% cotton")
-```
-
-If this property doesn't already exist, a new `Property` instance with this name will be created on the fly.
-
-<Info>
-As of version 4.6, product property `value` fields are translatable.
-</Info>
 
 ## Prices
 
@@ -292,5 +247,5 @@ which will output `/t/categories/clothes/dresses`.
 </Note>
 
 <Info>
-As of version 4.6, the taxon `name` and `description` fields are translatable.
+The taxon `name` and `description` fields are translatable.
 </Info>

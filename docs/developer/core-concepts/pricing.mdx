@@ -20,7 +20,7 @@ Spree's pricing system supports both simple single-currency pricing and advanced
 | `currency`        | The ISO code for the currency in which the `amount` and `compare_at_amount` are denominated. | `USD`                 |
 
 <Warning>
-If a product doesn't have a price in the selected currency it won't show up in the Storefront and Storefront API by default.
+If a product doesn't have a price in the selected currency it won't show up in the storefront and Store API by default.
 </Warning>
 
 To fetch a list of currencies that given product is available in, call `prices` to get a list of related `Price` objects:
@@ -84,15 +84,7 @@ There are also other helpful methods available such as:
   </Accordion>
 </AccordionGroup>
 
-<Info>
-Spree behind the scenes uses [Ruby Money gem](https://github.com/RubyMoney/money) with some [additional](https://github.com/spree/spree/blob/main/core/app/models/concerns/spree/display_money.rb) [tweaks](https://github.com/spree/spree/blob/main/core/lib/spree/money.rb).
-</Info>
-
 ## Price Lists
-
-<Info>
-Price Lists are available as of Spree 5.2.
-</Info>
 
 Price Lists allow you to create different pricing strategies for your products based on various conditions such as [markets](/developer/core-concepts/markets), customer zones, specific users, or order quantities. This enables advanced pricing scenarios like:
 

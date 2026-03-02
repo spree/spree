@@ -220,7 +220,9 @@ module Spree
     self.whitelisted_ransackable_associations = %w[taxons stores variants_including_master master variants tags labels
                                                    shipping_category classifications option_types]
     self.whitelisted_ransackable_scopes = %w[not_discontinued search_by_name in_taxon price_between
+                                             price_lte price_gte
                                              multi_search in_stock out_of_stock with_option_value_ids
+
                                              ascend_by_price descend_by_price]
 
     [

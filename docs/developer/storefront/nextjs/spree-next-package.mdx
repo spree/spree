@@ -1,0 +1,282 @@
+---
+title: "@spree/next Package"
+description: Next.js integration library — server actions, caching, and cookie-based auth
+---
+
+The `@spree/next` package provides a complete Next.js integration for Spree Commerce with server actions, automatic cookie management, and full TypeScript support.
+
+## Installation
+
+```bash
+npm install @spree/next @spree/sdk
+```
+
+## Configuration
+
+### Auto-initialization
+
+Set environment variables and the client initializes automatically:
+
+```env
+SPREE_API_URL=https://api.mystore.com
+SPREE_API_KEY=your-publishable-api-key
+```
+
+### Explicit initialization
+
+```typescript
+// lib/storefront.ts
+import { initSpreeNext } from '@spree/next';
+
+initSpreeNext({
+  baseUrl: process.env.SPREE_API_URL!,
+  apiKey: process.env.SPREE_API_KEY!,
+  cartCookieName: '_spree_cart_token',     // default
+  accessTokenCookieName: '_spree_jwt',     // default
+  defaultLocale: 'en',
+  defaultCurrency: 'USD',
+});
+```
+
+## Data Functions
+
+Plain async functions for reading data in Server Components. Wrap with `"use cache"` in your app for caching.
+
+### Products
+
+```typescript
+import { listProducts, getProduct, getProductFilters } from '@spree/next';
+
+const products = await listProducts({ per_page: 25, includes: ['variants', 'images'] });
+const product = await getProduct('spree-tote');
+const filters = await getProductFilters({ taxon_id: 'txn_123' });
+```
+
+### Categories
+
+```typescript
+import { listTaxons, getTaxon, listTaxonProducts } from '@spree/next';
+import { listTaxonomies, getTaxonomy } from '@spree/next';
+
+const taxons = await listTaxons({ depth_eq: 1 });
+const taxon = await getTaxon('categories/clothing');
+const products = await listTaxonProducts('categories/clothing', { per_page: 12 });
+
+const taxonomies = await listTaxonomies({ includes: ['taxons'] });
+const taxonomy = await getTaxonomy('tax_123');
+```
+
+### Store & Geography
+
+```typescript
+import { getStore, listCountries, getCountry } from '@spree/next';
+
+const store = await getStore();
+const countries = await listCountries();
+const usa = await getCountry('US');
+```
+
+### Using in Server Components
+
+```typescript
+import { listProducts, listTaxons } from '@spree/next';
+
+export default async function ProductsPage() {
+  const products = await listProducts({ per_page: 12 });
+  const categories = await listTaxons({ depth_eq: 1 });
+
+  return (
+    <div>
+      {products.data.map((product) => (
+        <div key={product.id}>{product.name}</div>
+      ))}
+    </div>
+  );
+}
+```
+
+## Server Actions
+
+Server actions handle mutations and auth-dependent reads. They automatically manage cookies for cart tokens and JWT authentication.
+
+### Cart
+
+```typescript
+import { getCart, getOrCreateCart, addItem, updateItem, removeItem, clearCart } from '@spree/next';
+
+const cart = await getCart();
+const cart = await getOrCreateCart();
+await addItem(variantId, quantity);
+await updateItem(lineItemId, quantity);
+await removeItem(lineItemId);
+await clearCart();
+```
+
+### Checkout
+
+```typescript
+import {
+  getCheckout,
+  updateAddresses,
+  advance,
+  next,
+  getShipments,
+  selectShippingRate,
+  applyCoupon,
+  removeCoupon,
+  complete,
+} from '@spree/next';
+
+const checkout = await getCheckout();
+await updateAddresses({ ship_address: { ... }, bill_address: { ... } });
+await advance();
+await next();
+const shipments = await getShipments();
+await selectShippingRate(shipmentId, rateId);
+await applyCoupon('SAVE20');
+await removeCoupon(promoId);
+await complete();
+```
+
+### Authentication
+
+```typescript
+import { login, register, logout, getCustomer, updateCustomer } from '@spree/next';
+
+await login(email, password);
+await register({ email, password, password_confirmation, first_name, last_name });
+await logout();
+const customer = await getCustomer();
+await updateCustomer({ first_name: 'John' });
+```
+
+### Addresses
+
+```typescript
+import { listAddresses, getAddress, createAddress, updateAddress, deleteAddress } from '@spree/next';
+
+const addresses = await listAddresses();
+const address = await getAddress(addressId);
+await createAddress({ firstname: 'John', address1: '123 Main St', ... });
+await updateAddress(addressId, { city: 'Brooklyn' });
+await deleteAddress(addressId);
+```
+
+### Orders
+
+```typescript
+import { listOrders, getOrder } from '@spree/next';
+
+const orders = await listOrders();
+const order = await getOrder(orderId);
+```
+
+### Payment Sessions
+
+```typescript
+import {
+  createPaymentSession,
+  getPaymentSession,
+  updatePaymentSession,
+  completePaymentSession,
+} from '@spree/next';
+
+const session = await createPaymentSession(orderId, { payment_method_id: 'pm_123' });
+
+// Access provider data (e.g., Stripe client secret)
+const clientSecret = session.external_data.client_secret;
+
+await updatePaymentSession(orderId, sessionId, { amount: '50.00' });
+await completePaymentSession(orderId, sessionId, { session_result: 'success' });
+```
+
+### Credit Cards & Gift Cards
+
+```typescript
+import { listCreditCards, deleteCreditCard } from '@spree/next';
+import { listGiftCards, getGiftCard } from '@spree/next';
+
+const cards = await listCreditCards();
+await deleteCreditCard(cardId);
+
+const giftCards = await listGiftCards();
+const giftCard = await getGiftCard(giftCardId);
+```
+
+## Using Server Actions in Forms
+
+```typescript
+import { addItem, getCart } from '@spree/next';
+
+export default async function CartPage() {
+  const cart = await getCart();
+
+  async function handleAddItem(formData: FormData) {
+    'use server';
+    await addItem(formData.get('variantId') as string, 1);
+  }
+
+  return <form action={handleAddItem}>...</form>;
+}
+```
+
+## Localization
+
+### Automatic (recommended)
+
+Data functions automatically read locale and country from cookies. Use the included middleware to set cookies based on the URL:
+
+```typescript
+// middleware.ts
+import { createSpreeMiddleware } from '@spree/next/middleware';
+
+export default createSpreeMiddleware({
+  defaultCountry: 'us',
+  defaultLocale: 'en',
+});
+
+export const config = {
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\\..*$).*)'],
+};
+```
+
+Then data functions work without any locale arguments:
+
+```typescript
+// Locale/country auto-read from cookies — no options needed
+const products = await listProducts({ per_page: 10 });
+const taxon = await getTaxon('categories/clothing');
+```
+
+Use the `setLocale` server action in country/language switchers:
+
+```typescript
+import { setLocale } from '@spree/next';
+
+await setLocale({ country: 'de', locale: 'de' });
+```
+
+### Manual override
+
+You can still pass locale options explicitly — they override the auto-detected values:
+
+```typescript
+const products = await listProducts({ per_page: 10 }, { locale: 'fr', country: 'FR' });
+const taxon = await getTaxon('categories/clothing', {}, { locale: 'de', country: 'DE' });
+```
+
+## TypeScript
+
+All types are re-exported from `@spree/sdk`:
+
+```typescript
+import type {
+  StoreProduct,
+  StoreOrder,
+  StoreLineItem,
+  StorePaymentSession,
+  StoreTaxon,
+  PaginatedResponse,
+  SpreeError,
+} from '@spree/next';
+```

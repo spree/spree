@@ -1,4 +1,4 @@
-import type { ErrorResponse } from './types';
+import type { ErrorResponse, LocaleDefaults } from './types';
 
 export interface RetryConfig {
   /** Maximum number of retries (default: 2) */
@@ -30,7 +30,7 @@ export interface RequestOptions {
 
 export interface InternalRequestOptions extends RequestOptions {
   body?: unknown;
-  params?: Record<string, string | number | undefined>;
+  params?: Record<string, string | number | boolean | (string | number)[] | undefined>;
 }
 
 export class SpreeError extends Error {
@@ -93,14 +93,20 @@ export interface AuthConfig {
 export function createRequestFn(
   config: RequestConfig,
   basePath: string,
-  auth: AuthConfig
+  auth: AuthConfig,
+  defaults?: LocaleDefaults
 ): RequestFn {
   return async function request<T>(
     method: string,
     path: string,
     options: InternalRequestOptions = {}
   ): Promise<T> {
-    const { token, orderToken, locale, currency, country, headers = {}, body, params } = options;
+    const { token, orderToken, headers = {}, body, params } = options;
+
+    // Per-request options override client-level defaults
+    const locale = options.locale ?? defaults?.locale;
+    const currency = options.currency ?? defaults?.currency;
+    const country = options.country ?? defaults?.country;
 
     // Build URL with query params
     const url = new URL(`${config.baseUrl}${basePath}${path}`);
