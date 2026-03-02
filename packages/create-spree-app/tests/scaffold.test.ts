@@ -4,6 +4,14 @@ import path from 'node:path'
 import os from 'node:os'
 import { scaffold } from '../src/scaffold'
 
+vi.mock('../src/storefront', async (importOriginal) => {
+  const mod = await importOriginal<typeof import('../src/storefront')>()
+  return {
+    ...mod,
+    installRootDeps: vi.fn(),
+  }
+})
+
 function createTempDir(): string {
   return fs.mkdtempSync(path.join(os.tmpdir(), 'create-spree-app-test-'))
 }

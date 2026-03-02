@@ -3,14 +3,18 @@ export function rootPackageJsonContent(name: string): string {
     name,
     private: true,
     scripts: {
-      dev: 'docker compose up -d',
-      stop: 'docker compose stop',
+      dev: 'spree dev',
+      stop: 'spree stop',
       down: 'docker compose down',
-      logs: 'docker compose logs -f web',
-      'logs:worker': 'docker compose logs -f worker',
-      'seed': 'docker compose exec web bin/rails db:seed',
-      'load-sample-data': 'docker compose exec web bin/rails spree:load_sample_data',
-      console: 'docker compose exec web bin/rails c',
+      update: 'spree update',
+      logs: 'spree logs',
+      'logs:worker': 'spree logs worker',
+      seed: 'spree seed',
+      'load-sample-data': 'spree sample-data',
+      console: 'spree console',
+    },
+    dependencies: {
+      '@spree/cli': '2.0.0-beta',
     },
   }
 
