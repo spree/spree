@@ -6,8 +6,6 @@ module Spree
       before_action :add_breadcrumbs
       before_action :load_orders, only: :show
 
-      helper_method :gift_cards_filter_dropdown_value
-
       private
 
       def permitted_resource_params
@@ -47,19 +45,6 @@ module Spree
 
       def load_user
         @user = Spree.user_class.find_by_prefix_id(params[:user_id]) if params[:user_id].present?
-      end
-
-      def gift_cards_filter_dropdown_value
-        Spree::Deprecation.warn("gift_cards_filter_dropdown_value is deprecated and will be removed in Spree 5.5")
-        if params.dig(:q, :active).present?
-          Spree.t('admin.gift_cards.active')
-        elsif params.dig(:q, :expired).present?
-          Spree.t(:expired)
-        elsif params.dig(:q, :redeemed).present?
-          Spree.t('admin.gift_cards.redeemed')
-        else
-          Spree.t('admin.gift_cards.all_statuses')
-        end
       end
 
       def add_breadcrumbs
