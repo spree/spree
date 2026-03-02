@@ -36,7 +36,6 @@
         date_to_value: params.dig(:q, :completed_at_lt) %>
       <% end %>
 
-      <%= render "spree/admin/orders/table_filter_dropdown" %>
       <%= button_tag type: 'button', class: 'btn btn-light flex items-center', data: { action: 'dialog#open' } do %>
         <%= icon "adjustments", class: "mr-1" %>
         <%= Spree.t("admin.filters") %>

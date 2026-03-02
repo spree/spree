@@ -141,24 +141,6 @@ module Spree
         }
       end
 
-      def order_filter_dropdown_value
-        Spree::Deprecation.warn("order_filter_dropdown_value is deprecated and will be removed in Spree 5.5")
-
-        if params.dig(:q, :shipment_state_not_in) == ['shipped', 'canceled']
-          Spree.t('admin.orders.unfulfilled')
-        elsif params.dig(:q, :shipment_state_eq) == 'shipped'
-          Spree.t('admin.orders.fulfilled')
-        elsif params.dig(:q, :state_in) == ['canceled','partially_canceled']
-          Spree.t('admin.orders.canceled')
-        elsif params.dig(:q, :refunded)&.present?
-          Spree.t('admin.orders.refunded')
-        elsif params.dig(:q, :partially_refunded)&.present?
-          Spree.t('admin.orders.partially_refunded')
-        else
-          Spree.t('admin.orders.all_orders')
-        end
-      end
-
       private
 
       def map_to_tax_line(tax_adjustment, for_shipment: false)

@@ -76,28 +76,6 @@ module Spree
         category_tree
       end
 
-      def product_filter_status_dropdown_value
-        case params.dig(:q, :status_eq)
-        when 'active'
-          Spree.t('admin.products.active')
-        when 'draft'
-          Spree.t('admin.products.draft')
-        when 'archived'
-          Spree.t('admin.products.archived')
-        else
-          Spree.t('admin.products.all_statuses')
-        end
-      end
-
-      def product_filter_stock_dropdown_value
-        if params.dig(:q, :in_stock) == '1'
-          Spree.t('admin.products.in_stock')
-        elsif params.dig(:q, :out_of_stock) == '1'
-          Spree.t('admin.products.out_of_stock')
-        else
-          Spree.t('admin.products.any_stock')
-        end
-      end
 
       def show_product_status_help_bubble?
         false
