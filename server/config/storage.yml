@@ -20,6 +20,7 @@ cloudflare:
   secret_access_key: <%= ENV.fetch("CLOUDFLARE_SECRET_ACCESS_KEY", "") %>
   region: auto
   bucket: <%= ENV.fetch("CLOUDFLARE_BUCKET", "spree-#{Rails.env}") %>
+  force_path_style: true
   request_checksum_calculation: "when_required"
   response_checksum_validation: "when_required"
 # Remember not to checkin your GCS keyfile to a repository

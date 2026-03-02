@@ -13,7 +13,7 @@ if ENV['SENTRY_DSN'].present?
 
     config.release = "spree@#{ENV['RENDER_GIT_COMMIT']}" if ENV['RENDER_GIT_COMMIT'].present?
 
-    config.excluded_exceptions = [
+    config.excluded_exceptions += [
       'ActionController::RoutingError',
       'ActiveRecord::RecordNotFound',
       'Sidekiq::JobRetry::Skip',
