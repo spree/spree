@@ -2418,7 +2418,18 @@ describe Spree::Order, type: :model do
     end
 
     context 'when order does not have refunds' do
-      let!(:order) { create(:order_ready_to_ship) }
+      let(:order) { create(:order_with_line_items, total: 100, store: store) }
+
+      context 'when order is fully paid by store credit' do
+        before do
+          create(:store_credit_payment_method, stores: [order.store])
+          create(:store_credit_payment, amount: order.total, order: order)
+        end
+
+        it 'returns false' do
+          expect(subject).to be(false)
+        end
+      end
 
       it 'returns false' do
         expect(subject).to be(false)

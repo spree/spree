@@ -309,9 +309,9 @@ module Spree
     # @return [Boolean]
     def order_refunded?
       return false if item_count.zero?
+      return false if refunds_total.zero?
 
-      (payment_state.in?(%w[void failed]) && refunds_total.positive?) ||
-        refunds_total == total_minus_store_credits - additional_tax_total.abs
+      payment_state.in?(%w[void failed]) || refunds_total == total_minus_store_credits - additional_tax_total.abs
     end
 
     def refunds_total
