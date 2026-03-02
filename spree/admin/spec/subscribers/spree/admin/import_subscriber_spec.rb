@@ -25,7 +25,7 @@ RSpec.describe Spree::Admin::ImportSubscriber do
         subscriber = described_class.new
         event = Spree::Event.new(
           name: 'import.completed',
-          payload: { 'id' => import.id }
+          payload: { 'id' => import.prefixed_id }
         )
 
         found_import = Spree::Import.find(import.id)
@@ -62,10 +62,8 @@ RSpec.describe Spree::Admin::ImportSubscriber do
         subscriber = described_class.new
         event = Spree::Event.new(
           name: 'import.completed',
-          payload: { 'id' => -999 }
+          payload: { 'id' => 'import_nonexistent' }
         )
-
-        expect(Spree::Import).to receive(:find_by).with(id: -999).and_return(nil)
 
         subscriber.update_loader_in_import_view(event)
       end

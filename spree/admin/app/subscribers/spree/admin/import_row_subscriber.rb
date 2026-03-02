@@ -21,7 +21,7 @@ module Spree
         import_row_id = event.payload['id']
         return unless import_row_id
 
-        import_row = Spree::ImportRow.find_by(id: import_row_id)
+        import_row = Spree::ImportRow.find_by_prefix_id(import_row_id)
         return unless import_row
 
         add_row_to_import_view(import_row)

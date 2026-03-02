@@ -34,7 +34,7 @@ module Spree
 
     def find_invitation(event)
       invitation_id = event.payload['id']
-      Spree::Invitation.find_by(id: invitation_id)
+      Spree::Invitation.find_by_prefix_id(invitation_id)
     end
   end
 end

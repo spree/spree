@@ -11,7 +11,7 @@ RSpec.describe Spree::InvitationEmailSubscriber do
   let(:subscriber) { described_class.new }
 
   def mock_event(invitation)
-    double('Event', payload: { 'id' => invitation.id })
+    double('Event', payload: { 'id' => invitation.prefixed_id })
   end
 
   describe 'invitation.created event' do
@@ -23,10 +23,11 @@ RSpec.describe Spree::InvitationEmailSubscriber do
 
     context 'when invitation not found' do
       it 'does not raise an error' do
-        invitation_id = invitation.id
+        prefixed_id = invitation.prefixed_id
         invitation.destroy
 
-        expect { subscriber.send(:send_invitation_email, mock_event(OpenStruct.new(id: invitation_id))) }.not_to raise_error
+        event = double('Event', payload: { 'id' => prefixed_id })
+        expect { subscriber.send(:send_invitation_email, event) }.not_to raise_error
       end
     end
   end
@@ -44,10 +45,11 @@ RSpec.describe Spree::InvitationEmailSubscriber do
 
     context 'when invitation not found' do
       it 'does not raise an error' do
-        invitation_id = invitation.id
+        prefixed_id = invitation.prefixed_id
         invitation.destroy
 
-        expect { subscriber.send(:send_acceptance_notification, mock_event(OpenStruct.new(id: invitation_id))) }.not_to raise_error
+        event = double('Event', payload: { 'id' => prefixed_id })
+        expect { subscriber.send(:send_acceptance_notification, event) }.not_to raise_error
       end
     end
   end
@@ -98,10 +100,11 @@ RSpec.describe Spree::InvitationEmailSubscriber do
 
     context 'when invitation not found' do
       it 'does not raise an error' do
-        invitation_id = invitation.id
+        prefixed_id = invitation.prefixed_id
         invitation.destroy!
 
-        expect { subscriber.send(:resend_invitation_email, mock_event(OpenStruct.new(id: invitation_id))) }.not_to raise_error
+        event = double('Event', payload: { 'id' => prefixed_id })
+        expect { subscriber.send(:resend_invitation_email, event) }.not_to raise_error
       end
     end
   end
