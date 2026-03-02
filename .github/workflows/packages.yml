@@ -168,9 +168,19 @@ jobs:
             echo "published=false" >> $GITHUB_OUTPUT
           fi
 
+      - name: Determine npm tag
+        id: tag
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          if echo "$PACKAGE_VERSION" | grep -qE '[-]'; then
+            echo "tag=beta" >> $GITHUB_OUTPUT
+          else
+            echo "tag=latest" >> $GITHUB_OUTPUT
+          fi
+
       - name: Build and Publish
         if: steps.check.outputs.published == 'false'
-        run: pnpm build && npm publish --provenance --access public
+        run: pnpm build && npm publish --provenance --access public --tag ${{ steps.tag.outputs.tag }}
 
   release-create-spree-app:
     name: "create-spree-app - Release"
