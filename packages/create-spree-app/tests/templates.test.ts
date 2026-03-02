@@ -20,22 +20,26 @@ describe('dockerComposeContent', () => {
     expect(content).toContain('curl -f http://localhost:3000/up')
   })
 
-  it('includes worker service with bin/jobs command', () => {
-    expect(content).toContain('command: bin/jobs')
+  it('includes worker service with sidekiq command', () => {
+    expect(content).toContain('command: bundle exec sidekiq')
   })
 
   it('includes volume definition', () => {
     expect(content).toContain('postgres_data:')
   })
 
-  it('uses DATABASE_URL pointing to postgres service', () => {
-    expect(content).toContain('DATABASE_URL: postgres://postgres@postgres:5432/spree_production')
+  it('uses DATABASE_HOST pointing to postgres service', () => {
+    expect(content).toContain('DATABASE_HOST: postgres')
   })
 
-  it('sets separate URLs for cache, queue, and cable databases', () => {
-    expect(content).toContain('CACHE_DATABASE_URL: postgres://postgres@postgres:5432/spree_production_cache')
-    expect(content).toContain('QUEUE_DATABASE_URL: postgres://postgres@postgres:5432/spree_production_queue')
-    expect(content).toContain('CABLE_DATABASE_URL: postgres://postgres@postgres:5432/spree_production_cable')
+  it('includes redis service and REDIS_URL', () => {
+    expect(content).toContain('redis:7-alpine')
+    expect(content).toContain('REDIS_URL: redis://redis:6379/0')
+  })
+
+  it('includes mailpit service for local email', () => {
+    expect(content).toContain('axllent/mailpit')
+    expect(content).toContain('SMTP_HOST: mailpit')
   })
 
   it('uses production environment with SSL disabled', () => {

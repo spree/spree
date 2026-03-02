@@ -24,6 +24,7 @@ Wait for the services to be healthy, then open:
   - Email: \`${DEFAULT_ADMIN_EMAIL}\`
   - Password: \`${DEFAULT_ADMIN_PASSWORD}\`
 - **Store API:** http://localhost:${port}/api/v3/store
+- **Mailpit (email inbox):** http://localhost:8025
 `
 
   if (hasStorefront) {
