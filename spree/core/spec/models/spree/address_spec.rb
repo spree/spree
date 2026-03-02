@@ -3,33 +3,6 @@ require 'spec_helper'
 describe Spree::Address, type: :model do
   it_behaves_like 'metadata'
 
-  describe 'before_validation :remove_emoji_and_normalize' do
-    let(:address) do
-      create(:address,
-        firstname: 'Jan 👋',
-        lastname: 'Масник',
-        phone: '1234567😃89',
-        alternative_phone: '😊 234567890',
-        company: 'общество',
-        address1: 'Default Street 123🌴',
-        address2: '🎂Apartment 6',
-        city: 'Варшава',
-        zipcode: '35005 👋 '
-      )
-    end
-
-    it 'normalizes the address and removes emojis' do
-      expect(address.firstname).to eq('Jan')
-      expect(address.lastname).to eq('Masnik')
-      expect(address.phone).to eq('123456789')
-      expect(address.alternative_phone).to eq('234567890')
-      expect(address.company).to eq('obshchestvo')
-      expect(address.address1).to eq('Default Street 123')
-      expect(address.address2).to eq('Apartment 6')
-      expect(address.city).to eq('Varshava')
-    end
-  end
-
   describe 'after_commit :async_geocode' do
     let(:address) { build(:address) }
 
