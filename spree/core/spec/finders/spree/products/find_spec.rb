@@ -67,7 +67,7 @@ module Spree
     end
 
     context 'in stock' do
-      it 'returns products with variants in stock' do
+      it 'returns products with variants in stock or backorderable' do
         params = {
           filter: {
             ids: '',
@@ -89,7 +89,7 @@ module Spree
             scope: Spree::Product.all,
             params: params
           ).execute
-        ).to contain_exactly(in_stock_product, not_backorderable_product)
+        ).to contain_exactly(product, product_2, product_3, in_stock_product, not_backorderable_product)
       end
     end
 

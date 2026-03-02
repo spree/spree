@@ -81,9 +81,26 @@ module Spree
         where(Price.table_name => { amount: price.. })
       end
 
-      add_search_scope :in_stock do
-        joins(:variants_including_master).merge(Spree::Variant.in_stock)
+      # Can't use add_search_scope for this as it needs a default argument
+      # Ransack calls with '1' to activate, '0' or nil to skip
+      # In Ruby code: in_stock(true) for in-stock, in_stock(false) for out-of-stock
+      def self.in_stock(in_stock = true)
+        if in_stock == '0' || !in_stock
+          all
+        else
+          joins(:variants_including_master).merge(Spree::Variant.in_stock_or_backorderable)
+        end
       end
+      search_scopes << :in_stock
+
+      def self.out_of_stock(out_of_stock = true)
+        if out_of_stock == '0' || !out_of_stock
+          all
+        else
+          where.not(id: joins(:variants_including_master).merge(Spree::Variant.in_stock_or_backorderable))
+        end
+      end
+      search_scopes << :out_of_stock
 
       add_search_scope :backorderable do
         joins(:variants_including_master).merge(Spree::Variant.backorderable)

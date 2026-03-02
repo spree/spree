@@ -90,9 +90,9 @@ module Spree
       end
 
       def product_filter_stock_dropdown_value
-        if params.dig(:q, :in_stock_items) == '1'
+        if params.dig(:q, :in_stock) == '1'
           Spree.t('admin.products.in_stock')
-        elsif params.dig(:q, :out_of_stock_items) == '1'
+        elsif params.dig(:q, :out_of_stock) == '1'
           Spree.t('admin.products.out_of_stock')
         else
           Spree.t('admin.products.any_stock')

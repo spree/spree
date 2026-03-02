@@ -98,7 +98,7 @@ Rails.application.config.after_initialize do
                                         displayable: false,
                                         default: false,
                                         position: 70,
-                                        ransack_attribute: 'in_stock_items'
+                                        ransack_attribute: 'in_stock'
 
   # Taxons - displayed as comma-separated list, filtered via autocomplete
   Spree.admin.tables.products.add :taxons,

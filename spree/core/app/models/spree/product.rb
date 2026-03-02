@@ -197,18 +197,6 @@ module Spree
     scope :by_source, ->(source) { send(source) }
     scope :paused, -> { where(status: 'paused') }
     scope :published, -> { where(status: 'active') }
-    scope :in_stock_items, -> { joins(:variants).merge(Spree::Variant.in_stock_or_backorderable) }
-    scope :out_of_stock_items, lambda {
-      joins(variants_including_master: :stock_items).
-        where(spree_variants: { track_inventory: true }).
-        where.not(id: Spree::Variant.where(track_inventory: false).pluck(:product_id).uniq).
-        where(spree_stock_items: { backorderable: false }).
-        group(:id).
-        having("SUM(#{Spree::StockItem.table_name}.count_on_hand) <= 0")
-    }
-    scope :out_of_stock, lambda {
-                           joins(:stock_items).where("#{Spree::Variant.table_name}.track_inventory = ? OR #{Spree::StockItem.table_name}.count_on_hand <= ?", false, 0)
-                         }
 
     attr_accessor :option_values_hash
 
@@ -232,7 +220,7 @@ module Spree
     self.whitelisted_ransackable_associations = %w[taxons stores variants_including_master master variants tags labels
                                                    shipping_category classifications option_types]
     self.whitelisted_ransackable_scopes = %w[not_discontinued search_by_name in_taxon price_between
-                                             multi_search in_stock_items out_of_stock_items with_option_value_ids
+                                             multi_search in_stock out_of_stock with_option_value_ids
                                              ascend_by_price descend_by_price]
 
     [

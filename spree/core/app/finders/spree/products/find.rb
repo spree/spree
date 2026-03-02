@@ -22,14 +22,8 @@ module Spree
         @in_stock         = params.dig(:filter, :in_stock)
         @backorderable    = params.dig(:filter, :backorderable)
         @purchasable      = params.dig(:filter, :purchasable)
-        @out_of_stock     = params.dig(:filter, :out_of_stock).to_b
         @tags             = params.dig(:filter, :tags).to_s.split(',').compact_blank
         @vendor_ids       = params.dig(:filter, :vendor_ids)&.split(',')&.compact_blank || []
-
-        if @purchasable.present? && @out_of_stock.present?
-          @purchasable = false
-          @out_of_stock = false
-        end
       end
 
       def execute
@@ -50,7 +44,6 @@ module Spree
         products = show_only_stock(products)
         products = show_only_backorderable(products)
         products = show_only_purchasable(products)
-        products = show_only_out_of_stock(products)
         products = by_taxonomies(products)
         products = ordered(products)
         products = by_vendor_ids(products)
@@ -62,7 +55,7 @@ module Spree
 
       attr_reader :ids, :skus, :price, :currency, :taxons, :concat_taxons, :name, :options, :option_value_ids, :scope,
                   :sort_by, :deleted, :discontinued, :store, :in_stock, :backorderable, :purchasable, :tags,
-                  :query, :vendor_ids, :out_of_stock, :slug, :taxonomies
+                  :query, :vendor_ids, :slug, :taxonomies
 
       def query?
         query.present?
@@ -292,12 +285,6 @@ module Spree
         return products unless purchasable.to_s == 'true'
 
         products.in_stock_or_backorderable
-      end
-
-      def show_only_out_of_stock(products)
-        return products unless out_of_stock.present?
-
-        products.out_of_stock
       end
 
       def map_prices(prices)
