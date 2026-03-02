@@ -28,7 +28,7 @@ const client = createSpreeClient({
 // Browse products (Store API)
 const products = await client.store.products.list({
   per_page: 10,
-  includes: 'variants,images',
+  includes: ['variants', 'images'],
 });
 
 // Get a single product

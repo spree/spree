@@ -96,7 +96,7 @@ All data fetching is done through server actions in `src/lib/data/`:
 import { getProducts, getProduct, getProductFilters } from '@/lib/data/products'
 
 const products = await getProducts({ per_page: 12 })
-const product = await getProduct('product-slug', { includes: 'variants,images' })
+const product = await getProduct('product-slug', { includes: ['variants', 'images'] })
 const filters = await getProductFilters({ taxon_id: 'txn_xxx' })
 
 // Cart

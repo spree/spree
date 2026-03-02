@@ -14,24 +14,44 @@ The Store API supports multi-language, multi-currency, and market-aware response
 | `X-Spree-Currency` | `EUR` | Currency for prices and totals |
 | `X-Spree-Country` | `FR` | Country ISO code for market resolution |
 
-## Setting Locale and Currency
+## Client-Level Defaults
 
-<CodeGroup>
+Set locale, currency, and country once at initialization — all subsequent requests use these defaults:
 
 ```typescript SDK
-// Set locale and currency per request
-const products = await client.store.products.list({}, {
+import { createSpreeClient } from '@spree/sdk'
+
+const client = createSpreeClient({
+  baseUrl: 'https://api.mystore.com',
+  publishableKey: 'spree_pk_xxx',
   locale: 'fr',
   currency: 'EUR',
   country: 'FR',
 })
 
-// Works on any endpoint
-const product = await client.store.products.get('spree-tote', {
-  includes: 'variants',
-}, {
-  locale: 'de',
+// All requests use fr/EUR/FR automatically
+const products = await client.store.products.list()
+```
+
+Update defaults at any time:
+
+```typescript
+client.setLocale('de')
+client.setCurrency('EUR')
+client.setCountry('DE')
+```
+
+## Per-Request Overrides
+
+Override client defaults for individual requests:
+
+<CodeGroup>
+
+```typescript SDK
+const products = await client.store.products.list({}, {
+  locale: 'fr',
   currency: 'EUR',
+  country: 'FR',
 })
 ```
 
@@ -161,22 +181,69 @@ curl 'http://localhost:3000/api/v3/store/products/spree-tote' \
 
 </CodeGroup>
 
-## Available Locales and Currencies
+## Available Countries, Locales, and Currencies
 
-To discover which locales and currencies a store supports, fetch the store information:
+Use the dedicated endpoints to discover which countries, locales, and currencies are available. These are derived from your store's [markets](/developer/core-concepts/markets) configuration.
+
+### Countries
+
+Each country includes its market's currency and supported locales:
 
 <CodeGroup>
 
 ```typescript SDK
-const store = await client.store.store.get()
-console.log(store.supported_locales)    // ["en", "fr", "de"]
-console.log(store.supported_currencies) // ["USD", "EUR", "GBP"]
-console.log(store.default_locale)       // "en"
-console.log(store.default_currency)     // "USD"
+const { data: countries } = await client.store.countries.list()
+// [
+//   { iso: "US", name: "United States", currency: "USD", default_locale: "en", supported_locales: ["en", "es"] },
+//   { iso: "DE", name: "Germany", currency: "EUR", default_locale: "de", supported_locales: ["de", "en"] },
+// ]
+
+// Get a single country with states
+const usa = await client.store.countries.get('US', {
+  includes: ['states'],
+})
+console.log(usa.states) // [{ abbr: "CA", name: "California" }, ...]
 ```
 
 ```bash cURL
-curl 'http://localhost:3000/api/v3/store/store' \
+# List all countries
+curl 'http://localhost:3000/api/v3/store/countries' \
+  -H 'X-Spree-Api-Key: spree_pk_xxx'
+
+# Get a country with states
+curl 'http://localhost:3000/api/v3/store/countries/US?include=states' \
+  -H 'X-Spree-Api-Key: spree_pk_xxx'
+```
+
+</CodeGroup>
+
+### Locales
+
+<CodeGroup>
+
+```typescript SDK
+const { data: locales } = await client.store.locales.list()
+// [{ code: "en", name: "English" }, { code: "fr", name: "French" }, ...]
+```
+
+```bash cURL
+curl 'http://localhost:3000/api/v3/store/locales' \
+  -H 'X-Spree-Api-Key: spree_pk_xxx'
+```
+
+</CodeGroup>
+
+### Currencies
+
+<CodeGroup>
+
+```typescript SDK
+const { data: currencies } = await client.store.currencies.list()
+// [{ iso_code: "USD", name: "US Dollar", symbol: "$" }, { iso_code: "EUR", name: "Euro", symbol: "€" }, ...]
+```
+
+```bash cURL
+curl 'http://localhost:3000/api/v3/store/currencies' \
   -H 'X-Spree-Api-Key: spree_pk_xxx'
 ```
 

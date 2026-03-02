@@ -500,7 +500,7 @@ Product images are included in Store API responses when you pass `includes=image
 
 ```typescript
 const product = await client.store.products.get('red-t-shirt', {
-  includes: 'images',
+  includes: ['images'],
 })
 ```
 

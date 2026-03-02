@@ -15,7 +15,7 @@ Pass a comma-separated list of relation names via the `include` (or `includes`) 
 ```typescript SDK
 // Product with variants and images
 const product = await client.store.products.get('spree-tote', {
-  includes: 'variants,images',
+  includes: ['variants', 'images'],
 })
 
 // Access included relations directly
@@ -91,7 +91,7 @@ With `?include=variants,images`, the related resources are embedded:
 
 ```typescript SDK
 const product = await client.store.products.get('spree-tote', {
-  includes: 'variants,images,option_types,metafields',
+  includes: ['variants', 'images', 'option_types', 'metafields'],
 })
 ```
 
@@ -115,7 +115,7 @@ curl -G 'http://localhost:3000/api/v3/store/products/spree-tote' \
 
 ```typescript SDK
 const taxon = await client.store.taxons.get('categories/clothing', {
-  includes: 'ancestors,children',
+  includes: ['ancestors', 'children'],
 })
 ```
 
@@ -144,7 +144,7 @@ curl -G 'http://localhost:3000/api/v3/store/taxons/categories/clothing' \
 
 ```typescript SDK
 const usa = await client.store.countries.get('US', {
-  includes: 'states',
+  includes: ['states'],
 })
 console.log(usa.states) // Array of state objects
 ```
@@ -166,7 +166,7 @@ The `include` parameter also works on collection endpoints:
 ```typescript SDK
 // List products with their images and default variant
 const { data: products } = await client.store.products.list({
-  includes: 'images,default_variant',
+  includes: ['images', 'default_variant'],
   per_page: 12,
 })
 ```
@@ -189,7 +189,7 @@ Use dot notation to include nested relations:
 ```typescript SDK
 // Include variants and their nested option values
 const product = await client.store.products.get('spree-tote', {
-  includes: 'variants.option_values',
+  includes: ['variants.option_values'],
 })
 ```
 
