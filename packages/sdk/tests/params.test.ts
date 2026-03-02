@@ -7,8 +7,13 @@ describe('transformListParams', () => {
     expect(result).toEqual({ page: 2, per_page: 10 });
   });
 
-  it('passes through includes param unchanged', () => {
+  it('passes through includes string unchanged', () => {
     const result = transformListParams({ includes: 'variants,images' });
+    expect(result).toEqual({ includes: 'variants,images' });
+  });
+
+  it('joins includes array into comma-separated string', () => {
+    const result = transformListParams({ includes: ['variants', 'images'] });
     expect(result).toEqual({ includes: 'variants,images' });
   });
 
@@ -55,12 +60,21 @@ describe('transformListParams', () => {
     expect(result).toEqual({ page: 1 });
   });
 
-  it('wraps array bracket keys correctly: foo[] → q[foo][]', () => {
+  it('wraps array values with [] suffix automatically', () => {
     const result = transformListParams({
-      'with_option_value_ids[]': ['optval_abc', 'optval_def'],
+      with_option_value_ids: ['optval_abc', 'optval_def'],
     });
     expect(result).toEqual({
       'q[with_option_value_ids][]': ['optval_abc', 'optval_def'],
+    });
+  });
+
+  it('handles array values even when key already has [] suffix', () => {
+    const result = transformListParams({
+      'with_option_value_ids[]': ['optval_abc'],
+    });
+    expect(result).toEqual({
+      'q[with_option_value_ids][]': ['optval_abc'],
     });
   });
 

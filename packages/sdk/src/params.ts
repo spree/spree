@@ -21,7 +21,8 @@ export function transformListParams(
     if (value === undefined) continue;
 
     if (PASSTHROUGH_KEYS.has(key)) {
-      result[key] = value as ParamValue;
+      // Join arrays for passthrough keys (e.g., includes: ['variants', 'images'] → 'variants,images')
+      result[key] = Array.isArray(value) ? (value as (string | number)[]).join(',') : value as ParamValue;
       continue;
     }
 
@@ -31,9 +32,9 @@ export function transformListParams(
       continue;
     }
 
-    // Handle array bracket keys: `foo[]` → `q[foo][]`
-    if (key.endsWith('[]')) {
-      const base = key.slice(0, -2);
+    // Array values get [] suffix automatically: `foo: [1,2]` → `q[foo][]`
+    if (Array.isArray(value)) {
+      const base = key.endsWith('[]') ? key.slice(0, -2) : key;
       result[`q[${base}][]`] = value as ParamValue;
     } else {
       result[`q[${key}]`] = value as ParamValue;

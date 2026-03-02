@@ -57,11 +57,12 @@ export interface RegisterParams {
 export interface ListParams {
   page?: number;
   per_page?: number;
-  includes?: string;
+  /** Associations to include. Accepts array or comma-separated string. */
+  includes?: string[] | string;
 }
 
 export interface ProductListParams extends ListParams {
-  /** Sort: 'price-low-to-high', 'price-high-to-low', 'best-selling', or Ransack e.g. 'name asc' */
+  /** Sort: 'price asc', 'price desc', 'best_selling', 'name asc', 'name desc', 'available_on desc', 'available_on asc' */
   sort?: string;
   /** Full-text search across name and SKU */
   multi_search?: string;
@@ -71,10 +72,12 @@ export interface ProductListParams extends ListParams {
   price_gte?: number;
   /** Filter: price <= value */
   price_lte?: number;
+  /** Filter by option value prefix IDs */
+  with_option_value_ids?: string[];
   /** Filter: only in-stock products */
-  in_stock_items?: boolean;
+  in_stock?: boolean;
   /** Filter: only out-of-stock products */
-  out_of_stock_items?: boolean;
+  out_of_stock?: boolean;
   /** Filter: products in taxon */
   taxons_id_eq?: string;
   /** Any additional Ransack predicate */
