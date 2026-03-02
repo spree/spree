@@ -47,7 +47,7 @@ Plain async functions for reading data in Server Components. Wrap with `"use cac
 ```typescript
 import { listProducts, getProduct, getProductFilters } from '@spree/next';
 
-const products = await listProducts({ per_page: 25, includes: 'variants,images' });
+const products = await listProducts({ per_page: 25, includes: ['variants', 'images'] });
 const product = await getProduct('spree-tote');
 const filters = await getProductFilters({ taxon_id: 'txn_123' });
 ```
@@ -62,7 +62,7 @@ const taxons = await listTaxons({ depth_eq: 1 });
 const taxon = await getTaxon('categories/clothing');
 const products = await listTaxonProducts('categories/clothing', { per_page: 12 });
 
-const taxonomies = await listTaxonomies({ includes: 'taxons' });
+const taxonomies = await listTaxonomies({ includes: ['taxons'] });
 const taxonomy = await getTaxonomy('tax_123');
 ```
 
@@ -222,11 +222,47 @@ export default async function CartPage() {
 
 ## Localization
 
-Pass locale and currency options to data functions:
+### Automatic (recommended)
+
+Data functions automatically read locale and country from cookies. Use the included middleware to set cookies based on the URL:
 
 ```typescript
-const products = await listProducts({ per_page: 10 }, { locale: 'fr', currency: 'EUR' });
-const taxon = await getTaxon('categories/clothing', {}, { locale: 'de', currency: 'EUR' });
+// middleware.ts
+import { createSpreeMiddleware } from '@spree/next/middleware';
+
+export default createSpreeMiddleware({
+  defaultCountry: 'us',
+  defaultLocale: 'en',
+});
+
+export const config = {
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\\..*$).*)'],
+};
+```
+
+Then data functions work without any locale arguments:
+
+```typescript
+// Locale/country auto-read from cookies — no options needed
+const products = await listProducts({ per_page: 10 });
+const taxon = await getTaxon('categories/clothing');
+```
+
+Use the `setLocale` server action in country/language switchers:
+
+```typescript
+import { setLocale } from '@spree/next';
+
+await setLocale({ country: 'de', locale: 'de' });
+```
+
+### Manual override
+
+You can still pass locale options explicitly — they override the auto-detected values:
+
+```typescript
+const products = await listProducts({ per_page: 10 }, { locale: 'fr', country: 'FR' });
+const taxon = await getTaxon('categories/clothing', {}, { locale: 'de', country: 'DE' });
 ```
 
 ## TypeScript

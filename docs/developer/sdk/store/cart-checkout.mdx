@@ -33,7 +33,7 @@ const orders = await client.store.orders.list({}, { token });
 
 ```typescript
 const order = await client.store.orders.get('R123456789', {
-  includes: 'line_items,shipments',
+  includes: ['line_items', 'shipments'],
 }, { orderToken: cart.token });
 ```
 

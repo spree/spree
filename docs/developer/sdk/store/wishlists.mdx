@@ -13,7 +13,7 @@ const { data: wishlists } = await client.store.wishlists.list({}, options);
 
 // Get wishlist by ID
 const wishlist = await client.store.wishlists.get('wl_xxx', {
-  includes: 'wished_items',
+  includes: ['wished_items'],
 }, options);
 
 // Create wishlist

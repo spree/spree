@@ -32,24 +32,28 @@ curl -G 'http://localhost:3000/api/v3/store/products' \
 
 ### Common Predicates
 
-| Predicate | Description | Example |
-|-----------|-------------|---------|
-| `eq` | Equals | `q[status_eq]=active` |
-| `not_eq` | Not equals | `q[status_not_eq]=draft` |
-| `cont` | Contains (case-insensitive) | `q[name_cont]=shirt` |
-| `start` | Starts with | `q[name_start]=Spree` |
-| `end` | Ends with | `q[slug_end]=tote` |
-| `lt` | Less than | `q[price_lt]=50` |
-| `lteq` | Less than or equal | `q[price_lteq]=50` |
-| `gt` | Greater than | `q[price_gt]=10` |
-| `gteq` | Greater than or equal | `q[price_gteq]=10` |
-| `in` | In a list | `q[status_in][]=active&q[status_in][]=draft` |
-| `null` | Is null | `q[deleted_at_null]=true` |
-| `not_null` | Is not null | `q[completed_at_not_null]=true` |
-| `present` | Is present (not null and not empty) | `q[description_present]=true` |
-| `blank` | Is blank (null or empty) | `q[description_blank]=true` |
-| `true` | Is true (boolean) | `q[purchasable_true]=1` |
-| `false` | Is false (boolean) | `q[purchasable_false]=1` |
+| Predicate | Description | SDK | cURL |
+|-----------|-------------|-----|------|
+| `eq` | Equals | `status_eq: 'active'` | `q[status_eq]=active` |
+| `not_eq` | Not equals | `status_not_eq: 'draft'` | `q[status_not_eq]=draft` |
+| `cont` | Contains (case-insensitive) | `name_cont: 'shirt'` | `q[name_cont]=shirt` |
+| `start` | Starts with | `name_start: 'Spree'` | `q[name_start]=Spree` |
+| `end` | Ends with | `slug_end: 'tote'` | `q[slug_end]=tote` |
+| `lt` | Less than | `price_lt: 50` | `q[price_lt]=50` |
+| `lteq` | Less than or equal | `price_lteq: 50` | `q[price_lteq]=50` |
+| `gt` | Greater than | `price_gt: 10` | `q[price_gt]=10` |
+| `gteq` | Greater than or equal | `price_gteq: 10` | `q[price_gteq]=10` |
+| `in` | In a list | `status_in: ['active', 'draft']` | `q[status_in][]=active&q[status_in][]=draft` |
+| `null` | Is null | `deleted_at_null: true` | `q[deleted_at_null]=true` |
+| `not_null` | Is not null | `completed_at_not_null: true` | `q[completed_at_not_null]=true` |
+| `present` | Is present (not empty) | `description_present: true` | `q[description_present]=true` |
+| `blank` | Is blank (null or empty) | `description_blank: true` | `q[description_blank]=true` |
+| `true` | Is true (boolean) | `purchasable_true: 1` | `q[purchasable_true]=1` |
+| `false` | Is false (boolean) | `purchasable_false: 1` | `q[purchasable_false]=1` |
+
+<Note>
+The SDK automatically wraps filter keys in `q[...]` and appends `[]` for array values — just pass flat params.
+</Note>
 
 ### Combining Filters
 
@@ -108,39 +112,106 @@ curl -G 'http://localhost:3000/api/v3/store/taxons' \
 
 </CodeGroup>
 
-## Sorting
+## Product Scopes
 
-Use the `q[s]` parameter to sort results. The value format is `attribute direction`:
+Products support additional filter scopes beyond standard Ransack predicates:
 
 <CodeGroup>
 
 ```typescript SDK
-// Sort by name ascending
 const products = await client.store.products.list({
-  sort: 'name asc',
-})
-
-// Sort by newest first
-const products = await client.store.products.list({
-  sort: 'created_at desc',
-})
-
-// Multiple sort criteria
-const products = await client.store.products.list({
-  sort: 'price asc, name asc',
+  price_gte: 20,                                        // Minimum price
+  price_lte: 100,                                       // Maximum price
+  with_option_value_ids: ['optval_abc', 'optval_def'], // Filter by option values
+  in_stock: true,                                       // Only in-stock products
 })
 ```
 
 ```bash cURL
-# Sort by name ascending
 curl -G 'http://localhost:3000/api/v3/store/products' \
+  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  --data-urlencode 'q[price_gte]=20' \
+  --data-urlencode 'q[price_lte]=100' \
+  --data-urlencode 'q[with_option_value_ids][]=optval_abc' \
+  --data-urlencode 'q[with_option_value_ids][]=optval_def' \
+  --data-urlencode 'q[in_stock]=true'
+```
+
+</CodeGroup>
+
+| Scope | Description | SDK | cURL |
+|-------|-------------|-----|------|
+| `price_gte` | Minimum price | `price_gte: 20` | `q[price_gte]=20` |
+| `price_lte` | Maximum price | `price_lte: 100` | `q[price_lte]=100` |
+| `with_option_value_ids` | Filter by option value IDs | `with_option_value_ids: ['optval_abc']` | `q[with_option_value_ids][]=optval_abc` |
+| `in_stock` | Only in-stock products | `in_stock: true` | `q[in_stock]=true` |
+| `out_of_stock` | Only out-of-stock products | `out_of_stock: true` | `q[out_of_stock]=true` |
+| `multi_search` | Full-text search | `multi_search: 'shirt'` | `q[multi_search]=shirt` |
+
+## Sorting
+
+Use the `sort` parameter to sort product results. The backend handles routing to the appropriate sort mechanism:
+
+<CodeGroup>
+
+```typescript SDK
+// Sort by price
+const products = await client.store.products.list({
+  sort: 'price asc',
+})
+
+// Sort by best selling
+const products = await client.store.products.list({
+  sort: 'best_selling',
+})
+
+// Sort by name
+const products = await client.store.products.list({
+  sort: 'name asc',
+})
+```
+
+```bash cURL
+# Sort by price low to high
+curl -G 'http://localhost:3000/api/v3/store/products' \
+  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -d 'sort=price+asc'
+
+# Sort by best selling
+curl -G 'http://localhost:3000/api/v3/store/products' \
+  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -d 'sort=best_selling'
+```
+
+</CodeGroup>
+
+### Product Sort Options
+
+| Value | Description |
+|-------|-------------|
+| `manual` | Manual sort order (default, uses taxon position) |
+| `best_selling` | Best selling products first |
+| `price asc` | Price low to high |
+| `price desc` | Price high to low |
+| `name asc` | Name A-Z |
+| `name desc` | Name Z-A |
+| `available_on desc` | Newest first |
+| `available_on asc` | Oldest first |
+
+For other resources, use `q[s]` with standard Ransack column sorts:
+
+<CodeGroup>
+
+```typescript SDK
+const taxons = await client.store.taxons.list({
+  sort: 'name asc',
+})
+```
+
+```bash cURL
+curl -G 'http://localhost:3000/api/v3/store/taxons' \
   -H 'X-Spree-Api-Key: spree_pk_xxx' \
   --data-urlencode 'q[s]=name asc'
-
-# Sort by newest first
-curl -G 'http://localhost:3000/api/v3/store/products' \
-  -H 'X-Spree-Api-Key: spree_pk_xxx' \
-  --data-urlencode 'q[s]=created_at desc'
 ```
 
 </CodeGroup>

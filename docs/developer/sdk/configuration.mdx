@@ -14,7 +14,7 @@ Pass locale and currency headers with any request. For full details, see the [Lo
 ```typescript
 // Works with all endpoints
 const taxon = await client.store.taxons.get('categories/clothing', {
-  includes: 'ancestors',
+  includes: ['ancestors'],
 }, {
   locale: 'de',
   currency: 'EUR',

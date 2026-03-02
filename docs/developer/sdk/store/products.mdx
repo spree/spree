@@ -11,30 +11,67 @@ description: Browse products, categories, and taxonomies with the Spree SDK
 const products = await client.store.products.list({
   page: 1,
   per_page: 25,
-  name_cont: 'shirt',
-  sort: 'price asc',
-  includes: 'variants,images,taxons',
+  includes: ['variants', 'images', 'taxons'],
+});
+```
+
+### Filtering Products
+
+Use flat param keys — the SDK wraps them in `q[...]` automatically:
+
+```typescript
+const products = await client.store.products.list({
+  name_cont: 'shirt',                                     // Name contains
+  price_gte: 20,                                           // Min price
+  price_lte: 100,                                          // Max price
+  with_option_value_ids: ['optval_abc', 'optval_def'], // By option values
+  in_stock: true,                                          // In stock only
+  multi_search: 'blue shirt',                              // Full-text search
+});
+```
+
+### Sorting Products
+
+Pass `sort` with one of the supported values:
+
+```typescript
+const products = await client.store.products.list({
+  sort: 'price asc',    // price asc, price desc, best_selling,
+                         // name asc, name desc, available_on desc, available_on asc
 });
 ```
 
 ### Get a Product
 
-Fetch a single product by ID or slug:
+Fetch a single product by slug or prefix ID:
 
 ```typescript
 const product = await client.store.products.get('spree-tote', {
-  includes: 'variants,images',
+  includes: ['variants', 'images'],
 });
 ```
 
 ### Product Filters
 
-Get available filters (price range, availability, options, taxons) for a product listing:
+Get available filters (price range, availability, options, taxons) and sort options for building filter UIs:
 
 ```typescript
 const filters = await client.store.products.filters({
   taxon_id: 'txn_abc123', // Optional: scope filters to a taxon
 });
+
+// Response:
+// {
+//   filters: [
+//     { id: 'price', type: 'price_range', min: 9.99, max: 199.99, currency: 'USD' },
+//     { id: 'availability', type: 'availability', options: [{ id: 'in_stock', count: 42 }, ...] },
+//     { id: 'opttype_abc', type: 'option', name: 'color', presentation: 'Color', options: [...] },
+//     { id: 'taxons', type: 'taxon', options: [{ id: 'txn_abc', name: 'Shirts', permalink: '...', count: 12 }] },
+//   ],
+//   sort_options: [{ id: 'manual' }, { id: 'price asc' }, { id: 'best_selling' }, ...],
+//   default_sort: 'manual',
+//   total_count: 85,
+// }
 ```
 
 ## Categories (Taxonomies & Taxons)
@@ -43,7 +80,7 @@ const filters = await client.store.products.filters({
 
 ```typescript
 const taxonomies = await client.store.taxonomies.list({
-  includes: 'taxons',
+  includes: ['taxons'],
 });
 ```
 
@@ -51,7 +88,7 @@ const taxonomies = await client.store.taxonomies.list({
 
 ```typescript
 const categories = await client.store.taxonomies.get('tax_123', {
-  includes: 'root,taxons',
+  includes: ['root', 'taxons'],
 });
 ```
 
@@ -70,7 +107,7 @@ Fetch by ID or permalink:
 
 ```typescript
 const taxon = await client.store.taxons.get('categories/clothing', {
-  includes: 'ancestors,children', // For breadcrumbs and subcategories
+  includes: ['ancestors', 'children'], // For breadcrumbs and subcategories
 });
 ```
 
@@ -80,7 +117,7 @@ const taxon = await client.store.taxons.get('categories/clothing', {
 const categoryProducts = await client.store.taxons.products.list('categories/clothing', {
   page: 1,
   per_page: 12,
-  includes: 'images,default_variant',
+  includes: ['images', 'default_variant'],
 });
 ```
 
