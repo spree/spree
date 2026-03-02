@@ -1,0 +1,267 @@
+---
+title: Errors
+description: Error response format, error codes, and handling strategies
+---
+
+The Store API uses a consistent, Stripe-style error format across all endpoints. Every error response includes a machine-readable `code` and a human-readable `message`.
+
+## Error Response Format
+
+All errors return a JSON object with a single `error` key:
+
+```json
+{
+  "error": {
+    "code": "record_not_found",
+    "message": "Product not found"
+  }
+}
+```
+
+Validation errors include an additional `details` field with per-field error messages:
+
+```json
+{
+  "error": {
+    "code": "validation_error",
+    "message": "Name can't be blank and Email is invalid",
+    "details": {
+      "name": ["can't be blank"],
+      "email": ["is invalid"]
+    }
+  }
+}
+```
+
+### Schema
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `error.code` | `string` | Machine-readable error code (see table below) |
+| `error.message` | `string` | Human-readable description of the error |
+| `error.details` | `object` | Field-specific validation errors. Each key is a field name, each value is an array of error strings. Only present for validation errors. |
+
+## HTTP Status Codes
+
+| Status | Meaning | When |
+|--------|---------|------|
+| `400` | Bad Request | Missing required parameters, malformed JSON, invalid arguments |
+| `401` | Unauthorized | Missing or invalid API key, expired JWT token |
+| `403` | Forbidden | Authenticated but not authorized for this resource |
+| `404` | Not Found | Resource doesn't exist or isn't accessible |
+| `422` | Unprocessable Content | Validation failed, invalid state transition, payment error |
+| `429` | Too Many Requests | Rate limit exceeded (see [Rate Limiting](/api-reference/store-api/rate-limitting)) |
+
+## Error Codes
+
+### Authentication & Authorization
+
+| Code | Status | Description |
+|------|--------|-------------|
+| `authentication_required` | 401 | Request requires a valid JWT token |
+| `authentication_failed` | 401 | Email or password is incorrect |
+| `invalid_token` | 401 | API key or JWT token is invalid or expired |
+| `invalid_provider` | 400 | OAuth provider not recognized |
+| `access_denied` | 403 | User doesn't have permission for this action |
+
+### Resource Errors
+
+| Code | Status | Description |
+|------|--------|-------------|
+| `record_not_found` | 404 | Resource doesn't exist or isn't accessible in the current store |
+| `resource_invalid` | 422 | Resource couldn't be saved |
+
+### Validation Errors
+
+| Code | Status | Description |
+|------|--------|-------------|
+| `validation_error` | 422 | Model validation failed. Check `details` for field-specific messages. |
+| `parameter_missing` | 400 | A required parameter is missing |
+| `parameter_invalid` | 400 | A parameter has an invalid value |
+
+### Order Errors
+
+| Code | Status | Description |
+|------|--------|-------------|
+| `order_not_found` | 404 | Order doesn't exist or doesn't belong to the current user/guest |
+| `order_already_completed` | 422 | Cannot modify an order that has already been completed |
+| `order_cannot_transition` | 422 | Order can't move to the requested state (e.g., advancing without an address) |
+| `order_empty` | 422 | Order has no line items |
+| `order_invalid_state` | 422 | Order is in an invalid state for this operation |
+
+### Line Item & Stock Errors
+
+| Code | Status | Description |
+|------|--------|-------------|
+| `line_item_not_found` | 404 | Line item doesn't exist in this order |
+| `variant_not_found` | 404 | Variant doesn't exist or isn't available |
+| `insufficient_stock` | 422 | Not enough stock to fulfill the requested quantity |
+| `invalid_quantity` | 422 | Quantity must be a positive integer |
+
+### Payment Errors
+
+| Code | Status | Description |
+|------|--------|-------------|
+| `payment_failed` | 422 | Payment was declined or couldn't be processed |
+| `payment_processing_error` | 422 | Error communicating with the payment gateway |
+| `gateway_error` | 422 | Payment gateway returned an error |
+
+### Digital Download Errors
+
+| Code | Status | Description |
+|------|--------|-------------|
+| `attachment_missing` | 403 | File attachment not found for this digital product |
+| `download_unauthorized` | 403 | User is not authorized to download this file |
+| `digital_link_expired` | 403 | Download link has expired |
+| `download_limit_exceeded` | 403 | Maximum number of downloads reached |
+
+### Other Errors
+
+| Code | Status | Description |
+|------|--------|-------------|
+| `rate_limit_exceeded` | 429 | Too many requests. Retry after the `Retry-After` header value. |
+| `request_too_large` | 413 | Request body exceeds the size limit |
+| `processing_error` | 422 | Generic server-side processing error |
+| `invalid_request` | 400 | Request is malformed (e.g., invalid JSON body) |
+
+## Examples
+
+### Not Found
+
+```bash
+curl https://api.mystore.com/api/v3/store/products/prod_nonexistent \
+  -H "Authorization: Bearer spree_pk_xxx"
+```
+
+```json 404
+{
+  "error": {
+    "code": "record_not_found",
+    "message": "Product not found"
+  }
+}
+```
+
+### Validation Error
+
+```bash
+curl -X POST https://api.mystore.com/api/v3/store/account/addresses \
+  -H "Authorization: Bearer <jwt_token>" \
+  -H "Content-Type: application/json" \
+  -d '{}'
+```
+
+```json 422
+{
+  "error": {
+    "code": "validation_error",
+    "message": "First name can't be blank, Address can't be blank, City can't be blank, and Country can't be blank",
+    "details": {
+      "firstname": ["can't be blank"],
+      "address1": ["can't be blank"],
+      "city": ["can't be blank"],
+      "country": ["can't be blank"]
+    }
+  }
+}
+```
+
+### Insufficient Stock
+
+```bash
+curl -X POST https://api.mystore.com/api/v3/store/cart/line_items \
+  -H "Authorization: Bearer spree_pk_xxx" \
+  -H "X-Spree-Order-Token: abc123" \
+  -H "Content-Type: application/json" \
+  -d '{"variant_id": "var_xxx", "quantity": 999}'
+```
+
+```json 422
+{
+  "error": {
+    "code": "insufficient_stock",
+    "message": "Quantity selected exceeds available stock"
+  }
+}
+```
+
+### Invalid State Transition
+
+```bash
+curl -X PATCH https://api.mystore.com/api/v3/store/orders/or_xxx/advance \
+  -H "Authorization: Bearer spree_pk_xxx" \
+  -H "X-Spree-Order-Token: abc123"
+```
+
+```json 422
+{
+  "error": {
+    "code": "order_cannot_transition",
+    "message": "Cannot transition state via :next from :cart"
+  }
+}
+```
+
+## Handling Errors in the SDK
+
+The `@spree/sdk` package throws a `SpreeError` for all non-2xx responses:
+
+```typescript
+import { SpreeError } from '@spree/sdk';
+
+try {
+  const product = await client.store.products.get('nonexistent');
+} catch (error) {
+  if (error instanceof SpreeError) {
+    console.log(error.code);    // 'record_not_found'
+    console.log(error.message); // 'Product not found'
+    console.log(error.status);  // 404
+    console.log(error.details); // undefined (or field errors for validation)
+  }
+}
+```
+
+### Common Patterns
+
+Handle specific error codes:
+
+```typescript
+try {
+  await client.store.orders.lineItems.create(orderId, {
+    variant_id: variantId,
+    quantity: 1,
+  });
+} catch (error) {
+  if (error instanceof SpreeError) {
+    switch (error.code) {
+      case 'insufficient_stock':
+        showNotification('This item is out of stock');
+        break;
+      case 'variant_not_found':
+        showNotification('This product is no longer available');
+        break;
+      case 'order_already_completed':
+        // Cart was already checked out — create a new one
+        await createNewCart();
+        break;
+      default:
+        showNotification(error.message);
+    }
+  }
+}
+```
+
+Display validation errors per field:
+
+```typescript
+try {
+  await client.store.customer.addresses.create(addressData);
+} catch (error) {
+  if (error instanceof SpreeError && error.details) {
+    // error.details = { city: ["can't be blank"], zipcode: ["is invalid"] }
+    for (const [field, messages] of Object.entries(error.details)) {
+      setFieldError(field, messages.join(', '));
+    }
+  }
+}
+```
