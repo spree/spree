@@ -34,7 +34,7 @@ RSpec.describe Spree::Admin::ImportRowSubscriber do
         subscriber = described_class.new
         event = Spree::Event.new(
           name: 'import_row.completed',
-          payload: { 'id' => import_row.id }
+          payload: { 'id' => import_row.prefixed_id }
         )
 
         expect(subscriber).to receive(:add_row_to_import_view).with(kind_of(Spree::ImportRow))
@@ -64,7 +64,7 @@ RSpec.describe Spree::Admin::ImportRowSubscriber do
         subscriber = described_class.new
         event = Spree::Event.new(
           name: 'import_row.completed',
-          payload: { 'id' => -999 }
+          payload: { 'id' => 'ir_nonexistent' }
         )
 
         expect(subscriber).not_to receive(:add_row_to_import_view)

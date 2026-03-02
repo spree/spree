@@ -19,7 +19,7 @@ module Spree
         import_id = event.payload['id']
         return unless import_id
 
-        import = Spree::Import.find_by(id: import_id)
+        import = Spree::Import.find_by_prefix_id(import_id)
         return unless import
         return unless import.respond_to?(:broadcast_update_to)
 
