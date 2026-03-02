@@ -33,7 +33,7 @@ RSpec.describe Spree::Admin::ClassificationsController, type: :controller do
     end
 
     context 'when sort_order is best_selling' do
-      let(:sort_order) { 'best-selling' }
+      let(:sort_order) { 'best_selling' }
 
       let!(:completed_order_1) { create(:completed_order_with_totals, variants: [product1.master, product2.master]) }
       let!(:completed_order_2) { create(:completed_order_with_totals, variants: [product2.master]) }
