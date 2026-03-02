@@ -10,7 +10,7 @@ export function dockerComposeContent(_port: number): string {
       condition: service_healthy
   env_file: .env
   environment: &app-env
-    DATABASE_HOST: postgres
+    DATABASE_URL: postgres://postgres@postgres:5432/spree
     REDIS_URL: redis://redis:6379/0
     SMTP_HOST: mailpit
     SMTP_PORT: 1025

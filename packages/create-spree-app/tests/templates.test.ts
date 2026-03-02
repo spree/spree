@@ -28,8 +28,8 @@ describe('dockerComposeContent', () => {
     expect(content).toContain('postgres_data:')
   })
 
-  it('uses DATABASE_HOST pointing to postgres service', () => {
-    expect(content).toContain('DATABASE_HOST: postgres')
+  it('uses DATABASE_URL pointing to postgres service', () => {
+    expect(content).toContain('DATABASE_URL: postgres://postgres@postgres:5432/spree')
   })
 
   it('includes redis service and REDIS_URL', () => {
