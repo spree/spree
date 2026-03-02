@@ -1483,12 +1483,12 @@ RSpec.describe Spree::Admin::ProductsController, type: :controller do
     end
 
     it 'returns only in stock products' do
-      get :index, params: { q: { in_stock_items: 1 } }
+      get :index, params: { q: { in_stock: 1 } }
       expect(assigns(:products).to_a).to eq([in_stock_product])
     end
 
     it 'returns only out of stock products' do
-      get :index, params: { q: { out_of_stock_items: 1 } }
+      get :index, params: { q: { out_of_stock: 1 } }
       expect(assigns(:products).to_a).to eq([out_of_stock_product])
     end
   end

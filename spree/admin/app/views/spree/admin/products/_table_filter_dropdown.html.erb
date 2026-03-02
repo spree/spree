@@ -16,7 +16,7 @@
   <%= dropdown_menu do %>
     <h6 class="dropdown-header"><%= Spree.t('admin.products.by_status') %>:</h6>
 
-    <%= active_link_to Spree.t('admin.products.all_statuses'), params.to_unsafe_h.deep_merge({page: nil, q: {status_eq: nil}}), class: 'dropdown-item', active: (params[:q] || {}).values_at(*%w[status_eq in_stock_items out_of_stock_items] ).all?(&:blank?) %>
+    <%= active_link_to Spree.t('admin.products.all_statuses'), params.to_unsafe_h.deep_merge({page: nil, q: {status_eq: nil}}), class: 'dropdown-item', active: (params[:q] || {}).values_at(*%w[status_eq in_stock out_of_stock] ).all?(&:blank?) %>
     <%= link_to Spree.t('admin.products.active'),
       params.to_unsafe_h.deep_merge({page: nil, q: {status_eq: :active}}),
       class: "dropdown-item #{'active' if params[:q][:status_eq] == 'active'}" %>
@@ -31,12 +31,12 @@
 
     <h6 class="dropdown-header"><%= Spree.t('admin.products.by_stock') %>:</h6>
 
-    <%= active_link_to Spree.t('admin.products.any_stock'), params.to_unsafe_h.deep_merge({page: nil, q: {in_stock_items: nil, out_of_stock_items: nil}}), class: 'dropdown-item', active: (params[:q] || {}).values_at(*%w[status_eq in_stock_items out_of_stock_items] ).all?(&:blank?) %>
+    <%= active_link_to Spree.t('admin.products.any_stock'), params.to_unsafe_h.deep_merge({page: nil, q: {in_stock: nil, out_of_stock: nil}}), class: 'dropdown-item', active: (params[:q] || {}).values_at(*%w[status_eq in_stock out_of_stock] ).all?(&:blank?) %>
     <%= link_to Spree.t('admin.products.in_stock'),
-        params.to_unsafe_h.deep_merge({page: nil, q: {in_stock_items: '1', out_of_stock_items: nil}}),
-        class: "dropdown-item #{'active' if params[:q][:in_stock_items] == '1'}" %>
+        params.to_unsafe_h.deep_merge({page: nil, q: {in_stock: '1', out_of_stock: nil}}),
+        class: "dropdown-item #{'active' if params[:q][:in_stock] == '1'}" %>
       <%= link_to Spree.t('admin.products.out_of_stock'),
-        params.to_unsafe_h.deep_merge({page: nil, q: {out_of_stock_items: '1', in_stock_items: nil}}),
-        class: "dropdown-item #{'active' if params[:q][:out_of_stock_items] == '1'}" %>
+        params.to_unsafe_h.deep_merge({page: nil, q: {out_of_stock: '1', in_stock: nil}}),
+        class: "dropdown-item #{'active' if params[:q][:out_of_stock] == '1'}" %>
   <% end %>
 <% end %>

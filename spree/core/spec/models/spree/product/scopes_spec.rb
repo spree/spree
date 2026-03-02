@@ -215,10 +215,66 @@ describe 'Product scopes', type: :model do
     end
   end
 
-  # Regression test for SD-1439 ambiguous column name: count_on_hand
-  describe '#in_stock.in_stock_or_backorderable' do
-    it do
-      expect { Spree::Product.in_stock.in_stock_or_backorderable.count }.not_to raise_error
+  describe '#in_stock / #out_of_stock' do
+    let!(:in_stock_product) do
+      create(:product, stores: [store]).tap do |p|
+        p.stock_items.update_all(count_on_hand: 10, backorderable: false)
+      end
+    end
+
+    let!(:backorderable_product) do
+      create(:product, stores: [store]).tap do |p|
+        p.stock_items.update_all(count_on_hand: 0, backorderable: true)
+      end
+    end
+
+    let!(:out_of_stock_product) do
+      create(:product, stores: [store]).tap do |p|
+        p.stock_items.update_all(count_on_hand: 0, backorderable: false)
+      end
+    end
+
+    describe '#in_stock' do
+      it 'returns products with stock on hand' do
+        expect(Spree::Product.in_stock).to include(in_stock_product)
+      end
+
+      it 'returns backorderable products' do
+        expect(Spree::Product.in_stock).to include(backorderable_product)
+      end
+
+      it 'excludes products with no stock and not backorderable' do
+        expect(Spree::Product.in_stock).not_to include(out_of_stock_product)
+      end
+
+      it 'returns all products when called with false (no filtering)' do
+        result = Spree::Product.in_stock(false)
+        expect(result).to include(in_stock_product, backorderable_product, out_of_stock_product)
+      end
+
+      it 'returns all products when called with "0" (Ransack skip)' do
+        result = Spree::Product.in_stock('0')
+        expect(result).to include(in_stock_product, backorderable_product, out_of_stock_product)
+      end
+
+      # Regression test for SD-1439 ambiguous column name: count_on_hand
+      it 'can be chained with other scopes without error' do
+        expect { Spree::Product.in_stock.in_stock_or_backorderable.count }.not_to raise_error
+      end
+    end
+
+    describe '#out_of_stock' do
+      it 'returns products with no stock and not backorderable' do
+        expect(Spree::Product.out_of_stock).to include(out_of_stock_product)
+      end
+
+      it 'excludes in-stock products' do
+        expect(Spree::Product.out_of_stock).not_to include(in_stock_product)
+      end
+
+      it 'excludes backorderable products' do
+        expect(Spree::Product.out_of_stock).not_to include(backorderable_product)
+      end
     end
   end
 
