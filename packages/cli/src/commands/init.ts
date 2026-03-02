@@ -28,6 +28,10 @@ export function registerInitCommand(program: Command): void {
       await waitForHealthy(ctx.port)
       s.stop('Spree is ready.')
 
+      s.start('Seeding database...')
+      await rakeTask('db:seed', ctx.projectDir)
+      s.stop('Database seeded.')
+
       s.start('Configuring API key...')
       const apiKey = await fetchApiKey(ctx.projectDir)
       s.stop(`API key: ${pc.cyan(apiKey)}`)
