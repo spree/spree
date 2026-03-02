@@ -4,7 +4,7 @@ import pc from 'picocolors'
 import { execaCommand } from 'execa'
 import { platform } from 'node:os'
 import { detectProject } from '../context.js'
-import { dockerCompose, rakeTask } from '../docker.js'
+import { dockerCompose, rakeTask, streamLogs } from '../docker.js'
 import { DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD } from '../constants.js'
 
 const HEALTH_CHECK_INTERVAL_MS = 3000
@@ -61,6 +61,9 @@ export function registerInitCommand(program: Command): void {
       if (flags.open) {
         await openBrowser(`http://localhost:${ctx.port}/admin`)
       }
+
+      p.log.info('Streaming logs (Ctrl+C to stop)...\n')
+      await streamLogs('web', ctx.projectDir)
     })
 }
 

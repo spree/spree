@@ -46,6 +46,13 @@ Rails.application.configure do
   # Change to "debug" to log everything (including potentially personally-identifiable information!).
   config.log_level = ENV.fetch("RAILS_LOG_LEVEL", "info")
 
+  # Condensed single-line request logs (e.g. "GET /products 200 12ms")
+  config.lograge.enabled = true
+  config.lograge.formatter = ->(data) {
+    duration = data[:duration].to_i
+    "#{data[:method]} #{data[:path]} #{data[:status]} #{duration}ms"
+  }
+
   # Prevent health checks from clogging up the logs.
   config.silence_healthcheck_path = "/up"
 

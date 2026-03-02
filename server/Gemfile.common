@@ -46,3 +46,6 @@ gem "aws-sdk-s3", require: false
 gem 'sentry-ruby'
 gem 'sentry-rails'
 gem 'sentry-sidekiq'
+
+# Condensed single-line request logs
+gem 'lograge'

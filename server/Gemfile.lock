@@ -420,6 +420,11 @@ GEM
       rb-inotify (~> 0.9, >= 0.9.10)
     local_time (3.0.3)
     logger (1.7.0)
+    lograge (0.14.0)
+      actionpack (>= 4)
+      activesupport (>= 4)
+      railties (>= 4)
+      request_store (~> 1.0)
     loofah (2.25.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
@@ -852,6 +857,7 @@ DEPENDENCIES
   importmap-rails
   letter_opener
   listen
+  lograge
   pg (~> 1.1)
   propshaft
   puma (>= 5.0)
@@ -999,6 +1005,7 @@ CHECKSUMS
   listen (3.10.0) sha256=c6e182db62143aeccc2e1960033bebe7445309c7272061979bb098d03760c9d2
   local_time (3.0.3) sha256=c69a8974d993fdf6e60db02977ed23c070f203dcb3a1ff0de52ad3d2393f8303
   logger (1.7.0) sha256=196edec7cc44b66cfb40f9755ce11b392f21f7967696af15d274dde7edff0203
+  lograge (0.14.0) sha256=42371a75823775f166f727639f5ddce73dd149452a55fc94b90c303213dc9ae1
   loofah (2.25.0) sha256=df5ed7ac3bac6a4ec802df3877ee5cc86d027299f8952e6243b3dac446b060e6
   mail (2.9.0) sha256=6fa6673ecd71c60c2d996260f9ee3dd387d4673b8169b502134659ece6d34941
   mapkick-rb (0.2.0) sha256=c70da2e1edc56da290ccab51fd932ee5b1c562fe9f7877de0333b5562937e28e
