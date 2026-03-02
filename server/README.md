@@ -108,3 +108,33 @@ Spree works with any SMTP provider (Resend, Postmark, Mailgun, SendGrid, Amazon 
 | `SMTP_PASSWORD` | — | SMTP auth password |
 | `SMTP_FROM_ADDRESS` | — | Default "from" email address |
 | `RAILS_HOST` | `example.com` | Host used in mailer URLs |
+
+### File Storage (S3 / Cloudflare R2)
+
+By default, uploaded files are stored on the local disk. Set the appropriate environment variables to use S3 or Cloudflare R2 instead. When both are configured, S3 takes priority.
+
+**AWS S3:**
+
+| Variable | Default | Description |
+|---|---|---|
+| `AWS_ACCESS_KEY_ID` | — | AWS access key |
+| `AWS_SECRET_ACCESS_KEY` | — | AWS secret key |
+| `AWS_REGION` | — | AWS region (e.g. `us-east-1`) |
+| `AWS_BUCKET` | `spree-<env>` | S3 bucket name |
+
+**Cloudflare R2:**
+
+| Variable | Default | Description |
+|---|---|---|
+| `CLOUDFLARE_ACCESS_KEY_ID` | — | R2 access key |
+| `CLOUDFLARE_SECRET_ACCESS_KEY` | — | R2 secret key |
+| `CLOUDFLARE_ENDPOINT` | — | R2 endpoint URL (e.g. `https://<account_id>.r2.cloudflarestorage.com`) |
+| `CLOUDFLARE_BUCKET` | `spree-<env>` | R2 bucket name |
+
+### Error Monitoring (Sentry)
+
+| Variable | Default | Description |
+|---|---|---|
+| `SENTRY_DSN` | — | Sentry DSN to enable error and performance monitoring |
+| `SENTRY_REPORT_ON_DEVELOPMENT` | — | Set to any value to also report errors in development |
+| `RENDER_GIT_COMMIT` | — | Git SHA used as Sentry release identifier |
