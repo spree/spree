@@ -3,7 +3,7 @@ import * as p from '@clack/prompts'
 import pc from 'picocolors'
 import { printTable } from 'console-table-printer'
 import { detectProject } from '../context.js'
-import { railsRunner, escapeRubyString } from '../docker.js'
+import { rakeTask } from '../docker.js'
 
 export function registerApiKeyCommand(program: Command): void {
   const apiKey = program
@@ -59,16 +59,10 @@ export function registerApiKeyCommand(program: Command): void {
       const s = p.spinner()
       s.start('Creating API key...')
 
-      const safeName = escapeRubyString(name)
-      const script = [
-        `key = Spree::Store.default.api_keys.create!(`,
-        `name: '${safeName}',`,
-        `key_type: '${keyType}'`,
-        `);`,
-        `print key.plaintext_token`,
-      ].join(' ')
-
-      const stdout = await railsRunner(script, ctx.projectDir)
+      const stdout = await rakeTask('spree:cli:create_api_key', ctx.projectDir, {
+        NAME: name,
+        KEY_TYPE: keyType,
+      })
 
       const tokenPrefix = keyType === 'publishable' ? 'pk_' : 'sk_'
       const match = stdout.match(new RegExp(`${tokenPrefix}[A-Za-z0-9_-]+`))
@@ -99,15 +93,7 @@ export function registerApiKeyCommand(program: Command): void {
       const s = p.spinner()
       s.start('Fetching API keys...')
 
-      const script = [
-        `Spree::Store.default.api_keys.order(created_at: :desc).each { |k|`,
-        `status = k.revoked_at ? 'revoked' : 'active';`,
-        `token = k.secret? ? k.token_prefix : k.token;`,
-        `puts [k.prefixed_id, k.name, k.key_type, token, k.created_at.strftime('%Y-%m-%d %H:%M'), status].join('|')`,
-        `}`,
-      ].join(' ')
-
-      const stdout = await railsRunner(script, ctx.projectDir)
+      const stdout = await rakeTask('spree:cli:list_api_keys', ctx.projectDir)
       s.stop('')
 
       const lines = stdout.trim().split('\n').filter(Boolean)
@@ -142,15 +128,9 @@ export function registerApiKeyCommand(program: Command): void {
       const s = p.spinner()
       s.start('Revoking API key...')
 
-      const safeId = escapeRubyString(id)
-
-      const script = [
-        `key = Spree::Store.default.api_keys.find_by_prefix_id!('${safeId}');`,
-        `key.revoke!;`,
-        `print key.name`,
-      ].join(' ')
-
-      const stdout = await railsRunner(script, ctx.projectDir)
+      const stdout = await rakeTask('spree:cli:revoke_api_key', ctx.projectDir, {
+        ID: id,
+      })
       const name = stdout.trim()
 
       s.stop(`API key "${name}" revoked.`)

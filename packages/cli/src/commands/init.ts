@@ -4,7 +4,7 @@ import pc from 'picocolors'
 import { execaCommand } from 'execa'
 import { platform } from 'node:os'
 import { detectProject } from '../context.js'
-import { dockerCompose, railsRunner } from '../docker.js'
+import { dockerCompose, rakeTask } from '../docker.js'
 import { DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD } from '../constants.js'
 
 const HEALTH_CHECK_INTERVAL_MS = 3000
@@ -34,10 +34,7 @@ export function registerInitCommand(program: Command): void {
 
       if (flags.sampleData) {
         s.start('Loading sample data...')
-        await dockerCompose(
-          ['exec', '-T', 'web', 'bin/rails', 'spree:load_sample_data'],
-          ctx.projectDir,
-        )
+        await rakeTask('spree:load_sample_data', ctx.projectDir)
         s.stop('Sample data loaded.')
       }
 
@@ -81,14 +78,7 @@ async function waitForHealthy(port: number): Promise<void> {
 }
 
 async function fetchApiKey(projectDir: string): Promise<string> {
-  const script = [
-    'store = Spree::Store.default;',
-    'key = store.api_keys.active.publishable.first ||',
-    "  store.api_keys.create!(name: 'Default', key_type: 'publishable');",
-    'print key.plaintext_token',
-  ].join(' ')
-
-  const stdout = await railsRunner(script, projectDir)
+  const stdout = await rakeTask('spree:cli:ensure_api_key', projectDir)
 
   const match = stdout.match(/pk_[A-Za-z0-9_-]+/)
   if (!match) {

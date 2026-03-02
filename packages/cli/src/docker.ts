@@ -1,10 +1,5 @@
 import { execa, type Options as ExecaOptions } from 'execa'
 
-/** Escape a string for safe interpolation into a Ruby single-quoted string. */
-export function escapeRubyString(value: string): string {
-  return value.replace(/\\/g, '\\\\').replace(/'/g, "\\'")
-}
-
 export async function dockerCompose(
   args: string[],
   projectDir: string,
@@ -16,15 +11,22 @@ export async function dockerCompose(
   })
 }
 
-export async function railsRunner(
-  script: string,
+export async function rakeTask(
+  task: string,
   projectDir: string,
+  env?: Record<string, string>,
 ): Promise<string> {
-  const { stdout } = await execa(
-    'docker',
-    ['compose', 'exec', '-T', 'web', 'bin/rails', 'runner', script],
-    { cwd: projectDir },
-  )
+  const args = ['compose', 'exec', '-T']
+
+  if (env) {
+    for (const [key, value] of Object.entries(env)) {
+      args.push('-e', `${key}=${value}`)
+    }
+  }
+
+  args.push('web', 'bin/rails', task)
+
+  const { stdout } = await execa('docker', args, { cwd: projectDir })
 
   // Rails boot prints noise to stdout (e.g. "[Spree Events] ...") — strip it
   return stdout
