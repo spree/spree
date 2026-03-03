@@ -52,7 +52,7 @@ RSpec.feature 'Tax Rates', js: true do
     )
 
     visit spree.admin_tax_rates_path
-    click_on 'Edit'
+    click_on tax_rate.name
 
     fill_in 'Name', with: 'Updated Tax Rate'
     fill_in 'Rate', with: 20
@@ -81,7 +81,7 @@ RSpec.feature 'Tax Rates', js: true do
     tax_rate = create(:tax_rate)
 
     visit spree.admin_tax_rates_path
-    click_on 'Edit'
+    click_on tax_rate.name
     wait_for_turbo
 
     accept_turbo_confirm do

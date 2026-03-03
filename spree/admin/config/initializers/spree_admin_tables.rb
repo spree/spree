@@ -1649,4 +1649,353 @@ Rails.application.config.after_initialize do
                                             filterable: false,
                                             default: true,
                                             position: 30
+
+  # ==========================================
+  # Register Shipping Categories table
+  # ==========================================
+  Spree.admin.tables.register(:shipping_categories, model_class: Spree::ShippingCategory, search_param: :name_cont)
+
+  Spree.admin.tables.shipping_categories.add :name,
+                                             label: :name,
+                                             type: :link,
+                                             sortable: true,
+                                             filterable: true,
+                                             default: true,
+                                             position: 10
+
+  # ==========================================
+  # Register Refund Reasons table
+  # ==========================================
+  Spree.admin.tables.register(:refund_reasons, model_class: Spree::RefundReason, search_param: :name_cont)
+
+  Spree.admin.tables.refund_reasons.add :name,
+                                        label: :name,
+                                        type: :link,
+                                        sortable: true,
+                                        filterable: true,
+                                        default: true,
+                                        position: 10
+
+  Spree.admin.tables.refund_reasons.add :active,
+                                        label: :status,
+                                        type: :status,
+                                        sortable: false,
+                                        default: true,
+                                        position: 20,
+                                        method: ->(r) { r.active? ? 'active' : 'inactive' }
+
+  Spree.admin.tables.refund_reasons.add :mutable,
+                                        label: :mutable,
+                                        type: :boolean,
+                                        sortable: false,
+                                        default: true,
+                                        position: 30
+
+  # ==========================================
+  # Register Return Authorization Reasons table
+  # ==========================================
+  Spree.admin.tables.register(:return_authorization_reasons, model_class: Spree::ReturnAuthorizationReason, search_param: :name_cont)
+
+  Spree.admin.tables.return_authorization_reasons.add :name,
+                                                      label: :name,
+                                                      type: :link,
+                                                      sortable: true,
+                                                      filterable: true,
+                                                      default: true,
+                                                      position: 10
+
+  Spree.admin.tables.return_authorization_reasons.add :active,
+                                                      label: :status,
+                                                      type: :status,
+                                                      sortable: false,
+                                                      default: true,
+                                                      position: 20,
+                                                      method: ->(r) { r.active? ? 'active' : 'inactive' }
+
+  # ==========================================
+  # Register Reimbursement Types table
+  # ==========================================
+  Spree.admin.tables.register(:reimbursement_types, model_class: Spree::ReimbursementType, search_param: :name_cont)
+
+  Spree.admin.tables.reimbursement_types.add :name,
+                                             label: :name,
+                                             type: :link,
+                                             sortable: true,
+                                             filterable: true,
+                                             default: true,
+                                             position: 10,
+                                             method: ->(rt) { rt.name.humanize }
+
+  Spree.admin.tables.reimbursement_types.add :type,
+                                             label: :type,
+                                             type: :string,
+                                             sortable: false,
+                                             default: true,
+                                             position: 20,
+                                             method: ->(rt) { rt.type.demodulize }
+
+  Spree.admin.tables.reimbursement_types.add :active,
+                                             label: :status,
+                                             type: :status,
+                                             sortable: false,
+                                             default: true,
+                                             position: 30,
+                                             method: ->(r) { r.active? ? 'active' : 'inactive' }
+
+  Spree.admin.tables.reimbursement_types.add :mutable,
+                                             label: :mutable,
+                                             type: :boolean,
+                                             sortable: false,
+                                             default: true,
+                                             position: 40
+
+  # ==========================================
+  # Register Zones table
+  # ==========================================
+  Spree.admin.tables.register(:zones, model_class: Spree::Zone, search_param: :name_cont)
+
+  Spree.admin.tables.zones.add :name,
+                               label: :name,
+                               type: :link,
+                               sortable: true,
+                               filterable: true,
+                               default: true,
+                               position: 10
+
+  Spree.admin.tables.zones.add :description,
+                               label: :description,
+                               type: :string,
+                               sortable: true,
+                               default: true,
+                               position: 20
+
+  Spree.admin.tables.zones.add :default_tax,
+                               label: :default_tax_zone,
+                               type: :boolean,
+                               sortable: false,
+                               default: true,
+                               position: 30
+
+  # ==========================================
+  # Register Tax Categories table
+  # ==========================================
+  Spree.admin.tables.register(:tax_categories, model_class: Spree::TaxCategory, search_param: :name_cont)
+
+  Spree.admin.tables.tax_categories.add :name,
+                                        label: :name,
+                                        type: :link,
+                                        sortable: true,
+                                        filterable: true,
+                                        default: true,
+                                        position: 10
+
+  Spree.admin.tables.tax_categories.add :tax_code,
+                                        label: :tax_code,
+                                        type: :string,
+                                        sortable: true,
+                                        filterable: true,
+                                        default: true,
+                                        position: 20
+
+  Spree.admin.tables.tax_categories.add :description,
+                                        label: :description,
+                                        type: :string,
+                                        sortable: false,
+                                        default: true,
+                                        position: 30
+
+  Spree.admin.tables.tax_categories.add :is_default,
+                                        label: :default,
+                                        type: :boolean,
+                                        sortable: false,
+                                        default: true,
+                                        position: 40
+
+  # ==========================================
+  # Register Tax Rates table
+  # ==========================================
+  Spree.admin.tables.register(:tax_rates, model_class: Spree::TaxRate, search_param: :name_cont)
+
+  Spree.admin.tables.tax_rates.add :name,
+                                   label: :name,
+                                   type: :link,
+                                   sortable: true,
+                                   filterable: true,
+                                   default: true,
+                                   position: 10
+
+  Spree.admin.tables.tax_rates.add :tax_category,
+                                   label: :tax_category,
+                                   type: :string,
+                                   sortable: false,
+                                   default: true,
+                                   position: 20,
+                                   method: ->(tr) { tr.tax_category&.name }
+
+  Spree.admin.tables.tax_rates.add :zone,
+                                   label: :zone,
+                                   type: :string,
+                                   sortable: false,
+                                   default: true,
+                                   position: 30,
+                                   method: ->(tr) { tr.zone&.name }
+
+  Spree.admin.tables.tax_rates.add :amount,
+                                   label: :amount,
+                                   type: :string,
+                                   sortable: true,
+                                   default: true,
+                                   position: 40,
+                                   method: ->(tr) { number_to_percentage(tr.amount * 100) }
+
+  Spree.admin.tables.tax_rates.add :included_in_price,
+                                   label: :included_in_price,
+                                   type: :boolean,
+                                   sortable: false,
+                                   default: true,
+                                   position: 50
+
+  Spree.admin.tables.tax_rates.add :show_rate_in_label,
+                                   label: :show_rate_in_label,
+                                   type: :boolean,
+                                   sortable: false,
+                                   default: true,
+                                   position: 60
+
+  # ==========================================
+  # Register Taxonomies table
+  # ==========================================
+  Spree.admin.tables.register(:taxonomies, model_class: Spree::Taxonomy, search_param: :name_cont)
+
+  Spree.admin.tables.taxonomies.add :name,
+                                    label: :name,
+                                    type: :link,
+                                    sortable: true,
+                                    filterable: true,
+                                    default: true,
+                                    position: 10
+
+  Spree.admin.tables.taxonomies.add :taxons_count,
+                                    label: :taxons,
+                                    type: :string,
+                                    sortable: false,
+                                    default: true,
+                                    position: 20,
+                                    method: ->(taxonomy) { taxonomy.taxons.count - 1 }
+
+  # ==========================================
+  # Register Stock Locations table
+  # ==========================================
+  Spree.admin.tables.register(:stock_locations, model_class: Spree::StockLocation, search_param: :name_cont)
+
+  Spree.admin.tables.stock_locations.add :name,
+                                         label: :name,
+                                         type: :link,
+                                         sortable: true,
+                                         filterable: true,
+                                         default: true,
+                                         position: 10,
+                                         method: ->(sl) { sl.display_name }
+
+  Spree.admin.tables.stock_locations.add :country,
+                                         label: :country,
+                                         type: :string,
+                                         sortable: false,
+                                         default: true,
+                                         position: 20,
+                                         method: ->(sl) { sl.country_name }
+
+  Spree.admin.tables.stock_locations.add :active,
+                                         label: :active,
+                                         type: :boolean,
+                                         sortable: false,
+                                         default: true,
+                                         position: 30
+
+  Spree.admin.tables.stock_locations.add :default,
+                                         label: :default,
+                                         type: :boolean,
+                                         sortable: false,
+                                         default: true,
+                                         position: 40
+
+  # ==========================================
+  # Register Return Authorizations table
+  # ==========================================
+  Spree.admin.tables.register(:return_authorizations, model_class: Spree::ReturnAuthorization, search_param: :number_cont, new_resource: false)
+
+  Spree.admin.tables.return_authorizations.add :number,
+                                               label: :number,
+                                               type: :string,
+                                               sortable: true,
+                                               filterable: true,
+                                               default: true,
+                                               position: 10
+
+  Spree.admin.tables.return_authorizations.add :created_at,
+                                               label: :created_at,
+                                               type: :datetime,
+                                               sortable: true,
+                                               default: true,
+                                               position: 20
+
+  Spree.admin.tables.return_authorizations.add :state,
+                                               label: :status,
+                                               type: :status,
+                                               sortable: false,
+                                               default: true,
+                                               position: 30
+
+  # ==========================================
+  # Register Shipping Methods table
+  # ==========================================
+  Spree.admin.tables.register(:shipping_methods, model_class: Spree::ShippingMethod, search_param: :name_cont)
+
+  Spree.admin.tables.shipping_methods.add :name,
+                                          label: :name,
+                                          type: :link,
+                                          sortable: true,
+                                          filterable: true,
+                                          default: true,
+                                          position: 10
+
+  Spree.admin.tables.shipping_methods.add :admin_name,
+                                          label: :admin_name,
+                                          type: :string,
+                                          sortable: false,
+                                          default: true,
+                                          position: 20
+
+  Spree.admin.tables.shipping_methods.add :zones,
+                                          label: :zones,
+                                          type: :string,
+                                          sortable: false,
+                                          default: true,
+                                          position: 30,
+                                          wrap: true,
+                                          method: ->(sm) { sm.zones.map(&:name).join(', ') }
+
+  Spree.admin.tables.shipping_methods.add :delivery_range,
+                                          label: :estimated_delivery_time,
+                                          type: :string,
+                                          sortable: false,
+                                          default: true,
+                                          position: 40,
+                                          method: ->(sm) { sm.delivery_range.present? ? Spree.t(:display_delivery_range, delivery_range: sm.delivery_range) : nil }
+
+  Spree.admin.tables.shipping_methods.add :estimated_price,
+                                          label: :amount,
+                                          type: :string,
+                                          sortable: false,
+                                          default: true,
+                                          position: 50,
+                                          method: ->(sm) { sm.display_estimated_price }
+
+  Spree.admin.tables.shipping_methods.add :display_on,
+                                          label: :visibility,
+                                          type: :status,
+                                          sortable: false,
+                                          default: true,
+                                          position: 60,
+                                          method: ->(sm) { sm.display_on.presence || 'both' }
 end

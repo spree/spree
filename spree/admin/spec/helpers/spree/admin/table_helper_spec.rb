@@ -165,12 +165,12 @@ RSpec.describe Spree::Admin::TableHelper, type: :helper do
         expect(result).to include('badge-inactive')
       end
 
-      it 'renders unknown status with badge-secondary class' do
+      it 'renders unknown status with badge-light class' do
         allow(product).to receive(:status).and_return('custom_status')
 
         result = helper.render_column_value(product, column, table)
 
-        expect(result).to include('badge-secondary')
+        expect(result).to include('badge-light')
       end
 
       it 'renders dash for blank value' do
@@ -418,7 +418,7 @@ RSpec.describe Spree::Admin::TableHelper, type: :helper do
 
     it 'applies secondary class for unknown statuses' do
       result = helper.render_status_column('custom', column)
-      expect(result).to include('badge-secondary')
+      expect(result).to include('badge-light')
     end
   end
 
@@ -467,12 +467,12 @@ RSpec.describe Spree::Admin::TableHelper, type: :helper do
   end
 
   describe '#column_cell_class' do
-    it 'returns empty string for left-aligned column (default)' do
+    it 'returns text-nowrap for left-aligned column (default)' do
       column = Spree::Admin::Table::Column.new(key: 'name', label: :name, align: 'left')
 
       result = helper.column_cell_class(column)
 
-      expect(result).to eq('')
+      expect(result).to eq('text-nowrap')
     end
 
     it 'returns text alignment class for right alignment' do
@@ -481,6 +481,16 @@ RSpec.describe Spree::Admin::TableHelper, type: :helper do
       result = helper.column_cell_class(column)
 
       expect(result).to include('text-right')
+      expect(result).to include('text-nowrap')
+    end
+
+    it 'returns text-wrap when wrap is true' do
+      column = Spree::Admin::Table::Column.new(key: 'description', label: :description, wrap: true)
+
+      result = helper.column_cell_class(column)
+
+      expect(result).to include('text-wrap')
+      expect(result).not_to include('text-nowrap')
     end
   end
 

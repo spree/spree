@@ -37,7 +37,7 @@ RSpec.feature 'Tax categories' do
     )
 
     visit spree.admin_tax_categories_path
-    click_on 'Edit'
+    click_on tax_category.name
 
     fill_in 'Name', with: 'Non-Taxable'
     fill_in 'Description', with: 'Non-Taxable Tax Category'
@@ -58,10 +58,10 @@ RSpec.feature 'Tax categories' do
   end
 
   it 'allows to delete tax category', js: true do
-    create(:tax_category)
+    tax_category = create(:tax_category)
 
     visit spree.admin_tax_categories_path
-    click_on 'Edit'
+    click_on tax_category.name
     wait_for_turbo
 
     accept_turbo_confirm do
