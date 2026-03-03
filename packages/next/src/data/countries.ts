@@ -5,8 +5,7 @@ import type { SpreeNextOptions } from '../types';
 
 /**
  * List countries available in the store.
- * Each country includes currency and default_locale derived from its market.
- * Locale/country are auto-read from cookies when not provided.
+ * Use ?include=market to include market details (currency, locale, tax_inclusive).
  */
 export async function listCountries(
   options?: SpreeNextOptions
@@ -18,8 +17,7 @@ export async function listCountries(
 /**
  * Get a country by ISO code.
  * @param iso - ISO 3166-1 alpha-2 code (e.g., "US", "DE")
- * @param params - Optional params (e.g., { include: 'states' } for address forms)
- * Locale/country are auto-read from cookies when not provided.
+ * @param params - Optional params (e.g., { include: 'states' } or { include: 'market' })
  */
 export async function getCountry(
   iso: string,

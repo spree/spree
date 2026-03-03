@@ -70,9 +70,18 @@ export const fixtures = {
     name: 'United States',
     states_required: true,
     zipcode_required: true,
+  },
+  market: {
+    id: 'mkt_1',
+    name: 'North America',
     currency: 'USD',
     default_locale: 'en',
     supported_locales: ['en', 'es'],
+    tax_inclusive: false,
+    default: true,
+    countries: [
+      { iso: 'US', iso3: 'USA', name: 'United States', states_required: true, zipcode_required: true },
+    ],
   },
   currency: {
     iso_code: 'USD',
@@ -174,6 +183,27 @@ export const handlers = [
   // Locales
   http.get(`${API_PREFIX}/locales`, () =>
     HttpResponse.json({ data: [fixtures.locale] })
+  ),
+
+  // Markets
+  http.get(`${API_PREFIX}/markets`, () =>
+    HttpResponse.json({ data: [fixtures.market] })
+  ),
+
+  http.get(`${API_PREFIX}/markets/resolve`, () =>
+    HttpResponse.json(fixtures.market)
+  ),
+
+  http.get(`${API_PREFIX}/markets/:id/countries`, () =>
+    HttpResponse.json({ data: [fixtures.country] })
+  ),
+
+  http.get(`${API_PREFIX}/markets/:id/countries/:iso`, () =>
+    HttpResponse.json(fixtures.country)
+  ),
+
+  http.get(`${API_PREFIX}/markets/:id`, () =>
+    HttpResponse.json(fixtures.market)
   ),
 
   // Cart

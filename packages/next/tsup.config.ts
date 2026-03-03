@@ -15,6 +15,7 @@ export default defineConfig([
       'data/countries': 'src/data/countries.ts',
       'data/currencies': 'src/data/currencies.ts',
       'data/locales': 'src/data/locales.ts',
+      'data/markets': 'src/data/markets.ts',
     },
     format: ['esm'],
     dts: true,
