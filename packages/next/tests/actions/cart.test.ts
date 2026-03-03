@@ -119,6 +119,7 @@ describe('cart actions', () => {
       expect(mockClient.store.orders.lineItems.delete).toHaveBeenCalledWith(
         '1',
         'li_1',
+        undefined,
         expect.objectContaining({ orderToken: 'cart_token' })
       );
       expect(revalidateTag).toHaveBeenCalledWith('cart');

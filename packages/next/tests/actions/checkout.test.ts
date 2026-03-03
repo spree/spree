@@ -94,6 +94,7 @@ describe('checkout actions', () => {
       expect(result).toEqual(mockOrder);
       expect(mockClient.store.orders.advance).toHaveBeenCalledWith(
         '1',
+        undefined,
         { orderToken: 'order_token_123', token: 'jwt_token_abc' }
       );
       expect(revalidateTag).toHaveBeenCalledWith('checkout');
@@ -109,6 +110,7 @@ describe('checkout actions', () => {
       expect(result).toEqual(mockOrder);
       expect(mockClient.store.orders.next).toHaveBeenCalledWith(
         '1',
+        undefined,
         { orderToken: 'order_token_123', token: 'jwt_token_abc' }
       );
       expect(revalidateTag).toHaveBeenCalledWith('checkout');
@@ -156,6 +158,7 @@ describe('checkout actions', () => {
       expect(mockClient.store.orders.couponCodes.apply).toHaveBeenCalledWith(
         '1',
         'SAVE10',
+        undefined,
         { orderToken: 'order_token_123', token: 'jwt_token_abc' }
       );
       expect(revalidateTag).toHaveBeenCalledWith('checkout');
@@ -173,6 +176,7 @@ describe('checkout actions', () => {
       expect(mockClient.store.orders.couponCodes.remove).toHaveBeenCalledWith(
         '1',
         'promo_1',
+        undefined,
         { orderToken: 'order_token_123', token: 'jwt_token_abc' }
       );
       expect(revalidateTag).toHaveBeenCalledWith('checkout');
@@ -189,6 +193,7 @@ describe('checkout actions', () => {
       expect(result).toEqual(mockOrder);
       expect(mockClient.store.orders.complete).toHaveBeenCalledWith(
         '1',
+        undefined,
         { orderToken: 'order_token_123', token: 'jwt_token_abc' }
       );
       expect(revalidateTag).toHaveBeenCalledWith('checkout');
