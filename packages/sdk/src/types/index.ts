@@ -143,6 +143,8 @@ export interface AddressParams {
   state_abbr?: string;
   /** State name - used for countries without predefined states */
   state_name?: string;
+  /** When true, relaxes validation requirements (name, phone, zipcode, street) */
+  quick_checkout?: boolean;
 }
 
 export interface UpdateOrderParams {

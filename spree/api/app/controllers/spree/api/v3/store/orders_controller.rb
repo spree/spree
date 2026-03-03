@@ -117,7 +117,7 @@ module Spree
             [
               :id, :firstname, :lastname, :address1, :address2,
               :city, :zipcode, :phone, :company,
-              :country_iso, :state_abbr, :state_name
+              :country_iso, :state_abbr, :state_name, :quick_checkout
             ]
           end
         end
