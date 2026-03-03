@@ -4,7 +4,7 @@ module Spree
       queue_as Spree.queues.reports
 
       def perform(report_id)
-        report = Spree::Report.find(report_id)
+        report = Spree::Report.find_by_prefix_id!(report_id)
         report.generate
       end
     end

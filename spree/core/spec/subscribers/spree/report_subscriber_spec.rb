@@ -30,18 +30,18 @@ RSpec.describe Spree::ReportSubscriber do
       )
     end
 
-    it 'extracts report_id from event payload' do
+    it 'passes prefixed ID to job' do
       event = Spree::Event.new(
         name: 'report.created',
-        payload: { 'id' => report.id }
+        payload: { 'id' => report.prefixed_id }
       )
 
-      expect(Spree::Reports::GenerateJob).to receive(:perform_later).with(report.id)
+      expect(Spree::Reports::GenerateJob).to receive(:perform_later).with(report.prefixed_id)
 
       subscriber.generate_report_async(event)
     end
 
-    it 'does not call job if report_id is missing' do
+    it 'does not call job if id is missing' do
       event = Spree::Event.new(
         name: 'report.created',
         payload: {}
