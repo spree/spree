@@ -1,4 +1,0 @@
-<%# locals: (record:, column:, value:) %>
-<%= form_with model: record, url: spree.admin_shipping_method_path(record), method: :patch, data: { controller: 'auto-submit' } do |f| %>
-  <%= f.select :display_on, display_on_options, {}, { class: 'form-select form-select-sm', data: { action: 'auto-submit#submit' } } %>
-<% end %>

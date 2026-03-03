@@ -1964,11 +1964,12 @@ Rails.application.config.after_initialize do
                                           position: 20
 
   Spree.admin.tables.shipping_methods.add :zones,
-                                          label: :zone,
+                                          label: :zones,
                                           type: :string,
                                           sortable: false,
                                           default: true,
                                           position: 30,
+                                          wrap: true,
                                           method: ->(sm) { sm.zones.map(&:name).join(', ') }
 
   Spree.admin.tables.shipping_methods.add :delivery_range,
@@ -1989,9 +1990,9 @@ Rails.application.config.after_initialize do
 
   Spree.admin.tables.shipping_methods.add :display_on,
                                           label: :visibility,
-                                          type: :custom,
+                                          type: :status,
                                           sortable: false,
                                           default: true,
                                           position: 60,
-                                          partial: 'spree/admin/tables/columns/shipping_method_display_on'
+                                          method: ->(sm) { sm.display_on.presence || 'both' }
 end

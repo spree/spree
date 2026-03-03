@@ -125,7 +125,7 @@ module Spree
       def render_status_column(value, column)
         return empty_column_placeholder if value.blank?
 
-        css_class = STATUS_BADGE_CLASSES[value.to_s] || 'badge-secondary'
+        css_class = STATUS_BADGE_CLASSES[value.to_s] || 'badge-light'
         content_tag(:span, Spree.t(value, scope: column.key, default: value.to_s.humanize), class: "badge #{css_class}")
       end
 
@@ -222,7 +222,10 @@ module Spree
       # @param column [Spree::Admin::Table::Column] column definition
       # @return [String]
       def column_cell_class(column)
-        column.align.to_s == 'left' ? '' : "text-#{column.align}"
+        [].tap do |classes|
+          classes << "text-#{column.align}" unless column.align.to_s == 'left'
+          classes << (column.wrap ? 'text-wrap' : 'text-nowrap')
+        end.join(' ')
       end
 
       # Build query builder fields JSON for Stimulus controller

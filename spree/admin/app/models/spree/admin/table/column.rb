@@ -37,6 +37,7 @@ module Spree
         attribute :method
         attribute :width, :string
         attribute :align, :string, default: 'left'
+        attribute :wrap, :boolean, default: false
         attribute :format, :string
         attribute :condition
         attribute :ransack_attribute, :string

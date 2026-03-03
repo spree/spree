@@ -165,12 +165,12 @@ RSpec.describe Spree::Admin::TableHelper, type: :helper do
         expect(result).to include('badge-inactive')
       end
 
-      it 'renders unknown status with badge-secondary class' do
+      it 'renders unknown status with badge-light class' do
         allow(product).to receive(:status).and_return('custom_status')
 
         result = helper.render_column_value(product, column, table)
 
-        expect(result).to include('badge-secondary')
+        expect(result).to include('badge-light')
       end
 
       it 'renders dash for blank value' do
@@ -418,7 +418,7 @@ RSpec.describe Spree::Admin::TableHelper, type: :helper do
 
     it 'applies secondary class for unknown statuses' do
       result = helper.render_status_column('custom', column)
-      expect(result).to include('badge-secondary')
+      expect(result).to include('badge-light')
     end
   end
 
