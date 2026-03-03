@@ -60,7 +60,7 @@ RSpec.describe Spree::Api::V3::ProductSerializer do
       end
 
       it 'includes only public metafields with include param' do
-        result = described_class.new(product, params: base_params.merge(includes: ['metafields'])).to_h
+        result = described_class.new(product, params: base_params.merge(expand: ['metafields'])).to_h
         expect(result['metafields'].length).to eq(1)
         expect(result['metafields'].first['value']).to eq('public')
       end
@@ -86,7 +86,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductSerializer do
       create(:metafield, resource: product, metafield_definition: public_def, value: 'public')
       create(:metafield, resource: product, metafield_definition: private_def, value: 'private')
 
-      result = described_class.new(product, params: base_params.merge(includes: ['metafields'])).to_h
+      result = described_class.new(product, params: base_params.merge(expand: ['metafields'])).to_h
       expect(result['metafields'].length).to eq(2)
       expect(result['metafields']).to all(have_key('display_on'))
     end
