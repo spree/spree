@@ -21,7 +21,7 @@ export async function getCheckout(
   const options = await getCheckoutOptions();
   return getClient().store.orders.get(
     orderId,
-    { includes: 'line_items,shipments,ship_address,bill_address' },
+    { expand: 'line_items,shipments,ship_address,bill_address' },
     options
   );
 }

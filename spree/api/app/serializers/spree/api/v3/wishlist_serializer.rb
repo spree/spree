@@ -18,7 +18,7 @@ module Spree
         many :wished_items,
              key: :items,
              resource: Spree.api.wished_item_serializer,
-             if: proc { params[:includes]&.include?('items') }
+             if: proc { params[:expand]&.include?('items') }
       end
     end
   end

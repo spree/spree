@@ -108,7 +108,7 @@ export class StoreClient {
      */
     get: (
       idOrSlug: string,
-      params?: { includes?: string },
+      params?: { expand?: string },
       options?: RequestOptions
     ): Promise<StoreProduct> =>
       this.request<StoreProduct>('GET', `/products/${idOrSlug}`, {
@@ -152,7 +152,7 @@ export class StoreClient {
      */
     get: (
       id: string,
-      params?: { includes?: string },
+      params?: { expand?: string },
       options?: RequestOptions
     ): Promise<StoreTaxonomy> =>
       this.request<StoreTaxonomy>('GET', `/taxonomies/${id}`, {
@@ -179,7 +179,7 @@ export class StoreClient {
      */
     get: (
       idOrPermalink: string,
-      params?: { includes?: string },
+      params?: { expand?: string },
       options?: RequestOptions
     ): Promise<StoreTaxon> =>
       this.request<StoreTaxon>('GET', `/taxons/${idOrPermalink}`, {
@@ -225,12 +225,12 @@ export class StoreClient {
 
     /**
      * Get a country by ISO code
-     * Use `?include=states` to include states for address forms
+     * Use `?expand=states` to expand states for address forms
      * @param iso - ISO 3166-1 alpha-2 code (e.g., "US", "DE")
      */
     get: (
       iso: string,
-      params?: { include?: string },
+      params?: { expand?: string },
       options?: RequestOptions
     ): Promise<StoreCountry> =>
       this.request<StoreCountry>('GET', `/countries/${iso}`, {
@@ -309,7 +309,7 @@ export class StoreClient {
       get: (
         marketId: string,
         iso: string,
-        params?: { include?: string },
+        params?: { expand?: string },
         options?: RequestOptions
       ): Promise<StoreCountry> =>
         this.request<StoreCountry>(
@@ -361,7 +361,7 @@ export class StoreClient {
      */
     get: (
       idOrNumber: string,
-      params?: { includes?: string },
+      params?: { expand?: string },
       options?: RequestOptions
     ): Promise<StoreOrder> =>
       this.request<StoreOrder>('GET', `/orders/${idOrNumber}`, {
@@ -911,7 +911,7 @@ export class StoreClient {
      */
     get: (
       id: string,
-      params?: { includes?: string },
+      params?: { expand?: string },
       options?: RequestOptions
     ): Promise<StoreWishlist> =>
       this.request<StoreWishlist>('GET', `/wishlists/${id}`, {

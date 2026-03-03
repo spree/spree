@@ -92,11 +92,11 @@ describe('order actions', () => {
       const mockOrder = { id: '1', number: 'R001' };
       mockClient.store.orders.get.mockResolvedValue(mockOrder);
 
-      const result = await getOrder('R001', { includes: 'line_items' });
+      const result = await getOrder('R001', { expand: 'line_items' });
       expect(result).toEqual(mockOrder);
       expect(mockClient.store.orders.get).toHaveBeenCalledWith(
         'R001',
-        { includes: 'line_items' },
+        { expand: 'line_items' },
         expect.objectContaining({ token: expect.any(String) })
       );
     });

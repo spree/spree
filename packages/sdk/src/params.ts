@@ -1,14 +1,14 @@
 /**
  * Keys that are passed through to the API without wrapping in q[...].
  */
-const PASSTHROUGH_KEYS = new Set(['page', 'limit', 'includes', 'include', 'sort']);
+const PASSTHROUGH_KEYS = new Set(['page', 'limit', 'expand', 'sort']);
 
 type ParamValue = string | number | boolean | (string | number)[] | undefined;
 
 /**
  * Transforms flat SDK params into Ransack-compatible query params.
  *
- * - `page`, `limit`, `includes`, `include`, `sort` pass through unchanged
+ * - `page`, `limit`, `expand`, `sort` pass through unchanged
  * - Keys already in `q[...]` format pass through (backward compat)
  * - All other keys are wrapped: `name_cont` → `q[name_cont]`
  */
@@ -21,7 +21,7 @@ export function transformListParams(
     if (value === undefined) continue;
 
     if (PASSTHROUGH_KEYS.has(key)) {
-      // Join arrays for passthrough keys (e.g., includes: ['variants', 'images'] → 'variants,images')
+      // Join arrays for passthrough keys (e.g., expand: ['variants', 'images'] → 'variants,images')
       result[key] = Array.isArray(value) ? (value as (string | number)[]).join(',') : value as ParamValue;
       continue;
     }

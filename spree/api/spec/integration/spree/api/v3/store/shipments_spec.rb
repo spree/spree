@@ -68,8 +68,8 @@ RSpec.describe 'Shipments API', type: :request, swagger_doc: 'api-reference/stor
       parameter name: :order_id, in: :path, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true, description: 'Shipment ID'
       parameter name: :token, in: :query, type: :string, required: false, description: 'Order token for guest access'
-      parameter name: :includes, in: :query, type: :string, required: false,
-                description: 'Include shipping_rates'
+      parameter name: :expand, in: :query, type: :string, required: false,
+                description: 'Expand shipping_rates'
 
       response '200', 'shipment found' do
         let(:'x-spree-api-key') { api_key.token }

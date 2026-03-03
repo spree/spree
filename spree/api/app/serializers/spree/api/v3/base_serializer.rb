@@ -33,24 +33,24 @@ module Spree
           params[:locale]
         end
 
-        def includes
-          @includes ||= Array(params[:includes] || [])
+        def expands
+          @expands ||= Array(params[:expand] || [])
         end
 
-        # Check if an association should be included
-        def include?(name)
-          includes.include?(name.to_s)
+        # Check if an association should be expanded
+        def expand?(name)
+          expands.include?(name.to_s)
         end
 
-        # Get nested includes for a given parent
-        def nested_includes_for(parent)
+        # Get nested expands for a given parent
+        def nested_expands_for(parent)
           prefix = "#{parent}."
-          includes.select { |i| i.start_with?(prefix) }.map { |i| i.sub(prefix, '') }
+          expands.select { |i| i.start_with?(prefix) }.map { |i| i.sub(prefix, '') }
         end
 
         # Build nested params for child serializers
         def nested_params(parent = nil)
-          params.merge(includes: parent ? nested_includes_for(parent) : [])
+          params.merge(expand: parent ? nested_expands_for(parent) : [])
         end
 
         # Returns price for a variant using full Price List resolution

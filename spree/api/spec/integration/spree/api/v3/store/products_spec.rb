@@ -39,7 +39,7 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
           price_gte: 20,
           price_lte: 100,
           with_option_value_ids: ['optval_abc', 'optval_def'],
-          includes: ['variants', 'images'],
+          expand: ['variants', 'images'],
         })
       JS
 
@@ -63,8 +63,8 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
                 description: 'Filter by option value prefix IDs (e.g., optval_abc). Pass multiple values for OR logic.'
       parameter name: 'q[in_stock]', in: :query, type: :boolean, required: false,
                 description: 'Filter to only in-stock products'
-      parameter name: :includes, in: :query, type: :string, required: false,
-                description: 'Comma-separated associations to include (variants, images, taxons, option_types)'
+      parameter name: :expand, in: :query, type: :string, required: false,
+                description: 'Comma-separated associations to expand (variants, images, taxons, option_types)'
 
       response '200', 'products found' do
         let(:'x-spree-api-key') { api_key.token }
@@ -105,7 +105,7 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
 
       sdk_example <<~JS
         const product = await client.store.products.get('spree-tote', {
-          includes: ['variants', 'images'],
+          expand: ['variants', 'images'],
         })
       JS
 
@@ -113,8 +113,8 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
                 description: 'Publishable API key'
       parameter name: :id, in: :path, type: :string, required: true,
                 description: 'Product slug (e.g., spree-tote) or prefix ID (e.g., product_abc123)'
-      parameter name: :includes, in: :query, type: :string, required: false,
-                description: 'Comma-separated associations to include'
+      parameter name: :expand, in: :query, type: :string, required: false,
+                description: 'Comma-separated associations to expand'
 
       response '200', 'product found by slug' do
         let(:'x-spree-api-key') { api_key.token }

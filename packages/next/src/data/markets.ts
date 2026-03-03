@@ -5,7 +5,7 @@ import type { SpreeNextOptions } from '../types';
 
 /**
  * List all markets for the current store.
- * Each market includes currency, locales, tax_inclusive flag, and countries.
+ * Each market contains currency, locales, tax_inclusive flag, and countries.
  */
 export async function listMarkets(
   options?: SpreeNextOptions
@@ -58,7 +58,7 @@ export async function listMarketCountries(
 export async function getMarketCountry(
   marketId: string,
   iso: string,
-  params?: { include?: string },
+  params?: { expand?: string },
   options?: SpreeNextOptions
 ): Promise<StoreCountry> {
   const resolved = options ?? await getLocaleOptions();

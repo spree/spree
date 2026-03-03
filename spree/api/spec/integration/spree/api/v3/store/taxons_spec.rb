@@ -72,15 +72,15 @@ RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.y
 
       sdk_example <<~JS
         const taxon = await client.store.taxons.get('categories/clothing/shirts', {
-          includes: 'children,products',
+          expand: 'children,products',
         })
       JS
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true,
                 description: 'Taxon permalink (e.g., categories/clothing/shirts) or prefix ID (e.g., taxon_abc123)'
-      parameter name: :includes, in: :query, type: :string, required: false,
-                description: 'Include associations (children, products, parent)'
+      parameter name: :expand, in: :query, type: :string, required: false,
+                description: 'Expand associations (children, products, parent)'
 
       response '200', 'taxon found by permalink' do
         let(:'x-spree-api-key') { api_key.token }

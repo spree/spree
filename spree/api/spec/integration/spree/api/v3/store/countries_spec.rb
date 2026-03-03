@@ -18,7 +18,7 @@ RSpec.describe 'Countries API', type: :request, swagger_doc: 'api-reference/stor
       tags 'Internationalization'
       produces 'application/json'
       security [api_key: []]
-      description 'Returns countries available in the store. Use ?include=market to include market details (currency, locale, tax_inclusive).'
+      description 'Returns countries available in the store. Use ?expand=market to include market details (currency, locale, tax_inclusive).'
 
       sdk_example <<~JS
         const countries = await client.store.countries.list()
@@ -67,7 +67,7 @@ RSpec.describe 'Countries API', type: :request, swagger_doc: 'api-reference/stor
       tags 'Internationalization'
       produces 'application/json'
       security [api_key: []]
-      description 'Returns a single country by ISO code. Supports ?include=states for address forms and ?include=market for market details.'
+      description 'Returns a single country by ISO code. Supports ?expand=states for address forms and ?expand=market for market details.'
 
       sdk_example <<~JS
         const country = await client.store.countries.get('US')
@@ -109,10 +109,10 @@ RSpec.describe 'Countries API', type: :request, swagger_doc: 'api-reference/stor
     end
   end
 
-  # Non-swagger tests for ?include functionality
-  describe 'GET /api/v3/store/countries/:iso?include=states' do
+  # Non-swagger tests for ?expand functionality
+  describe 'GET /api/v3/store/countries/:iso?expand=states' do
     it 'includes states when requested' do
-      get "/api/v3/store/countries/US?include=states", headers: { 'x-spree-api-key' => api_key.token }
+      get "/api/v3/store/countries/US?expand=states", headers: { 'x-spree-api-key' => api_key.token }
 
       expect(response).to have_http_status(:ok)
       data = JSON.parse(response.body)
@@ -122,9 +122,9 @@ RSpec.describe 'Countries API', type: :request, swagger_doc: 'api-reference/stor
     end
   end
 
-  describe 'GET /api/v3/store/countries/:iso?include=market' do
+  describe 'GET /api/v3/store/countries/:iso?expand=market' do
     it 'includes market details when requested' do
-      get "/api/v3/store/countries/US?include=market", headers: { 'x-spree-api-key' => api_key.token }
+      get "/api/v3/store/countries/US?expand=market", headers: { 'x-spree-api-key' => api_key.token }
 
       expect(response).to have_http_status(:ok)
       data = JSON.parse(response.body)

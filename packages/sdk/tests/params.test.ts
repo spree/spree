@@ -7,19 +7,14 @@ describe('transformListParams', () => {
     expect(result).toEqual({ page: 2, limit: 10 });
   });
 
-  it('passes through includes string unchanged', () => {
-    const result = transformListParams({ includes: 'variants,images' });
-    expect(result).toEqual({ includes: 'variants,images' });
+  it('passes through expand string unchanged', () => {
+    const result = transformListParams({ expand: 'variants,images' });
+    expect(result).toEqual({ expand: 'variants,images' });
   });
 
-  it('joins includes array into comma-separated string', () => {
-    const result = transformListParams({ includes: ['variants', 'images'] });
-    expect(result).toEqual({ includes: 'variants,images' });
-  });
-
-  it('passes through include param unchanged', () => {
-    const result = transformListParams({ include: 'variants' });
-    expect(result).toEqual({ include: 'variants' });
+  it('joins expand array into comma-separated string', () => {
+    const result = transformListParams({ expand: ['variants', 'images'] });
+    expect(result).toEqual({ expand: 'variants,images' });
   });
 
   it('passes through sort param unchanged', () => {
@@ -82,7 +77,7 @@ describe('transformListParams', () => {
     const result = transformListParams({
       page: 1,
       limit: 12,
-      includes: 'images,default_variant',
+      expand: 'images,default_variant',
       sort: 'created_at desc',
       name_cont: 'shirt',
       price_gte: 20,
@@ -91,7 +86,7 @@ describe('transformListParams', () => {
     expect(result).toEqual({
       page: 1,
       limit: 12,
-      includes: 'images,default_variant',
+      expand: 'images,default_variant',
       sort: 'created_at desc',
       'q[name_cont]': 'shirt',
       'q[price_gte]': 20,

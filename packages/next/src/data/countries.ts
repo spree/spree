@@ -5,7 +5,7 @@ import type { SpreeNextOptions } from '../types';
 
 /**
  * List countries available in the store.
- * Use ?include=market to include market details (currency, locale, tax_inclusive).
+ * Use ?expand=market to expand market details (currency, locale, tax_inclusive).
  */
 export async function listCountries(
   options?: SpreeNextOptions
@@ -17,11 +17,11 @@ export async function listCountries(
 /**
  * Get a country by ISO code.
  * @param iso - ISO 3166-1 alpha-2 code (e.g., "US", "DE")
- * @param params - Optional params (e.g., { include: 'states' } or { include: 'market' })
+ * @param params - Optional params (e.g., { expand: 'states' } or { expand: 'market' })
  */
 export async function getCountry(
   iso: string,
-  params?: { include?: string },
+  params?: { expand?: string },
   options?: SpreeNextOptions
 ): Promise<StoreCountry> {
   const resolved = options ?? await getLocaleOptions();

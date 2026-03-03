@@ -17,7 +17,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
 
       sdk_example <<~JS
         const order = await client.store.orders.get('or_abc123', {
-          includes: 'line_items,shipments',
+          expand: 'line_items,shipments',
         }, {
           bearerToken: '<token>',
         })
@@ -29,8 +29,8 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
                 description: 'Order ID (prefixed) or order number'
       parameter name: :order_token, in: :query, type: :string, required: false,
                 description: 'Order token for guest access'
-      parameter name: :includes, in: :query, type: :string, required: false,
-                description: 'Include associations (line_items, shipments, payments)'
+      parameter name: :expand, in: :query, type: :string, required: false,
+                description: 'Expand associations (line_items, shipments, payments)'
 
       response '200', 'order found (authenticated)' do
         let(:'x-spree-api-key') { api_key.token }

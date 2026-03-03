@@ -189,7 +189,7 @@ RSpec.describe 'Markets API', type: :request, swagger_doc: 'api-reference/store.
       tags 'Markets'
       produces 'application/json'
       security [api_key: []]
-      description 'Returns a single country by ISO code within a market. Supports ?include=states for address forms.'
+      description 'Returns a single country by ISO code within a market. Supports ?expand=states for address forms.'
 
       sdk_example <<~JS
         const country = await client.store.markets.countries.get('mkt_xxx', 'DE')

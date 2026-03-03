@@ -5,6 +5,7 @@
 ### Patch Changes
 
 - Rename `per_page` pagination parameter to `limit`
+- Rename `includes` query parameter to `expand`
 
 ## 0.6.3
 

@@ -21,7 +21,7 @@ export async function listProducts(
  */
 export async function getProduct(
   slugOrId: string,
-  params?: { includes?: string },
+  params?: { expand?: string },
   options?: SpreeNextOptions
 ): Promise<StoreProduct> {
   const resolved = options ?? await getLocaleOptions();

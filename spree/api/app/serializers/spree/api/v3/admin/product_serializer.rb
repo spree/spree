@@ -26,20 +26,20 @@ module Spree
           # Admin uses admin variant serializer
           many :variants,
                resource: Spree.api.admin_variant_serializer,
-               if: proc { params[:includes]&.include?('variants') }
+               if: proc { params[:expand]&.include?('variants') }
 
           one :default_variant,
               resource: Spree.api.admin_variant_serializer,
-              if: proc { params[:includes]&.include?('default_variant') }
+              if: proc { params[:expand]&.include?('default_variant') }
 
           one :master,
               key: :master_variant,
               resource: Spree.api.admin_variant_serializer,
-              if: proc { params[:includes]&.include?('master_variant') }
+              if: proc { params[:expand]&.include?('master_variant') }
 
           many :metafields,
                resource: Spree.api.admin_metafield_serializer,
-               if: proc { params[:includes]&.include?('metafields') }
+               if: proc { params[:expand]&.include?('metafields') }
         end
       end
     end
