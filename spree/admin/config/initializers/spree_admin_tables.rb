@@ -1614,4 +1614,39 @@ Rails.application.config.after_initialize do
                                        sortable: true,
                                        default: true,
                                        position: 40
+
+  # ==========================================
+  # Register Coupon Codes table
+  # ==========================================
+  Spree.admin.tables.register(:coupon_codes, model_class: Spree::CouponCode, search_param: :code_i_cont, new_resource: false)
+
+  Spree.admin.tables.coupon_codes.add :code,
+                                            label: :code,
+                                            type: :string,
+                                            sortable: true,
+                                            filterable: true,
+                                            default: true,
+                                            position: 10,
+                                            method: ->(coupon_code) { coupon_code.display_code }
+
+  Spree.admin.tables.coupon_codes.add :state,
+                                            label: :status,
+                                            type: :status,
+                                            filter_type: :select,
+                                            sortable: true,
+                                            filterable: true,
+                                            default: true,
+                                            position: 20,
+                                            value_options: [
+                                              { value: 'unused', label: 'Unused' },
+                                              { value: 'used', label: 'Used' }
+                                            ]
+
+  Spree.admin.tables.coupon_codes.add :created_at,
+                                            label: :created_at,
+                                            type: :datetime,
+                                            sortable: true,
+                                            filterable: false,
+                                            default: true,
+                                            position: 30
 end

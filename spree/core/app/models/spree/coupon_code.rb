@@ -19,7 +19,8 @@ module Spree
     validates :code, presence: true, uniqueness: { scope: spree_base_uniqueness_scope, conditions: -> { where(deleted_at: nil) } }
     validates :state, :promotion, presence: true
 
-    self.whitelisted_ransackable_attributes = %w[state code]
+    self.whitelisted_ransackable_attributes = %w[state code promotion_id]
+    self.whitelisted_ransackable_associations = %w[promotion]
 
     def self.used?(code)
       used_with_code(code).any?
@@ -35,6 +36,10 @@ module Spree
 
     def display_code
       code.upcase
+    end
+
+    def to_csv(_store = nil)
+      Spree::CSV::CouponCodePresenter.new(self).call
     end
   end
 end

@@ -8,7 +8,7 @@
 
 <div class="grid grid-cols-12 gap-6">
   <div class="col-span-12 lg:col-span-8">
-    <%= render 'spree/admin/shared/index_table', new_object_url: nil %>
+    <%= render_table @collection, :coupon_codes, export_type: Spree::Exports::CouponCodes %>
   </div>
 
   <div class="col-span-12 lg:col-span-4">

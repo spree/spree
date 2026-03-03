@@ -180,7 +180,8 @@ module Spree
           Spree::Exports::Orders,
           Spree::Exports::Customers,
           Spree::Exports::GiftCards,
-          Spree::Exports::NewsletterSubscribers
+          Spree::Exports::NewsletterSubscribers,
+          Spree::Exports::CouponCodes
         ]
 
         Rails.application.config.spree.import_types = [
