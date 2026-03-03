@@ -115,7 +115,7 @@ export async function removeItem(lineItemId: string): Promise<StoreOrder> {
 
   const cart = await getClient().store.cart.get({ orderToken, token });
 
-  const order = await getClient().store.orders.lineItems.delete(cart.id, lineItemId, {
+  const order = await getClient().store.orders.lineItems.delete(cart.id, lineItemId, undefined, {
     orderToken,
     token,
   });

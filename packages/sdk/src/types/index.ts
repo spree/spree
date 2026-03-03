@@ -108,6 +108,12 @@ export interface OrderListParams extends ListParams {
   [key: string]: string | number | boolean | (string | number)[] | undefined;
 }
 
+// Optimistic locking
+export interface OrderLockParams {
+  /** Optimistic lock version — if provided and stale, returns 409 Conflict */
+  state_lock_version?: number;
+}
+
 // Cart operations
 export interface CreateCartParams {
   /** Arbitrary key-value metadata (stored, not returned in responses) */
@@ -119,12 +125,16 @@ export interface AddLineItemParams {
   quantity: number;
   /** Arbitrary key-value metadata (stored, not returned in responses) */
   metadata?: Record<string, unknown>;
+  /** Optimistic lock version — if provided and stale, returns 409 Conflict */
+  state_lock_version?: number;
 }
 
 export interface UpdateLineItemParams {
   quantity?: number;
   /** Arbitrary key-value metadata (merged with existing) */
   metadata?: Record<string, unknown>;
+  /** Optimistic lock version — if provided and stale, returns 409 Conflict */
+  state_lock_version?: number;
 }
 
 // Address params
@@ -160,6 +170,8 @@ export interface UpdateOrderParams {
   bill_address?: AddressParams;
   /** New shipping address */
   ship_address?: AddressParams;
+  /** Optimistic lock version — if provided and stale, returns 409 Conflict */
+  state_lock_version?: number;
 }
 
 // Payment Sessions

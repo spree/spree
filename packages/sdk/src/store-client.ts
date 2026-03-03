@@ -15,6 +15,7 @@ import type {
   AddLineItemParams,
   UpdateLineItemParams,
   UpdateOrderParams,
+  OrderLockParams,
   AddressParams,
   CreatePaymentSessionParams,
   UpdatePaymentSessionParams,
@@ -319,20 +320,41 @@ export class StoreClient {
     /**
      * Advance order to next checkout step
      */
-    next: (idOrNumber: string, options?: RequestOptions): Promise<StoreOrder> =>
-      this.request<StoreOrder>('PATCH', `/orders/${idOrNumber}/next`, options),
+    next: (
+      idOrNumber: string,
+      params?: OrderLockParams,
+      options?: RequestOptions
+    ): Promise<StoreOrder> =>
+      this.request<StoreOrder>('PATCH', `/orders/${idOrNumber}/next`, {
+        ...options,
+        body: params,
+      }),
 
     /**
      * Advance through all checkout steps
      */
-    advance: (idOrNumber: string, options?: RequestOptions): Promise<StoreOrder> =>
-      this.request<StoreOrder>('PATCH', `/orders/${idOrNumber}/advance`, options),
+    advance: (
+      idOrNumber: string,
+      params?: OrderLockParams,
+      options?: RequestOptions
+    ): Promise<StoreOrder> =>
+      this.request<StoreOrder>('PATCH', `/orders/${idOrNumber}/advance`, {
+        ...options,
+        body: params,
+      }),
 
     /**
      * Complete the order
      */
-    complete: (idOrNumber: string, options?: RequestOptions): Promise<StoreOrder> =>
-      this.request<StoreOrder>('PATCH', `/orders/${idOrNumber}/complete`, options),
+    complete: (
+      idOrNumber: string,
+      params?: OrderLockParams,
+      options?: RequestOptions
+    ): Promise<StoreOrder> =>
+      this.request<StoreOrder>('PATCH', `/orders/${idOrNumber}/complete`, {
+        ...options,
+        body: params,
+      }),
 
     /**
      * Add store credit to order
@@ -340,11 +362,12 @@ export class StoreClient {
     addStoreCredit: (
       idOrNumber: string,
       amount?: number,
+      params?: OrderLockParams,
       options?: RequestOptions
     ): Promise<StoreOrder> =>
       this.request<StoreOrder>('POST', `/orders/${idOrNumber}/store_credits`, {
         ...options,
-        body: amount ? { amount } : undefined,
+        body: { ...(amount ? { amount } : {}), ...params },
       }),
 
     /**
@@ -352,9 +375,13 @@ export class StoreClient {
      */
     removeStoreCredit: (
       idOrNumber: string,
+      params?: OrderLockParams,
       options?: RequestOptions
     ): Promise<StoreOrder> =>
-      this.request<StoreOrder>('DELETE', `/orders/${idOrNumber}/store_credits`, options),
+      this.request<StoreOrder>('DELETE', `/orders/${idOrNumber}/store_credits`, {
+        ...options,
+        body: params,
+      }),
 
     /**
      * Nested resource: Line items
@@ -397,12 +424,13 @@ export class StoreClient {
       delete: (
         orderId: string,
         lineItemId: string,
+        params?: OrderLockParams,
         options?: RequestOptions
       ): Promise<StoreOrder> =>
         this.request<StoreOrder>(
           'DELETE',
           `/orders/${orderId}/line_items/${lineItemId}`,
-          options
+          { ...options, body: params }
         ),
     },
 
@@ -532,11 +560,12 @@ export class StoreClient {
       apply: (
         orderId: string,
         code: string,
+        params?: OrderLockParams,
         options?: RequestOptions
       ): Promise<StoreOrder> =>
         this.request<StoreOrder>('POST', `/orders/${orderId}/coupon_codes`, {
           ...options,
-          body: { code },
+          body: { code, ...params },
         }),
 
       /**
@@ -546,12 +575,13 @@ export class StoreClient {
       remove: (
         orderId: string,
         promotionId: string,
+        params?: OrderLockParams,
         options?: RequestOptions
       ): Promise<StoreOrder> =>
         this.request<StoreOrder>(
           'DELETE',
           `/orders/${orderId}/coupon_codes/${promotionId}`,
-          options
+          { ...options, body: params }
         ),
     },
 
@@ -579,7 +609,7 @@ export class StoreClient {
       update: (
         orderId: string,
         shipmentId: string,
-        params: { selected_shipping_rate_id: string },
+        params: { selected_shipping_rate_id: string } & OrderLockParams,
         options?: RequestOptions
       ): Promise<StoreOrder> =>
         this.request<StoreOrder>(
