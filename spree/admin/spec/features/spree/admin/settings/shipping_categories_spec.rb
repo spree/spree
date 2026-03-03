@@ -25,7 +25,7 @@ RSpec.feature 'Shipping categories' do
     shipping_category = create(:shipping_category, name: 'Standard')
 
     visit spree.admin_shipping_categories_path
-    click_on 'Edit'
+    click_on shipping_category.name
 
     fill_in 'Name', with: 'Express'
 
@@ -42,7 +42,7 @@ RSpec.feature 'Shipping categories' do
     shipping_category = create(:shipping_category, name: 'Standard')
 
     visit spree.admin_shipping_categories_path
-    click_on 'Edit'
+    click_on shipping_category.name
     wait_for_turbo
 
     accept_turbo_confirm do

@@ -467,12 +467,12 @@ RSpec.describe Spree::Admin::TableHelper, type: :helper do
   end
 
   describe '#column_cell_class' do
-    it 'returns empty string for left-aligned column (default)' do
+    it 'returns text-nowrap for left-aligned column (default)' do
       column = Spree::Admin::Table::Column.new(key: 'name', label: :name, align: 'left')
 
       result = helper.column_cell_class(column)
 
-      expect(result).to eq('')
+      expect(result).to eq('text-nowrap')
     end
 
     it 'returns text alignment class for right alignment' do
@@ -481,6 +481,16 @@ RSpec.describe Spree::Admin::TableHelper, type: :helper do
       result = helper.column_cell_class(column)
 
       expect(result).to include('text-right')
+      expect(result).to include('text-nowrap')
+    end
+
+    it 'returns text-wrap when wrap is true' do
+      column = Spree::Admin::Table::Column.new(key: 'description', label: :description, wrap: true)
+
+      result = helper.column_cell_class(column)
+
+      expect(result).to include('text-wrap')
+      expect(result).not_to include('text-nowrap')
     end
   end
 
