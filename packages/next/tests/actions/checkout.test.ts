@@ -28,7 +28,7 @@ vi.mock('@spree/sdk', () => ({
 
 import {
   getCheckout,
-  updateAddresses,
+  updateOrder,
   advance,
   next,
   getShipments,
@@ -65,20 +65,20 @@ describe('checkout actions', () => {
     });
   });
 
-  describe('updateAddresses', () => {
-    it('updates order addresses and revalidates checkout', async () => {
+  describe('updateOrder', () => {
+    it('updates order and revalidates checkout', async () => {
       const mockOrder = { id: '1', number: 'R123' };
-      const addressParams = {
+      const params = {
         email: 'test@example.com',
         ship_address: { firstname: 'John', lastname: 'Doe', address1: '123 Main St', city: 'NY', zipcode: '10001', country_iso: 'US' },
       };
       mockClient.store.orders.update.mockResolvedValue(mockOrder);
 
-      const result = await updateAddresses('1', addressParams);
+      const result = await updateOrder('1', params);
       expect(result).toEqual(mockOrder);
       expect(mockClient.store.orders.update).toHaveBeenCalledWith(
         '1',
-        addressParams,
+        params,
         { orderToken: 'order_token_123', token: 'jwt_token_abc' }
       );
       expect(revalidateTag).toHaveBeenCalledWith('checkout');
