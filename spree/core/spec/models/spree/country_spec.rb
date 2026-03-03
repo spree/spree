@@ -30,6 +30,29 @@ describe Spree::Country, type: :model do
     end
   end
 
+  describe '#current_market' do
+    let!(:market) { create(:market, store: store, countries: [america], currency: 'USD') }
+
+    before do
+      allow(Spree::Current).to receive(:store).and_return(store)
+      america.instance_variable_set(:@current_market, nil)
+      canada.instance_variable_set(:@current_market, nil)
+    end
+
+    it 'returns the market for the country in the current store' do
+      expect(america.current_market).to eq(market)
+    end
+
+    it 'returns nil for a country not in any market' do
+      expect(canada.current_market).to be_nil
+    end
+
+    it 'returns nil when there is no current store' do
+      allow(Spree::Current).to receive(:store).and_return(nil)
+      expect(america.current_market).to be_nil
+    end
+  end
+
   describe '#default?' do
     before do
       allow_any_instance_of(Spree::Store).to receive(:default).and_return(store)
@@ -54,128 +77,6 @@ describe Spree::Country, type: :model do
 
       it 'returns false for other countries' do
         expect(america.default?(other_store)).to eq(false)
-      end
-    end
-  end
-
-  describe '#default_currency' do
-    it 'returns the currency code from ISO3166' do
-      expect(america.default_currency).to eq('USD')
-    end
-
-    it 'returns EUR for Germany' do
-      germany = create(:country, name: 'Germany', iso_name: 'GERMANY', iso: 'DE', iso3: 'DEU', numcode: '276')
-      expect(germany.default_currency).to eq('EUR')
-    end
-
-    it 'returns nil for invalid ISO code' do
-      invalid_country = build(:country, iso: 'XX')
-      expect(invalid_country.default_currency).to be_nil
-    end
-  end
-
-  describe '#default_locale' do
-    it 'returns the primary language from ISO3166' do
-      expect(america.default_locale).to eq('en')
-    end
-
-    it 'returns de for Germany' do
-      germany = create(:country, name: 'Germany', iso_name: 'GERMANY', iso: 'DE', iso3: 'DEU', numcode: '276')
-      expect(germany.default_locale).to eq('de')
-    end
-
-    it 'returns nil for invalid ISO code' do
-      invalid_country = build(:country, iso: 'XX')
-      expect(invalid_country.default_locale).to be_nil
-    end
-  end
-
-  describe '#market_currency' do
-    before do
-      america.remove_instance_variable(:@current_market) if america.instance_variable_defined?(:@current_market)
-      Spree::Current.store = store
-    end
-    after { Spree::Current.reset }
-
-    context 'when country belongs to a market' do
-      let!(:market) { create(:market, :default, store: store, countries: [america], currency: 'EUR') }
-
-      it 'returns the market currency' do
-        expect(america.market_currency).to eq('EUR')
-      end
-    end
-
-    context 'when country does not belong to any market' do
-      it 'returns nil' do
-        expect(canada.market_currency).to be_nil
-      end
-    end
-
-    context 'when no current store is set' do
-      before { Spree::Current.store = nil }
-
-      it 'returns nil' do
-        expect(america.market_currency).to be_nil
-      end
-    end
-  end
-
-  describe '#market_locale' do
-    before do
-      america.remove_instance_variable(:@current_market) if america.instance_variable_defined?(:@current_market)
-      Spree::Current.store = store
-    end
-    after { Spree::Current.reset }
-
-    context 'when country belongs to a market' do
-      let!(:market) { create(:market, :default, store: store, countries: [america], default_locale: 'de') }
-
-      it 'returns the market default locale' do
-        expect(america.market_locale).to eq('de')
-      end
-    end
-
-    context 'when country does not belong to any market' do
-      it 'returns nil' do
-        expect(canada.market_locale).to be_nil
-      end
-    end
-
-    context 'when no current store is set' do
-      before { Spree::Current.store = nil }
-
-      it 'returns nil' do
-        expect(america.market_locale).to be_nil
-      end
-    end
-  end
-
-  describe '#market_supported_locales' do
-    before do
-      america.remove_instance_variable(:@current_market) if america.instance_variable_defined?(:@current_market)
-      Spree::Current.store = store
-    end
-    after { Spree::Current.reset }
-
-    context 'when country belongs to a market' do
-      let!(:market) { create(:market, :default, store: store, countries: [america], default_locale: 'en', supported_locales: 'en,fr') }
-
-      it 'returns the market supported locales' do
-        expect(america.market_supported_locales).to match_array(['en', 'fr'])
-      end
-    end
-
-    context 'when country does not belong to any market' do
-      it 'returns an empty array' do
-        expect(canada.market_supported_locales).to eq([])
-      end
-    end
-
-    context 'when no current store is set' do
-      before { Spree::Current.store = nil }
-
-      it 'returns an empty array' do
-        expect(america.market_supported_locales).to eq([])
       end
     end
   end

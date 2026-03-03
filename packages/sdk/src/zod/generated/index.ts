@@ -27,6 +27,7 @@ export { StoreImportRowSchema, type StoreImportRow } from './StoreImportRow';
 export { StoreInvitationSchema, type StoreInvitation } from './StoreInvitation';
 export { StoreLineItemSchema, type StoreLineItem } from './StoreLineItem';
 export { StoreLocaleSchema, type StoreLocale } from './StoreLocale';
+export { StoreMarketSchema, type StoreMarket } from './StoreMarket';
 export { StoreMetafieldSchema, type StoreMetafield } from './StoreMetafield';
 export { StoreNewsletterSubscriberSchema, type StoreNewsletterSubscriber } from './StoreNewsletterSubscriber';
 export { StoreOptionTypeSchema, type StoreOptionType } from './StoreOptionType';

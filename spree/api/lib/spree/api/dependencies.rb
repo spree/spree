@@ -107,6 +107,7 @@ module Spree
         address_serializer: 'Spree::Api::V3::AddressSerializer',
         customer_serializer: 'Spree::Api::V3::CustomerSerializer',
         country_serializer: 'Spree::Api::V3::CountrySerializer',
+        market_serializer: 'Spree::Api::V3::MarketSerializer',
         state_serializer: 'Spree::Api::V3::StateSerializer',
         store_serializer: 'Spree::Api::V3::StoreSerializer',
         wishlist_serializer: 'Spree::Api::V3::WishlistSerializer',

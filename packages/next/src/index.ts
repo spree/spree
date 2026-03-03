@@ -10,6 +10,7 @@ export { getStore } from './data/store';
 export { listCountries, getCountry } from './data/countries';
 export { listCurrencies } from './data/currencies';
 export { listLocales } from './data/locales';
+export { listMarkets, getMarket, resolveMarket, listMarketCountries, getMarketCountry } from './data/markets';
 
 // Server actions (mutations + auth-dependent reads)
 export {
@@ -79,6 +80,7 @@ export type {
   StoreCountry,
   StoreCurrency,
   StoreLocale,
+  StoreMarket,
   StoreStore,
   StoreAddress,
   StoreCustomer,

@@ -18,7 +18,7 @@ RSpec.describe 'Countries API', type: :request, swagger_doc: 'api-reference/stor
       tags 'Internationalization'
       produces 'application/json'
       security [api_key: []]
-      description 'Returns countries available in the store with their currency and locale (derived from markets)'
+      description 'Returns countries available in the store. Use ?include=market to include market details (currency, locale, tax_inclusive).'
 
       sdk_example <<~JS
         const countries = await client.store.countries.list()
@@ -45,15 +45,10 @@ RSpec.describe 'Countries API', type: :request, swagger_doc: 'api-reference/stor
           us_country = data['data'].find { |c| c['iso'] == 'US' }
           expect(us_country).to be_present
           expect(us_country['name']).to be_present
-          expect(us_country['currency']).to eq('USD')
-          expect(us_country['default_locale']).to eq('en')
-          expect(us_country['supported_locales']).to match_array(['en', 'es'])
+          expect(us_country['iso3']).to be_present
 
           de_country = data['data'].find { |c| c['iso'] == 'DE' }
           expect(de_country).to be_present
-          expect(de_country['currency']).to eq('EUR')
-          expect(de_country['default_locale']).to eq('de')
-          expect(de_country['supported_locales']).to match_array(['de', 'en'])
         end
       end
 
@@ -72,7 +67,7 @@ RSpec.describe 'Countries API', type: :request, swagger_doc: 'api-reference/stor
       tags 'Internationalization'
       produces 'application/json'
       security [api_key: []]
-      description 'Returns a single country by ISO code with currency and locale. Supports ?include=states for address forms.'
+      description 'Returns a single country by ISO code. Supports ?include=states for address forms and ?include=market for market details.'
 
       sdk_example <<~JS
         const country = await client.store.countries.get('US')
@@ -92,30 +87,14 @@ RSpec.describe 'Countries API', type: :request, swagger_doc: 'api-reference/stor
                  iso3: { type: :string },
                  name: { type: :string },
                  states_required: { type: :boolean },
-                 zipcode_required: { type: :boolean },
-                 currency: { type: :string, nullable: true },
-                 default_locale: { type: :string, nullable: true },
-                 supported_locales: { type: :array, items: { type: :string } },
-                 states: {
-                   type: :array,
-                   items: {
-                     type: :object,
-                     properties: {
-                       abbr: { type: :string },
-                       name: { type: :string }
-                     },
-                     required: %w[abbr name]
-                   }
-                 }
+                 zipcode_required: { type: :boolean }
                },
                required: %w[iso iso3 name states_required zipcode_required]
 
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['iso']).to eq('US')
-          expect(data['currency']).to eq('USD')
-          expect(data['default_locale']).to eq('en')
-          expect(data['supported_locales']).to match_array(['en', 'es'])
+          expect(data['name']).to be_present
         end
       end
 
@@ -130,7 +109,7 @@ RSpec.describe 'Countries API', type: :request, swagger_doc: 'api-reference/stor
     end
   end
 
-  # Non-swagger test for ?include=states functionality
+  # Non-swagger tests for ?include functionality
   describe 'GET /api/v3/store/countries/:iso?include=states' do
     it 'includes states when requested' do
       get "/api/v3/store/countries/US?include=states", headers: { 'x-spree-api-key' => api_key.token }
@@ -140,6 +119,21 @@ RSpec.describe 'Countries API', type: :request, swagger_doc: 'api-reference/stor
       expect(data['states']).to be_an(Array)
       state_abbrs = data['states'].map { |s| s['abbr'] }
       expect(state_abbrs).to match_array(['CA', 'NY'])
+    end
+  end
+
+  describe 'GET /api/v3/store/countries/:iso?include=market' do
+    it 'includes market details when requested' do
+      get "/api/v3/store/countries/US?include=market", headers: { 'x-spree-api-key' => api_key.token }
+
+      expect(response).to have_http_status(:ok)
+      data = JSON.parse(response.body)
+      expect(data['market']).to be_present
+      expect(data['market']['name']).to eq('North America')
+      expect(data['market']['currency']).to eq('USD')
+      expect(data['market']['default_locale']).to eq('en')
+      expect(data['market']['supported_locales']).to match_array(['en', 'es'])
+      expect(data['market']['tax_inclusive']).to eq(false)
     end
   end
 end
