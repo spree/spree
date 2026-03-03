@@ -265,27 +265,56 @@ Set the `code` attribute directly on the promotion. The `usage_limit` controls h
 
 ### Multi-Code Promotions
 
-For bulk-generated codes, each code is stored in the `spree_coupon_codes` table:
+For bulk-generated codes, each code tracks its usage state:
 
 | Attribute | Description | Example |
 |-----------|-------------|---------|
 | `code` | The unique code | `SUMMER22A0F62A230BD919` |
-| `promotion_id` | Associated promotion | 123 |
-| `order_id` | Order that used the code | 456 |
 | `state` | Usage state | `unused`, `used` |
+
+## Applying Coupon Codes via Store API
+
+Customers apply coupon codes during checkout via the Store API:
+
+<CodeGroup>
+
+```typescript SDK
+// Apply a coupon code to the order
+const order = await client.store.orders.couponCodes.apply('or_abc123', 'SUMMER20', {
+  orderToken: '<token>',
+})
+
+// Remove a coupon code
+await client.store.orders.couponCodes.remove('or_abc123', 'SUMMER20', {
+  orderToken: '<token>',
+})
+```
+
+```bash cURL
+# Apply a coupon code
+curl -X POST 'https://api.mystore.com/api/v3/store/orders/or_abc123/coupon_codes' \
+  -H 'Authorization: Bearer spree_pk_xxx' \
+  -H 'X-Spree-Order-Token: <token>' \
+  -H 'Content-Type: application/json' \
+  -d '{ "coupon_code": "SUMMER20" }'
+```
+
+</CodeGroup>
+
+Automatic promotions are applied without any customer action — they are evaluated on every order update.
 
 ## Promotion Flow
 
-Understanding how promotions are evaluated and applied:
+How promotions are evaluated and applied:
 
-1. **Order Update** - When an order is updated, the system checks all eligible promotions
-2. **Eligibility Check** - For each promotion:
+1. **Order Update** — When an order is updated, the system checks all eligible promotions
+2. **Eligibility Check** — For each promotion:
    - Check if within `starts_at` and `expires_at` range
    - Check if under `usage_limit`
    - Evaluate all rules based on `match_policy` (all or any)
-3. **Action Execution** - If eligible, each action's `perform()` method is called
-4. **Tracking** - Applied promotions are recorded in `spree_order_promotions`
-5. **Re-evaluation** - Eligibility is re-checked on every order update; adjustments from ineligible promotions are removed
+3. **Action Execution** — If eligible, each action is applied
+4. **Tracking** — Applied promotions are recorded on the order
+5. **Re-evaluation** — Eligibility is re-checked on every order update; adjustments from ineligible promotions are removed
 
 ## Related Documentation
 

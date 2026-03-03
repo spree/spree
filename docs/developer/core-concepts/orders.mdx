@@ -1,265 +1,343 @@
 ---
 title: Orders
+description: Order lifecycle, checkout flow, line items, payments, and shipments
 ---
 
 ## Overview
 
-The `Order` model is one of the key models in Spree. It provides a central place around which to collect information about a customer order - including line items, adjustments, payments, addresses, return authorizations, and shipments.
-
-### Order Model Diagram
+An order is the central model connecting a customer to their purchase. It collects line items, addresses, shipments, payments, and adjustments into a single transaction that flows through a checkout state machine from cart to completion.
 
 ```mermaid
 erDiagram
+    Order ||--o{ LineItem : "has many"
+    Order ||--o{ Shipment : "has many"
+    Order ||--o{ Payment : "has many"
+    Order ||--o{ Adjustment : "has many"
+    Order }o--|| Address : "ship_address"
+    Order }o--|| Address : "bill_address"
+    Order }o--|| User : "belongs to"
+    Order }o--|| Store : "belongs to"
+    LineItem }o--|| Variant : "belongs to"
+    Shipment }o--|| StockLocation : "ships from"
+    Payment }o--|| PaymentMethod : "belongs to"
+
     Order {
         string number
         string state
         string email
-        decimal item_total
-        decimal adjustment_total
+        string currency
         decimal total
-        decimal payment_total
-        decimal shipment_total
         string payment_state
         string shipment_state
-        datetime completed_at
-        string currency
     }
 
     LineItem {
         integer quantity
         decimal price
-        decimal adjustment_total
     }
 
     Shipment {
         string number
         string state
         string tracking
-        datetime shipped_at
     }
 
     Payment {
-        string number
         decimal amount
         string state
-        string response_code
     }
-
-    Adjustment {
-        decimal amount
-        string label
-        boolean eligible
-        string state
-        boolean included
-    }
-
-    Order ||--o{ LineItem : "has many"
-    Order ||--o{ Shipment : "has many"
-    Order ||--o{ Payment : "has many"
-    Order ||--o{ Adjustment : "has many"
-    Order ||--o{ ReturnAuthorization : "has many"
-    Order ||--o{ OrderPromotion : "has many"
-    Order }o--|| Address : "ship_address"
-    Order }o--|| Address : "bill_address"
-    Order }o--|| User : "belongs to"
-    Order }o--|| Store : "belongs to"
-    LineItem }o--|| Variant : "belongs to"
-    LineItem ||--o{ Adjustment : "has many"
-    Shipment ||--o{ InventoryUnit : "has many"
-    Shipment ||--o{ Adjustment : "has many"
-    Shipment }o--|| StockLocation : "ships from"
-    Payment }o--|| PaymentMethod : "belongs to"
 ```
 
 **Key relationships:**
-- **Order** is the central model connecting customers to their purchases
 - **Line Items** link orders to [Variants](/developer/core-concepts/products#variants) (what was purchased)
-- **[Shipments](/developer/core-concepts/shipments)** handle fulfillment from [Stock Locations](/developer/core-concepts/inventory#stock-locations)
+- **[Shipments](/developer/core-concepts/shipments)** handle fulfillment from stock locations
 - **[Payments](/developer/core-concepts/payments)** track payment attempts and their states
 - **[Adjustments](/developer/core-concepts/adjustments)** apply taxes, promotions, and shipping costs
 - **[Addresses](/developer/core-concepts/addresses)** store billing and shipping information
 
-### Order Attributes
+## Order Attributes
 
-| Attribute               | Description                                                                                      |
-|-------------------------|--------------------------------------------------------------------------------------------------|
-| `number`                | The unique identifier for this order. It begins with the letter R and ends in a 9-digit number. This number is shown to the users, and can be used to find the order by calling `Spree::Order.find_by(number: number)`. |
-| `item_total`            | The sum of all the line items for this order.                                                   |
-| `adjustment_total`      | The sum of all adjustments on this order.                                                       |
-| `total`                 | The result of the sum of the `item_total` and the `adjustment_total`.                           |
-| `payment_total`         | The total value of all finalized payments.                                                      |
-| `shipment_total`        | The total value of all shipments' costs.                                                        |
-| `additional_tax_total`  | The sum of all shipments' and line items' `additional_tax`.                                     |
-| `included_tax_total`    | The sum of all shipments' and line items' `included_tax`.                                       |
-| `promo_total`           | The sum of all shipments', line items' and promotions' `promo_total`.                           |
-| `state`                 | The current state of the order. To read more about the states an order goes through, read [The Order State Machine](orders#the-order-state-machine) section of this guide. |
-| `email`                 | The email address for the user who placed this order. Stored in case this order is for a guest user. |
-| `user_id`               | The ID for the corresponding user record for this order. Stored only if the order is placed by a signed-in user. |
-| `completed_at`          | The timestamp of when the order was completed.                                                  |
-| `bill_address_id`       | The ID for the related `Address` object with billing address information.                       |
-| `ship_address_id`       | The ID for the related `Address` object with shipping address information.                      |
-| `shipping_method_id`    | The ID for the related `ShippingMethod` object.                                                 |
-| `created_by_id`         | The ID of object that created this order.                                                       |
-| `shipment_state`        | The current shipment state of the order. It takes into account all shipments. Described below in [Order Shipment states section](orders#order-shipment-states). |
-| `payment_state`         | The current payment state of the order. It takes into account all payments. Described below in [Order Payment states section](orders#order-payment-states). |
-| `special_instructions`  | Any special instructions for the store to do with this order. Will only appear if shipping instructions are enabled in the store configuration. |
-| `currency`              | The currency for this order, eg. `USD` |
-| `last_ip_address`       | The last IP address used to update this order in the frontend.                                  |
-| `channel`               | The channel specified when importing orders from other stores. e.g. amazon.                     |
-| `item_count`            | The total value of line items' quantity.                                                        |
-| `approver_id`           | The ID of user that approved this order.                                                        |
-| `confirmation_delivered`| Boolean value indicating that confirmation email was delivered.                                 |
-| `token`                 | The token stored corresponding to token stored in cookies. |
-| `canceler_id`           | The ID of user that canceled this order.                                                        |
-| `store_id`              | The ID of `Store` in which this order was created.                                              |
+The API returns these key fields on every order:
 
-## Order methods
+| Attribute | Description |
+|-----------|-------------|
+| `number` | Unique order number (e.g., `R123456789`), shown to customers |
+| `state` | Current checkout state (`cart`, `address`, `delivery`, `payment`, `confirm`, `complete`) |
+| `email` | Customer's email address |
+| `currency` | Order currency (e.g., `USD`) |
+| `item_count` | Total number of items |
+| `item_total` / `display_item_total` | Sum of line item prices |
+| `ship_total` / `display_ship_total` | Shipping cost |
+| `tax_total` / `display_tax_total` | Total tax |
+| `promo_total` / `display_promo_total` | Total discount from promotions |
+| `adjustment_total` / `display_adjustment_total` | Sum of all adjustments (tax + shipping + promos) |
+| `total` / `display_total` | Final order total |
+| `payment_state` | Payment status (`balance_due`, `paid`, `credit_owed`, `failed`, `void`) |
+| `shipment_state` | Shipment status (`pending`, `ready`, `partial`, `shipped`, `backorder`) |
+| `completed_at` | Timestamp when the order was placed |
 
-Here is a list of methods you may find useful:
+The `display_*` fields return formatted strings with currency symbols (e.g., `"$15.99"`).
 
-| Method                      | Description                                                                                   |
-|-----------------------------|-----------------------------------------------------------------------------------------------|
-| `outstanding_balance`       | The outstanding balance for the order, calculated by taking the `total` and subtracting `payment_total`. |
-| `display_item_total`        | A "pretty" version of `item_total`. If `item_total` was `10.0`, `display_item_total` would be `$10.00`. |
-| `display_adjustment_total`  | Same as above, except for `adjustment_total`.                                                 |
-| `display_total`             | Same as above, except for `total`.                                                            |
-| `display_outstanding_balance` | Same as above, except for `outstanding_balance`.                                              |
+## Cart
 
-To see all available methods, please check the [Order model source code](https://github.com/spree/spree/blob/main/core/app/models/spree/order.rb).
+A cart is simply an order in the `cart` state. Guest carts are identified by a cart token; authenticated users' carts are linked to their account.
 
-## The Order State Machine
+<CodeGroup>
 
-Each Order flows through a state machine, beginning at a `cart` state and ending up at a `complete` state.
+```typescript SDK
+// Create a cart
+const cart = await client.store.cart.create()
+// cart.token => "abc123" (save this for guest checkout)
 
-<Note>
-This is the default order flow and can be adjusted or overhauled completely.
+// Get existing cart
+const cart = await client.store.cart.get()
 
-More on this topic at [Customizing Checkout page](../customization/checkout).
-</Note>
+// Add an item
+const updatedOrder = await client.store.orders.lineItems.create(cart.id, {
+  variant_id: 'var_xxx',
+  quantity: 2,
+})
 
-The default states are as follows:
+// Update quantity
+await client.store.orders.lineItems.update(cart.id, 'li_xxx', {
+  quantity: 3,
+})
+
+// Remove an item
+await client.store.orders.lineItems.delete(cart.id, 'li_xxx')
+```
+
+```bash cURL
+# Create a cart
+curl -X POST 'https://api.mystore.com/api/v3/store/cart' \
+  -H 'Authorization: Bearer spree_pk_xxx'
+
+# Get existing cart
+curl 'https://api.mystore.com/api/v3/store/cart' \
+  -H 'Authorization: Bearer spree_pk_xxx' \
+  -H 'X-Spree-Order-Token: abc123'
+
+# Add an item
+curl -X POST 'https://api.mystore.com/api/v3/store/orders/or_xxx/line_items' \
+  -H 'Authorization: Bearer spree_pk_xxx' \
+  -H 'X-Spree-Order-Token: abc123' \
+  -H 'Content-Type: application/json' \
+  -d '{ "variant_id": "var_xxx", "quantity": 2 }'
+
+# Update quantity
+curl -X PATCH 'https://api.mystore.com/api/v3/store/orders/or_xxx/line_items/li_xxx' \
+  -H 'Authorization: Bearer spree_pk_xxx' \
+  -H 'X-Spree-Order-Token: abc123' \
+  -H 'Content-Type: application/json' \
+  -d '{ "quantity": 3 }'
+
+# Remove an item
+curl -X DELETE 'https://api.mystore.com/api/v3/store/orders/or_xxx/line_items/li_xxx' \
+  -H 'Authorization: Bearer spree_pk_xxx' \
+  -H 'X-Spree-Order-Token: abc123'
+```
+
+</CodeGroup>
+
+Every line item mutation returns the full updated order with recalculated totals.
+
+## Checkout Flow
+
+The checkout is a state machine that advances the order through a series of steps. Each step collects required information before allowing the order to proceed.
 
 <Steps>
   <Step title="cart">
-    Initial state, you can treat it as a draft order
+    Customer has items in their cart. This is the starting state.
   </Step>
   <Step title="address">
-    Buyer started the checkout process and is on the address step
+    Customer provides shipping and billing addresses.
   </Step>
   <Step title="delivery">
-    Buyer has added Shipping and Billing addresses, now he or she needs to select a delivery option
+    Customer selects a shipping rate for each shipment.
   </Step>
   <Step title="payment">
-    Buyer selected delivery option, now he or she needs to add a payment option
-
-    <Note>
-      Only available if `Order#payment_required?` returns `true`. For most orders it will be `true`, but if the order is paid entirely with [Store Credit](store-credit) it will be `false`.
-    </Note>
+    Customer provides payment. Skipped if the order is fully covered by store credit.
   </Step>
   <Step title="confirm">
-    Buyer added payment option, now he or she needs to confirm the order
-
-    <Note>
-      Only available if `Order#confirmation_required?` returns `true`
-    </Note>
+    Customer reviews and confirms the order.
   </Step>
   <Step title="complete">
-    Order was placed. It will set the `completed_at` date to the current time.
+    Order is placed. `completed_at` is set and fulfillment begins.
   </Step>
 </Steps>
 
-Assuming that an order meets the criteria for the next state, you will be able to transition it to the next state by calling `next` on that object, eg. 
+Advance to the next step with `next`. If the order doesn't meet the requirements for the next state (e.g., missing address), the API returns an error.
 
-<Tabs>
-  <Tab title="SDK">
-    ```javascript
-    const order = await client.store.orders.next('or_abc123', {
-      bearerToken: '<token>',
-    })
-    ```
-  </Tab>
-  <Tab title="console">
-    ```ruby
-    order = Spree::Order.find_by_prefix_id!('or_HOVtlDrOmL')
-    order.next
-    ```
-  </Tab>
-</Tabs>
+<CodeGroup>
 
-If order cannot proceed to the next steps this will return an error. 
+```typescript SDK
+// Set addresses
+await client.store.orders.update(orderId, {
+  email: 'john@example.com',
+  ship_address: {
+    firstname: 'John', lastname: 'Doe',
+    address1: '123 Main St', city: 'Los Angeles',
+    country_iso: 'US', state_abbr: 'CA', zipcode: '90001',
+    phone: '555-0100',
+  },
+})
 
-### Order Shipment states
+// Advance to delivery
+await client.store.orders.next(orderId)
 
-Alongside the global Order state there's also `shipment_state` column which indicates the state of all shipments. Order can have multiple shipments.
+// Get shipments and select a shipping rate
+const { data: shipments } = await client.store.orders.shipments.list(orderId)
+await client.store.orders.shipments.update(orderId, shipments[0].id, {
+  selected_shipping_rate_id: 'sr_xxx',
+})
 
-| State     | Description |
-|-----------|-------------|
-| `shipped` | all Shipments are in the `shipped` state |
-| `partial` | at least one Shipment has a state of `shipped` and there is another Shipment with a state other than `shipped` or there are [InventoryUnits](inventory) associated with the order that have a state of `sold` but are not associated with a Shipment |
-| `ready`   | all Shipments are in the `ready` state |
-| `backorder` | there is backordered inventory associated with an order |
-| `pending` | all Shipments are in the `pending` state |
+// Advance to payment
+await client.store.orders.next(orderId)
 
-For more on this please go to [Shipment States page](shipments).
+// Create a payment session (e.g., Stripe)
+const session = await client.store.orders.paymentSessions.create(orderId, {
+  payment_method_id: 'pm_xxx',
+})
+// session.external_data.client_secret => use with Stripe.js
 
-### Order Payment states
+// Complete the payment session after provider confirmation
+await client.store.orders.paymentSessions.complete(orderId, session.id)
 
-Alongside the global Order state there's also `payment_state` column which indicates the state of all payments. Order can have multiple payments.
+// Complete the order
+await client.store.orders.complete(orderId)
+```
 
-| State        | Description                                         |
-|--------------|-----------------------------------------------------|
-| `paid`       | `payment_total` is equal to `total`                 |
-| `balance_due`| `payment_total` is less than `total`                |
-| `credit_owed`| `payment_total` is greater than `total`             |
-| `failed`     | most recent payment is in the `failed` state        |
-| `void`       | order is canceled and `payment_total` is equal to `zero` |
+```bash cURL
+# Set addresses
+curl -X PATCH 'https://api.mystore.com/api/v3/store/orders/or_xxx' \
+  -H 'Authorization: Bearer spree_pk_xxx' \
+  -H 'X-Spree-Order-Token: abc123' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "email": "john@example.com",
+    "ship_address": {
+      "firstname": "John", "lastname": "Doe",
+      "address1": "123 Main St", "city": "Los Angeles",
+      "country_iso": "US", "state_abbr": "CA", "zipcode": "90001",
+      "phone": "555-0100"
+    }
+  }'
 
-For more on this please go to [Payment States page](payments).
+# Advance to next step
+curl -X PATCH 'https://api.mystore.com/api/v3/store/orders/or_xxx/next' \
+  -H 'Authorization: Bearer spree_pk_xxx' \
+  -H 'X-Spree-Order-Token: abc123'
+
+# Select a shipping rate
+curl -X PATCH 'https://api.mystore.com/api/v3/store/orders/or_xxx/shipments/shp_xxx' \
+  -H 'Authorization: Bearer spree_pk_xxx' \
+  -H 'X-Spree-Order-Token: abc123' \
+  -H 'Content-Type: application/json' \
+  -d '{ "selected_shipping_rate_id": "sr_xxx" }'
+
+# Complete the order
+curl -X PATCH 'https://api.mystore.com/api/v3/store/orders/or_xxx/complete' \
+  -H 'Authorization: Bearer spree_pk_xxx' \
+  -H 'X-Spree-Order-Token: abc123'
+```
+
+</CodeGroup>
+
+## Coupon Codes
+
+Apply or remove promotional coupon codes during checkout:
+
+<CodeGroup>
+
+```typescript SDK
+// Apply a coupon
+await client.store.orders.couponCodes.apply(orderId, 'SAVE20')
+
+// Remove a coupon
+await client.store.orders.couponCodes.remove(orderId, 'promo_xxx')
+```
+
+```bash cURL
+# Apply a coupon
+curl -X POST 'https://api.mystore.com/api/v3/store/orders/or_xxx/coupon_codes' \
+  -H 'Authorization: Bearer spree_pk_xxx' \
+  -H 'X-Spree-Order-Token: abc123' \
+  -H 'Content-Type: application/json' \
+  -d '{ "code": "SAVE20" }'
+
+# Remove a coupon
+curl -X DELETE 'https://api.mystore.com/api/v3/store/orders/or_xxx/coupon_codes/promo_xxx' \
+  -H 'Authorization: Bearer spree_pk_xxx' \
+  -H 'X-Spree-Order-Token: abc123'
+```
+
+</CodeGroup>
+
+## Order History
+
+Authenticated customers can view their past orders:
+
+<CodeGroup>
+
+```typescript SDK
+// List past orders
+const { data: orders } = await client.store.customer.orders.list()
+
+// Get a specific order with details
+const order = await client.store.orders.get('or_xxx', {
+  includes: 'line_items,shipments,payments',
+})
+```
+
+```bash cURL
+# List past orders
+curl 'https://api.mystore.com/api/v3/store/customer/orders' \
+  -H 'Authorization: Bearer <jwt_token>'
+
+# Get a specific order
+curl 'https://api.mystore.com/api/v3/store/orders/or_xxx?includes=line_items,shipments,payments' \
+  -H 'Authorization: Bearer <jwt_token>'
+```
+
+</CodeGroup>
 
 ## Line Items
 
-Line items are used to keep track of items within the context of an order. These records provide a link between orders and [Variants](/developer/core-concepts/products#variants).
+Line items represent individual products in an order. Each line item links to a [Variant](/developer/core-concepts/products#variants) and tracks the quantity and price at the time of purchase.
 
-<Warning>
-When a variant is added to an order, the price of that item is tracked along with the line item to preserve that data. If the variant's price were to change, then the line item would still have a record of the price at the time of ordering.
-</Warning>
-
-## Addresses
-
-An order can link to two `Address` objects. The shipping address indicates where the order's products should be shipped to. This address is used to determine which shipping methods are available for an order.
-
-The billing address indicates where the user who's paying for the order is located. This can alter the tax rate for the order, which in turn can change how much the final order total can be.
-
-For more information about addresses, please read the [Addresses](/developer/core-concepts/addresses) guide.
+When a variant is added to an order, the price is locked on the line item. If the variant's price changes later, existing orders are unaffected.
 
 ## Adjustments
 
-Adjustments are used to affect an order's final cost, either by decreasing it ([Promotions](/developer/core-concepts/promotions)) or by increasing it ([Shipping](/developer/core-concepts/shipments), [Taxes](/developer/core-concepts/taxes)).
+[Adjustments](/developer/core-concepts/adjustments) modify an order's total — promotions decrease it, taxes and shipping increase it. Adjustments can be applied at the order level, the line item level, or the shipment level.
 
-For more information about adjustments, please see the [Adjustments](adjustments) guide.
+## Payment States
 
-## Payments
+| State | Description |
+|-------|-------------|
+| `balance_due` | Payment total is less than the order total |
+| `paid` | Payment total equals the order total |
+| `credit_owed` | Payment total exceeds the order total (refund pending) |
+| `failed` | Most recent payment attempt failed |
+| `void` | Order was canceled and payments voided |
 
-Payment records are used to track payment information about an order. Each Order can hold multiple payments, eg. one for each credit card or debit card and one for the store credit. 
+## Shipment States
 
-For more information, please read the [Payments](payments) guide.
+| State | Description |
+|-------|-------------|
+| `pending` | All shipments are pending |
+| `ready` | All shipments are ready to ship |
+| `partial` | At least one shipment is shipped, others are not |
+| `shipped` | All shipments have been shipped |
+| `backorder` | Some inventory is on backorder |
 
-## Return Authorizations
-
-An order can have many `ReturnAuthorization` objects. These records keeps track of which items have been authorized for return and how the user will be compensated -- either via exchanging the items or a reimbursement.
-
-## Updating an Order
-
-If you change any aspect of an `Order` object within code and you wish to update the order's totals -- including associated adjustments and shipments -- call the `update_with_updater!` method on that object, which calls out to the [OrderUpdater](https://github.com/spree/spree/blob/main/core/app/models/spree/order_updater.rb) class.
-
-For example, if you create or modify an existing payment for the order which would change the order's `payment_state` to a different value, calling `update_with_updater!` will cause the `payment_state` to be recalculated for that order.
-
-Another example is if a `LineItem` within the order had its price changed. Calling `update_with_updater!` will cause the totals for the order to be updated, the adjustments for the order to be recalculated, and then a final total to be established.
+For more details, see [Shipments](/developer/core-concepts/shipments) and [Payments](/developer/core-concepts/payments).
 
 ## Related Documentation
 
-- [Payments](/developer/core-concepts/payments) - Payment processing for orders
-- [Shipments](/developer/core-concepts/shipments) - Order fulfillment and shipping
-- [Promotions](/developer/core-concepts/promotions) - Discounts and promotions
-- [Checkout Customization](/developer/customization/checkout) - Customizing the checkout flow
-- [Events](/developer/core-concepts/events) - Subscribe to order events
+- [Payments](/developer/core-concepts/payments) — Payment processing and payment sessions
+- [Shipments](/developer/core-concepts/shipments) — Fulfillment and shipping rates
+- [Addresses](/developer/core-concepts/addresses) — Billing and shipping addresses
+- [Promotions](/developer/core-concepts/promotions) — Discounts and coupon codes
+- [Checkout Customization](/developer/customization/checkout) — Customizing the checkout flow
+- [Events](/developer/core-concepts/events) — Subscribe to order events (e.g., `order.completed`)

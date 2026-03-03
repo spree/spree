@@ -124,11 +124,11 @@ A `PaymentMethod` can have the following attributes:
 
 | Attribute    | Description                                                                                   | Example                |
 |--------------|-----------------------------------------------------------------------------------------------|------------------------|
-| `type`       | The subclass of `Spree::PaymentMethod` this payment method represents. Uses rails single table inheritance feature. | `Spree::PaymentMethod::Check` |
+| `type`       | The payment method type | `Check` |
 | `name`       | The visible name for this payment method                                                      | `Check`                |
 | `description`| The description for this payment method                                                       | `Pay by check.`        |
-| `active`     | Whether or not this payment method is active. Set it `false` to hide it in storefront.         | `true`                 |
-| `display_on` | Determines where the payment method can be visible. Values can be `front` for storefront, `back` for admin panel only or `both` for both. | `both`                 |
+| `active`     | Whether or not this payment method is active. Set it `false` to hide it in the Store API.         | `true`                 |
+| `display_on` | Determines where the payment method can be visible. Values can be `front` for Store API, `back` for admin panel only or `both` for both. | `both`                 |
 | `position`   | The position of the payment method in lists. Lower numbers appear first.                      | `1`                    |
 
 <Info>
@@ -351,34 +351,9 @@ Each payment update also recalculates the order's `payment_state`:
 You may want to keep tabs on the number of orders with a `payment_state` of `failed`. A sudden increase could indicate a problem with your payment gateway and most likely a serious problem affecting customer satisfaction. Check the latest `log_entries` for the most recent payments if this is happening.
 </Warning>
 
-### Legacy Processing
-
-For payment methods that don't use sessions (e.g., `Spree::PaymentMethod::Check`), Spree uses a direct authorize/capture flow without a Payment Session:
-
-When an order is completed, each `Payment` object has the `process!` method called on it unless `payment_required?` for the order returns `false`.
-
-If the `PaymentMethod` is configured to auto-capture, `Payment#purchase!` is called:
-
-```ruby
-payment_method.purchase(<amount>, <source>, <gateway options>)
-```
-
-If not, `Payment#authorize!` is called instead:
-
-```ruby
-payment_method.authorize(<amount>, <source>, <gateway options>)
-```
-
-If `purchase!` succeeds, the payment is marked `completed`. If `authorize!` succeeds, the payment transitions to `pending` for manual capture later via `capture!`. Either method marks the payment as `failed` if unsuccessful.
-
 ### Log Entries
 
-Responses from payment gateways are stored as log entries for debugging purposes:
-
-```ruby
-payment.log_entries
-payment.log_entries.first.details
-```
+Responses from payment gateways are stored as log entries for debugging purposes. These can be viewed in the Admin Panel on the payment detail page.
 
 ## Payment Sources
 
@@ -401,19 +376,9 @@ Stores non-sensitive credit card information. With modern gateways, the actual c
 Spree never stores full credit card numbers. With modern gateways, card data is collected entirely by the gateway's frontend SDK (e.g., Stripe.js, Adyen Drop-in) and never touches your server. Spree only stores the tokenized reference (`gateway_payment_profile_id`) returned by the provider.
 </Note>
 
-### Payment Sources (`Spree::PaymentSource`)
+### Payment Sources
 
-A generic payment source model for non-card payment methods such as digital wallets, bank transfers, and buy-now-pay-later services. Gateway extensions create STI subclasses for each payment method type:
-
-```ruby
-# Examples of payment source subclasses created by gateway gems:
-SpreeStripe::PaymentSources::Klarna    # Klarna BNPL
-SpreeStripe::PaymentSources::AfterPay  # Afterpay/Clearpay
-SpreeStripe::PaymentSources::Ideal     # iDEAL bank transfer
-SpreeStripe::PaymentSources::Link      # Stripe Link wallet
-SpreeAdyen::PaymentSources::ApplePay   # Apple Pay
-SpreeAdyen::PaymentSources::Paypal     # PayPal via Adyen
-```
+A generic payment source model for non-card payment methods such as digital wallets, bank transfers, and buy-now-pay-later services. Gateway integrations create subtypes for each payment method type (e.g., Klarna, Afterpay, iDEAL, Apple Pay, Google Pay, PayPal).
 
 ### Gateway Customers (`Spree::GatewayCustomer`)
 
