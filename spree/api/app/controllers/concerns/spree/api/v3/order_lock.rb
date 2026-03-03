@@ -10,15 +10,6 @@ module Spree
           order = @order || @parent
 
           order.with_lock do
-            if params[:state_lock_version].present? && order.state_lock_version != params[:state_lock_version].to_i
-              render_error(
-                code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:order_already_updated],
-                message: Spree.t(:order_already_updated),
-                status: :conflict
-              )
-              next
-            end
-
             # Persist increment within the transaction so reloads inside yield see the new version
             new_version = order.state_lock_version + 1
             order.update_column(:state_lock_version, new_version)

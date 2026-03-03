@@ -48,12 +48,9 @@ export async function updateAddresses(
 /**
  * Advance the checkout to the next step.
  */
-export async function advance(orderId: string, stateLockVersion?: number): Promise<StoreOrder> {
+export async function advance(orderId: string): Promise<StoreOrder> {
   const options = await getCheckoutOptions();
-  const result = await getClient().store.orders.advance(orderId, {
-    ...options,
-    ...(stateLockVersion != null ? { state_lock_version: stateLockVersion } : {}),
-  });
+  const result = await getClient().store.orders.advance(orderId, options);
   revalidateTag('checkout');
   return result;
 }
@@ -61,12 +58,9 @@ export async function advance(orderId: string, stateLockVersion?: number): Promi
 /**
  * Move the checkout to the next step (alias for advance).
  */
-export async function next(orderId: string, stateLockVersion?: number): Promise<StoreOrder> {
+export async function next(orderId: string): Promise<StoreOrder> {
   const options = await getCheckoutOptions();
-  const result = await getClient().store.orders.next(orderId, {
-    ...options,
-    ...(stateLockVersion != null ? { state_lock_version: stateLockVersion } : {}),
-  });
+  const result = await getClient().store.orders.next(orderId, options);
   revalidateTag('checkout');
   return result;
 }
@@ -132,12 +126,9 @@ export async function removeCoupon(
 /**
  * Complete the checkout and place the order.
  */
-export async function complete(orderId: string, stateLockVersion?: number): Promise<StoreOrder> {
+export async function complete(orderId: string): Promise<StoreOrder> {
   const options = await getCheckoutOptions();
-  const result = await getClient().store.orders.complete(orderId, {
-    ...options,
-    ...(stateLockVersion != null ? { state_lock_version: stateLockVersion } : {}),
-  });
+  const result = await getClient().store.orders.complete(orderId, options);
   revalidateTag('checkout');
   revalidateTag('cart');
   return result;

@@ -15,7 +15,6 @@ import type {
   AddLineItemParams,
   UpdateLineItemParams,
   UpdateOrderParams,
-  OrderLockParams,
   AddressParams,
   CreatePaymentSessionParams,
   UpdatePaymentSessionParams,
@@ -322,42 +321,35 @@ export class StoreClient {
      */
     next: (
       idOrNumber: string,
-      options?: RequestOptions & OrderLockParams
-    ): Promise<StoreOrder> => {
-      const { state_lock_version, ...reqOptions } = options ?? {};
-      return this.request<StoreOrder>('PATCH', `/orders/${idOrNumber}/next`, {
-        ...reqOptions,
-        body: state_lock_version != null ? { state_lock_version } : undefined,
-      });
-    },
+      options?: RequestOptions
+    ): Promise<StoreOrder> =>
+      this.request<StoreOrder>('PATCH', `/orders/${idOrNumber}/next`, options),
 
     /**
      * Advance through all checkout steps
      */
     advance: (
       idOrNumber: string,
-      options?: RequestOptions & OrderLockParams
-    ): Promise<StoreOrder> => {
-      const { state_lock_version, ...reqOptions } = options ?? {};
-      return this.request<StoreOrder>('PATCH', `/orders/${idOrNumber}/advance`, {
-        ...reqOptions,
-        body: state_lock_version != null ? { state_lock_version } : undefined,
-      });
-    },
+      options?: RequestOptions
+    ): Promise<StoreOrder> =>
+      this.request<StoreOrder>(
+        'PATCH',
+        `/orders/${idOrNumber}/advance`,
+        options
+      ),
 
     /**
      * Complete the order
      */
     complete: (
       idOrNumber: string,
-      options?: RequestOptions & OrderLockParams
-    ): Promise<StoreOrder> => {
-      const { state_lock_version, ...reqOptions } = options ?? {};
-      return this.request<StoreOrder>('PATCH', `/orders/${idOrNumber}/complete`, {
-        ...reqOptions,
-        body: state_lock_version != null ? { state_lock_version } : undefined,
-      });
-    },
+      options?: RequestOptions
+    ): Promise<StoreOrder> =>
+      this.request<StoreOrder>(
+        'PATCH',
+        `/orders/${idOrNumber}/complete`,
+        options
+      ),
 
     /**
      * Add store credit to order
@@ -365,28 +357,25 @@ export class StoreClient {
     addStoreCredit: (
       idOrNumber: string,
       amount?: number,
-      options?: RequestOptions & OrderLockParams
-    ): Promise<StoreOrder> => {
-      const { state_lock_version, ...reqOptions } = options ?? {};
-      return this.request<StoreOrder>('POST', `/orders/${idOrNumber}/store_credits`, {
-        ...reqOptions,
-        body: { ...(amount ? { amount } : {}), ...(state_lock_version != null ? { state_lock_version } : {}) },
-      });
-    },
+      options?: RequestOptions
+    ): Promise<StoreOrder> =>
+      this.request<StoreOrder>('POST', `/orders/${idOrNumber}/store_credits`, {
+        ...options,
+        body: amount ? { amount } : undefined,
+      }),
 
     /**
      * Remove store credit from order
      */
     removeStoreCredit: (
       idOrNumber: string,
-      options?: RequestOptions & OrderLockParams
-    ): Promise<StoreOrder> => {
-      const { state_lock_version, ...reqOptions } = options ?? {};
-      return this.request<StoreOrder>('DELETE', `/orders/${idOrNumber}/store_credits`, {
-        ...reqOptions,
-        body: state_lock_version != null ? { state_lock_version } : undefined,
-      });
-    },
+      options?: RequestOptions
+    ): Promise<StoreOrder> =>
+      this.request<StoreOrder>(
+        'DELETE',
+        `/orders/${idOrNumber}/store_credits`,
+        options
+      ),
 
     /**
      * Nested resource: Line items
@@ -429,15 +418,13 @@ export class StoreClient {
       delete: (
         orderId: string,
         lineItemId: string,
-        options?: RequestOptions & OrderLockParams
-      ): Promise<StoreOrder> => {
-        const { state_lock_version, ...reqOptions } = options ?? {};
-        return this.request<StoreOrder>(
+        options?: RequestOptions
+      ): Promise<StoreOrder> =>
+        this.request<StoreOrder>(
           'DELETE',
           `/orders/${orderId}/line_items/${lineItemId}`,
-          { ...reqOptions, body: state_lock_version != null ? { state_lock_version } : undefined }
-        );
-      },
+          options
+        ),
     },
 
     /**
@@ -566,14 +553,12 @@ export class StoreClient {
       apply: (
         orderId: string,
         code: string,
-        options?: RequestOptions & OrderLockParams
-      ): Promise<StoreOrder> => {
-        const { state_lock_version, ...reqOptions } = options ?? {};
-        return this.request<StoreOrder>('POST', `/orders/${orderId}/coupon_codes`, {
-          ...reqOptions,
-          body: { code, ...(state_lock_version != null ? { state_lock_version } : {}) },
-        });
-      },
+        options?: RequestOptions
+      ): Promise<StoreOrder> =>
+        this.request<StoreOrder>('POST', `/orders/${orderId}/coupon_codes`, {
+          ...options,
+          body: { code },
+        }),
 
       /**
        * Remove a coupon code from an order
@@ -582,15 +567,13 @@ export class StoreClient {
       remove: (
         orderId: string,
         promotionId: string,
-        options?: RequestOptions & OrderLockParams
-      ): Promise<StoreOrder> => {
-        const { state_lock_version, ...reqOptions } = options ?? {};
-        return this.request<StoreOrder>(
+        options?: RequestOptions
+      ): Promise<StoreOrder> =>
+        this.request<StoreOrder>(
           'DELETE',
           `/orders/${orderId}/coupon_codes/${promotionId}`,
-          { ...reqOptions, body: state_lock_version != null ? { state_lock_version } : undefined }
-        );
-      },
+          options
+        ),
     },
 
     /**
@@ -617,7 +600,7 @@ export class StoreClient {
       update: (
         orderId: string,
         shipmentId: string,
-        params: { selected_shipping_rate_id: string } & OrderLockParams,
+        params: { selected_shipping_rate_id: string },
         options?: RequestOptions
       ): Promise<StoreOrder> =>
         this.request<StoreOrder>(
