@@ -1678,10 +1678,11 @@ Rails.application.config.after_initialize do
 
   Spree.admin.tables.refund_reasons.add :active,
                                         label: :status,
-                                        type: :boolean,
+                                        type: :status,
                                         sortable: false,
                                         default: true,
-                                        position: 20
+                                        position: 20,
+                                        method: ->(r) { r.active? ? 'active' : 'inactive' }
 
   Spree.admin.tables.refund_reasons.add :mutable,
                                         label: :mutable,
@@ -1705,10 +1706,11 @@ Rails.application.config.after_initialize do
 
   Spree.admin.tables.return_authorization_reasons.add :active,
                                                       label: :status,
-                                                      type: :boolean,
+                                                      type: :status,
                                                       sortable: false,
                                                       default: true,
-                                                      position: 20
+                                                      position: 20,
+                                                      method: ->(r) { r.active? ? 'active' : 'inactive' }
 
   # ==========================================
   # Register Reimbursement Types table
@@ -1734,10 +1736,11 @@ Rails.application.config.after_initialize do
 
   Spree.admin.tables.reimbursement_types.add :active,
                                              label: :status,
-                                             type: :boolean,
+                                             type: :status,
                                              sortable: false,
                                              default: true,
-                                             position: 30
+                                             position: 30,
+                                             method: ->(r) { r.active? ? 'active' : 'inactive' }
 
   Spree.admin.tables.reimbursement_types.add :mutable,
                                              label: :mutable,
@@ -1827,7 +1830,7 @@ Rails.application.config.after_initialize do
                                    sortable: false,
                                    default: true,
                                    position: 20,
-                                   method: ->(tr) { tr.tax_categories.map(&:name).join(', ') }
+                                   method: ->(tr) { tr.tax_category&.name }
 
   Spree.admin.tables.tax_rates.add :zone,
                                    label: :zone,
