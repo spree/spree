@@ -319,20 +319,37 @@ export class StoreClient {
     /**
      * Advance order to next checkout step
      */
-    next: (idOrNumber: string, options?: RequestOptions): Promise<StoreOrder> =>
+    next: (
+      idOrNumber: string,
+      options?: RequestOptions
+    ): Promise<StoreOrder> =>
       this.request<StoreOrder>('PATCH', `/orders/${idOrNumber}/next`, options),
 
     /**
      * Advance through all checkout steps
      */
-    advance: (idOrNumber: string, options?: RequestOptions): Promise<StoreOrder> =>
-      this.request<StoreOrder>('PATCH', `/orders/${idOrNumber}/advance`, options),
+    advance: (
+      idOrNumber: string,
+      options?: RequestOptions
+    ): Promise<StoreOrder> =>
+      this.request<StoreOrder>(
+        'PATCH',
+        `/orders/${idOrNumber}/advance`,
+        options
+      ),
 
     /**
      * Complete the order
      */
-    complete: (idOrNumber: string, options?: RequestOptions): Promise<StoreOrder> =>
-      this.request<StoreOrder>('PATCH', `/orders/${idOrNumber}/complete`, options),
+    complete: (
+      idOrNumber: string,
+      options?: RequestOptions
+    ): Promise<StoreOrder> =>
+      this.request<StoreOrder>(
+        'PATCH',
+        `/orders/${idOrNumber}/complete`,
+        options
+      ),
 
     /**
      * Add store credit to order
@@ -354,7 +371,11 @@ export class StoreClient {
       idOrNumber: string,
       options?: RequestOptions
     ): Promise<StoreOrder> =>
-      this.request<StoreOrder>('DELETE', `/orders/${idOrNumber}/store_credits`, options),
+      this.request<StoreOrder>(
+        'DELETE',
+        `/orders/${idOrNumber}/store_credits`,
+        options
+      ),
 
     /**
      * Nested resource: Line items

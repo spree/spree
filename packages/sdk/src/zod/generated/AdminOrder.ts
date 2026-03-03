@@ -18,6 +18,7 @@ export const AdminOrderSchema: z.ZodObject<any> = z.object({
   currency: z.string(),
   locale: z.string().nullable(),
   item_count: z.number(),
+  state_lock_version: z.number(),
   shipment_state: z.string().nullable(),
   payment_state: z.string().nullable(),
   item_total: z.string(),

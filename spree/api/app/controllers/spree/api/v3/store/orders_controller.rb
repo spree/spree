@@ -4,6 +4,7 @@ module Spree
       module Store
         class OrdersController < ResourceController
           include Spree::Api::V3::OrderConcern
+          include Spree::Api::V3::OrderLock
 
           # Skip base controller's set_resource and define our own complete list
           skip_before_action :set_resource
@@ -20,48 +21,56 @@ module Spree
           #   }
           #
           def update
-            result = Spree::Api::V3::Orders::Update.call(
-              order: @order,
-              params: order_params
-            )
+            with_order_lock do
+              result = Spree::Api::V3::Orders::Update.call(
+                order: @order,
+                params: order_params
+              )
 
-            if result.success?
-              render json: serialize_resource(@order.reload)
-            else
-              render_service_error(result.error, code: ERROR_CODES[:validation_error])
+              if result.success?
+                render json: serialize_resource(@order.reload)
+              else
+                render_service_error(result.error, code: ERROR_CODES[:validation_error])
+              end
             end
           end
 
           # PATCH  /api/v3/store/orders/:id/next
           def next
-            result = Spree.checkout_next_service.call(order: @order)
+            with_order_lock do
+              result = Spree.checkout_next_service.call(order: @order)
 
-            if result.success?
-              render json: serialize_resource(@order)
-            else
-              render_service_error(result.error, code: ERROR_CODES[:order_cannot_transition])
+              if result.success?
+                render json: serialize_resource(@order)
+              else
+                render_service_error(result.error, code: ERROR_CODES[:order_cannot_transition])
+              end
             end
           end
 
           # PATCH  /api/v3/store/orders/:id/advance
           def advance
-            result = Spree.checkout_advance_service.call(order: @order)
+            with_order_lock do
+              result = Spree.checkout_advance_service.call(order: @order)
 
-            if result.success?
-              render json: serialize_resource(@order)
-            else
-              render_service_error(result.error, code: ERROR_CODES[:order_cannot_transition])
+              if result.success?
+                render json: serialize_resource(@order)
+              else
+                render_service_error(result.error, code: ERROR_CODES[:order_cannot_transition])
+              end
             end
           end
 
           # PATCH  /api/v3/store/orders/:id/complete
           def complete
-            result = Spree.checkout_complete_service.call(order: @order)
+            with_order_lock do
+              result = Spree.checkout_complete_service.call(order: @order)
 
-            if result.success?
-              render json: serialize_resource(@order)
-            else
-              render_service_error(result.error, code: ERROR_CODES[:order_already_completed])
+              if result.success?
+                render json: serialize_resource(@order)
+              else
+                render_service_error(result.error, code: ERROR_CODES[:order_already_completed])
+              end
             end
           end
 

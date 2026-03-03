@@ -5,6 +5,7 @@ module Spree
         module Orders
           class CouponCodesController < ResourceController
             include Spree::Api::V3::OrderConcern
+            include Spree::Api::V3::OrderLock
 
             before_action :authorize_order_access!
             skip_before_action :set_resource
@@ -12,14 +13,16 @@ module Spree
             # POST  /api/v3/store/orders/:order_id/coupon_codes
             # Apply a coupon code to the order
             def create
-              @parent.coupon_code = permitted_params[:code]
+              with_order_lock do
+                @parent.coupon_code = permitted_params[:code]
 
-              coupon_handler.apply
+                coupon_handler.apply
 
-              if coupon_handler.successful?
-                render_order(status: :created)
-              else
-                render_errors(coupon_handler.error)
+                if coupon_handler.successful?
+                  render_order(status: :created)
+                else
+                  render_errors(coupon_handler.error)
+                end
               end
             end
 
@@ -27,15 +30,17 @@ module Spree
             # Remove a coupon code from the order
             # :id is the promotion prefix_id (e.g., promo_xxx)
             def destroy
-              @resource = scope.find_by_prefix_id!(params[:id])
-              coupon_code = @resource.code.presence || @resource.name
+              with_order_lock do
+                @resource = scope.find_by_prefix_id!(params[:id])
+                coupon_code = @resource.code.presence || @resource.name
 
-              coupon_handler.remove(coupon_code)
+                coupon_handler.remove(coupon_code)
 
-              if coupon_handler.successful?
-                render_order
-              else
-                render_errors(coupon_handler.error)
+                if coupon_handler.successful?
+                  render_order
+                else
+                  render_errors(coupon_handler.error)
+                end
               end
             end
 

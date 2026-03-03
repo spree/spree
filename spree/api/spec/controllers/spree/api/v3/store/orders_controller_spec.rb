@@ -106,7 +106,7 @@ RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
       end
 
       it 'updates the order locale' do
-        allow(store).to receive(:supported_locales_list).and_return(['en', 'fr'])
+        create(:market, store: store, default_locale: 'en', supported_locales: 'en,fr')
 
         patch :update, params: { id: order.to_param, locale: 'fr' }
 
@@ -116,7 +116,7 @@ RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
       end
 
       it 'returns error when locale is not supported by store' do
-        allow(store).to receive(:supported_locales_list).and_return(['en'])
+        create(:market, store: store, default_locale: 'en', supported_locales: 'en')
 
         patch :update, params: { id: order.to_param, locale: 'de' }
 
@@ -182,5 +182,31 @@ RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
         expect(json_response['error']['code']).to eq('order_not_found')
       end
     end
+  end
+
+  describe 'order locking' do
+    let(:order) { create(:order_with_line_items, user: user, store: store) }
+
+    before do
+      request.headers['Authorization'] = "Bearer #{jwt_token}"
+    end
+
+    describe 'state_lock_version in responses' do
+      it 'returns state_lock_version in show response' do
+        get :show, params: { id: order.to_param }
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['state_lock_version']).to eq(0)
+      end
+
+      it 'increments state_lock_version after successful update' do
+        patch :update, params: { id: order.to_param, email: 'new@example.com' }
+
+        expect(response).to have_http_status(:ok)
+        expect(order.reload.state_lock_version).to eq(1)
+        expect(json_response['state_lock_version']).to eq(1)
+      end
+    end
+
   end
 end

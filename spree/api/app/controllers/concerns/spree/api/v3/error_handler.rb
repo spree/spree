@@ -23,6 +23,7 @@ module Spree
           order_cannot_transition: 'order_cannot_transition',
           order_empty: 'order_empty',
           order_invalid_state: 'order_invalid_state',
+          order_already_updated: 'order_already_updated',
 
           # Line item errors
           line_item_not_found: 'line_item_not_found',
@@ -191,6 +192,7 @@ module Spree
             status: :unprocessable_content
           )
         end
+
 
         private
 
