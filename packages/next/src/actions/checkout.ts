@@ -50,8 +50,10 @@ export async function updateAddresses(
  */
 export async function advance(orderId: string, stateLockVersion?: number): Promise<StoreOrder> {
   const options = await getCheckoutOptions();
-  const params = stateLockVersion != null ? { state_lock_version: stateLockVersion } : undefined;
-  const result = await getClient().store.orders.advance(orderId, params, options);
+  const result = await getClient().store.orders.advance(orderId, {
+    ...options,
+    ...(stateLockVersion != null ? { state_lock_version: stateLockVersion } : {}),
+  });
   revalidateTag('checkout');
   return result;
 }
@@ -61,8 +63,10 @@ export async function advance(orderId: string, stateLockVersion?: number): Promi
  */
 export async function next(orderId: string, stateLockVersion?: number): Promise<StoreOrder> {
   const options = await getCheckoutOptions();
-  const params = stateLockVersion != null ? { state_lock_version: stateLockVersion } : undefined;
-  const result = await getClient().store.orders.next(orderId, params, options);
+  const result = await getClient().store.orders.next(orderId, {
+    ...options,
+    ...(stateLockVersion != null ? { state_lock_version: stateLockVersion } : {}),
+  });
   revalidateTag('checkout');
   return result;
 }
@@ -105,7 +109,7 @@ export async function applyCoupon(
   code: string
 ): Promise<StoreOrder> {
   const options = await getCheckoutOptions();
-  const result = await getClient().store.orders.couponCodes.apply(orderId, code, undefined, options);
+  const result = await getClient().store.orders.couponCodes.apply(orderId, code, options);
   revalidateTag('checkout');
   revalidateTag('cart');
   return result;
@@ -119,7 +123,7 @@ export async function removeCoupon(
   promotionId: string
 ): Promise<StoreOrder> {
   const options = await getCheckoutOptions();
-  const result = await getClient().store.orders.couponCodes.remove(orderId, promotionId, undefined, options);
+  const result = await getClient().store.orders.couponCodes.remove(orderId, promotionId, options);
   revalidateTag('checkout');
   revalidateTag('cart');
   return result;
@@ -130,8 +134,10 @@ export async function removeCoupon(
  */
 export async function complete(orderId: string, stateLockVersion?: number): Promise<StoreOrder> {
   const options = await getCheckoutOptions();
-  const params = stateLockVersion != null ? { state_lock_version: stateLockVersion } : undefined;
-  const result = await getClient().store.orders.complete(orderId, params, options);
+  const result = await getClient().store.orders.complete(orderId, {
+    ...options,
+    ...(stateLockVersion != null ? { state_lock_version: stateLockVersion } : {}),
+  });
   revalidateTag('checkout');
   revalidateTag('cart');
   return result;

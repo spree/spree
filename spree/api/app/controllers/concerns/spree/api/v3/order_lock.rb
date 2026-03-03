@@ -10,20 +10,26 @@ module Spree
           order = @order || @parent
 
           order.with_lock do
-            if params[:state_lock_version].present?
-              unless order.state_lock_version == params[:state_lock_version].to_i
-                render_error(
-                  code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:order_already_updated],
-                  message: Spree.t(:order_already_updated),
-                  status: :conflict
-                )
-                return
-              end
+            if params[:state_lock_version].present? && order.state_lock_version != params[:state_lock_version].to_i
+              render_error(
+                code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:order_already_updated],
+                message: Spree.t(:order_already_updated),
+                status: :conflict
+              )
+              next
             end
 
-            order.increment!(:state_lock_version)
+            # Pre-increment in memory so serializers include the new version
+            order.state_lock_version += 1
 
             yield
+
+            if performed? && response.status >= 400
+              # Operation failed — revert in-memory increment, DB stays unchanged
+              order.state_lock_version -= 1
+            else
+              order.update_column(:state_lock_version, order.state_lock_version)
+            end
           end
         rescue ActiveRecord::Deadlocked, ActiveRecord::LockWaitTimeout => e
           Rails.error.report(e, context: { order_id: order&.id }, source: 'spree.api.v3')
