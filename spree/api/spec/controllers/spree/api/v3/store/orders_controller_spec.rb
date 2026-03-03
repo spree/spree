@@ -106,7 +106,7 @@ RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
       end
 
       it 'updates the order locale' do
-        store.update!(supported_locales: 'en,fr')
+        create(:market, store: store, default_locale: 'en', supported_locales: 'en,fr')
 
         patch :update, params: { id: order.to_param, locale: 'fr' }
 
@@ -116,7 +116,7 @@ RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
       end
 
       it 'returns error when locale is not supported by store' do
-        store.update!(supported_locales: 'en')
+        create(:market, store: store, default_locale: 'en', supported_locales: 'en')
 
         patch :update, params: { id: order.to_param, locale: 'de' }
 
