@@ -5,6 +5,7 @@ module Spree
         module Orders
           class ShipmentsController < ResourceController
             include Spree::Api::V3::OrderConcern
+            include Spree::Api::V3::OrderLock
 
             before_action :authorize_order_access!
             skip_before_action :set_resource
@@ -12,13 +13,15 @@ module Spree
 
             # PATCH /api/v3/store/orders/:order_id/shipments/:id
             def update
-              if permitted_params[:selected_shipping_rate_id].present?
-                shipping_rate = @resource.shipping_rates.find_by_prefix_id!(permitted_params[:selected_shipping_rate_id])
-                @resource.selected_shipping_rate_id = shipping_rate.id
-                @resource.save!
-              end
+              with_order_lock do
+                if permitted_params[:selected_shipping_rate_id].present?
+                  shipping_rate = @resource.shipping_rates.find_by_prefix_id!(permitted_params[:selected_shipping_rate_id])
+                  @resource.selected_shipping_rate_id = shipping_rate.id
+                  @resource.save!
+                end
 
-              render_order
+                render_order
+              end
             end
 
             protected

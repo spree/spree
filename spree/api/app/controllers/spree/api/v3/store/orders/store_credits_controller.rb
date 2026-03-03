@@ -5,6 +5,7 @@ module Spree
         module Orders
           class StoreCreditsController < Store::BaseController
             include Spree::Api::V3::OrderConcern
+            include Spree::Api::V3::OrderLock
 
             before_action :require_authentication!
             before_action :set_parent
@@ -12,26 +13,30 @@ module Spree
 
             # POST /api/v3/store/orders/:order_id/store_credits
             def create
-              result = Spree.checkout_add_store_credit_service.call(
-                order: @parent,
-                amount: params[:amount].try(:to_f)
-              )
+              with_order_lock do
+                result = Spree.checkout_add_store_credit_service.call(
+                  order: @parent,
+                  amount: params[:amount].try(:to_f)
+                )
 
-              if result.success?
-                render_order
-              else
-                render_service_error(result.error)
+                if result.success?
+                  render_order
+                else
+                  render_service_error(result.error)
+                end
               end
             end
 
             # DELETE /api/v3/store/orders/:order_id/store_credits
             def destroy
-              result = Spree.checkout_remove_store_credit_service.call(order: @parent)
+              with_order_lock do
+                result = Spree.checkout_remove_store_credit_service.call(order: @parent)
 
-              if result.success?
-                render_order
-              else
-                render_service_error(result.error)
+                if result.success?
+                  render_order
+                else
+                  render_service_error(result.error)
+                end
               end
             end
           end
