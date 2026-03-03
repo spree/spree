@@ -39,7 +39,7 @@ initSpreeNext({
 import { listProducts, getProduct, listTaxons } from '@spree/next';
 
 export default async function ProductsPage() {
-  const products = await listProducts({ per_page: 12 });
+  const products = await listProducts({ limit: 12 });
   const categories = await listTaxons({ depth_eq: 1 });
 
   return (
@@ -93,7 +93,7 @@ Plain async functions for reading data in Server Components. Wrap with `"use cac
 ```typescript
 import { listProducts, getProduct, getProductFilters } from '@spree/next';
 
-const products = await listProducts({ per_page: 25, includes: 'variants,images' });
+const products = await listProducts({ limit: 25, includes: 'variants,images' });
 const product = await getProduct('spree-tote');
 const filters = await getProductFilters({ taxon_id: 'txn_123' });
 ```
@@ -106,7 +106,7 @@ import { listTaxonomies, getTaxonomy } from '@spree/next';
 
 const taxons = await listTaxons({ depth_eq: 1 });
 const taxon = await getTaxon('categories/clothing');
-const products = await listTaxonProducts('categories/clothing', { per_page: 12 });
+const products = await listTaxonProducts('categories/clothing', { limit: 12 });
 
 const taxonomies = await listTaxonomies({ includes: 'taxons' });
 const taxonomy = await getTaxonomy('tax_123');
@@ -261,7 +261,7 @@ export const config = {
 Data functions work without any locale arguments:
 
 ```typescript
-const products = await listProducts({ per_page: 10 });
+const products = await listProducts({ limit: 10 });
 const taxon = await getTaxon('categories/clothing');
 ```
 
@@ -278,7 +278,7 @@ await setLocale({ country: 'de', locale: 'de' });
 You can still pass locale options explicitly — they override auto-detected values:
 
 ```typescript
-const products = await listProducts({ per_page: 10 }, { locale: 'fr', country: 'FR' });
+const products = await listProducts({ limit: 10 }, { locale: 'fr', country: 'FR' });
 ```
 
 ## TypeScript

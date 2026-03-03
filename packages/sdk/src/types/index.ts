@@ -56,7 +56,7 @@ export interface RegisterParams {
 // Query params
 export interface ListParams {
   page?: number;
-  per_page?: number;
+  limit?: number;
   /** Associations to include. Accepts array or comma-separated string. */
   includes?: string[] | string;
 }

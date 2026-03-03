@@ -23,7 +23,7 @@ RSpec.describe 'Credit Cards API', type: :request, swagger_doc: 'api-reference/s
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false
-      parameter name: :per_page, in: :query, type: :integer, required: false
+      parameter name: :limit, in: :query, type: :integer, required: false
 
       response '200', 'credit cards found' do
         let(:'x-spree-api-key') { api_key.token }

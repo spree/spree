@@ -1,5 +1,11 @@
 # @spree/sdk
 
+## 0.6.4
+
+### Patch Changes
+
+- Rename `per_page` pagination parameter to `limit`
+
 ## 0.6.3
 
 ### Patch Changes

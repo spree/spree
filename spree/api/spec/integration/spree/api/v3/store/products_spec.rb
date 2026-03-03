@@ -33,7 +33,7 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
       sdk_example <<~JS
         const products = await client.store.products.list({
           page: 1,
-          per_page: 25,
+          limit: 25,
           sort: 'price asc',
           name_cont: 'shirt',
           price_gte: 20,
@@ -47,7 +47,7 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
                 description: 'Publishable API key'
       parameter name: :page, in: :query, type: :integer, required: false,
                 description: 'Page number (default: 1)'
-      parameter name: :per_page, in: :query, type: :integer, required: false,
+      parameter name: :limit, in: :query, type: :integer, required: false,
                 description: 'Number of items per page (default: 25, max: 100)'
       parameter name: :sort, in: :query, type: :string, required: false,
                 description: 'Sort order. Values: price asc, price desc, best_selling, name asc, name desc, available_on desc, available_on asc'

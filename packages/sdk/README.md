@@ -26,7 +26,7 @@ const client = createSpreeClient({
 
 // Browse products (Store API)
 const products = await client.store.products.list({
-  per_page: 10,
+  limit: 10,
   includes: 'variants,images',
 });
 
@@ -147,7 +147,7 @@ const store = await client.store.store.get();
 // List products with filtering
 const products = await client.store.products.list({
   page: 1,
-  per_page: 25,
+  limit: 25,
   name_cont: 'shirt',
   sort: 'price asc',
   includes: 'variants,images,taxons',
@@ -191,7 +191,7 @@ const taxon = await client.store.taxons.get('categories/clothing', {
 // List products in a category
 const categoryProducts = await client.store.taxons.products.list('categories/clothing', {
   page: 1,
-  per_page: 12,
+  limit: 12,
   includes: 'images,default_variant',
 });
 ```

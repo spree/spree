@@ -1,14 +1,14 @@
 /**
  * Keys that are passed through to the API without wrapping in q[...].
  */
-const PASSTHROUGH_KEYS = new Set(['page', 'per_page', 'includes', 'include', 'sort']);
+const PASSTHROUGH_KEYS = new Set(['page', 'limit', 'includes', 'include', 'sort']);
 
 type ParamValue = string | number | boolean | (string | number)[] | undefined;
 
 /**
  * Transforms flat SDK params into Ransack-compatible query params.
  *
- * - `page`, `per_page`, `includes`, `include`, `sort` pass through unchanged
+ * - `page`, `limit`, `includes`, `include`, `sort` pass through unchanged
  * - Keys already in `q[...]` format pass through (backward compat)
  * - All other keys are wrapped: `name_cont` → `q[name_cont]`
  */

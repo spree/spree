@@ -127,7 +127,7 @@ module Spree
         end
 
         def limit
-          limit_param = params[:per_page]&.to_i || params[:limit]&.to_i || 25
+          limit_param = params[:limit]&.to_i || 25
           [limit_param, 100].min # Max 100 per page
         end
 

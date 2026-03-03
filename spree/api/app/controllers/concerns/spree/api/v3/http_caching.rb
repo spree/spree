@@ -77,7 +77,7 @@ module Spree
             params[:include],
             params[:q],
             params[:page],
-            params[:per_page],
+            params[:limit],
             current_currency,
             current_locale
           ]

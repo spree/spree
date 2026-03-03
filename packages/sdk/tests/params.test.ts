@@ -3,8 +3,8 @@ import { transformListParams } from '../src/params';
 
 describe('transformListParams', () => {
   it('passes through pagination params unchanged', () => {
-    const result = transformListParams({ page: 2, per_page: 10 });
-    expect(result).toEqual({ page: 2, per_page: 10 });
+    const result = transformListParams({ page: 2, limit: 10 });
+    expect(result).toEqual({ page: 2, limit: 10 });
   });
 
   it('passes through includes string unchanged', () => {
@@ -81,7 +81,7 @@ describe('transformListParams', () => {
   it('handles a full combined query', () => {
     const result = transformListParams({
       page: 1,
-      per_page: 12,
+      limit: 12,
       includes: 'images,default_variant',
       sort: 'created_at desc',
       name_cont: 'shirt',
@@ -90,7 +90,7 @@ describe('transformListParams', () => {
     });
     expect(result).toEqual({
       page: 1,
-      per_page: 12,
+      limit: 12,
       includes: 'images,default_variant',
       sort: 'created_at desc',
       'q[name_cont]': 'shirt',

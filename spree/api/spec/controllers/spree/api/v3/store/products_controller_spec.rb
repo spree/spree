@@ -35,7 +35,7 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
     end
 
     it 'returns pagination metadata' do
-      get :index, params: { page: 1, per_page: 1 }
+      get :index, params: { page: 1, limit: 1 }
 
       expect(response).to have_http_status(:ok)
       expect(json_response['data'].size).to eq(1)
@@ -47,8 +47,8 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
       )
     end
 
-    it 'respects max per_page limit' do
-      get :index, params: { per_page: 500 }
+    it 'respects max limit limit' do
+      get :index, params: { limit: 500 }
 
       expect(json_response['meta']['limit']).to eq(100)
     end
