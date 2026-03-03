@@ -4,7 +4,7 @@ module Spree
       queue_as Spree.queues.exports
 
       def perform(export_id)
-        export = Spree::Export.find(export_id)
+        export = Spree::Export.find_by_prefix_id!(export_id)
         export.generate
       end
     end
