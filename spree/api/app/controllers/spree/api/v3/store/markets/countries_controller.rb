@@ -29,7 +29,7 @@ module Spree
             end
 
             def serialize_country(country)
-              Spree.api.market_country_serializer.new(country, params: serializer_params).to_h
+              Spree.api.country_serializer.new(country, params: serializer_params).to_h
             end
           end
         end

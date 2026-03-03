@@ -5,41 +5,19 @@ module Spree
         include Alba::Resource
         include Typelizer::DSL
 
-        # ISO 3166-1 codes - iso is the identifier, no redundant id field
         typelize iso: :string, iso3: :string, name: :string,
-                 states_required: :boolean, zipcode_required: :boolean,
-                 currency: [:string, nullable: true],
-                 default_locale: [:string, nullable: true],
-                 supported_locales: [:string, multi: true],
-                 tax_inclusive: :boolean,
-                 market: [:object, nullable: true, properties: { id: :string, name: :string }]
+                 states_required: :boolean, zipcode_required: :boolean
 
         attributes :iso, :iso3, :name, :states_required, :zipcode_required
-
-        attribute :currency do |country|
-          country.market_currency
-        end
-
-        attribute :default_locale do |country|
-          country.market_locale
-        end
-
-        attribute :supported_locales do |country|
-          country.market_supported_locales
-        end
-
-        attribute :tax_inclusive do |country|
-          country.current_market&.tax_inclusive || false
-        end
-
-        attribute :market do |country|
-          m = country.current_market
-          m ? { id: m.prefixed_id, name: m.name } : nil
-        end
 
         many :states,
              resource: Spree.api.state_serializer,
              if: proc { params[:includes]&.include?('states') }
+
+        attribute :market, if: proc { params[:includes]&.include?('market') } do |country|
+          m = country.current_market
+          m ? Spree.api.market_serializer.new(m, params: params).to_h : nil
+        end
       end
     end
   end

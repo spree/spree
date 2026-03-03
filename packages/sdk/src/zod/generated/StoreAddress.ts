@@ -16,8 +16,8 @@ export const StoreAddressSchema = z.object({
   country_iso: z.string(),
   state_text: z.string().nullable(),
   state_abbr: z.string().nullable(),
-  state_name: z.string().nullable(),
   quick_checkout: z.boolean(),
+  state_name: z.string().nullable(),
 });
 
 export type StoreAddress = z.infer<typeof StoreAddressSchema>;

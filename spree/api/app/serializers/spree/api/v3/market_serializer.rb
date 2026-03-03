@@ -8,14 +8,14 @@ module Spree
                  tax_inclusive: :boolean,
                  default: :boolean
 
-        attributes :id, :name, :currency, :default_locale, :tax_inclusive, :default
+        attributes :name, :currency, :default_locale, :tax_inclusive, :default
 
         attribute :supported_locales do |market|
           market.supported_locales_list
         end
 
         many :countries,
-             resource: Spree.api.market_country_serializer,
+             resource: Spree.api.country_serializer,
              if: proc { include?(:countries) }
       end
     end
