@@ -52,15 +52,27 @@ module Spree
 
     # Returns the matching zone with the highest priority zone type (State, Country, Zone.)
     # Returns nil in the case of no matches.
-    def self.match(address)
-      return unless address &&
-        matches = includes(:zone_members).
-                    order('spree_zones.zone_members_count', 'spree_zones.created_at').
-                    where("(spree_zone_members.zoneable_type = 'Spree::Country' AND " \
-                          'spree_zone_members.zoneable_id = ?) OR ' \
-                          "(spree_zone_members.zoneable_type = 'Spree::State' AND " \
-                          'spree_zone_members.zoneable_id = ?)', address.country_id, address.state_id).
-                    references(:zones)
+    # Accepts either an address (with country_id/state_id) or a Spree::Country directly.
+    def self.match(address_or_country)
+      return unless address_or_country
+
+      if address_or_country.is_a?(Spree::Country)
+        country_id = address_or_country.id
+        state_id = nil
+      else
+        country_id = address_or_country.country_id
+        state_id = address_or_country.state_id
+      end
+
+      matches = includes(:zone_members).
+                  order('spree_zones.zone_members_count', 'spree_zones.created_at').
+                  where("(spree_zone_members.zoneable_type = 'Spree::Country' AND " \
+                        'spree_zone_members.zoneable_id = ?) OR ' \
+                        "(spree_zone_members.zoneable_type = 'Spree::State' AND " \
+                        'spree_zone_members.zoneable_id = ?)', country_id, state_id).
+                  references(:zones)
+
+      return if matches.empty?
 
       %w[state country].each do |zone_kind|
         if match = matches.detect { |zone| zone_kind == zone.kind }

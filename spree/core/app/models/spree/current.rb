@@ -34,10 +34,11 @@ module Spree
       super || market&.default_locale || store&.default_locale
     end
 
-    # Returns the current tax zone, falling back to the default tax zone.
+    # Returns the current tax zone.
+    # Fallback: market's tax zone (from default country) -> global default tax zone.
     # @return [Spree::Zone, nil]
     def zone
-      super || default_tax_zone
+      super || market&.tax_zone || default_tax_zone
     end
 
     # Returns the default tax zone (memoized per request).
