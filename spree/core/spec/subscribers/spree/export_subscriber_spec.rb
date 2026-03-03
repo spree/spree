@@ -21,24 +21,13 @@ RSpec.describe Spree::ExportSubscriber do
     let(:subscriber) { described_class.new }
     let(:export) { create(:export, store: store, user: user) }
 
-    it 'resolves prefixed ID and passes raw ID to job' do
+    it 'passes prefixed ID to job' do
       event = Spree::Event.new(
         name: 'export.created',
         payload: { 'id' => export.prefixed_id }
       )
 
-      expect(Spree::Exports::GenerateJob).to receive(:perform_later).with(export.id)
-
-      subscriber.generate_export_async(event)
-    end
-
-    it 'does not call job if export is not found' do
-      event = Spree::Event.new(
-        name: 'export.created',
-        payload: { 'id' => 'exp_nonexistent' }
-      )
-
-      expect(Spree::Exports::GenerateJob).not_to receive(:perform_later)
+      expect(Spree::Exports::GenerateJob).to receive(:perform_later).with(export.prefixed_id)
 
       subscriber.generate_export_async(event)
     end

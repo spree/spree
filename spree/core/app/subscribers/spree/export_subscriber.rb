@@ -17,10 +17,10 @@ module Spree
     on 'export.created', :generate_export_async
 
     def generate_export_async(event)
-      export = Spree::Export.find_by_prefix_id(event.payload['id'])
-      return unless export
+      export_id = event.payload['id']
+      return unless export_id
 
-      Spree::Exports::GenerateJob.perform_later(export.id)
+      Spree::Exports::GenerateJob.perform_later(export_id)
     end
   end
 end

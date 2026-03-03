@@ -6,7 +6,7 @@ RSpec.describe Spree::Exports::GenerateJob, type: :job do
   let!(:export) { create(:product_export, store: store, user: user, format: 'csv') }
 
   describe '#perform' do
-    subject(:perform_job) { described_class.perform_now(export.id) }
+    subject(:perform_job) { described_class.perform_now(export.prefixed_id) }
 
     it 'calls generate on the export' do
       expect_any_instance_of(Spree::Export).to receive(:generate)

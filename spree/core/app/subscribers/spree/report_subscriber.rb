@@ -17,10 +17,10 @@ module Spree
     on 'report.created', :generate_report_async
 
     def generate_report_async(event)
-      report = Spree::Report.find_by_prefix_id(event.payload['id'])
-      return unless report
+      report_id = event.payload['id']
+      return unless report_id
 
-      Spree::Reports::GenerateJob.perform_later(report.id)
+      Spree::Reports::GenerateJob.perform_later(report_id)
     end
   end
 end
