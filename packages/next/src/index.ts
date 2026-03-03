@@ -25,7 +25,7 @@ export {
 
 export {
   getCheckout,
-  updateAddresses,
+  updateOrder,
   advance,
   next,
   getShipments,
@@ -100,6 +100,7 @@ export type {
   StoreOrderPromotion,
   PaginatedResponse,
   AddressParams,
+  UpdateOrderParams,
   ProductFiltersResponse,
   CreatePaymentSessionParams,
   UpdatePaymentSessionParams,

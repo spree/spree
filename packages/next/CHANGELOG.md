@@ -1,5 +1,14 @@
 # @spree/next
 
+## 0.6.4
+
+### Patch Changes
+
+- Rename `updateAddresses` to `updateOrder` and widen params to full `UpdateOrderParams`
+
+  - **Breaking:** `updateAddresses(orderId, params)` renamed to `updateOrder(orderId, params)` — accepts all `UpdateOrderParams` fields (currency, locale, metadata, addresses, etc.)
+  - Export `UpdateOrderParams` type
+
 ## 0.6.3
 
 ### Patch Changes

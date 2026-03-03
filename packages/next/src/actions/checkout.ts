@@ -1,7 +1,7 @@
 'use server';
 
 import { revalidateTag } from 'next/cache';
-import type { StoreOrder, StoreShipment, AddressParams } from '@spree/sdk';
+import type { StoreOrder, StoreShipment, UpdateOrderParams } from '@spree/sdk';
 import { getClient } from '../config';
 import { getCartToken, getAccessToken } from '../cookies';
 
@@ -27,17 +27,11 @@ export async function getCheckout(
 }
 
 /**
- * Update shipping and/or billing addresses on the order.
+ * Update an order (addresses, email, currency, locale, metadata, etc.).
  */
-export async function updateAddresses(
+export async function updateOrder(
   orderId: string,
-  params: {
-    email?: string;
-    ship_address?: AddressParams;
-    bill_address?: AddressParams;
-    ship_address_id?: string;
-    bill_address_id?: string;
-  }
+  params: UpdateOrderParams
 ): Promise<StoreOrder> {
   const options = await getCheckoutOptions();
   const result = await getClient().store.orders.update(orderId, params, options);
