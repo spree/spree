@@ -4,6 +4,11 @@ module Spree
       module OrderLock
         extend ActiveSupport::Concern
 
+        included do
+          rescue_from ActiveRecord::Deadlocked, with: :handle_order_lock_conflict
+          rescue_from ActiveRecord::LockWaitTimeout, with: :handle_order_lock_conflict
+        end
+
         private
 
         def with_order_lock
@@ -21,8 +26,10 @@ module Spree
               order.update_column(:state_lock_version, new_version - 1)
             end
           end
-        rescue ActiveRecord::Deadlocked, ActiveRecord::LockWaitTimeout => e
-          Rails.error.report(e, context: { order_id: order&.id }, source: 'spree.api.v3')
+        end
+
+        def handle_order_lock_conflict(exception)
+          Rails.error.report(exception, context: { order_id: (@order || @parent)&.id }, source: 'spree.api.v3')
           render_error(
             code: Spree::Api::V3::ErrorHandler::ERROR_CODES[:order_already_updated],
             message: Spree.t(:order_already_updated),

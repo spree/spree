@@ -68,8 +68,6 @@ module Spree
           rescue_from ArgumentError, with: :handle_argument_error
           rescue_from ActionDispatch::Http::Parameters::ParseError, with: :handle_parse_error
           rescue_from StateMachines::InvalidTransition, with: :handle_invalid_transition
-          rescue_from ActiveRecord::Deadlocked, with: :handle_order_lock_conflict
-          rescue_from ActiveRecord::LockWaitTimeout, with: :handle_order_lock_conflict
         end
 
         protected
@@ -195,14 +193,6 @@ module Spree
           )
         end
 
-        def handle_order_lock_conflict(exception)
-          Rails.error.report(exception, context: error_context, source: 'spree.api.v3')
-          render_error(
-            code: ERROR_CODES[:order_already_updated],
-            message: Spree.t(:order_already_updated),
-            status: :conflict
-          )
-        end
 
         private
 
