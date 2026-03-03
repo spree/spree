@@ -19,16 +19,15 @@ module Spree
               next
             end
 
-            # Pre-increment in memory so serializers include the new version
-            order.state_lock_version += 1
+            # Persist increment within the transaction so reloads inside yield see the new version
+            new_version = order.state_lock_version + 1
+            order.update_column(:state_lock_version, new_version)
 
             yield
 
             if performed? && response.status >= 400
-              # Operation failed — revert in-memory increment, DB stays unchanged
-              order.state_lock_version -= 1
-            else
-              order.update_column(:state_lock_version, order.state_lock_version)
+              # Operation failed — revert the increment
+              order.update_column(:state_lock_version, new_version - 1)
             end
           end
         rescue ActiveRecord::Deadlocked, ActiveRecord::LockWaitTimeout => e
