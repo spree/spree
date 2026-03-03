@@ -1,5 +1,13 @@
 # @spree/next
 
+## 0.6.2
+
+### Patch Changes
+
+- Added `quick_checkout` attribute support for Address via updated SDK dependency
+
+- Bump SDK dependency for `state_lock_version` response type support.
+
 ## 0.6.1
 
 ### Patch Changes
