@@ -10,7 +10,9 @@ module Spree
                  states_required: :boolean, zipcode_required: :boolean,
                  currency: [:string, nullable: true],
                  default_locale: [:string, nullable: true],
-                 supported_locales: [:string, multi: true]
+                 supported_locales: [:string, multi: true],
+                 tax_inclusive: :boolean,
+                 market: [:object, nullable: true, properties: { id: :string, name: :string }]
 
         attributes :iso, :iso3, :name, :states_required, :zipcode_required
 
@@ -24,6 +26,15 @@ module Spree
 
         attribute :supported_locales do |country|
           country.market_supported_locales
+        end
+
+        attribute :tax_inclusive do |country|
+          country.current_market&.tax_inclusive || false
+        end
+
+        attribute :market do |country|
+          m = country.current_market
+          m ? { id: m.prefixed_id, name: m.name } : nil
         end
 
         many :states,

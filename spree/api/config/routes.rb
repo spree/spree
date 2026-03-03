@@ -11,6 +11,14 @@ Spree::Core::Engine.add_routes do
         # Store
         resource :store, only: [:show]
 
+        # Markets
+        resources :markets, only: [:index, :show] do
+          collection do
+            get :resolve
+          end
+          resources :countries, only: [:index, :show], controller: 'markets/countries'
+        end
+
         # Countries, Currencies, Locales (flat, market-aware)
         resources :countries, only: [:index, :show]
         resources :currencies, only: [:index]
