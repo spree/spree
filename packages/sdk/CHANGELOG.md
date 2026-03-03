@@ -1,5 +1,13 @@
 # @spree/sdk
 
+## 0.6.2
+
+### Patch Changes
+
+- Added `quick_checkout` attribute to Address type and AddressParams interface
+
+- Add `state_lock_version` to `StoreOrder` and `AdminOrder` response types. The API now returns a `state_lock_version` field on order responses for tracking order mutation versions.
+
 ## 0.6.1
 
 ### Patch Changes
