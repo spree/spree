@@ -20,6 +20,24 @@ The global rate limit is tracked by your publishable API key (`X-Spree-Api-Key`)
 
 Authentication endpoints have stricter per-IP limits to prevent brute-force attacks.
 
+## Rate Limit Headers
+
+Every Store API response includes headers that show your current rate limit usage:
+
+| Header | Description |
+|--------|-------------|
+| `X-RateLimit-Limit` | Maximum number of requests allowed per window |
+| `X-RateLimit-Remaining` | Number of requests remaining in the current window |
+| `Retry-After` | Seconds to wait before retrying (only present when limit is reached) |
+
+Example response headers:
+
+```
+HTTP/1.1 200 OK
+X-RateLimit-Limit: 300
+X-RateLimit-Remaining: 295
+```
+
 ## Rate Limit Response
 
 When you exceed the rate limit, the API returns a `429 Too Many Requests` response:
@@ -33,11 +51,13 @@ When you exceed the rate limit, the API returns a `429 Too Many Requests` respon
 }
 ```
 
-The response includes a `Retry-After` header indicating how many seconds to wait before retrying:
+The response includes rate limit headers and a `Retry-After` header indicating how many seconds to wait before retrying:
 
 ```
 HTTP/1.1 429 Too Many Requests
 Content-Type: application/json
+X-RateLimit-Limit: 300
+X-RateLimit-Remaining: 0
 Retry-After: 60
 ```
 
@@ -68,6 +88,7 @@ If you're self-hosting Spree, you can adjust rate limits in your initializer:
 ```ruby
 # config/initializers/spree.rb
 Spree::Api::Config[:rate_limit_per_key] = 300  # Global limit per API key
+Spree::Api::Config[:rate_limit_window] = 60    # Window in seconds
 Spree::Api::Config[:rate_limit_login] = 5      # Login attempts per IP
 Spree::Api::Config[:rate_limit_register] = 3   # Registration attempts per IP
 Spree::Api::Config[:rate_limit_refresh] = 10   # Token refresh per IP

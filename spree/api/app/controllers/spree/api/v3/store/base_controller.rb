@@ -3,13 +3,23 @@ module Spree
     module V3
       module Store
         class BaseController < Spree::Api::V3::BaseController
+          include Spree::Api::V3::RateLimitHeaders
+
           RATE_LIMIT_RESPONSE = -> {
+            limit = Spree::Api::Config[:rate_limit_per_key]
+            window = Spree::Api::Config[:rate_limit_window]
             body = { error: { code: 'rate_limit_exceeded', message: 'Too many requests. Please retry later.' } }
-            [429, { 'Content-Type' => 'application/json', 'Retry-After' => '60' }, [body.to_json]]
+            headers = {
+              'Content-Type' => 'application/json',
+              'Retry-After' => window.to_s,
+              'X-RateLimit-Limit' => limit.to_s,
+              'X-RateLimit-Remaining' => '0'
+            }
+            [429, headers, [body.to_json]]
           }
 
           # Global rate limit per publishable API key
-          rate_limit to: Spree::Api::Config[:rate_limit_per_key], within: 1.minute,
+          rate_limit to: Spree::Api::Config[:rate_limit_per_key], within: Spree::Api::Config[:rate_limit_window].seconds,
                      store: Rails.cache,
                      by: -> { request.headers['X-Spree-Api-Key'] || request.remote_ip },
                      with: RATE_LIMIT_RESPONSE
