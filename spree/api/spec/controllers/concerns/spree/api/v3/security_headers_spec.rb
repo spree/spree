@@ -22,6 +22,14 @@ RSpec.describe Spree::Api::V3::Store::StoresController, type: :controller do
       expect(response.headers['X-Frame-Options']).to eq('DENY')
     end
 
+    it 'sets X-Request-Id header' do
+      allow_any_instance_of(ActionDispatch::Request).to receive(:request_id).and_return('test-request-id-123')
+
+      get :show
+
+      expect(response.headers['X-Request-Id']).to eq('test-request-id-123')
+    end
+
     it 'removes X-Powered-By header' do
       get :show
 
