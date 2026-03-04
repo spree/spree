@@ -8,20 +8,12 @@ module Spree
 
           # Additional type hints for admin-only attributes
           typelize position: :number, tax_category_id: [:string, nullable: true],
-                   cost_price: [:number, nullable: true], cost_currency: [:string, nullable: true],
+                   cost_price: [:string, nullable: true], cost_currency: [:string, nullable: true],
                    total_on_hand: [:number, nullable: true],
                    deleted_at: [:string, nullable: true]
 
           # Admin-only attributes
-          attributes :position, :tax_category_id, deleted_at: :iso8601
-
-          attribute :cost_price do |variant|
-            variant.cost_price&.to_f
-          end
-
-          attribute :cost_currency do |variant|
-            variant.cost_currency
-          end
+          attributes :position, :tax_category_id, :cost_price, :cost_currency, deleted_at: :iso8601
 
           attribute :total_on_hand do |variant|
             variant.total_on_hand

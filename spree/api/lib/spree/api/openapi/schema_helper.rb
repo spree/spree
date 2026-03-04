@@ -40,10 +40,15 @@ module Spree
               properties: {
                 page: { type: :integer, example: 1 },
                 limit: { type: :integer, example: 25 },
-                count: { type: :integer, example: 100 },
-                pages: { type: :integer, example: 4 }
+                count: { type: :integer, example: 100, description: 'Total number of records' },
+                pages: { type: :integer, example: 4, description: 'Total number of pages' },
+                from: { type: :integer, example: 1, description: 'Index of first record on this page' },
+                to: { type: :integer, example: 25, description: 'Index of last record on this page' },
+                in: { type: :integer, example: 25, description: 'Number of records on this page' },
+                previous: { type: :integer, nullable: true, example: nil, description: 'Previous page number' },
+                next: { type: :integer, nullable: true, example: 2, description: 'Next page number' }
               },
-              required: %w[page limit count pages]
+              required: %w[page limit count pages from to in]
             },
             ErrorResponse: {
               type: :object,
@@ -101,6 +106,7 @@ module Spree
         def typelizer_schemas
           with_typelizer_enabled do
             schemas = Typelizer.openapi_schemas
+            schemas = schemas.select { |key, _| key.to_s.start_with?('Store') }
             schemas.each_value { |s| s[:'x-typelizer'] = true }
             schemas
           end

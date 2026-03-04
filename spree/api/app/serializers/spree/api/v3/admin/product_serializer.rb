@@ -9,14 +9,14 @@ module Spree
 
           # Additional type hints for admin-only computed attributes
           typelize status: :string, make_active_at: [:string, nullable: true], discontinue_on: [:string, nullable: true],
-                   cost_price: [:number, nullable: true], cost_currency: [:string, nullable: true],
+                   cost_price: [:string, nullable: true], cost_currency: [:string, nullable: true],
                    deleted_at: [:string, nullable: true]
 
           # Admin-only attributes
           attributes :status, :make_active_at, :discontinue_on, deleted_at: :iso8601
 
           attribute :cost_price do |product|
-            product.master&.cost_price&.to_f
+            product.master&.cost_price
           end
 
           attribute :cost_currency do |product|
