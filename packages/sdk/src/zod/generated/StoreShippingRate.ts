@@ -7,7 +7,7 @@ export const StoreShippingRateSchema = z.object({
   shipping_method_id: z.string(),
   name: z.string(),
   selected: z.boolean(),
-  cost: z.number(),
+  cost: z.string(),
   display_cost: z.string(),
   shipping_method: StoreShippingMethodSchema,
 });

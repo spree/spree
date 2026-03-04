@@ -77,10 +77,11 @@ RSpec.configure do |config|
         { name: 'Orders', description: 'Order lookup' },
         { name: 'Customers', description: 'Customer account, addresses, saved payment methods, and order history' },
         { name: 'Wishlists', description: 'Customer wishlists' },
-        { name: 'Digitals', description: 'Digital product downloads' }
+        { name: 'Digitals', description: 'Digital product downloads' },
+        { name: 'Markets', description: 'Market information and resolution' }
       ],
       'x-tagGroups': [
-        { name: 'Store', tags: %w[Store Internationalization] },
+        { name: 'Store', tags: %w[Store Internationalization Markets] },
         { name: 'Catalog', tags: ['Product Catalog'] },
         { name: 'Cart', tags: ['Cart'] },
         { name: 'Checkout', tags: ['Checkout'] },

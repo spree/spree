@@ -31,9 +31,9 @@ export const AdminVariantSchema = z.object({
   metafields: z.array(AdminMetafieldSchema).optional(),
   position: z.number(),
   tax_category_id: z.string().nullable(),
-  deleted_at: z.string().nullable(),
-  cost_price: z.number().nullable(),
+  cost_price: z.string().nullable(),
   cost_currency: z.string().nullable(),
+  deleted_at: z.string().nullable(),
   total_on_hand: z.number().nullable(),
   prices: z.array(AdminPriceSchema).optional(),
 });

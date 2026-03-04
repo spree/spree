@@ -4,10 +4,10 @@ module Spree
       class GiftCardSerializer < BaseSerializer
         typelize code: :string,
                  state: :string,
-                 amount: :number,
-                 amount_used: :number,
-                 amount_authorized: :number,
-                 amount_remaining: :number,
+                 amount: :string,
+                 amount_used: :string,
+                 amount_authorized: :string,
+                 amount_remaining: :string,
                  display_amount: :string,
                  display_amount_used: :string,
                  display_amount_remaining: :string,
@@ -25,23 +25,7 @@ module Spree
           gift_card.display_state
         end
 
-        attributes :currency
-
-        attribute :amount do |gift_card|
-          gift_card.amount.to_f
-        end
-
-        attribute :amount_used do |gift_card|
-          gift_card.amount_used.to_f
-        end
-
-        attribute :amount_authorized do |gift_card|
-          gift_card.amount_authorized.to_f
-        end
-
-        attribute :amount_remaining do |gift_card|
-          gift_card.amount_remaining.to_f
-        end
+        attributes :currency, :amount, :amount_used, :amount_authorized, :amount_remaining
 
         attribute :display_amount do |gift_card|
           gift_card.display_amount.to_s
