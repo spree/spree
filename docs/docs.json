@@ -424,6 +424,7 @@
                   "api-reference/store-api/introduction",
                   "api-reference/store-api/authentication",
                   "api-reference/store-api/errors",
+                  "api-reference/store-api/idempotency",
                   "api-reference/store-api/rate-limitting",
                   "api-reference/store-api/querying",
                   "api-reference/store-api/relations",

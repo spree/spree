@@ -49,6 +49,7 @@ Validation errors include an additional `details` field with per-field error mes
 | `401` | Unauthorized | Missing or invalid API key, expired JWT token |
 | `403` | Forbidden | Authenticated but not authorized for this resource |
 | `404` | Not Found | Resource doesn't exist or isn't accessible |
+| `409` | Conflict | Resource was modified by another request (concurrent update) |
 | `422` | Unprocessable Content | Validation failed, invalid state transition, payment error |
 | `429` | Too Many Requests | Rate limit exceeded (see [Rate Limiting](/api-reference/store-api/rate-limitting)) |
 
@@ -114,6 +115,13 @@ Validation errors include an additional `details` field with per-field error mes
 | `download_unauthorized` | 403 | User is not authorized to download this file |
 | `digital_link_expired` | 403 | Download link has expired |
 | `download_limit_exceeded` | 403 | Maximum number of downloads reached |
+
+### Concurrency & Idempotency Errors
+
+| Code | Status | Description |
+|------|--------|-------------|
+| `order_already_updated` | 409 | Order was modified by another concurrent request. Retry with fresh data. |
+| `idempotency_key_reused` | 422 | Idempotency key was already used with different request parameters. See [Idempotency](/api-reference/store-api/idempotency). |
 
 ### Other Errors
 

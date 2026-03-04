@@ -1,0 +1,131 @@
+---
+title: "Idempotency"
+sidebarTitle: "Idempotency"
+description: "Prevent duplicate operations with idempotency keys"
+---
+
+The Store API supports idempotency keys on mutating endpoints. This lets you safely retry requests without risking duplicate side effects — for example, adding an item to cart twice or creating duplicate payments due to network timeouts.
+
+## How It Works
+
+Include an `Idempotency-Key` header with a unique value (e.g., a UUID) on any supported request. The API will:
+
+1. **First request** — process normally and cache the response for 24 hours
+2. **Duplicate request** (same key, same parameters) — return the cached response without re-executing the operation
+3. **Key reuse with different parameters** — return a `422` error to prevent misuse
+
+```bash
+curl -X POST https://api.mystore.com/api/v3/store/orders/or_xxx/line_items \
+  -H "Authorization: Bearer spree_pk_xxx" \
+  -H "X-Spree-Order-Token: abc123" \
+  -H "Idempotency-Key: 550e8400-e29b-41d4-a716-446655440000" \
+  -H "Content-Type: application/json" \
+  -d '{"variant_id": "variant_xxx", "quantity": 1}'
+```
+
+If the client retries this exact request with the same idempotency key, the API returns the original response with an `Idempotent-Replayed: true` header — without adding the item again.
+
+## Supported Endpoints
+
+| Endpoint | Actions |
+|----------|---------|
+| `POST /cart` | Cart creation |
+| `PATCH /orders/:id` | Order updates |
+| `PATCH /orders/:id/next` | Checkout state transition |
+| `PATCH /orders/:id/advance` | Checkout advancement |
+| `PATCH /orders/:id/complete` | Order completion |
+| `POST /orders/:id/line_items` | Adding items to cart |
+| `POST /orders/:id/payment_sessions` | Payment session creation |
+| `PATCH /orders/:id/payment_sessions/:id/complete` | Payment completion |
+| `POST /orders/:id/coupon_codes` | Applying coupon codes |
+| `POST /orders/:id/store_credits` | Applying store credits |
+
+Idempotency keys are ignored on `GET`, `DELETE`, and other non-supported actions.
+
+## Key Requirements
+
+- Must be a string of **255 characters or less**
+- Should be unique per distinct operation (UUIDs are recommended)
+- Keys are scoped per API key — different API keys can use the same idempotency key without conflict
+- Cached responses expire after **24 hours**
+
+## Response Headers
+
+When a cached response is replayed, the API sets:
+
+```
+Idempotent-Replayed: true
+```
+
+You can use this header to detect replayed responses in your application or logging.
+
+## Error Handling
+
+### Key Reuse with Different Parameters
+
+If you send a request with an idempotency key that was previously used with different request parameters (different body, different path), the API returns a `422` error:
+
+```json
+{
+  "error": {
+    "code": "idempotency_key_reused",
+    "message": "This Idempotency-Key has already been used with different request parameters."
+  }
+}
+```
+
+### Key Too Long
+
+Keys longer than 255 characters return a `400` error:
+
+```json
+{
+  "error": {
+    "code": "invalid_request",
+    "message": "Idempotency-Key must be 255 characters or less."
+  }
+}
+```
+
+### Server Errors
+
+`5xx` responses are **not cached**. If the server fails to process your request, you can safely retry with the same idempotency key and the request will be re-executed.
+
+## SDK Usage
+
+The Spree SDK supports idempotency keys via the `idempotencyKey` option:
+
+```typescript
+import { createSpreeClient } from '@spree/sdk'
+
+const client = createSpreeClient({
+  baseUrl: 'http://localhost:3000',
+  publishableKey: 'spree_pk_xxx',
+})
+
+// Add item to cart with idempotency key
+await client.store.orders.lineItems.create(orderId, {
+  variant_id: 'variant_xxx',
+  quantity: 1,
+}, {
+  idempotencyKey: '550e8400-e29b-41d4-a716-446655440000',
+})
+```
+
+## Best Practices
+
+- **Generate a new key for each distinct operation.** Use a UUID (v4) or another random identifier. Never reuse keys across different operations.
+- **Store the key before sending the request.** If the request fails due to a network error, retry with the same key to ensure the operation is only performed once.
+- **Don't use idempotency keys for GET requests.** GET requests are naturally idempotent and the API ignores the header on read-only endpoints.
+- **Let keys expire naturally.** Cached responses expire after 24 hours. Don't rely on idempotency keys for longer-term deduplication.
+
+## Relationship with Optimistic Locking
+
+The Store API also uses [optimistic locking](/api-reference/store-api/introduction) via the `state_lock_version` field on orders. These mechanisms complement each other:
+
+| Mechanism | Prevents | Scope |
+|-----------|----------|-------|
+| **Idempotency keys** | Duplicate operations from retries | Per-request deduplication |
+| **Optimistic locking** (`state_lock_version`) | Concurrent modifications | Conflict detection between clients |
+
+Use both together for robust checkout flows: idempotency keys protect against network retries, while `state_lock_version` detects when another client has modified the order.
