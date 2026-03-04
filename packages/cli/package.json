@@ -1,6 +1,6 @@
 {
   "name": "@spree/cli",
-  "version": "2.0.0-beta.3",
+  "version": "2.0.0-beta.4",
   "description": "CLI for managing Spree Commerce projects",
   "type": "module",
   "bin": {

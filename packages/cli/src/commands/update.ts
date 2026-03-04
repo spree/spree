@@ -10,12 +10,10 @@ export function registerUpdateCommand(program: Command): void {
     .action(async () => {
       const ctx = detectProject()
 
+      p.log.step('Pulling latest images...')
+      await dockerCompose(['pull'], ctx.projectDir, { stdio: 'inherit' })
+
       const s = p.spinner()
-
-      s.start('Pulling latest images...')
-      await dockerCompose(['pull'], ctx.projectDir)
-      s.stop('Images pulled.')
-
       s.start('Recreating containers...')
       await dockerCompose(['up', '-d'], ctx.projectDir)
       s.stop('Containers recreated.')
