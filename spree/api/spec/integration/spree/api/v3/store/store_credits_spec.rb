@@ -25,7 +25,7 @@ RSpec.describe 'Store Credits API', type: :request, swagger_doc: 'api-reference/
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
       parameter name: :order_id, in: :path, type: :string, required: true
-      parameter name: :order_token, in: :query, type: :string, required: false
+      parameter name: 'x-spree-order-token', in: :header, type: :string, required: false
       parameter name: :body, in: :body, schema: {
         type: :object,
         properties: {
@@ -78,7 +78,7 @@ RSpec.describe 'Store Credits API', type: :request, swagger_doc: 'api-reference/
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
       parameter name: :order_id, in: :path, type: :string, required: true
-      parameter name: :order_token, in: :query, type: :string, required: false
+      parameter name: 'x-spree-order-token', in: :header, type: :string, required: false
 
       response '200', 'store credit removed' do
         let(:'x-spree-api-key') { api_key.token }

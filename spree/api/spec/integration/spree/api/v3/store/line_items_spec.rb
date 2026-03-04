@@ -32,7 +32,7 @@ RSpec.describe 'Line Items API', type: :request, swagger_doc: 'api-reference/sto
                 description: 'Bearer token for authenticated customers'
       parameter name: :order_id, in: :path, type: :string, required: true,
                 description: 'Order ID or number'
-      parameter name: :order_token, in: :query, type: :string, required: false,
+      parameter name: 'x-spree-order-token', in: :header, type: :string, required: false,
                 description: 'Order token for guest access'
       parameter name: :body, in: :body, schema: {
         type: :object,
@@ -119,7 +119,7 @@ RSpec.describe 'Line Items API', type: :request, swagger_doc: 'api-reference/sto
       parameter name: 'Authorization', in: :header, type: :string, required: false
       parameter name: :order_id, in: :path, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true, description: 'Line item ID'
-      parameter name: :order_token, in: :query, type: :string, required: false
+      parameter name: 'x-spree-order-token', in: :header, type: :string, required: false
       parameter name: :body, in: :body, schema: {
         type: :object,
         properties: {
@@ -174,7 +174,7 @@ RSpec.describe 'Line Items API', type: :request, swagger_doc: 'api-reference/sto
       parameter name: 'Authorization', in: :header, type: :string, required: false
       parameter name: :order_id, in: :path, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true
-      parameter name: :order_token, in: :query, type: :string, required: false
+      parameter name: 'x-spree-order-token', in: :header, type: :string, required: false
 
       response '200', 'line item removed, returns updated order' do
         let(:'x-spree-api-key') { api_key.token }

@@ -38,12 +38,7 @@ module Spree
         end
 
         def order_token
-          # Check x-spree-order-token header first (lowercase for consistency)
-          header = request.headers['x-spree-order-token']
-          return header if header.present?
-
-          # Fallback to query params (support both token and order_token)
-          params[:order_token].presence || params[:token]
+          request.headers['x-spree-order-token']
         end
       end
     end

@@ -37,7 +37,7 @@ RSpec.describe 'Payment Sessions API', type: :request, swagger_doc: 'api-referen
                 description: 'Bearer token for authenticated customers'
       parameter name: :order_id, in: :path, type: :string, required: true,
                 description: 'Order ID or number'
-      parameter name: :order_token, in: :query, type: :string, required: false,
+      parameter name: 'x-spree-order-token', in: :header, type: :string, required: false,
                 description: 'Order token for guest access'
       parameter name: :body, in: :body, schema: {
         type: :object,
@@ -83,7 +83,7 @@ RSpec.describe 'Payment Sessions API', type: :request, swagger_doc: 'api-referen
               description: 'Order ID or number'
     parameter name: :id, in: :path, type: :string, required: true,
               description: 'Payment session ID'
-    parameter name: :order_token, in: :query, type: :string, required: false,
+    parameter name: 'x-spree-order-token', in: :header, type: :string, required: false,
               description: 'Order token for guest access'
 
     get 'Get payment session' do
@@ -169,7 +169,7 @@ RSpec.describe 'Payment Sessions API', type: :request, swagger_doc: 'api-referen
               description: 'Order ID or number'
     parameter name: :id, in: :path, type: :string, required: true,
               description: 'Payment session ID'
-    parameter name: :order_token, in: :query, type: :string, required: false,
+    parameter name: 'x-spree-order-token', in: :header, type: :string, required: false,
               description: 'Order token for guest access'
 
     patch 'Complete payment session' do

@@ -81,7 +81,7 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
       security [api_key: [], bearer_auth: []]
       description <<~DESC
         Returns the current shopping cart (incomplete order).
-        Authenticate via JWT token for logged-in users or via order_token parameter for guests.
+        Authenticate via JWT token for logged-in users or via x-spree-order-token header for guests.
       DESC
 
       sdk_example <<~JS
@@ -99,13 +99,13 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false,
                 description: 'Bearer JWT token for authenticated customers'
-      parameter name: :order_token, in: :query, type: :string, required: false,
+      parameter name: 'x-spree-order-token', in: :header, type: :string, required: false,
                 description: 'Order token for guest checkout'
 
       response '200', 'cart found (guest)' do
         let(:cart) { create(:order_with_line_items, store: store) }
         let(:'x-spree-api-key') { api_key.token }
-        let(:order_token) { cart.token }
+        let(:'x-spree-order-token') { cart.token }
 
         schema '$ref' => '#/components/schemas/StoreOrder'
 
@@ -164,16 +164,14 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true,
                 description: 'Bearer JWT token (required)'
-      parameter name: 'x-spree-order-token', in: :header, type: :string, required: false,
-                description: 'Order token (can also be passed as query param)'
-      parameter name: :order_token, in: :query, type: :string, required: false,
-                description: 'Order token (alternative to header)'
+      parameter name: 'x-spree-order-token', in: :header, type: :string, required: true,
+                description: 'Order token for identifying the guest cart'
 
       response '200', 'cart associated successfully' do
         let(:guest_cart) { create(:order_with_line_items, store: store, user: nil) }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:order_token) { guest_cart.token }
+        let(:'x-spree-order-token') { guest_cart.token }
 
         schema '$ref' => '#/components/schemas/StoreOrder'
 
@@ -188,7 +186,7 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
         let(:guest_cart) { create(:order_with_line_items, store: store, user: nil) }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { '' }
-        let(:order_token) { guest_cart.token }
+        let(:'x-spree-order-token') { guest_cart.token }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 
@@ -203,7 +201,7 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
         let(:other_cart) { create(:order_with_line_items, store: store, user: other_user) }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:order_token) { other_cart.token }
+        let(:'x-spree-order-token') { other_cart.token }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 
@@ -216,7 +214,7 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
       response '404', 'cart not found' do
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:order_token) { 'invalid_token' }
+        let(:'x-spree-order-token') { 'invalid_token' }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 
@@ -230,7 +228,7 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
         let(:completed_order) { create(:completed_order_with_totals, store: store, user: nil) }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:order_token) { completed_order.token }
+        let(:'x-spree-order-token') { completed_order.token }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 

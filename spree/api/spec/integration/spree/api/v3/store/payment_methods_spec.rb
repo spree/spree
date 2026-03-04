@@ -26,7 +26,7 @@ RSpec.describe 'Payment Methods API', type: :request, swagger_doc: 'api-referenc
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false
       parameter name: :order_id, in: :path, type: :string, required: true
-      parameter name: :order_token, in: :query, type: :string, required: false
+      parameter name: 'x-spree-order-token', in: :header, type: :string, required: false
 
       response '200', 'payment methods found' do
         let(:'x-spree-api-key') { api_key.token }

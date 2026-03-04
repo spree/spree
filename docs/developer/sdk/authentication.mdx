@@ -45,7 +45,7 @@ const { token, user } = await client.store.auth.register({
 
 ## Guest Checkout
 
-For guest checkout, use the `token` (or `order_token`) returned when creating a cart:
+For guest checkout, use the `token` returned when creating a cart. The SDK automatically sends it via the `x-spree-order-token` header:
 
 <AuthGuestCart />
 

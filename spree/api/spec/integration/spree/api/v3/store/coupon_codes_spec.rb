@@ -29,7 +29,7 @@ RSpec.describe 'Coupon Codes API', type: :request, swagger_doc: 'api-reference/s
                 description: 'Bearer token for authenticated customers'
       parameter name: :order_id, in: :path, type: :string, required: true,
                 description: 'Order ID'
-      parameter name: :order_token, in: :query, type: :string, required: false,
+      parameter name: 'x-spree-order-token', in: :header, type: :string, required: false,
                 description: 'Order token for guest access'
       parameter name: :body, in: :body, schema: {
         type: :object,
@@ -116,7 +116,7 @@ RSpec.describe 'Coupon Codes API', type: :request, swagger_doc: 'api-reference/s
                 description: 'Order ID'
       parameter name: :id, in: :path, type: :string, required: true,
                 description: 'Order promotion ID'
-      parameter name: :order_token, in: :query, type: :string, required: false,
+      parameter name: 'x-spree-order-token', in: :header, type: :string, required: false,
                 description: 'Order token for guest access'
 
       response '200', 'coupon code removed' do
