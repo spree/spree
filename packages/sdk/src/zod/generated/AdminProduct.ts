@@ -38,7 +38,7 @@ export const AdminProductSchema = z.object({
   make_active_at: z.string().nullable(),
   discontinue_on: z.string().nullable(),
   deleted_at: z.string().nullable(),
-  cost_price: z.number().nullable(),
+  cost_price: z.string().nullable(),
   cost_currency: z.string().nullable(),
 });
 

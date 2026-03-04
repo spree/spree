@@ -14,6 +14,11 @@ export interface PaginationMeta {
   limit: number;
   count: number;
   pages: number;
+  from: number;
+  to: number;
+  in: number;
+  previous: number | null;
+  next: number | null;
 }
 
 export interface PaginatedResponse<T> {
