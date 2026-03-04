@@ -1,10 +1,11 @@
 ---
 title: Adjustments
+description: How taxes, promotions, and other price modifications are applied to orders
 ---
 
 ## Overview
 
-### Adjustment Model Diagram
+An Adjustment modifies the price of an [Order](/developer/core-concepts/orders), a [Line Item](/developer/core-concepts/orders#line-items), or a [Shipment](/developer/core-concepts/shipments). Adjustments can be positive (charges) or negative (credits).
 
 ```mermaid
 erDiagram
@@ -17,34 +18,6 @@ erDiagram
         boolean included
         string source_type
         string adjustable_type
-    }
-
-    Order {
-        string number
-        decimal adjustment_total
-        decimal total
-    }
-
-    LineItem {
-        integer quantity
-        decimal price
-        decimal adjustment_total
-    }
-
-    Shipment {
-        string number
-        decimal cost
-        decimal adjustment_total
-    }
-
-    TaxRate {
-        string name
-        decimal amount
-        boolean included_in_price
-    }
-
-    PromotionAction {
-        string type
     }
 
     Order ||--o{ Adjustment : "has many"
@@ -62,164 +35,76 @@ erDiagram
 - **Adjustable** is what's being adjusted (Order, LineItem, or Shipment)
 - Positive amounts are charges, negative amounts are credits
 
-An `Adjustment` object tracks an adjustment to the price of an [Order](orders), an order's [Line Item](orders#line-items), or an order's [Shipments](shipments) within a Spree application.
+## Adjustment Types
 
-Adjustments can be either positive or negative. Adjustments with a positive value are sometimes referred to as "charges" while adjustments with a negative value are sometimes referred to as "credits." These are just terms of convenience since there is only one `Spree::Adjustment` model in a storefront which handles this by allowing either positive or negative values.
+### Included vs Additional
 
-Adjustments can either be considered included or additional. An "included" adjustment is an adjustment to the price of an item which is included in that price of an item. A good example of this is a GST/VAT tax. An "additional" adjustment is an adjustment to the price of the item on top of the original item price. A good example of that would be how sales tax is handled in countries like the United States.
+- **Included** adjustments are part of the item's displayed price (e.g., VAT in European stores)
+- **Additional** adjustments are added on top of the item's price (e.g., US sales tax)
 
-Adjustments have the following attributes:
+### Sources
 
-* `amount` The dollar amount of the adjustment.
-* `label`: The label for the adjustment to indicate what the adjustment is for.
-* `eligible`: Indicates if the adjustment is eligible for the thing it's adjusting.
-* `mandatory`: Indicates if this adjustment is mandatory; i.e that this adjustment _must_ be applied regardless of its eligibility rules.
-* `state`: Can either be `open` or `closed`. Once an adjustment is closed, it will not be automatically updated.
-* `included`: Whether or not this adjustment affects the final price of the item it is applied to. Used only for tax adjustments which may themselves be included in the price.
+Adjustments are created by two sources:
 
-Along with these attributes, an adjustment links to three polymorphic objects:
+| Source | Example | Typical Amount |
+|--------|---------|----------------|
+| [Tax Rate](/developer/core-concepts/taxes) | Sales tax, VAT | Positive (charge) |
+| [Promotion Action](/developer/core-concepts/promotions) | Coupon discount, free shipping | Negative (credit) |
 
-* A source
-* An adjustable
+## Adjustment Attributes
 
-The _source_ is the source of the adjustment. Typically a `Spree::TaxRate` object or a `Spree::PromotionAction` object.
+| Attribute | Description | Example |
+|-----------|-------------|---------|
+| `amount` | The monetary value of the adjustment | `-10.00` |
+| `label` | Human-readable description | `10% off order` |
+| `eligible` | Whether the adjustment currently applies | `true` |
+| `mandatory` | If `true`, always applied regardless of eligibility rules | `false` |
+| `state` | `open` (auto-updated) or `closed` (locked) | `open` |
+| `included` | Whether the amount is included in the item's displayed price | `false` |
 
-The _adjustable_ is the object being adjusted, which is either an order, line item or shipment.
+## Adjustment Lifecycle
 
-Adjustments can come from one of two locations within Spree's core:
+- **Open** adjustments are recalculated whenever the order is updated (e.g., items added/removed, address changed)
+- **Closed** adjustments are locked and will not be automatically recalculated
+- When a promotion becomes ineligible (e.g., item removed from cart), its adjustments are automatically removed
 
-* Tax Rates
-* Promotions
+## Store API
 
-An adjustment's `label` attribute can be used as a good indicator of where the adjustment is coming from.
+Adjustments appear in order responses when you expand line items or shipments:
 
-## Adjustment Scopes
+<CodeGroup>
 
-There are some helper methods to return the different types of adjustments:
+```typescript SDK
+const order = await client.store.orders.get('or_abc123', {
+  expand: ['line_items', 'shipments'],
+  orderToken: '<token>',
+})
 
-```ruby
-scope :shipping, -> { where(adjustable_type: 'Spree::Shipment') }
-scope :is_included, -> { where(included: true)  }
-scope :additional, -> { where(included: false) }
+// Line item adjustments (promotions, taxes)
+order.line_items?.forEach(item => {
+  item.adjustment_total  // total adjustments on this item
+  item.additional_tax_total
+  item.included_tax_total
+})
+
+// Order-level totals
+order.adjustment_total    // total of all adjustments
+order.promo_total         // total promotional discounts
+order.additional_tax_total
+order.included_tax_total
 ```
 
-* `open`: All open adjustments.
-* `tax`: All adjustments which have a source that is a `Spree::TaxRate` object
-* `price`: All adjustments which adjust a `Spree::LineItem` object.
-* `shipping`: All adjustments which adjust a `Spree::Shipment` object.
-* `promotion`: All adjustments where the source is a `Spree::PromotionAction` object.
-* `optional`: All adjustments which are not `mandatory`.
-* `return_authorization`: All adjustments where the source is a `Spree::ReturnAuthorization`.
-* `eligible`: Adjustments which have been determined to be `eligible` for their adjustable. Useful for determining which adjustments are applying to the adjustable.
-* `charge`: Adjustments which _increase_ the price of their adjustable.
-* `credit`: Adjustments which _decrease_ the price of their adjustable.
-* `included`: Adjustments which are included in the object's price. Typically tax adjustments.
-* `additional`: Adjustments which modify the object's price. The default for all adjustments.
-
-These scopes can be called on either the `Spree::Adjustment` class itself, or on an `adjustments` association. For example, calling any one of these three is valid:
-
-```ruby
-Spree::Adjustment.eligible
-order.adjustments.eligible
-line_item.adjustments.eligible
-shipment.adjustments.eligible
+```bash cURL
+curl 'https://api.mystore.com/api/v3/store/orders/or_abc123?expand=line_items,shipments' \
+  -H 'Authorization: Bearer spree_pk_xxx' \
+  -H 'X-Spree-Order-Token: <token>'
 ```
 
-## Adjustment Associations
-
-You are able to retrieve the specific adjustments of an Order, a Line Item or a Shipment.
-
-An order itself, much like line items and shipments, can have its own individual modifications. For instance, an order with over $100 of line items may have 10% off. To retrieve these adjustments on the order, call the `adjustments` association:
-
-```ruby
-order.adjustments
-```
-
-If you want to retrieve all the adjustments for all the line items, shipments and the order itself, call the `all_adjustments` method:
-
-```ruby
-order.all_adjustments
-```
-
-If you want to grab just the line item adjustments, call `line_item_adjustments`:
-
-```ruby
-order.line_item_adjustments
-```
-
-Similarly, if you want to grab the adjustments applied to shipments, call `shipment_adjustments`:
-
-```ruby
-order.shipment_adjustments
-```
-
-## Extending Adjustments
-
-### Creating a New Adjuster
-
-To create a new adjuster for Spree, create a new ruby object that inherits from `Spree::Adjustable::Adjuster::Base` and implements an `update` method:
-
-```ruby app/models/spree/adjustable/adjuster/my_adjuster.rb
-module Spree
-  module Adjustable
-    module Adjuster
-      class MyAdjuster < Spree::Adjustable::Adjuster::Base
-        def update
-          ...
-          #your ruby magic
-          ...
-          update_totals(some_total, my_other_total)
-        end
-
-        private
-
-        # Note to persist your totals you need to update @totals
-        # This is shown in a separate method for readability
-        def update_totals(some_total, my_other_total)
-          # if you want to keep track of your total,
-          # you will need the column defined
-          @totals[:total_you_want_to_track] += some_total
-          @totals[:taxable_adjustment_total] += some_total
-          @totals[:non_taxable_adjustment_total] += my_other_total
-        end
-      end
-    end
-  end
-end
-```
-
-Next you need to add the class to spree `Spree.adjusters` so it is included whenever adjustments are updated Promotion and Tax are included by default:
-
-<Tabs>
-  <Tab title="Spree 5.2+">
-    ```ruby config/initializers/spree.rb
-    Rails.application.config.after_initialize do
-      Spree.adjusters = [
-        Spree::Adjustable::Adjuster::MyAdjuster,
-        Spree::Adjustable::Adjuster::Promotion,
-        Spree::Adjustable::Adjuster::Tax
-      ]
-    end
-    ```
-  </Tab>
-  <Tab title="Spree 5.1 and below">
-    ```ruby config/initializers/spree.rb
-    Rails.application.config.after_initialize do
-      Rails.application.config.spree.adjusters = [
-        Spree::Adjustable::Adjuster::MyAdjuster,
-        Spree::Adjustable::Adjuster::Promotion,
-        Spree::Adjustable::Adjuster::Tax
-      ]
-    end
-    ```
-  </Tab>
-</Tabs>
-
-That's it! Your custom adjuster is ready to go.
+</CodeGroup>
 
 ## Related Documentation
 
-- [Promotions](/developer/core-concepts/promotions) - Promotion-based adjustments
-- [Taxes](/developer/core-concepts/taxes) - Tax adjustments
-- [Shipments](/developer/core-concepts/shipments) - Shipping adjustments
-- [Orders](/developer/core-concepts/orders) - How adjustments affect order totals
+- [Promotions](/developer/core-concepts/promotions) — Promotion-based adjustments
+- [Taxes](/developer/core-concepts/taxes) — Tax adjustments
+- [Shipments](/developer/core-concepts/shipments) — Shipping adjustments
+- [Orders](/developer/core-concepts/orders) — How adjustments affect order totals

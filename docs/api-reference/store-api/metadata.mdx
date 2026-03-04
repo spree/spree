@@ -1,0 +1,172 @@
+---
+title: "Metadata"
+sidebarTitle: "Metadata"
+description: "How to store and retrieve custom metadata on carts, orders, and line items"
+---
+
+The Store API supports storing arbitrary key-value **metadata** on carts (orders) and line items. Metadata is useful for tracking custom information like gift messages, attribution data, or integration-specific fields.
+
+<Note>
+Metadata is different from [metafields](/developer/core-concepts/metafields). Metadata is simple JSON storage (untyped, no schema), while metafields are structured, typed, and schema-defined. Use metadata for integration data and internal tracking. Use metafields for customer-facing custom attributes.
+</Note>
+
+## Cart Metadata
+
+You can attach metadata when creating a cart:
+
+<CodeGroup>
+
+```typescript SDK
+const cart = await client.store.cart.create({
+  metadata: {
+    utm_source: 'google',
+    utm_campaign: 'summer_sale',
+    referral_code: 'FRIEND20',
+  },
+})
+```
+
+```bash cURL
+curl -X POST 'http://localhost:3000/api/v3/store/cart' \
+  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "metadata": {
+      "utm_source": "google",
+      "utm_campaign": "summer_sale",
+      "referral_code": "FRIEND20"
+    }
+  }'
+```
+
+</CodeGroup>
+
+## Order Metadata
+
+Update metadata on an existing order:
+
+<CodeGroup>
+
+```typescript SDK
+await client.store.orders.update(cart.id, {
+  metadata: {
+    gift_message: 'Happy Birthday!',
+    preferred_delivery: 'morning',
+  },
+}, { orderToken: cart.token })
+```
+
+```bash cURL
+curl -X PATCH 'http://localhost:3000/api/v3/store/orders/or_xxx' \
+  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'X-Spree-Order-Token: <order_token>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "metadata": {
+      "gift_message": "Happy Birthday!",
+      "preferred_delivery": "morning"
+    }
+  }'
+```
+
+</CodeGroup>
+
+## Line Item Metadata
+
+Attach metadata to individual line items when adding or updating them:
+
+### When Adding an Item
+
+<CodeGroup>
+
+```typescript SDK
+await client.store.orders.lineItems.create(cart.id, {
+  variant_id: 'variant_abc123',
+  quantity: 1,
+  metadata: {
+    personalization: 'John',
+    gift_wrap: true,
+  },
+}, { orderToken: cart.token })
+```
+
+```bash cURL
+curl -X POST 'http://localhost:3000/api/v3/store/orders/or_xxx/line_items' \
+  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'X-Spree-Order-Token: <order_token>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "variant_id": "variant_abc123",
+    "quantity": 1,
+    "metadata": {
+      "personalization": "John",
+      "gift_wrap": true
+    }
+  }'
+```
+
+</CodeGroup>
+
+### When Updating an Item
+
+Updating metadata **merges** with existing values rather than replacing them:
+
+<CodeGroup>
+
+```typescript SDK
+await client.store.orders.lineItems.update(cart.id, 'li_xyz789', {
+  metadata: {
+    personalization: 'Jane', // Updates existing key
+    engraving: 'With Love',  // Adds new key
+  },
+}, { orderToken: cart.token })
+```
+
+```bash cURL
+curl -X PATCH 'http://localhost:3000/api/v3/store/orders/or_xxx/line_items/li_xyz789' \
+  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'X-Spree-Order-Token: <order_token>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "metadata": {
+      "personalization": "Jane",
+      "engraving": "With Love"
+    }
+  }'
+```
+
+</CodeGroup>
+
+<Info>
+Metadata values can be any JSON-serializable type: strings, numbers, booleans, arrays, or nested objects.
+</Info>
+
+## Metadata Structure
+
+Metadata is stored as a flat JSON object. You can use any keys and values:
+
+```json
+{
+  "metadata": {
+    "string_value": "hello",
+    "number_value": 42,
+    "boolean_value": true,
+    "nested_object": {
+      "key": "value"
+    }
+  }
+}
+```
+
+## Metadata vs Metafields
+
+| | Metadata | Metafields |
+|-|----------|------------|
+| **Structure** | Untyped JSON | Schema-defined, strongly typed |
+| **Validation** | None | Type-specific validation |
+| **Visibility** | Write-only in Store API | Configurable (public/private) |
+| **Admin UI** | JSON preview | Dedicated form fields |
+| **Best for** | Integration data, tracking, attribution | Product specs, custom fields, customer-facing data |
+| **API access** | Write via Store API, read via Admin API | Read/write via both APIs |
+
+For more details on metafields, see the [Metafields guide](/developer/core-concepts/metafields).

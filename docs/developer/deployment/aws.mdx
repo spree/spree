@@ -15,20 +15,18 @@ To fully run your Spree application on AWS, you will need the following services
 |---------|-------------|
 | [AWS ECS Fargate](https://aws.amazon.com/fargate/) | Amazon Elastic Container Service (ECS) is a fully managed container orchestration service that allows you to run and scale containerized applications without managing the underlying infrastructure. |
 | [AWS RDS](https://aws.amazon.com/rds/) | Amazon Relational Database Service makes it easy to set up, operate, and scale a relational database in the cloud. Spree works great with multiple databases: [Amazon Aurora both MySQL and PostgreSQL variants](https://aws.amazon.com/rds/aurora/), [RDS PostgreSQL](https://aws.amazon.com/rds/postgresql/), [RDS MySQL](https://aws.amazon.com/rds/mysql/) and [RDS MariaDB](https://aws.amazon.com/rds/mariadb/) |
-| [AWS ElastiCache](https://aws.amazon.com/elasticache/redis/?nc=sn&loc=2&dn=1) | You will need 2 instances of Valkey or Redis: one for the [Active Job background queue](https://guides.rubyonrails.org/active_job_basics.html) and one for the [Spree cache](/developer/deployment/caching). |
+| [AWS ElastiCache](https://aws.amazon.com/elasticache/redis/?nc=sn&loc=2&dn=1) | Valkey or Redis instance for background jobs (Sidekiq), [caching](/developer/deployment/caching), and Action Cable. |
 | [AWS S3](https://aws.amazon.com/s3/) | Object storage service to store and read your uploaded files such as Product images, etc. [More information](/developer/deployment/assets#aws-s3). |
 | [AWS CloudFront](https://aws.amazon.com/cloudfront/) | Fast content delivery network CDN to speed up your asset images/stylesheets/javascript delivery. This will greatly enhance your application responsiveness. |
 | [AWS Route 53](https://aws.amazon.com/route53/) | Domain name system (DNS) service to manage your domain names and DNS records. |
 | [AWS Certificate Manager](https://aws.amazon.com/certificate-manager/) | AWS Certificate Manager is a service that provides you with SSL/TLS certificates that you can use to secure your application. Spree in production works only with HTTPS. |
 | [AWS ECR](https://aws.amazon.com/ecr/) | Amazon Elastic Container Registry is a fully managed Docker container registry that makes it easy to store, manage, and deploy Docker container images. |
 
-## Docker builds
+## Docker Image
 
-To deploy your Spree application on AWS, you will need to build a Docker image and send it to AWS ECR so that AWS ECS Fargate can pull it and run it.
+You can use the [official Docker image](/developer/deployment/docker) (`ghcr.io/spree/spree`) directly, or build your own from your Rails application's Dockerfile.
 
-[Spree Starter Dockerfile](https://github.com/spree/spree_starter/blob/main/Dockerfile) is a good starting point for your Docker build.
-
-You can deploy it to AWS ECR straitgh from GitHub via GitHub Actions, eg:
+To build and deploy a custom image to AWS ECR via GitHub Actions:
 
 ```yaml
 name: Deploy to AWS Fargate
@@ -282,7 +280,6 @@ You will need to create two ECS task definitions: one for the web service and on
 ### Worker service
 
 ```json
-@ -0,0 +1,52 @@
 {
   "family": "spree-worker",
   "networkMode": "awsvpc",

@@ -1,0 +1,364 @@
+---
+title: Build a Custom Payment Method
+description: Step-by-step guide to creating a custom payment gateway integration with Payment Sessions, 3D Secure, and PCI compliance.
+---
+
+## Overview
+
+This guide walks you through building a custom payment method integration for Spree. By the end, you'll have a fully functional payment gateway that:
+
+- Appears as a payment option during checkout
+- Uses Payment Sessions for PCI-compliant payment collection
+- Supports 3D Secure and alternative payment methods
+- Handles webhooks for reliable payment confirmation
+- Optionally supports saving payment methods for future use (Payment Setup Sessions)
+
+Before starting, make sure you understand [how payments work in Spree](/developer/core-concepts/payments).
+
+## Step 1: Create the Payment Method Model
+
+Create a new model inheriting from `Spree::PaymentMethod`. This is the central class that defines how your gateway processes payments.
+
+```ruby app/models/my_gateway.rb
+class MyGateway < Spree::PaymentMethod
+  preference :api_key, :string
+  preference :publishable_key, :string
+  preference :webhook_secret, :string
+
+  def payment_icon_name
+    'my-gateway'
+  end
+end
+```
+
+## Step 2: Register the Payment Method
+
+Add your gateway to the list of available payment methods so it appears in the admin panel:
+
+```ruby config/initializers/spree.rb
+Rails.application.config.after_initialize do
+  Spree.payment_methods << MyGateway
+end
+```
+
+After restarting your server, you can select "MyGateway" when creating a new payment method in the admin panel under **Settings > Payments**.
+
+## Step 3: Add Payment Session Support
+
+Payment Sessions are the modern, PCI-compliant way to handle payments. Your gateway creates a session with the provider, the frontend collects payment details using the provider's SDK, and Spree records the result.
+
+### Define the STI Subclass
+
+Create a Payment Session subclass for your gateway. This uses Single Table Inheritance (STI) on the `spree_payment_sessions` table:
+
+```ruby app/models/spree/payment_sessions/my_gateway.rb
+module Spree
+  module PaymentSessions
+    class MyGateway < Spree::PaymentSession
+      # Add gateway-specific helper methods here
+
+      def client_secret
+        external_data['client_secret']
+      end
+    end
+  end
+end
+```
+
+### Implement Session Methods on the Gateway
+
+Override the key methods on your `PaymentMethod` subclass:
+
+```ruby app/models/my_gateway.rb
+class MyGateway < Spree::PaymentMethod
+  preference :api_key, :string
+  preference :publishable_key, :string
+  preference :webhook_secret, :string
+
+  # Tell Spree this gateway uses Payment Sessions
+  def session_required?
+    true
+  end
+
+  # Return the STI subclass
+  def payment_session_class
+    Spree::PaymentSessions::MyGateway
+  end
+
+  # No source required upfront — it's created when the session completes
+  def source_required?
+    false
+  end
+
+  # Create a session with your payment provider
+  def create_payment_session(order:, amount: nil, external_data: {})
+    total = amount || order.total_minus_store_credits
+
+    # Call your provider's API to create a payment session
+    provider_session = MyProvider::Client.new(preferred_api_key).create_session(
+      amount: (total * 100).to_i, # amount in cents
+      currency: order.currency,
+      metadata: { order_number: order.number }
+    )
+
+    payment_sessions.create!(
+      order: order,
+      amount: total,
+      currency: order.currency,
+      external_id: provider_session.id,
+      external_data: {
+        client_secret: provider_session.client_secret
+      },
+      customer: order.user
+    )
+  end
+
+  # Update an existing session (e.g., when order total changes)
+  def update_payment_session(payment_session:, amount: nil, external_data: {})
+    if amount.present?
+      MyProvider::Client.new(preferred_api_key).update_session(
+        payment_session.external_id,
+        amount: (amount * 100).to_i
+      )
+      payment_session.update!(amount: amount)
+    end
+
+    payment_session
+  end
+
+  # Complete the session after the customer pays on the frontend
+  def complete_payment_session(payment_session:, params: {})
+    # Verify the payment with your provider
+    result = MyProvider::Client.new(preferred_api_key).retrieve_session(
+      payment_session.external_id
+    )
+
+    if result.status == 'succeeded'
+      payment_session.process!
+
+      # Create the Spree::Payment record
+      payment = payment_session.order.payments.create!(
+        amount: payment_session.amount,
+        payment_method: self,
+        response_code: payment_session.external_id,
+        state: 'checkout'
+      )
+
+      # Transition the payment to completed
+      payment.started_processing!
+      payment.complete!
+
+      payment_session.complete!
+    else
+      payment_session.fail!
+    end
+
+    payment_session
+  end
+
+  def payment_icon_name
+    'my-gateway'
+  end
+end
+```
+
+### How the Frontend Uses It
+
+The frontend creates a session, then uses the provider's SDK to collect payment:
+
+```typescript
+// 1. Get available payment methods
+const methods = await client.store.orders.paymentMethods.list(cart.id, options)
+
+// 2. Find your gateway (check session_required flag)
+const myGateway = methods.find(m => m.session_required)
+
+// 3. Create a payment session
+const session = await client.store.orders.paymentSessions.create(cart.id, {
+  payment_method_id: myGateway.id,
+}, options)
+
+// 4. Use the client_secret with your provider's frontend SDK
+const result = await MyProviderSDK.confirmPayment(session.external_data.client_secret)
+
+// 5. Complete the session
+const completed = await client.store.orders.paymentSessions.complete(
+  cart.id, session.id,
+  { session_result: result.id },
+  options
+)
+```
+
+## Step 4: Handle Webhooks (Recommended)
+
+Webhooks ensure payments are captured even if the customer closes their browser before the frontend can call `complete`. This is critical for production reliability.
+
+```ruby app/controllers/my_gateway/webhooks_controller.rb
+module MyGateway
+  class WebhooksController < ApplicationController
+    skip_before_action :verify_authenticity_token
+
+    def create
+      payload = request.body.read
+      signature = request.headers['X-Signature']
+
+      # Verify webhook authenticity
+      unless MyProvider::Webhook.verify(payload, signature, gateway.preferred_webhook_secret)
+        head :unauthorized
+        return
+      end
+
+      event = JSON.parse(payload)
+
+      case event['type']
+      when 'payment.succeeded'
+        handle_payment_succeeded(event['data'])
+      when 'payment.failed'
+        handle_payment_failed(event['data'])
+      end
+
+      head :ok
+    end
+
+    private
+
+    def handle_payment_succeeded(data)
+      payment_session = Spree::PaymentSession.find_by(external_id: data['session_id'])
+      return unless payment_session
+      return if payment_session.completed?
+
+      gateway.complete_payment_session(payment_session: payment_session)
+    end
+
+    def handle_payment_failed(data)
+      payment_session = Spree::PaymentSession.find_by(external_id: data['session_id'])
+      return unless payment_session
+
+      payment_session.fail! unless payment_session.failed?
+    end
+
+    def gateway
+      @gateway ||= MyGateway.active.first
+    end
+  end
+end
+```
+
+Add the webhook route:
+
+```ruby config/routes.rb
+post '/my-gateway/webhooks', to: 'my_gateway/webhooks#create'
+```
+
+## Step 5: Control Payment Method Visibility (Optional)
+
+Override visibility methods to control where and when your payment method appears:
+
+```ruby app/models/my_gateway.rb
+class MyGateway < Spree::PaymentMethod
+  # Only show for stores that support specific currencies
+  def available_for_store?(store)
+    store.supported_currencies.include?('EUR')
+  end
+
+  # Only show for orders above a certain amount
+  def available_for_order?(order)
+    order.total > 10 && order.currency == 'EUR'
+  end
+end
+```
+
+## Step 6: Add Payment Setup Session Support (Optional)
+
+If your provider supports saving payment methods for future use (like Stripe's SetupIntent), you can add Payment Setup Session support:
+
+```ruby app/models/my_gateway.rb
+class MyGateway < Spree::PaymentMethod
+  # ... existing code ...
+
+  def setup_session_supported?
+    true
+  end
+
+  def payment_setup_session_class
+    Spree::PaymentSetupSessions::MyGateway
+  end
+
+  def create_payment_setup_session(customer:, external_data: {})
+    provider_setup = MyProvider::Client.new(preferred_api_key).create_setup_session(
+      customer_id: find_or_create_provider_customer(customer)
+    )
+
+    payment_setup_sessions.create!(
+      customer: customer,
+      external_id: provider_setup.id,
+      external_client_secret: provider_setup.client_secret
+    )
+  end
+
+  def complete_payment_setup_session(setup_session:, params: {})
+    result = MyProvider::Client.new(preferred_api_key).retrieve_setup_session(
+      setup_session.external_id
+    )
+
+    if result.status == 'succeeded'
+      # Create a saved payment source
+      credit_card = Spree::CreditCard.create!(
+        payment_method: self,
+        user: setup_session.customer,
+        gateway_payment_profile_id: result.payment_method_id,
+        cc_type: result.card_brand,
+        last_digits: result.card_last4,
+        month: result.card_exp_month,
+        year: result.card_exp_year,
+        name: result.cardholder_name
+      )
+
+      setup_session.update!(
+        payment_source: credit_card
+      )
+      setup_session.complete!
+    else
+      setup_session.fail!
+    end
+
+    setup_session
+  end
+end
+```
+
+And the STI subclass:
+
+```ruby app/models/spree/payment_setup_sessions/my_gateway.rb
+module Spree
+  module PaymentSetupSessions
+    class MyGateway < Spree::PaymentSetupSession
+    end
+  end
+end
+```
+
+## Gateway Options Reference
+
+For every gateway action (authorize, purchase, capture, void, credit), Spree passes a hash of gateway options:
+
+| Option     | Description                                                                                   |
+|--------------------|-----------------------------------------------------------------------------------------------|
+| `email` and `customer` | The email address related to the order                                                       |
+| `ip`               | The last IP address for the order                                                            |
+| `order_id`         | The Order's `number` attribute, plus the `identifier` for each payment |
+| `shipping`         | The total shipping cost for the order, in cents                                              |
+| `tax`              | The total tax cost for the order, in cents                                                   |
+| `subtotal`         | The item total for the order, in cents                                                       |
+| `currency`         | The 3-character currency code for the order                                                  |
+| `discount`         | The promotional discount applied to the order                                                |
+| `billing_address`  | A hash containing billing address information                                                |
+| `shipping_address` | A hash containing shipping address information                                                |
+
+## Related Documentation
+
+- [Payments](/developer/core-concepts/payments) - Payment architecture and core concepts
+- [Checkout Customization](/developer/customization/checkout) - Customizing the checkout flow
+- [Events](/developer/core-concepts/events) - Subscribe to payment events
+- [Stripe Integration](/integrations/payments/stripe) - Reference implementation using Stripe
+- [Adyen Integration](/integrations/payments/adyen) - Reference implementation using Adyen

@@ -1,0 +1,125 @@
+---
+title: Spree CLI
+sidebarTitle: Overview
+description: Manage your Spree Commerce project from the command line.
+---
+
+The Spree CLI (`@spree/cli`) manages Docker-based Spree projects created with [create-spree-app](/developer/create-spree-app/quickstart).
+
+## Installation
+
+The CLI is included automatically when you scaffold a project with `create-spree-app`. You can also install it globally:
+
+```bash
+npm install -g @spree/cli
+```
+
+Then run commands from your project directory:
+
+```bash
+spree dev
+```
+
+Or use `npx` without installing:
+
+```bash
+npx @spree/cli dev
+```
+
+## Commands
+
+### `spree init`
+
+First-run setup. Starts Docker services, seeds the database, generates an API key, and optionally loads sample data.
+
+```bash
+spree init
+spree init --no-sample-data   # Skip sample data
+spree init --no-open           # Skip opening browser
+```
+
+### `spree dev`
+
+Start services and stream logs.
+
+```bash
+spree dev
+```
+
+### `spree stop`
+
+Stop all services.
+
+```bash
+spree stop
+```
+
+### `spree update`
+
+Pull the latest Spree Docker image and recreate containers. Migrations run automatically on startup.
+
+```bash
+spree update
+```
+
+### `spree logs`
+
+Stream service logs.
+
+```bash
+spree logs         # Web service (default)
+spree logs worker  # Worker service
+```
+
+### `spree console`
+
+Open a Rails console.
+
+```bash
+spree console
+```
+
+### `spree open`
+
+Open the admin dashboard in the browser.
+
+```bash
+spree open
+```
+
+### `spree seed`
+
+Seed the database.
+
+```bash
+spree seed
+```
+
+### `spree sample-data`
+
+Load sample products, categories, and images.
+
+```bash
+spree sample-data
+```
+
+### `spree user create`
+
+Create an admin user. Prompts for email and password interactively, or pass them as flags:
+
+```bash
+spree user create
+spree user create --email admin@example.com --password secret123
+```
+
+### `spree api-key`
+
+Manage Store and Admin API keys.
+
+```bash
+spree api-key list                                     # List all keys
+spree api-key create                                   # Interactive
+spree api-key create --name "Storefront" --type publishable  # Store API key
+spree api-key create --name "Admin" --type secret            # Admin API key
+spree api-key revoke <id>                              # Revoke a key
+```

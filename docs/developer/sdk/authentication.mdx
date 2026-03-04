@@ -1,0 +1,62 @@
+---
+title: Authentication
+description: Authentication modes and guest checkout with the Spree SDK
+---
+
+import SdkClientSetup from '/snippets/store-api/sdk-client-setup.mdx'
+import AuthJwtExample from '/snippets/store-api/auth-jwt-example.mdx'
+import AuthGuestCart from '/snippets/store-api/auth-guest-cart.mdx'
+
+The SDK supports multiple authentication modes depending on your use case. For a full overview of the API authentication methods, see the [Store API Authentication](/api-reference/store-api/authentication) reference.
+
+## Publishable Key Only (Guest/Public Access)
+
+Use a publishable API key for public endpoints like browsing products:
+
+<SdkClientSetup />
+
+```typescript
+// Public endpoints work without user authentication
+const products = await client.store.products.list()
+```
+
+## Publishable Key + JWT (Authenticated Customer)
+
+For authenticated customer actions like viewing orders or managing addresses:
+
+<AuthJwtExample />
+
+```typescript
+// Refresh token when needed
+const newTokens = await client.store.auth.refresh({ token })
+```
+
+## Register New Customer
+
+```typescript
+const { token, user } = await client.store.auth.register({
+  email: 'new@example.com',
+  password: 'password123',
+  password_confirmation: 'password123',
+  first_name: 'John',
+  last_name: 'Doe',
+})
+```
+
+## Guest Checkout
+
+For guest checkout, use the `token` (or `order_token`) returned when creating a cart:
+
+<AuthGuestCart />
+
+```typescript
+const options = { orderToken: cart.token }
+
+// Update order with email
+await client.store.orders.update(cart.id, {
+  email: 'guest@example.com',
+}, options)
+
+// Complete checkout
+await client.store.orders.complete(cart.id, options)
+```

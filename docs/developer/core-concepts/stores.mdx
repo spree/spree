@@ -1,103 +1,89 @@
 ---
 title: Stores
+description: The central model in Spree — every resource is scoped to a store
 ---
 
 ## Overview
 
-The `Spree::Store` model is the center of the Spree ecosystem.
-
-### Store Model Diagram
+The Store is the central model in Spree. Every resource — products, orders, markets, payment methods, taxonomies — is scoped to a store. Most setups use a single store, but Spree supports [multi-store](/developer/multi-store/quickstart) configurations where each store operates independently with its own catalog, branding, and checkout.
 
 ```mermaid
 erDiagram
+    Store ||--o{ Market : "has many"
+    Store ||--o{ Order : "has many"
+    Store }o--o{ Product : "has many"
+    Store }o--o{ PaymentMethod : "has many"
+    Store }o--o{ ShippingMethod : "has many"
+    Store ||--o{ Taxonomy : "has many"
+    Store ||--o{ StockLocation : "has many"
+
     Store {
         string name
         string code
         string url
         boolean default
-        string mail_from_address
         string customer_support_email
-    }
-
-    Order {
-        string number
-        string currency
-        string state
-        decimal total
-    }
-
-    Product {
-        string name
-        string status
-        datetime available_on
-    }
-
-    PaymentMethod {
-        string name
-        string type
-        boolean active
-        string display_on
-    }
-
-    ShippingMethod {
-        string name
-        string display_on
-    }
-
-    Taxonomy {
-        string name
-        integer position
     }
 
     Market {
         string name
         string currency
         string default_locale
-        boolean default
     }
 
-    Store ||--o{ Market : "has many"
-    Store ||--o{ Order : "has many"
-    Store }o--o{ Product : "has many"
-    Store }o--o{ PaymentMethod : "has many"
-    Store }o--o{ ShippingMethod : "has many"
-    Store ||--o{ StockLocation : "has many"
-    Store ||--o{ Taxonomy : "has many"
-    Store ||--o{ Menu : "has many"
-    Store ||--o{ CmsPage : "has many"
-    Store ||--o{ WebhookEndpoint : "has many"
+    Product {
+        string name
+        string status
+    }
+
+    Order {
+        string number
+        string state
+    }
 ```
 
-**Key relationships:**
-- **Store** is the central model - all commerce data is scoped to a store
-- Each store has one or more [Markets](/developer/core-concepts/markets) that define geographic selling regions with their own currency and locale
-- Each store has its own [Orders](/developer/core-concepts/orders), [Products](/developer/core-concepts/products), [Payment Methods](/developer/core-concepts/payments), and [Shipping Methods](/developer/core-concepts/shipments)
-- Stores can have different currencies, locales, and configurations
-- Content (Menus, CMS Pages) and [Webhooks](/developer/core-concepts/webhooks) are also store-specific
+## Store Attributes
 
-### Store attributes
+| Attribute | Description |
+|-----------|-------------|
+| `name` | Store name, displayed in the browser title and throughout the site |
+| `code` | Unique identifier for the store |
+| `url` | Primary URL of the store |
+| `meta_description` | SEO description |
+| `meta_keywords` | SEO keywords |
+| `seo_title` | Custom SEO title |
+| `customer_support_email` | Email for customer support inquiries |
+| `mail_from_address` | Sender address for transactional emails |
+| `favicon_image_url` | URL to the store's favicon |
+| `logo_image_url` | URL to the store's logo |
+| `social_image_url` | URL to the store's social sharing image |
+| `facebook`, `twitter`, `instagram` | Social media links |
+| `payment_methods` | Payment methods available in this store |
 
-| Attribute                | Description                                                                 | Example Value |
-|--------------------------|-----------------------------------------------------------------------------|---------------|
-| `name`                   | The name of the store, typically displayed in the browser title bar and throughout the site. | Spree Demo Site |
-| `code`                   | A unique code to identify the store.                                      | `spree-001` |
-| `meta_description`       | A brief description of the store for SEO purposes.                         | An exclusive selection of high-quality products. |
-| `meta_keywords`          | Relevant keywords associated with the store for SEO.                       | fashion, electronics, books |
-| `seo_title`              | A custom SEO title for the store.                                          | Shop the Best Deals Online - Spree Store |
-| `mail_from_address`      | The email address used for sending emails from the store.                  | noreply@example.com |
-| `default`                | Indicates if the store is the default store.                               | `true` |
-| `customer_support_email` | The email address for customer support inquiries.                          | support@example.com |
-| `facebook`               | The store's Facebook page URL.                                             | spree |
-| `twitter`                | The store's Twitter handle.                                                | @spreecommerce |
-| `instagram`              | The store's Instagram profile URL.                                         | https://www.instagram.com/spree |
-| `description`            | A detailed description of the store.                                       | Your one-stop shop for everything you need. |
-| `address`                | The physical address of the store.                                         | 123 Example St, San Francisco, CA |
-| `contact_phone`          | The contact phone number for the store.                                    | `+1 234-567-8900` |
-| `new_order_notifications_email` | The email address to send notifications of new orders.                  | orders@example.com |
+## Fetching Store Information
 
-### Accessing Store in code
+Use the store endpoint to get the current store's configuration — useful for rendering logos, SEO metadata, and footer content:
 
-To access the current store you can use `current_store` in controllers or `Spree::Store.current` in models/services/jobs.
+<CodeGroup>
+
+```typescript SDK
+const store = await client.store.store.get()
+// {
+//   name: "My Store",
+//   url: "https://mystore.com",
+//   logo_image_url: "https://cdn.mystore.com/logo.png",
+//   customer_support_email: "support@mystore.com",
+//   payment_methods: [{ id: "pm_xxx", name: "Stripe", kind: "card" }],
+//   ...
+// }
+```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/store/store' \
+  -H 'Authorization: Bearer spree_pk_xxx'
+```
+
+</CodeGroup>
 
 ## Markets
 
@@ -107,22 +93,29 @@ To access the current store you can use `current_store` in controllers or `Spree
 - **Europe** — EUR, German, ships to DE, FR, AT, NL
 - **United Kingdom** — GBP, English, ships to GB
 
-For full details on creating and managing markets, see the [Markets](/developer/core-concepts/markets) guide.
+See the [Markets](/developer/core-concepts/markets) guide for details.
 
-## Store resources
+## Store Resources
 
-Each Store can have its own resources. For example, a Store can have its own Products, Taxonomies, Promotions, etc.
+Each store has its own set of resources. This means products, orders, and promotions in one store are completely separate from another.
 
-| Resource                                          | Relationship                                                                                                                               |
-| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| [**Market**](markets)                          | One Store has many Markets, each defining a geographic region with its own currency and locale                                              |
-| [**Order**](orders)                            | One Order belongs to one Store                                                                                                             |
-| [**Product**](products)                        | One Product can be associated with many Store(s), you can pick and choose in which Store(s) each Product will be available                 |
-| [**Payment Method**](payments)                 | One Payment Method can be associated with many Store(s), you can select in which Stores given Payment Method will be available on Checkout |
-| [**Taxonomy**](products#taxons-and-taxonomies) | One Taxonomy belongs to one Store                                                                                                          |
-| [**Promotion**](promotions)                    | One Promotion can be associated with multiple Stores                                                                                       |
-| **Store Credit**                                  | One Store Credit belongs to and can be used in one Store                                                                                   |
+| Resource | Relationship |
+|----------|-------------|
+| [**Markets**](/developer/core-concepts/markets) | A store has many markets, each defining a geographic region with its own currency and locale |
+| [**Orders**](/developer/core-concepts/orders) | An order belongs to one store |
+| [**Products**](/developer/core-concepts/products) | A product can be available in multiple stores |
+| [**Payment Methods**](/developer/core-concepts/payments) | A payment method can be available in multiple stores |
+| [**Shipping Methods**](/developer/core-concepts/shipments) | A shipping method can be available in multiple stores |
+| [**Taxonomies**](/developer/core-concepts/products#taxons-and-taxonomies) | A taxonomy belongs to one store |
+| [**Promotions**](/developer/core-concepts/promotions) | A promotion can apply to multiple stores |
 
-## Multi-store setup
+## Multi-Store Setup
 
-To enable multiple stores please follow our [Multi Store guide](/developer/multi-store/quickstart)
+To run multiple stores from a single Spree installation, see the [Multi-Store guide](/developer/multi-store/quickstart). Each store gets its own domain, branding, catalog, and checkout — while sharing the same admin dashboard and infrastructure.
+
+## Related Documentation
+
+- [Markets](/developer/core-concepts/markets) — Multi-region commerce within a store
+- [Products](/developer/core-concepts/products) — Product catalog
+- [Orders](/developer/core-concepts/orders) — Order management and checkout
+- [Multi-Store](/developer/multi-store/quickstart) — Running multiple stores

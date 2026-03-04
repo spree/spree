@@ -4,41 +4,29 @@ sidebarTitle: Installation
 description: "Follow the instructions below to learn how to build and deploy your Spree application."
 ---
 
-<Info>
-  Spree works with **PostgreSQL**, **MySQL**, and **SQLite** databases. The installer defaults to SQLite for quick setup. You can switch to PostgreSQL or MySQL at any time later. [Learn more about database configuration](/developer/deployment/database).
-</Info>
-
 ## Installation options
 
 <Tabs>
-  <Tab title="Spree Installer">
-    Use the guided installer to set up your Spree application with all the required dependencies (system libraries, Ruby language) on your system.
+  <Tab title="create-spree-app">
+    The quickest way to get started. Scaffolds a full Spree project with Next.js Storefront (optional).
 
-    Copy and paste the following command to your terminal:
+    **Requirements:** [Node.js](https://nodejs.org/) 20+ and [Docker](https://docs.docker.com/get-docker/) running.
 
     ```bash
-    bash -c "$(curl -fsSL https://spreecommerce.org/install)"
+    npx create-spree-app@latest my-store
     ```
 
-    This will fire up the guided installer that will ask you a few questions (eg. application name, load sample data, etc.) and then set up your Spree application.
+    The CLI walks you through an interactive setup:
 
-    <Info>
-      **System Requirements**
-    
-      MacOS:
-      * MacOS 14.0+
-      * XCode command line tools installed
-      
-      Windows:
-      * Windows Subsystem for Linux is required, you can install it via `wsl --install`
-    </Info>
+    1. Choose **Full-stack** (Backend + Next.js Storefront) or **Backend only**
+    2. Optionally load **sample data** (products, categories, images)
 
-    <Info>
-      If you have any issues with the installer, please create an issue on [GitHub](https://github.com/spree/spree/issues/new). Thank you!
-    </Info>
+    Once complete, your store should be running at [http://localhost:3000/admin](http://localhost:3000/admin). The port can be different if `3000` is already used on your system.
+
+    See the full [create-spree-app documentation](/developer/create-spree-app/quickstart) for all CLI flags and options.
   </Tab>
   <Tab title="Manual Installation">
-    If you prefer to install Spree manually, you're free to do so.
+    For developers who prefer full control over the setup, or want to add Spree to an existing Rails application.
 
     1. Install [Ruby](https://www.ruby-lang.org/en/documentation/installation/)
     2. Install [vips](https://www.libvips.org/install.html) for image processing
@@ -46,7 +34,7 @@ description: "Follow the instructions below to learn how to build and deploy you
         ```bash
         gem install rails
         ```
-    4. Run the following command to create a new Spree application:
+    4. Create a new Spree application:
         ```bash
         rails new my_store -m https://raw.githubusercontent.com/spree/spree/main/spree/template.rb
         ```
@@ -55,11 +43,11 @@ description: "Follow the instructions below to learn how to build and deploy you
         rails new my_store -d postgresql -m https://raw.githubusercontent.com/spree/spree/main/spree/template.rb
         rails new my_store -d mysql -m https://raw.githubusercontent.com/spree/spree/main/spree/template.rb
         ```
-    5. Navigate to the application directory
+    5. Navigate to the application directory:
         ```bash
         cd my_store
         ```
-    6. Run the following command to start the development server:
+    6. Start the development server:
         ```bash
         bin/dev
         ```
@@ -67,24 +55,21 @@ description: "Follow the instructions below to learn how to build and deploy you
         ```bash
         bin/rails spree_sample:load
         ```
+
+    <Info>
+      Spree works with **PostgreSQL**, **MySQL**, and **SQLite** databases. The Rails template defaults to SQLite for quick setup. You can switch to PostgreSQL or MySQL at any time. [Learn more about database configuration](/developer/deployment/database).
+    </Info>
   </Tab>
 </Tabs>
 
 ## Accessing Admin Panel
 
-Use your browser window to navigate to [http://localhost:3000/admin](http://localhost:3000/admin). You can log in with the credentials you've chosen during installation, the defaults are:
+Navigate to [http://localhost:3000/admin](http://localhost:3000/admin) and log in with the default credentials:
 
-login: 
-
-```
-spree@example.com
-```
-
-password: 
-
-```
-spree123
-```
+| | |
+|---|---|
+| **Email** | `spree@example.com` |
+| **Password** | `spree123` |
 
 Upon successful authentication, you should see the admin screen:
 

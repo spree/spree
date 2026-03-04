@@ -1,40 +1,43 @@
 ---
 title: Products
+description: Products, variants, option types, images, prices, and categories
 ---
 
 ## Overview
 
-`Product` records track unique products within your store. These differ from [Variants](#variants), which track the unique variations of a product. For instance, a product that's a T-shirt would have variants denoting its different colors and sizes. Together, Products and Variants describe what is for sale.
+A product represents something you sell. Each product has one or more **variants** — the actual purchasable items with their own SKU, price, and inventory. For example, a "T-Shirt" product might have variants for each size and color combination.
+
+Products are organized into categories using **taxonomies** and **taxons**, and can be filtered, sorted, and searched via the Store API.
 
 <Info>
-Note that as of version 4.6, certain product fields are translatable (read more about this in [Internationalization](/developer/core-concepts/i18n#resource-translations)).
+Product names, descriptions, slugs, and SEO fields are [translatable](/developer/core-concepts/translations#resource-translations).
 </Info>
-
-### Product Model Diagram
 
 ```mermaid
 erDiagram
+    Product ||--o{ Variant : "has many"
+    Product }o--o{ OptionType : "has many"
+    Product ||--o{ Classification : "has many"
+    Variant ||--o{ Price : "has many"
+    Variant ||--o{ StockItem : "has many"
+    Variant ||--o{ Image : "has many"
+    Variant }o--o{ OptionValue : "has many"
+    OptionType ||--o{ OptionValue : "has many"
+    Taxon ||--o{ Classification : "has many"
+    Taxonomy ||--o{ Taxon : "has many"
+
     Product {
         string name
         string slug
         string status
         text description
         datetime available_on
-        datetime discontinue_on
-        string meta_title
-        string meta_description
     }
 
     Variant {
         string sku
-        string barcode
-        decimal weight
-        decimal height
-        decimal width
-        decimal depth
         boolean is_master
-        boolean track_inventory
-        decimal cost_price
+        decimal weight
     }
 
     Price {
@@ -46,251 +49,341 @@ erDiagram
     OptionType {
         string name
         string presentation
-        integer position
     }
 
     OptionValue {
         string name
         string presentation
-        integer position
     }
-
-    Taxon {
-        string name
-        string permalink
-        text description
-        integer position
-    }
-
-    Taxonomy {
-        string name
-        integer position
-    }
-
-    Product ||--o{ Variant : "has many"
-    Product }o--o{ OptionType : "has many"
-    Product ||--o{ Classification : "has many"
-    Product ||--o{ ProductProperty : "has many"
-    Product }o--|| ShippingCategory : "belongs to"
-    Product }o--|| TaxCategory : "belongs to"
-    Variant ||--o{ Price : "has many"
-    Variant ||--o{ StockItem : "has many"
-    Variant ||--o{ Image : "has many"
-    Variant }o--o{ OptionValue : "has many"
-    OptionType ||--o{ OptionValue : "has many"
-    Taxon ||--o{ Classification : "has many"
-    Taxonomy ||--o{ Taxon : "has many"
-    Property ||--o{ ProductProperty : "has many"
 ```
 
-**Key relationships:**
-- **Product** has one master Variant and many regular Variants
-- **Variants** represent purchasable items with SKU, price, and [inventory](/developer/core-concepts/inventory)
-- **Option Types** (e.g., Size, Color) define variant options
-- **Option Values** (e.g., Small, Red) are assigned to variants
-- **Taxons** (via Classifications) organize products into categories
-- **Properties** store additional product attributes (e.g., Material, Brand)
-- **[Shipping Category](/developer/core-concepts/shipments)** and **[Tax Category](/developer/core-concepts/taxes)** determine shipping and tax rules
+## Product Attributes
 
-Products have the following attributes:
+| Attribute | Description | Translatable |
+|-----------|-------------|:---:|
+| `name` | Product name | Yes |
+| `description` | Full product description | Yes |
+| `slug` | URL-friendly identifier (e.g., `spree-tote`) | Yes |
+| `status` | `draft`, `active`, or `archived` | No |
+| `available_on` | Date the product becomes available for sale | No |
+| `discontinue_on` | Date the product is no longer available | No |
+| `meta_title` | Custom SEO title | Yes |
+| `meta_description` | SEO description | Yes |
+| `meta_keywords` | SEO keywords | Yes |
+| `purchasable` | Whether the product can be added to cart | No |
+| `in_stock` | Whether any variant has stock available | No |
+| `price` | Default variant's price in the current currency | No |
+| `thumbnail_url` | URL to the product's first image — always returned, no expand needed | No |
+| `tags` | Array of tag strings for filtering | No |
 
-| Attribute         | Description                                                                                           | Translatable |
-|-------------------|-------------------------------------------------------------------------------------------------------|--------------|
-| `name`            | Short name for the product                                                                            | Yes          |
-| `description`     | The most elegant, poetic turn of phrase for describing your product's benefits and features          | Yes          |
-| `slug`            | SEO slug based on the product name that is placed into the URL for the product. We use a library called [friendly_id](https://github.com/norman/friendly_id) to generate them                     | Yes          |
-| `status`          | The status of the product. Can be `draft`, `active`, `archived`. Defaults to `draft`. | No           |
-| `available_on`    | The first date the product becomes available for sale online in your shop                            | No           |
-| `discontinue_on`  | Date when the product will become unavailable for sale online in your shop                            | No           |
-| `deleted_at`      | The date the product is marked as deleted. We don't remove products entirely, only soft deleting them using a library called `paranoia` | No           |
-| `meta_title`      | Optional title used for search engines instead of `name`                                              | Yes          |
-| `meta_description`| A description targeted at search engines for search engine optimization (SEO)                         | Yes          |
-| `meta_keywords`   | Several words and short phrases separated by commas, also targeted at search engines                  | Yes          |
+## Listing Products
 
-To understand how variants come to be, you must first understand option types and option values.
+<CodeGroup>
 
-## Option Types and Option Values
+```typescript SDK
+// List products with pagination
+const { data: products, meta } = await client.store.products.list({
+  limit: 12,
+  page: 1,
+})
 
-Option types denote the different options for a variant.
+// Filter by price range and availability
+const filtered = await client.store.products.list({
+  price_gte: 10,
+  price_lte: 50,
+  in_stock: true,
+})
 
-A typical option type would be a `size`, with that option type's values being something such as `Small`, `Medium` and `Large`. 
+// Search by keyword
+const results = await client.store.products.list({
+  multi_search: 'tote bag',
+})
 
-Another typical option type could be a `color`, such as `Red`, `Green`, or `Blue`.
+// Sort products
+const sorted = await client.store.products.list({
+  sort: 'price_high_to_low',  // or: price_low_to_high, newest, name_a_z, name_z_a
+})
+```
 
-A product can be assigned many option types, but must be assigned at least one if you wish to create variants for that product
+```bash cURL
+# List products
+curl 'https://api.mystore.com/api/v3/store/products?limit=12&page=1' \
+  -H 'Authorization: Bearer spree_pk_xxx'
 
-<Info>
-The `name` and `presentation` fields for option types are translatable as of version 4.6.
-</Info>
+# Filter by price and stock
+curl 'https://api.mystore.com/api/v3/store/products?q[price_gte]=10&q[price_lte]=50&q[in_stock]=true' \
+  -H 'Authorization: Bearer spree_pk_xxx'
+
+# Search
+curl 'https://api.mystore.com/api/v3/store/products?q[multi_search]=tote+bag' \
+  -H 'Authorization: Bearer spree_pk_xxx'
+```
+
+</CodeGroup>
+
+See [Querying](/api-reference/store-api/querying) for the full list of filtering, sorting, and pagination options.
+
+## Getting a Product
+
+<CodeGroup>
+
+```typescript SDK
+// Get by slug
+const product = await client.store.products.get('spree-tote')
+
+// Get with included relations
+const detailed = await client.store.products.get('spree-tote', {
+  expand: ['variants', 'images', 'option_types', 'taxons'],
+})
+// detailed.variants => [{ id: "var_xxx", sku: "TOTE-S-R", price: { amount: "15.99", currency: "USD" }, ... }]
+// detailed.images => [{ id: "img_xxx", url: "https://cdn...", position: 1 }]
+// detailed.option_types => [{ name: "size", presentation: "Size", option_values: [...] }]
+```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/store/products/spree-tote?expand=variants,images,option_types,taxons' \
+  -H 'Authorization: Bearer spree_pk_xxx'
+```
+
+</CodeGroup>
+
+## Product Filters
+
+Get available filter options for building a faceted search UI. Returns price ranges, option values, and taxons with counts:
+
+<CodeGroup>
+
+```typescript SDK
+const filters = await client.store.products.filters()
+// {
+//   option_types: [{ name: "size", option_values: [{ name: "Small", count: 12 }, ...] }],
+//   price_range: { min: 9.99, max: 199.99 },
+//   taxons: [{ id: "txn_xxx", name: "Clothing", count: 45 }],
+// }
+
+// Scoped to a specific taxon
+const taxonFilters = await client.store.products.filters({
+  taxon_id_eq: 'txn_xxx',
+})
+```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/store/products/filters' \
+  -H 'Authorization: Bearer spree_pk_xxx'
+
+# Scoped to a taxon
+curl 'https://api.mystore.com/api/v3/store/products/filters?taxon_id_eq=txn_xxx' \
+  -H 'Authorization: Bearer spree_pk_xxx'
+```
+
+</CodeGroup>
 
 ## Variants
 
-`Variant` records track the individual variants of a `Product`. Variants are of two types: master variants and normal variants.
+Variants are the purchasable units of a product. Each variant has its own SKU, price, inventory, and images, and is defined by a unique combination of option values.
 
-Variant records can track some individual properties regarding a variant, such as height, width, depth, and cost price. These properties are unique to each variant, and so are different from [Product Properties](#product-properties), which apply to all variants of that product.
+| Attribute | Description |
+|-----------|-------------|
+| `sku` | Unique stock keeping unit |
+| `barcode` | Barcode (UPC, EAN, etc.) |
+| `price` | Price in the current currency |
+| `original_price` | Compare-at price for showing discounts |
+| `weight`, `height`, `width`, `depth` | Dimensions for shipping calculations |
+| `in_stock` | Whether stock is available |
+| `backorderable` | Whether the variant can be ordered when out of stock |
+| `option_values` | The option values that define this variant (e.g., Size: Small, Color: Red) |
 
-| Attribute          | Description                                                                                   | Example Value          |
-|--------------------|-----------------------------------------------------------------------------------------------|------------------------|
-| `sku`              | Unique identifier for each variant                                                            | `123TSHRT-M-G`      |
-| `barcode`              | Barcode code                                                           | ``      |
-| `barcode`              | A unique code that represents a variant, often used for scanning purposes. | `123456789` |
-| `weight`           | The weight of the variant                                                                      | 2               |
-| `height`           | The height of the variant                                                                     | 150               |
-| `width`            | The width of the variant                                                                      | 150                |
-| `depth`            | The depth of the variant                                                                      | 100                 |
-| `is_master`        | Indicates if the variant is a master variant                                                  | `false`                  |
-| `track_inventory`  | Indicates if the inventory is tracked for this variant                                        | `true`                   |
-| `cost_price`       | The cost price of the variant                                                                 | 5.00                   |
-| `cost_currency`    | The currency of the cost price                                                                | `USD`                  |
-| `discontinue_on`   | Date when the variant will become unavailable for sale                                        | 2023-12-31 18:00           |
+### Master Variant
 
-### Master Variants
-
-Every single product has a master variant, which tracks basic information such as a count on hand, a price and a <Tooltip tip="Stock Keeping Unit - In inventory management, a stock keeping unit (abbreviated as SKU) is the unit of measure in which the stocks of a material are managed.">SKU</Tooltip>.
-
-Whenever a product is created, a master variant for that product will be created too.
-
-<Info>
-Logic behind is implemented in the `after_initialize` callback of the `Spree::Product` model in a [ensure_master](https://github.com/spree/spree/blob/d3927a3f646f0b4e72b137bf72606c885ec59829/core/app/models/spree/product.rb#L132) method.
-</Info>
-
-Master variants are automatically created along with a product and exist for the sole purpose of having a consistent API when associating variants and [line items](orders#line-items). If there were no master variant, then line items would need to track a polymorphic association which would either be a product or a variant.
+Every product has a **master variant** that holds default pricing and inventory. If a product has no option types (e.g., a book with no size/color), the master variant is the only purchasable variant.
 
 ### Regular Variants
 
-Variants which are not the master variant are unique based on a [option type and option value](#option-types-and-option-values) combinations.
+When a product has option types, each unique combination of option values creates a variant. For example, a T-shirt with sizes (S, M, L) and colors (Red, Green) has 6 variants:
 
-For instance, you may be selling a product which is a Baseball Jersey, which comes in the sizes "Small", "Medium" and "Large", as well as in the colors of "Red", "Green". For this combination of sizes and colors, you would be able to create 9 unique variants:
+| SKU | Size | Color |
+|-----|------|-------|
+| `TEE-S-R` | Small | Red |
+| `TEE-S-G` | Small | Green |
+| `TEE-M-R` | Medium | Red |
+| `TEE-M-G` | Medium | Green |
+| `TEE-L-R` | Large | Red |
+| `TEE-L-G` | Large | Green |
 
-| SKU       | Size  | Color |
-|-----------|-------|-------|
-| SKU-S-R   | Small | Red   |
-| SKU-S-G   | Small | Green |
-| SKU-M-R   | Medium| Red   |
-| SKU-M-G   | Medium| Green |
-| SKU-L-R   | Large | Red   |
-| SKU-L-G   | Large | Green |
+The product's `default_variant_id` points to the first non-master variant (or the master variant if none exist).
 
-### Default Variant
+## Option Types and Option Values
 
-This all can sound complex and confusing, so we'll simplify things for you.
+Option types define the axes of variation for a product (e.g., Size, Color, Material). Option values are the specific choices within each type (e.g., Small, Medium, Large).
 
-To get the default Variant for a product, you can call:
+A product must have at least one option type to have multiple variants. Option types and their values are included in the product response when requested:
 
-```ruby
-product.default_variant
+<CodeGroup>
+
+```typescript SDK
+const product = await client.store.products.get('spree-tee', {
+  expand: ['option_types'],
+})
+
+product.option_types?.forEach(optionType => {
+  console.log(optionType.presentation) // "Size"
+  optionType.option_values.forEach(value => {
+    console.log(value.presentation)    // "Small", "Medium", "Large"
+  })
+})
 ```
 
-How this works?
+```bash cURL
+curl 'https://api.mystore.com/api/v3/store/products/spree-tee?expand=option_types' \
+  -H 'Authorization: Bearer spree_pk_xxx'
+```
 
-* If a product has multiple Variants it will return the first non-master Variant based on their sort position set in the Admin Panel or Platform API.
-* If there are no non-master Variants it will return the Master Variant
+</CodeGroup>
 
-So you can easily rely on this method to get the default Variant for a product.
+<Info>
+Option type `name` and `presentation` fields are translatable.
+</Info>
 
 ## Images
 
-Images can be associated to the  Product (via master variant) or to the individual Variants.
+Images can be attached to the product (via the master variant) or to individual variants. When displaying a product, show the images for the selected variant, falling back to the product-level images.
 
-Product images can be fetched via:
+### Thumbnails
 
-```ruby
-product.images
+Every product response includes a `thumbnail_url` field — the URL to the first image, ready to use without any expands. Similarly, each variant includes a `thumbnail` URL and an `image_count` counter.
+
+Use these fields for product listing pages to avoid loading all images:
+
+<CodeGroup>
+
+```typescript SDK
+// List products — thumbnail_url is always included
+const { data: products } = await client.store.products.list({ limit: 12 })
+
+products.forEach(product => {
+  product.thumbnail_url // "https://cdn.../tote-front.jpg" — no expand needed
+})
 ```
 
-To get all images for product and all it's variants, call `variant_images` on the product:
-
-```ruby
-product.variant_images
+```bash cURL
+# thumbnail_url is always in the response — no ?expand needed
+curl 'https://api.mystore.com/api/v3/store/products?limit=12' \
+  -H 'Authorization: Bearer spree_pk_xxx'
 ```
 
-To fetch individual variant images, call `images` on the variant:
-
-```ruby
-product.default_variant.images
-```
-
-Image order is determined by the `position` attribute, which is an integer. By default, images are ordered from left to right.
-
-<Info>
-Under the hood we use [Rails Active Storage](https://guides.rubyonrails.org/active_storage_overview.html) to handle image storage and manipulation. See the [Images & Assets](/developer/core-concepts/images-assets) guide for more details on image processing, helpers, and best practices.
-</Info>
-
-## Product Properties
+</CodeGroup>
 
 <Warning>
-**Product Properties are deprecated as of Spree 5.2.** This feature was the default way to add custom attributes to products prior to Spree 5.2, but has been replaced by [Metafields](/developer/core-concepts/metafields).
-
-For **new projects**, use [Metafields](/developer/core-concepts/metafields) instead. Product Properties will be removed in Spree 6.0.
-
-For **existing projects**, Properties are still supported for backward compatibility but require enabling via `config.product_properties_enabled = true`. See the [upgrade guide](/developer/upgrades/5.1-to-5.2#3-migrate-to-metafields-or-keep-using-properties) for migration instructions.
+Avoid using `?expand=images` on listing pages. This loads **all** images for every product in the response, which is unnecessary when you only need a thumbnail. Use `thumbnail_url` instead and only expand full images on the product detail page.
 </Warning>
 
-Product properties track individual attributes for a product that don't apply to all products. These are typically additional information about the item. For instance, a T-Shirt may have properties representing information about the kind of material used, as well as the type of fit the shirt is.
+### All Images
 
-A `Property` should not be confused with an [`OptionType`](#option-types-and-option-values), which is used when defining [Variants](#variants) for a product.
+On the product detail page, expand `images` and `variants` to get the full set of images. Images are ordered by `position`:
 
-You can retrieve the value for a property on a `Product` object by calling the `property` method on it and passing through that property's name:
+<CodeGroup>
 
-```ruby
-product.property("material")
-=> "100% Cotton"
+```typescript SDK
+const product = await client.store.products.get('spree-tote', {
+  expand: ['images', 'variants'],
+})
+
+// Product-level images (from master variant)
+product.images // [{ url: "https://cdn.../tote-front.jpg", position: 1 }, ...]
+
+// Each variant has its own thumbnail and image_count
+product.variants?.forEach(variant => {
+  variant.thumbnail    // "https://cdn.../tote-red.jpg" — always available
+  variant.image_count  // 3 — quick check without loading images
+  variant.images       // full image array (only when ?expand=images)
+})
 ```
 
-You can set a property on a product by calling the `set_property` method:
-
-```ruby
-product.set_property("material", "100% cotton")
+```bash cURL
+curl 'https://api.mystore.com/api/v3/store/products/spree-tote?expand=images,variants' \
+  -H 'Authorization: Bearer spree_pk_xxx'
 ```
 
-If this property doesn't already exist, a new `Property` instance with this name will be created on the fly.
+</CodeGroup>
 
-<Info>
-As of version 4.6, product property `value` fields are translatable.
-</Info>
+| Field | Available on | Always returned | Description |
+|-------|-------------|:---:|-------------|
+| `thumbnail_url` | Product | Yes | URL to the product's first image |
+| `thumbnail` | Variant | Yes | URL to the variant's first image |
+| `image_count` | Variant | Yes | Number of images (counter cache — no DB query) |
+| `images` | Product, Variant | No | Full image array (requires `?expand=images`) |
 
 ## Prices
 
-`Price` objects track a price for a particular currency and variant combination. For instance, a [Variant](#variants) may be available for $15 (`15 USD`) and €7 (`7 Euro`).
+Each variant can have multiple prices — one per currency, plus additional prices from [Price Lists](/developer/core-concepts/pricing) that apply conditionally based on market, geography, customer segment, or quantity.
 
-Each variant can have multiple prices — a base price per currency, plus additional prices from Price Lists that apply conditionally based on rules like [market](/developer/core-concepts/markets), geography, customer segment, or quantity.
+The API automatically returns the correct price based on the current currency and market context:
 
-For full details on Prices, Price Lists, Price Rules, and the Pricing Context, see the dedicated [Pricing](/developer/core-concepts/pricing) guide.
+| Field | Description |
+|-------|-------------|
+| `price` | Current selling price |
+| `original_price` | Compare-at price (for showing strikethrough discounts) |
 
-## Prototypes
-
-A prototype is a useful way to share common `OptionType` and `Property` combinations amongst many different products. They work as a product template to speed up the creation of new products.
-
-For instance, if you're creating a lot of clothing products, you may wish to maintain the "Size" and "Color" option types, as well as a "Fitting Type" property.
+See the [Pricing](/developer/core-concepts/pricing) guide for details on Price Lists, Price Rules, and market-specific pricing.
 
 ## Taxons and Taxonomies
 
-Taxonomies provide a simple, yet robust way of categorizing products by enabling store administrators to define as many separate structures as needed.
+Taxonomies provide a flexible way to categorize products. A **taxonomy** is a hierarchical category tree, and a **taxon** is a node within that tree.
 
-When working with Taxonomies there are two key terms to understand:
+For example:
+- **Categories** (taxonomy) → Clothing → T-Shirts, Dresses
+- **Brands** (taxonomy) → Nike, Adidas, Puma
+- **Collections** (taxonomy) → Summer 2025, Best Sellers
 
-* `Taxonomy` – a hierarchical list which is made up of individual Taxons. Each taxonomy relates to one `Taxon`, which is its root node.
-* `Taxon` – a single child node which exists at a given point within a `Taxonomy`. Each `Taxon` can contain many (or no) sub / child taxons. Store administrators can define as many Taxonomies as required, and link a product to multiple Taxons from each Taxonomy.
+Products can belong to multiple taxons across different taxonomies.
 
-By default, both Taxons and Taxonomies are ordered by their `position` attribute.
+<CodeGroup>
 
-<Note>
-Taxons use the [Nested set model](http://en.wikipedia.org/wiki/Nested_set_model) for their hierarchy. The `lft` and `rgt` columns in the `spree_taxons` table represent the locations within the hierarchy of the item. This logic is handled by the [awesome nested set](https://github.com/collectiveidea/awesome_nested_set) gem.
-</Note>
+```typescript SDK
+// List taxonomies
+const { data: taxonomies } = await client.store.taxonomies.list()
 
-Taxons link to products through an intermediary model called `Classification`. This model exists so that when a product is deleted, all of the links from that product to its taxons are deleted automatically. A similar action takes place when a taxon is deleted; all of the links to products are deleted automatically.
+// List taxons (categories)
+const { data: taxons } = await client.store.taxons.list()
 
-<Note>
-Storefront uses `spree.nested_taxons_path` helper method to generate full taxon URLs, which will use the taxon's permalink, eg. 
+// Get a taxon by permalink
+const taxon = await client.store.taxons.get('categories/clothing')
 
-```ruby
-taxon = Spree::Taxon.find_by(permalink: 'clothes/dresses')
-spree.nested_taxons_path(taxon)
+// List products in a taxon
+const { data: products } = await client.store.taxons.products.list('categories/clothing', {
+  limit: 12,
+})
 ```
 
-which will output `/t/categories/clothes/dresses`.
-</Note>
+```bash cURL
+# List taxonomies
+curl 'https://api.mystore.com/api/v3/store/taxonomies' \
+  -H 'Authorization: Bearer spree_pk_xxx'
+
+# List taxons
+curl 'https://api.mystore.com/api/v3/store/taxons' \
+  -H 'Authorization: Bearer spree_pk_xxx'
+
+# Get a taxon by permalink
+curl 'https://api.mystore.com/api/v3/store/taxons/categories/clothing' \
+  -H 'Authorization: Bearer spree_pk_xxx'
+
+# List products in a taxon
+curl 'https://api.mystore.com/api/v3/store/taxons/categories/clothing/products?limit=12' \
+  -H 'Authorization: Bearer spree_pk_xxx'
+```
+
+</CodeGroup>
 
 <Info>
-As of version 4.6, the taxon `name` and `description` fields are translatable.
+Taxon `name` and `description` fields are translatable.
 </Info>
+
+## Related Documentation
+
+- [Pricing](/developer/core-concepts/pricing) — Price Lists, Price Rules, and market-specific pricing
+- [Inventory](/developer/core-concepts/inventory) — Stock management and backorders
+- [Images & Assets](/developer/core-concepts/images-assets) — Image management
+- [Translations](/developer/core-concepts/translations) — Translating product content
+- [Search & Filtering](/developer/core-concepts/search-filtering) — Full-text search and Ransack filtering
+- [Querying](/api-reference/store-api/querying) — API filtering, sorting, and pagination

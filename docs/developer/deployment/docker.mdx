@@ -1,34 +1,132 @@
 ---
 title: Docker
-description: Learn how to build a Docker image of your Spree application.
+description: Run the official Spree Docker image or build your own.
 ---
 
-Spree (when using Spree Starter template) comes with a Dockerfile that can be used to build a Docker image of your application.
+## Official Docker Image
 
-You can find the Dockerfile in the [Dockerfile](https://github.com/spree/spree_starter/blob/main/Dockerfile) file in the root of the project or in the Spree Starter repository.
-
-This Dockerfile is pre-configured to run Spree with a PostgreSQL database by default. You can also use MySQL or SQLite by changing the `DATABASE_URL` environment variable. [Learn more about database configuration](/developer/deployment/database).
-
-You can later use that image to run your application in a containerized environment eg. AWS ECS, AWS Fargate, Azure Container Instances, etc.
-
-## Building the Docker image
+Spree publishes multi-arch Docker images (`linux/amd64` and `linux/arm64`) to the GitHub Container Registry on every release.
 
 ```bash
-docker build -t spree .
+docker pull ghcr.io/spree/spree:latest
 ```
 
-## Running the Docker container
+### Available Tags
+
+| Tag | Description |
+|-----|-------------|
+| `latest` | Latest stable release |
+| `5.1.3` | Specific version |
+| `5.1` | Latest patch for a minor version |
+
+Browse all tags on the [GitHub Packages page](https://github.com/spree/spree/pkgs/container/spree).
+
+### Running the Image
+
+The image runs a Puma web server on port 3000. You also need a worker container for background jobs (Sidekiq):
+
+```yaml docker-compose.yml
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: pg_isready -U postgres
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: redis-cli ping
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  web:
+    image: ghcr.io/spree/spree:latest
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://postgres@postgres:5432/spree_production
+      REDIS_URL: redis://redis:6379/0
+      SECRET_KEY_BASE: change-me-to-a-real-secret
+      RAILS_FORCE_SSL: "false"
+      RAILS_ASSUME_SSL: "false"
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test: curl -f http://localhost:3000/up || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  worker:
+    image: ghcr.io/spree/spree:latest
+    depends_on:
+      web:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://postgres@postgres:5432/spree_production
+      REDIS_URL: redis://redis:6379/0
+      SECRET_KEY_BASE: change-me-to-a-real-secret
+    command: bundle exec sidekiq
+
+volumes:
+  postgres_data:
+  redis_data:
+```
+
+Start everything:
 
 ```bash
-docker run -p 3000:3000 -e SECRET_KEY_BASE=... -e DATABASE_URL=... -e REDIS_URL=... spree
+docker compose up -d
 ```
 
-You will need to supply the following environment variables to run the container:
+The database is automatically created and migrated on first boot. The app is available at [http://localhost:3000](http://localhost:3000).
+
+<Tip>
+Use [create-spree-app](/developer/create-spree-app/quickstart) for a fully scaffolded Docker setup with `.env` files, health checks, and optional Next.js storefront — all configured automatically.
+</Tip>
+
+### Required Environment Variables
 
 | Variable | Description | Example |
 | --- | --- | --- |
-| `DATABASE_URL` | Database connection URL. Spree supports PostgreSQL, MySQL, and SQLite | `postgres://user:pass@localhost:5432/spree` |
-| `REDIS_URL` | Redis/Valkey URL, used for background jobs processing,this could be your AWS ElastiCache instance or any other Redis/Valkey instance | `redis://localhost:6379/0` |
-| `SECRET_KEY_BASE` | You can generate this by running `bin/rails secret` | `2fad5c0b79d25e4765d3018d8c740f8c3a665f0e5c...` |
+| `DATABASE_URL` | PostgreSQL connection URL | `postgres://user:pass@host:5432/spree` |
+| `REDIS_URL` | Redis URL for jobs, caching, and Action Cable | `redis://redis:6379/0` |
+| `SECRET_KEY_BASE` | Secret key for session encryption | Generate with `bin/rails secret` |
 
-This is the bare minimum you need to run Spree Starter. [Learn more about environment variables](/developer/deployment/environment_variables).
+See [Environment Variables](/developer/deployment/environment_variables) for the full list.
+
+## Building Your Own Image
+
+If you have your own Rails application with Spree installed, build a Docker image from your app's Dockerfile:
+
+```bash
+docker build -t my-spree .
+```
+
+Then use your custom image in place of `ghcr.io/spree/spree`:
+
+```bash
+docker run -p 3000:3000 \
+  -e DATABASE_URL=postgres://user:pass@host:5432/spree \
+  -e REDIS_URL=redis://localhost:6379/0 \
+  -e SECRET_KEY_BASE=your-secret \
+  my-spree
+```
+
+<Tip>
+When creating a new Rails app with Spree via `rails new -m`, a production-ready Dockerfile is generated automatically by Rails.
+</Tip>

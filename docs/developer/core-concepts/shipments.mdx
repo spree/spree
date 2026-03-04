@@ -1,13 +1,25 @@
 ---
 title: Shipments
+description: Shipping methods, rates, split shipments, and fulfillment
 ---
 
 ## Overview
 
-### Shipment Model Diagram
+A shipment represents a package being sent to a customer from a [Stock Location](/developer/core-concepts/inventory#stock-locations). Each order can have one or more shipments — Spree automatically splits orders into multiple shipments when items need to ship from different locations or require different shipping methods.
 
 ```mermaid
 erDiagram
+    Order ||--o{ Shipment : "has many"
+    Shipment ||--o{ ShippingRate : "has many"
+    Shipment ||--o{ InventoryUnit : "has many"
+    Shipment }o--|| StockLocation : "ships from"
+    Shipment }o--|| ShippingMethod : "selected method"
+    ShippingMethod ||--o{ ShippingRate : "has many"
+    ShippingMethod }o--o{ Zone : "serves"
+    ShippingMethod }o--o{ ShippingCategory : "handles"
+    ShippingMethod }o--o{ Store : "available in"
+    Product }o--|| ShippingCategory : "belongs to"
+
     Shipment {
         string number
         string tracking
@@ -18,50 +30,14 @@ erDiagram
 
     ShippingMethod {
         string name
-        string display_on
         string tracking_url
         integer position
-    }
-
-    ShippingCategory {
-        string name
     }
 
     ShippingRate {
         decimal cost
         boolean selected
     }
-
-    Zone {
-        string name
-        string description
-        string kind
-    }
-
-    InventoryUnit {
-        string state
-    }
-
-    StockLocation {
-        string name
-        boolean active
-        boolean default
-    }
-
-    Order ||--o{ Shipment : "has many"
-    Shipment ||--o{ ShippingRate : "has many"
-    Shipment ||--o{ InventoryUnit : "has many"
-    Shipment }o--|| StockLocation : "ships from"
-    Shipment }o--|| ShippingMethod : "selected method"
-    Shipment ||--o{ Adjustment : "has many"
-    ShippingMethod ||--o{ ShippingRate : "has many"
-    ShippingMethod }o--o{ Zone : "serves"
-    ShippingMethod }o--o{ ShippingCategory : "handles"
-    ShippingMethod ||--|| Calculator : "has one"
-    ShippingMethod }o--o{ Store : "available in"
-    Product }o--|| ShippingCategory : "belongs to"
-    Variant ||--o{ InventoryUnit : "has many"
-    StockLocation ||--o{ StockItem : "has many"
 ```
 
 **Key relationships:**
@@ -70,437 +46,169 @@ erDiagram
 - **Shipping Rate** represents the calculated cost for a method
 - **[Zone](/developer/core-concepts/addresses#zones)** defines geographic regions for shipping availability
 - **Shipping Category** groups products with similar shipping requirements
-- **Inventory Units** track individual items within each shipment
 
-This guide explains how Spree represents shipping options and how it calculates expected costs, and shows how you can configure the system with your own shipping methods. After reading it you should know:
+## Shipment Attributes
 
-* how shipments and shipping are implemented in Spree
-* how to specify your shipping structure
-* how split shipments work
-* how to configure products for special shipping treatment
-* how to capture shipping instructions
+| Attribute | Description | Example |
+|-----------|-------------|---------|
+| `number` | Unique shipment identifier | `H12345678901` |
+| `tracking` | Carrier tracking number | `1Z999AA10123456784` |
+| `state` | Current shipment state | `shipped` |
+| `cost` | Shipping cost | `9.99` |
+| `shipped_at` | When the shipment was shipped | `2025-07-21T14:36:00Z` |
+| `stock_location` | Where items ship from | `Warehouse NYC` |
+| `selected_shipping_rate` | The rate chosen by the customer | `{ cost: 9.99, name: "UPS Ground" }` |
 
-Spree uses a very flexible and effective system to calculate shipping, accommodating the full range of shipment pricing: from simple flat rate to complex product-type- and weight-dependent calculations.
-
-The Shipment model is used to track how items are delivered to the buyer.
-
-Shipments have the following attributes:
-
-| Attribute          | Description                                                                                   | Example Value                |
-|--------------------|-----------------------------------------------------------------------------------------------|------------------------------|
-| `number`           | The unique identifier for this shipment. It begins with the letter H and ends in an 11-digit number. This number is shown to the users, and can be used to find the order by calling `Spree::Shipment.find_by(number: number)`. | H12345678901                 |
-| `tracking`         | The identifier given for the shipping provider i.e. FedEx, UPS, etc.                      | 1Z999AA10123456784           |
-| `shipped_at`       | The time when the shipment was shipped.                                                      | 2021-07-21T14:36:00.000Z     |
-| `state`            | The current state of the shipment.                                                            | `shipped`                      |
-| `stock_location_id`| The ID of the [Stock Location](/developer/core-concepts/inventory#stock-locations) where the items for this shipment will be sourced from.         | 3                            |
-
-A shipment can go through many different states, as illustrated below.
-
-An explanation of the different states:
+## Shipment States
 
 <Steps>
   <Step title="pending">
-  The shipment has backordered inventory units and/or the order is not paid for.
+    The shipment has backordered inventory or the order is not yet paid.
   </Step>
   <Step title="ready">
-  The shipment has _no_ backordered inventory units and the order is paid for.
+    All items are in stock and the order is paid. Ready to ship.
   </Step>
   <Step title="shipped">
-  The shipment is on its way to the buyer.
+    The shipment is on its way to the customer.
   </Step>
   <Step title="canceled">
-  When an order is cancelled, all of its shipments will also be cancelled. When this happens, all items in the shipment will be restocked. If an order is "resumed", then the shipment will also be resumed.
+    The shipment was canceled. All items are restocked.
   </Step>
 </Steps>
 
-Explaining each piece of the shipment world inside of Spree separately and how each piece fits together can be a cumbersome task. Fortunately, using a few simple examples makes it much easier to grasp. In that spirit, the examples are shown first in this guide.
+## Selecting Shipping Rates
+
+During checkout, after the customer provides a shipping address, Spree calculates available shipping rates for each shipment. The customer must select a rate before proceeding.
+
+<CodeGroup>
+
+```typescript SDK
+// Get shipments with available shipping rates
+const order = await client.store.orders.get(orderId, {
+  expand: ['shipments'],
+})
+
+// Each shipment has available shipping rates
+order.shipments?.forEach(shipment => {
+  console.log(shipment.number)           // "H12345678901"
+  console.log(shipment.shipping_rates)   // [{ id: "sr_xxx", name: "UPS Ground", cost: "9.99", selected: true }, ...]
+})
+
+// Select a shipping rate
+await client.store.orders.shipments.update(orderId, shipment.id, {
+  selected_shipping_rate_id: 'sr_xxx',
+})
+```
+
+```bash cURL
+# Get shipments
+curl 'https://api.mystore.com/api/v3/store/orders/or_xxx?expand=shipments' \
+  -H 'Authorization: Bearer spree_pk_xxx' \
+  -H 'X-Spree-Order-Token: abc123'
+
+# Select a shipping rate
+curl -X PATCH 'https://api.mystore.com/api/v3/store/orders/or_xxx/shipments/shp_xxx' \
+  -H 'Authorization: Bearer spree_pk_xxx' \
+  -H 'X-Spree-Order-Token: abc123' \
+  -H 'Content-Type: application/json' \
+  -d '{ "selected_shipping_rate_id": "sr_xxx" }'
+```
+
+</CodeGroup>
+
+## Shipping Methods
+
+Shipping methods represent the carrier services available to customers (e.g., UPS Ground, FedEx Overnight, DHL International). Each shipping method is scoped to:
+
+- **[Zones](/developer/core-concepts/addresses#zones)** — geographic regions where the method is available
+- **Shipping Categories** — product groups the method handles
+- **[Stores](/developer/core-concepts/stores)** — which stores offer this method
+
+Only methods whose zone matches the customer's shipping address are offered at checkout.
+
+### Shipping Categories
+
+Shipping categories group products with similar shipping requirements. For example:
+
+- **Light** — lightweight items like stickers
+- **Regular** — standard products
+- **Heavy** — items over a certain weight
+- **Oversized** — large items requiring special handling
+
+Each product is assigned a shipping category. Shipping methods can be restricted to handle only certain categories, and the shipping cost calculator uses the category to determine pricing.
+
+### Calculators
+
+Each shipping method uses a [Calculator](/developer/core-concepts/calculators) to determine the cost. Spree includes these built-in calculators:
+
+| Calculator | Description |
+|------------|-------------|
+| Flat rate per order | Same cost regardless of items |
+| Flat rate per item | Fixed cost per item |
+| Flat percent | Percentage of the order total |
+| Flexible rate | One rate for the first item, another for each additional |
+| Price sack | Tiered pricing based on order total |
+
+You can create custom calculators for more complex pricing. See the [Calculators guide](/developer/core-concepts/calculators).
+
+## Split Shipments
+
+When items in an order ship from different stock locations or have different shipping categories, Spree automatically splits the order into multiple shipments.
+
+```mermaid
+flowchart TB
+    A[Order with 3 items] --> B{Stock check}
+    B --> C["Item A & B: NYC Warehouse"]
+    B --> D["Item C: LA Warehouse"]
+    C --> E["Shipment 1: UPS Ground"]
+    D --> F["Shipment 2: FedEx 2Day"]
+```
+
+### How Splitting Works
+
+1. When an order reaches the delivery step, Spree evaluates where each item is in stock
+2. Items are grouped by stock location and shipping category
+3. Each group becomes a separate shipment with its own shipping rates
+4. The customer selects a shipping rate for each shipment independently
+
+### Weight Splitting
+
+By default, Spree also splits shipments when a package exceeds a weight threshold (default: 150 units). This prevents individual packages from being too heavy.
+
+<Info>
+Split shipment behavior is customizable. See the [Customization Quickstart](/developer/customization/quickstart) for details on creating custom splitting rules.
+</Info>
 
 ## Examples
 
 ### Simple Setup
 
-Consider you sell T-shirts to the US and Europe and ship from a single location, and you work with 2 deliverers:
+A store selling T-shirts to the US and Europe with 2 carriers:
 
-* USPS Ground to US
-* FedEx to EU
+| Method | Zone | Pricing |
+|--------|------|---------|
+| USPS Ground | US | $5 first item + $2 each additional |
+| FedEx | EU | $10 per item |
 
-and their pricing is as follow:
-
-* USPS charges $5 for one T-shirt and $2 for each additional one
-* FedEx charges $10 each, regardless of the quantity
-
-To achieve this setup you need the following configuration:
-
-* Shipping Categories: All your products are the same, so you only need to define one default shipping category. Each of your products would then need to be assigned to this shipping category.
-* 1 [Stock Location](/developer/core-concepts/inventory#stock-locations): You are shipping all items from the same location, so you can use the default.
-* 2 Shipping Methods Configuration-&gt;Shipping Methods as follows:
-
-| Name | Zone | Calculator |
-| ---: | ---: | ---: |
-| USPS Ground | US | Flexi Rate$5,$2 |
-| FedEx | EU_VAT | FlatRate-per-item$10 |
+This requires:
+- 1 shipping category (default)
+- 1 stock location
+- 2 shipping methods with appropriate zones and calculators
 
 ### Advanced Setup
 
-Consider you sell products to a single zone US and you ship from 2 [Stock Locations](/developer/core-concepts/inventory#stock-locations):
-
-* New York
-* Los Angeles
-
-and you work with 3 deliverers Shipping Methods:
-
-* FedEx
-* DHL
-* US postal service
-
-and your products can be classified into 3 Shipping Categories:
-
-* Light
-* Regular
-* Heavy
-
-and their pricing is as follow:
-
-FedEx charges:
-
-* $10 for all light items regardless of how many you have
-* $2 per regular item
-* $20 for the first heavy item and $15 for each additional one
-
-DHL charges:
-
-* $5 per item if it's light or regular
-* $50 per item if it's heavy
-
-USPS charges:
-
-* $8 per item if it's light or regular
-* $20 per item if it's heavy
-
-To achieve this setup you need the following configuration:
-
-* 4 Shipping Categories: Default, Light, Regular and Heavy
-* 3 Shipping Methods Configuration-&gt;Shipping Methods: FedEx, DHL, USPS
-* 2 [Stock Locations](/developer/core-concepts/inventory#stock-locations) (Configuration -> Stock Locations): New York, Los Angeles
-
-| S. Category / S. Method | DHL | FedEx | USPS |
-| ---: | ---: | ---: | ---: |
-| Light | Per Item $5 | Flat Rate $10 | Per Item $8 |
-| Regular | Per Item $5 | Per Item $2 | Per Item $8 |
-| Heavy | Per Item $50 | Flexi Rate$20,$15 | Per Item $20 |
-
-## Design & Functionality
-
-To properly leverage Spree's shipping system's flexibility you must understand a few key concepts:
-
-* Shipping Methods
-* Zones
-* Shipping Categories
-* Calculators through Shipping Rates
-
-### Shipping Methods
-
-Shipping methods are the actual services used to send the product. For example:
-
-* UPS Ground
-* UPS One Day
-* FedEx 2Day
-* FedEx Overnight
-* DHL International
-
-Each shipping method is only applicable to a specific `Zone`. For example, you wouldn't be able to get a package delivered internationally using a domestic-only shipping method. You can't ship from Dallas, USA to Rio de Janeiro, Brazil using UPS Ground a US-only carrier.
-
-If you are using shipping categories, these can be used to qualify or disqualify a given shipping method.
-
- Shipping methods can now have multiple shipping categories assigned to them. This allows the shipping methods available to an order to be determined by the shipping categories of the items in a shipment.
-
-### Zones
-
-Zones serve as a mechanism for grouping geographic areas together into a single entity. You can read all about how to configure and use Zones in the [Zones Guide](/developer/core-concepts/addresses#zones).
-
-The Shipping Address entered during checkout will define the zone the customer is in and limit the Shipping Methods available to him.
-
-### Shipping Categories
-
-Shipping Categories are useful if you sell products whose shipping pricing vary depending on the type of product TVs and Mugs, for instance.
-
- For simple setups, where shipping for all products is priced the same ie. T-shirt-only shop, all products would be assigned to the default shipping category for the store.
-
-Some examples of Shipping Categories would be:
-
-* Light for lightweight items like stickers
-* Regular
-* Heavy for items over a certain weight
-
-Shipping Categories are created in the admin interface `Configuration` -&gt; `Shipping Categories` and then assigned to products `Products` -&gt; `Edit`.
-
-During checkout, the shipping categories of the products in your order will determine which calculator will be used to price its shipping for each Shipping Method.
-
-### Calculators
-
-A Calculator is the component responsible for calculating the shipping price for each available Shipping Method.
-
-Spree ships with 5 default Calculators:
-
-* Flat rate per order
-* Flat rate per item/product
-* Flat percent
-* Flexible rate
-* Price sack
-
-Flexible rate is defined as a flat rate for the first product, plus a different flat rate for each additional product.
-
-You can define your own calculator if you have more complex needs. In that case, check out the [Calculators Guide](calculators).
-
-## UI
-
-### What the Customer Sees
-
-In the standard system, there is no mention of shipping until the checkout phase.
-
-After entering a shipping address, the system displays the available shipping options and their costs for each shipment in the order. Only the shipping options whose zones include the _shipping_ address are presented.
-
-The customer must choose a shipping method for each shipment before proceeding to the next stage. At the confirmation step, the shipping cost will be shown and included in the order's total.
-
- You can enable collection of extra _shipping instructions_ by setting the option \`Spree::Config.shipping_instructions\` to \`true\`. This is set to \`false\` by default. See \[Shipping Instructions\]\#shipping-instructions below.
-
-### What the Order's Administrator Sees
-
-`Shipment` objects are created during checkout for an order. Initially each records just the shipping method and the order it applies to. The administrator can update the record with the actual shipping cost and a tracking code, and may also once only confirm the dispatch. This confirmation causes a shipping date to be set as the time of confirmation.
-
-## Advanced Shipping Methods
-
-Spree comes with a set of calculators that should fit most of the shipping situations that may arise. If the calculators that come with Spree are not enough for your needs, you might want to use an extension - if one exists to meet your needs - or create a custom one.
-
-### Extensions
-
-There are a few Spree extensions which provide additional shipping methods, including special support for fees imposed by common carriers, or support for bulk orders. See the [Spree Extension Registry](https://github.com/spree-contrib) for the latest information.
-
-### Writing Your Own
-
-For more detailed information, check out the section on [Calculators](calculators).
-
-Your calculator should accept an array of `LineItem` objects and return a cost. It can look at any reachable data, but typically uses the address, the order and the information from variants which are contained in the line_items.
-
-## Product Configuration
-
-Store administrators can assign products to specific ShippingCategories or include extra information in variants to enable the calculator to determine results.
-
-Each product has a `ShippingCategory`, which adds product-specific information to the calculations beyond the standard information from the shipment. Standard information includes:
-
-* Destination address
-* Variants and quantities
-* Weight and dimension information, if given, for a variant
-
-`ShippingCategory` is basically a wrapper for a string. One use is to code up specific rates, eg. "Fixed $20" or "Fixed $40", from which a calculator could extract imposed prices and not go through its other calculations.
-
-### Variant Configuration
-
-Variants can be specified with weight and dimension information. Some shipping method calculators will use this information if it is present.
-
-## Filtering Shipping Methods On Criteria Other Than the Zone
-
-Ordinarily, it is the zone of the shipping address that determines which shipping methods are displayed to a customer at checkout. Here is how the availability of a shipping method is determined:
-
-```ruby
-class Spree::Stock::Estimator
-  def shipping_methods(package)
-    shipping_methods = package.shipping_methods
-    shipping_methods.delete_if { |ship_method| !ship_method.calculator.available?(package.contents) }
-    shipping_methods.delete_if { |ship_method| !ship_method.include?(order.ship_address) }
-    shipping_methods.delete_if { |ship_method| !(ship_method.calculator.preferences[:currency].nil? || ship_method.calculator.preferences[:currency] == currency) }
-    shipping_methods
-  end
-end
-```
-
-Unless overridden, the calculator's `available?` method returns `true` by default. It is, therefore, the zone of the destination address that filters out the shipping methods in most cases. However, in some circumstances it may be necessary to filter out additional shipping methods.
-
-Consider the case of the USPS First Class domestic shipping service, which is not offered if the weight of the package is greater than 13oz. Even though the USPS API does not return the option for First Class in this instance, First Class will appear as an option in the checkout view with an unfortunate value of 0, since it has been set as a Shipping Method.
-
-To ensure that First Class shipping is not available for orders that weigh more than 13oz, the calculator's `available?` method must be overridden as follows:
-
-```ruby
-class Calculator::Usps::FirstClassMailParcels < Calculator::Usps::Base
-  def self.description
-    "USPS First-Class Mail Parcel"
-  end
-
-  def available?(order)
-    multiplier = 1.3
-    weight = order.line_items.inject(0) do |weight, line_item|
-      weight + (line_item.variant.weight ? (line_item.quantity * line_item.variant.weight * multiplier) : 0)
-    end
-    #if weight in ounces > 13, then First Class Mail is not available for the order
-      weight > 13 ? false : true
-  end
-end
-```
-
-## Split Shipments
-
-### Introduction
-
-Split shipments are a feature for more complex Spree applications that require sophisticated shipping and warehouse logic. This includes detailed inventory management and allows for shipping from multiple locations.
-
-### Creating Proposed Shipments
-
-This section steps through the basics of what is involved in determining shipments for an order. There are a lot of pieces that make up this process. They are explained in detail in the [Components of Split Shipments](#components-of-split-shipments) section of this guide.
-
-The process of determining shipments for an order is triggered by calling `create_proposed_shipments` on an `Order` object while transitioning to the `delivery` state during checkout. This process will first delete any existing shipments for an order and then determine the possible shipments available for that order.
-
-`create_proposed_shipments` will initially call `Spree::Stock::Coordinator.new(@order).packages`. This will return an array of packages. In order to determine which items belong in which package when they are being built, Spree uses an object called a `Splitter`, described in more detail [below](#the-packer).
-
-After obtaining the array of available packages, they are converted to shipments on the order object. Shipping rates are determined and inventory units are created during this process as well.
-
-At this point, the checkout process can continue to the delivery step.
-
-## Components of Split Shipments
-
-This section describes the four main components that power split shipments: [The Coordinator](#the-coordinator), [The Packer](#the-packer), [The Prioritizer](#the-prioritizer), and [The Estimator](#the-estimator).
-
-### The Coordinator
-
-The `Spree::Stock::Coordinator` is the starting point for determining shipments when calling `create_proposed_shipments` on an order. Its job is to go through each [Stock Location](/developer/core-concepts/inventory#stock-locations) available and determine what can be shipped from that location.
-
-The `Spree::Stock::Coordinator` will ultimately return an array of packages which can then be easily converted into shipments for an order by calling `to_shipment` on them.
-
-### The Packer
-
-A `Spree::Stock::Packer` object is an important part of the `create_proposed_shipments` process. Its job is to determine possible packages for a given [Stock Location](/developer/core-concepts/inventory#stock-locations) and order. It uses rules defined in classes known as `Splitters` to determine what packages can be shipped from a [Stock Location](/developer/core-concepts/inventory#stock-locations).
-
-For example, we may have two splitters for a stock location. One splitter has a rule that any order weighing more than 50lbs should be shipped in a separate package from items weighing less. Our other splitter is a catch-all for any item weighing less than 50lbs. So, given one item in an order weighing 60lbs and two items weighing less, the Packer would use the rules defined in our splitters to come up with two separate packages: one containing the single 60lb item, the other containing our other two items.
-
-#### Default Splitters
-
-Spree comes with two default splitters which are run in sequence. This means that the first splitter takes the packages array from the order, and each subsequent splitter takes the output of the splitter that came before it.
-
-Let's take a look at what the default splitters do:
-
-**Shipping Category Splitter**
-
-Splits an order into packages based on items' shipping categories. This means that each package will only have items that all belong to the same shipping category.
-
-**Weight Splitter**
-
-Splits an order into packages based on a weight threshold. This means that each package has a mass weight. If a new item is added to the order and it causes a package to go over the weight threshold, a new package will be created so that all packages weigh less than the threshold. You can set the weight threshold by changing `Spree::Stock::Splitter::Weight.threshold` (defaults to `150`) in an initializer.
-
-#### Custom Splitters
-
-Note that splitters can be customized, and creating your own can be done with relative ease. By inheriting from `Spree::Stock::Splitter::Base`, you can create your own splitter.
-
-For an example of a simple splitter, take a look at Spree's [weight based splitter](https://github.com/spree/spree/blob/235e470b242225d7c75c7c4c4c033ee3d739bb36/core/app/models/spree/stock/splitter/weight.rb). This splitter pulls items with a weight greater than 150 into their own shipment.
-
-After creating your splitter, you need to add it to the array of splitters Spree uses. To do this, add the following to your application's spree initializer `spree.rb` file:
-
-<Tabs>
-  <Tab title="Spree 5.2+">
-    ```ruby config/initializers/spree.rb
-    Rails.application.config.after_initialize do
-      Spree.stock_splitters << Spree::Stock::Splitter::CustomSplitter
-    end
-    ```
-  </Tab>
-  <Tab title="Spree 5.1 and below">
-    ```ruby config/initializers/spree.rb
-    Rails.application.config.after_initialize do
-      Rails.application.config.spree.stock_splitters << Spree::Stock::Splitter::CustomSplitter
-    end
-    ```
-  </Tab>
-</Tabs>
-
-You can also completely override the splitters used in Spree, rearrange them, etc. To do this, add the following to your `spree.rb` file:
-
-<Tabs>
-  <Tab title="Spree 5.2+">
-    ```ruby config/initializers/spree.rb
-    Rails.application.config.after_initialize do
-      Spree.stock_splitters = [
-        Spree::Stock::Splitter::CustomSplitter,
-        Spree::Stock::Splitter::ShippingCategory
-      ]
-    end
-    ```
-  </Tab>
-  <Tab title="Spree 5.1 and below">
-    ```ruby config/initializers/spree.rb
-    Rails.application.config.after_initialize do
-      Rails.application.config.spree.stock_splitters = [
-        Spree::Stock::Splitter::CustomSplitter,
-        Spree::Stock::Splitter::ShippingCategory
-      ]
-    end
-    ```
-  </Tab>
-</Tabs>
-
-Or if you don't want to split packages just set the option above to an empty array. e.g. a store with the following configuration in spree.rb won't have any package splitted.
-
-<Tabs>
-  <Tab title="Spree 5.2+">
-    ```ruby config/initializers/spree.rb
-    Rails.application.config.after_initialize do
-      Spree.stock_splitters = []
-    end
-    ```
-  </Tab>
-  <Tab title="Spree 5.1 and below">
-    ```ruby config/initializers/spree.rb
-    Rails.application.config.after_initialize do
-      Rails.application.config.spree.stock_splitters = []
-    end
-    ```
-  </Tab>
-</Tabs>
-
-If you want to add different splitters for each [Stock Location](/developer/core-concepts/inventory#stock-locations), you need to decorate the `Spree::Stock::Coordinator` class and override the `splitters` method.
-
-### The Prioritizer
-
-A `Spree::Stock::Prioritizer` object will decide which `StockLocation` should ship which package from an order. The prioritizer will attempt to come up with the best shipping situation available to the user.
-
-By default, the prioritizer will first select packages where the items are on hand. Then it will try to find packages where items are backordered. During this process, the `Spree::Stock::Adjuster` is also used to ensure each package has the correct number of items.
-
-The prioritizer is also a customization point. If you want to customize which packages should take priority for the order during this process, you can override the `sort_packages` method in `Spree::Stock::Prioritizer`.
-
-#### Customizing the Adjuster
-
-The `Adjuster` visits each package in an order and ensures the correct number of items are in each package. To customize this functionality, you need to do two things:
-
-1. Subclass the [Spree::Stock::Adjuster](https://github.com/spree/spree/blob/main/core/app/models/spree/stock/adjuster.rb) class and override the the `adjust` method to get the desired functionality.
-2. Override the `prioritize_packages` method in the `Spree::Stock::Coordinator`, passing in your custom adjuster class to the `Prioritizer` initializer.
-
-<Warning>
-  Decorators should be used as a last resort as they can make upgrades difficult. See [Decorators](/developer/customization/decorators) for more information and alternatives.
-</Warning>
-
-For example, if your adjuster was called `Spree::Stock::CustomAdjuster`, you would do the following in `app/models/spree/stock/coordinator_decorator.rb`:
-
-```ruby app/models/spree/stock/coordinator_decorator.rb
-module Spree
-  module Stock
-    module CoordinatorDecorator
-      def prioritize_packages(packages)
-        prioritizer = Prioritizer.new(order, packages, Spree::Stock::CustomAdjuster)
-        prioritizer.prioritized_packages
-      end
-    end
-
-    Coordinator.prepend(CoordinatorDecorator)
-  end
-end
-```
-
-### The Estimator
-
-The `Spree::Stock::Estimator` loops through the packages created by the packer in order to calculate and attach shipping rates to them. This information is then returned to the user so they can select shipments for their order and complete the checkout process.
+A store shipping from 2 locations (New York, Los Angeles) with 3 carriers and 3 shipping categories:
+
+| Category / Method | DHL | FedEx | USPS |
+|:-|:-|:-|:-|
+| Light | $5/item | $10 flat | $8/item |
+| Regular | $5/item | $2/item | $8/item |
+| Heavy | $50/item | $20 + $15/add'l | $20/item |
 
 ## Related Documentation
 
-- [Orders](/developer/core-concepts/orders) - Order management and state machine
-- [Inventory](/developer/core-concepts/inventory) - Stock locations and inventory management
-- [Calculators](/developer/core-concepts/calculators) - Shipping rate calculators
-- [Addresses](/developer/core-concepts/addresses) - Shipping address and zones
-- [Events](/developer/core-concepts/events) - Subscribe to shipment events
-
+- [Orders](/developer/core-concepts/orders) — Checkout flow and shipping rate selection
+- [Inventory](/developer/core-concepts/inventory) — Stock locations and inventory management
+- [Calculators](/developer/core-concepts/calculators) — Shipping rate calculators
+- [Addresses](/developer/core-concepts/addresses) — Shipping address and zones
+- [Events](/developer/core-concepts/events) — Subscribe to shipment events (e.g., `shipment.shipped`)

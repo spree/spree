@@ -1,0 +1,207 @@
+---
+title: "create-spree-app"
+sidebarTitle: Overview
+description: "Scaffold a new Spree Commerce project with a single command. Backend runs via Docker using pre-built images."
+---
+
+## Quick Start
+
+```bash
+npx create-spree-app@latest my-store
+```
+
+The CLI walks you through an interactive setup:
+
+1. Choose **Full-stack** (Backend + Next.js Storefront) or **Backend only**
+2. Optionally load **sample data** (products, categories, images)
+3. Optionally **start Docker services** immediately
+
+Once complete, your store is running at [http://localhost:3000](http://localhost:3000).
+
+## Prerequisites
+
+- [Node.js](https://nodejs.org/) 20 or later
+- [Docker](https://docs.docker.com/get-docker/) (for running the Spree backend and PostgreSQL)
+
+## Setup Modes
+
+### Full-stack (default)
+
+Sets up both the Spree backend (Docker) and a [Next.js storefront](/developer/storefront/nextjs/quickstart) with the [Spree SDK](/developer/sdk/quickstart) pre-configured.
+
+```bash
+npx create-spree-app@latest my-store
+```
+
+The storefront is downloaded from the [Spree Storefront](https://github.com/spree/storefront) template and placed in `apps/storefront/`. The CLI automatically:
+
+- Installs storefront dependencies
+- Fetches a Store API key from the running backend
+- Writes the API key to the storefront's `.env.local`
+
+### Backend only
+
+Skips the storefront — just the Spree backend and PostgreSQL via Docker. Ideal when you're building a custom frontend or only need the API.
+
+```bash
+npx create-spree-app@latest my-store --backend-only
+```
+
+## CLI Flags
+
+All prompts can be skipped with flags for non-interactive (CI/CD) usage:
+
+```bash
+npx create-spree-app@latest my-store --backend-only --no-sample-data --no-start
+```
+
+| Flag | Description |
+|------|-------------|
+| `--backend-only` | Skip storefront setup |
+| `--no-sample-data` | Skip loading sample products and categories |
+| `--no-start` | Don't start Docker services after scaffolding |
+| `--port <number>` | Port for the Spree backend (default: `3000`) |
+| `--use-npm` | Use npm as package manager |
+| `--use-yarn` | Use yarn as package manager |
+| `--use-pnpm` | Use pnpm as package manager |
+
+<Tip>
+  The package manager is auto-detected from how you run the command. If you use `pnpm dlx create-spree-app`, pnpm will be used automatically.
+</Tip>
+
+<Tip>
+  If the default port is already in use, the CLI will automatically find a free port and let you know.
+</Tip>
+
+## Generated Project Structure
+
+<CodeGroup>
+```text Full-stack
+my-store/
+├── docker-compose.yml    # Spree backend + PostgreSQL
+├── .env                  # Backend environment variables
+├── .gitignore
+├── package.json          # Convenience scripts
+├── README.md
+└── apps/
+    └── storefront/       # Next.js storefront
+        ├── .env.local    # API URL + API key
+        └── ...
+```
+
+```text Backend only
+my-store/
+├── docker-compose.yml    # Spree backend + PostgreSQL
+├── .env                  # Backend environment variables
+├── .gitignore
+├── package.json          # Convenience scripts
+└── README.md
+```
+</CodeGroup>
+
+### What's in docker-compose.yml
+
+- **Spree** — runs the `ghcr.io/spree/spree:latest` image on the configured port (default `3000`)
+- **PostgreSQL 17** — database with persistent volume
+- Health checks on both services
+
+### Spree CLI Commands
+
+The project includes [@spree/cli](https://www.npmjs.com/package/@spree/cli) for managing your Spree backend:
+
+| Command | Description |
+|---------|-------------|
+| `spree start` | Start backend services and stream logs |
+| `spree stop` | Stop backend services |
+| `spree down` | Stop and remove backend services |
+| `spree update` | Pull latest Spree image and restart (runs migrations automatically) |
+| `spree logs` | View backend logs |
+| `spree logs:worker` | View background jobs logs |
+| `spree console` | Rails console |
+| `spree seed` | Re-seed the database |
+| `spree load-sample-data` | Load sample products, categories, and images |
+
+## After Setup
+
+### Admin Dashboard
+
+Open [http://localhost:3000/admin](http://localhost:3000/admin) and log in with:
+
+| | |
+|---|---|
+| **Email** | `spree@example.com` |
+| **Password** | `spree123` |
+
+### Store API
+
+The REST API is available at [http://localhost:3000/api/v3/store](http://localhost:3000/api/v3/store). See the [API Reference](/api-reference) for details.
+
+### Storefront (full-stack mode)
+
+If you chose full-stack mode, start the storefront in a separate terminal:
+
+```bash
+cd my-store/apps/storefront
+npm run dev
+```
+
+Open [http://localhost:3001](http://localhost:3001) to see your store.
+
+## Manual Start
+
+If you used `--no-start`, start services manually:
+
+```bash
+cd my-store
+spree start
+```
+
+Wait for Spree to be healthy, then optionally load sample data:
+
+```bash
+spree load-sample-data
+```
+
+
+## Spree CLI
+
+You can also use the [Spree CLI](/developer/cli) directly for additional commands:
+
+```bash
+spree user create          # Create an admin user
+spree api-key create       # Create an API key
+spree api-key list         # List API keys
+```
+
+## Updating Spree
+
+To update to the latest Spree version:
+
+```bash
+spree update
+```
+
+This pulls the latest Docker image and recreates the containers. The entrypoint automatically runs database migrations.
+
+To pin a specific version, edit `SPREE_VERSION_TAG` in `.env`:
+
+```
+SPREE_VERSION_TAG=5.4
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Next.js Storefront" icon="react" href="/developer/storefront/nextjs/quickstart">
+    Customize and extend the Storefront
+  </Card>
+  <Card title="Spree SDK" icon="code" href="/developer/sdk/quickstart">
+    TypeScript SDK for the Store and Admin APIs
+  </Card>
+  <Card title="API Reference" icon="book" href="/api-reference">
+    Explore the REST API endpoints
+  </Card>
+  <Card title="Core Concepts" icon="brain" href="/developer/core-concepts/architecture">
+    Learn about Spree's architecture
+  </Card>
+</CardGroup>
