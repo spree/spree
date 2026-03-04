@@ -103,6 +103,7 @@ module Spree
         end
 
         # Override in subclass to disable distinct (e.g., for custom sorting with computed columns)
+        # @return [Boolean] whether to apply distinct to the collection
         def collection_distinct?
           true
         end
@@ -112,6 +113,8 @@ module Spree
           collection
         end
 
+        # Override in subclass to specify collection includes
+        # @return [Array<Symbol>] the includes to apply to the collection
         def collection_includes
           []
         end
@@ -122,16 +125,19 @@ module Spree
         end
 
         # Pagination parameters
+        # @return [Integer] the current page number
         def page
           params[:page]&.to_i || 1
         end
 
+        # @return [Integer] the number of items per page
         def limit
           limit_param = params[:limit]&.to_i || 25
           [limit_param, 100].min # Max 100 per page
         end
 
         # Metadata for collection responses
+        # @return [Hash] pagination metadata
         def collection_meta(_collection)
           return {} unless @pagy
 

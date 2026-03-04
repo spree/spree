@@ -73,7 +73,8 @@ module Spree
         # Strips order to avoid PostgreSQL errors with DISTINCT + subquery ORDER BY expressions
         def collection_cache_key(collection)
           parts = [
-            collection.reorder(nil).cache_key_with_version,
+            collection.max { |a, b| a.updated_at <=> b.updated_at },
+            collection.length,
             params[:expand],
             params[:q],
             params[:page],
