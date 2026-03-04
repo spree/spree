@@ -19,6 +19,9 @@ export function registerInitCommand(program: Command): void {
     .action(async (flags: { sampleData: boolean; open: boolean }) => {
       const ctx = detectProject()
 
+      p.log.step('Pulling latest images...')
+      await dockerCompose(['pull'], ctx.projectDir, { stdio: 'inherit' })
+
       const s = p.spinner()
       s.start('Starting Docker services...')
       await dockerCompose(['up', '-d'], ctx.projectDir)

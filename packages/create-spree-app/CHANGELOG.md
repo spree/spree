@@ -1,5 +1,11 @@
 # create-spree-app
 
+## 0.3.2
+
+### Patch Changes
+
+- Bump `@spree/cli` dependency to `2.0.0-beta.4`
+
 ## 0.3.1
 
 ### Patch Changes
