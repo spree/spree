@@ -12,9 +12,14 @@ export default class extends Controller {
     this.element.reset = this.reset.bind(this)
     this.element.values = this.values.bind(this)
     this.element.setValues = this.setValues.bind(this)
-    this.element.addEventListener('tomSelectInitialized', () => this.refreshAvailableOptions())
+    this.boundRefresh = this.refreshAvailableOptions.bind(this)
+    this.element.addEventListener('tomSelectInitialized', this.boundRefresh)
 
     this.setValues(this.preloadedValuesValue)
+  }
+
+  disconnect() {
+    this.element.removeEventListener('tomSelectInitialized', this.boundRefresh)
   }
 
   reset(addBlankSelect = true) {

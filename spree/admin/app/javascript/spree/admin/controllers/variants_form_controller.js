@@ -768,14 +768,12 @@ export default class extends CheckboxSelectAll {
     if (this.lastOptionNameId) {
       const response = await get(`${this.adminPathValue}/option_types/${this.lastOptionNameId}/option_values/select_options`)
 
-      if (response.ok) {
-        this.currentOptionValues[this.lastOptionNameId] = await response.json
+      this.currentOptionValues[this.lastOptionNameId] = response.ok ? await response.json : []
 
-        const optionsCreatorContainer = targetInput.closest('.options-creator__option')
-        const newOptionValuesSelects = optionsCreatorContainer.querySelectorAll('[data-variants-form-target="newOptionValuesSelect"]')
+      const optionsCreatorContainer = targetInput.closest('.options-creator__option')
+      const newOptionValuesSelects = optionsCreatorContainer.querySelectorAll('[data-variants-form-target="newOptionValuesSelect"]')
 
-        newOptionValuesSelects.forEach((select) => this.replaceSelectOptions(select))
-      }
+      newOptionValuesSelects.forEach((select) => this.replaceSelectOptions(select))
     }
   }
 
