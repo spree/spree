@@ -1,5 +1,11 @@
 # create-spree-app
 
+## 0.3.1
+
+### Patch Changes
+
+- Updated storefront repository URL from `spree/nextjs-starter-spree` to `spree/storefront`
+
 ## 0.3.0
 
 ### Minor Changes

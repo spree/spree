@@ -78,7 +78,7 @@ Upcoming **Spree 5.4** expands the platform's reach to JavaScript developers wit
 
 - **[New REST API](api)** — ~10x faster than API v2, built for simplicity and performance
 - **[TypeScript SDK](sdk)** — First-class developer experience with full type safety
-- **[Next.js Starter Kit](https://github.com/spree/nextjs-starter-spree)** — Production-ready headless storefront powered by the new API
+- **[Next.js Starter Kit](https://github.com/spree/storefront)** — Production-ready headless storefront powered by the new API
 
 Read the [full Spree 5.3 announcement here](https://spreecommerce.org/announcing-spree-commerce-5-3-with-price-lists-customer-groups-new-admin-tools/).
 
