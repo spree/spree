@@ -12,9 +12,14 @@ export default class extends Controller {
     this.element.reset = this.reset.bind(this)
     this.element.values = this.values.bind(this)
     this.element.setValues = this.setValues.bind(this)
-    this.element.addEventListener('tomSelectInitialized', () => this.refreshAvailableOptions())
+    this.tomSelectInitializedHandler = this.refreshAvailableOptions.bind(this)
+    this.element.addEventListener('tomSelectInitialized', this.tomSelectInitializedHandler)
 
     this.setValues(this.preloadedValuesValue)
+  }
+
+  disconnect() {
+    this.element.removeEventListener('tomSelectInitialized', this.tomSelectInitializedHandler)
   }
 
   reset(addBlankSelect = true) {
@@ -42,6 +47,7 @@ export default class extends Controller {
 
   handleSelect(event) {
     const ts = event.target.tomselect
+    this.refreshPreloadedOptions()
 
     if (ts && ts.getValue().length > 0 && (this.lastSelect === event.target || this.selectTargets.length === 1)) {
       this.addSelect()
@@ -51,6 +57,29 @@ export default class extends Controller {
     }
 
     this.refreshAvailableOptions()
+  }
+
+  refreshPreloadedOptions() {
+    const options = new Map()
+
+    this.selectTargets.forEach((target) => {
+      const ts = target.querySelector('select')?.tomselect
+      if (!ts) return
+
+      Object.values(ts.options).forEach((option) => {
+        const optionId = String(option.id)
+        if (!options.has(optionId)) {
+          options.set(optionId, {
+            id: optionId,
+            name: option.name || option.text
+          })
+        }
+      })
+    })
+
+    if (options.size > 0) {
+      this.preloadedOptionsValue = Array.from(options.values())
+    }
   }
 
   removeSelect(container) {
