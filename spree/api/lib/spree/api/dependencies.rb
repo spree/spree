@@ -109,7 +109,6 @@ module Spree
         country_serializer: 'Spree::Api::V3::CountrySerializer',
         market_serializer: 'Spree::Api::V3::MarketSerializer',
         state_serializer: 'Spree::Api::V3::StateSerializer',
-        store_serializer: 'Spree::Api::V3::StoreSerializer',
         wishlist_serializer: 'Spree::Api::V3::WishlistSerializer',
         wished_item_serializer: 'Spree::Api::V3::WishedItemSerializer',
         payment_method_serializer: 'Spree::Api::V3::PaymentMethodSerializer',
