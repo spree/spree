@@ -12,7 +12,7 @@ module Spree
         extend ActiveSupport::Concern
 
         included do
-          before_action :set_vary_headers
+          after_action :set_vary_headers
         end
 
         protected
