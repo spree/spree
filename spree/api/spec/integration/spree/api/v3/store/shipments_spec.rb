@@ -24,7 +24,7 @@ RSpec.describe 'Shipments API', type: :request, swagger_doc: 'api-reference/stor
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false
       parameter name: :order_id, in: :path, type: :string, required: true
-      parameter name: :token, in: :query, type: :string, required: false, description: 'Order token for guest access'
+      parameter name: 'x-spree-order-token', in: :header, type: :string, required: false, description: 'Order token for guest access'
 
       response '200', 'shipments found' do
         let(:'x-spree-api-key') { api_key.token }
@@ -67,7 +67,7 @@ RSpec.describe 'Shipments API', type: :request, swagger_doc: 'api-reference/stor
       parameter name: 'Authorization', in: :header, type: :string, required: false
       parameter name: :order_id, in: :path, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true, description: 'Shipment ID'
-      parameter name: :token, in: :query, type: :string, required: false, description: 'Order token for guest access'
+      parameter name: 'x-spree-order-token', in: :header, type: :string, required: false, description: 'Order token for guest access'
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Expand shipping_rates'
 
@@ -76,7 +76,7 @@ RSpec.describe 'Shipments API', type: :request, swagger_doc: 'api-reference/stor
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:order_id) { order.to_param }
         let(:id) { shipment.to_param }
-        let(:token) { order.token }
+        let(:'x-spree-order-token') { order.token }
 
         schema '$ref' => '#/components/schemas/StoreShipment'
 
@@ -91,7 +91,7 @@ RSpec.describe 'Shipments API', type: :request, swagger_doc: 'api-reference/stor
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:order_id) { order.to_param }
         let(:id) { 'shp_nonexistent' }
-        let(:token) { order.token }
+        let(:'x-spree-order-token') { order.token }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 
@@ -118,7 +118,7 @@ RSpec.describe 'Shipments API', type: :request, swagger_doc: 'api-reference/stor
       parameter name: 'Authorization', in: :header, type: :string, required: false
       parameter name: :order_id, in: :path, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true, description: 'Shipment ID'
-      parameter name: :token, in: :query, type: :string, required: false, description: 'Order token for guest access'
+      parameter name: 'x-spree-order-token', in: :header, type: :string, required: false, description: 'Order token for guest access'
       parameter name: :body, in: :body, schema: {
         type: :object,
         properties: {
@@ -133,7 +133,7 @@ RSpec.describe 'Shipments API', type: :request, swagger_doc: 'api-reference/stor
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:order_id) { order.to_param }
         let(:id) { shipment.to_param }
-        let(:token) { order.token }
+        let(:'x-spree-order-token') { order.token }
         let(:body) { { selected_shipping_rate_id: shipping_rate.to_param } }
 
         schema '$ref' => '#/components/schemas/StoreOrder'
@@ -149,7 +149,7 @@ RSpec.describe 'Shipments API', type: :request, swagger_doc: 'api-reference/stor
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:order_id) { order.to_param }
         let(:id) { shipment.to_param }
-        let(:token) { order.token }
+        let(:'x-spree-order-token') { order.token }
         let(:body) { { selected_shipping_rate_id: 'shprt_invalid' } }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'

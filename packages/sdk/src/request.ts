@@ -121,10 +121,6 @@ export function createRequestFn(
         }
       });
     }
-    if (orderToken) {
-      url.searchParams.set('order_token', orderToken);
-    }
-
     // Build headers
     const requestHeaders: Record<string, string> = {
       'Content-Type': 'application/json',

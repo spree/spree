@@ -13,7 +13,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
       tags 'Orders'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Returns a single order by ID or number. Guests must provide order_token.'
+      description 'Returns a single order by ID or number. Guests must provide the x-spree-order-token header.'
 
       sdk_example <<~JS
         const order = await client.store.orders.get('or_abc123', {
@@ -27,7 +27,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
       parameter name: 'Authorization', in: :header, type: :string, required: false
       parameter name: :id, in: :path, type: :string, required: true,
                 description: 'Order ID (prefixed) or order number'
-      parameter name: :order_token, in: :query, type: :string, required: false,
+      parameter name: 'x-spree-order-token', in: :header, type: :string, required: false,
                 description: 'Order token for guest access'
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Expand associations (line_items, shipments, payments)'
@@ -49,7 +49,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
         let(:guest_order) { create(:order_with_line_items, store: store, user: nil) }
         let(:'x-spree-api-key') { api_key.token }
         let(:id) { guest_order.to_param }
-        let(:order_token) { guest_order.token }
+        let(:'x-spree-order-token') { guest_order.token }
 
         schema '$ref' => '#/components/schemas/StoreOrder'
 
@@ -107,7 +107,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false
       parameter name: :id, in: :path, type: :string, required: true
-      parameter name: :order_token, in: :query, type: :string, required: false
+      parameter name: 'x-spree-order-token', in: :header, type: :string, required: false
       parameter name: :body, in: :body, schema: {
         type: :object,
         properties: {
@@ -203,7 +203,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false
       parameter name: :id, in: :path, type: :string, required: true
-      parameter name: :order_token, in: :query, type: :string, required: false
+      parameter name: 'x-spree-order-token', in: :header, type: :string, required: false
 
       response '200', 'order advanced' do
         let(:advanceable_order) { create(:order_with_line_items, store: store, user: user) }
@@ -245,7 +245,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false
       parameter name: :id, in: :path, type: :string, required: true
-      parameter name: :order_token, in: :query, type: :string, required: false
+      parameter name: 'x-spree-order-token', in: :header, type: :string, required: false
 
       response '200', 'order advanced' do
         let(:advanceable_order) { create(:order_with_line_items, store: store, user: user) }
@@ -276,7 +276,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false
       parameter name: :id, in: :path, type: :string, required: true
-      parameter name: :order_token, in: :query, type: :string, required: false
+      parameter name: 'x-spree-order-token', in: :header, type: :string, required: false
 
       response '200', 'order completed' do
         let(:completable_order) do
