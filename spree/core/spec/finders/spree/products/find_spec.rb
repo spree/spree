@@ -3,14 +3,14 @@ require 'spec_helper'
 module Spree
   describe Products::Find do
     let(:store)                      { @default_store }
-    let!(:product)                   { create(:product, price: 15.99, stores: [store]) }
-    let!(:product_2)                 { create(:product, discontinue_on: Time.current + 1.day, price: 23.99, stores: [store]) }
-    let!(:product_3)                 { create(:product, stores: [store]) }
+    let!(:product)                   { create(:product, name: 'Product 1', price: 15.99, stores: [store]) }
+    let!(:product_2)                 { create(:product, name: 'Product 2', discontinue_on: Time.current + 1.day, price: 23.99, stores: [store]) }
+    let!(:product_3)                 { create(:product, name: 'Product 3', stores: [store]) }
     let!(:option_value)              { create(:option_value) }
-    let!(:deleted_product)           { create(:product, deleted_at: Time.current - 1.day) }
-    let!(:discontinued_product)      { create(:product, status: 'archived') }
-    let!(:in_stock_product)          { create(:product_in_stock) }
-    let!(:not_backorderable_product) { create(:product_in_stock, :without_backorder) }
+    let!(:deleted_product)           { create(:product, name: 'Deleted Product', deleted_at: Time.current - 1.day) }
+    let!(:discontinued_product)      { create(:product, name: 'Discontinued Product', status: 'archived') }
+    let!(:in_stock_product)          { create(:product_in_stock, name: 'In Stock Product') }
+    let!(:not_backorderable_product) { create(:product_in_stock, :without_backorder, name: 'Not Backorderable Product') }
 
     context 'include discontinued' do
       it 'returns products with discontinued' do
@@ -377,7 +377,7 @@ module Spree
         described_class.new(
           scope: Spree::Product.all,
           params: params
-        ).execute
+        ).execute.to_a
       end
 
       context 'default' do
@@ -385,7 +385,7 @@ module Spree
           let(:params) { { sort_by: 'default' } }
 
           it 'returns products in default order' do
-            expect(products.ids).to match_array Spree::Product.available.ids
+            expect(products).to match_array Spree::Product.available.to_a
           end
         end
 
@@ -415,11 +415,24 @@ module Spree
         end
       end
 
+
+      # module Spree
+      #   describe Products::Find do
+      #     let(:store)                      { @default_store }
+      #     let!(:product)                   { create(:product, name: 'Product 1', price: 15.99, stores: [store]) }
+      #     let!(:product_2)                 { create(:product, name: 'Product 2', discontinue_on: Time.current + 1.day, price: 23.99, stores: [store]) }
+      #     let!(:product_3)                 { create(:product, name: 'Product 3', stores: [store]) }
+      #     let!(:option_value)              { create(:option_value) }
+      #     let!(:deleted_product)           { create(:product, name: 'Deleted Product', deleted_at: Time.current - 1.day) }
+      #     let!(:discontinued_product)      { create(:product, name: 'Discontinued Product', status: 'archived') }
+      #     let!(:in_stock_product)          { create(:product_in_stock, name: 'In Stock Product') }
+      #     let!(:not_backorderable_product) { create(:product_in_stock, :without_backorder, name: 'Not Backorderable Product') }
+
       context 'when sorting by newest-first' do
         let(:params) { { sort_by: 'newest-first' } }
 
         it 'returns products in newest-first order' do
-          expect(products).to match_array([product_2, product_3, product, in_stock_product, not_backorderable_product])
+          expect(products.to_a).to eq([not_backorderable_product, in_stock_product, product_3, product_2, product])
         end
       end
 
@@ -427,7 +440,7 @@ module Spree
         let(:params) { { sort_by: 'price-high-to-low' } }
 
         it 'returns products in price-high-to-low order' do
-          expect(products).to match_array([product_2, product_3, product, in_stock_product, not_backorderable_product])
+          expect(products).to eq([product_2, not_backorderable_product, in_stock_product, product_3, product])
         end
       end
 
@@ -435,7 +448,7 @@ module Spree
         let(:params) { { sort_by: 'price-low-to-high' } }
 
         it 'returns products in price-low-to-high order' do
-          expect(products).to match_array([product, product_3, product_2, in_stock_product, not_backorderable_product])
+          expect(products).to eq([product, product_3, in_stock_product, not_backorderable_product, product_2])
         end
       end
 
@@ -443,7 +456,7 @@ module Spree
         let(:params) { { sort_by: 'name-a-z' } }
 
         it 'returns products in name-a-z order' do
-          expect(products).to match_array([product, product_2, product_3, in_stock_product, not_backorderable_product])
+          expect(products).to eq([in_stock_product, not_backorderable_product, product, product_2, product_3])
         end
       end
 
@@ -451,7 +464,7 @@ module Spree
         let(:params) { { sort_by: 'name-z-a' } }
 
         it 'returns products in name-z-a order' do
-          expect(products).to match_array([product_3, product_2, product, in_stock_product, not_backorderable_product])
+          expect(products).to eq([product_3, product_2, product, not_backorderable_product, in_stock_product])
         end
       end
 
@@ -459,13 +472,13 @@ module Spree
         let(:params) { { sort_by: 'best-selling' } }
 
         before do
-          create(:store_product, product: product, units_sold_count: 10, revenue: 100)
-          create(:store_product, product: product_2, units_sold_count: 20, revenue: 200)
-          create(:store_product, product: product_3, units_sold_count: 30, revenue: 300)
+          product.store_products.find_by(store: store).update(units_sold_count: 10, revenue: 100)
+          product_2.store_products.find_by(store: store).update(units_sold_count: 30, revenue: 200)
+          product_3.store_products.find_by(store: store).update(units_sold_count: 30, revenue: 300)
         end
 
         it 'returns products in best-selling order' do
-          expect(products).to match_array([product_3, product_2, product, in_stock_product, not_backorderable_product])
+          expect(products).to eq([product_3, product_2, product, in_stock_product, not_backorderable_product])
         end
       end
     end
