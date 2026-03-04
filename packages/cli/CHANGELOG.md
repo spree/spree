@@ -1,5 +1,11 @@
 # @spree/cli
 
+## 2.0.0-beta.5
+
+### Patch Changes
+
+- Automatically update storefront `.env.local` with the real API key during `spree init`
+
 ## 2.0.0-beta.4
 
 ### Patch Changes

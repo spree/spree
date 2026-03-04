@@ -3,6 +3,8 @@ import * as p from '@clack/prompts'
 import pc from 'picocolors'
 import { execaCommand } from 'execa'
 import { platform } from 'node:os'
+import fs from 'node:fs'
+import path from 'node:path'
 import { detectProject } from '../context.js'
 import { dockerCompose, rakeTask, streamLogs } from '../docker.js'
 import { DEFAULT_ADMIN_EMAIL, DEFAULT_ADMIN_PASSWORD } from '../constants.js'
@@ -37,6 +39,7 @@ export function registerInitCommand(program: Command): void {
 
       s.start('Configuring API key...')
       const apiKey = await fetchApiKey(ctx.projectDir)
+      updateStorefrontEnv(ctx.projectDir, apiKey)
       s.stop(`API key: ${pc.cyan(apiKey)}`)
 
       if (flags.sampleData) {
@@ -95,6 +98,14 @@ async function fetchApiKey(projectDir: string): Promise<string> {
     throw new Error(`Could not extract API key from Rails output: ${stdout}`)
   }
   return match[0]
+}
+
+export function updateStorefrontEnv(projectDir: string, apiKey: string): void {
+  const envPath = path.join(projectDir, 'apps', 'storefront', '.env.local')
+  if (!fs.existsSync(envPath)) return
+
+  const content = fs.readFileSync(envPath, 'utf-8')
+  fs.writeFileSync(envPath, content.replace(/SPREE_PUBLISHABLE_KEY=.*/, `SPREE_PUBLISHABLE_KEY=${apiKey}`))
 }
 
 async function openBrowser(url: string): Promise<void> {
