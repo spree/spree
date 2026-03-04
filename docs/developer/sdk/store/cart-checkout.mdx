@@ -26,7 +26,7 @@ await client.store.cart.associate({
 
 ```typescript
 // List orders for authenticated customer
-const orders = await client.store.orders.list({}, { token });
+const orders = await client.store.customer.orders.list({}, { token });
 ```
 
 ### Get an Order

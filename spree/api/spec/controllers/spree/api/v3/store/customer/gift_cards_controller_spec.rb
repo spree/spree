@@ -45,9 +45,9 @@ RSpec.describe Spree::Api::V3::Store::Customer::GiftCardsController, type: :cont
       get :index
 
       card_data = json_response['data'].first
-      expect(card_data['amount']).to eq(100.0)
-      expect(card_data['amount_used']).to eq(25.0)
-      expect(card_data['amount_remaining']).to eq(75.0)
+      expect(card_data['amount']).to eq('100.0')
+      expect(card_data['amount_used']).to eq('25.0')
+      expect(card_data['amount_remaining']).to eq('75.0')
     end
 
     it 'only returns gift cards belonging to the current user' do
@@ -111,7 +111,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::GiftCardsController, type: :cont
 
         partial_data = json_response['data'].find { |c| c['id'] == partial_card.prefixed_id }
         expect(partial_data['state']).to eq('partially_redeemed')
-        expect(partial_data['amount_remaining']).to eq(30.0)
+        expect(partial_data['amount_remaining']).to eq('30.0')
       end
     end
 
@@ -138,9 +138,9 @@ RSpec.describe Spree::Api::V3::Store::Customer::GiftCardsController, type: :cont
       get :show, params: { id: gift_card.prefixed_id }
 
       expect(json_response['code']).to eq(gift_card.display_code)
-      expect(json_response['amount']).to eq(100.0)
-      expect(json_response['amount_used']).to eq(25.0)
-      expect(json_response['amount_remaining']).to eq(75.0)
+      expect(json_response['amount']).to eq('100.0')
+      expect(json_response['amount_used']).to eq('25.0')
+      expect(json_response['amount_remaining']).to eq('75.0')
       expect(json_response['currency']).to eq(gift_card.currency)
     end
 
