@@ -200,7 +200,7 @@ const { data: countries } = await client.store.countries.list()
 
 // Get a single country with states
 const usa = await client.store.countries.get('US', {
-  includes: ['states'],
+  expand: ['states'],
 })
 console.log(usa.states) // [{ abbr: "CA", name: "California" }, ...]
 ```
@@ -211,7 +211,7 @@ curl 'http://localhost:3000/api/v3/store/countries' \
   -H 'X-Spree-Api-Key: spree_pk_xxx'
 
 # Get a country with states
-curl 'http://localhost:3000/api/v3/store/countries/US?include=states' \
+curl 'http://localhost:3000/api/v3/store/countries/US?expand=states' \
   -H 'X-Spree-Api-Key: spree_pk_xxx'
 ```
 

@@ -33,7 +33,7 @@ Sets up both the Spree backend (Docker) and a [Next.js storefront](/developer/st
 npx create-spree-app@latest my-store
 ```
 
-The storefront is downloaded from the [Next.js Starter](https://github.com/spree/nextjs-starter-spree) template and placed in `apps/storefront/`. The CLI automatically:
+The storefront is downloaded from the [Spree Storefront](https://github.com/spree/storefront) template and placed in `apps/storefront/`. The CLI automatically:
 
 - Installs storefront dependencies
 - Fetches a Store API key from the running backend
@@ -105,18 +105,21 @@ my-store/
 - **PostgreSQL 17** — database with persistent volume
 - Health checks on both services
 
-### What's in package.json
+### Spree CLI Commands
 
-Convenience scripts so you don't have to remember Docker commands:
+The project includes [@spree/cli](https://www.npmjs.com/package/@spree/cli) for managing your Spree backend:
 
 | Command | Description |
 |---------|-------------|
-| `npm run dev` | Start backend services (`docker compose up -d`) |
-| `npm run down` | Stop backend services (`docker compose down`) |
-| `npm run logs` | Tail backend logs (`docker compose logs -f spree`) |
-| `npm run console` | Open Rails console (`docker compose exec spree bin/rails c`) |
-| `npm run seed` | Re-seed the database |
-| `npm run load-sample-data` | Load sample products, categories, and images |
+| `spree start` | Start backend services and stream logs |
+| `spree stop` | Stop backend services |
+| `spree down` | Stop and remove backend services |
+| `spree update` | Pull latest Spree image and restart (runs migrations automatically) |
+| `spree logs` | View backend logs |
+| `spree logs:worker` | View background jobs logs |
+| `spree console` | Rails console |
+| `spree seed` | Re-seed the database |
+| `spree load-sample-data` | Load sample products, categories, and images |
 
 ## After Setup
 
@@ -150,34 +153,47 @@ If you used `--no-start`, start services manually:
 
 ```bash
 cd my-store
-npm run dev
+spree start
 ```
 
 Wait for Spree to be healthy, then optionally load sample data:
 
 ```bash
-npm run load-sample-data
+spree load-sample-data
 ```
 
-For the storefront, you'll need to fetch an API key manually:
+
+## Spree CLI
+
+You can also use the [Spree CLI](/developer/cli) directly for additional commands:
 
 ```bash
-# Get the publishable API key
-docker compose exec spree bin/rails runner "puts Spree::ApiKey.find_by(key_type: :publishable)&.key"
+spree user create          # Create an admin user
+spree api-key create       # Create an API key
+spree api-key list         # List API keys
 ```
 
-Then add it to `apps/storefront/.env.local`:
+## Updating Spree
+
+To update to the latest Spree version:
 
 ```bash
-NEXT_PUBLIC_SPREE_API_URL=http://localhost:3000
-NEXT_PUBLIC_SPREE_PUBLISHABLE_KEY=spree_pk_your_key_here
+spree update
+```
+
+This pulls the latest Docker image and recreates the containers. The entrypoint automatically runs database migrations.
+
+To pin a specific version, edit `SPREE_VERSION_TAG` in `.env`:
+
+```
+SPREE_VERSION_TAG=5.4
 ```
 
 ## Next Steps
 
 <CardGroup cols={2}>
   <Card title="Next.js Storefront" icon="react" href="/developer/storefront/nextjs/quickstart">
-    Customize and extend the Next.js starter
+    Customize and extend the Storefront
   </Card>
   <Card title="Spree SDK" icon="code" href="/developer/sdk/quickstart">
     TypeScript SDK for the Store and Admin APIs

@@ -35,7 +35,7 @@ console.log(product.original_price) // "19.99" — compare-at price (if set)
 
 // Each variant has its own price
 const detailed = await client.store.products.get('spree-tote', {
-  includes: 'variants',
+  expand: ['variants'],
 })
 detailed.variants?.forEach(variant => {
   console.log(variant.price)          // "15.99"
@@ -49,7 +49,7 @@ curl 'https://api.mystore.com/api/v3/store/products/spree-tote' \
   -H 'Authorization: Bearer spree_pk_xxx'
 
 # With variants
-curl 'https://api.mystore.com/api/v3/store/products/spree-tote?includes=variants' \
+curl 'https://api.mystore.com/api/v3/store/products/spree-tote?expand=variants' \
   -H 'Authorization: Bearer spree_pk_xxx'
 ```
 

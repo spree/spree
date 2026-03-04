@@ -218,14 +218,14 @@ curl -G 'http://localhost:3000/api/v3/store/taxons' \
 
 ## Pagination
 
-All collection endpoints return paginated results. Control pagination with `page` and `per_page` parameters:
+All collection endpoints return paginated results. Control pagination with `page` and `limit` parameters:
 
 <CodeGroup>
 
 ```typescript SDK
 const { data: products, meta } = await client.store.products.list({
   page: 2,
-  per_page: 10,
+  limit: 10,
 })
 
 // meta contains pagination info
@@ -247,7 +247,7 @@ console.log(meta)
 curl -G 'http://localhost:3000/api/v3/store/products' \
   -H 'X-Spree-Api-Key: spree_pk_xxx' \
   -d 'page=2' \
-  -d 'per_page=10'
+  -d 'limit=10'
 ```
 
 </CodeGroup>
@@ -257,7 +257,7 @@ curl -G 'http://localhost:3000/api/v3/store/products' \
 | Parameter | Default | Max | Description |
 |-----------|---------|-----|-------------|
 | `page` | `1` | - | Page number |
-| `per_page` | `25` | `100` | Number of records per page |
+| `limit` | `25` | `100` | Number of records per page |
 
 ### Pagination Metadata
 

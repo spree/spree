@@ -123,7 +123,7 @@ All data fetching is done through server actions in `src/lib/data/`. These are t
 // Products
 import { getProducts, getProduct, getProductFilters } from '@/lib/data/products'
 
-const products = await getProducts({ per_page: 12 })
+const products = await getProducts({ limit: 12 })
 const product = await getProduct('product-slug')
 const filters = await getProductFilters()
 

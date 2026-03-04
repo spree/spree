@@ -86,12 +86,13 @@
                 "pages": ["developer/getting-started/quickstart"]
               },
               {
-                "group": "Foundations",
-                "icon": "brain",
+                "group": "Platform",
+                "icon": "settings",
                 "pages": [
                   "developer/core-concepts/architecture",
                   "developer/core-concepts/stores",
                   "developer/core-concepts/markets",
+                  "developer/core-concepts/customers",
                   "developer/core-concepts/staff-roles"
                 ]
               },
@@ -100,49 +101,42 @@
                 "icon": "package",
                 "pages": [
                   "developer/core-concepts/products",
-                  "developer/core-concepts/images-assets",
                   "developer/core-concepts/pricing",
                   "developer/core-concepts/inventory",
+                  "developer/core-concepts/images-assets",
                   "developer/core-concepts/search-filtering"
                 ]
               },
               {
-                "group": "Shopping",
+                "group": "Cart & Checkout",
                 "icon": "shopping-cart",
                 "pages": [
                   "developer/core-concepts/orders",
-                  "developer/core-concepts/customers",
-                  "developer/core-concepts/addresses",
-                  "developer/core-concepts/promotions",
-                  "developer/core-concepts/taxes",
-                  "developer/core-concepts/shipments",
                   "developer/core-concepts/payments",
+                  "developer/core-concepts/taxes",
+                  "developer/core-concepts/promotions",
                   "developer/core-concepts/store-credits-gift-cards"
                 ]
               },
               {
-                "group": "Under the Hood",
-                "icon": "settings",
+                "group": "Fulfillment",
+                "icon": "truck",
                 "pages": [
+                  "developer/core-concepts/shipments",
+                  "developer/core-concepts/addresses",
                   "developer/core-concepts/adjustments",
                   "developer/core-concepts/calculators"
                 ]
               },
               {
-                "group": "Content & Data",
-                "icon": "languages",
-                "pages": [
-                  "developer/core-concepts/translations",
-                  "developer/core-concepts/slugs",
-                  "developer/core-concepts/metafields"
-                ]
-              },
-              {
-                "group": "Integration",
+                "group": "Extensibility",
                 "icon": "plug",
                 "pages": [
                   "developer/core-concepts/events",
                   "developer/core-concepts/webhooks",
+                  "developer/core-concepts/translations",
+                  "developer/core-concepts/slugs",
+                  "developer/core-concepts/metafields",
                   "developer/core-concepts/reports",
                   "developer/core-concepts/imports-exports"
                 ]
@@ -155,7 +149,7 @@
             "description": "Next.js, custom frontend, or Rails engine",
             "groups": [
               {
-                "group": "Next.js Starter",
+                "group": "Next.js Storefront",
                 "pages": [
                   "developer/storefront/nextjs/quickstart",
                   "developer/storefront/nextjs/architecture",
@@ -167,20 +161,6 @@
               {
                 "group": "Custom Frontend",
                 "pages": ["developer/storefront/custom/quickstart"]
-              },
-              {
-                "group": "Rails Storefront Engine",
-                "pages": [
-                  "developer/storefront/storefront",
-                  "developer/storefront/themes",
-                  "developer/storefront/pages",
-                  "developer/storefront/sections",
-                  "developer/storefront/blocks",
-                  "developer/storefront/links",
-                  "developer/storefront/helper-methods",
-                  "developer/storefront/custom-javascript",
-                  "developer/storefront/custom-css"
-                ]
               }
             ]
           },
@@ -395,6 +375,7 @@
                   "developer/sdk/store/products",
                   "developer/sdk/store/cart-checkout",
                   "developer/sdk/store/payments",
+                  "developer/sdk/store/markets",
                   "developer/sdk/store/account",
                   "developer/sdk/store/wishlists"
                 ]

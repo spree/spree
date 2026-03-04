@@ -9,20 +9,20 @@ The recommended approach is to fork the repository so you can customize freely w
 
 ### 1. Fork on GitHub
 
-Go to [github.com/spree/nextjs-starter-spree](https://github.com/spree/nextjs-starter-spree) and click **Fork**.
+Go to [github.com/spree/storefront](https://github.com/spree/storefront) and click **Fork**.
 
 ### 2. Clone Your Fork
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/nextjs-starter-spree.git
-cd nextjs-starter-spree
+git clone https://github.com/YOUR_USERNAME/storefront.git
+cd storefront
 npm install
 ```
 
 ### 3. Add Upstream Remote
 
 ```bash
-git remote add upstream https://github.com/spree/nextjs-starter-spree.git
+git remote add upstream https://github.com/spree/storefront.git
 ```
 
 ### 4. Pull Upstream Updates
@@ -125,7 +125,7 @@ src/app/[country]/[locale]/(storefront)/your-new-page/page.tsx
 import { listProducts } from '@spree/next';
 
 export default async function YourNewPage() {
-  const products = await listProducts({ per_page: 6 });
+  const products = await listProducts({ limit: 6 });
 
   return (
     <div>

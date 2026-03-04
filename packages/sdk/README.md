@@ -364,14 +364,37 @@ const completed = await client.store.orders.paymentSessions.complete(
 console.log(completed.status); // 'completed'
 ```
 
+### Markets
+
+```typescript
+// List all markets
+const { data: markets } = await client.store.markets.list();
+// [{ id: "mkt_xxx", name: "North America", currency: "USD", default_locale: "en", ... }]
+
+// Get a single market
+const market = await client.store.markets.get('mkt_xxx');
+
+// Resolve which market applies for a country
+const market = await client.store.markets.resolve('DE');
+// => { id: "mkt_xxx", name: "Europe", currency: "EUR", default_locale: "de", ... }
+
+// List countries in a market
+const { data: countries } = await client.store.markets.countries.list('mkt_xxx');
+
+// Get a country in a market (with states for address forms)
+const country = await client.store.markets.countries.get('mkt_xxx', 'DE', {
+  expand: ['states'],
+});
+```
+
 ### Geography
 
 ```typescript
 // List countries available for checkout
 const { data: countries } = await client.store.countries.list();
 
-// Get country by ISO code (includes states)
-const usa = await client.store.countries.get('US');
+// Get country by ISO code (with states)
+const usa = await client.store.countries.get('US', { expand: ['states'] });
 console.log(usa.states); // Array of states
 ```
 
@@ -501,6 +524,7 @@ The SDK uses a resource builder pattern for nested resources:
 | `store.customer` | `addresses` | `list`, `get`, `create`, `update`, `delete`, `markAsDefault` |
 | `store.customer` | `creditCards` | `list`, `get`, `delete` |
 | `store.customer` | `giftCards` | `list`, `get` |
+| `store.markets` | `countries` | `list`, `get` |
 | `store.taxons` | `products` | `list` |
 | `store.wishlists` | `items` | `create`, `update`, `delete` |
 
@@ -511,6 +535,7 @@ await client.store.orders.lineItems.create(orderId, params, options);
 await client.store.orders.payments.list(orderId, options);
 await client.store.orders.shipments.update(orderId, shipmentId, params, options);
 await client.store.customer.addresses.list({}, options);
+await client.store.markets.countries.list(marketId);
 await client.store.taxons.products.list(taxonId, params, options);
 await client.store.wishlists.items.create(wishlistId, params, options);
 ```
@@ -608,6 +633,7 @@ The SDK exports all Store API types:
 - `StoreState` - State/province
 - `StoreAddress` - Customer address
 - `StoreCustomer` - Customer profile
+- `StoreMarket` - Market configuration (currency, locales, countries)
 - `StoreStore` - Store configuration
 
 ### Commerce Types

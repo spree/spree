@@ -22,12 +22,12 @@ Use the `multi_search` parameter for full-text search across product fields:
 ```typescript SDK
 const { data: products } = await client.store.products.list({
   multi_search: 'tote bag',
-  per_page: 12,
+  limit: 12,
 })
 ```
 
 ```bash cURL
-curl 'https://api.mystore.com/api/v3/store/products?q[multi_search]=tote+bag&per_page=12' \
+curl 'https://api.mystore.com/api/v3/store/products?q[multi_search]=tote+bag&limit=12' \
   -H 'Authorization: Bearer spree_pk_xxx'
 ```
 
@@ -77,7 +77,7 @@ curl 'https://api.mystore.com/api/v3/store/products?q[in_stock]=true' \
 ```typescript SDK
 // Products in a specific category
 const { data: products } = await client.store.taxons.products.list('categories/clothing', {
-  per_page: 12,
+  limit: 12,
 })
 
 // Or filter by taxon ID
@@ -88,7 +88,7 @@ const { data: products } = await client.store.products.list({
 
 ```bash cURL
 # Products in a category
-curl 'https://api.mystore.com/api/v3/store/taxons/categories/clothing/products?per_page=12' \
+curl 'https://api.mystore.com/api/v3/store/taxons/categories/clothing/products?limit=12' \
   -H 'Authorization: Bearer spree_pk_xxx'
 
 # Filter by taxon ID
@@ -219,14 +219,14 @@ All list endpoints support pagination:
 ```typescript SDK
 const { data: products, meta } = await client.store.products.list({
   page: 1,
-  per_page: 24,
+  limit: 24,
 })
 // meta.total_count => 150
 // meta.total_pages => 7
 ```
 
 ```bash cURL
-curl 'https://api.mystore.com/api/v3/store/products?page=1&per_page=24' \
+curl 'https://api.mystore.com/api/v3/store/products?page=1&limit=24' \
   -H 'Authorization: Bearer spree_pk_xxx'
 ```
 

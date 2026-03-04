@@ -285,7 +285,7 @@ const { data: orders } = await client.store.customer.orders.list()
 
 // Get a specific order with details
 const order = await client.store.orders.get('or_xxx', {
-  includes: 'line_items,shipments,payments',
+  expand: ['line_items', 'shipments', 'payments'],
 })
 ```
 
@@ -295,7 +295,7 @@ curl 'https://api.mystore.com/api/v3/store/customer/orders' \
   -H 'Authorization: Bearer <jwt_token>'
 
 # Get a specific order
-curl 'https://api.mystore.com/api/v3/store/orders/or_xxx?includes=line_items,shipments,payments' \
+curl 'https://api.mystore.com/api/v3/store/orders/or_xxx?expand=line_items,shipments,payments' \
   -H 'Authorization: Bearer <jwt_token>'
 ```
 

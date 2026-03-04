@@ -110,13 +110,13 @@ Namespace and key are automatically normalized to snake_case.
 
 ## Store API
 
-Metafields with `display_on` set to `both` or `front_end` are included in Store API responses when you request the `metafields` include:
+Metafields with `display_on` set to `both` or `front_end` are included in Store API responses when you request the `metafields` expand:
 
 <CodeGroup>
 
 ```typescript SDK
 const product = await client.store.products.get('spree-tote', {
-  includes: 'metafields',
+  expand: ['metafields'],
 })
 
 product.metafields?.forEach(metafield => {
@@ -128,7 +128,7 @@ product.metafields?.forEach(metafield => {
 ```
 
 ```bash cURL
-curl 'https://api.mystore.com/api/v3/store/products/spree-tote?includes=metafields' \
+curl 'https://api.mystore.com/api/v3/store/products/spree-tote?expand=metafields' \
   -H 'Authorization: Bearer spree_pk_xxx'
 ```
 

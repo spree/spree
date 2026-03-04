@@ -4,18 +4,18 @@ sidebarTitle: "Relations"
 description: "How to include related resources in API responses"
 ---
 
-By default, the Store API returns only the primary resource attributes to keep responses fast and lightweight. Use the `include` parameter to expand related resources inline.
+By default, the Store API returns only the primary resource attributes to keep responses fast and lightweight. Use the `expand` parameter to expand related resources inline.
 
 ## Including Relations
 
-Pass a comma-separated list of relation names via the `include` (or `includes`) query parameter:
+Pass a comma-separated list of relation names via the `expand` query parameter:
 
 <CodeGroup>
 
 ```typescript SDK
 // Product with variants and images
 const product = await client.store.products.get('spree-tote', {
-  includes: ['variants', 'images'],
+  expand: ['variants', 'images'],
 })
 
 // Access included relations directly
@@ -26,14 +26,14 @@ console.log(product.images)    // Array of image objects
 ```bash cURL
 curl -G 'http://localhost:3000/api/v3/store/products/spree-tote' \
   -H 'X-Spree-Api-Key: spree_pk_xxx' \
-  -d 'include=variants,images'
+  -d 'expand=variants,images'
 ```
 
 </CodeGroup>
 
 ## Response Format
 
-Without includes, relation fields are omitted from the response:
+Without `expand`, relation fields are omitted from the response:
 
 ```json
 {
@@ -45,7 +45,7 @@ Without includes, relation fields are omitted from the response:
 }
 ```
 
-With `?include=variants,images`, the related resources are embedded:
+With `?expand=variants,images`, the related resources are embedded:
 
 ```json
 {
@@ -91,14 +91,14 @@ With `?include=variants,images`, the related resources are embedded:
 
 ```typescript SDK
 const product = await client.store.products.get('spree-tote', {
-  includes: ['variants', 'images', 'option_types', 'metafields'],
+  expand: ['variants', 'images', 'option_types', 'metafields'],
 })
 ```
 
 ```bash cURL
 curl -G 'http://localhost:3000/api/v3/store/products/spree-tote' \
   -H 'X-Spree-Api-Key: spree_pk_xxx' \
-  -d 'include=variants,images,option_types,metafields'
+  -d 'expand=variants,images,option_types,metafields'
 ```
 
 </CodeGroup>
@@ -115,14 +115,14 @@ curl -G 'http://localhost:3000/api/v3/store/products/spree-tote' \
 
 ```typescript SDK
 const taxon = await client.store.taxons.get('categories/clothing', {
-  includes: ['ancestors', 'children'],
+  expand: ['ancestors', 'children'],
 })
 ```
 
 ```bash cURL
 curl -G 'http://localhost:3000/api/v3/store/taxons/categories/clothing' \
   -H 'X-Spree-Api-Key: spree_pk_xxx' \
-  -d 'include=ancestors,children'
+  -d 'expand=ancestors,children'
 ```
 
 </CodeGroup>
@@ -144,7 +144,7 @@ curl -G 'http://localhost:3000/api/v3/store/taxons/categories/clothing' \
 
 ```typescript SDK
 const usa = await client.store.countries.get('US', {
-  includes: ['states'],
+  expand: ['states'],
 })
 console.log(usa.states) // Array of state objects
 ```
@@ -152,30 +152,30 @@ console.log(usa.states) // Array of state objects
 ```bash cURL
 curl -G 'http://localhost:3000/api/v3/store/countries/US' \
   -H 'X-Spree-Api-Key: spree_pk_xxx' \
-  -d 'include=states'
+  -d 'expand=states'
 ```
 
 </CodeGroup>
 
 ## Collections with Includes
 
-The `include` parameter also works on collection endpoints:
+The `expand` parameter also works on collection endpoints:
 
 <CodeGroup>
 
 ```typescript SDK
 // List products with their images and default variant
 const { data: products } = await client.store.products.list({
-  includes: ['images', 'default_variant'],
-  per_page: 12,
+  expand: ['images', 'default_variant'],
+  limit: 12,
 })
 ```
 
 ```bash cURL
 curl -G 'http://localhost:3000/api/v3/store/products' \
   -H 'X-Spree-Api-Key: spree_pk_xxx' \
-  -d 'include=images,default_variant' \
-  -d 'per_page=12'
+  -d 'expand=images,default_variant' \
+  -d 'limit=12'
 ```
 
 </CodeGroup>
@@ -189,14 +189,14 @@ Use dot notation to include nested relations:
 ```typescript SDK
 // Include variants and their nested option values
 const product = await client.store.products.get('spree-tote', {
-  includes: ['variants.option_values'],
+  expand: ['variants.option_values'],
 })
 ```
 
 ```bash cURL
 curl -G 'http://localhost:3000/api/v3/store/products/spree-tote' \
   -H 'X-Spree-Api-Key: spree_pk_xxx' \
-  -d 'include=variants.option_values'
+  -d 'expand=variants.option_values'
 ```
 
 </CodeGroup>

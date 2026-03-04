@@ -70,13 +70,13 @@ Adjustments are created by two sources:
 
 ## Store API
 
-Adjustments appear in order responses when you include line items or shipments:
+Adjustments appear in order responses when you expand line items or shipments:
 
 <CodeGroup>
 
 ```typescript SDK
 const order = await client.store.orders.get('or_abc123', {
-  includes: ['line_items', 'shipments'],
+  expand: ['line_items', 'shipments'],
   orderToken: '<token>',
 })
 
@@ -95,7 +95,7 @@ order.included_tax_total
 ```
 
 ```bash cURL
-curl 'https://api.mystore.com/api/v3/store/orders/or_abc123?includes=line_items,shipments' \
+curl 'https://api.mystore.com/api/v3/store/orders/or_abc123?expand=line_items,shipments' \
   -H 'Authorization: Bearer spree_pk_xxx' \
   -H 'X-Spree-Order-Token: <token>'
 ```

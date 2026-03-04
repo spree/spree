@@ -37,40 +37,40 @@ All variants are cropped to fill the exact dimensions and converted to WebP form
 
 ### Thumbnails (Always Available)
 
-Every product response includes a `thumbnail_url` field — ready to use without any includes. Similarly, each variant includes a `thumbnail` URL and an `image_count` counter.
+Every product response includes a `thumbnail_url` field — ready to use without any expands. Similarly, each variant includes a `thumbnail` URL and an `image_count` counter.
 
 <CodeGroup>
 
 ```typescript SDK
 // List products — thumbnail_url is always included
-const { data: products } = await client.store.products.list({ per_page: 12 })
+const { data: products } = await client.store.products.list({ limit: 12 })
 
 products.forEach(product => {
-  product.thumbnail_url // "https://cdn.../tote-front.webp" — no includes needed
+  product.thumbnail_url // "https://cdn.../tote-front.webp" — no expand needed
 })
 ```
 
 ```bash cURL
-# thumbnail_url is always in the response — no ?includes needed
-curl 'https://api.mystore.com/api/v3/store/products?per_page=12' \
+# thumbnail_url is always in the response — no ?expand needed
+curl 'https://api.mystore.com/api/v3/store/products?limit=12' \
   -H 'Authorization: Bearer spree_pk_xxx'
 ```
 
 </CodeGroup>
 
 <Warning>
-Avoid using `?includes=images` on listing pages. This loads **all** images for every product in the response. Use `thumbnail_url` instead and only include full images on product detail pages.
+Avoid using `?expand=images` on listing pages. This loads **all** images for every product in the response. Use `thumbnail_url` instead and only expand full images on product detail pages.
 </Warning>
 
 ### Full Images (On Demand)
 
-On the product detail page, include `images` and `variants` to get the full set of images with all named variant URLs:
+On the product detail page, expand `images` and `variants` to get the full set of images with all named variant URLs:
 
 <CodeGroup>
 
 ```typescript SDK
 const product = await client.store.products.get('spree-tote', {
-  includes: ['images', 'variants'],
+  expand: ['images', 'variants'],
 })
 
 // Product-level images (from master variant)
@@ -80,12 +80,12 @@ product.images // [{ url, mini_url, small_url, medium_url, large_url, xlarge_url
 product.variants?.forEach(variant => {
   variant.thumbnail    // "https://cdn.../tote-red.webp" — always available
   variant.image_count  // 3 — quick check without loading images
-  variant.images       // full image array (only with ?includes=images)
+  variant.images       // full image array (only with ?expand=images)
 })
 ```
 
 ```bash cURL
-curl 'https://api.mystore.com/api/v3/store/products/spree-tote?includes=images,variants' \
+curl 'https://api.mystore.com/api/v3/store/products/spree-tote?expand=images,variants' \
   -H 'Authorization: Bearer spree_pk_xxx'
 ```
 
@@ -114,7 +114,7 @@ curl 'https://api.mystore.com/api/v3/store/products/spree-tote?includes=images,v
 | `thumbnail_url` | Product | Yes | URL to the product's first image |
 | `thumbnail` | Variant | Yes | URL to the variant's first image |
 | `image_count` | Variant | Yes | Number of images (no extra query) |
-| `images` | Product, Variant | No | Full image array (requires `?includes=images`) |
+| `images` | Product, Variant | No | Full image array (requires `?expand=images`) |
 
 ## Image Processing
 
@@ -139,7 +139,7 @@ For production deployments, use cloud storage (S3, GCS, Azure) instead of local 
 
 ## Best Practices
 
-- **Use `thumbnail_url`** on listing pages — avoid loading full images via includes
+- **Use `thumbnail_url`** on listing pages — avoid loading full images via expand
 - **Always provide alt text** for accessibility and SEO
 - **Use named variant sizes** (`mini`, `small`, `medium`, `large`, `xlarge`) for optimal performance
 - **Use a CDN** in production for faster delivery

@@ -1,0 +1,163 @@
+---
+title: Markets
+description: Fetch markets, resolve by country, and list market countries with the Spree SDK
+---
+
+## List Markets
+
+Returns all markets for the current store with their countries, currency, locales, and tax configuration.
+
+<CodeGroup>
+
+```typescript SDK
+const { data: markets } = await client.store.markets.list()
+
+markets.forEach(market => {
+  market.id               // "mkt_UkLWZg9DAJ"
+  market.name             // "North America"
+  market.currency         // "USD"
+  market.default_locale   // "en"
+  market.tax_inclusive    // false
+  market.default          // true
+  market.supported_locales // ["en", "es"]
+  market.countries        // [{ iso: "US", name: "United States of America", ... }]
+})
+```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/store/markets' \
+  -H 'Authorization: Bearer spree_pk_xxx'
+```
+
+</CodeGroup>
+
+**Response:**
+
+```json
+{
+  "data": [
+    {
+      "id": "mkt_UkLWZg9DAJ",
+      "name": "North America",
+      "currency": "USD",
+      "default_locale": "en",
+      "tax_inclusive": false,
+      "default": true,
+      "supported_locales": ["en", "es"],
+      "countries": [
+        { "iso": "US", "iso3": "USA", "name": "United States of America", "states_required": true, "zipcode_required": true }
+      ]
+    },
+    {
+      "id": "mkt_gbHJdmfrXB",
+      "name": "Europe",
+      "currency": "EUR",
+      "default_locale": "de",
+      "tax_inclusive": true,
+      "default": false,
+      "supported_locales": ["de", "en", "fr"],
+      "countries": [
+        { "iso": "DE", "iso3": "DEU", "name": "Germany", "states_required": false, "zipcode_required": true },
+        { "iso": "FR", "iso3": "FRA", "name": "France", "states_required": false, "zipcode_required": true }
+      ]
+    }
+  ]
+}
+```
+
+## Get a Market
+
+<CodeGroup>
+
+```typescript SDK
+const market = await client.store.markets.get('mkt_gbHJdmfrXB')
+
+market.name      // "Europe"
+market.currency  // "EUR"
+market.countries // [{ iso: "DE", ... }, { iso: "FR", ... }]
+```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/store/markets/mkt_gbHJdmfrXB' \
+  -H 'Authorization: Bearer spree_pk_xxx'
+```
+
+</CodeGroup>
+
+## Resolve Market by Country
+
+Determine which market applies for a given country ISO code. Useful for auto-selecting the correct currency and locale when a customer's location is known.
+
+<CodeGroup>
+
+```typescript SDK
+const market = await client.store.markets.resolve('DE')
+
+market.id       // "mkt_gbHJdmfrXB"
+market.name     // "Europe"
+market.currency // "EUR"
+```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/store/markets/resolve?country=DE' \
+  -H 'Authorization: Bearer spree_pk_xxx'
+```
+
+</CodeGroup>
+
+<Info>
+If no market matches the given country, a `404` error is returned.
+</Info>
+
+## List Countries in a Market
+
+Returns countries belonging to a specific market. Use this for address form country dropdowns during checkout.
+
+<CodeGroup>
+
+```typescript SDK
+const { data: countries } = await client.store.markets.countries.list('mkt_gbHJdmfrXB')
+
+countries.forEach(country => {
+  country.iso              // "DE"
+  country.name             // "Germany"
+  country.states_required  // false
+  country.zipcode_required // true
+})
+```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/store/markets/mkt_gbHJdmfrXB/countries' \
+  -H 'Authorization: Bearer spree_pk_xxx'
+```
+
+</CodeGroup>
+
+## Get a Country in a Market
+
+Returns a single country by ISO code within a market. Use `expand: ['states']` for address forms that need state/province dropdowns.
+
+<CodeGroup>
+
+```typescript SDK
+const country = await client.store.markets.countries.get('mkt_gbHJdmfrXB', 'US', {
+  expand: ['states'],
+})
+
+country.iso    // "US"
+country.name   // "United States of America"
+country.states // [{ id: "st_xxx", name: "New York", abbr: "NY" }, ...]
+```
+
+```bash cURL
+curl 'https://api.mystore.com/api/v3/store/markets/mkt_gbHJdmfrXB/countries/US?expand=states' \
+  -H 'Authorization: Bearer spree_pk_xxx'
+```
+
+</CodeGroup>
+
+## Related Documentation
+
+- [Markets](/developer/core-concepts/markets) — Market concepts, zones, and configuration
+- [Localization](/api-reference/store-api/localization) — Locale and currency headers
+- [Geography](/developer/sdk/store/products#geography) — Global country endpoints
