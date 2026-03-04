@@ -7,14 +7,19 @@ describe('transformListParams', () => {
     expect(result).toEqual({ page: 2, limit: 10 });
   });
 
-  it('passes through expand string unchanged', () => {
-    const result = transformListParams({ expand: 'variants,images' });
-    expect(result).toEqual({ expand: 'variants,images' });
-  });
-
   it('joins expand array into comma-separated string', () => {
     const result = transformListParams({ expand: ['variants', 'images'] });
     expect(result).toEqual({ expand: 'variants,images' });
+  });
+
+  it('joins single-element expand array', () => {
+    const result = transformListParams({ expand: ['variants'] });
+    expect(result).toEqual({ expand: 'variants' });
+  });
+
+  it('handles empty expand array', () => {
+    const result = transformListParams({ expand: [] });
+    expect(result).toEqual({ expand: '' });
   });
 
   it('passes through sort param unchanged', () => {
@@ -77,7 +82,7 @@ describe('transformListParams', () => {
     const result = transformListParams({
       page: 1,
       limit: 12,
-      expand: 'images,default_variant',
+      expand: ['images', 'default_variant'],
       sort: 'created_at desc',
       name_cont: 'shirt',
       price_gte: 20,

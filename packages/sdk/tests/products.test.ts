@@ -42,6 +42,42 @@ describe('products', () => {
       const result = await client.store.products.get('prod_1');
       expect(result.id).toBe('prod_1');
     });
+
+    it('sends expand array as comma-separated query param', async () => {
+      let capturedUrl = '';
+      const { createSpreeClient } = await import('../src');
+      const customClient = createSpreeClient({
+        baseUrl: 'https://demo.spreecommerce.org',
+        publishableKey: 'test-key',
+        fetch: async (url, init) => {
+          capturedUrl = url.toString();
+          return globalThis.fetch(url, init);
+        },
+      });
+
+      await customClient.store.products.get('test-product', {
+        expand: ['variants', 'images'],
+      });
+
+      expect(capturedUrl).toContain('expand=variants%2Cimages');
+    });
+
+    it('omits expand param when array is empty', async () => {
+      let capturedUrl = '';
+      const { createSpreeClient } = await import('../src');
+      const customClient = createSpreeClient({
+        baseUrl: 'https://demo.spreecommerce.org',
+        publishableKey: 'test-key',
+        fetch: async (url, init) => {
+          capturedUrl = url.toString();
+          return globalThis.fetch(url, init);
+        },
+      });
+
+      await customClient.store.products.get('test-product', { expand: [] });
+
+      expect(capturedUrl).not.toContain('expand');
+    });
   });
 
   describe('filters', () => {

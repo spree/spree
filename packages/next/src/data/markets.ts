@@ -58,7 +58,7 @@ export async function listMarketCountries(
 export async function getMarketCountry(
   marketId: string,
   iso: string,
-  params?: { expand?: string },
+  params?: { expand?: string[] },
   options?: SpreeNextOptions
 ): Promise<StoreCountry> {
   const resolved = options ?? await getLocaleOptions();

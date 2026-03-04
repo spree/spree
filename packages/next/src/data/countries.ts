@@ -17,11 +17,11 @@ export async function listCountries(
 /**
  * Get a country by ISO code.
  * @param iso - ISO 3166-1 alpha-2 code (e.g., "US", "DE")
- * @param params - Optional params (e.g., { expand: 'states' } or { expand: 'market' })
+ * @param params - Optional params (e.g., { expand: ['states'] } or { expand: ['market'] })
  */
 export async function getCountry(
   iso: string,
-  params?: { expand?: string },
+  params?: { expand?: string[] },
   options?: SpreeNextOptions
 ): Promise<StoreCountry> {
   const resolved = options ?? await getLocaleOptions();

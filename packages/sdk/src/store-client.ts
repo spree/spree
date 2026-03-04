@@ -1,5 +1,11 @@
 import type { RequestFn, RequestOptions } from './request';
 import { transformListParams } from './params';
+
+/** Join expand array into comma-separated string for the API */
+function expandParams(params?: { expand?: string[] }): Record<string, string> | undefined {
+  if (!params?.expand?.length) return undefined;
+  return { expand: params.expand.join(',') };
+}
 import type {
   AuthTokens,
   LoginCredentials,
@@ -108,12 +114,12 @@ export class StoreClient {
      */
     get: (
       idOrSlug: string,
-      params?: { expand?: string },
+      params?: { expand?: string[] },
       options?: RequestOptions
     ): Promise<StoreProduct> =>
       this.request<StoreProduct>('GET', `/products/${idOrSlug}`, {
         ...options,
-        params,
+        params: expandParams(params),
       }),
 
     /**
@@ -152,12 +158,12 @@ export class StoreClient {
      */
     get: (
       id: string,
-      params?: { expand?: string },
+      params?: { expand?: string[] },
       options?: RequestOptions
     ): Promise<StoreTaxonomy> =>
       this.request<StoreTaxonomy>('GET', `/taxonomies/${id}`, {
         ...options,
-        params,
+        params: expandParams(params),
       }),
   };
 
@@ -179,12 +185,12 @@ export class StoreClient {
      */
     get: (
       idOrPermalink: string,
-      params?: { expand?: string },
+      params?: { expand?: string[] },
       options?: RequestOptions
     ): Promise<StoreTaxon> =>
       this.request<StoreTaxon>('GET', `/taxons/${idOrPermalink}`, {
         ...options,
-        params,
+        params: expandParams(params),
       }),
 
     /**
@@ -230,12 +236,12 @@ export class StoreClient {
      */
     get: (
       iso: string,
-      params?: { expand?: string },
+      params?: { expand?: string[] },
       options?: RequestOptions
     ): Promise<StoreCountry> =>
       this.request<StoreCountry>('GET', `/countries/${iso}`, {
         ...options,
-        params,
+        params: expandParams(params),
       }),
   };
 
@@ -309,13 +315,13 @@ export class StoreClient {
       get: (
         marketId: string,
         iso: string,
-        params?: { expand?: string },
+        params?: { expand?: string[] },
         options?: RequestOptions
       ): Promise<StoreCountry> =>
         this.request<StoreCountry>(
           'GET',
           `/markets/${marketId}/countries/${iso}`,
-          { ...options, params }
+          { ...options, params: expandParams(params) }
         ),
     },
   };
@@ -361,12 +367,12 @@ export class StoreClient {
      */
     get: (
       idOrNumber: string,
-      params?: { expand?: string },
+      params?: { expand?: string[] },
       options?: RequestOptions
     ): Promise<StoreOrder> =>
       this.request<StoreOrder>('GET', `/orders/${idOrNumber}`, {
         ...options,
-        params,
+        params: expandParams(params),
       }),
 
     /**
@@ -911,12 +917,12 @@ export class StoreClient {
      */
     get: (
       id: string,
-      params?: { expand?: string },
+      params?: { expand?: string[] },
       options?: RequestOptions
     ): Promise<StoreWishlist> =>
       this.request<StoreWishlist>('GET', `/wishlists/${id}`, {
         ...options,
-        params,
+        params: expandParams(params),
       }),
 
     /**

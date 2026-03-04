@@ -57,8 +57,8 @@ export interface RegisterParams {
 export interface ListParams {
   page?: number;
   limit?: number;
-  /** Associations to expand. Accepts array or comma-separated string. */
-  expand?: string[] | string;
+  /** Associations to expand, e.g. ['variants', 'images'] */
+  expand?: string[];
 }
 
 export interface ProductListParams extends ListParams {

@@ -59,7 +59,7 @@ describe('checkout actions', () => {
       expect(result).toEqual(mockOrder);
       expect(mockClient.store.orders.get).toHaveBeenCalledWith(
         '1',
-        { expand: 'line_items,shipments,ship_address,bill_address' },
+        { expand: ['line_items', 'shipments', 'ship_address', 'bill_address'] },
         { orderToken: 'order_token_123', token: 'jwt_token_abc' }
       );
     });

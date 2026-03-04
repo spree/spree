@@ -1,5 +1,11 @@
 # @spree/sdk
 
+## 0.6.7
+
+### Patch Changes
+
+- Standardize `expand` parameter to accept only `string[]`
+
 ## 0.6.6
 
 ### Patch Changes
