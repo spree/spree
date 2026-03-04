@@ -12,7 +12,7 @@ module Spree
         extend ActiveSupport::Concern
 
         included do
-          before_action :set_vary_headers
+          after_action :set_vary_headers
         end
 
         protected
@@ -69,13 +69,13 @@ module Spree
         private
 
         # Build a cache key for a collection
-        # Includes: query params, pagination, expand, currency, locale
-        # Strips order to avoid PostgreSQL errors with DISTINCT + subquery ORDER BY expressions
+        # Includes: latest updated_at, total count, query params, pagination, expand, currency, locale
         def collection_cache_key(collection)
           parts = [
-            collection.reorder(nil).cache_key_with_version,
+            collection.map(&:updated_at).max&.to_i,
+            @pagy&.count,
             params[:expand],
-            params[:q],
+            params[:q]&.to_json,
             params[:page],
             params[:limit],
             current_currency,

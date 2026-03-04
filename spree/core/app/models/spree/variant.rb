@@ -103,7 +103,7 @@ module Spree
     scope :not_discontinued, lambda {
       where(
         arel_table[:discontinue_on].eq(nil).or(
-          arel_table[:discontinue_on].gteq(Time.current)
+          arel_table[:discontinue_on].gteq(Time.current.beginning_of_minute)
         )
       )
     }
