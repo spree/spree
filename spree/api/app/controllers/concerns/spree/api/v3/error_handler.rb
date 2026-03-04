@@ -50,6 +50,9 @@ module Spree
           # Rate limiting errors
           rate_limit_exceeded: 'rate_limit_exceeded',
 
+          # Idempotency errors
+          idempotency_key_reused: 'idempotency_key_reused',
+
           # Request errors
           request_too_large: 'request_too_large',
 

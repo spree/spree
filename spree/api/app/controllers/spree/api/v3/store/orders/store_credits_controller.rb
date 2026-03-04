@@ -6,6 +6,9 @@ module Spree
           class StoreCreditsController < Store::BaseController
             include Spree::Api::V3::OrderConcern
             include Spree::Api::V3::OrderLock
+            include Spree::Api::V3::Idempotent
+
+            idempotent_actions :create
 
             before_action :require_authentication!
             before_action :set_parent
