@@ -5,12 +5,12 @@ module Spree
     let(:store)                      { @default_store }
     let!(:product)                   { create(:product, name: 'Product 1', price: 15.99, stores: [store]) }
     let!(:product_2)                 { create(:product, name: 'Product 2', discontinue_on: Time.current + 1.day, price: 23.99, stores: [store]) }
-    let!(:product_3)                 { create(:product, name: 'Product 3', stores: [store]) }
+    let!(:product_3)                 { create(:product, name: 'Product 3', price: 16.99, stores: [store]) }
     let!(:option_value)              { create(:option_value) }
     let!(:deleted_product)           { create(:product, name: 'Deleted Product', deleted_at: Time.current - 1.day) }
     let!(:discontinued_product)      { create(:product, name: 'Discontinued Product', status: 'archived') }
-    let!(:in_stock_product)          { create(:product_in_stock, name: 'In Stock Product') }
-    let!(:not_backorderable_product) { create(:product_in_stock, :without_backorder, name: 'Not Backorderable Product') }
+    let!(:in_stock_product)          { create(:product_in_stock, name: 'In Stock Product', price: 17.99) }
+    let!(:not_backorderable_product) { create(:product_in_stock, :without_backorder, name: 'Not Backorderable Product', price: 18.99) }
 
     context 'include discontinued' do
       it 'returns products with discontinued' do
