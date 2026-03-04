@@ -46,13 +46,6 @@ export const fixtures = {
     country_iso: 'US',
     state_abbr: 'NY',
   },
-  store: {
-    id: 'store_1',
-    name: 'Test Store',
-    url: 'https://demo.spreecommerce.org',
-    default_currency: 'USD',
-    default_locale: 'en',
-  },
   taxonomy: {
     id: 'tax_1',
     name: 'Categories',
@@ -119,11 +112,6 @@ export const handlers = [
 
   http.post(`${API_PREFIX}/auth/refresh`, () =>
     HttpResponse.json({ token: 'refreshed-jwt-token', user: fixtures.user })
-  ),
-
-  // Store
-  http.get(`${API_PREFIX}/store`, () =>
-    HttpResponse.json(fixtures.store)
   ),
 
   // Products

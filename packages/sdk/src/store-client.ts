@@ -1,5 +1,6 @@
 import type { RequestFn, RequestOptions } from './request';
 import { transformListParams } from './params';
+import { AsyncIterableList } from './pagination';
 
 /** Join expand array into comma-separated string for the API */
 function expandParams(params?: { expand?: string[] }): Record<string, string> | undefined {
@@ -10,6 +11,7 @@ import type {
   AuthTokens,
   LoginCredentials,
   RegisterParams,
+  ListResponse,
   PaginatedResponse,
   ListParams,
   ProductListParams,
@@ -42,7 +44,6 @@ import type {
   StorePaymentSession,
   StorePaymentSetupSession,
   StoreShipment,
-  StoreStore,
   StoreWishlist,
   StoreWishedItem,
   StoreAddress,
@@ -81,18 +82,6 @@ export class StoreClient {
   };
 
   // ============================================
-  // Store
-  // ============================================
-
-  readonly store = {
-    /**
-     * Get current store information
-     */
-    get: (options?: RequestOptions): Promise<StoreStore> =>
-      this.request<StoreStore>('GET', '/store', options),
-  };
-
-  // ============================================
   // Products
   // ============================================
 
@@ -103,11 +92,13 @@ export class StoreClient {
     list: (
       params?: ProductListParams,
       options?: RequestOptions
-    ): Promise<PaginatedResponse<StoreProduct>> =>
-      this.request<PaginatedResponse<StoreProduct>>('GET', '/products', {
-        ...options,
-        params: params ? transformListParams(params) : undefined,
-      }),
+    ): AsyncIterableList<StoreProduct> =>
+      new AsyncIterableList((page) =>
+        this.request<PaginatedResponse<StoreProduct>>('GET', '/products', {
+          ...options,
+          params: transformListParams({ ...params, page }),
+        })
+      , params?.page ?? 1),
 
     /**
      * Get a product by ID or slug
@@ -147,11 +138,13 @@ export class StoreClient {
     list: (
       params?: ListParams,
       options?: RequestOptions
-    ): Promise<PaginatedResponse<StoreTaxonomy>> =>
-      this.request<PaginatedResponse<StoreTaxonomy>>('GET', '/taxonomies', {
-        ...options,
-        params: params as Record<string, string | number | undefined>,
-      }),
+    ): AsyncIterableList<StoreTaxonomy> =>
+      new AsyncIterableList((page) =>
+        this.request<PaginatedResponse<StoreTaxonomy>>('GET', '/taxonomies', {
+          ...options,
+          params: { ...params, page } as Record<string, string | number | undefined>,
+        })
+      , params?.page ?? 1),
 
     /**
      * Get a taxonomy by ID
@@ -174,11 +167,13 @@ export class StoreClient {
     list: (
       params?: TaxonListParams,
       options?: RequestOptions
-    ): Promise<PaginatedResponse<StoreTaxon>> =>
-      this.request<PaginatedResponse<StoreTaxon>>('GET', '/taxons', {
-        ...options,
-        params: params ? transformListParams(params) : undefined,
-      }),
+    ): AsyncIterableList<StoreTaxon> =>
+      new AsyncIterableList((page) =>
+        this.request<PaginatedResponse<StoreTaxon>>('GET', '/taxons', {
+          ...options,
+          params: transformListParams({ ...params, page }),
+        })
+      , params?.page ?? 1),
 
     /**
      * Get a taxon by ID or permalink
@@ -205,15 +200,17 @@ export class StoreClient {
         taxonId: string,
         params?: ProductListParams,
         options?: RequestOptions
-      ): Promise<PaginatedResponse<StoreProduct>> =>
-        this.request<PaginatedResponse<StoreProduct>>(
-          'GET',
-          `/taxons/${taxonId}/products`,
-          {
-            ...options,
-            params: params ? transformListParams(params) : undefined,
-          }
-        ),
+      ): AsyncIterableList<StoreProduct> =>
+        new AsyncIterableList((page) =>
+          this.request<PaginatedResponse<StoreProduct>>(
+            'GET',
+            `/taxons/${taxonId}/products`,
+            {
+              ...options,
+              params: transformListParams({ ...params, page }),
+            }
+          )
+        , params?.page ?? 1),
     },
   };
 
@@ -226,8 +223,8 @@ export class StoreClient {
      * List countries available in the store
      * Each country includes currency and default_locale derived from its market
      */
-    list: (options?: RequestOptions): Promise<{ data: StoreCountry[] }> =>
-      this.request<{ data: StoreCountry[] }>('GET', '/countries', options),
+    list: (options?: RequestOptions): Promise<ListResponse<StoreCountry>> =>
+      this.request<ListResponse<StoreCountry>>('GET', '/countries', options),
 
     /**
      * Get a country by ISO code
@@ -249,16 +246,16 @@ export class StoreClient {
     /**
      * List currencies supported by the store (derived from markets)
      */
-    list: (options?: RequestOptions): Promise<{ data: StoreCurrency[] }> =>
-      this.request<{ data: StoreCurrency[] }>('GET', '/currencies', options),
+    list: (options?: RequestOptions): Promise<ListResponse<StoreCurrency>> =>
+      this.request<ListResponse<StoreCurrency>>('GET', '/currencies', options),
   };
 
   readonly locales = {
     /**
      * List locales supported by the store (derived from markets)
      */
-    list: (options?: RequestOptions): Promise<{ data: StoreLocale[] }> =>
-      this.request<{ data: StoreLocale[] }>('GET', '/locales', options),
+    list: (options?: RequestOptions): Promise<ListResponse<StoreLocale>> =>
+      this.request<ListResponse<StoreLocale>>('GET', '/locales', options),
   };
 
   // ============================================
@@ -269,8 +266,8 @@ export class StoreClient {
     /**
      * List all markets for the current store
      */
-    list: (options?: RequestOptions): Promise<{ data: StoreMarket[] }> =>
-      this.request<{ data: StoreMarket[] }>('GET', '/markets', options),
+    list: (options?: RequestOptions): Promise<ListResponse<StoreMarket>> =>
+      this.request<ListResponse<StoreMarket>>('GET', '/markets', options),
 
     /**
      * Get a market by prefixed ID
@@ -300,8 +297,8 @@ export class StoreClient {
       list: (
         marketId: string,
         options?: RequestOptions
-      ): Promise<{ data: StoreCountry[] }> =>
-        this.request<{ data: StoreCountry[] }>(
+      ): Promise<ListResponse<StoreCountry>> =>
+        this.request<ListResponse<StoreCountry>>(
           'GET',
           `/markets/${marketId}/countries`,
           options
@@ -509,8 +506,8 @@ export class StoreClient {
       list: (
         orderId: string,
         options?: RequestOptions
-      ): Promise<{ data: StorePayment[]; meta: object }> =>
-        this.request<{ data: StorePayment[]; meta: object }>(
+      ): Promise<PaginatedResponse<StorePayment>> =>
+        this.request<PaginatedResponse<StorePayment>>(
           'GET',
           `/orders/${orderId}/payments`,
           options
@@ -541,8 +538,8 @@ export class StoreClient {
       list: (
         orderId: string,
         options?: RequestOptions
-      ): Promise<PaginatedResponse<StorePaymentMethod>> =>
-        this.request<PaginatedResponse<StorePaymentMethod>>(
+      ): Promise<ListResponse<StorePaymentMethod>> =>
+        this.request<ListResponse<StorePaymentMethod>>(
           'GET',
           `/orders/${orderId}/payment_methods`,
           options
@@ -658,8 +655,8 @@ export class StoreClient {
       list: (
         orderId: string,
         options?: RequestOptions
-      ): Promise<{ data: StoreShipment[] }> =>
-        this.request<{ data: StoreShipment[] }>(
+      ): Promise<ListResponse<StoreShipment>> =>
+        this.request<ListResponse<StoreShipment>>(
           'GET',
           `/orders/${orderId}/shipments`,
           options
@@ -724,12 +721,14 @@ export class StoreClient {
       list: (
         params?: ListParams,
         options?: RequestOptions
-      ): Promise<PaginatedResponse<StoreAddress>> =>
-        this.request<PaginatedResponse<StoreAddress>>(
-          'GET',
-          '/customer/addresses',
-          { ...options, params: params as Record<string, string | number | undefined> }
-        ),
+      ): AsyncIterableList<StoreAddress> =>
+        new AsyncIterableList((page) =>
+          this.request<PaginatedResponse<StoreAddress>>(
+            'GET',
+            '/customer/addresses',
+            { ...options, params: { ...params, page } as Record<string, string | number | undefined> }
+          )
+        , params?.page ?? 1),
 
       /**
        * Get an address by ID
@@ -792,12 +791,14 @@ export class StoreClient {
       list: (
         params?: ListParams,
         options?: RequestOptions
-      ): Promise<PaginatedResponse<StoreCreditCard>> =>
-        this.request<PaginatedResponse<StoreCreditCard>>(
-          'GET',
-          '/customer/credit_cards',
-          { ...options, params: params as Record<string, string | number | undefined> }
-        ),
+      ): AsyncIterableList<StoreCreditCard> =>
+        new AsyncIterableList((page) =>
+          this.request<PaginatedResponse<StoreCreditCard>>(
+            'GET',
+            '/customer/credit_cards',
+            { ...options, params: { ...params, page } as Record<string, string | number | undefined> }
+          )
+        , params?.page ?? 1),
 
       /**
        * Get a credit card by ID
@@ -823,12 +824,14 @@ export class StoreClient {
       list: (
         params?: ListParams,
         options?: RequestOptions
-      ): Promise<PaginatedResponse<StoreGiftCard>> =>
-        this.request<PaginatedResponse<StoreGiftCard>>(
-          'GET',
-          '/customer/gift_cards',
-          { ...options, params: params as Record<string, string | number | undefined> }
-        ),
+      ): AsyncIterableList<StoreGiftCard> =>
+        new AsyncIterableList((page) =>
+          this.request<PaginatedResponse<StoreGiftCard>>(
+            'GET',
+            '/customer/gift_cards',
+            { ...options, params: { ...params, page } as Record<string, string | number | undefined> }
+          )
+        , params?.page ?? 1),
 
       /**
        * Get a gift card by ID
@@ -847,11 +850,13 @@ export class StoreClient {
       list: (
         params?: OrderListParams,
         options?: RequestOptions
-      ): Promise<PaginatedResponse<StoreOrder>> =>
-        this.request<PaginatedResponse<StoreOrder>>('GET', '/customer/orders', {
-          ...options,
-          params: params ? transformListParams(params) : undefined,
-        }),
+      ): AsyncIterableList<StoreOrder> =>
+        new AsyncIterableList((page) =>
+          this.request<PaginatedResponse<StoreOrder>>('GET', '/customer/orders', {
+            ...options,
+            params: transformListParams({ ...params, page }),
+          })
+        , params?.page ?? 1),
     },
 
     /**
@@ -906,11 +911,13 @@ export class StoreClient {
     list: (
       params?: ListParams,
       options?: RequestOptions
-    ): Promise<PaginatedResponse<StoreWishlist>> =>
-      this.request<PaginatedResponse<StoreWishlist>>('GET', '/wishlists', {
-        ...options,
-        params: params as Record<string, string | number | undefined>,
-      }),
+    ): AsyncIterableList<StoreWishlist> =>
+      new AsyncIterableList((page) =>
+        this.request<PaginatedResponse<StoreWishlist>>('GET', '/wishlists', {
+          ...options,
+          params: { ...params, page } as Record<string, string | number | undefined>,
+        })
+      , params?.page ?? 1),
 
     /**
      * Get a wishlist by ID

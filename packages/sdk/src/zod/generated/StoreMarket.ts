@@ -2,7 +2,7 @@
 import { z } from 'zod';
 import { StoreCountrySchema } from './StoreCountry';
 
-export const StoreMarketSchema = z.object({
+export const StoreMarketSchema: z.ZodObject<any> = z.object({
   id: z.string(),
   name: z.string(),
   currency: z.string(),
@@ -10,7 +10,7 @@ export const StoreMarketSchema = z.object({
   tax_inclusive: z.boolean(),
   default: z.boolean(),
   supported_locales: z.array(z.string()),
-  countries: z.array(StoreCountrySchema).optional(),
+  countries: z.array(z.lazy(() => StoreCountrySchema)).optional(),
 });
 
 export type StoreMarket = z.infer<typeof StoreMarketSchema>;

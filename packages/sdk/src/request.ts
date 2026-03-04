@@ -124,9 +124,12 @@ export function createRequestFn(
     // Build headers
     const requestHeaders: Record<string, string> = {
       'Content-Type': 'application/json',
-      [auth.headerName]: auth.headerValue,
       ...headers,
     };
+
+    if (auth.headerName && auth.headerValue) {
+      requestHeaders[auth.headerName] = auth.headerValue;
+    }
 
     if (token) {
       requestHeaders['Authorization'] = `Bearer ${token}`;

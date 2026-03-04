@@ -92,3 +92,19 @@ await client.store.customer.addresses.list({}, options);
 await client.store.taxons.products.list(taxonId, params, options);
 await client.store.wishlists.items.create(wishlistId, params, options);
 ```
+
+## Auto-Pagination
+
+All paginated list methods support `for await` to iterate through every item across all pages:
+
+```typescript
+// Iterate through all products automatically
+for await (const product of client.store.products.list()) {
+  console.log(product.name);
+}
+
+// await still works for a single page (backward-compatible)
+const firstPage = await client.store.products.list({ limit: 10 });
+console.log(firstPage.data);  // StoreProduct[]
+console.log(firstPage.meta);  // { page, limit, count, pages, ... }
+```
