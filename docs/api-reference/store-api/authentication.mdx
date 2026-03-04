@@ -33,15 +33,11 @@ curl -X GET 'http://localhost:3000/api/v3/store/products' \
 
 </CodeGroup>
 
-Publishable API keys are prefixed with `spree_pk_`. You can create them in the Spree Admin under **Settings > API Keys** or via the Rails console:
+Publishable API keys are prefixed with `spree_pk_`. You can create them in the Spree Admin under **Settings > API Keys** or via the Spree CLI:
 
-```ruby
-api_key = Spree::ApiKey.create!(
-  name: 'My Storefront',
-  key_type: :publishable,
-  store: Spree::Store.default
-)
-api_key.token # => "spree_pk_..."
+```bash
+spree api-key create       # Create a new API key
+spree api-key list         # List existing API keys
 ```
 
 <Warning>

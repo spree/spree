@@ -73,7 +73,7 @@ The `X-Spree-Country` header resolves the customer's [market](/developer/core-co
 ```typescript SDK
 // Setting country automatically resolves the market
 const products = await client.store.products.list({}, {
-  country: 'DE', // Resolves German market
+  country: 'DE', // Resolves German market → EUR, de locale
 })
 ```
 
@@ -88,6 +88,29 @@ curl -G 'http://localhost:3000/api/v3/store/products' \
 When a market is resolved from the country:
 1. The market's default locale is used (unless overridden by `X-Spree-Locale`)
 2. The market's default currency is used (unless overridden by `X-Spree-Currency`)
+
+You can also resolve the market explicitly using the [Markets API](/developer/sdk/store/markets):
+
+<CodeGroup>
+
+```typescript SDK
+// Resolve which market applies for a country
+const market = await client.store.markets.resolve('DE')
+// => { id: "mkt_xxx", name: "Europe", currency: "EUR", default_locale: "de", ... }
+
+// Then set the client defaults
+client.setLocale(market.default_locale)
+client.setCurrency(market.currency)
+client.setCountry('DE')
+```
+
+```bash cURL
+# Resolve market by country
+curl 'http://localhost:3000/api/v3/store/markets/resolve?country=DE' \
+  -H 'X-Spree-Api-Key: spree_pk_xxx'
+```
+
+</CodeGroup>
 
 ## Resolution Priority
 
@@ -181,22 +204,45 @@ curl 'http://localhost:3000/api/v3/store/products/spree-tote' \
 
 </CodeGroup>
 
-## Available Countries, Locales, and Currencies
+## Discovering Available Options
 
-Use the dedicated endpoints to discover which countries, locales, and currencies are available. These are derived from your store's [markets](/developer/core-concepts/markets) configuration.
+Use the dedicated endpoints to discover which markets, countries, locales, and currencies are available. These are derived from your store's [markets](/developer/core-concepts/markets) configuration.
 
-### Countries
+### Markets
 
-Each country includes its market's currency and supported locales:
+List all markets to get the full picture of regions, currencies, and supported locales:
 
 <CodeGroup>
 
 ```typescript SDK
-const { data: countries } = await client.store.countries.list()
+const { data: markets } = await client.store.markets.list()
 // [
-//   { iso: "US", name: "United States", currency: "USD", default_locale: "en", supported_locales: ["en", "es"] },
-//   { iso: "DE", name: "Germany", currency: "EUR", default_locale: "de", supported_locales: ["de", "en"] },
+//   { id: "mkt_xxx", name: "North America", currency: "USD", default_locale: "en",
+//     supported_locales: ["en", "es"], countries: [{ iso: "US", ... }, { iso: "CA", ... }] },
+//   { id: "mkt_yyy", name: "Europe", currency: "EUR", default_locale: "de",
+//     supported_locales: ["de", "en", "fr"], countries: [{ iso: "DE", ... }, { iso: "FR", ... }] },
 // ]
+```
+
+```bash cURL
+curl 'http://localhost:3000/api/v3/store/markets' \
+  -H 'X-Spree-Api-Key: spree_pk_xxx'
+```
+
+</CodeGroup>
+
+### Countries
+
+List all countries or countries within a specific market. Each country includes its market's currency and supported locales:
+
+<CodeGroup>
+
+```typescript SDK
+// All countries across all markets
+const { data: countries } = await client.store.countries.list()
+
+// Countries in a specific market (useful for checkout address forms)
+const { data: marketCountries } = await client.store.markets.countries.list('mkt_xxx')
 
 // Get a single country with states
 const usa = await client.store.countries.get('US', {
@@ -206,8 +252,12 @@ console.log(usa.states) // [{ abbr: "CA", name: "California" }, ...]
 ```
 
 ```bash cURL
-# List all countries
+# All countries
 curl 'http://localhost:3000/api/v3/store/countries' \
+  -H 'X-Spree-Api-Key: spree_pk_xxx'
+
+# Countries in a specific market
+curl 'http://localhost:3000/api/v3/store/markets/mkt_xxx/countries' \
   -H 'X-Spree-Api-Key: spree_pk_xxx'
 
 # Get a country with states
