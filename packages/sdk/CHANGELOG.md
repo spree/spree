@@ -1,6 +1,6 @@
 # @spree/sdk
 
-## 0.6.4
+## 0.6.6
 
 ### Patch Changes
 
