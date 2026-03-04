@@ -334,16 +334,22 @@ module Spree
       # @return [ActiveRecord::Relation]
       add_search_scope :by_best_selling do |order_direction = :desc|
         store_id = Spree::Current.store&.id
-        sp_table = StoreProduct.arel_table
+        sp_table = StoreProduct.arel_table.alias('sps_best_selling')
         products_table = Product.arel_table
 
-        conditions = sp_table[:product_id].eq(products_table[:id]).and(sp_table[:store_id].eq(store_id))
+        join_condition = sp_table[:product_id].eq(products_table[:id]).and(sp_table[:store_id].eq(store_id))
+        join_node = Arel::Nodes::OuterJoin.new(sp_table, Arel::Nodes::On.new(join_condition))
 
-        units_sold = Arel::Nodes::NamedFunction.new('COALESCE', [sp_table.project(sp_table[:units_sold_count]).where(conditions), 0])
-        revenue = Arel::Nodes::NamedFunction.new('COALESCE', [sp_table.project(sp_table[:revenue]).where(conditions), 0])
-
+        zero = Arel::Nodes::Quoted.new(0)
+        best_selling_units = Arel::Nodes::NamedFunction.new('COALESCE', [sp_table[:units_sold_count], zero]).as('best_selling_units')
+        best_selling_revenue = Arel::Nodes::NamedFunction.new('COALESCE', [sp_table[:revenue], zero]).as('best_selling_revenue')
         order_dir = order_direction == :desc ? :desc : :asc
-        order(units_sold.send(order_dir)).order(revenue.send(order_dir))
+        order_units = Arel.sql('best_selling_units')
+        order_revenue = Arel.sql('best_selling_revenue')
+
+        joins(join_node).
+          select(products_table[Arel.star], best_selling_units, best_selling_revenue).
+          order(order_units.public_send(order_dir)).order(order_revenue.public_send(order_dir))
       end
 
       # .search_by_name

@@ -373,14 +373,14 @@ module Spree
     end
 
     context 'ordered' do
-      context 'default' do
-        subject(:products) do
-          described_class.new(
-            scope: Spree::Product.all,
-            params: params
-          ).execute
-        end
+      subject(:products) do
+        described_class.new(
+          scope: Spree::Product.all,
+          params: params
+        ).execute
+      end
 
+      context 'default' do
         context 'when not filtering by taxons' do
           let(:params) { { sort_by: 'default' } }
 
@@ -415,69 +415,58 @@ module Spree
         end
       end
 
-      it 'returns products in newest-first order' do
-        params = {
-          sort_by: 'newest-first'
-        }
+      context 'when sorting by newest-first' do
+        let(:params) { { sort_by: 'newest-first' } }
 
-        product_ids = described_class.new(
-          scope: Spree::Product.all,
-          params: params
-        ).execute.map(&:id)
-
-        expect(product_ids).to eq Spree::Product.available.order(make_active_at: :desc).map(&:id)
+        it 'returns products in newest-first order' do
+          expect(products).to match_array([product_2, product_3, product, in_stock_product, not_backorderable_product])
+        end
       end
 
-      it 'returns products in price-high-to-low order' do
-        params = {
-          sort_by: 'price-high-to-low'
-        }
+      context 'when sorting by price-high-to-low' do
+        let(:params) { { sort_by: 'price-high-to-low' } }
 
-        products = described_class.new(
-          scope: Spree::Product.all,
-          params: params
-        ).execute.to_a
-
-        expect(products).to match_array([product_2, product_3, product, in_stock_product, not_backorderable_product])
+        it 'returns products in price-high-to-low order' do
+          expect(products).to match_array([product_2, product_3, product, in_stock_product, not_backorderable_product])
+        end
       end
 
-      it 'returns products in price-low-to-high order' do
-        params = {
-          sort_by: 'price-low-to-high'
-        }
+      context 'when sorting by price-low-to-high' do
+        let(:params) { { sort_by: 'price-low-to-high' } }
 
-        products = described_class.new(
-          scope: Spree::Product.all,
-          params: params
-        ).execute
-
-        expect(products).to match_array([product, product_3, product_2, in_stock_product, not_backorderable_product])
+        it 'returns products in price-low-to-high order' do
+          expect(products).to match_array([product, product_3, product_2, in_stock_product, not_backorderable_product])
+        end
       end
 
-      it 'returns products in name-a-z order' do
-        params = {
-          sort_by: 'name-a-z'
-        }
+      context 'when sorting by name-a-z' do
+        let(:params) { { sort_by: 'name-a-z' } }
 
-        products = described_class.new(
-          scope: Spree::Product.all,
-          params: params
-        ).execute
-
-        expect(products).to match_array([product, product_2, product_3, in_stock_product, not_backorderable_product])
+        it 'returns products in name-a-z order' do
+          expect(products).to match_array([product, product_2, product_3, in_stock_product, not_backorderable_product])
+        end
       end
 
-      it 'returns products in name-z-a order' do
-        params = {
-          sort_by: 'name-z-a'
-        }
+      context 'when sorting by name-z-a' do
+        let(:params) { { sort_by: 'name-z-a' } }
 
-        products = described_class.new(
-          scope: Spree::Product.all,
-          params: params
-        ).execute
+        it 'returns products in name-z-a order' do
+          expect(products).to match_array([product_3, product_2, product, in_stock_product, not_backorderable_product])
+        end
+      end
 
-        expect(products).to match_array([product_3, product_2, product, in_stock_product, not_backorderable_product])
+      context 'when sorting by best-selling' do
+        let(:params) { { sort_by: 'best-selling' } }
+
+        before do
+          create(:store_product, product: product, units_sold_count: 10, revenue: 100)
+          create(:store_product, product: product_2, units_sold_count: 20, revenue: 200)
+          create(:store_product, product: product_3, units_sold_count: 30, revenue: 300)
+        end
+
+        it 'returns products in best-selling order' do
+          expect(products).to match_array([product_3, product_2, product, in_stock_product, not_backorderable_product])
+        end
       end
     end
 
