@@ -12,9 +12,9 @@ module Spree
 
         many :states,
              resource: Spree.api.state_serializer,
-             if: proc { params[:includes]&.include?('states') }
+             if: proc { params[:expand]&.include?('states') }
 
-        attribute :market, if: proc { params[:includes]&.include?('market') } do |country|
+        attribute :market, if: proc { params[:expand]&.include?('market') } do |country|
           m = country.current_market
           m ? Spree.api.market_serializer.new(m, params: params).to_h : nil
         end

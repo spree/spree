@@ -23,17 +23,17 @@ module Spree
             store: current_store,
             user: current_user,
             locale: current_locale,
-            includes: include_list
+            expand: expand_list
           }
         end
 
-        # Parse include parameter into list
-        # Supports: ?include=variants,images or ?includes=variants,images
-        def include_list
-          include_param = params[:include].presence || params[:includes].presence
-          return [] unless include_param
+        # Parse expand parameter into list
+        # Supports: ?expand=variants,images
+        def expand_list
+          expand_param = params[:expand].presence
+          return [] unless expand_param
 
-          include_param.to_s.split(',').map(&:strip)
+          expand_param.to_s.split(',').map(&:strip)
         end
       end
     end

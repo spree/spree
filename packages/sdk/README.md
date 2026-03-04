@@ -26,8 +26,8 @@ const client = createSpreeClient({
 
 // Browse products (Store API)
 const products = await client.store.products.list({
-  per_page: 10,
-  includes: 'variants,images',
+  limit: 10,
+  expand: 'variants,images',
 });
 
 // Get a single product
@@ -147,15 +147,15 @@ const store = await client.store.store.get();
 // List products with filtering
 const products = await client.store.products.list({
   page: 1,
-  per_page: 25,
+  limit: 25,
   name_cont: 'shirt',
   sort: 'price asc',
-  includes: 'variants,images,taxons',
+  expand: 'variants,images,taxons',
 });
 
 // Get single product by ID or slug
 const product = await client.store.products.get('spree-tote', {
-  includes: 'variants,images',
+  expand: 'variants,images',
 });
 
 // Get available filters (price range, availability, options, taxons)
@@ -169,12 +169,12 @@ const filters = await client.store.products.filters({
 ```typescript
 // List taxonomies
 const taxonomies = await client.store.taxonomies.list({
-  includes: 'taxons',
+  expand: 'taxons',
 });
 
 // Get taxonomy with taxons
 const categories = await client.store.taxonomies.get('tax_123', {
-  includes: 'root,taxons',
+  expand: 'root,taxons',
 });
 
 // List taxons with filtering
@@ -185,14 +185,14 @@ const taxons = await client.store.taxons.list({
 
 // Get single taxon by ID or permalink
 const taxon = await client.store.taxons.get('categories/clothing', {
-  includes: 'ancestors,children', // For breadcrumbs and subcategories
+  expand: 'ancestors,children', // For breadcrumbs and subcategories
 });
 
 // List products in a category
 const categoryProducts = await client.store.taxons.products.list('categories/clothing', {
   page: 1,
-  per_page: 12,
-  includes: 'images,default_variant',
+  limit: 12,
+  expand: 'images,default_variant',
 });
 ```
 
@@ -225,7 +225,7 @@ const options = { orderToken: cart.order_token };
 
 // Get order by ID or number
 const order = await client.store.orders.get('R123456789', {
-  includes: 'line_items,shipments',
+  expand: 'line_items,shipments',
 }, options);
 
 // Update order (email, addresses)
@@ -448,7 +448,7 @@ const { data: wishlists } = await client.store.wishlists.list({}, options);
 
 // Get wishlist by ID
 const wishlist = await client.store.wishlists.get('wl_xxx', {
-  includes: 'wished_items',
+  expand: 'wished_items',
 }, options);
 
 // Create wishlist

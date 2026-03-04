@@ -16,7 +16,7 @@ module Spree
 
         many :countries,
              resource: Spree.api.country_serializer,
-             if: proc { include?(:countries) }
+             if: proc { expand?(:countries) }
       end
     end
   end

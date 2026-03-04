@@ -64,7 +64,7 @@ RSpec.describe Spree::Api::V3::Admin::VariantSerializer do
     end
 
     it 'includes prices array when included' do
-      result = described_class.new(variant, params: base_params.merge(includes: ['prices'])).to_h
+      result = described_class.new(variant, params: base_params.merge(expand: ['prices'])).to_h
       expect(result['prices']).to be_an(Array)
     end
   end

@@ -1,5 +1,12 @@
 # @spree/next
 
+## 0.6.5
+
+### Patch Changes
+
+- Rename `per_page` pagination parameter to `limit`
+- Rename `includes` query parameter to `expand`
+
 ## 0.6.4
 
 ### Patch Changes

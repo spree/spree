@@ -69,15 +69,15 @@ module Spree
         private
 
         # Build a cache key for a collection
-        # Includes: query params, pagination, includes, currency, locale
+        # Includes: query params, pagination, expand, currency, locale
         # Strips order to avoid PostgreSQL errors with DISTINCT + subquery ORDER BY expressions
         def collection_cache_key(collection)
           parts = [
             collection.reorder(nil).cache_key_with_version,
-            params[:include],
+            params[:expand],
             params[:q],
             params[:page],
-            params[:per_page],
+            params[:limit],
             current_currency,
             current_locale
           ]

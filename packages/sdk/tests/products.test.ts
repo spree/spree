@@ -20,7 +20,7 @@ describe('products', () => {
     it('passes query parameters', async () => {
       const result = await client.store.products.list({
         page: 2,
-        per_page: 10,
+        limit: 10,
         name_cont: 'shirt',
       });
 

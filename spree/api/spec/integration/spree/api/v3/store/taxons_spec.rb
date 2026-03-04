@@ -24,13 +24,13 @@ RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.y
       sdk_example <<~JS
         const taxons = await client.store.taxons.list({
           page: 1,
-          per_page: 25,
+          limit: 25,
         })
       JS
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false
-      parameter name: :per_page, in: :query, type: :integer, required: false
+      parameter name: :limit, in: :query, type: :integer, required: false
       parameter name: 'q[name_cont]', in: :query, type: :string, required: false,
                 description: 'Filter by name'
 
@@ -72,15 +72,15 @@ RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.y
 
       sdk_example <<~JS
         const taxon = await client.store.taxons.get('categories/clothing/shirts', {
-          includes: 'children,products',
+          expand: 'children,products',
         })
       JS
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true,
                 description: 'Taxon permalink (e.g., categories/clothing/shirts) or prefix ID (e.g., taxon_abc123)'
-      parameter name: :includes, in: :query, type: :string, required: false,
-                description: 'Include associations (children, products, parent)'
+      parameter name: :expand, in: :query, type: :string, required: false,
+                description: 'Expand associations (children, products, parent)'
 
       response '200', 'taxon found by permalink' do
         let(:'x-spree-api-key') { api_key.token }
@@ -145,7 +145,7 @@ RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.y
       sdk_example <<~JS
         const products = await client.store.taxons.products.list('categories/clothing', {
           page: 1,
-          per_page: 25,
+          limit: 25,
           sort: 'price asc',
           with_option_value_ids: ['optval_abc'],
         })
@@ -156,7 +156,7 @@ RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.y
                 description: 'Taxon permalink or prefix ID'
       parameter name: :page, in: :query, type: :integer, required: false,
                 description: 'Page number (default: 1)'
-      parameter name: :per_page, in: :query, type: :integer, required: false,
+      parameter name: :limit, in: :query, type: :integer, required: false,
                 description: 'Number of items per page (default: 25, max: 100)'
       parameter name: :sort, in: :query, type: :string, required: false,
                 description: 'Sort order. Values: price asc, price desc, best_selling, name asc, name desc, available_on desc, available_on asc'

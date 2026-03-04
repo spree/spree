@@ -7,7 +7,7 @@ module Spree
         class TaxonomySerializer < V3::TaxonomySerializer
           many :metafields,
                resource: Spree.api.admin_metafield_serializer,
-               if: proc { params[:includes]&.include?('metafields') }
+               if: proc { params[:expand]&.include?('metafields') }
         end
       end
     end

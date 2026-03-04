@@ -33,7 +33,7 @@ module Spree
           private
 
           def serialize_market(market)
-            Spree.api.market_serializer.new(market, params: serializer_params.merge(includes: include_list + ['countries'])).to_h
+            Spree.api.market_serializer.new(market, params: serializer_params.merge(expand: expand_list + ['countries'])).to_h
           end
         end
       end

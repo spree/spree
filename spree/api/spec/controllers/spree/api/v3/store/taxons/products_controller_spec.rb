@@ -69,7 +69,7 @@ RSpec.describe Spree::Api::V3::Store::Taxons::ProductsController, type: :control
     it 'supports pagination' do
       create_list(:product, 3, stores: [store], taxons: [taxon])
 
-      get :index, params: { taxon_id: taxon.permalink, per_page: 2, page: 1 }
+      get :index, params: { taxon_id: taxon.permalink, limit: 2, page: 1 }
 
       expect(json_response['data'].size).to eq(2)
       expect(json_response['meta']['page']).to eq(1)

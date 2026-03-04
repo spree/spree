@@ -18,7 +18,7 @@ RSpec.describe 'Customer Orders API', type: :request, swagger_doc: 'api-referenc
       sdk_example <<~JS
         const orders = await client.store.customer.orders.list({
           page: 1,
-          per_page: 25,
+          limit: 25,
         }, {
           bearerToken: '<token>',
         })
@@ -27,7 +27,7 @@ RSpec.describe 'Customer Orders API', type: :request, swagger_doc: 'api-referenc
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false
-      parameter name: :per_page, in: :query, type: :integer, required: false
+      parameter name: :limit, in: :query, type: :integer, required: false
       parameter name: 'q[state_eq]', in: :query, type: :string, required: false,
                 description: 'Filter by order state'
       parameter name: 'q[completed_at_gte]', in: :query, type: :string, required: false,

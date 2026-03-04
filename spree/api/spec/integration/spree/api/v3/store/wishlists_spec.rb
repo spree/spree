@@ -26,7 +26,7 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false
-      parameter name: :per_page, in: :query, type: :integer, required: false
+      parameter name: :limit, in: :query, type: :integer, required: false
 
       response '200', 'wishlists found' do
         let(:'x-spree-api-key') { api_key.token }
@@ -116,7 +116,7 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
 
       sdk_example <<~JS
         const wishlist = await client.store.wishlists.get('wl_abc123', {
-          includes: 'wished_items',
+          expand: 'wished_items',
         }, {
           bearerToken: '<token>',
         })
@@ -125,8 +125,8 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true
-      parameter name: :includes, in: :query, type: :string, required: false,
-                description: 'Include wished_items'
+      parameter name: :expand, in: :query, type: :string, required: false,
+                description: 'Expand wished_items'
 
       response '200', 'wishlist found' do
         let(:'x-spree-api-key') { api_key.token }

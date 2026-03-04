@@ -56,9 +56,9 @@ export interface RegisterParams {
 // Query params
 export interface ListParams {
   page?: number;
-  per_page?: number;
-  /** Associations to include. Accepts array or comma-separated string. */
-  includes?: string[] | string;
+  limit?: number;
+  /** Associations to expand. Accepts array or comma-separated string. */
+  expand?: string[] | string;
 }
 
 export interface ProductListParams extends ListParams {

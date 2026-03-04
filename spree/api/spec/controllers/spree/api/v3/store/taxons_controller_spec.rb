@@ -144,9 +144,9 @@ RSpec.describe Spree::Api::V3::Store::TaxonsController, type: :controller do
       expect(json_response).not_to include('lft', 'rgt')
     end
 
-    context 'with includes=ancestors' do
+    context 'with expand=ancestors' do
       it 'returns ancestors for breadcrumbs' do
-        get :show, params: { id: grandchild_taxon.prefixed_id, includes: 'ancestors' }
+        get :show, params: { id: grandchild_taxon.prefixed_id, expand: 'ancestors' }
 
         expect(response).to have_http_status(:ok)
         expect(json_response['ancestors']).to be_an(Array)
@@ -157,16 +157,16 @@ RSpec.describe Spree::Api::V3::Store::TaxonsController, type: :controller do
       it 'returns empty ancestors for root taxon' do
         root_taxon = taxonomy.root
 
-        get :show, params: { id: root_taxon.prefixed_id, includes: 'ancestors' }
+        get :show, params: { id: root_taxon.prefixed_id, expand: 'ancestors' }
 
         expect(response).to have_http_status(:ok)
         expect(json_response['ancestors']).to eq([])
       end
     end
 
-    context 'with includes=children' do
+    context 'with expand=children' do
       it 'returns children' do
-        get :show, params: { id: taxon.prefixed_id, includes: 'children' }
+        get :show, params: { id: taxon.prefixed_id, expand: 'children' }
 
         expect(response).to have_http_status(:ok)
         expect(json_response['children']).to be_an(Array)

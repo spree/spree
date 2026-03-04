@@ -51,7 +51,7 @@ describe('checkout actions', () => {
   });
 
   describe('getCheckout', () => {
-    it('fetches order with includes and auth options', async () => {
+    it('fetches order with expand and auth options', async () => {
       const mockOrder = { id: '1', number: 'R123', line_items: [{ id: 'li1' }] };
       mockClient.store.orders.get.mockResolvedValue(mockOrder);
 
@@ -59,7 +59,7 @@ describe('checkout actions', () => {
       expect(result).toEqual(mockOrder);
       expect(mockClient.store.orders.get).toHaveBeenCalledWith(
         '1',
-        { includes: 'line_items,shipments,ship_address,bill_address' },
+        { expand: 'line_items,shipments,ship_address,bill_address' },
         { orderToken: 'order_token_123', token: 'jwt_token_abc' }
       );
     });

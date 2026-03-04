@@ -71,37 +71,37 @@ module Spree
         many :variant_images,
              key: :images,
              resource: Spree.api.image_serializer,
-             if: proc { params[:includes]&.include?('images') }
+             if: proc { params[:expand]&.include?('images') }
 
         many :variants,
              resource: Spree.api.variant_serializer,
-             if: proc { params[:includes]&.include?('variants') }
+             if: proc { params[:expand]&.include?('variants') }
 
         one :default_variant,
             resource: Spree.api.variant_serializer,
-            if: proc { params[:includes]&.include?('default_variant') }
+            if: proc { params[:expand]&.include?('default_variant') }
 
         one :master,
             key: :master_variant,
             resource: Spree.api.variant_serializer,
-            if: proc { params[:includes]&.include?('master_variant') }
+            if: proc { params[:expand]&.include?('master_variant') }
 
         many :option_types,
              resource: Spree.api.option_type_serializer,
-             if: proc { params[:includes]&.include?('option_types') }
+             if: proc { params[:expand]&.include?('option_types') }
 
         many :taxons,
              proc { |taxons, params|
                taxons.select { |t| t.taxonomy.store_id == params[:store].id }
              },
              resource: Spree.api.taxon_serializer,
-             if: proc { params[:includes]&.include?('taxons') },
-             params: { includes: [] }
+             if: proc { params[:expand]&.include?('taxons') },
+             params: { expand: [] }
 
         many :public_metafields,
              key: :metafields,
              resource: Spree.api.metafield_serializer,
-             if: proc { params[:includes]&.include?('metafields') }
+             if: proc { params[:expand]&.include?('metafields') }
       end
     end
   end

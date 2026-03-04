@@ -20,15 +20,15 @@ RSpec.describe 'Taxonomies API', type: :request, swagger_doc: 'api-reference/sto
       sdk_example <<~JS
         const taxonomies = await client.store.taxonomies.list({
           page: 1,
-          per_page: 25,
+          limit: 25,
         })
       JS
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false
-      parameter name: :per_page, in: :query, type: :integer, required: false
-      parameter name: :includes, in: :query, type: :string, required: false,
-                description: 'Include root taxon'
+      parameter name: :limit, in: :query, type: :integer, required: false
+      parameter name: :expand, in: :query, type: :string, required: false,
+                description: 'Expand root taxon'
 
       response '200', 'taxonomies found' do
         let(:'x-spree-api-key') { api_key.token }
@@ -64,15 +64,15 @@ RSpec.describe 'Taxonomies API', type: :request, swagger_doc: 'api-reference/sto
 
       sdk_example <<~JS
         const taxonomy = await client.store.taxonomies.get('taxonomy_abc123', {
-          includes: 'taxons',
+          expand: 'taxons',
         })
       JS
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true,
                 description: 'Taxonomy ID (prefixed)'
-      parameter name: :includes, in: :query, type: :string, required: false,
-                description: 'Include taxons'
+      parameter name: :expand, in: :query, type: :string, required: false,
+                description: 'Expand taxons'
 
       response '200', 'taxonomy found' do
         let(:'x-spree-api-key') { api_key.token }

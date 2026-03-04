@@ -12,21 +12,21 @@ module Spree
         end
 
         # Conditional associations
-        # Note: We pass empty includes to nested taxons to prevent infinite recursion
+        # Note: We pass empty expand to nested taxons to prevent infinite recursion
         one :root,
             resource: Spree.api.taxon_serializer,
-            if: proc { params[:includes]&.include?('root') },
-            params: { includes: [] }
+            if: proc { params[:expand]&.include?('root') },
+            params: { expand: [] }
 
         many :taxons,
              resource: Spree.api.taxon_serializer,
-             if: proc { params[:includes]&.include?('taxons') },
-             params: { includes: [] }
+             if: proc { params[:expand]&.include?('taxons') },
+             params: { expand: [] }
 
         many :public_metafields,
              key: :metafields,
              resource: Spree.api.metafield_serializer,
-             if: proc { params[:includes]&.include?('metafields') }
+             if: proc { params[:expand]&.include?('metafields') }
       end
     end
   end
