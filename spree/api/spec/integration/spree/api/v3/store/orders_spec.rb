@@ -42,6 +42,8 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['number']).to eq(order.number)
+          expect(data['checkout_steps']).to be_an(Array)
+          expect(data['checkout_steps']).to include('address', 'complete')
         end
       end
 
