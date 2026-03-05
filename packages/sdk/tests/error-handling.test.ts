@@ -72,7 +72,7 @@ describe('error handling', () => {
 
   it('throws SpreeError on 500 server error', async () => {
     server.use(
-      http.get(`${API_PREFIX}/store`, () =>
+      http.get(`${API_PREFIX}/countries`, () =>
         HttpResponse.json(
           {
             error: {
@@ -87,7 +87,7 @@ describe('error handling', () => {
 
     const client = createTestClient();
     try {
-      await client.store.store.get();
+      await client.store.countries.list();
       expect.unreachable('Should have thrown');
     } catch (error) {
       const spreeError = error as SpreeError;

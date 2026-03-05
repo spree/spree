@@ -11,8 +11,9 @@ module Spree
 
       preference :jwt_expiration, :integer, default: 3600 # 1 hour in seconds
 
-      # Rate limiting (requests per minute)
+      # Rate limiting
       preference :rate_limit_per_key, :integer, default: 300 # per publishable API key
+      preference :rate_limit_window, :integer, default: 60 # window in seconds
       preference :rate_limit_login, :integer, default: 5 # per IP
       preference :rate_limit_register, :integer, default: 3 # per IP
       preference :rate_limit_refresh, :integer, default: 10 # per IP

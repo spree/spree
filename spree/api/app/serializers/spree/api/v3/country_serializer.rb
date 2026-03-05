@@ -6,7 +6,8 @@ module Spree
         include Typelizer::DSL
 
         typelize iso: :string, iso3: :string, name: :string,
-                 states_required: :boolean, zipcode_required: :boolean
+                 states_required: :boolean, zipcode_required: :boolean,
+                 market: [:StoreMarket, nullable: true]
 
         attributes :iso, :iso3, :name, :states_required, :zipcode_required
 

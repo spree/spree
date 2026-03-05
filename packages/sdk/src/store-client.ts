@@ -10,6 +10,7 @@ import type {
   AuthTokens,
   LoginCredentials,
   RegisterParams,
+  ListResponse,
   PaginatedResponse,
   ListParams,
   ProductListParams,
@@ -42,7 +43,6 @@ import type {
   StorePaymentSession,
   StorePaymentSetupSession,
   StoreShipment,
-  StoreStore,
   StoreWishlist,
   StoreWishedItem,
   StoreAddress,
@@ -81,18 +81,6 @@ export class StoreClient {
   };
 
   // ============================================
-  // Store
-  // ============================================
-
-  readonly store = {
-    /**
-     * Get current store information
-     */
-    get: (options?: RequestOptions): Promise<StoreStore> =>
-      this.request<StoreStore>('GET', '/store', options),
-  };
-
-  // ============================================
   // Products
   // ============================================
 
@@ -106,7 +94,7 @@ export class StoreClient {
     ): Promise<PaginatedResponse<StoreProduct>> =>
       this.request<PaginatedResponse<StoreProduct>>('GET', '/products', {
         ...options,
-        params: params ? transformListParams(params) : undefined,
+        params: transformListParams({ ...params }),
       }),
 
     /**
@@ -150,7 +138,7 @@ export class StoreClient {
     ): Promise<PaginatedResponse<StoreTaxonomy>> =>
       this.request<PaginatedResponse<StoreTaxonomy>>('GET', '/taxonomies', {
         ...options,
-        params: params as Record<string, string | number | undefined>,
+        params: transformListParams({ ...params }),
       }),
 
     /**
@@ -177,7 +165,7 @@ export class StoreClient {
     ): Promise<PaginatedResponse<StoreTaxon>> =>
       this.request<PaginatedResponse<StoreTaxon>>('GET', '/taxons', {
         ...options,
-        params: params ? transformListParams(params) : undefined,
+        params: transformListParams({ ...params }),
       }),
 
     /**
@@ -211,7 +199,7 @@ export class StoreClient {
           `/taxons/${taxonId}/products`,
           {
             ...options,
-            params: params ? transformListParams(params) : undefined,
+            params: transformListParams({ ...params }),
           }
         ),
     },
@@ -226,8 +214,8 @@ export class StoreClient {
      * List countries available in the store
      * Each country includes currency and default_locale derived from its market
      */
-    list: (options?: RequestOptions): Promise<{ data: StoreCountry[] }> =>
-      this.request<{ data: StoreCountry[] }>('GET', '/countries', options),
+    list: (options?: RequestOptions): Promise<ListResponse<StoreCountry>> =>
+      this.request<ListResponse<StoreCountry>>('GET', '/countries', options),
 
     /**
      * Get a country by ISO code
@@ -249,16 +237,16 @@ export class StoreClient {
     /**
      * List currencies supported by the store (derived from markets)
      */
-    list: (options?: RequestOptions): Promise<{ data: StoreCurrency[] }> =>
-      this.request<{ data: StoreCurrency[] }>('GET', '/currencies', options),
+    list: (options?: RequestOptions): Promise<ListResponse<StoreCurrency>> =>
+      this.request<ListResponse<StoreCurrency>>('GET', '/currencies', options),
   };
 
   readonly locales = {
     /**
      * List locales supported by the store (derived from markets)
      */
-    list: (options?: RequestOptions): Promise<{ data: StoreLocale[] }> =>
-      this.request<{ data: StoreLocale[] }>('GET', '/locales', options),
+    list: (options?: RequestOptions): Promise<ListResponse<StoreLocale>> =>
+      this.request<ListResponse<StoreLocale>>('GET', '/locales', options),
   };
 
   // ============================================
@@ -269,8 +257,8 @@ export class StoreClient {
     /**
      * List all markets for the current store
      */
-    list: (options?: RequestOptions): Promise<{ data: StoreMarket[] }> =>
-      this.request<{ data: StoreMarket[] }>('GET', '/markets', options),
+    list: (options?: RequestOptions): Promise<ListResponse<StoreMarket>> =>
+      this.request<ListResponse<StoreMarket>>('GET', '/markets', options),
 
     /**
      * Get a market by prefixed ID
@@ -300,8 +288,8 @@ export class StoreClient {
       list: (
         marketId: string,
         options?: RequestOptions
-      ): Promise<{ data: StoreCountry[] }> =>
-        this.request<{ data: StoreCountry[] }>(
+      ): Promise<ListResponse<StoreCountry>> =>
+        this.request<ListResponse<StoreCountry>>(
           'GET',
           `/markets/${marketId}/countries`,
           options
@@ -509,8 +497,8 @@ export class StoreClient {
       list: (
         orderId: string,
         options?: RequestOptions
-      ): Promise<{ data: StorePayment[]; meta: object }> =>
-        this.request<{ data: StorePayment[]; meta: object }>(
+      ): Promise<PaginatedResponse<StorePayment>> =>
+        this.request<PaginatedResponse<StorePayment>>(
           'GET',
           `/orders/${orderId}/payments`,
           options
@@ -541,8 +529,8 @@ export class StoreClient {
       list: (
         orderId: string,
         options?: RequestOptions
-      ): Promise<PaginatedResponse<StorePaymentMethod>> =>
-        this.request<PaginatedResponse<StorePaymentMethod>>(
+      ): Promise<ListResponse<StorePaymentMethod>> =>
+        this.request<ListResponse<StorePaymentMethod>>(
           'GET',
           `/orders/${orderId}/payment_methods`,
           options
@@ -658,8 +646,8 @@ export class StoreClient {
       list: (
         orderId: string,
         options?: RequestOptions
-      ): Promise<{ data: StoreShipment[] }> =>
-        this.request<{ data: StoreShipment[] }>(
+      ): Promise<ListResponse<StoreShipment>> =>
+        this.request<ListResponse<StoreShipment>>(
           'GET',
           `/orders/${orderId}/shipments`,
           options
@@ -728,7 +716,7 @@ export class StoreClient {
         this.request<PaginatedResponse<StoreAddress>>(
           'GET',
           '/customer/addresses',
-          { ...options, params: params as Record<string, string | number | undefined> }
+          { ...options, params: transformListParams({ ...params }) }
         ),
 
       /**
@@ -796,7 +784,7 @@ export class StoreClient {
         this.request<PaginatedResponse<StoreCreditCard>>(
           'GET',
           '/customer/credit_cards',
-          { ...options, params: params as Record<string, string | number | undefined> }
+          { ...options, params: transformListParams({ ...params }) }
         ),
 
       /**
@@ -827,7 +815,7 @@ export class StoreClient {
         this.request<PaginatedResponse<StoreGiftCard>>(
           'GET',
           '/customer/gift_cards',
-          { ...options, params: params as Record<string, string | number | undefined> }
+          { ...options, params: transformListParams({ ...params }) }
         ),
 
       /**
@@ -850,7 +838,7 @@ export class StoreClient {
       ): Promise<PaginatedResponse<StoreOrder>> =>
         this.request<PaginatedResponse<StoreOrder>>('GET', '/customer/orders', {
           ...options,
-          params: params ? transformListParams(params) : undefined,
+          params: transformListParams({ ...params }),
         }),
     },
 
@@ -909,7 +897,7 @@ export class StoreClient {
     ): Promise<PaginatedResponse<StoreWishlist>> =>
       this.request<PaginatedResponse<StoreWishlist>>('GET', '/wishlists', {
         ...options,
-        params: params as Record<string, string | number | undefined>,
+        params: transformListParams({ ...params }),
       }),
 
     /**

@@ -6,7 +6,6 @@ export type { SpreeNextConfig, SpreeNextOptions } from './types';
 export { listProducts, getProduct, getProductFilters } from './data/products';
 export { listTaxons, getTaxon, listTaxonProducts } from './data/taxons';
 export { listTaxonomies, getTaxonomy } from './data/taxonomies';
-export { getStore } from './data/store';
 export { listCountries, getCountry } from './data/countries';
 export { listCurrencies } from './data/currencies';
 export { listLocales } from './data/locales';
@@ -81,7 +80,6 @@ export type {
   StoreCurrency,
   StoreLocale,
   StoreMarket,
-  StoreStore,
   StoreAddress,
   StoreCustomer,
   StoreCreditCard,
