@@ -62,12 +62,14 @@ export interface RegisterParams {
 export interface ListParams {
   page?: number;
   limit?: number;
+  /** Sort order. Prefix with - for descending, e.g. '-created_at', 'name'. Comma-separated for multiple fields. */
+  sort?: string;
   /** Associations to expand, e.g. ['variants', 'images'] */
   expand?: string[];
 }
 
 export interface ProductListParams extends ListParams {
-  /** Sort: 'price asc', 'price desc', 'best_selling', 'name asc', 'name desc', 'available_on desc', 'available_on asc' */
+  /** Sort: 'price', '-price', 'best_selling', 'name', '-name', '-available_on', 'available_on' */
   sort?: string;
   /** Full-text search across name and SKU */
   multi_search?: string;
@@ -90,7 +92,7 @@ export interface ProductListParams extends ListParams {
 }
 
 export interface TaxonListParams extends ListParams {
-  /** Sort order, e.g. 'name asc', 'created_at desc' */
+  /** Sort order, e.g. 'name', '-created_at' */
   sort?: string;
   /** Filter: name contains */
   name_cont?: string;

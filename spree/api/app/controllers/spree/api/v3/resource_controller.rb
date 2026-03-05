@@ -119,9 +119,30 @@ module Spree
           []
         end
 
-        # Ransack query parameters
+        # Ransack query parameters with sort translation.
+        # Translates `-field` notation (JSON:API standard) to Ransack `s` format.
+        # e.g., sort=-price,name → s=price desc,name asc
         def ransack_params
-          params[:q] || {}
+          rp = params[:q]&.to_unsafe_h || params[:q] || {}
+          sort_value = sort_param
+
+          if sort_value.present?
+            rp = rp.dup unless rp.is_a?(Hash)
+            rp['s'] = sort_value.split(',').map { |field|
+              if field.start_with?('-')
+                "#{field[1..]} desc"
+              else
+                "#{field} asc"
+              end
+            }.join(',')
+          end
+
+          rp
+        end
+
+        # Sort parameter from the request
+        def sort_param
+          params[:sort]
         end
 
         # Pagination parameters

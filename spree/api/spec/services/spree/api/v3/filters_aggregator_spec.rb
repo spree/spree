@@ -43,7 +43,7 @@ RSpec.describe Spree::Api::V3::FiltersAggregator do
 
     it 'returns default_sort from taxon' do
       taxon.update!(sort_order: 'available_on desc')
-      expect(result[:default_sort]).to eq('available_on desc')
+      expect(result[:default_sort]).to eq('-available_on')
     end
 
     it 'returns manual as default_sort when no taxon' do

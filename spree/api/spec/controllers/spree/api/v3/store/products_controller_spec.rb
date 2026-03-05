@@ -162,7 +162,7 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
       end
 
       it 'sorts by price low to high' do
-        get :index, params: { sort: 'price asc' }
+        get :index, params: { sort: 'price' }
 
         expect(response).to have_http_status(:ok)
         prices = json_response['data'].map { |p| p['price']['amount'].to_f }
@@ -170,7 +170,7 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
       end
 
       it 'sorts by price high to low' do
-        get :index, params: { sort: 'price desc' }
+        get :index, params: { sort: '-price' }
 
         expect(response).to have_http_status(:ok)
         prices = json_response['data'].map { |p| p['price']['amount'].to_f }
@@ -188,8 +188,8 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
         expect(ids.first).to eq(product2.prefixed_id)
       end
 
-      it 'sorts by name a-z with ransack' do
-        get :index, params: { q: { s: 'name asc' } }
+      it 'sorts by name a-z' do
+        get :index, params: { sort: 'name' }
 
         expect(response).to have_http_status(:ok)
         names = json_response['data'].map { |p| p['name'] }

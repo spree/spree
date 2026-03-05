@@ -32,12 +32,12 @@ const products = await client.store.products.list({
 
 ### Sorting Products
 
-Pass `sort` with one of the supported values:
+Pass `sort` with one of the supported values. Prefix with `-` for descending order:
 
 ```typescript
 const products = await client.store.products.list({
-  sort: 'price asc',    // price asc, price desc, best_selling,
-                         // name asc, name desc, available_on desc, available_on asc
+  sort: 'price',        // price, -price, best_selling,
+                         // name, -name, -available_on, available_on
 });
 ```
 
@@ -68,7 +68,7 @@ const filters = await client.store.products.filters({
 //     { id: 'opttype_abc', type: 'option', name: 'color', presentation: 'Color', options: [...] },
 //     { id: 'taxons', type: 'taxon', options: [{ id: 'txn_abc', name: 'Shirts', permalink: '...', count: 12 }] },
 //   ],
-//   sort_options: [{ id: 'manual' }, { id: 'price asc' }, { id: 'best_selling' }, ...],
+//   sort_options: [{ id: 'manual' }, { id: 'price' }, { id: 'best_selling' }, ...],
 //   default_sort: 'manual',
 //   total_count: 85,
 // }

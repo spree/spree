@@ -22,14 +22,14 @@ describe('transformListParams', () => {
     expect(result).toEqual({ expand: '' });
   });
 
-  it('passes through sort param unchanged', () => {
-    const result = transformListParams({ sort: 'price asc' });
-    expect(result).toEqual({ sort: 'price asc' });
+  it('passes through descending sort param unchanged', () => {
+    const result = transformListParams({ sort: '-price' });
+    expect(result).toEqual({ sort: '-price' });
   });
 
-  it('passes through custom sort values like price-low-to-high', () => {
-    const result = transformListParams({ sort: 'price-low-to-high' });
-    expect(result).toEqual({ sort: 'price-low-to-high' });
+  it('passes through ascending sort param unchanged', () => {
+    const result = transformListParams({ sort: 'name' });
+    expect(result).toEqual({ sort: 'name' });
   });
 
   it('wraps filter keys in q[...]', () => {
@@ -83,7 +83,7 @@ describe('transformListParams', () => {
       page: 1,
       limit: 12,
       expand: ['images', 'default_variant'],
-      sort: 'created_at desc',
+      sort: '-created_at',
       name_cont: 'shirt',
       price_gte: 20,
       taxons_id_eq: 'txn_abc123',
@@ -92,7 +92,7 @@ describe('transformListParams', () => {
       page: 1,
       limit: 12,
       expand: 'images,default_variant',
-      sort: 'created_at desc',
+      sort: '-created_at',
       'q[name_cont]': 'shirt',
       'q[price_gte]': 20,
       'q[taxons_id_eq]': 'txn_abc123',

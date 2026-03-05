@@ -58,13 +58,13 @@ module Spree
 
         sort_orders = {
           'manual' => 'manual',
-          'best-selling' => '-best_selling',
-          'name-a-z' => 'name',
-          'name-z-a' => '-name',
-          'price-low-to-high' => 'price',
-          'price-high-to-low' => '-price',
-          'newest-first' => '-available_on',
-          'oldest-first' => 'available_on'
+          'best_selling' => '-best_selling',
+          'name asc' => 'name',
+          'name desc' => '-name',
+          'price asc' => 'price',
+          'price desc' => '-price',
+          'available_on desc' => '-available_on',
+          'available_on asc' => 'available_on'
         }
 
         sort_orders.fetch(sort_order.to_s, 'manual')
