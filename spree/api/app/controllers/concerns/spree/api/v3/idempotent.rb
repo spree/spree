@@ -8,20 +8,10 @@ module Spree
         IDEMPOTENCY_HEADER = 'Idempotency-Key'
         MAX_KEY_LENGTH = 255
 
+        MUTATING_METHODS = %w[POST PUT PATCH DELETE].freeze
+
         included do
-          around_action :check_idempotency, if: :idempotent_action?
-        end
-
-        class_methods do
-          def idempotent_actions(*actions)
-            self._idempotent_actions = actions.map(&:to_s).freeze
-          end
-
-          attr_writer :_idempotent_actions
-
-          def _idempotent_actions
-            @_idempotent_actions || []
-          end
+          around_action :check_idempotency, if: :mutating_request?
         end
 
         private
@@ -72,8 +62,8 @@ module Spree
           end
         end
 
-        def idempotent_action?
-          self.class._idempotent_actions.include?(action_name)
+        def mutating_request?
+          MUTATING_METHODS.include?(request.method)
         end
 
         def idempotency_cache_key(key)

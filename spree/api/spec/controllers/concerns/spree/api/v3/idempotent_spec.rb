@@ -81,7 +81,7 @@ RSpec.describe Spree::Api::V3::Idempotent, type: :controller do
         expect(json_response['error']['code']).to eq('invalid_request')
       end
 
-      it 'does not apply to non-idempotent actions' do
+      it 'does not apply to GET requests' do
         cart = create(:order, store: store)
         request.headers['x-spree-order-token'] = cart.token
         request.headers['Idempotency-Key'] = idempotency_key

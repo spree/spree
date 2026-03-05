@@ -5,9 +5,6 @@ module Spree
         module Orders
           class PaymentSessionsController < ResourceController
             include Spree::Api::V3::OrderConcern
-            include Spree::Api::V3::Idempotent
-
-            idempotent_actions :create, :complete
 
             skip_before_action :set_resource
             before_action :authorize_order_access!

@@ -4,9 +4,6 @@ module Spree
       module Store
         class CartController < Store::BaseController
           include Spree::Api::V3::OrderConcern
-          include Spree::Api::V3::Idempotent
-
-          idempotent_actions :create
 
           before_action :require_authentication!, only: [:associate]
 

@@ -5,9 +5,6 @@ module Spree
         class OrdersController < ResourceController
           include Spree::Api::V3::OrderConcern
           include Spree::Api::V3::OrderLock
-          include Spree::Api::V3::Idempotent
-
-          idempotent_actions :update, :next, :advance, :complete
 
           # Skip base controller's set_resource and define our own complete list
           skip_before_action :set_resource

@@ -6,9 +6,6 @@ module Spree
           class CouponCodesController < ResourceController
             include Spree::Api::V3::OrderConcern
             include Spree::Api::V3::OrderLock
-            include Spree::Api::V3::Idempotent
-
-            idempotent_actions :create
 
             before_action :authorize_order_access!
             skip_before_action :set_resource
