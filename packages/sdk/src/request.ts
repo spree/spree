@@ -65,6 +65,10 @@ function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+function generateIdempotencyKey(): string {
+  return `spree-sdk-retry-${crypto.randomUUID()}`;
+}
+
 function shouldRetryOnStatus(method: string, status: number, config: Required<RetryConfig>, hasIdempotencyKey: boolean): boolean {
   const isIdempotent = method === 'GET' || method === 'HEAD' || hasIdempotencyKey;
   if (isIdempotent) {
@@ -150,11 +154,16 @@ export function createRequestFn(
       requestHeaders['x-spree-country'] = country;
     }
 
-    if (idempotencyKey) {
-      requestHeaders['Idempotency-Key'] = idempotencyKey;
+    // Auto-generate idempotency key for mutating requests when retries are enabled (Stripe-style).
+    // User-supplied keys take precedence over auto-generated ones.
+    const isMutating = method !== 'GET' && method !== 'HEAD';
+    const effectiveIdempotencyKey = idempotencyKey ?? (isMutating && config.retryConfig ? generateIdempotencyKey() : undefined);
+
+    if (effectiveIdempotencyKey) {
+      requestHeaders['Idempotency-Key'] = effectiveIdempotencyKey;
     }
 
-    const hasIdempotencyKey = !!idempotencyKey;
+    const hasIdempotencyKey = !!effectiveIdempotencyKey;
     const maxAttempts = config.retryConfig ? config.retryConfig.maxRetries + 1 : 1;
 
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
