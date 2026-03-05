@@ -107,8 +107,23 @@ module Spree
           with_typelizer_enabled do
             schemas = Typelizer.openapi_schemas
             schemas = schemas.select { |key, _| key.to_s.start_with?('Store') }
-            schemas.each_value { |s| s[:'x-typelizer'] = true }
+            schemas.each_value do |s|
+              s[:'x-typelizer'] = true
+              strip_null_from_enums(s)
+            end
             schemas
+          end
+        end
+
+        # Typelizer adds nil to enum arrays for nullable fields.
+        # OpenAPI 3.0 handles nullability via `nullable: true`, so the nil entry is redundant
+        # and causes issues with code generators.
+        def strip_null_from_enums(schema)
+          properties = schema[:properties] || {}
+          properties.each_value do |prop|
+            next unless prop.is_a?(Hash) && prop[:enum].is_a?(Array)
+
+            prop[:enum].reject!(&:nil?)
           end
         end
 

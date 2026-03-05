@@ -52,6 +52,28 @@ const client = createSpreeClient({
 });
 ```
 
+## Monetary Amounts
+
+All monetary values in the API are returned as **strings** (e.g., `"29.99"`, `"0.0"`), not numbers. This preserves decimal precision and avoids floating-point rounding issues.
+
+```typescript
+const order = await client.store.orders.get('or_abc123', {}, { token });
+
+// Monetary fields are strings
+order.total;         // "129.99"
+order.item_total;    // "99.99"
+order.ship_total;    // "10.00"
+order.tax_total;     // "20.00"
+
+// Display fields include currency formatting
+order.display_total; // "$129.99"
+
+// Convert to number when needed for calculations
+const total = parseFloat(order.total);
+```
+
+This applies to all monetary fields across all types: `StoreOrder`, `StoreLineItem`, `StoreShipment`, `StorePayment`, `StoreGiftCard`, `StorePrice`, etc.
+
 ## TypeScript Support
 
 The SDK includes full TypeScript support with generated types from the API serializers:
