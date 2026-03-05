@@ -459,9 +459,12 @@ module Spree
         let(:params) { { sort_by: 'best-selling' } }
 
         before do
+          Spree::Current.store = store
           product.store_products.find_by(store: store).update(units_sold_count: 10, revenue: 100)
           product_2.store_products.find_by(store: store).update(units_sold_count: 30, revenue: 200)
           product_3.store_products.find_by(store: store).update(units_sold_count: 30, revenue: 300)
+          in_stock_product.store_products.find_by(store: store).update(units_sold_count: 0, revenue: 1)
+          not_backorderable_product.store_products.find_by(store: store).update(units_sold_count: 0, revenue: 0)
         end
 
         it 'returns products in best-selling order' do
