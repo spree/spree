@@ -3,14 +3,14 @@ require 'spec_helper'
 module Spree
   describe Products::Find do
     let(:store)                      { @default_store }
-    let!(:product)                   { create(:product, name: 'Product 1', price: 15.99, stores: [store]) }
-    let!(:product_2)                 { create(:product, name: 'Product 2', discontinue_on: Time.current + 1.day, price: 23.99, stores: [store]) }
-    let!(:product_3)                 { create(:product, name: 'Product 3', price: 16.99, stores: [store]) }
+    let!(:product)                   { Timecop.travel(5.days.ago) { create(:product, name: 'Product 1', price: 15.99, stores: [store]) } }
+    let!(:product_2)                 { Timecop.travel(4.days.ago) { create(:product, name: 'Product 2', discontinue_on: Time.current + 5.day, price: 23.99, stores: [store]) } }
+    let!(:product_3)                 { Timecop.travel(3.days.ago) { create(:product, name: 'Product 3', price: 16.99, stores: [store]) } }
     let!(:option_value)              { create(:option_value) }
-    let!(:deleted_product)           { create(:product, name: 'Deleted Product', deleted_at: Time.current - 1.day) }
-    let!(:discontinued_product)      { create(:product, name: 'Discontinued Product', status: 'archived') }
-    let!(:in_stock_product)          { create(:product_in_stock, name: 'In Stock Product', price: 17.99) }
-    let!(:not_backorderable_product) { create(:product_in_stock, :without_backorder, name: 'Not Backorderable Product', price: 18.99) }
+    let!(:deleted_product)           { Timecop.travel(2.days.ago) { create(:product, name: 'Deleted Product', deleted_at: Time.current - 1.day) } }
+    let!(:discontinued_product)      { Timecop.travel(1.day.ago) { create(:product, name: 'Discontinued Product', status: 'archived') } }
+    let!(:in_stock_product)          { Timecop.travel(1.hour.ago) { create(:product_in_stock, name: 'In Stock Product', price: 17.99) } }
+    let!(:not_backorderable_product) { Timecop.travel(1.minute.ago) { create(:product_in_stock, :without_backorder, name: 'Not Backorderable Product', price: 18.99) } }
 
     context 'include discontinued' do
       it 'returns products with discontinued' do
@@ -419,7 +419,7 @@ module Spree
         let(:params) { { sort_by: 'newest-first' } }
 
         it 'returns products in newest-first order' do
-          expect(products.to_a).to eq([not_backorderable_product, in_stock_product, product_3, product_2, product])
+          expect(products.to_a.map(&:name)).to eq([not_backorderable_product.name, in_stock_product.name, product_3.name, product_2.name, product.name])
         end
       end
 
