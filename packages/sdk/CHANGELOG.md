@@ -1,5 +1,23 @@
 # @spree/sdk
 
+## 0.6.8
+
+### Patch Changes
+
+- Monetary amount types (`cost`, `amount`, `amount_used`, `amount_authorized`, `amount_remaining`, `cost_price`) changed from `number` to `string` in `StoreShippingRate`, `StoreGiftCard`, `AdminProduct`, and `AdminVariant` types. This follows the Stripe convention of serializing financial values as strings to preserve decimal precision across JSON parsers.
+
+- Fixed `StoreCountry.market` type from `unknown` to `StoreMarket | null`.
+
+- Add `idempotencyKey` option to `RequestOptions` and auto-generate idempotency keys for all mutating requests (POST, PUT, PATCH, DELETE) when retries are enabled. This enables safe automatic retries on 5xx errors and network failures for all requests, matching Stripe SDK behavior. User-supplied keys take precedence over auto-generated ones.
+
+- Added `ListResponse<T>` type for non-paginated list endpoints (countries, currencies, locales, markets). `PaginatedResponse<T>` now extends `ListResponse<T>`.
+
+- Made `publishableKey` optional in client config. Admin-only consumers no longer need to provide a publishable key. At least one of `publishableKey` or `secretKey` must still be provided.
+
+- Stop sending `orderToken` as a URL query parameter. The order token is now sent exclusively via the `x-spree-order-token` header, keeping auth tokens out of URLs (server logs, browser history, referrer headers).
+
+- Removed `store.store` resource from the SDK. Store branding should be configured as developer config (env vars) rather than fetched from the API.
+
 ## 0.6.7
 
 ### Patch Changes
