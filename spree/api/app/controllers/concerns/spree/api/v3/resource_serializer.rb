@@ -8,12 +8,16 @@ module Spree
 
         # Serialize a single resource
         def serialize_resource(resource)
-          serializer_class.new(resource, params: serializer_params).to_h
+          hash = serializer_class.new(resource, params: serializer_params).to_h
+          filter_fields(hash)
         end
 
         # Serialize a collection of resources
         def serialize_collection(collection)
-          collection.map { |item| serializer_class.new(item, params: serializer_params).to_h }
+          collection.map do |item|
+            hash = serializer_class.new(item, params: serializer_params).to_h
+            filter_fields(hash)
+          end
         end
 
         # Params passed to serializers
@@ -34,6 +38,25 @@ module Spree
           return [] unless expand_param
 
           expand_param.to_s.split(',').map(&:strip)
+        end
+
+        # Parse fields parameter into a Set for O(1) lookup.
+        # Returns nil when no fields param is present (return all fields).
+        # Supports: ?fields=name,slug,price
+        def fields_list
+          return @fields_list if defined?(@fields_list)
+
+          fields_param = params[:fields].presence
+          @fields_list = fields_param ? fields_param.to_s.split(',').map(&:strip).to_set : nil
+        end
+
+        # Filter serialized hash to only include requested fields.
+        # The 'id' field is always included.
+        def filter_fields(hash)
+          fields = fields_list
+          return hash unless fields
+
+          hash.select { |key, _| key == 'id' || fields.include?(key) }
         end
       end
     end

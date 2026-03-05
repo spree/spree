@@ -25,6 +25,8 @@ RSpec.describe 'Countries API', type: :request, swagger_doc: 'api-reference/stor
       JS
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., name,slug,price). id is always included.'
 
       response '200', 'countries found' do
         let(:'x-spree-api-key') { api_key.token }
@@ -76,6 +78,8 @@ RSpec.describe 'Countries API', type: :request, swagger_doc: 'api-reference/stor
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :iso, in: :path, type: :string, required: true,
                 description: 'Country ISO 3166-1 alpha-2 code (e.g., "US", "DE")'
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., name,slug,price). id is always included.'
 
       response '200', 'country found' do
         let(:'x-spree-api-key') { api_key.token }

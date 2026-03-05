@@ -75,6 +75,7 @@ module Spree
             collection.map(&:updated_at).max&.to_i,
             @pagy&.count,
             params[:expand],
+            params[:fields],
             params[:q]&.to_json,
             params[:page],
             params[:limit],

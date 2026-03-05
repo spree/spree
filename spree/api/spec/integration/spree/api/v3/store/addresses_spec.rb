@@ -26,6 +26,8 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
       parameter name: 'Authorization', in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false
       parameter name: :limit, in: :query, type: :integer, required: false
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., name,slug,price). id is always included.'
 
       response '200', 'addresses found' do
         let(:'x-spree-api-key') { api_key.token }
@@ -149,6 +151,8 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., name,slug,price). id is always included.'
 
       response '200', 'address found' do
         let(:'x-spree-api-key') { api_key.token }

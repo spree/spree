@@ -65,6 +65,8 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
                 description: 'Filter to only in-stock products'
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Comma-separated associations to expand (variants, images, taxons, option_types)'
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., name,slug,price). id is always included.'
 
       response '200', 'products found' do
         let(:'x-spree-api-key') { api_key.token }
@@ -115,6 +117,8 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
                 description: 'Product slug (e.g., spree-tote) or prefix ID (e.g., product_abc123)'
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Comma-separated associations to expand'
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., name,slug,price). id is always included.'
 
       response '200', 'product found by slug' do
         let(:'x-spree-api-key') { api_key.token }

@@ -25,6 +25,8 @@ RSpec.describe 'Markets API', type: :request, swagger_doc: 'api-reference/store.
       JS
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., name,slug,price). id is always included.'
 
       response '200', 'markets found' do
         let(:'x-spree-api-key') { api_key.token }
@@ -80,6 +82,8 @@ RSpec.describe 'Markets API', type: :request, swagger_doc: 'api-reference/store.
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true,
                 description: 'Market prefixed ID (e.g., "mkt_k5nR8xLq")'
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., name,slug,price). id is always included.'
 
       response '200', 'market found' do
         let(:'x-spree-api-key') { api_key.token }
@@ -122,6 +126,8 @@ RSpec.describe 'Markets API', type: :request, swagger_doc: 'api-reference/store.
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :country, in: :query, type: :string, required: true,
                 description: 'Country ISO 3166-1 alpha-2 code (e.g., "DE", "US")'
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., name,slug,price). id is always included.'
 
       response '200', 'market resolved' do
         let(:'x-spree-api-key') { api_key.token }
@@ -163,6 +169,8 @@ RSpec.describe 'Markets API', type: :request, swagger_doc: 'api-reference/store.
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :market_id, in: :path, type: :string, required: true,
                 description: 'Market prefixed ID'
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., name,slug,price). id is always included.'
 
       response '200', 'countries found' do
         let(:'x-spree-api-key') { api_key.token }
@@ -200,6 +208,8 @@ RSpec.describe 'Markets API', type: :request, swagger_doc: 'api-reference/store.
                 description: 'Market prefixed ID'
       parameter name: :id, in: :path, type: :string, required: true,
                 description: 'Country ISO 3166-1 alpha-2 code (e.g., "DE")'
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., name,slug,price). id is always included.'
 
       response '200', 'country found' do
         let(:'x-spree-api-key') { api_key.token }

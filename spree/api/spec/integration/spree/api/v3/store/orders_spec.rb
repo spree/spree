@@ -31,6 +31,8 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
                 description: 'Order token for guest access'
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Expand associations (line_items, shipments, payments)'
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., name,slug,price). id is always included.'
 
       response '200', 'order found (authenticated)' do
         let(:'x-spree-api-key') { api_key.token }

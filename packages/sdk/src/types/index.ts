@@ -69,6 +69,8 @@ export interface ListParams {
   sort?: string;
   /** Associations to expand, e.g. ['variants', 'images'] */
   expand?: string[];
+  /** Fields to include in response, e.g. ['name', 'slug', 'price']. Omit to return all fields. 'id' is always included. */
+  fields?: string[];
 }
 
 export interface ProductListParams extends ListParams {

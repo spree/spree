@@ -31,6 +31,8 @@ RSpec.describe 'Taxonomies API', type: :request, swagger_doc: 'api-reference/sto
                 description: 'Sort order. Prefix with - for descending. Example: name, -name'
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Expand root taxon'
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., name,slug,price). id is always included.'
 
       response '200', 'taxonomies found' do
         let(:'x-spree-api-key') { api_key.token }
@@ -75,6 +77,8 @@ RSpec.describe 'Taxonomies API', type: :request, swagger_doc: 'api-reference/sto
                 description: 'Taxonomy ID (prefixed)'
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Expand taxons'
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., name,slug,price). id is always included.'
 
       response '200', 'taxonomy found' do
         let(:'x-spree-api-key') { api_key.token }
