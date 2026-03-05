@@ -142,7 +142,7 @@ export class StoreClient {
       new AsyncIterableList((page) =>
         this.request<PaginatedResponse<StoreTaxonomy>>('GET', '/taxonomies', {
           ...options,
-          params: { ...params, page } as Record<string, string | number | undefined>,
+          params: transformListParams({ ...params, page }),
         })
       , params?.page ?? 1),
 
@@ -726,7 +726,7 @@ export class StoreClient {
           this.request<PaginatedResponse<StoreAddress>>(
             'GET',
             '/customer/addresses',
-            { ...options, params: { ...params, page } as Record<string, string | number | undefined> }
+            { ...options, params: transformListParams({ ...params, page }) }
           )
         , params?.page ?? 1),
 
@@ -796,7 +796,7 @@ export class StoreClient {
           this.request<PaginatedResponse<StoreCreditCard>>(
             'GET',
             '/customer/credit_cards',
-            { ...options, params: { ...params, page } as Record<string, string | number | undefined> }
+            { ...options, params: transformListParams({ ...params, page }) }
           )
         , params?.page ?? 1),
 
@@ -829,7 +829,7 @@ export class StoreClient {
           this.request<PaginatedResponse<StoreGiftCard>>(
             'GET',
             '/customer/gift_cards',
-            { ...options, params: { ...params, page } as Record<string, string | number | undefined> }
+            { ...options, params: transformListParams({ ...params, page }) }
           )
         , params?.page ?? 1),
 
@@ -915,7 +915,7 @@ export class StoreClient {
       new AsyncIterableList((page) =>
         this.request<PaginatedResponse<StoreWishlist>>('GET', '/wishlists', {
           ...options,
-          params: { ...params, page } as Record<string, string | number | undefined>,
+          params: transformListParams({ ...params, page }),
         })
       , params?.page ?? 1),
 
