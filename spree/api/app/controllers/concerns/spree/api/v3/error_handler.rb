@@ -12,6 +12,7 @@ module Spree
           access_denied: 'access_denied',
           invalid_token: 'invalid_token',
           invalid_provider: 'invalid_provider',
+          current_password_invalid: 'current_password_invalid',
 
           # Resource errors
           record_not_found: 'record_not_found',

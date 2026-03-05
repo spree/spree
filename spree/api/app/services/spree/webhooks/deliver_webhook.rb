@@ -60,6 +60,7 @@ module Spree
         request['Content-Type'] = 'application/json'
         request['User-Agent'] = 'Spree-Webhooks/1.0'
         request['X-Spree-Webhook-Signature'] = generate_signature
+        request['X-Spree-Webhook-Timestamp'] = webhook_timestamp.to_s
         request['X-Spree-Webhook-Event'] = @delivery.event_name
         request.body = @delivery.payload.to_json
 
@@ -68,13 +69,18 @@ module Spree
 
       def generate_signature
         payload_json = @delivery.payload.to_json
-        OpenSSL::HMAC.hexdigest('SHA256', @secret_key, payload_json)
+        OpenSSL::HMAC.hexdigest('SHA256', @secret_key, "#{webhook_timestamp}.#{payload_json}")
+      end
+
+      def webhook_timestamp
+        @webhook_timestamp ||= Time.current.to_i
       end
 
       def ssl_verify_mode
         if Spree::Api::Config.webhooks_verify_ssl
           OpenSSL::SSL::VERIFY_PEER
         else
+          Rails.logger.warn('[Spree] Webhook SSL verification is disabled. This is not recommended for production environments.')
           OpenSSL::SSL::VERIFY_NONE
         end
       end

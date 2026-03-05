@@ -39,13 +39,20 @@ module Spree
               })
           end
 
-          it 'includes HMAC signature in headers' do
-            expected_signature = OpenSSL::HMAC.hexdigest('SHA256', secret_key, delivery.payload.to_json)
+          it 'includes HMAC signature with timestamp in headers' do
+            Timecop.freeze do
+              timestamp = Time.current.to_i
+              payload_json = delivery.payload.to_json
+              expected_signature = OpenSSL::HMAC.hexdigest('SHA256', secret_key, "#{timestamp}.#{payload_json}")
 
-            described_class.call(delivery: delivery, secret_key: secret_key)
+              described_class.call(delivery: delivery, secret_key: secret_key)
 
-            expect(WebMock).to have_requested(:post, delivery.url)
-              .with(headers: { 'X-Spree-Webhook-Signature' => expected_signature })
+              expect(WebMock).to have_requested(:post, delivery.url)
+                .with(headers: {
+                  'X-Spree-Webhook-Signature' => expected_signature,
+                  'X-Spree-Webhook-Timestamp' => timestamp.to_s
+                })
+            end
           end
 
           it 'sends payload as JSON body' do

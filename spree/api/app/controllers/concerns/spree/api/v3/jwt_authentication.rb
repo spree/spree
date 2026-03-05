@@ -82,7 +82,10 @@ module Spree
         end
 
         def jwt_secret
-          Rails.application.credentials.jwt_secret_key || ENV['JWT_SECRET_KEY'] || Rails.application.secret_key_base
+          Spree::Api::Config[:jwt_secret_key].presence ||
+            Rails.application.credentials.jwt_secret_key ||
+            ENV['JWT_SECRET_KEY'] ||
+            Rails.application.secret_key_base
         end
 
         def jwt_expiration

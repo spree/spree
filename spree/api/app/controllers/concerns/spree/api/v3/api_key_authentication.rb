@@ -68,7 +68,7 @@ module Spree
         #
         # @return [String, nil] the API key token
         def extract_api_key
-          request.headers['X-Spree-Api-Key'].presence || params[:api_key]
+          request.headers['X-Spree-Api-Key'].presence
         end
       end
     end
