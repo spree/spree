@@ -50,6 +50,10 @@ module Spree
 
       def make_request
         uri = URI.parse(@delivery.url)
+
+        # SSRF protection: validate URL does not resolve to internal/private IP
+        Spree::UrlSafety.validate_url!(@delivery.url)
+
         http = Net::HTTP.new(uri.host, uri.port)
         http.use_ssl = uri.scheme == 'https'
         http.verify_mode = ssl_verify_mode

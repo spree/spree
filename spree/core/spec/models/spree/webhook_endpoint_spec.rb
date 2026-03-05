@@ -6,6 +6,10 @@ describe Spree::WebhookEndpoint, type: :model do
   let(:store) { @default_store }
   let(:webhook_endpoint) { build(:webhook_endpoint, store: store) }
 
+  before do
+    allow(Spree::UrlSafety).to receive(:validate_url!).and_return(nil)
+  end
+
   describe 'validations' do
     describe 'url format' do
       it 'accepts valid https urls' do
@@ -27,6 +31,20 @@ describe Spree::WebhookEndpoint, type: :model do
       it 'rejects ftp urls' do
         webhook_endpoint.url = 'ftp://example.com/webhooks'
         expect(webhook_endpoint).not_to be_valid
+      end
+    end
+
+    describe 'url SSRF validation' do
+      it 'rejects URLs resolving to private IPs' do
+        allow(Spree::UrlSafety).to receive(:validate_url!).and_raise(Spree::UrlSafety::SsrfError)
+        endpoint = build(:webhook_endpoint, store: store, url: 'http://internal-service.local/webhook')
+        expect(endpoint).not_to be_valid
+        expect(endpoint.errors[:url]).to include(I18n.t('activerecord.errors.models.spree/webhook_endpoint.attributes.url.internal_address_not_allowed'))
+      end
+
+      it 'accepts URLs resolving to public IPs' do
+        endpoint = build(:webhook_endpoint, store: store, url: 'https://example.com/webhook')
+        expect(endpoint).to be_valid
       end
     end
 

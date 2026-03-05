@@ -10,6 +10,10 @@ module Spree
       let(:delivery) { create(:webhook_delivery, :pending, webhook_endpoint: webhook_endpoint) }
       let(:secret_key) { webhook_endpoint.secret_key }
 
+      before do
+        allow(Spree::UrlSafety).to receive(:validate_url!).and_return(nil)
+      end
+
       describe '.call' do
         context 'with successful response' do
           before do
@@ -167,6 +171,24 @@ module Spree
 
             delivery.reload
             expect(delivery.response_body.length).to be <= 10_003 # 10_000 + '...'
+          end
+        end
+
+        context 'when URL resolves to private IP (SSRF)' do
+          before do
+            # Force delivery creation before overriding the SSRF stub
+            delivery
+            allow(Spree::UrlSafety).to receive(:validate_url!).and_raise(Spree::UrlSafety::SsrfError, 'URL resolves to a blocked internal address')
+            allow(Rails.error).to receive(:report)
+          end
+
+          it 'marks delivery as failed with connection error' do
+            described_class.call(delivery: delivery, secret_key: secret_key)
+
+            delivery.reload
+            expect(delivery.success).to be false
+            expect(delivery.error_type).to eq('connection_error')
+            expect(delivery.request_errors).to include('blocked internal address')
           end
         end
       end

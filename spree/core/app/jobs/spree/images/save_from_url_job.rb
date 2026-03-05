@@ -1,5 +1,6 @@
 require 'open-uri'
 require 'openssl'
+require 'tempfile'
 
 module Spree
   module Images
@@ -7,6 +8,7 @@ module Spree
       queue_as Spree.queues.images
       retry_on ActiveRecord::RecordInvalid, OpenURI::HTTPError, wait: :polynomially_longer, attempts: Spree::Config.images_save_from_url_job_attempts.to_i
       discard_on URI::InvalidURIError
+      discard_on Spree::UrlSafety::SsrfError
 
       def perform(viewable_id, viewable_type, external_url, external_id = nil, position = nil)
         viewable = viewable_type.safe_constantize.find(viewable_id)
@@ -34,28 +36,60 @@ module Spree
           raise URI::InvalidURIError, "Invalid URL scheme: #{uri.scheme}. Only http and https are allowed."
         end
 
-        file = uri.open(
-          'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-          'Accept' => 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
-          'Accept-Language' => 'en-US,en;q=0.9',
-          'Accept-Encoding' => 'gzip, deflate, br',
-          'Cache-Control' => 'no-cache',
-          'Pragma' => 'no-cache',
-          read_timeout: 60,
-          ssl_verify_mode: OpenSSL::SSL::VERIFY_PEER,
-          redirect: true
-        )
-        filename = File.basename(uri.path)
+        # SSRF protection: validate URL does not resolve to internal/private IP
+        Spree::UrlSafety.validate_url!(external_url)
 
-        image.attachment.attach(io: file, filename: filename)
-        image.external_url = external_url
-        image.external_id = external_id if external_id.present? && image.respond_to?(:external_id)
-        image.save!
+        download_and_attach_image(uri, image, external_url, external_id)
       rescue ActiveStorage::IntegrityError => e
         raise e unless Rails.env.test?
       end
 
       private
+
+      def download_and_attach_image(uri, image, external_url, external_id)
+        max_size = Spree::Config.max_image_download_size
+        tempfile = Tempfile.new(['spree_image', File.extname(uri.path)], binmode: true)
+
+        begin
+          downloaded = uri.open(
+            'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept' => 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
+            'Accept-Language' => 'en-US,en;q=0.9',
+            'Accept-Encoding' => 'gzip, deflate, br',
+            'Cache-Control' => 'no-cache',
+            'Pragma' => 'no-cache',
+            read_timeout: 60,
+            ssl_verify_mode: OpenSSL::SSL::VERIFY_PEER,
+            redirect: true
+          )
+
+          # Fast-fail on Content-Length if available
+          if downloaded.respond_to?(:meta) && downloaded.meta['content-length'].to_i > max_size
+            raise StandardError, "Image file size exceeds the maximum allowed size of #{max_size} bytes"
+          end
+
+          # Stream to tempfile with size check
+          total_bytes = 0
+          while (chunk = downloaded.read(16_384))
+            total_bytes += chunk.bytesize
+            if total_bytes > max_size
+              raise StandardError, "Image file size exceeds the maximum allowed size of #{max_size} bytes"
+            end
+            tempfile.write(chunk)
+          end
+
+          tempfile.rewind
+          filename = File.basename(uri.path)
+
+          image.attachment.attach(io: tempfile, filename: filename)
+          image.external_url = external_url
+          image.external_id = external_id if external_id.present? && image.respond_to?(:external_id)
+          image.save!
+        ensure
+          tempfile.close
+          tempfile.unlink
+        end
+      end
 
       def image_already_saved?(image, external_url)
         image.persisted? && image.attachment.attached? && image.external_url.present? && external_url == image.external_url

@@ -15,6 +15,7 @@ module Spree
 
     before do
       allow(Spree::Api::Config).to receive(:webhooks_enabled).and_return(true)
+      allow(Spree::UrlSafety).to receive(:validate_url!).and_return(nil)
     end
 
     describe '#handle' do

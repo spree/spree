@@ -8,6 +8,10 @@ RSpec.describe Spree::Admin::WebhookEndpointsController, type: :controller do
 
   let(:store) { @default_store }
 
+  before do
+    allow(Spree::UrlSafety).to receive(:validate_url!).and_return(nil)
+  end
+
   describe 'GET #index' do
     subject(:index) { get :index }
 
