@@ -153,10 +153,10 @@ describe('Retry logic', () => {
 
     it('does not send Idempotency-Key on GET', async () => {
       const mockFetch = vi.fn()
-        .mockResolvedValueOnce(jsonResponse({ name: 'Test Store' }));
+        .mockResolvedValueOnce(jsonResponse({ data: [], meta: {} }));
 
       const client = createSpreeClient({ ...baseConfig, fetch: mockFetch });
-      await client.store.store.get();
+      await client.store.products.list();
 
       const headers = mockFetch.mock.calls[0][1].headers;
       expect(headers['Idempotency-Key']).toBeUndefined();
