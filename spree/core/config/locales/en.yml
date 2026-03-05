@@ -1231,6 +1231,7 @@ en:
       this_file_language: English (US)
       translations: Translations
     icon: Icon
+    idempotency_key_reused: This Idempotency-Key has already been used with different request parameters.
     image: Image
     image_alt_text: Add Alt text to your image
     images: Images

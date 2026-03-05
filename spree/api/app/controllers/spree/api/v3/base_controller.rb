@@ -13,6 +13,7 @@ module Spree
         include Spree::Api::V3::HttpCaching
         include Spree::Api::V3::SecurityHeaders
         include Spree::Api::V3::ResourceSerializer
+        include Spree::Api::V3::Idempotent
         include Pagy::Method
 
         # Optional JWT authentication by default

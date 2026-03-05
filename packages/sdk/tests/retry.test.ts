@@ -103,8 +103,8 @@ describe('Retry logic', () => {
     });
   });
 
-  describe('POST requests (non-idempotent)', () => {
-    it('retries POST on 429 only', async () => {
+  describe('POST requests (auto-idempotency)', () => {
+    it('retries POST on 429', async () => {
       const mockFetch = vi.fn()
         .mockResolvedValueOnce(errorResponse(429, 'rate_limited', 'Too many requests'))
         .mockResolvedValueOnce(jsonResponse({ token: 'abc', user: { id: '1', email: 'a@b.com' } }));
@@ -116,11 +116,57 @@ describe('Retry logic', () => {
       expect(mockFetch).toHaveBeenCalledTimes(2);
     });
 
-    it('does NOT retry POST on 500', async () => {
+    it('retries POST on 500 with auto-generated idempotency key', async () => {
+      const mockFetch = vi.fn()
+        .mockResolvedValueOnce(errorResponse(500, 'server_error', 'Internal error'))
+        .mockResolvedValueOnce(jsonResponse({ token: 'abc', user: { id: '1', email: 'a@b.com' } }));
+
+      const client = createSpreeClient({ ...baseConfig, fetch: mockFetch });
+      const result = await client.store.auth.login({ email: 'a@b.com', password: 'pass' });
+
+      expect(result.token).toBe('abc');
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+    });
+
+    it('retries POST on network errors with auto-generated idempotency key', async () => {
+      const mockFetch = vi.fn()
+        .mockRejectedValueOnce(new TypeError('fetch failed'))
+        .mockResolvedValueOnce(jsonResponse({ token: 'abc', user: { id: '1', email: 'a@b.com' } }));
+
+      const client = createSpreeClient({ ...baseConfig, fetch: mockFetch });
+      const result = await client.store.auth.login({ email: 'a@b.com', password: 'pass' });
+
+      expect(result.token).toBe('abc');
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+    });
+
+    it('sends auto-generated Idempotency-Key header on POST', async () => {
+      const mockFetch = vi.fn()
+        .mockResolvedValueOnce(jsonResponse({ token: 'abc', user: { id: '1', email: 'a@b.com' } }));
+
+      const client = createSpreeClient({ ...baseConfig, fetch: mockFetch });
+      await client.store.auth.login({ email: 'a@b.com', password: 'pass' });
+
+      const headers = mockFetch.mock.calls[0][1].headers;
+      expect(headers['Idempotency-Key']).toMatch(/^spree-sdk-retry-/);
+    });
+
+    it('does not send Idempotency-Key on GET', async () => {
+      const mockFetch = vi.fn()
+        .mockResolvedValueOnce(jsonResponse({ data: [], meta: {} }));
+
+      const client = createSpreeClient({ ...baseConfig, fetch: mockFetch });
+      await client.store.products.list();
+
+      const headers = mockFetch.mock.calls[0][1].headers;
+      expect(headers['Idempotency-Key']).toBeUndefined();
+    });
+
+    it('does NOT retry POST when retries are disabled', async () => {
       const mockFetch = vi.fn()
         .mockResolvedValueOnce(errorResponse(500, 'server_error', 'Internal error'));
 
-      const client = createSpreeClient({ ...baseConfig, fetch: mockFetch });
+      const client = createSpreeClient({ ...baseConfig, fetch: mockFetch, retry: false });
 
       await expect(
         client.store.auth.login({ email: 'a@b.com', password: 'pass' })
@@ -128,16 +174,26 @@ describe('Retry logic', () => {
       expect(mockFetch).toHaveBeenCalledTimes(1);
     });
 
-    it('does NOT retry POST on network errors', async () => {
+    it('does not send Idempotency-Key when retries are disabled', async () => {
       const mockFetch = vi.fn()
-        .mockRejectedValueOnce(new TypeError('fetch failed'));
+        .mockResolvedValueOnce(jsonResponse({ token: 'abc', user: { id: '1', email: 'a@b.com' } }));
+
+      const client = createSpreeClient({ ...baseConfig, fetch: mockFetch, retry: false });
+      await client.store.auth.login({ email: 'a@b.com', password: 'pass' });
+
+      const headers = mockFetch.mock.calls[0][1].headers;
+      expect(headers['Idempotency-Key']).toBeUndefined();
+    });
+
+    it('uses user-supplied key over auto-generated one', async () => {
+      const mockFetch = vi.fn()
+        .mockResolvedValueOnce(jsonResponse({ number: 'R123', token: 'cart-token' }));
 
       const client = createSpreeClient({ ...baseConfig, fetch: mockFetch });
+      await client.store.cart.create(undefined, { idempotencyKey: 'my-custom-key' });
 
-      await expect(
-        client.store.auth.login({ email: 'a@b.com', password: 'pass' })
-      ).rejects.toThrow(TypeError);
-      expect(mockFetch).toHaveBeenCalledTimes(1);
+      const headers = mockFetch.mock.calls[0][1].headers;
+      expect(headers['Idempotency-Key']).toBe('my-custom-key');
     });
   });
 
