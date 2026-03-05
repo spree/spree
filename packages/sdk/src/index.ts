@@ -10,8 +10,5 @@ export { AdminClient } from './admin-client';
 export { SpreeError } from './request';
 export type { RequestOptions, RetryConfig } from './request';
 
-// Pagination
-export { AsyncIterableList } from './pagination';
-
 // All types
 export * from './types';
