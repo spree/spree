@@ -37,7 +37,7 @@ module Spree
               render_error(
                 code: ErrorHandler::ERROR_CODES[:idempotency_key_reused],
                 message: Spree.t(:idempotency_key_reused),
-                status: :unprocessable_entity
+                status: :unprocessable_content
               )
               return
             end
