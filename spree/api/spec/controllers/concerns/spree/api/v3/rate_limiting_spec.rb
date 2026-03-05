@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 RSpec.describe 'Rate Limiting', type: :controller do
-  describe Spree::Api::V3::Store::StoresController do
-    controller(Spree::Api::V3::Store::StoresController) {}
+  describe Spree::Api::V3::Store::CountriesController do
+    controller(Spree::Api::V3::Store::CountriesController) {}
 
     render_views
 
