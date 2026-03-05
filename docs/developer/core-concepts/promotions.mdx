@@ -284,8 +284,8 @@ const order = await client.store.orders.couponCodes.apply('or_abc123', 'SUMMER20
   orderToken: '<token>',
 })
 
-// Remove a coupon code
-await client.store.orders.couponCodes.remove('or_abc123', 'SUMMER20', {
+// Remove a promotion from the order
+await client.store.orders.couponCodes.remove('or_abc123', 'promo_abc123', {
   orderToken: '<token>',
 })
 ```

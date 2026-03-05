@@ -1,0 +1,69 @@
+---
+title: "Monetary Amounts"
+sidebarTitle: "Monetary Amounts"
+description: "How monetary values are represented in API responses"
+---
+
+All monetary values in the Store API are returned as **strings** (e.g., `"29.99"`, `"0.0"`), not numbers. This preserves decimal precision and avoids floating-point rounding issues common with JSON numbers.
+
+## Response Format
+
+Every monetary field has a corresponding `display_` field that includes currency formatting:
+
+```json
+{
+  "total": "129.99",
+  "display_total": "$129.99",
+  "item_total": "99.99",
+  "display_item_total": "$99.99",
+  "ship_total": "10.00",
+  "display_ship_total": "$10.00",
+  "tax_total": "20.00",
+  "display_tax_total": "$20.00"
+}
+```
+
+## Affected Types
+
+This convention applies to all monetary fields across all resources:
+
+| Resource | Monetary Fields |
+|----------|----------------|
+| **Order** | `total`, `item_total`, `ship_total`, `tax_total`, `adjustment_total`, `promo_total`, `included_tax_total`, `additional_tax_total` |
+| **Line Item** | `price`, `total`, `adjustment_total`, `promo_total`, `pre_tax_amount`, `discounted_amount`, `compare_at_amount` |
+| **Shipment** | `cost` |
+| **Payment** | `amount` |
+| **Gift Card** | `amount`, `amount_used`, `amount_authorized`, `amount_remaining` |
+| **Store Credit** | `amount`, `amount_used`, `amount_remaining` |
+| **Price** | `amount`, `compare_at_amount` |
+
+## Working with Amounts
+
+<CodeGroup>
+
+```typescript SDK
+const order = await client.store.orders.get('or_abc123', {}, { token });
+
+// Raw string values
+order.total;         // "129.99"
+order.display_total; // "$129.99"
+
+// Convert to number for calculations
+const total = parseFloat(order.total);
+```
+
+```javascript JavaScript
+const data = await response.json();
+
+// Use display fields for rendering
+element.textContent = data.display_total; // "$129.99"
+
+// Use raw fields for calculations
+const total = parseFloat(data.total);
+```
+
+</CodeGroup>
+
+<Tip>
+Use `display_*` fields for rendering prices in the UI — they are pre-formatted with the correct currency symbol and decimal places based on the order's currency. Use the raw string fields when you need to perform calculations.
+</Tip>
