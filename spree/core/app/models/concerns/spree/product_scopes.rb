@@ -41,32 +41,28 @@ module Spree
         order(price_table_name => { amount: :desc })
       end
 
-      # Price sorting scopes that use subqueries to get prices across all variants
-      # These ensure products with only variant prices (no master price) are included in results
+      # Price sorting scopes that use a derived table JOIN to get prices across all variants.
+      # These ensure products with only variant prices (no master price) are included in results.
       add_search_scope :ascend_by_price do
-        price_subquery = Price
-          .non_zero
-          .joins(:variant)
-          .where("#{Variant.table_name}.product_id = #{Product.table_name}.id")
-          .select('MIN(amount)')
+        price_agg_sql = Price.non_zero.joins(:variant)
+                            .select("#{Variant.table_name}.product_id AS product_id, MIN(#{Price.table_name}.amount) AS agg_price")
+                            .group("#{Variant.table_name}.product_id")
+                            .to_sql
 
-        price_sort_sql = "COALESCE((#{price_subquery.to_sql}), 999999999)"
-
-        select("#{Product.table_name}.*", "#{price_sort_sql} AS min_price").
-          order(Arel.sql("#{price_sort_sql} ASC"))
+        joins("LEFT JOIN (#{price_agg_sql}) AS price_agg ON price_agg.product_id = #{Product.table_name}.id").
+          select("#{Product.table_name}.*", 'COALESCE(price_agg.agg_price, 999999999) AS min_price').
+          order(Arel.sql('COALESCE(price_agg.agg_price, 999999999) ASC'))
       end
 
       add_search_scope :descend_by_price do
-        price_subquery = Price
-          .non_zero
-          .joins(:variant)
-          .where("#{Variant.table_name}.product_id = #{Product.table_name}.id")
-          .select('MAX(amount)')
+        price_agg_sql = Price.non_zero.joins(:variant)
+                            .select("#{Variant.table_name}.product_id AS product_id, MAX(#{Price.table_name}.amount) AS agg_price")
+                            .group("#{Variant.table_name}.product_id")
+                            .to_sql
 
-        price_sort_sql = "COALESCE((#{price_subquery.to_sql}), 0)"
-
-        select("#{Product.table_name}.*", "#{price_sort_sql} AS max_price").
-          order(Arel.sql("#{price_sort_sql} DESC"))
+        joins("LEFT JOIN (#{price_agg_sql}) AS price_agg ON price_agg.product_id = #{Product.table_name}.id").
+          select("#{Product.table_name}.*", 'COALESCE(price_agg.agg_price, 0) AS max_price').
+          order(Arel.sql('COALESCE(price_agg.agg_price, 0) DESC'))
       end
 
       add_search_scope :price_between do |low, high|

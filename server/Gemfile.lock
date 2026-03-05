@@ -47,7 +47,7 @@ PATH
       oj (~> 3.16)
       pagy (~> 43.0)
       spree_core (= 5.4.0.beta4)
-      typelizer (~> 0.9)
+      typelizer (~> 0.10.0)
     spree_core (5.4.0.beta4)
       active_storage_validations (= 1.3.0)
       acts-as-taggable-on
@@ -798,7 +798,7 @@ GEM
     turbo-rails (2.0.23)
       actionpack (>= 7.1.0)
       railties (>= 7.1.0)
-    typelizer (0.9.1)
+    typelizer (0.10.0)
       benchmark
       railties (>= 6.0.0)
     tzinfo (2.0.6)
@@ -1161,7 +1161,7 @@ CHECKSUMS
   tracking_number (2.4.0) sha256=2a4c6b39cbdfc8326c234626556da1e269c8dfe33478786bea93461331c247ff
   tsort (0.2.0) sha256=9650a793f6859a43b6641671278f79cfead60ac714148aabe4e3f0060480089f
   turbo-rails (2.0.23) sha256=ee0d90733aafff056cf51ff11e803d65e43cae258cc55f6492020ec1f9f9315f
-  typelizer (0.9.1) sha256=50a09824765adf94d38397685897a1db0d01fc4a3b9b7eec8ee507c276828f05
+  typelizer (0.10.0) sha256=344082184163c5178aefc68c068ce9a2dcfec77979cc149a509f4f96269026d8
   tzinfo (2.0.6) sha256=8daf828cc77bcf7d63b0e3bdb6caa47e2272dcfaf4fbfe46f8c3a9df087a829b
   unaccent (0.4.0) sha256=d9278230016edc5317c053f8e84c1e1dea6827dec028e5481e2294a4e11e7333
   unicode-display_width (3.2.0) sha256=0cdd96b5681a5949cdbc2c55e7b420facae74c4aaf9a9815eee1087cb1853c42
