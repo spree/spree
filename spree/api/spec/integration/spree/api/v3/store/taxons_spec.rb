@@ -33,6 +33,8 @@ RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.y
       parameter name: :limit, in: :query, type: :integer, required: false
       parameter name: 'q[name_cont]', in: :query, type: :string, required: false,
                 description: 'Filter by name'
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., name,slug,price). id is always included.'
 
       response '200', 'taxons found' do
         let(:'x-spree-api-key') { api_key.token }
@@ -81,6 +83,8 @@ RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.y
                 description: 'Taxon permalink (e.g., categories/clothing/shirts) or prefix ID (e.g., taxon_abc123)'
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Expand associations (children, products, parent)'
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., name,slug,price). id is always included.'
 
       response '200', 'taxon found by permalink' do
         let(:'x-spree-api-key') { api_key.token }
@@ -168,6 +172,8 @@ RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.y
                 description: 'Filter by option value prefix IDs'
       parameter name: 'q[in_stock]', in: :query, type: :boolean, required: false,
                 description: 'Filter to only in-stock products'
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., name,slug,price). id is always included.'
 
       response '200', 'products found' do
         let(:'x-spree-api-key') { api_key.token }

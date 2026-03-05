@@ -78,6 +78,19 @@ describe('transformListParams', () => {
     });
   });
 
+  it('joins fields array into comma-separated string', () => {
+    const result = transformListParams({ fields: ['name', 'slug', 'price'] });
+    expect(result).toEqual({ fields: 'name,slug,price' });
+  });
+
+  it('passes fields through without wrapping in q[...]', () => {
+    const result = transformListParams({ fields: ['name', 'slug'], name_cont: 'shirt' });
+    expect(result).toEqual({
+      fields: 'name,slug',
+      'q[name_cont]': 'shirt',
+    });
+  });
+
   it('handles a full combined query', () => {
     const result = transformListParams({
       page: 1,

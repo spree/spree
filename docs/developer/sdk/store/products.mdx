@@ -41,6 +41,23 @@ const products = await client.store.products.list({
 });
 ```
 
+### Field Selection
+
+Request only specific fields to reduce payload size:
+
+```typescript
+const products = await client.store.products.list({
+  fields: ['name', 'slug', 'price', 'display_price'],
+});
+
+const product = await client.store.products.get('spree-tote', {
+  fields: ['name', 'slug', 'price'],
+  expand: ['images'],  // expanded associations return all their fields
+});
+```
+
+`id` is always included. Omit `fields` to return all fields.
+
 ### Get a Product
 
 Fetch a single product by slug or prefix ID:

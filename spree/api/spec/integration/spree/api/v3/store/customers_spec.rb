@@ -21,6 +21,8 @@ RSpec.describe 'Customers API', type: :request, swagger_doc: 'api-reference/stor
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true,
                 description: 'Bearer JWT token'
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., name,slug,price). id is always included.'
 
       response '200', 'profile found' do
         let(:'x-spree-api-key') { api_key.token }
