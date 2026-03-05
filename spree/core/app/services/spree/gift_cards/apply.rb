@@ -25,15 +25,16 @@ module Spree
           return failure(:gift_card_mismatched_customer) if gift_card.user != order.user
         end
 
-        amount = [gift_card.amount_remaining, order.total].min
         store = order.store
-
-        return failure(:gift_card_no_amount_remaining) unless amount.positive? || order.total.zero?
 
         payment_method = ensure_store_credit_payment_method!(store)
 
-        gift_card.lock!
         order.with_lock do
+          gift_card.lock!
+          amount = [gift_card.amount_remaining, order.total].min
+
+          return failure(:gift_card_no_amount_remaining) unless amount.positive? || order.total.zero?
+
           store_credit = gift_card.store_credits.create!(
             store: store,
             user: order.user,
