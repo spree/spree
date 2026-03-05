@@ -29,6 +29,8 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
           metadata: { type: :object, description: 'Write-only key-value metadata (Stripe-style). Not returned in responses.' }
         }
       }
+      parameter name: 'Idempotency-Key', in: :header, type: :string, required: false,
+                description: 'Unique key for request idempotency. Duplicate requests with the same key return the cached response.'
 
       response '201', 'cart created (guest)' do
         let(:'x-spree-api-key') { api_key.token }
@@ -72,6 +74,44 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
         schema '$ref' => '#/components/schemas/ErrorResponse'
 
         run_test!
+      end
+
+      response '400', 'idempotency key too long' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Idempotency-Key') { 'a' * 256 }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['error']['code']).to eq('invalid_request')
+        end
+      end
+
+      response '422', 'idempotency key reused with different parameters' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Idempotency-Key') { 'test-idempotency-key' }
+
+        around do |example|
+          original_cache = Rails.cache
+          Rails.cache = ActiveSupport::Cache::MemoryStore.new
+          example.run
+        ensure
+          Rails.cache = original_cache
+        end
+
+        before do
+          post '/api/v3/store/cart',
+               headers: { 'x-spree-api-key' => api_key.token, 'Idempotency-Key' => 'test-idempotency-key' },
+               as: :json
+        end
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['error']['code']).to eq('idempotency_key_reused')
+        end
       end
     end
 

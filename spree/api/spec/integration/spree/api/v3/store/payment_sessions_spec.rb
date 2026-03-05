@@ -39,6 +39,8 @@ RSpec.describe 'Payment Sessions API', type: :request, swagger_doc: 'api-referen
                 description: 'Order ID or number'
       parameter name: 'x-spree-order-token', in: :header, type: :string, required: false,
                 description: 'Order token for guest access'
+      parameter name: 'Idempotency-Key', in: :header, type: :string, required: false,
+                description: 'Unique key for request idempotency. Duplicate requests with the same key return the cached response.'
       parameter name: :body, in: :body, schema: {
         type: :object,
         properties: {
@@ -194,6 +196,8 @@ RSpec.describe 'Payment Sessions API', type: :request, swagger_doc: 'api-referen
           external_data: { type: :object, description: 'Provider-specific completion data' }
         }
       }
+      parameter name: 'Idempotency-Key', in: :header, type: :string, required: false,
+                description: 'Unique key for request idempotency. Duplicate requests with the same key return the cached response.'
 
       response '200', 'payment session completed' do
         let(:'x-spree-api-key') { api_key.token }

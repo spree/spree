@@ -26,6 +26,8 @@ RSpec.describe 'Store Credits API', type: :request, swagger_doc: 'api-reference/
       parameter name: 'Authorization', in: :header, type: :string, required: true
       parameter name: :order_id, in: :path, type: :string, required: true
       parameter name: 'x-spree-order-token', in: :header, type: :string, required: false
+      parameter name: 'Idempotency-Key', in: :header, type: :string, required: false,
+                description: 'Unique key for request idempotency. Duplicate requests with the same key return the cached response.'
       parameter name: :body, in: :body, schema: {
         type: :object,
         properties: {

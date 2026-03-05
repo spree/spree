@@ -108,6 +108,8 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
       parameter name: 'Authorization', in: :header, type: :string, required: false
       parameter name: :id, in: :path, type: :string, required: true
       parameter name: 'x-spree-order-token', in: :header, type: :string, required: false
+      parameter name: 'Idempotency-Key', in: :header, type: :string, required: false,
+                description: 'Unique key for request idempotency. Duplicate requests with the same key return the cached response.'
       parameter name: :body, in: :body, schema: {
         type: :object,
         properties: {
@@ -204,6 +206,8 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
       parameter name: 'Authorization', in: :header, type: :string, required: false
       parameter name: :id, in: :path, type: :string, required: true
       parameter name: 'x-spree-order-token', in: :header, type: :string, required: false
+      parameter name: 'Idempotency-Key', in: :header, type: :string, required: false,
+                description: 'Unique key for request idempotency. Duplicate requests with the same key return the cached response.'
 
       response '200', 'order advanced' do
         let(:advanceable_order) { create(:order_with_line_items, store: store, user: user) }
@@ -246,6 +250,8 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
       parameter name: 'Authorization', in: :header, type: :string, required: false
       parameter name: :id, in: :path, type: :string, required: true
       parameter name: 'x-spree-order-token', in: :header, type: :string, required: false
+      parameter name: 'Idempotency-Key', in: :header, type: :string, required: false,
+                description: 'Unique key for request idempotency. Duplicate requests with the same key return the cached response.'
 
       response '200', 'order advanced' do
         let(:advanceable_order) { create(:order_with_line_items, store: store, user: user) }
@@ -277,6 +283,8 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
       parameter name: 'Authorization', in: :header, type: :string, required: false
       parameter name: :id, in: :path, type: :string, required: true
       parameter name: 'x-spree-order-token', in: :header, type: :string, required: false
+      parameter name: 'Idempotency-Key', in: :header, type: :string, required: false,
+                description: 'Unique key for request idempotency. Duplicate requests with the same key return the cached response.'
 
       response '200', 'order completed' do
         let(:completable_order) do

@@ -34,6 +34,8 @@ RSpec.describe 'Line Items API', type: :request, swagger_doc: 'api-reference/sto
                 description: 'Order ID or number'
       parameter name: 'x-spree-order-token', in: :header, type: :string, required: false,
                 description: 'Order token for guest access'
+      parameter name: 'Idempotency-Key', in: :header, type: :string, required: false,
+                description: 'Unique key for request idempotency. Duplicate requests with the same key return the cached response.'
       parameter name: :body, in: :body, schema: {
         type: :object,
         properties: {
