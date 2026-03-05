@@ -1,5 +1,11 @@
 # @spree/next
 
+## 0.6.8
+
+### Patch Changes
+
+- Bump to match `@spree/sdk@0.6.8`
+
 ## 0.6.7
 
 ### Patch Changes
