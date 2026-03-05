@@ -1,3 +1,5 @@
+require 'open-uri'
+require 'openssl'
 require 'ssrf_filter'
 require 'tempfile'
 
