@@ -341,15 +341,17 @@ module Spree
         join_node = Arel::Nodes::OuterJoin.new(sp_table, Arel::Nodes::On.new(join_condition))
 
         zero = Arel::Nodes::Quoted.new(0)
-        best_selling_units = Arel::Nodes::NamedFunction.new('COALESCE', [sp_table[:units_sold_count], zero]).as('best_selling_units')
-        best_selling_revenue = Arel::Nodes::NamedFunction.new('COALESCE', [sp_table[:revenue], zero]).as('best_selling_revenue')
+        best_selling_units = Arel::Nodes::NamedFunction.new('COALESCE', [sp_table[:units_sold_count], zero])
+                                                       .as('best_selling_units')
+        best_selling_revenue = Arel::Nodes::NamedFunction.new('COALESCE', [sp_table[:revenue], zero])
+                                                         .as('best_selling_revenue')
         order_dir = order_direction == :desc ? :desc : :asc
         order_units = Arel.sql('best_selling_units')
         order_revenue = Arel.sql('best_selling_revenue')
 
-        joins(join_node).
-          select(products_table[Arel.star], best_selling_units, best_selling_revenue).
-          order(order_units.public_send(order_dir)).order(order_revenue.public_send(order_dir))
+        joins(join_node)
+          .select(products_table[Arel.star], best_selling_units, best_selling_revenue)
+          .order(order_units.public_send(order_dir)).order(order_revenue.public_send(order_dir))
       end
 
       # .search_by_name
