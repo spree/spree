@@ -8,9 +8,6 @@ Spree::Core::Engine.add_routes do
         post 'auth/refresh', to: 'auth#refresh'
         post 'auth/oauth/callback', to: 'auth#oauth_callback'
 
-        # Store
-        resource :store, only: [:show]
-
         # Markets
         resources :markets, only: [:index, :show] do
           collection do

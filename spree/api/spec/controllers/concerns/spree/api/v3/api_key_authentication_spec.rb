@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 RSpec.describe 'API Key Authentication Touch Throttling', type: :controller do
-  describe Spree::Api::V3::Store::StoresController do
-    controller(Spree::Api::V3::Store::StoresController) {}
+  describe Spree::Api::V3::Store::CountriesController do
+    controller(Spree::Api::V3::Store::CountriesController) {}
 
     render_views
 
@@ -18,7 +18,7 @@ RSpec.describe 'API Key Authentication Touch Throttling', type: :controller do
 
         it 'enqueues the mark as used job' do
           expect {
-            get :show, params: { id: store.prefixed_id }
+            get :index
           }.to have_enqueued_job(Spree::ApiKeys::MarkAsUsed).with(api_key.id, instance_of(ActiveSupport::TimeWithZone))
         end
       end
@@ -28,7 +28,7 @@ RSpec.describe 'API Key Authentication Touch Throttling', type: :controller do
 
         it 'enqueues the mark as used job' do
           expect {
-            get :show, params: { id: store.prefixed_id }
+            get :index
           }.to have_enqueued_job(Spree::ApiKeys::MarkAsUsed).with(api_key.id, instance_of(ActiveSupport::TimeWithZone))
         end
       end
@@ -38,7 +38,7 @@ RSpec.describe 'API Key Authentication Touch Throttling', type: :controller do
 
         it 'does not enqueue the mark as used job' do
           expect {
-            get :show, params: { id: store.prefixed_id }
+            get :index
           }.not_to have_enqueued_job(Spree::ApiKeys::MarkAsUsed)
         end
       end

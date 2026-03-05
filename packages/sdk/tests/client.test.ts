@@ -19,21 +19,35 @@ describe('SpreeClient', () => {
     expect(client).toBeInstanceOf(SpreeClient);
   });
 
+  it('creates a client with secretKey only (no publishableKey)', () => {
+    const client = createSpreeClient({
+      baseUrl: TEST_BASE_URL,
+      secretKey: 'spree_sk_test',
+    });
+    expect(client).toBeInstanceOf(SpreeClient);
+    expect(client.admin).toBeDefined();
+  });
+
+  it('throws when neither publishableKey nor secretKey is provided', () => {
+    expect(() => createSpreeClient({
+      baseUrl: TEST_BASE_URL,
+    })).toThrow('SpreeClient requires at least one of publishableKey or secretKey');
+  });
+
   it('strips trailing slash from baseUrl', async () => {
     const client = createSpreeClient({
       baseUrl: `${TEST_BASE_URL}/`,
       publishableKey: TEST_API_KEY,
     });
-    // Should not throw - the trailing slash is handled
-    const store = await client.store.store.get();
-    expect(store).toBeDefined();
+    const result = await client.store.products.list();
+    expect(result.data).toBeDefined();
   });
 
   it('accepts a custom fetch implementation', async () => {
     let capturedUrl = '';
     const customFetch = async (input: string | URL | Request, init?: RequestInit) => {
       capturedUrl = input.toString();
-      return new Response(JSON.stringify({ id: 'store_1', name: 'Test' }), {
+      return new Response(JSON.stringify({ data: [], meta: { page: 1, limit: 25, count: 0, pages: 0, from: 0, to: 0, in: 0, previous: null, next: null } }), {
         status: 200,
         headers: { 'Content-Type': 'application/json' },
       });
@@ -45,8 +59,8 @@ describe('SpreeClient', () => {
       fetch: customFetch,
     });
 
-    await client.store.store.get();
-    expect(capturedUrl).toContain('/api/v3/store/store');
+    await client.store.products.list();
+    expect(capturedUrl).toContain('/api/v3/store/products');
   });
 
   it('sends x-spree-api-key header on every store request', async () => {
@@ -55,7 +69,7 @@ describe('SpreeClient', () => {
       capturedHeaders = Object.fromEntries(
         Object.entries(init?.headers as Record<string, string> || {})
       );
-      return new Response(JSON.stringify({}), {
+      return new Response(JSON.stringify({ data: [], meta: { page: 1, limit: 25, count: 0, pages: 0, from: 0, to: 0, in: 0, previous: null, next: null } }), {
         status: 200,
         headers: { 'Content-Type': 'application/json' },
       });
@@ -67,11 +81,11 @@ describe('SpreeClient', () => {
       fetch: customFetch,
     });
 
-    await client.store.store.get();
+    await client.store.products.list();
     expect(capturedHeaders['x-spree-api-key']).toBe('my-secret-key');
   });
 
-  it('sends Authorization header when token is provided', async () => {
+  it('does not send x-spree-api-key header when publishableKey is not provided', async () => {
     let capturedHeaders: Record<string, string> = {};
     const customFetch = async (input: string | URL | Request, init?: RequestInit) => {
       capturedHeaders = Object.fromEntries(
@@ -85,11 +99,33 @@ describe('SpreeClient', () => {
 
     const client = createSpreeClient({
       baseUrl: TEST_BASE_URL,
+      secretKey: 'spree_sk_test',
+      fetch: customFetch,
+    });
+
+    await client.store.auth.login({ email: 'a@b.com', password: 'pass' });
+    expect(capturedHeaders['x-spree-api-key']).toBeUndefined();
+  });
+
+  it('sends Authorization header when token is provided', async () => {
+    let capturedHeaders: Record<string, string> = {};
+    const customFetch = async (input: string | URL | Request, init?: RequestInit) => {
+      capturedHeaders = Object.fromEntries(
+        Object.entries(init?.headers as Record<string, string> || {})
+      );
+      return new Response(JSON.stringify({ data: [], meta: { page: 1, limit: 25, count: 0, pages: 0, from: 0, to: 0, in: 0, previous: null, next: null } }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    };
+
+    const client = createSpreeClient({
+      baseUrl: TEST_BASE_URL,
       publishableKey: TEST_API_KEY,
       fetch: customFetch,
     });
 
-    await client.store.store.get({ token: 'my-jwt-token' });
+    await client.store.products.list({}, { token: 'my-jwt-token' });
     expect(capturedHeaders['Authorization']).toBe('Bearer my-jwt-token');
   });
 
@@ -99,7 +135,7 @@ describe('SpreeClient', () => {
       capturedHeaders = Object.fromEntries(
         Object.entries(init?.headers as Record<string, string> || {})
       );
-      return new Response(JSON.stringify({}), {
+      return new Response(JSON.stringify({ data: [], meta: { page: 1, limit: 25, count: 0, pages: 0, from: 0, to: 0, in: 0, previous: null, next: null } }), {
         status: 200,
         headers: { 'Content-Type': 'application/json' },
       });
@@ -111,7 +147,7 @@ describe('SpreeClient', () => {
       fetch: customFetch,
     });
 
-    await client.store.store.get({ locale: 'fr', currency: 'EUR' });
+    await client.store.products.list({}, { locale: 'fr', currency: 'EUR' });
     expect(capturedHeaders['x-spree-locale']).toBe('fr');
     expect(capturedHeaders['x-spree-currency']).toBe('EUR');
   });
@@ -133,7 +169,6 @@ describe('SpreeClient', () => {
     });
 
     expect(client.store.auth).toBeDefined();
-    expect(client.store.store).toBeDefined();
     expect(client.store.products).toBeDefined();
     expect(client.store.taxonomies).toBeDefined();
     expect(client.store.taxons).toBeDefined();

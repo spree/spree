@@ -10,8 +10,8 @@ export type { AddressParams, StoreCreditCard, LocaleDefaults } from './types';
 export interface SpreeClientConfig {
   /** Base URL of the Spree API (e.g., 'https://api.mystore.com') */
   baseUrl: string;
-  /** Publishable API key for Store API access */
-  publishableKey: string;
+  /** Publishable API key for Store API access (required for Store API) */
+  publishableKey?: string;
   /** Secret API key for Admin API access (optional) */
   secretKey?: string;
   /** Custom fetch implementation (optional, defaults to global fetch) */
@@ -35,6 +35,10 @@ export class SpreeClient {
   private readonly _defaults: LocaleDefaults;
 
   constructor(config: SpreeClientConfig) {
+    if (!config.publishableKey && !config.secretKey) {
+      throw new Error('SpreeClient requires at least one of publishableKey or secretKey');
+    }
+
     const baseUrl = config.baseUrl.replace(/\/$/, '');
     // Bind fetch to globalThis to avoid "Illegal invocation" errors in browsers
     const fetchFn = config.fetch || fetch.bind(globalThis);
@@ -63,7 +67,9 @@ export class SpreeClient {
     const storeRequestFn = createRequestFn(
       requestConfig,
       '/api/v3/store',
-      { headerName: 'x-spree-api-key', headerValue: config.publishableKey },
+      config.publishableKey
+        ? { headerName: 'x-spree-api-key', headerValue: config.publishableKey }
+        : { headerName: '', headerValue: '' },
       this._defaults
     );
 

@@ -55,7 +55,6 @@ export { StoreStockItemSchema, type StoreStockItem } from './StoreStockItem';
 export { StoreStockLocationSchema, type StoreStockLocation } from './StoreStockLocation';
 export { StoreStockMovementSchema, type StoreStockMovement } from './StoreStockMovement';
 export { StoreStockTransferSchema, type StoreStockTransfer } from './StoreStockTransfer';
-export { StoreStoreSchema, type StoreStore } from './StoreStore';
 export { StoreStoreCreditSchema, type StoreStoreCredit } from './StoreStoreCredit';
 export { StoreTaxonSchema, type StoreTaxon } from './StoreTaxon';
 export { StoreTaxonomySchema, type StoreTaxonomy } from './StoreTaxonomy';

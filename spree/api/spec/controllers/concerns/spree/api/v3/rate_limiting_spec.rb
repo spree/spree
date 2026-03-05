@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 RSpec.describe 'Rate Limiting', type: :controller do
-  describe Spree::Api::V3::Store::StoresController do
-    controller(Spree::Api::V3::Store::StoresController) {}
+  describe Spree::Api::V3::Store::CountriesController do
+    controller(Spree::Api::V3::Store::CountriesController) {}
 
     render_views
 
@@ -65,7 +65,7 @@ RSpec.describe 'Rate Limiting', type: :controller do
   end
 end
 
-RSpec.describe Spree::Api::V3::Store::StoresController, 'rate limit headers', type: :controller do
+RSpec.describe Spree::Api::V3::Store::CountriesController, 'rate limit headers', type: :controller do
   render_views
 
   include_context 'API v3 Store'
@@ -75,7 +75,7 @@ RSpec.describe Spree::Api::V3::Store::StoresController, 'rate limit headers', ty
   end
 
   it 'skips rate limit headers when cache has no counter' do
-    get :show
+    get :index
 
     expect(response.headers['X-RateLimit-Limit']).to be_nil
     expect(response.headers['X-RateLimit-Remaining']).to be_nil
@@ -85,10 +85,10 @@ RSpec.describe Spree::Api::V3::Store::StoresController, 'rate limit headers', ty
   it 'sets X-RateLimit-Limit and X-RateLimit-Remaining headers' do
     allow(Rails.cache).to receive(:read).and_call_original
     allow(Rails.cache).to receive(:read)
-      .with("rate-limit:spree/api/v3/store/stores:#{api_key.token}")
+      .with("rate-limit:spree/api/v3/store/countries:#{api_key.token}")
       .and_return(5)
 
-    get :show
+    get :index
 
     expect(response.headers['X-RateLimit-Limit']).to eq(Spree::Api::Config[:rate_limit_per_key].to_s)
     expect(response.headers['X-RateLimit-Remaining'].to_i).to eq(Spree::Api::Config[:rate_limit_per_key] - 5)
@@ -97,10 +97,10 @@ RSpec.describe Spree::Api::V3::Store::StoresController, 'rate limit headers', ty
   it 'does not set Retry-After header when under the limit' do
     allow(Rails.cache).to receive(:read).and_call_original
     allow(Rails.cache).to receive(:read)
-      .with("rate-limit:spree/api/v3/store/stores:#{api_key.token}")
+      .with("rate-limit:spree/api/v3/store/countries:#{api_key.token}")
       .and_return(5)
 
-    get :show
+    get :index
 
     expect(response.headers['Retry-After']).to be_nil
   end
@@ -108,10 +108,10 @@ RSpec.describe Spree::Api::V3::Store::StoresController, 'rate limit headers', ty
   it 'decreases X-RateLimit-Remaining based on request count' do
     allow(Rails.cache).to receive(:read).and_call_original
     allow(Rails.cache).to receive(:read)
-      .with("rate-limit:spree/api/v3/store/stores:#{api_key.token}")
+      .with("rate-limit:spree/api/v3/store/countries:#{api_key.token}")
       .and_return(10)
 
-    get :show
+    get :index
 
     expect(response.headers['X-RateLimit-Remaining'].to_i).to eq(Spree::Api::Config[:rate_limit_per_key] - 10)
   end
@@ -120,10 +120,10 @@ RSpec.describe Spree::Api::V3::Store::StoresController, 'rate limit headers', ty
     limit = Spree::Api::Config[:rate_limit_per_key]
     allow(Rails.cache).to receive(:read).and_call_original
     allow(Rails.cache).to receive(:read)
-      .with("rate-limit:spree/api/v3/store/stores:#{api_key.token}")
+      .with("rate-limit:spree/api/v3/store/countries:#{api_key.token}")
       .and_return(limit)
 
-    get :show
+    get :index
 
     expect(response.headers['Retry-After']).to eq(Spree::Api::Config[:rate_limit_window].to_s)
     expect(response.headers['X-RateLimit-Remaining']).to eq('0')

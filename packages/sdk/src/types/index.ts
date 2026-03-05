@@ -21,8 +21,11 @@ export interface PaginationMeta {
   next: number | null;
 }
 
-export interface PaginatedResponse<T> {
+export interface ListResponse<T> {
   data: T[];
+}
+
+export interface PaginatedResponse<T> extends ListResponse<T> {
   meta: PaginationMeta;
 }
 
