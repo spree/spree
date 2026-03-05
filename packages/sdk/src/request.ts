@@ -24,6 +24,8 @@ export interface RequestOptions {
   currency?: string;
   /** Country ISO code for market resolution (e.g., 'US', 'DE') */
   country?: string;
+  /** Idempotency key for safe retries of mutating requests (max 255 characters) */
+  idempotencyKey?: string;
   /** Custom headers */
   headers?: Record<string, string>;
 }
@@ -63,17 +65,17 @@ function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function shouldRetryOnStatus(method: string, status: number, config: Required<RetryConfig>): boolean {
-  const isIdempotent = method === 'GET' || method === 'HEAD';
+function shouldRetryOnStatus(method: string, status: number, config: Required<RetryConfig>, hasIdempotencyKey: boolean): boolean {
+  const isIdempotent = method === 'GET' || method === 'HEAD' || hasIdempotencyKey;
   if (isIdempotent) {
     return config.retryOnStatus.includes(status);
   }
   return status === 429;
 }
 
-function shouldRetryOnNetworkError(method: string, config: Required<RetryConfig>): boolean {
+function shouldRetryOnNetworkError(method: string, config: Required<RetryConfig>, hasIdempotencyKey: boolean): boolean {
   if (!config.retryOnNetworkError) return false;
-  return method === 'GET' || method === 'HEAD';
+  return method === 'GET' || method === 'HEAD' || hasIdempotencyKey;
 }
 
 export interface RequestConfig {
@@ -101,7 +103,7 @@ export function createRequestFn(
     path: string,
     options: InternalRequestOptions = {}
   ): Promise<T> {
-    const { token, orderToken, headers = {}, body, params } = options;
+    const { token, orderToken, idempotencyKey, headers = {}, body, params } = options;
 
     // Per-request options override client-level defaults
     const locale = options.locale ?? defaults?.locale;
@@ -148,6 +150,11 @@ export function createRequestFn(
       requestHeaders['x-spree-country'] = country;
     }
 
+    if (idempotencyKey) {
+      requestHeaders['Idempotency-Key'] = idempotencyKey;
+    }
+
+    const hasIdempotencyKey = !!idempotencyKey;
     const maxAttempts = config.retryConfig ? config.retryConfig.maxRetries + 1 : 1;
 
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
@@ -161,7 +168,7 @@ export function createRequestFn(
         if (!response.ok) {
           const isLastAttempt = attempt >= maxAttempts - 1;
 
-          if (!isLastAttempt && config.retryConfig && shouldRetryOnStatus(method, response.status, config.retryConfig)) {
+          if (!isLastAttempt && config.retryConfig && shouldRetryOnStatus(method, response.status, config.retryConfig, hasIdempotencyKey)) {
             const retryAfter = response.headers.get('Retry-After');
             const delay = retryAfter
               ? Math.min(parseInt(retryAfter, 10) * 1000, config.retryConfig.maxDelay)
@@ -187,7 +194,7 @@ export function createRequestFn(
 
         const isLastAttempt = attempt >= maxAttempts - 1;
 
-        if (!isLastAttempt && config.retryConfig && shouldRetryOnNetworkError(method, config.retryConfig)) {
+        if (!isLastAttempt && config.retryConfig && shouldRetryOnNetworkError(method, config.retryConfig, hasIdempotencyKey)) {
           const delay = calculateDelay(attempt, config.retryConfig);
           await sleep(delay);
           continue;
