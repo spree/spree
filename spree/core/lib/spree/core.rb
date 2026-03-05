@@ -424,7 +424,6 @@ require 'spree/service_module'
 require 'spree/database_type_utilities'
 require 'spree/analytics'
 require 'spree/events'
-require 'spree/url_safety'
 require 'spree/webhooks'
 
 require 'spree/core/partials'

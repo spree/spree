@@ -16,7 +16,6 @@ module Spree
     validates :store, :url, presence: true
     validates :url, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]), message: :invalid_url }
     validates :active, inclusion: { in: [true, false] }
-    validate :url_not_pointing_to_internal_address, if: -> { url.present? && url_changed? }
 
     before_create :generate_secret_key
 
@@ -53,14 +52,6 @@ module Spree
 
     def generate_secret_key
       self.secret_key ||= SecureRandom.hex(32)
-    end
-
-    def url_not_pointing_to_internal_address
-      Spree::UrlSafety.validate_url!(url)
-    rescue Spree::UrlSafety::SsrfError
-      errors.add(:url, :internal_address_not_allowed)
-    rescue URI::InvalidURIError, Resolv::ResolvError
-      # URL format validation already handles invalid URLs
     end
   end
 end

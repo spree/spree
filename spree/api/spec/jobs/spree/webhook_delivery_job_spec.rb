@@ -12,7 +12,6 @@ module Spree
     describe '#perform' do
       before do
         stub_request(:post, delivery.url).to_return(status: 200, body: '{}')
-        allow(Spree::UrlSafety).to receive(:validate_url!).and_return(nil)
       end
 
       it 'calls DeliverWebhook service with secret_key from endpoint' do
