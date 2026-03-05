@@ -25,7 +25,7 @@ RSpec.describe Spree::Api::V3::Store::CountriesController, type: :controller do
     it 'sets X-Request-Id header' do
       allow_any_instance_of(ActionDispatch::Request).to receive(:request_id).and_return('test-request-id-123')
 
-      get :show
+      get :index
 
       expect(response.headers['X-Request-Id']).to eq('test-request-id-123')
     end
