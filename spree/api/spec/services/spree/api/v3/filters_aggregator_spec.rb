@@ -36,19 +36,31 @@ RSpec.describe Spree::Api::V3::FiltersAggregator do
       expect(result[:filters]).to be_an(Array)
     end
 
-    it 'returns sort_options array' do
-      expect(result[:sort_options]).to be_an(Array)
-      expect(result[:sort_options].first).to include(id: 'manual')
-    end
+    describe 'sort options' do
+      it 'returns sort_options in API format' do
+        sort_ids = result[:sort_options].map { |s| s[:id] }
+        expect(sort_ids).to eq(%w[manual best_selling price -price -available_on available_on name -name])
+      end
 
-    it 'returns default_sort from taxon' do
-      taxon.update!(sort_order: 'available_on desc')
-      expect(result[:default_sort]).to eq('-available_on')
-    end
+      it 'converts ascending internal format to field name' do
+        taxon.update!(sort_order: 'price asc')
+        expect(result[:default_sort]).to eq('price')
+      end
 
-    it 'returns manual as default_sort when no taxon' do
-      aggregator = described_class.new(scope: scope, currency: currency, taxon: nil)
-      expect(aggregator.call[:default_sort]).to eq('manual')
+      it 'converts descending internal format to -field' do
+        taxon.update!(sort_order: 'available_on desc')
+        expect(result[:default_sort]).to eq('-available_on')
+      end
+
+      it 'passes through values without direction unchanged' do
+        taxon.update!(sort_order: 'best_selling')
+        expect(result[:default_sort]).to eq('best_selling')
+      end
+
+      it 'returns manual as default_sort when no taxon' do
+        aggregator = described_class.new(scope: scope, currency: currency, taxon: nil)
+        expect(aggregator.call[:default_sort]).to eq('manual')
+      end
     end
 
     it 'returns total_count' do
