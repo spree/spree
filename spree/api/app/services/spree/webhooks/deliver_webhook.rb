@@ -49,11 +49,11 @@ module Spree
       private
 
       def make_request
+        # Re-validate the endpoint URL to guard against DNS rebinding
+        endpoint = @delivery.webhook_endpoint
+        raise StandardError, 'Webhook endpoint URL is invalid' unless endpoint.valid?
+
         uri = URI.parse(@delivery.url)
-
-        # SSRF protection: validate URL does not resolve to internal/private IP
-        Spree::UrlSafety.validate_url!(@delivery.url)
-
         http = Net::HTTP.new(uri.host, uri.port)
         http.use_ssl = uri.scheme == 'https'
         http.verify_mode = ssl_verify_mode

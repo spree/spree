@@ -174,11 +174,10 @@ module Spree
           end
         end
 
-        context 'when URL resolves to private IP (SSRF)' do
+        context 'when endpoint URL fails validation (SSRF)' do
           before do
-            # Force delivery creation before overriding the SSRF stub
             delivery
-            allow(Spree::UrlSafety).to receive(:validate_url!).and_raise(Spree::UrlSafety::SsrfError, 'URL resolves to a blocked internal address')
+            allow(delivery.webhook_endpoint).to receive(:valid?).and_return(false)
             allow(Rails.error).to receive(:report)
           end
 
@@ -188,7 +187,7 @@ module Spree
             delivery.reload
             expect(delivery.success).to be false
             expect(delivery.error_type).to eq('connection_error')
-            expect(delivery.request_errors).to include('blocked internal address')
+            expect(delivery.request_errors).to include('invalid')
           end
         end
       end
