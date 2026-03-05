@@ -2,8 +2,6 @@ module Spree
   module Api
     module V3
       class FiltersAggregator
-        SORT_OPTION_IDS = Spree::Taxon::SORT_ORDERS
-
         # @param scope [ActiveRecord::Relation] Base product scope (already filtered by store, availability, taxon, etc.)
         # @param currency [String] Currency for price range
         # @param taxon [Spree::Taxon, nil] Optional taxon for default_sort and taxon filtering context
@@ -17,7 +15,7 @@ module Spree
           {
             filters: build_filters,
             sort_options: sort_options,
-            default_sort: @taxon&.sort_order || 'manual',
+            default_sort: to_api_sort(@taxon&.sort_order || 'manual'),
             total_count: @scope.distinct.count
           }
         end
@@ -34,7 +32,15 @@ module Spree
         end
 
         def sort_options
-          SORT_OPTION_IDS.map { |id| { id: id } }
+          Spree::Taxon::SORT_ORDERS.map { |id| { id: to_api_sort(id) } }
+        end
+
+        # Converts internal sort format ('price asc') to API format ('price', '-price')
+        def to_api_sort(sort_value)
+          return sort_value unless sort_value.include?(' ')
+
+          field, direction = sort_value.split(' ', 2)
+          direction == 'desc' ? "-#{field}" : field
         end
 
 

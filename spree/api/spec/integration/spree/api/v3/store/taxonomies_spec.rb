@@ -27,6 +27,8 @@ RSpec.describe 'Taxonomies API', type: :request, swagger_doc: 'api-reference/sto
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false
       parameter name: :limit, in: :query, type: :integer, required: false
+      parameter name: :sort, in: :query, type: :string, required: false,
+                description: 'Sort order. Prefix with - for descending. Example: name, -name'
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Expand root taxon'
 

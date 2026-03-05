@@ -83,6 +83,31 @@ RSpec.describe Spree::Api::V3::Store::TaxonsController, type: :controller do
       end
     end
 
+    context 'sorting' do
+      let!(:taxon_b) { create(:taxon, taxonomy: taxonomy, name: 'Bags') }
+      let!(:taxon_z) { create(:taxon, taxonomy: taxonomy, name: 'Zippers') }
+
+      it 'sorts by name ascending' do
+        get :index, params: { sort: 'name' }
+
+        expect(response).to have_http_status(:ok)
+        names = json_response['data'].map { |t| t['name'] }
+        bags_index = names.index('Bags')
+        zippers_index = names.index('Zippers')
+        expect(bags_index).to be < zippers_index
+      end
+
+      it 'sorts by name descending' do
+        get :index, params: { sort: '-name' }
+
+        expect(response).to have_http_status(:ok)
+        names = json_response['data'].map { |t| t['name'] }
+        bags_index = names.index('Bags')
+        zippers_index = names.index('Zippers')
+        expect(zippers_index).to be < bags_index
+      end
+    end
+
     context 'without API key' do
       before { request.headers['X-Spree-Api-Key'] = nil }
 

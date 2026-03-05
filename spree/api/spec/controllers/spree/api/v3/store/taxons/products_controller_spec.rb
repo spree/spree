@@ -157,7 +157,7 @@ RSpec.describe Spree::Api::V3::Store::Taxons::ProductsController, type: :control
       end
 
       it 'sorts by price low to high' do
-        get :index, params: { taxon_id: taxon.permalink, sort: 'price asc' }
+        get :index, params: { taxon_id: taxon.permalink, sort: 'price' }
 
         expect(response).to have_http_status(:ok)
         prices = json_response['data'].map { |p| p['price']['amount'].to_f }
@@ -165,15 +165,15 @@ RSpec.describe Spree::Api::V3::Store::Taxons::ProductsController, type: :control
       end
 
       it 'sorts by price high to low' do
-        get :index, params: { taxon_id: taxon.permalink, sort: 'price desc' }
+        get :index, params: { taxon_id: taxon.permalink, sort: '-price' }
 
         expect(response).to have_http_status(:ok)
         prices = json_response['data'].map { |p| p['price']['amount'].to_f }
         expect(prices).to eq(prices.sort.reverse)
       end
 
-      it 'sorts by name a-z with ransack' do
-        get :index, params: { taxon_id: taxon.permalink, q: { s: 'name asc' } }
+      it 'sorts by name a-z' do
+        get :index, params: { taxon_id: taxon.permalink, sort: 'name' }
 
         expect(response).to have_http_status(:ok)
         names = json_response['data'].map { |p| p['name'] }

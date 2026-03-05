@@ -150,24 +150,24 @@ curl -G 'http://localhost:3000/api/v3/store/products' \
 
 ## Sorting
 
-Use the `sort` parameter to sort product results. The backend handles routing to the appropriate sort mechanism:
+Use the `sort` parameter on any list endpoint. Prefix a field with `-` for descending order (ascending is the default). This follows the [JSON:API sorting convention](https://jsonapi.org/format/#fetching-sorting).
 
 <CodeGroup>
 
 ```typescript SDK
-// Sort by price
+// Sort by price (low to high)
 const products = await client.store.products.list({
-  sort: 'price asc',
+  sort: 'price',
+})
+
+// Sort by price (high to low)
+const products = await client.store.products.list({
+  sort: '-price',
 })
 
 // Sort by best selling
 const products = await client.store.products.list({
   sort: 'best_selling',
-})
-
-// Sort by name
-const products = await client.store.products.list({
-  sort: 'name asc',
 })
 ```
 
@@ -175,12 +175,12 @@ const products = await client.store.products.list({
 # Sort by price low to high
 curl -G 'http://localhost:3000/api/v3/store/products' \
   -H 'X-Spree-Api-Key: spree_pk_xxx' \
-  -d 'sort=price+asc'
+  -d 'sort=price'
 
-# Sort by best selling
+# Sort by price high to low
 curl -G 'http://localhost:3000/api/v3/store/products' \
   -H 'X-Spree-Api-Key: spree_pk_xxx' \
-  -d 'sort=best_selling'
+  -d 'sort=-price'
 ```
 
 </CodeGroup>
@@ -191,27 +191,47 @@ curl -G 'http://localhost:3000/api/v3/store/products' \
 |-------|-------------|
 | `manual` | Manual sort order (default, uses taxon position) |
 | `best_selling` | Best selling products first |
-| `price asc` | Price low to high |
-| `price desc` | Price high to low |
-| `name asc` | Name A-Z |
-| `name desc` | Name Z-A |
-| `available_on desc` | Newest first |
-| `available_on asc` | Oldest first |
+| `price` | Price low to high |
+| `-price` | Price high to low |
+| `name` | Name A-Z |
+| `-name` | Name Z-A |
+| `-available_on` | Newest first |
+| `available_on` | Oldest first |
 
-For other resources, use `q[s]` with standard Ransack column sorts:
+### Sorting Other Resources
+
+The `sort` parameter works on all list endpoints. Use any sortable column name:
 
 <CodeGroup>
 
 ```typescript SDK
+// Taxons sorted by name
 const taxons = await client.store.taxons.list({
-  sort: 'name asc',
+  sort: 'name',
+})
+
+// Customer orders sorted by most recent
+const orders = await client.store.customer.orders.list({
+  sort: '-completed_at',
+})
+
+// Taxonomies sorted by name descending
+const taxonomies = await client.store.taxonomies.list({
+  sort: '-name',
 })
 ```
 
 ```bash cURL
+# Taxons sorted by name
 curl -G 'http://localhost:3000/api/v3/store/taxons' \
   -H 'X-Spree-Api-Key: spree_pk_xxx' \
-  --data-urlencode 'q[s]=name asc'
+  -d 'sort=name'
+
+# Customer orders by most recent
+curl -G 'http://localhost:3000/api/v3/store/customer/orders' \
+  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -H 'Authorization: Bearer <token>' \
+  -d 'sort=-completed_at'
 ```
 
 </CodeGroup>
