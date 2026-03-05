@@ -67,8 +67,10 @@ module Spree
         end
 
         def idempotency_cache_key(key)
-          owner_id = @current_api_key&.id || spree_current_user&.id || request.remote_ip
-          "spree:idempotency:#{owner_id}:#{Digest::SHA256.hexdigest(key)}"
+          owner_id = request.headers['X-Spree-Api-Key'].presence ||
+                     spree_current_user&.id ||
+                     request.remote_ip
+          "spree:idempotency:#{Digest::SHA256.hexdigest(owner_id.to_s)}:#{Digest::SHA256.hexdigest(key)}"
         end
 
         def request_fingerprint
