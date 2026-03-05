@@ -105,6 +105,33 @@ RSpec.describe Spree::GiftCards::Apply do
     end
   end
 
+  context 'when applied concurrently to multiple orders' do
+    let(:gift_card) { create(:gift_card, amount: 100, store: store) }
+    let(:users) { Array.new(5) { create(:user) } }
+    let(:orders) do
+      users.map do |user|
+        order = create(:order, store: store, user: user)
+        order.update_columns(total: 80, item_total: 80)
+        order
+      end
+    end
+
+    it 'does not generate store credits exceeding the gift card value' do
+      threads = orders.map do |order|
+        Thread.new do
+          described_class.call(gift_card: gift_card, order: order)
+        end
+      end
+      threads.each(&:join)
+
+      gift_card.reload
+      total_credits = Spree::StoreCredit.where(originator: gift_card).sum(:amount)
+
+      expect(total_credits).to be <= gift_card.amount
+      expect(gift_card.amount_used).to be <= gift_card.amount
+    end
+  end
+
   context 'when the gift card has no amount remaining' do
     before { gift_card.update!(amount_used: gift_card.amount) }
 
