@@ -124,6 +124,19 @@ Spree::Core::Engine.add_routes do
           end
 
           resources :line_items, controller: 'orders/line_items'
+          resources :shipments, controller: 'orders/shipments', only: [:index, :show, :update] do
+            member do
+              patch :ship
+            end
+          end
+          resources :payments, controller: 'orders/payments', only: [:index, :show, :create] do
+            member do
+              patch :capture
+              patch :void
+            end
+          end
+          resources :refunds, controller: 'orders/refunds', only: [:index, :create]
+          resources :adjustments, controller: 'orders/adjustments', only: [:index, :show, :create, :update, :destroy]
         end
       end
     end

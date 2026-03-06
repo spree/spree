@@ -1,4 +1,5 @@
 // This file is auto-generated. Do not edit directly.
+export { AdminAdjustmentSchema, type AdminAdjustment } from './AdminAdjustment';
 export { AdminAssetSchema, type AdminAsset } from './AdminAsset';
 export { AdminCustomerSchema, type AdminCustomer } from './AdminCustomer';
 export { AdminImageSchema, type AdminImage } from './AdminImage';
@@ -7,8 +8,11 @@ export { AdminMetafieldSchema, type AdminMetafield } from './AdminMetafield';
 export { AdminOptionTypeSchema, type AdminOptionType } from './AdminOptionType';
 export { AdminOptionValueSchema, type AdminOptionValue } from './AdminOptionValue';
 export { AdminOrderSchema, type AdminOrder } from './AdminOrder';
+export { AdminPaymentSchema, type AdminPayment } from './AdminPayment';
 export { AdminPriceSchema, type AdminPrice } from './AdminPrice';
 export { AdminProductSchema, type AdminProduct } from './AdminProduct';
+export { AdminRefundSchema, type AdminRefund } from './AdminRefund';
+export { AdminShipmentSchema, type AdminShipment } from './AdminShipment';
 export { AdminStockItemSchema, type AdminStockItem } from './AdminStockItem';
 export { AdminTaxonSchema, type AdminTaxon } from './AdminTaxon';
 export { AdminTaxonomySchema, type AdminTaxonomy } from './AdminTaxonomy';

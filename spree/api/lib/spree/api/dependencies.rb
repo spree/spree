@@ -159,6 +159,10 @@ module Spree
         admin_image_serializer: 'Spree::Api::V3::Admin::ImageSerializer',
         admin_asset_serializer: 'Spree::Api::V3::Admin::AssetSerializer',
         admin_stock_item_serializer: 'Spree::Api::V3::Admin::StockItemSerializer',
+        admin_shipment_serializer: 'Spree::Api::V3::Admin::ShipmentSerializer',
+        admin_payment_serializer: 'Spree::Api::V3::Admin::PaymentSerializer',
+        admin_refund_serializer: 'Spree::Api::V3::Admin::RefundSerializer',
+        admin_adjustment_serializer: 'Spree::Api::V3::Admin::AdjustmentSerializer',
 
         # platform serializers
         platform_metafield_serializer: 'Spree::Api::V2::Platform::MetafieldSerializer',

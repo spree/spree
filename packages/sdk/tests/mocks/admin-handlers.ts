@@ -63,6 +63,61 @@ export const adminFixtures = {
     permalink: 'categories/clothing',
     position: 1,
   },
+  shipment: {
+    id: 'ship_1',
+    number: 'H12345',
+    state: 'ready',
+    tracking: null,
+    tracking_url: null,
+    cost: '5.00',
+    display_cost: '$5.00',
+    shipped_at: null,
+    created_at: '2026-03-06T12:00:00.000Z',
+    updated_at: '2026-03-06T12:00:00.000Z',
+    order_id: 'or_1',
+    stock_location_id: 'sl_1',
+    metadata: null,
+  },
+  payment: {
+    id: 'py_1',
+    payment_method_id: 'pm_1',
+    state: 'completed',
+    response_code: '12345',
+    number: 'P100001',
+    amount: '29.99',
+    display_amount: '$29.99',
+    captured_amount: '29.99',
+    created_at: '2026-03-06T12:00:00.000Z',
+    updated_at: '2026-03-06T12:00:00.000Z',
+    order_id: 'or_1',
+    metadata: null,
+  },
+  refund: {
+    id: 're_1',
+    transaction_id: 'txn_123',
+    created_at: '2026-03-06T12:00:00.000Z',
+    updated_at: '2026-03-06T12:00:00.000Z',
+    amount: '5.0',
+    payment_id: 'py_1',
+    refund_reason_id: 'rr_1',
+    reimbursement_id: null,
+    metadata: null,
+  },
+  adjustment: {
+    id: 'adj_1',
+    amount: '-5.0',
+    label: 'Admin discount',
+    eligible: true,
+    state: 'open',
+    source_type: null,
+    source_id: null,
+    adjustable_type: 'Spree::Order',
+    adjustable_id: 'or_1',
+    order_id: 'or_1',
+    included: false,
+    created_at: '2026-03-06T12:00:00.000Z',
+    updated_at: '2026-03-06T12:00:00.000Z',
+  },
 };
 
 const paginationMeta = { page: 1, limit: 25, count: 1, pages: 1 };
@@ -273,5 +328,81 @@ export const adminHandlers = [
 
   http.get(`${API_PREFIX}/taxons/:id`, () =>
     HttpResponse.json(adminFixtures.taxon)
+  ),
+
+  // ============================================
+  // Order Shipments
+  // ============================================
+  http.get(`${API_PREFIX}/orders/:orderId/shipments`, () =>
+    HttpResponse.json({ data: [adminFixtures.shipment], meta: paginationMeta })
+  ),
+
+  http.get(`${API_PREFIX}/orders/:orderId/shipments/:id`, () =>
+    HttpResponse.json(adminFixtures.shipment)
+  ),
+
+  http.patch(`${API_PREFIX}/orders/:orderId/shipments/:id/ship`, () =>
+    HttpResponse.json({ ...adminFixtures.shipment, state: 'shipped', shipped_at: '2026-03-06T14:00:00.000Z' })
+  ),
+
+  http.patch(`${API_PREFIX}/orders/:orderId/shipments/:id`, () =>
+    HttpResponse.json({ ...adminFixtures.shipment, tracking: '1Z999AA10123456784' })
+  ),
+
+  // ============================================
+  // Order Payments
+  // ============================================
+  http.get(`${API_PREFIX}/orders/:orderId/payments`, () =>
+    HttpResponse.json({ data: [adminFixtures.payment], meta: paginationMeta })
+  ),
+
+  http.post(`${API_PREFIX}/orders/:orderId/payments`, () =>
+    HttpResponse.json(adminFixtures.payment, { status: 201 })
+  ),
+
+  http.get(`${API_PREFIX}/orders/:orderId/payments/:id`, () =>
+    HttpResponse.json(adminFixtures.payment)
+  ),
+
+  http.patch(`${API_PREFIX}/orders/:orderId/payments/:id/capture`, () =>
+    HttpResponse.json({ ...adminFixtures.payment, state: 'completed' })
+  ),
+
+  http.patch(`${API_PREFIX}/orders/:orderId/payments/:id/void`, () =>
+    HttpResponse.json({ ...adminFixtures.payment, state: 'void' })
+  ),
+
+  // ============================================
+  // Order Refunds
+  // ============================================
+  http.get(`${API_PREFIX}/orders/:orderId/refunds`, () =>
+    HttpResponse.json({ data: [adminFixtures.refund], meta: paginationMeta })
+  ),
+
+  http.post(`${API_PREFIX}/orders/:orderId/refunds`, () =>
+    HttpResponse.json(adminFixtures.refund, { status: 201 })
+  ),
+
+  // ============================================
+  // Order Adjustments
+  // ============================================
+  http.get(`${API_PREFIX}/orders/:orderId/adjustments`, () =>
+    HttpResponse.json({ data: [adminFixtures.adjustment], meta: paginationMeta })
+  ),
+
+  http.post(`${API_PREFIX}/orders/:orderId/adjustments`, () =>
+    HttpResponse.json(adminFixtures.adjustment, { status: 201 })
+  ),
+
+  http.get(`${API_PREFIX}/orders/:orderId/adjustments/:id`, () =>
+    HttpResponse.json(adminFixtures.adjustment)
+  ),
+
+  http.patch(`${API_PREFIX}/orders/:orderId/adjustments/:id`, () =>
+    HttpResponse.json({ ...adminFixtures.adjustment, amount: '10.0', label: 'Updated discount' })
+  ),
+
+  http.delete(`${API_PREFIX}/orders/:orderId/adjustments/:id`, () =>
+    new HttpResponse(null, { status: 204 })
   ),
 ];
