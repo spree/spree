@@ -46,4 +46,34 @@ describe('admin / orders.shipments', () => {
       expect(result.shipped_at).toBeTruthy();
     });
   });
+
+  describe('cancel', () => {
+    it('cancels a shipment', async () => {
+      const result = await client.admin.orders.shipments.cancel(orderId, 'ship_1');
+
+      expect(result.state).toBe('canceled');
+    });
+  });
+
+  describe('resume', () => {
+    it('resumes a canceled shipment', async () => {
+      const result = await client.admin.orders.shipments.resume(orderId, 'ship_1');
+
+      expect(result.state).toBe('ready');
+    });
+  });
+
+  describe('split', () => {
+    it('splits a shipment to a new stock location', async () => {
+      const result = await client.admin.orders.shipments.split(orderId, 'ship_1', {
+        variant_id: 'var_1',
+        quantity: 1,
+        stock_location_id: 'sl_2',
+      });
+
+      expect(result.data).toHaveLength(2);
+      expect(result.data[0].id).toBe('ship_1');
+      expect(result.data[1].id).toBe('ship_2');
+    });
+  });
 });

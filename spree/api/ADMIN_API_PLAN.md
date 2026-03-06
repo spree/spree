@@ -278,30 +278,32 @@ Here's the endpoint list we need to implement:
 - [x] `DELETE /api/v3/admin/orders/:order_id/line_items/:id` — Remove line item
 
 ### Shipments (nested under Orders)
-- [ ] `GET /api/v3/admin/orders/:order_id/shipments` — List shipments
-- [ ] `GET /api/v3/admin/orders/:order_id/shipments/:id` — Show shipment
+- [x] `GET /api/v3/admin/orders/:order_id/shipments` — List shipments
+- [x] `GET /api/v3/admin/orders/:order_id/shipments/:id` — Show shipment
 - [ ] `POST /api/v3/admin/orders/:order_id/shipments` — Create shipment
-- [ ] `PATCH /api/v3/admin/orders/:order_id/shipments/:id` — Update shipment
-- [ ] `PATCH /api/v3/admin/orders/:order_id/shipments/:id/ship` — Mark shipment as shipped
-- [ ] `POST /api/v3/admin/orders/:order_id/shipments/:id/transfer` — Transfer items between shipments
+- [x] `PATCH /api/v3/admin/orders/:order_id/shipments/:id` — Update shipment
+- [x] `PATCH /api/v3/admin/orders/:order_id/shipments/:id/ship` — Mark shipment as shipped
+- [x] `PATCH /api/v3/admin/orders/:order_id/shipments/:id/cancel` — Cancel a shipment
+- [x] `PATCH /api/v3/admin/orders/:order_id/shipments/:id/resume` — Resume a canceled shipment
+- [x] `PATCH /api/v3/admin/orders/:order_id/shipments/:id/split` — Split/transfer items to a new shipment
 
 ### Payments (nested under Orders)
-- [ ] `GET /api/v3/admin/orders/:order_id/payments` — List payments
-- [ ] `GET /api/v3/admin/orders/:order_id/payments/:id` — Show payment
-- [ ] `POST /api/v3/admin/orders/:order_id/payments` — Create payment
-- [ ] `PATCH /api/v3/admin/orders/:order_id/payments/:id/capture` — Capture payment
-- [ ] `PATCH /api/v3/admin/orders/:order_id/payments/:id/void` — Void payment
+- [x] `GET /api/v3/admin/orders/:order_id/payments` — List payments
+- [x] `GET /api/v3/admin/orders/:order_id/payments/:id` — Show payment
+- [x] `POST /api/v3/admin/orders/:order_id/payments` — Create payment
+- [x] `PATCH /api/v3/admin/orders/:order_id/payments/:id/capture` — Capture payment
+- [x] `PATCH /api/v3/admin/orders/:order_id/payments/:id/void` — Void payment
 
 ### Refunds (nested under Orders)
-- [ ] `GET /api/v3/admin/orders/:order_id/refunds` — List refunds
-- [ ] `POST /api/v3/admin/orders/:order_id/refunds` — Create refund (with payment_id in body)
+- [x] `GET /api/v3/admin/orders/:order_id/refunds` — List refunds
+- [x] `POST /api/v3/admin/orders/:order_id/refunds` — Create refund (with payment_id in body)
 - [ ] `PATCH /api/v3/admin/orders/:order_id/refunds/:id` — Update refund
 
 ### Adjustments (nested under Orders)
-- [ ] `GET /api/v3/admin/orders/:order_id/adjustments` — List adjustments
-- [ ] `POST /api/v3/admin/orders/:order_id/adjustments` — Create adjustment
-- [ ] `PATCH /api/v3/admin/orders/:order_id/adjustments/:id` — Update adjustment
-- [ ] `DELETE /api/v3/admin/orders/:order_id/adjustments/:id` — Delete adjustment
+- [x] `GET /api/v3/admin/orders/:order_id/adjustments` — List adjustments
+- [x] `POST /api/v3/admin/orders/:order_id/adjustments` — Create adjustment
+- [x] `PATCH /api/v3/admin/orders/:order_id/adjustments/:id` — Update adjustment
+- [x] `DELETE /api/v3/admin/orders/:order_id/adjustments/:id` — Delete adjustment
 
 ### Order User Assignment
 - [ ] `PUT /api/v3/admin/orders/:order_id/user` — Assign user to order
