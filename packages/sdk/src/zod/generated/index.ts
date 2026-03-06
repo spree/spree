@@ -2,6 +2,7 @@
 export { AdminCustomerSchema, type AdminCustomer } from './AdminCustomer';
 export { AdminLineItemSchema, type AdminLineItem } from './AdminLineItem';
 export { AdminMetafieldSchema, type AdminMetafield } from './AdminMetafield';
+export { AdminOptionTypeSchema, type AdminOptionType } from './AdminOptionType';
 export { AdminOrderSchema, type AdminOrder } from './AdminOrder';
 export { AdminPriceSchema, type AdminPrice } from './AdminPrice';
 export { AdminProductSchema, type AdminProduct } from './AdminProduct';

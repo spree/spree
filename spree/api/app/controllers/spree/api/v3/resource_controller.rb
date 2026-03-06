@@ -80,11 +80,14 @@ module Spree
 
         # Builds a new resource, using parent association when @parent is set
         def build_resource
-          if @parent.present?
-            @parent.send(parent_association).build(permitted_params)
-          else
-            model_class.new(permitted_params)
-          end
+          resource = if @parent.present?
+                       @parent.send(parent_association).build(permitted_params)
+                     else
+                       model_class.new(permitted_params)
+                     end
+          resource.store = current_store if resource.respond_to?(:store_id) && resource.store_id.blank?
+          resource.created_by = try_spree_current_user if resource.respond_to?(:created_by_id)
+          resource
         end
 
         # Finds a single resource within scope using prefixed ID
