@@ -175,6 +175,35 @@ export interface AdminTaxonUpdateParams {
   sort_order?: string;
 }
 
+export interface AdminShipmentUpdateParams {
+  tracking?: string;
+  selected_shipping_rate_id?: string;
+  stock_location_id?: string;
+}
+
+export interface AdminPaymentCreateParams {
+  payment_method_id: string;
+  amount?: number;
+  source_id?: string;
+}
+
+export interface AdminRefundCreateParams {
+  payment_id: string;
+  amount: number;
+  refund_reason_id?: string;
+}
+
+export interface AdminAdjustmentCreateParams {
+  amount: number;
+  label: string;
+}
+
+export interface AdminAdjustmentUpdateParams {
+  amount?: number;
+  label?: string;
+  eligible?: boolean;
+}
+
 export interface AdminVariantCreateParams {
   sku?: string;
   price?: number;
