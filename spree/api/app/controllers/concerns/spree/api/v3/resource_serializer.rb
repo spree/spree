@@ -51,12 +51,17 @@ module Spree
         end
 
         # Filter serialized hash to only include requested fields.
-        # The 'id' field is always included.
+        # The 'id' field is always included. Expanded associations are always included.
         def filter_fields(hash)
           fields = fields_list
           return hash unless fields
 
-          hash.select { |key, _| key == 'id' || fields.include?(key) }
+          hash.select { |key, _| key == 'id' || fields.include?(key) || expanded_keys.include?(key) }
+        end
+
+        # Top-level expand keys (e.g., 'variants.images' → 'variants')
+        def expanded_keys
+          @expanded_keys ||= expand_list.map { |e| e.split('.').first }.to_set
         end
       end
     end

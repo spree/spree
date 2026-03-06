@@ -345,7 +345,7 @@ curl -G 'http://localhost:3000/api/v3/store/products' \
 - The `id` field is **always included**, even if not listed in `fields`
 - Omitting `fields` returns all fields (default behavior)
 - Field selection applies to the top-level resource only — expanded associations always return their full set of fields
-- Combine with `expand` to include associations: `?fields=name,variants&expand=variants`
+- Expanded associations are **always included** in the response regardless of `fields` — `?fields=name&expand=variants` returns `id`, `name`, and `variants`
 
 <Note>
 The SDK TypeScript types remain fully typed regardless of field selection. When using `fields`, be aware that only the requested fields will be present at runtime.
