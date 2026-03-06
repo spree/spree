@@ -98,6 +98,8 @@ export type {
   StoreOrderPromotion,
   PaginatedResponse,
   AddressParams,
+  CreateCartParams,
+  LineItemInput,
   UpdateOrderParams,
   ProductFiltersResponse,
   CreatePaymentSessionParams,

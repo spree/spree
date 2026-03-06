@@ -17,7 +17,15 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
       DESC
 
       sdk_example <<~JS
+        // Create an empty cart
         const cart = await client.store.cart.create()
+
+        // Create a cart with line items
+        const cartWithItems = await client.store.cart.create({
+          line_items: [
+            { variant_id: 'variant_abc123', quantity: 2 },
+          ],
+        })
       JS
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
@@ -26,7 +34,20 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
       parameter name: :body, in: :body, required: false, schema: {
         type: :object,
         properties: {
-          metadata: { type: :object, description: 'Write-only key-value metadata (Stripe-style). Not returned in responses.' }
+          metadata: { type: :object, description: 'Write-only key-value metadata (Stripe-style). Not returned in responses.' },
+          line_items: {
+            type: :array,
+            description: 'Line items to add to the cart on creation',
+            items: {
+              type: :object,
+              properties: {
+                variant_id: { type: :string, example: 'variant_abc123', description: 'Prefixed variant ID' },
+                quantity: { type: :integer, example: 2, description: 'Quantity (defaults to 1)' },
+                metadata: { type: :object, additionalProperties: true, description: 'Arbitrary key-value metadata' }
+              },
+              required: %w[variant_id]
+            }
+          }
         }
       }
       parameter name: 'Idempotency-Key', in: :header, type: :string, required: false,
@@ -52,6 +73,31 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
         schema '$ref' => '#/components/schemas/StoreOrder'
 
         run_test!
+      end
+
+      response '201', 'cart created with line items' do
+        let(:product) { create(:product, stores: [store]) }
+        let(:variant) { create(:variant, product: product) }
+
+        before { variant.stock_items.first.update!(count_on_hand: 10) }
+
+        let(:'x-spree-api-key') { api_key.token }
+        let(:body) do
+          {
+            line_items: [
+              { variant_id: variant.prefixed_id, quantity: 3 }
+            ]
+          }
+        end
+
+        schema '$ref' => '#/components/schemas/StoreOrder'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['line_items'].size).to eq(1)
+          expect(data['line_items'].first['quantity']).to eq(3)
+          expect(data['line_items'].first['variant_id']).to eq(variant.prefixed_id)
+        end
       end
 
       response '201', 'cart created with metadata' do

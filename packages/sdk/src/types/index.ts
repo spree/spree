@@ -120,10 +120,22 @@ export interface OrderListParams extends ListParams {
   [key: string]: string | number | boolean | (string | number)[] | undefined;
 }
 
+// Line item input for bulk cart/order operations
+export interface LineItemInput {
+  /** Prefixed variant ID (e.g., "variant_k5nR8xLq") */
+  variant_id: string;
+  /** Quantity to set (defaults to 1 if omitted) */
+  quantity?: number;
+  /** Arbitrary key-value metadata (merged with existing on upsert) */
+  metadata?: Record<string, unknown>;
+}
+
 // Cart operations
 export interface CreateCartParams {
   /** Arbitrary key-value metadata (stored, not returned in responses) */
   metadata?: Record<string, unknown>;
+  /** Line items to add to the cart on creation */
+  line_items?: LineItemInput[];
 }
 
 export interface AddLineItemParams {
@@ -174,6 +186,8 @@ export interface UpdateOrderParams {
   bill_address?: AddressParams;
   /** New shipping address */
   ship_address?: AddressParams;
+  /** Line items to upsert (sets quantity for existing, creates new) */
+  line_items?: LineItemInput[];
 }
 
 // Payment Sessions

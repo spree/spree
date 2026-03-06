@@ -16,6 +16,7 @@ module Spree
         cart_remove_item_service: 'Spree::Cart::RemoveItem',
         cart_remove_line_item_service: 'Spree::Cart::RemoveLineItem',
         cart_set_item_quantity_service: 'Spree::Cart::SetQuantity',
+        cart_upsert_items_service: 'Spree::Cart::UpsertItems',
         cart_estimate_shipping_rates_service: 'Spree::Cart::EstimateShippingRates',
         cart_empty_service: 'Spree::Cart::Empty',
         cart_destroy_service: 'Spree::Cart::Destroy',
@@ -41,6 +42,7 @@ module Spree
         # order
         order_approve_service: 'Spree::Orders::Approve',
         order_cancel_service: 'Spree::Orders::Cancel',
+        order_update_service: 'Spree::Orders::Update',
         order_updater: 'Spree::OrderUpdater',
 
         # shipment

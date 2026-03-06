@@ -94,6 +94,9 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
         const order = await client.store.orders.update('or_abc123', {
           email: 'customer@example.com',
           special_instructions: 'Leave at door',
+          line_items: [
+            { variant_id: 'variant_abc123', quantity: 2 },
+          ],
           bill_address: {
             firstname: 'John',
             lastname: 'Doe',
@@ -150,6 +153,19 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
               country_iso: { type: :string, example: 'US' },
               state_abbr: { type: :string, example: 'CA' }
             }
+          },
+          line_items: {
+            type: :array,
+            description: 'Line items to upsert (sets quantity for existing variants, creates new line items)',
+            items: {
+              type: :object,
+              properties: {
+                variant_id: { type: :string, example: 'variant_abc123', description: 'Prefixed variant ID' },
+                quantity: { type: :integer, example: 2, description: 'Quantity to set (defaults to 1)' },
+                metadata: { type: :object, additionalProperties: true, description: 'Arbitrary key-value metadata (merged with existing)' }
+              },
+              required: %w[variant_id]
+            }
           }
         }
       }
@@ -165,6 +181,33 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
         run_test! do |response|
           data = JSON.parse(response.body)
           expect(data['special_instructions']).to eq('Leave at door')
+        end
+      end
+
+      response '200', 'order updated with line items' do
+        let(:product) { create(:product, stores: [store]) }
+        let(:variant) { create(:variant, product: product) }
+
+        before { variant.stock_items.first.update!(count_on_hand: 10) }
+
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { "Bearer #{jwt_token}" }
+        let(:id) { order.to_param }
+        let(:body) do
+          {
+            line_items: [
+              { variant_id: variant.prefixed_id, quantity: 2 }
+            ]
+          }
+        end
+
+        schema '$ref' => '#/components/schemas/StoreOrder'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          variant_ids = data['line_items'].map { |li| li['variant_id'] }
+          expect(variant_ids).to include(variant.prefixed_id)
+          expect(order.reload.line_items.find_by(variant: variant).quantity).to eq(2)
         end
       end
 

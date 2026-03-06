@@ -1,7 +1,7 @@
 'use server';
 
 import { revalidateTag } from 'next/cache';
-import type { StoreOrder } from '@spree/sdk';
+import type { StoreOrder, CreateCartParams } from '@spree/sdk';
 import { getClient } from '../config';
 import { getCartToken, setCartToken, clearCartToken, getAccessToken } from '../cookies';
 
@@ -26,16 +26,16 @@ export async function getCart(): Promise<(StoreOrder & { token: string }) | null
 
 /**
  * Get existing cart or create a new one.
- * @param metadata - Optional metadata to set on the cart when creating a new one
+ * @param params - Optional cart creation params (metadata, line_items)
  */
 export async function getOrCreateCart(
-  metadata?: Record<string, unknown>
+  params?: CreateCartParams
 ): Promise<StoreOrder & { token: string }> {
   const existing = await getCart();
   if (existing) return existing;
 
   const token = await getAccessToken();
-  const cartParams = metadata ? { metadata } : undefined;
+  const cartParams = params && Object.keys(params).length > 0 ? params : undefined;
   const cart = await getClient().store.cart.create(cartParams, token ? { token } : undefined);
 
   if (cart.token) {

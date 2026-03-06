@@ -1,5 +1,38 @@
 # @spree/sdk
 
+## 0.6.9
+
+### Patch Changes
+
+- Added `checkout_steps` field to `StoreOrder` type. Returns an array of applicable checkout step names for the order (e.g., `["address", "delivery", "payment", "complete"]`). Steps are dynamic per order — digital-only orders may skip `delivery`, free orders may skip `payment`. Use alongside `state` to build dynamic checkout step indicators.
+
+- Added `fields` parameter support for field selection. Pass `fields: ['name', 'slug', 'price']` to `list` and `get` methods to receive only specific fields in the response. The `id` field is always included. Omit `fields` to return all fields (default behavior).
+
+- Added `LineItemInput` type and `line_items` parameter to `CreateCartParams` and `UpdateOrderParams`. You can now pass line items when creating a cart or updating an order, enabling bulk add/upsert of items in a single API call.
+
+  ```typescript
+  // Create a cart with line items
+  const cart = await client.store.cart.create({
+    line_items: [
+      { variant_id: "variant_abc123", quantity: 2 },
+      { variant_id: "variant_def456", quantity: 1 },
+    ],
+  });
+
+  // Upsert line items on an existing order
+  const order = await client.store.orders.update(
+    "or_abc123",
+    {
+      line_items: [{ variant_id: "variant_abc123", quantity: 3 }],
+    },
+    { bearerToken: "<token>" }
+  );
+  ```
+
+- Switch API `sort` parameter to JSON:API standard `-field` notation. Use `-price` for descending and `price` for ascending instead of `price desc` / `price asc`. The `sort` parameter is now supported on all list endpoints (products, taxons, orders, taxonomies, etc.).
+
+- Added support for nested expand with dot notation. Pass `expand: ['variants.images']` to expand associations up to 4 levels deep. No SDK code changes required — this is a backend feature that works with the existing SDK.
+
 ## 0.6.8
 
 ### Patch Changes

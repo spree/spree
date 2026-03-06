@@ -16,7 +16,8 @@ module Spree
               store: current_store,
               currency: current_currency,
               locale: current_locale,
-              metadata: cart_params[:metadata] || {}
+              metadata: cart_params[:metadata] || {},
+              line_items: cart_params[:line_items] || []
             )
 
             if result.success?
@@ -61,7 +62,10 @@ module Spree
           private
 
           def cart_params
-            params.permit(metadata: {})
+            params.permit(
+              metadata: {},
+              line_items: [:variant_id, :quantity, { metadata: {}, options: {} }]
+            )
           end
 
           # Find incomplete cart by order token for associate action
