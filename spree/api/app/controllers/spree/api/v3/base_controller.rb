@@ -13,8 +13,27 @@ module Spree
         include Spree::Api::V3::HttpCaching
         include Spree::Api::V3::SecurityHeaders
         include Spree::Api::V3::ResourceSerializer
+        include Spree::Api::V3::RateLimitHeaders
         include Spree::Api::V3::Idempotent
         include Pagy::Method
+
+        RATE_LIMIT_RESPONSE = -> {
+          limit = Spree::Api::Config[:rate_limit_per_key]
+          window = Spree::Api::Config[:rate_limit_window]
+          body = { error: { code: 'rate_limit_exceeded', message: 'Too many requests. Please retry later.' } }
+          headers = {
+            'Content-Type' => 'application/json',
+            'Retry-After' => window.to_s,
+            'X-RateLimit-Limit' => limit.to_s,
+            'X-RateLimit-Remaining' => '0'
+          }
+          [429, headers, [body.to_json]]
+        }
+
+        rate_limit to: Spree::Api::Config[:rate_limit_per_key], within: Spree::Api::Config[:rate_limit_window].seconds,
+                   store: Rails.cache,
+                   by: -> { request.headers['X-Spree-Api-Key'] || request.remote_ip },
+                   with: RATE_LIMIT_RESPONSE
 
         # Optional JWT authentication by default
         before_action :authenticate_user
