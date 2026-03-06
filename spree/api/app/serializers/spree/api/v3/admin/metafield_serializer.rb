@@ -7,7 +7,8 @@ module Spree
         class MetafieldSerializer < V3::MetafieldSerializer
           typelize display_on: :string
 
-          attributes :display_on
+          attributes :display_on,
+                     created_at: :iso8601, updated_at: :iso8601
         end
       end
     end
