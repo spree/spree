@@ -5,7 +5,13 @@ module Spree
         class ShipmentSerializer < V3::ShipmentSerializer
           typelize metadata: 'Record<string, unknown> | null',
                    order_id: [:string, nullable: true],
-                   stock_location_id: [:string, nullable: true]
+                   stock_location_id: [:string, nullable: true],
+                   adjustment_total: :string, additional_tax_total: :string,
+                   included_tax_total: :string, promo_total: :string,
+                   pre_tax_amount: :string
+
+          attributes :adjustment_total, :additional_tax_total,
+                     :included_tax_total, :promo_total, :pre_tax_amount
 
           attribute :metadata do |shipment|
             shipment.metadata.presence
@@ -18,6 +24,14 @@ module Spree
           attribute :stock_location_id do |shipment|
             shipment.stock_location&.prefixed_id
           end
+
+          one :order,
+              resource: Spree.api.admin_order_serializer,
+              if: proc { expand?('order') }
+
+          many :adjustments,
+               resource: Spree.api.admin_adjustment_serializer,
+               if: proc { expand?('adjustments') }
         end
       end
     end

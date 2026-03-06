@@ -12,10 +12,16 @@ module Spree
                    cost_price: [:string, nullable: true], cost_currency: [:string, nullable: true],
                    total_on_hand: [:number, nullable: true],
                    deleted_at: [:string, nullable: true],
+                   barcode: [:string, nullable: true],
+                   discontinue_on: [:string, nullable: true],
+                   weight_unit: [:string, nullable: true],
+                   dimensions_unit: [:string, nullable: true],
                    price: 'AdminPrice', original_price: ['AdminPrice', nullable: true]
 
           # Admin-only attributes
-          attributes :position, :tax_category_id, :cost_price, :cost_currency, deleted_at: :iso8601
+          attributes :position, :tax_category_id, :cost_price, :cost_currency,
+                     :barcode, :weight_unit, :dimensions_unit,
+                     deleted_at: :iso8601, discontinue_on: :iso8601
 
           attribute :total_on_hand do |variant|
             variant.total_on_hand
@@ -54,6 +60,14 @@ module Spree
           many :metafields,
                resource: Spree.api.admin_metafield_serializer,
                if: proc { expand?('metafields') }
+
+          one :product,
+              resource: Spree.api.admin_product_serializer,
+              if: proc { expand?('product') }
+
+          one :tax_category,
+              resource: Spree.api.admin_tax_category_serializer,
+              if: proc { expand?('tax_category') }
         end
       end
     end

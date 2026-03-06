@@ -123,6 +123,8 @@ module Spree
         currency_serializer: 'Spree::Api::V3::CurrencySerializer',
         locale_serializer: 'Spree::Api::V3::LocaleSerializer',
         metafield_serializer: 'Spree::Api::V3::MetafieldSerializer',
+        shipping_category_serializer: 'Spree::Api::V3::ShippingCategorySerializer',
+        tax_category_serializer: 'Spree::Api::V3::TaxCategorySerializer',
 
         # v3 event serializers (for models without Store API endpoints yet)
         asset_serializer: 'Spree::Api::V3::AssetSerializer',
@@ -163,6 +165,10 @@ module Spree
         admin_payment_serializer: 'Spree::Api::V3::Admin::PaymentSerializer',
         admin_refund_serializer: 'Spree::Api::V3::Admin::RefundSerializer',
         admin_adjustment_serializer: 'Spree::Api::V3::Admin::AdjustmentSerializer',
+        admin_shipping_category_serializer: 'Spree::Api::V3::Admin::ShippingCategorySerializer',
+        admin_tax_category_serializer: 'Spree::Api::V3::Admin::TaxCategorySerializer',
+        admin_return_authorization_serializer: 'Spree::Api::V3::Admin::ReturnAuthorizationSerializer',
+        admin_reimbursement_serializer: 'Spree::Api::V3::Admin::ReimbursementSerializer',
 
         # platform serializers
         platform_metafield_serializer: 'Spree::Api::V2::Platform::MetafieldSerializer',

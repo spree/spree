@@ -1,7 +1,8 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import { AdminVariantSchema } from './AdminVariant';
 
-export const AdminPriceSchema = z.object({
+export const AdminPriceSchema: z.ZodObject<any> = z.object({
   id: z.string(),
   amount: z.string().nullable(),
   amount_in_cents: z.number().nullable(),
@@ -14,6 +15,7 @@ export const AdminPriceSchema = z.object({
   variant_id: z.string().nullable(),
   created_at: z.string(),
   updated_at: z.string(),
+  variant: z.lazy(() => AdminVariantSchema).optional(),
 });
 
 export type AdminPrice = z.infer<typeof AdminPriceSchema>;

@@ -4,7 +4,7 @@ module Spree
       module Admin
         class AdjustmentSerializer < BaseSerializer
           typelize amount: :string, label: [:string, nullable: true],
-                   eligible: :boolean, state: :string,
+                   eligible: :boolean, state: :string, mandatory: [:boolean, nullable: true],
                    source_type: [:string, nullable: true],
                    source_id: [:string, nullable: true],
                    adjustable_type: [:string, nullable: true],
@@ -12,7 +12,7 @@ module Spree
                    order_id: [:string, nullable: true],
                    included: :boolean
 
-          attributes :amount, :label, :eligible, :state, :included,
+          attributes :amount, :label, :eligible, :state, :included, :mandatory,
                      created_at: :iso8601, updated_at: :iso8601
 
           attribute :source_type do |adjustment|
@@ -34,6 +34,10 @@ module Spree
           attribute :order_id do |adjustment|
             adjustment.order&.prefixed_id
           end
+
+          one :order,
+              resource: Spree.api.admin_order_serializer,
+              if: proc { expand?('order') }
         end
       end
     end

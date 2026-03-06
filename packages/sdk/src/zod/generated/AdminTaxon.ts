@@ -1,6 +1,7 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
 import { AdminMetafieldSchema } from './AdminMetafield';
+import { AdminTaxonomySchema } from './AdminTaxonomy';
 
 export const AdminTaxonSchema: z.ZodObject<any> = z.object({
   id: z.string(),
@@ -29,6 +30,11 @@ export const AdminTaxonSchema: z.ZodObject<any> = z.object({
   metafields: z.array(AdminMetafieldSchema).optional(),
   lft: z.number(),
   rgt: z.number(),
+  hide_from_nav: z.boolean(),
+  sort_order: z.string(),
+  rules_match_policy: z.string(),
+  automatic: z.boolean(),
+  taxonomy: z.lazy(() => AdminTaxonomySchema).optional(),
 });
 
 export type AdminTaxon = z.infer<typeof AdminTaxonSchema>;

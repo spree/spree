@@ -12,10 +12,21 @@ module Spree
           typelize status: :string, make_active_at: [:string, nullable: true], discontinue_on: [:string, nullable: true],
                    cost_price: [:string, nullable: true], cost_currency: [:string, nullable: true],
                    deleted_at: [:string, nullable: true],
+                   meta_title: [:string, nullable: true], promotionable: :boolean,
+                   shipping_category_id: [:string, nullable: true], tax_category_id: [:string, nullable: true],
                    price: 'AdminPrice', original_price: ['AdminPrice', nullable: true]
 
           # Admin-only attributes
-          attributes :status, :make_active_at, :discontinue_on, deleted_at: :iso8601
+          attributes :status, :make_active_at, :discontinue_on, :meta_title, :promotionable,
+                     deleted_at: :iso8601
+
+          attribute :shipping_category_id do |product|
+            product.shipping_category&.prefixed_id
+          end
+
+          attribute :tax_category_id do |product|
+            product.tax_category&.prefixed_id
+          end
 
           attribute :cost_price do |product|
             product.master&.cost_price
@@ -74,6 +85,14 @@ module Spree
           many :metafields,
                resource: Spree.api.admin_metafield_serializer,
                if: proc { expand?('metafields') }
+
+          one :shipping_category,
+              resource: Spree.api.admin_shipping_category_serializer,
+              if: proc { expand?('shipping_category') }
+
+          one :tax_category,
+              resource: Spree.api.admin_tax_category_serializer,
+              if: proc { expand?('tax_category') }
         end
       end
     end
