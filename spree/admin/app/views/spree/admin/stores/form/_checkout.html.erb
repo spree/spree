@@ -20,30 +20,3 @@
     <%= f.spree_check_box :preferred_special_instructions_enabled, label: Spree.t('admin.checkout_settings.special_instructions.label'), help: Spree.t('admin.checkout_settings.special_instructions.description') %>
   </div>
 </div>
-
-<div class="card mb-6">
-  <div class="card-header">
-    <h5 class="card-title"><%= Spree.t(:checkout_message) %></h5>
-  </div>
-
-  <div class="card-body">
-    <%= f.spree_rich_text_area :checkout_message, label: false, help: Spree.t('admin.checkout_settings.checkout_message_description') %>
-  </div>
-</div>
-
-<% if current_store.respond_to?(:links) %>
-  <div class="card mb-6">
-    <div class="card-header">
-      <h5 class="card-title"><%= Spree.t('admin.checkout_settings.checkout_links.label') %></h5>
-    </div>
-
-    <div class="card-body">
-      <div class="alert alert-info">
-        <div>
-          <%= Spree.t('admin.checkout_settings.checkout_links.description') %>
-        </div>
-      </div>
-      <%= render 'spree/admin/stores/form/checkout_links' %>
-    </div>
-  </div>
-<% end %>

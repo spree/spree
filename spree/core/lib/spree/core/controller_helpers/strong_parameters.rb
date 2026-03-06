@@ -39,7 +39,7 @@ module Spree
         end
 
         def permitted_store_attributes
-          permitted_attributes.store_attributes + Spree::Store::SUPPORTED_SOCIAL_NETWORKS.map { |social| "store_#{social}" }
+          permitted_attributes.store_attributes
         end
       end
     end
