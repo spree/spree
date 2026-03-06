@@ -48,7 +48,7 @@ module Spree
       )
 
       # Queue the delivery job
-      Spree::WebhookDeliveryJob.perform_later(delivery.id, endpoint.secret_key)
+      Spree::WebhookDeliveryJob.perform_later(delivery.id)
     rescue StandardError => e
       Rails.logger.error "[Spree Webhooks] Error queuing delivery for endpoint #{endpoint.id}: #{e.message}"
       Rails.error.report(e)

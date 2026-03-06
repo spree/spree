@@ -14,20 +14,20 @@ module Spree
         stub_request(:post, delivery.url).to_return(status: 200, body: '{}')
       end
 
-      it 'calls DeliverWebhook service' do
+      it 'calls DeliverWebhook service with secret_key from endpoint' do
         expect(Spree::Webhooks::DeliverWebhook).to receive(:call).with(
           delivery: delivery,
           secret_key: secret_key
         )
 
-        described_class.new.perform(delivery.id, secret_key)
+        described_class.new.perform(delivery.id)
       end
 
       context 'when delivery does not exist' do
         it 'returns early without calling service' do
           expect(Spree::Webhooks::DeliverWebhook).not_to receive(:call)
 
-          described_class.new.perform(-1, secret_key)
+          described_class.new.perform(-1)
         end
       end
 
@@ -37,7 +37,7 @@ module Spree
         it 'returns early without calling service' do
           expect(Spree::Webhooks::DeliverWebhook).not_to receive(:call)
 
-          described_class.new.perform(delivery.id, secret_key)
+          described_class.new.perform(delivery.id)
         end
       end
     end

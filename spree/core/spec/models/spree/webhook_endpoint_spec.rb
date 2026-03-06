@@ -28,6 +28,13 @@ describe Spree::WebhookEndpoint, type: :model do
         webhook_endpoint.url = 'ftp://example.com/webhooks'
         expect(webhook_endpoint).not_to be_valid
       end
+
+      it 'rejects urls resolving to private IPs' do
+        allow(Resolv).to receive(:getaddresses).with('internal.example.com').and_return(['127.0.0.1'])
+        webhook_endpoint.url = 'https://internal.example.com/webhooks'
+        expect(webhook_endpoint).not_to be_valid
+        expect(webhook_endpoint.errors[:url]).to include('must not point to an internal or private network address')
+      end
     end
 
     describe 'active inclusion' do
