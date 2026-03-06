@@ -33,6 +33,8 @@ RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.y
       parameter name: :limit, in: :query, type: :integer, required: false
       parameter name: 'q[name_cont]', in: :query, type: :string, required: false,
                 description: 'Filter by name'
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., name,slug,price). id is always included.'
 
       response '200', 'taxons found' do
         let(:'x-spree-api-key') { api_key.token }
@@ -81,6 +83,8 @@ RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.y
                 description: 'Taxon permalink (e.g., categories/clothing/shirts) or prefix ID (e.g., taxon_abc123)'
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Expand associations (children, products, parent)'
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., name,slug,price). id is always included.'
 
       response '200', 'taxon found by permalink' do
         let(:'x-spree-api-key') { api_key.token }
@@ -146,7 +150,7 @@ RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.y
         const products = await client.store.taxons.products.list('categories/clothing', {
           page: 1,
           limit: 25,
-          sort: 'price asc',
+          sort: 'price',
           with_option_value_ids: ['optval_abc'],
         })
       JS
@@ -159,7 +163,7 @@ RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.y
       parameter name: :limit, in: :query, type: :integer, required: false,
                 description: 'Number of items per page (default: 25, max: 100)'
       parameter name: :sort, in: :query, type: :string, required: false,
-                description: 'Sort order. Values: price asc, price desc, best_selling, name asc, name desc, available_on desc, available_on asc'
+                description: 'Sort order. Prefix with - for descending. Values: price, -price, best_selling, name, -name, -available_on, available_on'
       parameter name: 'q[price_gte]', in: :query, type: :number, required: false,
                 description: 'Filter by minimum price'
       parameter name: 'q[price_lte]', in: :query, type: :number, required: false,
@@ -168,6 +172,8 @@ RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.y
                 description: 'Filter by option value prefix IDs'
       parameter name: 'q[in_stock]', in: :query, type: :boolean, required: false,
                 description: 'Filter to only in-stock products'
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., name,slug,price). id is always included.'
 
       response '200', 'products found' do
         let(:'x-spree-api-key') { api_key.token }

@@ -176,6 +176,23 @@ module Spree
             expect(delivery.response_body.length).to be <= 10_003 # 10_000 + '...'
           end
         end
+
+        context 'when URL resolves to private IP (SSRF)' do
+          before do
+            delivery
+            allow(SsrfFilter).to receive(:post).and_raise(SsrfFilter::PrivateIPAddress, 'URL resolves to a blocked internal address')
+            allow(Rails.error).to receive(:report)
+          end
+
+          it 'marks delivery as failed with connection error' do
+            described_class.call(delivery: delivery, secret_key: secret_key)
+
+            delivery.reload
+            expect(delivery.success).to be false
+            expect(delivery.error_type).to eq('connection_error')
+            expect(delivery.request_errors).to include('blocked internal address')
+          end
+        end
       end
     end
   end

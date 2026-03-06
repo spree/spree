@@ -6,5 +6,5 @@ const { token, user } = await client.store.auth.login({
 })
 
 // Use the token for authenticated requests
-const orders = await client.store.orders.list({}, { token })
+const orders = await client.store.customer.orders.list({}, { token })
 ```

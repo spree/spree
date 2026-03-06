@@ -96,8 +96,8 @@ RSpec.describe Spree::Api::V3::Store::Products::FiltersController, type: :contro
 
       sort_ids = json_response['sort_options'].map { |s| s['id'] }
       expect(sort_ids).to include(
-        'manual', 'best_selling', 'price asc', 'price desc',
-        'available_on desc', 'available_on asc', 'name asc', 'name desc'
+        'manual', 'best_selling', 'price', '-price',
+        '-available_on', 'available_on', 'name', '-name'
       )
     end
 
@@ -129,7 +129,7 @@ RSpec.describe Spree::Api::V3::Store::Products::FiltersController, type: :contro
 
         get :index, params: { taxon_id: taxon.prefixed_id }
 
-        expect(json_response['default_sort']).to eq('price asc')
+        expect(json_response['default_sort']).to eq('price')
       end
     end
 

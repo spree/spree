@@ -5,8 +5,8 @@ module Spree
         class ProductsController < ResourceController
           # Sort values that require special scopes (not plain Ransack column sorts).
           CUSTOM_SORT_SCOPES = {
-            'price asc' => :ascend_by_price,
-            'price desc' => :descend_by_price,
+            'price' => :ascend_by_price,
+            '-price' => :descend_by_price,
             'best_selling' => :by_best_selling
           }.freeze
 
@@ -51,8 +51,8 @@ module Spree
           end
 
           # Applies sorting from the unified `sort` param.
-          # Custom values ('price asc', 'best_selling') use product-specific scopes.
-          # Standard Ransack values ('name asc', 'created_at desc') are passed to q[s].
+          # Custom values ('price', '-price', 'best_selling') use product-specific scopes.
+          # Standard Ransack values ('name', '-created_at') are handled by base ResourceController.
           def apply_collection_sort(collection)
             sort_value = sort_param
             return collection unless sort_value.present?
@@ -64,24 +64,20 @@ module Spree
             sort_value == 'best_selling' ? sorted.distinct(false).send(scope_method) : sorted.send(scope_method)
           end
 
-          # Inject sort into ransack params when it's a standard Ransack sort
+          # Skip base Ransack sort injection for custom sort scopes
           def ransack_params
             rp = super
-            sort_value = sort_param
 
-            if sort_value.present? && !CUSTOM_SORT_SCOPES.key?(sort_value)
-              rp = rp.respond_to?(:to_unsafe_h) ? rp.to_unsafe_h : rp.dup
-              rp['s'] = sort_value
+            # Remove Ransack sort when a custom scope handles it
+            if sort_param.present? && CUSTOM_SORT_SCOPES.key?(sort_param)
+              rp = rp.is_a?(Hash) ? rp.dup : rp.to_unsafe_h
+              rp.delete('s')
             end
 
             rp
           end
 
           private
-
-          def sort_param
-            params[:sort] || params.dig(:q, :s)
-          end
 
           def custom_sort_requested?
             CUSTOM_SORT_SCOPES.key?(sort_param)

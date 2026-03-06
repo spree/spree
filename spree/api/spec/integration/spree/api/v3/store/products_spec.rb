@@ -34,7 +34,7 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
         const products = await client.store.products.list({
           page: 1,
           limit: 25,
-          sort: 'price asc',
+          sort: 'price',
           name_cont: 'shirt',
           price_gte: 20,
           price_lte: 100,
@@ -50,7 +50,7 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
       parameter name: :limit, in: :query, type: :integer, required: false,
                 description: 'Number of items per page (default: 25, max: 100)'
       parameter name: :sort, in: :query, type: :string, required: false,
-                description: 'Sort order. Values: price asc, price desc, best_selling, name asc, name desc, available_on desc, available_on asc'
+                description: 'Sort order. Prefix with - for descending. Values: price, -price, best_selling, name, -name, -available_on, available_on'
       parameter name: 'q[name_cont]', in: :query, type: :string, required: false,
                 description: 'Filter by name containing string'
       parameter name: 'q[taxons_id_eq]', in: :query, type: :string, required: false,
@@ -65,6 +65,8 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
                 description: 'Filter to only in-stock products'
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Comma-separated associations to expand (variants, images, taxons, option_types)'
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., name,slug,price). id is always included.'
 
       response '200', 'products found' do
         let(:'x-spree-api-key') { api_key.token }
@@ -115,6 +117,8 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
                 description: 'Product slug (e.g., spree-tote) or prefix ID (e.g., product_abc123)'
       parameter name: :expand, in: :query, type: :string, required: false,
                 description: 'Comma-separated associations to expand'
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., name,slug,price). id is always included.'
 
       response '200', 'product found by slug' do
         let(:'x-spree-api-key') { api_key.token }
@@ -256,7 +260,7 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
 
           # Check sort options
           sort_ids = data['sort_options'].map { |s| s['id'] }
-          expect(sort_ids).to include('manual', 'price asc', 'available_on desc')
+          expect(sort_ids).to include('manual', 'price', '-available_on')
         end
       end
 

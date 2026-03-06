@@ -28,10 +28,14 @@ RSpec.describe 'Customer Orders API', type: :request, swagger_doc: 'api-referenc
       parameter name: 'Authorization', in: :header, type: :string, required: true
       parameter name: :page, in: :query, type: :integer, required: false
       parameter name: :limit, in: :query, type: :integer, required: false
+      parameter name: :sort, in: :query, type: :string, required: false,
+                description: 'Sort order. Prefix with - for descending. Example: -completed_at'
       parameter name: 'q[state_eq]', in: :query, type: :string, required: false,
                 description: 'Filter by order state'
       parameter name: 'q[completed_at_gte]', in: :query, type: :string, required: false,
                 description: 'Filter by completion date (after)'
+      parameter name: :fields, in: :query, type: :string, required: false,
+                description: 'Comma-separated list of fields to include (e.g., name,slug,price). id is always included.'
 
       response '200', 'orders found' do
         let(:'x-spree-api-key') { api_key.token }

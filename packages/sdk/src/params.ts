@@ -1,7 +1,7 @@
 /**
  * Keys that are passed through to the API without wrapping in q[...].
  */
-const PASSTHROUGH_KEYS = new Set(['page', 'limit', 'expand', 'sort']);
+const PASSTHROUGH_KEYS = new Set(['page', 'limit', 'expand', 'sort', 'fields']);
 
 type ParamValue = string | number | boolean | (string | number)[] | undefined;
 

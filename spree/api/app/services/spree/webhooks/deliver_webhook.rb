@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'net/http'
+require 'ssrf_filter'
 require 'openssl'
 
 module Spree
@@ -49,22 +49,22 @@ module Spree
       private
 
       def make_request
-        uri = URI.parse(@delivery.url)
-        http = Net::HTTP.new(uri.host, uri.port)
-        http.use_ssl = uri.scheme == 'https'
-        http.verify_mode = ssl_verify_mode
-        http.open_timeout = TIMEOUT
-        http.read_timeout = TIMEOUT
-
-        request = Net::HTTP::Post.new(uri.request_uri)
-        request['Content-Type'] = 'application/json'
-        request['User-Agent'] = 'Spree-Webhooks/1.0'
-        request['X-Spree-Webhook-Signature'] = generate_signature
-        request['X-Spree-Webhook-Timestamp'] = webhook_timestamp.to_s
-        request['X-Spree-Webhook-Event'] = @delivery.event_name
-        request.body = @delivery.payload.to_json
-
-        http.request(request)
+        SsrfFilter.post(
+          @delivery.url,
+          headers: {
+            'Content-Type' => 'application/json',
+            'User-Agent' => 'Spree-Webhooks/1.0',
+            'X-Spree-Webhook-Signature' => generate_signature,
+            'X-Spree-Webhook-Timestamp' => webhook_timestamp.to_s,
+            'X-Spree-Webhook-Event' => @delivery.event_name
+          },
+          body: @delivery.payload.to_json,
+          http_options: {
+            open_timeout: TIMEOUT,
+            read_timeout: TIMEOUT,
+            verify_mode: ssl_verify_mode
+          }
+        )
       end
 
       def generate_signature

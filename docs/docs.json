@@ -429,7 +429,8 @@
                   "api-reference/store-api/querying",
                   "api-reference/store-api/relations",
                   "api-reference/store-api/metadata",
-                  "api-reference/store-api/localization"
+                  "api-reference/store-api/localization",
+                  "api-reference/store-api/monetary-amounts"
                 ]
               },
               {

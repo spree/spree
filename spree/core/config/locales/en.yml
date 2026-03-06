@@ -363,6 +363,10 @@ en:
               cannot_destroy_if_attached_to_line_items: Cannot delete Variants that are added to placed Orders. In such cases, please discontinue them.
               must_supply_price_for_variant_or_master: Must supply price for variant or master price for product.
               no_master_variant_found_to_infer_price: No master variant found to infer price
+        spree/webhook_endpoint:
+          attributes:
+            url:
+              internal_address_not_allowed: must not point to an internal or private network address
         spree/wished_item:
           attributes:
             variant:
