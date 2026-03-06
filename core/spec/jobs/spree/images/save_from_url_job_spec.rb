@@ -24,17 +24,12 @@ RSpec.describe Spree::Images::SaveFromUrlJob, type: :job do
   end
 
   context "when performing the job" do
-    let(:image_scope) { double('image_scope') }
     let(:image) { variant.images.last }
-    let(:file_double) { StringIO.new("imagecontent") }
-    let(:filename) { "bar_image.png" }
-    let(:uri_double) {
-      instance_double(URI::HTTPS, path: "/foo/bar_image.png", open: file_double)
-    }
+    let(:response_body) { "imagecontent" }
+    let(:response) { instance_double(Net::HTTPResponse, code: '200', body: response_body) }
 
     before do
-      allow(URI).to receive(:parse).with(external_url.strip).and_return(uri_double)
-      allow(uri_double).to receive(:scheme).and_return('https')
+      allow(SsrfFilter).to receive(:get).and_return(response)
     end
 
     it "downloads and attaches image from the URL" do
@@ -62,8 +57,7 @@ RSpec.describe Spree::Images::SaveFromUrlJob, type: :job do
       end
 
       it "does not re-download but triggers save!" do
-        expect(URI).not_to receive(:parse)
-        expect(URI).not_to receive(:open)
+        expect(SsrfFilter).not_to receive(:get)
         expect { subject }.not_to change(image, :attachment)
       end
     end
@@ -78,9 +72,31 @@ RSpec.describe Spree::Images::SaveFromUrlJob, type: :job do
       let!(:image) { create(:image, viewable: variant) }
 
       it "does not download the image" do
-        expect(URI).not_to receive(:parse)
-        expect(URI).not_to receive(:open)
+        expect(SsrfFilter).not_to receive(:get)
         expect { subject }.not_to change(image, :attachment)
+      end
+    end
+
+    context 'when URL resolves to private IP (SSRF)' do
+      before do
+        allow(SsrfFilter).to receive(:get).and_raise(SsrfFilter::PrivateIPAddress, 'URL resolves to a blocked internal address')
+      end
+
+      it 'discards the job without downloading' do
+        expect { subject }.not_to change(Spree::Image, :count)
+      end
+    end
+
+    context 'when downloaded file exceeds max size' do
+      let(:max_size) { 1024 }
+      let(:response_body) { 'x' * (max_size + 1) }
+
+      before do
+        allow(Spree::Config).to receive(:max_image_download_size).and_return(max_size)
+      end
+
+      it 'raises an error about file size' do
+        expect { subject }.to raise_error(StandardError, /exceeds the maximum allowed size/)
       end
     end
   end

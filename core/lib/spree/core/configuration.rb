@@ -47,6 +47,7 @@ module Spree
       preference :expedited_exchanges_days_window, :integer, default: 14 # the amount of days the customer has to return their item after the expedited exchange is shipped in order to avoid being charged
       preference :geocode_addresses, :boolean, default: true
       preference :images_save_from_url_job_attempts, :integer, default: 5
+      preference :max_image_download_size, :integer, default: 20_971_520 # 20 MB in bytes
 
       # Preprocessed product image variant sizes at 2x retina resolution.
       # These variants are generated on upload to reduce runtime processing.
