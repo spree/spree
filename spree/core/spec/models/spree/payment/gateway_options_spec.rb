@@ -92,6 +92,12 @@ RSpec.describe Spree::Payment::GatewayOptions, type: :model do
     it { is_expected.to eq 'R1444-P1566' }
   end
 
+  describe '#idempotency_key' do
+    subject { options.idempotency_key }
+
+    it { is_expected.to eq 'spree-P1566' }
+  end
+
   describe '#shipping' do
     subject { options.shipping }
 
@@ -145,6 +151,7 @@ RSpec.describe Spree::Payment::GatewayOptions, type: :model do
         ip: '0.0.0.0',
         order_id: 'R1444-P1566',
         payment_id: 'P1566',
+        idempotency_key: 'spree-P1566',
         shipping: '1244'.to_d,
         tax: '153'.to_d,
         subtotal: '1511'.to_d,

@@ -14,7 +14,7 @@ RSpec.describe 'Rate Limiting', type: :controller do
 
     describe 'rate limit response format' do
       it 'returns JSON error with rate_limit_exceeded code' do
-        response_proc = Spree::Api::V3::Store::BaseController::RATE_LIMIT_RESPONSE
+        response_proc = Spree::Api::V3::BaseController::RATE_LIMIT_RESPONSE
         status, headers, body = response_proc.call
 
         expect(status).to eq(429)

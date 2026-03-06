@@ -24,6 +24,21 @@ module Spree
         Spree.subscribers << Spree::WebhookEventSubscriber
       end
 
+      # Warn in production if no dedicated JWT secret key is configured
+      config.after_initialize do
+        next unless Rails.env.production?
+
+        if Spree::Api::Config[:jwt_secret_key].blank? &&
+           Rails.application.credentials.jwt_secret_key.blank? &&
+           ENV['JWT_SECRET_KEY'].blank?
+          Rails.logger.warn(
+            '[Spree] No dedicated JWT secret key configured. Falling back to Rails.application.secret_key_base. ' \
+            'Set Spree::Api::Config[:jwt_secret_key], Rails credentials jwt_secret_key, or ENV["JWT_SECRET_KEY"] ' \
+            'for improved security.'
+          )
+        end
+      end
+
       def self.root
         @root ||= Pathname.new(File.expand_path('../../..', __dir__))
       end

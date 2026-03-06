@@ -10,6 +10,7 @@ module Spree
       preference :api_v2_per_page_limit, :integer, default: 500
 
       preference :jwt_expiration, :integer, default: 3600 # 1 hour in seconds
+      preference :jwt_secret_key, :string, default: nil
 
       # Rate limiting
       preference :rate_limit_per_key, :integer, default: 300 # per publishable API key

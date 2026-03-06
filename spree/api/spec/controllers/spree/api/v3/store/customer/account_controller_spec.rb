@@ -94,18 +94,63 @@ RSpec.describe Spree::Api::V3::Store::Customer::AccountController, type: :contro
       expect(user.internal_note).to be_nil
     end
 
+    context 'when changing email' do
+      it 'requires current_password' do
+        patch :update, params: { email: 'new@example.com' }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('current_password_invalid')
+      end
+
+      it 'rejects wrong current_password' do
+        patch :update, params: { email: 'new@example.com', current_password: 'wrongpassword' }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('current_password_invalid')
+      end
+
+      it 'accepts correct current_password' do
+        patch :update, params: { email: 'new@example.com', current_password: 'secret' }
+
+        expect(response).to have_http_status(:ok)
+        expect(user.reload.email).to eq('new@example.com')
+      end
+
+      it 'does not require current_password when email is unchanged' do
+        patch :update, params: { email: user.email, first_name: 'Updated' }
+
+        expect(response).to have_http_status(:ok)
+        expect(user.reload.first_name).to eq('Updated')
+      end
+    end
+
+    context 'when changing password' do
+      it 'requires current_password' do
+        patch :update, params: { password: 'newpassword123', password_confirmation: 'newpassword123' }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('current_password_invalid')
+      end
+
+      it 'accepts correct current_password' do
+        patch :update, params: { password: 'newpassword123', password_confirmation: 'newpassword123', current_password: 'secret' }
+
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
     context 'validation errors' do
-      it 'returns errors for blank email' do
-        patch :update, params: { email: '' }
+      it 'returns errors for blank email with current password' do
+        patch :update, params: { email: '', current_password: 'secret' }
 
         expect(response).to have_http_status(:unprocessable_content)
         expect(json_response['error']['code']).to eq('validation_error')
         expect(json_response['error']['details']['email']).to be_present
       end
 
-      it 'returns errors for duplicate email' do
+      it 'returns errors for duplicate email with current password' do
         other_user = create(:user)
-        patch :update, params: { email: other_user.email }
+        patch :update, params: { email: other_user.email, current_password: 'secret' }
 
         expect(response).to have_http_status(:unprocessable_content)
         expect(json_response['error']['code']).to eq('validation_error')

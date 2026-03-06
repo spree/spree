@@ -6,6 +6,7 @@ en:
       invalid_api_key: Invalid API key (%{key}) specified.
       invalid_resource: Invalid resource. Please fix errors and try again.
       invalid_taxonomy_id: Invalid taxonomy id.
+      current_password_invalid: Current password is invalid or missing
       must_specify_api_key: You must specify an API key.
       negative_quantity: quantity is negative
       order:

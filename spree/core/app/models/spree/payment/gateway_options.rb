@@ -34,6 +34,10 @@ module Spree
         payment.number
       end
 
+      def idempotency_key
+        "spree-#{payment.number}"
+      end
+
       def shipping
         order.ship_total * exchange_multiplier
       end
@@ -66,6 +70,7 @@ module Spree
           :ip,
           :order_id,
           :payment_id,
+          :idempotency_key,
           :shipping,
           :tax,
           :subtotal,

@@ -13,7 +13,10 @@ module Spree
             aud: audience,
             exp: Time.current.to_i + expiration
           }
-          secret = Rails.application.credentials.jwt_secret_key || ENV['JWT_SECRET_KEY'] || Rails.application.secret_key_base
+          secret = Spree::Api::Config[:jwt_secret_key].presence ||
+                   Rails.application.credentials.jwt_secret_key ||
+                   ENV['JWT_SECRET_KEY'] ||
+                   Rails.application.secret_key_base
           JWT.encode(payload, secret, 'HS256')
         end
       end
@@ -45,6 +48,26 @@ shared_context 'API v3 Store guest' do
   include_context 'API v3 Store'
 
   let(:headers) { api_key_headers }
+end
+
+shared_context 'API v3 Admin' do
+  let(:store) { @default_store || create(:store, default: true) }
+  let(:secret_api_key) { create(:api_key, :secret, store: store) }
+  let(:api_key_headers) { { 'x-spree-api-key' => secret_api_key.plaintext_token } }
+
+  let(:admin_user) { create(:admin_user) }
+  let(:admin_jwt_token) { Spree::Api::V3::TestingSupport.generate_jwt(admin_user, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_ADMIN) }
+  let(:bearer_headers) { api_key_headers.merge('Authorization' => "Bearer #{admin_jwt_token}") }
+
+  before do
+    allow_any_instance_of(Spree::Api::V3::BaseController).to receive(:current_store).and_return(store)
+  end
+end
+
+shared_context 'API v3 Admin authenticated' do
+  include_context 'API v3 Admin'
+
+  let(:headers) { bearer_headers }
 end
 
 # Shared examples for common response patterns
