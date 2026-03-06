@@ -67,7 +67,7 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
         expect(data['variants']).to be_an(Array)
       end
 
-      it 'excludes expanded associations when not listed in fields' do
+      it 'always includes expanded associations even when not listed in fields' do
         get :show, params: {
           id: product.prefixed_id,
           fields: 'name',
@@ -75,8 +75,8 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
         }
 
         data = JSON.parse(response.body)
-        expect(data.keys).to contain_exactly('id', 'name')
-        expect(data).not_to have_key('variants')
+        expect(data.keys).to contain_exactly('id', 'name', 'variants')
+        expect(data['variants']).to be_an(Array)
       end
     end
   end

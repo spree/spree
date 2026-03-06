@@ -38,8 +38,10 @@ module Spree
         end
 
         # Check if an association should be expanded
+        # Supports dot notation: expand?('variants') matches both 'variants' and 'variants.images'
         def expand?(name)
-          expands.include?(name.to_s)
+          name = name.to_s
+          expands.any? { |e| e == name || e.start_with?("#{name}.") }
         end
 
         # Get nested expands for a given parent
@@ -48,9 +50,24 @@ module Spree
           expands.select { |i| i.start_with?(prefix) }.map { |i| i.sub(prefix, '') }
         end
 
-        # Build nested params for child serializers
-        def nested_params(parent = nil)
-          params.merge(expand: parent ? nested_expands_for(parent) : [])
+        # Build nested params for child serializers with depth limit (max 4 levels)
+        def nested_params(parent)
+          depth = params.fetch(:_expand_depth, 0)
+          nested = depth < 4 ? nested_expands_for(parent) : []
+          params.merge(expand: nested, _expand_depth: depth + 1)
+        end
+
+        private
+
+        # Override Alba's fetch_attribute to automatically inject nested expand params
+        # into child serializers via nested_params
+        def fetch_attribute(obj, key, attribute)
+          if attribute.is_a?(Alba::Association)
+            nested = nested_params(attribute.name)
+            yield_if_within(attribute.name.to_sym) { |within| attribute.to_h(obj, params: nested, within: within) }
+          else
+            super
+          end
         end
 
         # Returns price for a variant using full Price List resolution

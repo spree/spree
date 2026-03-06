@@ -12,7 +12,7 @@ module Spree
 
           many :metafields,
                resource: Spree.api.admin_metafield_serializer,
-               if: proc { params[:expand]&.include?('metafields') }
+               if: proc { expand?('metafields') }
         end
       end
     end

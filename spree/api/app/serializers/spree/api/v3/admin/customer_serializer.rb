@@ -33,7 +33,7 @@ module Spree
 
           many :orders,
                resource: Spree.api.admin_order_serializer,
-               if: proc { params[:expand]&.include?('orders') }
+               if: proc { expand?('orders') }
 
           # TODO: Add store_credits association when Admin API is implemented
         end

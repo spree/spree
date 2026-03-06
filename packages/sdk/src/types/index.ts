@@ -67,7 +67,7 @@ export interface ListParams {
   limit?: number;
   /** Sort order. Prefix with - for descending, e.g. '-created_at', 'name'. Comma-separated for multiple fields. */
   sort?: string;
-  /** Associations to expand, e.g. ['variants', 'images'] */
+  /** Associations to expand. Supports dot notation for nested expand (max 4 levels), e.g. ['variants', 'variants.images'] */
   expand?: string[];
   /** Fields to include in response, e.g. ['name', 'slug', 'price']. Omit to return all fields. 'id' is always included. */
   fields?: string[];
