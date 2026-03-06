@@ -7,7 +7,7 @@ module Spree
 
           attributes :filterable
 
-          has_many :option_values, serializer: Spree::Api::V3::OptionValueSerializer
+          has_many :option_values, serializer: Spree::Api::V3::Admin::OptionValueSerializer
         end
       end
     end

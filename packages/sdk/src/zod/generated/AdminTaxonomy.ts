@@ -1,7 +1,7 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
 import { AdminMetafieldSchema } from './AdminMetafield';
-import { StoreTaxonSchema } from './StoreTaxon';
+import { AdminTaxonSchema } from './AdminTaxon';
 
 export const AdminTaxonomySchema = z.object({
   id: z.string(),
@@ -10,8 +10,8 @@ export const AdminTaxonomySchema = z.object({
   created_at: z.string(),
   updated_at: z.string(),
   root_id: z.string().nullable(),
-  root: z.lazy(() => StoreTaxonSchema).optional(),
-  taxons: z.array(z.lazy(() => StoreTaxonSchema)).optional(),
+  root: z.lazy(() => AdminTaxonSchema).optional(),
+  taxons: z.array(z.lazy(() => AdminTaxonSchema)).optional(),
   metafields: z.array(AdminMetafieldSchema).optional(),
 });
 

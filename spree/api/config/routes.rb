@@ -100,11 +100,6 @@ Spree::Core::Engine.add_routes do
           resources :assets, controller: 'products/assets', only: [:index, :create, :update, :destroy]
         end
 
-        # Variants > Prices
-        resources :variants, only: [] do
-          resources :prices, controller: 'variants/prices', only: [:index, :create, :update, :destroy]
-        end
-
         # Taxonomies > Taxons
         resources :taxonomies do
           resources :taxons, controller: 'taxonomies/taxons'

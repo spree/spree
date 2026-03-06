@@ -1,10 +1,10 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import { AdminImageSchema } from './AdminImage';
 import { AdminMetafieldSchema } from './AdminMetafield';
+import { AdminOptionValueSchema } from './AdminOptionValue';
 import { AdminPriceSchema } from './AdminPrice';
-import { StoreImageSchema } from './StoreImage';
-import { StoreOptionValueSchema } from './StoreOptionValue';
-import { StorePriceSchema } from './StorePrice';
+import { AdminStockItemSchema } from './AdminStockItem';
 
 export const AdminVariantSchema = z.object({
   id: z.string(),
@@ -24,10 +24,10 @@ export const AdminVariantSchema = z.object({
   height: z.number().nullable(),
   width: z.number().nullable(),
   depth: z.number().nullable(),
-  price: StorePriceSchema,
-  original_price: StorePriceSchema.nullable(),
-  images: z.array(StoreImageSchema).optional(),
-  option_values: z.array(StoreOptionValueSchema),
+  price: AdminPriceSchema,
+  original_price: AdminPriceSchema.nullable(),
+  images: z.array(AdminImageSchema).optional(),
+  option_values: z.array(AdminOptionValueSchema),
   metafields: z.array(AdminMetafieldSchema).optional(),
   position: z.number(),
   tax_category_id: z.string().nullable(),
@@ -36,6 +36,7 @@ export const AdminVariantSchema = z.object({
   deleted_at: z.string().nullable(),
   total_on_hand: z.number().nullable(),
   prices: z.array(AdminPriceSchema).optional(),
+  stock_items: z.array(AdminStockItemSchema).optional(),
 });
 
 export type AdminVariant = z.infer<typeof AdminVariantSchema>;

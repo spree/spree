@@ -1,9 +1,8 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
 import { AdminMetafieldSchema } from './AdminMetafield';
-import { StoreTaxonSchema } from './StoreTaxon';
 
-export const AdminTaxonSchema = z.object({
+export const AdminTaxonSchema: z.ZodObject<any> = z.object({
   id: z.string(),
   name: z.string(),
   permalink: z.string(),
@@ -24,9 +23,9 @@ export const AdminTaxonSchema = z.object({
   is_root: z.boolean(),
   is_child: z.boolean(),
   is_leaf: z.boolean(),
-  parent: z.lazy(() => StoreTaxonSchema).optional(),
-  children: z.array(z.lazy(() => StoreTaxonSchema)).optional(),
-  ancestors: z.array(z.lazy(() => StoreTaxonSchema)).optional(),
+  parent: z.lazy(() => AdminTaxonSchema).optional(),
+  children: z.array(z.lazy(() => AdminTaxonSchema)).optional(),
+  ancestors: z.array(z.lazy(() => AdminTaxonSchema)).optional(),
   metafields: z.array(AdminMetafieldSchema).optional(),
   lft: z.number(),
   rgt: z.number(),

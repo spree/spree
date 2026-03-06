@@ -155,6 +155,10 @@ module Spree
         admin_line_item_serializer: 'Spree::Api::V3::Admin::LineItemSerializer',
         admin_taxonomy_serializer: 'Spree::Api::V3::Admin::TaxonomySerializer',
         admin_option_type_serializer: 'Spree::Api::V3::Admin::OptionTypeSerializer',
+        admin_option_value_serializer: 'Spree::Api::V3::Admin::OptionValueSerializer',
+        admin_image_serializer: 'Spree::Api::V3::Admin::ImageSerializer',
+        admin_asset_serializer: 'Spree::Api::V3::Admin::AssetSerializer',
+        admin_stock_item_serializer: 'Spree::Api::V3::Admin::StockItemSerializer',
 
         # platform serializers
         platform_metafield_serializer: 'Spree::Api::V2::Platform::MetafieldSerializer',

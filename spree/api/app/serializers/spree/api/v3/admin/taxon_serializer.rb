@@ -10,6 +10,19 @@ module Spree
           # Nested set columns for tree operations
           attributes :lft, :rgt
 
+          # Override all nested associations to use admin serializers
+          one :parent,
+              resource: Spree.api.admin_taxon_serializer,
+              if: proc { expand?('parent') }
+
+          many :children,
+               resource: Spree.api.admin_taxon_serializer,
+               if: proc { expand?('children') }
+
+          many :ancestors,
+               resource: Spree.api.admin_taxon_serializer,
+               if: proc { expand?('ancestors') }
+
           many :metafields,
                resource: Spree.api.admin_metafield_serializer,
                if: proc { expand?('metafields') }
