@@ -79,5 +79,51 @@ module Spree
         expect(execute).to be_failure
       end
     end
+
+    context 'create an order with line_items' do
+      let(:variant) { create(:variant) }
+      let(:variant2) { create(:variant) }
+
+      before do
+        variant.stock_items.first.update!(count_on_hand: 10)
+        variant2.stock_items.first.update!(count_on_hand: 10)
+        store.products << variant.product unless store.products.include?(variant.product)
+        store.products << variant2.product unless store.products.include?(variant2.product)
+      end
+
+      let(:line_items) do
+        [
+          { variant_id: variant.prefixed_id, quantity: 1 },
+          { variant_id: variant2.prefixed_id, quantity: 2 }
+        ]
+      end
+
+      let(:execute) { subject.call user: user, store: store, currency: currency, line_items: line_items }
+      let(:value) { execute.value }
+
+      it 'creates order with line items' do
+        expect(execute).to be_success
+        expect(value.line_items.count).to eq(2)
+        expect(value.line_items.find_by(variant: variant).quantity).to eq(1)
+        expect(value.line_items.find_by(variant: variant2).quantity).to eq(2)
+      end
+    end
+
+    context 'create an order with line_items using default quantity' do
+      let(:variant) { create(:variant) }
+
+      before do
+        variant.stock_items.first.update!(count_on_hand: 10)
+        store.products << variant.product unless store.products.include?(variant.product)
+      end
+
+      let(:line_items) { [{ variant_id: variant.prefixed_id }] }
+      let(:execute) { subject.call user: user, store: store, currency: currency, line_items: line_items }
+
+      it 'defaults quantity to 1' do
+        expect(execute).to be_success
+        expect(execute.value.line_items.first.quantity).to eq(1)
+      end
+    end
   end
 end

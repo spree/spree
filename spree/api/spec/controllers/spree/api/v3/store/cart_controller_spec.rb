@@ -70,6 +70,63 @@ RSpec.describe Spree::Api::V3::Store::CartController, type: :controller do
       end
     end
 
+    context 'with line_items' do
+      let(:product) { create(:product, stores: [store]) }
+      let(:product2) { create(:product, stores: [store]) }
+      let(:variant) { create(:variant, product: product) }
+      let(:variant2) { create(:variant, product: product2) }
+
+      before do
+        [variant, variant2].each do |v|
+          v.stock_items.first.update!(count_on_hand: 10)
+        end
+      end
+
+      it 'creates a cart with line items' do
+        post :create, params: {
+          line_items: [
+            { variant_id: variant.prefixed_id, quantity: 2 },
+            { variant_id: variant2.prefixed_id, quantity: 1 }
+          ]
+        }
+
+        expect(response).to have_http_status(:created)
+        order = Spree::Order.last
+        expect(order.line_items.count).to eq(2)
+        expect(order.line_items.find_by(variant: variant).quantity).to eq(2)
+        expect(order.line_items.find_by(variant: variant2).quantity).to eq(1)
+      end
+
+      it 'returns line items in response' do
+        post :create, params: {
+          line_items: [{ variant_id: variant.prefixed_id, quantity: 3 }]
+        }
+
+        expect(response).to have_http_status(:created)
+        expect(json_response['line_items'].size).to eq(1)
+        expect(json_response['line_items'].first['quantity']).to eq(3)
+      end
+
+      it 'defaults quantity to 1 when not specified' do
+        post :create, params: {
+          line_items: [{ variant_id: variant.prefixed_id }]
+        }
+
+        expect(response).to have_http_status(:created)
+        expect(Spree::Order.last.line_items.first.quantity).to eq(1)
+      end
+
+      it 'returns variant_not_found for invalid variant_id' do
+        post :create, params: {
+          line_items: [{ variant_id: 'variant_doesnotexist', quantity: 1 }]
+        }
+
+        expect(response).to have_http_status(:not_found)
+        expect(json_response['error']['code']).to eq('variant_not_found')
+        expect(json_response['error']['message']).to include('variant_doesnotexist')
+      end
+    end
+
     context 'without API key' do
       before { request.headers['X-Spree-Api-Key'] = nil }
 

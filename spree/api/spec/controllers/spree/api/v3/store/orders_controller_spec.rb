@@ -169,6 +169,60 @@ RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
       end
     end
 
+    context 'with line_items' do
+      let(:product) { create(:product, stores: [store]) }
+      let(:variant) { create(:variant, product: product) }
+
+      before do
+        request.headers['Authorization'] = "Bearer #{jwt_token}"
+        variant.stock_items.first.update!(count_on_hand: 10)
+      end
+
+      it 'adds new line items to the order' do
+        patch :update, params: {
+          id: order.to_param,
+          line_items: [{ variant_id: variant.prefixed_id, quantity: 3 }]
+        }
+
+        expect(response).to have_http_status(:ok)
+        expect(order.reload.line_items.find_by(variant: variant).quantity).to eq(3)
+      end
+
+      it 'upserts existing line items' do
+        existing_variant = order.line_items.first.variant
+
+        patch :update, params: {
+          id: order.to_param,
+          line_items: [{ variant_id: existing_variant.prefixed_id, quantity: 7 }]
+        }
+
+        expect(response).to have_http_status(:ok)
+        expect(order.reload.line_items.find_by(variant: existing_variant).quantity).to eq(7)
+      end
+
+      it 'returns line items in response' do
+        patch :update, params: {
+          id: order.to_param,
+          line_items: [{ variant_id: variant.prefixed_id, quantity: 2 }]
+        }
+
+        expect(response).to have_http_status(:ok)
+        variant_ids = json_response['line_items'].map { |li| li['variant_id'] }
+        expect(variant_ids).to include(variant.prefixed_id)
+      end
+
+      it 'returns variant_not_found for invalid variant_id' do
+        patch :update, params: {
+          id: order.to_param,
+          line_items: [{ variant_id: 'variant_doesnotexist', quantity: 1 }]
+        }
+
+        expect(response).to have_http_status(:not_found)
+        expect(json_response['error']['code']).to eq('variant_not_found')
+        expect(json_response['error']['message']).to include('variant_doesnotexist')
+      end
+    end
+
     context 'error handling' do
       before do
         request.headers['Authorization'] = "Bearer #{jwt_token}"

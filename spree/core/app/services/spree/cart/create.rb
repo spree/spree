@@ -10,9 +10,11 @@ module Spree
       # @param public_metadata [Hash] public metadata for the order
       # @param private_metadata [Hash] private metadata for the order
       # @param order_params [Hash] additional order attributes
+      # @param line_items [Array<Hash>] line items to add, each with :variant_id (prefixed) and :quantity
       # @return [Spree::ServiceModule::Result]
-      def call(user:, store:, currency:, locale: nil, metadata: {}, public_metadata: {}, private_metadata: {}, order_params: {})
+      def call(user:, store:, currency:, locale: nil, metadata: {}, public_metadata: {}, private_metadata: {}, order_params: {}, line_items: [])
         order_params ||= {}
+        line_items ||= []
 
         # we cannot create an order without store
         return failure(:store_is_required) if store.nil?
@@ -28,8 +30,22 @@ module Spree
           private_metadata: resolved_metadata.to_h
         }
 
-        order = store.orders.create!(default_params.merge(order_params))
+        order = nil
+
+        ApplicationRecord.transaction do
+          order = store.orders.create!(default_params.merge(order_params))
+
+          if line_items.present?
+            result = Spree.cart_upsert_items_service.call(order: order, line_items: line_items)
+            raise StandardError, result.error.to_s if result.failure?
+          end
+        end
+
         success(order)
+      rescue ActiveRecord::RecordNotFound
+        raise
+      rescue StandardError => e
+        failure(order, e.message)
       end
     end
   end

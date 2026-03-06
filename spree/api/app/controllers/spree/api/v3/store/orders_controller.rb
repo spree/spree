@@ -22,7 +22,7 @@ module Spree
           #
           def update
             with_order_lock do
-              result = Spree::Api::V3::Orders::Update.call(
+              result = Spree.order_update_service.call(
                 order: @order,
                 params: order_params
               )
@@ -118,7 +118,8 @@ module Spree
               :bill_address_id,
               ship_address: address_params,
               bill_address: address_params,
-              metadata: {}
+              metadata: {},
+              line_items: [:variant_id, :quantity, { metadata: {}, options: {} }]
             )
           end
 

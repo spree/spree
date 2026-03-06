@@ -1,5 +1,11 @@
 # @spree/next
 
+## 0.6.9
+
+### Patch Changes
+
+- Updated `getOrCreateCart()` to accept full `CreateCartParams` (including `line_items`) instead of just `metadata`. Re-export `CreateCartParams` and `LineItemInput` types from `@spree/sdk`.
+
 ## 0.6.8
 
 ### Patch Changes
