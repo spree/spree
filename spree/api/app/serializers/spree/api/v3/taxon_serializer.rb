@@ -55,23 +55,20 @@ module Spree
         # (e.g., ancestors trying to load their own ancestors)
         one :parent,
             resource: Spree.api.taxon_serializer,
-            if: proc { params[:expand]&.include?('parent') },
-            params: { expand: [] }
+            if: proc { expand?('parent') }
 
         many :children,
              resource: Spree.api.taxon_serializer,
-             if: proc { params[:expand]&.include?('children') },
-             params: { expand: [] }
+             if: proc { expand?('children') }
 
         many :ancestors,
              resource: Spree.api.taxon_serializer,
-             if: proc { params[:expand]&.include?('ancestors') },
-             params: { expand: [] }
+             if: proc { expand?('ancestors') }
 
         many :public_metafields,
              key: :metafields,
              resource: Spree.api.metafield_serializer,
-             if: proc { params[:expand]&.include?('metafields') }
+             if: proc { expand?('metafields') }
       end
     end
   end

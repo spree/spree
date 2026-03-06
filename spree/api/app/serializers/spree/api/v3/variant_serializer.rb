@@ -72,14 +72,14 @@ module Spree
         # Conditional associations
         many :images,
              resource: Spree.api.image_serializer,
-             if: proc { params[:expand]&.include?('images') }
+             if: proc { expand?('images') }
 
         many :option_values, resource: Spree.api.option_value_serializer
 
         many :public_metafields,
              key: :metafields,
              resource: Spree.api.metafield_serializer,
-             if: proc { params[:expand]&.include?('metafields') }
+             if: proc { expand?('metafields') }
       end
     end
   end

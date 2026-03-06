@@ -15,18 +15,16 @@ module Spree
         # Note: We pass empty expand to nested taxons to prevent infinite recursion
         one :root,
             resource: Spree.api.taxon_serializer,
-            if: proc { params[:expand]&.include?('root') },
-            params: { expand: [] }
+            if: proc { expand?('root') }
 
         many :taxons,
              resource: Spree.api.taxon_serializer,
-             if: proc { params[:expand]&.include?('taxons') },
-             params: { expand: [] }
+             if: proc { expand?('taxons') }
 
         many :public_metafields,
              key: :metafields,
              resource: Spree.api.metafield_serializer,
-             if: proc { params[:expand]&.include?('metafields') }
+             if: proc { expand?('metafields') }
       end
     end
   end

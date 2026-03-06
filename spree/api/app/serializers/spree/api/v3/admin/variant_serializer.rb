@@ -22,11 +22,11 @@ module Spree
           # All prices for this variant (for admin management)
           many :prices,
                resource: Spree.api.admin_price_serializer,
-               if: proc { params[:expand]&.include?('prices') }
+               if: proc { expand?('prices') }
 
           many :metafields,
                resource: Spree.api.admin_metafield_serializer,
-               if: proc { params[:expand]&.include?('metafields') }
+               if: proc { expand?('metafields') }
 
           # TODO: Add stock_items association when Admin API is implemented
         end

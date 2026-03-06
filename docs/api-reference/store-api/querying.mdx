@@ -236,6 +236,69 @@ curl -G 'http://localhost:3000/api/v3/store/customer/orders' \
 
 </CodeGroup>
 
+## Expanding Associations
+
+Use the `expand` parameter to include associated resources in the response. Pass a comma-separated list of association names:
+
+<CodeGroup>
+
+```typescript SDK
+const product = await client.store.products.get('spree-tote', {
+  expand: ['variants', 'images'],
+})
+```
+
+```bash cURL
+curl -G 'http://localhost:3000/api/v3/store/products/spree-tote' \
+  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -d 'expand=variants,images'
+```
+
+</CodeGroup>
+
+### Nested Expand
+
+Use dot notation to expand nested associations (up to 4 levels deep):
+
+<CodeGroup>
+
+```typescript SDK
+// Expand variants and their images in one request
+const product = await client.store.products.get('spree-tote', {
+  expand: ['variants.images'],
+})
+
+// Multiple nested expands
+const product = await client.store.products.get('spree-tote', {
+  expand: ['variants.images', 'variants.metafields', 'option_types'],
+})
+
+// Taxon with nested children
+const taxon = await client.store.taxons.get('categories/clothing', {
+  expand: ['children.children'],  // Two levels of subcategories
+})
+```
+
+```bash cURL
+# Expand variants with their images
+curl -G 'http://localhost:3000/api/v3/store/products/spree-tote' \
+  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -d 'expand=variants.images'
+
+# Multiple nested expands
+curl -G 'http://localhost:3000/api/v3/store/products/spree-tote' \
+  -H 'X-Spree-Api-Key: spree_pk_xxx' \
+  -d 'expand=variants.images,variants.metafields,option_types'
+```
+
+</CodeGroup>
+
+### Rules
+
+- Maximum depth is **4 levels** (e.g., `a.b.c.d`)
+- A nested expand automatically includes its parent — `expand=variants.images` expands both `variants` and their `images`
+- Nested expand only applies to conditional associations (those controlled by `expand`)
+
 ## Field Selection
 
 Use the `fields` parameter to request only specific fields in the response. This reduces payload size for bandwidth-sensitive clients like mobile apps or server-side rendering.

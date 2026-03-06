@@ -58,6 +58,22 @@ const product = await client.store.products.get('spree-tote', {
 
 `id` is always included. Omit `fields` to return all fields.
 
+### Nested Expand
+
+Use dot notation to expand nested associations (up to 4 levels):
+
+```typescript
+// Expand variants with their images in one request
+const product = await client.store.products.get('spree-tote', {
+  expand: ['variants.images', 'option_types'],
+});
+
+// Access nested data
+product.variants.forEach(variant => {
+  console.log(variant.images); // Images are included
+});
+```
+
 ### Get a Product
 
 Fetch a single product by slug or prefix ID:
