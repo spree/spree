@@ -3,6 +3,8 @@ module Spree
     module V3
       module Store
         class TaxonomiesController < ResourceController
+          include Spree::Api::V3::HttpCaching
+
           protected
 
           def model_class

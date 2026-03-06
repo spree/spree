@@ -3,6 +3,8 @@ module Spree
     module V3
       module Store
         class ProductsController < ResourceController
+          include Spree::Api::V3::HttpCaching
+
           # Sort values that require special scopes (not plain Ransack column sorts).
           CUSTOM_SORT_SCOPES = {
             'price' => :ascend_by_price,

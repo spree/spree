@@ -3,9 +3,13 @@ module Spree
     module V3
       module Store
         class MarketsController < Store::BaseController
+          include Spree::Api::V3::HttpCaching
+
           # GET /api/v3/store/markets
           def index
             markets = current_store.markets.includes(:countries).order(:position)
+
+            return unless cache_collection(markets)
 
             render json: {
               data: markets.map { |market| serialize_market(market) }
@@ -15,6 +19,8 @@ module Spree
           # GET /api/v3/store/markets/:id
           def show
             market = current_store.markets.includes(:countries).find_by_prefix_id!(params[:id])
+
+            return unless cache_resource(market)
 
             render json: serialize_market(market)
           end
@@ -26,6 +32,8 @@ module Spree
             market = current_store.market_for_country(country)
 
             raise ActiveRecord::RecordNotFound unless market
+
+            return unless cache_resource(market)
 
             render json: serialize_market(market)
           end
