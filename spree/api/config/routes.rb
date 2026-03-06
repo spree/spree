@@ -92,6 +92,33 @@ Spree::Core::Engine.add_routes do
         get 'digitals/:token', to: 'digitals#show', as: :digital_download
 
       end
+
+      namespace :admin do
+        # Products
+        resources :products do
+          member do
+            post :clone
+          end
+          resources :variants, controller: 'products/variants'
+          resources :assets, controller: 'products/assets', only: [:index, :create, :update, :destroy]
+        end
+
+        # Variants > Prices
+        resources :variants, only: [] do
+          resources :prices, controller: 'variants/prices', only: [:index, :create, :update, :destroy]
+        end
+
+        # Taxonomies > Taxons
+        resources :taxonomies do
+          resources :taxons, controller: 'taxonomies/taxons'
+        end
+
+        # Taxons (flat, top-level)
+        resources :taxons, only: [:index, :show]
+
+        # Option Types (with nested option_values in payload)
+        resources :option_types
+      end
     end
   end
 end

@@ -190,32 +190,32 @@ Here's the endpoint list we need to implement:
 - [ ] `DELETE /api/v3/admin/auth/logout` — Invalidate JWT token
 
 ### Products (⭐ high priority)
-- [ ] `GET /api/v3/admin/products` — List products (with Ransack filtering, sorting, pagination)
-- [ ] `GET /api/v3/admin/products/:id` — Show product
-- [ ] `POST /api/v3/admin/products` — Create product (with nested variants, prices, taxon_ids)
-- [ ] `PATCH /api/v3/admin/products/:id` — Update product
-- [ ] `DELETE /api/v3/admin/products/:id` — Soft-delete product
-- [ ] `POST /api/v3/admin/products/:id/clone` — Clone product
+- [x] `GET /api/v3/admin/products` — List products (with Ransack filtering, sorting, pagination)
+- [x] `GET /api/v3/admin/products/:id` — Show product
+- [x] `POST /api/v3/admin/products` — Create product (with nested variants, prices, taxon_ids)
+- [x] `PATCH /api/v3/admin/products/:id` — Update product
+- [x] `DELETE /api/v3/admin/products/:id` — Soft-delete product
+- [x] `POST /api/v3/admin/products/:id/clone` — Clone product
 - [ ] `PATCH /api/v3/admin/products/bulk_update` — Bulk update products (status, taxons, tags)
 
 ### Variants (nested under Products)
-- [ ] `GET /api/v3/admin/products/:product_id/variants` — List variants
-- [ ] `GET /api/v3/admin/products/:product_id/variants/:id` — Show variant
-- [ ] `POST /api/v3/admin/products/:product_id/variants` — Create variant (with nested prices)
-- [ ] `PATCH /api/v3/admin/products/:product_id/variants/:id` — Update variant
-- [ ] `DELETE /api/v3/admin/products/:product_id/variants/:id` — Soft-delete variant
+- [x] `GET /api/v3/admin/products/:product_id/variants` — List variants
+- [x] `GET /api/v3/admin/products/:product_id/variants/:id` — Show variant
+- [x] `POST /api/v3/admin/products/:product_id/variants` — Create variant (with nested prices)
+- [x] `PATCH /api/v3/admin/products/:product_id/variants/:id` — Update variant
+- [x] `DELETE /api/v3/admin/products/:product_id/variants/:id` — Soft-delete variant
 
 ### Prices (nested under Variants)
-- [ ] `GET /api/v3/admin/variants/:variant_id/prices` — List prices for variant
-- [ ] `POST /api/v3/admin/variants/:variant_id/prices` — Create price
-- [ ] `PATCH /api/v3/admin/variants/:variant_id/prices/:id` — Update price
-- [ ] `DELETE /api/v3/admin/variants/:variant_id/prices/:id` — Delete price
+- [x] `GET /api/v3/admin/variants/:variant_id/prices` — List prices for variant
+- [x] `POST /api/v3/admin/variants/:variant_id/prices` — Create price
+- [x] `PATCH /api/v3/admin/variants/:variant_id/prices/:id` — Update price
+- [x] `DELETE /api/v3/admin/variants/:variant_id/prices/:id` — Delete price
 
 ### Product Assets (nested under Products)
-- [ ] `GET /api/v3/admin/products/:product_id/assets` — List product assets (filterable by type: image, video, etc.)
-- [ ] `POST /api/v3/admin/products/:product_id/assets` — Create asset. Two modes: (1) file upload via multipart/form-data, (2) URL via `source_url` param (triggers async download). Params: type, alt, position, variant_ids
-- [ ] `PATCH /api/v3/admin/products/:product_id/assets/:id` — Update asset (alt, position, variant assignment)
-- [ ] `DELETE /api/v3/admin/products/:product_id/assets/:id` — Delete asset
+- [x] `GET /api/v3/admin/products/:product_id/assets` — List product assets (filterable by type: image, video, etc.)
+- [x] `POST /api/v3/admin/products/:product_id/assets` — Create asset. Two modes: (1) file upload via multipart/form-data, (2) URL via `source_url` param (triggers async download). Params: type, alt, position, variant_ids
+- [x] `PATCH /api/v3/admin/products/:product_id/assets/:id` — Update asset (alt, position, variant assignment)
+- [x] `DELETE /api/v3/admin/products/:product_id/assets/:id` — Delete asset
 
 ### Digital Assets (nested under Products)
 - [ ] `GET /api/v3/admin/products/:product_id/digital_assets` — List digital assets
@@ -224,36 +224,36 @@ Here's the endpoint list we need to implement:
 - [ ] `DELETE /api/v3/admin/products/:product_id/digital_assets/:id` — Delete digital asset
 
 ### Option Types
-- [ ] `GET /api/v3/admin/option_types` — List option types
-- [ ] `GET /api/v3/admin/option_types/:id` — Show option type
-- [ ] `POST /api/v3/admin/option_types` — Create option type
-- [ ] `PATCH /api/v3/admin/option_types/:id` — Update option type
-- [ ] `DELETE /api/v3/admin/option_types/:id` — Delete option type
+- [x] `GET /api/v3/admin/option_types` — List option types
+- [x] `GET /api/v3/admin/option_types/:id` — Show option type
+- [x] `POST /api/v3/admin/option_types` — Create option type
+- [x] `PATCH /api/v3/admin/option_types/:id` — Update option type
+- [x] `DELETE /api/v3/admin/option_types/:id` — Delete option type
 
 ### Option Values (nested under Option Types)
-- [ ] `GET /api/v3/admin/option_types/:option_type_id/option_values` — List option values
-- [ ] `POST /api/v3/admin/option_types/:option_type_id/option_values` — Create option value
-- [ ] `PATCH /api/v3/admin/option_types/:option_type_id/option_values/:id` — Update option value
-- [ ] `DELETE /api/v3/admin/option_types/:option_type_id/option_values/:id` — Delete option value
+- [x] `GET /api/v3/admin/option_types/:option_type_id/option_values` — List option values
+- [x] `POST /api/v3/admin/option_types/:option_type_id/option_values` — Create option value
+- [x] `PATCH /api/v3/admin/option_types/:option_type_id/option_values/:id` — Update option value
+- [x] `DELETE /api/v3/admin/option_types/:option_type_id/option_values/:id` — Delete option value
 
 ### Taxonomies
-- [ ] `GET /api/v3/admin/taxonomies` — List taxonomies
-- [ ] `GET /api/v3/admin/taxonomies/:id` — Show taxonomy
-- [ ] `POST /api/v3/admin/taxonomies` — Create taxonomy
-- [ ] `PATCH /api/v3/admin/taxonomies/:id` — Update taxonomy
-- [ ] `DELETE /api/v3/admin/taxonomies/:id` — Delete taxonomy
+- [x] `GET /api/v3/admin/taxonomies` — List taxonomies
+- [x] `GET /api/v3/admin/taxonomies/:id` — Show taxonomy
+- [x] `POST /api/v3/admin/taxonomies` — Create taxonomy
+- [x] `PATCH /api/v3/admin/taxonomies/:id` — Update taxonomy
+- [x] `DELETE /api/v3/admin/taxonomies/:id` — Delete taxonomy
 
 ### Taxons (nested under Taxonomies)
-- [ ] `GET /api/v3/admin/taxonomies/:taxonomy_id/taxons` — List taxons
-- [ ] `GET /api/v3/admin/taxonomies/:taxonomy_id/taxons/:id` — Show taxon
-- [ ] `POST /api/v3/admin/taxonomies/:taxonomy_id/taxons` — Create taxon
-- [ ] `PATCH /api/v3/admin/taxonomies/:taxonomy_id/taxons/:id` — Update taxon
-- [ ] `DELETE /api/v3/admin/taxonomies/:taxonomy_id/taxons/:id` — Delete taxon
-- [ ] `PATCH /api/v3/admin/taxonomies/:taxonomy_id/taxons/:id/reposition` — Reposition taxon in tree
+- [x] `GET /api/v3/admin/taxonomies/:taxonomy_id/taxons` — List taxons
+- [x] `GET /api/v3/admin/taxonomies/:taxonomy_id/taxons/:id` — Show taxon
+- [x] `POST /api/v3/admin/taxonomies/:taxonomy_id/taxons` — Create taxon
+- [x] `PATCH /api/v3/admin/taxonomies/:taxonomy_id/taxons/:id` — Update taxon
+- [x] `DELETE /api/v3/admin/taxonomies/:taxonomy_id/taxons/:id` — Delete taxon
+- [x] `PATCH /api/v3/admin/taxonomies/:taxonomy_id/taxons/:id/reposition` — Reposition taxon in tree
 
 ### Taxons (flat, top-level for convenience)
-- [ ] `GET /api/v3/admin/taxons` — List all taxons across taxonomies
-- [ ] `GET /api/v3/admin/taxons/:id` — Show taxon
+- [x] `GET /api/v3/admin/taxons` — List all taxons across taxonomies
+- [x] `GET /api/v3/admin/taxons/:id` — Show taxon
 
 ### Classifications (Product-Taxon assignments, nested under Taxons)
 - [ ] `GET /api/v3/admin/taxons/:taxon_id/classifications` — List products in taxon
