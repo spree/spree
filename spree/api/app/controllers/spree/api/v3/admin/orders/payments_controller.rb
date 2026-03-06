@@ -83,7 +83,7 @@ module Spree
             end
 
             def permitted_params
-              params.permit(:amount, :payment_method_id, :source_id)
+              params.permit(*Spree::PermittedAttributes.payment_attributes, :source_id)
             end
 
             private

@@ -15,7 +15,7 @@ module Spree
       def update_product(product:, store:, params:)
         params = params.to_h.with_indifferent_access
         variants_params = params.delete(:variants)
-        product_params = resolve_ids(params)
+        product_params = params
 
         # Map tags array to tag_list
         product_params[:tag_list] = product_params.delete(:tags) if product_params.key?(:tags)
@@ -69,7 +69,6 @@ module Spree
           variant.assign_attributes(variant_data.except(:id))
 
           unless variant.save
-            raise ActiveRecord::Rollback
             return failure(variant, variant.errors)
           end
 
@@ -113,29 +112,6 @@ module Spree
         )
       end
 
-      def resolve_ids(params)
-        params = params.to_h.with_indifferent_access
-
-        if params[:tax_category_id].present?
-          params[:tax_category_id] = resolve_prefix_id(Spree::TaxCategory, params[:tax_category_id])
-        end
-
-        if params[:shipping_category_id].present?
-          params[:shipping_category_id] = resolve_prefix_id(Spree::ShippingCategory, params[:shipping_category_id])
-        end
-
-        if params[:taxon_ids].present?
-          params[:taxon_ids] = params[:taxon_ids].map { |id| resolve_prefix_id(Spree::Taxon, id) }
-        end
-
-        params
-      end
-
-      def resolve_prefix_id(klass, id)
-        return id unless id.is_a?(String) && id.match?(/\A[a-z]+_/)
-
-        klass.find_by_prefix_id!(id).id
-      end
     end
   end
 end

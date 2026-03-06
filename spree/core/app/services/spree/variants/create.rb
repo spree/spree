@@ -21,8 +21,6 @@ module Spree
         option_value_name = params.delete(:option_value)
         total_on_hand = params.delete(:total_on_hand)
 
-        resolve_ids!(params)
-
         variant = product.variants.build(params)
 
         if option_type_name.present? && option_value_name.present?
@@ -121,22 +119,8 @@ module Spree
         variant.option_values = [option_value]
       end
 
-      def resolve_ids!(params)
-        if params[:tax_category_id].present?
-          params[:tax_category_id] = resolve_prefix_id(Spree::TaxCategory, params[:tax_category_id])
-        end
-      end
-
-      def resolve_prefix_id(klass, id)
-        return id unless id.is_a?(String) && id.match?(/\A[a-z]+_/)
-
-        klass.find_by_prefix_id!(id).id
-      end
-
       def resolve_stock_location(id)
-        return Spree::StockLocation.find(id) unless id.is_a?(String) && id.match?(/\A[a-z]+_/)
-
-        Spree::StockLocation.find_by_prefix_id!(id)
+        Spree::StockLocation.find_by_param!(id)
       end
     end
   end

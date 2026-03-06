@@ -119,23 +119,12 @@ module Spree
             CUSTOM_SORT_SCOPES.key?(sort_param)
           end
 
-          # Flat JSON params for create/update service.
-          # Accepts the plan's payload format with nested variants array.
           def product_service_params
             params.permit(
-              :name, :description, :slug, :status, :price, :sku, :barcode,
-              :available_on, :make_active_at, :discontinue_on,
-              :meta_description, :meta_keywords, :meta_title,
-              :weight, :height, :width, :depth, :weight_unit, :dimensions_unit,
-              :shipping_category_id, :tax_category_id,
-              :cost_currency, :cost_price, :compare_at_price,
-              :track_inventory, :backorderable,
+              *Spree::PermittedAttributes.product_attributes,
               tags: [],
-              taxon_ids: [],
-              option_type_ids: [],
-              store_ids: [],
               variants: [
-                :id, :sku, :barcode, :price, :compare_at_price,
+                :sku, :barcode, :price, :compare_at_price,
                 :cost_price, :cost_currency,
                 :weight, :height, :width, :depth, :weight_unit, :dimensions_unit,
                 :track_inventory, :tax_category_id,

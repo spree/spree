@@ -50,7 +50,7 @@ module Spree
             end
 
             def permitted_params
-              params.permit(:alt, :position, :attachment, :type, :viewable_type, :viewable_id, variant_ids: [])
+              params.permit(*Spree::PermittedAttributes.asset_attributes, variant_ids: [])
             end
           end
         end
