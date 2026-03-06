@@ -113,6 +113,21 @@ Spree::Core::Engine.add_routes do
 
         # Option Types (with nested option_values in payload)
         resources :option_types
+
+        # Orders
+        resources :orders do
+          member do
+            patch :next
+            patch :advance
+            patch :complete
+            patch :cancel
+            patch :approve
+            patch :resume
+            post :resend_confirmation
+          end
+
+          resources :line_items, controller: 'orders/line_items'
+        end
       end
     end
   end

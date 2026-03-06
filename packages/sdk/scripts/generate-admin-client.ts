@@ -253,11 +253,33 @@ function analyzeResources(spec: OpenApiSpec): Resource[] {
       let parentParam: string | undefined;
 
       if (segments.length >= 3 && segments[1].startsWith('{') && segments[1].endsWith('}')) {
-        // Nested: /products/{product_id}/variants...
-        parentName = segments[0];
-        parentParam = segments[1].slice(1, -1); // remove { }
-        resourceName = segments[2];
-        basePath = `${API_PREFIX}/${segments[0]}/${segments[1]}/${segments[2]}`;
+        // Check if this is a member action (e.g., /orders/{id}/cancel) vs a nested resource
+        // Member actions: only have /parent/{id}/action (no further /{id})
+        // Nested resources: have /parent/{id}/resource and /parent/{id}/resource/{id}
+        const isMemberAction = segments.length === 3 && !segments[2].startsWith('{');
+
+        // Look ahead: is there a collection endpoint for this sub-path?
+        // If there's only single-verb endpoints and no collection/show patterns, treat as member action
+        const subPathPrefix = `${API_PREFIX}/${segments[0]}/${segments[1]}/${segments[2]}`;
+        const hasCollectionOrMember = Object.keys(spec.paths).some(
+          (p) => p.startsWith(subPathPrefix) && p !== fullPath && p.includes('/{id}')
+        );
+        const hasCollectionEndpoint = Object.keys(spec.paths).some(
+          (p) => p === subPathPrefix && spec.paths[p]?.get
+        );
+
+        if (isMemberAction && !hasCollectionOrMember && !hasCollectionEndpoint) {
+          // This is a member action on the parent resource (e.g., PATCH /orders/{id}/cancel)
+          resourceName = segments[0];
+          basePath = `${API_PREFIX}/${segments[0]}`;
+          // Classify as a custom action on the parent resource
+        } else {
+          // Nested resource: /products/{product_id}/variants...
+          parentName = segments[0];
+          parentParam = segments[1].slice(1, -1); // remove { }
+          resourceName = segments[2];
+          basePath = `${API_PREFIX}/${segments[0]}/${segments[1]}/${segments[2]}`;
+        }
       } else {
         resourceName = segments[0];
         basePath = `${API_PREFIX}/${segments[0]}`;
