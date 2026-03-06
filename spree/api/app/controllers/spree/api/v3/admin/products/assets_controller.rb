@@ -22,16 +22,17 @@ module Spree
             end
 
             def serializer_class
-              Spree.api.image_serializer
+              Spree.api.admin_asset_serializer
             end
 
             def set_parent
-              @parent = current_store.products.find_by_prefix_id!(params[:product_id])
-              authorize!(:show, @parent)
+              @product = current_store.products.find_by_prefix_id!(params[:product_id])
+              authorize!(:show, @product)
+              @parent = @product.master
             end
 
             def parent_association
-              :assets
+              :images
             end
 
             def build_resource
@@ -42,10 +43,8 @@ module Spree
                 raise ArgumentError, "Invalid asset type: #{asset_type}"
               end
 
-              # Build through parent association, then set the correct STI type
-              asset = @parent.assets.build(permitted_params.except(:type, :variant_ids))
+              asset = @parent.images.build(permitted_params.except(:type, :variant_ids))
               asset.type = asset_class.name
-              asset.viewable = @parent.master if asset.viewable.nil?
 
               asset
             end
