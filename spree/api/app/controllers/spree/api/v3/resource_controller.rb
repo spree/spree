@@ -55,6 +55,16 @@ module Spree
 
         protected
 
+        # No-op HTTP caching methods. Include Spree::Api::V3::HttpCaching
+        # in specific controllers to enable HTTP caching for their actions.
+        def cache_collection(_collection, **_options)
+          true
+        end
+
+        def cache_resource(_resource, **_options)
+          true
+        end
+
         # Override in subclass to set parent resource (e.g., @wishlist, @order)
         # This runs before set_resource, allowing scope to use the parent
         def set_parent

@@ -3,9 +3,13 @@ module Spree
     module V3
       module Store
         class CountriesController < Store::BaseController
+          include Spree::Api::V3::HttpCaching
+
           # GET /api/v3/store/countries
           def index
             countries = current_store.countries_from_markets
+
+            return unless cache_collection(countries)
 
             render json: {
               data: countries.map { |country| serialize_country(country) }
@@ -15,6 +19,8 @@ module Spree
           # GET /api/v3/store/countries/:id
           def show
             country = current_store.countries_from_markets.find_by!(iso: params[:id].upcase)
+
+            return unless cache_resource(country)
 
             render json: serialize_country(country)
           end

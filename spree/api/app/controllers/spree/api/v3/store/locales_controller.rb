@@ -3,9 +3,13 @@ module Spree
     module V3
       module Store
         class LocalesController < Store::BaseController
+          include Spree::Api::V3::HttpCaching
+
           # GET /api/v3/store/locales
           def index
             locales = current_store.supported_locales_list
+
+            return unless cache_collection(locales)
 
             render json: {
               data: locales.map { |code| Spree.api.locale_serializer.new(OpenStruct.new(code: code, name: locale_name(code))).to_h }
