@@ -61,16 +61,16 @@ module Spree
 
       private
 
-      def resolve_variant(store, prefixed_id)
-        return nil if prefixed_id.blank?
+      def resolve_variant(store, variant_id)
+        return nil if variant_id.blank?
 
-        variant = store.variants.find_by_prefix_id(prefixed_id)
+        variant = store.variants.find_by_param(variant_id)
 
         raise ActiveRecord::RecordNotFound.new(
-          "Variant '#{prefixed_id}' not found in this store",
+          "Variant '#{variant_id}' not found in this store",
           'Spree::Variant',
-          'prefix_id',
-          prefixed_id
+          'id',
+          variant_id
         ) unless variant
 
         variant

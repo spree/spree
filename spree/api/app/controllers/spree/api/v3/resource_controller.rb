@@ -2,6 +2,8 @@ module Spree
   module Api
     module V3
       class ResourceController < BaseController
+        include Spree::Api::V3::ParamsNormalizer
+
         before_action :set_parent
         before_action :set_resource, only: [:show, :update, :destroy]
 

@@ -171,7 +171,7 @@ module Spree
           def resolve_user
             return unless params[:user_id].present?
 
-            Spree.user_class.find_by_prefix_id!(params[:user_id])
+            Spree.user_class.find_by_param!(params[:user_id])
           end
 
           def order_create_params
@@ -184,19 +184,11 @@ module Spree
 
           def order_update_params
             params.permit(
-              :email, :special_instructions, :internal_note, :channel,
-              ship_address: address_params,
-              bill_address: address_params,
-              line_items: [:variant_id, :quantity, { metadata: {} }]
+              *Spree::PermittedAttributes.checkout_attributes,
+              ship_address: Spree::PermittedAttributes.address_attributes,
+              bill_address: Spree::PermittedAttributes.address_attributes,
+              line_items: Spree::PermittedAttributes.line_item_attributes
             )
-          end
-
-          def address_params
-            [
-              :id, :firstname, :lastname, :address1, :address2,
-              :city, :zipcode, :phone, :company,
-              :country_iso, :state_abbr, :state_name
-            ]
           end
         end
       end
