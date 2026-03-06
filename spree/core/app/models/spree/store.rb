@@ -9,7 +9,6 @@ module Spree
     include Spree::Metafields
     include Spree::Metadata
     include Spree::Stores::Setup
-    include Spree::Stores::Socials
     include Spree::Stores::Markets
     include Spree::Security::Stores if defined?(Spree::Security::Stores)
     include Spree::UserManagement
@@ -23,8 +22,7 @@ module Spree
     #
     # Translations
     #
-    TRANSLATABLE_FIELDS = %i[name meta_description meta_keywords seo_title facebook
-                             twitter instagram customer_support_email
+    TRANSLATABLE_FIELDS = %i[name meta_description meta_keywords seo_title customer_support_email
                              address contact_phone].freeze
     translates(*TRANSLATABLE_FIELDS, column_fallback: !Spree.always_use_translations?)
     self::Translation.class_eval do
@@ -115,7 +113,6 @@ module Spree
     #
     # ActionText
     #
-    has_rich_text :checkout_message
     has_rich_text :customer_terms_of_service
     has_rich_text :customer_privacy_policy
     has_rich_text :customer_returns_policy
