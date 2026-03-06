@@ -130,6 +130,9 @@ Spree::Core::Engine.add_routes do
           resources :shipments, controller: 'orders/shipments', only: [:index, :show, :update] do
             member do
               patch :ship
+              patch :cancel
+              patch :resume
+              patch :split
             end
           end
           resources :payments, controller: 'orders/payments', only: [:index, :show, :create] do

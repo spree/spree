@@ -7,8 +7,8 @@ module Spree
             include Spree::Api::V3::OrderLock
 
             before_action :authorize_order_access!
-            skip_before_action :set_resource, only: [:index]
-            before_action :set_shipment, only: [:show, :update, :ship]
+            skip_before_action :set_resource, only: [:index, :show, :update, :ship, :cancel, :resume, :split]
+            before_action :set_shipment, only: [:show, :update, :ship, :cancel, :resume, :split]
 
             # PATCH /api/v3/admin/orders/:order_id/shipments/:id
             def update
@@ -29,15 +29,55 @@ module Spree
             # PATCH /api/v3/admin/orders/:order_id/shipments/:id/ship
             def ship
               with_order_lock do
-                result = Spree.shipment_change_state_service.call(
-                  shipment: @resource,
-                  state: 'ship'
-                )
+                @resource.ship!
+                render json: serialize_resource(@resource.reload)
+              rescue StateMachines::InvalidTransition => e
+                render_service_error(e.message)
+              end
+            end
 
-                if result.success?
-                  render json: serialize_resource(@resource.reload)
+            # PATCH /api/v3/admin/orders/:order_id/shipments/:id/cancel
+            def cancel
+              with_order_lock do
+                @resource.cancel!
+                render json: serialize_resource(@resource.reload)
+              rescue StateMachines::InvalidTransition => e
+                render_service_error(e.message)
+              end
+            end
+
+            # PATCH /api/v3/admin/orders/:order_id/shipments/:id/resume
+            def resume
+              with_order_lock do
+                @resource.resume!
+                render json: serialize_resource(@resource.reload)
+              rescue StateMachines::InvalidTransition => e
+                render_service_error(e.message)
+              end
+            end
+
+            # PATCH /api/v3/admin/orders/:order_id/shipments/:id/split
+            def split
+              with_order_lock do
+                variant = Spree::Variant.find_by_prefix_id!(params[:variant_id])
+                quantity = params[:quantity].to_i
+
+                stock_location = if params[:stock_location_id].present?
+                                   Spree::StockLocation.find_by_prefix_id!(params[:stock_location_id])
+                                 else
+                                   @resource.stock_location
+                                 end
+
+                fulfilment_changer = @resource.transfer_to_location(variant, quantity, stock_location)
+
+                if fulfilment_changer.run!
+                  # Original shipment may be destroyed if all items were transferred
+                  shipments = @order.reload.shipments
+                  render json: {
+                    data: shipments.map { |s| serialize_resource(s) }
+                  }
                 else
-                  render_service_error(result.error)
+                  render_validation_error(fulfilment_changer.errors)
                 end
               end
             end

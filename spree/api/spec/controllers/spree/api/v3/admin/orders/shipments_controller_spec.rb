@@ -46,7 +46,6 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ShipmentsController, type: :contro
 
   describe 'PATCH #ship' do
     it 'marks the shipment as shipped' do
-      # Ensure shipment is ready
       shipment.ready! if shipment.can_ready?
 
       patch :ship, params: {
@@ -56,6 +55,51 @@ RSpec.describe Spree::Api::V3::Admin::Orders::ShipmentsController, type: :contro
 
       expect(response).to have_http_status(:ok)
       expect(json_response['state']).to eq('shipped')
+    end
+  end
+
+  describe 'PATCH #cancel' do
+    it 'cancels the shipment' do
+      patch :cancel, params: {
+        order_id: order.prefixed_id,
+        id: shipment.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(json_response['state']).to eq('canceled')
+    end
+  end
+
+  describe 'PATCH #resume' do
+    it 'resumes a canceled shipment' do
+      shipment.cancel!
+
+      patch :resume, params: {
+        order_id: order.prefixed_id,
+        id: shipment.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(%w[pending ready]).to include(json_response['state'])
+    end
+  end
+
+  describe 'PATCH #split' do
+    it 'splits items to a new shipment at a different stock location' do
+      variant = shipment.inventory_units.first.variant
+      target_stock_location = create(:stock_location, name: 'Warehouse 2')
+      target_stock_location.stock_items.find_or_create_by(variant: variant).set_count_on_hand(10)
+
+      patch :split, params: {
+        order_id: order.prefixed_id,
+        id: shipment.prefixed_id,
+        variant_id: variant.prefixed_id,
+        quantity: 1,
+        stock_location_id: target_stock_location.prefixed_id
+      }, as: :json
+
+      expect(response).to have_http_status(:ok), "Expected 200 but got #{response.status}: #{response.body}"
+      expect(json_response['data']).to be_an(Array)
     end
   end
 end

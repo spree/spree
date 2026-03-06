@@ -181,6 +181,12 @@ export interface AdminShipmentUpdateParams {
   stock_location_id?: string;
 }
 
+export interface AdminShipmentSplitParams {
+  variant_id: string;
+  quantity: number;
+  stock_location_id?: string;
+}
+
 export interface AdminPaymentCreateParams {
   payment_method_id: string;
   amount?: number;

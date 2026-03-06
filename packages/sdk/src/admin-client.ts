@@ -34,6 +34,7 @@ import type {
   AdminProductCreateParams,
   AdminProductUpdateParams,
   AdminRefundCreateParams,
+  AdminShipmentSplitParams,
   AdminShipmentUpdateParams,
   AdminTaxonCreateParams,
   AdminTaxonUpdateParams,
@@ -58,6 +59,7 @@ export type {
   AdminProductCreateParams,
   AdminProductUpdateParams,
   AdminRefundCreateParams,
+  AdminShipmentSplitParams,
   AdminShipmentUpdateParams,
   AdminTaxonCreateParams,
   AdminTaxonUpdateParams,
@@ -336,6 +338,34 @@ export class AdminClient {
         options?: RequestOptions
       ): Promise<AdminShipment> =>
         this.request<AdminShipment>('PATCH', `/orders/${orderId}/shipments/${id}/ship`, options),
+
+      /** Cancel a shipment */
+      cancel: (
+        orderId: string,
+        id: string,
+        options?: RequestOptions
+      ): Promise<AdminShipment> =>
+        this.request<AdminShipment>('PATCH', `/orders/${orderId}/shipments/${id}/cancel`, options),
+
+      /** Resume a canceled shipment */
+      resume: (
+        orderId: string,
+        id: string,
+        options?: RequestOptions
+      ): Promise<AdminShipment> =>
+        this.request<AdminShipment>('PATCH', `/orders/${orderId}/shipments/${id}/resume`, options),
+
+      /** Split a shipment - transfer items to a new shipment */
+      split: (
+        orderId: string,
+        id: string,
+        params: AdminShipmentSplitParams,
+        options?: RequestOptions
+      ): Promise<{ data: AdminShipment[] }> =>
+        this.request<{ data: AdminShipment[] }>('PATCH', `/orders/${orderId}/shipments/${id}/split`, {
+          ...options,
+          body: params,
+        }),
 
     },
 

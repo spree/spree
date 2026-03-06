@@ -345,6 +345,21 @@ export const adminHandlers = [
     HttpResponse.json({ ...adminFixtures.shipment, state: 'shipped', shipped_at: '2026-03-06T14:00:00.000Z' })
   ),
 
+  http.patch(`${API_PREFIX}/orders/:orderId/shipments/:id/cancel`, () =>
+    HttpResponse.json({ ...adminFixtures.shipment, state: 'canceled' })
+  ),
+
+  http.patch(`${API_PREFIX}/orders/:orderId/shipments/:id/resume`, () =>
+    HttpResponse.json({ ...adminFixtures.shipment, state: 'ready' })
+  ),
+
+  http.patch(`${API_PREFIX}/orders/:orderId/shipments/:id/split`, () =>
+    HttpResponse.json({ data: [
+      { ...adminFixtures.shipment, id: 'ship_1' },
+      { ...adminFixtures.shipment, id: 'ship_2', stock_location_id: 'sl_2' },
+    ] })
+  ),
+
   http.patch(`${API_PREFIX}/orders/:orderId/shipments/:id`, () =>
     HttpResponse.json({ ...adminFixtures.shipment, tracking: '1Z999AA10123456784' })
   ),
