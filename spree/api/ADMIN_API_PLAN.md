@@ -205,11 +205,7 @@ Here's the endpoint list we need to implement:
 - [x] `PATCH /api/v3/admin/products/:product_id/variants/:id` — Update variant
 - [x] `DELETE /api/v3/admin/products/:product_id/variants/:id` — Soft-delete variant
 
-### Prices (nested under Variants)
-- [x] `GET /api/v3/admin/variants/:variant_id/prices` — List prices for variant
-- [x] `POST /api/v3/admin/variants/:variant_id/prices` — Create price
-- [x] `PATCH /api/v3/admin/variants/:variant_id/prices/:id` — Update price
-- [x] `DELETE /api/v3/admin/variants/:variant_id/prices/:id` — Delete price
+### Prices (managed via nested variant params, no standalone endpoints needed)
 
 ### Product Assets (nested under Products)
 - [x] `GET /api/v3/admin/products/:product_id/assets` — List product assets (filterable by type: image, video, etc.)
@@ -262,24 +258,24 @@ Here's the endpoint list we need to implement:
 - [ ] `DELETE /api/v3/admin/taxons/:taxon_id/classifications/:id` — Remove product from taxon
 
 ### Orders (⭐ high priority)
-- [ ] `GET /api/v3/admin/orders` — List orders (with Ransack filtering, sorting, pagination)
-- [ ] `GET /api/v3/admin/orders/:id` — Show order
-- [ ] `POST /api/v3/admin/orders` — Create draft order
-- [ ] `PATCH /api/v3/admin/orders/:id` — Update order
-- [ ] `DELETE /api/v3/admin/orders/:id` — Delete draft order
-- [ ] `PATCH /api/v3/admin/orders/:id/next` — Push the order to the next state
-- [ ] `PATCH /api/v3/admin/orders/:id/advance` — Advance the order to the furthest state
-- [ ] `PATCH /api/v3/admin/orders/:id/complete` — Complete the order
-- [ ] `PATCH /api/v3/admin/orders/:id/cancel` — Cancel order
-- [ ] `PATCH /api/v3/admin/orders/:id/approve` — Approve order
-- [ ] `PATCH /api/v3/admin/orders/:id/resume` — Resume canceled order
-- [ ] `POST /api/v3/admin/orders/:id/resend_confirmation` — Resend confirmation email
+- [x] `GET /api/v3/admin/orders` — List orders (with Ransack filtering, sorting, pagination)
+- [x] `GET /api/v3/admin/orders/:id` — Show order
+- [x] `POST /api/v3/admin/orders` — Create draft order
+- [x] `PATCH /api/v3/admin/orders/:id` — Update order
+- [x] `DELETE /api/v3/admin/orders/:id` — Delete draft order
+- [x] `PATCH /api/v3/admin/orders/:id/next` — Push the order to the next state
+- [x] `PATCH /api/v3/admin/orders/:id/advance` — Advance the order to the furthest state
+- [x] `PATCH /api/v3/admin/orders/:id/complete` — Complete the order
+- [x] `PATCH /api/v3/admin/orders/:id/cancel` — Cancel order
+- [x] `PATCH /api/v3/admin/orders/:id/approve` — Approve order
+- [x] `PATCH /api/v3/admin/orders/:id/resume` — Resume canceled order
+- [x] `POST /api/v3/admin/orders/:id/resend_confirmation` — Resend confirmation email
 
 ### Line Items (nested under Orders)
-- [ ] `GET /api/v3/admin/orders/:order_id/line_items` — List line items
-- [ ] `POST /api/v3/admin/orders/:order_id/line_items` — Add line item
-- [ ] `PATCH /api/v3/admin/orders/:order_id/line_items/:id` — Update line item (quantity, price)
-- [ ] `DELETE /api/v3/admin/orders/:order_id/line_items/:id` — Remove line item
+- [x] `GET /api/v3/admin/orders/:order_id/line_items` — List line items
+- [x] `POST /api/v3/admin/orders/:order_id/line_items` — Add line item
+- [x] `PATCH /api/v3/admin/orders/:order_id/line_items/:id` — Update line item (quantity, price)
+- [x] `DELETE /api/v3/admin/orders/:order_id/line_items/:id` — Remove line item
 
 ### Shipments (nested under Orders)
 - [ ] `GET /api/v3/admin/orders/:order_id/shipments` — List shipments

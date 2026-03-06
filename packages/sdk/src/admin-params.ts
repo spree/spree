@@ -41,6 +41,54 @@ export interface AdminOptionTypeUpdateParams {
   }>;
 }
 
+export interface AdminLineItemCreateParams {
+  variant_id: string;
+  quantity?: number;
+}
+
+export interface AdminLineItemUpdateParams {
+  quantity?: number;
+}
+
+export interface AdminOrderCreateParams {
+  email?: string;
+  user_id?: string;
+  currency?: string;
+  channel?: string;
+  internal_note?: string;
+}
+
+export interface AdminOrderUpdateParams {
+  email?: string;
+  special_instructions?: string;
+  internal_note?: string;
+  channel?: string;
+  ship_address?: {
+    firstname?: string;
+    lastname?: string;
+    address1?: string;
+    city?: string;
+    zipcode?: string;
+    country_iso?: string;
+    state_abbr?: string;
+    phone?: string;
+  };
+  bill_address?: {
+    firstname?: string;
+    lastname?: string;
+    address1?: string;
+    city?: string;
+    zipcode?: string;
+    country_iso?: string;
+    state_abbr?: string;
+    phone?: string;
+  };
+  line_items?: Array<{
+    variant_id?: string;
+    quantity?: number;
+  }>;
+}
+
 export interface AdminProductCreateParams {
   name: string;
   price: number;

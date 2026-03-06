@@ -7,7 +7,9 @@ import type {
   PaginatedResponse,
   ListParams,
   AdminAsset,
+  AdminLineItem,
   AdminOptionType,
+  AdminOrder,
   AdminProduct,
   AdminTaxon,
   AdminTaxonomy,
@@ -16,8 +18,12 @@ import type {
 import type {
   AdminAssetCreateParams,
   AdminAssetUpdateParams,
+  AdminLineItemCreateParams,
+  AdminLineItemUpdateParams,
   AdminOptionTypeCreateParams,
   AdminOptionTypeUpdateParams,
+  AdminOrderCreateParams,
+  AdminOrderUpdateParams,
   AdminProductCreateParams,
   AdminProductUpdateParams,
   AdminTaxonCreateParams,
@@ -31,8 +37,12 @@ import type {
 export type {
   AdminAssetCreateParams,
   AdminAssetUpdateParams,
+  AdminLineItemCreateParams,
+  AdminLineItemUpdateParams,
   AdminOptionTypeCreateParams,
   AdminOptionTypeUpdateParams,
+  AdminOrderCreateParams,
+  AdminOrderUpdateParams,
   AdminProductCreateParams,
   AdminProductUpdateParams,
   AdminTaxonCreateParams,
@@ -109,6 +119,164 @@ export class AdminClient {
       options?: RequestOptions
     ): Promise<void> =>
       this.request<void>('DELETE', `/option_types/${id}`, options),
+
+  };
+
+  // ============================================
+  // Orders
+  // ============================================
+
+  readonly orders = {
+    /** List orders */
+    list: (
+      params?: ListParams,
+      options?: RequestOptions
+    ): Promise<PaginatedResponse<AdminOrder>> =>
+      this.request<PaginatedResponse<AdminOrder>>('GET', '/orders', {
+        ...options,
+        params: transformListParams({ ...params }),
+      }),
+
+    /** Create a draft order */
+    create: (
+      params: AdminOrderCreateParams,
+      options?: RequestOptions
+    ): Promise<AdminOrder> =>
+      this.request<AdminOrder>('POST', '/orders', {
+        ...options,
+        body: params,
+      }),
+
+    /** Show an order */
+    get: (
+      id: string,
+      params?: { expand?: string[] },
+      options?: RequestOptions
+    ): Promise<AdminOrder> =>
+      this.request<AdminOrder>('GET', `/orders/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
+
+    /** Update an order */
+    update: (
+      id: string,
+      params: AdminOrderUpdateParams,
+      options?: RequestOptions
+    ): Promise<AdminOrder> =>
+      this.request<AdminOrder>('PATCH', `/orders/${id}`, {
+        ...options,
+        body: params,
+      }),
+
+    /** Delete a draft order */
+    delete: (
+      id: string,
+      options?: RequestOptions
+    ): Promise<void> =>
+      this.request<void>('DELETE', `/orders/${id}`, options),
+
+    /** Cancel an order */
+    cancel: (
+      id: string,
+      params?: Record<string, unknown>,
+      options?: RequestOptions
+    ): Promise<AdminOrder> =>
+      this.request<AdminOrder>('PATCH', `/orders/${id}/cancel`, {
+        ...options,
+        body: params,
+      }),
+
+    /** Approve an order */
+    approve: (
+      id: string,
+      params?: Record<string, unknown>,
+      options?: RequestOptions
+    ): Promise<AdminOrder> =>
+      this.request<AdminOrder>('PATCH', `/orders/${id}/approve`, {
+        ...options,
+        body: params,
+      }),
+
+    /** Resume a canceled order */
+    resume: (
+      id: string,
+      params?: Record<string, unknown>,
+      options?: RequestOptions
+    ): Promise<AdminOrder> =>
+      this.request<AdminOrder>('PATCH', `/orders/${id}/resume`, {
+        ...options,
+        body: params,
+      }),
+
+    /** Resend confirmation email */
+    resendConfirmation: (
+      id: string,
+      params?: Record<string, unknown>,
+      options?: RequestOptions
+    ): Promise<AdminOrder> =>
+      this.request<AdminOrder>('POST', `/orders/${id}/resend_confirmation`, {
+        ...options,
+        body: params,
+      }),
+
+    /** Nested: orders/{id}/line_items */
+    lineItems: {
+      /** List line items */
+      list: (
+        orderId: string,
+        params?: ListParams,
+        options?: RequestOptions
+      ): Promise<PaginatedResponse<AdminLineItem>> =>
+        this.request<PaginatedResponse<AdminLineItem>>('GET', `/orders/${orderId}/line_items`, {
+          ...options,
+          params: transformListParams({ ...params }),
+        }),
+
+      /** Add a line item */
+      create: (
+        orderId: string,
+        params: AdminLineItemCreateParams,
+        options?: RequestOptions
+      ): Promise<AdminLineItem> =>
+        this.request<AdminLineItem>('POST', `/orders/${orderId}/line_items`, {
+          ...options,
+          body: params,
+        }),
+
+      /** Show a line item */
+      get: (
+        orderId: string,
+        id: string,
+        params?: { expand?: string[] },
+        options?: RequestOptions
+      ): Promise<AdminLineItem> =>
+        this.request<AdminLineItem>('GET', `/orders/${orderId}/line_items/${id}`, {
+          ...options,
+          params: getParams(params),
+        }),
+
+      /** Update a line item */
+      update: (
+        orderId: string,
+        id: string,
+        params: AdminLineItemUpdateParams,
+        options?: RequestOptions
+      ): Promise<AdminLineItem> =>
+        this.request<AdminLineItem>('PATCH', `/orders/${orderId}/line_items/${id}`, {
+          ...options,
+          body: params,
+        }),
+
+      /** Remove a line item */
+      delete: (
+        orderId: string,
+        id: string,
+        options?: RequestOptions
+      ): Promise<void> =>
+        this.request<void>('DELETE', `/orders/${orderId}/line_items/${id}`, options),
+
+    },
 
   };
 
