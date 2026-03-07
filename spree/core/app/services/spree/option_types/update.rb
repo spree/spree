@@ -50,7 +50,7 @@ module Spree
           Spree::OptionValue.upsert_all(
             records,
             unique_by: :index_spree_option_values_on_option_type_id_and_name,
-            update_only: [:presentation, :position, :updated_at]
+            update_only: [:presentation, :position]
           )
         end
 

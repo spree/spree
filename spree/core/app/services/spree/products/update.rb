@@ -108,7 +108,7 @@ module Spree
         Spree::Price.upsert_all(
           records,
           unique_by: :index_spree_prices_on_variant_id_and_currency,
-          update_only: [:amount, :compare_at_amount, :updated_at]
+          update_only: [:amount, :compare_at_amount]
         )
       end
 

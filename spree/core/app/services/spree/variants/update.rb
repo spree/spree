@@ -74,7 +74,7 @@ module Spree
         Spree::Price.upsert_all(
           records,
           unique_by: :index_spree_prices_on_variant_id_and_currency,
-          update_only: [:amount, :compare_at_amount, :updated_at]
+          update_only: [:amount, :compare_at_amount]
         )
       end
 
@@ -104,7 +104,7 @@ module Spree
         Spree::StockItem.upsert_all(
           records,
           unique_by: :index_spree_stock_items_unique_without_deleted_at,
-          update_only: [:count_on_hand, :backorderable, :updated_at]
+          update_only: [:count_on_hand, :backorderable]
         )
       end
 
