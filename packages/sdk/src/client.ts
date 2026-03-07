@@ -1,11 +1,11 @@
-import { createRequestFn } from './request';
-import type { RetryConfig, RequestConfig } from './request';
-import type { LocaleDefaults } from './types';
-import { StoreClient } from './store-client';
-import { AdminClient } from './admin-client';
+import { createRequestFn } from "./request";
+import type { RetryConfig, RequestConfig } from "./request";
+import type { LocaleDefaults } from "./types";
+import { StoreClient } from "./store-client";
+import { AdminClient } from "./admin-client";
 
 // Re-export types for convenience
-export type { AddressParams, StoreCreditCard, LocaleDefaults } from './types';
+export type { AddressParams, StoreCreditCard, LocaleDefaults } from "./types";
 
 export interface SpreeClientConfig {
   /** Base URL of the Spree API (e.g., 'https://api.mystore.com') */
@@ -36,10 +36,12 @@ export class SpreeClient {
 
   constructor(config: SpreeClientConfig) {
     if (!config.publishableKey && !config.secretKey) {
-      throw new Error('SpreeClient requires at least one of publishableKey or secretKey');
+      throw new Error(
+        "SpreeClient requires at least one of publishableKey or secretKey"
+      );
     }
 
-    const baseUrl = config.baseUrl.replace(/\/$/, '');
+    const baseUrl = config.baseUrl.replace(/\/$/, "");
     // Bind fetch to globalThis to avoid "Illegal invocation" errors in browsers
     const fetchFn = config.fetch || fetch.bind(globalThis);
 
@@ -66,20 +68,19 @@ export class SpreeClient {
 
     const storeRequestFn = createRequestFn(
       requestConfig,
-      '/api/v3/store',
+      "/api/v3/store",
       config.publishableKey
-        ? { headerName: 'x-spree-api-key', headerValue: config.publishableKey }
-        : { headerName: '', headerValue: '' },
+        ? { headerName: "x-spree-api-key", headerValue: config.publishableKey }
+        : { headerName: "", headerValue: "" },
       this._defaults
     );
 
     const adminRequestFn = createRequestFn(
       requestConfig,
-      '/api/v3/admin',
-      {
-        headerName: 'Authorization',
-        headerValue: config.secretKey ? `Bearer ${config.secretKey}` : '',
-      },
+      "/api/v3/admin",
+      config.secretKey
+        ? { headerName: "x-spree-api-key", headerValue: config.secretKey }
+        : { headerName: "", headerValue: "" },
       this._defaults
     );
 
