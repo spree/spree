@@ -47,11 +47,12 @@ module Spree
         option_type.option_values.where.not(name: names).destroy_all
 
         if records.any?
-          Spree::OptionValue.upsert_all(
-            records,
-            unique_by: :index_spree_option_values_on_option_type_id_and_name,
-            update_only: [:presentation, :position]
-          )
+          # Deduplicate by name (last wins) to avoid PG's "ON CONFLICT cannot affect row a second time"
+          records = records.reverse.uniq { |r| r[:name] }.reverse
+
+          opts = { update_only: [:presentation, :position] }
+          opts[:unique_by] = :index_spree_option_values_on_option_type_id_and_name unless ActiveRecord::Base.connection.adapter_name == 'Mysql2'
+          Spree::OptionValue.upsert_all(records, **opts)
         end
 
         success(option_type: option_type.reload)

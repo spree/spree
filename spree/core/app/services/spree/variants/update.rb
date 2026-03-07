@@ -7,7 +7,7 @@ module Spree
         ApplicationRecord.transaction do
           run :update_variant
           run :sync_prices
-          run :sync_stock_items
+          run :sync_stock
         end
       end
 
@@ -15,113 +15,62 @@ module Spree
 
       def update_variant(variant:, params:)
         params = params.to_h.with_indifferent_access
-        prices_params = params.delete(:prices)
-        stock_items_params = params.delete(:stock_items)
+        @prices_params = params.delete(:prices)
+        @stock_items_params = params.delete(:stock_items)
         option_type_name = params.delete(:option_type)
         option_value_name = params.delete(:option_value)
-        total_on_hand = params.delete(:total_on_hand)
 
-        if option_type_name.present? && option_value_name.present?
-          assign_option_value(variant.product, variant, option_type_name, option_value_name)
+        # When explicit prices are provided, remove shortcut attrs to avoid conflicts
+        if @prices_params
+          params.delete(:price)
+          params.delete(:compare_at_price)
+          params.delete(:currency)
         end
 
-        variant.assign_attributes(params)
+        if option_type_name.present? && option_value_name.present?
+          variant.set_option_value(option_type_name, option_value_name)
+        end
 
-        if variant.save
-          # Simple single-location stock shortcut
-          if total_on_hand.present? && stock_items_params.blank?
-            variant.stock_items.first&.set_count_on_hand(total_on_hand.to_i)
-          end
-
-          success(variant: variant, prices_params: prices_params, stock_items_params: stock_items_params)
+        if variant.update(params)
+          success(variant: variant)
         else
           failure(variant, variant.errors)
         end
       end
 
-      def sync_prices(variant:, prices_params:, stock_items_params:)
-        upsert_prices(variant, prices_params) if prices_params.present?
-        success(variant: variant, stock_items_params: stock_items_params)
-      end
+      def sync_prices(variant:)
+        return success(variant: variant) unless @prices_params
 
-      def sync_stock_items(variant:, stock_items_params:)
-        upsert_stock_items(variant, stock_items_params) if stock_items_params.present?
-        success(variant: variant.reload)
-      end
+        currencies_in_payload = []
 
-      def upsert_prices(variant, prices_params)
-        now = Time.current
-        currencies = []
-
-        records = prices_params.map do |price_data|
+        @prices_params.each do |price_data|
           price_data = price_data.to_h.with_indifferent_access
-          currencies << price_data[:currency]
-          {
-            variant_id: variant.id,
-            currency: price_data[:currency],
-            amount: price_data[:amount],
-            compare_at_amount: price_data[:compare_at_amount],
-            created_at: now,
-            updated_at: now
-          }
+          currencies_in_payload << price_data[:currency]
+          variant.set_price(price_data[:currency], price_data[:amount], price_data[:compare_at_amount])
         end
 
         # Soft-delete prices for currencies not in the payload
-        Spree::Price.where(variant_id: variant.id, price_list_id: nil)
-                    .where.not(currency: currencies)
-                    .update_all(deleted_at: now)
+        variant.prices.base_prices.where.not(currency: currencies_in_payload).destroy_all
 
-        Spree::Price.upsert_all(
-          records,
-          unique_by: :index_spree_prices_on_variant_id_and_currency,
-          update_only: [:amount, :compare_at_amount]
-        )
+        success(variant: variant.reload)
       end
 
-      def upsert_stock_items(variant, stock_items_params)
-        now = Time.current
-        location_ids = []
+      def sync_stock(variant:)
+        return success(variant: variant) unless @stock_items_params
 
-        records = stock_items_params.map do |stock_data|
+        location_ids_in_payload = []
+
+        @stock_items_params.each do |stock_data|
           stock_data = stock_data.to_h.with_indifferent_access
-          stock_location = resolve_stock_location(stock_data[:stock_location_id])
-          location_ids << stock_location.id
-          {
-            variant_id: variant.id,
-            stock_location_id: stock_location.id,
-            count_on_hand: stock_data[:count_on_hand].to_i,
-            backorderable: stock_data[:backorderable] || false,
-            created_at: now,
-            updated_at: now
-          }
+          location = Spree::StockLocation.find_by_prefix_id!(stock_data[:stock_location_id])
+          location_ids_in_payload << location.id
+          variant.set_stock(stock_data[:count_on_hand], stock_data[:backorderable], location)
         end
 
         # Soft-delete stock items for locations not in the payload
-        Spree::StockItem.where(variant_id: variant.id)
-                        .where.not(stock_location_id: location_ids)
-                        .update_all(deleted_at: now)
+        variant.stock_items.where.not(stock_location_id: location_ids_in_payload).update_all(deleted_at: Time.current)
 
-        Spree::StockItem.upsert_all(
-          records,
-          unique_by: :index_spree_stock_items_unique_without_deleted_at,
-          update_only: [:count_on_hand, :backorderable]
-        )
-      end
-
-      def assign_option_value(product, variant, option_type_name, option_value_name)
-        option_type = Spree::OptionType.where(name: option_type_name.to_s.parameterize).first_or_create! do |ot|
-          ot.presentation = option_type_name
-        end
-        product.option_types << option_type unless product.option_types.include?(option_type)
-
-        option_value = option_type.option_values.where(name: option_value_name.to_s.parameterize).first_or_create! do |ov|
-          ov.presentation = option_value_name
-        end
-        variant.option_values = [option_value]
-      end
-
-      def resolve_stock_location(id)
-        Spree::StockLocation.find_by_param!(id)
+        success(variant: variant.reload)
       end
     end
   end

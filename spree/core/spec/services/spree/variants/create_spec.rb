@@ -51,7 +51,7 @@ RSpec.describe Spree::Variants::Create do
       }
     end
 
-    it 'creates prices via upsert' do
+    it 'creates prices' do
       expect(result).to be_success
       variant = result.value[:variant]
       expect(variant.prices.find_by(currency: 'USD').amount.to_f).to eq(25.00)
@@ -77,7 +77,7 @@ RSpec.describe Spree::Variants::Create do
       }
     end
 
-    it 'sets stock via upsert' do
+    it 'sets stock levels' do
       expect(result).to be_success
       variant = result.value[:variant]
       si1 = variant.stock_items.find_by(stock_location: stock_location_1)
@@ -104,40 +104,6 @@ RSpec.describe Spree::Variants::Create do
 
     it 'raises RecordNotFound' do
       expect { result }.to raise_error(ActiveRecord::RecordNotFound)
-    end
-  end
-
-  describe 'total_on_hand shortcut' do
-    before { Spree::StockLocation.update_all(propagate_all_variants: true) }
-
-    let(:params) { { sku: 'TOH-V', option_type: option_type.name, option_value: 'toh', price: 10, total_on_hand: 42 } }
-
-    it 'sets stock on first stock item' do
-      expect(result).to be_success
-      expect(result.value[:variant].total_on_hand).to eq(42)
-    end
-  end
-
-  describe 'total_on_hand ignored when stock_items present' do
-    let!(:stock_location) { Spree::StockLocation.first || create(:stock_location) }
-
-    let(:params) do
-      {
-        sku: 'BOTH-V',
-        option_type: option_type.name,
-        option_value: 'both',
-        price: 10,
-        total_on_hand: 99,
-        stock_items: [
-          { stock_location_id: stock_location.prefixed_id, count_on_hand: 5 }
-        ]
-      }
-    end
-
-    it 'uses stock_items, not total_on_hand' do
-      expect(result).to be_success
-      variant = result.value[:variant]
-      expect(variant.stock_items.find_by(stock_location: stock_location).count_on_hand).to eq(5)
     end
   end
 

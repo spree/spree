@@ -88,7 +88,7 @@ RSpec.describe Spree::Products::Create do
     end
   end
 
-  describe 'variant with prices upserted' do
+  describe 'variant with prices' do
     let(:params) do
       {
         name: 'Multi-price Product',
@@ -108,7 +108,7 @@ RSpec.describe Spree::Products::Create do
       }
     end
 
-    it 'upserts prices for the variant' do
+    it 'sets prices for the variant' do
       expect(result).to be_success
       variant = result.value[:product].variants.find_by(sku: 'MP-1')
       usd = variant.prices.find_by(currency: 'USD')
@@ -120,7 +120,7 @@ RSpec.describe Spree::Products::Create do
     end
   end
 
-  describe 'variant with total_on_hand' do
+  describe 'variant with stock_items' do
     let!(:stock_location) { create(:stock_location, propagate_all_variants: true) }
 
     let(:params) do
@@ -129,7 +129,14 @@ RSpec.describe Spree::Products::Create do
         price: 10,
         shipping_category_id: shipping_category.id,
         variants: [
-          { sku: 'STK-1', option_type: 'Size', option_value: 'M', total_on_hand: 25 }
+          {
+            sku: 'STK-1',
+            option_type: 'Size',
+            option_value: 'M',
+            stock_items: [
+              { stock_location_id: stock_location.prefixed_id, count_on_hand: 25 }
+            ]
+          }
         ]
       }
     end
@@ -137,7 +144,8 @@ RSpec.describe Spree::Products::Create do
     it 'sets stock level' do
       expect(result).to be_success
       variant = result.value[:product].variants.find_by(sku: 'STK-1')
-      expect(variant.total_on_hand).to eq(25)
+      si = variant.stock_items.find_by(stock_location: stock_location)
+      expect(si.count_on_hand).to eq(25)
     end
   end
 

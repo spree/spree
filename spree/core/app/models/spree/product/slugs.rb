@@ -28,7 +28,7 @@ module Spree
 
           def generate_slug
             if name.blank? && slug.blank?
-              translated_model.name.to_url
+              translated_model.name&.to_url
             elsif slug.blank?
               name.to_url
             else
