@@ -61,17 +61,6 @@ module Spree
 
             private
 
-            def render_result_error(result)
-              error = result.error
-              errors = error.respond_to?(:value) ? error.value : error
-
-              if errors.is_a?(ActiveModel::Errors)
-                render_validation_error(errors)
-              else
-                render_service_error(error)
-              end
-            end
-
             def variant_service_params
               params.permit(
                 :sku, :barcode, :price, :compare_at_price,

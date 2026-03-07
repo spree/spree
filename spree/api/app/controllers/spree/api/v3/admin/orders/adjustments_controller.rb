@@ -3,13 +3,7 @@ module Spree
     module V3
       module Admin
         module Orders
-          class AdjustmentsController < ResourceController
-            include Spree::Api::V3::OrderLock
-
-            before_action :authorize_order_access!
-            skip_before_action :set_resource, only: [:index, :create]
-            before_action :set_adjustment, only: [:show, :update, :destroy]
-
+          class AdjustmentsController < BaseController
             # POST /api/v3/admin/orders/:order_id/adjustments
             def create
               with_order_lock do
@@ -62,20 +56,6 @@ module Spree
 
             def parent_association
               :adjustments
-            end
-
-            def set_parent
-              @parent = current_store.orders.find_by_prefix_id!(params[:order_id])
-              @order = @parent
-            end
-
-            def authorize_order_access!
-              authorize!(:show, @parent)
-            end
-
-            def set_adjustment
-              @resource = @parent.adjustments.find_by_prefix_id!(params[:id])
-              authorize_resource!(@resource)
             end
 
             def permitted_params

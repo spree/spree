@@ -3,13 +3,7 @@ module Spree
     module V3
       module Admin
         module Orders
-          class LineItemsController < ResourceController
-            include Spree::Api::V3::OrderLock
-
-            before_action :authorize_order_access!
-            skip_before_action :set_resource, only: [:index, :create]
-            before_action :set_line_item, only: [:show, :update, :destroy]
-
+          class LineItemsController < BaseController
             # POST /api/v3/admin/orders/:order_id/line_items
             def create
               with_order_lock do
@@ -79,26 +73,14 @@ module Spree
               :line_items
             end
 
-            def set_parent
-              @parent = current_store.orders.find_by_prefix_id!(params[:order_id])
-              @order = @parent # needed for OrderLock
+            def permitted_params
+              params.permit(*Spree::PermittedAttributes.line_item_attributes, { options: {} })
             end
 
-            def authorize_order_access!
-              authorize!(:show, @parent)
-            end
-
-            def set_line_item
-              @resource = @parent.line_items.find_by_prefix_id!(params[:id])
-              authorize_resource!(@resource)
-            end
+            private
 
             def variant
               @variant ||= current_store.variants.find_by_prefix_id!(permitted_params[:variant_id])
-            end
-
-            def permitted_params
-              params.permit(*Spree::PermittedAttributes.line_item_attributes, { options: {} })
             end
           end
         end

@@ -3,12 +3,8 @@ module Spree
     module V3
       module Admin
         module Orders
-          class PaymentsController < ResourceController
-            include Spree::Api::V3::OrderLock
-
-            before_action :authorize_order_access!
-            skip_before_action :set_resource, only: [:index, :create]
-            before_action :set_payment, only: [:show, :capture, :void]
+          class PaymentsController < BaseController
+            before_action :set_resource, only: [:show, :capture, :void]
 
             # POST /api/v3/admin/orders/:order_id/payments
             def create
@@ -68,35 +64,8 @@ module Spree
               :payments
             end
 
-            def set_parent
-              @parent = current_store.orders.find_by_prefix_id!(params[:order_id])
-              @order = @parent
-            end
-
-            def authorize_order_access!
-              authorize!(:show, @parent)
-            end
-
-            def set_payment
-              @resource = @parent.payments.find_by_prefix_id!(params[:id])
-              authorize_resource!(@resource)
-            end
-
             def permitted_params
               params.permit(*Spree::PermittedAttributes.payment_attributes, :source_id)
-            end
-
-            private
-
-            def render_result_error(result)
-              error = result.error
-              errors = error.respond_to?(:value) ? error.value : error
-
-              if errors.is_a?(ActiveModel::Errors)
-                render_validation_error(errors)
-              else
-                render_service_error(error)
-              end
             end
           end
         end

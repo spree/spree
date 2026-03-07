@@ -157,17 +157,6 @@ module Spree
 
           private
 
-          def render_result_error(result)
-            error = result.error
-            errors = error.respond_to?(:value) ? error.value : error
-
-            if errors.is_a?(ActiveModel::Errors)
-              render_validation_error(errors)
-            else
-              render_service_error(error)
-            end
-          end
-
           def resolve_user
             return unless params[:user_id].present?
 

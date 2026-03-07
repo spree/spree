@@ -3,12 +3,7 @@ module Spree
     module V3
       module Admin
         module Orders
-          class RefundsController < ResourceController
-            include Spree::Api::V3::OrderLock
-
-            before_action :authorize_order_access!
-            skip_before_action :set_resource, only: [:index, :create]
-
+          class RefundsController < BaseController
             # POST /api/v3/admin/orders/:order_id/refunds
             def create
               with_order_lock do
@@ -39,15 +34,6 @@ module Spree
 
             def serializer_class
               Spree.api.admin_refund_serializer
-            end
-
-            def set_parent
-              @parent = current_store.orders.find_by_prefix_id!(params[:order_id])
-              @order = @parent
-            end
-
-            def authorize_order_access!
-              authorize!(:show, @parent)
             end
 
             def scope
