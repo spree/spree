@@ -17,7 +17,7 @@ module Spree
         Rails.cache.fetch(["#{store.cache_key_with_version}/admin_icon", opts.to_param]) do
           if store.logo&.attached? && store.logo&.variable?
             spree_image_tag(store.logo, class: opts[:class], width: opts[:width], height: opts[:height])
-          elsif store.favicon_image&.attached? && store.favicon_image&.variable?
+          elsif store.respond_to?(:favicon_image) && store.favicon_image&.attached? && store.favicon_image&.variable?
             spree_image_tag(store.favicon_image, class: opts[:class], width: opts[:width], height: opts[:height])
           else
             first_letter_icon(store.name, opts)

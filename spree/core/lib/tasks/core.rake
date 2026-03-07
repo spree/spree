@@ -8,34 +8,6 @@ namespace :db do
     end
   end
 
-  desc 'Migrate policies to store policies'
-  task migrate_policies: :environment do |_t, _args|
-    # Helper to consistently derive policy name
-    derive_policy_name = lambda do |name_str|
-      name_str.to_s.gsub(/customer_/, '').gsub(/_policy$/, '')
-    end
-
-    # Check if migration has already been run
-    if Spree::Policy.any?
-      puts "Policies already exist. Skipping migration to prevent duplicates."
-      exit
-    end
-
-    Spree::Store.all.each do |store|
-      %w[customer_terms_of_service customer_privacy_policy customer_returns_policy customer_shipping_policy].each do |policy_slug|
-        policy = store.send(policy_slug)
-        next unless policy.present?
-
-        store.policies.create(
-          name: Spree.t(derive_policy_name.call(policy_slug)),
-          body: policy.body
-        )
-
-        puts "Migrated #{policy_slug} to store #{store.id}"
-      end
-    end
-  end
-
 end
 
 namespace :core do
