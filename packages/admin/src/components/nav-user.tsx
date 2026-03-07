@@ -6,18 +6,16 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import {
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar'
 import { useAuth } from '@/hooks/use-auth'
-import { ChevronsUpDownIcon, LogOutIcon } from 'lucide-react'
+import { TablerIcon } from '@/components/tabler-icon'
 
 export function NavUser() {
   const { isMobile } = useSidebar()
@@ -38,40 +36,58 @@ export function NavUser() {
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <SidebarMenuButton
-              size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-            >
-              <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
+            <button className="flex w-full items-center gap-2 rounded-lg p-1 text-left hover:bg-gray-200/50 transition-colors duration-100 outline-none">
+              <Avatar className="size-8">
+                <AvatarFallback className="text-xs bg-zinc-950 text-white">
+                  {initials}
+                </AvatarFallback>
               </Avatar>
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{displayName}</span>
-                <span className="truncate text-xs">{user.email}</span>
-              </div>
-              <ChevronsUpDownIcon className="ml-auto size-4" />
-            </SidebarMenuButton>
+              <span className="flex-1 min-w-0 truncate text-sm text-zinc-950">
+                {displayName}
+              </span>
+            </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-            side={isMobile ? 'bottom' : 'right'}
+            className="w-56"
+            side={isMobile ? 'top' : 'right'}
             align="end"
-            sideOffset={4}
+            sideOffset={8}
           >
-            <DropdownMenuLabel className="p-0 font-normal">
-              <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
+            {/* Profile card */}
+            <div className="px-2.5 py-2.5">
+              <div className="flex items-center gap-3 rounded-xl bg-muted p-2.5">
+                <Avatar className="size-8">
+                  <AvatarFallback className="text-xs bg-zinc-950 text-white">
+                    {initials}
+                  </AvatarFallback>
                 </Avatar>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{displayName}</span>
-                  <span className="truncate text-xs">{user.email}</span>
+                <div className="grid flex-1 min-w-0 text-sm leading-tight">
+                  <span className="truncate font-medium text-zinc-950">{displayName}</span>
+                  <span className="truncate text-xs text-muted-foreground">{user.email}</span>
                 </div>
               </div>
-            </DropdownMenuLabel>
+            </div>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={logout}>
-              <LogOutIcon />
+            <DropdownMenuItem>
+              <TablerIcon name="user-scan" />
+              Edit Profile
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>
+              <TablerIcon name="book" />
+              Documentation
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <TablerIcon name="message-circle" />
+              Community
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <TablerIcon name="mail" />
+              Contact Support
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={logout} className="text-destructive focus:text-destructive">
+              <TablerIcon name="log-out" />
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>
