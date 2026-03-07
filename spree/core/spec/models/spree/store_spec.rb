@@ -739,28 +739,6 @@ describe Spree::Store, type: :model, without_global_store: true do
     end
   end
 
-  describe '#favicon' do
-    subject(:favicon) { store.favicon }
-
-    context 'with an attached favicon image' do
-      let(:store) { create(:store, :with_favicon) }
-      let(:favicon_variation) { favicon.processed.variation }
-
-      it 'returns a resized favicon' do
-        expect(favicon_variation).to be_present
-        expect(favicon_variation.transformations.fetch(:resize_to_limit)).to eq([32, 32])
-      end
-    end
-
-    context 'without an attached favicon image' do
-      let(:store) { build(:store) }
-
-      it 'returns a blank favicon' do
-        expect(favicon).to be_nil
-      end
-    end
-  end
-
   describe 'soft deletion' do
     let!(:store) { create(:store) }
 

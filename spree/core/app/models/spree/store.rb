@@ -41,9 +41,6 @@ module Spree
     preference :unit_system, :string, default: 'imperial'
     # email preferences
     preference :send_consumer_transactional_emails, :boolean, default: true
-    # SEO preferences
-    preference :index_in_search_engines, :boolean, default: false
-    preference :password_protected, :boolean, default: false
     # Checkout preferences
     preference :guest_checkout, :boolean, default: true
     preference :special_instructions_enabled, :boolean, default: false
@@ -110,18 +107,6 @@ module Spree
     has_many :api_keys, class_name: 'Spree::ApiKey', dependent: :destroy
 
 
-    #
-    # ActionText
-    #
-    has_rich_text :customer_terms_of_service
-    has_rich_text :customer_privacy_policy
-    has_rich_text :customer_returns_policy
-    has_rich_text :customer_shipping_policy
-
-    #
-    # Virtual attributes
-    #
-    store_accessor :private_metadata, :storefront_password
 
     #
     # Validations
@@ -139,14 +124,12 @@ module Spree
         connection.column_exists?(:spree_stores, :new_order_notifications_email)
       validates :new_order_notifications_email, email: { allow_blank: true }
     end
-    validates :favicon_image, :social_image, :mailer_logo, content_type: Rails.application.config.active_storage.web_image_content_types
+    validates :mailer_logo, content_type: Rails.application.config.active_storage.web_image_content_types
 
     #
     # Attachments
     #
     has_one_attached :logo, service: Spree.public_storage_service_name
-    has_one_attached :favicon_image, service: Spree.public_storage_service_name
-    has_one_attached :social_image, service: Spree.public_storage_service_name
     has_one_attached :mailer_logo, service: Spree.public_storage_service_name
 
     #
@@ -228,16 +211,6 @@ module Spree
       end
 
       @default_country_for_market = country
-    end
-
-    def seo_meta_description
-      if meta_description.present?
-        meta_description
-      elsif seo_title.present?
-        seo_title
-      else
-        name
-      end
     end
 
     def unique_name
@@ -345,12 +318,6 @@ module Spree
       users
     end
 
-    def favicon
-      return unless favicon_image.attached? && favicon_image.variable?
-
-      favicon_image.variant(resize_to_limit: [32, 32])
-    end
-
     def metric_unit_system?
       preferred_unit_system == 'metric'
     end
@@ -361,14 +328,6 @@ module Spree
 
     def digital_shipping_category
       @digital_shipping_category ||= ShippingCategory.find_or_create_by(name: 'Digital')
-    end
-
-    %w[customer_terms_of_service customer_privacy_policy customer_returns_policy customer_shipping_policy].each do |policy_method|
-      define_method policy_method do
-        Spree::Deprecation.warn("Store##{policy_method} is deprecated and will be removed in Spree 5.5. Please use Store#policies instead.")
-
-        ActionText::RichText.find_by(name: policy_method, record: self)
-      end
     end
 
     private
