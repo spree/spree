@@ -2,6 +2,8 @@ module Spree
   module Api
     module V3
       class ResourceController < BaseController
+        include Spree::Api::V3::ParamsNormalizer
+
         before_action :set_parent
         before_action :set_resource, only: [:show, :update, :destroy]
 
@@ -80,11 +82,15 @@ module Spree
 
         # Builds a new resource, using parent association when @parent is set
         def build_resource
-          if @parent.present?
-            @parent.send(parent_association).build(permitted_params)
-          else
-            model_class.new(permitted_params)
-          end
+          resource = if @parent.present?
+                       @parent.send(parent_association).build(permitted_params)
+                     else
+                       model_class.new(permitted_params)
+                     end
+          resource.store = current_store if resource.respond_to?(:store_id) && resource.store_id.blank?
+          resource.store_ids = [current_store.id] if resource.respond_to?(:store_ids) && resource.store_ids.blank?
+          resource.created_by = try_spree_current_user if resource.respond_to?(:created_by_id)
+          resource
         end
 
         # Finds a single resource within scope using prefixed ID

@@ -77,23 +77,44 @@ module Spree
                 }
               }
             },
-            AuthResponse: {
-              type: :object,
-              properties: {
-                token: { type: :string, description: 'JWT access token' },
-                user: { '$ref' => '#/components/schemas/StoreCustomer' }
-              },
-              required: %w[token user]
-            }
           }
         end
 
-        # Get all schemas (Typelizer + common)
+        # Get store schemas (Typelizer Store* + common)
         def all_schemas
           schemas = common_schemas
+          schemas[:AuthResponse] = {
+            type: :object,
+            properties: {
+              token: { type: :string, description: 'JWT access token' },
+              user: { '$ref' => '#/components/schemas/StoreCustomer' }
+            },
+            required: %w[token user]
+          }
 
           begin
-            schemas.merge!(typelizer_schemas)
+            schemas.merge!(typelizer_schemas('Store'))
+          rescue StandardError => e
+            Rails.logger.warn "Failed to load Typelizer schemas: #{e.message}"
+          end
+
+          schemas
+        end
+
+        # Get admin schemas (Typelizer Admin* + common)
+        def admin_schemas
+          schemas = common_schemas
+          schemas[:AdminAuthResponse] = {
+            type: :object,
+            properties: {
+              token: { type: :string, description: 'JWT access token' },
+              user: { '$ref' => '#/components/schemas/AdminAdminUser' }
+            },
+            required: %w[token user]
+          }
+
+          begin
+            schemas.merge!(typelizer_schemas('Admin'))
           rescue StandardError => e
             Rails.logger.warn "Failed to load Typelizer schemas: #{e.message}"
           end
@@ -103,10 +124,10 @@ module Spree
 
         private
 
-        def typelizer_schemas
+        def typelizer_schemas(prefix)
           with_typelizer_enabled do
             schemas = Typelizer.openapi_schemas
-            schemas = schemas.select { |key, _| key.to_s.start_with?('Store') }
+            schemas = schemas.select { |key, _| key.to_s.start_with?(prefix) }
             schemas.each_value do |s|
               s[:'x-typelizer'] = true
               strip_null_from_enums(s)

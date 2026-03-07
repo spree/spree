@@ -105,6 +105,95 @@ RSpec.configure do |config|
         },
         schemas: Spree::Api::OpenAPI::SchemaHelper.all_schemas
       }
+    },
+
+    # Admin API v3 - Administrative API for managing store resources
+    'api-reference/admin.yaml' => {
+      openapi: '3.0.3',
+      info: {
+        title: 'Admin API',
+        contact: {
+          name: 'Spree Commerce',
+          url: 'https://spreecommerce.org',
+          email: 'hello@spreecommerce.org',
+        },
+        description: <<~DESC,
+          Spree Admin API v3 - Administrative API for managing products, orders, and store settings.
+
+          ## Authentication
+
+          The Admin API requires a secret API key passed in the `x-spree-api-key` header.
+          Secret API keys can be generated in the Spree admin dashboard.
+
+          ## Response Format
+
+          All responses are JSON. List endpoints return paginated responses with `data` and `meta` keys.
+          Single resource endpoints return a flat JSON object.
+
+          ## Prefixed IDs
+
+          All resources use Stripe-style prefixed IDs (e.g., `prod_86Rf07xd4z`, `variant_k5nR8xLq`).
+          These IDs must be used in all API requests.
+
+          ## Error Handling
+
+          Errors return a consistent format:
+          ```json
+          {
+            "error": {
+              "code": "validation_error",
+              "message": "Validation failed",
+              "details": { "name": ["can't be blank"] }
+            }
+          }
+          ```
+        DESC
+        version: 'v3'
+      },
+      paths: {},
+      servers: [
+        {
+          url: 'http://{defaultHost}',
+          variables: {
+            defaultHost: {
+              default: 'localhost:3000'
+            }
+          }
+        }
+      ],
+      tags: [
+        { name: 'Authentication', description: 'Admin user authentication' },
+        { name: 'Products', description: 'Product management' },
+        { name: 'Variants', description: 'Product variant management' },
+        { name: 'Option Types', description: 'Option type and value management' },
+        { name: 'Taxonomies', description: 'Taxonomy management' },
+        { name: 'Taxons', description: 'Taxon (category) management' },
+        { name: 'Assets', description: 'Product image and asset management' },
+        { name: 'Prices', description: 'Variant price management' }
+      ],
+      'x-tagGroups': [
+        { name: 'Authentication', tags: ['Authentication'] },
+        { name: 'Catalog', tags: %w[Products Variants Assets Prices] },
+        { name: 'Categories', tags: %w[Taxonomies Taxons] },
+        { name: 'Options', tags: ['Option Types'] }
+      ],
+      components: {
+        securitySchemes: {
+          api_key: {
+            type: :apiKey,
+            name: 'x-spree-api-key',
+            in: :header,
+            description: 'Secret API key for admin access'
+          },
+          bearer_auth: {
+            type: :http,
+            scheme: :bearer,
+            bearerFormat: 'JWT',
+            description: 'JWT token for admin user authentication'
+          }
+        },
+        schemas: Spree::Api::OpenAPI::SchemaHelper.admin_schemas
+      }
     }
   }
 

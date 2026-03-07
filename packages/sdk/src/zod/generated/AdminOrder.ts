@@ -1,12 +1,15 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import { AdminAdjustmentSchema } from './AdminAdjustment';
 import { AdminCustomerSchema } from './AdminCustomer';
 import { AdminLineItemSchema } from './AdminLineItem';
+import { AdminPaymentSchema } from './AdminPayment';
+import { AdminReimbursementSchema } from './AdminReimbursement';
+import { AdminReturnAuthorizationSchema } from './AdminReturnAuthorization';
+import { AdminShipmentSchema } from './AdminShipment';
 import { StoreAddressSchema } from './StoreAddress';
 import { StoreOrderPromotionSchema } from './StoreOrderPromotion';
-import { StorePaymentSchema } from './StorePayment';
 import { StorePaymentMethodSchema } from './StorePaymentMethod';
-import { StoreShipmentSchema } from './StoreShipment';
 
 export const AdminOrderSchema: z.ZodObject<any> = z.object({
   id: z.string(),
@@ -42,9 +45,9 @@ export const AdminOrderSchema: z.ZodObject<any> = z.object({
   created_at: z.string(),
   updated_at: z.string(),
   order_promotions: z.array(StoreOrderPromotionSchema),
-  line_items: z.array(AdminLineItemSchema),
-  shipments: z.array(StoreShipmentSchema),
-  payments: z.array(StorePaymentSchema),
+  line_items: z.array(z.lazy(() => AdminLineItemSchema)),
+  shipments: z.array(z.lazy(() => AdminShipmentSchema)),
+  payments: z.array(z.lazy(() => AdminPaymentSchema)),
   bill_address: StoreAddressSchema.nullable(),
   ship_address: StoreAddressSchema.nullable(),
   payment_methods: z.array(StorePaymentMethodSchema),
@@ -54,13 +57,22 @@ export const AdminOrderSchema: z.ZodObject<any> = z.object({
   confirmation_delivered: z.boolean(),
   store_owner_notification_delivered: z.boolean(),
   internal_note: z.string().nullable(),
-  approver_id: z.string().nullable(),
+  payment_total: z.string(),
+  display_payment_total: z.string(),
   canceled_at: z.string().nullable(),
   approved_at: z.string().nullable(),
   metadata: z.record(z.string(), z.unknown()).nullable(),
+  approver_id: z.string().nullable(),
   canceler_id: z.string().nullable(),
   created_by_id: z.string().nullable(),
+  user_id: z.string().nullable(),
   user: z.lazy(() => AdminCustomerSchema).optional(),
+  approver: z.lazy(() => AdminCustomerSchema).optional(),
+  canceler: z.lazy(() => AdminCustomerSchema).optional(),
+  created_by: z.lazy(() => AdminCustomerSchema).optional(),
+  adjustments: z.array(z.lazy(() => AdminAdjustmentSchema)).optional(),
+  return_authorizations: z.array(AdminReturnAuthorizationSchema).optional(),
+  reimbursements: z.array(AdminReimbursementSchema).optional(),
 });
 
 export type AdminOrder = z.infer<typeof AdminOrderSchema>;

@@ -123,6 +123,8 @@ module Spree
         currency_serializer: 'Spree::Api::V3::CurrencySerializer',
         locale_serializer: 'Spree::Api::V3::LocaleSerializer',
         metafield_serializer: 'Spree::Api::V3::MetafieldSerializer',
+        shipping_category_serializer: 'Spree::Api::V3::ShippingCategorySerializer',
+        tax_category_serializer: 'Spree::Api::V3::TaxCategorySerializer',
 
         # v3 event serializers (for models without Store API endpoints yet)
         asset_serializer: 'Spree::Api::V3::AssetSerializer',
@@ -154,6 +156,20 @@ module Spree
         admin_taxon_serializer: 'Spree::Api::V3::Admin::TaxonSerializer',
         admin_line_item_serializer: 'Spree::Api::V3::Admin::LineItemSerializer',
         admin_taxonomy_serializer: 'Spree::Api::V3::Admin::TaxonomySerializer',
+        admin_option_type_serializer: 'Spree::Api::V3::Admin::OptionTypeSerializer',
+        admin_option_value_serializer: 'Spree::Api::V3::Admin::OptionValueSerializer',
+        admin_image_serializer: 'Spree::Api::V3::Admin::ImageSerializer',
+        admin_asset_serializer: 'Spree::Api::V3::Admin::AssetSerializer',
+        admin_stock_item_serializer: 'Spree::Api::V3::Admin::StockItemSerializer',
+        admin_shipment_serializer: 'Spree::Api::V3::Admin::ShipmentSerializer',
+        admin_payment_serializer: 'Spree::Api::V3::Admin::PaymentSerializer',
+        admin_refund_serializer: 'Spree::Api::V3::Admin::RefundSerializer',
+        admin_adjustment_serializer: 'Spree::Api::V3::Admin::AdjustmentSerializer',
+        admin_shipping_category_serializer: 'Spree::Api::V3::Admin::ShippingCategorySerializer',
+        admin_tax_category_serializer: 'Spree::Api::V3::Admin::TaxCategorySerializer',
+        admin_return_authorization_serializer: 'Spree::Api::V3::Admin::ReturnAuthorizationSerializer',
+        admin_reimbursement_serializer: 'Spree::Api::V3::Admin::ReimbursementSerializer',
+        admin_admin_user_serializer: 'Spree::Api::V3::Admin::AdminUserSerializer',
 
         # platform serializers
         platform_metafield_serializer: 'Spree::Api::V2::Platform::MetafieldSerializer',

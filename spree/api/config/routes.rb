@@ -89,6 +89,65 @@ Spree::Core::Engine.add_routes do
         get 'digitals/:token', to: 'digitals#show', as: :digital_download
 
       end
+
+      namespace :admin do
+        # Authentication
+        post 'auth/login', to: 'auth#create'
+        post 'auth/refresh', to: 'auth#refresh'
+
+        # Products
+        resources :products do
+          member do
+            post :clone
+          end
+          resources :variants, controller: 'products/variants' do
+            resources :assets, controller: 'assets', only: [:index, :create, :update, :destroy]
+          end
+          resources :assets, controller: 'assets', only: [:index, :create, :update, :destroy]
+        end
+
+        # Taxonomies > Taxons
+        resources :taxonomies do
+          resources :taxons, controller: 'taxonomies/taxons'
+        end
+
+        # Taxons (flat, top-level)
+        resources :taxons, only: [:index, :show]
+
+        # Option Types (with nested option_values in payload)
+        resources :option_types
+
+        # Orders
+        resources :orders do
+          member do
+            patch :next
+            patch :advance
+            patch :complete
+            patch :cancel
+            patch :approve
+            patch :resume
+            post :resend_confirmation
+          end
+
+          resources :line_items, controller: 'orders/line_items'
+          resources :shipments, controller: 'orders/shipments', only: [:index, :show, :update] do
+            member do
+              patch :ship
+              patch :cancel
+              patch :resume
+              patch :split
+            end
+          end
+          resources :payments, controller: 'orders/payments', only: [:index, :show, :create] do
+            member do
+              patch :capture
+              patch :void
+            end
+          end
+          resources :refunds, controller: 'orders/refunds', only: [:index, :create]
+          resources :adjustments, controller: 'orders/adjustments', only: [:index, :show, :create, :update, :destroy]
+        end
+      end
     end
   end
 end

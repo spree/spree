@@ -85,6 +85,52 @@ describe('SpreeClient', () => {
     expect(capturedHeaders['x-spree-api-key']).toBe('my-secret-key');
   });
 
+  it('sends x-spree-api-key header on admin requests with secretKey', async () => {
+    let capturedHeaders: Record<string, string> = {};
+    const customFetch = async (input: string | URL | Request, init?: RequestInit) => {
+      capturedHeaders = Object.fromEntries(
+        Object.entries(init?.headers as Record<string, string> || {})
+      );
+      return new Response(JSON.stringify({ data: [], meta: { page: 1, limit: 25, count: 0, pages: 0 } }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    };
+
+    const client = createSpreeClient({
+      baseUrl: TEST_BASE_URL,
+      secretKey: 'spree_sk_test_secret',
+      fetch: customFetch,
+    });
+
+    await client.admin.products.list();
+    expect(capturedHeaders['x-spree-api-key']).toBe('spree_sk_test_secret');
+    expect(capturedHeaders['Authorization']).toBeUndefined();
+  });
+
+  it('does not send Authorization: Bearer with secretKey for admin requests', async () => {
+    let capturedHeaders: Record<string, string> = {};
+    const customFetch = async (input: string | URL | Request, init?: RequestInit) => {
+      capturedHeaders = Object.fromEntries(
+        Object.entries(init?.headers as Record<string, string> || {})
+      );
+      return new Response(JSON.stringify({ data: [], meta: { page: 1, limit: 25, count: 0, pages: 0 } }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    };
+
+    const client = createSpreeClient({
+      baseUrl: TEST_BASE_URL,
+      secretKey: 'spree_sk_my_key',
+      fetch: customFetch,
+    });
+
+    await client.admin.products.list();
+    expect(capturedHeaders['x-spree-api-key']).toBe('spree_sk_my_key');
+    expect(capturedHeaders['Authorization']).toBeUndefined();
+  });
+
   it('does not send x-spree-api-key header when publishableKey is not provided', async () => {
     let capturedHeaders: Record<string, string> = {};
     const customFetch = async (input: string | URL | Request, init?: RequestInit) => {

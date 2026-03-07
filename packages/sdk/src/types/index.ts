@@ -37,7 +37,7 @@ export interface ErrorResponse {
   };
 }
 
-// Auth types
+// Auth types (Store)
 export interface AuthTokens {
   token: string;
   user: {
@@ -51,6 +51,25 @@ export interface AuthTokens {
 export interface LoginCredentials {
   email: string;
   password: string;
+}
+
+// Auth types (Admin)
+export interface AdminAuthTokens {
+  token: string;
+  user: {
+    id: string;
+    email: string;
+    first_name: string | null;
+    last_name: string | null;
+    created_at: string;
+    updated_at: string;
+  };
+}
+
+export interface AdminLoginCredentials {
+  email: string;
+  password: string;
+  provider?: string;
 }
 
 export interface RegisterParams {

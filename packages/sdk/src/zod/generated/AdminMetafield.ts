@@ -8,6 +8,8 @@ export const AdminMetafieldSchema = z.object({
   key: z.string(),
   value: z.any(),
   display_on: z.string(),
+  created_at: z.string(),
+  updated_at: z.string(),
 });
 
 export type AdminMetafield = z.infer<typeof AdminMetafieldSchema>;
