@@ -77,20 +77,20 @@ module Spree
                 }
               }
             },
-            AuthResponse: {
-              type: :object,
-              properties: {
-                token: { type: :string, description: 'JWT access token' },
-                user: { '$ref' => '#/components/schemas/StoreCustomer' }
-              },
-              required: %w[token user]
-            }
           }
         end
 
         # Get store schemas (Typelizer Store* + common)
         def all_schemas
           schemas = common_schemas
+          schemas[:AuthResponse] = {
+            type: :object,
+            properties: {
+              token: { type: :string, description: 'JWT access token' },
+              user: { '$ref' => '#/components/schemas/StoreCustomer' }
+            },
+            required: %w[token user]
+          }
 
           begin
             schemas.merge!(typelizer_schemas('Store'))
@@ -104,6 +104,14 @@ module Spree
         # Get admin schemas (Typelizer Admin* + common)
         def admin_schemas
           schemas = common_schemas
+          schemas[:AdminAuthResponse] = {
+            type: :object,
+            properties: {
+              token: { type: :string, description: 'JWT access token' },
+              user: { '$ref' => '#/components/schemas/AdminAdminUser' }
+            },
+            required: %w[token user]
+          }
 
           begin
             schemas.merge!(typelizer_schemas('Admin'))

@@ -1,5 +1,6 @@
 // This file is auto-generated. Do not edit directly.
 export { AdminAdjustmentSchema, type AdminAdjustment } from './AdminAdjustment';
+export { AdminAdminUserSchema, type AdminAdminUser } from './AdminAdminUser';
 export { AdminAssetSchema, type AdminAsset } from './AdminAsset';
 export { AdminCustomerSchema, type AdminCustomer } from './AdminCustomer';
 export { AdminImageSchema, type AdminImage } from './AdminImage';

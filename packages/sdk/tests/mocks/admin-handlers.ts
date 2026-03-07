@@ -122,7 +122,29 @@ export const adminFixtures = {
 
 const paginationMeta = { page: 1, limit: 25, count: 1, pages: 1 };
 
+export const adminFixtureAuth = {
+  adminUser: {
+    id: 'adm_1',
+    email: 'admin@example.com',
+    first_name: 'Admin',
+    last_name: 'User',
+    created_at: '2026-01-01T00:00:00.000Z',
+    updated_at: '2026-03-06T12:00:00.000Z',
+  },
+};
+
 export const adminHandlers = [
+  // ============================================
+  // Authentication
+  // ============================================
+  http.post(`${API_PREFIX}/auth/login`, () =>
+    HttpResponse.json({ token: 'admin-jwt-token', user: adminFixtureAuth.adminUser })
+  ),
+
+  http.post(`${API_PREFIX}/auth/refresh`, () =>
+    HttpResponse.json({ token: 'refreshed-admin-jwt-token', user: adminFixtureAuth.adminUser })
+  ),
+
   // ============================================
   // Option Types
   // ============================================

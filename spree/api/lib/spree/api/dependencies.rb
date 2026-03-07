@@ -169,6 +169,7 @@ module Spree
         admin_tax_category_serializer: 'Spree::Api::V3::Admin::TaxCategorySerializer',
         admin_return_authorization_serializer: 'Spree::Api::V3::Admin::ReturnAuthorizationSerializer',
         admin_reimbursement_serializer: 'Spree::Api::V3::Admin::ReimbursementSerializer',
+        admin_admin_user_serializer: 'Spree::Api::V3::Admin::AdminUserSerializer',
 
         # platform serializers
         platform_metafield_serializer: 'Spree::Api::V2::Platform::MetafieldSerializer',

@@ -233,6 +233,9 @@ function analyzeResources(spec: OpenApiSpec): Resource[] {
 
     const apiPath = fullPath.slice(API_PREFIX.length); // e.g. '/products', '/products/{id}'
 
+    // Skip auth paths — these are hand-written in the AdminClient class
+    if (apiPath.startsWith('/auth')) continue;
+
     for (const [method, operation] of Object.entries(methods)) {
       if (!operation || typeof operation !== 'object') continue;
       const httpMethod = method.toUpperCase();
@@ -639,6 +642,8 @@ function generateClient(spec: OpenApiSpec): { client: string; params: string } {
   out.push(`import type {`);
   out.push(`  PaginatedResponse,`);
   out.push(`  ListParams,`);
+  out.push(`  AdminAuthTokens,`);
+  out.push(`  AdminLoginCredentials,`);
   for (const t of importedTypes) {
     out.push(`  ${t},`);
   }
@@ -680,6 +685,20 @@ function generateClient(spec: OpenApiSpec): { client: string; params: string } {
   out.push(`  constructor(request: RequestFn) {`);
   out.push(`    this.request = request;`);
   out.push(`  }`);
+  out.push(``);
+  out.push(`  // ============================================`);
+  out.push(`  // Authentication (hand-written, not auto-generated)`);
+  out.push(`  // ============================================`);
+  out.push(``);
+  out.push(`  readonly auth = {`);
+  out.push(`    /** Login with email and password */`);
+  out.push(`    login: (credentials: AdminLoginCredentials): Promise<AdminAuthTokens> =>`);
+  out.push(`      this.request<AdminAuthTokens>('POST', '/auth/login', { body: credentials }),`);
+  out.push(``);
+  out.push(`    /** Refresh access token (requires valid Bearer token) */`);
+  out.push(`    refresh: (options: RequestOptions): Promise<AdminAuthTokens> =>`);
+  out.push(`      this.request<AdminAuthTokens>('POST', '/auth/refresh', options),`);
+  out.push(`  };`);
 
   // Top-level resources
   for (const resource of topLevel) {

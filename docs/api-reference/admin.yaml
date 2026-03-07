@@ -90,8 +90,8 @@ paths:
                   viewable_type: Spree::Variant
                   position: 1
                   alt:
-                  created_at: '2026-03-06T19:36:27.564Z'
-                  updated_at: '2026-03-06T19:36:27.571Z'
+                  created_at: '2026-03-07T09:48:52.536Z'
+                  updated_at: '2026-03-07T09:48:52.543Z'
                 meta:
                   page: 1
                   limit: 25
@@ -209,8 +209,8 @@ paths:
                 viewable_type: Spree::Variant
                 position: 1
                 alt: Updated alt text
-                created_at: '2026-03-06T19:36:28.322Z'
-                updated_at: '2026-03-06T19:36:28.611Z'
+                created_at: '2026-03-07T09:48:53.343Z'
+                updated_at: '2026-03-07T09:48:53.644Z'
       requestBody:
         content:
           application/json:
@@ -258,6 +258,143 @@ paths:
       responses:
         '204':
           description: asset deleted
+  "/api/v3/admin/auth/login":
+    post:
+      summary: Login
+      tags:
+      - Authentication
+      security:
+      - api_key: []
+      description: Authenticates an admin user with email/password and returns a JWT
+        token
+      x-codeSamples:
+      - lang: javascript
+        label: Spree SDK
+        source: |-
+          import { createSpreeClient } from '@spree/sdk'
+
+          const client = createSpreeClient({
+            baseUrl: 'https://your-store.com',
+            publishableKey: '<api-key>',
+          })
+
+          const auth = await client.admin.auth.login({
+            email: 'admin@example.com',
+            password: 'password123',
+          })
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: login successful
+          content:
+            application/json:
+              example:
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6IjE1OGE1YzExLWE2NzktNDQyMi05ZDc5LTQ0NThkM2U5Yjk2ZiIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzcyODgwNTM0fQ.BN4XFSIuQQwCrQ_FIPVcGps5xgYLNiws_tuwIJxawBA
+                user:
+                  id: admin_UkLWZg9DAJ
+                  email: afton@gorczanysteuber.biz
+                  first_name: Sook
+                  last_name: Heathcote
+                  created_at: '2026-03-07T09:48:54.263Z'
+                  updated_at: '2026-03-07T09:48:54.263Z'
+              schema:
+                "$ref": "#/components/schemas/AdminAuthResponse"
+        '401':
+          description: non-admin user
+          content:
+            application/json:
+              example:
+                error:
+                  code: authentication_failed
+                  message: Invalid email or password
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                provider:
+                  type: string
+                  example: email
+                  description: 'Authentication provider (default: email)'
+                email:
+                  type: string
+                  format: email
+                  example: admin@example.com
+                password:
+                  type: string
+                  example: password123
+              required:
+              - email
+              - password
+  "/api/v3/admin/auth/refresh":
+    post:
+      summary: Refresh token
+      tags:
+      - Authentication
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Generates a new JWT token for the authenticated admin user
+      x-codeSamples:
+      - lang: javascript
+        label: Spree SDK
+        source: |-
+          import { createSpreeClient } from '@spree/sdk'
+
+          const client = createSpreeClient({
+            baseUrl: 'https://your-store.com',
+            publishableKey: '<api-key>',
+          })
+
+          const auth = await client.admin.auth.refresh({
+            bearerToken: '<token>',
+          })
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      responses:
+        '200':
+          description: token refreshed
+          content:
+            application/json:
+              example:
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJhZG1pbiIsImp0aSI6IjdhZDczMmY4LWJiMTktNDU2MS04MWUxLTEwZDRhZjIxN2IyYSIsImlzcyI6InNwcmVlIiwiYXVkIjoiYWRtaW5fYXBpIiwiZXhwIjoxNzcyODgwNTM1fQ.yR3s9n89lASSQ1OOBW2bBFF3eH-8xelkVq_ymUiAGfQ
+                user:
+                  id: admin_UkLWZg9DAJ
+                  email: ludivina.koelpin@lueilwitzbrekke.co.uk
+                  first_name: Alena
+                  last_name: Schaden
+                  created_at: '2026-03-07T09:48:55.946Z'
+                  updated_at: '2026-03-07T09:48:55.946Z'
+              schema:
+                "$ref": "#/components/schemas/AdminAuthResponse"
+        '401':
+          description: missing or invalid token
+          content:
+            application/json:
+              example:
+                error:
+                  code: authentication_required
+                  message: Authentication required
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
   "/api/v3/admin/option_types":
     get:
       summary: List option types
@@ -309,6 +446,8 @@ paths:
                   presentation: Size
                   position: 1
                   filterable: true
+                  created_at: '2026-03-07T09:48:55.974Z'
+                  updated_at: '2026-03-07T09:48:55.974Z'
                   option_values: []
                 meta:
                   page: 1
@@ -376,6 +515,8 @@ paths:
                 presentation: Material
                 position: 2
                 filterable: true
+                created_at: '2026-03-07T09:48:56.832Z'
+                updated_at: '2026-03-07T09:48:56.832Z'
                 option_values: []
               schema:
                 "$ref": "#/components/schemas/AdminOptionType"
@@ -467,6 +608,8 @@ paths:
                 presentation: Size
                 position: 1
                 filterable: true
+                created_at: '2026-03-07T09:48:57.122Z'
+                updated_at: '2026-03-07T09:48:57.122Z'
                 option_values: []
               schema:
                 "$ref": "#/components/schemas/AdminOptionType"
@@ -517,6 +660,8 @@ paths:
                 presentation: Updated Presentation
                 position: 1
                 filterable: true
+                created_at: '2026-03-07T09:48:57.694Z'
+                updated_at: '2026-03-07T09:48:57.977Z'
                 option_values: []
               schema:
                 "$ref": "#/components/schemas/AdminOptionType"
@@ -596,6 +741,279 @@ paths:
       responses:
         '204':
           description: option type deleted
+  "/api/v3/admin/orders/{order_id}/adjustments":
+    get:
+      summary: List adjustments
+      tags:
+      - Adjustments
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Returns all adjustments for an order.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order prefixed ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: adjustments found
+          content:
+            application/json:
+              example:
+                data:
+                - id: adj_UkLWZg9DAJ
+                  amount: '0.0'
+                  label: Admin discount
+                  eligible: true
+                  state: open
+                  included: false
+                  mandatory:
+                  created_at: '2026-03-07T09:48:58.916Z'
+                  updated_at: '2026-03-07T09:48:58.922Z'
+                  source_type: Spree::TaxRate
+                  source_id: tax_UkLWZg9DAJ
+                  adjustable_type: Spree::Order
+                  adjustable_id: or_UkLWZg9DAJ
+                  order_id: or_UkLWZg9DAJ
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+    post:
+      summary: Create an adjustment
+      tags:
+      - Adjustments
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Creates a manual adjustment on an order (e.g., admin discount,
+        fee).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order prefixed ID
+        schema:
+          type: string
+      responses:
+        '201':
+          description: adjustment created
+          content:
+            application/json:
+              example:
+                id: adj_gbHJdmfrXB
+                amount: "-10.0"
+                label: VIP discount
+                eligible: true
+                state: open
+                included: false
+                mandatory:
+                created_at: '2026-03-07T09:48:59.778Z'
+                updated_at: '2026-03-07T09:48:59.778Z'
+                source_type:
+                source_id:
+                adjustable_type: Spree::Order
+                adjustable_id: or_UkLWZg9DAJ
+                order_id: or_UkLWZg9DAJ
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - amount
+              - label
+              properties:
+                amount:
+                  type: number
+                  example: -5.0
+                  description: Negative for discounts, positive for fees
+                label:
+                  type: string
+                  example: Admin discount
+  "/api/v3/admin/orders/{order_id}/adjustments/{id}":
+    get:
+      summary: Show an adjustment
+      tags:
+      - Adjustments
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Returns details of a specific adjustment.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order prefixed ID
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Adjustment prefixed ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: adjustment found
+          content:
+            application/json:
+              example:
+                id: adj_UkLWZg9DAJ
+                amount: '0.0'
+                label: Admin discount
+                eligible: true
+                state: open
+                included: false
+                mandatory:
+                created_at: '2026-03-07T09:49:00.142Z'
+                updated_at: '2026-03-07T09:49:00.145Z'
+                source_type: Spree::TaxRate
+                source_id: tax_UkLWZg9DAJ
+                adjustable_type: Spree::Order
+                adjustable_id: or_UkLWZg9DAJ
+                order_id: or_UkLWZg9DAJ
+    patch:
+      summary: Update an adjustment
+      tags:
+      - Adjustments
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Updates an adjustment amount or label.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order prefixed ID
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Adjustment prefixed ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: adjustment updated
+          content:
+            application/json:
+              example:
+                id: adj_UkLWZg9DAJ
+                amount: '15.0'
+                label: Updated discount
+                eligible: true
+                state: open
+                included: false
+                mandatory:
+                created_at: '2026-03-07T09:49:00.708Z'
+                updated_at: '2026-03-07T09:49:00.994Z'
+                source_type: Spree::TaxRate
+                source_id: tax_UkLWZg9DAJ
+                adjustable_type: Spree::Order
+                adjustable_id: or_UkLWZg9DAJ
+                order_id: or_UkLWZg9DAJ
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: number
+                label:
+                  type: string
+                eligible:
+                  type: boolean
+    delete:
+      summary: Delete an adjustment
+      tags:
+      - Adjustments
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Deletes an adjustment from an order.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order prefixed ID
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Adjustment prefixed ID
+        schema:
+          type: string
+      responses:
+        '204':
+          description: adjustment deleted
   "/api/v3/admin/orders/{order_id}/line_items":
     get:
       summary: List line items
@@ -634,8 +1052,8 @@ paths:
                   variant_id: variant_gbHJdmfrXB
                   quantity: 2
                   currency: USD
-                  name: Product 55441
-                  slug: product-55441
+                  name: Product 54277
+                  slug: product-54277
                   options_text: 'Size: S'
                   price: '10.0'
                   display_price: "$10.00"
@@ -654,8 +1072,8 @@ paths:
                   discounted_amount: '20.0'
                   display_discounted_amount: "$20.00"
                   display_compare_at_amount: "$0.00"
-                  created_at: '2026-03-06T19:36:31.951Z'
-                  updated_at: '2026-03-06T19:36:31.951Z'
+                  created_at: '2026-03-07T09:49:01.917Z'
+                  updated_at: '2026-03-07T09:49:01.917Z'
                   compare_at_amount:
                   thumbnail_url:
                   option_values:
@@ -668,6 +1086,9 @@ paths:
                     option_type_presentation: Size
                   digital_links: []
                   metadata:
+                  cost_price: '17.0'
+                  tax_category_id: taxcat_UkLWZg9DAJ
+                  order_id: or_UkLWZg9DAJ
                 meta:
                   page: 1
                   limit: 25
@@ -714,8 +1135,8 @@ paths:
                 variant_id: variant_VqXmZF31wY
                 quantity: 3
                 currency: USD
-                name: Product 75077
-                slug: product-75077
+                name: Product 74079
+                slug: product-74079
                 options_text: 'Size: S'
                 price: '19.99'
                 display_price: "$19.99"
@@ -734,8 +1155,8 @@ paths:
                 discounted_amount: '59.97'
                 display_discounted_amount: "$59.97"
                 display_compare_at_amount: "$0.00"
-                created_at: '2026-03-06T19:36:32.908Z'
-                updated_at: '2026-03-06T19:36:32.908Z'
+                created_at: '2026-03-07T09:49:02.880Z'
+                updated_at: '2026-03-07T09:49:02.880Z'
                 compare_at_amount:
                 thumbnail_url:
                 option_values:
@@ -748,6 +1169,9 @@ paths:
                   option_type_presentation: Size
                 digital_links: []
                 metadata:
+                cost_price: '17.0'
+                tax_category_id: taxcat_UkLWZg9DAJ
+                order_id: or_UkLWZg9DAJ
       requestBody:
         content:
           application/json:
@@ -805,8 +1229,8 @@ paths:
                 variant_id: variant_gbHJdmfrXB
                 quantity: 2
                 currency: USD
-                name: Product 8356
-                slug: product-8356
+                name: Product 83056
+                slug: product-83056
                 options_text: 'Size: S'
                 price: '10.0'
                 display_price: "$10.00"
@@ -825,8 +1249,8 @@ paths:
                 discounted_amount: '20.0'
                 display_discounted_amount: "$20.00"
                 display_compare_at_amount: "$0.00"
-                created_at: '2026-03-06T19:36:33.265Z'
-                updated_at: '2026-03-06T19:36:33.265Z'
+                created_at: '2026-03-07T09:49:03.230Z'
+                updated_at: '2026-03-07T09:49:03.230Z'
                 compare_at_amount:
                 thumbnail_url:
                 option_values:
@@ -839,6 +1263,9 @@ paths:
                   option_type_presentation: Size
                 digital_links: []
                 metadata:
+                cost_price: '17.0'
+                tax_category_id: taxcat_UkLWZg9DAJ
+                order_id: or_UkLWZg9DAJ
     patch:
       summary: Update a line item
       tags:
@@ -881,8 +1308,8 @@ paths:
                 variant_id: variant_gbHJdmfrXB
                 quantity: 5
                 currency: USD
-                name: Product 94615
-                slug: product-94615
+                name: Product 97809
+                slug: product-97809
                 options_text: 'Size: S'
                 price: '19.99'
                 display_price: "$19.99"
@@ -901,8 +1328,8 @@ paths:
                 discounted_amount: '99.95'
                 display_discounted_amount: "$99.95"
                 display_compare_at_amount: "$0.00"
-                created_at: '2026-03-06T19:36:33.864Z'
-                updated_at: '2026-03-06T19:36:34.175Z'
+                created_at: '2026-03-07T09:49:03.877Z'
+                updated_at: '2026-03-07T09:49:04.178Z'
                 compare_at_amount:
                 thumbnail_url:
                 option_values:
@@ -915,6 +1342,9 @@ paths:
                   option_type_presentation: Size
                 digital_links: []
                 metadata:
+                cost_price: '17.0'
+                tax_category_id: taxcat_UkLWZg9DAJ
+                order_id: or_UkLWZg9DAJ
       requestBody:
         content:
           application/json:
@@ -958,6 +1388,1081 @@ paths:
       responses:
         '204':
           description: line item removed
+  "/api/v3/admin/orders/{order_id}/payments":
+    get:
+      summary: List payments
+      tags:
+      - Payments
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Returns all payments for an order.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order prefixed ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: payments found
+          content:
+            application/json:
+              example:
+                data:
+                - id: py_UkLWZg9DAJ
+                  payment_method_id: pm_UkLWZg9DAJ
+                  state: completed
+                  response_code: '12345'
+                  number: P5NANKE0
+                  amount: '110.0'
+                  display_amount: "$110.00"
+                  created_at: '2026-03-07T09:49:05.222Z'
+                  updated_at: '2026-03-07T09:49:05.222Z'
+                  source_type: credit_card
+                  source_id: card_UkLWZg9DAJ
+                  source:
+                    id: card_UkLWZg9DAJ
+                    cc_type: visa
+                    last_digits: '1111'
+                    month: 12
+                    year: 2027
+                    name: Spree Commerce
+                    default: false
+                    gateway_payment_profile_id:
+                  payment_method:
+                    id: pm_UkLWZg9DAJ
+                    name: Credit Card
+                    description:
+                    type: Spree::Gateway::Bogus
+                    session_required: true
+                  avs_response:
+                  cvv_response_code:
+                  cvv_response_message:
+                  metadata:
+                  captured_amount: '0.0'
+                  order_id: or_UkLWZg9DAJ
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+    post:
+      summary: Create a payment
+      tags:
+      - Payments
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Creates a new payment for the order.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order prefixed ID
+        schema:
+          type: string
+      responses:
+        '201':
+          description: payment created
+          content:
+            application/json:
+              example:
+                id: py_gbHJdmfrXB
+                payment_method_id: pm_EfhxLZ9ck8
+                state: checkout
+                response_code:
+                number: P3KGU7F5
+                amount: '110.0'
+                display_amount: "$110.00"
+                created_at: '2026-03-07T09:49:06.611Z'
+                updated_at: '2026-03-07T09:49:06.611Z'
+                source_type:
+                source_id:
+                source:
+                payment_method:
+                  id: pm_EfhxLZ9ck8
+                  name: Check
+                  description:
+                  type: Spree::PaymentMethod::Check
+                  session_required: false
+                avs_response:
+                cvv_response_code:
+                cvv_response_message:
+                metadata:
+                captured_amount: '0.0'
+                order_id: or_gbHJdmfrXB
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - payment_method_id
+              properties:
+                payment_method_id:
+                  type: string
+                  description: Payment method ID or prefixed ID
+                amount:
+                  type: number
+                  example: 99.99
+                source_id:
+                  type: string
+                  description: Payment source prefixed ID
+  "/api/v3/admin/orders/{order_id}/payments/{id}":
+    get:
+      summary: Show a payment
+      tags:
+      - Payments
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Returns details of a specific payment.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order prefixed ID
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Payment prefixed ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: payment found
+          content:
+            application/json:
+              example:
+                id: py_UkLWZg9DAJ
+                payment_method_id: pm_UkLWZg9DAJ
+                state: completed
+                response_code: '12345'
+                number: PYESX0KG
+                amount: '110.0'
+                display_amount: "$110.00"
+                created_at: '2026-03-07T09:49:06.982Z'
+                updated_at: '2026-03-07T09:49:06.982Z'
+                source_type: credit_card
+                source_id: card_UkLWZg9DAJ
+                source:
+                  id: card_UkLWZg9DAJ
+                  cc_type: visa
+                  last_digits: '1111'
+                  month: 12
+                  year: 2027
+                  name: Spree Commerce
+                  default: false
+                  gateway_payment_profile_id:
+                payment_method:
+                  id: pm_UkLWZg9DAJ
+                  name: Credit Card
+                  description:
+                  type: Spree::Gateway::Bogus
+                  session_required: true
+                avs_response:
+                cvv_response_code:
+                cvv_response_message:
+                metadata:
+                captured_amount: '0.0'
+                order_id: or_UkLWZg9DAJ
+  "/api/v3/admin/orders/{order_id}/payments/{id}/capture":
+    patch:
+      summary: Capture a payment
+      tags:
+      - Payments
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Captures a pending payment.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order prefixed ID
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Payment prefixed ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: payment captured
+          content:
+            application/json:
+              example:
+                id: py_UkLWZg9DAJ
+                payment_method_id: pm_UkLWZg9DAJ
+                state: completed
+                response_code: '12345'
+                number: PSA3QJH1
+                amount: '110.0'
+                display_amount: "$110.00"
+                created_at: '2026-03-07T09:49:07.630Z'
+                updated_at: '2026-03-07T09:49:07.954Z'
+                source_type: credit_card
+                source_id: card_UkLWZg9DAJ
+                source:
+                  id: card_UkLWZg9DAJ
+                  cc_type: visa
+                  last_digits: '1111'
+                  month: 12
+                  year: 2027
+                  name: Spree Commerce
+                  default: false
+                  gateway_payment_profile_id:
+                payment_method:
+                  id: pm_UkLWZg9DAJ
+                  name: Credit Card
+                  description:
+                  type: Spree::Gateway::Bogus
+                  session_required: true
+                avs_response:
+                cvv_response_code:
+                cvv_response_message:
+                metadata:
+                captured_amount: '110.0'
+                order_id: or_UkLWZg9DAJ
+  "/api/v3/admin/orders/{order_id}/payments/{id}/void":
+    patch:
+      summary: Void a payment
+      tags:
+      - Payments
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Voids a payment.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order prefixed ID
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Payment prefixed ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: payment voided
+          content:
+            application/json:
+              example:
+                id: py_UkLWZg9DAJ
+                payment_method_id: pm_UkLWZg9DAJ
+                state: void
+                response_code: void-12345
+                number: PKCSF9MY
+                amount: '110.0'
+                display_amount: "$110.00"
+                created_at: '2026-03-07T09:49:08.341Z'
+                updated_at: '2026-03-07T09:49:08.651Z'
+                source_type: credit_card
+                source_id: card_UkLWZg9DAJ
+                source:
+                  id: card_UkLWZg9DAJ
+                  cc_type: visa
+                  last_digits: '1111'
+                  month: 12
+                  year: 2027
+                  name: Spree Commerce
+                  default: false
+                  gateway_payment_profile_id:
+                payment_method:
+                  id: pm_UkLWZg9DAJ
+                  name: Credit Card
+                  description:
+                  type: Spree::Gateway::Bogus
+                  session_required: true
+                avs_response:
+                cvv_response_code:
+                cvv_response_message:
+                metadata:
+                captured_amount: '0.0'
+                order_id: or_UkLWZg9DAJ
+  "/api/v3/admin/orders/{order_id}/refunds":
+    get:
+      summary: List refunds
+      tags:
+      - Refunds
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Returns all refunds for an order.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order prefixed ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: refunds found
+          content:
+            application/json:
+              example:
+                data: []
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 0
+                  pages: 1
+                  from: 0
+                  to: 0
+                  in: 0
+                  previous:
+                  next:
+    post:
+      summary: Create a refund
+      tags:
+      - Refunds
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Creates a refund for a payment on the order. The refund is automatically
+        processed via the payment gateway.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order prefixed ID
+        schema:
+          type: string
+      responses:
+        '201':
+          description: refund created
+          content:
+            application/json:
+              example:
+                id: re_UkLWZg9DAJ
+                transaction_id: '12345'
+                created_at: '2026-03-07T09:49:09.979Z'
+                updated_at: '2026-03-07T09:49:09.979Z'
+                amount: '5.0'
+                payment_id: py_UkLWZg9DAJ
+                refund_reason_id: rr_UkLWZg9DAJ
+                reimbursement_id:
+                metadata:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - payment_id
+              - amount
+              properties:
+                payment_id:
+                  type: string
+                  description: Payment prefixed ID
+                amount:
+                  type: number
+                  example: 10.0
+                refund_reason_id:
+                  type: string
+                  description: Refund reason prefixed ID
+  "/api/v3/admin/orders/{order_id}/shipments":
+    get:
+      summary: List shipments
+      tags:
+      - Shipments
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Returns all shipments for an order.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order prefixed ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: shipments found
+          content:
+            application/json:
+              example:
+                data:
+                - id: ship_UkLWZg9DAJ
+                  number: H17811757638
+                  state: ready
+                  tracking: U10000
+                  tracking_url:
+                  cost: '10.0'
+                  display_cost: "$10.00"
+                  shipped_at:
+                  created_at: '2026-03-07T09:49:10.322Z'
+                  updated_at: '2026-03-07T09:49:10.381Z'
+                  shipping_method:
+                    id: shpm_UkLWZg9DAJ
+                    name: UPS Ground
+                    code: UPS_GROUND
+                  stock_location:
+                    id: sloc_UkLWZg9DAJ
+                    state_abbr: STATE_ABBR_36
+                    name: Marcos Tremblay
+                    address1: 1600 Pennsylvania Ave NW
+                    city: Washington
+                    zipcode: '20500'
+                    country_iso: US
+                    country_name: United States of America
+                    state_text: STATE_ABBR_36
+                  shipping_rates:
+                  - id: shpr_EfhxLZ9ck8
+                    shipping_method_id: shpm_UkLWZg9DAJ
+                    name: UPS Ground
+                    selected: true
+                    cost: '10.0'
+                    display_cost: "$10.00"
+                    shipping_method:
+                      id: shpm_UkLWZg9DAJ
+                      name: UPS Ground
+                      code: UPS_GROUND
+                  adjustment_total: '0.0'
+                  additional_tax_total: '0.0'
+                  included_tax_total: '0.0'
+                  promo_total: '0.0'
+                  pre_tax_amount: '0.0'
+                  metadata:
+                  order_id: or_UkLWZg9DAJ
+                  stock_location_id: sloc_UkLWZg9DAJ
+                meta:
+                  page: 1
+                  limit: 25
+                  count: 1
+                  pages: 1
+                  from: 1
+                  to: 1
+                  in: 1
+                  previous:
+                  next:
+  "/api/v3/admin/orders/{order_id}/shipments/{id}":
+    get:
+      summary: Show a shipment
+      tags:
+      - Shipments
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Returns details of a specific shipment.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order prefixed ID
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Shipment prefixed ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: shipment found
+          content:
+            application/json:
+              example:
+                id: ship_UkLWZg9DAJ
+                number: H83204287660
+                state: ready
+                tracking: U10000
+                tracking_url:
+                cost: '10.0'
+                display_cost: "$10.00"
+                shipped_at:
+                created_at: '2026-03-07T09:49:10.982Z'
+                updated_at: '2026-03-07T09:49:11.047Z'
+                shipping_method:
+                  id: shpm_UkLWZg9DAJ
+                  name: UPS Ground
+                  code: UPS_GROUND
+                stock_location:
+                  id: sloc_UkLWZg9DAJ
+                  state_abbr: STATE_ABBR_38
+                  name: Dolores Kertzmann
+                  address1: 1600 Pennsylvania Ave NW
+                  city: Washington
+                  zipcode: '20500'
+                  country_iso: US
+                  country_name: United States of America
+                  state_text: STATE_ABBR_38
+                shipping_rates:
+                - id: shpr_EfhxLZ9ck8
+                  shipping_method_id: shpm_UkLWZg9DAJ
+                  name: UPS Ground
+                  selected: true
+                  cost: '10.0'
+                  display_cost: "$10.00"
+                  shipping_method:
+                    id: shpm_UkLWZg9DAJ
+                    name: UPS Ground
+                    code: UPS_GROUND
+                adjustment_total: '0.0'
+                additional_tax_total: '0.0'
+                included_tax_total: '0.0'
+                promo_total: '0.0'
+                pre_tax_amount: '0.0'
+                metadata:
+                order_id: or_UkLWZg9DAJ
+                stock_location_id: sloc_UkLWZg9DAJ
+    patch:
+      summary: Update a shipment
+      tags:
+      - Shipments
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Updates a shipment (tracking, shipping rate).
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order prefixed ID
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Shipment prefixed ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: shipment updated
+          content:
+            application/json:
+              example:
+                id: ship_UkLWZg9DAJ
+                number: H43240020259
+                state: ready
+                tracking: 1Z999AA10123456784
+                tracking_url: https://wwwapps.ups.com/WebTracking/track?track=yes&trackNums=1Z999AA10123456784
+                cost: '10.0'
+                display_cost: "$10.00"
+                shipped_at:
+                created_at: '2026-03-07T09:49:11.724Z'
+                updated_at: '2026-03-07T09:49:12.080Z'
+                shipping_method:
+                  id: shpm_UkLWZg9DAJ
+                  name: UPS Ground
+                  code: UPS_GROUND
+                stock_location:
+                  id: sloc_UkLWZg9DAJ
+                  state_abbr: STATE_ABBR_40
+                  name: Enoch Eichmann
+                  address1: 1600 Pennsylvania Ave NW
+                  city: Washington
+                  zipcode: '20500'
+                  country_iso: US
+                  country_name: United States of America
+                  state_text: STATE_ABBR_40
+                shipping_rates:
+                - id: shpr_EfhxLZ9ck8
+                  shipping_method_id: shpm_UkLWZg9DAJ
+                  name: UPS Ground
+                  selected: true
+                  cost: '10.0'
+                  display_cost: "$10.00"
+                  shipping_method:
+                    id: shpm_UkLWZg9DAJ
+                    name: UPS Ground
+                    code: UPS_GROUND
+                adjustment_total: '0.0'
+                additional_tax_total: '0.0'
+                included_tax_total: '0.0'
+                promo_total: '0.0'
+                pre_tax_amount: '0.0'
+                metadata:
+                order_id: or_UkLWZg9DAJ
+                stock_location_id: sloc_UkLWZg9DAJ
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tracking:
+                  type: string
+                  example: 1Z999AA10123456784
+                selected_shipping_rate_id:
+                  type: string
+  "/api/v3/admin/orders/{order_id}/shipments/{id}/ship":
+    patch:
+      summary: Ship a shipment
+      tags:
+      - Shipments
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Marks a shipment as shipped.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order prefixed ID
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Shipment prefixed ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: shipment shipped
+          content:
+            application/json:
+              example:
+                id: ship_UkLWZg9DAJ
+                number: H30742910700
+                state: shipped
+                tracking: U10000
+                tracking_url:
+                cost: '10.0'
+                display_cost: "$10.00"
+                shipped_at: '2026-03-07T09:49:12.733Z'
+                created_at: '2026-03-07T09:49:12.391Z'
+                updated_at: '2026-03-07T09:49:12.733Z'
+                shipping_method:
+                  id: shpm_UkLWZg9DAJ
+                  name: UPS Ground
+                  code: UPS_GROUND
+                stock_location:
+                  id: sloc_UkLWZg9DAJ
+                  state_abbr: STATE_ABBR_42
+                  name: Jacquelyne Feeney
+                  address1: 1600 Pennsylvania Ave NW
+                  city: Washington
+                  zipcode: '20500'
+                  country_iso: US
+                  country_name: United States of America
+                  state_text: STATE_ABBR_42
+                shipping_rates:
+                - id: shpr_EfhxLZ9ck8
+                  shipping_method_id: shpm_UkLWZg9DAJ
+                  name: UPS Ground
+                  selected: true
+                  cost: '10.0'
+                  display_cost: "$10.00"
+                  shipping_method:
+                    id: shpm_UkLWZg9DAJ
+                    name: UPS Ground
+                    code: UPS_GROUND
+                adjustment_total: '0.0'
+                additional_tax_total: '0.0'
+                included_tax_total: '0.0'
+                promo_total: '0.0'
+                pre_tax_amount: '0.0'
+                metadata:
+                order_id: or_UkLWZg9DAJ
+                stock_location_id: sloc_UkLWZg9DAJ
+  "/api/v3/admin/orders/{order_id}/shipments/{id}/cancel":
+    patch:
+      summary: Cancel a shipment
+      tags:
+      - Shipments
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Cancels a pending or ready shipment.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order prefixed ID
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Shipment prefixed ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: shipment canceled
+          content:
+            application/json:
+              example:
+                id: ship_UkLWZg9DAJ
+                number: H78231356128
+                state: canceled
+                tracking: U10000
+                tracking_url:
+                cost: '10.0'
+                display_cost: "$10.00"
+                shipped_at:
+                created_at: '2026-03-07T09:49:13.041Z'
+                updated_at: '2026-03-07T09:49:13.371Z'
+                shipping_method:
+                  id: shpm_UkLWZg9DAJ
+                  name: UPS Ground
+                  code: UPS_GROUND
+                stock_location:
+                  id: sloc_UkLWZg9DAJ
+                  state_abbr: STATE_ABBR_44
+                  name: Sandie Kreiger
+                  address1: 1600 Pennsylvania Ave NW
+                  city: Washington
+                  zipcode: '20500'
+                  country_iso: US
+                  country_name: United States of America
+                  state_text: STATE_ABBR_44
+                shipping_rates:
+                - id: shpr_EfhxLZ9ck8
+                  shipping_method_id: shpm_UkLWZg9DAJ
+                  name: UPS Ground
+                  selected: true
+                  cost: '10.0'
+                  display_cost: "$10.00"
+                  shipping_method:
+                    id: shpm_UkLWZg9DAJ
+                    name: UPS Ground
+                    code: UPS_GROUND
+                adjustment_total: '0.0'
+                additional_tax_total: '0.0'
+                included_tax_total: '0.0'
+                promo_total: '0.0'
+                pre_tax_amount: '0.0'
+                metadata:
+                order_id: or_UkLWZg9DAJ
+                stock_location_id: sloc_UkLWZg9DAJ
+  "/api/v3/admin/orders/{order_id}/shipments/{id}/resume":
+    patch:
+      summary: Resume a shipment
+      tags:
+      - Shipments
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Resumes a canceled shipment.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order prefixed ID
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Shipment prefixed ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: shipment resumed
+          content:
+            application/json:
+              example:
+                id: ship_UkLWZg9DAJ
+                number: H23636611052
+                state: pending
+                tracking: U10000
+                tracking_url:
+                cost: '10.0'
+                display_cost: "$10.00"
+                shipped_at:
+                created_at: '2026-03-07T09:49:13.691Z'
+                updated_at: '2026-03-07T09:49:14.062Z'
+                shipping_method:
+                  id: shpm_UkLWZg9DAJ
+                  name: UPS Ground
+                  code: UPS_GROUND
+                stock_location:
+                  id: sloc_UkLWZg9DAJ
+                  state_abbr: STATE_ABBR_46
+                  name: Saturnina Turner
+                  address1: 1600 Pennsylvania Ave NW
+                  city: Washington
+                  zipcode: '20500'
+                  country_iso: US
+                  country_name: United States of America
+                  state_text: STATE_ABBR_46
+                shipping_rates:
+                - id: shpr_EfhxLZ9ck8
+                  shipping_method_id: shpm_UkLWZg9DAJ
+                  name: UPS Ground
+                  selected: true
+                  cost: '10.0'
+                  display_cost: "$10.00"
+                  shipping_method:
+                    id: shpm_UkLWZg9DAJ
+                    name: UPS Ground
+                    code: UPS_GROUND
+                adjustment_total: '0.0'
+                additional_tax_total: '0.0'
+                included_tax_total: '0.0'
+                promo_total: '0.0'
+                pre_tax_amount: '0.0'
+                metadata:
+                order_id: or_UkLWZg9DAJ
+                stock_location_id: sloc_UkLWZg9DAJ
+  "/api/v3/admin/orders/{order_id}/shipments/{id}/split":
+    patch:
+      summary: Split a shipment
+      tags:
+      - Shipments
+      security:
+      - api_key: []
+        bearer_auth: []
+      description: Transfers items from this shipment to a new shipment at a different
+        stock location.
+      parameters:
+      - name: x-spree-api-key
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: Authorization
+        in: header
+        required: true
+        description: Bearer token for admin authentication
+        schema:
+          type: string
+      - name: order_id
+        in: path
+        required: true
+        description: Order prefixed ID
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        description: Shipment prefixed ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: shipment split
+          content:
+            application/json:
+              example:
+                data:
+                - id: ship_gbHJdmfrXB
+                  number: H17061029092
+                  state: ready
+                  tracking:
+                  tracking_url:
+                  cost: '10.0'
+                  display_cost: "$10.00"
+                  shipped_at:
+                  created_at: '2026-03-07T09:49:14.808Z'
+                  updated_at: '2026-03-07T09:49:14.858Z'
+                  shipping_method:
+                    id: shpm_UkLWZg9DAJ
+                    name: UPS Ground
+                    code: UPS_GROUND
+                  stock_location:
+                    id: sloc_gbHJdmfrXB
+                    state_abbr: STATE_ABBR_48
+                    name: Warehouse 2
+                    address1: 1600 Pennsylvania Ave NW
+                    city: Washington
+                    zipcode: '20500'
+                    country_iso: US
+                    country_name: United States of America
+                    state_text: STATE_ABBR_48
+                  shipping_rates:
+                  - id: shpr_uw2YK1rnl0
+                    shipping_method_id: shpm_UkLWZg9DAJ
+                    name: UPS Ground
+                    selected: true
+                    cost: '10.0'
+                    display_cost: "$10.00"
+                    shipping_method:
+                      id: shpm_UkLWZg9DAJ
+                      name: UPS Ground
+                      code: UPS_GROUND
+                  adjustment_total: '0.0'
+                  additional_tax_total: '0.0'
+                  included_tax_total: '0.0'
+                  promo_total: '0.0'
+                  pre_tax_amount: '0.0'
+                  metadata:
+                  order_id: or_UkLWZg9DAJ
+                  stock_location_id: sloc_gbHJdmfrXB
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - variant_id
+              - quantity
+              properties:
+                variant_id:
+                  type: string
+                  description: Variant prefixed ID
+                quantity:
+                  type: integer
+                  example: 1
+                stock_location_id:
+                  type: string
+                  description: Target stock location prefixed ID
   "/api/v3/admin/orders":
     get:
       summary: List orders
@@ -1030,14 +2535,14 @@ paths:
               example:
                 data:
                 - id: or_UkLWZg9DAJ
-                  number: R670769835
+                  number: R794806176
                   state: cart
                   checkout_steps:
                   - address
                   - delivery
                   - complete
-                  token: SmvvUsahJSmjVxKW5arvpTCDXDroPWwxTor
-                  email: earnestine_shields@aufderhar.co.uk
+                  token: RJ25AtGi6tnVKG6bfwh8pmyn497Rthwr5fu
+                  email: luther.kuhlman@wardhuels.ca
                   special_instructions:
                   currency: USD
                   locale: en
@@ -1062,8 +2567,8 @@ paths:
                   total: '0.0'
                   display_total: "$0.00"
                   completed_at:
-                  created_at: '2026-03-06T19:36:35.061Z'
-                  updated_at: '2026-03-06T19:36:35.061Z'
+                  created_at: '2026-03-07T09:49:15.137Z'
+                  updated_at: '2026-03-07T09:49:15.137Z'
                   order_promotions: []
                   line_items: []
                   shipments: []
@@ -1073,7 +2578,7 @@ paths:
                     firstname: John
                     lastname: Doe
                     full_name: John Doe
-                    address1: 6 Lovely Street
+                    address1: 41 Lovely Street
                     address2: Northwest
                     city: Herndon
                     zipcode: '35005'
@@ -1081,10 +2586,10 @@ paths:
                     company: Company
                     country_name: United States of America
                     country_iso: US
-                    state_text: STATE_ABBR_15
-                    state_abbr: STATE_ABBR_15
+                    state_text: STATE_ABBR_50
+                    state_abbr: STATE_ABBR_50
                     quick_checkout: false
-                    state_name: STATE_NAME_15
+                    state_name: STATE_NAME_50
                   ship_address:
                   payment_methods: []
                   channel: spree
@@ -1101,12 +2606,15 @@ paths:
                     created_at:
                     updated_at:
                     locale: en
-                  approver_id:
+                  payment_total: '0.0'
+                  display_payment_total: "$0.00"
                   canceled_at:
                   approved_at:
                   metadata:
+                  approver_id:
                   canceler_id:
                   created_by_id:
+                  user_id: cus_UkLWZg9DAJ
                 meta:
                   page: 1
                   limit: 25
@@ -1155,13 +2663,13 @@ paths:
             application/json:
               example:
                 id: or_gbHJdmfrXB
-                number: R196811022
+                number: R877641266
                 state: cart
                 checkout_steps:
                 - address
                 - delivery
                 - complete
-                token: ar0qWypfbUdHJE2-iA3ewA1772825796448
+                token: ljpkaGh8h1KxYK_6BJGH8A1772876956532
                 email: new-order@example.com
                 special_instructions:
                 currency: USD
@@ -1187,8 +2695,8 @@ paths:
                 total: '0.0'
                 display_total: "$0.00"
                 completed_at:
-                created_at: '2026-03-06T19:36:36.450Z'
-                updated_at: '2026-03-06T19:36:36.450Z'
+                created_at: '2026-03-07T09:49:16.534Z'
+                updated_at: '2026-03-07T09:49:16.534Z'
                 order_promotions: []
                 line_items: []
                 shipments: []
@@ -1210,12 +2718,15 @@ paths:
                   created_at:
                   updated_at:
                   locale: en
-                approver_id:
+                payment_total: '0.0'
+                display_payment_total: "$0.00"
                 canceled_at:
                 approved_at:
                 metadata:
+                approver_id:
                 canceler_id:
                 created_by_id:
+                user_id:
       requestBody:
         content:
           application/json:
@@ -1276,14 +2787,14 @@ paths:
             application/json:
               example:
                 id: or_UkLWZg9DAJ
-                number: R835227695
+                number: R396350911
                 state: cart
                 checkout_steps:
                 - address
                 - delivery
                 - complete
-                token: MvRgXzzRybWEerm4oXPZweuyPuwPV648cBy
-                email: loyce@kertzmann.ca
+                token: b1SWfXoFfG9k8PcytUamj5kJjNcfPred3hs
+                email: taneka@medhurst.biz
                 special_instructions:
                 currency: USD
                 locale: en
@@ -1308,8 +2819,8 @@ paths:
                 total: '0.0'
                 display_total: "$0.00"
                 completed_at:
-                created_at: '2026-03-06T19:36:36.726Z'
-                updated_at: '2026-03-06T19:36:36.726Z'
+                created_at: '2026-03-07T09:49:16.808Z'
+                updated_at: '2026-03-07T09:49:16.808Z'
                 order_promotions: []
                 line_items: []
                 shipments: []
@@ -1319,7 +2830,7 @@ paths:
                   firstname: John
                   lastname: Doe
                   full_name: John Doe
-                  address1: 9 Lovely Street
+                  address1: 44 Lovely Street
                   address2: Northwest
                   city: Herndon
                   zipcode: '35005'
@@ -1327,10 +2838,10 @@ paths:
                   company: Company
                   country_name: United States of America
                   country_iso: US
-                  state_text: STATE_ABBR_18
-                  state_abbr: STATE_ABBR_18
+                  state_text: STATE_ABBR_53
+                  state_abbr: STATE_ABBR_53
                   quick_checkout: false
-                  state_name: STATE_NAME_18
+                  state_name: STATE_NAME_53
                 ship_address:
                 payment_methods: []
                 channel: spree
@@ -1347,12 +2858,15 @@ paths:
                   created_at:
                   updated_at:
                   locale: en
-                approver_id:
+                payment_total: '0.0'
+                display_payment_total: "$0.00"
                 canceled_at:
                 approved_at:
                 metadata:
+                approver_id:
                 canceler_id:
                 created_by_id:
+                user_id: cus_UkLWZg9DAJ
         '404':
           description: order not found
           content:
@@ -1398,13 +2912,13 @@ paths:
             application/json:
               example:
                 id: or_UkLWZg9DAJ
-                number: R491915587
+                number: R394325023
                 state: cart
                 checkout_steps:
                 - address
                 - delivery
                 - complete
-                token: oa4uDeV51XSQ69coVJfwTg8NfqpQTQMbqH2
+                token: YwSvAv32FSSfzUvAKvzbkrv21Z2ie5yVtgH
                 email: updated@example.com
                 special_instructions:
                 currency: USD
@@ -1430,8 +2944,8 @@ paths:
                 total: '0.0'
                 display_total: "$0.00"
                 completed_at:
-                created_at: '2026-03-06T19:36:37.823Z'
-                updated_at: '2026-03-06T19:36:38.104Z'
+                created_at: '2026-03-07T09:49:17.934Z'
+                updated_at: '2026-03-07T09:49:18.265Z'
                 order_promotions: []
                 line_items: []
                 shipments: []
@@ -1441,7 +2955,7 @@ paths:
                   firstname: John
                   lastname: Doe
                   full_name: John Doe
-                  address1: 11 Lovely Street
+                  address1: 46 Lovely Street
                   address2: Northwest
                   city: Herndon
                   zipcode: '35005'
@@ -1449,10 +2963,10 @@ paths:
                   company: Company
                   country_name: United States of America
                   country_iso: US
-                  state_text: STATE_ABBR_20
-                  state_abbr: STATE_ABBR_20
+                  state_text: STATE_ABBR_55
+                  state_abbr: STATE_ABBR_55
                   quick_checkout: false
-                  state_name: STATE_NAME_20
+                  state_name: STATE_NAME_55
                 ship_address:
                 payment_methods: []
                 channel: spree
@@ -1469,12 +2983,15 @@ paths:
                   created_at:
                   updated_at:
                   locale: en
-                approver_id:
+                payment_total: '0.0'
+                display_payment_total: "$0.00"
                 canceled_at:
                 approved_at:
                 metadata:
+                approver_id:
                 canceler_id:
                 created_by_id:
+                user_id: cus_UkLWZg9DAJ
       requestBody:
         content:
           application/json:
@@ -1599,15 +3116,15 @@ paths:
             application/json:
               example:
                 id: or_UkLWZg9DAJ
-                number: R135697035
+                number: R613805461
                 state: canceled
                 checkout_steps:
                 - address
                 - delivery
                 - payment
                 - complete
-                token: SCYNJvFFruNxrmnpqDnHREfZdA7hVcgz156
-                email: cherri@reillylubowitz.us
+                token: 9Pg1D7pyZUHktpuPwnLn9ytGGxiDGSD4LkR
+                email: lizette@hermiston.name
                 special_instructions:
                 currency: USD
                 locale: en
@@ -1631,17 +3148,17 @@ paths:
                 display_additional_tax_total: "$0.00"
                 total: '20.0'
                 display_total: "$20.00"
-                completed_at: '2026-03-06T19:36:39.033Z'
-                created_at: '2026-03-06T19:36:38.941Z'
-                updated_at: '2026-03-06T19:36:39.384Z'
+                completed_at: '2026-03-07T09:49:19.172Z'
+                created_at: '2026-03-07T09:49:19.121Z'
+                updated_at: '2026-03-07T09:49:19.501Z'
                 order_promotions: []
                 line_items:
                 - id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 11635
-                  slug: product-11635
+                  name: Product 264282
+                  slug: product-264282
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -1660,38 +3177,41 @@ paths:
                   discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
-                  created_at: '2026-03-06T19:36:38.978Z'
-                  updated_at: '2026-03-06T19:36:38.978Z'
+                  created_at: '2026-03-07T09:49:19.150Z'
+                  updated_at: '2026-03-07T09:49:19.150Z'
                   compare_at_amount:
                   thumbnail_url:
                   option_values: []
                   digital_links: []
                   metadata:
+                  cost_price: '17.0'
+                  tax_category_id: taxcat_UkLWZg9DAJ
+                  order_id: or_UkLWZg9DAJ
                 shipments:
                 - id: ship_UkLWZg9DAJ
-                  number: H24460167975
+                  number: H90495361070
                   state: canceled
                   tracking: U10000
                   tracking_url:
                   cost: '10.0'
                   display_cost: "$10.00"
                   shipped_at:
-                  created_at: '2026-03-06T19:36:38.989Z'
-                  updated_at: '2026-03-06T19:36:39.378Z'
+                  created_at: '2026-03-07T09:49:19.156Z'
+                  updated_at: '2026-03-07T09:49:19.498Z'
                   shipping_method:
                     id: shpm_UkLWZg9DAJ
                     name: UPS Ground
                     code: UPS_GROUND
                   stock_location:
                     id: sloc_UkLWZg9DAJ
-                    state_abbr: STATE_ABBR_22
-                    name: Shaunna Heller
+                    state_abbr: STATE_ABBR_57
+                    name: Pattie Ritchie
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
                     country_iso: US
                     country_name: United States of America
-                    state_text: STATE_ABBR_22
+                    state_text: STATE_ABBR_57
                   shipping_rates:
                   - id: shpr_EfhxLZ9ck8
                     shipping_method_id: shpm_UkLWZg9DAJ
@@ -1703,13 +3223,21 @@ paths:
                       id: shpm_UkLWZg9DAJ
                       name: UPS Ground
                       code: UPS_GROUND
+                  adjustment_total: '0.0'
+                  additional_tax_total: '0.0'
+                  included_tax_total: '0.0'
+                  promo_total: '0.0'
+                  pre_tax_amount: '0.0'
+                  metadata:
+                  order_id: or_UkLWZg9DAJ
+                  stock_location_id: sloc_UkLWZg9DAJ
                 payments: []
                 bill_address:
                   id: addr_UkLWZg9DAJ
                   firstname: John
                   lastname: Doe
                   full_name: John Doe
-                  address1: 13 Lovely Street
+                  address1: 48 Lovely Street
                   address2: Northwest
                   city: Herndon
                   zipcode: '35005'
@@ -1717,16 +3245,16 @@ paths:
                   company: Company
                   country_name: United States of America
                   country_iso: US
-                  state_text: STATE_ABBR_22
-                  state_abbr: STATE_ABBR_22
+                  state_text: STATE_ABBR_57
+                  state_abbr: STATE_ABBR_57
                   quick_checkout: false
-                  state_name: STATE_NAME_22
+                  state_name: STATE_NAME_57
                 ship_address:
                   id: addr_gbHJdmfrXB
                   firstname: John
                   lastname: Doe
                   full_name: John Doe
-                  address1: 14 Lovely Street
+                  address1: 49 Lovely Street
                   address2: Northwest
                   city: Herndon
                   zipcode: '35005'
@@ -1734,10 +3262,10 @@ paths:
                   company: Company
                   country_name: United States of America
                   country_iso: US
-                  state_text: STATE_ABBR_23
-                  state_abbr: STATE_ABBR_23
+                  state_text: STATE_ABBR_58
+                  state_abbr: STATE_ABBR_58
                   quick_checkout: false
-                  state_name: STATE_NAME_23
+                  state_name: STATE_NAME_58
                 payment_methods: []
                 channel: spree
                 last_ip_address:
@@ -1753,12 +3281,15 @@ paths:
                   created_at:
                   updated_at:
                   locale: en
-                approver_id:
-                canceled_at: '2026-03-06T19:36:39.326Z'
+                payment_total: '0.0'
+                display_payment_total: "$0.00"
+                canceled_at: '2026-03-07T09:49:19.463Z'
                 approved_at:
                 metadata:
-                canceler_id: 1
+                approver_id:
+                canceler_id: admin_UkLWZg9DAJ
                 created_by_id:
+                user_id: cus_UkLWZg9DAJ
   "/api/v3/admin/orders/{id}/approve":
     patch:
       summary: Approve an order
@@ -1793,15 +3324,15 @@ paths:
             application/json:
               example:
                 id: or_UkLWZg9DAJ
-                number: R067718188
+                number: R314260374
                 state: complete
                 checkout_steps:
                 - address
                 - delivery
                 - payment
                 - complete
-                token: EYUiSfU7NdXYcHEYzf8Bf2DbaqZkXWqU2cY
-                email: thomasina_beahan@eichmann.name
+                token: CkCEY5aSoa6uHikCHNV5T7uEuWsForvjXzQ
+                email: patrica@veum.ca
                 special_instructions:
                 currency: USD
                 locale: en
@@ -1825,17 +3356,17 @@ paths:
                 display_additional_tax_total: "$0.00"
                 total: '110.0'
                 display_total: "$110.00"
-                completed_at: '2026-03-06T19:36:39.785Z'
-                created_at: '2026-03-06T19:36:39.717Z'
-                updated_at: '2026-03-06T19:36:39.785Z'
+                completed_at: '2026-03-07T09:49:19.839Z'
+                created_at: '2026-03-07T09:49:19.788Z'
+                updated_at: '2026-03-07T09:49:19.839Z'
                 order_promotions: []
                 line_items:
                 - id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 123202
-                  slug: product-123202
+                  name: Product 278932
+                  slug: product-278932
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -1854,38 +3385,41 @@ paths:
                   discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
-                  created_at: '2026-03-06T19:36:39.762Z'
-                  updated_at: '2026-03-06T19:36:39.762Z'
+                  created_at: '2026-03-07T09:49:19.816Z'
+                  updated_at: '2026-03-07T09:49:19.816Z'
                   compare_at_amount:
                   thumbnail_url:
                   option_values: []
                   digital_links: []
                   metadata:
+                  cost_price: '17.0'
+                  tax_category_id: taxcat_UkLWZg9DAJ
+                  order_id: or_UkLWZg9DAJ
                 shipments:
                 - id: ship_UkLWZg9DAJ
-                  number: H69744456357
+                  number: H45895641344
                   state: pending
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
                   display_cost: "$100.00"
                   shipped_at:
-                  created_at: '2026-03-06T19:36:39.768Z'
-                  updated_at: '2026-03-06T19:36:39.783Z'
+                  created_at: '2026-03-07T09:49:19.822Z'
+                  updated_at: '2026-03-07T09:49:19.836Z'
                   shipping_method:
                     id: shpm_UkLWZg9DAJ
                     name: UPS Ground
                     code: UPS_GROUND
                   stock_location:
                     id: sloc_UkLWZg9DAJ
-                    state_abbr: STATE_ABBR_24
-                    name: Kerry Ledner
+                    state_abbr: STATE_ABBR_59
+                    name: Kyoko Jaskolski
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
                     country_iso: US
                     country_name: United States of America
-                    state_text: STATE_ABBR_24
+                    state_text: STATE_ABBR_59
                   shipping_rates:
                   - id: shpr_gbHJdmfrXB
                     shipping_method_id: shpm_UkLWZg9DAJ
@@ -1897,13 +3431,21 @@ paths:
                       id: shpm_UkLWZg9DAJ
                       name: UPS Ground
                       code: UPS_GROUND
+                  adjustment_total: '0.0'
+                  additional_tax_total: '0.0'
+                  included_tax_total: '0.0'
+                  promo_total: '0.0'
+                  pre_tax_amount: '0.0'
+                  metadata:
+                  order_id: or_UkLWZg9DAJ
+                  stock_location_id: sloc_UkLWZg9DAJ
                 payments: []
                 bill_address:
                   id: addr_UkLWZg9DAJ
                   firstname: John
                   lastname: Doe
                   full_name: John Doe
-                  address1: 15 Lovely Street
+                  address1: 50 Lovely Street
                   address2: Northwest
                   city: Herndon
                   zipcode: '35005'
@@ -1911,16 +3453,16 @@ paths:
                   company: Company
                   country_name: United States of America
                   country_iso: US
-                  state_text: STATE_ABBR_24
-                  state_abbr: STATE_ABBR_24
+                  state_text: STATE_ABBR_59
+                  state_abbr: STATE_ABBR_59
                   quick_checkout: false
-                  state_name: STATE_NAME_24
+                  state_name: STATE_NAME_59
                 ship_address:
                   id: addr_gbHJdmfrXB
                   firstname: John
                   lastname: Doe
                   full_name: John Doe
-                  address1: 16 Lovely Street
+                  address1: 51 Lovely Street
                   address2: Northwest
                   city: Herndon
                   zipcode: '35005'
@@ -1928,10 +3470,10 @@ paths:
                   company: Company
                   country_name: United States of America
                   country_iso: US
-                  state_text: STATE_ABBR_25
-                  state_abbr: STATE_ABBR_25
+                  state_text: STATE_ABBR_60
+                  state_abbr: STATE_ABBR_60
                   quick_checkout: false
-                  state_name: STATE_NAME_25
+                  state_name: STATE_NAME_60
                 payment_methods: []
                 channel: spree
                 last_ip_address:
@@ -1947,12 +3489,15 @@ paths:
                   created_at:
                   updated_at:
                   locale: en
-                approver_id: 1
+                payment_total: '0.0'
+                display_payment_total: "$0.00"
                 canceled_at:
-                approved_at: '2026-03-06T19:36:40.076Z'
+                approved_at: '2026-03-07T09:49:20.133Z'
                 metadata:
+                approver_id: admin_UkLWZg9DAJ
                 canceler_id:
                 created_by_id:
+                user_id: cus_UkLWZg9DAJ
   "/api/v3/admin/orders/{id}/resume":
     patch:
       summary: Resume a canceled order
@@ -1987,15 +3532,15 @@ paths:
             application/json:
               example:
                 id: or_UkLWZg9DAJ
-                number: R013995765
+                number: R044624105
                 state: resumed
                 checkout_steps:
                 - address
                 - delivery
                 - payment
                 - complete
-                token: fL2iAYWMZNnyBCr3MEo2Bp1EmFbxQV2ZXcX
-                email: spencer@johns.biz
+                token: GS1ErpET5WiD4FAVmiyXym3gUFT8P8nnwhY
+                email: classie@wittingdicki.us
                 special_instructions:
                 currency: USD
                 locale: en
@@ -2019,17 +3564,17 @@ paths:
                 display_additional_tax_total: "$0.00"
                 total: '20.0'
                 display_total: "$20.00"
-                completed_at: '2026-03-06T19:36:40.412Z'
-                created_at: '2026-03-06T19:36:40.360Z'
-                updated_at: '2026-03-06T19:36:40.749Z'
+                completed_at: '2026-03-07T09:49:20.485Z'
+                created_at: '2026-03-07T09:49:20.422Z'
+                updated_at: '2026-03-07T09:49:20.832Z'
                 order_promotions: []
                 line_items:
                 - id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 137493
-                  slug: product-137493
+                  name: Product 282673
+                  slug: product-282673
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -2048,38 +3593,41 @@ paths:
                   discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
-                  created_at: '2026-03-06T19:36:40.389Z'
-                  updated_at: '2026-03-06T19:36:40.722Z'
+                  created_at: '2026-03-07T09:49:20.458Z'
+                  updated_at: '2026-03-07T09:49:20.804Z'
                   compare_at_amount:
                   thumbnail_url:
                   option_values: []
                   digital_links: []
                   metadata:
+                  cost_price: '17.0'
+                  tax_category_id: taxcat_UkLWZg9DAJ
+                  order_id: or_UkLWZg9DAJ
                 shipments:
                 - id: ship_UkLWZg9DAJ
-                  number: H13016636197
+                  number: H28345271880
                   state: pending
                   tracking: U10000
                   tracking_url:
                   cost: '10.0'
                   display_cost: "$10.00"
                   shipped_at:
-                  created_at: '2026-03-06T19:36:40.395Z'
-                  updated_at: '2026-03-06T19:36:40.743Z'
+                  created_at: '2026-03-07T09:49:20.464Z'
+                  updated_at: '2026-03-07T09:49:20.824Z'
                   shipping_method:
                     id: shpm_UkLWZg9DAJ
                     name: UPS Ground
                     code: UPS_GROUND
                   stock_location:
                     id: sloc_UkLWZg9DAJ
-                    state_abbr: STATE_ABBR_26
-                    name: Caterina Bechtelar
+                    state_abbr: STATE_ABBR_61
+                    name: Jeff Spencer
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
                     country_iso: US
                     country_name: United States of America
-                    state_text: STATE_ABBR_26
+                    state_text: STATE_ABBR_61
                   shipping_rates:
                   - id: shpr_EfhxLZ9ck8
                     shipping_method_id: shpm_UkLWZg9DAJ
@@ -2091,13 +3639,21 @@ paths:
                       id: shpm_UkLWZg9DAJ
                       name: UPS Ground
                       code: UPS_GROUND
+                  adjustment_total: '0.0'
+                  additional_tax_total: '0.0'
+                  included_tax_total: '0.0'
+                  promo_total: '0.0'
+                  pre_tax_amount: '0.0'
+                  metadata:
+                  order_id: or_UkLWZg9DAJ
+                  stock_location_id: sloc_UkLWZg9DAJ
                 payments: []
                 bill_address:
                   id: addr_UkLWZg9DAJ
                   firstname: John
                   lastname: Doe
                   full_name: John Doe
-                  address1: 17 Lovely Street
+                  address1: 52 Lovely Street
                   address2: Northwest
                   city: Herndon
                   zipcode: '35005'
@@ -2105,16 +3661,16 @@ paths:
                   company: Company
                   country_name: United States of America
                   country_iso: US
-                  state_text: STATE_ABBR_26
-                  state_abbr: STATE_ABBR_26
+                  state_text: STATE_ABBR_61
+                  state_abbr: STATE_ABBR_61
                   quick_checkout: false
-                  state_name: STATE_NAME_26
+                  state_name: STATE_NAME_61
                 ship_address:
                   id: addr_gbHJdmfrXB
                   firstname: John
                   lastname: Doe
                   full_name: John Doe
-                  address1: 18 Lovely Street
+                  address1: 53 Lovely Street
                   address2: Northwest
                   city: Herndon
                   zipcode: '35005'
@@ -2122,10 +3678,10 @@ paths:
                   company: Company
                   country_name: United States of America
                   country_iso: US
-                  state_text: STATE_ABBR_27
-                  state_abbr: STATE_ABBR_27
+                  state_text: STATE_ABBR_62
+                  state_abbr: STATE_ABBR_62
                   quick_checkout: false
-                  state_name: STATE_NAME_27
+                  state_name: STATE_NAME_62
                 payment_methods: []
                 channel: spree
                 last_ip_address:
@@ -2141,12 +3697,15 @@ paths:
                   created_at:
                   updated_at:
                   locale: en
-                approver_id:
-                canceled_at: '2026-03-06T19:36:40.690Z'
+                payment_total: '0.0'
+                display_payment_total: "$0.00"
+                canceled_at: '2026-03-07T09:49:20.769Z'
                 approved_at:
                 metadata:
-                canceler_id: 1
+                approver_id:
+                canceler_id: admin_UkLWZg9DAJ
                 created_by_id:
+                user_id: cus_UkLWZg9DAJ
   "/api/v3/admin/orders/{id}/resend_confirmation":
     post:
       summary: Resend confirmation email
@@ -2182,15 +3741,15 @@ paths:
             application/json:
               example:
                 id: or_UkLWZg9DAJ
-                number: R435313423
+                number: R003420680
                 state: complete
                 checkout_steps:
                 - address
                 - delivery
                 - payment
                 - complete
-                token: d7jpBYqhqVkkALwqJxFCh4J8xVm188VDExV
-                email: merri@romagueramaggio.co.uk
+                token: AmbpLGfsFGZuggwhJmPx9YDdXW9Jk3HfqFg
+                email: esperanza_eichmann@dickinson.com
                 special_instructions:
                 currency: USD
                 locale: en
@@ -2214,17 +3773,17 @@ paths:
                 display_additional_tax_total: "$0.00"
                 total: '110.0'
                 display_total: "$110.00"
-                completed_at: '2026-03-06T19:36:41.088Z'
-                created_at: '2026-03-06T19:36:41.037Z'
-                updated_at: '2026-03-06T19:36:41.087Z'
+                completed_at: '2026-03-07T09:49:21.165Z'
+                created_at: '2026-03-07T09:49:21.119Z'
+                updated_at: '2026-03-07T09:49:21.165Z'
                 order_promotions: []
                 line_items:
                 - id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 149448
-                  slug: product-149448
+                  name: Product 295302
+                  slug: product-295302
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -2243,38 +3802,41 @@ paths:
                   discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
-                  created_at: '2026-03-06T19:36:41.065Z'
-                  updated_at: '2026-03-06T19:36:41.065Z'
+                  created_at: '2026-03-07T09:49:21.146Z'
+                  updated_at: '2026-03-07T09:49:21.146Z'
                   compare_at_amount:
                   thumbnail_url:
                   option_values: []
                   digital_links: []
                   metadata:
+                  cost_price: '17.0'
+                  tax_category_id: taxcat_UkLWZg9DAJ
+                  order_id: or_UkLWZg9DAJ
                 shipments:
                 - id: ship_UkLWZg9DAJ
-                  number: H51301757117
+                  number: H70934335043
                   state: pending
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
                   display_cost: "$100.00"
                   shipped_at:
-                  created_at: '2026-03-06T19:36:41.070Z'
-                  updated_at: '2026-03-06T19:36:41.085Z'
+                  created_at: '2026-03-07T09:49:21.150Z'
+                  updated_at: '2026-03-07T09:49:21.163Z'
                   shipping_method:
                     id: shpm_UkLWZg9DAJ
                     name: UPS Ground
                     code: UPS_GROUND
                   stock_location:
                     id: sloc_UkLWZg9DAJ
-                    state_abbr: STATE_ABBR_28
-                    name: Hedwig Ledner
+                    state_abbr: STATE_ABBR_63
+                    name: Deb Stehr
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
                     country_iso: US
                     country_name: United States of America
-                    state_text: STATE_ABBR_28
+                    state_text: STATE_ABBR_63
                   shipping_rates:
                   - id: shpr_gbHJdmfrXB
                     shipping_method_id: shpm_UkLWZg9DAJ
@@ -2286,13 +3848,21 @@ paths:
                       id: shpm_UkLWZg9DAJ
                       name: UPS Ground
                       code: UPS_GROUND
+                  adjustment_total: '0.0'
+                  additional_tax_total: '0.0'
+                  included_tax_total: '0.0'
+                  promo_total: '0.0'
+                  pre_tax_amount: '0.0'
+                  metadata:
+                  order_id: or_UkLWZg9DAJ
+                  stock_location_id: sloc_UkLWZg9DAJ
                 payments: []
                 bill_address:
                   id: addr_UkLWZg9DAJ
                   firstname: John
                   lastname: Doe
                   full_name: John Doe
-                  address1: 19 Lovely Street
+                  address1: 54 Lovely Street
                   address2: Northwest
                   city: Herndon
                   zipcode: '35005'
@@ -2300,16 +3870,16 @@ paths:
                   company: Company
                   country_name: United States of America
                   country_iso: US
-                  state_text: STATE_ABBR_28
-                  state_abbr: STATE_ABBR_28
+                  state_text: STATE_ABBR_63
+                  state_abbr: STATE_ABBR_63
                   quick_checkout: false
-                  state_name: STATE_NAME_28
+                  state_name: STATE_NAME_63
                 ship_address:
                   id: addr_gbHJdmfrXB
                   firstname: John
                   lastname: Doe
                   full_name: John Doe
-                  address1: 20 Lovely Street
+                  address1: 55 Lovely Street
                   address2: Northwest
                   city: Herndon
                   zipcode: '35005'
@@ -2317,10 +3887,10 @@ paths:
                   company: Company
                   country_name: United States of America
                   country_iso: US
-                  state_text: STATE_ABBR_29
-                  state_abbr: STATE_ABBR_29
+                  state_text: STATE_ABBR_64
+                  state_abbr: STATE_ABBR_64
                   quick_checkout: false
-                  state_name: STATE_NAME_29
+                  state_name: STATE_NAME_64
                 payment_methods: []
                 channel: spree
                 last_ip_address:
@@ -2336,12 +3906,15 @@ paths:
                   created_at:
                   updated_at:
                   locale: en
-                approver_id:
+                payment_total: '0.0'
+                display_payment_total: "$0.00"
                 canceled_at:
                 approved_at:
                 metadata:
+                approver_id:
                 canceler_id:
                 created_by_id:
+                user_id: cus_UkLWZg9DAJ
   "/api/v3/admin/products":
     get:
       summary: List products
@@ -2407,20 +3980,19 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 157975
+                  name: Product 309987
                   description: |-
-                    Corrupti repellat nostrum incidunt perferendis. Facere minus ex distinctio ipsam quia id corporis. Magnam occaecati dolor accusantium dolorem unde. Quasi corrupti non tenetur officia.
-                    Maiores dicta dolorum autem adipisci odio. Veniam quis aut ducimus aliquid. Possimus quos cum accusamus impedit quae odio tempore dolore. Sapiente dolorem animi maiores officiis vitae.
-                    Cupiditate harum possimus magni est corrupti. Veniam maiores laborum sit dicta voluptates. Eius ratione nihil dolore deserunt nobis commodi laborum. Ex praesentium quam nisi necessitatibus quae modi impedit. In tempora labore aperiam dicta similique totam.
-                    Id adipisci soluta cum ratione fuga blanditiis quaerat maxime. Saepe explicabo quos impedit quisquam dolor quam veritatis. Eligendi eveniet tenetur rem et maxime vero repellat.
-                    Exercitationem eos nobis tempore odit. Eum a facilis pariatur eius error repudiandae. Corrupti ullam harum voluptate quia impedit autem corporis repellendus. Totam cumque nulla aspernatur consequuntur non impedit in. Tempore minima tempora necessitatibus nesciunt sunt commodi assumenda id.
-                  slug: product-157975
+                    Expedita accusantium ipsa itaque asperiores ducimus eius. Natus officiis perspiciatis occaecati repudiandae quos. Repellat distinctio quam placeat nobis.
+                    Quia ullam similique quasi recusandae ratione. Quaerat minima ipsa atque rerum sed. Iusto in rerum incidunt doloribus consequuntur.
+                    Accusamus molestias voluptas nostrum debitis. Magni ratione placeat aspernatur omnis error sed hic deleniti. Aliquid tempore aliquam porro dolorem perferendis. Voluptatibus corporis facere dolorum perspiciatis sequi ipsum rem sint.
+                    Libero rem ducimus reiciendis placeat quasi natus quidem sit. Nostrum repellat illo commodi ex debitis mollitia corrupti corporis. Enim aliquid rem eaque vero. Minima facere ipsum dolorum ut assumenda earum. Voluptatem quis similique maxime labore earum id magnam.
+                  slug: product-309987
                   meta_description:
                   meta_keywords:
                   variant_count: 0
-                  available_on: '2025-03-06T19:36:41.396Z'
-                  created_at: '2026-03-06T19:36:41.409Z'
-                  updated_at: '2026-03-06T19:36:41.421Z'
+                  available_on: '2025-03-07T09:49:21.501Z'
+                  created_at: '2026-03-07T09:49:21.524Z'
+                  updated_at: '2026-03-07T09:49:21.546Z'
                   purchasable: true
                   in_stock: false
                   backorderable: true
@@ -2439,13 +4011,17 @@ paths:
                     display_compare_at_amount:
                     price_list_id:
                     variant_id: variant_UkLWZg9DAJ
-                    created_at: '2026-03-06T19:36:41.411Z'
-                    updated_at: '2026-03-06T19:36:41.411Z'
+                    created_at: '2026-03-07T09:49:21.528Z'
+                    updated_at: '2026-03-07T09:49:21.528Z'
                   original_price:
                   status: active
-                  make_active_at: '2025-03-06T19:36:41.396Z'
+                  make_active_at: '2025-03-07T09:49:21.502Z'
                   discontinue_on:
+                  meta_title:
+                  promotionable: true
                   deleted_at:
+                  shipping_category_id: scat_UkLWZg9DAJ
+                  tax_category_id: taxcat_UkLWZg9DAJ
                   cost_price: '17.0'
                   cost_currency: USD
                 meta:
@@ -2518,8 +4094,8 @@ paths:
                 meta_keywords:
                 variant_count: 0
                 available_on:
-                created_at: '2026-03-06T19:36:42.377Z'
-                updated_at: '2026-03-06T19:36:42.381Z'
+                created_at: '2026-03-07T09:49:22.549Z'
+                updated_at: '2026-03-07T09:49:22.552Z'
                 purchasable: false
                 in_stock: false
                 backorderable: false
@@ -2538,13 +4114,17 @@ paths:
                   display_compare_at_amount:
                   price_list_id:
                   variant_id: variant_gbHJdmfrXB
-                  created_at: '2026-03-06T19:36:42.379Z'
-                  updated_at: '2026-03-06T19:36:42.379Z'
+                  created_at: '2026-03-07T09:49:22.551Z'
+                  updated_at: '2026-03-07T09:49:22.551Z'
                 original_price:
                 status: draft
                 make_active_at:
                 discontinue_on:
+                meta_title:
+                promotionable: true
                 deleted_at:
+                shipping_category_id: scat_gbHJdmfrXB
+                tax_category_id:
                 cost_price:
                 cost_currency: USD
               schema:
@@ -2682,18 +4262,17 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 197566
+                name: Product 343825
                 description: |-
-                  Sint laborum quae fuga deleniti. Laborum dolores neque fugiat officiis possimus accusantium. Hic sed facere incidunt fugiat qui occaecati commodi. Esse distinctio voluptate incidunt neque eos tempora deserunt. Porro illum ratione est ad.
-                  Totam exercitationem a velit sint recusandae inventore modi magnam. Libero distinctio iusto saepe quos veritatis aspernatur. Cupiditate quos aliquid ipsum iure corporis libero id. Est recusandae ipsum in numquam asperiores nobis sit facilis. Corrupti eaque necessitatibus nulla officia cupiditate.
-                  Nesciunt provident aliquid commodi similique non debitis. Asperiores harum nam quas magnam. Vero omnis fuga alias facere error cum. Animi ducimus perferendis repellendus ullam nihil commodi.
-                slug: product-197566
+                  Numquam in officiis ex cum neque. Dolor error neque eaque repellat minus. Necessitatibus corporis beatae dolores iusto. Unde itaque est quas exercitationem tempora.
+                  Quisquam impedit harum enim sequi. Reiciendis rem doloremque nam expedita. Incidunt fugit sint odio adipisci perferendis.
+                slug: product-343825
                 meta_description:
                 meta_keywords:
                 variant_count: 0
-                available_on: '2025-03-06T19:36:42.732Z'
-                created_at: '2026-03-06T19:36:42.743Z'
-                updated_at: '2026-03-06T19:36:42.754Z'
+                available_on: '2025-03-07T09:49:22.902Z'
+                created_at: '2026-03-07T09:49:22.914Z'
+                updated_at: '2026-03-07T09:49:22.924Z'
                 purchasable: true
                 in_stock: false
                 backorderable: true
@@ -2712,13 +4291,17 @@ paths:
                   display_compare_at_amount:
                   price_list_id:
                   variant_id: variant_UkLWZg9DAJ
-                  created_at: '2026-03-06T19:36:42.744Z'
-                  updated_at: '2026-03-06T19:36:42.744Z'
+                  created_at: '2026-03-07T09:49:22.916Z'
+                  updated_at: '2026-03-07T09:49:22.916Z'
                 original_price:
                 status: active
-                make_active_at: '2025-03-06T19:36:42.732Z'
+                make_active_at: '2025-03-07T09:49:22.902Z'
                 discontinue_on:
+                meta_title:
+                promotionable: true
                 deleted_at:
+                shipping_category_id: scat_UkLWZg9DAJ
+                tax_category_id: taxcat_UkLWZg9DAJ
                 cost_price: '17.0'
                 cost_currency: USD
               schema:
@@ -2770,17 +4353,15 @@ paths:
                 id: prod_UkLWZg9DAJ
                 name: Updated Name
                 description: |-
-                  Totam asperiores ullam corrupti dolor distinctio tempora aspernatur ratione. Laudantium dicta occaecati id ea eum. Nesciunt necessitatibus odit quod voluptatibus.
-                  Minima aliquam vel architecto tempore consequatur dolor. Eius nulla libero magni assumenda blanditiis nesciunt. Reiciendis cupiditate impedit vitae nisi nesciunt magnam suscipit praesentium.
-                  Laudantium tempora quam quae magnam dolorum libero quaerat. Quae in natus nostrum itaque. Atque ipsum veniam enim labore quidem voluptatibus quod. Eaque blanditiis reprehenderit modi eligendi neque.
-                  Delectus quo iure facilis earum. Sed a sunt consequatur animi. Quidem ipsum soluta nulla error debitis libero expedita. Deleniti sunt quae perspiciatis vero architecto inventore labore.
-                slug: product-216275
+                  Consequatur illum sint quidem amet labore incidunt minus. A perspiciatis deleniti non voluptate. Perspiciatis vitae laboriosam dolor id perferendis dignissimos quas. Similique vero delectus iste minima. Error assumenda laudantium nostrum aliquid.
+                  Doloribus corrupti atque quidem necessitatibus saepe esse odio. Laboriosam repellendus quas qui nihil velit delectus. Minima atque vitae nam hic accusamus. Exercitationem voluptatibus beatae qui officiis hic veniam.
+                slug: product-365151
                 meta_description:
                 meta_keywords:
                 variant_count: 0
-                available_on: '2025-03-06T19:36:43.365Z'
-                created_at: '2026-03-06T19:36:43.378Z'
-                updated_at: '2026-03-06T19:36:43.679Z'
+                available_on: '2025-03-07T09:49:23.540Z'
+                created_at: '2026-03-07T09:49:23.552Z'
+                updated_at: '2026-03-07T09:49:23.856Z'
                 purchasable: true
                 in_stock: false
                 backorderable: true
@@ -2799,13 +4380,17 @@ paths:
                   display_compare_at_amount:
                   price_list_id:
                   variant_id: variant_UkLWZg9DAJ
-                  created_at: '2026-03-06T19:36:43.380Z'
-                  updated_at: '2026-03-06T19:36:43.380Z'
+                  created_at: '2026-03-07T09:49:23.554Z'
+                  updated_at: '2026-03-07T09:49:23.554Z'
                 original_price:
                 status: active
-                make_active_at: '2025-03-06T19:36:43.365Z'
+                make_active_at: '2025-03-07T09:49:23.540Z'
                 discontinue_on:
+                meta_title:
+                promotionable: true
                 deleted_at:
+                shipping_category_id: scat_UkLWZg9DAJ
+                tax_category_id: taxcat_UkLWZg9DAJ
                 cost_price: '17.0'
                 cost_currency: USD
               schema:
@@ -2971,27 +4556,31 @@ paths:
                 - id: txnmy_UkLWZg9DAJ
                   name: Categories
                   position: 1
-                  created_at: '2026-03-06T19:36:27.349Z'
-                  updated_at: '2026-03-06T19:36:27.370Z'
+                  created_at: '2026-03-07T09:48:52.290Z'
+                  updated_at: '2026-03-07T09:48:52.310Z'
                   root_id: txn_UkLWZg9DAJ
+                  store_id: store_UkLWZg9DAJ
                 - id: txnmy_gbHJdmfrXB
                   name: Brands
                   position: 2
-                  created_at: '2026-03-06T19:36:27.371Z'
-                  updated_at: '2026-03-06T19:36:27.380Z'
+                  created_at: '2026-03-07T09:48:52.311Z'
+                  updated_at: '2026-03-07T09:48:52.319Z'
                   root_id: txn_gbHJdmfrXB
+                  store_id: store_UkLWZg9DAJ
                 - id: txnmy_EfhxLZ9ck8
                   name: Collections
                   position: 3
-                  created_at: '2026-03-06T19:36:27.381Z'
-                  updated_at: '2026-03-06T19:36:27.440Z'
+                  created_at: '2026-03-07T09:48:52.321Z'
+                  updated_at: '2026-03-07T09:48:52.387Z'
                   root_id: txn_EfhxLZ9ck8
+                  store_id: store_UkLWZg9DAJ
                 - id: txnmy_VqXmZF31wY
                   name: taxonomy_1
                   position: 4
-                  created_at: '2026-03-06T19:36:44.342Z'
-                  updated_at: '2026-03-06T19:36:44.350Z'
+                  created_at: '2026-03-07T09:49:24.550Z'
+                  updated_at: '2026-03-07T09:49:24.559Z'
                   root_id: txn_OIJLhNcSbf
+                  store_id: store_UkLWZg9DAJ
                 meta:
                   page: 1
                   limit: 25
@@ -3053,9 +4642,10 @@ paths:
                 id: txnmy_uw2YK1rnl0
                 name: New Taxonomy
                 position: 5
-                created_at: '2026-03-06T19:36:45.233Z'
-                updated_at: '2026-03-06T19:36:45.243Z'
+                created_at: '2026-03-07T09:49:25.419Z'
+                updated_at: '2026-03-07T09:49:25.428Z'
                 root_id: txn_AXs1igzRC6
+                store_id: store_UkLWZg9DAJ
               schema:
                 "$ref": "#/components/schemas/AdminTaxonomy"
         '422':
@@ -3127,9 +4717,10 @@ paths:
                 id: txnmy_VqXmZF31wY
                 name: taxonomy_5
                 position: 4
-                created_at: '2026-03-06T19:36:45.537Z'
-                updated_at: '2026-03-06T19:36:45.545Z'
+                created_at: '2026-03-07T09:49:25.732Z'
+                updated_at: '2026-03-07T09:49:25.740Z'
                 root_id: txn_OIJLhNcSbf
+                store_id: store_UkLWZg9DAJ
               schema:
                 "$ref": "#/components/schemas/AdminTaxonomy"
         '404':
@@ -3178,9 +4769,10 @@ paths:
                 id: txnmy_VqXmZF31wY
                 name: Updated Taxonomy
                 position: 4
-                created_at: '2026-03-06T19:36:46.117Z'
-                updated_at: '2026-03-06T19:36:46.411Z'
+                created_at: '2026-03-07T09:49:26.309Z'
+                updated_at: '2026-03-07T09:49:26.603Z'
                 root_id: txn_OIJLhNcSbf
+                store_id: store_UkLWZg9DAJ
               schema:
                 "$ref": "#/components/schemas/AdminTaxonomy"
         '422':
@@ -3292,8 +4884,8 @@ paths:
                   meta_description:
                   meta_keywords:
                   children_count: 0
-                  created_at: '2026-03-06T19:36:27.359Z'
-                  updated_at: '2026-03-06T19:36:27.368Z'
+                  created_at: '2026-03-07T09:48:52.301Z'
+                  updated_at: '2026-03-07T09:48:52.309Z'
                   parent_id:
                   taxonomy_id: txnmy_UkLWZg9DAJ
                   description: ''
@@ -3305,6 +4897,10 @@ paths:
                   is_leaf: true
                   lft: 1
                   rgt: 2
+                  hide_from_nav: false
+                  sort_order: manual
+                  rules_match_policy: all
+                  automatic: false
                 - id: txn_gbHJdmfrXB
                   name: Brands
                   permalink: brands
@@ -3314,8 +4910,8 @@ paths:
                   meta_description:
                   meta_keywords:
                   children_count: 0
-                  created_at: '2026-03-06T19:36:27.374Z'
-                  updated_at: '2026-03-06T19:36:27.378Z'
+                  created_at: '2026-03-07T09:48:52.314Z'
+                  updated_at: '2026-03-07T09:48:52.318Z'
                   parent_id:
                   taxonomy_id: txnmy_gbHJdmfrXB
                   description: ''
@@ -3327,6 +4923,10 @@ paths:
                   is_leaf: true
                   lft: 3
                   rgt: 4
+                  hide_from_nav: false
+                  sort_order: manual
+                  rules_match_policy: all
+                  automatic: false
                 - id: txn_EfhxLZ9ck8
                   name: Collections
                   permalink: collections
@@ -3336,8 +4936,8 @@ paths:
                   meta_description:
                   meta_keywords:
                   children_count: 2
-                  created_at: '2026-03-06T19:36:27.383Z'
-                  updated_at: '2026-03-06T19:36:27.439Z'
+                  created_at: '2026-03-07T09:48:52.325Z'
+                  updated_at: '2026-03-07T09:48:52.387Z'
                   parent_id:
                   taxonomy_id: txnmy_EfhxLZ9ck8
                   description: ''
@@ -3349,6 +4949,10 @@ paths:
                   is_leaf: false
                   lft: 5
                   rgt: 10
+                  hide_from_nav: false
+                  sort_order: manual
+                  rules_match_policy: all
+                  automatic: false
                 - id: txn_VqXmZF31wY
                   name: On sale
                   permalink: collections/on-sale
@@ -3358,8 +4962,8 @@ paths:
                   meta_description:
                   meta_keywords:
                   children_count: 0
-                  created_at: '2026-03-06T19:36:27.396Z'
-                  updated_at: '2026-03-06T19:36:27.398Z'
+                  created_at: '2026-03-07T09:48:52.339Z'
+                  updated_at: '2026-03-07T09:48:52.342Z'
                   parent_id: txn_EfhxLZ9ck8
                   taxonomy_id: txnmy_EfhxLZ9ck8
                   description: ''
@@ -3371,6 +4975,10 @@ paths:
                   is_leaf: true
                   lft: 6
                   rgt: 7
+                  hide_from_nav: false
+                  sort_order: manual
+                  rules_match_policy: all
+                  automatic: true
                 - id: txn_uw2YK1rnl0
                   name: New arrivals
                   permalink: collections/new-arrivals
@@ -3380,8 +4988,8 @@ paths:
                   meta_description:
                   meta_keywords:
                   children_count: 0
-                  created_at: '2026-03-06T19:36:27.407Z'
-                  updated_at: '2026-03-06T19:36:27.409Z'
+                  created_at: '2026-03-07T09:48:52.353Z'
+                  updated_at: '2026-03-07T09:48:52.354Z'
                   parent_id: txn_EfhxLZ9ck8
                   taxonomy_id: txnmy_EfhxLZ9ck8
                   description: ''
@@ -3393,6 +5001,10 @@ paths:
                   is_leaf: true
                   lft: 8
                   rgt: 9
+                  hide_from_nav: false
+                  sort_order: manual
+                  rules_match_policy: all
+                  automatic: true
                 - id: txn_OIJLhNcSbf
                   name: taxonomy_10
                   permalink: taxonomy-10
@@ -3402,8 +5014,8 @@ paths:
                   meta_description:
                   meta_keywords:
                   children_count: 1
-                  created_at: '2026-03-06T19:36:47.021Z'
-                  updated_at: '2026-03-06T19:36:47.033Z'
+                  created_at: '2026-03-07T09:49:27.237Z'
+                  updated_at: '2026-03-07T09:49:27.252Z'
                   parent_id:
                   taxonomy_id: txnmy_VqXmZF31wY
                   description: ''
@@ -3415,6 +5027,10 @@ paths:
                   is_leaf: false
                   lft: 11
                   rgt: 14
+                  hide_from_nav: false
+                  sort_order: manual
+                  rules_match_policy: all
+                  automatic: false
                 - id: txn_AXs1igzRC6
                   name: taxon_1
                   permalink: taxonomy-10/taxon-1
@@ -3424,8 +5040,8 @@ paths:
                   meta_description:
                   meta_keywords:
                   children_count: 0
-                  created_at: '2026-03-06T19:36:47.027Z'
-                  updated_at: '2026-03-06T19:36:47.032Z'
+                  created_at: '2026-03-07T09:49:27.245Z'
+                  updated_at: '2026-03-07T09:49:27.250Z'
                   parent_id: txn_OIJLhNcSbf
                   taxonomy_id: txnmy_VqXmZF31wY
                   description: ''
@@ -3437,6 +5053,10 @@ paths:
                   is_leaf: true
                   lft: 12
                   rgt: 13
+                  hide_from_nav: false
+                  sort_order: manual
+                  rules_match_policy: all
+                  automatic: false
                 meta:
                   page: 1
                   limit: 25
@@ -3518,8 +5138,8 @@ paths:
                 meta_description:
                 meta_keywords:
                 children_count: 0
-                created_at: '2026-03-06T19:36:47.647Z'
-                updated_at: '2026-03-06T19:36:47.653Z'
+                created_at: '2026-03-07T09:49:27.868Z'
+                updated_at: '2026-03-07T09:49:27.874Z'
                 parent_id: txn_OIJLhNcSbf
                 taxonomy_id: txnmy_VqXmZF31wY
                 description: ''
@@ -3531,6 +5151,10 @@ paths:
                 is_leaf: true
                 lft: 12
                 rgt: 13
+                hide_from_nav: false
+                sort_order: manual
+                rules_match_policy: all
+                automatic: false
               schema:
                 "$ref": "#/components/schemas/AdminTaxon"
         '404':
@@ -3599,8 +5223,8 @@ paths:
                   meta_description:
                   meta_keywords:
                   children_count: 1
-                  created_at: '2026-03-06T19:36:48.253Z'
-                  updated_at: '2026-03-06T19:36:48.272Z'
+                  created_at: '2026-03-07T09:49:28.464Z'
+                  updated_at: '2026-03-07T09:49:28.478Z'
                   parent_id:
                   taxonomy_id: txnmy_VqXmZF31wY
                   description: ''
@@ -3612,6 +5236,10 @@ paths:
                   is_leaf: false
                   lft: 11
                   rgt: 14
+                  hide_from_nav: false
+                  sort_order: manual
+                  rules_match_policy: all
+                  automatic: false
                 - id: txn_AXs1igzRC6
                   name: taxon_5
                   permalink: taxonomy-14/taxon-5
@@ -3621,8 +5249,8 @@ paths:
                   meta_description:
                   meta_keywords:
                   children_count: 0
-                  created_at: '2026-03-06T19:36:48.262Z'
-                  updated_at: '2026-03-06T19:36:48.271Z'
+                  created_at: '2026-03-07T09:49:28.471Z'
+                  updated_at: '2026-03-07T09:49:28.477Z'
                   parent_id: txn_OIJLhNcSbf
                   taxonomy_id: txnmy_VqXmZF31wY
                   description: ''
@@ -3634,6 +5262,10 @@ paths:
                   is_leaf: true
                   lft: 12
                   rgt: 13
+                  hide_from_nav: false
+                  sort_order: manual
+                  rules_match_policy: all
+                  automatic: false
                 meta:
                   page: 1
                   limit: 25
@@ -3697,8 +5329,8 @@ paths:
                 meta_description:
                 meta_keywords:
                 children_count: 0
-                created_at: '2026-03-06T19:36:48.859Z'
-                updated_at: '2026-03-06T19:36:48.866Z'
+                created_at: '2026-03-07T09:49:29.076Z'
+                updated_at: '2026-03-07T09:49:29.089Z'
                 parent_id: txn_OIJLhNcSbf
                 taxonomy_id: txnmy_VqXmZF31wY
                 description: ''
@@ -3710,6 +5342,10 @@ paths:
                 is_leaf: true
                 lft: 14
                 rgt: 15
+                hide_from_nav: false
+                sort_order: manual
+                rules_match_policy: all
+                automatic: false
               schema:
                 "$ref": "#/components/schemas/AdminTaxon"
         '422':
@@ -3814,8 +5450,8 @@ paths:
                 meta_description:
                 meta_keywords:
                 children_count: 0
-                created_at: '2026-03-06T19:36:49.184Z'
-                updated_at: '2026-03-06T19:36:49.191Z'
+                created_at: '2026-03-07T09:49:29.424Z'
+                updated_at: '2026-03-07T09:49:29.430Z'
                 parent_id: txn_OIJLhNcSbf
                 taxonomy_id: txnmy_VqXmZF31wY
                 description: ''
@@ -3827,6 +5463,10 @@ paths:
                 is_leaf: true
                 lft: 12
                 rgt: 13
+                hide_from_nav: false
+                sort_order: manual
+                rules_match_policy: all
+                automatic: false
               schema:
                 "$ref": "#/components/schemas/AdminTaxon"
         '404':
@@ -3887,8 +5527,8 @@ paths:
                 meta_description:
                 meta_keywords:
                 children_count: 0
-                created_at: '2026-03-06T19:36:49.788Z'
-                updated_at: '2026-03-06T19:36:50.092Z'
+                created_at: '2026-03-07T09:49:30.176Z'
+                updated_at: '2026-03-07T09:49:30.465Z'
                 parent_id: txn_OIJLhNcSbf
                 taxonomy_id: txnmy_VqXmZF31wY
                 description: ''
@@ -3900,6 +5540,10 @@ paths:
                 is_leaf: true
                 lft: 12
                 rgt: 13
+                hide_from_nav: false
+                sort_order: manual
+                rules_match_policy: all
+                automatic: false
               schema:
                 "$ref": "#/components/schemas/AdminTaxon"
         '422':
@@ -4035,13 +5679,13 @@ paths:
                 data:
                 - id: variant_UkLWZg9DAJ
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-30
+                  sku: SKU-45
                   is_master: true
                   options_text: ''
                   track_inventory: true
                   image_count: 0
-                  created_at: '2026-03-06T19:36:50.789Z'
-                  updated_at: '2026-03-06T19:36:50.802Z'
+                  created_at: '2026-03-07T09:49:31.204Z'
+                  updated_at: '2026-03-07T09:49:31.218Z'
                   thumbnail:
                   purchasable: false
                   in_stock: false
@@ -4069,25 +5713,29 @@ paths:
                   tax_category_id: 1
                   cost_price: '17.0'
                   cost_currency: USD
+                  barcode:
+                  weight_unit: lb
+                  dimensions_unit:
                   deleted_at:
+                  discontinue_on:
                   total_on_hand: 0
                 - id: variant_gbHJdmfrXB
                   product_id: prod_UkLWZg9DAJ
-                  sku: SKU-31
+                  sku: SKU-46
                   is_master: false
                   options_text: 'Size: S'
                   track_inventory: true
                   image_count: 0
-                  created_at: '2026-03-06T19:36:50.814Z'
-                  updated_at: '2026-03-06T19:36:50.826Z'
+                  created_at: '2026-03-07T09:49:31.230Z'
+                  updated_at: '2026-03-07T09:49:31.246Z'
                   thumbnail:
                   purchasable: true
                   in_stock: false
                   backorderable: true
-                  weight: 65.12
-                  height: 36.3
-                  width: 134.5
-                  depth: 3.89
+                  weight: 99.54
+                  height: 43.63
+                  width: 184.31
+                  depth: 123.69
                   price:
                     id: price_gbHJdmfrXB
                     amount: '19.99'
@@ -4099,8 +5747,8 @@ paths:
                     display_compare_at_amount:
                     price_list_id:
                     variant_id: variant_gbHJdmfrXB
-                    created_at: '2026-03-06T19:36:50.815Z'
-                    updated_at: '2026-03-06T19:36:50.815Z'
+                    created_at: '2026-03-07T09:49:31.232Z'
+                    updated_at: '2026-03-07T09:49:31.232Z'
                   original_price:
                   option_values:
                   - id: optval_UkLWZg9DAJ
@@ -4110,11 +5758,17 @@ paths:
                     position: 1
                     option_type_name: foo-size-16
                     option_type_presentation: Size
+                    created_at: '2026-03-07T09:49:31.236Z'
+                    updated_at: '2026-03-07T09:49:31.236Z'
                   position: 2
                   tax_category_id: 1
                   cost_price: '17.0'
                   cost_currency: USD
+                  barcode:
+                  weight_unit: lb
+                  dimensions_unit:
                   deleted_at:
+                  discontinue_on:
                   total_on_hand: 0
                 meta:
                   page: 1
@@ -4169,8 +5823,8 @@ paths:
                 options_text: 'Size: XL'
                 track_inventory: true
                 image_count: 0
-                created_at: '2026-03-06T19:36:51.479Z'
-                updated_at: '2026-03-06T19:36:51.482Z'
+                created_at: '2026-03-07T09:49:31.940Z'
+                updated_at: '2026-03-07T09:49:31.942Z'
                 thumbnail:
                 purchasable: false
                 in_stock: false
@@ -4190,8 +5844,8 @@ paths:
                   display_compare_at_amount:
                   price_list_id:
                   variant_id: variant_EfhxLZ9ck8
-                  created_at: '2026-03-06T19:36:51.480Z'
-                  updated_at: '2026-03-06T19:36:51.480Z'
+                  created_at: '2026-03-07T09:49:31.941Z'
+                  updated_at: '2026-03-07T09:49:31.941Z'
                 original_price:
                 option_values:
                 - id: optval_gbHJdmfrXB
@@ -4201,11 +5855,17 @@ paths:
                   position: 1
                   option_type_name: size
                   option_type_presentation: Size
+                  created_at: '2026-03-07T09:49:31.936Z'
+                  updated_at: '2026-03-07T09:49:31.936Z'
                 position: 3
                 tax_category_id: 1
                 cost_price:
                 cost_currency: USD
+                barcode:
+                weight_unit: lb
+                dimensions_unit:
                 deleted_at:
+                discontinue_on:
                 total_on_hand: 0
         '422':
           description: validation error
@@ -4348,21 +6008,21 @@ paths:
               example:
                 id: variant_gbHJdmfrXB
                 product_id: prod_UkLWZg9DAJ
-                sku: SKU-37
+                sku: SKU-52
                 is_master: false
                 options_text: 'Size: S'
                 track_inventory: true
                 image_count: 0
-                created_at: '2026-03-06T19:36:51.879Z'
-                updated_at: '2026-03-06T19:36:51.889Z'
+                created_at: '2026-03-07T09:49:32.412Z'
+                updated_at: '2026-03-07T09:49:32.423Z'
                 thumbnail:
                 purchasable: true
                 in_stock: false
                 backorderable: true
-                weight: 102.26
-                height: 72.23
-                width: 188.79
-                depth: 179.21
+                weight: 28.96
+                height: 55.66
+                width: 97.34
+                depth: 133.49
                 price:
                   id: price_gbHJdmfrXB
                   amount: '19.99'
@@ -4374,8 +6034,8 @@ paths:
                   display_compare_at_amount:
                   price_list_id:
                   variant_id: variant_gbHJdmfrXB
-                  created_at: '2026-03-06T19:36:51.880Z'
-                  updated_at: '2026-03-06T19:36:51.880Z'
+                  created_at: '2026-03-07T09:49:32.413Z'
+                  updated_at: '2026-03-07T09:49:32.413Z'
                 original_price:
                 option_values:
                 - id: optval_UkLWZg9DAJ
@@ -4385,11 +6045,17 @@ paths:
                   position: 1
                   option_type_name: foo-size-19
                   option_type_presentation: Size
+                  created_at: '2026-03-07T09:49:32.416Z'
+                  updated_at: '2026-03-07T09:49:32.416Z'
                 position: 2
                 tax_category_id: 1
                 cost_price: '17.0'
                 cost_currency: USD
+                barcode:
+                weight_unit: lb
+                dimensions_unit:
                 deleted_at:
+                discontinue_on:
                 total_on_hand: 0
         '404':
           description: variant not found
@@ -4448,16 +6114,16 @@ paths:
                 options_text: 'Size: S'
                 track_inventory: true
                 image_count: 0
-                created_at: '2026-03-06T19:36:52.558Z'
-                updated_at: '2026-03-06T19:36:52.863Z'
+                created_at: '2026-03-07T09:49:33.130Z'
+                updated_at: '2026-03-07T09:49:33.506Z'
                 thumbnail:
                 purchasable: true
                 in_stock: false
                 backorderable: true
-                weight: 135.4
-                height: 59.23
-                width: 99.22
-                depth: 15.96
+                weight: 164.39
+                height: 7.16
+                width: 13.85
+                depth: 84.33
                 price:
                   id: price_gbHJdmfrXB
                   amount: '19.99'
@@ -4469,8 +6135,8 @@ paths:
                   display_compare_at_amount:
                   price_list_id:
                   variant_id: variant_gbHJdmfrXB
-                  created_at: '2026-03-06T19:36:52.559Z'
-                  updated_at: '2026-03-06T19:36:52.559Z'
+                  created_at: '2026-03-07T09:49:33.131Z'
+                  updated_at: '2026-03-07T09:49:33.131Z'
                 original_price:
                 option_values:
                 - id: optval_UkLWZg9DAJ
@@ -4480,11 +6146,17 @@ paths:
                   position: 1
                   option_type_name: foo-size-21
                   option_type_presentation: Size
+                  created_at: '2026-03-07T09:49:33.133Z'
+                  updated_at: '2026-03-07T09:49:33.133Z'
                 position: 2
                 tax_category_id: 1
                 cost_price: '17.0'
                 cost_currency: USD
+                barcode:
+                weight_unit: lb
+                dimensions_unit:
                 deleted_at:
+                discontinue_on:
                 total_on_hand: 0
       requestBody:
         content:
@@ -4605,6 +6277,8 @@ servers:
     defaultHost:
       default: localhost:3000
 tags:
+- name: Authentication
+  description: Admin user authentication
 - name: Products
   description: Product management
 - name: Variants
@@ -4620,6 +6294,9 @@ tags:
 - name: Prices
   description: Variant price management
 x-tagGroups:
+- name: Authentication
+  tags:
+  - Authentication
 - name: Catalog
   tags:
   - Products
@@ -4729,17 +6406,98 @@ components:
             - is too short
             email:
             - is invalid
-    AuthResponse:
+    AdminAuthResponse:
       type: object
       properties:
         token:
           type: string
           description: JWT access token
         user:
-          "$ref": "#/components/schemas/StoreCustomer"
+          "$ref": "#/components/schemas/AdminAdminUser"
       required:
       - token
       - user
+    AdminAdjustment:
+      type: object
+      properties:
+        id:
+          type: string
+        amount:
+          type: string
+        label:
+          type: string
+          nullable: true
+        eligible:
+          type: boolean
+        state:
+          type: string
+        included:
+          type: boolean
+        mandatory:
+          type: boolean
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        source_type:
+          type: string
+          nullable: true
+        source_id:
+          type: string
+          nullable: true
+        adjustable_type:
+          type: string
+          nullable: true
+        adjustable_id:
+          type: string
+          nullable: true
+        order_id:
+          type: string
+          nullable: true
+        order:
+          "$ref": "#/components/schemas/AdminOrder"
+      required:
+      - id
+      - amount
+      - label
+      - eligible
+      - state
+      - included
+      - mandatory
+      - created_at
+      - updated_at
+      - source_type
+      - source_id
+      - adjustable_type
+      - adjustable_id
+      - order_id
+      x-typelizer: true
+    AdminAdminUser:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        first_name:
+          type: string
+          nullable: true
+        last_name:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+      required:
+      - id
+      - email
+      - first_name
+      - last_name
+      - created_at
+      - updated_at
+      x-typelizer: true
     AdminAsset:
       type: object
       properties:
@@ -4982,6 +6740,25 @@ components:
         metadata:
           type: object
           nullable: true
+        cost_price:
+          type: string
+          nullable: true
+        tax_category_id:
+          type: string
+          nullable: true
+        order_id:
+          type: string
+          nullable: true
+        order:
+          "$ref": "#/components/schemas/AdminOrder"
+        variant:
+          "$ref": "#/components/schemas/AdminVariant"
+        tax_category:
+          "$ref": "#/components/schemas/AdminTaxCategory"
+        adjustments:
+          type: array
+          items:
+            "$ref": "#/components/schemas/AdminAdjustment"
       required:
       - id
       - variant_id
@@ -5014,6 +6791,9 @@ components:
       - option_values
       - digital_links
       - metadata
+      - cost_price
+      - tax_category_id
+      - order_id
       x-typelizer: true
     AdminMetafield:
       type: object
@@ -5030,6 +6810,10 @@ components:
           type: object
         display_on:
           type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
       required:
       - id
       - name
@@ -5037,6 +6821,8 @@ components:
       - key
       - value
       - display_on
+      - created_at
+      - updated_at
       x-typelizer: true
     AdminOptionType:
       type: object
@@ -5051,16 +6837,26 @@ components:
           type: number
         filterable:
           type: boolean
+        created_at:
+          type: string
+        updated_at:
+          type: string
         option_values:
           type: array
           items:
             "$ref": "#/components/schemas/AdminOptionValue"
+        metafields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/AdminMetafield"
       required:
       - id
       - name
       - presentation
       - position
       - filterable
+      - created_at
+      - updated_at
       - option_values
       x-typelizer: true
     AdminOptionValue:
@@ -5080,6 +6876,16 @@ components:
           type: string
         option_type_presentation:
           type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        option_type:
+          "$ref": "#/components/schemas/AdminOptionType"
+        metafields:
+          type: array
+          items:
+            "$ref": "#/components/schemas/AdminMetafield"
       required:
       - id
       - option_type_id
@@ -5088,6 +6894,8 @@ components:
       - position
       - option_type_name
       - option_type_presentation
+      - created_at
+      - updated_at
       x-typelizer: true
     AdminOrder:
       type: object
@@ -5175,11 +6983,11 @@ components:
         shipments:
           type: array
           items:
-            "$ref": "#/components/schemas/StoreShipment"
+            "$ref": "#/components/schemas/AdminShipment"
         payments:
           type: array
           items:
-            "$ref": "#/components/schemas/StorePayment"
+            "$ref": "#/components/schemas/AdminPayment"
         bill_address:
           allOf:
           - "$ref": "#/components/schemas/StoreAddress"
@@ -5207,9 +7015,10 @@ components:
         internal_note:
           type: string
           nullable: true
-        approver_id:
+        payment_total:
           type: string
-          nullable: true
+        display_payment_total:
+          type: string
         canceled_at:
           type: string
           nullable: true
@@ -5219,14 +7028,38 @@ components:
         metadata:
           type: object
           nullable: true
+        approver_id:
+          type: string
+          nullable: true
         canceler_id:
           type: string
           nullable: true
         created_by_id:
           type: string
           nullable: true
+        user_id:
+          type: string
+          nullable: true
         user:
           "$ref": "#/components/schemas/AdminCustomer"
+        approver:
+          "$ref": "#/components/schemas/AdminCustomer"
+        canceler:
+          "$ref": "#/components/schemas/AdminCustomer"
+        created_by:
+          "$ref": "#/components/schemas/AdminCustomer"
+        adjustments:
+          type: array
+          items:
+            "$ref": "#/components/schemas/AdminAdjustment"
+        return_authorizations:
+          type: array
+          items:
+            "$ref": "#/components/schemas/AdminReturnAuthorization"
+        reimbursements:
+          type: array
+          items:
+            "$ref": "#/components/schemas/AdminReimbursement"
       required:
       - id
       - number
@@ -5273,12 +7106,99 @@ components:
       - confirmation_delivered
       - store_owner_notification_delivered
       - internal_note
-      - approver_id
+      - payment_total
+      - display_payment_total
       - canceled_at
       - approved_at
       - metadata
+      - approver_id
       - canceler_id
       - created_by_id
+      - user_id
+      x-typelizer: true
+    AdminPayment:
+      type: object
+      properties:
+        id:
+          type: string
+        payment_method_id:
+          type: string
+        state:
+          type: string
+        response_code:
+          type: string
+          nullable: true
+        number:
+          type: string
+        amount:
+          type: string
+        display_amount:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        source_type:
+          type: string
+          nullable: true
+          enum:
+          - credit_card
+          - store_credit
+          - payment_source
+        source_id:
+          type: string
+          nullable: true
+        source:
+          anyOf:
+          - "$ref": "#/components/schemas/StoreCreditCard"
+          - "$ref": "#/components/schemas/StoreStoreCredit"
+          - "$ref": "#/components/schemas/StorePaymentSource"
+          nullable: true
+        payment_method:
+          "$ref": "#/components/schemas/StorePaymentMethod"
+        avs_response:
+          type: string
+          nullable: true
+        cvv_response_code:
+          type: string
+          nullable: true
+        cvv_response_message:
+          type: string
+          nullable: true
+        metadata:
+          type: object
+          nullable: true
+        captured_amount:
+          type: string
+        order_id:
+          type: string
+          nullable: true
+        order:
+          "$ref": "#/components/schemas/AdminOrder"
+        refunds:
+          type: array
+          items:
+            "$ref": "#/components/schemas/AdminRefund"
+      required:
+      - id
+      - payment_method_id
+      - state
+      - response_code
+      - number
+      - amount
+      - display_amount
+      - created_at
+      - updated_at
+      - source_type
+      - source_id
+      - source
+      - payment_method
+      - avs_response
+      - cvv_response_code
+      - cvv_response_message
+      - metadata
+      - captured_amount
+      - order_id
       x-typelizer: true
     AdminPrice:
       type: object
@@ -5316,6 +7236,8 @@ components:
           type: string
         updated_at:
           type: string
+        variant:
+          "$ref": "#/components/schemas/AdminVariant"
       required:
       - id
       - amount
@@ -5412,7 +7334,18 @@ components:
         discontinue_on:
           type: string
           nullable: true
+        meta_title:
+          type: string
+          nullable: true
+        promotionable:
+          type: boolean
         deleted_at:
+          type: string
+          nullable: true
+        shipping_category_id:
+          type: string
+          nullable: true
+        tax_category_id:
           type: string
           nullable: true
         cost_price:
@@ -5421,6 +7354,10 @@ components:
         cost_currency:
           type: string
           nullable: true
+        shipping_category:
+          "$ref": "#/components/schemas/AdminShippingCategory"
+        tax_category:
+          "$ref": "#/components/schemas/AdminTaxCategory"
       required:
       - id
       - name
@@ -5444,9 +7381,215 @@ components:
       - status
       - make_active_at
       - discontinue_on
+      - meta_title
+      - promotionable
       - deleted_at
+      - shipping_category_id
+      - tax_category_id
       - cost_price
       - cost_currency
+      x-typelizer: true
+    AdminRefund:
+      type: object
+      properties:
+        id:
+          type: string
+        transaction_id:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        amount:
+          type: string
+          nullable: true
+        payment_id:
+          type: string
+          nullable: true
+        refund_reason_id:
+          type: string
+          nullable: true
+        reimbursement_id:
+          type: string
+          nullable: true
+        metadata:
+          type: object
+          nullable: true
+      required:
+      - id
+      - transaction_id
+      - created_at
+      - updated_at
+      - amount
+      - payment_id
+      - refund_reason_id
+      - reimbursement_id
+      - metadata
+      x-typelizer: true
+    AdminReimbursement:
+      type: object
+      properties:
+        id:
+          type: string
+        number:
+          type: string
+        reimbursement_status:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        total:
+          type: string
+          nullable: true
+        order_id:
+          type: string
+          nullable: true
+        customer_return_id:
+          type: string
+          nullable: true
+      required:
+      - id
+      - number
+      - reimbursement_status
+      - created_at
+      - updated_at
+      - total
+      - order_id
+      - customer_return_id
+      x-typelizer: true
+    AdminReturnAuthorization:
+      type: object
+      properties:
+        id:
+          type: string
+        number:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        state:
+          type: string
+        order_id:
+          type: string
+          nullable: true
+        stock_location_id:
+          type: string
+          nullable: true
+        return_authorization_reason_id:
+          type: string
+          nullable: true
+      required:
+      - id
+      - number
+      - created_at
+      - updated_at
+      - state
+      - order_id
+      - stock_location_id
+      - return_authorization_reason_id
+      x-typelizer: true
+    AdminShipment:
+      type: object
+      properties:
+        id:
+          type: string
+        number:
+          type: string
+        state:
+          type: string
+        tracking:
+          type: string
+          nullable: true
+        tracking_url:
+          type: string
+          nullable: true
+        cost:
+          type: string
+        display_cost:
+          type: string
+        shipped_at:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        shipping_method:
+          "$ref": "#/components/schemas/StoreShippingMethod"
+        stock_location:
+          "$ref": "#/components/schemas/StoreStockLocation"
+        shipping_rates:
+          type: array
+          items:
+            "$ref": "#/components/schemas/StoreShippingRate"
+        adjustment_total:
+          type: string
+        additional_tax_total:
+          type: string
+        included_tax_total:
+          type: string
+        promo_total:
+          type: string
+        pre_tax_amount:
+          type: string
+        metadata:
+          type: object
+          nullable: true
+        order_id:
+          type: string
+          nullable: true
+        stock_location_id:
+          type: string
+          nullable: true
+        order:
+          "$ref": "#/components/schemas/AdminOrder"
+        adjustments:
+          type: array
+          items:
+            "$ref": "#/components/schemas/AdminAdjustment"
+      required:
+      - id
+      - number
+      - state
+      - tracking
+      - tracking_url
+      - cost
+      - display_cost
+      - shipped_at
+      - created_at
+      - updated_at
+      - shipping_method
+      - stock_location
+      - shipping_rates
+      - adjustment_total
+      - additional_tax_total
+      - included_tax_total
+      - promo_total
+      - pre_tax_amount
+      - metadata
+      - order_id
+      - stock_location_id
+      x-typelizer: true
+    AdminShippingCategory:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+      required:
+      - id
+      - name
+      - created_at
+      - updated_at
       x-typelizer: true
     AdminStockItem:
       type: object
@@ -5475,6 +7618,30 @@ components:
       - updated_at
       - stock_location_id
       - variant_id
+      x-typelizer: true
+    AdminTaxCategory:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        is_default:
+          type: boolean
+        tax_code:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        updated_at:
+          type: string
+      required:
+      - id
+      - name
+      - is_default
+      - tax_code
+      - created_at
+      - updated_at
       x-typelizer: true
     AdminTaxon:
       type: object
@@ -5543,6 +7710,16 @@ components:
           type: number
         rgt:
           type: number
+        hide_from_nav:
+          type: boolean
+        sort_order:
+          type: string
+        rules_match_policy:
+          type: string
+        automatic:
+          type: boolean
+        taxonomy:
+          "$ref": "#/components/schemas/AdminTaxonomy"
       required:
       - id
       - name
@@ -5566,6 +7743,10 @@ components:
       - is_leaf
       - lft
       - rgt
+      - hide_from_nav
+      - sort_order
+      - rules_match_policy
+      - automatic
       x-typelizer: true
     AdminTaxonomy:
       type: object
@@ -5593,6 +7774,9 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/AdminMetafield"
+        store_id:
+          type: string
+          nullable: true
       required:
       - id
       - name
@@ -5600,6 +7784,7 @@ components:
       - created_at
       - updated_at
       - root_id
+      - store_id
       x-typelizer: true
     AdminVariant:
       type: object
@@ -5673,7 +7858,19 @@ components:
         cost_currency:
           type: string
           nullable: true
+        barcode:
+          type: string
+          nullable: true
+        weight_unit:
+          type: string
+          nullable: true
+        dimensions_unit:
+          type: string
+          nullable: true
         deleted_at:
+          type: string
+          nullable: true
+        discontinue_on:
           type: string
           nullable: true
         total_on_hand:
@@ -5687,6 +7884,10 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/AdminStockItem"
+        product:
+          "$ref": "#/components/schemas/AdminProduct"
+        tax_category:
+          "$ref": "#/components/schemas/AdminTaxCategory"
       required:
       - id
       - product_id
@@ -5712,6 +7913,10 @@ components:
       - tax_category_id
       - cost_price
       - cost_currency
+      - barcode
+      - weight_unit
+      - dimensions_unit
       - deleted_at
+      - discontinue_on
       - total_on_hand
       x-typelizer: true
