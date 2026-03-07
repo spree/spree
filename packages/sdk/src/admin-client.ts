@@ -106,7 +106,7 @@ export class AdminClient {
       params?: ListParams,
       options?: RequestOptions
     ): Promise<PaginatedResponse<AdminOptionType>> =>
-      this.request<PaginatedResponse<AdminOptionType>>('GET', '/option_types', {
+      this.request<PaginatedResponse<AdminOptionType>>('GET', `/option_types`, {
         ...options,
         params: transformListParams({ ...params }),
       }),
@@ -116,7 +116,7 @@ export class AdminClient {
       params: AdminOptionTypeCreateParams,
       options?: RequestOptions
     ): Promise<AdminOptionType> =>
-      this.request<AdminOptionType>('POST', '/option_types', {
+      this.request<AdminOptionType>('POST', `/option_types`, {
         ...options,
         body: params,
       }),
@@ -162,7 +162,7 @@ export class AdminClient {
       params?: ListParams,
       options?: RequestOptions
     ): Promise<PaginatedResponse<AdminOrder>> =>
-      this.request<PaginatedResponse<AdminOrder>>('GET', '/orders', {
+      this.request<PaginatedResponse<AdminOrder>>('GET', `/orders`, {
         ...options,
         params: transformListParams({ ...params }),
       }),
@@ -172,7 +172,7 @@ export class AdminClient {
       params: AdminOrderCreateParams,
       options?: RequestOptions
     ): Promise<AdminOrder> =>
-      this.request<AdminOrder>('POST', '/orders', {
+      this.request<AdminOrder>('POST', `/orders`, {
         ...options,
         body: params,
       }),
@@ -553,7 +553,7 @@ export class AdminClient {
       params?: ListParams,
       options?: RequestOptions
     ): Promise<PaginatedResponse<AdminProduct>> =>
-      this.request<PaginatedResponse<AdminProduct>>('GET', '/products', {
+      this.request<PaginatedResponse<AdminProduct>>('GET', `/products`, {
         ...options,
         params: transformListParams({ ...params }),
       }),
@@ -563,7 +563,7 @@ export class AdminClient {
       params: AdminProductCreateParams,
       options?: RequestOptions
     ): Promise<AdminProduct> =>
-      this.request<AdminProduct>('POST', '/products', {
+      this.request<AdminProduct>('POST', `/products`, {
         ...options,
         body: params,
       }),
@@ -610,7 +610,7 @@ export class AdminClient {
           params: transformListParams({ ...params }),
         }),
 
-      /** Create an asset */
+      /** Create a product asset */
       create: (
         productId: string,
         params: AdminAssetCreateParams,
@@ -621,7 +621,7 @@ export class AdminClient {
           body: params,
         }),
 
-      /** Update an asset */
+      /** Update a product asset */
       update: (
         productId: string,
         id: string,
@@ -633,7 +633,7 @@ export class AdminClient {
           body: params,
         }),
 
-      /** Delete an asset */
+      /** Delete a product asset */
       delete: (
         productId: string,
         id: string,
@@ -699,6 +699,56 @@ export class AdminClient {
       ): Promise<void> =>
         this.request<void>('DELETE', `/products/${productId}/variants/${id}`, options),
 
+      /** Nested: products/{id}/variants/{id}/assets */
+      assets: {
+        /** List variant assets */
+        list: (
+          productId: string,
+          variantId: string,
+          params?: ListParams,
+          options?: RequestOptions
+        ): Promise<PaginatedResponse<AdminAsset>> =>
+          this.request<PaginatedResponse<AdminAsset>>('GET', `/products/${productId}/variants/${variantId}/assets`, {
+            ...options,
+            params: transformListParams({ ...params }),
+          }),
+
+        /** Create a variant asset */
+        create: (
+          productId: string,
+          variantId: string,
+          params: AdminAssetCreateParams,
+          options?: RequestOptions
+        ): Promise<AdminAsset> =>
+          this.request<AdminAsset>('POST', `/products/${productId}/variants/${variantId}/assets`, {
+            ...options,
+            body: params,
+          }),
+
+        /** Update a variant asset */
+        update: (
+          productId: string,
+          variantId: string,
+          id: string,
+          params: AdminAssetUpdateParams,
+          options?: RequestOptions
+        ): Promise<AdminAsset> =>
+          this.request<AdminAsset>('PATCH', `/products/${productId}/variants/${variantId}/assets/${id}`, {
+            ...options,
+            body: params,
+          }),
+
+        /** Delete a variant asset */
+        delete: (
+          productId: string,
+          variantId: string,
+          id: string,
+          options?: RequestOptions
+        ): Promise<void> =>
+          this.request<void>('DELETE', `/products/${productId}/variants/${variantId}/assets/${id}`, options),
+
+      },
+
     },
 
   };
@@ -713,7 +763,7 @@ export class AdminClient {
       params?: ListParams,
       options?: RequestOptions
     ): Promise<PaginatedResponse<AdminTaxonomy>> =>
-      this.request<PaginatedResponse<AdminTaxonomy>>('GET', '/taxonomies', {
+      this.request<PaginatedResponse<AdminTaxonomy>>('GET', `/taxonomies`, {
         ...options,
         params: transformListParams({ ...params }),
       }),
@@ -723,7 +773,7 @@ export class AdminClient {
       params: AdminTaxonomyCreateParams,
       options?: RequestOptions
     ): Promise<AdminTaxonomy> =>
-      this.request<AdminTaxonomy>('POST', '/taxonomies', {
+      this.request<AdminTaxonomy>('POST', `/taxonomies`, {
         ...options,
         body: params,
       }),
@@ -827,7 +877,7 @@ export class AdminClient {
       params?: ListParams,
       options?: RequestOptions
     ): Promise<PaginatedResponse<AdminTaxon>> =>
-      this.request<PaginatedResponse<AdminTaxon>>('GET', '/taxons', {
+      this.request<PaginatedResponse<AdminTaxon>>('GET', `/taxons`, {
         ...options,
         params: transformListParams({ ...params }),
       }),

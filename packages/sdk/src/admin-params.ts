@@ -3,19 +3,6 @@
 
 // Request parameter types (generated from OpenAPI request bodies)
 
-export interface AdminAssetCreateParams {
-  alt?: string;
-  position?: number;
-  type?: string;
-  viewable_type?: string;
-  viewable_id?: string;
-}
-
-export interface AdminAssetUpdateParams {
-  alt?: string;
-  position?: number;
-}
-
 export interface AdminOptionTypeCreateParams {
   name: string;
   presentation: string;
@@ -115,6 +102,18 @@ export interface AdminOrderUpdateParams {
     variant_id?: string;
     quantity?: number;
   }>;
+}
+
+export interface AdminAssetCreateParams {
+  alt?: string;
+  position?: number;
+  type?: string;
+  url?: string;
+}
+
+export interface AdminAssetUpdateParams {
+  alt?: string;
+  position?: number;
 }
 
 export interface AdminProductCreateParams {

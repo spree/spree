@@ -260,15 +260,42 @@ export const adminHandlers = [
     HttpResponse.json({ data: [adminFixtures.asset], meta: paginationMeta })
   ),
 
-  http.post(`${API_PREFIX}/products/:productId/assets`, () =>
-    HttpResponse.json(adminFixtures.asset, { status: 201 })
-  ),
+  http.post(`${API_PREFIX}/products/:productId/assets`, async ({ request }) => {
+    const body = await request.json() as Record<string, unknown>;
+    if (body.url) {
+      return new HttpResponse(null, { status: 202 });
+    }
+    return HttpResponse.json(adminFixtures.asset, { status: 201 });
+  }),
 
   http.patch(`${API_PREFIX}/products/:productId/assets/:id`, () =>
     HttpResponse.json({ ...adminFixtures.asset, alt: 'Updated alt' })
   ),
 
   http.delete(`${API_PREFIX}/products/:productId/assets/:id`, () =>
+    new HttpResponse(null, { status: 204 })
+  ),
+
+  // ============================================
+  // Variant Assets
+  // ============================================
+  http.get(`${API_PREFIX}/products/:productId/variants/:variantId/assets`, () =>
+    HttpResponse.json({ data: [adminFixtures.asset], meta: paginationMeta })
+  ),
+
+  http.post(`${API_PREFIX}/products/:productId/variants/:variantId/assets`, async ({ request }) => {
+    const body = await request.json() as Record<string, unknown>;
+    if (body.url) {
+      return new HttpResponse(null, { status: 202 });
+    }
+    return HttpResponse.json(adminFixtures.asset, { status: 201 });
+  }),
+
+  http.patch(`${API_PREFIX}/products/:productId/variants/:variantId/assets/:id`, () =>
+    HttpResponse.json({ ...adminFixtures.asset, alt: 'Updated variant alt' })
+  ),
+
+  http.delete(`${API_PREFIX}/products/:productId/variants/:variantId/assets/:id`, () =>
     new HttpResponse(null, { status: 204 })
   ),
 

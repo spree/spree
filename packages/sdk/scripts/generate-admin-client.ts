@@ -199,6 +199,10 @@ interface Resource {
   parentName?: string;
   /** Parent path param, e.g. 'product_id' */
   parentParam?: string;
+  /** Grandparent resource name for deeply nested, e.g. 'products' for variant assets */
+  grandparentName?: string;
+  /** Grandparent path param, e.g. 'product_id' for variant assets */
+  grandparentParam?: string;
   endpoints: ResourceEndpoint[];
 }
 
@@ -247,15 +251,45 @@ function analyzeResources(spec: OpenApiSpec): Resource[] {
       // /products → resource=products
       // /products/{id} → resource=products
       // /products/{product_id}/variants → resource=variants, parent=products
-      // /products/{product_id}/variants/{id} → resource=variants, parent=products
+      // /products/{product_id}/variants/{variant_id}/assets → resource=assets, parent=variants, grandparent=products
       const segments = apiPath.split('/').filter(Boolean);
 
       let resourceName: string;
       let basePath: string;
       let parentName: string | undefined;
       let parentParam: string | undefined;
+      let grandparentName: string | undefined;
+      let grandparentParam: string | undefined;
 
-      if (segments.length >= 3 && segments[1].startsWith('{') && segments[1].endsWith('}')) {
+      if (segments.length >= 5 && segments[1].startsWith('{') && segments[3].startsWith('{')) {
+        // 5+ segments: /parent/{id}/child/{id}/something
+        // If the 5th segment is a resource name (has collection/member endpoints), it's deeply nested.
+        // If it's a custom action name (no sub-paths with /{id}), it's a member action on the child resource.
+        const fifthSegment = segments[4];
+        const potentialDeepBasePath = `${API_PREFIX}/${segments[0]}/${segments[1]}/${segments[2]}/${segments[3]}/${fifthSegment}`;
+        const hasDeepCollection = Object.keys(spec.paths).some(
+          (p) => p === potentialDeepBasePath && (spec.paths[p]?.get || spec.paths[p]?.post)
+        );
+        const hasDeepMember = Object.keys(spec.paths).some(
+          (p) => p.startsWith(potentialDeepBasePath + '/{')
+        );
+
+        if (hasDeepCollection || hasDeepMember) {
+          // Deeply nested resource: /products/{product_id}/variants/{variant_id}/assets
+          grandparentName = segments[0];
+          grandparentParam = segments[1].slice(1, -1);
+          parentName = segments[2];
+          parentParam = segments[3].slice(1, -1);
+          resourceName = segments[4];
+          basePath = potentialDeepBasePath;
+        } else {
+          // Custom member action on nested resource: /orders/{order_id}/payments/{id}/capture
+          parentName = segments[0];
+          parentParam = segments[1].slice(1, -1);
+          resourceName = segments[2];
+          basePath = `${API_PREFIX}/${segments[0]}/${segments[1]}/${segments[2]}`;
+        }
+      } else if (segments.length >= 3 && segments[1].startsWith('{') && segments[1].endsWith('}')) {
         // Check if this is a member action (e.g., /orders/{id}/cancel) vs a nested resource
         // Member actions: only have /parent/{id}/action (no further /{id})
         // Nested resources: have /parent/{id}/resource and /parent/{id}/resource/{id}
@@ -288,7 +322,9 @@ function analyzeResources(spec: OpenApiSpec): Resource[] {
         basePath = `${API_PREFIX}/${segments[0]}`;
       }
 
-      const resourceKey = parentName ? `${parentName}.${resourceName}` : resourceName;
+      const resourceKey = grandparentName
+        ? `${grandparentName}.${parentName}.${resourceName}`
+        : parentName ? `${parentName}.${resourceName}` : resourceName;
       const { action, customAction } = classifyAction(httpMethod, fullPath, basePath);
 
       if (!resourceMap.has(resourceKey)) {
@@ -298,6 +334,8 @@ function analyzeResources(spec: OpenApiSpec): Resource[] {
           basePath,
           parentName,
           parentParam,
+          grandparentName,
+          grandparentParam,
           endpoints: [],
         });
       }
@@ -408,8 +446,37 @@ function generateRequestParamType(
 function generateResourceMethods(resource: Resource, paramTypes: Map<string, string>): string {
   const lines: string[] = [];
   const responseType = getResponseType(resource);
-  const hasParent = !!resource.parentName;
-  const parentParamName = resource.parentParam ? camelCase(resource.parentParam) : '';
+
+  // Build parent param declarations and URL prefix
+  const parentParams: { name: string; camel: string }[] = [];
+  if (resource.grandparentParam) {
+    parentParams.push({ name: resource.grandparentParam, camel: camelCase(resource.grandparentParam) });
+  }
+  if (resource.parentParam) {
+    parentParams.push({ name: resource.parentParam, camel: camelCase(resource.parentParam) });
+  }
+
+  // Build URL prefix: e.g. `/products/${productId}/variants/${variantId}/assets`
+  let urlPrefix: string;
+  if (resource.grandparentName && resource.parentName) {
+    urlPrefix = `/${resource.grandparentName}/\${${parentParams[0].camel}}/${resource.parentName}/\${${parentParams[1].camel}}/${resource.name}`;
+  } else if (resource.parentName) {
+    urlPrefix = `/${resource.parentName}/\${${parentParams[0].camel}}/${resource.name}`;
+  } else {
+    urlPrefix = `/${resource.name}`;
+  }
+  const hasParent = parentParams.length > 0;
+  const useBacktick = hasParent;
+
+  const parentParamDecls = parentParams.map((p) => `      ${p.camel}: string,`);
+
+  // Build path string for generated code. Always uses backtick template literal.
+  function collectionPath() {
+    return `\`${urlPrefix}\``;
+  }
+  function memberPath(suffix = '') {
+    return `\`${urlPrefix}/\${id}${suffix}\``;
+  }
 
   for (const endpoint of resource.endpoints) {
     const { action, method, operation, customAction } = endpoint;
@@ -420,53 +487,30 @@ function generateResourceMethods(resource: Resource, paramTypes: Map<string, str
     switch (action) {
       case 'list': {
         if (jsdoc) lines.push(jsdoc);
-        if (hasParent) {
-          lines.push(`    list: (`);
-          lines.push(`      ${parentParamName}: string,`);
-          lines.push(`      params?: ListParams,`);
-          lines.push(`      options?: RequestOptions`);
-          lines.push(`    ): Promise<PaginatedResponse<${responseType}>> =>`);
-          lines.push(`      this.request<PaginatedResponse<${responseType}>>('GET', \`/${resource.parentName}/\${${parentParamName}}/${resource.name}\`, {`);
-          lines.push(`        ...options,`);
-          lines.push(`        params: transformListParams({ ...params }),`);
-          lines.push(`      }),`);
-        } else {
-          lines.push(`    list: (`);
-          lines.push(`      params?: ListParams,`);
-          lines.push(`      options?: RequestOptions`);
-          lines.push(`    ): Promise<PaginatedResponse<${responseType}>> =>`);
-          lines.push(`      this.request<PaginatedResponse<${responseType}>>('GET', '/${resource.name}', {`);
-          lines.push(`        ...options,`);
-          lines.push(`        params: transformListParams({ ...params }),`);
-          lines.push(`      }),`);
-        }
+        lines.push(`    list: (`);
+        lines.push(...parentParamDecls);
+        lines.push(`      params?: ListParams,`);
+        lines.push(`      options?: RequestOptions`);
+        lines.push(`    ): Promise<PaginatedResponse<${responseType}>> =>`);
+        lines.push(`      this.request<PaginatedResponse<${responseType}>>('GET', ${collectionPath()}, {`);
+        lines.push(`        ...options,`);
+        lines.push(`        params: transformListParams({ ...params }),`);
+        lines.push(`      }),`);
         break;
       }
 
       case 'get': {
         if (jsdoc) lines.push(jsdoc);
-        if (hasParent) {
-          lines.push(`    get: (`);
-          lines.push(`      ${parentParamName}: string,`);
-          lines.push(`      id: string,`);
-          lines.push(`      params?: { expand?: string[] },`);
-          lines.push(`      options?: RequestOptions`);
-          lines.push(`    ): Promise<${responseType}> =>`);
-          lines.push(`      this.request<${responseType}>('GET', \`/${resource.parentName}/\${${parentParamName}}/${resource.name}/\${id}\`, {`);
-          lines.push(`        ...options,`);
-          lines.push(`        params: getParams(params),`);
-          lines.push(`      }),`);
-        } else {
-          lines.push(`    get: (`);
-          lines.push(`      id: string,`);
-          lines.push(`      params?: { expand?: string[] },`);
-          lines.push(`      options?: RequestOptions`);
-          lines.push(`    ): Promise<${responseType}> =>`);
-          lines.push(`      this.request<${responseType}>('GET', \`/${resource.name}/\${id}\`, {`);
-          lines.push(`        ...options,`);
-          lines.push(`        params: getParams(params),`);
-          lines.push(`      }),`);
-        }
+        lines.push(`    get: (`);
+        lines.push(...parentParamDecls);
+        lines.push(`      id: string,`);
+        lines.push(`      params?: { expand?: string[] },`);
+        lines.push(`      options?: RequestOptions`);
+        lines.push(`    ): Promise<${responseType}> =>`);
+        lines.push(`      this.request<${responseType}>('GET', ${memberPath()}, {`);
+        lines.push(`        ...options,`);
+        lines.push(`        params: getParams(params),`);
+        lines.push(`      }),`);
         break;
       }
 
@@ -474,26 +518,15 @@ function generateResourceMethods(resource: Resource, paramTypes: Map<string, str
         const createTypeName = `Admin${singularPascal(resource.name)}CreateParams`;
         const paramType = paramTypes.has(createTypeName) ? createTypeName : 'Record<string, unknown>';
         if (jsdoc) lines.push(jsdoc);
-        if (hasParent) {
-          lines.push(`    create: (`);
-          lines.push(`      ${parentParamName}: string,`);
-          lines.push(`      params: ${paramType},`);
-          lines.push(`      options?: RequestOptions`);
-          lines.push(`    ): Promise<${responseType}> =>`);
-          lines.push(`      this.request<${responseType}>('POST', \`/${resource.parentName}/\${${parentParamName}}/${resource.name}\`, {`);
-          lines.push(`        ...options,`);
-          lines.push(`        body: params,`);
-          lines.push(`      }),`);
-        } else {
-          lines.push(`    create: (`);
-          lines.push(`      params: ${paramType},`);
-          lines.push(`      options?: RequestOptions`);
-          lines.push(`    ): Promise<${responseType}> =>`);
-          lines.push(`      this.request<${responseType}>('POST', '/${resource.name}', {`);
-          lines.push(`        ...options,`);
-          lines.push(`        body: params,`);
-          lines.push(`      }),`);
-        }
+        lines.push(`    create: (`);
+        lines.push(...parentParamDecls);
+        lines.push(`      params: ${paramType},`);
+        lines.push(`      options?: RequestOptions`);
+        lines.push(`    ): Promise<${responseType}> =>`);
+        lines.push(`      this.request<${responseType}>('POST', ${collectionPath()}, {`);
+        lines.push(`        ...options,`);
+        lines.push(`        body: params,`);
+        lines.push(`      }),`);
         break;
       }
 
@@ -501,47 +534,27 @@ function generateResourceMethods(resource: Resource, paramTypes: Map<string, str
         const updateTypeName = `Admin${singularPascal(resource.name)}UpdateParams`;
         const paramType = paramTypes.has(updateTypeName) ? updateTypeName : 'Record<string, unknown>';
         if (jsdoc) lines.push(jsdoc);
-        if (hasParent) {
-          lines.push(`    update: (`);
-          lines.push(`      ${parentParamName}: string,`);
-          lines.push(`      id: string,`);
-          lines.push(`      params: ${paramType},`);
-          lines.push(`      options?: RequestOptions`);
-          lines.push(`    ): Promise<${responseType}> =>`);
-          lines.push(`      this.request<${responseType}>('PATCH', \`/${resource.parentName}/\${${parentParamName}}/${resource.name}/\${id}\`, {`);
-          lines.push(`        ...options,`);
-          lines.push(`        body: params,`);
-          lines.push(`      }),`);
-        } else {
-          lines.push(`    update: (`);
-          lines.push(`      id: string,`);
-          lines.push(`      params: ${paramType},`);
-          lines.push(`      options?: RequestOptions`);
-          lines.push(`    ): Promise<${responseType}> =>`);
-          lines.push(`      this.request<${responseType}>('PATCH', \`/${resource.name}/\${id}\`, {`);
-          lines.push(`        ...options,`);
-          lines.push(`        body: params,`);
-          lines.push(`      }),`);
-        }
+        lines.push(`    update: (`);
+        lines.push(...parentParamDecls);
+        lines.push(`      id: string,`);
+        lines.push(`      params: ${paramType},`);
+        lines.push(`      options?: RequestOptions`);
+        lines.push(`    ): Promise<${responseType}> =>`);
+        lines.push(`      this.request<${responseType}>('PATCH', ${memberPath()}, {`);
+        lines.push(`        ...options,`);
+        lines.push(`        body: params,`);
+        lines.push(`      }),`);
         break;
       }
 
       case 'delete': {
         if (jsdoc) lines.push(jsdoc);
-        if (hasParent) {
-          lines.push(`    delete: (`);
-          lines.push(`      ${parentParamName}: string,`);
-          lines.push(`      id: string,`);
-          lines.push(`      options?: RequestOptions`);
-          lines.push(`    ): Promise<void> =>`);
-          lines.push(`      this.request<void>('DELETE', \`/${resource.parentName}/\${${parentParamName}}/${resource.name}/\${id}\`, options),`);
-        } else {
-          lines.push(`    delete: (`);
-          lines.push(`      id: string,`);
-          lines.push(`      options?: RequestOptions`);
-          lines.push(`    ): Promise<void> =>`);
-          lines.push(`      this.request<void>('DELETE', \`/${resource.name}/\${id}\`, options),`);
-        }
+        lines.push(`    delete: (`);
+        lines.push(...parentParamDecls);
+        lines.push(`      id: string,`);
+        lines.push(`      options?: RequestOptions`);
+        lines.push(`    ): Promise<void> =>`);
+        lines.push(`      this.request<void>('DELETE', ${memberPath()}, options),`);
         break;
       }
 
@@ -549,30 +562,17 @@ function generateResourceMethods(resource: Resource, paramTypes: Map<string, str
         if (!customAction) break;
         const fnName = camelCase(customAction);
         if (jsdoc) lines.push(jsdoc);
-        // Custom actions are always on a member (POST /resources/{id}/action)
         if (method === 'POST' || method === 'PATCH') {
-          if (hasParent) {
-            lines.push(`    ${fnName}: (`);
-            lines.push(`      ${parentParamName}: string,`);
-            lines.push(`      id: string,`);
-            lines.push(`      params?: Record<string, unknown>,`);
-            lines.push(`      options?: RequestOptions`);
-            lines.push(`    ): Promise<${responseType}> =>`);
-            lines.push(`      this.request<${responseType}>('${method}', \`/${resource.parentName}/\${${parentParamName}}/${resource.name}/\${id}/${customAction}\`, {`);
-            lines.push(`        ...options,`);
-            lines.push(`        body: params,`);
-            lines.push(`      }),`);
-          } else {
-            lines.push(`    ${fnName}: (`);
-            lines.push(`      id: string,`);
-            lines.push(`      params?: Record<string, unknown>,`);
-            lines.push(`      options?: RequestOptions`);
-            lines.push(`    ): Promise<${responseType}> =>`);
-            lines.push(`      this.request<${responseType}>('${method}', \`/${resource.name}/\${id}/${customAction}\`, {`);
-            lines.push(`        ...options,`);
-            lines.push(`        body: params,`);
-            lines.push(`      }),`);
-          }
+          lines.push(`    ${fnName}: (`);
+          lines.push(...parentParamDecls);
+          lines.push(`      id: string,`);
+          lines.push(`      params?: Record<string, unknown>,`);
+          lines.push(`      options?: RequestOptions`);
+          lines.push(`    ): Promise<${responseType}> =>`);
+          lines.push(`      this.request<${responseType}>('${method}', ${memberPath(`/${customAction}`)}, {`);
+          lines.push(`        ...options,`);
+          lines.push(`        body: params,`);
+          lines.push(`      }),`);
         }
         break;
       }
@@ -623,9 +623,10 @@ function generateClient(spec: OpenApiSpec): { client: string; params: string } {
     responseTypes.add(getResponseType(resource));
   }
 
-  // Group resources: top-level vs nested
+  // Group resources: top-level, 1-level nested, deeply nested (2-level)
   const topLevel = resources.filter((r) => !r.parentName);
-  const nested = resources.filter((r) => r.parentName);
+  const nested = resources.filter((r) => r.parentName && !r.grandparentName);
+  const deeplyNested = resources.filter((r) => r.grandparentName);
 
   // Build imports
   const importedTypes = [...responseTypes].sort();
@@ -716,6 +717,11 @@ function generateClient(spec: OpenApiSpec): { client: string; params: string } {
     // Add nested resources as sub-objects
     for (const nestedResource of nestedResources) {
       const nestedPropName = camelCase(nestedResource.name);
+      // Find deeply nested resources under this nested resource
+      const deepChildren = deeplyNested.filter(
+        (d) => d.grandparentName === resource.name && d.parentName === nestedResource.name
+      );
+
       out.push(`    /** Nested: ${resource.name}/{id}/${nestedResource.name} */`);
       out.push(`    ${nestedPropName}: {`);
       // Indent nested methods by 2 more spaces
@@ -724,6 +730,21 @@ function generateClient(spec: OpenApiSpec): { client: string; params: string } {
         .map((line) => (line.trim() ? `  ${line}` : line))
         .join('\n');
       out.push(nestedMethods);
+
+      // Add deeply nested resources as sub-sub-objects
+      for (const deepResource of deepChildren) {
+        const deepPropName = camelCase(deepResource.name);
+        out.push(`      /** Nested: ${resource.name}/{id}/${nestedResource.name}/{id}/${deepResource.name} */`);
+        out.push(`      ${deepPropName}: {`);
+        const deepMethods = generateResourceMethods(deepResource, paramTypes)
+          .split('\n')
+          .map((line) => (line.trim() ? `    ${line}` : line))
+          .join('\n');
+        out.push(deepMethods);
+        out.push(`      },`);
+        out.push(``);
+      }
+
       out.push(`    },`);
       out.push(``);
     }
