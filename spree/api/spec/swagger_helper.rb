@@ -162,6 +162,7 @@ RSpec.configure do |config|
         }
       ],
       tags: [
+        { name: 'Authentication', description: 'Admin user authentication' },
         { name: 'Products', description: 'Product management' },
         { name: 'Variants', description: 'Product variant management' },
         { name: 'Option Types', description: 'Option type and value management' },
@@ -171,6 +172,7 @@ RSpec.configure do |config|
         { name: 'Prices', description: 'Variant price management' }
       ],
       'x-tagGroups': [
+        { name: 'Authentication', tags: ['Authentication'] },
         { name: 'Catalog', tags: %w[Products Variants Assets Prices] },
         { name: 'Categories', tags: %w[Taxonomies Taxons] },
         { name: 'Options', tags: ['Option Types'] }

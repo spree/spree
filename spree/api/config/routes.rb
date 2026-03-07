@@ -94,6 +94,10 @@ Spree::Core::Engine.add_routes do
       end
 
       namespace :admin do
+        # Authentication
+        post 'auth/login', to: 'auth#create'
+        post 'auth/refresh', to: 'auth#refresh'
+
         # Products
         resources :products do
           member do

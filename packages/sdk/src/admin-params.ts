@@ -41,6 +41,17 @@ export interface AdminOptionTypeUpdateParams {
   }>;
 }
 
+export interface AdminAdjustmentCreateParams {
+  amount: number;
+  label: string;
+}
+
+export interface AdminAdjustmentUpdateParams {
+  amount?: number;
+  label?: string;
+  eligible?: boolean;
+}
+
 export interface AdminLineItemCreateParams {
   variant_id: string;
   quantity?: number;
@@ -48,6 +59,23 @@ export interface AdminLineItemCreateParams {
 
 export interface AdminLineItemUpdateParams {
   quantity?: number;
+}
+
+export interface AdminPaymentCreateParams {
+  payment_method_id: string;
+  amount?: number;
+  source_id?: string;
+}
+
+export interface AdminRefundCreateParams {
+  payment_id: string;
+  amount: number;
+  refund_reason_id?: string;
+}
+
+export interface AdminShipmentUpdateParams {
+  tracking?: string;
+  selected_shipping_rate_id?: string;
 }
 
 export interface AdminOrderCreateParams {
@@ -173,41 +201,6 @@ export interface AdminTaxonUpdateParams {
   meta_keywords?: string;
   hide_from_nav?: boolean;
   sort_order?: string;
-}
-
-export interface AdminShipmentUpdateParams {
-  tracking?: string;
-  selected_shipping_rate_id?: string;
-  stock_location_id?: string;
-}
-
-export interface AdminShipmentSplitParams {
-  variant_id: string;
-  quantity: number;
-  stock_location_id?: string;
-}
-
-export interface AdminPaymentCreateParams {
-  payment_method_id: string;
-  amount?: number;
-  source_id?: string;
-}
-
-export interface AdminRefundCreateParams {
-  payment_id: string;
-  amount: number;
-  refund_reason_id?: string;
-}
-
-export interface AdminAdjustmentCreateParams {
-  amount: number;
-  label: string;
-}
-
-export interface AdminAdjustmentUpdateParams {
-  amount?: number;
-  label?: string;
-  eligible?: boolean;
 }
 
 export interface AdminVariantCreateParams {

@@ -6,6 +6,8 @@ import { transformListParams } from './params';
 import type {
   PaginatedResponse,
   ListParams,
+  AdminAuthTokens,
+  AdminLoginCredentials,
   AdminAdjustment,
   AdminAsset,
   AdminLineItem,
@@ -34,7 +36,6 @@ import type {
   AdminProductCreateParams,
   AdminProductUpdateParams,
   AdminRefundCreateParams,
-  AdminShipmentSplitParams,
   AdminShipmentUpdateParams,
   AdminTaxonCreateParams,
   AdminTaxonUpdateParams,
@@ -59,7 +60,6 @@ export type {
   AdminProductCreateParams,
   AdminProductUpdateParams,
   AdminRefundCreateParams,
-  AdminShipmentSplitParams,
   AdminShipmentUpdateParams,
   AdminTaxonCreateParams,
   AdminTaxonUpdateParams,
@@ -81,6 +81,20 @@ export class AdminClient {
   constructor(request: RequestFn) {
     this.request = request;
   }
+
+  // ============================================
+  // Authentication (hand-written, not auto-generated)
+  // ============================================
+
+  readonly auth = {
+    /** Login with email and password */
+    login: (credentials: AdminLoginCredentials): Promise<AdminAuthTokens> =>
+      this.request<AdminAuthTokens>('POST', '/auth/login', { body: credentials }),
+
+    /** Refresh access token (requires valid Bearer token) */
+    refresh: (options: RequestOptions): Promise<AdminAuthTokens> =>
+      this.request<AdminAuthTokens>('POST', '/auth/refresh', options),
+  };
 
   // ============================================
   // Option Types
@@ -236,6 +250,64 @@ export class AdminClient {
         body: params,
       }),
 
+    /** Nested: orders/{id}/adjustments */
+    adjustments: {
+      /** List adjustments */
+      list: (
+        orderId: string,
+        params?: ListParams,
+        options?: RequestOptions
+      ): Promise<PaginatedResponse<AdminAdjustment>> =>
+        this.request<PaginatedResponse<AdminAdjustment>>('GET', `/orders/${orderId}/adjustments`, {
+          ...options,
+          params: transformListParams({ ...params }),
+        }),
+
+      /** Create an adjustment */
+      create: (
+        orderId: string,
+        params: AdminAdjustmentCreateParams,
+        options?: RequestOptions
+      ): Promise<AdminAdjustment> =>
+        this.request<AdminAdjustment>('POST', `/orders/${orderId}/adjustments`, {
+          ...options,
+          body: params,
+        }),
+
+      /** Show an adjustment */
+      get: (
+        orderId: string,
+        id: string,
+        params?: { expand?: string[] },
+        options?: RequestOptions
+      ): Promise<AdminAdjustment> =>
+        this.request<AdminAdjustment>('GET', `/orders/${orderId}/adjustments/${id}`, {
+          ...options,
+          params: getParams(params),
+        }),
+
+      /** Update an adjustment */
+      update: (
+        orderId: string,
+        id: string,
+        params: AdminAdjustmentUpdateParams,
+        options?: RequestOptions
+      ): Promise<AdminAdjustment> =>
+        this.request<AdminAdjustment>('PATCH', `/orders/${orderId}/adjustments/${id}`, {
+          ...options,
+          body: params,
+        }),
+
+      /** Delete an adjustment */
+      delete: (
+        orderId: string,
+        id: string,
+        options?: RequestOptions
+      ): Promise<void> =>
+        this.request<void>('DELETE', `/orders/${orderId}/adjustments/${id}`, options),
+
+    },
+
     /** Nested: orders/{id}/line_items */
     lineItems: {
       /** List line items */
@@ -294,6 +366,94 @@ export class AdminClient {
 
     },
 
+    /** Nested: orders/{id}/payments */
+    payments: {
+      /** List payments */
+      list: (
+        orderId: string,
+        params?: ListParams,
+        options?: RequestOptions
+      ): Promise<PaginatedResponse<AdminPayment>> =>
+        this.request<PaginatedResponse<AdminPayment>>('GET', `/orders/${orderId}/payments`, {
+          ...options,
+          params: transformListParams({ ...params }),
+        }),
+
+      /** Create a payment */
+      create: (
+        orderId: string,
+        params: AdminPaymentCreateParams,
+        options?: RequestOptions
+      ): Promise<AdminPayment> =>
+        this.request<AdminPayment>('POST', `/orders/${orderId}/payments`, {
+          ...options,
+          body: params,
+        }),
+
+      /** Show a payment */
+      get: (
+        orderId: string,
+        id: string,
+        params?: { expand?: string[] },
+        options?: RequestOptions
+      ): Promise<AdminPayment> =>
+        this.request<AdminPayment>('GET', `/orders/${orderId}/payments/${id}`, {
+          ...options,
+          params: getParams(params),
+        }),
+
+      /** Capture a payment */
+      capture: (
+        orderId: string,
+        id: string,
+        params?: Record<string, unknown>,
+        options?: RequestOptions
+      ): Promise<AdminPayment> =>
+        this.request<AdminPayment>('PATCH', `/orders/${orderId}/payments/${id}/capture`, {
+          ...options,
+          body: params,
+        }),
+
+      /** Void a payment */
+      void: (
+        orderId: string,
+        id: string,
+        params?: Record<string, unknown>,
+        options?: RequestOptions
+      ): Promise<AdminPayment> =>
+        this.request<AdminPayment>('PATCH', `/orders/${orderId}/payments/${id}/void`, {
+          ...options,
+          body: params,
+        }),
+
+    },
+
+    /** Nested: orders/{id}/refunds */
+    refunds: {
+      /** List refunds */
+      list: (
+        orderId: string,
+        params?: ListParams,
+        options?: RequestOptions
+      ): Promise<PaginatedResponse<AdminRefund>> =>
+        this.request<PaginatedResponse<AdminRefund>>('GET', `/orders/${orderId}/refunds`, {
+          ...options,
+          params: transformListParams({ ...params }),
+        }),
+
+      /** Create a refund */
+      create: (
+        orderId: string,
+        params: AdminRefundCreateParams,
+        options?: RequestOptions
+      ): Promise<AdminRefund> =>
+        this.request<AdminRefund>('POST', `/orders/${orderId}/refunds`, {
+          ...options,
+          body: params,
+        }),
+
+    },
+
     /** Nested: orders/{id}/shipments */
     shipments: {
       /** List shipments */
@@ -335,175 +495,49 @@ export class AdminClient {
       ship: (
         orderId: string,
         id: string,
+        params?: Record<string, unknown>,
         options?: RequestOptions
       ): Promise<AdminShipment> =>
-        this.request<AdminShipment>('PATCH', `/orders/${orderId}/shipments/${id}/ship`, options),
+        this.request<AdminShipment>('PATCH', `/orders/${orderId}/shipments/${id}/ship`, {
+          ...options,
+          body: params,
+        }),
 
       /** Cancel a shipment */
       cancel: (
         orderId: string,
         id: string,
+        params?: Record<string, unknown>,
         options?: RequestOptions
       ): Promise<AdminShipment> =>
-        this.request<AdminShipment>('PATCH', `/orders/${orderId}/shipments/${id}/cancel`, options),
+        this.request<AdminShipment>('PATCH', `/orders/${orderId}/shipments/${id}/cancel`, {
+          ...options,
+          body: params,
+        }),
 
-      /** Resume a canceled shipment */
+      /** Resume a shipment */
       resume: (
         orderId: string,
         id: string,
+        params?: Record<string, unknown>,
         options?: RequestOptions
       ): Promise<AdminShipment> =>
-        this.request<AdminShipment>('PATCH', `/orders/${orderId}/shipments/${id}/resume`, options),
+        this.request<AdminShipment>('PATCH', `/orders/${orderId}/shipments/${id}/resume`, {
+          ...options,
+          body: params,
+        }),
 
-      /** Split a shipment - transfer items to a new shipment */
+      /** Split a shipment */
       split: (
         orderId: string,
         id: string,
-        params: AdminShipmentSplitParams,
+        params?: Record<string, unknown>,
         options?: RequestOptions
-      ): Promise<{ data: AdminShipment[] }> =>
-        this.request<{ data: AdminShipment[] }>('PATCH', `/orders/${orderId}/shipments/${id}/split`, {
+      ): Promise<AdminShipment> =>
+        this.request<AdminShipment>('PATCH', `/orders/${orderId}/shipments/${id}/split`, {
           ...options,
           body: params,
         }),
-
-    },
-
-    /** Nested: orders/{id}/payments */
-    payments: {
-      /** List payments */
-      list: (
-        orderId: string,
-        params?: ListParams,
-        options?: RequestOptions
-      ): Promise<PaginatedResponse<AdminPayment>> =>
-        this.request<PaginatedResponse<AdminPayment>>('GET', `/orders/${orderId}/payments`, {
-          ...options,
-          params: transformListParams({ ...params }),
-        }),
-
-      /** Show a payment */
-      get: (
-        orderId: string,
-        id: string,
-        params?: { expand?: string[] },
-        options?: RequestOptions
-      ): Promise<AdminPayment> =>
-        this.request<AdminPayment>('GET', `/orders/${orderId}/payments/${id}`, {
-          ...options,
-          params: getParams(params),
-        }),
-
-      /** Create a payment */
-      create: (
-        orderId: string,
-        params: AdminPaymentCreateParams,
-        options?: RequestOptions
-      ): Promise<AdminPayment> =>
-        this.request<AdminPayment>('POST', `/orders/${orderId}/payments`, {
-          ...options,
-          body: params,
-        }),
-
-      /** Capture a payment */
-      capture: (
-        orderId: string,
-        id: string,
-        options?: RequestOptions
-      ): Promise<AdminPayment> =>
-        this.request<AdminPayment>('PATCH', `/orders/${orderId}/payments/${id}/capture`, options),
-
-      /** Void a payment */
-      void: (
-        orderId: string,
-        id: string,
-        options?: RequestOptions
-      ): Promise<AdminPayment> =>
-        this.request<AdminPayment>('PATCH', `/orders/${orderId}/payments/${id}/void`, options),
-
-    },
-
-    /** Nested: orders/{id}/refunds */
-    refunds: {
-      /** List refunds */
-      list: (
-        orderId: string,
-        params?: ListParams,
-        options?: RequestOptions
-      ): Promise<PaginatedResponse<AdminRefund>> =>
-        this.request<PaginatedResponse<AdminRefund>>('GET', `/orders/${orderId}/refunds`, {
-          ...options,
-          params: transformListParams({ ...params }),
-        }),
-
-      /** Create a refund */
-      create: (
-        orderId: string,
-        params: AdminRefundCreateParams,
-        options?: RequestOptions
-      ): Promise<AdminRefund> =>
-        this.request<AdminRefund>('POST', `/orders/${orderId}/refunds`, {
-          ...options,
-          body: params,
-        }),
-
-    },
-
-    /** Nested: orders/{id}/adjustments */
-    adjustments: {
-      /** List adjustments */
-      list: (
-        orderId: string,
-        params?: ListParams,
-        options?: RequestOptions
-      ): Promise<PaginatedResponse<AdminAdjustment>> =>
-        this.request<PaginatedResponse<AdminAdjustment>>('GET', `/orders/${orderId}/adjustments`, {
-          ...options,
-          params: transformListParams({ ...params }),
-        }),
-
-      /** Show an adjustment */
-      get: (
-        orderId: string,
-        id: string,
-        params?: { expand?: string[] },
-        options?: RequestOptions
-      ): Promise<AdminAdjustment> =>
-        this.request<AdminAdjustment>('GET', `/orders/${orderId}/adjustments/${id}`, {
-          ...options,
-          params: getParams(params),
-        }),
-
-      /** Create an adjustment */
-      create: (
-        orderId: string,
-        params: AdminAdjustmentCreateParams,
-        options?: RequestOptions
-      ): Promise<AdminAdjustment> =>
-        this.request<AdminAdjustment>('POST', `/orders/${orderId}/adjustments`, {
-          ...options,
-          body: params,
-        }),
-
-      /** Update an adjustment */
-      update: (
-        orderId: string,
-        id: string,
-        params: AdminAdjustmentUpdateParams,
-        options?: RequestOptions
-      ): Promise<AdminAdjustment> =>
-        this.request<AdminAdjustment>('PATCH', `/orders/${orderId}/adjustments/${id}`, {
-          ...options,
-          body: params,
-        }),
-
-      /** Delete an adjustment */
-      delete: (
-        orderId: string,
-        id: string,
-        options?: RequestOptions
-      ): Promise<void> =>
-        this.request<void>('DELETE', `/orders/${orderId}/adjustments/${id}`, options),
 
     },
 
