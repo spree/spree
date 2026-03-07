@@ -99,26 +99,31 @@ module Spree
 
       # Resolve a prefixed ID string for a belongs_to foreign key attribute.
       # Uses the association's target class to validate the record exists.
+      # Only resolves when a matching belongs_to association exists — columns
+      # like external_id that happen to end with _id are left untouched.
       def resolve_prefixed_id_for_attribute(attribute_name, prefixed_id_value)
         reflection = belongs_to_reflections_by_fk[attribute_name]
 
         if reflection
           reflection.klass.find_by_param!(prefixed_id_value).id
         else
-          Spree::PrefixedId.decode_prefixed_id(prefixed_id_value) || prefixed_id_value
+          prefixed_id_value
         end
       end
 
       # Resolve an array of prefixed IDs for a has_many _ids setter.
       # Infers the target class from the association name (e.g., taxon_ids → taxons → Spree::Taxon).
+      # Only resolves when a matching association exists.
       def resolve_prefixed_ids_for_attribute(attribute_name, values)
         association_name = attribute_name.sub(/_ids$/, '').pluralize
         reflection = reflect_on_association(association_name.to_sym)
         klass = reflection&.klass
 
+        return values unless klass
+
         values.map do |v|
           if Spree::PrefixedId.prefixed_id?(v)
-            klass ? klass.find_by_param!(v).id : (Spree::PrefixedId.decode_prefixed_id(v) || v)
+            klass.find_by_param!(v).id
           else
             v
           end
