@@ -1,6 +1,6 @@
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,7 +10,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
-} from '@/components/ui/dropdown-menu'
+} from "@/components/ui/dropdown-menu";
 import {
   Sheet,
   SheetContent,
@@ -19,7 +19,8 @@ import {
   SheetDescription,
   SheetFooter,
   SheetClose,
-} from '@/components/ui/sheet'
+} from "@/components/ui/sheet";
+import { CardTitle } from "@/components/ui/card";
 import {
   SearchIcon,
   XIcon,
@@ -28,47 +29,27 @@ import {
   Columns3Icon,
   PlusIcon,
   Trash2Icon,
-} from 'lucide-react'
-import { useState, useCallback, useRef, useEffect } from 'react'
-
-// ============================================================================
-// Types
-// ============================================================================
-
-export interface ColumnDef {
-  key: string
-  label: string
-  sortable?: boolean
-  filterable?: boolean
-  default?: boolean
-  filterType?: 'string' | 'status' | 'boolean' | 'number' | 'date'
-  filterOptions?: { value: string; label: string }[]
-}
-
-export interface FilterRule {
-  id: string
-  field: string
-  operator: string
-  value: string
-}
-
-export interface SortOption {
-  field: string
-  direction: 'asc' | 'desc'
-}
+} from "lucide-react";
+import { useState, useCallback, useRef, useEffect } from "react";
+import type { ColumnDef, FilterRule, SortOption } from "@/lib/table-registry";
 
 interface TableToolbarProps {
-  columns: ColumnDef[]
-  visibleColumns: string[]
-  onVisibleColumnsChange: (columns: string[]) => void
-  search: string
-  onSearchChange: (value: string) => void
-  searchPlaceholder?: string
-  sort: SortOption
-  onSortChange: (sort: SortOption) => void
-  filters: FilterRule[]
-  onFiltersChange: (filters: FilterRule[]) => void
-  actions?: React.ReactNode
+  /** Displayable columns (for column selector and table headers) */
+  columns: ColumnDef[];
+  visibleColumns: string[];
+  onVisibleColumnsChange: (columns: string[]) => void;
+  search: string;
+  onSearchChange: (value: string) => void;
+  searchPlaceholder?: string;
+  sort: SortOption;
+  onSortChange: (sort: SortOption) => void;
+  filters: FilterRule[];
+  onFiltersChange: (filters: FilterRule[]) => void;
+  /** All columns including filter-only ones (for the filter drawer). Falls back to `columns` if not provided. */
+  allColumns?: ColumnDef[];
+  /** Title displayed in the toolbar header */
+  title?: string;
+  actions?: React.ReactNode;
 }
 
 // ============================================================================
@@ -77,44 +58,42 @@ interface TableToolbarProps {
 
 const operatorsByType: Record<string, { value: string; label: string }[]> = {
   string: [
-    { value: 'cont', label: 'contains' },
-    { value: 'eq', label: 'equals' },
-    { value: 'not_eq', label: 'does not equal' },
-    { value: 'start', label: 'starts with' },
-    { value: 'end', label: 'ends with' },
-    { value: 'present', label: 'is set' },
-    { value: 'blank', label: 'is not set' },
+    { value: "cont", label: "contains" },
+    { value: "eq", label: "equals" },
+    { value: "not_eq", label: "does not equal" },
+    { value: "start", label: "starts with" },
+    { value: "end", label: "ends with" },
+    { value: "present", label: "is set" },
+    { value: "blank", label: "is not set" },
   ],
   status: [
-    { value: 'eq', label: 'is' },
-    { value: 'not_eq', label: 'is not' },
-    { value: 'in', label: 'is any of' },
-    { value: 'not_in', label: 'is none of' },
+    { value: "eq", label: "is" },
+    { value: "not_eq", label: "is not" },
+    { value: "in", label: "is any of" },
+    { value: "not_in", label: "is none of" },
   ],
-  boolean: [
-    { value: 'eq', label: 'is' },
-  ],
+  boolean: [{ value: "eq", label: "is" }],
   number: [
-    { value: 'eq', label: 'equals' },
-    { value: 'gt', label: 'greater than' },
-    { value: 'gteq', label: 'greater than or equal' },
-    { value: 'lt', label: 'less than' },
-    { value: 'lteq', label: 'less than or equal' },
+    { value: "eq", label: "equals" },
+    { value: "gt", label: "greater than" },
+    { value: "gteq", label: "greater than or equal" },
+    { value: "lt", label: "less than" },
+    { value: "lteq", label: "less than or equal" },
   ],
   date: [
-    { value: 'eq', label: 'is' },
-    { value: 'gt', label: 'after' },
-    { value: 'lt', label: 'before' },
-    { value: 'gteq', label: 'on or after' },
-    { value: 'lteq', label: 'on or before' },
+    { value: "eq", label: "is" },
+    { value: "gt", label: "after" },
+    { value: "lt", label: "before" },
+    { value: "gteq", label: "on or after" },
+    { value: "lteq", label: "on or before" },
   ],
-}
+};
 
 function getOperators(type: string) {
-  return operatorsByType[type] || operatorsByType.string
+  return operatorsByType[type] || operatorsByType.string;
 }
 
-const noValueOperators = ['present', 'blank']
+const noValueOperators = ["present", "blank"];
 
 // ============================================================================
 // TableToolbar
@@ -126,24 +105,28 @@ export function TableToolbar({
   onVisibleColumnsChange,
   search,
   onSearchChange,
-  searchPlaceholder = 'Search...',
+  searchPlaceholder = "Search...",
   sort,
   onSortChange,
   filters,
   onFiltersChange,
+  allColumns,
+  title,
   actions,
 }: TableToolbarProps) {
-  const [filterOpen, setFilterOpen] = useState(false)
-  const searchRef = useRef<HTMLInputElement>(null)
+  const [filterOpen, setFilterOpen] = useState(false);
+  const searchRef = useRef<HTMLInputElement>(null);
 
-  const sortableColumns = columns.filter((c) => c.sortable)
-  const filterableColumns = columns.filter((c) => c.filterable)
-  const activeFilterCount = filters.length
+  const allCols = allColumns ?? columns;
+  const sortableColumns = allCols.filter((c) => c.sortable);
+  const filterableColumns = allCols.filter((c) => c.filterable);
+  const activeFilterCount = filters.length;
 
   return (
     <>
       <div className="flex flex-col lg:flex-row gap-3 items-start lg:items-center justify-between p-3 border-b border-gray-200">
-        <div className="flex gap-2 items-center flex-wrap">
+        {title && <CardTitle>{title}</CardTitle>}
+        <div className="flex gap-2 items-center flex-wrap ml-auto">
           {/* Search */}
           <div className="relative lg:w-[300px]">
             <SearchIcon className="absolute left-2.5 top-1/2 -translate-y-1/2 size-4 text-gray-600 pointer-events-none" />
@@ -159,8 +142,8 @@ export function TableToolbar({
                 type="button"
                 className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 text-gray-400 hover:text-gray-600"
                 onClick={() => {
-                  onSearchChange('')
-                  searchRef.current?.focus()
+                  onSearchChange("");
+                  searchRef.current?.focus();
                 }}
               >
                 <XIcon className="size-3.5" />
@@ -181,7 +164,9 @@ export function TableToolbar({
               <FilterIcon className="size-4" />
               Filters
               {activeFilterCount > 0 && (
-                <Badge className="ml-1 px-1.5 py-0 text-xs">{activeFilterCount}</Badge>
+                <Badge className="ml-1 px-1.5 py-0 text-xs">
+                  {activeFilterCount}
+                </Badge>
               )}
             </Button>
           )}
@@ -210,12 +195,16 @@ export function TableToolbar({
       {filters.length > 0 && (
         <div className="flex gap-2 flex-wrap px-3 py-2 border-b border-gray-200">
           {filters.map((filter) => {
-            const col = columns.find((c) => c.key === filter.field)
-            const ops = getOperators(col?.filterType ?? 'string')
-            const opLabel = ops.find((o) => o.value === filter.operator)?.label ?? filter.operator
+            const col = allCols.find((c) => c.key === filter.field);
+            const ops = getOperators(col?.filterType ?? "string");
+            const opLabel =
+              ops.find((o) => o.value === filter.operator)?.label ??
+              filter.operator;
             return (
               <Badge key={filter.id} className="gap-1.5 pr-1">
-                <span className="font-medium">{col?.label ?? filter.field}</span>
+                <span className="font-medium">
+                  {col?.label ?? filter.field}
+                </span>
                 <span className="text-muted-foreground">{opLabel}</span>
                 {!noValueOperators.includes(filter.operator) && (
                   <span className="font-medium">{filter.value}</span>
@@ -223,12 +212,14 @@ export function TableToolbar({
                 <button
                   type="button"
                   className="ml-0.5 p-0.5 rounded-sm hover:bg-gray-200"
-                  onClick={() => onFiltersChange(filters.filter((f) => f.id !== filter.id))}
+                  onClick={() =>
+                    onFiltersChange(filters.filter((f) => f.id !== filter.id))
+                  }
                 >
                   <XIcon className="size-3" />
                 </button>
               </Badge>
-            )
+            );
           })}
           <button
             type="button"
@@ -249,7 +240,7 @@ export function TableToolbar({
         onApply={onFiltersChange}
       />
     </>
-  )
+  );
 }
 
 // ============================================================================
@@ -261,20 +252,20 @@ function SortDropdown({
   sort,
   onSortChange,
 }: {
-  columns: ColumnDef[]
-  sort: SortOption
-  onSortChange: (sort: SortOption) => void
+  columns: ColumnDef[];
+  sort: SortOption;
+  onSortChange: (sort: SortOption) => void;
 }) {
-  const currentCol = columns.find((c) => c.key === sort.field)
-  const currentLabel = currentCol?.label ?? 'Sort'
-  const dirLabel = sort.direction === 'asc' ? 'A-Z' : 'Z-A'
+  const currentCol = columns.find((c) => c.key === sort.field);
+  const currentLabel = currentCol?.label ?? "Sort";
+  const dirLabel = sort.direction === "asc" ? "A-Z" : "Z-A";
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="sm" className="h-[2.125rem]">
           <ArrowUpDownIcon className="size-4" />
-          {currentCol ? `${currentLabel} (${dirLabel})` : 'Sort'}
+          {currentCol ? `${currentLabel} (${dirLabel})` : "Sort"}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="min-w-48">
@@ -283,8 +274,8 @@ function SortDropdown({
         <DropdownMenuRadioGroup
           value={`${sort.field}:${sort.direction}`}
           onValueChange={(val) => {
-            const [field, direction] = val.split(':')
-            onSortChange({ field, direction: direction as 'asc' | 'desc' })
+            const [field, direction] = val.split(":");
+            onSortChange({ field, direction: direction as "asc" | "desc" });
           }}
         >
           {columns.map((col) => (
@@ -300,7 +291,7 @@ function SortDropdown({
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }
 
 // ============================================================================
@@ -312,11 +303,11 @@ function ColumnSelector({
   visibleColumns,
   onVisibleColumnsChange,
 }: {
-  columns: ColumnDef[]
-  visibleColumns: string[]
-  onVisibleColumnsChange: (columns: string[]) => void
+  columns: ColumnDef[];
+  visibleColumns: string[];
+  onVisibleColumnsChange: (columns: string[]) => void;
 }) {
-  const defaults = columns.filter((c) => c.default).map((c) => c.key)
+  const defaults = columns.filter((c) => c.default).map((c) => c.key);
 
   return (
     <DropdownMenu>
@@ -338,7 +329,7 @@ function ColumnSelector({
                 checked
                   ? [...visibleColumns, col.key]
                   : visibleColumns.filter((k) => k !== col.key),
-              )
+              );
             }}
             onSelect={(e) => e.preventDefault()}
           >
@@ -358,7 +349,7 @@ function ColumnSelector({
         </div>
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }
 
 // ============================================================================
@@ -372,50 +363,53 @@ function FilterDrawer({
   filters: initialFilters,
   onApply,
 }: {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  columns: ColumnDef[]
-  filters: FilterRule[]
-  onApply: (filters: FilterRule[]) => void
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  columns: ColumnDef[];
+  filters: FilterRule[];
+  onApply: (filters: FilterRule[]) => void;
 }) {
-  const [draft, setDraft] = useState<FilterRule[]>(initialFilters)
+  const [draft, setDraft] = useState<FilterRule[]>(initialFilters);
 
   // Sync draft when opened
   useEffect(() => {
-    if (open) setDraft(initialFilters)
-  }, [open, initialFilters])
+    if (open) setDraft(initialFilters);
+  }, [open, initialFilters]);
 
   const addFilter = useCallback(() => {
-    const first = columns[0]
-    if (!first) return
+    const first = columns[0];
+    if (!first) return;
     setDraft((prev) => [
       ...prev,
       {
         id: crypto.randomUUID(),
         field: first.key,
-        operator: getOperators(first.filterType ?? 'string')[0].value,
-        value: '',
+        operator: getOperators(first.filterType ?? "string")[0].value,
+        value: "",
       },
-    ])
-  }, [columns])
+    ]);
+  }, [columns]);
 
-  const updateFilter = useCallback((id: string, update: Partial<FilterRule>) => {
-    setDraft((prev) =>
-      prev.map((f) => (f.id === id ? { ...f, ...update } : f)),
-    )
-  }, [])
+  const updateFilter = useCallback(
+    (id: string, update: Partial<FilterRule>) => {
+      setDraft((prev) =>
+        prev.map((f) => (f.id === id ? { ...f, ...update } : f)),
+      );
+    },
+    [],
+  );
 
   const removeFilter = useCallback((id: string) => {
-    setDraft((prev) => prev.filter((f) => f.id !== id))
-  }, [])
+    setDraft((prev) => prev.filter((f) => f.id !== id));
+  }, []);
 
   function handleApply() {
     // Remove filters with no value (unless operator doesn't need one)
     const valid = draft.filter(
-      (f) => noValueOperators.includes(f.operator) || f.value.trim() !== '',
-    )
-    onApply(valid)
-    onOpenChange(false)
+      (f) => noValueOperators.includes(f.operator) || f.value.trim() !== "",
+    );
+    onApply(valid);
+    onOpenChange(false);
   }
 
   return (
@@ -423,7 +417,9 @@ function FilterDrawer({
       <SheetContent side="right" showCloseButton={false}>
         <SheetHeader>
           <SheetTitle>Filters</SheetTitle>
-          <SheetDescription className="sr-only">Build filters for the table</SheetDescription>
+          <SheetDescription className="sr-only">
+            Build filters for the table
+          </SheetDescription>
           <SheetClose asChild>
             <Button variant="ghost" size="icon-sm">
               <XIcon />
@@ -433,9 +429,9 @@ function FilterDrawer({
 
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
           {draft.map((filter) => {
-            const col = columns.find((c) => c.key === filter.field)
-            const type = col?.filterType ?? 'string'
-            const ops = getOperators(type)
+            const col = columns.find((c) => c.key === filter.field);
+            const type = col?.filterType ?? "string";
+            const ops = getOperators(type);
 
             return (
               <div
@@ -447,13 +443,15 @@ function FilterDrawer({
                   className="flex-1 rounded-lg border border-border bg-white py-1.5 px-2 text-sm outline-none focus:outline-2 focus:outline-offset-2 focus:outline-blue-500"
                   value={filter.field}
                   onChange={(e) => {
-                    const newCol = columns.find((c) => c.key === e.target.value)
-                    const newOps = getOperators(newCol?.filterType ?? 'string')
+                    const newCol = columns.find(
+                      (c) => c.key === e.target.value,
+                    );
+                    const newOps = getOperators(newCol?.filterType ?? "string");
                     updateFilter(filter.id, {
                       field: e.target.value,
                       operator: newOps[0].value,
-                      value: '',
-                    })
+                      value: "",
+                    });
                   }}
                 >
                   {columns.map((c) => (
@@ -467,7 +465,9 @@ function FilterDrawer({
                 <select
                   className="w-[140px] shrink-0 rounded-lg border border-border bg-white py-1.5 px-2 text-sm outline-none focus:outline-2 focus:outline-offset-2 focus:outline-blue-500"
                   value={filter.operator}
-                  onChange={(e) => updateFilter(filter.id, { operator: e.target.value })}
+                  onChange={(e) =>
+                    updateFilter(filter.id, { operator: e.target.value })
+                  }
                 >
                   {ops.map((op) => (
                     <option key={op.value} value={op.value}>
@@ -477,12 +477,14 @@ function FilterDrawer({
                 </select>
 
                 {/* Value input */}
-                {!noValueOperators.includes(filter.operator) && (
-                  col?.filterType === 'status' && col.filterOptions ? (
+                {!noValueOperators.includes(filter.operator) &&
+                  (col?.filterType === "status" && col.filterOptions ? (
                     <select
                       className="flex-1 rounded-lg border border-border bg-white py-1.5 px-2 text-sm outline-none focus:outline-2 focus:outline-offset-2 focus:outline-blue-500"
                       value={filter.value}
-                      onChange={(e) => updateFilter(filter.id, { value: e.target.value })}
+                      onChange={(e) =>
+                        updateFilter(filter.id, { value: e.target.value })
+                      }
                     >
                       <option value="">Select...</option>
                       {col.filterOptions.map((opt) => (
@@ -491,11 +493,13 @@ function FilterDrawer({
                         </option>
                       ))}
                     </select>
-                  ) : col?.filterType === 'boolean' ? (
+                  ) : col?.filterType === "boolean" ? (
                     <select
                       className="flex-1 rounded-lg border border-border bg-white py-1.5 px-2 text-sm outline-none focus:outline-2 focus:outline-offset-2 focus:outline-blue-500"
                       value={filter.value}
-                      onChange={(e) => updateFilter(filter.id, { value: e.target.value })}
+                      onChange={(e) =>
+                        updateFilter(filter.id, { value: e.target.value })
+                      }
                     >
                       <option value="">Select...</option>
                       <option value="true">Yes</option>
@@ -503,14 +507,21 @@ function FilterDrawer({
                     </select>
                   ) : (
                     <input
-                      type={col?.filterType === 'number' ? 'number' : col?.filterType === 'date' ? 'date' : 'text'}
+                      type={
+                        col?.filterType === "number"
+                          ? "number"
+                          : col?.filterType === "date"
+                            ? "date"
+                            : "text"
+                      }
                       className="flex-1 rounded-lg border border-border bg-white py-1.5 px-2 text-sm outline-none focus:outline-2 focus:outline-offset-2 focus:outline-blue-500"
                       placeholder="Enter value..."
                       value={filter.value}
-                      onChange={(e) => updateFilter(filter.id, { value: e.target.value })}
+                      onChange={(e) =>
+                        updateFilter(filter.id, { value: e.target.value })
+                      }
                     />
-                  )
-                )}
+                  ))}
 
                 {/* Remove button */}
                 <button
@@ -521,7 +532,7 @@ function FilterDrawer({
                   <Trash2Icon className="size-4" />
                 </button>
               </div>
-            )
+            );
           })}
 
           {draft.length === 0 && (
@@ -530,11 +541,7 @@ function FilterDrawer({
             </p>
           )}
 
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={addFilter}
-          >
+          <Button variant="outline" size="sm" onClick={addFilter}>
             <PlusIcon className="size-4" />
             Add filter
           </Button>
@@ -545,18 +552,13 @@ function FilterDrawer({
             <Button variant="outline">Discard</Button>
           </SheetClose>
           <div className="flex gap-2">
-            <Button
-              variant="outline"
-              onClick={() => setDraft([])}
-            >
+            <Button variant="outline" onClick={() => setDraft([])}>
               Clear all
             </Button>
-            <Button onClick={handleApply}>
-              Apply filters
-            </Button>
+            <Button onClick={handleApply}>Apply filters</Button>
           </div>
         </SheetFooter>
       </SheetContent>
     </Sheet>
-  )
+  );
 }

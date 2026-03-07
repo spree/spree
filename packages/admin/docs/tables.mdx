@@ -1,0 +1,302 @@
+# Admin Tables
+
+The admin uses a **table registry** to declaratively define resource list pages. This system provides:
+
+- Declarative column, filter, and sort definitions
+- A generic `<ResourceTable>` component that renders any registered table
+- A mutation API for extensions to add, remove, or update columns on existing tables
+
+This is the React equivalent of the Rails admin's `Spree.admin.tables` DSL.
+
+## Quick start
+
+A resource list page requires two things:
+
+1. A **table definition** that declares columns
+2. A **route** that renders `<ResourceTable>`
+
+### 1. Define the table
+
+Create a file in `src/tables/` (e.g., `src/tables/orders.tsx`):
+
+```tsx
+import { defineTable } from '@/lib/table-registry'
+import { StatusBadge } from '@/components/ui/badge'
+import { formatRelativeTime } from '@/lib/formatters'
+
+defineTable('orders', {
+  title: 'Orders',
+  searchParam: 'number_cont',
+  searchPlaceholder: 'Search orders...',
+  defaultSort: { field: 'completed_at', direction: 'desc' },
+  emptyMessage: 'No orders found',
+  columns: [
+    {
+      key: 'number',
+      label: 'Order',
+      sortable: true,
+      filterable: true,
+      default: true,
+      render: (order) => (
+        <span className="font-medium text-zinc-950">#{order.number}</span>
+      ),
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      sortable: true,
+      filterable: true,
+      default: true,
+      filterType: 'status',
+      filterOptions: [
+        { value: 'complete', label: 'Complete' },
+        { value: 'canceled', label: 'Canceled' },
+      ],
+      render: (order) => <StatusBadge status={order.status} />,
+    },
+    {
+      key: 'total',
+      label: 'Total',
+      sortable: true,
+      default: true,
+      className: 'text-right tabular-nums',
+      render: (order) => order.display_total,
+    },
+    {
+      key: 'completed_at',
+      label: 'Date',
+      sortable: true,
+      filterable: true,
+      default: true,
+      filterType: 'date',
+      className: 'text-sm text-muted-foreground whitespace-nowrap',
+      render: (order) => order.completed_at ? formatRelativeTime(order.completed_at) : '—',
+    },
+  ],
+})
+```
+
+### 2. Create the route
+
+```tsx
+import { createFileRoute } from '@tanstack/react-router'
+import { ResourceTable, resourceSearchSchema } from '@/components/resource-table'
+import { spreeClient } from '@/client'
+import { useAuth } from '@/hooks/use-auth'
+import '@/tables/orders' // registers the table definition
+
+export const Route = createFileRoute('/_authenticated/orders/')({
+  validateSearch: resourceSearchSchema,
+  component: OrdersPage,
+})
+
+function OrdersPage() {
+  const searchParams = Route.useSearch()
+  const { token } = useAuth()
+
+  return (
+    <ResourceTable
+      tableKey="orders"
+      queryKey="orders"
+      queryFn={(params) =>
+        spreeClient.admin.orders.list(params, { token: token! })
+      }
+      searchParams={searchParams}
+    />
+  )
+}
+```
+
+That's it. The `<ResourceTable>` component handles the toolbar (search, filters, sort, column selector), data fetching, pagination, loading states, and empty states automatically.
+
+## Table definition reference
+
+### `defineTable(key, options)`
+
+Registers a table in the global registry.
+
+| Option | Type | Description |
+|---|---|---|
+| `title` | `string` | Title displayed in the toolbar header (e.g., `'Products'`) |
+| `columns` | `ColumnDef[]` | Column definitions (see below) |
+| `searchParam` | `string` | Ransack search parameter name. Defaults to `'name_cont'` |
+| `searchPlaceholder` | `string` | Placeholder text for the search input |
+| `defaultSort` | `{ field, direction }` | Default sort. Defaults to `{ field: 'updated_at', direction: 'desc' }` |
+| `emptyIcon` | `ReactNode` | Icon shown when the table is empty |
+| `emptyMessage` | `string` | Message shown when the table is empty |
+
+### Column definition (`ColumnDef`)
+
+| Property | Type | Default | Description |
+|---|---|---|---|
+| `key` | `string` | *required* | Unique column identifier, also used as the Ransack attribute for filtering/sorting |
+| `label` | `string` | *required* | Display label in the header and toolbar |
+| `sortable` | `boolean` | `false` | Whether this column can be sorted |
+| `filterable` | `boolean` | `false` | Whether this column appears in the filter drawer |
+| `default` | `boolean` | `false` | Whether this column is visible by default |
+| `filterType` | `'string' \| 'status' \| 'boolean' \| 'number' \| 'date'` | `'string'` | Determines which filter operators are available |
+| `filterOptions` | `{ value, label }[]` | — | Predefined options for `status` filter type |
+| `ransackAttribute` | `string` | — | Override the Ransack attribute name (e.g., `'master_sku'` for a column with `key: 'sku'`) |
+| `render` | `(row: T) => ReactNode` | — | Custom cell renderer. If omitted, renders `row[key]` as plain text |
+| `className` | `string` | — | CSS class applied to the `<td>` element |
+| `displayable` | `boolean` | `true` | Set to `false` for filter-only columns that don't render in the table |
+
+### Filter types and operators
+
+Each `filterType` provides a different set of operators in the filter drawer:
+
+| Type | Operators |
+|---|---|
+| `string` | contains, equals, does not equal, starts with, ends with, is set, is not set |
+| `status` | is, is not, is any of, is none of |
+| `boolean` | is |
+| `number` | equals, greater than, greater than or equal, less than, less than or equal |
+| `date` | is, after, before, on or after, on or before |
+
+## Extending existing tables
+
+Use the `tables` proxy to modify any registered table. Extensions must run **after** the table is registered (i.e., after the table definition file is imported).
+
+### Add a column
+
+```tsx
+import { tables } from '@/lib/table-registry'
+
+tables.products.addColumn({
+  key: 'vendor',
+  label: 'Vendor',
+  sortable: true,
+  filterable: true,
+  default: true,
+  render: (product) => product.vendor_name ?? '—',
+})
+```
+
+### Remove a column
+
+```tsx
+tables.products.removeColumn('inventory')
+```
+
+### Update a column
+
+Merges the updates into the existing column definition:
+
+```tsx
+tables.products.updateColumn('sku', {
+  default: true,           // make SKU visible by default
+  label: 'Product SKU',    // change the header label
+})
+```
+
+### Replace a column's renderer
+
+```tsx
+tables.products.updateColumn('name', {
+  render: (product) => (
+    <div className="flex items-center gap-2">
+      <MyCustomAvatar src={product.thumbnail_url} />
+      <span>{product.name}</span>
+    </div>
+  ),
+})
+```
+
+### Add a filter-only column
+
+Columns with `displayable: false` appear in the filter drawer but not in the table itself:
+
+```tsx
+tables.products.addColumn({
+  key: 'in_stock',
+  label: 'In Stock',
+  filterable: true,
+  filterType: 'boolean',
+  displayable: false,
+})
+```
+
+## `<ResourceTable>` props
+
+| Prop | Type | Description |
+|---|---|---|
+| `tableKey` | `string` | Registry key matching the `defineTable()` call |
+| `queryKey` | `string` | TanStack Query cache key prefix |
+| `queryFn` | `(params) => Promise<{ data: T[], meta }>` | SDK call to fetch data. Receives pre-built Ransack params |
+| `searchParams` | `ResourceSearch` | Current URL search params from the route (use `Route.useSearch()`) |
+| `title` | `string` | Title displayed in the toolbar header. Overrides the table definition's `title` |
+| `actions` | `ReactNode` | Toolbar actions (e.g., "Add Product" button) |
+
+### URL state
+
+`<ResourceTable>` persists all table state in the URL via TanStack Router search params. The shared `resourceSearchSchema` validates these params:
+
+| Param | Type | Description |
+|---|---|---|
+| `page` | `number` | Current page (default: 1) |
+| `sort` | `string` | Sort field |
+| `dir` | `'asc' \| 'desc'` | Sort direction |
+| `search` | `string` | Search query |
+| `filters` | `string` (JSON) | Serialized `FilterRule[]` |
+| `columns` | `string` (comma-separated) | Visible column keys. Omitted when using defaults |
+
+Use `resourceSearchSchema` in your route's `validateSearch`:
+
+```tsx
+import { resourceSearchSchema } from '@/components/resource-table'
+
+export const Route = createFileRoute('/_authenticated/orders/')({
+  validateSearch: resourceSearchSchema,
+  component: OrdersPage,
+})
+```
+
+## How data fetching works
+
+`<ResourceTable>` builds the API params automatically:
+
+1. **Search** — sends `{ [searchParam]: value }` (e.g., `{ multi_search: "widget" }`)
+2. **Sort** — sends `{ sort: "field" }` or `{ sort: "-field" }` for descending
+3. **Filters** — converts each `FilterRule` to a Ransack param: `{ [ransackAttribute]_[operator]: value }` (e.g., `{ status_eq: "active" }`)
+4. **Pagination** — sends `{ page: N }`
+
+These params are passed to your `queryFn`, which forwards them to the SDK.
+
+## File structure
+
+```
+src/
+  lib/
+    table-registry.ts     # defineTable, getTable, tables proxy
+    formatters.ts         # formatPrice, formatRelativeTime
+  tables/
+    products.tsx          # Product table definition
+    orders.tsx            # Order table definition (example)
+  components/
+    resource-table.tsx    # <ResourceTable> component + resourceSearchSchema
+    table-toolbar.tsx     # Search, filters, sort, column selector
+    ui/
+      data-table.tsx      # Table primitives (Table, TableRow, etc.)
+      pagination.tsx      # Pagination component
+  routes/
+    _authenticated/
+      products/
+        index.tsx         # Products list page (~30 lines)
+      orders/
+        index.tsx         # Orders list page (~30 lines)
+```
+
+## Comparison with Rails admin
+
+| Rails Admin | React Admin |
+|---|---|
+| `Spree.admin.tables.register(:products, ...)` | `defineTable('products', { ... })` |
+| `Spree.admin.tables.products.add :name, ...` | Column in the `columns` array |
+| `type: :custom, partial: '...'` | `render: (row) => <Component />` |
+| `Spree.admin.tables.products.add :col, ...` (in initializer) | `tables.products.addColumn({ ... })` |
+| `Spree.admin.tables.products.remove :col` | `tables.products.removeColumn('col')` |
+| `Spree.admin.tables.products.update :col, ...` | `tables.products.updateColumn('col', { ... })` |
+| `render_table @collection, :products` | `<ResourceTable tableKey="products" ... />` |
+| `ransack_attribute: 'master_sku'` | `ransackAttribute: 'master_sku'` |
+| `filter_type: :status, value_options: [...]` | `filterType: 'status', filterOptions: [...]` |
+| `displayable: false` (filter-only) | `displayable: false` |

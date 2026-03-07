@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { spreeClient } from '@/client'
 import { useAuth } from '@/hooks/use-auth'
-import type { FilterRule } from '@/components/table-toolbar'
+import type { FilterRule } from '@/lib/table-registry'
 
 interface UseProductsParams {
   page?: number
