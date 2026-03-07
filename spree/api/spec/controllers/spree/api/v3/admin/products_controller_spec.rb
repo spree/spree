@@ -147,8 +147,7 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
           tags: ['eco', 'best-seller'],
           variants: [
             {
-              option_type: 'size',
-              option_value: 'small',
+              options: [{ name: 'size', value: 'small' }],
               sku: 'TEST-SM',
               total_on_hand: 10,
               track_inventory: true,

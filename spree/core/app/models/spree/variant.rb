@@ -61,6 +61,7 @@ module Spree
     has_many :digitals
 
     before_validation :set_cost_currency
+    before_validation :apply_pending_options, if: :pending_options?
 
     validate :check_price
 
@@ -77,6 +78,7 @@ module Spree
     validates :weight_unit, inclusion: { in: WEIGHT_UNITS }, allow_blank: true
 
     after_create :create_stock_items
+    after_create :apply_pending_stock_items, if: :pending_stock_items?
     after_create :set_master_out_of_stock, unless: :is_master?
     after_commit :clear_line_items_cache, on: :update
 
@@ -339,6 +341,11 @@ module Spree
     # @param options [Array<Hash>] the options to set
     # @return [void]
     def options=(options = {})
+      if product.nil?
+        @pending_options = options
+        return
+      end
+
       options.each do |option|
         next if option[:name].blank? || option[:value].blank?
 
@@ -445,6 +452,62 @@ module Spree
     # @return [BigDecimal] the compare at amount for the given currency
     def compare_at_amount_in(currency)
       price_in(currency).try(:compare_at_amount)
+    end
+
+    # Syncs base prices from an array of hashes.
+    # Upserts prices for listed currencies, removes base prices for unlisted currencies.
+    # On new records, builds prices in memory (saved when variant is saved).
+    # On persisted records, saves prices immediately and removes unlisted currencies.
+    # @param prices_params [Array<Hash>] array of { currency:, amount:, compare_at_amount: }
+    # @return [void]
+    def prices=(prices_params)
+      return super if prices_params.blank? || prices_params.first.is_a?(Spree::Price)
+
+      currencies_in_payload = []
+
+      prices_params.each do |price_data|
+        price_data = price_data.to_h.with_indifferent_access
+        currencies_in_payload << price_data[:currency]
+
+        if persisted?
+          set_price(price_data[:currency], price_data[:amount], price_data[:compare_at_amount])
+        else
+          # Check default_price first (built via price= setter)
+          if default_price && default_price.new_record? && default_price.currency == price_data[:currency]
+            default_price.amount = price_data[:amount]
+            default_price.compare_at_amount = price_data[:compare_at_amount] if price_data[:compare_at_amount].present?
+          else
+            # Replace any existing in-memory price for this currency
+            existing = prices.detect { |p| p.currency == price_data[:currency] && p.new_record? }
+            if existing
+              existing.amount = price_data[:amount]
+              existing.compare_at_amount = price_data[:compare_at_amount] if price_data[:compare_at_amount].present?
+            else
+              price = prices.build(currency: price_data[:currency], amount: price_data[:amount])
+              price.compare_at_amount = price_data[:compare_at_amount] if price_data[:compare_at_amount].present?
+            end
+          end
+        end
+      end
+
+      # Remove base prices for currencies not in the payload
+      prices.base_prices.where.not(currency: currencies_in_payload).destroy_all if persisted?
+    end
+
+    # Syncs stock items from an array of hashes.
+    # Upserts stock for listed locations, soft-deletes stock items for unlisted locations.
+    # On new records, defers to after_create callback.
+    # @param stock_items_params [Array<Hash>] array of { stock_location_id:, count_on_hand:, backorderable: }
+    # @return [void]
+    def stock_items=(stock_items_params)
+      return super if stock_items_params.blank? || stock_items_params.first.is_a?(Spree::StockItem)
+
+      if new_record?
+        @pending_stock_items_params = stock_items_params
+        return
+      end
+
+      apply_stock_items(stock_items_params)
     end
 
     # Sets the base price (global price, not for a price list) for the given currency.
@@ -590,6 +653,53 @@ module Spree
     end
 
     private
+
+    def pending_options?
+      @pending_options.present?
+    end
+
+    def apply_pending_options
+      return unless @pending_options
+
+      options_to_apply = @pending_options
+      @pending_options = nil
+
+      options_to_apply.each do |option|
+        next if option[:name].blank? || option[:value].blank?
+
+        set_option_value(option[:name], option[:value], option[:position])
+      end
+    end
+
+    def pending_stock_items?
+      @pending_stock_items_params.present?
+    end
+
+    def apply_pending_stock_items
+      return unless @pending_stock_items_params
+
+      apply_stock_items(@pending_stock_items_params)
+      @pending_stock_items_params = nil
+    end
+
+    def apply_stock_items(stock_items_params)
+      location_ids_in_payload = []
+
+      stock_items_params.each do |stock_data|
+        stock_data = stock_data.to_h.with_indifferent_access
+        location_id = stock_data[:stock_location_id]
+        location = if Spree::PrefixedId.prefixed_id?(location_id)
+                     Spree::StockLocation.find_by_prefix_id!(location_id)
+                   else
+                     Spree::StockLocation.find(location_id)
+                   end
+        location_ids_in_payload << location.id
+        set_stock(stock_data[:count_on_hand], stock_data[:backorderable], location)
+      end
+
+      # Soft-delete stock items for locations not in the payload
+      stock_items.where.not(stock_location_id: location_ids_in_payload).update_all(deleted_at: Time.current)
+    end
 
     def ensure_not_in_complete_orders
       if orders.complete.any?

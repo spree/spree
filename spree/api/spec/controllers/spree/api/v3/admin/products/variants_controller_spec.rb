@@ -47,14 +47,13 @@ RSpec.describe Spree::Api::V3::Admin::Products::VariantsController, type: :contr
 
     before { product.option_types << option_type }
 
-    it 'creates a variant with option_type and option_value' do
+    it 'creates a variant with options' do
       expect {
         post :create, params: {
           product_id: product.prefixed_id,
           sku: 'NEW-SKU-001',
           price: 29.99,
-          option_type: option_type.name,
-          option_value: option_value.name
+          options: [{ name: option_type.name, value: option_value.name }]
         }, as: :json
       }.to change(product.variants, :count).by(1)
 
@@ -72,8 +71,7 @@ RSpec.describe Spree::Api::V3::Admin::Products::VariantsController, type: :contr
             product_id: product.prefixed_id,
             sku: 'MULTI-001',
             price: 19.99,
-            option_type: option_type.name,
-            option_value: 'New Value',
+            options: [{ name: option_type.name, value: 'New Value' }],
             prices: [
               { currency: 'USD', amount: 19.99, compare_at_amount: 24.99 },
               { currency: 'EUR', amount: 17.99 }
