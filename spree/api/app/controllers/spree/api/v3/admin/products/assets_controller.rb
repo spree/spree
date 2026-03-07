@@ -35,16 +35,17 @@ module Spree
               :images
             end
 
+            ALLOWED_ASSET_TYPES = -> { [Spree::Asset, *Spree::Asset.descendants].map(&:name).to_set.freeze }
+
             def build_resource
               asset_type = permitted_params[:type] || 'Spree::Image'
-              asset_class = asset_type.safe_constantize
 
-              unless asset_class && asset_class <= Spree::Asset
+              unless ALLOWED_ASSET_TYPES.call.include?(asset_type)
                 raise ArgumentError, "Invalid asset type: #{asset_type}"
               end
 
               asset = @parent.images.build(permitted_params.except(:type, :variant_ids))
-              asset.type = asset_class.name
+              asset.type = asset_type
 
               asset
             end
