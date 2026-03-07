@@ -10,36 +10,12 @@ module Spree
             'best_selling' => :by_best_selling
           }.freeze
 
-          # POST /api/v3/admin/products
-          def create
-            authorize!(:create, Spree::Product)
-
-            result = Spree.product_create_service.call(
-              store: current_store,
-              params: product_service_params
-            )
-
-            if result.success?
-              @resource = result.value[:product]
-              render json: serialize_resource(@resource), status: :created
-            else
-              render_result_error(result)
-            end
-          end
-
           # PATCH /api/v3/admin/products/:id
           def update
-            result = Spree.product_update_service.call(
-              product: @resource,
-              store: current_store,
-              params: product_service_params
-            )
-
-            if result.success?
-              @resource = result.value[:product]
+            if @resource.update(update_params)
               render json: serialize_resource(@resource)
             else
-              render_result_error(result)
+              render_validation_error(@resource.errors)
             end
           end
 
@@ -100,25 +76,40 @@ module Spree
             rp
           end
 
-          private
-
-          def custom_sort_requested?
-            CUSTOM_SORT_SCOPES.key?(sort_param)
-          end
-
-          def product_service_params
+          def permitted_params
             params.permit(
               *Spree::PermittedAttributes.product_attributes,
               tags: [],
               variants: [
-                :sku, :barcode, :price, :compare_at_price,
+                :id, :sku, :barcode, :price, :compare_at_price,
                 :cost_price, :cost_currency,
                 :weight, :height, :width, :depth, :weight_unit, :dimensions_unit,
-                :track_inventory, :tax_category_id,
-                :option_type, :option_value, :position,
-                prices: [:amount, :compare_at_amount, :currency]
+                :track_inventory, :tax_category_id, :position,
+                options: [:name, :value],
+                prices: [:amount, :compare_at_amount, :currency],
+                stock_items: [:stock_location_id, :count_on_hand, :backorderable]
               ]
             )
+          end
+
+          private
+
+          def update_params
+            p = permitted_params.to_h.with_indifferent_access
+
+            if p.key?(:taxon_ids)
+              other_store_taxon_ids = @resource.taxons
+                                               .joins(:taxonomy)
+                                               .where.not(spree_taxonomies: { store_id: current_store.id })
+                                               .pluck(:id)
+              p[:taxon_ids] = (Array(p[:taxon_ids]) + other_store_taxon_ids).uniq
+            end
+
+            p
+          end
+
+          def custom_sort_requested?
+            CUSTOM_SORT_SCOPES.key?(sort_param)
           end
         end
       end

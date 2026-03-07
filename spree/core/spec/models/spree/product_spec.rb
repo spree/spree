@@ -1734,4 +1734,106 @@ describe Spree::Product, type: :model do
       end
     end
   end
+
+  describe '#tags=' do
+    let(:product) { create(:product, stores: [store]) }
+
+    it 'sets tag_list from array' do
+      product.tags = ['eco', 'sale']
+      product.save!
+      expect(product.reload.tag_list).to match_array(['eco', 'sale'])
+    end
+
+    it 'clears tags with empty array' do
+      product.update!(tag_list: ['old'])
+      product.tags = []
+      product.save!
+      expect(product.reload.tag_list).to be_empty
+    end
+  end
+
+  describe '#variants=' do
+    let(:product) { create(:product, stores: [store]) }
+    let(:shipping_category) { product.shipping_category }
+
+    context 'with hash params' do
+      it 'creates new variants' do
+        product.variants = [
+          { sku: 'V1', price: 10, options: [{ name: 'Size', value: 'S' }] },
+          { sku: 'V2', price: 20, options: [{ name: 'Size', value: 'M' }] }
+        ]
+
+        expect(product.variants.count).to eq(2)
+        expect(product.variants.pluck(:sku)).to match_array(%w[V1 V2])
+      end
+
+      it 'updates existing variants by prefixed id' do
+        variant = create(:variant, product: product)
+        product.variants = [{ id: variant.prefixed_id, sku: 'UPDATED' }]
+
+        expect(variant.reload.sku).to eq('UPDATED')
+      end
+
+      it 'removes unlisted variants' do
+        v1 = create(:variant, product: product)
+        v2 = create(:variant, product: product)
+
+        product.variants = [{ id: v1.prefixed_id, sku: v1.sku }]
+
+        expect(product.variants.reload).to include(v1)
+        expect(product.variants).not_to include(v2)
+      end
+
+      it 'defers creation on new records' do
+        new_product = Spree::Product.new(
+          name: 'Deferred',
+          price: 10,
+          shipping_category: shipping_category,
+          stores: [store],
+          variants: [{ sku: 'DEF-1', options: [{ name: 'Color', value: 'Red' }] }]
+        )
+        new_product.save!
+
+        expect(new_product.variants.count).to eq(1)
+        expect(new_product.variants.first.sku).to eq('DEF-1')
+      end
+    end
+
+    context 'with Variant objects' do
+      it 'passes through to ActiveRecord setter' do
+        variant = build(:variant)
+        product.variants = [variant]
+        expect(product.variants).to include(variant)
+      end
+    end
+  end
+
+  describe 'assign_default_tax_category with explicit tax_category_id' do
+    let!(:default_tc) { create(:tax_category, is_default: true) }
+    let!(:custom_tc) { create(:tax_category, is_default: false) }
+
+    it 'does not overwrite explicit tax_category_id' do
+      product = Spree::Product.new(
+        name: 'Test',
+        price: 10,
+        shipping_category: create(:shipping_category),
+        stores: [store],
+        tax_category_id: custom_tc.id
+      )
+      product.save!
+
+      expect(product.reload.tax_category).to eq(custom_tc)
+    end
+
+    it 'assigns default when tax_category_id is not provided' do
+      product = Spree::Product.new(
+        name: 'Test',
+        price: 10,
+        shipping_category: create(:shipping_category),
+        stores: [store]
+      )
+
+      expect(product.tax_category).to eq(default_tc)
+    end
+  end
 end

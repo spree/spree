@@ -68,8 +68,18 @@ RSpec.describe 'Admin Variants API', type: :request, swagger_doc: 'api-reference
           dimensions_unit: { type: :string },
           track_inventory: { type: :boolean },
           tax_category_id: { type: :string },
-          option_type: { type: :string, example: 'Size', description: 'Option type name (auto-created if needed)' },
-          option_value: { type: :string, example: 'Large', description: 'Option value name (auto-created if needed)' },
+          options: {
+            type: :array,
+            description: 'Option types and values (auto-created if needed)',
+            items: {
+              type: :object,
+              properties: {
+                name: { type: :string, example: 'Size' },
+                value: { type: :string, example: 'Large' }
+              },
+              required: %w[name value]
+            }
+          },
           total_on_hand: { type: :integer, example: 100 },
           position: { type: :integer },
           barcode: { type: :string },
@@ -102,7 +112,7 @@ RSpec.describe 'Admin Variants API', type: :request, swagger_doc: 'api-reference
       response '201', 'variant created' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:product_id) { product.prefixed_id }
-        let(:body) { { sku: 'NEW-SKU-001', price: 24.99, option_type: 'Size', option_value: 'XL' } }
+        let(:body) { { sku: 'NEW-SKU-001', price: 24.99, options: [{ name: 'Size', value: 'XL' }] } }
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -187,8 +197,16 @@ RSpec.describe 'Admin Variants API', type: :request, swagger_doc: 'api-reference
           dimensions_unit: { type: :string },
           track_inventory: { type: :boolean },
           tax_category_id: { type: :string },
-          option_type: { type: :string, example: 'Size' },
-          option_value: { type: :string, example: 'Large' },
+          options: {
+            type: :array,
+            items: {
+              type: :object,
+              properties: {
+                name: { type: :string, example: 'Size' },
+                value: { type: :string, example: 'Large' }
+              }
+            }
+          },
           total_on_hand: { type: :integer, example: 100 },
           position: { type: :integer },
           barcode: { type: :string },

@@ -4,38 +4,6 @@ module Spree
       module Admin
         module Products
           class VariantsController < ResourceController
-            # POST /api/v3/admin/products/:product_id/variants
-            def create
-              authorize!(:create, Spree::Variant)
-
-              result = Spree.variant_create_service.call(
-                product: @parent,
-                params: variant_service_params
-              )
-
-              if result.success?
-                @resource = result.value[:variant]
-                render json: serialize_resource(@resource), status: :created
-              else
-                render_result_error(result)
-              end
-            end
-
-            # PATCH /api/v3/admin/products/:product_id/variants/:id
-            def update
-              result = Spree.variant_update_service.call(
-                variant: @resource,
-                params: variant_service_params
-              )
-
-              if result.success?
-                @resource = result.value[:variant]
-                render json: serialize_resource(@resource)
-              else
-                render_result_error(result)
-              end
-            end
-
             protected
 
             def model_class
@@ -59,15 +27,13 @@ module Spree
               [:prices, stock_items: :stock_location]
             end
 
-            private
-
-            def variant_service_params
+            def permitted_params
               params.permit(
                 :sku, :barcode, :price, :compare_at_price,
                 :cost_price, :cost_currency,
                 :weight, :height, :width, :depth, :weight_unit, :dimensions_unit,
-                :track_inventory, :tax_category_id,
-                :option_type, :option_value, :position,
+                :track_inventory, :tax_category_id, :position,
+                options: [:name, :value],
                 prices: [:amount, :compare_at_amount, :currency],
                 stock_items: [:stock_location_id, :count_on_hand, :backorderable]
               )
