@@ -103,8 +103,10 @@ Spree::Core::Engine.add_routes do
           member do
             post :clone
           end
-          resources :variants, controller: 'products/variants'
-          resources :assets, controller: 'products/assets', only: [:index, :create, :update, :destroy]
+          resources :variants, controller: 'products/variants' do
+            resources :assets, controller: 'assets', only: [:index, :create, :update, :destroy]
+          end
+          resources :assets, controller: 'assets', only: [:index, :create, :update, :destroy]
         end
 
         # Taxonomies > Taxons

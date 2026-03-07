@@ -72,6 +72,15 @@ describe('admin / products', () => {
       expect(result.alt).toBe(adminFixtures.asset.alt);
     });
 
+    it('creates an asset from URL (returns 202)', async () => {
+      await expect(
+        client.admin.products.assets.create('prod_1', {
+          url: 'https://example.com/image.jpg',
+          position: 1,
+        })
+      ).resolves.toBeFalsy();
+    });
+
     it('updates an asset', async () => {
       const result = await client.admin.products.assets.update('prod_1', 'asset_1', {
         alt: 'Updated alt',
@@ -122,6 +131,45 @@ describe('admin / products', () => {
       await expect(
         client.admin.products.variants.delete('prod_1', 'var_1')
       ).resolves.toBeUndefined();
+    });
+
+    describe('assets', () => {
+      it('lists variant assets', async () => {
+        const result = await client.admin.products.variants.assets.list('prod_1', 'var_1');
+
+        expect(result.data).toHaveLength(1);
+        expect(result.data[0].alt).toBe('Product image');
+      });
+
+      it('creates a variant asset', async () => {
+        const result = await client.admin.products.variants.assets.create('prod_1', 'var_1', {
+          alt: 'Variant image',
+        });
+
+        expect(result.alt).toBe(adminFixtures.asset.alt);
+      });
+
+      it('creates a variant asset from URL (returns 202)', async () => {
+        await expect(
+          client.admin.products.variants.assets.create('prod_1', 'var_1', {
+            url: 'https://example.com/variant.jpg',
+          })
+        ).resolves.toBeFalsy();
+      });
+
+      it('updates a variant asset', async () => {
+        const result = await client.admin.products.variants.assets.update('prod_1', 'var_1', 'asset_1', {
+          alt: 'Updated variant alt',
+        });
+
+        expect(result.alt).toBe('Updated variant alt');
+      });
+
+      it('deletes a variant asset', async () => {
+        await expect(
+          client.admin.products.variants.assets.delete('prod_1', 'var_1', 'asset_1')
+        ).resolves.toBeUndefined();
+      });
     });
   });
 });

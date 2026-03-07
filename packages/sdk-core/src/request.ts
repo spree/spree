@@ -193,8 +193,8 @@ export function createRequestFn(
           throw new SpreeError(errorBody, response.status);
         }
 
-        // Handle 204 No Content
-        if (response.status === 204) {
+        // Handle 202 Accepted / 204 No Content (empty body)
+        if (response.status === 202 || response.status === 204) {
           return undefined as T;
         }
 
