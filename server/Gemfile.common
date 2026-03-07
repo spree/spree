@@ -49,3 +49,6 @@ gem 'sentry-sidekiq'
 
 # Condensed single-line request logs
 gem 'lograge'
+
+# CORS support for API requests
+gem 'rack-cors'
