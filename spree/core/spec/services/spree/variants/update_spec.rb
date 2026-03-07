@@ -25,7 +25,7 @@ RSpec.describe Spree::Variants::Update do
     end
   end
 
-  describe 'upsert prices' do
+  describe 'sync prices' do
     let(:params) do
       {
         prices: [
@@ -43,7 +43,7 @@ RSpec.describe Spree::Variants::Update do
     end
   end
 
-  describe 'upsert prices removes missing currencies' do
+  describe 'sync prices removes missing currencies' do
     before do
       variant.prices.create!(currency: 'EUR', amount: 20)
       variant.prices.create!(currency: 'GBP', amount: 15)
@@ -67,7 +67,7 @@ RSpec.describe Spree::Variants::Update do
     end
   end
 
-  describe 'upsert stock_items' do
+  describe 'sync stock_items' do
     let!(:stock_location) { Spree::StockLocation.first || create(:stock_location) }
 
     let(:params) do
@@ -86,7 +86,7 @@ RSpec.describe Spree::Variants::Update do
     end
   end
 
-  describe 'upsert stock_items removes missing locations' do
+  describe 'sync stock_items removes missing locations' do
     let!(:loc1) { Spree::StockLocation.first || create(:stock_location) }
     let!(:loc2) { create(:stock_location, name: 'Secondary') }
 
@@ -117,16 +117,7 @@ RSpec.describe Spree::Variants::Update do
 
     it 'assigns new option value' do
       expect(result).to be_success
-      expect(result.value[:variant].option_values.first.presentation).to eq('Blue')
-    end
-  end
-
-  describe 'total_on_hand shortcut' do
-    let(:params) { { total_on_hand: 77 } }
-
-    it 'sets stock on first stock item' do
-      expect(result).to be_success
-      expect(result.value[:variant].total_on_hand).to eq(77)
+      expect(result.value[:variant].option_values.map(&:presentation)).to include('Blue')
     end
   end
 

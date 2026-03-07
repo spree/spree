@@ -78,7 +78,7 @@ module Spree
                 :cost_price, :cost_currency,
                 :weight, :height, :width, :depth, :weight_unit, :dimensions_unit,
                 :track_inventory, :tax_category_id,
-                :option_type, :option_value, :total_on_hand, :position,
+                :option_type, :option_value, :position,
                 prices: [:amount, :compare_at_amount, :currency],
                 stock_items: [:stock_location_id, :count_on_hand, :backorderable]
               )
