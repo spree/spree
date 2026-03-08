@@ -177,6 +177,22 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
         expect(prices).to eq(prices.sort.reverse)
       end
 
+      it 'paginates correctly when sorting by price' do
+        get :index, params: { sort: 'price', page: 1, limit: 1 }
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['data'].size).to eq(1)
+        expect(json_response['meta']['pages']).to be >= 2
+      end
+
+      it 'paginates correctly when sorting by price descending' do
+        get :index, params: { sort: '-price', page: 1, limit: 1 }
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['data'].size).to eq(1)
+        expect(json_response['meta']['pages']).to be >= 2
+      end
+
       it 'sorts by best selling' do
         Spree::StoreProduct.find_by(product: product, store: store).update!(units_sold_count: 10, revenue: 100)
         Spree::StoreProduct.find_by(product: product2, store: store).update!(units_sold_count: 50, revenue: 500)

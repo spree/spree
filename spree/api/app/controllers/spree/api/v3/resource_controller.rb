@@ -108,7 +108,14 @@ module Spree
                     ransack(ransack_params)
           result = @search.result(distinct: collection_distinct?)
           result = apply_collection_sort(result)
-          @pagy, @collection = pagy(result, limit: limit, page: page)
+          pagy_options = { limit: limit, page: page }
+          # When custom scopes add select values (e.g. price sorting), pre-compute
+          # the count without those selects to avoid Mobility's select_for_count
+          # crashing on non-Arel select values.
+          if result.select_values.any?
+            pagy_options[:count] = result.except(:select, :order).count(:all)
+          end
+          @pagy, @collection = pagy(result, **pagy_options)
           @collection
         end
 

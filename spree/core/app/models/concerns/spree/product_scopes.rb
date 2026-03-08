@@ -43,15 +43,22 @@ module Spree
 
       # Price sorting scopes that use a derived table JOIN to get prices across all variants.
       # These ensure products with only variant prices (no master price) are included in results.
+      #
+      # Uses Arel::Nodes::As for select expressions so that:
+      # - PG allows ORDER BY with DISTINCT (expressions must appear in SELECT list)
+      # - Mobility's select_for_count can safely call .right on all select_values
       add_search_scope :ascend_by_price do
         price_agg_sql = Price.non_zero.joins(:variant)
                             .select("#{Variant.table_name}.product_id AS product_id, MIN(#{Price.table_name}.amount) AS agg_price")
                             .group("#{Variant.table_name}.product_id")
                             .to_sql
 
+        price_expr = Arel.sql('COALESCE(price_agg.agg_price, 999999999)')
+
         joins("LEFT JOIN (#{price_agg_sql}) AS price_agg ON price_agg.product_id = #{Product.table_name}.id").
-          select("#{Product.table_name}.*", 'COALESCE(price_agg.agg_price, 999999999) AS min_price').
-          order(Arel.sql('COALESCE(price_agg.agg_price, 999999999) ASC'))
+          select("#{Product.table_name}.*").
+          select(Arel::Nodes::As.new(price_expr, Arel.sql('min_price'))).
+          order(price_expr.asc)
       end
 
       add_search_scope :descend_by_price do
@@ -60,9 +67,12 @@ module Spree
                             .group("#{Variant.table_name}.product_id")
                             .to_sql
 
+        price_expr = Arel.sql('COALESCE(price_agg.agg_price, 0)')
+
         joins("LEFT JOIN (#{price_agg_sql}) AS price_agg ON price_agg.product_id = #{Product.table_name}.id").
-          select("#{Product.table_name}.*", 'COALESCE(price_agg.agg_price, 0) AS max_price').
-          order(Arel.sql('COALESCE(price_agg.agg_price, 0) DESC'))
+          select("#{Product.table_name}.*").
+          select(Arel::Nodes::As.new(price_expr, Arel.sql('max_price'))).
+          order(price_expr.desc)
       end
 
       add_search_scope :price_between do |low, high|
