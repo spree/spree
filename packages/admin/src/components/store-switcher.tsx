@@ -1,3 +1,5 @@
+import { ChevronsUpDownIcon, ExternalLinkIcon } from 'lucide-react'
+import { TablerIcon } from '@/components/tabler-icon'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -7,12 +9,10 @@ import {
 } from '@/components/ui/dropdown-menu'
 import {
   SidebarMenu,
-  SidebarMenuItem,
   SidebarMenuButton,
+  SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar'
-import { ChevronsUpDownIcon, ExternalLinkIcon } from 'lucide-react'
-import { TablerIcon } from '@/components/tabler-icon'
 
 export function StoreSwitcher() {
   const { isMobile } = useSidebar()

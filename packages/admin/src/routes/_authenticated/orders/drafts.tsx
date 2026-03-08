@@ -4,27 +4,29 @@ import { spreeClient } from '@/client'
 import { ResourceTable, resourceSearchSchema } from '@/components/resource-table'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/hooks/use-auth'
-import '@/tables/products'
+import '@/tables/orders'
 
-export const Route = createFileRoute('/_authenticated/products/')({
+export const Route = createFileRoute('/_authenticated/orders/drafts')({
   validateSearch: resourceSearchSchema,
-  component: ProductsPage,
+  component: DraftOrdersPage,
 })
 
-function ProductsPage() {
+function DraftOrdersPage() {
   const searchParams = Route.useSearch()
   const { token } = useAuth()
 
   return (
     <ResourceTable
-      tableKey="products"
-      queryKey="products"
-      queryFn={(params) => spreeClient.admin.products.list(params, { token: token! })}
+      tableKey="orders"
+      queryKey="draft-orders"
+      queryFn={(params) => spreeClient.admin.orders.list(params, { token: token! })}
       searchParams={searchParams}
+      defaultParams={{ incomplete: 1 }}
+      title="Draft Orders"
       actions={
         <Button size="sm" className="h-[2.125rem]">
           <PlusIcon className="size-4" />
-          Add Product
+          New Order
         </Button>
       }
     />

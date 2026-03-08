@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button"
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
+import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 interface PaginationMeta {
   page: number
@@ -35,14 +35,14 @@ export function Pagination({ meta, onPageChange }: PaginationProps) {
           <ChevronLeftIcon className="size-4" />
         </Button>
         {generatePageNumbers(meta.page, meta.pages).map((p, i) =>
-          p === "..." ? (
+          p === '...' ? (
             <span key={`ellipsis-${i}`} className="px-1 text-sm text-muted-foreground">
               ...
             </span>
           ) : (
             <Button
               key={p}
-              variant={p === meta.page ? "default" : "ghost"}
+              variant={p === meta.page ? 'default' : 'ghost'}
               size="icon-sm"
               onClick={() => onPageChange(p as number)}
             >
@@ -63,18 +63,18 @@ export function Pagination({ meta, onPageChange }: PaginationProps) {
   )
 }
 
-function generatePageNumbers(current: number, total: number): (number | "...")[] {
+function generatePageNumbers(current: number, total: number): (number | '...')[] {
   if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1)
 
-  const pages: (number | "...")[] = [1]
+  const pages: (number | '...')[] = [1]
 
-  if (current > 3) pages.push("...")
+  if (current > 3) pages.push('...')
 
   const start = Math.max(2, current - 1)
   const end = Math.min(total - 1, current + 1)
   for (let i = start; i <= end; i++) pages.push(i)
 
-  if (current < total - 2) pages.push("...")
+  if (current < total - 2) pages.push('...')
 
   pages.push(total)
   return pages

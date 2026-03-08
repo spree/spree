@@ -1,8 +1,8 @@
 import { Link } from '@tanstack/react-router'
 import { PackageIcon } from 'lucide-react'
 import { StatusBadge } from '@/components/ui/badge'
-import { defineTable } from '@/lib/table-registry'
 import { formatPrice, formatRelativeTime } from '@/lib/formatters'
+import { defineTable } from '@/lib/table-registry'
 
 defineTable('products', {
   title: 'Products',
@@ -36,9 +36,7 @@ defineTable('products', {
             )}
           </div>
           <div className="min-w-0">
-            <div className="truncate font-medium text-zinc-950">
-              {product.name}
-            </div>
+            <div className="truncate font-medium text-zinc-950">{product.name}</div>
           </div>
         </Link>
       ),

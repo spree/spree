@@ -1,13 +1,8 @@
+import type { ComponentProps } from 'react'
 import { NavMain } from '@/components/nav-main'
 import { NavUser } from '@/components/nav-user'
 import { StoreSwitcher } from '@/components/store-switcher'
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-} from '@/components/ui/sidebar'
-import type { ComponentProps } from 'react'
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader } from '@/components/ui/sidebar'
 
 export type NavItem = {
   title: string
@@ -26,9 +21,7 @@ const navigation: NavItem[] = [
     title: 'Orders',
     url: '/orders',
     icon: 'inbox',
-    items: [
-      { title: 'Draft Orders', url: '/orders/drafts' },
-    ],
+    items: [{ title: 'Draft Orders', url: '/orders/drafts' }],
   },
   {
     title: 'Products',
@@ -50,9 +43,7 @@ const navigation: NavItem[] = [
     title: 'Promotions',
     url: '/promotions',
     icon: 'discount',
-    items: [
-      { title: 'Gift Cards', url: '/promotions/gift-cards' },
-    ],
+    items: [{ title: 'Gift Cards', url: '/promotions/gift-cards' }],
   },
   {
     title: 'Reports',

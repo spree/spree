@@ -1,7 +1,5 @@
-import {
-  Avatar,
-  AvatarFallback,
-} from '@/components/ui/avatar'
+import { TablerIcon } from '@/components/tabler-icon'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,13 +7,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import {
-  SidebarMenu,
-  SidebarMenuItem,
-  useSidebar,
-} from '@/components/ui/sidebar'
+import { SidebarMenu, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar'
 import { useAuth } from '@/hooks/use-auth'
-import { TablerIcon } from '@/components/tabler-icon'
 
 export function NavUser() {
   const { isMobile } = useSidebar()
@@ -23,11 +16,12 @@ export function NavUser() {
 
   if (!user) return null
 
-  const initials = [user.first_name, user.last_name]
-    .filter(Boolean)
-    .map((n) => n![0])
-    .join('')
-    .toUpperCase() || user.email[0]!.toUpperCase()
+  const initials =
+    [user.first_name, user.last_name]
+      .filter(Boolean)
+      .map((n) => n![0])
+      .join('')
+      .toUpperCase() || user.email[0]!.toUpperCase()
 
   const displayName = [user.first_name, user.last_name].filter(Boolean).join(' ') || user.email
 
@@ -36,15 +30,16 @@ export function NavUser() {
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="flex w-full items-center gap-2 rounded-lg p-1 text-left hover:bg-gray-200/50 transition-colors duration-100 outline-none">
+            <button
+              type="button"
+              className="flex w-full items-center gap-2 rounded-lg p-1 text-left hover:bg-gray-200/50 transition-colors duration-100 outline-none"
+            >
               <Avatar className="size-8">
                 <AvatarFallback className="text-xs bg-zinc-950 text-white">
                   {initials}
                 </AvatarFallback>
               </Avatar>
-              <span className="flex-1 min-w-0 truncate text-sm text-zinc-950">
-                {displayName}
-              </span>
+              <span className="flex-1 min-w-0 truncate text-sm text-zinc-950">{displayName}</span>
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent

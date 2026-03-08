@@ -1,28 +1,27 @@
-import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
-import { Card, CardContent } from "@/components/ui/card";
-import { Pagination, type PaginationMeta } from "@/components/ui/pagination";
+import { useQuery } from '@tanstack/react-query'
+import { useNavigate } from '@tanstack/react-router'
+import { type ReactNode, useDeferredValue, useState } from 'react'
+import { z } from 'zod/v4'
+import { TableToolbar } from '@/components/table-toolbar'
+import { Card, CardContent } from '@/components/ui/card'
 import {
   Table,
-  TableHeader,
   TableBody,
-  TableRow,
-  TableHead,
   TableCell,
   TableEmpty,
-} from "@/components/ui/data-table";
-import { TableToolbar } from "@/components/table-toolbar";
-import { useAuth } from "@/hooks/use-auth";
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/data-table'
+import { Pagination, type PaginationMeta } from '@/components/ui/pagination'
+import { useAuth } from '@/hooks/use-auth'
 import {
-  getTable,
-  getDisplayableColumns,
-  getDefaultColumnKeys,
-  type TableDef,
   type FilterRule,
+  getDefaultColumnKeys,
+  getDisplayableColumns,
+  getTable,
   type SortOption,
-} from "@/lib/table-registry";
-import { z } from "zod/v4";
-import { useState, useDeferredValue, type ReactNode } from "react";
+} from '@/lib/table-registry'
 
 // ============================================================================
 // Search schema — shared by all resource table routes
@@ -33,30 +32,30 @@ const filterSchema = z.object({
   field: z.string(),
   operator: z.string(),
   value: z.string(),
-});
+})
 
 export const resourceSearchSchema = z.object({
   page: z.coerce.number().optional().default(1),
   sort: z.string().optional(),
-  dir: z.enum(["asc", "desc"]).optional(),
+  dir: z.enum(['asc', 'desc']).optional(),
   search: z.string().optional(),
   filters: z.preprocess((val) => {
-    if (typeof val === "string") {
+    if (typeof val === 'string') {
       try {
-        return JSON.parse(val);
+        return JSON.parse(val)
       } catch {
-        return [];
+        return []
       }
     }
-    return val ?? [];
+    return val ?? []
   }, z.array(filterSchema).optional().default([])),
   columns: z.preprocess((val) => {
-    if (typeof val === "string") return val.split(",");
-    return val ?? undefined;
+    if (typeof val === 'string') return val.split(',')
+    return val ?? undefined
   }, z.array(z.string()).optional()),
-});
+})
 
-export type ResourceSearch = z.infer<typeof resourceSearchSchema>;
+export type ResourceSearch = z.infer<typeof resourceSearchSchema>
 
 // ============================================================================
 // Props
@@ -64,19 +63,19 @@ export type ResourceSearch = z.infer<typeof resourceSearchSchema>;
 
 interface ResourceTableProps<T> {
   /** Registry key (e.g., 'products') */
-  tableKey: string;
+  tableKey: string
   /** TanStack Query key prefix (e.g., 'products') */
-  queryKey: string;
+  queryKey: string
   /** Function that calls the SDK to fetch data */
-  queryFn: (
-    params: Record<string, unknown>,
-  ) => Promise<{ data: T[]; meta: PaginationMeta }>;
+  queryFn: (params: Record<string, unknown>) => Promise<{ data: T[]; meta: PaginationMeta }>
   /** Current search params from the route */
-  searchParams: ResourceSearch;
+  searchParams: ResourceSearch
   /** Title displayed in the toolbar header. Overrides the table definition's title. */
-  title?: string;
+  title?: string
+  /** Default params always sent with every request (e.g., { complete: 1 } for orders) */
+  defaultParams?: Record<string, unknown>
   /** Actions to render in the toolbar (e.g., "Add Product" button) */
-  actions?: ReactNode;
+  actions?: ReactNode
 }
 
 // ============================================================================
@@ -89,108 +88,96 @@ export function ResourceTable<T extends Record<string, any>>({
   queryFn,
   searchParams,
   title,
+  defaultParams,
   actions,
 }: ResourceTableProps<T>) {
-  const table = getTable<T>(tableKey);
-  const { token } = useAuth();
-  const navigate = useNavigate();
+  const table = getTable<T>(tableKey)
+  const { token } = useAuth()
+  const navigate = useNavigate()
 
-  const {
-    page,
-    sort: urlSort,
-    dir: urlDir,
-    search,
-    filters,
-    columns: urlColumns,
-  } = searchParams;
+  const { page, sort: urlSort, dir: urlDir, search, filters, columns: urlColumns } = searchParams
 
   const defaultSort = table.defaultSort ?? {
-    field: "updated_at",
-    direction: "desc" as const,
-  };
-  const sort = urlSort ?? defaultSort.field;
-  const dir = urlDir ?? defaultSort.direction;
+    field: 'updated_at',
+    direction: 'desc' as const,
+  }
+  const sort = urlSort ?? defaultSort.field
+  const dir = urlDir ?? defaultSort.direction
 
-  const [searchInput, setSearchInput] = useState(search ?? "");
-  const deferredSearch = useDeferredValue(searchInput);
+  const [searchInput, setSearchInput] = useState(search ?? '')
+  const deferredSearch = useDeferredValue(searchInput)
 
-  const displayableColumns = getDisplayableColumns(table);
-  const defaultColumnKeys = getDefaultColumnKeys(table);
-  const visibleColumnKeys = urlColumns ?? defaultColumnKeys;
+  const displayableColumns = getDisplayableColumns(table)
+  const defaultColumnKeys = getDefaultColumnKeys(table)
+  const visibleColumnKeys = urlColumns ?? defaultColumnKeys
 
-  const visibleColumns = displayableColumns.filter((c) =>
-    visibleColumnKeys.includes(c.key),
-  );
+  const visibleColumns = displayableColumns.filter((c) => visibleColumnKeys.includes(c.key))
 
   // Build API params
-  const sortString = dir === "desc" ? `-${sort}` : sort;
+  const sortString = dir === 'desc' ? `-${sort}` : sort
 
   const { data, isLoading } = useQuery({
-    queryKey: [
-      queryKey,
-      { page, sort: sortString, search: deferredSearch, filters },
-    ],
+    queryKey: [queryKey, { page, sort: sortString, search: deferredSearch, filters }],
     queryFn: () => {
-      const params: Record<string, unknown> = { page, sort: sortString };
+      const params: Record<string, unknown> = { page, sort: sortString, ...defaultParams }
 
       if (deferredSearch) {
-        const searchParam = table.searchParam ?? "name_cont";
-        params[searchParam] = deferredSearch;
+        const searchParam = table.searchParam ?? 'name_cont'
+        params[searchParam] = deferredSearch
       }
 
       // Convert FilterRule[] to Ransack params
       for (const filter of filters as FilterRule[]) {
-        const col = table.columns.find((c) => c.key === filter.field);
-        const ransackKey = col?.ransackAttribute ?? filter.field;
-        params[`${ransackKey}_${filter.operator}`] = filter.value;
+        const col = table.columns.find((c) => c.key === filter.field)
+        const ransackKey = col?.ransackAttribute ?? filter.field
+        params[`${ransackKey}_${filter.operator}`] = filter.value
       }
 
-      return queryFn(params);
+      return queryFn(params)
     },
     enabled: !!token,
-  });
+  })
 
-  const rows = data?.data ?? [];
-  const meta = data?.meta;
+  const rows = data?.data ?? []
+  const meta = data?.meta
 
   // Navigation helpers
   function updateSearch(updates: Record<string, unknown>) {
     navigate({
       search: (prev: Record<string, unknown>) => ({ ...prev, ...updates }),
-    });
+    })
   }
 
   function handleSearchChange(value: string) {
-    setSearchInput(value);
-    updateSearch({ search: value || undefined, page: 1 });
+    setSearchInput(value)
+    updateSearch({ search: value || undefined, page: 1 })
   }
 
   function handleSortChange(s: SortOption) {
-    updateSearch({ sort: s.field, dir: s.direction, page: 1 });
+    updateSearch({ sort: s.field, dir: s.direction, page: 1 })
   }
 
   function handleFiltersChange(f: FilterRule[]) {
     updateSearch({
       filters: f.length > 0 ? JSON.stringify(f) : undefined,
       page: 1,
-    });
+    })
   }
 
   function handleColumnsChange(cols: string[]) {
     const isDefault =
-      cols.length === defaultColumnKeys.length &&
-      cols.every((c) => defaultColumnKeys.includes(c));
-    updateSearch({ columns: isDefault ? undefined : cols.join(",") });
+      cols.length === defaultColumnKeys.length && cols.every((c) => defaultColumnKeys.includes(c))
+    updateSearch({ columns: isDefault ? undefined : cols.join(',') })
   }
 
   // Header columns for price-like right-aligned columns
   const headerColumns = visibleColumns.map((col) => {
-    const isRightAligned = col.className?.includes("text-right");
+    const isRightAligned = col.className?.includes('text-right')
     return {
       ...col,
-      headerClassName: isRightAligned ? "text-right" : undefined,
-    };
-  });
+      headerClassName: isRightAligned ? 'text-right' : undefined,
+    }
+  })
 
   return (
     <Card className="rounded-2xl">
@@ -200,7 +187,7 @@ export function ResourceTable<T extends Record<string, any>>({
         onVisibleColumnsChange={handleColumnsChange}
         search={searchInput}
         onSearchChange={handleSearchChange}
-        searchPlaceholder={table.searchPlaceholder ?? "Search..."}
+        searchPlaceholder={table.searchPlaceholder ?? 'Search...'}
         sort={{ field: sort, direction: dir }}
         onSortChange={handleSortChange}
         filters={filters as FilterRule[]}
@@ -222,18 +209,14 @@ export function ResourceTable<T extends Record<string, any>>({
           </TableHeader>
           <TableBody>
             {isLoading ? (
-              <TableEmpty colSpan={visibleColumns.length}>
-                Loading...
-              </TableEmpty>
+              <TableEmpty colSpan={visibleColumns.length}>Loading...</TableEmpty>
             ) : rows.length === 0 ? (
               <TableEmpty colSpan={visibleColumns.length}>
                 <div className="flex flex-col items-center gap-2">
                   {table.emptyIcon}
-                  <p>{table.emptyMessage ?? "No results found"}</p>
+                  <p>{table.emptyMessage ?? 'No results found'}</p>
                   {(deferredSearch || (filters as FilterRule[]).length > 0) && (
-                    <p className="text-xs">
-                      Try adjusting your search or filters
-                    </p>
+                    <p className="text-xs">Try adjusting your search or filters</p>
                   )}
                 </div>
               </TableEmpty>
@@ -242,9 +225,7 @@ export function ResourceTable<T extends Record<string, any>>({
                 <TableRow key={(row as any).id ?? i}>
                   {visibleColumns.map((col) => (
                     <TableCell key={col.key} className={col.className}>
-                      {col.render
-                        ? col.render(row)
-                        : String((row as any)[col.key] ?? "—")}
+                      {col.render ? col.render(row) : String((row as any)[col.key] ?? '—')}
                     </TableCell>
                   ))}
                 </TableRow>
@@ -252,13 +233,8 @@ export function ResourceTable<T extends Record<string, any>>({
             )}
           </TableBody>
         </Table>
-        {meta && (
-          <Pagination
-            meta={meta}
-            onPageChange={(p) => updateSearch({ page: p })}
-          />
-        )}
+        {meta && <Pagination meta={meta} onPageChange={(p) => updateSearch({ page: p })} />}
       </CardContent>
     </Card>
-  );
+  )
 }

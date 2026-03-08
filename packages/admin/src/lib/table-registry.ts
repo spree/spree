@@ -59,7 +59,8 @@ export function defineTable<T = any>(key: string, def: Omit<TableDef<T>, 'key'>)
 
 export function getTable<T = any>(key: string): TableDef<T> {
   const table = registry.get(key)
-  if (!table) throw new Error(`Table "${key}" is not registered. Call defineTable("${key}", ...) first.`)
+  if (!table)
+    throw new Error(`Table "${key}" is not registered. Call defineTable("${key}", ...) first.`)
   return table as TableDef<T>
 }
 
@@ -86,7 +87,9 @@ function createMutator(tableKey: string): TableMutator {
       if (!table) throw new Error(`Table "${tableKey}" is not registered.`)
       // Prevent duplicates
       if (table.columns.some((c) => c.key === column.key)) {
-        throw new Error(`Column "${column.key}" already exists in table "${tableKey}". Use updateColumn() instead.`)
+        throw new Error(
+          `Column "${column.key}" already exists in table "${tableKey}". Use updateColumn() instead.`,
+        )
       }
       table.columns.push(column)
     },

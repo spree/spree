@@ -1,3 +1,6 @@
+import { Link, useRouterState } from '@tanstack/react-router'
+import type { NavItem } from '@/components/app-sidebar'
+import { TablerIcon } from '@/components/tabler-icon'
 import {
   SidebarGroup,
   SidebarMenu,
@@ -7,9 +10,6 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from '@/components/ui/sidebar'
-import { TablerIcon } from '@/components/tabler-icon'
-import { Link, useRouterState } from '@tanstack/react-router'
-import type { NavItem } from '@/components/app-sidebar'
 
 function NavIcon({ name, isActive }: { name: string; isActive?: boolean }) {
   return (
@@ -26,13 +26,7 @@ function NavIcon({ name, isActive }: { name: string; isActive?: boolean }) {
   )
 }
 
-export function NavMain({
-  items,
-  bottomItems,
-}: {
-  items: NavItem[]
-  bottomItems?: NavItem[]
-}) {
+export function NavMain({ items, bottomItems }: { items: NavItem[]; bottomItems?: NavItem[] }) {
   const routerState = useRouterState()
   const currentPath = routerState.location.pathname
 
@@ -42,10 +36,9 @@ export function NavMain({
         <SidebarMenu>
           {items.map((item) => {
             const isExactActive = currentPath === item.url
-            const isActive = isExactActive ||
-              (item.url !== '/' && currentPath.startsWith(item.url))
+            const isActive = isExactActive || (item.url !== '/' && currentPath.startsWith(item.url))
             const hasActiveChild = item.items?.some(
-              (sub) => currentPath === sub.url || currentPath.startsWith(sub.url)
+              (sub) => currentPath === sub.url || currentPath.startsWith(sub.url),
             )
             const showSubmenu = isActive || hasActiveChild
 
@@ -64,8 +57,8 @@ export function NavMain({
                 {item.items && showSubmenu && (
                   <SidebarMenuSub>
                     {item.items.map((subItem) => {
-                      const subActive = currentPath === subItem.url ||
-                        currentPath.startsWith(subItem.url)
+                      const subActive =
+                        currentPath === subItem.url || currentPath.startsWith(subItem.url)
                       return (
                         <SidebarMenuSubItem key={subItem.title}>
                           <SidebarMenuSubButton asChild isActive={subActive}>
@@ -88,16 +81,12 @@ export function NavMain({
         <SidebarGroup className="mt-auto">
           <SidebarMenu>
             {bottomItems.map((item) => {
-              const isActive = currentPath === item.url ||
-                (item.url !== '/' && currentPath.startsWith(item.url))
+              const isActive =
+                currentPath === item.url || (item.url !== '/' && currentPath.startsWith(item.url))
 
               return (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    tooltip={item.title}
-                    asChild
-                    isActive={isActive}
-                  >
+                  <SidebarMenuButton tooltip={item.title} asChild isActive={isActive}>
                     <Link to={item.url}>
                       <NavIcon name={item.icon} isActive={isActive} />
                       <span>{item.title}</span>

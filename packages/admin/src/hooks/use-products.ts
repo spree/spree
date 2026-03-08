@@ -11,7 +11,13 @@ interface UseProductsParams {
   filters?: FilterRule[]
 }
 
-export function useProducts({ page = 1, limit = 25, sort = '-updated_at', search, filters = [] }: UseProductsParams = {}) {
+export function useProducts({
+  page = 1,
+  limit = 25,
+  sort = '-updated_at',
+  search,
+  filters = [],
+}: UseProductsParams = {}) {
   const { token } = useAuth()
 
   return useQuery({

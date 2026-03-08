@@ -1,18 +1,33 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { PlusIcon } from 'lucide-react'
+import { spreeClient } from '@/client'
+import { ResourceTable, resourceSearchSchema } from '@/components/resource-table'
+import { Button } from '@/components/ui/button'
+import { useAuth } from '@/hooks/use-auth'
+import '@/tables/orders'
 
 export const Route = createFileRoute('/_authenticated/orders/')({
+  validateSearch: resourceSearchSchema,
   component: OrdersPage,
 })
 
 function OrdersPage() {
+  const searchParams = Route.useSearch()
+  const { token } = useAuth()
+
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Orders</h1>
-      </div>
-      <p className="text-muted-foreground">
-        Order listing will be implemented here.
-      </p>
-    </div>
+    <ResourceTable
+      tableKey="orders"
+      queryKey="orders"
+      queryFn={(params) => spreeClient.admin.orders.list(params, { token: token! })}
+      searchParams={searchParams}
+      defaultParams={{ complete: 1 }}
+      actions={
+        <Button size="sm" className="h-[2.125rem]">
+          <PlusIcon className="size-4" />
+          New Order
+        </Button>
+      }
+    />
   )
 }

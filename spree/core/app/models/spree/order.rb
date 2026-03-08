@@ -87,7 +87,7 @@ module Spree
       completed_at email number state payment_state shipment_state
       total item_total item_count considered_risky channel
     ]
-    self.whitelisted_ransackable_scopes = %w[refunded partially_refunded multi_search]
+    self.whitelisted_ransackable_scopes = %w[complete incomplete refunded partially_refunded multi_search]
 
     attr_reader :coupon_code
     attr_accessor :temporary_address

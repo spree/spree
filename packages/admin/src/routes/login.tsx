@@ -1,13 +1,13 @@
+import { zodResolver } from '@hookform/resolvers/zod'
 import { createFileRoute, redirect, useRouter } from '@tanstack/react-router'
-import { useAuth } from '@/hooks/use-auth'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod/v4'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { useAuth } from '@/hooks/use-auth'
+import { cn } from '@/lib/utils'
 
 const loginSchema = z.object({
   email: z.email(),
@@ -75,9 +75,7 @@ function LoginFormCard({
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Welcome back</CardTitle>
-          <CardDescription>
-            Sign in to your admin account
-          </CardDescription>
+          <CardDescription>Sign in to your admin account</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -104,11 +102,7 @@ function LoginFormCard({
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="password">Password</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    {...form.register('password')}
-                  />
+                  <Input id="password" type="password" {...form.register('password')} />
                   {form.formState.errors.password && (
                     <p className="text-sm text-destructive">
                       {form.formState.errors.password.message}
@@ -125,7 +119,12 @@ function LoginFormCard({
       </Card>
       <div className="text-balance text-center text-xs text-muted-foreground">
         Powered by{' '}
-        <a href="https://spreecommerce.org" className="underline underline-offset-4 hover:text-primary" target="_blank" rel="noreferrer">
+        <a
+          href="https://spreecommerce.org"
+          className="underline underline-offset-4 hover:text-primary"
+          target="_blank"
+          rel="noreferrer"
+        >
           Spree Commerce
         </a>
       </div>
@@ -145,6 +144,7 @@ function GalleryVerticalEnd(props: React.SVGProps<SVGSVGElement>) {
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
+      aria-hidden="true"
       {...props}
     >
       <path d="M7 2h10" />

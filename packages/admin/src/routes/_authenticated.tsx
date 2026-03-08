@@ -1,17 +1,13 @@
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
 import { AppSidebar } from '@/components/app-sidebar'
 import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from '@/components/ui/sidebar'
-import { Separator } from '@/components/ui/separator'
-import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbList,
   BreadcrumbPage,
 } from '@/components/ui/breadcrumb'
+import { Separator } from '@/components/ui/separator'
+import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 
 export const Route = createFileRoute('/_authenticated')({
   beforeLoad: ({ context }) => {
