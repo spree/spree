@@ -31,11 +31,14 @@ module Spree
             user.current_sign_in_ip
           end
 
+          # Override inherited associations to use admin serializers
+          many :addresses, resource: Spree.api.admin_address_serializer, if: proc { expand?('addresses') }
+          one :bill_address, key: :default_billing_address, resource: Spree.api.admin_address_serializer, if: proc { expand?('default_billing_address') }
+          one :ship_address, key: :default_shipping_address, resource: Spree.api.admin_address_serializer, if: proc { expand?('default_shipping_address') }
+
           many :orders,
                resource: Spree.api.admin_order_serializer,
                if: proc { expand?('orders') }
-
-          # TODO: Add store_credits association when Admin API is implemented
         end
       end
     end

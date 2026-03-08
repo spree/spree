@@ -25,6 +25,7 @@ RSpec.describe Spree::Api::V3::Admin::OrderSerializer do
 
   describe 'line_items' do
     let(:order) { create(:order_with_line_items, store: store) }
+    let(:base_params) { { store: store, currency: store.default_currency, expand: 'line_items' } }
 
     before { order.line_items.first.update!(private_metadata: { 'gift' => true }) }
 

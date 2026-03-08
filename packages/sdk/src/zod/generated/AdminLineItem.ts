@@ -1,9 +1,13 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import { AdminAdjustmentSchema } from './AdminAdjustment';
+import { AdminOptionValueSchema } from './AdminOptionValue';
+import { AdminOrderSchema } from './AdminOrder';
+import { AdminTaxCategorySchema } from './AdminTaxCategory';
+import { AdminVariantSchema } from './AdminVariant';
 import { StoreDigitalLinkSchema } from './StoreDigitalLink';
-import { StoreOptionValueSchema } from './StoreOptionValue';
 
-export const AdminLineItemSchema = z.object({
+export const AdminLineItemSchema: z.ZodObject<any> = z.object({
   id: z.string(),
   variant_id: z.string(),
   quantity: z.number(),
@@ -32,9 +36,16 @@ export const AdminLineItemSchema = z.object({
   updated_at: z.string(),
   compare_at_amount: z.string().nullable(),
   thumbnail_url: z.string().nullable(),
-  option_values: z.array(StoreOptionValueSchema),
+  option_values: z.array(z.lazy(() => AdminOptionValueSchema)).optional(),
   digital_links: z.array(StoreDigitalLinkSchema),
   metadata: z.record(z.string(), z.unknown()).nullable(),
+  cost_price: z.string().nullable(),
+  tax_category_id: z.string().nullable(),
+  order_id: z.string().nullable(),
+  order: z.lazy(() => AdminOrderSchema).optional(),
+  variant: z.lazy(() => AdminVariantSchema).optional(),
+  tax_category: AdminTaxCategorySchema.optional(),
+  adjustments: z.array(z.lazy(() => AdminAdjustmentSchema)).optional(),
 });
 
 export type AdminLineItem = z.infer<typeof AdminLineItemSchema>;

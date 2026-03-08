@@ -1,7 +1,7 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import { AdminAddressSchema } from './AdminAddress';
 import { AdminOrderSchema } from './AdminOrder';
-import { StoreAddressSchema } from './StoreAddress';
 
 export const AdminCustomerSchema: z.ZodObject<any> = z.object({
   id: z.string(),
@@ -10,9 +10,9 @@ export const AdminCustomerSchema: z.ZodObject<any> = z.object({
   last_name: z.string().nullable(),
   created_at: z.string(),
   updated_at: z.string(),
-  addresses: z.array(StoreAddressSchema),
-  default_billing_address: StoreAddressSchema.nullable(),
-  default_shipping_address: StoreAddressSchema.nullable(),
+  addresses: z.array(AdminAddressSchema).optional(),
+  default_billing_address: AdminAddressSchema.nullable().optional(),
+  default_shipping_address: AdminAddressSchema.nullable().optional(),
   phone: z.string().nullable(),
   login: z.string().nullable(),
   accepts_email_marketing: z.boolean(),
