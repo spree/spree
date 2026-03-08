@@ -63,6 +63,44 @@ RSpec.describe Spree::Api::V3::Admin::ProductsController, type: :controller do
         names = json_response['data'].map { |p| p['name'] }
         expect(names).to eq(names.sort.reverse)
       end
+
+      context 'by price' do
+        let!(:cheap_product) do
+          create(:product, stores: [store], name: 'Cheap').tap do |p|
+            p.master.prices.first.update!(amount: 10.0)
+          end
+        end
+
+        let!(:expensive_product) do
+          create(:product, stores: [store], name: 'Expensive').tap do |p|
+            p.master.prices.first.update!(amount: 100.0)
+          end
+        end
+
+        it 'sorts by price ascending' do
+          get :index, params: { sort: 'price' }, as: :json
+
+          expect(response).to have_http_status(:ok)
+          prices = json_response['data'].map { |p| p['price']['amount'].to_f }
+          expect(prices).to eq(prices.sort)
+        end
+
+        it 'sorts by price descending' do
+          get :index, params: { sort: '-price' }, as: :json
+
+          expect(response).to have_http_status(:ok)
+          prices = json_response['data'].map { |p| p['price']['amount'].to_f }
+          expect(prices).to eq(prices.sort.reverse)
+        end
+
+        it 'paginates correctly when sorting by price' do
+          get :index, params: { sort: 'price', page: 1, limit: 1 }, as: :json
+
+          expect(response).to have_http_status(:ok)
+          expect(json_response['data'].size).to eq(1)
+          expect(json_response['meta']['pages']).to be >= 2
+        end
+      end
     end
 
     context 'without authentication' do
