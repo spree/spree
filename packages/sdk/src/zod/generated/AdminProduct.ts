@@ -41,7 +41,7 @@ export const AdminProductSchema: z.ZodObject<any> = z.object({
   discontinue_on: z.string().nullable(),
   meta_title: z.string().nullable(),
   promotionable: z.boolean(),
-  total_on_hand: z.any(),
+  total_on_hand: z.number().nullable(),
   deleted_at: z.string().nullable(),
   shipping_category_id: z.string().nullable(),
   tax_category_id: z.string().nullable(),
