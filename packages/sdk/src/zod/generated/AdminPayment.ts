@@ -1,8 +1,8 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
 import { AdminOrderSchema } from './AdminOrder';
+import { AdminPaymentMethodSchema } from './AdminPaymentMethod';
 import { AdminRefundSchema } from './AdminRefund';
-import { StorePaymentMethodSchema } from './StorePaymentMethod';
 
 export const AdminPaymentSchema: z.ZodObject<any> = z.object({
   id: z.string(),
@@ -17,7 +17,7 @@ export const AdminPaymentSchema: z.ZodObject<any> = z.object({
   source_type: z.string().nullable(),
   source_id: z.string().nullable(),
   source: z.any(),
-  payment_method: StorePaymentMethodSchema,
+  payment_method: AdminPaymentMethodSchema.optional(),
   avs_response: z.string().nullable(),
   cvv_response_code: z.string().nullable(),
   cvv_response_message: z.string().nullable(),

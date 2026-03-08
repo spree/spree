@@ -2,9 +2,9 @@
 import { z } from 'zod';
 import { AdminAdjustmentSchema } from './AdminAdjustment';
 import { AdminOrderSchema } from './AdminOrder';
-import { StoreShippingMethodSchema } from './StoreShippingMethod';
-import { StoreShippingRateSchema } from './StoreShippingRate';
-import { StoreStockLocationSchema } from './StoreStockLocation';
+import { AdminShippingMethodSchema } from './AdminShippingMethod';
+import { AdminShippingRateSchema } from './AdminShippingRate';
+import { AdminStockLocationSchema } from './AdminStockLocation';
 
 export const AdminShipmentSchema: z.ZodObject<any> = z.object({
   id: z.string(),
@@ -17,9 +17,9 @@ export const AdminShipmentSchema: z.ZodObject<any> = z.object({
   shipped_at: z.string().nullable(),
   created_at: z.string(),
   updated_at: z.string(),
-  shipping_method: StoreShippingMethodSchema,
-  stock_location: StoreStockLocationSchema,
-  shipping_rates: z.array(StoreShippingRateSchema),
+  shipping_method: AdminShippingMethodSchema.optional(),
+  stock_location: AdminStockLocationSchema.optional(),
+  shipping_rates: z.array(AdminShippingRateSchema).optional(),
   adjustment_total: z.string(),
   additional_tax_total: z.string(),
   included_tax_total: z.string(),
