@@ -535,7 +535,11 @@ module Spree
       @total_on_hand ||= if any_variants_not_track_inventory?
                            BigDecimal::INFINITY
                          else
-                           stock_items.loaded? ? stock_items.sum(&:count_on_hand) : stock_items.sum(:count_on_hand)
+                           if variants_including_master.loaded?
+                             variants_including_master.sum(&:total_on_hand)
+                           else
+                             stock_items.loaded? ? stock_items.sum(&:count_on_hand) : stock_items.sum(:count_on_hand)
+                           end
                          end
     end
 
