@@ -1,4 +1,4 @@
-import { TablerIcon } from '@/components/tabler-icon'
+import { BookOpenIcon, LogOutIcon, MailIcon, MessageCircleIcon, UserIcon } from 'lucide-react'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {
   DropdownMenu,
@@ -11,7 +11,8 @@ import { SidebarMenu, SidebarMenuItem, useSidebar } from '@/components/ui/sideba
 import { useAuth } from '@/hooks/use-auth'
 
 export function NavUser() {
-  const { isMobile } = useSidebar()
+  const { isMobile, state } = useSidebar()
+  const isCollapsed = state === 'collapsed'
   const { user, logout } = useAuth()
 
   if (!user) return null
@@ -32,14 +33,19 @@ export function NavUser() {
           <DropdownMenuTrigger asChild>
             <button
               type="button"
-              className="flex w-full items-center gap-2 rounded-lg p-1 text-left hover:bg-gray-200/50 transition-colors duration-100 outline-none"
+              className={
+                'flex w-full items-center rounded-lg text-left transition-colors duration-100 outline-none hover:bg-gray-200/50 ' +
+                (isCollapsed ? 'justify-center p-0' : 'gap-2 p-1')
+              }
             >
-              <Avatar className="size-8">
+              <Avatar className="size-8 shrink-0">
                 <AvatarFallback className="text-xs bg-zinc-950 text-white">
                   {initials}
                 </AvatarFallback>
               </Avatar>
-              <span className="flex-1 min-w-0 truncate text-sm text-zinc-950">{displayName}</span>
+              {!isCollapsed && (
+                <span className="flex-1 min-w-0 truncate text-sm text-zinc-950">{displayName}</span>
+              )}
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent
@@ -64,25 +70,25 @@ export function NavUser() {
             </div>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <TablerIcon name="user-scan" />
+              <UserIcon className="size-4" />
               Edit Profile
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <TablerIcon name="book" />
+              <BookOpenIcon className="size-4" />
               Documentation
             </DropdownMenuItem>
             <DropdownMenuItem>
-              <TablerIcon name="message-circle" />
+              <MessageCircleIcon className="size-4" />
               Community
             </DropdownMenuItem>
             <DropdownMenuItem>
-              <TablerIcon name="mail" />
+              <MailIcon className="size-4" />
               Contact Support
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={logout} className="text-destructive focus:text-destructive">
-              <TablerIcon name="log-out" />
+              <LogOutIcon className="size-4" />
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>

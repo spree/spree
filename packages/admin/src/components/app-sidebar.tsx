@@ -1,3 +1,13 @@
+import {
+  BarChart3Icon,
+  HomeIcon,
+  InboxIcon,
+  type LucideIcon,
+  PackageIcon,
+  SettingsIcon,
+  TagIcon,
+  UsersIcon,
+} from 'lucide-react'
 import type { ComponentProps } from 'react'
 import { NavMain } from '@/components/nav-main'
 import { NavUser } from '@/components/nav-user'
@@ -7,7 +17,7 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader } from '@/compone
 export type NavItem = {
   title: string
   url: string
-  icon: string
+  icon: LucideIcon
   items?: { title: string; url: string }[]
 }
 
@@ -15,18 +25,18 @@ const navigation: NavItem[] = [
   {
     title: 'Home',
     url: '/',
-    icon: 'home',
+    icon: HomeIcon,
   },
   {
     title: 'Orders',
     url: '/orders',
-    icon: 'inbox',
+    icon: InboxIcon,
     items: [{ title: 'Draft Orders', url: '/orders/drafts' }],
   },
   {
     title: 'Products',
     url: '/products',
-    icon: 'package',
+    icon: PackageIcon,
     items: [
       { title: 'Price Lists', url: '/products/price-lists' },
       { title: 'Stock', url: '/products/stock' },
@@ -37,18 +47,18 @@ const navigation: NavItem[] = [
   {
     title: 'Customers',
     url: '/customers',
-    icon: 'users',
+    icon: UsersIcon,
   },
   {
     title: 'Promotions',
     url: '/promotions',
-    icon: 'discount',
+    icon: TagIcon,
     items: [{ title: 'Gift Cards', url: '/promotions/gift-cards' }],
   },
   {
     title: 'Reports',
     url: '/reports',
-    icon: 'chart-bar',
+    icon: BarChart3Icon,
   },
 ]
 
@@ -56,7 +66,7 @@ const bottomNavigation: NavItem[] = [
   {
     title: 'Settings',
     url: '/settings',
-    icon: 'settings',
+    icon: SettingsIcon,
   },
 ]
 

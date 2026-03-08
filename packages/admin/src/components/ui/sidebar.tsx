@@ -21,7 +21,7 @@ const SIDEBAR_COOKIE_NAME = 'sidebar_state'
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
 const SIDEBAR_WIDTH = '220px'
 const SIDEBAR_WIDTH_MOBILE = '220px'
-const SIDEBAR_WIDTH_ICON = '3rem'
+const SIDEBAR_WIDTH_ICON = '59px'
 const SIDEBAR_KEYBOARD_SHORTCUT = 'b'
 
 type SidebarContextProps = {
@@ -223,7 +223,7 @@ function Sidebar({
           // Adjust the padding for floating and inset variants.
           variant === 'floating' || variant === 'inset'
             ? 'p-2 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4))+2px)]'
-            : 'group-data-[collapsible=icon]:w-(--sidebar-width-icon) group-data-[side=left]:border-r group-data-[side=right]:border-l',
+            : 'group-data-[collapsible=icon]:w-(--sidebar-width-icon)',
           className,
         )}
         {...props}
@@ -316,7 +316,10 @@ function SidebarHeader({ className, ...props }: React.ComponentProps<'div'>) {
     <div
       data-slot="sidebar-header"
       data-sidebar="header"
-      className={cn('flex flex-col gap-0 px-2', className)}
+      className={cn(
+        'flex flex-col gap-0 px-2 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:items-center',
+        className,
+      )}
       {...props}
     />
   )
@@ -327,7 +330,10 @@ function SidebarFooter({ className, ...props }: React.ComponentProps<'div'>) {
     <div
       data-slot="sidebar-footer"
       data-sidebar="footer"
-      className={cn('flex flex-col gap-0 p-2 mt-auto border-t border-sidebar-border', className)}
+      className={cn(
+        'flex flex-col gap-0 p-2 mt-auto border-t border-sidebar-border group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:items-center',
+        className,
+      )}
       {...props}
     />
   )
@@ -350,7 +356,7 @@ function SidebarContent({ className, ...props }: React.ComponentProps<'div'>) {
       data-slot="sidebar-content"
       data-sidebar="content"
       className={cn(
-        'no-scrollbar flex min-h-0 flex-1 flex-col gap-0 pt-2 overflow-auto group-data-[collapsible=icon]:overflow-hidden',
+        'no-scrollbar flex min-h-0 flex-1 flex-col gap-0 pt-2 overflow-auto group-data-[collapsible=icon]:overflow-visible',
         className,
       )}
       {...props}
@@ -363,7 +369,10 @@ function SidebarGroup({ className, ...props }: React.ComponentProps<'div'>) {
     <div
       data-slot="sidebar-group"
       data-sidebar="group"
-      className={cn('relative flex w-full min-w-0 flex-col px-3 py-0', className)}
+      className={cn(
+        'relative flex w-full min-w-0 flex-col px-3 py-0 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:items-center',
+        className,
+      )}
       {...props}
     />
   )
@@ -443,7 +452,7 @@ function SidebarMenuItem({ className, ...props }: React.ComponentProps<'li'>) {
 }
 
 const sidebarMenuButtonVariants = cva(
-  'peer/menu-button group/menu-button flex w-full items-center overflow-hidden rounded-xl p-1 text-left text-sm text-gray-800 ring-sidebar-ring outline-hidden transition-colors duration-100 ease-in-out group-has-data-[sidebar=menu-action]/menu-item:pr-8 group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! hover:bg-gray-200/50 hover:text-zinc-950 focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-open:hover:bg-gray-200/50 data-open:hover:text-zinc-950 data-active:bg-white data-active:text-zinc-950 data-active:font-semibold data-active:shadow-[rgba(0,0,0,0)_0px_0px_0px_0px,rgba(0,0,0,0)_0px_0px_0px_0px,rgba(0,0,0,0.04)_0px_0px_0px_1px,rgba(0,0,0,0.04)_0px_1px_2px_-1px,rgba(0,0,0,0.02)_0px_2px_4px_0px] [&>span:last-child]:truncate',
+  'peer/menu-button group/menu-button flex w-full items-center overflow-hidden rounded-xl p-1 text-left text-base text-gray-800 ring-sidebar-ring outline-hidden transition-colors duration-100 ease-in-out group-has-data-[sidebar=menu-action]/menu-item:pr-8 group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:overflow-visible group-data-[collapsible=icon]:p-0! group-data-[collapsible=icon]:[&>span:last-child]:hidden hover:bg-gray-200/50 hover:text-zinc-950 focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-open:hover:bg-gray-200/50 data-open:hover:text-zinc-950 data-active:bg-white data-active:text-zinc-950 data-active:font-semibold data-active:shadow-nav [&>span:last-child]:truncate',
   {
     variants: {
       variant: {
@@ -452,9 +461,9 @@ const sidebarMenuButtonVariants = cva(
           'bg-background shadow-[0_0_0_1px_hsl(var(--sidebar-border))] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:shadow-[0_0_0_1px_hsl(var(--sidebar-accent))]',
       },
       size: {
-        default: 'h-8 text-sm',
+        default: 'h-8 text-base',
         sm: 'h-7 text-xs',
-        lg: 'h-12 text-sm group-data-[collapsible=icon]:p-0!',
+        lg: 'h-12 text-base group-data-[collapsible=icon]:p-0!',
       },
     },
     defaultVariants: {
@@ -632,7 +641,7 @@ function SidebarMenuSubButton({
       data-size={size}
       data-active={isActive}
       className={cn(
-        'relative flex h-7 min-w-0 items-center gap-2 overflow-hidden rounded-xl p-1 text-gray-800 ring-sidebar-ring outline-hidden group-data-[collapsible=icon]:hidden hover:bg-gray-50 hover:text-zinc-950 focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[size=md]:text-sm data-[size=sm]:text-xs data-active:font-semibold data-active:text-zinc-950 data-active:bg-transparent data-active:shadow-none data-active:before:absolute data-active:before:-left-4 data-active:before:top-[10%] data-active:before:h-[80%] data-active:before:w-[3px] data-active:before:rounded-sm data-active:before:bg-zinc-950 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0',
+        'relative flex h-7 min-w-0 items-center gap-2 overflow-hidden rounded-xl p-1 text-gray-800 ring-sidebar-ring outline-hidden group-data-[collapsible=icon]:hidden hover:bg-gray-50 hover:text-zinc-950 focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[size=md]:text-base data-[size=sm]:text-xs data-active:font-semibold data-active:text-zinc-950 data-active:bg-transparent data-active:shadow-none data-active:before:absolute data-active:before:-left-4 data-active:before:top-[10%] data-active:before:h-[80%] data-active:before:w-[3px] data-active:before:rounded-sm data-active:before:bg-zinc-950 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0',
         className,
       )}
       {...props}

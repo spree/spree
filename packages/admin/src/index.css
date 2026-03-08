@@ -99,6 +99,7 @@
   /* Shadows — subtle like Rails admin */
   --shadow-xs: rgba(43, 34, 51, 0.05) 0px 1px 1px;
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-nav: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.04) 0px 0px 0px 1px, rgba(0, 0, 0, 0.04) 0px 1px 2px -1px, rgba(0, 0, 0, 0.02) 0px 2px 4px 0px;
 
   /* Sidebar + header tokens */
   --spacing-sidebar-width: 220px;
