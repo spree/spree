@@ -348,25 +348,22 @@ module Spree
       end
 
       # Orders products by best selling based on units_sold_count and revenue
-      # stored in spree_products_stores table.
+      # from spree_products_stores (already joined via store.products).
       #
-      # These metrics are updated asynchronously when orders are completed
-      # via the ProductMetricsSubscriber.
-      #
-      # @param order_direction [Symbol] :desc (default) or :asc
-      # @return [ActiveRecord::Relation]
+      # Uses Arel::Nodes::As so that ORDER BY expressions appear in SELECT
+      # and work with DISTINCT (same pattern as the price sorting scopes).
       add_search_scope :by_best_selling do |order_direction = :desc|
-        store_id = Spree::Current.store&.id
-        sp_table = StoreProduct.arel_table
-        products_table = Product.arel_table
-
-        conditions = sp_table[:product_id].eq(products_table[:id]).and(sp_table[:store_id].eq(store_id))
-
-        units_sold = Arel::Nodes::NamedFunction.new('COALESCE', [sp_table.project(sp_table[:units_sold_count]).where(conditions), 0])
-        revenue = Arel::Nodes::NamedFunction.new('COALESCE', [sp_table.project(sp_table[:revenue]).where(conditions), 0])
+        sp_table = StoreProduct.table_name
+        units_expr = Arel.sql("COALESCE(#{sp_table}.units_sold_count, 0)")
+        revenue_expr = Arel.sql("COALESCE(#{sp_table}.revenue, 0)")
 
         order_dir = order_direction == :desc ? :desc : :asc
-        order(units_sold.send(order_dir)).order(revenue.send(order_dir))
+
+        select("#{Product.table_name}.*").
+          select(Arel::Nodes::As.new(units_expr, Arel.sql('best_selling_units'))).
+          select(Arel::Nodes::As.new(revenue_expr, Arel.sql('best_selling_revenue'))).
+          order(units_expr.send(order_dir)).
+          order(revenue_expr.send(order_dir))
       end
 
       # .search_by_name
