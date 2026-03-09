@@ -179,6 +179,7 @@ module Spree
         admin_credit_card_serializer: 'Spree::Api::V3::Admin::CreditCardSerializer',
         admin_store_credit_serializer: 'Spree::Api::V3::Admin::StoreCreditSerializer',
         admin_payment_source_serializer: 'Spree::Api::V3::Admin::PaymentSourceSerializer',
+        admin_digital_link_serializer: 'Spree::Api::V3::Admin::DigitalLinkSerializer',
 
         # platform serializers
         platform_metafield_serializer: 'Spree::Api::V2::Platform::MetafieldSerializer',

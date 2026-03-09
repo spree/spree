@@ -27,7 +27,8 @@ module Spree
           end
 
           # Override inherited associations to use admin serializers
-          many :option_values, resource: Spree.api.admin_option_value_serializer, if: proc { expand?('option_values') }
+          many :option_values, resource: Spree.api.admin_option_value_serializer
+          many :digital_links, resource: Spree.api.admin_digital_link_serializer
 
           one :order,
               resource: Spree.api.admin_order_serializer,
