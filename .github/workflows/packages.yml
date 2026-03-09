@@ -82,7 +82,7 @@ jobs:
 
       - name: Build and Publish
         if: steps.check.outputs.published == 'false'
-        run: pnpm build && npm publish --provenance --access public
+        run: pnpm turbo build --filter=@spree/sdk && npm publish --provenance --access public
 
   release-next:
     name: "Next - Release"
