@@ -97,6 +97,15 @@ module Spree
       end
       private_class_method :join_variants_and_stock_items
 
+      # Mirrors Spree::Variant.in_stock_or_backorderable logic using raw table
+      # names (to pair with join_variants_and_stock_items).
+      scope :in_stock_or_backorderable_condition, -> {
+        where(
+          "#{Variant.table_name}.track_inventory = ? OR #{StockItem.table_name}.count_on_hand > ? OR #{StockItem.table_name}.backorderable = ?",
+          false, 0, true
+        )
+      }
+
       # Can't use add_search_scope for this as it needs a default argument
       # Ransack calls with '1' to activate, '0' or nil to skip
       # In Ruby code: in_stock(true) for in-stock, in_stock(false) for out-of-stock
@@ -104,11 +113,7 @@ module Spree
         if in_stock == '0' || !in_stock
           all
         else
-          join_variants_and_stock_items.
-            where(
-              "#{Variant.table_name}.track_inventory = ? OR #{StockItem.table_name}.count_on_hand > ? OR #{StockItem.table_name}.backorderable = ?",
-              false, 0, true
-            )
+          join_variants_and_stock_items.in_stock_or_backorderable_condition
         end
       end
 
@@ -125,13 +130,7 @@ module Spree
         if out_of_stock == '0' || !out_of_stock
           all
         else
-          where.not(
-            id: join_variants_and_stock_items.
-              where(
-                "#{Variant.table_name}.track_inventory = ? OR #{StockItem.table_name}.count_on_hand > ? OR #{StockItem.table_name}.backorderable = ?",
-                false, 0, true
-              )
-          )
+          where.not(id: join_variants_and_stock_items.in_stock_or_backorderable_condition)
         end
       end
       search_scopes << :out_of_stock
@@ -141,11 +140,7 @@ module Spree
       end
 
       add_search_scope :in_stock_or_backorderable do
-        join_variants_and_stock_items.
-          where(
-            "#{Variant.table_name}.track_inventory = ? OR #{StockItem.table_name}.count_on_hand > ? OR #{StockItem.table_name}.backorderable = ?",
-            false, 0, true
-          )
+        join_variants_and_stock_items.in_stock_or_backorderable_condition
       end
 
       # This scope selects products in taxon AND all its descendants
