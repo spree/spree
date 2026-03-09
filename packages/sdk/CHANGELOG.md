@@ -1,5 +1,11 @@
 # @spree/sdk
 
+## 0.7.1
+
+### Patch Changes
+
+- Fix `workspace:*` protocol leaking into published package. Internal `@spree/sdk-core` dependency is now bundled at build time instead of declared as a runtime dependency.
+
 ## 0.7.0
 
 ### Minor Changes
