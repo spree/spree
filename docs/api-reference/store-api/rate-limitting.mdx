@@ -66,9 +66,9 @@ Retry-After: 60
 The Spree SDK automatically handles rate-limited responses with built-in retry logic and exponential backoff:
 
 ```typescript
-import { createSpreeClient } from '@spree/sdk'
+import { createClient } from '@spree/sdk'
 
-const client = createSpreeClient({
+const client = createClient({
   baseUrl: 'http://localhost:3000',
   publishableKey: 'spree_pk_xxx',
   retry: {

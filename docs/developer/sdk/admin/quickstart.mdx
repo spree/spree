@@ -10,9 +10,9 @@ description: Manage your store programmatically with the Spree Admin SDK
 ## Preview
 
 ```typescript
-import { createSpreeClient } from '@spree/sdk';
+import { createClient } from '@spree/sdk';
 
-const client = createSpreeClient({
+const client = createClient({
   baseUrl: 'https://api.mystore.com',
   secretKey: 'spree_sk_xxx', // Admin API requires a secret key
 });

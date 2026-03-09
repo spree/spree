@@ -2,9 +2,9 @@
 
 module CodeSamplesHelper
   SDK_CLIENT_INIT = <<~JS.strip
-    import { createSpreeClient } from '@spree/sdk'
+    import { createClient } from '@spree/sdk'
 
-    const client = createSpreeClient({
+    const client = createClient({
       baseUrl: 'https://your-store.com',
       publishableKey: '<api-key>',
     })

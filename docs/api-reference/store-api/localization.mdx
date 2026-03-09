@@ -19,9 +19,9 @@ The Store API supports multi-language, multi-currency, and market-aware response
 Set locale, currency, and country once at initialization — all subsequent requests use these defaults:
 
 ```typescript SDK
-import { createSpreeClient } from '@spree/sdk'
+import { createClient } from '@spree/sdk'
 
-const client = createSpreeClient({
+const client = createClient({
   baseUrl: 'https://api.mystore.com',
   publishableKey: 'spree_pk_xxx',
   locale: 'fr',

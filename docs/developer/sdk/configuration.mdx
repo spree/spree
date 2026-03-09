@@ -43,9 +43,9 @@ try {
 You can provide a custom fetch implementation:
 
 ```typescript
-import { createSpreeClient } from '@spree/sdk';
+import { createClient } from '@spree/sdk';
 
-const client = createSpreeClient({
+const client = createClient({
   baseUrl: 'https://api.mystore.com',
   publishableKey: 'spree_pk_xxx',
   fetch: customFetchImplementation,

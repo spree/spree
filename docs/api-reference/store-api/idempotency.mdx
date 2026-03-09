@@ -96,9 +96,9 @@ Keys longer than 255 characters return a `400` error:
 The Spree SDK supports idempotency keys via the `idempotencyKey` option:
 
 ```typescript
-import { createSpreeClient } from '@spree/sdk'
+import { createClient } from '@spree/sdk'
 
-const client = createSpreeClient({
+const client = createClient({
   baseUrl: 'http://localhost:3000',
   publishableKey: 'spree_pk_xxx',
 })

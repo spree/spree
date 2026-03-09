@@ -15,13 +15,12 @@ pnpm add @spree/sdk
 ## Quick Start
 
 ```typescript
-import { createSpreeClient } from '@spree/sdk';
+import { createClient } from '@spree/sdk';
 
 // Initialize the client
-const client = createSpreeClient({
+const client = createClient({
   baseUrl: 'https://api.mystore.com',
-  publishableKey: 'spree_pk_xxx',   // Store API
-  secretKey: 'spree_sk_xxx',        // Admin API (optional)
+  publishableKey: 'spree_pk_xxx',
 });
 
 // Browse products (Store API)
@@ -53,14 +52,14 @@ await client.orders.complete(cart.id, { orderToken: cart.token });
 
 ## Client Architecture
 
-The SDK exposes two API namespaces:
+All Store API resources are available directly on the client:
 
 ```typescript
-client.store   // Store API — customer-facing (products, cart, checkout, account)
-client.admin   // Admin API — administrative (coming soon)
+client.products.list()           // Products
+client.cart.create()             // Cart
+client.orders.complete(id, opt)  // Checkout
+client.customer.get(opt)         // Account
 ```
-
-All Store API endpoints live under `client.*`. The Admin API namespace is ready for future endpoints.
 
 ## Authentication
 
@@ -69,7 +68,7 @@ The SDK supports multiple authentication modes:
 ### 1. Publishable Key Only (Guest/Public Access)
 
 ```typescript
-const client = createSpreeClient({
+const client = createClient({
   baseUrl: 'https://api.mystore.com',
   publishableKey: 'spree_pk_xxx',
 });
@@ -515,18 +514,18 @@ The SDK uses a resource builder pattern for nested resources:
 
 | Parent Resource | Nested Resource | Available Methods |
 |-----------------|-----------------|-------------------|
-| `store.orders` | `lineItems` | `create`, `update`, `delete` |
-| `store.orders` | `payments` | `list`, `get` |
-| `store.orders` | `paymentMethods` | `list` |
-| `store.orders` | `paymentSessions` | `create`, `get`, `update`, `complete` |
-| `store.orders` | `shipments` | `list`, `update` |
-| `store.orders` | `couponCodes` | `apply`, `remove` |
-| `store.customer` | `addresses` | `list`, `get`, `create`, `update`, `delete`, `markAsDefault` |
-| `store.customer` | `creditCards` | `list`, `get`, `delete` |
-| `store.customer` | `giftCards` | `list`, `get` |
-| `store.markets` | `countries` | `list`, `get` |
-| `store.taxons` | `products` | `list` |
-| `store.wishlists` | `items` | `create`, `update`, `delete` |
+| `orders` | `lineItems` | `create`, `update`, `delete` |
+| `orders` | `payments` | `list`, `get` |
+| `orders` | `paymentMethods` | `list` |
+| `orders` | `paymentSessions` | `create`, `get`, `update`, `complete` |
+| `orders` | `shipments` | `list`, `update` |
+| `orders` | `couponCodes` | `apply`, `remove` |
+| `customer` | `addresses` | `list`, `get`, `create`, `update`, `delete`, `markAsDefault` |
+| `customer` | `creditCards` | `list`, `get`, `delete` |
+| `customer` | `giftCards` | `list`, `get` |
+| `markets` | `countries` | `list`, `get` |
+| `taxons` | `products` | `list` |
+| `wishlists` | `items` | `create`, `update`, `delete` |
 
 Example:
 ```typescript
@@ -547,7 +546,7 @@ await client.wishlists.items.create(wishlistId, params, options);
 Set locale, currency, and country when creating the client:
 
 ```typescript
-const client = createSpreeClient({
+const client = createClient({
   baseUrl: 'https://api.mystore.com',
   publishableKey: 'spree_pk_xxx',
   locale: 'fr',
@@ -658,10 +657,9 @@ The SDK exports all Store API types:
 - `StoreWishedItem` - Wishlist item
 
 ### Client Types
-- `SpreeClient` - Main client class
+- `Client` - Main client interface
 - `StoreClient` - Store API client
-- `AdminClient` - Admin API client
-- `SpreeClientConfig` - Client configuration
+- `ClientConfig` - Client configuration
 - `RequestOptions` - Per-request options
 - `RetryConfig` - Retry behavior configuration
 
@@ -679,9 +677,9 @@ The SDK exports all Store API types:
 You can provide a custom fetch implementation:
 
 ```typescript
-import { createSpreeClient } from '@spree/sdk';
+import { createClient } from '@spree/sdk';
 
-const client = createSpreeClient({
+const client = createClient({
   baseUrl: 'https://api.mystore.com',
   publishableKey: 'spree_pk_xxx',
   fetch: customFetchImplementation,

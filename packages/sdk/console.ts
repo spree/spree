@@ -1,5 +1,5 @@
 import * as repl from "node:repl";
-import { createSpreeClient, SpreeError } from "./src";
+import { createClient, SpreeError } from "./src";
 
 const baseUrl = process.env.SPREE_URL || "http://localhost:3000";
 const publishableKey = process.env.SPREE_PUBLISHABLE_KEY || "";
@@ -12,17 +12,16 @@ if (!publishableKey) {
   console.log("");
 }
 
-const client = createSpreeClient({ baseUrl, publishableKey });
+const client = createClient({ baseUrl, publishableKey });
 
 console.log("Spree SDK Console");
 console.log(`Connected to: ${baseUrl}`);
 console.log("");
 console.log("Available:");
-console.log("  client              - SpreeClient instance");
-console.log("  createSpreeClient   - Create new client");
+console.log("  client              - Client instance");
+console.log("  createClient        - Create new client");
 console.log("");
 console.log("Examples:");
-console.log("  await client.store.get()");
 console.log("  await client.products.list()");
 console.log('  await client.products.get("my-product", {}, { locale: "fr" })');
 console.log(
@@ -34,5 +33,5 @@ const r = repl.start({ prompt: "spree> ", useGlobal: true });
 
 // Make await work at top level
 r.context.client = client;
-r.context.createSpreeClient = createSpreeClient;
+r.context.createClient = createClient;
 r.context.SpreeError = SpreeError;
