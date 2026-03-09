@@ -26,5 +26,11 @@ Rails.application.config.middleware.insert_before 0, Rack::Cors do
       methods: [:get, :post, :put, :patch, :delete, :options, :head],
       expose: ['X-Total-Count', 'X-Page', 'X-Per-Page'],
       max_age: 7200
+
+    # Active Storage direct uploads (disk service uses Rails routes for PUT)
+    resource '/rails/active_storage/*',
+      headers: :any,
+      methods: [:get, :put, :options, :head],
+      max_age: 3600
   end
 end
