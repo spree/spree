@@ -219,6 +219,14 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
         names = json_response['data'].map { |p| p['name'] }
         expect(names).to eq(names.sort)
       end
+
+      # Regression test: combining in_stock filter with price sorting caused
+      # PG::UndefinedTable due to table alias conflicts on spree_variants
+      it 'sorts by price while filtering in_stock' do
+        get :index, params: { sort: '-price', q: { in_stock: true } }
+
+        expect(response).to have_http_status(:ok)
+      end
     end
 
     context 'authentication' do
