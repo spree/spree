@@ -97,6 +97,18 @@ export class AdminClient {
   };
 
   // ============================================
+  // Direct Uploads (hand-written, not auto-generated)
+  // ============================================
+
+  readonly directUploads = {
+    create: (
+      params: { blob: { filename: string; byte_size: number; checksum: string; content_type: string } },
+      options?: RequestOptions,
+    ): Promise<{ direct_upload: { url: string; headers: Record<string, string> }; signed_id: string }> =>
+      this.request('POST', '/direct_uploads', { ...options, body: params }),
+  } as const;
+
+  // ============================================
   // Option Types
   // ============================================
 
