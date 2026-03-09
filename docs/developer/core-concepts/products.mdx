@@ -82,25 +82,25 @@ erDiagram
 
 ```typescript SDK
 // List products with pagination
-const { data: products, meta } = await client.store.products.list({
+const { data: products, meta } = await client.products.list({
   limit: 12,
   page: 1,
 })
 
 // Filter by price range and availability
-const filtered = await client.store.products.list({
+const filtered = await client.products.list({
   price_gte: 10,
   price_lte: 50,
   in_stock: true,
 })
 
 // Search by keyword
-const results = await client.store.products.list({
+const results = await client.products.list({
   multi_search: 'tote bag',
 })
 
 // Sort products
-const sorted = await client.store.products.list({
+const sorted = await client.products.list({
   sort: 'price_high_to_low',  // or: price_low_to_high, newest, name_a_z, name_z_a
 })
 ```
@@ -129,10 +129,10 @@ See [Querying](/api-reference/store-api/querying) for the full list of filtering
 
 ```typescript SDK
 // Get by slug
-const product = await client.store.products.get('spree-tote')
+const product = await client.products.get('spree-tote')
 
 // Get with included relations
-const detailed = await client.store.products.get('spree-tote', {
+const detailed = await client.products.get('spree-tote', {
   expand: ['variants', 'images', 'option_types', 'taxons'],
 })
 // detailed.variants => [{ id: "var_xxx", sku: "TOTE-S-R", price: { amount: "15.99", currency: "USD" }, ... }]
@@ -154,7 +154,7 @@ Get available filter options for building a faceted search UI. Returns price ran
 <CodeGroup>
 
 ```typescript SDK
-const filters = await client.store.products.filters()
+const filters = await client.products.filters()
 // {
 //   option_types: [{ name: "size", option_values: [{ name: "Small", count: 12 }, ...] }],
 //   price_range: { min: 9.99, max: 199.99 },
@@ -162,7 +162,7 @@ const filters = await client.store.products.filters()
 // }
 
 // Scoped to a specific taxon
-const taxonFilters = await client.store.products.filters({
+const taxonFilters = await client.products.filters({
   taxon_id_eq: 'txn_xxx',
 })
 ```
@@ -221,7 +221,7 @@ A product must have at least one option type to have multiple variants. Option t
 <CodeGroup>
 
 ```typescript SDK
-const product = await client.store.products.get('spree-tee', {
+const product = await client.products.get('spree-tee', {
   expand: ['option_types'],
 })
 
@@ -258,7 +258,7 @@ Use these fields for product listing pages to avoid loading all images:
 
 ```typescript SDK
 // List products — thumbnail_url is always included
-const { data: products } = await client.store.products.list({ limit: 12 })
+const { data: products } = await client.products.list({ limit: 12 })
 
 products.forEach(product => {
   product.thumbnail_url // "https://cdn.../tote-front.jpg" — no expand needed
@@ -284,7 +284,7 @@ On the product detail page, expand `images` and `variants` to get the full set o
 <CodeGroup>
 
 ```typescript SDK
-const product = await client.store.products.get('spree-tote', {
+const product = await client.products.get('spree-tote', {
   expand: ['images', 'variants'],
 })
 
@@ -341,16 +341,16 @@ Products can belong to multiple taxons across different taxonomies.
 
 ```typescript SDK
 // List taxonomies
-const { data: taxonomies } = await client.store.taxonomies.list()
+const { data: taxonomies } = await client.taxonomies.list()
 
 // List taxons (categories)
-const { data: taxons } = await client.store.taxons.list()
+const { data: taxons } = await client.taxons.list()
 
 // Get a taxon by permalink
-const taxon = await client.store.taxons.get('categories/clothing')
+const taxon = await client.taxons.get('categories/clothing')
 
 // List products in a taxon
-const { data: products } = await client.store.taxons.products.list('categories/clothing', {
+const { data: products } = await client.taxons.products.list('categories/clothing', {
   limit: 12,
 })
 ```

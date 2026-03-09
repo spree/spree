@@ -1,77 +1,114 @@
-// Re-export all generated types
-export * from './generated';
+import type { ListParams, AddressParams } from '@spree/sdk-core';
 
-// Locale defaults for client-level configuration
-export interface LocaleDefaults {
-  locale?: string;
-  currency?: string;
-  country?: string;
-}
+// Re-export generated Store types with unprefixed names
+export type { default as Address } from './generated/StoreAddress';
+export type { default as Asset } from './generated/StoreAsset';
+export type { default as Country } from './generated/StoreCountry';
+export type { default as CreditCard } from './generated/StoreCreditCard';
+export type { default as Currency } from './generated/StoreCurrency';
+export type { default as CustomerReturn } from './generated/StoreCustomerReturn';
+export type { default as Customer } from './generated/StoreCustomer';
+export type { default as DigitalLink } from './generated/StoreDigitalLink';
+export type { default as Digital } from './generated/StoreDigital';
+export type { default as GiftCardBatch } from './generated/StoreGiftCardBatch';
+export type { default as GiftCard } from './generated/StoreGiftCard';
+export type { default as Image } from './generated/StoreImage';
+export type { default as LineItem } from './generated/StoreLineItem';
+export type { default as Locale } from './generated/StoreLocale';
+export type { default as Market } from './generated/StoreMarket';
+export type { default as Metafield } from './generated/StoreMetafield';
+export type { default as OptionType } from './generated/StoreOptionType';
+export type { default as OptionValue } from './generated/StoreOptionValue';
+export type { default as OrderPromotion } from './generated/StoreOrderPromotion';
+export type { default as Order } from './generated/StoreOrder';
+export type { default as PaymentMethod } from './generated/StorePaymentMethod';
+export type { default as Payment } from './generated/StorePayment';
+export type { default as PaymentSession } from './generated/StorePaymentSession';
+export type { default as PaymentSetupSession } from './generated/StorePaymentSetupSession';
+export type { default as PaymentSource } from './generated/StorePaymentSource';
+export type { default as Price } from './generated/StorePrice';
+export type { default as Product } from './generated/StoreProduct';
+export type { default as Promotion } from './generated/StorePromotion';
+export type { default as Refund } from './generated/StoreRefund';
+export type { default as Reimbursement } from './generated/StoreReimbursement';
+export type { default as ReturnAuthorization } from './generated/StoreReturnAuthorization';
+export type { default as ReturnItem } from './generated/StoreReturnItem';
+export type { default as Shipment } from './generated/StoreShipment';
+export type { default as ShippingCategory } from './generated/StoreShippingCategory';
+export type { default as ShippingMethod } from './generated/StoreShippingMethod';
+export type { default as ShippingRate } from './generated/StoreShippingRate';
+export type { default as State } from './generated/StoreState';
+export type { default as StockItem } from './generated/StoreStockItem';
+export type { default as StockLocation } from './generated/StoreStockLocation';
+export type { default as StoreCredit } from './generated/StoreStoreCredit';
+export type { default as TaxCategory } from './generated/StoreTaxCategory';
+export type { default as Taxon } from './generated/StoreTaxon';
+export type { default as Taxonomy } from './generated/StoreTaxonomy';
+export type { default as Variant } from './generated/StoreVariant';
+export type { default as WishedItem } from './generated/StoreWishedItem';
+export type { default as Wishlist } from './generated/StoreWishlist';
 
-// API Response types
-export interface PaginationMeta {
-  page: number;
-  limit: number;
-  count: number;
-  pages: number;
-  from: number;
-  to: number;
-  in: number;
-  previous: number | null;
-  next: number | null;
-}
+// Also re-export with Store* prefix for backward compatibility
+export type { default as StoreAddress } from './generated/StoreAddress';
+export type { default as StoreAsset } from './generated/StoreAsset';
+export type { default as StoreCountry } from './generated/StoreCountry';
+export type { default as StoreCreditCard } from './generated/StoreCreditCard';
+export type { default as StoreCurrency } from './generated/StoreCurrency';
+export type { default as StoreCustomerReturn } from './generated/StoreCustomerReturn';
+export type { default as StoreCustomer } from './generated/StoreCustomer';
+export type { default as StoreDigitalLink } from './generated/StoreDigitalLink';
+export type { default as StoreDigital } from './generated/StoreDigital';
+export type { default as StoreGiftCardBatch } from './generated/StoreGiftCardBatch';
+export type { default as StoreGiftCard } from './generated/StoreGiftCard';
+export type { default as StoreImage } from './generated/StoreImage';
+export type { default as StoreLineItem } from './generated/StoreLineItem';
+export type { default as StoreLocale } from './generated/StoreLocale';
+export type { default as StoreMarket } from './generated/StoreMarket';
+export type { default as StoreMetafield } from './generated/StoreMetafield';
+export type { default as StoreOptionType } from './generated/StoreOptionType';
+export type { default as StoreOptionValue } from './generated/StoreOptionValue';
+export type { default as StoreOrderPromotion } from './generated/StoreOrderPromotion';
+export type { default as StoreOrder } from './generated/StoreOrder';
+export type { default as StorePaymentMethod } from './generated/StorePaymentMethod';
+export type { default as StorePayment } from './generated/StorePayment';
+export type { default as StorePaymentSession } from './generated/StorePaymentSession';
+export type { default as StorePaymentSetupSession } from './generated/StorePaymentSetupSession';
+export type { default as StorePaymentSource } from './generated/StorePaymentSource';
+export type { default as StorePrice } from './generated/StorePrice';
+export type { default as StoreProduct } from './generated/StoreProduct';
+export type { default as StorePromotion } from './generated/StorePromotion';
+export type { default as StoreRefund } from './generated/StoreRefund';
+export type { default as StoreReimbursement } from './generated/StoreReimbursement';
+export type { default as StoreReturnAuthorization } from './generated/StoreReturnAuthorization';
+export type { default as StoreReturnItem } from './generated/StoreReturnItem';
+export type { default as StoreShipment } from './generated/StoreShipment';
+export type { default as StoreShippingCategory } from './generated/StoreShippingCategory';
+export type { default as StoreShippingMethod } from './generated/StoreShippingMethod';
+export type { default as StoreShippingRate } from './generated/StoreShippingRate';
+export type { default as StoreState } from './generated/StoreState';
+export type { default as StoreStockItem } from './generated/StoreStockItem';
+export type { default as StoreStockLocation } from './generated/StoreStockLocation';
+export type { default as StoreStoreCredit } from './generated/StoreStoreCredit';
+export type { default as StoreTaxCategory } from './generated/StoreTaxCategory';
+export type { default as StoreTaxon } from './generated/StoreTaxon';
+export type { default as StoreTaxonomy } from './generated/StoreTaxonomy';
+export type { default as StoreVariant } from './generated/StoreVariant';
+export type { default as StoreWishedItem } from './generated/StoreWishedItem';
+export type { default as StoreWishlist } from './generated/StoreWishlist';
 
-export interface ListResponse<T> {
-  data: T[];
-}
-
-export interface PaginatedResponse<T> extends ListResponse<T> {
-  meta: PaginationMeta;
-}
-
-export interface ErrorResponse {
-  error: {
-    code: string;
-    message: string;
-    details?: Record<string, string[]>;
-  };
-}
-
-// Auth types
-export interface AuthTokens {
-  token: string;
-  user: {
-    id: string;
-    email: string;
-    first_name: string | null;
-    last_name: string | null;
-  };
-}
-
-export interface LoginCredentials {
-  email: string;
-  password: string;
-}
-
-export interface RegisterParams {
-  email: string;
-  password: string;
-  password_confirmation: string;
-  first_name?: string;
-  last_name?: string;
-}
-
-// Query params
-export interface ListParams {
-  page?: number;
-  limit?: number;
-  /** Sort order. Prefix with - for descending, e.g. '-created_at', 'name'. Comma-separated for multiple fields. */
-  sort?: string;
-  /** Associations to expand. Supports dot notation for nested expand (max 4 levels), e.g. ['variants', 'variants.images'] */
-  expand?: string[];
-  /** Fields to include in response, e.g. ['name', 'slug', 'price']. Omit to return all fields. 'id' is always included. */
-  fields?: string[];
-}
+// Hand-written domain types
+export type {
+  LocaleDefaults,
+  PaginationMeta,
+  ListResponse,
+  PaginatedResponse,
+  ErrorResponse,
+  AuthTokens,
+  LoginCredentials,
+  RegisterParams,
+  ListParams,
+  AddressParams,
+} from '@spree/sdk-core';
 
 export interface ProductListParams extends ListParams {
   /** Sort: 'price', '-price', 'best_selling', 'name', '-name', '-available_on', 'available_on' */
@@ -149,26 +186,6 @@ export interface UpdateLineItemParams {
   quantity?: number;
   /** Arbitrary key-value metadata (merged with existing) */
   metadata?: Record<string, unknown>;
-}
-
-// Address params
-export interface AddressParams {
-  firstname: string;
-  lastname: string;
-  address1: string;
-  address2?: string;
-  city: string;
-  zipcode: string;
-  phone?: string;
-  company?: string;
-  /** ISO 3166-1 alpha-2 country code (e.g., "US", "DE") */
-  country_iso: string;
-  /** ISO 3166-2 subdivision code without country prefix (e.g., "CA", "NY") */
-  state_abbr?: string;
-  /** State name - used for countries without predefined states */
-  state_name?: string;
-  /** When true, relaxes validation requirements (name, phone, zipcode, street) */
-  quick_checkout?: boolean;
 }
 
 export interface UpdateOrderParams {

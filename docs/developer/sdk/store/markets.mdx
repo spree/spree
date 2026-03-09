@@ -10,7 +10,7 @@ Returns all markets for the current store with their countries, currency, locale
 <CodeGroup>
 
 ```typescript SDK
-const { data: markets } = await client.store.markets.list()
+const { data: markets } = await client.markets.list()
 
 markets.forEach(market => {
   market.id               // "mkt_UkLWZg9DAJ"
@@ -70,7 +70,7 @@ curl 'https://api.mystore.com/api/v3/store/markets' \
 <CodeGroup>
 
 ```typescript SDK
-const market = await client.store.markets.get('mkt_gbHJdmfrXB')
+const market = await client.markets.get('mkt_gbHJdmfrXB')
 
 market.name      // "Europe"
 market.currency  // "EUR"
@@ -91,7 +91,7 @@ Determine which market applies for a given country ISO code. Useful for auto-sel
 <CodeGroup>
 
 ```typescript SDK
-const market = await client.store.markets.resolve('DE')
+const market = await client.markets.resolve('DE')
 
 market.id       // "mkt_gbHJdmfrXB"
 market.name     // "Europe"
@@ -116,7 +116,7 @@ Returns countries belonging to a specific market. Use this for address form coun
 <CodeGroup>
 
 ```typescript SDK
-const { data: countries } = await client.store.markets.countries.list('mkt_gbHJdmfrXB')
+const { data: countries } = await client.markets.countries.list('mkt_gbHJdmfrXB')
 
 countries.forEach(country => {
   country.iso              // "DE"
@@ -140,7 +140,7 @@ Returns a single country by ISO code within a market. Use `expand: ['states']` f
 <CodeGroup>
 
 ```typescript SDK
-const country = await client.store.markets.countries.get('mkt_gbHJdmfrXB', 'US', {
+const country = await client.markets.countries.get('mkt_gbHJdmfrXB', 'US', {
   expand: ['states'],
 })
 

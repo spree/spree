@@ -1,4 +1,4 @@
-import type { StoreCurrency } from '@spree/sdk';
+import type { Currency } from '@spree/sdk';
 import { getClient } from '../config';
 import { getLocaleOptions } from '../locale';
 import type { SpreeNextOptions } from '../types';
@@ -9,7 +9,7 @@ import type { SpreeNextOptions } from '../types';
  */
 export async function listCurrencies(
   options?: SpreeNextOptions
-): Promise<{ data: StoreCurrency[] }> {
+): Promise<{ data: Currency[] }> {
   const resolved = options ?? await getLocaleOptions();
-  return getClient().store.currencies.list(resolved);
+  return getClient().currencies.list(resolved);
 }

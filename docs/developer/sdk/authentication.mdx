@@ -17,7 +17,7 @@ Use a publishable API key for public endpoints like browsing products:
 
 ```typescript
 // Public endpoints work without user authentication
-const products = await client.store.products.list()
+const products = await client.products.list()
 ```
 
 ## Publishable Key + JWT (Authenticated Customer)
@@ -28,13 +28,13 @@ For authenticated customer actions like viewing orders or managing addresses:
 
 ```typescript
 // Refresh token when needed
-const newTokens = await client.store.auth.refresh({ token })
+const newTokens = await client.auth.refresh({ token })
 ```
 
 ## Register New Customer
 
 ```typescript
-const { token, user } = await client.store.auth.register({
+const { token, user } = await client.auth.register({
   email: 'new@example.com',
   password: 'password123',
   password_confirmation: 'password123',
@@ -53,10 +53,10 @@ For guest checkout, use the `token` returned when creating a cart. The SDK autom
 const options = { orderToken: cart.token }
 
 // Update order with email
-await client.store.orders.update(cart.id, {
+await client.orders.update(cart.id, {
   email: 'guest@example.com',
 }, options)
 
 // Complete checkout
-await client.store.orders.complete(cart.id, options)
+await client.orders.complete(cart.id, options)
 ```

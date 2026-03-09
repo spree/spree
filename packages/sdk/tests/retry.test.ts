@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
-import { createSpreeClient } from '../src/client';
-import { SpreeError } from '../src/request';
+import { createClient } from '../src/client';
+import { SpreeError } from '@spree/sdk-core';
 
 function jsonResponse(body: object, status = 200, headers: Record<string, string> = {}): Response {
   return new Response(JSON.stringify(body), {
@@ -27,8 +27,8 @@ describe('Retry logic', () => {
         .mockResolvedValueOnce(errorResponse(500))
         .mockResolvedValueOnce(jsonResponse(paginatedEmpty));
 
-      const client = createSpreeClient({ ...baseConfig, fetch: mockFetch });
-      const result = await client.store.products.list();
+      const client = createClient({ ...baseConfig, fetch: mockFetch });
+      const result = await client.products.list();
 
       expect(result).toEqual(paginatedEmpty);
       expect(mockFetch).toHaveBeenCalledTimes(2);
@@ -39,8 +39,8 @@ describe('Retry logic', () => {
         .mockResolvedValueOnce(errorResponse(429, 'rate_limited', 'Too many requests'))
         .mockResolvedValueOnce(jsonResponse(paginatedEmpty));
 
-      const client = createSpreeClient({ ...baseConfig, fetch: mockFetch });
-      const result = await client.store.products.list();
+      const client = createClient({ ...baseConfig, fetch: mockFetch });
+      const result = await client.products.list();
 
       expect(result).toEqual(paginatedEmpty);
       expect(mockFetch).toHaveBeenCalledTimes(2);
@@ -52,8 +52,8 @@ describe('Retry logic', () => {
         .mockResolvedValueOnce(errorResponse(503))
         .mockResolvedValueOnce(jsonResponse(paginatedEmpty));
 
-      const client = createSpreeClient({ ...baseConfig, fetch: mockFetch });
-      const result = await client.store.products.list();
+      const client = createClient({ ...baseConfig, fetch: mockFetch });
+      const result = await client.products.list();
 
       expect(result).toEqual(paginatedEmpty);
       expect(mockFetch).toHaveBeenCalledTimes(3);
@@ -63,9 +63,9 @@ describe('Retry logic', () => {
       const mockFetch = vi.fn()
         .mockResolvedValue(errorResponse(500, 'server_error', 'Internal error'));
 
-      const client = createSpreeClient({ ...baseConfig, fetch: mockFetch });
+      const client = createClient({ ...baseConfig, fetch: mockFetch });
 
-      await expect(client.store.products.list()).rejects.toThrow(SpreeError);
+      await expect(client.products.list()).rejects.toThrow(SpreeError);
       // 1 initial + 2 retries = 3 attempts
       expect(mockFetch).toHaveBeenCalledTimes(3);
     });
@@ -75,8 +75,8 @@ describe('Retry logic', () => {
         .mockRejectedValueOnce(new TypeError('fetch failed'))
         .mockResolvedValueOnce(jsonResponse(paginatedEmpty));
 
-      const client = createSpreeClient({ ...baseConfig, fetch: mockFetch });
-      const result = await client.store.products.list();
+      const client = createClient({ ...baseConfig, fetch: mockFetch });
+      const result = await client.products.list();
 
       expect(result).toEqual(paginatedEmpty);
       expect(mockFetch).toHaveBeenCalledTimes(2);
@@ -86,9 +86,9 @@ describe('Retry logic', () => {
       const mockFetch = vi.fn()
         .mockResolvedValueOnce(errorResponse(400, 'bad_request', 'Bad request'));
 
-      const client = createSpreeClient({ ...baseConfig, fetch: mockFetch });
+      const client = createClient({ ...baseConfig, fetch: mockFetch });
 
-      await expect(client.store.products.list()).rejects.toThrow(SpreeError);
+      await expect(client.products.list()).rejects.toThrow(SpreeError);
       expect(mockFetch).toHaveBeenCalledTimes(1);
     });
 
@@ -96,9 +96,9 @@ describe('Retry logic', () => {
       const mockFetch = vi.fn()
         .mockResolvedValueOnce(errorResponse(401, 'unauthorized', 'Unauthorized'));
 
-      const client = createSpreeClient({ ...baseConfig, fetch: mockFetch });
+      const client = createClient({ ...baseConfig, fetch: mockFetch });
 
-      await expect(client.store.products.list()).rejects.toThrow(SpreeError);
+      await expect(client.products.list()).rejects.toThrow(SpreeError);
       expect(mockFetch).toHaveBeenCalledTimes(1);
     });
   });
@@ -109,8 +109,8 @@ describe('Retry logic', () => {
         .mockResolvedValueOnce(errorResponse(429, 'rate_limited', 'Too many requests'))
         .mockResolvedValueOnce(jsonResponse({ token: 'abc', user: { id: '1', email: 'a@b.com' } }));
 
-      const client = createSpreeClient({ ...baseConfig, fetch: mockFetch });
-      const result = await client.store.auth.login({ email: 'a@b.com', password: 'pass' });
+      const client = createClient({ ...baseConfig, fetch: mockFetch });
+      const result = await client.auth.login({ email: 'a@b.com', password: 'pass' });
 
       expect(result.token).toBe('abc');
       expect(mockFetch).toHaveBeenCalledTimes(2);
@@ -121,8 +121,8 @@ describe('Retry logic', () => {
         .mockResolvedValueOnce(errorResponse(500, 'server_error', 'Internal error'))
         .mockResolvedValueOnce(jsonResponse({ token: 'abc', user: { id: '1', email: 'a@b.com' } }));
 
-      const client = createSpreeClient({ ...baseConfig, fetch: mockFetch });
-      const result = await client.store.auth.login({ email: 'a@b.com', password: 'pass' });
+      const client = createClient({ ...baseConfig, fetch: mockFetch });
+      const result = await client.auth.login({ email: 'a@b.com', password: 'pass' });
 
       expect(result.token).toBe('abc');
       expect(mockFetch).toHaveBeenCalledTimes(2);
@@ -133,8 +133,8 @@ describe('Retry logic', () => {
         .mockRejectedValueOnce(new TypeError('fetch failed'))
         .mockResolvedValueOnce(jsonResponse({ token: 'abc', user: { id: '1', email: 'a@b.com' } }));
 
-      const client = createSpreeClient({ ...baseConfig, fetch: mockFetch });
-      const result = await client.store.auth.login({ email: 'a@b.com', password: 'pass' });
+      const client = createClient({ ...baseConfig, fetch: mockFetch });
+      const result = await client.auth.login({ email: 'a@b.com', password: 'pass' });
 
       expect(result.token).toBe('abc');
       expect(mockFetch).toHaveBeenCalledTimes(2);
@@ -144,8 +144,8 @@ describe('Retry logic', () => {
       const mockFetch = vi.fn()
         .mockResolvedValueOnce(jsonResponse({ token: 'abc', user: { id: '1', email: 'a@b.com' } }));
 
-      const client = createSpreeClient({ ...baseConfig, fetch: mockFetch });
-      await client.store.auth.login({ email: 'a@b.com', password: 'pass' });
+      const client = createClient({ ...baseConfig, fetch: mockFetch });
+      await client.auth.login({ email: 'a@b.com', password: 'pass' });
 
       const headers = mockFetch.mock.calls[0][1].headers;
       expect(headers['Idempotency-Key']).toMatch(/^spree-sdk-retry-/);
@@ -155,8 +155,8 @@ describe('Retry logic', () => {
       const mockFetch = vi.fn()
         .mockResolvedValueOnce(jsonResponse({ data: [], meta: {} }));
 
-      const client = createSpreeClient({ ...baseConfig, fetch: mockFetch });
-      await client.store.products.list();
+      const client = createClient({ ...baseConfig, fetch: mockFetch });
+      await client.products.list();
 
       const headers = mockFetch.mock.calls[0][1].headers;
       expect(headers['Idempotency-Key']).toBeUndefined();
@@ -166,10 +166,10 @@ describe('Retry logic', () => {
       const mockFetch = vi.fn()
         .mockResolvedValueOnce(errorResponse(500, 'server_error', 'Internal error'));
 
-      const client = createSpreeClient({ ...baseConfig, fetch: mockFetch, retry: false });
+      const client = createClient({ ...baseConfig, fetch: mockFetch, retry: false });
 
       await expect(
-        client.store.auth.login({ email: 'a@b.com', password: 'pass' })
+        client.auth.login({ email: 'a@b.com', password: 'pass' })
       ).rejects.toThrow(SpreeError);
       expect(mockFetch).toHaveBeenCalledTimes(1);
     });
@@ -178,8 +178,8 @@ describe('Retry logic', () => {
       const mockFetch = vi.fn()
         .mockResolvedValueOnce(jsonResponse({ token: 'abc', user: { id: '1', email: 'a@b.com' } }));
 
-      const client = createSpreeClient({ ...baseConfig, fetch: mockFetch, retry: false });
-      await client.store.auth.login({ email: 'a@b.com', password: 'pass' });
+      const client = createClient({ ...baseConfig, fetch: mockFetch, retry: false });
+      await client.auth.login({ email: 'a@b.com', password: 'pass' });
 
       const headers = mockFetch.mock.calls[0][1].headers;
       expect(headers['Idempotency-Key']).toBeUndefined();
@@ -189,8 +189,8 @@ describe('Retry logic', () => {
       const mockFetch = vi.fn()
         .mockResolvedValueOnce(jsonResponse({ number: 'R123', token: 'cart-token' }));
 
-      const client = createSpreeClient({ ...baseConfig, fetch: mockFetch });
-      await client.store.cart.create(undefined, { idempotencyKey: 'my-custom-key' });
+      const client = createClient({ ...baseConfig, fetch: mockFetch });
+      await client.cart.create(undefined, { idempotencyKey: 'my-custom-key' });
 
       const headers = mockFetch.mock.calls[0][1].headers;
       expect(headers['Idempotency-Key']).toBe('my-custom-key');
@@ -202,9 +202,9 @@ describe('Retry logic', () => {
       const mockFetch = vi.fn()
         .mockResolvedValueOnce(errorResponse(500, 'server_error', 'Internal error'));
 
-      const client = createSpreeClient({ ...baseConfig, fetch: mockFetch, retry: false });
+      const client = createClient({ ...baseConfig, fetch: mockFetch, retry: false });
 
-      await expect(client.store.products.list()).rejects.toThrow(SpreeError);
+      await expect(client.products.list()).rejects.toThrow(SpreeError);
       expect(mockFetch).toHaveBeenCalledTimes(1);
     });
   });
@@ -214,13 +214,13 @@ describe('Retry logic', () => {
       const mockFetch = vi.fn()
         .mockResolvedValue(errorResponse(500, 'server_error', 'Internal error'));
 
-      const client = createSpreeClient({
+      const client = createClient({
         ...baseConfig,
         fetch: mockFetch,
         retry: { maxRetries: 4, baseDelay: 10 },
       });
 
-      await expect(client.store.products.list()).rejects.toThrow(SpreeError);
+      await expect(client.products.list()).rejects.toThrow(SpreeError);
       // 1 initial + 4 retries = 5 attempts
       expect(mockFetch).toHaveBeenCalledTimes(5);
     });
@@ -231,13 +231,13 @@ describe('Retry logic', () => {
         .mockResolvedValueOnce(errorResponse(429, 'rate_limited', 'Too many requests', { 'Retry-After': '1' }))
         .mockResolvedValueOnce(jsonResponse(paginatedEmpty));
 
-      const client = createSpreeClient({
+      const client = createClient({
         ...baseConfig,
         fetch: mockFetch,
         retry: { baseDelay: 10 },
       });
 
-      const result = await client.store.products.list();
+      const result = await client.products.list();
       const elapsed = Date.now() - start;
 
       expect(result).toEqual(paginatedEmpty);

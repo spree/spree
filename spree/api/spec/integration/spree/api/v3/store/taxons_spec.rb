@@ -22,7 +22,7 @@ RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.y
       description 'Returns a paginated list of taxons (categories) for the current store'
 
       sdk_example <<~JS
-        const taxons = await client.store.taxons.list({
+        const taxons = await client.taxons.list({
           page: 1,
           limit: 25,
         })
@@ -73,7 +73,7 @@ RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.y
       description 'Returns a single taxon by permalink or prefix ID'
 
       sdk_example <<~JS
-        const taxon = await client.store.taxons.get('categories/clothing/shirts', {
+        const taxon = await client.taxons.get('categories/clothing/shirts', {
           expand: 'children,products',
         })
       JS
@@ -147,7 +147,7 @@ RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.y
       description 'Returns a paginated list of products belonging to the specified taxon'
 
       sdk_example <<~JS
-        const products = await client.store.taxons.products.list('categories/clothing', {
+        const products = await client.taxons.products.list('categories/clothing', {
           page: 1,
           limit: 25,
           sort: 'price',

@@ -30,7 +30,7 @@ const client = createSpreeClient({
 })
 
 // All requests use fr/EUR/FR automatically
-const products = await client.store.products.list()
+const products = await client.products.list()
 ```
 
 Update defaults at any time:
@@ -48,7 +48,7 @@ Override client defaults for individual requests:
 <CodeGroup>
 
 ```typescript SDK
-const products = await client.store.products.list({}, {
+const products = await client.products.list({}, {
   locale: 'fr',
   currency: 'EUR',
   country: 'FR',
@@ -72,7 +72,7 @@ The `X-Spree-Country` header resolves the customer's [market](/developer/core-co
 
 ```typescript SDK
 // Setting country automatically resolves the market
-const products = await client.store.products.list({}, {
+const products = await client.products.list({}, {
   country: 'DE', // Resolves German market → EUR, de locale
 })
 ```
@@ -95,7 +95,7 @@ You can also resolve the market explicitly using the [Markets API](/developer/sd
 
 ```typescript SDK
 // Resolve which market applies for a country
-const market = await client.store.markets.resolve('DE')
+const market = await client.markets.resolve('DE')
 // => { id: "mkt_xxx", name: "Europe", currency: "EUR", default_locale: "de", ... }
 
 // Then set the client defaults
@@ -144,11 +144,11 @@ When a locale is set, all translatable fields are returned in the requested lang
 
 ```typescript SDK
 // English (default)
-const enProduct = await client.store.products.get('spree-tote')
+const enProduct = await client.products.get('spree-tote')
 console.log(enProduct.name) // "Spree Tote"
 
 // French
-const frProduct = await client.store.products.get('spree-tote', {}, {
+const frProduct = await client.products.get('spree-tote', {}, {
   locale: 'fr',
 })
 console.log(frProduct.name) // "Sac Spree"
@@ -178,13 +178,13 @@ All price fields in the response reflect the requested currency:
 
 ```typescript SDK
 // USD prices
-const usdProduct = await client.store.products.get('spree-tote', {}, {
+const usdProduct = await client.products.get('spree-tote', {}, {
   currency: 'USD',
 })
 console.log(usdProduct.price) // { amount: "15.99", currency: "USD" }
 
 // EUR prices
-const eurProduct = await client.store.products.get('spree-tote', {}, {
+const eurProduct = await client.products.get('spree-tote', {}, {
   currency: 'EUR',
 })
 console.log(eurProduct.price) // { amount: "14.49", currency: "EUR" }
@@ -215,7 +215,7 @@ List all markets to get the full picture of regions, currencies, and supported l
 <CodeGroup>
 
 ```typescript SDK
-const { data: markets } = await client.store.markets.list()
+const { data: markets } = await client.markets.list()
 // [
 //   { id: "mkt_xxx", name: "North America", currency: "USD", default_locale: "en",
 //     supported_locales: ["en", "es"], countries: [{ iso: "US", ... }, { iso: "CA", ... }] },
@@ -239,13 +239,13 @@ List all countries or countries within a specific market. Each country includes 
 
 ```typescript SDK
 // All countries across all markets
-const { data: countries } = await client.store.countries.list()
+const { data: countries } = await client.countries.list()
 
 // Countries in a specific market (useful for checkout address forms)
-const { data: marketCountries } = await client.store.markets.countries.list('mkt_xxx')
+const { data: marketCountries } = await client.markets.countries.list('mkt_xxx')
 
 // Get a single country with states
-const usa = await client.store.countries.get('US', {
+const usa = await client.countries.get('US', {
   expand: ['states'],
 })
 console.log(usa.states) // [{ abbr: "CA", name: "California" }, ...]
@@ -272,7 +272,7 @@ curl 'http://localhost:3000/api/v3/store/countries/US?expand=states' \
 <CodeGroup>
 
 ```typescript SDK
-const { data: locales } = await client.store.locales.list()
+const { data: locales } = await client.locales.list()
 // [{ code: "en", name: "English" }, { code: "fr", name: "French" }, ...]
 ```
 
@@ -288,7 +288,7 @@ curl 'http://localhost:3000/api/v3/store/locales' \
 <CodeGroup>
 
 ```typescript SDK
-const { data: currencies } = await client.store.currencies.list()
+const { data: currencies } = await client.currencies.list()
 // [{ iso_code: "USD", name: "US Dollar", symbol: "$" }, { iso_code: "EUR", name: "Euro", symbol: "€" }, ...]
 ```
 

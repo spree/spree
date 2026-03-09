@@ -73,7 +73,7 @@ Fetch all markets for the current store, including their countries:
 <CodeGroup>
 
 ```typescript SDK
-const { data: markets } = await client.store.markets.list()
+const { data: markets } = await client.markets.list()
 // [
 //   {
 //     id: "mkt_k5nR8xLq",
@@ -106,7 +106,7 @@ When you know a customer's country (e.g., from geolocation or a country picker),
 <CodeGroup>
 
 ```typescript SDK
-const market = await client.store.markets.resolve('DE')
+const market = await client.markets.resolve('DE')
 // { id: "mkt_gbHJdmfr", name: "Europe", currency: "EUR", tax_inclusive: true, ... }
 ```
 
@@ -128,14 +128,14 @@ List countries belonging to a specific market. Useful for populating address for
 <CodeGroup>
 
 ```typescript SDK
-const { data: countries } = await client.store.markets.countries.list('mkt_k5nR8xLq')
+const { data: countries } = await client.markets.countries.list('mkt_k5nR8xLq')
 // [
 //   { iso: "CA", name: "Canada", states_required: true, zipcode_required: true },
 //   { iso: "US", name: "United States", states_required: true, zipcode_required: true }
 // ]
 
 // Get a country with its states (for address form dropdowns)
-const usa = await client.store.markets.countries.get('mkt_k5nR8xLq', 'US', {
+const usa = await client.markets.countries.get('mkt_k5nR8xLq', 'US', {
   include: 'states',
 })
 ```
@@ -158,10 +158,10 @@ You can also fetch countries flat (across all markets) or include the market on 
 
 ```typescript SDK
 // All countries across all markets
-const { data: countries } = await client.store.countries.list()
+const { data: countries } = await client.countries.list()
 
 // Get a country with its market details
-const germany = await client.store.countries.get('DE', { include: 'market' })
+const germany = await client.countries.get('DE', { include: 'market' })
 // { iso: "DE", name: "Germany", market: { currency: "EUR", default_locale: "de", tax_inclusive: true } }
 ```
 
@@ -186,10 +186,10 @@ You can discover all available currencies and locales (aggregated from all marke
 <CodeGroup>
 
 ```typescript SDK
-const { data: currencies } = await client.store.currencies.list()
+const { data: currencies } = await client.currencies.list()
 // [{ iso_code: "USD", name: "US Dollar", symbol: "$" }, { iso_code: "EUR", name: "Euro", symbol: "€" }]
 
-const { data: locales } = await client.store.locales.list()
+const { data: locales } = await client.locales.list()
 // [{ code: "en", name: "English" }, { code: "de", name: "German" }]
 ```
 

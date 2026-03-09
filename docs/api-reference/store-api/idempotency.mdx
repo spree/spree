@@ -104,7 +104,7 @@ const client = createSpreeClient({
 })
 
 // Add item to cart with idempotency key
-await client.store.orders.lineItems.create(orderId, {
+await client.orders.lineItems.create(orderId, {
   variant_id: 'variant_xxx',
   quantity: 1,
 }, {

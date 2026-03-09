@@ -16,7 +16,7 @@ RSpec.describe 'Shipments API', type: :request, swagger_doc: 'api-reference/stor
       description 'Returns all shipments associated with the order'
 
       sdk_example <<~JS
-        const shipments = await client.store.orders.shipments.list('or_abc123', {
+        const shipments = await client.orders.shipments.list('or_abc123', {
           bearerToken: '<token>',
         })
       JS
@@ -107,7 +107,7 @@ RSpec.describe 'Shipments API', type: :request, swagger_doc: 'api-reference/stor
       description 'Selects a shipping rate for the shipment'
 
       sdk_example <<~JS
-        const order = await client.store.orders.shipments.update('or_abc123', 'shp_abc123', {
+        const order = await client.orders.shipments.update('or_abc123', 'shp_abc123', {
           selected_shipping_rate_id: 'shprt_abc123',
         }, {
           bearerToken: '<token>',

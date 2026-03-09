@@ -18,7 +18,7 @@ RSpec.describe 'Taxonomies API', type: :request, swagger_doc: 'api-reference/sto
       description 'Returns a list of taxonomies (category hierarchies) for the current store'
 
       sdk_example <<~JS
-        const taxonomies = await client.store.taxonomies.list({
+        const taxonomies = await client.taxonomies.list({
           page: 1,
           limit: 25,
         })
@@ -67,7 +67,7 @@ RSpec.describe 'Taxonomies API', type: :request, swagger_doc: 'api-reference/sto
       description 'Returns a single taxonomy with its taxon tree'
 
       sdk_example <<~JS
-        const taxonomy = await client.store.taxonomies.get('taxonomy_abc123', {
+        const taxonomy = await client.taxonomies.get('taxonomy_abc123', {
           expand: 'taxons',
         })
       JS

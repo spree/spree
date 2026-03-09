@@ -115,7 +115,7 @@ Metafields with `display_on` set to `both` or `front_end` are included in Store 
 <CodeGroup>
 
 ```typescript SDK
-const product = await client.store.products.get('spree-tote', {
+const product = await client.products.get('spree-tote', {
   expand: ['metafields'],
 })
 

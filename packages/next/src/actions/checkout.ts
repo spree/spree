@@ -1,7 +1,7 @@
 'use server';
 
 import { revalidateTag } from 'next/cache';
-import type { StoreOrder, StoreShipment, UpdateOrderParams } from '@spree/sdk';
+import type { Order, Shipment, UpdateOrderParams } from '@spree/sdk';
 import { getClient } from '../config';
 import { getCartToken, getAccessToken } from '../cookies';
 
@@ -17,9 +17,9 @@ async function getCheckoutOptions() {
  */
 export async function getCheckout(
   orderId: string
-): Promise<StoreOrder> {
+): Promise<Order> {
   const options = await getCheckoutOptions();
-  return getClient().store.orders.get(
+  return getClient().orders.get(
     orderId,
     { expand: ['line_items', 'shipments', 'ship_address', 'bill_address'] },
     options
@@ -32,9 +32,9 @@ export async function getCheckout(
 export async function updateOrder(
   orderId: string,
   params: UpdateOrderParams
-): Promise<StoreOrder> {
+): Promise<Order> {
   const options = await getCheckoutOptions();
-  const result = await getClient().store.orders.update(orderId, params, options);
+  const result = await getClient().orders.update(orderId, params, options);
   revalidateTag('checkout');
   return result;
 }
@@ -42,9 +42,9 @@ export async function updateOrder(
 /**
  * Advance the checkout to the next step.
  */
-export async function advance(orderId: string): Promise<StoreOrder> {
+export async function advance(orderId: string): Promise<Order> {
   const options = await getCheckoutOptions();
-  const result = await getClient().store.orders.advance(orderId, options);
+  const result = await getClient().orders.advance(orderId, options);
   revalidateTag('checkout');
   return result;
 }
@@ -52,9 +52,9 @@ export async function advance(orderId: string): Promise<StoreOrder> {
 /**
  * Move the checkout to the next step (alias for advance).
  */
-export async function next(orderId: string): Promise<StoreOrder> {
+export async function next(orderId: string): Promise<Order> {
   const options = await getCheckoutOptions();
-  const result = await getClient().store.orders.next(orderId, options);
+  const result = await getClient().orders.next(orderId, options);
   revalidateTag('checkout');
   return result;
 }
@@ -64,9 +64,9 @@ export async function next(orderId: string): Promise<StoreOrder> {
  */
 export async function getShipments(
   orderId: string
-): Promise<{ data: StoreShipment[] }> {
+): Promise<{ data: Shipment[] }> {
   const options = await getCheckoutOptions();
-  return getClient().store.orders.shipments.list(orderId, options);
+  return getClient().orders.shipments.list(orderId, options);
 }
 
 /**
@@ -77,9 +77,9 @@ export async function selectShippingRate(
   orderId: string,
   shipmentId: string,
   shippingRateId: string
-): Promise<StoreOrder> {
+): Promise<Order> {
   const options = await getCheckoutOptions();
-  const result = await getClient().store.orders.shipments.update(
+  const result = await getClient().orders.shipments.update(
     orderId,
     shipmentId,
     { selected_shipping_rate_id: shippingRateId },
@@ -95,9 +95,9 @@ export async function selectShippingRate(
 export async function applyCoupon(
   orderId: string,
   code: string
-): Promise<StoreOrder> {
+): Promise<Order> {
   const options = await getCheckoutOptions();
-  const result = await getClient().store.orders.couponCodes.apply(orderId, code, options);
+  const result = await getClient().orders.couponCodes.apply(orderId, code, options);
   revalidateTag('checkout');
   revalidateTag('cart');
   return result;
@@ -109,9 +109,9 @@ export async function applyCoupon(
 export async function removeCoupon(
   orderId: string,
   promotionId: string
-): Promise<StoreOrder> {
+): Promise<Order> {
   const options = await getCheckoutOptions();
-  const result = await getClient().store.orders.couponCodes.remove(orderId, promotionId, options);
+  const result = await getClient().orders.couponCodes.remove(orderId, promotionId, options);
   revalidateTag('checkout');
   revalidateTag('cart');
   return result;
@@ -120,9 +120,9 @@ export async function removeCoupon(
 /**
  * Complete the checkout and place the order.
  */
-export async function complete(orderId: string): Promise<StoreOrder> {
+export async function complete(orderId: string): Promise<Order> {
   const options = await getCheckoutOptions();
-  const result = await getClient().store.orders.complete(orderId, options);
+  const result = await getClient().orders.complete(orderId, options);
   revalidateTag('checkout');
   revalidateTag('cart');
   return result;

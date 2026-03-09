@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { transformListParams } from '../src/params';
+import { transformListParams } from '@spree/sdk-core';
 
 describe('transformListParams', () => {
   it('passes through pagination params unchanged', () => {

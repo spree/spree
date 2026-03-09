@@ -239,7 +239,7 @@ stateDiagram-v2
 const options = { orderToken: cart.token }
 
 // Create a payment session for the selected payment method
-const session = await client.store.orders.paymentSessions.create(cart.id, {
+const session = await client.orders.paymentSessions.create(cart.id, {
   payment_method_id: 'pm_xyz789',
   amount: '99.99',             // Optional, defaults to order total
   external_data: {},           // Optional, provider-specific data
@@ -273,7 +273,7 @@ console.log(session.external_data.client_secret) // Use with Stripe.js or Adyen 
 **Update a Payment Session** (e.g., after order total changes):
 
 ```typescript
-const updated = await client.store.orders.paymentSessions.update(
+const updated = await client.orders.paymentSessions.update(
   cart.id, session.id,
   { amount: '149.99' },
   options
@@ -283,7 +283,7 @@ const updated = await client.store.orders.paymentSessions.update(
 **Complete a Payment Session** (after customer confirms payment on the frontend):
 
 ```typescript
-const completed = await client.store.orders.paymentSessions.complete(
+const completed = await client.orders.paymentSessions.complete(
   cart.id, session.id,
   { session_result: '...', external_data: {} },
   options
@@ -447,7 +447,7 @@ Payment Setup Sessions require customer authentication. The customer must be log
 const options = { token: jwtToken }
 
 // Create a setup session for saving a payment method
-const setupSession = await client.store.customer.paymentSetupSessions.create({
+const setupSession = await client.customer.paymentSetupSessions.create({
   payment_method_id: 'pm_xyz789',
   external_data: {},
 }, options)
@@ -475,13 +475,13 @@ console.log(setupSession.external_client_secret) // e.g. 'seti_ABC123_secret_xyz
 **Get a Payment Setup Session:**
 
 ```typescript
-const session = await client.store.customer.paymentSetupSessions.get('pss_abc123', options)
+const session = await client.customer.paymentSetupSessions.get('pss_abc123', options)
 ```
 
 **Complete a Payment Setup Session** (after the customer completes setup on the frontend using the gateway SDK and `external_client_secret`):
 
 ```typescript
-const completed = await client.store.customer.paymentSetupSessions.complete(
+const completed = await client.customer.paymentSetupSessions.complete(
   'pss_abc123',
   { external_data: {} },
   options

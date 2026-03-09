@@ -44,10 +44,10 @@ Customers can save multiple addresses and set a default for shipping and billing
 
 ```typescript SDK
 // List addresses
-const { data: addresses } = await client.store.customer.addresses.list()
+const { data: addresses } = await client.customer.addresses.list()
 
 // Create an address
-const address = await client.store.customer.addresses.create({
+const address = await client.customer.addresses.create({
   firstname: 'John',
   lastname: 'Doe',
   address1: '123 Main St',
@@ -59,13 +59,13 @@ const address = await client.store.customer.addresses.create({
 })
 
 // Update an address
-await client.store.customer.addresses.update('addr_xxx', { city: 'Brooklyn' })
+await client.customer.addresses.update('addr_xxx', { city: 'Brooklyn' })
 
 // Delete an address
-await client.store.customer.addresses.delete('addr_xxx')
+await client.customer.addresses.delete('addr_xxx')
 
 // Set as default shipping or billing address
-await client.store.customer.addresses.markAsDefault('addr_xxx', 'shipping')
+await client.customer.addresses.markAsDefault('addr_xxx', 'shipping')
 ```
 
 ```bash cURL
@@ -109,13 +109,13 @@ During checkout, you can either reference a saved address by ID or pass a new ad
 
 ```typescript SDK
 // Use saved addresses
-await client.store.orders.update(orderId, {
+await client.orders.update(orderId, {
   ship_address_id: 'addr_xxx',
   bill_address_id: 'addr_yyy',
 })
 
 // Or pass new addresses inline
-await client.store.orders.update(orderId, {
+await client.orders.update(orderId, {
   ship_address: {
     firstname: 'John',
     lastname: 'Doe',
@@ -180,14 +180,14 @@ Only countries assigned to a [Market](/developer/core-concepts/markets) are avai
 
 ```typescript SDK
 // List all countries available in this store
-const { data: countries } = await client.store.countries.list()
+const { data: countries } = await client.countries.list()
 
 // Get a country with its states (for address form dropdowns)
-const usa = await client.store.countries.get('US', { include: 'states' })
+const usa = await client.countries.get('US', { include: 'states' })
 // usa.states => [{ name: "Alabama", abbr: "AL" }, { name: "Alaska", abbr: "AK" }, ...]
 
 // Get a country with its market (for currency/locale resolution)
-const germany = await client.store.countries.get('DE', { include: 'market' })
+const germany = await client.countries.get('DE', { include: 'market' })
 // germany.market => { currency: "EUR", default_locale: "de", tax_inclusive: true }
 ```
 
@@ -218,7 +218,7 @@ States are fetched via the country endpoint using `?include=states`:
 <CodeGroup>
 
 ```typescript SDK
-const usa = await client.store.countries.get('US', { include: 'states' })
+const usa = await client.countries.get('US', { include: 'states' })
 
 // Build a state picker from the response
 usa.states.forEach(state => {

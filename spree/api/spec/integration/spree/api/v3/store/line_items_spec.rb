@@ -19,7 +19,7 @@ RSpec.describe 'Line Items API', type: :request, swagger_doc: 'api-reference/sto
       description 'Adds a variant to the order. Creates a new line item or increases quantity if variant already in cart.'
 
       sdk_example <<~JS
-        const order = await client.store.orders.lineItems.create('or_abc123', {
+        const order = await client.orders.lineItems.create('or_abc123', {
           variant_id: 'variant_abc123',
           quantity: 2,
         }, {
@@ -110,7 +110,7 @@ RSpec.describe 'Line Items API', type: :request, swagger_doc: 'api-reference/sto
       description 'Updates the quantity of a line item in the cart'
 
       sdk_example <<~JS
-        const order = await client.store.orders.lineItems.update('or_abc123', 'li_abc123', {
+        const order = await client.orders.lineItems.update('or_abc123', 'li_abc123', {
           quantity: 5,
         }, {
           bearerToken: '<token>',
@@ -167,7 +167,7 @@ RSpec.describe 'Line Items API', type: :request, swagger_doc: 'api-reference/sto
       description 'Removes a line item from the order'
 
       sdk_example <<~JS
-        const order = await client.store.orders.lineItems.delete('or_abc123', 'li_abc123', {
+        const order = await client.orders.lineItems.delete('or_abc123', 'li_abc123', {
           bearerToken: '<token>',
         })
       JS

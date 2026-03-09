@@ -4,24 +4,22 @@ import { initSpreeNext, resetClient } from '../../src/config';
 
 // Mock the SDK client
 const mockClient = {
-  store: {
-    cart: {
-      get: vi.fn(),
+  cart: {
+    get: vi.fn(),
+    create: vi.fn(),
+    associate: vi.fn(),
+  },
+  orders: {
+    lineItems: {
       create: vi.fn(),
-      associate: vi.fn(),
-    },
-    orders: {
-      lineItems: {
-        create: vi.fn(),
-        update: vi.fn(),
-        delete: vi.fn(),
-      },
+      update: vi.fn(),
+      delete: vi.fn(),
     },
   },
 };
 
 vi.mock('@spree/sdk', () => ({
-  createSpreeClient: vi.fn(() => mockClient),
+  createClient: vi.fn(() => mockClient),
 }));
 
 import { getCart, getOrCreateCart, addItem, removeItem, clearCart, associateCart } from '../../src/actions/cart';
@@ -44,18 +42,18 @@ describe('cart actions', () => {
     it('returns cart when order token exists', async () => {
       const mockCart = { id: '1', token: 'order_abc', line_items: [] };
       mockCookieStore.get.mockReturnValue({ value: 'order_abc' });
-      mockClient.store.cart.get.mockResolvedValue(mockCart);
+      mockClient.cart.get.mockResolvedValue(mockCart);
 
       const cart = await getCart();
       expect(cart).toEqual(mockCart);
-      expect(mockClient.store.cart.get).toHaveBeenCalledWith(
+      expect(mockClient.cart.get).toHaveBeenCalledWith(
         expect.objectContaining({ orderToken: 'order_abc' })
       );
     });
 
     it('returns null when cart fetch fails', async () => {
       mockCookieStore.get.mockReturnValue({ value: 'bad_token' });
-      mockClient.store.cart.get.mockRejectedValue(new Error('Not found'));
+      mockClient.cart.get.mockRejectedValue(new Error('Not found'));
 
       const cart = await getCart();
       expect(cart).toBeNull();
@@ -66,21 +64,21 @@ describe('cart actions', () => {
     it('returns existing cart if available', async () => {
       const mockCart = { id: '1', token: 'existing', line_items: [] };
       mockCookieStore.get.mockReturnValue({ value: 'existing' });
-      mockClient.store.cart.get.mockResolvedValue(mockCart);
+      mockClient.cart.get.mockResolvedValue(mockCart);
 
       const cart = await getOrCreateCart();
       expect(cart).toEqual(mockCart);
-      expect(mockClient.store.cart.create).not.toHaveBeenCalled();
+      expect(mockClient.cart.create).not.toHaveBeenCalled();
     });
 
     it('creates new cart when none exists', async () => {
       const newCart = { id: '2', token: 'new_token', line_items: [] };
       mockCookieStore.get.mockReturnValue(undefined);
-      mockClient.store.cart.create.mockResolvedValue(newCart);
+      mockClient.cart.create.mockResolvedValue(newCart);
 
       const cart = await getOrCreateCart();
       expect(cart).toEqual(newCart);
-      expect(mockClient.store.cart.create).toHaveBeenCalled();
+      expect(mockClient.cart.create).toHaveBeenCalled();
       expect(mockCookieStore.set).toHaveBeenCalledWith(
         '_spree_cart_token',
         'new_token',
@@ -94,12 +92,12 @@ describe('cart actions', () => {
       const mockCart = { id: '1', token: 'cart_token', line_items: [] };
       const mockLineItem = { id: 'li_1', quantity: 2, variant_id: 'v1' };
       mockCookieStore.get.mockReturnValue({ value: 'cart_token' });
-      mockClient.store.cart.get.mockResolvedValue(mockCart);
-      mockClient.store.orders.lineItems.create.mockResolvedValue(mockLineItem);
+      mockClient.cart.get.mockResolvedValue(mockCart);
+      mockClient.orders.lineItems.create.mockResolvedValue(mockLineItem);
 
       const result = await addItem('v1', 2);
       expect(result).toEqual(mockLineItem);
-      expect(mockClient.store.orders.lineItems.create).toHaveBeenCalledWith(
+      expect(mockClient.orders.lineItems.create).toHaveBeenCalledWith(
         '1',
         { variant_id: 'v1', quantity: 2 },
         expect.objectContaining({ orderToken: 'cart_token' })
@@ -112,11 +110,11 @@ describe('cart actions', () => {
     it('deletes line item and invalidates cache', async () => {
       const mockCart = { id: '1', token: 'cart_token' };
       mockCookieStore.get.mockReturnValue({ value: 'cart_token' });
-      mockClient.store.cart.get.mockResolvedValue(mockCart);
-      mockClient.store.orders.lineItems.delete.mockResolvedValue(undefined);
+      mockClient.cart.get.mockResolvedValue(mockCart);
+      mockClient.orders.lineItems.delete.mockResolvedValue(undefined);
 
       await removeItem('li_1');
-      expect(mockClient.store.orders.lineItems.delete).toHaveBeenCalledWith(
+      expect(mockClient.orders.lineItems.delete).toHaveBeenCalledWith(
         '1',
         'li_1',
         expect.objectContaining({ orderToken: 'cart_token' })
@@ -150,11 +148,11 @@ describe('cart actions', () => {
       mockCookieStore.get
         .mockReturnValueOnce({ value: 'cart_token' })
         .mockReturnValueOnce({ value: 'jwt_token' });
-      mockClient.store.cart.associate.mockResolvedValue(mockCart);
+      mockClient.cart.associate.mockResolvedValue(mockCart);
 
       const result = await associateCart();
       expect(result).toEqual(mockCart);
-      expect(mockClient.store.cart.associate).toHaveBeenCalledWith({
+      expect(mockClient.cart.associate).toHaveBeenCalledWith({
         orderToken: 'cart_token',
         token: 'jwt_token',
       });

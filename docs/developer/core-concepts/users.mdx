@@ -61,7 +61,7 @@ erDiagram
 <CodeGroup>
 
 ```typescript SDK
-const { token, user } = await client.store.auth.register({
+const { token, user } = await client.auth.register({
   email: 'john@example.com',
   password: 'password123',
   password_confirmation: 'password123',
@@ -92,7 +92,7 @@ curl -X POST 'https://api.mystore.com/api/v3/store/auth/register' \
 <CodeGroup>
 
 ```typescript SDK
-const { token, user } = await client.store.auth.login({
+const { token, user } = await client.auth.login({
   email: 'john@example.com',
   password: 'password123',
 })
@@ -120,7 +120,7 @@ Refresh an expiring token to keep the session alive:
 <CodeGroup>
 
 ```typescript SDK
-const { token } = await client.store.auth.refresh({
+const { token } = await client.auth.refresh({
   token: existingToken,
 })
 ```
@@ -138,7 +138,7 @@ curl -X POST 'https://api.mystore.com/api/v3/store/auth/refresh' \
 
 ```typescript SDK
 // Get current customer
-const customer = await client.store.customer.get()
+const customer = await client.customer.get()
 // {
 //   id: "usr_xxx",
 //   email: "john@example.com",
@@ -150,7 +150,7 @@ const customer = await client.store.customer.get()
 // }
 
 // Update profile
-const updated = await client.store.customer.update({
+const updated = await client.customer.update({
   first_name: 'Jonathan',
   accepts_email_marketing: true,
 })

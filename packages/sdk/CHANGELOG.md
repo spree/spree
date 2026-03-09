@@ -1,5 +1,21 @@
 # @spree/sdk
 
+## 0.7.0
+
+### Minor Changes
+
+- Flatten client API — `createClient()` replaces `createSpreeClient()`, all store resources are now top-level (`client.products.list()` instead of `client.store.products.list()`). Generated types are re-exported with unprefixed names (`Product` instead of `StoreProduct`; prefixed names remain as aliases for backward compatibility). Shared HTTP client, retry logic, and param utilities extracted to internal `@spree/sdk-core` package.
+
+### Patch Changes
+
+- Added `checkout_steps` field to `StoreOrder` type. Returns an array of applicable checkout step names for the order (e.g., `["address", "delivery", "payment", "complete"]`). Steps are dynamic per order — digital-only orders may skip `delivery`, free orders may skip `payment`. Use alongside `state` to build dynamic checkout step indicators.
+
+- Added `fields` parameter support for field selection. Pass `fields: ['name', 'slug', 'price']` to `list` and `get` methods to receive only specific fields in the response. The `id` field is always included. Omit `fields` to return all fields (default behavior).
+
+- Switch API `sort` parameter to JSON:API standard `-field` notation. Use `-price` for descending and `price` for ascending instead of `price desc` / `price asc`. The `sort` parameter is now supported on all list endpoints (products, taxons, orders, taxonomies, etc.).
+
+- Added support for nested expand with dot notation. Pass `expand: ['variants.images']` to expand associations up to 4 levels deep. No SDK code changes required — this is a backend feature that works with the existing SDK.
+
 ## 0.6.9
 
 ### Patch Changes
@@ -12,7 +28,7 @@
 
   ```typescript
   // Create a cart with line items
-  const cart = await client.store.cart.create({
+  const cart = await client.cart.create({
     line_items: [
       { variant_id: "variant_abc123", quantity: 2 },
       { variant_id: "variant_def456", quantity: 1 },
@@ -20,7 +36,7 @@
   });
 
   // Upsert line items on an existing order
-  const order = await client.store.orders.update(
+  const order = await client.orders.update(
     "or_abc123",
     {
       line_items: [{ variant_id: "variant_abc123", quantity: 3 }],
@@ -71,7 +87,7 @@
 - Add Markets API support and simplify Country type
 
   - Add `StoreMarket` type with `id`, `name`, `currency`, `default_locale`, `supported_locales`, `tax_inclusive`, `default`, and optional `countries`
-  - Add `client.store.markets` with `list()`, `get(id)`, `resolve(country)`, and nested `countries.list(marketId)` / `countries.get(marketId, iso)`
+  - Add `client.markets` with `list()`, `get(id)`, `resolve(country)`, and nested `countries.list(marketId)` / `countries.get(marketId, iso)`
   - **Breaking:** Remove `currency`, `default_locale`, `supported_locales` from `StoreCountry` — these now live on `StoreMarket`. Use `?include=market` on the countries endpoint or the markets endpoint directly
   - Add optional `market?: StoreMarket` field to `StoreCountry` (populated when `?include=market` is passed)
 
@@ -163,13 +179,13 @@
 ### Minor Changes
 
 - **Breaking:** Restructure Store API endpoints for Cart, Checkout & Orders
-  - Cart creation moved from `POST /orders` to `POST /cart` — use `client.store.cart.create()` instead of `client.store.orders.create()`
-  - Customer order history moved from `GET /orders` to `GET /customer/orders` — use `client.store.customer.orders.list()` instead of `client.store.orders.list()`
+  - Cart creation moved from `POST /orders` to `POST /cart` — use `client.cart.create()` instead of `client.orders.create()`
+  - Customer order history moved from `GET /orders` to `GET /customer/orders` — use `client.customer.orders.list()` instead of `client.orders.list()`
   - `orders.create()` removed — use `cart.create()` instead
   - `orders.list()` removed — use `customer.orders.list()` instead
   - Orders namespace now focuses on individual order management and checkout: `get`, `update`, `next`, `advance`, `complete`, plus nested resources (lineItems, payments, shipments, etc.)
 - Add `customer.orders.list()` method for fetching authenticated customer's order history
-- Add Payment Setup Sessions support: `client.store.customer.paymentSetupSessions` with `create`, `get`, and `complete` methods for saving payment methods for future use
+- Add Payment Setup Sessions support: `client.customer.paymentSetupSessions` with `create`, `get`, and `complete` methods for saving payment methods for future use
 
 ## 0.2.5
 
@@ -201,13 +217,13 @@
 
 ### Patch Changes
 
-- Add Payment Sessions support: `client.store.orders.paymentSessions` with `create`, `get`, `update`, and `complete` methods. Add `session_required` field to `StorePaymentMethod` type. Add `StorePaymentSession`, `CreatePaymentSessionParams`, `UpdatePaymentSessionParams`, and `CompletePaymentSessionParams` types.
+- Add Payment Sessions support: `client.orders.paymentSessions` with `create`, `get`, `update`, and `complete` methods. Add `session_required` field to `StorePaymentMethod` type. Add `StorePaymentSession`, `CreatePaymentSessionParams`, `UpdatePaymentSessionParams`, and `CompletePaymentSessionParams` types.
 
 ## 0.2.0
 
 ### Minor Changes
 
-- Restructure SDK to support dual API namespaces: `client.store.*` (Store API) and `client.admin.*` (Admin API)
+- Restructure SDK to support dual API namespaces: `client.*` (Store API) and `client.admin.*` (Admin API)
 
 ### Internal
 

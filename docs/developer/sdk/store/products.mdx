@@ -8,7 +8,7 @@ description: Browse products, categories, and taxonomies with the Spree SDK
 ### List Products
 
 ```typescript
-const products = await client.store.products.list({
+const products = await client.products.list({
   page: 1,
   limit: 25,
   expand: ['variants', 'images', 'taxons'],
@@ -20,7 +20,7 @@ const products = await client.store.products.list({
 Use flat param keys — the SDK wraps them in `q[...]` automatically:
 
 ```typescript
-const products = await client.store.products.list({
+const products = await client.products.list({
   name_cont: 'shirt',                                     // Name contains
   price_gte: 20,                                           // Min price
   price_lte: 100,                                          // Max price
@@ -35,7 +35,7 @@ const products = await client.store.products.list({
 Pass `sort` with one of the supported values. Prefix with `-` for descending order:
 
 ```typescript
-const products = await client.store.products.list({
+const products = await client.products.list({
   sort: 'price',        // price, -price, best_selling,
                          // name, -name, -available_on, available_on
 });
@@ -46,11 +46,11 @@ const products = await client.store.products.list({
 Request only specific fields to reduce payload size:
 
 ```typescript
-const products = await client.store.products.list({
+const products = await client.products.list({
   fields: ['name', 'slug', 'price', 'display_price'],
 });
 
-const product = await client.store.products.get('spree-tote', {
+const product = await client.products.get('spree-tote', {
   fields: ['name', 'slug', 'price'],
   expand: ['images'],  // expanded associations are always included
 });
@@ -64,7 +64,7 @@ Use dot notation to expand nested associations (up to 4 levels):
 
 ```typescript
 // Expand variants with their images in one request
-const product = await client.store.products.get('spree-tote', {
+const product = await client.products.get('spree-tote', {
   expand: ['variants.images', 'option_types'],
 });
 
@@ -79,7 +79,7 @@ product.variants.forEach(variant => {
 Fetch a single product by slug or prefix ID:
 
 ```typescript
-const product = await client.store.products.get('spree-tote', {
+const product = await client.products.get('spree-tote', {
   expand: ['variants', 'images'],
 });
 ```
@@ -89,7 +89,7 @@ const product = await client.store.products.get('spree-tote', {
 Get available filters (price range, availability, options, taxons) and sort options for building filter UIs:
 
 ```typescript
-const filters = await client.store.products.filters({
+const filters = await client.products.filters({
   taxon_id: 'txn_abc123', // Optional: scope filters to a taxon
 });
 
@@ -112,7 +112,7 @@ const filters = await client.store.products.filters({
 ### List Taxonomies
 
 ```typescript
-const taxonomies = await client.store.taxonomies.list({
+const taxonomies = await client.taxonomies.list({
   expand: ['taxons'],
 });
 ```
@@ -120,7 +120,7 @@ const taxonomies = await client.store.taxonomies.list({
 ### Get a Taxonomy
 
 ```typescript
-const categories = await client.store.taxonomies.get('tax_123', {
+const categories = await client.taxonomies.get('tax_123', {
   expand: ['root', 'taxons'],
 });
 ```
@@ -128,7 +128,7 @@ const categories = await client.store.taxonomies.get('tax_123', {
 ### List Taxons
 
 ```typescript
-const taxons = await client.store.taxons.list({
+const taxons = await client.taxons.list({
   depth_eq: 1,              // Top-level categories only
   taxonomy_id_eq: '123',    // Filter by taxonomy
 });
@@ -139,7 +139,7 @@ const taxons = await client.store.taxons.list({
 Fetch by ID or permalink:
 
 ```typescript
-const taxon = await client.store.taxons.get('categories/clothing', {
+const taxon = await client.taxons.get('categories/clothing', {
   expand: ['ancestors', 'children'], // For breadcrumbs and subcategories
 });
 ```
@@ -147,7 +147,7 @@ const taxon = await client.store.taxons.get('categories/clothing', {
 ### List Products in a Category
 
 ```typescript
-const categoryProducts = await client.store.taxons.products.list('categories/clothing', {
+const categoryProducts = await client.taxons.products.list('categories/clothing', {
   page: 1,
   limit: 12,
   expand: ['images', 'default_variant'],
@@ -158,9 +158,9 @@ const categoryProducts = await client.store.taxons.products.list('categories/clo
 
 ```typescript
 // List countries available for checkout
-const { data: countries } = await client.store.countries.list();
+const { data: countries } = await client.countries.list();
 
 // Get country by ISO code (includes states)
-const usa = await client.store.countries.get('US');
+const usa = await client.countries.get('US');
 console.log(usa.states); // Array of states
 ```

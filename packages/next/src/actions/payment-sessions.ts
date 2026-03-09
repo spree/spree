@@ -2,7 +2,7 @@
 
 import { revalidateTag } from 'next/cache';
 import type {
-  StorePaymentSession,
+  PaymentSession,
   CreatePaymentSessionParams,
   UpdatePaymentSessionParams,
   CompletePaymentSessionParams,
@@ -23,9 +23,9 @@ async function getCheckoutOptions() {
 export async function createPaymentSession(
   orderId: string,
   params: CreatePaymentSessionParams
-): Promise<StorePaymentSession> {
+): Promise<PaymentSession> {
   const options = await getCheckoutOptions();
-  const result = await getClient().store.orders.paymentSessions.create(orderId, params, options);
+  const result = await getClient().orders.paymentSessions.create(orderId, params, options);
   revalidateTag('checkout');
   return result;
 }
@@ -36,9 +36,9 @@ export async function createPaymentSession(
 export async function getPaymentSession(
   orderId: string,
   sessionId: string
-): Promise<StorePaymentSession> {
+): Promise<PaymentSession> {
   const options = await getCheckoutOptions();
-  return getClient().store.orders.paymentSessions.get(orderId, sessionId, options);
+  return getClient().orders.paymentSessions.get(orderId, sessionId, options);
 }
 
 /**
@@ -49,9 +49,9 @@ export async function updatePaymentSession(
   orderId: string,
   sessionId: string,
   params: UpdatePaymentSessionParams
-): Promise<StorePaymentSession> {
+): Promise<PaymentSession> {
   const options = await getCheckoutOptions();
-  const result = await getClient().store.orders.paymentSessions.update(orderId, sessionId, params, options);
+  const result = await getClient().orders.paymentSessions.update(orderId, sessionId, params, options);
   revalidateTag('checkout');
   return result;
 }
@@ -64,9 +64,9 @@ export async function completePaymentSession(
   orderId: string,
   sessionId: string,
   params?: CompletePaymentSessionParams
-): Promise<StorePaymentSession> {
+): Promise<PaymentSession> {
   const options = await getCheckoutOptions();
-  const result = await getClient().store.orders.paymentSessions.complete(orderId, sessionId, params, options);
+  const result = await getClient().orders.paymentSessions.complete(orderId, sessionId, params, options);
   revalidateTag('checkout');
   return result;
 }

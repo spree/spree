@@ -1,7 +1,7 @@
 'use server';
 
 import type {
-  StorePaymentSetupSession,
+  PaymentSetupSession,
   CreatePaymentSetupSessionParams,
   CompletePaymentSetupSessionParams,
 } from '@spree/sdk';
@@ -14,9 +14,9 @@ import { getClient } from '../config';
  */
 export async function createPaymentSetupSession(
   params: CreatePaymentSetupSessionParams
-): Promise<StorePaymentSetupSession> {
+): Promise<PaymentSetupSession> {
   return withAuthRefresh(async (options) => {
-    return getClient().store.customer.paymentSetupSessions.create(params, options);
+    return getClient().customer.paymentSetupSessions.create(params, options);
   });
 }
 
@@ -25,9 +25,9 @@ export async function createPaymentSetupSession(
  */
 export async function getPaymentSetupSession(
   id: string
-): Promise<StorePaymentSetupSession> {
+): Promise<PaymentSetupSession> {
   return withAuthRefresh(async (options) => {
-    return getClient().store.customer.paymentSetupSessions.get(id, options);
+    return getClient().customer.paymentSetupSessions.get(id, options);
   });
 }
 
@@ -38,8 +38,8 @@ export async function getPaymentSetupSession(
 export async function completePaymentSetupSession(
   id: string,
   params?: CompletePaymentSetupSessionParams
-): Promise<StorePaymentSetupSession> {
+): Promise<PaymentSetupSession> {
   return withAuthRefresh(async (options) => {
-    return getClient().store.customer.paymentSetupSessions.complete(id, params, options);
+    return getClient().customer.paymentSetupSessions.complete(id, params, options);
   });
 }

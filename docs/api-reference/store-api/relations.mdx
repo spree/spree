@@ -14,7 +14,7 @@ Pass a comma-separated list of relation names via the `expand` query parameter:
 
 ```typescript SDK
 // Product with variants and images
-const product = await client.store.products.get('spree-tote', {
+const product = await client.products.get('spree-tote', {
   expand: ['variants', 'images'],
 })
 
@@ -90,7 +90,7 @@ With `?expand=variants,images`, the related resources are embedded:
 <CodeGroup>
 
 ```typescript SDK
-const product = await client.store.products.get('spree-tote', {
+const product = await client.products.get('spree-tote', {
   expand: ['variants', 'images', 'option_types', 'metafields'],
 })
 ```
@@ -114,7 +114,7 @@ curl -G 'http://localhost:3000/api/v3/store/products/spree-tote' \
 <CodeGroup>
 
 ```typescript SDK
-const taxon = await client.store.taxons.get('categories/clothing', {
+const taxon = await client.taxons.get('categories/clothing', {
   expand: ['ancestors', 'children'],
 })
 ```
@@ -143,7 +143,7 @@ curl -G 'http://localhost:3000/api/v3/store/taxons/categories/clothing' \
 <CodeGroup>
 
 ```typescript SDK
-const usa = await client.store.countries.get('US', {
+const usa = await client.countries.get('US', {
   expand: ['states'],
 })
 console.log(usa.states) // Array of state objects
@@ -165,7 +165,7 @@ The `expand` parameter also works on collection endpoints:
 
 ```typescript SDK
 // List products with their images and default variant
-const { data: products } = await client.store.products.list({
+const { data: products } = await client.products.list({
   expand: ['images', 'default_variant'],
   limit: 12,
 })
@@ -188,7 +188,7 @@ Use dot notation to include nested relations:
 
 ```typescript SDK
 // Include variants and their nested option values
-const product = await client.store.products.get('spree-tote', {
+const product = await client.products.get('spree-tote', {
   expand: ['variants.option_values'],
 })
 ```

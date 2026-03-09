@@ -1,15 +1,15 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { createTestClient } from './helpers';
-import type { SpreeClient } from '../src';
+import type { Client } from '../src';
 
 describe('paymentSessions', () => {
-  let client: SpreeClient;
+  let client: Client;
   beforeAll(() => { client = createTestClient(); });
   const opts = { token: 'user-jwt' };
 
   describe('create', () => {
     it('creates a payment session', async () => {
-      const result = await client.store.orders.paymentSessions.create(
+      const result = await client.orders.paymentSessions.create(
         'order_1',
         { payment_method_id: 'pm_1' },
         opts
@@ -22,7 +22,7 @@ describe('paymentSessions', () => {
     });
 
     it('accepts optional amount and external_data', async () => {
-      const result = await client.store.orders.paymentSessions.create(
+      const result = await client.orders.paymentSessions.create(
         'order_1',
         { payment_method_id: 'pm_1', amount: '50.00', external_data: { channel: 'Web' } },
         opts
@@ -33,7 +33,7 @@ describe('paymentSessions', () => {
 
   describe('get', () => {
     it('returns a payment session by ID', async () => {
-      const result = await client.store.orders.paymentSessions.get(
+      const result = await client.orders.paymentSessions.get(
         'order_1',
         'ps_1',
         opts
@@ -48,7 +48,7 @@ describe('paymentSessions', () => {
 
   describe('update', () => {
     it('updates a payment session', async () => {
-      const result = await client.store.orders.paymentSessions.update(
+      const result = await client.orders.paymentSessions.update(
         'order_1',
         'ps_1',
         { amount: '50.00' },
@@ -61,7 +61,7 @@ describe('paymentSessions', () => {
 
   describe('complete', () => {
     it('completes a payment session', async () => {
-      const result = await client.store.orders.paymentSessions.complete(
+      const result = await client.orders.paymentSessions.complete(
         'order_1',
         'ps_1',
         { session_result: 'success' },
@@ -72,7 +72,7 @@ describe('paymentSessions', () => {
     });
 
     it('completes without params', async () => {
-      const result = await client.store.orders.paymentSessions.complete(
+      const result = await client.orders.paymentSessions.complete(
         'order_1',
         'ps_1',
         undefined,

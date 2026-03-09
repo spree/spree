@@ -17,7 +17,7 @@ You can attach metadata when creating a cart:
 <CodeGroup>
 
 ```typescript SDK
-const cart = await client.store.cart.create({
+const cart = await client.cart.create({
   metadata: {
     utm_source: 'google',
     utm_campaign: 'summer_sale',
@@ -48,7 +48,7 @@ Update metadata on an existing order:
 <CodeGroup>
 
 ```typescript SDK
-await client.store.orders.update(cart.id, {
+await client.orders.update(cart.id, {
   metadata: {
     gift_message: 'Happy Birthday!',
     preferred_delivery: 'morning',
@@ -80,7 +80,7 @@ Attach metadata to individual line items when adding or updating them:
 <CodeGroup>
 
 ```typescript SDK
-await client.store.orders.lineItems.create(cart.id, {
+await client.orders.lineItems.create(cart.id, {
   variant_id: 'variant_abc123',
   quantity: 1,
   metadata: {
@@ -114,7 +114,7 @@ Updating metadata **merges** with existing values rather than replacing them:
 <CodeGroup>
 
 ```typescript SDK
-await client.store.orders.lineItems.update(cart.id, 'li_xyz789', {
+await client.orders.lineItems.update(cart.id, 'li_xyz789', {
   metadata: {
     personalization: 'Jane', // Updates existing key
     engraving: 'With Love',  // Adds new key

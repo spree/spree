@@ -218,7 +218,7 @@ The `@spree/sdk` package throws a `SpreeError` for all non-2xx responses:
 import { SpreeError } from '@spree/sdk';
 
 try {
-  const product = await client.store.products.get('nonexistent');
+  const product = await client.products.get('nonexistent');
 } catch (error) {
   if (error instanceof SpreeError) {
     console.log(error.code);    // 'record_not_found'
@@ -235,7 +235,7 @@ Handle specific error codes:
 
 ```typescript
 try {
-  await client.store.orders.lineItems.create(orderId, {
+  await client.orders.lineItems.create(orderId, {
     variant_id: variantId,
     quantity: 1,
   });
@@ -263,7 +263,7 @@ Display validation errors per field:
 
 ```typescript
 try {
-  await client.store.customer.addresses.create(addressData);
+  await client.customer.addresses.create(addressData);
 } catch (error) {
   if (error instanceof SpreeError && error.details) {
     // error.details = { city: ["can't be blank"], zipcode: ["is invalid"] }

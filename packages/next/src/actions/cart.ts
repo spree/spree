@@ -1,20 +1,20 @@
 'use server';
 
 import { revalidateTag } from 'next/cache';
-import type { StoreOrder, CreateCartParams } from '@spree/sdk';
+import type { Order, CreateCartParams } from '@spree/sdk';
 import { getClient } from '../config';
 import { getCartToken, setCartToken, clearCartToken, getAccessToken } from '../cookies';
 
 /**
  * Get the current cart. Returns null if no cart exists.
  */
-export async function getCart(): Promise<(StoreOrder & { token: string }) | null> {
+export async function getCart(): Promise<(Order & { token: string }) | null> {
   const orderToken = await getCartToken();
   const token = await getAccessToken();
   if (!orderToken && !token) return null;
 
   try {
-    return await getClient().store.cart.get({ orderToken, token });
+    return await getClient().cart.get({ orderToken, token });
   } catch {
     // Cart not found (e.g., order was completed) — clear stale token
     if (orderToken) {
@@ -30,13 +30,13 @@ export async function getCart(): Promise<(StoreOrder & { token: string }) | null
  */
 export async function getOrCreateCart(
   params?: CreateCartParams
-): Promise<StoreOrder & { token: string }> {
+): Promise<Order & { token: string }> {
   const existing = await getCart();
   if (existing) return existing;
 
   const token = await getAccessToken();
   const cartParams = params && Object.keys(params).length > 0 ? params : undefined;
-  const cart = await getClient().store.cart.create(cartParams, token ? { token } : undefined);
+  const cart = await getClient().cart.create(cartParams, token ? { token } : undefined);
 
   if (cart.token) {
     await setCartToken(cart.token);
@@ -54,12 +54,12 @@ export async function addItem(
   variantId: string,
   quantity: number = 1,
   metadata?: Record<string, unknown>
-): Promise<StoreOrder> {
+): Promise<Order> {
   const cart = await getOrCreateCart();
   const orderToken = cart.token;
   const token = await getAccessToken();
 
-  const order = await getClient().store.orders.lineItems.create(
+  const order = await getClient().orders.lineItems.create(
     cart.id,
     { variant_id: variantId, quantity, metadata },
     { orderToken, token }
@@ -86,14 +86,14 @@ export async function addItem(
 export async function updateItem(
   lineItemId: string,
   params: { quantity?: number; metadata?: Record<string, unknown> }
-): Promise<StoreOrder> {
+): Promise<Order> {
   const orderToken = await getCartToken();
   const token = await getAccessToken();
   if (!orderToken && !token) throw new Error('No cart found');
 
-  const cart = await getClient().store.cart.get({ orderToken, token });
+  const cart = await getClient().cart.get({ orderToken, token });
 
-  const order = await getClient().store.orders.lineItems.update(
+  const order = await getClient().orders.lineItems.update(
     cart.id,
     lineItemId,
     params,
@@ -108,14 +108,14 @@ export async function updateItem(
  * Remove a line item from the cart.
  * Returns the updated order with recalculated totals.
  */
-export async function removeItem(lineItemId: string): Promise<StoreOrder> {
+export async function removeItem(lineItemId: string): Promise<Order> {
   const orderToken = await getCartToken();
   const token = await getAccessToken();
   if (!orderToken && !token) throw new Error('No cart found');
 
-  const cart = await getClient().store.cart.get({ orderToken, token });
+  const cart = await getClient().cart.get({ orderToken, token });
 
-  const order = await getClient().store.orders.lineItems.delete(cart.id, lineItemId, {
+  const order = await getClient().orders.lineItems.delete(cart.id, lineItemId, {
     orderToken,
     token,
   });
@@ -136,13 +136,13 @@ export async function clearCart(): Promise<void> {
  * Associate a guest cart with the currently authenticated user.
  * Call this after login/register when the user has an existing guest cart.
  */
-export async function associateCart(): Promise<(StoreOrder & { token: string }) | null> {
+export async function associateCart(): Promise<(Order & { token: string }) | null> {
   const orderToken = await getCartToken();
   const token = await getAccessToken();
   if (!orderToken || !token) return null;
 
   try {
-    const result = await getClient().store.cart.associate({ orderToken, token });
+    const result = await getClient().cart.associate({ orderToken, token });
     revalidateTag('cart');
     return result;
   } catch {

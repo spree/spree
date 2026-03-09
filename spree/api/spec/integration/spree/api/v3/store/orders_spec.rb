@@ -16,7 +16,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
       description 'Returns a single order by ID or number. Guests must provide the x-spree-order-token header.'
 
       sdk_example <<~JS
-        const order = await client.store.orders.get('or_abc123', {
+        const order = await client.orders.get('or_abc123', {
           expand: 'line_items,shipments',
         }, {
           bearerToken: '<token>',
@@ -91,7 +91,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
       description 'Updates order attributes like email, special instructions, or addresses'
 
       sdk_example <<~JS
-        const order = await client.store.orders.update('or_abc123', {
+        const order = await client.orders.update('or_abc123', {
           email: 'customer@example.com',
           special_instructions: 'Leave at door',
           line_items: [
@@ -244,7 +244,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
       description 'Advances the order to the next state in the checkout flow'
 
       sdk_example <<~JS
-        const order = await client.store.orders.next('or_abc123', {
+        const order = await client.orders.next('or_abc123', {
           bearerToken: '<token>',
         })
       JS
@@ -288,7 +288,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
       description 'Advances the order through all possible checkout states'
 
       sdk_example <<~JS
-        const order = await client.store.orders.advance('or_abc123', {
+        const order = await client.orders.advance('or_abc123', {
           bearerToken: '<token>',
         })
       JS
@@ -321,7 +321,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
       description 'Completes the order (finalizes the purchase)'
 
       sdk_example <<~JS
-        const order = await client.store.orders.complete('or_abc123', {
+        const order = await client.orders.complete('or_abc123', {
           bearerToken: '<token>',
         })
       JS

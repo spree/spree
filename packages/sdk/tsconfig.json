@@ -15,7 +15,6 @@
     "rootDir": "./src",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
       "@/types": ["./src/types/generated/index.ts"]
     },
     "resolveJsonModule": true,

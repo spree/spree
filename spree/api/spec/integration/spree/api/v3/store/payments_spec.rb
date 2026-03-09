@@ -22,7 +22,7 @@ RSpec.describe 'Payments API', type: :request, swagger_doc: 'api-reference/store
       description 'Returns a list of payments for the specified order'
 
       sdk_example <<~JS
-        const payments = await client.store.orders.payments.list('or_abc123', {
+        const payments = await client.orders.payments.list('or_abc123', {
           bearerToken: '<token>',
         })
       JS
@@ -71,7 +71,7 @@ RSpec.describe 'Payments API', type: :request, swagger_doc: 'api-reference/store
       description 'Returns a single payment by ID'
 
       sdk_example <<~JS
-        const payment = await client.store.orders.payments.get('or_abc123', 'pay_abc123', {
+        const payment = await client.orders.payments.get('or_abc123', 'pay_abc123', {
           bearerToken: '<token>',
         })
       JS

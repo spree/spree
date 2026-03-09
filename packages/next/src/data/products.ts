@@ -1,4 +1,4 @@
-import type { StoreProduct, PaginatedResponse, ProductFiltersResponse, ProductListParams } from '@spree/sdk';
+import type { Product, PaginatedResponse, ProductFiltersResponse, ProductListParams } from '@spree/sdk';
 import { getClient } from '../config';
 import { getLocaleOptions } from '../locale';
 import type { SpreeNextOptions } from '../types';
@@ -10,9 +10,9 @@ import type { SpreeNextOptions } from '../types';
 export async function listProducts(
   params?: ProductListParams,
   options?: SpreeNextOptions
-): Promise<PaginatedResponse<StoreProduct>> {
+): Promise<PaginatedResponse<Product>> {
   const resolved = options ?? await getLocaleOptions();
-  return getClient().store.products.list(params, resolved);
+  return getClient().products.list(params, resolved);
 }
 
 /**
@@ -23,9 +23,9 @@ export async function getProduct(
   slugOrId: string,
   params?: { expand?: string[] },
   options?: SpreeNextOptions
-): Promise<StoreProduct> {
+): Promise<Product> {
   const resolved = options ?? await getLocaleOptions();
-  return getClient().store.products.get(slugOrId, params, resolved);
+  return getClient().products.get(slugOrId, params, resolved);
 }
 
 /**
@@ -37,5 +37,5 @@ export async function getProductFilters(
   options?: SpreeNextOptions
 ): Promise<ProductFiltersResponse> {
   const resolved = options ?? await getLocaleOptions();
-  return getClient().store.products.filters(params, resolved);
+  return getClient().products.filters(params, resolved);
 }

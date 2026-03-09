@@ -1,23 +1,23 @@
 'use server';
 
-import type { StoreGiftCard } from '@spree/sdk';
+import type { GiftCard } from '@spree/sdk';
 import { withAuthRefresh } from '../auth-helpers';
 import { getClient } from '../config';
 
 /**
  * List the authenticated customer's gift cards.
  */
-export async function listGiftCards(): Promise<{ data: StoreGiftCard[] }> {
+export async function listGiftCards(): Promise<{ data: GiftCard[] }> {
   return withAuthRefresh(async (options) => {
-    return getClient().store.customer.giftCards.list(undefined, options);
+    return getClient().customer.giftCards.list(undefined, options);
   });
 }
 
 /**
  * Get a single gift card by ID.
  */
-export async function getGiftCard(id: string): Promise<StoreGiftCard> {
+export async function getGiftCard(id: string): Promise<GiftCard> {
   return withAuthRefresh(async (options) => {
-    return getClient().store.customer.giftCards.get(id, options);
+    return getClient().customer.giftCards.get(id, options);
   });
 }

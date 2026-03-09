@@ -32,7 +32,7 @@ Content-Type: application/json
 
 ```typescript
 // @spree/sdk
-const cart = await client.store.cart.create({
+const cart = await client.cart.create({
   metadata: { source: 'mobile_app', campaign: 'summer_sale' }
 })
 
@@ -59,7 +59,7 @@ Content-Type: application/json
 ```
 
 ```typescript
-const order = await client.store.orders.lineItems.create(orderId, {
+const order = await client.orders.lineItems.create(orderId, {
   variant_id: 'variant_k5nR8xLq',
   quantity: 1,
   metadata: { gift_note: 'Happy Birthday!' },
@@ -86,12 +86,12 @@ You can update metadata without changing quantity, or update both at once:
 
 ```typescript
 // Metadata only
-await client.store.orders.lineItems.update(orderId, lineItemId, {
+await client.orders.lineItems.update(orderId, lineItemId, {
   metadata: { engraving: 'A.B.' },
 })
 
 // Both quantity and metadata
-await client.store.orders.lineItems.update(orderId, lineItemId, {
+await client.orders.lineItems.update(orderId, lineItemId, {
   quantity: 3,
   metadata: { gift_note: 'Happy Birthday!' },
 })
@@ -112,7 +112,7 @@ Content-Type: application/json
 ```
 
 ```typescript
-await client.store.orders.update(orderId, {
+await client.orders.update(orderId, {
   metadata: { utm_source: 'google' },
 }, { orderToken })
 ```

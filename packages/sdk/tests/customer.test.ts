@@ -1,22 +1,22 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { createTestClient } from './helpers';
-import type { SpreeClient } from '../src';
+import type { Client } from '../src';
 
 describe('customer', () => {
-  let client: SpreeClient;
+  let client: Client;
   beforeAll(() => { client = createTestClient(); });
   const opts = { token: 'user-jwt' };
 
   describe('get', () => {
     it('returns customer profile', async () => {
-      const result = await client.store.customer.get(opts);
+      const result = await client.customer.get(opts);
       expect(result.email).toBe('test@example.com');
     });
   });
 
   describe('update', () => {
     it('updates customer profile', async () => {
-      const result = await client.store.customer.update(
+      const result = await client.customer.update(
         { first_name: 'Updated' },
         opts
       );
@@ -26,17 +26,17 @@ describe('customer', () => {
 
   describe('addresses', () => {
     it('lists addresses', async () => {
-      const result = await client.store.customer.addresses.list(undefined, opts);
+      const result = await client.customer.addresses.list(undefined, opts);
       expect(result.data).toHaveLength(1);
     });
 
     it('gets an address by ID', async () => {
-      const result = await client.store.customer.addresses.get('addr_1', opts);
+      const result = await client.customer.addresses.get('addr_1', opts);
       expect(result.city).toBe('New York');
     });
 
     it('creates an address', async () => {
-      const result = await client.store.customer.addresses.create(
+      const result = await client.customer.addresses.create(
         {
           firstname: 'Test',
           lastname: 'User',
@@ -51,7 +51,7 @@ describe('customer', () => {
     });
 
     it('updates an address', async () => {
-      const result = await client.store.customer.addresses.update(
+      const result = await client.customer.addresses.update(
         'addr_1',
         { city: 'Updated City' },
         opts
@@ -61,32 +61,32 @@ describe('customer', () => {
 
     it('deletes an address', async () => {
       await expect(
-        client.store.customer.addresses.delete('addr_1', opts)
+        client.customer.addresses.delete('addr_1', opts)
       ).resolves.toBeUndefined();
     });
   });
 
   describe('creditCards', () => {
     it('lists credit cards', async () => {
-      const result = await client.store.customer.creditCards.list(undefined, opts);
+      const result = await client.customer.creditCards.list(undefined, opts);
       expect(result.data).toBeDefined();
     });
 
     it('gets a credit card', async () => {
-      const result = await client.store.customer.creditCards.get('cc_1', opts);
+      const result = await client.customer.creditCards.get('cc_1', opts);
       expect(result).toBeDefined();
     });
 
     it('deletes a credit card', async () => {
       await expect(
-        client.store.customer.creditCards.delete('cc_1', opts)
+        client.customer.creditCards.delete('cc_1', opts)
       ).resolves.toBeUndefined();
     });
   });
 
   describe('orders', () => {
     it('lists customer orders', async () => {
-      const result = await client.store.customer.orders.list(undefined, opts);
+      const result = await client.customer.orders.list(undefined, opts);
       expect(result.data).toHaveLength(1);
       expect(result.meta.page).toBe(1);
     });
@@ -94,12 +94,12 @@ describe('customer', () => {
 
   describe('giftCards', () => {
     it('lists gift cards', async () => {
-      const result = await client.store.customer.giftCards.list(undefined, opts);
+      const result = await client.customer.giftCards.list(undefined, opts);
       expect(result.data).toBeDefined();
     });
 
     it('gets a gift card', async () => {
-      const result = await client.store.customer.giftCards.get('gc_1', opts);
+      const result = await client.customer.giftCards.get('gc_1', opts);
       expect(result).toBeDefined();
     });
   });

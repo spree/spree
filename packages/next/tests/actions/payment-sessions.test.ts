@@ -3,20 +3,18 @@ import { mockCookieStore } from '../setup';
 import { initSpreeNext, resetClient } from '../../src/config';
 
 const mockClient = {
-  store: {
-    orders: {
-      paymentSessions: {
-        create: vi.fn(),
-        get: vi.fn(),
-        update: vi.fn(),
-        complete: vi.fn(),
-      },
+  orders: {
+    paymentSessions: {
+      create: vi.fn(),
+      get: vi.fn(),
+      update: vi.fn(),
+      complete: vi.fn(),
     },
   },
 };
 
 vi.mock('@spree/sdk', () => ({
-  createSpreeClient: vi.fn(() => mockClient),
+  createClient: vi.fn(() => mockClient),
 }));
 
 import {
@@ -40,11 +38,11 @@ describe('payment session actions', () => {
   describe('createPaymentSession', () => {
     it('creates a payment session and revalidates checkout', async () => {
       const mockSession = { id: 'ps_1', status: 'pending', payment_method_id: 'pm_1' };
-      mockClient.store.orders.paymentSessions.create.mockResolvedValue(mockSession);
+      mockClient.orders.paymentSessions.create.mockResolvedValue(mockSession);
 
       const result = await createPaymentSession('order_1', { payment_method_id: 'pm_1' });
       expect(result).toEqual(mockSession);
-      expect(mockClient.store.orders.paymentSessions.create).toHaveBeenCalledWith(
+      expect(mockClient.orders.paymentSessions.create).toHaveBeenCalledWith(
         'order_1',
         { payment_method_id: 'pm_1' },
         { orderToken: 'order_token_123', token: 'jwt_token_abc' }
@@ -56,11 +54,11 @@ describe('payment session actions', () => {
   describe('getPaymentSession', () => {
     it('returns a payment session by ID', async () => {
       const mockSession = { id: 'ps_1', status: 'pending', amount: '99.99' };
-      mockClient.store.orders.paymentSessions.get.mockResolvedValue(mockSession);
+      mockClient.orders.paymentSessions.get.mockResolvedValue(mockSession);
 
       const result = await getPaymentSession('order_1', 'ps_1');
       expect(result).toEqual(mockSession);
-      expect(mockClient.store.orders.paymentSessions.get).toHaveBeenCalledWith(
+      expect(mockClient.orders.paymentSessions.get).toHaveBeenCalledWith(
         'order_1',
         'ps_1',
         { orderToken: 'order_token_123', token: 'jwt_token_abc' }
@@ -71,11 +69,11 @@ describe('payment session actions', () => {
   describe('updatePaymentSession', () => {
     it('updates a payment session and revalidates checkout', async () => {
       const mockSession = { id: 'ps_1', status: 'pending', amount: '50.00' };
-      mockClient.store.orders.paymentSessions.update.mockResolvedValue(mockSession);
+      mockClient.orders.paymentSessions.update.mockResolvedValue(mockSession);
 
       const result = await updatePaymentSession('order_1', 'ps_1', { amount: '50.00' });
       expect(result).toEqual(mockSession);
-      expect(mockClient.store.orders.paymentSessions.update).toHaveBeenCalledWith(
+      expect(mockClient.orders.paymentSessions.update).toHaveBeenCalledWith(
         'order_1',
         'ps_1',
         { amount: '50.00' },
@@ -88,11 +86,11 @@ describe('payment session actions', () => {
   describe('completePaymentSession', () => {
     it('completes a payment session and revalidates checkout', async () => {
       const mockSession = { id: 'ps_1', status: 'completed' };
-      mockClient.store.orders.paymentSessions.complete.mockResolvedValue(mockSession);
+      mockClient.orders.paymentSessions.complete.mockResolvedValue(mockSession);
 
       const result = await completePaymentSession('order_1', 'ps_1', { session_result: 'success' });
       expect(result).toEqual(mockSession);
-      expect(mockClient.store.orders.paymentSessions.complete).toHaveBeenCalledWith(
+      expect(mockClient.orders.paymentSessions.complete).toHaveBeenCalledWith(
         'order_1',
         'ps_1',
         { session_result: 'success' },
@@ -103,11 +101,11 @@ describe('payment session actions', () => {
 
     it('completes without params', async () => {
       const mockSession = { id: 'ps_1', status: 'completed' };
-      mockClient.store.orders.paymentSessions.complete.mockResolvedValue(mockSession);
+      mockClient.orders.paymentSessions.complete.mockResolvedValue(mockSession);
 
       const result = await completePaymentSession('order_1', 'ps_1');
       expect(result).toEqual(mockSession);
-      expect(mockClient.store.orders.paymentSessions.complete).toHaveBeenCalledWith(
+      expect(mockClient.orders.paymentSessions.complete).toHaveBeenCalledWith(
         'order_1',
         'ps_1',
         undefined,

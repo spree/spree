@@ -9,10 +9,10 @@ description: Manage customer profiles, addresses, and credit cards with the Spre
 const options = { token: jwtToken };
 
 // Get profile
-const profile = await client.store.customer.get(options);
+const profile = await client.customer.get(options);
 
 // Update profile
-await client.store.customer.update({
+await client.customer.update({
   first_name: 'John',
   last_name: 'Doe',
 }, options);
@@ -24,13 +24,13 @@ await client.store.customer.update({
 const options = { token: jwtToken };
 
 // List addresses
-const { data: addresses } = await client.store.customer.addresses.list({}, options);
+const { data: addresses } = await client.customer.addresses.list({}, options);
 
 // Get address by ID
-const address = await client.store.customer.addresses.get('addr_xxx', options);
+const address = await client.customer.addresses.get('addr_xxx', options);
 
 // Create address
-await client.store.customer.addresses.create({
+await client.customer.addresses.create({
   firstname: 'John',
   lastname: 'Doe',
   address1: '123 Main St',
@@ -41,14 +41,14 @@ await client.store.customer.addresses.create({
 }, options);
 
 // Update address
-await client.store.customer.addresses.update('addr_xxx', { city: 'Brooklyn' }, options);
+await client.customer.addresses.update('addr_xxx', { city: 'Brooklyn' }, options);
 
 // Delete address
-await client.store.customer.addresses.delete('addr_xxx', options);
+await client.customer.addresses.delete('addr_xxx', options);
 
 // Mark as default billing or shipping address
-await client.store.customer.addresses.markAsDefault('addr_xxx', 'billing', options);
-await client.store.customer.addresses.markAsDefault('addr_xxx', 'shipping', options);
+await client.customer.addresses.markAsDefault('addr_xxx', 'billing', options);
+await client.customer.addresses.markAsDefault('addr_xxx', 'shipping', options);
 ```
 
 ## Credit Cards
@@ -57,11 +57,11 @@ await client.store.customer.addresses.markAsDefault('addr_xxx', 'shipping', opti
 const options = { token: jwtToken };
 
 // List saved credit cards
-const { data: cards } = await client.store.customer.creditCards.list({}, options);
+const { data: cards } = await client.customer.creditCards.list({}, options);
 
 // Get credit card by ID
-const card = await client.store.customer.creditCards.get('cc_xxx', options);
+const card = await client.customer.creditCards.get('cc_xxx', options);
 
 // Delete credit card
-await client.store.customer.creditCards.delete('cc_xxx', options);
+await client.customer.creditCards.delete('cc_xxx', options);
 ```

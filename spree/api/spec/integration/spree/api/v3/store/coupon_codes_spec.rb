@@ -19,7 +19,7 @@ RSpec.describe 'Coupon Codes API', type: :request, swagger_doc: 'api-reference/s
       DESC
 
       sdk_example <<~JS
-        const order = await client.store.orders.couponCodes.apply('or_abc123', 'SAVE10', {
+        const order = await client.orders.couponCodes.apply('or_abc123', 'SAVE10', {
           bearerToken: '<token>',
         })
       JS
@@ -106,7 +106,7 @@ RSpec.describe 'Coupon Codes API', type: :request, swagger_doc: 'api-reference/s
       description 'Removes a previously applied coupon code from the order.'
 
       sdk_example <<~JS
-        const order = await client.store.orders.couponCodes.remove('or_abc123', 'op_abc123', {
+        const order = await client.orders.couponCodes.remove('or_abc123', 'op_abc123', {
           bearerToken: '<token>',
         })
       JS

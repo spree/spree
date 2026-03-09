@@ -18,7 +18,7 @@ RSpec.describe 'Payment Methods API', type: :request, swagger_doc: 'api-referenc
       description 'Returns payment methods available for the order based on store configuration and order state'
 
       sdk_example <<~JS
-        const methods = await client.store.orders.paymentMethods.list('or_abc123', {
+        const methods = await client.orders.paymentMethods.list('or_abc123', {
           bearerToken: '<token>',
         })
       JS

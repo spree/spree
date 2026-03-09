@@ -1,4 +1,4 @@
-import type { StoreTaxon, StoreProduct, PaginatedResponse, TaxonListParams, ProductListParams } from '@spree/sdk';
+import type { Taxon, Product, PaginatedResponse, TaxonListParams, ProductListParams } from '@spree/sdk';
 import { getClient } from '../config';
 import { getLocaleOptions } from '../locale';
 import type { SpreeNextOptions } from '../types';
@@ -10,9 +10,9 @@ import type { SpreeNextOptions } from '../types';
 export async function listTaxons(
   params?: TaxonListParams,
   options?: SpreeNextOptions
-): Promise<PaginatedResponse<StoreTaxon>> {
+): Promise<PaginatedResponse<Taxon>> {
   const resolved = options ?? await getLocaleOptions();
-  return getClient().store.taxons.list(params, resolved);
+  return getClient().taxons.list(params, resolved);
 }
 
 /**
@@ -23,9 +23,9 @@ export async function getTaxon(
   idOrPermalink: string,
   params?: Record<string, unknown>,
   options?: SpreeNextOptions
-): Promise<StoreTaxon> {
+): Promise<Taxon> {
   const resolved = options ?? await getLocaleOptions();
-  return getClient().store.taxons.get(idOrPermalink, params, resolved);
+  return getClient().taxons.get(idOrPermalink, params, resolved);
 }
 
 /**
@@ -36,7 +36,7 @@ export async function listTaxonProducts(
   taxonId: string,
   params?: ProductListParams,
   options?: SpreeNextOptions
-): Promise<PaginatedResponse<StoreProduct>> {
+): Promise<PaginatedResponse<Product>> {
   const resolved = options ?? await getLocaleOptions();
-  return getClient().store.taxons.products.list(taxonId, params, resolved);
+  return getClient().taxons.products.list(taxonId, params, resolved);
 }

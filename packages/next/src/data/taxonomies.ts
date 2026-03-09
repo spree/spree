@@ -1,4 +1,4 @@
-import type { StoreTaxonomy, PaginatedResponse } from '@spree/sdk';
+import type { Taxonomy, PaginatedResponse } from '@spree/sdk';
 import { getClient } from '../config';
 import { getLocaleOptions } from '../locale';
 import type { SpreeNextOptions } from '../types';
@@ -10,9 +10,9 @@ import type { SpreeNextOptions } from '../types';
 export async function listTaxonomies(
   params?: Record<string, unknown>,
   options?: SpreeNextOptions
-): Promise<PaginatedResponse<StoreTaxonomy>> {
+): Promise<PaginatedResponse<Taxonomy>> {
   const resolved = options ?? await getLocaleOptions();
-  return getClient().store.taxonomies.list(params, resolved);
+  return getClient().taxonomies.list(params, resolved);
 }
 
 /**
@@ -23,7 +23,7 @@ export async function getTaxonomy(
   id: string,
   params?: Record<string, unknown>,
   options?: SpreeNextOptions
-): Promise<StoreTaxonomy> {
+): Promise<Taxonomy> {
   const resolved = options ?? await getLocaleOptions();
-  return getClient().store.taxonomies.get(id, params, resolved);
+  return getClient().taxonomies.get(id, params, resolved);
 }

@@ -16,7 +16,7 @@ RSpec.describe 'Authentication API', type: :request, swagger_doc: 'api-reference
       description 'Authenticates a customer with email/password and returns a JWT token'
 
       sdk_example <<~JS
-        const auth = await client.store.auth.login({
+        const auth = await client.auth.login({
           email: 'customer@example.com',
           password: 'password123',
         })
@@ -85,7 +85,7 @@ RSpec.describe 'Authentication API', type: :request, swagger_doc: 'api-reference
       description 'Creates a new customer account and returns a JWT token'
 
       sdk_example <<~JS
-        const auth = await client.store.auth.register({
+        const auth = await client.auth.register({
           email: 'newuser@example.com',
           password: 'password123',
           first_name: 'John',
@@ -158,7 +158,7 @@ RSpec.describe 'Authentication API', type: :request, swagger_doc: 'api-reference
       description 'Generates a new JWT token for the authenticated user'
 
       sdk_example <<~JS
-        const auth = await client.store.auth.refresh({
+        const auth = await client.auth.refresh({
           bearerToken: '<token>',
         })
       JS

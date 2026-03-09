@@ -3,10 +3,8 @@ import { mockCookieStore } from './setup';
 import { initSpreeNext, resetClient } from '../src/config';
 
 const mockClient = {
-  store: {
-    auth: {
-      refresh: vi.fn(),
-    },
+  auth: {
+    refresh: vi.fn(),
   },
 };
 
@@ -19,7 +17,7 @@ vi.mock('@spree/sdk', () => {
     }
   }
   return {
-    createSpreeClient: vi.fn(() => mockClient),
+    createClient: vi.fn(() => mockClient),
     SpreeError,
   };
 });
@@ -54,7 +52,7 @@ describe('auth-helpers', () => {
 
       const options = await getAuthOptions();
       expect(options).toEqual({ token: jwt });
-      expect(mockClient.store.auth.refresh).not.toHaveBeenCalled();
+      expect(mockClient.auth.refresh).not.toHaveBeenCalled();
     });
 
     it('refreshes token when near expiry', async () => {
@@ -62,11 +60,11 @@ describe('auth-helpers', () => {
       const jwt = makeJwt(nearExp);
       const newJwt = 'refreshed_token';
       mockCookieStore.get.mockReturnValue({ value: jwt });
-      mockClient.store.auth.refresh.mockResolvedValue({ token: newJwt });
+      mockClient.auth.refresh.mockResolvedValue({ token: newJwt });
 
       const options = await getAuthOptions();
       expect(options).toEqual({ token: newJwt });
-      expect(mockClient.store.auth.refresh).toHaveBeenCalledWith({ token: jwt });
+      expect(mockClient.auth.refresh).toHaveBeenCalledWith({ token: jwt });
       expect(mockCookieStore.set).toHaveBeenCalledWith(
         '_spree_jwt',
         newJwt,
@@ -78,7 +76,7 @@ describe('auth-helpers', () => {
       const nearExp = Math.floor(Date.now() / 1000) + 1800;
       const jwt = makeJwt(nearExp);
       mockCookieStore.get.mockReturnValue({ value: jwt });
-      mockClient.store.auth.refresh.mockRejectedValue(new Error('Refresh failed'));
+      mockClient.auth.refresh.mockRejectedValue(new Error('Refresh failed'));
 
       const options = await getAuthOptions();
       expect(options).toEqual({ token: jwt });
@@ -90,7 +88,7 @@ describe('auth-helpers', () => {
 
       const options = await getAuthOptions();
       expect(options).toEqual({ token: malformedJwt });
-      expect(mockClient.store.auth.refresh).not.toHaveBeenCalled();
+      expect(mockClient.auth.refresh).not.toHaveBeenCalled();
     });
   });
 
@@ -124,7 +122,7 @@ describe('auth-helpers', () => {
       const fn = vi.fn()
         .mockRejectedValueOnce(error401)
         .mockResolvedValueOnce({ data: 'retried' });
-      mockClient.store.auth.refresh.mockResolvedValue({ token: newJwt });
+      mockClient.auth.refresh.mockResolvedValue({ token: newJwt });
 
       const result = await withAuthRefresh(fn);
       expect(result).toEqual({ data: 'retried' });
@@ -144,7 +142,7 @@ describe('auth-helpers', () => {
 
       const error401 = new SpreeError({ error: { message: 'Unauthorized' } } as any, 401);
       const fn = vi.fn().mockRejectedValue(error401);
-      mockClient.store.auth.refresh.mockRejectedValue(new Error('Refresh failed'));
+      mockClient.auth.refresh.mockRejectedValue(new Error('Refresh failed'));
 
       await expect(withAuthRefresh(fn)).rejects.toThrow('Unauthorized');
       // Token should be cleared
@@ -164,7 +162,7 @@ describe('auth-helpers', () => {
       const fn = vi.fn().mockRejectedValue(error500);
 
       await expect(withAuthRefresh(fn)).rejects.toThrow('Server error');
-      expect(mockClient.store.auth.refresh).not.toHaveBeenCalled();
+      expect(mockClient.auth.refresh).not.toHaveBeenCalled();
     });
   });
 });

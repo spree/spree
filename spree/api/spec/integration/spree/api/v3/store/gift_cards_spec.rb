@@ -15,7 +15,7 @@ RSpec.describe 'Gift Cards API', type: :request, swagger_doc: 'api-reference/sto
       description 'Returns all gift cards for the authenticated customer'
 
       sdk_example <<~JS
-        const giftCards = await client.store.customer.giftCards.list({}, {
+        const giftCards = await client.customer.giftCards.list({}, {
           bearerToken: '<token>',
         })
       JS
@@ -63,7 +63,7 @@ RSpec.describe 'Gift Cards API', type: :request, swagger_doc: 'api-reference/sto
       description 'Returns a gift card by its ID'
 
       sdk_example <<~JS
-        const giftCard = await client.store.customer.giftCards.get('gc_abc123', {
+        const giftCard = await client.customer.giftCards.get('gc_abc123', {
           bearerToken: '<token>',
         })
       JS

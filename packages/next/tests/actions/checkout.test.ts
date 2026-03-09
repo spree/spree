@@ -3,27 +3,25 @@ import { mockCookieStore } from '../setup';
 import { initSpreeNext, resetClient } from '../../src/config';
 
 const mockClient = {
-  store: {
-    orders: {
-      get: vi.fn(),
+  orders: {
+    get: vi.fn(),
+    update: vi.fn(),
+    advance: vi.fn(),
+    next: vi.fn(),
+    complete: vi.fn(),
+    shipments: {
+      list: vi.fn(),
       update: vi.fn(),
-      advance: vi.fn(),
-      next: vi.fn(),
-      complete: vi.fn(),
-      shipments: {
-        list: vi.fn(),
-        update: vi.fn(),
-      },
-      couponCodes: {
-        apply: vi.fn(),
-        remove: vi.fn(),
-      },
+    },
+    couponCodes: {
+      apply: vi.fn(),
+      remove: vi.fn(),
     },
   },
 };
 
 vi.mock('@spree/sdk', () => ({
-  createSpreeClient: vi.fn(() => mockClient),
+  createClient: vi.fn(() => mockClient),
 }));
 
 import {
@@ -53,11 +51,11 @@ describe('checkout actions', () => {
   describe('getCheckout', () => {
     it('fetches order with expand and auth options', async () => {
       const mockOrder = { id: '1', number: 'R123', line_items: [{ id: 'li1' }] };
-      mockClient.store.orders.get.mockResolvedValue(mockOrder);
+      mockClient.orders.get.mockResolvedValue(mockOrder);
 
       const result = await getCheckout('1');
       expect(result).toEqual(mockOrder);
-      expect(mockClient.store.orders.get).toHaveBeenCalledWith(
+      expect(mockClient.orders.get).toHaveBeenCalledWith(
         '1',
         { expand: ['line_items', 'shipments', 'ship_address', 'bill_address'] },
         { orderToken: 'order_token_123', token: 'jwt_token_abc' }
@@ -72,11 +70,11 @@ describe('checkout actions', () => {
         email: 'test@example.com',
         ship_address: { firstname: 'John', lastname: 'Doe', address1: '123 Main St', city: 'NY', zipcode: '10001', country_iso: 'US' },
       };
-      mockClient.store.orders.update.mockResolvedValue(mockOrder);
+      mockClient.orders.update.mockResolvedValue(mockOrder);
 
       const result = await updateOrder('1', params);
       expect(result).toEqual(mockOrder);
-      expect(mockClient.store.orders.update).toHaveBeenCalledWith(
+      expect(mockClient.orders.update).toHaveBeenCalledWith(
         '1',
         params,
         { orderToken: 'order_token_123', token: 'jwt_token_abc' }
@@ -88,11 +86,11 @@ describe('checkout actions', () => {
   describe('advance', () => {
     it('advances checkout and revalidates', async () => {
       const mockOrder = { id: '1', state: 'delivery' };
-      mockClient.store.orders.advance.mockResolvedValue(mockOrder);
+      mockClient.orders.advance.mockResolvedValue(mockOrder);
 
       const result = await advance('1');
       expect(result).toEqual(mockOrder);
-      expect(mockClient.store.orders.advance).toHaveBeenCalledWith(
+      expect(mockClient.orders.advance).toHaveBeenCalledWith(
         '1',
         { orderToken: 'order_token_123', token: 'jwt_token_abc' }
       );
@@ -103,11 +101,11 @@ describe('checkout actions', () => {
   describe('next', () => {
     it('moves checkout to next step and revalidates', async () => {
       const mockOrder = { id: '1', state: 'payment' };
-      mockClient.store.orders.next.mockResolvedValue(mockOrder);
+      mockClient.orders.next.mockResolvedValue(mockOrder);
 
       const result = await next('1');
       expect(result).toEqual(mockOrder);
-      expect(mockClient.store.orders.next).toHaveBeenCalledWith(
+      expect(mockClient.orders.next).toHaveBeenCalledWith(
         '1',
         { orderToken: 'order_token_123', token: 'jwt_token_abc' }
       );
@@ -118,11 +116,11 @@ describe('checkout actions', () => {
   describe('getShipments', () => {
     it('returns shipments for the order', async () => {
       const mockShipments = { data: [{ id: 's1', shipping_rates: [] }] };
-      mockClient.store.orders.shipments.list.mockResolvedValue(mockShipments);
+      mockClient.orders.shipments.list.mockResolvedValue(mockShipments);
 
       const result = await getShipments('1');
       expect(result).toEqual(mockShipments);
-      expect(mockClient.store.orders.shipments.list).toHaveBeenCalledWith(
+      expect(mockClient.orders.shipments.list).toHaveBeenCalledWith(
         '1',
         { orderToken: 'order_token_123', token: 'jwt_token_abc' }
       );
@@ -132,11 +130,11 @@ describe('checkout actions', () => {
   describe('selectShippingRate', () => {
     it('selects shipping rate and revalidates checkout', async () => {
       const mockOrder = { id: '1', number: 'R123', ship_total: '10.0' };
-      mockClient.store.orders.shipments.update.mockResolvedValue(mockOrder);
+      mockClient.orders.shipments.update.mockResolvedValue(mockOrder);
 
       const result = await selectShippingRate('1', 's1', 'sr1');
       expect(result).toEqual(mockOrder);
-      expect(mockClient.store.orders.shipments.update).toHaveBeenCalledWith(
+      expect(mockClient.orders.shipments.update).toHaveBeenCalledWith(
         '1',
         's1',
         { selected_shipping_rate_id: 'sr1' },
@@ -149,11 +147,11 @@ describe('checkout actions', () => {
   describe('applyCoupon', () => {
     it('applies coupon and revalidates checkout and cart', async () => {
       const mockOrder = { id: '1', promo_total: -10 };
-      mockClient.store.orders.couponCodes.apply.mockResolvedValue(mockOrder);
+      mockClient.orders.couponCodes.apply.mockResolvedValue(mockOrder);
 
       const result = await applyCoupon('1', 'SAVE10');
       expect(result).toEqual(mockOrder);
-      expect(mockClient.store.orders.couponCodes.apply).toHaveBeenCalledWith(
+      expect(mockClient.orders.couponCodes.apply).toHaveBeenCalledWith(
         '1',
         'SAVE10',
         { orderToken: 'order_token_123', token: 'jwt_token_abc' }
@@ -166,11 +164,11 @@ describe('checkout actions', () => {
   describe('removeCoupon', () => {
     it('removes coupon and revalidates checkout and cart', async () => {
       const mockOrder = { id: '1', promo_total: 0 };
-      mockClient.store.orders.couponCodes.remove.mockResolvedValue(mockOrder);
+      mockClient.orders.couponCodes.remove.mockResolvedValue(mockOrder);
 
       const result = await removeCoupon('1', 'promo_1');
       expect(result).toEqual(mockOrder);
-      expect(mockClient.store.orders.couponCodes.remove).toHaveBeenCalledWith(
+      expect(mockClient.orders.couponCodes.remove).toHaveBeenCalledWith(
         '1',
         'promo_1',
         { orderToken: 'order_token_123', token: 'jwt_token_abc' }
@@ -183,11 +181,11 @@ describe('checkout actions', () => {
   describe('complete', () => {
     it('completes checkout and revalidates checkout and cart', async () => {
       const mockOrder = { id: '1', state: 'complete' };
-      mockClient.store.orders.complete.mockResolvedValue(mockOrder);
+      mockClient.orders.complete.mockResolvedValue(mockOrder);
 
       const result = await complete('1');
       expect(result).toEqual(mockOrder);
-      expect(mockClient.store.orders.complete).toHaveBeenCalledWith(
+      expect(mockClient.orders.complete).toHaveBeenCalledWith(
         '1',
         { orderToken: 'order_token_123', token: 'jwt_token_abc' }
       );

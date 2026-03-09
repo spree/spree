@@ -1,7 +1,7 @@
 {
   "name": "@spree/sdk",
-  "version": "0.6.9",
-  "description": "Official TypeScript SDK for Spree Commerce API",
+  "version": "0.7.0",
+  "description": "Official TypeScript SDK for Spree Commerce Store API",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -76,6 +76,9 @@
   "homepage": "https://spreecommerce.org",
   "bugs": {
     "url": "https://github.com/spree/spree/issues"
+  },
+  "dependencies": {
+    "@spree/sdk-core": "workspace:*"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.5.2",

@@ -42,7 +42,7 @@ This convention applies to all monetary fields across all resources:
 <CodeGroup>
 
 ```typescript SDK
-const order = await client.store.orders.get('or_abc123', {}, { token });
+const order = await client.orders.get('or_abc123', {}, { token });
 
 // Raw string values
 order.total;         // "129.99"

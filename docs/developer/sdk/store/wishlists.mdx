@@ -9,26 +9,26 @@ description: Manage wishlists and wished items with the Spree SDK
 const options = { token: jwtToken };
 
 // List wishlists
-const { data: wishlists } = await client.store.wishlists.list({}, options);
+const { data: wishlists } = await client.wishlists.list({}, options);
 
 // Get wishlist by ID
-const wishlist = await client.store.wishlists.get('wl_xxx', {
+const wishlist = await client.wishlists.get('wl_xxx', {
   expand: ['wished_items'],
 }, options);
 
 // Create wishlist
-const newWishlist = await client.store.wishlists.create({
+const newWishlist = await client.wishlists.create({
   name: 'Birthday Ideas',
   is_private: true,
 }, options);
 
 // Update wishlist
-await client.store.wishlists.update('wl_xxx', {
+await client.wishlists.update('wl_xxx', {
   name: 'Updated Name',
 }, options);
 
 // Delete wishlist
-await client.store.wishlists.delete('wl_xxx', options);
+await client.wishlists.delete('wl_xxx', options);
 ```
 
 ## Wishlist Items
@@ -37,16 +37,16 @@ await client.store.wishlists.delete('wl_xxx', options);
 const options = { token: jwtToken };
 
 // Add item to wishlist
-await client.store.wishlists.items.create('wl_xxx', {
+await client.wishlists.items.create('wl_xxx', {
   variant_id: 'var_123',
   quantity: 1,
 }, options);
 
 // Update item quantity
-await client.store.wishlists.items.update('wl_xxx', 'wi_xxx', {
+await client.wishlists.items.update('wl_xxx', 'wi_xxx', {
   quantity: 2,
 }, options);
 
 // Remove item from wishlist
-await client.store.wishlists.items.delete('wl_xxx', 'wi_xxx', options);
+await client.wishlists.items.delete('wl_xxx', 'wi_xxx', options);
 ```

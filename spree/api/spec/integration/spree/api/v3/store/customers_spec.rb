@@ -13,7 +13,7 @@ RSpec.describe 'Customers API', type: :request, swagger_doc: 'api-reference/stor
       description 'Returns the profile of the currently authenticated customer'
 
       sdk_example <<~JS
-        const customer = await client.store.customer.get({
+        const customer = await client.customer.get({
           bearerToken: '<token>',
         })
       JS
@@ -63,7 +63,7 @@ RSpec.describe 'Customers API', type: :request, swagger_doc: 'api-reference/stor
       description 'Updates the profile of the currently authenticated customer'
 
       sdk_example <<~JS
-        const customer = await client.store.customer.update({
+        const customer = await client.customer.update({
           first_name: 'John',
           last_name: 'Doe',
         }, {

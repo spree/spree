@@ -18,10 +18,10 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
 
       sdk_example <<~JS
         // Create an empty cart
-        const cart = await client.store.cart.create()
+        const cart = await client.cart.create()
 
         // Create a cart with line items
-        const cartWithItems = await client.store.cart.create({
+        const cartWithItems = await client.cart.create({
           line_items: [
             { variant_id: 'variant_abc123', quantity: 2 },
           ],
@@ -172,12 +172,12 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
 
       sdk_example <<~JS
         // Authenticated customer
-        const cart = await client.store.cart.get({
+        const cart = await client.cart.get({
           bearerToken: '<token>',
         })
 
         // Guest with order token
-        const guestCart = await client.store.cart.get({
+        const guestCart = await client.cart.get({
           orderToken: 'ORDER_TOKEN',
         })
       JS
@@ -241,7 +241,7 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
       DESC
 
       sdk_example <<~JS
-        const cart = await client.store.cart.associate({
+        const cart = await client.cart.associate({
           bearerToken: '<token>',
           orderToken: 'GUEST_ORDER_TOKEN',
         })

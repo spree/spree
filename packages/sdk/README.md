@@ -25,30 +25,30 @@ const client = createSpreeClient({
 });
 
 // Browse products (Store API)
-const products = await client.store.products.list({
+const products = await client.products.list({
   limit: 10,
   expand: ['variants', 'images'],
 });
 
 // Get a single product
-const product = await client.store.products.get('spree-tote');
+const product = await client.products.get('spree-tote');
 
 // Authentication
-const { token, user } = await client.store.auth.login({
+const { token, user } = await client.auth.login({
   email: 'customer@example.com',
   password: 'password123',
 });
 
 // Create a cart and add items
-const cart = await client.store.cart.create();
-await client.store.orders.lineItems.create(cart.id, {
+const cart = await client.cart.create();
+await client.orders.lineItems.create(cart.id, {
   variant_id: 'var_abc123',
   quantity: 2,
 }, { orderToken: cart.token });
 
 // Checkout flow
-await client.store.orders.next(cart.id, { orderToken: cart.token });
-await client.store.orders.complete(cart.id, { orderToken: cart.token });
+await client.orders.next(cart.id, { orderToken: cart.token });
+await client.orders.complete(cart.id, { orderToken: cart.token });
 ```
 
 ## Client Architecture
@@ -60,7 +60,7 @@ client.store   // Store API — customer-facing (products, cart, checkout, accou
 client.admin   // Admin API — administrative (coming soon)
 ```
 
-All Store API endpoints live under `client.store.*`. The Admin API namespace is ready for future endpoints.
+All Store API endpoints live under `client.*`. The Admin API namespace is ready for future endpoints.
 
 ## Authentication
 
@@ -75,29 +75,29 @@ const client = createSpreeClient({
 });
 
 // Public endpoints work without user authentication
-const products = await client.store.products.list();
+const products = await client.products.list();
 ```
 
 ### 2. Publishable Key + JWT (Authenticated Customer)
 
 ```typescript
 // Login to get tokens
-const { token, user } = await client.store.auth.login({
+const { token, user } = await client.auth.login({
   email: 'customer@example.com',
   password: 'password123',
 });
 
 // Use token for authenticated requests
-const orders = await client.store.orders.list({}, { token });
+const orders = await client.orders.list({}, { token });
 
 // Refresh token when needed
-const newTokens = await client.store.auth.refresh({ token });
+const newTokens = await client.auth.refresh({ token });
 ```
 
 ### 3. Register New Customer
 
 ```typescript
-const { token, user } = await client.store.auth.register({
+const { token, user } = await client.auth.register({
   email: 'new@example.com',
   password: 'password123',
   password_confirmation: 'password123',
@@ -112,24 +112,24 @@ For guest checkout, use the `token` (or `order_token`) returned when creating a 
 
 ```typescript
 // Create a cart (guest)
-const cart = await client.store.cart.create();
+const cart = await client.cart.create();
 
 // Use orderToken for all cart operations
 const options = { orderToken: cart.token };
 
 // Add items
-await client.store.orders.lineItems.create(cart.id, {
+await client.orders.lineItems.create(cart.id, {
   variant_id: 'var_abc123',
   quantity: 1,
 }, options);
 
 // Update order with email
-await client.store.orders.update(cart.id, {
+await client.orders.update(cart.id, {
   email: 'guest@example.com',
 }, options);
 
 // Complete checkout
-await client.store.orders.complete(cart.id, options);
+await client.orders.complete(cart.id, options);
 ```
 
 ## API Reference
@@ -138,14 +138,14 @@ await client.store.orders.complete(cart.id, options);
 
 ```typescript
 // Get current store information
-const store = await client.store.store.get();
+const store = await client.store.get();
 ```
 
 ### Products
 
 ```typescript
 // List products with filtering
-const products = await client.store.products.list({
+const products = await client.products.list({
   page: 1,
   limit: 25,
   name_cont: 'shirt',
@@ -154,12 +154,12 @@ const products = await client.store.products.list({
 });
 
 // Get single product by ID or slug
-const product = await client.store.products.get('spree-tote', {
+const product = await client.products.get('spree-tote', {
   expand: ['variants', 'images'],
 });
 
 // Get available filters (price range, availability, options, taxons)
-const filters = await client.store.products.filters({
+const filters = await client.products.filters({
   taxon_id: 'txn_abc123', // Optional: scope filters to a taxon
 });
 ```
@@ -168,28 +168,28 @@ const filters = await client.store.products.filters({
 
 ```typescript
 // List taxonomies
-const taxonomies = await client.store.taxonomies.list({
+const taxonomies = await client.taxonomies.list({
   expand: ['taxons'],
 });
 
 // Get taxonomy with taxons
-const categories = await client.store.taxonomies.get('tax_123', {
+const categories = await client.taxonomies.get('tax_123', {
   expand: ['root', 'taxons'],
 });
 
 // List taxons with filtering
-const taxons = await client.store.taxons.list({
+const taxons = await client.taxons.list({
   depth_eq: 1,              // Top-level categories only
   taxonomy_id_eq: '123',    // Filter by taxonomy
 });
 
 // Get single taxon by ID or permalink
-const taxon = await client.store.taxons.get('categories/clothing', {
+const taxon = await client.taxons.get('categories/clothing', {
   expand: ['ancestors', 'children'], // For breadcrumbs and subcategories
 });
 
 // List products in a category
-const categoryProducts = await client.store.taxons.products.list('categories/clothing', {
+const categoryProducts = await client.taxons.products.list('categories/clothing', {
   page: 1,
   limit: 12,
   expand: ['images', 'default_variant'],
@@ -200,14 +200,14 @@ const categoryProducts = await client.store.taxons.products.list('categories/clo
 
 ```typescript
 // Get current cart
-const cart = await client.store.cart.get({ orderToken: 'xxx' });
+const cart = await client.cart.get({ orderToken: 'xxx' });
 
 // Create a new cart
-const newCart = await client.store.cart.create();
+const newCart = await client.cart.create();
 
 // Associate guest cart with authenticated user
 // (after user logs in, merge their guest cart with their account)
-await client.store.cart.associate({
+await client.cart.associate({
   token: jwtToken,        // User's JWT token
   orderToken: cart.token, // Guest cart token
 });
@@ -217,19 +217,19 @@ await client.store.cart.associate({
 
 ```typescript
 // List orders for authenticated customer
-const orders = await client.store.orders.list({}, { token });
+const orders = await client.orders.list({}, { token });
 
 // Create a new order (cart)
-const cart = await client.store.orders.create();
+const cart = await client.orders.create();
 const options = { orderToken: cart.order_token };
 
 // Get order by ID or number
-const order = await client.store.orders.get('R123456789', {
+const order = await client.orders.get('R123456789', {
   expand: ['line_items', 'shipments'],
 }, options);
 
 // Update order (email, addresses)
-await client.store.orders.update(cart.id, {
+await client.orders.update(cart.id, {
   email: 'customer@example.com',
   ship_address: {
     firstname: 'John',
@@ -245,9 +245,9 @@ await client.store.orders.update(cart.id, {
 }, options);
 
 // Checkout flow
-await client.store.orders.next(cart.id, options);     // Move to next step
-await client.store.orders.advance(cart.id, options);  // Advance through all steps
-await client.store.orders.complete(cart.id, options); // Complete the order
+await client.orders.next(cart.id, options);     // Move to next step
+await client.orders.advance(cart.id, options);  // Advance through all steps
+await client.orders.complete(cart.id, options); // Complete the order
 ```
 
 ### Line Items
@@ -256,18 +256,18 @@ await client.store.orders.complete(cart.id, options); // Complete the order
 const options = { orderToken: cart.token };
 
 // Add item
-await client.store.orders.lineItems.create(cart.id, {
+await client.orders.lineItems.create(cart.id, {
   variant_id: 'var_123',
   quantity: 2,
 }, options);
 
 // Update item quantity
-await client.store.orders.lineItems.update(cart.id, lineItemId, {
+await client.orders.lineItems.update(cart.id, lineItemId, {
   quantity: 3,
 }, options);
 
 // Remove item
-await client.store.orders.lineItems.delete(cart.id, lineItemId, options);
+await client.orders.lineItems.delete(cart.id, lineItemId, options);
 ```
 
 ### Coupon Codes
@@ -276,10 +276,10 @@ await client.store.orders.lineItems.delete(cart.id, lineItemId, options);
 const options = { orderToken: cart.token };
 
 // Apply a coupon code
-await client.store.orders.couponCodes.apply(cart.id, 'SAVE20', options);
+await client.orders.couponCodes.apply(cart.id, 'SAVE20', options);
 
 // Remove a coupon code
-await client.store.orders.couponCodes.remove(cart.id, 'promo_xxx', options);
+await client.orders.couponCodes.remove(cart.id, 'promo_xxx', options);
 ```
 
 ### Store Credits
@@ -288,13 +288,13 @@ await client.store.orders.couponCodes.remove(cart.id, 'promo_xxx', options);
 const options = { orderToken: cart.token };
 
 // Apply store credit to order (applies maximum available by default)
-await client.store.orders.addStoreCredit(cart.id, undefined, options);
+await client.orders.addStoreCredit(cart.id, undefined, options);
 
 // Apply specific amount of store credit
-await client.store.orders.addStoreCredit(cart.id, 25.00, options);
+await client.orders.addStoreCredit(cart.id, 25.00, options);
 
 // Remove store credit from order
-await client.store.orders.removeStoreCredit(cart.id, options);
+await client.orders.removeStoreCredit(cart.id, options);
 ```
 
 ### Shipments
@@ -303,10 +303,10 @@ await client.store.orders.removeStoreCredit(cart.id, options);
 const options = { orderToken: cart.token };
 
 // List shipments for an order
-const shipments = await client.store.orders.shipments.list(cart.id, options);
+const shipments = await client.orders.shipments.list(cart.id, options);
 
 // Select a shipping rate
-await client.store.orders.shipments.update(cart.id, shipmentId, {
+await client.orders.shipments.update(cart.id, shipmentId, {
   selected_shipping_rate_id: 'rate_xxx',
 }, options);
 ```
@@ -317,13 +317,13 @@ await client.store.orders.shipments.update(cart.id, shipmentId, {
 const options = { orderToken: cart.token };
 
 // Get available payment methods for an order
-const methods = await client.store.orders.paymentMethods.list(cart.id, options);
+const methods = await client.orders.paymentMethods.list(cart.id, options);
 
 // List payments on an order
-const payments = await client.store.orders.payments.list(cart.id, options);
+const payments = await client.orders.payments.list(cart.id, options);
 
 // Get a specific payment
-const payment = await client.store.orders.payments.get(cart.id, paymentId, options);
+const payment = await client.orders.payments.get(cart.id, paymentId, options);
 ```
 
 ### Payment Sessions
@@ -334,7 +334,7 @@ Payment sessions provide a unified, provider-agnostic interface for payment proc
 const options = { orderToken: cart.token };
 
 // Create a payment session (initializes a session with the payment gateway)
-const session = await client.store.orders.paymentSessions.create(cart.id, {
+const session = await client.orders.paymentSessions.create(cart.id, {
   payment_method_id: 'pm_xxx',
   amount: '99.99',             // Optional, defaults to order total
   external_data: {              // Optional, provider-specific data
@@ -346,17 +346,17 @@ const session = await client.store.orders.paymentSessions.create(cart.id, {
 console.log(session.external_data.client_secret);
 
 // Get a payment session
-const existing = await client.store.orders.paymentSessions.get(
+const existing = await client.orders.paymentSessions.get(
   cart.id, session.id, options
 );
 
 // Update a payment session (e.g., after order total changes)
-await client.store.orders.paymentSessions.update(cart.id, session.id, {
+await client.orders.paymentSessions.update(cart.id, session.id, {
   amount: '149.99',
 }, options);
 
 // Complete the payment session (after customer confirms payment on the frontend)
-const completed = await client.store.orders.paymentSessions.complete(
+const completed = await client.orders.paymentSessions.complete(
   cart.id, session.id,
   { session_result: 'success' },
   options
@@ -368,21 +368,21 @@ console.log(completed.status); // 'completed'
 
 ```typescript
 // List all markets
-const { data: markets } = await client.store.markets.list();
+const { data: markets } = await client.markets.list();
 // [{ id: "mkt_xxx", name: "North America", currency: "USD", default_locale: "en", ... }]
 
 // Get a single market
-const market = await client.store.markets.get('mkt_xxx');
+const market = await client.markets.get('mkt_xxx');
 
 // Resolve which market applies for a country
-const market = await client.store.markets.resolve('DE');
+const market = await client.markets.resolve('DE');
 // => { id: "mkt_xxx", name: "Europe", currency: "EUR", default_locale: "de", ... }
 
 // List countries in a market
-const { data: countries } = await client.store.markets.countries.list('mkt_xxx');
+const { data: countries } = await client.markets.countries.list('mkt_xxx');
 
 // Get a country in a market (with states for address forms)
-const country = await client.store.markets.countries.get('mkt_xxx', 'DE', {
+const country = await client.markets.countries.get('mkt_xxx', 'DE', {
   expand: ['states'],
 });
 ```
@@ -391,10 +391,10 @@ const country = await client.store.markets.countries.get('mkt_xxx', 'DE', {
 
 ```typescript
 // List countries available for checkout
-const { data: countries } = await client.store.countries.list();
+const { data: countries } = await client.countries.list();
 
 // Get country by ISO code (with states)
-const usa = await client.store.countries.get('US', { expand: ['states'] });
+const usa = await client.countries.get('US', { expand: ['states'] });
 console.log(usa.states); // Array of states
 ```
 
@@ -404,10 +404,10 @@ console.log(usa.states); // Array of states
 const options = { token: jwtToken };
 
 // Get profile
-const profile = await client.store.customer.get(options);
+const profile = await client.customer.get(options);
 
 // Update profile
-await client.store.customer.update({
+await client.customer.update({
   first_name: 'John',
   last_name: 'Doe',
 }, options);
@@ -419,13 +419,13 @@ await client.store.customer.update({
 const options = { token: jwtToken };
 
 // List addresses
-const { data: addresses } = await client.store.customer.addresses.list({}, options);
+const { data: addresses } = await client.customer.addresses.list({}, options);
 
 // Get address by ID
-const address = await client.store.customer.addresses.get('addr_xxx', options);
+const address = await client.customer.addresses.get('addr_xxx', options);
 
 // Create address
-await client.store.customer.addresses.create({
+await client.customer.addresses.create({
   firstname: 'John',
   lastname: 'Doe',
   address1: '123 Main St',
@@ -436,14 +436,14 @@ await client.store.customer.addresses.create({
 }, options);
 
 // Update address
-await client.store.customer.addresses.update('addr_xxx', { city: 'Brooklyn' }, options);
+await client.customer.addresses.update('addr_xxx', { city: 'Brooklyn' }, options);
 
 // Delete address
-await client.store.customer.addresses.delete('addr_xxx', options);
+await client.customer.addresses.delete('addr_xxx', options);
 
 // Mark as default billing or shipping address
-await client.store.customer.addresses.markAsDefault('addr_xxx', 'billing', options);
-await client.store.customer.addresses.markAsDefault('addr_xxx', 'shipping', options);
+await client.customer.addresses.markAsDefault('addr_xxx', 'billing', options);
+await client.customer.addresses.markAsDefault('addr_xxx', 'shipping', options);
 ```
 
 ### Customer Credit Cards
@@ -452,13 +452,13 @@ await client.store.customer.addresses.markAsDefault('addr_xxx', 'shipping', opti
 const options = { token: jwtToken };
 
 // List saved credit cards
-const { data: cards } = await client.store.customer.creditCards.list({}, options);
+const { data: cards } = await client.customer.creditCards.list({}, options);
 
 // Get credit card by ID
-const card = await client.store.customer.creditCards.get('cc_xxx', options);
+const card = await client.customer.creditCards.get('cc_xxx', options);
 
 // Delete credit card
-await client.store.customer.creditCards.delete('cc_xxx', options);
+await client.customer.creditCards.delete('cc_xxx', options);
 ```
 
 ### Wishlists
@@ -467,26 +467,26 @@ await client.store.customer.creditCards.delete('cc_xxx', options);
 const options = { token: jwtToken };
 
 // List wishlists
-const { data: wishlists } = await client.store.wishlists.list({}, options);
+const { data: wishlists } = await client.wishlists.list({}, options);
 
 // Get wishlist by ID
-const wishlist = await client.store.wishlists.get('wl_xxx', {
+const wishlist = await client.wishlists.get('wl_xxx', {
   expand: ['wished_items'],
 }, options);
 
 // Create wishlist
-const newWishlist = await client.store.wishlists.create({
+const newWishlist = await client.wishlists.create({
   name: 'Birthday Ideas',
   is_private: true,
 }, options);
 
 // Update wishlist
-await client.store.wishlists.update('wl_xxx', {
+await client.wishlists.update('wl_xxx', {
   name: 'Updated Name',
 }, options);
 
 // Delete wishlist
-await client.store.wishlists.delete('wl_xxx', options);
+await client.wishlists.delete('wl_xxx', options);
 ```
 
 ### Wishlist Items
@@ -495,18 +495,18 @@ await client.store.wishlists.delete('wl_xxx', options);
 const options = { token: jwtToken };
 
 // Add item to wishlist
-await client.store.wishlists.items.create('wl_xxx', {
+await client.wishlists.items.create('wl_xxx', {
   variant_id: 'var_123',
   quantity: 1,
 }, options);
 
 // Update item quantity
-await client.store.wishlists.items.update('wl_xxx', 'wi_xxx', {
+await client.wishlists.items.update('wl_xxx', 'wi_xxx', {
   quantity: 2,
 }, options);
 
 // Remove item from wishlist
-await client.store.wishlists.items.delete('wl_xxx', 'wi_xxx', options);
+await client.wishlists.items.delete('wl_xxx', 'wi_xxx', options);
 ```
 
 ## Nested Resources
@@ -530,14 +530,14 @@ The SDK uses a resource builder pattern for nested resources:
 
 Example:
 ```typescript
-// Nested resources follow the pattern: client.store.parent.nested.method(parentId, ...)
-await client.store.orders.lineItems.create(orderId, params, options);
-await client.store.orders.payments.list(orderId, options);
-await client.store.orders.shipments.update(orderId, shipmentId, params, options);
-await client.store.customer.addresses.list({}, options);
-await client.store.markets.countries.list(marketId);
-await client.store.taxons.products.list(taxonId, params, options);
-await client.store.wishlists.items.create(wishlistId, params, options);
+// Nested resources follow the pattern: client.parent.nested.method(parentId, ...)
+await client.orders.lineItems.create(orderId, params, options);
+await client.orders.payments.list(orderId, options);
+await client.orders.shipments.update(orderId, shipmentId, params, options);
+await client.customer.addresses.list({}, options);
+await client.markets.countries.list(marketId);
+await client.taxons.products.list(taxonId, params, options);
+await client.wishlists.items.create(wishlistId, params, options);
 ```
 
 ## Localization & Currency
@@ -556,7 +556,7 @@ const client = createSpreeClient({
 });
 
 // All requests use fr/EUR/FR automatically
-const products = await client.store.products.list();
+const products = await client.products.list();
 ```
 
 Update defaults at any time:
@@ -572,7 +572,7 @@ client.setCountry('DE');
 Pass locale and currency headers with any request to override defaults:
 
 ```typescript
-const products = await client.store.products.list({}, {
+const products = await client.products.list({}, {
   locale: 'fr',
   currency: 'EUR',
   country: 'FR',
@@ -585,7 +585,7 @@ const products = await client.store.products.list({}, {
 import { SpreeError } from '@spree/sdk';
 
 try {
-  await client.store.products.get('non-existent');
+  await client.products.get('non-existent');
 } catch (error) {
   if (error instanceof SpreeError) {
     console.log(error.code);    // 'record_not_found'
@@ -614,8 +614,8 @@ import type {
 } from '@spree/sdk';
 
 // All responses are fully typed
-const products: PaginatedResponse<StoreProduct> = await client.store.products.list();
-const taxon: StoreTaxon = await client.store.taxons.get('clothing');
+const products: PaginatedResponse<StoreProduct> = await client.products.list();
+const taxon: StoreTaxon = await client.taxons.get('clothing');
 ```
 
 ## Available Types

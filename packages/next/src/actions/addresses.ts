@@ -1,34 +1,34 @@
 'use server';
 
 import { revalidateTag } from 'next/cache';
-import type { StoreAddress, AddressParams } from '@spree/sdk';
+import type { Address, AddressParams } from '@spree/sdk';
 import { withAuthRefresh } from '../auth-helpers';
 import { getClient } from '../config';
 
 /**
  * List the authenticated customer's addresses.
  */
-export async function listAddresses(): Promise<{ data: StoreAddress[] }> {
+export async function listAddresses(): Promise<{ data: Address[] }> {
   return withAuthRefresh(async (options) => {
-    return getClient().store.customer.addresses.list(undefined, options);
+    return getClient().customer.addresses.list(undefined, options);
   });
 }
 
 /**
  * Get a single address by ID.
  */
-export async function getAddress(id: string): Promise<StoreAddress> {
+export async function getAddress(id: string): Promise<Address> {
   return withAuthRefresh(async (options) => {
-    return getClient().store.customer.addresses.get(id, options);
+    return getClient().customer.addresses.get(id, options);
   });
 }
 
 /**
  * Create a new address for the customer.
  */
-export async function createAddress(params: AddressParams): Promise<StoreAddress> {
+export async function createAddress(params: AddressParams): Promise<Address> {
   const result = await withAuthRefresh(async (options) => {
-    return getClient().store.customer.addresses.create(params, options);
+    return getClient().customer.addresses.create(params, options);
   });
   revalidateTag('addresses');
   return result;
@@ -40,9 +40,9 @@ export async function createAddress(params: AddressParams): Promise<StoreAddress
 export async function updateAddress(
   id: string,
   params: Partial<AddressParams>
-): Promise<StoreAddress> {
+): Promise<Address> {
   const result = await withAuthRefresh(async (options) => {
-    return getClient().store.customer.addresses.update(id, params, options);
+    return getClient().customer.addresses.update(id, params, options);
   });
   revalidateTag('addresses');
   return result;
@@ -53,7 +53,7 @@ export async function updateAddress(
  */
 export async function deleteAddress(id: string): Promise<void> {
   await withAuthRefresh(async (options) => {
-    return getClient().store.customer.addresses.delete(id, options);
+    return getClient().customer.addresses.delete(id, options);
   });
   revalidateTag('addresses');
 }

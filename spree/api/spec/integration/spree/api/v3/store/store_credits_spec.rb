@@ -17,7 +17,7 @@ RSpec.describe 'Store Credits API', type: :request, swagger_doc: 'api-reference/
       description 'Applies store credit to the order'
 
       sdk_example <<~JS
-        const order = await client.store.orders.addStoreCredit('or_abc123', 10.0, {
+        const order = await client.orders.addStoreCredit('or_abc123', 10.0, {
           bearerToken: '<token>',
         })
       JS
@@ -72,7 +72,7 @@ RSpec.describe 'Store Credits API', type: :request, swagger_doc: 'api-reference/
       description 'Removes store credit from the order'
 
       sdk_example <<~JS
-        const order = await client.store.orders.removeStoreCredit('or_abc123', {
+        const order = await client.orders.removeStoreCredit('or_abc123', {
           bearerToken: '<token>',
         })
       JS

@@ -7,14 +7,14 @@ description: Manage carts, line items, coupons, and checkout flow with the Spree
 
 ```typescript
 // Create a new cart
-const cart = await client.store.cart.create();
+const cart = await client.cart.create();
 
 // Get current cart
-const cart = await client.store.cart.get({ orderToken: 'xxx' });
+const cart = await client.cart.get({ orderToken: 'xxx' });
 
 // Associate guest cart with authenticated user
 // (after user logs in, merge their guest cart with their account)
-await client.store.cart.associate({
+await client.cart.associate({
   token: jwtToken,        // User's JWT token
   orderToken: cart.token, // Guest cart token
 });
@@ -26,13 +26,13 @@ await client.store.cart.associate({
 
 ```typescript
 // List orders for authenticated customer
-const orders = await client.store.customer.orders.list({}, { token });
+const orders = await client.customer.orders.list({}, { token });
 ```
 
 ### Get an Order
 
 ```typescript
-const order = await client.store.orders.get('R123456789', {
+const order = await client.orders.get('R123456789', {
   expand: ['line_items', 'shipments'],
 }, { orderToken: cart.token });
 ```
@@ -40,7 +40,7 @@ const order = await client.store.orders.get('R123456789', {
 ### Update an Order
 
 ```typescript
-await client.store.orders.update(cart.id, {
+await client.orders.update(cart.id, {
   email: 'customer@example.com',
   ship_address: {
     firstname: 'John',
@@ -61,9 +61,9 @@ await client.store.orders.update(cart.id, {
 ```typescript
 const options = { orderToken: cart.token };
 
-await client.store.orders.next(cart.id, options);     // Move to next step
-await client.store.orders.advance(cart.id, options);  // Advance through all steps
-await client.store.orders.complete(cart.id, options); // Complete the order
+await client.orders.next(cart.id, options);     // Move to next step
+await client.orders.advance(cart.id, options);  // Advance through all steps
+await client.orders.complete(cart.id, options); // Complete the order
 ```
 
 ## Line Items
@@ -72,18 +72,18 @@ await client.store.orders.complete(cart.id, options); // Complete the order
 const options = { orderToken: cart.token };
 
 // Add item
-await client.store.orders.lineItems.create(cart.id, {
+await client.orders.lineItems.create(cart.id, {
   variant_id: 'var_123',
   quantity: 2,
 }, options);
 
 // Update item quantity
-await client.store.orders.lineItems.update(cart.id, lineItemId, {
+await client.orders.lineItems.update(cart.id, lineItemId, {
   quantity: 3,
 }, options);
 
 // Remove item
-await client.store.orders.lineItems.delete(cart.id, lineItemId, options);
+await client.orders.lineItems.delete(cart.id, lineItemId, options);
 ```
 
 ## Coupon Codes
@@ -92,10 +92,10 @@ await client.store.orders.lineItems.delete(cart.id, lineItemId, options);
 const options = { orderToken: cart.token };
 
 // Apply a coupon code
-await client.store.orders.couponCodes.apply(cart.id, 'SAVE20', options);
+await client.orders.couponCodes.apply(cart.id, 'SAVE20', options);
 
 // Remove a coupon code
-await client.store.orders.couponCodes.remove(cart.id, 'promo_xxx', options);
+await client.orders.couponCodes.remove(cart.id, 'promo_xxx', options);
 ```
 
 ## Store Credits
@@ -104,11 +104,11 @@ await client.store.orders.couponCodes.remove(cart.id, 'promo_xxx', options);
 const options = { orderToken: cart.token };
 
 // Apply store credit to order (applies maximum available by default)
-await client.store.orders.addStoreCredit(cart.id, undefined, options);
+await client.orders.addStoreCredit(cart.id, undefined, options);
 
 // Apply specific amount of store credit
-await client.store.orders.addStoreCredit(cart.id, 25.00, options);
+await client.orders.addStoreCredit(cart.id, 25.00, options);
 
 // Remove store credit from order
-await client.store.orders.removeStoreCredit(cart.id, options);
+await client.orders.removeStoreCredit(cart.id, options);
 ```

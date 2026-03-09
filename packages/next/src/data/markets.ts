@@ -1,4 +1,4 @@
-import type { StoreMarket, StoreCountry } from '@spree/sdk';
+import type { Market, Country } from '@spree/sdk';
 import { getClient } from '../config';
 import { getLocaleOptions } from '../locale';
 import type { SpreeNextOptions } from '../types';
@@ -9,9 +9,9 @@ import type { SpreeNextOptions } from '../types';
  */
 export async function listMarkets(
   options?: SpreeNextOptions
-): Promise<{ data: StoreMarket[] }> {
+): Promise<{ data: Market[] }> {
   const resolved = options ?? await getLocaleOptions();
-  return getClient().store.markets.list(resolved);
+  return getClient().markets.list(resolved);
 }
 
 /**
@@ -21,9 +21,9 @@ export async function listMarkets(
 export async function getMarket(
   id: string,
   options?: SpreeNextOptions
-): Promise<StoreMarket> {
+): Promise<Market> {
   const resolved = options ?? await getLocaleOptions();
-  return getClient().store.markets.get(id, resolved);
+  return getClient().markets.get(id, resolved);
 }
 
 /**
@@ -33,9 +33,9 @@ export async function getMarket(
 export async function resolveMarket(
   country: string,
   options?: SpreeNextOptions
-): Promise<StoreMarket> {
+): Promise<Market> {
   const resolved = options ?? await getLocaleOptions();
-  return getClient().store.markets.resolve(country, resolved);
+  return getClient().markets.resolve(country, resolved);
 }
 
 /**
@@ -45,9 +45,9 @@ export async function resolveMarket(
 export async function listMarketCountries(
   marketId: string,
   options?: SpreeNextOptions
-): Promise<{ data: StoreCountry[] }> {
+): Promise<{ data: Country[] }> {
   const resolved = options ?? await getLocaleOptions();
-  return getClient().store.markets.countries.list(marketId, resolved);
+  return getClient().markets.countries.list(marketId, resolved);
 }
 
 /**
@@ -60,7 +60,7 @@ export async function getMarketCountry(
   iso: string,
   params?: { expand?: string[] },
   options?: SpreeNextOptions
-): Promise<StoreCountry> {
+): Promise<Country> {
   const resolved = options ?? await getLocaleOptions();
-  return getClient().store.markets.countries.get(marketId, iso, params, resolved);
+  return getClient().markets.countries.get(marketId, iso, params, resolved);
 }
