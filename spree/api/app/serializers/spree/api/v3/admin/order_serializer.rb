@@ -19,8 +19,12 @@ module Spree
           # Admin-only attributes
           attributes :channel, :last_ip_address, :considered_risky,
                      :confirmation_delivered, :store_owner_notification_delivered,
-                     :internal_note, :payment_total, :display_payment_total,
+                     :payment_total, :display_payment_total,
                      canceled_at: :iso8601, approved_at: :iso8601
+
+          attribute :internal_note do |order|
+            order.internal_note&.to_plain_text.presence
+          end
 
           attribute :metadata do |order|
             order.metadata.presence

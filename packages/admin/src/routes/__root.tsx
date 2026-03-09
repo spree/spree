@@ -1,4 +1,5 @@
 import { createRootRouteWithContext, Outlet } from '@tanstack/react-router'
+import { Toaster } from 'sonner'
 
 interface RouterContext {
   auth: {
@@ -12,5 +13,10 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 })
 
 function RootLayout() {
-  return <Outlet />
+  return (
+    <>
+      <Outlet />
+      <Toaster position="bottom-right" richColors />
+    </>
+  )
 }

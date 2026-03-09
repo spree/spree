@@ -17,6 +17,8 @@ import type {
   AdminProduct,
   AdminRefund,
   AdminShipment,
+  AdminShippingCategory,
+  AdminTaxCategory,
   AdminTaxon,
   AdminTaxonomy,
   AdminVariant,
@@ -106,6 +108,56 @@ export class AdminClient {
       options?: RequestOptions,
     ): Promise<{ direct_upload: { url: string; headers: Record<string, string> }; signed_id: string }> =>
       this.request('POST', '/direct_uploads', { ...options, body: params }),
+  } as const;
+
+  // ============================================
+  // Shipping Categories (hand-written, not auto-generated)
+  // ============================================
+
+  readonly shippingCategories = {
+    list: (
+      params?: ListParams,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<AdminShippingCategory>> =>
+      this.request<PaginatedResponse<AdminShippingCategory>>('GET', '/shipping_categories', {
+        ...options,
+        params: transformListParams({ ...params }),
+      }),
+
+    get: (
+      id: string,
+      params?: ListParams,
+      options?: RequestOptions,
+    ): Promise<AdminShippingCategory> =>
+      this.request<AdminShippingCategory>('GET', `/shipping_categories/${id}`, {
+        ...options,
+        params: transformListParams({ ...params }),
+      }),
+  } as const;
+
+  // ============================================
+  // Tax Categories (hand-written, not auto-generated)
+  // ============================================
+
+  readonly taxCategories = {
+    list: (
+      params?: ListParams,
+      options?: RequestOptions,
+    ): Promise<PaginatedResponse<AdminTaxCategory>> =>
+      this.request<PaginatedResponse<AdminTaxCategory>>('GET', '/tax_categories', {
+        ...options,
+        params: transformListParams({ ...params }),
+      }),
+
+    get: (
+      id: string,
+      params?: ListParams,
+      options?: RequestOptions,
+    ): Promise<AdminTaxCategory> =>
+      this.request<AdminTaxCategory>('GET', `/tax_categories/${id}`, {
+        ...options,
+        params: transformListParams({ ...params }),
+      }),
   } as const;
 
   // ============================================

@@ -1,12 +1,12 @@
-import { Link, useRouterState } from '@tanstack/react-router'
-import { useState } from 'react'
-import type { NavItem } from '@/components/app-sidebar'
+import { Link, useRouterState } from "@tanstack/react-router";
+import { useState } from "react";
+import type { NavItem } from "@/components/app-sidebar";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+} from "@/components/ui/dropdown-menu";
 import {
   SidebarGroup,
   SidebarMenu,
@@ -16,25 +16,37 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
   useSidebar,
-} from '@/components/ui/sidebar'
+} from "@/components/ui/sidebar";
 
-function NavIcon({ icon: Icon, isActive }: { icon: NavItem['icon']; isActive?: boolean }) {
+function NavIcon({
+  icon: Icon,
+  isActive,
+}: {
+  icon: NavItem["icon"];
+  isActive?: boolean;
+}) {
   return (
     <span
       className={
-        'inline-flex shrink-0 items-center justify-center rounded-lg p-[0.2rem] transition-colors duration-100 ' +
+        "inline-flex shrink-0 items-center justify-center rounded-lg p-[0.2rem] transition-colors duration-100 " +
         (isActive
-          ? 'bg-zinc-950 text-white'
-          : 'text-gray-400 group-hover/menu-button:text-zinc-950')
+          ? "bg-zinc-950 text-white"
+          : "group-hover/menu-button:text-zinc-950")
       }
     >
-      <Icon className="size-[1.125rem]" strokeWidth={2.25} />
+      <Icon size={16} strokeWidth={2} />
     </span>
-  )
+  );
 }
 
-function CollapsedDropdown({ item, children }: { item: NavItem; children: React.ReactNode }) {
-  const [open, setOpen] = useState(false)
+function CollapsedDropdown({
+  item,
+  children,
+}: {
+  item: NavItem;
+  children: React.ReactNode;
+}) {
+  const [open, setOpen] = useState(false);
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
@@ -58,7 +70,7 @@ function CollapsedDropdown({ item, children }: { item: NavItem; children: React.
         ))}
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }
 
 function NavItemContent({
@@ -66,17 +78,18 @@ function NavItemContent({
   currentPath,
   isCollapsed,
 }: {
-  item: NavItem
-  currentPath: string
-  isCollapsed: boolean
+  item: NavItem;
+  currentPath: string;
+  isCollapsed: boolean;
 }) {
-  const isExactActive = currentPath === item.url
-  const isActive = isExactActive || (item.url !== '/' && currentPath.startsWith(item.url))
+  const isExactActive = currentPath === item.url;
+  const isActive =
+    isExactActive || (item.url !== "/" && currentPath.startsWith(item.url));
   const hasActiveChild = item.items?.some(
     (sub) => currentPath === sub.url || currentPath.startsWith(sub.url),
-  )
-  const showSubmenu = isActive || hasActiveChild
-  const itemIsActive = isActive || !!hasActiveChild
+  );
+  const showSubmenu = isActive || hasActiveChild;
+  const itemIsActive = isActive || !!hasActiveChild;
 
   const button = (
     <SidebarMenuButton
@@ -89,7 +102,7 @@ function NavItemContent({
         <span>{item.title}</span>
       </Link>
     </SidebarMenuButton>
-  )
+  );
 
   return (
     <SidebarMenuItem>
@@ -101,7 +114,9 @@ function NavItemContent({
       {item.items && showSubmenu && (
         <SidebarMenuSub>
           {item.items.map((subItem) => {
-            const subActive = currentPath === subItem.url || currentPath.startsWith(subItem.url)
+            const subActive =
+              currentPath === subItem.url ||
+              currentPath.startsWith(subItem.url);
             return (
               <SidebarMenuSubItem key={subItem.title}>
                 <SidebarMenuSubButton asChild isActive={subActive}>
@@ -110,19 +125,25 @@ function NavItemContent({
                   </Link>
                 </SidebarMenuSubButton>
               </SidebarMenuSubItem>
-            )
+            );
           })}
         </SidebarMenuSub>
       )}
     </SidebarMenuItem>
-  )
+  );
 }
 
-export function NavMain({ items, bottomItems }: { items: NavItem[]; bottomItems?: NavItem[] }) {
-  const routerState = useRouterState()
-  const currentPath = routerState.location.pathname
-  const { state } = useSidebar()
-  const isCollapsed = state === 'collapsed'
+export function NavMain({
+  items,
+  bottomItems,
+}: {
+  items: NavItem[];
+  bottomItems?: NavItem[];
+}) {
+  const routerState = useRouterState();
+  const currentPath = routerState.location.pathname;
+  const { state } = useSidebar();
+  const isCollapsed = state === "collapsed";
 
   return (
     <>
@@ -144,22 +165,27 @@ export function NavMain({ items, bottomItems }: { items: NavItem[]; bottomItems?
           <SidebarMenu>
             {bottomItems.map((item) => {
               const isActive =
-                currentPath === item.url || (item.url !== '/' && currentPath.startsWith(item.url))
+                currentPath === item.url ||
+                (item.url !== "/" && currentPath.startsWith(item.url));
 
               return (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton tooltip={item.title} asChild isActive={isActive}>
+                  <SidebarMenuButton
+                    tooltip={item.title}
+                    asChild
+                    isActive={isActive}
+                  >
                     <Link to={item.url}>
                       <NavIcon icon={item.icon} isActive={isActive} />
                       <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
-              )
+              );
             })}
           </SidebarMenu>
         </SidebarGroup>
       )}
     </>
-  )
+  );
 }
