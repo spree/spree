@@ -87,6 +87,16 @@ module Spree
         where(Price.table_name => { amount: price.. })
       end
 
+      # Joins spree_variants and spree_stock_items directly (without association
+      # aliases) so that the table names stay as-is. This avoids alias conflicts
+      # when combined with other scopes (e.g., price sorting) that also join
+      # spree_variants through associations which generate aliases.
+      def self.join_variants_and_stock_items
+        joins("INNER JOIN #{Variant.table_name} ON #{Variant.table_name}.deleted_at IS NULL AND #{Variant.table_name}.product_id = #{Product.table_name}.id").
+          joins("LEFT OUTER JOIN #{StockItem.table_name} ON #{StockItem.table_name}.deleted_at IS NULL AND #{StockItem.table_name}.variant_id = #{Variant.table_name}.id")
+      end
+      private_class_method :join_variants_and_stock_items
+
       # Can't use add_search_scope for this as it needs a default argument
       # Ransack calls with '1' to activate, '0' or nil to skip
       # In Ruby code: in_stock(true) for in-stock, in_stock(false) for out-of-stock
@@ -94,7 +104,11 @@ module Spree
         if in_stock == '0' || !in_stock
           all
         else
-          joins(:variants_including_master).merge(Spree::Variant.in_stock_or_backorderable)
+          join_variants_and_stock_items.
+            where(
+              "#{Variant.table_name}.track_inventory = ? OR #{StockItem.table_name}.count_on_hand > ? OR #{StockItem.table_name}.backorderable = ?",
+              false, 0, true
+            )
         end
       end
 
@@ -111,17 +125,27 @@ module Spree
         if out_of_stock == '0' || !out_of_stock
           all
         else
-          where.not(id: joins(:variants_including_master).merge(Spree::Variant.in_stock_or_backorderable))
+          where.not(
+            id: join_variants_and_stock_items.
+              where(
+                "#{Variant.table_name}.track_inventory = ? OR #{StockItem.table_name}.count_on_hand > ? OR #{StockItem.table_name}.backorderable = ?",
+                false, 0, true
+              )
+          )
         end
       end
       search_scopes << :out_of_stock
 
       add_search_scope :backorderable do
-        joins(:variants_including_master).merge(Spree::Variant.backorderable)
+        join_variants_and_stock_items.where(StockItem.table_name => { backorderable: true })
       end
 
       add_search_scope :in_stock_or_backorderable do
-        joins(:variants_including_master).merge(Spree::Variant.in_stock_or_backorderable)
+        join_variants_and_stock_items.
+          where(
+            "#{Variant.table_name}.track_inventory = ? OR #{StockItem.table_name}.count_on_hand > ? OR #{StockItem.table_name}.backorderable = ?",
+            false, 0, true
+          )
       end
 
       # This scope selects products in taxon AND all its descendants

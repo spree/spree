@@ -261,6 +261,13 @@ describe 'Product scopes', type: :model do
       it 'can be chained with other scopes without error' do
         expect { Spree::Product.in_stock.in_stock_or_backorderable.count }.not_to raise_error
       end
+
+      # Regression test: in_stock combined with price sorting scopes should not
+      # raise table alias conflicts (variants_including_masters_spree_products)
+      it 'can be chained with price sorting scopes without error' do
+        expect { Spree::Product.in_stock.descend_by_price.to_a }.not_to raise_error
+        expect { Spree::Product.in_stock.ascend_by_price.to_a }.not_to raise_error
+      end
     end
 
     describe '#out_of_stock' do
