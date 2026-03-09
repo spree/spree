@@ -1,5 +1,16 @@
 # @spree/next
 
+## 0.7.0
+
+### Minor Changes
+
+- Update to use flattened `@spree/sdk` client API — `createClient()` replaces `createSpreeClient()`, `client.products.list()` replaces `client.store.products.list()`. All re-exported types use unprefixed names (`Product` instead of `StoreProduct`).
+
+### Patch Changes
+
+- Updated dependencies:
+  - @spree/sdk@0.7.0
+
 ## 0.6.9
 
 ### Patch Changes

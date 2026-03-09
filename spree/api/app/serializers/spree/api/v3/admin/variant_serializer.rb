@@ -19,6 +19,13 @@ module Spree
             variant.total_on_hand
           end
 
+          # Override inherited associations to use admin serializers
+          many :images,
+               resource: Spree.api.admin_image_serializer,
+               if: proc { expand?('images') }
+
+          many :option_values, resource: Spree.api.admin_option_value_serializer
+
           # All prices for this variant (for admin management)
           many :prices,
                resource: Spree.api.admin_price_serializer,
@@ -27,8 +34,6 @@ module Spree
           many :metafields,
                resource: Spree.api.admin_metafield_serializer,
                if: proc { expand?('metafields') }
-
-          # TODO: Add stock_items association when Admin API is implemented
         end
       end
     end

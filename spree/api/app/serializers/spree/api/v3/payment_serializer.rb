@@ -6,7 +6,7 @@ module Spree
                  number: :string, amount: :string, display_amount: :string,
                  source_type: [:string, nullable: true, enum: %w[credit_card store_credit payment_source]],
                  source_id: [:string, nullable: true],
-                 source: 'StoreCreditCard | StoreStoreCredit | StorePaymentSource | null'
+                 source: 'CreditCard | StoreCredit | PaymentSource | null'
 
         attribute :payment_method_id do |payment|
           payment.payment_method&.prefixed_id

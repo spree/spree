@@ -75,7 +75,7 @@ Adjustments appear in order responses when you expand line items or shipments:
 <CodeGroup>
 
 ```typescript SDK
-const order = await client.store.orders.get('or_abc123', {
+const order = await client.orders.get('or_abc123', {
   expand: ['line_items', 'shipments'],
   orderToken: '<token>',
 })

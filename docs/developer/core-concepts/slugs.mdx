@@ -13,11 +13,11 @@ Both the Store API and Admin API accept slugs or IDs interchangeably for resourc
 
 ```typescript SDK
 // Both work — slug or ID
-const product = await client.store.products.get('spree-tote')
-const product = await client.store.products.get('prod_86Rf07xd4z')
+const product = await client.products.get('spree-tote')
+const product = await client.products.get('prod_86Rf07xd4z')
 
 // Taxons use permalink slugs
-const taxon = await client.store.taxons.get('categories/clothing')
+const taxon = await client.taxons.get('categories/clothing')
 ```
 
 ```bash cURL
@@ -81,10 +81,10 @@ Products, taxons, and posts support localized slugs — a different slug per loc
 
 ```typescript SDK
 // English
-const product = await client.store.products.get('red-shoes')
+const product = await client.products.get('red-shoes')
 
 // French (with locale header)
-const product = await client.store.products.get('chaussures-rouges', {
+const product = await client.products.get('chaussures-rouges', {
   locale: 'fr',
 })
 ```

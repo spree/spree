@@ -25,7 +25,7 @@ RSpec.describe 'Payment Sessions API', type: :request, swagger_doc: 'api-referen
       description 'Creates a new payment session for the specified order. Delegates to the payment gateway to initialize a provider-specific session (e.g. Stripe PaymentIntent, Adyen session, PayPal order).'
 
       sdk_example <<~JS
-        const session = await client.store.orders.paymentSessions.create('or_abc123', {
+        const session = await client.orders.paymentSessions.create('or_abc123', {
           payment_method_id: 'pm_abc123',
         }, {
           bearerToken: '<token>',
@@ -56,7 +56,7 @@ RSpec.describe 'Payment Sessions API', type: :request, swagger_doc: 'api-referen
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:body) { { payment_method_id: payment_method.prefixed_id } }
 
-        schema '$ref' => '#/components/schemas/StorePaymentSession'
+        schema '$ref' => '#/components/schemas/PaymentSession'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -95,7 +95,7 @@ RSpec.describe 'Payment Sessions API', type: :request, swagger_doc: 'api-referen
       description 'Returns a single payment session with its current status and provider data.'
 
       sdk_example <<~JS
-        const session = await client.store.orders.paymentSessions.get('or_abc123', 'ps_abc123', {
+        const session = await client.orders.paymentSessions.get('or_abc123', 'ps_abc123', {
           bearerToken: '<token>',
         })
       JS
@@ -105,7 +105,7 @@ RSpec.describe 'Payment Sessions API', type: :request, swagger_doc: 'api-referen
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:id) { payment_session.to_param }
 
-        schema '$ref' => '#/components/schemas/StorePaymentSession'
+        schema '$ref' => '#/components/schemas/PaymentSession'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -132,7 +132,7 @@ RSpec.describe 'Payment Sessions API', type: :request, swagger_doc: 'api-referen
       description 'Updates a payment session. Delegates to the payment gateway to sync changes with the provider.'
 
       sdk_example <<~JS
-        const session = await client.store.orders.paymentSessions.update('or_abc123', 'ps_abc123', {
+        const session = await client.orders.paymentSessions.update('or_abc123', 'ps_abc123', {
           amount: '50.00',
         }, {
           bearerToken: '<token>',
@@ -153,7 +153,7 @@ RSpec.describe 'Payment Sessions API', type: :request, swagger_doc: 'api-referen
         let(:id) { payment_session.to_param }
         let(:body) { { amount: '50.00' } }
 
-        schema '$ref' => '#/components/schemas/StorePaymentSession'
+        schema '$ref' => '#/components/schemas/PaymentSession'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -182,7 +182,7 @@ RSpec.describe 'Payment Sessions API', type: :request, swagger_doc: 'api-referen
       description 'Completes a payment session by confirming the payment with the provider. This triggers payment capture/authorization and order completion.'
 
       sdk_example <<~JS
-        const session = await client.store.orders.paymentSessions.complete('or_abc123', 'ps_abc123', {
+        const session = await client.orders.paymentSessions.complete('or_abc123', 'ps_abc123', {
           session_result: 'success',
         }, {
           bearerToken: '<token>',
@@ -205,7 +205,7 @@ RSpec.describe 'Payment Sessions API', type: :request, swagger_doc: 'api-referen
         let(:id) { payment_session.to_param }
         let(:body) { { session_result: 'success' } }
 
-        schema '$ref' => '#/components/schemas/StorePaymentSession'
+        schema '$ref' => '#/components/schemas/PaymentSession'
 
         run_test! do |response|
           data = JSON.parse(response.body)

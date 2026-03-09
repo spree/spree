@@ -168,13 +168,13 @@ The frontend creates a session, then uses the provider's SDK to collect payment:
 
 ```typescript
 // 1. Get available payment methods
-const methods = await client.store.orders.paymentMethods.list(cart.id, options)
+const methods = await client.orders.paymentMethods.list(cart.id, options)
 
 // 2. Find your gateway (check session_required flag)
 const myGateway = methods.find(m => m.session_required)
 
 // 3. Create a payment session
-const session = await client.store.orders.paymentSessions.create(cart.id, {
+const session = await client.orders.paymentSessions.create(cart.id, {
   payment_method_id: myGateway.id,
 }, options)
 
@@ -182,7 +182,7 @@ const session = await client.store.orders.paymentSessions.create(cart.id, {
 const result = await MyProviderSDK.confirmPayment(session.external_data.client_secret)
 
 // 5. Complete the session
-const completed = await client.store.orders.paymentSessions.complete(
+const completed = await client.orders.paymentSessions.complete(
   cart.id, session.id,
   { session_result: result.id },
   options

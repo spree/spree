@@ -53,14 +53,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const addresses = await client.store.customer.addresses.list({}, {
+          const addresses = await client.customer.addresses.list({}, {
             bearerToken: '<token>',
           })
       parameters:
@@ -162,7 +162,7 @@ paths:
                   data:
                     type: array
                     items:
-                      "$ref": "#/components/schemas/StoreAddress"
+                      "$ref": "#/components/schemas/Address"
                   meta:
                     "$ref": "#/components/schemas/PaginationMeta"
         '401':
@@ -187,14 +187,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const address = await client.store.customer.addresses.create({
+          const address = await client.customer.addresses.create({
             firstname: 'John',
             lastname: 'Doe',
             address1: '123 Main St',
@@ -240,7 +240,7 @@ paths:
                 quick_checkout: false
                 state_name: STATE_NAME_7
               schema:
-                "$ref": "#/components/schemas/StoreAddress"
+                "$ref": "#/components/schemas/Address"
         '422':
           description: validation error
           content:
@@ -328,14 +328,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const address = await client.store.customer.addresses.get('addr_abc123', {
+          const address = await client.customer.addresses.get('addr_abc123', {
             bearerToken: '<token>',
           })
       parameters:
@@ -384,7 +384,7 @@ paths:
                 quick_checkout: false
                 state_name: STATE_NAME_13
               schema:
-                "$ref": "#/components/schemas/StoreAddress"
+                "$ref": "#/components/schemas/Address"
         '404':
           description: address not found
           content:
@@ -406,14 +406,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const address = await client.store.customer.addresses.update('addr_abc123', {
+          const address = await client.customer.addresses.update('addr_abc123', {
             city: 'Los Angeles',
           }, {
             bearerToken: '<token>',
@@ -457,7 +457,7 @@ paths:
                 quick_checkout: false
                 state_name: STATE_NAME_19
               schema:
-                "$ref": "#/components/schemas/StoreAddress"
+                "$ref": "#/components/schemas/Address"
       requestBody:
         content:
           application/json:
@@ -487,14 +487,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          await client.store.customer.addresses.delete('addr_abc123', {
+          await client.customer.addresses.delete('addr_abc123', {
             bearerToken: '<token>',
           })
       parameters:
@@ -540,14 +540,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const address = await client.store.customer.addresses.markAsDefault('addr_abc123', 'billing', {
+          const address = await client.customer.addresses.markAsDefault('addr_abc123', 'billing', {
             bearerToken: '<token>',
           })
       parameters:
@@ -589,7 +589,7 @@ paths:
                 quick_checkout: false
                 state_name: STATE_NAME_28
               schema:
-                "$ref": "#/components/schemas/StoreAddress"
+                "$ref": "#/components/schemas/Address"
         '422':
           description: invalid kind parameter
           content:
@@ -638,14 +638,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const auth = await client.store.auth.login({
+          const auth = await client.auth.login({
             email: 'customer@example.com',
             password: 'password123',
           })
@@ -661,14 +661,14 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6Ijk5MzE4ODkwLThlOTAtNDgxNy05NjE4LTlhZDYzNTZhZmVmOSIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzcyODE2NzQ0fQ.RyH0ml8HoNXFmtnkBzQiFMib_jbSSw9hTIDTqdaJdkY
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6IjA5MzEzMjFmLTA0OGItNDIxYy04MzAzLTFjMDMzMjhhMjdhZSIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzczMDYyOTA1fQ.qxFeFhNGHD6GHILPdlGIytKZCTRLM87m6MxIPufv_fI
                 user:
                   id: cus_UkLWZg9DAJ
                   email: test@example.com
-                  first_name: Jess
-                  last_name: Herman
-                  created_at: '2026-03-06T16:05:44.628Z'
-                  updated_at: '2026-03-06T16:05:44.628Z'
+                  first_name: Allene
+                  last_name: McCullough
+                  created_at: '2026-03-09T12:28:25.413Z'
+                  updated_at: '2026-03-09T12:28:25.413Z'
                   addresses: []
                   default_billing_address:
                   default_shipping_address:
@@ -716,14 +716,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const auth = await client.store.auth.register({
+          const auth = await client.auth.register({
             email: 'newuser@example.com',
             password: 'password123',
             first_name: 'John',
@@ -741,14 +741,14 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6ImQ3NGI1NmRjLTFjZWItNDgzOS05Y2VlLTc4MGM3ODAzMjdmMSIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzcyODE2NzQ2fQ.EHNR3TzU_3VKE9WlxeexOtxDKk0eV1pCf8oLHG-9kLY
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6IjYwNThlZDFhLTVkYjctNGE2ZS04OWUzLWJmNGEzZmM4YzdiMSIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzczMDYyOTA2fQ.iFXfrOs2cEOQUvxUEdBw9cJdf4aP8ZF2yNMg79W981c
                 user:
                   id: cus_UkLWZg9DAJ
                   email: newuser@example.com
                   first_name: John
                   last_name: Doe
-                  created_at: '2026-03-06T16:05:46.380Z'
-                  updated_at: '2026-03-06T16:05:46.380Z'
+                  created_at: '2026-03-09T12:28:26.776Z'
+                  updated_at: '2026-03-09T12:28:26.776Z'
                   addresses: []
                   default_billing_address:
                   default_shipping_address:
@@ -806,14 +806,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const auth = await client.store.auth.refresh({
+          const auth = await client.auth.refresh({
             bearerToken: '<token>',
           })
       parameters:
@@ -834,14 +834,14 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6IjI2YjM2OTUwLWI5MTAtNDA5Ny05ZDY5LWI0YTE3ZDNkZmMyYyIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzcyODE2NzQ3fQ.lWsz3Aa4AvYDktpxtF76tIDfNB7FtBwIkvLe_twENgQ
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6ImFhYjQyNzQ3LWJiYWUtNGQyNy1hYjA2LWVkZjI1MTRkY2I3MiIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzczMDYyOTA3fQ.auf2_QEyiuLaXLponYgBc03G_6GfozbL6DnJXaWKvWI
                 user:
                   id: cus_UkLWZg9DAJ
                   email: test@example.com
-                  first_name: Xiomara
-                  last_name: Parker
-                  created_at: '2026-03-06T16:05:47.006Z'
-                  updated_at: '2026-03-06T16:05:47.006Z'
+                  first_name: Maurita
+                  last_name: Schulist
+                  created_at: '2026-03-09T12:28:27.316Z'
+                  updated_at: '2026-03-09T12:28:27.316Z'
                   addresses: []
                   default_billing_address:
                   default_shipping_address:
@@ -871,18 +871,18 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
           // Create an empty cart
-          const cart = await client.store.cart.create()
+          const cart = await client.cart.create()
 
           // Create a cart with line items
-          const cartWithItems = await client.store.cart.create({
+          const cartWithItems = await client.cart.create({
             line_items: [
               { variant_id: 'variant_abc123', quantity: 2 },
             ],
@@ -913,13 +913,13 @@ paths:
             application/json:
               example:
                 id: or_UkLWZg9DAJ
-                number: R837733905
+                number: R901603924
                 state: cart
                 checkout_steps:
                 - address
                 - delivery
                 - complete
-                token: 8iiDqv7nalxnK1ZIGJGiew1772813147862
+                token: C-qM1G8fbmHXTd_VW_zkLQ1773059308064
                 email:
                 special_instructions:
                 currency: USD
@@ -945,8 +945,8 @@ paths:
                 total: '0.0'
                 display_total: "$0.00"
                 completed_at:
-                created_at: '2026-03-06T16:05:47.864Z'
-                updated_at: '2026-03-06T16:05:47.864Z'
+                created_at: '2026-03-09T12:28:28.065Z'
+                updated_at: '2026-03-09T12:28:28.065Z'
                 order_promotions: []
                 line_items: []
                 shipments: []
@@ -955,7 +955,7 @@ paths:
                 ship_address:
                 payment_methods: []
               schema:
-                "$ref": "#/components/schemas/StoreOrder"
+                "$ref": "#/components/schemas/Order"
         '401':
           description: unauthorized - invalid API key
           content:
@@ -1031,20 +1031,20 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
           // Authenticated customer
-          const cart = await client.store.cart.get({
+          const cart = await client.cart.get({
             bearerToken: '<token>',
           })
 
           // Guest with order token
-          const guestCart = await client.store.cart.get({
+          const guestCart = await client.cart.get({
             orderToken: 'ORDER_TOKEN',
           })
       parameters:
@@ -1072,15 +1072,15 @@ paths:
             application/json:
               example:
                 id: or_UkLWZg9DAJ
-                number: R011658796
+                number: R409640971
                 state: cart
                 checkout_steps:
                 - address
                 - delivery
                 - payment
                 - complete
-                token: xdADfKv8cfN356n1QvRrX4wXQ22M2iJQhiU
-                email: denisha.dickens@gusikowskitillman.us
+                token: tGXT6NXNutVnpyS2EW5FxHyPDdyrwjZB5az
+                email: agueda.lesch@larson.info
                 special_instructions:
                 currency: USD
                 locale: en
@@ -1105,16 +1105,16 @@ paths:
                 total: '110.0'
                 display_total: "$110.00"
                 completed_at:
-                created_at: '2026-03-06T16:05:48.857Z'
-                updated_at: '2026-03-06T16:05:48.912Z'
+                created_at: '2026-03-09T12:28:29.036Z'
+                updated_at: '2026-03-09T12:28:29.090Z'
                 order_promotions: []
                 line_items:
                 - id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 37790
-                  slug: product-37790
+                  name: Product 36588
+                  slug: product-36588
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -1133,23 +1133,23 @@ paths:
                   discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
-                  created_at: '2026-03-06T16:05:48.888Z'
-                  updated_at: '2026-03-06T16:05:48.888Z'
+                  created_at: '2026-03-09T12:28:29.067Z'
+                  updated_at: '2026-03-09T12:28:29.067Z'
                   compare_at_amount:
                   thumbnail_url:
                   option_values: []
                   digital_links: []
                 shipments:
                 - id: ship_UkLWZg9DAJ
-                  number: H22558386403
+                  number: H71139668117
                   state: pending
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
                   display_cost: "$100.00"
                   shipped_at:
-                  created_at: '2026-03-06T16:05:48.895Z'
-                  updated_at: '2026-03-06T16:05:48.910Z'
+                  created_at: '2026-03-09T12:28:29.072Z'
+                  updated_at: '2026-03-09T12:28:29.088Z'
                   shipping_method:
                     id: shpm_UkLWZg9DAJ
                     name: UPS Ground
@@ -1157,7 +1157,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: STATE_ABBR_42
-                    name: Vicente Marks
+                    name: Meri Torp
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -1212,7 +1212,7 @@ paths:
                   state_name: STATE_NAME_45
                 payment_methods: []
               schema:
-                "$ref": "#/components/schemas/StoreOrder"
+                "$ref": "#/components/schemas/Order"
         '404':
           description: no cart found
           content:
@@ -1239,14 +1239,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const cart = await client.store.cart.associate({
+          const cart = await client.cart.associate({
             bearerToken: '<token>',
             orderToken: 'GUEST_ORDER_TOKEN',
           })
@@ -1275,15 +1275,15 @@ paths:
             application/json:
               example:
                 id: or_UkLWZg9DAJ
-                number: R891955921
+                number: R769889871
                 state: cart
                 checkout_steps:
                 - address
                 - delivery
                 - payment
                 - complete
-                token: cbFMM3s3XCsFMp6gadwQXtABTxppeWnsP1o
-                email: vicenta@will.com
+                token: oEKYs22LuEosc6tJfymXmwc3aD5VkUmzvcS
+                email: maris@towne.us
                 special_instructions:
                 currency: USD
                 locale: en
@@ -1308,16 +1308,16 @@ paths:
                 total: '110.0'
                 display_total: "$110.00"
                 completed_at:
-                created_at: '2026-03-06T16:05:49.496Z'
-                updated_at: '2026-03-06T16:05:49.550Z'
+                created_at: '2026-03-09T12:28:29.670Z'
+                updated_at: '2026-03-09T12:28:29.724Z'
                 order_promotions: []
                 line_items:
                 - id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 47787
-                  slug: product-47787
+                  name: Product 44382
+                  slug: product-44382
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -1336,23 +1336,23 @@ paths:
                   discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
-                  created_at: '2026-03-06T16:05:49.528Z'
-                  updated_at: '2026-03-06T16:05:49.528Z'
+                  created_at: '2026-03-09T12:28:29.702Z'
+                  updated_at: '2026-03-09T12:28:29.702Z'
                   compare_at_amount:
                   thumbnail_url:
                   option_values: []
                   digital_links: []
                 shipments:
                 - id: ship_UkLWZg9DAJ
-                  number: H79710509955
+                  number: H81559797540
                   state: pending
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
                   display_cost: "$100.00"
                   shipped_at:
-                  created_at: '2026-03-06T16:05:49.533Z'
-                  updated_at: '2026-03-06T16:05:49.547Z'
+                  created_at: '2026-03-09T12:28:29.708Z'
+                  updated_at: '2026-03-09T12:28:29.722Z'
                   shipping_method:
                     id: shpm_UkLWZg9DAJ
                     name: UPS Ground
@@ -1360,7 +1360,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: STATE_ABBR_46
-                    name: Mittie Feest
+                    name: Luise Aufderhar
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -1415,7 +1415,7 @@ paths:
                   state_name: STATE_NAME_49
                 payment_methods: []
               schema:
-                "$ref": "#/components/schemas/StoreOrder"
+                "$ref": "#/components/schemas/Order"
         '401':
           description: unauthorized - JWT required
           content:
@@ -1449,14 +1449,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const countries = await client.store.countries.list()
+          const countries = await client.countries.list()
       parameters:
       - name: x-spree-api-key
         in: header
@@ -1493,7 +1493,7 @@ paths:
                   data:
                     type: array
                     items:
-                      "$ref": "#/components/schemas/StoreCountry"
+                      "$ref": "#/components/schemas/Country"
                 required:
                 - data
         '401':
@@ -1519,14 +1519,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const country = await client.store.countries.get('US')
+          const country = await client.countries.get('US')
       parameters:
       - name: x-spree-api-key
         in: header
@@ -1601,14 +1601,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const order = await client.store.orders.couponCodes.apply('or_abc123', 'SAVE10', {
+          const order = await client.orders.couponCodes.apply('or_abc123', 'SAVE10', {
             bearerToken: '<token>',
           })
       parameters:
@@ -1649,15 +1649,15 @@ paths:
             application/json:
               example:
                 id: or_UkLWZg9DAJ
-                number: R012071690
+                number: R609895252
                 state: cart
                 checkout_steps:
                 - address
                 - delivery
                 - payment
                 - complete
-                token: W5LZodGGqQY2NFK8Jtv8zt8KjkrBdkTnrDg
-                email: leandra@feest.info
+                token: 7J7WrV6Pd6yCwhpXPztJsVe3gJWnLAF2jNo
+                email: corina@hammes.co.uk
                 special_instructions:
                 currency: USD
                 locale: en
@@ -1682,16 +1682,16 @@ paths:
                 total: '110.0'
                 display_total: "$110.00"
                 completed_at:
-                created_at: '2026-03-06T16:05:53.985Z'
-                updated_at: '2026-03-06T16:05:54.121Z'
+                created_at: '2026-03-09T12:28:33.319Z'
+                updated_at: '2026-03-09T12:28:33.436Z'
                 order_promotions: []
                 line_items:
                 - id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 994
-                  slug: product-994
+                  name: Product 93322
+                  slug: product-93322
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -1710,23 +1710,23 @@ paths:
                   discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
-                  created_at: '2026-03-06T16:05:54.021Z'
-                  updated_at: '2026-03-06T16:05:54.021Z'
+                  created_at: '2026-03-09T12:28:33.346Z'
+                  updated_at: '2026-03-09T12:28:33.346Z'
                   compare_at_amount:
                   thumbnail_url:
                   option_values: []
                   digital_links: []
                 shipments:
                 - id: ship_UkLWZg9DAJ
-                  number: H61699139305
+                  number: H76811757601
                   state: pending
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
                   display_cost: "$100.00"
                   shipped_at:
-                  created_at: '2026-03-06T16:05:54.027Z'
-                  updated_at: '2026-03-06T16:05:54.043Z'
+                  created_at: '2026-03-09T12:28:33.351Z'
+                  updated_at: '2026-03-09T12:28:33.365Z'
                   shipping_method:
                     id: shpm_UkLWZg9DAJ
                     name: UPS Ground
@@ -1734,7 +1734,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: STATE_ABBR_66
-                    name: Maira Gottlieb
+                    name: Lue Pollich
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -1756,12 +1756,12 @@ paths:
                 - id: py_UkLWZg9DAJ
                   payment_method_id: pm_UkLWZg9DAJ
                   state: checkout
-                  response_code: 1-SC-20260306160554109759
-                  number: PHJC75RV
+                  response_code: 1-SC-20260309122833426973
+                  number: PS3TRVCI
                   amount: '50.0'
                   display_amount: "$50.00"
-                  created_at: '2026-03-06T16:05:54.114Z'
-                  updated_at: '2026-03-06T16:05:54.114Z'
+                  created_at: '2026-03-09T12:28:33.431Z'
+                  updated_at: '2026-03-09T12:28:33.431Z'
                   source_type: store_credit
                   source_id: credit_UkLWZg9DAJ
                   source:
@@ -1820,7 +1820,7 @@ paths:
                   type: Spree::PaymentMethod::StoreCredit
                   session_required: false
               schema:
-                "$ref": "#/components/schemas/StoreOrder"
+                "$ref": "#/components/schemas/Order"
         '422':
           description: invalid coupon code
           content:
@@ -1868,14 +1868,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const order = await client.store.orders.couponCodes.remove('or_abc123', 'op_abc123', {
+          const order = await client.orders.couponCodes.remove('or_abc123', 'op_abc123', {
             bearerToken: '<token>',
           })
       parameters:
@@ -1915,15 +1915,15 @@ paths:
             application/json:
               example:
                 id: or_UkLWZg9DAJ
-                number: R938711248
+                number: R605171731
                 state: cart
                 checkout_steps:
                 - address
                 - delivery
                 - payment
                 - complete
-                token: gPLbage9AWaCJTXWxfvVmU7rTRBzAsmtiRk
-                email: tesha_bechtelar@lockmankoch.name
+                token: mw8dvKvxRejXPT9pEmJjr5KcJGND4n5siYR
+                email: michaele@runolfsson.biz
                 special_instructions:
                 currency: USD
                 locale: en
@@ -1948,16 +1948,16 @@ paths:
                 total: '110.0'
                 display_total: "$110.00"
                 completed_at:
-                created_at: '2026-03-06T16:05:56.116Z'
-                updated_at: '2026-03-06T16:05:56.271Z'
+                created_at: '2026-03-09T12:28:35.280Z'
+                updated_at: '2026-03-09T12:28:35.387Z'
                 order_promotions: []
                 line_items:
                 - id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 129935
-                  slug: product-129935
+                  name: Product 1283
+                  slug: product-1283
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -1976,23 +1976,23 @@ paths:
                   discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
-                  created_at: '2026-03-06T16:05:56.153Z'
-                  updated_at: '2026-03-06T16:05:56.265Z'
+                  created_at: '2026-03-09T12:28:35.311Z'
+                  updated_at: '2026-03-09T12:28:35.382Z'
                   compare_at_amount:
                   thumbnail_url:
                   option_values: []
                   digital_links: []
                 shipments:
                 - id: ship_UkLWZg9DAJ
-                  number: H12293513952
+                  number: H29119013414
                   state: pending
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
                   display_cost: "$100.00"
                   shipped_at:
-                  created_at: '2026-03-06T16:05:56.159Z'
-                  updated_at: '2026-03-06T16:05:56.182Z'
+                  created_at: '2026-03-09T12:28:35.316Z'
+                  updated_at: '2026-03-09T12:28:35.328Z'
                   shipping_method:
                     id: shpm_UkLWZg9DAJ
                     name: UPS Ground
@@ -2000,7 +2000,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: STATE_ABBR_78
-                    name: Bradly Leffler
+                    name: Danna Steuber
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -2055,7 +2055,7 @@ paths:
                   state_name: STATE_NAME_81
                 payment_methods: []
               schema:
-                "$ref": "#/components/schemas/StoreOrder"
+                "$ref": "#/components/schemas/Order"
         '404':
           description: coupon code not found on order
           content:
@@ -2080,14 +2080,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const cards = await client.store.customer.creditCards.list({}, {
+          const cards = await client.customer.creditCards.list({}, {
             bearerToken: '<token>',
           })
       parameters:
@@ -2149,7 +2149,7 @@ paths:
                   data:
                     type: array
                     items:
-                      "$ref": "#/components/schemas/StoreCreditCard"
+                      "$ref": "#/components/schemas/CreditCard"
                   meta:
                     "$ref": "#/components/schemas/PaginationMeta"
         '401':
@@ -2175,14 +2175,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const card = await client.store.customer.creditCards.get('cc_abc123', {
+          const card = await client.customer.creditCards.get('cc_abc123', {
             bearerToken: '<token>',
           })
       parameters:
@@ -2223,7 +2223,7 @@ paths:
                 default: false
                 gateway_payment_profile_id:
               schema:
-                "$ref": "#/components/schemas/StoreCreditCard"
+                "$ref": "#/components/schemas/CreditCard"
         '404':
           description: credit card not found
           content:
@@ -2246,14 +2246,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          await client.store.customer.creditCards.delete('cc_abc123', {
+          await client.customer.creditCards.delete('cc_abc123', {
             bearerToken: '<token>',
           })
       parameters:
@@ -2297,14 +2297,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const currencies = await client.store.currencies.list()
+          const currencies = await client.currencies.list()
       parameters:
       - name: x-spree-api-key
         in: header
@@ -2337,7 +2337,7 @@ paths:
                   data:
                     type: array
                     items:
-                      "$ref": "#/components/schemas/StoreCurrency"
+                      "$ref": "#/components/schemas/Currency"
                 required:
                 - data
         '401':
@@ -2363,14 +2363,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const orders = await client.store.customer.orders.list({
+          const orders = await client.customer.orders.list({
             page: 1,
             limit: 25,
           }, {
@@ -2430,15 +2430,15 @@ paths:
               example:
                 data:
                 - id: or_UkLWZg9DAJ
-                  number: R397202194
+                  number: R849018614
                   state: cart
                   checkout_steps:
                   - address
                   - delivery
                   - payment
                   - complete
-                  token: LeVwX6bH4Lr73ieTA1ts2hTHkmHuJLd27WR
-                  email: reynaldo@emmerich.ca
+                  token: 1ZiQcjswGoN2rm7GC2MUsQubdQgCyfdkiyu
+                  email: jed@lebsackmante.ca
                   special_instructions:
                   currency: USD
                   locale: en
@@ -2463,16 +2463,16 @@ paths:
                   total: '110.0'
                   display_total: "$110.00"
                   completed_at:
-                  created_at: '2026-03-06T16:06:01.088Z'
-                  updated_at: '2026-03-06T16:06:01.140Z'
+                  created_at: '2026-03-09T12:28:39.954Z'
+                  updated_at: '2026-03-09T12:28:40.006Z'
                   order_promotions: []
                   line_items:
                   - id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
                     quantity: 1
                     currency: USD
-                    name: Product 141310
-                    slug: product-141310
+                    name: Product 14180
+                    slug: product-14180
                     options_text: ''
                     price: '10.0'
                     display_price: "$10.00"
@@ -2491,23 +2491,23 @@ paths:
                     discounted_amount: '10.0'
                     display_discounted_amount: "$10.00"
                     display_compare_at_amount: "$0.00"
-                    created_at: '2026-03-06T16:06:01.118Z'
-                    updated_at: '2026-03-06T16:06:01.118Z'
+                    created_at: '2026-03-09T12:28:39.984Z'
+                    updated_at: '2026-03-09T12:28:39.984Z'
                     compare_at_amount:
                     thumbnail_url:
                     option_values: []
                     digital_links: []
                   shipments:
                   - id: ship_UkLWZg9DAJ
-                    number: H86316243100
+                    number: H87198456836
                     state: pending
                     tracking: U10000
                     tracking_url:
                     cost: '100.0'
                     display_cost: "$100.00"
                     shipped_at:
-                    created_at: '2026-03-06T16:06:01.123Z'
-                    updated_at: '2026-03-06T16:06:01.138Z'
+                    created_at: '2026-03-09T12:28:39.990Z'
+                    updated_at: '2026-03-09T12:28:40.004Z'
                     shipping_method:
                       id: shpm_UkLWZg9DAJ
                       name: UPS Ground
@@ -2515,7 +2515,7 @@ paths:
                     stock_location:
                       id: sloc_UkLWZg9DAJ
                       state_abbr: STATE_ABBR_100
-                      name: Lee Ryan
+                      name: Laquita Windler
                       address1: 1600 Pennsylvania Ave NW
                       city: Washington
                       zipcode: '20500'
@@ -2585,7 +2585,7 @@ paths:
                   data:
                     type: array
                     items:
-                      "$ref": "#/components/schemas/StoreOrder"
+                      "$ref": "#/components/schemas/Order"
                   meta:
                     "$ref": "#/components/schemas/PaginationMeta"
         '401':
@@ -2611,14 +2611,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const customer = await client.store.customer.get({
+          const customer = await client.customer.get({
             bearerToken: '<token>',
           })
       parameters:
@@ -2647,11 +2647,11 @@ paths:
             application/json:
               example:
                 id: cus_UkLWZg9DAJ
-                email: hedwig@fisherlang.us
-                first_name: Blanche
-                last_name: Douglas
-                created_at: '2026-03-06T16:06:02.182Z'
-                updated_at: '2026-03-06T16:06:02.484Z'
+                email: lenore@nolangislason.name
+                first_name: Kristine
+                last_name: Durgan
+                created_at: '2026-03-09T12:28:40.897Z'
+                updated_at: '2026-03-09T12:28:41.164Z'
                 addresses:
                 - id: addr_gbHJdmfrXB
                   firstname: John
@@ -2720,7 +2720,7 @@ paths:
                   quick_checkout: false
                   state_name: STATE_NAME_106
               schema:
-                "$ref": "#/components/schemas/StoreCustomer"
+                "$ref": "#/components/schemas/Customer"
         '401':
           description: unauthorized - invalid token
           content:
@@ -2743,14 +2743,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const customer = await client.store.customer.update({
+          const customer = await client.customer.update({
             first_name: 'John',
             last_name: 'Doe',
           }, {
@@ -2774,11 +2774,11 @@ paths:
             application/json:
               example:
                 id: cus_UkLWZg9DAJ
-                email: elyse.gibson@kohler.biz
+                email: angelina@reilly.name
                 first_name: Updated
                 last_name: Name
-                created_at: '2026-03-06T16:06:02.798Z'
-                updated_at: '2026-03-06T16:06:03.089Z'
+                created_at: '2026-03-09T12:28:41.455Z'
+                updated_at: '2026-03-09T12:28:41.732Z'
                 addresses:
                 - id: addr_gbHJdmfrXB
                   firstname: John
@@ -2847,7 +2847,7 @@ paths:
                   quick_checkout: false
                   state_name: STATE_NAME_108
               schema:
-                "$ref": "#/components/schemas/StoreCustomer"
+                "$ref": "#/components/schemas/Customer"
         '422':
           description: validation error
           content:
@@ -2952,14 +2952,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const giftCards = await client.store.customer.giftCards.list({}, {
+          const giftCards = await client.customer.giftCards.list({}, {
             bearerToken: '<token>',
           })
       parameters:
@@ -2998,7 +2998,7 @@ paths:
               example:
                 data:
                 - id: gc_UkLWZg9DAJ
-                  code: '08F168E1780D419A'
+                  code: AB8AD3590881355C
                   state: active
                   currency: USD
                   amount: '10.0'
@@ -3012,8 +3012,8 @@ paths:
                   redeemed_at:
                   expired: false
                   active: true
-                  created_at: '2026-03-06T16:06:06.569Z'
-                  updated_at: '2026-03-06T16:06:06.569Z'
+                  created_at: '2026-03-09T12:28:44.810Z'
+                  updated_at: '2026-03-09T12:28:44.810Z'
                 meta:
                   page: 1
                   limit: 25
@@ -3030,7 +3030,7 @@ paths:
                   data:
                     type: array
                     items:
-                      "$ref": "#/components/schemas/StoreGiftCard"
+                      "$ref": "#/components/schemas/GiftCard"
                   meta:
                     "$ref": "#/components/schemas/PaginationMeta"
         '401':
@@ -3056,14 +3056,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const giftCard = await client.store.customer.giftCards.get('gc_abc123', {
+          const giftCard = await client.customer.giftCards.get('gc_abc123', {
             bearerToken: '<token>',
           })
       parameters:
@@ -3096,7 +3096,7 @@ paths:
             application/json:
               example:
                 id: gc_UkLWZg9DAJ
-                code: 76192A8789932CC4
+                code: BD1C079916A4C238
                 state: active
                 currency: USD
                 amount: '10.0'
@@ -3110,10 +3110,10 @@ paths:
                 redeemed_at:
                 expired: false
                 active: true
-                created_at: '2026-03-06T16:06:07.664Z'
-                updated_at: '2026-03-06T16:06:07.664Z'
+                created_at: '2026-03-09T12:28:45.895Z'
+                updated_at: '2026-03-09T12:28:45.895Z'
               schema:
-                "$ref": "#/components/schemas/StoreGiftCard"
+                "$ref": "#/components/schemas/GiftCard"
         '404':
           description: gift card not found
           content:
@@ -3138,14 +3138,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const order = await client.store.orders.lineItems.create('or_abc123', {
+          const order = await client.orders.lineItems.create('or_abc123', {
             variant_id: 'variant_abc123',
             quantity: 2,
           }, {
@@ -3189,15 +3189,15 @@ paths:
             application/json:
               example:
                 id: or_UkLWZg9DAJ
-                number: R930917369
+                number: R883205664
                 state: cart
                 checkout_steps:
                 - address
                 - delivery
                 - payment
                 - complete
-                token: AJhQDfoyhSTMne53TUJ1gcQT5ifXTvxAPxF
-                email: jeromy@beattykemmer.biz
+                token: h5dvnrmPK7Gmvk6yeQyFmzpepwSHitvKVy1
+                email: sook@okuneva.info
                 special_instructions:
                 currency: USD
                 locale: en
@@ -3222,16 +3222,16 @@ paths:
                 total: '29.99'
                 display_total: "$29.99"
                 completed_at:
-                created_at: '2026-03-06T16:06:09.528Z'
-                updated_at: '2026-03-06T16:06:09.654Z'
+                created_at: '2026-03-09T12:28:47.652Z'
+                updated_at: '2026-03-09T12:28:47.750Z'
                 order_promotions: []
                 line_items:
                 - id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 248167
-                  slug: product-248167
+                  name: Product 245155
+                  slug: product-245155
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -3250,8 +3250,8 @@ paths:
                   discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
-                  created_at: '2026-03-06T16:06:09.571Z'
-                  updated_at: '2026-03-06T16:06:09.571Z'
+                  created_at: '2026-03-09T12:28:47.683Z'
+                  updated_at: '2026-03-09T12:28:47.683Z'
                   compare_at_amount:
                   thumbnail_url:
                   option_values: []
@@ -3260,8 +3260,8 @@ paths:
                   variant_id: variant_gbHJdmfrXB
                   quantity: 1
                   currency: USD
-                  name: Product 255835
-                  slug: product-255835
+                  name: Product 256214
+                  slug: product-256214
                   options_text: ''
                   price: '19.99'
                   display_price: "$19.99"
@@ -3280,8 +3280,8 @@ paths:
                   discounted_amount: '19.99'
                   display_discounted_amount: "$19.99"
                   display_compare_at_amount: "$0.00"
-                  created_at: '2026-03-06T16:06:09.626Z'
-                  updated_at: '2026-03-06T16:06:09.626Z'
+                  created_at: '2026-03-09T12:28:47.725Z'
+                  updated_at: '2026-03-09T12:28:47.725Z'
                   compare_at_amount:
                   thumbnail_url:
                   option_values: []
@@ -3308,7 +3308,7 @@ paths:
                 ship_address:
                 payment_methods: []
               schema:
-                "$ref": "#/components/schemas/StoreOrder"
+                "$ref": "#/components/schemas/Order"
         '404':
           description: order not found
           content:
@@ -3355,14 +3355,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const order = await client.store.orders.lineItems.update('or_abc123', 'li_abc123', {
+          const order = await client.orders.lineItems.update('or_abc123', 'li_abc123', {
             quantity: 5,
           }, {
             bearerToken: '<token>',
@@ -3401,14 +3401,14 @@ paths:
             application/json:
               example:
                 id: or_UkLWZg9DAJ
-                number: R116666160
+                number: R771989946
                 state: cart
                 checkout_steps:
                 - address
                 - delivery
                 - complete
-                token: dRNFyzwWkAP8S7Wv4hcwQBQchowv5h3BSc1
-                email: shaunda@buckridge.name
+                token: FbYENgekKXdfjGUpPN8PY1rr2gbsypRepw9
+                email: brenda_bernhard@osinski.info
                 special_instructions:
                 currency: USD
                 locale: en
@@ -3433,16 +3433,16 @@ paths:
                 total: '0.0'
                 display_total: "$0.00"
                 completed_at:
-                created_at: '2026-03-06T16:06:12.028Z'
-                updated_at: '2026-03-06T16:06:12.057Z'
+                created_at: '2026-03-09T12:28:50.079Z'
+                updated_at: '2026-03-09T12:28:50.109Z'
                 order_promotions: []
                 line_items:
                 - id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 293386
-                  slug: product-293386
+                  name: Product 29292
+                  slug: product-29292
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -3461,8 +3461,8 @@ paths:
                   discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
-                  created_at: '2026-03-06T16:06:12.056Z'
-                  updated_at: '2026-03-06T16:06:12.073Z'
+                  created_at: '2026-03-09T12:28:50.109Z'
+                  updated_at: '2026-03-09T12:28:50.125Z'
                   compare_at_amount:
                   thumbnail_url:
                   option_values: []
@@ -3489,7 +3489,7 @@ paths:
                 ship_address:
                 payment_methods: []
               schema:
-                "$ref": "#/components/schemas/StoreOrder"
+                "$ref": "#/components/schemas/Order"
       requestBody:
         content:
           application/json:
@@ -3518,14 +3518,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const order = await client.store.orders.lineItems.delete('or_abc123', 'li_abc123', {
+          const order = await client.orders.lineItems.delete('or_abc123', 'li_abc123', {
             bearerToken: '<token>',
           })
       parameters:
@@ -3561,14 +3561,14 @@ paths:
             application/json:
               example:
                 id: or_UkLWZg9DAJ
-                number: R666708773
+                number: R392729983
                 state: cart
                 checkout_steps:
                 - address
                 - delivery
                 - complete
-                token: 8v6NSeXRCS273BfwoS5yRNCPz5aDt9JcqgR
-                email: nicholle@fay.com
+                token: sEyJKPTuwmPXcnsoxUUjHN41gYDBFitEZFf
+                email: shoshana.lynch@becker.us
                 special_instructions:
                 currency: USD
                 locale: en
@@ -3593,8 +3593,8 @@ paths:
                 total: '0.0'
                 display_total: "$0.00"
                 completed_at:
-                created_at: '2026-03-06T16:06:12.625Z'
-                updated_at: '2026-03-06T16:06:12.695Z'
+                created_at: '2026-03-09T12:28:50.669Z'
+                updated_at: '2026-03-09T12:28:50.723Z'
                 order_promotions: []
                 line_items: []
                 shipments: []
@@ -3619,7 +3619,7 @@ paths:
                 ship_address:
                 payment_methods: []
               schema:
-                "$ref": "#/components/schemas/StoreOrder"
+                "$ref": "#/components/schemas/Order"
         '404':
           description: line item not found
           content:
@@ -3642,14 +3642,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const locales = await client.store.locales.list()
+          const locales = await client.locales.list()
       parameters:
       - name: x-spree-api-key
         in: header
@@ -3680,7 +3680,7 @@ paths:
                   data:
                     type: array
                     items:
-                      "$ref": "#/components/schemas/StoreLocale"
+                      "$ref": "#/components/schemas/Locale"
                 required:
                 - data
         '401':
@@ -3706,14 +3706,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const markets = await client.store.markets.list()
+          const markets = await client.markets.list()
       parameters:
       - name: x-spree-api-key
         in: header
@@ -3800,14 +3800,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const market = await client.store.markets.get('mkt_xxx')
+          const market = await client.markets.get('mkt_xxx')
       parameters:
       - name: x-spree-api-key
         in: header
@@ -3882,14 +3882,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const market = await client.store.markets.resolve('DE')
+          const market = await client.markets.resolve('DE')
       parameters:
       - name: x-spree-api-key
         in: header
@@ -3961,14 +3961,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const countries = await client.store.markets.countries.list('mkt_xxx')
+          const countries = await client.markets.countries.list('mkt_xxx')
       parameters:
       - name: x-spree-api-key
         in: header
@@ -4025,14 +4025,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const country = await client.store.markets.countries.get('mkt_xxx', 'DE')
+          const country = await client.markets.countries.get('mkt_xxx', 'DE')
       parameters:
       - name: x-spree-api-key
         in: header
@@ -4095,14 +4095,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const order = await client.store.orders.get('or_abc123', {
+          const order = await client.orders.get('or_abc123', {
             expand: 'line_items,shipments',
           }, {
             bearerToken: '<token>',
@@ -4150,14 +4150,14 @@ paths:
             application/json:
               example:
                 id: or_gbHJdmfrXB
-                number: R749689000
+                number: R218599926
                 state: cart
                 checkout_steps:
                 - address
                 - delivery
                 - payment
                 - complete
-                token: TrLQuTMjsgavKth4koNb8CeBHYFckYqkRCS
+                token: CzhTEcThYwFpqawdKAF54rPo2VKbPk9FmGk
                 email:
                 special_instructions:
                 currency: USD
@@ -4183,16 +4183,16 @@ paths:
                 total: '110.0'
                 display_total: "$110.00"
                 completed_at:
-                created_at: '2026-03-06T16:06:14.979Z'
-                updated_at: '2026-03-06T16:06:15.022Z'
+                created_at: '2026-03-09T12:28:53.048Z'
+                updated_at: '2026-03-09T12:28:53.097Z'
                 order_promotions: []
                 line_items:
                 - id: li_gbHJdmfrXB
                   variant_id: variant_gbHJdmfrXB
                   quantity: 1
                   currency: USD
-                  name: Product 34462
-                  slug: product-34462
+                  name: Product 349831
+                  slug: product-349831
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -4211,23 +4211,23 @@ paths:
                   discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
-                  created_at: '2026-03-06T16:06:15.003Z'
-                  updated_at: '2026-03-06T16:06:15.003Z'
+                  created_at: '2026-03-09T12:28:53.079Z'
+                  updated_at: '2026-03-09T12:28:53.079Z'
                   compare_at_amount:
                   thumbnail_url:
                   option_values: []
                   digital_links: []
                 shipments:
                 - id: ship_gbHJdmfrXB
-                  number: H54363829115
+                  number: H57969717078
                   state: pending
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
                   display_cost: "$100.00"
                   shipped_at:
-                  created_at: '2026-03-06T16:06:15.010Z'
-                  updated_at: '2026-03-06T16:06:15.020Z'
+                  created_at: '2026-03-09T12:28:53.085Z'
+                  updated_at: '2026-03-09T12:28:53.095Z'
                   shipping_method:
                     id: shpm_gbHJdmfrXB
                     name: UPS Ground
@@ -4235,7 +4235,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: STATE_ABBR_160
-                    name: Major Daniel
+                    name: Tayna Runolfsdottir
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -4290,7 +4290,7 @@ paths:
                   state_name: STATE_NAME_165
                 payment_methods: []
               schema:
-                "$ref": "#/components/schemas/StoreOrder"
+                "$ref": "#/components/schemas/Order"
         '404':
           description: not found - order belongs to another user
           content:
@@ -4314,14 +4314,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const order = await client.store.orders.update('or_abc123', {
+          const order = await client.orders.update('or_abc123', {
             email: 'customer@example.com',
             special_instructions: 'Leave at door',
             line_items: [
@@ -4374,15 +4374,15 @@ paths:
             application/json:
               example:
                 id: or_UkLWZg9DAJ
-                number: R703579590
+                number: R633354257
                 state: cart
                 checkout_steps:
                 - address
                 - delivery
                 - payment
                 - complete
-                token: PsKR5TCsd2How5pSSsWsPHyHRQLXxZKDeVJ
-                email: flo.zboncak@baumbach.name
+                token: A8jX4iVDhZ8cXbJJs65Vy4qz3FZRZn6AKMW
+                email: marci@pacochamaggio.name
                 special_instructions:
                 currency: USD
                 locale: en
@@ -4407,16 +4407,16 @@ paths:
                 total: '110.0'
                 display_total: "$110.00"
                 completed_at:
-                created_at: '2026-03-06T16:06:18.536Z'
-                updated_at: '2026-03-06T16:06:18.605Z'
+                created_at: '2026-03-09T12:28:56.439Z'
+                updated_at: '2026-03-09T12:28:56.503Z'
                 order_promotions: []
                 line_items:
                 - id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 405611
-                  slug: product-405611
+                  name: Product 403902
+                  slug: product-403902
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -4435,23 +4435,23 @@ paths:
                   discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
-                  created_at: '2026-03-06T16:06:18.571Z'
-                  updated_at: '2026-03-06T16:06:18.571Z'
+                  created_at: '2026-03-09T12:28:56.466Z'
+                  updated_at: '2026-03-09T12:28:56.466Z'
                   compare_at_amount:
                   thumbnail_url:
                   option_values: []
                   digital_links: []
                 shipments:
                 - id: ship_UkLWZg9DAJ
-                  number: H11243118111
+                  number: H01134903113
                   state: pending
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
                   display_cost: "$100.00"
                   shipped_at:
-                  created_at: '2026-03-06T16:06:18.576Z'
-                  updated_at: '2026-03-06T16:06:18.589Z'
+                  created_at: '2026-03-09T12:28:56.472Z'
+                  updated_at: '2026-03-09T12:28:56.487Z'
                   shipping_method:
                     id: shpm_UkLWZg9DAJ
                     name: UPS Ground
@@ -4459,7 +4459,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: STATE_ABBR_183
-                    name: Lonny Murazik
+                    name: Casie Bogisich
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -4514,7 +4514,7 @@ paths:
                   state_name: STATE_NAME_186
                 payment_methods: []
               schema:
-                "$ref": "#/components/schemas/StoreOrder"
+                "$ref": "#/components/schemas/Order"
         '403':
           description: cannot update completed order
           content:
@@ -4646,14 +4646,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const order = await client.store.orders.next('or_abc123', {
+          const order = await client.orders.next('or_abc123', {
             bearerToken: '<token>',
           })
       parameters:
@@ -4691,15 +4691,15 @@ paths:
             application/json:
               example:
                 id: or_gbHJdmfrXB
-                number: R672852846
+                number: R918194865
                 state: address
                 checkout_steps:
                 - address
                 - delivery
                 - payment
                 - complete
-                token: TrEpRuX7pMLDp47kkSyL26E1eGwp9AJQfLB
-                email: danelle@kunzeschimmel.co.uk
+                token: kwgS9j9bUTPWiBw2kbcTwWp1txaTHwH5j47
+                email: taneka.zieme@schuster.com
                 special_instructions:
                 currency: USD
                 locale: en
@@ -4724,16 +4724,16 @@ paths:
                 total: '110.0'
                 display_total: "$110.00"
                 completed_at:
-                created_at: '2026-03-06T16:06:19.898Z'
-                updated_at: '2026-03-06T16:06:19.959Z'
+                created_at: '2026-03-09T12:28:57.767Z'
+                updated_at: '2026-03-09T12:28:57.825Z'
                 order_promotions: []
                 line_items:
                 - id: li_gbHJdmfrXB
                   variant_id: variant_gbHJdmfrXB
                   quantity: 1
                   currency: USD
-                  name: Product 4473
-                  slug: product-4473
+                  name: Product 44732
+                  slug: product-44732
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -4752,23 +4752,23 @@ paths:
                   discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
-                  created_at: '2026-03-06T16:06:19.925Z'
-                  updated_at: '2026-03-06T16:06:19.925Z'
+                  created_at: '2026-03-09T12:28:57.791Z'
+                  updated_at: '2026-03-09T12:28:57.791Z'
                   compare_at_amount:
                   thumbnail_url:
                   option_values: []
                   digital_links: []
                 shipments:
                 - id: ship_gbHJdmfrXB
-                  number: H07283771768
+                  number: H27372451292
                   state: pending
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
                   display_cost: "$100.00"
                   shipped_at:
-                  created_at: '2026-03-06T16:06:19.931Z'
-                  updated_at: '2026-03-06T16:06:19.941Z'
+                  created_at: '2026-03-09T12:28:57.797Z'
+                  updated_at: '2026-03-09T12:28:57.807Z'
                   shipping_method:
                     id: shpm_gbHJdmfrXB
                     name: UPS Ground
@@ -4776,7 +4776,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: STATE_ABBR_193
-                    name: Myrta Marks
+                    name: Antony Borer
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -4831,7 +4831,7 @@ paths:
                   state_name: STATE_NAME_198
                 payment_methods: []
               schema:
-                "$ref": "#/components/schemas/StoreOrder"
+                "$ref": "#/components/schemas/Order"
         '422':
           description: cannot advance - validation errors
           content:
@@ -4856,14 +4856,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const order = await client.store.orders.advance('or_abc123', {
+          const order = await client.orders.advance('or_abc123', {
             bearerToken: '<token>',
           })
       parameters:
@@ -4901,15 +4901,15 @@ paths:
             application/json:
               example:
                 id: or_gbHJdmfrXB
-                number: R059924334
+                number: R807773758
                 state: payment
                 checkout_steps:
                 - address
                 - delivery
                 - payment
                 - complete
-                token: g6pZAjMwfbGxbafm4MBVKLvgd6VY62yW6u3
-                email: jeanice@bahringer.info
+                token: oboWLGAkjvfS7aGT6txpcqM7VrVM7BKBdwF
+                email: belia.hettinger@johnson.ca
                 special_instructions:
                 currency: USD
                 locale: en
@@ -4934,16 +4934,16 @@ paths:
                 total: '29.99'
                 display_total: "$29.99"
                 completed_at:
-                created_at: '2026-03-06T16:06:21.218Z'
-                updated_at: '2026-03-06T16:06:21.352Z'
+                created_at: '2026-03-09T12:28:59.064Z'
+                updated_at: '2026-03-09T12:28:59.245Z'
                 order_promotions: []
                 line_items:
                 - id: li_gbHJdmfrXB
                   variant_id: variant_gbHJdmfrXB
                   quantity: 1
                   currency: USD
-                  name: Product 478099
-                  slug: product-478099
+                  name: Product 477925
+                  slug: product-477925
                   options_text: ''
                   price: '19.99'
                   display_price: "$19.99"
@@ -4962,23 +4962,23 @@ paths:
                   discounted_amount: '19.99'
                   display_discounted_amount: "$19.99"
                   display_compare_at_amount: "$0.00"
-                  created_at: '2026-03-06T16:06:21.243Z'
-                  updated_at: '2026-03-06T16:06:21.294Z'
+                  created_at: '2026-03-09T12:28:59.089Z'
+                  updated_at: '2026-03-09T12:28:59.143Z'
                   compare_at_amount:
                   thumbnail_url:
                   option_values: []
                   digital_links: []
                 shipments:
                 - id: ship_EfhxLZ9ck8
-                  number: H98881076470
+                  number: H75994155196
                   state: pending
                   tracking:
                   tracking_url:
                   cost: '10.0'
                   display_cost: "$10.00"
                   shipped_at:
-                  created_at: '2026-03-06T16:06:21.312Z'
-                  updated_at: '2026-03-06T16:06:21.325Z'
+                  created_at: '2026-03-09T12:28:59.166Z'
+                  updated_at: '2026-03-09T12:28:59.193Z'
                   shipping_method:
                     id: shpm_UkLWZg9DAJ
                     name: UPS Ground
@@ -4986,7 +4986,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: STATE_ABBR_203
-                    name: Delta Mitchell
+                    name: Chloe Connelly
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -5051,7 +5051,7 @@ paths:
                   state_name: STATE_NAME_208
                 payment_methods: []
               schema:
-                "$ref": "#/components/schemas/StoreOrder"
+                "$ref": "#/components/schemas/Order"
   "/api/v3/store/orders/{id}/complete":
     patch:
       summary: Complete the order
@@ -5065,14 +5065,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const order = await client.store.orders.complete('or_abc123', {
+          const order = await client.orders.complete('or_abc123', {
             bearerToken: '<token>',
           })
       parameters:
@@ -5110,15 +5110,15 @@ paths:
             application/json:
               example:
                 id: or_gbHJdmfrXB
-                number: R522633737
+                number: R046177636
                 state: complete
                 checkout_steps:
                 - address
                 - delivery
                 - payment
                 - complete
-                token: HrHB76V8Zb9PyXH22ZuFoWNo58bx6z3EiuW
-                email: jackelyn@grant.co.uk
+                token: TtUFSRQWZYP4tnhqUh1Uv2NtD3ibonjP89X
+                email: gia@ziemebechtelar.ca
                 special_instructions:
                 currency: USD
                 locale: en
@@ -5142,17 +5142,17 @@ paths:
                 display_additional_tax_total: "$0.00"
                 total: '29.99'
                 display_total: "$29.99"
-                completed_at: '2026-03-06T16:06:22.164Z'
-                created_at: '2026-03-06T16:06:21.970Z'
-                updated_at: '2026-03-06T16:06:22.164Z'
+                completed_at: '2026-03-09T12:29:00.094Z'
+                created_at: '2026-03-09T12:28:59.899Z'
+                updated_at: '2026-03-09T12:29:00.094Z'
                 order_promotions: []
                 line_items:
                 - id: li_gbHJdmfrXB
                   variant_id: variant_gbHJdmfrXB
                   quantity: 1
                   currency: USD
-                  name: Product 496726
-                  slug: product-496726
+                  name: Product 497538
+                  slug: product-497538
                   options_text: ''
                   price: '19.99'
                   display_price: "$19.99"
@@ -5171,23 +5171,23 @@ paths:
                   discounted_amount: '19.99'
                   display_discounted_amount: "$19.99"
                   display_compare_at_amount: "$0.00"
-                  created_at: '2026-03-06T16:06:21.995Z'
-                  updated_at: '2026-03-06T16:06:22.049Z'
+                  created_at: '2026-03-09T12:28:59.931Z'
+                  updated_at: '2026-03-09T12:28:59.980Z'
                   compare_at_amount:
                   thumbnail_url:
                   option_values: []
                   digital_links: []
                 shipments:
                 - id: ship_EfhxLZ9ck8
-                  number: H97556379249
+                  number: H73394227511
                   state: pending
                   tracking:
                   tracking_url:
                   cost: '10.0'
                   display_cost: "$10.00"
                   shipped_at:
-                  created_at: '2026-03-06T16:06:22.071Z'
-                  updated_at: '2026-03-06T16:06:22.156Z'
+                  created_at: '2026-03-09T12:28:59.999Z'
+                  updated_at: '2026-03-09T12:29:00.085Z'
                   shipping_method:
                     id: shpm_UkLWZg9DAJ
                     name: UPS Ground
@@ -5195,7 +5195,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: STATE_ABBR_209
-                    name: Kimberley Bergstrom
+                    name: Shemeka Gislason
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -5228,11 +5228,11 @@ paths:
                   payment_method_id: pm_UkLWZg9DAJ
                   state: checkout
                   response_code: '12345'
-                  number: PUYTTULO
+                  number: PXW9C753
                   amount: '29.99'
                   display_amount: "$29.99"
-                  created_at: '2026-03-06T16:06:22.130Z'
-                  updated_at: '2026-03-06T16:06:22.130Z'
+                  created_at: '2026-03-09T12:29:00.059Z'
+                  updated_at: '2026-03-09T12:29:00.059Z'
                   source_type: credit_card
                   source_id: card_UkLWZg9DAJ
                   source:
@@ -5296,7 +5296,7 @@ paths:
                   type: Spree::Gateway::Bogus
                   session_required: true
               schema:
-                "$ref": "#/components/schemas/StoreOrder"
+                "$ref": "#/components/schemas/Order"
         '422':
           description: cannot complete
           content:
@@ -5321,14 +5321,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const methods = await client.store.orders.paymentMethods.list('or_abc123', {
+          const methods = await client.orders.paymentMethods.list('or_abc123', {
             bearerToken: '<token>',
           })
       parameters:
@@ -5372,7 +5372,7 @@ paths:
                   data:
                     type: array
                     items:
-                      "$ref": "#/components/schemas/StorePaymentMethod"
+                      "$ref": "#/components/schemas/PaymentMethod"
                   meta:
                     type: object
                     properties:
@@ -5413,14 +5413,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const session = await client.store.orders.paymentSessions.create('or_abc123', {
+          const session = await client.orders.paymentSessions.create('or_abc123', {
             payment_method_id: 'pm_abc123',
           }, {
             bearerToken: '<token>',
@@ -5465,13 +5465,13 @@ paths:
                 id: ps_gbHJdmfrXB
                 status: pending
                 currency: USD
-                external_id: bogus_082652a2e0a60e0d7b97a8b0
+                external_id: bogus_f1c94f4a3df7776ac21152b4
                 external_data:
-                  client_secret: bogus_secret_f6955b3b1cfcebc3
+                  client_secret: bogus_secret_863e9633075ecade
                 customer_external_id:
                 expires_at:
-                created_at: '2026-03-06T16:06:24.711Z'
-                updated_at: '2026-03-06T16:06:24.711Z'
+                created_at: '2026-03-09T12:29:02.508Z'
+                updated_at: '2026-03-09T12:29:02.508Z'
                 amount: '110.0'
                 payment_method_id: pm_UkLWZg9DAJ
                 order_id: or_UkLWZg9DAJ
@@ -5482,7 +5482,7 @@ paths:
                   type: Spree::Gateway::Bogus
                   session_required: true
               schema:
-                "$ref": "#/components/schemas/StorePaymentSession"
+                "$ref": "#/components/schemas/PaymentSession"
         '404':
           description: order not found
           content:
@@ -5557,14 +5557,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const session = await client.store.orders.paymentSessions.get('or_abc123', 'ps_abc123', {
+          const session = await client.orders.paymentSessions.get('or_abc123', 'ps_abc123', {
             bearerToken: '<token>',
           })
       responses:
@@ -5576,13 +5576,13 @@ paths:
                 id: ps_UkLWZg9DAJ
                 status: pending
                 currency: USD
-                external_id: bogus_06cae865c0a33de3d2b12679
+                external_id: bogus_503062167fe680cc8021025d
                 external_data:
                   client_secret: secret_123
                 customer_external_id:
                 expires_at:
-                created_at: '2026-03-06T16:06:26.064Z'
-                updated_at: '2026-03-06T16:06:26.064Z'
+                created_at: '2026-03-09T12:29:03.727Z'
+                updated_at: '2026-03-09T12:29:03.727Z'
                 amount: '110.0'
                 payment_method_id: pm_UkLWZg9DAJ
                 order_id: or_UkLWZg9DAJ
@@ -5593,7 +5593,7 @@ paths:
                   type: Spree::Gateway::Bogus
                   session_required: true
               schema:
-                "$ref": "#/components/schemas/StorePaymentSession"
+                "$ref": "#/components/schemas/PaymentSession"
         '404':
           description: payment session not found
           content:
@@ -5617,14 +5617,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const session = await client.store.orders.paymentSessions.update('or_abc123', 'ps_abc123', {
+          const session = await client.orders.paymentSessions.update('or_abc123', 'ps_abc123', {
             amount: '50.00',
           }, {
             bearerToken: '<token>',
@@ -5639,13 +5639,13 @@ paths:
                 id: ps_UkLWZg9DAJ
                 status: pending
                 currency: USD
-                external_id: bogus_a7c21988dde2867697538015
+                external_id: bogus_491780682a4166a6b2651c80
                 external_data:
                   client_secret: secret_123
                 customer_external_id:
                 expires_at:
-                created_at: '2026-03-06T16:06:27.314Z'
-                updated_at: '2026-03-06T16:06:27.330Z'
+                created_at: '2026-03-09T12:29:04.946Z'
+                updated_at: '2026-03-09T12:29:04.960Z'
                 amount: '50.0'
                 payment_method_id: pm_UkLWZg9DAJ
                 order_id: or_UkLWZg9DAJ
@@ -5656,7 +5656,7 @@ paths:
                   type: Spree::Gateway::Bogus
                   session_required: true
               schema:
-                "$ref": "#/components/schemas/StorePaymentSession"
+                "$ref": "#/components/schemas/PaymentSession"
       requestBody:
         content:
           application/json:
@@ -5714,14 +5714,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const session = await client.store.orders.paymentSessions.complete('or_abc123', 'ps_abc123', {
+          const session = await client.orders.paymentSessions.complete('or_abc123', 'ps_abc123', {
             session_result: 'success',
           }, {
             bearerToken: '<token>',
@@ -5743,13 +5743,13 @@ paths:
                 id: ps_UkLWZg9DAJ
                 status: completed
                 currency: USD
-                external_id: bogus_5e344c46e904b5c0f2c3c55c
+                external_id: bogus_b85f542179c0ea459b18905e
                 external_data:
                   client_secret: secret_123
                 customer_external_id:
                 expires_at:
-                created_at: '2026-03-06T16:06:27.935Z'
-                updated_at: '2026-03-06T16:06:27.948Z'
+                created_at: '2026-03-09T12:29:05.557Z'
+                updated_at: '2026-03-09T12:29:05.571Z'
                 amount: '110.0'
                 payment_method_id: pm_UkLWZg9DAJ
                 order_id: or_UkLWZg9DAJ
@@ -5760,7 +5760,7 @@ paths:
                   type: Spree::Gateway::Bogus
                   session_required: true
               schema:
-                "$ref": "#/components/schemas/StorePaymentSession"
+                "$ref": "#/components/schemas/PaymentSession"
         '404':
           description: payment session not found
           content:
@@ -5798,14 +5798,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const session = await client.store.customer.paymentSetupSessions.create({
+          const session = await client.customer.paymentSetupSessions.create({
             payment_method_id: 'pm_abc123',
           }, {
             bearerToken: '<token>',
@@ -5829,11 +5829,11 @@ paths:
               example:
                 id: pss_gbHJdmfrXB
                 status: pending
-                external_id: bogus_seti_fe4d42894d67c50919579448
-                external_client_secret: bogus_seti_secret_500e0af16394e3ce
+                external_id: bogus_seti_d4854a6e3c1f742301934072
+                external_client_secret: bogus_seti_secret_baf8f04aea034535
                 external_data: {}
-                created_at: '2026-03-06T16:06:29.140Z'
-                updated_at: '2026-03-06T16:06:29.140Z'
+                created_at: '2026-03-09T12:29:06.753Z'
+                updated_at: '2026-03-09T12:29:06.753Z'
                 payment_method_id: pm_UkLWZg9DAJ
                 payment_source_id:
                 payment_source_type:
@@ -5845,7 +5845,7 @@ paths:
                   type: Spree::Gateway::Bogus
                   session_required: true
               schema:
-                "$ref": "#/components/schemas/StorePaymentSetupSession"
+                "$ref": "#/components/schemas/PaymentSetupSession"
         '401':
           description: unauthorized
           content:
@@ -5912,14 +5912,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const session = await client.store.customer.paymentSetupSessions.get('pss_abc123', {
+          const session = await client.customer.paymentSetupSessions.get('pss_abc123', {
             bearerToken: '<token>',
           })
       responses:
@@ -5930,12 +5930,12 @@ paths:
               example:
                 id: pss_UkLWZg9DAJ
                 status: pending
-                external_id: seti_test_e925261d5c9e1edf61b595b9
-                external_client_secret: seti_secret_4a64f938377127aaafda1b1d
+                external_id: seti_test_193047699171c7985b466c85
+                external_client_secret: seti_secret_993499571eea4d347cda442b
                 external_data:
                   client_secret: secret_123
-                created_at: '2026-03-06T16:06:30.760Z'
-                updated_at: '2026-03-06T16:06:30.760Z'
+                created_at: '2026-03-09T12:29:08.380Z'
+                updated_at: '2026-03-09T12:29:08.380Z'
                 payment_method_id: pm_UkLWZg9DAJ
                 payment_source_id:
                 payment_source_type:
@@ -5947,7 +5947,7 @@ paths:
                   type: Spree::Gateway::Bogus
                   session_required: true
               schema:
-                "$ref": "#/components/schemas/StorePaymentSetupSession"
+                "$ref": "#/components/schemas/PaymentSetupSession"
         '404':
           description: payment setup session not found
           content:
@@ -5989,14 +5989,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const session = await client.store.customer.paymentSetupSessions.complete('pss_abc123', {}, {
+          const session = await client.customer.paymentSetupSessions.complete('pss_abc123', {}, {
             bearerToken: '<token>',
           })
       parameters: []
@@ -6008,12 +6008,12 @@ paths:
               example:
                 id: pss_UkLWZg9DAJ
                 status: completed
-                external_id: seti_test_452b1e3d49b56fa111c4b7a2
-                external_client_secret: seti_secret_b66a3c1753ece82034dbfa1c
+                external_id: seti_test_3dbf5d434cbacb29bfb665fb
+                external_client_secret: seti_secret_29a6d6175fa2781d73a1b206
                 external_data:
                   client_secret: secret_123
-                created_at: '2026-03-06T16:06:31.856Z'
-                updated_at: '2026-03-06T16:06:31.868Z'
+                created_at: '2026-03-09T12:29:09.473Z'
+                updated_at: '2026-03-09T12:29:09.487Z'
                 payment_method_id: pm_UkLWZg9DAJ
                 payment_source_id: card_UkLWZg9DAJ
                 payment_source_type: Spree::CreditCard
@@ -6025,7 +6025,7 @@ paths:
                   type: Spree::Gateway::Bogus
                   session_required: true
               schema:
-                "$ref": "#/components/schemas/StorePaymentSetupSession"
+                "$ref": "#/components/schemas/PaymentSetupSession"
         '404':
           description: payment setup session not found
           content:
@@ -6075,14 +6075,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const payments = await client.store.orders.payments.list('or_abc123', {
+          const payments = await client.orders.payments.list('or_abc123', {
             bearerToken: '<token>',
           })
       responses:
@@ -6096,11 +6096,11 @@ paths:
                   payment_method_id: pm_UkLWZg9DAJ
                   state: checkout
                   response_code: '12345'
-                  number: PSC8XJG7
+                  number: PKS5S8XX
                   amount: '110.0'
                   display_amount: "$110.00"
-                  created_at: '2026-03-06T16:06:33.018Z'
-                  updated_at: '2026-03-06T16:06:33.018Z'
+                  created_at: '2026-03-09T12:29:10.692Z'
+                  updated_at: '2026-03-09T12:29:10.692Z'
                   source_type: credit_card
                   source_id: card_UkLWZg9DAJ
                   source:
@@ -6125,7 +6125,7 @@ paths:
                   data:
                     type: array
                     items:
-                      "$ref": "#/components/schemas/StorePayment"
+                      "$ref": "#/components/schemas/Payment"
                   meta:
                     type: object
         '404':
@@ -6174,14 +6174,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const payment = await client.store.orders.payments.get('or_abc123', 'pay_abc123', {
+          const payment = await client.orders.payments.get('or_abc123', 'pay_abc123', {
             bearerToken: '<token>',
           })
       responses:
@@ -6194,11 +6194,11 @@ paths:
                 payment_method_id: pm_UkLWZg9DAJ
                 state: checkout
                 response_code: '12345'
-                number: POU55AZX
+                number: PYVOETRX
                 amount: '110.0'
                 display_amount: "$110.00"
-                created_at: '2026-03-06T16:06:34.379Z'
-                updated_at: '2026-03-06T16:06:34.379Z'
+                created_at: '2026-03-09T12:29:11.966Z'
+                updated_at: '2026-03-09T12:29:11.966Z'
                 source_type: credit_card
                 source_id: card_UkLWZg9DAJ
                 source:
@@ -6217,7 +6217,7 @@ paths:
                   type: Spree::Gateway::Bogus
                   session_required: true
               schema:
-                "$ref": "#/components/schemas/StorePayment"
+                "$ref": "#/components/schemas/Payment"
         '404':
           description: payment not found
           content:
@@ -6240,14 +6240,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const products = await client.store.products.list({
+          const products = await client.products.list({
             page: 1,
             limit: 25,
             sort: 'price',
@@ -6342,18 +6342,18 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 66618
-                  description: |-
-                    Adipisci fugit praesentium incidunt architecto dolor modi. Dolorem repellat tempore consequuntur voluptatum. Corporis modi ea eligendi quia reprehenderit nesciunt nihil. Aperiam et vero quam numquam optio nihil laudantium. Quasi nisi voluptatibus tempore hic.
-                    Ipsa cum similique aut facilis iure quod dolores. Deleniti quisquam fugit ab voluptate dolorum sit. Cum tempore autem non voluptatem corporis commodi ad unde. Harum ut enim debitis asperiores nostrum praesentium placeat perspiciatis.
-                    Nihil est tempora perferendis hic eveniet molestias. Quae aspernatur repellendus est ab fuga. Atque sunt numquam dicta consectetur facilis molestias modi deserunt.
-                  slug: product-66618
+                  name: Product 662781
+                  description: Minima optio similique cumque magni laudantium quaerat
+                    quidem. Qui deserunt earum veniam voluptatibus eaque in laborum
+                    rerum. Nam asperiores molestiae quidem consectetur consequatur
+                    eveniet quo.
+                  slug: product-662781
                   meta_description:
                   meta_keywords:
                   variant_count: 1
-                  available_on: '2025-03-06T16:06:35.452Z'
-                  created_at: '2026-03-06T16:06:35.475Z'
-                  updated_at: '2026-03-06T16:06:35.559Z'
+                  available_on: '2025-03-09T12:29:12.631Z'
+                  created_at: '2026-03-09T12:29:12.647Z'
+                  updated_at: '2026-03-09T12:29:12.695Z'
                   purchasable: true
                   in_stock: false
                   backorderable: true
@@ -6373,17 +6373,18 @@ paths:
                     price_list_id:
                   original_price:
                 - id: prod_gbHJdmfrXB
-                  name: Product 672922
-                  description: Quod dicta ad facere eos unde delectus voluptatum consequatur.
-                    Similique quod voluptatum mollitia est nemo. Non debitis eos incidunt
-                    ab fuga ea.
-                  slug: product-672922
+                  name: Product 672610
+                  description: Modi rerum minus quia sed. Eaque molestiae facilis
+                    excepturi a sapiente. Modi ut ex necessitatibus nam. Culpa nisi
+                    omnis officiis quasi tempore deleniti quae. Et aspernatur iure
+                    voluptatibus libero quis magni.
+                  slug: product-672610
                   meta_description:
                   meta_keywords:
                   variant_count: 0
-                  available_on: '2025-03-06T16:06:35.567Z'
-                  created_at: '2026-03-06T16:06:35.579Z'
-                  updated_at: '2026-03-06T16:06:35.594Z'
+                  available_on: '2025-03-09T12:29:12.703Z'
+                  created_at: '2026-03-09T12:29:12.712Z'
+                  updated_at: '2026-03-09T12:29:12.727Z'
                   purchasable: true
                   in_stock: false
                   backorderable: true
@@ -6418,7 +6419,7 @@ paths:
                   data:
                     type: array
                     items:
-                      "$ref": "#/components/schemas/StoreProduct"
+                      "$ref": "#/components/schemas/Product"
                   meta:
                     "$ref": "#/components/schemas/PaginationMeta"
                 required:
@@ -6446,14 +6447,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const product = await client.store.products.get('spree-tote', {
+          const product = await client.products.get('spree-tote', {
             expand: ['variants', 'images'],
           })
       parameters:
@@ -6489,20 +6490,17 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 789094
+                name: Product 781365
                 description: |-
-                  Impedit cupiditate eum tempora expedita similique ipsam. Repellendus iusto quibusdam iure fugiat corrupti officia totam eveniet. Fugit voluptatem maxime aliquam dignissimos. Excepturi tenetur illum error autem sint animi harum.
-                  Molestiae molestias iusto nobis ducimus quae veritatis eligendi. Quam optio ducimus dolor natus quaerat facere perspiciatis. Delectus fugiat quam placeat labore praesentium fuga eveniet.
-                  Ex autem ad iste impedit totam fugiat accusantium. Exercitationem sed architecto rem rerum sint dolor. Sequi velit adipisci repellendus alias accusamus. Nesciunt perferendis iste assumenda enim dolorum. Itaque deserunt saepe explicabo atque.
-                  Autem in magnam vero ipsa laudantium. Porro mollitia eius eos ab. Non ducimus reiciendis beatae libero. Commodi ad quidem provident delectus minima.
-                  Quo asperiores illo unde illum. Incidunt expedita consequuntur natus officiis deserunt rem doloribus. Dolorum et accusantium quisquam id maiores magni ut placeat. Totam ab quae voluptates earum at accusamus placeat. Neque corporis quia dolor occaecati consequatur sed a nesciunt.
-                slug: product-789094
+                  Ut amet velit commodi inventore laborum soluta excepturi in. Accusantium cum dolorem alias facere. Harum ipsum ducimus dolore cum excepturi. Sequi architecto similique porro sapiente accusantium voluptatibus eveniet blanditiis. Nulla distinctio eos voluptatibus ducimus nihil accusantium quasi reprehenderit.
+                  Suscipit quod eveniet perspiciatis tempore quo iste optio. Tempore quibusdam esse eveniet voluptatem quisquam nemo. Non illum tenetur neque quaerat necessitatibus dolore tempore ipsa. Aliquid accusamus aspernatur recusandae quis similique enim omnis. Unde veniam totam tempore cupiditate ut dolores sed maxime.
+                slug: product-781365
                 meta_description:
                 meta_keywords:
                 variant_count: 1
-                available_on: '2025-03-06T16:06:36.521Z'
-                created_at: '2026-03-06T16:06:36.546Z'
-                updated_at: '2026-03-06T16:06:36.596Z'
+                available_on: '2025-03-09T12:29:13.488Z'
+                created_at: '2026-03-09T12:29:13.501Z'
+                updated_at: '2026-03-09T12:29:13.536Z'
                 purchasable: true
                 in_stock: false
                 backorderable: true
@@ -6522,7 +6520,7 @@ paths:
                   price_list_id:
                 original_price:
               schema:
-                "$ref": "#/components/schemas/StoreProduct"
+                "$ref": "#/components/schemas/Product"
         '404':
           description: draft product not visible
           content:
@@ -6550,14 +6548,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const filters = await client.store.products.filters({
+          const filters = await client.products.filters({
             taxon_id: 'taxon_abc123',
           })
       parameters:
@@ -6679,14 +6677,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const shipments = await client.store.orders.shipments.list('or_abc123', {
+          const shipments = await client.orders.shipments.list('or_abc123', {
             bearerToken: '<token>',
           })
       parameters:
@@ -6719,15 +6717,15 @@ paths:
               example:
                 data:
                 - id: ship_UkLWZg9DAJ
-                  number: H98447373434
+                  number: H63965039070
                   state: pending
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
                   display_cost: "$100.00"
                   shipped_at:
-                  created_at: '2026-03-06T16:06:39.375Z'
-                  updated_at: '2026-03-06T16:06:39.394Z'
+                  created_at: '2026-03-09T12:29:16.023Z'
+                  updated_at: '2026-03-09T12:29:16.038Z'
                   shipping_method:
                     id: shpm_UkLWZg9DAJ
                     name: UPS Ground
@@ -6735,7 +6733,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: STATE_ABBR_295
-                    name: Alishia Thiel
+                    name: Charles Senger
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -6769,7 +6767,7 @@ paths:
                   data:
                     type: array
                     items:
-                      "$ref": "#/components/schemas/StoreShipment"
+                      "$ref": "#/components/schemas/Shipment"
                   meta:
                     "$ref": "#/components/schemas/PaginationMeta"
         '404':
@@ -6832,15 +6830,15 @@ paths:
             application/json:
               example:
                 id: ship_UkLWZg9DAJ
-                number: H76257575404
+                number: H11217993078
                 state: pending
                 tracking: U10000
                 tracking_url:
                 cost: '100.0'
                 display_cost: "$100.00"
                 shipped_at:
-                created_at: '2026-03-06T16:06:40.616Z'
-                updated_at: '2026-03-06T16:06:40.636Z'
+                created_at: '2026-03-09T12:29:17.320Z'
+                updated_at: '2026-03-09T12:29:17.345Z'
                 shipping_method:
                   id: shpm_UkLWZg9DAJ
                   name: UPS Ground
@@ -6848,7 +6846,7 @@ paths:
                 stock_location:
                   id: sloc_UkLWZg9DAJ
                   state_abbr: STATE_ABBR_303
-                  name: Doloris Wilderman
+                  name: Renata Weissnat
                   address1: 1600 Pennsylvania Ave NW
                   city: Washington
                   zipcode: '20500'
@@ -6867,7 +6865,7 @@ paths:
                     name: UPS Ground
                     code: UPS_GROUND
               schema:
-                "$ref": "#/components/schemas/StoreShipment"
+                "$ref": "#/components/schemas/Shipment"
         '404':
           description: shipment not found
           content:
@@ -6891,14 +6889,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const order = await client.store.orders.shipments.update('or_abc123', 'shp_abc123', {
+          const order = await client.orders.shipments.update('or_abc123', 'shp_abc123', {
             selected_shipping_rate_id: 'shprt_abc123',
           }, {
             bearerToken: '<token>',
@@ -6938,15 +6936,15 @@ paths:
             application/json:
               example:
                 id: or_UkLWZg9DAJ
-                number: R635582648
+                number: R849338526
                 state: delivery
                 checkout_steps:
                 - address
                 - delivery
                 - payment
                 - complete
-                token: z1NADBk29YMaLeLnXtfLjtWR3p7NqBMSsWu
-                email: caitlin@jacobs.co.uk
+                token: YLsPdGvuRCN9JZazaL2x6QJtL39ek9w83Eu
+                email: chrissy.beahan@bartoletti.ca
                 special_instructions:
                 currency: USD
                 locale: en
@@ -6971,16 +6969,16 @@ paths:
                 total: '110.0'
                 display_total: "$110.00"
                 completed_at:
-                created_at: '2026-03-06T16:06:41.806Z'
-                updated_at: '2026-03-06T16:06:41.877Z'
+                created_at: '2026-03-09T12:29:18.581Z'
+                updated_at: '2026-03-09T12:29:18.653Z'
                 order_promotions: []
                 line_items:
                 - id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 1105977
-                  slug: product-1105977
+                  name: Product 1107589
+                  slug: product-1107589
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -6999,23 +6997,23 @@ paths:
                   discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
-                  created_at: '2026-03-06T16:06:41.836Z'
-                  updated_at: '2026-03-06T16:06:41.836Z'
+                  created_at: '2026-03-09T12:29:18.611Z'
+                  updated_at: '2026-03-09T12:29:18.611Z'
                   compare_at_amount:
                   thumbnail_url:
                   option_values: []
                   digital_links: []
                 shipments:
                 - id: ship_UkLWZg9DAJ
-                  number: H52321074309
+                  number: H67661824004
                   state: pending
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
                   display_cost: "$100.00"
                   shipped_at:
-                  created_at: '2026-03-06T16:06:41.842Z'
-                  updated_at: '2026-03-06T16:06:41.876Z'
+                  created_at: '2026-03-09T12:29:18.617Z'
+                  updated_at: '2026-03-09T12:29:18.651Z'
                   shipping_method:
                     id: shpm_UkLWZg9DAJ
                     name: UPS Ground
@@ -7023,7 +7021,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: STATE_ABBR_311
-                    name: Ima Aufderhar
+                    name: Kisha Renner
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -7078,7 +7076,7 @@ paths:
                   state_name: STATE_NAME_314
                 payment_methods: []
               schema:
-                "$ref": "#/components/schemas/StoreOrder"
+                "$ref": "#/components/schemas/Order"
         '404':
           description: shipping rate not found
           content:
@@ -7115,14 +7113,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const order = await client.store.orders.addStoreCredit('or_abc123', 10.0, {
+          const order = await client.orders.addStoreCredit('or_abc123', 10.0, {
             bearerToken: '<token>',
           })
       parameters:
@@ -7160,15 +7158,15 @@ paths:
             application/json:
               example:
                 id: or_UkLWZg9DAJ
-                number: R526061542
+                number: R370675879
                 state: cart
                 checkout_steps:
                 - address
                 - delivery
                 - payment
                 - complete
-                token: L8LG5fv41MCjkpJYAHYT6rKzZar2hh6fk4h
-                email: janene@feestmiller.co.uk
+                token: TpoBw9Zbe1ZtFYk5NFdFuiFjzLLG3H254s4
+                email: tifany@von.com
                 special_instructions:
                 currency: USD
                 locale: en
@@ -7193,16 +7191,16 @@ paths:
                 total: '110.0'
                 display_total: "$110.00"
                 completed_at:
-                created_at: '2026-03-06T16:06:43.114Z'
-                updated_at: '2026-03-06T16:06:43.301Z'
+                created_at: '2026-03-09T12:29:19.811Z'
+                updated_at: '2026-03-09T12:29:19.859Z'
                 order_promotions: []
                 line_items:
                 - id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 1128020
-                  slug: product-1128020
+                  name: Product 1124671
+                  slug: product-1124671
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -7221,23 +7219,23 @@ paths:
                   discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
-                  created_at: '2026-03-06T16:06:43.213Z'
-                  updated_at: '2026-03-06T16:06:43.213Z'
+                  created_at: '2026-03-09T12:29:19.839Z'
+                  updated_at: '2026-03-09T12:29:19.839Z'
                   compare_at_amount:
                   thumbnail_url:
                   option_values: []
                   digital_links: []
                 shipments:
                 - id: ship_UkLWZg9DAJ
-                  number: H88926578086
+                  number: H31599810668
                   state: pending
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
                   display_cost: "$100.00"
                   shipped_at:
-                  created_at: '2026-03-06T16:06:43.224Z'
-                  updated_at: '2026-03-06T16:06:43.295Z'
+                  created_at: '2026-03-09T12:29:19.844Z'
+                  updated_at: '2026-03-09T12:29:19.857Z'
                   shipping_method:
                     id: shpm_UkLWZg9DAJ
                     name: UPS Ground
@@ -7245,7 +7243,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: STATE_ABBR_319
-                    name: Yu Kling
+                    name: Verlie Oga
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -7267,12 +7265,12 @@ paths:
                 - id: py_UkLWZg9DAJ
                   payment_method_id: pm_UkLWZg9DAJ
                   state: checkout
-                  response_code: 1-SC-20260306160643807682
-                  number: P3WI1BIH
+                  response_code: 1-SC-20260309122920162837
+                  number: PO1YK2YE
                   amount: '10.0'
                   display_amount: "$10.00"
-                  created_at: '2026-03-06T16:06:43.812Z'
-                  updated_at: '2026-03-06T16:06:43.812Z'
+                  created_at: '2026-03-09T12:29:20.166Z'
+                  updated_at: '2026-03-09T12:29:20.166Z'
                   source_type: store_credit
                   source_id: credit_UkLWZg9DAJ
                   source:
@@ -7331,7 +7329,7 @@ paths:
                   type: Spree::PaymentMethod::StoreCredit
                   session_required: false
               schema:
-                "$ref": "#/components/schemas/StoreOrder"
+                "$ref": "#/components/schemas/Order"
         '422':
           description: no store credit available
           content:
@@ -7364,14 +7362,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const order = await client.store.orders.removeStoreCredit('or_abc123', {
+          const order = await client.orders.removeStoreCredit('or_abc123', {
             bearerToken: '<token>',
           })
       parameters:
@@ -7402,15 +7400,15 @@ paths:
             application/json:
               example:
                 id: or_UkLWZg9DAJ
-                number: R858249717
+                number: R894807500
                 state: cart
                 checkout_steps:
                 - address
                 - delivery
                 - payment
                 - complete
-                token: bjeDv2AEk4Dy3Nob7MT7wnqaQqnozee8BQm
-                email: donny.hyatt@hodkiewiczbosco.ca
+                token: jEEkSm38opz6ZRdCT8vUx6nUEaKfhLkHnfP
+                email: tamika_hudson@kunze.info
                 special_instructions:
                 currency: USD
                 locale: en
@@ -7435,16 +7433,16 @@ paths:
                 total: '110.0'
                 display_total: "$110.00"
                 completed_at:
-                created_at: '2026-03-06T16:06:45.333Z'
-                updated_at: '2026-03-06T16:06:45.401Z'
+                created_at: '2026-03-09T12:29:21.353Z'
+                updated_at: '2026-03-09T12:29:21.406Z'
                 order_promotions: []
                 line_items:
                 - id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 1149928
-                  slug: product-1149928
+                  name: Product 1147019
+                  slug: product-1147019
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -7463,23 +7461,23 @@ paths:
                   discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
-                  created_at: '2026-03-06T16:06:45.375Z'
-                  updated_at: '2026-03-06T16:06:45.375Z'
+                  created_at: '2026-03-09T12:29:21.384Z'
+                  updated_at: '2026-03-09T12:29:21.384Z'
                   compare_at_amount:
                   thumbnail_url:
                   option_values: []
                   digital_links: []
                 shipments:
                 - id: ship_UkLWZg9DAJ
-                  number: H94851815246
+                  number: H03571800356
                   state: pending
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
                   display_cost: "$100.00"
                   shipped_at:
-                  created_at: '2026-03-06T16:06:45.382Z'
-                  updated_at: '2026-03-06T16:06:45.396Z'
+                  created_at: '2026-03-09T12:29:21.390Z'
+                  updated_at: '2026-03-09T12:29:21.404Z'
                   shipping_method:
                     id: shpm_UkLWZg9DAJ
                     name: UPS Ground
@@ -7487,7 +7485,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: STATE_ABBR_327
-                    name: Murray Littel
+                    name: Wilhelmina Walter
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -7542,7 +7540,7 @@ paths:
                   state_name: STATE_NAME_330
                 payment_methods: []
               schema:
-                "$ref": "#/components/schemas/StoreOrder"
+                "$ref": "#/components/schemas/Order"
   "/api/v3/store/taxonomies":
     get:
       summary: List taxonomies
@@ -7556,14 +7554,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const taxonomies = await client.store.taxonomies.list({
+          const taxonomies = await client.taxonomies.list({
             page: 1,
             limit: 25,
           })
@@ -7612,32 +7610,32 @@ paths:
                 - id: txnmy_UkLWZg9DAJ
                   name: Categories
                   position: 1
-                  created_at: '2026-03-06T16:05:37.067Z'
-                  updated_at: '2026-03-06T16:05:37.089Z'
+                  created_at: '2026-03-09T12:28:18.307Z'
+                  updated_at: '2026-03-09T12:28:18.325Z'
                   root_id: txn_UkLWZg9DAJ
                 - id: txnmy_gbHJdmfrXB
                   name: Brands
                   position: 2
-                  created_at: '2026-03-06T16:05:37.090Z'
-                  updated_at: '2026-03-06T16:05:37.098Z'
+                  created_at: '2026-03-09T12:28:18.326Z'
+                  updated_at: '2026-03-09T12:28:18.334Z'
                   root_id: txn_gbHJdmfrXB
                 - id: txnmy_EfhxLZ9ck8
                   name: Collections
                   position: 3
-                  created_at: '2026-03-06T16:05:37.099Z'
-                  updated_at: '2026-03-06T16:05:37.175Z'
+                  created_at: '2026-03-09T12:28:18.335Z'
+                  updated_at: '2026-03-09T12:28:18.390Z'
                   root_id: txn_EfhxLZ9ck8
                 - id: txnmy_VqXmZF31wY
                   name: taxonomy_11
                   position: 4
-                  created_at: '2026-03-06T16:06:45.442Z'
-                  updated_at: '2026-03-06T16:06:45.454Z'
+                  created_at: '2026-03-09T12:29:21.440Z'
+                  updated_at: '2026-03-09T12:29:21.450Z'
                   root_id: txn_OIJLhNcSbf
                 - id: txnmy_uw2YK1rnl0
                   name: taxonomy_12
                   position: 5
-                  created_at: '2026-03-06T16:06:45.455Z'
-                  updated_at: '2026-03-06T16:06:45.467Z'
+                  created_at: '2026-03-09T12:29:21.451Z'
+                  updated_at: '2026-03-09T12:29:21.459Z'
                   root_id: txn_AXs1igzRC6
                 meta:
                   page: 1
@@ -7655,7 +7653,7 @@ paths:
                   data:
                     type: array
                     items:
-                      "$ref": "#/components/schemas/StoreTaxonomy"
+                      "$ref": "#/components/schemas/Taxonomy"
                   meta:
                     "$ref": "#/components/schemas/PaginationMeta"
         '401':
@@ -7680,14 +7678,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const taxonomy = await client.store.taxonomies.get('taxonomy_abc123', {
+          const taxonomy = await client.taxonomies.get('taxonomy_abc123', {
             expand: 'taxons',
           })
       parameters:
@@ -7724,11 +7722,11 @@ paths:
                 id: txnmy_VqXmZF31wY
                 name: taxonomy_17
                 position: 4
-                created_at: '2026-03-06T16:06:45.770Z'
-                updated_at: '2026-03-06T16:06:45.784Z'
+                created_at: '2026-03-09T12:29:21.695Z'
+                updated_at: '2026-03-09T12:29:21.704Z'
                 root_id: txn_OIJLhNcSbf
               schema:
-                "$ref": "#/components/schemas/StoreTaxonomy"
+                "$ref": "#/components/schemas/Taxonomy"
         '404':
           description: taxonomy from other store
           content:
@@ -7753,14 +7751,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const taxons = await client.store.taxons.list({
+          const taxons = await client.taxons.list({
             page: 1,
             limit: 25,
           })
@@ -7809,8 +7807,8 @@ paths:
                   meta_description:
                   meta_keywords:
                   children_count: 0
-                  created_at: '2026-03-06T16:05:37.078Z'
-                  updated_at: '2026-03-06T16:05:37.088Z'
+                  created_at: '2026-03-09T12:28:18.316Z'
+                  updated_at: '2026-03-09T12:28:18.324Z'
                   parent_id:
                   taxonomy_id: txnmy_UkLWZg9DAJ
                   description: ''
@@ -7829,8 +7827,8 @@ paths:
                   meta_description:
                   meta_keywords:
                   children_count: 0
-                  created_at: '2026-03-06T16:05:37.092Z'
-                  updated_at: '2026-03-06T16:05:37.096Z'
+                  created_at: '2026-03-09T12:28:18.328Z'
+                  updated_at: '2026-03-09T12:28:18.332Z'
                   parent_id:
                   taxonomy_id: txnmy_gbHJdmfrXB
                   description: ''
@@ -7849,8 +7847,8 @@ paths:
                   meta_description:
                   meta_keywords:
                   children_count: 2
-                  created_at: '2026-03-06T16:05:37.101Z'
-                  updated_at: '2026-03-06T16:05:37.174Z'
+                  created_at: '2026-03-09T12:28:18.338Z'
+                  updated_at: '2026-03-09T12:28:18.390Z'
                   parent_id:
                   taxonomy_id: txnmy_EfhxLZ9ck8
                   description: ''
@@ -7869,8 +7867,8 @@ paths:
                   meta_description:
                   meta_keywords:
                   children_count: 0
-                  created_at: '2026-03-06T16:05:37.116Z'
-                  updated_at: '2026-03-06T16:05:37.118Z'
+                  created_at: '2026-03-09T12:28:18.349Z'
+                  updated_at: '2026-03-09T12:28:18.350Z'
                   parent_id: txn_EfhxLZ9ck8
                   taxonomy_id: txnmy_EfhxLZ9ck8
                   description: ''
@@ -7889,8 +7887,8 @@ paths:
                   meta_description:
                   meta_keywords:
                   children_count: 0
-                  created_at: '2026-03-06T16:05:37.131Z'
-                  updated_at: '2026-03-06T16:05:37.133Z'
+                  created_at: '2026-03-09T12:28:18.361Z'
+                  updated_at: '2026-03-09T12:28:18.362Z'
                   parent_id: txn_EfhxLZ9ck8
                   taxonomy_id: txnmy_EfhxLZ9ck8
                   description: ''
@@ -7909,8 +7907,8 @@ paths:
                   meta_description:
                   meta_keywords:
                   children_count: 1
-                  created_at: '2026-03-06T16:06:46.382Z'
-                  updated_at: '2026-03-06T16:06:46.436Z'
+                  created_at: '2026-03-09T12:29:22.075Z'
+                  updated_at: '2026-03-09T12:29:22.120Z'
                   parent_id:
                   taxonomy_id: txnmy_VqXmZF31wY
                   description: ''
@@ -7929,8 +7927,8 @@ paths:
                   meta_description:
                   meta_keywords:
                   children_count: 1
-                  created_at: '2026-03-06T16:06:46.391Z'
-                  updated_at: '2026-03-06T16:06:46.436Z'
+                  created_at: '2026-03-09T12:29:22.082Z'
+                  updated_at: '2026-03-09T12:29:22.120Z'
                   parent_id: txn_OIJLhNcSbf
                   taxonomy_id: txnmy_VqXmZF31wY
                   description: ''
@@ -7949,8 +7947,8 @@ paths:
                   meta_description:
                   meta_keywords:
                   children_count: 0
-                  created_at: '2026-03-06T16:06:46.401Z'
-                  updated_at: '2026-03-06T16:06:46.406Z'
+                  created_at: '2026-03-09T12:29:22.090Z'
+                  updated_at: '2026-03-09T12:29:22.096Z'
                   parent_id: txn_AXs1igzRC6
                   taxonomy_id: txnmy_VqXmZF31wY
                   description: ''
@@ -7976,7 +7974,7 @@ paths:
                   data:
                     type: array
                     items:
-                      "$ref": "#/components/schemas/StoreTaxon"
+                      "$ref": "#/components/schemas/Taxon"
                   meta:
                     "$ref": "#/components/schemas/PaginationMeta"
         '401':
@@ -8001,14 +7999,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const taxon = await client.store.taxons.get('categories/clothing/shirts', {
+          const taxon = await client.taxons.get('categories/clothing/shirts', {
             expand: 'children,products',
           })
       parameters:
@@ -8052,8 +8050,8 @@ paths:
                 meta_description:
                 meta_keywords:
                 children_count: 1
-                created_at: '2026-03-06T16:06:47.110Z'
-                updated_at: '2026-03-06T16:06:47.425Z'
+                created_at: '2026-03-09T12:29:22.707Z'
+                updated_at: '2026-03-09T12:29:22.746Z'
                 parent_id: txn_OIJLhNcSbf
                 taxonomy_id: txnmy_VqXmZF31wY
                 description: ''
@@ -8064,7 +8062,7 @@ paths:
                 is_child: true
                 is_leaf: false
               schema:
-                "$ref": "#/components/schemas/StoreTaxon"
+                "$ref": "#/components/schemas/Taxon"
         '404':
           description: taxon from other store not accessible
           content:
@@ -8098,14 +8096,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const products = await client.store.taxons.products.list('categories/clothing', {
+          const products = await client.taxons.products.list('categories/clothing', {
             page: 1,
             limit: 25,
             sort: 'price',
@@ -8181,18 +8179,20 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 1222757
+                  name: Product 1222548
                   description: |-
-                    Eum nisi error aspernatur quod facere odit tenetur. Consectetur hic error occaecati maiores blanditiis dolore. Nesciunt recusandae quas nisi voluptatem aspernatur placeat maiores.
-                    Illo tempore porro esse harum dolor iste deleniti molestias. Voluptates at tenetur necessitatibus assumenda iure. Expedita ducimus sed quasi ut. Reiciendis distinctio temporibus dolore a harum.
-                    Maiores repellendus mollitia neque eius ullam veritatis dolor. Optio aut architecto hic quod non mollitia blanditiis ut. Cupiditate ex eveniet est consequuntur. Impedit eaque rem exercitationem incidunt corrupti consectetur aut.
-                  slug: product-1222757
+                    Incidunt animi recusandae provident minima cumque commodi. Nesciunt reiciendis optio voluptates cupiditate neque praesentium. Dolores dolore quidem atque vero.
+                    Ut eos provident fugiat cumque beatae. Nihil laborum nisi quibusdam minima eius. Placeat reprehenderit earum nemo quas quidem ipsam. Quaerat distinctio at omnis occaecati voluptas. Quam nam tempora repellat numquam aut sit laudantium modi.
+                    Incidunt numquam doloremque quis iusto odit. Itaque necessitatibus deserunt error autem. Dicta ipsa dignissimos architecto sed.
+                    Rem porro aut tempore eum odit. Asperiores eum porro harum voluptas. Commodi placeat ea dolorem quae ipsa repellat.
+                    Quasi hic aspernatur rerum ad et. Quae doloribus quas debitis quisquam veniam. Quisquam nesciunt fuga eligendi consequatur eius autem quibusdam.
+                  slug: product-1222548
                   meta_description:
                   meta_keywords:
                   variant_count: 0
-                  available_on: '2025-03-06T16:06:48.221Z'
-                  created_at: '2026-03-06T16:06:48.246Z'
-                  updated_at: '2026-03-06T16:06:48.275Z'
+                  available_on: '2025-03-09T12:29:23.456Z'
+                  created_at: '2026-03-09T12:29:23.470Z'
+                  updated_at: '2026-03-09T12:29:23.484Z'
                   purchasable: true
                   in_stock: false
                   backorderable: true
@@ -8227,7 +8227,7 @@ paths:
                   data:
                     type: array
                     items:
-                      "$ref": "#/components/schemas/StoreProduct"
+                      "$ref": "#/components/schemas/Product"
                   meta:
                     "$ref": "#/components/schemas/PaginationMeta"
         '404':
@@ -8263,14 +8263,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const wishlists = await client.store.wishlists.list({}, {
+          const wishlists = await client.wishlists.list({}, {
             bearerToken: '<token>',
           })
       parameters:
@@ -8310,9 +8310,9 @@ paths:
                 data:
                 - id: wl_UkLWZg9DAJ
                   name: My Wishlist
-                  token: umgE8Xa53fRj351uzEXq1F29
-                  created_at: '2026-03-06T16:06:49.443Z'
-                  updated_at: '2026-03-06T16:06:49.443Z'
+                  token: NmFgGktq88KCgw62BHtyFHQz
+                  created_at: '2026-03-09T12:29:24.621Z'
+                  updated_at: '2026-03-09T12:29:24.621Z'
                   is_default: false
                   is_private: true
                 meta:
@@ -8331,7 +8331,7 @@ paths:
                   data:
                     type: array
                     items:
-                      "$ref": "#/components/schemas/StoreWishlist"
+                      "$ref": "#/components/schemas/Wishlist"
                   meta:
                     "$ref": "#/components/schemas/PaginationMeta"
         '401':
@@ -8356,14 +8356,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const wishlist = await client.store.wishlists.create({
+          const wishlist = await client.wishlists.create({
             name: 'Birthday Ideas',
             is_private: true,
           }, {
@@ -8388,13 +8388,13 @@ paths:
               example:
                 id: wl_gbHJdmfrXB
                 name: Birthday Ideas
-                token: cmjwgRzavdEy1TWRCuGZ6PbH
-                created_at: '2026-03-06T16:06:50.640Z'
-                updated_at: '2026-03-06T16:06:50.640Z'
+                token: cqKQuHc4Y1ZxATwgrwaesthL
+                created_at: '2026-03-09T12:29:25.802Z'
+                updated_at: '2026-03-09T12:29:25.802Z'
                 is_default: false
                 is_private: true
               schema:
-                "$ref": "#/components/schemas/StoreWishlist"
+                "$ref": "#/components/schemas/Wishlist"
         '422':
           description: validation error
           content:
@@ -8437,14 +8437,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const wishlist = await client.store.wishlists.get('wl_abc123', {
+          const wishlist = await client.wishlists.get('wl_abc123', {
             expand: 'wished_items',
           }, {
             bearerToken: '<token>',
@@ -8486,13 +8486,13 @@ paths:
               example:
                 id: wl_UkLWZg9DAJ
                 name: My Wishlist
-                token: Z9ceWN6JEScradeaE1xhS6ic
-                created_at: '2026-03-06T16:06:51.758Z'
-                updated_at: '2026-03-06T16:06:51.758Z'
+                token: BGTquKH2vasYY1vKktdNTS4Y
+                created_at: '2026-03-09T12:29:26.918Z'
+                updated_at: '2026-03-09T12:29:26.918Z'
                 is_default: false
                 is_private: true
               schema:
-                "$ref": "#/components/schemas/StoreWishlist"
+                "$ref": "#/components/schemas/Wishlist"
         '404':
           description: wishlist not found
           content:
@@ -8514,14 +8514,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const wishlist = await client.store.wishlists.update('wl_abc123', {
+          const wishlist = await client.wishlists.update('wl_abc123', {
             name: 'Updated Name',
           }, {
             bearerToken: '<token>',
@@ -8550,13 +8550,13 @@ paths:
               example:
                 id: wl_UkLWZg9DAJ
                 name: Updated Name
-                token: X21SJ4Wna4Cy8cmheTUQtzX7
-                created_at: '2026-03-06T16:06:52.923Z'
-                updated_at: '2026-03-06T16:06:52.974Z'
+                token: Yun1VE6MrfabZS81HAUMAB3y
+                created_at: '2026-03-09T12:29:28.082Z'
+                updated_at: '2026-03-09T12:29:28.127Z'
                 is_default: false
                 is_private: true
               schema:
-                "$ref": "#/components/schemas/StoreWishlist"
+                "$ref": "#/components/schemas/Wishlist"
       requestBody:
         content:
           application/json:
@@ -8583,14 +8583,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          await client.store.wishlists.delete('wl_abc123', {
+          await client.wishlists.delete('wl_abc123', {
             bearerToken: '<token>',
           })
       parameters:
@@ -8625,14 +8625,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          const item = await client.store.wishlists.items.create('wl_abc123', {
+          const item = await client.wishlists.items.create('wl_abc123', {
             variant_id: 'variant_abc123',
             quantity: 1,
           }, {
@@ -8664,8 +8664,8 @@ paths:
                 variant_id: variant_gbHJdmfrXB
                 wishlist_id: wl_UkLWZg9DAJ
                 quantity: 1
-                created_at: '2026-03-06T16:06:54.181Z'
-                updated_at: '2026-03-06T16:06:54.181Z'
+                created_at: '2026-03-09T12:29:29.305Z'
+                updated_at: '2026-03-09T12:29:29.305Z'
                 variant:
                   id: variant_gbHJdmfrXB
                   product_id: prod_gbHJdmfrXB
@@ -8674,8 +8674,8 @@ paths:
                   options_text: ''
                   track_inventory: true
                   image_count: 0
-                  created_at: '2026-03-06T16:06:54.156Z'
-                  updated_at: '2026-03-06T16:06:54.167Z'
+                  created_at: '2026-03-09T12:29:29.281Z'
+                  updated_at: '2026-03-09T12:29:29.290Z'
                   thumbnail:
                   purchasable: true
                   in_stock: false
@@ -8697,7 +8697,7 @@ paths:
                   original_price:
                   option_values: []
               schema:
-                "$ref": "#/components/schemas/StoreWishedItem"
+                "$ref": "#/components/schemas/WishedItem"
       requestBody:
         content:
           application/json:
@@ -8724,14 +8724,14 @@ paths:
       - lang: javascript
         label: Spree SDK
         source: |-
-          import { createSpreeClient } from '@spree/sdk'
+          import { createClient } from '@spree/sdk'
 
-          const client = createSpreeClient({
+          const client = createClient({
             baseUrl: 'https://your-store.com',
             publishableKey: '<api-key>',
           })
 
-          await client.store.wishlists.items.delete('wl_abc123', 'wi_abc123', {
+          await client.wishlists.items.delete('wl_abc123', 'wi_abc123', {
             bearerToken: '<token>',
           })
       parameters:
@@ -8921,11 +8921,11 @@ components:
           type: string
           description: JWT access token
         user:
-          "$ref": "#/components/schemas/StoreCustomer"
+          "$ref": "#/components/schemas/Customer"
       required:
       - token
       - user
-    StoreAddress:
+    Address:
       type: object
       properties:
         id:
@@ -8989,7 +8989,7 @@ components:
       - quick_checkout
       - state_name
       x-typelizer: true
-    StoreAsset:
+    Asset:
       type: object
       properties:
         id:
@@ -9021,7 +9021,7 @@ components:
       - created_at
       - updated_at
       x-typelizer: true
-    StoreBase:
+    Base:
       type: object
       properties:
         id:
@@ -9029,7 +9029,7 @@ components:
       required:
       - id
       x-typelizer: true
-    StoreCountry:
+    Country:
       type: object
       properties:
         iso:
@@ -9045,10 +9045,10 @@ components:
         states:
           type: array
           items:
-            "$ref": "#/components/schemas/StoreState"
+            "$ref": "#/components/schemas/State"
         market:
           allOf:
-          - "$ref": "#/components/schemas/StoreMarket"
+          - "$ref": "#/components/schemas/Market"
           nullable: true
       required:
       - iso
@@ -9057,7 +9057,7 @@ components:
       - states_required
       - zipcode_required
       x-typelizer: true
-    StoreCreditCard:
+    CreditCard:
       type: object
       properties:
         id:
@@ -9088,7 +9088,7 @@ components:
       - default
       - gateway_payment_profile_id
       x-typelizer: true
-    StoreCurrency:
+    Currency:
       type: object
       properties:
         iso_code:
@@ -9102,7 +9102,7 @@ components:
       - name
       - symbol
       x-typelizer: true
-    StoreCustomerReturn:
+    CustomerReturn:
       type: object
       properties:
         id:
@@ -9123,7 +9123,7 @@ components:
       - updated_at
       - stock_location_id
       x-typelizer: true
-    StoreCustomer:
+    Customer:
       type: object
       properties:
         id:
@@ -9143,14 +9143,14 @@ components:
         addresses:
           type: array
           items:
-            "$ref": "#/components/schemas/StoreAddress"
+            "$ref": "#/components/schemas/Address"
         default_billing_address:
           allOf:
-          - "$ref": "#/components/schemas/StoreAddress"
+          - "$ref": "#/components/schemas/Address"
           nullable: true
         default_shipping_address:
           allOf:
-          - "$ref": "#/components/schemas/StoreAddress"
+          - "$ref": "#/components/schemas/Address"
           nullable: true
       required:
       - id
@@ -9163,7 +9163,7 @@ components:
       - default_billing_address
       - default_shipping_address
       x-typelizer: true
-    StoreDigitalLink:
+    DigitalLink:
       type: object
       properties:
         id:
@@ -9198,7 +9198,7 @@ components:
       - expired
       - access_limit_exceeded
       x-typelizer: true
-    StoreDigital:
+    Digital:
       type: object
       properties:
         id:
@@ -9216,7 +9216,7 @@ components:
       - updated_at
       - variant_id
       x-typelizer: true
-    StoreExport:
+    Export:
       type: object
       properties:
         id:
@@ -9245,7 +9245,7 @@ components:
       - updated_at
       - user_id
       x-typelizer: true
-    StoreGiftCardBatch:
+    GiftCardBatch:
       type: object
       properties:
         id:
@@ -9282,7 +9282,7 @@ components:
       - expires_at
       - created_by_id
       x-typelizer: true
-    StoreGiftCard:
+    GiftCard:
       type: object
       properties:
         id:
@@ -9340,7 +9340,7 @@ components:
       - created_at
       - updated_at
       x-typelizer: true
-    StoreImage:
+    Image:
       type: object
       properties:
         id:
@@ -9400,7 +9400,7 @@ components:
       - xlarge_url
       - og_image_url
       x-typelizer: true
-    StoreImportRow:
+    ImportRow:
       type: object
       properties:
         id:
@@ -9435,7 +9435,7 @@ components:
       - import_id
       - item_id
       x-typelizer: true
-    StoreImport:
+    Import:
       type: object
       properties:
         id:
@@ -9474,7 +9474,7 @@ components:
       - owner_id
       - user_id
       x-typelizer: true
-    StoreInvitation:
+    Invitation:
       type: object
       properties:
         id:
@@ -9530,7 +9530,7 @@ components:
       - expires_at
       - accepted_at
       x-typelizer: true
-    StoreLineItem:
+    LineItem:
       type: object
       properties:
         id:
@@ -9595,11 +9595,11 @@ components:
         option_values:
           type: array
           items:
-            "$ref": "#/components/schemas/StoreOptionValue"
+            "$ref": "#/components/schemas/OptionValue"
         digital_links:
           type: array
           items:
-            "$ref": "#/components/schemas/StoreDigitalLink"
+            "$ref": "#/components/schemas/DigitalLink"
       required:
       - id
       - variant_id
@@ -9632,7 +9632,7 @@ components:
       - option_values
       - digital_links
       x-typelizer: true
-    StoreLocale:
+    Locale:
       type: object
       properties:
         code:
@@ -9643,7 +9643,7 @@ components:
       - code
       - name
       x-typelizer: true
-    StoreMarket:
+    Market:
       type: object
       properties:
         id:
@@ -9665,7 +9665,7 @@ components:
         countries:
           type: array
           items:
-            "$ref": "#/components/schemas/StoreCountry"
+            "$ref": "#/components/schemas/Country"
       required:
       - id
       - name
@@ -9675,7 +9675,7 @@ components:
       - default
       - supported_locales
       x-typelizer: true
-    StoreMetafield:
+    Metafield:
       type: object
       properties:
         id:
@@ -9695,7 +9695,7 @@ components:
       - key
       - value
       x-typelizer: true
-    StoreNewsletterSubscriber:
+    NewsletterSubscriber:
       type: object
       properties:
         id:
@@ -9723,7 +9723,7 @@ components:
       - verified_at
       - user_id
       x-typelizer: true
-    StoreOptionType:
+    OptionType:
       type: object
       properties:
         id:
@@ -9740,7 +9740,7 @@ components:
       - presentation
       - position
       x-typelizer: true
-    StoreOptionValue:
+    OptionValue:
       type: object
       properties:
         id:
@@ -9766,7 +9766,7 @@ components:
       - option_type_name
       - option_type_presentation
       x-typelizer: true
-    StoreOrderPromotion:
+    OrderPromotion:
       type: object
       properties:
         id:
@@ -9794,7 +9794,7 @@ components:
       - amount
       - display_amount
       x-typelizer: true
-    StoreOrder:
+    Order:
       type: object
       properties:
         id:
@@ -9872,31 +9872,31 @@ components:
         order_promotions:
           type: array
           items:
-            "$ref": "#/components/schemas/StoreOrderPromotion"
+            "$ref": "#/components/schemas/OrderPromotion"
         line_items:
           type: array
           items:
-            "$ref": "#/components/schemas/StoreLineItem"
+            "$ref": "#/components/schemas/LineItem"
         shipments:
           type: array
           items:
-            "$ref": "#/components/schemas/StoreShipment"
+            "$ref": "#/components/schemas/Shipment"
         payments:
           type: array
           items:
-            "$ref": "#/components/schemas/StorePayment"
+            "$ref": "#/components/schemas/Payment"
         bill_address:
           allOf:
-          - "$ref": "#/components/schemas/StoreAddress"
+          - "$ref": "#/components/schemas/Address"
           nullable: true
         ship_address:
           allOf:
-          - "$ref": "#/components/schemas/StoreAddress"
+          - "$ref": "#/components/schemas/Address"
           nullable: true
         payment_methods:
           type: array
           items:
-            "$ref": "#/components/schemas/StorePaymentMethod"
+            "$ref": "#/components/schemas/PaymentMethod"
       required:
       - id
       - number
@@ -9938,7 +9938,7 @@ components:
       - ship_address
       - payment_methods
       x-typelizer: true
-    StorePaymentMethod:
+    PaymentMethod:
       type: object
       properties:
         id:
@@ -9959,7 +9959,7 @@ components:
       - type
       - session_required
       x-typelizer: true
-    StorePayment:
+    Payment:
       type: object
       properties:
         id:
@@ -9993,12 +9993,12 @@ components:
           nullable: true
         source:
           anyOf:
-          - "$ref": "#/components/schemas/StoreCreditCard"
-          - "$ref": "#/components/schemas/StoreStoreCredit"
-          - "$ref": "#/components/schemas/StorePaymentSource"
+          - "$ref": "#/components/schemas/CreditCard"
+          - "$ref": "#/components/schemas/StoreCredit"
+          - "$ref": "#/components/schemas/PaymentSource"
           nullable: true
         payment_method:
-          "$ref": "#/components/schemas/StorePaymentMethod"
+          "$ref": "#/components/schemas/PaymentMethod"
       required:
       - id
       - payment_method_id
@@ -10014,7 +10014,7 @@ components:
       - source
       - payment_method
       x-typelizer: true
-    StorePaymentSession:
+    PaymentSession:
       type: object
       properties:
         id:
@@ -10044,9 +10044,9 @@ components:
         order_id:
           type: string
         payment_method:
-          "$ref": "#/components/schemas/StorePaymentMethod"
+          "$ref": "#/components/schemas/PaymentMethod"
         payment:
-          "$ref": "#/components/schemas/StorePayment"
+          "$ref": "#/components/schemas/Payment"
       required:
       - id
       - status
@@ -10062,7 +10062,7 @@ components:
       - order_id
       - payment_method
       x-typelizer: true
-    StorePaymentSetupSession:
+    PaymentSetupSession:
       type: object
       properties:
         id:
@@ -10094,7 +10094,7 @@ components:
           type: string
           nullable: true
         payment_method:
-          "$ref": "#/components/schemas/StorePaymentMethod"
+          "$ref": "#/components/schemas/PaymentMethod"
       required:
       - id
       - status
@@ -10109,7 +10109,7 @@ components:
       - customer_id
       - payment_method
       x-typelizer: true
-    StorePaymentSource:
+    PaymentSource:
       type: object
       properties:
         id:
@@ -10121,7 +10121,7 @@ components:
       - id
       - gateway_payment_profile_id
       x-typelizer: true
-    StorePrice:
+    Price:
       type: object
       properties:
         id:
@@ -10161,7 +10161,7 @@ components:
       - display_compare_at_amount
       - price_list_id
       x-typelizer: true
-    StoreProduct:
+    Product:
       type: object
       properties:
         id:
@@ -10206,35 +10206,35 @@ components:
           items:
             type: string
         price:
-          "$ref": "#/components/schemas/StorePrice"
+          "$ref": "#/components/schemas/Price"
         original_price:
           allOf:
-          - "$ref": "#/components/schemas/StorePrice"
+          - "$ref": "#/components/schemas/Price"
           nullable: true
         images:
           type: array
           items:
-            "$ref": "#/components/schemas/StoreImage"
+            "$ref": "#/components/schemas/Image"
         variants:
           type: array
           items:
-            "$ref": "#/components/schemas/StoreVariant"
+            "$ref": "#/components/schemas/Variant"
         default_variant:
-          "$ref": "#/components/schemas/StoreVariant"
+          "$ref": "#/components/schemas/Variant"
         master_variant:
-          "$ref": "#/components/schemas/StoreVariant"
+          "$ref": "#/components/schemas/Variant"
         option_types:
           type: array
           items:
-            "$ref": "#/components/schemas/StoreOptionType"
+            "$ref": "#/components/schemas/OptionType"
         taxons:
           type: array
           items:
-            "$ref": "#/components/schemas/StoreTaxon"
+            "$ref": "#/components/schemas/Taxon"
         metafields:
           type: array
           items:
-            "$ref": "#/components/schemas/StoreMetafield"
+            "$ref": "#/components/schemas/Metafield"
       required:
       - id
       - name
@@ -10256,7 +10256,7 @@ components:
       - price
       - original_price
       x-typelizer: true
-    StorePromotion:
+    Promotion:
       type: object
       properties:
         id:
@@ -10327,7 +10327,7 @@ components:
       - updated_at
       - promotion_category_id
       x-typelizer: true
-    StoreRefund:
+    Refund:
       type: object
       properties:
         id:
@@ -10361,7 +10361,7 @@ components:
       - refund_reason_id
       - reimbursement_id
       x-typelizer: true
-    StoreReimbursement:
+    Reimbursement:
       type: object
       properties:
         id:
@@ -10394,7 +10394,7 @@ components:
       - order_id
       - customer_return_id
       x-typelizer: true
-    StoreReport:
+    Report:
       type: object
       properties:
         id:
@@ -10428,7 +10428,7 @@ components:
       - date_from
       - date_to
       x-typelizer: true
-    StoreReturnAuthorization:
+    ReturnAuthorization:
       type: object
       properties:
         id:
@@ -10460,7 +10460,7 @@ components:
       - stock_location_id
       - return_authorization_reason_id
       x-typelizer: true
-    StoreReturnItem:
+    ReturnItem:
       type: object
       properties:
         id:
@@ -10514,7 +10514,7 @@ components:
       - reimbursement_id
       - exchange_variant_id
       x-typelizer: true
-    StoreShipment:
+    Shipment:
       type: object
       properties:
         id:
@@ -10541,13 +10541,13 @@ components:
         updated_at:
           type: string
         shipping_method:
-          "$ref": "#/components/schemas/StoreShippingMethod"
+          "$ref": "#/components/schemas/ShippingMethod"
         stock_location:
-          "$ref": "#/components/schemas/StoreStockLocation"
+          "$ref": "#/components/schemas/StockLocation"
         shipping_rates:
           type: array
           items:
-            "$ref": "#/components/schemas/StoreShippingRate"
+            "$ref": "#/components/schemas/ShippingRate"
       required:
       - id
       - number
@@ -10563,7 +10563,18 @@ components:
       - stock_location
       - shipping_rates
       x-typelizer: true
-    StoreShippingMethod:
+    ShippingCategory:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+      required:
+      - id
+      - name
+      x-typelizer: true
+    ShippingMethod:
       type: object
       properties:
         id:
@@ -10578,7 +10589,7 @@ components:
       - name
       - code
       x-typelizer: true
-    StoreShippingRate:
+    ShippingRate:
       type: object
       properties:
         id:
@@ -10594,7 +10605,7 @@ components:
         display_cost:
           type: string
         shipping_method:
-          "$ref": "#/components/schemas/StoreShippingMethod"
+          "$ref": "#/components/schemas/ShippingMethod"
       required:
       - id
       - shipping_method_id
@@ -10604,7 +10615,7 @@ components:
       - display_cost
       - shipping_method
       x-typelizer: true
-    StoreState:
+    State:
       type: object
       properties:
         abbr:
@@ -10615,7 +10626,7 @@ components:
       - abbr
       - name
       x-typelizer: true
-    StoreStockItem:
+    StockItem:
       type: object
       properties:
         id:
@@ -10643,7 +10654,7 @@ components:
       - stock_location_id
       - variant_id
       x-typelizer: true
-    StoreStockLocation:
+    StockLocation:
       type: object
       properties:
         id:
@@ -10682,7 +10693,7 @@ components:
       - country_name
       - state_text
       x-typelizer: true
-    StoreStockMovement:
+    StockMovement:
       type: object
       properties:
         id:
@@ -10715,7 +10726,7 @@ components:
       - originator_id
       - stock_item_id
       x-typelizer: true
-    StoreStockTransfer:
+    StockTransfer:
       type: object
       properties:
         id:
@@ -10749,7 +10760,7 @@ components:
       - source_location_id
       - destination_location_id
       x-typelizer: true
-    StoreStoreCredit:
+    StoreCredit:
       type: object
       properties:
         id:
@@ -10778,7 +10789,18 @@ components:
       - display_amount_remaining
       - currency
       x-typelizer: true
-    StoreTaxon:
+    TaxCategory:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+      required:
+      - id
+      - name
+      x-typelizer: true
+    Taxon:
       type: object
       properties:
         id:
@@ -10828,19 +10850,19 @@ components:
         is_leaf:
           type: boolean
         parent:
-          "$ref": "#/components/schemas/StoreTaxon"
+          "$ref": "#/components/schemas/Taxon"
         children:
           type: array
           items:
-            "$ref": "#/components/schemas/StoreTaxon"
+            "$ref": "#/components/schemas/Taxon"
         ancestors:
           type: array
           items:
-            "$ref": "#/components/schemas/StoreTaxon"
+            "$ref": "#/components/schemas/Taxon"
         metafields:
           type: array
           items:
-            "$ref": "#/components/schemas/StoreMetafield"
+            "$ref": "#/components/schemas/Metafield"
       required:
       - id
       - name
@@ -10863,7 +10885,7 @@ components:
       - is_child
       - is_leaf
       x-typelizer: true
-    StoreTaxonomy:
+    Taxonomy:
       type: object
       properties:
         id:
@@ -10880,15 +10902,15 @@ components:
           type: string
           nullable: true
         root:
-          "$ref": "#/components/schemas/StoreTaxon"
+          "$ref": "#/components/schemas/Taxon"
         taxons:
           type: array
           items:
-            "$ref": "#/components/schemas/StoreTaxon"
+            "$ref": "#/components/schemas/Taxon"
         metafields:
           type: array
           items:
-            "$ref": "#/components/schemas/StoreMetafield"
+            "$ref": "#/components/schemas/Metafield"
       required:
       - id
       - name
@@ -10897,7 +10919,7 @@ components:
       - updated_at
       - root_id
       x-typelizer: true
-    StoreVariant:
+    Variant:
       type: object
       properties:
         id:
@@ -10941,23 +10963,23 @@ components:
           type: number
           nullable: true
         price:
-          "$ref": "#/components/schemas/StorePrice"
+          "$ref": "#/components/schemas/Price"
         original_price:
           allOf:
-          - "$ref": "#/components/schemas/StorePrice"
+          - "$ref": "#/components/schemas/Price"
           nullable: true
         images:
           type: array
           items:
-            "$ref": "#/components/schemas/StoreImage"
+            "$ref": "#/components/schemas/Image"
         option_values:
           type: array
           items:
-            "$ref": "#/components/schemas/StoreOptionValue"
+            "$ref": "#/components/schemas/OptionValue"
         metafields:
           type: array
           items:
-            "$ref": "#/components/schemas/StoreMetafield"
+            "$ref": "#/components/schemas/Metafield"
       required:
       - id
       - product_id
@@ -10980,7 +11002,7 @@ components:
       - original_price
       - option_values
       x-typelizer: true
-    StoreWishedItem:
+    WishedItem:
       type: object
       properties:
         id:
@@ -10996,7 +11018,7 @@ components:
         updated_at:
           type: string
         variant:
-          "$ref": "#/components/schemas/StoreVariant"
+          "$ref": "#/components/schemas/Variant"
       required:
       - id
       - variant_id
@@ -11006,7 +11028,7 @@ components:
       - updated_at
       - variant
       x-typelizer: true
-    StoreWishlist:
+    Wishlist:
       type: object
       properties:
         id:
@@ -11026,7 +11048,7 @@ components:
         items:
           type: array
           items:
-            "$ref": "#/components/schemas/StoreWishedItem"
+            "$ref": "#/components/schemas/WishedItem"
       required:
       - id
       - name

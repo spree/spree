@@ -18,10 +18,10 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
 
       sdk_example <<~JS
         // Create an empty cart
-        const cart = await client.store.cart.create()
+        const cart = await client.cart.create()
 
         // Create a cart with line items
-        const cartWithItems = await client.store.cart.create({
+        const cartWithItems = await client.cart.create({
           line_items: [
             { variant_id: 'variant_abc123', quantity: 2 },
           ],
@@ -56,7 +56,7 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
       response '201', 'cart created (guest)' do
         let(:'x-spree-api-key') { api_key.token }
 
-        schema '$ref' => '#/components/schemas/StoreOrder'
+        schema '$ref' => '#/components/schemas/Order'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -70,7 +70,7 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
 
-        schema '$ref' => '#/components/schemas/StoreOrder'
+        schema '$ref' => '#/components/schemas/Order'
 
         run_test!
       end
@@ -90,7 +90,7 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
           }
         end
 
-        schema '$ref' => '#/components/schemas/StoreOrder'
+        schema '$ref' => '#/components/schemas/Order'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -104,7 +104,7 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
         let(:'x-spree-api-key') { api_key.token }
         let(:body) { { metadata: { 'source' => 'mobile_app', 'campaign' => 'summer_sale' } } }
 
-        schema '$ref' => '#/components/schemas/StoreOrder'
+        schema '$ref' => '#/components/schemas/Order'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -172,12 +172,12 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
 
       sdk_example <<~JS
         // Authenticated customer
-        const cart = await client.store.cart.get({
+        const cart = await client.cart.get({
           bearerToken: '<token>',
         })
 
         // Guest with order token
-        const guestCart = await client.store.cart.get({
+        const guestCart = await client.cart.get({
           orderToken: 'ORDER_TOKEN',
         })
       JS
@@ -193,7 +193,7 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
         let(:'x-spree-api-key') { api_key.token }
         let(:'x-spree-order-token') { cart.token }
 
-        schema '$ref' => '#/components/schemas/StoreOrder'
+        schema '$ref' => '#/components/schemas/Order'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -208,7 +208,7 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
 
-        schema '$ref' => '#/components/schemas/StoreOrder'
+        schema '$ref' => '#/components/schemas/Order'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -241,7 +241,7 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
       DESC
 
       sdk_example <<~JS
-        const cart = await client.store.cart.associate({
+        const cart = await client.cart.associate({
           bearerToken: '<token>',
           orderToken: 'GUEST_ORDER_TOKEN',
         })
@@ -259,7 +259,7 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:'x-spree-order-token') { guest_cart.token }
 
-        schema '$ref' => '#/components/schemas/StoreOrder'
+        schema '$ref' => '#/components/schemas/Order'
 
         run_test! do |response|
           data = JSON.parse(response.body)

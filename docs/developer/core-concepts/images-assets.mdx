@@ -43,7 +43,7 @@ Every product response includes a `thumbnail_url` field — ready to use without
 
 ```typescript SDK
 // List products — thumbnail_url is always included
-const { data: products } = await client.store.products.list({ limit: 12 })
+const { data: products } = await client.products.list({ limit: 12 })
 
 products.forEach(product => {
   product.thumbnail_url // "https://cdn.../tote-front.webp" — no expand needed
@@ -69,7 +69,7 @@ On the product detail page, expand `images` and `variants` to get the full set o
 <CodeGroup>
 
 ```typescript SDK
-const product = await client.store.products.get('spree-tote', {
+const product = await client.products.get('spree-tote', {
   expand: ['images', 'variants'],
 })
 

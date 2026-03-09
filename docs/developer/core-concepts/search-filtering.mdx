@@ -20,7 +20,7 @@ Use the `multi_search` parameter for full-text search across product fields:
 <CodeGroup>
 
 ```typescript SDK
-const { data: products } = await client.store.products.list({
+const { data: products } = await client.products.list({
   multi_search: 'tote bag',
   limit: 12,
 })
@@ -40,7 +40,7 @@ curl 'https://api.mystore.com/api/v3/store/products?q[multi_search]=tote+bag&lim
 <CodeGroup>
 
 ```typescript SDK
-const { data: products } = await client.store.products.list({
+const { data: products } = await client.products.list({
   price_gte: 20,
   price_lte: 100,
 })
@@ -58,7 +58,7 @@ curl 'https://api.mystore.com/api/v3/store/products?q[price_gte]=20&q[price_lte]
 <CodeGroup>
 
 ```typescript SDK
-const { data: products } = await client.store.products.list({
+const { data: products } = await client.products.list({
   in_stock: true,
 })
 ```
@@ -76,12 +76,12 @@ curl 'https://api.mystore.com/api/v3/store/products?q[in_stock]=true' \
 
 ```typescript SDK
 // Products in a specific category
-const { data: products } = await client.store.taxons.products.list('categories/clothing', {
+const { data: products } = await client.taxons.products.list('categories/clothing', {
   limit: 12,
 })
 
 // Or filter by taxon ID
-const { data: products } = await client.store.products.list({
+const { data: products } = await client.products.list({
   taxon_id_eq: 'txn_xxx',
 })
 ```
@@ -103,7 +103,7 @@ curl 'https://api.mystore.com/api/v3/store/products?q[taxon_id_eq]=txn_xxx' \
 <CodeGroup>
 
 ```typescript SDK
-const { data: products } = await client.store.products.list({
+const { data: products } = await client.products.list({
   tags_cont: 'sale',
 })
 ```
@@ -121,7 +121,7 @@ curl 'https://api.mystore.com/api/v3/store/products?q[tags_cont]=sale' \
 
 ```typescript SDK
 // Sort by price (low to high)
-const sorted = await client.store.products.list({
+const sorted = await client.products.list({
   sort: 'price_low_to_high',
 })
 
@@ -143,7 +143,7 @@ Get available filter options for building a faceted search UI. Returns option va
 <CodeGroup>
 
 ```typescript SDK
-const filters = await client.store.products.filters()
+const filters = await client.products.filters()
 // {
 //   option_types: [{ name: "size", option_values: [{ name: "Small", count: 12 }, ...] }],
 //   price_range: { min: 9.99, max: 199.99 },
@@ -151,7 +151,7 @@ const filters = await client.store.products.filters()
 // }
 
 // Scoped to a specific category
-const taxonFilters = await client.store.products.filters({
+const taxonFilters = await client.products.filters({
   taxon_id_eq: 'txn_xxx',
 })
 ```
@@ -217,7 +217,7 @@ All list endpoints support pagination:
 <CodeGroup>
 
 ```typescript SDK
-const { data: products, meta } = await client.store.products.list({
+const { data: products, meta } = await client.products.list({
   page: 1,
   limit: 24,
 })

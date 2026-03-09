@@ -9,7 +9,7 @@ describe('auth', () => {
   describe('login', () => {
     it('returns auth tokens on successful login', async () => {
       const client = createTestClient();
-      const result = await client.store.auth.login({
+      const result = await client.auth.login({
         email: 'test@example.com',
         password: 'password123',
       });
@@ -30,7 +30,7 @@ describe('auth', () => {
 
       const client = createTestClient();
       await expect(
-        client.store.auth.login({ email: 'bad@example.com', password: 'wrong' })
+        client.auth.login({ email: 'bad@example.com', password: 'wrong' })
       ).rejects.toThrow('Invalid credentials');
     });
   });
@@ -38,7 +38,7 @@ describe('auth', () => {
   describe('register', () => {
     it('returns auth tokens on successful registration', async () => {
       const client = createTestClient();
-      const result = await client.store.auth.register({
+      const result = await client.auth.register({
         email: 'new@example.com',
         password: 'password123',
         password_confirmation: 'password123',
@@ -68,7 +68,7 @@ describe('auth', () => {
 
       const client = createTestClient();
       try {
-        await client.store.auth.register({
+        await client.auth.register({
           email: 'existing@example.com',
           password: 'password123',
           password_confirmation: 'password123',
@@ -85,7 +85,7 @@ describe('auth', () => {
   describe('refresh', () => {
     it('returns new tokens', async () => {
       const client = createTestClient();
-      const result = await client.store.auth.refresh({ token: 'old-token' });
+      const result = await client.auth.refresh({ token: 'old-token' });
 
       expect(result.token).toBe('refreshed-jwt-token');
     });

@@ -15,7 +15,7 @@ RSpec.describe 'Gift Cards API', type: :request, swagger_doc: 'api-reference/sto
       description 'Returns all gift cards for the authenticated customer'
 
       sdk_example <<~JS
-        const giftCards = await client.store.customer.giftCards.list({}, {
+        const giftCards = await client.customer.giftCards.list({}, {
           bearerToken: '<token>',
         })
       JS
@@ -33,7 +33,7 @@ RSpec.describe 'Gift Cards API', type: :request, swagger_doc: 'api-reference/sto
 
         schema type: :object,
                properties: {
-                 data: { type: :array, items: { '$ref' => '#/components/schemas/StoreGiftCard' } },
+                 data: { type: :array, items: { '$ref' => '#/components/schemas/GiftCard' } },
                  meta: { '$ref' => '#/components/schemas/PaginationMeta' }
                }
 
@@ -63,7 +63,7 @@ RSpec.describe 'Gift Cards API', type: :request, swagger_doc: 'api-reference/sto
       description 'Returns a gift card by its ID'
 
       sdk_example <<~JS
-        const giftCard = await client.store.customer.giftCards.get('gc_abc123', {
+        const giftCard = await client.customer.giftCards.get('gc_abc123', {
           bearerToken: '<token>',
         })
       JS
@@ -79,7 +79,7 @@ RSpec.describe 'Gift Cards API', type: :request, swagger_doc: 'api-reference/sto
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:id) { gift_card.to_param }
 
-        schema '$ref' => '#/components/schemas/StoreGiftCard'
+        schema '$ref' => '#/components/schemas/GiftCard'
 
         run_test!
       end

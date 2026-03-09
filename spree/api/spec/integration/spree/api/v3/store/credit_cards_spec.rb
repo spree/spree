@@ -15,7 +15,7 @@ RSpec.describe 'Credit Cards API', type: :request, swagger_doc: 'api-reference/s
       description 'Returns all saved credit cards for the authenticated customer'
 
       sdk_example <<~JS
-        const cards = await client.store.customer.creditCards.list({}, {
+        const cards = await client.customer.creditCards.list({}, {
           bearerToken: '<token>',
         })
       JS
@@ -33,7 +33,7 @@ RSpec.describe 'Credit Cards API', type: :request, swagger_doc: 'api-reference/s
 
         schema type: :object,
                properties: {
-                 data: { type: :array, items: { '$ref' => '#/components/schemas/StoreCreditCard' } },
+                 data: { type: :array, items: { '$ref' => '#/components/schemas/CreditCard' } },
                  meta: { '$ref' => '#/components/schemas/PaginationMeta' }
                }
 
@@ -63,7 +63,7 @@ RSpec.describe 'Credit Cards API', type: :request, swagger_doc: 'api-reference/s
       description 'Returns a saved credit card by its ID'
 
       sdk_example <<~JS
-        const card = await client.store.customer.creditCards.get('cc_abc123', {
+        const card = await client.customer.creditCards.get('cc_abc123', {
           bearerToken: '<token>',
         })
       JS
@@ -79,7 +79,7 @@ RSpec.describe 'Credit Cards API', type: :request, swagger_doc: 'api-reference/s
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:id) { credit_card.to_param }
 
-        schema '$ref' => '#/components/schemas/StoreCreditCard'
+        schema '$ref' => '#/components/schemas/CreditCard'
 
         run_test!
       end
@@ -102,7 +102,7 @@ RSpec.describe 'Credit Cards API', type: :request, swagger_doc: 'api-reference/s
       description 'Removes a saved credit card from the customer account'
 
       sdk_example <<~JS
-        await client.store.customer.creditCards.delete('cc_abc123', {
+        await client.customer.creditCards.delete('cc_abc123', {
           bearerToken: '<token>',
         })
       JS

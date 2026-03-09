@@ -7,7 +7,7 @@ module Spree
 
         typelize iso: :string, iso3: :string, name: :string,
                  states_required: :boolean, zipcode_required: :boolean,
-                 market: [:StoreMarket, nullable: true]
+                 market: [:Market, nullable: true]
 
         attributes :iso, :iso3, :name, :states_required, :zipcode_required
 

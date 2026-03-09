@@ -1,77 +1,125 @@
-// Re-export all generated types
-export * from './generated';
+import type { ListParams, AddressParams } from '@spree/sdk-core';
 
-// Locale defaults for client-level configuration
-export interface LocaleDefaults {
-  locale?: string;
-  currency?: string;
-  country?: string;
-}
+// Re-export all generated types (unprefixed: Product, Order, etc.)
+export type {
+  Address,
+  Asset,
+  Base,
+  Country,
+  CreditCard,
+  Currency,
+  CustomerReturn,
+  Customer,
+  DigitalLink,
+  Digital,
+  Export,
+  GiftCardBatch,
+  GiftCard,
+  Image,
+  ImportRow,
+  Import,
+  Invitation,
+  LineItem,
+  Locale,
+  Market,
+  Metafield,
+  NewsletterSubscriber,
+  OptionType,
+  OptionValue,
+  OrderPromotion,
+  Order,
+  PaymentMethod,
+  Payment,
+  PaymentSession,
+  PaymentSetupSession,
+  PaymentSource,
+  Price,
+  Product,
+  Promotion,
+  Refund,
+  Reimbursement,
+  Report,
+  ReturnAuthorization,
+  ReturnItem,
+  Shipment,
+  ShippingCategory,
+  ShippingMethod,
+  ShippingRate,
+  State,
+  StockItem,
+  StockLocation,
+  StockMovement,
+  StockTransfer,
+  StoreCredit,
+  TaxCategory,
+  Taxon,
+  Taxonomy,
+  Variant,
+  WishedItem,
+  Wishlist,
+} from './generated';
 
-// API Response types
-export interface PaginationMeta {
-  page: number;
-  limit: number;
-  count: number;
-  pages: number;
-  from: number;
-  to: number;
-  in: number;
-  previous: number | null;
-  next: number | null;
-}
+// Backward compatibility aliases (Store* prefix)
+export type { Address as StoreAddress } from './generated';
+export type { Asset as StoreAsset } from './generated';
+export type { Country as StoreCountry } from './generated';
+export type { CreditCard as StoreCreditCard } from './generated';
+export type { Currency as StoreCurrency } from './generated';
+export type { CustomerReturn as StoreCustomerReturn } from './generated';
+export type { Customer as StoreCustomer } from './generated';
+export type { DigitalLink as StoreDigitalLink } from './generated';
+export type { Digital as StoreDigital } from './generated';
+export type { GiftCardBatch as StoreGiftCardBatch } from './generated';
+export type { GiftCard as StoreGiftCard } from './generated';
+export type { Image as StoreImage } from './generated';
+export type { LineItem as StoreLineItem } from './generated';
+export type { Locale as StoreLocale } from './generated';
+export type { Market as StoreMarket } from './generated';
+export type { Metafield as StoreMetafield } from './generated';
+export type { OptionType as StoreOptionType } from './generated';
+export type { OptionValue as StoreOptionValue } from './generated';
+export type { OrderPromotion as StoreOrderPromotion } from './generated';
+export type { Order as StoreOrder } from './generated';
+export type { PaymentMethod as StorePaymentMethod } from './generated';
+export type { Payment as StorePayment } from './generated';
+export type { PaymentSession as StorePaymentSession } from './generated';
+export type { PaymentSetupSession as StorePaymentSetupSession } from './generated';
+export type { PaymentSource as StorePaymentSource } from './generated';
+export type { Price as StorePrice } from './generated';
+export type { Product as StoreProduct } from './generated';
+export type { Promotion as StorePromotion } from './generated';
+export type { Refund as StoreRefund } from './generated';
+export type { Reimbursement as StoreReimbursement } from './generated';
+export type { ReturnAuthorization as StoreReturnAuthorization } from './generated';
+export type { ReturnItem as StoreReturnItem } from './generated';
+export type { Shipment as StoreShipment } from './generated';
+export type { ShippingCategory as StoreShippingCategory } from './generated';
+export type { ShippingMethod as StoreShippingMethod } from './generated';
+export type { ShippingRate as StoreShippingRate } from './generated';
+export type { State as StoreState } from './generated';
+export type { StockItem as StoreStockItem } from './generated';
+export type { StockLocation as StoreStockLocation } from './generated';
+export type { StoreCredit as StoreStoreCredit } from './generated';
+export type { TaxCategory as StoreTaxCategory } from './generated';
+export type { Taxon as StoreTaxon } from './generated';
+export type { Taxonomy as StoreTaxonomy } from './generated';
+export type { Variant as StoreVariant } from './generated';
+export type { WishedItem as StoreWishedItem } from './generated';
+export type { Wishlist as StoreWishlist } from './generated';
 
-export interface ListResponse<T> {
-  data: T[];
-}
-
-export interface PaginatedResponse<T> extends ListResponse<T> {
-  meta: PaginationMeta;
-}
-
-export interface ErrorResponse {
-  error: {
-    code: string;
-    message: string;
-    details?: Record<string, string[]>;
-  };
-}
-
-// Auth types
-export interface AuthTokens {
-  token: string;
-  user: {
-    id: string;
-    email: string;
-    first_name: string | null;
-    last_name: string | null;
-  };
-}
-
-export interface LoginCredentials {
-  email: string;
-  password: string;
-}
-
-export interface RegisterParams {
-  email: string;
-  password: string;
-  password_confirmation: string;
-  first_name?: string;
-  last_name?: string;
-}
-
-// Query params
-export interface ListParams {
-  page?: number;
-  limit?: number;
-  /** Sort order. Prefix with - for descending, e.g. '-created_at', 'name'. Comma-separated for multiple fields. */
-  sort?: string;
-  /** Associations to expand. Supports dot notation for nested expand (max 4 levels), e.g. ['variants', 'variants.images'] */
-  expand?: string[];
-  /** Fields to include in response, e.g. ['name', 'slug', 'price']. Omit to return all fields. 'id' is always included. */
-  fields?: string[];
-}
+// Hand-written domain types
+export type {
+  LocaleDefaults,
+  PaginationMeta,
+  ListResponse,
+  PaginatedResponse,
+  ErrorResponse,
+  AuthTokens,
+  LoginCredentials,
+  RegisterParams,
+  ListParams,
+  AddressParams,
+} from '@spree/sdk-core';
 
 export interface ProductListParams extends ListParams {
   /** Sort: 'price', '-price', 'best_selling', 'name', '-name', '-available_on', 'available_on' */
@@ -149,26 +197,6 @@ export interface UpdateLineItemParams {
   quantity?: number;
   /** Arbitrary key-value metadata (merged with existing) */
   metadata?: Record<string, unknown>;
-}
-
-// Address params
-export interface AddressParams {
-  firstname: string;
-  lastname: string;
-  address1: string;
-  address2?: string;
-  city: string;
-  zipcode: string;
-  phone?: string;
-  company?: string;
-  /** ISO 3166-1 alpha-2 country code (e.g., "US", "DE") */
-  country_iso: string;
-  /** ISO 3166-2 subdivision code without country prefix (e.g., "CA", "NY") */
-  state_abbr?: string;
-  /** State name - used for countries without predefined states */
-  state_name?: string;
-  /** When true, relaxes validation requirements (name, phone, zipcode, street) */
-  quick_checkout?: boolean;
 }
 
 export interface UpdateOrderParams {

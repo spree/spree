@@ -257,7 +257,7 @@ Gift cards are applied using the same coupon codes endpoint as promotion codes. 
 
 ```typescript SDK
 // Apply gift card code to order (works for guests and registered customers)
-const order = await client.store.orders.couponCodes.apply('or_abc123', 'abc1234def', {
+const order = await client.orders.couponCodes.apply('or_abc123', 'abc1234def', {
   orderToken: '<token>',
 })
 ```

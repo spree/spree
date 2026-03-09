@@ -22,7 +22,7 @@ RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.y
       description 'Returns a paginated list of taxons (categories) for the current store'
 
       sdk_example <<~JS
-        const taxons = await client.store.taxons.list({
+        const taxons = await client.taxons.list({
           page: 1,
           limit: 25,
         })
@@ -41,7 +41,7 @@ RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.y
 
         schema type: :object,
                properties: {
-                 data: { type: :array, items: { '$ref' => '#/components/schemas/StoreTaxon' } },
+                 data: { type: :array, items: { '$ref' => '#/components/schemas/Taxon' } },
                  meta: { '$ref' => '#/components/schemas/PaginationMeta' }
                }
 
@@ -73,7 +73,7 @@ RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.y
       description 'Returns a single taxon by permalink or prefix ID'
 
       sdk_example <<~JS
-        const taxon = await client.store.taxons.get('categories/clothing/shirts', {
+        const taxon = await client.taxons.get('categories/clothing/shirts', {
           expand: 'children,products',
         })
       JS
@@ -90,7 +90,7 @@ RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.y
         let(:'x-spree-api-key') { api_key.token }
         let(:id) { taxon.permalink }
 
-        schema '$ref' => '#/components/schemas/StoreTaxon'
+        schema '$ref' => '#/components/schemas/Taxon'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -102,7 +102,7 @@ RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.y
         let(:'x-spree-api-key') { api_key.token }
         let(:id) { taxon.to_param }
 
-        schema '$ref' => '#/components/schemas/StoreTaxon'
+        schema '$ref' => '#/components/schemas/Taxon'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -147,7 +147,7 @@ RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.y
       description 'Returns a paginated list of products belonging to the specified taxon'
 
       sdk_example <<~JS
-        const products = await client.store.taxons.products.list('categories/clothing', {
+        const products = await client.taxons.products.list('categories/clothing', {
           page: 1,
           limit: 25,
           sort: 'price',
@@ -181,7 +181,7 @@ RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.y
 
         schema type: :object,
                properties: {
-                 data: { type: :array, items: { '$ref' => '#/components/schemas/StoreProduct' } },
+                 data: { type: :array, items: { '$ref' => '#/components/schemas/Product' } },
                  meta: { '$ref' => '#/components/schemas/PaginationMeta' }
                }
 

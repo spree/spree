@@ -1,10 +1,10 @@
 ```typescript
 // Login to get a JWT token
-const { token, user } = await client.store.auth.login({
+const { token, user } = await client.auth.login({
   email: 'customer@example.com',
   password: 'password123',
 })
 
 // Use the token for authenticated requests
-const orders = await client.store.customer.orders.list({}, { token })
+const orders = await client.customer.orders.list({}, { token })
 ```

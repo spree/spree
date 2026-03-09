@@ -17,7 +17,7 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
       description 'Returns all addresses in the customer address book'
 
       sdk_example <<~JS
-        const addresses = await client.store.customer.addresses.list({}, {
+        const addresses = await client.customer.addresses.list({}, {
           bearerToken: '<token>',
         })
       JS
@@ -35,7 +35,7 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
 
         schema type: :object,
                properties: {
-                 data: { type: :array, items: { '$ref' => '#/components/schemas/StoreAddress' } },
+                 data: { type: :array, items: { '$ref' => '#/components/schemas/Address' } },
                  meta: { '$ref' => '#/components/schemas/PaginationMeta' }
                }
 
@@ -63,7 +63,7 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
       description 'Adds a new address to the customer address book'
 
       sdk_example <<~JS
-        const address = await client.store.customer.addresses.create({
+        const address = await client.customer.addresses.create({
           firstname: 'John',
           lastname: 'Doe',
           address1: '123 Main St',
@@ -113,7 +113,7 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
           }
         end
 
-        schema '$ref' => '#/components/schemas/StoreAddress'
+        schema '$ref' => '#/components/schemas/Address'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -143,7 +143,7 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
       security [api_key: [], bearer_auth: []]
 
       sdk_example <<~JS
-        const address = await client.store.customer.addresses.get('addr_abc123', {
+        const address = await client.customer.addresses.get('addr_abc123', {
           bearerToken: '<token>',
         })
       JS
@@ -159,7 +159,7 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:id) { address.to_param }
 
-        schema '$ref' => '#/components/schemas/StoreAddress'
+        schema '$ref' => '#/components/schemas/Address'
 
         run_test!
       end
@@ -182,7 +182,7 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
       security [api_key: [], bearer_auth: []]
 
       sdk_example <<~JS
-        const address = await client.store.customer.addresses.update('addr_abc123', {
+        const address = await client.customer.addresses.update('addr_abc123', {
           city: 'Los Angeles',
         }, {
           bearerToken: '<token>',
@@ -208,7 +208,7 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
         let(:id) { address.to_param }
         let(:body) { { city: 'Los Angeles' } }
 
-        schema '$ref' => '#/components/schemas/StoreAddress'
+        schema '$ref' => '#/components/schemas/Address'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -223,7 +223,7 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
       security [api_key: [], bearer_auth: []]
 
       sdk_example <<~JS
-        await client.store.customer.addresses.delete('addr_abc123', {
+        await client.customer.addresses.delete('addr_abc123', {
           bearerToken: '<token>',
         })
       JS
@@ -261,7 +261,7 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
       description 'Sets the address as the default billing or shipping address for the customer'
 
       sdk_example <<~JS
-        const address = await client.store.customer.addresses.markAsDefault('addr_abc123', 'billing', {
+        const address = await client.customer.addresses.markAsDefault('addr_abc123', 'billing', {
           bearerToken: '<token>',
         })
       JS
@@ -284,7 +284,7 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
         let(:id) { address.to_param }
         let(:body) { { kind: 'billing' } }
 
-        schema '$ref' => '#/components/schemas/StoreAddress'
+        schema '$ref' => '#/components/schemas/Address'
 
         run_test! do |response|
           data = JSON.parse(response.body)

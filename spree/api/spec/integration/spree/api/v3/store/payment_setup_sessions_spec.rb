@@ -22,7 +22,7 @@ RSpec.describe 'Payment Setup Sessions API', type: :request, swagger_doc: 'api-r
       description 'Creates a new payment setup session for saving a payment method for future use. Delegates to the payment gateway to initialize a provider-specific setup flow (e.g. Stripe SetupIntent, Adyen zero-auth tokenization).'
 
       sdk_example <<~JS
-        const session = await client.store.customer.paymentSetupSessions.create({
+        const session = await client.customer.paymentSetupSessions.create({
           payment_method_id: 'pm_abc123',
         }, {
           bearerToken: '<token>',
@@ -45,7 +45,7 @@ RSpec.describe 'Payment Setup Sessions API', type: :request, swagger_doc: 'api-r
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:body) { { payment_method_id: payment_method.prefixed_id } }
 
-        schema '$ref' => '#/components/schemas/StorePaymentSetupSession'
+        schema '$ref' => '#/components/schemas/PaymentSetupSession'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -88,7 +88,7 @@ RSpec.describe 'Payment Setup Sessions API', type: :request, swagger_doc: 'api-r
       description 'Returns a payment setup session with its current status and provider data.'
 
       sdk_example <<~JS
-        const session = await client.store.customer.paymentSetupSessions.get('pss_abc123', {
+        const session = await client.customer.paymentSetupSessions.get('pss_abc123', {
           bearerToken: '<token>',
         })
       JS
@@ -98,7 +98,7 @@ RSpec.describe 'Payment Setup Sessions API', type: :request, swagger_doc: 'api-r
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:id) { payment_setup_session.to_param }
 
-        schema '$ref' => '#/components/schemas/StorePaymentSetupSession'
+        schema '$ref' => '#/components/schemas/PaymentSetupSession'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -132,7 +132,7 @@ RSpec.describe 'Payment Setup Sessions API', type: :request, swagger_doc: 'api-r
       description 'Completes a payment setup session by confirming the setup with the provider, resulting in a saved payment method.'
 
       sdk_example <<~JS
-        const session = await client.store.customer.paymentSetupSessions.complete('pss_abc123', {}, {
+        const session = await client.customer.paymentSetupSessions.complete('pss_abc123', {}, {
           bearerToken: '<token>',
         })
       JS
@@ -150,7 +150,7 @@ RSpec.describe 'Payment Setup Sessions API', type: :request, swagger_doc: 'api-r
         let(:id) { payment_setup_session.to_param }
         let(:body) { {} }
 
-        schema '$ref' => '#/components/schemas/StorePaymentSetupSession'
+        schema '$ref' => '#/components/schemas/PaymentSetupSession'
 
         run_test! do |response|
           data = JSON.parse(response.body)

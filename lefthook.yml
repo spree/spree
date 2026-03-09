@@ -7,3 +7,4 @@ pre-commit:
         cd spree/api && bundle exec rake typelizer:generate && cd ../..
         cd packages/sdk && pnpm generate:zod && cd ../..
         git add packages/sdk/src/types/generated/ packages/sdk/src/zod/generated/
+        git add packages/admin-sdk/src/types/generated/

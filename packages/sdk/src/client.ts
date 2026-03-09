@@ -1,19 +1,12 @@
-import { createRequestFn } from './request';
-import type { RetryConfig, RequestConfig } from './request';
-import type { LocaleDefaults } from './types';
+import { createRequestFn, resolveRetryConfig } from '@spree/sdk-core';
+import type { RetryConfig, RequestConfig, LocaleDefaults } from '@spree/sdk-core';
 import { StoreClient } from './store-client';
-import { AdminClient } from './admin-client';
 
-// Re-export types for convenience
-export type { AddressParams, StoreCreditCard, LocaleDefaults } from './types';
-
-export interface SpreeClientConfig {
+export interface ClientConfig {
   /** Base URL of the Spree API (e.g., 'https://api.mystore.com') */
   baseUrl: string;
-  /** Publishable API key for Store API access (required for Store API) */
-  publishableKey?: string;
-  /** Secret API key for Admin API access (optional) */
-  secretKey?: string;
+  /** Publishable API key for Store API access */
+  publishableKey: string;
   /** Custom fetch implementation (optional, defaults to global fetch) */
   fetch?: typeof fetch;
   /** Retry configuration. Enabled by default. Pass false to disable. */
@@ -26,86 +19,62 @@ export interface SpreeClientConfig {
   country?: string;
 }
 
-export class SpreeClient {
-  /** Store API — customer-facing endpoints (products, cart, checkout, account) */
-  readonly store: StoreClient;
-  /** Admin API — administrative endpoints (manage orders, products, settings) */
-  readonly admin: AdminClient;
-
-  private readonly _defaults: LocaleDefaults;
-
-  constructor(config: SpreeClientConfig) {
-    if (!config.publishableKey && !config.secretKey) {
-      throw new Error('SpreeClient requires at least one of publishableKey or secretKey');
-    }
-
-    const baseUrl = config.baseUrl.replace(/\/$/, '');
-    // Bind fetch to globalThis to avoid "Illegal invocation" errors in browsers
-    const fetchFn = config.fetch || fetch.bind(globalThis);
-
-    this._defaults = {
-      locale: config.locale,
-      currency: config.currency,
-      country: config.country,
-    };
-
-    let retryConfig: Required<RetryConfig> | false;
-    if (config.retry === false) {
-      retryConfig = false;
-    } else {
-      retryConfig = {
-        maxRetries: config.retry?.maxRetries ?? 2,
-        retryOnStatus: config.retry?.retryOnStatus ?? [429, 500, 502, 503, 504],
-        baseDelay: config.retry?.baseDelay ?? 300,
-        maxDelay: config.retry?.maxDelay ?? 10000,
-        retryOnNetworkError: config.retry?.retryOnNetworkError ?? true,
-      };
-    }
-
-    const requestConfig: RequestConfig = { baseUrl, fetchFn, retryConfig };
-
-    const storeRequestFn = createRequestFn(
-      requestConfig,
-      '/api/v3/store',
-      config.publishableKey
-        ? { headerName: 'x-spree-api-key', headerValue: config.publishableKey }
-        : { headerName: '', headerValue: '' },
-      this._defaults
-    );
-
-    const adminRequestFn = createRequestFn(
-      requestConfig,
-      '/api/v3/admin',
-      {
-        headerName: 'Authorization',
-        headerValue: config.secretKey ? `Bearer ${config.secretKey}` : '',
-      },
-      this._defaults
-    );
-
-    this.store = new StoreClient(storeRequestFn);
-    this.admin = new AdminClient(adminRequestFn);
-  }
-
+export interface Client extends StoreClient {
   /** Set default locale for all subsequent requests */
-  setLocale(locale: string): void {
-    this._defaults.locale = locale;
-  }
-
+  setLocale(locale: string): void;
   /** Set default currency for all subsequent requests */
-  setCurrency(currency: string): void {
-    this._defaults.currency = currency;
-  }
-
+  setCurrency(currency: string): void;
   /** Set default country for all subsequent requests */
-  setCountry(country: string): void {
-    this._defaults.country = country;
-  }
+  setCountry(country: string): void;
 }
 
 /**
- * Create a new Spree SDK client
+ * Create a new Spree Store SDK client.
+ *
+ * Returns a flat client with all store resources directly accessible:
+ * ```ts
+ * const client = createClient({ baseUrl: '...', publishableKey: '...' })
+ * client.products.list()
+ * client.cart.create()
+ * client.orders.get('order_1')
+ * ```
  */
-export function createSpreeClient(config: SpreeClientConfig): SpreeClient {
-  return new SpreeClient(config);
+export function createClient(config: ClientConfig): Client {
+  const baseUrl = config.baseUrl.replace(/\/$/, '');
+  const fetchFn = config.fetch || fetch.bind(globalThis);
+
+  const defaults: LocaleDefaults = {
+    locale: config.locale,
+    currency: config.currency,
+    country: config.country,
+  };
+
+  const retryConfig = resolveRetryConfig(config.retry);
+
+  const requestConfig: RequestConfig = { baseUrl, fetchFn, retryConfig };
+
+  const requestFn = createRequestFn(
+    requestConfig,
+    '/api/v3/store',
+    { headerName: 'x-spree-api-key', headerValue: config.publishableKey },
+    defaults
+  );
+
+  const storeClient = new StoreClient(requestFn);
+
+  // Build the flat client by spreading StoreClient's prototype methods/properties
+  // and adding locale/currency/country setters
+  const client = Object.create(storeClient) as Client;
+
+  client.setLocale = (locale: string) => {
+    defaults.locale = locale;
+  };
+  client.setCurrency = (currency: string) => {
+    defaults.currency = currency;
+  };
+  client.setCountry = (country: string) => {
+    defaults.country = country;
+  };
+
+  return client;
 }

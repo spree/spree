@@ -86,25 +86,25 @@ A cart is simply an order in the `cart` state. Guest carts are identified by a c
 
 ```typescript SDK
 // Create a cart
-const cart = await client.store.cart.create()
+const cart = await client.cart.create()
 // cart.token => "abc123" (save this for guest checkout)
 
 // Get existing cart
-const cart = await client.store.cart.get()
+const cart = await client.cart.get()
 
 // Add an item
-const updatedOrder = await client.store.orders.lineItems.create(cart.id, {
+const updatedOrder = await client.orders.lineItems.create(cart.id, {
   variant_id: 'var_xxx',
   quantity: 2,
 })
 
 // Update quantity
-await client.store.orders.lineItems.update(cart.id, 'li_xxx', {
+await client.orders.lineItems.update(cart.id, 'li_xxx', {
   quantity: 3,
 })
 
 // Remove an item
-await client.store.orders.lineItems.delete(cart.id, 'li_xxx')
+await client.orders.lineItems.delete(cart.id, 'li_xxx')
 ```
 
 ```bash cURL
@@ -172,7 +172,7 @@ Advance to the next step with `next`. If the order doesn't meet the requirements
 
 ```typescript SDK
 // Set addresses
-await client.store.orders.update(orderId, {
+await client.orders.update(orderId, {
   email: 'john@example.com',
   ship_address: {
     firstname: 'John', lastname: 'Doe',
@@ -183,28 +183,28 @@ await client.store.orders.update(orderId, {
 })
 
 // Advance to delivery
-await client.store.orders.next(orderId)
+await client.orders.next(orderId)
 
 // Get shipments and select a shipping rate
-const { data: shipments } = await client.store.orders.shipments.list(orderId)
-await client.store.orders.shipments.update(orderId, shipments[0].id, {
+const { data: shipments } = await client.orders.shipments.list(orderId)
+await client.orders.shipments.update(orderId, shipments[0].id, {
   selected_shipping_rate_id: 'sr_xxx',
 })
 
 // Advance to payment
-await client.store.orders.next(orderId)
+await client.orders.next(orderId)
 
 // Create a payment session (e.g., Stripe)
-const session = await client.store.orders.paymentSessions.create(orderId, {
+const session = await client.orders.paymentSessions.create(orderId, {
   payment_method_id: 'pm_xxx',
 })
 // session.external_data.client_secret => use with Stripe.js
 
 // Complete the payment session after provider confirmation
-await client.store.orders.paymentSessions.complete(orderId, session.id)
+await client.orders.paymentSessions.complete(orderId, session.id)
 
 // Complete the order
-await client.store.orders.complete(orderId)
+await client.orders.complete(orderId)
 ```
 
 ```bash cURL
@@ -251,10 +251,10 @@ Apply or remove promotional coupon codes during checkout:
 
 ```typescript SDK
 // Apply a coupon
-await client.store.orders.couponCodes.apply(orderId, 'SAVE20')
+await client.orders.couponCodes.apply(orderId, 'SAVE20')
 
 // Remove a coupon
-await client.store.orders.couponCodes.remove(orderId, 'promo_xxx')
+await client.orders.couponCodes.remove(orderId, 'promo_xxx')
 ```
 
 ```bash cURL
@@ -281,10 +281,10 @@ Authenticated customers can view their past orders:
 
 ```typescript SDK
 // List past orders
-const { data: orders } = await client.store.customer.orders.list()
+const { data: orders } = await client.customer.orders.list()
 
 // Get a specific order with details
-const order = await client.store.orders.get('or_xxx', {
+const order = await client.orders.get('or_xxx', {
   expand: ['line_items', 'shipments', 'payments'],
 })
 ```

@@ -1,14 +1,13 @@
 // Main client
-export { SpreeClient, createSpreeClient } from './client';
-export type { SpreeClientConfig } from './client';
+export { createClient } from './client';
+export type { ClientConfig, Client } from './client';
 
-// Sub-clients
+// Store client class (for advanced use / subclassing)
 export { StoreClient } from './store-client';
-export { AdminClient } from './admin-client';
 
-// Request infrastructure
-export { SpreeError } from './request';
-export type { RequestOptions, RetryConfig } from './request';
+// Request infrastructure (re-export from sdk-core)
+export { SpreeError } from '@spree/sdk-core';
+export type { RequestOptions, RetryConfig } from '@spree/sdk-core';
 
 // All types
 export * from './types';

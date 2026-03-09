@@ -31,7 +31,7 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
       description 'Returns a paginated list of active products for the current store'
 
       sdk_example <<~JS
-        const products = await client.store.products.list({
+        const products = await client.products.list({
           page: 1,
           limit: 25,
           sort: 'price',
@@ -73,7 +73,7 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
 
         schema type: :object,
                properties: {
-                 data: { type: :array, items: { '$ref' => '#/components/schemas/StoreProduct' } },
+                 data: { type: :array, items: { '$ref' => '#/components/schemas/Product' } },
                  meta: { '$ref' => '#/components/schemas/PaginationMeta' }
                },
                required: %w[data meta]
@@ -106,7 +106,7 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
       description 'Returns a single product by slug or prefix ID'
 
       sdk_example <<~JS
-        const product = await client.store.products.get('spree-tote', {
+        const product = await client.products.get('spree-tote', {
           expand: ['variants', 'images'],
         })
       JS
@@ -124,7 +124,7 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
         let(:'x-spree-api-key') { api_key.token }
         let(:id) { product.slug }
 
-        schema '$ref' => '#/components/schemas/StoreProduct'
+        schema '$ref' => '#/components/schemas/Product'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -138,7 +138,7 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
         let(:'x-spree-api-key') { api_key.token }
         let(:id) { product.to_param }
 
-        schema '$ref' => '#/components/schemas/StoreProduct'
+        schema '$ref' => '#/components/schemas/Product'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -192,7 +192,7 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
       DESC
 
       sdk_example <<~JS
-        const filters = await client.store.products.filters({
+        const filters = await client.products.filters({
           taxon_id: 'taxon_abc123',
         })
       JS

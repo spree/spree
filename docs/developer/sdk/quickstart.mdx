@@ -16,40 +16,40 @@ pnpm add @spree/sdk
 ## Quick Start
 
 ```typescript
-import { createSpreeClient } from '@spree/sdk';
+import { createClient } from '@spree/sdk';
 
 // Initialize the client
-const client = createSpreeClient({
+const client = createClient({
   baseUrl: 'https://api.mystore.com',
   publishableKey: 'spree_pk_xxx',   // Store API
   secretKey: 'spree_sk_xxx',        // Admin API (optional)
 });
 
 // Browse products (Store API)
-const products = await client.store.products.list({
+const products = await client.products.list({
   limit: 10,
   expand: ['variants', 'images'],
 });
 
 // Get a single product
-const product = await client.store.products.get('spree-tote');
+const product = await client.products.get('spree-tote');
 
 // Authentication
-const { token, user } = await client.store.auth.login({
+const { token, user } = await client.auth.login({
   email: 'customer@example.com',
   password: 'password123',
 });
 
 // Create a cart and add items
-const cart = await client.store.cart.create();
-await client.store.orders.lineItems.create(cart.id, {
+const cart = await client.cart.create();
+await client.orders.lineItems.create(cart.id, {
   variant_id: 'var_abc123',
   quantity: 2,
 }, { orderToken: cart.token });
 
 // Checkout flow
-await client.store.orders.next(cart.id, { orderToken: cart.token });
-await client.store.orders.complete(cart.id, { orderToken: cart.token });
+await client.orders.next(cart.id, { orderToken: cart.token });
+await client.orders.complete(cart.id, { orderToken: cart.token });
 ```
 
 ## Client Architecture
@@ -61,7 +61,7 @@ client.store   // Store API — customer-facing (products, cart, checkout, accou
 client.admin   // Admin API — administrative (coming soon)
 ```
 
-All Store API endpoints live under `client.store.*`. The Admin API namespace is ready for future endpoints.
+All Store API endpoints live under `client.*`. The Admin API namespace is ready for future endpoints.
 
 ## Nested Resources
 
@@ -84,12 +84,11 @@ The SDK uses a resource builder pattern for nested resources:
 | `store.wishlists` | `items` | `create`, `update`, `delete` |
 
 ```typescript
-// Nested resources follow the pattern: client.store.parent.nested.method(parentId, ...)
-await client.store.orders.lineItems.create(orderId, params, options);
-await client.store.orders.payments.list(orderId, options);
-await client.store.orders.shipments.update(orderId, shipmentId, params, options);
-await client.store.customer.addresses.list({}, options);
-await client.store.taxons.products.list(taxonId, params, options);
-await client.store.wishlists.items.create(wishlistId, params, options);
+// Nested resources follow the pattern: client.parent.nested.method(parentId, ...)
+await client.orders.lineItems.create(orderId, params, options);
+await client.orders.payments.list(orderId, options);
+await client.orders.shipments.update(orderId, shipmentId, params, options);
+await client.customer.addresses.list({}, options);
+await client.taxons.products.list(taxonId, params, options);
+await client.wishlists.items.create(wishlistId, params, options);
 ```
-

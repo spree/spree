@@ -1,10 +1,10 @@
-import { createSpreeClient } from '../src';
+import { createClient } from '../src';
 
 export const TEST_BASE_URL = 'https://demo.spreecommerce.org';
 export const TEST_API_KEY = 'test-publishable-key';
 
 export function createTestClient() {
-  return createSpreeClient({
+  return createClient({
     baseUrl: TEST_BASE_URL,
     publishableKey: TEST_API_KEY,
   });

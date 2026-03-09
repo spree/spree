@@ -1,15 +1,15 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { createTestClient } from './helpers';
-import type { SpreeClient } from '../src';
+import type { Client } from '../src';
 
 describe('paymentSetupSessions', () => {
-  let client: SpreeClient;
+  let client: Client;
   beforeAll(() => { client = createTestClient(); });
   const opts = { token: 'user-jwt' };
 
   describe('create', () => {
     it('creates a payment setup session', async () => {
-      const result = await client.store.customer.paymentSetupSessions.create(
+      const result = await client.customer.paymentSetupSessions.create(
         { payment_method_id: 'pm_1' },
         opts
       );
@@ -20,7 +20,7 @@ describe('paymentSetupSessions', () => {
     });
 
     it('accepts optional external_data', async () => {
-      const result = await client.store.customer.paymentSetupSessions.create(
+      const result = await client.customer.paymentSetupSessions.create(
         { payment_method_id: 'pm_1', external_data: { channel: 'Web' } },
         opts
       );
@@ -30,7 +30,7 @@ describe('paymentSetupSessions', () => {
 
   describe('get', () => {
     it('returns a payment setup session by ID', async () => {
-      const result = await client.store.customer.paymentSetupSessions.get(
+      const result = await client.customer.paymentSetupSessions.get(
         'pss_1',
         opts
       );
@@ -43,7 +43,7 @@ describe('paymentSetupSessions', () => {
 
   describe('complete', () => {
     it('completes a payment setup session', async () => {
-      const result = await client.store.customer.paymentSetupSessions.complete(
+      const result = await client.customer.paymentSetupSessions.complete(
         'pss_1',
         undefined,
         opts
@@ -55,7 +55,7 @@ describe('paymentSetupSessions', () => {
     });
 
     it('completes with external_data', async () => {
-      const result = await client.store.customer.paymentSetupSessions.complete(
+      const result = await client.customer.paymentSetupSessions.complete(
         'pss_1',
         { external_data: { setup_intent_id: 'seti_123' } },
         opts

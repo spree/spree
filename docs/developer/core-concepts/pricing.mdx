@@ -29,12 +29,12 @@ The Store API returns the resolved price (including Price List rules) for the cu
 
 ```typescript SDK
 // Product price is included by default
-const product = await client.store.products.get('spree-tote')
+const product = await client.products.get('spree-tote')
 console.log(product.price)          // "15.99" — resolved for current currency
 console.log(product.original_price) // "19.99" — compare-at price (if set)
 
 // Each variant has its own price
-const detailed = await client.store.products.get('spree-tote', {
+const detailed = await client.products.get('spree-tote', {
   expand: ['variants'],
 })
 detailed.variants?.forEach(variant => {

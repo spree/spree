@@ -4,7 +4,6 @@ import path from 'path';
 export default defineConfig({
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
       '@/types': path.resolve(__dirname, './src/types/generated/index.ts'),
     },
   },

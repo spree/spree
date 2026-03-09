@@ -15,15 +15,15 @@ Pass the key via the `X-Spree-Api-Key` header:
 <CodeGroup>
 
 ```typescript SDK
-import { createSpreeClient } from '@spree/sdk'
+import { createClient } from '@spree/sdk'
 
-const client = createSpreeClient({
+const client = createClient({
   baseUrl: 'http://localhost:3000',
   publishableKey: 'spree_pk_xxx',
 })
 
 // The SDK automatically sends the publishable key with every request
-const products = await client.store.products.list()
+const products = await client.products.list()
 ```
 
 ```bash cURL
@@ -63,13 +63,13 @@ For actions that require a logged-in customer (viewing orders, managing addresse
 
 ```typescript SDK
 // Login to get a JWT token
-const { token, user } = await client.store.auth.login({
+const { token, user } = await client.auth.login({
   email: 'customer@example.com',
   password: 'password123',
 })
 
 // Use the token for authenticated requests
-const orders = await client.store.customer.orders.list({}, { token })
+const orders = await client.customer.orders.list({}, { token })
 ```
 
 ```bash cURL
@@ -92,7 +92,7 @@ curl -X GET 'http://localhost:3000/api/v3/store/orders' \
 <CodeGroup>
 
 ```typescript SDK
-const { token, user } = await client.store.auth.register({
+const { token, user } = await client.auth.register({
   email: 'new@example.com',
   password: 'password123',
   password_confirmation: 'password123',
@@ -123,7 +123,7 @@ JWT tokens expire after 1 hour by default. Use the refresh endpoint to get a new
 <CodeGroup>
 
 ```typescript SDK
-const { token } = await client.store.auth.refresh({ token: currentToken })
+const { token } = await client.auth.refresh({ token: currentToken })
 ```
 
 ```bash cURL
@@ -144,13 +144,13 @@ Pass the token via the `X-Spree-Order-Token` header or `order_token` query param
 
 ```typescript SDK
 // Create a cart (guest)
-const cart = await client.store.cart.create()
+const cart = await client.cart.create()
 
 // Use orderToken for all cart operations
 const options = { orderToken: cart.token }
 
 // Add items
-await client.store.orders.lineItems.create(cart.id, {
+await client.orders.lineItems.create(cart.id, {
   variant_id: 'variant_abc123',
   quantity: 1,
 }, options)
@@ -178,7 +178,7 @@ After a guest user logs in, you can associate their guest cart with their accoun
 <CodeGroup>
 
 ```typescript SDK
-await client.store.cart.associate({
+await client.cart.associate({
   token: jwtToken,
   orderToken: cart.token,
 })

@@ -31,7 +31,7 @@ namespace :rswag do
 end
 
 namespace :typelizer do
-  desc 'Generate TypeScript types from Alba serializers'
+  desc 'Generate TypeScript types for both Store and Admin SDKs'
   task :generate do
     ENV['RAILS_ENV'] ||= 'test'
     ENV['DISABLE_TYPELIZER'] = 'false'
@@ -43,10 +43,10 @@ namespace :typelizer do
     Rails.autoloaders.main.eager_load_dir(serializers_path)
 
     require 'typelizer/generator'
-    serializers = Typelizer::Generator.call(force: true)
 
-    puts "Generated TypeScript types for #{serializers.size} serializers"
-    puts "Output: #{Typelizer.configuration.writer_config.output_dir}"
+    # Writer config is in config/initializers/typelizer.rb
+    Typelizer::Generator.call(force: true)
+    puts "Generated types → packages/sdk/src/types/generated/ & packages/admin-sdk/src/types/generated/"
   end
 
   desc 'Clean and regenerate TypeScript types'

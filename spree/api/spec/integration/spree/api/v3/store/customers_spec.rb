@@ -13,7 +13,7 @@ RSpec.describe 'Customers API', type: :request, swagger_doc: 'api-reference/stor
       description 'Returns the profile of the currently authenticated customer'
 
       sdk_example <<~JS
-        const customer = await client.store.customer.get({
+        const customer = await client.customer.get({
           bearerToken: '<token>',
         })
       JS
@@ -28,7 +28,7 @@ RSpec.describe 'Customers API', type: :request, swagger_doc: 'api-reference/stor
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
 
-        schema '$ref' => '#/components/schemas/StoreCustomer'
+        schema '$ref' => '#/components/schemas/Customer'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -63,7 +63,7 @@ RSpec.describe 'Customers API', type: :request, swagger_doc: 'api-reference/stor
       description 'Updates the profile of the currently authenticated customer'
 
       sdk_example <<~JS
-        const customer = await client.store.customer.update({
+        const customer = await client.customer.update({
           first_name: 'John',
           last_name: 'Doe',
         }, {
@@ -91,7 +91,7 @@ RSpec.describe 'Customers API', type: :request, swagger_doc: 'api-reference/stor
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:body) { { first_name: 'Updated', last_name: 'Name' } }
 
-        schema '$ref' => '#/components/schemas/StoreCustomer'
+        schema '$ref' => '#/components/schemas/Customer'
 
         run_test! do |response|
           data = JSON.parse(response.body)

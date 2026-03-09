@@ -22,7 +22,7 @@ RSpec.describe 'Payments API', type: :request, swagger_doc: 'api-reference/store
       description 'Returns a list of payments for the specified order'
 
       sdk_example <<~JS
-        const payments = await client.store.orders.payments.list('or_abc123', {
+        const payments = await client.orders.payments.list('or_abc123', {
           bearerToken: '<token>',
         })
       JS
@@ -35,7 +35,7 @@ RSpec.describe 'Payments API', type: :request, swagger_doc: 'api-reference/store
                properties: {
                  data: {
                    type: :array,
-                   items: { '$ref' => '#/components/schemas/StorePayment' }
+                   items: { '$ref' => '#/components/schemas/Payment' }
                  },
                  meta: { type: :object }
                }
@@ -71,7 +71,7 @@ RSpec.describe 'Payments API', type: :request, swagger_doc: 'api-reference/store
       description 'Returns a single payment by ID'
 
       sdk_example <<~JS
-        const payment = await client.store.orders.payments.get('or_abc123', 'pay_abc123', {
+        const payment = await client.orders.payments.get('or_abc123', 'pay_abc123', {
           bearerToken: '<token>',
         })
       JS
@@ -81,7 +81,7 @@ RSpec.describe 'Payments API', type: :request, swagger_doc: 'api-reference/store
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:id) { payment.to_param }
 
-        schema '$ref' => '#/components/schemas/StorePayment'
+        schema '$ref' => '#/components/schemas/Payment'
 
         run_test! do |response|
           data = JSON.parse(response.body)

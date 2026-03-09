@@ -19,7 +19,7 @@ RSpec.describe 'Coupon Codes API', type: :request, swagger_doc: 'api-reference/s
       DESC
 
       sdk_example <<~JS
-        const order = await client.store.orders.couponCodes.apply('or_abc123', 'SAVE10', {
+        const order = await client.orders.couponCodes.apply('or_abc123', 'SAVE10', {
           bearerToken: '<token>',
         })
       JS
@@ -48,7 +48,7 @@ RSpec.describe 'Coupon Codes API', type: :request, swagger_doc: 'api-reference/s
         let(:order_id) { order.to_param }
         let(:body) { { code: 'SAVE10' } }
 
-        schema '$ref' => '#/components/schemas/StoreOrder'
+        schema '$ref' => '#/components/schemas/Order'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -63,7 +63,7 @@ RSpec.describe 'Coupon Codes API', type: :request, swagger_doc: 'api-reference/s
         let(:order_id) { order.to_param }
         let(:body) { { code: 'giftcode1' } }
 
-        schema '$ref' => '#/components/schemas/StoreOrder'
+        schema '$ref' => '#/components/schemas/Order'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -106,7 +106,7 @@ RSpec.describe 'Coupon Codes API', type: :request, swagger_doc: 'api-reference/s
       description 'Removes a previously applied coupon code from the order.'
 
       sdk_example <<~JS
-        const order = await client.store.orders.couponCodes.remove('or_abc123', 'op_abc123', {
+        const order = await client.orders.couponCodes.remove('or_abc123', 'op_abc123', {
           bearerToken: '<token>',
         })
       JS
@@ -133,7 +133,7 @@ RSpec.describe 'Coupon Codes API', type: :request, swagger_doc: 'api-reference/s
           "op_#{Spree::PrefixedId::SQIDS.encode([op.id])}"
         end
 
-        schema '$ref' => '#/components/schemas/StoreOrder'
+        schema '$ref' => '#/components/schemas/Order'
 
         run_test! do |response|
           data = JSON.parse(response.body)

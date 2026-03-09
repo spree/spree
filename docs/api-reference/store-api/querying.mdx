@@ -13,7 +13,7 @@ Pass filter conditions using the `q` parameter with Ransack predicates:
 <CodeGroup>
 
 ```typescript SDK
-const products = await client.store.products.list({
+const products = await client.products.list({
   name_cont: 'shirt',
   price_gte: 20,
   price_lte: 100,
@@ -63,7 +63,7 @@ Multiple filters are combined with AND logic:
 
 ```typescript SDK
 // Products that contain "shirt" AND cost between $20-$100
-const products = await client.store.products.list({
+const products = await client.products.list({
   name_cont: 'shirt',
   price_gteq: 20,
   price_lteq: 100,
@@ -88,12 +88,12 @@ You can filter by associated model attributes using underscore notation:
 
 ```typescript SDK
 // Products in a specific taxon (category)
-const products = await client.store.products.list({
+const products = await client.products.list({
   taxons_id_eq: 'txn_abc123',
 })
 
 // Taxons at a specific depth
-const taxons = await client.store.taxons.list({
+const taxons = await client.taxons.list({
   depth_eq: 1,
 })
 ```
@@ -119,7 +119,7 @@ Products support additional filter scopes beyond standard Ransack predicates:
 <CodeGroup>
 
 ```typescript SDK
-const products = await client.store.products.list({
+const products = await client.products.list({
   price_gte: 20,                                        // Minimum price
   price_lte: 100,                                       // Maximum price
   with_option_value_ids: ['optval_abc', 'optval_def'], // Filter by option values
@@ -156,17 +156,17 @@ Use the `sort` parameter on any list endpoint. Prefix a field with `-` for desce
 
 ```typescript SDK
 // Sort by price (low to high)
-const products = await client.store.products.list({
+const products = await client.products.list({
   sort: 'price',
 })
 
 // Sort by price (high to low)
-const products = await client.store.products.list({
+const products = await client.products.list({
   sort: '-price',
 })
 
 // Sort by best selling
-const products = await client.store.products.list({
+const products = await client.products.list({
   sort: 'best_selling',
 })
 ```
@@ -206,17 +206,17 @@ The `sort` parameter works on all list endpoints. Use any sortable column name:
 
 ```typescript SDK
 // Taxons sorted by name
-const taxons = await client.store.taxons.list({
+const taxons = await client.taxons.list({
   sort: 'name',
 })
 
 // Customer orders sorted by most recent
-const orders = await client.store.customer.orders.list({
+const orders = await client.customer.orders.list({
   sort: '-completed_at',
 })
 
 // Taxonomies sorted by name descending
-const taxonomies = await client.store.taxonomies.list({
+const taxonomies = await client.taxonomies.list({
   sort: '-name',
 })
 ```
@@ -243,7 +243,7 @@ Use the `expand` parameter to include associated resources in the response. Pass
 <CodeGroup>
 
 ```typescript SDK
-const product = await client.store.products.get('spree-tote', {
+const product = await client.products.get('spree-tote', {
   expand: ['variants', 'images'],
 })
 ```
@@ -264,17 +264,17 @@ Use dot notation to expand nested associations (up to 4 levels deep):
 
 ```typescript SDK
 // Expand variants and their images in one request
-const product = await client.store.products.get('spree-tote', {
+const product = await client.products.get('spree-tote', {
   expand: ['variants.images'],
 })
 
 // Multiple nested expands
-const product = await client.store.products.get('spree-tote', {
+const product = await client.products.get('spree-tote', {
   expand: ['variants.images', 'variants.metafields', 'option_types'],
 })
 
 // Taxon with nested children
-const taxon = await client.store.taxons.get('categories/clothing', {
+const taxon = await client.taxons.get('categories/clothing', {
   expand: ['children.children'],  // Two levels of subcategories
 })
 ```
@@ -307,12 +307,12 @@ Use the `fields` parameter to request only specific fields in the response. This
 
 ```typescript SDK
 // Only return name, slug, and price
-const products = await client.store.products.list({
+const products = await client.products.list({
   fields: ['name', 'slug', 'price', 'display_price'],
 })
 
 // Works on single resources too
-const product = await client.store.products.get('spree-tote', {
+const product = await client.products.get('spree-tote', {
   fields: ['name', 'slug', 'price'],
 })
 ```
@@ -358,7 +358,7 @@ All collection endpoints return paginated results. Control pagination with `page
 <CodeGroup>
 
 ```typescript SDK
-const { data: products, meta } = await client.store.products.list({
+const { data: products, meta } = await client.products.list({
   page: 2,
   limit: 10,
 })

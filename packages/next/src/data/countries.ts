@@ -1,4 +1,4 @@
-import type { StoreCountry } from '@spree/sdk';
+import type { Country } from '@spree/sdk';
 import { getClient } from '../config';
 import { getLocaleOptions } from '../locale';
 import type { SpreeNextOptions } from '../types';
@@ -9,9 +9,9 @@ import type { SpreeNextOptions } from '../types';
  */
 export async function listCountries(
   options?: SpreeNextOptions
-): Promise<{ data: StoreCountry[] }> {
+): Promise<{ data: Country[] }> {
   const resolved = options ?? await getLocaleOptions();
-  return getClient().store.countries.list(resolved);
+  return getClient().countries.list(resolved);
 }
 
 /**
@@ -23,7 +23,7 @@ export async function getCountry(
   iso: string,
   params?: { expand?: string[] },
   options?: SpreeNextOptions
-): Promise<StoreCountry> {
+): Promise<Country> {
   const resolved = options ?? await getLocaleOptions();
-  return getClient().store.countries.get(iso, params, resolved);
+  return getClient().countries.get(iso, params, resolved);
 }

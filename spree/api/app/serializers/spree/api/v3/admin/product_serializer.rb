@@ -37,6 +37,22 @@ module Spree
               resource: Spree.api.admin_variant_serializer,
               if: proc { expand?('master_variant') }
 
+          many :variant_images,
+               key: :images,
+               resource: Spree.api.admin_image_serializer,
+               if: proc { expand?('images') }
+
+          many :option_types,
+               resource: Spree.api.admin_option_type_serializer,
+               if: proc { expand?('option_types') }
+
+          many :taxons,
+               proc { |taxons, params|
+                 taxons.select { |t| t.taxonomy.store_id == params[:store].id }
+               },
+               resource: Spree.api.admin_taxon_serializer,
+               if: proc { expand?('taxons') }
+
           many :metafields,
                resource: Spree.api.admin_metafield_serializer,
                if: proc { expand?('metafields') }

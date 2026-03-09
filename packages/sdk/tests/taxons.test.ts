@@ -1,15 +1,15 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { createTestClient } from './helpers';
 import { fixtures } from './mocks/handlers';
-import type { SpreeClient } from '../src';
+import type { Client } from '../src';
 
 describe('taxons', () => {
-  let client: SpreeClient;
+  let client: Client;
   beforeAll(() => { client = createTestClient(); });
 
   describe('list', () => {
     it('returns paginated taxons', async () => {
-      const result = await client.store.taxons.list();
+      const result = await client.taxons.list();
 
       expect(result.data).toHaveLength(1);
       expect(result.data[0].name).toBe('Clothing');
@@ -17,7 +17,7 @@ describe('taxons', () => {
     });
 
     it('passes query parameters', async () => {
-      const result = await client.store.taxons.list({
+      const result = await client.taxons.list({
         taxonomy_id_eq: 'tax_1',
       });
       expect(result.data).toBeDefined();
@@ -26,7 +26,7 @@ describe('taxons', () => {
 
   describe('get', () => {
     it('returns a taxon by ID', async () => {
-      const result = await client.store.taxons.get('taxon_1');
+      const result = await client.taxons.get('taxon_1');
       expect(result.name).toBe(fixtures.taxon.name);
     });
 
@@ -34,7 +34,7 @@ describe('taxons', () => {
 
   describe('products', () => {
     it('lists products in a taxon', async () => {
-      const result = await client.store.taxons.products.list('taxon_1');
+      const result = await client.taxons.products.list('taxon_1');
 
       expect(result.data).toHaveLength(1);
       expect(result.data[0].name).toBe('Test Product');

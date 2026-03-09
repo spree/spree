@@ -18,7 +18,7 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
       description 'Returns all wishlists for the authenticated customer'
 
       sdk_example <<~JS
-        const wishlists = await client.store.wishlists.list({}, {
+        const wishlists = await client.wishlists.list({}, {
           bearerToken: '<token>',
         })
       JS
@@ -36,7 +36,7 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
 
         schema type: :object,
                properties: {
-                 data: { type: :array, items: { '$ref' => '#/components/schemas/StoreWishlist' } },
+                 data: { type: :array, items: { '$ref' => '#/components/schemas/Wishlist' } },
                  meta: { '$ref' => '#/components/schemas/PaginationMeta' }
                }
 
@@ -64,7 +64,7 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
       description 'Creates a new wishlist for the customer'
 
       sdk_example <<~JS
-        const wishlist = await client.store.wishlists.create({
+        const wishlist = await client.wishlists.create({
           name: 'Birthday Ideas',
           is_private: true,
         }, {
@@ -89,7 +89,7 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:body) { { name: 'Birthday Ideas', is_private: true } }
 
-        schema '$ref' => '#/components/schemas/StoreWishlist'
+        schema '$ref' => '#/components/schemas/Wishlist'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -117,7 +117,7 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
       security [api_key: [], bearer_auth: []]
 
       sdk_example <<~JS
-        const wishlist = await client.store.wishlists.get('wl_abc123', {
+        const wishlist = await client.wishlists.get('wl_abc123', {
           expand: 'wished_items',
         }, {
           bearerToken: '<token>',
@@ -137,7 +137,7 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:id) { wishlist.to_param }
 
-        schema '$ref' => '#/components/schemas/StoreWishlist'
+        schema '$ref' => '#/components/schemas/Wishlist'
 
         run_test!
       end
@@ -160,7 +160,7 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
       security [api_key: [], bearer_auth: []]
 
       sdk_example <<~JS
-        const wishlist = await client.store.wishlists.update('wl_abc123', {
+        const wishlist = await client.wishlists.update('wl_abc123', {
           name: 'Updated Name',
         }, {
           bearerToken: '<token>',
@@ -185,7 +185,7 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
         let(:id) { wishlist.to_param }
         let(:body) { { name: 'Updated Name' } }
 
-        schema '$ref' => '#/components/schemas/StoreWishlist'
+        schema '$ref' => '#/components/schemas/Wishlist'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -199,7 +199,7 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
       security [api_key: [], bearer_auth: []]
 
       sdk_example <<~JS
-        await client.store.wishlists.delete('wl_abc123', {
+        await client.wishlists.delete('wl_abc123', {
           bearerToken: '<token>',
         })
       JS
@@ -227,7 +227,7 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
       description 'Adds a variant to the wishlist'
 
       sdk_example <<~JS
-        const item = await client.store.wishlists.items.create('wl_abc123', {
+        const item = await client.wishlists.items.create('wl_abc123', {
           variant_id: 'variant_abc123',
           quantity: 1,
         }, {
@@ -255,7 +255,7 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
         let(:wishlist_id) { wishlist.to_param }
         let(:body) { { variant_id: new_variant.prefixed_id, quantity: 1 } }
 
-        schema '$ref' => '#/components/schemas/StoreWishedItem'
+        schema '$ref' => '#/components/schemas/WishedItem'
 
         run_test!
       end
@@ -268,7 +268,7 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
       security [api_key: [], bearer_auth: []]
 
       sdk_example <<~JS
-        await client.store.wishlists.items.delete('wl_abc123', 'wi_abc123', {
+        await client.wishlists.items.delete('wl_abc123', 'wi_abc123', {
           bearerToken: '<token>',
         })
       JS

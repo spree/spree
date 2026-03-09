@@ -7,7 +7,7 @@ module Spree
       module SchemaHelper
         extend self
 
-        # Reference a schema by name (e.g., 'StoreProduct', 'StoreOrder')
+        # Reference a schema by name (e.g., 'Product', 'Order')
         def ref(schema_name)
           { '$ref' => "#/components/schemas/#{schema_name}" }
         end
@@ -81,7 +81,7 @@ module Spree
               type: :object,
               properties: {
                 token: { type: :string, description: 'JWT access token' },
-                user: { '$ref' => '#/components/schemas/StoreCustomer' }
+                user: { '$ref' => '#/components/schemas/Customer' }
               },
               required: %w[token user]
             }
@@ -105,8 +105,7 @@ module Spree
 
         def typelizer_schemas
           with_typelizer_enabled do
-            schemas = Typelizer.openapi_schemas
-            schemas = schemas.select { |key, _| key.to_s.start_with?('Store') }
+            schemas = Typelizer.openapi_schemas(writer_name: :store)
             schemas.each_value do |s|
               s[:'x-typelizer'] = true
               strip_null_from_enums(s)

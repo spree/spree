@@ -13,7 +13,7 @@ Pass locale and currency headers with any request. For full details, see the [Lo
 
 ```typescript
 // Works with all endpoints
-const taxon = await client.store.taxons.get('categories/clothing', {
+const taxon = await client.taxons.get('categories/clothing', {
   expand: ['ancestors'],
 }, {
   locale: 'de',
@@ -27,7 +27,7 @@ const taxon = await client.store.taxons.get('categories/clothing', {
 import { SpreeError } from '@spree/sdk';
 
 try {
-  await client.store.products.get('non-existent');
+  await client.products.get('non-existent');
 } catch (error) {
   if (error instanceof SpreeError) {
     console.log(error.code);    // 'record_not_found'
@@ -43,9 +43,9 @@ try {
 You can provide a custom fetch implementation:
 
 ```typescript
-import { createSpreeClient } from '@spree/sdk';
+import { createClient } from '@spree/sdk';
 
-const client = createSpreeClient({
+const client = createClient({
   baseUrl: 'https://api.mystore.com',
   publishableKey: 'spree_pk_xxx',
   fetch: customFetchImplementation,
@@ -57,7 +57,7 @@ const client = createSpreeClient({
 All monetary values in the API are returned as **strings** (e.g., `"29.99"`, `"0.0"`), not numbers. This preserves decimal precision and avoids floating-point rounding issues.
 
 ```typescript
-const order = await client.store.orders.get('or_abc123', {}, { token });
+const order = await client.orders.get('or_abc123', {}, { token });
 
 // Monetary fields are strings
 order.total;         // "129.99"
@@ -92,8 +92,8 @@ import type {
 } from '@spree/sdk';
 
 // All responses are fully typed
-const products: PaginatedResponse<StoreProduct> = await client.store.products.list();
-const taxon: StoreTaxon = await client.store.taxons.get('clothing');
+const products: PaginatedResponse<StoreProduct> = await client.products.list();
+const taxon: StoreTaxon = await client.taxons.get('clothing');
 ```
 
 ## Available Types

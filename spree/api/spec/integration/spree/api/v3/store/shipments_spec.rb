@@ -16,7 +16,7 @@ RSpec.describe 'Shipments API', type: :request, swagger_doc: 'api-reference/stor
       description 'Returns all shipments associated with the order'
 
       sdk_example <<~JS
-        const shipments = await client.store.orders.shipments.list('or_abc123', {
+        const shipments = await client.orders.shipments.list('or_abc123', {
           bearerToken: '<token>',
         })
       JS
@@ -33,7 +33,7 @@ RSpec.describe 'Shipments API', type: :request, swagger_doc: 'api-reference/stor
 
         schema type: :object,
                properties: {
-                 data: { type: :array, items: { '$ref' => '#/components/schemas/StoreShipment' } },
+                 data: { type: :array, items: { '$ref' => '#/components/schemas/Shipment' } },
                  meta: { '$ref' => '#/components/schemas/PaginationMeta' }
                }
 
@@ -78,7 +78,7 @@ RSpec.describe 'Shipments API', type: :request, swagger_doc: 'api-reference/stor
         let(:id) { shipment.to_param }
         let(:'x-spree-order-token') { order.token }
 
-        schema '$ref' => '#/components/schemas/StoreShipment'
+        schema '$ref' => '#/components/schemas/Shipment'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -107,7 +107,7 @@ RSpec.describe 'Shipments API', type: :request, swagger_doc: 'api-reference/stor
       description 'Selects a shipping rate for the shipment'
 
       sdk_example <<~JS
-        const order = await client.store.orders.shipments.update('or_abc123', 'shp_abc123', {
+        const order = await client.orders.shipments.update('or_abc123', 'shp_abc123', {
           selected_shipping_rate_id: 'shprt_abc123',
         }, {
           bearerToken: '<token>',
@@ -136,7 +136,7 @@ RSpec.describe 'Shipments API', type: :request, swagger_doc: 'api-reference/stor
         let(:'x-spree-order-token') { order.token }
         let(:body) { { selected_shipping_rate_id: shipping_rate.to_param } }
 
-        schema '$ref' => '#/components/schemas/StoreOrder'
+        schema '$ref' => '#/components/schemas/Order'
 
         run_test! do |response|
           data = JSON.parse(response.body)

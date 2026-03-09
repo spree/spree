@@ -84,7 +84,7 @@ During checkout, after the customer provides a shipping address, Spree calculate
 
 ```typescript SDK
 // Get shipments with available shipping rates
-const order = await client.store.orders.get(orderId, {
+const order = await client.orders.get(orderId, {
   expand: ['shipments'],
 })
 
@@ -95,7 +95,7 @@ order.shipments?.forEach(shipment => {
 })
 
 // Select a shipping rate
-await client.store.orders.shipments.update(orderId, shipment.id, {
+await client.orders.shipments.update(orderId, shipment.id, {
   selected_shipping_rate_id: 'sr_xxx',
 })
 ```

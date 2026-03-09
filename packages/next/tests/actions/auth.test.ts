@@ -3,24 +3,22 @@ import { mockCookieStore } from '../setup';
 import { initSpreeNext, resetClient } from '../../src/config';
 
 const mockClient = {
-  store: {
-    auth: {
-      login: vi.fn(),
-      register: vi.fn(),
-      refresh: vi.fn(),
-    },
-    customer: {
-      get: vi.fn(),
-      update: vi.fn(),
-    },
-    cart: {
-      associate: vi.fn(),
-    },
+  auth: {
+    login: vi.fn(),
+    register: vi.fn(),
+    refresh: vi.fn(),
+  },
+  customer: {
+    get: vi.fn(),
+    update: vi.fn(),
+  },
+  cart: {
+    associate: vi.fn(),
   },
 };
 
 vi.mock('@spree/sdk', () => ({
-  createSpreeClient: vi.fn(() => mockClient),
+  createClient: vi.fn(() => mockClient),
   SpreeError: class SpreeError extends Error {
     public readonly code: string;
     public readonly status: number;
@@ -49,7 +47,7 @@ describe('auth actions', () => {
         user: { id: '1', email: 'test@example.com', first_name: 'Test', last_name: 'User' },
       };
       mockCookieStore.get.mockReturnValue(undefined); // no cart token
-      mockClient.store.auth.login.mockResolvedValue(authResult);
+      mockClient.auth.login.mockResolvedValue(authResult);
 
       const result = await login('test@example.com', 'password123');
       expect(result.success).toBe(true);
@@ -66,18 +64,18 @@ describe('auth actions', () => {
       const authResult = { token: 'jwt_new', user: { id: '1', email: 'a@b.com' } };
       mockCookieStore.get
         .mockReturnValueOnce({ value: 'guest_cart_token' }); // getCartToken
-      mockClient.store.auth.login.mockResolvedValue(authResult);
-      mockClient.store.cart.associate.mockResolvedValue({});
+      mockClient.auth.login.mockResolvedValue(authResult);
+      mockClient.cart.associate.mockResolvedValue({});
 
       await login('a@b.com', 'pass');
-      expect(mockClient.store.cart.associate).toHaveBeenCalledWith({
+      expect(mockClient.cart.associate).toHaveBeenCalledWith({
         token: 'jwt_new',
         orderToken: 'guest_cart_token',
       });
     });
 
     it('returns error on failure', async () => {
-      mockClient.store.auth.login.mockRejectedValue(new Error('Invalid credentials'));
+      mockClient.auth.login.mockRejectedValue(new Error('Invalid credentials'));
 
       const result = await login('bad@email.com', 'wrong');
       expect(result.success).toBe(false);
@@ -110,7 +108,7 @@ describe('auth actions', () => {
     it('returns customer when authenticated', async () => {
       const mockUser = { id: '1', email: 'test@test.com' };
       mockCookieStore.get.mockReturnValue({ value: 'valid_jwt' });
-      mockClient.store.customer.get.mockResolvedValue(mockUser);
+      mockClient.customer.get.mockResolvedValue(mockUser);
 
       const customer = await getCustomer();
       expect(customer).toEqual(mockUser);

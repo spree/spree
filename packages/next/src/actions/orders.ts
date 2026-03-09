@@ -1,6 +1,6 @@
 'use server';
 
-import type { StoreOrder, PaginatedResponse, OrderListParams } from '@spree/sdk';
+import type { Order, PaginatedResponse, OrderListParams } from '@spree/sdk';
 import { withAuthRefresh } from '../auth-helpers';
 import { getClient } from '../config';
 
@@ -9,9 +9,9 @@ import { getClient } from '../config';
  */
 export async function listOrders(
   params?: OrderListParams
-): Promise<PaginatedResponse<StoreOrder>> {
+): Promise<PaginatedResponse<Order>> {
   return withAuthRefresh(async (options) => {
-    return getClient().store.customer.orders.list(params, options);
+    return getClient().customer.orders.list(params, options);
   });
 }
 
@@ -21,8 +21,8 @@ export async function listOrders(
 export async function getOrder(
   idOrNumber: string,
   params?: Record<string, unknown>
-): Promise<StoreOrder> {
+): Promise<Order> {
   return withAuthRefresh(async (options) => {
-    return getClient().store.orders.get(idOrNumber, params, options);
+    return getClient().orders.get(idOrNumber, params, options);
   });
 }

@@ -1,7 +1,7 @@
-import { createSpreeClient, type SpreeClient } from '@spree/sdk';
+import { createClient, type Client } from '@spree/sdk';
 import type { SpreeNextConfig } from './types';
 
-let _client: SpreeClient | null = null;
+let _client: Client | null = null;
 let _config: SpreeNextConfig | null = null;
 
 /**
@@ -11,17 +11,17 @@ let _config: SpreeNextConfig | null = null;
  */
 export function initSpreeNext(config: SpreeNextConfig): void {
   _config = config;
-  _client = createSpreeClient({
+  _client = createClient({
     baseUrl: config.baseUrl,
     publishableKey: config.publishableKey,
   });
 }
 
 /**
- * Get the SpreeClient instance. Auto-initializes from env vars if needed.
+ * Get the Client instance. Auto-initializes from env vars if needed.
  * @internal
  */
-export function getClient(): SpreeClient {
+export function getClient(): Client {
   if (!_client) {
     const baseUrl = process.env.SPREE_API_URL;
     const publishableKey = process.env.SPREE_PUBLISHABLE_KEY;

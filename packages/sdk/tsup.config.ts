@@ -13,11 +13,10 @@ export default defineConfig({
   clean: true,
   treeshake: true,
   minify: false,
-  external: [],
+  external: ['@spree/sdk-core'],
   esbuildOptions(options) {
     options.alias = {
       '@/types': './src/types/generated/index.ts',
-      '@': './src',
     };
   },
 });

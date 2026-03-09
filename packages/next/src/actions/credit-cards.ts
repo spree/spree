@@ -1,16 +1,16 @@
 'use server';
 
 import { revalidateTag } from 'next/cache';
-import type { StoreCreditCard } from '@spree/sdk';
+import type { CreditCard } from '@spree/sdk';
 import { withAuthRefresh } from '../auth-helpers';
 import { getClient } from '../config';
 
 /**
  * List the authenticated customer's credit cards.
  */
-export async function listCreditCards(): Promise<{ data: StoreCreditCard[] }> {
+export async function listCreditCards(): Promise<{ data: CreditCard[] }> {
   return withAuthRefresh(async (options) => {
-    return getClient().store.customer.creditCards.list(undefined, options);
+    return getClient().customer.creditCards.list(undefined, options);
   });
 }
 
@@ -19,7 +19,7 @@ export async function listCreditCards(): Promise<{ data: StoreCreditCard[] }> {
  */
 export async function deleteCreditCard(id: string): Promise<void> {
   await withAuthRefresh(async (options) => {
-    return getClient().store.customer.creditCards.delete(id, options);
+    return getClient().customer.creditCards.delete(id, options);
   });
   revalidateTag('credit-cards');
 }

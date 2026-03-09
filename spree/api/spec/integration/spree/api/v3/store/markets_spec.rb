@@ -21,7 +21,7 @@ RSpec.describe 'Markets API', type: :request, swagger_doc: 'api-reference/store.
       description 'Returns all markets for the current store with their countries, currency, locales, and tax configuration.'
 
       sdk_example <<~JS
-        const markets = await client.store.markets.list()
+        const markets = await client.markets.list()
       JS
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
@@ -76,7 +76,7 @@ RSpec.describe 'Markets API', type: :request, swagger_doc: 'api-reference/store.
       description 'Returns a single market by prefixed ID with its countries, currency, locales, and tax configuration.'
 
       sdk_example <<~JS
-        const market = await client.store.markets.get('mkt_xxx')
+        const market = await client.markets.get('mkt_xxx')
       JS
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
@@ -120,7 +120,7 @@ RSpec.describe 'Markets API', type: :request, swagger_doc: 'api-reference/store.
       description 'Determine which market applies for a given country ISO code. Useful for auto-selecting the correct currency and locale when a customer\'s location is known.'
 
       sdk_example <<~JS
-        const market = await client.store.markets.resolve('DE')
+        const market = await client.markets.resolve('DE')
       JS
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
@@ -163,7 +163,7 @@ RSpec.describe 'Markets API', type: :request, swagger_doc: 'api-reference/store.
       description 'Returns countries belonging to a specific market. Use this for address form country dropdowns during checkout.'
 
       sdk_example <<~JS
-        const countries = await client.store.markets.countries.list('mkt_xxx')
+        const countries = await client.markets.countries.list('mkt_xxx')
       JS
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
@@ -200,7 +200,7 @@ RSpec.describe 'Markets API', type: :request, swagger_doc: 'api-reference/store.
       description 'Returns a single country by ISO code within a market. Supports ?expand=states for address forms.'
 
       sdk_example <<~JS
-        const country = await client.store.markets.countries.get('mkt_xxx', 'DE')
+        const country = await client.markets.countries.get('mkt_xxx', 'DE')
       JS
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
