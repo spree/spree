@@ -3,6 +3,8 @@
 # the one component of Spree.
 source 'https://rubygems.org'
 
+# https://github.com/shioyama/mobility/issues/678
+gem 'mobility', github: 'StephenVNelson/mobility', branch: 'stephenvnelson/fix_ar_8_querying'
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]
 gem 'rails', ENV.fetch('RAILS_VERSION', '~> 8.1.0'), require: false
 
