@@ -1,4 +1,5 @@
 import { defineConfig } from 'tsup';
+import path from 'node:path';
 
 export default defineConfig({
   entry: {
@@ -13,4 +14,9 @@ export default defineConfig({
   treeshake: true,
   minify: false,
   external: ['@spree/sdk-core'],
+  esbuildOptions(options) {
+    options.alias = {
+      '@/types': path.resolve(import.meta.dirname, 'src/types/generated/index.ts'),
+    };
+  },
 });

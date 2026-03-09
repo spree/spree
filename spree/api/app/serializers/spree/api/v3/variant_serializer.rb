@@ -9,8 +9,8 @@ module Spree
                  thumbnail: [:string, nullable: true],
                  purchasable: :boolean, in_stock: :boolean, backorderable: :boolean,
                  weight: [:number, nullable: true], height: [:number, nullable: true], width: [:number, nullable: true], depth: [:number, nullable: true],
-                 price: 'StorePrice',
-                 original_price: ['StorePrice', nullable: true]
+                 price: 'Price',
+                 original_price: ['Price', nullable: true]
 
         attribute :product_id do |variant|
           variant.product&.prefixed_id

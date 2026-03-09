@@ -56,7 +56,7 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
       response '201', 'cart created (guest)' do
         let(:'x-spree-api-key') { api_key.token }
 
-        schema '$ref' => '#/components/schemas/StoreOrder'
+        schema '$ref' => '#/components/schemas/Order'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -70,7 +70,7 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
 
-        schema '$ref' => '#/components/schemas/StoreOrder'
+        schema '$ref' => '#/components/schemas/Order'
 
         run_test!
       end
@@ -90,7 +90,7 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
           }
         end
 
-        schema '$ref' => '#/components/schemas/StoreOrder'
+        schema '$ref' => '#/components/schemas/Order'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -104,7 +104,7 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
         let(:'x-spree-api-key') { api_key.token }
         let(:body) { { metadata: { 'source' => 'mobile_app', 'campaign' => 'summer_sale' } } }
 
-        schema '$ref' => '#/components/schemas/StoreOrder'
+        schema '$ref' => '#/components/schemas/Order'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -193,7 +193,7 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
         let(:'x-spree-api-key') { api_key.token }
         let(:'x-spree-order-token') { cart.token }
 
-        schema '$ref' => '#/components/schemas/StoreOrder'
+        schema '$ref' => '#/components/schemas/Order'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -208,7 +208,7 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
 
-        schema '$ref' => '#/components/schemas/StoreOrder'
+        schema '$ref' => '#/components/schemas/Order'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -259,7 +259,7 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:'x-spree-order-token') { guest_cart.token }
 
-        schema '$ref' => '#/components/schemas/StoreOrder'
+        schema '$ref' => '#/components/schemas/Order'
 
         run_test! do |response|
           data = JSON.parse(response.body)

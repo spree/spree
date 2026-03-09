@@ -48,7 +48,7 @@ RSpec.describe 'Coupon Codes API', type: :request, swagger_doc: 'api-reference/s
         let(:order_id) { order.to_param }
         let(:body) { { code: 'SAVE10' } }
 
-        schema '$ref' => '#/components/schemas/StoreOrder'
+        schema '$ref' => '#/components/schemas/Order'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -63,7 +63,7 @@ RSpec.describe 'Coupon Codes API', type: :request, swagger_doc: 'api-reference/s
         let(:order_id) { order.to_param }
         let(:body) { { code: 'giftcode1' } }
 
-        schema '$ref' => '#/components/schemas/StoreOrder'
+        schema '$ref' => '#/components/schemas/Order'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -133,7 +133,7 @@ RSpec.describe 'Coupon Codes API', type: :request, swagger_doc: 'api-reference/s
           "op_#{Spree::PrefixedId::SQIDS.encode([op.id])}"
         end
 
-        schema '$ref' => '#/components/schemas/StoreOrder'
+        schema '$ref' => '#/components/schemas/Order'
 
         run_test! do |response|
           data = JSON.parse(response.body)

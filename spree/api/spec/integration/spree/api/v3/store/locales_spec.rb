@@ -33,7 +33,7 @@ RSpec.describe 'Locales API', type: :request, swagger_doc: 'api-reference/store.
                properties: {
                  data: {
                    type: :array,
-                   items: { '$ref' => '#/components/schemas/StoreLocale' }
+                   items: { '$ref' => '#/components/schemas/Locale' }
                  }
                },
                required: ['data']

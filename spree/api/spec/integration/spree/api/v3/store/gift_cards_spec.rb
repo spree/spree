@@ -33,7 +33,7 @@ RSpec.describe 'Gift Cards API', type: :request, swagger_doc: 'api-reference/sto
 
         schema type: :object,
                properties: {
-                 data: { type: :array, items: { '$ref' => '#/components/schemas/StoreGiftCard' } },
+                 data: { type: :array, items: { '$ref' => '#/components/schemas/GiftCard' } },
                  meta: { '$ref' => '#/components/schemas/PaginationMeta' }
                }
 
@@ -79,7 +79,7 @@ RSpec.describe 'Gift Cards API', type: :request, swagger_doc: 'api-reference/sto
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:id) { gift_card.to_param }
 
-        schema '$ref' => '#/components/schemas/StoreGiftCard'
+        schema '$ref' => '#/components/schemas/GiftCard'
 
         run_test!
       end

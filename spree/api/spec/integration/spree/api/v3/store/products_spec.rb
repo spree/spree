@@ -73,7 +73,7 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
 
         schema type: :object,
                properties: {
-                 data: { type: :array, items: { '$ref' => '#/components/schemas/StoreProduct' } },
+                 data: { type: :array, items: { '$ref' => '#/components/schemas/Product' } },
                  meta: { '$ref' => '#/components/schemas/PaginationMeta' }
                },
                required: %w[data meta]
@@ -124,7 +124,7 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
         let(:'x-spree-api-key') { api_key.token }
         let(:id) { product.slug }
 
-        schema '$ref' => '#/components/schemas/StoreProduct'
+        schema '$ref' => '#/components/schemas/Product'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -138,7 +138,7 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
         let(:'x-spree-api-key') { api_key.token }
         let(:id) { product.to_param }
 
-        schema '$ref' => '#/components/schemas/StoreProduct'
+        schema '$ref' => '#/components/schemas/Product'
 
         run_test! do |response|
           data = JSON.parse(response.body)

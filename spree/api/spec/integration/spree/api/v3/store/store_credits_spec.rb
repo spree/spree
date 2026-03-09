@@ -48,7 +48,7 @@ RSpec.describe 'Store Credits API', type: :request, swagger_doc: 'api-reference/
           store_credit
         end
 
-        schema '$ref' => '#/components/schemas/StoreOrder'
+        schema '$ref' => '#/components/schemas/Order'
 
         run_test!
       end
@@ -87,7 +87,7 @@ RSpec.describe 'Store Credits API', type: :request, swagger_doc: 'api-reference/
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:order_id) { order.to_param }
 
-        schema '$ref' => '#/components/schemas/StoreOrder'
+        schema '$ref' => '#/components/schemas/Order'
 
         run_test!
       end

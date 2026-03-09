@@ -35,7 +35,7 @@ RSpec.describe 'Payment Methods API', type: :request, swagger_doc: 'api-referenc
 
         schema type: :object,
                properties: {
-                 data: { type: :array, items: { '$ref' => '#/components/schemas/StorePaymentMethod' } },
+                 data: { type: :array, items: { '$ref' => '#/components/schemas/PaymentMethod' } },
                  meta: {
                    type: :object,
                    properties: {

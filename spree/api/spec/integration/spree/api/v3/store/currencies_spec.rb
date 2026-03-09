@@ -33,7 +33,7 @@ RSpec.describe 'Currencies API', type: :request, swagger_doc: 'api-reference/sto
                properties: {
                  data: {
                    type: :array,
-                   items: { '$ref' => '#/components/schemas/StoreCurrency' }
+                   items: { '$ref' => '#/components/schemas/Currency' }
                  }
                },
                required: ['data']

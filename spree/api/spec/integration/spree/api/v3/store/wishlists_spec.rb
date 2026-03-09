@@ -36,7 +36,7 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
 
         schema type: :object,
                properties: {
-                 data: { type: :array, items: { '$ref' => '#/components/schemas/StoreWishlist' } },
+                 data: { type: :array, items: { '$ref' => '#/components/schemas/Wishlist' } },
                  meta: { '$ref' => '#/components/schemas/PaginationMeta' }
                }
 
@@ -89,7 +89,7 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:body) { { name: 'Birthday Ideas', is_private: true } }
 
-        schema '$ref' => '#/components/schemas/StoreWishlist'
+        schema '$ref' => '#/components/schemas/Wishlist'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -137,7 +137,7 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:id) { wishlist.to_param }
 
-        schema '$ref' => '#/components/schemas/StoreWishlist'
+        schema '$ref' => '#/components/schemas/Wishlist'
 
         run_test!
       end
@@ -185,7 +185,7 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
         let(:id) { wishlist.to_param }
         let(:body) { { name: 'Updated Name' } }
 
-        schema '$ref' => '#/components/schemas/StoreWishlist'
+        schema '$ref' => '#/components/schemas/Wishlist'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -255,7 +255,7 @@ RSpec.describe 'Wishlists API', type: :request, swagger_doc: 'api-reference/stor
         let(:wishlist_id) { wishlist.to_param }
         let(:body) { { variant_id: new_variant.prefixed_id, quantity: 1 } }
 
-        schema '$ref' => '#/components/schemas/StoreWishedItem'
+        schema '$ref' => '#/components/schemas/WishedItem'
 
         run_test!
       end

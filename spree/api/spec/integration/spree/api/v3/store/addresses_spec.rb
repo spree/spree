@@ -35,7 +35,7 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
 
         schema type: :object,
                properties: {
-                 data: { type: :array, items: { '$ref' => '#/components/schemas/StoreAddress' } },
+                 data: { type: :array, items: { '$ref' => '#/components/schemas/Address' } },
                  meta: { '$ref' => '#/components/schemas/PaginationMeta' }
                }
 
@@ -113,7 +113,7 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
           }
         end
 
-        schema '$ref' => '#/components/schemas/StoreAddress'
+        schema '$ref' => '#/components/schemas/Address'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -159,7 +159,7 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:id) { address.to_param }
 
-        schema '$ref' => '#/components/schemas/StoreAddress'
+        schema '$ref' => '#/components/schemas/Address'
 
         run_test!
       end
@@ -208,7 +208,7 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
         let(:id) { address.to_param }
         let(:body) { { city: 'Los Angeles' } }
 
-        schema '$ref' => '#/components/schemas/StoreAddress'
+        schema '$ref' => '#/components/schemas/Address'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -284,7 +284,7 @@ RSpec.describe 'Addresses API', type: :request, swagger_doc: 'api-reference/stor
         let(:id) { address.to_param }
         let(:body) { { kind: 'billing' } }
 
-        schema '$ref' => '#/components/schemas/StoreAddress'
+        schema '$ref' => '#/components/schemas/Address'
 
         run_test! do |response|
           data = JSON.parse(response.body)

@@ -54,7 +54,7 @@ RSpec.describe 'Line Items API', type: :request, swagger_doc: 'api-reference/sto
         let(:order_id) { order.to_param }
         let(:body) { { variant_id: new_variant.prefixed_id, quantity: 2 } }
 
-        schema '$ref' => '#/components/schemas/StoreOrder'
+        schema '$ref' => '#/components/schemas/Order'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -137,7 +137,7 @@ RSpec.describe 'Line Items API', type: :request, swagger_doc: 'api-reference/sto
         let(:id) { line_item.to_param }
         let(:body) { { quantity: 5 } }
 
-        schema '$ref' => '#/components/schemas/StoreOrder'
+        schema '$ref' => '#/components/schemas/Order'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -184,7 +184,7 @@ RSpec.describe 'Line Items API', type: :request, swagger_doc: 'api-reference/sto
         let(:order_id) { order.to_param }
         let(:id) { line_item.to_param }
 
-        schema '$ref' => '#/components/schemas/StoreOrder'
+        schema '$ref' => '#/components/schemas/Order'
 
         run_test! do |response|
           expect(order.reload.line_items).to be_empty

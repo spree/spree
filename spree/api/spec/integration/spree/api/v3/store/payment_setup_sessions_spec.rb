@@ -45,7 +45,7 @@ RSpec.describe 'Payment Setup Sessions API', type: :request, swagger_doc: 'api-r
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:body) { { payment_method_id: payment_method.prefixed_id } }
 
-        schema '$ref' => '#/components/schemas/StorePaymentSetupSession'
+        schema '$ref' => '#/components/schemas/PaymentSetupSession'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -98,7 +98,7 @@ RSpec.describe 'Payment Setup Sessions API', type: :request, swagger_doc: 'api-r
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:id) { payment_setup_session.to_param }
 
-        schema '$ref' => '#/components/schemas/StorePaymentSetupSession'
+        schema '$ref' => '#/components/schemas/PaymentSetupSession'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -150,7 +150,7 @@ RSpec.describe 'Payment Setup Sessions API', type: :request, swagger_doc: 'api-r
         let(:id) { payment_setup_session.to_param }
         let(:body) { {} }
 
-        schema '$ref' => '#/components/schemas/StorePaymentSetupSession'
+        schema '$ref' => '#/components/schemas/PaymentSetupSession'
 
         run_test! do |response|
           data = JSON.parse(response.body)

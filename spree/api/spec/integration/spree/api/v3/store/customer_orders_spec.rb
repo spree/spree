@@ -43,7 +43,7 @@ RSpec.describe 'Customer Orders API', type: :request, swagger_doc: 'api-referenc
 
         schema type: :object,
                properties: {
-                 data: { type: :array, items: { '$ref' => '#/components/schemas/StoreOrder' } },
+                 data: { type: :array, items: { '$ref' => '#/components/schemas/Order' } },
                  meta: { '$ref' => '#/components/schemas/PaginationMeta' }
                }
 

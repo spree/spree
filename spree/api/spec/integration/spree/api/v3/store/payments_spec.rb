@@ -35,7 +35,7 @@ RSpec.describe 'Payments API', type: :request, swagger_doc: 'api-reference/store
                properties: {
                  data: {
                    type: :array,
-                   items: { '$ref' => '#/components/schemas/StorePayment' }
+                   items: { '$ref' => '#/components/schemas/Payment' }
                  },
                  meta: { type: :object }
                }
@@ -81,7 +81,7 @@ RSpec.describe 'Payments API', type: :request, swagger_doc: 'api-reference/store
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:id) { payment.to_param }
 
-        schema '$ref' => '#/components/schemas/StorePayment'
+        schema '$ref' => '#/components/schemas/Payment'
 
         run_test! do |response|
           data = JSON.parse(response.body)

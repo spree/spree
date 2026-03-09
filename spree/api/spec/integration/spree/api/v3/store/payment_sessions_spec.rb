@@ -56,7 +56,7 @@ RSpec.describe 'Payment Sessions API', type: :request, swagger_doc: 'api-referen
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:body) { { payment_method_id: payment_method.prefixed_id } }
 
-        schema '$ref' => '#/components/schemas/StorePaymentSession'
+        schema '$ref' => '#/components/schemas/PaymentSession'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -105,7 +105,7 @@ RSpec.describe 'Payment Sessions API', type: :request, swagger_doc: 'api-referen
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:id) { payment_session.to_param }
 
-        schema '$ref' => '#/components/schemas/StorePaymentSession'
+        schema '$ref' => '#/components/schemas/PaymentSession'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -153,7 +153,7 @@ RSpec.describe 'Payment Sessions API', type: :request, swagger_doc: 'api-referen
         let(:id) { payment_session.to_param }
         let(:body) { { amount: '50.00' } }
 
-        schema '$ref' => '#/components/schemas/StorePaymentSession'
+        schema '$ref' => '#/components/schemas/PaymentSession'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -205,7 +205,7 @@ RSpec.describe 'Payment Sessions API', type: :request, swagger_doc: 'api-referen
         let(:id) { payment_session.to_param }
         let(:body) { { session_result: 'success' } }
 
-        schema '$ref' => '#/components/schemas/StorePaymentSession'
+        schema '$ref' => '#/components/schemas/PaymentSession'
 
         run_test! do |response|
           data = JSON.parse(response.body)

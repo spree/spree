@@ -33,7 +33,7 @@ RSpec.describe 'Credit Cards API', type: :request, swagger_doc: 'api-reference/s
 
         schema type: :object,
                properties: {
-                 data: { type: :array, items: { '$ref' => '#/components/schemas/StoreCreditCard' } },
+                 data: { type: :array, items: { '$ref' => '#/components/schemas/CreditCard' } },
                  meta: { '$ref' => '#/components/schemas/PaginationMeta' }
                }
 
@@ -79,7 +79,7 @@ RSpec.describe 'Credit Cards API', type: :request, swagger_doc: 'api-reference/s
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:id) { credit_card.to_param }
 
-        schema '$ref' => '#/components/schemas/StoreCreditCard'
+        schema '$ref' => '#/components/schemas/CreditCard'
 
         run_test!
       end

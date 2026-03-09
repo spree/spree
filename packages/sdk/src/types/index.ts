@@ -1,100 +1,111 @@
 import type { ListParams, AddressParams } from '@spree/sdk-core';
 
-// Re-export generated Store types with unprefixed names
-export type { default as Address } from './generated/StoreAddress';
-export type { default as Asset } from './generated/StoreAsset';
-export type { default as Country } from './generated/StoreCountry';
-export type { default as CreditCard } from './generated/StoreCreditCard';
-export type { default as Currency } from './generated/StoreCurrency';
-export type { default as CustomerReturn } from './generated/StoreCustomerReturn';
-export type { default as Customer } from './generated/StoreCustomer';
-export type { default as DigitalLink } from './generated/StoreDigitalLink';
-export type { default as Digital } from './generated/StoreDigital';
-export type { default as GiftCardBatch } from './generated/StoreGiftCardBatch';
-export type { default as GiftCard } from './generated/StoreGiftCard';
-export type { default as Image } from './generated/StoreImage';
-export type { default as LineItem } from './generated/StoreLineItem';
-export type { default as Locale } from './generated/StoreLocale';
-export type { default as Market } from './generated/StoreMarket';
-export type { default as Metafield } from './generated/StoreMetafield';
-export type { default as OptionType } from './generated/StoreOptionType';
-export type { default as OptionValue } from './generated/StoreOptionValue';
-export type { default as OrderPromotion } from './generated/StoreOrderPromotion';
-export type { default as Order } from './generated/StoreOrder';
-export type { default as PaymentMethod } from './generated/StorePaymentMethod';
-export type { default as Payment } from './generated/StorePayment';
-export type { default as PaymentSession } from './generated/StorePaymentSession';
-export type { default as PaymentSetupSession } from './generated/StorePaymentSetupSession';
-export type { default as PaymentSource } from './generated/StorePaymentSource';
-export type { default as Price } from './generated/StorePrice';
-export type { default as Product } from './generated/StoreProduct';
-export type { default as Promotion } from './generated/StorePromotion';
-export type { default as Refund } from './generated/StoreRefund';
-export type { default as Reimbursement } from './generated/StoreReimbursement';
-export type { default as ReturnAuthorization } from './generated/StoreReturnAuthorization';
-export type { default as ReturnItem } from './generated/StoreReturnItem';
-export type { default as Shipment } from './generated/StoreShipment';
-export type { default as ShippingCategory } from './generated/StoreShippingCategory';
-export type { default as ShippingMethod } from './generated/StoreShippingMethod';
-export type { default as ShippingRate } from './generated/StoreShippingRate';
-export type { default as State } from './generated/StoreState';
-export type { default as StockItem } from './generated/StoreStockItem';
-export type { default as StockLocation } from './generated/StoreStockLocation';
-export type { default as StoreCredit } from './generated/StoreStoreCredit';
-export type { default as TaxCategory } from './generated/StoreTaxCategory';
-export type { default as Taxon } from './generated/StoreTaxon';
-export type { default as Taxonomy } from './generated/StoreTaxonomy';
-export type { default as Variant } from './generated/StoreVariant';
-export type { default as WishedItem } from './generated/StoreWishedItem';
-export type { default as Wishlist } from './generated/StoreWishlist';
+// Re-export all generated types (unprefixed: Product, Order, etc.)
+export type {
+  Address,
+  Asset,
+  Base,
+  Country,
+  CreditCard,
+  Currency,
+  CustomerReturn,
+  Customer,
+  DigitalLink,
+  Digital,
+  Export,
+  GiftCardBatch,
+  GiftCard,
+  Image,
+  ImportRow,
+  Import,
+  Invitation,
+  LineItem,
+  Locale,
+  Market,
+  Metafield,
+  NewsletterSubscriber,
+  OptionType,
+  OptionValue,
+  OrderPromotion,
+  Order,
+  PaymentMethod,
+  Payment,
+  PaymentSession,
+  PaymentSetupSession,
+  PaymentSource,
+  Price,
+  Product,
+  Promotion,
+  Refund,
+  Reimbursement,
+  Report,
+  ReturnAuthorization,
+  ReturnItem,
+  Shipment,
+  ShippingCategory,
+  ShippingMethod,
+  ShippingRate,
+  State,
+  StockItem,
+  StockLocation,
+  StockMovement,
+  StockTransfer,
+  StoreCredit,
+  TaxCategory,
+  Taxon,
+  Taxonomy,
+  Variant,
+  WishedItem,
+  Wishlist,
+} from './generated';
 
-// Also re-export with Store* prefix for backward compatibility
-export type { default as StoreAddress } from './generated/StoreAddress';
-export type { default as StoreAsset } from './generated/StoreAsset';
-export type { default as StoreCountry } from './generated/StoreCountry';
-export type { default as StoreCreditCard } from './generated/StoreCreditCard';
-export type { default as StoreCurrency } from './generated/StoreCurrency';
-export type { default as StoreCustomerReturn } from './generated/StoreCustomerReturn';
-export type { default as StoreCustomer } from './generated/StoreCustomer';
-export type { default as StoreDigitalLink } from './generated/StoreDigitalLink';
-export type { default as StoreDigital } from './generated/StoreDigital';
-export type { default as StoreGiftCardBatch } from './generated/StoreGiftCardBatch';
-export type { default as StoreGiftCard } from './generated/StoreGiftCard';
-export type { default as StoreImage } from './generated/StoreImage';
-export type { default as StoreLineItem } from './generated/StoreLineItem';
-export type { default as StoreLocale } from './generated/StoreLocale';
-export type { default as StoreMarket } from './generated/StoreMarket';
-export type { default as StoreMetafield } from './generated/StoreMetafield';
-export type { default as StoreOptionType } from './generated/StoreOptionType';
-export type { default as StoreOptionValue } from './generated/StoreOptionValue';
-export type { default as StoreOrderPromotion } from './generated/StoreOrderPromotion';
-export type { default as StoreOrder } from './generated/StoreOrder';
-export type { default as StorePaymentMethod } from './generated/StorePaymentMethod';
-export type { default as StorePayment } from './generated/StorePayment';
-export type { default as StorePaymentSession } from './generated/StorePaymentSession';
-export type { default as StorePaymentSetupSession } from './generated/StorePaymentSetupSession';
-export type { default as StorePaymentSource } from './generated/StorePaymentSource';
-export type { default as StorePrice } from './generated/StorePrice';
-export type { default as StoreProduct } from './generated/StoreProduct';
-export type { default as StorePromotion } from './generated/StorePromotion';
-export type { default as StoreRefund } from './generated/StoreRefund';
-export type { default as StoreReimbursement } from './generated/StoreReimbursement';
-export type { default as StoreReturnAuthorization } from './generated/StoreReturnAuthorization';
-export type { default as StoreReturnItem } from './generated/StoreReturnItem';
-export type { default as StoreShipment } from './generated/StoreShipment';
-export type { default as StoreShippingCategory } from './generated/StoreShippingCategory';
-export type { default as StoreShippingMethod } from './generated/StoreShippingMethod';
-export type { default as StoreShippingRate } from './generated/StoreShippingRate';
-export type { default as StoreState } from './generated/StoreState';
-export type { default as StoreStockItem } from './generated/StoreStockItem';
-export type { default as StoreStockLocation } from './generated/StoreStockLocation';
-export type { default as StoreStoreCredit } from './generated/StoreStoreCredit';
-export type { default as StoreTaxCategory } from './generated/StoreTaxCategory';
-export type { default as StoreTaxon } from './generated/StoreTaxon';
-export type { default as StoreTaxonomy } from './generated/StoreTaxonomy';
-export type { default as StoreVariant } from './generated/StoreVariant';
-export type { default as StoreWishedItem } from './generated/StoreWishedItem';
-export type { default as StoreWishlist } from './generated/StoreWishlist';
+// Backward compatibility aliases (Store* prefix)
+export type { Address as StoreAddress } from './generated';
+export type { Asset as StoreAsset } from './generated';
+export type { Country as StoreCountry } from './generated';
+export type { CreditCard as StoreCreditCard } from './generated';
+export type { Currency as StoreCurrency } from './generated';
+export type { CustomerReturn as StoreCustomerReturn } from './generated';
+export type { Customer as StoreCustomer } from './generated';
+export type { DigitalLink as StoreDigitalLink } from './generated';
+export type { Digital as StoreDigital } from './generated';
+export type { GiftCardBatch as StoreGiftCardBatch } from './generated';
+export type { GiftCard as StoreGiftCard } from './generated';
+export type { Image as StoreImage } from './generated';
+export type { LineItem as StoreLineItem } from './generated';
+export type { Locale as StoreLocale } from './generated';
+export type { Market as StoreMarket } from './generated';
+export type { Metafield as StoreMetafield } from './generated';
+export type { OptionType as StoreOptionType } from './generated';
+export type { OptionValue as StoreOptionValue } from './generated';
+export type { OrderPromotion as StoreOrderPromotion } from './generated';
+export type { Order as StoreOrder } from './generated';
+export type { PaymentMethod as StorePaymentMethod } from './generated';
+export type { Payment as StorePayment } from './generated';
+export type { PaymentSession as StorePaymentSession } from './generated';
+export type { PaymentSetupSession as StorePaymentSetupSession } from './generated';
+export type { PaymentSource as StorePaymentSource } from './generated';
+export type { Price as StorePrice } from './generated';
+export type { Product as StoreProduct } from './generated';
+export type { Promotion as StorePromotion } from './generated';
+export type { Refund as StoreRefund } from './generated';
+export type { Reimbursement as StoreReimbursement } from './generated';
+export type { ReturnAuthorization as StoreReturnAuthorization } from './generated';
+export type { ReturnItem as StoreReturnItem } from './generated';
+export type { Shipment as StoreShipment } from './generated';
+export type { ShippingCategory as StoreShippingCategory } from './generated';
+export type { ShippingMethod as StoreShippingMethod } from './generated';
+export type { ShippingRate as StoreShippingRate } from './generated';
+export type { State as StoreState } from './generated';
+export type { StockItem as StoreStockItem } from './generated';
+export type { StockLocation as StoreStockLocation } from './generated';
+export type { StoreCredit as StoreStoreCredit } from './generated';
+export type { TaxCategory as StoreTaxCategory } from './generated';
+export type { Taxon as StoreTaxon } from './generated';
+export type { Taxonomy as StoreTaxonomy } from './generated';
+export type { Variant as StoreVariant } from './generated';
+export type { WishedItem as StoreWishedItem } from './generated';
+export type { Wishlist as StoreWishlist } from './generated';
 
 // Hand-written domain types
 export type {

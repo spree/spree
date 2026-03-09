@@ -11,8 +11,8 @@ module Spree
                  thumbnail_url: [:string, nullable: true],
                  available_on: [:string, nullable: true],
                  purchasable: :boolean, in_stock: :boolean, backorderable: :boolean, available: :boolean,
-                 price: 'StorePrice',
-                 original_price: ['StorePrice', nullable: true],
+                 price: 'Price',
+                 original_price: ['Price', nullable: true],
                  tags: [:string, multi: true]
 
         attributes :name, :description, :slug,

@@ -35,7 +35,7 @@ RSpec.describe 'Countries API', type: :request, swagger_doc: 'api-reference/stor
                properties: {
                  data: {
                    type: :array,
-                   items: { '$ref' => '#/components/schemas/StoreCountry' }
+                   items: { '$ref' => '#/components/schemas/Country' }
                  }
                },
                required: ['data']

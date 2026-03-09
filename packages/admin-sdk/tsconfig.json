@@ -13,6 +13,10 @@
     "sourceMap": true,
     "outDir": "./dist",
     "rootDir": "./src",
+    "baseUrl": ".",
+    "paths": {
+      "@/types": ["./src/types/generated/index.ts"]
+    },
     "resolveJsonModule": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,

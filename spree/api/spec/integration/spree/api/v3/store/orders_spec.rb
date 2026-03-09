@@ -39,7 +39,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:id) { order.to_param }
 
-        schema '$ref' => '#/components/schemas/StoreOrder'
+        schema '$ref' => '#/components/schemas/Order'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -55,7 +55,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
         let(:id) { guest_order.to_param }
         let(:'x-spree-order-token') { guest_order.token }
 
-        schema '$ref' => '#/components/schemas/StoreOrder'
+        schema '$ref' => '#/components/schemas/Order'
 
         run_test!
       end
@@ -176,7 +176,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
         let(:id) { order.to_param }
         let(:body) { { special_instructions: 'Leave at door' } }
 
-        schema '$ref' => '#/components/schemas/StoreOrder'
+        schema '$ref' => '#/components/schemas/Order'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -201,7 +201,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
           }
         end
 
-        schema '$ref' => '#/components/schemas/StoreOrder'
+        schema '$ref' => '#/components/schemas/Order'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -262,7 +262,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:id) { advanceable_order.to_param }
 
-        schema '$ref' => '#/components/schemas/StoreOrder'
+        schema '$ref' => '#/components/schemas/Order'
 
         run_test!
       end
@@ -306,7 +306,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:id) { advanceable_order.to_param }
 
-        schema '$ref' => '#/components/schemas/StoreOrder'
+        schema '$ref' => '#/components/schemas/Order'
 
         run_test!
       end
@@ -347,7 +347,7 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
         let(:'Authorization') { "Bearer #{jwt_token}" }
         let(:id) { completable_order.to_param }
 
-        schema '$ref' => '#/components/schemas/StoreOrder'
+        schema '$ref' => '#/components/schemas/Order'
 
         run_test!
       end

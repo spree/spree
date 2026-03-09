@@ -33,7 +33,7 @@ RSpec.describe 'Shipments API', type: :request, swagger_doc: 'api-reference/stor
 
         schema type: :object,
                properties: {
-                 data: { type: :array, items: { '$ref' => '#/components/schemas/StoreShipment' } },
+                 data: { type: :array, items: { '$ref' => '#/components/schemas/Shipment' } },
                  meta: { '$ref' => '#/components/schemas/PaginationMeta' }
                }
 
@@ -78,7 +78,7 @@ RSpec.describe 'Shipments API', type: :request, swagger_doc: 'api-reference/stor
         let(:id) { shipment.to_param }
         let(:'x-spree-order-token') { order.token }
 
-        schema '$ref' => '#/components/schemas/StoreShipment'
+        schema '$ref' => '#/components/schemas/Shipment'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -136,7 +136,7 @@ RSpec.describe 'Shipments API', type: :request, swagger_doc: 'api-reference/stor
         let(:'x-spree-order-token') { order.token }
         let(:body) { { selected_shipping_rate_id: shipping_rate.to_param } }
 
-        schema '$ref' => '#/components/schemas/StoreOrder'
+        schema '$ref' => '#/components/schemas/Order'
 
         run_test! do |response|
           data = JSON.parse(response.body)

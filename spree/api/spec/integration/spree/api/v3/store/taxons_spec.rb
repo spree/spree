@@ -41,7 +41,7 @@ RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.y
 
         schema type: :object,
                properties: {
-                 data: { type: :array, items: { '$ref' => '#/components/schemas/StoreTaxon' } },
+                 data: { type: :array, items: { '$ref' => '#/components/schemas/Taxon' } },
                  meta: { '$ref' => '#/components/schemas/PaginationMeta' }
                }
 
@@ -90,7 +90,7 @@ RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.y
         let(:'x-spree-api-key') { api_key.token }
         let(:id) { taxon.permalink }
 
-        schema '$ref' => '#/components/schemas/StoreTaxon'
+        schema '$ref' => '#/components/schemas/Taxon'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -102,7 +102,7 @@ RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.y
         let(:'x-spree-api-key') { api_key.token }
         let(:id) { taxon.to_param }
 
-        schema '$ref' => '#/components/schemas/StoreTaxon'
+        schema '$ref' => '#/components/schemas/Taxon'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -181,7 +181,7 @@ RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.y
 
         schema type: :object,
                properties: {
-                 data: { type: :array, items: { '$ref' => '#/components/schemas/StoreProduct' } },
+                 data: { type: :array, items: { '$ref' => '#/components/schemas/Product' } },
                  meta: { '$ref' => '#/components/schemas/PaginationMeta' }
                }
 
