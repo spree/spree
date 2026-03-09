@@ -210,9 +210,7 @@ module Spree
 
         return none if actual_ids.empty?
 
-        group("#{Spree::Product.table_name}.id").
-          joins(variants: :option_values).
-          where(Spree::OptionValue.table_name => { id: actual_ids })
+        joins(variants: :option_values).where(Spree::OptionValue.table_name => { id: actual_ids })
       end
 
       # Finds all products which have an option value with the name matching the one given
