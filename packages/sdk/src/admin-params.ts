@@ -109,6 +109,7 @@ export interface AdminAssetCreateParams {
   position?: number;
   type?: string;
   url?: string;
+  signed_id?: string;
 }
 
 export interface AdminAssetUpdateParams {

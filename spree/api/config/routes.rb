@@ -98,6 +98,9 @@ Spree::Core::Engine.add_routes do
         post 'auth/login', to: 'auth#create'
         post 'auth/refresh', to: 'auth#refresh'
 
+        # Direct Uploads (Active Storage)
+        resources :direct_uploads, only: [:create]
+
         # Products
         resources :products do
           member do

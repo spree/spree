@@ -6,6 +6,8 @@ module Spree
           def create
             if permitted_params[:url].present?
               create_from_url
+            elsif permitted_params[:signed_id].present?
+              create_from_signed_id
             else
               @resource = build_resource
               authorize_resource!(@resource, :create)
@@ -25,7 +27,7 @@ module Spree
           end
 
           def serializer_class
-            Spree.api.admin_asset_serializer
+            Spree.api.admin_image_serializer
           end
 
           def set_parent
@@ -52,7 +54,7 @@ module Spree
               raise ArgumentError, "Invalid asset type: #{asset_type}"
             end
 
-            asset = @parent.images.build(permitted_params.except(:type, :url))
+            asset = @parent.images.build(permitted_params.except(:type, :url, :signed_id))
             asset.type = asset_type
 
             asset
@@ -77,6 +79,18 @@ module Spree
             )
 
             head :accepted
+          end
+
+          def create_from_signed_id
+            @resource = build_resource
+            @resource.attachment.attach(permitted_params[:signed_id])
+            authorize_resource!(@resource, :create)
+
+            if @resource.save
+              render json: serialize_resource(@resource), status: :created
+            else
+              render_validation_error(@resource.errors)
+            end
           end
         end
       end
