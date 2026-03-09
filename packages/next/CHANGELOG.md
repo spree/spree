@@ -1,5 +1,12 @@
 # @spree/next
 
+## 0.7.1
+
+### Patch Changes
+
+- Updated dependencies:
+  - @spree/sdk@0.7.1
+
 ## 0.7.0
 
 ### Minor Changes
