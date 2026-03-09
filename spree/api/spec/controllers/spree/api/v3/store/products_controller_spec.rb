@@ -145,6 +145,14 @@ RSpec.describe Spree::Api::V3::Store::ProductsController, type: :controller do
           expect(ids).to include(product_with_blue.prefixed_id)
           expect(ids).not_to include(product_with_red.prefixed_id)
         end
+
+        it 'sorts by price while filtering by option values' do
+          get :index, params: { sort: 'price', q: { with_option_value_ids: [option_value_red.prefixed_id, option_value_blue.prefixed_id] } }
+
+          expect(response).to have_http_status(:ok)
+          ids = json_response['data'].map { |p| p['id'] }
+          expect(ids).to include(product_with_red.prefixed_id, product_with_blue.prefixed_id)
+        end
       end
     end
 

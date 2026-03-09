@@ -47,11 +47,6 @@ module Spree
             ]
           end
 
-          # Disable distinct when using custom sort scopes that add computed columns
-          def collection_distinct?
-            !custom_sort_requested?
-          end
-
           # Applies sorting from the unified `sort` param.
           # Custom values ('price', '-price', 'best_selling') use product-specific scopes.
           # Standard Ransack values ('name', '-created_at') are handled by base ResourceController.
