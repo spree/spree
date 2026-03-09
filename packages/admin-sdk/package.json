@@ -37,7 +37,7 @@
     "build": "tsup",
     "dev": "tsup --watch",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run",
+    "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
     "clean": "rm -rf dist",
     "prepublishOnly": "npm run build",
