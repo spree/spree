@@ -154,10 +154,6 @@ importers:
         version: 4.0.18(@types/node@20.19.33)(msw@2.12.9(@types/node@20.19.33)(typescript@5.9.3))(tsx@4.21.0)
 
   packages/sdk:
-    dependencies:
-      '@spree/sdk-core':
-        specifier: workspace:*
-        version: link:../sdk-core
     devDependencies:
       '@changesets/changelog-github':
         specifier: ^0.5.2
@@ -165,6 +161,9 @@ importers:
       '@changesets/cli':
         specifier: ^2.29.8
         version: 2.29.8(@types/node@20.19.33)
+      '@spree/sdk-core':
+        specifier: workspace:*
+        version: link:../sdk-core
       '@types/node':
         specifier: ^20.0.0
         version: 20.19.33
