@@ -261,6 +261,13 @@ describe 'Product scopes', type: :model do
       it 'can be chained with other scopes without error' do
         expect { Spree::Product.in_stock.in_stock_or_backorderable.count }.not_to raise_error
       end
+
+      # Regression test: in_stock combined with price sorting scopes should not
+      # raise table alias conflicts (variants_including_masters_spree_products)
+      it 'can be chained with price sorting scopes without error' do
+        expect { Spree::Product.in_stock.descend_by_price.to_a }.not_to raise_error
+        expect { Spree::Product.in_stock.ascend_by_price.to_a }.not_to raise_error
+      end
     end
 
     describe '#out_of_stock' do
@@ -308,12 +315,12 @@ describe 'Product scopes', type: :model do
       end
 
       it 'orders products by units_sold_count in descending order by default' do
-        products = Spree::Product.where(id: test_product_ids).by_best_selling
+        products = store.products.where(id: test_product_ids).by_best_selling
         expect(products.map(&:name)).to eq(['Product 2', 'Product 1', 'Product 3', 'Product 4'])
       end
 
       it 'orders products by units_sold_count in ascending order when specified' do
-        products = Spree::Product.where(id: test_product_ids).by_best_selling(:asc)
+        products = store.products.where(id: test_product_ids).by_best_selling(:asc)
         expect(products.map(&:name)).to eq(['Product 4', 'Product 3', 'Product 1', 'Product 2'])
       end
     end
@@ -331,7 +338,7 @@ describe 'Product scopes', type: :model do
       end
 
       it 'only counts units from completed orders' do
-        products = Spree::Product.where(id: test_product_ids).by_best_selling
+        products = store.products.where(id: test_product_ids).by_best_selling
         expect(products.first.name).to eq('Product 1')
 
         product_1_store_product = product_1.store_products.find_by(store: store)
@@ -355,7 +362,7 @@ describe 'Product scopes', type: :model do
       end
 
       it 'uses revenue as secondary sort criteria' do
-        products = Spree::Product.where(id: test_product_ids).by_best_selling
+        products = store.products.where(id: test_product_ids).by_best_selling
         # Both have 2 units sold, but product_2 has higher revenue
         expect(products.first.name).to eq('Product 2')
         expect(products.second.name).to eq('Product 1')
@@ -384,7 +391,7 @@ describe 'Product scopes', type: :model do
       end
 
       it 'sums line item quantities for units_sold_count' do
-        products = Spree::Product.where(id: test_product_ids).by_best_selling
+        products = store.products.where(id: test_product_ids).by_best_selling
 
         product_1_store_product = product_1.store_products.find_by(store: store)
         product_2_store_product = product_2.store_products.find_by(store: store)
@@ -419,7 +426,7 @@ describe 'Product scopes', type: :model do
       end
 
       it 'ranks by total units sold across all orders' do
-        products = Spree::Product.where(id: test_product_ids).by_best_selling
+        products = store.products.where(id: test_product_ids).by_best_selling
 
         product_1_store_product = product_1.store_products.find_by(store: store)
         product_2_store_product = product_2.store_products.find_by(store: store)
@@ -441,7 +448,7 @@ describe 'Product scopes', type: :model do
       end
 
       it 'includes products with no orders at the end' do
-        products = Spree::Product.where(id: test_product_ids).by_best_selling
+        products = store.products.where(id: test_product_ids).by_best_selling
         expect(products.length).to eq(4)
         # All products should be included, those without orders have units_sold_count = 0
         [product_1, product_2, product_3, product_4].each do |p|
@@ -470,7 +477,7 @@ describe 'Product scopes', type: :model do
       end
 
       it 'includes products with only pending orders with units_sold_count = 0' do
-        products = Spree::Product.where(id: test_product_ids).by_best_selling
+        products = store.products.where(id: test_product_ids).by_best_selling
 
         # All products should be included
         expect(products.length).to eq(4)
@@ -496,7 +503,7 @@ describe 'Product scopes', type: :model do
       end
 
       it 'orders products correctly with pending orders included' do
-        products = Spree::Product.where(id: test_product_ids).by_best_selling
+        products = store.products.where(id: test_product_ids).by_best_selling
         # Product 1: 2 units sold (first)
         # Product 3: 1 unit sold (second)
         # Product 2 & 4: 0 units sold (last, order between them is non-deterministic)

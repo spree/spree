@@ -58,7 +58,7 @@ module Spree
             return collection unless scope_method
 
             sorted = collection.reorder(nil)
-            sort_value == 'best_selling' ? sorted.distinct(false).send(scope_method) : sorted.send(scope_method)
+            sorted.send(scope_method)
           end
 
           # Skip base Ransack sort injection for custom sort scopes
