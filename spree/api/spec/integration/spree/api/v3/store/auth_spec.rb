@@ -88,8 +88,12 @@ RSpec.describe 'Authentication API', type: :request, swagger_doc: 'api-reference
         const auth = await client.auth.register({
           email: 'newuser@example.com',
           password: 'password123',
+          password_confirmation: 'password123',
           first_name: 'John',
           last_name: 'Doe',
+          phone: '+1234567890',
+          accepts_email_marketing: true,
+          metadata: { source: 'storefront' },
         })
       JS
 
@@ -101,7 +105,10 @@ RSpec.describe 'Authentication API', type: :request, swagger_doc: 'api-reference
           password: { type: :string, minLength: 6, example: 'password123' },
           password_confirmation: { type: :string, example: 'password123' },
           first_name: { type: :string, example: 'John' },
-          last_name: { type: :string, example: 'Doe' }
+          last_name: { type: :string, example: 'Doe' },
+          phone: { type: :string, example: '+1234567890' },
+          accepts_email_marketing: { type: :boolean, example: true },
+          metadata: { type: :object, example: { source: 'storefront' } }
         },
         required: %w[email password]
       }
@@ -113,7 +120,10 @@ RSpec.describe 'Authentication API', type: :request, swagger_doc: 'api-reference
             email: 'newuser@example.com',
             password: 'password123',
             first_name: 'John',
-            last_name: 'Doe'
+            last_name: 'Doe',
+            phone: '+1234567890',
+            accepts_email_marketing: true,
+            metadata: { source: 'storefront' }
           }
         end
 
@@ -124,10 +134,13 @@ RSpec.describe 'Authentication API', type: :request, swagger_doc: 'api-reference
           expect(data['token']).to be_present
           expect(data['user']).to be_present
 
-          # Verify user was created
+          # Verify user was created with all fields
           new_user = Spree.user_class.find_by(email: 'newuser@example.com')
           expect(new_user).to be_present
           expect(new_user.first_name).to eq('John')
+          expect(new_user.phone).to eq('+1234567890')
+          expect(new_user.accepts_email_marketing).to eq(true)
+          expect(new_user.metadata).to eq({ 'source' => 'storefront' })
         end
       end
 

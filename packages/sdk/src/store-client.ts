@@ -4,12 +4,12 @@ import type {
   ListResponse,
   PaginatedResponse,
   ListParams,
-  AuthTokens,
-  LoginCredentials,
-  RegisterParams,
   AddressParams,
 } from '@spree/sdk-core';
 import type {
+  AuthTokens,
+  LoginCredentials,
+  RegisterParams,
   ProductListParams,
   ProductFiltersParams,
   ProductFiltersResponse,
@@ -688,8 +688,12 @@ export class StoreClient {
         email?: string
         password?: string
         password_confirmation?: string
+        /** Required when changing email or password */
+        current_password?: string
         accepts_email_marketing?: boolean
         phone?: string
+        /** Arbitrary key-value metadata (stored, not returned in responses) */
+        metadata?: Record<string, unknown>
       },
       options?: RequestOptions
     ): Promise<Customer> =>

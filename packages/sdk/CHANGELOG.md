@@ -1,5 +1,13 @@
 # @spree/sdk
 
+## 0.7.2
+
+### Patch Changes
+
+- Added `phone`, `accepts_email_marketing`, and `metadata` fields to `RegisterParams` for customer registration. Added `metadata` and `current_password` fields to `customer.update()` params. The `Customer` type now includes `phone` and `accepts_email_marketing` fields returned from the Store API.
+
+- Moved `AuthTokens`, `LoginCredentials`, and `RegisterParams` types from `@spree/sdk-core` to `@spree/sdk`. These are store-specific auth types and don't belong in the shared core package. No changes needed for consumers — they are still exported from `@spree/sdk`.
+
 ## 0.7.1
 
 ### Patch Changes

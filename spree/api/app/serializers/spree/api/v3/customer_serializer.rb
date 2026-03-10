@@ -5,9 +5,10 @@ module Spree
       # Customer-facing user data
       class CustomerSerializer < BaseSerializer
         typelize email: :string, first_name: [:string, nullable: true], last_name: [:string, nullable: true],
+                 phone: [:string, nullable: true], accepts_email_marketing: :boolean,
                  default_billing_address: { nullable: true }, default_shipping_address: { nullable: true }
 
-        attributes :email, :first_name, :last_name,
+        attributes :email, :first_name, :last_name, :phone, :accepts_email_marketing,
                    created_at: :iso8601, updated_at: :iso8601
 
         many :addresses, resource: Spree.api.address_serializer

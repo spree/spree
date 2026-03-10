@@ -66,6 +66,7 @@ RSpec.describe 'Customers API', type: :request, swagger_doc: 'api-reference/stor
         const customer = await client.customer.update({
           first_name: 'John',
           last_name: 'Doe',
+          metadata: { preferred_contact: 'email' },
         }, {
           bearerToken: '<token>',
         })
@@ -82,7 +83,8 @@ RSpec.describe 'Customers API', type: :request, swagger_doc: 'api-reference/stor
           password: { type: :string, example: 'newpassword123' },
           password_confirmation: { type: :string, example: 'newpassword123' },
           accepts_email_marketing: { type: :boolean, example: true },
-          phone: { type: :string, example: '+1 555 123 4567' }
+          phone: { type: :string, example: '+1 555 123 4567' },
+          metadata: { type: :object, example: { preferred_contact: 'email' } }
         }
       }
 

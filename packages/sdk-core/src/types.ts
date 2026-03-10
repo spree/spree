@@ -34,30 +34,6 @@ export interface ErrorResponse {
   };
 }
 
-// Auth types
-export interface AuthTokens {
-  token: string;
-  user: {
-    id: string;
-    email: string;
-    first_name: string | null;
-    last_name: string | null;
-  };
-}
-
-export interface LoginCredentials {
-  email: string;
-  password: string;
-}
-
-export interface RegisterParams {
-  email: string;
-  password: string;
-  password_confirmation: string;
-  first_name?: string;
-  last_name?: string;
-}
-
 // Query params
 export interface ListParams {
   page?: number;

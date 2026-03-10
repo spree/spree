@@ -114,12 +114,37 @@ export type {
   ListResponse,
   PaginatedResponse,
   ErrorResponse,
-  AuthTokens,
-  LoginCredentials,
-  RegisterParams,
   ListParams,
   AddressParams,
 } from '@spree/sdk-core';
+
+// Store auth types
+export interface AuthTokens {
+  token: string;
+  user: {
+    id: string;
+    email: string;
+    first_name: string | null;
+    last_name: string | null;
+  };
+}
+
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}
+
+export interface RegisterParams {
+  email: string;
+  password: string;
+  password_confirmation: string;
+  first_name?: string;
+  last_name?: string;
+  phone?: string;
+  accepts_email_marketing?: boolean;
+  /** Arbitrary key-value metadata (stored, not returned in responses) */
+  metadata?: Record<string, unknown>;
+}
 
 export interface ProductListParams extends ListParams {
   /** Sort: 'price', '-price', 'best_selling', 'name', '-name', '-available_on', 'available_on' */

@@ -50,6 +50,30 @@ describe('auth', () => {
       expect(result.user).toBeDefined();
     });
 
+    it('sends phone, accepts_email_marketing, and metadata', async () => {
+      let capturedBody: Record<string, unknown> = {};
+      server.use(
+        http.post(`${API_PREFIX}/auth/register`, async ({ request }) => {
+          capturedBody = await request.json() as Record<string, unknown>;
+          return HttpResponse.json({ token: 'test-jwt-token', user: { id: 'user_1', email: 'new@example.com', first_name: null, last_name: null } });
+        })
+      );
+
+      const client = createTestClient();
+      await client.auth.register({
+        email: 'new@example.com',
+        password: 'password123',
+        password_confirmation: 'password123',
+        phone: '+1234567890',
+        accepts_email_marketing: true,
+        metadata: { source: 'storefront' },
+      });
+
+      expect(capturedBody.phone).toBe('+1234567890');
+      expect(capturedBody.accepts_email_marketing).toBe(true);
+      expect(capturedBody.metadata).toEqual({ source: 'storefront' });
+    });
+
     it('throws SpreeError on validation failure', async () => {
       server.use(
         http.post(`${API_PREFIX}/auth/register`, () =>

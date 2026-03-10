@@ -47,16 +47,19 @@ export async function login(
  * Automatically associates any guest cart with the new account.
  */
 export async function register(
-  email: string,
-  password: string,
-  passwordConfirmation: string
+  params: {
+    email: string;
+    password: string;
+    password_confirmation: string;
+    first_name?: string;
+    last_name?: string;
+    phone?: string;
+    accepts_email_marketing?: boolean;
+    metadata?: Record<string, unknown>;
+  }
 ): Promise<{ success: boolean; user?: { id: string; email: string; first_name?: string | null; last_name?: string | null }; error?: string }> {
   try {
-    const result = await getClient().auth.register({
-      email,
-      password,
-      password_confirmation: passwordConfirmation,
-    });
+    const result = await getClient().auth.register(params);
     await setAccessToken(result.token);
 
     // Associate guest cart
@@ -115,7 +118,18 @@ export async function getCustomer(): Promise<Customer | null> {
  * Update the current customer's profile.
  */
 export async function updateCustomer(
-  data: { first_name?: string; last_name?: string; email?: string }
+  data: {
+    first_name?: string;
+    last_name?: string;
+    email?: string;
+    password?: string;
+    password_confirmation?: string;
+    /** Required when changing email or password */
+    current_password?: string;
+    phone?: string;
+    accepts_email_marketing?: boolean;
+    metadata?: Record<string, unknown>;
+  }
 ): Promise<Customer> {
   const result = await withAuthRefresh(async (options) => {
     return getClient().customer.update(data, options);

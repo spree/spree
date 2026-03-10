@@ -133,7 +133,8 @@ module Spree
           end
 
           def registration_params
-            params.permit(:email, :password, :password_confirmation, :first_name, :last_name)
+            params.permit(:email, :password, :password_confirmation, :first_name, :last_name,
+                          :phone, :accepts_email_marketing, metadata: {})
           end
 
           def user_serializer

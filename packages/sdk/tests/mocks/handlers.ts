@@ -35,6 +35,8 @@ export const fixtures = {
     email: 'test@example.com',
     first_name: 'Test',
     last_name: 'User',
+    phone: null as string | null,
+    accepts_email_marketing: false,
   },
   address: {
     id: 'addr_1',
