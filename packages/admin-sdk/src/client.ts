@@ -47,7 +47,7 @@ export interface Client extends AdminClient {
  * ```
  */
 export function createAdminClient(config: AdminClientConfig): Client {
-  if (!config.secretKey && !config.jwtToken) {
+  if (!config.secretKey && config.jwtToken === undefined) {
     throw new Error('Admin client requires either secretKey or jwtToken');
   }
 

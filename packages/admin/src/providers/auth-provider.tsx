@@ -1,5 +1,5 @@
 import { createContext, type ReactNode, useCallback, useEffect, useState } from 'react'
-import { spreeClient } from '@/client'
+import { adminClient } from '@/client'
 
 interface AuthUser {
   id: string
@@ -33,7 +33,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = useCallback(async (email: string, password: string) => {
     setIsLoading(true)
     try {
-      const response = await spreeClient.admin.auth.login({ email, password })
+      const response = await adminClient.auth.login({ email, password })
+      adminClient.setToken(response.token)
       setToken(response.token)
       setUser(response.user)
       localStorage.setItem(TOKEN_KEY, response.token)
@@ -54,9 +55,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!token) return
 
-    spreeClient.admin.auth
-      .refresh({ token })
+    adminClient.auth
+      .refresh()
       .then((response) => {
+        adminClient.setToken(response.token)
         setToken(response.token)
         localStorage.setItem(TOKEN_KEY, response.token)
       })

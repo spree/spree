@@ -1,14 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
-import { spreeClient } from '@/client'
-import { useAuth } from '@/hooks/use-auth'
+import { adminClient } from '@/client'
 
 export function useTaxCategories() {
-  const { token } = useAuth()
-
   return useQuery({
     queryKey: ['tax-categories'],
-    queryFn: () => spreeClient.admin.taxCategories.list({}, { token: token! }),
-    enabled: !!token,
+    queryFn: () => adminClient.taxCategories.list(),
     staleTime: 1000 * 60 * 5,
   })
 }

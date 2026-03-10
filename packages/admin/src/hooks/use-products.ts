@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { spreeClient } from '@/client'
-import { useAuth } from '@/hooks/use-auth'
+import { adminClient } from '@/client'
 import type { FilterRule } from '@/lib/table-registry'
 
 interface UseProductsParams {
@@ -18,8 +17,6 @@ export function useProducts({
   search,
   filters = [],
 }: UseProductsParams = {}) {
-  const { token } = useAuth()
-
   return useQuery({
     queryKey: ['products', { page, limit, sort, search, filters }],
     queryFn: async () => {
@@ -35,8 +32,7 @@ export function useProducts({
         params[key] = filter.value
       }
 
-      return spreeClient.admin.products.list(params, { token: token! })
+      return adminClient.products.list(params)
     },
-    enabled: !!token,
   })
 }

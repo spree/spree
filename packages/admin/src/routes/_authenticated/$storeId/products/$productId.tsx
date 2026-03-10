@@ -1,4 +1,18 @@
-import type { Image, Product } from '@spree/admin-sdk'
+import type { Image, Product as BaseProduct, Variant as BaseVariant } from '@spree/admin-sdk'
+
+// Extended types for fields not yet in generated types
+type Variant = BaseVariant & {
+  barcode?: string | null
+  weight_unit?: string | null
+  dimensions_unit?: string | null
+}
+type Product = Omit<BaseProduct, 'master_variant' | 'variants'> & {
+  shipping_category_id?: string | null
+  tax_category_id?: string | null
+  meta_title?: string | null
+  master_variant?: Variant
+  variants?: Variant[]
+}
 import { zodResolver } from '@hookform/resolvers/zod'
 import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
 import {
@@ -53,7 +67,7 @@ import { useTaxCategories } from '@/hooks/use-tax-categories'
 import { useTaxons } from '@/hooks/use-taxons'
 import { productFormSchema, type ProductFormValues } from '@/schemas/product'
 
-export const Route = createFileRoute('/_authenticated/products/$productId')({
+export const Route = createFileRoute('/_authenticated/$storeId/products/$productId')({
   component: ProductDetailPage,
 })
 
@@ -108,7 +122,7 @@ function ProductDetailPage() {
     return <p className="text-destructive p-4">Failed to load product.</p>
   }
 
-  return <ProductForm product={product} />
+  return <ProductForm product={product as Product} />
 }
 
 // ---------------------------------------------------------------------------
@@ -116,7 +130,7 @@ function ProductDetailPage() {
 // ---------------------------------------------------------------------------
 
 function ProductForm({ product }: { product: Product }) {
-  const { productId } = Route.useParams()
+  const { productId, storeId } = Route.useParams()
   const router = useRouter()
   const updateProduct = useUpdateProduct()
   const deleteProduct = useDeleteProduct()
@@ -146,7 +160,7 @@ function ProductForm({ product }: { product: Product }) {
     try {
       await deleteProduct.mutateAsync(productId)
       toast.success('Product deleted')
-      await router.navigate({ to: '/products', search: { filters: [], columns: [] } })
+      await router.navigate({ to: '/$storeId/products', params: { storeId }, search: { filters: [], columns: [] } })
     } catch {
       toast.error('Failed to delete product')
     }
@@ -157,7 +171,8 @@ function ProductForm({ product }: { product: Product }) {
       {/* Header */}
       <div className="flex items-center gap-3">
         <Link
-          to="/products"
+          to="/$storeId/products"
+          params={{ storeId }}
           search={{ filters: [], columns: [] }}
           className="inline-flex items-center justify-center rounded-lg p-1.5 text-muted-foreground hover:bg-gray-100 hover:text-foreground transition-colors"
         >

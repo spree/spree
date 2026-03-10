@@ -3,26 +3,27 @@ import { PlusIcon } from 'lucide-react'
 import { adminClient } from '@/client'
 import { ResourceTable, resourceSearchSchema } from '@/components/resource-table'
 import { Button } from '@/components/ui/button'
-import '@/tables/products'
+import '@/tables/orders'
 
-export const Route = createFileRoute('/_authenticated/products/')({
+export const Route = createFileRoute('/_authenticated/$storeId/orders/')({
   validateSearch: resourceSearchSchema,
-  component: ProductsPage,
+  component: OrdersPage,
 })
 
-function ProductsPage() {
+function OrdersPage() {
   const searchParams = Route.useSearch()
 
   return (
     <ResourceTable
-      tableKey="products"
-      queryKey="products"
-      queryFn={(params) => adminClient.products.list(params)}
+      tableKey="orders"
+      queryKey="orders"
+      queryFn={(params) => adminClient.orders.list(params)}
       searchParams={searchParams}
+      defaultParams={{ complete: 1 }}
       actions={
         <Button size="sm" className="h-[2.125rem]">
           <PlusIcon className="size-4" />
-          Add Product
+          New Order
         </Button>
       }
     />

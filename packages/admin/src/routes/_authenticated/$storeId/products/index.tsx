@@ -5,7 +5,7 @@ import { ResourceTable, resourceSearchSchema } from '@/components/resource-table
 import { Button } from '@/components/ui/button'
 import '@/tables/products'
 
-export const Route = createFileRoute('/_authenticated/products/')({
+export const Route = createFileRoute('/_authenticated/$storeId/products/')({
   validateSearch: resourceSearchSchema,
   component: ProductsPage,
 })

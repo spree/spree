@@ -1,9 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { PlusIcon } from 'lucide-react'
-import { spreeClient } from '@/client'
+import { adminClient } from '@/client'
 import { ResourceTable, resourceSearchSchema } from '@/components/resource-table'
 import { Button } from '@/components/ui/button'
-import { useAuth } from '@/hooks/use-auth'
 import '@/tables/orders'
 
 export const Route = createFileRoute('/_authenticated/orders/')({
@@ -13,13 +12,12 @@ export const Route = createFileRoute('/_authenticated/orders/')({
 
 function OrdersPage() {
   const searchParams = Route.useSearch()
-  const { token } = useAuth()
 
   return (
     <ResourceTable
       tableKey="orders"
       queryKey="orders"
-      queryFn={(params) => spreeClient.admin.orders.list(params, { token: token! })}
+      queryFn={(params) => adminClient.orders.list(params)}
       searchParams={searchParams}
       defaultParams={{ complete: 1 }}
       actions={

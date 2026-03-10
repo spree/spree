@@ -1,7 +1,6 @@
 import { useMutation } from '@tanstack/react-query'
 import SparkMD5 from 'spark-md5'
-import { spreeClient } from '@/client'
-import { useAuth } from '@/hooks/use-auth'
+import { adminClient } from '@/client'
 
 function computeMD5Checksum(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -41,8 +40,6 @@ interface UploadResult {
 }
 
 export function useDirectUpload() {
-  const { token } = useAuth()
-
   return useMutation({
     mutationFn: async (file: File): Promise<UploadResult> => {
       const checksum = await computeMD5Checksum(file)
@@ -50,17 +47,14 @@ export function useDirectUpload() {
       // Step 1: Get presigned upload URL
       let response: { direct_upload: { url: string; headers: Record<string, string> }; signed_id: string }
       try {
-        response = await spreeClient.admin.directUploads.create(
-          {
-            blob: {
-              filename: file.name,
-              byte_size: file.size,
-              checksum,
-              content_type: file.type || 'application/octet-stream',
-            },
+        response = await adminClient.directUploads.create({
+          blob: {
+            filename: file.name,
+            byte_size: file.size,
+            checksum,
+            content_type: file.type || 'application/octet-stream',
           },
-          { token: token! },
-        )
+        })
       } catch (err) {
         throw new Error(`Presign failed: ${err instanceof Error ? err.message : err}`)
       }

@@ -98,6 +98,9 @@ Spree::Core::Engine.add_routes do
         post 'auth/login', to: 'auth#create'
         post 'auth/refresh', to: 'auth#refresh'
 
+        # Store Settings
+        resource :store, only: [:show, :update], controller: 'store'
+
         # Direct Uploads (Active Storage)
         resources :direct_uploads, only: [:create]
 
