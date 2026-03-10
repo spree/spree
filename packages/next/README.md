@@ -104,8 +104,8 @@ const filters = await getProductFilters({ category_id: 'txn_123' });
 import { listCategories, getCategory, listCategoryProducts } from '@spree/next';
 
 const categories = await listCategories({ depth_eq: 1 });
-const category = await getCategory('categories/clothing');
-const products = await listCategoryProducts('categories/clothing', { limit: 12 });
+const category = await getCategory('clothing/shirts');
+const products = await listCategoryProducts('clothing/shirts', { limit: 12 });
 ```
 
 ### Store & Geography
@@ -258,7 +258,7 @@ Data functions work without any locale arguments:
 
 ```typescript
 const products = await listProducts({ limit: 10 });
-const category = await getCategory('categories/clothing');
+const category = await getCategory('clothing/shirts');
 ```
 
 Use the `setLocale` server action in country/language switchers:

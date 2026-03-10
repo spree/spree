@@ -51,7 +51,7 @@ export const fixtures = {
   category: {
     id: 'txn_1',
     name: 'Clothing',
-    permalink: 'categories/clothing',
+    permalink: 'clothing/shirts',
     position: 1,
   },
   country: {

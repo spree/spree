@@ -326,57 +326,50 @@ The API automatically returns the correct price based on the current currency an
 
 See the [Pricing](/developer/core-concepts/pricing) guide for details on Price Lists, Price Rules, and market-specific pricing.
 
-## Taxons and Taxonomies
+## Categories
 
-Taxonomies provide a flexible way to categorize products. A **taxonomy** is a hierarchical category tree, and a **taxon** is a node within that tree.
+Categories provide a flexible way to organize products into hierarchical trees. Internally, Spree uses Taxonomies (category trees) and Taxons (nodes within those trees), but the Store API exposes them simply as **Categories**.
 
 For example:
-- **Categories** (taxonomy) → Clothing → T-Shirts, Dresses
-- **Brands** (taxonomy) → Nike, Adidas, Puma
-- **Collections** (taxonomy) → Summer 2025, Best Sellers
+- **Categories** → Clothing → T-Shirts, Dresses
+- **Brands** → Nike, Adidas, Puma
+- **Collections** → Summer 2025, Best Sellers
 
-Products can belong to multiple taxons across different taxonomies.
+Products can belong to multiple categories.
 
 <CodeGroup>
 
 ```typescript SDK
-// List taxonomies
-const { data: taxonomies } = await client.taxonomies.list()
+// List categories
+const { data: categories } = await client.categories.list()
 
-// List taxons (categories)
-const { data: taxons } = await client.taxons.list()
+// Get a category by permalink
+const category = await client.categories.get('clothing/shirts')
 
-// Get a taxon by permalink
-const taxon = await client.taxons.get('categories/clothing')
-
-// List products in a taxon
-const { data: products } = await client.taxons.products.list('categories/clothing', {
+// List products in a category
+const { data: products } = await client.categories.products.list('clothing/shirts', {
   limit: 12,
 })
 ```
 
 ```bash cURL
-# List taxonomies
-curl 'https://api.mystore.com/api/v3/store/taxonomies' \
+# List categories
+curl 'https://api.mystore.com/api/v3/store/categories' \
   -H 'Authorization: Bearer spree_pk_xxx'
 
-# List taxons
-curl 'https://api.mystore.com/api/v3/store/taxons' \
+# Get a category by permalink
+curl 'https://api.mystore.com/api/v3/store/categories/clothing/shirts' \
   -H 'Authorization: Bearer spree_pk_xxx'
 
-# Get a taxon by permalink
-curl 'https://api.mystore.com/api/v3/store/taxons/categories/clothing' \
-  -H 'Authorization: Bearer spree_pk_xxx'
-
-# List products in a taxon
-curl 'https://api.mystore.com/api/v3/store/taxons/categories/clothing/products?limit=12' \
+# List products in a category
+curl 'https://api.mystore.com/api/v3/store/categories/clothing/shirts/products?limit=12' \
   -H 'Authorization: Bearer spree_pk_xxx'
 ```
 
 </CodeGroup>
 
 <Info>
-Taxon `name` and `description` fields are translatable.
+Category `name` and `description` fields are translatable.
 </Info>
 
 ## Related Documentation

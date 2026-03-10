@@ -173,12 +173,12 @@ const categories = await client.categories.list({
 });
 
 // Get single category by ID or permalink
-const category = await client.categories.get('categories/clothing', {
+const category = await client.categories.get('clothing/shirts', {
   expand: ['ancestors', 'children'], // For breadcrumbs and subcategories
 });
 
 // List products in a category
-const categoryProducts = await client.categories.products.list('categories/clothing', {
+const categoryProducts = await client.categories.products.list('clothing/shirts', {
   page: 1,
   limit: 12,
   expand: ['images', 'default_variant'],

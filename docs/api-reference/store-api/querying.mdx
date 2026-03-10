@@ -87,25 +87,25 @@ You can filter by associated model attributes using underscore notation:
 <CodeGroup>
 
 ```typescript SDK
-// Products in a specific taxon (category)
+// Products in a specific category
 const products = await client.products.list({
   taxons_id_eq: 'txn_abc123',
 })
 
-// Taxons at a specific depth
-const taxons = await client.taxons.list({
+// Categories at a specific depth
+const categories = await client.categories.list({
   depth_eq: 1,
 })
 ```
 
 ```bash cURL
-# Products in a specific taxon
+# Products in a specific category
 curl -G 'http://localhost:3000/api/v3/store/products' \
   -H 'X-Spree-Api-Key: spree_pk_xxx' \
   --data-urlencode 'q[taxons_id_eq]=txn_abc123'
 
-# Top-level taxons only
-curl -G 'http://localhost:3000/api/v3/store/taxons' \
+# Top-level categories only
+curl -G 'http://localhost:3000/api/v3/store/categories' \
   -H 'X-Spree-Api-Key: spree_pk_xxx' \
   --data-urlencode 'q[depth_eq]=1'
 ```
@@ -205,8 +205,8 @@ The `sort` parameter works on all list endpoints. Use any sortable column name:
 <CodeGroup>
 
 ```typescript SDK
-// Taxons sorted by name
-const taxons = await client.taxons.list({
+// Categories sorted by name
+const categories = await client.categories.list({
   sort: 'name',
 })
 
@@ -214,16 +214,11 @@ const taxons = await client.taxons.list({
 const orders = await client.customer.orders.list({
   sort: '-completed_at',
 })
-
-// Taxonomies sorted by name descending
-const taxonomies = await client.taxonomies.list({
-  sort: '-name',
-})
 ```
 
 ```bash cURL
-# Taxons sorted by name
-curl -G 'http://localhost:3000/api/v3/store/taxons' \
+# Categories sorted by name
+curl -G 'http://localhost:3000/api/v3/store/categories' \
   -H 'X-Spree-Api-Key: spree_pk_xxx' \
   -d 'sort=name'
 
@@ -273,8 +268,8 @@ const product = await client.products.get('spree-tote', {
   expand: ['variants.images', 'variants.metafields', 'option_types'],
 })
 
-// Taxon with nested children
-const taxon = await client.taxons.get('categories/clothing', {
+// Category with nested children
+const category = await client.categories.get('clothing/shirts', {
   expand: ['children.children'],  // Two levels of subcategories
 })
 ```
