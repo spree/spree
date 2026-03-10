@@ -1,5 +1,13 @@
 # @spree/next
 
+## 0.7.2
+
+### Patch Changes
+
+- Changed `register()` to accept a single params object instead of positional arguments, matching industry standard patterns. Added `phone`, `accepts_email_marketing`, and `metadata` fields to both `register()` and `updateCustomer()`.
+
+- Added `current_password`, `password`, and `password_confirmation` fields to `updateCustomer()` to support email and password changes that require current password verification.
+
 ## 0.7.1
 
 ### Patch Changes

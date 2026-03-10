@@ -38,7 +38,7 @@ module Spree
 
             def permitted_params
               params.permit(:email, :password, :password_confirmation, :first_name, :last_name,
-                            :accepts_email_marketing, :phone, :current_password)
+                            :accepts_email_marketing, :phone, :current_password, metadata: {})
             end
 
             private

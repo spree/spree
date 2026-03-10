@@ -95,6 +95,39 @@ RSpec.describe Spree::Api::V3::Store::AuthController, type: :controller do
       expect(json_response['user']['email']).to eq('newuser@example.com')
     end
 
+    it 'saves first_name and last_name' do
+      post :register, params: valid_params.merge(first_name: 'John', last_name: 'Doe')
+
+      expect(response).to have_http_status(:created)
+      new_user = Spree.user_class.find_by(email: 'newuser@example.com')
+      expect(new_user.first_name).to eq('John')
+      expect(new_user.last_name).to eq('Doe')
+    end
+
+    it 'saves phone' do
+      post :register, params: valid_params.merge(phone: '+1234567890')
+
+      expect(response).to have_http_status(:created)
+      new_user = Spree.user_class.find_by(email: 'newuser@example.com')
+      expect(new_user.phone).to eq('+1234567890')
+    end
+
+    it 'saves accepts_email_marketing' do
+      post :register, params: valid_params.merge(accepts_email_marketing: true)
+
+      expect(response).to have_http_status(:created)
+      new_user = Spree.user_class.find_by(email: 'newuser@example.com')
+      expect(new_user.accepts_email_marketing).to eq(true)
+    end
+
+    it 'saves metadata' do
+      post :register, params: valid_params.merge(metadata: { source: 'storefront' })
+
+      expect(response).to have_http_status(:created)
+      new_user = Spree.user_class.find_by(email: 'newuser@example.com')
+      expect(new_user.metadata).to eq({ 'source' => 'storefront' })
+    end
+
     context 'validation errors' do
       it 'returns validation error for blank email' do
         post :register, params: { email: '', password: 'password123', password_confirmation: 'password123' }

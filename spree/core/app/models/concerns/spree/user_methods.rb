@@ -4,6 +4,7 @@ module Spree
 
     include Spree::PrefixedId
     include Spree::Metafields
+    include Spree::Metadata
     include Spree::UserPaymentSource
     include Spree::UserReporting
     include Spree::UserRoles

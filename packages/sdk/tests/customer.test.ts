@@ -1,6 +1,11 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { createTestClient } from './helpers';
+import { http, HttpResponse } from 'msw';
+import { server } from './mocks/server';
+import { createTestClient, TEST_BASE_URL } from './helpers';
+import { fixtures } from './mocks/handlers';
 import type { Client } from '../src';
+
+const API_PREFIX = `${TEST_BASE_URL}/api/v3/store`;
 
 describe('customer', () => {
   let client: Client;
@@ -21,6 +26,27 @@ describe('customer', () => {
         opts
       );
       expect(result.first_name).toBe('Updated');
+    });
+
+    it('sends phone, accepts_email_marketing, and metadata', async () => {
+      let capturedBody: Record<string, unknown> = {};
+      server.use(
+        http.patch(`${API_PREFIX}/customer`, async ({ request }) => {
+          capturedBody = await request.json() as Record<string, unknown>;
+          return HttpResponse.json({ ...fixtures.user, phone: '+1234567890', accepts_email_marketing: true });
+        })
+      );
+
+      const result = await client.customer.update(
+        { phone: '+1234567890', accepts_email_marketing: true, metadata: { source: 'app' } },
+        opts
+      );
+
+      expect(capturedBody.phone).toBe('+1234567890');
+      expect(capturedBody.accepts_email_marketing).toBe(true);
+      expect(capturedBody.metadata).toEqual({ source: 'app' });
+      expect(result.phone).toBe('+1234567890');
+      expect(result.accepts_email_marketing).toBe(true);
     });
   });
 

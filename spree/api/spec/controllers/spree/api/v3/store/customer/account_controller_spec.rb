@@ -22,7 +22,7 @@ RSpec.describe Spree::Api::V3::Store::Customer::AccountController, type: :contro
     it 'returns user attributes' do
       get :show
 
-      expect(json_response).to include('id', 'email', 'first_name', 'last_name')
+      expect(json_response).to include('id', 'email', 'first_name', 'last_name', 'phone', 'accepts_email_marketing')
     end
 
     context 'without authentication' do
@@ -82,6 +82,29 @@ RSpec.describe Spree::Api::V3::Store::Customer::AccountController, type: :contro
       patch :update, params: { first_name: 'Updated' }
 
       expect(json_response['first_name']).to eq('Updated')
+    end
+
+    it 'updates phone' do
+      patch :update, params: { phone: '+1234567890' }
+
+      expect(response).to have_http_status(:ok)
+      expect(user.reload.phone).to eq('+1234567890')
+      expect(json_response['phone']).to eq('+1234567890')
+    end
+
+    it 'updates accepts_email_marketing' do
+      patch :update, params: { accepts_email_marketing: true }
+
+      expect(response).to have_http_status(:ok)
+      expect(user.reload.accepts_email_marketing).to eq(true)
+      expect(json_response['accepts_email_marketing']).to eq(true)
+    end
+
+    it 'updates metadata' do
+      patch :update, params: { metadata: { preferred_contact: 'email' } }
+
+      expect(response).to have_http_status(:ok)
+      expect(user.reload.metadata).to eq({ 'preferred_contact' => 'email' })
     end
 
     it 'ignores restricted attributes' do

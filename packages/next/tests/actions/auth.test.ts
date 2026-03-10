@@ -30,7 +30,7 @@ vi.mock('@spree/sdk', () => ({
   },
 }));
 
-import { login, logout, getCustomer } from '../../src/actions/auth';
+import { login, register, logout, getCustomer, updateCustomer } from '../../src/actions/auth';
 import { revalidateTag } from 'next/cache';
 
 describe('auth actions', () => {
@@ -95,6 +95,114 @@ describe('auth actions', () => {
       expect(revalidateTag).toHaveBeenCalledWith('cart');
       expect(revalidateTag).toHaveBeenCalledWith('addresses');
       expect(revalidateTag).toHaveBeenCalledWith('credit-cards');
+    });
+  });
+
+  describe('register', () => {
+    it('calls auth.register with all params and sets token', async () => {
+      const authResult = {
+        token: 'jwt_new',
+        user: { id: '1', email: 'new@example.com', first_name: 'John', last_name: 'Doe' },
+      };
+      mockCookieStore.get.mockReturnValue(undefined); // no cart token
+      mockClient.auth.register.mockResolvedValue(authResult);
+
+      const result = await register({
+        email: 'new@example.com',
+        password: 'password123',
+        password_confirmation: 'password123',
+        first_name: 'John',
+        last_name: 'Doe',
+        phone: '+1234567890',
+        accepts_email_marketing: true,
+        metadata: { source: 'storefront' },
+      });
+
+      expect(result.success).toBe(true);
+      expect(result.user).toEqual(authResult.user);
+      expect(mockClient.auth.register).toHaveBeenCalledWith({
+        email: 'new@example.com',
+        password: 'password123',
+        password_confirmation: 'password123',
+        first_name: 'John',
+        last_name: 'Doe',
+        phone: '+1234567890',
+        accepts_email_marketing: true,
+        metadata: { source: 'storefront' },
+      });
+      expect(mockCookieStore.set).toHaveBeenCalledWith(
+        '_spree_jwt',
+        'jwt_new',
+        expect.any(Object)
+      );
+      expect(revalidateTag).toHaveBeenCalledWith('customer');
+      expect(revalidateTag).toHaveBeenCalledWith('cart');
+    });
+
+    it('associates guest cart after registration', async () => {
+      const authResult = { token: 'jwt_new', user: { id: '1', email: 'new@example.com' } };
+      mockCookieStore.get
+        .mockReturnValueOnce({ value: 'guest_cart_token' });
+      mockClient.auth.register.mockResolvedValue(authResult);
+      mockClient.cart.associate.mockResolvedValue({});
+
+      await register({
+        email: 'new@example.com',
+        password: 'password123',
+        password_confirmation: 'password123',
+      });
+
+      expect(mockClient.cart.associate).toHaveBeenCalledWith({
+        token: 'jwt_new',
+        orderToken: 'guest_cart_token',
+      });
+    });
+
+    it('returns error on failure', async () => {
+      mockClient.auth.register.mockRejectedValue(new Error('Email taken'));
+
+      const result = await register({
+        email: 'existing@example.com',
+        password: 'password123',
+        password_confirmation: 'password123',
+      });
+
+      expect(result.success).toBe(false);
+      expect(result.error).toBe('Email taken');
+    });
+  });
+
+  describe('updateCustomer', () => {
+    it('calls customer.update with all params', async () => {
+      const updatedCustomer = {
+        id: '1',
+        email: 'test@test.com',
+        first_name: 'Updated',
+        last_name: 'Name',
+        phone: '+1234567890',
+        accepts_email_marketing: true,
+      };
+      mockCookieStore.get.mockReturnValue({ value: 'valid_jwt' });
+      mockClient.customer.update.mockResolvedValue(updatedCustomer);
+
+      const result = await updateCustomer({
+        first_name: 'Updated',
+        phone: '+1234567890',
+        accepts_email_marketing: true,
+        metadata: { preferred_contact: 'email' },
+      });
+
+      expect(result).toEqual(updatedCustomer);
+      expect(mockClient.customer.update).toHaveBeenCalledWith(
+        {
+          first_name: 'Updated',
+          phone: '+1234567890',
+          accepts_email_marketing: true,
+          metadata: { preferred_contact: 'email' },
+        },
+        expect.any(Object)
+      );
+      expect(revalidateTag).toHaveBeenCalledWith('customer');
     });
   });
 
