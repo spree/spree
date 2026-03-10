@@ -2,7 +2,7 @@ require 'stringex'
 
 module Spree
   class Taxon < Spree.base_class
-    has_prefix_id :txn  # Spree-specific: taxon
+    has_prefix_id :ctg
 
     RULES_MATCH_POLICIES = %w[all any].freeze
     SORT_ORDERS = [

@@ -7,7 +7,7 @@ description: Products, variants, option types, images, prices, and categories
 
 A product represents something you sell. Each product has one or more **variants** — the actual purchasable items with their own SKU, price, and inventory. For example, a "T-Shirt" product might have variants for each size and color combination.
 
-Products are organized into categories using **taxonomies** and **taxons**, and can be filtered, sorted, and searched via the Store API.
+Products are organized into **categories** — a flexible hierarchy for grouping products. Categories can be filtered, sorted, and searched via the Store API.
 
 <Info>
 Product names, descriptions, slugs, and SEO fields are [translatable](/developer/core-concepts/translations#resource-translations).
@@ -133,7 +133,7 @@ const product = await client.products.get('spree-tote')
 
 // Get with included relations
 const detailed = await client.products.get('spree-tote', {
-  expand: ['variants', 'images', 'option_types', 'taxons'],
+  expand: ['variants', 'images', 'option_types', 'categories'],
 })
 // detailed.variants => [{ id: "var_xxx", sku: "TOTE-S-R", price: { amount: "15.99", currency: "USD" }, ... }]
 // detailed.images => [{ id: "img_xxx", url: "https://cdn...", position: 1 }]
@@ -141,7 +141,7 @@ const detailed = await client.products.get('spree-tote', {
 ```
 
 ```bash cURL
-curl 'https://api.mystore.com/api/v3/store/products/spree-tote?expand=variants,images,option_types,taxons' \
+curl 'https://api.mystore.com/api/v3/store/products/spree-tote?expand=variants,images,option_types,categories' \
   -H 'Authorization: Bearer spree_pk_xxx'
 ```
 
@@ -149,7 +149,7 @@ curl 'https://api.mystore.com/api/v3/store/products/spree-tote?expand=variants,i
 
 ## Product Filters
 
-Get available filter options for building a faceted search UI. Returns price ranges, option values, and taxons with counts:
+Get available filter options for building a faceted search UI. Returns price ranges, option values, and categories with counts:
 
 <CodeGroup>
 
@@ -158,12 +158,12 @@ const filters = await client.products.filters()
 // {
 //   option_types: [{ name: "size", option_values: [{ name: "Small", count: 12 }, ...] }],
 //   price_range: { min: 9.99, max: 199.99 },
-//   taxons: [{ id: "txn_xxx", name: "Clothing", count: 45 }],
+//   categories: [{ id: "ctg_xxx", name: "Clothing", count: 45 }],
 // }
 
-// Scoped to a specific taxon
-const taxonFilters = await client.products.filters({
-  taxon_id_eq: 'txn_xxx',
+// Scoped to a specific category
+const categoryFilters = await client.products.filters({
+  category_id: 'ctg_xxx',
 })
 ```
 
@@ -171,8 +171,8 @@ const taxonFilters = await client.products.filters({
 curl 'https://api.mystore.com/api/v3/store/products/filters' \
   -H 'Authorization: Bearer spree_pk_xxx'
 
-# Scoped to a taxon
-curl 'https://api.mystore.com/api/v3/store/products/filters?taxon_id_eq=txn_xxx' \
+# Scoped to a category
+curl 'https://api.mystore.com/api/v3/store/products/filters?category_id=ctg_xxx' \
   -H 'Authorization: Bearer spree_pk_xxx'
 ```
 
@@ -326,57 +326,50 @@ The API automatically returns the correct price based on the current currency an
 
 See the [Pricing](/developer/core-concepts/pricing) guide for details on Price Lists, Price Rules, and market-specific pricing.
 
-## Taxons and Taxonomies
+## Categories
 
-Taxonomies provide a flexible way to categorize products. A **taxonomy** is a hierarchical category tree, and a **taxon** is a node within that tree.
+Categories provide a flexible way to organize products into hierarchical trees. Internally, Spree uses Taxonomies (category trees) and Taxons (nodes within those trees), but the Store API exposes them simply as **Categories**.
 
 For example:
-- **Categories** (taxonomy) → Clothing → T-Shirts, Dresses
-- **Brands** (taxonomy) → Nike, Adidas, Puma
-- **Collections** (taxonomy) → Summer 2025, Best Sellers
+- **Categories** → Clothing → T-Shirts, Dresses
+- **Brands** → Nike, Adidas, Puma
+- **Collections** → Summer 2025, Best Sellers
 
-Products can belong to multiple taxons across different taxonomies.
+Products can belong to multiple categories.
 
 <CodeGroup>
 
 ```typescript SDK
-// List taxonomies
-const { data: taxonomies } = await client.taxonomies.list()
+// List categories
+const { data: categories } = await client.categories.list()
 
-// List taxons (categories)
-const { data: taxons } = await client.taxons.list()
+// Get a category by permalink
+const category = await client.categories.get('clothing/shirts')
 
-// Get a taxon by permalink
-const taxon = await client.taxons.get('categories/clothing')
-
-// List products in a taxon
-const { data: products } = await client.taxons.products.list('categories/clothing', {
+// List products in a category
+const { data: products } = await client.categories.products.list('clothing/shirts', {
   limit: 12,
 })
 ```
 
 ```bash cURL
-# List taxonomies
-curl 'https://api.mystore.com/api/v3/store/taxonomies' \
+# List categories
+curl 'https://api.mystore.com/api/v3/store/categories' \
   -H 'Authorization: Bearer spree_pk_xxx'
 
-# List taxons
-curl 'https://api.mystore.com/api/v3/store/taxons' \
+# Get a category by permalink
+curl 'https://api.mystore.com/api/v3/store/categories/clothing/shirts' \
   -H 'Authorization: Bearer spree_pk_xxx'
 
-# Get a taxon by permalink
-curl 'https://api.mystore.com/api/v3/store/taxons/categories/clothing' \
-  -H 'Authorization: Bearer spree_pk_xxx'
-
-# List products in a taxon
-curl 'https://api.mystore.com/api/v3/store/taxons/categories/clothing/products?limit=12' \
+# List products in a category
+curl 'https://api.mystore.com/api/v3/store/categories/clothing/shirts/products?limit=12' \
   -H 'Authorization: Bearer spree_pk_xxx'
 ```
 
 </CodeGroup>
 
 <Info>
-Taxon `name` and `description` fields are translatable.
+Category `name` and `description` fields are translatable.
 </Info>
 
 ## Related Documentation

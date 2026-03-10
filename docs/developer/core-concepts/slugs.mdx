@@ -5,7 +5,7 @@ description: SEO-friendly URL identifiers for products, categories, and other re
 
 ## Overview
 
-Spree generates SEO-friendly URL slugs for resources like products, taxons, and stores. Instead of accessing resources by ID, you can use clean, readable URLs based on resource names.
+Spree generates SEO-friendly URL slugs for resources like products, categories, and stores. Instead of accessing resources by ID, you can use clean, readable URLs based on resource names.
 
 Both the Store API and Admin API accept slugs or IDs interchangeably for resource lookups.
 
@@ -16,8 +16,8 @@ Both the Store API and Admin API accept slugs or IDs interchangeably for resourc
 const product = await client.products.get('spree-tote')
 const product = await client.products.get('prod_86Rf07xd4z')
 
-// Taxons use permalink slugs
-const taxon = await client.taxons.get('categories/clothing')
+// Categories use permalink slugs
+const category = await client.categories.get('clothing/shirts')
 ```
 
 ```bash cURL
@@ -49,21 +49,21 @@ If a slug already exists, Spree appends the SKU or a unique identifier to ensure
 | Resource | Slug Column | Translatable | Hierarchical |
 |----------|-------------|:---:|:---:|
 | Product | `slug` | Yes | No |
-| Taxon | `permalink` | Yes | Yes |
+| Category | `permalink` | Yes | Yes |
 | Store | `code` | No | No |
 | Post | `slug` | Yes | No |
 
-### Taxon Permalinks
+### Category Permalinks
 
-Taxon slugs include the full parent path, making them hierarchical:
+Category slugs include the full parent path, making them hierarchical:
 
 ```
-categories                     → "categories"
-categories/clothing            → "categories/clothing"
-categories/clothing/t-shirts   → "categories/clothing/t-shirts"
+clothing                       → "clothing"
+clothing/shirts                → "clothing/shirts"
+clothing/shirts/t-shirts       → "clothing/shirts/t-shirts"
 ```
 
-When a parent taxon is renamed, all child permalinks update automatically.
+When a parent category is renamed, all child permalinks update automatically.
 
 ## Slug History
 
@@ -75,7 +75,7 @@ When a slug changes (e.g., a product is renamed), Spree preserves the old slug. 
 
 ## Internationalization
 
-Products, taxons, and posts support localized slugs — a different slug per locale:
+Products, categories, and posts support localized slugs — a different slug per locale:
 
 <CodeGroup>
 

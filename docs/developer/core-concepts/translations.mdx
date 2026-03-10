@@ -77,8 +77,8 @@ product.name        // "Sac Spree"
 product.description // "Un sac fourre-tout élégant..."
 product.slug        // "sac-spree"
 
-// List taxons in German
-const { data: taxons } = await client.taxons.list({}, {
+// List categories in German
+const { data: categories } = await client.categories.list({}, {
   locale: 'de',
 })
 ```

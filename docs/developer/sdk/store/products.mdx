@@ -1,6 +1,6 @@
 ---
 title: Products & Categories
-description: Browse products, categories, and taxonomies with the Spree SDK
+description: Browse products and categories with the Spree SDK
 ---
 
 ## Products
@@ -11,7 +11,7 @@ description: Browse products, categories, and taxonomies with the Spree SDK
 const products = await client.products.list({
   page: 1,
   limit: 25,
-  expand: ['variants', 'images', 'taxons'],
+  expand: ['variants', 'images', 'categories'],
 });
 ```
 
@@ -86,11 +86,11 @@ const product = await client.products.get('spree-tote', {
 
 ### Product Filters
 
-Get available filters (price range, availability, options, taxons) and sort options for building filter UIs:
+Get available filters (price range, availability, options, categories) and sort options for building filter UIs:
 
 ```typescript
 const filters = await client.products.filters({
-  taxon_id: 'txn_abc123', // Optional: scope filters to a taxon
+  category_id: 'ctg_abc123', // Optional: scope filters to a category
 });
 
 // Response:
@@ -99,7 +99,7 @@ const filters = await client.products.filters({
 //     { id: 'price', type: 'price_range', min: 9.99, max: 199.99, currency: 'USD' },
 //     { id: 'availability', type: 'availability', options: [{ id: 'in_stock', count: 42 }, ...] },
 //     { id: 'opttype_abc', type: 'option', name: 'color', presentation: 'Color', options: [...] },
-//     { id: 'taxons', type: 'taxon', options: [{ id: 'txn_abc', name: 'Shirts', permalink: '...', count: 12 }] },
+//     { id: 'categories', type: 'category', options: [{ id: 'ctg_abc', name: 'Shirts', permalink: '...', count: 12 }] },
 //   ],
 //   sort_options: [{ id: 'manual' }, { id: 'price' }, { id: 'best_selling' }, ...],
 //   default_sort: 'manual',
@@ -107,39 +107,22 @@ const filters = await client.products.filters({
 // }
 ```
 
-## Categories (Taxonomies & Taxons)
+## Categories
 
-### List Taxonomies
-
-```typescript
-const taxonomies = await client.taxonomies.list({
-  expand: ['taxons'],
-});
-```
-
-### Get a Taxonomy
+### List Categories
 
 ```typescript
-const categories = await client.taxonomies.get('tax_123', {
-  expand: ['root', 'taxons'],
-});
-```
-
-### List Taxons
-
-```typescript
-const taxons = await client.taxons.list({
+const categories = await client.categories.list({
   depth_eq: 1,              // Top-level categories only
-  taxonomy_id_eq: '123',    // Filter by taxonomy
 });
 ```
 
-### Get a Taxon
+### Get a Category
 
 Fetch by ID or permalink:
 
 ```typescript
-const taxon = await client.taxons.get('categories/clothing', {
+const category = await client.categories.get('clothing/shirts', {
   expand: ['ancestors', 'children'], // For breadcrumbs and subcategories
 });
 ```
@@ -147,7 +130,7 @@ const taxon = await client.taxons.get('categories/clothing', {
 ### List Products in a Category
 
 ```typescript
-const categoryProducts = await client.taxons.products.list('categories/clothing', {
+const categoryProducts = await client.categories.products.list('clothing/shirts', {
   page: 1,
   limit: 12,
   expand: ['images', 'default_variant'],

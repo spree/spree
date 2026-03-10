@@ -70,29 +70,29 @@ curl 'https://api.mystore.com/api/v3/store/products?q[in_stock]=true' \
 
 </CodeGroup>
 
-### By Category (Taxon)
+### By Category
 
 <CodeGroup>
 
 ```typescript SDK
 // Products in a specific category
-const { data: products } = await client.taxons.products.list('categories/clothing', {
+const { data: products } = await client.categories.products.list('clothing/shirts', {
   limit: 12,
 })
 
-// Or filter by taxon ID
+// Or filter by category ID
 const { data: products } = await client.products.list({
-  taxon_id_eq: 'txn_xxx',
+  categories_id_eq: 'ctg_xxx',
 })
 ```
 
 ```bash cURL
 # Products in a category
-curl 'https://api.mystore.com/api/v3/store/taxons/categories/clothing/products?limit=12' \
+curl 'https://api.mystore.com/api/v3/store/categories/clothing/shirts/products?limit=12' \
   -H 'Authorization: Bearer spree_pk_xxx'
 
-# Filter by taxon ID
-curl 'https://api.mystore.com/api/v3/store/products?q[taxon_id_eq]=txn_xxx' \
+# Filter by category ID
+curl 'https://api.mystore.com/api/v3/store/products?q[categories_id_eq]=ctg_xxx' \
   -H 'Authorization: Bearer spree_pk_xxx'
 ```
 
@@ -138,7 +138,7 @@ curl 'https://api.mystore.com/api/v3/store/products?sort=price_low_to_high' \
 
 ## Product Filters (Faceted Search)
 
-Get available filter options for building a faceted search UI. Returns option values, price ranges, and taxons with counts:
+Get available filter options for building a faceted search UI. Returns option values, price ranges, and categories with counts:
 
 <CodeGroup>
 
@@ -147,12 +147,12 @@ const filters = await client.products.filters()
 // {
 //   option_types: [{ name: "size", option_values: [{ name: "Small", count: 12 }, ...] }],
 //   price_range: { min: 9.99, max: 199.99 },
-//   taxons: [{ id: "txn_xxx", name: "Clothing", count: 45 }],
+//   categories: [{ id: "ctg_xxx", name: "Clothing", count: 45 }],
 // }
 
 // Scoped to a specific category
-const taxonFilters = await client.products.filters({
-  taxon_id_eq: 'txn_xxx',
+const categoryFilters = await client.products.filters({
+  category_id: 'ctg_xxx',
 })
 ```
 
@@ -161,8 +161,8 @@ const taxonFilters = await client.products.filters({
 curl 'https://api.mystore.com/api/v3/store/products/filters' \
   -H 'Authorization: Bearer spree_pk_xxx'
 
-# Scoped to a taxon
-curl 'https://api.mystore.com/api/v3/store/products/filters?taxon_id_eq=txn_xxx' \
+# Scoped to a category
+curl 'https://api.mystore.com/api/v3/store/products/filters?category_id=ctg_xxx' \
   -H 'Authorization: Bearer spree_pk_xxx'
 ```
 

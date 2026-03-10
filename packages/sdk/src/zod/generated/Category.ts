@@ -2,7 +2,7 @@
 import { z } from 'zod';
 import { MetafieldSchema } from './Metafield';
 
-export const TaxonSchema: z.ZodObject<any> = z.object({
+export const CategorySchema: z.ZodObject<any> = z.object({
   id: z.string(),
   name: z.string(),
   permalink: z.string(),
@@ -15,7 +15,6 @@ export const TaxonSchema: z.ZodObject<any> = z.object({
   created_at: z.string(),
   updated_at: z.string(),
   parent_id: z.string().nullable(),
-  taxonomy_id: z.string(),
   description: z.string(),
   description_html: z.string(),
   image_url: z.string().nullable(),
@@ -23,10 +22,10 @@ export const TaxonSchema: z.ZodObject<any> = z.object({
   is_root: z.boolean(),
   is_child: z.boolean(),
   is_leaf: z.boolean(),
-  parent: z.lazy(() => TaxonSchema).optional(),
-  children: z.array(z.lazy(() => TaxonSchema)).optional(),
-  ancestors: z.array(z.lazy(() => TaxonSchema)).optional(),
+  parent: z.lazy(() => CategorySchema).optional(),
+  children: z.array(z.lazy(() => CategorySchema)).optional(),
+  ancestors: z.array(z.lazy(() => CategorySchema)).optional(),
   metafields: z.array(MetafieldSchema).optional(),
 });
 
-export type Taxon = z.infer<typeof TaxonSchema>;
+export type Category = z.infer<typeof CategorySchema>;

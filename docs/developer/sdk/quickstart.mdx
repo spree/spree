@@ -68,7 +68,7 @@ The SDK uses a resource builder pattern for nested resources:
 | `customer` | `giftCards` | `list`, `get` |
 | `customer` | `orders` | `list` |
 | `customer` | `paymentSetupSessions` | `create`, `get`, `complete` |
-| `taxons` | `products` | `list` |
+| `categories` | `products` | `list` |
 | `wishlists` | `items` | `create`, `update`, `delete` |
 
 ```typescript
@@ -77,6 +77,6 @@ await client.orders.lineItems.create(orderId, params, options);
 await client.orders.payments.list(orderId, options);
 await client.orders.shipments.update(orderId, shipmentId, params, options);
 await client.customer.addresses.list({}, options);
-await client.taxons.products.list(taxonId, params, options);
+await client.categories.products.list(categoryId, params, options);
 await client.wishlists.items.create(wishlistId, params, options);
 ```

@@ -2,27 +2,27 @@
 
 require 'swagger_helper'
 
-RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.yaml' do
+RSpec.describe 'Categories API', type: :request, swagger_doc: 'api-reference/store.yaml' do
   include_context 'API v3 Store'
 
   let!(:taxonomy) { create(:taxonomy, store: store) }
   let!(:root_taxon) { taxonomy.root }
-  let!(:taxon) { create(:taxon, taxonomy: taxonomy, parent: root_taxon) }
-  let!(:child_taxon) { create(:taxon, taxonomy: taxonomy, parent: taxon) }
-  let!(:product) { create(:product, stores: [store], status: 'active', taxons: [taxon]) }
+  let!(:category) { create(:taxon, taxonomy: taxonomy, parent: root_taxon) }
+  let!(:child_category) { create(:taxon, taxonomy: taxonomy, parent: category) }
+  let!(:product) { create(:product, stores: [store], status: 'active', taxons: [category]) }
   let!(:other_store) { create(:store) }
   let!(:other_taxonomy) { create(:taxonomy, store: other_store) }
-  let!(:other_taxon) { create(:taxon, taxonomy: other_taxonomy) }
+  let!(:other_category) { create(:taxon, taxonomy: other_taxonomy) }
 
-  path '/api/v3/store/taxons' do
-    get 'List taxons' do
+  path '/api/v3/store/categories' do
+    get 'List categories' do
       tags 'Product Catalog'
       produces 'application/json'
       security [api_key: []]
-      description 'Returns a paginated list of taxons (categories) for the current store'
+      description 'Returns a paginated list of categories for the current store'
 
       sdk_example <<~JS
-        const taxons = await client.taxons.list({
+        const categories = await client.categories.list({
           page: 1,
           limit: 25,
         })
@@ -36,12 +36,12 @@ RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.y
       parameter name: :fields, in: :query, type: :string, required: false,
                 description: 'Comma-separated list of fields to include (e.g., name,slug,price). id is always included.'
 
-      response '200', 'taxons found' do
+      response '200', 'categories found' do
         let(:'x-spree-api-key') { api_key.token }
 
         schema type: :object,
                properties: {
-                 data: { type: :array, items: { '$ref' => '#/components/schemas/Taxon' } },
+                 data: { type: :array, items: { '$ref' => '#/components/schemas/Category' } },
                  meta: { '$ref' => '#/components/schemas/PaginationMeta' }
                }
 
@@ -49,9 +49,9 @@ RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.y
           data = JSON.parse(response.body)
           expect(data['data']).to be_an(Array)
           expect(data['data'].size).to be >= 1
-          # Should not include taxons from other stores
+          # Should not include categories from other stores
           ids = data['data'].map { |t| t['id'] }
-          expect(ids).not_to include(other_taxon.prefixed_id)
+          expect(ids).not_to include(other_category.prefixed_id)
         end
       end
 
@@ -65,52 +65,52 @@ RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.y
     end
   end
 
-  path '/api/v3/store/taxons/{id}' do
-    get 'Get a taxon' do
+  path '/api/v3/store/categories/{id}' do
+    get 'Get a category' do
       tags 'Product Catalog'
       produces 'application/json'
       security [api_key: []]
-      description 'Returns a single taxon by permalink or prefix ID'
+      description 'Returns a single category by permalink or prefix ID'
 
       sdk_example <<~JS
-        const taxon = await client.taxons.get('categories/clothing/shirts', {
-          expand: 'children,products',
+        const category = await client.categories.get('categories/clothing/shirts', {
+          expand: 'children',
         })
       JS
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true,
-                description: 'Taxon permalink (e.g., categories/clothing/shirts) or prefix ID (e.g., taxon_abc123)'
+                description: 'Category permalink (e.g., clothing/shirts) or prefix ID (e.g., ctg_abc123)'
       parameter name: :expand, in: :query, type: :string, required: false,
-                description: 'Expand associations (children, products, parent)'
+                description: 'Expand associations (children, parent, ancestors, metafields)'
       parameter name: :fields, in: :query, type: :string, required: false,
                 description: 'Comma-separated list of fields to include (e.g., name,slug,price). id is always included.'
 
-      response '200', 'taxon found by permalink' do
+      response '200', 'category found by permalink' do
         let(:'x-spree-api-key') { api_key.token }
-        let(:id) { taxon.permalink }
+        let(:id) { category.permalink }
 
-        schema '$ref' => '#/components/schemas/Taxon'
+        schema '$ref' => '#/components/schemas/Category'
 
         run_test! do |response|
           data = JSON.parse(response.body)
-          expect(data['name']).to eq(taxon.name)
+          expect(data['name']).to eq(category.name)
         end
       end
 
-      response '200', 'taxon found by prefix ID' do
+      response '200', 'category found by prefix ID' do
         let(:'x-spree-api-key') { api_key.token }
-        let(:id) { taxon.to_param }
+        let(:id) { category.to_param }
 
-        schema '$ref' => '#/components/schemas/Taxon'
+        schema '$ref' => '#/components/schemas/Category'
 
         run_test! do |response|
           data = JSON.parse(response.body)
-          expect(data['name']).to eq(taxon.name)
+          expect(data['name']).to eq(category.name)
         end
       end
 
-      response '404', 'taxon not found' do
+      response '404', 'category not found' do
         let(:'x-spree-api-key') { api_key.token }
         let(:id) { 'non-existent-permalink' }
 
@@ -119,9 +119,9 @@ RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.y
         run_test!
       end
 
-      response '404', 'taxon from other store not accessible' do
+      response '404', 'category from other store not accessible' do
         let(:'x-spree-api-key') { api_key.token }
-        let(:id) { other_taxon.permalink }
+        let(:id) { other_category.permalink }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 
@@ -130,7 +130,7 @@ RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.y
 
       response '401', 'unauthorized' do
         let(:'x-spree-api-key') { 'invalid' }
-        let(:id) { taxon.permalink }
+        let(:id) { category.permalink }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 
@@ -139,15 +139,15 @@ RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.y
     end
   end
 
-  path '/api/v3/store/taxons/{taxon_id}/products' do
-    get 'List products in a taxon' do
+  path '/api/v3/store/categories/{category_id}/products' do
+    get 'List products in a category' do
       tags 'Product Catalog'
       produces 'application/json'
       security [api_key: []]
-      description 'Returns a paginated list of products belonging to the specified taxon'
+      description 'Returns a paginated list of products belonging to the specified category'
 
       sdk_example <<~JS
-        const products = await client.taxons.products.list('categories/clothing', {
+        const products = await client.categories.products.list('categories/clothing', {
           page: 1,
           limit: 25,
           sort: 'price',
@@ -156,8 +156,8 @@ RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.y
       JS
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
-      parameter name: :taxon_id, in: :path, type: :string, required: true,
-                description: 'Taxon permalink or prefix ID'
+      parameter name: :category_id, in: :path, type: :string, required: true,
+                description: 'Category permalink or prefix ID'
       parameter name: :page, in: :query, type: :integer, required: false,
                 description: 'Page number (default: 1)'
       parameter name: :limit, in: :query, type: :integer, required: false,
@@ -177,7 +177,7 @@ RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.y
 
       response '200', 'products found' do
         let(:'x-spree-api-key') { api_key.token }
-        let(:taxon_id) { taxon.to_param }
+        let(:category_id) { category.to_param }
 
         schema type: :object,
                properties: {
@@ -193,9 +193,9 @@ RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.y
         end
       end
 
-      response '404', 'taxon not found' do
+      response '404', 'category not found' do
         let(:'x-spree-api-key') { api_key.token }
-        let(:taxon_id) { 'non-existent' }
+        let(:category_id) { 'non-existent' }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 
@@ -204,7 +204,7 @@ RSpec.describe 'Taxons API', type: :request, swagger_doc: 'api-reference/store.y
 
       response '401', 'unauthorized' do
         let(:'x-spree-api-key') { 'invalid' }
-        let(:taxon_id) { taxon.to_param }
+        let(:category_id) { category.to_param }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 

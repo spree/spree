@@ -40,9 +40,9 @@ module Spree
 
     publishes_lifecycle_events
 
-    MEMOIZED_METHODS = %w[total_on_hand taxonomy_ids taxon_and_ancestors category
+    MEMOIZED_METHODS = %w[total_on_hand taxonomy_ids taxon_and_ancestors
                           default_variant_id tax_category default_variant variant_for_images
-                          category_taxon brand_taxon main_taxon
+                          brand_taxon main_taxon
                           purchasable? in_stock? backorderable? digital?]
 
     STATUSES = %w[draft active archived].freeze
@@ -74,6 +74,7 @@ module Spree
     has_many :option_types, through: :product_option_types
     has_many :classifications, -> { order(created_at: :asc) }, dependent: :delete_all, inverse_of: :product
     has_many :taxons, through: :classifications, before_remove: :remove_taxon
+    has_many :categories, through: :classifications, class_name: 'Spree::Category', source: :taxon
     has_many :taxonomies, through: :taxons
 
     has_many :product_promotion_rules, class_name: 'Spree::ProductPromotionRule'
@@ -217,7 +218,7 @@ module Spree
     alias options product_option_types
 
     self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on status available_on created_at updated_at]
-    self.whitelisted_ransackable_associations = %w[taxons stores variants_including_master master variants tags labels
+    self.whitelisted_ransackable_associations = %w[taxons categories stores variants_including_master master variants tags labels
                                                    shipping_category classifications option_types]
     self.whitelisted_ransackable_scopes = %w[not_discontinued search_by_name in_taxon price_between
                                              price_lte price_gte
@@ -556,40 +557,10 @@ module Spree
       brand&.name
     end
 
-    # Returns the category for the product
-    # If a category association is defined (e.g., belongs_to :category), it will be used
-    # Otherwise, falls back to category_taxon for compatibility
-    # @return [Spree::Category, Spree::Taxon]
-    def category
-      if self.class.reflect_on_association(:category)
-        super
-      else
-        Spree::Deprecation.warn('Spree::Product#category is deprecated and will be removed in Spree 5.5. Please use Spree::Product#category_taxon instead.')
-        category_taxon
-      end
-    end
-
-    # Returns the category taxon for the product
-    # @return [Spree::Taxon]
-    def category_taxon
-      @category_taxon ||= if classification_count.zero?
-                            nil
-                          elsif Spree.use_translations?
-                            taxons.joins(:taxonomy).
-                              join_translation_table(Taxonomy).
-                              order(depth: :desc).
-                              find_by(Taxonomy.translation_table_alias => { name: Spree.t(:taxonomy_categories_name) })
-                          elsif taxons.loaded?
-                            taxons.find { |taxon| taxon.taxonomy.name == Spree.t(:taxonomy_categories_name) }
-                          else
-                            taxons.joins(:taxonomy).order(depth: :desc).find_by(Taxonomy.table_name => { name: Spree.t(:taxonomy_categories_name) })
-                          end
-    end
-
     def main_taxon
       return if classification_count.zero?
 
-      @main_taxon ||= category_taxon || taxons.first
+      @main_taxon ||= taxons.first
     end
 
     def taxons_for_store(store)

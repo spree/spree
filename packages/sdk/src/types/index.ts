@@ -5,6 +5,7 @@ export type {
   Address,
   Asset,
   Base,
+  Category,
   Country,
   CreditCard,
   Currency,
@@ -52,8 +53,6 @@ export type {
   StockTransfer,
   StoreCredit,
   TaxCategory,
-  Taxon,
-  Taxonomy,
   Variant,
   WishedItem,
   Wishlist,
@@ -62,6 +61,7 @@ export type {
 // Backward compatibility aliases (Store* prefix)
 export type { Address as StoreAddress } from './generated';
 export type { Asset as StoreAsset } from './generated';
+export type { Category as StoreCategory } from './generated';
 export type { Country as StoreCountry } from './generated';
 export type { CreditCard as StoreCreditCard } from './generated';
 export type { Currency as StoreCurrency } from './generated';
@@ -101,8 +101,6 @@ export type { StockItem as StoreStockItem } from './generated';
 export type { StockLocation as StoreStockLocation } from './generated';
 export type { StoreCredit as StoreStoreCredit } from './generated';
 export type { TaxCategory as StoreTaxCategory } from './generated';
-export type { Taxon as StoreTaxon } from './generated';
-export type { Taxonomy as StoreTaxonomy } from './generated';
 export type { Variant as StoreVariant } from './generated';
 export type { WishedItem as StoreWishedItem } from './generated';
 export type { Wishlist as StoreWishlist } from './generated';
@@ -163,18 +161,17 @@ export interface ProductListParams extends ListParams {
   in_stock?: boolean;
   /** Filter: only out-of-stock products */
   out_of_stock?: boolean;
-  /** Filter: products in taxon */
-  taxons_id_eq?: string;
+  /** Filter: products in category */
+  categories_id_eq?: string;
   /** Any additional Ransack predicate */
   [key: string]: string | number | boolean | (string | number)[] | undefined;
 }
 
-export interface TaxonListParams extends ListParams {
+export interface CategoryListParams extends ListParams {
   /** Sort order, e.g. 'name', '-created_at' */
   sort?: string;
   /** Filter: name contains */
   name_cont?: string;
-  taxonomy_id_eq?: string | number;
   parent_id_eq?: string | number;
   depth_eq?: number;
   /** Any additional Ransack predicate */
@@ -282,7 +279,7 @@ export interface OptionFilterOption extends FilterOption {
   position: number;
 }
 
-export interface TaxonFilterOption {
+export interface CategoryFilterOption {
   id: string;
   name: string;
   permalink: string;
@@ -311,13 +308,13 @@ export interface OptionFilter {
   options: OptionFilterOption[];
 }
 
-export interface TaxonFilter {
-  id: 'taxons';
-  type: 'taxon';
-  options: TaxonFilterOption[];
+export interface CategoryFilter {
+  id: 'categories';
+  type: 'category';
+  options: CategoryFilterOption[];
 }
 
-export type ProductFilter = PriceRangeFilter | AvailabilityFilter | OptionFilter | TaxonFilter;
+export type ProductFilter = PriceRangeFilter | AvailabilityFilter | OptionFilter | CategoryFilter;
 
 export interface SortOption {
   id: string;
@@ -331,6 +328,6 @@ export interface ProductFiltersResponse {
 }
 
 export interface ProductFiltersParams {
-  taxon_id?: string;
+  category_id?: string;
   q?: Record<string, unknown>;
 }

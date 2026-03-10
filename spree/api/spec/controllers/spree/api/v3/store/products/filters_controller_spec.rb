@@ -107,27 +107,27 @@ RSpec.describe Spree::Api::V3::Store::Products::FiltersController, type: :contro
       expect(json_response['total_count']).to eq(3)
     end
 
-    context 'with taxon_id parameter' do
-      it 'scopes filters to taxon' do
-        get :index, params: { taxon_id: child_taxon1.prefixed_id }
+    context 'with category_id parameter' do
+      it 'scopes filters to category' do
+        get :index, params: { category_id: child_taxon1.prefixed_id }
 
         expect(json_response['total_count']).to eq(2) # Only products in child_taxon1
       end
 
-      it 'returns child taxons as filter options' do
-        get :index, params: { taxon_id: taxon.prefixed_id }
+      it 'returns child categories as filter options' do
+        get :index, params: { category_id: taxon.prefixed_id }
 
-        taxon_filter = json_response['filters'].find { |f| f['type'] == 'taxon' }
-        expect(taxon_filter).to be_present
+        category_filter = json_response['filters'].find { |f| f['type'] == 'category' }
+        expect(category_filter).to be_present
 
-        taxon_options = taxon_filter['options']
-        expect(taxon_options.map { |t| t['name'] }).to include('Shirts', 'Pants')
+        category_options = category_filter['options']
+        expect(category_options.map { |t| t['name'] }).to include('Shirts', 'Pants')
       end
 
-      it 'returns default_sort from taxon' do
+      it 'returns default_sort from category' do
         taxon.update!(sort_order: 'price asc')
 
-        get :index, params: { taxon_id: taxon.prefixed_id }
+        get :index, params: { category_id: taxon.prefixed_id }
 
         expect(json_response['default_sort']).to eq('price')
       end

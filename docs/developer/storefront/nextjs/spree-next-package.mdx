@@ -50,21 +50,17 @@ import { listProducts, getProduct, getProductFilters } from '@spree/next';
 
 const products = await listProducts({ limit: 25 });
 const product = await getProduct('spree-tote', { expand: ['variants', 'images'] });
-const filters = await getProductFilters({ taxon_id_eq: 'txn_123' });
+const filters = await getProductFilters({ category_id: 'ctg_123' });
 ```
 
 ### Categories
 
 ```typescript
-import { listTaxons, getTaxon, listTaxonProducts } from '@spree/next';
-import { listTaxonomies, getTaxonomy } from '@spree/next';
+import { listCategories, getCategory, listCategoryProducts } from '@spree/next';
 
-const taxons = await listTaxons({ depth_eq: 1 });
-const taxon = await getTaxon('categories/clothing');
-const products = await listTaxonProducts('categories/clothing', { limit: 12 });
-
-const taxonomies = await listTaxonomies({ expand: ['taxons'] });
-const taxonomy = await getTaxonomy('tax_123');
+const categories = await listCategories({ depth_eq: 1 });
+const category = await getCategory('clothing/shirts');
+const products = await listCategoryProducts('clothing/shirts', { limit: 12 });
 ```
 
 ### Store & Geography
@@ -82,11 +78,11 @@ const locales = await listLocales();
 ### Using in Server Components
 
 ```typescript
-import { listProducts, listTaxons } from '@spree/next';
+import { listProducts, listCategories } from '@spree/next';
 
 export default async function ProductsPage() {
   const products = await listProducts({ limit: 12 });
-  const categories = await listTaxons({ depth_eq: 1 });
+  const categories = await listCategories({ depth_eq: 1 });
 
   return (
     <div>
@@ -268,7 +264,7 @@ Then data functions work without any locale arguments:
 ```typescript
 // Locale/country auto-read from cookies — no options needed
 const products = await listProducts({ limit: 10 });
-const taxon = await getTaxon('categories/clothing');
+const category = await getCategory('clothing/shirts');
 ```
 
 Use the `setLocale` server action in country/language switchers:
@@ -285,7 +281,7 @@ You can still pass locale options explicitly — they override the auto-detected
 
 ```typescript
 const products = await listProducts({ limit: 10 }, { locale: 'fr', country: 'FR' });
-const taxon = await getTaxon('categories/clothing', {}, { locale: 'de', country: 'DE' });
+const category = await getCategory('clothing/shirts', {}, { locale: 'de', country: 'DE' });
 ```
 
 ## TypeScript
@@ -298,8 +294,7 @@ import type {
   StoreOrder,
   StoreLineItem,
   StoreVariant,
-  StoreTaxon,
-  StoreTaxonomy,
+  StoreCategory,
   StoreCountry,
   StoreCurrency,
   StoreLocale,

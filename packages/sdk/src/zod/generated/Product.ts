@@ -1,10 +1,10 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
+import { CategorySchema } from './Category';
 import { ImageSchema } from './Image';
 import { MetafieldSchema } from './Metafield';
 import { OptionTypeSchema } from './OptionType';
 import { PriceSchema } from './Price';
-import { TaxonSchema } from './Taxon';
 import { VariantSchema } from './Variant';
 
 export const ProductSchema = z.object({
@@ -32,7 +32,7 @@ export const ProductSchema = z.object({
   default_variant: VariantSchema.optional(),
   master_variant: VariantSchema.optional(),
   option_types: z.array(OptionTypeSchema).optional(),
-  taxons: z.array(z.lazy(() => TaxonSchema)).optional(),
+  categories: z.array(z.lazy(() => CategorySchema)).optional(),
   metafields: z.array(MetafieldSchema).optional(),
 });
 

@@ -1,5 +1,11 @@
 # @spree/next
 
+## 0.8.1
+
+### Patch Changes
+
+- Renamed Taxons/Taxonomies to Categories. `listTaxons`/`getTaxon`/`listTaxonProducts` replaced with `listCategories`/`getCategory`/`listCategoryProducts`. `listTaxonomies`/`getTaxonomy` removed. Re-exported `Category` type replaces `Taxon`/`Taxonomy`.
+
 ## 0.8.0
 
 ### Minor Changes

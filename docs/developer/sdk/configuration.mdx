@@ -13,7 +13,7 @@ Pass locale and currency headers with any request. For full details, see the [Lo
 
 ```typescript
 // Works with all endpoints
-const taxon = await client.taxons.get('categories/clothing', {
+const category = await client.categories.get('clothing/shirts', {
   expand: ['ancestors'],
 }, {
   locale: 'de',
@@ -83,8 +83,7 @@ import type {
   StoreProduct,
   StoreOrder,
   StoreVariant,
-  StoreTaxon,
-  StoreTaxonomy,
+  StoreCategory,
   StoreLineItem,
   StoreAddress,
   StoreCustomer,
@@ -93,7 +92,7 @@ import type {
 
 // All responses are fully typed
 const products: PaginatedResponse<StoreProduct> = await client.products.list();
-const taxon: StoreTaxon = await client.taxons.get('clothing');
+const category: StoreCategory = await client.categories.get('clothing');
 ```
 
 ## Available Types
@@ -103,8 +102,7 @@ const taxon: StoreTaxon = await client.taxons.get('clothing');
 - `StoreVariant` - Variant data
 - `StoreOrder` - Order/cart data
 - `StoreLineItem` - Line item in cart
-- `StoreTaxonomy` - Category group
-- `StoreTaxon` - Individual category
+- `StoreCategory` - Category
 - `StoreCountry` - Country with states
 - `StoreState` - State/province
 - `StoreAddress` - Customer address

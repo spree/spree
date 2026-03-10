@@ -94,8 +94,9 @@ module Spree
              proc { |taxons, params|
                taxons.select { |t| t.taxonomy.store_id == params[:store].id }
              },
-             resource: Spree.api.taxon_serializer,
-             if: proc { expand?('taxons') }
+             key: :categories,
+             resource: Spree.api.category_serializer,
+             if: proc { expand?('categories') }
 
         many :public_metafields,
              key: :metafields,

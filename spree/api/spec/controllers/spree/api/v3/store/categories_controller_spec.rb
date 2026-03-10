@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe Spree::Api::V3::Store::TaxonsController, type: :controller do
+RSpec.describe Spree::Api::V3::Store::CategoriesController, type: :controller do
   render_views
 
   include_context 'API v3 Store'
@@ -22,7 +22,7 @@ RSpec.describe Spree::Api::V3::Store::TaxonsController, type: :controller do
   end
 
   describe 'GET #index' do
-    it 'returns taxons for the current store' do
+    it 'returns categories for the current store' do
       get :index
 
       expect(response).to have_http_status(:ok)
@@ -36,13 +36,13 @@ RSpec.describe Spree::Api::V3::Store::TaxonsController, type: :controller do
       expect(json_response['meta']).to include('page', 'limit', 'count', 'pages')
     end
 
-    it 'returns taxon attributes' do
+    it 'returns category attributes' do
       get :index
 
-      taxon_data = json_response['data'].find { |t| t['id'] == taxon.prefixed_id }
-      expect(taxon_data).to include('name', 'permalink', 'position', 'depth')
-      expect(taxon_data).to include('taxonomy_id', 'parent_id', 'children_count')
-      expect(taxon_data).not_to include('lft', 'rgt')
+      category_data = json_response['data'].find { |t| t['id'] == taxon.prefixed_id }
+      expect(category_data).to include('name', 'permalink', 'position', 'depth')
+      expect(category_data).to include('parent_id', 'children_count')
+      expect(category_data).not_to include('lft', 'rgt')
     end
 
     context 'with images' do
@@ -51,23 +51,12 @@ RSpec.describe Spree::Api::V3::Store::TaxonsController, type: :controller do
       it 'returns image URLs' do
         get :index
 
-        taxon_data = json_response['data'].find { |t| t['id'] == taxon_with_image.prefixed_id }
-        expect(taxon_data['image_url']).to be_present
+        category_data = json_response['data'].find { |t| t['id'] == taxon_with_image.prefixed_id }
+        expect(category_data['image_url']).to be_present
       end
     end
 
     context 'filtering' do
-      it 'filters by taxonomy_id' do
-        other_taxonomy_in_store = create(:taxonomy, store: store)
-        other_taxon = create(:taxon, taxonomy: other_taxonomy_in_store)
-
-        get :index, params: { q: { taxonomy_id_eq: taxonomy.id } }
-
-        ids = json_response['data'].pluck('id')
-        expect(ids).to include(taxon.prefixed_id)
-        expect(ids).not_to include(other_taxon.prefixed_id)
-      end
-
       it 'filters by depth' do
         get :index, params: { q: { depth_eq: grandchild_taxon.depth } }
 
@@ -121,7 +110,7 @@ RSpec.describe Spree::Api::V3::Store::TaxonsController, type: :controller do
 
   describe 'GET #show' do
     context 'finding by permalink' do
-      it 'returns the taxon by permalink' do
+      it 'returns the category by permalink' do
         get :show, params: { id: taxon.permalink }
 
         expect(response).to have_http_status(:ok)
@@ -130,7 +119,7 @@ RSpec.describe Spree::Api::V3::Store::TaxonsController, type: :controller do
         expect(json_response['permalink']).to eq(taxon.permalink)
       end
 
-      it 'returns nested taxon by full permalink path' do
+      it 'returns nested category by full permalink path' do
         get :show, params: { id: child_taxon.permalink }
 
         expect(response).to have_http_status(:ok)
@@ -140,7 +129,7 @@ RSpec.describe Spree::Api::V3::Store::TaxonsController, type: :controller do
     end
 
     context 'finding by prefix_id' do
-      it 'returns the taxon by prefix_id' do
+      it 'returns the category by prefix_id' do
         get :show, params: { id: taxon.prefixed_id }
 
         expect(response).to have_http_status(:ok)
@@ -150,13 +139,13 @@ RSpec.describe Spree::Api::V3::Store::TaxonsController, type: :controller do
       end
     end
 
-    it 'returns taxon attributes' do
+    it 'returns category attributes' do
       get :show, params: { id: taxon.permalink }
 
       expect(json_response).to include('id', 'name', 'permalink')
     end
 
-    it 'includes parent information for child taxon' do
+    it 'includes parent information for child category' do
       get :show, params: { id: child_taxon.permalink }
 
       expect(response).to have_http_status(:ok)
@@ -179,7 +168,7 @@ RSpec.describe Spree::Api::V3::Store::TaxonsController, type: :controller do
         expect(ancestor_ids).to include(taxon.prefixed_id, child_taxon.prefixed_id)
       end
 
-      it 'returns empty ancestors for root taxon' do
+      it 'returns empty ancestors for root category' do
         root_taxon = taxonomy.root
 
         get :show, params: { id: root_taxon.prefixed_id, expand: 'ancestors' }
@@ -215,7 +204,7 @@ RSpec.describe Spree::Api::V3::Store::TaxonsController, type: :controller do
         allow(store).to receive(:default_locale).and_return('en')
       end
 
-      it 'finds taxon by English permalink with English locale' do
+      it 'finds category by English permalink with English locale' do
         request.headers['x-spree-locale'] = 'en'
         get :show, params: { id: translated_taxon.permalink }
 
@@ -224,7 +213,7 @@ RSpec.describe Spree::Api::V3::Store::TaxonsController, type: :controller do
         expect(json_response['permalink']).to eq(translated_taxon.permalink)
       end
 
-      it 'finds taxon by French permalink with French locale' do
+      it 'finds category by French permalink with French locale' do
         french_permalink = Mobility.with_locale(:fr) { translated_taxon.permalink }
         request.headers['x-spree-locale'] = 'fr'
         get :show, params: { id: french_permalink }
@@ -254,13 +243,12 @@ RSpec.describe Spree::Api::V3::Store::TaxonsController, type: :controller do
           create(:taxon, taxonomy: taxonomy, name: 'Electronics')
         end
 
-        it 'falls back to default locale when taxon has no translation in requested locale' do
+        it 'falls back to default locale when category has no translation in requested locale' do
           request.headers['x-spree-locale'] = 'fr'
           get :show, params: { id: english_only_taxon.permalink }
 
           expect(response).to have_http_status(:ok)
           expect(json_response['id']).to eq(english_only_taxon.prefixed_id)
-          # Name returns English since no French translation exists
           expect(json_response['name']).to eq('Electronics')
         end
 
@@ -276,7 +264,7 @@ RSpec.describe Spree::Api::V3::Store::TaxonsController, type: :controller do
     end
 
     context 'error handling' do
-      it 'returns not found for non-existent taxon' do
+      it 'returns not found for non-existent category' do
         get :show, params: { id: 'non-existent-permalink' }
 
         expect(response).to have_http_status(:not_found)
@@ -284,7 +272,7 @@ RSpec.describe Spree::Api::V3::Store::TaxonsController, type: :controller do
         expect(json_response['error']['message']).to be_present
       end
 
-      it 'returns not found for taxon from another store' do
+      it 'returns not found for category from another store' do
         get :show, params: { id: other_store_taxon.permalink }
 
         expect(response).to have_http_status(:not_found)
@@ -292,7 +280,7 @@ RSpec.describe Spree::Api::V3::Store::TaxonsController, type: :controller do
       end
 
       it 'returns not found for invalid prefix_id' do
-        get :show, params: { id: 'txn_invalid123' }
+        get :show, params: { id: 'ctg_invalid123' }
 
         expect(response).to have_http_status(:not_found)
         expect(json_response['error']['code']).to eq('record_not_found')

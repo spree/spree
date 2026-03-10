@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 require 'uri'
 
 module Spree
   class Store < Spree.base_class
-    has_prefix_id :store  # Spree-specific: store
+    has_prefix_id :store # Spree-specific: store
 
     include FriendlyId
     include Spree::TranslatableResource
@@ -81,6 +83,7 @@ module Spree
 
     has_many :taxonomies, class_name: 'Spree::Taxonomy'
     has_many :taxons, through: :taxonomies, class_name: 'Spree::Taxon'
+    has_many :categories, through: :taxonomies, class_name: 'Spree::Category', source: :taxons
 
     has_many :store_promotions, class_name: 'Spree::StorePromotion'
     has_many :promotions, through: :store_promotions, class_name: 'Spree::Promotion'
@@ -106,8 +109,6 @@ module Spree
 
     has_many :api_keys, class_name: 'Spree::ApiKey', dependent: :destroy
 
-
-
     #
     # Validations
     #
@@ -119,9 +120,9 @@ module Spree
     validates :mail_from_address, email: { allow_blank: false }
     # FIXME: we should remove this condition in v5
     if !ENV['SPREE_DISABLE_DB_CONNECTION'] &&
-        connected? &&
-        table_exists? &&
-        connection.column_exists?(:spree_stores, :new_order_notifications_email)
+       connected? &&
+       table_exists? &&
+       connection.column_exists?(:spree_stores, :new_order_notifications_email)
       validates :new_order_notifications_email, email: { allow_blank: true }
     end
     validates :mailer_logo, content_type: Rails.application.config.active_storage.web_image_content_types
@@ -137,8 +138,6 @@ module Spree
     before_validation :set_default_code, on: :create
     before_save :ensure_default_exists_and_is_unique
     after_create :ensure_default_market
-    after_create :ensure_default_taxonomies_are_created
-    after_create :ensure_default_automatic_taxons
     after_create :create_default_policies
 
     #
@@ -282,18 +281,18 @@ module Spree
     # @return [ActiveRecord::Relation<Spree::Country>]
     def countries_with_shipping_coverage
       zone_ids = Spree::Zone
-        .joins(:shipping_methods)
-        .select(:id)
+                 .joins(:shipping_methods)
+                 .select(:id)
 
       country_zone_country_ids = Spree::ZoneMember
-        .where(zone_id: zone_ids, zoneable_type: 'Spree::Country')
-        .select(:zoneable_id)
+                                 .where(zone_id: zone_ids, zoneable_type: 'Spree::Country')
+                                 .select(:zoneable_id)
 
       state_zone_country_ids = Spree::State
-        .where(id: Spree::ZoneMember
-          .where(zone_id: zone_ids, zoneable_type: 'Spree::State')
-          .select(:zoneable_id))
-        .select(:country_id)
+                               .where(id: Spree::ZoneMember
+                                          .where(zone_id: zone_ids, zoneable_type: 'Spree::State')
+                                          .select(:zoneable_id))
+                               .select(:country_id)
 
       Spree::Country
         .where(id: country_zone_country_ids)
@@ -307,7 +306,8 @@ module Spree
       @default_stock_location ||= begin
         stock_location_scope = Spree::StockLocation.where(default: true)
         stock_location_scope.first || ActiveRecord::Base.connected_to(role: :writing) do
-          stock_location_scope.create(default: true, name: Spree.t(:default_stock_location_name), country: default_country)
+          stock_location_scope.create(default: true, name: Spree.t(:default_stock_location_name),
+                                      country: default_country)
         end
       end
     end
@@ -351,7 +351,25 @@ module Spree
       end
     end
 
+    def create_default_policies
+      Spree::Events.disable do
+        [
+          translate_with_store_locale_fallback('spree.terms_of_service'),
+          translate_with_store_locale_fallback('spree.privacy_policy'),
+          translate_with_store_locale_fallback('spree.returns_policy'),
+          translate_with_store_locale_fallback('spree.shipping_policy')
+        ].each do |policy_name|
+          # Manual exists?/create to work around Mobility bug with find_or_create_by
+          next if policies.with_matching_name(policy_name).exists?
+
+          policies.create(name: policy_name)
+        end
+      end
+    end
+
     def ensure_default_taxonomies_are_created
+      Spree::Deprecation.warn('Store#ensure_default_taxonomies_are_created is deprecated and will be removed in Spree 5.5. Please remove it from your codebase')
+
       Spree::Events.disable do
         [
           translate_with_store_locale_fallback('spree.taxonomy_categories_name'),
@@ -367,13 +385,16 @@ module Spree
     end
 
     def ensure_default_automatic_taxons
+      Spree::Deprecation.warn('Store#ensure_default_automatic_taxons is deprecated and will be removed in Spree 5.5. Please remove it from your codebase')
+
       Spree::Events.disable do
         # Use Mobility-safe lookup for taxonomy
         collections_taxonomy = taxonomies.with_matching_name(translate_with_store_locale_fallback('spree.taxonomy_collections_name')).first
         return unless collections_taxonomy.present?
 
         automatic_taxons_config = [
-          { name: translate_with_store_locale_fallback('spree.automatic_taxon_names.on_sale'), rule_type: 'Spree::TaxonRules::Sale', rule_value: 'true' },
+          { name: translate_with_store_locale_fallback('spree.automatic_taxon_names.on_sale'),
+            rule_type: 'Spree::TaxonRules::Sale', rule_value: 'true' },
           { name: translate_with_store_locale_fallback('spree.automatic_taxon_names.new_arrivals'), rule_type: 'Spree::TaxonRules::AvailableOn', rule_value: 30 }
         ]
 
@@ -391,22 +412,6 @@ module Spree
               taxon_rules: [TaxonRule.new(type: config[:rule_type], value: config[:rule_value])]
             )
           end
-        end
-      end
-    end
-
-    def create_default_policies
-      Spree::Events.disable do
-        [
-          translate_with_store_locale_fallback('spree.terms_of_service'),
-          translate_with_store_locale_fallback('spree.privacy_policy'),
-          translate_with_store_locale_fallback('spree.returns_policy'),
-          translate_with_store_locale_fallback('spree.shipping_policy')
-        ].each do |policy_name|
-          # Manual exists?/create to work around Mobility bug with find_or_create_by
-          next if policies.with_matching_name(policy_name).exists?
-
-          policies.create(name: policy_name)
         end
       end
     end

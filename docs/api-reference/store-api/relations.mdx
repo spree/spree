@@ -84,7 +84,7 @@ With `?expand=variants,images`, the related resources are embedded:
 | `master_variant` | The master variant |
 | `images` | All product images (across all variants) |
 | `option_types` | Option types (e.g., Size, Color) |
-| `taxons` | Categories this product belongs to |
+| `categories` | Categories this product belongs to |
 | `metafields` | Public metafields (custom structured data) |
 
 <CodeGroup>
@@ -103,36 +103,29 @@ curl -G 'http://localhost:3000/api/v3/store/products/spree-tote' \
 
 </CodeGroup>
 
-### Taxons (Categories)
+### Categories
 
 | Relation | Description |
 |----------|-------------|
-| `ancestors` | Parent taxons (for breadcrumbs) |
-| `children` | Direct child taxons |
-| `products` | Products in this taxon |
+| `ancestors` | Parent categories (for breadcrumbs) |
+| `children` | Direct child categories |
+| `products` | Products in this category |
 
 <CodeGroup>
 
 ```typescript SDK
-const taxon = await client.taxons.get('categories/clothing', {
+const category = await client.categories.get('clothing/shirts', {
   expand: ['ancestors', 'children'],
 })
 ```
 
 ```bash cURL
-curl -G 'http://localhost:3000/api/v3/store/taxons/categories/clothing' \
+curl -G 'http://localhost:3000/api/v3/store/categories/clothing/shirts' \
   -H 'X-Spree-Api-Key: spree_pk_xxx' \
   -d 'expand=ancestors,children'
 ```
 
 </CodeGroup>
-
-### Taxonomies
-
-| Relation | Description |
-|----------|-------------|
-| `root` | Root taxon |
-| `taxons` | All taxons in this taxonomy |
 
 ### Countries
 

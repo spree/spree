@@ -636,7 +636,7 @@ describe Spree::Product, type: :model do
   end
 
   describe '#brand_taxon' do
-    let(:taxonomy) { store.taxonomies.find_by(name: Spree.t(:taxonomy_brands_name)) }
+    let(:taxonomy) { store.taxonomies.find_by(name: Spree.t(:taxonomy_brands_name)) || create(:taxonomy, name: Spree.t(:taxonomy_brands_name), store: store) }
     let(:product) { create(:product, taxons: [taxonomy.taxons.first], stores: [store]) }
 
     it 'fetches Brand Taxon' do
@@ -645,7 +645,7 @@ describe Spree::Product, type: :model do
   end
 
   describe '#brand' do
-    let(:taxonomy) { store.taxonomies.find_by(name: Spree.t(:taxonomy_brands_name)) }
+    let(:taxonomy) { store.taxonomies.find_by(name: Spree.t(:taxonomy_brands_name)) || create(:taxonomy, name: Spree.t(:taxonomy_brands_name), store: store) }
     let(:product) { create(:product, taxons: [taxonomy.taxons.first], stores: [store]) }
 
     context 'when brand association is not defined' do
@@ -679,40 +679,6 @@ describe Spree::Product, type: :model do
         allow(product).to receive(:brand).and_call_original
         # Since we can't easily mock super, we verify the reflection check
         expect(Spree::Product.reflect_on_association(:brand)).to be_truthy
-      end
-    end
-  end
-
-  describe '#category_taxon' do
-    let(:taxonomy) { store.taxonomies.find_by(name: Spree.t(:taxonomy_categories_name)) }
-    let(:product) { create(:product, taxons: [taxonomy.taxons.first], stores: [store]) }
-
-    it 'fetches Category Taxon' do
-      expect(product.category_taxon).to eql(taxonomy.taxons.first)
-    end
-  end
-
-  describe '#category' do
-    let(:taxonomy) { store.taxonomies.find_by(name: Spree.t(:taxonomy_categories_name)) }
-    let(:product) { create(:product, taxons: [taxonomy.taxons.first], stores: [store]) }
-
-    context 'when category association is not defined' do
-      it 'falls back to category_taxon' do
-        expect(product.category).to eql(taxonomy.taxons.first)
-      end
-    end
-
-    context 'when category association is defined' do
-      let(:category_class) { Class.new(Spree::Base) { self.table_name = 'spree_taxons' } }
-      let(:category) { category_class.first }
-
-      before do
-        stub_const('Spree::Category', category_class)
-        allow(Spree::Product).to receive(:reflect_on_association).with(:category).and_return(double(name: :category))
-      end
-
-      it 'checks for the category association' do
-        expect(Spree::Product.reflect_on_association(:category)).to be_truthy
       end
     end
   end
