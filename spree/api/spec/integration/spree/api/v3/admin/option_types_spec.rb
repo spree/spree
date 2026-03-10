@@ -37,6 +37,7 @@ RSpec.describe 'Admin Option Types API', type: :request, swagger_doc: 'api-refer
 
       response '401', 'unauthorized' do
         let(:'x-spree-api-key') { 'invalid' }
+        let(:Authorization) { 'Bearer invalid' }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 

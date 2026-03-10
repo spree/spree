@@ -23,6 +23,22 @@ module Spree
             product.master&.cost_currency
           end
 
+          # Override price attributes to use admin price serializer
+          attribute :price do |product|
+            price = price_for(product.default_variant)
+            Spree.api.admin_price_serializer.new(price, params: params).to_h if price.present?
+          end
+
+          attribute :original_price do |product|
+            variant = product.default_variant
+            calculated = price_for(variant)
+            base = price_in(variant)
+
+            if calculated.present? && base.present? && calculated.id != base.id
+              Spree.api.admin_price_serializer.new(base, params: params).to_h
+            end
+          end
+
           # Admin uses admin variant serializer
           many :variants,
                resource: Spree.api.admin_variant_serializer,

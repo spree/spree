@@ -43,6 +43,7 @@ RSpec.describe 'Admin Orders API', type: :request, swagger_doc: 'api-reference/a
 
       response '401', 'unauthorized' do
         let(:'x-spree-api-key') { 'invalid' }
+        let(:Authorization) { 'Bearer invalid' }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 

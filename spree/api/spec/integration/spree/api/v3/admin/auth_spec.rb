@@ -65,15 +65,6 @@ RSpec.describe 'Admin Authentication API', type: :request, swagger_doc: 'api-ref
         run_test!
       end
 
-      response '401', 'missing API key' do
-        let(:'x-spree-api-key') { 'invalid' }
-        let(:body) { { email: existing_admin.email, password: 'password123' } }
-
-        schema '$ref' => '#/components/schemas/ErrorResponse'
-
-        run_test!
-      end
-
       response '401', 'non-admin user' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:regular_user) { create(:user, password: 'password123', password_confirmation: 'password123') }

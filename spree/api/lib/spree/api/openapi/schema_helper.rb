@@ -105,6 +105,9 @@ module Spree
         def admin_schemas
           schemas = common_schemas
 
+          # Override AuthResponse to reference AdminUser instead of Customer
+          schemas[:AuthResponse][:properties][:user] = { '$ref' => '#/components/schemas/AdminUser' }
+
           begin
             schemas.merge!(typelizer_schemas(:admin))
           rescue StandardError => e

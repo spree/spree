@@ -4,8 +4,7 @@ module Spree
       module Admin
         class OptionTypeSerializer < V3::OptionTypeSerializer
           many :option_values,
-               resource: Spree.api.admin_option_value_serializer,
-               if: proc { expand?('option_values') }
+               resource: Spree.api.admin_option_value_serializer
         end
       end
     end
