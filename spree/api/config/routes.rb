@@ -4,9 +4,11 @@ Spree::Core::Engine.add_routes do
       namespace :store do
         # Authentication
         post 'auth/login', to: 'auth#create'
-        post 'auth/register', to: 'auth#register'
         post 'auth/refresh', to: 'auth#refresh'
         post 'auth/oauth/callback', to: 'auth#oauth_callback'
+
+        # Customer registration
+        resources :customers, only: [:create]
 
         # Markets
         resources :markets, only: [:index, :show] do
@@ -60,10 +62,12 @@ Spree::Core::Engine.add_routes do
           resources :shipments, only: [:index, :show, :update], controller: 'orders/shipments'
         end
 
-        # Customer
+        # Customer (current user profile)
+        get 'customer', to: 'customers#show'
+        patch 'customer', to: 'customers#update'
+
+        # Customer nested resources
         namespace :customer, path: 'customer' do
-          get '/', to: 'account#show'
-          patch '/', to: 'account#update'
           resources :addresses, only: [:index, :show, :create, :update, :destroy] do
             member do
               patch :mark_as_default

@@ -108,7 +108,7 @@ export const handlers = [
     HttpResponse.json({ token: 'test-jwt-token', user: fixtures.user })
   ),
 
-  http.post(`${API_PREFIX}/auth/register`, () =>
+  http.post(`${API_PREFIX}/customers`, () =>
     HttpResponse.json({ token: 'test-jwt-token', user: fixtures.user })
   ),
 

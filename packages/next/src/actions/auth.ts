@@ -59,7 +59,7 @@ export async function register(
   }
 ): Promise<{ success: boolean; user?: { id: string; email: string; first_name?: string | null; last_name?: string | null }; error?: string }> {
   try {
-    const result = await getClient().auth.register(params);
+    const result = await getClient().customers.create(params);
     await setAccessToken(result.token);
 
     // Associate guest cart

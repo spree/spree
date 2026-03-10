@@ -35,10 +35,10 @@ describe('auth', () => {
     });
   });
 
-  describe('register', () => {
+  describe('register (via customers.create)', () => {
     it('returns auth tokens on successful registration', async () => {
       const client = createTestClient();
-      const result = await client.auth.register({
+      const result = await client.customers.create({
         email: 'new@example.com',
         password: 'password123',
         password_confirmation: 'password123',
@@ -53,14 +53,14 @@ describe('auth', () => {
     it('sends phone, accepts_email_marketing, and metadata', async () => {
       let capturedBody: Record<string, unknown> = {};
       server.use(
-        http.post(`${API_PREFIX}/auth/register`, async ({ request }) => {
+        http.post(`${API_PREFIX}/customers`, async ({ request }) => {
           capturedBody = await request.json() as Record<string, unknown>;
           return HttpResponse.json({ token: 'test-jwt-token', user: { id: 'user_1', email: 'new@example.com', first_name: null, last_name: null } });
         })
       );
 
       const client = createTestClient();
-      await client.auth.register({
+      await client.customers.create({
         email: 'new@example.com',
         password: 'password123',
         password_confirmation: 'password123',
@@ -76,7 +76,7 @@ describe('auth', () => {
 
     it('throws SpreeError on validation failure', async () => {
       server.use(
-        http.post(`${API_PREFIX}/auth/register`, () =>
+        http.post(`${API_PREFIX}/customers`, () =>
           HttpResponse.json(
             {
               error: {
@@ -92,7 +92,7 @@ describe('auth', () => {
 
       const client = createTestClient();
       try {
-        await client.auth.register({
+        await client.customers.create({
           email: 'existing@example.com',
           password: 'password123',
           password_confirmation: 'password123',

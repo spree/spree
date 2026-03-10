@@ -5,8 +5,10 @@ import { initSpreeNext, resetClient } from '../../src/config';
 const mockClient = {
   auth: {
     login: vi.fn(),
-    register: vi.fn(),
     refresh: vi.fn(),
+  },
+  customers: {
+    create: vi.fn(),
   },
   customer: {
     get: vi.fn(),
@@ -99,13 +101,13 @@ describe('auth actions', () => {
   });
 
   describe('register', () => {
-    it('calls auth.register with all params and sets token', async () => {
+    it('calls customers.create with all params and sets token', async () => {
       const authResult = {
         token: 'jwt_new',
         user: { id: '1', email: 'new@example.com', first_name: 'John', last_name: 'Doe' },
       };
       mockCookieStore.get.mockReturnValue(undefined); // no cart token
-      mockClient.auth.register.mockResolvedValue(authResult);
+      mockClient.customers.create.mockResolvedValue(authResult);
 
       const result = await register({
         email: 'new@example.com',
@@ -120,7 +122,7 @@ describe('auth actions', () => {
 
       expect(result.success).toBe(true);
       expect(result.user).toEqual(authResult.user);
-      expect(mockClient.auth.register).toHaveBeenCalledWith({
+      expect(mockClient.customers.create).toHaveBeenCalledWith({
         email: 'new@example.com',
         password: 'password123',
         password_confirmation: 'password123',
@@ -143,7 +145,7 @@ describe('auth actions', () => {
       const authResult = { token: 'jwt_new', user: { id: '1', email: 'new@example.com' } };
       mockCookieStore.get
         .mockReturnValueOnce({ value: 'guest_cart_token' });
-      mockClient.auth.register.mockResolvedValue(authResult);
+      mockClient.customers.create.mockResolvedValue(authResult);
       mockClient.cart.associate.mockResolvedValue({});
 
       await register({
@@ -159,7 +161,7 @@ describe('auth actions', () => {
     });
 
     it('returns error on failure', async () => {
-      mockClient.auth.register.mockRejectedValue(new Error('Email taken'));
+      mockClient.customers.create.mockRejectedValue(new Error('Email taken'));
 
       const result = await register({
         email: 'existing@example.com',

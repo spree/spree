@@ -64,12 +64,6 @@ export class StoreClient {
       this.request<AuthTokens>('POST', '/auth/login', { body: credentials }),
 
     /**
-     * Register a new customer account
-     */
-    register: (params: RegisterParams): Promise<AuthTokens> =>
-      this.request<AuthTokens>('POST', '/auth/register', { body: params }),
-
-    /**
      * Refresh access token (requires valid Bearer token)
      */
     refresh: (options: RequestOptions): Promise<AuthTokens> =>
@@ -670,6 +664,14 @@ export class StoreClient {
   // ============================================
   // Customer
   // ============================================
+
+  readonly customers = {
+    /**
+     * Register a new customer account
+     */
+    create: (params: RegisterParams): Promise<AuthTokens> =>
+      this.request<AuthTokens>('POST', '/customers', { body: params }),
+  };
 
   readonly customer = {
     /**

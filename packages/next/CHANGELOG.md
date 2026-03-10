@@ -1,5 +1,16 @@
 # @spree/next
 
+## 0.8.0
+
+### Minor Changes
+
+- **Breaking:** `register()` now calls `customers.create()` (was `auth.register()`), matching the backend API restructure from `POST /auth/register` to `POST /customers`. The `register()` function signature and parameters are unchanged — this is transparent to consumers of `@spree/next`.
+
+### Patch Changes
+
+- Updated dependencies:
+  - @spree/sdk@0.8.0
+
 ## 0.7.2
 
 ### Patch Changes

@@ -1,16 +1,112 @@
 require 'spec_helper'
 
-RSpec.describe Spree::Api::V3::Store::Customer::AccountController, type: :controller do
+RSpec.describe Spree::Api::V3::Store::CustomersController, type: :controller do
   render_views
 
   include_context 'API v3 Store'
 
   before do
     request.headers['X-Spree-Api-Key'] = api_key.token
-    request.headers['Authorization'] = "Bearer #{jwt_token}"
+  end
+
+  describe 'POST #create' do
+    let(:valid_params) do
+      {
+        email: 'newuser@example.com',
+        password: 'password123',
+        password_confirmation: 'password123'
+      }
+    end
+
+    it 'creates a new user' do
+      expect {
+        post :create, params: valid_params
+      }.to change(Spree.user_class, :count).by(1)
+
+      expect(response).to have_http_status(:created)
+    end
+
+    it 'returns a token' do
+      post :create, params: valid_params
+
+      expect(json_response['token']).to be_present
+    end
+
+    it 'returns user data' do
+      post :create, params: valid_params
+
+      expect(json_response['user']).to be_present
+      expect(json_response['user']['email']).to eq('newuser@example.com')
+    end
+
+    it 'saves first_name and last_name' do
+      post :create, params: valid_params.merge(first_name: 'John', last_name: 'Doe')
+
+      expect(response).to have_http_status(:created)
+      new_user = Spree.user_class.find_by(email: 'newuser@example.com')
+      expect(new_user.first_name).to eq('John')
+      expect(new_user.last_name).to eq('Doe')
+    end
+
+    it 'saves phone' do
+      post :create, params: valid_params.merge(phone: '+1234567890')
+
+      expect(response).to have_http_status(:created)
+      new_user = Spree.user_class.find_by(email: 'newuser@example.com')
+      expect(new_user.phone).to eq('+1234567890')
+    end
+
+    it 'saves accepts_email_marketing' do
+      post :create, params: valid_params.merge(accepts_email_marketing: true)
+
+      expect(response).to have_http_status(:created)
+      new_user = Spree.user_class.find_by(email: 'newuser@example.com')
+      expect(new_user.accepts_email_marketing).to eq(true)
+    end
+
+    it 'saves metadata' do
+      post :create, params: valid_params.merge(metadata: { source: 'storefront' })
+
+      expect(response).to have_http_status(:created)
+      new_user = Spree.user_class.find_by(email: 'newuser@example.com')
+      expect(new_user.metadata).to eq({ 'source' => 'storefront' })
+    end
+
+    context 'validation errors' do
+      it 'returns validation error for blank email' do
+        post :create, params: { email: '', password: 'password123', password_confirmation: 'password123' }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('validation_error')
+        expect(json_response['error']['details']['email']).to be_present
+      end
+
+      it 'returns validation error for duplicate email' do
+        existing_user = create(:user)
+        post :create, params: { email: existing_user.email, password: 'password123', password_confirmation: 'password123' }
+
+        expect(response).to have_http_status(:unprocessable_content)
+        expect(json_response['error']['code']).to eq('validation_error')
+        expect(json_response['error']['details']['email']).to be_present
+      end
+    end
+
+    context 'without API key' do
+      before { request.headers['X-Spree-Api-Key'] = nil }
+
+      it 'returns unauthorized' do
+        post :create, params: valid_params
+
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
   end
 
   describe 'GET #show' do
+    before do
+      request.headers['Authorization'] = "Bearer #{jwt_token}"
+    end
+
     it 'returns the current user' do
       get :show
 
@@ -62,6 +158,10 @@ RSpec.describe Spree::Api::V3::Store::Customer::AccountController, type: :contro
   end
 
   describe 'PATCH #update' do
+    before do
+      request.headers['Authorization'] = "Bearer #{jwt_token}"
+    end
+
     it 'updates the current user first name' do
       patch :update, params: { first_name: 'Updated' }
 

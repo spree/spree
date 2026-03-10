@@ -5,11 +5,10 @@ module Spree
         class AuthController < Store::BaseController
           # Tighter rate limits for auth endpoints (per IP to prevent brute force)
           rate_limit to: Spree::Api::Config[:rate_limit_login], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: :create, with: RATE_LIMIT_RESPONSE
-          rate_limit to: Spree::Api::Config[:rate_limit_register], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: :register, with: RATE_LIMIT_RESPONSE
           rate_limit to: Spree::Api::Config[:rate_limit_refresh], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: :refresh, with: RATE_LIMIT_RESPONSE
           rate_limit to: Spree::Api::Config[:rate_limit_oauth], within: Spree::Api::Config[:rate_limit_window].seconds, store: Rails.cache, only: :oauth_callback, with: RATE_LIMIT_RESPONSE
 
-          skip_before_action :authenticate_user, only: [:create, :register, :oauth_callback]
+          skip_before_action :authenticate_user, only: [:create, :oauth_callback]
           prepend_before_action :require_authentication!, only: [:refresh]
 
           # POST  /api/v3/store/auth/login
@@ -35,21 +34,6 @@ module Spree
                 message: result.error,
                 status: :unauthorized
               )
-            end
-          end
-
-          # POST  /api/v3/store/auth/register
-          def register
-            user = Spree.user_class.new(registration_params)
-
-            if user.save
-              token = generate_jwt(user)
-              render json: {
-                token: token,
-                user: user_serializer.new(user, params: serializer_params).to_h
-              }, status: :created
-            else
-              render_errors(user.errors)
             end
           end
 
@@ -130,11 +114,6 @@ module Spree
             end
 
             strategy_class
-          end
-
-          def registration_params
-            params.permit(:email, :password, :password_confirmation, :first_name, :last_name,
-                          :phone, :accepts_email_marketing, metadata: {})
           end
 
           def user_serializer
