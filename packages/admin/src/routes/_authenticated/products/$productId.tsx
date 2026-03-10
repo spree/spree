@@ -1,4 +1,18 @@
-import type { Image, Product } from '@spree/admin-sdk'
+import type { Image, Product as BaseProduct, Variant as BaseVariant } from '@spree/admin-sdk'
+
+// Extended types for fields not yet in generated types
+type Variant = BaseVariant & {
+  barcode?: string | null
+  weight_unit?: string | null
+  dimensions_unit?: string | null
+}
+type Product = Omit<BaseProduct, 'master_variant' | 'variants'> & {
+  shipping_category_id?: string | null
+  tax_category_id?: string | null
+  meta_title?: string | null
+  master_variant?: Variant
+  variants?: Variant[]
+}
 import { zodResolver } from '@hookform/resolvers/zod'
 import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
 import {

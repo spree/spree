@@ -43,7 +43,6 @@ import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Textarea } from '@/components/ui/textarea'
-import { useAuth } from '@/hooks/use-auth'
 import { cn } from '@/lib/utils'
 
 export const Route = createFileRoute('/_authenticated/orders/$orderId')({
@@ -155,7 +154,6 @@ function OrderDetailPage() {
 
 function OrderHeader({ order }: { order: Order }) {
   const { orderId } = Route.useParams()
-  const { token } = useAuth()
   const backUrl = order.completed_at ? '/orders' : '/orders/drafts'
 
   const cancelMutation = useOrderMutation(orderId, () =>
@@ -244,7 +242,6 @@ function AddLineItemDialog({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
-  const { token } = useAuth()
   const mutation = useOrderMutation(orderId, (params: { variant_id: string; quantity: number }) =>
     adminClient.orders.lineItems.create(orderId, params),
   )
@@ -305,7 +302,6 @@ function EditQuantityDialog({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
-  const { token } = useAuth()
   const mutation = useOrderMutation(orderId, (params: { quantity: number }) =>
     adminClient.orders.lineItems.update(orderId, lineItemId, params),
   )
@@ -357,7 +353,6 @@ function EditQuantityDialog({
 
 function LineItemsCard({ order }: { order: Order }) {
   const { orderId } = Route.useParams()
-  const { token } = useAuth()
   const items = order.line_items ?? []
   const [addOpen, setAddOpen] = useState(false)
   const [editItem, setEditItem] = useState<{ id: string; quantity: number } | null>(null)
@@ -506,7 +501,6 @@ function EditTrackingDialog({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
-  const { token } = useAuth()
   const mutation = useOrderMutation(orderId, (params: { tracking: string }) =>
     adminClient.orders.shipments.update(orderId, shipmentId, params),
   )
@@ -552,7 +546,6 @@ function EditTrackingDialog({
 
 function ShipmentsCard({ order }: { order: Order }) {
   const { orderId } = Route.useParams()
-  const { token } = useAuth()
   const shipments = order.shipments ?? []
   const [editTracking, setEditTracking] = useState<{
     id: string
@@ -697,7 +690,6 @@ function ShipmentsCard({ order }: { order: Order }) {
 
 function PaymentsCard({ order }: { order: Order }) {
   const { orderId } = Route.useParams()
-  const { token } = useAuth()
   const payments = order.payments ?? []
 
   const captureMutation = useOrderMutation(orderId, (paymentId: string) =>
@@ -807,7 +799,6 @@ function AddAdjustmentDialog({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
-  const { token } = useAuth()
   const mutation = useOrderMutation(orderId, (params: { label: string; amount: number }) =>
     adminClient.orders.adjustments.create(orderId, params),
   )
@@ -866,7 +857,6 @@ function AddAdjustmentDialog({
 
 function AdjustmentsCard({ order }: { order: Order }) {
   const { orderId } = Route.useParams()
-  const { token } = useAuth()
   const adjustments = (order.adjustments ?? []).filter(
     (a) => a.source_type !== 'Spree::TaxRate' && a.source_type !== 'Spree::PromotionAction',
   )
@@ -1093,7 +1083,6 @@ function EditAddressDialog({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
-  const { token } = useAuth()
   const mutation = useOrderMutation(orderId, (params: Record<string, unknown>) =>
     adminClient.orders.update(orderId, { [type]: params } as any),
   )
@@ -1274,7 +1263,6 @@ function CustomerCard({ order }: { order: Order }) {
 
 function SpecialInstructionsCard({ order }: { order: Order }) {
   const { orderId } = Route.useParams()
-  const { token } = useAuth()
   const [editing, setEditing] = useState(false)
   const mutation = useOrderMutation(orderId, (params: { special_instructions: string }) =>
     adminClient.orders.update(orderId, params),
@@ -1330,7 +1318,6 @@ function SpecialInstructionsCard({ order }: { order: Order }) {
 
 function InternalNoteCard({ order }: { order: Order }) {
   const { orderId } = Route.useParams()
-  const { token } = useAuth()
   const [editing, setEditing] = useState(false)
   const mutation = useOrderMutation(orderId, (params: { internal_note: string }) =>
     adminClient.orders.update(orderId, params),

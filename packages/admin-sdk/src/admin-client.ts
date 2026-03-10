@@ -5,6 +5,12 @@ import type { PaginatedResponse, ListParams } from '@spree/sdk-core';
 export interface AuthTokens {
   token: string;
   refresh_token?: string;
+  user: {
+    id: string;
+    email: string;
+    first_name: string | null;
+    last_name: string | null;
+  };
 }
 
 export interface LoginCredentials {
