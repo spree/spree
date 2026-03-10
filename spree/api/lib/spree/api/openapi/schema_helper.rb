@@ -88,12 +88,12 @@ module Spree
           }
         end
 
-        # Get all schemas (Typelizer + common)
+        # Get all store schemas (Typelizer + common)
         def all_schemas
           schemas = common_schemas
 
           begin
-            schemas.merge!(typelizer_schemas)
+            schemas.merge!(typelizer_schemas(:store))
           rescue StandardError => e
             Rails.logger.warn "Failed to load Typelizer schemas: #{e.message}"
           end
@@ -101,11 +101,24 @@ module Spree
           schemas
         end
 
+        # Get all admin schemas (Typelizer + common)
+        def admin_schemas
+          schemas = common_schemas
+
+          begin
+            schemas.merge!(typelizer_schemas(:admin))
+          rescue StandardError => e
+            Rails.logger.warn "Failed to load Typelizer admin schemas: #{e.message}"
+          end
+
+          schemas
+        end
+
         private
 
-        def typelizer_schemas
+        def typelizer_schemas(writer_name)
           with_typelizer_enabled do
-            schemas = Typelizer.openapi_schemas(writer_name: :store)
+            schemas = Typelizer.openapi_schemas(writer_name: writer_name)
             schemas.each_value do |s|
               s[:'x-typelizer'] = true
               strip_null_from_enums(s)
