@@ -50,7 +50,7 @@ import {
 } from '@/hooks/use-product-assets'
 import { useShippingCategories } from '@/hooks/use-shipping-categories'
 import { useTaxCategories } from '@/hooks/use-tax-categories'
-import { useTaxons } from '@/hooks/use-taxons'
+import { useCategories } from '@/hooks/use-categories'
 import { productFormSchema, type ProductFormValues } from '@/schemas/product'
 
 export const Route = createFileRoute('/_authenticated/products/$productId')({
@@ -71,7 +71,7 @@ function productToFormValues(product: Product): ProductFormValues {
     make_active_at: product.make_active_at ?? null,
     available_on: product.available_on ?? null,
     discontinue_on: product.discontinue_on ?? null,
-    taxon_ids: product.taxons?.map((t) => t.id) ?? [],
+    category_ids: product.categories?.map((t) => t.id) ?? [],
     tags: product.tags ?? [],
     price: master?.price?.amount ? Number(master.price.amount) : undefined,
     compare_at_price: master?.original_price?.amount
@@ -689,8 +689,8 @@ function StatusCard({ form }: FormCardProps) {
 // ---------------------------------------------------------------------------
 
 function CategorizationCard({ form }: FormCardProps) {
-  const { data: taxonsResponse } = useTaxons()
-  const taxons = taxonsResponse?.data ?? []
+  const { data: categoriesResponse } = useCategories()
+  const categories = categoriesResponse?.data ?? []
 
   return (
     <Card>
@@ -701,11 +701,11 @@ function CategorizationCard({ form }: FormCardProps) {
         <div className="grid gap-2">
           <Label>Categories</Label>
           <Controller
-            name="taxon_ids"
+            name="category_ids"
             control={form.control}
             render={({ field }) => (
-              <TaxonCombobox
-                taxons={taxons}
+              <CategoryCombobox
+                categories={categories}
                 value={field.value ?? []}
                 onChange={field.onChange}
               />
@@ -731,17 +731,17 @@ function CategorizationCard({ form }: FormCardProps) {
   )
 }
 
-interface TaxonOption {
+interface CategoryOption {
   id: string
   name: string
 }
 
-function TaxonCombobox({
-  taxons,
+function CategoryCombobox({
+  categories,
   value,
   onChange,
 }: {
-  taxons: TaxonOption[]
+  categories: CategoryOption[]
   value: string[]
   onChange: (value: string[]) => void
 }) {
@@ -758,7 +758,7 @@ function TaxonCombobox({
           {(selectedValues: string[]) =>
             selectedValues.map((id) => (
               <ComboboxChip key={id}>
-                {taxons.find((t) => t.id === id)?.name ?? id}
+                {categories.find((c) => c.id === id)?.name ?? id}
               </ComboboxChip>
             ))
           }
@@ -767,9 +767,9 @@ function TaxonCombobox({
       </ComboboxChips>
       <ComboboxContent anchor={anchorRef}>
         <ComboboxList>
-          {taxons.map((taxon) => (
-            <ComboboxItem key={taxon.id} value={taxon.id}>
-              {taxon.name}
+          {categories.map((category) => (
+            <ComboboxItem key={category.id} value={category.id}>
+              {category.name}
             </ComboboxItem>
           ))}
           <ComboboxEmpty>No categories found</ComboboxEmpty>

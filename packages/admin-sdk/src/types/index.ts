@@ -17,4 +17,4 @@ export type { default as Product } from './generated/Product';
 export type { default as ShippingCategory } from './generated/ShippingCategory';
 export type { default as Store } from './generated/Store';
 export type { default as TaxCategory } from './generated/TaxCategory';
-export type { default as Taxon } from './generated/Taxon';
+export type { default as Category } from './generated/Category';

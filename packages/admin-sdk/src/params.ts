@@ -151,7 +151,7 @@ export interface ProductCreateParams {
   sku?: string;
   shipping_category_id: string;
   tax_category_id?: string;
-  taxon_ids?: Array<string>;
+  category_ids?: Array<string>;
   tags?: Array<string>;
   variants?: Array<{
     sku?: string;
@@ -176,7 +176,7 @@ export interface ProductUpdateParams {
   sku?: string;
   shipping_category_id?: string;
   tax_category_id?: string;
-  taxon_ids?: Array<string>;
+  category_ids?: Array<string>;
   tags?: Array<string>;
   variants?: Array<{
     sku?: string;
@@ -192,17 +192,7 @@ export interface ProductUpdateParams {
   }>;
 }
 
-export interface TaxonomyCreateParams {
-  name: string;
-  position?: number;
-}
-
-export interface TaxonomyUpdateParams {
-  name?: string;
-  position?: number;
-}
-
-export interface TaxonCreateParams {
+export interface CategoryCreateParams {
   name: string;
   parent_id?: string;
   position?: number;
@@ -215,7 +205,7 @@ export interface TaxonCreateParams {
   sort_order?: string;
 }
 
-export interface TaxonUpdateParams {
+export interface CategoryUpdateParams {
   name?: string;
   parent_id?: string;
   position?: number;

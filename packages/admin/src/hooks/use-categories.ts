@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
 import { adminClient } from '@/client'
 
-export function useTaxons() {
+export function useCategories() {
   return useQuery({
-    queryKey: ['taxons'],
+    queryKey: ['categories'],
     queryFn: () =>
-      adminClient.taxons.list({ limit: 100, expand: ['taxonomy'] }),
+      adminClient.categories.list({ limit: 100 }),
     staleTime: 1000 * 60 * 5,
   })
 }

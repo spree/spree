@@ -12,7 +12,7 @@ export const productFormSchema = z.object({
   discontinue_on: z.string().nullable().optional(),
 
   // Categorization
-  taxon_ids: z.array(z.string()).optional(),
+  category_ids: z.array(z.string()).optional(),
   tags: z.array(z.string()).optional(),
 
   // Pricing (master variant)

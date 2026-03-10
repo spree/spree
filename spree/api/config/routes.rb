@@ -115,13 +115,8 @@ Spree::Core::Engine.add_routes do
           resources :assets, controller: 'assets', only: [:index, :create, :update, :destroy]
         end
 
-        # Taxonomies > Taxons
-        resources :taxonomies do
-          resources :taxons, controller: 'taxonomies/taxons'
-        end
-
-        # Taxons (flat, top-level)
-        resources :taxons, only: [:index, :show]
+        # Categories
+        resources :categories, only: [:index, :show]
 
         # Option Types (with nested option_values in payload)
         resources :option_types

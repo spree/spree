@@ -1,7 +1,7 @@
 import type { RequestFn, RequestOptions, AuthTokens, LoginCredentials } from '@spree/sdk-core';
 import { transformListParams, getParams } from '@spree/sdk-core';
 import type { PaginatedResponse, ListParams } from '@spree/sdk-core';
-import type { Store, Product, Order, Asset, Taxon, TaxCategory, ShippingCategory } from './types';
+import type { Store, Product, Order, Asset, Category, TaxCategory, ShippingCategory } from './types';
 import type {
   StoreUpdateParams,
   ProductUpdateParams,
@@ -154,12 +154,12 @@ export class AdminClient {
   };
 
   // ============================================
-  // Taxons
+  // Categories
   // ============================================
 
-  readonly taxons = {
-    list: (params?: ListParams & Record<string, unknown>, options?: RequestOptions): Promise<PaginatedResponse<Taxon>> =>
-      this.request<PaginatedResponse<Taxon>>('GET', '/taxons', {
+  readonly categories = {
+    list: (params?: ListParams & Record<string, unknown>, options?: RequestOptions): Promise<PaginatedResponse<Category>> =>
+      this.request<PaginatedResponse<Category>>('GET', '/categories', {
         ...options,
         params: params ? transformListParams(params) : undefined,
       }),

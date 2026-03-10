@@ -40,7 +40,7 @@ const navigation: NavItem[] = [
     items: [
       { title: 'Price Lists', url: '/products/price-lists' },
       { title: 'Stock', url: '/products/stock' },
-      { title: 'Taxonomies', url: '/products/taxonomies' },
+      { title: 'Categories', url: '/products/categories' },
       { title: 'Options', url: '/products/options' },
     ],
   },

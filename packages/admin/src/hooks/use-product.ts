@@ -10,7 +10,7 @@ export function useProduct(id: string) {
           'variants',
           'images',
           'option_types',
-          'taxons',
+          'categories',
           'shipping_category',
           'tax_category',
         ],
