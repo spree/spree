@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe Spree::Api::V3::Store::Taxons::ProductsController, type: :controller do
+RSpec.describe Spree::Api::V3::Store::Categories::ProductsController, type: :controller do
   render_views
 
   include_context 'API v3 Store'
@@ -23,9 +23,9 @@ RSpec.describe Spree::Api::V3::Store::Taxons::ProductsController, type: :control
   end
 
   describe 'GET #index' do
-    context 'finding taxon by permalink' do
-      it 'returns active products belonging to the taxon' do
-        get :index, params: { taxon_id: taxon.permalink }
+    context 'finding category by permalink' do
+      it 'returns active products belonging to the category' do
+        get :index, params: { category_id: taxon.permalink }
 
         expect(response).to have_http_status(:ok)
         expect(json_response['data'].pluck('id')).to include(product_in_taxon.prefixed_id)
@@ -33,17 +33,16 @@ RSpec.describe Spree::Api::V3::Store::Taxons::ProductsController, type: :control
         expect(json_response['data'].pluck('id')).not_to include(inactive_product_in_taxon.prefixed_id)
       end
 
-      it 'returns products from descendant taxons' do
-        get :index, params: { taxon_id: taxon.permalink }
+      it 'returns products from descendant categories' do
+        get :index, params: { category_id: taxon.permalink }
 
         expect(response).to have_http_status(:ok)
-        # Parent taxon should include products from child taxons
         expect(json_response['data'].pluck('id')).to include(product_in_taxon.prefixed_id)
         expect(json_response['data'].pluck('id')).to include(product_in_child_taxon.prefixed_id)
       end
 
-      it 'returns only products from the specific child taxon when queried directly' do
-        get :index, params: { taxon_id: child_taxon.permalink }
+      it 'returns only products from the specific child category when queried directly' do
+        get :index, params: { category_id: child_taxon.permalink }
 
         expect(response).to have_http_status(:ok)
         expect(json_response['data'].pluck('id')).to include(product_in_child_taxon.prefixed_id)
@@ -51,9 +50,9 @@ RSpec.describe Spree::Api::V3::Store::Taxons::ProductsController, type: :control
       end
     end
 
-    context 'finding taxon by prefix_id' do
-      it 'returns products belonging to the taxon' do
-        get :index, params: { taxon_id: taxon.prefixed_id }
+    context 'finding category by prefix_id' do
+      it 'returns products belonging to the category' do
+        get :index, params: { category_id: taxon.prefixed_id }
 
         expect(response).to have_http_status(:ok)
         expect(json_response['data'].pluck('id')).to include(product_in_taxon.prefixed_id)
@@ -61,7 +60,7 @@ RSpec.describe Spree::Api::V3::Store::Taxons::ProductsController, type: :control
     end
 
     it 'returns pagination metadata' do
-      get :index, params: { taxon_id: taxon.permalink }
+      get :index, params: { category_id: taxon.permalink }
 
       expect(json_response['meta']).to include('page', 'limit', 'count', 'pages')
     end
@@ -69,7 +68,7 @@ RSpec.describe Spree::Api::V3::Store::Taxons::ProductsController, type: :control
     it 'supports pagination' do
       create_list(:product, 3, stores: [store], taxons: [taxon])
 
-      get :index, params: { taxon_id: taxon.permalink, limit: 2, page: 1 }
+      get :index, params: { category_id: taxon.permalink, limit: 2, page: 1 }
 
       expect(json_response['data'].size).to eq(2)
       expect(json_response['meta']['page']).to eq(1)
@@ -77,14 +76,14 @@ RSpec.describe Spree::Api::V3::Store::Taxons::ProductsController, type: :control
     end
 
     context 'error handling' do
-      it 'returns not found for non-existent taxon' do
-        get :index, params: { taxon_id: 'non-existent' }
+      it 'returns not found for non-existent category' do
+        get :index, params: { category_id: 'non-existent' }
 
         expect(response).to have_http_status(:not_found)
       end
 
-      it 'returns not found for taxon from another store' do
-        get :index, params: { taxon_id: other_taxon.permalink }
+      it 'returns not found for category from another store' do
+        get :index, params: { category_id: other_taxon.permalink }
 
         expect(response).to have_http_status(:not_found)
       end
@@ -94,7 +93,7 @@ RSpec.describe Spree::Api::V3::Store::Taxons::ProductsController, type: :control
       before { request.headers['X-Spree-Api-Key'] = nil }
 
       it 'returns unauthorized' do
-        get :index, params: { taxon_id: taxon.permalink }
+        get :index, params: { category_id: taxon.permalink }
 
         expect(response).to have_http_status(:unauthorized)
       end
@@ -115,8 +114,8 @@ RSpec.describe Spree::Api::V3::Store::Taxons::ProductsController, type: :control
         end
       end
 
-      it 'filters products by option value prefixed IDs within taxon' do
-        get :index, params: { taxon_id: taxon.permalink, q: { with_option_value_ids: [option_value_red.prefixed_id] } }
+      it 'filters products by option value prefixed IDs within category' do
+        get :index, params: { category_id: taxon.permalink, q: { with_option_value_ids: [option_value_red.prefixed_id] } }
 
         expect(response).to have_http_status(:ok)
         ids = json_response['data'].map { |p| p['id'] }
@@ -124,8 +123,8 @@ RSpec.describe Spree::Api::V3::Store::Taxons::ProductsController, type: :control
         expect(ids).not_to include(product_with_blue.prefixed_id)
       end
 
-      it 'filters products by price range within taxon' do
-        get :index, params: { taxon_id: taxon.permalink, q: { price_between: [50, 100] } }
+      it 'filters products by price range within category' do
+        get :index, params: { category_id: taxon.permalink, q: { price_between: [50, 100] } }
 
         expect(response).to have_http_status(:ok)
         ids = json_response['data'].map { |p| p['id'] }
@@ -133,8 +132,8 @@ RSpec.describe Spree::Api::V3::Store::Taxons::ProductsController, type: :control
         expect(ids).not_to include(product_with_red.prefixed_id)
       end
 
-      it 'filters products by option values and price range combined within taxon' do
-        get :index, params: { taxon_id: taxon.permalink, q: { with_option_value_ids: [option_value_red.prefixed_id, option_value_blue.prefixed_id], price_between: [50, 100] } }
+      it 'filters products by option values and price range combined within category' do
+        get :index, params: { category_id: taxon.permalink, q: { with_option_value_ids: [option_value_red.prefixed_id, option_value_blue.prefixed_id], price_between: [50, 100] } }
 
         expect(response).to have_http_status(:ok)
         ids = json_response['data'].map { |p| p['id'] }
@@ -157,7 +156,7 @@ RSpec.describe Spree::Api::V3::Store::Taxons::ProductsController, type: :control
       end
 
       it 'sorts by price low to high' do
-        get :index, params: { taxon_id: taxon.permalink, sort: 'price' }
+        get :index, params: { category_id: taxon.permalink, sort: 'price' }
 
         expect(response).to have_http_status(:ok)
         prices = json_response['data'].map { |p| p['price']['amount'].to_f }
@@ -165,7 +164,7 @@ RSpec.describe Spree::Api::V3::Store::Taxons::ProductsController, type: :control
       end
 
       it 'sorts by price high to low' do
-        get :index, params: { taxon_id: taxon.permalink, sort: '-price' }
+        get :index, params: { category_id: taxon.permalink, sort: '-price' }
 
         expect(response).to have_http_status(:ok)
         prices = json_response['data'].map { |p| p['price']['amount'].to_f }
@@ -173,7 +172,7 @@ RSpec.describe Spree::Api::V3::Store::Taxons::ProductsController, type: :control
       end
 
       it 'sorts by name a-z' do
-        get :index, params: { taxon_id: taxon.permalink, sort: 'name' }
+        get :index, params: { category_id: taxon.permalink, sort: 'name' }
 
         expect(response).to have_http_status(:ok)
         names = json_response['data'].map { |p| p['name'] }

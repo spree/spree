@@ -223,7 +223,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
     end
 
     it 'assigns taxons to the product' do
-      expect { subject.process! }.to change { Spree::Taxon.count }.by(6)
+      expect { subject.process! }.to change { Spree::Taxon.count }.by(9) # 3 root taxons (from 3 taxonomies) + 6 leaf taxons
 
       expect(product.reload.taxons.map(&:pretty_name)).to contain_exactly(
         'Categories -> Men -> Clothing -> Shirts',
@@ -297,7 +297,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
       end
 
       it 'skips invalid taxons' do
-        expect { subject.process! }.to change { Spree::Taxon.count }.by(2)
+        expect { subject.process! }.to change { Spree::Taxon.count }.by(3) # 1 root taxon (from 1 taxonomy) + 2 leaf taxons
 
         expect(product.reload.taxons.map(&:pretty_name)).to contain_exactly(
           'Categories -> Men -> Shirts'
