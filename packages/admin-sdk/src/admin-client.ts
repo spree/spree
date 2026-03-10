@@ -1,6 +1,16 @@
-import type { RequestFn, RequestOptions, AuthTokens, LoginCredentials } from '@spree/sdk-core';
+import type { RequestFn, RequestOptions } from '@spree/sdk-core';
 import { transformListParams, getParams } from '@spree/sdk-core';
 import type { PaginatedResponse, ListParams } from '@spree/sdk-core';
+
+export interface AuthTokens {
+  token: string;
+  refresh_token?: string;
+}
+
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}
 import type { Store, Product, Order, Asset, Category, TaxCategory, ShippingCategory } from './types';
 import type {
   StoreUpdateParams,
