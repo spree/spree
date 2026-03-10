@@ -82,7 +82,7 @@ const { data: products } = await client.categories.products.list('clothing/shirt
 
 // Or filter by category ID
 const { data: products } = await client.products.list({
-  taxons_id_eq: 'txn_xxx',
+  categories_id_eq: 'ctg_xxx',
 })
 ```
 
@@ -92,7 +92,7 @@ curl 'https://api.mystore.com/api/v3/store/categories/clothing/shirts/products?l
   -H 'Authorization: Bearer spree_pk_xxx'
 
 # Filter by category ID
-curl 'https://api.mystore.com/api/v3/store/products?q[taxons_id_eq]=txn_xxx' \
+curl 'https://api.mystore.com/api/v3/store/products?q[categories_id_eq]=ctg_xxx' \
   -H 'Authorization: Bearer spree_pk_xxx'
 ```
 
@@ -147,12 +147,12 @@ const filters = await client.products.filters()
 // {
 //   option_types: [{ name: "size", option_values: [{ name: "Small", count: 12 }, ...] }],
 //   price_range: { min: 9.99, max: 199.99 },
-//   categories: [{ id: "txn_xxx", name: "Clothing", count: 45 }],
+//   categories: [{ id: "ctg_xxx", name: "Clothing", count: 45 }],
 // }
 
 // Scoped to a specific category
 const categoryFilters = await client.products.filters({
-  category_id: 'txn_xxx',
+  category_id: 'ctg_xxx',
 })
 ```
 
@@ -162,7 +162,7 @@ curl 'https://api.mystore.com/api/v3/store/products/filters' \
   -H 'Authorization: Bearer spree_pk_xxx'
 
 # Scoped to a category
-curl 'https://api.mystore.com/api/v3/store/products/filters?category_id=txn_xxx' \
+curl 'https://api.mystore.com/api/v3/store/products/filters?category_id=ctg_xxx' \
   -H 'Authorization: Bearer spree_pk_xxx'
 ```
 

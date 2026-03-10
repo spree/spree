@@ -53,7 +53,7 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
                 description: 'Sort order. Prefix with - for descending. Values: price, -price, best_selling, name, -name, -available_on, available_on'
       parameter name: 'q[name_cont]', in: :query, type: :string, required: false,
                 description: 'Filter by name containing string'
-      parameter name: 'q[taxons_id_eq]', in: :query, type: :string, required: false,
+      parameter name: 'q[categories_id_eq]', in: :query, type: :string, required: false,
                 description: 'Filter by category ID'
       parameter name: 'q[price_gte]', in: :query, type: :number, required: false,
                 description: 'Filter by minimum price'
@@ -193,7 +193,7 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
 
       sdk_example <<~JS
         const filters = await client.products.filters({
-          category_id: 'txn_abc123',
+          category_id: 'ctg_abc123',
         })
       JS
 

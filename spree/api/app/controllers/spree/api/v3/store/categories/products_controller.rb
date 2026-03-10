@@ -23,7 +23,7 @@ module Spree
               category_scope = Spree::Category.for_store(current_store).accessible_by(current_ability, :show)
               category_scope = category_scope.i18n if Spree::Category.include?(Spree::TranslatableResource)
 
-              if id.to_s.start_with?('txn_')
+              if id.to_s.start_with?('ctg_')
                 category_scope.find_by_prefix_id!(id)
               else
                 find_with_fallback_default_locale { category_scope.i18n.find_by!(permalink: id) }

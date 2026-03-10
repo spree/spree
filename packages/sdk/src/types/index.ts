@@ -162,7 +162,7 @@ export interface ProductListParams extends ListParams {
   /** Filter: only out-of-stock products */
   out_of_stock?: boolean;
   /** Filter: products in category */
-  taxons_id_eq?: string;
+  categories_id_eq?: string;
   /** Any additional Ransack predicate */
   [key: string]: string | number | boolean | (string | number)[] | undefined;
 }

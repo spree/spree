@@ -99,7 +99,7 @@ describe('transformListParams', () => {
       sort: '-created_at',
       name_cont: 'shirt',
       price_gte: 20,
-      taxons_id_eq: 'txn_abc123', // Ransack param name matches DB column
+      categories_id_eq: 'ctg_abc123',
     });
     expect(result).toEqual({
       page: 1,
@@ -108,7 +108,7 @@ describe('transformListParams', () => {
       sort: '-created_at',
       'q[name_cont]': 'shirt',
       'q[price_gte]': 20,
-      'q[taxons_id_eq]': 'txn_abc123',
+      'q[categories_id_eq]': 'ctg_abc123',
     });
   });
 });

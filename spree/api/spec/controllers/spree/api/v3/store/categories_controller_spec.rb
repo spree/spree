@@ -280,7 +280,7 @@ RSpec.describe Spree::Api::V3::Store::CategoriesController, type: :controller do
       end
 
       it 'returns not found for invalid prefix_id' do
-        get :show, params: { id: 'txn_invalid123' }
+        get :show, params: { id: 'ctg_invalid123' }
 
         expect(response).to have_http_status(:not_found)
         expect(json_response['error']['code']).to eq('record_not_found')

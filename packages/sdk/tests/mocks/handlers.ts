@@ -49,7 +49,7 @@ export const fixtures = {
     state_abbr: 'NY',
   },
   category: {
-    id: 'txn_1',
+    id: 'ctg_1',
     name: 'Clothing',
     permalink: 'clothing/shirts',
     position: 1,

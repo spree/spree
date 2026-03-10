@@ -95,7 +95,7 @@ import { listProducts, getProduct, getProductFilters } from '@spree/next';
 
 const products = await listProducts({ limit: 25, expand: ['variants', 'images'] });
 const product = await getProduct('spree-tote');
-const filters = await getProductFilters({ category_id: 'txn_123' });
+const filters = await getProductFilters({ category_id: 'ctg_123' });
 ```
 
 ### Categories

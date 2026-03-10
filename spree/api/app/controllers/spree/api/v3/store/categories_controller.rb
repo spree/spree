@@ -19,7 +19,7 @@ module Spree
           # Falls back to default locale if category is not found in the current locale
           def find_resource
             id = params[:id]
-            if id.to_s.start_with?('txn_')
+            if id.to_s.start_with?('ctg_')
               scope.find_by_prefix_id!(id)
             else
               find_with_fallback_default_locale { scope.i18n.find_by!(permalink: id) }

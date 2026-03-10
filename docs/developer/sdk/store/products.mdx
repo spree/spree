@@ -90,7 +90,7 @@ Get available filters (price range, availability, options, categories) and sort 
 
 ```typescript
 const filters = await client.products.filters({
-  category_id: 'txn_abc123', // Optional: scope filters to a category
+  category_id: 'ctg_abc123', // Optional: scope filters to a category
 });
 
 // Response:
@@ -99,7 +99,7 @@ const filters = await client.products.filters({
 //     { id: 'price', type: 'price_range', min: 9.99, max: 199.99, currency: 'USD' },
 //     { id: 'availability', type: 'availability', options: [{ id: 'in_stock', count: 42 }, ...] },
 //     { id: 'opttype_abc', type: 'option', name: 'color', presentation: 'Color', options: [...] },
-//     { id: 'categories', type: 'category', options: [{ id: 'txn_abc', name: 'Shirts', permalink: '...', count: 12 }] },
+//     { id: 'categories', type: 'category', options: [{ id: 'ctg_abc', name: 'Shirts', permalink: '...', count: 12 }] },
 //   ],
 //   sort_options: [{ id: 'manual' }, { id: 'price' }, { id: 'best_selling' }, ...],
 //   default_sort: 'manual',

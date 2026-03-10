@@ -19,14 +19,14 @@ describe('categories', () => {
 
   describe('get', () => {
     it('returns a category by ID', async () => {
-      const result = await client.categories.get('txn_1');
+      const result = await client.categories.get('ctg_1');
       expect(result.name).toBe(fixtures.category.name);
     });
   });
 
   describe('products', () => {
     it('lists products in a category', async () => {
-      const result = await client.categories.products.list('txn_1');
+      const result = await client.categories.products.list('ctg_1');
 
       expect(result.data).toHaveLength(1);
       expect(result.data[0].name).toBe('Test Product');

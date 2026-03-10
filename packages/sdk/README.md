@@ -160,7 +160,7 @@ const product = await client.products.get('spree-tote', {
 
 // Get available filters (price range, availability, options, categories)
 const filters = await client.products.filters({
-  category_id: 'txn_abc123', // Optional: scope filters to a category
+  category_id: 'ctg_abc123', // Optional: scope filters to a category
 });
 ```
 

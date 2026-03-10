@@ -74,6 +74,7 @@ module Spree
     has_many :option_types, through: :product_option_types
     has_many :classifications, -> { order(created_at: :asc) }, dependent: :delete_all, inverse_of: :product
     has_many :taxons, through: :classifications, before_remove: :remove_taxon
+    has_many :categories, through: :classifications, class_name: 'Spree::Category', source: :taxon
     has_many :taxonomies, through: :taxons
 
     has_many :product_promotion_rules, class_name: 'Spree::ProductPromotionRule'
@@ -217,7 +218,7 @@ module Spree
     alias options product_option_types
 
     self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on status available_on created_at updated_at]
-    self.whitelisted_ransackable_associations = %w[taxons stores variants_including_master master variants tags labels
+    self.whitelisted_ransackable_associations = %w[taxons categories stores variants_including_master master variants tags labels
                                                    shipping_category classifications option_types]
     self.whitelisted_ransackable_scopes = %w[not_discontinued search_by_name in_taxon price_between
                                              price_lte price_gte

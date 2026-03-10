@@ -89,7 +89,7 @@ You can filter by associated model attributes using underscore notation:
 ```typescript SDK
 // Products in a specific category
 const products = await client.products.list({
-  taxons_id_eq: 'txn_abc123',
+  categories_id_eq: 'ctg_abc123',
 })
 
 // Categories at a specific depth
@@ -102,7 +102,7 @@ const categories = await client.categories.list({
 # Products in a specific category
 curl -G 'http://localhost:3000/api/v3/store/products' \
   -H 'X-Spree-Api-Key: spree_pk_xxx' \
-  --data-urlencode 'q[taxons_id_eq]=txn_abc123'
+  --data-urlencode 'q[categories_id_eq]=ctg_abc123'
 
 # Top-level categories only
 curl -G 'http://localhost:3000/api/v3/store/categories' \
