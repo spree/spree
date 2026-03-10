@@ -3,38 +3,30 @@ import { createTestClient } from './helpers';
 import { fixtures } from './mocks/handlers';
 import type { Client } from '../src';
 
-describe('taxons', () => {
+describe('categories', () => {
   let client: Client;
   beforeAll(() => { client = createTestClient(); });
 
   describe('list', () => {
-    it('returns paginated taxons', async () => {
-      const result = await client.taxons.list();
+    it('returns paginated categories', async () => {
+      const result = await client.categories.list();
 
       expect(result.data).toHaveLength(1);
       expect(result.data[0].name).toBe('Clothing');
       expect(result.meta.page).toBe(1);
     });
-
-    it('passes query parameters', async () => {
-      const result = await client.taxons.list({
-        taxonomy_id_eq: 'tax_1',
-      });
-      expect(result.data).toBeDefined();
-    });
   });
 
   describe('get', () => {
-    it('returns a taxon by ID', async () => {
-      const result = await client.taxons.get('taxon_1');
-      expect(result.name).toBe(fixtures.taxon.name);
+    it('returns a category by ID', async () => {
+      const result = await client.categories.get('txn_1');
+      expect(result.name).toBe(fixtures.category.name);
     });
-
-});
+  });
 
   describe('products', () => {
-    it('lists products in a taxon', async () => {
-      const result = await client.taxons.products.list('taxon_1');
+    it('lists products in a category', async () => {
+      const result = await client.categories.products.list('txn_1');
 
       expect(result.data).toHaveLength(1);
       expect(result.data[0].name).toBe('Test Product');

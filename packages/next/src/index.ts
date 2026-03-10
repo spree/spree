@@ -4,8 +4,7 @@ export type { SpreeNextConfig, SpreeNextOptions } from './types';
 
 // Data reads (plain async functions — wrap with "use cache" in your app)
 export { listProducts, getProduct, getProductFilters } from './data/products';
-export { listTaxons, getTaxon, listTaxonProducts } from './data/taxons';
-export { listTaxonomies, getTaxonomy } from './data/taxonomies';
+export { listCategories, getCategory, listCategoryProducts } from './data/categories';
 export { listCountries, getCountry } from './data/countries';
 export { listCurrencies } from './data/currencies';
 export { listLocales } from './data/locales';
@@ -74,8 +73,7 @@ export type {
   Order,
   LineItem,
   Variant,
-  Taxon,
-  Taxonomy,
+  Category,
   Country,
   Currency,
   Locale,

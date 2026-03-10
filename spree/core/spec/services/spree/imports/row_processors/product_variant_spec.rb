@@ -233,15 +233,15 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
     end
 
     context 'when the taxons already exist' do
-      let(:categories_taxonomy) { store.taxonomies.find_by(name: 'Categories') }
+      let(:categories_taxonomy) { store.taxonomies.find_by(name: 'Categories') || create(:taxonomy, name: 'Categories', store: store) }
       let!(:men_taxon) { create(:taxon, name: 'Men', taxonomy: categories_taxonomy, parent: categories_taxonomy.root) }
       let!(:clothing_taxon) { create(:taxon, name: 'clothing', taxonomy: categories_taxonomy, parent: men_taxon) }
       let!(:shirts_category_taxon) { create(:taxon, name: 'Shirts', taxonomy: categories_taxonomy, parent: clothing_taxon) }
 
-      let(:brands_taxonomy) { store.taxonomies.find_by(name: 'Brands') }
+      let(:brands_taxonomy) { store.taxonomies.find_by(name: 'Brands') || create(:taxonomy, name: 'Brands', store: store) }
       let!(:awesome_brand_taxon) { create(:taxon, name: 'Awesome brand', taxonomy: brands_taxonomy, parent: brands_taxonomy.root) }
 
-      let(:collections_taxonomy) { store.taxonomies.find_by(name: 'Collections') }
+      let(:collections_taxonomy) { store.taxonomies.find_by(name: 'Collections') || create(:taxonomy, name: 'Collections', store: store) }
       let!(:summer_taxon) { create(:taxon, name: 'Summer', taxonomy: collections_taxonomy, parent: collections_taxonomy.root) }
       let!(:shirts_collection_taxon) { create(:taxon, name: 'Shirts', taxonomy: collections_taxonomy, parent: summer_taxon) }
 
@@ -266,7 +266,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
     end
 
     context 'when taxons are not provided' do
-      let(:categories_taxonomy) { store.taxonomies.find_by(name: 'Categories') }
+      let(:categories_taxonomy) { store.taxonomies.find_by(name: 'Categories') || create(:taxonomy, name: 'Categories', store: store) }
       let!(:men_taxon) { create(:taxon, name: 'Men', taxonomy: categories_taxonomy, parent: categories_taxonomy.root) }
       let!(:clothing_taxon) { create(:taxon, name: 'Clothing', taxonomy: categories_taxonomy, parent: men_taxon) }
 
@@ -306,7 +306,7 @@ RSpec.describe Spree::Imports::RowProcessors::ProductVariant, type: :service do
     end
 
     context 'when importing a variant row with no taxons' do
-      let(:categories_taxonomy) { store.taxonomies.find_by(name: 'Categories') }
+      let(:categories_taxonomy) { store.taxonomies.find_by(name: 'Categories') || create(:taxonomy, name: 'Categories', store: store) }
       let!(:men_taxon) { create(:taxon, name: 'Men', taxonomy: categories_taxonomy, parent: categories_taxonomy.root) }
       let!(:clothing_taxon) { create(:taxon, name: 'Clothing', taxonomy: categories_taxonomy, parent: men_taxon) }
 

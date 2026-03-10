@@ -165,6 +165,11 @@ module Spree
           where("#{Classification.table_name}.taxon_id" => taxon.cached_self_and_descendants_ids).distinct
       end
 
+      # Alias for in_taxon — public API name
+      add_search_scope :in_category do |category|
+        in_taxon(category)
+      end
+
       # This scope selects products in all taxons AND all its descendants
       # If you need products only within one taxon use
       #

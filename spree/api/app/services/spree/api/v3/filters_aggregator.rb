@@ -2,20 +2,20 @@ module Spree
   module Api
     module V3
       class FiltersAggregator
-        # @param scope [ActiveRecord::Relation] Base product scope (already filtered by store, availability, taxon, etc.)
+        # @param scope [ActiveRecord::Relation] Base product scope (already filtered by store, availability, category, etc.)
         # @param currency [String] Currency for price range
-        # @param taxon [Spree::Taxon, nil] Optional taxon for default_sort and taxon filtering context
-        def initialize(scope:, currency:, taxon: nil)
+        # @param category [Spree::Category, nil] Optional category for default_sort and category filtering context
+        def initialize(scope:, currency:, category: nil)
           @scope = scope
           @currency = currency
-          @taxon = taxon
+          @category = category
         end
 
         def call
           {
             filters: build_filters,
             sort_options: sort_options,
-            default_sort: to_api_sort(@taxon&.sort_order || 'manual'),
+            default_sort: to_api_sort(@category&.sort_order || 'manual'),
             total_count: @scope.distinct.count
           }
         end
@@ -27,7 +27,7 @@ module Spree
             price_filter,
             availability_filter,
             *option_type_filters,
-            taxon_filter
+            category_filter
           ].compact
         end
 
@@ -93,7 +93,7 @@ module Spree
 
         def option_value_data(option_type, option_value)
           # Count products in scope that have this option value
-          # We use a subquery approach to avoid GROUP BY conflicts when scope includes joins (like in_taxon)
+          # We use a subquery approach to avoid GROUP BY conflicts when scope includes joins (like in_category)
           # Join directly to option_value_variants for efficiency (skips joining through option_values table)
           count = Spree::Product
             .where(id: base_scope_product_ids)
@@ -115,31 +115,31 @@ module Spree
           @base_scope_product_ids ||= @scope.reorder('').distinct.pluck(:id)
         end
 
-        def taxon_filter
-          return nil if @taxon.nil?
+        def category_filter
+          return nil if @category.nil?
 
-          # Get child taxons at the next depth level
-          child_taxons = @taxon.children.order(:lft).select do |child|
-            # Only include taxons that have products in the current scope
-            @scope.in_taxon(child).exists?
+          # Get child categories at the next depth level
+          child_categories = @category.children.order(:lft).select do |child|
+            # Only include categories that have products in the current scope
+            @scope.in_category(child).exists?
           end
 
-          return nil if child_taxons.empty?
+          return nil if child_categories.empty?
 
           {
-            id: 'taxons',
-            type: 'taxon',
-            options: child_taxons.map { |t| taxon_option_data(t) }
+            id: 'categories',
+            type: 'category',
+            options: child_categories.map { |c| category_option_data(c) }
           }
         end
 
-        def taxon_option_data(taxon)
-          count = @scope.in_taxon(taxon).distinct.count
+        def category_option_data(category)
+          count = @scope.in_category(category).distinct.count
 
           {
-            id: taxon.prefixed_id,
-            name: taxon.name,
-            permalink: taxon.permalink,
+            id: category.prefixed_id,
+            name: category.name,
+            permalink: category.permalink,
             count: count
           }
         end

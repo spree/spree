@@ -7,7 +7,7 @@ RSpec.describe Spree::Products::AutoMatchTaxons do
   let(:product) { create(:product, stores: [store]) }
 
   context 'when product matches new taxon' do
-    let!(:taxon) { create(:automatic_taxon, taxonomy: store.taxonomies.first) }
+    let!(:taxon) { create(:automatic_taxon, taxonomy: store.taxonomies.first || create(:taxonomy, store: store)) }
 
     before do
       create(:tag_taxon_rule, taxon: taxon, value: 'cruelty-free')
@@ -32,7 +32,7 @@ RSpec.describe Spree::Products::AutoMatchTaxons do
   end
 
   context 'when product no longer matches taxon' do
-    let(:taxon) { create(:automatic_taxon, taxonomy: store.taxonomies.first) }
+    let(:taxon) { create(:automatic_taxon, taxonomy: store.taxonomies.first || create(:taxonomy, store: store)) }
 
     before do
       create(:tag_taxon_rule, taxon: taxon, value: 'cruelty-free')

@@ -25,7 +25,7 @@ console.log("Examples:");
 console.log("  await client.products.list()");
 console.log('  await client.products.get("my-product", {}, { locale: "fr" })');
 console.log(
-  '  await client.taxons.get("categories/clothing", {}, { currency: "EUR" })',
+  '  await client.categories.get("categories/clothing", {}, { currency: "EUR" })',
 );
 console.log("");
 

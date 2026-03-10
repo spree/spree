@@ -29,9 +29,8 @@ Spree::Core::Engine.add_routes do
             get :filters, to: 'products/filters#index'
           end
         end
-        resources :taxonomies, only: [:index, :show]
-        resources :taxons, only: [:index, :show], id: /.+/ do
-          resources :products, only: [:index], controller: 'taxons/products'
+        resources :categories, only: [:index, :show], id: /.+/ do
+          resources :products, only: [:index], controller: 'categories/products'
         end
 
         # Cart

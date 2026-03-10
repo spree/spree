@@ -150,7 +150,7 @@ const products = await client.products.list({
   limit: 25,
   name_cont: 'shirt',
   sort: 'price asc',
-  expand: ['variants', 'images', 'taxons'],
+  expand: ['variants', 'images', 'categories'],
 });
 
 // Get single product by ID or slug
@@ -158,38 +158,27 @@ const product = await client.products.get('spree-tote', {
   expand: ['variants', 'images'],
 });
 
-// Get available filters (price range, availability, options, taxons)
+// Get available filters (price range, availability, options, categories)
 const filters = await client.products.filters({
-  taxon_id: 'txn_abc123', // Optional: scope filters to a taxon
+  category_id: 'txn_abc123', // Optional: scope filters to a category
 });
 ```
 
-### Categories (Taxonomies & Taxons)
+### Categories
 
 ```typescript
-// List taxonomies
-const taxonomies = await client.taxonomies.list({
-  expand: ['taxons'],
-});
-
-// Get taxonomy with taxons
-const categories = await client.taxonomies.get('tax_123', {
-  expand: ['root', 'taxons'],
-});
-
-// List taxons with filtering
-const taxons = await client.taxons.list({
+// List categories with filtering
+const categories = await client.categories.list({
   depth_eq: 1,              // Top-level categories only
-  taxonomy_id_eq: '123',    // Filter by taxonomy
 });
 
-// Get single taxon by ID or permalink
-const taxon = await client.taxons.get('categories/clothing', {
+// Get single category by ID or permalink
+const category = await client.categories.get('categories/clothing', {
   expand: ['ancestors', 'children'], // For breadcrumbs and subcategories
 });
 
 // List products in a category
-const categoryProducts = await client.taxons.products.list('categories/clothing', {
+const categoryProducts = await client.categories.products.list('categories/clothing', {
   page: 1,
   limit: 12,
   expand: ['images', 'default_variant'],
@@ -525,7 +514,7 @@ The SDK uses a resource builder pattern for nested resources:
 | `customer` | `creditCards` | `list`, `get`, `delete` |
 | `customer` | `giftCards` | `list`, `get` |
 | `markets` | `countries` | `list`, `get` |
-| `taxons` | `products` | `list` |
+| `categories` | `products` | `list` |
 | `wishlists` | `items` | `create`, `update`, `delete` |
 
 Example:
@@ -536,7 +525,7 @@ await client.orders.payments.list(orderId, options);
 await client.orders.shipments.update(orderId, shipmentId, params, options);
 await client.customer.addresses.list({}, options);
 await client.markets.countries.list(marketId);
-await client.taxons.products.list(taxonId, params, options);
+await client.categories.products.list(categoryId, params, options);
 await client.wishlists.items.create(wishlistId, params, options);
 ```
 
@@ -605,8 +594,7 @@ import type {
   StoreProduct,
   StoreOrder,
   StoreVariant,
-  StoreTaxon,
-  StoreTaxonomy,
+  StoreCategory,
   StoreLineItem,
   StoreAddress,
   StoreCustomer,
@@ -615,7 +603,7 @@ import type {
 
 // All responses are fully typed
 const products: PaginatedResponse<StoreProduct> = await client.products.list();
-const taxon: StoreTaxon = await client.taxons.get('clothing');
+const category: StoreCategory = await client.categories.get('clothing');
 ```
 
 ## Available Types
@@ -627,8 +615,7 @@ The SDK exports all Store API types:
 - `StoreVariant` - Variant data
 - `StoreOrder` - Order/cart data
 - `StoreLineItem` - Line item in cart
-- `StoreTaxonomy` - Category group
-- `StoreTaxon` - Individual category
+- `StoreCategory` - Category
 - `StoreCountry` - Country with states
 - `StoreState` - State/province
 - `StoreAddress` - Customer address

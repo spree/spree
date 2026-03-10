@@ -6,7 +6,8 @@ RSpec.describe Spree::Admin::ClassificationsController, type: :controller do
   render_views
 
   let(:store) { @default_store }
-  let(:taxon) { create(:taxon, sort_order: sort_order, taxonomy: store.taxonomies.first) }
+  let(:taxonomy) { store.taxonomies.first || create(:taxonomy, store: store) }
+  let(:taxon) { create(:taxon, sort_order: sort_order, taxonomy: taxonomy) }
   let(:sort_order) { 'manual' }
 
   let(:product1) { create(:product, stores: [store]) }

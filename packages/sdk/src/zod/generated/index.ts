@@ -2,6 +2,7 @@
 export { AddressSchema, type Address } from './Address';
 export { AssetSchema, type Asset } from './Asset';
 export { BaseSchema, type Base } from './Base';
+export { CategorySchema, type Category } from './Category';
 export { CountrySchema, type Country } from './Country';
 export { CreditCardSchema, type CreditCard } from './CreditCard';
 export { CurrencySchema, type Currency } from './Currency';
@@ -49,8 +50,6 @@ export { StockMovementSchema, type StockMovement } from './StockMovement';
 export { StockTransferSchema, type StockTransfer } from './StockTransfer';
 export { StoreCreditSchema, type StoreCredit } from './StoreCredit';
 export { TaxCategorySchema, type TaxCategory } from './TaxCategory';
-export { TaxonSchema, type Taxon } from './Taxon';
-export { TaxonomySchema, type Taxonomy } from './Taxonomy';
 export { VariantSchema, type Variant } from './Variant';
 export { WishedItemSchema, type WishedItem } from './WishedItem';
 export { WishlistSchema, type Wishlist } from './Wishlist';

@@ -25,7 +25,7 @@ RSpec.describe Spree::ReportLineItems::ProductsPerformance do
   end
 
   describe '#category_levels' do
-    let(:taxonomy) { store.taxonomies.first }
+    let(:taxonomy) { store.taxonomies.first || create(:taxonomy, name: 'Categories', store: store) }
     let(:taxon) { create(:taxon, name: 'Shoes', taxonomy: taxonomy) }
 
     context 'when product has taxons' do

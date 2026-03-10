@@ -116,8 +116,7 @@ describe('createClient', () => {
 
     expect(client.auth).toBeDefined();
     expect(client.products).toBeDefined();
-    expect(client.taxonomies).toBeDefined();
-    expect(client.taxons).toBeDefined();
+    expect(client.categories).toBeDefined();
     expect(client.countries).toBeDefined();
     expect(client.currencies).toBeDefined();
     expect(client.locales).toBeDefined();

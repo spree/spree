@@ -1,42 +1,42 @@
-import type { Taxon, Product, PaginatedResponse, TaxonListParams, ProductListParams } from '@spree/sdk';
+import type { Category, Product, PaginatedResponse, CategoryListParams, ProductListParams } from '@spree/sdk';
 import { getClient } from '../config';
 import { getLocaleOptions } from '../locale';
 import type { SpreeNextOptions } from '../types';
 
 /**
- * List taxons (categories) with optional filtering and pagination.
+ * List categories with optional filtering and pagination.
  * Locale/country are auto-read from cookies when not provided.
  */
-export async function listTaxons(
-  params?: TaxonListParams,
+export async function listCategories(
+  params?: CategoryListParams,
   options?: SpreeNextOptions
-): Promise<PaginatedResponse<Taxon>> {
+): Promise<PaginatedResponse<Category>> {
   const resolved = options ?? await getLocaleOptions();
-  return getClient().taxons.list(params, resolved);
+  return getClient().categories.list(params, resolved);
 }
 
 /**
- * Get a single taxon by ID or permalink.
+ * Get a single category by ID or permalink.
  * Locale/country are auto-read from cookies when not provided.
  */
-export async function getTaxon(
+export async function getCategory(
   idOrPermalink: string,
   params?: Record<string, unknown>,
   options?: SpreeNextOptions
-): Promise<Taxon> {
+): Promise<Category> {
   const resolved = options ?? await getLocaleOptions();
-  return getClient().taxons.get(idOrPermalink, params, resolved);
+  return getClient().categories.get(idOrPermalink, params, resolved);
 }
 
 /**
- * List products within a taxon.
+ * List products within a category.
  * Locale/country are auto-read from cookies when not provided.
  */
-export async function listTaxonProducts(
-  taxonId: string,
+export async function listCategoryProducts(
+  categoryId: string,
   params?: ProductListParams,
   options?: SpreeNextOptions
 ): Promise<PaginatedResponse<Product>> {
   const resolved = options ?? await getLocaleOptions();
-  return getClient().taxons.products.list(taxonId, params, resolved);
+  return getClient().categories.products.list(categoryId, params, resolved);
 }

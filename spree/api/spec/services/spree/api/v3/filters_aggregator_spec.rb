@@ -27,7 +27,7 @@ RSpec.describe Spree::Api::V3::FiltersAggregator do
 
   let(:scope) { store.products.available(Time.current, currency) }
 
-  subject { described_class.new(scope: scope, currency: currency, taxon: taxon) }
+  subject { described_class.new(scope: scope, currency: currency, category: taxon) }
 
   describe '#call' do
     let(:result) { subject.call }
@@ -58,7 +58,7 @@ RSpec.describe Spree::Api::V3::FiltersAggregator do
       end
 
       it 'returns manual as default_sort when no taxon' do
-        aggregator = described_class.new(scope: scope, currency: currency, taxon: nil)
+        aggregator = described_class.new(scope: scope, currency: currency, category: nil)
         expect(aggregator.call[:default_sort]).to eq('manual')
       end
     end
@@ -115,24 +115,24 @@ RSpec.describe Spree::Api::V3::FiltersAggregator do
       end
     end
 
-    describe 'taxon filter' do
-      it 'includes child taxons when taxon is provided' do
-        taxon_filter = result[:filters].find { |f| f[:type] == 'taxon' }
+    describe 'category filter' do
+      it 'includes child categories when category is provided' do
+        category_filter = result[:filters].find { |f| f[:type] == 'category' }
 
-        expect(taxon_filter).to be_present
-        expect(taxon_filter[:options].map { |t| t[:name] }).to include('Child')
+        expect(category_filter).to be_present
+        expect(category_filter[:options].map { |t| t[:name] }).to include('Child')
       end
 
-      it 'does not include taxon filter when no taxon provided' do
-        aggregator = described_class.new(scope: scope, currency: currency, taxon: nil)
-        taxon_filter = aggregator.call[:filters].find { |f| f[:type] == 'taxon' }
+      it 'does not include category filter when no category provided' do
+        aggregator = described_class.new(scope: scope, currency: currency, category: nil)
+        category_filter = aggregator.call[:filters].find { |f| f[:type] == 'category' }
 
-        expect(taxon_filter).to be_nil
+        expect(category_filter).to be_nil
       end
 
-      it 'includes product count per taxon' do
-        taxon_filter = result[:filters].find { |f| f[:type] == 'taxon' }
-        child_option = taxon_filter[:options].find { |t| t[:name] == 'Child' }
+      it 'includes product count per category' do
+        category_filter = result[:filters].find { |f| f[:type] == 'category' }
+        child_option = category_filter[:options].find { |t| t[:name] == 'Child' }
 
         expect(child_option[:count]).to eq(2)
       end

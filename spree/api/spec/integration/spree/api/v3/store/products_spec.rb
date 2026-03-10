@@ -54,7 +54,7 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
       parameter name: 'q[name_cont]', in: :query, type: :string, required: false,
                 description: 'Filter by name containing string'
       parameter name: 'q[taxons_id_eq]', in: :query, type: :string, required: false,
-                description: 'Filter by taxon ID'
+                description: 'Filter by category ID'
       parameter name: 'q[price_gte]', in: :query, type: :number, required: false,
                 description: 'Filter by minimum price'
       parameter name: 'q[price_lte]', in: :query, type: :number, required: false,
@@ -64,7 +64,7 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
       parameter name: 'q[in_stock]', in: :query, type: :boolean, required: false,
                 description: 'Filter to only in-stock products'
       parameter name: :expand, in: :query, type: :string, required: false,
-                description: 'Comma-separated associations to expand (variants, images, taxons, option_types)'
+                description: 'Comma-separated associations to expand (variants, images, categories, option_types)'
       parameter name: :fields, in: :query, type: :string, required: false,
                 description: 'Comma-separated list of fields to include (e.g., name,slug,price). id is always included.'
 
@@ -187,20 +187,20 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
         Returns available filters for products with their options and counts.
         Use this endpoint to build filter UIs for product listing pages.
 
-        The filters are context-aware - when a taxon_id is provided, only filters
-        relevant to products in that taxon are returned.
+        The filters are context-aware - when a category_id is provided, only filters
+        relevant to products in that category are returned.
       DESC
 
       sdk_example <<~JS
         const filters = await client.products.filters({
-          taxon_id: 'taxon_abc123',
+          category_id: 'txn_abc123',
         })
       JS
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true,
                 description: 'Publishable API key'
-      parameter name: :taxon_id, in: :query, type: :string, required: false,
-                description: 'Scope filters to products in this taxon (prefix ID)'
+      parameter name: :category_id, in: :query, type: :string, required: false,
+                description: 'Scope filters to products in this category (prefix ID)'
       parameter name: 'q[name_cont]', in: :query, type: :string, required: false,
                 description: 'Filter by name containing string'
 
@@ -211,7 +211,7 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
                properties: {
                  filters: {
                    type: :array,
-                   description: 'Available filters (price_range, availability, option, taxon)',
+                   description: 'Available filters (price_range, availability, option, category)',
                    items: { type: :object }
                  },
                  sort_options: {
@@ -264,9 +264,9 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
         end
       end
 
-      response '200', 'filters scoped to taxon' do
+      response '200', 'filters scoped to category' do
         let(:'x-spree-api-key') { api_key.token }
-        let(:taxon_id) { taxon.prefixed_id }
+        let(:category_id) { taxon.prefixed_id }
 
         schema type: :object,
                properties: {
@@ -280,10 +280,10 @@ RSpec.describe 'Products API', type: :request, swagger_doc: 'api-reference/store
         run_test! do |response|
           data = JSON.parse(response.body)
 
-          # Should include taxon filter with child taxons
-          taxon_filter = data['filters'].find { |f| f['type'] == 'taxon' }
-          expect(taxon_filter).to be_present
-          expect(taxon_filter['options'].map { |t| t['name'] }).to include('Shirts')
+          # Should include category filter with child categories
+          category_filter = data['filters'].find { |f| f['type'] == 'category' }
+          expect(category_filter).to be_present
+          expect(category_filter['options'].map { |t| t['name'] }).to include('Shirts')
         end
       end
 

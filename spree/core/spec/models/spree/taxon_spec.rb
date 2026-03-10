@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::Taxon, type: :model do
   let(:store) { @default_store }
-  let(:taxonomy) { store.taxonomies.first }
+  let(:taxonomy) { store.taxonomies.first || create(:taxonomy, store: store) }
   let(:taxon) { build(:taxon, name: 'Ruby on Rails', parent: nil) }
 
   it_behaves_like 'metadata'
@@ -332,7 +332,7 @@ describe Spree::Taxon, type: :model do
 
   describe '#localized_slugs_for_store' do
     let(:store) { create(:store, default_locale: 'fr', supported_locales: 'en,pl,fr') }
-    let(:taxonomy) { store.taxonomies.find_by(name: Spree.t(:taxonomy_categories_name)) }
+    let(:taxonomy) { store.taxonomies.find_by(name: Spree.t(:taxonomy_categories_name)) || create(:taxonomy, name: Spree.t(:taxonomy_categories_name), store: store) }
     let(:taxon) { create(:taxon, taxonomy: taxonomy, permalink: 'test_slug_en') }
     let!(:taxon_translation_fr) { taxon.translations.create(slug: 'test_slug_fr', locale: 'fr') }
     let!(:root_taxon) { taxonomy.taxons.find_by(parent_id: nil) }

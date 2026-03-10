@@ -62,7 +62,7 @@
     "url": "https://github.com/spree/spree/issues"
   },
   "peerDependencies": {
-    "@spree/sdk": ">=0.8.0",
+    "@spree/sdk": ">=0.8.2",
     "next": ">=15.0.0",
     "react": ">=19.0.0"
   },

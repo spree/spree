@@ -48,13 +48,8 @@ export const fixtures = {
     country_iso: 'US',
     state_abbr: 'NY',
   },
-  taxonomy: {
-    id: 'tax_1',
-    name: 'Categories',
-    position: 1,
-  },
-  taxon: {
-    id: 'taxon_1',
+  category: {
+    id: 'txn_1',
     name: 'Clothing',
     permalink: 'categories/clothing',
     position: 1,
@@ -134,26 +129,17 @@ export const handlers = [
     HttpResponse.json(fixtures.product)
   ),
 
-  // Taxonomies
-  http.get(`${API_PREFIX}/taxonomies`, () =>
-    HttpResponse.json({ data: [fixtures.taxonomy], meta: paginationMeta })
+  // Categories
+  http.get(`${API_PREFIX}/categories`, () =>
+    HttpResponse.json({ data: [fixtures.category], meta: paginationMeta })
   ),
 
-  http.get(`${API_PREFIX}/taxonomies/:id`, () =>
-    HttpResponse.json(fixtures.taxonomy)
-  ),
-
-  // Taxons
-  http.get(`${API_PREFIX}/taxons`, () =>
-    HttpResponse.json({ data: [fixtures.taxon], meta: paginationMeta })
-  ),
-
-  http.get(`${API_PREFIX}/taxons/:id/products`, () =>
+  http.get(`${API_PREFIX}/categories/:id/products`, () =>
     HttpResponse.json({ data: [fixtures.product], meta: paginationMeta })
   ),
 
-  http.get(`${API_PREFIX}/taxons/:id`, () =>
-    HttpResponse.json(fixtures.taxon)
+  http.get(`${API_PREFIX}/categories/:id`, () =>
+    HttpResponse.json(fixtures.category)
   ),
 
   // Countries

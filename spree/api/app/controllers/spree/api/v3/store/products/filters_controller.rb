@@ -8,27 +8,28 @@ module Spree
               aggregator = Spree::Api::V3::FiltersAggregator.new(
                 scope: filters_scope,
                 currency: current_currency,
-                taxon: taxon
+                category: category
               )
               render json: aggregator.call
             end
 
             private
 
-            # Build scope from taxon and/or ransack params
+            # Build scope from category and/or ransack params
             # @return [ActiveRecord::Relation]
             def filters_scope
               scope = current_store.products.active(current_currency)
-              scope = scope.in_taxon(taxon) if taxon.present?
+              scope = scope.in_category(category) if category.present?
               scope = scope.ransack(params[:q]).result if params[:q].present?
               scope.accessible_by(current_ability, :show)
             end
 
-            # Fetches taxon from params
-            # @param [String] taxon_id
-            # @return [Spree::Taxon]
-            def taxon
-              @taxon ||= params[:taxon_id].present? ? current_store.taxons.find_by_param(params[:taxon_id]) : nil
+            # Fetches category from params
+            # @param [String] category_id
+            # @return [Spree::Category]
+            def category
+              category_id = params[:category_id]
+              @category ||= category_id.present? ? current_store.categories.find_by_param(category_id) : nil
             end
           end
         end

@@ -36,11 +36,11 @@ initSpreeNext({
 ### 2. Fetch data in Server Components
 
 ```typescript
-import { listProducts, getProduct, listTaxons } from '@spree/next';
+import { listProducts, getProduct, listCategories } from '@spree/next';
 
 export default async function ProductsPage() {
   const products = await listProducts({ limit: 12 });
-  const categories = await listTaxons({ depth_eq: 1 });
+  const categories = await listCategories({ depth_eq: 1 });
 
   return (
     <div>
@@ -95,21 +95,17 @@ import { listProducts, getProduct, getProductFilters } from '@spree/next';
 
 const products = await listProducts({ limit: 25, expand: ['variants', 'images'] });
 const product = await getProduct('spree-tote');
-const filters = await getProductFilters({ taxon_id: 'txn_123' });
+const filters = await getProductFilters({ category_id: 'txn_123' });
 ```
 
 ### Categories
 
 ```typescript
-import { listTaxons, getTaxon, listTaxonProducts } from '@spree/next';
-import { listTaxonomies, getTaxonomy } from '@spree/next';
+import { listCategories, getCategory, listCategoryProducts } from '@spree/next';
 
-const taxons = await listTaxons({ depth_eq: 1 });
-const taxon = await getTaxon('categories/clothing');
-const products = await listTaxonProducts('categories/clothing', { limit: 12 });
-
-const taxonomies = await listTaxonomies({ expand: ['taxons'] });
-const taxonomy = await getTaxonomy('tax_123');
+const categories = await listCategories({ depth_eq: 1 });
+const category = await getCategory('categories/clothing');
+const products = await listCategoryProducts('categories/clothing', { limit: 12 });
 ```
 
 ### Store & Geography
@@ -262,7 +258,7 @@ Data functions work without any locale arguments:
 
 ```typescript
 const products = await listProducts({ limit: 10 });
-const taxon = await getTaxon('categories/clothing');
+const category = await getCategory('categories/clothing');
 ```
 
 Use the `setLocale` server action in country/language switchers:
@@ -291,7 +287,7 @@ import type {
   StoreOrder,
   StoreLineItem,
   StorePaymentSession,
-  StoreTaxon,
+  StoreCategory,
   PaginatedResponse,
   SpreeError,
 } from '@spree/next';

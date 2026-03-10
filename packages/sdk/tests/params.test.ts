@@ -99,7 +99,7 @@ describe('transformListParams', () => {
       sort: '-created_at',
       name_cont: 'shirt',
       price_gte: 20,
-      taxons_id_eq: 'txn_abc123',
+      taxons_id_eq: 'txn_abc123', // Ransack param name matches DB column
     });
     expect(result).toEqual({
       page: 1,

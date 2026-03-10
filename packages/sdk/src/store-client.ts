@@ -13,7 +13,7 @@ import type {
   ProductListParams,
   ProductFiltersParams,
   ProductFiltersResponse,
-  TaxonListParams,
+  CategoryListParams,
   OrderListParams,
   CreateCartParams,
   AddLineItemParams,
@@ -32,8 +32,7 @@ import type {
   Currency,
   Locale,
   Market,
-  Taxonomy,
-  Taxon,
+  Category,
   Payment,
   PaymentMethod,
   PaymentSession,
@@ -102,7 +101,7 @@ export class StoreClient {
 
     /**
      * Get available filters for products
-     * Returns filter options (price range, availability, option types, taxons) with counts
+     * Returns filter options (price range, availability, option types, categories) with counts
      */
     filters: (
       params?: ProductFiltersParams,
@@ -115,78 +114,51 @@ export class StoreClient {
   };
 
   // ============================================
-  // Taxonomies & Taxons
+  // Categories
   // ============================================
 
-  readonly taxonomies = {
+  readonly categories = {
     /**
-     * List taxonomies
+     * List categories
      */
     list: (
-      params?: ListParams,
+      params?: CategoryListParams,
       options?: RequestOptions
-    ): Promise<PaginatedResponse<Taxonomy>> =>
-      this.request<PaginatedResponse<Taxonomy>>('GET', '/taxonomies', {
+    ): Promise<PaginatedResponse<Category>> =>
+      this.request<PaginatedResponse<Category>>('GET', '/categories', {
         ...options,
         params: transformListParams({ ...params }),
       }),
 
     /**
-     * Get a taxonomy by ID
-     */
-    get: (
-      id: string,
-      params?: { expand?: string[]; fields?: string[] },
-      options?: RequestOptions
-    ): Promise<Taxonomy> =>
-      this.request<Taxonomy>('GET', `/taxonomies/${id}`, {
-        ...options,
-        params: getParams(params),
-      }),
-  };
-
-  readonly taxons = {
-    /**
-     * List taxons
-     */
-    list: (
-      params?: TaxonListParams,
-      options?: RequestOptions
-    ): Promise<PaginatedResponse<Taxon>> =>
-      this.request<PaginatedResponse<Taxon>>('GET', '/taxons', {
-        ...options,
-        params: transformListParams({ ...params }),
-      }),
-
-    /**
-     * Get a taxon by ID or permalink
+     * Get a category by ID or permalink
      */
     get: (
       idOrPermalink: string,
       params?: { expand?: string[]; fields?: string[] },
       options?: RequestOptions
-    ): Promise<Taxon> =>
-      this.request<Taxon>('GET', `/taxons/${idOrPermalink}`, {
+    ): Promise<Category> =>
+      this.request<Category>('GET', `/categories/${idOrPermalink}`, {
         ...options,
         params: getParams(params),
       }),
 
     /**
-     * Nested resource: Products in a taxon
+     * Nested resource: Products in a category
      */
     products: {
       /**
-       * List products in a taxon
-       * @param taxonId - Taxon ID (prefix_id) or permalink
+       * List products in a category
+       * @param categoryId - Category ID (prefix_id) or permalink
        */
       list: (
-        taxonId: string,
+        categoryId: string,
         params?: ProductListParams,
         options?: RequestOptions
       ): Promise<PaginatedResponse<Product>> =>
         this.request<PaginatedResponse<Product>>(
           'GET',
-          `/taxons/${taxonId}/products`,
+          `/categories/${categoryId}/products`,
           {
             ...options,
             params: transformListParams({ ...params }),
