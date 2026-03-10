@@ -1,5 +1,24 @@
 # @spree/sdk
 
+## 0.8.0
+
+### Minor Changes
+
+- **Breaking:** Move customer registration from `auth.register()` to `customers.create()`. The API endpoint changed from `POST /auth/register` to `POST /customers`, aligning with RESTful resource conventions. The method signature and parameters remain the same — only the namespace changed.
+
+  ```typescript
+  // Before
+  const auth = await client.auth.register({ email, password, ... })
+
+  // After
+  const auth = await client.customers.create({ email, password, ... })
+  ```
+
+### Patch Changes
+
+- Updated dependencies:
+  - @spree/next@0.8.0
+
 ## 0.7.2
 
 ### Patch Changes
@@ -224,7 +243,7 @@
 
 ### Patch Changes
 
-- All cart/checkout mutations (line items create/update/delete, shipments update) now return the updated `StoreOrder` with recalculated totals, matching the industry standard (Shopify, Medusa, Saleor)
+- All cart/checkout mutations (line items create/update/delete, shipments update) now return the updated `StoreOrder` with recalculated totals, matching the industry standard
 - `StoreOrder` type: all associations (`line_items`, `shipments`, `payments`, `bill_address`, `ship_address`, `order_promotions`) are now always included — no longer require `?includes=` param
 
 ## 0.2.1

@@ -61,7 +61,7 @@ erDiagram
 <CodeGroup>
 
 ```typescript SDK
-const { token, user } = await client.auth.register({
+const { token, user } = await client.customers.create({
   email: 'john@example.com',
   password: 'password123',
   password_confirmation: 'password123',
@@ -73,8 +73,8 @@ const { token, user } = await client.auth.register({
 ```
 
 ```bash cURL
-curl -X POST 'https://api.mystore.com/api/v3/store/auth/register' \
-  -H 'Authorization: Bearer spree_pk_xxx' \
+curl -X POST 'https://api.mystore.com/api/v3/store/customers' \
+  -H 'X-Spree-Api-Key: spree_pk_xxx' \
   -H 'Content-Type: application/json' \
   -d '{
     "email": "john@example.com",

@@ -58,6 +58,7 @@ All Store API resources are available directly on the client:
 client.products.list()           // Products
 client.cart.create()             // Cart
 client.orders.complete(id, opt)  // Checkout
+client.customers.create(params)  // Registration
 client.customer.get(opt)         // Account
 ```
 
@@ -96,7 +97,7 @@ const newTokens = await client.auth.refresh({ token });
 ### 3. Register New Customer
 
 ```typescript
-const { token, user } = await client.auth.register({
+const { token, user } = await client.customers.create({
   email: 'new@example.com',
   password: 'password123',
   password_confirmation: 'password123',
