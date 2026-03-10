@@ -33,7 +33,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
       response '200', 'products found' do
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
 
-        schema SwaggerSchemaHelpers.paginated('AdminProduct')
+        schema SwaggerSchemaHelpers.paginated('Product')
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -112,7 +112,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:body) { { name: 'New Product', price: 19.99, shipping_category_id: shipping_category.id } }
 
-        schema '$ref' => '#/components/schemas/AdminProduct'
+        schema '$ref' => '#/components/schemas/Product'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -149,7 +149,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
         let(:'x-spree-api-key') { secret_api_key.plaintext_token }
         let(:id) { product.prefixed_id }
 
-        schema '$ref' => '#/components/schemas/AdminProduct'
+        schema '$ref' => '#/components/schemas/Product'
 
         run_test! do |response|
           data = JSON.parse(response.body)
@@ -224,7 +224,7 @@ RSpec.describe 'Admin Products API', type: :request, swagger_doc: 'api-reference
         let(:id) { product.prefixed_id }
         let(:body) { { name: 'Updated Name' } }
 
-        schema '$ref' => '#/components/schemas/AdminProduct'
+        schema '$ref' => '#/components/schemas/Product'
 
         run_test! do |response|
           data = JSON.parse(response.body)
