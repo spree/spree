@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'stringex'
 
 module Spree
@@ -54,9 +56,9 @@ module Spree
     #
     # Validations
     #
-    validates :name, presence: true, uniqueness: { scope: [:parent_id, :taxonomy_id], case_sensitive: false }
+    validates :name, presence: true, uniqueness: { scope: %i[parent_id taxonomy_id], case_sensitive: false }
     validates :taxonomy, presence: true
-    validates :permalink, uniqueness: { case_sensitive: false, scope: [:parent_id, :taxonomy_id] }
+    validates :permalink, uniqueness: { case_sensitive: false, scope: %i[parent_id taxonomy_id] }
     validates :hide_from_nav, inclusion: { in: [true, false] }
     validate :check_for_root, on: :create
     validate :parent_belongs_to_same_taxonomy
@@ -88,9 +90,9 @@ module Spree
     scope :for_stores, ->(stores) { joins(:taxonomy).where(spree_taxonomies: { store_id: stores.ids }) }
     scope :for_taxonomy, lambda { |taxonomy_name|
       if Spree.use_translations?
-        joins(:taxonomy).
-          join_translation_table(Taxonomy).
-          where(
+        joins(:taxonomy)
+          .join_translation_table(Taxonomy)
+          .where(
             Taxonomy.arel_table_alias[:name].lower.matches(taxonomy_name.downcase.strip)
           )
       else
@@ -110,7 +112,7 @@ module Spree
       end
     end
 
-    scope :with_matching_name, ->(name_to_match) do
+    scope :with_matching_name, lambda { |name_to_match|
       value = name_to_match.to_s.strip.downcase
 
       if Spree.use_translations?
@@ -118,13 +120,14 @@ module Spree
       else
         where(arel_table[:name].lower.eq(value))
       end
-    end
+    }
 
     #
     #  Ransack
     #
-    self.whitelisted_ransackable_associations = %w[taxonomy]
-    self.whitelisted_ransackable_attributes = %w[name permalink automatic]
+    self.whitelisted_ransackable_associations = %w[taxonomy parent]
+    self.whitelisted_ransackable_attributes = %w[name permalink automatic depth is_root children_count
+                                                 classification_count hide_from_nav parent_id]
 
     #
     # Translations
@@ -142,7 +145,9 @@ module Spree
     validates :sort_order, inclusion: { in: SORT_ORDERS }, presence: true
 
     has_many :taxon_rules, class_name: 'Spree::TaxonRule', dependent: :destroy
-    accepts_nested_attributes_for :taxon_rules, allow_destroy: true, reject_if: proc { |attributes| attributes['value'].blank? }
+    accepts_nested_attributes_for :taxon_rules, allow_destroy: true, reject_if: proc { |attributes|
+      attributes['value'].blank?
+    }
     alias rules taxon_rules
 
     scope :manual, -> { where.not(automatic: true) }
@@ -160,14 +165,14 @@ module Spree
     end
 
     def active_products_with_descendants
-      @active_products_with_descendants ||= store.products.
-                                            joins(:classifications).
-                                            active.
-                                            where(
-                                              Spree::Classification.table_name => {
-                                                taxon_id: descendants.ids + [id]
-                                              }
-                                            )
+      @active_products_with_descendants ||= store.products
+                                                 .joins(:classifications)
+                                                 .active
+                                                 .where(
+                                                   Spree::Classification.table_name => {
+                                                     taxon_id: descendants.ids + [id]
+                                                   }
+                                                 )
     end
 
     def products_matching_rules(opts = {})
@@ -209,10 +214,10 @@ module Spree
     # so we can later use them for product filtering and so on
     # if we want to fire the service once during object lifecycle - pass only_once: true
     def regenerate_taxon_products(only_once: false)
-      if marked_for_regenerate_taxon_products?
-        Spree::Taxons::RegenerateProducts.call(taxon: self)
-        self.marked_for_regenerate_taxon_products = false if !frozen? && only_once
-      end
+      return unless marked_for_regenerate_taxon_products?
+
+      Spree::Taxons::RegenerateProducts.call(taxon: self)
+      self.marked_for_regenerate_taxon_products = false if !frozen? && only_once
     end
 
     def slug
@@ -283,7 +288,8 @@ module Spree
       end
 
       def generate_permalink_including_parent
-        [parent_permalink_with_fallback, (permalink.blank? ? name_with_fallback.to_url : permalink.split('/').last.to_url)].join('/')
+        [parent_permalink_with_fallback,
+         (permalink.blank? ? name_with_fallback.to_url : permalink.split('/').last.to_url)].join('/')
       end
 
       def generate_pretty_name_including_parent
@@ -384,11 +390,10 @@ module Spree
     end
 
     def sync_taxonomy_name
-      if saved_changes.key?(:name) && root?
-        return if taxonomy.name.to_s == name.to_s
+      return unless saved_changes.key?(:name) && root?
+      return if taxonomy.name.to_s == name.to_s
 
-        taxonomy.update(name: name)
-      end
+      taxonomy.update(name: name)
     end
 
     def touch_ancestors_and_taxonomy
@@ -399,15 +404,15 @@ module Spree
     end
 
     def check_for_root
-      if taxonomy.try(:root).present? && parent_id.nil?
-        errors.add(:root_conflict, 'this taxonomy already has a root taxon')
-      end
+      return unless taxonomy.try(:root).present? && parent_id.nil?
+
+      errors.add(:root_conflict, 'this taxonomy already has a root taxon')
     end
 
     def parent_belongs_to_same_taxonomy
-      if parent.present? && parent.taxonomy_id != taxonomy_id
-        errors.add(:parent, 'must belong to the same taxonomy')
-      end
+      return unless parent.present? && parent.taxonomy_id != taxonomy_id
+
+      errors.add(:parent, 'must belong to the same taxonomy')
     end
 
     def copy_taxonomy_from_parent
