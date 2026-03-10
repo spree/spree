@@ -172,7 +172,7 @@ await complete();
 import { login, register, logout, getCustomer, updateCustomer } from '@spree/next';
 
 await login(email, password);
-await register({ email, password, password_confirmation, first_name, last_name });
+await register({ email, password, password_confirmation, first_name, last_name, phone, accepts_email_marketing });
 await logout();
 const customer = await getCustomer();
 await updateCustomer({ first_name: 'John' });

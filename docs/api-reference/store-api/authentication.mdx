@@ -92,7 +92,7 @@ curl -X GET 'http://localhost:3000/api/v3/store/orders' \
 <CodeGroup>
 
 ```typescript SDK
-const { token, user } = await client.auth.register({
+const { token, user } = await client.customers.create({
   email: 'new@example.com',
   password: 'password123',
   password_confirmation: 'password123',
@@ -102,7 +102,7 @@ const { token, user } = await client.auth.register({
 ```
 
 ```bash cURL
-curl -X POST 'http://localhost:3000/api/v3/store/auth/register' \
+curl -X POST 'http://localhost:3000/api/v3/store/customers' \
   -H 'X-Spree-Api-Key: spree_pk_xxx' \
   -H 'Content-Type: application/json' \
   -d '{

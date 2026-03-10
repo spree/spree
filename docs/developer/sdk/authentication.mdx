@@ -34,7 +34,7 @@ const newTokens = await client.auth.refresh({ token })
 ## Register New Customer
 
 ```typescript
-const { token, user } = await client.auth.register({
+const { token, user } = await client.customers.create({
   email: 'new@example.com',
   password: 'password123',
   password_confirmation: 'password123',
