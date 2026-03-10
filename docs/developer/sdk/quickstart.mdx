@@ -22,7 +22,6 @@ import { createClient } from '@spree/sdk';
 const client = createClient({
   baseUrl: 'https://api.mystore.com',
   publishableKey: 'spree_pk_xxx',   // Store API
-  secretKey: 'spree_sk_xxx',        // Admin API (optional)
 });
 
 // Browse products (Store API)
@@ -52,36 +51,25 @@ await client.orders.next(cart.id, { orderToken: cart.token });
 await client.orders.complete(cart.id, { orderToken: cart.token });
 ```
 
-## Client Architecture
-
-The SDK exposes two API namespaces:
-
-```typescript
-client.store   // Store API — customer-facing (products, cart, checkout, account)
-client.admin   // Admin API — administrative (coming soon)
-```
-
-All Store API endpoints live under `client.*`. The Admin API namespace is ready for future endpoints.
-
 ## Nested Resources
 
 The SDK uses a resource builder pattern for nested resources:
 
 | Parent Resource | Nested Resource | Available Methods |
 |-----------------|-----------------|-------------------|
-| `store.orders` | `lineItems` | `create`, `update`, `delete` |
-| `store.orders` | `payments` | `list`, `get` |
-| `store.orders` | `paymentMethods` | `list` |
-| `store.orders` | `paymentSessions` | `create`, `get`, `update`, `complete` |
-| `store.orders` | `shipments` | `list`, `update` |
-| `store.orders` | `couponCodes` | `apply`, `remove` |
-| `store.customer` | `addresses` | `list`, `get`, `create`, `update`, `delete`, `markAsDefault` |
-| `store.customer` | `creditCards` | `list`, `get`, `delete` |
-| `store.customer` | `giftCards` | `list`, `get` |
-| `store.customer` | `orders` | `list` |
-| `store.customer` | `paymentSetupSessions` | `create`, `get`, `complete` |
-| `store.taxons` | `products` | `list` |
-| `store.wishlists` | `items` | `create`, `update`, `delete` |
+| `orders` | `lineItems` | `create`, `update`, `delete` |
+| `orders` | `payments` | `list`, `get` |
+| `orders` | `paymentMethods` | `list` |
+| `orders` | `paymentSessions` | `create`, `get`, `update`, `complete` |
+| `orders` | `shipments` | `list`, `update` |
+| `orders` | `couponCodes` | `apply`, `remove` |
+| `customer` | `addresses` | `list`, `get`, `create`, `update`, `delete`, `markAsDefault` |
+| `customer` | `creditCards` | `list`, `get`, `delete` |
+| `customer` | `giftCards` | `list`, `get` |
+| `customer` | `orders` | `list` |
+| `customer` | `paymentSetupSessions` | `create`, `get`, `complete` |
+| `taxons` | `products` | `list` |
+| `wishlists` | `items` | `create`, `update`, `delete` |
 
 ```typescript
 // Nested resources follow the pattern: client.parent.nested.method(parentId, ...)
