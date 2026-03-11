@@ -35,7 +35,7 @@ RSpec.configure do |config|
           After login, include the JWT token in the `Authorization: Bearer <token>` header.
 
           ### Order Token (For guest checkout)
-          When creating an order, a `token` is returned. Include this in the `x-spree-order-token` header
+          When creating an order, a `token` is returned. Include this in the `x-spree-token` header
           for guest access to that specific order.
 
           ## Response Format

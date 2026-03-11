@@ -4,21 +4,16 @@ import { AddressSchema } from './Address';
 import { LineItemSchema } from './LineItem';
 import { OrderPromotionSchema } from './OrderPromotion';
 import { PaymentSchema } from './Payment';
-import { PaymentMethodSchema } from './PaymentMethod';
 import { ShipmentSchema } from './Shipment';
 
 export const OrderSchema = z.object({
   id: z.string(),
   number: z.string(),
-  state: z.string(),
-  checkout_steps: z.array(z.string()),
-  token: z.string(),
-  email: z.string().nullable(),
+  email: z.string(),
   special_instructions: z.string().nullable(),
   currency: z.string(),
   locale: z.string().nullable(),
   item_count: z.number(),
-  state_lock_version: z.number(),
   shipment_state: z.string().nullable(),
   payment_state: z.string().nullable(),
   item_total: z.string(),
@@ -46,7 +41,6 @@ export const OrderSchema = z.object({
   payments: z.array(PaymentSchema),
   bill_address: AddressSchema.nullable(),
   ship_address: AddressSchema.nullable(),
-  payment_methods: z.array(PaymentMethodSchema),
 });
 
 export type Order = z.infer<typeof OrderSchema>;

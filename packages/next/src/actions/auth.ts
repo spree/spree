@@ -24,7 +24,7 @@ export async function login(
       try {
         await getClient().cart.associate({
           token: result.token,
-          orderToken: cartToken,
+          spreeToken: cartToken,
         });
       } catch {
         // Cart association failure is non-fatal
@@ -68,7 +68,7 @@ export async function register(
       try {
         await getClient().cart.associate({
           token: result.token,
-          orderToken: cartToken,
+          spreeToken: cartToken,
         });
       } catch {
         // Non-fatal

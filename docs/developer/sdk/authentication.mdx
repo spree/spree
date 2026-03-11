@@ -45,18 +45,18 @@ const { token, user } = await client.customers.create({
 
 ## Guest Checkout
 
-For guest checkout, use the `token` returned when creating a cart. The SDK automatically sends it via the `x-spree-order-token` header:
+For guest checkout, use the `token` returned when creating a cart. The SDK automatically sends it via the `x-spree-token` header:
 
 <AuthGuestCart />
 
 ```typescript
-const options = { orderToken: cart.token }
+const options = { spreeToken: cart.token }
 
-// Update order with email
-await client.orders.update(cart.id, {
+// Update checkout with email
+await client.checkout.update({
   email: 'guest@example.com',
 }, options)
 
 // Complete checkout
-await client.orders.complete(cart.id, options)
+await client.checkout.complete(options)
 ```

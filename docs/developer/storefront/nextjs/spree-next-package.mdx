@@ -114,14 +114,12 @@ await associateCart();                     // link guest cart to logged-in user
 
 ### Checkout
 
-All checkout functions take `orderId` as the first argument:
+Checkout functions use the implicit cart resolved from cookies. No `orderId` is needed.
 
 ```typescript
 import {
   getCheckout,
-  updateAddresses,
-  advance,
-  next,
+  updateCheckout,
   getShipments,
   selectShippingRate,
   applyCoupon,
@@ -129,15 +127,13 @@ import {
   complete,
 } from '@spree/next';
 
-const checkout = await getCheckout(orderId);
-await updateAddresses(orderId, { ship_address: { ... }, bill_address: { ... } });
-await advance(orderId);
-await next(orderId);
-const shipments = await getShipments(orderId);
-await selectShippingRate(orderId, shipmentId, shippingRateId);
-await applyCoupon(orderId, 'SAVE20');
-await removeCoupon(orderId, promotionId);
-await complete(orderId);
+const checkout = await getCheckout();
+await updateCheckout({ ship_address: { ... }, bill_address: { ... } });
+const shipments = await getShipments();
+await selectShippingRate(shipmentId, shippingRateId);
+await applyCoupon('SAVE20');
+await removeCoupon(promotionId);
+await complete();
 ```
 
 ### Authentication
@@ -175,6 +171,8 @@ const order = await getOrder(orderId);
 
 ### Payment Sessions
 
+Payment session functions use the implicit cart. No `orderId` is needed.
+
 ```typescript
 import {
   createPaymentSession,
@@ -183,14 +181,14 @@ import {
   completePaymentSession,
 } from '@spree/next';
 
-const session = await createPaymentSession(orderId, { payment_method_id: 'pm_123' });
+const session = await createPaymentSession({ payment_method_id: 'pm_123' });
 
 // Access provider data (e.g., Stripe client secret)
 const clientSecret = session.external_data.client_secret;
 
-const current = await getPaymentSession(orderId, sessionId);
-await updatePaymentSession(orderId, sessionId, { amount: '50.00' });
-await completePaymentSession(orderId, sessionId, { session_result: 'success' });
+const current = await getPaymentSession(sessionId);
+await updatePaymentSession(sessionId, { amount: '50.00' });
+await completePaymentSession(sessionId, { session_result: 'success' });
 ```
 
 ### Payment Setup Sessions

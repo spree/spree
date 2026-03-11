@@ -2,133 +2,40 @@ module Spree
   module Api
     module V3
       module Store
-        class OrdersController < ResourceController
-          include Spree::Api::V3::OrderConcern
-          include Spree::Api::V3::OrderLock
+        class OrdersController < Store::BaseController
+          # GET /api/v3/store/orders/:id
+          # Single order lookup — accessible via order token (guests) or JWT (authenticated users)
+          before_action :find_order!
 
-          # Skip base controller's set_resource and define our own complete list
-          skip_before_action :set_resource
-          before_action :set_resource, only: [:show, :update, :next, :advance, :complete]
-
-          # PATCH  /api/v3/store/orders/:id
-          #
-          # Accepts flat parameters:
-          #   {
-          #     "email": "customer@example.com",
-          #     "currency": "EUR",
-          #     "ship_address": { "firstname": "John", "country_iso": "US", ... },
-          #     "bill_address": { "firstname": "John", "country_iso": "US", ... }
-          #   }
-          #
-          def update
-            with_order_lock do
-              result = Spree.order_update_service.call(
-                order: @order,
-                params: order_params
-              )
-
-              if result.success?
-                render json: serialize_resource(@order.reload)
-              else
-                render_service_error(result.error, code: ERROR_CODES[:validation_error])
-              end
-            end
+          def show
+            render json: serializer_class.new(@order, params: serializer_params).to_h
           end
 
-          # PATCH  /api/v3/store/orders/:id/next
-          def next
-            with_order_lock do
-              result = Spree.checkout_next_service.call(order: @order)
+          private
 
-              if result.success?
-                render json: serialize_resource(@order)
-              else
-                render_service_error(result.error, code: ERROR_CODES[:order_cannot_transition])
-              end
-            end
+          def find_order!
+            @order = scope.find_by_prefix_id!(params[:id])
+            authorize!(:show, @order, order_token)
           end
 
-          # PATCH  /api/v3/store/orders/:id/advance
-          def advance
-            with_order_lock do
-              result = Spree.checkout_advance_service.call(order: @order)
-
-              if result.success?
-                render json: serialize_resource(@order)
-              else
-                render_service_error(result.error, code: ERROR_CODES[:order_cannot_transition])
-              end
-            end
-          end
-
-          # PATCH  /api/v3/store/orders/:id/complete
-          def complete
-            with_order_lock do
-              result = Spree.checkout_complete_service.call(order: @order)
-
-              if result.success?
-                render json: serialize_resource(@order)
-              else
-                render_service_error(result.error, code: ERROR_CODES[:order_already_completed])
-              end
-            end
-          end
-
-          protected
-
-          # Override scope to avoid accessible_by (Order permissions use blocks)
           def scope
-            order_scope
-          end
+            base = current_store.orders.complete
 
-          # Override set_resource to scope lookup by user or order token (IDOR prevention)
-          def set_resource
-            @order = order_scope.find_by_prefix_id!(params[:id])
-            @resource = @order
-            authorize_resource!(@order)
-          end
-
-          # override authorize_resource! to pass the order token
-          # Maps custom checkout actions to appropriate permissions
-          def authorize_resource!(resource = @resource, action = action_name.to_sym)
-            mapped_action = case action
-                            when :next, :advance, :complete
-                              :update # Checkout actions require update (non-completed order)
-                            else
-                              action
-                            end
-            authorize!(mapped_action, resource, order_token)
-          end
-
-          def model_class
-            Spree::Order
+            if current_user.present?
+              base.where(user: current_user)
+            elsif order_token.present?
+              base.where(token: order_token)
+            else
+              base.none
+            end
           end
 
           def serializer_class
             Spree.api.order_serializer
           end
 
-          def order_params
-            params.permit(
-              :email,
-              :currency,
-              :locale,
-              :special_instructions,
-              :ship_address_id,
-              :bill_address_id,
-              ship_address: address_params,
-              bill_address: address_params,
-              metadata: {},
-              line_items: [:variant_id, :quantity, { metadata: {}, options: {} }]
-            )
-          end
-
-          def address_params
-            [
-              :id, :firstname, :lastname, :address1, :address2,
-              :city, :zipcode, :phone, :company,
-              :country_iso, :state_abbr, :state_name, :quick_checkout
-            ]
+          def order_token
+            request.headers['x-spree-token']
           end
         end
       end

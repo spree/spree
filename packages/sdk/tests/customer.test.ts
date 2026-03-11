@@ -116,6 +116,11 @@ describe('customer', () => {
       expect(result.data).toHaveLength(1);
       expect(result.meta.page).toBe(1);
     });
+
+    it('gets a customer order by ID', async () => {
+      const result = await client.customer.orders.get('or_abc123', undefined, opts);
+      expect(result.id).toBe('or_1');
+    });
   });
 
   describe('giftCards', () => {

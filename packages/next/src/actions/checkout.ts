@@ -1,86 +1,48 @@
 'use server';
 
 import { revalidateTag } from 'next/cache';
-import type { Order, Shipment, UpdateOrderParams } from '@spree/sdk';
+import type { Cart, Order, Shipment, UpdateCheckoutParams, ListResponse } from '@spree/sdk';
 import { getClient } from '../config';
-import { getCartToken, getAccessToken } from '../cookies';
+import { getCheckoutOptions } from '../cookies';
 
-async function getCheckoutOptions() {
-  const orderToken = await getCartToken();
-  const token = await getAccessToken();
-  return { orderToken, token };
+/**
+ * Get the current checkout state (cart with expanded associations).
+ */
+export async function getCheckout(): Promise<Cart> {
+  const options = await getCheckoutOptions();
+  return getClient().cart.get(options);
 }
 
 /**
- * Get the current checkout order state.
- * Includes line_items, shipments, and addresses by default.
+ * Update checkout info (email, addresses, special instructions).
  */
-export async function getCheckout(
-  orderId: string
-): Promise<Order> {
+export async function updateCheckout(
+  params: UpdateCheckoutParams
+): Promise<Cart> {
   const options = await getCheckoutOptions();
-  return getClient().orders.get(
-    orderId,
-    { expand: ['line_items', 'shipments', 'ship_address', 'bill_address'] },
-    options
-  );
-}
-
-/**
- * Update an order (addresses, email, currency, locale, metadata, etc.).
- */
-export async function updateOrder(
-  orderId: string,
-  params: UpdateOrderParams
-): Promise<Order> {
-  const options = await getCheckoutOptions();
-  const result = await getClient().orders.update(orderId, params, options);
+  const result = await getClient().checkout.update(params, options);
   revalidateTag('checkout');
   return result;
 }
 
 /**
- * Advance the checkout to the next step.
+ * Get shipments with shipping rates for the current cart.
  */
-export async function advance(orderId: string): Promise<Order> {
+export async function getShipments(): Promise<ListResponse<Shipment>> {
   const options = await getCheckoutOptions();
-  const result = await getClient().orders.advance(orderId, options);
-  revalidateTag('checkout');
-  return result;
-}
-
-/**
- * Move the checkout to the next step (alias for advance).
- */
-export async function next(orderId: string): Promise<Order> {
-  const options = await getCheckoutOptions();
-  const result = await getClient().orders.next(orderId, options);
-  revalidateTag('checkout');
-  return result;
-}
-
-/**
- * Get shipments for the order (includes available shipping rates).
- */
-export async function getShipments(
-  orderId: string
-): Promise<{ data: Shipment[] }> {
-  const options = await getCheckoutOptions();
-  return getClient().orders.shipments.list(orderId, options);
+  return getClient().checkout.shipments.list(options);
 }
 
 /**
  * Select a shipping rate for a shipment.
- * Returns the updated order with recalculated totals.
+ * Returns the updated cart with recalculated totals.
  */
 export async function selectShippingRate(
-  orderId: string,
   shipmentId: string,
   shippingRateId: string
-): Promise<Order> {
+): Promise<Cart> {
   const options = await getCheckoutOptions();
-  const result = await getClient().orders.shipments.update(
-    orderId,
+  const result = await getClient().checkout.shipments.update(
     shipmentId,
     { selected_shipping_rate_id: shippingRateId },
     options
@@ -90,28 +52,26 @@ export async function selectShippingRate(
 }
 
 /**
- * Apply a coupon code to the order.
+ * Apply a coupon code to the cart.
  */
 export async function applyCoupon(
-  orderId: string,
   code: string
-): Promise<Order> {
+): Promise<Cart> {
   const options = await getCheckoutOptions();
-  const result = await getClient().orders.couponCodes.apply(orderId, code, options);
+  const result = await getClient().cart.couponCodes.apply(code, options);
   revalidateTag('checkout');
   revalidateTag('cart');
   return result;
 }
 
 /**
- * Remove a coupon/promotion from the order.
+ * Remove a coupon code from the cart.
  */
 export async function removeCoupon(
-  orderId: string,
-  promotionId: string
-): Promise<Order> {
+  code: string
+): Promise<Cart> {
   const options = await getCheckoutOptions();
-  const result = await getClient().orders.couponCodes.remove(orderId, promotionId, options);
+  const result = await getClient().cart.couponCodes.remove(code, options);
   revalidateTag('checkout');
   revalidateTag('cart');
   return result;
@@ -120,9 +80,9 @@ export async function removeCoupon(
 /**
  * Complete the checkout and place the order.
  */
-export async function complete(orderId: string): Promise<Order> {
+export async function complete(): Promise<Order> {
   const options = await getCheckoutOptions();
-  const result = await getClient().orders.complete(orderId, options);
+  const result = await getClient().checkout.complete(options);
   revalidateTag('checkout');
   revalidateTag('cart');
   return result;

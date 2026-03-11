@@ -8,24 +8,17 @@ import type {
   CompletePaymentSessionParams,
 } from '@spree/sdk';
 import { getClient } from '../config';
-import { getCartToken, getAccessToken } from '../cookies';
-
-async function getCheckoutOptions() {
-  const orderToken = await getCartToken();
-  const token = await getAccessToken();
-  return { orderToken, token };
-}
+import { getCheckoutOptions } from '../cookies';
 
 /**
- * Create a payment session for an order.
+ * Create a payment session for the current cart.
  * Delegates to the payment gateway to initialize a provider-specific session.
  */
 export async function createPaymentSession(
-  orderId: string,
   params: CreatePaymentSessionParams
 ): Promise<PaymentSession> {
   const options = await getCheckoutOptions();
-  const result = await getClient().orders.paymentSessions.create(orderId, params, options);
+  const result = await getClient().checkout.paymentSessions.create(params, options);
   revalidateTag('checkout');
   return result;
 }
@@ -34,11 +27,10 @@ export async function createPaymentSession(
  * Get a payment session by ID.
  */
 export async function getPaymentSession(
-  orderId: string,
   sessionId: string
 ): Promise<PaymentSession> {
   const options = await getCheckoutOptions();
-  return getClient().orders.paymentSessions.get(orderId, sessionId, options);
+  return getClient().checkout.paymentSessions.get(sessionId, options);
 }
 
 /**
@@ -46,12 +38,11 @@ export async function getPaymentSession(
  * Delegates to the payment gateway to sync changes with the provider.
  */
 export async function updatePaymentSession(
-  orderId: string,
   sessionId: string,
   params: UpdatePaymentSessionParams
 ): Promise<PaymentSession> {
   const options = await getCheckoutOptions();
-  const result = await getClient().orders.paymentSessions.update(orderId, sessionId, params, options);
+  const result = await getClient().checkout.paymentSessions.update(sessionId, params, options);
   revalidateTag('checkout');
   return result;
 }
@@ -61,12 +52,11 @@ export async function updatePaymentSession(
  * Confirms the payment with the provider, triggering capture/authorization.
  */
 export async function completePaymentSession(
-  orderId: string,
   sessionId: string,
   params?: CompletePaymentSessionParams
 ): Promise<PaymentSession> {
   const options = await getCheckoutOptions();
-  const result = await getClient().orders.paymentSessions.complete(orderId, sessionId, params, options);
+  const result = await getClient().checkout.paymentSessions.complete(sessionId, params, options);
   revalidateTag('checkout');
   return result;
 }

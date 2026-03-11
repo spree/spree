@@ -16,8 +16,8 @@ export interface RetryConfig {
 export interface RequestOptions {
   /** Bearer token for authenticated requests */
   token?: string;
-  /** Order token for guest checkout */
-  orderToken?: string;
+  /** Spree token for guest cart/checkout/order access */
+  spreeToken?: string;
   /** Locale for translated content (e.g., 'en', 'fr') */
   locale?: string;
   /** Currency for prices (e.g., 'USD', 'EUR') */
@@ -107,7 +107,7 @@ export function createRequestFn(
     path: string,
     options: InternalRequestOptions = {}
   ): Promise<T> {
-    const { token, orderToken, idempotencyKey, headers = {}, body, params } = options;
+    const { token, spreeToken, idempotencyKey, headers = {}, body, params } = options;
 
     // Per-request options override client-level defaults
     const locale = options.locale ?? defaults?.locale;
@@ -141,8 +141,8 @@ export function createRequestFn(
       requestHeaders['Authorization'] = `Bearer ${token}`;
     }
 
-    if (orderToken) {
-      requestHeaders['x-spree-order-token'] = orderToken;
+    if (spreeToken) {
+      requestHeaders['x-spree-token'] = spreeToken;
     }
 
     if (locale) {

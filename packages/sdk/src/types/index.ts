@@ -5,6 +5,7 @@ export type {
   Address,
   Asset,
   Base,
+  Cart,
   Category,
   Country,
   CreditCard,
@@ -61,6 +62,7 @@ export type {
 // Backward compatibility aliases (Store* prefix)
 export type { Address as StoreAddress } from './generated';
 export type { Asset as StoreAsset } from './generated';
+export type { Cart as StoreCart } from './generated';
 export type { Category as StoreCategory } from './generated';
 export type { Country as StoreCountry } from './generated';
 export type { CreditCard as StoreCreditCard } from './generated';
@@ -221,7 +223,7 @@ export interface UpdateLineItemParams {
   metadata?: Record<string, unknown>;
 }
 
-export interface UpdateOrderParams {
+export interface UpdateCheckoutParams {
   email?: string;
   currency?: string;
   locale?: string;

@@ -2,19 +2,18 @@ module Spree
   module Api
     module V3
       module Store
-        module Orders
-          class LineItemsController < ResourceController
-            include Spree::Api::V3::OrderConcern
+        module Cart
+          class ItemsController < Store::BaseController
+            include Spree::Api::V3::CartResolvable
             include Spree::Api::V3::OrderLock
 
-            skip_before_action :set_resource
-            before_action :authorize_order_access!
+            before_action :find_cart!
 
-            # POST  /api/v3/store/orders/:order_id/line_items
+            # POST  /api/v3/store/cart/items
             def create
               with_order_lock do
                 result = Spree.cart_add_item_service.call(
-                  order: @parent,
+                  order: @cart,
                   variant: variant,
                   quantity: permitted_params[:quantity] || 1,
                   metadata: permitted_params[:metadata] || {},
@@ -22,71 +21,60 @@ module Spree
                 )
 
                 if result.success?
-                  render_order(status: :created)
+                  render_cart(status: :created)
                 else
                   render_service_error(result.error, code: ERROR_CODES[:insufficient_stock])
                 end
               end
             end
 
-            # PATCH  /api/v3/store/orders/:order_id/line_items/:id
+            # PATCH  /api/v3/store/cart/items/:id
             def update
               with_order_lock do
-                @line_item = scope.find_by_prefix_id!(params[:id])
+                @line_item = @cart.line_items.find_by_prefix_id!(params[:id])
 
                 @line_item.metadata = @line_item.metadata.merge(permitted_params[:metadata].to_h) if permitted_params[:metadata].present?
 
                 if permitted_params[:quantity].present?
                   result = Spree.cart_set_item_quantity_service.call(
-                    order: @parent,
+                    order: @cart,
                     line_item: @line_item,
                     quantity: permitted_params[:quantity]
                   )
 
                   if result.success?
-                    render_order
+                    render_cart
                   else
                     render_service_error(result.error, code: ERROR_CODES[:invalid_quantity])
                   end
                 elsif @line_item.changed?
                   @line_item.save!
-                  render_order
+                  render_cart
                 else
-                  render_order
+                  render_cart
                 end
               end
             end
 
-            # DELETE  /api/v3/store/orders/:order_id/line_items/:id
+            # DELETE  /api/v3/store/cart/items/:id
             def destroy
               with_order_lock do
-                @line_item = scope.find_by_prefix_id!(params[:id])
+                @line_item = @cart.line_items.find_by_prefix_id!(params[:id])
 
                 Spree.cart_remove_line_item_service.call(
-                  order: @parent,
+                  order: @cart,
                   line_item: @line_item
                 )
 
-                render_order
+                render_cart
               end
             end
 
-            protected
+            private
 
-            def parent_association
-              :line_items
-            end
 
             def variant
               @variant ||= current_store.variants.accessible_by(current_ability).find_by_prefix_id!(permitted_params[:variant_id])
-            end
-
-            def model_class
-              Spree::LineItem
-            end
-
-            def serializer_class
-              Spree.api.line_item_serializer
             end
 
             def permitted_params

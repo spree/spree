@@ -83,7 +83,7 @@ RSpec.describe Spree::Api::V3::Idempotent, type: :controller do
 
       it 'does not apply to GET requests' do
         cart = create(:order, store: store)
-        request.headers['x-spree-order-token'] = cart.token
+        request.headers['x-spree-token'] = cart.token
         request.headers['Idempotency-Key'] = idempotency_key
 
         get :show

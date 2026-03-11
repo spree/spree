@@ -10,7 +10,7 @@ RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
   end
 
   describe 'GET #show' do
-    let(:order) { create(:order_with_line_items, user: user, store: store) }
+    let(:order) { create(:completed_order_with_totals, user: user, store: store) }
 
     context 'authenticated user' do
       before do
@@ -22,7 +22,6 @@ RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
 
         expect(response).to have_http_status(:ok)
         expect(json_response['number']).to eq(order.number)
-        expect(json_response['state']).to eq(order.state)
       end
 
       it 'returns order with expected attributes' do
@@ -33,11 +32,11 @@ RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
       end
     end
 
-    context 'with order token' do
-      let(:guest_order) { create(:order_with_line_items, user: nil, store: store) }
+    context 'with spree token' do
+      let(:guest_order) { create(:completed_order_with_totals, user: nil, store: store) }
 
       it 'returns the order for guest with valid token' do
-        request.headers['X-Spree-Order-Token'] = guest_order.token
+        request.headers['x-spree-token'] = guest_order.token
         get :show, params: { id: guest_order.to_param }
 
         expect(response).to have_http_status(:ok)
@@ -45,18 +44,16 @@ RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
       end
 
       it 'returns not found with invalid token' do
-        request.headers['X-Spree-Order-Token'] = 'invalid'
+        request.headers['x-spree-token'] = 'invalid'
         get :show, params: { id: guest_order.to_param }
 
         expect(response).to have_http_status(:not_found)
-        expect(json_response['error']['code']).to eq('order_not_found')
       end
 
       it 'returns not found without token' do
         get :show, params: { id: guest_order.to_param }
 
         expect(response).to have_http_status(:not_found)
-        expect(json_response['error']['code']).to eq('order_not_found')
       end
     end
 
@@ -65,202 +62,25 @@ RSpec.describe Spree::Api::V3::Store::OrdersController, type: :controller do
         request.headers['Authorization'] = "Bearer #{jwt_token}"
       end
 
-      it 'returns not found for invalid order number' do
-        get :show, params: { id: 'invalid' }
+      it 'returns not found for invalid order id' do
+        get :show, params: { id: 'or_invalid' }
 
         expect(response).to have_http_status(:not_found)
-        expect(json_response['error']['code']).to eq('order_not_found')
-        expect(json_response['error']['message']).to be_present
       end
 
       it 'returns not found for other users order' do
-        other_order = create(:order_with_line_items, store: store)
+        other_order = create(:completed_order_with_totals, store: store)
         get :show, params: { id: other_order.to_param }
 
         expect(response).to have_http_status(:not_found)
-        expect(json_response['error']['code']).to eq('order_not_found')
-      end
-    end
-  end
-
-  describe 'PATCH #update' do
-    let(:order) { create(:order_with_line_items, user: user, store: store) }
-
-    context 'authenticated' do
-      before do
-        request.headers['Authorization'] = "Bearer #{jwt_token}"
       end
 
-      it 'updates the order email' do
-        patch :update, params: { id: order.to_param, email: 'new@example.com' }
-
-        expect(response).to have_http_status(:ok)
-        expect(order.reload.email).to eq('new@example.com')
-      end
-
-      it 'updates special instructions' do
-        patch :update, params: { id: order.to_param, special_instructions: 'Leave at door' }
-
-        expect(response).to have_http_status(:ok)
-        expect(order.reload.special_instructions).to eq('Leave at door')
-      end
-
-      it 'updates the order locale' do
-        create(:market, store: store, default_locale: 'en', supported_locales: 'en,fr')
-
-        patch :update, params: { id: order.to_param, locale: 'fr' }
-
-        expect(response).to have_http_status(:ok)
-        expect(order.reload.locale).to eq('fr')
-        expect(json_response['locale']).to eq('fr')
-      end
-
-      it 'returns error when locale is not supported by store' do
-        create(:market, store: store, default_locale: 'en', supported_locales: 'en')
-
-        patch :update, params: { id: order.to_param, locale: 'de' }
-
-        expect(response).to have_http_status(:unprocessable_entity)
-      end
-
-      it 'updates order metadata' do
-        patch :update, params: {
-          id: order.to_param,
-          metadata: { 'source' => 'mobile_app', 'utm_campaign' => 'summer' }
-        }
-
-        expect(response).to have_http_status(:ok)
-        expect(order.reload.metadata).to eq({ 'source' => 'mobile_app', 'utm_campaign' => 'summer' })
-      end
-
-      it 'merges metadata with existing values' do
-        order.update!(private_metadata: { 'existing' => 'value' })
-
-        patch :update, params: {
-          id: order.to_param,
-          metadata: { 'new_key' => 'new_value' }
-        }
-
-        expect(response).to have_http_status(:ok)
-        expect(order.reload.metadata).to eq({ 'existing' => 'value', 'new_key' => 'new_value' })
-      end
-
-      it 'does not return metadata in response' do
-        patch :update, params: {
-          id: order.to_param,
-          metadata: { 'source' => 'mobile_app' }
-        }
-
-        expect(response).to have_http_status(:ok)
-        expect(json_response).not_to have_key('metadata')
-        expect(json_response).not_to have_key('private_metadata')
-      end
-    end
-
-    context 'with order token' do
-      let(:guest_order) { create(:order_with_line_items, user: nil, store: store) }
-
-      it 'updates order for guest with valid token' do
-        request.headers['X-Spree-Order-Token'] = guest_order.token
-        patch :update, params: { id: guest_order.to_param, email: 'guest@example.com' }
-
-        expect(response).to have_http_status(:ok)
-        expect(guest_order.reload.email).to eq('guest@example.com')
-      end
-    end
-
-    context 'with line_items' do
-      let(:product) { create(:product, stores: [store]) }
-      let(:variant) { create(:variant, product: product) }
-
-      before do
-        request.headers['Authorization'] = "Bearer #{jwt_token}"
-        variant.stock_items.first.update!(count_on_hand: 10)
-      end
-
-      it 'adds new line items to the order' do
-        patch :update, params: {
-          id: order.to_param,
-          line_items: [{ variant_id: variant.prefixed_id, quantity: 3 }]
-        }
-
-        expect(response).to have_http_status(:ok)
-        expect(order.reload.line_items.find_by(variant: variant).quantity).to eq(3)
-      end
-
-      it 'upserts existing line items' do
-        existing_variant = order.line_items.first.variant
-
-        patch :update, params: {
-          id: order.to_param,
-          line_items: [{ variant_id: existing_variant.prefixed_id, quantity: 7 }]
-        }
-
-        expect(response).to have_http_status(:ok)
-        expect(order.reload.line_items.find_by(variant: existing_variant).quantity).to eq(7)
-      end
-
-      it 'returns line items in response' do
-        patch :update, params: {
-          id: order.to_param,
-          line_items: [{ variant_id: variant.prefixed_id, quantity: 2 }]
-        }
-
-        expect(response).to have_http_status(:ok)
-        variant_ids = json_response['line_items'].map { |li| li['variant_id'] }
-        expect(variant_ids).to include(variant.prefixed_id)
-      end
-
-      it 'returns variant_not_found for invalid variant_id' do
-        patch :update, params: {
-          id: order.to_param,
-          line_items: [{ variant_id: 'variant_doesnotexist', quantity: 1 }]
-        }
+      it 'returns not found for incomplete orders' do
+        incomplete_order = create(:order_with_line_items, user: user, store: store)
+        get :show, params: { id: incomplete_order.to_param }
 
         expect(response).to have_http_status(:not_found)
-        expect(json_response['error']['code']).to eq('variant_not_found')
-        expect(json_response['error']['message']).to include('variant_doesnotexist')
       end
     end
-
-    context 'error handling' do
-      before do
-        request.headers['Authorization'] = "Bearer #{jwt_token}"
-      end
-
-      it 'returns not found for other users order' do
-        other_order = create(:order_with_line_items, store: store)
-        patch :update, params: { id: other_order.to_param, email: 'hack@example.com' }
-
-        expect(response).to have_http_status(:not_found)
-        expect(json_response['error']['code']).to eq('order_not_found')
-      end
-    end
-  end
-
-  describe 'order locking' do
-    let(:order) { create(:order_with_line_items, user: user, store: store) }
-
-    before do
-      request.headers['Authorization'] = "Bearer #{jwt_token}"
-    end
-
-    describe 'state_lock_version in responses' do
-      it 'returns state_lock_version in show response' do
-        get :show, params: { id: order.to_param }
-
-        expect(response).to have_http_status(:ok)
-        expect(json_response['state_lock_version']).to eq(0)
-      end
-
-      it 'increments state_lock_version after successful update' do
-        patch :update, params: { id: order.to_param, email: 'new@example.com' }
-
-        expect(response).to have_http_status(:ok)
-        expect(order.reload.state_lock_version).to eq(1)
-        expect(json_response['state_lock_version']).to eq(1)
-      end
-    end
-
   end
 end

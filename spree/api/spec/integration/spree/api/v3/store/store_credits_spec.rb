@@ -2,32 +2,31 @@
 
 require 'swagger_helper'
 
-RSpec.describe 'Store Credits API', type: :request, swagger_doc: 'api-reference/store.yaml' do
+RSpec.describe 'Checkout Store Credits API', type: :request, swagger_doc: 'api-reference/store.yaml' do
   include_context 'API v3 Store'
 
   let(:user) { create(:user_with_addresses) }
   let!(:order) { create(:order_with_line_items, store: store, user: user) }
 
-  path '/api/v3/store/orders/{order_id}/store_credits' do
-    post 'Add store credit' do
+  path '/api/v3/store/checkout/store_credits' do
+    post 'Apply store credit' do
       tags 'Checkout'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Applies store credit to the order'
+      description 'Applies store credit to the current cart during checkout.'
 
       sdk_example <<~JS
-        const order = await client.orders.addStoreCredit('or_abc123', 10.0, {
+        const cart = await client.checkout.applyStoreCredit(10.0, {
           bearerToken: '<token>',
         })
       JS
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
-      parameter name: :order_id, in: :path, type: :string, required: true
-      parameter name: 'x-spree-order-token', in: :header, type: :string, required: false
+      parameter name: 'x-spree-token', in: :header, type: :string, required: false
       parameter name: 'Idempotency-Key', in: :header, type: :string, required: false,
-                description: 'Unique key for request idempotency. Duplicate requests with the same key return the cached response.'
+                description: 'Unique key for request idempotency.'
       parameter name: :body, in: :body, schema: {
         type: :object,
         properties: {
@@ -40,7 +39,6 @@ RSpec.describe 'Store Credits API', type: :request, swagger_doc: 'api-reference/
         let(:store_credit) { create(:store_credit, user: user, store: store, amount: 50) }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:order_id) { order.to_param }
         let(:body) { { amount: 10 } }
 
         before do
@@ -48,7 +46,7 @@ RSpec.describe 'Store Credits API', type: :request, swagger_doc: 'api-reference/
           store_credit
         end
 
-        schema '$ref' => '#/components/schemas/Order'
+        schema '$ref' => '#/components/schemas/Cart'
 
         run_test!
       end
@@ -56,7 +54,6 @@ RSpec.describe 'Store Credits API', type: :request, swagger_doc: 'api-reference/
       response '422', 'no store credit available' do
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:order_id) { order.to_param }
         let(:body) { {} }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
@@ -69,25 +66,23 @@ RSpec.describe 'Store Credits API', type: :request, swagger_doc: 'api-reference/
       tags 'Checkout'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Removes store credit from the order'
+      description 'Removes store credit from the current cart.'
 
       sdk_example <<~JS
-        const order = await client.orders.removeStoreCredit('or_abc123', {
+        const cart = await client.checkout.removeStoreCredit({
           bearerToken: '<token>',
         })
       JS
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: true
-      parameter name: :order_id, in: :path, type: :string, required: true
-      parameter name: 'x-spree-order-token', in: :header, type: :string, required: false
+      parameter name: 'x-spree-token', in: :header, type: :string, required: false
 
       response '200', 'store credit removed' do
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:order_id) { order.to_param }
 
-        schema '$ref' => '#/components/schemas/Order'
+        schema '$ref' => '#/components/schemas/Cart'
 
         run_test!
       end

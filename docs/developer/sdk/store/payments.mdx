@@ -3,13 +3,15 @@ title: Payments & Shipping
 description: Handle payments, payment sessions, and shipping with the Spree SDK
 ---
 
+All payment and shipping endpoints use the **implicit cart** resolved from the `spreeToken` header or JWT. You never pass an `orderId`.
+
 ## Payment Methods
 
 ```typescript
-const options = { orderToken: cart.token };
+const options = { spreeToken: cart.token };
 
-// Get available payment methods for an order
-const methods = await client.orders.paymentMethods.list(cart.id, options);
+// Get available payment methods for the current checkout
+const methods = await client.checkout.paymentMethods.list(options);
 
 // Each method includes a `session_required` flag:
 // - true  → use Payment Sessions (Stripe, Adyen, PayPal, etc.)
@@ -19,17 +21,17 @@ const methods = await client.orders.paymentMethods.list(cart.id, options);
 ## Payments
 
 ```typescript
-const options = { orderToken: cart.token };
+const options = { spreeToken: cart.token };
 
-// List payments on an order
-const payments = await client.orders.payments.list(cart.id, options);
+// List payments on the current checkout
+const payments = await client.checkout.payments.list(options);
 
 // Get a specific payment
-const payment = await client.orders.payments.get(cart.id, paymentId, options);
+const payment = await client.checkout.payments.get(paymentId, options);
 
 // Create a payment for a non-session payment method
 // (e.g. Check, Cash on Delivery, Bank Transfer, Purchase Order)
-const payment = await client.orders.payments.create(cart.id, {
+const payment = await client.checkout.payments.create({
   payment_method_id: 'pm_xxx',
   amount: '99.99',              // Optional, defaults to order total minus store credits
   metadata: {                   // Optional, write-only metadata
@@ -48,10 +50,10 @@ const payment = await client.orders.payments.create(cart.id, {
 Payment sessions provide a unified, provider-agnostic interface for payment processing. They work with any payment gateway (Stripe, Adyen, PayPal, etc.) through a single API.
 
 ```typescript
-const options = { orderToken: cart.token };
+const options = { spreeToken: cart.token };
 
 // Create a payment session (initializes a session with the payment gateway)
-const session = await client.orders.paymentSessions.create(cart.id, {
+const session = await client.checkout.paymentSessions.create({
   payment_method_id: 'pm_xxx',
   amount: '99.99',             // Optional, defaults to order total
   external_data: {              // Optional, provider-specific data
@@ -63,18 +65,18 @@ const session = await client.orders.paymentSessions.create(cart.id, {
 console.log(session.external_data.client_secret);
 
 // Get a payment session
-const existing = await client.orders.paymentSessions.get(
-  cart.id, session.id, options
+const existing = await client.checkout.paymentSessions.get(
+  session.id, options
 );
 
 // Update a payment session (e.g., after order total changes)
-await client.orders.paymentSessions.update(cart.id, session.id, {
+await client.checkout.paymentSessions.update(session.id, {
   amount: '149.99',
 }, options);
 
 // Complete the payment session (after customer confirms payment on the frontend)
-const completed = await client.orders.paymentSessions.complete(
-  cart.id, session.id,
+const completed = await client.checkout.paymentSessions.complete(
+  session.id,
   { session_result: 'success' },
   options
 );
@@ -84,13 +86,13 @@ console.log(completed.status); // 'completed'
 ## Shipments
 
 ```typescript
-const options = { orderToken: cart.token };
+const options = { spreeToken: cart.token };
 
-// List shipments for an order
-const shipments = await client.orders.shipments.list(cart.id, options);
+// List shipments for the current checkout
+const shipments = await client.checkout.shipments.list(options);
 
 // Select a shipping rate
-await client.orders.shipments.update(cart.id, shipmentId, {
+await client.checkout.shipments.update(shipmentId, {
   selected_shipping_rate_id: 'rate_xxx',
 }, options);
 ```

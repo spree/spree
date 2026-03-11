@@ -141,10 +141,10 @@ RSpec.describe Spree::Api::V3::Store::CartController, type: :controller do
   end
 
   describe 'GET #show' do
-    context 'with x-spree-order-token header' do
+    context 'with x-spree-token header' do
       let(:cart) { create(:order_with_line_items, store: store) }
 
-      before { request.headers['x-spree-order-token'] = cart.token }
+      before { request.headers['x-spree-token'] = cart.token }
 
       it 'returns the cart' do
         get :show
@@ -168,7 +168,7 @@ RSpec.describe Spree::Api::V3::Store::CartController, type: :controller do
       end
 
       it 'returns not found for invalid token' do
-        request.headers['x-spree-order-token'] = 'invalid_token'
+        request.headers['x-spree-token'] = 'invalid_token'
         get :show
 
         expect(response).to have_http_status(:not_found)
@@ -177,7 +177,7 @@ RSpec.describe Spree::Api::V3::Store::CartController, type: :controller do
 
       it 'returns not found for completed order token' do
         completed_order = create(:completed_order_with_totals, store: store)
-        request.headers['x-spree-order-token'] = completed_order.token
+        request.headers['x-spree-token'] = completed_order.token
         get :show
 
         expect(response).to have_http_status(:not_found)
@@ -187,7 +187,7 @@ RSpec.describe Spree::Api::V3::Store::CartController, type: :controller do
       it 'returns not found for other store cart' do
         other_store = create(:store)
         other_cart = create(:order_with_line_items, store: other_store)
-        request.headers['x-spree-order-token'] = other_cart.token
+        request.headers['x-spree-token'] = other_cart.token
         get :show
 
         expect(response).to have_http_status(:not_found)
@@ -244,7 +244,7 @@ RSpec.describe Spree::Api::V3::Store::CartController, type: :controller do
     end
 
     context 'without authentication' do
-      it 'returns not found without order_token or JWT' do
+      it 'returns not found without cart_token or JWT' do
         get :show
 
         expect(response).to have_http_status(:not_found)
@@ -266,7 +266,7 @@ RSpec.describe Spree::Api::V3::Store::CartController, type: :controller do
     context 'response structure' do
       let(:cart) { create(:order_with_line_items, store: store) }
 
-      before { request.headers['x-spree-order-token'] = cart.token }
+      before { request.headers['x-spree-token'] = cart.token }
 
       it 'returns expected cart attributes' do
         get :show
@@ -311,8 +311,8 @@ RSpec.describe Spree::Api::V3::Store::CartController, type: :controller do
         request.headers['Authorization'] = "Bearer #{jwt_token}"
       end
 
-      it 'associates guest cart with current user via x-spree-order-token header' do
-        request.headers['x-spree-order-token'] = guest_cart.token
+      it 'associates guest cart with current user via x-spree-token header' do
+        request.headers['x-spree-token'] = guest_cart.token
         patch :associate
 
         expect(response).to have_http_status(:ok)
@@ -321,7 +321,7 @@ RSpec.describe Spree::Api::V3::Store::CartController, type: :controller do
       end
 
       it 'updates cart email to users email' do
-        request.headers['x-spree-order-token'] = guest_cart.token
+        request.headers['x-spree-token'] = guest_cart.token
         patch :associate
 
         expect(response).to have_http_status(:ok)
@@ -333,7 +333,7 @@ RSpec.describe Spree::Api::V3::Store::CartController, type: :controller do
         ship = create(:address, firstname: 'Ship')
         user.update!(bill_address: bill, ship_address: ship)
 
-        request.headers['x-spree-order-token'] = guest_cart.token
+        request.headers['x-spree-token'] = guest_cart.token
         patch :associate
 
         expect(response).to have_http_status(:ok)
@@ -345,7 +345,7 @@ RSpec.describe Spree::Api::V3::Store::CartController, type: :controller do
       it 'allows re-associating cart already owned by current user' do
         guest_cart.update!(user: user)
 
-        request.headers['x-spree-order-token'] = guest_cart.token
+        request.headers['x-spree-token'] = guest_cart.token
         patch :associate
 
         expect(response).to have_http_status(:ok)
@@ -353,7 +353,7 @@ RSpec.describe Spree::Api::V3::Store::CartController, type: :controller do
       end
 
       it 'returns not found for invalid token' do
-        request.headers['x-spree-order-token'] = 'invalid_token'
+        request.headers['x-spree-token'] = 'invalid_token'
         patch :associate
 
         expect(response).to have_http_status(:not_found)
@@ -370,7 +370,7 @@ RSpec.describe Spree::Api::V3::Store::CartController, type: :controller do
       it 'returns not found for completed order' do
         completed_order = create(:completed_order_with_totals, store: store, user: nil)
 
-        request.headers['x-spree-order-token'] = completed_order.token
+        request.headers['x-spree-token'] = completed_order.token
         patch :associate
 
         expect(response).to have_http_status(:not_found)
@@ -381,7 +381,7 @@ RSpec.describe Spree::Api::V3::Store::CartController, type: :controller do
         other_user = create(:user)
         other_user_cart = create(:order_with_line_items, store: store, user: other_user)
 
-        request.headers['x-spree-order-token'] = other_user_cart.token
+        request.headers['x-spree-token'] = other_user_cart.token
         patch :associate
 
         expect(response).to have_http_status(:not_found)
@@ -393,7 +393,7 @@ RSpec.describe Spree::Api::V3::Store::CartController, type: :controller do
         other_store = create(:store)
         other_store_cart = create(:order_with_line_items, store: other_store)
 
-        request.headers['x-spree-order-token'] = other_store_cart.token
+        request.headers['x-spree-token'] = other_store_cart.token
         patch :associate
 
         expect(response).to have_http_status(:not_found)
@@ -402,7 +402,7 @@ RSpec.describe Spree::Api::V3::Store::CartController, type: :controller do
 
     context 'without JWT authentication' do
       it 'returns unauthorized' do
-        request.headers['x-spree-order-token'] = guest_cart.token
+        request.headers['x-spree-token'] = guest_cart.token
         patch :associate
 
         expect(response).to have_http_status(:unauthorized)
@@ -414,7 +414,7 @@ RSpec.describe Spree::Api::V3::Store::CartController, type: :controller do
       before { request.headers['X-Spree-Api-Key'] = nil }
 
       it 'returns unauthorized' do
-        request.headers['x-spree-order-token'] = guest_cart.token
+        request.headers['x-spree-token'] = guest_cart.token
         patch :associate
 
         expect(response).to have_http_status(:unauthorized)

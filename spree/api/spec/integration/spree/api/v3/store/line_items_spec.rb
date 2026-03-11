@@ -2,7 +2,7 @@
 
 require 'swagger_helper'
 
-RSpec.describe 'Line Items API', type: :request, swagger_doc: 'api-reference/store.yaml' do
+RSpec.describe 'Cart Items API', type: :request, swagger_doc: 'api-reference/store.yaml' do
   include_context 'API v3 Store'
 
   let!(:order) { create(:order, store: store, user: user) }
@@ -10,16 +10,16 @@ RSpec.describe 'Line Items API', type: :request, swagger_doc: 'api-reference/sto
   let!(:variant) { product.master }
   let!(:line_item) { create(:line_item, order: order, variant: variant, quantity: 1) }
 
-  path '/api/v3/store/orders/{order_id}/line_items' do
+  path '/api/v3/store/cart/items' do
     post 'Add item to cart' do
       tags 'Cart'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Adds a variant to the order. Creates a new line item or increases quantity if variant already in cart.'
+      description 'Adds a variant to the cart. Creates a new line item or increases quantity if variant already in cart.'
 
       sdk_example <<~JS
-        const order = await client.orders.lineItems.create('or_abc123', {
+        const cart = await client.cart.items.add({
           variant_id: 'variant_abc123',
           quantity: 2,
         }, {
@@ -30,34 +30,32 @@ RSpec.describe 'Line Items API', type: :request, swagger_doc: 'api-reference/sto
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false,
                 description: 'Bearer token for authenticated customers'
-      parameter name: :order_id, in: :path, type: :string, required: true,
-                description: 'Order ID or number'
-      parameter name: 'x-spree-order-token', in: :header, type: :string, required: false,
+      parameter name: 'x-spree-token', in: :header, type: :string, required: false,
                 description: 'Order token for guest access'
       parameter name: 'Idempotency-Key', in: :header, type: :string, required: false,
-                description: 'Unique key for request idempotency. Duplicate requests with the same key return the cached response.'
+                description: 'Unique key for request idempotency.'
       parameter name: :body, in: :body, schema: {
         type: :object,
         properties: {
           variant_id: { type: :string, example: 'variant_abc123', description: 'Variant ID to add' },
           quantity: { type: :integer, example: 2, description: 'Quantity to add (default: 1)' },
-          metadata: { type: :object, additionalProperties: true, description: 'Arbitrary key-value metadata (stored, not returned in responses)', example: { gift_message: 'Happy Birthday!' } }
+          metadata: { type: :object, additionalProperties: true, description: 'Arbitrary key-value metadata', example: { gift_message: 'Happy Birthday!' } }
         },
         required: %w[variant_id]
       }
 
-      response '201', 'item added, returns updated order' do
+      response '201', 'item added, returns updated cart' do
         let(:new_product) { create(:product, stores: [store]) }
         let(:new_variant) { new_product.master }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:order_id) { order.to_param }
         let(:body) { { variant_id: new_variant.prefixed_id, quantity: 2 } }
 
-        schema '$ref' => '#/components/schemas/Order'
+        schema '$ref' => '#/components/schemas/Cart'
 
         run_test! do |response|
           data = JSON.parse(response.body)
+          expect(data['id']).to start_with('cart_')
           expect(data['number']).to eq(order.number)
           expect(data['line_items'].first).to have_key('currency')
         end
@@ -68,7 +66,6 @@ RSpec.describe 'Line Items API', type: :request, swagger_doc: 'api-reference/sto
         let(:new_variant) { new_product.master }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:order_id) { order.to_param }
         let(:body) { { variant_id: new_variant.prefixed_id, quantity: 1, metadata: { gift_message: 'Happy Birthday!' } } }
 
         run_test! do |_response|
@@ -80,19 +77,7 @@ RSpec.describe 'Line Items API', type: :request, swagger_doc: 'api-reference/sto
       response '404', 'variant not found' do
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:order_id) { order.to_param }
         let(:body) { { variant_id: 'invalid', quantity: 1 } }
-
-        schema '$ref' => '#/components/schemas/ErrorResponse'
-
-        run_test!
-      end
-
-      response '404', 'order not found' do
-        let(:'x-spree-api-key') { api_key.token }
-        let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:order_id) { 'non-existent' }
-        let(:body) { { variant_id: variant.prefixed_id, quantity: 1 } }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 
@@ -101,7 +86,7 @@ RSpec.describe 'Line Items API', type: :request, swagger_doc: 'api-reference/sto
     end
   end
 
-  path '/api/v3/store/orders/{order_id}/line_items/{id}' do
+  path '/api/v3/store/cart/items/{id}' do
     patch 'Update line item quantity' do
       tags 'Cart'
       consumes 'application/json'
@@ -110,7 +95,7 @@ RSpec.describe 'Line Items API', type: :request, swagger_doc: 'api-reference/sto
       description 'Updates the quantity of a line item in the cart'
 
       sdk_example <<~JS
-        const order = await client.orders.lineItems.update('or_abc123', 'li_abc123', {
+        const cart = await client.cart.items.update('li_abc123', {
           quantity: 5,
         }, {
           bearerToken: '<token>',
@@ -119,9 +104,8 @@ RSpec.describe 'Line Items API', type: :request, swagger_doc: 'api-reference/sto
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false
-      parameter name: :order_id, in: :path, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true, description: 'Line item ID'
-      parameter name: 'x-spree-order-token', in: :header, type: :string, required: false
+      parameter name: 'x-spree-token', in: :header, type: :string, required: false
       parameter name: :body, in: :body, schema: {
         type: :object,
         properties: {
@@ -130,17 +114,17 @@ RSpec.describe 'Line Items API', type: :request, swagger_doc: 'api-reference/sto
         }
       }
 
-      response '200', 'quantity updated, returns updated order' do
+      response '200', 'quantity updated, returns updated cart' do
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:order_id) { order.to_param }
         let(:id) { line_item.to_param }
         let(:body) { { quantity: 5 } }
 
-        schema '$ref' => '#/components/schemas/Order'
+        schema '$ref' => '#/components/schemas/Cart'
 
         run_test! do |response|
           data = JSON.parse(response.body)
+          expect(data['id']).to start_with('cart_')
           expect(data['number']).to eq(order.number)
           expect(line_item.reload.quantity).to eq(5)
         end
@@ -149,7 +133,6 @@ RSpec.describe 'Line Items API', type: :request, swagger_doc: 'api-reference/sto
       response '200', 'metadata updated on line item' do
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:order_id) { order.to_param }
         let(:id) { line_item.to_param }
         let(:body) { { metadata: { engraving: 'J.D.' } } }
 
@@ -157,38 +140,36 @@ RSpec.describe 'Line Items API', type: :request, swagger_doc: 'api-reference/sto
           expect(line_item.reload.metadata).to include('engraving' => 'J.D.')
         end
       end
-
     end
 
     delete 'Remove line item from cart' do
       tags 'Cart'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Removes a line item from the order'
+      description 'Removes a line item from the cart'
 
       sdk_example <<~JS
-        const order = await client.orders.lineItems.delete('or_abc123', 'li_abc123', {
+        const cart = await client.cart.items.remove('li_abc123', {
           bearerToken: '<token>',
         })
       JS
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false
-      parameter name: :order_id, in: :path, type: :string, required: true
       parameter name: :id, in: :path, type: :string, required: true
-      parameter name: 'x-spree-order-token', in: :header, type: :string, required: false
+      parameter name: 'x-spree-token', in: :header, type: :string, required: false
 
-      response '200', 'line item removed, returns updated order' do
+      response '200', 'line item removed, returns updated cart' do
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:order_id) { order.to_param }
         let(:id) { line_item.to_param }
 
-        schema '$ref' => '#/components/schemas/Order'
+        schema '$ref' => '#/components/schemas/Cart'
 
         run_test! do |response|
           expect(order.reload.line_items).to be_empty
           data = JSON.parse(response.body)
+          expect(data['id']).to start_with('cart_')
           expect(data['number']).to eq(order.number)
         end
       end
@@ -196,7 +177,6 @@ RSpec.describe 'Line Items API', type: :request, swagger_doc: 'api-reference/sto
       response '404', 'line item not found' do
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:order_id) { order.to_param }
         let(:id) { 'non-existent' }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'

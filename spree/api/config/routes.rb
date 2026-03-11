@@ -7,9 +7,6 @@ Spree::Core::Engine.add_routes do
         post 'auth/refresh', to: 'auth#refresh'
         post 'auth/oauth/callback', to: 'auth#oauth_callback'
 
-        # Customer registration
-        resources :customers, only: [:create]
-
         # Markets
         resources :markets, only: [:index, :show] do
           collection do
@@ -33,46 +30,46 @@ Spree::Core::Engine.add_routes do
           resources :products, only: [:index], controller: 'categories/products'
         end
 
-        # Cart
-        resource :cart, only: [:show, :create], controller: 'cart' do
+        # Carts (list all active carts for authenticated users)
+        resources :carts, only: [:index]
+
+        # Cart (pre-purchase, mutable)
+        resource :cart, only: [:show, :create, :destroy], controller: 'cart' do
           patch :associate
+          resources :items, only: [:create, :update, :destroy], controller: 'cart/items'
+          resources :coupon_codes, only: [:create, :destroy], controller: 'cart/coupon_codes'
         end
 
-        # Orders - individual order management and checkout
-        resources :orders, only: [:show, :update] do
-          member do
-            # State transitions
-            patch :next       # Move to next checkout step
-            patch :advance    # Advance through all steps
-            patch :complete   # Complete the order
-          end
-
-          # Nested resources - all require order access
-          resource :store_credits, only: [:create, :destroy], controller: 'orders/store_credits'
-          resources :line_items, only: [:create, :update, :destroy], controller: 'orders/line_items'
-          resources :coupon_codes, only: [:create, :destroy], controller: 'orders/coupon_codes'
-          resources :payments, only: [:index, :show, :create], controller: 'orders/payments'
-          resources :payment_methods, only: [:index], controller: 'orders/payment_methods'
-          resources :payment_sessions, only: [:create, :show, :update], controller: 'orders/payment_sessions' do
+        # Checkout (cart → order transition)
+        resource :checkout, only: [:update], controller: 'checkout' do
+          post :complete
+          resources :shipments, only: [:index, :update], controller: 'checkout/shipments'
+          resources :payment_methods, only: [:index], controller: 'checkout/payment_methods'
+          resources :payments, only: [:index, :show, :create], controller: 'checkout/payments'
+          resources :payment_sessions, only: [:create, :show, :update], controller: 'checkout/payment_sessions' do
             member do
               patch :complete
             end
           end
-          resources :shipments, only: [:index, :show, :update], controller: 'orders/shipments'
+          resource :store_credits, only: [:create, :destroy], controller: 'checkout/store_credits'
         end
 
+        # Orders (single order lookup, guest-accessible via order token)
+        resources :orders, only: [:show]
+
         # Customer (current user profile)
+        resources :customers, only: [:create]
         get 'customer', to: 'customers#show'
         patch 'customer', to: 'customers#update'
 
         # Customer nested resources
         namespace :customer, path: 'customer' do
+          resources :orders, only: [:index, :show]
           resources :addresses, only: [:index, :show, :create, :update, :destroy] do
             member do
               patch :mark_as_default
             end
           end
-          resources :orders, only: [:index]
           resources :credit_cards, only: [:index, :show, :destroy]
           resources :gift_cards, only: [:index, :show]
           resources :payment_setup_sessions, only: [:create, :show] do
