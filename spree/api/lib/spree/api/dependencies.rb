@@ -4,6 +4,7 @@ module Spree
   module Api
     class ApiDependencies
       INJECTION_POINTS_WITH_DEFAULTS = {
+        # Legacy API v2 dependencies - will be removed in Spree 6
         # cart services
         storefront_cart_create_service: -> { Spree::Dependencies.cart_create_service },
         storefront_cart_add_item_service: -> { Spree::Dependencies.cart_add_item_service },
@@ -66,6 +67,8 @@ module Spree
         storefront_estimated_shipment_serializer: 'Spree::V2::Storefront::EstimatedShippingRateSerializer',
         storefront_store_serializer: 'Spree::V2::Storefront::StoreSerializer',
         storefront_policy_serializer: 'Spree::V2::Storefront::PolicySerializer',
+        storefront_post_category_serializer: 'Spree::V2::Storefront::PostCategorySerializer',
+        storefront_post_serializer: 'Spree::V2::Storefront::PostSerializer',
         storefront_order_serializer: 'Spree::V2::Storefront::OrderSerializer',
         storefront_variant_serializer: 'Spree::V2::Storefront::VariantSerializer',
         storefront_image_serializer: 'Spree::V2::Storefront::ImageSerializer',
