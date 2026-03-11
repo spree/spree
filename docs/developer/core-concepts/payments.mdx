@@ -248,7 +248,7 @@ sequenceDiagram
     Spree API-->>Frontend: Payment created
 
     Frontend->>Spree API: PATCH /orders/:id/complete
-    Spree API->>Spree API: process_payments! (no-op for manual methods)
+    Spree API->>Spree API: process_payments! (authorize succeeds immediately)
     Spree API->>Spree API: Payment → pending/completed
     Spree API-->>Frontend: Order completed
 ```
@@ -261,7 +261,7 @@ sequenceDiagram
     The frontend calls `POST /payments` with the `payment_method_id`. Spree creates a `Payment` record in `checkout` state. No external provider interaction is needed.
   </Step>
   <Step title="Complete order">
-    The frontend completes the order. Spree's `process_payments!` runs the payment method's authorize/purchase, which for manual methods is a no-op success. The payment transitions to `pending` (or `completed` with auto-capture) and the order completes.
+    The frontend completes the order. Spree's `process_payments!` runs the payment method's `authorize` (or `purchase` with auto-capture). For manual methods like Check, these return an immediate success — no external service is called. The payment transitions to `pending` (without auto-capture) or `completed` (with auto-capture) and the order completes. The merchant can later capture `pending` payments from the Admin Panel once the physical payment is received.
   </Step>
 </Steps>
 

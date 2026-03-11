@@ -127,6 +127,8 @@ module Spree
           else
             raise Core::GatewayError, Spree.t(:payment_processing_failed)
           end
+        else
+          yield unless processing?
         end
       end
 
