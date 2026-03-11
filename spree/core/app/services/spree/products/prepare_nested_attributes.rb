@@ -78,13 +78,9 @@ module Spree
           params[:option_type_ids] = []
           params[:variants_attributes] = {}
 
-          next_index = 0
-          variants_to_remove.each do |variant_id|
-            removal_attrs = resolve_variant_removal(variant_id)
-            next unless removal_attrs
-
-            params[:variants_attributes][next_index.to_s] = removal_attrs
-            next_index += 1
+          populate_variants_to_discontinue
+          variant_ids_to_destroy.each_with_index do |variant_id, index|
+            params[:variants_attributes][index.to_s] = { id: variant_id, _destroy: '1' }
           end
 
           params[:variants_attributes].permit!
@@ -130,28 +126,24 @@ module Spree
       def removed_variants_attributes
         return {} unless can_remove_variants?
 
+        populate_variants_to_discontinue
+
         attributes = {}
         last_index = params[:variants_attributes].keys.map(&:to_i).max
-        next_index = last_index + 1
-        variants_to_remove.each do |variant_id|
-          removal_attrs = resolve_variant_removal(variant_id)
-          next unless removal_attrs
-
-          attributes[next_index.to_s] = removal_attrs
-          next_index += 1
+        variant_ids_to_destroy.each_with_index do |variant_id, index|
+          attributes[(last_index + 1 + index).to_s] = { id: variant_id, _destroy: '1' }
         end
 
         attributes
       end
 
-      def resolve_variant_removal(variant_id)
-        if variant_ids_with_completed_orders.include?(variant_id)
-          variant = product.variants.find_by(id: variant_id)
-          @variants_to_discontinue << variant if variant
-          nil
-        else
-          { id: variant_id, _destroy: '1' }
-        end
+      def populate_variants_to_discontinue
+        ids = variants_to_remove.select { |vid| variant_ids_with_completed_orders.include?(vid) }
+        @variants_to_discontinue = product.variants.where(id: ids).to_a if ids.any?
+      end
+
+      def variant_ids_to_destroy
+        variants_to_remove - variant_ids_with_completed_orders
       end
 
       def variant_ids_with_completed_orders
