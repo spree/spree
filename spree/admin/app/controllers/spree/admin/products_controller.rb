@@ -57,7 +57,17 @@ module Spree
       def update
         invoke_callbacks(:update, :before)
 
-        if @product.update(permitted_resource_params)
+        success = ActiveRecord::Base.transaction do
+          @prepare_params_service&.variants_to_discontinue&.each(&:discontinue!)
+
+          unless @product.update(permitted_resource_params)
+            raise ActiveRecord::Rollback
+          end
+
+          true
+        end
+
+        if success
           set_current_store
           invoke_callbacks(:update, :after)
           flash[:success] = flash_message_for(@product, :successfully_updated)
@@ -202,8 +212,8 @@ module Spree
       end
 
       def prepare_product_params
-        params_service = Spree::Products::PrepareNestedAttributes.new(@product, current_store, permitted_resource_params, current_ability)
-        params[:product] = params_service.call
+        @prepare_params_service = Spree::Products::PrepareNestedAttributes.new(@product, current_store, permitted_resource_params, current_ability)
+        params[:product] = @prepare_params_service.call
       end
 
       # These includes are not picked automatically by ar_lazy_preload gem so we need to specify them manually.

@@ -17,11 +17,14 @@ module Spree
     #   prepared_params = service.call
     #
     class PrepareNestedAttributes
+      attr_reader :variants_to_discontinue
+
       def initialize(product, store, params, ability)
         @product = product
         @store = store
         @params = params
         @ability = ability
+        @variants_to_discontinue = []
       end
 
       def call
@@ -75,8 +78,13 @@ module Spree
           params[:option_type_ids] = []
           params[:variants_attributes] = {}
 
-          variants_to_remove.each_with_index do |variant_id, index|
-            params[:variants_attributes][index.to_s] = { id: variant_id, _destroy: '1' }
+          next_index = 0
+          variants_to_remove.each do |variant_id|
+            removal_attrs = resolve_variant_removal(variant_id)
+            next unless removal_attrs
+
+            params[:variants_attributes][next_index.to_s] = removal_attrs
+            next_index += 1
           end
 
           params[:variants_attributes].permit!
@@ -124,11 +132,36 @@ module Spree
 
         attributes = {}
         last_index = params[:variants_attributes].keys.map(&:to_i).max
-        variants_to_remove.each_with_index do |variant_id, index|
-          attributes[(index + last_index + 1).to_s] = { id: variant_id, _destroy: '1' }
+        next_index = last_index + 1
+        variants_to_remove.each do |variant_id|
+          removal_attrs = resolve_variant_removal(variant_id)
+          next unless removal_attrs
+
+          attributes[next_index.to_s] = removal_attrs
+          next_index += 1
         end
 
         attributes
+      end
+
+      def resolve_variant_removal(variant_id)
+        if variant_ids_with_completed_orders.include?(variant_id)
+          variant = product.variants.find_by(id: variant_id)
+          @variants_to_discontinue << variant if variant
+          nil
+        else
+          { id: variant_id, _destroy: '1' }
+        end
+      end
+
+      def variant_ids_with_completed_orders
+        @variant_ids_with_completed_orders ||=
+          product.variants
+                 .joins(:orders)
+                 .merge(Spree::Order.complete)
+                 .distinct
+                 .pluck(:id)
+                 .map(&:to_s)
       end
 
       def removed_product_option_types_attributes

@@ -1,7 +1,8 @@
 require 'spec_helper'
 
 RSpec.describe Spree::Products::PrepareNestedAttributes do
-  subject(:prepared_params) { described_class.new(product, store, params, ability).call }
+  let(:service) { described_class.new(product, store, params, ability) }
+  subject(:prepared_params) { service.call }
 
   let(:ability) { Spree::Ability.new(nil) }
   let(:store) { @default_store }
@@ -214,6 +215,138 @@ RSpec.describe Spree::Products::PrepareNestedAttributes do
         it 'marks the price for destruction' do
           expect(prepared_params[:variants_attributes]['0'][:prices_attributes]['0']['_destroy']).to eq('1')
         end
+      end
+    end
+  end
+
+  describe 'variant removal handling' do
+    let(:option_type) { create(:option_type) }
+    let(:option_value) { create(:option_value, option_type: option_type) }
+    let(:variant) { create(:variant, product: product) }
+
+    context 'when variant has completed orders' do
+      before do
+        create(:completed_order_with_totals, variants: [variant])
+      end
+
+      context 'via variants_attributes' do
+        let(:new_option_value) { create(:option_value, option_type: option_type) }
+        let(:new_variant) { create(:variant, product: product) }
+        let(:raw_params) do
+          {
+            variants_attributes: {
+              '0' => {
+                id: new_variant.id.to_s,
+                options: [
+                  {
+                    id: option_type.id,
+                    name: option_type.name,
+                    position: '0',
+                    option_value_name: new_option_value.name,
+                    option_value_presentation: new_option_value.presentation
+                  }
+                ]
+              }
+            }
+          }
+        end
+
+        it 'collects the variant for discontinuation' do
+          prepared_params
+          expect(service.variants_to_discontinue).to include(variant)
+        end
+
+        it 'does not include the variant in removal attributes' do
+          removed = prepared_params[:variants_attributes].values.find { |v| v[:id] == variant.id.to_s }
+          expect(removed).to be_nil
+        end
+      end
+
+      context 'via fallback removal (no variants_attributes)' do
+        let(:raw_params) { { name: 'Updated Product' } }
+
+        it 'collects the variant for discontinuation' do
+          prepared_params
+          expect(service.variants_to_discontinue).to include(variant)
+        end
+
+        it 'does not include the variant in destruction attributes' do
+          removed = prepared_params[:variants_attributes]&.values&.find { |v| v[:id] == variant.id.to_s }
+          expect(removed).to be_nil
+        end
+      end
+    end
+
+    context 'when variant has no completed orders' do
+      before { variant } # ensure variant exists before service runs
+
+      context 'via variants_attributes' do
+        let(:new_option_value) { create(:option_value, option_type: option_type) }
+        let(:new_variant) { create(:variant, product: product) }
+        let(:raw_params) do
+          {
+            variants_attributes: {
+              '0' => {
+                id: new_variant.id.to_s,
+                options: [
+                  {
+                    id: option_type.id,
+                    name: option_type.name,
+                    position: '0',
+                    option_value_name: new_option_value.name,
+                    option_value_presentation: new_option_value.presentation
+                  }
+                ]
+              }
+            }
+          }
+        end
+
+        it 'marks the variant for destruction' do
+          removed = prepared_params[:variants_attributes].values.find { |v| v[:id] == variant.id.to_s }
+          expect(removed[:_destroy]).to eq('1')
+        end
+
+        it 'does not collect the variant for discontinuation' do
+          prepared_params
+          expect(service.variants_to_discontinue).not_to include(variant)
+        end
+      end
+
+      context 'via fallback removal (no variants_attributes)' do
+        let(:raw_params) { { name: 'Updated Product' } }
+
+        it 'marks the variant for destruction' do
+          removed = prepared_params[:variants_attributes].values.find { |v| v[:id] == variant.id.to_s }
+          expect(removed[:_destroy]).to eq('1')
+        end
+      end
+    end
+
+    context 'when product has mix of variants with and without completed orders' do
+      let(:variant_with_order) { create(:variant, product: product) }
+      let(:variant_without_order) { create(:variant, product: product) }
+
+      before do
+        variant_without_order # ensure variant exists before service runs
+        create(:completed_order_with_totals, variants: [variant_with_order])
+      end
+
+      let(:raw_params) { { name: 'Updated Product' } }
+
+      it 'collects the variant with completed orders for discontinuation' do
+        prepared_params
+        expect(service.variants_to_discontinue).to include(variant_with_order)
+      end
+
+      it 'does not include the collected variant in removal attributes' do
+        removed = prepared_params[:variants_attributes].values.find { |v| v[:id] == variant_with_order.id.to_s }
+        expect(removed).to be_nil
+      end
+
+      it 'marks the variant without completed orders for destruction' do
+        removed = prepared_params[:variants_attributes].values.find { |v| v[:id] == variant_without_order.id.to_s }
+        expect(removed[:_destroy]).to eq('1')
       end
     end
   end
