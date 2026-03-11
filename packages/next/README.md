@@ -195,7 +195,23 @@ const orders = await listOrders();
 const order = await getOrder(orderId);
 ```
 
-### Payment Sessions
+### Payments (Manual/Offline)
+
+```typescript
+import { createPayment } from '@spree/next';
+
+// Create a payment for a non-session payment method
+// (e.g. Check, Cash on Delivery, Bank Transfer, Purchase Order)
+await createPayment(orderId, {
+  payment_method_id: 'pm_123',
+  amount: '99.99',              // Optional, defaults to order total minus store credits
+  metadata: {                   // Optional, write-only metadata
+    purchase_order_number: 'PO-12345',
+  },
+});
+```
+
+### Payment Sessions (Stripe, Adyen, PayPal, etc.)
 
 ```typescript
 import {

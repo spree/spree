@@ -307,12 +307,25 @@ const options = { orderToken: cart.token };
 
 // Get available payment methods for an order
 const methods = await client.orders.paymentMethods.list(cart.id, options);
+// Each method includes `session_required` flag:
+// - true  → use paymentSessions (Stripe, Adyen, PayPal, etc.)
+// - false → use payments.create (Check, Cash on Delivery, Bank Transfer, etc.)
 
 // List payments on an order
 const payments = await client.orders.payments.list(cart.id, options);
 
 // Get a specific payment
 const payment = await client.orders.payments.get(cart.id, paymentId, options);
+
+// Create a payment for a non-session payment method
+// (e.g. Check, Cash on Delivery, Bank Transfer, Purchase Order)
+const payment = await client.orders.payments.create(cart.id, {
+  payment_method_id: 'pm_xxx',
+  amount: '99.99',              // Optional, defaults to order total minus store credits
+  metadata: {                   // Optional, write-only metadata
+    purchase_order_number: 'PO-12345',
+  },
+}, options);
 ```
 
 ### Payment Sessions
@@ -505,7 +518,7 @@ The SDK uses a resource builder pattern for nested resources:
 | Parent Resource | Nested Resource | Available Methods |
 |-----------------|-----------------|-------------------|
 | `orders` | `lineItems` | `create`, `update`, `delete` |
-| `orders` | `payments` | `list`, `get` |
+| `orders` | `payments` | `list`, `get`, `create` |
 | `orders` | `paymentMethods` | `list` |
 | `orders` | `paymentSessions` | `create`, `get`, `update`, `complete` |
 | `orders` | `shipments` | `list`, `update` |
@@ -655,6 +668,7 @@ The SDK exports all Store API types:
 - `PaginatedResponse<T>` - Paginated API response
 - `AuthTokens` - JWT tokens from login
 - `AddressParams` - Address input parameters
+- `CreatePaymentParams` - Direct payment creation parameters (for non-session payment methods)
 - `CreatePaymentSessionParams` - Payment session creation parameters
 - `UpdatePaymentSessionParams` - Payment session update parameters
 - `CompletePaymentSessionParams` - Payment session completion parameters

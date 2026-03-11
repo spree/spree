@@ -148,9 +148,41 @@ Payment methods indicate whether they use the modern session-based flow via the 
 
 Modern gateways like Stripe and Adyen set `session_required?` to `true`. The Store API serializer includes this as the `session_required` field so your frontend knows which flow to use.
 
+### Non-Session Payment Methods (Manual/Offline)
+
+Payment methods where `session_required?` returns `false` don't need a payment session. These are typically offline or manual payment methods such as:
+
+- **Check** — built-in (`Spree::PaymentMethod::Check`)
+- **Cash on Delivery** — customer pays upon delivery
+- **Bank Transfer / Wire** — customer transfers money to a bank account
+- **Purchase Order** — common in B2B, customer provides a PO number
+
+For these methods, the Store API allows creating a payment directly without going through the payment session flow:
+
+```typescript
+const options = { orderToken: cart.token }
+
+// Create a payment for a non-session payment method
+const payment = await client.orders.payments.create(cart.id, {
+  payment_method_id: 'pm_xyz789',
+  amount: '99.99',              // Optional, defaults to order total minus store credits
+  metadata: {                   // Optional, write-only metadata (e.g. PO number)
+    purchase_order_number: 'PO-12345',
+  },
+}, options)
+```
+
+The payment is created in `checkout` state. When the order transitions to `complete`, Spree calls `process_payments!` which runs the payment method's `authorize` (or `purchase` if auto-capture is enabled). For manual payment methods like Check, this is a no-op that succeeds immediately — the payment moves to `pending` (or `completed` with auto-capture), allowing the order to complete.
+
+The merchant can later capture or void the payment from the Admin Panel once the actual payment is received (e.g., check arrives, bank transfer clears, cash is collected on delivery).
+
 ## Payment Flow
 
-Modern payment gateways (Stripe, Adyen, PayPal) use a two-phase approach: first a **Payment Session** is created with the gateway, then after the customer completes payment on the frontend, Spree creates a **Payment** record to track the result. This ensures full PCI compliance, 3D Secure support, and compatibility with all payment method types.
+Spree supports two payment flows depending on the payment method type:
+
+### Session-Based Flow (Stripe, Adyen, PayPal, etc.)
+
+Modern payment gateways use a two-phase approach: first a **Payment Session** is created with the gateway, then after the customer completes payment on the frontend, Spree creates a **Payment** record to track the result. This ensures full PCI compliance, 3D Secure support, and compatibility with all payment method types.
 
 ```mermaid
 sequenceDiagram
@@ -196,6 +228,40 @@ sequenceDiagram
   </Step>
   <Step title="Payment is created and order is completed">
     After the customer completes payment, the session is completed either via a webhook from the provider or by the frontend calling the complete endpoint. Spree creates a `Payment` record (in `completed` or `pending` state depending on auto-capture settings), creates the appropriate payment source (Credit Card, Klarna, etc.), and completes the order.
+  </Step>
+</Steps>
+
+### Direct Payment Flow (Check, Cash on Delivery, Bank Transfer, etc.)
+
+Non-session payment methods use a simpler flow where a payment is created directly without involving an external payment provider:
+
+```mermaid
+sequenceDiagram
+    participant Frontend
+    participant Spree API
+
+    Frontend->>Spree API: GET /payment_methods
+    Spree API-->>Frontend: Payment methods (with session_required flag)
+
+    Frontend->>Spree API: POST /payments (payment_method_id)
+    Spree API->>Spree API: Create Payment (checkout state)
+    Spree API-->>Frontend: Payment created
+
+    Frontend->>Spree API: PATCH /orders/:id/complete
+    Spree API->>Spree API: process_payments! (no-op for manual methods)
+    Spree API->>Spree API: Payment → pending/completed
+    Spree API-->>Frontend: Order completed
+```
+
+<Steps>
+  <Step title="List payment methods">
+    The frontend calls `GET /payment_methods` and checks the `session_required` flag on each method. Methods with `session_required: false` use this direct flow.
+  </Step>
+  <Step title="Create payment">
+    The frontend calls `POST /payments` with the `payment_method_id`. Spree creates a `Payment` record in `checkout` state. No external provider interaction is needed.
+  </Step>
+  <Step title="Complete order">
+    The frontend completes the order. Spree's `process_payments!` runs the payment method's authorize/purchase, which for manual methods is a no-op success. The payment transitions to `pending` (or `completed` with auto-capture) and the order completes.
   </Step>
 </Steps>
 
