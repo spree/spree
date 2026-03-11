@@ -4,6 +4,14 @@ module Spree
       %w{capture void}
     end
 
+    def authorize(*)
+      simulated_successful_billing_response
+    end
+
+    def purchase(*)
+      simulated_successful_billing_response
+    end
+
     # Indicates whether its possible to capture the payment
     def can_capture?(payment)
       ['checkout', 'pending'].include?(payment.state)
