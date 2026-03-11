@@ -24,6 +24,10 @@ en:
       shipment_transfer_success: Variants successfully transferred
       stock_location_required: A stock_location_id parameter must be provided in order to retrieve stock movements.
       unauthorized: You are not authorized to perform that action.
+      v3:
+        payments:
+          session_required: This payment method requires a payment session. Use the payment sessions endpoint instead.
+          method_unavailable: This payment method is not available for this order.
       v2:
         cart:
           no_coupon_code: No coupon code provided and the Order doesn't have any coupon code promotions applied

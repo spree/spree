@@ -1,5 +1,14 @@
 # @spree/next
 
+## 0.8.2
+
+### Patch Changes
+
+- Added `createPayment` server action for non-session payment methods (e.g. Check, Cash on Delivery, Bank Transfer). Exported `CreatePaymentParams` type.
+
+- Updated dependencies:
+  - @spree/sdk@0.8.2
+
 ## 0.8.1
 
 ### Patch Changes

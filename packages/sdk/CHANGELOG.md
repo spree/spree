@@ -1,5 +1,11 @@
 # @spree/sdk
 
+## 0.8.2
+
+### Patch Changes
+
+- Added `orders.payments.create()` method for non-session payment methods (e.g. Check, Cash on Delivery, Bank Transfer). Accepts `payment_method_id`, optional `amount`, and optional `metadata`. For session-based payment methods, use `orders.paymentSessions.create()` instead. Added `CreatePaymentParams` type.
+
 ## 0.8.1
 
 ### Patch Changes

@@ -295,6 +295,24 @@ export const handlers = [
     })
   ),
 
+  http.post(`${API_PREFIX}/orders/:orderId/payments`, () =>
+    HttpResponse.json({
+      id: 'py_2',
+      payment_method_id: 'pm_2',
+      state: 'checkout',
+      response_code: null,
+      number: 'P5678',
+      amount: '19.99',
+      display_amount: '$19.99',
+      source_type: null,
+      source_id: null,
+      source: null,
+      created_at: '2026-02-17T00:00:00.000Z',
+      updated_at: '2026-02-17T00:00:00.000Z',
+      payment_method: { id: 'pm_2', name: 'Check', description: null, type: 'Spree::PaymentMethod::Check', session_required: false },
+    }, { status: 201 })
+  ),
+
   // Payment Methods
   http.get(`${API_PREFIX}/orders/:orderId/payment_methods`, () =>
     HttpResponse.json({ data: [], meta: paginationMeta })

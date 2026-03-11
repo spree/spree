@@ -19,6 +19,7 @@ import type {
   AddLineItemParams,
   UpdateLineItemParams,
   UpdateOrderParams,
+  CreatePaymentParams,
   CreatePaymentSessionParams,
   UpdatePaymentSessionParams,
   CompletePaymentSessionParams,
@@ -478,6 +479,21 @@ export class StoreClient {
           'GET',
           `/orders/${orderId}/payments/${paymentId}`,
           options
+        ),
+
+      /**
+       * Create a payment for a non-session payment method (e.g. Check, Cash on Delivery, Bank Transfer)
+       * For session-based payment methods (e.g. Stripe, PayPal), use paymentSessions.create() instead
+       */
+      create: (
+        orderId: string,
+        params: CreatePaymentParams,
+        options?: RequestOptions
+      ): Promise<Payment> =>
+        this.request<Payment>(
+          'POST',
+          `/orders/${orderId}/payments`,
+          { ...options, body: params }
         ),
     },
 

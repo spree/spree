@@ -54,6 +54,8 @@ export { setLocale } from './actions/locale';
 export { listCreditCards, deleteCreditCard } from './actions/credit-cards';
 export { listGiftCards, getGiftCard } from './actions/gift-cards';
 
+export { createPayment } from './actions/payments';
+
 export {
   createPaymentSession,
   getPaymentSession,
@@ -100,6 +102,7 @@ export type {
   LineItemInput,
   UpdateOrderParams,
   ProductFiltersResponse,
+  CreatePaymentParams,
   CreatePaymentSessionParams,
   UpdatePaymentSessionParams,
   CompletePaymentSessionParams,
