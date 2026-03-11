@@ -159,6 +159,7 @@ module Spree
           product.variants
                  .joins(:orders)
                  .merge(Spree::Order.complete)
+                 .reorder(nil)
                  .distinct
                  .pluck(:id)
                  .map(&:to_s)
