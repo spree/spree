@@ -240,6 +240,13 @@ export interface UpdateOrderParams {
   line_items?: LineItemInput[];
 }
 
+// Payments
+export interface CreatePaymentParams {
+  payment_method_id: string;
+  amount?: string;
+  metadata?: Record<string, unknown>;
+}
+
 // Payment Sessions
 export interface CreatePaymentSessionParams {
   payment_method_id: string;

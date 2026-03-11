@@ -56,6 +56,69 @@ RSpec.describe 'Payments API', type: :request, swagger_doc: 'api-reference/store
         run_test!
       end
     end
+
+    post 'Create payment' do
+      let(:check_method) { create(:check_payment_method, stores: [store]) }
+
+      tags 'Checkout'
+      consumes 'application/json'
+      produces 'application/json'
+      security [api_key: [], bearer_auth: []]
+      description 'Creates a payment for a non-session payment method (e.g. Check, Cash on Delivery, Bank Transfer). For payment methods that require a session (e.g. Stripe, PayPal), use the payment sessions endpoint instead.'
+
+      sdk_example <<~JS
+        const payment = await client.orders.payments.create('or_abc123', {
+          payment_method_id: 'pm_abc123',
+        }, {
+          bearerToken: '<token>',
+        })
+      JS
+
+      parameter name: 'x-spree-order-token', in: :header, type: :string, required: false,
+                description: 'Order token for guest access'
+      parameter name: :body, in: :body, schema: {
+        type: :object,
+        properties: {
+          payment_method_id: { type: :string, example: 'pm_abc123', description: 'Payment method ID (must be a non-session payment method)' },
+          amount: { type: :string, example: '99.99', description: 'Payment amount (defaults to order total minus store credits)' },
+          metadata: { type: :object, description: 'Arbitrary metadata to attach to the payment (write-only, not returned in Store API responses)' }
+        },
+        required: %w[payment_method_id]
+      }
+
+      response '201', 'payment created' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { "Bearer #{jwt_token}" }
+        let(:body) { { payment_method_id: check_method.prefixed_id } }
+
+        schema '$ref' => '#/components/schemas/Payment'
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['state']).to eq('checkout')
+          expect(data['payment_method_id']).to eq(check_method.prefixed_id)
+        end
+      end
+
+      response '422', 'session-based payment method' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { "Bearer #{jwt_token}" }
+        let(:body) { { payment_method_id: payment_method.prefixed_id } }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+        run_test!
+      end
+
+      response '404', 'order not found' do
+        let(:'x-spree-api-key') { api_key.token }
+        let(:'Authorization') { "Bearer #{jwt_token}" }
+        let(:order_id) { 'invalid' }
+        let(:body) { { payment_method_id: check_method.prefixed_id } }
+
+        schema '$ref' => '#/components/schemas/ErrorResponse'
+        run_test!
+      end
+    end
   end
 
   path '/api/v3/store/orders/{order_id}/payments/{id}' do
