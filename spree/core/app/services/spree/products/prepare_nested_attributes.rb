@@ -17,11 +17,14 @@ module Spree
     #   prepared_params = service.call
     #
     class PrepareNestedAttributes
+      attr_reader :variants_to_discontinue
+
       def initialize(product, store, params, ability)
         @product = product
         @store = store
         @params = params
         @ability = ability
+        @variants_to_discontinue = []
       end
 
       def call
@@ -75,7 +78,8 @@ module Spree
           params[:option_type_ids] = []
           params[:variants_attributes] = {}
 
-          variants_to_remove.each_with_index do |variant_id, index|
+          populate_variants_to_discontinue
+          variant_ids_to_destroy.each_with_index do |variant_id, index|
             params[:variants_attributes][index.to_s] = { id: variant_id, _destroy: '1' }
           end
 
@@ -122,13 +126,35 @@ module Spree
       def removed_variants_attributes
         return {} unless can_remove_variants?
 
+        populate_variants_to_discontinue
+
         attributes = {}
         last_index = params[:variants_attributes].keys.map(&:to_i).max
-        variants_to_remove.each_with_index do |variant_id, index|
-          attributes[(index + last_index + 1).to_s] = { id: variant_id, _destroy: '1' }
+        variant_ids_to_destroy.each_with_index do |variant_id, index|
+          attributes[(last_index + 1 + index).to_s] = { id: variant_id, _destroy: '1' }
         end
 
         attributes
+      end
+
+      def populate_variants_to_discontinue
+        ids = variants_to_remove.select { |vid| variant_ids_with_completed_orders.include?(vid) }
+        @variants_to_discontinue = product.variants.where(id: ids).to_a if ids.any?
+      end
+
+      def variant_ids_to_destroy
+        variants_to_remove - variant_ids_with_completed_orders
+      end
+
+      def variant_ids_with_completed_orders
+        @variant_ids_with_completed_orders ||=
+          product.variants
+                 .joins(:orders)
+                 .merge(Spree::Order.complete)
+                 .reorder(nil)
+                 .distinct
+                 .pluck(:id)
+                 .map(&:to_s)
       end
 
       def removed_product_option_types_attributes
