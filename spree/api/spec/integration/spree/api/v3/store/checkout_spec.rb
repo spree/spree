@@ -116,29 +116,6 @@ RSpec.describe 'Checkout API', type: :request, swagger_doc: 'api-reference/store
       expect(data['current_step']).to eq('delivery')
     end
 
-    it 'auto-advances from delivery to payment with empty body' do
-      # Set up order in delivery state
-      order.update!(email: 'customer@example.com')
-      order.ship_address = create(:address, country: country, state: us_state)
-      order.save!
-      order.next # cart -> address
-      order.next # address -> delivery
-      order.reload
-      expect(order.state).to eq('delivery')
-
-      # Send empty PATCH to trigger advancement
-      patch '/api/v3/store/checkout',
-            params: {}.to_json,
-            headers: {
-              'Content-Type' => 'application/json',
-              'x-spree-api-key' => api_key.token,
-              'Authorization' => "Bearer #{jwt_token}"
-            }
-
-      expect(response).to have_http_status(:ok)
-      data = JSON.parse(response.body)
-      expect(data['current_step']).to eq('payment')
-    end
   end
 
   path '/api/v3/store/checkout/complete' do

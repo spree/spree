@@ -30,6 +30,10 @@ module Spree
                   shipment.save!
                 end
 
+                # Auto-advance (e.g. delivery → payment) after rate selection.
+                # Temporary — Spree 6 removes the checkout state machine.
+                try_advance
+
                 render_cart
               end
             end
@@ -38,6 +42,17 @@ module Spree
 
             def permitted_params
               params.permit(:selected_shipping_rate_id)
+            end
+
+            # Temporary — Spree 6 removes the checkout state machine.
+            def try_advance
+              return if @cart.complete? || @cart.canceled?
+
+              @cart.next
+            rescue StandardError => e
+              Rails.error.report(e, context: { order_id: @cart.id, state: @cart.state }, source: 'spree.checkout')
+            ensure
+              @cart.reload
             end
           end
         end
