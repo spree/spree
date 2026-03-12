@@ -30,7 +30,7 @@ development:
   username: <%= ENV.fetch("DATABASE_USERNAME") { 'postgres' } %>
 
   # The password associated with the PostgreSQL role (username).
-  #password:
+  password: <%= ENV.fetch("DATABASE_PASSWORD") { "password" } %>
 
   # Connect on a TCP socket. Omitted by default since the client uses a
   # domain socket that doesn't need configuration. Windows does not have
@@ -57,6 +57,7 @@ test:
   <<: *default
   database: spree_test
   username: <%= ENV.fetch("DATABASE_USERNAME") { 'postgres' } %>
+  password: <%= ENV.fetch("DATABASE_PASSWORD") { "password" } %>
   host: <%= ENV.fetch("DATABASE_HOST") { "localhost" } %>
   port: <%= ENV.fetch("DATABASE_PORT") { 5432 }.to_i %>
 

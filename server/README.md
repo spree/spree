@@ -19,7 +19,7 @@ server/
 PostgreSQL and Redis must be running before you start. If you have them installed locally, make sure they're running. Otherwise you can start them with Docker:
 
 ```bash
-docker run -d --name spree-postgres -p 5432:5432 -e POSTGRES_HOST_AUTH_METHOD=trust postgres:17-alpine
+docker run -d --name spree-postgres -p 5432:5432 -e POSTGRES_PASSWORD=password postgres:17-alpine
 docker run -d --name spree-redis -p 6379:6379 redis:7-alpine
 ```
 
@@ -33,10 +33,10 @@ bin/dev
 
 `bin/setup` handles everything: installs Ruby (via [mise](https://mise.jdx.dev) if available, otherwise uses your system Ruby), system packages (libpq, vips), gems, and prepares the database.
 
-By default the app connects to PostgreSQL at `localhost:5432` as user `postgres` with no password. Override with environment variables if needed:
+By default the app connects to PostgreSQL at `localhost:5432` as user `postgres` with password `password`. Override with environment variables if needed:
 
 ```bash
-DATABASE_HOST=127.0.0.1 DATABASE_PORT=5433 DATABASE_USERNAME=myuser bin/setup
+DATABASE_HOST=127.0.0.1 DATABASE_PORT=5433 DATABASE_USERNAME=myuser DATABASE_PASSWORD=secret bin/setup
 ```
 
 Use `bin/setup --reset` to drop and recreate the database.
@@ -87,6 +87,7 @@ docker compose up -d
 | `DATABASE_HOST` | `localhost` | PostgreSQL host |
 | `DATABASE_PORT` | `5432` | PostgreSQL port |
 | `DATABASE_USERNAME` | `postgres` | PostgreSQL user |
+| `DATABASE_PASSWORD` | `password` | PostgreSQL password |
 
 ### Production
 

@@ -51,14 +51,14 @@ bin/dev
 PostgreSQL and Redis must be running before you run `bin/setup`. If you don't have them installed locally, start them with Docker:
 
 ```bash
-docker run -d --name spree-postgres -p 5432:5432 -e POSTGRES_HOST_AUTH_METHOD=trust postgres:17-alpine
+docker run -d --name spree-postgres -p 5432:5432 -e POSTGRES_PASSWORD=password postgres:17-alpine
 docker run -d --name spree-redis -p 6379:6379 redis:7-alpine
 ```
 
-By default the app connects to PostgreSQL at `localhost:5432` as user `postgres` with no password. Override with environment variables if needed:
+By default the app connects to PostgreSQL at `localhost:5432` as user `postgres` with password `password`. Override with environment variables if needed:
 
 ```bash
-DATABASE_HOST=127.0.0.1 DATABASE_PORT=5433 DATABASE_USERNAME=myuser bin/setup
+DATABASE_HOST=127.0.0.1 DATABASE_PORT=5433 DATABASE_USERNAME=myuser DATABASE_PASSWORD=secret bin/setup
 ```
 
 Use `bin/setup --reset` to drop and recreate the database.
