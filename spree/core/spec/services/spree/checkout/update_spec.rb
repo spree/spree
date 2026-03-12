@@ -112,7 +112,7 @@ module Spree
             context 'when order has address checkout step and is past address state' do
               let(:order) { create(:order_with_line_items, user: user, store: store, state: 'delivery') }
 
-              it 'reverts to address then auto-advances to delivery' do
+              it 'reverts to address then auto-advances one step to delivery' do
                 expect(subject).to be_success
                 expect(order.reload.state).to eq('delivery')
               end
@@ -121,10 +121,9 @@ module Spree
             context 'when order is in cart state' do
               let(:order) { create(:order_with_line_items, user: user, store: store, state: 'cart') }
 
-              it 'auto-advances past cart state' do
+              it 'auto-advances one step to address' do
                 expect(subject).to be_success
-                # After address assignment, try_advance pushes order forward
-                expect(order.reload.state).not_to eq('cart')
+                expect(order.reload.state).to eq('address')
               end
             end
           end
@@ -347,6 +346,37 @@ module Spree
         it 'handles string keys' do
           expect(subject).to be_success
           expect(order.reload.email).to eq('string_key@example.com')
+        end
+      end
+
+      describe 'auto-advance with empty params' do
+        let(:params) { {} }
+
+        context 'when order is in delivery state with shipping rates' do
+          let(:order) { create(:order_with_line_items, user: user, store: store, state: 'delivery') }
+
+          it 'advances to payment' do
+            expect(subject).to be_success
+            expect(order.reload.state).to eq('payment')
+          end
+        end
+
+        context 'when order is in cart state' do
+          let(:order) { create(:order_with_line_items, user: user, store: store, state: 'cart') }
+
+          it 'advances one step to address' do
+            expect(subject).to be_success
+            expect(order.reload.state).to eq('address')
+          end
+        end
+
+        context 'when order is complete' do
+          let(:order) { create(:completed_order_with_totals, user: user, store: store) }
+
+          it 'does not change state' do
+            expect(subject).to be_success
+            expect(order.reload.state).to eq('complete')
+          end
         end
       end
     end

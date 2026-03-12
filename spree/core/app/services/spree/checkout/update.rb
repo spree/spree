@@ -85,8 +85,8 @@ module Spree
         order.state = 'address'
       end
 
-      # Auto-advance to next checkout step after successful update.
-      # Uses order.next (state machine event) directly.
+      # Auto-advance to the next checkout step after successful update.
+      # Single order.next call — advances one step only (e.g. address → delivery).
       # Failure is swallowed — the update succeeded, advancement is best-effort.
       # The `requirements` array in the serialized response tells the frontend what's missing.
       def try_advance
