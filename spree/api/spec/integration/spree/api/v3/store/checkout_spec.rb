@@ -85,16 +85,19 @@ RSpec.describe 'Checkout API', type: :request, swagger_doc: 'api-reference/store
 
   describe 'auto-advance behavior' do
     let(:country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
-    let!(:state) { country.states.find_by(abbr: 'NY') || create(:state, country: country, abbr: 'NY', name: 'New York') }
-    let!(:zone) { Spree::Zone.find_by(name: 'GlobalZone') || create(:global_zone) }
-    let!(:shipping_method) { Spree::ShippingMethod.first || create(:shipping_method, zones: [zone]) }
+    let!(:us_state) { country.states.find_by(abbr: 'NY') || create(:state, country: country, abbr: 'NY', name: 'New York') }
+    let!(:zone) { create(:zone, zone_members: [Spree::ZoneMember.new(zoneable: country)]) }
+    let!(:shipping_method) { create(:shipping_method, zones: [zone]) }
 
-    it 'auto-advances one step after address submission' do
-      # Order starts in cart state, so single order.next goes cart → address
-      # A second PATCH would go address → delivery
+    it 'auto-advances from address to delivery after address submission' do
+      # Put order in address state with email set
+      order.update!(email: 'customer@example.com')
+      order.next # cart -> address
+      order.reload
+      expect(order.state).to eq('address')
+
       patch '/api/v3/store/checkout',
             params: {
-              email: 'customer@example.com',
               ship_address: {
                 firstname: 'John', lastname: 'Doe',
                 address1: '123 Main St', city: 'New York',
@@ -110,21 +113,20 @@ RSpec.describe 'Checkout API', type: :request, swagger_doc: 'api-reference/store
 
       expect(response).to have_http_status(:ok)
       data = JSON.parse(response.body)
-      expect(data['current_step']).to eq('address')
+      expect(data['current_step']).to eq('delivery')
     end
 
     it 'auto-advances from delivery to payment with empty body' do
       # Set up order in delivery state
       order.update!(email: 'customer@example.com')
-      order.ship_address = create(:address, country: country, state: state)
+      order.ship_address = create(:address, country: country, state: us_state)
       order.save!
-      # Use order.next to advance one step at a time (not advance which loops)
       order.next # cart -> address
       order.next # address -> delivery
       order.reload
       expect(order.state).to eq('delivery')
 
-      # Now send empty PATCH to trigger advancement
+      # Send empty PATCH to trigger advancement
       patch '/api/v3/store/checkout',
             params: {}.to_json,
             headers: {

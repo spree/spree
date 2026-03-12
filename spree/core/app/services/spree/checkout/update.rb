@@ -19,7 +19,7 @@ module Spree
 
         try_advance
 
-        success(order.reload)
+        success(order)
       rescue ActiveRecord::RecordNotFound
         raise
       rescue ActiveRecord::RecordInvalid => e
@@ -96,7 +96,11 @@ module Spree
       rescue StandardError => e
         Rails.error.report(e, context: { order_id: order.id, state: order.state }, source: 'spree.checkout')
       ensure
-        order.reload
+        begin
+          order.reload
+        rescue StandardError # rubocop:disable Lint/SuppressedException
+          # reload failure must not mask the original result
+        end
       end
     end
   end

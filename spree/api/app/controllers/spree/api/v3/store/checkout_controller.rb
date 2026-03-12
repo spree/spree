@@ -46,6 +46,8 @@ module Spree
             params.permit(
               :email,
               :special_instructions,
+              :currency,
+              :locale,
               ship_address: address_params,
               bill_address: address_params,
               metadata: {}
