@@ -10,10 +10,10 @@ module Spree
 
           # PATCH  /api/v3/store/checkout
           # Update checkout info (email, addresses, special instructions).
-          # Does NOT auto-advance — the frontend controls navigation between steps.
+          # Auto-advances to the next checkout step when possible.
           def update
             with_order_lock do
-              result = Spree.order_update_service.call(
+              result = Spree.checkout_update_service.call(
                 order: @cart,
                 params: checkout_params
               )

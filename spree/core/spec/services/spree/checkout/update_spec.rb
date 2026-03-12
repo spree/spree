@@ -1,347 +1,354 @@
 require 'spec_helper'
 
-describe Spree::Checkout::Update, type: :service do
-  describe '#transform_address_params' do
-    let!(:state)              { create(:state) }
-    let!(:country)            { state.country }
-    let!(:replace_country)    { described_class.new }
-    let!(:address) do
-      {
-        firstname: 'John',
-        lastname: 'Doe',
-        address1: '7735 Old Georgetown Road',
-        city: 'Bethesda',
-        phone: '3014445002',
-        zipcode: '20814',
-        state_id: state.id,
-        country_iso: country.iso
-      }
-    end
+module Spree
+  RSpec.describe Checkout::Update do
+    let(:store) { create(:store, supported_currencies: 'USD,EUR,GBP') }
+    let(:user) { create(:user) }
+    let(:order) { create(:order_with_line_items, user: user, store: store, currency: 'USD') }
 
-    context 'with ship_address order params' do
-      let(:order_params) do
-        ActionController::Parameters.new(
-          order: {
-            ship_address_attributes: address
-          }
-        )
-      end
-      let(:result) { replace_country.send(:replace_country_iso_with_id, order_params[:order][:ship_address_attributes]) }
+    describe '#call' do
+      subject { described_class.call(order: order, params: params) }
 
-      before { result }
+      describe 'updating email' do
+        let(:params) { { email: 'new@example.com' } }
 
-      it 'will return hash contain country_id' do
-        expect(result[:country_id]).to eq country.id
-      end
-
-      it 'will return hash without country_iso' do
-        expect(result).not_to include(:country_iso)
-      end
-    end
-
-    context 'with bill_address order params' do
-      let(:order_params) do
-        ActionController::Parameters.new(
-          order: {
-            bill_address_attributes: address
-          }
-        )
-      end
-      let(:result) { replace_country.send(:replace_country_iso_with_id, order_params[:order][:bill_address_attributes]) }
-
-      before { result }
-
-      it 'will return hash contain country_id' do
-        expect(result[:country_id]).to eq country.id
-      end
-
-      it 'will return hash without country_iso' do
-        expect(result).not_to include(:country_iso)
-      end
-    end
-  end
-
-  describe 'update address' do
-    let(:user) { create(:user_with_addresses) }
-    let(:order) { create(:order_with_line_items, user: user, bill_address: user.bill_address, ship_address: user.ship_address, state: order_state) }
-    let(:state) { create(:state) }
-    let(:country) { state.country }
-    let(:update_service) { described_class.call(order: order, params: order_params, permitted_attributes: permitted_attributes, request_env: nil) }
-    let(:order_params) { ActionController::Parameters.new(order: {
-                                                                  ship_address_id: ship_address_id,
-                                                                  bill_address_id: bill_address_id,
-                                                                  ship_address_attributes: address_attributes
-                                                                 }) }
-    let(:permitted_attributes) do
-      Spree::PermittedAttributes.checkout_attributes + [
-        bill_address_attributes: Spree::PermittedAttributes.address_attributes,
-        ship_address_attributes: Spree::PermittedAttributes.address_attributes
-      ]
-    end
-
-    context 'at cart state' do
-      let(:order_state) { 'cart' }
-      let(:ship_address_id) { nil }
-      let(:bill_address_id) { nil }
-      let(:address_attributes) do
-        {
-          firstname: 'John',
-          lastname: 'Doe',
-          address1: '7735 Old Georgetown Road',
-          city: 'Bethesda',
-          phone: '3014445002',
-          zipcode: '20814',
-          state_id: state.id,
-          country_iso: country.iso
-        }
-      end
-
-      it 'should set order back to address state' do
-        expect(order.state).not_to eq 'address'
-        expect(order.ship_address.state.id).not_to eq state.id
-
-        update_service
-
-        expect(order.state).to eq 'address'
-        expect(order.ship_address.state.id).to eq state.id
-      end
-
-      it 'should not set order back to address state if do_not_change_state is true' do
-        expect(order.state).not_to eq 'address'
-        order_params[:do_not_change_state] = true
-        update_service
-
-        expect(order.state).not_to eq 'address'
-      end
-
-      it 'should set order back to address state if quick checkout cancelled' do
-        expect(order.state).not_to eq 'address'
-        order_params[:order][:ship_address_id] = 'CLEAR'
-        update_service
-
-        expect(order.state).to eq 'address'
-      end
-    end
-
-    context 'at address state' do
-      let(:order_state) { 'address' }
-      let(:ship_address_id) { order.ship_address_id }
-      let(:bill_address_id) { order.bill_address_id }
-      let(:address_attributes) { nil }
-      let(:address) { create(:address, user: user) }
-
-      shared_examples 'user default addresses did not change' do
-        it 'does not change user default addresses' do
-          update_service
-
-          expect(user.reload.bill_address_id).not_to eq order.reload.bill_address
-          expect(user.reload.bill_address_id).not_to eq order.reload.ship_address
-          expect(user.reload.ship_address_id).not_to eq order.reload.bill_address
-          expect(user.reload.ship_address_id).not_to eq order.reload.ship_address
+        it 'updates the order email' do
+          expect(subject).to be_success
+          expect(order.reload.email).to eq('new@example.com')
         end
       end
 
-      shared_examples 'checkout is in address step' do
-        it 'keeps checkout in address step' do
-          update_service
+      describe 'updating special_instructions' do
+        let(:params) { { special_instructions: 'Leave at the door' } }
 
-          expect(order.reload.state).to eq 'address'
+        it 'updates the special instructions' do
+          expect(subject).to be_success
+          expect(order.reload.special_instructions).to eq('Leave at the door')
+        end
+
+        context 'when clearing special_instructions' do
+          let(:order) { create(:order_with_line_items, user: user, store: store, special_instructions: 'Existing instructions') }
+
+          it 'clears with empty string' do
+            result = described_class.call(order: order, params: { special_instructions: '' })
+            expect(result).to be_success
+            expect(order.reload.special_instructions).to eq('')
+          end
+
+          it 'clears with nil' do
+            result = described_class.call(order: order, params: { special_instructions: nil })
+            expect(result).to be_success
+            expect(order.reload.special_instructions).to be_nil
+          end
         end
       end
 
-      context 'when address did not change' do
-        it_behaves_like 'user default addresses did not change'
-        it_behaves_like 'checkout is in address step'
+      describe 'updating currency' do
+        context 'with supported currency' do
+          let(:params) { { currency: 'EUR' } }
 
-        it 'does not change order addresses' do
-          expect(update_service).to be_success
+          it 'updates the currency' do
+            expect(subject).to be_success
+            expect(order.reload.currency).to eq('EUR')
+          end
 
-          expect(order.reload.bill_address_id).to eq user.bill_address_id
-          expect(order.reload.ship_address_id).to eq user.ship_address_id
+          it 'is case-insensitive' do
+            result = described_class.call(order: order, params: { currency: 'eur' })
+            expect(result).to be_success
+            expect(order.reload.currency).to eq('EUR')
+          end
+        end
+
+        context 'with unsupported currency' do
+          let(:params) { { currency: 'JPY' } }
+
+          it 'returns failure' do
+            expect(subject).to be_failure
+          end
+
+          it 'does not change the currency' do
+            subject
+            expect(order.reload.currency).to eq('USD')
+          end
         end
       end
 
-      context 'when ship address changed' do
-        let(:ship_address_id) { address.id }
+      describe 'updating addresses' do
+        let(:country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
+        let!(:state) { country.states.find_by(abbr: 'NY') || create(:state, country: country, abbr: 'NY', name: 'New York') }
 
-        it_behaves_like 'user default addresses did not change'
-        it_behaves_like 'checkout is in address step'
+        shared_examples 'address update' do |address_type|
+          let(:address_key) { address_type }
+          let(:address_id_key) { :"#{address_type}_id" }
 
-        it 'should update order ship address' do
-          expect(update_service).to be_success
-          expect(order.reload.bill_address_id).to eq user.bill_address_id
-          expect(order.reload.ship_address_id).to eq address.id
+          context 'with new address attributes' do
+            let(:params) do
+              {
+                address_key => {
+                  firstname: 'John',
+                  lastname: 'Doe',
+                  address1: '123 Main St',
+                  city: 'New York',
+                  zipcode: '10001',
+                  country_iso: 'US',
+                  state_abbr: 'NY',
+                  phone: '555-1234'
+                }
+              }
+            end
+
+            it 'creates a new address' do
+              expect(subject).to be_success
+              address = order.reload.public_send(address_key)
+              expect(address.firstname).to eq('John')
+              expect(address.lastname).to eq('Doe')
+              expect(address.address1).to eq('123 Main St')
+              expect(address.city).to eq('New York')
+              expect(address.zipcode).to eq('10001')
+              expect(address.country.iso).to eq('US')
+              expect(address.state.abbr).to eq('NY')
+            end
+
+            context 'when order has address checkout step and is past address state' do
+              let(:order) { create(:order_with_line_items, user: user, store: store, state: 'delivery') }
+
+              it 'reverts to address then auto-advances to delivery' do
+                expect(subject).to be_success
+                expect(order.reload.state).to eq('delivery')
+              end
+            end
+
+            context 'when order is in cart state' do
+              let(:order) { create(:order_with_line_items, user: user, store: store, state: 'cart') }
+
+              it 'auto-advances past cart state' do
+                expect(subject).to be_success
+                # After address assignment, try_advance pushes order forward
+                expect(order.reload.state).not_to eq('cart')
+              end
+            end
+          end
+
+          context 'with existing address by nested id' do
+            let(:existing_address) { create(:address, user: user) }
+            let(:params) { { address_key => { id: existing_address.prefixed_id } } }
+
+            it 'uses the existing address' do
+              expect(subject).to be_success
+              expect(order.reload.public_send(address_id_key)).to eq(existing_address.id)
+            end
+          end
+
+          context 'with top-level address_id parameter' do
+            let(:existing_address) { create(:address, user: user) }
+            let(:params) { { address_id_key => existing_address.prefixed_id } }
+
+            it 'uses the existing address' do
+              expect(subject).to be_success
+              expect(order.reload.public_send(address_id_key)).to eq(existing_address.id)
+            end
+          end
+        end
+
+        describe 'ship_address' do
+          include_examples 'address update', :ship_address
+        end
+
+        describe 'bill_address' do
+          include_examples 'address update', :bill_address
         end
       end
 
-      context 'when bill address changed' do
-        let(:bill_address_id) { address.id }
+      describe 'address ownership' do
+        let(:other_user) { create(:user) }
+        let(:other_users_address) { create(:address, user: other_user) }
 
-        it_behaves_like 'user default addresses did not change'
-        it_behaves_like 'checkout is in address step'
+        shared_examples 'ignores other users address' do |address_type|
+          context "when using another user's address for #{address_type}" do
+            let(:params) { { address_type => { id: other_users_address.prefixed_id } } }
 
-        it 'should update order bill address' do
-          expect(update_service).to be_success
-          expect(order.reload.bill_address_id).to eq address.id
-          expect(order.reload.ship_address_id).to eq user.ship_address_id
+            it 'ignores the address and keeps original' do
+              original_address_id = order.public_send(:"#{address_type}_id")
+              expect(subject).to be_success
+              expect(order.reload.public_send(:"#{address_type}_id")).to eq(original_address_id)
+              expect(order.public_send(:"#{address_type}_id")).not_to eq(other_users_address.id)
+            end
+          end
+
+          context "when using another user's address via #{address_type}_id" do
+            let(:params) { { :"#{address_type}_id" => other_users_address.prefixed_id } }
+
+            it 'ignores the address and keeps original' do
+              original_address_id = order.public_send(:"#{address_type}_id")
+              expect(subject).to be_success
+              expect(order.reload.public_send(:"#{address_type}_id")).to eq(original_address_id)
+              expect(order.public_send(:"#{address_type}_id")).not_to eq(other_users_address.id)
+            end
+          end
+        end
+
+        include_examples 'ignores other users address', :ship_address
+        include_examples 'ignores other users address', :bill_address
+
+        context 'when order has no user (guest order)' do
+          let(:order) { create(:order_with_line_items, user: nil, store: store) }
+          let(:params) { { ship_address_id: other_users_address.prefixed_id } }
+
+          it 'ignores address_id params and keeps existing address' do
+            original_address_id = order.ship_address_id
+            expect(subject).to be_success
+            expect(order.reload.ship_address_id).to eq(original_address_id)
+          end
         end
       end
 
-      context 'when ship and bill address changed' do
-        let(:ship_address_id) { address.id }
-        let(:bill_address_id) { address.id }
+      describe 'updating metadata' do
+        let(:params) { { metadata: { 'erp_id' => '12345', 'source' => 'mobile' } } }
 
-        it_behaves_like 'user default addresses did not change'
-        it_behaves_like 'checkout is in address step'
+        it 'merges metadata into the order' do
+          expect(subject).to be_success
+          expect(order.reload.metadata).to include('erp_id' => '12345', 'source' => 'mobile')
+        end
 
-        it 'should update both order addresses' do
-          expect(update_service).to be_success
-          expect(order.reload.bill_address_id).to eq address.id
-          expect(order.reload.ship_address_id).to eq address.id
+        context 'with existing metadata' do
+          before { order.update!(metadata: { 'existing_key' => 'existing_value' }) }
+
+          let(:params) { { metadata: { 'new_key' => 'new_value' } } }
+
+          it 'merges without removing existing keys' do
+            expect(subject).to be_success
+            expect(order.reload.metadata).to include('existing_key' => 'existing_value', 'new_key' => 'new_value')
+          end
         end
       end
-    end
-  end
 
-  describe 'address ownership validation' do
-    let(:user) { create(:user_with_addresses) }
-    let(:other_user) { create(:user_with_addresses) }
-    let(:order) { create(:order_with_line_items, user: user, state: 'address') }
-    let(:permitted_attributes) do
-      Spree::PermittedAttributes.checkout_attributes + [
-        bill_address_attributes: Spree::PermittedAttributes.address_attributes,
-        ship_address_attributes: Spree::PermittedAttributes.address_attributes
-      ]
-    end
+      describe 'updating multiple fields' do
+        let(:country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
+        let!(:state) { country.states.find_by(abbr: 'NY') || create(:state, country: country, abbr: 'NY', name: 'New York') }
 
-    context 'when bill_address_attributes contains id of another user address' do
-      let(:other_user_address) { other_user.bill_address }
-      let(:order_params) do
-        ActionController::Parameters.new(
-          order: {
-            bill_address_attributes: { id: other_user_address.id }
-          }
-        )
-      end
-
-      it 'returns failure' do
-        result = described_class.call(order: order, params: order_params, permitted_attributes: permitted_attributes, request_env: nil)
-        expect(result).to be_failure
-      end
-
-      it 'does not associate the other user address with the order' do
-        described_class.call(order: order, params: order_params, permitted_attributes: permitted_attributes, request_env: nil)
-        expect(order.reload.bill_address_id).not_to eq other_user_address.id
-      end
-    end
-
-    context 'when ship_address_attributes contains id of another user address' do
-      let(:other_user_address) { other_user.ship_address }
-      let(:order_params) do
-        ActionController::Parameters.new(
-          order: {
-            ship_address_attributes: { id: other_user_address.id }
-          }
-        )
-      end
-
-      it 'returns failure' do
-        result = described_class.call(order: order, params: order_params, permitted_attributes: permitted_attributes, request_env: nil)
-        expect(result).to be_failure
-      end
-
-      it 'does not associate the other user address with the order' do
-        described_class.call(order: order, params: order_params, permitted_attributes: permitted_attributes, request_env: nil)
-        expect(order.reload.ship_address_id).not_to eq other_user_address.id
-      end
-    end
-
-    context 'when address_attributes contains id of the same user address' do
-      let(:user_address) { create(:address, user: user) }
-      let(:order_params) do
-        ActionController::Parameters.new(
-          order: {
-            bill_address_attributes: { id: user_address.id }
-          }
-        )
-      end
-
-      it 'returns success' do
-        result = described_class.call(order: order, params: order_params, permitted_attributes: permitted_attributes, request_env: nil)
-        expect(result).to be_success
-      end
-    end
-
-    context 'when address_attributes contains id of address with no user' do
-      let(:guest_address) { create(:address, user: nil) }
-      let(:order_params) do
-        ActionController::Parameters.new(
-          order: {
-            bill_address_attributes: { id: guest_address.id }
-          }
-        )
-      end
-
-      it 'returns success' do
-        result = described_class.call(order: order, params: order_params, permitted_attributes: permitted_attributes, request_env: nil)
-        expect(result).to be_success
-      end
-    end
-
-    context 'when address_attributes does not contain id' do
-      let(:state) { create(:state) }
-      let(:country) { state.country }
-      let(:order_params) do
-        ActionController::Parameters.new(
-          order: {
-            bill_address_attributes: {
+        let(:params) do
+          {
+            email: 'customer@example.com',
+            special_instructions: 'Handle with care',
+            ship_address: {
               firstname: 'John',
               lastname: 'Doe',
               address1: '123 Main St',
-              city: 'Anytown',
-              zipcode: '12345',
-              country_iso: country.iso,
-              state_id: state.id,
-              phone: '555-1234'
+              city: 'New York',
+              zipcode: '10001',
+              country_iso: 'US',
+              state_abbr: 'NY'
             }
           }
-        )
+        end
+
+        it 'updates all fields in a single transaction' do
+          expect(subject).to be_success
+          order.reload
+          expect(order.email).to eq('customer@example.com')
+          expect(order.special_instructions).to eq('Handle with care')
+          expect(order.ship_address.firstname).to eq('John')
+        end
       end
 
-      it 'returns success' do
-        result = described_class.call(order: order, params: order_params, permitted_attributes: permitted_attributes, request_env: nil)
-        expect(result).to be_success
-      end
-    end
-  end
+      describe 'setting line items' do
+        let(:variant) { create(:variant) }
 
-  describe 'update selected shipping rate' do
-    let(:update_service) { described_class.new }
-    let(:order) { create(:order_with_line_items) }
-    let(:order_params) do
-      ActionController::Parameters.new(
-        order: {
-          shipments_attributes: [
+        before do
+          variant.stock_items.first.update!(count_on_hand: 10)
+          store.products << variant.product unless store.products.include?(variant.product)
+        end
+
+        context 'with new line_items' do
+          let(:params) do
             {
-              id: order.shipments.first.id,
-              selected_shipping_rate_id: order.shipments.first.shipping_rates.first.id
+              line_items: [
+                { variant_id: variant.prefixed_id, quantity: 2 }
+              ]
             }
-          ]
-        }
-      )
-    end
-    let(:permitted_attributes) do
-      Spree::PermittedAttributes.checkout_attributes + [
-        shipments_attributes: Spree::PermittedAttributes.shipment_attributes
-      ]
-    end
+          end
 
-    it 'should set order back to delivery state' do
-      expect(order.state).not_to eq 'delivery'
+          it 'adds line items to the order' do
+            expect(subject).to be_success
+            order.reload
+            line_item = order.line_items.find_by(variant: variant)
+            expect(line_item).to be_present
+            expect(line_item.quantity).to eq(2)
+          end
+        end
 
-      update_service.send(:call, order: order, params: order_params, permitted_attributes: permitted_attributes, request_env: nil)
+        context 'with existing line item (upsert)' do
+          let!(:existing_line_item) { order.line_items.first }
+          let(:existing_variant) { existing_line_item.variant }
 
-      expect(order.state).to eq 'delivery'
+          before do
+            store.products << existing_variant.product unless store.products.include?(existing_variant.product)
+          end
+
+          let(:params) do
+            {
+              line_items: [
+                { variant_id: existing_variant.prefixed_id, quantity: 7 }
+              ]
+            }
+          end
+
+          it 'sets quantity instead of incrementing' do
+            expect(subject).to be_success
+            expect(existing_line_item.reload.quantity).to eq(7)
+          end
+        end
+
+        context 'with invalid variant_id' do
+          let(:params) do
+            {
+              line_items: [
+                { variant_id: 'variant_invalid999', quantity: 1 }
+              ]
+            }
+          end
+
+          it 'raises RecordNotFound with variant details' do
+            expect { subject }.to raise_error(ActiveRecord::RecordNotFound) do |error|
+              expect(error.model).to eq('Spree::Variant')
+              expect(error.message).to include('variant_invalid999')
+            end
+          end
+        end
+      end
+
+      describe 'error handling' do
+        context 'with invalid address prefix_id' do
+          let(:params) { { ship_address_id: 'addr_invalid123' } }
+
+          it 'succeeds but does not change the address' do
+            original_address_id = order.ship_address_id
+            expect(subject).to be_success
+            expect(order.reload.ship_address_id).to eq(original_address_id)
+          end
+        end
+
+        context 'when order save fails' do
+          let(:params) { { email: 'new@example.com' } }
+
+          before do
+            allow(order).to receive(:save!).and_raise(ActiveRecord::RecordInvalid.new(order))
+          end
+
+          it 'returns failure with error message' do
+            expect(subject).to be_failure
+          end
+        end
+      end
+
+      describe 'parameter normalization' do
+        let(:params) { { 'email' => 'string_key@example.com' } }
+
+        it 'handles string keys' do
+          expect(subject).to be_success
+          expect(order.reload.email).to eq('string_key@example.com')
+        end
+      end
     end
   end
 end
