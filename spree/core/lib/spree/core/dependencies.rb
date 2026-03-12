@@ -42,7 +42,7 @@ module Spree
         # order
         order_approve_service: 'Spree::Orders::Approve',
         order_cancel_service: 'Spree::Orders::Cancel',
-        order_update_service: 'Spree::Orders::Update',
+        order_update_service: 'Spree::Checkout::Update',
         order_updater: 'Spree::OrderUpdater',
 
         # shipment

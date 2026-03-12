@@ -2,70 +2,110 @@ module Spree
   module Checkout
     class Update
       prepend Spree::ServiceModule::Base
-      include Spree::Addresses::Helper
 
-      def call(order:, params:, permitted_attributes:, request_env:)
-        # Validate address ownership to prevent IDOR attacks
-        address_ownership_error = validate_address_ownership(order, params)
-        return failure(order, address_ownership_error) if address_ownership_error
+      def call(order:, params:)
+        @order = order
+        @params = params.to_h.deep_symbolize_keys
 
-        ship_changed = address_with_country_iso_present?(params, 'ship')
-        bill_changed = address_with_country_iso_present?(params, 'bill')
-        params[:order][:ship_address_attributes] = replace_country_iso_with_id(params[:order][:ship_address_attributes]) if ship_changed
-        params[:order][:bill_address_attributes] = replace_country_iso_with_id(params[:order][:bill_address_attributes]) if bill_changed
+        ApplicationRecord.transaction do
+          assign_order_attributes
+          assign_address(:ship_address)
+          assign_address(:bill_address)
 
-        # for quick checkouts we cannot revert to previous states
-        # we already have the address and delivery steps completed
-        # however we need to update the shipping address with missing data
-        # as previously we didn't have access to first/last name and street
-        unless params[:do_not_change_state]
-          order.state = 'address' if (ship_changed || bill_changed || quick_checkout_cancelled?(params)) && order.has_checkout_step?('address')
-          order.state = 'delivery' if selected_shipping_rate_present?(params) && order.has_checkout_step?('delivery')
+          order.save!
+
+          process_line_items
         end
 
-        return success(order) if order.update_from_params(params, permitted_attributes, request_env)
+        try_advance
 
-        failure(order)
+        success(order)
+      rescue ActiveRecord::RecordNotFound
+        raise
+      rescue ActiveRecord::RecordInvalid => e
+        failure(order, e.record.errors.full_messages.to_sentence)
+      rescue StandardError => e
+        failure(order, e.message)
       end
 
       private
 
-      def validate_address_ownership(order, params)
-        return nil unless params[:order]
+      attr_reader :order, :params
 
-        %w[bill ship].each do |address_kind|
-          address_id = params[:order].dig("#{address_kind}_address_attributes".to_sym, :id)
-          next unless address_id
+      def assign_order_attributes
+        order.email = params[:email] if params[:email].present?
+        order.special_instructions = params[:special_instructions] if params.key?(:special_instructions)
+        order.currency = params[:currency].upcase if params[:currency].present?
+        order.locale = params[:locale] if params[:locale].present?
+        order.metadata = order.metadata.merge(params[:metadata].to_h) if params[:metadata].present?
+      end
 
-          address = Spree::Address.find_by(id: address_id)
-          next unless address
+      def assign_address(address_type)
+        address_id_param = params[:"#{address_type}_id"]
+        address_params = params[address_type]
 
-          # Allow if address has no user (guest address) or belongs to the order's user
-          next if address.user_id.nil?
-          next if order.user_id.present? && address.user_id == order.user_id
-
-          return Spree.t(:address_not_owned_by_user)
+        if address_id_param.present?
+          address_id = resolve_address_id(address_id_param)
+          order.public_send(:"#{address_type}_id=", address_id) if address_id
+          return
         end
 
-        nil
+        return unless address_params.is_a?(Hash)
+
+        if address_params[:id].present?
+          address_id = resolve_address_id(address_params[:id])
+          order.public_send(:"#{address_type}_id=", address_id) if address_id
+        else
+          revert_to_address_state if order.has_checkout_step?('address')
+          order.public_send(:"#{address_type}_attributes=", address_params)
+        end
       end
 
-      def address_with_country_iso_present?(params, address_kind = 'ship')
-        return false unless params.dig(:order, "#{address_kind}_address_attributes".to_sym, :country_iso)
-        return false if params.dig(:order, "#{address_kind}_address_attributes".to_sym, :country_id)
+      def process_line_items
+        return unless params[:line_items].is_a?(Array)
 
-        true
+        result = Spree.cart_upsert_items_service.call(
+          order: order,
+          line_items: params[:line_items]
+        )
+
+        raise StandardError, result.error.to_s if result.failure?
       end
 
-      def selected_shipping_rate_present?(params)
-        shipments_attributes = params.dig(:order, :shipments_attributes)
-        return false unless shipments_attributes
+      def resolve_address_id(prefixed_id)
+        return unless order.user
 
-        shipments_attributes.any? { |s| s.dig(:selected_shipping_rate_id) }
+        decoded = Spree::Address.decode_prefixed_id(prefixed_id)
+        decoded ? order.user.addresses.find_by(id: decoded)&.id : nil
       end
 
-      def quick_checkout_cancelled?(params)
-        params.dig(:order, :ship_address_id) == 'CLEAR'
+      def revert_to_address_state
+        return if ['cart', 'address'].include?(order.state)
+
+        order.state = 'address'
+      end
+
+      # Auto-advance as far as the checkout state machine allows.
+      # Loops order.next until the order can't progress further (e.g. missing
+      # payment) or reaches confirm/complete. Stops at the first step whose
+      # before_transition guard fails — the `requirements` array in the
+      # serialized response tells the frontend what's still missing.
+      # Failure is swallowed — the update itself already succeeded.
+      def try_advance
+        return if order.complete? || order.canceled?
+
+        loop do
+          break unless order.next
+          break if order.confirm? || order.complete?
+        end
+      rescue StandardError => e
+        Rails.error.report(e, context: { order_id: order.id, state: order.state }, source: 'spree.checkout')
+      ensure
+        begin
+          order.reload
+        rescue StandardError # rubocop:disable Lint/SuppressedException
+          # reload failure must not mask the original result
+        end
       end
     end
   end
