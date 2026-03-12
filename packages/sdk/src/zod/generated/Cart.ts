@@ -1,8 +1,8 @@
 // This file is auto-generated. Do not edit directly.
 import { z } from 'zod';
 import { AddressSchema } from './Address';
+import { CartPromotionSchema } from './CartPromotion';
 import { LineItemSchema } from './LineItem';
-import { OrderPromotionSchema } from './OrderPromotion';
 import { PaymentSchema } from './Payment';
 import { PaymentMethodSchema } from './PaymentMethod';
 import { ShipmentSchema } from './Shipment';
@@ -37,8 +37,8 @@ export const CartSchema = z.object({
   current_step: z.string(),
   completed_steps: z.array(z.string()),
   requirements: z.array(z.object({ step: z.string(), field: z.string(), message: z.string() })),
-  order_promotions: z.array(OrderPromotionSchema),
-  line_items: z.array(LineItemSchema),
+  promotions: z.array(CartPromotionSchema),
+  items: z.array(LineItemSchema),
   shipments: z.array(ShipmentSchema),
   payments: z.array(PaymentSchema),
   bill_address: AddressSchema.nullable(),
