@@ -1502,4 +1502,135 @@ describe Spree::Variant, type: :model do
       end
     end
   end
+
+  describe '#prices= (hash array)' do
+    context 'on persisted variant' do
+      it 'upserts prices by currency' do
+        variant.prices = [
+          { currency: 'USD', amount: 19.99, compare_at_amount: 24.99 },
+          { currency: 'EUR', amount: 17.50 }
+        ]
+
+        expect(variant.prices.find_by(currency: 'USD').amount.to_f).to eq(19.99)
+        expect(variant.prices.find_by(currency: 'USD').compare_at_amount.to_f).to eq(24.99)
+        expect(variant.prices.find_by(currency: 'EUR').amount.to_f).to eq(17.50)
+      end
+
+      it 'removes base prices for unlisted currencies' do
+        variant.set_price('GBP', 15.00)
+        variant.prices = [{ currency: 'USD', amount: 10.00 }]
+
+        expect(variant.prices.reload.find_by(currency: 'GBP')).to be_nil
+      end
+    end
+
+    context 'on new variant' do
+      let(:new_variant) { build(:variant, product: variant.product) }
+
+      it 'builds prices in memory and saves with variant' do
+        new_variant.prices.clear
+        new_variant.prices = [
+          { currency: 'EUR', amount: 25.00 },
+          { currency: 'GBP', amount: 20.00 }
+        ]
+        new_variant.save!
+
+        expect(new_variant.prices.where(currency: %w[EUR GBP]).count).to eq(2)
+        expect(new_variant.prices.find_by(currency: 'GBP').amount.to_f).to eq(20.00)
+      end
+    end
+
+    context 'with Price objects' do
+      it 'passes through to ActiveRecord setter' do
+        price = build(:price, currency: 'CAD', amount: 30)
+        variant.prices = [price]
+        expect(variant.prices).to include(price)
+      end
+    end
+  end
+
+  describe '#stock_items= (hash array)' do
+    let!(:stock_location) { Spree::StockLocation.first || create(:stock_location) }
+    let!(:stock_location_2) { create(:stock_location, name: 'Warehouse 2') }
+
+    context 'on persisted variant' do
+      it 'upserts stock by location' do
+        variant.stock_items = [
+          { stock_location_id: stock_location.id, count_on_hand: 50, backorderable: true }
+        ]
+
+        si = variant.stock_items.find_by(stock_location: stock_location)
+        expect(si.count_on_hand).to eq(50)
+        expect(si.backorderable).to eq(true)
+      end
+
+      it 'accepts prefixed IDs for stock_location_id' do
+        variant.stock_items = [
+          { stock_location_id: stock_location.prefixed_id, count_on_hand: 30 }
+        ]
+
+        si = variant.stock_items.find_by(stock_location: stock_location)
+        expect(si.count_on_hand).to eq(30)
+      end
+
+      it 'soft-deletes stock items for unlisted locations' do
+        variant.set_stock(10, false, stock_location)
+        variant.set_stock(5, false, stock_location_2)
+
+        variant.stock_items = [
+          { stock_location_id: stock_location.id, count_on_hand: 20 }
+        ]
+
+        expect(variant.stock_items.find_by(stock_location: stock_location).count_on_hand).to eq(20)
+        expect(Spree::StockItem.unscoped.find_by(variant: variant, stock_location: stock_location_2).deleted_at).not_to be_nil
+      end
+    end
+
+    context 'on new variant' do
+      let(:new_variant) { build(:variant, product: variant.product) }
+
+      it 'defers stock_items creation to after_create' do
+        new_variant.stock_items = [
+          { stock_location_id: stock_location.prefixed_id, count_on_hand: 99 }
+        ]
+        new_variant.save!
+
+        si = new_variant.stock_items.find_by(stock_location: stock_location)
+        expect(si.count_on_hand).to eq(99)
+      end
+    end
+  end
+
+  describe '#options=' do
+    it 'sets option values via set_option_value' do
+      product = create(:product, stores: [store])
+      v = create(:variant, product: product)
+      v.set_option_value('color', 'blue')
+
+      expect(v.option_values.reload.map(&:name)).to include('blue')
+    end
+
+    it 'calls set_option_value for each option hash' do
+      product = create(:product, stores: [store])
+      v = create(:variant, product: product)
+
+      expect(v).to receive(:set_option_value).with('Color', 'Blue', nil)
+      v.options = [{ name: 'Color', value: 'Blue' }]
+    end
+
+    it 'skips options with blank name or value' do
+      product = create(:product, stores: [store])
+      v = create(:variant, product: product)
+
+      expect(v).not_to receive(:set_option_value)
+      v.options = [{ name: '', value: 'Blue' }, { name: 'Color', value: '' }]
+    end
+
+    it 'defers when product is nil' do
+      v = Spree::Variant.new
+      v.options = [{ name: 'Color', value: 'Blue' }]
+
+      expect(v.instance_variable_get(:@pending_options)).to eq([{ name: 'Color', value: 'Blue' }])
+    end
+  end
 end

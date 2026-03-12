@@ -136,6 +136,7 @@ module Spree
 
     after_create :add_associations_from_prototype
     after_create :build_variants_from_option_values_hash, if: :option_values_hash
+    after_create :apply_pending_variants, if: :pending_variants?
 
     after_save :save_master
     after_save :run_touch_callbacks, if: :anything_changed?
@@ -216,6 +217,29 @@ module Spree
     )
 
     alias options product_option_types
+
+    # Maps tags array to tag_list for API convenience.
+    # @param tags [Array<String>]
+    def tags=(tags)
+      self.tag_list = tags
+    end
+
+    # Syncs variants from an array of hashes.
+    # Creates new variants, updates existing ones (matched by :id), and removes unlisted ones.
+    # Must be called on a persisted product (use after_save or call explicitly after create).
+    # @param variants_params [Array<Hash>] array of variant attribute hashes
+    # @return [void]
+    def variants=(variants_params)
+      return super if variants_params.blank? || variants_params.first.is_a?(Spree::Variant)
+
+      # Store for deferred processing if product is not yet persisted
+      if new_record?
+        @pending_variants_params = variants_params
+        return
+      end
+
+      apply_variants(variants_params)
+    end
 
     self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on status available_on created_at updated_at]
     self.whitelisted_ransackable_associations = %w[taxons categories stores variants_including_master master variants tags labels
@@ -511,7 +535,11 @@ module Spree
       @total_on_hand ||= if any_variants_not_track_inventory?
                            BigDecimal::INFINITY
                          else
-                           stock_items.loaded? ? stock_items.sum(&:count_on_hand) : stock_items.sum(:count_on_hand)
+                           if variants_including_master.loaded?
+                             variants_including_master.sum(&:total_on_hand)
+                           else
+                             stock_items.loaded? ? stock_items.sum(&:count_on_hand) : stock_items.sum(:count_on_hand)
+                           end
                          end
     end
 
@@ -640,6 +668,40 @@ module Spree
       nil
     end
 
+    def pending_variants?
+      @pending_variants_params.present?
+    end
+
+    def apply_pending_variants
+      return unless @pending_variants_params
+
+      apply_variants(@pending_variants_params)
+      @pending_variants_params = nil
+    end
+
+    def apply_variants(variants_params)
+      variant_ids_in_payload = []
+
+      variants_params.each do |variant_data|
+        variant_data = variant_data.to_h.with_indifferent_access
+        variant_id = variant_data.delete(:id)
+
+        if variant_id.present?
+          variant = variants_including_master.find_by_param!(variant_id)
+          variant.update!(variant_data)
+          variant_ids_in_payload << variant.id
+        else
+          variant = variants.build
+          variant.assign_attributes(variant_data)
+          variant.save!
+          variant_ids_in_payload << variant.id
+        end
+      end
+
+      # Remove variants not in the payload (only non-master)
+      variants.where.not(id: variant_ids_in_payload).destroy_all if variant_ids_in_payload.any?
+    end
+
     def add_associations_from_prototype
       if prototype_id && prototype = Spree::Prototype.find_by(id: prototype_id)
         self.option_types = prototype.option_types
@@ -685,7 +747,7 @@ module Spree
     end
 
     def assign_default_tax_category
-      self.tax_category = Spree::TaxCategory.default if new_record?
+      self.tax_category = Spree::TaxCategory.default if new_record? && self[:tax_category_id].blank?
     end
 
     def anything_changed?

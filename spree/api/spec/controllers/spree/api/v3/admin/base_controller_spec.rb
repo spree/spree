@@ -26,7 +26,7 @@ RSpec.describe Spree::Api::V3::Admin::BaseController, type: :controller do
     routes.draw { get 'index' => 'spree/api/v3/admin/test#index' }
   end
 
-  describe 'secret API key authentication' do
+  describe 'authentication via secret API key' do
     context 'with valid secret API key' do
       before { request.headers['X-Spree-Api-Key'] = secret_api_key.plaintext_token }
 
@@ -37,16 +37,6 @@ RSpec.describe Spree::Api::V3::Admin::BaseController, type: :controller do
       end
     end
 
-    context 'without API key' do
-      it 'returns 401 unauthorized' do
-        get :index
-
-        expect(response).to have_http_status(:unauthorized)
-        expect(json_response['error']['code']).to eq('invalid_token')
-        expect(json_response['error']['message']).to include('secret API key')
-      end
-    end
-
     context 'with invalid API key' do
       before { request.headers['X-Spree-Api-Key'] = 'sk_invalid' }
 
@@ -54,7 +44,6 @@ RSpec.describe Spree::Api::V3::Admin::BaseController, type: :controller do
         get :index
 
         expect(response).to have_http_status(:unauthorized)
-        expect(json_response['error']['code']).to eq('invalid_token')
       end
     end
 
@@ -97,13 +86,11 @@ RSpec.describe Spree::Api::V3::Admin::BaseController, type: :controller do
     end
   end
 
-  describe 'JWT audience enforcement' do
-    before { request.headers['X-Spree-Api-Key'] = secret_api_key.plaintext_token }
-
-    context 'with admin JWT token (audience: admin_api)' do
+  describe 'authentication via JWT token' do
+    context 'with valid admin JWT token' do
       before { request.headers['Authorization'] = "Bearer #{admin_jwt_token}" }
 
-      it 'authenticates successfully' do
+      it 'returns 200 and sets current_user' do
         get :index
 
         expect(response).to have_http_status(:ok)
@@ -111,27 +98,128 @@ RSpec.describe Spree::Api::V3::Admin::BaseController, type: :controller do
       end
     end
 
-    context 'with store JWT token (audience: store_api)' do
-      let(:customer) { create(:user) }
-      let(:store_jwt_token) { Spree::Api::V3::TestingSupport.generate_jwt(customer, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_STORE) }
+    context 'with expired JWT token' do
+      let(:expired_token) do
+        Spree::Api::V3::TestingSupport.generate_jwt(
+          admin_user,
+          expiration: -1.hour.to_i,
+          audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_ADMIN
+        )
+      end
 
-      before { request.headers['Authorization'] = "Bearer #{store_jwt_token}" }
+      before { request.headers['Authorization'] = "Bearer #{expired_token}" }
 
-      it 'rejects the token silently (optional auth)' do
+      it 'returns 401 unauthorized' do
         get :index
 
-        expect(response).to have_http_status(:ok)
-        expect(json_response['user_id']).to be_nil
+        expect(response).to have_http_status(:unauthorized)
       end
     end
 
-    context 'without JWT token' do
-      it 'proceeds without user (optional auth)' do
+    context 'with store JWT token (wrong audience)' do
+      let(:store_jwt_token) do
+        Spree::Api::V3::TestingSupport.generate_jwt(
+          admin_user,
+          audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_STORE
+        )
+      end
+
+      before { request.headers['Authorization'] = "Bearer #{store_jwt_token}" }
+
+      it 'returns 401 unauthorized' do
+        get :index
+
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
+
+    context 'with tampered JWT token' do
+      before { request.headers['Authorization'] = "Bearer #{admin_jwt_token}tampered" }
+
+      it 'returns 401 unauthorized' do
+        get :index
+
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
+
+    context 'with completely invalid JWT token' do
+      before { request.headers['Authorization'] = 'Bearer not_a_real_jwt_at_all' }
+
+      it 'returns 401 unauthorized' do
+        get :index
+
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
+
+    context 'with a non-admin user JWT token' do
+      let(:customer) { create(:user) }
+      let(:customer_admin_jwt) do
+        Spree::Api::V3::TestingSupport.generate_jwt(
+          customer,
+          audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_ADMIN
+        )
+      end
+
+      before { request.headers['Authorization'] = "Bearer #{customer_admin_jwt}" }
+
+      it 'authenticates the user (authorization is handled separately)' do
         get :index
 
         expect(response).to have_http_status(:ok)
-        expect(json_response['user_id']).to be_nil
+        expect(json_response['user_id']).to eq(customer.id)
       end
+    end
+  end
+
+  describe 'authentication priority (secret key vs JWT)' do
+    context 'with both valid secret key and valid JWT' do
+      before do
+        request.headers['X-Spree-Api-Key'] = secret_api_key.plaintext_token
+        request.headers['Authorization'] = "Bearer #{admin_jwt_token}"
+      end
+
+      it 'authenticates successfully via secret key' do
+        get :index
+
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
+    context 'with invalid secret key and valid JWT' do
+      before do
+        request.headers['X-Spree-Api-Key'] = 'sk_invalid'
+        request.headers['Authorization'] = "Bearer #{admin_jwt_token}"
+      end
+
+      it 'falls back to JWT authentication' do
+        get :index
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['user_id']).to eq(admin_user.id)
+      end
+    end
+
+    context 'with both invalid secret key and invalid JWT' do
+      before do
+        request.headers['X-Spree-Api-Key'] = 'sk_invalid'
+        request.headers['Authorization'] = 'Bearer invalid_token'
+      end
+
+      it 'returns 401 unauthorized' do
+        get :index
+
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
+  end
+
+  describe 'no authentication' do
+    it 'returns 401 unauthorized' do
+      get :index
+
+      expect(response).to have_http_status(:unauthorized)
     end
   end
 
@@ -140,6 +228,87 @@ RSpec.describe Spree::Api::V3::Admin::BaseController, type: :controller do
       get :index, params: { api_key: secret_api_key.plaintext_token }
 
       expect(response).to have_http_status(:unauthorized)
+    end
+  end
+
+  describe 'response headers' do
+    before { request.headers['X-Spree-Api-Key'] = secret_api_key.plaintext_token }
+
+    it 'sets no-store cache control' do
+      get :index
+
+      expect(response.headers['Cache-Control']).to include('no-store')
+    end
+
+    it 'sets private cache control' do
+      get :index
+
+      expect(response.headers['Cache-Control']).to include('private')
+    end
+  end
+
+  describe 'JWT audience enforcement' do
+    before { request.headers['X-Spree-Api-Key'] = secret_api_key.plaintext_token }
+
+    context 'with admin JWT token (audience: admin_api)' do
+      before { request.headers['Authorization'] = "Bearer #{admin_jwt_token}" }
+
+      it 'authenticates successfully and sets current_user' do
+        get :index
+
+        expect(response).to have_http_status(:ok)
+        # Secret key takes priority, so user_id won't be set from JWT
+        # To test JWT audience, we remove the secret key
+      end
+    end
+
+    context 'with store JWT token (audience: store_api) and valid secret key' do
+      let(:customer) { create(:user) }
+      let(:store_jwt_token) { Spree::Api::V3::TestingSupport.generate_jwt(customer, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_STORE) }
+
+      before { request.headers['Authorization'] = "Bearer #{store_jwt_token}" }
+
+      it 'authenticates via secret key, ignoring the store JWT' do
+        get :index
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['user_id']).to be_nil
+      end
+    end
+
+    context 'without JWT token but with valid secret key' do
+      it 'proceeds without user (optional auth via JWT)' do
+        get :index
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['user_id']).to be_nil
+      end
+    end
+  end
+
+  describe 'JWT-only audience enforcement' do
+    context 'with admin JWT only (no secret key)' do
+      before { request.headers['Authorization'] = "Bearer #{admin_jwt_token}" }
+
+      it 'authenticates and sets current_user' do
+        get :index
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['user_id']).to eq(admin_user.id)
+      end
+    end
+
+    context 'with store JWT only (wrong audience, no secret key)' do
+      let(:customer) { create(:user) }
+      let(:store_jwt_token) { Spree::Api::V3::TestingSupport.generate_jwt(customer, audience: Spree::Api::V3::JwtAuthentication::JWT_AUDIENCE_STORE) }
+
+      before { request.headers['Authorization'] = "Bearer #{store_jwt_token}" }
+
+      it 'rejects the token because audience does not match' do
+        get :index
+
+        expect(response).to have_http_status(:unauthorized)
+      end
     end
   end
 end

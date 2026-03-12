@@ -23,5 +23,8 @@
   "packageManager": "pnpm@10.6.0",
   "engines": {
     "node": ">=20"
+  },
+  "dependencies": {
+    "@base-ui/react": "^1.2.0"
   }
 }

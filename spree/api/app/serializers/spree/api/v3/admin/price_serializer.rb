@@ -14,6 +14,10 @@ module Spree
           end
 
           attributes created_at: :iso8601, updated_at: :iso8601
+
+          one :variant,
+              resource: Spree.api.admin_variant_serializer,
+              if: proc { expand?('variant') }
         end
       end
     end
