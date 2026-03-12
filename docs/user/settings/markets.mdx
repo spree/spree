@@ -1,0 +1,69 @@
+---
+title: "Markets"
+description: "Learn how to create and manage markets in Spree Commerce."
+---
+
+Markets allow you to define distinct shopping experiences for different regions or customer
+segments — each with its own currency, language, and tax settings. When multiple markets are
+configured, customers can switch between them on the storefront to see prices and content in
+their preferred currency and language.
+
+Markets can also be used as a rule condition in Price Lists, making it easy to apply
+region-specific pricing without duplicating products.
+
+<Note>Markets are not directly linked to Zones, but the two features work well together for multi-regional stores. Use Zones to control where you ship and how tax is applied by region, and Markets to manage the currency and language experience your customers see on the storefront.</Note>
+
+To manage markets, navigate to **Settings → Markets** in the admin dashboard.
+
+![The Markets overview page showing all configured markets](/docs/images/user/settings/markets/1-markets-overview.png)
+
+## Markets Overview
+
+The Markets table displays all configured markets with the following details:
+
+- **Name** — the internal label for the market (e.g., "United States", "Europe")
+- **Currency** — the currency customers in this market will see at checkout
+- **Default Locale** — the primary language for this market
+- **Default** — indicates which market is set as the default for new visitors
+
+## Create a Market
+
+To create a new market, click **New Market** in the top-right corner.
+
+![The market creation form in Spree Commerce](/docs/images/user/settings/markets/2-new-market.png)
+
+Fill in the following fields:
+
+- **Name** — an internal label to identify this market (e.g., "United Kingdom", "DACH Region")
+- **Default Country** — the primary country for this market, used to determine default shipping
+  and tax behaviour
+- **Currency** — the currency displayed to customers in this market at checkout
+- **Default Locale** — the primary language shown to customers in this market
+- **Supported Locales** — additional languages customers can switch to within this market
+- **Tax Inclusive** — check this if prices should be displayed with tax already included
+  (common in VAT-inclusive markets such as the EU)
+- **Default** — check this to make this the default market for visitors who haven't selected one
+
+Once you've filled in the details, click **Create** to save the new market.
+
+## Edit a Market
+
+To edit a market, click on its row in the Markets table to open the edit form.
+
+![Editing a market in Spree Commerce](/docs/images/user/settings/markets/3-edit-market.png)
+
+The edit form contains the same fields as the creation form. Update the relevant fields and
+click **Update** to save your changes.
+
+## Delete a Market
+
+To delete a market, click on its row to open the edit form, then click **Delete** at the
+bottom of the page.
+
+<Warning>Deleting a market cannot be undone. Before deleting, check that no active Price List rules or storefront configurations reference this market.</Warning>
+
+## Related
+
+- [<u>Zones</u>](https://spreecommerce.org/docs/user/settings/zones)
+- [<u>Tax</u>](https://spreecommerce.org/docs/user/settings/tax)
+- [<u>Price Lists</u>](https://spreecommerce.org/docs/user/manage-products/price-lists)
