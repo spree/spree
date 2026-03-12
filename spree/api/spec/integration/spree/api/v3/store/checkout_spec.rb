@@ -85,61 +85,6 @@ RSpec.describe 'Checkout API', type: :request, swagger_doc: 'api-reference/store
     end
   end
 
-  describe 'auto-advance behavior' do
-    let(:country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
-    let!(:us_state) { country.states.find_by(abbr: 'NY') || create(:state, country: country, abbr: 'NY', name: 'New York') }
-    let!(:zone) { create(:zone, zone_members: [Spree::ZoneMember.new(zoneable: country)]) }
-    let!(:shipping_method) { create(:shipping_method, zones: [zone]) }
-
-    it 'accepts ship_address_id to use an existing address' do
-      order.update!(email: 'customer@example.com')
-      existing_address = user.addresses.first || create(:address, user: user, country: country, state: us_state)
-
-      patch '/api/v3/store/checkout',
-            params: {
-              ship_address_id: existing_address.prefixed_id
-            }.to_json,
-            headers: {
-              'Content-Type' => 'application/json',
-              'x-spree-api-key' => api_key.token,
-              'Authorization' => "Bearer #{jwt_token}"
-            }
-
-      expect(response).to have_http_status(:ok)
-      data = JSON.parse(response.body)
-      expect(order.reload.ship_address_id).to eq(existing_address.id)
-    end
-
-    it 'auto-advances to payment after address submission' do
-      # Put order in address state with email set
-      order.update!(email: 'customer@example.com')
-      order.next # cart -> address
-      order.reload
-      expect(order.state).to eq('address')
-
-      patch '/api/v3/store/checkout',
-            params: {
-              ship_address: {
-                firstname: 'John', lastname: 'Doe',
-                address1: '123 Main St', city: 'New York',
-                zipcode: '10001', country_iso: 'US', state_abbr: 'NY',
-                phone: '555-1234'
-              }
-            }.to_json,
-            headers: {
-              'Content-Type' => 'application/json',
-              'x-spree-api-key' => api_key.token,
-              'Authorization' => "Bearer #{jwt_token}"
-            }
-
-      expect(response).to have_http_status(:ok)
-      data = JSON.parse(response.body)
-      # Advances through delivery (rates pre-selected) to payment
-      expect(data['current_step']).to eq('payment')
-    end
-
-  end
-
   path '/api/v3/store/checkout/complete' do
     post 'Complete checkout' do
       tags 'Checkout'

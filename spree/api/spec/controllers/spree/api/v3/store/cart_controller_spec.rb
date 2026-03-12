@@ -306,6 +306,45 @@ RSpec.describe Spree::Api::V3::Store::CartController, type: :controller do
         )
       end
     end
+
+    context 'auto-advance' do
+      let(:user) { create(:user_with_addresses) }
+      let(:cart) { create(:order_with_line_items, store: store, user: user) }
+      let(:country) { Spree::Country.find_by(iso: 'US') || create(:country, iso: 'US') }
+      let!(:us_state) { country.states.find_by(abbr: 'NY') || create(:state, country: country, abbr: 'NY', name: 'New York') }
+      let!(:zone) { create(:zone, zone_members: [Spree::ZoneMember.new(zoneable: country)]) }
+      let!(:shipping_method) { create(:shipping_method, zones: [zone]) }
+
+      before do
+        request.headers['Authorization'] = "Bearer #{jwt_token}"
+      end
+
+      it 'generates shipments when address is present but shipments are empty' do
+        address = create(:address, user: user, country: country, state: us_state)
+        cart.update!(email: 'customer@example.com', ship_address: address)
+        cart.shipments.delete_all
+        cart.update_column(:state, 'address')
+        cart.reload
+
+        expect(cart.shipments).to be_empty
+
+        get :show
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['shipments']).to be_present
+      end
+
+      it 'does not advance when no address is set' do
+        cart.update!(ship_address: nil)
+        cart.shipments.delete_all
+        cart.reload
+
+        get :show
+
+        expect(response).to have_http_status(:ok)
+        expect(json_response['shipments']).to be_empty
+      end
+    end
   end
 
   describe 'PATCH #associate' do
