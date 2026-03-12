@@ -6,6 +6,7 @@ export type {
   Asset,
   Base,
   Cart,
+  CartPromotion,
   Category,
   Country,
   CreditCard,
@@ -80,6 +81,7 @@ export type { Market as StoreMarket } from './generated';
 export type { Metafield as StoreMetafield } from './generated';
 export type { OptionType as StoreOptionType } from './generated';
 export type { OptionValue as StoreOptionValue } from './generated';
+export type { CartPromotion as StoreCartPromotion } from './generated';
 export type { OrderPromotion as StoreOrderPromotion } from './generated';
 export type { Order as StoreOrder } from './generated';
 export type { PaymentMethod as StorePaymentMethod } from './generated';

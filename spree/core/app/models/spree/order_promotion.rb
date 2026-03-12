@@ -1,5 +1,7 @@
 module Spree
   class OrderPromotion < Spree.base_class
+    has_prefix_id :oprom
+
     belongs_to :order, class_name: 'Spree::Order'
     belongs_to :promotion, class_name: 'Spree::Promotion'
 

@@ -23,14 +23,14 @@ RSpec.describe Spree::Api::V3::Admin::OrderSerializer do
     end
   end
 
-  describe 'line_items' do
+  describe 'items' do
     let(:order) { create(:order_with_line_items, store: store) }
-    let(:base_params) { { store: store, currency: store.default_currency, expand: 'line_items' } }
+    let(:base_params) { { store: store, currency: store.default_currency, expand: 'items' } }
 
     before { order.line_items.first.update!(private_metadata: { 'gift' => true }) }
 
     it 'uses admin line item serializer with metadata' do
-      line_item_data = subject['line_items'].first
+      line_item_data = subject['items'].first
       expect(line_item_data).to have_key('metadata')
       expect(line_item_data['metadata']).to eq({ 'gift' => true })
     end

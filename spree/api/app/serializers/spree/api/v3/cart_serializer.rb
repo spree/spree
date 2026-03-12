@@ -42,8 +42,8 @@ module Spree
           Spree::Checkout::Requirements.new(order).call
         end
 
-        many :order_promotions, resource: Spree.api.order_promotion_serializer
-        many :line_items, resource: Spree.api.line_item_serializer
+        many :cart_promotions, key: :promotions, resource: Spree.api.cart_promotion_serializer
+        many :line_items, key: :items, resource: Spree.api.line_item_serializer
         many :shipments, resource: Spree.api.shipment_serializer
         many :payments, resource: Spree.api.payment_serializer
         one :bill_address, resource: Spree.api.address_serializer
