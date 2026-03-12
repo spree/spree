@@ -227,6 +227,24 @@ module Spree
             self.checkout_steps.index(step).to_i
           end
 
+          # Customer-facing checkout step derived from the internal state machine state.
+          # Maps +'cart'+ to +'address'+ since cart is not a user-facing checkout step.
+          #
+          # @return [String] current checkout step name (e.g. +"address"+, +"delivery"+, +"payment"+)
+          def current_checkout_step
+            state == 'cart' ? 'address' : state
+          end
+
+          # Checkout steps that have already been completed, i.e. all steps before
+          # {#current_checkout_step}. Does not include +'complete'+.
+          #
+          # @return [Array<String>] completed step names in order
+          def completed_checkout_steps
+            steps = checkout_steps.reject { |s| s == 'complete' }
+            idx = steps.index(current_checkout_step) || 0
+            steps.first(idx)
+          end
+
           def can_go_to_state?(state)
             return false unless has_checkout_step?(self.state) && has_checkout_step?(state)
 

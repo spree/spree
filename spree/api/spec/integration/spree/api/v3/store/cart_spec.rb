@@ -62,7 +62,9 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
           data = JSON.parse(response.body)
           expect(data['id']).to start_with('cart_')
           expect(data['number']).to be_present
-          expect(data['state']).to eq('cart')
+          expect(data['current_step']).to eq('address')
+          expect(data['completed_steps']).to eq([])
+          expect(data['requirements']).to be_an(Array)
           expect(data['token']).to be_present
         end
       end

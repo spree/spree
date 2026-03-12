@@ -17,7 +17,7 @@ RSpec.describe Spree::Api::V3::Store::CartController, type: :controller do
 
       expect(response).to have_http_status(:created)
       expect(json_response['number']).to be_present
-      expect(json_response['state']).to eq('cart')
+      expect(json_response['current_step']).to eq('address')
     end
 
     it 'returns token for guest access' do
@@ -151,7 +151,7 @@ RSpec.describe Spree::Api::V3::Store::CartController, type: :controller do
 
         expect(response).to have_http_status(:ok)
         expect(json_response['number']).to eq(cart.number)
-        expect(json_response['state']).to eq('cart')
+        expect(json_response['current_step']).to eq('address')
       end
 
       it 'returns cart with line items' do
@@ -274,7 +274,9 @@ RSpec.describe Spree::Api::V3::Store::CartController, type: :controller do
         expect(json_response).to include(
           'id',
           'number',
-          'state',
+          'current_step',
+          'completed_steps',
+          'requirements',
           'token',
           'currency',
           'item_count',
@@ -283,6 +285,9 @@ RSpec.describe Spree::Api::V3::Store::CartController, type: :controller do
           'total',
           'display_total'
         )
+        expect(json_response).not_to have_key('state')
+        expect(json_response).not_to have_key('checkout_steps')
+        expect(json_response).not_to have_key('state_lock_version')
       end
 
       it 'returns line item attributes' do

@@ -1,5 +1,16 @@
 # @spree/next
 
+## 0.9.0
+
+### Minor Changes
+
+- **Breaking:** Cart responses no longer include `state`, `checkout_steps`, or `state_lock_version`. Use `current_step`, `completed_steps`, and `requirements` instead.
+
+### Patch Changes
+
+- Updated dependencies:
+  - @spree/sdk@0.9.0
+
 ## 0.8.2
 
 ### Patch Changes

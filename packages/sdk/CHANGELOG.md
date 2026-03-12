@@ -1,5 +1,18 @@
 # @spree/sdk
 
+## 0.9.0
+
+### Minor Changes
+
+- **Breaking:** Cart API no longer returns `state`, `checkout_steps`, or `state_lock_version`. These are replaced by:
+  - `current_step` — the current checkout step (e.g. `"address"`, `"delivery"`, `"payment"`)
+  - `completed_steps` — array of steps already completed
+  - `requirements` — array of `{ step, field, message }` objects describing what's still needed to complete checkout
+
+- Added `CheckoutRequirement` type for the new `requirements` field on `Cart`.
+
+- Zod generator now supports inline object types (`Array<{...}>`) and correctly handles nested braces in TypeScript type definitions.
+
 ## 0.8.2
 
 ### Patch Changes

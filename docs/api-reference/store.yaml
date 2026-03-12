@@ -661,16 +661,16 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6ImNkN2QyY2FhLTkyOWQtNDkzYS05NTQ0LTgwZDMyYTc0YmRjZSIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzczMjYzNzY5fQ.ziT9ugb9kC8vLE8q41j5UM9vJb_dMea0feoumRqgBgA
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6IjI4NGQ4YTMzLWFlN2UtNGRhZi04NjllLTI5NWQ2ZTYyNTEyNiIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzczMzEwNTQ4fQ.yAWJcJfwuPf2xhzYFY-VTklDlNXqpEmLu2jg7kPdMEo
                 user:
                   id: cus_UkLWZg9DAJ
                   email: test@example.com
-                  first_name: Mallory
-                  last_name: Schmitt
+                  first_name: Rodrick
+                  last_name: Kshlerin
                   phone:
                   accepts_email_marketing: false
-                  created_at: '2026-03-11T20:16:08.948Z'
-                  updated_at: '2026-03-11T20:16:08.948Z'
+                  created_at: '2026-03-12T09:15:48.006Z'
+                  updated_at: '2026-03-12T09:15:48.006Z'
                   addresses: []
                   default_billing_address:
                   default_shipping_address:
@@ -747,16 +747,16 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6IjY4MTg5MjBmLTM5ODYtNDdiYy04NjE1LWUxMDBhMDFjYmMwNyIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzczMjYzNzcwfQ.QAFfl9n0ftXwpVd8NcRfD7pg39I8Eo7jibXguYer7vk
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6IjA1NDlhYTcyLWFiZTMtNGEwZC05NmVmLTI4MjZhYTlhZDYwMSIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzczMzEwNTQ5fQ.A6Z_Eewbap_WUk8k_WI8oPvnu8zY7FmXlNHj2OOxJlo
                 user:
                   id: cus_UkLWZg9DAJ
                   email: test@example.com
-                  first_name: Loma
-                  last_name: Hickle
+                  first_name: Marcel
+                  last_name: Vandervort
                   phone:
                   accepts_email_marketing: false
-                  created_at: '2026-03-11T20:16:10.379Z'
-                  updated_at: '2026-03-11T20:16:10.379Z'
+                  created_at: '2026-03-12T09:15:49.445Z'
+                  updated_at: '2026-03-12T09:15:49.445Z'
                   addresses: []
                   default_billing_address:
                   default_shipping_address:
@@ -828,19 +828,13 @@ paths:
             application/json:
               example:
                 id: cart_UkLWZg9DAJ
-                number: R234338485
-                state: cart
-                checkout_steps:
-                - address
-                - delivery
-                - complete
-                token: 1WFmOSYStXOjNKWBoA9RTg1773260171159
+                number: R499009231
+                token: 60QazEbZa7-Um7T3oyRyiA1773306950226
                 email:
                 special_instructions:
                 currency: USD
                 locale: en
                 item_count: 0
-                state_lock_version: 0
                 item_total: '0.0'
                 display_item_total: "$0.00"
                 ship_total: '0.0'
@@ -857,8 +851,23 @@ paths:
                 display_additional_tax_total: "$0.00"
                 total: '0.0'
                 display_total: "$0.00"
-                created_at: '2026-03-11T20:16:11.160Z'
-                updated_at: '2026-03-11T20:16:11.160Z'
+                created_at: '2026-03-12T09:15:50.227Z'
+                updated_at: '2026-03-12T09:15:50.227Z'
+                current_step: address
+                completed_steps: []
+                requirements:
+                - step: cart
+                  field: line_items
+                  message: Add at least one item to your cart
+                - step: address
+                  field: email
+                  message: Email address is required
+                - step: address
+                  field: ship_address
+                  message: Shipping address is required
+                - step: delivery
+                  field: shipping_method
+                  message: Select a shipping method for all shipments
                 order_promotions: []
                 line_items: []
                 shipments: []
@@ -984,20 +993,13 @@ paths:
             application/json:
               example:
                 id: cart_UkLWZg9DAJ
-                number: R984383391
-                state: cart
-                checkout_steps:
-                - address
-                - delivery
-                - payment
-                - complete
-                token: RvY28jX4f7dPXw7cPnHeEJPE4CELLvXSpBM
-                email: talia@schulistjones.us
+                number: R626687381
+                token: jSwsK2nfC2wZ1TgbJhdxv7HXPUuAFU6d7tC
+                email: boyce@schaefer.ca
                 special_instructions:
                 currency: USD
                 locale: en
                 item_count: 1
-                state_lock_version: 0
                 item_total: '10.0'
                 display_item_total: "$10.00"
                 ship_total: '100.0'
@@ -1014,16 +1016,22 @@ paths:
                 display_additional_tax_total: "$0.00"
                 total: '110.0'
                 display_total: "$110.00"
-                created_at: '2026-03-11T20:16:12.161Z'
-                updated_at: '2026-03-11T20:16:12.218Z'
+                created_at: '2026-03-12T09:15:51.312Z'
+                updated_at: '2026-03-12T09:15:51.371Z'
+                current_step: address
+                completed_steps: []
+                requirements:
+                - step: payment
+                  field: payment
+                  message: Add a payment method
                 order_promotions: []
                 line_items:
                 - id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 36316
-                  slug: product-36316
+                  name: Product 36511
+                  slug: product-36511
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -1042,23 +1050,23 @@ paths:
                   discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
-                  created_at: '2026-03-11T20:16:12.196Z'
-                  updated_at: '2026-03-11T20:16:12.196Z'
+                  created_at: '2026-03-12T09:15:51.345Z'
+                  updated_at: '2026-03-12T09:15:51.345Z'
                   compare_at_amount:
                   thumbnail_url:
                   option_values: []
                   digital_links: []
                 shipments:
                 - id: ship_UkLWZg9DAJ
-                  number: H91527585123
+                  number: H50818630911
                   state: pending
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
                   display_cost: "$100.00"
                   shipped_at:
-                  created_at: '2026-03-11T20:16:12.201Z'
-                  updated_at: '2026-03-11T20:16:12.215Z'
+                  created_at: '2026-03-12T09:15:51.352Z'
+                  updated_at: '2026-03-12T09:15:51.368Z'
                   shipping_method:
                     id: shpm_UkLWZg9DAJ
                     name: UPS Ground
@@ -1066,7 +1074,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: STATE_ABBR_42
-                    name: Idalia Predovic
+                    name: Debra Mayert
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -1225,20 +1233,13 @@ paths:
             application/json:
               example:
                 id: cart_UkLWZg9DAJ
-                number: R300345614
-                state: cart
-                checkout_steps:
-                - address
-                - delivery
-                - payment
-                - complete
-                token: WoRC24UvkSqpTXHRP2sX23Gs6m7hoHPNjCQ
-                email: keneth@heaneyheathcote.info
+                number: R608743303
+                token: VhjaK3YhvMZDCAdghEGJkm4TbQEyTC23qPz
+                email: marybelle@kulassenger.us
                 special_instructions:
                 currency: USD
                 locale: en
                 item_count: 1
-                state_lock_version: 0
                 item_total: '10.0'
                 display_item_total: "$10.00"
                 ship_total: '100.0'
@@ -1255,16 +1256,22 @@ paths:
                 display_additional_tax_total: "$0.00"
                 total: '110.0'
                 display_total: "$110.00"
-                created_at: '2026-03-11T20:16:13.450Z'
-                updated_at: '2026-03-11T20:16:13.517Z'
+                created_at: '2026-03-12T09:15:52.596Z'
+                updated_at: '2026-03-12T09:15:52.646Z'
+                current_step: address
+                completed_steps: []
+                requirements:
+                - step: payment
+                  field: payment
+                  message: Add a payment method
                 order_promotions: []
                 line_items:
                 - id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 51231
-                  slug: product-51231
+                  name: Product 54502
+                  slug: product-54502
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -1283,23 +1290,23 @@ paths:
                   discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
-                  created_at: '2026-03-11T20:16:13.487Z'
-                  updated_at: '2026-03-11T20:16:13.487Z'
+                  created_at: '2026-03-12T09:15:52.626Z'
+                  updated_at: '2026-03-12T09:15:52.626Z'
                   compare_at_amount:
                   thumbnail_url:
                   option_values: []
                   digital_links: []
                 shipments:
                 - id: ship_UkLWZg9DAJ
-                  number: H00139797754
+                  number: H62160033361
                   state: pending
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
                   display_cost: "$100.00"
                   shipped_at:
-                  created_at: '2026-03-11T20:16:13.493Z'
-                  updated_at: '2026-03-11T20:16:13.515Z'
+                  created_at: '2026-03-12T09:15:52.631Z'
+                  updated_at: '2026-03-12T09:15:52.643Z'
                   shipping_method:
                     id: shpm_UkLWZg9DAJ
                     name: UPS Ground
@@ -1307,7 +1314,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: STATE_ABBR_50
-                    name: Lai Harvey
+                    name: Holli Wiza
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -1426,20 +1433,13 @@ paths:
               example:
                 data:
                 - id: cart_gbHJdmfrXB
-                  number: R086891701
-                  state: cart
-                  checkout_steps:
-                  - address
-                  - delivery
-                  - payment
-                  - complete
-                  token: phVNSmF8sKw7t33JchC8ymQo4JN5wQjyugD
-                  email: cayla.kuhic@connelly.us
+                  number: R151314057
+                  token: Zc4Woyn2doGc6WVfSWYm8rmiVwuiJb8LpKM
+                  email: stephane@kochcollier.com
                   special_instructions:
                   currency: USD
                   locale: en
                   item_count: 1
-                  state_lock_version: 0
                   item_total: '10.0'
                   display_item_total: "$10.00"
                   ship_total: '100.0'
@@ -1456,16 +1456,22 @@ paths:
                   display_additional_tax_total: "$0.00"
                   total: '110.0'
                   display_total: "$110.00"
-                  created_at: '2026-03-11T20:16:16.260Z'
-                  updated_at: '2026-03-11T20:16:16.311Z'
+                  created_at: '2026-03-12T09:15:55.412Z'
+                  updated_at: '2026-03-12T09:15:55.456Z'
+                  current_step: address
+                  completed_steps: []
+                  requirements:
+                  - step: payment
+                    field: payment
+                    message: Add a payment method
                   order_promotions: []
                   line_items:
                   - id: li_gbHJdmfrXB
                     variant_id: variant_gbHJdmfrXB
                     quantity: 1
                     currency: USD
-                    name: Product 108397
-                    slug: product-108397
+                    name: Product 107565
+                    slug: product-107565
                     options_text: ''
                     price: '10.0'
                     display_price: "$10.00"
@@ -1484,23 +1490,23 @@ paths:
                     discounted_amount: '10.0'
                     display_discounted_amount: "$10.00"
                     display_compare_at_amount: "$0.00"
-                    created_at: '2026-03-11T20:16:16.289Z'
-                    updated_at: '2026-03-11T20:16:16.289Z'
+                    created_at: '2026-03-12T09:15:55.437Z'
+                    updated_at: '2026-03-12T09:15:55.437Z'
                     compare_at_amount:
                     thumbnail_url:
                     option_values: []
                     digital_links: []
                   shipments:
                   - id: ship_gbHJdmfrXB
-                    number: H42649481070
+                    number: H54853402827
                     state: pending
                     tracking: U10000
                     tracking_url:
                     cost: '100.0'
                     display_cost: "$100.00"
                     shipped_at:
-                    created_at: '2026-03-11T20:16:16.297Z'
-                    updated_at: '2026-03-11T20:16:16.309Z'
+                    created_at: '2026-03-12T09:15:55.444Z'
+                    updated_at: '2026-03-12T09:15:55.454Z'
                     shipping_method:
                       id: shpm_gbHJdmfrXB
                       name: UPS Ground
@@ -1508,7 +1514,7 @@ paths:
                     stock_location:
                       id: sloc_UkLWZg9DAJ
                       state_abbr: STATE_ABBR_66
-                      name: Janise Gaylord
+                      name: Ozella McKenzie
                       address1: 1600 Pennsylvania Ave NW
                       city: Washington
                       zipcode: '20500'
@@ -1563,20 +1569,13 @@ paths:
                     state_name: STATE_NAME_71
                   payment_methods: []
                 - id: cart_UkLWZg9DAJ
-                  number: R768632994
-                  state: cart
-                  checkout_steps:
-                  - address
-                  - delivery
-                  - payment
-                  - complete
-                  token: UgphxzbfnFWinPDepo4CheaxB4HVG8m6Ms7
-                  email: cayla.kuhic@connelly.us
+                  number: R916575973
+                  token: WZuuRH9CBcvENZhDDyaBgbfBP8Vn6fXgJgV
+                  email: stephane@kochcollier.com
                   special_instructions:
                   currency: USD
                   locale: en
                   item_count: 1
-                  state_lock_version: 0
                   item_total: '10.0'
                   display_item_total: "$10.00"
                   ship_total: '100.0'
@@ -1593,16 +1592,22 @@ paths:
                   display_additional_tax_total: "$0.00"
                   total: '110.0'
                   display_total: "$110.00"
-                  created_at: '2026-03-11T20:16:16.196Z'
-                  updated_at: '2026-03-11T20:16:16.248Z'
+                  created_at: '2026-03-12T09:15:55.331Z'
+                  updated_at: '2026-03-12T09:15:55.405Z'
+                  current_step: address
+                  completed_steps: []
+                  requirements:
+                  - step: payment
+                    field: payment
+                    message: Add a payment method
                   order_promotions: []
                   line_items:
                   - id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
                     quantity: 1
                     currency: USD
-                    name: Product 95834
-                    slug: product-95834
+                    name: Product 91699
+                    slug: product-91699
                     options_text: ''
                     price: '10.0'
                     display_price: "$10.00"
@@ -1621,23 +1626,23 @@ paths:
                     discounted_amount: '10.0'
                     display_discounted_amount: "$10.00"
                     display_compare_at_amount: "$0.00"
-                    created_at: '2026-03-11T20:16:16.226Z'
-                    updated_at: '2026-03-11T20:16:16.226Z'
+                    created_at: '2026-03-12T09:15:55.376Z'
+                    updated_at: '2026-03-12T09:15:55.376Z'
                     compare_at_amount:
                     thumbnail_url:
                     option_values: []
                     digital_links: []
                   shipments:
                   - id: ship_UkLWZg9DAJ
-                    number: H16511579350
+                    number: H15664343601
                     state: pending
                     tracking: U10000
                     tracking_url:
                     cost: '100.0'
                     display_cost: "$100.00"
                     shipped_at:
-                    created_at: '2026-03-11T20:16:16.231Z'
-                    updated_at: '2026-03-11T20:16:16.245Z'
+                    created_at: '2026-03-12T09:15:55.385Z'
+                    updated_at: '2026-03-12T09:15:55.402Z'
                     shipping_method:
                       id: shpm_UkLWZg9DAJ
                       name: UPS Ground
@@ -1645,7 +1650,7 @@ paths:
                     stock_location:
                       id: sloc_UkLWZg9DAJ
                       state_abbr: STATE_ABBR_66
-                      name: Janise Gaylord
+                      name: Ozella McKenzie
                       address1: 1600 Pennsylvania Ave NW
                       city: Washington
                       zipcode: '20500'
@@ -1787,8 +1792,8 @@ paths:
                   meta_description:
                   meta_keywords:
                   children_count: 1
-                  created_at: '2026-03-11T20:16:16.754Z'
-                  updated_at: '2026-03-11T20:16:16.814Z'
+                  created_at: '2026-03-12T09:15:55.915Z'
+                  updated_at: '2026-03-12T09:15:55.963Z'
                   parent_id:
                   description: ''
                   description_html: ''
@@ -1806,8 +1811,8 @@ paths:
                   meta_description:
                   meta_keywords:
                   children_count: 1
-                  created_at: '2026-03-11T20:16:16.764Z'
-                  updated_at: '2026-03-11T20:16:16.814Z'
+                  created_at: '2026-03-12T09:15:55.923Z'
+                  updated_at: '2026-03-12T09:15:55.963Z'
                   parent_id: ctg_UkLWZg9DAJ
                   description: ''
                   description_html: ''
@@ -1825,8 +1830,8 @@ paths:
                   meta_description:
                   meta_keywords:
                   children_count: 0
-                  created_at: '2026-03-11T20:16:16.776Z'
-                  updated_at: '2026-03-11T20:16:16.783Z'
+                  created_at: '2026-03-12T09:15:55.932Z'
+                  updated_at: '2026-03-12T09:15:55.937Z'
                   parent_id: ctg_gbHJdmfrXB
                   description: ''
                   description_html: ''
@@ -1927,8 +1932,8 @@ paths:
                 meta_description:
                 meta_keywords:
                 children_count: 1
-                created_at: '2026-03-11T20:16:17.226Z'
-                updated_at: '2026-03-11T20:16:17.263Z'
+                created_at: '2026-03-12T09:15:56.391Z'
+                updated_at: '2026-03-12T09:15:56.429Z'
                 parent_id: ctg_UkLWZg9DAJ
                 description: ''
                 description_html: ''
@@ -2055,17 +2060,17 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 208355
+                  name: Product 203371
                   description: |-
-                    Consectetur tenetur pariatur totam soluta. Quasi temporibus odio provident incidunt. Aut molestiae at maxime ullam consequatur laborum voluptatum. Illo autem eos modi quasi dicta fuga.
-                    Modi cumque laudantium quod animi reprehenderit totam. Minus corporis consectetur temporibus est blanditiis iure quae. Alias eos consequatur delectus eaque quidem reprehenderit amet. Tempora numquam dolorem rem nemo autem quo blanditiis commodi.
-                  slug: product-208355
+                    Odio excepturi autem repellendus a. Pariatur architecto repudiandae reiciendis corrupti nobis. Quas doloremque enim soluta id voluptates.
+                    Optio officiis totam quae id. Enim numquam adipisci alias voluptas sequi distinctio impedit. Quis aspernatur deserunt esse veniam eos enim aut. Distinctio dolores neque quia atque. Sed laboriosam omnis ullam dicta voluptates.
+                  slug: product-203371
                   meta_description:
                   meta_keywords:
                   variant_count: 0
-                  available_on: '2025-03-11T20:16:17.712Z'
-                  created_at: '2026-03-11T20:16:17.731Z'
-                  updated_at: '2026-03-11T20:16:17.746Z'
+                  available_on: '2025-03-12T09:15:56.899Z'
+                  created_at: '2026-03-12T09:15:56.914Z'
+                  updated_at: '2026-03-12T09:15:56.928Z'
                   purchasable: true
                   in_stock: false
                   backorderable: true
@@ -2188,20 +2193,13 @@ paths:
             application/json:
               example:
                 id: cart_UkLWZg9DAJ
-                number: R588561123
-                state: cart
-                checkout_steps:
-                - address
-                - delivery
-                - payment
-                - complete
-                token: MWAPtS8LeQokYsy4vPCw8KLhHkZoh6yT5Q3
-                email: libby_jenkins@sipesdietrich.com
+                number: R232840484
+                token: M2ZjMQxhkpPrJWKqZtXX5t86Woa2Au7PZMS
+                email: sherry.gaylord@weimannstreich.info
                 special_instructions: Leave at door
                 currency: USD
                 locale: en
                 item_count: 1
-                state_lock_version: 1
                 item_total: '10.0'
                 display_item_total: "$10.00"
                 ship_total: '100.0'
@@ -2218,16 +2216,22 @@ paths:
                 display_additional_tax_total: "$0.00"
                 total: '110.0'
                 display_total: "$110.00"
-                created_at: '2026-03-11T20:16:18.705Z'
-                updated_at: '2026-03-11T20:16:18.781Z'
+                created_at: '2026-03-12T09:15:57.863Z'
+                updated_at: '2026-03-12T09:15:57.934Z'
+                current_step: address
+                completed_steps: []
+                requirements:
+                - step: payment
+                  field: payment
+                  message: Add a payment method
                 order_promotions: []
                 line_items:
                 - id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 237577
-                  slug: product-237577
+                  name: Product 235056
+                  slug: product-235056
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -2246,23 +2250,23 @@ paths:
                   discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
-                  created_at: '2026-03-11T20:16:18.738Z'
-                  updated_at: '2026-03-11T20:16:18.738Z'
+                  created_at: '2026-03-12T09:15:57.893Z'
+                  updated_at: '2026-03-12T09:15:57.893Z'
                   compare_at_amount:
                   thumbnail_url:
                   option_values: []
                   digital_links: []
                 shipments:
                 - id: ship_UkLWZg9DAJ
-                  number: H23404285089
+                  number: H71035350624
                   state: pending
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
                   display_cost: "$100.00"
                   shipped_at:
-                  created_at: '2026-03-11T20:16:18.743Z'
-                  updated_at: '2026-03-11T20:16:18.759Z'
+                  created_at: '2026-03-12T09:15:57.898Z'
+                  updated_at: '2026-03-12T09:15:57.913Z'
                   shipping_method:
                     id: shpm_UkLWZg9DAJ
                     name: UPS Ground
@@ -2270,7 +2274,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: STATE_ABBR_86
-                    name: Weldon Towne
+                    name: Jeanelle Feest
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -2440,8 +2444,8 @@ paths:
             application/json:
               example:
                 id: or_gbHJdmfrXB
-                number: R870413854
-                email: whitney.huels@beatty.biz
+                number: R880956650
+                email: alane@walsh.us
                 special_instructions:
                 currency: USD
                 locale: en
@@ -2464,17 +2468,17 @@ paths:
                 display_additional_tax_total: "$0.00"
                 total: '29.99'
                 display_total: "$29.99"
-                completed_at: '2026-03-11T20:16:19.602Z'
-                created_at: '2026-03-11T20:16:19.386Z'
-                updated_at: '2026-03-11T20:16:19.602Z'
+                completed_at: '2026-03-12T09:15:58.772Z'
+                created_at: '2026-03-12T09:15:58.554Z'
+                updated_at: '2026-03-12T09:15:58.772Z'
                 order_promotions: []
                 line_items:
                 - id: li_gbHJdmfrXB
                   variant_id: variant_gbHJdmfrXB
                   quantity: 1
                   currency: USD
-                  name: Product 251178
-                  slug: product-251178
+                  name: Product 251236
+                  slug: product-251236
                   options_text: ''
                   price: '19.99'
                   display_price: "$19.99"
@@ -2493,23 +2497,23 @@ paths:
                   discounted_amount: '19.99'
                   display_discounted_amount: "$19.99"
                   display_compare_at_amount: "$0.00"
-                  created_at: '2026-03-11T20:16:19.410Z'
-                  updated_at: '2026-03-11T20:16:19.457Z'
+                  created_at: '2026-03-12T09:15:58.580Z'
+                  updated_at: '2026-03-12T09:15:58.628Z'
                   compare_at_amount:
                   thumbnail_url:
                   option_values: []
                   digital_links: []
                 shipments:
                 - id: ship_EfhxLZ9ck8
-                  number: H68645938166
+                  number: H17784765265
                   state: pending
                   tracking:
                   tracking_url:
                   cost: '10.0'
                   display_cost: "$10.00"
                   shipped_at:
-                  created_at: '2026-03-11T20:16:19.478Z'
-                  updated_at: '2026-03-11T20:16:19.597Z'
+                  created_at: '2026-03-12T09:15:58.647Z'
+                  updated_at: '2026-03-12T09:15:58.766Z'
                   shipping_method:
                     id: shpm_UkLWZg9DAJ
                     name: UPS Ground
@@ -2517,7 +2521,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: STATE_ABBR_90
-                    name: Jack Sipes
+                    name: Rosaura Leuschke
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -2550,11 +2554,11 @@ paths:
                   payment_method_id: pm_UkLWZg9DAJ
                   state: completed
                   response_code: '12345'
-                  number: PJAIOR48
+                  number: PL2AWR0X
                   amount: '29.99'
                   display_amount: "$29.99"
-                  created_at: '2026-03-11T20:16:19.556Z'
-                  updated_at: '2026-03-11T20:16:19.583Z'
+                  created_at: '2026-03-12T09:15:58.723Z'
+                  updated_at: '2026-03-12T09:15:58.750Z'
                   source_type: credit_card
                   source_id: card_UkLWZg9DAJ
                   source:
@@ -2824,20 +2828,13 @@ paths:
             application/json:
               example:
                 id: cart_UkLWZg9DAJ
-                number: R684605333
-                state: cart
-                checkout_steps:
-                - address
-                - delivery
-                - payment
-                - complete
-                token: VE67cEJ9DR1dx51rgSvwWVWHs5ESp8JSseM
-                email: tanika@schulistfeil.co.uk
+                number: R171344928
+                token: dhxagu7sCqDXm3rg37EejP61rYyrB2nEKx1
+                email: jolyn.schowalter@prohaska.info
                 special_instructions:
                 currency: USD
                 locale: en
                 item_count: 1
-                state_lock_version: 1
                 item_total: '10.0'
                 display_item_total: "$10.00"
                 ship_total: '100.0'
@@ -2854,16 +2851,22 @@ paths:
                 display_additional_tax_total: "$0.00"
                 total: '110.0'
                 display_total: "$110.00"
-                created_at: '2026-03-11T20:16:21.735Z'
-                updated_at: '2026-03-11T20:16:21.835Z'
+                created_at: '2026-03-12T09:16:00.964Z'
+                updated_at: '2026-03-12T09:16:01.117Z'
+                current_step: address
+                completed_steps: []
+                requirements:
+                - step: payment
+                  field: payment
+                  message: Add a payment method
                 order_promotions: []
                 line_items:
                 - id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 286411
-                  slug: product-286411
+                  name: Product 285504
+                  slug: product-285504
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -2882,23 +2885,23 @@ paths:
                   discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
-                  created_at: '2026-03-11T20:16:21.765Z'
-                  updated_at: '2026-03-11T20:16:21.765Z'
+                  created_at: '2026-03-12T09:16:01.014Z'
+                  updated_at: '2026-03-12T09:16:01.014Z'
                   compare_at_amount:
                   thumbnail_url:
                   option_values: []
                   digital_links: []
                 shipments:
                 - id: ship_UkLWZg9DAJ
-                  number: H84193505229
+                  number: H48407680008
                   state: pending
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
                   display_cost: "$100.00"
                   shipped_at:
-                  created_at: '2026-03-11T20:16:21.770Z'
-                  updated_at: '2026-03-11T20:16:21.784Z'
+                  created_at: '2026-03-12T09:16:01.021Z'
+                  updated_at: '2026-03-12T09:16:01.036Z'
                   shipping_method:
                     id: shpm_UkLWZg9DAJ
                     name: UPS Ground
@@ -2906,7 +2909,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: STATE_ABBR_104
-                    name: Angelina Tromp
+                    name: Valrie McKenzie
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -2928,12 +2931,12 @@ paths:
                 - id: py_UkLWZg9DAJ
                   payment_method_id: pm_UkLWZg9DAJ
                   state: checkout
-                  response_code: 1-SC-20260311201621829283
-                  number: PMEGFU0N
+                  response_code: 1-SC-20260312091601109175
+                  number: PQ587MJD
                   amount: '50.0'
                   display_amount: "$50.00"
-                  created_at: '2026-03-11T20:16:21.830Z'
-                  updated_at: '2026-03-11T20:16:21.830Z'
+                  created_at: '2026-03-12T09:16:01.110Z'
+                  updated_at: '2026-03-12T09:16:01.110Z'
                   source_type: store_credit
                   source_id: credit_UkLWZg9DAJ
                   source:
@@ -3070,20 +3073,13 @@ paths:
             application/json:
               example:
                 id: cart_UkLWZg9DAJ
-                number: R561946058
-                state: cart
-                checkout_steps:
-                - address
-                - delivery
-                - payment
-                - complete
-                token: N2ffiZoKdeftYDG5LBx7fkPmaJhGXaeijYV
-                email: tommye.wilderman@faydaugherty.biz
+                number: R421628859
+                token: Peuh7kyRkdR3aZhAeJw8DVfXheHQUjdScnt
+                email: talia@glover.name
                 special_instructions:
                 currency: USD
                 locale: en
                 item_count: 1
-                state_lock_version: 1
                 item_total: '10.0'
                 display_item_total: "$10.00"
                 ship_total: '100.0'
@@ -3100,16 +3096,22 @@ paths:
                 display_additional_tax_total: "$0.00"
                 total: '110.0'
                 display_total: "$110.00"
-                created_at: '2026-03-11T20:16:22.999Z'
-                updated_at: '2026-03-11T20:16:23.104Z'
+                created_at: '2026-03-12T09:16:02.304Z'
+                updated_at: '2026-03-12T09:16:02.418Z'
+                current_step: address
+                completed_steps: []
+                requirements:
+                - step: payment
+                  field: payment
+                  message: Add a payment method
                 order_promotions: []
                 line_items:
                 - id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 30599
-                  slug: product-30599
+                  name: Product 307733
+                  slug: product-307733
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -3128,23 +3130,23 @@ paths:
                   discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
-                  created_at: '2026-03-11T20:16:23.029Z'
-                  updated_at: '2026-03-11T20:16:23.099Z'
+                  created_at: '2026-03-12T09:16:02.337Z'
+                  updated_at: '2026-03-12T09:16:02.414Z'
                   compare_at_amount:
                   thumbnail_url:
                   option_values: []
                   digital_links: []
                 shipments:
                 - id: ship_UkLWZg9DAJ
-                  number: H95858592120
+                  number: H26651858682
                   state: pending
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
                   display_cost: "$100.00"
                   shipped_at:
-                  created_at: '2026-03-11T20:16:23.034Z'
-                  updated_at: '2026-03-11T20:16:23.047Z'
+                  created_at: '2026-03-12T09:16:02.343Z'
+                  updated_at: '2026-03-12T09:16:02.358Z'
                   shipping_method:
                     id: shpm_UkLWZg9DAJ
                     name: UPS Ground
@@ -3152,7 +3154,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: STATE_ABBR_112
-                    name: Aileen Murray
+                    name: Felicitas Swaniawski
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -3544,8 +3546,8 @@ paths:
               example:
                 data:
                 - id: or_UkLWZg9DAJ
-                  number: R749102215
-                  email: grayce@crooks.ca
+                  number: R615290401
+                  email: mabelle@kutch.name
                   special_instructions:
                   currency: USD
                   locale: en
@@ -3568,17 +3570,17 @@ paths:
                   display_additional_tax_total: "$0.00"
                   total: '110.0'
                   display_total: "$110.00"
-                  completed_at: '2026-03-11T20:16:27.795Z'
-                  created_at: '2026-03-11T20:16:27.710Z'
-                  updated_at: '2026-03-11T20:16:27.794Z'
+                  completed_at: '2026-03-12T09:16:07.134Z'
+                  created_at: '2026-03-12T09:16:07.080Z'
+                  updated_at: '2026-03-12T09:16:07.134Z'
                   order_promotions: []
                   line_items:
                   - id: li_UkLWZg9DAJ
                     variant_id: variant_UkLWZg9DAJ
                     quantity: 1
                     currency: USD
-                    name: Product 328144
-                    slug: product-328144
+                    name: Product 328748
+                    slug: product-328748
                     options_text: ''
                     price: '10.0'
                     display_price: "$10.00"
@@ -3597,23 +3599,23 @@ paths:
                     discounted_amount: '10.0'
                     display_discounted_amount: "$10.00"
                     display_compare_at_amount: "$0.00"
-                    created_at: '2026-03-11T20:16:27.761Z'
-                    updated_at: '2026-03-11T20:16:27.761Z'
+                    created_at: '2026-03-12T09:16:07.111Z'
+                    updated_at: '2026-03-12T09:16:07.111Z'
                     compare_at_amount:
                     thumbnail_url:
                     option_values: []
                     digital_links: []
                   shipments:
                   - id: ship_UkLWZg9DAJ
-                    number: H69766910536
+                    number: H72164232623
                     state: pending
                     tracking: U10000
                     tracking_url:
                     cost: '100.0'
                     display_cost: "$100.00"
                     shipped_at:
-                    created_at: '2026-03-11T20:16:27.769Z'
-                    updated_at: '2026-03-11T20:16:27.791Z'
+                    created_at: '2026-03-12T09:16:07.116Z'
+                    updated_at: '2026-03-12T09:16:07.132Z'
                     shipping_method:
                       id: shpm_UkLWZg9DAJ
                       name: UPS Ground
@@ -3621,7 +3623,7 @@ paths:
                     stock_location:
                       id: sloc_UkLWZg9DAJ
                       state_abbr: STATE_ABBR_132
-                      name: Darla Franecki
+                      name: Jerrica Mueller
                       address1: 1600 Pennsylvania Ave NW
                       city: Washington
                       zipcode: '20500'
@@ -3741,8 +3743,8 @@ paths:
             application/json:
               example:
                 id: or_UkLWZg9DAJ
-                number: R094723322
-                email: nguyet@sanford.name
+                number: R866772594
+                email: sherron_nienow@mann.co.uk
                 special_instructions:
                 currency: USD
                 locale: en
@@ -3765,17 +3767,17 @@ paths:
                 display_additional_tax_total: "$0.00"
                 total: '110.0'
                 display_total: "$110.00"
-                completed_at: '2026-03-11T20:16:28.486Z'
-                created_at: '2026-03-11T20:16:28.437Z'
-                updated_at: '2026-03-11T20:16:28.486Z'
+                completed_at: '2026-03-12T09:16:07.805Z'
+                created_at: '2026-03-12T09:16:07.758Z'
+                updated_at: '2026-03-12T09:16:07.805Z'
                 order_promotions: []
                 line_items:
                 - id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 341755
-                  slug: product-341755
+                  name: Product 346963
+                  slug: product-346963
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -3794,23 +3796,23 @@ paths:
                   discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
-                  created_at: '2026-03-11T20:16:28.467Z'
-                  updated_at: '2026-03-11T20:16:28.467Z'
+                  created_at: '2026-03-12T09:16:07.786Z'
+                  updated_at: '2026-03-12T09:16:07.786Z'
                   compare_at_amount:
                   thumbnail_url:
                   option_values: []
                   digital_links: []
                 shipments:
                 - id: ship_UkLWZg9DAJ
-                  number: H68136358737
+                  number: H24666627910
                   state: pending
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
                   display_cost: "$100.00"
                   shipped_at:
-                  created_at: '2026-03-11T20:16:28.472Z'
-                  updated_at: '2026-03-11T20:16:28.484Z'
+                  created_at: '2026-03-12T09:16:07.790Z'
+                  updated_at: '2026-03-12T09:16:07.803Z'
                   shipping_method:
                     id: shpm_UkLWZg9DAJ
                     name: UPS Ground
@@ -3818,7 +3820,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: STATE_ABBR_138
-                    name: Leopoldo Monahan
+                    name: Jani Smitham
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -3926,7 +3928,7 @@ paths:
           content:
             application/json:
               example:
-                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6ImU4NjQwMzgwLWI2NjAtNDZhNy05NDM4LTk3NmY4YjcwMDk0YiIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzczMjYzNzg5fQ.YMTjgRA2s6FXRb7KqeYDobu_TQEKQbBdfyHRPWCdsDY
+                token: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX3R5cGUiOiJjdXN0b21lciIsImp0aSI6ImM4MGRjYWRmLWExOGQtNDMwYS04ZDVhLTM2ZDU4Zjg5M2E1MiIsImlzcyI6InNwcmVlIiwiYXVkIjoic3RvcmVfYXBpIiwiZXhwIjoxNzczMzEwNTY5fQ.fI9N_jETSyJCtggRZdqgGEN02rmOeMzemBNPghH6sq0
                 user:
                   id: cus_UkLWZg9DAJ
                   email: newuser@example.com
@@ -3934,8 +3936,8 @@ paths:
                   last_name: Doe
                   phone: "+1234567890"
                   accepts_email_marketing: true
-                  created_at: '2026-03-11T20:16:29.684Z'
-                  updated_at: '2026-03-11T20:16:29.684Z'
+                  created_at: '2026-03-12T09:16:09.013Z'
+                  updated_at: '2026-03-12T09:16:09.013Z'
                   addresses: []
                   default_billing_address:
                   default_shipping_address:
@@ -4039,13 +4041,13 @@ paths:
             application/json:
               example:
                 id: cus_UkLWZg9DAJ
-                email: elaina@okeefe.com
-                first_name: Cortney
-                last_name: Cartwright
+                email: wilfredo_kuhn@gerhold.us
+                first_name: Louvenia
+                last_name: Crist
                 phone: 555-555-0199
                 accepts_email_marketing: false
-                created_at: '2026-03-11T20:16:30.230Z'
-                updated_at: '2026-03-11T20:16:30.496Z'
+                created_at: '2026-03-12T09:16:09.558Z'
+                updated_at: '2026-03-12T09:16:09.824Z'
                 addresses:
                 - id: addr_gbHJdmfrXB
                   firstname: John
@@ -4169,13 +4171,13 @@ paths:
             application/json:
               example:
                 id: cus_UkLWZg9DAJ
-                email: allegra@harris.info
+                email: margherita.wilderman@zulauf.co.uk
                 first_name: Updated
                 last_name: Name
                 phone: 555-555-0199
                 accepts_email_marketing: false
-                created_at: '2026-03-11T20:16:30.791Z'
-                updated_at: '2026-03-11T20:16:31.073Z'
+                created_at: '2026-03-12T09:16:10.125Z'
+                updated_at: '2026-03-12T09:16:10.403Z'
                 addresses:
                 - id: addr_gbHJdmfrXB
                   firstname: John
@@ -4399,7 +4401,7 @@ paths:
               example:
                 data:
                 - id: gc_UkLWZg9DAJ
-                  code: C7706CBAF6DA86AB
+                  code: 3E4DD37149EC053B
                   state: active
                   currency: USD
                   amount: '10.0'
@@ -4413,8 +4415,8 @@ paths:
                   redeemed_at:
                   expired: false
                   active: true
-                  created_at: '2026-03-11T20:16:34.340Z'
-                  updated_at: '2026-03-11T20:16:34.340Z'
+                  created_at: '2026-03-12T09:16:13.488Z'
+                  updated_at: '2026-03-12T09:16:13.488Z'
                 meta:
                   page: 1
                   limit: 25
@@ -4497,7 +4499,7 @@ paths:
             application/json:
               example:
                 id: gc_UkLWZg9DAJ
-                code: A8CECCF67EA14278
+                code: 37DE86DA57381B3C
                 state: active
                 currency: USD
                 amount: '10.0'
@@ -4511,8 +4513,8 @@ paths:
                 redeemed_at:
                 expired: false
                 active: true
-                created_at: '2026-03-11T20:16:35.429Z'
-                updated_at: '2026-03-11T20:16:35.429Z'
+                created_at: '2026-03-12T09:16:14.590Z'
+                updated_at: '2026-03-12T09:16:14.590Z'
               schema:
                 "$ref": "#/components/schemas/GiftCard"
         '404':
@@ -4583,20 +4585,13 @@ paths:
             application/json:
               example:
                 id: cart_UkLWZg9DAJ
-                number: R516823008
-                state: cart
-                checkout_steps:
-                - address
-                - delivery
-                - payment
-                - complete
-                token: PedZ9zcDBZR1Bhyd2mF9nnzXAmNJQXpjrtP
-                email: yukiko@herman.us
+                number: R941027820
+                token: 4dfyuRuDvjBw6BUVVdPU9YngkPU37GmiZ4w
+                email: lavette_buckridge@moenmurray.ca
                 special_instructions:
                 currency: USD
                 locale: en
                 item_count: 2
-                state_lock_version: 1
                 item_total: '29.99'
                 display_item_total: "$29.99"
                 ship_total: '0.0'
@@ -4613,16 +4608,28 @@ paths:
                 display_additional_tax_total: "$0.00"
                 total: '29.99'
                 display_total: "$29.99"
-                created_at: '2026-03-11T20:16:37.178Z'
-                updated_at: '2026-03-11T20:16:37.272Z'
+                created_at: '2026-03-12T09:16:16.415Z'
+                updated_at: '2026-03-12T09:16:16.523Z'
+                current_step: address
+                completed_steps: []
+                requirements:
+                - step: address
+                  field: ship_address
+                  message: Shipping address is required
+                - step: delivery
+                  field: shipping_method
+                  message: Select a shipping method for all shipments
+                - step: payment
+                  field: payment
+                  message: Add a payment method
                 order_promotions: []
                 line_items:
                 - id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 449502
-                  slug: product-449502
+                  name: Product 442792
+                  slug: product-442792
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -4641,8 +4648,8 @@ paths:
                   discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
-                  created_at: '2026-03-11T20:16:37.204Z'
-                  updated_at: '2026-03-11T20:16:37.204Z'
+                  created_at: '2026-03-12T09:16:16.444Z'
+                  updated_at: '2026-03-12T09:16:16.444Z'
                   compare_at_amount:
                   thumbnail_url:
                   option_values: []
@@ -4651,8 +4658,8 @@ paths:
                   variant_id: variant_gbHJdmfrXB
                   quantity: 1
                   currency: USD
-                  name: Product 458133
-                  slug: product-458133
+                  name: Product 453921
+                  slug: product-453921
                   options_text: ''
                   price: '19.99'
                   display_price: "$19.99"
@@ -4671,8 +4678,8 @@ paths:
                   discounted_amount: '19.99'
                   display_discounted_amount: "$19.99"
                   display_compare_at_amount: "$0.00"
-                  created_at: '2026-03-11T20:16:37.239Z'
-                  updated_at: '2026-03-11T20:16:37.239Z'
+                  created_at: '2026-03-12T09:16:16.497Z'
+                  updated_at: '2026-03-12T09:16:16.497Z'
                   compare_at_amount:
                   thumbnail_url:
                   option_values: []
@@ -4786,19 +4793,13 @@ paths:
             application/json:
               example:
                 id: cart_UkLWZg9DAJ
-                number: R467731208
-                state: cart
-                checkout_steps:
-                - address
-                - delivery
-                - complete
-                token: XmefX8ayavKS3bKQeYx57guiYpJMBRcHoXM
-                email: tomeka_wolf@lindgren.com
+                number: R691705517
+                token: EWR4oZxAiBMjzzr4YnL3GkjmQwhSuL983MM
+                email: jed.spinka@larkintoy.name
                 special_instructions:
                 currency: USD
                 locale: en
                 item_count: 0
-                state_lock_version: 1
                 item_total: '0.0'
                 display_item_total: "$0.00"
                 ship_total: '0.0'
@@ -4815,16 +4816,25 @@ paths:
                 display_additional_tax_total: "$0.00"
                 total: '0.0'
                 display_total: "$0.00"
-                created_at: '2026-03-11T20:16:39.006Z'
-                updated_at: '2026-03-11T20:16:39.040Z'
+                created_at: '2026-03-12T09:16:18.286Z'
+                updated_at: '2026-03-12T09:16:18.316Z'
+                current_step: address
+                completed_steps: []
+                requirements:
+                - step: address
+                  field: ship_address
+                  message: Shipping address is required
+                - step: delivery
+                  field: shipping_method
+                  message: Select a shipping method for all shipments
                 order_promotions: []
                 line_items:
                 - id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 487545
-                  slug: product-487545
+                  name: Product 481521
+                  slug: product-481521
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -4843,8 +4853,8 @@ paths:
                   discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
-                  created_at: '2026-03-11T20:16:39.039Z'
-                  updated_at: '2026-03-11T20:16:39.060Z'
+                  created_at: '2026-03-12T09:16:18.315Z'
+                  updated_at: '2026-03-12T09:16:18.348Z'
                   compare_at_amount:
                   thumbnail_url:
                   option_values: []
@@ -4938,19 +4948,13 @@ paths:
             application/json:
               example:
                 id: cart_UkLWZg9DAJ
-                number: R770244240
-                state: cart
-                checkout_steps:
-                - address
-                - delivery
-                - complete
-                token: 2wDhy4RHwbhhSD3voBxYTt5x8VmEtrDTweh
-                email: gilberto@marksschneider.name
+                number: R844378796
+                token: mPfnnKWeKzSTHgGmKMazDuWc3Wx9WCWpp9G
+                email: geneva_hauck@bode.us
                 special_instructions:
                 currency: USD
                 locale: en
                 item_count: 0
-                state_lock_version: 1
                 item_total: '0.0'
                 display_item_total: "$0.00"
                 ship_total: '0.0'
@@ -4967,8 +4971,20 @@ paths:
                 display_additional_tax_total: "$0.00"
                 total: '0.0'
                 display_total: "$0.00"
-                created_at: '2026-03-11T20:16:39.615Z'
-                updated_at: '2026-03-11T20:16:39.702Z'
+                created_at: '2026-03-12T09:16:18.912Z'
+                updated_at: '2026-03-12T09:16:19.017Z'
+                current_step: address
+                completed_steps: []
+                requirements:
+                - step: cart
+                  field: line_items
+                  message: Add at least one item to your cart
+                - step: address
+                  field: ship_address
+                  message: Shipping address is required
+                - step: delivery
+                  field: shipping_method
+                  message: Select a shipping method for all shipments
                 order_promotions: []
                 line_items: []
                 shipments: []
@@ -5510,7 +5526,7 @@ paths:
             application/json:
               example:
                 id: or_UkLWZg9DAJ
-                number: R286057069
+                number: R629853947
                 email: guest@example.com
                 special_instructions:
                 currency: USD
@@ -5534,17 +5550,17 @@ paths:
                 display_additional_tax_total: "$0.00"
                 total: '110.0'
                 display_total: "$110.00"
-                completed_at: '2026-03-11T20:16:41.401Z'
-                created_at: '2026-03-11T20:16:41.353Z'
-                updated_at: '2026-03-11T20:16:41.401Z'
+                completed_at: '2026-03-12T09:16:20.797Z'
+                created_at: '2026-03-12T09:16:20.749Z'
+                updated_at: '2026-03-12T09:16:20.797Z'
                 order_promotions: []
                 line_items:
                 - id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 526850
-                  slug: product-526850
+                  name: Product 52522
+                  slug: product-52522
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -5563,23 +5579,23 @@ paths:
                   discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
-                  created_at: '2026-03-11T20:16:41.380Z'
-                  updated_at: '2026-03-11T20:16:41.380Z'
+                  created_at: '2026-03-12T09:16:20.777Z'
+                  updated_at: '2026-03-12T09:16:20.777Z'
                   compare_at_amount:
                   thumbnail_url:
                   option_values: []
                   digital_links: []
                 shipments:
                 - id: ship_UkLWZg9DAJ
-                  number: H90765027023
+                  number: H72182556184
                   state: pending
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
                   display_cost: "$100.00"
                   shipped_at:
-                  created_at: '2026-03-11T20:16:41.385Z'
-                  updated_at: '2026-03-11T20:16:41.398Z'
+                  created_at: '2026-03-12T09:16:20.782Z'
+                  updated_at: '2026-03-12T09:16:20.795Z'
                   shipping_method:
                     id: shpm_UkLWZg9DAJ
                     name: UPS Ground
@@ -5587,7 +5603,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: STATE_ABBR_197
-                    name: Toni Hessel
+                    name: Willette Wuckert
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -5782,13 +5798,13 @@ paths:
                 id: ps_gbHJdmfrXB
                 status: pending
                 currency: USD
-                external_id: bogus_939206b9e39cf38a11c26a57
+                external_id: bogus_6e271386d876ecf70966484f
                 external_data:
-                  client_secret: bogus_secret_f4c6242151dd9228
+                  client_secret: bogus_secret_9cf8b7fec7696687
                 customer_external_id:
                 expires_at:
-                created_at: '2026-03-11T20:16:43.811Z'
-                updated_at: '2026-03-11T20:16:43.811Z'
+                created_at: '2026-03-12T09:16:23.240Z'
+                updated_at: '2026-03-12T09:16:23.240Z'
                 amount: '110.0'
                 payment_method_id: pm_UkLWZg9DAJ
                 order_id: or_UkLWZg9DAJ
@@ -5877,13 +5893,13 @@ paths:
                 id: ps_UkLWZg9DAJ
                 status: pending
                 currency: USD
-                external_id: bogus_bc82c2673de64ed729f48e41
+                external_id: bogus_5768847c2cdf415629f8709c
                 external_data:
                   client_secret: secret_123
                 customer_external_id:
                 expires_at:
-                created_at: '2026-03-11T20:16:44.400Z'
-                updated_at: '2026-03-11T20:16:44.400Z'
+                created_at: '2026-03-12T09:16:23.843Z'
+                updated_at: '2026-03-12T09:16:23.843Z'
                 amount: '110.0'
                 payment_method_id: pm_UkLWZg9DAJ
                 order_id: or_UkLWZg9DAJ
@@ -5940,13 +5956,13 @@ paths:
                 id: ps_UkLWZg9DAJ
                 status: pending
                 currency: USD
-                external_id: bogus_f316a00803e0c9e1401ae1c3
+                external_id: bogus_2666c07bda0c167f4ae48bc3
                 external_data:
                   client_secret: secret_123
                 customer_external_id:
                 expires_at:
-                created_at: '2026-03-11T20:16:45.634Z'
-                updated_at: '2026-03-11T20:16:45.647Z'
+                created_at: '2026-03-12T09:16:25.089Z'
+                updated_at: '2026-03-12T09:16:25.102Z'
                 amount: '50.0'
                 payment_method_id: pm_UkLWZg9DAJ
                 order_id: or_UkLWZg9DAJ
@@ -6037,13 +6053,13 @@ paths:
                 id: ps_UkLWZg9DAJ
                 status: completed
                 currency: USD
-                external_id: bogus_62e29b242af47209c88c5c5f
+                external_id: bogus_c592e2e176a379eea8d3d70a
                 external_data:
                   client_secret: secret_123
                 customer_external_id:
                 expires_at:
-                created_at: '2026-03-11T20:16:46.249Z'
-                updated_at: '2026-03-11T20:16:46.262Z'
+                created_at: '2026-03-12T09:16:25.707Z'
+                updated_at: '2026-03-12T09:16:25.721Z'
                 amount: '110.0'
                 payment_method_id: pm_UkLWZg9DAJ
                 order_id: or_UkLWZg9DAJ
@@ -6123,11 +6139,11 @@ paths:
               example:
                 id: pss_gbHJdmfrXB
                 status: pending
-                external_id: bogus_seti_01a4dd0b5363cfafaa72ac6e
-                external_client_secret: bogus_seti_secret_16408d9c954c43f8
+                external_id: bogus_seti_058c9a088f6b00e703d74733
+                external_client_secret: bogus_seti_secret_ea3be35a6b9d6cf7
                 external_data: {}
-                created_at: '2026-03-11T20:16:47.484Z'
-                updated_at: '2026-03-11T20:16:47.484Z'
+                created_at: '2026-03-12T09:16:27.050Z'
+                updated_at: '2026-03-12T09:16:27.050Z'
                 payment_method_id: pm_UkLWZg9DAJ
                 payment_source_id:
                 payment_source_type:
@@ -6224,12 +6240,12 @@ paths:
               example:
                 id: pss_UkLWZg9DAJ
                 status: pending
-                external_id: seti_test_a011106e2f58cb1c542cb4d1
-                external_client_secret: seti_secret_0b2f92f40bd0afbbf7044da3
+                external_id: seti_test_3ce26f6ba67fe132b945e418
+                external_client_secret: seti_secret_71fa514934b449ae898e8d67
                 external_data:
                   client_secret: secret_123
-                created_at: '2026-03-11T20:16:49.187Z'
-                updated_at: '2026-03-11T20:16:49.187Z'
+                created_at: '2026-03-12T09:16:28.707Z'
+                updated_at: '2026-03-12T09:16:28.707Z'
                 payment_method_id: pm_UkLWZg9DAJ
                 payment_source_id:
                 payment_source_type:
@@ -6302,12 +6318,12 @@ paths:
               example:
                 id: pss_UkLWZg9DAJ
                 status: completed
-                external_id: seti_test_66940b447b5069ab23b8d9fe
-                external_client_secret: seti_secret_ed8707996cca86b59bc6b1e7
+                external_id: seti_test_5cfb5dd8a36cc4bcf9731e23
+                external_client_secret: seti_secret_95ae516a56c5b4607c2c124f
                 external_data:
                   client_secret: secret_123
-                created_at: '2026-03-11T20:16:50.300Z'
-                updated_at: '2026-03-11T20:16:50.313Z'
+                created_at: '2026-03-12T09:16:29.792Z'
+                updated_at: '2026-03-12T09:16:29.804Z'
                 payment_method_id: pm_UkLWZg9DAJ
                 payment_source_id: card_UkLWZg9DAJ
                 payment_source_type: Spree::CreditCard
@@ -6389,11 +6405,11 @@ paths:
                   payment_method_id: pm_UkLWZg9DAJ
                   state: checkout
                   response_code: '12345'
-                  number: PJP8HO3U
+                  number: PEKKKT4W
                   amount: '110.0'
                   display_amount: "$110.00"
-                  created_at: '2026-03-11T20:16:51.472Z'
-                  updated_at: '2026-03-11T20:16:51.472Z'
+                  created_at: '2026-03-12T09:16:30.954Z'
+                  updated_at: '2026-03-12T09:16:30.954Z'
                   source_type: credit_card
                   source_id: card_UkLWZg9DAJ
                   source:
@@ -6474,11 +6490,11 @@ paths:
                 payment_method_id: pm_UkLWZg9DAJ
                 state: checkout
                 response_code:
-                number: PL969YAG
+                number: PGJ3BUP1
                 amount: '110.0'
                 display_amount: "$110.00"
-                created_at: '2026-03-11T20:16:52.105Z'
-                updated_at: '2026-03-11T20:16:52.105Z'
+                created_at: '2026-03-12T09:16:31.592Z'
+                updated_at: '2026-03-12T09:16:31.592Z'
                 source_type:
                 source_id:
                 source:
@@ -6635,17 +6651,20 @@ paths:
               example:
                 data:
                 - id: prod_UkLWZg9DAJ
-                  name: Product 648748
+                  name: Product 646269
                   description: |-
-                    Odio a officia sit perferendis vel quod doloremque. Dolore libero consectetur veniam aperiam odit consequatur eius. Aliquid praesentium illum facilis deleniti perspiciatis alias.
-                    Beatae recusandae in odio impedit amet perferendis. Consequuntur repudiandae quis debitis quos aliquid necessitatibus totam. Ipsam commodi reprehenderit aperiam voluptatibus debitis odit dolorum itaque. Labore repellat perferendis ullam repudiandae.
-                  slug: product-648748
+                    Voluptatem nihil hic id provident incidunt nemo. Odio nisi consequatur corrupti alias error accusantium. Debitis et voluptatem corporis sed. Mollitia dignissimos error ducimus deleniti. Quibusdam nisi modi error unde iste.
+                    Blanditiis nihil quam at sapiente odit impedit. Necessitatibus dolorum quasi quis nobis. Illo similique asperiores modi dicta aspernatur eum. Occaecati facilis quas consequatur nisi optio.
+                    Rem voluptatem soluta eum explicabo eligendi. Aspernatur eligendi nihil incidunt et dicta ea ipsa ducimus. Et quas officia dolorum nostrum occaecati. Adipisci molestiae aliquam laborum quae quod fugiat. Labore totam unde asperiores beatae commodi nulla dolores atque.
+                    Numquam earum vero magni ea amet. Ipsum sed autem doloribus provident. Cupiditate eos unde nisi impedit ad facilis iure fugiat. Officiis sunt et consequatur quo similique. A possimus nulla fuga excepturi voluptate.
+                    Consequatur necessitatibus ipsa esse repellendus at impedit. Sapiente officiis incidunt nobis laudantium placeat. Fugit animi cum culpa tempore occaecati voluptatibus fuga. Odit nulla saepe aperiam quod. Pariatur vitae consectetur exercitationem quod provident dolorem aspernatur occaecati.
+                  slug: product-646269
                   meta_description:
                   meta_keywords:
                   variant_count: 1
-                  available_on: '2025-03-11T20:16:52.791Z'
-                  created_at: '2026-03-11T20:16:52.814Z'
-                  updated_at: '2026-03-11T20:16:52.868Z'
+                  available_on: '2025-03-12T09:16:32.253Z'
+                  created_at: '2026-03-12T09:16:32.266Z'
+                  updated_at: '2026-03-12T09:16:32.302Z'
                   purchasable: true
                   in_stock: false
                   backorderable: true
@@ -6665,18 +6684,17 @@ paths:
                     price_list_id:
                   original_price:
                 - id: prod_gbHJdmfrXB
-                  name: Product 654485
+                  name: Product 658929
                   description: |-
-                    Occaecati deserunt voluptates quis quam optio quidem libero. Nobis cum nulla incidunt vitae optio. Ullam cumque molestiae hic sit nulla vel ratione. Voluptatem voluptas harum nihil quae expedita vel. Veritatis reprehenderit cupiditate tempora eos consectetur placeat iusto adipisci.
-                    Quis necessitatibus et debitis explicabo nesciunt. Possimus earum neque nisi tempore. Dicta sint illo numquam culpa a.
-                    Quia eligendi autem corporis vero tempora corrupti ducimus. Sit non necessitatibus delectus ullam doloribus. Explicabo laudantium voluptatibus doloribus atque corrupti odio.
-                  slug: product-654485
+                    Non dolore est sint quasi placeat excepturi modi temporibus. Incidunt cum atque eveniet expedita reprehenderit amet voluptates. Iusto exercitationem odit ipsam magnam aliquid reiciendis necessitatibus.
+                    Repudiandae vitae aperiam ad ex. Neque minima commodi inventore magni earum. Incidunt mollitia ipsum possimus harum rem ipsa excepturi odit.
+                  slug: product-658929
                   meta_description:
                   meta_keywords:
                   variant_count: 0
-                  available_on: '2025-03-11T20:16:52.874Z'
-                  created_at: '2026-03-11T20:16:52.884Z'
-                  updated_at: '2026-03-11T20:16:52.898Z'
+                  available_on: '2025-03-12T09:16:32.307Z'
+                  created_at: '2026-03-12T09:16:32.316Z'
+                  updated_at: '2026-03-12T09:16:32.327Z'
                   purchasable: true
                   in_stock: false
                   backorderable: true
@@ -6782,18 +6800,18 @@ paths:
             application/json:
               example:
                 id: prod_UkLWZg9DAJ
-                name: Product 767469
+                name: Product 767950
                 description: |-
-                  Eum dolore accusantium temporibus ab nemo nulla itaque architecto. Quibusdam deserunt iste beatae magni nesciunt inventore porro. Aspernatur quos eius minus incidunt ratione cupiditate harum. Praesentium eum porro quasi sed placeat.
-                  Facere voluptatum illo aspernatur dolore eligendi eveniet quae veniam. Veritatis voluptas officiis eligendi totam illum. Qui dolore deleniti voluptatum quidem.
-                  Esse itaque magnam eligendi alias architecto a. Est dolorum dolorem magnam hic quo aperiam modi. Nesciunt suscipit vitae occaecati vel corporis.
-                slug: product-767469
+                  Cupiditate illum architecto possimus blanditiis. Placeat nam autem beatae veritatis nisi officia culpa nesciunt. Veniam ut neque beatae alias. Est eaque sed quae ducimus. Itaque officiis quos ab consequuntur.
+                  Pariatur dolores ducimus eaque minus. Incidunt nulla nostrum possimus libero assumenda suscipit pariatur. Eaque illo eos delectus voluptas minima aliquid explicabo.
+                  Iure sequi nam quidem quas ad reiciendis nisi. Blanditiis porro tempore atque dolorem architecto. Suscipit repellat quo unde enim omnis dolorem. Possimus velit provident occaecati repellat omnis.
+                slug: product-767950
                 meta_description:
                 meta_keywords:
                 variant_count: 1
-                available_on: '2025-03-11T20:16:53.494Z'
-                created_at: '2026-03-11T20:16:53.508Z'
-                updated_at: '2026-03-11T20:16:53.549Z'
+                available_on: '2025-03-12T09:16:32.871Z'
+                created_at: '2026-03-12T09:16:32.888Z'
+                updated_at: '2026-03-12T09:16:32.927Z'
                 purchasable: true
                 in_stock: false
                 backorderable: true
@@ -7005,15 +7023,15 @@ paths:
               example:
                 data:
                 - id: ship_UkLWZg9DAJ
-                  number: H39889652757
+                  number: H22884700230
                   state: pending
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
                   display_cost: "$100.00"
                   shipped_at:
-                  created_at: '2026-03-11T20:16:55.577Z'
-                  updated_at: '2026-03-11T20:16:55.591Z'
+                  created_at: '2026-03-12T09:16:34.891Z'
+                  updated_at: '2026-03-12T09:16:34.904Z'
                   shipping_method:
                     id: shpm_UkLWZg9DAJ
                     name: UPS Ground
@@ -7021,7 +7039,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: STATE_ABBR_269
-                    name: Leonida Christiansen
+                    name: Elsa Herman
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -7097,20 +7115,13 @@ paths:
             application/json:
               example:
                 id: cart_UkLWZg9DAJ
-                number: R486934809
-                state: delivery
-                checkout_steps:
-                - address
-                - delivery
-                - payment
-                - complete
-                token: cFrQenShmVNV7uTV2ETsHJQGn1PWq1wbvt6
-                email: chanell@marvin.com
+                number: R411812718
+                token: 7UBRx54Po8joHP633fg8vbCLstacktmyuhu
+                email: adan_gottlieb@kiehnkulas.us
                 special_instructions:
                 currency: USD
                 locale: en
                 item_count: 1
-                state_lock_version: 1
                 item_total: '10.0'
                 display_item_total: "$10.00"
                 ship_total: '100.0'
@@ -7127,16 +7138,23 @@ paths:
                 display_additional_tax_total: "$0.00"
                 total: '110.0'
                 display_total: "$110.00"
-                created_at: '2026-03-11T20:16:56.155Z'
-                updated_at: '2026-03-11T20:16:56.243Z'
+                created_at: '2026-03-12T09:16:35.468Z'
+                updated_at: '2026-03-12T09:16:35.549Z'
+                current_step: delivery
+                completed_steps:
+                - address
+                requirements:
+                - step: payment
+                  field: payment
+                  message: Add a payment method
                 order_promotions: []
                 line_items:
                 - id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 105702
-                  slug: product-105702
+                  name: Product 1053693
+                  slug: product-1053693
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -7155,23 +7173,23 @@ paths:
                   discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
-                  created_at: '2026-03-11T20:16:56.197Z'
-                  updated_at: '2026-03-11T20:16:56.197Z'
+                  created_at: '2026-03-12T09:16:35.507Z'
+                  updated_at: '2026-03-12T09:16:35.507Z'
                   compare_at_amount:
                   thumbnail_url:
                   option_values: []
                   digital_links: []
                 shipments:
                 - id: ship_UkLWZg9DAJ
-                  number: H42723789632
+                  number: H48004239465
                   state: pending
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
                   display_cost: "$100.00"
                   shipped_at:
-                  created_at: '2026-03-11T20:16:56.204Z'
-                  updated_at: '2026-03-11T20:16:56.242Z'
+                  created_at: '2026-03-12T09:16:35.513Z'
+                  updated_at: '2026-03-12T09:16:35.548Z'
                   shipping_method:
                     id: shpm_UkLWZg9DAJ
                     name: UPS Ground
@@ -7179,7 +7197,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: STATE_ABBR_273
-                    name: Lizeth Bashirian
+                    name: Elodia Thiel
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -7310,20 +7328,13 @@ paths:
             application/json:
               example:
                 id: cart_UkLWZg9DAJ
-                number: R769411673
-                state: cart
-                checkout_steps:
-                - address
-                - delivery
-                - payment
-                - complete
-                token: 6kgCjWuw9VxQ4SuvK3KaBi3L5fF5sxoAiud
-                email: cathern.deckow@paucek.us
+                number: R017505750
+                token: J1tqA7U9v1UkX3cjTBoLryPYsDRWkBA5u1X
+                email: latoya@rath.us
                 special_instructions:
                 currency: USD
                 locale: en
                 item_count: 1
-                state_lock_version: 1
                 item_total: '10.0'
                 display_item_total: "$10.00"
                 ship_total: '100.0'
@@ -7340,16 +7351,22 @@ paths:
                 display_additional_tax_total: "$0.00"
                 total: '110.0'
                 display_total: "$110.00"
-                created_at: '2026-03-11T20:16:57.400Z'
-                updated_at: '2026-03-11T20:16:57.447Z'
+                created_at: '2026-03-12T09:16:36.713Z'
+                updated_at: '2026-03-12T09:16:36.788Z'
+                current_step: address
+                completed_steps: []
+                requirements:
+                - step: payment
+                  field: payment
+                  message: Add a payment method
                 order_promotions: []
                 line_items:
                 - id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 1072748
-                  slug: product-1072748
+                  name: Product 1071314
+                  slug: product-1071314
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -7368,23 +7385,23 @@ paths:
                   discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
-                  created_at: '2026-03-11T20:16:57.427Z'
-                  updated_at: '2026-03-11T20:16:57.427Z'
+                  created_at: '2026-03-12T09:16:36.749Z'
+                  updated_at: '2026-03-12T09:16:36.749Z'
                   compare_at_amount:
                   thumbnail_url:
                   option_values: []
                   digital_links: []
                 shipments:
                 - id: ship_UkLWZg9DAJ
-                  number: H32477969001
+                  number: H04422519647
                   state: pending
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
                   display_cost: "$100.00"
                   shipped_at:
-                  created_at: '2026-03-11T20:16:57.432Z'
-                  updated_at: '2026-03-11T20:16:57.444Z'
+                  created_at: '2026-03-12T09:16:36.759Z'
+                  updated_at: '2026-03-12T09:16:36.784Z'
                   shipping_method:
                     id: shpm_UkLWZg9DAJ
                     name: UPS Ground
@@ -7392,7 +7409,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: STATE_ABBR_281
-                    name: Mendy Koss
+                    name: Basilia Torphy
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -7414,12 +7431,12 @@ paths:
                 - id: py_UkLWZg9DAJ
                   payment_method_id: pm_UkLWZg9DAJ
                   state: checkout
-                  response_code: 1-SC-20260311201657780014
-                  number: PNEWMSZ6
+                  response_code: 1-SC-20260312091637134595
+                  number: PUHHRWX1
                   amount: '10.0'
                   display_amount: "$10.00"
-                  created_at: '2026-03-11T20:16:57.785Z'
-                  updated_at: '2026-03-11T20:16:57.785Z'
+                  created_at: '2026-03-12T09:16:37.140Z'
+                  updated_at: '2026-03-12T09:16:37.140Z'
                   source_type: store_credit
                   source_id: credit_UkLWZg9DAJ
                   source:
@@ -7544,20 +7561,13 @@ paths:
             application/json:
               example:
                 id: cart_UkLWZg9DAJ
-                number: R023223592
-                state: cart
-                checkout_steps:
-                - address
-                - delivery
-                - payment
-                - complete
-                token: G1Sdq5jhpBeq29pYqvnq3Jcd1mxJ7fseXb8
-                email: kandi@nicolas.us
+                number: R426571297
+                token: vwPVWQvhLRwXGc6KB7LqAz24PmmQ7iHCpb2
+                email: andrew_schiller@mcclurewindler.ca
                 special_instructions:
                 currency: USD
                 locale: en
                 item_count: 1
-                state_lock_version: 1
                 item_total: '10.0'
                 display_item_total: "$10.00"
                 ship_total: '100.0'
@@ -7574,16 +7584,22 @@ paths:
                 display_additional_tax_total: "$0.00"
                 total: '110.0'
                 display_total: "$110.00"
-                created_at: '2026-03-11T20:16:59.026Z'
-                updated_at: '2026-03-11T20:16:59.073Z'
+                created_at: '2026-03-12T09:16:38.311Z'
+                updated_at: '2026-03-12T09:16:38.358Z'
+                current_step: address
+                completed_steps: []
+                requirements:
+                - step: payment
+                  field: payment
+                  message: Add a payment method
                 order_promotions: []
                 line_items:
                 - id: li_UkLWZg9DAJ
                   variant_id: variant_UkLWZg9DAJ
                   quantity: 1
                   currency: USD
-                  name: Product 1096204
-                  slug: product-1096204
+                  name: Product 1092715
+                  slug: product-1092715
                   options_text: ''
                   price: '10.0'
                   display_price: "$10.00"
@@ -7602,23 +7618,23 @@ paths:
                   discounted_amount: '10.0'
                   display_discounted_amount: "$10.00"
                   display_compare_at_amount: "$0.00"
-                  created_at: '2026-03-11T20:16:59.053Z'
-                  updated_at: '2026-03-11T20:16:59.053Z'
+                  created_at: '2026-03-12T09:16:38.338Z'
+                  updated_at: '2026-03-12T09:16:38.338Z'
                   compare_at_amount:
                   thumbnail_url:
                   option_values: []
                   digital_links: []
                 shipments:
                 - id: ship_UkLWZg9DAJ
-                  number: H82284414826
+                  number: H94897631388
                   state: pending
                   tracking: U10000
                   tracking_url:
                   cost: '100.0'
                   display_cost: "$100.00"
                   shipped_at:
-                  created_at: '2026-03-11T20:16:59.058Z'
-                  updated_at: '2026-03-11T20:16:59.071Z'
+                  created_at: '2026-03-12T09:16:38.343Z'
+                  updated_at: '2026-03-12T09:16:38.356Z'
                   shipping_method:
                     id: shpm_UkLWZg9DAJ
                     name: UPS Ground
@@ -7626,7 +7642,7 @@ paths:
                   stock_location:
                     id: sloc_UkLWZg9DAJ
                     state_abbr: STATE_ABBR_289
-                    name: Marcelene Smitham
+                    name: Yessenia Hettinger
                     address1: 1600 Pennsylvania Ave NW
                     city: Washington
                     zipcode: '20500'
@@ -7742,9 +7758,9 @@ paths:
                 data:
                 - id: wl_UkLWZg9DAJ
                   name: My Wishlist
-                  token: 3YQ4fd4a1CvqbKLtNEPHG1ZF
-                  created_at: '2026-03-11T20:16:59.638Z'
-                  updated_at: '2026-03-11T20:16:59.638Z'
+                  token: 2iHmZ51BPyq4an6gjALiqHBn
+                  created_at: '2026-03-12T09:16:38.933Z'
+                  updated_at: '2026-03-12T09:16:38.933Z'
                   is_default: false
                   is_private: true
                 meta:
@@ -7820,9 +7836,9 @@ paths:
               example:
                 id: wl_gbHJdmfrXB
                 name: Birthday Ideas
-                token: 86y11tQTHf5Lahkkds4Z4mT1
-                created_at: '2026-03-11T20:17:00.852Z'
-                updated_at: '2026-03-11T20:17:00.852Z'
+                token: ds89ih2cPLFaLTUjFb5Z9fVA
+                created_at: '2026-03-12T09:16:40.116Z'
+                updated_at: '2026-03-12T09:16:40.116Z'
                 is_default: false
                 is_private: true
               schema:
@@ -7918,9 +7934,9 @@ paths:
               example:
                 id: wl_UkLWZg9DAJ
                 name: My Wishlist
-                token: bKWGSxheujTMekoudUVVkktL
-                created_at: '2026-03-11T20:17:01.972Z'
-                updated_at: '2026-03-11T20:17:01.972Z'
+                token: xYnFQpEEhvC7FdK4emLTP1dz
+                created_at: '2026-03-12T09:16:41.264Z'
+                updated_at: '2026-03-12T09:16:41.264Z'
                 is_default: false
                 is_private: true
               schema:
@@ -7982,9 +7998,9 @@ paths:
               example:
                 id: wl_UkLWZg9DAJ
                 name: Updated Name
-                token: tpGAt3HC5t39Mz1fxesJt9Ez
-                created_at: '2026-03-11T20:17:03.122Z'
-                updated_at: '2026-03-11T20:17:03.160Z'
+                token: 3eEH9rUH9qUfbeUmck6C35dR
+                created_at: '2026-03-12T09:16:42.401Z'
+                updated_at: '2026-03-12T09:16:42.446Z'
                 is_default: false
                 is_private: true
               schema:
@@ -8096,8 +8112,8 @@ paths:
                 variant_id: variant_gbHJdmfrXB
                 wishlist_id: wl_UkLWZg9DAJ
                 quantity: 1
-                created_at: '2026-03-11T20:17:04.425Z'
-                updated_at: '2026-03-11T20:17:04.425Z'
+                created_at: '2026-03-12T09:16:43.621Z'
+                updated_at: '2026-03-12T09:16:43.621Z'
                 variant:
                   id: variant_gbHJdmfrXB
                   product_id: prod_gbHJdmfrXB
@@ -8106,8 +8122,8 @@ paths:
                   options_text: ''
                   track_inventory: true
                   image_count: 0
-                  created_at: '2026-03-11T20:17:04.402Z'
-                  updated_at: '2026-03-11T20:17:04.412Z'
+                  created_at: '2026-03-12T09:16:43.598Z'
+                  updated_at: '2026-03-12T09:16:43.606Z'
                   thumbnail:
                   purchasable: true
                   in_stock: false
@@ -8357,6 +8373,25 @@ components:
       required:
       - token
       - user
+    CheckoutRequirement:
+      type: object
+      properties:
+        step:
+          type: string
+          description: Checkout step this requirement belongs to
+          example: payment
+        field:
+          type: string
+          description: Field that needs to be satisfied
+          example: payment
+        message:
+          type: string
+          description: Human-readable requirement message
+          example: Add a payment method
+      required:
+      - step
+      - field
+      - message
     Address:
       type: object
       properties:
@@ -8468,12 +8503,6 @@ components:
           type: string
         number:
           type: string
-        state:
-          type: string
-        checkout_steps:
-          type: array
-          items:
-            type: string
         token:
           type: string
         email:
@@ -8488,8 +8517,6 @@ components:
           type: string
           nullable: true
         item_count:
-          type: number
-        state_lock_version:
           type: number
         item_total:
           type: string
@@ -8527,6 +8554,16 @@ components:
           type: string
         updated_at:
           type: string
+        current_step:
+          type: string
+        completed_steps:
+          type: array
+          items:
+            type: string
+        requirements:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CheckoutRequirement"
         order_promotions:
           type: array
           items:
@@ -8558,15 +8595,12 @@ components:
       required:
       - id
       - number
-      - state
-      - checkout_steps
       - token
       - email
       - special_instructions
       - currency
       - locale
       - item_count
-      - state_lock_version
       - item_total
       - display_item_total
       - ship_total
@@ -8585,6 +8619,9 @@ components:
       - display_total
       - created_at
       - updated_at
+      - current_step
+      - completed_steps
+      - requirements
       - order_promotions
       - line_items
       - shipments

@@ -864,6 +864,12 @@ en:
     charged: Charged
     checkout: Checkout
     checkout_message: Checkout message
+    checkout_requirements:
+      email_required: Email address is required
+      line_items_required: Add at least one item to your cart
+      payment_required: Add a payment method
+      ship_address_required: Shipping address is required
+      shipping_method_required: Select a shipping method for all shipments
     choose_a_customer: Choose a customer
     choose_a_taxon_to_sort_products_for: Choose a taxon to sort products for
     choose_currency: Choose Currency
