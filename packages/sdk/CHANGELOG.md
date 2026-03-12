@@ -13,7 +13,7 @@
 
 - **Breaking:** `line_items` renamed to `items` in both `Cart` and `Order` responses.
 
-- **Breaking:** `order_promotions` renamed to `promotions` in both `Cart` and `Order` responses. Cart promotions use `CartPromotion` type (with `cp_` prefixed IDs), Order promotions use `OrderPromotion` (with `oprom_` prefixed IDs).
+- **Breaking:** `order_promotions` renamed to `promotions` in both `Cart` and `Order` responses. Cart promotions use `CartPromotion` type (with `cpromo_` prefixed IDs), Order promotions use `OrderPromotion` (with `oprom_` prefixed IDs).
 
 - Added `CartPromotion` type and `CartPromotionSchema` Zod schema.
 

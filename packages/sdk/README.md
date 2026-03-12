@@ -686,7 +686,7 @@ The SDK exports all Store API types:
 - `StoreShippingMethod` - Shipping method
 - `StoreCreditCard` - Saved credit card
 - `StoreGiftCard` - Gift card
-- `StoreCartPromotion` - Promotion applied to a cart (uses `cp_` prefixed IDs)
+- `StoreCartPromotion` - Promotion applied to a cart (uses `cpromo_` prefixed IDs)
 - `StoreOrderPromotion` - Promotion applied to an order (uses `oprom_` prefixed IDs)
 
 ### Product Types
