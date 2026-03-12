@@ -44,6 +44,8 @@ RSpec.describe 'Checkout API', type: :request, swagger_doc: 'api-reference/store
           email: { type: :string, format: 'email', example: 'customer@example.com' },
           special_instructions: { type: :string, example: 'Leave at door' },
           metadata: { type: :object, additionalProperties: true },
+          ship_address_id: { type: :string, description: 'Existing address ID to use as shipping address', example: 'addr_abc123' },
+          bill_address_id: { type: :string, description: 'Existing address ID to use as billing address', example: 'addr_def456' },
           bill_address: {
             type: :object,
             properties: {
@@ -88,6 +90,25 @@ RSpec.describe 'Checkout API', type: :request, swagger_doc: 'api-reference/store
     let!(:us_state) { country.states.find_by(abbr: 'NY') || create(:state, country: country, abbr: 'NY', name: 'New York') }
     let!(:zone) { create(:zone, zone_members: [Spree::ZoneMember.new(zoneable: country)]) }
     let!(:shipping_method) { create(:shipping_method, zones: [zone]) }
+
+    it 'accepts ship_address_id to use an existing address' do
+      order.update!(email: 'customer@example.com')
+      existing_address = user.addresses.first || create(:address, user: user, country: country, state: us_state)
+
+      patch '/api/v3/store/checkout',
+            params: {
+              ship_address_id: existing_address.prefixed_id
+            }.to_json,
+            headers: {
+              'Content-Type' => 'application/json',
+              'x-spree-api-key' => api_key.token,
+              'Authorization' => "Bearer #{jwt_token}"
+            }
+
+      expect(response).to have_http_status(:ok)
+      data = JSON.parse(response.body)
+      expect(order.reload.ship_address_id).to eq(existing_address.id)
+    end
 
     it 'auto-advances to payment after address submission' do
       # Put order in address state with email set

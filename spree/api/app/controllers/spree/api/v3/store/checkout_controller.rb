@@ -48,6 +48,8 @@ module Spree
               :special_instructions,
               :currency,
               :locale,
+              :ship_address_id,
+              :bill_address_id,
               ship_address: address_params,
               bill_address: address_params,
               metadata: {}
