@@ -89,7 +89,7 @@ RSpec.describe 'Checkout API', type: :request, swagger_doc: 'api-reference/store
     let!(:zone) { create(:zone, zone_members: [Spree::ZoneMember.new(zoneable: country)]) }
     let!(:shipping_method) { create(:shipping_method, zones: [zone]) }
 
-    it 'auto-advances from address to delivery after address submission' do
+    it 'auto-advances to payment after address submission' do
       # Put order in address state with email set
       order.update!(email: 'customer@example.com')
       order.next # cart -> address
@@ -113,7 +113,8 @@ RSpec.describe 'Checkout API', type: :request, swagger_doc: 'api-reference/store
 
       expect(response).to have_http_status(:ok)
       data = JSON.parse(response.body)
-      expect(data['current_step']).to eq('delivery')
+      # Advances through delivery (rates pre-selected) to payment
+      expect(data['current_step']).to eq('payment')
     end
 
   end

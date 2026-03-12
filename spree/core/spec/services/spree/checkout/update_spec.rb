@@ -112,18 +112,18 @@ module Spree
             context 'when order has address checkout step and is past address state' do
               let(:order) { create(:order_with_line_items, user: user, store: store, state: 'delivery') }
 
-              it 'reverts to address then auto-advances one step to delivery' do
+              it 'reverts to address then auto-advances to payment' do
                 expect(subject).to be_success
-                expect(order.reload.state).to eq('delivery')
+                expect(order.reload.state).to eq('payment')
               end
             end
 
             context 'when order is in cart state' do
               let(:order) { create(:order_with_line_items, user: user, store: store, state: 'cart') }
 
-              it 'auto-advances one step to address' do
+              it 'auto-advances to payment' do
                 expect(subject).to be_success
-                expect(order.reload.state).to eq('address')
+                expect(order.reload.state).to eq('payment')
               end
             end
           end

@@ -85,14 +85,19 @@ module Spree
         order.state = 'address'
       end
 
-      # Auto-advance to the next checkout step after successful update.
-      # Single order.next call — advances one step only (e.g. address → delivery).
-      # Failure is swallowed — the update succeeded, advancement is best-effort.
-      # The `requirements` array in the serialized response tells the frontend what's missing.
+      # Auto-advance as far as the checkout state machine allows.
+      # Loops order.next until the order can't progress further (e.g. missing
+      # payment) or reaches confirm/complete. Stops at the first step whose
+      # before_transition guard fails — the `requirements` array in the
+      # serialized response tells the frontend what's still missing.
+      # Failure is swallowed — the update itself already succeeded.
       def try_advance
         return if order.complete? || order.canceled?
 
-        order.next
+        loop do
+          break unless order.next
+          break if order.confirm? || order.complete?
+        end
       rescue StandardError => e
         Rails.error.report(e, context: { order_id: order.id, state: order.state }, source: 'spree.checkout')
       ensure
