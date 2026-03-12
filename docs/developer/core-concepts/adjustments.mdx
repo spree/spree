@@ -76,12 +76,12 @@ Adjustments appear in order responses when you expand line items or shipments:
 
 ```typescript SDK
 const order = await client.orders.get('or_abc123', {
-  expand: ['line_items', 'shipments'],
+  expand: ['items', 'shipments'],
   orderToken: '<token>',
 })
 
 // Line item adjustments (promotions, taxes)
-order.line_items?.forEach(item => {
+order.items?.forEach(item => {
   item.adjustment_total  // total adjustments on this item
   item.additional_tax_total
   item.included_tax_total
@@ -95,7 +95,7 @@ order.included_tax_total
 ```
 
 ```bash cURL
-curl 'https://api.mystore.com/api/v3/store/orders/or_abc123?expand=line_items,shipments' \
+curl 'https://api.mystore.com/api/v3/store/orders/or_abc123?expand=items,shipments' \
   -H 'Authorization: Bearer spree_pk_xxx' \
   -H 'X-Spree-Order-Token: <token>'
 ```

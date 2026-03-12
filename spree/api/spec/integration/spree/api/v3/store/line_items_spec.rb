@@ -57,7 +57,7 @@ RSpec.describe 'Cart Items API', type: :request, swagger_doc: 'api-reference/sto
           data = JSON.parse(response.body)
           expect(data['id']).to start_with('cart_')
           expect(data['number']).to eq(order.number)
-          expect(data['line_items'].first).to have_key('currency')
+          expect(data['items'].first).to have_key('currency')
         end
       end
 

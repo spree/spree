@@ -5,6 +5,8 @@
 ### Minor Changes
 
 - **Breaking:** Cart responses no longer include `state`, `checkout_steps`, or `state_lock_version`. Use `current_step`, `completed_steps`, and `requirements` instead.
+- **Breaking:** `line_items` renamed to `items` in both `Cart` and `Order` responses.
+- **Breaking:** `order_promotions` renamed to `promotions` in both `Cart` and `Order` responses.
 
 ### Patch Changes
 

@@ -39,7 +39,7 @@ Event payloads include the same top-level attributes and unconditional associati
 
 Events: `order.created`, `order.updated`, `order.completed`, `order.canceled`, `order.resumed`, `order.paid`, `order.shipped`
 
-Order payloads include nested `line_items`, `shipments`, `payments`, `bill_address`, `ship_address`, `payment_methods`, and `order_promotions`.
+Order payloads include nested `items`, `shipments`, `payments`, `bill_address`, `ship_address`, `payment_methods`, and `promotions`.
 
 ```json
 {
@@ -72,8 +72,8 @@ Order payloads include nested `line_items`, `shipments`, `payments`, `bill_addre
   "completed_at": "2025-01-15T10:30:00Z",
   "created_at": "2025-01-15T10:00:00Z",
   "updated_at": "2025-01-15T10:30:00Z",
-  "order_promotions": [],
-  "line_items": [
+  "promotions": [],
+  "items": [
     {
       "id": "li_7xRt4wPq",
       "variant_id": "var_k5nR8xLq",

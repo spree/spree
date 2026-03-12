@@ -378,7 +378,7 @@ Completed orders can be looked up by ID or number:
 ```typescript
 // Get a completed order by ID or number
 const order = await client.orders.get('R123456789', {
-  expand: ['line_items', 'shipments'],
+  expand: ['items', 'shipments'],
 }, { spreeToken: orderToken });
 ```
 
@@ -392,7 +392,7 @@ const orders = await client.customer.orders.list({}, options);
 
 // Get a specific order from history
 const order = await client.customer.orders.get('or_xxx', {
-  expand: ['line_items', 'shipments'],
+  expand: ['items', 'shipments'],
 }, options);
 ```
 
@@ -686,6 +686,8 @@ The SDK exports all Store API types:
 - `StoreShippingMethod` - Shipping method
 - `StoreCreditCard` - Saved credit card
 - `StoreGiftCard` - Gift card
+- `StoreCartPromotion` - Promotion applied to a cart (uses `cp_` prefixed IDs)
+- `StoreOrderPromotion` - Promotion applied to an order (uses `oprom_` prefixed IDs)
 
 ### Product Types
 - `StoreImage` - Product image
@@ -715,6 +717,7 @@ The SDK exports all Store API types:
 - `UpdatePaymentSessionParams` - Payment session update parameters
 - `CompletePaymentSessionParams` - Payment session completion parameters
 - `ProductFiltersResponse` - Product filters response
+- `CheckoutRequirement` - Checkout requirement (`{ step, field, message }`)
 
 ## Custom Fetch
 

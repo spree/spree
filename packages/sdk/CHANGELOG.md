@@ -11,6 +11,14 @@
 
 - Added `CheckoutRequirement` type for the new `requirements` field on `Cart`.
 
+- **Breaking:** `line_items` renamed to `items` in both `Cart` and `Order` responses.
+
+- **Breaking:** `order_promotions` renamed to `promotions` in both `Cart` and `Order` responses. Cart promotions use `CartPromotion` type (with `cp_` prefixed IDs), Order promotions use `OrderPromotion` (with `oprom_` prefixed IDs).
+
+- Added `CartPromotion` type and `CartPromotionSchema` Zod schema.
+
+- `OrderPromotion` now has a prefixed ID (`oprom_`).
+
 - Zod generator now supports inline object types (`Array<{...}>`) and correctly handles nested braces in TypeScript type definitions.
 
 ## 0.8.2

@@ -97,9 +97,9 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
 
         run_test! do |response|
           data = JSON.parse(response.body)
-          expect(data['line_items'].size).to eq(1)
-          expect(data['line_items'].first['quantity']).to eq(3)
-          expect(data['line_items'].first['variant_id']).to eq(variant.prefixed_id)
+          expect(data['items'].size).to eq(1)
+          expect(data['items'].first['quantity']).to eq(3)
+          expect(data['items'].first['variant_id']).to eq(variant.prefixed_id)
         end
       end
 
@@ -203,7 +203,7 @@ RSpec.describe 'Cart API', type: :request, swagger_doc: 'api-reference/store.yam
           expect(data['id']).to start_with('cart_')
           expect(data['number']).to eq(cart.number)
           expect(data['token']).to eq(cart.token)
-          expect(data['line_items']).to be_present
+          expect(data['items']).to be_present
         end
       end
 

@@ -25,8 +25,8 @@ module Spree
                    :additional_tax_total, :display_additional_tax_total, :total, :display_total,
                    completed_at: :iso8601, created_at: :iso8601, updated_at: :iso8601
 
-        many :order_promotions, resource: Spree.api.order_promotion_serializer
-        many :line_items, resource: Spree.api.line_item_serializer
+        many :order_promotions, key: :promotions, resource: Spree.api.order_promotion_serializer
+        many :line_items, key: :items, resource: Spree.api.line_item_serializer
         many :shipments, resource: Spree.api.shipment_serializer
         many :payments, resource: Spree.api.payment_serializer
         one :bill_address, resource: Spree.api.address_serializer

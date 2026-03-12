@@ -103,8 +103,8 @@ RSpec.describe Spree::Api::V3::Store::CartController, type: :controller do
         }
 
         expect(response).to have_http_status(:created)
-        expect(json_response['line_items'].size).to eq(1)
-        expect(json_response['line_items'].first['quantity']).to eq(3)
+        expect(json_response['items'].size).to eq(1)
+        expect(json_response['items'].first['quantity']).to eq(3)
       end
 
       it 'defaults quantity to 1 when not specified' do
@@ -157,8 +157,8 @@ RSpec.describe Spree::Api::V3::Store::CartController, type: :controller do
       it 'returns cart with line items' do
         get :show
 
-        expect(json_response['line_items']).to be_present
-        expect(json_response['line_items'].size).to eq(cart.line_items.count)
+        expect(json_response['items']).to be_present
+        expect(json_response['items'].size).to eq(cart.line_items.count)
       end
 
       it 'returns cart token in response' do
@@ -293,7 +293,7 @@ RSpec.describe Spree::Api::V3::Store::CartController, type: :controller do
       it 'returns line item attributes' do
         get :show
 
-        line_item = json_response['line_items'].first
+        line_item = json_response['items'].first
         expect(line_item).to include(
           'id',
           'variant_id',
