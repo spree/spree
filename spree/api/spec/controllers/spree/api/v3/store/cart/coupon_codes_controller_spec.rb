@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe Spree::Api::V3::Store::Orders::CouponCodesController, type: :controller do
+RSpec.describe Spree::Api::V3::Store::Cart::CouponCodesController, type: :controller do
   render_views
 
   include_context 'API v3 Store'
@@ -10,7 +10,6 @@ RSpec.describe Spree::Api::V3::Store::Orders::CouponCodesController, type: :cont
   before do
     request.headers['X-Spree-Api-Key'] = api_key.token
     request.headers['Authorization'] = "Bearer #{jwt_token}"
-    request.headers['x-spree-order-token'] = order.token
   end
 
   describe 'POST #create' do
@@ -18,20 +17,20 @@ RSpec.describe Spree::Api::V3::Store::Orders::CouponCodesController, type: :cont
       let!(:promotion) { create(:promotion_with_item_adjustment, code: 'SAVE10', stores: [store]) }
 
       it 'applies the coupon code successfully' do
-        post :create, params: { order_id: order.to_param, code: 'SAVE10' }
+        post :create, params: { code: 'SAVE10' }
 
         expect(response).to have_http_status(:created)
-        expect(json_response['number']).to eq(order.number)
+        expect(json_response['id']).to start_with('cart_')
       end
 
       it 'is case insensitive' do
-        post :create, params: { order_id: order.to_param, code: 'save10' }
+        post :create, params: { code: 'save10' }
 
         expect(response).to have_http_status(:created)
       end
 
       it 'returns error for invalid coupon code' do
-        post :create, params: { order_id: order.to_param, code: 'INVALID' }
+        post :create, params: { code: 'INVALID' }
 
         expect(response).to have_http_status(:unprocessable_content)
         expect(json_response['error']).to be_present
@@ -41,7 +40,7 @@ RSpec.describe Spree::Api::V3::Store::Orders::CouponCodesController, type: :cont
         order.coupon_code = 'SAVE10'
         Spree::PromotionHandler::Coupon.new(order).apply
 
-        post :create, params: { order_id: order.to_param, code: 'SAVE10' }
+        post :create, params: { code: 'SAVE10' }
 
         expect(response).to have_http_status(:unprocessable_content)
       end
@@ -54,14 +53,14 @@ RSpec.describe Spree::Api::V3::Store::Orders::CouponCodesController, type: :cont
       let!(:coupon_code) { create(:coupon_code, promotion: promotion, code: 'multi1') }
 
       it 'applies the multi-code coupon successfully' do
-        post :create, params: { order_id: order.to_param, code: 'multi1' }
+        post :create, params: { code: 'multi1' }
 
         expect(response).to have_http_status(:created)
-        expect(json_response['number']).to eq(order.number)
+        expect(json_response['id']).to start_with('cart_')
       end
 
       it 'marks the coupon code as used' do
-        post :create, params: { order_id: order.to_param, code: 'multi1' }
+        post :create, params: { code: 'multi1' }
 
         expect(coupon_code.reload.state).to eq('used')
       end
@@ -71,16 +70,16 @@ RSpec.describe Spree::Api::V3::Store::Orders::CouponCodesController, type: :cont
       let!(:gift_card) { create(:gift_card, store: store, amount: 50, code: 'giftcard123') }
 
       it 'applies the gift card successfully' do
-        post :create, params: { order_id: order.to_param, code: 'giftcard123' }
+        post :create, params: { code: 'giftcard123' }
 
         expect(response).to have_http_status(:created)
-        expect(json_response['number']).to eq(order.number)
+        expect(json_response['id']).to start_with('cart_')
       end
 
       it 'returns error for expired gift card' do
         gift_card.update!(expires_at: 1.day.ago)
 
-        post :create, params: { order_id: order.to_param, code: 'giftcard123' }
+        post :create, params: { code: 'giftcard123' }
 
         expect(response).to have_http_status(:unprocessable_content)
       end
@@ -88,7 +87,7 @@ RSpec.describe Spree::Api::V3::Store::Orders::CouponCodesController, type: :cont
       it 'returns error for redeemed gift card' do
         gift_card.update!(state: :redeemed, redeemed_at: Time.current, amount_used: gift_card.amount)
 
-        post :create, params: { order_id: order.to_param, code: 'giftcard123' }
+        post :create, params: { code: 'giftcard123' }
 
         expect(response).to have_http_status(:unprocessable_content)
       end
@@ -101,34 +100,23 @@ RSpec.describe Spree::Api::V3::Store::Orders::CouponCodesController, type: :cont
       end
 
       it 'returns error' do
-        post :create, params: { order_id: order.to_param, code: 'EXPIRED' }
+        post :create, params: { code: 'EXPIRED' }
 
         expect(response).to have_http_status(:unprocessable_content)
       end
     end
 
-    context 'without order access' do
-      let(:other_order) { create(:order, store: store) }
-
-      it 'returns not found' do
-        request.headers['x-spree-order-token'] = nil
-        post :create, params: { order_id: other_order.to_param, code: 'SAVE10' }
-
-        expect(response).to have_http_status(:not_found)
-      end
-    end
-
-    context 'with guest order token' do
+    context 'with guest spree token' do
       let(:guest_order) { create(:order_with_line_items, store: store, user: nil) }
       let!(:promotion) { create(:promotion_with_item_adjustment, code: 'GUEST10', stores: [store]) }
 
       before do
         request.headers['Authorization'] = nil
-        request.headers['x-spree-order-token'] = guest_order.token
+        request.headers['x-spree-token'] = guest_order.token
       end
 
-      it 'allows access via order token' do
-        post :create, params: { order_id: guest_order.to_param, code: 'GUEST10' }
+      it 'allows access via spree token' do
+        post :create, params: { code: 'GUEST10' }
 
         expect(response).to have_http_status(:created)
       end
@@ -145,22 +133,18 @@ RSpec.describe Spree::Api::V3::Store::Orders::CouponCodesController, type: :cont
       end
 
       it 'removes the coupon code successfully' do
-        order_promotion = order.order_promotions.find_by(promotion: promotion)
-        # OrderPromotion lacks has_prefix_id, so construct a decodable param
-        encoded_id = "op_#{Spree::PrefixedId::SQIDS.encode([order_promotion.id])}"
-
-        delete :destroy, params: { order_id: order.to_param, id: encoded_id }
+        delete :destroy, params: { id: 'REMOVE10' }
 
         expect(response).to have_http_status(:ok)
         expect(order.reload.promotions).not_to include(promotion)
       end
     end
 
-    context 'with non-existent promotion' do
-      it 'returns not found' do
-        delete :destroy, params: { order_id: order.to_param, id: 'op_nonexistent' }
+    context 'with non-existent coupon code' do
+      it 'returns error' do
+        delete :destroy, params: { id: 'NONEXISTENT' }
 
-        expect(response).to have_http_status(:not_found)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
   end

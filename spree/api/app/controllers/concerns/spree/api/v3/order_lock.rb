@@ -12,7 +12,7 @@ module Spree
         private
 
         def with_order_lock
-          order = @order || @parent
+          order = @order || @parent || @cart
 
           order.with_lock do
             # Persist increment within the transaction so reloads inside yield see the new version

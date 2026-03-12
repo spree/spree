@@ -9,8 +9,7 @@ describe('paymentSessions', () => {
 
   describe('create', () => {
     it('creates a payment session', async () => {
-      const result = await client.orders.paymentSessions.create(
-        'order_1',
+      const result = await client.checkout.paymentSessions.create(
         { payment_method_id: 'pm_1' },
         opts
       );
@@ -22,8 +21,7 @@ describe('paymentSessions', () => {
     });
 
     it('accepts optional amount and external_data', async () => {
-      const result = await client.orders.paymentSessions.create(
-        'order_1',
+      const result = await client.checkout.paymentSessions.create(
         { payment_method_id: 'pm_1', amount: '50.00', external_data: { channel: 'Web' } },
         opts
       );
@@ -33,11 +31,7 @@ describe('paymentSessions', () => {
 
   describe('get', () => {
     it('returns a payment session by ID', async () => {
-      const result = await client.orders.paymentSessions.get(
-        'order_1',
-        'ps_1',
-        opts
-      );
+      const result = await client.checkout.paymentSessions.get('ps_1', opts);
       expect(result.id).toBe('ps_1');
       expect(result.status).toBe('pending');
       expect(result.amount).toBe('99.99');
@@ -48,8 +42,7 @@ describe('paymentSessions', () => {
 
   describe('update', () => {
     it('updates a payment session', async () => {
-      const result = await client.orders.paymentSessions.update(
-        'order_1',
+      const result = await client.checkout.paymentSessions.update(
         'ps_1',
         { amount: '50.00' },
         opts
@@ -61,8 +54,7 @@ describe('paymentSessions', () => {
 
   describe('complete', () => {
     it('completes a payment session', async () => {
-      const result = await client.orders.paymentSessions.complete(
-        'order_1',
+      const result = await client.checkout.paymentSessions.complete(
         'ps_1',
         { session_result: 'success' },
         opts
@@ -72,8 +64,7 @@ describe('paymentSessions', () => {
     });
 
     it('completes without params', async () => {
-      const result = await client.orders.paymentSessions.complete(
-        'order_1',
+      const result = await client.checkout.paymentSessions.complete(
         'ps_1',
         undefined,
         opts

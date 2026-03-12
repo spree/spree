@@ -73,3 +73,14 @@ export async function clearAccessToken(): Promise<void> {
     path: '/',
   });
 }
+
+// --- Checkout Options (combined cart + access tokens for checkout/payment actions) ---
+
+export async function getCheckoutOptions(): Promise<{
+  spreeToken: string | undefined;
+  token: string | undefined;
+}> {
+  const spreeToken = await getCartToken();
+  const token = await getAccessToken();
+  return { spreeToken, token };
+}

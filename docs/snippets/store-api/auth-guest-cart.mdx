@@ -2,11 +2,11 @@
 // Create a cart (guest)
 const cart = await client.cart.create()
 
-// Use orderToken for all cart operations
-const options = { orderToken: cart.token }
+// Use spreeToken for all cart and checkout operations
+const options = { spreeToken: cart.token }
 
 // Add items
-await client.orders.lineItems.create(cart.id, {
+await client.cart.items.create({
   variant_id: 'variant_abc123',
   quantity: 1,
 }, options)

@@ -58,7 +58,7 @@ export default async function ProductsPage() {
 import { addItem, removeItem, getCart } from '@spree/next';
 
 export default async function CartPage() {
-  const cart = await getCart();
+  const cart = await getCart(); // Cart | null
 
   async function handleAddItem(formData: FormData) {
     'use server';
@@ -127,23 +127,23 @@ Server actions handle mutations and auth-dependent reads. They automatically man
 ```typescript
 import { getCart, getOrCreateCart, addItem, updateItem, removeItem, clearCart } from '@spree/next';
 
-const cart = await getCart();
-const cart = await getOrCreateCart();
-await addItem(variantId, quantity, { gift_message: 'Happy Birthday!' });
-await updateItem(lineItemId, { quantity: 3 });
-await updateItem(lineItemId, { metadata: { engraving: 'J.D.' } });
-await removeItem(lineItemId);
+const cart = await getCart();           // Cart | null
+const cart = await getOrCreateCart();   // Cart
+await addItem(variantId, quantity, { gift_message: 'Happy Birthday!' });   // Cart
+await updateItem(lineItemId, { quantity: 3 });                             // Cart
+await updateItem(lineItemId, { metadata: { engraving: 'J.D.' } });        // Cart
+await removeItem(lineItemId);                                              // Cart
 await clearCart();
 ```
 
 ### Checkout
 
+All checkout functions operate on the current cart implicitly (via the cart cookie).
+
 ```typescript
 import {
   getCheckout,
-  updateAddresses,
-  advance,
-  next,
+  updateCheckout,
   getShipments,
   selectShippingRate,
   applyCoupon,
@@ -152,13 +152,11 @@ import {
 } from '@spree/next';
 
 const checkout = await getCheckout();
-await updateAddresses({ ship_address: { ... }, bill_address: { ... } });
-await advance();
-await next();
+await updateCheckout({ ship_address: { ... }, bill_address: { ... } });
 const shipments = await getShipments();
 await selectShippingRate(shipmentId, rateId);
 await applyCoupon('SAVE20');
-await removeCoupon(promoId);
+await removeCoupon('SAVE20');
 await complete();
 ```
 
@@ -197,12 +195,14 @@ const order = await getOrder(orderId);
 
 ### Payments (Manual/Offline)
 
+All payment functions operate on the current cart implicitly (via the cart cookie).
+
 ```typescript
 import { createPayment } from '@spree/next';
 
 // Create a payment for a non-session payment method
 // (e.g. Check, Cash on Delivery, Bank Transfer, Purchase Order)
-await createPayment(orderId, {
+await createPayment({
   payment_method_id: 'pm_123',
   amount: '99.99',              // Optional, defaults to order total minus store credits
   metadata: {                   // Optional, write-only metadata
@@ -213,6 +213,8 @@ await createPayment(orderId, {
 
 ### Payment Sessions (Stripe, Adyen, PayPal, etc.)
 
+All payment session functions operate on the current cart implicitly (via the cart cookie).
+
 ```typescript
 import {
   createPaymentSession,
@@ -222,19 +224,19 @@ import {
 } from '@spree/next';
 
 // Create a payment session (initializes provider-specific session)
-const session = await createPaymentSession(orderId, { payment_method_id: 'pm_123' });
+const session = await createPaymentSession({ payment_method_id: 'pm_123' });
 
 // Access provider data (e.g., Stripe client secret)
 const clientSecret = session.external_data.client_secret;
 
 // Get a payment session
-const session = await getPaymentSession(orderId, sessionId);
+const session = await getPaymentSession(sessionId);
 
 // Update a payment session
-await updatePaymentSession(orderId, sessionId, { amount: '50.00' });
+await updatePaymentSession(sessionId, { amount: '50.00' });
 
 // Complete a payment session (confirms payment with provider)
-await completePaymentSession(orderId, sessionId, { session_result: 'success' });
+await completePaymentSession(sessionId, { session_result: 'success' });
 ```
 
 ### Credit Cards & Gift Cards
@@ -299,11 +301,13 @@ All types are re-exported from `@spree/sdk` for convenience:
 
 ```typescript
 import type {
+  Cart,
   StoreProduct,
   StoreOrder,
   StoreLineItem,
   StorePaymentSession,
   StoreCategory,
+  UpdateCheckoutParams,
   PaginatedResponse,
   SpreeError,
 } from '@spree/next';

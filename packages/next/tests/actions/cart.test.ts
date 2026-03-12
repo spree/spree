@@ -8,12 +8,14 @@ const mockClient = {
     get: vi.fn(),
     create: vi.fn(),
     associate: vi.fn(),
-  },
-  orders: {
-    lineItems: {
+    items: {
       create: vi.fn(),
       update: vi.fn(),
       delete: vi.fn(),
+    },
+    couponCodes: {
+      apply: vi.fn(),
+      remove: vi.fn(),
     },
   },
 };
@@ -22,7 +24,7 @@ vi.mock('@spree/sdk', () => ({
   createClient: vi.fn(() => mockClient),
 }));
 
-import { getCart, getOrCreateCart, addItem, removeItem, clearCart, associateCart } from '../../src/actions/cart';
+import { getCart, getOrCreateCart, addItem, updateItem, removeItem, clearCart, associateCart } from '../../src/actions/cart';
 import { revalidateTag } from 'next/cache';
 
 describe('cart actions', () => {
@@ -47,7 +49,7 @@ describe('cart actions', () => {
       const cart = await getCart();
       expect(cart).toEqual(mockCart);
       expect(mockClient.cart.get).toHaveBeenCalledWith(
-        expect.objectContaining({ orderToken: 'order_abc' })
+        expect.objectContaining({ spreeToken: 'order_abc' })
       );
     });
 
@@ -90,17 +92,33 @@ describe('cart actions', () => {
   describe('addItem', () => {
     it('adds line item and invalidates cache', async () => {
       const mockCart = { id: '1', token: 'cart_token', line_items: [] };
-      const mockLineItem = { id: 'li_1', quantity: 2, variant_id: 'v1' };
+      const updatedCart = { id: '1', token: 'cart_token', line_items: [{ id: 'li_1' }] };
       mockCookieStore.get.mockReturnValue({ value: 'cart_token' });
       mockClient.cart.get.mockResolvedValue(mockCart);
-      mockClient.orders.lineItems.create.mockResolvedValue(mockLineItem);
+      mockClient.cart.items.create.mockResolvedValue(updatedCart);
 
       const result = await addItem('v1', 2);
-      expect(result).toEqual(mockLineItem);
-      expect(mockClient.orders.lineItems.create).toHaveBeenCalledWith(
-        '1',
+      expect(result).toEqual(updatedCart);
+      expect(mockClient.cart.items.create).toHaveBeenCalledWith(
         { variant_id: 'v1', quantity: 2 },
-        expect.objectContaining({ orderToken: 'cart_token' })
+        expect.objectContaining({ spreeToken: 'cart_token' })
+      );
+      expect(revalidateTag).toHaveBeenCalledWith('cart');
+    });
+  });
+
+  describe('updateItem', () => {
+    it('updates line item and invalidates cache', async () => {
+      const updatedCart = { id: '1', token: 'cart_token', item_count: 3 };
+      mockCookieStore.get.mockReturnValue({ value: 'cart_token' });
+      mockClient.cart.items.update.mockResolvedValue(updatedCart);
+
+      const result = await updateItem('li_1', { quantity: 3 });
+      expect(result).toEqual(updatedCart);
+      expect(mockClient.cart.items.update).toHaveBeenCalledWith(
+        'li_1',
+        { quantity: 3 },
+        expect.objectContaining({ spreeToken: 'cart_token' })
       );
       expect(revalidateTag).toHaveBeenCalledWith('cart');
     });
@@ -108,16 +126,15 @@ describe('cart actions', () => {
 
   describe('removeItem', () => {
     it('deletes line item and invalidates cache', async () => {
-      const mockCart = { id: '1', token: 'cart_token' };
+      const updatedCart = { id: '1', token: 'cart_token', item_count: 0 };
       mockCookieStore.get.mockReturnValue({ value: 'cart_token' });
-      mockClient.cart.get.mockResolvedValue(mockCart);
-      mockClient.orders.lineItems.delete.mockResolvedValue(undefined);
+      mockClient.cart.items.delete.mockResolvedValue(updatedCart);
 
-      await removeItem('li_1');
-      expect(mockClient.orders.lineItems.delete).toHaveBeenCalledWith(
-        '1',
+      const result = await removeItem('li_1');
+      expect(result).toEqual(updatedCart);
+      expect(mockClient.cart.items.delete).toHaveBeenCalledWith(
         'li_1',
-        expect.objectContaining({ orderToken: 'cart_token' })
+        expect.objectContaining({ spreeToken: 'cart_token' })
       );
       expect(revalidateTag).toHaveBeenCalledWith('cart');
     });
@@ -153,7 +170,7 @@ describe('cart actions', () => {
       const result = await associateCart();
       expect(result).toEqual(mockCart);
       expect(mockClient.cart.associate).toHaveBeenCalledWith({
-        orderToken: 'cart_token',
+        spreeToken: 'cart_token',
         token: 'jwt_token',
       });
     });

@@ -2,11 +2,10 @@
 
 require 'swagger_helper'
 
-RSpec.describe 'Payment Sessions API', type: :request, swagger_doc: 'api-reference/store.yaml' do
+RSpec.describe 'Checkout Payment Sessions API', type: :request, swagger_doc: 'api-reference/store.yaml' do
   include_context 'API v3 Store'
 
-  let(:order) { create(:order_with_line_items, store: store, user: user, state: 'payment') }
-  let(:order_id) { order.to_param }
+  let!(:order) { create(:order_with_line_items, store: store, user: user, state: 'payment') }
   let(:payment_method) { create(:bogus_payment_method, stores: [store]) }
   let!(:payment_session) do
     create(:bogus_payment_session,
@@ -16,16 +15,16 @@ RSpec.describe 'Payment Sessions API', type: :request, swagger_doc: 'api-referen
            external_data: { 'client_secret' => 'secret_123' })
   end
 
-  path '/api/v3/store/orders/{order_id}/payment_sessions' do
+  path '/api/v3/store/checkout/payment_sessions' do
     post 'Create payment session' do
       tags 'Checkout'
       consumes 'application/json'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Creates a new payment session for the specified order. Delegates to the payment gateway to initialize a provider-specific session (e.g. Stripe PaymentIntent, Adyen session, PayPal order).'
+      description 'Creates a new payment session for the current cart. Delegates to the payment gateway to initialize a provider-specific session (e.g. Stripe PaymentIntent, Adyen session, PayPal order).'
 
       sdk_example <<~JS
-        const session = await client.orders.paymentSessions.create('or_abc123', {
+        const session = await client.checkout.paymentSessions.create({
           payment_method_id: 'pm_abc123',
         }, {
           bearerToken: '<token>',
@@ -35,12 +34,10 @@ RSpec.describe 'Payment Sessions API', type: :request, swagger_doc: 'api-referen
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
       parameter name: 'Authorization', in: :header, type: :string, required: false,
                 description: 'Bearer token for authenticated customers'
-      parameter name: :order_id, in: :path, type: :string, required: true,
-                description: 'Order ID or number'
-      parameter name: 'x-spree-order-token', in: :header, type: :string, required: false,
+      parameter name: 'x-spree-token', in: :header, type: :string, required: false,
                 description: 'Order token for guest access'
       parameter name: 'Idempotency-Key', in: :header, type: :string, required: false,
-                description: 'Unique key for request idempotency. Duplicate requests with the same key return the cached response.'
+                description: 'Unique key for request idempotency.'
       parameter name: :body, in: :body, schema: {
         type: :object,
         properties: {
@@ -64,28 +61,16 @@ RSpec.describe 'Payment Sessions API', type: :request, swagger_doc: 'api-referen
           expect(data['payment_method_id']).to eq(payment_method.prefixed_id)
         end
       end
-
-      response '404', 'order not found' do
-        let(:'x-spree-api-key') { api_key.token }
-        let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:order_id) { 'invalid' }
-        let(:body) { { payment_method_id: payment_method.prefixed_id } }
-
-        schema '$ref' => '#/components/schemas/ErrorResponse'
-        run_test!
-      end
     end
   end
 
-  path '/api/v3/store/orders/{order_id}/payment_sessions/{id}' do
+  path '/api/v3/store/checkout/payment_sessions/{id}' do
     parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
     parameter name: 'Authorization', in: :header, type: :string, required: false,
               description: 'Bearer token for authenticated customers'
-    parameter name: :order_id, in: :path, type: :string, required: true,
-              description: 'Order ID or number'
     parameter name: :id, in: :path, type: :string, required: true,
               description: 'Payment session ID'
-    parameter name: 'x-spree-order-token', in: :header, type: :string, required: false,
+    parameter name: 'x-spree-token', in: :header, type: :string, required: false,
               description: 'Order token for guest access'
 
     get 'Get payment session' do
@@ -95,7 +80,7 @@ RSpec.describe 'Payment Sessions API', type: :request, swagger_doc: 'api-referen
       description 'Returns a single payment session with its current status and provider data.'
 
       sdk_example <<~JS
-        const session = await client.orders.paymentSessions.get('or_abc123', 'ps_abc123', {
+        const session = await client.checkout.paymentSessions.get('ps_abc123', {
           bearerToken: '<token>',
         })
       JS
@@ -132,7 +117,7 @@ RSpec.describe 'Payment Sessions API', type: :request, swagger_doc: 'api-referen
       description 'Updates a payment session. Delegates to the payment gateway to sync changes with the provider.'
 
       sdk_example <<~JS
-        const session = await client.orders.paymentSessions.update('or_abc123', 'ps_abc123', {
+        const session = await client.checkout.paymentSessions.update('ps_abc123', {
           amount: '50.00',
         }, {
           bearerToken: '<token>',
@@ -163,15 +148,13 @@ RSpec.describe 'Payment Sessions API', type: :request, swagger_doc: 'api-referen
     end
   end
 
-  path '/api/v3/store/orders/{order_id}/payment_sessions/{id}/complete' do
+  path '/api/v3/store/checkout/payment_sessions/{id}/complete' do
     parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
     parameter name: 'Authorization', in: :header, type: :string, required: false,
               description: 'Bearer token for authenticated customers'
-    parameter name: :order_id, in: :path, type: :string, required: true,
-              description: 'Order ID or number'
     parameter name: :id, in: :path, type: :string, required: true,
               description: 'Payment session ID'
-    parameter name: 'x-spree-order-token', in: :header, type: :string, required: false,
+    parameter name: 'x-spree-token', in: :header, type: :string, required: false,
               description: 'Order token for guest access'
 
     patch 'Complete payment session' do
@@ -182,7 +165,7 @@ RSpec.describe 'Payment Sessions API', type: :request, swagger_doc: 'api-referen
       description 'Completes a payment session by confirming the payment with the provider. This triggers payment capture/authorization and order completion.'
 
       sdk_example <<~JS
-        const session = await client.orders.paymentSessions.complete('or_abc123', 'ps_abc123', {
+        const session = await client.checkout.paymentSessions.complete('ps_abc123', {
           session_result: 'success',
         }, {
           bearerToken: '<token>',
@@ -197,7 +180,7 @@ RSpec.describe 'Payment Sessions API', type: :request, swagger_doc: 'api-referen
         }
       }
       parameter name: 'Idempotency-Key', in: :header, type: :string, required: false,
-                description: 'Unique key for request idempotency. Duplicate requests with the same key return the cached response.'
+                description: 'Unique key for request idempotency.'
 
       response '200', 'payment session completed' do
         let(:'x-spree-api-key') { api_key.token }

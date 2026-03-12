@@ -3,7 +3,7 @@ import { mockCookieStore } from '../setup';
 import { initSpreeNext, resetClient } from '../../src/config';
 
 const mockClient = {
-  orders: {
+  checkout: {
     paymentSessions: {
       create: vi.fn(),
       get: vi.fn(),
@@ -38,14 +38,13 @@ describe('payment session actions', () => {
   describe('createPaymentSession', () => {
     it('creates a payment session and revalidates checkout', async () => {
       const mockSession = { id: 'ps_1', status: 'pending', payment_method_id: 'pm_1' };
-      mockClient.orders.paymentSessions.create.mockResolvedValue(mockSession);
+      mockClient.checkout.paymentSessions.create.mockResolvedValue(mockSession);
 
-      const result = await createPaymentSession('order_1', { payment_method_id: 'pm_1' });
+      const result = await createPaymentSession({ payment_method_id: 'pm_1' });
       expect(result).toEqual(mockSession);
-      expect(mockClient.orders.paymentSessions.create).toHaveBeenCalledWith(
-        'order_1',
+      expect(mockClient.checkout.paymentSessions.create).toHaveBeenCalledWith(
         { payment_method_id: 'pm_1' },
-        { orderToken: 'order_token_123', token: 'jwt_token_abc' }
+        { spreeToken: 'order_token_123', token: 'jwt_token_abc' }
       );
       expect(revalidateTag).toHaveBeenCalledWith('checkout');
     });
@@ -54,14 +53,13 @@ describe('payment session actions', () => {
   describe('getPaymentSession', () => {
     it('returns a payment session by ID', async () => {
       const mockSession = { id: 'ps_1', status: 'pending', amount: '99.99' };
-      mockClient.orders.paymentSessions.get.mockResolvedValue(mockSession);
+      mockClient.checkout.paymentSessions.get.mockResolvedValue(mockSession);
 
-      const result = await getPaymentSession('order_1', 'ps_1');
+      const result = await getPaymentSession('ps_1');
       expect(result).toEqual(mockSession);
-      expect(mockClient.orders.paymentSessions.get).toHaveBeenCalledWith(
-        'order_1',
+      expect(mockClient.checkout.paymentSessions.get).toHaveBeenCalledWith(
         'ps_1',
-        { orderToken: 'order_token_123', token: 'jwt_token_abc' }
+        { spreeToken: 'order_token_123', token: 'jwt_token_abc' }
       );
     });
   });
@@ -69,15 +67,14 @@ describe('payment session actions', () => {
   describe('updatePaymentSession', () => {
     it('updates a payment session and revalidates checkout', async () => {
       const mockSession = { id: 'ps_1', status: 'pending', amount: '50.00' };
-      mockClient.orders.paymentSessions.update.mockResolvedValue(mockSession);
+      mockClient.checkout.paymentSessions.update.mockResolvedValue(mockSession);
 
-      const result = await updatePaymentSession('order_1', 'ps_1', { amount: '50.00' });
+      const result = await updatePaymentSession('ps_1', { amount: '50.00' });
       expect(result).toEqual(mockSession);
-      expect(mockClient.orders.paymentSessions.update).toHaveBeenCalledWith(
-        'order_1',
+      expect(mockClient.checkout.paymentSessions.update).toHaveBeenCalledWith(
         'ps_1',
         { amount: '50.00' },
-        { orderToken: 'order_token_123', token: 'jwt_token_abc' }
+        { spreeToken: 'order_token_123', token: 'jwt_token_abc' }
       );
       expect(revalidateTag).toHaveBeenCalledWith('checkout');
     });
@@ -86,30 +83,28 @@ describe('payment session actions', () => {
   describe('completePaymentSession', () => {
     it('completes a payment session and revalidates checkout', async () => {
       const mockSession = { id: 'ps_1', status: 'completed' };
-      mockClient.orders.paymentSessions.complete.mockResolvedValue(mockSession);
+      mockClient.checkout.paymentSessions.complete.mockResolvedValue(mockSession);
 
-      const result = await completePaymentSession('order_1', 'ps_1', { session_result: 'success' });
+      const result = await completePaymentSession('ps_1', { session_result: 'success' });
       expect(result).toEqual(mockSession);
-      expect(mockClient.orders.paymentSessions.complete).toHaveBeenCalledWith(
-        'order_1',
+      expect(mockClient.checkout.paymentSessions.complete).toHaveBeenCalledWith(
         'ps_1',
         { session_result: 'success' },
-        { orderToken: 'order_token_123', token: 'jwt_token_abc' }
+        { spreeToken: 'order_token_123', token: 'jwt_token_abc' }
       );
       expect(revalidateTag).toHaveBeenCalledWith('checkout');
     });
 
     it('completes without params', async () => {
       const mockSession = { id: 'ps_1', status: 'completed' };
-      mockClient.orders.paymentSessions.complete.mockResolvedValue(mockSession);
+      mockClient.checkout.paymentSessions.complete.mockResolvedValue(mockSession);
 
-      const result = await completePaymentSession('order_1', 'ps_1');
+      const result = await completePaymentSession('ps_1');
       expect(result).toEqual(mockSession);
-      expect(mockClient.orders.paymentSessions.complete).toHaveBeenCalledWith(
-        'order_1',
+      expect(mockClient.checkout.paymentSessions.complete).toHaveBeenCalledWith(
         'ps_1',
         undefined,
-        { orderToken: 'order_token_123', token: 'jwt_token_abc' }
+        { spreeToken: 'order_token_123', token: 'jwt_token_abc' }
       );
     });
   });

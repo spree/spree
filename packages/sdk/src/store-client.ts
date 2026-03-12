@@ -18,13 +18,14 @@ import type {
   CreateCartParams,
   AddLineItemParams,
   UpdateLineItemParams,
-  UpdateOrderParams,
+  UpdateCheckoutParams,
   CreatePaymentParams,
   CreatePaymentSessionParams,
   UpdatePaymentSessionParams,
   CompletePaymentSessionParams,
   CreatePaymentSetupSessionParams,
   CompletePaymentSetupSessionParams,
+  Cart,
   CreditCard,
   GiftCard,
   Product,
@@ -278,221 +279,184 @@ export class StoreClient {
   };
 
   // ============================================
-  // Cart (convenience wrapper for current incomplete order)
+  // Carts (list all active carts for authenticated users)
+  // ============================================
+
+  readonly carts = {
+    /**
+     * List all active (incomplete) carts for the authenticated user
+     */
+    list: (options?: RequestOptions): Promise<ListResponse<Cart>> =>
+      this.request<ListResponse<Cart>>('GET', '/carts', options),
+  };
+
+  // ============================================
+  // Cart (pre-purchase, mutable)
   // ============================================
 
   readonly cart = {
     /**
-     * Get current cart (returns null if none exists)
-     * Pass orderToken for guest checkout, or use JWT for authenticated users
+     * Get current cart
+     * Pass spreeToken for guest checkout, or use JWT for authenticated users
      */
-    get: (options?: RequestOptions): Promise<Order & { token: string }> =>
-      this.request<Order & { token: string }>('GET', '/cart', options),
+    get: (options?: RequestOptions): Promise<Cart> =>
+      this.request<Cart>('GET', '/cart', options),
 
     /**
      * Create a new cart
-     * @param params - Optional cart parameters (e.g., metadata)
+     * @param params - Optional cart parameters (e.g., metadata, line_items)
      */
-    create: (params?: CreateCartParams, options?: RequestOptions): Promise<Order & { token: string }> =>
-      this.request<Order & { token: string }>('POST', '/cart', {
+    create: (params?: CreateCartParams, options?: RequestOptions): Promise<Cart> =>
+      this.request<Cart>('POST', '/cart', {
         ...options,
         body: params,
       }),
+
+    /**
+     * Delete the current cart
+     */
+    delete: (options?: RequestOptions): Promise<void> =>
+      this.request<void>('DELETE', '/cart', options),
 
     /**
      * Associate a guest cart with the currently authenticated user
-     * Requires both JWT token (for authentication) and orderToken (to identify the cart)
-     * @param options - Must include both `token` (JWT) and `orderToken` (guest cart token)
+     * Requires both JWT token (for authentication) and spreeToken (to identify the cart)
+     * @param options - Must include both `token` (JWT) and `spreeToken` (guest cart token)
      */
-    associate: (options: RequestOptions): Promise<Order & { token: string }> =>
-      this.request<Order & { token: string }>('PATCH', '/cart/associate', options),
-  };
-
-  // ============================================
-  // Orders (individual order management & checkout)
-  // ============================================
-
-  readonly orders = {
-    /**
-     * Get an order by ID or number
-     */
-    get: (
-      idOrNumber: string,
-      params?: { expand?: string[]; fields?: string[] },
-      options?: RequestOptions
-    ): Promise<Order> =>
-      this.request<Order>('GET', `/orders/${idOrNumber}`, {
-        ...options,
-        params: getParams(params),
-      }),
-
-    /**
-     * Update an order
-     */
-    update: (
-      idOrNumber: string,
-      params: UpdateOrderParams,
-      options?: RequestOptions
-    ): Promise<Order> =>
-      this.request<Order>('PATCH', `/orders/${idOrNumber}`, {
-        ...options,
-        body: params,
-      }),
-
-    /**
-     * Advance order to next checkout step
-     */
-    next: (
-      idOrNumber: string,
-      options?: RequestOptions
-    ): Promise<Order> =>
-      this.request<Order>('PATCH', `/orders/${idOrNumber}/next`, options),
-
-    /**
-     * Advance through all checkout steps
-     */
-    advance: (
-      idOrNumber: string,
-      options?: RequestOptions
-    ): Promise<Order> =>
-      this.request<Order>(
-        'PATCH',
-        `/orders/${idOrNumber}/advance`,
-        options
-      ),
-
-    /**
-     * Complete the order
-     */
-    complete: (
-      idOrNumber: string,
-      options?: RequestOptions
-    ): Promise<Order> =>
-      this.request<Order>(
-        'PATCH',
-        `/orders/${idOrNumber}/complete`,
-        options
-      ),
-
-    /**
-     * Add store credit to order
-     */
-    addStoreCredit: (
-      idOrNumber: string,
-      amount?: number,
-      options?: RequestOptions
-    ): Promise<Order> =>
-      this.request<Order>('POST', `/orders/${idOrNumber}/store_credits`, {
-        ...options,
-        body: amount ? { amount } : undefined,
-      }),
-
-    /**
-     * Remove store credit from order
-     */
-    removeStoreCredit: (
-      idOrNumber: string,
-      options?: RequestOptions
-    ): Promise<Order> =>
-      this.request<Order>(
-        'DELETE',
-        `/orders/${idOrNumber}/store_credits`,
-        options
-      ),
+    associate: (options: RequestOptions): Promise<Cart> =>
+      this.request<Cart>('PATCH', '/cart/associate', options),
 
     /**
      * Nested resource: Line items
      */
-    lineItems: {
+    items: {
       /**
-       * Add a line item to an order.
-       * Returns the updated order with recalculated totals.
+       * Add an item to the cart.
+       * Returns the updated cart with recalculated totals.
        */
       create: (
-        orderId: string,
         params: AddLineItemParams,
         options?: RequestOptions
-      ): Promise<Order> =>
-        this.request<Order>('POST', `/orders/${orderId}/line_items`, {
+      ): Promise<Cart> =>
+        this.request<Cart>('POST', '/cart/items', {
           ...options,
           body: params,
         }),
 
       /**
        * Update a line item quantity.
-       * Returns the updated order with recalculated totals.
+       * Returns the updated cart with recalculated totals.
        */
       update: (
-        orderId: string,
         lineItemId: string,
         params: UpdateLineItemParams,
         options?: RequestOptions
-      ): Promise<Order> =>
-        this.request<Order>(
+      ): Promise<Cart> =>
+        this.request<Cart>(
           'PATCH',
-          `/orders/${orderId}/line_items/${lineItemId}`,
+          `/cart/items/${lineItemId}`,
           { ...options, body: params }
         ),
 
       /**
-       * Remove a line item from an order.
-       * Returns the updated order with recalculated totals.
+       * Remove a line item from the cart.
+       * Returns the updated cart with recalculated totals.
        */
       delete: (
-        orderId: string,
         lineItemId: string,
         options?: RequestOptions
-      ): Promise<Order> =>
-        this.request<Order>(
+      ): Promise<Cart> =>
+        this.request<Cart>(
           'DELETE',
-          `/orders/${orderId}/line_items/${lineItemId}`,
+          `/cart/items/${lineItemId}`,
           options
         ),
     },
 
     /**
-     * Nested resource: Payments
+     * Nested resource: Coupon codes
      */
-    payments: {
+    couponCodes: {
       /**
-       * List payments for an order
+       * Apply a coupon code to the cart
        */
-      list: (
-        orderId: string,
+      apply: (
+        code: string,
         options?: RequestOptions
-      ): Promise<PaginatedResponse<Payment>> =>
-        this.request<PaginatedResponse<Payment>>(
+      ): Promise<Cart> =>
+        this.request<Cart>('POST', '/cart/coupon_codes', {
+          ...options,
+          body: { code },
+        }),
+
+      /**
+       * Remove a coupon code from the cart
+       * @param code - The coupon code string to remove (e.g., 'SAVE10')
+       */
+      remove: (
+        code: string,
+        options?: RequestOptions
+      ): Promise<Cart> =>
+        this.request<Cart>(
+          'DELETE',
+          `/cart/coupon_codes/${code}`,
+          options
+        ),
+    },
+  };
+
+  // ============================================
+  // Checkout (cart → order transition)
+  // ============================================
+
+  readonly checkout = {
+    /**
+     * Update checkout info (email, addresses, special instructions).
+     * When addresses change, the order state is reverted to address
+     * to ensure shipments are recalculated.
+     */
+    update: (
+      params: UpdateCheckoutParams,
+      options?: RequestOptions
+    ): Promise<Cart> =>
+      this.request<Cart>('PATCH', '/checkout', {
+        ...options,
+        body: params,
+      }),
+
+    /**
+     * Complete the checkout and finalize the purchase.
+     * Returns an Order (not Cart).
+     */
+    complete: (options?: RequestOptions): Promise<Order> =>
+      this.request<Order>('POST', '/checkout/complete', options),
+
+    /**
+     * Nested resource: Shipments
+     */
+    shipments: {
+      /**
+       * List shipments with shipping rates for the current cart
+       */
+      list: (options?: RequestOptions): Promise<ListResponse<Shipment>> =>
+        this.request<ListResponse<Shipment>>(
           'GET',
-          `/orders/${orderId}/payments`,
+          '/checkout/shipments',
           options
         ),
 
       /**
-       * Get a payment by ID
+       * Select a shipping rate for a specific shipment.
+       * Returns the updated cart with recalculated totals.
        */
-      get: (
-        orderId: string,
-        paymentId: string,
+      update: (
+        shipmentId: string,
+        params: { selected_shipping_rate_id: string },
         options?: RequestOptions
-      ): Promise<Payment> =>
-        this.request<Payment>(
-          'GET',
-          `/orders/${orderId}/payments/${paymentId}`,
-          options
-        ),
-
-      /**
-       * Create a payment for a non-session payment method (e.g. Check, Cash on Delivery, Bank Transfer)
-       * For session-based payment methods (e.g. Stripe, PayPal), use paymentSessions.create() instead
-       */
-      create: (
-        orderId: string,
-        params: CreatePaymentParams,
-        options?: RequestOptions
-      ): Promise<Payment> =>
-        this.request<Payment>(
-          'POST',
-          `/orders/${orderId}/payments`,
+      ): Promise<Cart> =>
+        this.request<Cart>(
+          'PATCH',
+          `/checkout/shipments/${shipmentId}`,
           { ...options, body: params }
         ),
     },
@@ -502,16 +466,55 @@ export class StoreClient {
      */
     paymentMethods: {
       /**
-       * List available payment methods for an order
+       * List available payment methods for the current cart
        */
-      list: (
-        orderId: string,
-        options?: RequestOptions
-      ): Promise<ListResponse<PaymentMethod>> =>
+      list: (options?: RequestOptions): Promise<ListResponse<PaymentMethod>> =>
         this.request<ListResponse<PaymentMethod>>(
           'GET',
-          `/orders/${orderId}/payment_methods`,
+          '/checkout/payment_methods',
           options
+        ),
+    },
+
+    /**
+     * Nested resource: Payments
+     */
+    payments: {
+      /**
+       * List payments for the current cart
+       */
+      list: (options?: RequestOptions): Promise<ListResponse<Payment>> =>
+        this.request<ListResponse<Payment>>(
+          'GET',
+          '/checkout/payments',
+          options
+        ),
+
+      /**
+       * Get a payment by ID
+       */
+      get: (
+        paymentId: string,
+        options?: RequestOptions
+      ): Promise<Payment> =>
+        this.request<Payment>(
+          'GET',
+          `/checkout/payments/${paymentId}`,
+          options
+        ),
+
+      /**
+       * Create a payment for a non-session payment method (e.g. Check, Cash on Delivery, Bank Transfer).
+       * For session-based payment methods (e.g. Stripe, PayPal), use checkout.paymentSessions.create() instead.
+       */
+      create: (
+        params: CreatePaymentParams,
+        options?: RequestOptions
+      ): Promise<Payment> =>
+        this.request<Payment>(
+          'POST',
+          '/checkout/payments',
+          { ...options, body: params }
         ),
     },
 
@@ -520,17 +523,16 @@ export class StoreClient {
      */
     paymentSessions: {
       /**
-       * Create a payment session for an order
-       * Delegates to the payment gateway to initialize a provider-specific session
+       * Create a payment session for the current cart.
+       * Delegates to the payment gateway to initialize a provider-specific session.
        */
       create: (
-        orderId: string,
         params: CreatePaymentSessionParams,
         options?: RequestOptions
       ): Promise<PaymentSession> =>
         this.request<PaymentSession>(
           'POST',
-          `/orders/${orderId}/payment_sessions`,
+          '/checkout/payment_sessions',
           { ...options, body: params }
         ),
 
@@ -538,115 +540,92 @@ export class StoreClient {
        * Get a payment session by ID
        */
       get: (
-        orderId: string,
         sessionId: string,
         options?: RequestOptions
       ): Promise<PaymentSession> =>
         this.request<PaymentSession>(
           'GET',
-          `/orders/${orderId}/payment_sessions/${sessionId}`,
+          `/checkout/payment_sessions/${sessionId}`,
           options
         ),
 
       /**
-       * Update a payment session
-       * Delegates to the payment gateway to sync changes with the provider
+       * Update a payment session.
+       * Delegates to the payment gateway to sync changes with the provider.
        */
       update: (
-        orderId: string,
         sessionId: string,
         params: UpdatePaymentSessionParams,
         options?: RequestOptions
       ): Promise<PaymentSession> =>
         this.request<PaymentSession>(
           'PATCH',
-          `/orders/${orderId}/payment_sessions/${sessionId}`,
+          `/checkout/payment_sessions/${sessionId}`,
           { ...options, body: params }
         ),
 
       /**
-       * Complete a payment session
-       * Confirms the payment with the provider, triggering capture/authorization
+       * Complete a payment session.
+       * Confirms the payment with the provider, triggering capture/authorization.
        */
       complete: (
-        orderId: string,
         sessionId: string,
         params?: CompletePaymentSessionParams,
         options?: RequestOptions
       ): Promise<PaymentSession> =>
         this.request<PaymentSession>(
           'PATCH',
-          `/orders/${orderId}/payment_sessions/${sessionId}/complete`,
+          `/checkout/payment_sessions/${sessionId}/complete`,
           { ...options, body: params }
         ),
     },
 
     /**
-     * Nested resource: Coupon codes
+     * Store credits
      */
-    couponCodes: {
+    storeCredits: {
       /**
-       * Apply a coupon code to an order
+       * Apply store credit to the current cart
        */
       apply: (
-        orderId: string,
-        code: string,
+        amount?: number,
         options?: RequestOptions
-      ): Promise<Order> =>
-        this.request<Order>('POST', `/orders/${orderId}/coupon_codes`, {
+      ): Promise<Cart> =>
+        this.request<Cart>('POST', '/checkout/store_credits', {
           ...options,
-          body: { code },
+          body: amount ? { amount } : undefined,
         }),
 
       /**
-       * Remove a coupon code from an order
-       * @param promotionId - The promotion prefix_id (e.g., 'promo_xxx')
+       * Remove store credit from the current cart
        */
-      remove: (
-        orderId: string,
-        promotionId: string,
-        options?: RequestOptions
-      ): Promise<Order> =>
-        this.request<Order>(
+      remove: (options?: RequestOptions): Promise<Cart> =>
+        this.request<Cart>(
           'DELETE',
-          `/orders/${orderId}/coupon_codes/${promotionId}`,
+          '/checkout/store_credits',
           options
         ),
     },
+  };
 
+  // ============================================
+  // Orders (post-purchase, read-only)
+  // ============================================
+
+  readonly orders = {
     /**
-     * Nested resource: Shipments
+     * Get a completed order by prefixed ID.
+     * Accessible via JWT (authenticated users) or spreeToken (guests).
      */
-    shipments: {
-      /**
-       * List shipments for an order
-       */
-      list: (
-        orderId: string,
-        options?: RequestOptions
-      ): Promise<ListResponse<Shipment>> =>
-        this.request<ListResponse<Shipment>>(
-          'GET',
-          `/orders/${orderId}/shipments`,
-          options
-        ),
-
-      /**
-       * Select a shipping rate for a shipment.
-       * Returns the updated order with recalculated totals.
-       */
-      update: (
-        orderId: string,
-        shipmentId: string,
-        params: { selected_shipping_rate_id: string },
-        options?: RequestOptions
-      ): Promise<Order> =>
-        this.request<Order>(
-          'PATCH',
-          `/orders/${orderId}/shipments/${shipmentId}`,
-          { ...options, body: params }
-        ),
-    },
+    get: (
+      id: string,
+      params?: { expand?: string[]; fields?: string[] },
+      options?: RequestOptions
+    ): Promise<Order> =>
+      this.request<Order>('GET', `/orders/${id}`, {
+        ...options,
+        params: getParams(params),
+      }),
   };
 
   // ============================================
@@ -820,7 +799,7 @@ export class StoreClient {
      */
     orders: {
       /**
-       * List orders for the authenticated customer
+       * List completed orders for the authenticated customer
        */
       list: (
         params?: OrderListParams,
@@ -829,6 +808,19 @@ export class StoreClient {
         this.request<PaginatedResponse<Order>>('GET', '/customer/orders', {
           ...options,
           params: transformListParams({ ...params }),
+        }),
+
+      /**
+       * Get a completed order by prefixed ID
+       */
+      get: (
+        id: string,
+        params?: { expand?: string[]; fields?: string[] },
+        options?: RequestOptions
+      ): Promise<Order> =>
+        this.request<Order>('GET', `/customer/orders/${id}`, {
+          ...options,
+          params: getParams(params),
         }),
     },
 

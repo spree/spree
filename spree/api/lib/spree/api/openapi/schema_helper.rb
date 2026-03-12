@@ -84,6 +84,15 @@ module Spree
                 user: { '$ref' => '#/components/schemas/Customer' }
               },
               required: %w[token user]
+            },
+            CheckoutRequirement: {
+              type: :object,
+              properties: {
+                step: { type: :string, description: 'Checkout step this requirement belongs to', example: 'payment' },
+                field: { type: :string, description: 'Field that needs to be satisfied', example: 'payment' },
+                message: { type: :string, description: 'Human-readable requirement message', example: 'Add a payment method' }
+              },
+              required: %w[step field message]
             }
           }
         end
@@ -110,7 +119,26 @@ module Spree
               s[:'x-typelizer'] = true
               strip_null_from_enums(s)
             end
+            patch_cart_schema(schemas)
             schemas
+          end
+        end
+
+        # Typelizer cannot represent Array<{...}> inline object types in OpenAPI,
+        # so we patch them to reference manually-defined component schemas.
+        def patch_cart_schema(schemas)
+          cart = schemas['Cart'] || schemas[:Cart]
+          return unless cart
+
+          props = cart[:properties]
+          return unless props
+
+          req_key = props.key?('requirements') ? 'requirements' : :requirements
+          if props[req_key]
+            props[req_key] = {
+              type: :array,
+              items: { '$ref' => '#/components/schemas/CheckoutRequirement' }
+            }
           end
         end
 

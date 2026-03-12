@@ -23,9 +23,7 @@ export {
 
 export {
   getCheckout,
-  updateOrder,
-  advance,
-  next,
+  updateCheckout,
   getShipments,
   selectShippingRate,
   applyCoupon,
@@ -71,6 +69,7 @@ export {
 
 // Re-export commonly used SDK types for convenience
 export type {
+  Cart,
   Product,
   Order,
   LineItem,
@@ -100,7 +99,7 @@ export type {
   AddressParams,
   CreateCartParams,
   LineItemInput,
-  UpdateOrderParams,
+  UpdateCheckoutParams,
   ProductFiltersResponse,
   CreatePaymentParams,
   CreatePaymentSessionParams,

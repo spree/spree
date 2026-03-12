@@ -6,353 +6,73 @@ RSpec.describe 'Orders API', type: :request, swagger_doc: 'api-reference/store.y
   include_context 'API v3 Store'
 
   let(:user) { create(:user_with_addresses) }
-  let!(:order) { create(:order_with_line_items, store: store, user: user) }
 
   path '/api/v3/store/orders/{id}' do
     get 'Get an order' do
       tags 'Orders'
       produces 'application/json'
       security [api_key: [], bearer_auth: []]
-      description 'Returns a single order by ID or number. Guests must provide the x-spree-order-token header.'
+      description 'Returns a single completed order by prefixed ID. Accessible via JWT (authenticated users) or order token header (guests).'
 
       sdk_example <<~JS
         const order = await client.orders.get('or_abc123', {
-          expand: 'line_items,shipments',
-        }, {
           bearerToken: '<token>',
         })
       JS
 
       parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
-      parameter name: 'Authorization', in: :header, type: :string, required: false
+      parameter name: 'Authorization', in: :header, type: :string, required: false,
+                description: 'Bearer token for authenticated customers'
       parameter name: :id, in: :path, type: :string, required: true,
-                description: 'Order ID (prefixed) or order number'
-      parameter name: 'x-spree-order-token', in: :header, type: :string, required: false,
+                description: 'Order prefixed ID'
+      parameter name: 'x-spree-token', in: :header, type: :string, required: false,
                 description: 'Order token for guest access'
-      parameter name: :expand, in: :query, type: :string, required: false,
-                description: 'Expand associations (line_items, shipments, payments)'
-      parameter name: :fields, in: :query, type: :string, required: false,
-                description: 'Comma-separated list of fields to include (e.g., name,slug,price). id is always included.'
 
       response '200', 'order found (authenticated)' do
+        let(:completed_order) { create(:completed_order_with_totals, store: store, user: user) }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:id) { order.to_param }
+        let(:id) { completed_order.to_param }
 
         schema '$ref' => '#/components/schemas/Order'
 
         run_test! do |response|
           data = JSON.parse(response.body)
-          expect(data['number']).to eq(order.number)
-          expect(data['checkout_steps']).to be_an(Array)
-          expect(data['checkout_steps']).to include('address', 'complete')
+          expect(data['id']).to start_with('or_')
+          expect(data['number']).to eq(completed_order.number)
+          expect(data['completed_at']).to be_present
+          expect(data).not_to have_key('token')
+          expect(data).not_to have_key('checkout_steps')
+          expect(data).not_to have_key('state_lock_version')
         end
       end
 
-      response '200', 'order found (guest with token)' do
-        let(:guest_order) { create(:order_with_line_items, store: store, user: nil) }
+      response '200', 'order found (guest via order token)' do
+        let(:guest_order) { create(:completed_order_with_totals, store: store, user: nil, email: 'guest@example.com') }
         let(:'x-spree-api-key') { api_key.token }
         let(:id) { guest_order.to_param }
-        let(:'x-spree-order-token') { guest_order.token }
+        let(:'x-spree-token') { guest_order.token }
 
         schema '$ref' => '#/components/schemas/Order'
 
-        run_test!
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data['id']).to start_with('or_')
+          expect(data['number']).to eq(guest_order.number)
+        end
       end
 
       response '404', 'order not found' do
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:id) { 'R999999999' }
+        let(:id) { 'or_nonexistent' }
 
         schema '$ref' => '#/components/schemas/ErrorResponse'
 
         run_test!
       end
 
-      response '404', 'not found - order belongs to another user' do
-        let(:other_user) { create(:user) }
-        let(:other_order) { create(:order, store: store, user: other_user) }
-        let(:'x-spree-api-key') { api_key.token }
-        let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:id) { other_order.to_param }
-
-        schema '$ref' => '#/components/schemas/ErrorResponse'
-
-        run_test!
-      end
-    end
-
-    patch 'Update an order' do
-      tags 'Checkout'
-      consumes 'application/json'
-      produces 'application/json'
-      security [api_key: [], bearer_auth: []]
-      description 'Updates order attributes like email, special instructions, or addresses'
-
-      sdk_example <<~JS
-        const order = await client.orders.update('or_abc123', {
-          email: 'customer@example.com',
-          special_instructions: 'Leave at door',
-          line_items: [
-            { variant_id: 'variant_abc123', quantity: 2 },
-          ],
-          bill_address: {
-            firstname: 'John',
-            lastname: 'Doe',
-            address1: '123 Main St',
-            city: 'New York',
-            zipcode: '10001',
-            country_iso: 'US',
-            state_abbr: 'NY',
-          },
-        }, {
-          bearerToken: '<token>',
-        })
-      JS
-
-      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
-      parameter name: 'Authorization', in: :header, type: :string, required: false
-      parameter name: :id, in: :path, type: :string, required: true
-      parameter name: 'x-spree-order-token', in: :header, type: :string, required: false
-      parameter name: 'Idempotency-Key', in: :header, type: :string, required: false,
-                description: 'Unique key for request idempotency. Duplicate requests with the same key return the cached response.'
-      parameter name: :body, in: :body, schema: {
-        type: :object,
-        properties: {
-          email: { type: :string, format: 'email', example: 'customer@example.com' },
-          locale: { type: :string, example: 'en' },
-          special_instructions: { type: :string, example: 'Leave at door' },
-          metadata: { type: :object, additionalProperties: true, description: 'Arbitrary key-value metadata (merged with existing)', example: { source: 'mobile_app' } },
-          bill_address: {
-            type: :object,
-            properties: {
-              firstname: { type: :string, example: 'John' },
-              lastname: { type: :string, example: 'Doe' },
-              address1: { type: :string, example: '123 Main St' },
-              address2: { type: :string, example: 'Apt 4B' },
-              city: { type: :string, example: 'New York' },
-              zipcode: { type: :string, example: '10001' },
-              phone: { type: :string, example: '+1 555 123 4567' },
-              company: { type: :string, example: 'Acme Inc' },
-              country_iso: { type: :string, example: 'US' },
-              state_abbr: { type: :string, example: 'NY' }
-            }
-          },
-          ship_address: {
-            type: :object,
-            properties: {
-              firstname: { type: :string, example: 'Jane' },
-              lastname: { type: :string, example: 'Smith' },
-              address1: { type: :string, example: '456 Oak Ave' },
-              address2: { type: :string, example: 'Suite 200' },
-              city: { type: :string, example: 'Los Angeles' },
-              zipcode: { type: :string, example: '90001' },
-              phone: { type: :string, example: '+1 555 987 6543' },
-              company: { type: :string },
-              country_iso: { type: :string, example: 'US' },
-              state_abbr: { type: :string, example: 'CA' }
-            }
-          },
-          line_items: {
-            type: :array,
-            description: 'Line items to upsert (sets quantity for existing variants, creates new line items)',
-            items: {
-              type: :object,
-              properties: {
-                variant_id: { type: :string, example: 'variant_abc123', description: 'Prefixed variant ID' },
-                quantity: { type: :integer, example: 2, description: 'Quantity to set (defaults to 1)' },
-                metadata: { type: :object, additionalProperties: true, description: 'Arbitrary key-value metadata (merged with existing)' }
-              },
-              required: %w[variant_id]
-            }
-          }
-        }
-      }
-
-      response '200', 'order updated' do
-        let(:'x-spree-api-key') { api_key.token }
-        let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:id) { order.to_param }
-        let(:body) { { special_instructions: 'Leave at door' } }
-
-        schema '$ref' => '#/components/schemas/Order'
-
-        run_test! do |response|
-          data = JSON.parse(response.body)
-          expect(data['special_instructions']).to eq('Leave at door')
-        end
-      end
-
-      response '200', 'order updated with line items' do
-        let(:product) { create(:product, stores: [store]) }
-        let(:variant) { create(:variant, product: product) }
-
-        before { variant.stock_items.first.update!(count_on_hand: 10) }
-
-        let(:'x-spree-api-key') { api_key.token }
-        let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:id) { order.to_param }
-        let(:body) do
-          {
-            line_items: [
-              { variant_id: variant.prefixed_id, quantity: 2 }
-            ]
-          }
-        end
-
-        schema '$ref' => '#/components/schemas/Order'
-
-        run_test! do |response|
-          data = JSON.parse(response.body)
-          variant_ids = data['line_items'].map { |li| li['variant_id'] }
-          expect(variant_ids).to include(variant.prefixed_id)
-          expect(order.reload.line_items.find_by(variant: variant).quantity).to eq(2)
-        end
-      end
-
-      response '200', 'order updated with metadata' do
-        let(:'x-spree-api-key') { api_key.token }
-        let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:id) { order.to_param }
-        let(:body) { { metadata: { source: 'mobile_app', campaign: 'summer_sale' } } }
-
-        run_test! do |_response|
-          expect(order.reload.metadata).to include('source' => 'mobile_app', 'campaign' => 'summer_sale')
-        end
-      end
-
-      response '403', 'cannot update completed order' do
-        let(:completed_order) { create(:completed_order_with_totals, store: store, user: user) }
-        let(:'x-spree-api-key') { api_key.token }
-        let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:id) { completed_order.to_param }
-        let(:body) { { special_instructions: 'Test' } }
-
-        schema '$ref' => '#/components/schemas/ErrorResponse'
-
-        run_test!
-      end
-    end
-  end
-
-  path '/api/v3/store/orders/{id}/next' do
-    patch 'Advance to next checkout step' do
-      tags 'Checkout'
-      produces 'application/json'
-      security [api_key: [], bearer_auth: []]
-      description 'Advances the order to the next state in the checkout flow'
-
-      sdk_example <<~JS
-        const order = await client.orders.next('or_abc123', {
-          bearerToken: '<token>',
-        })
-      JS
-
-      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
-      parameter name: 'Authorization', in: :header, type: :string, required: false
-      parameter name: :id, in: :path, type: :string, required: true
-      parameter name: 'x-spree-order-token', in: :header, type: :string, required: false
-      parameter name: 'Idempotency-Key', in: :header, type: :string, required: false,
-                description: 'Unique key for request idempotency. Duplicate requests with the same key return the cached response.'
-
-      response '200', 'order advanced' do
-        let(:advanceable_order) { create(:order_with_line_items, store: store, user: user) }
-        let(:'x-spree-api-key') { api_key.token }
-        let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:id) { advanceable_order.to_param }
-
-        schema '$ref' => '#/components/schemas/Order'
-
-        run_test!
-      end
-
-      response '422', 'cannot advance - validation errors' do
-        let(:invalid_order) { create(:order, store: store, user: user, state: 'address', bill_address: nil, ship_address: nil) }
-        let(:'x-spree-api-key') { api_key.token }
-        let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:id) { invalid_order.to_param }
-
-        schema '$ref' => '#/components/schemas/ErrorResponse'
-
-        run_test!
-      end
-    end
-  end
-
-  path '/api/v3/store/orders/{id}/advance' do
-    patch 'Advance through checkout' do
-      tags 'Checkout'
-      produces 'application/json'
-      security [api_key: [], bearer_auth: []]
-      description 'Advances the order through all possible checkout states'
-
-      sdk_example <<~JS
-        const order = await client.orders.advance('or_abc123', {
-          bearerToken: '<token>',
-        })
-      JS
-
-      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
-      parameter name: 'Authorization', in: :header, type: :string, required: false
-      parameter name: :id, in: :path, type: :string, required: true
-      parameter name: 'x-spree-order-token', in: :header, type: :string, required: false
-      parameter name: 'Idempotency-Key', in: :header, type: :string, required: false,
-                description: 'Unique key for request idempotency. Duplicate requests with the same key return the cached response.'
-
-      response '200', 'order advanced' do
-        let(:advanceable_order) { create(:order_with_line_items, store: store, user: user) }
-        let(:'x-spree-api-key') { api_key.token }
-        let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:id) { advanceable_order.to_param }
-
-        schema '$ref' => '#/components/schemas/Order'
-
-        run_test!
-      end
-    end
-  end
-
-  path '/api/v3/store/orders/{id}/complete' do
-    patch 'Complete the order' do
-      tags 'Checkout'
-      produces 'application/json'
-      security [api_key: [], bearer_auth: []]
-      description 'Completes the order (finalizes the purchase)'
-
-      sdk_example <<~JS
-        const order = await client.orders.complete('or_abc123', {
-          bearerToken: '<token>',
-        })
-      JS
-
-      parameter name: 'x-spree-api-key', in: :header, type: :string, required: true
-      parameter name: 'Authorization', in: :header, type: :string, required: false
-      parameter name: :id, in: :path, type: :string, required: true
-      parameter name: 'x-spree-order-token', in: :header, type: :string, required: false
-      parameter name: 'Idempotency-Key', in: :header, type: :string, required: false,
-                description: 'Unique key for request idempotency. Duplicate requests with the same key return the cached response.'
-
-      response '200', 'order completed' do
-        let(:completable_order) do
-          order = create(:order_with_line_items, store: store, user: user)
-          # Advance through checkout - order_with_line_items has addresses set
-          Spree.checkout_advance_service.call(order: order)
-          # Add payment to reach confirm state
-          payment_method = create(:check_payment_method, stores: [store])
-          create(:payment, order: order, amount: order.total, payment_method: payment_method, state: 'checkout')
-          order.reload
-        end
-        let(:'x-spree-api-key') { api_key.token }
-        let(:'Authorization') { "Bearer #{jwt_token}" }
-        let(:id) { completable_order.to_param }
-
-        schema '$ref' => '#/components/schemas/Order'
-
-        run_test!
-      end
-
-      response '422', 'cannot complete' do
+      response '404', 'incomplete order not accessible' do
         let(:incomplete_order) { create(:order_with_line_items, store: store, user: user) }
         let(:'x-spree-api-key') { api_key.token }
         let(:'Authorization') { "Bearer #{jwt_token}" }

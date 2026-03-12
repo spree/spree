@@ -99,6 +99,7 @@ module Spree
         image_serializer: 'Spree::Api::V3::ImageSerializer',
         option_type_serializer: 'Spree::Api::V3::OptionTypeSerializer',
         option_value_serializer: 'Spree::Api::V3::OptionValueSerializer',
+        cart_serializer: 'Spree::Api::V3::CartSerializer',
         order_serializer: 'Spree::Api::V3::OrderSerializer',
         line_item_serializer: 'Spree::Api::V3::LineItemSerializer',
         payment_serializer: 'Spree::Api::V3::PaymentSerializer',

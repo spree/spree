@@ -25,7 +25,7 @@ module Spree
             end
 
             def scope
-              super.for_store(current_store)
+              super.for_store(current_store).complete
             end
           end
         end

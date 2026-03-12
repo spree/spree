@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe Spree::Api::V3::Store::Orders::PaymentSessionsController, type: :controller do
+RSpec.describe Spree::Api::V3::Store::Checkout::PaymentSessionsController, type: :controller do
   render_views
 
   include_context 'API v3 Store'
@@ -22,10 +22,7 @@ RSpec.describe Spree::Api::V3::Store::Orders::PaymentSessionsController, type: :
 
   describe 'POST #create' do
     it 'creates a payment session' do
-      post :create, params: {
-        order_id: order.to_param,
-        payment_method_id: payment_method.prefixed_id
-      }
+      post :create, params: { payment_method_id: payment_method.prefixed_id }
 
       expect(response).to have_http_status(:created)
       expect(json_response['id']).to be_present
@@ -36,7 +33,6 @@ RSpec.describe Spree::Api::V3::Store::Orders::PaymentSessionsController, type: :
 
     it 'passes external_data to the gateway' do
       post :create, params: {
-        order_id: order.to_param,
         payment_method_id: payment_method.prefixed_id,
         external_data: { channel: 'Web' }
       }
@@ -45,58 +41,37 @@ RSpec.describe Spree::Api::V3::Store::Orders::PaymentSessionsController, type: :
       expect(json_response['external_data']).to include('channel' => 'Web')
     end
 
-    context 'with order token (guest)' do
+    context 'with spree token (guest)' do
       let(:guest_order) { create(:order_with_line_items, user: nil, store: store, state: 'payment') }
 
       before { request.headers['Authorization'] = nil }
 
-      it 'creates payment session with valid order token' do
-        request.headers['X-Spree-Order-Token'] = guest_order.token
-        post :create, params: {
-          order_id: guest_order.to_param,
-          payment_method_id: payment_method.prefixed_id
-        }
+      it 'creates payment session with valid spree token' do
+        request.headers['x-spree-token'] = guest_order.token
+        post :create, params: { payment_method_id: payment_method.prefixed_id }
 
         expect(response).to have_http_status(:created)
       end
 
-      it 'returns not found without order token' do
-        post :create, params: {
-          order_id: guest_order.to_param,
-          payment_method_id: payment_method.prefixed_id
-        }
+      it 'returns not found without spree token' do
+        post :create, params: { payment_method_id: payment_method.prefixed_id }
 
         expect(response).to have_http_status(:not_found)
-        expect(json_response['error']['code']).to eq('order_not_found')
       end
     end
 
     context 'error handling' do
-      it 'returns not found for non-existent order' do
-        post :create, params: {
-          order_id: 'invalid',
-          payment_method_id: payment_method.prefixed_id
-        }
-
-        expect(response).to have_http_status(:not_found)
-        expect(json_response['error']['code']).to eq('order_not_found')
-      end
-
       it 'returns not found for non-existent payment method' do
-        post :create, params: {
-          order_id: order.to_param,
-          payment_method_id: 'invalid'
-        }
+        post :create, params: { payment_method_id: 'pm_invalid' }
 
         expect(response).to have_http_status(:not_found)
-        expect(json_response['error']['code']).to eq('record_not_found')
       end
     end
   end
 
   describe 'GET #show' do
     it 'returns a payment session' do
-      get :show, params: { order_id: order.to_param, id: payment_session.to_param }
+      get :show, params: { id: payment_session.to_param }
 
       expect(response).to have_http_status(:ok)
       expect(json_response['id']).to eq(payment_session.prefixed_id)
@@ -107,33 +82,28 @@ RSpec.describe Spree::Api::V3::Store::Orders::PaymentSessionsController, type: :
 
     context 'error handling' do
       it 'returns not found for non-existent payment session' do
-        get :show, params: { order_id: order.to_param, id: 'invalid' }
+        get :show, params: { id: 'ps_invalid' }
 
         expect(response).to have_http_status(:not_found)
-        expect(json_response['error']['code']).to eq('record_not_found')
       end
 
       it 'returns not found for payment session from another order' do
-        other_order = create(:order_with_line_items, user: user, store: store, state: 'payment')
+        other_user = create(:user)
+        other_order = create(:order_with_line_items, user: other_user, store: store, state: 'payment')
         other_session = create(:bogus_payment_session,
                                order: other_order,
                                payment_method: payment_method)
 
-        get :show, params: { order_id: order.to_param, id: other_session.to_param }
+        get :show, params: { id: other_session.to_param }
 
         expect(response).to have_http_status(:not_found)
-        expect(json_response['error']['code']).to eq('record_not_found')
       end
     end
   end
 
   describe 'PATCH #update' do
     it 'updates the payment session' do
-      patch :update, params: {
-        order_id: order.to_param,
-        id: payment_session.to_param,
-        amount: 50.00
-      }
+      patch :update, params: { id: payment_session.to_param, amount: 50.00 }
 
       expect(response).to have_http_status(:ok)
       expect(json_response['id']).to eq(payment_session.prefixed_id)
@@ -143,11 +113,7 @@ RSpec.describe Spree::Api::V3::Store::Orders::PaymentSessionsController, type: :
 
   describe 'PATCH #complete' do
     it 'completes the payment session' do
-      patch :complete, params: {
-        order_id: order.to_param,
-        id: payment_session.to_param,
-        session_result: 'success'
-      }
+      patch :complete, params: { id: payment_session.to_param, session_result: 'success' }
 
       expect(response).to have_http_status(:ok)
       expect(json_response['status']).to eq('completed')

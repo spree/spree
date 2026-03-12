@@ -14,13 +14,27 @@ export const fixtures = {
     purchasable: true,
     in_stock: true,
   },
-  order: {
-    id: 'order_1',
+  cart: {
+    id: 'cart_1',
     number: 'R123456',
     state: 'cart',
     total: '0.00',
     item_total: '0.00',
     token: 'guest-order-token',
+    checkout_steps: ['address', 'delivery', 'payment', 'confirm'],
+    state_lock_version: 0,
+    line_items: [],
+    payment_methods: [],
+  },
+  order: {
+    id: 'or_1',
+    number: 'R123456',
+    email: 'test@example.com',
+    total: '0.00',
+    item_total: '0.00',
+    completed_at: '2026-03-01T00:00:00.000Z',
+    shipment_state: 'shipped',
+    payment_state: 'paid',
     line_items: [],
   },
   lineItem: {
@@ -182,120 +196,114 @@ export const handlers = [
     HttpResponse.json(fixtures.market)
   ),
 
+  // Carts (list)
+  http.get(`${API_PREFIX}/carts`, () =>
+    HttpResponse.json({ data: [fixtures.cart], meta: { count: 1 } })
+  ),
+
   // Cart
   http.get(`${API_PREFIX}/cart`, () =>
-    HttpResponse.json({ ...fixtures.order, token: 'guest-order-token' })
+    HttpResponse.json(fixtures.cart)
   ),
 
   http.post(`${API_PREFIX}/cart`, () =>
-    HttpResponse.json({ ...fixtures.order, token: 'new-cart-token' })
+    HttpResponse.json({ ...fixtures.cart, token: 'new-cart-token' })
   ),
 
-  http.patch(`${API_PREFIX}/cart/associate`, () =>
-    HttpResponse.json({ ...fixtures.order, token: 'guest-order-token' })
-  ),
-
-  // Customer Orders
-  http.get(`${API_PREFIX}/customer/orders`, () =>
-    HttpResponse.json({ data: [fixtures.order], meta: paginationMeta })
-  ),
-
-  // Orders
-
-  http.get(`${API_PREFIX}/orders/:id`, () =>
-    HttpResponse.json(fixtures.order)
-  ),
-
-  http.patch(`${API_PREFIX}/orders/:id`, () =>
-    HttpResponse.json(fixtures.order)
-  ),
-
-  http.patch(`${API_PREFIX}/orders/:id/next`, () =>
-    HttpResponse.json({ ...fixtures.order, state: 'address' })
-  ),
-
-  http.patch(`${API_PREFIX}/orders/:id/advance`, () =>
-    HttpResponse.json({ ...fixtures.order, state: 'complete' })
-  ),
-
-  http.patch(`${API_PREFIX}/orders/:id/complete`, () =>
-    HttpResponse.json({ ...fixtures.order, state: 'complete' })
-  ),
-
-  // Line Items
-  http.post(`${API_PREFIX}/orders/:orderId/line_items`, () =>
-    HttpResponse.json(fixtures.lineItem)
-  ),
-
-  http.patch(`${API_PREFIX}/orders/:orderId/line_items/:id`, () =>
-    HttpResponse.json({ ...fixtures.lineItem, quantity: 5 })
-  ),
-
-  http.delete(`${API_PREFIX}/orders/:orderId/line_items/:id`, () =>
+  http.delete(`${API_PREFIX}/cart`, () =>
     new HttpResponse(null, { status: 204 })
   ),
 
-  // Payments
-  http.get(`${API_PREFIX}/orders/:orderId/payments`, () =>
+  http.patch(`${API_PREFIX}/cart/associate`, () =>
+    HttpResponse.json(fixtures.cart)
+  ),
+
+  // Cart > Items
+  http.post(`${API_PREFIX}/cart/items`, () =>
+    HttpResponse.json(fixtures.cart)
+  ),
+
+  http.patch(`${API_PREFIX}/cart/items/:id`, () =>
+    HttpResponse.json(fixtures.cart)
+  ),
+
+  http.delete(`${API_PREFIX}/cart/items/:id`, () =>
+    HttpResponse.json(fixtures.cart)
+  ),
+
+  // Cart > Coupon Codes
+  http.post(`${API_PREFIX}/cart/coupon_codes`, () =>
+    HttpResponse.json(fixtures.cart)
+  ),
+
+  http.delete(`${API_PREFIX}/cart/coupon_codes/:code`, () =>
+    HttpResponse.json(fixtures.cart)
+  ),
+
+  // Checkout
+  http.patch(`${API_PREFIX}/checkout`, () =>
+    HttpResponse.json(fixtures.cart)
+  ),
+
+  http.post(`${API_PREFIX}/checkout/complete`, () =>
+    HttpResponse.json(fixtures.order)
+  ),
+
+  // Checkout > Shipments
+  http.get(`${API_PREFIX}/checkout/shipments`, () =>
+    HttpResponse.json({ data: [], meta: { count: 0 } })
+  ),
+
+  http.patch(`${API_PREFIX}/checkout/shipments/:id`, () =>
+    HttpResponse.json(fixtures.cart)
+  ),
+
+  // Checkout > Payment Methods
+  http.get(`${API_PREFIX}/checkout/payment_methods`, () =>
+    HttpResponse.json({ data: [], meta: { count: 0 } })
+  ),
+
+  // Checkout > Payments
+  http.get(`${API_PREFIX}/checkout/payments`, () =>
     HttpResponse.json({
-      data: [
-        {
-          id: 'py_1',
-          payment_method_id: 'pm_1',
-          state: 'checkout',
-          response_code: '12345',
-          number: 'P1234',
-          amount: '19.99',
-          display_amount: '$19.99',
-          source_type: 'credit_card',
-          source_id: 'card_1',
-          source: {
-            id: 'card_1',
-            cc_type: 'visa',
-            last_digits: '4242',
-            month: 12,
-            year: 2028,
-            name: 'John Doe',
-            default: true,
-            gateway_payment_profile_id: 'pm_stripe_123',
-          },
-          created_at: '2026-02-17T00:00:00.000Z',
-          updated_at: '2026-02-17T00:00:00.000Z',
-          payment_method: { id: 'pm_1', name: 'Credit Card', description: null, type: 'Spree::Gateway::Bogus', session_required: false },
-        },
-      ],
-      meta: paginationMeta,
+      data: [{
+        id: 'py_1',
+        payment_method_id: 'pm_1',
+        state: 'checkout',
+        response_code: null,
+        number: 'P1234',
+        amount: '19.99',
+        display_amount: '$19.99',
+        source_type: 'credit_card',
+        source_id: 'card_1',
+        source: { id: 'card_1', cc_type: 'visa', last_digits: '4242', name: 'Test User', month: '12', year: '2028' },
+        created_at: '2026-02-17T00:00:00.000Z',
+        updated_at: '2026-02-17T00:00:00.000Z',
+        payment_method: { id: 'pm_1', name: 'Credit Card', description: null, type: 'Spree::Gateway::Bogus', session_required: true },
+      }],
+      meta: { count: 1 },
     })
   ),
 
-  http.get(`${API_PREFIX}/orders/:orderId/payments/:id`, () =>
+  http.get(`${API_PREFIX}/checkout/payments/:id`, () =>
     HttpResponse.json({
       id: 'py_1',
       payment_method_id: 'pm_1',
       state: 'checkout',
-      response_code: '12345',
+      response_code: null,
       number: 'P1234',
       amount: '19.99',
       display_amount: '$19.99',
       source_type: 'credit_card',
       source_id: 'card_1',
-      source: {
-        id: 'card_1',
-        cc_type: 'visa',
-        last_digits: '4242',
-        month: 12,
-        year: 2028,
-        name: 'John Doe',
-        default: true,
-        gateway_payment_profile_id: 'pm_stripe_123',
-      },
+      source: { id: 'card_1', cc_type: 'visa', last_digits: '4242', name: 'Test User', month: '12', year: '2028' },
       created_at: '2026-02-17T00:00:00.000Z',
       updated_at: '2026-02-17T00:00:00.000Z',
-      payment_method: { id: 'pm_1', name: 'Credit Card', description: null, type: 'Spree::Gateway::Bogus', session_required: false },
+      payment_method: { id: 'pm_1', name: 'Credit Card', description: null, type: 'Spree::Gateway::Bogus', session_required: true },
     })
   ),
 
-  http.post(`${API_PREFIX}/orders/:orderId/payments`, () =>
+  http.post(`${API_PREFIX}/checkout/payments`, () =>
     HttpResponse.json({
       id: 'py_2',
       payment_method_id: 'pm_2',
@@ -313,13 +321,8 @@ export const handlers = [
     }, { status: 201 })
   ),
 
-  // Payment Methods
-  http.get(`${API_PREFIX}/orders/:orderId/payment_methods`, () =>
-    HttpResponse.json({ data: [], meta: paginationMeta })
-  ),
-
-  // Payment Sessions
-  http.post(`${API_PREFIX}/orders/:orderId/payment_sessions`, () =>
+  // Checkout > Payment Sessions
+  http.post(`${API_PREFIX}/checkout/payment_sessions`, () =>
     HttpResponse.json({
       id: 'ps_1',
       status: 'pending',
@@ -337,7 +340,7 @@ export const handlers = [
     }, { status: 201 })
   ),
 
-  http.get(`${API_PREFIX}/orders/:orderId/payment_sessions/:id`, () =>
+  http.get(`${API_PREFIX}/checkout/payment_sessions/:id`, () =>
     HttpResponse.json({
       id: 'ps_1',
       status: 'pending',
@@ -355,7 +358,7 @@ export const handlers = [
     })
   ),
 
-  http.patch(`${API_PREFIX}/orders/:orderId/payment_sessions/:id/complete`, () =>
+  http.patch(`${API_PREFIX}/checkout/payment_sessions/:id/complete`, () =>
     HttpResponse.json({
       id: 'ps_1',
       status: 'completed',
@@ -373,7 +376,7 @@ export const handlers = [
     })
   ),
 
-  http.patch(`${API_PREFIX}/orders/:orderId/payment_sessions/:id`, () =>
+  http.patch(`${API_PREFIX}/checkout/payment_sessions/:id`, () =>
     HttpResponse.json({
       id: 'ps_1',
       status: 'pending',
@@ -391,30 +394,17 @@ export const handlers = [
     })
   ),
 
-  // Coupon Codes
-  http.post(`${API_PREFIX}/orders/:orderId/coupon_codes`, () =>
-    HttpResponse.json(fixtures.order)
+  // Checkout > Store Credits
+  http.post(`${API_PREFIX}/checkout/store_credits`, () =>
+    HttpResponse.json(fixtures.cart)
   ),
 
-  http.delete(`${API_PREFIX}/orders/:orderId/coupon_codes/:id`, () =>
-    HttpResponse.json(fixtures.order)
+  http.delete(`${API_PREFIX}/checkout/store_credits`, () =>
+    HttpResponse.json(fixtures.cart)
   ),
 
-  // Shipments
-  http.get(`${API_PREFIX}/orders/:orderId/shipments`, () =>
-    HttpResponse.json({ data: [] })
-  ),
-
-  http.patch(`${API_PREFIX}/orders/:orderId/shipments/:id`, () =>
-    HttpResponse.json({ id: 'ship_1', selected_shipping_rate_id: 'rate_1' })
-  ),
-
-  // Store Credits
-  http.post(`${API_PREFIX}/orders/:orderId/store_credits`, () =>
-    HttpResponse.json(fixtures.order)
-  ),
-
-  http.delete(`${API_PREFIX}/orders/:orderId/store_credits`, () =>
+  // Orders (read-only, single lookup)
+  http.get(`${API_PREFIX}/orders/:id`, () =>
     HttpResponse.json(fixtures.order)
   ),
 
@@ -427,7 +417,16 @@ export const handlers = [
     HttpResponse.json({ ...fixtures.user, first_name: 'Updated' })
   ),
 
-  // Customer Addresses
+  // Customer > Orders
+  http.get(`${API_PREFIX}/customer/orders`, () =>
+    HttpResponse.json({ data: [fixtures.order], meta: paginationMeta })
+  ),
+
+  http.get(`${API_PREFIX}/customer/orders/:id`, () =>
+    HttpResponse.json(fixtures.order)
+  ),
+
+  // Customer > Addresses
   http.get(`${API_PREFIX}/customer/addresses`, () =>
     HttpResponse.json({ data: [fixtures.address], meta: paginationMeta })
   ),
@@ -448,7 +447,7 @@ export const handlers = [
     new HttpResponse(null, { status: 204 })
   ),
 
-  // Customer Credit Cards
+  // Customer > Credit Cards
   http.get(`${API_PREFIX}/customer/credit_cards`, () =>
     HttpResponse.json({ data: [], meta: paginationMeta })
   ),
@@ -461,7 +460,7 @@ export const handlers = [
     new HttpResponse(null, { status: 204 })
   ),
 
-  // Customer Gift Cards
+  // Customer > Gift Cards
   http.get(`${API_PREFIX}/customer/gift_cards`, () =>
     HttpResponse.json({ data: [], meta: paginationMeta })
   ),
@@ -470,7 +469,7 @@ export const handlers = [
     HttpResponse.json({ id: 'gc_1', code: 'GIFT123', balance: '50.00' })
   ),
 
-  // Customer Payment Setup Sessions
+  // Customer > Payment Setup Sessions
   http.post(`${API_PREFIX}/customer/payment_setup_sessions`, () =>
     HttpResponse.json({
       id: 'pss_1',

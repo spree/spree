@@ -40,14 +40,16 @@ const { token, user } = await client.auth.login({
 
 // Create a cart and add items
 const cart = await client.cart.create();
-await client.orders.lineItems.create(cart.id, {
+await client.cart.items.create({
   variant_id: 'var_abc123',
   quantity: 2,
-}, { orderToken: cart.token });
+}, { spreeToken: cart.token });
 
 // Checkout flow
-await client.orders.next(cart.id, { orderToken: cart.token });
-await client.orders.complete(cart.id, { orderToken: cart.token });
+await client.checkout.update({
+  email: 'customer@example.com',
+}, { spreeToken: cart.token });
+await client.checkout.complete({ spreeToken: cart.token });
 ```
 
 ## Client Architecture
@@ -56,10 +58,13 @@ All Store API resources are available directly on the client:
 
 ```typescript
 client.products.list()           // Products
-client.cart.create()             // Cart
-client.orders.complete(id, opt)  // Checkout
+client.cart.create()             // Cart (singleton)
+client.cart.items.create(params) // Cart line items
+client.carts.list()              // List active carts
+client.checkout.complete(opt)    // Checkout
 client.customers.create(params)  // Registration
 client.customer.get(opt)         // Account
+client.customer.orders.list()    // Order history
 ```
 
 ## Authentication
@@ -88,7 +93,7 @@ const { token, user } = await client.auth.login({
 });
 
 // Use token for authenticated requests
-const orders = await client.orders.list({}, { token });
+const orders = await client.customer.orders.list({}, { token });
 
 // Refresh token when needed
 const newTokens = await client.auth.refresh({ token });
@@ -108,28 +113,28 @@ const { token, user } = await client.customers.create({
 
 ## Guest Checkout
 
-For guest checkout, use the `token` (or `order_token`) returned when creating a cart:
+For guest checkout, use the `token` returned when creating a cart:
 
 ```typescript
 // Create a cart (guest)
 const cart = await client.cart.create();
 
-// Use orderToken for all cart operations
-const options = { orderToken: cart.token };
+// Use spreeToken for all cart/checkout operations
+const options = { spreeToken: cart.token };
 
 // Add items
-await client.orders.lineItems.create(cart.id, {
+await client.cart.items.create({
   variant_id: 'var_abc123',
   quantity: 1,
 }, options);
 
-// Update order with email
-await client.orders.update(cart.id, {
+// Update checkout with email and addresses
+await client.checkout.update({
   email: 'guest@example.com',
 }, options);
 
 // Complete checkout
-await client.orders.complete(cart.id, options);
+await client.checkout.complete(options);
 ```
 
 ## API Reference
@@ -187,38 +192,72 @@ const categoryProducts = await client.categories.products.list('clothing/shirts'
 
 ### Cart
 
-```typescript
-// Get current cart
-const cart = await client.cart.get({ orderToken: 'xxx' });
+The cart API uses an implicit cart model -- no order ID is needed. The cart is resolved
+from the `spreeToken` header (guest) or JWT token (authenticated user).
 
+```typescript
 // Create a new cart
-const newCart = await client.cart.create();
+const cart = await client.cart.create();
+
+// Get current cart
+const cart = await client.cart.get({ spreeToken: cart.token });
+
+// Delete / empty current cart
+await client.cart.delete({ spreeToken: cart.token });
 
 // Associate guest cart with authenticated user
 // (after user logs in, merge their guest cart with their account)
 await client.cart.associate({
-  token: jwtToken,        // User's JWT token
-  orderToken: cart.token, // Guest cart token
+  token: jwtToken,          // User's JWT token
+  spreeToken: cart.token,   // Guest cart token
 });
+
+// List all active carts for authenticated user
+const { data: carts } = await client.carts.list({ token: jwtToken });
 ```
 
-### Orders & Checkout
+### Cart Items (Line Items)
 
 ```typescript
-// List orders for authenticated customer
-const orders = await client.orders.list({}, { token });
+const options = { spreeToken: cart.token };
 
-// Create a new order (cart)
-const cart = await client.orders.create();
-const options = { orderToken: cart.order_token };
-
-// Get order by ID or number
-const order = await client.orders.get('R123456789', {
-  expand: ['line_items', 'shipments'],
+// Add item
+await client.cart.items.create({
+  variant_id: 'var_123',
+  quantity: 2,
 }, options);
 
-// Update order (email, addresses)
-await client.orders.update(cart.id, {
+// Update item quantity
+await client.cart.items.update(lineItemId, {
+  quantity: 3,
+}, options);
+
+// Remove item
+await client.cart.items.delete(lineItemId, options);
+```
+
+### Coupon Codes
+
+```typescript
+const options = { spreeToken: cart.token };
+
+// Apply a coupon code
+await client.cart.couponCodes.apply('SAVE20', options);
+
+// Remove a coupon code
+await client.cart.couponCodes.remove('promo_xxx', options);
+```
+
+### Checkout
+
+The checkout API operates on the current cart, resolved implicitly from the
+`spreeToken` header or JWT token.
+
+```typescript
+const options = { spreeToken: cart.token };
+
+// Update checkout (email, addresses)
+await client.checkout.update({
   email: 'customer@example.com',
   ship_address: {
     firstname: 'John',
@@ -233,93 +272,59 @@ await client.orders.update(cart.id, {
   bill_address_id: 'addr_xxx', // Or use existing address by ID
 }, options);
 
-// Checkout flow
-await client.orders.next(cart.id, options);     // Move to next step
-await client.orders.advance(cart.id, options);  // Advance through all steps
-await client.orders.complete(cart.id, options); // Complete the order
-```
-
-### Line Items
-
-```typescript
-const options = { orderToken: cart.token };
-
-// Add item
-await client.orders.lineItems.create(cart.id, {
-  variant_id: 'var_123',
-  quantity: 2,
-}, options);
-
-// Update item quantity
-await client.orders.lineItems.update(cart.id, lineItemId, {
-  quantity: 3,
-}, options);
-
-// Remove item
-await client.orders.lineItems.delete(cart.id, lineItemId, options);
-```
-
-### Coupon Codes
-
-```typescript
-const options = { orderToken: cart.token };
-
-// Apply a coupon code
-await client.orders.couponCodes.apply(cart.id, 'SAVE20', options);
-
-// Remove a coupon code
-await client.orders.couponCodes.remove(cart.id, 'promo_xxx', options);
-```
-
-### Store Credits
-
-```typescript
-const options = { orderToken: cart.token };
-
-// Apply store credit to order (applies maximum available by default)
-await client.orders.addStoreCredit(cart.id, undefined, options);
-
-// Apply specific amount of store credit
-await client.orders.addStoreCredit(cart.id, 25.00, options);
-
-// Remove store credit from order
-await client.orders.removeStoreCredit(cart.id, options);
+// Complete the order
+await client.checkout.complete(options);
 ```
 
 ### Shipments
 
 ```typescript
-const options = { orderToken: cart.token };
+const options = { spreeToken: cart.token };
 
-// List shipments for an order
-const shipments = await client.orders.shipments.list(cart.id, options);
+// List shipments for the current checkout
+const shipments = await client.checkout.shipments.list(options);
 
 // Select a shipping rate
-await client.orders.shipments.update(cart.id, shipmentId, {
+await client.checkout.shipments.update(shipmentId, {
   selected_shipping_rate_id: 'rate_xxx',
 }, options);
+```
+
+### Store Credits
+
+```typescript
+const options = { spreeToken: cart.token };
+
+// Apply store credit to checkout (applies maximum available by default)
+await client.checkout.storeCredits.apply(undefined, options);
+
+// Apply specific amount of store credit
+await client.checkout.storeCredits.apply(25.00, options);
+
+// Remove store credit from checkout
+await client.checkout.storeCredits.remove(options);
 ```
 
 ### Payments
 
 ```typescript
-const options = { orderToken: cart.token };
+const options = { spreeToken: cart.token };
 
-// Get available payment methods for an order
-const methods = await client.orders.paymentMethods.list(cart.id, options);
+// Get available payment methods for the current checkout
+const methods = await client.checkout.paymentMethods.list(options);
 // Each method includes `session_required` flag:
-// - true  → use paymentSessions (Stripe, Adyen, PayPal, etc.)
-// - false → use payments.create (Check, Cash on Delivery, Bank Transfer, etc.)
+// - true  -> use paymentSessions (Stripe, Adyen, PayPal, etc.)
+// - false -> use payments.create (Check, Cash on Delivery, Bank Transfer, etc.)
 
-// List payments on an order
-const payments = await client.orders.payments.list(cart.id, options);
+// List payments on the current checkout
+const payments = await client.checkout.payments.list(options);
 
 // Get a specific payment
-const payment = await client.orders.payments.get(cart.id, paymentId, options);
+const payment = await client.checkout.payments.get(paymentId, options);
 
 // Create a payment for a non-session payment method
 // (e.g. Check, Cash on Delivery, Bank Transfer, Purchase Order)
-const payment = await client.orders.payments.create(cart.id, {
+const payment = await client.checkout.payments.create({
   payment_method_id: 'pm_xxx',
   amount: '99.99',              // Optional, defaults to order total minus store credits
   metadata: {                   // Optional, write-only metadata
@@ -333,10 +338,10 @@ const payment = await client.orders.payments.create(cart.id, {
 Payment sessions provide a unified, provider-agnostic interface for payment processing. They work with any payment gateway (Stripe, Adyen, PayPal, etc.) through a single API.
 
 ```typescript
-const options = { orderToken: cart.token };
+const options = { spreeToken: cart.token };
 
 // Create a payment session (initializes a session with the payment gateway)
-const session = await client.orders.paymentSessions.create(cart.id, {
+const session = await client.checkout.paymentSessions.create({
   payment_method_id: 'pm_xxx',
   amount: '99.99',             // Optional, defaults to order total
   external_data: {              // Optional, provider-specific data
@@ -348,22 +353,47 @@ const session = await client.orders.paymentSessions.create(cart.id, {
 console.log(session.external_data.client_secret);
 
 // Get a payment session
-const existing = await client.orders.paymentSessions.get(
-  cart.id, session.id, options
+const existing = await client.checkout.paymentSessions.get(
+  session.id, options
 );
 
 // Update a payment session (e.g., after order total changes)
-await client.orders.paymentSessions.update(cart.id, session.id, {
+await client.checkout.paymentSessions.update(session.id, {
   amount: '149.99',
 }, options);
 
 // Complete the payment session (after customer confirms payment on the frontend)
-const completed = await client.orders.paymentSessions.complete(
-  cart.id, session.id,
+const completed = await client.checkout.paymentSessions.complete(
+  session.id,
   { session_result: 'success' },
   options
 );
 console.log(completed.status); // 'completed'
+```
+
+### Orders
+
+Completed orders can be looked up by ID or number:
+
+```typescript
+// Get a completed order by ID or number
+const order = await client.orders.get('R123456789', {
+  expand: ['line_items', 'shipments'],
+}, { spreeToken: orderToken });
+```
+
+For order history, use the customer orders resource:
+
+```typescript
+const options = { token: jwtToken };
+
+// List order history for authenticated customer
+const orders = await client.customer.orders.list({}, options);
+
+// Get a specific order from history
+const order = await client.customer.orders.get('or_xxx', {
+  expand: ['line_items', 'shipments'],
+}, options);
 ```
 
 ### Markets
@@ -517,26 +547,34 @@ The SDK uses a resource builder pattern for nested resources:
 
 | Parent Resource | Nested Resource | Available Methods |
 |-----------------|-----------------|-------------------|
-| `orders` | `lineItems` | `create`, `update`, `delete` |
-| `orders` | `payments` | `list`, `get`, `create` |
-| `orders` | `paymentMethods` | `list` |
-| `orders` | `paymentSessions` | `create`, `get`, `update`, `complete` |
-| `orders` | `shipments` | `list`, `update` |
-| `orders` | `couponCodes` | `apply`, `remove` |
+| `cart` | `items` | `create`, `update`, `delete` |
+| `cart` | `couponCodes` | `apply`, `remove` |
+| `checkout` | `shipments` | `list`, `update` |
+| `checkout` | `paymentMethods` | `list` |
+| `checkout` | `payments` | `list`, `get`, `create` |
+| `checkout` | `paymentSessions` | `create`, `get`, `update`, `complete` |
+| `checkout` | `storeCredits` | `apply`, `remove` |
 | `customer` | `addresses` | `list`, `get`, `create`, `update`, `delete`, `markAsDefault` |
 | `customer` | `creditCards` | `list`, `get`, `delete` |
 | `customer` | `giftCards` | `list`, `get` |
+| `customer` | `orders` | `list`, `get` |
 | `markets` | `countries` | `list`, `get` |
 | `categories` | `products` | `list` |
 | `wishlists` | `items` | `create`, `update`, `delete` |
 
 Example:
 ```typescript
-// Nested resources follow the pattern: client.parent.nested.method(parentId, ...)
-await client.orders.lineItems.create(orderId, params, options);
-await client.orders.payments.list(orderId, options);
-await client.orders.shipments.update(orderId, shipmentId, params, options);
+// Cart and checkout resources are implicit -- no order ID needed
+await client.cart.items.create(params, options);
+await client.cart.couponCodes.apply(code, options);
+await client.checkout.shipments.update(shipmentId, params, options);
+await client.checkout.payments.list(options);
+await client.checkout.paymentSessions.create(params, options);
+await client.checkout.storeCredits.apply(amount, options);
+
+// Other nested resources follow the pattern: client.parent.nested.method(parentId, ...)
 await client.customer.addresses.list({}, options);
+await client.customer.orders.list({}, options);
 await client.markets.countries.list(marketId);
 await client.categories.products.list(categoryId, params, options);
 await client.wishlists.items.create(wishlistId, params, options);
@@ -605,6 +643,7 @@ The SDK includes full TypeScript support with generated types from the API seria
 ```typescript
 import type {
   StoreProduct,
+  StoreCart,
   StoreOrder,
   StoreVariant,
   StoreCategory,
@@ -617,6 +656,7 @@ import type {
 // All responses are fully typed
 const products: PaginatedResponse<StoreProduct> = await client.products.list();
 const category: StoreCategory = await client.categories.get('clothing');
+const cart: StoreCart = await client.cart.create();
 ```
 
 ## Available Types
@@ -626,7 +666,8 @@ The SDK exports all Store API types:
 ### Core Types
 - `StoreProduct` - Product data
 - `StoreVariant` - Variant data
-- `StoreOrder` - Order/cart data
+- `StoreCart` - Cart data (uses `cart_` prefixed IDs)
+- `StoreOrder` - Completed order data (uses `or_` prefixed IDs)
 - `StoreLineItem` - Line item in cart
 - `StoreCategory` - Category
 - `StoreCountry` - Country with states
@@ -668,6 +709,7 @@ The SDK exports all Store API types:
 - `PaginatedResponse<T>` - Paginated API response
 - `AuthTokens` - JWT tokens from login
 - `AddressParams` - Address input parameters
+- `UpdateCheckoutParams` - Checkout update parameters
 - `CreatePaymentParams` - Direct payment creation parameters (for non-session payment methods)
 - `CreatePaymentSessionParams` - Payment session creation parameters
 - `UpdatePaymentSessionParams` - Payment session update parameters

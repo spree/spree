@@ -20,10 +20,18 @@ function parseTypeFile(content: string): ParsedType | null {
   if (!typeNameMatch) return null;
   const typeName = typeNameMatch[1];
 
-  const bodyMatch = content.match(/type\s+\w+\s*=\s*\{([\s\S]*?)\}/);
-  if (!bodyMatch) return null;
-
-  const body = bodyMatch[1];
+  // Find the body between braces, handling nested braces (e.g., inline object types)
+  const typeStart = content.indexOf('{', content.search(/^type\s+\w+\s*=\s*\{/m));
+  if (typeStart === -1) return null;
+  let depth = 1;
+  let i = typeStart + 1;
+  while (i < content.length && depth > 0) {
+    if (content[i] === '{') depth++;
+    else if (content[i] === '}') depth--;
+    i++;
+  }
+  if (depth !== 0) return null;
+  const body = content.slice(typeStart + 1, i - 1);
   const fields: FieldDef[] = [];
   const fieldRegex = /^\s+(\w+)(\?)?\s*:\s*(.+?)\s*;?\s*$/gm;
   let match: RegExpExecArray | null;
@@ -58,6 +66,22 @@ function primitiveOrRef(inner: string, referencedTypes: Set<string>, cyclicTypes
   return 'z.any()';
 }
 
+/** Parse an inline object type like {step: string, field: string} into a z.object() expression */
+function inlineObjectToZod(inner: string, referencedTypes: Set<string>, cyclicTypes: Set<string>): string | null {
+  const trimmed = inner.trim();
+  if (!trimmed.startsWith('{') || !trimmed.endsWith('}')) return null;
+  const body = trimmed.slice(1, -1);
+  const fields = body.split(',').map(f => f.trim()).filter(Boolean);
+  const zodFields: string[] = [];
+  for (const field of fields) {
+    const match = field.match(/^(\w+)\s*:\s*(.+)$/);
+    if (!match) return null;
+    const [, name, type] = match;
+    zodFields.push(`${name}: ${typeToZod(type.trim(), referencedTypes, cyclicTypes)}`);
+  }
+  return `z.object({ ${zodFields.join(', ')} })`;
+}
+
 function typeToZod(typeStr: string, referencedTypes: Set<string>, cyclicTypes: Set<string>): string {
   const t = typeStr.trim();
 
@@ -73,13 +97,19 @@ function typeToZod(typeStr: string, referencedTypes: Set<string>, cyclicTypes: S
   // Array<T> | null
   const arrayNullableMatch = t.match(/^Array<(.+)>\s*\|\s*null$/);
   if (arrayNullableMatch) {
-    return `z.array(${primitiveOrRef(arrayNullableMatch[1].trim(), referencedTypes, cyclicTypes)}).nullable()`;
+    const inner = arrayNullableMatch[1].trim();
+    const inlineObj = inlineObjectToZod(inner, referencedTypes, cyclicTypes);
+    if (inlineObj) return `z.array(${inlineObj}).nullable()`;
+    return `z.array(${primitiveOrRef(inner, referencedTypes, cyclicTypes)}).nullable()`;
   }
 
   // Array<T>
   const arrayMatch = t.match(/^Array<(.+)>$/);
   if (arrayMatch) {
-    return `z.array(${primitiveOrRef(arrayMatch[1].trim(), referencedTypes, cyclicTypes)})`;
+    const inner = arrayMatch[1].trim();
+    const inlineObj = inlineObjectToZod(inner, referencedTypes, cyclicTypes);
+    if (inlineObj) return `z.array(${inlineObj})`;
+    return `z.array(${primitiveOrRef(inner, referencedTypes, cyclicTypes)})`;
   }
 
   // String literal unions: 'a' | 'b' | 'c'

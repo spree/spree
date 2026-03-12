@@ -2,6 +2,7 @@
 export { AddressSchema, type Address } from './Address';
 export { AssetSchema, type Asset } from './Asset';
 export { BaseSchema, type Base } from './Base';
+export { CartSchema, type Cart } from './Cart';
 export { CategorySchema, type Category } from './Category';
 export { CountrySchema, type Country } from './Country';
 export { CreditCardSchema, type CreditCard } from './CreditCard';

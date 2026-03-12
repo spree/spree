@@ -5,6 +5,7 @@ export type {
   Address,
   Asset,
   Base,
+  Cart,
   Category,
   Country,
   CreditCard,
@@ -61,6 +62,7 @@ export type {
 // Backward compatibility aliases (Store* prefix)
 export type { Address as StoreAddress } from './generated';
 export type { Asset as StoreAsset } from './generated';
+export type { Cart as StoreCart } from './generated';
 export type { Category as StoreCategory } from './generated';
 export type { Country as StoreCountry } from './generated';
 export type { CreditCard as StoreCreditCard } from './generated';
@@ -104,6 +106,16 @@ export type { TaxCategory as StoreTaxCategory } from './generated';
 export type { Variant as StoreVariant } from './generated';
 export type { WishedItem as StoreWishedItem } from './generated';
 export type { Wishlist as StoreWishlist } from './generated';
+
+// Checkout requirement — a single unsatisfied checkout prerequisite
+export interface CheckoutRequirement {
+  /** Checkout step this requirement belongs to (e.g. "address", "payment") */
+  step: string;
+  /** Field that needs to be satisfied (e.g. "email", "ship_address") */
+  field: string;
+  /** Human-readable message describing what's needed */
+  message: string;
+}
 
 // Hand-written domain types
 export type {
@@ -221,7 +233,7 @@ export interface UpdateLineItemParams {
   metadata?: Record<string, unknown>;
 }
 
-export interface UpdateOrderParams {
+export interface UpdateCheckoutParams {
   email?: string;
   currency?: string;
   locale?: string;

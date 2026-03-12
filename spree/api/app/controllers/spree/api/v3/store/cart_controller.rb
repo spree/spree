@@ -3,7 +3,7 @@ module Spree
     module V3
       module Store
         class CartController < Store::BaseController
-          include Spree::Api::V3::OrderConcern
+          include Spree::Api::V3::CartResolvable
 
           before_action :require_authentication!, only: [:associate]
 
@@ -22,7 +22,7 @@ module Spree
 
             if result.success?
               @cart = result.value
-              render json: serialize_resource(@cart), status: :created
+              render_cart(status: :created)
             else
               render_service_error(result.error.to_s)
             end
@@ -31,11 +31,26 @@ module Spree
           # GET /api/v3/store/cart
           # Returns current incomplete order (cart)
           # Returns 404 if no cart exists - use POST /cart to create one
-          # Authorize via order_token param or JWT Bearer token
+          # Authorize via cart_token param or JWT Bearer token
+          # Uses find_cart (without bang) intentionally — read-only access, no authorize! needed
           def show
             @cart = find_cart
 
-            render json: serialize_resource(@cart)
+            render_cart
+          end
+
+          # DELETE /api/v3/store/cart
+          # Deletes/abandons the current cart
+          def destroy
+            find_cart!
+
+            result = Spree.cart_destroy_service.call(order: @cart)
+
+            if result.success?
+              head :no_content
+            else
+              render_service_error(result.error.to_s)
+            end
           end
 
           # PATCH /api/v3/store/cart/associate
@@ -47,16 +62,10 @@ module Spree
             result = Spree.cart_associate_service.call(guest_order: @cart, user: current_user, guest_only: true)
 
             if result.success?
-              render json: serialize_resource(@cart)
+              render_cart
             else
               render_service_error(result.error.to_s)
             end
-          end
-
-          protected
-
-          def serializer_class
-            Spree.api.order_serializer
           end
 
           private
@@ -71,24 +80,7 @@ module Spree
           # Find incomplete cart by order token for associate action
           # Only finds guest carts (no user) or carts already owned by current user (idempotent)
           def find_cart_by_token
-            current_store.orders.incomplete.where(user: [ nil, current_user ]).find_by!(token: order_token)
-          end
-
-          def find_cart
-            scope = current_store.orders.incomplete
-
-            # Try order_token first (guest checkout)
-            if order_token.present?
-              return scope.find_by!(token: order_token)
-            end
-
-            # Then try JWT authenticated user
-            if current_user.present?
-              cart = scope.where(user: current_user).order(created_at: :desc).first
-              return cart if cart
-            end
-
-            raise ActiveRecord::RecordNotFound.new(nil, 'Spree::Order')
+            current_store.carts.where(user: [nil, current_user]).find_by!(token: cart_token)
           end
         end
       end

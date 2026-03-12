@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-RSpec.describe Spree::Api::V3::Store::Orders::PaymentsController, type: :controller do
+RSpec.describe Spree::Api::V3::Store::Checkout::PaymentsController, type: :controller do
   render_views
 
   include_context 'API v3 Store'
@@ -15,8 +15,8 @@ RSpec.describe Spree::Api::V3::Store::Orders::PaymentsController, type: :control
   end
 
   describe 'GET #index' do
-    it 'returns a list of payments for the order' do
-      get :index, params: { order_id: order.to_param }
+    it 'returns a list of payments for the cart' do
+      get :index
 
       expect(response).to have_http_status(:ok)
       expect(json_response['data'].size).to eq(1)
@@ -24,55 +24,36 @@ RSpec.describe Spree::Api::V3::Store::Orders::PaymentsController, type: :control
     end
 
     it 'includes payment method information' do
-      get :index, params: { order_id: order.to_param }
+      get :index
 
       expect(json_response['data'].first['payment_method_id']).to eq(payment_method.prefixed_id)
     end
 
-    context 'with order token (guest)' do
+    context 'with spree token (guest)' do
       let(:guest_order) { create(:order_with_line_items, user: nil, store: store, state: 'payment') }
       let!(:guest_payment) { create(:payment, order: guest_order, payment_method: payment_method) }
 
       before { request.headers['Authorization'] = nil }
 
-      it 'returns payments with valid order token' do
-        request.headers['X-Spree-Order-Token'] = guest_order.token
-        get :index, params: { order_id: guest_order.to_param }
+      it 'returns payments with valid spree token' do
+        request.headers['x-spree-token'] = guest_order.token
+        get :index
 
         expect(response).to have_http_status(:ok)
         expect(json_response['data'].size).to eq(1)
       end
 
-      it 'returns not found without order token' do
-        get :index, params: { order_id: guest_order.to_param }
+      it 'returns not found without spree token' do
+        get :index
 
         expect(response).to have_http_status(:not_found)
-        expect(json_response['error']['code']).to eq('order_not_found')
-      end
-    end
-
-    context 'error handling' do
-      it 'returns not found for non-existent order' do
-        get :index, params: { order_id: 'invalid' }
-
-        expect(response).to have_http_status(:not_found)
-        expect(json_response['error']['code']).to eq('order_not_found')
-      end
-
-      it 'returns not found for other users order' do
-        other_order = create(:order, store: store)
-
-        get :index, params: { order_id: other_order.to_param }
-
-        expect(response).to have_http_status(:not_found)
-        expect(json_response['error']['code']).to eq('order_not_found')
       end
     end
   end
 
   describe 'GET #show' do
     it 'returns a single payment' do
-      get :show, params: { order_id: order.to_param, id: payment.to_param }
+      get :show, params: { id: payment.to_param }
 
       expect(response).to have_http_status(:ok)
       expect(json_response['id']).to eq(payment.prefixed_id)
@@ -82,20 +63,19 @@ RSpec.describe Spree::Api::V3::Store::Orders::PaymentsController, type: :control
 
     context 'error handling' do
       it 'returns not found for non-existent payment' do
-        get :show, params: { order_id: order.to_param, id: 'invalid' }
+        get :show, params: { id: 'py_invalid' }
 
         expect(response).to have_http_status(:not_found)
-        expect(json_response['error']['code']).to eq('record_not_found')
       end
 
       it 'returns not found for payment from another order' do
-        other_order = create(:order_with_line_items, user: user, store: store, state: 'payment')
+        other_user = create(:user)
+        other_order = create(:order_with_line_items, user: other_user, store: store, state: 'payment')
         other_payment = create(:payment, order: other_order, payment_method: payment_method, amount: other_order.total)
 
-        get :show, params: { order_id: order.to_param, id: other_payment.to_param }
+        get :show, params: { id: other_payment.to_param }
 
         expect(response).to have_http_status(:not_found)
-        expect(json_response['error']['code']).to eq('record_not_found')
       end
     end
   end
@@ -104,17 +84,16 @@ RSpec.describe Spree::Api::V3::Store::Orders::PaymentsController, type: :control
     let(:check_payment_method) { create(:check_payment_method, stores: [store]) }
 
     it 'creates a payment with a non-session payment method' do
-      post :create, params: { order_id: order.to_param, payment_method_id: check_payment_method.prefixed_id }
+      post :create, params: { payment_method_id: check_payment_method.prefixed_id }
 
       expect(response).to have_http_status(:created)
       expect(json_response['id']).to be_present
       expect(json_response['state']).to eq('checkout')
       expect(json_response['payment_method_id']).to eq(check_payment_method.prefixed_id)
-      expect(json_response['amount']).to eq(order.total_minus_store_credits.to_s)
     end
 
     it 'creates a payment with a custom amount' do
-      post :create, params: { order_id: order.to_param, payment_method_id: check_payment_method.prefixed_id, amount: '50.00' }
+      post :create, params: { payment_method_id: check_payment_method.prefixed_id, amount: '50.00' }
 
       expect(response).to have_http_status(:created)
       expect(json_response['amount']).to eq('50.0')
@@ -122,7 +101,6 @@ RSpec.describe Spree::Api::V3::Store::Orders::PaymentsController, type: :control
 
     it 'creates a payment with metadata' do
       post :create, params: {
-        order_id: order.to_param,
         payment_method_id: check_payment_method.prefixed_id,
         metadata: { purchase_order_number: 'PO-12345' }
       }
@@ -135,7 +113,7 @@ RSpec.describe Spree::Api::V3::Store::Orders::PaymentsController, type: :control
     it 'rejects session-required payment methods' do
       bogus_method = create(:bogus_payment_method, stores: [store])
 
-      post :create, params: { order_id: order.to_param, payment_method_id: bogus_method.prefixed_id }
+      post :create, params: { payment_method_id: bogus_method.prefixed_id }
 
       expect(response).to have_http_status(:unprocessable_content)
       expect(json_response['error']['code']).to eq('payment_session_required')
@@ -145,26 +123,26 @@ RSpec.describe Spree::Api::V3::Store::Orders::PaymentsController, type: :control
       unavailable_method = create(:check_payment_method, stores: [store])
       allow_any_instance_of(Spree::PaymentMethod::Check).to receive(:available_for_order?).and_return(false)
 
-      post :create, params: { order_id: order.to_param, payment_method_id: unavailable_method.prefixed_id }
+      post :create, params: { payment_method_id: unavailable_method.prefixed_id }
 
       expect(response).to have_http_status(:unprocessable_content)
       expect(json_response['error']['code']).to eq('payment_method_unavailable')
     end
 
     it 'returns not found for invalid payment method' do
-      post :create, params: { order_id: order.to_param, payment_method_id: 'pm_invalid' }
+      post :create, params: { payment_method_id: 'pm_invalid' }
 
       expect(response).to have_http_status(:not_found)
     end
 
-    context 'with order token (guest)' do
+    context 'with spree token (guest)' do
       let(:guest_order) { create(:order_with_line_items, user: nil, store: store, state: 'payment') }
 
       before { request.headers['Authorization'] = nil }
 
-      it 'creates a payment with valid order token' do
-        request.headers['X-Spree-Order-Token'] = guest_order.token
-        post :create, params: { order_id: guest_order.to_param, payment_method_id: check_payment_method.prefixed_id }
+      it 'creates a payment with valid spree token' do
+        request.headers['x-spree-token'] = guest_order.token
+        post :create, params: { payment_method_id: check_payment_method.prefixed_id }
 
         expect(response).to have_http_status(:created)
         expect(json_response['payment_method_id']).to eq(check_payment_method.prefixed_id)

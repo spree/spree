@@ -72,7 +72,7 @@ describe('auth actions', () => {
       await login('a@b.com', 'pass');
       expect(mockClient.cart.associate).toHaveBeenCalledWith({
         token: 'jwt_new',
-        orderToken: 'guest_cart_token',
+        spreeToken: 'guest_cart_token',
       });
     });
 
@@ -156,7 +156,7 @@ describe('auth actions', () => {
 
       expect(mockClient.cart.associate).toHaveBeenCalledWith({
         token: 'jwt_new',
-        orderToken: 'guest_cart_token',
+        spreeToken: 'guest_cart_token',
       });
     });
 
