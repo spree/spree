@@ -120,6 +120,7 @@ module Spree
         shipping_rate_serializer: 'Spree::Api::V3::ShippingRateSerializer',
         stock_location_serializer: 'Spree::Api::V3::StockLocationSerializer',
         category_serializer: 'Spree::Api::V3::CategorySerializer',
+        cart_promotion_serializer: 'Spree::Api::V3::CartPromotionSerializer',
         order_promotion_serializer: 'Spree::Api::V3::OrderPromotionSerializer',
         digital_link_serializer: 'Spree::Api::V3::DigitalLinkSerializer',
         gift_card_serializer: 'Spree::Api::V3::GiftCardSerializer',

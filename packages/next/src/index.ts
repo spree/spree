@@ -94,6 +94,7 @@ export type {
   OptionType,
   OptionValue,
   Price,
+  CartPromotion,
   OrderPromotion,
   PaginatedResponse,
   AddressParams,

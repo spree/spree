@@ -124,7 +124,7 @@ await client.checkout.storeCredits.remove(options);
 
 ```typescript
 const order = await client.orders.get('R123456789', {
-  expand: ['line_items', 'shipments'],
+  expand: ['items', 'shipments'],
 }, { spreeToken: cart.token });
 ```
 

@@ -139,6 +139,7 @@ module Spree
              inverse_of: :order
 
     has_many :order_promotions, class_name: 'Spree::OrderPromotion'
+    has_many :cart_promotions, class_name: 'Spree::CartPromotion', foreign_key: :order_id
     has_many :promotions, through: :order_promotions, class_name: 'Spree::Promotion'
 
     has_many :shipments, class_name: 'Spree::Shipment', dependent: :destroy, inverse_of: :order do
