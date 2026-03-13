@@ -8,13 +8,7 @@ import type {
   CompletePaymentSessionParams,
 } from '@spree/sdk';
 import { getClient } from '../config';
-import { getCheckoutOptions, getCartId } from '../cookies';
-
-async function requireCartId(): Promise<string> {
-  const cartId = await getCartId();
-  if (!cartId) throw new Error('No cart found');
-  return cartId;
-}
+import { getCartOptions, requireCartId } from '../cookies';
 
 /**
  * Create a payment session for the current cart.
@@ -23,7 +17,7 @@ async function requireCartId(): Promise<string> {
 export async function createPaymentSession(
   params: CreatePaymentSessionParams
 ): Promise<PaymentSession> {
-  const options = await getCheckoutOptions();
+  const options = await getCartOptions();
   const cartId = await requireCartId();
   const result = await getClient().carts.paymentSessions.create(cartId, params, options);
   revalidateTag('checkout');
@@ -36,7 +30,7 @@ export async function createPaymentSession(
 export async function getPaymentSession(
   sessionId: string
 ): Promise<PaymentSession> {
-  const options = await getCheckoutOptions();
+  const options = await getCartOptions();
   const cartId = await requireCartId();
   return getClient().carts.paymentSessions.get(cartId, sessionId, options);
 }
@@ -49,7 +43,7 @@ export async function updatePaymentSession(
   sessionId: string,
   params: UpdatePaymentSessionParams
 ): Promise<PaymentSession> {
-  const options = await getCheckoutOptions();
+  const options = await getCartOptions();
   const cartId = await requireCartId();
   const result = await getClient().carts.paymentSessions.update(cartId, sessionId, params, options);
   revalidateTag('checkout');
@@ -64,7 +58,7 @@ export async function completePaymentSession(
   sessionId: string,
   params?: CompletePaymentSessionParams
 ): Promise<PaymentSession> {
-  const options = await getCheckoutOptions();
+  const options = await getCartOptions();
   const cartId = await requireCartId();
   const result = await getClient().carts.paymentSessions.complete(cartId, sessionId, params, options);
   revalidateTag('checkout');

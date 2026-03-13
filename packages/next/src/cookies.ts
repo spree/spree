@@ -104,13 +104,21 @@ export async function clearAccessToken(): Promise<void> {
   });
 }
 
-// --- Checkout Options (combined cart + access tokens for checkout/payment actions) ---
+// --- Cart Options (combined cart + access tokens for cart/checkout/payment actions) ---
 
-export async function getCheckoutOptions(): Promise<{
+export async function getCartOptions(): Promise<{
   spreeToken: string | undefined;
   token: string | undefined;
 }> {
   const spreeToken = await getCartToken();
   const token = await getAccessToken();
   return { spreeToken, token };
+}
+
+// --- Cart ID (required) ---
+
+export async function requireCartId(): Promise<string> {
+  const cartId = await getCartId();
+  if (!cartId) throw new Error('No cart found');
+  return cartId;
 }

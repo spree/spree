@@ -26,7 +26,6 @@ export default defineConfig([
   {
     entry: {
       'actions/cart': 'src/actions/cart.ts',
-      'actions/checkout': 'src/actions/checkout.ts',
       'actions/auth': 'src/actions/auth.ts',
       'actions/addresses': 'src/actions/addresses.ts',
       'actions/orders': 'src/actions/orders.ts',

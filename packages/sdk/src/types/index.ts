@@ -254,9 +254,6 @@ export interface UpdateCartParams {
   items?: LineItemInput[];
 }
 
-/** @deprecated Use UpdateCartParams instead */
-export type UpdateCheckoutParams = UpdateCartParams;
-
 // Payments
 export interface CreatePaymentParams {
   payment_method_id: string;
