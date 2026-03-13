@@ -226,7 +226,7 @@ RSpec.describe Spree::Api::V3::Store::CartsController, type: :controller do
 
         expect(response).to have_http_status(:not_found)
         expect(json_response['error']['code']).to eq('variant_not_found')
-        expect(json_response['error']['message']).to include('variant_doesnotexist')
+        expect(json_response['error']['message']).to eq('Variant not found')
       end
     end
 
