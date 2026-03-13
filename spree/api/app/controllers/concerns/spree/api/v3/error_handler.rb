@@ -20,11 +20,11 @@ module Spree
 
           # Cart errors
           cart_not_found: 'cart_not_found',
-          cart_already_completed: 'cart_already_completed',
           cart_cannot_transition: 'cart_cannot_transition',
           cart_empty: 'cart_empty',
           cart_invalid_state: 'cart_invalid_state',
           cart_already_updated: 'cart_already_updated',
+          cart_cannot_complete: 'cart_cannot_complete',
 
           # Order errors
           order_not_found: 'order_not_found',

@@ -97,19 +97,32 @@ module Spree
           end
 
           # POST /api/v3/store/carts/:id/complete
-          # Completes the checkout — returns Order (not Cart)
+          # Completes the checkout — returns Order (not Cart).
+          # Idempotent: if the gateway already completed the order, find_cart!
+          # will 404 (carts scope is incomplete-only), so we fall back to the
+          # orders scope and return the completed order.
+          # this is temporary hack until Spree 6 when Cart and Order will be separate models
           def complete
             find_cart!
 
             with_order_lock do
-              result = Spree.checkout_complete_service.call(order: @cart)
+              Spree.checkout_complete_service.call(order: @cart)
+              @cart.reload
 
-              if result.success?
+              if @cart.complete?
                 render_order
               else
-                render_service_error(result.error, code: ERROR_CODES[:cart_already_completed])
+                render_service_error(
+                  @cart.errors.full_messages.to_sentence.presence || 'Could not complete checkout',
+                  code: ERROR_CODES[:cart_cannot_complete]
+                )
               end
             end
+          rescue ActiveRecord::RecordNotFound
+            @cart = current_store.orders.complete.find_by_prefix_id!(params[:id])
+            authorize!(:show, @cart, cart_token)
+
+            render_order
           end
 
           protected
